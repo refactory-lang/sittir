@@ -32,6 +32,7 @@ import { listKinds } from './list-kinds.ts';
 import { outputGate } from './output-gate.ts';
 import { overrideCensus } from './override-census.ts';
 import { phantomKinds } from './phantom-kinds.ts';
+import { portableAdmission } from './portable-admission.ts';
 import { portableConformance } from './portable-conformance.ts';
 import { probeKind } from './probe-kind.ts';
 import { probeParity } from './probe-parity.ts';
@@ -84,6 +85,7 @@ export const toolModules: readonly CommandModule[] = [
 	outputGate,
 	overrideCensus,
 	phantomKinds,
+	portableAdmission,
 	portableConformance,
 	probeKind,
 	probeParity,

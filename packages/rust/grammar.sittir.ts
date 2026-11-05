@@ -19,6 +19,7 @@ import {
 	regex,
 	prec,
 	token,
+	spellings,
 	preference,
 	reauthored,
 	vocabulary,
@@ -53,7 +54,7 @@ export default grammar(enrich(base), wire({
 		type_argument: ($) =>
 			seq(choice($._type, $.type_binding, $.lifetime, $._literal, $.block), optional($.trait_bounds)),
 
-		match_block_arms: ($) => seq(field('arms', repeat($.match_arm)), field('last_arm', $.last_match_arm))
+		match_block_arms: ($) => seq(field('arms', repeat($.match_arm)), field('arms', $.last_match_arm))
 	},
 	options: {
 		indent: preference('    '),
@@ -311,7 +312,7 @@ export default grammar(enrich(base), wire({
 
 		match_block: {
 			'1/0/0': field('arms'),
-			'1/0/1': field('last_arm')
+			'1/0/1': field('arms')
 		},
 
 		async_block: {
@@ -730,8 +731,8 @@ export default grammar(enrich(base), wire({
 		raw_string_literal_content: token.immediate(/[\s\S]*/),
 		_outer_block_doc_comment_marker: token.immediate('*'),
 		_inner_block_doc_comment_marker: token.immediate('!'),
-		_raw_string_literal_start: /[bc]?r#*"/,
-		_raw_string_literal_end: token.immediate(/"#*/),
+		_raw_string_literal_start: token(seq(field('prefix', spellings({ r: {}, br: {}, cr: {} })), field('hashes', /#*/), '"')),
+		_raw_string_literal_end: token.immediate(seq('"', field('hashes', /#*/))),
 		_line_doc_content: token.immediate(/.*\n?/),
 		_block_comment_content: token.immediate(/[^]*/)
 	}),

@@ -33,6 +33,7 @@ export const buildIfStatement = dispatched(() => backend().buildIfStatement);
 export const buildElifClause = dispatched(() => backend().buildElifClause);
 export const buildElseClause = dispatched(() => backend().buildElseClause);
 export const buildMatchStatement = dispatched(() => backend().buildMatchStatement);
+export const buildMatchBlock = dispatched(() => backend().buildMatchBlock);
 export const buildCaseClause = dispatched(() => backend().buildCaseClause);
 export const buildForStatement = dispatched(() => backend().buildForStatement);
 export const buildWhileStatement = dispatched(() => backend().buildWhileStatement);
@@ -140,6 +141,8 @@ export const buildSubscripts = dispatched(() => backend().buildSubscripts);
 export const buildDictionaryElements = dispatched(() => backend().buildDictionaryElements);
 export const buildSliceGroup = dispatched(() => backend().buildSliceGroup);
 export const buildFormatSpecifierText = dispatched(() => backend().buildFormatSpecifierText);
+export const buildTypeParams = dispatched(() => backend().buildTypeParams);
+export const buildTypeParamsItems = dispatched(() => backend().buildTypeParamsItems);
 export const buildTuplePatternElements = dispatched(() => backend().buildTuplePatternElements);
 export const buildCasePatternList = dispatched(() => backend().buildCasePatternList);
 export const buildTupleElements = dispatched(() => backend().buildTupleElements);
@@ -182,13 +185,14 @@ export const buildAssignmentTyped = dispatched(() => backend().buildAssignmentTy
 export const buildExpressionStatementTuple = dispatched(() => backend().buildExpressionStatementTuple);
 export const buildWithClauseBare = dispatched(() => backend().buildWithClauseBare);
 export const buildWithClauseParen = dispatched(() => backend().buildWithClauseParen);
-export const buildMatchBlockBlock = dispatched(() => backend().buildMatchBlockBlock);
-export const buildMatchBlockEmpty = dispatched(() => backend().buildMatchBlockEmpty);
 export const buildSuiteInline = dispatched(() => backend().buildSuiteInline);
 export const buildSuiteBlock = dispatched(() => backend().buildSuiteBlock);
 export const buildSuiteEmpty = dispatched(() => backend().buildSuiteEmpty);
 export const buildComparisonOperatorComparator = dispatched(() => backend().buildComparisonOperatorComparator);
 export const buildYieldFromClause = dispatched(() => backend().buildYieldFromClause);
+export const buildTypeParamTypeVar = dispatched(() => backend().buildTypeParamTypeVar);
+export const buildTypeParamTypeVarTuple = dispatched(() => backend().buildTypeParamTypeVarTuple);
+export const buildTypeParamParamSpec = dispatched(() => backend().buildTypeParamParamSpec);
 export const buildStringStart = dispatched(() => backend().buildStringStart);
 export const buildStringFragment = dispatched(() => backend().buildStringFragment);
 export const buildEscapeInterpolation = dispatched(() => backend().buildEscapeInterpolation);
@@ -239,6 +243,7 @@ export const _factoryMap = {
 	elif_clause: buildElifClause,
 	else_clause: buildElseClause,
 	match_statement: buildMatchStatement,
+	match_block: buildMatchBlock,
 	case_clause: buildCaseClause,
 	for_statement: buildForStatement,
 	while_statement: buildWhileStatement,
@@ -346,6 +351,8 @@ export const _factoryMap = {
 	dictionary_elements: buildDictionaryElements,
 	slice_group: buildSliceGroup,
 	format_specifier_text: buildFormatSpecifierText,
+	type_params: buildTypeParams,
+	type_params_items: buildTypeParamsItems,
 	tuple_pattern_elements: buildTuplePatternElements,
 	case_pattern_list: buildCasePatternList,
 	tuple_elements: buildTupleElements,
@@ -388,13 +395,14 @@ export const _factoryMap = {
 	expression_statement_tuple: buildExpressionStatementTuple,
 	with_clause_bare: buildWithClauseBare,
 	with_clause_paren: buildWithClauseParen,
-	match_block_block: buildMatchBlockBlock,
-	match_block_empty: buildMatchBlockEmpty,
 	suite_inline: buildSuiteInline,
 	suite_block: buildSuiteBlock,
 	suite_empty: buildSuiteEmpty,
 	comparison_operator_comparator: buildComparisonOperatorComparator,
 	yield_from_clause: buildYieldFromClause,
+	type_param_type_var: buildTypeParamTypeVar,
+	type_param_type_var_tuple: buildTypeParamTypeVarTuple,
+	type_param_param_spec: buildTypeParamParamSpec,
 	string_start: buildStringStart,
 	string_fragment: buildStringFragment,
 	escape_interpolation: buildEscapeInterpolation,

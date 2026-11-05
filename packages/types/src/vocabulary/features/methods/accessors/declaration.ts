@@ -19,11 +19,21 @@ export namespace Declaration {
 			// claimed by t
 			readonly $kind: 'declaration.property.setter';
 			readonly body: V.Statement.Block<G>;
-			readonly parameters: V.Declaration.Parameter.Any<G>[];
+			readonly parameters: (
+				| V.Declaration.Parameter<G>
+				| V.Declaration.Parameter.Private<G>
+				| V.Declaration.Parameter.Protected<G>
+				| V.Declaration.Parameter.Public<G>
+			)[];
 		}
 		export interface Signature<G extends GrammarContext<G>> extends SubKindOf<V.Declaration.Property<G>> {
 			readonly $kind: 'declaration.property.signature';
-			readonly parameters: V.Declaration.Parameter.Any<G>[];
+			readonly parameters: (
+				| V.Declaration.Parameter<G>
+				| V.Declaration.Parameter.Private<G>
+				| V.Declaration.Parameter.Protected<G>
+				| V.Declaration.Parameter.Public<G>
+			)[];
 		}
 		export namespace Signature {
 			export interface Abstract<G extends GrammarContext<G>> extends SubKindOf<V.Declaration.Property.Signature<G>> {

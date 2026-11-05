@@ -20,7 +20,6 @@ export interface KindMembers {
 		| TSKindId.ClassDefinition
 		| TSKindId.DecoratedDefinition
 		| TSKindId.MatchStatement;
-	[TSKindId.MatchBlock]: TSKindId.MatchBlockBlock | TSKindId.MatchBlockEmpty;
 	[TSKindId.WithClause]: TSKindId.WithClauseBare | TSKindId.WithClauseParen;
 	[TSKindId.SplatPattern]:
 		| TSKindId.ListSplatPattern
@@ -134,6 +133,7 @@ export interface KindMembers {
 		| TSKindId.IntegerDecimalImaginary
 		| TSKindId.IntegerDecimalPlain;
 	[TSKindId.Float]: TSKindId.FloatPoint | TSKindId.FloatLeadingPoint | TSKindId.FloatScientific;
+	[TSKindId.TypeParam]: TSKindId.TypeParamTypeVar | TSKindId.TypeParamTypeVarTuple | TSKindId.TypeParamParamSpec;
 	[TSKindId.IntegerDecimal]:
 		| TSKindId.IntegerDecimalLong
 		| TSKindId.IntegerDecimalImaginary
@@ -197,12 +197,7 @@ export interface IsGuards {
 		<T extends { readonly $type: number } | number>(
 			v: T
 		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.PrintStatement };
-		readonly chevron: {
-			<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.PrintStatement };
-			printChevronArguments<T extends { readonly $type: number }>(
-				v: T
-			): v is T & { readonly $type: TSKindId.PrintStatement };
-		};
+		chevron<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.PrintStatement };
 		plain<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.PrintStatement };
 	};
 	chevron<T extends { readonly $type: number } | number>(
@@ -251,6 +246,9 @@ export interface IsGuards {
 	matchStatement<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.MatchStatement };
+	matchBlock<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.MatchBlock };
 	caseClause<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.CaseClause };
@@ -596,6 +594,12 @@ export interface IsGuards {
 	sliceGroup<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.SliceGroup };
+	typeParams<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.TypeParams };
+	typeParamsItems<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.TypeParamsItems };
 	tuplePatternElements<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.TuplePatternElements };
@@ -620,14 +624,9 @@ export interface IsGuards {
 	printChevronArguments<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.PrintChevronArguments };
-	readonly printStatementChevron: {
-		<T extends { readonly $type: number } | number>(
-			v: T
-		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.PrintStatementChevron };
-		printChevronArguments<T extends { readonly $type: number }>(
-			v: T
-		): v is T & { readonly $type: TSKindId.PrintStatementChevron };
-	};
+	printStatementChevron<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.PrintStatementChevron };
 	printStatementPlain<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.PrintStatementPlain };
@@ -709,12 +708,6 @@ export interface IsGuards {
 	withClauseParen<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.WithClauseParen };
-	matchBlockBlock<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.MatchBlockBlock };
-	matchBlockEmpty<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.MatchBlockEmpty };
 	suiteInline<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.SuiteInline };
@@ -730,6 +723,21 @@ export interface IsGuards {
 	yieldFromClause<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.YieldFromClause };
+	typeParamTypeVar<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.TypeParamTypeVar };
+	typeParamTypeVarTuple<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.TypeParamTypeVarTuple };
+	typeParamParamSpec<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.TypeParamParamSpec };
+	stringStart<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.StringStart };
+	stringEnd<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.StringEnd };
 	constructorDeclaration<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ConstructorDeclaration };
@@ -808,12 +816,7 @@ export interface IsGuards {
 			<T extends { readonly $type: number } | number>(
 				v: T
 			): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.PrintStatement };
-			readonly chevron: {
-				<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.PrintStatement };
-				printChevronArguments<T extends { readonly $type: number }>(
-					v: T
-				): v is T & { readonly $type: TSKindId.PrintStatement };
-			};
+			chevron<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.PrintStatement };
 			plain<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.PrintStatement };
 		};
 		assert<T extends { readonly $type: number } | number>(
@@ -901,15 +904,6 @@ export interface IsGuards {
 		match<T extends { readonly $type: number } | number>(
 			v: T
 		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.MatchStatement };
-	};
-	readonly matchBlock: {
-		<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, KindMembers[TSKindId.MatchBlock]>;
-		block<T extends { readonly $type: number } | number>(
-			v: T
-		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.MatchBlockBlock };
-		empty<T extends { readonly $type: number } | number>(
-			v: T
-		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.MatchBlockEmpty };
 	};
 	readonly withClause: {
 		<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, KindMembers[TSKindId.WithClause]>;
@@ -1153,6 +1147,18 @@ export interface IsGuards {
 		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.LineContinuationNewline };
 		nul<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, TSKindId.LineContinuationNul>;
 	};
+	readonly typeParam: {
+		<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, KindMembers[TSKindId.TypeParam]>;
+		typeVar<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.TypeParamTypeVar };
+		typeVarTuple<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.TypeParamTypeVarTuple };
+		paramSpec<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.TypeParamParamSpec };
+	};
 	readonly integerDecimal: {
 		<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, KindMembers[TSKindId.IntegerDecimal]>;
 		long<T extends { readonly $type: number } | number>(
@@ -1197,18 +1203,12 @@ export interface IsGuards {
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.FormatSpecifierText };
 	wildcardPattern<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, TSKindId.WildcardPattern>;
-	stringStart<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.StringStart };
 	stringFragment<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.StringFragment };
 	escapeInterpolation<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.EscapeInterpolation };
-	stringEnd<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.StringEnd };
 	indent<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, TSKindId.Indent>;
 	dedent<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, TSKindId.Dedent>;
 	newline<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, TSKindId.Newline>;
@@ -1219,10 +1219,9 @@ const _supertype_simpleStatement_ids = new Set<number>([
 	134, 131, 135, 139, 141, 142, 145, 146, 147, 148, 149, 150, 170, 171, 172, 173
 ]);
 const _supertype_compoundStatement_ids = new Set<number>([151, 157, 158, 159, 162, 165, 174, 178, 154]);
-const _supertype_matchBlock_ids = new Set<number>([295, 296]);
-const _supertype_withClause_ids = new Set<number>([293, 294]);
-const _supertype_suite_ids = new Set<number>([297, 298, 299]);
-const _supertype_splatPattern_ids = new Set<number>([201, 202, 287, 288]);
+const _supertype_withClause_ids = new Set<number>([297, 298]);
+const _supertype_suite_ids = new Set<number>([299, 300, 301]);
+const _supertype_splatPattern_ids = new Set<number>([201, 202, 291, 292]);
 const _supertype_parameter_ids = new Set<number>([201, 202, 1, 225, 199, 200, 197, 259, 258]);
 const _supertype_pattern_ids = new Set<number>([201, 1, 222, 221, 197, 198]);
 const _supertype_expression_ids = new Set<number>([
@@ -1233,24 +1232,24 @@ const _supertype_primaryExpression_ids = new Set<number>([
 	201, 257, 209, 1, 248, 247, 90, 91, 92, 93, 94, 95, 96, 97, 98, 69, 70, 71, 210, 221, 222, 224, 233, 238, 236, 239,
 	234, 240, 235, 242, 241, 63
 ]);
-const _supertype_assignment_ids = new Set<number>([289, 290, 291]);
+const _supertype_assignment_ids = new Set<number>([293, 294, 295]);
 const _supertype_escapeSequence_ids = new Set<number>([99, 100, 101, 102, 103, 104, 105]);
 const _supertype_integer_ids = new Set<number>([90, 91, 92, 93, 94, 95]);
 const _supertype_float_ids = new Set<number>([96, 97, 98]);
 const _supertype_lineContinuation_ids = new Set<number>([106, 107]);
+const _supertype_typeParam_ids = new Set<number>([304, 305, 306]);
 const _supertype_integerDecimal_ids = new Set<number>([93, 94, 95]);
 const _supertype_layout_ids = new Set<number>([123, 124, 125, 116, 126, 127]);
 const _supertype_compoundStatementClassDefinition_ids = new Set<number>([
-	345, 151, 157, 158, 159, 162, 302, 174, 306, 154
+	352, 151, 157, 158, 159, 162, 307, 174, 311, 154
 ]);
 const _supertype_statementClassDefinition_ids = new Set<number>([
-	130, 345, 151, 157, 158, 159, 162, 302, 174, 306, 154
+	130, 352, 151, 157, 158, 159, 162, 307, 174, 311, 154
 ]);
-const _supertype_suiteClassDefinition_ids = new Set<number>([297, 305, 299]);
+const _supertype_suiteClassDefinition_ids = new Set<number>([299, 310, 301]);
 
 const _members = new Map<number, ReadonlySet<number>>([
 	[TSKindId.Statement, _supertype_statement_ids],
-	[TSKindId.MatchBlock, _supertype_matchBlock_ids],
 	[TSKindId.WithClause, _supertype_withClause_ids],
 	[TSKindId.SplatPattern, _supertype_splatPattern_ids],
 	[TSKindId.Parameter, _supertype_parameter_ids],
@@ -1261,6 +1260,7 @@ const _members = new Map<number, ReadonlySet<number>>([
 	[TSKindId.EscapeSequence, _supertype_escapeSequence_ids],
 	[TSKindId.Integer, _supertype_integer_ids],
 	[TSKindId.Float, _supertype_float_ids],
+	[TSKindId.TypeParam, _supertype_typeParam_ids],
 	[TSKindId.IntegerDecimal, _supertype_integerDecimal_ids],
 	[TSKindId.StatementClassDefinition, _supertype_statementClassDefinition_ids]
 ]);
@@ -1313,7 +1313,6 @@ export function guardsWith(test: KindTest): IsGuards {
 	const _kind_ImportStatement_guard = _g(TSKindId.ImportStatement);
 	const _kind_WildcardImport_guard = _mg(TSKindId.WildcardImport);
 	const _kind_ImportFromStatement_guard = _g(TSKindId.ImportFromStatement);
-	const _kind_PrintChevronArguments_guard = _g(TSKindId.PrintChevronArguments);
 	const _kind_PrintStatementChevron_guard = _g(TSKindId.PrintStatementChevron);
 	const _kind_PrintStatement_guard = _g(TSKindId.PrintStatement);
 	const _kind_PrintStatementPlain_guard = _g(TSKindId.PrintStatementPlain);
@@ -1342,8 +1341,6 @@ export function guardsWith(test: KindTest): IsGuards {
 	const _kind_ClassDefinition_guard = _g(TSKindId.ClassDefinition);
 	const _kind_DecoratedDefinition_guard = _g(TSKindId.DecoratedDefinition);
 	const _kind_MatchStatement_guard = _g(TSKindId.MatchStatement);
-	const _kind_MatchBlockBlock_guard = _g(TSKindId.MatchBlockBlock);
-	const _kind_MatchBlockEmpty_guard = _g(TSKindId.MatchBlockEmpty);
 	const _kind_WithClauseBare_guard = _g(TSKindId.WithClauseBare);
 	const _kind_WithClauseParen_guard = _g(TSKindId.WithClauseParen);
 	const _kind_SuiteInline_guard = _g(TSKindId.SuiteInline);
@@ -1407,6 +1404,9 @@ export function guardsWith(test: KindTest): IsGuards {
 	const _kind_FloatScientific_guard = _g(TSKindId.FloatScientific);
 	const _kind_LineContinuationNewline_guard = _g(TSKindId.LineContinuationNewline);
 	const _kind_LineContinuationNul_guard = _mg(TSKindId.LineContinuationNul);
+	const _kind_TypeParamTypeVar_guard = _g(TSKindId.TypeParamTypeVar);
+	const _kind_TypeParamTypeVarTuple_guard = _g(TSKindId.TypeParamTypeVarTuple);
+	const _kind_TypeParamParamSpec_guard = _g(TSKindId.TypeParamParamSpec);
 	const _kind_IntegerDecimalLong_guard = _g(TSKindId.IntegerDecimalLong);
 	const _kind_IntegerDecimalImaginary_guard = _g(TSKindId.IntegerDecimalImaginary);
 	const _kind_IntegerDecimalPlain_guard = _g(TSKindId.IntegerDecimalPlain);
@@ -1418,6 +1418,7 @@ export function guardsWith(test: KindTest): IsGuards {
 	const _kind_NamedExpressionLhs_guard = _g(TSKindId.NamedExpressionLhs);
 	const _kind_ElifClause_guard = _g(TSKindId.ElifClause);
 	const _kind_ElseClause_guard = _g(TSKindId.ElseClause);
+	const _kind_MatchBlock_guard = _g(TSKindId.MatchBlock);
 	const _kind_CaseClause_guard = _g(TSKindId.CaseClause);
 	const _kind_ExceptClauseExceptionAs_guard = _g(TSKindId.ExceptClauseExceptionAs);
 	const _kind_ExceptClauseException_guard = _g(TSKindId.ExceptClauseException);
@@ -1479,12 +1480,17 @@ export function guardsWith(test: KindTest): IsGuards {
 	const _kind_Subscripts_guard = _g(TSKindId.Subscripts);
 	const _kind_DictionaryElements_guard = _g(TSKindId.DictionaryElements);
 	const _kind_SliceGroup_guard = _g(TSKindId.SliceGroup);
+	const _kind_TypeParams_guard = _g(TSKindId.TypeParams);
+	const _kind_TypeParamsItems_guard = _g(TSKindId.TypeParamsItems);
 	const _kind_TuplePatternElements_guard = _g(TSKindId.TuplePatternElements);
 	const _kind_CasePatternList_guard = _g(TSKindId.CasePatternList);
 	const _kind_TupleElements_guard = _g(TSKindId.TupleElements);
 	const _kind_PrintArguments_guard = _g(TSKindId.PrintArguments);
+	const _kind_PrintChevronArguments_guard = _g(TSKindId.PrintChevronArguments);
 	const _kind_ComprehensionClauses_guard = _g(TSKindId.ComprehensionClauses);
 	const _kind_ComparisonOperatorComparator_guard = _g(TSKindId.ComparisonOperatorComparator);
+	const _kind_StringStart_guard = _g(TSKindId.StringStart);
+	const _kind_StringEnd_guard = _g(TSKindId.StringEnd);
 	const _kind_ConstructorDeclaration_guard = _g(TSKindId.ConstructorDeclaration);
 	const _kind_BlockClassDeclaration_guard = _g(TSKindId.BlockClassDeclaration);
 	const _kind_SuiteBlockClassDeclaration_guard = _g(TSKindId.SuiteBlockClassDeclaration);
@@ -1497,10 +1503,8 @@ export function guardsWith(test: KindTest): IsGuards {
 	const _kind_NotEscapeSequence_guard = _mg(TSKindId.NotEscapeSequence);
 	const _kind_TypeConversion_guard = _g(TSKindId.TypeConversion);
 	const _kind_FormatSpecifierText_guard = _g(TSKindId.FormatSpecifierText);
-	const _kind_StringStart_guard = _g(TSKindId.StringStart);
 	const _kind_StringFragment_guard = _g(TSKindId.StringFragment);
 	const _kind_EscapeInterpolation_guard = _g(TSKindId.EscapeInterpolation);
-	const _kind_StringEnd_guard = _g(TSKindId.StringEnd);
 	const _kind_Indent_guard = _mg(TSKindId.Indent);
 	const _kind_Dedent_guard = _mg(TSKindId.Dedent);
 	const _kind_Newline_guard = _mg(TSKindId.Newline);
@@ -1514,17 +1518,7 @@ export function guardsWith(test: KindTest): IsGuards {
 		parenthesizedImportList: _at(_kind_ImportFromStatement_guard, 'content', _kind_ParenthesizedImportList_guard)
 	});
 	const _form_PrintStatement_guard = _vg(_g(TSKindId.PrintStatement), {
-		chevron: _at(
-			_kind_PrintStatement_guard,
-			'content',
-			_vg(_g(TSKindId.PrintStatementChevron), {
-				printChevronArguments: _at(
-					_kind_PrintStatementChevron_guard,
-					'printChevronArguments',
-					_kind_PrintChevronArguments_guard
-				)
-			})
-		),
+		chevron: _at(_kind_PrintStatement_guard, 'content', _kind_PrintStatementChevron_guard),
 		plain: _at(_kind_PrintStatement_guard, 'content', _kind_PrintStatementPlain_guard)
 	});
 	const _form_ExpressionStatement_guard = _vg(_g(TSKindId.ExpressionStatement), {
@@ -1596,13 +1590,6 @@ export function guardsWith(test: KindTest): IsGuards {
 		constrainedType: _at(_kind_Type_guard, 'content', _kind_ConstrainedType_guard),
 		memberType: _at(_kind_Type_guard, 'content', _kind_MemberType_guard)
 	});
-	const _form_PrintStatementChevron_guard = _vg(_g(TSKindId.PrintStatementChevron), {
-		printChevronArguments: _at(
-			_kind_PrintStatementChevron_guard,
-			'printChevronArguments',
-			_kind_PrintChevronArguments_guard
-		)
-	});
 	const _supertype_simpleStatement_guard = _vg(_sg(_supertype_simpleStatement_ids), {
 		futureImport: _form_FutureImportStatement_guard,
 		import: _kind_ImportStatement_guard,
@@ -1631,10 +1618,6 @@ export function guardsWith(test: KindTest): IsGuards {
 		class: _kind_ClassDefinition_guard,
 		decorated: _kind_DecoratedDefinition_guard,
 		match: _kind_MatchStatement_guard
-	});
-	const _supertype_matchBlock_guard = _vg(_mg(155), {
-		block: _kind_MatchBlockBlock_guard,
-		empty: _kind_MatchBlockEmpty_guard
 	});
 	const _supertype_withClause_guard = _vg(_mg(163), {
 		bare: _kind_WithClauseBare_guard,
@@ -1691,7 +1674,12 @@ export function guardsWith(test: KindTest): IsGuards {
 		newline: _kind_LineContinuationNewline_guard,
 		nul: _kind_LineContinuationNul_guard
 	});
-	const _supertype_integerDecimal_guard = _vg(_mg(283), {
+	const _supertype_typeParam_guard = _vg(_mg(270), {
+		typeVar: _kind_TypeParamTypeVar_guard,
+		typeVarTuple: _kind_TypeParamTypeVarTuple_guard,
+		paramSpec: _kind_TypeParamParamSpec_guard
+	});
+	const _supertype_integerDecimal_guard = _vg(_mg(287), {
 		long: _kind_IntegerDecimalLong_guard,
 		imaginary: _kind_IntegerDecimalImaginary_guard,
 		plain: _kind_IntegerDecimalPlain_guard
@@ -1761,6 +1749,7 @@ export function guardsWith(test: KindTest): IsGuards {
 		elifClause: _kind_ElifClause_guard,
 		elseClause: _kind_ElseClause_guard,
 		matchStatement: _kind_MatchStatement_guard,
+		matchBlock: _kind_MatchBlock_guard,
 		caseClause: _kind_CaseClause_guard,
 		forStatement: _kind_ForStatement_guard,
 		whileStatement: _kind_WhileStatement_guard,
@@ -1858,6 +1847,8 @@ export function guardsWith(test: KindTest): IsGuards {
 		subscripts: _kind_Subscripts_guard,
 		dictionaryElements: _kind_DictionaryElements_guard,
 		sliceGroup: _kind_SliceGroup_guard,
+		typeParams: _kind_TypeParams_guard,
+		typeParamsItems: _kind_TypeParamsItems_guard,
 		tuplePatternElements: _kind_TuplePatternElements_guard,
 		casePatternList: _kind_CasePatternList_guard,
 		tupleElements: _kind_TupleElements_guard,
@@ -1866,7 +1857,7 @@ export function guardsWith(test: KindTest): IsGuards {
 		caseListPattern: _kind_CaseListPattern_guard,
 		printArguments: _kind_PrintArguments_guard,
 		printChevronArguments: _kind_PrintChevronArguments_guard,
-		printStatementChevron: _form_PrintStatementChevron_guard,
+		printStatementChevron: _kind_PrintStatementChevron_guard,
 		printStatementPlain: _kind_PrintStatementPlain_guard,
 		parenthesizedImportList: _kind_ParenthesizedImportList_guard,
 		comprehensionClauses: _kind_ComprehensionClauses_guard,
@@ -1894,13 +1885,16 @@ export function guardsWith(test: KindTest): IsGuards {
 		expressionStatementTuple: _kind_ExpressionStatementTuple_guard,
 		withClauseBare: _kind_WithClauseBare_guard,
 		withClauseParen: _kind_WithClauseParen_guard,
-		matchBlockBlock: _kind_MatchBlockBlock_guard,
-		matchBlockEmpty: _kind_MatchBlockEmpty_guard,
 		suiteInline: _kind_SuiteInline_guard,
 		suiteBlock: _kind_SuiteBlock_guard,
 		suiteEmpty: _kind_SuiteEmpty_guard,
 		comparisonOperatorComparator: _kind_ComparisonOperatorComparator_guard,
 		yieldFromClause: _kind_YieldFromClause_guard,
+		typeParamTypeVar: _kind_TypeParamTypeVar_guard,
+		typeParamTypeVarTuple: _kind_TypeParamTypeVarTuple_guard,
+		typeParamParamSpec: _kind_TypeParamParamSpec_guard,
+		stringStart: _kind_StringStart_guard,
+		stringEnd: _kind_StringEnd_guard,
 		constructorDeclaration: _kind_ConstructorDeclaration_guard,
 		blockClassDeclaration: _kind_BlockClassDeclaration_guard,
 		suiteBlockClassDeclaration: _kind_SuiteBlockClassDeclaration_guard,
@@ -1913,7 +1907,6 @@ export function guardsWith(test: KindTest): IsGuards {
 		statement: _mg(129),
 		simpleStatement: _supertype_simpleStatement_guard,
 		compoundStatement: _supertype_compoundStatement_guard,
-		matchBlock: _supertype_matchBlock_guard,
 		withClause: _supertype_withClause_guard,
 		suite: _supertype_suite_guard,
 		splatPattern: _supertype_splatPattern_guard,
@@ -1926,6 +1919,7 @@ export function guardsWith(test: KindTest): IsGuards {
 		integer: _supertype_integer_guard,
 		float: _supertype_float_guard,
 		lineContinuation: _supertype_lineContinuation_guard,
+		typeParam: _supertype_typeParam_guard,
 		integerDecimal: _supertype_integerDecimal_guard,
 		layout: _sg(_supertype_layout_ids),
 		importPrefix: _kind_ImportPrefix_guard,
@@ -1944,10 +1938,8 @@ export function guardsWith(test: KindTest): IsGuards {
 		keywordSeparator: _kind_KeywordSeparator_guard,
 		formatSpecifierText: _kind_FormatSpecifierText_guard,
 		wildcardPattern: _kind_WildcardPattern_guard,
-		stringStart: _kind_StringStart_guard,
 		stringFragment: _kind_StringFragment_guard,
 		escapeInterpolation: _kind_EscapeInterpolation_guard,
-		stringEnd: _kind_StringEnd_guard,
 		indent: _kind_Indent_guard,
 		dedent: _kind_Dedent_guard,
 		newline: _kind_Newline_guard

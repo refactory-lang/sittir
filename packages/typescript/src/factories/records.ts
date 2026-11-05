@@ -127,7 +127,7 @@ export function buildProgram(config: Partial<T.Program.Config> = {}): T.Program.
 	return arena.scope(() => {
 		const record = arena.record(TSKindId.Program as const);
 		storeCell(arena, record, 2, 2, _shebang);
-		storeList(arena, record, 3, 6, _statements);
+		storeList(arena, record, 3, 8, _statements);
 		const node = arena.view(record);
 		return node as unknown as T.Program.Bound;
 	});
@@ -144,7 +144,7 @@ function buildProgram$patch(source: object, config: Partial<T.Program.Config> = 
 	return arena.scope(() => {
 		const record = arena.copy(source, TSKindId.Program as const);
 		patchCell(arena, record, 2, 2, carriedSlot(source, 'shebang', _shebang));
-		patchList(arena, record, 3, 6, _statements);
+		patchList(arena, record, 3, 8, _statements);
 		const node = arena.view(record);
 		return node as unknown as T.Program.Bound;
 	});
@@ -6303,7 +6303,7 @@ export function buildPair(config: T.Pair.Config): T.Pair.Bound {
 	return arena.scope(() => {
 		const record = arena.record(TSKindId.Pair as const);
 		storeCell(arena, record, 2, 2, _key);
-		storeCell(arena, record, 3, 15, _value);
+		storeCell(arena, record, 3, 17, _value);
 		const node = arena.view(record);
 		return node as unknown as T.Pair.Bound;
 	});
@@ -6328,7 +6328,7 @@ function buildPair$patch(source: object, config: T.Pair.Config): T.Pair.Bound {
 	return arena.scope(() => {
 		const record = arena.copy(source, TSKindId.Pair as const);
 		patchCell(arena, record, 2, 2, carriedSlot(source, 'key', _key));
-		patchCell(arena, record, 3, 15, carriedSlot(source, 'value', _value));
+		patchCell(arena, record, 3, 17, carriedSlot(source, 'value', _value));
 		const node = arena.view(record);
 		return node as unknown as T.Pair.Bound;
 	});
@@ -6378,7 +6378,7 @@ export function buildPairPattern(config: T.PairPattern.Config): T.PairPattern.Bo
 	return arena.scope(() => {
 		const record = arena.record(TSKindId.PairPattern as const);
 		storeCell(arena, record, 2, 2, _key);
-		storeCell(arena, record, 3, 15, _value);
+		storeCell(arena, record, 3, 17, _value);
 		const node = arena.view(record);
 		return node as unknown as T.PairPattern.Bound;
 	});
@@ -6398,7 +6398,7 @@ function buildPairPattern$patch(source: object, config: T.PairPattern.Config): T
 	return arena.scope(() => {
 		const record = arena.copy(source, TSKindId.PairPattern as const);
 		patchCell(arena, record, 2, 2, carriedSlot(source, 'key', _key));
-		patchCell(arena, record, 3, 15, carriedSlot(source, 'value', _value));
+		patchCell(arena, record, 3, 17, carriedSlot(source, 'value', _value));
 		const node = arena.view(record);
 		return node as unknown as T.PairPattern.Bound;
 	});
@@ -8152,7 +8152,7 @@ export function buildEnumAssignment(config: T.EnumAssignment.Config): T.EnumAssi
 	return arena.scope(() => {
 		const record = arena.record(TSKindId.EnumAssignment as const);
 		storeCell(arena, record, 2, 2, _name);
-		storeCell(arena, record, 3, 15, _value);
+		storeCell(arena, record, 3, 17, _value);
 		const node = arena.view(record);
 		return node as unknown as T.EnumAssignment.Bound;
 	});
@@ -8177,7 +8177,7 @@ function buildEnumAssignment$patch(source: object, config: T.EnumAssignment.Conf
 	return arena.scope(() => {
 		const record = arena.copy(source, TSKindId.EnumAssignment as const);
 		patchCell(arena, record, 2, 2, carriedSlot(source, 'name', _name));
-		patchCell(arena, record, 3, 15, carriedSlot(source, 'value', _value));
+		patchCell(arena, record, 3, 17, carriedSlot(source, 'value', _value));
 		const node = arena.view(record);
 		return node as unknown as T.EnumAssignment.Bound;
 	});
@@ -11367,7 +11367,7 @@ export function buildPropertySignature(config: T.PropertySignature.Config): T.Pr
 		if (_readonly) storeFlag(record.data, record.base + 2, 4);
 		storeCell(arena, record, 4, 4, _name);
 		if (_optional) storeFlag(record.data, record.base + 2, 8);
-		storeCell(arena, record, 5, 17, _type);
+		storeCell(arena, record, 5, 19, _type);
 		const node = arena.view(record);
 		return node as unknown as T.PropertySignature.Bound;
 	});
@@ -11416,7 +11416,7 @@ function buildPropertySignature$patch(source: object, config: T.PropertySignatur
 		patchFlag(record, 2, 4, _readonly);
 		patchCell(arena, record, 4, 4, carriedSlot(source, 'name', _name));
 		patchFlag(record, 2, 8, _optional);
-		patchCell(arena, record, 5, 17, carriedSlot(source, 'type', _type));
+		patchCell(arena, record, 5, 19, carriedSlot(source, 'type', _type));
 		const node = arena.view(record);
 		return node as unknown as T.PropertySignature.Bound;
 	});
@@ -15013,7 +15013,7 @@ export function buildClassBodyMemberMethod(
 		const record = arena.record(TSKindId.ClassBodyMemberMethod as const);
 		storeList(arena, record, 2, 2, _decorator);
 		storeCell(arena, record, 3, 3, _method_definition);
-		storeCell(arena, record, 4, 40, _terminator);
+		storeCell(arena, record, 4, 42, _terminator);
 		const node = arena.view(record);
 		return node as unknown as T.ClassBodyMemberMethod.Bound;
 	});
@@ -15044,7 +15044,7 @@ function buildClassBodyMemberMethod$patch(
 		const record = arena.copy(source, TSKindId.ClassBodyMemberMethod as const);
 		patchList(arena, record, 2, 2, _decorator);
 		patchCell(arena, record, 3, 3, carriedSlot(source, 'methodDefinition', _method_definition));
-		patchCell(arena, record, 4, 40, carriedSlot(source, 'terminator', _terminator));
+		patchCell(arena, record, 4, 42, carriedSlot(source, 'terminator', _terminator));
 		const node = arena.view(record);
 		return node as unknown as T.ClassBodyMemberMethod.Bound;
 	});
@@ -15101,7 +15101,7 @@ export function buildClassBodyMemberMethodSig(
 	return arena.scope(() => {
 		const record = arena.record(TSKindId.ClassBodyMemberMethodSig as const);
 		storeCell(arena, record, 2, 2, _method_signature);
-		storeCell(arena, record, 3, 35, _terminator);
+		storeCell(arena, record, 3, 37, _terminator);
 		const node = arena.view(record);
 		return node as unknown as T.ClassBodyMemberMethodSig.Bound;
 	});
@@ -15128,7 +15128,7 @@ function buildClassBodyMemberMethodSig$patch(
 	return arena.scope(() => {
 		const record = arena.copy(source, TSKindId.ClassBodyMemberMethodSig as const);
 		patchCell(arena, record, 2, 2, carriedSlot(source, 'methodSignature', _method_signature));
-		patchCell(arena, record, 3, 35, carriedSlot(source, 'terminator', _terminator));
+		patchCell(arena, record, 3, 37, carriedSlot(source, 'terminator', _terminator));
 		const node = arena.view(record);
 		return node as unknown as T.ClassBodyMemberMethodSig.Bound;
 	});
@@ -15173,7 +15173,7 @@ export function buildClassBodyMemberDeclaration(
 	return arena.scope(() => {
 		const record = arena.record(TSKindId.ClassBodyMemberDeclaration as const);
 		storeCell(arena, record, 2, 2, _member);
-		storeCell(arena, record, 3, 35, _terminator);
+		storeCell(arena, record, 3, 37, _terminator);
 		const node = arena.view(record);
 		return node as unknown as T.ClassBodyMemberDeclaration.Bound;
 	});
@@ -15197,7 +15197,7 @@ function buildClassBodyMemberDeclaration$patch(
 	return arena.scope(() => {
 		const record = arena.copy(source, TSKindId.ClassBodyMemberDeclaration as const);
 		patchCell(arena, record, 2, 2, carriedSlot(source, 'member', _member));
-		patchCell(arena, record, 3, 35, carriedSlot(source, 'terminator', _terminator));
+		patchCell(arena, record, 3, 37, carriedSlot(source, 'terminator', _terminator));
 		const node = arena.view(record);
 		return node as unknown as T.ClassBodyMemberDeclaration.Bound;
 	});
@@ -18073,10 +18073,10 @@ export function buildMethodDefinitionPlain(config: T.MethodDefinitionPlain.Confi
 		if (_generator) storeFlag(record.data, record.base + 2, 16);
 		storeCell(arena, record, 4, 4, _name);
 		if (_optional) storeFlag(record.data, record.base + 2, 32);
-		storeCell(arena, record, 5, 17, _type_parameters);
-		storeCell(arena, record, 6, 22, _parameters);
-		storeCell(arena, record, 7, 25, _return_type);
-		storeCell(arena, record, 8, 28, _body);
+		storeCell(arena, record, 5, 19, _type_parameters);
+		storeCell(arena, record, 6, 24, _parameters);
+		storeCell(arena, record, 7, 27, _return_type);
+		storeCell(arena, record, 8, 30, _body);
 		const node = arena.view(record);
 		return node as unknown as T.MethodDefinitionPlain.Bound;
 	});
@@ -18145,10 +18145,10 @@ function buildMethodDefinitionPlain$patch(
 		patchFlag(record, 2, 16, _generator);
 		patchCell(arena, record, 4, 4, carriedSlot(source, 'name', _name));
 		patchFlag(record, 2, 32, _optional);
-		patchCell(arena, record, 5, 17, carriedSlot(source, 'typeParameters', _type_parameters));
-		patchCell(arena, record, 6, 22, carriedSlot(source, 'parameters', _parameters));
-		patchCell(arena, record, 7, 25, carriedSlot(source, 'returnType', _return_type));
-		patchCell(arena, record, 8, 28, carriedSlot(source, 'body', _body));
+		patchCell(arena, record, 5, 19, carriedSlot(source, 'typeParameters', _type_parameters));
+		patchCell(arena, record, 6, 24, carriedSlot(source, 'parameters', _parameters));
+		patchCell(arena, record, 7, 27, carriedSlot(source, 'returnType', _return_type));
+		patchCell(arena, record, 8, 30, carriedSlot(source, 'body', _body));
 		const node = arena.view(record);
 		return node as unknown as T.MethodDefinitionPlain.Bound;
 	});
@@ -18272,8 +18272,8 @@ export function buildMethodDefinitionGetter(config: T.MethodDefinitionGetter.Con
 		if (_static) storeFlag(record.data, record.base + 2, 1);
 		if (_override) storeFlag(record.data, record.base + 2, 2);
 		storeCell(arena, record, 4, 4, _name);
-		storeCell(arena, record, 5, 17, _type);
-		storeCell(arena, record, 6, 20, _body);
+		storeCell(arena, record, 5, 19, _type);
+		storeCell(arena, record, 6, 22, _body);
 		const node = arena.view(record);
 		return node as unknown as T.MethodDefinitionGetter.Bound;
 	});
@@ -18320,8 +18320,8 @@ function buildMethodDefinitionGetter$patch(
 		patchFlag(record, 2, 1, _static);
 		patchFlag(record, 2, 2, _override);
 		patchCell(arena, record, 4, 4, carriedSlot(source, 'name', _name));
-		patchCell(arena, record, 5, 17, carriedSlot(source, 'type', _type));
-		patchCell(arena, record, 6, 20, carriedSlot(source, 'body', _body));
+		patchCell(arena, record, 5, 19, carriedSlot(source, 'type', _type));
+		patchCell(arena, record, 6, 22, carriedSlot(source, 'body', _body));
 		const node = arena.view(record);
 		return node as unknown as T.MethodDefinitionGetter.Bound;
 	});
@@ -18419,8 +18419,8 @@ export function buildMethodDefinitionSetter(config: T.MethodDefinitionSetter.Con
 		if (_static) storeFlag(record.data, record.base + 2, 1);
 		if (_override) storeFlag(record.data, record.base + 2, 2);
 		storeCell(arena, record, 4, 4, _name);
-		storeCell(arena, record, 5, 17, _parameters);
-		storeCell(arena, record, 6, 33, _body);
+		storeCell(arena, record, 5, 19, _parameters);
+		storeCell(arena, record, 6, 35, _body);
 		const node = arena.view(record);
 		return node as unknown as T.MethodDefinitionSetter.Bound;
 	});
@@ -18467,8 +18467,8 @@ function buildMethodDefinitionSetter$patch(
 		patchFlag(record, 2, 1, _static);
 		patchFlag(record, 2, 2, _override);
 		patchCell(arena, record, 4, 4, carriedSlot(source, 'name', _name));
-		patchCell(arena, record, 5, 17, carriedSlot(source, 'parameters', _parameters));
-		patchCell(arena, record, 6, 33, carriedSlot(source, 'body', _body));
+		patchCell(arena, record, 5, 19, carriedSlot(source, 'parameters', _parameters));
+		patchCell(arena, record, 6, 35, carriedSlot(source, 'body', _body));
 		const node = arena.view(record);
 		return node as unknown as T.MethodDefinitionSetter.Bound;
 	});
@@ -18586,9 +18586,9 @@ export function buildMethodSignaturePlain(config: T.MethodSignaturePlain.Config)
 		if (_generator) storeFlag(record.data, record.base + 2, 16);
 		storeCell(arena, record, 4, 4, _name);
 		if (_optional) storeFlag(record.data, record.base + 2, 32);
-		storeCell(arena, record, 5, 17, _type_parameters);
-		storeCell(arena, record, 6, 22, _parameters);
-		storeCell(arena, record, 7, 25, _return_type);
+		storeCell(arena, record, 5, 19, _type_parameters);
+		storeCell(arena, record, 6, 24, _parameters);
+		storeCell(arena, record, 7, 27, _return_type);
 		const node = arena.view(record);
 		return node as unknown as T.MethodSignaturePlain.Bound;
 	});
@@ -18654,9 +18654,9 @@ function buildMethodSignaturePlain$patch(
 		patchFlag(record, 2, 16, _generator);
 		patchCell(arena, record, 4, 4, carriedSlot(source, 'name', _name));
 		patchFlag(record, 2, 32, _optional);
-		patchCell(arena, record, 5, 17, carriedSlot(source, 'typeParameters', _type_parameters));
-		patchCell(arena, record, 6, 22, carriedSlot(source, 'parameters', _parameters));
-		patchCell(arena, record, 7, 25, carriedSlot(source, 'returnType', _return_type));
+		patchCell(arena, record, 5, 19, carriedSlot(source, 'typeParameters', _type_parameters));
+		patchCell(arena, record, 6, 24, carriedSlot(source, 'parameters', _parameters));
+		patchCell(arena, record, 7, 27, carriedSlot(source, 'returnType', _return_type));
 		const node = arena.view(record);
 		return node as unknown as T.MethodSignaturePlain.Bound;
 	});
@@ -18772,7 +18772,7 @@ export function buildMethodSignatureGetter(config: T.MethodSignatureGetter.Confi
 		if (_static) storeFlag(record.data, record.base + 2, 1);
 		if (_override) storeFlag(record.data, record.base + 2, 2);
 		storeCell(arena, record, 4, 4, _name);
-		storeCell(arena, record, 5, 17, _type);
+		storeCell(arena, record, 5, 19, _type);
 		const node = arena.view(record);
 		return node as unknown as T.MethodSignatureGetter.Bound;
 	});
@@ -18816,7 +18816,7 @@ function buildMethodSignatureGetter$patch(
 		patchFlag(record, 2, 1, _static);
 		patchFlag(record, 2, 2, _override);
 		patchCell(arena, record, 4, 4, carriedSlot(source, 'name', _name));
-		patchCell(arena, record, 5, 17, carriedSlot(source, 'type', _type));
+		patchCell(arena, record, 5, 19, carriedSlot(source, 'type', _type));
 		const node = arena.view(record);
 		return node as unknown as T.MethodSignatureGetter.Bound;
 	});
@@ -18901,7 +18901,7 @@ export function buildMethodSignatureSetter(config: T.MethodSignatureSetter.Confi
 		if (_static) storeFlag(record.data, record.base + 2, 1);
 		if (_override) storeFlag(record.data, record.base + 2, 2);
 		storeCell(arena, record, 4, 4, _name);
-		storeCell(arena, record, 5, 17, _parameters);
+		storeCell(arena, record, 5, 19, _parameters);
 		const node = arena.view(record);
 		return node as unknown as T.MethodSignatureSetter.Bound;
 	});
@@ -18945,7 +18945,7 @@ function buildMethodSignatureSetter$patch(
 		patchFlag(record, 2, 1, _static);
 		patchFlag(record, 2, 2, _override);
 		patchCell(arena, record, 4, 4, carriedSlot(source, 'name', _name));
-		patchCell(arena, record, 5, 17, carriedSlot(source, 'parameters', _parameters));
+		patchCell(arena, record, 5, 19, carriedSlot(source, 'parameters', _parameters));
 		const node = arena.view(record);
 		return node as unknown as T.MethodSignatureSetter.Bound;
 	});
@@ -19052,9 +19052,9 @@ export function buildAbstractMethodSignaturePlain(
 		if (_generator) storeFlag(record.data, record.base + 2, 2);
 		storeCell(arena, record, 4, 4, _name);
 		if (_optional) storeFlag(record.data, record.base + 2, 4);
-		storeCell(arena, record, 5, 17, _type_parameters);
-		storeCell(arena, record, 6, 22, _parameters);
-		storeCell(arena, record, 7, 25, _return_type);
+		storeCell(arena, record, 5, 19, _type_parameters);
+		storeCell(arena, record, 6, 24, _parameters);
+		storeCell(arena, record, 7, 27, _return_type);
 		const node = arena.view(record);
 		return node as unknown as T.AbstractMethodSignaturePlain.Bound;
 	});
@@ -19113,9 +19113,9 @@ function buildAbstractMethodSignaturePlain$patch(
 		patchFlag(record, 2, 2, _generator);
 		patchCell(arena, record, 4, 4, carriedSlot(source, 'name', _name));
 		patchFlag(record, 2, 4, _optional);
-		patchCell(arena, record, 5, 17, carriedSlot(source, 'typeParameters', _type_parameters));
-		patchCell(arena, record, 6, 22, carriedSlot(source, 'parameters', _parameters));
-		patchCell(arena, record, 7, 25, carriedSlot(source, 'returnType', _return_type));
+		patchCell(arena, record, 5, 19, carriedSlot(source, 'typeParameters', _type_parameters));
+		patchCell(arena, record, 6, 24, carriedSlot(source, 'parameters', _parameters));
+		patchCell(arena, record, 7, 27, carriedSlot(source, 'returnType', _return_type));
 		const node = arena.view(record);
 		return node as unknown as T.AbstractMethodSignaturePlain.Bound;
 	});
@@ -19226,7 +19226,7 @@ export function buildAbstractMethodSignatureGetter(
 		storeCell(arena, record, 3, 3, _accessibility_modifier);
 		if (_override) storeFlag(record.data, record.base + 2, 1);
 		storeCell(arena, record, 4, 4, _name);
-		storeCell(arena, record, 5, 17, _type);
+		storeCell(arena, record, 5, 19, _type);
 		const node = arena.view(record);
 		return node as unknown as T.AbstractMethodSignatureGetter.Bound;
 	});
@@ -19271,7 +19271,7 @@ function buildAbstractMethodSignatureGetter$patch(
 		patchCell(arena, record, 3, 3, carriedSlot(source, 'accessibilityModifier', _accessibility_modifier));
 		patchFlag(record, 2, 1, _override);
 		patchCell(arena, record, 4, 4, carriedSlot(source, 'name', _name));
-		patchCell(arena, record, 5, 17, carriedSlot(source, 'type', _type));
+		patchCell(arena, record, 5, 19, carriedSlot(source, 'type', _type));
 		const node = arena.view(record);
 		return node as unknown as T.AbstractMethodSignatureGetter.Bound;
 	});
@@ -19359,7 +19359,7 @@ export function buildAbstractMethodSignatureSetter(
 		storeCell(arena, record, 3, 3, _accessibility_modifier);
 		if (_override) storeFlag(record.data, record.base + 2, 1);
 		storeCell(arena, record, 4, 4, _name);
-		storeCell(arena, record, 5, 17, _parameters);
+		storeCell(arena, record, 5, 19, _parameters);
 		const node = arena.view(record);
 		return node as unknown as T.AbstractMethodSignatureSetter.Bound;
 	});
@@ -19404,7 +19404,7 @@ function buildAbstractMethodSignatureSetter$patch(
 		patchCell(arena, record, 3, 3, carriedSlot(source, 'accessibilityModifier', _accessibility_modifier));
 		patchFlag(record, 2, 1, _override);
 		patchCell(arena, record, 4, 4, carriedSlot(source, 'name', _name));
-		patchCell(arena, record, 5, 17, carriedSlot(source, 'parameters', _parameters));
+		patchCell(arena, record, 5, 19, carriedSlot(source, 'parameters', _parameters));
 		const node = arena.view(record);
 		return node as unknown as T.AbstractMethodSignatureSetter.Bound;
 	});
@@ -19528,9 +19528,9 @@ export function buildPublicFieldDefinitionPlain(
 		if (_readonly) storeFlag(record.data, record.base + 2, 8);
 		if (_abstract) storeFlag(record.data, record.base + 2, 16);
 		storeCell(arena, record, 5, 5, _name);
-		storeCell(arena, record, 6, 18, _optionality);
-		storeCell(arena, record, 7, 19, _type);
-		storeCell(arena, record, 8, 22, _value);
+		storeCell(arena, record, 6, 20, _optionality);
+		storeCell(arena, record, 7, 21, _type);
+		storeCell(arena, record, 8, 24, _value);
 		const node = arena.view(record);
 		return node as unknown as T.PublicFieldDefinitionPlain.Bound;
 	});
@@ -19606,9 +19606,9 @@ function buildPublicFieldDefinitionPlain$patch(
 		patchFlag(record, 2, 8, _readonly);
 		patchFlag(record, 2, 16, _abstract);
 		patchCell(arena, record, 5, 5, carriedSlot(source, 'name', _name));
-		patchCell(arena, record, 6, 18, carriedSlot(source, 'optionality', _optionality));
-		patchCell(arena, record, 7, 19, carriedSlot(source, 'type', _type));
-		patchCell(arena, record, 8, 22, carriedSlot(source, 'value', _value));
+		patchCell(arena, record, 6, 20, carriedSlot(source, 'optionality', _optionality));
+		patchCell(arena, record, 7, 21, carriedSlot(source, 'type', _type));
+		patchCell(arena, record, 8, 24, carriedSlot(source, 'value', _value));
 		const node = arena.view(record);
 		return node as unknown as T.PublicFieldDefinitionPlain.Bound;
 	});
@@ -19751,8 +19751,8 @@ export function buildPublicFieldDefinitionAccessor(
 		if (_abstract) storeFlag(record.data, record.base + 2, 2);
 		if (_override) storeFlag(record.data, record.base + 2, 4);
 		storeCell(arena, record, 5, 5, _name);
-		storeCell(arena, record, 6, 18, _type);
-		storeCell(arena, record, 7, 21, _value);
+		storeCell(arena, record, 6, 20, _type);
+		storeCell(arena, record, 7, 23, _value);
 		const node = arena.view(record);
 		return node as unknown as T.PublicFieldDefinitionAccessor.Bound;
 	});
@@ -19817,8 +19817,8 @@ function buildPublicFieldDefinitionAccessor$patch(
 		patchFlag(record, 2, 2, _abstract);
 		patchFlag(record, 2, 4, _override);
 		patchCell(arena, record, 5, 5, carriedSlot(source, 'name', _name));
-		patchCell(arena, record, 6, 18, carriedSlot(source, 'type', _type));
-		patchCell(arena, record, 7, 21, carriedSlot(source, 'value', _value));
+		patchCell(arena, record, 6, 20, carriedSlot(source, 'type', _type));
+		patchCell(arena, record, 7, 23, carriedSlot(source, 'value', _value));
 		const node = arena.view(record);
 		return node as unknown as T.PublicFieldDefinitionAccessor.Bound;
 	});
@@ -21642,21 +21642,21 @@ export const builtViews: BuiltViews = Object.freeze({
 		504: withTypeIdentifier
 	}),
 	words: Object.freeze({
-		2: 3,
-		121: 3,
-		128: 3,
-		153: 3,
-		154: 3,
-		155: 4,
-		156: 7,
-		157: 6,
-		158: 6,
-		160: 4,
-		161: 4,
-		162: 3,
-		163: 3,
-		164: 3,
-		165: 3,
+		2: 4,
+		121: 4,
+		128: 4,
+		153: 4,
+		154: 4,
+		155: 5,
+		156: 8,
+		157: 7,
+		158: 7,
+		160: 5,
+		161: 5,
+		162: 4,
+		163: 4,
+		164: 4,
+		165: 4,
 		189: 4,
 		191: 3,
 		192: 3,

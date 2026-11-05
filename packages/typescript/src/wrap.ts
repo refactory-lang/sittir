@@ -18483,10 +18483,10 @@ function wrapInterfaceBody$with$closing(this: Received<Held>, ...args: unknown[]
 }
 
 function viewProgram$shebang(this: RecordHandle) {
-	return viewSlot<T.HashBangLine | undefined>(this, 2, 4, 8, 4, 2);
+	return viewSlot<T.HashBangLine | undefined>(this, 2, 6, 8, 6, 2);
 }
 function viewProgram$statements(this: RecordHandle) {
-	return viewSlots<T.Statement>(this, 6, 1, 4, 3, 0, 3);
+	return viewSlots<T.Statement>(this, 8, 1, 4, 3, 0, 3);
 }
 function viewProgram(data: RecordPosition, tree: TreeHandle): T.Program.Parsed {
 	const node = {
@@ -18525,6 +18525,7 @@ function viewHashBangLine(data: RecordPosition, tree: TreeHandle): T.HashBangLin
 		$words: positionWords(data),
 		$cache: undefined as Record<number, unknown> | undefined,
 		$_layout: data.$_layout,
+		$verbatim: undefined as string | undefined,
 		content: viewHashBangLine$content,
 		$with: undefined as unknown as object,
 		$render: handleRender,
@@ -18538,6 +18539,7 @@ function viewHashBangLine(data: RecordPosition, tree: TreeHandle): T.HashBangLin
 	};
 	node.$with = { content: $with$content, [RECEIVER]: node };
 	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
+	node.$verbatim = viewSlot<string | undefined>(node, 4, 2, 4, 0, 3);
 	return node as unknown as T.HashBangLine.Parsed;
 }
 
@@ -20409,7 +20411,7 @@ function viewMemberExpression$operator(this: RecordHandle) {
 	return childSlot(this, 6, 1, 2, 0, 3);
 }
 function viewMemberExpression$property(this: RecordHandle) {
-	return viewSlot<T.PrivatePropertyIdentifier | T.PropertyIdentifier>(this, 7, 5, 8, 5, 4);
+	return viewSlot<T.PrivatePropertyIdentifier | T.PropertyIdentifier>(this, 7, 6, 8, 6, 4);
 }
 function viewMemberExpression(data: RecordPosition, tree: TreeHandle): T.MemberExpression.Parsed {
 	const node = {
@@ -20763,6 +20765,7 @@ function viewEscapeSequence(data: RecordPosition, tree: TreeHandle): T.EscapeSeq
 		$words: positionWords(data),
 		$cache: undefined as Record<number, unknown> | undefined,
 		$_layout: data.$_layout,
+		$verbatim: undefined as string | undefined,
 		content: viewEscapeSequence$content,
 		$with: undefined as unknown as object,
 		$render: handleRender,
@@ -20776,6 +20779,7 @@ function viewEscapeSequence(data: RecordPosition, tree: TreeHandle): T.EscapeSeq
 	};
 	node.$with = { content: $with$content, [RECEIVER]: node };
 	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
+	node.$verbatim = viewSlot<string | undefined>(node, 4, 2, 4, 0, 3);
 	return node as unknown as T.EscapeSequence.Parsed;
 }
 
@@ -20875,6 +20879,7 @@ function viewPrivatePropertyIdentifier(data: RecordPosition, tree: TreeHandle): 
 		$words: positionWords(data),
 		$cache: undefined as Record<number, unknown> | undefined,
 		$_layout: data.$_layout,
+		$verbatim: undefined as string | undefined,
 		content: viewPrivatePropertyIdentifier$content,
 		$with: undefined as unknown as object,
 		$render: handleRender,
@@ -20888,6 +20893,7 @@ function viewPrivatePropertyIdentifier(data: RecordPosition, tree: TreeHandle): 
 	};
 	node.$with = { content: $with$content, [RECEIVER]: node };
 	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
+	node.$verbatim = viewSlot<string | undefined>(node, 4, 2, 4, 0, 3);
 	return node as unknown as T.PrivatePropertyIdentifier.Parsed;
 }
 
@@ -21142,14 +21148,14 @@ function viewPair$key(this: RecordHandle) {
 	return viewSlot<T.PropertyIdentifier | T.PrivatePropertyIdentifier | T.String | T.Number | T.ComputedPropertyName>(
 		this,
 		2,
-		13,
+		15,
 		9,
-		12,
+		14,
 		2
 	);
 }
 function viewPair$value(this: RecordHandle) {
-	return viewSlot<T.Expression>(this, 15, 4, 3, 0, 3);
+	return viewSlot<T.Expression>(this, 17, 4, 3, 0, 3);
 }
 function viewPair(data: RecordPosition, tree: TreeHandle): T.Pair.Parsed {
 	const node = {
@@ -21180,14 +21186,14 @@ function viewPairPattern$key(this: RecordHandle) {
 	return viewSlot<T.PropertyIdentifier | T.PrivatePropertyIdentifier | T.String | T.Number | T.ComputedPropertyName>(
 		this,
 		2,
-		13,
+		15,
 		9,
-		12,
+		14,
 		2
 	);
 }
 function viewPairPattern$value(this: RecordHandle) {
-	return viewSlot<T.Pattern | T.AssignmentPattern>(this, 15, 3, 1, 0, 3);
+	return viewSlot<T.Pattern | T.AssignmentPattern>(this, 17, 3, 1, 0, 3);
 }
 function viewPairPattern(data: RecordPosition, tree: TreeHandle): T.PairPattern.Parsed {
 	const node = {
@@ -21975,14 +21981,14 @@ function viewEnumAssignment$name(this: RecordHandle) {
 	return viewSlot<T.PropertyIdentifier | T.PrivatePropertyIdentifier | T.String | T.Number | T.ComputedPropertyName>(
 		this,
 		2,
-		13,
+		15,
 		9,
-		12,
+		14,
 		2
 	);
 }
 function viewEnumAssignment$value(this: RecordHandle) {
-	return viewSlot<T.Expression>(this, 15, 4, 3, 0, 3);
+	return viewSlot<T.Expression>(this, 17, 4, 3, 0, 3);
 }
 function viewEnumAssignment(data: RecordPosition, tree: TreeHandle): T.EnumAssignment.Parsed {
 	const node = {
@@ -22288,7 +22294,7 @@ function viewTypeQueryMemberExpressionInTypeAnnotation$object(this: RecordHandle
 	>(this, 2, 4, 3, 0, 2);
 }
 function viewTypeQueryMemberExpressionInTypeAnnotation$property(this: RecordHandle) {
-	return viewSlot<T.PrivatePropertyIdentifier | T.PropertyIdentifier>(this, 6, 5, 8, 5, 3);
+	return viewSlot<T.PrivatePropertyIdentifier | T.PropertyIdentifier>(this, 6, 6, 8, 6, 3);
 }
 function viewTypeQueryMemberExpressionInTypeAnnotation(
 	data: RecordPosition,
@@ -22812,7 +22818,7 @@ function viewTypeQueryMemberExpression$operator(this: RecordHandle) {
 	return childSlot(this, 6, 1, 2, 0, 3);
 }
 function viewTypeQueryMemberExpression$property(this: RecordHandle) {
-	return viewSlot<T.PrivatePropertyIdentifier | T.PropertyIdentifier>(this, 7, 5, 8, 5, 4);
+	return viewSlot<T.PrivatePropertyIdentifier | T.PropertyIdentifier>(this, 7, 6, 8, 6, 4);
 }
 function viewTypeQueryMemberExpression(data: RecordPosition, tree: TreeHandle): T.TypeQueryMemberExpression.Parsed {
 	const node = {
@@ -22866,7 +22872,7 @@ function viewTypeQuerySubscriptExpression$index(this: RecordHandle) {
 		| TSKindId.ObjectKeyword
 		| T.String
 		| T.Number
-	>(this, 7, 13, 11, 12, 4);
+	>(this, 7, 15, 11, 14, 4);
 }
 function viewTypeQuerySubscriptExpression(
 	data: RecordPosition,
@@ -23112,7 +23118,7 @@ function viewLiteralType$content(this: RecordHandle) {
 		| TSKindId.False
 		| TSKindId.Null
 		| TSKindId.Undefined
-	>(this, 2, 16, 11, 15, 2);
+	>(this, 2, 18, 11, 17, 2);
 }
 function viewLiteralType(data: RecordPosition, tree: TreeHandle): T.LiteralType.Parsed {
 	const node = {
@@ -23349,9 +23355,9 @@ function viewPropertySignature$name(this: RecordHandle) {
 	return viewSlot<T.PropertyIdentifier | T.PrivatePropertyIdentifier | T.String | T.Number | T.ComputedPropertyName>(
 		this,
 		4,
-		13,
+		15,
 		9,
-		12,
+		14,
 		4
 	);
 }
@@ -23359,7 +23365,7 @@ function viewPropertySignature$optional(this: RecordHandle) {
 	return recordFlag(this, 2, 3);
 }
 function viewPropertySignature$type(this: RecordHandle) {
-	return viewSlot<T.TypeAnnotation | undefined>(this, 17, 3, 1, 0, 5);
+	return viewSlot<T.TypeAnnotation | undefined>(this, 19, 3, 1, 0, 5);
 }
 function viewPropertySignature(data: RecordPosition, tree: TreeHandle): T.PropertySignature.Parsed {
 	const node = {
@@ -24045,9 +24051,9 @@ function viewEnumBodyElementName$name(this: RecordHandle) {
 	return viewSlot<T.PropertyIdentifier | T.PrivatePropertyIdentifier | T.String | T.Number | T.ComputedPropertyName>(
 		this,
 		2,
-		13,
+		15,
 		9,
-		12,
+		14,
 		2
 	);
 }
@@ -24644,6 +24650,7 @@ function viewCommentLine(data: RecordPosition, tree: TreeHandle): T.CommentLine.
 		$words: positionWords(data),
 		$cache: undefined as Record<number, unknown> | undefined,
 		$_layout: data.$_layout,
+		$verbatim: undefined as string | undefined,
 		content: viewCommentLine$content,
 		$with: undefined as unknown as object,
 		$render: handleRender,
@@ -24655,6 +24662,7 @@ function viewCommentLine(data: RecordPosition, tree: TreeHandle): T.CommentLine.
 		[Symbol.dispose]: handleDispose
 	};
 	node.$with = { content: $with$content, [RECEIVER]: node };
+	node.$verbatim = viewSlot<string | undefined>(node, 4, 2, 4, 0, 3);
 	return node as unknown as T.CommentLine.Parsed;
 }
 
@@ -24669,6 +24677,7 @@ function viewCommentBlock(data: RecordPosition, tree: TreeHandle): T.CommentBloc
 		$words: positionWords(data),
 		$cache: undefined as Record<number, unknown> | undefined,
 		$_layout: data.$_layout,
+		$verbatim: undefined as string | undefined,
 		content: viewCommentBlock$content,
 		$with: undefined as unknown as object,
 		$render: handleRender,
@@ -24680,11 +24689,12 @@ function viewCommentBlock(data: RecordPosition, tree: TreeHandle): T.CommentBloc
 		[Symbol.dispose]: handleDispose
 	};
 	node.$with = { content: $with$content, [RECEIVER]: node };
+	node.$verbatim = viewSlot<string | undefined>(node, 4, 2, 4, 0, 3);
 	return node as unknown as T.CommentBlock.Parsed;
 }
 
 function viewLiteralTypeNegativeNumber$value(this: RecordHandle) {
-	return viewSlot<T.Number>(this, 2, 13, 9, 12, 2);
+	return viewSlot<T.Number>(this, 2, 15, 9, 14, 2);
 }
 function viewLiteralTypeNegativeNumber(data: RecordPosition, tree: TreeHandle): T.LiteralTypeNegativeNumber.Parsed {
 	const node = {
@@ -24724,6 +24734,7 @@ function viewNumberHex(data: RecordPosition, tree: TreeHandle): T.NumberHex.Pars
 		$words: positionWords(data),
 		$cache: undefined as Record<number, unknown> | undefined,
 		$_layout: data.$_layout,
+		$verbatim: undefined as string | undefined,
 		radixPrefix: viewNumberHex$radixPrefix,
 		content: viewNumberHex$content,
 		$with: undefined as unknown as object,
@@ -24738,6 +24749,7 @@ function viewNumberHex(data: RecordPosition, tree: TreeHandle): T.NumberHex.Pars
 	};
 	node.$with = { radixPrefix: $with$radixPrefix, content: $with$content, [RECEIVER]: node };
 	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
+	node.$verbatim = viewSlot<string | undefined>(node, 6, 2, 4, 0, 4);
 	return node as unknown as T.NumberHex.Parsed;
 }
 
@@ -24764,6 +24776,7 @@ function viewNumberFloatPoint(data: RecordPosition, tree: TreeHandle): T.NumberF
 		$words: positionWords(data),
 		$cache: undefined as Record<number, unknown> | undefined,
 		$_layout: data.$_layout,
+		$verbatim: undefined as string | undefined,
 		integer: viewNumberFloatPoint$integer,
 		fraction: viewNumberFloatPoint$fraction,
 		marker: viewNumberFloatPoint$marker,
@@ -24788,6 +24801,7 @@ function viewNumberFloatPoint(data: RecordPosition, tree: TreeHandle): T.NumberF
 		[RECEIVER]: node
 	};
 	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
+	node.$verbatim = viewSlot<string | undefined>(node, 12, 2, 4, 0, 7);
 	return node as unknown as T.NumberFloatPoint.Parsed;
 }
 
@@ -24811,6 +24825,7 @@ function viewNumberFloatLeadingPoint(data: RecordPosition, tree: TreeHandle): T.
 		$words: positionWords(data),
 		$cache: undefined as Record<number, unknown> | undefined,
 		$_layout: data.$_layout,
+		$verbatim: undefined as string | undefined,
 		fraction: viewNumberFloatLeadingPoint$fraction,
 		marker: viewNumberFloatLeadingPoint$marker,
 		exponentSign: viewNumberFloatLeadingPoint$exponentSign,
@@ -24833,6 +24848,7 @@ function viewNumberFloatLeadingPoint(data: RecordPosition, tree: TreeHandle): T.
 		[RECEIVER]: node
 	};
 	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
+	node.$verbatim = viewSlot<string | undefined>(node, 10, 2, 4, 0, 6);
 	return node as unknown as T.NumberFloatLeadingPoint.Parsed;
 }
 
@@ -24856,6 +24872,7 @@ function viewNumberFloatScientific(data: RecordPosition, tree: TreeHandle): T.Nu
 		$words: positionWords(data),
 		$cache: undefined as Record<number, unknown> | undefined,
 		$_layout: data.$_layout,
+		$verbatim: undefined as string | undefined,
 		integer: viewNumberFloatScientific$integer,
 		marker: viewNumberFloatScientific$marker,
 		exponentSign: viewNumberFloatScientific$exponentSign,
@@ -24878,6 +24895,7 @@ function viewNumberFloatScientific(data: RecordPosition, tree: TreeHandle): T.Nu
 		[RECEIVER]: node
 	};
 	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
+	node.$verbatim = viewSlot<string | undefined>(node, 10, 2, 4, 0, 6);
 	return node as unknown as T.NumberFloatScientific.Parsed;
 }
 
@@ -24895,6 +24913,7 @@ function viewNumberBinary(data: RecordPosition, tree: TreeHandle): T.NumberBinar
 		$words: positionWords(data),
 		$cache: undefined as Record<number, unknown> | undefined,
 		$_layout: data.$_layout,
+		$verbatim: undefined as string | undefined,
 		radixPrefix: viewNumberBinary$radixPrefix,
 		content: viewNumberBinary$content,
 		$with: undefined as unknown as object,
@@ -24909,6 +24928,7 @@ function viewNumberBinary(data: RecordPosition, tree: TreeHandle): T.NumberBinar
 	};
 	node.$with = { radixPrefix: $with$radixPrefix, content: $with$content, [RECEIVER]: node };
 	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
+	node.$verbatim = viewSlot<string | undefined>(node, 6, 2, 4, 0, 4);
 	return node as unknown as T.NumberBinary.Parsed;
 }
 
@@ -24926,6 +24946,7 @@ function viewNumberOctal(data: RecordPosition, tree: TreeHandle): T.NumberOctal.
 		$words: positionWords(data),
 		$cache: undefined as Record<number, unknown> | undefined,
 		$_layout: data.$_layout,
+		$verbatim: undefined as string | undefined,
 		radixPrefix: viewNumberOctal$radixPrefix,
 		content: viewNumberOctal$content,
 		$with: undefined as unknown as object,
@@ -24940,6 +24961,7 @@ function viewNumberOctal(data: RecordPosition, tree: TreeHandle): T.NumberOctal.
 	};
 	node.$with = { radixPrefix: $with$radixPrefix, content: $with$content, [RECEIVER]: node };
 	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
+	node.$verbatim = viewSlot<string | undefined>(node, 6, 2, 4, 0, 4);
 	return node as unknown as T.NumberOctal.Parsed;
 }
 
@@ -24954,6 +24976,7 @@ function viewNumberBigintHex(data: RecordPosition, tree: TreeHandle): T.NumberBi
 		$words: positionWords(data),
 		$cache: undefined as Record<number, unknown> | undefined,
 		$_layout: data.$_layout,
+		$verbatim: undefined as string | undefined,
 		content: viewNumberBigintHex$content,
 		$with: undefined as unknown as object,
 		$render: handleRender,
@@ -24967,6 +24990,7 @@ function viewNumberBigintHex(data: RecordPosition, tree: TreeHandle): T.NumberBi
 	};
 	node.$with = { content: $with$content, [RECEIVER]: node };
 	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
+	node.$verbatim = viewSlot<string | undefined>(node, 4, 2, 4, 0, 3);
 	return node as unknown as T.NumberBigintHex.Parsed;
 }
 
@@ -24981,6 +25005,7 @@ function viewNumberBigintBinary(data: RecordPosition, tree: TreeHandle): T.Numbe
 		$words: positionWords(data),
 		$cache: undefined as Record<number, unknown> | undefined,
 		$_layout: data.$_layout,
+		$verbatim: undefined as string | undefined,
 		content: viewNumberBigintBinary$content,
 		$with: undefined as unknown as object,
 		$render: handleRender,
@@ -24994,6 +25019,7 @@ function viewNumberBigintBinary(data: RecordPosition, tree: TreeHandle): T.Numbe
 	};
 	node.$with = { content: $with$content, [RECEIVER]: node };
 	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
+	node.$verbatim = viewSlot<string | undefined>(node, 4, 2, 4, 0, 3);
 	return node as unknown as T.NumberBigintBinary.Parsed;
 }
 
@@ -25008,6 +25034,7 @@ function viewNumberBigintOctal(data: RecordPosition, tree: TreeHandle): T.Number
 		$words: positionWords(data),
 		$cache: undefined as Record<number, unknown> | undefined,
 		$_layout: data.$_layout,
+		$verbatim: undefined as string | undefined,
 		content: viewNumberBigintOctal$content,
 		$with: undefined as unknown as object,
 		$render: handleRender,
@@ -25021,6 +25048,7 @@ function viewNumberBigintOctal(data: RecordPosition, tree: TreeHandle): T.Number
 	};
 	node.$with = { content: $with$content, [RECEIVER]: node };
 	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
+	node.$verbatim = viewSlot<string | undefined>(node, 4, 2, 4, 0, 3);
 	return node as unknown as T.NumberBigintOctal.Parsed;
 }
 
@@ -25035,6 +25063,7 @@ function viewNumberBigintDecimal(data: RecordPosition, tree: TreeHandle): T.Numb
 		$words: positionWords(data),
 		$cache: undefined as Record<number, unknown> | undefined,
 		$_layout: data.$_layout,
+		$verbatim: undefined as string | undefined,
 		content: viewNumberBigintDecimal$content,
 		$with: undefined as unknown as object,
 		$render: handleRender,
@@ -25048,6 +25077,7 @@ function viewNumberBigintDecimal(data: RecordPosition, tree: TreeHandle): T.Numb
 	};
 	node.$with = { content: $with$content, [RECEIVER]: node };
 	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
+	node.$verbatim = viewSlot<string | undefined>(node, 4, 2, 4, 0, 3);
 	return node as unknown as T.NumberBigintDecimal.Parsed;
 }
 
@@ -25086,10 +25116,10 @@ function viewClassBodyMemberMethod$decorators(this: RecordHandle) {
 	return viewSlots<T.Decorator>(this, 2, 1, 3, 1, 0, 2);
 }
 function viewClassBodyMemberMethod$methodDefinition(this: RecordHandle) {
-	return viewSlot<T.MethodDefinitionClassBodyMemberMethod>(this, 3, 37, 8, 37, 3);
+	return viewSlot<T.MethodDefinitionClassBodyMemberMethod>(this, 3, 39, 8, 39, 3);
 }
 function viewClassBodyMemberMethod$terminator(this: RecordHandle) {
-	return blankArmRead(childSlot(this, 40, 1, 18, 0, 4));
+	return blankArmRead(childSlot(this, 42, 1, 18, 0, 4));
 }
 function viewClassBodyMemberMethod(data: RecordPosition, tree: TreeHandle): T.ClassBodyMemberMethod.Parsed {
 	const node = {
@@ -25123,10 +25153,10 @@ function viewClassBodyMemberMethod(data: RecordPosition, tree: TreeHandle): T.Cl
 }
 
 function viewClassBodyMemberMethodSig$methodSignature(this: RecordHandle) {
-	return viewSlot<T.MethodSignature>(this, 2, 33, 8, 33, 2);
+	return viewSlot<T.MethodSignature>(this, 2, 35, 8, 35, 2);
 }
 function viewClassBodyMemberMethodSig$terminator(this: RecordHandle) {
-	return childSlot(this, 35, 1, 2, 0, 3);
+	return childSlot(this, 37, 1, 2, 0, 3);
 }
 function viewClassBodyMemberMethodSig(data: RecordPosition, tree: TreeHandle): T.ClassBodyMemberMethodSig.Parsed {
 	const node = {
@@ -25157,14 +25187,14 @@ function viewClassBodyMemberDeclaration$member(this: RecordHandle) {
 	return viewSlot<T.AbstractMethodSignature | T.IndexSignature | T.MethodSignature | T.PublicFieldDefinition>(
 		this,
 		2,
-		33,
+		35,
 		8,
-		33,
+		35,
 		2
 	);
 }
 function viewClassBodyMemberDeclaration$terminator(this: RecordHandle) {
-	return childSlot(this, 35, 1, 2, 0, 3);
+	return childSlot(this, 37, 1, 2, 0, 3);
 }
 function viewClassBodyMemberDeclaration(data: RecordPosition, tree: TreeHandle): T.ClassBodyMemberDeclaration.Parsed {
 	const node = {
@@ -26417,9 +26447,9 @@ function viewMethodDefinitionPlain$name(this: RecordHandle) {
 	return viewSlot<T.PropertyIdentifier | T.PrivatePropertyIdentifier | T.String | T.Number | T.ComputedPropertyName>(
 		this,
 		4,
-		13,
+		15,
 		9,
-		12,
+		14,
 		4
 	);
 }
@@ -26427,16 +26457,16 @@ function viewMethodDefinitionPlain$optional(this: RecordHandle) {
 	return recordFlag(this, 2, 5);
 }
 function viewMethodDefinitionPlain$typeParameters(this: RecordHandle) {
-	return viewSlot<T.TypeParameters | undefined>(this, 17, 5, 8, 5, 5);
+	return viewSlot<T.TypeParameters | undefined>(this, 19, 5, 8, 5, 5);
 }
 function viewMethodDefinitionPlain$parameters(this: RecordHandle) {
-	return viewSlot<T.FormalParameters>(this, 22, 3, 1, 0, 6);
+	return viewSlot<T.FormalParameters>(this, 24, 3, 1, 0, 6);
 }
 function viewMethodDefinitionPlain$returnType(this: RecordHandle) {
-	return viewSlot<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation | undefined>(this, 25, 3, 1, 0, 7);
+	return viewSlot<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation | undefined>(this, 27, 3, 1, 0, 7);
 }
 function viewMethodDefinitionPlain$body(this: RecordHandle) {
-	return viewSlot<T.StatementBlock>(this, 28, 4, 8, 4, 8);
+	return viewSlot<T.StatementBlock>(this, 30, 4, 8, 4, 8);
 }
 function viewMethodDefinitionPlain(data: RecordPosition, tree: TreeHandle): T.MethodDefinitionPlain.Parsed {
 	const node = {
@@ -26500,17 +26530,17 @@ function viewMethodDefinitionGetter$name(this: RecordHandle) {
 	return viewSlot<T.PropertyIdentifier | T.PrivatePropertyIdentifier | T.String | T.Number | T.ComputedPropertyName>(
 		this,
 		4,
-		13,
+		15,
 		9,
-		12,
+		14,
 		4
 	);
 }
 function viewMethodDefinitionGetter$type(this: RecordHandle) {
-	return viewSlot<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation | undefined>(this, 17, 3, 1, 0, 5);
+	return viewSlot<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation | undefined>(this, 19, 3, 1, 0, 5);
 }
 function viewMethodDefinitionGetter$body(this: RecordHandle) {
-	return viewSlot<T.StatementBlock>(this, 20, 4, 8, 4, 6);
+	return viewSlot<T.StatementBlock>(this, 22, 4, 8, 4, 6);
 }
 function viewMethodDefinitionGetter(data: RecordPosition, tree: TreeHandle): T.MethodDefinitionGetter.Parsed {
 	const node = {
@@ -26562,17 +26592,17 @@ function viewMethodDefinitionSetter$name(this: RecordHandle) {
 	return viewSlot<T.PropertyIdentifier | T.PrivatePropertyIdentifier | T.String | T.Number | T.ComputedPropertyName>(
 		this,
 		4,
-		13,
+		15,
 		9,
-		12,
+		14,
 		4
 	);
 }
 function viewMethodDefinitionSetter$parameters(this: RecordHandle) {
-	return viewSlot<T.FormalParametersSetAccessorSignature>(this, 17, 16, 8, 16, 5);
+	return viewSlot<T.FormalParametersSetAccessorSignature>(this, 19, 16, 8, 16, 5);
 }
 function viewMethodDefinitionSetter$body(this: RecordHandle) {
-	return viewSlot<T.StatementBlock>(this, 33, 4, 8, 4, 6);
+	return viewSlot<T.StatementBlock>(this, 35, 4, 8, 4, 6);
 }
 function viewMethodDefinitionSetter(data: RecordPosition, tree: TreeHandle): T.MethodDefinitionSetter.Parsed {
 	const node = {
@@ -26633,9 +26663,9 @@ function viewMethodSignaturePlain$name(this: RecordHandle) {
 	return viewSlot<T.PropertyIdentifier | T.PrivatePropertyIdentifier | T.String | T.Number | T.ComputedPropertyName>(
 		this,
 		4,
-		13,
+		15,
 		9,
-		12,
+		14,
 		4
 	);
 }
@@ -26643,13 +26673,13 @@ function viewMethodSignaturePlain$optional(this: RecordHandle) {
 	return recordFlag(this, 2, 5);
 }
 function viewMethodSignaturePlain$typeParameters(this: RecordHandle) {
-	return viewSlot<T.TypeParameters | undefined>(this, 17, 5, 8, 5, 5);
+	return viewSlot<T.TypeParameters | undefined>(this, 19, 5, 8, 5, 5);
 }
 function viewMethodSignaturePlain$parameters(this: RecordHandle) {
-	return viewSlot<T.FormalParameters>(this, 22, 3, 1, 0, 6);
+	return viewSlot<T.FormalParameters>(this, 24, 3, 1, 0, 6);
 }
 function viewMethodSignaturePlain$returnType(this: RecordHandle) {
-	return viewSlot<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation | undefined>(this, 25, 3, 1, 0, 7);
+	return viewSlot<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation | undefined>(this, 27, 3, 1, 0, 7);
 }
 function viewMethodSignaturePlain(data: RecordPosition, tree: TreeHandle): T.MethodSignaturePlain.Parsed {
 	const node = {
@@ -26711,14 +26741,14 @@ function viewMethodSignatureGetter$name(this: RecordHandle) {
 	return viewSlot<T.PropertyIdentifier | T.PrivatePropertyIdentifier | T.String | T.Number | T.ComputedPropertyName>(
 		this,
 		4,
-		13,
+		15,
 		9,
-		12,
+		14,
 		4
 	);
 }
 function viewMethodSignatureGetter$type(this: RecordHandle) {
-	return viewSlot<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation | undefined>(this, 17, 3, 1, 0, 5);
+	return viewSlot<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation | undefined>(this, 19, 3, 1, 0, 5);
 }
 function viewMethodSignatureGetter(data: RecordPosition, tree: TreeHandle): T.MethodSignatureGetter.Parsed {
 	const node = {
@@ -26768,14 +26798,14 @@ function viewMethodSignatureSetter$name(this: RecordHandle) {
 	return viewSlot<T.PropertyIdentifier | T.PrivatePropertyIdentifier | T.String | T.Number | T.ComputedPropertyName>(
 		this,
 		4,
-		13,
+		15,
 		9,
-		12,
+		14,
 		4
 	);
 }
 function viewMethodSignatureSetter$parameters(this: RecordHandle) {
-	return viewSlot<T.FormalParametersSetAccessorSignature>(this, 17, 16, 8, 16, 5);
+	return viewSlot<T.FormalParametersSetAccessorSignature>(this, 19, 16, 8, 16, 5);
 }
 function viewMethodSignatureSetter(data: RecordPosition, tree: TreeHandle): T.MethodSignatureSetter.Parsed {
 	const node = {
@@ -26825,9 +26855,9 @@ function viewAbstractMethodSignaturePlain$name(this: RecordHandle) {
 	return viewSlot<T.PropertyIdentifier | T.PrivatePropertyIdentifier | T.String | T.Number | T.ComputedPropertyName>(
 		this,
 		4,
-		13,
+		15,
 		9,
-		12,
+		14,
 		4
 	);
 }
@@ -26835,13 +26865,13 @@ function viewAbstractMethodSignaturePlain$optional(this: RecordHandle) {
 	return recordFlag(this, 2, 2);
 }
 function viewAbstractMethodSignaturePlain$typeParameters(this: RecordHandle) {
-	return viewSlot<T.TypeParameters | undefined>(this, 17, 5, 8, 5, 5);
+	return viewSlot<T.TypeParameters | undefined>(this, 19, 5, 8, 5, 5);
 }
 function viewAbstractMethodSignaturePlain$parameters(this: RecordHandle) {
-	return viewSlot<T.FormalParameters>(this, 22, 3, 1, 0, 6);
+	return viewSlot<T.FormalParameters>(this, 24, 3, 1, 0, 6);
 }
 function viewAbstractMethodSignaturePlain$returnType(this: RecordHandle) {
-	return viewSlot<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation | undefined>(this, 25, 3, 1, 0, 7);
+	return viewSlot<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation | undefined>(this, 27, 3, 1, 0, 7);
 }
 function viewAbstractMethodSignaturePlain(
 	data: RecordPosition,
@@ -26897,14 +26927,14 @@ function viewAbstractMethodSignatureGetter$name(this: RecordHandle) {
 	return viewSlot<T.PropertyIdentifier | T.PrivatePropertyIdentifier | T.String | T.Number | T.ComputedPropertyName>(
 		this,
 		4,
-		13,
+		15,
 		9,
-		12,
+		14,
 		4
 	);
 }
 function viewAbstractMethodSignatureGetter$type(this: RecordHandle) {
-	return viewSlot<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation | undefined>(this, 17, 3, 1, 0, 5);
+	return viewSlot<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation | undefined>(this, 19, 3, 1, 0, 5);
 }
 function viewAbstractMethodSignatureGetter(
 	data: RecordPosition,
@@ -26952,14 +26982,14 @@ function viewAbstractMethodSignatureSetter$name(this: RecordHandle) {
 	return viewSlot<T.PropertyIdentifier | T.PrivatePropertyIdentifier | T.String | T.Number | T.ComputedPropertyName>(
 		this,
 		4,
-		13,
+		15,
 		9,
-		12,
+		14,
 		4
 	);
 }
 function viewAbstractMethodSignatureSetter$parameters(this: RecordHandle) {
-	return viewSlot<T.FormalParametersSetAccessorSignature>(this, 17, 16, 8, 16, 5);
+	return viewSlot<T.FormalParametersSetAccessorSignature>(this, 19, 16, 8, 16, 5);
 }
 function viewAbstractMethodSignatureSetter(
 	data: RecordPosition,
@@ -27022,20 +27052,20 @@ function viewPublicFieldDefinitionPlain$name(this: RecordHandle) {
 	return viewSlot<T.PropertyIdentifier | T.PrivatePropertyIdentifier | T.String | T.Number | T.ComputedPropertyName>(
 		this,
 		5,
-		13,
+		15,
 		9,
-		12,
+		14,
 		5
 	);
 }
 function viewPublicFieldDefinitionPlain$optionality(this: RecordHandle) {
-	return childSlot(this, 18, 1, 2, 0, 6);
+	return childSlot(this, 20, 1, 2, 0, 6);
 }
 function viewPublicFieldDefinitionPlain$type(this: RecordHandle) {
-	return viewSlot<T.TypeAnnotation | undefined>(this, 19, 3, 1, 0, 7);
+	return viewSlot<T.TypeAnnotation | undefined>(this, 21, 3, 1, 0, 7);
 }
 function viewPublicFieldDefinitionPlain$value(this: RecordHandle) {
-	return viewSlot<T.Expression | undefined>(this, 22, 4, 3, 0, 8);
+	return viewSlot<T.Expression | undefined>(this, 24, 4, 3, 0, 8);
 }
 function viewPublicFieldDefinitionPlain(data: RecordPosition, tree: TreeHandle): T.PublicFieldDefinitionPlain.Parsed {
 	const node = {
@@ -27103,17 +27133,17 @@ function viewPublicFieldDefinitionAccessor$name(this: RecordHandle) {
 	return viewSlot<T.PropertyIdentifier | T.PrivatePropertyIdentifier | T.String | T.Number | T.ComputedPropertyName>(
 		this,
 		5,
-		13,
+		15,
 		9,
-		12,
+		14,
 		5
 	);
 }
 function viewPublicFieldDefinitionAccessor$type(this: RecordHandle) {
-	return viewSlot<T.TypeAnnotation | undefined>(this, 18, 3, 1, 0, 6);
+	return viewSlot<T.TypeAnnotation | undefined>(this, 20, 3, 1, 0, 6);
 }
 function viewPublicFieldDefinitionAccessor$value(this: RecordHandle) {
-	return viewSlot<T.Expression | undefined>(this, 21, 4, 3, 0, 7);
+	return viewSlot<T.Expression | undefined>(this, 23, 4, 3, 0, 7);
 }
 function viewPublicFieldDefinitionAccessor(
 	data: RecordPosition,

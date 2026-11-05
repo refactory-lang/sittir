@@ -14,6 +14,10 @@ const NO_TYPES = (): never => refuse('query: an is plan tests node types, and th
 
 const NO_CHILDREN = (): never => refuse('query: a child plan tests a node\'s children, and this caller reads none');
 
+const NO_COUNT = (): never => refuse('query: a count plan counts a slot\'s values, and this caller reads none');
+
+const NO_DELIMITERS = (): never => refuse('query: a delimiter plan tests a list\'s delimiter flags, and this caller reads none');
+
 export function anchored<T>(items: readonly T[], anchor: StepAnchor | undefined): readonly T[] {
 	if (anchor === undefined) return items;
 	if (anchor === 'first') return items.slice(0, 1);
@@ -25,10 +29,12 @@ export interface PlanSubjects {
 	readonly texts: (subject: QuerySubject) => readonly string[];
 	readonly types?: (subject: QuerySubject) => readonly number[];
 	readonly children?: (subject: SlotSubject) => readonly PlanSubjects[];
+	readonly count?: (subject: SlotSubject) => number;
+	readonly delimiters?: () => readonly number[];
 }
 
 export function holds(plan: QueryPlan<QuerySubject>, subjects: PlanSubjects): boolean {
-	const { texts, types = NO_TYPES, children = NO_CHILDREN } = subjects;
+	const { texts, types = NO_TYPES, children = NO_CHILDREN, count = NO_COUNT, delimiters = NO_DELIMITERS } = subjects;
 	switch (plan.op) {
 		case 'eq':
 			return texts(plan).includes(plan.text);
@@ -38,6 +44,10 @@ export function holds(plan: QueryPlan<QuerySubject>, subjects: PlanSubjects): bo
 		}
 		case 'present':
 			return texts(plan).length > 0;
+		case 'count':
+			return count(plan) >= plan.min;
+		case 'delimiter':
+			return delimiters().some((stamped) => (stamped & plan.delimiter) !== 0);
 		case 'is':
 			return types(plan).some((type) => plan.types.includes(type));
 		case 'child':

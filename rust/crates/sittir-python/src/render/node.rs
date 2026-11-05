@@ -65,11 +65,13 @@ pub enum AnyNode {
     #[kind(kind::IF_STATEMENT)]
     IfStatement(Box<IfStatementNode>),
     #[kind(kind::ELIF_CLAUSE)]
-    ElifClause(ElifClauseNode),
+    ElifClause(Box<ElifClauseNode>),
     #[kind(kind::ELSE_CLAUSE)]
     ElseClause(ElseClauseNode),
     #[kind(kind::MATCH_STATEMENT)]
     MatchStatement(MatchStatementNode),
+    #[kind(kind::_MATCH_BLOCK)]
+    MatchBlock(MatchBlockNode),
     #[kind(kind::CASE_CLAUSE)]
     CaseClause(Box<CaseClauseNode>),
     #[kind(kind::FOR_STATEMENT)]
@@ -133,9 +135,9 @@ pub enum AnyNode {
     #[kind(kind::DICT_PATTERN)]
     DictPattern(DictPatternNode),
     #[kind(kind::_KEY_VALUE_PATTERN)]
-    KeyValuePattern(KeyValuePatternNode),
+    KeyValuePattern(Box<KeyValuePatternNode>),
     #[kind(kind::KEYWORD_PATTERN)]
-    KeywordPattern(KeywordPatternNode),
+    KeywordPattern(Box<KeywordPatternNode>),
     #[kind(kind::CLASS_PATTERN)]
     ClassPattern(ClassPatternNode),
     #[kind(kind::COMPLEX_PATTERN)]
@@ -149,7 +151,7 @@ pub enum AnyNode {
     #[kind(kind::LIST_PATTERN)]
     ListPattern(ListPatternNode),
     #[kind(kind::DEFAULT_PARAMETER)]
-    DefaultParameter(DefaultParameterNode),
+    DefaultParameter(Box<DefaultParameterNode>),
     #[kind(kind::TYPED_DEFAULT_PARAMETER)]
     TypedDefaultParameter(Box<TypedDefaultParameterNode>),
     #[kind(kind::LIST_SPLAT_PATTERN)]
@@ -173,7 +175,7 @@ pub enum AnyNode {
     #[kind(kind::LAMBDA_WITHIN_FOR_IN_CLAUSE)]
     LambdaWithinForInClause(LambdaWithinForInClauseNode),
     #[kind(kind::AUGMENTED_ASSIGNMENT)]
-    AugmentedAssignment(AugmentedAssignmentNode),
+    AugmentedAssignment(Box<AugmentedAssignmentNode>),
     #[kind(kind::PATTERN_LIST)]
     PatternList(PatternListNode),
     #[kind(kind::YIELD)]
@@ -270,6 +272,10 @@ pub enum AnyNode {
     SliceGroup(SliceGroupNode),
     #[kind(kind::FORMAT_SPECIFIER_TEXT)]
     FormatSpecifierText(FormatSpecifierTextNode),
+    #[kind(kind::TYPE_PARAMS)]
+    TypeParams(TypeParamsNode),
+    #[kind(kind::TYPE_PARAMS_ITEMS)]
+    TypeParamsItems(TypeParamsItemsNode),
     #[kind(kind::_TUPLE_PATTERN_ELEMENTS)]
     TuplePatternElements(TuplePatternElementsNode),
     #[kind(kind::CASE_PATTERN_LIST)]
@@ -287,7 +293,7 @@ pub enum AnyNode {
     #[kind(kind::_PRINT_CHEVRON_ARGUMENTS)]
     PrintChevronArguments(PrintChevronArgumentsNode),
     #[kind(kind::PRINT_STATEMENT_CHEVRON)]
-    PrintStatementChevron(PrintStatementChevronNode),
+    PrintStatementChevron(Box<PrintStatementChevronNode>),
     #[kind(kind::PRINT_STATEMENT_PLAIN)]
     PrintStatementPlain(PrintStatementPlainNode),
     #[kind(kind::_PARENTHESIZED_IMPORT_LIST)]
@@ -343,17 +349,13 @@ pub enum AnyNode {
     #[kind(kind::ASSIGNMENT_TYPE)]
     AssignmentType(AssignmentTypeNode),
     #[kind(kind::ASSIGNMENT_TYPED)]
-    AssignmentTyped(AssignmentTypedNode),
+    AssignmentTyped(Box<AssignmentTypedNode>),
     #[kind(kind::EXPRESSION_STATEMENT_TUPLE)]
     ExpressionStatementTuple(ExpressionStatementTupleNode),
     #[kind(kind::WITH_CLAUSE_BARE)]
     WithClauseBare(WithClauseBareNode),
     #[kind(kind::WITH_CLAUSE_PAREN)]
     WithClauseParen(WithClauseParenNode),
-    #[kind(kind::MATCH_BLOCK_BLOCK)]
-    MatchBlockBlock(MatchBlockBlockNode),
-    #[kind(kind::MATCH_BLOCK_EMPTY)]
-    MatchBlockEmpty(MatchBlockEmptyNode),
     #[kind(kind::SUITE_INLINE)]
     SuiteInline(SuiteInlineNode),
     #[kind(kind::SUITE_BLOCK)]
@@ -364,6 +366,12 @@ pub enum AnyNode {
     ComparisonOperatorComparator(ComparisonOperatorComparatorNode),
     #[kind(kind::_YIELD_FROM_CLAUSE)]
     YieldFromClause(YieldFromClauseNode),
+    #[kind(kind::TYPE_PARAM_TYPE_VAR)]
+    TypeParamTypeVar(TypeParamTypeVarNode),
+    #[kind(kind::TYPE_PARAM_TYPE_VAR_TUPLE)]
+    TypeParamTypeVarTuple(TypeParamTypeVarTupleNode),
+    #[kind(kind::TYPE_PARAM_PARAM_SPEC)]
+    TypeParamParamSpec(TypeParamParamSpecNode),
     #[kind(kind::STRING_START)]
     StringStart(StringStartNode),
     #[kind(kind::_STRING_FRAGMENT)]
@@ -622,7 +630,7 @@ pub enum AnyNode {
 }
 
 impl ::sittir_core::prepare::Prepare for AnyNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         match self {
             AnyNode::Module(t) => t.prepare(ctx),
             AnyNode::SimpleStatements(t) => t.prepare(ctx),
@@ -646,6 +654,7 @@ impl ::sittir_core::prepare::Prepare for AnyNode {
             AnyNode::ElifClause(t) => t.prepare(ctx),
             AnyNode::ElseClause(t) => t.prepare(ctx),
             AnyNode::MatchStatement(t) => t.prepare(ctx),
+            AnyNode::MatchBlock(t) => t.prepare(ctx),
             AnyNode::CaseClause(t) => t.prepare(ctx),
             AnyNode::ForStatement(t) => t.prepare(ctx),
             AnyNode::WhileStatement(t) => t.prepare(ctx),
@@ -746,6 +755,8 @@ impl ::sittir_core::prepare::Prepare for AnyNode {
             AnyNode::DictionaryElements(t) => t.prepare(ctx),
             AnyNode::SliceGroup(t) => t.prepare(ctx),
             AnyNode::FormatSpecifierText(t) => t.prepare(ctx),
+            AnyNode::TypeParams(t) => t.prepare(ctx),
+            AnyNode::TypeParamsItems(t) => t.prepare(ctx),
             AnyNode::TuplePatternElements(t) => t.prepare(ctx),
             AnyNode::CasePatternList(t) => t.prepare(ctx),
             AnyNode::TupleElements(t) => t.prepare(ctx),
@@ -786,13 +797,14 @@ impl ::sittir_core::prepare::Prepare for AnyNode {
             AnyNode::ExpressionStatementTuple(t) => t.prepare(ctx),
             AnyNode::WithClauseBare(t) => t.prepare(ctx),
             AnyNode::WithClauseParen(t) => t.prepare(ctx),
-            AnyNode::MatchBlockBlock(t) => t.prepare(ctx),
-            AnyNode::MatchBlockEmpty(t) => t.prepare(ctx),
             AnyNode::SuiteInline(t) => t.prepare(ctx),
             AnyNode::SuiteBlock(t) => t.prepare(ctx),
             AnyNode::SuiteEmpty(t) => t.prepare(ctx),
             AnyNode::ComparisonOperatorComparator(t) => t.prepare(ctx),
             AnyNode::YieldFromClause(t) => t.prepare(ctx),
+            AnyNode::TypeParamTypeVar(t) => t.prepare(ctx),
+            AnyNode::TypeParamTypeVarTuple(t) => t.prepare(ctx),
+            AnyNode::TypeParamParamSpec(t) => t.prepare(ctx),
             AnyNode::StringStart(t) => t.prepare(ctx),
             AnyNode::StringFragment(t) => t.prepare(ctx),
             AnyNode::EscapeInterpolation(t) => t.prepare(ctx),
@@ -942,6 +954,7 @@ impl ::sittir_core::prepare::Prepare for AnyNode {
             AnyNode::ElifClause(t) => t.gap_edges(),
             AnyNode::ElseClause(t) => t.gap_edges(),
             AnyNode::MatchStatement(t) => t.gap_edges(),
+            AnyNode::MatchBlock(t) => t.gap_edges(),
             AnyNode::CaseClause(t) => t.gap_edges(),
             AnyNode::ForStatement(t) => t.gap_edges(),
             AnyNode::WhileStatement(t) => t.gap_edges(),
@@ -1042,6 +1055,8 @@ impl ::sittir_core::prepare::Prepare for AnyNode {
             AnyNode::DictionaryElements(t) => t.gap_edges(),
             AnyNode::SliceGroup(t) => t.gap_edges(),
             AnyNode::FormatSpecifierText(t) => t.gap_edges(),
+            AnyNode::TypeParams(t) => t.gap_edges(),
+            AnyNode::TypeParamsItems(t) => t.gap_edges(),
             AnyNode::TuplePatternElements(t) => t.gap_edges(),
             AnyNode::CasePatternList(t) => t.gap_edges(),
             AnyNode::TupleElements(t) => t.gap_edges(),
@@ -1082,13 +1097,14 @@ impl ::sittir_core::prepare::Prepare for AnyNode {
             AnyNode::ExpressionStatementTuple(t) => t.gap_edges(),
             AnyNode::WithClauseBare(t) => t.gap_edges(),
             AnyNode::WithClauseParen(t) => t.gap_edges(),
-            AnyNode::MatchBlockBlock(t) => t.gap_edges(),
-            AnyNode::MatchBlockEmpty(t) => t.gap_edges(),
             AnyNode::SuiteInline(t) => t.gap_edges(),
             AnyNode::SuiteBlock(t) => t.gap_edges(),
             AnyNode::SuiteEmpty(t) => t.gap_edges(),
             AnyNode::ComparisonOperatorComparator(t) => t.gap_edges(),
             AnyNode::YieldFromClause(t) => t.gap_edges(),
+            AnyNode::TypeParamTypeVar(t) => t.gap_edges(),
+            AnyNode::TypeParamTypeVarTuple(t) => t.gap_edges(),
+            AnyNode::TypeParamParamSpec(t) => t.gap_edges(),
             AnyNode::StringStart(t) => t.gap_edges(),
             AnyNode::StringFragment(t) => t.gap_edges(),
             AnyNode::EscapeInterpolation(t) => t.gap_edges(),
@@ -1238,6 +1254,7 @@ impl ::sittir_core::prepare::Prepare for AnyNode {
             AnyNode::ElifClause(t) => t.snapshot_edge(),
             AnyNode::ElseClause(t) => t.snapshot_edge(),
             AnyNode::MatchStatement(t) => t.snapshot_edge(),
+            AnyNode::MatchBlock(t) => t.snapshot_edge(),
             AnyNode::CaseClause(t) => t.snapshot_edge(),
             AnyNode::ForStatement(t) => t.snapshot_edge(),
             AnyNode::WhileStatement(t) => t.snapshot_edge(),
@@ -1338,6 +1355,8 @@ impl ::sittir_core::prepare::Prepare for AnyNode {
             AnyNode::DictionaryElements(t) => t.snapshot_edge(),
             AnyNode::SliceGroup(t) => t.snapshot_edge(),
             AnyNode::FormatSpecifierText(t) => t.snapshot_edge(),
+            AnyNode::TypeParams(t) => t.snapshot_edge(),
+            AnyNode::TypeParamsItems(t) => t.snapshot_edge(),
             AnyNode::TuplePatternElements(t) => t.snapshot_edge(),
             AnyNode::CasePatternList(t) => t.snapshot_edge(),
             AnyNode::TupleElements(t) => t.snapshot_edge(),
@@ -1378,13 +1397,14 @@ impl ::sittir_core::prepare::Prepare for AnyNode {
             AnyNode::ExpressionStatementTuple(t) => t.snapshot_edge(),
             AnyNode::WithClauseBare(t) => t.snapshot_edge(),
             AnyNode::WithClauseParen(t) => t.snapshot_edge(),
-            AnyNode::MatchBlockBlock(t) => t.snapshot_edge(),
-            AnyNode::MatchBlockEmpty(t) => t.snapshot_edge(),
             AnyNode::SuiteInline(t) => t.snapshot_edge(),
             AnyNode::SuiteBlock(t) => t.snapshot_edge(),
             AnyNode::SuiteEmpty(t) => t.snapshot_edge(),
             AnyNode::ComparisonOperatorComparator(t) => t.snapshot_edge(),
             AnyNode::YieldFromClause(t) => t.snapshot_edge(),
+            AnyNode::TypeParamTypeVar(t) => t.snapshot_edge(),
+            AnyNode::TypeParamTypeVarTuple(t) => t.snapshot_edge(),
+            AnyNode::TypeParamParamSpec(t) => t.snapshot_edge(),
             AnyNode::StringStart(t) => t.snapshot_edge(),
             AnyNode::StringFragment(t) => t.snapshot_edge(),
             AnyNode::EscapeInterpolation(t) => t.snapshot_edge(),
@@ -1534,6 +1554,7 @@ impl ::sittir_core::prepare::Prepare for AnyNode {
             AnyNode::ElifClause(t) => t.source_coordinate(),
             AnyNode::ElseClause(t) => t.source_coordinate(),
             AnyNode::MatchStatement(t) => t.source_coordinate(),
+            AnyNode::MatchBlock(t) => t.source_coordinate(),
             AnyNode::CaseClause(t) => t.source_coordinate(),
             AnyNode::ForStatement(t) => t.source_coordinate(),
             AnyNode::WhileStatement(t) => t.source_coordinate(),
@@ -1634,6 +1655,8 @@ impl ::sittir_core::prepare::Prepare for AnyNode {
             AnyNode::DictionaryElements(t) => t.source_coordinate(),
             AnyNode::SliceGroup(t) => t.source_coordinate(),
             AnyNode::FormatSpecifierText(t) => t.source_coordinate(),
+            AnyNode::TypeParams(t) => t.source_coordinate(),
+            AnyNode::TypeParamsItems(t) => t.source_coordinate(),
             AnyNode::TuplePatternElements(t) => t.source_coordinate(),
             AnyNode::CasePatternList(t) => t.source_coordinate(),
             AnyNode::TupleElements(t) => t.source_coordinate(),
@@ -1674,13 +1697,14 @@ impl ::sittir_core::prepare::Prepare for AnyNode {
             AnyNode::ExpressionStatementTuple(t) => t.source_coordinate(),
             AnyNode::WithClauseBare(t) => t.source_coordinate(),
             AnyNode::WithClauseParen(t) => t.source_coordinate(),
-            AnyNode::MatchBlockBlock(t) => t.source_coordinate(),
-            AnyNode::MatchBlockEmpty(t) => t.source_coordinate(),
             AnyNode::SuiteInline(t) => t.source_coordinate(),
             AnyNode::SuiteBlock(t) => t.source_coordinate(),
             AnyNode::SuiteEmpty(t) => t.source_coordinate(),
             AnyNode::ComparisonOperatorComparator(t) => t.source_coordinate(),
             AnyNode::YieldFromClause(t) => t.source_coordinate(),
+            AnyNode::TypeParamTypeVar(t) => t.source_coordinate(),
+            AnyNode::TypeParamTypeVarTuple(t) => t.source_coordinate(),
+            AnyNode::TypeParamParamSpec(t) => t.source_coordinate(),
             AnyNode::StringStart(t) => t.source_coordinate(),
             AnyNode::StringFragment(t) => t.source_coordinate(),
             AnyNode::EscapeInterpolation(t) => t.source_coordinate(),
@@ -1830,6 +1854,7 @@ impl ::sittir_core::prepare::Prepare for AnyNode {
             AnyNode::ElifClause(t) => t.source_separator(ctx),
             AnyNode::ElseClause(t) => t.source_separator(ctx),
             AnyNode::MatchStatement(t) => t.source_separator(ctx),
+            AnyNode::MatchBlock(t) => t.source_separator(ctx),
             AnyNode::CaseClause(t) => t.source_separator(ctx),
             AnyNode::ForStatement(t) => t.source_separator(ctx),
             AnyNode::WhileStatement(t) => t.source_separator(ctx),
@@ -1930,6 +1955,8 @@ impl ::sittir_core::prepare::Prepare for AnyNode {
             AnyNode::DictionaryElements(t) => t.source_separator(ctx),
             AnyNode::SliceGroup(t) => t.source_separator(ctx),
             AnyNode::FormatSpecifierText(t) => t.source_separator(ctx),
+            AnyNode::TypeParams(t) => t.source_separator(ctx),
+            AnyNode::TypeParamsItems(t) => t.source_separator(ctx),
             AnyNode::TuplePatternElements(t) => t.source_separator(ctx),
             AnyNode::CasePatternList(t) => t.source_separator(ctx),
             AnyNode::TupleElements(t) => t.source_separator(ctx),
@@ -1970,13 +1997,14 @@ impl ::sittir_core::prepare::Prepare for AnyNode {
             AnyNode::ExpressionStatementTuple(t) => t.source_separator(ctx),
             AnyNode::WithClauseBare(t) => t.source_separator(ctx),
             AnyNode::WithClauseParen(t) => t.source_separator(ctx),
-            AnyNode::MatchBlockBlock(t) => t.source_separator(ctx),
-            AnyNode::MatchBlockEmpty(t) => t.source_separator(ctx),
             AnyNode::SuiteInline(t) => t.source_separator(ctx),
             AnyNode::SuiteBlock(t) => t.source_separator(ctx),
             AnyNode::SuiteEmpty(t) => t.source_separator(ctx),
             AnyNode::ComparisonOperatorComparator(t) => t.source_separator(ctx),
             AnyNode::YieldFromClause(t) => t.source_separator(ctx),
+            AnyNode::TypeParamTypeVar(t) => t.source_separator(ctx),
+            AnyNode::TypeParamTypeVarTuple(t) => t.source_separator(ctx),
+            AnyNode::TypeParamParamSpec(t) => t.source_separator(ctx),
             AnyNode::StringStart(t) => t.source_separator(ctx),
             AnyNode::StringFragment(t) => t.source_separator(ctx),
             AnyNode::EscapeInterpolation(t) => t.source_separator(ctx),
@@ -2141,7 +2169,7 @@ pub enum TriviaNode {
 }
 
 impl ::sittir_core::prepare::Prepare for TriviaNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         match self {
             TriviaNode::Comment(t) => t.prepare(ctx),
             TriviaNode::LineContinuationNewline(t) => t.prepare(ctx),
@@ -2322,7 +2350,7 @@ pub enum StatementNode {
 }
 
 impl ::sittir_core::prepare::Prepare for StatementNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         match self {
             StatementNode::SimpleStatements(t) => t.prepare(ctx),
             StatementNode::CompoundStatement(t) => t.prepare(ctx),
@@ -2494,7 +2522,7 @@ pub enum SimpleStatementNode {
 }
 
 impl ::sittir_core::prepare::Prepare for SimpleStatementNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         match self {
             SimpleStatementNode::FutureImportStatement(t) => t.prepare(ctx),
             SimpleStatementNode::ImportStatement(t) => t.prepare(ctx),
@@ -2684,7 +2712,7 @@ pub enum CompoundStatementNode {
 }
 
 impl ::sittir_core::prepare::Prepare for CompoundStatementNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         match self {
             CompoundStatementNode::IfStatement(t) => t.prepare(ctx),
             CompoundStatementNode::ForStatement(t) => t.prepare(ctx),
@@ -2816,84 +2844,6 @@ impl ::sittir_core::render::Render for CompoundStatementNodeRecord<'_> {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice, stamp = stamp, view = MatchBlockNodeRecord)]
-pub enum MatchBlockNode {
-    #[kind(kind::MATCH_BLOCK_BLOCK)]
-    MatchBlockBlock(MatchBlockBlockNode),
-    #[kind(kind::MATCH_BLOCK_EMPTY)]
-    MatchBlockEmpty(MatchBlockEmptyNode),
-}
-
-impl ::sittir_core::prepare::Prepare for MatchBlockNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        match self {
-            MatchBlockNode::MatchBlockBlock(t) => t.prepare(ctx),
-            MatchBlockNode::MatchBlockEmpty(t) => t.prepare(ctx),
-        }
-    }
-    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        match self {
-            MatchBlockNode::MatchBlockBlock(t) => t.gap_edges(),
-            MatchBlockNode::MatchBlockEmpty(t) => t.gap_edges(),
-        }
-    }
-    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
-        match self {
-            MatchBlockNode::MatchBlockBlock(t) => t.snapshot_edge(),
-            MatchBlockNode::MatchBlockEmpty(t) => t.snapshot_edge(),
-        }
-    }
-    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
-        match self {
-            MatchBlockNode::MatchBlockBlock(t) => t.source_coordinate(),
-            MatchBlockNode::MatchBlockEmpty(t) => t.source_coordinate(),
-        }
-    }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
-        match self {
-            MatchBlockNode::MatchBlockBlock(t) => t.source_separator(ctx),
-            MatchBlockNode::MatchBlockEmpty(t) => t.source_separator(ctx),
-        }
-    }
-    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &mut ::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
-        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
-    }
-}
-
-impl ::sittir_core::view::KindOf for MatchBlockNode {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        match self {
-            Self::MatchBlockBlock(inner) => inner.kind_in(kinds),
-            Self::MatchBlockEmpty(inner) => inner.kind_in(kinds),
-        }
-    }
-}
-
-impl ::sittir_core::render::Render for MatchBlockNode {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_match_block(self, w)
-    }
-}
-
-::sittir_core::records_codec! {
-impl ::sittir_core::view::KindOf for MatchBlockNodeRecord<'_> {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        match self {
-            Self::MatchBlockBlock(inner) => inner.kind_in(kinds),
-            Self::MatchBlockEmpty(inner) => inner.kind_in(kinds),
-        }
-    }
-}
-
-impl ::sittir_core::render::Render for MatchBlockNodeRecord<'_> {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_match_block_record(self, w)
-    }
-}
-
-}
-
-#[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
 #[node(choice, stamp = stamp, view = WithClauseNodeRecord)]
 pub enum WithClauseNode {
     #[kind(kind::WITH_CLAUSE_BARE)]
@@ -2903,7 +2853,7 @@ pub enum WithClauseNode {
 }
 
 impl ::sittir_core::prepare::Prepare for WithClauseNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         match self {
             WithClauseNode::WithClauseBare(t) => t.prepare(ctx),
             WithClauseNode::WithClauseParen(t) => t.prepare(ctx),
@@ -2983,7 +2933,7 @@ pub enum SuiteNode {
 }
 
 impl ::sittir_core::prepare::Prepare for SuiteNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         match self {
             SuiteNode::SuiteInline(t) => t.prepare(ctx),
             SuiteNode::SuiteBlock(t) => t.prepare(ctx),
@@ -3066,7 +3016,7 @@ pub enum ParameterNode {
     #[kind(kind::TYPED_PARAMETER)]
     TypedParameter(TypedParameterNode),
     #[kind(kind::DEFAULT_PARAMETER)]
-    DefaultParameter(DefaultParameterNode),
+    DefaultParameter(Box<DefaultParameterNode>),
     #[kind(kind::TYPED_DEFAULT_PARAMETER)]
     TypedDefaultParameter(Box<TypedDefaultParameterNode>),
     #[kind(kind::LIST_SPLAT_PATTERN)]
@@ -3086,7 +3036,7 @@ pub enum ParameterNode {
 }
 
 impl ::sittir_core::prepare::Prepare for ParameterNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         match self {
             ParameterNode::Identifier(t) => t.prepare(ctx),
             ParameterNode::TypedParameter(t) => t.prepare(ctx),
@@ -3230,7 +3180,7 @@ pub enum PatternNode {
 }
 
 impl ::sittir_core::prepare::Prepare for PatternNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         match self {
             PatternNode::Identifier(t) => t.prepare(ctx),
             PatternNode::Subscript(t) => t.prepare(ctx),
@@ -3357,7 +3307,7 @@ pub enum ExpressionNode {
 }
 
 impl ::sittir_core::prepare::Prepare for ExpressionNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         match self {
             ExpressionNode::ComparisonOperator(t) => t.prepare(ctx),
             ExpressionNode::NotOperator(t) => t.prepare(ctx),
@@ -3536,7 +3486,7 @@ pub enum PrimaryExpressionNode {
 }
 
 impl ::sittir_core::prepare::Prepare for PrimaryExpressionNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         match self {
             PrimaryExpressionNode::Await(t) => t.prepare(ctx),
             PrimaryExpressionNode::BinaryOperator(t) => t.prepare(ctx),
@@ -3819,7 +3769,7 @@ pub enum IntegerNode {
 }
 
 impl ::sittir_core::prepare::Prepare for IntegerNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         match self {
             IntegerNode::IntegerHex(t) => t.prepare(ctx),
             IntegerNode::IntegerOctal(t) => t.prepare(ctx),
@@ -3930,7 +3880,7 @@ pub enum FloatNode {
 }
 
 impl ::sittir_core::prepare::Prepare for FloatNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         match self {
             FloatNode::FloatPoint(t) => t.prepare(ctx),
             FloatNode::FloatLeadingPoint(t) => t.prepare(ctx),
@@ -4014,6 +3964,93 @@ impl ::sittir_core::render::Render for FloatNodeRecord<'_> {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
+#[node(choice, stamp = stamp, view = TypeParamNodeRecord)]
+pub enum TypeParamNode {
+    #[kind(kind::TYPE_PARAM_TYPE_VAR)]
+    TypeParamTypeVar(TypeParamTypeVarNode),
+    #[kind(kind::TYPE_PARAM_TYPE_VAR_TUPLE)]
+    TypeParamTypeVarTuple(TypeParamTypeVarTupleNode),
+    #[kind(kind::TYPE_PARAM_PARAM_SPEC)]
+    TypeParamParamSpec(TypeParamParamSpecNode),
+}
+
+impl ::sittir_core::prepare::Prepare for TypeParamNode {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
+        match self {
+            TypeParamNode::TypeParamTypeVar(t) => t.prepare(ctx),
+            TypeParamNode::TypeParamTypeVarTuple(t) => t.prepare(ctx),
+            TypeParamNode::TypeParamParamSpec(t) => t.prepare(ctx),
+        }
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        match self {
+            TypeParamNode::TypeParamTypeVar(t) => t.gap_edges(),
+            TypeParamNode::TypeParamTypeVarTuple(t) => t.gap_edges(),
+            TypeParamNode::TypeParamParamSpec(t) => t.gap_edges(),
+        }
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        match self {
+            TypeParamNode::TypeParamTypeVar(t) => t.snapshot_edge(),
+            TypeParamNode::TypeParamTypeVarTuple(t) => t.snapshot_edge(),
+            TypeParamNode::TypeParamParamSpec(t) => t.snapshot_edge(),
+        }
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        match self {
+            TypeParamNode::TypeParamTypeVar(t) => t.source_coordinate(),
+            TypeParamNode::TypeParamTypeVarTuple(t) => t.source_coordinate(),
+            TypeParamNode::TypeParamParamSpec(t) => t.source_coordinate(),
+        }
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
+        match self {
+            TypeParamNode::TypeParamTypeVar(t) => t.source_separator(ctx),
+            TypeParamNode::TypeParamTypeVarTuple(t) => t.source_separator(ctx),
+            TypeParamNode::TypeParamParamSpec(t) => t.source_separator(ctx),
+        }
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &mut ::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
+}
+
+impl ::sittir_core::view::KindOf for TypeParamNode {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::TypeParamTypeVar(inner) => inner.kind_in(kinds),
+            Self::TypeParamTypeVarTuple(inner) => inner.kind_in(kinds),
+            Self::TypeParamParamSpec(inner) => inner.kind_in(kinds),
+        }
+    }
+}
+
+impl ::sittir_core::render::Render for TypeParamNode {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_type_param(self, w)
+    }
+}
+
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for TypeParamNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::TypeParamTypeVar(inner) => inner.kind_in(kinds),
+            Self::TypeParamTypeVarTuple(inner) => inner.kind_in(kinds),
+            Self::TypeParamParamSpec(inner) => inner.kind_in(kinds),
+        }
+    }
+}
+
+impl ::sittir_core::render::Render for TypeParamNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_type_param_record(self, w)
+    }
+}
+
+}
+
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
 #[node(choice, stamp = stamp, view = IntegerDecimalNodeRecord)]
 pub enum IntegerDecimalNode {
     #[kind(kind::INTEGER_DECIMAL_LONG)]
@@ -4027,7 +4064,7 @@ pub enum IntegerDecimalNode {
 }
 
 impl ::sittir_core::prepare::Prepare for IntegerDecimalNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         match self {
             IntegerDecimalNode::IntegerDecimalLong(t) => t.prepare(ctx),
             IntegerDecimalNode::IntegerDecimalImaginary(t) => t.prepare(ctx),
@@ -4144,7 +4181,7 @@ pub enum CompoundStatementClassDefinitionNode {
 }
 
 impl ::sittir_core::prepare::Prepare for CompoundStatementClassDefinitionNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         match self {
             CompoundStatementClassDefinitionNode::IfStatement(t) => t.prepare(ctx),
             CompoundStatementClassDefinitionNode::ForStatement(t) => t.prepare(ctx),
@@ -4303,7 +4340,7 @@ pub enum StatementClassDefinitionNode {
 }
 
 impl ::sittir_core::prepare::Prepare for StatementClassDefinitionNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         match self {
             StatementClassDefinitionNode::SimpleStatements(t) => t.prepare(ctx),
             StatementClassDefinitionNode::CompoundStatementClassDefinition(t) => t.prepare(ctx),
@@ -4453,7 +4490,7 @@ pub enum SuiteClassDefinitionNode {
 }
 
 impl ::sittir_core::prepare::Prepare for SuiteClassDefinitionNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         match self {
             SuiteClassDefinitionNode::SuiteInline(t) => t.prepare(ctx),
             SuiteClassDefinitionNode::SuiteBlockClassDeclaration(t) => t.prepare(ctx),
@@ -4539,7 +4576,7 @@ pub enum FutureImportStatementContentNodeSlot {
 }
 
 impl ::sittir_core::prepare::Prepare for FutureImportStatementContentNodeSlot {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         match self {
             FutureImportStatementContentNodeSlot::ImportList(t) => t.prepare(ctx),
             FutureImportStatementContentNodeSlot::ParenthesizedImportList(t) => t.prepare(ctx),
@@ -4622,7 +4659,7 @@ pub enum ImportFromStatementModuleNameNodeSlot {
 }
 
 impl ::sittir_core::prepare::Prepare for ImportFromStatementModuleNameNodeSlot {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         match self {
             ImportFromStatementModuleNameNodeSlot::RelativeImport(t) => t.prepare(ctx),
             ImportFromStatementModuleNameNodeSlot::DottedName(t) => t.prepare(ctx),
@@ -4707,7 +4744,7 @@ pub enum ImportFromStatementContentNodeSlot {
 }
 
 impl ::sittir_core::prepare::Prepare for ImportFromStatementContentNodeSlot {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         match self {
             ImportFromStatementContentNodeSlot::ImportList(t) => t.prepare(ctx),
             ImportFromStatementContentNodeSlot::ParenthesizedImportList(t) => t.prepare(ctx),
@@ -4809,7 +4846,7 @@ pub enum ImportListNameNodeSlot {
 }
 
 impl ::sittir_core::prepare::Prepare for ImportListNameNodeSlot {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         match self {
             ImportListNameNodeSlot::DottedName(t) => t.prepare(ctx),
             ImportListNameNodeSlot::AliasedImport(t) => t.prepare(ctx),
@@ -4886,13 +4923,13 @@ impl ::sittir_core::render::Render for ImportListNameNodeSlotRecord<'_> {
 #[node(choice, stamp = stamp, view = PrintStatementContentNodeSlotRecord)]
 pub enum PrintStatementContentNodeSlot {
     #[kind(kind::PRINT_STATEMENT_CHEVRON)]
-    PrintStatementChevron(PrintStatementChevronNode),
+    PrintStatementChevron(Box<PrintStatementChevronNode>),
     #[kind(kind::PRINT_STATEMENT_PLAIN)]
     PrintStatementPlain(PrintStatementPlainNode),
 }
 
 impl ::sittir_core::prepare::Prepare for PrintStatementContentNodeSlot {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         match self {
             PrintStatementContentNodeSlot::PrintStatementChevron(t) => t.prepare(ctx),
             PrintStatementContentNodeSlot::PrintStatementPlain(t) => t.prepare(ctx),
@@ -4939,7 +4976,7 @@ impl ::sittir_core::view::KindOf for PrintStatementContentNodeSlot {
 impl ::sittir_core::render::Render for PrintStatementContentNodeSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            PrintStatementContentNodeSlot::PrintStatementChevron(inner) => inner.render(w),
+            PrintStatementContentNodeSlot::PrintStatementChevron(inner) => inner.as_ref().render(w),
             PrintStatementContentNodeSlot::PrintStatementPlain(inner) => inner.render(w),
         }
     }
@@ -5045,9 +5082,9 @@ pub enum ExpressionStatementContentNodeSlot {
     #[kind(kind::ASSIGNMENT_TYPE)]
     AssignmentType(AssignmentTypeNode),
     #[kind(kind::ASSIGNMENT_TYPED)]
-    AssignmentTyped(AssignmentTypedNode),
+    AssignmentTyped(Box<AssignmentTypedNode>),
     #[kind(kind::AUGMENTED_ASSIGNMENT)]
-    AugmentedAssignment(AugmentedAssignmentNode),
+    AugmentedAssignment(Box<AugmentedAssignmentNode>),
     #[kind(kind::YIELD)]
     Yield(YieldNode),
     #[kind(kind::TRUE)]
@@ -5067,7 +5104,7 @@ pub enum ExpressionStatementContentNodeSlot {
 }
 
 impl ::sittir_core::prepare::Prepare for ExpressionStatementContentNodeSlot {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         match self {
             ExpressionStatementContentNodeSlot::ComparisonOperator(t) => t.prepare(ctx),
             ExpressionStatementContentNodeSlot::NotOperator(t) => t.prepare(ctx),
@@ -5416,8 +5453,8 @@ impl ::sittir_core::render::Render for ExpressionStatementContentNodeSlot {
             ExpressionStatementContentNodeSlot::ExpressionStatementTuple(inner) => inner.render(w),
             ExpressionStatementContentNodeSlot::AssignmentEq(inner) => inner.render(w),
             ExpressionStatementContentNodeSlot::AssignmentType(inner) => inner.render(w),
-            ExpressionStatementContentNodeSlot::AssignmentTyped(inner) => inner.render(w),
-            ExpressionStatementContentNodeSlot::AugmentedAssignment(inner) => inner.render(w),
+            ExpressionStatementContentNodeSlot::AssignmentTyped(inner) => inner.as_ref().render(w),
+            ExpressionStatementContentNodeSlot::AugmentedAssignment(inner) => inner.as_ref().render(w),
             ExpressionStatementContentNodeSlot::Yield(inner) => inner.render(w),
             ExpressionStatementContentNodeSlot::True(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(69), edges, w, render_true),
             ExpressionStatementContentNodeSlot::False(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(70), edges, w, render_false),
@@ -5628,7 +5665,7 @@ pub enum ReturnStatementExpressionsNodeSlot {
 }
 
 impl ::sittir_core::prepare::Prepare for ReturnStatementExpressionsNodeSlot {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         match self {
             ReturnStatementExpressionsNodeSlot::ComparisonOperator(t) => t.prepare(ctx),
             ReturnStatementExpressionsNodeSlot::NotOperator(t) => t.prepare(ctx),
@@ -6056,13 +6093,13 @@ impl ::sittir_core::render::Render for ReturnStatementExpressionsNodeSlotRecord<
 #[node(choice, stamp = stamp, view = IfStatementAlternativeNodeSlotRecord)]
 pub enum IfStatementAlternativeNodeSlot {
     #[kind(kind::ELIF_CLAUSE)]
-    ElifClause(ElifClauseNode),
+    ElifClause(Box<ElifClauseNode>),
     #[kind(kind::ELSE_CLAUSE)]
     ElseClause(ElseClauseNode),
 }
 
 impl ::sittir_core::prepare::Prepare for IfStatementAlternativeNodeSlot {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         match self {
             IfStatementAlternativeNodeSlot::ElifClause(t) => t.prepare(ctx),
             IfStatementAlternativeNodeSlot::ElseClause(t) => t.prepare(ctx),
@@ -6109,7 +6146,7 @@ impl ::sittir_core::view::KindOf for IfStatementAlternativeNodeSlot {
 impl ::sittir_core::render::Render for IfStatementAlternativeNodeSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            IfStatementAlternativeNodeSlot::ElifClause(inner) => inner.render(w),
+            IfStatementAlternativeNodeSlot::ElifClause(inner) => inner.as_ref().render(w),
             IfStatementAlternativeNodeSlot::ElseClause(inner) => inner.render(w),
         }
     }
@@ -6145,7 +6182,7 @@ pub enum CaseClausePatternNodeSlot {
 }
 
 impl ::sittir_core::prepare::Prepare for CaseClausePatternNodeSlot {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         match self {
             CaseClausePatternNodeSlot::CasePattern(t) => t.prepare(ctx),
             CaseClausePatternNodeSlot::CasePatternList(t) => t.prepare(ctx),
@@ -6240,7 +6277,7 @@ pub enum ForStatementLeftNodeSlot {
 }
 
 impl ::sittir_core::prepare::Prepare for ForStatementLeftNodeSlot {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         match self {
             ForStatementLeftNodeSlot::Identifier(t) => t.prepare(ctx),
             ForStatementLeftNodeSlot::Subscript(t) => t.prepare(ctx),
@@ -6379,7 +6416,7 @@ pub enum ExecStatementCodeNodeSlot {
 }
 
 impl ::sittir_core::prepare::Prepare for ExecStatementCodeNodeSlot {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         match self {
             ExecStatementCodeNodeSlot::String(t) => t.prepare(ctx),
             ExecStatementCodeNodeSlot::Identifier(t) => t.prepare(ctx),
@@ -6471,7 +6508,7 @@ pub enum ParenthesizedListSplatContentNodeSlot {
 }
 
 impl ::sittir_core::prepare::Prepare for ParenthesizedListSplatContentNodeSlot {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         match self {
             ParenthesizedListSplatContentNodeSlot::ParenthesizedListSplat(t) => t.prepare(ctx),
             ParenthesizedListSplatContentNodeSlot::ListSplat(t) => t.prepare(ctx),
@@ -6554,7 +6591,7 @@ pub enum DecoratedDefinitionDefinitionNodeSlot {
 }
 
 impl ::sittir_core::prepare::Prepare for DecoratedDefinitionDefinitionNodeSlot {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         match self {
             DecoratedDefinitionDefinitionNodeSlot::ClassDefinition(t) => t.prepare(ctx),
             DecoratedDefinitionDefinitionNodeSlot::FunctionDefinition(t) => t.prepare(ctx),
@@ -6633,13 +6670,13 @@ pub enum CasePatternContentNodeSlot {
     #[kind(kind::_CASE_AS_PATTERN)]
     CaseAsPattern(CaseAsPatternNode),
     #[kind(kind::KEYWORD_PATTERN)]
-    KeywordPattern(KeywordPatternNode),
+    KeywordPattern(Box<KeywordPatternNode>),
     #[kind(kind::_SIMPLE_PATTERN, kind::SIMPLE_PATTERN)]
     SimplePattern(SimplePatternNode),
 }
 
 impl ::sittir_core::prepare::Prepare for CasePatternContentNodeSlot {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         match self {
             CasePatternContentNodeSlot::CaseAsPattern(t) => t.prepare(ctx),
             CasePatternContentNodeSlot::KeywordPattern(t) => t.prepare(ctx),
@@ -6693,7 +6730,7 @@ impl ::sittir_core::render::Render for CasePatternContentNodeSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
             CasePatternContentNodeSlot::CaseAsPattern(inner) => inner.render(w),
-            CasePatternContentNodeSlot::KeywordPattern(inner) => inner.render(w),
+            CasePatternContentNodeSlot::KeywordPattern(inner) => inner.as_ref().render(w),
             CasePatternContentNodeSlot::SimplePattern(inner) => inner.render(w),
         }
     }
@@ -6782,7 +6819,7 @@ pub enum SimplePatternContentNodeSlot {
 }
 
 impl ::sittir_core::prepare::Prepare for SimplePatternContentNodeSlot {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         match self {
             SimplePatternContentNodeSlot::ClassPattern(t) => t.prepare(ctx),
             SimplePatternContentNodeSlot::SplatPatternList(t) => t.prepare(ctx),
@@ -6964,7 +7001,7 @@ impl ::sittir_core::view::KindOf for SimplePatternContentNodeSlot {
             Self::True(_) => [::sittir_core::types::KindId(69)].iter().any(|k| kinds.contains(k)),
             Self::False(_) => [::sittir_core::types::KindId(70)].iter().any(|k| kinds.contains(k)),
             Self::None(_) => [::sittir_core::types::KindId(71)].iter().any(|k| kinds.contains(k)),
-            Self::WildcardPattern => [::sittir_core::types::KindId(280)].iter().any(|k| kinds.contains(k)),
+            Self::WildcardPattern => [::sittir_core::types::KindId(284)].iter().any(|k| kinds.contains(k)),
             Self::Verbatim(_) => [::sittir_core::types::KindId(93), ::sittir_core::types::KindId(94), ::sittir_core::types::KindId(95)].iter().any(|k| kinds.contains(k)),
         }
     }
@@ -7031,7 +7068,7 @@ impl ::sittir_core::view::KindOf for SimplePatternContentNodeSlotRecord<'_> {
             Self::True(_) => [::sittir_core::types::KindId(69)].iter().any(|k| kinds.contains(k)),
             Self::False(_) => [::sittir_core::types::KindId(70)].iter().any(|k| kinds.contains(k)),
             Self::None(_) => [::sittir_core::types::KindId(71)].iter().any(|k| kinds.contains(k)),
-            Self::WildcardPattern => [::sittir_core::types::KindId(280)].iter().any(|k| kinds.contains(k)),
+            Self::WildcardPattern => [::sittir_core::types::KindId(284)].iter().any(|k| kinds.contains(k)),
             Self::Verbatim(_) => [::sittir_core::types::KindId(93), ::sittir_core::types::KindId(94), ::sittir_core::types::KindId(95)].iter().any(|k| kinds.contains(k)),
         }
     }
@@ -7097,7 +7134,7 @@ pub enum ComplexPatternRealNodeSlot {
 }
 
 impl ::sittir_core::prepare::Prepare for ComplexPatternRealNodeSlot {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         match self {
             ComplexPatternRealNodeSlot::IntegerHex(t) => t.prepare(ctx),
             ComplexPatternRealNodeSlot::IntegerOctal(t) => t.prepare(ctx),
@@ -7252,7 +7289,7 @@ pub enum ComplexPatternOperatorNodeSlot {
 }
 
 impl ::sittir_core::prepare::Prepare for ComplexPatternOperatorNodeSlot {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         match self {
             ComplexPatternOperatorNodeSlot::Plus => Ok(()),
             ComplexPatternOperatorNodeSlot::Dash => Ok(()),
@@ -7293,7 +7330,7 @@ pub enum DefaultParameterNameNodeSlot {
 }
 
 impl ::sittir_core::prepare::Prepare for DefaultParameterNameNodeSlot {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         match self {
             DefaultParameterNameNodeSlot::Identifier(t) => t.prepare(ctx),
             DefaultParameterNameNodeSlot::TuplePattern(t) => t.prepare(ctx),
@@ -7389,7 +7426,7 @@ pub enum ListSplatPatternPatternNodeSlot {
 }
 
 impl ::sittir_core::prepare::Prepare for ListSplatPatternPatternNodeSlot {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         match self {
             ListSplatPatternPatternNodeSlot::Identifier(t) => t.prepare(ctx),
             ListSplatPatternPatternNodeSlot::Subscript(t) => t.prepare(ctx),
@@ -7490,7 +7527,7 @@ pub enum BooleanOperatorOperatorNodeSlot {
 }
 
 impl ::sittir_core::prepare::Prepare for BooleanOperatorOperatorNodeSlot {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         match self {
             BooleanOperatorOperatorNodeSlot::AndKeyword => Ok(()),
             BooleanOperatorOperatorNodeSlot::OrKeyword => Ok(()),
@@ -7551,7 +7588,7 @@ pub enum BinaryOperatorOperatorNodeSlot {
 }
 
 impl ::sittir_core::prepare::Prepare for BinaryOperatorOperatorNodeSlot {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         match self {
             BinaryOperatorOperatorNodeSlot::Plus => Ok(()),
             BinaryOperatorOperatorNodeSlot::Dash => Ok(()),
@@ -7625,7 +7662,7 @@ pub enum UnaryOperatorOperatorNodeSlot {
 }
 
 impl ::sittir_core::prepare::Prepare for UnaryOperatorOperatorNodeSlot {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         match self {
             UnaryOperatorOperatorNodeSlot::Plus => Ok(()),
             UnaryOperatorOperatorNodeSlot::Dash => Ok(()),
@@ -7764,7 +7801,7 @@ pub enum LambdaWithinForInClauseBodyNodeSlot {
 }
 
 impl ::sittir_core::prepare::Prepare for LambdaWithinForInClauseBodyNodeSlot {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         match self {
             LambdaWithinForInClauseBodyNodeSlot::ComparisonOperator(t) => t.prepare(ctx),
             LambdaWithinForInClauseBodyNodeSlot::NotOperator(t) => t.prepare(ctx),
@@ -8220,7 +8257,7 @@ pub enum AugmentedAssignmentOperatorNodeSlot {
 }
 
 impl ::sittir_core::prepare::Prepare for AugmentedAssignmentOperatorNodeSlot {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         match self {
             AugmentedAssignmentOperatorNodeSlot::PlusEq => Ok(()),
             AugmentedAssignmentOperatorNodeSlot::DashEq => Ok(()),
@@ -8357,14 +8394,6 @@ pub enum AugmentedAssignmentRightNodeSlot {
     AsPattern(AsPatternNode),
     #[kind(kind::EXPRESSION_LIST)]
     ExpressionList(ExpressionListNode),
-    #[kind(kind::ASSIGNMENT_EQ)]
-    AssignmentEq(AssignmentEqNode),
-    #[kind(kind::ASSIGNMENT_TYPE)]
-    AssignmentType(AssignmentTypeNode),
-    #[kind(kind::ASSIGNMENT_TYPED)]
-    AssignmentTyped(AssignmentTypedNode),
-    #[kind(kind::AUGMENTED_ASSIGNMENT)]
-    AugmentedAssignment(AugmentedAssignmentNode),
     #[kind(kind::PATTERN_LIST)]
     PatternList(PatternListNode),
     #[kind(kind::YIELD)]
@@ -8386,7 +8415,7 @@ pub enum AugmentedAssignmentRightNodeSlot {
 }
 
 impl ::sittir_core::prepare::Prepare for AugmentedAssignmentRightNodeSlot {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         match self {
             AugmentedAssignmentRightNodeSlot::ComparisonOperator(t) => t.prepare(ctx),
             AugmentedAssignmentRightNodeSlot::NotOperator(t) => t.prepare(ctx),
@@ -8424,10 +8453,6 @@ impl ::sittir_core::prepare::Prepare for AugmentedAssignmentRightNodeSlot {
             AugmentedAssignmentRightNodeSlot::NamedExpression(t) => t.prepare(ctx),
             AugmentedAssignmentRightNodeSlot::AsPattern(t) => t.prepare(ctx),
             AugmentedAssignmentRightNodeSlot::ExpressionList(t) => t.prepare(ctx),
-            AugmentedAssignmentRightNodeSlot::AssignmentEq(t) => t.prepare(ctx),
-            AugmentedAssignmentRightNodeSlot::AssignmentType(t) => t.prepare(ctx),
-            AugmentedAssignmentRightNodeSlot::AssignmentTyped(t) => t.prepare(ctx),
-            AugmentedAssignmentRightNodeSlot::AugmentedAssignment(t) => t.prepare(ctx),
             AugmentedAssignmentRightNodeSlot::PatternList(t) => t.prepare(ctx),
             AugmentedAssignmentRightNodeSlot::Yield(t) => t.prepare(ctx),
             AugmentedAssignmentRightNodeSlot::True(_) => Ok(()),
@@ -8475,10 +8500,6 @@ impl ::sittir_core::prepare::Prepare for AugmentedAssignmentRightNodeSlot {
             AugmentedAssignmentRightNodeSlot::NamedExpression(t) => t.gap_edges(),
             AugmentedAssignmentRightNodeSlot::AsPattern(t) => t.gap_edges(),
             AugmentedAssignmentRightNodeSlot::ExpressionList(t) => t.gap_edges(),
-            AugmentedAssignmentRightNodeSlot::AssignmentEq(t) => t.gap_edges(),
-            AugmentedAssignmentRightNodeSlot::AssignmentType(t) => t.gap_edges(),
-            AugmentedAssignmentRightNodeSlot::AssignmentTyped(t) => t.gap_edges(),
-            AugmentedAssignmentRightNodeSlot::AugmentedAssignment(t) => t.gap_edges(),
             AugmentedAssignmentRightNodeSlot::PatternList(t) => t.gap_edges(),
             AugmentedAssignmentRightNodeSlot::Yield(t) => t.gap_edges(),
             AugmentedAssignmentRightNodeSlot::True(edges) => Some(edges),
@@ -8526,10 +8547,6 @@ impl ::sittir_core::prepare::Prepare for AugmentedAssignmentRightNodeSlot {
             AugmentedAssignmentRightNodeSlot::NamedExpression(t) => t.snapshot_edge(),
             AugmentedAssignmentRightNodeSlot::AsPattern(t) => t.snapshot_edge(),
             AugmentedAssignmentRightNodeSlot::ExpressionList(t) => t.snapshot_edge(),
-            AugmentedAssignmentRightNodeSlot::AssignmentEq(t) => t.snapshot_edge(),
-            AugmentedAssignmentRightNodeSlot::AssignmentType(t) => t.snapshot_edge(),
-            AugmentedAssignmentRightNodeSlot::AssignmentTyped(t) => t.snapshot_edge(),
-            AugmentedAssignmentRightNodeSlot::AugmentedAssignment(t) => t.snapshot_edge(),
             AugmentedAssignmentRightNodeSlot::PatternList(t) => t.snapshot_edge(),
             AugmentedAssignmentRightNodeSlot::Yield(t) => t.snapshot_edge(),
             AugmentedAssignmentRightNodeSlot::True(_) => None,
@@ -8577,10 +8594,6 @@ impl ::sittir_core::prepare::Prepare for AugmentedAssignmentRightNodeSlot {
             AugmentedAssignmentRightNodeSlot::NamedExpression(t) => t.source_coordinate(),
             AugmentedAssignmentRightNodeSlot::AsPattern(t) => t.source_coordinate(),
             AugmentedAssignmentRightNodeSlot::ExpressionList(t) => t.source_coordinate(),
-            AugmentedAssignmentRightNodeSlot::AssignmentEq(t) => t.source_coordinate(),
-            AugmentedAssignmentRightNodeSlot::AssignmentType(t) => t.source_coordinate(),
-            AugmentedAssignmentRightNodeSlot::AssignmentTyped(t) => t.source_coordinate(),
-            AugmentedAssignmentRightNodeSlot::AugmentedAssignment(t) => t.source_coordinate(),
             AugmentedAssignmentRightNodeSlot::PatternList(t) => t.source_coordinate(),
             AugmentedAssignmentRightNodeSlot::Yield(t) => t.source_coordinate(),
             AugmentedAssignmentRightNodeSlot::True(_) => None,
@@ -8628,10 +8641,6 @@ impl ::sittir_core::prepare::Prepare for AugmentedAssignmentRightNodeSlot {
             AugmentedAssignmentRightNodeSlot::NamedExpression(t) => t.source_separator(ctx),
             AugmentedAssignmentRightNodeSlot::AsPattern(t) => t.source_separator(ctx),
             AugmentedAssignmentRightNodeSlot::ExpressionList(t) => t.source_separator(ctx),
-            AugmentedAssignmentRightNodeSlot::AssignmentEq(t) => t.source_separator(ctx),
-            AugmentedAssignmentRightNodeSlot::AssignmentType(t) => t.source_separator(ctx),
-            AugmentedAssignmentRightNodeSlot::AssignmentTyped(t) => t.source_separator(ctx),
-            AugmentedAssignmentRightNodeSlot::AugmentedAssignment(t) => t.source_separator(ctx),
             AugmentedAssignmentRightNodeSlot::PatternList(t) => t.source_separator(ctx),
             AugmentedAssignmentRightNodeSlot::Yield(t) => t.source_separator(ctx),
             AugmentedAssignmentRightNodeSlot::True(_) => None,
@@ -8685,10 +8694,6 @@ impl ::sittir_core::view::KindOf for AugmentedAssignmentRightNodeSlot {
             Self::NamedExpression(inner) => inner.kind_in(kinds),
             Self::AsPattern(inner) => inner.kind_in(kinds),
             Self::ExpressionList(inner) => inner.kind_in(kinds),
-            Self::AssignmentEq(inner) => inner.kind_in(kinds),
-            Self::AssignmentType(inner) => inner.kind_in(kinds),
-            Self::AssignmentTyped(inner) => inner.kind_in(kinds),
-            Self::AugmentedAssignment(inner) => inner.kind_in(kinds),
             Self::PatternList(inner) => inner.kind_in(kinds),
             Self::Yield(inner) => inner.kind_in(kinds),
             Self::True(_) => [::sittir_core::types::KindId(69)].iter().any(|k| kinds.contains(k)),
@@ -8739,10 +8744,6 @@ impl ::sittir_core::render::Render for AugmentedAssignmentRightNodeSlot {
             AugmentedAssignmentRightNodeSlot::NamedExpression(inner) => inner.render(w),
             AugmentedAssignmentRightNodeSlot::AsPattern(inner) => inner.render(w),
             AugmentedAssignmentRightNodeSlot::ExpressionList(inner) => inner.render(w),
-            AugmentedAssignmentRightNodeSlot::AssignmentEq(inner) => inner.render(w),
-            AugmentedAssignmentRightNodeSlot::AssignmentType(inner) => inner.render(w),
-            AugmentedAssignmentRightNodeSlot::AssignmentTyped(inner) => inner.render(w),
-            AugmentedAssignmentRightNodeSlot::AugmentedAssignment(inner) => inner.render(w),
             AugmentedAssignmentRightNodeSlot::PatternList(inner) => inner.render(w),
             AugmentedAssignmentRightNodeSlot::Yield(inner) => inner.render(w),
             AugmentedAssignmentRightNodeSlot::True(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(69), edges, w, render_true),
@@ -8794,10 +8795,6 @@ impl ::sittir_core::view::KindOf for AugmentedAssignmentRightNodeSlotRecord<'_> 
             Self::NamedExpression(inner) => inner.kind_in(kinds),
             Self::AsPattern(inner) => inner.kind_in(kinds),
             Self::ExpressionList(inner) => inner.kind_in(kinds),
-            Self::AssignmentEq(inner) => inner.kind_in(kinds),
-            Self::AssignmentType(inner) => inner.kind_in(kinds),
-            Self::AssignmentTyped(inner) => inner.kind_in(kinds),
-            Self::AugmentedAssignment(inner) => inner.kind_in(kinds),
             Self::PatternList(inner) => inner.kind_in(kinds),
             Self::Yield(inner) => inner.kind_in(kinds),
             Self::True(_) => [::sittir_core::types::KindId(69)].iter().any(|k| kinds.contains(k)),
@@ -8848,10 +8845,6 @@ impl ::sittir_core::render::Render for AugmentedAssignmentRightNodeSlotRecord<'_
             AugmentedAssignmentRightNodeSlotRecord::NamedExpression(inner) => inner.render(w),
             AugmentedAssignmentRightNodeSlotRecord::AsPattern(inner) => inner.render(w),
             AugmentedAssignmentRightNodeSlotRecord::ExpressionList(inner) => inner.render(w),
-            AugmentedAssignmentRightNodeSlotRecord::AssignmentEq(inner) => inner.render(w),
-            AugmentedAssignmentRightNodeSlotRecord::AssignmentType(inner) => inner.render(w),
-            AugmentedAssignmentRightNodeSlotRecord::AssignmentTyped(inner) => inner.render(w),
-            AugmentedAssignmentRightNodeSlotRecord::AugmentedAssignment(inner) => inner.render(w),
             AugmentedAssignmentRightNodeSlotRecord::PatternList(inner) => inner.render(w),
             AugmentedAssignmentRightNodeSlotRecord::Yield(inner) => inner.render(w),
             AugmentedAssignmentRightNodeSlotRecord::True(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(69), edges, w, render_true),
@@ -8958,7 +8951,7 @@ pub enum YieldContentNodeSlot {
 }
 
 impl ::sittir_core::prepare::Prepare for YieldContentNodeSlot {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         match self {
             YieldContentNodeSlot::YieldFromClause(t) => t.prepare(ctx),
             YieldContentNodeSlot::ComparisonOperator(t) => t.prepare(ctx),
@@ -9401,7 +9394,7 @@ pub enum CallArgumentsNodeSlot {
 }
 
 impl ::sittir_core::prepare::Prepare for CallArgumentsNodeSlot {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         match self {
             CallArgumentsNodeSlot::GeneratorExpression(t) => t.prepare(ctx),
             CallArgumentsNodeSlot::ArgumentList(t) => t.prepare(ctx),
@@ -9488,7 +9481,7 @@ pub enum TypedParameterNameNodeSlot {
 }
 
 impl ::sittir_core::prepare::Prepare for TypedParameterNameNodeSlot {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         match self {
             TypedParameterNameNodeSlot::Identifier(t) => t.prepare(ctx),
             TypedParameterNameNodeSlot::ListSplatPattern(t) => t.prepare(ctx),
@@ -9679,7 +9672,7 @@ pub enum TypeContentNodeSlot {
 }
 
 impl ::sittir_core::prepare::Prepare for TypeContentNodeSlot {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         match self {
             TypeContentNodeSlot::ComparisonOperator(t) => t.prepare(ctx),
             TypeContentNodeSlot::NotOperator(t) => t.prepare(ctx),
@@ -10140,55 +10133,6 @@ impl ::sittir_core::render::Render for TypeContentNodeSlotRecord<'_> {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice, stamp = stamp)]
-pub enum SplatTypeOperatorNodeSlot {
-    #[kind(kind::STAR, folded(kind::STAR2))]
-    Star,
-    #[kind(kind::STAR_STAR)]
-    StarStar,
-}
-
-impl ::sittir_core::prepare::Prepare for SplatTypeOperatorNodeSlot {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        match self {
-            SplatTypeOperatorNodeSlot::Star => Ok(()),
-            SplatTypeOperatorNodeSlot::StarStar => Ok(()),
-        }
-    }
-    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &mut ::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
-        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
-    }
-}
-
-impl ::sittir_core::view::KindOf for SplatTypeOperatorNodeSlot {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        match self {
-            Self::Star => [::sittir_core::types::KindId(8)].iter().any(|k| kinds.contains(k)),
-            Self::StarStar => [::sittir_core::types::KindId(35)].iter().any(|k| kinds.contains(k)),
-        }
-    }
-}
-
-impl ::sittir_core::render::Render for SplatTypeOperatorNodeSlot {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        match self {
-            SplatTypeOperatorNodeSlot::Star => {
-                w.site_at(options::SITE_SPLAT_TYPE_STAR_BEFORE);
-                let written = render_star(w);
-                written?;
-                Ok(())
-            }
-            SplatTypeOperatorNodeSlot::StarStar => {
-                w.site_at(options::SITE_SPLAT_TYPE_STAR_STAR_BEFORE);
-                let written = render_star_star(w);
-                written?;
-                Ok(())
-            }
-        }
-    }
-}
-
-#[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
 #[node(choice, stamp = stamp, view = ParenthesizedExpressionExpressionNodeSlotRecord)]
 pub enum ParenthesizedExpressionExpressionNodeSlot {
     #[kind(kind::COMPARISON_OPERATOR)]
@@ -10280,7 +10224,7 @@ pub enum ParenthesizedExpressionExpressionNodeSlot {
 }
 
 impl ::sittir_core::prepare::Prepare for ParenthesizedExpressionExpressionNodeSlot {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         match self {
             ParenthesizedExpressionExpressionNodeSlot::ComparisonOperator(t) => t.prepare(ctx),
             ParenthesizedExpressionExpressionNodeSlot::NotOperator(t) => t.prepare(ctx),
@@ -10800,7 +10744,7 @@ pub enum CollectionElementsItemNodeSlot {
 }
 
 impl ::sittir_core::prepare::Prepare for CollectionElementsItemNodeSlot {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         match self {
             CollectionElementsItemNodeSlot::ComparisonOperator(t) => t.prepare(ctx),
             CollectionElementsItemNodeSlot::NotOperator(t) => t.prepare(ctx),
@@ -11252,7 +11196,7 @@ pub enum ForInClauseTrailingCommaNodeSlot {
 }
 
 impl ::sittir_core::prepare::Prepare for ForInClauseTrailingCommaNodeSlot {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         match self {
             ForInClauseTrailingCommaNodeSlot::Comma => Ok(()),
             ForInClauseTrailingCommaNodeSlot::Blank => Ok(()),
@@ -11296,7 +11240,7 @@ pub enum StringContentNodeSlot {
 }
 
 impl ::sittir_core::prepare::Prepare for StringContentNodeSlot {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         match self {
             StringContentNodeSlot::Interpolation(t) => t.prepare(ctx),
             StringContentNodeSlot::StringContent(t) => t.prepare(ctx),
@@ -11397,7 +11341,7 @@ pub enum StringContentElementsNodeSlot {
 }
 
 impl ::sittir_core::prepare::Prepare for StringContentElementsNodeSlot {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         match self {
             StringContentElementsNodeSlot::EscapeInterpolation(t) => t.prepare(ctx),
             StringContentElementsNodeSlot::EscapeSequenceUnicodeFixed(t) => t.prepare(ctx),
@@ -11552,544 +11496,6 @@ impl ::sittir_core::render::Render for StringContentElementsNodeSlotRecord<'_> {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice, stamp = stamp, view = InterpolationExpressionNodeSlotRecord)]
-pub enum InterpolationExpressionNodeSlot {
-    #[kind(kind::COMPARISON_OPERATOR)]
-    ComparisonOperator(ComparisonOperatorNode),
-    #[kind(kind::NOT_OPERATOR)]
-    NotOperator(NotOperatorNode),
-    #[kind(kind::BOOLEAN_OPERATOR)]
-    BooleanOperator(BooleanOperatorNode),
-    #[kind(kind::LAMBDA)]
-    Lambda(LambdaNode),
-    #[kind(kind::AWAIT)]
-    Await(AwaitNode),
-    #[kind(kind::BINARY_OPERATOR)]
-    BinaryOperator(BinaryOperatorNode),
-    #[kind(kind::IDENTIFIER, folded(kind::__INIT_U_KEYWORD), folded(kind::TYPE_KEYWORD), folded(kind::PRINT_KEYWORD), folded(kind::EXEC_KEYWORD), folded(kind::ASYNC_KEYWORD), folded(kind::AWAIT_KEYWORD), folded(kind::MATCH_KEYWORD))]
-    Identifier(IdentifierNode),
-    #[kind(kind::STRING)]
-    String(StringNode),
-    #[kind(kind::CONCATENATED_STRING)]
-    ConcatenatedString(ConcatenatedStringNode),
-    #[kind(kind::INTEGER_HEX)]
-    IntegerHex(IntegerHexNode),
-    #[kind(kind::INTEGER_OCTAL)]
-    IntegerOctal(IntegerOctalNode),
-    #[kind(kind::INTEGER_BINARY)]
-    IntegerBinary(IntegerBinaryNode),
-    #[kind(kind::INTEGER_DECIMAL_LONG)]
-    IntegerDecimalLong(IntegerDecimalLongNode),
-    #[kind(kind::INTEGER_DECIMAL_IMAGINARY)]
-    IntegerDecimalImaginary(IntegerDecimalImaginaryNode),
-    #[kind(kind::INTEGER_DECIMAL_PLAIN)]
-    IntegerDecimalPlain(IntegerDecimalPlainNode),
-    #[kind(kind::FLOAT_POINT)]
-    FloatPoint(FloatPointNode),
-    #[kind(kind::FLOAT_LEADING_POINT)]
-    FloatLeadingPoint(FloatLeadingPointNode),
-    #[kind(kind::FLOAT_SCIENTIFIC)]
-    FloatScientific(FloatScientificNode),
-    #[kind(kind::UNARY_OPERATOR)]
-    UnaryOperator(UnaryOperatorNode),
-    #[kind(kind::ATTRIBUTE)]
-    Attribute(AttributeNode),
-    #[kind(kind::SUBSCRIPT)]
-    Subscript(SubscriptNode),
-    #[kind(kind::CALL)]
-    Call(CallNode),
-    #[kind(kind::LIST)]
-    List(ListNode),
-    #[kind(kind::LIST_COMPREHENSION)]
-    ListComprehension(ListComprehensionNode),
-    #[kind(kind::DICTIONARY)]
-    Dictionary(DictionaryNode),
-    #[kind(kind::DICTIONARY_COMPREHENSION)]
-    DictionaryComprehension(DictionaryComprehensionNode),
-    #[kind(kind::SET)]
-    Set(SetNode),
-    #[kind(kind::SET_COMPREHENSION)]
-    SetComprehension(SetComprehensionNode),
-    #[kind(kind::TUPLE)]
-    Tuple(TupleNode),
-    #[kind(kind::PARENTHESIZED_EXPRESSION)]
-    ParenthesizedExpression(ParenthesizedExpressionNode),
-    #[kind(kind::GENERATOR_EXPRESSION)]
-    GeneratorExpression(GeneratorExpressionNode),
-    #[kind(kind::LIST_SPLAT_PATTERN)]
-    ListSplatPattern(ListSplatPatternNode),
-    #[kind(kind::CONDITIONAL_EXPRESSION)]
-    ConditionalExpression(ConditionalExpressionNode),
-    #[kind(kind::NAMED_EXPRESSION)]
-    NamedExpression(NamedExpressionNode),
-    #[kind(kind::AS_PATTERN)]
-    AsPattern(AsPatternNode),
-    #[kind(kind::EXPRESSION_LIST)]
-    ExpressionList(ExpressionListNode),
-    #[kind(kind::PATTERN_LIST)]
-    PatternList(PatternListNode),
-    #[kind(kind::YIELD)]
-    Yield(YieldNode),
-    #[kind(kind::TRUE)]
-    #[node(edged)]
-    True(::sittir_core::options::Edges),
-    #[kind(kind::FALSE)]
-    #[node(edged)]
-    False(::sittir_core::options::Edges),
-    #[kind(kind::NONE)]
-    #[node(edged)]
-    None(::sittir_core::options::Edges),
-    #[kind(kind::ELLIPSIS)]
-    #[node(edged)]
-    Ellipsis(::sittir_core::options::Edges),
-    #[node(verbatim)]
-    Verbatim(VerbatimNode),
-}
-
-impl ::sittir_core::prepare::Prepare for InterpolationExpressionNodeSlot {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        match self {
-            InterpolationExpressionNodeSlot::ComparisonOperator(t) => t.prepare(ctx),
-            InterpolationExpressionNodeSlot::NotOperator(t) => t.prepare(ctx),
-            InterpolationExpressionNodeSlot::BooleanOperator(t) => t.prepare(ctx),
-            InterpolationExpressionNodeSlot::Lambda(t) => t.prepare(ctx),
-            InterpolationExpressionNodeSlot::Await(t) => t.prepare(ctx),
-            InterpolationExpressionNodeSlot::BinaryOperator(t) => t.prepare(ctx),
-            InterpolationExpressionNodeSlot::Identifier(t) => t.prepare(ctx),
-            InterpolationExpressionNodeSlot::String(t) => t.prepare(ctx),
-            InterpolationExpressionNodeSlot::ConcatenatedString(t) => t.prepare(ctx),
-            InterpolationExpressionNodeSlot::IntegerHex(t) => t.prepare(ctx),
-            InterpolationExpressionNodeSlot::IntegerOctal(t) => t.prepare(ctx),
-            InterpolationExpressionNodeSlot::IntegerBinary(t) => t.prepare(ctx),
-            InterpolationExpressionNodeSlot::IntegerDecimalLong(t) => t.prepare(ctx),
-            InterpolationExpressionNodeSlot::IntegerDecimalImaginary(t) => t.prepare(ctx),
-            InterpolationExpressionNodeSlot::IntegerDecimalPlain(t) => t.prepare(ctx),
-            InterpolationExpressionNodeSlot::FloatPoint(t) => t.prepare(ctx),
-            InterpolationExpressionNodeSlot::FloatLeadingPoint(t) => t.prepare(ctx),
-            InterpolationExpressionNodeSlot::FloatScientific(t) => t.prepare(ctx),
-            InterpolationExpressionNodeSlot::UnaryOperator(t) => t.prepare(ctx),
-            InterpolationExpressionNodeSlot::Attribute(t) => t.prepare(ctx),
-            InterpolationExpressionNodeSlot::Subscript(t) => t.prepare(ctx),
-            InterpolationExpressionNodeSlot::Call(t) => t.prepare(ctx),
-            InterpolationExpressionNodeSlot::List(t) => t.prepare(ctx),
-            InterpolationExpressionNodeSlot::ListComprehension(t) => t.prepare(ctx),
-            InterpolationExpressionNodeSlot::Dictionary(t) => t.prepare(ctx),
-            InterpolationExpressionNodeSlot::DictionaryComprehension(t) => t.prepare(ctx),
-            InterpolationExpressionNodeSlot::Set(t) => t.prepare(ctx),
-            InterpolationExpressionNodeSlot::SetComprehension(t) => t.prepare(ctx),
-            InterpolationExpressionNodeSlot::Tuple(t) => t.prepare(ctx),
-            InterpolationExpressionNodeSlot::ParenthesizedExpression(t) => t.prepare(ctx),
-            InterpolationExpressionNodeSlot::GeneratorExpression(t) => t.prepare(ctx),
-            InterpolationExpressionNodeSlot::ListSplatPattern(t) => t.prepare(ctx),
-            InterpolationExpressionNodeSlot::ConditionalExpression(t) => t.prepare(ctx),
-            InterpolationExpressionNodeSlot::NamedExpression(t) => t.prepare(ctx),
-            InterpolationExpressionNodeSlot::AsPattern(t) => t.prepare(ctx),
-            InterpolationExpressionNodeSlot::ExpressionList(t) => t.prepare(ctx),
-            InterpolationExpressionNodeSlot::PatternList(t) => t.prepare(ctx),
-            InterpolationExpressionNodeSlot::Yield(t) => t.prepare(ctx),
-            InterpolationExpressionNodeSlot::True(_) => Ok(()),
-            InterpolationExpressionNodeSlot::False(_) => Ok(()),
-            InterpolationExpressionNodeSlot::None(_) => Ok(()),
-            InterpolationExpressionNodeSlot::Ellipsis(_) => Ok(()),
-            InterpolationExpressionNodeSlot::Verbatim(t) => t.prepare(ctx),
-        }
-    }
-    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        match self {
-            InterpolationExpressionNodeSlot::ComparisonOperator(t) => t.gap_edges(),
-            InterpolationExpressionNodeSlot::NotOperator(t) => t.gap_edges(),
-            InterpolationExpressionNodeSlot::BooleanOperator(t) => t.gap_edges(),
-            InterpolationExpressionNodeSlot::Lambda(t) => t.gap_edges(),
-            InterpolationExpressionNodeSlot::Await(t) => t.gap_edges(),
-            InterpolationExpressionNodeSlot::BinaryOperator(t) => t.gap_edges(),
-            InterpolationExpressionNodeSlot::Identifier(t) => t.gap_edges(),
-            InterpolationExpressionNodeSlot::String(t) => t.gap_edges(),
-            InterpolationExpressionNodeSlot::ConcatenatedString(t) => t.gap_edges(),
-            InterpolationExpressionNodeSlot::IntegerHex(t) => t.gap_edges(),
-            InterpolationExpressionNodeSlot::IntegerOctal(t) => t.gap_edges(),
-            InterpolationExpressionNodeSlot::IntegerBinary(t) => t.gap_edges(),
-            InterpolationExpressionNodeSlot::IntegerDecimalLong(t) => t.gap_edges(),
-            InterpolationExpressionNodeSlot::IntegerDecimalImaginary(t) => t.gap_edges(),
-            InterpolationExpressionNodeSlot::IntegerDecimalPlain(t) => t.gap_edges(),
-            InterpolationExpressionNodeSlot::FloatPoint(t) => t.gap_edges(),
-            InterpolationExpressionNodeSlot::FloatLeadingPoint(t) => t.gap_edges(),
-            InterpolationExpressionNodeSlot::FloatScientific(t) => t.gap_edges(),
-            InterpolationExpressionNodeSlot::UnaryOperator(t) => t.gap_edges(),
-            InterpolationExpressionNodeSlot::Attribute(t) => t.gap_edges(),
-            InterpolationExpressionNodeSlot::Subscript(t) => t.gap_edges(),
-            InterpolationExpressionNodeSlot::Call(t) => t.gap_edges(),
-            InterpolationExpressionNodeSlot::List(t) => t.gap_edges(),
-            InterpolationExpressionNodeSlot::ListComprehension(t) => t.gap_edges(),
-            InterpolationExpressionNodeSlot::Dictionary(t) => t.gap_edges(),
-            InterpolationExpressionNodeSlot::DictionaryComprehension(t) => t.gap_edges(),
-            InterpolationExpressionNodeSlot::Set(t) => t.gap_edges(),
-            InterpolationExpressionNodeSlot::SetComprehension(t) => t.gap_edges(),
-            InterpolationExpressionNodeSlot::Tuple(t) => t.gap_edges(),
-            InterpolationExpressionNodeSlot::ParenthesizedExpression(t) => t.gap_edges(),
-            InterpolationExpressionNodeSlot::GeneratorExpression(t) => t.gap_edges(),
-            InterpolationExpressionNodeSlot::ListSplatPattern(t) => t.gap_edges(),
-            InterpolationExpressionNodeSlot::ConditionalExpression(t) => t.gap_edges(),
-            InterpolationExpressionNodeSlot::NamedExpression(t) => t.gap_edges(),
-            InterpolationExpressionNodeSlot::AsPattern(t) => t.gap_edges(),
-            InterpolationExpressionNodeSlot::ExpressionList(t) => t.gap_edges(),
-            InterpolationExpressionNodeSlot::PatternList(t) => t.gap_edges(),
-            InterpolationExpressionNodeSlot::Yield(t) => t.gap_edges(),
-            InterpolationExpressionNodeSlot::True(edges) => Some(edges),
-            InterpolationExpressionNodeSlot::False(edges) => Some(edges),
-            InterpolationExpressionNodeSlot::None(edges) => Some(edges),
-            InterpolationExpressionNodeSlot::Ellipsis(edges) => Some(edges),
-            InterpolationExpressionNodeSlot::Verbatim(t) => t.gap_edges(),
-        }
-    }
-    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
-        match self {
-            InterpolationExpressionNodeSlot::ComparisonOperator(t) => t.snapshot_edge(),
-            InterpolationExpressionNodeSlot::NotOperator(t) => t.snapshot_edge(),
-            InterpolationExpressionNodeSlot::BooleanOperator(t) => t.snapshot_edge(),
-            InterpolationExpressionNodeSlot::Lambda(t) => t.snapshot_edge(),
-            InterpolationExpressionNodeSlot::Await(t) => t.snapshot_edge(),
-            InterpolationExpressionNodeSlot::BinaryOperator(t) => t.snapshot_edge(),
-            InterpolationExpressionNodeSlot::Identifier(t) => t.snapshot_edge(),
-            InterpolationExpressionNodeSlot::String(t) => t.snapshot_edge(),
-            InterpolationExpressionNodeSlot::ConcatenatedString(t) => t.snapshot_edge(),
-            InterpolationExpressionNodeSlot::IntegerHex(t) => t.snapshot_edge(),
-            InterpolationExpressionNodeSlot::IntegerOctal(t) => t.snapshot_edge(),
-            InterpolationExpressionNodeSlot::IntegerBinary(t) => t.snapshot_edge(),
-            InterpolationExpressionNodeSlot::IntegerDecimalLong(t) => t.snapshot_edge(),
-            InterpolationExpressionNodeSlot::IntegerDecimalImaginary(t) => t.snapshot_edge(),
-            InterpolationExpressionNodeSlot::IntegerDecimalPlain(t) => t.snapshot_edge(),
-            InterpolationExpressionNodeSlot::FloatPoint(t) => t.snapshot_edge(),
-            InterpolationExpressionNodeSlot::FloatLeadingPoint(t) => t.snapshot_edge(),
-            InterpolationExpressionNodeSlot::FloatScientific(t) => t.snapshot_edge(),
-            InterpolationExpressionNodeSlot::UnaryOperator(t) => t.snapshot_edge(),
-            InterpolationExpressionNodeSlot::Attribute(t) => t.snapshot_edge(),
-            InterpolationExpressionNodeSlot::Subscript(t) => t.snapshot_edge(),
-            InterpolationExpressionNodeSlot::Call(t) => t.snapshot_edge(),
-            InterpolationExpressionNodeSlot::List(t) => t.snapshot_edge(),
-            InterpolationExpressionNodeSlot::ListComprehension(t) => t.snapshot_edge(),
-            InterpolationExpressionNodeSlot::Dictionary(t) => t.snapshot_edge(),
-            InterpolationExpressionNodeSlot::DictionaryComprehension(t) => t.snapshot_edge(),
-            InterpolationExpressionNodeSlot::Set(t) => t.snapshot_edge(),
-            InterpolationExpressionNodeSlot::SetComprehension(t) => t.snapshot_edge(),
-            InterpolationExpressionNodeSlot::Tuple(t) => t.snapshot_edge(),
-            InterpolationExpressionNodeSlot::ParenthesizedExpression(t) => t.snapshot_edge(),
-            InterpolationExpressionNodeSlot::GeneratorExpression(t) => t.snapshot_edge(),
-            InterpolationExpressionNodeSlot::ListSplatPattern(t) => t.snapshot_edge(),
-            InterpolationExpressionNodeSlot::ConditionalExpression(t) => t.snapshot_edge(),
-            InterpolationExpressionNodeSlot::NamedExpression(t) => t.snapshot_edge(),
-            InterpolationExpressionNodeSlot::AsPattern(t) => t.snapshot_edge(),
-            InterpolationExpressionNodeSlot::ExpressionList(t) => t.snapshot_edge(),
-            InterpolationExpressionNodeSlot::PatternList(t) => t.snapshot_edge(),
-            InterpolationExpressionNodeSlot::Yield(t) => t.snapshot_edge(),
-            InterpolationExpressionNodeSlot::True(_) => None,
-            InterpolationExpressionNodeSlot::False(_) => None,
-            InterpolationExpressionNodeSlot::None(_) => None,
-            InterpolationExpressionNodeSlot::Ellipsis(_) => None,
-            InterpolationExpressionNodeSlot::Verbatim(t) => t.snapshot_edge(),
-        }
-    }
-    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
-        match self {
-            InterpolationExpressionNodeSlot::ComparisonOperator(t) => t.source_coordinate(),
-            InterpolationExpressionNodeSlot::NotOperator(t) => t.source_coordinate(),
-            InterpolationExpressionNodeSlot::BooleanOperator(t) => t.source_coordinate(),
-            InterpolationExpressionNodeSlot::Lambda(t) => t.source_coordinate(),
-            InterpolationExpressionNodeSlot::Await(t) => t.source_coordinate(),
-            InterpolationExpressionNodeSlot::BinaryOperator(t) => t.source_coordinate(),
-            InterpolationExpressionNodeSlot::Identifier(t) => t.source_coordinate(),
-            InterpolationExpressionNodeSlot::String(t) => t.source_coordinate(),
-            InterpolationExpressionNodeSlot::ConcatenatedString(t) => t.source_coordinate(),
-            InterpolationExpressionNodeSlot::IntegerHex(t) => t.source_coordinate(),
-            InterpolationExpressionNodeSlot::IntegerOctal(t) => t.source_coordinate(),
-            InterpolationExpressionNodeSlot::IntegerBinary(t) => t.source_coordinate(),
-            InterpolationExpressionNodeSlot::IntegerDecimalLong(t) => t.source_coordinate(),
-            InterpolationExpressionNodeSlot::IntegerDecimalImaginary(t) => t.source_coordinate(),
-            InterpolationExpressionNodeSlot::IntegerDecimalPlain(t) => t.source_coordinate(),
-            InterpolationExpressionNodeSlot::FloatPoint(t) => t.source_coordinate(),
-            InterpolationExpressionNodeSlot::FloatLeadingPoint(t) => t.source_coordinate(),
-            InterpolationExpressionNodeSlot::FloatScientific(t) => t.source_coordinate(),
-            InterpolationExpressionNodeSlot::UnaryOperator(t) => t.source_coordinate(),
-            InterpolationExpressionNodeSlot::Attribute(t) => t.source_coordinate(),
-            InterpolationExpressionNodeSlot::Subscript(t) => t.source_coordinate(),
-            InterpolationExpressionNodeSlot::Call(t) => t.source_coordinate(),
-            InterpolationExpressionNodeSlot::List(t) => t.source_coordinate(),
-            InterpolationExpressionNodeSlot::ListComprehension(t) => t.source_coordinate(),
-            InterpolationExpressionNodeSlot::Dictionary(t) => t.source_coordinate(),
-            InterpolationExpressionNodeSlot::DictionaryComprehension(t) => t.source_coordinate(),
-            InterpolationExpressionNodeSlot::Set(t) => t.source_coordinate(),
-            InterpolationExpressionNodeSlot::SetComprehension(t) => t.source_coordinate(),
-            InterpolationExpressionNodeSlot::Tuple(t) => t.source_coordinate(),
-            InterpolationExpressionNodeSlot::ParenthesizedExpression(t) => t.source_coordinate(),
-            InterpolationExpressionNodeSlot::GeneratorExpression(t) => t.source_coordinate(),
-            InterpolationExpressionNodeSlot::ListSplatPattern(t) => t.source_coordinate(),
-            InterpolationExpressionNodeSlot::ConditionalExpression(t) => t.source_coordinate(),
-            InterpolationExpressionNodeSlot::NamedExpression(t) => t.source_coordinate(),
-            InterpolationExpressionNodeSlot::AsPattern(t) => t.source_coordinate(),
-            InterpolationExpressionNodeSlot::ExpressionList(t) => t.source_coordinate(),
-            InterpolationExpressionNodeSlot::PatternList(t) => t.source_coordinate(),
-            InterpolationExpressionNodeSlot::Yield(t) => t.source_coordinate(),
-            InterpolationExpressionNodeSlot::True(_) => None,
-            InterpolationExpressionNodeSlot::False(_) => None,
-            InterpolationExpressionNodeSlot::None(_) => None,
-            InterpolationExpressionNodeSlot::Ellipsis(_) => None,
-            InterpolationExpressionNodeSlot::Verbatim(t) => t.source_coordinate(),
-        }
-    }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
-        match self {
-            InterpolationExpressionNodeSlot::ComparisonOperator(t) => t.source_separator(ctx),
-            InterpolationExpressionNodeSlot::NotOperator(t) => t.source_separator(ctx),
-            InterpolationExpressionNodeSlot::BooleanOperator(t) => t.source_separator(ctx),
-            InterpolationExpressionNodeSlot::Lambda(t) => t.source_separator(ctx),
-            InterpolationExpressionNodeSlot::Await(t) => t.source_separator(ctx),
-            InterpolationExpressionNodeSlot::BinaryOperator(t) => t.source_separator(ctx),
-            InterpolationExpressionNodeSlot::Identifier(t) => t.source_separator(ctx),
-            InterpolationExpressionNodeSlot::String(t) => t.source_separator(ctx),
-            InterpolationExpressionNodeSlot::ConcatenatedString(t) => t.source_separator(ctx),
-            InterpolationExpressionNodeSlot::IntegerHex(t) => t.source_separator(ctx),
-            InterpolationExpressionNodeSlot::IntegerOctal(t) => t.source_separator(ctx),
-            InterpolationExpressionNodeSlot::IntegerBinary(t) => t.source_separator(ctx),
-            InterpolationExpressionNodeSlot::IntegerDecimalLong(t) => t.source_separator(ctx),
-            InterpolationExpressionNodeSlot::IntegerDecimalImaginary(t) => t.source_separator(ctx),
-            InterpolationExpressionNodeSlot::IntegerDecimalPlain(t) => t.source_separator(ctx),
-            InterpolationExpressionNodeSlot::FloatPoint(t) => t.source_separator(ctx),
-            InterpolationExpressionNodeSlot::FloatLeadingPoint(t) => t.source_separator(ctx),
-            InterpolationExpressionNodeSlot::FloatScientific(t) => t.source_separator(ctx),
-            InterpolationExpressionNodeSlot::UnaryOperator(t) => t.source_separator(ctx),
-            InterpolationExpressionNodeSlot::Attribute(t) => t.source_separator(ctx),
-            InterpolationExpressionNodeSlot::Subscript(t) => t.source_separator(ctx),
-            InterpolationExpressionNodeSlot::Call(t) => t.source_separator(ctx),
-            InterpolationExpressionNodeSlot::List(t) => t.source_separator(ctx),
-            InterpolationExpressionNodeSlot::ListComprehension(t) => t.source_separator(ctx),
-            InterpolationExpressionNodeSlot::Dictionary(t) => t.source_separator(ctx),
-            InterpolationExpressionNodeSlot::DictionaryComprehension(t) => t.source_separator(ctx),
-            InterpolationExpressionNodeSlot::Set(t) => t.source_separator(ctx),
-            InterpolationExpressionNodeSlot::SetComprehension(t) => t.source_separator(ctx),
-            InterpolationExpressionNodeSlot::Tuple(t) => t.source_separator(ctx),
-            InterpolationExpressionNodeSlot::ParenthesizedExpression(t) => t.source_separator(ctx),
-            InterpolationExpressionNodeSlot::GeneratorExpression(t) => t.source_separator(ctx),
-            InterpolationExpressionNodeSlot::ListSplatPattern(t) => t.source_separator(ctx),
-            InterpolationExpressionNodeSlot::ConditionalExpression(t) => t.source_separator(ctx),
-            InterpolationExpressionNodeSlot::NamedExpression(t) => t.source_separator(ctx),
-            InterpolationExpressionNodeSlot::AsPattern(t) => t.source_separator(ctx),
-            InterpolationExpressionNodeSlot::ExpressionList(t) => t.source_separator(ctx),
-            InterpolationExpressionNodeSlot::PatternList(t) => t.source_separator(ctx),
-            InterpolationExpressionNodeSlot::Yield(t) => t.source_separator(ctx),
-            InterpolationExpressionNodeSlot::True(_) => None,
-            InterpolationExpressionNodeSlot::False(_) => None,
-            InterpolationExpressionNodeSlot::None(_) => None,
-            InterpolationExpressionNodeSlot::Ellipsis(_) => None,
-            InterpolationExpressionNodeSlot::Verbatim(t) => t.source_separator(ctx),
-        }
-    }
-    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &mut ::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
-        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
-    }
-}
-
-impl ::sittir_core::view::KindOf for InterpolationExpressionNodeSlot {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        match self {
-            Self::ComparisonOperator(inner) => inner.kind_in(kinds),
-            Self::NotOperator(inner) => inner.kind_in(kinds),
-            Self::BooleanOperator(inner) => inner.kind_in(kinds),
-            Self::Lambda(inner) => inner.kind_in(kinds),
-            Self::Await(inner) => inner.kind_in(kinds),
-            Self::BinaryOperator(inner) => inner.kind_in(kinds),
-            Self::Identifier(inner) => inner.kind_in(kinds),
-            Self::String(inner) => inner.kind_in(kinds),
-            Self::ConcatenatedString(inner) => inner.kind_in(kinds),
-            Self::IntegerHex(inner) => inner.kind_in(kinds),
-            Self::IntegerOctal(inner) => inner.kind_in(kinds),
-            Self::IntegerBinary(inner) => inner.kind_in(kinds),
-            Self::IntegerDecimalLong(inner) => inner.kind_in(kinds),
-            Self::IntegerDecimalImaginary(inner) => inner.kind_in(kinds),
-            Self::IntegerDecimalPlain(inner) => inner.kind_in(kinds),
-            Self::FloatPoint(inner) => inner.kind_in(kinds),
-            Self::FloatLeadingPoint(inner) => inner.kind_in(kinds),
-            Self::FloatScientific(inner) => inner.kind_in(kinds),
-            Self::UnaryOperator(inner) => inner.kind_in(kinds),
-            Self::Attribute(inner) => inner.kind_in(kinds),
-            Self::Subscript(inner) => inner.kind_in(kinds),
-            Self::Call(inner) => inner.kind_in(kinds),
-            Self::List(inner) => inner.kind_in(kinds),
-            Self::ListComprehension(inner) => inner.kind_in(kinds),
-            Self::Dictionary(inner) => inner.kind_in(kinds),
-            Self::DictionaryComprehension(inner) => inner.kind_in(kinds),
-            Self::Set(inner) => inner.kind_in(kinds),
-            Self::SetComprehension(inner) => inner.kind_in(kinds),
-            Self::Tuple(inner) => inner.kind_in(kinds),
-            Self::ParenthesizedExpression(inner) => inner.kind_in(kinds),
-            Self::GeneratorExpression(inner) => inner.kind_in(kinds),
-            Self::ListSplatPattern(inner) => inner.kind_in(kinds),
-            Self::ConditionalExpression(inner) => inner.kind_in(kinds),
-            Self::NamedExpression(inner) => inner.kind_in(kinds),
-            Self::AsPattern(inner) => inner.kind_in(kinds),
-            Self::ExpressionList(inner) => inner.kind_in(kinds),
-            Self::PatternList(inner) => inner.kind_in(kinds),
-            Self::Yield(inner) => inner.kind_in(kinds),
-            Self::True(_) => [::sittir_core::types::KindId(69)].iter().any(|k| kinds.contains(k)),
-            Self::False(_) => [::sittir_core::types::KindId(70)].iter().any(|k| kinds.contains(k)),
-            Self::None(_) => [::sittir_core::types::KindId(71)].iter().any(|k| kinds.contains(k)),
-            Self::Ellipsis(_) => [::sittir_core::types::KindId(63)].iter().any(|k| kinds.contains(k)),
-            Self::Verbatim(_) => [::sittir_core::types::KindId(1), ::sittir_core::types::KindId(93), ::sittir_core::types::KindId(94), ::sittir_core::types::KindId(95)].iter().any(|k| kinds.contains(k)),
-        }
-    }
-}
-
-impl ::sittir_core::render::Render for InterpolationExpressionNodeSlot {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        match self {
-            InterpolationExpressionNodeSlot::ComparisonOperator(inner) => inner.render(w),
-            InterpolationExpressionNodeSlot::NotOperator(inner) => inner.render(w),
-            InterpolationExpressionNodeSlot::BooleanOperator(inner) => inner.render(w),
-            InterpolationExpressionNodeSlot::Lambda(inner) => inner.render(w),
-            InterpolationExpressionNodeSlot::Await(inner) => inner.render(w),
-            InterpolationExpressionNodeSlot::BinaryOperator(inner) => inner.render(w),
-            InterpolationExpressionNodeSlot::Identifier(inner) => inner.render(w),
-            InterpolationExpressionNodeSlot::String(inner) => inner.render(w),
-            InterpolationExpressionNodeSlot::ConcatenatedString(inner) => inner.render(w),
-            InterpolationExpressionNodeSlot::IntegerHex(inner) => inner.render(w),
-            InterpolationExpressionNodeSlot::IntegerOctal(inner) => inner.render(w),
-            InterpolationExpressionNodeSlot::IntegerBinary(inner) => inner.render(w),
-            InterpolationExpressionNodeSlot::IntegerDecimalLong(inner) => inner.render(w),
-            InterpolationExpressionNodeSlot::IntegerDecimalImaginary(inner) => inner.render(w),
-            InterpolationExpressionNodeSlot::IntegerDecimalPlain(inner) => inner.render(w),
-            InterpolationExpressionNodeSlot::FloatPoint(inner) => inner.render(w),
-            InterpolationExpressionNodeSlot::FloatLeadingPoint(inner) => inner.render(w),
-            InterpolationExpressionNodeSlot::FloatScientific(inner) => inner.render(w),
-            InterpolationExpressionNodeSlot::UnaryOperator(inner) => inner.render(w),
-            InterpolationExpressionNodeSlot::Attribute(inner) => inner.render(w),
-            InterpolationExpressionNodeSlot::Subscript(inner) => inner.render(w),
-            InterpolationExpressionNodeSlot::Call(inner) => inner.render(w),
-            InterpolationExpressionNodeSlot::List(inner) => inner.render(w),
-            InterpolationExpressionNodeSlot::ListComprehension(inner) => inner.render(w),
-            InterpolationExpressionNodeSlot::Dictionary(inner) => inner.render(w),
-            InterpolationExpressionNodeSlot::DictionaryComprehension(inner) => inner.render(w),
-            InterpolationExpressionNodeSlot::Set(inner) => inner.render(w),
-            InterpolationExpressionNodeSlot::SetComprehension(inner) => inner.render(w),
-            InterpolationExpressionNodeSlot::Tuple(inner) => inner.render(w),
-            InterpolationExpressionNodeSlot::ParenthesizedExpression(inner) => inner.render(w),
-            InterpolationExpressionNodeSlot::GeneratorExpression(inner) => inner.render(w),
-            InterpolationExpressionNodeSlot::ListSplatPattern(inner) => inner.render(w),
-            InterpolationExpressionNodeSlot::ConditionalExpression(inner) => inner.render(w),
-            InterpolationExpressionNodeSlot::NamedExpression(inner) => inner.render(w),
-            InterpolationExpressionNodeSlot::AsPattern(inner) => inner.render(w),
-            InterpolationExpressionNodeSlot::ExpressionList(inner) => inner.render(w),
-            InterpolationExpressionNodeSlot::PatternList(inner) => inner.render(w),
-            InterpolationExpressionNodeSlot::Yield(inner) => inner.render(w),
-            InterpolationExpressionNodeSlot::True(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(69), edges, w, render_true),
-            InterpolationExpressionNodeSlot::False(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(70), edges, w, render_false),
-            InterpolationExpressionNodeSlot::None(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(71), edges, w, render_none),
-            InterpolationExpressionNodeSlot::Ellipsis(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(63), edges, w, render_ellipsis),
-            InterpolationExpressionNodeSlot::Verbatim(inner) => inner.render(w),
-        }
-    }
-}
-
-::sittir_core::records_codec! {
-impl ::sittir_core::view::KindOf for InterpolationExpressionNodeSlotRecord<'_> {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        match self {
-            Self::ComparisonOperator(inner) => inner.kind_in(kinds),
-            Self::NotOperator(inner) => inner.kind_in(kinds),
-            Self::BooleanOperator(inner) => inner.kind_in(kinds),
-            Self::Lambda(inner) => inner.kind_in(kinds),
-            Self::Await(inner) => inner.kind_in(kinds),
-            Self::BinaryOperator(inner) => inner.kind_in(kinds),
-            Self::Identifier(inner) => inner.kind_in(kinds),
-            Self::String(inner) => inner.kind_in(kinds),
-            Self::ConcatenatedString(inner) => inner.kind_in(kinds),
-            Self::IntegerHex(inner) => inner.kind_in(kinds),
-            Self::IntegerOctal(inner) => inner.kind_in(kinds),
-            Self::IntegerBinary(inner) => inner.kind_in(kinds),
-            Self::IntegerDecimalLong(inner) => inner.kind_in(kinds),
-            Self::IntegerDecimalImaginary(inner) => inner.kind_in(kinds),
-            Self::IntegerDecimalPlain(inner) => inner.kind_in(kinds),
-            Self::FloatPoint(inner) => inner.kind_in(kinds),
-            Self::FloatLeadingPoint(inner) => inner.kind_in(kinds),
-            Self::FloatScientific(inner) => inner.kind_in(kinds),
-            Self::UnaryOperator(inner) => inner.kind_in(kinds),
-            Self::Attribute(inner) => inner.kind_in(kinds),
-            Self::Subscript(inner) => inner.kind_in(kinds),
-            Self::Call(inner) => inner.kind_in(kinds),
-            Self::List(inner) => inner.kind_in(kinds),
-            Self::ListComprehension(inner) => inner.kind_in(kinds),
-            Self::Dictionary(inner) => inner.kind_in(kinds),
-            Self::DictionaryComprehension(inner) => inner.kind_in(kinds),
-            Self::Set(inner) => inner.kind_in(kinds),
-            Self::SetComprehension(inner) => inner.kind_in(kinds),
-            Self::Tuple(inner) => inner.kind_in(kinds),
-            Self::ParenthesizedExpression(inner) => inner.kind_in(kinds),
-            Self::GeneratorExpression(inner) => inner.kind_in(kinds),
-            Self::ListSplatPattern(inner) => inner.kind_in(kinds),
-            Self::ConditionalExpression(inner) => inner.kind_in(kinds),
-            Self::NamedExpression(inner) => inner.kind_in(kinds),
-            Self::AsPattern(inner) => inner.kind_in(kinds),
-            Self::ExpressionList(inner) => inner.kind_in(kinds),
-            Self::PatternList(inner) => inner.kind_in(kinds),
-            Self::Yield(inner) => inner.kind_in(kinds),
-            Self::True(_) => [::sittir_core::types::KindId(69)].iter().any(|k| kinds.contains(k)),
-            Self::False(_) => [::sittir_core::types::KindId(70)].iter().any(|k| kinds.contains(k)),
-            Self::None(_) => [::sittir_core::types::KindId(71)].iter().any(|k| kinds.contains(k)),
-            Self::Ellipsis(_) => [::sittir_core::types::KindId(63)].iter().any(|k| kinds.contains(k)),
-            Self::Verbatim(_) => [::sittir_core::types::KindId(1), ::sittir_core::types::KindId(93), ::sittir_core::types::KindId(94), ::sittir_core::types::KindId(95)].iter().any(|k| kinds.contains(k)),
-        }
-    }
-}
-
-impl ::sittir_core::render::Render for InterpolationExpressionNodeSlotRecord<'_> {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        match self {
-            InterpolationExpressionNodeSlotRecord::ComparisonOperator(inner) => inner.render(w),
-            InterpolationExpressionNodeSlotRecord::NotOperator(inner) => inner.render(w),
-            InterpolationExpressionNodeSlotRecord::BooleanOperator(inner) => inner.render(w),
-            InterpolationExpressionNodeSlotRecord::Lambda(inner) => inner.render(w),
-            InterpolationExpressionNodeSlotRecord::Await(inner) => inner.render(w),
-            InterpolationExpressionNodeSlotRecord::BinaryOperator(inner) => inner.render(w),
-            InterpolationExpressionNodeSlotRecord::Identifier(inner) => inner.render(w),
-            InterpolationExpressionNodeSlotRecord::String(inner) => inner.render(w),
-            InterpolationExpressionNodeSlotRecord::ConcatenatedString(inner) => inner.render(w),
-            InterpolationExpressionNodeSlotRecord::IntegerHex(inner) => inner.render(w),
-            InterpolationExpressionNodeSlotRecord::IntegerOctal(inner) => inner.render(w),
-            InterpolationExpressionNodeSlotRecord::IntegerBinary(inner) => inner.render(w),
-            InterpolationExpressionNodeSlotRecord::IntegerDecimalLong(inner) => inner.render(w),
-            InterpolationExpressionNodeSlotRecord::IntegerDecimalImaginary(inner) => inner.render(w),
-            InterpolationExpressionNodeSlotRecord::IntegerDecimalPlain(inner) => inner.render(w),
-            InterpolationExpressionNodeSlotRecord::FloatPoint(inner) => inner.render(w),
-            InterpolationExpressionNodeSlotRecord::FloatLeadingPoint(inner) => inner.render(w),
-            InterpolationExpressionNodeSlotRecord::FloatScientific(inner) => inner.render(w),
-            InterpolationExpressionNodeSlotRecord::UnaryOperator(inner) => inner.render(w),
-            InterpolationExpressionNodeSlotRecord::Attribute(inner) => inner.render(w),
-            InterpolationExpressionNodeSlotRecord::Subscript(inner) => inner.render(w),
-            InterpolationExpressionNodeSlotRecord::Call(inner) => inner.render(w),
-            InterpolationExpressionNodeSlotRecord::List(inner) => inner.render(w),
-            InterpolationExpressionNodeSlotRecord::ListComprehension(inner) => inner.render(w),
-            InterpolationExpressionNodeSlotRecord::Dictionary(inner) => inner.render(w),
-            InterpolationExpressionNodeSlotRecord::DictionaryComprehension(inner) => inner.render(w),
-            InterpolationExpressionNodeSlotRecord::Set(inner) => inner.render(w),
-            InterpolationExpressionNodeSlotRecord::SetComprehension(inner) => inner.render(w),
-            InterpolationExpressionNodeSlotRecord::Tuple(inner) => inner.render(w),
-            InterpolationExpressionNodeSlotRecord::ParenthesizedExpression(inner) => inner.render(w),
-            InterpolationExpressionNodeSlotRecord::GeneratorExpression(inner) => inner.render(w),
-            InterpolationExpressionNodeSlotRecord::ListSplatPattern(inner) => inner.render(w),
-            InterpolationExpressionNodeSlotRecord::ConditionalExpression(inner) => inner.render(w),
-            InterpolationExpressionNodeSlotRecord::NamedExpression(inner) => inner.render(w),
-            InterpolationExpressionNodeSlotRecord::AsPattern(inner) => inner.render(w),
-            InterpolationExpressionNodeSlotRecord::ExpressionList(inner) => inner.render(w),
-            InterpolationExpressionNodeSlotRecord::PatternList(inner) => inner.render(w),
-            InterpolationExpressionNodeSlotRecord::Yield(inner) => inner.render(w),
-            InterpolationExpressionNodeSlotRecord::True(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(69), edges, w, render_true),
-            InterpolationExpressionNodeSlotRecord::False(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(70), edges, w, render_false),
-            InterpolationExpressionNodeSlotRecord::None(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(71), edges, w, render_none),
-            InterpolationExpressionNodeSlotRecord::Ellipsis(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(63), edges, w, render_ellipsis),
-            InterpolationExpressionNodeSlotRecord::Verbatim(inner) => inner.render(w),
-        }
-    }
-}
-}
-
-#[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
 #[node(choice, stamp = stamp, view = FormatSpecifierElementsNodeSlotRecord)]
 pub enum FormatSpecifierElementsNodeSlot {
     #[kind(kind::FORMAT_SPECIFIER_TEXT)]
@@ -12101,7 +11507,7 @@ pub enum FormatSpecifierElementsNodeSlot {
 }
 
 impl ::sittir_core::prepare::Prepare for FormatSpecifierElementsNodeSlot {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         match self {
             FormatSpecifierElementsNodeSlot::FormatSpecifierText(t) => t.prepare(ctx),
             FormatSpecifierElementsNodeSlot::FormatExpression(t) => t.prepare(ctx),
@@ -12281,7 +11687,7 @@ pub enum ArgumentListElementsItemNodeSlot {
 }
 
 impl ::sittir_core::prepare::Prepare for ArgumentListElementsItemNodeSlot {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         match self {
             ArgumentListElementsItemNodeSlot::ComparisonOperator(t) => t.prepare(ctx),
             ArgumentListElementsItemNodeSlot::NotOperator(t) => t.prepare(ctx),
@@ -12736,7 +12142,7 @@ impl ::sittir_core::render::Render for ArgumentListElementsItemNodeSlotRecord<'_
 #[node(choice, stamp = stamp, view = DictPatternElementsItemNodeSlotRecord)]
 pub enum DictPatternElementsItemNodeSlot {
     #[kind(kind::_KEY_VALUE_PATTERN)]
-    KeyValuePattern(KeyValuePatternNode),
+    KeyValuePattern(Box<KeyValuePatternNode>),
     #[kind(kind::SPLAT_PATTERN_LIST)]
     SplatPatternList(SplatPatternListNode),
     #[kind(kind::SPLAT_PATTERN_DICTIONARY)]
@@ -12744,7 +12150,7 @@ pub enum DictPatternElementsItemNodeSlot {
 }
 
 impl ::sittir_core::prepare::Prepare for DictPatternElementsItemNodeSlot {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         match self {
             DictPatternElementsItemNodeSlot::KeyValuePattern(t) => t.prepare(ctx),
             DictPatternElementsItemNodeSlot::SplatPatternList(t) => t.prepare(ctx),
@@ -12797,7 +12203,7 @@ impl ::sittir_core::view::KindOf for DictPatternElementsItemNodeSlot {
 impl ::sittir_core::render::Render for DictPatternElementsItemNodeSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            DictPatternElementsItemNodeSlot::KeyValuePattern(inner) => inner.render(w),
+            DictPatternElementsItemNodeSlot::KeyValuePattern(inner) => inner.as_ref().render(w),
             DictPatternElementsItemNodeSlot::SplatPatternList(inner) => inner.render(w),
             DictPatternElementsItemNodeSlot::SplatPatternDictionary(inner) => inner.render(w),
         }
@@ -12827,8 +12233,8 @@ impl ::sittir_core::render::Render for DictPatternElementsItemNodeSlotRecord<'_>
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice, stamp = stamp, view = SubscriptsSubscriptNodeSlotRecord)]
-pub enum SubscriptsSubscriptNodeSlot {
+#[node(choice, stamp = stamp, view = SubscriptsElementsNodeSlotRecord)]
+pub enum SubscriptsElementsNodeSlot {
     #[kind(kind::COMPARISON_OPERATOR)]
     ComparisonOperator(ComparisonOperatorNode),
     #[kind(kind::NOT_OPERATOR)]
@@ -12917,230 +12323,230 @@ pub enum SubscriptsSubscriptNodeSlot {
     Verbatim(VerbatimNode),
 }
 
-impl ::sittir_core::prepare::Prepare for SubscriptsSubscriptNodeSlot {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+impl ::sittir_core::prepare::Prepare for SubscriptsElementsNodeSlot {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         match self {
-            SubscriptsSubscriptNodeSlot::ComparisonOperator(t) => t.prepare(ctx),
-            SubscriptsSubscriptNodeSlot::NotOperator(t) => t.prepare(ctx),
-            SubscriptsSubscriptNodeSlot::BooleanOperator(t) => t.prepare(ctx),
-            SubscriptsSubscriptNodeSlot::Lambda(t) => t.prepare(ctx),
-            SubscriptsSubscriptNodeSlot::Await(t) => t.prepare(ctx),
-            SubscriptsSubscriptNodeSlot::BinaryOperator(t) => t.prepare(ctx),
-            SubscriptsSubscriptNodeSlot::Identifier(t) => t.prepare(ctx),
-            SubscriptsSubscriptNodeSlot::String(t) => t.prepare(ctx),
-            SubscriptsSubscriptNodeSlot::ConcatenatedString(t) => t.prepare(ctx),
-            SubscriptsSubscriptNodeSlot::IntegerHex(t) => t.prepare(ctx),
-            SubscriptsSubscriptNodeSlot::IntegerOctal(t) => t.prepare(ctx),
-            SubscriptsSubscriptNodeSlot::IntegerBinary(t) => t.prepare(ctx),
-            SubscriptsSubscriptNodeSlot::IntegerDecimalLong(t) => t.prepare(ctx),
-            SubscriptsSubscriptNodeSlot::IntegerDecimalImaginary(t) => t.prepare(ctx),
-            SubscriptsSubscriptNodeSlot::IntegerDecimalPlain(t) => t.prepare(ctx),
-            SubscriptsSubscriptNodeSlot::FloatPoint(t) => t.prepare(ctx),
-            SubscriptsSubscriptNodeSlot::FloatLeadingPoint(t) => t.prepare(ctx),
-            SubscriptsSubscriptNodeSlot::FloatScientific(t) => t.prepare(ctx),
-            SubscriptsSubscriptNodeSlot::UnaryOperator(t) => t.prepare(ctx),
-            SubscriptsSubscriptNodeSlot::Attribute(t) => t.prepare(ctx),
-            SubscriptsSubscriptNodeSlot::Subscript(t) => t.prepare(ctx),
-            SubscriptsSubscriptNodeSlot::Call(t) => t.prepare(ctx),
-            SubscriptsSubscriptNodeSlot::List(t) => t.prepare(ctx),
-            SubscriptsSubscriptNodeSlot::ListComprehension(t) => t.prepare(ctx),
-            SubscriptsSubscriptNodeSlot::Dictionary(t) => t.prepare(ctx),
-            SubscriptsSubscriptNodeSlot::DictionaryComprehension(t) => t.prepare(ctx),
-            SubscriptsSubscriptNodeSlot::Set(t) => t.prepare(ctx),
-            SubscriptsSubscriptNodeSlot::SetComprehension(t) => t.prepare(ctx),
-            SubscriptsSubscriptNodeSlot::Tuple(t) => t.prepare(ctx),
-            SubscriptsSubscriptNodeSlot::ParenthesizedExpression(t) => t.prepare(ctx),
-            SubscriptsSubscriptNodeSlot::GeneratorExpression(t) => t.prepare(ctx),
-            SubscriptsSubscriptNodeSlot::ListSplatPattern(t) => t.prepare(ctx),
-            SubscriptsSubscriptNodeSlot::ConditionalExpression(t) => t.prepare(ctx),
-            SubscriptsSubscriptNodeSlot::NamedExpression(t) => t.prepare(ctx),
-            SubscriptsSubscriptNodeSlot::AsPattern(t) => t.prepare(ctx),
-            SubscriptsSubscriptNodeSlot::Slice(t) => t.prepare(ctx),
-            SubscriptsSubscriptNodeSlot::True(_) => Ok(()),
-            SubscriptsSubscriptNodeSlot::False(_) => Ok(()),
-            SubscriptsSubscriptNodeSlot::None(_) => Ok(()),
-            SubscriptsSubscriptNodeSlot::Ellipsis(_) => Ok(()),
-            SubscriptsSubscriptNodeSlot::Verbatim(t) => t.prepare(ctx),
+            SubscriptsElementsNodeSlot::ComparisonOperator(t) => t.prepare(ctx),
+            SubscriptsElementsNodeSlot::NotOperator(t) => t.prepare(ctx),
+            SubscriptsElementsNodeSlot::BooleanOperator(t) => t.prepare(ctx),
+            SubscriptsElementsNodeSlot::Lambda(t) => t.prepare(ctx),
+            SubscriptsElementsNodeSlot::Await(t) => t.prepare(ctx),
+            SubscriptsElementsNodeSlot::BinaryOperator(t) => t.prepare(ctx),
+            SubscriptsElementsNodeSlot::Identifier(t) => t.prepare(ctx),
+            SubscriptsElementsNodeSlot::String(t) => t.prepare(ctx),
+            SubscriptsElementsNodeSlot::ConcatenatedString(t) => t.prepare(ctx),
+            SubscriptsElementsNodeSlot::IntegerHex(t) => t.prepare(ctx),
+            SubscriptsElementsNodeSlot::IntegerOctal(t) => t.prepare(ctx),
+            SubscriptsElementsNodeSlot::IntegerBinary(t) => t.prepare(ctx),
+            SubscriptsElementsNodeSlot::IntegerDecimalLong(t) => t.prepare(ctx),
+            SubscriptsElementsNodeSlot::IntegerDecimalImaginary(t) => t.prepare(ctx),
+            SubscriptsElementsNodeSlot::IntegerDecimalPlain(t) => t.prepare(ctx),
+            SubscriptsElementsNodeSlot::FloatPoint(t) => t.prepare(ctx),
+            SubscriptsElementsNodeSlot::FloatLeadingPoint(t) => t.prepare(ctx),
+            SubscriptsElementsNodeSlot::FloatScientific(t) => t.prepare(ctx),
+            SubscriptsElementsNodeSlot::UnaryOperator(t) => t.prepare(ctx),
+            SubscriptsElementsNodeSlot::Attribute(t) => t.prepare(ctx),
+            SubscriptsElementsNodeSlot::Subscript(t) => t.prepare(ctx),
+            SubscriptsElementsNodeSlot::Call(t) => t.prepare(ctx),
+            SubscriptsElementsNodeSlot::List(t) => t.prepare(ctx),
+            SubscriptsElementsNodeSlot::ListComprehension(t) => t.prepare(ctx),
+            SubscriptsElementsNodeSlot::Dictionary(t) => t.prepare(ctx),
+            SubscriptsElementsNodeSlot::DictionaryComprehension(t) => t.prepare(ctx),
+            SubscriptsElementsNodeSlot::Set(t) => t.prepare(ctx),
+            SubscriptsElementsNodeSlot::SetComprehension(t) => t.prepare(ctx),
+            SubscriptsElementsNodeSlot::Tuple(t) => t.prepare(ctx),
+            SubscriptsElementsNodeSlot::ParenthesizedExpression(t) => t.prepare(ctx),
+            SubscriptsElementsNodeSlot::GeneratorExpression(t) => t.prepare(ctx),
+            SubscriptsElementsNodeSlot::ListSplatPattern(t) => t.prepare(ctx),
+            SubscriptsElementsNodeSlot::ConditionalExpression(t) => t.prepare(ctx),
+            SubscriptsElementsNodeSlot::NamedExpression(t) => t.prepare(ctx),
+            SubscriptsElementsNodeSlot::AsPattern(t) => t.prepare(ctx),
+            SubscriptsElementsNodeSlot::Slice(t) => t.prepare(ctx),
+            SubscriptsElementsNodeSlot::True(_) => Ok(()),
+            SubscriptsElementsNodeSlot::False(_) => Ok(()),
+            SubscriptsElementsNodeSlot::None(_) => Ok(()),
+            SubscriptsElementsNodeSlot::Ellipsis(_) => Ok(()),
+            SubscriptsElementsNodeSlot::Verbatim(t) => t.prepare(ctx),
         }
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         match self {
-            SubscriptsSubscriptNodeSlot::ComparisonOperator(t) => t.gap_edges(),
-            SubscriptsSubscriptNodeSlot::NotOperator(t) => t.gap_edges(),
-            SubscriptsSubscriptNodeSlot::BooleanOperator(t) => t.gap_edges(),
-            SubscriptsSubscriptNodeSlot::Lambda(t) => t.gap_edges(),
-            SubscriptsSubscriptNodeSlot::Await(t) => t.gap_edges(),
-            SubscriptsSubscriptNodeSlot::BinaryOperator(t) => t.gap_edges(),
-            SubscriptsSubscriptNodeSlot::Identifier(t) => t.gap_edges(),
-            SubscriptsSubscriptNodeSlot::String(t) => t.gap_edges(),
-            SubscriptsSubscriptNodeSlot::ConcatenatedString(t) => t.gap_edges(),
-            SubscriptsSubscriptNodeSlot::IntegerHex(t) => t.gap_edges(),
-            SubscriptsSubscriptNodeSlot::IntegerOctal(t) => t.gap_edges(),
-            SubscriptsSubscriptNodeSlot::IntegerBinary(t) => t.gap_edges(),
-            SubscriptsSubscriptNodeSlot::IntegerDecimalLong(t) => t.gap_edges(),
-            SubscriptsSubscriptNodeSlot::IntegerDecimalImaginary(t) => t.gap_edges(),
-            SubscriptsSubscriptNodeSlot::IntegerDecimalPlain(t) => t.gap_edges(),
-            SubscriptsSubscriptNodeSlot::FloatPoint(t) => t.gap_edges(),
-            SubscriptsSubscriptNodeSlot::FloatLeadingPoint(t) => t.gap_edges(),
-            SubscriptsSubscriptNodeSlot::FloatScientific(t) => t.gap_edges(),
-            SubscriptsSubscriptNodeSlot::UnaryOperator(t) => t.gap_edges(),
-            SubscriptsSubscriptNodeSlot::Attribute(t) => t.gap_edges(),
-            SubscriptsSubscriptNodeSlot::Subscript(t) => t.gap_edges(),
-            SubscriptsSubscriptNodeSlot::Call(t) => t.gap_edges(),
-            SubscriptsSubscriptNodeSlot::List(t) => t.gap_edges(),
-            SubscriptsSubscriptNodeSlot::ListComprehension(t) => t.gap_edges(),
-            SubscriptsSubscriptNodeSlot::Dictionary(t) => t.gap_edges(),
-            SubscriptsSubscriptNodeSlot::DictionaryComprehension(t) => t.gap_edges(),
-            SubscriptsSubscriptNodeSlot::Set(t) => t.gap_edges(),
-            SubscriptsSubscriptNodeSlot::SetComprehension(t) => t.gap_edges(),
-            SubscriptsSubscriptNodeSlot::Tuple(t) => t.gap_edges(),
-            SubscriptsSubscriptNodeSlot::ParenthesizedExpression(t) => t.gap_edges(),
-            SubscriptsSubscriptNodeSlot::GeneratorExpression(t) => t.gap_edges(),
-            SubscriptsSubscriptNodeSlot::ListSplatPattern(t) => t.gap_edges(),
-            SubscriptsSubscriptNodeSlot::ConditionalExpression(t) => t.gap_edges(),
-            SubscriptsSubscriptNodeSlot::NamedExpression(t) => t.gap_edges(),
-            SubscriptsSubscriptNodeSlot::AsPattern(t) => t.gap_edges(),
-            SubscriptsSubscriptNodeSlot::Slice(t) => t.gap_edges(),
-            SubscriptsSubscriptNodeSlot::True(edges) => Some(edges),
-            SubscriptsSubscriptNodeSlot::False(edges) => Some(edges),
-            SubscriptsSubscriptNodeSlot::None(edges) => Some(edges),
-            SubscriptsSubscriptNodeSlot::Ellipsis(edges) => Some(edges),
-            SubscriptsSubscriptNodeSlot::Verbatim(t) => t.gap_edges(),
+            SubscriptsElementsNodeSlot::ComparisonOperator(t) => t.gap_edges(),
+            SubscriptsElementsNodeSlot::NotOperator(t) => t.gap_edges(),
+            SubscriptsElementsNodeSlot::BooleanOperator(t) => t.gap_edges(),
+            SubscriptsElementsNodeSlot::Lambda(t) => t.gap_edges(),
+            SubscriptsElementsNodeSlot::Await(t) => t.gap_edges(),
+            SubscriptsElementsNodeSlot::BinaryOperator(t) => t.gap_edges(),
+            SubscriptsElementsNodeSlot::Identifier(t) => t.gap_edges(),
+            SubscriptsElementsNodeSlot::String(t) => t.gap_edges(),
+            SubscriptsElementsNodeSlot::ConcatenatedString(t) => t.gap_edges(),
+            SubscriptsElementsNodeSlot::IntegerHex(t) => t.gap_edges(),
+            SubscriptsElementsNodeSlot::IntegerOctal(t) => t.gap_edges(),
+            SubscriptsElementsNodeSlot::IntegerBinary(t) => t.gap_edges(),
+            SubscriptsElementsNodeSlot::IntegerDecimalLong(t) => t.gap_edges(),
+            SubscriptsElementsNodeSlot::IntegerDecimalImaginary(t) => t.gap_edges(),
+            SubscriptsElementsNodeSlot::IntegerDecimalPlain(t) => t.gap_edges(),
+            SubscriptsElementsNodeSlot::FloatPoint(t) => t.gap_edges(),
+            SubscriptsElementsNodeSlot::FloatLeadingPoint(t) => t.gap_edges(),
+            SubscriptsElementsNodeSlot::FloatScientific(t) => t.gap_edges(),
+            SubscriptsElementsNodeSlot::UnaryOperator(t) => t.gap_edges(),
+            SubscriptsElementsNodeSlot::Attribute(t) => t.gap_edges(),
+            SubscriptsElementsNodeSlot::Subscript(t) => t.gap_edges(),
+            SubscriptsElementsNodeSlot::Call(t) => t.gap_edges(),
+            SubscriptsElementsNodeSlot::List(t) => t.gap_edges(),
+            SubscriptsElementsNodeSlot::ListComprehension(t) => t.gap_edges(),
+            SubscriptsElementsNodeSlot::Dictionary(t) => t.gap_edges(),
+            SubscriptsElementsNodeSlot::DictionaryComprehension(t) => t.gap_edges(),
+            SubscriptsElementsNodeSlot::Set(t) => t.gap_edges(),
+            SubscriptsElementsNodeSlot::SetComprehension(t) => t.gap_edges(),
+            SubscriptsElementsNodeSlot::Tuple(t) => t.gap_edges(),
+            SubscriptsElementsNodeSlot::ParenthesizedExpression(t) => t.gap_edges(),
+            SubscriptsElementsNodeSlot::GeneratorExpression(t) => t.gap_edges(),
+            SubscriptsElementsNodeSlot::ListSplatPattern(t) => t.gap_edges(),
+            SubscriptsElementsNodeSlot::ConditionalExpression(t) => t.gap_edges(),
+            SubscriptsElementsNodeSlot::NamedExpression(t) => t.gap_edges(),
+            SubscriptsElementsNodeSlot::AsPattern(t) => t.gap_edges(),
+            SubscriptsElementsNodeSlot::Slice(t) => t.gap_edges(),
+            SubscriptsElementsNodeSlot::True(edges) => Some(edges),
+            SubscriptsElementsNodeSlot::False(edges) => Some(edges),
+            SubscriptsElementsNodeSlot::None(edges) => Some(edges),
+            SubscriptsElementsNodeSlot::Ellipsis(edges) => Some(edges),
+            SubscriptsElementsNodeSlot::Verbatim(t) => t.gap_edges(),
         }
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         match self {
-            SubscriptsSubscriptNodeSlot::ComparisonOperator(t) => t.snapshot_edge(),
-            SubscriptsSubscriptNodeSlot::NotOperator(t) => t.snapshot_edge(),
-            SubscriptsSubscriptNodeSlot::BooleanOperator(t) => t.snapshot_edge(),
-            SubscriptsSubscriptNodeSlot::Lambda(t) => t.snapshot_edge(),
-            SubscriptsSubscriptNodeSlot::Await(t) => t.snapshot_edge(),
-            SubscriptsSubscriptNodeSlot::BinaryOperator(t) => t.snapshot_edge(),
-            SubscriptsSubscriptNodeSlot::Identifier(t) => t.snapshot_edge(),
-            SubscriptsSubscriptNodeSlot::String(t) => t.snapshot_edge(),
-            SubscriptsSubscriptNodeSlot::ConcatenatedString(t) => t.snapshot_edge(),
-            SubscriptsSubscriptNodeSlot::IntegerHex(t) => t.snapshot_edge(),
-            SubscriptsSubscriptNodeSlot::IntegerOctal(t) => t.snapshot_edge(),
-            SubscriptsSubscriptNodeSlot::IntegerBinary(t) => t.snapshot_edge(),
-            SubscriptsSubscriptNodeSlot::IntegerDecimalLong(t) => t.snapshot_edge(),
-            SubscriptsSubscriptNodeSlot::IntegerDecimalImaginary(t) => t.snapshot_edge(),
-            SubscriptsSubscriptNodeSlot::IntegerDecimalPlain(t) => t.snapshot_edge(),
-            SubscriptsSubscriptNodeSlot::FloatPoint(t) => t.snapshot_edge(),
-            SubscriptsSubscriptNodeSlot::FloatLeadingPoint(t) => t.snapshot_edge(),
-            SubscriptsSubscriptNodeSlot::FloatScientific(t) => t.snapshot_edge(),
-            SubscriptsSubscriptNodeSlot::UnaryOperator(t) => t.snapshot_edge(),
-            SubscriptsSubscriptNodeSlot::Attribute(t) => t.snapshot_edge(),
-            SubscriptsSubscriptNodeSlot::Subscript(t) => t.snapshot_edge(),
-            SubscriptsSubscriptNodeSlot::Call(t) => t.snapshot_edge(),
-            SubscriptsSubscriptNodeSlot::List(t) => t.snapshot_edge(),
-            SubscriptsSubscriptNodeSlot::ListComprehension(t) => t.snapshot_edge(),
-            SubscriptsSubscriptNodeSlot::Dictionary(t) => t.snapshot_edge(),
-            SubscriptsSubscriptNodeSlot::DictionaryComprehension(t) => t.snapshot_edge(),
-            SubscriptsSubscriptNodeSlot::Set(t) => t.snapshot_edge(),
-            SubscriptsSubscriptNodeSlot::SetComprehension(t) => t.snapshot_edge(),
-            SubscriptsSubscriptNodeSlot::Tuple(t) => t.snapshot_edge(),
-            SubscriptsSubscriptNodeSlot::ParenthesizedExpression(t) => t.snapshot_edge(),
-            SubscriptsSubscriptNodeSlot::GeneratorExpression(t) => t.snapshot_edge(),
-            SubscriptsSubscriptNodeSlot::ListSplatPattern(t) => t.snapshot_edge(),
-            SubscriptsSubscriptNodeSlot::ConditionalExpression(t) => t.snapshot_edge(),
-            SubscriptsSubscriptNodeSlot::NamedExpression(t) => t.snapshot_edge(),
-            SubscriptsSubscriptNodeSlot::AsPattern(t) => t.snapshot_edge(),
-            SubscriptsSubscriptNodeSlot::Slice(t) => t.snapshot_edge(),
-            SubscriptsSubscriptNodeSlot::True(_) => None,
-            SubscriptsSubscriptNodeSlot::False(_) => None,
-            SubscriptsSubscriptNodeSlot::None(_) => None,
-            SubscriptsSubscriptNodeSlot::Ellipsis(_) => None,
-            SubscriptsSubscriptNodeSlot::Verbatim(t) => t.snapshot_edge(),
+            SubscriptsElementsNodeSlot::ComparisonOperator(t) => t.snapshot_edge(),
+            SubscriptsElementsNodeSlot::NotOperator(t) => t.snapshot_edge(),
+            SubscriptsElementsNodeSlot::BooleanOperator(t) => t.snapshot_edge(),
+            SubscriptsElementsNodeSlot::Lambda(t) => t.snapshot_edge(),
+            SubscriptsElementsNodeSlot::Await(t) => t.snapshot_edge(),
+            SubscriptsElementsNodeSlot::BinaryOperator(t) => t.snapshot_edge(),
+            SubscriptsElementsNodeSlot::Identifier(t) => t.snapshot_edge(),
+            SubscriptsElementsNodeSlot::String(t) => t.snapshot_edge(),
+            SubscriptsElementsNodeSlot::ConcatenatedString(t) => t.snapshot_edge(),
+            SubscriptsElementsNodeSlot::IntegerHex(t) => t.snapshot_edge(),
+            SubscriptsElementsNodeSlot::IntegerOctal(t) => t.snapshot_edge(),
+            SubscriptsElementsNodeSlot::IntegerBinary(t) => t.snapshot_edge(),
+            SubscriptsElementsNodeSlot::IntegerDecimalLong(t) => t.snapshot_edge(),
+            SubscriptsElementsNodeSlot::IntegerDecimalImaginary(t) => t.snapshot_edge(),
+            SubscriptsElementsNodeSlot::IntegerDecimalPlain(t) => t.snapshot_edge(),
+            SubscriptsElementsNodeSlot::FloatPoint(t) => t.snapshot_edge(),
+            SubscriptsElementsNodeSlot::FloatLeadingPoint(t) => t.snapshot_edge(),
+            SubscriptsElementsNodeSlot::FloatScientific(t) => t.snapshot_edge(),
+            SubscriptsElementsNodeSlot::UnaryOperator(t) => t.snapshot_edge(),
+            SubscriptsElementsNodeSlot::Attribute(t) => t.snapshot_edge(),
+            SubscriptsElementsNodeSlot::Subscript(t) => t.snapshot_edge(),
+            SubscriptsElementsNodeSlot::Call(t) => t.snapshot_edge(),
+            SubscriptsElementsNodeSlot::List(t) => t.snapshot_edge(),
+            SubscriptsElementsNodeSlot::ListComprehension(t) => t.snapshot_edge(),
+            SubscriptsElementsNodeSlot::Dictionary(t) => t.snapshot_edge(),
+            SubscriptsElementsNodeSlot::DictionaryComprehension(t) => t.snapshot_edge(),
+            SubscriptsElementsNodeSlot::Set(t) => t.snapshot_edge(),
+            SubscriptsElementsNodeSlot::SetComprehension(t) => t.snapshot_edge(),
+            SubscriptsElementsNodeSlot::Tuple(t) => t.snapshot_edge(),
+            SubscriptsElementsNodeSlot::ParenthesizedExpression(t) => t.snapshot_edge(),
+            SubscriptsElementsNodeSlot::GeneratorExpression(t) => t.snapshot_edge(),
+            SubscriptsElementsNodeSlot::ListSplatPattern(t) => t.snapshot_edge(),
+            SubscriptsElementsNodeSlot::ConditionalExpression(t) => t.snapshot_edge(),
+            SubscriptsElementsNodeSlot::NamedExpression(t) => t.snapshot_edge(),
+            SubscriptsElementsNodeSlot::AsPattern(t) => t.snapshot_edge(),
+            SubscriptsElementsNodeSlot::Slice(t) => t.snapshot_edge(),
+            SubscriptsElementsNodeSlot::True(_) => None,
+            SubscriptsElementsNodeSlot::False(_) => None,
+            SubscriptsElementsNodeSlot::None(_) => None,
+            SubscriptsElementsNodeSlot::Ellipsis(_) => None,
+            SubscriptsElementsNodeSlot::Verbatim(t) => t.snapshot_edge(),
         }
     }
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         match self {
-            SubscriptsSubscriptNodeSlot::ComparisonOperator(t) => t.source_coordinate(),
-            SubscriptsSubscriptNodeSlot::NotOperator(t) => t.source_coordinate(),
-            SubscriptsSubscriptNodeSlot::BooleanOperator(t) => t.source_coordinate(),
-            SubscriptsSubscriptNodeSlot::Lambda(t) => t.source_coordinate(),
-            SubscriptsSubscriptNodeSlot::Await(t) => t.source_coordinate(),
-            SubscriptsSubscriptNodeSlot::BinaryOperator(t) => t.source_coordinate(),
-            SubscriptsSubscriptNodeSlot::Identifier(t) => t.source_coordinate(),
-            SubscriptsSubscriptNodeSlot::String(t) => t.source_coordinate(),
-            SubscriptsSubscriptNodeSlot::ConcatenatedString(t) => t.source_coordinate(),
-            SubscriptsSubscriptNodeSlot::IntegerHex(t) => t.source_coordinate(),
-            SubscriptsSubscriptNodeSlot::IntegerOctal(t) => t.source_coordinate(),
-            SubscriptsSubscriptNodeSlot::IntegerBinary(t) => t.source_coordinate(),
-            SubscriptsSubscriptNodeSlot::IntegerDecimalLong(t) => t.source_coordinate(),
-            SubscriptsSubscriptNodeSlot::IntegerDecimalImaginary(t) => t.source_coordinate(),
-            SubscriptsSubscriptNodeSlot::IntegerDecimalPlain(t) => t.source_coordinate(),
-            SubscriptsSubscriptNodeSlot::FloatPoint(t) => t.source_coordinate(),
-            SubscriptsSubscriptNodeSlot::FloatLeadingPoint(t) => t.source_coordinate(),
-            SubscriptsSubscriptNodeSlot::FloatScientific(t) => t.source_coordinate(),
-            SubscriptsSubscriptNodeSlot::UnaryOperator(t) => t.source_coordinate(),
-            SubscriptsSubscriptNodeSlot::Attribute(t) => t.source_coordinate(),
-            SubscriptsSubscriptNodeSlot::Subscript(t) => t.source_coordinate(),
-            SubscriptsSubscriptNodeSlot::Call(t) => t.source_coordinate(),
-            SubscriptsSubscriptNodeSlot::List(t) => t.source_coordinate(),
-            SubscriptsSubscriptNodeSlot::ListComprehension(t) => t.source_coordinate(),
-            SubscriptsSubscriptNodeSlot::Dictionary(t) => t.source_coordinate(),
-            SubscriptsSubscriptNodeSlot::DictionaryComprehension(t) => t.source_coordinate(),
-            SubscriptsSubscriptNodeSlot::Set(t) => t.source_coordinate(),
-            SubscriptsSubscriptNodeSlot::SetComprehension(t) => t.source_coordinate(),
-            SubscriptsSubscriptNodeSlot::Tuple(t) => t.source_coordinate(),
-            SubscriptsSubscriptNodeSlot::ParenthesizedExpression(t) => t.source_coordinate(),
-            SubscriptsSubscriptNodeSlot::GeneratorExpression(t) => t.source_coordinate(),
-            SubscriptsSubscriptNodeSlot::ListSplatPattern(t) => t.source_coordinate(),
-            SubscriptsSubscriptNodeSlot::ConditionalExpression(t) => t.source_coordinate(),
-            SubscriptsSubscriptNodeSlot::NamedExpression(t) => t.source_coordinate(),
-            SubscriptsSubscriptNodeSlot::AsPattern(t) => t.source_coordinate(),
-            SubscriptsSubscriptNodeSlot::Slice(t) => t.source_coordinate(),
-            SubscriptsSubscriptNodeSlot::True(_) => None,
-            SubscriptsSubscriptNodeSlot::False(_) => None,
-            SubscriptsSubscriptNodeSlot::None(_) => None,
-            SubscriptsSubscriptNodeSlot::Ellipsis(_) => None,
-            SubscriptsSubscriptNodeSlot::Verbatim(t) => t.source_coordinate(),
+            SubscriptsElementsNodeSlot::ComparisonOperator(t) => t.source_coordinate(),
+            SubscriptsElementsNodeSlot::NotOperator(t) => t.source_coordinate(),
+            SubscriptsElementsNodeSlot::BooleanOperator(t) => t.source_coordinate(),
+            SubscriptsElementsNodeSlot::Lambda(t) => t.source_coordinate(),
+            SubscriptsElementsNodeSlot::Await(t) => t.source_coordinate(),
+            SubscriptsElementsNodeSlot::BinaryOperator(t) => t.source_coordinate(),
+            SubscriptsElementsNodeSlot::Identifier(t) => t.source_coordinate(),
+            SubscriptsElementsNodeSlot::String(t) => t.source_coordinate(),
+            SubscriptsElementsNodeSlot::ConcatenatedString(t) => t.source_coordinate(),
+            SubscriptsElementsNodeSlot::IntegerHex(t) => t.source_coordinate(),
+            SubscriptsElementsNodeSlot::IntegerOctal(t) => t.source_coordinate(),
+            SubscriptsElementsNodeSlot::IntegerBinary(t) => t.source_coordinate(),
+            SubscriptsElementsNodeSlot::IntegerDecimalLong(t) => t.source_coordinate(),
+            SubscriptsElementsNodeSlot::IntegerDecimalImaginary(t) => t.source_coordinate(),
+            SubscriptsElementsNodeSlot::IntegerDecimalPlain(t) => t.source_coordinate(),
+            SubscriptsElementsNodeSlot::FloatPoint(t) => t.source_coordinate(),
+            SubscriptsElementsNodeSlot::FloatLeadingPoint(t) => t.source_coordinate(),
+            SubscriptsElementsNodeSlot::FloatScientific(t) => t.source_coordinate(),
+            SubscriptsElementsNodeSlot::UnaryOperator(t) => t.source_coordinate(),
+            SubscriptsElementsNodeSlot::Attribute(t) => t.source_coordinate(),
+            SubscriptsElementsNodeSlot::Subscript(t) => t.source_coordinate(),
+            SubscriptsElementsNodeSlot::Call(t) => t.source_coordinate(),
+            SubscriptsElementsNodeSlot::List(t) => t.source_coordinate(),
+            SubscriptsElementsNodeSlot::ListComprehension(t) => t.source_coordinate(),
+            SubscriptsElementsNodeSlot::Dictionary(t) => t.source_coordinate(),
+            SubscriptsElementsNodeSlot::DictionaryComprehension(t) => t.source_coordinate(),
+            SubscriptsElementsNodeSlot::Set(t) => t.source_coordinate(),
+            SubscriptsElementsNodeSlot::SetComprehension(t) => t.source_coordinate(),
+            SubscriptsElementsNodeSlot::Tuple(t) => t.source_coordinate(),
+            SubscriptsElementsNodeSlot::ParenthesizedExpression(t) => t.source_coordinate(),
+            SubscriptsElementsNodeSlot::GeneratorExpression(t) => t.source_coordinate(),
+            SubscriptsElementsNodeSlot::ListSplatPattern(t) => t.source_coordinate(),
+            SubscriptsElementsNodeSlot::ConditionalExpression(t) => t.source_coordinate(),
+            SubscriptsElementsNodeSlot::NamedExpression(t) => t.source_coordinate(),
+            SubscriptsElementsNodeSlot::AsPattern(t) => t.source_coordinate(),
+            SubscriptsElementsNodeSlot::Slice(t) => t.source_coordinate(),
+            SubscriptsElementsNodeSlot::True(_) => None,
+            SubscriptsElementsNodeSlot::False(_) => None,
+            SubscriptsElementsNodeSlot::None(_) => None,
+            SubscriptsElementsNodeSlot::Ellipsis(_) => None,
+            SubscriptsElementsNodeSlot::Verbatim(t) => t.source_coordinate(),
         }
     }
     fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
-            SubscriptsSubscriptNodeSlot::ComparisonOperator(t) => t.source_separator(ctx),
-            SubscriptsSubscriptNodeSlot::NotOperator(t) => t.source_separator(ctx),
-            SubscriptsSubscriptNodeSlot::BooleanOperator(t) => t.source_separator(ctx),
-            SubscriptsSubscriptNodeSlot::Lambda(t) => t.source_separator(ctx),
-            SubscriptsSubscriptNodeSlot::Await(t) => t.source_separator(ctx),
-            SubscriptsSubscriptNodeSlot::BinaryOperator(t) => t.source_separator(ctx),
-            SubscriptsSubscriptNodeSlot::Identifier(t) => t.source_separator(ctx),
-            SubscriptsSubscriptNodeSlot::String(t) => t.source_separator(ctx),
-            SubscriptsSubscriptNodeSlot::ConcatenatedString(t) => t.source_separator(ctx),
-            SubscriptsSubscriptNodeSlot::IntegerHex(t) => t.source_separator(ctx),
-            SubscriptsSubscriptNodeSlot::IntegerOctal(t) => t.source_separator(ctx),
-            SubscriptsSubscriptNodeSlot::IntegerBinary(t) => t.source_separator(ctx),
-            SubscriptsSubscriptNodeSlot::IntegerDecimalLong(t) => t.source_separator(ctx),
-            SubscriptsSubscriptNodeSlot::IntegerDecimalImaginary(t) => t.source_separator(ctx),
-            SubscriptsSubscriptNodeSlot::IntegerDecimalPlain(t) => t.source_separator(ctx),
-            SubscriptsSubscriptNodeSlot::FloatPoint(t) => t.source_separator(ctx),
-            SubscriptsSubscriptNodeSlot::FloatLeadingPoint(t) => t.source_separator(ctx),
-            SubscriptsSubscriptNodeSlot::FloatScientific(t) => t.source_separator(ctx),
-            SubscriptsSubscriptNodeSlot::UnaryOperator(t) => t.source_separator(ctx),
-            SubscriptsSubscriptNodeSlot::Attribute(t) => t.source_separator(ctx),
-            SubscriptsSubscriptNodeSlot::Subscript(t) => t.source_separator(ctx),
-            SubscriptsSubscriptNodeSlot::Call(t) => t.source_separator(ctx),
-            SubscriptsSubscriptNodeSlot::List(t) => t.source_separator(ctx),
-            SubscriptsSubscriptNodeSlot::ListComprehension(t) => t.source_separator(ctx),
-            SubscriptsSubscriptNodeSlot::Dictionary(t) => t.source_separator(ctx),
-            SubscriptsSubscriptNodeSlot::DictionaryComprehension(t) => t.source_separator(ctx),
-            SubscriptsSubscriptNodeSlot::Set(t) => t.source_separator(ctx),
-            SubscriptsSubscriptNodeSlot::SetComprehension(t) => t.source_separator(ctx),
-            SubscriptsSubscriptNodeSlot::Tuple(t) => t.source_separator(ctx),
-            SubscriptsSubscriptNodeSlot::ParenthesizedExpression(t) => t.source_separator(ctx),
-            SubscriptsSubscriptNodeSlot::GeneratorExpression(t) => t.source_separator(ctx),
-            SubscriptsSubscriptNodeSlot::ListSplatPattern(t) => t.source_separator(ctx),
-            SubscriptsSubscriptNodeSlot::ConditionalExpression(t) => t.source_separator(ctx),
-            SubscriptsSubscriptNodeSlot::NamedExpression(t) => t.source_separator(ctx),
-            SubscriptsSubscriptNodeSlot::AsPattern(t) => t.source_separator(ctx),
-            SubscriptsSubscriptNodeSlot::Slice(t) => t.source_separator(ctx),
-            SubscriptsSubscriptNodeSlot::True(_) => None,
-            SubscriptsSubscriptNodeSlot::False(_) => None,
-            SubscriptsSubscriptNodeSlot::None(_) => None,
-            SubscriptsSubscriptNodeSlot::Ellipsis(_) => None,
-            SubscriptsSubscriptNodeSlot::Verbatim(t) => t.source_separator(ctx),
+            SubscriptsElementsNodeSlot::ComparisonOperator(t) => t.source_separator(ctx),
+            SubscriptsElementsNodeSlot::NotOperator(t) => t.source_separator(ctx),
+            SubscriptsElementsNodeSlot::BooleanOperator(t) => t.source_separator(ctx),
+            SubscriptsElementsNodeSlot::Lambda(t) => t.source_separator(ctx),
+            SubscriptsElementsNodeSlot::Await(t) => t.source_separator(ctx),
+            SubscriptsElementsNodeSlot::BinaryOperator(t) => t.source_separator(ctx),
+            SubscriptsElementsNodeSlot::Identifier(t) => t.source_separator(ctx),
+            SubscriptsElementsNodeSlot::String(t) => t.source_separator(ctx),
+            SubscriptsElementsNodeSlot::ConcatenatedString(t) => t.source_separator(ctx),
+            SubscriptsElementsNodeSlot::IntegerHex(t) => t.source_separator(ctx),
+            SubscriptsElementsNodeSlot::IntegerOctal(t) => t.source_separator(ctx),
+            SubscriptsElementsNodeSlot::IntegerBinary(t) => t.source_separator(ctx),
+            SubscriptsElementsNodeSlot::IntegerDecimalLong(t) => t.source_separator(ctx),
+            SubscriptsElementsNodeSlot::IntegerDecimalImaginary(t) => t.source_separator(ctx),
+            SubscriptsElementsNodeSlot::IntegerDecimalPlain(t) => t.source_separator(ctx),
+            SubscriptsElementsNodeSlot::FloatPoint(t) => t.source_separator(ctx),
+            SubscriptsElementsNodeSlot::FloatLeadingPoint(t) => t.source_separator(ctx),
+            SubscriptsElementsNodeSlot::FloatScientific(t) => t.source_separator(ctx),
+            SubscriptsElementsNodeSlot::UnaryOperator(t) => t.source_separator(ctx),
+            SubscriptsElementsNodeSlot::Attribute(t) => t.source_separator(ctx),
+            SubscriptsElementsNodeSlot::Subscript(t) => t.source_separator(ctx),
+            SubscriptsElementsNodeSlot::Call(t) => t.source_separator(ctx),
+            SubscriptsElementsNodeSlot::List(t) => t.source_separator(ctx),
+            SubscriptsElementsNodeSlot::ListComprehension(t) => t.source_separator(ctx),
+            SubscriptsElementsNodeSlot::Dictionary(t) => t.source_separator(ctx),
+            SubscriptsElementsNodeSlot::DictionaryComprehension(t) => t.source_separator(ctx),
+            SubscriptsElementsNodeSlot::Set(t) => t.source_separator(ctx),
+            SubscriptsElementsNodeSlot::SetComprehension(t) => t.source_separator(ctx),
+            SubscriptsElementsNodeSlot::Tuple(t) => t.source_separator(ctx),
+            SubscriptsElementsNodeSlot::ParenthesizedExpression(t) => t.source_separator(ctx),
+            SubscriptsElementsNodeSlot::GeneratorExpression(t) => t.source_separator(ctx),
+            SubscriptsElementsNodeSlot::ListSplatPattern(t) => t.source_separator(ctx),
+            SubscriptsElementsNodeSlot::ConditionalExpression(t) => t.source_separator(ctx),
+            SubscriptsElementsNodeSlot::NamedExpression(t) => t.source_separator(ctx),
+            SubscriptsElementsNodeSlot::AsPattern(t) => t.source_separator(ctx),
+            SubscriptsElementsNodeSlot::Slice(t) => t.source_separator(ctx),
+            SubscriptsElementsNodeSlot::True(_) => None,
+            SubscriptsElementsNodeSlot::False(_) => None,
+            SubscriptsElementsNodeSlot::None(_) => None,
+            SubscriptsElementsNodeSlot::Ellipsis(_) => None,
+            SubscriptsElementsNodeSlot::Verbatim(t) => t.source_separator(ctx),
         }
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &mut ::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -13148,7 +12554,7 @@ impl ::sittir_core::prepare::Prepare for SubscriptsSubscriptNodeSlot {
     }
 }
 
-impl ::sittir_core::view::KindOf for SubscriptsSubscriptNodeSlot {
+impl ::sittir_core::view::KindOf for SubscriptsElementsNodeSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
             Self::ComparisonOperator(inner) => inner.kind_in(kinds),
@@ -13196,56 +12602,56 @@ impl ::sittir_core::view::KindOf for SubscriptsSubscriptNodeSlot {
     }
 }
 
-impl ::sittir_core::render::Render for SubscriptsSubscriptNodeSlot {
+impl ::sittir_core::render::Render for SubscriptsElementsNodeSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            SubscriptsSubscriptNodeSlot::ComparisonOperator(inner) => inner.render(w),
-            SubscriptsSubscriptNodeSlot::NotOperator(inner) => inner.render(w),
-            SubscriptsSubscriptNodeSlot::BooleanOperator(inner) => inner.render(w),
-            SubscriptsSubscriptNodeSlot::Lambda(inner) => inner.render(w),
-            SubscriptsSubscriptNodeSlot::Await(inner) => inner.render(w),
-            SubscriptsSubscriptNodeSlot::BinaryOperator(inner) => inner.render(w),
-            SubscriptsSubscriptNodeSlot::Identifier(inner) => inner.render(w),
-            SubscriptsSubscriptNodeSlot::String(inner) => inner.render(w),
-            SubscriptsSubscriptNodeSlot::ConcatenatedString(inner) => inner.render(w),
-            SubscriptsSubscriptNodeSlot::IntegerHex(inner) => inner.render(w),
-            SubscriptsSubscriptNodeSlot::IntegerOctal(inner) => inner.render(w),
-            SubscriptsSubscriptNodeSlot::IntegerBinary(inner) => inner.render(w),
-            SubscriptsSubscriptNodeSlot::IntegerDecimalLong(inner) => inner.render(w),
-            SubscriptsSubscriptNodeSlot::IntegerDecimalImaginary(inner) => inner.render(w),
-            SubscriptsSubscriptNodeSlot::IntegerDecimalPlain(inner) => inner.render(w),
-            SubscriptsSubscriptNodeSlot::FloatPoint(inner) => inner.render(w),
-            SubscriptsSubscriptNodeSlot::FloatLeadingPoint(inner) => inner.render(w),
-            SubscriptsSubscriptNodeSlot::FloatScientific(inner) => inner.render(w),
-            SubscriptsSubscriptNodeSlot::UnaryOperator(inner) => inner.render(w),
-            SubscriptsSubscriptNodeSlot::Attribute(inner) => inner.render(w),
-            SubscriptsSubscriptNodeSlot::Subscript(inner) => inner.render(w),
-            SubscriptsSubscriptNodeSlot::Call(inner) => inner.render(w),
-            SubscriptsSubscriptNodeSlot::List(inner) => inner.render(w),
-            SubscriptsSubscriptNodeSlot::ListComprehension(inner) => inner.render(w),
-            SubscriptsSubscriptNodeSlot::Dictionary(inner) => inner.render(w),
-            SubscriptsSubscriptNodeSlot::DictionaryComprehension(inner) => inner.render(w),
-            SubscriptsSubscriptNodeSlot::Set(inner) => inner.render(w),
-            SubscriptsSubscriptNodeSlot::SetComprehension(inner) => inner.render(w),
-            SubscriptsSubscriptNodeSlot::Tuple(inner) => inner.render(w),
-            SubscriptsSubscriptNodeSlot::ParenthesizedExpression(inner) => inner.render(w),
-            SubscriptsSubscriptNodeSlot::GeneratorExpression(inner) => inner.render(w),
-            SubscriptsSubscriptNodeSlot::ListSplatPattern(inner) => inner.render(w),
-            SubscriptsSubscriptNodeSlot::ConditionalExpression(inner) => inner.render(w),
-            SubscriptsSubscriptNodeSlot::NamedExpression(inner) => inner.render(w),
-            SubscriptsSubscriptNodeSlot::AsPattern(inner) => inner.render(w),
-            SubscriptsSubscriptNodeSlot::Slice(inner) => inner.as_ref().render(w),
-            SubscriptsSubscriptNodeSlot::True(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(69), edges, w, render_true),
-            SubscriptsSubscriptNodeSlot::False(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(70), edges, w, render_false),
-            SubscriptsSubscriptNodeSlot::None(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(71), edges, w, render_none),
-            SubscriptsSubscriptNodeSlot::Ellipsis(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(63), edges, w, render_ellipsis),
-            SubscriptsSubscriptNodeSlot::Verbatim(inner) => inner.render(w),
+            SubscriptsElementsNodeSlot::ComparisonOperator(inner) => inner.render(w),
+            SubscriptsElementsNodeSlot::NotOperator(inner) => inner.render(w),
+            SubscriptsElementsNodeSlot::BooleanOperator(inner) => inner.render(w),
+            SubscriptsElementsNodeSlot::Lambda(inner) => inner.render(w),
+            SubscriptsElementsNodeSlot::Await(inner) => inner.render(w),
+            SubscriptsElementsNodeSlot::BinaryOperator(inner) => inner.render(w),
+            SubscriptsElementsNodeSlot::Identifier(inner) => inner.render(w),
+            SubscriptsElementsNodeSlot::String(inner) => inner.render(w),
+            SubscriptsElementsNodeSlot::ConcatenatedString(inner) => inner.render(w),
+            SubscriptsElementsNodeSlot::IntegerHex(inner) => inner.render(w),
+            SubscriptsElementsNodeSlot::IntegerOctal(inner) => inner.render(w),
+            SubscriptsElementsNodeSlot::IntegerBinary(inner) => inner.render(w),
+            SubscriptsElementsNodeSlot::IntegerDecimalLong(inner) => inner.render(w),
+            SubscriptsElementsNodeSlot::IntegerDecimalImaginary(inner) => inner.render(w),
+            SubscriptsElementsNodeSlot::IntegerDecimalPlain(inner) => inner.render(w),
+            SubscriptsElementsNodeSlot::FloatPoint(inner) => inner.render(w),
+            SubscriptsElementsNodeSlot::FloatLeadingPoint(inner) => inner.render(w),
+            SubscriptsElementsNodeSlot::FloatScientific(inner) => inner.render(w),
+            SubscriptsElementsNodeSlot::UnaryOperator(inner) => inner.render(w),
+            SubscriptsElementsNodeSlot::Attribute(inner) => inner.render(w),
+            SubscriptsElementsNodeSlot::Subscript(inner) => inner.render(w),
+            SubscriptsElementsNodeSlot::Call(inner) => inner.render(w),
+            SubscriptsElementsNodeSlot::List(inner) => inner.render(w),
+            SubscriptsElementsNodeSlot::ListComprehension(inner) => inner.render(w),
+            SubscriptsElementsNodeSlot::Dictionary(inner) => inner.render(w),
+            SubscriptsElementsNodeSlot::DictionaryComprehension(inner) => inner.render(w),
+            SubscriptsElementsNodeSlot::Set(inner) => inner.render(w),
+            SubscriptsElementsNodeSlot::SetComprehension(inner) => inner.render(w),
+            SubscriptsElementsNodeSlot::Tuple(inner) => inner.render(w),
+            SubscriptsElementsNodeSlot::ParenthesizedExpression(inner) => inner.render(w),
+            SubscriptsElementsNodeSlot::GeneratorExpression(inner) => inner.render(w),
+            SubscriptsElementsNodeSlot::ListSplatPattern(inner) => inner.render(w),
+            SubscriptsElementsNodeSlot::ConditionalExpression(inner) => inner.render(w),
+            SubscriptsElementsNodeSlot::NamedExpression(inner) => inner.render(w),
+            SubscriptsElementsNodeSlot::AsPattern(inner) => inner.render(w),
+            SubscriptsElementsNodeSlot::Slice(inner) => inner.as_ref().render(w),
+            SubscriptsElementsNodeSlot::True(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(69), edges, w, render_true),
+            SubscriptsElementsNodeSlot::False(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(70), edges, w, render_false),
+            SubscriptsElementsNodeSlot::None(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(71), edges, w, render_none),
+            SubscriptsElementsNodeSlot::Ellipsis(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(63), edges, w, render_ellipsis),
+            SubscriptsElementsNodeSlot::Verbatim(inner) => inner.render(w),
         }
     }
 }
 
 ::sittir_core::records_codec! {
-impl ::sittir_core::view::KindOf for SubscriptsSubscriptNodeSlotRecord<'_> {
+impl ::sittir_core::view::KindOf for SubscriptsElementsNodeSlotRecord<'_> {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
             Self::ComparisonOperator(inner) => inner.kind_in(kinds),
@@ -13293,50 +12699,50 @@ impl ::sittir_core::view::KindOf for SubscriptsSubscriptNodeSlotRecord<'_> {
     }
 }
 
-impl ::sittir_core::render::Render for SubscriptsSubscriptNodeSlotRecord<'_> {
+impl ::sittir_core::render::Render for SubscriptsElementsNodeSlotRecord<'_> {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            SubscriptsSubscriptNodeSlotRecord::ComparisonOperator(inner) => inner.render(w),
-            SubscriptsSubscriptNodeSlotRecord::NotOperator(inner) => inner.render(w),
-            SubscriptsSubscriptNodeSlotRecord::BooleanOperator(inner) => inner.render(w),
-            SubscriptsSubscriptNodeSlotRecord::Lambda(inner) => inner.render(w),
-            SubscriptsSubscriptNodeSlotRecord::Await(inner) => inner.render(w),
-            SubscriptsSubscriptNodeSlotRecord::BinaryOperator(inner) => inner.render(w),
-            SubscriptsSubscriptNodeSlotRecord::Identifier(inner) => inner.render(w),
-            SubscriptsSubscriptNodeSlotRecord::String(inner) => inner.render(w),
-            SubscriptsSubscriptNodeSlotRecord::ConcatenatedString(inner) => inner.render(w),
-            SubscriptsSubscriptNodeSlotRecord::IntegerHex(inner) => inner.render(w),
-            SubscriptsSubscriptNodeSlotRecord::IntegerOctal(inner) => inner.render(w),
-            SubscriptsSubscriptNodeSlotRecord::IntegerBinary(inner) => inner.render(w),
-            SubscriptsSubscriptNodeSlotRecord::IntegerDecimalLong(inner) => inner.render(w),
-            SubscriptsSubscriptNodeSlotRecord::IntegerDecimalImaginary(inner) => inner.render(w),
-            SubscriptsSubscriptNodeSlotRecord::IntegerDecimalPlain(inner) => inner.render(w),
-            SubscriptsSubscriptNodeSlotRecord::FloatPoint(inner) => inner.render(w),
-            SubscriptsSubscriptNodeSlotRecord::FloatLeadingPoint(inner) => inner.render(w),
-            SubscriptsSubscriptNodeSlotRecord::FloatScientific(inner) => inner.render(w),
-            SubscriptsSubscriptNodeSlotRecord::UnaryOperator(inner) => inner.render(w),
-            SubscriptsSubscriptNodeSlotRecord::Attribute(inner) => inner.render(w),
-            SubscriptsSubscriptNodeSlotRecord::Subscript(inner) => inner.render(w),
-            SubscriptsSubscriptNodeSlotRecord::Call(inner) => inner.render(w),
-            SubscriptsSubscriptNodeSlotRecord::List(inner) => inner.render(w),
-            SubscriptsSubscriptNodeSlotRecord::ListComprehension(inner) => inner.render(w),
-            SubscriptsSubscriptNodeSlotRecord::Dictionary(inner) => inner.render(w),
-            SubscriptsSubscriptNodeSlotRecord::DictionaryComprehension(inner) => inner.render(w),
-            SubscriptsSubscriptNodeSlotRecord::Set(inner) => inner.render(w),
-            SubscriptsSubscriptNodeSlotRecord::SetComprehension(inner) => inner.render(w),
-            SubscriptsSubscriptNodeSlotRecord::Tuple(inner) => inner.render(w),
-            SubscriptsSubscriptNodeSlotRecord::ParenthesizedExpression(inner) => inner.render(w),
-            SubscriptsSubscriptNodeSlotRecord::GeneratorExpression(inner) => inner.render(w),
-            SubscriptsSubscriptNodeSlotRecord::ListSplatPattern(inner) => inner.render(w),
-            SubscriptsSubscriptNodeSlotRecord::ConditionalExpression(inner) => inner.render(w),
-            SubscriptsSubscriptNodeSlotRecord::NamedExpression(inner) => inner.render(w),
-            SubscriptsSubscriptNodeSlotRecord::AsPattern(inner) => inner.render(w),
-            SubscriptsSubscriptNodeSlotRecord::Slice(inner) => inner.render(w),
-            SubscriptsSubscriptNodeSlotRecord::True(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(69), edges, w, render_true),
-            SubscriptsSubscriptNodeSlotRecord::False(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(70), edges, w, render_false),
-            SubscriptsSubscriptNodeSlotRecord::None(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(71), edges, w, render_none),
-            SubscriptsSubscriptNodeSlotRecord::Ellipsis(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(63), edges, w, render_ellipsis),
-            SubscriptsSubscriptNodeSlotRecord::Verbatim(inner) => inner.render(w),
+            SubscriptsElementsNodeSlotRecord::ComparisonOperator(inner) => inner.render(w),
+            SubscriptsElementsNodeSlotRecord::NotOperator(inner) => inner.render(w),
+            SubscriptsElementsNodeSlotRecord::BooleanOperator(inner) => inner.render(w),
+            SubscriptsElementsNodeSlotRecord::Lambda(inner) => inner.render(w),
+            SubscriptsElementsNodeSlotRecord::Await(inner) => inner.render(w),
+            SubscriptsElementsNodeSlotRecord::BinaryOperator(inner) => inner.render(w),
+            SubscriptsElementsNodeSlotRecord::Identifier(inner) => inner.render(w),
+            SubscriptsElementsNodeSlotRecord::String(inner) => inner.render(w),
+            SubscriptsElementsNodeSlotRecord::ConcatenatedString(inner) => inner.render(w),
+            SubscriptsElementsNodeSlotRecord::IntegerHex(inner) => inner.render(w),
+            SubscriptsElementsNodeSlotRecord::IntegerOctal(inner) => inner.render(w),
+            SubscriptsElementsNodeSlotRecord::IntegerBinary(inner) => inner.render(w),
+            SubscriptsElementsNodeSlotRecord::IntegerDecimalLong(inner) => inner.render(w),
+            SubscriptsElementsNodeSlotRecord::IntegerDecimalImaginary(inner) => inner.render(w),
+            SubscriptsElementsNodeSlotRecord::IntegerDecimalPlain(inner) => inner.render(w),
+            SubscriptsElementsNodeSlotRecord::FloatPoint(inner) => inner.render(w),
+            SubscriptsElementsNodeSlotRecord::FloatLeadingPoint(inner) => inner.render(w),
+            SubscriptsElementsNodeSlotRecord::FloatScientific(inner) => inner.render(w),
+            SubscriptsElementsNodeSlotRecord::UnaryOperator(inner) => inner.render(w),
+            SubscriptsElementsNodeSlotRecord::Attribute(inner) => inner.render(w),
+            SubscriptsElementsNodeSlotRecord::Subscript(inner) => inner.render(w),
+            SubscriptsElementsNodeSlotRecord::Call(inner) => inner.render(w),
+            SubscriptsElementsNodeSlotRecord::List(inner) => inner.render(w),
+            SubscriptsElementsNodeSlotRecord::ListComprehension(inner) => inner.render(w),
+            SubscriptsElementsNodeSlotRecord::Dictionary(inner) => inner.render(w),
+            SubscriptsElementsNodeSlotRecord::DictionaryComprehension(inner) => inner.render(w),
+            SubscriptsElementsNodeSlotRecord::Set(inner) => inner.render(w),
+            SubscriptsElementsNodeSlotRecord::SetComprehension(inner) => inner.render(w),
+            SubscriptsElementsNodeSlotRecord::Tuple(inner) => inner.render(w),
+            SubscriptsElementsNodeSlotRecord::ParenthesizedExpression(inner) => inner.render(w),
+            SubscriptsElementsNodeSlotRecord::GeneratorExpression(inner) => inner.render(w),
+            SubscriptsElementsNodeSlotRecord::ListSplatPattern(inner) => inner.render(w),
+            SubscriptsElementsNodeSlotRecord::ConditionalExpression(inner) => inner.render(w),
+            SubscriptsElementsNodeSlotRecord::NamedExpression(inner) => inner.render(w),
+            SubscriptsElementsNodeSlotRecord::AsPattern(inner) => inner.render(w),
+            SubscriptsElementsNodeSlotRecord::Slice(inner) => inner.render(w),
+            SubscriptsElementsNodeSlotRecord::True(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(69), edges, w, render_true),
+            SubscriptsElementsNodeSlotRecord::False(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(70), edges, w, render_false),
+            SubscriptsElementsNodeSlotRecord::None(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(71), edges, w, render_none),
+            SubscriptsElementsNodeSlotRecord::Ellipsis(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(63), edges, w, render_ellipsis),
+            SubscriptsElementsNodeSlotRecord::Verbatim(inner) => inner.render(w),
         }
     }
 }
@@ -13352,7 +12758,7 @@ pub enum DictionaryElementsItemNodeSlot {
 }
 
 impl ::sittir_core::prepare::Prepare for DictionaryElementsItemNodeSlot {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         match self {
             DictionaryElementsItemNodeSlot::Pair(t) => t.prepare(ctx),
             DictionaryElementsItemNodeSlot::DictionarySplat(t) => t.prepare(ctx),
@@ -13426,99 +12832,6 @@ impl ::sittir_core::render::Render for DictionaryElementsItemNodeSlotRecord<'_> 
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice, stamp = stamp, view = PrintStatementChevronPrintChevronArgumentsNodeSlotRecord)]
-pub enum PrintStatementChevronPrintChevronArgumentsNodeSlot {
-    #[kind(kind::_PRINT_CHEVRON_ARGUMENTS)]
-    PrintChevronArguments(PrintChevronArgumentsNode),
-    #[kind(kind::COMMA)]
-    Comma,
-}
-
-impl ::sittir_core::prepare::Prepare for PrintStatementChevronPrintChevronArgumentsNodeSlot {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        match self {
-            PrintStatementChevronPrintChevronArgumentsNodeSlot::PrintChevronArguments(t) => t.prepare(ctx),
-            PrintStatementChevronPrintChevronArgumentsNodeSlot::Comma => Ok(()),
-        }
-    }
-    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        match self {
-            PrintStatementChevronPrintChevronArgumentsNodeSlot::PrintChevronArguments(t) => t.gap_edges(),
-            PrintStatementChevronPrintChevronArgumentsNodeSlot::Comma => None,
-        }
-    }
-    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
-        match self {
-            PrintStatementChevronPrintChevronArgumentsNodeSlot::PrintChevronArguments(t) => t.snapshot_edge(),
-            PrintStatementChevronPrintChevronArgumentsNodeSlot::Comma => None,
-        }
-    }
-    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
-        match self {
-            PrintStatementChevronPrintChevronArgumentsNodeSlot::PrintChevronArguments(t) => t.source_coordinate(),
-            PrintStatementChevronPrintChevronArgumentsNodeSlot::Comma => None,
-        }
-    }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
-        match self {
-            PrintStatementChevronPrintChevronArgumentsNodeSlot::PrintChevronArguments(t) => t.source_separator(ctx),
-            PrintStatementChevronPrintChevronArgumentsNodeSlot::Comma => None,
-        }
-    }
-    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &mut ::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
-        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
-    }
-}
-
-impl ::sittir_core::view::KindOf for PrintStatementChevronPrintChevronArgumentsNodeSlot {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        match self {
-            Self::PrintChevronArguments(inner) => inner.kind_in(kinds),
-            Self::Comma => [::sittir_core::types::KindId(6)].iter().any(|k| kinds.contains(k)),
-        }
-    }
-}
-
-impl ::sittir_core::render::Render for PrintStatementChevronPrintChevronArgumentsNodeSlot {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        match self {
-            PrintStatementChevronPrintChevronArgumentsNodeSlot::PrintChevronArguments(inner) => inner.render(w),
-            PrintStatementChevronPrintChevronArgumentsNodeSlot::Comma => {
-                w.site_at(options::SITE_PRINT_STATEMENT_CHEVRON_COMMA_BEFORE);
-                let written = render_comma(w);
-                written?;
-                Ok(())
-            }
-        }
-    }
-}
-
-::sittir_core::records_codec! {
-impl ::sittir_core::view::KindOf for PrintStatementChevronPrintChevronArgumentsNodeSlotRecord<'_> {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        match self {
-            Self::PrintChevronArguments(inner) => inner.kind_in(kinds),
-            Self::Comma => [::sittir_core::types::KindId(6)].iter().any(|k| kinds.contains(k)),
-        }
-    }
-}
-
-impl ::sittir_core::render::Render for PrintStatementChevronPrintChevronArgumentsNodeSlotRecord<'_> {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        match self {
-            PrintStatementChevronPrintChevronArgumentsNodeSlotRecord::PrintChevronArguments(inner) => inner.render(w),
-            PrintStatementChevronPrintChevronArgumentsNodeSlotRecord::Comma => {
-                w.site_at(options::SITE_PRINT_STATEMENT_CHEVRON_COMMA_BEFORE);
-                let written = render_comma(w);
-                written?;
-                Ok(())
-            }
-        }
-    }
-}
-}
-
-#[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
 #[node(choice, stamp = stamp, view = ComprehensionClausesContentNodeSlotRecord)]
 pub enum ComprehensionClausesContentNodeSlot {
     #[kind(kind::FOR_IN_CLAUSE)]
@@ -13528,7 +12841,7 @@ pub enum ComprehensionClausesContentNodeSlot {
 }
 
 impl ::sittir_core::prepare::Prepare for ComprehensionClausesContentNodeSlot {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         match self {
             ComprehensionClausesContentNodeSlot::ForInClause(t) => t.prepare(ctx),
             ComprehensionClausesContentNodeSlot::IfClause(t) => t.prepare(ctx),
@@ -13611,7 +12924,7 @@ pub enum ExceptClauseExceptionContentNodeSlot {
 }
 
 impl ::sittir_core::prepare::Prepare for ExceptClauseExceptionContentNodeSlot {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         match self {
             ExceptClauseExceptionContentNodeSlot::ExceptClauseExceptionAs(t) => t.prepare(ctx),
             ExceptClauseExceptionContentNodeSlot::ExceptClauseExceptionList(t) => t.prepare(ctx),
@@ -13696,7 +13009,7 @@ pub enum SplatPatternListPatternNodeSlot {
 }
 
 impl ::sittir_core::prepare::Prepare for SplatPatternListPatternNodeSlot {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         match self {
             SplatPatternListPatternNodeSlot::Identifier(t) => t.prepare(ctx),
             SplatPatternListPatternNodeSlot::Underscore => Ok(()),
@@ -13800,7 +13113,7 @@ pub enum SplatPatternDictionaryPatternNodeSlot {
 }
 
 impl ::sittir_core::prepare::Prepare for SplatPatternDictionaryPatternNodeSlot {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         match self {
             SplatPatternDictionaryPatternNodeSlot::Identifier(t) => t.prepare(ctx),
             SplatPatternDictionaryPatternNodeSlot::Underscore => Ok(()),
@@ -13893,6 +13206,577 @@ impl ::sittir_core::render::Render for SplatPatternDictionaryPatternNodeSlotReco
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
+#[node(choice, stamp = stamp, view = AssignmentEqValueNodeSlotRecord)]
+pub enum AssignmentEqValueNodeSlot {
+    #[kind(kind::COMPARISON_OPERATOR)]
+    ComparisonOperator(ComparisonOperatorNode),
+    #[kind(kind::NOT_OPERATOR)]
+    NotOperator(NotOperatorNode),
+    #[kind(kind::BOOLEAN_OPERATOR)]
+    BooleanOperator(BooleanOperatorNode),
+    #[kind(kind::LAMBDA)]
+    Lambda(LambdaNode),
+    #[kind(kind::AWAIT)]
+    Await(AwaitNode),
+    #[kind(kind::BINARY_OPERATOR)]
+    BinaryOperator(BinaryOperatorNode),
+    #[kind(kind::IDENTIFIER, folded(kind::__INIT_U_KEYWORD), folded(kind::TYPE_KEYWORD), folded(kind::PRINT_KEYWORD), folded(kind::EXEC_KEYWORD), folded(kind::ASYNC_KEYWORD), folded(kind::AWAIT_KEYWORD), folded(kind::MATCH_KEYWORD))]
+    Identifier(IdentifierNode),
+    #[kind(kind::STRING)]
+    String(StringNode),
+    #[kind(kind::CONCATENATED_STRING)]
+    ConcatenatedString(ConcatenatedStringNode),
+    #[kind(kind::INTEGER_HEX)]
+    IntegerHex(IntegerHexNode),
+    #[kind(kind::INTEGER_OCTAL)]
+    IntegerOctal(IntegerOctalNode),
+    #[kind(kind::INTEGER_BINARY)]
+    IntegerBinary(IntegerBinaryNode),
+    #[kind(kind::INTEGER_DECIMAL_LONG)]
+    IntegerDecimalLong(IntegerDecimalLongNode),
+    #[kind(kind::INTEGER_DECIMAL_IMAGINARY)]
+    IntegerDecimalImaginary(IntegerDecimalImaginaryNode),
+    #[kind(kind::INTEGER_DECIMAL_PLAIN)]
+    IntegerDecimalPlain(IntegerDecimalPlainNode),
+    #[kind(kind::FLOAT_POINT)]
+    FloatPoint(FloatPointNode),
+    #[kind(kind::FLOAT_LEADING_POINT)]
+    FloatLeadingPoint(FloatLeadingPointNode),
+    #[kind(kind::FLOAT_SCIENTIFIC)]
+    FloatScientific(FloatScientificNode),
+    #[kind(kind::UNARY_OPERATOR)]
+    UnaryOperator(UnaryOperatorNode),
+    #[kind(kind::ATTRIBUTE)]
+    Attribute(AttributeNode),
+    #[kind(kind::SUBSCRIPT)]
+    Subscript(SubscriptNode),
+    #[kind(kind::CALL)]
+    Call(CallNode),
+    #[kind(kind::LIST)]
+    List(ListNode),
+    #[kind(kind::LIST_COMPREHENSION)]
+    ListComprehension(ListComprehensionNode),
+    #[kind(kind::DICTIONARY)]
+    Dictionary(DictionaryNode),
+    #[kind(kind::DICTIONARY_COMPREHENSION)]
+    DictionaryComprehension(DictionaryComprehensionNode),
+    #[kind(kind::SET)]
+    Set(SetNode),
+    #[kind(kind::SET_COMPREHENSION)]
+    SetComprehension(SetComprehensionNode),
+    #[kind(kind::TUPLE)]
+    Tuple(TupleNode),
+    #[kind(kind::PARENTHESIZED_EXPRESSION)]
+    ParenthesizedExpression(ParenthesizedExpressionNode),
+    #[kind(kind::GENERATOR_EXPRESSION)]
+    GeneratorExpression(GeneratorExpressionNode),
+    #[kind(kind::LIST_SPLAT_PATTERN)]
+    ListSplatPattern(ListSplatPatternNode),
+    #[kind(kind::CONDITIONAL_EXPRESSION)]
+    ConditionalExpression(ConditionalExpressionNode),
+    #[kind(kind::NAMED_EXPRESSION)]
+    NamedExpression(NamedExpressionNode),
+    #[kind(kind::AS_PATTERN)]
+    AsPattern(AsPatternNode),
+    #[kind(kind::EXPRESSION_LIST)]
+    ExpressionList(ExpressionListNode),
+    #[kind(kind::PATTERN_LIST)]
+    PatternList(PatternListNode),
+    #[kind(kind::YIELD)]
+    Yield(YieldNode),
+    #[kind(kind::ASSIGNMENT_EQ)]
+    AssignmentEq(AssignmentEqNode),
+    #[kind(kind::ASSIGNMENT_TYPE)]
+    AssignmentType(AssignmentTypeNode),
+    #[kind(kind::ASSIGNMENT_TYPED)]
+    AssignmentTyped(Box<AssignmentTypedNode>),
+    #[kind(kind::TRUE)]
+    #[node(edged)]
+    True(::sittir_core::options::Edges),
+    #[kind(kind::FALSE)]
+    #[node(edged)]
+    False(::sittir_core::options::Edges),
+    #[kind(kind::NONE)]
+    #[node(edged)]
+    None(::sittir_core::options::Edges),
+    #[kind(kind::ELLIPSIS)]
+    #[node(edged)]
+    Ellipsis(::sittir_core::options::Edges),
+    #[node(verbatim)]
+    Verbatim(VerbatimNode),
+}
+
+impl ::sittir_core::prepare::Prepare for AssignmentEqValueNodeSlot {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
+        match self {
+            AssignmentEqValueNodeSlot::ComparisonOperator(t) => t.prepare(ctx),
+            AssignmentEqValueNodeSlot::NotOperator(t) => t.prepare(ctx),
+            AssignmentEqValueNodeSlot::BooleanOperator(t) => t.prepare(ctx),
+            AssignmentEqValueNodeSlot::Lambda(t) => t.prepare(ctx),
+            AssignmentEqValueNodeSlot::Await(t) => t.prepare(ctx),
+            AssignmentEqValueNodeSlot::BinaryOperator(t) => t.prepare(ctx),
+            AssignmentEqValueNodeSlot::Identifier(t) => t.prepare(ctx),
+            AssignmentEqValueNodeSlot::String(t) => t.prepare(ctx),
+            AssignmentEqValueNodeSlot::ConcatenatedString(t) => t.prepare(ctx),
+            AssignmentEqValueNodeSlot::IntegerHex(t) => t.prepare(ctx),
+            AssignmentEqValueNodeSlot::IntegerOctal(t) => t.prepare(ctx),
+            AssignmentEqValueNodeSlot::IntegerBinary(t) => t.prepare(ctx),
+            AssignmentEqValueNodeSlot::IntegerDecimalLong(t) => t.prepare(ctx),
+            AssignmentEqValueNodeSlot::IntegerDecimalImaginary(t) => t.prepare(ctx),
+            AssignmentEqValueNodeSlot::IntegerDecimalPlain(t) => t.prepare(ctx),
+            AssignmentEqValueNodeSlot::FloatPoint(t) => t.prepare(ctx),
+            AssignmentEqValueNodeSlot::FloatLeadingPoint(t) => t.prepare(ctx),
+            AssignmentEqValueNodeSlot::FloatScientific(t) => t.prepare(ctx),
+            AssignmentEqValueNodeSlot::UnaryOperator(t) => t.prepare(ctx),
+            AssignmentEqValueNodeSlot::Attribute(t) => t.prepare(ctx),
+            AssignmentEqValueNodeSlot::Subscript(t) => t.prepare(ctx),
+            AssignmentEqValueNodeSlot::Call(t) => t.prepare(ctx),
+            AssignmentEqValueNodeSlot::List(t) => t.prepare(ctx),
+            AssignmentEqValueNodeSlot::ListComprehension(t) => t.prepare(ctx),
+            AssignmentEqValueNodeSlot::Dictionary(t) => t.prepare(ctx),
+            AssignmentEqValueNodeSlot::DictionaryComprehension(t) => t.prepare(ctx),
+            AssignmentEqValueNodeSlot::Set(t) => t.prepare(ctx),
+            AssignmentEqValueNodeSlot::SetComprehension(t) => t.prepare(ctx),
+            AssignmentEqValueNodeSlot::Tuple(t) => t.prepare(ctx),
+            AssignmentEqValueNodeSlot::ParenthesizedExpression(t) => t.prepare(ctx),
+            AssignmentEqValueNodeSlot::GeneratorExpression(t) => t.prepare(ctx),
+            AssignmentEqValueNodeSlot::ListSplatPattern(t) => t.prepare(ctx),
+            AssignmentEqValueNodeSlot::ConditionalExpression(t) => t.prepare(ctx),
+            AssignmentEqValueNodeSlot::NamedExpression(t) => t.prepare(ctx),
+            AssignmentEqValueNodeSlot::AsPattern(t) => t.prepare(ctx),
+            AssignmentEqValueNodeSlot::ExpressionList(t) => t.prepare(ctx),
+            AssignmentEqValueNodeSlot::PatternList(t) => t.prepare(ctx),
+            AssignmentEqValueNodeSlot::Yield(t) => t.prepare(ctx),
+            AssignmentEqValueNodeSlot::AssignmentEq(t) => t.prepare(ctx),
+            AssignmentEqValueNodeSlot::AssignmentType(t) => t.prepare(ctx),
+            AssignmentEqValueNodeSlot::AssignmentTyped(t) => t.prepare(ctx),
+            AssignmentEqValueNodeSlot::True(_) => Ok(()),
+            AssignmentEqValueNodeSlot::False(_) => Ok(()),
+            AssignmentEqValueNodeSlot::None(_) => Ok(()),
+            AssignmentEqValueNodeSlot::Ellipsis(_) => Ok(()),
+            AssignmentEqValueNodeSlot::Verbatim(t) => t.prepare(ctx),
+        }
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        match self {
+            AssignmentEqValueNodeSlot::ComparisonOperator(t) => t.gap_edges(),
+            AssignmentEqValueNodeSlot::NotOperator(t) => t.gap_edges(),
+            AssignmentEqValueNodeSlot::BooleanOperator(t) => t.gap_edges(),
+            AssignmentEqValueNodeSlot::Lambda(t) => t.gap_edges(),
+            AssignmentEqValueNodeSlot::Await(t) => t.gap_edges(),
+            AssignmentEqValueNodeSlot::BinaryOperator(t) => t.gap_edges(),
+            AssignmentEqValueNodeSlot::Identifier(t) => t.gap_edges(),
+            AssignmentEqValueNodeSlot::String(t) => t.gap_edges(),
+            AssignmentEqValueNodeSlot::ConcatenatedString(t) => t.gap_edges(),
+            AssignmentEqValueNodeSlot::IntegerHex(t) => t.gap_edges(),
+            AssignmentEqValueNodeSlot::IntegerOctal(t) => t.gap_edges(),
+            AssignmentEqValueNodeSlot::IntegerBinary(t) => t.gap_edges(),
+            AssignmentEqValueNodeSlot::IntegerDecimalLong(t) => t.gap_edges(),
+            AssignmentEqValueNodeSlot::IntegerDecimalImaginary(t) => t.gap_edges(),
+            AssignmentEqValueNodeSlot::IntegerDecimalPlain(t) => t.gap_edges(),
+            AssignmentEqValueNodeSlot::FloatPoint(t) => t.gap_edges(),
+            AssignmentEqValueNodeSlot::FloatLeadingPoint(t) => t.gap_edges(),
+            AssignmentEqValueNodeSlot::FloatScientific(t) => t.gap_edges(),
+            AssignmentEqValueNodeSlot::UnaryOperator(t) => t.gap_edges(),
+            AssignmentEqValueNodeSlot::Attribute(t) => t.gap_edges(),
+            AssignmentEqValueNodeSlot::Subscript(t) => t.gap_edges(),
+            AssignmentEqValueNodeSlot::Call(t) => t.gap_edges(),
+            AssignmentEqValueNodeSlot::List(t) => t.gap_edges(),
+            AssignmentEqValueNodeSlot::ListComprehension(t) => t.gap_edges(),
+            AssignmentEqValueNodeSlot::Dictionary(t) => t.gap_edges(),
+            AssignmentEqValueNodeSlot::DictionaryComprehension(t) => t.gap_edges(),
+            AssignmentEqValueNodeSlot::Set(t) => t.gap_edges(),
+            AssignmentEqValueNodeSlot::SetComprehension(t) => t.gap_edges(),
+            AssignmentEqValueNodeSlot::Tuple(t) => t.gap_edges(),
+            AssignmentEqValueNodeSlot::ParenthesizedExpression(t) => t.gap_edges(),
+            AssignmentEqValueNodeSlot::GeneratorExpression(t) => t.gap_edges(),
+            AssignmentEqValueNodeSlot::ListSplatPattern(t) => t.gap_edges(),
+            AssignmentEqValueNodeSlot::ConditionalExpression(t) => t.gap_edges(),
+            AssignmentEqValueNodeSlot::NamedExpression(t) => t.gap_edges(),
+            AssignmentEqValueNodeSlot::AsPattern(t) => t.gap_edges(),
+            AssignmentEqValueNodeSlot::ExpressionList(t) => t.gap_edges(),
+            AssignmentEqValueNodeSlot::PatternList(t) => t.gap_edges(),
+            AssignmentEqValueNodeSlot::Yield(t) => t.gap_edges(),
+            AssignmentEqValueNodeSlot::AssignmentEq(t) => t.gap_edges(),
+            AssignmentEqValueNodeSlot::AssignmentType(t) => t.gap_edges(),
+            AssignmentEqValueNodeSlot::AssignmentTyped(t) => t.gap_edges(),
+            AssignmentEqValueNodeSlot::True(edges) => Some(edges),
+            AssignmentEqValueNodeSlot::False(edges) => Some(edges),
+            AssignmentEqValueNodeSlot::None(edges) => Some(edges),
+            AssignmentEqValueNodeSlot::Ellipsis(edges) => Some(edges),
+            AssignmentEqValueNodeSlot::Verbatim(t) => t.gap_edges(),
+        }
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        match self {
+            AssignmentEqValueNodeSlot::ComparisonOperator(t) => t.snapshot_edge(),
+            AssignmentEqValueNodeSlot::NotOperator(t) => t.snapshot_edge(),
+            AssignmentEqValueNodeSlot::BooleanOperator(t) => t.snapshot_edge(),
+            AssignmentEqValueNodeSlot::Lambda(t) => t.snapshot_edge(),
+            AssignmentEqValueNodeSlot::Await(t) => t.snapshot_edge(),
+            AssignmentEqValueNodeSlot::BinaryOperator(t) => t.snapshot_edge(),
+            AssignmentEqValueNodeSlot::Identifier(t) => t.snapshot_edge(),
+            AssignmentEqValueNodeSlot::String(t) => t.snapshot_edge(),
+            AssignmentEqValueNodeSlot::ConcatenatedString(t) => t.snapshot_edge(),
+            AssignmentEqValueNodeSlot::IntegerHex(t) => t.snapshot_edge(),
+            AssignmentEqValueNodeSlot::IntegerOctal(t) => t.snapshot_edge(),
+            AssignmentEqValueNodeSlot::IntegerBinary(t) => t.snapshot_edge(),
+            AssignmentEqValueNodeSlot::IntegerDecimalLong(t) => t.snapshot_edge(),
+            AssignmentEqValueNodeSlot::IntegerDecimalImaginary(t) => t.snapshot_edge(),
+            AssignmentEqValueNodeSlot::IntegerDecimalPlain(t) => t.snapshot_edge(),
+            AssignmentEqValueNodeSlot::FloatPoint(t) => t.snapshot_edge(),
+            AssignmentEqValueNodeSlot::FloatLeadingPoint(t) => t.snapshot_edge(),
+            AssignmentEqValueNodeSlot::FloatScientific(t) => t.snapshot_edge(),
+            AssignmentEqValueNodeSlot::UnaryOperator(t) => t.snapshot_edge(),
+            AssignmentEqValueNodeSlot::Attribute(t) => t.snapshot_edge(),
+            AssignmentEqValueNodeSlot::Subscript(t) => t.snapshot_edge(),
+            AssignmentEqValueNodeSlot::Call(t) => t.snapshot_edge(),
+            AssignmentEqValueNodeSlot::List(t) => t.snapshot_edge(),
+            AssignmentEqValueNodeSlot::ListComprehension(t) => t.snapshot_edge(),
+            AssignmentEqValueNodeSlot::Dictionary(t) => t.snapshot_edge(),
+            AssignmentEqValueNodeSlot::DictionaryComprehension(t) => t.snapshot_edge(),
+            AssignmentEqValueNodeSlot::Set(t) => t.snapshot_edge(),
+            AssignmentEqValueNodeSlot::SetComprehension(t) => t.snapshot_edge(),
+            AssignmentEqValueNodeSlot::Tuple(t) => t.snapshot_edge(),
+            AssignmentEqValueNodeSlot::ParenthesizedExpression(t) => t.snapshot_edge(),
+            AssignmentEqValueNodeSlot::GeneratorExpression(t) => t.snapshot_edge(),
+            AssignmentEqValueNodeSlot::ListSplatPattern(t) => t.snapshot_edge(),
+            AssignmentEqValueNodeSlot::ConditionalExpression(t) => t.snapshot_edge(),
+            AssignmentEqValueNodeSlot::NamedExpression(t) => t.snapshot_edge(),
+            AssignmentEqValueNodeSlot::AsPattern(t) => t.snapshot_edge(),
+            AssignmentEqValueNodeSlot::ExpressionList(t) => t.snapshot_edge(),
+            AssignmentEqValueNodeSlot::PatternList(t) => t.snapshot_edge(),
+            AssignmentEqValueNodeSlot::Yield(t) => t.snapshot_edge(),
+            AssignmentEqValueNodeSlot::AssignmentEq(t) => t.snapshot_edge(),
+            AssignmentEqValueNodeSlot::AssignmentType(t) => t.snapshot_edge(),
+            AssignmentEqValueNodeSlot::AssignmentTyped(t) => t.snapshot_edge(),
+            AssignmentEqValueNodeSlot::True(_) => None,
+            AssignmentEqValueNodeSlot::False(_) => None,
+            AssignmentEqValueNodeSlot::None(_) => None,
+            AssignmentEqValueNodeSlot::Ellipsis(_) => None,
+            AssignmentEqValueNodeSlot::Verbatim(t) => t.snapshot_edge(),
+        }
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        match self {
+            AssignmentEqValueNodeSlot::ComparisonOperator(t) => t.source_coordinate(),
+            AssignmentEqValueNodeSlot::NotOperator(t) => t.source_coordinate(),
+            AssignmentEqValueNodeSlot::BooleanOperator(t) => t.source_coordinate(),
+            AssignmentEqValueNodeSlot::Lambda(t) => t.source_coordinate(),
+            AssignmentEqValueNodeSlot::Await(t) => t.source_coordinate(),
+            AssignmentEqValueNodeSlot::BinaryOperator(t) => t.source_coordinate(),
+            AssignmentEqValueNodeSlot::Identifier(t) => t.source_coordinate(),
+            AssignmentEqValueNodeSlot::String(t) => t.source_coordinate(),
+            AssignmentEqValueNodeSlot::ConcatenatedString(t) => t.source_coordinate(),
+            AssignmentEqValueNodeSlot::IntegerHex(t) => t.source_coordinate(),
+            AssignmentEqValueNodeSlot::IntegerOctal(t) => t.source_coordinate(),
+            AssignmentEqValueNodeSlot::IntegerBinary(t) => t.source_coordinate(),
+            AssignmentEqValueNodeSlot::IntegerDecimalLong(t) => t.source_coordinate(),
+            AssignmentEqValueNodeSlot::IntegerDecimalImaginary(t) => t.source_coordinate(),
+            AssignmentEqValueNodeSlot::IntegerDecimalPlain(t) => t.source_coordinate(),
+            AssignmentEqValueNodeSlot::FloatPoint(t) => t.source_coordinate(),
+            AssignmentEqValueNodeSlot::FloatLeadingPoint(t) => t.source_coordinate(),
+            AssignmentEqValueNodeSlot::FloatScientific(t) => t.source_coordinate(),
+            AssignmentEqValueNodeSlot::UnaryOperator(t) => t.source_coordinate(),
+            AssignmentEqValueNodeSlot::Attribute(t) => t.source_coordinate(),
+            AssignmentEqValueNodeSlot::Subscript(t) => t.source_coordinate(),
+            AssignmentEqValueNodeSlot::Call(t) => t.source_coordinate(),
+            AssignmentEqValueNodeSlot::List(t) => t.source_coordinate(),
+            AssignmentEqValueNodeSlot::ListComprehension(t) => t.source_coordinate(),
+            AssignmentEqValueNodeSlot::Dictionary(t) => t.source_coordinate(),
+            AssignmentEqValueNodeSlot::DictionaryComprehension(t) => t.source_coordinate(),
+            AssignmentEqValueNodeSlot::Set(t) => t.source_coordinate(),
+            AssignmentEqValueNodeSlot::SetComprehension(t) => t.source_coordinate(),
+            AssignmentEqValueNodeSlot::Tuple(t) => t.source_coordinate(),
+            AssignmentEqValueNodeSlot::ParenthesizedExpression(t) => t.source_coordinate(),
+            AssignmentEqValueNodeSlot::GeneratorExpression(t) => t.source_coordinate(),
+            AssignmentEqValueNodeSlot::ListSplatPattern(t) => t.source_coordinate(),
+            AssignmentEqValueNodeSlot::ConditionalExpression(t) => t.source_coordinate(),
+            AssignmentEqValueNodeSlot::NamedExpression(t) => t.source_coordinate(),
+            AssignmentEqValueNodeSlot::AsPattern(t) => t.source_coordinate(),
+            AssignmentEqValueNodeSlot::ExpressionList(t) => t.source_coordinate(),
+            AssignmentEqValueNodeSlot::PatternList(t) => t.source_coordinate(),
+            AssignmentEqValueNodeSlot::Yield(t) => t.source_coordinate(),
+            AssignmentEqValueNodeSlot::AssignmentEq(t) => t.source_coordinate(),
+            AssignmentEqValueNodeSlot::AssignmentType(t) => t.source_coordinate(),
+            AssignmentEqValueNodeSlot::AssignmentTyped(t) => t.source_coordinate(),
+            AssignmentEqValueNodeSlot::True(_) => None,
+            AssignmentEqValueNodeSlot::False(_) => None,
+            AssignmentEqValueNodeSlot::None(_) => None,
+            AssignmentEqValueNodeSlot::Ellipsis(_) => None,
+            AssignmentEqValueNodeSlot::Verbatim(t) => t.source_coordinate(),
+        }
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
+        match self {
+            AssignmentEqValueNodeSlot::ComparisonOperator(t) => t.source_separator(ctx),
+            AssignmentEqValueNodeSlot::NotOperator(t) => t.source_separator(ctx),
+            AssignmentEqValueNodeSlot::BooleanOperator(t) => t.source_separator(ctx),
+            AssignmentEqValueNodeSlot::Lambda(t) => t.source_separator(ctx),
+            AssignmentEqValueNodeSlot::Await(t) => t.source_separator(ctx),
+            AssignmentEqValueNodeSlot::BinaryOperator(t) => t.source_separator(ctx),
+            AssignmentEqValueNodeSlot::Identifier(t) => t.source_separator(ctx),
+            AssignmentEqValueNodeSlot::String(t) => t.source_separator(ctx),
+            AssignmentEqValueNodeSlot::ConcatenatedString(t) => t.source_separator(ctx),
+            AssignmentEqValueNodeSlot::IntegerHex(t) => t.source_separator(ctx),
+            AssignmentEqValueNodeSlot::IntegerOctal(t) => t.source_separator(ctx),
+            AssignmentEqValueNodeSlot::IntegerBinary(t) => t.source_separator(ctx),
+            AssignmentEqValueNodeSlot::IntegerDecimalLong(t) => t.source_separator(ctx),
+            AssignmentEqValueNodeSlot::IntegerDecimalImaginary(t) => t.source_separator(ctx),
+            AssignmentEqValueNodeSlot::IntegerDecimalPlain(t) => t.source_separator(ctx),
+            AssignmentEqValueNodeSlot::FloatPoint(t) => t.source_separator(ctx),
+            AssignmentEqValueNodeSlot::FloatLeadingPoint(t) => t.source_separator(ctx),
+            AssignmentEqValueNodeSlot::FloatScientific(t) => t.source_separator(ctx),
+            AssignmentEqValueNodeSlot::UnaryOperator(t) => t.source_separator(ctx),
+            AssignmentEqValueNodeSlot::Attribute(t) => t.source_separator(ctx),
+            AssignmentEqValueNodeSlot::Subscript(t) => t.source_separator(ctx),
+            AssignmentEqValueNodeSlot::Call(t) => t.source_separator(ctx),
+            AssignmentEqValueNodeSlot::List(t) => t.source_separator(ctx),
+            AssignmentEqValueNodeSlot::ListComprehension(t) => t.source_separator(ctx),
+            AssignmentEqValueNodeSlot::Dictionary(t) => t.source_separator(ctx),
+            AssignmentEqValueNodeSlot::DictionaryComprehension(t) => t.source_separator(ctx),
+            AssignmentEqValueNodeSlot::Set(t) => t.source_separator(ctx),
+            AssignmentEqValueNodeSlot::SetComprehension(t) => t.source_separator(ctx),
+            AssignmentEqValueNodeSlot::Tuple(t) => t.source_separator(ctx),
+            AssignmentEqValueNodeSlot::ParenthesizedExpression(t) => t.source_separator(ctx),
+            AssignmentEqValueNodeSlot::GeneratorExpression(t) => t.source_separator(ctx),
+            AssignmentEqValueNodeSlot::ListSplatPattern(t) => t.source_separator(ctx),
+            AssignmentEqValueNodeSlot::ConditionalExpression(t) => t.source_separator(ctx),
+            AssignmentEqValueNodeSlot::NamedExpression(t) => t.source_separator(ctx),
+            AssignmentEqValueNodeSlot::AsPattern(t) => t.source_separator(ctx),
+            AssignmentEqValueNodeSlot::ExpressionList(t) => t.source_separator(ctx),
+            AssignmentEqValueNodeSlot::PatternList(t) => t.source_separator(ctx),
+            AssignmentEqValueNodeSlot::Yield(t) => t.source_separator(ctx),
+            AssignmentEqValueNodeSlot::AssignmentEq(t) => t.source_separator(ctx),
+            AssignmentEqValueNodeSlot::AssignmentType(t) => t.source_separator(ctx),
+            AssignmentEqValueNodeSlot::AssignmentTyped(t) => t.source_separator(ctx),
+            AssignmentEqValueNodeSlot::True(_) => None,
+            AssignmentEqValueNodeSlot::False(_) => None,
+            AssignmentEqValueNodeSlot::None(_) => None,
+            AssignmentEqValueNodeSlot::Ellipsis(_) => None,
+            AssignmentEqValueNodeSlot::Verbatim(t) => t.source_separator(ctx),
+        }
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &mut ::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
+}
+
+impl ::sittir_core::view::KindOf for AssignmentEqValueNodeSlot {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::ComparisonOperator(inner) => inner.kind_in(kinds),
+            Self::NotOperator(inner) => inner.kind_in(kinds),
+            Self::BooleanOperator(inner) => inner.kind_in(kinds),
+            Self::Lambda(inner) => inner.kind_in(kinds),
+            Self::Await(inner) => inner.kind_in(kinds),
+            Self::BinaryOperator(inner) => inner.kind_in(kinds),
+            Self::Identifier(inner) => inner.kind_in(kinds),
+            Self::String(inner) => inner.kind_in(kinds),
+            Self::ConcatenatedString(inner) => inner.kind_in(kinds),
+            Self::IntegerHex(inner) => inner.kind_in(kinds),
+            Self::IntegerOctal(inner) => inner.kind_in(kinds),
+            Self::IntegerBinary(inner) => inner.kind_in(kinds),
+            Self::IntegerDecimalLong(inner) => inner.kind_in(kinds),
+            Self::IntegerDecimalImaginary(inner) => inner.kind_in(kinds),
+            Self::IntegerDecimalPlain(inner) => inner.kind_in(kinds),
+            Self::FloatPoint(inner) => inner.kind_in(kinds),
+            Self::FloatLeadingPoint(inner) => inner.kind_in(kinds),
+            Self::FloatScientific(inner) => inner.kind_in(kinds),
+            Self::UnaryOperator(inner) => inner.kind_in(kinds),
+            Self::Attribute(inner) => inner.kind_in(kinds),
+            Self::Subscript(inner) => inner.kind_in(kinds),
+            Self::Call(inner) => inner.kind_in(kinds),
+            Self::List(inner) => inner.kind_in(kinds),
+            Self::ListComprehension(inner) => inner.kind_in(kinds),
+            Self::Dictionary(inner) => inner.kind_in(kinds),
+            Self::DictionaryComprehension(inner) => inner.kind_in(kinds),
+            Self::Set(inner) => inner.kind_in(kinds),
+            Self::SetComprehension(inner) => inner.kind_in(kinds),
+            Self::Tuple(inner) => inner.kind_in(kinds),
+            Self::ParenthesizedExpression(inner) => inner.kind_in(kinds),
+            Self::GeneratorExpression(inner) => inner.kind_in(kinds),
+            Self::ListSplatPattern(inner) => inner.kind_in(kinds),
+            Self::ConditionalExpression(inner) => inner.kind_in(kinds),
+            Self::NamedExpression(inner) => inner.kind_in(kinds),
+            Self::AsPattern(inner) => inner.kind_in(kinds),
+            Self::ExpressionList(inner) => inner.kind_in(kinds),
+            Self::PatternList(inner) => inner.kind_in(kinds),
+            Self::Yield(inner) => inner.kind_in(kinds),
+            Self::AssignmentEq(inner) => inner.kind_in(kinds),
+            Self::AssignmentType(inner) => inner.kind_in(kinds),
+            Self::AssignmentTyped(inner) => inner.kind_in(kinds),
+            Self::True(_) => [::sittir_core::types::KindId(69)].iter().any(|k| kinds.contains(k)),
+            Self::False(_) => [::sittir_core::types::KindId(70)].iter().any(|k| kinds.contains(k)),
+            Self::None(_) => [::sittir_core::types::KindId(71)].iter().any(|k| kinds.contains(k)),
+            Self::Ellipsis(_) => [::sittir_core::types::KindId(63)].iter().any(|k| kinds.contains(k)),
+            Self::Verbatim(_) => [::sittir_core::types::KindId(1), ::sittir_core::types::KindId(93), ::sittir_core::types::KindId(94), ::sittir_core::types::KindId(95)].iter().any(|k| kinds.contains(k)),
+        }
+    }
+}
+
+impl ::sittir_core::render::Render for AssignmentEqValueNodeSlot {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        match self {
+            AssignmentEqValueNodeSlot::ComparisonOperator(inner) => inner.render(w),
+            AssignmentEqValueNodeSlot::NotOperator(inner) => inner.render(w),
+            AssignmentEqValueNodeSlot::BooleanOperator(inner) => inner.render(w),
+            AssignmentEqValueNodeSlot::Lambda(inner) => inner.render(w),
+            AssignmentEqValueNodeSlot::Await(inner) => inner.render(w),
+            AssignmentEqValueNodeSlot::BinaryOperator(inner) => inner.render(w),
+            AssignmentEqValueNodeSlot::Identifier(inner) => inner.render(w),
+            AssignmentEqValueNodeSlot::String(inner) => inner.render(w),
+            AssignmentEqValueNodeSlot::ConcatenatedString(inner) => inner.render(w),
+            AssignmentEqValueNodeSlot::IntegerHex(inner) => inner.render(w),
+            AssignmentEqValueNodeSlot::IntegerOctal(inner) => inner.render(w),
+            AssignmentEqValueNodeSlot::IntegerBinary(inner) => inner.render(w),
+            AssignmentEqValueNodeSlot::IntegerDecimalLong(inner) => inner.render(w),
+            AssignmentEqValueNodeSlot::IntegerDecimalImaginary(inner) => inner.render(w),
+            AssignmentEqValueNodeSlot::IntegerDecimalPlain(inner) => inner.render(w),
+            AssignmentEqValueNodeSlot::FloatPoint(inner) => inner.render(w),
+            AssignmentEqValueNodeSlot::FloatLeadingPoint(inner) => inner.render(w),
+            AssignmentEqValueNodeSlot::FloatScientific(inner) => inner.render(w),
+            AssignmentEqValueNodeSlot::UnaryOperator(inner) => inner.render(w),
+            AssignmentEqValueNodeSlot::Attribute(inner) => inner.render(w),
+            AssignmentEqValueNodeSlot::Subscript(inner) => inner.render(w),
+            AssignmentEqValueNodeSlot::Call(inner) => inner.render(w),
+            AssignmentEqValueNodeSlot::List(inner) => inner.render(w),
+            AssignmentEqValueNodeSlot::ListComprehension(inner) => inner.render(w),
+            AssignmentEqValueNodeSlot::Dictionary(inner) => inner.render(w),
+            AssignmentEqValueNodeSlot::DictionaryComprehension(inner) => inner.render(w),
+            AssignmentEqValueNodeSlot::Set(inner) => inner.render(w),
+            AssignmentEqValueNodeSlot::SetComprehension(inner) => inner.render(w),
+            AssignmentEqValueNodeSlot::Tuple(inner) => inner.render(w),
+            AssignmentEqValueNodeSlot::ParenthesizedExpression(inner) => inner.render(w),
+            AssignmentEqValueNodeSlot::GeneratorExpression(inner) => inner.render(w),
+            AssignmentEqValueNodeSlot::ListSplatPattern(inner) => inner.render(w),
+            AssignmentEqValueNodeSlot::ConditionalExpression(inner) => inner.render(w),
+            AssignmentEqValueNodeSlot::NamedExpression(inner) => inner.render(w),
+            AssignmentEqValueNodeSlot::AsPattern(inner) => inner.render(w),
+            AssignmentEqValueNodeSlot::ExpressionList(inner) => inner.render(w),
+            AssignmentEqValueNodeSlot::PatternList(inner) => inner.render(w),
+            AssignmentEqValueNodeSlot::Yield(inner) => inner.render(w),
+            AssignmentEqValueNodeSlot::AssignmentEq(inner) => inner.render(w),
+            AssignmentEqValueNodeSlot::AssignmentType(inner) => inner.render(w),
+            AssignmentEqValueNodeSlot::AssignmentTyped(inner) => inner.as_ref().render(w),
+            AssignmentEqValueNodeSlot::True(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(69), edges, w, render_true),
+            AssignmentEqValueNodeSlot::False(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(70), edges, w, render_false),
+            AssignmentEqValueNodeSlot::None(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(71), edges, w, render_none),
+            AssignmentEqValueNodeSlot::Ellipsis(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(63), edges, w, render_ellipsis),
+            AssignmentEqValueNodeSlot::Verbatim(inner) => inner.render(w),
+        }
+    }
+}
+
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for AssignmentEqValueNodeSlotRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::ComparisonOperator(inner) => inner.kind_in(kinds),
+            Self::NotOperator(inner) => inner.kind_in(kinds),
+            Self::BooleanOperator(inner) => inner.kind_in(kinds),
+            Self::Lambda(inner) => inner.kind_in(kinds),
+            Self::Await(inner) => inner.kind_in(kinds),
+            Self::BinaryOperator(inner) => inner.kind_in(kinds),
+            Self::Identifier(inner) => inner.kind_in(kinds),
+            Self::String(inner) => inner.kind_in(kinds),
+            Self::ConcatenatedString(inner) => inner.kind_in(kinds),
+            Self::IntegerHex(inner) => inner.kind_in(kinds),
+            Self::IntegerOctal(inner) => inner.kind_in(kinds),
+            Self::IntegerBinary(inner) => inner.kind_in(kinds),
+            Self::IntegerDecimalLong(inner) => inner.kind_in(kinds),
+            Self::IntegerDecimalImaginary(inner) => inner.kind_in(kinds),
+            Self::IntegerDecimalPlain(inner) => inner.kind_in(kinds),
+            Self::FloatPoint(inner) => inner.kind_in(kinds),
+            Self::FloatLeadingPoint(inner) => inner.kind_in(kinds),
+            Self::FloatScientific(inner) => inner.kind_in(kinds),
+            Self::UnaryOperator(inner) => inner.kind_in(kinds),
+            Self::Attribute(inner) => inner.kind_in(kinds),
+            Self::Subscript(inner) => inner.kind_in(kinds),
+            Self::Call(inner) => inner.kind_in(kinds),
+            Self::List(inner) => inner.kind_in(kinds),
+            Self::ListComprehension(inner) => inner.kind_in(kinds),
+            Self::Dictionary(inner) => inner.kind_in(kinds),
+            Self::DictionaryComprehension(inner) => inner.kind_in(kinds),
+            Self::Set(inner) => inner.kind_in(kinds),
+            Self::SetComprehension(inner) => inner.kind_in(kinds),
+            Self::Tuple(inner) => inner.kind_in(kinds),
+            Self::ParenthesizedExpression(inner) => inner.kind_in(kinds),
+            Self::GeneratorExpression(inner) => inner.kind_in(kinds),
+            Self::ListSplatPattern(inner) => inner.kind_in(kinds),
+            Self::ConditionalExpression(inner) => inner.kind_in(kinds),
+            Self::NamedExpression(inner) => inner.kind_in(kinds),
+            Self::AsPattern(inner) => inner.kind_in(kinds),
+            Self::ExpressionList(inner) => inner.kind_in(kinds),
+            Self::PatternList(inner) => inner.kind_in(kinds),
+            Self::Yield(inner) => inner.kind_in(kinds),
+            Self::AssignmentEq(inner) => inner.kind_in(kinds),
+            Self::AssignmentType(inner) => inner.kind_in(kinds),
+            Self::AssignmentTyped(inner) => inner.kind_in(kinds),
+            Self::True(_) => [::sittir_core::types::KindId(69)].iter().any(|k| kinds.contains(k)),
+            Self::False(_) => [::sittir_core::types::KindId(70)].iter().any(|k| kinds.contains(k)),
+            Self::None(_) => [::sittir_core::types::KindId(71)].iter().any(|k| kinds.contains(k)),
+            Self::Ellipsis(_) => [::sittir_core::types::KindId(63)].iter().any(|k| kinds.contains(k)),
+            Self::Verbatim(_) => [::sittir_core::types::KindId(1), ::sittir_core::types::KindId(93), ::sittir_core::types::KindId(94), ::sittir_core::types::KindId(95)].iter().any(|k| kinds.contains(k)),
+        }
+    }
+}
+
+impl ::sittir_core::render::Render for AssignmentEqValueNodeSlotRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        match self {
+            AssignmentEqValueNodeSlotRecord::ComparisonOperator(inner) => inner.render(w),
+            AssignmentEqValueNodeSlotRecord::NotOperator(inner) => inner.render(w),
+            AssignmentEqValueNodeSlotRecord::BooleanOperator(inner) => inner.render(w),
+            AssignmentEqValueNodeSlotRecord::Lambda(inner) => inner.render(w),
+            AssignmentEqValueNodeSlotRecord::Await(inner) => inner.render(w),
+            AssignmentEqValueNodeSlotRecord::BinaryOperator(inner) => inner.render(w),
+            AssignmentEqValueNodeSlotRecord::Identifier(inner) => inner.render(w),
+            AssignmentEqValueNodeSlotRecord::String(inner) => inner.render(w),
+            AssignmentEqValueNodeSlotRecord::ConcatenatedString(inner) => inner.render(w),
+            AssignmentEqValueNodeSlotRecord::IntegerHex(inner) => inner.render(w),
+            AssignmentEqValueNodeSlotRecord::IntegerOctal(inner) => inner.render(w),
+            AssignmentEqValueNodeSlotRecord::IntegerBinary(inner) => inner.render(w),
+            AssignmentEqValueNodeSlotRecord::IntegerDecimalLong(inner) => inner.render(w),
+            AssignmentEqValueNodeSlotRecord::IntegerDecimalImaginary(inner) => inner.render(w),
+            AssignmentEqValueNodeSlotRecord::IntegerDecimalPlain(inner) => inner.render(w),
+            AssignmentEqValueNodeSlotRecord::FloatPoint(inner) => inner.render(w),
+            AssignmentEqValueNodeSlotRecord::FloatLeadingPoint(inner) => inner.render(w),
+            AssignmentEqValueNodeSlotRecord::FloatScientific(inner) => inner.render(w),
+            AssignmentEqValueNodeSlotRecord::UnaryOperator(inner) => inner.render(w),
+            AssignmentEqValueNodeSlotRecord::Attribute(inner) => inner.render(w),
+            AssignmentEqValueNodeSlotRecord::Subscript(inner) => inner.render(w),
+            AssignmentEqValueNodeSlotRecord::Call(inner) => inner.render(w),
+            AssignmentEqValueNodeSlotRecord::List(inner) => inner.render(w),
+            AssignmentEqValueNodeSlotRecord::ListComprehension(inner) => inner.render(w),
+            AssignmentEqValueNodeSlotRecord::Dictionary(inner) => inner.render(w),
+            AssignmentEqValueNodeSlotRecord::DictionaryComprehension(inner) => inner.render(w),
+            AssignmentEqValueNodeSlotRecord::Set(inner) => inner.render(w),
+            AssignmentEqValueNodeSlotRecord::SetComprehension(inner) => inner.render(w),
+            AssignmentEqValueNodeSlotRecord::Tuple(inner) => inner.render(w),
+            AssignmentEqValueNodeSlotRecord::ParenthesizedExpression(inner) => inner.render(w),
+            AssignmentEqValueNodeSlotRecord::GeneratorExpression(inner) => inner.render(w),
+            AssignmentEqValueNodeSlotRecord::ListSplatPattern(inner) => inner.render(w),
+            AssignmentEqValueNodeSlotRecord::ConditionalExpression(inner) => inner.render(w),
+            AssignmentEqValueNodeSlotRecord::NamedExpression(inner) => inner.render(w),
+            AssignmentEqValueNodeSlotRecord::AsPattern(inner) => inner.render(w),
+            AssignmentEqValueNodeSlotRecord::ExpressionList(inner) => inner.render(w),
+            AssignmentEqValueNodeSlotRecord::PatternList(inner) => inner.render(w),
+            AssignmentEqValueNodeSlotRecord::Yield(inner) => inner.render(w),
+            AssignmentEqValueNodeSlotRecord::AssignmentEq(inner) => inner.render(w),
+            AssignmentEqValueNodeSlotRecord::AssignmentType(inner) => inner.render(w),
+            AssignmentEqValueNodeSlotRecord::AssignmentTyped(inner) => inner.render(w),
+            AssignmentEqValueNodeSlotRecord::True(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(69), edges, w, render_true),
+            AssignmentEqValueNodeSlotRecord::False(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(70), edges, w, render_false),
+            AssignmentEqValueNodeSlotRecord::None(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(71), edges, w, render_none),
+            AssignmentEqValueNodeSlotRecord::Ellipsis(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(63), edges, w, render_ellipsis),
+            AssignmentEqValueNodeSlotRecord::Verbatim(inner) => inner.render(w),
+        }
+    }
+}
+}
+
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
 #[node(choice, stamp = stamp)]
 pub enum ComparisonOperatorComparatorOperatorsNodeSlot {
     #[kind(kind::LT)]
@@ -13920,7 +13804,7 @@ pub enum ComparisonOperatorComparatorOperatorsNodeSlot {
 }
 
 impl ::sittir_core::prepare::Prepare for ComparisonOperatorComparatorOperatorsNodeSlot {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         match self {
             ComparisonOperatorComparatorOperatorsNodeSlot::Lt => Ok(()),
             ComparisonOperatorComparatorOperatorsNodeSlot::LtEq => Ok(()),
@@ -14043,7 +13927,7 @@ pub enum DecoratedDefinitionClassDeclarationDefinitionNodeSlot {
 }
 
 impl ::sittir_core::prepare::Prepare for DecoratedDefinitionClassDeclarationDefinitionNodeSlot {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         match self {
             DecoratedDefinitionClassDeclarationDefinitionNodeSlot::ClassDefinition(t) => t.prepare(ctx),
             DecoratedDefinitionClassDeclarationDefinitionNodeSlot::MethodDeclaration(t) => t.prepare(ctx),
@@ -14176,7 +14060,7 @@ impl ::sittir_core::render::Render for ModuleNodeRecord<'_> {
 }
 
 impl ::sittir_core::prepare::Prepare for ModuleNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_module(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -14196,7 +14080,7 @@ impl ::sittir_core::prepare::Prepare for ModuleNode {
     }
 }
 
-fn prepare_module<N: ModulePrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_module<N: ModulePrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     let inner = ::sittir_core::prepare::LayoutTarget::inner_item(&parts.layout, overlay);
@@ -14260,7 +14144,7 @@ impl ::sittir_core::render::Render for SimpleStatementsNodeRecord<'_> {
 }
 
 impl ::sittir_core::prepare::Prepare for SimpleStatementsNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_simple_statements(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -14280,7 +14164,7 @@ impl ::sittir_core::prepare::Prepare for SimpleStatementsNode {
     }
 }
 
-fn prepare_simple_statements<N: SimpleStatementsPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_simple_statements<N: SimpleStatementsPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(130), (None, None), ctx);
@@ -14335,7 +14219,7 @@ impl ::sittir_core::render::Render for ImportStatementNodeRecord<'_> {
 }
 
 impl ::sittir_core::prepare::Prepare for ImportStatementNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_import_statement(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -14355,7 +14239,7 @@ impl ::sittir_core::prepare::Prepare for ImportStatementNode {
     }
 }
 
-fn prepare_import_statement<N: ImportStatementPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_import_statement<N: ImportStatementPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(131), (None, None), ctx);
@@ -14408,7 +14292,7 @@ impl ::sittir_core::render::Render for ImportPrefixNodeRecord<'_> {
 }
 
 impl ::sittir_core::prepare::Prepare for ImportPrefixNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_import_prefix(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -14428,7 +14312,7 @@ impl ::sittir_core::prepare::Prepare for ImportPrefixNode {
     }
 }
 
-fn prepare_import_prefix<N: ImportPrefixPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_import_prefix<N: ImportPrefixPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     Ok(())
@@ -14442,9 +14326,9 @@ pub struct RelativeImportNode {
     pub layout: Option<Box<NodeLayout>>,
     #[height]
     height: u16,
-    #[wire(key = "_prefix")]
-    #[slot(field = field::PREFIX, word = 2, width = 3, forms = 1, built = 2)]
-    pub prefix: ::sittir_core::SlotValue<ImportPrefixNode>,
+    #[wire(key = "_dots")]
+    #[slot(field = field::DOTS, word = 2, width = 3, forms = 1, built = 2)]
+    pub dots: ::sittir_core::SlotValue<ImportPrefixNode>,
     #[wire(key = "_name")]
     #[slot(field = field::NAME, word = 5, width = 3, forms = 1, built = 3)]
     pub name: Option<::sittir_core::SlotValue<DottedNameNode>>,
@@ -14484,7 +14368,7 @@ impl ::sittir_core::render::Render for RelativeImportNodeRecord<'_> {
 }
 
 impl ::sittir_core::prepare::Prepare for RelativeImportNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_relative_import(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -14504,11 +14388,11 @@ impl ::sittir_core::prepare::Prepare for RelativeImportNode {
     }
 }
 
-fn prepare_relative_import<N: RelativeImportPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_relative_import<N: RelativeImportPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(133), (None, None), ctx);
-    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.prefix, overlay, ctx)?;
+    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.dots, overlay, ctx)?;
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.name, overlay, ctx)?;
     Ok(())
 }
@@ -14560,7 +14444,7 @@ impl ::sittir_core::render::Render for FutureImportStatementNodeRecord<'_> {
 }
 
 impl ::sittir_core::prepare::Prepare for FutureImportStatementNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_future_import_statement(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -14580,7 +14464,7 @@ impl ::sittir_core::prepare::Prepare for FutureImportStatementNode {
     }
 }
 
-fn prepare_future_import_statement<N: FutureImportStatementPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_future_import_statement<N: FutureImportStatementPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(134), (None, None), ctx);
@@ -14638,7 +14522,7 @@ impl ::sittir_core::render::Render for ImportFromStatementNodeRecord<'_> {
 }
 
 impl ::sittir_core::prepare::Prepare for ImportFromStatementNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_import_from_statement(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -14658,7 +14542,7 @@ impl ::sittir_core::prepare::Prepare for ImportFromStatementNode {
     }
 }
 
-fn prepare_import_from_statement<N: ImportFromStatementPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_import_from_statement<N: ImportFromStatementPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(135), (None, None), ctx);
@@ -14725,7 +14609,7 @@ impl ::sittir_core::render::Render for ImportListNodeRecord<'_> {
 }
 
 impl ::sittir_core::prepare::Prepare for ImportListNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_import_list(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -14745,7 +14629,7 @@ impl ::sittir_core::prepare::Prepare for ImportListNode {
     }
 }
 
-fn prepare_import_list<N: ImportListPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_import_list<N: ImportListPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     { let slot = ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, overlay, "_name"); ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.name, overlay, slot.as_deref()); }
@@ -14808,7 +14692,7 @@ impl ::sittir_core::render::Render for AliasedImportNodeRecord<'_> {
 }
 
 impl ::sittir_core::prepare::Prepare for AliasedImportNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_aliased_import(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -14828,7 +14712,7 @@ impl ::sittir_core::prepare::Prepare for AliasedImportNode {
     }
 }
 
-fn prepare_aliased_import<N: AliasedImportPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_aliased_import<N: AliasedImportPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(137), (None, None), ctx);
@@ -14851,7 +14735,7 @@ impl ::sittir_core::view::KindOf for WildcardImportNode {
 }
 
 impl ::sittir_core::prepare::Prepare for WildcardImportNode {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &mut ::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -14866,7 +14750,7 @@ impl ::sittir_core::render::Render for WildcardImportNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::PRINT_STATEMENT, words = 14, built_words = 3, fields = PrintStatementFields, prepare = PrintStatementPrepare, view = PrintStatementNodeRecord, prepare_fn = prepare_print_statement, seat_through = content)]
+#[node(kind = kind::PRINT_STATEMENT, words = 13, built_words = 3, fields = PrintStatementFields, prepare = PrintStatementPrepare, view = PrintStatementNodeRecord, prepare_fn = prepare_print_statement, seat_through = content)]
 pub struct PrintStatementNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -14874,7 +14758,7 @@ pub struct PrintStatementNode {
     #[height]
     height: u16,
     #[wire(key = "_content")]
-    #[slot(word = 2, width = 12, inline = 12, forms = 8, built = 2)]
+    #[slot(word = 2, width = 11, inline = 11, forms = 8, built = 2)]
     pub content: ::sittir_core::SlotValue<PrintStatementContentNodeSlot>,
 }
 
@@ -14912,7 +14796,7 @@ impl ::sittir_core::render::Render for PrintStatementNodeRecord<'_> {
 }
 
 impl ::sittir_core::prepare::Prepare for PrintStatementNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_print_statement(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -14932,7 +14816,7 @@ impl ::sittir_core::prepare::Prepare for PrintStatementNode {
     }
 }
 
-fn prepare_print_statement<N: PrintStatementPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_print_statement<N: PrintStatementPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.content, overlay, ctx)?;
@@ -14986,7 +14870,7 @@ impl ::sittir_core::render::Render for ChevronNodeRecord<'_> {
 }
 
 impl ::sittir_core::prepare::Prepare for ChevronNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_chevron(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -15006,7 +14890,7 @@ impl ::sittir_core::prepare::Prepare for ChevronNode {
     }
 }
 
-fn prepare_chevron<N: ChevronPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_chevron<N: ChevronPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(140), (None, None), ctx);
@@ -15067,7 +14951,7 @@ impl ::sittir_core::render::Render for AssertStatementNodeRecord<'_> {
 }
 
 impl ::sittir_core::prepare::Prepare for AssertStatementNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_assert_statement(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -15087,7 +14971,7 @@ impl ::sittir_core::prepare::Prepare for AssertStatementNode {
     }
 }
 
-fn prepare_assert_statement<N: AssertStatementPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_assert_statement<N: AssertStatementPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(141), (None, None), ctx);
@@ -15146,7 +15030,7 @@ impl ::sittir_core::render::Render for ExpressionStatementNodeRecord<'_> {
 }
 
 impl ::sittir_core::prepare::Prepare for ExpressionStatementNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_expression_statement(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -15166,7 +15050,7 @@ impl ::sittir_core::prepare::Prepare for ExpressionStatementNode {
     }
 }
 
-fn prepare_expression_statement<N: ExpressionStatementPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_expression_statement<N: ExpressionStatementPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.content, overlay, ctx)?;
@@ -15223,7 +15107,7 @@ impl ::sittir_core::render::Render for NamedExpressionNodeRecord<'_> {
 }
 
 impl ::sittir_core::prepare::Prepare for NamedExpressionNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_named_expression(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -15243,7 +15127,7 @@ impl ::sittir_core::prepare::Prepare for NamedExpressionNode {
     }
 }
 
-fn prepare_named_expression<N: NamedExpressionPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_named_expression<N: NamedExpressionPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(143), (None, None), ctx);
@@ -15299,7 +15183,7 @@ impl ::sittir_core::render::Render for NamedExpressionLhsNodeRecord<'_> {
 }
 
 impl ::sittir_core::prepare::Prepare for NamedExpressionLhsNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_named_expression_lhs(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -15319,7 +15203,7 @@ impl ::sittir_core::prepare::Prepare for NamedExpressionLhsNode {
     }
 }
 
-fn prepare_named_expression_lhs<N: NamedExpressionLhsPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_named_expression_lhs<N: NamedExpressionLhsPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.identifier, overlay, ctx)?;
@@ -15373,7 +15257,7 @@ impl ::sittir_core::render::Render for ReturnStatementNodeRecord<'_> {
 }
 
 impl ::sittir_core::prepare::Prepare for ReturnStatementNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_return_statement(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -15393,7 +15277,7 @@ impl ::sittir_core::prepare::Prepare for ReturnStatementNode {
     }
 }
 
-fn prepare_return_statement<N: ReturnStatementPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_return_statement<N: ReturnStatementPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(145), (None, None), ctx);
@@ -15448,7 +15332,7 @@ impl ::sittir_core::render::Render for DeleteStatementNodeRecord<'_> {
 }
 
 impl ::sittir_core::prepare::Prepare for DeleteStatementNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_delete_statement(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -15468,7 +15352,7 @@ impl ::sittir_core::prepare::Prepare for DeleteStatementNode {
     }
 }
 
-fn prepare_delete_statement<N: DeleteStatementPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_delete_statement<N: DeleteStatementPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(146), (None, None), ctx);
@@ -15526,7 +15410,7 @@ impl ::sittir_core::render::Render for RaiseStatementNodeRecord<'_> {
 }
 
 impl ::sittir_core::prepare::Prepare for RaiseStatementNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_raise_statement(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -15546,7 +15430,7 @@ impl ::sittir_core::prepare::Prepare for RaiseStatementNode {
     }
 }
 
-fn prepare_raise_statement<N: RaiseStatementPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_raise_statement<N: RaiseStatementPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(147), (None, None), ctx);
@@ -15570,7 +15454,7 @@ impl ::sittir_core::view::KindOf for PassStatementNode {
 }
 
 impl ::sittir_core::prepare::Prepare for PassStatementNode {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         match self {
             PassStatementNode::PassStatement(_) => Ok(()),
         }
@@ -15623,7 +15507,7 @@ impl ::sittir_core::view::KindOf for BreakStatementNode {
 }
 
 impl ::sittir_core::prepare::Prepare for BreakStatementNode {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         match self {
             BreakStatementNode::BreakStatement(_) => Ok(()),
         }
@@ -15676,7 +15560,7 @@ impl ::sittir_core::view::KindOf for ContinueStatementNode {
 }
 
 impl ::sittir_core::prepare::Prepare for ContinueStatementNode {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         match self {
             ContinueStatementNode::ContinueStatement(_) => Ok(()),
         }
@@ -15770,7 +15654,7 @@ impl ::sittir_core::render::Render for IfStatementNodeRecord<'_> {
 }
 
 impl ::sittir_core::prepare::Prepare for IfStatementNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_if_statement(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -15790,7 +15674,7 @@ impl ::sittir_core::prepare::Prepare for IfStatementNode {
     }
 }
 
-fn prepare_if_statement<N: IfStatementPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_if_statement<N: IfStatementPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(151), (None, None), ctx);
@@ -15853,7 +15737,7 @@ impl ::sittir_core::render::Render for ElifClauseNodeRecord<'_> {
 }
 
 impl ::sittir_core::prepare::Prepare for ElifClauseNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_elif_clause(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -15873,7 +15757,7 @@ impl ::sittir_core::prepare::Prepare for ElifClauseNode {
     }
 }
 
-fn prepare_elif_clause<N: ElifClausePrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_elif_clause<N: ElifClausePrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(152), (None, None), ctx);
@@ -15929,7 +15813,7 @@ impl ::sittir_core::render::Render for ElseClauseNodeRecord<'_> {
 }
 
 impl ::sittir_core::prepare::Prepare for ElseClauseNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_else_clause(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -15949,7 +15833,7 @@ impl ::sittir_core::prepare::Prepare for ElseClauseNode {
     }
 }
 
-fn prepare_else_clause<N: ElseClausePrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_else_clause<N: ElseClausePrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(153), (None, None), ctx);
@@ -15965,9 +15849,9 @@ pub struct MatchStatementNode {
     pub layout: Option<Box<NodeLayout>>,
     #[height]
     height: u16,
-    #[wire(key = "_subjects")]
-    #[slot(word = 2, width = 3, inline = 3, forms = 8, built = 2)]
-    pub subjects: ::sittir_core::SlotValue<SubjectsNode>,
+    #[wire(key = "_subject")]
+    #[slot(field = field::SUBJECT, word = 2, width = 3, inline = 3, forms = 8, built = 2)]
+    pub subject: ::sittir_core::SlotValue<SubjectsNode>,
     #[wire(key = "_body")]
     #[slot(field = field::BODY, word = 5, width = 3, inline = 3, forms = 8, built = 3)]
     pub body: ::sittir_core::SlotValue<MatchBlockNode>,
@@ -16007,7 +15891,7 @@ impl ::sittir_core::render::Render for MatchStatementNodeRecord<'_> {
 }
 
 impl ::sittir_core::prepare::Prepare for MatchStatementNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_match_statement(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -16027,12 +15911,93 @@ impl ::sittir_core::prepare::Prepare for MatchStatementNode {
     }
 }
 
-fn prepare_match_statement<N: MatchStatementPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_match_statement<N: MatchStatementPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(154), (None, None), ctx);
-    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.subjects, overlay, ctx)?;
+    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.subject, overlay, ctx)?;
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.body, overlay, ctx)?;
+    Ok(())
+}
+
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
+#[node(kind = kind::_MATCH_BLOCK, layout = [kind::_INDENT, kind::_DEDENT], words = 3, built_words = 3, fields = MatchBlockFields, prepare = MatchBlockPrepare, view = MatchBlockNodeRecord, prepare_fn = prepare_match_block)]
+pub struct MatchBlockNode {
+    #[wire(key = "$_layout")]
+    #[layout]
+    pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
+    #[wire(key = "_alternative")]
+    #[slot(field = field::ALTERNATIVE, word = 2, width = 1, run = 3, forms = 1, built = 2, seated)]
+    pub alternative: Vec<::sittir_core::SlotValue<CaseClauseNode>>,
+    #[wire(key = "_alternative_separator_space")]
+    #[space(slot = 2, side = after, site = options::SITE_MATCH_BLOCK_ALTERNATIVE_SEPARATOR_SPACE)]
+    pub alternative_separator_space: Option<KindId>,
+}
+
+impl ::sittir_core::view::KindOf for MatchBlockNode {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(155)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::options::Edged for MatchBlockNode {
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(155) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
+}
+
+impl ::sittir_core::render::Render for MatchBlockNode {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(155)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_match_block(self, w))
+    }
+}
+
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for MatchBlockNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(155)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for MatchBlockNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(MatchBlockFields::layout(self), Some(::sittir_core::types::KindId(155)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_match_block(self, w))
+    }
+}
+
+}
+
+impl ::sittir_core::prepare::Prepare for MatchBlockNode {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
+        prepare_match_block(self, &mut (), ctx)
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &mut ::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
+}
+
+fn prepare_match_block<N: MatchBlockPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
+    let mut parts = node.prepare_parts();
+    ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
+    ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(155), (None, None), ctx);
+    { let slot = ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, overlay, "_alternative"); ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.alternative, overlay, slot.as_deref()); }
+    ::sittir_core::prepare::Setting::fill(&mut parts.alternative_separator_space, overlay, ctx.options.site_arm(options::SITE_MATCH_BLOCK_ALTERNATIVE_SEPARATOR_SPACE).arm);
+    ::sittir_core::prepare::SeatSlot::fill_seats(&mut parts.alternative, overlay, options::SEATS_MATCH_BLOCK_ALTERNATIVE, ctx);
+    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.alternative, overlay, ctx)?;
     Ok(())
 }
 
@@ -16089,7 +16054,7 @@ impl ::sittir_core::render::Render for CaseClauseNodeRecord<'_> {
 }
 
 impl ::sittir_core::prepare::Prepare for CaseClauseNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_case_clause(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -16109,7 +16074,7 @@ impl ::sittir_core::prepare::Prepare for CaseClauseNode {
     }
 }
 
-fn prepare_case_clause<N: CaseClausePrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_case_clause<N: CaseClausePrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(156), (None, None), ctx);
@@ -16178,7 +16143,7 @@ impl ::sittir_core::render::Render for ForStatementNodeRecord<'_> {
 }
 
 impl ::sittir_core::prepare::Prepare for ForStatementNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_for_statement(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -16198,7 +16163,7 @@ impl ::sittir_core::prepare::Prepare for ForStatementNode {
     }
 }
 
-fn prepare_for_statement<N: ForStatementPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_for_statement<N: ForStatementPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(157), (None, None), ctx);
@@ -16262,7 +16227,7 @@ impl ::sittir_core::render::Render for WhileStatementNodeRecord<'_> {
 }
 
 impl ::sittir_core::prepare::Prepare for WhileStatementNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_while_statement(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -16282,7 +16247,7 @@ impl ::sittir_core::prepare::Prepare for WhileStatementNode {
     }
 }
 
-fn prepare_while_statement<N: WhileStatementPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_while_statement<N: WhileStatementPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(158), (None, None), ctx);
@@ -16351,7 +16316,7 @@ impl ::sittir_core::render::Render for TryStatementNodeRecord<'_> {
 }
 
 impl ::sittir_core::prepare::Prepare for TryStatementNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_try_statement(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -16371,7 +16336,7 @@ impl ::sittir_core::prepare::Prepare for TryStatementNode {
     }
 }
 
-fn prepare_try_statement<N: TryStatementPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_try_statement<N: TryStatementPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(159), (None, None), ctx);
@@ -16438,7 +16403,7 @@ impl ::sittir_core::render::Render for ExceptClauseNodeRecord<'_> {
 }
 
 impl ::sittir_core::prepare::Prepare for ExceptClauseNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_except_clause(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -16458,7 +16423,7 @@ impl ::sittir_core::prepare::Prepare for ExceptClauseNode {
     }
 }
 
-fn prepare_except_clause<N: ExceptClausePrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_except_clause<N: ExceptClausePrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(160), (None, None), ctx);
@@ -16514,7 +16479,7 @@ impl ::sittir_core::render::Render for FinallyClauseNodeRecord<'_> {
 }
 
 impl ::sittir_core::prepare::Prepare for FinallyClauseNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_finally_clause(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -16534,7 +16499,7 @@ impl ::sittir_core::prepare::Prepare for FinallyClauseNode {
     }
 }
 
-fn prepare_finally_clause<N: FinallyClausePrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_finally_clause<N: FinallyClausePrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(161), (None, None), ctx);
@@ -16595,7 +16560,7 @@ impl ::sittir_core::render::Render for WithStatementNodeRecord<'_> {
 }
 
 impl ::sittir_core::prepare::Prepare for WithStatementNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_with_statement(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -16615,7 +16580,7 @@ impl ::sittir_core::prepare::Prepare for WithStatementNode {
     }
 }
 
-fn prepare_with_statement<N: WithStatementPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_with_statement<N: WithStatementPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(162), (None, None), ctx);
@@ -16671,7 +16636,7 @@ impl ::sittir_core::render::Render for WithItemNodeRecord<'_> {
 }
 
 impl ::sittir_core::prepare::Prepare for WithItemNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_with_item(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -16691,7 +16656,7 @@ impl ::sittir_core::prepare::Prepare for WithItemNode {
     }
 }
 
-fn prepare_with_item<N: WithItemPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_with_item<N: WithItemPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.value, overlay, ctx)?;
@@ -16716,7 +16681,7 @@ pub struct FunctionDefinitionNode {
     pub name: ::sittir_core::SlotValue<IdentifierNode>,
     #[wire(key = "_type_parameters")]
     #[slot(field = field::TYPE_PARAMETERS, word = 6, width = 5, inline = 5, forms = 8, built = 4)]
-    pub type_parameters: Option<::sittir_core::SlotValue<TypeParameterNode>>,
+    pub type_parameters: Option<::sittir_core::SlotValue<TypeParamsNode>>,
     #[wire(key = "_parameters")]
     #[slot(field = field::PARAMETERS, word = 11, width = 5, inline = 5, forms = 8, built = 5)]
     pub parameters: ::sittir_core::SlotValue<ParametersNode>,
@@ -16762,7 +16727,7 @@ impl ::sittir_core::render::Render for FunctionDefinitionNodeRecord<'_> {
 }
 
 impl ::sittir_core::prepare::Prepare for FunctionDefinitionNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_function_definition(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -16782,7 +16747,7 @@ impl ::sittir_core::prepare::Prepare for FunctionDefinitionNode {
     }
 }
 
-fn prepare_function_definition<N: FunctionDefinitionPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_function_definition<N: FunctionDefinitionPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(165), (None, None), ctx);
@@ -16841,7 +16806,7 @@ impl ::sittir_core::render::Render for ParametersNodeRecord<'_> {
 }
 
 impl ::sittir_core::prepare::Prepare for ParametersNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_parameters(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -16861,7 +16826,7 @@ impl ::sittir_core::prepare::Prepare for ParametersNode {
     }
 }
 
-fn prepare_parameters<N: ParametersPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_parameters<N: ParametersPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(166), (None, None), ctx);
@@ -16916,7 +16881,7 @@ impl ::sittir_core::render::Render for LambdaParametersNodeRecord<'_> {
 }
 
 impl ::sittir_core::prepare::Prepare for LambdaParametersNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_lambda_parameters(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -16936,7 +16901,7 @@ impl ::sittir_core::prepare::Prepare for LambdaParametersNode {
     }
 }
 
-fn prepare_lambda_parameters<N: LambdaParametersPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_lambda_parameters<N: LambdaParametersPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.parameters_elements, overlay, ctx)?;
@@ -16990,7 +16955,7 @@ impl ::sittir_core::render::Render for ListSplatNodeRecord<'_> {
 }
 
 impl ::sittir_core::prepare::Prepare for ListSplatNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_list_splat(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -17010,7 +16975,7 @@ impl ::sittir_core::prepare::Prepare for ListSplatNode {
     }
 }
 
-fn prepare_list_splat<N: ListSplatPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_list_splat<N: ListSplatPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(168), (None, None), ctx);
@@ -17065,7 +17030,7 @@ impl ::sittir_core::render::Render for DictionarySplatNodeRecord<'_> {
 }
 
 impl ::sittir_core::prepare::Prepare for DictionarySplatNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_dictionary_splat(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -17085,7 +17050,7 @@ impl ::sittir_core::prepare::Prepare for DictionarySplatNode {
     }
 }
 
-fn prepare_dictionary_splat<N: DictionarySplatPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_dictionary_splat<N: DictionarySplatPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(169), (None, None), ctx);
@@ -17146,7 +17111,7 @@ impl ::sittir_core::render::Render for GlobalStatementNodeRecord<'_> {
 }
 
 impl ::sittir_core::prepare::Prepare for GlobalStatementNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_global_statement(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -17166,7 +17131,7 @@ impl ::sittir_core::prepare::Prepare for GlobalStatementNode {
     }
 }
 
-fn prepare_global_statement<N: GlobalStatementPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_global_statement<N: GlobalStatementPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(170), (None, None), ctx);
@@ -17230,7 +17195,7 @@ impl ::sittir_core::render::Render for NonlocalStatementNodeRecord<'_> {
 }
 
 impl ::sittir_core::prepare::Prepare for NonlocalStatementNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_nonlocal_statement(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -17250,7 +17215,7 @@ impl ::sittir_core::prepare::Prepare for NonlocalStatementNode {
     }
 }
 
-fn prepare_nonlocal_statement<N: NonlocalStatementPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_nonlocal_statement<N: NonlocalStatementPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(171), (None, None), ctx);
@@ -17262,7 +17227,7 @@ fn prepare_nonlocal_statement<N: NonlocalStatementPrepare + ?Sized>(node: &mut N
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::EXEC_STATEMENT, layout = [kind::EXEC_KEYWORD, kind::IN_KEYWORD], words = 13, built_words = 4, fields = ExecStatementFields, prepare = ExecStatementPrepare, view = ExecStatementNodeRecord, prepare_fn = prepare_exec_statement)]
+#[node(kind = kind::EXEC_STATEMENT, layout = [kind::EXEC_KEYWORD, kind::IN_KEYWORD], words = 23, built_words = 4, fields = ExecStatementFields, prepare = ExecStatementPrepare, view = ExecStatementNodeRecord, prepare_fn = prepare_exec_statement)]
 pub struct ExecStatementNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -17270,16 +17235,16 @@ pub struct ExecStatementNode {
     #[height]
     height: u16,
     #[wire(key = "_code")]
-    #[slot(field = field::CODE, word = 2, width = 10, inline = 9, forms = 9, built = 2)]
+    #[slot(field = field::CODE, word = 2, width = 20, inline = 19, forms = 9, built = 2)]
     pub code: ::sittir_core::SlotValue<ExecStatementCodeNodeSlot>,
     #[wire(key = "_in_clause")]
-    #[slot(field = field::IN_CLAUSE, separator = kind::COMMA, word = 12, width = 1, run = 4, forms = 3, built = 3, seated)]
+    #[slot(field = field::IN_CLAUSE, separator = kind::COMMA, word = 22, width = 1, run = 4, forms = 3, built = 3, seated)]
     pub in_clause: Vec<::sittir_core::SlotValue<ExpressionNode>>,
     #[wire(key = "_in_clause_separator_space_before")]
-    #[space(slot = 12, side = before, site = options::SITE_EXEC_STATEMENT_IN_CLAUSE_SEPARATOR_SPACE_BEFORE)]
+    #[space(slot = 22, side = before, site = options::SITE_EXEC_STATEMENT_IN_CLAUSE_SEPARATOR_SPACE_BEFORE)]
     pub in_clause_separator_space_before: Option<KindId>,
     #[wire(key = "_in_clause_separator_space_after")]
-    #[space(slot = 12, side = after, site = options::SITE_EXEC_STATEMENT_IN_CLAUSE_SEPARATOR_SPACE_AFTER)]
+    #[space(slot = 22, side = after, site = options::SITE_EXEC_STATEMENT_IN_CLAUSE_SEPARATOR_SPACE_AFTER)]
     pub in_clause_separator_space_after: Option<KindId>,
 }
 
@@ -17317,7 +17282,7 @@ impl ::sittir_core::render::Render for ExecStatementNodeRecord<'_> {
 }
 
 impl ::sittir_core::prepare::Prepare for ExecStatementNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_exec_statement(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -17337,7 +17302,7 @@ impl ::sittir_core::prepare::Prepare for ExecStatementNode {
     }
 }
 
-fn prepare_exec_statement<N: ExecStatementPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_exec_statement<N: ExecStatementPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(172), (None, None), ctx);
@@ -17351,19 +17316,22 @@ fn prepare_exec_statement<N: ExecStatementPrepare + ?Sized>(node: &mut N, overla
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::TYPE_ALIAS_STATEMENT, layout = [kind::TYPE_KEYWORD, kind::EQ], words = 8, built_words = 4, fields = TypeAliasStatementFields, prepare = TypeAliasStatementPrepare, view = TypeAliasStatementNodeRecord, prepare_fn = prepare_type_alias_statement)]
+#[node(kind = kind::TYPE_ALIAS_STATEMENT, layout = [kind::TYPE_KEYWORD, kind::EQ], words = 13, built_words = 5, fields = TypeAliasStatementFields, prepare = TypeAliasStatementPrepare, view = TypeAliasStatementNodeRecord, prepare_fn = prepare_type_alias_statement)]
 pub struct TypeAliasStatementNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
     #[height]
     height: u16,
-    #[wire(key = "_left")]
-    #[slot(field = field::LEFT, word = 2, width = 3, forms = 1, built = 2)]
-    pub left: ::sittir_core::SlotValue<TypeNode>,
-    #[wire(key = "_right")]
-    #[slot(field = field::RIGHT, word = 5, width = 3, forms = 1, built = 3)]
-    pub right: ::sittir_core::SlotValue<TypeNode>,
+    #[wire(key = "_name")]
+    #[slot(field = field::NAME, word = 2, width = 3, forms = 1, built = 2)]
+    pub name: ::sittir_core::SlotValue<IdentifierNode>,
+    #[wire(key = "_type_parameters")]
+    #[slot(field = field::TYPE_PARAMETERS, word = 5, width = 5, inline = 5, forms = 8, built = 3)]
+    pub type_parameters: Option<::sittir_core::SlotValue<TypeParamsNode>>,
+    #[wire(key = "_value")]
+    #[slot(field = field::VALUE, word = 10, width = 3, forms = 1, built = 4)]
+    pub value: ::sittir_core::SlotValue<TypeNode>,
 }
 
 impl ::sittir_core::view::KindOf for TypeAliasStatementNode {
@@ -17400,7 +17368,7 @@ impl ::sittir_core::render::Render for TypeAliasStatementNodeRecord<'_> {
 }
 
 impl ::sittir_core::prepare::Prepare for TypeAliasStatementNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_type_alias_statement(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -17420,12 +17388,13 @@ impl ::sittir_core::prepare::Prepare for TypeAliasStatementNode {
     }
 }
 
-fn prepare_type_alias_statement<N: TypeAliasStatementPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_type_alias_statement<N: TypeAliasStatementPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(173), (None, None), ctx);
-    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.left, overlay, ctx)?;
-    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.right, overlay, ctx)?;
+    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.name, overlay, ctx)?;
+    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.type_parameters, overlay, ctx)?;
+    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.value, overlay, ctx)?;
     Ok(())
 }
 
@@ -17442,7 +17411,7 @@ pub struct ClassDefinitionNode {
     pub name: ::sittir_core::SlotValue<IdentifierNode>,
     #[wire(key = "_type_parameters")]
     #[slot(field = field::TYPE_PARAMETERS, word = 5, width = 5, inline = 5, forms = 8, built = 3)]
-    pub type_parameters: Option<::sittir_core::SlotValue<TypeParameterNode>>,
+    pub type_parameters: Option<::sittir_core::SlotValue<TypeParamsNode>>,
     #[wire(key = "_bases")]
     #[slot(field = field::BASES, word = 10, width = 5, inline = 5, forms = 8, built = 4)]
     pub bases: Option<::sittir_core::SlotValue<ArgumentListNode>>,
@@ -17485,7 +17454,7 @@ impl ::sittir_core::render::Render for ClassDefinitionNodeRecord<'_> {
 }
 
 impl ::sittir_core::prepare::Prepare for ClassDefinitionNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_class_definition(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -17505,7 +17474,7 @@ impl ::sittir_core::prepare::Prepare for ClassDefinitionNode {
     }
 }
 
-fn prepare_class_definition<N: ClassDefinitionPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_class_definition<N: ClassDefinitionPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(174), (None, None), ctx);
@@ -17525,7 +17494,7 @@ pub struct TypeParameterNode {
     #[height]
     height: u16,
     #[wire(key = "_types")]
-    #[slot(field = field::TYPES, word = 2, width = 3, inline = 3, forms = 8, built = 2)]
+    #[slot(word = 2, width = 3, inline = 3, forms = 8, built = 2)]
     pub types: ::sittir_core::SlotValue<TypesNode>,
 }
 
@@ -17563,7 +17532,7 @@ impl ::sittir_core::render::Render for TypeParameterNodeRecord<'_> {
 }
 
 impl ::sittir_core::prepare::Prepare for TypeParameterNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_type_parameter(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -17583,7 +17552,7 @@ impl ::sittir_core::prepare::Prepare for TypeParameterNode {
     }
 }
 
-fn prepare_type_parameter<N: TypeParameterPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_type_parameter<N: TypeParameterPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(175), (None, None), ctx);
@@ -17638,7 +17607,7 @@ impl ::sittir_core::render::Render for ParenthesizedListSplatNodeRecord<'_> {
 }
 
 impl ::sittir_core::prepare::Prepare for ParenthesizedListSplatNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_parenthesized_list_splat(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -17658,7 +17627,7 @@ impl ::sittir_core::prepare::Prepare for ParenthesizedListSplatNode {
     }
 }
 
-fn prepare_parenthesized_list_splat<N: ParenthesizedListSplatPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_parenthesized_list_splat<N: ParenthesizedListSplatPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(176), (None, None), ctx);
@@ -17713,7 +17682,7 @@ impl ::sittir_core::render::Render for ArgumentListNodeRecord<'_> {
 }
 
 impl ::sittir_core::prepare::Prepare for ArgumentListNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_argument_list(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -17733,7 +17702,7 @@ impl ::sittir_core::prepare::Prepare for ArgumentListNode {
     }
 }
 
-fn prepare_argument_list<N: ArgumentListPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_argument_list<N: ArgumentListPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(177), (None, None), ctx);
@@ -17794,7 +17763,7 @@ impl ::sittir_core::render::Render for DecoratedDefinitionNodeRecord<'_> {
 }
 
 impl ::sittir_core::prepare::Prepare for DecoratedDefinitionNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_decorated_definition(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -17814,7 +17783,7 @@ impl ::sittir_core::prepare::Prepare for DecoratedDefinitionNode {
     }
 }
 
-fn prepare_decorated_definition<N: DecoratedDefinitionPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_decorated_definition<N: DecoratedDefinitionPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(178), (None, None), ctx);
@@ -17873,7 +17842,7 @@ impl ::sittir_core::render::Render for DecoratorNodeRecord<'_> {
 }
 
 impl ::sittir_core::prepare::Prepare for DecoratorNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_decorator(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -17893,7 +17862,7 @@ impl ::sittir_core::prepare::Prepare for DecoratorNode {
     }
 }
 
-fn prepare_decorator<N: DecoratorPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_decorator<N: DecoratorPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(179), (None, None), ctx);
@@ -17951,7 +17920,7 @@ impl ::sittir_core::render::Render for BlockNodeRecord<'_> {
 }
 
 impl ::sittir_core::prepare::Prepare for BlockNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_block(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -17971,7 +17940,7 @@ impl ::sittir_core::prepare::Prepare for BlockNode {
     }
 }
 
-fn prepare_block<N: BlockPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_block<N: BlockPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(180), (None, None), ctx);
@@ -17983,25 +17952,25 @@ fn prepare_block<N: BlockPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overla
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::EXPRESSION_LIST, item = item, words = 3, built_words = 3, fields = ExpressionListFields, prepare = ExpressionListPrepare, view = ExpressionListNodeRecord, prepare_fn = prepare_expression_list)]
+#[node(kind = kind::EXPRESSION_LIST, item = elements, words = 3, built_words = 3, fields = ExpressionListFields, prepare = ExpressionListPrepare, view = ExpressionListNodeRecord, prepare_fn = prepare_expression_list)]
 pub struct ExpressionListNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
     #[height]
     height: u16,
-    #[wire(key = "_item")]
-    #[slot(field = field::ITEM, separator = kind::COMMA, word = 2, width = 1, run = 4, forms = 3, built = 2, seated)]
-    pub item: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<ExpressionNode>>,
+    #[wire(key = "_elements")]
+    #[slot(field = field::ELEMENTS, separator = kind::COMMA, word = 2, width = 1, run = 4, forms = 3, built = 2, seated)]
+    pub elements: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<ExpressionNode>>,
     #[wire(key = "_delimiter")]
     #[flank(trailing = 0)]
     pub delimiter: Option<::sittir_core::types::Delimiter>,
-    #[wire(key = "_item_separator_space_before")]
-    #[space(slot = 2, side = before, site = options::SITE_EXPRESSION_LIST_ITEM_SEPARATOR_SPACE_BEFORE)]
-    pub item_separator_space_before: Option<KindId>,
-    #[wire(key = "_item_separator_space_after")]
-    #[space(slot = 2, side = after, site = options::SITE_EXPRESSION_LIST_ITEM_SEPARATOR_SPACE_AFTER)]
-    pub item_separator_space_after: Option<KindId>,
+    #[wire(key = "_elements_separator_space_before")]
+    #[space(slot = 2, side = before, site = options::SITE_EXPRESSION_LIST_ELEMENTS_SEPARATOR_SPACE_BEFORE)]
+    pub elements_separator_space_before: Option<KindId>,
+    #[wire(key = "_elements_separator_space_after")]
+    #[space(slot = 2, side = after, site = options::SITE_EXPRESSION_LIST_ELEMENTS_SEPARATOR_SPACE_AFTER)]
+    pub elements_separator_space_after: Option<KindId>,
 }
 
 impl ::sittir_core::view::KindOf for ExpressionListNode {
@@ -18038,7 +18007,7 @@ impl ::sittir_core::render::Render for ExpressionListNodeRecord<'_> {
 }
 
 impl ::sittir_core::prepare::Prepare for ExpressionListNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_expression_list(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -18058,16 +18027,16 @@ impl ::sittir_core::prepare::Prepare for ExpressionListNode {
     }
 }
 
-fn prepare_expression_list<N: ExpressionListPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_expression_list<N: ExpressionListPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
-    { let slot = ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, overlay, "_item"); ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.item, overlay, slot.as_deref()); }
-    ::sittir_core::prepare::Setting::fill(&mut parts.item_separator_space_before, overlay, ctx.options.site_arm(options::SITE_EXPRESSION_LIST_ITEM_SEPARATOR_SPACE_BEFORE).arm);
-    ::sittir_core::prepare::Setting::fill(&mut parts.item_separator_space_after, overlay, ctx.options.site_arm(options::SITE_EXPRESSION_LIST_ITEM_SEPARATOR_SPACE_AFTER).arm);
-    ::sittir_core::prepare::SeatSlot::fill_seats(&mut parts.item, overlay, options::SEATS_EXPRESSION_LIST_ITEM, ctx);
-    let delimiter = ::sittir_core::prepare::source_trailing_delimiter(::sittir_core::prepare::LayoutTarget::sides(&parts.layout, overlay).as_deref(), ::sittir_core::types::KindId(181), &[::sittir_core::types::KindId(6)], ctx.options.delimiter_at(options::DELIM_EXPRESSION_LIST_ITEM), ctx);
+    { let slot = ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, overlay, "_elements"); ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.elements, overlay, slot.as_deref()); }
+    ::sittir_core::prepare::Setting::fill(&mut parts.elements_separator_space_before, overlay, ctx.options.site_arm(options::SITE_EXPRESSION_LIST_ELEMENTS_SEPARATOR_SPACE_BEFORE).arm);
+    ::sittir_core::prepare::Setting::fill(&mut parts.elements_separator_space_after, overlay, ctx.options.site_arm(options::SITE_EXPRESSION_LIST_ELEMENTS_SEPARATOR_SPACE_AFTER).arm);
+    ::sittir_core::prepare::SeatSlot::fill_seats(&mut parts.elements, overlay, options::SEATS_EXPRESSION_LIST_ELEMENTS, ctx);
+    let delimiter = ::sittir_core::prepare::source_trailing_delimiter(::sittir_core::prepare::LayoutTarget::sides(&parts.layout, overlay).as_deref(), ::sittir_core::types::KindId(181), &[::sittir_core::types::KindId(6)], ctx.options.delimiter_at(options::DELIM_EXPRESSION_LIST_ELEMENTS), ctx);
     ::sittir_core::prepare::Setting::fill(&mut parts.delimiter, overlay, delimiter);
-    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.item, overlay, ctx)?;
+    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.elements, overlay, ctx)?;
     Ok(())
 }
 
@@ -18121,7 +18090,7 @@ impl ::sittir_core::render::Render for DottedNameNodeRecord<'_> {
 }
 
 impl ::sittir_core::prepare::Prepare for DottedNameNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_dotted_name(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -18141,7 +18110,7 @@ impl ::sittir_core::prepare::Prepare for DottedNameNode {
     }
 }
 
-fn prepare_dotted_name<N: DottedNamePrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_dotted_name<N: DottedNamePrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(182), (None, None), ctx);
@@ -18197,7 +18166,7 @@ impl ::sittir_core::render::Render for CasePatternNodeRecord<'_> {
 }
 
 impl ::sittir_core::prepare::Prepare for CasePatternNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_case_pattern(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -18217,7 +18186,7 @@ impl ::sittir_core::prepare::Prepare for CasePatternNode {
     }
 }
 
-fn prepare_case_pattern<N: CasePatternPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_case_pattern<N: CasePatternPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.content, overlay, ctx)?;
@@ -18271,7 +18240,7 @@ impl ::sittir_core::render::Render for SimplePatternNodeRecord<'_> {
 }
 
 impl ::sittir_core::prepare::Prepare for SimplePatternNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_simple_pattern(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -18291,7 +18260,7 @@ impl ::sittir_core::prepare::Prepare for SimplePatternNode {
     }
 }
 
-fn prepare_simple_pattern<N: SimplePatternPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_simple_pattern<N: SimplePatternPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.content, overlay, ctx)?;
@@ -18348,7 +18317,7 @@ impl ::sittir_core::render::Render for CaseAsPatternNodeRecord<'_> {
 }
 
 impl ::sittir_core::prepare::Prepare for CaseAsPatternNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_case_as_pattern(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -18368,7 +18337,7 @@ impl ::sittir_core::prepare::Prepare for CaseAsPatternNode {
     }
 }
 
-fn prepare_case_as_pattern<N: CaseAsPatternPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_case_as_pattern<N: CaseAsPatternPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(185), (None, None), ctx);
@@ -18427,7 +18396,7 @@ impl ::sittir_core::render::Render for UnionPatternNodeRecord<'_> {
 }
 
 impl ::sittir_core::prepare::Prepare for UnionPatternNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_union_pattern(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -18447,7 +18416,7 @@ impl ::sittir_core::prepare::Prepare for UnionPatternNode {
     }
 }
 
-fn prepare_union_pattern<N: UnionPatternPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_union_pattern<N: UnionPatternPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(186), (None, None), ctx);
@@ -18503,7 +18472,7 @@ impl ::sittir_core::render::Render for DictPatternNodeRecord<'_> {
 }
 
 impl ::sittir_core::prepare::Prepare for DictPatternNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_dict_pattern(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -18523,7 +18492,7 @@ impl ::sittir_core::prepare::Prepare for DictPatternNode {
     }
 }
 
-fn prepare_dict_pattern<N: DictPatternPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_dict_pattern<N: DictPatternPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(187), (None, None), ctx);
@@ -18581,7 +18550,7 @@ impl ::sittir_core::render::Render for KeyValuePatternNodeRecord<'_> {
 }
 
 impl ::sittir_core::prepare::Prepare for KeyValuePatternNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_key_value_pattern(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -18601,7 +18570,7 @@ impl ::sittir_core::prepare::Prepare for KeyValuePatternNode {
     }
 }
 
-fn prepare_key_value_pattern<N: KeyValuePatternPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_key_value_pattern<N: KeyValuePatternPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(188), (None, None), ctx);
@@ -18660,7 +18629,7 @@ impl ::sittir_core::render::Render for KeywordPatternNodeRecord<'_> {
 }
 
 impl ::sittir_core::prepare::Prepare for KeywordPatternNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_keyword_pattern(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -18680,7 +18649,7 @@ impl ::sittir_core::prepare::Prepare for KeywordPatternNode {
     }
 }
 
-fn prepare_keyword_pattern<N: KeywordPatternPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_keyword_pattern<N: KeywordPatternPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(189), (None, None), ctx);
@@ -18739,7 +18708,7 @@ impl ::sittir_core::render::Render for ClassPatternNodeRecord<'_> {
 }
 
 impl ::sittir_core::prepare::Prepare for ClassPatternNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_class_pattern(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -18759,7 +18728,7 @@ impl ::sittir_core::prepare::Prepare for ClassPatternNode {
     }
 }
 
-fn prepare_class_pattern<N: ClassPatternPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_class_pattern<N: ClassPatternPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(191), (None, None), ctx);
@@ -18769,7 +18738,7 @@ fn prepare_class_pattern<N: ClassPatternPrepare + ?Sized>(node: &mut N, overlay:
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::COMPLEX_PATTERN, words = 34, built_words = 6, fields = ComplexPatternFields, prepare = ComplexPatternPrepare, view = ComplexPatternNodeRecord, prepare_fn = prepare_complex_pattern)]
+#[node(kind = kind::COMPLEX_PATTERN, words = 38, built_words = 6, fields = ComplexPatternFields, prepare = ComplexPatternPrepare, view = ComplexPatternNodeRecord, prepare_fn = prepare_complex_pattern)]
 pub struct ComplexPatternNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -18780,13 +18749,13 @@ pub struct ComplexPatternNode {
     #[slot(field = field::SIGN, presence = kind::DASH, word = 2, bit = 0)]
     pub sign: bool,
     #[wire(key = "_real")]
-    #[slot(field = field::REAL, word = 3, width = 15, inline = 14, forms = 9, built = 3)]
+    #[slot(field = field::REAL, word = 3, width = 17, inline = 16, forms = 9, built = 3)]
     pub real: ::sittir_core::SlotValue<ComplexPatternRealNodeSlot>,
     #[wire(key = "_operator")]
-    #[slot(field = field::OPERATOR, word = 18, width = 1, forms = 2, built = 4)]
+    #[slot(field = field::OPERATOR, word = 20, width = 1, forms = 2, built = 4)]
     pub operator: ::sittir_core::SlotValue<ComplexPatternOperatorNodeSlot>,
     #[wire(key = "_imaginary")]
-    #[slot(field = field::IMAGINARY, word = 19, width = 15, inline = 14, forms = 9, built = 5)]
+    #[slot(field = field::IMAGINARY, word = 21, width = 17, inline = 16, forms = 9, built = 5)]
     pub imaginary: ::sittir_core::SlotValue<ComplexPatternRealNodeSlot>,
 }
 
@@ -18824,7 +18793,7 @@ impl ::sittir_core::render::Render for ComplexPatternNodeRecord<'_> {
 }
 
 impl ::sittir_core::prepare::Prepare for ComplexPatternNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_complex_pattern(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -18844,7 +18813,7 @@ impl ::sittir_core::prepare::Prepare for ComplexPatternNode {
     }
 }
 
-fn prepare_complex_pattern<N: ComplexPatternPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_complex_pattern<N: ComplexPatternPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(192), (None, None), ctx);
@@ -18910,7 +18879,7 @@ impl ::sittir_core::render::Render for ParametersElementsNodeRecord<'_> {
 }
 
 impl ::sittir_core::prepare::Prepare for ParametersElementsNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_parameters_elements(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -18930,7 +18899,7 @@ impl ::sittir_core::prepare::Prepare for ParametersElementsNode {
     }
 }
 
-fn prepare_parameters_elements<N: ParametersElementsPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_parameters_elements<N: ParametersElementsPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     { let slot = ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, overlay, "_item"); ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.item, overlay, slot.as_deref()); }
@@ -18999,7 +18968,7 @@ impl ::sittir_core::render::Render for PatternsNodeRecord<'_> {
 }
 
 impl ::sittir_core::prepare::Prepare for PatternsNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_patterns(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -19019,7 +18988,7 @@ impl ::sittir_core::prepare::Prepare for PatternsNode {
     }
 }
 
-fn prepare_patterns<N: PatternsPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_patterns<N: PatternsPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     { let slot = ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, overlay, "_item"); ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.item, overlay, slot.as_deref()); }
@@ -19079,7 +19048,7 @@ impl ::sittir_core::render::Render for TuplePatternNodeRecord<'_> {
 }
 
 impl ::sittir_core::prepare::Prepare for TuplePatternNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_tuple_pattern(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -19099,7 +19068,7 @@ impl ::sittir_core::prepare::Prepare for TuplePatternNode {
     }
 }
 
-fn prepare_tuple_pattern<N: TuplePatternPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_tuple_pattern<N: TuplePatternPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(197), (None, None), ctx);
@@ -19154,7 +19123,7 @@ impl ::sittir_core::render::Render for ListPatternNodeRecord<'_> {
 }
 
 impl ::sittir_core::prepare::Prepare for ListPatternNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_list_pattern(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -19174,7 +19143,7 @@ impl ::sittir_core::prepare::Prepare for ListPatternNode {
     }
 }
 
-fn prepare_list_pattern<N: ListPatternPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_list_pattern<N: ListPatternPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(198), (None, None), ctx);
@@ -19232,7 +19201,7 @@ impl ::sittir_core::render::Render for DefaultParameterNodeRecord<'_> {
 }
 
 impl ::sittir_core::prepare::Prepare for DefaultParameterNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_default_parameter(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -19252,7 +19221,7 @@ impl ::sittir_core::prepare::Prepare for DefaultParameterNode {
     }
 }
 
-fn prepare_default_parameter<N: DefaultParameterPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_default_parameter<N: DefaultParameterPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(199), (None, None), ctx);
@@ -19314,7 +19283,7 @@ impl ::sittir_core::render::Render for TypedDefaultParameterNodeRecord<'_> {
 }
 
 impl ::sittir_core::prepare::Prepare for TypedDefaultParameterNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_typed_default_parameter(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -19334,7 +19303,7 @@ impl ::sittir_core::prepare::Prepare for TypedDefaultParameterNode {
     }
 }
 
-fn prepare_typed_default_parameter<N: TypedDefaultParameterPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_typed_default_parameter<N: TypedDefaultParameterPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(200), (None, None), ctx);
@@ -19391,7 +19360,7 @@ impl ::sittir_core::render::Render for ListSplatPatternNodeRecord<'_> {
 }
 
 impl ::sittir_core::prepare::Prepare for ListSplatPatternNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_list_splat_pattern(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -19411,7 +19380,7 @@ impl ::sittir_core::prepare::Prepare for ListSplatPatternNode {
     }
 }
 
-fn prepare_list_splat_pattern<N: ListSplatPatternPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_list_splat_pattern<N: ListSplatPatternPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(201), (None, None), ctx);
@@ -19466,7 +19435,7 @@ impl ::sittir_core::render::Render for DictionarySplatPatternNodeRecord<'_> {
 }
 
 impl ::sittir_core::prepare::Prepare for DictionarySplatPatternNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_dictionary_splat_pattern(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -19486,7 +19455,7 @@ impl ::sittir_core::prepare::Prepare for DictionarySplatPatternNode {
     }
 }
 
-fn prepare_dictionary_splat_pattern<N: DictionarySplatPatternPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_dictionary_splat_pattern<N: DictionarySplatPatternPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(202), (None, None), ctx);
@@ -19544,7 +19513,7 @@ impl ::sittir_core::render::Render for AsPatternNodeRecord<'_> {
 }
 
 impl ::sittir_core::prepare::Prepare for AsPatternNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_as_pattern(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -19564,7 +19533,7 @@ impl ::sittir_core::prepare::Prepare for AsPatternNode {
     }
 }
 
-fn prepare_as_pattern<N: AsPatternPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_as_pattern<N: AsPatternPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(203), (None, None), ctx);
@@ -19620,7 +19589,7 @@ impl ::sittir_core::render::Render for NotOperatorNodeRecord<'_> {
 }
 
 impl ::sittir_core::prepare::Prepare for NotOperatorNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_not_operator(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -19640,7 +19609,7 @@ impl ::sittir_core::prepare::Prepare for NotOperatorNode {
     }
 }
 
-fn prepare_not_operator<N: NotOperatorPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_not_operator<N: NotOperatorPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(207), (None, None), ctx);
@@ -19701,7 +19670,7 @@ impl ::sittir_core::render::Render for BooleanOperatorNodeRecord<'_> {
 }
 
 impl ::sittir_core::prepare::Prepare for BooleanOperatorNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_boolean_operator(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -19721,7 +19690,7 @@ impl ::sittir_core::prepare::Prepare for BooleanOperatorNode {
     }
 }
 
-fn prepare_boolean_operator<N: BooleanOperatorPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_boolean_operator<N: BooleanOperatorPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(208), (None, None), ctx);
@@ -19784,7 +19753,7 @@ impl ::sittir_core::render::Render for BinaryOperatorNodeRecord<'_> {
 }
 
 impl ::sittir_core::prepare::Prepare for BinaryOperatorNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_binary_operator(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -19804,7 +19773,7 @@ impl ::sittir_core::prepare::Prepare for BinaryOperatorNode {
     }
 }
 
-fn prepare_binary_operator<N: BinaryOperatorPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_binary_operator<N: BinaryOperatorPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(209), (None, None), ctx);
@@ -19864,7 +19833,7 @@ impl ::sittir_core::render::Render for UnaryOperatorNodeRecord<'_> {
 }
 
 impl ::sittir_core::prepare::Prepare for UnaryOperatorNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_unary_operator(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -19884,7 +19853,7 @@ impl ::sittir_core::prepare::Prepare for UnaryOperatorNode {
     }
 }
 
-fn prepare_unary_operator<N: UnaryOperatorPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_unary_operator<N: UnaryOperatorPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     { let arms = (::sittir_core::prepare::ArmOf::arm_among(&parts.operator, overlay, ctx, ctx.options.edge_arm_sites(::sittir_core::types::KindId(210), ::sittir_core::options::Side::Before)), None); ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(210), arms, ctx); }
@@ -19946,7 +19915,7 @@ impl ::sittir_core::render::Render for ComparisonOperatorNodeRecord<'_> {
 }
 
 impl ::sittir_core::prepare::Prepare for ComparisonOperatorNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_comparison_operator(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -19966,7 +19935,7 @@ impl ::sittir_core::prepare::Prepare for ComparisonOperatorNode {
     }
 }
 
-fn prepare_comparison_operator<N: ComparisonOperatorPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_comparison_operator<N: ComparisonOperatorPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(213), (None, None), ctx);
@@ -20028,7 +19997,7 @@ impl ::sittir_core::render::Render for LambdaNodeRecord<'_> {
 }
 
 impl ::sittir_core::prepare::Prepare for LambdaNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_lambda(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -20048,7 +20017,7 @@ impl ::sittir_core::prepare::Prepare for LambdaNode {
     }
 }
 
-fn prepare_lambda<N: LambdaPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_lambda<N: LambdaPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(214), (None, None), ctx);
@@ -20107,7 +20076,7 @@ impl ::sittir_core::render::Render for LambdaWithinForInClauseNodeRecord<'_> {
 }
 
 impl ::sittir_core::prepare::Prepare for LambdaWithinForInClauseNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_lambda_within_for_in_clause(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -20127,7 +20096,7 @@ impl ::sittir_core::prepare::Prepare for LambdaWithinForInClauseNode {
     }
 }
 
-fn prepare_lambda_within_for_in_clause<N: LambdaWithinForInClausePrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_lambda_within_for_in_clause<N: LambdaWithinForInClausePrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(215), (None, None), ctx);
@@ -20152,7 +20121,7 @@ pub struct AugmentedAssignmentNode {
     pub operator: ::sittir_core::SlotValue<AugmentedAssignmentOperatorNodeSlot>,
     #[wire(key = "_right")]
     #[slot(field = field::RIGHT, word = 6, width = 4, forms = 3, built = 4)]
-    pub right: ::sittir_core::SlotValue<Box<AugmentedAssignmentRightNodeSlot>>,
+    pub right: ::sittir_core::SlotValue<AugmentedAssignmentRightNodeSlot>,
 }
 
 impl ::sittir_core::view::KindOf for AugmentedAssignmentNode {
@@ -20189,7 +20158,7 @@ impl ::sittir_core::render::Render for AugmentedAssignmentNodeRecord<'_> {
 }
 
 impl ::sittir_core::prepare::Prepare for AugmentedAssignmentNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_augmented_assignment(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -20209,7 +20178,7 @@ impl ::sittir_core::prepare::Prepare for AugmentedAssignmentNode {
     }
 }
 
-fn prepare_augmented_assignment<N: AugmentedAssignmentPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_augmented_assignment<N: AugmentedAssignmentPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(217), (None, None), ctx);
@@ -20220,25 +20189,25 @@ fn prepare_augmented_assignment<N: AugmentedAssignmentPrepare + ?Sized>(node: &m
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::PATTERN_LIST, item = item, words = 3, built_words = 3, fields = PatternListFields, prepare = PatternListPrepare, view = PatternListNodeRecord, prepare_fn = prepare_pattern_list)]
+#[node(kind = kind::PATTERN_LIST, item = elements, words = 3, built_words = 3, fields = PatternListFields, prepare = PatternListPrepare, view = PatternListNodeRecord, prepare_fn = prepare_pattern_list)]
 pub struct PatternListNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
     #[height]
     height: u16,
-    #[wire(key = "_item")]
-    #[slot(field = field::ITEM, separator = kind::COMMA, word = 2, width = 1, run = 3, forms = 1, built = 2, seated)]
-    pub item: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<PatternNode>>,
+    #[wire(key = "_elements")]
+    #[slot(field = field::ELEMENTS, separator = kind::COMMA, word = 2, width = 1, run = 3, forms = 1, built = 2, seated)]
+    pub elements: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<PatternNode>>,
     #[wire(key = "_delimiter")]
     #[flank(trailing = 0)]
     pub delimiter: Option<::sittir_core::types::Delimiter>,
-    #[wire(key = "_item_separator_space_before")]
-    #[space(slot = 2, side = before, site = options::SITE_PATTERN_LIST_ITEM_SEPARATOR_SPACE_BEFORE)]
-    pub item_separator_space_before: Option<KindId>,
-    #[wire(key = "_item_separator_space_after")]
-    #[space(slot = 2, side = after, site = options::SITE_PATTERN_LIST_ITEM_SEPARATOR_SPACE_AFTER)]
-    pub item_separator_space_after: Option<KindId>,
+    #[wire(key = "_elements_separator_space_before")]
+    #[space(slot = 2, side = before, site = options::SITE_PATTERN_LIST_ELEMENTS_SEPARATOR_SPACE_BEFORE)]
+    pub elements_separator_space_before: Option<KindId>,
+    #[wire(key = "_elements_separator_space_after")]
+    #[space(slot = 2, side = after, site = options::SITE_PATTERN_LIST_ELEMENTS_SEPARATOR_SPACE_AFTER)]
+    pub elements_separator_space_after: Option<KindId>,
 }
 
 impl ::sittir_core::view::KindOf for PatternListNode {
@@ -20275,7 +20244,7 @@ impl ::sittir_core::render::Render for PatternListNodeRecord<'_> {
 }
 
 impl ::sittir_core::prepare::Prepare for PatternListNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_pattern_list(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -20295,16 +20264,16 @@ impl ::sittir_core::prepare::Prepare for PatternListNode {
     }
 }
 
-fn prepare_pattern_list<N: PatternListPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_pattern_list<N: PatternListPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
-    { let slot = ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, overlay, "_item"); ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.item, overlay, slot.as_deref()); }
-    ::sittir_core::prepare::Setting::fill(&mut parts.item_separator_space_before, overlay, ctx.options.site_arm(options::SITE_PATTERN_LIST_ITEM_SEPARATOR_SPACE_BEFORE).arm);
-    ::sittir_core::prepare::Setting::fill(&mut parts.item_separator_space_after, overlay, ctx.options.site_arm(options::SITE_PATTERN_LIST_ITEM_SEPARATOR_SPACE_AFTER).arm);
-    ::sittir_core::prepare::SeatSlot::fill_seats(&mut parts.item, overlay, options::SEATS_PATTERN_LIST_ITEM, ctx);
-    let delimiter = ::sittir_core::prepare::source_trailing_delimiter(::sittir_core::prepare::LayoutTarget::sides(&parts.layout, overlay).as_deref(), ::sittir_core::types::KindId(218), &[::sittir_core::types::KindId(6)], ctx.options.delimiter_at(options::DELIM_PATTERN_LIST_ITEM), ctx);
+    { let slot = ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, overlay, "_elements"); ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.elements, overlay, slot.as_deref()); }
+    ::sittir_core::prepare::Setting::fill(&mut parts.elements_separator_space_before, overlay, ctx.options.site_arm(options::SITE_PATTERN_LIST_ELEMENTS_SEPARATOR_SPACE_BEFORE).arm);
+    ::sittir_core::prepare::Setting::fill(&mut parts.elements_separator_space_after, overlay, ctx.options.site_arm(options::SITE_PATTERN_LIST_ELEMENTS_SEPARATOR_SPACE_AFTER).arm);
+    ::sittir_core::prepare::SeatSlot::fill_seats(&mut parts.elements, overlay, options::SEATS_PATTERN_LIST_ELEMENTS, ctx);
+    let delimiter = ::sittir_core::prepare::source_trailing_delimiter(::sittir_core::prepare::LayoutTarget::sides(&parts.layout, overlay).as_deref(), ::sittir_core::types::KindId(218), &[::sittir_core::types::KindId(6)], ctx.options.delimiter_at(options::DELIM_PATTERN_LIST_ELEMENTS), ctx);
     ::sittir_core::prepare::Setting::fill(&mut parts.delimiter, overlay, delimiter);
-    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.item, overlay, ctx)?;
+    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.elements, overlay, ctx)?;
     Ok(())
 }
 
@@ -20355,7 +20324,7 @@ impl ::sittir_core::render::Render for YieldNodeRecord<'_> {
 }
 
 impl ::sittir_core::prepare::Prepare for YieldNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_yield(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -20375,7 +20344,7 @@ impl ::sittir_core::prepare::Prepare for YieldNode {
     }
 }
 
-fn prepare_yield<N: YieldPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_yield<N: YieldPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(220), (None, None), ctx);
@@ -20433,7 +20402,7 @@ impl ::sittir_core::render::Render for AttributeNodeRecord<'_> {
 }
 
 impl ::sittir_core::prepare::Prepare for AttributeNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_attribute(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -20453,7 +20422,7 @@ impl ::sittir_core::prepare::Prepare for AttributeNode {
     }
 }
 
-fn prepare_attribute<N: AttributePrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_attribute<N: AttributePrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(221), (None, None), ctx);
@@ -20473,9 +20442,9 @@ pub struct SubscriptNode {
     #[wire(key = "_object")]
     #[slot(field = field::OBJECT, word = 2, width = 4, forms = 3, built = 2)]
     pub object: ::sittir_core::SlotValue<Box<PrimaryExpressionNode>>,
-    #[wire(key = "_subscripts")]
-    #[slot(word = 6, width = 3, inline = 3, forms = 8, built = 3)]
-    pub subscripts: ::sittir_core::SlotValue<SubscriptsNode>,
+    #[wire(key = "_index")]
+    #[slot(field = field::INDEX, word = 6, width = 3, inline = 3, forms = 8, built = 3)]
+    pub index: ::sittir_core::SlotValue<SubscriptsNode>,
 }
 
 impl ::sittir_core::view::KindOf for SubscriptNode {
@@ -20512,7 +20481,7 @@ impl ::sittir_core::render::Render for SubscriptNodeRecord<'_> {
 }
 
 impl ::sittir_core::prepare::Prepare for SubscriptNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_subscript(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -20532,12 +20501,12 @@ impl ::sittir_core::prepare::Prepare for SubscriptNode {
     }
 }
 
-fn prepare_subscript<N: SubscriptPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_subscript<N: SubscriptPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(222), (None, None), ctx);
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.object, overlay, ctx)?;
-    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.subscripts, overlay, ctx)?;
+    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.index, overlay, ctx)?;
     Ok(())
 }
 
@@ -20594,7 +20563,7 @@ impl ::sittir_core::render::Render for SliceNodeRecord<'_> {
 }
 
 impl ::sittir_core::prepare::Prepare for SliceNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_slice(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -20614,7 +20583,7 @@ impl ::sittir_core::prepare::Prepare for SliceNode {
     }
 }
 
-fn prepare_slice<N: SlicePrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_slice<N: SlicePrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(223), (None, None), ctx);
@@ -20639,7 +20608,7 @@ impl ::sittir_core::view::KindOf for EllipsisNode {
 }
 
 impl ::sittir_core::prepare::Prepare for EllipsisNode {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         match self {
             EllipsisNode::Ellipsis(_) => Ok(()),
         }
@@ -20727,7 +20696,7 @@ impl ::sittir_core::render::Render for CallNodeRecord<'_> {
 }
 
 impl ::sittir_core::prepare::Prepare for CallNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_call(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -20747,7 +20716,7 @@ impl ::sittir_core::prepare::Prepare for CallNode {
     }
 }
 
-fn prepare_call<N: CallPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_call<N: CallPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(224), (None, None), ctx);
@@ -20806,7 +20775,7 @@ impl ::sittir_core::render::Render for TypedParameterNodeRecord<'_> {
 }
 
 impl ::sittir_core::prepare::Prepare for TypedParameterNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_typed_parameter(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -20826,7 +20795,7 @@ impl ::sittir_core::prepare::Prepare for TypedParameterNode {
     }
 }
 
-fn prepare_typed_parameter<N: TypedParameterPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_typed_parameter<N: TypedParameterPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(225), (None, None), ctx);
@@ -20882,7 +20851,7 @@ impl ::sittir_core::render::Render for TypeNodeRecord<'_> {
 }
 
 impl ::sittir_core::prepare::Prepare for TypeNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_type(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -20902,7 +20871,7 @@ impl ::sittir_core::prepare::Prepare for TypeNode {
     }
 }
 
-fn prepare_type<N: TypePrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_type<N: TypePrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.content, overlay, ctx)?;
@@ -20910,18 +20879,15 @@ fn prepare_type<N: TypePrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay,
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::SPLAT_TYPE, words = 6, built_words = 4, fields = SplatTypeFields, prepare = SplatTypePrepare, view = SplatTypeNodeRecord, prepare_fn = prepare_splat_type)]
+#[node(kind = kind::SPLAT_TYPE, layout = [kind::STAR | kind::STAR2], words = 5, built_words = 3, fields = SplatTypeFields, prepare = SplatTypePrepare, view = SplatTypeNodeRecord, prepare_fn = prepare_splat_type)]
 pub struct SplatTypeNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
     #[height]
     height: u16,
-    #[wire(key = "_operator")]
-    #[slot(field = field::OPERATOR, word = 2, width = 1, forms = 2, built = 2)]
-    pub operator: ::sittir_core::SlotValue<SplatTypeOperatorNodeSlot>,
     #[wire(key = "_type")]
-    #[slot(field = field::TYPE, word = 3, width = 3, forms = 1, built = 3)]
+    #[slot(field = field::TYPE, word = 2, width = 3, forms = 1, built = 2)]
     pub type_: ::sittir_core::SlotValue<IdentifierNode>,
 }
 
@@ -20959,7 +20925,7 @@ impl ::sittir_core::render::Render for SplatTypeNodeRecord<'_> {
 }
 
 impl ::sittir_core::prepare::Prepare for SplatTypeNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_splat_type(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -20979,11 +20945,10 @@ impl ::sittir_core::prepare::Prepare for SplatTypeNode {
     }
 }
 
-fn prepare_splat_type<N: SplatTypePrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_splat_type<N: SplatTypePrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
-    { let arms = (::sittir_core::prepare::ArmOf::arm_among(&parts.operator, overlay, ctx, ctx.options.edge_arm_sites(::sittir_core::types::KindId(227), ::sittir_core::options::Side::Before)), None); ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(227), arms, ctx); }
-    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.operator, overlay, ctx)?;
+    ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(227), (None, None), ctx);
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.type_, overlay, ctx)?;
     Ok(())
 }
@@ -21038,7 +21003,7 @@ impl ::sittir_core::render::Render for GenericTypeNodeRecord<'_> {
 }
 
 impl ::sittir_core::prepare::Prepare for GenericTypeNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_generic_type(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -21058,7 +21023,7 @@ impl ::sittir_core::prepare::Prepare for GenericTypeNode {
     }
 }
 
-fn prepare_generic_type<N: GenericTypePrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_generic_type<N: GenericTypePrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(228), (None, None), ctx);
@@ -21117,7 +21082,7 @@ impl ::sittir_core::render::Render for UnionTypeNodeRecord<'_> {
 }
 
 impl ::sittir_core::prepare::Prepare for UnionTypeNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_union_type(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -21137,7 +21102,7 @@ impl ::sittir_core::prepare::Prepare for UnionTypeNode {
     }
 }
 
-fn prepare_union_type<N: UnionTypePrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_union_type<N: UnionTypePrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(229), (None, None), ctx);
@@ -21196,7 +21161,7 @@ impl ::sittir_core::render::Render for ConstrainedTypeNodeRecord<'_> {
 }
 
 impl ::sittir_core::prepare::Prepare for ConstrainedTypeNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_constrained_type(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -21216,7 +21181,7 @@ impl ::sittir_core::prepare::Prepare for ConstrainedTypeNode {
     }
 }
 
-fn prepare_constrained_type<N: ConstrainedTypePrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_constrained_type<N: ConstrainedTypePrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(230), (None, None), ctx);
@@ -21275,7 +21240,7 @@ impl ::sittir_core::render::Render for MemberTypeNodeRecord<'_> {
 }
 
 impl ::sittir_core::prepare::Prepare for MemberTypeNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_member_type(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -21295,7 +21260,7 @@ impl ::sittir_core::prepare::Prepare for MemberTypeNode {
     }
 }
 
-fn prepare_member_type<N: MemberTypePrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_member_type<N: MemberTypePrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(231), (None, None), ctx);
@@ -21354,7 +21319,7 @@ impl ::sittir_core::render::Render for KeywordArgumentNodeRecord<'_> {
 }
 
 impl ::sittir_core::prepare::Prepare for KeywordArgumentNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_keyword_argument(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -21374,7 +21339,7 @@ impl ::sittir_core::prepare::Prepare for KeywordArgumentNode {
     }
 }
 
-fn prepare_keyword_argument<N: KeywordArgumentPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_keyword_argument<N: KeywordArgumentPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(232), (None, None), ctx);
@@ -21430,7 +21395,7 @@ impl ::sittir_core::render::Render for ListNodeRecord<'_> {
 }
 
 impl ::sittir_core::prepare::Prepare for ListNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_list(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -21450,7 +21415,7 @@ impl ::sittir_core::prepare::Prepare for ListNode {
     }
 }
 
-fn prepare_list<N: ListPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_list<N: ListPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(233), (None, None), ctx);
@@ -21505,7 +21470,7 @@ impl ::sittir_core::render::Render for SetNodeRecord<'_> {
 }
 
 impl ::sittir_core::prepare::Prepare for SetNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_set(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -21525,7 +21490,7 @@ impl ::sittir_core::prepare::Prepare for SetNode {
     }
 }
 
-fn prepare_set<N: SetPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_set<N: SetPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(234), (None, None), ctx);
@@ -21580,7 +21545,7 @@ impl ::sittir_core::render::Render for TupleNodeRecord<'_> {
 }
 
 impl ::sittir_core::prepare::Prepare for TupleNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_tuple(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -21600,7 +21565,7 @@ impl ::sittir_core::prepare::Prepare for TupleNode {
     }
 }
 
-fn prepare_tuple<N: TuplePrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_tuple<N: TuplePrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(235), (None, None), ctx);
@@ -21655,7 +21620,7 @@ impl ::sittir_core::render::Render for DictionaryNodeRecord<'_> {
 }
 
 impl ::sittir_core::prepare::Prepare for DictionaryNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_dictionary(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -21675,7 +21640,7 @@ impl ::sittir_core::prepare::Prepare for DictionaryNode {
     }
 }
 
-fn prepare_dictionary<N: DictionaryPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_dictionary<N: DictionaryPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(236), (None, None), ctx);
@@ -21733,7 +21698,7 @@ impl ::sittir_core::render::Render for PairNodeRecord<'_> {
 }
 
 impl ::sittir_core::prepare::Prepare for PairNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_pair(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -21753,7 +21718,7 @@ impl ::sittir_core::prepare::Prepare for PairNode {
     }
 }
 
-fn prepare_pair<N: PairPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_pair<N: PairPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(237), (None, None), ctx);
@@ -21812,7 +21777,7 @@ impl ::sittir_core::render::Render for ListComprehensionNodeRecord<'_> {
 }
 
 impl ::sittir_core::prepare::Prepare for ListComprehensionNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_list_comprehension(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -21832,7 +21797,7 @@ impl ::sittir_core::prepare::Prepare for ListComprehensionNode {
     }
 }
 
-fn prepare_list_comprehension<N: ListComprehensionPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_list_comprehension<N: ListComprehensionPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(238), (None, None), ctx);
@@ -21891,7 +21856,7 @@ impl ::sittir_core::render::Render for DictionaryComprehensionNodeRecord<'_> {
 }
 
 impl ::sittir_core::prepare::Prepare for DictionaryComprehensionNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_dictionary_comprehension(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -21911,7 +21876,7 @@ impl ::sittir_core::prepare::Prepare for DictionaryComprehensionNode {
     }
 }
 
-fn prepare_dictionary_comprehension<N: DictionaryComprehensionPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_dictionary_comprehension<N: DictionaryComprehensionPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(239), (None, None), ctx);
@@ -21970,7 +21935,7 @@ impl ::sittir_core::render::Render for SetComprehensionNodeRecord<'_> {
 }
 
 impl ::sittir_core::prepare::Prepare for SetComprehensionNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_set_comprehension(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -21990,7 +21955,7 @@ impl ::sittir_core::prepare::Prepare for SetComprehensionNode {
     }
 }
 
-fn prepare_set_comprehension<N: SetComprehensionPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_set_comprehension<N: SetComprehensionPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(240), (None, None), ctx);
@@ -22049,7 +22014,7 @@ impl ::sittir_core::render::Render for GeneratorExpressionNodeRecord<'_> {
 }
 
 impl ::sittir_core::prepare::Prepare for GeneratorExpressionNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_generator_expression(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -22069,7 +22034,7 @@ impl ::sittir_core::prepare::Prepare for GeneratorExpressionNode {
     }
 }
 
-fn prepare_generator_expression<N: GeneratorExpressionPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_generator_expression<N: GeneratorExpressionPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(241), (None, None), ctx);
@@ -22125,7 +22090,7 @@ impl ::sittir_core::render::Render for ParenthesizedExpressionNodeRecord<'_> {
 }
 
 impl ::sittir_core::prepare::Prepare for ParenthesizedExpressionNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_parenthesized_expression(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -22145,7 +22110,7 @@ impl ::sittir_core::prepare::Prepare for ParenthesizedExpressionNode {
     }
 }
 
-fn prepare_parenthesized_expression<N: ParenthesizedExpressionPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_parenthesized_expression<N: ParenthesizedExpressionPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(242), (None, None), ctx);
@@ -22209,7 +22174,7 @@ impl ::sittir_core::render::Render for CollectionElementsNodeRecord<'_> {
 }
 
 impl ::sittir_core::prepare::Prepare for CollectionElementsNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_collection_elements(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -22229,7 +22194,7 @@ impl ::sittir_core::prepare::Prepare for CollectionElementsNode {
     }
 }
 
-fn prepare_collection_elements<N: CollectionElementsPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_collection_elements<N: CollectionElementsPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     { let slot = ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, overlay, "_item"); ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.item, overlay, slot.as_deref()); }
@@ -22304,7 +22269,7 @@ impl ::sittir_core::render::Render for ForInClauseNodeRecord<'_> {
 }
 
 impl ::sittir_core::prepare::Prepare for ForInClauseNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_for_in_clause(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -22324,7 +22289,7 @@ impl ::sittir_core::prepare::Prepare for ForInClauseNode {
     }
 }
 
-fn prepare_for_in_clause<N: ForInClausePrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_for_in_clause<N: ForInClausePrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(244), (None, None), ctx);
@@ -22386,7 +22351,7 @@ impl ::sittir_core::render::Render for IfClauseNodeRecord<'_> {
 }
 
 impl ::sittir_core::prepare::Prepare for IfClauseNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_if_clause(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -22406,7 +22371,7 @@ impl ::sittir_core::prepare::Prepare for IfClauseNode {
     }
 }
 
-fn prepare_if_clause<N: IfClausePrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_if_clause<N: IfClausePrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(245), (None, None), ctx);
@@ -22467,7 +22432,7 @@ impl ::sittir_core::render::Render for ConditionalExpressionNodeRecord<'_> {
 }
 
 impl ::sittir_core::prepare::Prepare for ConditionalExpressionNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_conditional_expression(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -22487,7 +22452,7 @@ impl ::sittir_core::prepare::Prepare for ConditionalExpressionNode {
     }
 }
 
-fn prepare_conditional_expression<N: ConditionalExpressionPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_conditional_expression<N: ConditionalExpressionPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(246), (None, None), ctx);
@@ -22547,7 +22512,7 @@ impl ::sittir_core::render::Render for ConcatenatedStringNodeRecord<'_> {
 }
 
 impl ::sittir_core::prepare::Prepare for ConcatenatedStringNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_concatenated_string(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -22567,7 +22532,7 @@ impl ::sittir_core::prepare::Prepare for ConcatenatedStringNode {
     }
 }
 
-fn prepare_concatenated_string<N: ConcatenatedStringPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_concatenated_string<N: ConcatenatedStringPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(247), (None, None), ctx);
@@ -22579,7 +22544,7 @@ fn prepare_concatenated_string<N: ConcatenatedStringPrepare + ?Sized>(node: &mut
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::STRING, words = 9, built_words = 5, fields = StringFields, prepare = StringPrepare, view = StringNodeRecord, prepare_fn = prepare_string)]
+#[node(kind = kind::STRING, words = 19, built_words = 5, fields = StringFields, prepare = StringPrepare, view = StringNodeRecord, prepare_fn = prepare_string)]
 pub struct StringNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -22587,13 +22552,13 @@ pub struct StringNode {
     #[height]
     height: u16,
     #[wire(key = "_string_start")]
-    #[slot(field = field::STRING_START, word = 2, width = 3, forms = 1, built = 2)]
+    #[slot(field = field::STRING_START, word = 2, width = 8, inline = 8, forms = 8, built = 2, delimiter)]
     pub string_start: ::sittir_core::SlotValue<StringStartNode>,
     #[wire(key = "_content")]
-    #[slot(field = field::CONTENT, word = 5, width = 1, run = 3, forms = 1, built = 3)]
+    #[slot(field = field::CONTENT, word = 10, width = 1, run = 3, forms = 1, built = 3, bounded)]
     pub content: Vec<::sittir_core::SlotValue<StringContentNodeSlot>>,
     #[wire(key = "_string_end")]
-    #[slot(field = field::STRING_END, word = 6, width = 3, forms = 1, built = 4)]
+    #[slot(field = field::STRING_END, word = 11, width = 8, inline = 8, forms = 8, built = 4, delimiter)]
     pub string_end: ::sittir_core::SlotValue<StringEndNode, true>,
 }
 
@@ -22631,7 +22596,7 @@ impl ::sittir_core::render::Render for StringNodeRecord<'_> {
 }
 
 impl ::sittir_core::prepare::Prepare for StringNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_string(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -22651,7 +22616,7 @@ impl ::sittir_core::prepare::Prepare for StringNode {
     }
 }
 
-fn prepare_string<N: StringPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_string<N: StringPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(248), (None, None), ctx);
@@ -22659,6 +22624,7 @@ fn prepare_string<N: StringPrepare + ?Sized>(node: &mut N, overlay: &mut N::Over
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.string_start, overlay, ctx)?;
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.content, overlay, ctx)?;
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.string_end, overlay, ctx)?;
+    ::sittir_core::delimiters::fill(&mut parts.string_start, &mut parts.string_end, overlay, &::sittir_core::delimiters::DelimiterSpec { kind: "string", arms: &[::sittir_core::delimiters::DelimiterArm { text: "\"", single_line: true }, ::sittir_core::delimiters::DelimiterArm { text: "'", single_line: true }, ::sittir_core::delimiters::DelimiterArm { text: "\"\"\"", single_line: false }, ::sittir_core::delimiters::DelimiterArm { text: "'''", single_line: false }], run: None, close_lead: "", escape: Some('\\'), id: ::sittir_core::types::KindId(248), free_text: &[::sittir_core::delimiters::ContentKind { kind: ::sittir_core::types::KindId(120), name: "string_fragment" }], excluded: &[(123, 123), (125, 125)], opened: &[::sittir_core::delimiters::ContentKind { kind: ::sittir_core::types::KindId(250), name: "interpolation" }, ::sittir_core::delimiters::ContentKind { kind: ::sittir_core::types::KindId(121), name: "escape_interpolation" }], gate: Some(&["f", "F", "t", "T", "rf", "rF", "Rf", "RF", "fr", "fR", "Fr", "FR", "rt", "rT", "Rt", "RT", "tr", "tR", "Tr", "TR"]), whitespace: &options::WHITESPACE }, ctx, |overlay: &N::Overlay, w: &mut dyn ::sittir_core::render::RenderSink| { ::sittir_core::prepare::RenderSlot::render_slot(&parts.content, overlay, ctx, w)?; Ok(()) })?;
     Ok(())
 }
 
@@ -22709,7 +22675,7 @@ impl ::sittir_core::render::Render for StringContentNodeRecord<'_> {
 }
 
 impl ::sittir_core::prepare::Prepare for StringContentNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_string_content(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -22729,7 +22695,7 @@ impl ::sittir_core::prepare::Prepare for StringContentNode {
     }
 }
 
-fn prepare_string_content<N: StringContentPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_string_content<N: StringContentPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     { let slot = ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, overlay, "_elements"); ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.elements, overlay, slot.as_deref()); }
@@ -22749,7 +22715,7 @@ pub struct InterpolationNode {
     height: u16,
     #[wire(key = "_expression")]
     #[slot(field = field::EXPRESSION, word = 3, width = 4, forms = 3, built = 3)]
-    pub expression: ::sittir_core::SlotValue<InterpolationExpressionNodeSlot>,
+    pub expression: ::sittir_core::SlotValue<AugmentedAssignmentRightNodeSlot>,
     #[wire(key = "_debug")]
     #[slot(field = field::DEBUG, presence = kind::EQ, word = 2, bit = 0)]
     pub debug: bool,
@@ -22795,7 +22761,7 @@ impl ::sittir_core::render::Render for InterpolationNodeRecord<'_> {
 }
 
 impl ::sittir_core::prepare::Prepare for InterpolationNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_interpolation(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -22815,7 +22781,7 @@ impl ::sittir_core::prepare::Prepare for InterpolationNode {
     }
 }
 
-fn prepare_interpolation<N: InterpolationPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_interpolation<N: InterpolationPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(250), (None, None), ctx);
@@ -22839,7 +22805,7 @@ impl ::sittir_core::view::KindOf for NotEscapeSequenceNode {
 }
 
 impl ::sittir_core::prepare::Prepare for NotEscapeSequenceNode {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &mut ::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -22900,7 +22866,7 @@ impl ::sittir_core::render::Render for FormatSpecifierNodeRecord<'_> {
 }
 
 impl ::sittir_core::prepare::Prepare for FormatSpecifierNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_format_specifier(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -22920,7 +22886,7 @@ impl ::sittir_core::prepare::Prepare for FormatSpecifierNode {
     }
 }
 
-fn prepare_format_specifier<N: FormatSpecifierPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_format_specifier<N: FormatSpecifierPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(254), (None, None), ctx);
@@ -22974,7 +22940,7 @@ impl ::sittir_core::render::Render for TypeConversionNodeRecord<'_> {
 }
 
 impl ::sittir_core::prepare::Prepare for TypeConversionNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_type_conversion(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -22994,7 +22960,7 @@ impl ::sittir_core::prepare::Prepare for TypeConversionNode {
     }
 }
 
-fn prepare_type_conversion<N: TypeConversionPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_type_conversion<N: TypeConversionPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     Ok(())
@@ -23045,7 +23011,7 @@ impl ::sittir_core::render::Render for IdentifierNodeRecord<'_> {
 }
 
 impl ::sittir_core::prepare::Prepare for IdentifierNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_identifier(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -23065,7 +23031,7 @@ impl ::sittir_core::prepare::Prepare for IdentifierNode {
     }
 }
 
-fn prepare_identifier<N: IdentifierPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_identifier<N: IdentifierPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     Ok(())
@@ -23086,7 +23052,7 @@ impl ::sittir_core::view::KindOf for TrueNode {
 }
 
 impl ::sittir_core::prepare::Prepare for TrueNode {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         match self {
             TrueNode::True(_) => Ok(()),
         }
@@ -23139,7 +23105,7 @@ impl ::sittir_core::view::KindOf for FalseNode {
 }
 
 impl ::sittir_core::prepare::Prepare for FalseNode {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         match self {
             FalseNode::False(_) => Ok(()),
         }
@@ -23192,7 +23158,7 @@ impl ::sittir_core::view::KindOf for NoneNode {
 }
 
 impl ::sittir_core::prepare::Prepare for NoneNode {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         match self {
             NoneNode::None(_) => Ok(()),
         }
@@ -23277,7 +23243,7 @@ impl ::sittir_core::render::Render for AwaitNodeRecord<'_> {
 }
 
 impl ::sittir_core::prepare::Prepare for AwaitNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_await(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -23297,7 +23263,7 @@ impl ::sittir_core::prepare::Prepare for AwaitNode {
     }
 }
 
-fn prepare_await<N: AwaitPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_await<N: AwaitPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(257), (None, None), ctx);
@@ -23306,11 +23272,14 @@ fn prepare_await<N: AwaitPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overla
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::COMMENT, interior = "^#(?<content>(?:.*))$", words = 4, built_words = 3, fields = CommentFields, prepare = CommentPrepare, view = CommentNodeRecord, prepare_fn = prepare_comment)]
+#[node(kind = kind::COMMENT, interior = "^#(?<content>(?:.*))$", words = 6, built_words = 4, fields = CommentFields, prepare = CommentPrepare, view = CommentNodeRecord, prepare_fn = prepare_comment)]
 pub struct CommentNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[wire(key = "$verbatim")]
+    #[slot(word = 4, width = 2, forms = 4, built = 3)]
+    pub verbatim: Option<String>,
     #[wire(key = "_content")]
     #[slot(capture = "content", word = 2, width = 2, forms = 4, built = 2)]
     pub content: String,
@@ -23330,7 +23299,7 @@ impl ::sittir_core::options::Edged for CommentNode {
 
 impl ::sittir_core::render::Render for CommentNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(72)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_comment(self, w))
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(72)), ::sittir_core::layout::TriviaRole::Owner, w, |w| match CommentFields::verbatim(self) { Some(text) => w.text(text), None => render_comment(self, w) })
     }
 }
 
@@ -23343,14 +23312,14 @@ impl ::sittir_core::view::KindOf for CommentNodeRecord<'_> {
 
 impl ::sittir_core::render::Render for CommentNodeRecord<'_> {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        ::sittir_core::arena::RecordLayout::render(CommentFields::layout(self), Some(::sittir_core::types::KindId(72)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_comment(self, w))
+        ::sittir_core::arena::RecordLayout::render(CommentFields::layout(self), Some(::sittir_core::types::KindId(72)), ::sittir_core::layout::TriviaRole::Owner, w, |w| match CommentFields::verbatim(self) { Some(text) => w.text(text), None => render_comment(self, w) })
     }
 }
 
 }
 
 impl ::sittir_core::prepare::Prepare for CommentNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_comment(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -23370,7 +23339,7 @@ impl ::sittir_core::prepare::Prepare for CommentNode {
     }
 }
 
-fn prepare_comment<N: CommentPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_comment<N: CommentPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     Ok(())
@@ -23391,7 +23360,7 @@ impl ::sittir_core::view::KindOf for PositionalSeparatorNode {
 }
 
 impl ::sittir_core::prepare::Prepare for PositionalSeparatorNode {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         match self {
             PositionalSeparatorNode::PositionalSeparator(_) => Ok(()),
         }
@@ -23444,7 +23413,7 @@ impl ::sittir_core::view::KindOf for KeywordSeparatorNode {
 }
 
 impl ::sittir_core::prepare::Prepare for KeywordSeparatorNode {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         match self {
             KeywordSeparatorNode::KeywordSeparator(_) => Ok(()),
         }
@@ -23538,7 +23507,7 @@ impl ::sittir_core::render::Render for SimpleStatementsElementsNodeRecord<'_> {
 }
 
 impl ::sittir_core::prepare::Prepare for SimpleStatementsElementsNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_simple_statements_elements(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -23558,7 +23527,7 @@ impl ::sittir_core::prepare::Prepare for SimpleStatementsElementsNode {
     }
 }
 
-fn prepare_simple_statements_elements<N: SimpleStatementsElementsPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_simple_statements_elements<N: SimpleStatementsElementsPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     { let slot = ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, overlay, "_item"); ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.item, overlay, slot.as_deref()); }
@@ -23572,25 +23541,25 @@ fn prepare_simple_statements_elements<N: SimpleStatementsElementsPrepare + ?Size
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::SUBJECTS, item = subject, words = 3, built_words = 3, fields = SubjectsFields, prepare = SubjectsPrepare, view = SubjectsNodeRecord, prepare_fn = prepare_subjects)]
+#[node(kind = kind::SUBJECTS, item = elements, words = 3, built_words = 3, fields = SubjectsFields, prepare = SubjectsPrepare, view = SubjectsNodeRecord, prepare_fn = prepare_subjects)]
 pub struct SubjectsNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
     #[height]
     height: u16,
-    #[wire(key = "_subject")]
-    #[slot(field = field::SUBJECT, separator = kind::COMMA, word = 2, width = 1, run = 4, forms = 3, built = 2, seated)]
-    pub subject: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<ExpressionNode>>,
+    #[wire(key = "_elements")]
+    #[slot(field = field::ELEMENTS, separator = kind::COMMA, word = 2, width = 1, run = 4, forms = 3, built = 2, seated)]
+    pub elements: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<ExpressionNode>>,
     #[wire(key = "_delimiter")]
     #[flank(trailing = 0)]
     pub delimiter: Option<::sittir_core::types::Delimiter>,
-    #[wire(key = "_subject_separator_space_before")]
-    #[space(slot = 2, side = before, site = options::SITE_SUBJECTS_SUBJECT_SEPARATOR_SPACE_BEFORE)]
-    pub subject_separator_space_before: Option<KindId>,
-    #[wire(key = "_subject_separator_space_after")]
-    #[space(slot = 2, side = after, site = options::SITE_SUBJECTS_SUBJECT_SEPARATOR_SPACE_AFTER)]
-    pub subject_separator_space_after: Option<KindId>,
+    #[wire(key = "_elements_separator_space_before")]
+    #[space(slot = 2, side = before, site = options::SITE_SUBJECTS_ELEMENTS_SEPARATOR_SPACE_BEFORE)]
+    pub elements_separator_space_before: Option<KindId>,
+    #[wire(key = "_elements_separator_space_after")]
+    #[space(slot = 2, side = after, site = options::SITE_SUBJECTS_ELEMENTS_SEPARATOR_SPACE_AFTER)]
+    pub elements_separator_space_after: Option<KindId>,
 }
 
 impl ::sittir_core::view::KindOf for SubjectsNode {
@@ -23627,7 +23596,7 @@ impl ::sittir_core::render::Render for SubjectsNodeRecord<'_> {
 }
 
 impl ::sittir_core::prepare::Prepare for SubjectsNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_subjects(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -23647,16 +23616,16 @@ impl ::sittir_core::prepare::Prepare for SubjectsNode {
     }
 }
 
-fn prepare_subjects<N: SubjectsPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_subjects<N: SubjectsPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
-    { let slot = ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, overlay, "_subject"); ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.subject, overlay, slot.as_deref()); }
-    ::sittir_core::prepare::Setting::fill(&mut parts.subject_separator_space_before, overlay, ctx.options.site_arm(options::SITE_SUBJECTS_SUBJECT_SEPARATOR_SPACE_BEFORE).arm);
-    ::sittir_core::prepare::Setting::fill(&mut parts.subject_separator_space_after, overlay, ctx.options.site_arm(options::SITE_SUBJECTS_SUBJECT_SEPARATOR_SPACE_AFTER).arm);
-    ::sittir_core::prepare::SeatSlot::fill_seats(&mut parts.subject, overlay, options::SEATS_SUBJECTS_SUBJECT, ctx);
-    let delimiter = ::sittir_core::prepare::source_trailing_delimiter(::sittir_core::prepare::LayoutTarget::sides(&parts.layout, overlay).as_deref(), ::sittir_core::types::KindId(261), &[::sittir_core::types::KindId(6)], ctx.options.delimiter_at(options::DELIM_SUBJECTS_SUBJECT), ctx);
+    { let slot = ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, overlay, "_elements"); ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.elements, overlay, slot.as_deref()); }
+    ::sittir_core::prepare::Setting::fill(&mut parts.elements_separator_space_before, overlay, ctx.options.site_arm(options::SITE_SUBJECTS_ELEMENTS_SEPARATOR_SPACE_BEFORE).arm);
+    ::sittir_core::prepare::Setting::fill(&mut parts.elements_separator_space_after, overlay, ctx.options.site_arm(options::SITE_SUBJECTS_ELEMENTS_SEPARATOR_SPACE_AFTER).arm);
+    ::sittir_core::prepare::SeatSlot::fill_seats(&mut parts.elements, overlay, options::SEATS_SUBJECTS_ELEMENTS, ctx);
+    let delimiter = ::sittir_core::prepare::source_trailing_delimiter(::sittir_core::prepare::LayoutTarget::sides(&parts.layout, overlay).as_deref(), ::sittir_core::types::KindId(261), &[::sittir_core::types::KindId(6)], ctx.options.delimiter_at(options::DELIM_SUBJECTS_ELEMENTS), ctx);
     ::sittir_core::prepare::Setting::fill(&mut parts.delimiter, overlay, delimiter);
-    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.subject, overlay, ctx)?;
+    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.elements, overlay, ctx)?;
     Ok(())
 }
 
@@ -23716,7 +23685,7 @@ impl ::sittir_core::render::Render for WithClauseWithItemsNodeRecord<'_> {
 }
 
 impl ::sittir_core::prepare::Prepare for WithClauseWithItemsNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_with_clause_with_items(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -23736,7 +23705,7 @@ impl ::sittir_core::prepare::Prepare for WithClauseWithItemsNode {
     }
 }
 
-fn prepare_with_clause_with_items<N: WithClauseWithItemsPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_with_clause_with_items<N: WithClauseWithItemsPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     { let slot = ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, overlay, "_item"); ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.item, overlay, slot.as_deref()); }
@@ -23804,7 +23773,7 @@ impl ::sittir_core::render::Render for TypesNodeRecord<'_> {
 }
 
 impl ::sittir_core::prepare::Prepare for TypesNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_types(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -23824,7 +23793,7 @@ impl ::sittir_core::prepare::Prepare for TypesNode {
     }
 }
 
-fn prepare_types<N: TypesPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_types<N: TypesPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     { let slot = ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, overlay, "_item"); ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.item, overlay, slot.as_deref()); }
@@ -23893,7 +23862,7 @@ impl ::sittir_core::render::Render for ArgumentListElementsNodeRecord<'_> {
 }
 
 impl ::sittir_core::prepare::Prepare for ArgumentListElementsNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_argument_list_elements(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -23913,7 +23882,7 @@ impl ::sittir_core::prepare::Prepare for ArgumentListElementsNode {
     }
 }
 
-fn prepare_argument_list_elements<N: ArgumentListElementsPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_argument_list_elements<N: ArgumentListElementsPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     { let slot = ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, overlay, "_item"); ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.item, overlay, slot.as_deref()); }
@@ -23982,7 +23951,7 @@ impl ::sittir_core::render::Render for ListPatternCasePatternsNodeRecord<'_> {
 }
 
 impl ::sittir_core::prepare::Prepare for ListPatternCasePatternsNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_list_pattern_case_patterns(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -24002,7 +23971,7 @@ impl ::sittir_core::prepare::Prepare for ListPatternCasePatternsNode {
     }
 }
 
-fn prepare_list_pattern_case_patterns<N: ListPatternCasePatternsPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_list_pattern_case_patterns<N: ListPatternCasePatternsPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     { let slot = ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, overlay, "_item"); ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.item, overlay, slot.as_deref()); }
@@ -24071,7 +24040,7 @@ impl ::sittir_core::render::Render for DictPatternElementsNodeRecord<'_> {
 }
 
 impl ::sittir_core::prepare::Prepare for DictPatternElementsNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_dict_pattern_elements(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -24091,7 +24060,7 @@ impl ::sittir_core::prepare::Prepare for DictPatternElementsNode {
     }
 }
 
-fn prepare_dict_pattern_elements<N: DictPatternElementsPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_dict_pattern_elements<N: DictPatternElementsPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     { let slot = ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, overlay, "_item"); ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.item, overlay, slot.as_deref()); }
@@ -24105,25 +24074,25 @@ fn prepare_dict_pattern_elements<N: DictPatternElementsPrepare + ?Sized>(node: &
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::SUBSCRIPTS, item = subscript, words = 3, built_words = 3, fields = SubscriptsFields, prepare = SubscriptsPrepare, view = SubscriptsNodeRecord, prepare_fn = prepare_subscripts)]
+#[node(kind = kind::SUBSCRIPTS, item = elements, words = 3, built_words = 3, fields = SubscriptsFields, prepare = SubscriptsPrepare, view = SubscriptsNodeRecord, prepare_fn = prepare_subscripts)]
 pub struct SubscriptsNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
     #[height]
     height: u16,
-    #[wire(key = "_subscript")]
-    #[slot(field = field::SUBSCRIPT, separator = kind::COMMA, word = 2, width = 1, run = 4, forms = 3, built = 2, seated)]
-    pub subscript: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<SubscriptsSubscriptNodeSlot>>,
+    #[wire(key = "_elements")]
+    #[slot(field = field::ELEMENTS, separator = kind::COMMA, word = 2, width = 1, run = 4, forms = 3, built = 2, seated)]
+    pub elements: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<SubscriptsElementsNodeSlot>>,
     #[wire(key = "_delimiter")]
     #[flank(trailing = 0)]
     pub delimiter: Option<::sittir_core::types::Delimiter>,
-    #[wire(key = "_subscript_separator_space_before")]
-    #[space(slot = 2, side = before, site = options::SITE_SUBSCRIPTS_SUBSCRIPT_SEPARATOR_SPACE_BEFORE)]
-    pub subscript_separator_space_before: Option<KindId>,
-    #[wire(key = "_subscript_separator_space_after")]
-    #[space(slot = 2, side = after, site = options::SITE_SUBSCRIPTS_SUBSCRIPT_SEPARATOR_SPACE_AFTER)]
-    pub subscript_separator_space_after: Option<KindId>,
+    #[wire(key = "_elements_separator_space_before")]
+    #[space(slot = 2, side = before, site = options::SITE_SUBSCRIPTS_ELEMENTS_SEPARATOR_SPACE_BEFORE)]
+    pub elements_separator_space_before: Option<KindId>,
+    #[wire(key = "_elements_separator_space_after")]
+    #[space(slot = 2, side = after, site = options::SITE_SUBSCRIPTS_ELEMENTS_SEPARATOR_SPACE_AFTER)]
+    pub elements_separator_space_after: Option<KindId>,
 }
 
 impl ::sittir_core::view::KindOf for SubscriptsNode {
@@ -24160,7 +24129,7 @@ impl ::sittir_core::render::Render for SubscriptsNodeRecord<'_> {
 }
 
 impl ::sittir_core::prepare::Prepare for SubscriptsNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_subscripts(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -24180,16 +24149,16 @@ impl ::sittir_core::prepare::Prepare for SubscriptsNode {
     }
 }
 
-fn prepare_subscripts<N: SubscriptsPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_subscripts<N: SubscriptsPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
-    { let slot = ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, overlay, "_subscript"); ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.subscript, overlay, slot.as_deref()); }
-    ::sittir_core::prepare::Setting::fill(&mut parts.subscript_separator_space_before, overlay, ctx.options.site_arm(options::SITE_SUBSCRIPTS_SUBSCRIPT_SEPARATOR_SPACE_BEFORE).arm);
-    ::sittir_core::prepare::Setting::fill(&mut parts.subscript_separator_space_after, overlay, ctx.options.site_arm(options::SITE_SUBSCRIPTS_SUBSCRIPT_SEPARATOR_SPACE_AFTER).arm);
-    ::sittir_core::prepare::SeatSlot::fill_seats(&mut parts.subscript, overlay, options::SEATS_SUBSCRIPTS_SUBSCRIPT, ctx);
-    let delimiter = ::sittir_core::prepare::source_trailing_delimiter(::sittir_core::prepare::LayoutTarget::sides(&parts.layout, overlay).as_deref(), ::sittir_core::types::KindId(267), &[::sittir_core::types::KindId(6)], ctx.options.delimiter_at(options::DELIM_SUBSCRIPTS_SUBSCRIPT), ctx);
+    { let slot = ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, overlay, "_elements"); ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.elements, overlay, slot.as_deref()); }
+    ::sittir_core::prepare::Setting::fill(&mut parts.elements_separator_space_before, overlay, ctx.options.site_arm(options::SITE_SUBSCRIPTS_ELEMENTS_SEPARATOR_SPACE_BEFORE).arm);
+    ::sittir_core::prepare::Setting::fill(&mut parts.elements_separator_space_after, overlay, ctx.options.site_arm(options::SITE_SUBSCRIPTS_ELEMENTS_SEPARATOR_SPACE_AFTER).arm);
+    ::sittir_core::prepare::SeatSlot::fill_seats(&mut parts.elements, overlay, options::SEATS_SUBSCRIPTS_ELEMENTS, ctx);
+    let delimiter = ::sittir_core::prepare::source_trailing_delimiter(::sittir_core::prepare::LayoutTarget::sides(&parts.layout, overlay).as_deref(), ::sittir_core::types::KindId(267), &[::sittir_core::types::KindId(6)], ctx.options.delimiter_at(options::DELIM_SUBSCRIPTS_ELEMENTS), ctx);
     ::sittir_core::prepare::Setting::fill(&mut parts.delimiter, overlay, delimiter);
-    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.subscript, overlay, ctx)?;
+    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.elements, overlay, ctx)?;
     Ok(())
 }
 
@@ -24249,7 +24218,7 @@ impl ::sittir_core::render::Render for DictionaryElementsNodeRecord<'_> {
 }
 
 impl ::sittir_core::prepare::Prepare for DictionaryElementsNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_dictionary_elements(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -24269,7 +24238,7 @@ impl ::sittir_core::prepare::Prepare for DictionaryElementsNode {
     }
 }
 
-fn prepare_dictionary_elements<N: DictionaryElementsPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_dictionary_elements<N: DictionaryElementsPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     { let slot = ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, overlay, "_item"); ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.item, overlay, slot.as_deref()); }
@@ -24329,7 +24298,7 @@ impl ::sittir_core::render::Render for SliceGroupNodeRecord<'_> {
 }
 
 impl ::sittir_core::prepare::Prepare for SliceGroupNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_slice_group(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -24349,7 +24318,7 @@ impl ::sittir_core::prepare::Prepare for SliceGroupNode {
     }
 }
 
-fn prepare_slice_group<N: SliceGroupPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_slice_group<N: SliceGroupPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(269), (None, None), ctx);
@@ -24402,7 +24371,7 @@ impl ::sittir_core::render::Render for FormatSpecifierTextNodeRecord<'_> {
 }
 
 impl ::sittir_core::prepare::Prepare for FormatSpecifierTextNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_format_specifier_text(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -24422,9 +24391,173 @@ impl ::sittir_core::prepare::Prepare for FormatSpecifierTextNode {
     }
 }
 
-fn prepare_format_specifier_text<N: FormatSpecifierTextPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_format_specifier_text<N: FormatSpecifierTextPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
+    Ok(())
+}
+
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
+#[node(kind = kind::TYPE_PARAMS, min_depth = 2, layout = [kind::LBRACK, kind::RBRACK], words = 5, built_words = 3, fields = TypeParamsFields, prepare = TypeParamsPrepare, view = TypeParamsNodeRecord, prepare_fn = prepare_type_params)]
+pub struct TypeParamsNode {
+    #[wire(key = "$_layout")]
+    #[layout]
+    pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
+    #[wire(key = "_items")]
+    #[slot(field = field::ITEMS, word = 2, width = 3, inline = 3, forms = 8, built = 2)]
+    pub items: ::sittir_core::SlotValue<TypeParamsItemsNode>,
+}
+
+impl ::sittir_core::view::KindOf for TypeParamsNode {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(272)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::options::Edged for TypeParamsNode {
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(272) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
+}
+
+impl ::sittir_core::render::Render for TypeParamsNode {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(272)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_type_params(self, w))
+    }
+}
+
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for TypeParamsNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(272)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for TypeParamsNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(TypeParamsFields::layout(self), Some(::sittir_core::types::KindId(272)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_type_params(self, w))
+    }
+}
+
+}
+
+impl ::sittir_core::prepare::Prepare for TypeParamsNode {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
+        prepare_type_params(self, &mut (), ctx)
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &mut ::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
+}
+
+fn prepare_type_params<N: TypeParamsPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
+    let mut parts = node.prepare_parts();
+    ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
+    ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(272), (None, None), ctx);
+    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.items, overlay, ctx)?;
+    Ok(())
+}
+
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
+#[node(kind = kind::TYPE_PARAMS_ITEMS, item = item, words = 3, built_words = 3, fields = TypeParamsItemsFields, prepare = TypeParamsItemsPrepare, view = TypeParamsItemsNodeRecord, prepare_fn = prepare_type_params_items)]
+pub struct TypeParamsItemsNode {
+    #[wire(key = "$_layout")]
+    #[layout]
+    pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
+    #[wire(key = "_item")]
+    #[slot(field = field::ITEM, separator = kind::COMMA, word = 2, width = 1, run = 3, forms = 1, built = 2, seated)]
+    pub item: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<TypeParamNode>>,
+    #[wire(key = "_delimiter")]
+    #[flank(trailing = 0)]
+    pub delimiter: Option<::sittir_core::types::Delimiter>,
+    #[wire(key = "_item_separator_space_before")]
+    #[space(slot = 2, side = before, site = options::SITE_TYPE_PARAMS_ITEMS_ITEM_SEPARATOR_SPACE_BEFORE)]
+    pub item_separator_space_before: Option<KindId>,
+    #[wire(key = "_item_separator_space_after")]
+    #[space(slot = 2, side = after, site = options::SITE_TYPE_PARAMS_ITEMS_ITEM_SEPARATOR_SPACE_AFTER)]
+    pub item_separator_space_after: Option<KindId>,
+}
+
+impl ::sittir_core::view::KindOf for TypeParamsItemsNode {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(273)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::options::Edged for TypeParamsItemsNode {
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(273) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
+}
+
+impl ::sittir_core::render::Render for TypeParamsItemsNode {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(273)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_type_params_items(self, w))
+    }
+}
+
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for TypeParamsItemsNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(273)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for TypeParamsItemsNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(TypeParamsItemsFields::layout(self), Some(::sittir_core::types::KindId(273)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_type_params_items(self, w))
+    }
+}
+
+}
+
+impl ::sittir_core::prepare::Prepare for TypeParamsItemsNode {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
+        prepare_type_params_items(self, &mut (), ctx)
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &mut ::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
+}
+
+fn prepare_type_params_items<N: TypeParamsItemsPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
+    let mut parts = node.prepare_parts();
+    ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
+    { let slot = ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, overlay, "_item"); ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.item, overlay, slot.as_deref()); }
+    ::sittir_core::prepare::Setting::fill(&mut parts.item_separator_space_before, overlay, ctx.options.site_arm(options::SITE_TYPE_PARAMS_ITEMS_ITEM_SEPARATOR_SPACE_BEFORE).arm);
+    ::sittir_core::prepare::Setting::fill(&mut parts.item_separator_space_after, overlay, ctx.options.site_arm(options::SITE_TYPE_PARAMS_ITEMS_ITEM_SEPARATOR_SPACE_AFTER).arm);
+    ::sittir_core::prepare::SeatSlot::fill_seats(&mut parts.item, overlay, options::SEATS_TYPE_PARAMS_ITEMS_ITEM, ctx);
+    let delimiter = ::sittir_core::prepare::source_trailing_delimiter(::sittir_core::prepare::LayoutTarget::sides(&parts.layout, overlay).as_deref(), ::sittir_core::types::KindId(273), &[::sittir_core::types::KindId(6)], ctx.options.delimiter_at(options::DELIM_TYPE_PARAMS_ITEMS_ITEM), ctx);
+    ::sittir_core::prepare::Setting::fill(&mut parts.delimiter, overlay, delimiter);
+    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.item, overlay, ctx)?;
     Ok(())
 }
 
@@ -24452,39 +24585,39 @@ pub struct TuplePatternElementsNode {
 
 impl ::sittir_core::view::KindOf for TuplePatternElementsNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(270)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(274)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for TuplePatternElementsNode {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(270) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(274) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for TuplePatternElementsNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(270)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_tuple_pattern_elements(self, w))
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(274)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_tuple_pattern_elements(self, w))
     }
 }
 
 ::sittir_core::records_codec! {
 impl ::sittir_core::view::KindOf for TuplePatternElementsNodeRecord<'_> {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(270)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(274)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::render::Render for TuplePatternElementsNodeRecord<'_> {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        ::sittir_core::arena::RecordLayout::render(TuplePatternElementsFields::layout(self), Some(::sittir_core::types::KindId(270)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_tuple_pattern_elements(self, w))
+        ::sittir_core::arena::RecordLayout::render(TuplePatternElementsFields::layout(self), Some(::sittir_core::types::KindId(274)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_tuple_pattern_elements(self, w))
     }
 }
 
 }
 
 impl ::sittir_core::prepare::Prepare for TuplePatternElementsNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_tuple_pattern_elements(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -24504,76 +24637,76 @@ impl ::sittir_core::prepare::Prepare for TuplePatternElementsNode {
     }
 }
 
-fn prepare_tuple_pattern_elements<N: TuplePatternElementsPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_tuple_pattern_elements<N: TuplePatternElementsPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     { let slot = ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, overlay, "_item"); ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.item, overlay, slot.as_deref()); }
     ::sittir_core::prepare::Setting::fill(&mut parts.item_separator_space_before, overlay, ctx.options.site_arm(options::SITE_TUPLE_PATTERN_ELEMENTS_ITEM_SEPARATOR_SPACE_BEFORE).arm);
     ::sittir_core::prepare::Setting::fill(&mut parts.item_separator_space_after, overlay, ctx.options.site_arm(options::SITE_TUPLE_PATTERN_ELEMENTS_ITEM_SEPARATOR_SPACE_AFTER).arm);
     ::sittir_core::prepare::SeatSlot::fill_seats(&mut parts.item, overlay, options::SEATS_TUPLE_PATTERN_ELEMENTS_ITEM, ctx);
-    let delimiter = ::sittir_core::prepare::source_trailing_delimiter(::sittir_core::prepare::LayoutTarget::sides(&parts.layout, overlay).as_deref(), ::sittir_core::types::KindId(270), &[::sittir_core::types::KindId(6)], ctx.options.delimiter_at(options::DELIM_TUPLE_PATTERN_ELEMENTS_ITEM), ctx);
+    let delimiter = ::sittir_core::prepare::source_trailing_delimiter(::sittir_core::prepare::LayoutTarget::sides(&parts.layout, overlay).as_deref(), ::sittir_core::types::KindId(274), &[::sittir_core::types::KindId(6)], ctx.options.delimiter_at(options::DELIM_TUPLE_PATTERN_ELEMENTS_ITEM), ctx);
     ::sittir_core::prepare::Setting::fill(&mut parts.delimiter, overlay, delimiter);
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.item, overlay, ctx)?;
     Ok(())
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::CASE_PATTERN_LIST, item = item, words = 3, built_words = 3, fields = CasePatternListFields, prepare = CasePatternListPrepare, view = CasePatternListNodeRecord, prepare_fn = prepare_case_pattern_list)]
+#[node(kind = kind::CASE_PATTERN_LIST, item = elements, words = 3, built_words = 3, fields = CasePatternListFields, prepare = CasePatternListPrepare, view = CasePatternListNodeRecord, prepare_fn = prepare_case_pattern_list)]
 pub struct CasePatternListNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
     #[height]
     height: u16,
-    #[wire(key = "_item")]
-    #[slot(field = field::ITEM, separator = kind::COMMA, word = 2, width = 1, run = 3, forms = 1, built = 2, seated)]
-    pub item: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<CasePatternNode>>,
+    #[wire(key = "_elements")]
+    #[slot(field = field::ELEMENTS, separator = kind::COMMA, word = 2, width = 1, run = 3, forms = 1, built = 2, seated)]
+    pub elements: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<CasePatternNode>>,
     #[wire(key = "_delimiter")]
     #[flank(trailing = 0)]
     pub delimiter: Option<::sittir_core::types::Delimiter>,
-    #[wire(key = "_item_separator_space_before")]
-    #[space(slot = 2, side = before, site = options::SITE_CASE_PATTERN_LIST_ITEM_SEPARATOR_SPACE_BEFORE)]
-    pub item_separator_space_before: Option<KindId>,
-    #[wire(key = "_item_separator_space_after")]
-    #[space(slot = 2, side = after, site = options::SITE_CASE_PATTERN_LIST_ITEM_SEPARATOR_SPACE_AFTER)]
-    pub item_separator_space_after: Option<KindId>,
+    #[wire(key = "_elements_separator_space_before")]
+    #[space(slot = 2, side = before, site = options::SITE_CASE_PATTERN_LIST_ELEMENTS_SEPARATOR_SPACE_BEFORE)]
+    pub elements_separator_space_before: Option<KindId>,
+    #[wire(key = "_elements_separator_space_after")]
+    #[space(slot = 2, side = after, site = options::SITE_CASE_PATTERN_LIST_ELEMENTS_SEPARATOR_SPACE_AFTER)]
+    pub elements_separator_space_after: Option<KindId>,
 }
 
 impl ::sittir_core::view::KindOf for CasePatternListNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(271)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(275)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for CasePatternListNode {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(271) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(275) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for CasePatternListNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(271)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_case_pattern_list(self, w))
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(275)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_case_pattern_list(self, w))
     }
 }
 
 ::sittir_core::records_codec! {
 impl ::sittir_core::view::KindOf for CasePatternListNodeRecord<'_> {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(271)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(275)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::render::Render for CasePatternListNodeRecord<'_> {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        ::sittir_core::arena::RecordLayout::render(CasePatternListFields::layout(self), Some(::sittir_core::types::KindId(271)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_case_pattern_list(self, w))
+        ::sittir_core::arena::RecordLayout::render(CasePatternListFields::layout(self), Some(::sittir_core::types::KindId(275)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_case_pattern_list(self, w))
     }
 }
 
 }
 
 impl ::sittir_core::prepare::Prepare for CasePatternListNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_case_pattern_list(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -24593,16 +24726,16 @@ impl ::sittir_core::prepare::Prepare for CasePatternListNode {
     }
 }
 
-fn prepare_case_pattern_list<N: CasePatternListPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_case_pattern_list<N: CasePatternListPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
-    { let slot = ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, overlay, "_item"); ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.item, overlay, slot.as_deref()); }
-    ::sittir_core::prepare::Setting::fill(&mut parts.item_separator_space_before, overlay, ctx.options.site_arm(options::SITE_CASE_PATTERN_LIST_ITEM_SEPARATOR_SPACE_BEFORE).arm);
-    ::sittir_core::prepare::Setting::fill(&mut parts.item_separator_space_after, overlay, ctx.options.site_arm(options::SITE_CASE_PATTERN_LIST_ITEM_SEPARATOR_SPACE_AFTER).arm);
-    ::sittir_core::prepare::SeatSlot::fill_seats(&mut parts.item, overlay, options::SEATS_CASE_PATTERN_LIST_ITEM, ctx);
-    let delimiter = ::sittir_core::prepare::source_trailing_delimiter(::sittir_core::prepare::LayoutTarget::sides(&parts.layout, overlay).as_deref(), ::sittir_core::types::KindId(271), &[::sittir_core::types::KindId(6)], ctx.options.delimiter_at(options::DELIM_CASE_PATTERN_LIST_ITEM), ctx);
+    { let slot = ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, overlay, "_elements"); ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.elements, overlay, slot.as_deref()); }
+    ::sittir_core::prepare::Setting::fill(&mut parts.elements_separator_space_before, overlay, ctx.options.site_arm(options::SITE_CASE_PATTERN_LIST_ELEMENTS_SEPARATOR_SPACE_BEFORE).arm);
+    ::sittir_core::prepare::Setting::fill(&mut parts.elements_separator_space_after, overlay, ctx.options.site_arm(options::SITE_CASE_PATTERN_LIST_ELEMENTS_SEPARATOR_SPACE_AFTER).arm);
+    ::sittir_core::prepare::SeatSlot::fill_seats(&mut parts.elements, overlay, options::SEATS_CASE_PATTERN_LIST_ELEMENTS, ctx);
+    let delimiter = ::sittir_core::prepare::source_trailing_delimiter(::sittir_core::prepare::LayoutTarget::sides(&parts.layout, overlay).as_deref(), ::sittir_core::types::KindId(275), &[::sittir_core::types::KindId(6)], ctx.options.delimiter_at(options::DELIM_CASE_PATTERN_LIST_ELEMENTS), ctx);
     ::sittir_core::prepare::Setting::fill(&mut parts.delimiter, overlay, delimiter);
-    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.item, overlay, ctx)?;
+    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.elements, overlay, ctx)?;
     Ok(())
 }
 
@@ -24630,39 +24763,39 @@ pub struct TupleElementsNode {
 
 impl ::sittir_core::view::KindOf for TupleElementsNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(272)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(276)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for TupleElementsNode {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(272) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(276) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for TupleElementsNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(272)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_tuple_elements(self, w))
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(276)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_tuple_elements(self, w))
     }
 }
 
 ::sittir_core::records_codec! {
 impl ::sittir_core::view::KindOf for TupleElementsNodeRecord<'_> {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(272)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(276)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::render::Render for TupleElementsNodeRecord<'_> {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        ::sittir_core::arena::RecordLayout::render(TupleElementsFields::layout(self), Some(::sittir_core::types::KindId(272)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_tuple_elements(self, w))
+        ::sittir_core::arena::RecordLayout::render(TupleElementsFields::layout(self), Some(::sittir_core::types::KindId(276)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_tuple_elements(self, w))
     }
 }
 
 }
 
 impl ::sittir_core::prepare::Prepare for TupleElementsNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_tuple_elements(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -24682,14 +24815,14 @@ impl ::sittir_core::prepare::Prepare for TupleElementsNode {
     }
 }
 
-fn prepare_tuple_elements<N: TupleElementsPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_tuple_elements<N: TupleElementsPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     { let slot = ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, overlay, "_item"); ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.item, overlay, slot.as_deref()); }
     ::sittir_core::prepare::Setting::fill(&mut parts.item_separator_space_before, overlay, ctx.options.site_arm(options::SITE_TUPLE_ELEMENTS_ITEM_SEPARATOR_SPACE_BEFORE).arm);
     ::sittir_core::prepare::Setting::fill(&mut parts.item_separator_space_after, overlay, ctx.options.site_arm(options::SITE_TUPLE_ELEMENTS_ITEM_SEPARATOR_SPACE_AFTER).arm);
     ::sittir_core::prepare::SeatSlot::fill_seats(&mut parts.item, overlay, options::SEATS_TUPLE_ELEMENTS_ITEM, ctx);
-    let delimiter = ::sittir_core::prepare::source_trailing_delimiter(::sittir_core::prepare::LayoutTarget::sides(&parts.layout, overlay).as_deref(), ::sittir_core::types::KindId(272), &[::sittir_core::types::KindId(6)], ctx.options.delimiter_at(options::DELIM_TUPLE_ELEMENTS_ITEM), ctx);
+    let delimiter = ::sittir_core::prepare::source_trailing_delimiter(::sittir_core::prepare::LayoutTarget::sides(&parts.layout, overlay).as_deref(), ::sittir_core::types::KindId(276), &[::sittir_core::types::KindId(6)], ctx.options.delimiter_at(options::DELIM_TUPLE_ELEMENTS_ITEM), ctx);
     ::sittir_core::prepare::Setting::fill(&mut parts.delimiter, overlay, delimiter);
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.item, overlay, ctx)?;
     Ok(())
@@ -24713,39 +24846,39 @@ pub struct ExceptClauseExceptionAsNode {
 
 impl ::sittir_core::view::KindOf for ExceptClauseExceptionAsNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(273)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(277)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for ExceptClauseExceptionAsNode {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(273) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(277) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for ExceptClauseExceptionAsNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(273)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_except_clause_exception_as(self, w))
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(277)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_except_clause_exception_as(self, w))
     }
 }
 
 ::sittir_core::records_codec! {
 impl ::sittir_core::view::KindOf for ExceptClauseExceptionAsNodeRecord<'_> {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(273)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(277)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::render::Render for ExceptClauseExceptionAsNodeRecord<'_> {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        ::sittir_core::arena::RecordLayout::render(ExceptClauseExceptionAsFields::layout(self), Some(::sittir_core::types::KindId(273)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_except_clause_exception_as(self, w))
+        ::sittir_core::arena::RecordLayout::render(ExceptClauseExceptionAsFields::layout(self), Some(::sittir_core::types::KindId(277)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_except_clause_exception_as(self, w))
     }
 }
 
 }
 
 impl ::sittir_core::prepare::Prepare for ExceptClauseExceptionAsNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_except_clause_exception_as(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -24765,10 +24898,10 @@ impl ::sittir_core::prepare::Prepare for ExceptClauseExceptionAsNode {
     }
 }
 
-fn prepare_except_clause_exception_as<N: ExceptClauseExceptionAsPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_except_clause_exception_as<N: ExceptClauseExceptionAsPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
-    ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(273), (None, None), ctx);
+    ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(277), (None, None), ctx);
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.value, overlay, ctx)?;
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.alias, overlay, ctx)?;
     Ok(())
@@ -24789,39 +24922,39 @@ pub struct CaseTuplePatternNode {
 
 impl ::sittir_core::view::KindOf for CaseTuplePatternNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(274)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(278)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for CaseTuplePatternNode {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(274) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(278) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for CaseTuplePatternNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(274)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_case_tuple_pattern(self, w))
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(278)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_case_tuple_pattern(self, w))
     }
 }
 
 ::sittir_core::records_codec! {
 impl ::sittir_core::view::KindOf for CaseTuplePatternNodeRecord<'_> {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(274)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(278)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::render::Render for CaseTuplePatternNodeRecord<'_> {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        ::sittir_core::arena::RecordLayout::render(CaseTuplePatternFields::layout(self), Some(::sittir_core::types::KindId(274)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_case_tuple_pattern(self, w))
+        ::sittir_core::arena::RecordLayout::render(CaseTuplePatternFields::layout(self), Some(::sittir_core::types::KindId(278)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_case_tuple_pattern(self, w))
     }
 }
 
 }
 
 impl ::sittir_core::prepare::Prepare for CaseTuplePatternNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_case_tuple_pattern(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -24841,10 +24974,10 @@ impl ::sittir_core::prepare::Prepare for CaseTuplePatternNode {
     }
 }
 
-fn prepare_case_tuple_pattern<N: CaseTuplePatternPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_case_tuple_pattern<N: CaseTuplePatternPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
-    ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(274), (None, None), ctx);
+    ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(278), (None, None), ctx);
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.elements, overlay, ctx)?;
     Ok(())
 }
@@ -24864,39 +24997,39 @@ pub struct CaseListPatternNode {
 
 impl ::sittir_core::view::KindOf for CaseListPatternNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(275)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(279)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for CaseListPatternNode {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(275) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(279) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for CaseListPatternNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(275)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_case_list_pattern(self, w))
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(279)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_case_list_pattern(self, w))
     }
 }
 
 ::sittir_core::records_codec! {
 impl ::sittir_core::view::KindOf for CaseListPatternNodeRecord<'_> {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(275)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(279)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::render::Render for CaseListPatternNodeRecord<'_> {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        ::sittir_core::arena::RecordLayout::render(CaseListPatternFields::layout(self), Some(::sittir_core::types::KindId(275)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_case_list_pattern(self, w))
+        ::sittir_core::arena::RecordLayout::render(CaseListPatternFields::layout(self), Some(::sittir_core::types::KindId(279)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_case_list_pattern(self, w))
     }
 }
 
 }
 
 impl ::sittir_core::prepare::Prepare for CaseListPatternNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_case_list_pattern(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -24916,10 +25049,10 @@ impl ::sittir_core::prepare::Prepare for CaseListPatternNode {
     }
 }
 
-fn prepare_case_list_pattern<N: CaseListPatternPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_case_list_pattern<N: CaseListPatternPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
-    ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(275), (None, None), ctx);
+    ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(279), (None, None), ctx);
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.elements, overlay, ctx)?;
     Ok(())
 }
@@ -24948,39 +25081,39 @@ pub struct PrintArgumentsNode {
 
 impl ::sittir_core::view::KindOf for PrintArgumentsNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(276)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(280)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for PrintArgumentsNode {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(276) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(280) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for PrintArgumentsNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(276)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_print_arguments(self, w))
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(280)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_print_arguments(self, w))
     }
 }
 
 ::sittir_core::records_codec! {
 impl ::sittir_core::view::KindOf for PrintArgumentsNodeRecord<'_> {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(276)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(280)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::render::Render for PrintArgumentsNodeRecord<'_> {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        ::sittir_core::arena::RecordLayout::render(PrintArgumentsFields::layout(self), Some(::sittir_core::types::KindId(276)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_print_arguments(self, w))
+        ::sittir_core::arena::RecordLayout::render(PrintArgumentsFields::layout(self), Some(::sittir_core::types::KindId(280)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_print_arguments(self, w))
     }
 }
 
 }
 
 impl ::sittir_core::prepare::Prepare for PrintArgumentsNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_print_arguments(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -25000,14 +25133,14 @@ impl ::sittir_core::prepare::Prepare for PrintArgumentsNode {
     }
 }
 
-fn prepare_print_arguments<N: PrintArgumentsPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_print_arguments<N: PrintArgumentsPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     { let slot = ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, overlay, "_item"); ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.item, overlay, slot.as_deref()); }
     ::sittir_core::prepare::Setting::fill(&mut parts.item_separator_space_before, overlay, ctx.options.site_arm(options::SITE_PRINT_ARGUMENTS_ITEM_SEPARATOR_SPACE_BEFORE).arm);
     ::sittir_core::prepare::Setting::fill(&mut parts.item_separator_space_after, overlay, ctx.options.site_arm(options::SITE_PRINT_ARGUMENTS_ITEM_SEPARATOR_SPACE_AFTER).arm);
     ::sittir_core::prepare::SeatSlot::fill_seats(&mut parts.item, overlay, options::SEATS_PRINT_ARGUMENTS_ITEM, ctx);
-    let delimiter = ::sittir_core::prepare::source_trailing_delimiter(::sittir_core::prepare::LayoutTarget::sides(&parts.layout, overlay).as_deref(), ::sittir_core::types::KindId(276), &[::sittir_core::types::KindId(6)], ctx.options.delimiter_at(options::DELIM_PRINT_ARGUMENTS_ITEM), ctx);
+    let delimiter = ::sittir_core::prepare::source_trailing_delimiter(::sittir_core::prepare::LayoutTarget::sides(&parts.layout, overlay).as_deref(), ::sittir_core::types::KindId(280), &[::sittir_core::types::KindId(6)], ctx.options.delimiter_at(options::DELIM_PRINT_ARGUMENTS_ITEM), ctx);
     ::sittir_core::prepare::Setting::fill(&mut parts.delimiter, overlay, delimiter);
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.item, overlay, ctx)?;
     Ok(())
@@ -25037,39 +25170,39 @@ pub struct PrintChevronArgumentsNode {
 
 impl ::sittir_core::view::KindOf for PrintChevronArgumentsNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(277)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(281)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for PrintChevronArgumentsNode {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(277) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(281) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for PrintChevronArgumentsNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(277)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_print_chevron_arguments(self, w))
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(281)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_print_chevron_arguments(self, w))
     }
 }
 
 ::sittir_core::records_codec! {
 impl ::sittir_core::view::KindOf for PrintChevronArgumentsNodeRecord<'_> {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(277)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(281)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::render::Render for PrintChevronArgumentsNodeRecord<'_> {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        ::sittir_core::arena::RecordLayout::render(PrintChevronArgumentsFields::layout(self), Some(::sittir_core::types::KindId(277)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_print_chevron_arguments(self, w))
+        ::sittir_core::arena::RecordLayout::render(PrintChevronArgumentsFields::layout(self), Some(::sittir_core::types::KindId(281)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_print_chevron_arguments(self, w))
     }
 }
 
 }
 
 impl ::sittir_core::prepare::Prepare for PrintChevronArgumentsNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_print_chevron_arguments(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -25089,21 +25222,21 @@ impl ::sittir_core::prepare::Prepare for PrintChevronArgumentsNode {
     }
 }
 
-fn prepare_print_chevron_arguments<N: PrintChevronArgumentsPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_print_chevron_arguments<N: PrintChevronArgumentsPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     { let slot = ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, overlay, "_item"); ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.item, overlay, slot.as_deref()); }
     ::sittir_core::prepare::Setting::fill(&mut parts.item_separator_space_before, overlay, ctx.options.site_arm(options::SITE_PRINT_CHEVRON_ARGUMENTS_ITEM_SEPARATOR_SPACE_BEFORE).arm);
     ::sittir_core::prepare::Setting::fill(&mut parts.item_separator_space_after, overlay, ctx.options.site_arm(options::SITE_PRINT_CHEVRON_ARGUMENTS_ITEM_SEPARATOR_SPACE_AFTER).arm);
     ::sittir_core::prepare::SeatSlot::fill_seats(&mut parts.item, overlay, options::SEATS_PRINT_CHEVRON_ARGUMENTS_ITEM, ctx);
-    let delimiter = ::sittir_core::prepare::source_trailing_delimiter(::sittir_core::prepare::LayoutTarget::sides(&parts.layout, overlay).as_deref(), ::sittir_core::types::KindId(277), &[::sittir_core::types::KindId(6)], ctx.options.delimiter_at(options::DELIM_PRINT_CHEVRON_ARGUMENTS_ITEM), ctx);
+    let delimiter = ::sittir_core::prepare::source_trailing_delimiter(::sittir_core::prepare::LayoutTarget::sides(&parts.layout, overlay).as_deref(), ::sittir_core::types::KindId(281), &[::sittir_core::types::KindId(6)], ctx.options.delimiter_at(options::DELIM_PRINT_CHEVRON_ARGUMENTS_ITEM), ctx);
     ::sittir_core::prepare::Setting::fill(&mut parts.delimiter, overlay, delimiter);
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.item, overlay, ctx)?;
     Ok(())
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::PRINT_STATEMENT_CHEVRON, layout = [kind::PRINT_KEYWORD, kind::COMMA], words = 12, built_words = 4, fields = PrintStatementChevronFields, prepare = PrintStatementChevronPrepare, view = PrintStatementChevronNodeRecord, prepare_fn = prepare_print_statement_chevron)]
+#[node(kind = kind::PRINT_STATEMENT_CHEVRON, layout = [kind::PRINT_KEYWORD], words = 11, built_words = 4, fields = PrintStatementChevronFields, prepare = PrintStatementChevronPrepare, view = PrintStatementChevronNodeRecord, prepare_fn = prepare_print_statement_chevron)]
 pub struct PrintStatementChevronNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -25113,46 +25246,46 @@ pub struct PrintStatementChevronNode {
     #[wire(key = "_chevron")]
     #[slot(field = field::CHEVRON, word = 2, width = 6, inline = 6, forms = 8, built = 2)]
     pub chevron: ::sittir_core::SlotValue<ChevronNode>,
-    #[wire(key = "_print_chevron_arguments")]
-    #[slot(word = 8, width = 4, inline = 3, forms = 10, built = 3)]
-    pub print_chevron_arguments: Option<::sittir_core::SlotValue<PrintStatementChevronPrintChevronArgumentsNodeSlot>>,
+    #[wire(key = "_arguments")]
+    #[slot(field = field::ARGUMENTS, word = 8, width = 3, inline = 3, forms = 8, built = 3)]
+    pub arguments: Option<::sittir_core::SlotValue<PrintChevronArgumentsNode>>,
 }
 
 impl ::sittir_core::view::KindOf for PrintStatementChevronNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(278)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(282)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for PrintStatementChevronNode {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(278) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(282) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for PrintStatementChevronNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(278)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_print_statement_chevron(self, w))
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(282)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_print_statement_chevron(self, w))
     }
 }
 
 ::sittir_core::records_codec! {
 impl ::sittir_core::view::KindOf for PrintStatementChevronNodeRecord<'_> {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(278)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(282)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::render::Render for PrintStatementChevronNodeRecord<'_> {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        ::sittir_core::arena::RecordLayout::render(PrintStatementChevronFields::layout(self), Some(::sittir_core::types::KindId(278)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_print_statement_chevron(self, w))
+        ::sittir_core::arena::RecordLayout::render(PrintStatementChevronFields::layout(self), Some(::sittir_core::types::KindId(282)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_print_statement_chevron(self, w))
     }
 }
 
 }
 
 impl ::sittir_core::prepare::Prepare for PrintStatementChevronNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_print_statement_chevron(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -25172,12 +25305,12 @@ impl ::sittir_core::prepare::Prepare for PrintStatementChevronNode {
     }
 }
 
-fn prepare_print_statement_chevron<N: PrintStatementChevronPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_print_statement_chevron<N: PrintStatementChevronPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
-    ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(278), (None, None), ctx);
+    ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(282), (None, None), ctx);
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.chevron, overlay, ctx)?;
-    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.print_chevron_arguments, overlay, ctx)?;
+    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.arguments, overlay, ctx)?;
     Ok(())
 }
 
@@ -25189,46 +25322,46 @@ pub struct PrintStatementPlainNode {
     pub layout: Option<Box<NodeLayout>>,
     #[height]
     height: u16,
-    #[wire(key = "_print_arguments")]
-    #[slot(word = 2, width = 3, inline = 3, forms = 8, built = 2)]
-    pub print_arguments: ::sittir_core::SlotValue<PrintArgumentsNode>,
+    #[wire(key = "_arguments")]
+    #[slot(field = field::ARGUMENTS, word = 2, width = 3, inline = 3, forms = 8, built = 2)]
+    pub arguments: ::sittir_core::SlotValue<PrintArgumentsNode>,
 }
 
 impl ::sittir_core::view::KindOf for PrintStatementPlainNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(279)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(283)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for PrintStatementPlainNode {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(279) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(283) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for PrintStatementPlainNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(279)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_print_statement_plain(self, w))
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(283)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_print_statement_plain(self, w))
     }
 }
 
 ::sittir_core::records_codec! {
 impl ::sittir_core::view::KindOf for PrintStatementPlainNodeRecord<'_> {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(279)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(283)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::render::Render for PrintStatementPlainNodeRecord<'_> {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        ::sittir_core::arena::RecordLayout::render(PrintStatementPlainFields::layout(self), Some(::sittir_core::types::KindId(279)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_print_statement_plain(self, w))
+        ::sittir_core::arena::RecordLayout::render(PrintStatementPlainFields::layout(self), Some(::sittir_core::types::KindId(283)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_print_statement_plain(self, w))
     }
 }
 
 }
 
 impl ::sittir_core::prepare::Prepare for PrintStatementPlainNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_print_statement_plain(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -25248,11 +25381,11 @@ impl ::sittir_core::prepare::Prepare for PrintStatementPlainNode {
     }
 }
 
-fn prepare_print_statement_plain<N: PrintStatementPlainPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_print_statement_plain<N: PrintStatementPlainPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
-    ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(279), (None, None), ctx);
-    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.print_arguments, overlay, ctx)?;
+    ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(283), (None, None), ctx);
+    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.arguments, overlay, ctx)?;
     Ok(())
 }
 
@@ -25265,12 +25398,12 @@ pub enum WildcardPatternNode {
 
 impl ::sittir_core::view::KindOf for WildcardPatternNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(280)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(284)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for WildcardPatternNode {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &mut ::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -25299,39 +25432,39 @@ pub struct ParenthesizedImportListNode {
 
 impl ::sittir_core::view::KindOf for ParenthesizedImportListNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(281)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(285)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for ParenthesizedImportListNode {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(281) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(285) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for ParenthesizedImportListNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(281)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_parenthesized_import_list(self, w))
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(285)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_parenthesized_import_list(self, w))
     }
 }
 
 ::sittir_core::records_codec! {
 impl ::sittir_core::view::KindOf for ParenthesizedImportListNodeRecord<'_> {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(281)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(285)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::render::Render for ParenthesizedImportListNodeRecord<'_> {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        ::sittir_core::arena::RecordLayout::render(ParenthesizedImportListFields::layout(self), Some(::sittir_core::types::KindId(281)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_parenthesized_import_list(self, w))
+        ::sittir_core::arena::RecordLayout::render(ParenthesizedImportListFields::layout(self), Some(::sittir_core::types::KindId(285)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_parenthesized_import_list(self, w))
     }
 }
 
 }
 
 impl ::sittir_core::prepare::Prepare for ParenthesizedImportListNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_parenthesized_import_list(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -25351,10 +25484,10 @@ impl ::sittir_core::prepare::Prepare for ParenthesizedImportListNode {
     }
 }
 
-fn prepare_parenthesized_import_list<N: ParenthesizedImportListPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_parenthesized_import_list<N: ParenthesizedImportListPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
-    ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(281), (None, None), ctx);
+    ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(285), (None, None), ctx);
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.import_list, overlay, ctx)?;
     Ok(())
 }
@@ -25377,39 +25510,39 @@ pub struct ComprehensionClausesNode {
 
 impl ::sittir_core::view::KindOf for ComprehensionClausesNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(282)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(286)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for ComprehensionClausesNode {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(282) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(286) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for ComprehensionClausesNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(282)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_comprehension_clauses(self, w))
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(286)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_comprehension_clauses(self, w))
     }
 }
 
 ::sittir_core::records_codec! {
 impl ::sittir_core::view::KindOf for ComprehensionClausesNodeRecord<'_> {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(282)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(286)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::render::Render for ComprehensionClausesNodeRecord<'_> {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        ::sittir_core::arena::RecordLayout::render(ComprehensionClausesFields::layout(self), Some(::sittir_core::types::KindId(282)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_comprehension_clauses(self, w))
+        ::sittir_core::arena::RecordLayout::render(ComprehensionClausesFields::layout(self), Some(::sittir_core::types::KindId(286)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_comprehension_clauses(self, w))
     }
 }
 
 }
 
 impl ::sittir_core::prepare::Prepare for ComprehensionClausesNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_comprehension_clauses(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -25429,7 +25562,7 @@ impl ::sittir_core::prepare::Prepare for ComprehensionClausesNode {
     }
 }
 
-fn prepare_comprehension_clauses<N: ComprehensionClausesPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_comprehension_clauses<N: ComprehensionClausesPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     { let slot = ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, overlay, "_content"); ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.content, overlay, slot.as_deref()); }
@@ -25440,11 +25573,14 @@ fn prepare_comprehension_clauses<N: ComprehensionClausesPrepare + ?Sized>(node: 
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::INTEGER_HEX, interior = "^(?<radix_prefix>0x|0X)(?<content>(?:(?:_?[A-Fa-f0-9]+))+(?:(?:[Ll]))?)$", words = 6, built_words = 4, fields = IntegerHexFields, prepare = IntegerHexPrepare, view = IntegerHexNodeRecord, prepare_fn = prepare_integer_hex)]
+#[node(kind = kind::INTEGER_HEX, interior = "^(?<radix_prefix>0x|0X)(?<content>(?:(?:_?[A-Fa-f0-9]+))+(?:(?:[Ll]))?)$", words = 8, built_words = 5, fields = IntegerHexFields, prepare = IntegerHexPrepare, view = IntegerHexNodeRecord, prepare_fn = prepare_integer_hex)]
 pub struct IntegerHexNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[wire(key = "$verbatim")]
+    #[slot(word = 6, width = 2, forms = 4, built = 4)]
+    pub verbatim: Option<String>,
     #[wire(key = "_radix_prefix")]
     #[slot(capture = "radix_prefix", word = 2, width = 2, forms = 4, built = 2)]
     pub radix_prefix: String,
@@ -25467,7 +25603,7 @@ impl ::sittir_core::options::Edged for IntegerHexNode {
 
 impl ::sittir_core::render::Render for IntegerHexNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(90)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_integer_hex(self, w))
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(90)), ::sittir_core::layout::TriviaRole::Owner, w, |w| match IntegerHexFields::verbatim(self) { Some(text) => w.text(text), None => render_integer_hex(self, w) })
     }
 }
 
@@ -25480,14 +25616,14 @@ impl ::sittir_core::view::KindOf for IntegerHexNodeRecord<'_> {
 
 impl ::sittir_core::render::Render for IntegerHexNodeRecord<'_> {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        ::sittir_core::arena::RecordLayout::render(IntegerHexFields::layout(self), Some(::sittir_core::types::KindId(90)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_integer_hex(self, w))
+        ::sittir_core::arena::RecordLayout::render(IntegerHexFields::layout(self), Some(::sittir_core::types::KindId(90)), ::sittir_core::layout::TriviaRole::Owner, w, |w| match IntegerHexFields::verbatim(self) { Some(text) => w.text(text), None => render_integer_hex(self, w) })
     }
 }
 
 }
 
 impl ::sittir_core::prepare::Prepare for IntegerHexNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_integer_hex(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -25507,18 +25643,21 @@ impl ::sittir_core::prepare::Prepare for IntegerHexNode {
     }
 }
 
-fn prepare_integer_hex<N: IntegerHexPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_integer_hex<N: IntegerHexPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     Ok(())
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::INTEGER_OCTAL, interior = "^(?<radix_prefix>0o|0O)(?<content>(?:(?:_?[0-7]+))+(?:(?:[Ll]))?)$", words = 6, built_words = 4, fields = IntegerOctalFields, prepare = IntegerOctalPrepare, view = IntegerOctalNodeRecord, prepare_fn = prepare_integer_octal)]
+#[node(kind = kind::INTEGER_OCTAL, interior = "^(?<radix_prefix>0o|0O)(?<content>(?:(?:_?[0-7]+))+(?:(?:[Ll]))?)$", words = 8, built_words = 5, fields = IntegerOctalFields, prepare = IntegerOctalPrepare, view = IntegerOctalNodeRecord, prepare_fn = prepare_integer_octal)]
 pub struct IntegerOctalNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[wire(key = "$verbatim")]
+    #[slot(word = 6, width = 2, forms = 4, built = 4)]
+    pub verbatim: Option<String>,
     #[wire(key = "_radix_prefix")]
     #[slot(capture = "radix_prefix", word = 2, width = 2, forms = 4, built = 2)]
     pub radix_prefix: String,
@@ -25541,7 +25680,7 @@ impl ::sittir_core::options::Edged for IntegerOctalNode {
 
 impl ::sittir_core::render::Render for IntegerOctalNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(91)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_integer_octal(self, w))
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(91)), ::sittir_core::layout::TriviaRole::Owner, w, |w| match IntegerOctalFields::verbatim(self) { Some(text) => w.text(text), None => render_integer_octal(self, w) })
     }
 }
 
@@ -25554,14 +25693,14 @@ impl ::sittir_core::view::KindOf for IntegerOctalNodeRecord<'_> {
 
 impl ::sittir_core::render::Render for IntegerOctalNodeRecord<'_> {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        ::sittir_core::arena::RecordLayout::render(IntegerOctalFields::layout(self), Some(::sittir_core::types::KindId(91)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_integer_octal(self, w))
+        ::sittir_core::arena::RecordLayout::render(IntegerOctalFields::layout(self), Some(::sittir_core::types::KindId(91)), ::sittir_core::layout::TriviaRole::Owner, w, |w| match IntegerOctalFields::verbatim(self) { Some(text) => w.text(text), None => render_integer_octal(self, w) })
     }
 }
 
 }
 
 impl ::sittir_core::prepare::Prepare for IntegerOctalNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_integer_octal(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -25581,18 +25720,21 @@ impl ::sittir_core::prepare::Prepare for IntegerOctalNode {
     }
 }
 
-fn prepare_integer_octal<N: IntegerOctalPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_integer_octal<N: IntegerOctalPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     Ok(())
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::INTEGER_BINARY, interior = "^(?<radix_prefix>0b|0B)(?<content>(?:(?:_?[0-1]+))+(?:(?:[Ll]))?)$", words = 6, built_words = 4, fields = IntegerBinaryFields, prepare = IntegerBinaryPrepare, view = IntegerBinaryNodeRecord, prepare_fn = prepare_integer_binary)]
+#[node(kind = kind::INTEGER_BINARY, interior = "^(?<radix_prefix>0b|0B)(?<content>(?:(?:_?[0-1]+))+(?:(?:[Ll]))?)$", words = 8, built_words = 5, fields = IntegerBinaryFields, prepare = IntegerBinaryPrepare, view = IntegerBinaryNodeRecord, prepare_fn = prepare_integer_binary)]
 pub struct IntegerBinaryNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[wire(key = "$verbatim")]
+    #[slot(word = 6, width = 2, forms = 4, built = 4)]
+    pub verbatim: Option<String>,
     #[wire(key = "_radix_prefix")]
     #[slot(capture = "radix_prefix", word = 2, width = 2, forms = 4, built = 2)]
     pub radix_prefix: String,
@@ -25615,7 +25757,7 @@ impl ::sittir_core::options::Edged for IntegerBinaryNode {
 
 impl ::sittir_core::render::Render for IntegerBinaryNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(92)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_integer_binary(self, w))
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(92)), ::sittir_core::layout::TriviaRole::Owner, w, |w| match IntegerBinaryFields::verbatim(self) { Some(text) => w.text(text), None => render_integer_binary(self, w) })
     }
 }
 
@@ -25628,14 +25770,14 @@ impl ::sittir_core::view::KindOf for IntegerBinaryNodeRecord<'_> {
 
 impl ::sittir_core::render::Render for IntegerBinaryNodeRecord<'_> {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        ::sittir_core::arena::RecordLayout::render(IntegerBinaryFields::layout(self), Some(::sittir_core::types::KindId(92)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_integer_binary(self, w))
+        ::sittir_core::arena::RecordLayout::render(IntegerBinaryFields::layout(self), Some(::sittir_core::types::KindId(92)), ::sittir_core::layout::TriviaRole::Owner, w, |w| match IntegerBinaryFields::verbatim(self) { Some(text) => w.text(text), None => render_integer_binary(self, w) })
     }
 }
 
 }
 
 impl ::sittir_core::prepare::Prepare for IntegerBinaryNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_integer_binary(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -25655,7 +25797,7 @@ impl ::sittir_core::prepare::Prepare for IntegerBinaryNode {
     }
 }
 
-fn prepare_integer_binary<N: IntegerBinaryPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_integer_binary<N: IntegerBinaryPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     Ok(())
@@ -25706,7 +25848,7 @@ impl ::sittir_core::render::Render for IntegerDecimalLongNodeRecord<'_> {
 }
 
 impl ::sittir_core::prepare::Prepare for IntegerDecimalLongNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_integer_decimal_long(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -25726,7 +25868,7 @@ impl ::sittir_core::prepare::Prepare for IntegerDecimalLongNode {
     }
 }
 
-fn prepare_integer_decimal_long<N: IntegerDecimalLongPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_integer_decimal_long<N: IntegerDecimalLongPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     Ok(())
@@ -25777,7 +25919,7 @@ impl ::sittir_core::render::Render for IntegerDecimalImaginaryNodeRecord<'_> {
 }
 
 impl ::sittir_core::prepare::Prepare for IntegerDecimalImaginaryNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_integer_decimal_imaginary(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -25797,7 +25939,7 @@ impl ::sittir_core::prepare::Prepare for IntegerDecimalImaginaryNode {
     }
 }
 
-fn prepare_integer_decimal_imaginary<N: IntegerDecimalImaginaryPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_integer_decimal_imaginary<N: IntegerDecimalImaginaryPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     Ok(())
@@ -25848,7 +25990,7 @@ impl ::sittir_core::render::Render for IntegerDecimalPlainNodeRecord<'_> {
 }
 
 impl ::sittir_core::prepare::Prepare for IntegerDecimalPlainNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_integer_decimal_plain(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -25868,18 +26010,21 @@ impl ::sittir_core::prepare::Prepare for IntegerDecimalPlainNode {
     }
 }
 
-fn prepare_integer_decimal_plain<N: IntegerDecimalPlainPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_integer_decimal_plain<N: IntegerDecimalPlainPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     Ok(())
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::FLOAT_POINT, interior = "^(?<integer>(?:(?:[0-9]+_?))+)\\.(?<fraction>(?:(?:[0-9]+_?))+)?(?:(?<marker>e|E)?(?<exponent_sign>-|\\+)?(?<exponent>(?:(?:[0-9]+_?))+)?)?(?<imaginary>(?:[jJ]))?$", words = 14, built_words = 8, fields = FloatPointFields, prepare = FloatPointPrepare, view = FloatPointNodeRecord, prepare_fn = prepare_float_point)]
+#[node(kind = kind::FLOAT_POINT, interior = "^(?<integer>(?:(?:[0-9]+_?))+)\\.(?<fraction>(?:(?:[0-9]+_?))+)?(?:(?<marker>e|E)?(?<exponent_sign>-|\\+)?(?<exponent>(?:(?:[0-9]+_?))+)?)?(?<imaginary>(?:[jJ]))?$", words = 16, built_words = 9, fields = FloatPointFields, prepare = FloatPointPrepare, view = FloatPointNodeRecord, prepare_fn = prepare_float_point)]
 pub struct FloatPointNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[wire(key = "$verbatim")]
+    #[slot(word = 14, width = 2, forms = 4, built = 8)]
+    pub verbatim: Option<String>,
     #[wire(key = "_integer")]
     #[slot(capture = "integer", word = 2, width = 2, forms = 4, built = 2)]
     pub integer: String,
@@ -25914,7 +26059,7 @@ impl ::sittir_core::options::Edged for FloatPointNode {
 
 impl ::sittir_core::render::Render for FloatPointNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(96)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_float_point(self, w))
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(96)), ::sittir_core::layout::TriviaRole::Owner, w, |w| match FloatPointFields::verbatim(self) { Some(text) => w.text(text), None => render_float_point(self, w) })
     }
 }
 
@@ -25927,14 +26072,14 @@ impl ::sittir_core::view::KindOf for FloatPointNodeRecord<'_> {
 
 impl ::sittir_core::render::Render for FloatPointNodeRecord<'_> {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        ::sittir_core::arena::RecordLayout::render(FloatPointFields::layout(self), Some(::sittir_core::types::KindId(96)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_float_point(self, w))
+        ::sittir_core::arena::RecordLayout::render(FloatPointFields::layout(self), Some(::sittir_core::types::KindId(96)), ::sittir_core::layout::TriviaRole::Owner, w, |w| match FloatPointFields::verbatim(self) { Some(text) => w.text(text), None => render_float_point(self, w) })
     }
 }
 
 }
 
 impl ::sittir_core::prepare::Prepare for FloatPointNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_float_point(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -25954,18 +26099,21 @@ impl ::sittir_core::prepare::Prepare for FloatPointNode {
     }
 }
 
-fn prepare_float_point<N: FloatPointPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_float_point<N: FloatPointPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     Ok(())
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::FLOAT_LEADING_POINT, interior = "^(?<integer>(?:(?:[0-9]+_?))+)?\\.(?<fraction>(?:(?:[0-9]+_?))+)(?:(?<marker>e|E)?(?<exponent_sign>-|\\+)?(?<exponent>(?:(?:[0-9]+_?))+)?)?(?<imaginary>(?:[jJ]))?$", words = 14, built_words = 8, fields = FloatLeadingPointFields, prepare = FloatLeadingPointPrepare, view = FloatLeadingPointNodeRecord, prepare_fn = prepare_float_leading_point)]
+#[node(kind = kind::FLOAT_LEADING_POINT, interior = "^(?<integer>(?:(?:[0-9]+_?))+)?\\.(?<fraction>(?:(?:[0-9]+_?))+)(?:(?<marker>e|E)?(?<exponent_sign>-|\\+)?(?<exponent>(?:(?:[0-9]+_?))+)?)?(?<imaginary>(?:[jJ]))?$", words = 16, built_words = 9, fields = FloatLeadingPointFields, prepare = FloatLeadingPointPrepare, view = FloatLeadingPointNodeRecord, prepare_fn = prepare_float_leading_point)]
 pub struct FloatLeadingPointNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[wire(key = "$verbatim")]
+    #[slot(word = 14, width = 2, forms = 4, built = 8)]
+    pub verbatim: Option<String>,
     #[wire(key = "_integer")]
     #[slot(capture = "integer", word = 2, width = 2, forms = 4, built = 2)]
     pub integer: Option<String>,
@@ -26000,7 +26148,7 @@ impl ::sittir_core::options::Edged for FloatLeadingPointNode {
 
 impl ::sittir_core::render::Render for FloatLeadingPointNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(97)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_float_leading_point(self, w))
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(97)), ::sittir_core::layout::TriviaRole::Owner, w, |w| match FloatLeadingPointFields::verbatim(self) { Some(text) => w.text(text), None => render_float_leading_point(self, w) })
     }
 }
 
@@ -26013,14 +26161,14 @@ impl ::sittir_core::view::KindOf for FloatLeadingPointNodeRecord<'_> {
 
 impl ::sittir_core::render::Render for FloatLeadingPointNodeRecord<'_> {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        ::sittir_core::arena::RecordLayout::render(FloatLeadingPointFields::layout(self), Some(::sittir_core::types::KindId(97)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_float_leading_point(self, w))
+        ::sittir_core::arena::RecordLayout::render(FloatLeadingPointFields::layout(self), Some(::sittir_core::types::KindId(97)), ::sittir_core::layout::TriviaRole::Owner, w, |w| match FloatLeadingPointFields::verbatim(self) { Some(text) => w.text(text), None => render_float_leading_point(self, w) })
     }
 }
 
 }
 
 impl ::sittir_core::prepare::Prepare for FloatLeadingPointNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_float_leading_point(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -26040,18 +26188,21 @@ impl ::sittir_core::prepare::Prepare for FloatLeadingPointNode {
     }
 }
 
-fn prepare_float_leading_point<N: FloatLeadingPointPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_float_leading_point<N: FloatLeadingPointPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     Ok(())
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::FLOAT_SCIENTIFIC, interior = "^(?<integer>(?:(?:[0-9]+_?))+)(?<marker>e|E)(?<exponent_sign>-|\\+)?(?<exponent>(?:(?:[0-9]+_?))+)(?<imaginary>(?:[jJ]))?$", words = 12, built_words = 7, fields = FloatScientificFields, prepare = FloatScientificPrepare, view = FloatScientificNodeRecord, prepare_fn = prepare_float_scientific)]
+#[node(kind = kind::FLOAT_SCIENTIFIC, interior = "^(?<integer>(?:(?:[0-9]+_?))+)(?<marker>e|E)(?<exponent_sign>-|\\+)?(?<exponent>(?:(?:[0-9]+_?))+)(?<imaginary>(?:[jJ]))?$", words = 14, built_words = 8, fields = FloatScientificFields, prepare = FloatScientificPrepare, view = FloatScientificNodeRecord, prepare_fn = prepare_float_scientific)]
 pub struct FloatScientificNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[wire(key = "$verbatim")]
+    #[slot(word = 12, width = 2, forms = 4, built = 7)]
+    pub verbatim: Option<String>,
     #[wire(key = "_integer")]
     #[slot(capture = "integer", word = 2, width = 2, forms = 4, built = 2)]
     pub integer: String,
@@ -26083,7 +26234,7 @@ impl ::sittir_core::options::Edged for FloatScientificNode {
 
 impl ::sittir_core::render::Render for FloatScientificNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(98)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_float_scientific(self, w))
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(98)), ::sittir_core::layout::TriviaRole::Owner, w, |w| match FloatScientificFields::verbatim(self) { Some(text) => w.text(text), None => render_float_scientific(self, w) })
     }
 }
 
@@ -26096,14 +26247,14 @@ impl ::sittir_core::view::KindOf for FloatScientificNodeRecord<'_> {
 
 impl ::sittir_core::render::Render for FloatScientificNodeRecord<'_> {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        ::sittir_core::arena::RecordLayout::render(FloatScientificFields::layout(self), Some(::sittir_core::types::KindId(98)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_float_scientific(self, w))
+        ::sittir_core::arena::RecordLayout::render(FloatScientificFields::layout(self), Some(::sittir_core::types::KindId(98)), ::sittir_core::layout::TriviaRole::Owner, w, |w| match FloatScientificFields::verbatim(self) { Some(text) => w.text(text), None => render_float_scientific(self, w) })
     }
 }
 
 }
 
 impl ::sittir_core::prepare::Prepare for FloatScientificNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_float_scientific(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -26123,18 +26274,21 @@ impl ::sittir_core::prepare::Prepare for FloatScientificNode {
     }
 }
 
-fn prepare_float_scientific<N: FloatScientificPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_float_scientific<N: FloatScientificPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     Ok(())
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::ESCAPE_SEQUENCE_UNICODE_FIXED, interior = "^\\\\(?<content>(?:u[a-fA-F\\d]{4}))$", words = 4, built_words = 3, fields = EscapeSequenceUnicodeFixedFields, prepare = EscapeSequenceUnicodeFixedPrepare, view = EscapeSequenceUnicodeFixedNodeRecord, prepare_fn = prepare_escape_sequence_unicode_fixed)]
+#[node(kind = kind::ESCAPE_SEQUENCE_UNICODE_FIXED, interior = "^\\\\(?<content>(?:u[a-fA-F\\d]{4}))$", words = 6, built_words = 4, fields = EscapeSequenceUnicodeFixedFields, prepare = EscapeSequenceUnicodeFixedPrepare, view = EscapeSequenceUnicodeFixedNodeRecord, prepare_fn = prepare_escape_sequence_unicode_fixed)]
 pub struct EscapeSequenceUnicodeFixedNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[wire(key = "$verbatim")]
+    #[slot(word = 4, width = 2, forms = 4, built = 3)]
+    pub verbatim: Option<String>,
     #[wire(key = "_content")]
     #[slot(capture = "content", word = 2, width = 2, forms = 4, built = 2)]
     pub content: String,
@@ -26154,7 +26308,7 @@ impl ::sittir_core::options::Edged for EscapeSequenceUnicodeFixedNode {
 
 impl ::sittir_core::render::Render for EscapeSequenceUnicodeFixedNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(99)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_escape_sequence_unicode_fixed(self, w))
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(99)), ::sittir_core::layout::TriviaRole::Owner, w, |w| match EscapeSequenceUnicodeFixedFields::verbatim(self) { Some(text) => w.text(text), None => render_escape_sequence_unicode_fixed(self, w) })
     }
 }
 
@@ -26167,14 +26321,14 @@ impl ::sittir_core::view::KindOf for EscapeSequenceUnicodeFixedNodeRecord<'_> {
 
 impl ::sittir_core::render::Render for EscapeSequenceUnicodeFixedNodeRecord<'_> {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        ::sittir_core::arena::RecordLayout::render(EscapeSequenceUnicodeFixedFields::layout(self), Some(::sittir_core::types::KindId(99)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_escape_sequence_unicode_fixed(self, w))
+        ::sittir_core::arena::RecordLayout::render(EscapeSequenceUnicodeFixedFields::layout(self), Some(::sittir_core::types::KindId(99)), ::sittir_core::layout::TriviaRole::Owner, w, |w| match EscapeSequenceUnicodeFixedFields::verbatim(self) { Some(text) => w.text(text), None => render_escape_sequence_unicode_fixed(self, w) })
     }
 }
 
 }
 
 impl ::sittir_core::prepare::Prepare for EscapeSequenceUnicodeFixedNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_escape_sequence_unicode_fixed(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -26194,18 +26348,21 @@ impl ::sittir_core::prepare::Prepare for EscapeSequenceUnicodeFixedNode {
     }
 }
 
-fn prepare_escape_sequence_unicode_fixed<N: EscapeSequenceUnicodeFixedPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_escape_sequence_unicode_fixed<N: EscapeSequenceUnicodeFixedPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     Ok(())
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::ESCAPE_SEQUENCE_UNICODE_WIDE, interior = "^\\\\(?<content>(?:U[a-fA-F\\d]{8}))$", words = 4, built_words = 3, fields = EscapeSequenceUnicodeWideFields, prepare = EscapeSequenceUnicodeWidePrepare, view = EscapeSequenceUnicodeWideNodeRecord, prepare_fn = prepare_escape_sequence_unicode_wide)]
+#[node(kind = kind::ESCAPE_SEQUENCE_UNICODE_WIDE, interior = "^\\\\(?<content>(?:U[a-fA-F\\d]{8}))$", words = 6, built_words = 4, fields = EscapeSequenceUnicodeWideFields, prepare = EscapeSequenceUnicodeWidePrepare, view = EscapeSequenceUnicodeWideNodeRecord, prepare_fn = prepare_escape_sequence_unicode_wide)]
 pub struct EscapeSequenceUnicodeWideNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[wire(key = "$verbatim")]
+    #[slot(word = 4, width = 2, forms = 4, built = 3)]
+    pub verbatim: Option<String>,
     #[wire(key = "_content")]
     #[slot(capture = "content", word = 2, width = 2, forms = 4, built = 2)]
     pub content: String,
@@ -26225,7 +26382,7 @@ impl ::sittir_core::options::Edged for EscapeSequenceUnicodeWideNode {
 
 impl ::sittir_core::render::Render for EscapeSequenceUnicodeWideNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(100)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_escape_sequence_unicode_wide(self, w))
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(100)), ::sittir_core::layout::TriviaRole::Owner, w, |w| match EscapeSequenceUnicodeWideFields::verbatim(self) { Some(text) => w.text(text), None => render_escape_sequence_unicode_wide(self, w) })
     }
 }
 
@@ -26238,14 +26395,14 @@ impl ::sittir_core::view::KindOf for EscapeSequenceUnicodeWideNodeRecord<'_> {
 
 impl ::sittir_core::render::Render for EscapeSequenceUnicodeWideNodeRecord<'_> {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        ::sittir_core::arena::RecordLayout::render(EscapeSequenceUnicodeWideFields::layout(self), Some(::sittir_core::types::KindId(100)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_escape_sequence_unicode_wide(self, w))
+        ::sittir_core::arena::RecordLayout::render(EscapeSequenceUnicodeWideFields::layout(self), Some(::sittir_core::types::KindId(100)), ::sittir_core::layout::TriviaRole::Owner, w, |w| match EscapeSequenceUnicodeWideFields::verbatim(self) { Some(text) => w.text(text), None => render_escape_sequence_unicode_wide(self, w) })
     }
 }
 
 }
 
 impl ::sittir_core::prepare::Prepare for EscapeSequenceUnicodeWideNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_escape_sequence_unicode_wide(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -26265,18 +26422,21 @@ impl ::sittir_core::prepare::Prepare for EscapeSequenceUnicodeWideNode {
     }
 }
 
-fn prepare_escape_sequence_unicode_wide<N: EscapeSequenceUnicodeWidePrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_escape_sequence_unicode_wide<N: EscapeSequenceUnicodeWidePrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     Ok(())
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::ESCAPE_SEQUENCE_HEX, interior = "^\\\\(?<content>(?:x[a-fA-F\\d]{2}))$", words = 4, built_words = 3, fields = EscapeSequenceHexFields, prepare = EscapeSequenceHexPrepare, view = EscapeSequenceHexNodeRecord, prepare_fn = prepare_escape_sequence_hex)]
+#[node(kind = kind::ESCAPE_SEQUENCE_HEX, interior = "^\\\\(?<content>(?:x[a-fA-F\\d]{2}))$", words = 6, built_words = 4, fields = EscapeSequenceHexFields, prepare = EscapeSequenceHexPrepare, view = EscapeSequenceHexNodeRecord, prepare_fn = prepare_escape_sequence_hex)]
 pub struct EscapeSequenceHexNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[wire(key = "$verbatim")]
+    #[slot(word = 4, width = 2, forms = 4, built = 3)]
+    pub verbatim: Option<String>,
     #[wire(key = "_content")]
     #[slot(capture = "content", word = 2, width = 2, forms = 4, built = 2)]
     pub content: String,
@@ -26296,7 +26456,7 @@ impl ::sittir_core::options::Edged for EscapeSequenceHexNode {
 
 impl ::sittir_core::render::Render for EscapeSequenceHexNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(101)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_escape_sequence_hex(self, w))
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(101)), ::sittir_core::layout::TriviaRole::Owner, w, |w| match EscapeSequenceHexFields::verbatim(self) { Some(text) => w.text(text), None => render_escape_sequence_hex(self, w) })
     }
 }
 
@@ -26309,14 +26469,14 @@ impl ::sittir_core::view::KindOf for EscapeSequenceHexNodeRecord<'_> {
 
 impl ::sittir_core::render::Render for EscapeSequenceHexNodeRecord<'_> {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        ::sittir_core::arena::RecordLayout::render(EscapeSequenceHexFields::layout(self), Some(::sittir_core::types::KindId(101)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_escape_sequence_hex(self, w))
+        ::sittir_core::arena::RecordLayout::render(EscapeSequenceHexFields::layout(self), Some(::sittir_core::types::KindId(101)), ::sittir_core::layout::TriviaRole::Owner, w, |w| match EscapeSequenceHexFields::verbatim(self) { Some(text) => w.text(text), None => render_escape_sequence_hex(self, w) })
     }
 }
 
 }
 
 impl ::sittir_core::prepare::Prepare for EscapeSequenceHexNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_escape_sequence_hex(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -26336,18 +26496,21 @@ impl ::sittir_core::prepare::Prepare for EscapeSequenceHexNode {
     }
 }
 
-fn prepare_escape_sequence_hex<N: EscapeSequenceHexPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_escape_sequence_hex<N: EscapeSequenceHexPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     Ok(())
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::ESCAPE_SEQUENCE_OCTAL, interior = "^\\\\(?<content>(?:\\d{1,3}))$", words = 4, built_words = 3, fields = EscapeSequenceOctalFields, prepare = EscapeSequenceOctalPrepare, view = EscapeSequenceOctalNodeRecord, prepare_fn = prepare_escape_sequence_octal)]
+#[node(kind = kind::ESCAPE_SEQUENCE_OCTAL, interior = "^\\\\(?<content>(?:\\d{1,3}))$", words = 6, built_words = 4, fields = EscapeSequenceOctalFields, prepare = EscapeSequenceOctalPrepare, view = EscapeSequenceOctalNodeRecord, prepare_fn = prepare_escape_sequence_octal)]
 pub struct EscapeSequenceOctalNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[wire(key = "$verbatim")]
+    #[slot(word = 4, width = 2, forms = 4, built = 3)]
+    pub verbatim: Option<String>,
     #[wire(key = "_content")]
     #[slot(capture = "content", word = 2, width = 2, forms = 4, built = 2)]
     pub content: String,
@@ -26367,7 +26530,7 @@ impl ::sittir_core::options::Edged for EscapeSequenceOctalNode {
 
 impl ::sittir_core::render::Render for EscapeSequenceOctalNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(102)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_escape_sequence_octal(self, w))
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(102)), ::sittir_core::layout::TriviaRole::Owner, w, |w| match EscapeSequenceOctalFields::verbatim(self) { Some(text) => w.text(text), None => render_escape_sequence_octal(self, w) })
     }
 }
 
@@ -26380,14 +26543,14 @@ impl ::sittir_core::view::KindOf for EscapeSequenceOctalNodeRecord<'_> {
 
 impl ::sittir_core::render::Render for EscapeSequenceOctalNodeRecord<'_> {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        ::sittir_core::arena::RecordLayout::render(EscapeSequenceOctalFields::layout(self), Some(::sittir_core::types::KindId(102)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_escape_sequence_octal(self, w))
+        ::sittir_core::arena::RecordLayout::render(EscapeSequenceOctalFields::layout(self), Some(::sittir_core::types::KindId(102)), ::sittir_core::layout::TriviaRole::Owner, w, |w| match EscapeSequenceOctalFields::verbatim(self) { Some(text) => w.text(text), None => render_escape_sequence_octal(self, w) })
     }
 }
 
 }
 
 impl ::sittir_core::prepare::Prepare for EscapeSequenceOctalNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_escape_sequence_octal(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -26407,18 +26570,21 @@ impl ::sittir_core::prepare::Prepare for EscapeSequenceOctalNode {
     }
 }
 
-fn prepare_escape_sequence_octal<N: EscapeSequenceOctalPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_escape_sequence_octal<N: EscapeSequenceOctalPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     Ok(())
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::ESCAPE_SEQUENCE_LINE_BREAK, interior = "^\\\\(?<content>(?:\\r?\\n))$", words = 4, built_words = 3, fields = EscapeSequenceLineBreakFields, prepare = EscapeSequenceLineBreakPrepare, view = EscapeSequenceLineBreakNodeRecord, prepare_fn = prepare_escape_sequence_line_break)]
+#[node(kind = kind::ESCAPE_SEQUENCE_LINE_BREAK, interior = "^\\\\(?<content>(?:\\r?\\n))$", words = 6, built_words = 4, fields = EscapeSequenceLineBreakFields, prepare = EscapeSequenceLineBreakPrepare, view = EscapeSequenceLineBreakNodeRecord, prepare_fn = prepare_escape_sequence_line_break)]
 pub struct EscapeSequenceLineBreakNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[wire(key = "$verbatim")]
+    #[slot(word = 4, width = 2, forms = 4, built = 3)]
+    pub verbatim: Option<String>,
     #[wire(key = "_content")]
     #[slot(capture = "content", word = 2, width = 2, forms = 4, built = 2)]
     pub content: String,
@@ -26438,7 +26604,7 @@ impl ::sittir_core::options::Edged for EscapeSequenceLineBreakNode {
 
 impl ::sittir_core::render::Render for EscapeSequenceLineBreakNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(103)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_escape_sequence_line_break(self, w))
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(103)), ::sittir_core::layout::TriviaRole::Owner, w, |w| match EscapeSequenceLineBreakFields::verbatim(self) { Some(text) => w.text(text), None => render_escape_sequence_line_break(self, w) })
     }
 }
 
@@ -26451,14 +26617,14 @@ impl ::sittir_core::view::KindOf for EscapeSequenceLineBreakNodeRecord<'_> {
 
 impl ::sittir_core::render::Render for EscapeSequenceLineBreakNodeRecord<'_> {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        ::sittir_core::arena::RecordLayout::render(EscapeSequenceLineBreakFields::layout(self), Some(::sittir_core::types::KindId(103)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_escape_sequence_line_break(self, w))
+        ::sittir_core::arena::RecordLayout::render(EscapeSequenceLineBreakFields::layout(self), Some(::sittir_core::types::KindId(103)), ::sittir_core::layout::TriviaRole::Owner, w, |w| match EscapeSequenceLineBreakFields::verbatim(self) { Some(text) => w.text(text), None => render_escape_sequence_line_break(self, w) })
     }
 }
 
 }
 
 impl ::sittir_core::prepare::Prepare for EscapeSequenceLineBreakNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_escape_sequence_line_break(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -26478,18 +26644,21 @@ impl ::sittir_core::prepare::Prepare for EscapeSequenceLineBreakNode {
     }
 }
 
-fn prepare_escape_sequence_line_break<N: EscapeSequenceLineBreakPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_escape_sequence_line_break<N: EscapeSequenceLineBreakPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     Ok(())
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::ESCAPE_SEQUENCE_SIMPLE, interior = "^\\\\(?<content>(?:['\"abfrntv\\\\]))$", words = 4, built_words = 3, fields = EscapeSequenceSimpleFields, prepare = EscapeSequenceSimplePrepare, view = EscapeSequenceSimpleNodeRecord, prepare_fn = prepare_escape_sequence_simple)]
+#[node(kind = kind::ESCAPE_SEQUENCE_SIMPLE, interior = "^\\\\(?<content>(?:['\"abfrntv\\\\]))$", words = 6, built_words = 4, fields = EscapeSequenceSimpleFields, prepare = EscapeSequenceSimplePrepare, view = EscapeSequenceSimpleNodeRecord, prepare_fn = prepare_escape_sequence_simple)]
 pub struct EscapeSequenceSimpleNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[wire(key = "$verbatim")]
+    #[slot(word = 4, width = 2, forms = 4, built = 3)]
+    pub verbatim: Option<String>,
     #[wire(key = "_content")]
     #[slot(capture = "content", word = 2, width = 2, forms = 4, built = 2)]
     pub content: String,
@@ -26509,7 +26678,7 @@ impl ::sittir_core::options::Edged for EscapeSequenceSimpleNode {
 
 impl ::sittir_core::render::Render for EscapeSequenceSimpleNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(104)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_escape_sequence_simple(self, w))
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(104)), ::sittir_core::layout::TriviaRole::Owner, w, |w| match EscapeSequenceSimpleFields::verbatim(self) { Some(text) => w.text(text), None => render_escape_sequence_simple(self, w) })
     }
 }
 
@@ -26522,14 +26691,14 @@ impl ::sittir_core::view::KindOf for EscapeSequenceSimpleNodeRecord<'_> {
 
 impl ::sittir_core::render::Render for EscapeSequenceSimpleNodeRecord<'_> {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        ::sittir_core::arena::RecordLayout::render(EscapeSequenceSimpleFields::layout(self), Some(::sittir_core::types::KindId(104)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_escape_sequence_simple(self, w))
+        ::sittir_core::arena::RecordLayout::render(EscapeSequenceSimpleFields::layout(self), Some(::sittir_core::types::KindId(104)), ::sittir_core::layout::TriviaRole::Owner, w, |w| match EscapeSequenceSimpleFields::verbatim(self) { Some(text) => w.text(text), None => render_escape_sequence_simple(self, w) })
     }
 }
 
 }
 
 impl ::sittir_core::prepare::Prepare for EscapeSequenceSimpleNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_escape_sequence_simple(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -26549,18 +26718,21 @@ impl ::sittir_core::prepare::Prepare for EscapeSequenceSimpleNode {
     }
 }
 
-fn prepare_escape_sequence_simple<N: EscapeSequenceSimplePrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_escape_sequence_simple<N: EscapeSequenceSimplePrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     Ok(())
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::ESCAPE_SEQUENCE_NAMED, interior = "^\\\\(?<content>(?:N\\{[^}]+\\}))$", words = 4, built_words = 3, fields = EscapeSequenceNamedFields, prepare = EscapeSequenceNamedPrepare, view = EscapeSequenceNamedNodeRecord, prepare_fn = prepare_escape_sequence_named)]
+#[node(kind = kind::ESCAPE_SEQUENCE_NAMED, interior = "^\\\\(?<content>(?:N\\{[^}]+\\}))$", words = 6, built_words = 4, fields = EscapeSequenceNamedFields, prepare = EscapeSequenceNamedPrepare, view = EscapeSequenceNamedNodeRecord, prepare_fn = prepare_escape_sequence_named)]
 pub struct EscapeSequenceNamedNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[wire(key = "$verbatim")]
+    #[slot(word = 4, width = 2, forms = 4, built = 3)]
+    pub verbatim: Option<String>,
     #[wire(key = "_content")]
     #[slot(capture = "content", word = 2, width = 2, forms = 4, built = 2)]
     pub content: String,
@@ -26580,7 +26752,7 @@ impl ::sittir_core::options::Edged for EscapeSequenceNamedNode {
 
 impl ::sittir_core::render::Render for EscapeSequenceNamedNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(105)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_escape_sequence_named(self, w))
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(105)), ::sittir_core::layout::TriviaRole::Owner, w, |w| match EscapeSequenceNamedFields::verbatim(self) { Some(text) => w.text(text), None => render_escape_sequence_named(self, w) })
     }
 }
 
@@ -26593,14 +26765,14 @@ impl ::sittir_core::view::KindOf for EscapeSequenceNamedNodeRecord<'_> {
 
 impl ::sittir_core::render::Render for EscapeSequenceNamedNodeRecord<'_> {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        ::sittir_core::arena::RecordLayout::render(EscapeSequenceNamedFields::layout(self), Some(::sittir_core::types::KindId(105)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_escape_sequence_named(self, w))
+        ::sittir_core::arena::RecordLayout::render(EscapeSequenceNamedFields::layout(self), Some(::sittir_core::types::KindId(105)), ::sittir_core::layout::TriviaRole::Owner, w, |w| match EscapeSequenceNamedFields::verbatim(self) { Some(text) => w.text(text), None => render_escape_sequence_named(self, w) })
     }
 }
 
 }
 
 impl ::sittir_core::prepare::Prepare for EscapeSequenceNamedNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_escape_sequence_named(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -26620,7 +26792,7 @@ impl ::sittir_core::prepare::Prepare for EscapeSequenceNamedNode {
     }
 }
 
-fn prepare_escape_sequence_named<N: EscapeSequenceNamedPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_escape_sequence_named<N: EscapeSequenceNamedPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     Ok(())
@@ -26671,7 +26843,7 @@ impl ::sittir_core::render::Render for LineContinuationNewlineNodeRecord<'_> {
 }
 
 impl ::sittir_core::prepare::Prepare for LineContinuationNewlineNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_line_continuation_newline(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -26691,7 +26863,7 @@ impl ::sittir_core::prepare::Prepare for LineContinuationNewlineNode {
     }
 }
 
-fn prepare_line_continuation_newline<N: LineContinuationNewlinePrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_line_continuation_newline<N: LineContinuationNewlinePrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     Ok(())
@@ -26711,7 +26883,7 @@ impl ::sittir_core::view::KindOf for LineContinuationNulNode {
 }
 
 impl ::sittir_core::prepare::Prepare for LineContinuationNulNode {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &mut ::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -26726,7 +26898,7 @@ impl ::sittir_core::render::Render for LineContinuationNulNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::SIMPLE_PATTERN_NEGATIVE, layout = [kind::DASH], words = 17, built_words = 3, fields = SimplePatternNegativeFields, prepare = SimplePatternNegativePrepare, view = SimplePatternNegativeNodeRecord, prepare_fn = prepare_simple_pattern_negative)]
+#[node(kind = kind::SIMPLE_PATTERN_NEGATIVE, layout = [kind::DASH], words = 19, built_words = 3, fields = SimplePatternNegativeFields, prepare = SimplePatternNegativePrepare, view = SimplePatternNegativeNodeRecord, prepare_fn = prepare_simple_pattern_negative)]
 pub struct SimplePatternNegativeNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -26734,45 +26906,45 @@ pub struct SimplePatternNegativeNode {
     #[height]
     height: u16,
     #[wire(key = "_value")]
-    #[slot(field = field::VALUE, word = 2, width = 15, inline = 14, forms = 9, built = 2)]
+    #[slot(field = field::VALUE, word = 2, width = 17, inline = 16, forms = 9, built = 2)]
     pub value: ::sittir_core::SlotValue<ComplexPatternRealNodeSlot>,
 }
 
 impl ::sittir_core::view::KindOf for SimplePatternNegativeNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(284)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(288)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for SimplePatternNegativeNode {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(284) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(288) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for SimplePatternNegativeNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(284)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_simple_pattern_negative(self, w))
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(288)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_simple_pattern_negative(self, w))
     }
 }
 
 ::sittir_core::records_codec! {
 impl ::sittir_core::view::KindOf for SimplePatternNegativeNodeRecord<'_> {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(284)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(288)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::render::Render for SimplePatternNegativeNodeRecord<'_> {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        ::sittir_core::arena::RecordLayout::render(SimplePatternNegativeFields::layout(self), Some(::sittir_core::types::KindId(284)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_simple_pattern_negative(self, w))
+        ::sittir_core::arena::RecordLayout::render(SimplePatternNegativeFields::layout(self), Some(::sittir_core::types::KindId(288)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_simple_pattern_negative(self, w))
     }
 }
 
 }
 
 impl ::sittir_core::prepare::Prepare for SimplePatternNegativeNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_simple_pattern_negative(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -26792,10 +26964,10 @@ impl ::sittir_core::prepare::Prepare for SimplePatternNegativeNode {
     }
 }
 
-fn prepare_simple_pattern_negative<N: SimplePatternNegativePrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_simple_pattern_negative<N: SimplePatternNegativePrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
-    ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(284), (None, None), ctx);
+    ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(288), (None, None), ctx);
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.value, overlay, ctx)?;
     Ok(())
 }
@@ -26821,39 +26993,39 @@ pub struct ExceptClauseExceptionListNode {
 
 impl ::sittir_core::view::KindOf for ExceptClauseExceptionListNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(285)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(289)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for ExceptClauseExceptionListNode {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(285) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(289) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for ExceptClauseExceptionListNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(285)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_except_clause_exception_list(self, w))
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(289)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_except_clause_exception_list(self, w))
     }
 }
 
 ::sittir_core::records_codec! {
 impl ::sittir_core::view::KindOf for ExceptClauseExceptionListNodeRecord<'_> {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(285)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(289)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::render::Render for ExceptClauseExceptionListNodeRecord<'_> {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        ::sittir_core::arena::RecordLayout::render(ExceptClauseExceptionListFields::layout(self), Some(::sittir_core::types::KindId(285)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_except_clause_exception_list(self, w))
+        ::sittir_core::arena::RecordLayout::render(ExceptClauseExceptionListFields::layout(self), Some(::sittir_core::types::KindId(289)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_except_clause_exception_list(self, w))
     }
 }
 
 }
 
 impl ::sittir_core::prepare::Prepare for ExceptClauseExceptionListNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_except_clause_exception_list(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -26873,7 +27045,7 @@ impl ::sittir_core::prepare::Prepare for ExceptClauseExceptionListNode {
     }
 }
 
-fn prepare_except_clause_exception_list<N: ExceptClauseExceptionListPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_except_clause_exception_list<N: ExceptClauseExceptionListPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     { let slot = ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, overlay, "_value"); ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.value, overlay, slot.as_deref()); }
@@ -26899,39 +27071,39 @@ pub struct ExceptClauseExceptionNode {
 
 impl ::sittir_core::view::KindOf for ExceptClauseExceptionNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(286)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(290)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for ExceptClauseExceptionNode {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(286) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(290) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for ExceptClauseExceptionNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(286)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_except_clause_exception(self, w))
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(290)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_except_clause_exception(self, w))
     }
 }
 
 ::sittir_core::records_codec! {
 impl ::sittir_core::view::KindOf for ExceptClauseExceptionNodeRecord<'_> {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(286)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(290)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::render::Render for ExceptClauseExceptionNodeRecord<'_> {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        ::sittir_core::arena::RecordLayout::render(ExceptClauseExceptionFields::layout(self), Some(::sittir_core::types::KindId(286)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_except_clause_exception(self, w))
+        ::sittir_core::arena::RecordLayout::render(ExceptClauseExceptionFields::layout(self), Some(::sittir_core::types::KindId(290)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_except_clause_exception(self, w))
     }
 }
 
 }
 
 impl ::sittir_core::prepare::Prepare for ExceptClauseExceptionNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_except_clause_exception(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -26951,7 +27123,7 @@ impl ::sittir_core::prepare::Prepare for ExceptClauseExceptionNode {
     }
 }
 
-fn prepare_except_clause_exception<N: ExceptClauseExceptionPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_except_clause_exception<N: ExceptClauseExceptionPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.content, overlay, ctx)?;
@@ -26973,39 +27145,39 @@ pub struct SplatPatternListNode {
 
 impl ::sittir_core::view::KindOf for SplatPatternListNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(287)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(291)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for SplatPatternListNode {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(287) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(291) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for SplatPatternListNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(287)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_splat_pattern_list(self, w))
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(291)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_splat_pattern_list(self, w))
     }
 }
 
 ::sittir_core::records_codec! {
 impl ::sittir_core::view::KindOf for SplatPatternListNodeRecord<'_> {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(287)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(291)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::render::Render for SplatPatternListNodeRecord<'_> {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        ::sittir_core::arena::RecordLayout::render(SplatPatternListFields::layout(self), Some(::sittir_core::types::KindId(287)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_splat_pattern_list(self, w))
+        ::sittir_core::arena::RecordLayout::render(SplatPatternListFields::layout(self), Some(::sittir_core::types::KindId(291)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_splat_pattern_list(self, w))
     }
 }
 
 }
 
 impl ::sittir_core::prepare::Prepare for SplatPatternListNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_splat_pattern_list(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -27025,10 +27197,10 @@ impl ::sittir_core::prepare::Prepare for SplatPatternListNode {
     }
 }
 
-fn prepare_splat_pattern_list<N: SplatPatternListPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_splat_pattern_list<N: SplatPatternListPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
-    ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(287), (None, None), ctx);
+    ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(291), (None, None), ctx);
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.pattern, overlay, ctx)?;
     Ok(())
 }
@@ -27048,39 +27220,39 @@ pub struct SplatPatternDictionaryNode {
 
 impl ::sittir_core::view::KindOf for SplatPatternDictionaryNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(288)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(292)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for SplatPatternDictionaryNode {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(288) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(292) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for SplatPatternDictionaryNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(288)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_splat_pattern_dictionary(self, w))
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(292)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_splat_pattern_dictionary(self, w))
     }
 }
 
 ::sittir_core::records_codec! {
 impl ::sittir_core::view::KindOf for SplatPatternDictionaryNodeRecord<'_> {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(288)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(292)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::render::Render for SplatPatternDictionaryNodeRecord<'_> {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        ::sittir_core::arena::RecordLayout::render(SplatPatternDictionaryFields::layout(self), Some(::sittir_core::types::KindId(288)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_splat_pattern_dictionary(self, w))
+        ::sittir_core::arena::RecordLayout::render(SplatPatternDictionaryFields::layout(self), Some(::sittir_core::types::KindId(292)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_splat_pattern_dictionary(self, w))
     }
 }
 
 }
 
 impl ::sittir_core::prepare::Prepare for SplatPatternDictionaryNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_splat_pattern_dictionary(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -27100,10 +27272,10 @@ impl ::sittir_core::prepare::Prepare for SplatPatternDictionaryNode {
     }
 }
 
-fn prepare_splat_pattern_dictionary<N: SplatPatternDictionaryPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_splat_pattern_dictionary<N: SplatPatternDictionaryPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
-    ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(288), (None, None), ctx);
+    ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(292), (None, None), ctx);
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.pattern, overlay, ctx)?;
     Ok(())
 }
@@ -27121,44 +27293,44 @@ pub struct AssignmentEqNode {
     pub name: ::sittir_core::SlotValue<ForStatementLeftNodeSlot>,
     #[wire(key = "_value")]
     #[slot(field = field::VALUE, word = 5, width = 4, forms = 3, built = 3)]
-    pub value: ::sittir_core::SlotValue<Box<AugmentedAssignmentRightNodeSlot>>,
+    pub value: ::sittir_core::SlotValue<Box<AssignmentEqValueNodeSlot>>,
 }
 
 impl ::sittir_core::view::KindOf for AssignmentEqNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(289)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(293)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for AssignmentEqNode {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(289) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(293) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for AssignmentEqNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(289)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_assignment_eq(self, w))
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(293)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_assignment_eq(self, w))
     }
 }
 
 ::sittir_core::records_codec! {
 impl ::sittir_core::view::KindOf for AssignmentEqNodeRecord<'_> {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(289)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(293)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::render::Render for AssignmentEqNodeRecord<'_> {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        ::sittir_core::arena::RecordLayout::render(AssignmentEqFields::layout(self), Some(::sittir_core::types::KindId(289)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_assignment_eq(self, w))
+        ::sittir_core::arena::RecordLayout::render(AssignmentEqFields::layout(self), Some(::sittir_core::types::KindId(293)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_assignment_eq(self, w))
     }
 }
 
 }
 
 impl ::sittir_core::prepare::Prepare for AssignmentEqNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_assignment_eq(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -27178,10 +27350,10 @@ impl ::sittir_core::prepare::Prepare for AssignmentEqNode {
     }
 }
 
-fn prepare_assignment_eq<N: AssignmentEqPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_assignment_eq<N: AssignmentEqPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
-    ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(289), (None, None), ctx);
+    ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(293), (None, None), ctx);
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.name, overlay, ctx)?;
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.value, overlay, ctx)?;
     Ok(())
@@ -27205,39 +27377,39 @@ pub struct AssignmentTypeNode {
 
 impl ::sittir_core::view::KindOf for AssignmentTypeNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(290)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(294)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for AssignmentTypeNode {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(290) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(294) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for AssignmentTypeNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(290)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_assignment_type(self, w))
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(294)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_assignment_type(self, w))
     }
 }
 
 ::sittir_core::records_codec! {
 impl ::sittir_core::view::KindOf for AssignmentTypeNodeRecord<'_> {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(290)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(294)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::render::Render for AssignmentTypeNodeRecord<'_> {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        ::sittir_core::arena::RecordLayout::render(AssignmentTypeFields::layout(self), Some(::sittir_core::types::KindId(290)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_assignment_type(self, w))
+        ::sittir_core::arena::RecordLayout::render(AssignmentTypeFields::layout(self), Some(::sittir_core::types::KindId(294)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_assignment_type(self, w))
     }
 }
 
 }
 
 impl ::sittir_core::prepare::Prepare for AssignmentTypeNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_assignment_type(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -27257,10 +27429,10 @@ impl ::sittir_core::prepare::Prepare for AssignmentTypeNode {
     }
 }
 
-fn prepare_assignment_type<N: AssignmentTypePrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_assignment_type<N: AssignmentTypePrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
-    ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(290), (None, None), ctx);
+    ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(294), (None, None), ctx);
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.name, overlay, ctx)?;
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.type_, overlay, ctx)?;
     Ok(())
@@ -27282,44 +27454,44 @@ pub struct AssignmentTypedNode {
     pub type_: ::sittir_core::SlotValue<TypeNode>,
     #[wire(key = "_value")]
     #[slot(field = field::VALUE, word = 8, width = 4, forms = 3, built = 4)]
-    pub value: ::sittir_core::SlotValue<Box<AugmentedAssignmentRightNodeSlot>>,
+    pub value: ::sittir_core::SlotValue<AugmentedAssignmentRightNodeSlot>,
 }
 
 impl ::sittir_core::view::KindOf for AssignmentTypedNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(291)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(295)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for AssignmentTypedNode {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(291) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(295) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for AssignmentTypedNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(291)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_assignment_typed(self, w))
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(295)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_assignment_typed(self, w))
     }
 }
 
 ::sittir_core::records_codec! {
 impl ::sittir_core::view::KindOf for AssignmentTypedNodeRecord<'_> {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(291)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(295)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::render::Render for AssignmentTypedNodeRecord<'_> {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        ::sittir_core::arena::RecordLayout::render(AssignmentTypedFields::layout(self), Some(::sittir_core::types::KindId(291)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_assignment_typed(self, w))
+        ::sittir_core::arena::RecordLayout::render(AssignmentTypedFields::layout(self), Some(::sittir_core::types::KindId(295)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_assignment_typed(self, w))
     }
 }
 
 }
 
 impl ::sittir_core::prepare::Prepare for AssignmentTypedNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_assignment_typed(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -27339,10 +27511,10 @@ impl ::sittir_core::prepare::Prepare for AssignmentTypedNode {
     }
 }
 
-fn prepare_assignment_typed<N: AssignmentTypedPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_assignment_typed<N: AssignmentTypedPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
-    ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(291), (None, None), ctx);
+    ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(295), (None, None), ctx);
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.name, overlay, ctx)?;
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.type_, overlay, ctx)?;
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.value, overlay, ctx)?;
@@ -27350,62 +27522,62 @@ fn prepare_assignment_typed<N: AssignmentTypedPrepare + ?Sized>(node: &mut N, ov
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::EXPRESSION_STATEMENT_TUPLE, item = item, words = 3, built_words = 3, fields = ExpressionStatementTupleFields, prepare = ExpressionStatementTuplePrepare, view = ExpressionStatementTupleNodeRecord, prepare_fn = prepare_expression_statement_tuple)]
+#[node(kind = kind::EXPRESSION_STATEMENT_TUPLE, item = elements, words = 3, built_words = 3, fields = ExpressionStatementTupleFields, prepare = ExpressionStatementTuplePrepare, view = ExpressionStatementTupleNodeRecord, prepare_fn = prepare_expression_statement_tuple)]
 pub struct ExpressionStatementTupleNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
     #[height]
     height: u16,
-    #[wire(key = "_item")]
-    #[slot(field = field::ITEM, separator = kind::COMMA, word = 2, width = 1, run = 4, forms = 3, built = 2, seated)]
-    pub item: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<ExpressionNode>>,
+    #[wire(key = "_elements")]
+    #[slot(field = field::ELEMENTS, separator = kind::COMMA, word = 2, width = 1, run = 4, forms = 3, built = 2, seated)]
+    pub elements: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<ExpressionNode>>,
     #[wire(key = "_delimiter")]
     #[flank(trailing = 0)]
     pub delimiter: Option<::sittir_core::types::Delimiter>,
-    #[wire(key = "_item_separator_space_before")]
-    #[space(slot = 2, side = before, site = options::SITE_EXPRESSION_STATEMENT_TUPLE_ITEM_SEPARATOR_SPACE_BEFORE)]
-    pub item_separator_space_before: Option<KindId>,
-    #[wire(key = "_item_separator_space_after")]
-    #[space(slot = 2, side = after, site = options::SITE_EXPRESSION_STATEMENT_TUPLE_ITEM_SEPARATOR_SPACE_AFTER)]
-    pub item_separator_space_after: Option<KindId>,
+    #[wire(key = "_elements_separator_space_before")]
+    #[space(slot = 2, side = before, site = options::SITE_EXPRESSION_STATEMENT_TUPLE_ELEMENTS_SEPARATOR_SPACE_BEFORE)]
+    pub elements_separator_space_before: Option<KindId>,
+    #[wire(key = "_elements_separator_space_after")]
+    #[space(slot = 2, side = after, site = options::SITE_EXPRESSION_STATEMENT_TUPLE_ELEMENTS_SEPARATOR_SPACE_AFTER)]
+    pub elements_separator_space_after: Option<KindId>,
 }
 
 impl ::sittir_core::view::KindOf for ExpressionStatementTupleNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(292)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(296)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for ExpressionStatementTupleNode {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(292) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(296) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for ExpressionStatementTupleNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(292)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_expression_statement_tuple(self, w))
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(296)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_expression_statement_tuple(self, w))
     }
 }
 
 ::sittir_core::records_codec! {
 impl ::sittir_core::view::KindOf for ExpressionStatementTupleNodeRecord<'_> {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(292)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(296)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::render::Render for ExpressionStatementTupleNodeRecord<'_> {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        ::sittir_core::arena::RecordLayout::render(ExpressionStatementTupleFields::layout(self), Some(::sittir_core::types::KindId(292)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_expression_statement_tuple(self, w))
+        ::sittir_core::arena::RecordLayout::render(ExpressionStatementTupleFields::layout(self), Some(::sittir_core::types::KindId(296)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_expression_statement_tuple(self, w))
     }
 }
 
 }
 
 impl ::sittir_core::prepare::Prepare for ExpressionStatementTupleNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_expression_statement_tuple(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -27425,16 +27597,16 @@ impl ::sittir_core::prepare::Prepare for ExpressionStatementTupleNode {
     }
 }
 
-fn prepare_expression_statement_tuple<N: ExpressionStatementTuplePrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_expression_statement_tuple<N: ExpressionStatementTuplePrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
-    { let slot = ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, overlay, "_item"); ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.item, overlay, slot.as_deref()); }
-    ::sittir_core::prepare::Setting::fill(&mut parts.item_separator_space_before, overlay, ctx.options.site_arm(options::SITE_EXPRESSION_STATEMENT_TUPLE_ITEM_SEPARATOR_SPACE_BEFORE).arm);
-    ::sittir_core::prepare::Setting::fill(&mut parts.item_separator_space_after, overlay, ctx.options.site_arm(options::SITE_EXPRESSION_STATEMENT_TUPLE_ITEM_SEPARATOR_SPACE_AFTER).arm);
-    ::sittir_core::prepare::SeatSlot::fill_seats(&mut parts.item, overlay, options::SEATS_EXPRESSION_STATEMENT_TUPLE_ITEM, ctx);
-    let delimiter = ::sittir_core::prepare::source_trailing_delimiter(::sittir_core::prepare::LayoutTarget::sides(&parts.layout, overlay).as_deref(), ::sittir_core::types::KindId(292), &[::sittir_core::types::KindId(6)], ctx.options.delimiter_at(options::DELIM_EXPRESSION_STATEMENT_TUPLE_ITEM), ctx);
+    { let slot = ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, overlay, "_elements"); ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.elements, overlay, slot.as_deref()); }
+    ::sittir_core::prepare::Setting::fill(&mut parts.elements_separator_space_before, overlay, ctx.options.site_arm(options::SITE_EXPRESSION_STATEMENT_TUPLE_ELEMENTS_SEPARATOR_SPACE_BEFORE).arm);
+    ::sittir_core::prepare::Setting::fill(&mut parts.elements_separator_space_after, overlay, ctx.options.site_arm(options::SITE_EXPRESSION_STATEMENT_TUPLE_ELEMENTS_SEPARATOR_SPACE_AFTER).arm);
+    ::sittir_core::prepare::SeatSlot::fill_seats(&mut parts.elements, overlay, options::SEATS_EXPRESSION_STATEMENT_TUPLE_ELEMENTS, ctx);
+    let delimiter = ::sittir_core::prepare::source_trailing_delimiter(::sittir_core::prepare::LayoutTarget::sides(&parts.layout, overlay).as_deref(), ::sittir_core::types::KindId(296), &[::sittir_core::types::KindId(6)], ctx.options.delimiter_at(options::DELIM_EXPRESSION_STATEMENT_TUPLE_ELEMENTS), ctx);
     ::sittir_core::prepare::Setting::fill(&mut parts.delimiter, overlay, delimiter);
-    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.item, overlay, ctx)?;
+    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.elements, overlay, ctx)?;
     Ok(())
 }
 
@@ -27462,39 +27634,39 @@ pub struct WithClauseBareNode {
 
 impl ::sittir_core::view::KindOf for WithClauseBareNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(293)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(297)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for WithClauseBareNode {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(293) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(297) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for WithClauseBareNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(293)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_with_clause_bare(self, w))
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(297)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_with_clause_bare(self, w))
     }
 }
 
 ::sittir_core::records_codec! {
 impl ::sittir_core::view::KindOf for WithClauseBareNodeRecord<'_> {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(293)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(297)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::render::Render for WithClauseBareNodeRecord<'_> {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        ::sittir_core::arena::RecordLayout::render(WithClauseBareFields::layout(self), Some(::sittir_core::types::KindId(293)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_with_clause_bare(self, w))
+        ::sittir_core::arena::RecordLayout::render(WithClauseBareFields::layout(self), Some(::sittir_core::types::KindId(297)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_with_clause_bare(self, w))
     }
 }
 
 }
 
 impl ::sittir_core::prepare::Prepare for WithClauseBareNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_with_clause_bare(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -27514,13 +27686,13 @@ impl ::sittir_core::prepare::Prepare for WithClauseBareNode {
     }
 }
 
-fn prepare_with_clause_bare<N: WithClauseBarePrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_with_clause_bare<N: WithClauseBarePrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     { let slot = ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, overlay, "_items"); ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.items, overlay, slot.as_deref()); }
     ::sittir_core::prepare::Setting::fill(&mut parts.items_separator_space_before, overlay, ctx.options.site_arm(options::SITE_WITH_CLAUSE_BARE_ITEMS_SEPARATOR_SPACE_BEFORE).arm);
     ::sittir_core::prepare::Setting::fill(&mut parts.items_separator_space_after, overlay, ctx.options.site_arm(options::SITE_WITH_CLAUSE_BARE_ITEMS_SEPARATOR_SPACE_AFTER).arm);
-    let delimiter = ::sittir_core::prepare::source_trailing_delimiter(::sittir_core::prepare::LayoutTarget::sides(&parts.layout, overlay).as_deref(), ::sittir_core::types::KindId(293), &[::sittir_core::types::KindId(6)], ctx.options.delimiter_at(options::DELIM_WITH_CLAUSE_BARE_ITEMS), ctx);
+    let delimiter = ::sittir_core::prepare::source_trailing_delimiter(::sittir_core::prepare::LayoutTarget::sides(&parts.layout, overlay).as_deref(), ::sittir_core::types::KindId(297), &[::sittir_core::types::KindId(6)], ctx.options.delimiter_at(options::DELIM_WITH_CLAUSE_BARE_ITEMS), ctx);
     ::sittir_core::prepare::Setting::fill(&mut parts.delimiter, overlay, delimiter);
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.items, overlay, ctx)?;
     Ok(())
@@ -27541,39 +27713,39 @@ pub struct WithClauseParenNode {
 
 impl ::sittir_core::view::KindOf for WithClauseParenNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(294)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(298)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for WithClauseParenNode {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(294) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(298) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for WithClauseParenNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(294)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_with_clause_paren(self, w))
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(298)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_with_clause_paren(self, w))
     }
 }
 
 ::sittir_core::records_codec! {
 impl ::sittir_core::view::KindOf for WithClauseParenNodeRecord<'_> {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(294)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(298)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::render::Render for WithClauseParenNodeRecord<'_> {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        ::sittir_core::arena::RecordLayout::render(WithClauseParenFields::layout(self), Some(::sittir_core::types::KindId(294)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_with_clause_paren(self, w))
+        ::sittir_core::arena::RecordLayout::render(WithClauseParenFields::layout(self), Some(::sittir_core::types::KindId(298)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_with_clause_paren(self, w))
     }
 }
 
 }
 
 impl ::sittir_core::prepare::Prepare for WithClauseParenNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_with_clause_paren(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -27593,166 +27765,11 @@ impl ::sittir_core::prepare::Prepare for WithClauseParenNode {
     }
 }
 
-fn prepare_with_clause_paren<N: WithClauseParenPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_with_clause_paren<N: WithClauseParenPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
-    ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(294), (None, None), ctx);
+    ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(298), (None, None), ctx);
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.items, overlay, ctx)?;
-    Ok(())
-}
-
-#[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::MATCH_BLOCK_BLOCK, layout = [kind::_INDENT, kind::_DEDENT], words = 3, built_words = 3, fields = MatchBlockBlockFields, prepare = MatchBlockBlockPrepare, view = MatchBlockBlockNodeRecord, prepare_fn = prepare_match_block_block)]
-pub struct MatchBlockBlockNode {
-    #[wire(key = "$_layout")]
-    #[layout]
-    pub layout: Option<Box<NodeLayout>>,
-    #[height]
-    height: u16,
-    #[wire(key = "_alternative")]
-    #[slot(field = field::ALTERNATIVE, word = 2, width = 1, run = 3, forms = 1, built = 2, seated)]
-    pub alternative: Vec<::sittir_core::SlotValue<CaseClauseNode>>,
-    #[wire(key = "_alternative_separator_space")]
-    #[space(slot = 2, side = after, site = options::SITE_MATCH_BLOCK_BLOCK_ALTERNATIVE_SEPARATOR_SPACE)]
-    pub alternative_separator_space: Option<KindId>,
-}
-
-impl ::sittir_core::view::KindOf for MatchBlockBlockNode {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(295)].iter().any(|k| kinds.contains(k))
-    }
-}
-
-impl ::sittir_core::options::Edged for MatchBlockBlockNode {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(295) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
-}
-
-impl ::sittir_core::render::Render for MatchBlockBlockNode {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(295)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_match_block_block(self, w))
-    }
-}
-
-::sittir_core::records_codec! {
-impl ::sittir_core::view::KindOf for MatchBlockBlockNodeRecord<'_> {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(295)].iter().any(|k| kinds.contains(k))
-    }
-}
-
-impl ::sittir_core::render::Render for MatchBlockBlockNodeRecord<'_> {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        ::sittir_core::arena::RecordLayout::render(MatchBlockBlockFields::layout(self), Some(::sittir_core::types::KindId(295)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_match_block_block(self, w))
-    }
-}
-
-}
-
-impl ::sittir_core::prepare::Prepare for MatchBlockBlockNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        prepare_match_block_block(self, &mut (), ctx)
-    }
-    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.layout.edges_mut())
-    }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
-        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
-    }
-    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
-        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
-    }
-    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
-        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
-    }
-    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &mut ::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
-        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
-    }
-}
-
-fn prepare_match_block_block<N: MatchBlockBlockPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-    let mut parts = node.prepare_parts();
-    ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
-    ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(295), (None, None), ctx);
-    { let slot = ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, overlay, "_alternative"); ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.alternative, overlay, slot.as_deref()); }
-    ::sittir_core::prepare::Setting::fill(&mut parts.alternative_separator_space, overlay, ctx.options.site_arm(options::SITE_MATCH_BLOCK_BLOCK_ALTERNATIVE_SEPARATOR_SPACE).arm);
-    ::sittir_core::prepare::SeatSlot::fill_seats(&mut parts.alternative, overlay, options::SEATS_MATCH_BLOCK_BLOCK_ALTERNATIVE, ctx);
-    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.alternative, overlay, ctx)?;
-    Ok(())
-}
-
-#[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::MATCH_BLOCK_EMPTY, words = 3, built_words = 3, fields = MatchBlockEmptyFields, prepare = MatchBlockEmptyPrepare, view = MatchBlockEmptyNodeRecord, prepare_fn = prepare_match_block_empty)]
-pub struct MatchBlockEmptyNode {
-    #[wire(key = "$_layout")]
-    #[layout]
-    pub layout: Option<Box<NodeLayout>>,
-    #[height]
-    height: u16,
-    #[wire(key = "_newline")]
-    #[slot(word = 2, width = 1, forms = 2, built = 2)]
-    pub newline: ::sittir_core::SlotValue<NewlineNode>,
-}
-
-impl ::sittir_core::view::KindOf for MatchBlockEmptyNode {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(296)].iter().any(|k| kinds.contains(k))
-    }
-}
-
-impl ::sittir_core::options::Edged for MatchBlockEmptyNode {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(296) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
-}
-
-impl ::sittir_core::render::Render for MatchBlockEmptyNode {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(296)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_match_block_empty(self, w))
-    }
-}
-
-::sittir_core::records_codec! {
-impl ::sittir_core::view::KindOf for MatchBlockEmptyNodeRecord<'_> {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(296)].iter().any(|k| kinds.contains(k))
-    }
-}
-
-impl ::sittir_core::render::Render for MatchBlockEmptyNodeRecord<'_> {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        ::sittir_core::arena::RecordLayout::render(MatchBlockEmptyFields::layout(self), Some(::sittir_core::types::KindId(296)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_match_block_empty(self, w))
-    }
-}
-
-}
-
-impl ::sittir_core::prepare::Prepare for MatchBlockEmptyNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        prepare_match_block_empty(self, &mut (), ctx)
-    }
-    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.layout.edges_mut())
-    }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
-        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
-    }
-    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
-        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
-    }
-    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
-        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
-    }
-    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &mut ::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
-        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
-    }
-}
-
-fn prepare_match_block_empty<N: MatchBlockEmptyPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-    let mut parts = node.prepare_parts();
-    ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
-    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.newline, overlay, ctx)?;
     Ok(())
 }
 
@@ -27771,39 +27788,39 @@ pub struct SuiteInlineNode {
 
 impl ::sittir_core::view::KindOf for SuiteInlineNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(297)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(299)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for SuiteInlineNode {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(297) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(299) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for SuiteInlineNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(297)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_suite_inline(self, w))
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(299)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_suite_inline(self, w))
     }
 }
 
 ::sittir_core::records_codec! {
 impl ::sittir_core::view::KindOf for SuiteInlineNodeRecord<'_> {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(297)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(299)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::render::Render for SuiteInlineNodeRecord<'_> {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        ::sittir_core::arena::RecordLayout::render(SuiteInlineFields::layout(self), Some(::sittir_core::types::KindId(297)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_suite_inline(self, w))
+        ::sittir_core::arena::RecordLayout::render(SuiteInlineFields::layout(self), Some(::sittir_core::types::KindId(299)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_suite_inline(self, w))
     }
 }
 
 }
 
 impl ::sittir_core::prepare::Prepare for SuiteInlineNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_suite_inline(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -27823,10 +27840,10 @@ impl ::sittir_core::prepare::Prepare for SuiteInlineNode {
     }
 }
 
-fn prepare_suite_inline<N: SuiteInlinePrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_suite_inline<N: SuiteInlinePrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
-    ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(297), (None, None), ctx);
+    ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(299), (None, None), ctx);
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.elements, overlay, ctx)?;
     Ok(())
 }
@@ -27846,39 +27863,39 @@ pub struct SuiteBlockNode {
 
 impl ::sittir_core::view::KindOf for SuiteBlockNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(298)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(300)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for SuiteBlockNode {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(298) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(300) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for SuiteBlockNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(298)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_suite_block(self, w))
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(300)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_suite_block(self, w))
     }
 }
 
 ::sittir_core::records_codec! {
 impl ::sittir_core::view::KindOf for SuiteBlockNodeRecord<'_> {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(298)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(300)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::render::Render for SuiteBlockNodeRecord<'_> {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        ::sittir_core::arena::RecordLayout::render(SuiteBlockFields::layout(self), Some(::sittir_core::types::KindId(298)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_suite_block(self, w))
+        ::sittir_core::arena::RecordLayout::render(SuiteBlockFields::layout(self), Some(::sittir_core::types::KindId(300)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_suite_block(self, w))
     }
 }
 
 }
 
 impl ::sittir_core::prepare::Prepare for SuiteBlockNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_suite_block(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -27898,10 +27915,10 @@ impl ::sittir_core::prepare::Prepare for SuiteBlockNode {
     }
 }
 
-fn prepare_suite_block<N: SuiteBlockPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_suite_block<N: SuiteBlockPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
-    ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(298), (None, None), ctx);
+    ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(300), (None, None), ctx);
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.block, overlay, ctx)?;
     Ok(())
 }
@@ -27921,39 +27938,39 @@ pub struct SuiteEmptyNode {
 
 impl ::sittir_core::view::KindOf for SuiteEmptyNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(299)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(301)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for SuiteEmptyNode {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(299) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(301) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for SuiteEmptyNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(299)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_suite_empty(self, w))
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(301)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_suite_empty(self, w))
     }
 }
 
 ::sittir_core::records_codec! {
 impl ::sittir_core::view::KindOf for SuiteEmptyNodeRecord<'_> {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(299)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(301)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::render::Render for SuiteEmptyNodeRecord<'_> {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        ::sittir_core::arena::RecordLayout::render(SuiteEmptyFields::layout(self), Some(::sittir_core::types::KindId(299)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_suite_empty(self, w))
+        ::sittir_core::arena::RecordLayout::render(SuiteEmptyFields::layout(self), Some(::sittir_core::types::KindId(301)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_suite_empty(self, w))
     }
 }
 
 }
 
 impl ::sittir_core::prepare::Prepare for SuiteEmptyNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_suite_empty(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -27973,7 +27990,7 @@ impl ::sittir_core::prepare::Prepare for SuiteEmptyNode {
     }
 }
 
-fn prepare_suite_empty<N: SuiteEmptyPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_suite_empty<N: SuiteEmptyPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.newline, overlay, ctx)?;
@@ -27998,39 +28015,39 @@ pub struct ComparisonOperatorComparatorNode {
 
 impl ::sittir_core::view::KindOf for ComparisonOperatorComparatorNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(300)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(302)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for ComparisonOperatorComparatorNode {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(300) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(302) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for ComparisonOperatorComparatorNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(300)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_comparison_operator_comparator(self, w))
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(302)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_comparison_operator_comparator(self, w))
     }
 }
 
 ::sittir_core::records_codec! {
 impl ::sittir_core::view::KindOf for ComparisonOperatorComparatorNodeRecord<'_> {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(300)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(302)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::render::Render for ComparisonOperatorComparatorNodeRecord<'_> {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        ::sittir_core::arena::RecordLayout::render(ComparisonOperatorComparatorFields::layout(self), Some(::sittir_core::types::KindId(300)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_comparison_operator_comparator(self, w))
+        ::sittir_core::arena::RecordLayout::render(ComparisonOperatorComparatorFields::layout(self), Some(::sittir_core::types::KindId(302)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_comparison_operator_comparator(self, w))
     }
 }
 
 }
 
 impl ::sittir_core::prepare::Prepare for ComparisonOperatorComparatorNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_comparison_operator_comparator(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -28050,10 +28067,10 @@ impl ::sittir_core::prepare::Prepare for ComparisonOperatorComparatorNode {
     }
 }
 
-fn prepare_comparison_operator_comparator<N: ComparisonOperatorComparatorPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_comparison_operator_comparator<N: ComparisonOperatorComparatorPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
-    { let arms = (::sittir_core::prepare::ArmOf::arm_among(&parts.operators, overlay, ctx, ctx.options.edge_arm_sites(::sittir_core::types::KindId(300), ::sittir_core::options::Side::Before)), None); ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(300), arms, ctx); }
+    { let arms = (::sittir_core::prepare::ArmOf::arm_among(&parts.operators, overlay, ctx, ctx.options.edge_arm_sites(::sittir_core::types::KindId(302), ::sittir_core::options::Side::Before)), None); ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(302), arms, ctx); }
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.operators, overlay, ctx)?;
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.primary_expression, overlay, ctx)?;
     Ok(())
@@ -28074,39 +28091,39 @@ pub struct YieldFromClauseNode {
 
 impl ::sittir_core::view::KindOf for YieldFromClauseNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(301)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(303)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for YieldFromClauseNode {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(301) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(303) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for YieldFromClauseNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(301)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_yield_from_clause(self, w))
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(303)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_yield_from_clause(self, w))
     }
 }
 
 ::sittir_core::records_codec! {
 impl ::sittir_core::view::KindOf for YieldFromClauseNodeRecord<'_> {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(301)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(303)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::render::Render for YieldFromClauseNodeRecord<'_> {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        ::sittir_core::arena::RecordLayout::render(YieldFromClauseFields::layout(self), Some(::sittir_core::types::KindId(301)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_yield_from_clause(self, w))
+        ::sittir_core::arena::RecordLayout::render(YieldFromClauseFields::layout(self), Some(::sittir_core::types::KindId(303)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_yield_from_clause(self, w))
     }
 }
 
 }
 
 impl ::sittir_core::prepare::Prepare for YieldFromClauseNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_yield_from_clause(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -28126,23 +28143,258 @@ impl ::sittir_core::prepare::Prepare for YieldFromClauseNode {
     }
 }
 
-fn prepare_yield_from_clause<N: YieldFromClausePrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_yield_from_clause<N: YieldFromClausePrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
-    ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(301), (None, None), ctx);
+    ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(303), (None, None), ctx);
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.expression, overlay, ctx)?;
     Ok(())
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::STRING_START, text, words = 2, built_words = 2, fields = StringStartFields, prepare = StringStartPrepare, view = StringStartNodeRecord, prepare_fn = prepare_string_start)]
+#[node(kind = kind::TYPE_PARAM_TYPE_VAR, layout = [kind::COLON], words = 8, built_words = 4, fields = TypeParamTypeVarFields, prepare = TypeParamTypeVarPrepare, view = TypeParamTypeVarNodeRecord, prepare_fn = prepare_type_param_type_var)]
+pub struct TypeParamTypeVarNode {
+    #[wire(key = "$_layout")]
+    #[layout]
+    pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
+    #[wire(key = "_name")]
+    #[slot(field = field::NAME, word = 2, width = 3, forms = 1, built = 2)]
+    pub name: ::sittir_core::SlotValue<IdentifierNode>,
+    #[wire(key = "_bounds")]
+    #[slot(field = field::BOUNDS, word = 5, width = 3, forms = 1, built = 3)]
+    pub bounds: Option<::sittir_core::SlotValue<TypeNode>>,
+}
+
+impl ::sittir_core::view::KindOf for TypeParamTypeVarNode {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(304)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::options::Edged for TypeParamTypeVarNode {
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(304) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
+}
+
+impl ::sittir_core::render::Render for TypeParamTypeVarNode {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(304)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_type_param_type_var(self, w))
+    }
+}
+
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for TypeParamTypeVarNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(304)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for TypeParamTypeVarNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(TypeParamTypeVarFields::layout(self), Some(::sittir_core::types::KindId(304)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_type_param_type_var(self, w))
+    }
+}
+
+}
+
+impl ::sittir_core::prepare::Prepare for TypeParamTypeVarNode {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
+        prepare_type_param_type_var(self, &mut (), ctx)
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &mut ::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
+}
+
+fn prepare_type_param_type_var<N: TypeParamTypeVarPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
+    let mut parts = node.prepare_parts();
+    ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
+    ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(304), (None, None), ctx);
+    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.name, overlay, ctx)?;
+    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.bounds, overlay, ctx)?;
+    Ok(())
+}
+
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
+#[node(kind = kind::TYPE_PARAM_TYPE_VAR_TUPLE, layout = [kind::STAR | kind::STAR2], words = 5, built_words = 3, fields = TypeParamTypeVarTupleFields, prepare = TypeParamTypeVarTuplePrepare, view = TypeParamTypeVarTupleNodeRecord, prepare_fn = prepare_type_param_type_var_tuple)]
+pub struct TypeParamTypeVarTupleNode {
+    #[wire(key = "$_layout")]
+    #[layout]
+    pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
+    #[wire(key = "_name")]
+    #[slot(field = field::NAME, word = 2, width = 3, forms = 1, built = 2)]
+    pub name: ::sittir_core::SlotValue<IdentifierNode>,
+}
+
+impl ::sittir_core::view::KindOf for TypeParamTypeVarTupleNode {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(305)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::options::Edged for TypeParamTypeVarTupleNode {
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(305) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
+}
+
+impl ::sittir_core::render::Render for TypeParamTypeVarTupleNode {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(305)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_type_param_type_var_tuple(self, w))
+    }
+}
+
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for TypeParamTypeVarTupleNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(305)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for TypeParamTypeVarTupleNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(TypeParamTypeVarTupleFields::layout(self), Some(::sittir_core::types::KindId(305)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_type_param_type_var_tuple(self, w))
+    }
+}
+
+}
+
+impl ::sittir_core::prepare::Prepare for TypeParamTypeVarTupleNode {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
+        prepare_type_param_type_var_tuple(self, &mut (), ctx)
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &mut ::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
+}
+
+fn prepare_type_param_type_var_tuple<N: TypeParamTypeVarTuplePrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
+    let mut parts = node.prepare_parts();
+    ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
+    ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(305), (None, None), ctx);
+    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.name, overlay, ctx)?;
+    Ok(())
+}
+
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
+#[node(kind = kind::TYPE_PARAM_PARAM_SPEC, layout = [kind::STAR_STAR], words = 5, built_words = 3, fields = TypeParamParamSpecFields, prepare = TypeParamParamSpecPrepare, view = TypeParamParamSpecNodeRecord, prepare_fn = prepare_type_param_param_spec)]
+pub struct TypeParamParamSpecNode {
+    #[wire(key = "$_layout")]
+    #[layout]
+    pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
+    #[wire(key = "_name")]
+    #[slot(field = field::NAME, word = 2, width = 3, forms = 1, built = 2)]
+    pub name: ::sittir_core::SlotValue<IdentifierNode>,
+}
+
+impl ::sittir_core::view::KindOf for TypeParamParamSpecNode {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(306)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::options::Edged for TypeParamParamSpecNode {
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(306) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
+}
+
+impl ::sittir_core::render::Render for TypeParamParamSpecNode {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(306)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_type_param_param_spec(self, w))
+    }
+}
+
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for TypeParamParamSpecNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(306)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for TypeParamParamSpecNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(TypeParamParamSpecFields::layout(self), Some(::sittir_core::types::KindId(306)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_type_param_param_spec(self, w))
+    }
+}
+
+}
+
+impl ::sittir_core::prepare::Prepare for TypeParamParamSpecNode {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
+        prepare_type_param_param_spec(self, &mut (), ctx)
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &mut ::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
+}
+
+fn prepare_type_param_param_spec<N: TypeParamParamSpecPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
+    let mut parts = node.prepare_parts();
+    ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
+    ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(306), (None, None), ctx);
+    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.name, overlay, ctx)?;
+    Ok(())
+}
+
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
+#[node(kind = kind::STRING_START, interior = "^(?<prefix>rb|rB|Rb|RB|br|bR|Br|BR|rf|rF|Rf|RF|fr|fR|Fr|FR|rt|rT|Rt|RT|tr|tR|Tr|TR|ur|uR|Ur|UR|r|R|b|B|f|F|t|T|u|U)?(?<quote>\"\"\"|'''|\"|'|`)$", words = 8, built_words = 5, fields = StringStartFields, prepare = StringStartPrepare, view = StringStartNodeRecord, prepare_fn = prepare_string_start, facet = quote)]
 pub struct StringStartNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
-    #[wire(key = "$text")]
-    #[text]
-    pub text: String,
+    #[wire(key = "$verbatim")]
+    #[slot(word = 6, width = 2, forms = 4, built = 4)]
+    pub verbatim: Option<String>,
+    #[wire(key = "_prefix")]
+    #[slot(capture = "prefix", word = 2, width = 2, forms = 4, built = 2)]
+    pub prefix: Option<String>,
+    #[wire(key = "_quote")]
+    #[slot(capture = "quote", word = 4, width = 2, forms = 4, built = 3)]
+    pub quote: Option<String>,
 }
 
 impl ::sittir_core::view::KindOf for StringStartNode {
@@ -28159,7 +28411,7 @@ impl ::sittir_core::options::Edged for StringStartNode {
 
 impl ::sittir_core::render::Render for StringStartNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(119)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_string_start(self, w))
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(119)), ::sittir_core::layout::TriviaRole::Owner, w, |w| match StringStartFields::verbatim(self) { Some(text) => w.text(text), None => render_string_start(self, w) })
     }
 }
 
@@ -28172,14 +28424,14 @@ impl ::sittir_core::view::KindOf for StringStartNodeRecord<'_> {
 
 impl ::sittir_core::render::Render for StringStartNodeRecord<'_> {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        ::sittir_core::arena::RecordLayout::render(StringStartFields::layout(self), Some(::sittir_core::types::KindId(119)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_string_start(self, w))
+        ::sittir_core::arena::RecordLayout::render(StringStartFields::layout(self), Some(::sittir_core::types::KindId(119)), ::sittir_core::layout::TriviaRole::Owner, w, |w| match StringStartFields::verbatim(self) { Some(text) => w.text(text), None => render_string_start(self, w) })
     }
 }
 
 }
 
 impl ::sittir_core::prepare::Prepare for StringStartNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_string_start(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -28199,10 +28451,29 @@ impl ::sittir_core::prepare::Prepare for StringStartNode {
     }
 }
 
-fn prepare_string_start<N: StringStartPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_string_start<N: StringStartPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     Ok(())
+}
+
+impl ::sittir_core::delimiters::DelimiterToken for StringStartNode {
+    fn facet(&self) -> Option<&str> { StringStartFields::quote(self) }
+    fn opaque(&self) -> bool { StringStartFields::verbatim(self).is_some() }
+    fn gate(&self) -> Option<&str> { StringStartFields::prefix(self) }
+}
+
+impl ::sittir_core::delimiters::SetFacet for StringStartNode {
+    fn set_facet(&mut self, text: String) { self.quote = Some(text); }
+}
+
+::sittir_core::records_codec! {
+impl ::sittir_core::delimiters::DelimiterToken for StringStartNodeRecord<'_> {
+    fn facet(&self) -> Option<&str> { StringStartFields::quote(self) }
+    fn opaque(&self) -> bool { StringStartFields::verbatim(self).is_some() }
+    fn gate(&self) -> Option<&str> { StringStartFields::prefix(self) }
+}
+
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
@@ -28250,7 +28521,7 @@ impl ::sittir_core::render::Render for StringFragmentNodeRecord<'_> {
 }
 
 impl ::sittir_core::prepare::Prepare for StringFragmentNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_string_fragment(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -28270,7 +28541,7 @@ impl ::sittir_core::prepare::Prepare for StringFragmentNode {
     }
 }
 
-fn prepare_string_fragment<N: StringFragmentPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_string_fragment<N: StringFragmentPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     Ok(())
@@ -28321,7 +28592,7 @@ impl ::sittir_core::render::Render for EscapeInterpolationNodeRecord<'_> {
 }
 
 impl ::sittir_core::prepare::Prepare for EscapeInterpolationNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_escape_interpolation(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -28341,21 +28612,27 @@ impl ::sittir_core::prepare::Prepare for EscapeInterpolationNode {
     }
 }
 
-fn prepare_escape_interpolation<N: EscapeInterpolationPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_escape_interpolation<N: EscapeInterpolationPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     Ok(())
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::STRING_END, text, words = 2, built_words = 2, fields = StringEndFields, prepare = StringEndPrepare, view = StringEndNodeRecord, prepare_fn = prepare_string_end)]
+#[node(kind = kind::STRING_END, interior = "^(?<content>(?:(?:\\\\[\\s\\S])*))(?<quote>\"\"\"|'''|\"|'|`)$", words = 8, built_words = 5, fields = StringEndFields, prepare = StringEndPrepare, view = StringEndNodeRecord, prepare_fn = prepare_string_end, facet = quote)]
 pub struct StringEndNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
-    #[wire(key = "$text")]
-    #[text]
-    pub text: String,
+    #[wire(key = "$verbatim")]
+    #[slot(word = 6, width = 2, forms = 4, built = 4)]
+    pub verbatim: Option<String>,
+    #[wire(key = "_content")]
+    #[slot(capture = "content", word = 2, width = 2, forms = 4, built = 2)]
+    pub content: Option<String>,
+    #[wire(key = "_quote")]
+    #[slot(capture = "quote", word = 4, width = 2, forms = 4, built = 3)]
+    pub quote: Option<String>,
 }
 
 impl ::sittir_core::view::KindOf for StringEndNode {
@@ -28372,7 +28649,7 @@ impl ::sittir_core::options::Edged for StringEndNode {
 
 impl ::sittir_core::render::Render for StringEndNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(122)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_string_end(self, w))
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(122)), ::sittir_core::layout::TriviaRole::Owner, w, |w| match StringEndFields::verbatim(self) { Some(text) => w.text(text), None => render_string_end(self, w) })
     }
 }
 
@@ -28385,14 +28662,14 @@ impl ::sittir_core::view::KindOf for StringEndNodeRecord<'_> {
 
 impl ::sittir_core::render::Render for StringEndNodeRecord<'_> {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        ::sittir_core::arena::RecordLayout::render(StringEndFields::layout(self), Some(::sittir_core::types::KindId(122)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_string_end(self, w))
+        ::sittir_core::arena::RecordLayout::render(StringEndFields::layout(self), Some(::sittir_core::types::KindId(122)), ::sittir_core::layout::TriviaRole::Owner, w, |w| match StringEndFields::verbatim(self) { Some(text) => w.text(text), None => render_string_end(self, w) })
     }
 }
 
 }
 
 impl ::sittir_core::prepare::Prepare for StringEndNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_string_end(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -28412,10 +28689,29 @@ impl ::sittir_core::prepare::Prepare for StringEndNode {
     }
 }
 
-fn prepare_string_end<N: StringEndPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_string_end<N: StringEndPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     Ok(())
+}
+
+impl ::sittir_core::delimiters::DelimiterToken for StringEndNode {
+    fn facet(&self) -> Option<&str> { StringEndFields::quote(self) }
+    fn content(&self) -> Option<&str> { StringEndFields::content(self) }
+    fn opaque(&self) -> bool { StringEndFields::verbatim(self).is_some() }
+}
+
+impl ::sittir_core::delimiters::SetFacet for StringEndNode {
+    fn set_facet(&mut self, text: String) { self.quote = Some(text); }
+}
+
+::sittir_core::records_codec! {
+impl ::sittir_core::delimiters::DelimiterToken for StringEndNodeRecord<'_> {
+    fn facet(&self) -> Option<&str> { StringEndFields::quote(self) }
+    fn content(&self) -> Option<&str> { StringEndFields::content(self) }
+    fn opaque(&self) -> bool { StringEndFields::verbatim(self).is_some() }
+}
+
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
@@ -28432,7 +28728,7 @@ impl ::sittir_core::view::KindOf for IndentNode {
 }
 
 impl ::sittir_core::prepare::Prepare for IndentNode {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &mut ::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -28460,7 +28756,7 @@ impl ::sittir_core::view::KindOf for DedentNode {
 }
 
 impl ::sittir_core::prepare::Prepare for DedentNode {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &mut ::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -28488,7 +28784,7 @@ impl ::sittir_core::view::KindOf for TightNode {
 }
 
 impl ::sittir_core::prepare::Prepare for TightNode {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &mut ::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -28516,7 +28812,7 @@ impl ::sittir_core::view::KindOf for SpaceNode {
 }
 
 impl ::sittir_core::prepare::Prepare for SpaceNode {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &mut ::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -28544,7 +28840,7 @@ impl ::sittir_core::view::KindOf for TabNode {
 }
 
 impl ::sittir_core::prepare::Prepare for TabNode {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &mut ::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -28572,7 +28868,7 @@ impl ::sittir_core::view::KindOf for NewlineNode {
 }
 
 impl ::sittir_core::prepare::Prepare for NewlineNode {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &mut ::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -28600,7 +28896,7 @@ impl ::sittir_core::view::KindOf for BlanklineNode {
 }
 
 impl ::sittir_core::prepare::Prepare for BlanklineNode {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &mut ::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -28628,7 +28924,7 @@ impl ::sittir_core::view::KindOf for DoubleBlanklineNode {
 }
 
 impl ::sittir_core::prepare::Prepare for DoubleBlanklineNode {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &mut ::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -28655,7 +28951,7 @@ pub struct ConstructorDeclarationNode {
     pub async_: bool,
     #[wire(key = "_type_parameters")]
     #[slot(field = field::TYPE_PARAMETERS, word = 3, width = 5, inline = 5, forms = 8, built = 3)]
-    pub type_parameters: Option<::sittir_core::SlotValue<TypeParameterNode>>,
+    pub type_parameters: Option<::sittir_core::SlotValue<TypeParamsNode>>,
     #[wire(key = "_parameters")]
     #[slot(field = field::PARAMETERS, word = 8, width = 5, inline = 5, forms = 8, built = 4)]
     pub parameters: ::sittir_core::SlotValue<ParametersNode>,
@@ -28669,39 +28965,39 @@ pub struct ConstructorDeclarationNode {
 
 impl ::sittir_core::view::KindOf for ConstructorDeclarationNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(302)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(307)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for ConstructorDeclarationNode {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(302) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(307) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for ConstructorDeclarationNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(302)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_constructor_declaration(self, w))
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(307)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_constructor_declaration(self, w))
     }
 }
 
 ::sittir_core::records_codec! {
 impl ::sittir_core::view::KindOf for ConstructorDeclarationNodeRecord<'_> {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(302)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(307)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::render::Render for ConstructorDeclarationNodeRecord<'_> {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        ::sittir_core::arena::RecordLayout::render(ConstructorDeclarationFields::layout(self), Some(::sittir_core::types::KindId(302)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_constructor_declaration(self, w))
+        ::sittir_core::arena::RecordLayout::render(ConstructorDeclarationFields::layout(self), Some(::sittir_core::types::KindId(307)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_constructor_declaration(self, w))
     }
 }
 
 }
 
 impl ::sittir_core::prepare::Prepare for ConstructorDeclarationNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_constructor_declaration(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -28721,10 +29017,10 @@ impl ::sittir_core::prepare::Prepare for ConstructorDeclarationNode {
     }
 }
 
-fn prepare_constructor_declaration<N: ConstructorDeclarationPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_constructor_declaration<N: ConstructorDeclarationPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
-    ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(302), (None, None), ctx);
+    ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(307), (None, None), ctx);
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.type_parameters, overlay, ctx)?;
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.parameters, overlay, ctx)?;
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.return_type, overlay, ctx)?;
@@ -28750,39 +29046,39 @@ pub struct BlockClassDeclarationNode {
 
 impl ::sittir_core::view::KindOf for BlockClassDeclarationNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(304)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(309)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for BlockClassDeclarationNode {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(304) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(309) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for BlockClassDeclarationNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(304)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_block_class_declaration(self, w))
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(309)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_block_class_declaration(self, w))
     }
 }
 
 ::sittir_core::records_codec! {
 impl ::sittir_core::view::KindOf for BlockClassDeclarationNodeRecord<'_> {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(304)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(309)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::render::Render for BlockClassDeclarationNodeRecord<'_> {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        ::sittir_core::arena::RecordLayout::render(BlockClassDeclarationFields::layout(self), Some(::sittir_core::types::KindId(304)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_block_class_declaration(self, w))
+        ::sittir_core::arena::RecordLayout::render(BlockClassDeclarationFields::layout(self), Some(::sittir_core::types::KindId(309)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_block_class_declaration(self, w))
     }
 }
 
 }
 
 impl ::sittir_core::prepare::Prepare for BlockClassDeclarationNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_block_class_declaration(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -28802,10 +29098,10 @@ impl ::sittir_core::prepare::Prepare for BlockClassDeclarationNode {
     }
 }
 
-fn prepare_block_class_declaration<N: BlockClassDeclarationPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_block_class_declaration<N: BlockClassDeclarationPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
-    ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(304), (None, None), ctx);
+    ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(309), (None, None), ctx);
     { let slot = ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, overlay, "_statements"); ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.statements, overlay, slot.as_deref()); }
     ::sittir_core::prepare::Setting::fill(&mut parts.statements_separator_space, overlay, ctx.options.site_arm(options::SITE_BLOCK_CLASS_DECLARATION_STATEMENTS_SEPARATOR_SPACE).arm);
     ::sittir_core::prepare::SeatSlot::fill_seats(&mut parts.statements, overlay, options::SEATS_BLOCK_CLASS_DECLARATION_STATEMENTS, ctx);
@@ -28828,39 +29124,39 @@ pub struct SuiteBlockClassDeclarationNode {
 
 impl ::sittir_core::view::KindOf for SuiteBlockClassDeclarationNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(305)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(310)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for SuiteBlockClassDeclarationNode {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(305) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(310) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for SuiteBlockClassDeclarationNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(305)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_suite_block_class_declaration(self, w))
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(310)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_suite_block_class_declaration(self, w))
     }
 }
 
 ::sittir_core::records_codec! {
 impl ::sittir_core::view::KindOf for SuiteBlockClassDeclarationNodeRecord<'_> {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(305)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(310)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::render::Render for SuiteBlockClassDeclarationNodeRecord<'_> {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        ::sittir_core::arena::RecordLayout::render(SuiteBlockClassDeclarationFields::layout(self), Some(::sittir_core::types::KindId(305)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_suite_block_class_declaration(self, w))
+        ::sittir_core::arena::RecordLayout::render(SuiteBlockClassDeclarationFields::layout(self), Some(::sittir_core::types::KindId(310)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_suite_block_class_declaration(self, w))
     }
 }
 
 }
 
 impl ::sittir_core::prepare::Prepare for SuiteBlockClassDeclarationNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_suite_block_class_declaration(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -28880,10 +29176,10 @@ impl ::sittir_core::prepare::Prepare for SuiteBlockClassDeclarationNode {
     }
 }
 
-fn prepare_suite_block_class_declaration<N: SuiteBlockClassDeclarationPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_suite_block_class_declaration<N: SuiteBlockClassDeclarationPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
-    ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(305), (None, None), ctx);
+    ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(310), (None, None), ctx);
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.block_class_declaration, overlay, ctx)?;
     Ok(())
 }
@@ -28909,39 +29205,39 @@ pub struct DecoratedDefinitionClassDeclarationNode {
 
 impl ::sittir_core::view::KindOf for DecoratedDefinitionClassDeclarationNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(306)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(311)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for DecoratedDefinitionClassDeclarationNode {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(306) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(311) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for DecoratedDefinitionClassDeclarationNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(306)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_decorated_definition_class_declaration(self, w))
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(311)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_decorated_definition_class_declaration(self, w))
     }
 }
 
 ::sittir_core::records_codec! {
 impl ::sittir_core::view::KindOf for DecoratedDefinitionClassDeclarationNodeRecord<'_> {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(306)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(311)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::render::Render for DecoratedDefinitionClassDeclarationNodeRecord<'_> {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        ::sittir_core::arena::RecordLayout::render(DecoratedDefinitionClassDeclarationFields::layout(self), Some(::sittir_core::types::KindId(306)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_decorated_definition_class_declaration(self, w))
+        ::sittir_core::arena::RecordLayout::render(DecoratedDefinitionClassDeclarationFields::layout(self), Some(::sittir_core::types::KindId(311)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_decorated_definition_class_declaration(self, w))
     }
 }
 
 }
 
 impl ::sittir_core::prepare::Prepare for DecoratedDefinitionClassDeclarationNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_decorated_definition_class_declaration(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -28961,10 +29257,10 @@ impl ::sittir_core::prepare::Prepare for DecoratedDefinitionClassDeclarationNode
     }
 }
 
-fn prepare_decorated_definition_class_declaration<N: DecoratedDefinitionClassDeclarationPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_decorated_definition_class_declaration<N: DecoratedDefinitionClassDeclarationPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
-    ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(306), (None, None), ctx);
+    ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(311), (None, None), ctx);
     { let slot = ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, overlay, "_decorator"); ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.decorator, overlay, slot.as_deref()); }
     ::sittir_core::prepare::Setting::fill(&mut parts.decorator_separator_space, overlay, ctx.options.site_arm(options::SITE_DECORATED_DEFINITION_CLASS_DECLARATION_DECORATOR_SEPARATOR_SPACE).arm);
     ::sittir_core::prepare::SeatSlot::fill_seats(&mut parts.decorator, overlay, options::SEATS_DECORATED_DEFINITION_CLASS_DECLARATION_DECORATOR, ctx);
@@ -28988,39 +29284,39 @@ pub struct AsPatternTargetNode {
 
 impl ::sittir_core::view::KindOf for AsPatternTargetNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(343)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(350)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for AsPatternTargetNode {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(343) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(350) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for AsPatternTargetNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(343)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_as_pattern_target(self, w))
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(350)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_as_pattern_target(self, w))
     }
 }
 
 ::sittir_core::records_codec! {
 impl ::sittir_core::view::KindOf for AsPatternTargetNodeRecord<'_> {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(343)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(350)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::render::Render for AsPatternTargetNodeRecord<'_> {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        ::sittir_core::arena::RecordLayout::render(AsPatternTargetFields::layout(self), Some(::sittir_core::types::KindId(343)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_as_pattern_target(self, w))
+        ::sittir_core::arena::RecordLayout::render(AsPatternTargetFields::layout(self), Some(::sittir_core::types::KindId(350)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_as_pattern_target(self, w))
     }
 }
 
 }
 
 impl ::sittir_core::prepare::Prepare for AsPatternTargetNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         prepare_as_pattern_target(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -29040,7 +29336,7 @@ impl ::sittir_core::prepare::Prepare for AsPatternTargetNode {
     }
 }
 
-fn prepare_as_pattern_target<N: AsPatternTargetPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_as_pattern_target<N: AsPatternTargetPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.content, overlay, ctx)?;
@@ -29061,7 +29357,7 @@ impl ::sittir_core::view::KindOf for ImportKeywordNode {
 }
 
 impl ::sittir_core::prepare::Prepare for ImportKeywordNode {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &mut ::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -29089,7 +29385,7 @@ impl ::sittir_core::view::KindOf for DotNode {
 }
 
 impl ::sittir_core::prepare::Prepare for DotNode {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &mut ::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -29117,7 +29413,7 @@ impl ::sittir_core::view::KindOf for FromKeywordNode {
 }
 
 impl ::sittir_core::prepare::Prepare for FromKeywordNode {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &mut ::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -29145,7 +29441,7 @@ impl ::sittir_core::view::KindOf for FutureUKeywordNode {
 }
 
 impl ::sittir_core::prepare::Prepare for FutureUKeywordNode {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &mut ::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -29173,7 +29469,7 @@ impl ::sittir_core::view::KindOf for AsKeywordNode {
 }
 
 impl ::sittir_core::prepare::Prepare for AsKeywordNode {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &mut ::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -29201,7 +29497,7 @@ impl ::sittir_core::view::KindOf for StarNode {
 }
 
 impl ::sittir_core::prepare::Prepare for StarNode {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &mut ::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -29229,7 +29525,7 @@ impl ::sittir_core::view::KindOf for GtGtNode {
 }
 
 impl ::sittir_core::prepare::Prepare for GtGtNode {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &mut ::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -29257,7 +29553,7 @@ impl ::sittir_core::view::KindOf for AssertKeywordNode {
 }
 
 impl ::sittir_core::prepare::Prepare for AssertKeywordNode {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &mut ::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -29285,7 +29581,7 @@ impl ::sittir_core::view::KindOf for ColonEqNode {
 }
 
 impl ::sittir_core::prepare::Prepare for ColonEqNode {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &mut ::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -29313,7 +29609,7 @@ impl ::sittir_core::view::KindOf for ReturnKeywordNode {
 }
 
 impl ::sittir_core::prepare::Prepare for ReturnKeywordNode {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &mut ::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -29341,7 +29637,7 @@ impl ::sittir_core::view::KindOf for DelKeywordNode {
 }
 
 impl ::sittir_core::prepare::Prepare for DelKeywordNode {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &mut ::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -29369,7 +29665,7 @@ impl ::sittir_core::view::KindOf for RaiseKeywordNode {
 }
 
 impl ::sittir_core::prepare::Prepare for RaiseKeywordNode {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &mut ::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -29397,7 +29693,7 @@ impl ::sittir_core::view::KindOf for PassKeywordNode {
 }
 
 impl ::sittir_core::prepare::Prepare for PassKeywordNode {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &mut ::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -29425,7 +29721,7 @@ impl ::sittir_core::view::KindOf for BreakKeywordNode {
 }
 
 impl ::sittir_core::prepare::Prepare for BreakKeywordNode {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &mut ::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -29453,7 +29749,7 @@ impl ::sittir_core::view::KindOf for ContinueKeywordNode {
 }
 
 impl ::sittir_core::prepare::Prepare for ContinueKeywordNode {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &mut ::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -29481,7 +29777,7 @@ impl ::sittir_core::view::KindOf for IfKeywordNode {
 }
 
 impl ::sittir_core::prepare::Prepare for IfKeywordNode {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &mut ::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -29509,7 +29805,7 @@ impl ::sittir_core::view::KindOf for ColonNode {
 }
 
 impl ::sittir_core::prepare::Prepare for ColonNode {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &mut ::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -29537,7 +29833,7 @@ impl ::sittir_core::view::KindOf for ElifKeywordNode {
 }
 
 impl ::sittir_core::prepare::Prepare for ElifKeywordNode {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &mut ::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -29565,7 +29861,7 @@ impl ::sittir_core::view::KindOf for ElseKeywordNode {
 }
 
 impl ::sittir_core::prepare::Prepare for ElseKeywordNode {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &mut ::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -29593,7 +29889,7 @@ impl ::sittir_core::view::KindOf for MatchKeywordNode {
 }
 
 impl ::sittir_core::prepare::Prepare for MatchKeywordNode {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &mut ::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -29621,7 +29917,7 @@ impl ::sittir_core::view::KindOf for CaseKeywordNode {
 }
 
 impl ::sittir_core::prepare::Prepare for CaseKeywordNode {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &mut ::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -29649,7 +29945,7 @@ impl ::sittir_core::view::KindOf for AsyncKeywordNode {
 }
 
 impl ::sittir_core::prepare::Prepare for AsyncKeywordNode {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &mut ::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -29677,7 +29973,7 @@ impl ::sittir_core::view::KindOf for ForKeywordNode {
 }
 
 impl ::sittir_core::prepare::Prepare for ForKeywordNode {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &mut ::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -29705,7 +30001,7 @@ impl ::sittir_core::view::KindOf for InKeywordNode {
 }
 
 impl ::sittir_core::prepare::Prepare for InKeywordNode {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &mut ::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -29733,7 +30029,7 @@ impl ::sittir_core::view::KindOf for WhileKeywordNode {
 }
 
 impl ::sittir_core::prepare::Prepare for WhileKeywordNode {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &mut ::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -29761,7 +30057,7 @@ impl ::sittir_core::view::KindOf for TryKeywordNode {
 }
 
 impl ::sittir_core::prepare::Prepare for TryKeywordNode {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &mut ::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -29789,7 +30085,7 @@ impl ::sittir_core::view::KindOf for ExceptKeywordNode {
 }
 
 impl ::sittir_core::prepare::Prepare for ExceptKeywordNode {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &mut ::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -29817,7 +30113,7 @@ impl ::sittir_core::view::KindOf for FinallyKeywordNode {
 }
 
 impl ::sittir_core::prepare::Prepare for FinallyKeywordNode {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &mut ::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -29845,7 +30141,7 @@ impl ::sittir_core::view::KindOf for WithKeywordNode {
 }
 
 impl ::sittir_core::prepare::Prepare for WithKeywordNode {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &mut ::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -29873,7 +30169,7 @@ impl ::sittir_core::view::KindOf for DefKeywordNode {
 }
 
 impl ::sittir_core::prepare::Prepare for DefKeywordNode {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &mut ::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -29901,7 +30197,7 @@ impl ::sittir_core::view::KindOf for DashGtNode {
 }
 
 impl ::sittir_core::prepare::Prepare for DashGtNode {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &mut ::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -29929,7 +30225,7 @@ impl ::sittir_core::view::KindOf for LparenNode {
 }
 
 impl ::sittir_core::prepare::Prepare for LparenNode {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &mut ::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -29957,7 +30253,7 @@ impl ::sittir_core::view::KindOf for RparenNode {
 }
 
 impl ::sittir_core::prepare::Prepare for RparenNode {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &mut ::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -29985,7 +30281,7 @@ impl ::sittir_core::view::KindOf for StarStarNode {
 }
 
 impl ::sittir_core::prepare::Prepare for StarStarNode {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &mut ::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -30013,7 +30309,7 @@ impl ::sittir_core::view::KindOf for GlobalKeywordNode {
 }
 
 impl ::sittir_core::prepare::Prepare for GlobalKeywordNode {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &mut ::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -30041,7 +30337,7 @@ impl ::sittir_core::view::KindOf for NonlocalKeywordNode {
 }
 
 impl ::sittir_core::prepare::Prepare for NonlocalKeywordNode {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &mut ::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -30069,7 +30365,7 @@ impl ::sittir_core::view::KindOf for ExecKeywordNode {
 }
 
 impl ::sittir_core::prepare::Prepare for ExecKeywordNode {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &mut ::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -30097,7 +30393,7 @@ impl ::sittir_core::view::KindOf for TypeKeywordNode {
 }
 
 impl ::sittir_core::prepare::Prepare for TypeKeywordNode {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &mut ::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -30125,7 +30421,7 @@ impl ::sittir_core::view::KindOf for EqNode {
 }
 
 impl ::sittir_core::prepare::Prepare for EqNode {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &mut ::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -30153,7 +30449,7 @@ impl ::sittir_core::view::KindOf for ClassKeywordNode {
 }
 
 impl ::sittir_core::prepare::Prepare for ClassKeywordNode {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &mut ::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -30181,7 +30477,7 @@ impl ::sittir_core::view::KindOf for LbrackNode {
 }
 
 impl ::sittir_core::prepare::Prepare for LbrackNode {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &mut ::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -30209,7 +30505,7 @@ impl ::sittir_core::view::KindOf for RbrackNode {
 }
 
 impl ::sittir_core::prepare::Prepare for RbrackNode {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &mut ::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -30237,7 +30533,7 @@ impl ::sittir_core::view::KindOf for AtNode {
 }
 
 impl ::sittir_core::prepare::Prepare for AtNode {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &mut ::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -30265,7 +30561,7 @@ impl ::sittir_core::view::KindOf for PipeNode {
 }
 
 impl ::sittir_core::prepare::Prepare for PipeNode {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &mut ::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -30293,7 +30589,7 @@ impl ::sittir_core::view::KindOf for LbraceNode {
 }
 
 impl ::sittir_core::prepare::Prepare for LbraceNode {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &mut ::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -30321,7 +30617,7 @@ impl ::sittir_core::view::KindOf for RbraceNode {
 }
 
 impl ::sittir_core::prepare::Prepare for RbraceNode {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &mut ::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -30349,7 +30645,7 @@ impl ::sittir_core::view::KindOf for DashNode {
 }
 
 impl ::sittir_core::prepare::Prepare for DashNode {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &mut ::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -30377,7 +30673,7 @@ impl ::sittir_core::view::KindOf for PlusNode {
 }
 
 impl ::sittir_core::prepare::Prepare for PlusNode {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &mut ::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -30405,7 +30701,7 @@ impl ::sittir_core::view::KindOf for NotKeywordNode {
 }
 
 impl ::sittir_core::prepare::Prepare for NotKeywordNode {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &mut ::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -30433,7 +30729,7 @@ impl ::sittir_core::view::KindOf for AndKeywordNode {
 }
 
 impl ::sittir_core::prepare::Prepare for AndKeywordNode {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &mut ::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -30461,7 +30757,7 @@ impl ::sittir_core::view::KindOf for OrKeywordNode {
 }
 
 impl ::sittir_core::prepare::Prepare for OrKeywordNode {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &mut ::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -30489,7 +30785,7 @@ impl ::sittir_core::view::KindOf for SlashNode {
 }
 
 impl ::sittir_core::prepare::Prepare for SlashNode {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &mut ::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -30517,7 +30813,7 @@ impl ::sittir_core::view::KindOf for PercentNode {
 }
 
 impl ::sittir_core::prepare::Prepare for PercentNode {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &mut ::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -30545,7 +30841,7 @@ impl ::sittir_core::view::KindOf for SlashSlashNode {
 }
 
 impl ::sittir_core::prepare::Prepare for SlashSlashNode {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &mut ::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -30573,7 +30869,7 @@ impl ::sittir_core::view::KindOf for AmpNode {
 }
 
 impl ::sittir_core::prepare::Prepare for AmpNode {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &mut ::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -30601,7 +30897,7 @@ impl ::sittir_core::view::KindOf for CaretNode {
 }
 
 impl ::sittir_core::prepare::Prepare for CaretNode {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &mut ::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -30629,7 +30925,7 @@ impl ::sittir_core::view::KindOf for LtLtNode {
 }
 
 impl ::sittir_core::prepare::Prepare for LtLtNode {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &mut ::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -30657,7 +30953,7 @@ impl ::sittir_core::view::KindOf for TildeNode {
 }
 
 impl ::sittir_core::prepare::Prepare for TildeNode {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &mut ::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -30685,7 +30981,7 @@ impl ::sittir_core::view::KindOf for LambdaKeywordNode {
 }
 
 impl ::sittir_core::prepare::Prepare for LambdaKeywordNode {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &mut ::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -30713,7 +31009,7 @@ impl ::sittir_core::view::KindOf for PlusEqNode {
 }
 
 impl ::sittir_core::prepare::Prepare for PlusEqNode {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &mut ::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -30741,7 +31037,7 @@ impl ::sittir_core::view::KindOf for DashEqNode {
 }
 
 impl ::sittir_core::prepare::Prepare for DashEqNode {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &mut ::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -30769,7 +31065,7 @@ impl ::sittir_core::view::KindOf for StarEqNode {
 }
 
 impl ::sittir_core::prepare::Prepare for StarEqNode {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &mut ::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -30797,7 +31093,7 @@ impl ::sittir_core::view::KindOf for SlashEqNode {
 }
 
 impl ::sittir_core::prepare::Prepare for SlashEqNode {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &mut ::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -30825,7 +31121,7 @@ impl ::sittir_core::view::KindOf for AtEqNode {
 }
 
 impl ::sittir_core::prepare::Prepare for AtEqNode {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &mut ::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -30853,7 +31149,7 @@ impl ::sittir_core::view::KindOf for SlashSlashEqNode {
 }
 
 impl ::sittir_core::prepare::Prepare for SlashSlashEqNode {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &mut ::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -30881,7 +31177,7 @@ impl ::sittir_core::view::KindOf for PercentEqNode {
 }
 
 impl ::sittir_core::prepare::Prepare for PercentEqNode {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &mut ::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -30909,7 +31205,7 @@ impl ::sittir_core::view::KindOf for StarStarEqNode {
 }
 
 impl ::sittir_core::prepare::Prepare for StarStarEqNode {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &mut ::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -30937,7 +31233,7 @@ impl ::sittir_core::view::KindOf for GtGtEqNode {
 }
 
 impl ::sittir_core::prepare::Prepare for GtGtEqNode {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &mut ::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -30965,7 +31261,7 @@ impl ::sittir_core::view::KindOf for LtLtEqNode {
 }
 
 impl ::sittir_core::prepare::Prepare for LtLtEqNode {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &mut ::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -30993,7 +31289,7 @@ impl ::sittir_core::view::KindOf for AmpEqNode {
 }
 
 impl ::sittir_core::prepare::Prepare for AmpEqNode {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &mut ::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -31021,7 +31317,7 @@ impl ::sittir_core::view::KindOf for CaretEqNode {
 }
 
 impl ::sittir_core::prepare::Prepare for CaretEqNode {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &mut ::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -31049,7 +31345,7 @@ impl ::sittir_core::view::KindOf for PipeEqNode {
 }
 
 impl ::sittir_core::prepare::Prepare for PipeEqNode {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &mut ::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -31077,7 +31373,7 @@ impl ::sittir_core::view::KindOf for YieldKeywordNode {
 }
 
 impl ::sittir_core::prepare::Prepare for YieldKeywordNode {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &mut ::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -31105,7 +31401,7 @@ impl ::sittir_core::view::KindOf for CommaNode {
 }
 
 impl ::sittir_core::prepare::Prepare for CommaNode {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &mut ::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -31133,7 +31429,7 @@ impl ::sittir_core::view::KindOf for BslashNode {
 }
 
 impl ::sittir_core::prepare::Prepare for BslashNode {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &mut ::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -31161,7 +31457,7 @@ impl ::sittir_core::view::KindOf for AwaitKeywordNode {
 }
 
 impl ::sittir_core::prepare::Prepare for AwaitKeywordNode {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &mut ::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -31189,7 +31485,7 @@ impl ::sittir_core::view::KindOf for PrintKeywordNode {
 }
 
 impl ::sittir_core::prepare::Prepare for PrintKeywordNode {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &mut ::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -31217,7 +31513,7 @@ impl ::sittir_core::view::KindOf for UnderscoreNode {
 }
 
 impl ::sittir_core::prepare::Prepare for UnderscoreNode {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &mut ::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -31245,7 +31541,7 @@ impl ::sittir_core::view::KindOf for LtNode {
 }
 
 impl ::sittir_core::prepare::Prepare for LtNode {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &mut ::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -31273,7 +31569,7 @@ impl ::sittir_core::view::KindOf for LtEqNode {
 }
 
 impl ::sittir_core::prepare::Prepare for LtEqNode {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &mut ::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -31301,7 +31597,7 @@ impl ::sittir_core::view::KindOf for EqEqNode {
 }
 
 impl ::sittir_core::prepare::Prepare for EqEqNode {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &mut ::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -31329,7 +31625,7 @@ impl ::sittir_core::view::KindOf for BangEqNode {
 }
 
 impl ::sittir_core::prepare::Prepare for BangEqNode {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &mut ::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -31357,7 +31653,7 @@ impl ::sittir_core::view::KindOf for GtEqNode {
 }
 
 impl ::sittir_core::prepare::Prepare for GtEqNode {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &mut ::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -31385,7 +31681,7 @@ impl ::sittir_core::view::KindOf for GtNode {
 }
 
 impl ::sittir_core::prepare::Prepare for GtNode {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &mut ::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -31413,7 +31709,7 @@ impl ::sittir_core::view::KindOf for LtGtNode {
 }
 
 impl ::sittir_core::prepare::Prepare for LtGtNode {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &mut ::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -31441,7 +31737,7 @@ impl ::sittir_core::view::KindOf for NotInNode {
 }
 
 impl ::sittir_core::prepare::Prepare for NotInNode {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &mut ::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -31469,7 +31765,7 @@ impl ::sittir_core::view::KindOf for IsKeywordNode {
 }
 
 impl ::sittir_core::prepare::Prepare for IsKeywordNode {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &mut ::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -31497,7 +31793,7 @@ impl ::sittir_core::view::KindOf for IsNotNode {
 }
 
 impl ::sittir_core::prepare::Prepare for IsNotNode {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &mut ::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -31525,7 +31821,7 @@ impl ::sittir_core::view::KindOf for InitUKeywordNode {
 }
 
 impl ::sittir_core::prepare::Prepare for InitUKeywordNode {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &mut ::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -32402,7 +32698,7 @@ impl ::sittir_core::prepare::SeatTarget for KeywordSeparatorNode {
 
 impl ::sittir_core::prepare::SeatTarget for PrintStatementChevronNode {
     fn seat_target(&mut self, table: &[Option<::sittir_core::types::SiteId>], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, ::sittir_core::types::SiteId)> {
-        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(278)) {
+        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(282)) {
             return Some((self.layout.edges_mut(), site));
         }
         None
@@ -32411,7 +32707,7 @@ impl ::sittir_core::prepare::SeatTarget for PrintStatementChevronNode {
 
 impl ::sittir_core::prepare::SeatTarget for PrintStatementPlainNode {
     fn seat_target(&mut self, table: &[Option<::sittir_core::types::SiteId>], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, ::sittir_core::types::SiteId)> {
-        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(279)) {
+        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(283)) {
             return Some((self.layout.edges_mut(), site));
         }
         None
@@ -32420,7 +32716,7 @@ impl ::sittir_core::prepare::SeatTarget for PrintStatementPlainNode {
 
 impl ::sittir_core::prepare::SeatTarget for SplatPatternListNode {
     fn seat_target(&mut self, table: &[Option<::sittir_core::types::SiteId>], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, ::sittir_core::types::SiteId)> {
-        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(287)) {
+        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(291)) {
             return Some((self.layout.edges_mut(), site));
         }
         None
@@ -32429,7 +32725,7 @@ impl ::sittir_core::prepare::SeatTarget for SplatPatternListNode {
 
 impl ::sittir_core::prepare::SeatTarget for SplatPatternDictionaryNode {
     fn seat_target(&mut self, table: &[Option<::sittir_core::types::SiteId>], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, ::sittir_core::types::SiteId)> {
-        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(288)) {
+        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(292)) {
             return Some((self.layout.edges_mut(), site));
         }
         None
@@ -32438,7 +32734,7 @@ impl ::sittir_core::prepare::SeatTarget for SplatPatternDictionaryNode {
 
 impl ::sittir_core::prepare::SeatTarget for AssignmentEqNode {
     fn seat_target(&mut self, table: &[Option<::sittir_core::types::SiteId>], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, ::sittir_core::types::SiteId)> {
-        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(289)) {
+        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(293)) {
             return Some((self.layout.edges_mut(), site));
         }
         None
@@ -32447,7 +32743,7 @@ impl ::sittir_core::prepare::SeatTarget for AssignmentEqNode {
 
 impl ::sittir_core::prepare::SeatTarget for AssignmentTypeNode {
     fn seat_target(&mut self, table: &[Option<::sittir_core::types::SiteId>], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, ::sittir_core::types::SiteId)> {
-        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(290)) {
+        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(294)) {
             return Some((self.layout.edges_mut(), site));
         }
         None
@@ -32456,7 +32752,7 @@ impl ::sittir_core::prepare::SeatTarget for AssignmentTypeNode {
 
 impl ::sittir_core::prepare::SeatTarget for AssignmentTypedNode {
     fn seat_target(&mut self, table: &[Option<::sittir_core::types::SiteId>], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, ::sittir_core::types::SiteId)> {
-        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(291)) {
+        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(295)) {
             return Some((self.layout.edges_mut(), site));
         }
         None
@@ -32465,7 +32761,34 @@ impl ::sittir_core::prepare::SeatTarget for AssignmentTypedNode {
 
 impl ::sittir_core::prepare::SeatTarget for ComparisonOperatorComparatorNode {
     fn seat_target(&mut self, table: &[Option<::sittir_core::types::SiteId>], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, ::sittir_core::types::SiteId)> {
-        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(300)) {
+        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(302)) {
+            return Some((self.layout.edges_mut(), site));
+        }
+        None
+    }
+}
+
+impl ::sittir_core::prepare::SeatTarget for TypeParamTypeVarNode {
+    fn seat_target(&mut self, table: &[Option<::sittir_core::types::SiteId>], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, ::sittir_core::types::SiteId)> {
+        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(304)) {
+            return Some((self.layout.edges_mut(), site));
+        }
+        None
+    }
+}
+
+impl ::sittir_core::prepare::SeatTarget for TypeParamTypeVarTupleNode {
+    fn seat_target(&mut self, table: &[Option<::sittir_core::types::SiteId>], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, ::sittir_core::types::SiteId)> {
+        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(305)) {
+            return Some((self.layout.edges_mut(), site));
+        }
+        None
+    }
+}
+
+impl ::sittir_core::prepare::SeatTarget for TypeParamParamSpecNode {
+    fn seat_target(&mut self, table: &[Option<::sittir_core::types::SiteId>], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, ::sittir_core::types::SiteId)> {
+        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(306)) {
             return Some((self.layout.edges_mut(), site));
         }
         None
@@ -32474,7 +32797,7 @@ impl ::sittir_core::prepare::SeatTarget for ComparisonOperatorComparatorNode {
 
 impl ::sittir_core::prepare::SeatTarget for ConstructorDeclarationNode {
     fn seat_target(&mut self, table: &[Option<::sittir_core::types::SiteId>], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, ::sittir_core::types::SiteId)> {
-        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(302)) {
+        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(307)) {
             return Some((self.layout.edges_mut(), site));
         }
         None
@@ -32483,7 +32806,7 @@ impl ::sittir_core::prepare::SeatTarget for ConstructorDeclarationNode {
 
 impl ::sittir_core::prepare::SeatTarget for DecoratedDefinitionClassDeclarationNode {
     fn seat_target(&mut self, table: &[Option<::sittir_core::types::SiteId>], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, ::sittir_core::types::SiteId)> {
-        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(306)) {
+        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(311)) {
             return Some((self.layout.edges_mut(), site));
         }
         None
@@ -32618,6 +32941,16 @@ impl ::sittir_core::prepare::SeatTarget for PrimaryExpressionNode {
             Self::Ellipsis(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(63)).map(|site| (edges, site)),
             Self::ListSplatPattern(t) => t.seat_target(table, ctx),
             Self::Identifier { .. } | Self::Integer { .. } | Self::Float { .. } | Self::Verbatim { .. } => None,
+        }
+    }
+}
+
+impl ::sittir_core::prepare::SeatTarget for TypeParamNode {
+    fn seat_target(&mut self, table: &[Option<::sittir_core::types::SiteId>], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, ::sittir_core::types::SiteId)> {
+        match self {
+            Self::TypeParamTypeVar(t) => t.seat_target(table, ctx),
+            Self::TypeParamTypeVarTuple(t) => t.seat_target(table, ctx),
+            Self::TypeParamParamSpec(t) => t.seat_target(table, ctx),
         }
     }
 }
@@ -32937,10 +33270,6 @@ impl ::sittir_core::prepare::SeatTarget for AugmentedAssignmentRightNodeSlot {
             Self::ConditionalExpression(t) => t.seat_target(table, ctx),
             Self::NamedExpression(t) => t.seat_target(table, ctx),
             Self::AsPattern(t) => t.seat_target(table, ctx),
-            Self::AssignmentEq(t) => t.seat_target(table, ctx),
-            Self::AssignmentType(t) => t.seat_target(table, ctx),
-            Self::AssignmentTyped(t) => t.seat_target(table, ctx),
-            Self::AugmentedAssignment(t) => t.seat_target(table, ctx),
             Self::Yield(t) => t.seat_target(table, ctx),
             Self::Identifier { .. } | Self::IntegerHex { .. } | Self::IntegerOctal { .. } | Self::IntegerBinary { .. } | Self::IntegerDecimalLong { .. } | Self::IntegerDecimalImaginary { .. } | Self::IntegerDecimalPlain { .. } | Self::FloatPoint { .. } | Self::FloatLeadingPoint { .. } | Self::FloatScientific { .. } | Self::ExpressionList { .. } | Self::PatternList { .. } | Self::Verbatim { .. } => None,
         }
@@ -33123,44 +33452,6 @@ impl ::sittir_core::prepare::SeatTarget for CollectionElementsItemNodeSlot {
     }
 }
 
-impl ::sittir_core::prepare::SeatTarget for InterpolationExpressionNodeSlot {
-    fn seat_target(&mut self, table: &[Option<::sittir_core::types::SiteId>], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, ::sittir_core::types::SiteId)> {
-        match self {
-            Self::ComparisonOperator(t) => t.seat_target(table, ctx),
-            Self::NotOperator(t) => t.seat_target(table, ctx),
-            Self::BooleanOperator(t) => t.seat_target(table, ctx),
-            Self::Lambda(t) => t.seat_target(table, ctx),
-            Self::Await(t) => t.seat_target(table, ctx),
-            Self::BinaryOperator(t) => t.seat_target(table, ctx),
-            Self::String(t) => t.seat_target(table, ctx),
-            Self::ConcatenatedString(t) => t.seat_target(table, ctx),
-            Self::True(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(69)).map(|site| (edges, site)),
-            Self::False(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(70)).map(|site| (edges, site)),
-            Self::None(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(71)).map(|site| (edges, site)),
-            Self::UnaryOperator(t) => t.seat_target(table, ctx),
-            Self::Attribute(t) => t.seat_target(table, ctx),
-            Self::Subscript(t) => t.seat_target(table, ctx),
-            Self::Call(t) => t.seat_target(table, ctx),
-            Self::List(t) => t.seat_target(table, ctx),
-            Self::ListComprehension(t) => t.seat_target(table, ctx),
-            Self::Dictionary(t) => t.seat_target(table, ctx),
-            Self::DictionaryComprehension(t) => t.seat_target(table, ctx),
-            Self::Set(t) => t.seat_target(table, ctx),
-            Self::SetComprehension(t) => t.seat_target(table, ctx),
-            Self::Tuple(t) => t.seat_target(table, ctx),
-            Self::ParenthesizedExpression(t) => t.seat_target(table, ctx),
-            Self::GeneratorExpression(t) => t.seat_target(table, ctx),
-            Self::Ellipsis(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(63)).map(|site| (edges, site)),
-            Self::ListSplatPattern(t) => t.seat_target(table, ctx),
-            Self::ConditionalExpression(t) => t.seat_target(table, ctx),
-            Self::NamedExpression(t) => t.seat_target(table, ctx),
-            Self::AsPattern(t) => t.seat_target(table, ctx),
-            Self::Yield(t) => t.seat_target(table, ctx),
-            Self::Identifier { .. } | Self::IntegerHex { .. } | Self::IntegerOctal { .. } | Self::IntegerBinary { .. } | Self::IntegerDecimalLong { .. } | Self::IntegerDecimalImaginary { .. } | Self::IntegerDecimalPlain { .. } | Self::FloatPoint { .. } | Self::FloatLeadingPoint { .. } | Self::FloatScientific { .. } | Self::ExpressionList { .. } | Self::PatternList { .. } | Self::Verbatim { .. } => None,
-        }
-    }
-}
-
 impl ::sittir_core::prepare::SeatTarget for ArgumentListElementsItemNodeSlot {
     fn seat_target(&mut self, table: &[Option<::sittir_core::types::SiteId>], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, ::sittir_core::types::SiteId)> {
         match self {
@@ -33212,7 +33503,7 @@ impl ::sittir_core::prepare::SeatTarget for DictPatternElementsItemNodeSlot {
     }
 }
 
-impl ::sittir_core::prepare::SeatTarget for SubscriptsSubscriptNodeSlot {
+impl ::sittir_core::prepare::SeatTarget for SubscriptsElementsNodeSlot {
     fn seat_target(&mut self, table: &[Option<::sittir_core::types::SiteId>], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, ::sittir_core::types::SiteId)> {
         match self {
             Self::ComparisonOperator(t) => t.seat_target(table, ctx),
@@ -33264,6 +33555,47 @@ impl ::sittir_core::prepare::SeatTarget for ComprehensionClausesContentNodeSlot 
         match self {
             Self::ForInClause(t) => t.seat_target(table, ctx),
             Self::IfClause(t) => t.seat_target(table, ctx),
+        }
+    }
+}
+
+impl ::sittir_core::prepare::SeatTarget for AssignmentEqValueNodeSlot {
+    fn seat_target(&mut self, table: &[Option<::sittir_core::types::SiteId>], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, ::sittir_core::types::SiteId)> {
+        match self {
+            Self::ComparisonOperator(t) => t.seat_target(table, ctx),
+            Self::NotOperator(t) => t.seat_target(table, ctx),
+            Self::BooleanOperator(t) => t.seat_target(table, ctx),
+            Self::Lambda(t) => t.seat_target(table, ctx),
+            Self::Await(t) => t.seat_target(table, ctx),
+            Self::BinaryOperator(t) => t.seat_target(table, ctx),
+            Self::String(t) => t.seat_target(table, ctx),
+            Self::ConcatenatedString(t) => t.seat_target(table, ctx),
+            Self::True(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(69)).map(|site| (edges, site)),
+            Self::False(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(70)).map(|site| (edges, site)),
+            Self::None(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(71)).map(|site| (edges, site)),
+            Self::UnaryOperator(t) => t.seat_target(table, ctx),
+            Self::Attribute(t) => t.seat_target(table, ctx),
+            Self::Subscript(t) => t.seat_target(table, ctx),
+            Self::Call(t) => t.seat_target(table, ctx),
+            Self::List(t) => t.seat_target(table, ctx),
+            Self::ListComprehension(t) => t.seat_target(table, ctx),
+            Self::Dictionary(t) => t.seat_target(table, ctx),
+            Self::DictionaryComprehension(t) => t.seat_target(table, ctx),
+            Self::Set(t) => t.seat_target(table, ctx),
+            Self::SetComprehension(t) => t.seat_target(table, ctx),
+            Self::Tuple(t) => t.seat_target(table, ctx),
+            Self::ParenthesizedExpression(t) => t.seat_target(table, ctx),
+            Self::GeneratorExpression(t) => t.seat_target(table, ctx),
+            Self::Ellipsis(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(63)).map(|site| (edges, site)),
+            Self::ListSplatPattern(t) => t.seat_target(table, ctx),
+            Self::ConditionalExpression(t) => t.seat_target(table, ctx),
+            Self::NamedExpression(t) => t.seat_target(table, ctx),
+            Self::AsPattern(t) => t.seat_target(table, ctx),
+            Self::Yield(t) => t.seat_target(table, ctx),
+            Self::AssignmentEq(t) => t.seat_target(table, ctx),
+            Self::AssignmentType(t) => t.seat_target(table, ctx),
+            Self::AssignmentTyped(t) => t.seat_target(table, ctx),
+            Self::Identifier { .. } | Self::IntegerHex { .. } | Self::IntegerOctal { .. } | Self::IntegerBinary { .. } | Self::IntegerDecimalLong { .. } | Self::IntegerDecimalImaginary { .. } | Self::IntegerDecimalPlain { .. } | Self::FloatPoint { .. } | Self::FloatLeadingPoint { .. } | Self::FloatScientific { .. } | Self::ExpressionList { .. } | Self::PatternList { .. } | Self::Verbatim { .. } => None,
         }
     }
 }
@@ -33380,9 +33712,12 @@ impl ::sittir_core::prepare::SeatTarget for AnyNode {
             Self::AssignmentType(t) => t.seat_target(table, ctx),
             Self::AssignmentTyped(t) => t.seat_target(table, ctx),
             Self::ComparisonOperatorComparator(t) => t.seat_target(table, ctx),
+            Self::TypeParamTypeVar(t) => t.seat_target(table, ctx),
+            Self::TypeParamTypeVarTuple(t) => t.seat_target(table, ctx),
+            Self::TypeParamParamSpec(t) => t.seat_target(table, ctx),
             Self::ConstructorDeclaration(t) => t.seat_target(table, ctx),
             Self::DecoratedDefinitionClassDeclaration(t) => t.seat_target(table, ctx),
-            Self::Module { .. } | Self::ImportPrefix { .. } | Self::RelativeImport { .. } | Self::ImportList { .. } | Self::Chevron { .. } | Self::NamedExpressionLhs { .. } | Self::FinallyClause { .. } | Self::WithItem { .. } | Self::Parameters { .. } | Self::LambdaParameters { .. } | Self::TypeParameter { .. } | Self::ArgumentList { .. } | Self::Block { .. } | Self::ExpressionList { .. } | Self::SimplePattern { .. } | Self::UnionPattern { .. } | Self::DictPattern { .. } | Self::ClassPattern { .. } | Self::ComplexPattern { .. } | Self::ParametersElements { .. } | Self::Patterns { .. } | Self::PatternList { .. } | Self::CollectionElements { .. } | Self::StringContent { .. } | Self::Interpolation { .. } | Self::FormatSpecifier { .. } | Self::TypeConversion { .. } | Self::Identifier { .. } | Self::Comment { .. } | Self::SimpleStatementsElements { .. } | Self::Subjects { .. } | Self::WithClauseWithItems { .. } | Self::Types { .. } | Self::ArgumentListElements { .. } | Self::ListPatternCasePatterns { .. } | Self::DictPatternElements { .. } | Self::Subscripts { .. } | Self::DictionaryElements { .. } | Self::SliceGroup { .. } | Self::FormatSpecifierText { .. } | Self::TuplePatternElements { .. } | Self::CasePatternList { .. } | Self::TupleElements { .. } | Self::ExceptClauseExceptionAs { .. } | Self::CaseTuplePattern { .. } | Self::CaseListPattern { .. } | Self::PrintArguments { .. } | Self::PrintChevronArguments { .. } | Self::ParenthesizedImportList { .. } | Self::ComprehensionClauses { .. } | Self::IntegerHex { .. } | Self::IntegerOctal { .. } | Self::IntegerBinary { .. } | Self::IntegerDecimalLong { .. } | Self::IntegerDecimalImaginary { .. } | Self::IntegerDecimalPlain { .. } | Self::FloatPoint { .. } | Self::FloatLeadingPoint { .. } | Self::FloatScientific { .. } | Self::EscapeSequenceUnicodeFixed { .. } | Self::EscapeSequenceUnicodeWide { .. } | Self::EscapeSequenceHex { .. } | Self::EscapeSequenceOctal { .. } | Self::EscapeSequenceLineBreak { .. } | Self::EscapeSequenceSimple { .. } | Self::EscapeSequenceNamed { .. } | Self::LineContinuationNewline { .. } | Self::SimplePatternNegative { .. } | Self::ExceptClauseExceptionList { .. } | Self::ExceptClauseException { .. } | Self::ExpressionStatementTuple { .. } | Self::WithClauseBare { .. } | Self::WithClauseParen { .. } | Self::MatchBlockBlock { .. } | Self::MatchBlockEmpty { .. } | Self::SuiteInline { .. } | Self::SuiteBlock { .. } | Self::SuiteEmpty { .. } | Self::YieldFromClause { .. } | Self::StringStart { .. } | Self::StringFragment { .. } | Self::EscapeInterpolation { .. } | Self::StringEnd { .. } | Self::BlockClassDeclaration { .. } | Self::SuiteBlockClassDeclaration { .. } | Self::Names { .. } | Self::AsPatternTarget { .. } | Self::FormatExpression { .. } | Self::MethodDeclaration { .. } | Self::WildcardImport { .. } | Self::NotEscapeSequence { .. } | Self::WildcardPattern { .. } | Self::LineContinuationNul { .. } | Self::Indent { .. } | Self::Dedent { .. } | Self::Tight { .. } | Self::Space { .. } | Self::Tab { .. } | Self::Newline { .. } | Self::Blankline { .. } | Self::DoubleBlankline { .. } | Self::ImportKeyword { .. } | Self::Dot { .. } | Self::FromKeyword { .. } | Self::FutureUKeyword { .. } | Self::AsKeyword { .. } | Self::Star { .. } | Self::GtGt { .. } | Self::AssertKeyword { .. } | Self::ColonEq { .. } | Self::ReturnKeyword { .. } | Self::DelKeyword { .. } | Self::RaiseKeyword { .. } | Self::PassKeyword { .. } | Self::BreakKeyword { .. } | Self::ContinueKeyword { .. } | Self::IfKeyword { .. } | Self::Colon { .. } | Self::ElifKeyword { .. } | Self::ElseKeyword { .. } | Self::MatchKeyword { .. } | Self::CaseKeyword { .. } | Self::AsyncKeyword { .. } | Self::ForKeyword { .. } | Self::InKeyword { .. } | Self::WhileKeyword { .. } | Self::TryKeyword { .. } | Self::ExceptKeyword { .. } | Self::FinallyKeyword { .. } | Self::WithKeyword { .. } | Self::DefKeyword { .. } | Self::DashGt { .. } | Self::Lparen { .. } | Self::Rparen { .. } | Self::StarStar { .. } | Self::GlobalKeyword { .. } | Self::NonlocalKeyword { .. } | Self::ExecKeyword { .. } | Self::TypeKeyword { .. } | Self::Eq { .. } | Self::ClassKeyword { .. } | Self::Lbrack { .. } | Self::Rbrack { .. } | Self::At { .. } | Self::Pipe { .. } | Self::Lbrace { .. } | Self::Rbrace { .. } | Self::Dash { .. } | Self::Plus { .. } | Self::NotKeyword { .. } | Self::AndKeyword { .. } | Self::OrKeyword { .. } | Self::Slash { .. } | Self::Percent { .. } | Self::SlashSlash { .. } | Self::Amp { .. } | Self::Caret { .. } | Self::LtLt { .. } | Self::Tilde { .. } | Self::LambdaKeyword { .. } | Self::PlusEq { .. } | Self::DashEq { .. } | Self::StarEq { .. } | Self::SlashEq { .. } | Self::AtEq { .. } | Self::SlashSlashEq { .. } | Self::PercentEq { .. } | Self::StarStarEq { .. } | Self::GtGtEq { .. } | Self::LtLtEq { .. } | Self::AmpEq { .. } | Self::CaretEq { .. } | Self::PipeEq { .. } | Self::YieldKeyword { .. } | Self::Comma { .. } | Self::Bslash { .. } | Self::AwaitKeyword { .. } | Self::PrintKeyword { .. } | Self::Underscore { .. } | Self::Lt { .. } | Self::LtEq { .. } | Self::EqEq { .. } | Self::BangEq { .. } | Self::GtEq { .. } | Self::Gt { .. } | Self::LtGt { .. } | Self::NotIn { .. } | Self::IsKeyword { .. } | Self::IsNot { .. } | Self::InitUKeyword { .. } | Self::Verbatim { .. } => None,
+            Self::Module { .. } | Self::ImportPrefix { .. } | Self::RelativeImport { .. } | Self::ImportList { .. } | Self::Chevron { .. } | Self::NamedExpressionLhs { .. } | Self::MatchBlock { .. } | Self::FinallyClause { .. } | Self::WithItem { .. } | Self::Parameters { .. } | Self::LambdaParameters { .. } | Self::TypeParameter { .. } | Self::ArgumentList { .. } | Self::Block { .. } | Self::ExpressionList { .. } | Self::SimplePattern { .. } | Self::UnionPattern { .. } | Self::DictPattern { .. } | Self::ClassPattern { .. } | Self::ComplexPattern { .. } | Self::ParametersElements { .. } | Self::Patterns { .. } | Self::PatternList { .. } | Self::CollectionElements { .. } | Self::StringContent { .. } | Self::Interpolation { .. } | Self::FormatSpecifier { .. } | Self::TypeConversion { .. } | Self::Identifier { .. } | Self::Comment { .. } | Self::SimpleStatementsElements { .. } | Self::Subjects { .. } | Self::WithClauseWithItems { .. } | Self::Types { .. } | Self::ArgumentListElements { .. } | Self::ListPatternCasePatterns { .. } | Self::DictPatternElements { .. } | Self::Subscripts { .. } | Self::DictionaryElements { .. } | Self::SliceGroup { .. } | Self::FormatSpecifierText { .. } | Self::TypeParams { .. } | Self::TypeParamsItems { .. } | Self::TuplePatternElements { .. } | Self::CasePatternList { .. } | Self::TupleElements { .. } | Self::ExceptClauseExceptionAs { .. } | Self::CaseTuplePattern { .. } | Self::CaseListPattern { .. } | Self::PrintArguments { .. } | Self::PrintChevronArguments { .. } | Self::ParenthesizedImportList { .. } | Self::ComprehensionClauses { .. } | Self::IntegerHex { .. } | Self::IntegerOctal { .. } | Self::IntegerBinary { .. } | Self::IntegerDecimalLong { .. } | Self::IntegerDecimalImaginary { .. } | Self::IntegerDecimalPlain { .. } | Self::FloatPoint { .. } | Self::FloatLeadingPoint { .. } | Self::FloatScientific { .. } | Self::EscapeSequenceUnicodeFixed { .. } | Self::EscapeSequenceUnicodeWide { .. } | Self::EscapeSequenceHex { .. } | Self::EscapeSequenceOctal { .. } | Self::EscapeSequenceLineBreak { .. } | Self::EscapeSequenceSimple { .. } | Self::EscapeSequenceNamed { .. } | Self::LineContinuationNewline { .. } | Self::SimplePatternNegative { .. } | Self::ExceptClauseExceptionList { .. } | Self::ExceptClauseException { .. } | Self::ExpressionStatementTuple { .. } | Self::WithClauseBare { .. } | Self::WithClauseParen { .. } | Self::SuiteInline { .. } | Self::SuiteBlock { .. } | Self::SuiteEmpty { .. } | Self::YieldFromClause { .. } | Self::StringStart { .. } | Self::StringFragment { .. } | Self::EscapeInterpolation { .. } | Self::StringEnd { .. } | Self::BlockClassDeclaration { .. } | Self::SuiteBlockClassDeclaration { .. } | Self::Names { .. } | Self::AsPatternTarget { .. } | Self::FormatExpression { .. } | Self::MethodDeclaration { .. } | Self::WildcardImport { .. } | Self::NotEscapeSequence { .. } | Self::WildcardPattern { .. } | Self::LineContinuationNul { .. } | Self::Indent { .. } | Self::Dedent { .. } | Self::Tight { .. } | Self::Space { .. } | Self::Tab { .. } | Self::Newline { .. } | Self::Blankline { .. } | Self::DoubleBlankline { .. } | Self::ImportKeyword { .. } | Self::Dot { .. } | Self::FromKeyword { .. } | Self::FutureUKeyword { .. } | Self::AsKeyword { .. } | Self::Star { .. } | Self::GtGt { .. } | Self::AssertKeyword { .. } | Self::ColonEq { .. } | Self::ReturnKeyword { .. } | Self::DelKeyword { .. } | Self::RaiseKeyword { .. } | Self::PassKeyword { .. } | Self::BreakKeyword { .. } | Self::ContinueKeyword { .. } | Self::IfKeyword { .. } | Self::Colon { .. } | Self::ElifKeyword { .. } | Self::ElseKeyword { .. } | Self::MatchKeyword { .. } | Self::CaseKeyword { .. } | Self::AsyncKeyword { .. } | Self::ForKeyword { .. } | Self::InKeyword { .. } | Self::WhileKeyword { .. } | Self::TryKeyword { .. } | Self::ExceptKeyword { .. } | Self::FinallyKeyword { .. } | Self::WithKeyword { .. } | Self::DefKeyword { .. } | Self::DashGt { .. } | Self::Lparen { .. } | Self::Rparen { .. } | Self::StarStar { .. } | Self::GlobalKeyword { .. } | Self::NonlocalKeyword { .. } | Self::ExecKeyword { .. } | Self::TypeKeyword { .. } | Self::Eq { .. } | Self::ClassKeyword { .. } | Self::Lbrack { .. } | Self::Rbrack { .. } | Self::At { .. } | Self::Pipe { .. } | Self::Lbrace { .. } | Self::Rbrace { .. } | Self::Dash { .. } | Self::Plus { .. } | Self::NotKeyword { .. } | Self::AndKeyword { .. } | Self::OrKeyword { .. } | Self::Slash { .. } | Self::Percent { .. } | Self::SlashSlash { .. } | Self::Amp { .. } | Self::Caret { .. } | Self::LtLt { .. } | Self::Tilde { .. } | Self::LambdaKeyword { .. } | Self::PlusEq { .. } | Self::DashEq { .. } | Self::StarEq { .. } | Self::SlashEq { .. } | Self::AtEq { .. } | Self::SlashSlashEq { .. } | Self::PercentEq { .. } | Self::StarStarEq { .. } | Self::GtGtEq { .. } | Self::LtLtEq { .. } | Self::AmpEq { .. } | Self::CaretEq { .. } | Self::PipeEq { .. } | Self::YieldKeyword { .. } | Self::Comma { .. } | Self::Bslash { .. } | Self::AwaitKeyword { .. } | Self::PrintKeyword { .. } | Self::Underscore { .. } | Self::Lt { .. } | Self::LtEq { .. } | Self::EqEq { .. } | Self::BangEq { .. } | Self::GtEq { .. } | Self::Gt { .. } | Self::LtGt { .. } | Self::NotIn { .. } | Self::IsKeyword { .. } | Self::IsNot { .. } | Self::InitUKeyword { .. } | Self::Verbatim { .. } => None,
         }
     }
 }
@@ -33434,10 +33769,10 @@ fn render_import_prefix<N: ImportPrefixFields + ?Sized>(t: &N, w: &mut dyn ::sit
 }
 
 fn render_relative_import<N: RelativeImportFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let dots = node.dots();
     let name = View::new(node.name(), "{}");
-    let prefix = node.prefix();
     w.edge(::sittir_core::types::KindId(133), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
-    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_prefix", ::sittir_core::types::ItemIndex(0), w, |w| prefix.render(w))?;
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_dots", ::sittir_core::types::ItemIndex(0), w, |w| dots.render(w))?;
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_name", ::sittir_core::types::ItemIndex(0), w, |w| name.render(w))?;
     w.edge(::sittir_core::types::KindId(133), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
@@ -33663,16 +33998,44 @@ fn render_else_clause<N: ElseClauseFields + ?Sized>(node: &N, w: &mut dyn ::sitt
 
 fn render_match_statement<N: MatchStatementFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let body = node.body();
-    let subjects = node.subjects();
+    let subject = node.subject();
     w.edge(::sittir_core::types::KindId(154), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text("match")?;
     w.site_at(options::SITE_MATCH_STATEMENT_MATCH_KEYWORD_AFTER);
-    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_subjects", ::sittir_core::types::ItemIndex(0), w, |w| subjects.render(w))?;
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_subject", ::sittir_core::types::ItemIndex(0), w, |w| subject.render(w))?;
     w.site_at(options::SITE_MATCH_STATEMENT_COLON_BEFORE);
     w.text(":")?;
     w.site_at(options::SITE_MATCH_STATEMENT_COLON_AFTER);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_body", ::sittir_core::types::ItemIndex(0), w, |w| body.render(w))?;
     w.edge(::sittir_core::types::KindId(154), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
+    Ok(())
+}
+
+fn render_match_block<N: MatchBlockFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let alternative = ListView {
+        items: node.alternative(),
+        template: "{}",
+        token: "",
+        separators: None,
+        before: KindId::BLANK,
+        after: node.alternative_separator_space().unwrap_or(KindId::BLANK),
+        leading: false,
+        trailing: false,
+        head: None,
+        tail: None,
+        units: ::sittir_core::layout::BodyLayout::list_units(node.layout(), "_alternative"),
+    };
+    w.edge(::sittir_core::types::KindId(155), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
+    w.indent();
+    w.seam(::sittir_core::layout_kinds::LayoutKinds::from_bits(120));
+    w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT);
+    ::sittir_core::layout::BodyLayout::render_inner(node.layout(), w)?;
+    alternative.render(w)?;
+    if alternative.is_present() {
+        w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT);
+    }
+    w.dedent(::sittir_core::layout_kinds::LayoutKinds::NONE);
+    w.edge(::sittir_core::types::KindId(155), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
@@ -33975,16 +34338,18 @@ fn render_exec_statement<N: ExecStatementFields + ?Sized>(node: &N, w: &mut dyn 
 }
 
 fn render_type_alias_statement<N: TypeAliasStatementFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let left = node.left();
-    let right = node.right();
+    let name = node.name();
+    let type_parameters = View::new(node.type_parameters(), "{}");
+    let value = node.value();
     w.edge(::sittir_core::types::KindId(173), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text("type")?;
     w.site_at(options::SITE_TYPE_ALIAS_STATEMENT_TYPE_KEYWORD_AFTER);
-    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_left", ::sittir_core::types::ItemIndex(0), w, |w| left.render(w))?;
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_name", ::sittir_core::types::ItemIndex(0), w, |w| name.render(w))?;
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_type_parameters", ::sittir_core::types::ItemIndex(0), w, |w| type_parameters.render(w))?;
     w.site_at(options::SITE_TYPE_ALIAS_STATEMENT_EQ_BEFORE);
     w.text("=")?;
     w.site_at(options::SITE_TYPE_ALIAS_STATEMENT_EQ_AFTER);
-    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_right", ::sittir_core::types::ItemIndex(0), w, |w| right.render(w))?;
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_value", ::sittir_core::types::ItemIndex(0), w, |w| value.render(w))?;
     w.edge(::sittir_core::types::KindId(173), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
@@ -34103,20 +34468,20 @@ fn render_block<N: BlockFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::re
 }
 
 fn render_expression_list<N: ExpressionListFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let item = ListView {
-        items: node.item(),
+    let elements = ListView {
+        items: node.elements(),
         template: "{}",
         token: ",",
         separators: None,
-        before: node.item_separator_space_before().unwrap_or(KindId::BLANK),
-        after: node.item_separator_space_after().unwrap_or(KindId::BLANK),
+        before: node.elements_separator_space_before().unwrap_or(KindId::BLANK),
+        after: node.elements_separator_space_after().unwrap_or(KindId::BLANK),
         leading: false,
-        trailing: ::sittir_core::view::SlotItems::count(&node.item()) == 1 || node.delimiter().is_some_and(|d| d.has(::sittir_core::types::Delimiter::TRAILING)),
+        trailing: ::sittir_core::view::SlotItems::count(&node.elements()) == 1 || node.delimiter().is_some_and(|d| d.has(::sittir_core::types::Delimiter::TRAILING)),
         head: None,
         tail: None,
-        units: ::sittir_core::layout::BodyLayout::list_units(node.layout(), "_item"),
+        units: ::sittir_core::layout::BodyLayout::list_units(node.layout(), "_elements"),
     };
-    item.render(w)?;
+    elements.render(w)?;
     Ok(())
 }
 
@@ -34488,20 +34853,20 @@ fn render_augmented_assignment<N: AugmentedAssignmentFields + ?Sized>(node: &N, 
 }
 
 fn render_pattern_list<N: PatternListFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let item = ListView {
-        items: node.item(),
+    let elements = ListView {
+        items: node.elements(),
         template: "{}",
         token: ",",
         separators: None,
-        before: node.item_separator_space_before().unwrap_or(KindId::BLANK),
-        after: node.item_separator_space_after().unwrap_or(KindId::BLANK),
+        before: node.elements_separator_space_before().unwrap_or(KindId::BLANK),
+        after: node.elements_separator_space_after().unwrap_or(KindId::BLANK),
         leading: false,
-        trailing: ::sittir_core::view::SlotItems::count(&node.item()) == 1 || node.delimiter().is_some_and(|d| d.has(::sittir_core::types::Delimiter::TRAILING)),
+        trailing: ::sittir_core::view::SlotItems::count(&node.elements()) == 1 || node.delimiter().is_some_and(|d| d.has(::sittir_core::types::Delimiter::TRAILING)),
         head: None,
         tail: None,
-        units: ::sittir_core::layout::BodyLayout::list_units(node.layout(), "_item"),
+        units: ::sittir_core::layout::BodyLayout::list_units(node.layout(), "_elements"),
     };
-    item.render(w)?;
+    elements.render(w)?;
     Ok(())
 }
 
@@ -34529,14 +34894,14 @@ fn render_attribute<N: AttributeFields + ?Sized>(node: &N, w: &mut dyn ::sittir_
 }
 
 fn render_subscript<N: SubscriptFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let index = node.index();
     let object = node.object();
-    let subscripts = node.subscripts();
     w.edge(::sittir_core::types::KindId(222), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_object", ::sittir_core::types::ItemIndex(0), w, |w| object.render(w))?;
     w.site_at(options::SITE_SUBSCRIPT_LBRACK_BEFORE);
     w.text("[")?;
     w.site_at(options::SITE_SUBSCRIPT_LBRACK_AFTER);
-    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_subscripts", ::sittir_core::types::ItemIndex(0), w, |w| subscripts.render(w))?;
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_index", ::sittir_core::types::ItemIndex(0), w, |w| index.render(w))?;
     w.site_at(options::SITE_SUBSCRIPT_RBRACK_BEFORE);
     w.text("]")?;
     w.edge(::sittir_core::types::KindId(222), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
@@ -34588,11 +34953,10 @@ fn render_type<N: TypeFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::rend
 }
 
 fn render_splat_type<N: SplatTypeFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let operator = node.operator();
     let type_ = node.type_();
     w.edge(::sittir_core::types::KindId(227), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
-    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_operator", ::sittir_core::types::ItemIndex(0), w, |w| operator.render(w))?;
-    w.site_at(options::SITE_SPLAT_TYPE_OPERATOR_AFTER);
+    w.text("*")?;
+    w.site_at(options::SITE_SPLAT_TYPE_STAR_AFTER);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_type", ::sittir_core::types::ItemIndex(0), w, |w| type_.render(w))?;
     w.edge(::sittir_core::types::KindId(227), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
@@ -35024,20 +35388,20 @@ fn render_simple_statements_elements<N: SimpleStatementsElementsFields + ?Sized>
 }
 
 fn render_subjects<N: SubjectsFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let subject = ListView {
-        items: node.subject(),
+    let elements = ListView {
+        items: node.elements(),
         template: "{}",
         token: ",",
         separators: None,
-        before: node.subject_separator_space_before().unwrap_or(KindId::BLANK),
-        after: node.subject_separator_space_after().unwrap_or(KindId::BLANK),
+        before: node.elements_separator_space_before().unwrap_or(KindId::BLANK),
+        after: node.elements_separator_space_after().unwrap_or(KindId::BLANK),
         leading: false,
         trailing: node.delimiter().is_some_and(|d| d.has(::sittir_core::types::Delimiter::TRAILING)),
         head: None,
         tail: None,
-        units: ::sittir_core::layout::BodyLayout::list_units(node.layout(), "_subject"),
+        units: ::sittir_core::layout::BodyLayout::list_units(node.layout(), "_elements"),
     };
-    subject.render(w)?;
+    elements.render(w)?;
     Ok(())
 }
 
@@ -35132,20 +35496,20 @@ fn render_dict_pattern_elements<N: DictPatternElementsFields + ?Sized>(node: &N,
 }
 
 fn render_subscripts<N: SubscriptsFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let subscript = ListView {
-        items: node.subscript(),
+    let elements = ListView {
+        items: node.elements(),
         template: "{}",
         token: ",",
         separators: None,
-        before: node.subscript_separator_space_before().unwrap_or(KindId::BLANK),
-        after: node.subscript_separator_space_after().unwrap_or(KindId::BLANK),
+        before: node.elements_separator_space_before().unwrap_or(KindId::BLANK),
+        after: node.elements_separator_space_after().unwrap_or(KindId::BLANK),
         leading: false,
         trailing: node.delimiter().is_some_and(|d| d.has(::sittir_core::types::Delimiter::TRAILING)),
         head: None,
         tail: None,
-        units: ::sittir_core::layout::BodyLayout::list_units(node.layout(), "_subscript"),
+        units: ::sittir_core::layout::BodyLayout::list_units(node.layout(), "_elements"),
     };
-    subscript.render(w)?;
+    elements.render(w)?;
     Ok(())
 }
 
@@ -35182,6 +35546,36 @@ fn render_format_specifier_text<N: FormatSpecifierTextFields + ?Sized>(t: &N, w:
     w.text(t.text())
 }
 
+fn render_type_params<N: TypeParamsFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let items = node.items();
+    w.edge(::sittir_core::types::KindId(272), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
+    w.text("[")?;
+    w.site_at(options::SITE_TYPE_PARAMS_LBRACK_AFTER);
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_items", ::sittir_core::types::ItemIndex(0), w, |w| items.render(w))?;
+    w.site_at(options::SITE_TYPE_PARAMS_RBRACK_BEFORE);
+    w.text("]")?;
+    w.edge(::sittir_core::types::KindId(272), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
+    Ok(())
+}
+
+fn render_type_params_items<N: TypeParamsItemsFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let item = ListView {
+        items: node.item(),
+        template: "{}",
+        token: ",",
+        separators: None,
+        before: node.item_separator_space_before().unwrap_or(KindId::BLANK),
+        after: node.item_separator_space_after().unwrap_or(KindId::BLANK),
+        leading: false,
+        trailing: node.delimiter().is_some_and(|d| d.has(::sittir_core::types::Delimiter::TRAILING)),
+        head: None,
+        tail: None,
+        units: ::sittir_core::layout::BodyLayout::list_units(node.layout(), "_item"),
+    };
+    item.render(w)?;
+    Ok(())
+}
+
 fn render_tuple_pattern_elements<N: TuplePatternElementsFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let item = ListView {
         items: node.item(),
@@ -35201,20 +35595,20 @@ fn render_tuple_pattern_elements<N: TuplePatternElementsFields + ?Sized>(node: &
 }
 
 fn render_case_pattern_list<N: CasePatternListFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let item = ListView {
-        items: node.item(),
+    let elements = ListView {
+        items: node.elements(),
         template: "{}",
         token: ",",
         separators: None,
-        before: node.item_separator_space_before().unwrap_or(KindId::BLANK),
-        after: node.item_separator_space_after().unwrap_or(KindId::BLANK),
+        before: node.elements_separator_space_before().unwrap_or(KindId::BLANK),
+        after: node.elements_separator_space_after().unwrap_or(KindId::BLANK),
         leading: false,
-        trailing: ::sittir_core::view::SlotItems::count(&node.item()) == 1 || node.delimiter().is_some_and(|d| d.has(::sittir_core::types::Delimiter::TRAILING)),
+        trailing: ::sittir_core::view::SlotItems::count(&node.elements()) == 1 || node.delimiter().is_some_and(|d| d.has(::sittir_core::types::Delimiter::TRAILING)),
         head: None,
         tail: None,
-        units: ::sittir_core::layout::BodyLayout::list_units(node.layout(), "_item"),
+        units: ::sittir_core::layout::BodyLayout::list_units(node.layout(), "_elements"),
     };
-    item.render(w)?;
+    elements.render(w)?;
     Ok(())
 }
 
@@ -35239,7 +35633,7 @@ fn render_tuple_elements<N: TupleElementsFields + ?Sized>(node: &N, w: &mut dyn 
 fn render_except_clause_exception_as<N: ExceptClauseExceptionAsFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let alias = View::new(node.alias(), "{}");
     let value = node.value();
-    w.edge(::sittir_core::types::KindId(273), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
+    w.edge(::sittir_core::types::KindId(277), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_value", ::sittir_core::types::ItemIndex(0), w, |w| value.render(w))?;
     if alias.is_present() {
         w.site_at(options::SITE_EXCEPT_CLAUSE_EXCEPTION_AS_AS_KEYWORD_BEFORE);
@@ -35247,33 +35641,33 @@ fn render_except_clause_exception_as<N: ExceptClauseExceptionAsFields + ?Sized>(
         w.site_at(options::SITE_EXCEPT_CLAUSE_EXCEPTION_AS_AS_KEYWORD_AFTER);
         ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_alias", ::sittir_core::types::ItemIndex(0), w, |w| alias.render(w))?;
     }
-    w.edge(::sittir_core::types::KindId(273), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
+    w.edge(::sittir_core::types::KindId(277), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
 fn render_case_tuple_pattern<N: CaseTuplePatternFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let elements = View::new(node.elements(), "{}");
-    w.edge(::sittir_core::types::KindId(274), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
+    w.edge(::sittir_core::types::KindId(278), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text("(")?;
     w.site_at(options::SITE_CASE_TUPLE_PATTERN_LPAREN_AFTER);
     ::sittir_core::layout::BodyLayout::render_inner(node.layout(), w)?;
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_elements", ::sittir_core::types::ItemIndex(0), w, |w| elements.render(w))?;
     w.site_at(options::SITE_CASE_TUPLE_PATTERN_RPAREN_BEFORE);
     w.text(")")?;
-    w.edge(::sittir_core::types::KindId(274), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
+    w.edge(::sittir_core::types::KindId(278), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
 fn render_case_list_pattern<N: CaseListPatternFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let elements = View::new(node.elements(), "{}");
-    w.edge(::sittir_core::types::KindId(275), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
+    w.edge(::sittir_core::types::KindId(279), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text("[")?;
     w.site_at(options::SITE_CASE_LIST_PATTERN_LBRACK_AFTER);
     ::sittir_core::layout::BodyLayout::render_inner(node.layout(), w)?;
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_elements", ::sittir_core::types::ItemIndex(0), w, |w| elements.render(w))?;
     w.site_at(options::SITE_CASE_LIST_PATTERN_RBRACK_BEFORE);
     w.text("]")?;
-    w.edge(::sittir_core::types::KindId(275), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
+    w.edge(::sittir_core::types::KindId(279), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
@@ -35314,36 +35708,36 @@ fn render_print_chevron_arguments<N: PrintChevronArgumentsFields + ?Sized>(node:
 }
 
 fn render_print_statement_chevron<N: PrintStatementChevronFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let arguments = View::new(node.arguments(), "{}");
     let chevron = node.chevron();
-    let print_chevron_arguments = View::new(node.print_chevron_arguments(), "{}");
-    w.edge(::sittir_core::types::KindId(278), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
+    w.edge(::sittir_core::types::KindId(282), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text("print")?;
     w.site_at(options::SITE_PRINT_STATEMENT_CHEVRON_PRINT_KEYWORD_AFTER);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_chevron", ::sittir_core::types::ItemIndex(0), w, |w| chevron.render(w))?;
-    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_print_chevron_arguments", ::sittir_core::types::ItemIndex(0), w, |w| print_chevron_arguments.render(w))?;
-    w.edge(::sittir_core::types::KindId(278), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_arguments", ::sittir_core::types::ItemIndex(0), w, |w| arguments.render(w))?;
+    w.edge(::sittir_core::types::KindId(282), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
 fn render_print_statement_plain<N: PrintStatementPlainFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let print_arguments = node.print_arguments();
-    w.edge(::sittir_core::types::KindId(279), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
+    let arguments = node.arguments();
+    w.edge(::sittir_core::types::KindId(283), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text("print")?;
     w.site_at(options::SITE_PRINT_STATEMENT_PLAIN_PRINT_KEYWORD_AFTER);
-    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_print_arguments", ::sittir_core::types::ItemIndex(0), w, |w| print_arguments.render(w))?;
-    w.edge(::sittir_core::types::KindId(279), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_arguments", ::sittir_core::types::ItemIndex(0), w, |w| arguments.render(w))?;
+    w.edge(::sittir_core::types::KindId(283), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
 fn render_parenthesized_import_list<N: ParenthesizedImportListFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let import_list = node.import_list();
-    w.edge(::sittir_core::types::KindId(281), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
+    w.edge(::sittir_core::types::KindId(285), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text("(")?;
     w.site_at(options::SITE_PARENTHESIZED_IMPORT_LIST_LPAREN_AFTER);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_import_list", ::sittir_core::types::ItemIndex(0), w, |w| import_list.render(w))?;
     w.site_at(options::SITE_PARENTHESIZED_IMPORT_LIST_RPAREN_BEFORE);
     w.text(")")?;
-    w.edge(::sittir_core::types::KindId(281), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
+    w.edge(::sittir_core::types::KindId(285), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
@@ -35559,11 +35953,11 @@ fn render_line_continuation_newline<N: LineContinuationNewlineFields + ?Sized>(t
 
 fn render_simple_pattern_negative<N: SimplePatternNegativeFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let value = node.value();
-    w.edge(::sittir_core::types::KindId(284), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
+    w.edge(::sittir_core::types::KindId(288), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text("-")?;
     w.site_at(options::SITE_SIMPLE_PATTERN_NEGATIVE_DASH_AFTER);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_value", ::sittir_core::types::ItemIndex(0), w, |w| value.render(w))?;
-    w.edge(::sittir_core::types::KindId(284), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
+    w.edge(::sittir_core::types::KindId(288), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
@@ -35593,47 +35987,47 @@ fn render_except_clause_exception<N: ExceptClauseExceptionFields + ?Sized>(node:
 
 fn render_splat_pattern_list<N: SplatPatternListFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let pattern = node.pattern();
-    w.edge(::sittir_core::types::KindId(287), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
+    w.edge(::sittir_core::types::KindId(291), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text("*")?;
     w.site_at(options::SITE_SPLAT_PATTERN_LIST_STAR_AFTER);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_pattern", ::sittir_core::types::ItemIndex(0), w, |w| pattern.render(w))?;
-    w.edge(::sittir_core::types::KindId(287), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
+    w.edge(::sittir_core::types::KindId(291), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
 fn render_splat_pattern_dictionary<N: SplatPatternDictionaryFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let pattern = node.pattern();
-    w.edge(::sittir_core::types::KindId(288), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
+    w.edge(::sittir_core::types::KindId(292), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text("**")?;
     w.site_at(options::SITE_SPLAT_PATTERN_DICTIONARY_STAR_STAR_AFTER);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_pattern", ::sittir_core::types::ItemIndex(0), w, |w| pattern.render(w))?;
-    w.edge(::sittir_core::types::KindId(288), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
+    w.edge(::sittir_core::types::KindId(292), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
 fn render_assignment_eq<N: AssignmentEqFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let name = node.name();
     let value = node.value();
-    w.edge(::sittir_core::types::KindId(289), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
+    w.edge(::sittir_core::types::KindId(293), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_name", ::sittir_core::types::ItemIndex(0), w, |w| name.render(w))?;
     w.site_at(options::SITE_ASSIGNMENT_EQ_EQ_BEFORE);
     w.text("=")?;
     w.site_at(options::SITE_ASSIGNMENT_EQ_EQ_AFTER);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_value", ::sittir_core::types::ItemIndex(0), w, |w| value.render(w))?;
-    w.edge(::sittir_core::types::KindId(289), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
+    w.edge(::sittir_core::types::KindId(293), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
 fn render_assignment_type<N: AssignmentTypeFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let name = node.name();
     let type_ = node.type_();
-    w.edge(::sittir_core::types::KindId(290), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
+    w.edge(::sittir_core::types::KindId(294), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_name", ::sittir_core::types::ItemIndex(0), w, |w| name.render(w))?;
     w.site_at(options::SITE_ASSIGNMENT_TYPE_COLON_BEFORE);
     w.text(":")?;
     w.site_at(options::SITE_ASSIGNMENT_TYPE_COLON_AFTER);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_type", ::sittir_core::types::ItemIndex(0), w, |w| type_.render(w))?;
-    w.edge(::sittir_core::types::KindId(290), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
+    w.edge(::sittir_core::types::KindId(294), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
@@ -35641,7 +36035,7 @@ fn render_assignment_typed<N: AssignmentTypedFields + ?Sized>(node: &N, w: &mut 
     let name = node.name();
     let type_ = node.type_();
     let value = node.value();
-    w.edge(::sittir_core::types::KindId(291), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
+    w.edge(::sittir_core::types::KindId(295), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_name", ::sittir_core::types::ItemIndex(0), w, |w| name.render(w))?;
     w.site_at(options::SITE_ASSIGNMENT_TYPED_COLON_BEFORE);
     w.text(":")?;
@@ -35651,25 +36045,25 @@ fn render_assignment_typed<N: AssignmentTypedFields + ?Sized>(node: &N, w: &mut 
     w.text("=")?;
     w.site_at(options::SITE_ASSIGNMENT_TYPED_EQ_AFTER);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_value", ::sittir_core::types::ItemIndex(0), w, |w| value.render(w))?;
-    w.edge(::sittir_core::types::KindId(291), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
+    w.edge(::sittir_core::types::KindId(295), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
 fn render_expression_statement_tuple<N: ExpressionStatementTupleFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let item = ListView {
-        items: node.item(),
+    let elements = ListView {
+        items: node.elements(),
         template: "{}",
         token: ",",
         separators: None,
-        before: node.item_separator_space_before().unwrap_or(KindId::BLANK),
-        after: node.item_separator_space_after().unwrap_or(KindId::BLANK),
+        before: node.elements_separator_space_before().unwrap_or(KindId::BLANK),
+        after: node.elements_separator_space_after().unwrap_or(KindId::BLANK),
         leading: false,
         trailing: node.delimiter().is_some_and(|d| d.has(::sittir_core::types::Delimiter::TRAILING)),
         head: None,
         tail: None,
-        units: ::sittir_core::layout::BodyLayout::list_units(node.layout(), "_item"),
+        units: ::sittir_core::layout::BodyLayout::list_units(node.layout(), "_elements"),
     };
-    item.render(w)?;
+    elements.render(w)?;
     Ok(())
 }
 
@@ -35693,67 +36087,33 @@ fn render_with_clause_bare<N: WithClauseBareFields + ?Sized>(node: &N, w: &mut d
 
 fn render_with_clause_paren<N: WithClauseParenFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let items = node.items();
-    w.edge(::sittir_core::types::KindId(294), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
+    w.edge(::sittir_core::types::KindId(298), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text("(")?;
     w.site_at(options::SITE_WITH_CLAUSE_PAREN_LPAREN_AFTER);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_items", ::sittir_core::types::ItemIndex(0), w, |w| items.render(w))?;
     w.site_at(options::SITE_WITH_CLAUSE_PAREN_RPAREN_BEFORE);
     w.text(")")?;
-    w.edge(::sittir_core::types::KindId(294), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
-    Ok(())
-}
-
-fn render_match_block_block<N: MatchBlockBlockFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let alternative = ListView {
-        items: node.alternative(),
-        template: "{}",
-        token: "",
-        separators: None,
-        before: KindId::BLANK,
-        after: node.alternative_separator_space().unwrap_or(KindId::BLANK),
-        leading: false,
-        trailing: false,
-        head: None,
-        tail: None,
-        units: ::sittir_core::layout::BodyLayout::list_units(node.layout(), "_alternative"),
-    };
-    w.edge(::sittir_core::types::KindId(295), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
-    w.indent();
-    w.seam(::sittir_core::layout_kinds::LayoutKinds::from_bits(120));
-    w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT);
-    ::sittir_core::layout::BodyLayout::render_inner(node.layout(), w)?;
-    alternative.render(w)?;
-    if alternative.is_present() {
-        w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT);
-    }
-    w.dedent(::sittir_core::layout_kinds::LayoutKinds::NONE);
-    w.edge(::sittir_core::types::KindId(295), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
-    Ok(())
-}
-
-fn render_match_block_empty<N: MatchBlockEmptyFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let newline = node.newline();
-    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_newline", ::sittir_core::types::ItemIndex(0), w, |w| newline.render(w))?;
+    w.edge(::sittir_core::types::KindId(298), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
 fn render_suite_inline<N: SuiteInlineFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let elements = node.elements();
-    w.edge(::sittir_core::types::KindId(297), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
+    w.edge(::sittir_core::types::KindId(299), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_elements", ::sittir_core::types::ItemIndex(0), w, |w| elements.render(w))?;
     w.seam(::sittir_core::layout_kinds::LayoutKinds::NEWLINE);
-    w.edge(::sittir_core::types::KindId(297), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
+    w.edge(::sittir_core::types::KindId(299), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
 fn render_suite_block<N: SuiteBlockFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let block = node.block();
-    w.edge(::sittir_core::types::KindId(298), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
+    w.edge(::sittir_core::types::KindId(300), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.indent();
     w.seam(::sittir_core::layout_kinds::LayoutKinds::from_bits(120));
     w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_block", ::sittir_core::types::ItemIndex(0), w, |w| block.render(w))?;
-    w.edge(::sittir_core::types::KindId(298), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
+    w.edge(::sittir_core::types::KindId(300), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
@@ -35766,7 +36126,7 @@ fn render_suite_empty<N: SuiteEmptyFields + ?Sized>(node: &N, w: &mut dyn ::sitt
 fn render_comparison_operator_comparator<N: ComparisonOperatorComparatorFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let operators = node.operators();
     let primary_expression = node.primary_expression();
-    w.edge(::sittir_core::types::KindId(300), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
+    w.edge(::sittir_core::types::KindId(302), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_operators", ::sittir_core::types::ItemIndex(0), w, |w| operators.render(w))?;
     if operators.kind_in(&*w, &[::sittir_core::types::KindId(25), ::sittir_core::types::KindId(60)]) {
         w.seam(::sittir_core::layout_kinds::LayoutKinds::SEPARATING);
@@ -35774,22 +36134,64 @@ fn render_comparison_operator_comparator<N: ComparisonOperatorComparatorFields +
         w.site_at(options::SITE_COMPARISON_OPERATOR_COMPARATOR_OPERATORS_AFTER);
     }
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_primary_expression", ::sittir_core::types::ItemIndex(0), w, |w| primary_expression.render(w))?;
-    w.edge(::sittir_core::types::KindId(300), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
+    w.edge(::sittir_core::types::KindId(302), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
 fn render_yield_from_clause<N: YieldFromClauseFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let expression = node.expression();
-    w.edge(::sittir_core::types::KindId(301), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
+    w.edge(::sittir_core::types::KindId(303), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text("from")?;
     w.site_at(options::SITE_YIELD_FROM_CLAUSE_FROM_KEYWORD_AFTER);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_expression", ::sittir_core::types::ItemIndex(0), w, |w| expression.render(w))?;
-    w.edge(::sittir_core::types::KindId(301), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
+    w.edge(::sittir_core::types::KindId(303), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
-fn render_string_start<N: StringStartFields + ?Sized>(t: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text(t.text())
+fn render_type_param_type_var<N: TypeParamTypeVarFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let bounds = View::new(node.bounds(), "{}");
+    let name = node.name();
+    w.edge(::sittir_core::types::KindId(304), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_name", ::sittir_core::types::ItemIndex(0), w, |w| name.render(w))?;
+    if bounds.is_present() {
+        w.site_at(options::SITE_TYPE_PARAM_TYPE_VAR_COLON_BEFORE);
+        w.text(":")?;
+        w.site_at(options::SITE_TYPE_PARAM_TYPE_VAR_COLON_AFTER);
+        ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_bounds", ::sittir_core::types::ItemIndex(0), w, |w| bounds.render(w))?;
+    }
+    w.edge(::sittir_core::types::KindId(304), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
+    Ok(())
+}
+
+fn render_type_param_type_var_tuple<N: TypeParamTypeVarTupleFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let name = node.name();
+    w.edge(::sittir_core::types::KindId(305), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
+    w.text("*")?;
+    w.site_at(options::SITE_TYPE_PARAM_TYPE_VAR_TUPLE_STAR_AFTER);
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_name", ::sittir_core::types::ItemIndex(0), w, |w| name.render(w))?;
+    w.edge(::sittir_core::types::KindId(305), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
+    Ok(())
+}
+
+fn render_type_param_param_spec<N: TypeParamParamSpecFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let name = node.name();
+    w.edge(::sittir_core::types::KindId(306), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
+    w.text("**")?;
+    w.site_at(options::SITE_TYPE_PARAM_PARAM_SPEC_STAR_STAR_AFTER);
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_name", ::sittir_core::types::ItemIndex(0), w, |w| name.render(w))?;
+    w.edge(::sittir_core::types::KindId(306), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
+    Ok(())
+}
+
+fn render_string_start<N: StringStartFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let prefix = View::new(node.prefix(), "{}");
+    let quote = View::new(node.quote(), "{}");
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_prefix", ::sittir_core::types::ItemIndex(0), w, |w| prefix.render(w))?;
+    if prefix.is_present() {
+        w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT);
+    }
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_quote", ::sittir_core::types::ItemIndex(0), w, |w| quote.render(w))?;
+    Ok(())
 }
 
 fn render_string_fragment<N: StringFragmentFields + ?Sized>(t: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
@@ -35802,9 +36204,15 @@ fn render_escape_interpolation<N: EscapeInterpolationFields + ?Sized>(t: &N, w: 
     w.text(t.text())
 }
 
-fn render_string_end<N: StringEndFields + ?Sized>(t: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.leaf_kind(::sittir_core::types::KindId(122));
-    w.text(t.text())
+fn render_string_end<N: StringEndFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let content = View::new(node.content(), "{}");
+    let quote = View::new(node.quote(), "{}");
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_content", ::sittir_core::types::ItemIndex(0), w, |w| content.render(w))?;
+    if content.is_present() {
+        w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT);
+    }
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_quote", ::sittir_core::types::ItemIndex(0), w, |w| quote.render(w))?;
+    Ok(())
 }
 
 fn render_constructor_declaration<N: ConstructorDeclarationFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
@@ -35813,7 +36221,7 @@ fn render_constructor_declaration<N: ConstructorDeclarationFields + ?Sized>(node
     let parameters = node.parameters();
     let return_type = View::new(node.return_type(), "{}");
     let type_parameters = View::new(node.type_parameters(), "{}");
-    w.edge(::sittir_core::types::KindId(302), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
+    w.edge(::sittir_core::types::KindId(307), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     if async_.is_present() {
         async_.render(w)?;
         w.site_at(options::SITE_CONSTRUCTOR_DECLARATION_ASYNC_AFTER);
@@ -35834,7 +36242,7 @@ fn render_constructor_declaration<N: ConstructorDeclarationFields + ?Sized>(node
     w.text(":")?;
     w.site_at(options::SITE_CONSTRUCTOR_DECLARATION_COLON_AFTER);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_body", ::sittir_core::types::ItemIndex(0), w, |w| body.render(w))?;
-    w.edge(::sittir_core::types::KindId(302), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
+    w.edge(::sittir_core::types::KindId(307), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
@@ -35852,24 +36260,24 @@ fn render_block_class_declaration<N: BlockClassDeclarationFields + ?Sized>(node:
         tail: None,
         units: ::sittir_core::layout::BodyLayout::list_units(node.layout(), "_statements"),
     };
-    w.edge(::sittir_core::types::KindId(304), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
+    w.edge(::sittir_core::types::KindId(309), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     statements.render(w)?;
     if statements.is_present() {
         w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT);
     }
     w.dedent(::sittir_core::layout_kinds::LayoutKinds::NONE);
-    w.edge(::sittir_core::types::KindId(304), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
+    w.edge(::sittir_core::types::KindId(309), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
 fn render_suite_block_class_declaration<N: SuiteBlockClassDeclarationFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let block_class_declaration = node.block_class_declaration();
-    w.edge(::sittir_core::types::KindId(305), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
+    w.edge(::sittir_core::types::KindId(310), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.indent();
     w.seam(::sittir_core::layout_kinds::LayoutKinds::from_bits(120));
     w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_block_class_declaration", ::sittir_core::types::ItemIndex(0), w, |w| block_class_declaration.render(w))?;
-    w.edge(::sittir_core::types::KindId(305), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
+    w.edge(::sittir_core::types::KindId(310), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
@@ -35888,10 +36296,10 @@ fn render_decorated_definition_class_declaration<N: DecoratedDefinitionClassDecl
         units: ::sittir_core::layout::BodyLayout::list_units(node.layout(), "_decorator"),
     };
     let definition = node.definition();
-    w.edge(::sittir_core::types::KindId(306), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
+    w.edge(::sittir_core::types::KindId(311), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     decorator.render(w)?;
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_definition", ::sittir_core::types::ItemIndex(0), w, |w| definition.render(w))?;
-    w.edge(::sittir_core::types::KindId(306), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
+    w.edge(::sittir_core::types::KindId(311), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
@@ -35946,7 +36354,7 @@ fn render_keyword_separator(w: &mut dyn ::sittir_core::render::RenderSink) -> ::
 }
 
 fn render_wildcard_pattern(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    NodeLayout::render(None, Some(::sittir_core::types::KindId(280)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text("_"))
+    NodeLayout::render(None, Some(::sittir_core::types::KindId(284)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text("_"))
 }
 
 fn render_line_continuation_nul(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
@@ -36452,23 +36860,6 @@ fn render_compound_statement_record(t: &CompoundStatementNodeRecord<'_>, w: &mut
 
 }
 
-fn render_match_block(t: &MatchBlockNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    match t {
-        MatchBlockNode::MatchBlockBlock(inner) => inner.render(w),
-        MatchBlockNode::MatchBlockEmpty(inner) => inner.render(w),
-    }
-}
-
-::sittir_core::records_codec! {
-fn render_match_block_record(t: &MatchBlockNodeRecord<'_>, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    match t {
-        MatchBlockNodeRecord::MatchBlockBlock(inner) => inner.render(w),
-        MatchBlockNodeRecord::MatchBlockEmpty(inner) => inner.render(w),
-    }
-}
-
-}
-
 fn render_with_clause(t: &WithClauseNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     match t {
         WithClauseNode::WithClauseBare(inner) => inner.render(w),
@@ -36509,7 +36900,7 @@ fn render_parameter(t: &ParameterNode, w: &mut dyn ::sittir_core::render::Render
     match t {
         ParameterNode::Identifier(inner) => inner.render(w),
         ParameterNode::TypedParameter(inner) => inner.render(w),
-        ParameterNode::DefaultParameter(inner) => inner.render(w),
+        ParameterNode::DefaultParameter(inner) => inner.as_ref().render(w),
         ParameterNode::TypedDefaultParameter(inner) => inner.as_ref().render(w),
         ParameterNode::ListSplatPattern(inner) => inner.render(w),
         ParameterNode::TuplePattern(inner) => inner.render(w),
@@ -36698,6 +37089,25 @@ fn render_float_record(t: &FloatNodeRecord<'_>, w: &mut dyn ::sittir_core::rende
         FloatNodeRecord::FloatPoint(inner) => inner.render(w),
         FloatNodeRecord::FloatLeadingPoint(inner) => inner.render(w),
         FloatNodeRecord::FloatScientific(inner) => inner.render(w),
+    }
+}
+
+}
+
+fn render_type_param(t: &TypeParamNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    match t {
+        TypeParamNode::TypeParamTypeVar(inner) => inner.render(w),
+        TypeParamNode::TypeParamTypeVarTuple(inner) => inner.render(w),
+        TypeParamNode::TypeParamParamSpec(inner) => inner.render(w),
+    }
+}
+
+::sittir_core::records_codec! {
+fn render_type_param_record(t: &TypeParamNodeRecord<'_>, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    match t {
+        TypeParamNodeRecord::TypeParamTypeVar(inner) => inner.render(w),
+        TypeParamNodeRecord::TypeParamTypeVarTuple(inner) => inner.render(w),
+        TypeParamNodeRecord::TypeParamParamSpec(inner) => inner.render(w),
     }
 }
 
@@ -36923,6 +37333,7 @@ impl ::sittir_core::view::KindOf for AnyNode {
             Self::ElifClause(inner) => inner.kind_in(kinds),
             Self::ElseClause(inner) => inner.kind_in(kinds),
             Self::MatchStatement(inner) => inner.kind_in(kinds),
+            Self::MatchBlock(inner) => inner.kind_in(kinds),
             Self::CaseClause(inner) => inner.kind_in(kinds),
             Self::ForStatement(inner) => inner.kind_in(kinds),
             Self::WhileStatement(inner) => inner.kind_in(kinds),
@@ -37023,6 +37434,8 @@ impl ::sittir_core::view::KindOf for AnyNode {
             Self::DictionaryElements(inner) => inner.kind_in(kinds),
             Self::SliceGroup(inner) => inner.kind_in(kinds),
             Self::FormatSpecifierText(inner) => inner.kind_in(kinds),
+            Self::TypeParams(inner) => inner.kind_in(kinds),
+            Self::TypeParamsItems(inner) => inner.kind_in(kinds),
             Self::TuplePatternElements(inner) => inner.kind_in(kinds),
             Self::CasePatternList(inner) => inner.kind_in(kinds),
             Self::TupleElements(inner) => inner.kind_in(kinds),
@@ -37063,13 +37476,14 @@ impl ::sittir_core::view::KindOf for AnyNode {
             Self::ExpressionStatementTuple(inner) => inner.kind_in(kinds),
             Self::WithClauseBare(inner) => inner.kind_in(kinds),
             Self::WithClauseParen(inner) => inner.kind_in(kinds),
-            Self::MatchBlockBlock(inner) => inner.kind_in(kinds),
-            Self::MatchBlockEmpty(inner) => inner.kind_in(kinds),
             Self::SuiteInline(inner) => inner.kind_in(kinds),
             Self::SuiteBlock(inner) => inner.kind_in(kinds),
             Self::SuiteEmpty(inner) => inner.kind_in(kinds),
             Self::ComparisonOperatorComparator(inner) => inner.kind_in(kinds),
             Self::YieldFromClause(inner) => inner.kind_in(kinds),
+            Self::TypeParamTypeVar(inner) => inner.kind_in(kinds),
+            Self::TypeParamTypeVarTuple(inner) => inner.kind_in(kinds),
+            Self::TypeParamParamSpec(inner) => inner.kind_in(kinds),
             Self::StringStart(inner) => inner.kind_in(kinds),
             Self::StringFragment(inner) => inner.kind_in(kinds),
             Self::EscapeInterpolation(inner) => inner.kind_in(kinds),
@@ -37093,7 +37507,7 @@ impl ::sittir_core::view::KindOf for AnyNode {
             Self::None(_) => [::sittir_core::types::KindId(71)].iter().any(|k| kinds.contains(k)),
             Self::PositionalSeparator(_) => [::sittir_core::types::KindId(258)].iter().any(|k| kinds.contains(k)),
             Self::KeywordSeparator(_) => [::sittir_core::types::KindId(259)].iter().any(|k| kinds.contains(k)),
-            Self::WildcardPattern => [::sittir_core::types::KindId(280)].iter().any(|k| kinds.contains(k)),
+            Self::WildcardPattern => [::sittir_core::types::KindId(284)].iter().any(|k| kinds.contains(k)),
             Self::LineContinuationNul => [::sittir_core::types::KindId(107)].iter().any(|k| kinds.contains(k)),
             Self::Indent => [::sittir_core::types::KindId(117)].iter().any(|k| kinds.contains(k)),
             Self::Dedent => [::sittir_core::types::KindId(118)].iter().any(|k| kinds.contains(k)),
@@ -37222,6 +37636,7 @@ impl ::sittir_core::render::Render for AnyNode {
             AnyNode::ElifClause(t) => t.render(w),
             AnyNode::ElseClause(t) => t.render(w),
             AnyNode::MatchStatement(t) => t.render(w),
+            AnyNode::MatchBlock(t) => t.render(w),
             AnyNode::CaseClause(t) => t.render(w),
             AnyNode::ForStatement(t) => t.render(w),
             AnyNode::WhileStatement(t) => t.render(w),
@@ -37322,6 +37737,8 @@ impl ::sittir_core::render::Render for AnyNode {
             AnyNode::DictionaryElements(t) => t.render(w),
             AnyNode::SliceGroup(t) => t.render(w),
             AnyNode::FormatSpecifierText(t) => t.render(w),
+            AnyNode::TypeParams(t) => t.render(w),
+            AnyNode::TypeParamsItems(t) => t.render(w),
             AnyNode::TuplePatternElements(t) => t.render(w),
             AnyNode::CasePatternList(t) => t.render(w),
             AnyNode::TupleElements(t) => t.render(w),
@@ -37362,13 +37779,14 @@ impl ::sittir_core::render::Render for AnyNode {
             AnyNode::ExpressionStatementTuple(t) => t.render(w),
             AnyNode::WithClauseBare(t) => t.render(w),
             AnyNode::WithClauseParen(t) => t.render(w),
-            AnyNode::MatchBlockBlock(t) => t.render(w),
-            AnyNode::MatchBlockEmpty(t) => t.render(w),
             AnyNode::SuiteInline(t) => t.render(w),
             AnyNode::SuiteBlock(t) => t.render(w),
             AnyNode::SuiteEmpty(t) => t.render(w),
             AnyNode::ComparisonOperatorComparator(t) => t.render(w),
             AnyNode::YieldFromClause(t) => t.render(w),
+            AnyNode::TypeParamTypeVar(t) => t.render(w),
+            AnyNode::TypeParamTypeVarTuple(t) => t.render(w),
+            AnyNode::TypeParamParamSpec(t) => t.render(w),
             AnyNode::StringStart(t) => t.render(w),
             AnyNode::StringFragment(t) => t.render(w),
             AnyNode::EscapeInterpolation(t) => t.render(w),
@@ -37522,6 +37940,7 @@ impl ::sittir_core::view::KindOf for AnyNodeRecord<'_> {
             Self::ElifClause(inner) => inner.kind_in(kinds),
             Self::ElseClause(inner) => inner.kind_in(kinds),
             Self::MatchStatement(inner) => inner.kind_in(kinds),
+            Self::MatchBlock(inner) => inner.kind_in(kinds),
             Self::CaseClause(inner) => inner.kind_in(kinds),
             Self::ForStatement(inner) => inner.kind_in(kinds),
             Self::WhileStatement(inner) => inner.kind_in(kinds),
@@ -37622,6 +38041,8 @@ impl ::sittir_core::view::KindOf for AnyNodeRecord<'_> {
             Self::DictionaryElements(inner) => inner.kind_in(kinds),
             Self::SliceGroup(inner) => inner.kind_in(kinds),
             Self::FormatSpecifierText(inner) => inner.kind_in(kinds),
+            Self::TypeParams(inner) => inner.kind_in(kinds),
+            Self::TypeParamsItems(inner) => inner.kind_in(kinds),
             Self::TuplePatternElements(inner) => inner.kind_in(kinds),
             Self::CasePatternList(inner) => inner.kind_in(kinds),
             Self::TupleElements(inner) => inner.kind_in(kinds),
@@ -37662,13 +38083,14 @@ impl ::sittir_core::view::KindOf for AnyNodeRecord<'_> {
             Self::ExpressionStatementTuple(inner) => inner.kind_in(kinds),
             Self::WithClauseBare(inner) => inner.kind_in(kinds),
             Self::WithClauseParen(inner) => inner.kind_in(kinds),
-            Self::MatchBlockBlock(inner) => inner.kind_in(kinds),
-            Self::MatchBlockEmpty(inner) => inner.kind_in(kinds),
             Self::SuiteInline(inner) => inner.kind_in(kinds),
             Self::SuiteBlock(inner) => inner.kind_in(kinds),
             Self::SuiteEmpty(inner) => inner.kind_in(kinds),
             Self::ComparisonOperatorComparator(inner) => inner.kind_in(kinds),
             Self::YieldFromClause(inner) => inner.kind_in(kinds),
+            Self::TypeParamTypeVar(inner) => inner.kind_in(kinds),
+            Self::TypeParamTypeVarTuple(inner) => inner.kind_in(kinds),
+            Self::TypeParamParamSpec(inner) => inner.kind_in(kinds),
             Self::StringStart(inner) => inner.kind_in(kinds),
             Self::StringFragment(inner) => inner.kind_in(kinds),
             Self::EscapeInterpolation(inner) => inner.kind_in(kinds),
@@ -37692,7 +38114,7 @@ impl ::sittir_core::view::KindOf for AnyNodeRecord<'_> {
             Self::None(_) => [::sittir_core::types::KindId(71)].iter().any(|k| kinds.contains(k)),
             Self::PositionalSeparator(_) => [::sittir_core::types::KindId(258)].iter().any(|k| kinds.contains(k)),
             Self::KeywordSeparator(_) => [::sittir_core::types::KindId(259)].iter().any(|k| kinds.contains(k)),
-            Self::WildcardPattern => [::sittir_core::types::KindId(280)].iter().any(|k| kinds.contains(k)),
+            Self::WildcardPattern => [::sittir_core::types::KindId(284)].iter().any(|k| kinds.contains(k)),
             Self::LineContinuationNul => [::sittir_core::types::KindId(107)].iter().any(|k| kinds.contains(k)),
             Self::Indent => [::sittir_core::types::KindId(117)].iter().any(|k| kinds.contains(k)),
             Self::Dedent => [::sittir_core::types::KindId(118)].iter().any(|k| kinds.contains(k)),
@@ -37821,6 +38243,7 @@ impl ::sittir_core::render::Render for AnyNodeRecord<'_> {
             AnyNodeRecord::ElifClause(t) => t.render(w),
             AnyNodeRecord::ElseClause(t) => t.render(w),
             AnyNodeRecord::MatchStatement(t) => t.render(w),
+            AnyNodeRecord::MatchBlock(t) => t.render(w),
             AnyNodeRecord::CaseClause(t) => t.render(w),
             AnyNodeRecord::ForStatement(t) => t.render(w),
             AnyNodeRecord::WhileStatement(t) => t.render(w),
@@ -37921,6 +38344,8 @@ impl ::sittir_core::render::Render for AnyNodeRecord<'_> {
             AnyNodeRecord::DictionaryElements(t) => t.render(w),
             AnyNodeRecord::SliceGroup(t) => t.render(w),
             AnyNodeRecord::FormatSpecifierText(t) => t.render(w),
+            AnyNodeRecord::TypeParams(t) => t.render(w),
+            AnyNodeRecord::TypeParamsItems(t) => t.render(w),
             AnyNodeRecord::TuplePatternElements(t) => t.render(w),
             AnyNodeRecord::CasePatternList(t) => t.render(w),
             AnyNodeRecord::TupleElements(t) => t.render(w),
@@ -37961,13 +38386,14 @@ impl ::sittir_core::render::Render for AnyNodeRecord<'_> {
             AnyNodeRecord::ExpressionStatementTuple(t) => t.render(w),
             AnyNodeRecord::WithClauseBare(t) => t.render(w),
             AnyNodeRecord::WithClauseParen(t) => t.render(w),
-            AnyNodeRecord::MatchBlockBlock(t) => t.render(w),
-            AnyNodeRecord::MatchBlockEmpty(t) => t.render(w),
             AnyNodeRecord::SuiteInline(t) => t.render(w),
             AnyNodeRecord::SuiteBlock(t) => t.render(w),
             AnyNodeRecord::SuiteEmpty(t) => t.render(w),
             AnyNodeRecord::ComparisonOperatorComparator(t) => t.render(w),
             AnyNodeRecord::YieldFromClause(t) => t.render(w),
+            AnyNodeRecord::TypeParamTypeVar(t) => t.render(w),
+            AnyNodeRecord::TypeParamTypeVarTuple(t) => t.render(w),
+            AnyNodeRecord::TypeParamParamSpec(t) => t.render(w),
             AnyNodeRecord::StringStart(t) => t.render(w),
             AnyNodeRecord::StringFragment(t) => t.render(w),
             AnyNodeRecord::EscapeInterpolation(t) => t.render(w),
@@ -38112,7 +38538,7 @@ pub fn render_node_parts(
 ) -> Result<(NodeSource, String), ::sittir_core::render::RenderError> {
     let rendered = match ::sittir_core::prepare::Prepare::prepare(&mut node, ctx) {
         Ok(()) => render_node_dispatch(&node, ctx, recording),
-        Err(error) => Err(error.into()),
+        Err(error) => Err(error),
     };
     ::sittir_core::codec::release::<TriviaNode, _>(node);
     Ok((NodeSource::Factory, rendered?))
@@ -38126,9 +38552,9 @@ const _: () = assert!(::core::mem::size_of::<AsPatternTargetNode>() <= 256, "AsP
 const _: () = assert!(::core::mem::size_of::<AssertStatementNode>() <= 256, "AssertStatementNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 const _: () = assert!(::core::mem::size_of::<AssignmentEqNode>() <= 256, "AssignmentEqNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 const _: () = assert!(::core::mem::size_of::<AssignmentTypeNode>() <= 256, "AssignmentTypeNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
-const _: () = assert!(::core::mem::size_of::<AssignmentTypedNode>() <= 256, "AssignmentTypedNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<AssignmentTypedNode>() > 256, "AssignmentTypedNode is within the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it over");
 const _: () = assert!(::core::mem::size_of::<AttributeNode>() <= 256, "AttributeNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
-const _: () = assert!(::core::mem::size_of::<AugmentedAssignmentNode>() <= 256, "AugmentedAssignmentNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<AugmentedAssignmentNode>() > 256, "AugmentedAssignmentNode is within the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it over");
 const _: () = assert!(::core::mem::size_of::<AwaitNode>() <= 256, "AwaitNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 const _: () = assert!(::core::mem::size_of::<BinaryOperatorNode>() <= 256, "BinaryOperatorNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 const _: () = assert!(::core::mem::size_of::<BlockClassDeclarationNode>() <= 256, "BlockClassDeclarationNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
@@ -38159,7 +38585,7 @@ const _: () = assert!(::core::mem::size_of::<ConstructorDeclarationNode>() > 256
 const _: () = assert!(::core::mem::size_of::<DecoratedDefinitionClassDeclarationNode>() > 256, "DecoratedDefinitionClassDeclarationNode is within the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it over");
 const _: () = assert!(::core::mem::size_of::<DecoratedDefinitionNode>() > 256, "DecoratedDefinitionNode is within the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it over");
 const _: () = assert!(::core::mem::size_of::<DecoratorNode>() <= 256, "DecoratorNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
-const _: () = assert!(::core::mem::size_of::<DefaultParameterNode>() <= 256, "DefaultParameterNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<DefaultParameterNode>() > 256, "DefaultParameterNode is within the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it over");
 const _: () = assert!(::core::mem::size_of::<DeleteStatementNode>() <= 256, "DeleteStatementNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 const _: () = assert!(::core::mem::size_of::<DictPatternElementsNode>() <= 256, "DictPatternElementsNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 const _: () = assert!(::core::mem::size_of::<DictPatternNode>() <= 256, "DictPatternNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
@@ -38169,7 +38595,7 @@ const _: () = assert!(::core::mem::size_of::<DictionaryNode>() <= 256, "Dictiona
 const _: () = assert!(::core::mem::size_of::<DictionarySplatNode>() <= 256, "DictionarySplatNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 const _: () = assert!(::core::mem::size_of::<DictionarySplatPatternNode>() <= 256, "DictionarySplatPatternNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 const _: () = assert!(::core::mem::size_of::<DottedNameNode>() <= 256, "DottedNameNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
-const _: () = assert!(::core::mem::size_of::<ElifClauseNode>() <= 256, "ElifClauseNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<ElifClauseNode>() > 256, "ElifClauseNode is within the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it over");
 const _: () = assert!(::core::mem::size_of::<ElseClauseNode>() <= 256, "ElseClauseNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 const _: () = assert!(::core::mem::size_of::<EscapeInterpolationNode>() <= 256, "EscapeInterpolationNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 const _: () = assert!(::core::mem::size_of::<EscapeSequenceHexNode>() <= 256, "EscapeSequenceHexNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
@@ -38217,9 +38643,9 @@ const _: () = assert!(::core::mem::size_of::<IntegerHexNode>() <= 256, "IntegerH
 const _: () = assert!(::core::mem::size_of::<IntegerNode>() <= 256, "IntegerNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 const _: () = assert!(::core::mem::size_of::<IntegerOctalNode>() <= 256, "IntegerOctalNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 const _: () = assert!(::core::mem::size_of::<InterpolationNode>() > 256, "InterpolationNode is within the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it over");
-const _: () = assert!(::core::mem::size_of::<KeyValuePatternNode>() <= 256, "KeyValuePatternNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<KeyValuePatternNode>() > 256, "KeyValuePatternNode is within the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it over");
 const _: () = assert!(::core::mem::size_of::<KeywordArgumentNode>() <= 256, "KeywordArgumentNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
-const _: () = assert!(::core::mem::size_of::<KeywordPatternNode>() <= 256, "KeywordPatternNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<KeywordPatternNode>() > 256, "KeywordPatternNode is within the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it over");
 const _: () = assert!(::core::mem::size_of::<LambdaNode>() <= 256, "LambdaNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 const _: () = assert!(::core::mem::size_of::<LambdaParametersNode>() <= 256, "LambdaParametersNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 const _: () = assert!(::core::mem::size_of::<LambdaWithinForInClauseNode>() <= 256, "LambdaWithinForInClauseNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
@@ -38230,8 +38656,7 @@ const _: () = assert!(::core::mem::size_of::<ListPatternCasePatternsNode>() <= 2
 const _: () = assert!(::core::mem::size_of::<ListPatternNode>() <= 256, "ListPatternNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 const _: () = assert!(::core::mem::size_of::<ListSplatNode>() <= 256, "ListSplatNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 const _: () = assert!(::core::mem::size_of::<ListSplatPatternNode>() <= 256, "ListSplatPatternNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
-const _: () = assert!(::core::mem::size_of::<MatchBlockBlockNode>() <= 256, "MatchBlockBlockNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
-const _: () = assert!(::core::mem::size_of::<MatchBlockEmptyNode>() <= 256, "MatchBlockEmptyNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<MatchBlockNode>() <= 256, "MatchBlockNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 const _: () = assert!(::core::mem::size_of::<MatchStatementNode>() <= 256, "MatchStatementNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 const _: () = assert!(::core::mem::size_of::<MemberTypeNode>() <= 256, "MemberTypeNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 const _: () = assert!(::core::mem::size_of::<ModuleNode>() <= 256, "ModuleNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
@@ -38250,7 +38675,7 @@ const _: () = assert!(::core::mem::size_of::<PatternsNode>() <= 256, "PatternsNo
 const _: () = assert!(::core::mem::size_of::<PrimaryExpressionNode>() <= 256, "PrimaryExpressionNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 const _: () = assert!(::core::mem::size_of::<PrintArgumentsNode>() <= 256, "PrintArgumentsNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 const _: () = assert!(::core::mem::size_of::<PrintChevronArgumentsNode>() <= 256, "PrintChevronArgumentsNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
-const _: () = assert!(::core::mem::size_of::<PrintStatementChevronNode>() <= 256, "PrintStatementChevronNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<PrintStatementChevronNode>() > 256, "PrintStatementChevronNode is within the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it over");
 const _: () = assert!(::core::mem::size_of::<PrintStatementNode>() <= 256, "PrintStatementNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 const _: () = assert!(::core::mem::size_of::<PrintStatementPlainNode>() <= 256, "PrintStatementPlainNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 const _: () = assert!(::core::mem::size_of::<RaiseStatementNode>() > 256, "RaiseStatementNode is within the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it over");
@@ -38287,7 +38712,12 @@ const _: () = assert!(::core::mem::size_of::<TuplePatternNode>() <= 256, "TupleP
 const _: () = assert!(::core::mem::size_of::<TypeAliasStatementNode>() <= 256, "TypeAliasStatementNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 const _: () = assert!(::core::mem::size_of::<TypeConversionNode>() <= 256, "TypeConversionNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 const _: () = assert!(::core::mem::size_of::<TypeNode>() <= 256, "TypeNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<TypeParamParamSpecNode>() <= 256, "TypeParamParamSpecNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<TypeParamTypeVarNode>() <= 256, "TypeParamTypeVarNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<TypeParamTypeVarTupleNode>() <= 256, "TypeParamTypeVarTupleNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 const _: () = assert!(::core::mem::size_of::<TypeParameterNode>() <= 256, "TypeParameterNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<TypeParamsItemsNode>() <= 256, "TypeParamsItemsNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<TypeParamsNode>() <= 256, "TypeParamsNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 const _: () = assert!(::core::mem::size_of::<TypedDefaultParameterNode>() > 256, "TypedDefaultParameterNode is within the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it over");
 const _: () = assert!(::core::mem::size_of::<TypedParameterNode>() <= 256, "TypedParameterNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 const _: () = assert!(::core::mem::size_of::<TypesNode>() <= 256, "TypesNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
@@ -38303,7 +38733,7 @@ const _: () = assert!(::core::mem::size_of::<WithStatementNode>() <= 256, "WithS
 const _: () = assert!(::core::mem::size_of::<YieldFromClauseNode>() <= 256, "YieldFromClauseNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 const _: () = assert!(::core::mem::size_of::<YieldNode>() <= 256, "YieldNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 
-::sittir_core::grammar_nodes!(TriviaNode; AnyNode, StatementNode, SimpleStatementNode, CompoundStatementNode, MatchBlockNode, WithClauseNode, SuiteNode, ParameterNode, PatternNode, ExpressionNode, PrimaryExpressionNode, IntegerNode, FloatNode, IntegerDecimalNode, CompoundStatementClassDefinitionNode, StatementClassDefinitionNode, SuiteClassDefinitionNode, FutureImportStatementContentNodeSlot, ImportFromStatementModuleNameNodeSlot, ImportFromStatementContentNodeSlot, ImportListNameNodeSlot, PrintStatementContentNodeSlot, ExpressionStatementContentNodeSlot, ReturnStatementExpressionsNodeSlot, IfStatementAlternativeNodeSlot, CaseClausePatternNodeSlot, ForStatementLeftNodeSlot, ExecStatementCodeNodeSlot, ParenthesizedListSplatContentNodeSlot, DecoratedDefinitionDefinitionNodeSlot, CasePatternContentNodeSlot, SimplePatternContentNodeSlot, ComplexPatternRealNodeSlot, ComplexPatternOperatorNodeSlot, DefaultParameterNameNodeSlot, ListSplatPatternPatternNodeSlot, BooleanOperatorOperatorNodeSlot, BinaryOperatorOperatorNodeSlot, UnaryOperatorOperatorNodeSlot, LambdaWithinForInClauseBodyNodeSlot, AugmentedAssignmentOperatorNodeSlot, AugmentedAssignmentRightNodeSlot, YieldContentNodeSlot, CallArgumentsNodeSlot, TypedParameterNameNodeSlot, TypeContentNodeSlot, SplatTypeOperatorNodeSlot, ParenthesizedExpressionExpressionNodeSlot, CollectionElementsItemNodeSlot, ForInClauseTrailingCommaNodeSlot, StringContentNodeSlot, StringContentElementsNodeSlot, InterpolationExpressionNodeSlot, FormatSpecifierElementsNodeSlot, ArgumentListElementsItemNodeSlot, DictPatternElementsItemNodeSlot, SubscriptsSubscriptNodeSlot, DictionaryElementsItemNodeSlot, PrintStatementChevronPrintChevronArgumentsNodeSlot, ComprehensionClausesContentNodeSlot, ExceptClauseExceptionContentNodeSlot, SplatPatternListPatternNodeSlot, SplatPatternDictionaryPatternNodeSlot, ComparisonOperatorComparatorOperatorsNodeSlot, DecoratedDefinitionClassDeclarationDefinitionNodeSlot, ModuleNode, SimpleStatementsNode, ImportStatementNode, ImportPrefixNode, RelativeImportNode, FutureImportStatementNode, ImportFromStatementNode, ImportListNode, AliasedImportNode, WildcardImportNode, PrintStatementNode, ChevronNode, AssertStatementNode, ExpressionStatementNode, NamedExpressionNode, NamedExpressionLhsNode, ReturnStatementNode, DeleteStatementNode, RaiseStatementNode, PassStatementNode, BreakStatementNode, ContinueStatementNode, IfStatementNode, ElifClauseNode, ElseClauseNode, MatchStatementNode, CaseClauseNode, ForStatementNode, WhileStatementNode, TryStatementNode, ExceptClauseNode, FinallyClauseNode, WithStatementNode, WithItemNode, FunctionDefinitionNode, ParametersNode, LambdaParametersNode, ListSplatNode, DictionarySplatNode, GlobalStatementNode, NonlocalStatementNode, ExecStatementNode, TypeAliasStatementNode, ClassDefinitionNode, TypeParameterNode, ParenthesizedListSplatNode, ArgumentListNode, DecoratedDefinitionNode, DecoratorNode, BlockNode, ExpressionListNode, DottedNameNode, CasePatternNode, SimplePatternNode, CaseAsPatternNode, UnionPatternNode, DictPatternNode, KeyValuePatternNode, KeywordPatternNode, ClassPatternNode, ComplexPatternNode, ParametersElementsNode, PatternsNode, TuplePatternNode, ListPatternNode, DefaultParameterNode, TypedDefaultParameterNode, ListSplatPatternNode, DictionarySplatPatternNode, AsPatternNode, NotOperatorNode, BooleanOperatorNode, BinaryOperatorNode, UnaryOperatorNode, ComparisonOperatorNode, LambdaNode, LambdaWithinForInClauseNode, AugmentedAssignmentNode, PatternListNode, YieldNode, AttributeNode, SubscriptNode, SliceNode, EllipsisNode, CallNode, TypedParameterNode, TypeNode, SplatTypeNode, GenericTypeNode, UnionTypeNode, ConstrainedTypeNode, MemberTypeNode, KeywordArgumentNode, ListNode, SetNode, TupleNode, DictionaryNode, PairNode, ListComprehensionNode, DictionaryComprehensionNode, SetComprehensionNode, GeneratorExpressionNode, ParenthesizedExpressionNode, CollectionElementsNode, ForInClauseNode, IfClauseNode, ConditionalExpressionNode, ConcatenatedStringNode, StringNode, StringContentNode, InterpolationNode, NotEscapeSequenceNode, FormatSpecifierNode, TypeConversionNode, IdentifierNode, TrueNode, FalseNode, NoneNode, AwaitNode, CommentNode, PositionalSeparatorNode, KeywordSeparatorNode, SimpleStatementsElementsNode, SubjectsNode, WithClauseWithItemsNode, TypesNode, ArgumentListElementsNode, ListPatternCasePatternsNode, DictPatternElementsNode, SubscriptsNode, DictionaryElementsNode, SliceGroupNode, FormatSpecifierTextNode, TuplePatternElementsNode, CasePatternListNode, TupleElementsNode, ExceptClauseExceptionAsNode, CaseTuplePatternNode, CaseListPatternNode, PrintArgumentsNode, PrintChevronArgumentsNode, PrintStatementChevronNode, PrintStatementPlainNode, WildcardPatternNode, ParenthesizedImportListNode, ComprehensionClausesNode, IntegerHexNode, IntegerOctalNode, IntegerBinaryNode, IntegerDecimalLongNode, IntegerDecimalImaginaryNode, IntegerDecimalPlainNode, FloatPointNode, FloatLeadingPointNode, FloatScientificNode, EscapeSequenceUnicodeFixedNode, EscapeSequenceUnicodeWideNode, EscapeSequenceHexNode, EscapeSequenceOctalNode, EscapeSequenceLineBreakNode, EscapeSequenceSimpleNode, EscapeSequenceNamedNode, LineContinuationNewlineNode, LineContinuationNulNode, SimplePatternNegativeNode, ExceptClauseExceptionListNode, ExceptClauseExceptionNode, SplatPatternListNode, SplatPatternDictionaryNode, AssignmentEqNode, AssignmentTypeNode, AssignmentTypedNode, ExpressionStatementTupleNode, WithClauseBareNode, WithClauseParenNode, MatchBlockBlockNode, MatchBlockEmptyNode, SuiteInlineNode, SuiteBlockNode, SuiteEmptyNode, ComparisonOperatorComparatorNode, YieldFromClauseNode, StringStartNode, StringFragmentNode, EscapeInterpolationNode, StringEndNode, IndentNode, DedentNode, TightNode, SpaceNode, TabNode, NewlineNode, BlanklineNode, DoubleBlanklineNode, ConstructorDeclarationNode, BlockClassDeclarationNode, SuiteBlockClassDeclarationNode, DecoratedDefinitionClassDeclarationNode, AsPatternTargetNode, ImportKeywordNode, DotNode, FromKeywordNode, FutureUKeywordNode, AsKeywordNode, StarNode, GtGtNode, AssertKeywordNode, ColonEqNode, ReturnKeywordNode, DelKeywordNode, RaiseKeywordNode, PassKeywordNode, BreakKeywordNode, ContinueKeywordNode, IfKeywordNode, ColonNode, ElifKeywordNode, ElseKeywordNode, MatchKeywordNode, CaseKeywordNode, AsyncKeywordNode, ForKeywordNode, InKeywordNode, WhileKeywordNode, TryKeywordNode, ExceptKeywordNode, FinallyKeywordNode, WithKeywordNode, DefKeywordNode, DashGtNode, LparenNode, RparenNode, StarStarNode, GlobalKeywordNode, NonlocalKeywordNode, ExecKeywordNode, TypeKeywordNode, EqNode, ClassKeywordNode, LbrackNode, RbrackNode, AtNode, PipeNode, LbraceNode, RbraceNode, DashNode, PlusNode, NotKeywordNode, AndKeywordNode, OrKeywordNode, SlashNode, PercentNode, SlashSlashNode, AmpNode, CaretNode, LtLtNode, TildeNode, LambdaKeywordNode, PlusEqNode, DashEqNode, StarEqNode, SlashEqNode, AtEqNode, SlashSlashEqNode, PercentEqNode, StarStarEqNode, GtGtEqNode, LtLtEqNode, AmpEqNode, CaretEqNode, PipeEqNode, YieldKeywordNode, CommaNode, BslashNode, AwaitKeywordNode, PrintKeywordNode, UnderscoreNode, LtNode, LtEqNode, EqEqNode, BangEqNode, GtEqNode, GtNode, LtGtNode, NotInNode, IsKeywordNode, IsNotNode, InitUKeywordNode, TriviaNode);
+::sittir_core::grammar_nodes!(TriviaNode; AnyNode, StatementNode, SimpleStatementNode, CompoundStatementNode, WithClauseNode, SuiteNode, ParameterNode, PatternNode, ExpressionNode, PrimaryExpressionNode, IntegerNode, FloatNode, TypeParamNode, IntegerDecimalNode, CompoundStatementClassDefinitionNode, StatementClassDefinitionNode, SuiteClassDefinitionNode, FutureImportStatementContentNodeSlot, ImportFromStatementModuleNameNodeSlot, ImportFromStatementContentNodeSlot, ImportListNameNodeSlot, PrintStatementContentNodeSlot, ExpressionStatementContentNodeSlot, ReturnStatementExpressionsNodeSlot, IfStatementAlternativeNodeSlot, CaseClausePatternNodeSlot, ForStatementLeftNodeSlot, ExecStatementCodeNodeSlot, ParenthesizedListSplatContentNodeSlot, DecoratedDefinitionDefinitionNodeSlot, CasePatternContentNodeSlot, SimplePatternContentNodeSlot, ComplexPatternRealNodeSlot, ComplexPatternOperatorNodeSlot, DefaultParameterNameNodeSlot, ListSplatPatternPatternNodeSlot, BooleanOperatorOperatorNodeSlot, BinaryOperatorOperatorNodeSlot, UnaryOperatorOperatorNodeSlot, LambdaWithinForInClauseBodyNodeSlot, AugmentedAssignmentOperatorNodeSlot, AugmentedAssignmentRightNodeSlot, YieldContentNodeSlot, CallArgumentsNodeSlot, TypedParameterNameNodeSlot, TypeContentNodeSlot, ParenthesizedExpressionExpressionNodeSlot, CollectionElementsItemNodeSlot, ForInClauseTrailingCommaNodeSlot, StringContentNodeSlot, StringContentElementsNodeSlot, FormatSpecifierElementsNodeSlot, ArgumentListElementsItemNodeSlot, DictPatternElementsItemNodeSlot, SubscriptsElementsNodeSlot, DictionaryElementsItemNodeSlot, ComprehensionClausesContentNodeSlot, ExceptClauseExceptionContentNodeSlot, SplatPatternListPatternNodeSlot, SplatPatternDictionaryPatternNodeSlot, AssignmentEqValueNodeSlot, ComparisonOperatorComparatorOperatorsNodeSlot, DecoratedDefinitionClassDeclarationDefinitionNodeSlot, ModuleNode, SimpleStatementsNode, ImportStatementNode, ImportPrefixNode, RelativeImportNode, FutureImportStatementNode, ImportFromStatementNode, ImportListNode, AliasedImportNode, WildcardImportNode, PrintStatementNode, ChevronNode, AssertStatementNode, ExpressionStatementNode, NamedExpressionNode, NamedExpressionLhsNode, ReturnStatementNode, DeleteStatementNode, RaiseStatementNode, PassStatementNode, BreakStatementNode, ContinueStatementNode, IfStatementNode, ElifClauseNode, ElseClauseNode, MatchStatementNode, MatchBlockNode, CaseClauseNode, ForStatementNode, WhileStatementNode, TryStatementNode, ExceptClauseNode, FinallyClauseNode, WithStatementNode, WithItemNode, FunctionDefinitionNode, ParametersNode, LambdaParametersNode, ListSplatNode, DictionarySplatNode, GlobalStatementNode, NonlocalStatementNode, ExecStatementNode, TypeAliasStatementNode, ClassDefinitionNode, TypeParameterNode, ParenthesizedListSplatNode, ArgumentListNode, DecoratedDefinitionNode, DecoratorNode, BlockNode, ExpressionListNode, DottedNameNode, CasePatternNode, SimplePatternNode, CaseAsPatternNode, UnionPatternNode, DictPatternNode, KeyValuePatternNode, KeywordPatternNode, ClassPatternNode, ComplexPatternNode, ParametersElementsNode, PatternsNode, TuplePatternNode, ListPatternNode, DefaultParameterNode, TypedDefaultParameterNode, ListSplatPatternNode, DictionarySplatPatternNode, AsPatternNode, NotOperatorNode, BooleanOperatorNode, BinaryOperatorNode, UnaryOperatorNode, ComparisonOperatorNode, LambdaNode, LambdaWithinForInClauseNode, AugmentedAssignmentNode, PatternListNode, YieldNode, AttributeNode, SubscriptNode, SliceNode, EllipsisNode, CallNode, TypedParameterNode, TypeNode, SplatTypeNode, GenericTypeNode, UnionTypeNode, ConstrainedTypeNode, MemberTypeNode, KeywordArgumentNode, ListNode, SetNode, TupleNode, DictionaryNode, PairNode, ListComprehensionNode, DictionaryComprehensionNode, SetComprehensionNode, GeneratorExpressionNode, ParenthesizedExpressionNode, CollectionElementsNode, ForInClauseNode, IfClauseNode, ConditionalExpressionNode, ConcatenatedStringNode, StringNode, StringContentNode, InterpolationNode, NotEscapeSequenceNode, FormatSpecifierNode, TypeConversionNode, IdentifierNode, TrueNode, FalseNode, NoneNode, AwaitNode, CommentNode, PositionalSeparatorNode, KeywordSeparatorNode, SimpleStatementsElementsNode, SubjectsNode, WithClauseWithItemsNode, TypesNode, ArgumentListElementsNode, ListPatternCasePatternsNode, DictPatternElementsNode, SubscriptsNode, DictionaryElementsNode, SliceGroupNode, FormatSpecifierTextNode, TypeParamsNode, TypeParamsItemsNode, TuplePatternElementsNode, CasePatternListNode, TupleElementsNode, ExceptClauseExceptionAsNode, CaseTuplePatternNode, CaseListPatternNode, PrintArgumentsNode, PrintChevronArgumentsNode, PrintStatementChevronNode, PrintStatementPlainNode, WildcardPatternNode, ParenthesizedImportListNode, ComprehensionClausesNode, IntegerHexNode, IntegerOctalNode, IntegerBinaryNode, IntegerDecimalLongNode, IntegerDecimalImaginaryNode, IntegerDecimalPlainNode, FloatPointNode, FloatLeadingPointNode, FloatScientificNode, EscapeSequenceUnicodeFixedNode, EscapeSequenceUnicodeWideNode, EscapeSequenceHexNode, EscapeSequenceOctalNode, EscapeSequenceLineBreakNode, EscapeSequenceSimpleNode, EscapeSequenceNamedNode, LineContinuationNewlineNode, LineContinuationNulNode, SimplePatternNegativeNode, ExceptClauseExceptionListNode, ExceptClauseExceptionNode, SplatPatternListNode, SplatPatternDictionaryNode, AssignmentEqNode, AssignmentTypeNode, AssignmentTypedNode, ExpressionStatementTupleNode, WithClauseBareNode, WithClauseParenNode, SuiteInlineNode, SuiteBlockNode, SuiteEmptyNode, ComparisonOperatorComparatorNode, YieldFromClauseNode, TypeParamTypeVarNode, TypeParamTypeVarTupleNode, TypeParamParamSpecNode, StringStartNode, StringFragmentNode, EscapeInterpolationNode, StringEndNode, IndentNode, DedentNode, TightNode, SpaceNode, TabNode, NewlineNode, BlanklineNode, DoubleBlanklineNode, ConstructorDeclarationNode, BlockClassDeclarationNode, SuiteBlockClassDeclarationNode, DecoratedDefinitionClassDeclarationNode, AsPatternTargetNode, ImportKeywordNode, DotNode, FromKeywordNode, FutureUKeywordNode, AsKeywordNode, StarNode, GtGtNode, AssertKeywordNode, ColonEqNode, ReturnKeywordNode, DelKeywordNode, RaiseKeywordNode, PassKeywordNode, BreakKeywordNode, ContinueKeywordNode, IfKeywordNode, ColonNode, ElifKeywordNode, ElseKeywordNode, MatchKeywordNode, CaseKeywordNode, AsyncKeywordNode, ForKeywordNode, InKeywordNode, WhileKeywordNode, TryKeywordNode, ExceptKeywordNode, FinallyKeywordNode, WithKeywordNode, DefKeywordNode, DashGtNode, LparenNode, RparenNode, StarStarNode, GlobalKeywordNode, NonlocalKeywordNode, ExecKeywordNode, TypeKeywordNode, EqNode, ClassKeywordNode, LbrackNode, RbrackNode, AtNode, PipeNode, LbraceNode, RbraceNode, DashNode, PlusNode, NotKeywordNode, AndKeywordNode, OrKeywordNode, SlashNode, PercentNode, SlashSlashNode, AmpNode, CaretNode, LtLtNode, TildeNode, LambdaKeywordNode, PlusEqNode, DashEqNode, StarEqNode, SlashEqNode, AtEqNode, SlashSlashEqNode, PercentEqNode, StarStarEqNode, GtGtEqNode, LtLtEqNode, AmpEqNode, CaretEqNode, PipeEqNode, YieldKeywordNode, CommaNode, BslashNode, AwaitKeywordNode, PrintKeywordNode, UnderscoreNode, LtNode, LtEqNode, EqEqNode, BangEqNode, GtEqNode, GtNode, LtGtNode, NotInNode, IsKeywordNode, IsNotNode, InitUKeywordNode, TriviaNode);
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<AliasedImportNode>() == 152, "AliasedImportNode is not the 152 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
@@ -38315,7 +38745,7 @@ const _: () = assert!(::core::mem::size_of::<AndKeywordNode>() == 0, "AndKeyword
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<AnyNode>() == 264, "AnyNode is not the 264 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<ArgumentListElementsItemNodeSlot>() == 216, "ArgumentListElementsItemNodeSlot is not the 216 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<ArgumentListElementsItemNodeSlot>() == 256, "ArgumentListElementsItemNodeSlot is not the 256 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<ArgumentListElementsNode>() == 48, "ArgumentListElementsNode is not the 48 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
@@ -38333,9 +38763,11 @@ const _: () = assert!(::core::mem::size_of::<AssertStatementNode>() == 48, "Asse
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<AssignmentEqNode>() == 160, "AssignmentEqNode is not the 160 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<AssignmentEqValueNodeSlot>() == 200, "AssignmentEqValueNodeSlot is not the 200 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<AssignmentTypeNode>() == 176, "AssignmentTypeNode is not the 176 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<AssignmentTypedNode>() == 216, "AssignmentTypedNode is not the 216 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<AssignmentTypedNode>() == 376, "AssignmentTypedNode is not the 376 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<AsyncKeywordNode>() == 0, "AsyncKeywordNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
@@ -38345,11 +38777,11 @@ const _: () = assert!(::core::mem::size_of::<AtNode>() == 0, "AtNode is not the 
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<AttributeNode>() == 96, "AttributeNode is not the 96 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<AugmentedAssignmentNode>() == 200, "AugmentedAssignmentNode is not the 200 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<AugmentedAssignmentNode>() == 360, "AugmentedAssignmentNode is not the 360 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<AugmentedAssignmentOperatorNodeSlot>() == 1, "AugmentedAssignmentOperatorNodeSlot is not the 1 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<AugmentedAssignmentRightNodeSlot>() == 216, "AugmentedAssignmentRightNodeSlot is not the 216 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<AugmentedAssignmentRightNodeSlot>() == 200, "AugmentedAssignmentRightNodeSlot is not the 200 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<AwaitKeywordNode>() == 0, "AwaitKeywordNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
@@ -38387,7 +38819,7 @@ const _: () = assert!(::core::mem::size_of::<CaretNode>() == 0, "CaretNode is no
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<CaseAsPatternNode>() == 96, "CaseAsPatternNode is not the 96 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<CaseClauseNode>() == 328, "CaseClauseNode is not the 328 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<CaseClauseNode>() == 368, "CaseClauseNode is not the 368 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<CaseClausePatternNodeSlot>() == 64, "CaseClausePatternNodeSlot is not the 64 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
@@ -38395,7 +38827,7 @@ const _: () = assert!(::core::mem::size_of::<CaseKeywordNode>() == 0, "CaseKeywo
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<CaseListPatternNode>() == 64, "CaseListPatternNode is not the 64 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<CasePatternContentNodeSlot>() == 232, "CasePatternContentNodeSlot is not the 232 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<CasePatternContentNodeSlot>() == 224, "CasePatternContentNodeSlot is not the 224 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<CasePatternListNode>() == 48, "CasePatternListNode is not the 48 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
@@ -38403,7 +38835,7 @@ const _: () = assert!(::core::mem::size_of::<CasePatternNode>() == 56, "CasePatt
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<CaseTuplePatternNode>() == 64, "CaseTuplePatternNode is not the 64 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<ChevronNode>() == 176, "ChevronNode is not the 176 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<ChevronNode>() == 216, "ChevronNode is not the 216 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<ClassDefinitionNode>() == 256, "ClassDefinitionNode is not the 256 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
@@ -38411,7 +38843,7 @@ const _: () = assert!(::core::mem::size_of::<ClassKeywordNode>() == 0, "ClassKey
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<ClassPatternNode>() == 160, "ClassPatternNode is not the 160 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<CollectionElementsItemNodeSlot>() == 176, "CollectionElementsItemNodeSlot is not the 176 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<CollectionElementsItemNodeSlot>() == 216, "CollectionElementsItemNodeSlot is not the 216 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<CollectionElementsNode>() == 48, "CollectionElementsNode is not the 48 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
@@ -38421,25 +38853,25 @@ const _: () = assert!(::core::mem::size_of::<ColonNode>() == 0, "ColonNode is no
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<CommaNode>() == 0, "CommaNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<CommentNode>() == 32, "CommentNode is not the 32 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<CommentNode>() == 56, "CommentNode is not the 56 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<ComparisonOperatorComparatorNode>() == 216, "ComparisonOperatorComparatorNode is not the 216 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<ComparisonOperatorComparatorNode>() == 256, "ComparisonOperatorComparatorNode is not the 256 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<ComparisonOperatorComparatorOperatorsNodeSlot>() == 1, "ComparisonOperatorComparatorOperatorsNodeSlot is not the 1 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<ComparisonOperatorNode>() == 80, "ComparisonOperatorNode is not the 80 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<ComplexPatternNode>() == 376, "ComplexPatternNode is not the 376 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<ComplexPatternNode>() == 424, "ComplexPatternNode is not the 424 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<ComplexPatternOperatorNodeSlot>() == 1, "ComplexPatternOperatorNodeSlot is not the 1 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<ComplexPatternRealNodeSlot>() == 160, "ComplexPatternRealNodeSlot is not the 160 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<ComplexPatternRealNodeSlot>() == 184, "ComplexPatternRealNodeSlot is not the 184 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<CompoundStatementClassDefinitionNode>() == 256, "CompoundStatementClassDefinitionNode is not the 256 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<CompoundStatementNode>() == 256, "CompoundStatementNode is not the 256 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<ComprehensionClausesContentNodeSlot>() == 192, "ComprehensionClausesContentNodeSlot is not the 192 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<ComprehensionClausesContentNodeSlot>() == 216, "ComprehensionClausesContentNodeSlot is not the 216 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<ComprehensionClausesNode>() == 40, "ComprehensionClausesNode is not the 40 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
@@ -38469,7 +38901,7 @@ const _: () = assert!(::core::mem::size_of::<DecoratedDefinitionDefinitionNodeSl
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<DecoratedDefinitionNode>() == 296, "DecoratedDefinitionNode is not the 296 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<DecoratorNode>() == 176, "DecoratorNode is not the 176 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<DecoratorNode>() == 216, "DecoratorNode is not the 216 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<DedentNode>() == 0, "DedentNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
@@ -38477,13 +38909,13 @@ const _: () = assert!(::core::mem::size_of::<DefKeywordNode>() == 0, "DefKeyword
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<DefaultParameterNameNodeSlot>() == 64, "DefaultParameterNameNodeSlot is not the 64 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<DefaultParameterNode>() == 240, "DefaultParameterNode is not the 240 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<DefaultParameterNode>() == 280, "DefaultParameterNode is not the 280 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<DelKeywordNode>() == 0, "DelKeywordNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<DeleteStatementNode>() == 176, "DeleteStatementNode is not the 176 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<DeleteStatementNode>() == 216, "DeleteStatementNode is not the 216 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<DictPatternElementsItemNodeSlot>() == 248, "DictPatternElementsItemNodeSlot is not the 248 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<DictPatternElementsItemNodeSlot>() == 72, "DictPatternElementsItemNodeSlot is not the 72 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<DictPatternElementsNode>() == 48, "DictPatternElementsNode is not the 48 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
@@ -38491,13 +38923,13 @@ const _: () = assert!(::core::mem::size_of::<DictPatternNode>() == 64, "DictPatt
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<DictionaryComprehensionNode>() == 104, "DictionaryComprehensionNode is not the 104 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<DictionaryElementsItemNodeSlot>() == 176, "DictionaryElementsItemNodeSlot is not the 176 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<DictionaryElementsItemNodeSlot>() == 216, "DictionaryElementsItemNodeSlot is not the 216 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<DictionaryElementsNode>() == 48, "DictionaryElementsNode is not the 48 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<DictionaryNode>() == 64, "DictionaryNode is not the 64 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<DictionarySplatNode>() == 176, "DictionarySplatNode is not the 176 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<DictionarySplatNode>() == 216, "DictionarySplatNode is not the 216 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<DictionarySplatPatternNode>() == 120, "DictionarySplatPatternNode is not the 120 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
@@ -38507,7 +38939,7 @@ const _: () = assert!(::core::mem::size_of::<DottedNameNode>() == 96, "DottedNam
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<DoubleBlanklineNode>() == 0, "DoubleBlanklineNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<ElifClauseNode>() == 248, "ElifClauseNode is not the 248 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<ElifClauseNode>() == 288, "ElifClauseNode is not the 288 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<ElifKeywordNode>() == 0, "ElifKeywordNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
@@ -38523,21 +38955,21 @@ const _: () = assert!(::core::mem::size_of::<EqNode>() == 0, "EqNode is not the 
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<EscapeInterpolationNode>() == 32, "EscapeInterpolationNode is not the 32 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<EscapeSequenceHexNode>() == 32, "EscapeSequenceHexNode is not the 32 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<EscapeSequenceHexNode>() == 56, "EscapeSequenceHexNode is not the 56 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<EscapeSequenceLineBreakNode>() == 32, "EscapeSequenceLineBreakNode is not the 32 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<EscapeSequenceLineBreakNode>() == 56, "EscapeSequenceLineBreakNode is not the 56 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<EscapeSequenceNamedNode>() == 32, "EscapeSequenceNamedNode is not the 32 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<EscapeSequenceNamedNode>() == 56, "EscapeSequenceNamedNode is not the 56 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<EscapeSequenceOctalNode>() == 32, "EscapeSequenceOctalNode is not the 32 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<EscapeSequenceOctalNode>() == 56, "EscapeSequenceOctalNode is not the 56 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<EscapeSequenceSimpleNode>() == 32, "EscapeSequenceSimpleNode is not the 32 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<EscapeSequenceSimpleNode>() == 56, "EscapeSequenceSimpleNode is not the 56 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<EscapeSequenceUnicodeFixedNode>() == 32, "EscapeSequenceUnicodeFixedNode is not the 32 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<EscapeSequenceUnicodeFixedNode>() == 56, "EscapeSequenceUnicodeFixedNode is not the 56 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<EscapeSequenceUnicodeWideNode>() == 32, "EscapeSequenceUnicodeWideNode is not the 32 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<EscapeSequenceUnicodeWideNode>() == 56, "EscapeSequenceUnicodeWideNode is not the 56 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<ExceptClauseExceptionAsNode>() == 336, "ExceptClauseExceptionAsNode is not the 336 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<ExceptClauseExceptionAsNode>() == 416, "ExceptClauseExceptionAsNode is not the 416 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<ExceptClauseExceptionContentNodeSlot>() == 48, "ExceptClauseExceptionContentNodeSlot is not the 48 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
@@ -38551,17 +38983,17 @@ const _: () = assert!(::core::mem::size_of::<ExceptKeywordNode>() == 0, "ExceptK
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<ExecKeywordNode>() == 0, "ExecKeywordNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<ExecStatementCodeNodeSlot>() == 120, "ExecStatementCodeNodeSlot is not the 120 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<ExecStatementCodeNodeSlot>() == 200, "ExecStatementCodeNodeSlot is not the 200 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<ExecStatementNode>() == 168, "ExecStatementNode is not the 168 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<ExecStatementNode>() == 248, "ExecStatementNode is not the 248 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<ExpressionListNode>() == 48, "ExpressionListNode is not the 48 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<ExpressionNode>() == 160, "ExpressionNode is not the 160 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<ExpressionNode>() == 200, "ExpressionNode is not the 200 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<ExpressionStatementContentNodeSlot>() == 216, "ExpressionStatementContentNodeSlot is not the 216 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<ExpressionStatementContentNodeSlot>() == 200, "ExpressionStatementContentNodeSlot is not the 200 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<ExpressionStatementNode>() == 232, "ExpressionStatementNode is not the 232 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<ExpressionStatementNode>() == 216, "ExpressionStatementNode is not the 216 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<ExpressionStatementTupleNode>() == 48, "ExpressionStatementTupleNode is not the 48 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
@@ -38571,13 +39003,13 @@ const _: () = assert!(::core::mem::size_of::<FinallyClauseNode>() == 88, "Finall
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<FinallyKeywordNode>() == 0, "FinallyKeywordNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<FloatLeadingPointNode>() == 152, "FloatLeadingPointNode is not the 152 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<FloatLeadingPointNode>() == 176, "FloatLeadingPointNode is not the 176 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<FloatNode>() == 160, "FloatNode is not the 160 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<FloatNode>() == 184, "FloatNode is not the 184 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<FloatPointNode>() == 152, "FloatPointNode is not the 152 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<FloatPointNode>() == 176, "FloatPointNode is not the 176 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<FloatScientificNode>() == 128, "FloatScientificNode is not the 128 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<FloatScientificNode>() == 152, "FloatScientificNode is not the 152 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<ForInClauseNode>() == 192, "ForInClauseNode is not the 192 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
@@ -38587,7 +39019,7 @@ const _: () = assert!(::core::mem::size_of::<ForKeywordNode>() == 0, "ForKeyword
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<ForStatementLeftNodeSlot>() == 104, "ForStatementLeftNodeSlot is not the 104 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<ForStatementNode>() == 440, "ForStatementNode is not the 440 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<ForStatementNode>() == 480, "ForStatementNode is not the 480 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<FormatSpecifierElementsNodeSlot>() == 40, "FormatSpecifierElementsNodeSlot is not the 40 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
@@ -38623,13 +39055,13 @@ const _: () = assert!(::core::mem::size_of::<GtNode>() == 0, "GtNode is not the 
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<IdentifierNode>() == 32, "IdentifierNode is not the 32 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<IfClauseNode>() == 176, "IfClauseNode is not the 176 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<IfClauseNode>() == 216, "IfClauseNode is not the 216 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<IfKeywordNode>() == 0, "IfKeywordNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<IfStatementAlternativeNodeSlot>() == 248, "IfStatementAlternativeNodeSlot is not the 248 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<IfStatementAlternativeNodeSlot>() == 88, "IfStatementAlternativeNodeSlot is not the 88 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<IfStatementNode>() == 272, "IfStatementNode is not the 272 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<IfStatementNode>() == 312, "IfStatementNode is not the 312 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<ImportFromStatementContentNodeSlot>() == 64, "ImportFromStatementContentNodeSlot is not the 64 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
@@ -38653,7 +39085,7 @@ const _: () = assert!(::core::mem::size_of::<IndentNode>() == 0, "IndentNode is 
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<InitUKeywordNode>() == 0, "InitUKeywordNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<IntegerBinaryNode>() == 56, "IntegerBinaryNode is not the 56 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<IntegerBinaryNode>() == 80, "IntegerBinaryNode is not the 80 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<IntegerDecimalImaginaryNode>() == 32, "IntegerDecimalImaginaryNode is not the 32 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
@@ -38663,25 +39095,23 @@ const _: () = assert!(::core::mem::size_of::<IntegerDecimalNode>() == 40, "Integ
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<IntegerDecimalPlainNode>() == 32, "IntegerDecimalPlainNode is not the 32 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<IntegerHexNode>() == 56, "IntegerHexNode is not the 56 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<IntegerHexNode>() == 80, "IntegerHexNode is not the 80 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<IntegerNode>() == 64, "IntegerNode is not the 64 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<IntegerNode>() == 88, "IntegerNode is not the 88 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<IntegerOctalNode>() == 56, "IntegerOctalNode is not the 56 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<IntegerOctalNode>() == 80, "IntegerOctalNode is not the 80 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<InterpolationExpressionNodeSlot>() == 160, "InterpolationExpressionNodeSlot is not the 160 bytes the byte rule in boxed-payloads.ts sizes it");
-#[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<InterpolationNode>() == 264, "InterpolationNode is not the 264 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<InterpolationNode>() == 304, "InterpolationNode is not the 304 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<IsKeywordNode>() == 0, "IsKeywordNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<IsNotNode>() == 0, "IsNotNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<KeyValuePatternNode>() == 248, "KeyValuePatternNode is not the 248 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<KeyValuePatternNode>() == 280, "KeyValuePatternNode is not the 280 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<KeywordArgumentNode>() == 216, "KeywordArgumentNode is not the 216 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<KeywordArgumentNode>() == 256, "KeywordArgumentNode is not the 256 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<KeywordPatternNode>() == 232, "KeywordPatternNode is not the 232 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<KeywordPatternNode>() == 264, "KeywordPatternNode is not the 264 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<KeywordSeparatorNode>() == 8, "KeywordSeparatorNode is not the 8 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
@@ -38691,7 +39121,7 @@ const _: () = assert!(::core::mem::size_of::<LambdaNode>() == 120, "LambdaNode i
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<LambdaParametersNode>() == 64, "LambdaParametersNode is not the 64 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<LambdaWithinForInClauseBodyNodeSlot>() == 160, "LambdaWithinForInClauseBodyNodeSlot is not the 160 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<LambdaWithinForInClauseBodyNodeSlot>() == 200, "LambdaWithinForInClauseBodyNodeSlot is not the 200 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<LambdaWithinForInClauseNode>() == 120, "LambdaWithinForInClauseNode is not the 120 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
@@ -38711,7 +39141,7 @@ const _: () = assert!(::core::mem::size_of::<ListPatternCasePatternsNode>() == 4
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<ListPatternNode>() == 64, "ListPatternNode is not the 64 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<ListSplatNode>() == 176, "ListSplatNode is not the 176 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<ListSplatNode>() == 216, "ListSplatNode is not the 216 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<ListSplatPatternNode>() == 56, "ListSplatPatternNode is not the 56 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
@@ -38729,15 +39159,11 @@ const _: () = assert!(::core::mem::size_of::<LtLtNode>() == 0, "LtLtNode is not 
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<LtNode>() == 0, "LtNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<MatchBlockBlockNode>() == 40, "MatchBlockBlockNode is not the 40 bytes the byte rule in boxed-payloads.ts sizes it");
-#[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<MatchBlockEmptyNode>() == 56, "MatchBlockEmptyNode is not the 56 bytes the byte rule in boxed-payloads.ts sizes it");
-#[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<MatchBlockNode>() == 56, "MatchBlockNode is not the 56 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<MatchBlockNode>() == 40, "MatchBlockNode is not the 40 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<MatchKeywordNode>() == 0, "MatchKeywordNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<MatchStatementNode>() == 120, "MatchStatementNode is not the 120 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<MatchStatementNode>() == 112, "MatchStatementNode is not the 112 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<MemberTypeNode>() == 96, "MemberTypeNode is not the 96 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
@@ -38767,19 +39193,19 @@ const _: () = assert!(::core::mem::size_of::<OrKeywordNode>() == 0, "OrKeywordNo
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<PairNode>() == 96, "PairNode is not the 96 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<ParameterNode>() == 240, "ParameterNode is not the 240 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<ParameterNode>() == 192, "ParameterNode is not the 192 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<ParametersElementsNode>() == 48, "ParametersElementsNode is not the 48 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<ParametersNode>() == 64, "ParametersNode is not the 64 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<ParenthesizedExpressionExpressionNodeSlot>() == 160, "ParenthesizedExpressionExpressionNodeSlot is not the 160 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<ParenthesizedExpressionExpressionNodeSlot>() == 200, "ParenthesizedExpressionExpressionNodeSlot is not the 200 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<ParenthesizedExpressionNode>() == 56, "ParenthesizedExpressionNode is not the 56 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<ParenthesizedImportListNode>() == 64, "ParenthesizedImportListNode is not the 64 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<ParenthesizedListSplatContentNodeSlot>() == 176, "ParenthesizedListSplatContentNodeSlot is not the 176 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<ParenthesizedListSplatContentNodeSlot>() == 216, "ParenthesizedListSplatContentNodeSlot is not the 216 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<ParenthesizedListSplatNode>() == 56, "ParenthesizedListSplatNode is not the 56 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
@@ -38807,7 +39233,7 @@ const _: () = assert!(::core::mem::size_of::<PlusNode>() == 0, "PlusNode is not 
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<PositionalSeparatorNode>() == 8, "PositionalSeparatorNode is not the 8 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<PrimaryExpressionNode>() == 160, "PrimaryExpressionNode is not the 160 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<PrimaryExpressionNode>() == 200, "PrimaryExpressionNode is not the 200 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<PrintArgumentsNode>() == 48, "PrintArgumentsNode is not the 48 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
@@ -38815,19 +39241,17 @@ const _: () = assert!(::core::mem::size_of::<PrintChevronArgumentsNode>() == 48,
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<PrintKeywordNode>() == 0, "PrintKeywordNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<PrintStatementChevronNode>() == 240, "PrintStatementChevronNode is not the 240 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<PrintStatementChevronNode>() == 280, "PrintStatementChevronNode is not the 280 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<PrintStatementChevronPrintChevronArgumentsNodeSlot>() == 48, "PrintStatementChevronPrintChevronArgumentsNodeSlot is not the 48 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<PrintStatementContentNodeSlot>() == 64, "PrintStatementContentNodeSlot is not the 64 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<PrintStatementContentNodeSlot>() == 240, "PrintStatementContentNodeSlot is not the 240 bytes the byte rule in boxed-payloads.ts sizes it");
-#[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<PrintStatementNode>() == 256, "PrintStatementNode is not the 256 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<PrintStatementNode>() == 80, "PrintStatementNode is not the 80 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<PrintStatementPlainNode>() == 64, "PrintStatementPlainNode is not the 64 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<RaiseKeywordNode>() == 0, "RaiseKeywordNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<RaiseStatementNode>() == 336, "RaiseStatementNode is not the 336 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<RaiseStatementNode>() == 416, "RaiseStatementNode is not the 416 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<RbraceNode>() == 0, "RbraceNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
@@ -38837,9 +39261,9 @@ const _: () = assert!(::core::mem::size_of::<RelativeImportNode>() == 152, "Rela
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<ReturnKeywordNode>() == 0, "ReturnKeywordNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<ReturnStatementExpressionsNodeSlot>() == 160, "ReturnStatementExpressionsNodeSlot is not the 160 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<ReturnStatementExpressionsNodeSlot>() == 200, "ReturnStatementExpressionsNodeSlot is not the 200 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<ReturnStatementNode>() == 176, "ReturnStatementNode is not the 176 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<ReturnStatementNode>() == 216, "ReturnStatementNode is not the 216 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<RparenNode>() == 0, "RparenNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
@@ -38847,13 +39271,13 @@ const _: () = assert!(::core::mem::size_of::<SetComprehensionNode>() == 104, "Se
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<SetNode>() == 64, "SetNode is not the 64 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<SimplePatternContentNodeSlot>() == 176, "SimplePatternContentNodeSlot is not the 176 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<SimplePatternContentNodeSlot>() == 208, "SimplePatternContentNodeSlot is not the 208 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<SimplePatternNegativeNode>() == 176, "SimplePatternNegativeNode is not the 176 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<SimplePatternNegativeNode>() == 200, "SimplePatternNegativeNode is not the 200 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<SimplePatternNode>() == 192, "SimplePatternNode is not the 192 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<SimplePatternNode>() == 224, "SimplePatternNode is not the 224 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<SimpleStatementNode>() == 256, "SimpleStatementNode is not the 256 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<SimpleStatementNode>() == 248, "SimpleStatementNode is not the 248 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<SimpleStatementsElementsNode>() == 48, "SimpleStatementsElementsNode is not the 48 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
@@ -38867,9 +39291,9 @@ const _: () = assert!(::core::mem::size_of::<SlashSlashEqNode>() == 0, "SlashSla
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<SlashSlashNode>() == 0, "SlashSlashNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<SliceGroupNode>() == 176, "SliceGroupNode is not the 176 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<SliceGroupNode>() == 216, "SliceGroupNode is not the 216 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<SliceNode>() == 512, "SliceNode is not the 512 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<SliceNode>() == 632, "SliceNode is not the 632 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<SpaceNode>() == 0, "SpaceNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
@@ -38881,9 +39305,7 @@ const _: () = assert!(::core::mem::size_of::<SplatPatternListNode>() == 64, "Spl
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<SplatPatternListPatternNodeSlot>() == 40, "SplatPatternListPatternNodeSlot is not the 40 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<SplatTypeNode>() == 96, "SplatTypeNode is not the 96 bytes the byte rule in boxed-payloads.ts sizes it");
-#[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<SplatTypeOperatorNodeSlot>() == 1, "SplatTypeOperatorNodeSlot is not the 1 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<SplatTypeNode>() == 56, "SplatTypeNode is not the 56 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<StarEqNode>() == 0, "StarEqNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
@@ -38897,27 +39319,27 @@ const _: () = assert!(::core::mem::size_of::<StatementClassDefinitionNode>() == 
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<StatementNode>() == 264, "StatementNode is not the 264 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<StringContentElementsNodeSlot>() == 40, "StringContentElementsNodeSlot is not the 40 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<StringContentElementsNodeSlot>() == 64, "StringContentElementsNodeSlot is not the 64 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<StringContentNode>() == 40, "StringContentNode is not the 40 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<StringContentNodeSlot>() == 40, "StringContentNodeSlot is not the 40 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<StringEndNode>() == 32, "StringEndNode is not the 32 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<StringEndNode>() == 80, "StringEndNode is not the 80 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<StringFragmentNode>() == 32, "StringFragmentNode is not the 32 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<StringNode>() == 120, "StringNode is not the 120 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<StringNode>() == 200, "StringNode is not the 200 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<StringStartNode>() == 32, "StringStartNode is not the 32 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<StringStartNode>() == 80, "StringStartNode is not the 80 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<SubjectsNode>() == 48, "SubjectsNode is not the 48 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<SubscriptNode>() == 104, "SubscriptNode is not the 104 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<SubscriptsNode>() == 48, "SubscriptsNode is not the 48 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<SubscriptsElementsNodeSlot>() == 200, "SubscriptsElementsNodeSlot is not the 200 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<SubscriptsSubscriptNodeSlot>() == 160, "SubscriptsSubscriptNodeSlot is not the 160 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<SubscriptsNode>() == 48, "SubscriptsNode is not the 48 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<SuiteBlockClassDeclarationNode>() == 64, "SuiteBlockClassDeclarationNode is not the 64 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
@@ -38953,9 +39375,9 @@ const _: () = assert!(::core::mem::size_of::<TuplePatternElementsNode>() == 48, 
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<TuplePatternNode>() == 64, "TuplePatternNode is not the 64 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<TypeAliasStatementNode>() == 128, "TypeAliasStatementNode is not the 128 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<TypeAliasStatementNode>() == 176, "TypeAliasStatementNode is not the 176 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<TypeContentNodeSlot>() == 160, "TypeContentNodeSlot is not the 160 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<TypeContentNodeSlot>() == 200, "TypeContentNodeSlot is not the 200 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<TypeConversionNode>() == 32, "TypeConversionNode is not the 32 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
@@ -38963,9 +39385,21 @@ const _: () = assert!(::core::mem::size_of::<TypeKeywordNode>() == 0, "TypeKeywo
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<TypeNode>() == 56, "TypeNode is not the 56 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<TypeParamNode>() == 112, "TypeParamNode is not the 112 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<TypeParamParamSpecNode>() == 56, "TypeParamParamSpecNode is not the 56 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<TypeParamTypeVarNode>() == 112, "TypeParamTypeVarNode is not the 112 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<TypeParamTypeVarTupleNode>() == 56, "TypeParamTypeVarTupleNode is not the 56 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<TypeParameterNode>() == 64, "TypeParameterNode is not the 64 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<TypedDefaultParameterNode>() == 272, "TypedDefaultParameterNode is not the 272 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<TypeParamsItemsNode>() == 48, "TypeParamsItemsNode is not the 48 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<TypeParamsNode>() == 64, "TypeParamsNode is not the 64 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<TypedDefaultParameterNode>() == 312, "TypedDefaultParameterNode is not the 312 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<TypedParameterNameNodeSlot>() == 120, "TypedParameterNameNodeSlot is not the 120 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
@@ -38985,7 +39419,7 @@ const _: () = assert!(::core::mem::size_of::<UnionTypeNode>() == 96, "UnionTypeN
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<WhileKeywordNode>() == 0, "WhileKeywordNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<WhileStatementNode>() == 336, "WhileStatementNode is not the 336 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<WhileStatementNode>() == 376, "WhileStatementNode is not the 376 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<WildcardImportNode>() == 0, "WildcardImportNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
@@ -38999,13 +39433,13 @@ const _: () = assert!(::core::mem::size_of::<WithClauseParenNode>() == 64, "With
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<WithClauseWithItemsNode>() == 48, "WithClauseWithItemsNode is not the 48 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<WithItemNode>() == 176, "WithItemNode is not the 176 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<WithItemNode>() == 216, "WithItemNode is not the 216 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<WithKeywordNode>() == 0, "WithKeywordNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<WithStatementNode>() == 152, "WithStatementNode is not the 152 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<YieldContentNodeSlot>() == 160, "YieldContentNodeSlot is not the 160 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<YieldContentNodeSlot>() == 200, "YieldContentNodeSlot is not the 200 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<YieldFromClauseNode>() == 56, "YieldFromClauseNode is not the 56 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]

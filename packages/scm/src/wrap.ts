@@ -1588,6 +1588,7 @@ function viewEscapeSequence(data: RecordPosition, tree: TreeHandle): T.EscapeSeq
 		$words: positionWords(data),
 		$cache: undefined as Record<number, unknown> | undefined,
 		$_layout: data.$_layout,
+		$verbatim: undefined as string | undefined,
 		content: viewEscapeSequence$content,
 		$with: undefined as unknown as object,
 		$render: handleRender,
@@ -1601,6 +1602,7 @@ function viewEscapeSequence(data: RecordPosition, tree: TreeHandle): T.EscapeSeq
 	};
 	node.$with = { content: $with$content, [RECEIVER]: node };
 	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
+	node.$verbatim = viewSlot<string | undefined>(node, 4, 2, 4, 0, 3);
 	return node as unknown as T.EscapeSequence.Parsed;
 }
 
@@ -1750,6 +1752,7 @@ function viewComment(data: RecordPosition, tree: TreeHandle): T.Comment.Parsed {
 		$words: positionWords(data),
 		$cache: undefined as Record<number, unknown> | undefined,
 		$_layout: data.$_layout,
+		$verbatim: undefined as string | undefined,
 		content: viewComment$content,
 		$with: undefined as unknown as object,
 		$render: handleRender,
@@ -1761,6 +1764,7 @@ function viewComment(data: RecordPosition, tree: TreeHandle): T.Comment.Parsed {
 		[Symbol.dispose]: handleDispose
 	};
 	node.$with = { content: $with$content, [RECEIVER]: node };
+	node.$verbatim = viewSlot<string | undefined>(node, 4, 2, 4, 0, 3);
 	return node as unknown as T.Comment.Parsed;
 }
 

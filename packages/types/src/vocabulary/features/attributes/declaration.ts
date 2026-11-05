@@ -8,6 +8,10 @@ export namespace Declaration {
 		readonly attributes?: G['attribute'][];
 		// r only
 	}
+	export interface Parameter<G extends GrammarContext<G>> {
+		readonly attributes?: G['attribute'][];
+		// r only
+	}
 	export interface TypeParameter<G extends GrammarContext<G>> {
 		readonly attributes?: G['attribute'][];
 		// r only

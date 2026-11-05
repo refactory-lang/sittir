@@ -13,15 +13,15 @@ it('keeps both physical Python lambda factories in the from validation universe'
 	ordinary.mockRestore();
 	restricted.mockRestore();
 	expect(result.errors).toEqual([]);
-	expect(result.total).toBe(183);
-	expect(result.pass).toBe(183);
+	expect(result.total).toBe(185);
+	expect(result.pass).toBe(185);
 	expect(result.excluded.filter((entry) => entry.kind === 'lambda_expression')).toEqual([]);
 }, 120000);
 
 it('checks both physical Python lambda templates behind their shared display', () => {
 	const result = validateTemplateCoverage('python');
 	expect(result.issues).toEqual([]);
-	expect(result.total).toBe(154);
-	expect(result.pass).toBe(154);
+	expect(result.total).toBe(158);
+	expect(result.pass).toBe(158);
 	expect(result.excluded.filter((entry) => entry.entry === 'lambda_expression')).toEqual([]);
 });

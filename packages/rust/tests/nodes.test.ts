@@ -231,9 +231,8 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 		});
 		it('rawString builds the parent', () => {
 			const node = ir.nonSpecialToken.rawString({
-				rawStringLiteralStart: { $type: TSKindId.RawStringLiteralStart, text: 'r"' } as never,
-				stringContent: { $type: TSKindId.RawStringLiteralContent, text: 'test' } as never,
-				rawStringLiteralEnd: { $type: TSKindId.RawStringLiteralEnd, text: '"' } as never
+				prefix: 'r',
+				stringContent: { $type: TSKindId.RawStringLiteralContent, text: 'test' } as never
 			});
 			expect(node.$type).toBe(TSKindId.NonSpecialToken);
 			expect((node as any).content()).toBeDefined();
@@ -2335,18 +2334,16 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 	describe('raw_string_literal', () => {
 		it('factory produces correct type', () => {
 			const node = ir.rawStringLiteral({
-				rawStringLiteralStart: { $type: TSKindId.RawStringLiteralStart, text: 'r"' } as never,
-				stringContent: { $type: TSKindId.RawStringLiteralContent, text: 'test' } as never,
-				rawStringLiteralEnd: { $type: TSKindId.RawStringLiteralEnd, text: '"' } as never
+				prefix: 'r',
+				stringContent: { $type: TSKindId.RawStringLiteralContent, text: 'test' } as never
 			});
 			expect(node.$type).toBe(TSKindId.RawStringLiteral);
 			expectBuiltNode(node);
 		});
 		it('render produces non-empty string', () => {
 			const node = ir.rawStringLiteral({
-				rawStringLiteralStart: { $type: TSKindId.RawStringLiteralStart, text: 'r"' } as never,
-				stringContent: { $type: TSKindId.RawStringLiteralContent, text: 'test' } as never,
-				rawStringLiteralEnd: { $type: TSKindId.RawStringLiteralEnd, text: '"' } as never
+				prefix: 'r',
+				stringContent: { $type: TSKindId.RawStringLiteralContent, text: 'test' } as never
 			});
 			const rendered = node.$render!();
 			expect(rendered.length).toBeGreaterThan(0);
@@ -3883,24 +3880,6 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 	describe('inner_doc_comment_marker', () => {
 		it('is the kind id', () => {
 			expect(ir.innerDocCommentMarker).toBe(TSKindId.InnerDocCommentMarker);
-		});
-	});
-
-	describe('raw_string_literal_start', () => {
-		it('factory produces correct type', () => {
-			const node = ir.rawStringLiteralStart('r#"');
-			expect(node.$type).toBe(TSKindId.RawStringLiteralStart);
-			expectBuiltNode(node);
-			expect(node.$text()).toBe('r#"');
-		});
-	});
-
-	describe('raw_string_literal_end', () => {
-		it('factory produces correct type', () => {
-			const node = ir.rawStringLiteralEnd('"#');
-			expect(node.$type).toBe(TSKindId.RawStringLiteralEnd);
-			expectBuiltNode(node);
-			expect(node.$text()).toBe('"#');
 		});
 	});
 

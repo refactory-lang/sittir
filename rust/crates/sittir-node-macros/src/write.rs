@@ -21,7 +21,7 @@ fn gated(items: &TokenStream) -> TokenStream {
 }
 
 /// The statement writing `field`'s cell, by its stamp. `capture` says the
-/// field is a capture slot.
+/// field is an interior's captured string: a capture slot or its verbatim text.
 fn slot_write(field: &Field<'_>, slot: &SlotAttrs, capture: bool) -> syn::Result<TokenStream> {
     let name = field.ident;
     let word = slot.cell.word.ok_or_else(|| syn::Error::new_spanned(name, format!("`{name}` is a record slot without its record cell (`word = …`)")))?;
@@ -84,7 +84,11 @@ pub fn structure(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn:
             .ident;
         return Ok(writer(quote!(::sittir_core::arena::leaf_cell(__sink, #kind, &self.#text, #layout_of))));
     }
-    let captures: Vec<&Ident> = if attrs.interior.is_some() { capture_fields(fields)?.into_iter().map(|(field, _)| field.ident).collect() } else { Vec::new() };
+    let captures: Vec<&Ident> = if attrs.interior.is_some() {
+        capture_fields(fields)?.into_iter().map(|(field, _)| field.ident).chain(fields.iter().filter(|field| field.ident == "verbatim").map(|field| field.ident)).collect()
+    } else {
+        Vec::new()
+    };
     let mut writes = Vec::new();
     let mut settings = Vec::new();
     let mut slot_words = Vec::new();
@@ -260,7 +264,7 @@ mod tests {
     #[test]
     fn a_token_interior_writes_each_capture_as_a_captured_string_at_its_built_word() {
         let out = expand(&parse_quote! {
-            #[node(kind = kind::DECIMAL, interior = "(?<whole>[0-9]+)(?<suffix>[a-z]+)?", words = 6, built_words = 4)]
+            #[node(kind = kind::DECIMAL, interior = "(?<whole>[0-9]+)(?<suffix>[a-z]+)?", words = 8, built_words = 5)]
             pub struct DecimalNode {
                 #[wire(key = "$_layout")]
                 #[layout]
@@ -271,6 +275,9 @@ mod tests {
                 #[wire(key = "_suffix")]
                 #[slot(capture = "suffix", word = 4, width = 2, forms = 4, built = 3)]
                 pub suffix: Option<String>,
+                #[wire(key = "$verbatim")]
+                #[slot(word = 6, width = 2, forms = 4, built = 4)]
+                pub verbatim: Option<String>,
             }
         })
         .expect("expands");

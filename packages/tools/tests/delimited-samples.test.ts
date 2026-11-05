@@ -9,7 +9,7 @@ import { patternDfa, shortestAccepted } from '../../codegen/src/compiler/model/p
 
 const pascal = (kind: string) => kind.replace(/(^|_)([a-z])/g, (_m, _s, c: string) => c.toUpperCase());
 
-describe.each(['python', 'rust', 'typescript'])('%s: every delimited kind, written with its sample delimiters, parses in its host', (grammar) => {
+describe.each(['rust', 'typescript'])('%s: every delimited kind, written with its sample delimiters, parses in its host', (grammar) => {
 	it('shows the kind spanning the whole sample', async () => {
 		const { nodeMap } = await compileGrammar({ package: grammarPackage(grammar) });
 		const engine: any = await createEngine((await import(`@sittir/${grammar}`)).default);

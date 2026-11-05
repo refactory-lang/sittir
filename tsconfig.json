@@ -8,6 +8,7 @@
 			"@sittir/common": ["./packages/common/src/index.ts"],
 			"@sittir/common/engine": ["./packages/common/src/engine-boundary.ts"],
 			"@sittir/common/blank-arm": ["./packages/common/src/blank-arm.ts"],
+			"@sittir/common/delimiter": ["./packages/common/src/delimiter.ts"],
 			"@sittir/common/error-kind": ["./packages/common/src/error-kind.ts"],
 			"@sittir/common/language": ["./packages/common/src/language.ts"],
 			"@sittir/common/portable": ["./packages/common/src/portable/index.ts"],

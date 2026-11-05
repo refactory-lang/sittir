@@ -64,6 +64,9 @@ pub struct KindAttrs {
     /// and display ids, which picks the variant; absent, the choice stamps
     /// with its own displays and no relaxed keywords.
     pub stamp: Option<Path>,
+    /// On a delimiter token: its derived facet's field, which its record's
+    /// view reads from the overlay where prepare filled it.
+    pub facet: Option<Ident>,
 }
 
 /// A slot's record cell, as codegen stamps it on `#[slot(…)]`: `word` and
@@ -97,6 +100,12 @@ pub struct SlotAttrs {
     /// The optional slot takes, unset, the unit its option site chooses
     /// (`UnitSlot`).
     pub defaulted: bool,
+    /// The slot holds a delimiter token whose derived facet its holder's
+    /// prepare fills (`DelimiterSlot`).
+    pub delimiter: bool,
+    /// The slot is content a derived delimiter bounds, which its holder's
+    /// prepare renders to choose the facet (`RenderSlot`).
+    pub bounded: bool,
 }
 
 /// `#[space(slot = N, side = before|after, site = PATH)]` on a field: a list
@@ -223,6 +232,7 @@ pub fn kind_attrs(attrs: &[Attribute]) -> syn::Result<KindAttrs> {
                 "prepare_fn" => out.prepare_fn = Some(meta.value()?.parse()?),
                 "seat_through" => out.seat_through = Some(meta.value()?.parse()?),
                 "stamp" => out.stamp = Some(meta.value()?.parse()?),
+                "facet" => out.facet = Some(meta.value()?.parse()?),
                 _ => return Err(meta.error("unknown `node` attribute")),
             }
             Ok(())
@@ -254,6 +264,8 @@ pub fn slot_attrs(attrs: &[Attribute]) -> syn::Result<Option<SlotAttrs>> {
             "built" => out.cell.built = Some(meta.value()?.parse::<LitInt>()?.base10_parse()?),
             "seated" => out.seated = true,
             "defaulted" => out.defaulted = true,
+            "delimiter" => out.delimiter = true,
+            "bounded" => out.bounded = true,
             _ => return Err(meta.error("unknown `slot` attribute")),
         }
         Ok(())

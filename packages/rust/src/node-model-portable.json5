@@ -619,7 +619,8 @@
                 "attribute_item"
               ],
               "terminals": []
-            }
+            },
+            "list": true
           }
         ]
       }
@@ -645,7 +646,8 @@
                 "attribute_item"
               ],
               "terminals": []
-            }
+            },
+            "list": true
           }
         ]
       }
@@ -1204,7 +1206,24 @@
         "terminals": [
           "_"
         ],
-        "list": false
+        "list": false,
+        "members": [
+          {
+            "name": "attributes",
+            "slot": {
+              "name": "attribute_item",
+              "propertyName": "attributeItem",
+              "required": false,
+              "multiple": false,
+              "storage": "verbatim",
+              "kinds": [
+                "attribute_item"
+              ],
+              "terminals": []
+            },
+            "list": true
+          }
+        ]
       }
     },
     "attributed_parameter_receiver": {
@@ -1215,7 +1234,24 @@
           "self_parameter"
         ],
         "terminals": [],
-        "list": false
+        "list": false,
+        "members": [
+          {
+            "name": "attributes",
+            "slot": {
+              "name": "attribute_item",
+              "propertyName": "attributeItem",
+              "required": false,
+              "multiple": false,
+              "storage": "verbatim",
+              "kinds": [
+                "attribute_item"
+              ],
+              "terminals": []
+            },
+            "list": true
+          }
+        ]
       }
     },
     "attributed_type_parameter": {
@@ -1242,7 +1278,8 @@
                 "attribute_item"
               ],
               "terminals": []
-            }
+            },
+            "list": true
           }
         ]
       }
@@ -11557,12 +11594,36 @@
         },
         {
           "name": "body",
-          "route": "slot",
-          "slot": "body",
+          "route": "nested",
+          "via": [
+            {
+              "field": null,
+              "kind": "match_block_arms",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": "body",
+              "kind": "match_block",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "match_block_arms",
+          "slot": "arms",
+          "multiple": false,
           "path": [
             {
               "owner": "match_expression",
               "slot": "body"
+            },
+            {
+              "owner": "match_block",
+              "slot": "match_block_arms"
+            },
+            {
+              "owner": "match_block_arms",
+              "slot": "arms"
             }
           ]
         }
@@ -14581,6 +14642,44 @@
           "within": [],
           "pins": [],
           "test": []
+        },
+        {
+          "vocab": "literal.string.bytes.raw",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "match",
+                "pattern": "^br",
+                "slots": {
+                  "333": 0
+                }
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "literal.string.c.raw",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "match",
+                "pattern": "^cr",
+                "slots": {
+                  "333": 0
+                }
+              }
+            }
+          ]
         }
       ],
       "members": [
@@ -21728,7 +21827,7 @@
           "super",
           "crate",
           "identifier",
-          "qualified_identifier",
+          "scoped_identifier",
           "use_as_clause",
           "use_list",
           "scoped_use_list",
@@ -22871,9 +22970,9 @@
       },
       {
         "depth": 4,
-        "paths": 106,
-        "kinds": 59,
-        "refinements": 80
+        "paths": 108,
+        "kinds": 60,
+        "refinements": 82
       },
       {
         "depth": 5,

@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { portablePathHasFacts, readableEntries } from '../src/portable/facts.ts';
+import { portablePathHasFacts, readableEntries, tokenKind } from '../src/portable/facts.ts';
+import type { PortableSeat } from '@sittir/types';
 
 describe('portablePathHasFacts', () => {
 	it('holds when the read path names every fact of the guard path, in order, other facts between', () => {
@@ -80,5 +81,19 @@ describe('readableEntries', () => {
 		expect(paths(readableEntries([entry('declaration.method', [], [7]), entry('declaration.function.inner', [{ up: 1 }]), entry('declaration.function')]))).toEqual([
 			'declaration.function'
 		]);
+	});
+});
+
+describe('tokenKind', () => {
+	const seats = [{ kinds: [], tokens: { '+': 7, in: 9 } }] as unknown as readonly PortableSeat[];
+
+	it("reads a token's kind by its text", () => {
+		expect(tokenKind('+', seats)).toBe(7);
+		expect(tokenKind('in', seats)).toBe(9);
+		expect(tokenKind('-', seats)).toBeUndefined();
+	});
+
+	it("reads only the seat's own tokens, never an inherited property", () => {
+		for (const text of ['toString', 'constructor', '__proto__', 'hasOwnProperty']) expect(tokenKind(text, seats)).toBeUndefined();
 	});
 });

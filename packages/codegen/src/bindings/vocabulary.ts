@@ -1,6 +1,6 @@
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { join, posix, sep } from 'node:path';
-import { type BindingFacts, type ClaimFact, isNamedMember, type NamedMemberFact, type SlotModel, VOCABULARY_DIR } from './facts.ts';
+import { type BindingFacts, type ClaimFact, isNamedMember, type MemberFact, type NamedMemberFact, type SlotModel, VOCABULARY_DIR } from './facts.ts';
 import { capturePaths, envelopeTargets, kindVocabs, memberTargets, readsByKind, refinedContainers } from './routes.ts';
 import { camel, snake } from './names.ts';
 import { grammarDisplayName } from '../grammars.ts';
@@ -17,6 +17,7 @@ export const TEXTS = 'texts';
 export const CONTEXT = 'GrammarContext';
 export const REFINED_BY = 'RefinedBy';
 export const SYNONYMS = 'Synonyms';
+const NEVER = 'never';
 
 export interface Member {
 	readonly name: string;
@@ -84,6 +85,7 @@ export interface VocabularyMember {
 	readonly arity?: MemberArity;
 	readonly flag: boolean;
 	readonly features?: readonly string[];
+	readonly excluded?: true;
 }
 
 export interface VocabularyKind {
@@ -236,7 +238,7 @@ export async function readVocabulary(dir: string): Promise<Vocabulary> {
 	const stubs = source.features.flatMap((feature) => feature.stubs);
 	const declared = [...source.kinds, ...stubs.filter(isKind)];
 	const pathByName = new Map(declared.map((d) => [d.qname, d.path]));
-	const own = new Map<string, Map<string, VocabularyMember>>(declared.map((d) => [d.qname, new Map(d.members.map((m) => [m.name, { optional: m.optional, ...(m.arity === undefined ? {} : { arity: m.arity }), flag: m.flag }]))]));
+	const own = new Map<string, Map<string, VocabularyMember>>(declared.map((d) => [d.qname, new Map(d.members.map((m) => [m.name, { optional: m.optional, ...(m.arity === undefined ? {} : { arity: m.arity }), flag: m.flag, ...(m.type === NEVER ? { excluded: true as const } : {}) }]))]));
 	for (const feature of source.features)
 		for (const stub of feature.stubs) {
 			const members = own.get(stub.qname);
@@ -244,7 +246,7 @@ export async function readVocabulary(dir: string): Promise<Vocabulary> {
 			for (const m of stub.members) {
 				const held = members.get(m.name);
 				const features = held === undefined ? [feature.name] : held.features === undefined ? undefined : [...held.features, feature.name];
-				members.set(m.name, { optional: m.optional || held?.optional === true, ...((m.arity ?? held?.arity) === undefined ? {} : { arity: m.arity ?? held?.arity }), flag: m.flag, ...(features === undefined ? {} : { features }) });
+				members.set(m.name, { optional: m.optional || held?.optional === true, ...((m.arity ?? held?.arity) === undefined ? {} : { arity: m.arity ?? held?.arity }), flag: m.flag, ...(features === undefined ? {} : { features }), ...(m.type === NEVER ? { excluded: true as const } : {}) });
 			}
 		}
 	const kinds = new Map<string, VocabularyKind>();
@@ -254,9 +256,13 @@ export async function readVocabulary(dir: string): Promise<Vocabulary> {
 	}
 	const membersWithin = (composed: ReadonlySet<string> | undefined) => (path: string): ReadonlyMap<string, VocabularyMember> => {
 		const all = new Map<string, VocabularyMember>();
+		const seen = new Set<string>();
 		for (const at of lineageOf(path, (line) => kinds.get(line)))
-			for (const [name, member] of kinds.get(at)?.own ?? [])
-				if (!all.has(name) && (composed === undefined || member.features === undefined || member.features.some((feature) => composed.has(feature)))) all.set(name, member);
+			for (const [name, member] of kinds.get(at)?.own ?? []) {
+				if (seen.has(name) || (composed !== undefined && member.features !== undefined && !member.features.some((feature) => composed.has(feature)))) continue;
+				seen.add(name);
+				if (member.excluded !== true) all.set(name, member);
+			}
 		return all;
 	};
 	const flags = new Set([...kinds.values()].flatMap((kind) => [...kind.own].flatMap(([name, member]) => (member.flag ? [name] : []))));
@@ -334,6 +340,9 @@ const flagResolved = (vocabulary: Vocabulary, claims: readonly ClaimFact[]): Cla
 		return segment === undefined ? claim : { ...claim, vocab: segment.parent, flag: segment.flag };
 	});
 
+const declares = (vocabulary: Vocabulary, paths: readonly string[], name: string): boolean =>
+	paths.some((path) => vocabulary.members(path).has(camel(name)) || flagsSpelledBy(vocabulary, path, name).length > 0);
+
 function canonicalCapture(vocabulary: Vocabulary, paths: readonly string[], name: string, owner: string): string {
 	const member = paths.find((path) => vocabulary.members(path).has(camel(name)));
 	const spelled = paths.flatMap((path) => flagsSpelledBy(vocabulary, path, name).map((flag) => [path, flag] as const));
@@ -364,24 +373,27 @@ export function canonicalFacts(facts: BindingFacts, vocabulary: Vocabulary, mode
 		...facts,
 		claims,
 		templates: facts.templates.map((template) => ({ ...template, vocabs: template.vocabs.map(canonical) })),
-		members: facts.members.map((member) => {
-			if (!isNamedMember(member)) return member;
-			const name = canonicalCapture(vocabulary, pathsOf(member), member.name, member.owner);
+		members: facts.members.flatMap((member): MemberFact[] => {
+			if (!isNamedMember(member)) return [member];
+			const paths = pathsOf(member);
+			if (member.tested === true && !declares(vocabulary, attached(member), member.name)) return [];
+			const name = canonicalCapture(vocabulary, paths, member.name, member.owner);
 			const named = name === member.name ? member : { ...member, name };
 			if (named.route !== 'kind') {
 				renamed.set(`${member.owner} ${member.name}`, name);
-				return named;
+				return [named];
 			}
 			const referenced = renamed.get(`${named.owner} ${named.member}`) ?? named.member;
-			return referenced === named.member ? named : { ...named, member: referenced };
+			return [referenced === named.member ? named : { ...named, member: referenced }];
 		}),
 		containers: facts.containers.map((container) => {
 			const paths = envelopeTargets(model, container, vocabs);
 			return {
 				...container,
-				captures: container.captures.map((capture) => {
+				captures: container.captures.flatMap((capture) => {
+					if (capture.tested === true && !declares(vocabulary, paths, capture.name)) return [];
 					const name = canonicalCapture(vocabulary, paths, capture.name, container.kind);
-					return name === capture.name ? capture : { ...capture, name };
+					return [name === capture.name ? capture : { ...capture, name }];
 				})
 			};
 		})

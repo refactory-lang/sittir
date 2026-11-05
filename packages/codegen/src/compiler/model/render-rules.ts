@@ -5,7 +5,7 @@ import { aliasTargetOf, type RenderRule, type Rule, type RuleAnnotations, type R
 import { ALIAS, CHOICE, DEDENT, INDENT, SEQ, STRING, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
 import { RuleWalker } from '../../dsl/rule-walker.ts';
 import { matchesWordShape } from '../../util/word-matcher.ts';
-import { type AssembledNode, AbstractAssembledCompound, AssembledEnum, AssembledKeyword, AssembledPolymorph, concreteKindsOf, isFixedTextLeaf, isVisiblePunctuationLeaf, layoutNodeOf, startsImmediateWhenPresent, leftmostTerminalImmediate } from './node-map.ts';
+import { type AssembledNode, AbstractAssembledCompound, AssembledLexedPattern, AssembledEnum, AssembledKeyword, AssembledPolymorph, concreteKindsOf, isFixedTextLeaf, isVisiblePunctuationLeaf, layoutNodeOf, startsImmediateWhenPresent, leftmostTerminalImmediate } from './node-map.ts';
 import { slotElementKinds } from '../../emitters/node-common.ts';
 import { supertypeMembersByDisplayName } from './supertype-members.ts';
 import { lineTerminatedKinds, triviaKinds } from './trivia.ts';
@@ -800,8 +800,7 @@ function withArmSeams(rule: RenderRule, kind: string, config: RenderRulesConfig,
 }
 
 function isLexedKind(kind: string, nodeMap: NodeMap): boolean {
-	const node = nodeMap.nodes.get(kind);
-	return node instanceof AbstractAssembledCompound && node.lexedInterior;
+	return nodeMap.nodes.get(kind) instanceof AssembledLexedPattern;
 }
 
 function ownsKindEdges(kind: string, nodeMap: NodeMap): boolean {

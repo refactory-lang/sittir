@@ -84,6 +84,14 @@ export const TOKEN_INTERIORS = {
 		]
 	},
 	metavariable: { regex: '^\\$(?<name>[a-zA-Z_]\\w*)$', slots: [{ name: 'name', propertyName: 'name' }] },
+	raw_string_literal_end: { regex: '^"(?<hashes>(?:#*))$', slots: [{ name: 'hashes', propertyName: 'hashes' }] },
+	raw_string_literal_start: {
+		regex: '^(?<prefix>br|cr|r)(?<hashes>(?:#*))"$',
+		slots: [
+			{ name: 'prefix', propertyName: 'prefix' },
+			{ name: 'hashes', propertyName: 'hashes' }
+		]
+	},
 	shebang: {
 		regex: '^#!(?<content>[\\r\\f\\t\\v ]*(?:[^\\[\\n].*)?)\n$',
 		slots: [{ name: 'content', propertyName: 'content' }]

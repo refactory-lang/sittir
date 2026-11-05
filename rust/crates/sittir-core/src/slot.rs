@@ -641,7 +641,7 @@ mod tests {
         fn prepare(
             &mut self,
             _: &crate::prepare::RenderContext<'_>,
-        ) -> Result<(), CoordinateError> {
+        ) -> Result<(), crate::render::RenderError> {
             Ok(())
         }
     }

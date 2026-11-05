@@ -3,7 +3,7 @@ import type { NodeMap } from '../compiler/types.ts';
 import { samplePattern } from '../types/runtime-shapes.ts';
 import { SEQ, SYMBOL } from '../types/rule-types.ts'; // @rule-type-consts
 import { patternDfa, shortestAccepted } from '../compiler/model/pattern-automaton.ts';
-import { isFixedTextLeaf, isPatternValue } from '../compiler/model/node-map.ts';
+import { isDelimiterToken, isFixedTextLeaf, isPatternValue } from '../compiler/model/node-map.ts';
 import { isBuilderTextLeaf } from '../compiler/model/node-map.ts';
 import type { AssembledNode, AssembledNonterminal } from '../compiler/model/node-map.ts';
 import {
@@ -143,6 +143,7 @@ export function emitTests(config: EmitTestsConfig): string {
 
 		switch (node.modelType) {
 			case 'branch':
+			case 'lexedPattern':
 			case 'envelope':
 			case 'polymorph':
 				emit((into) => emitBranchTest(into, node, kind, key, nodeMap, kindEntries, writesTextOf));
@@ -267,9 +268,7 @@ function factoryCallArgs(
 	const typeConfigParts: string[] = [];
 	for (const f of node.slots) {
 		if (registeredSet.has(f)) continue;
-		if (seated(f)) {
-			typeConfigParts.push(`${f.propertyName}: ${dummyValue(f, nodeMap, kindEntries, strict, at, inner)}`);
-		}
+		if (seated(f)) typeConfigParts.push(...fieldDummyParts(f, nodeMap, kindEntries, strict, at, inner));
 	}
 	const renderConfigParts = [...typeConfigParts];
 
@@ -373,6 +372,7 @@ function childBareCallArgs(
 ): string | undefined {
 	switch (child.modelType) {
 		case 'branch':
+		case 'lexedPattern':
 		case 'envelope':
 		case 'polymorph':
 		case 'alias': {
@@ -407,7 +407,13 @@ function requiredFieldParts(
 	nodeMap: NodeMap,
 	kindEntries: readonly KindEnumEntry[]
 ): string[] {
-	return slots.filter(isRequired).map((f) => `${f.propertyName}: ${dummyValue(f, nodeMap, kindEntries)}`);
+	return slots.filter(isRequired).flatMap((f) => fieldDummyParts(f, nodeMap, kindEntries));
+}
+
+function fieldDummyParts(f: AssembledNonterminal, nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[], strict = false, at: DummyAt = TOP, options?: DummyOptions): string[] {
+	const token = f.values.filter(isNodeRef).map((value) => nodeMap.nodes.get(storageKindOfRef(value.node))).find(isDelimiterToken);
+	if (token === undefined) return [`${f.propertyName}: ${dummyValue(f, nodeMap, kindEntries, strict, at, options)}`];
+	return token.configSlots.filter(isRequired).map((facet) => `${facet.propertyName}: ${dummyValue(facet, nodeMap, kindEntries, strict, at, options)}`);
 }
 
 function objectLiteralInner(text: string): string | undefined {
@@ -876,7 +882,7 @@ function childInput(
 	}
 	const populateOptional = depth === 0 && options?.populateOptional === true;
 	const parts = node.slots.flatMap((f) => {
-		if (isRequired(f) || (populateOptional && !isMultiple(f))) return [`${f.propertyName}: ${dummyValue(f, nodeMap, kindEntries, false, at, inner)}`];
+		if (isRequired(f) || (populateOptional && !isMultiple(f))) return fieldDummyParts(f, nodeMap, kindEntries, false, at, inner);
 		return isMultiple(f) ? [`${f.propertyName}: []`] : [];
 	});
 	return `{ ${[`$type: ${type}`, ...parts].join(', ')} }`;

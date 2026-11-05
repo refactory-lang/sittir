@@ -56,6 +56,7 @@ export function buildRuleLookup(nodeMap: NodeMap): RuleLookup {
 function classify(node: AssembledNode): RenderKindPath {
 	switch (node.modelType) {
 		case 'branch':
+		case 'lexedPattern':
 		case 'envelope':
 		case 'list':
 			return 'template';

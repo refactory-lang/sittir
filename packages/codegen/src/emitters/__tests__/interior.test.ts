@@ -1,7 +1,7 @@
 import { withGeneratedIdTablesNode } from '../../__tests__/helpers/node-map-fixtures.ts';
 import type { GeneratedKindEntry } from '../../dsl/symbol-table.ts';
 import { describe, it, expect } from 'vitest';
-import { AssembledBranch } from '../../compiler/model/node-map.ts';
+import { AssembledLexedPattern } from '../../compiler/model/node-map.ts';
 import { CHOICE, FIELD, PATTERN, SEQ, STRING } from '../../types/rule-types.ts'; // @rule-type-consts
 import { flatten } from '../../compiler/flatten.ts';
 import { assertUnambiguous, interiorEntryPattern, interiorOf, type InteriorEntry } from '../interior.ts';
@@ -42,9 +42,9 @@ describe('assertUnambiguous', () => {
 });
 
 describe('interiorOf', () => {
-	const lexed = (rule: object, kindEntries: readonly GeneratedKindEntry[]): AssembledBranch => {
+	const lexed = (rule: object, kindEntries: readonly GeneratedKindEntry[]): AssembledLexedPattern => {
 		const flat = { ...(flatten(rule as never) as object), lexed: true } as never;
-		return new AssembledBranch('shape', flat, flat, { kindEntries });
+		return new AssembledLexedPattern('shape', flat, flat, { kindEntries });
 	};
 
 	it('fails closed, naming the kind, when a lexed kind is not a sequence', () => {

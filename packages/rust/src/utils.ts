@@ -113,6 +113,11 @@ export const querySlots: QuerySlots = Object.freeze({
 	152: [['content', 0, undefined, '_content']],
 	153: [['content', 0, undefined, '_content']],
 	154: [['content', 0, undefined, '_content']],
+	159: [
+		['prefix', 0, undefined, '_prefix'],
+		['hashes', 1, undefined, '_hashes']
+	],
+	161: [['hashes', 0, undefined, '_hashes']],
 	176: [
 		['shebang', 0, undefined, '_shebang'],
 		['statements', 1, undefined, '_statements']
@@ -739,10 +744,7 @@ export const querySlots: QuerySlots = Object.freeze({
 		['content', 0, undefined, '_content'],
 		['traitBounds', 1, undefined, '_trait_bounds']
 	],
-	434: [
-		['arms', 0, undefined, '_arms'],
-		['lastArm', 1, undefined, '_last_arm']
-	],
+	434: [['arms', 0, undefined, '_arms']],
 	435: [['declarations', 0, undefined, '_declarations']],
 	436: [['declarations', 0, undefined, '_declarations']],
 	437: [
@@ -898,6 +900,13 @@ export const structure: StructureTable = Object.freeze({
 		required: [['_content', 'content']],
 		single: [['_content', 'EscapeSequenceHex.content']]
 	},
+	159: {
+		kind: 'raw_string_literal_start',
+		required: [['_prefix', 'prefix']],
+		texts: [['_prefix', 'RawStringLiteralStart.prefix', ['r', 'br', 'cr']]],
+		options: ['hashes']
+	},
+	161: { kind: 'raw_string_literal_end', config: ['hashes'], options: ['hashes'] },
 	176: {
 		kind: 'source_file',
 		single: [['_shebang', 'SourceFile.shebang']],
@@ -2397,9 +2406,9 @@ export const structure: StructureTable = Object.freeze({
 			['_raw_string_literal_end', 'RawStringLiteral.rawStringLiteralEnd']
 		],
 		nodeOnly: [
-			['_raw_string_literal_start', 'RawStringLiteral.rawStringLiteralStart', 'buildRawStringLiteralStart(…)', [159]],
+			['_raw_string_literal_start', 'RawStringLiteral.rawStringLiteralStart', 'a built RawStringLiteralStart', [159]],
 			['_string_content', 'RawStringLiteral.stringContent', 'buildRawStringLiteralContent(…)', [160]],
-			['_raw_string_literal_end', 'RawStringLiteral.rawStringLiteralEnd', 'buildRawStringLiteralEnd(…)', [161]]
+			['_raw_string_literal_end', 'RawStringLiteral.rawStringLiteralEnd', 'a built RawStringLiteralEnd', [161]]
 		],
 		config: ['rawStringLiteralStart', 'stringContent', 'rawStringLiteralEnd']
 	},
@@ -3301,14 +3310,9 @@ export const structure: StructureTable = Object.freeze({
 	},
 	434: {
 		kind: 'match_block_arms',
-		required: [['_last_arm', 'lastArm']],
-		single: [['_last_arm', 'MatchBlockArms.lastArm']],
-		nodeOnly: [
-			['_arms', 'MatchBlockArms.arms', 'a built MatchArm', [294]],
-			['_last_arm', 'MatchBlockArms.lastArm', 'a built LastMatchArm', [295]]
-		],
-		config: ['arms', 'lastArm'],
-		lists: [['arms', false, 'key']]
+		final: [['_arms', 'match_block_arms.children', [294], [295]]],
+		nodeOnly: [['_arms', 'MatchBlockArms.arms', 'a built MatchArm / LastMatchArm', [294, 295]]],
+		lists: [['arms', false, 0]]
 	},
 	435: {
 		kind: 'trait_interface_declaration_body',

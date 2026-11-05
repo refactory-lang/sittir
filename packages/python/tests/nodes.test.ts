@@ -65,12 +65,12 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 
 	describe('relative_import', () => {
 		it('factory produces correct type', () => {
-			const node = ir.relativeImport({ prefix: { $type: TSKindId.ImportPrefix, text: '.' } as never });
+			const node = ir.relativeImport({ dots: { $type: TSKindId.ImportPrefix, text: '.' } as never });
 			expect(node.$type).toBe(TSKindId.RelativeImport);
 			expectBuiltNode(node);
 		});
 		it('render produces non-empty string', () => {
-			const node = ir.relativeImport({ prefix: { $type: TSKindId.ImportPrefix, text: '.' } as never });
+			const node = ir.relativeImport({ dots: { $type: TSKindId.ImportPrefix, text: '.' } as never });
 			const rendered = node.$render!();
 			expect(rendered.length).toBeGreaterThan(0);
 		});
@@ -128,7 +128,7 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 			const node = ir.importFromStatement({
 				moduleName: {
 					$type: TSKindId.RelativeImport,
-					prefix: { $type: TSKindId.ImportPrefix, text: '.' } as never
+					dots: { $type: TSKindId.ImportPrefix, text: '.' } as never
 				} as never,
 				content: TSKindId.WildcardImport as never
 			});
@@ -139,7 +139,7 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 			const node = ir.importFromStatement({
 				moduleName: {
 					$type: TSKindId.RelativeImport,
-					prefix: { $type: TSKindId.ImportPrefix, text: '.' } as never
+					dots: { $type: TSKindId.ImportPrefix, text: '.' } as never
 				} as never,
 				content: TSKindId.WildcardImport as never
 			});
@@ -153,7 +153,7 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 			const node = ir.importFromStatement.wildcardImport({
 				moduleName: {
 					$type: TSKindId.RelativeImport,
-					prefix: { $type: TSKindId.ImportPrefix, text: '.' } as never
+					dots: { $type: TSKindId.ImportPrefix, text: '.' } as never
 				} as never
 			});
 			expect(node.$type).toBe(TSKindId.ImportFromStatement);
@@ -165,7 +165,7 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 			const node = ir.importFromStatement.importList({
 				moduleName: {
 					$type: TSKindId.RelativeImport,
-					prefix: { $type: TSKindId.ImportPrefix, text: '.' } as never
+					dots: { $type: TSKindId.ImportPrefix, text: '.' } as never
 				} as never,
 				content: [{ $type: TSKindId.DottedName, name: { $type: TSKindId.Identifier, text: 'test' } as never } as never]
 			});
@@ -177,7 +177,7 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 			const node = ir.importFromStatement.parenthesizedImportList({
 				moduleName: {
 					$type: TSKindId.RelativeImport,
-					prefix: { $type: TSKindId.ImportPrefix, text: '.' } as never
+					dots: { $type: TSKindId.ImportPrefix, text: '.' } as never
 				} as never,
 				content: ir.importList({
 					$type: TSKindId.DottedName,
@@ -239,7 +239,7 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 					$type: TSKindId.Chevron,
 					expression: { $type: TSKindId.Identifier, text: 'test' } as never
 				} as never,
-				printChevronArguments: ir.printChevronArguments({ $type: TSKindId.Identifier, text: 'test' } as never) as never
+				arguments: ir.printChevronArguments({ $type: TSKindId.Identifier, text: 'test' } as never) as never
 			} as never);
 			expect(node.$type).toBe(TSKindId.PrintStatement);
 			expectBuiltNode(node);
@@ -251,7 +251,7 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 					$type: TSKindId.Chevron,
 					expression: { $type: TSKindId.Identifier, text: 'test' } as never
 				} as never,
-				printChevronArguments: ir.printChevronArguments({ $type: TSKindId.Identifier, text: 'test' } as never) as never
+				arguments: ir.printChevronArguments({ $type: TSKindId.Identifier, text: 'test' } as never) as never
 			} as never);
 			const rendered = node.$render!();
 			expect(rendered.length).toBeGreaterThan(0);
@@ -274,26 +274,6 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 			);
 			expect(node.$type).toBe(TSKindId.PrintStatement);
 			expect((node as any).content()?.$type).toBe(TSKindId.PrintStatementPlain);
-			expect(node.$render!().length).toBeGreaterThan(0);
-		});
-		it('chevron.printChevronArguments builds the parent', () => {
-			const node = ir.printStatement.chevron.printChevronArguments({
-				chevron: {
-					$type: TSKindId.Chevron,
-					expression: { $type: TSKindId.Identifier, text: 'test' } as never
-				} as never,
-				printChevronArguments: [{ $type: TSKindId.Identifier, text: 'test' } as never]
-			});
-			expect(node.$type).toBe(TSKindId.PrintStatement);
-			expect((node as any).content()?.$type).toBe(TSKindId.PrintStatementChevron);
-			expect(node.$render!().length).toBeGreaterThan(0);
-		});
-		it('chevron.comma builds the parent', () => {
-			const node = ir.printStatement.chevron.comma({
-				chevron: { $type: TSKindId.Chevron, expression: { $type: TSKindId.Identifier, text: 'test' } as never } as never
-			});
-			expect(node.$type).toBe(TSKindId.PrintStatement);
-			expect((node as any).content()?.$type).toBe(TSKindId.PrintStatementChevron);
 			expect(node.$render!().length).toBeGreaterThan(0);
 		});
 	});
@@ -1057,19 +1037,31 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 	describe('match_statement', () => {
 		it('factory produces correct type', () => {
 			const node = ir.matchStatement({
-				subjects: ir.subjects({ $type: TSKindId.Identifier, text: 'test' } as never) as never,
-				body: { $type: TSKindId.MatchBlockBlock, alternatives: [] } as never
+				subject: ir.subjects({ $type: TSKindId.Identifier, text: 'test' } as never) as never,
+				body: { $type: TSKindId.MatchBlock, alternatives: [] } as never
 			});
 			expect(node.$type).toBe(TSKindId.MatchStatement);
 			expectBuiltNode(node);
 		});
 		it('render produces non-empty string', () => {
 			const node = ir.matchStatement({
-				subjects: ir.subjects({ $type: TSKindId.Identifier, text: 'test' } as never) as never,
-				body: { $type: TSKindId.MatchBlockBlock, alternatives: [] } as never
+				subject: ir.subjects({ $type: TSKindId.Identifier, text: 'test' } as never) as never,
+				body: { $type: TSKindId.MatchBlock, alternatives: [] } as never
 			});
 			const rendered = node.$render!();
 			expect(rendered.length).toBeGreaterThan(0);
+		});
+	});
+
+	describe('match_block', () => {
+		it('factory produces correct type', () => {
+			const node = ir.matchBlock();
+			expect(node.$type).toBe(TSKindId.MatchBlock);
+			expectBuiltNode(node);
+		});
+		it('render does not throw on minimal config', () => {
+			const node = ir.matchBlock();
+			expect(() => node.$render!()).not.toThrow();
 		});
 	});
 
@@ -1446,16 +1438,16 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 	describe('type_alias_statement', () => {
 		it('factory produces correct type', () => {
 			const node = ir.typeAliasStatement({
-				left: { $type: TSKindId.Type, content: { $type: TSKindId.Identifier, text: 'test' } as never } as never,
-				right: { $type: TSKindId.Type, content: { $type: TSKindId.Identifier, text: 'test' } as never } as never
+				name: { $type: TSKindId.Identifier, text: 'test' } as never,
+				value: { $type: TSKindId.Type, content: { $type: TSKindId.Identifier, text: 'test' } as never } as never
 			});
 			expect(node.$type).toBe(TSKindId.TypeAliasStatement);
 			expectBuiltNode(node);
 		});
 		it('render produces non-empty string', () => {
 			const node = ir.typeAliasStatement({
-				left: { $type: TSKindId.Type, content: { $type: TSKindId.Identifier, text: 'test' } as never } as never,
-				right: { $type: TSKindId.Type, content: { $type: TSKindId.Identifier, text: 'test' } as never } as never
+				name: { $type: TSKindId.Identifier, text: 'test' } as never,
+				value: { $type: TSKindId.Type, content: { $type: TSKindId.Identifier, text: 'test' } as never } as never
 			});
 			const rendered = node.$render!();
 			expect(rendered.length).toBeGreaterThan(0);
@@ -1777,9 +1769,7 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 		});
 		it('keywordPattern.string builds the parent', () => {
 			const node = ir.casePattern.keywordPattern.string({
-				name: { $type: TSKindId.Identifier, text: 'test' } as never,
-				stringStart: { $type: TSKindId.StringStart, text: '"' } as never,
-				stringEnd: { $type: TSKindId.StringEnd, text: '"' } as never
+				name: { $type: TSKindId.Identifier, text: 'test' } as never
 			});
 			expect(node.$type).toBe(TSKindId.CasePattern);
 			expect((node as any).content()?.$type).toBe(TSKindId.KeywordPattern);
@@ -1788,14 +1778,7 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 		it('keywordPattern.concatenatedString builds the parent', () => {
 			const node = ir.casePattern.keywordPattern.concatenatedString({
 				name: { $type: TSKindId.Identifier, text: 'test' } as never,
-				pattern: [
-					{
-						$type: TSKindId.String,
-						stringStart: { $type: TSKindId.StringStart, text: '"' } as never,
-						contents: [],
-						stringEnd: { $type: TSKindId.StringEnd, text: '"' } as never
-					} as never
-				]
+				pattern: [{ $type: TSKindId.String, contents: [] } as never]
 			});
 			expect(node.$type).toBe(TSKindId.CasePattern);
 			expect((node as any).content()?.$type).toBe(TSKindId.KeywordPattern);
@@ -1990,21 +1973,13 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 			expect(node.$render!().length).toBeGreaterThan(0);
 		});
 		it('simplePattern.string builds the parent', () => {
-			const node = ir.casePattern.simplePattern.string({
-				stringStart: { $type: TSKindId.StringStart, text: '"' } as never,
-				stringEnd: { $type: TSKindId.StringEnd, text: '"' } as never
-			});
+			const node = ir.casePattern.simplePattern.string({});
 			expect(node.$type).toBe(TSKindId.CasePattern);
 			expect((node as any).content()?.$type).toBe(TSKindId.SimplePattern);
 			expect(node.$render!().length).toBeGreaterThan(0);
 		});
 		it('simplePattern.concatenatedString builds the parent', () => {
-			const node = ir.casePattern.simplePattern.concatenatedString({
-				$type: TSKindId.String,
-				stringStart: { $type: TSKindId.StringStart, text: '"' } as never,
-				contents: [],
-				stringEnd: { $type: TSKindId.StringEnd, text: '"' } as never
-			} as never);
+			const node = ir.casePattern.simplePattern.concatenatedString({ $type: TSKindId.String, contents: [] } as never);
 			expect(node.$type).toBe(TSKindId.CasePattern);
 			expect((node as any).content()?.$type).toBe(TSKindId.SimplePattern);
 			expect(node.$render!().length).toBeGreaterThan(0);
@@ -2334,9 +2309,7 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 						name: { $type: TSKindId.Identifier, text: 'test' } as never,
 						pattern: TSKindId.True as never
 					} as never
-				} as never,
-				stringStart: { $type: TSKindId.StringStart, text: '"' } as never,
-				stringEnd: { $type: TSKindId.StringEnd, text: '"' } as never
+				} as never
 			});
 			expect(node.$type).toBe(TSKindId.KeyValuePattern);
 			expect((node as any).key()).toBeDefined();
@@ -2352,14 +2325,7 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 						pattern: TSKindId.True as never
 					} as never
 				} as never,
-				key: [
-					{
-						$type: TSKindId.String,
-						stringStart: { $type: TSKindId.StringStart, text: '"' } as never,
-						contents: [],
-						stringEnd: { $type: TSKindId.StringEnd, text: '"' } as never
-					} as never
-				]
+				key: [{ $type: TSKindId.String, contents: [] } as never]
 			});
 			expect(node.$type).toBe(TSKindId.KeyValuePattern);
 			expect((node as any).key()).toBeDefined();
@@ -2688,11 +2654,7 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 			expect(node.$render!().length).toBeGreaterThan(0);
 		});
 		it('string builds the parent', () => {
-			const node = ir.keywordPattern.string({
-				name: { $type: TSKindId.Identifier, text: 'test' } as never,
-				stringStart: { $type: TSKindId.StringStart, text: '"' } as never,
-				stringEnd: { $type: TSKindId.StringEnd, text: '"' } as never
-			});
+			const node = ir.keywordPattern.string({ name: { $type: TSKindId.Identifier, text: 'test' } as never });
 			expect(node.$type).toBe(TSKindId.KeywordPattern);
 			expect((node as any).pattern()).toBeDefined();
 			expect(node.$render!().length).toBeGreaterThan(0);
@@ -2700,14 +2662,7 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 		it('concatenatedString builds the parent', () => {
 			const node = ir.keywordPattern.concatenatedString({
 				name: { $type: TSKindId.Identifier, text: 'test' } as never,
-				pattern: [
-					{
-						$type: TSKindId.String,
-						stringStart: { $type: TSKindId.StringStart, text: '"' } as never,
-						contents: [],
-						stringEnd: { $type: TSKindId.StringEnd, text: '"' } as never
-					} as never
-				]
+				pattern: [{ $type: TSKindId.String, contents: [] } as never]
 			});
 			expect(node.$type).toBe(TSKindId.KeywordPattern);
 			expect((node as any).pattern()).toBeDefined();
@@ -3366,7 +3321,7 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 		it('factory produces correct type', () => {
 			const node = ir.subscript({
 				object: { $type: TSKindId.Identifier, text: 'test' } as never,
-				subscripts: ir.subscripts({ $type: TSKindId.Identifier, text: 'test' } as never) as never
+				index: ir.subscripts({ $type: TSKindId.Identifier, text: 'test' } as never) as never
 			});
 			expect(node.$type).toBe(TSKindId.Subscript);
 			expectBuiltNode(node);
@@ -3374,7 +3329,7 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 		it('render produces non-empty string', () => {
 			const node = ir.subscript({
 				object: { $type: TSKindId.Identifier, text: 'test' } as never,
-				subscripts: ir.subscripts({ $type: TSKindId.Identifier, text: 'test' } as never) as never
+				index: ir.subscripts({ $type: TSKindId.Identifier, text: 'test' } as never) as never
 			});
 			const rendered = node.$render!();
 			expect(rendered.length).toBeGreaterThan(0);
@@ -3547,7 +3502,7 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 			expect(node.$render!().length).toBeGreaterThan(0);
 		});
 		it('splatType builds the parent', () => {
-			const node = ir.type.splatType({ operator: '*', type: { $type: TSKindId.Identifier, text: 'test' } as never });
+			const node = ir.type.splatType({ $type: TSKindId.Identifier, text: 'test' } as never);
 			expect(node.$type).toBe(TSKindId.Type);
 			expect((node as any).content()).toBeDefined();
 			expect(node.$render!().length).toBeGreaterThan(0);
@@ -3607,14 +3562,15 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 
 	describe('splat_type', () => {
 		it('factory produces correct type', () => {
-			const node = ir.splatType({ operator: '*', type: { $type: TSKindId.Identifier, text: 'test' } as never });
+			const node = ir.splatType({ $type: TSKindId.Identifier, text: 'test' } as never);
 			expect(node.$type).toBe(TSKindId.SplatType);
 			expectBuiltNode(node);
 		});
 		it('render produces non-empty string', () => {
-			const node = ir.splatType({ operator: '*', type: { $type: TSKindId.Identifier, text: 'test' } as never });
+			const node = ir.splatType({ $type: TSKindId.Identifier, text: 'test' } as never);
 			const rendered = node.$render!();
 			expect(rendered.length).toBeGreaterThan(0);
+			expect(rendered).toContain('test');
 		});
 	});
 
@@ -4032,44 +3988,26 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 
 	describe('concatenated_string', () => {
 		it('factory produces correct type', () => {
-			const node = ir.concatenatedString({
-				$type: TSKindId.String,
-				stringStart: { $type: TSKindId.StringStart, text: '"' } as never,
-				contents: [],
-				stringEnd: { $type: TSKindId.StringEnd, text: '"' } as never
-			} as never);
+			const node = ir.concatenatedString({ $type: TSKindId.String, contents: [] } as never);
 			expect(node.$type).toBe(TSKindId.ConcatenatedString);
 			expectBuiltNode(node);
 		});
 		it('render produces non-empty string', () => {
-			const node = ir.concatenatedString({
-				$type: TSKindId.String,
-				stringStart: { $type: TSKindId.StringStart, text: '"' } as never,
-				contents: [],
-				stringEnd: { $type: TSKindId.StringEnd, text: '"' } as never
-			} as never);
+			const node = ir.concatenatedString({ $type: TSKindId.String, contents: [] } as never);
 			const rendered = node.$render!();
 			expect(rendered.length).toBeGreaterThan(0);
-			expect(rendered).toContain('"');
 		});
 	});
 
 	describe('string', () => {
 		it('factory produces correct type', () => {
-			const node = ir.string({
-				stringStart: { $type: TSKindId.StringStart, text: '"' } as never,
-				stringEnd: { $type: TSKindId.StringEnd, text: '"' } as never
-			});
+			const node = ir.string({});
 			expect(node.$type).toBe(TSKindId.String);
 			expectBuiltNode(node);
 		});
-		it('render produces non-empty string', () => {
-			const node = ir.string({
-				stringStart: { $type: TSKindId.StringStart, text: '"' } as never,
-				stringEnd: { $type: TSKindId.StringEnd, text: '"' } as never
-			});
-			const rendered = node.$render!();
-			expect(rendered.length).toBeGreaterThan(0);
+		it('render does not throw on minimal config', () => {
+			const node = ir.string({});
+			expect(() => node.$render!()).not.toThrow();
 		});
 	});
 
@@ -4386,6 +4324,46 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 		});
 	});
 
+	describe('type_params', () => {
+		it('factory produces correct type', () => {
+			const node = ir.typeParams(
+				ir.typeParamsItems({
+					$type: TSKindId.TypeParamTypeVar,
+					name: { $type: TSKindId.Identifier, text: 'test' } as never
+				} as never) as never
+			);
+			expect(node.$type).toBe(TSKindId.TypeParams);
+			expectBuiltNode(node);
+		});
+		it('render produces non-empty string', () => {
+			const node = ir.typeParams(
+				ir.typeParamsItems({
+					$type: TSKindId.TypeParamTypeVar,
+					name: { $type: TSKindId.Identifier, text: 'test' } as never
+				} as never) as never
+			);
+			const rendered = node.$render!();
+			expect(rendered.length).toBeGreaterThan(0);
+			expect(rendered).toContain('test');
+		});
+	});
+
+	describe('type_params_items', () => {
+		it('factory produces correct type', () => {
+			const node = ir.typeParamsItems(
+				...[{ $type: TSKindId.TypeParamTypeVar, name: { $type: TSKindId.Identifier, text: 'test' } as never } as never]
+			);
+			expect(node.$type).toBe(TSKindId.TypeParamsItems);
+			expectBuiltNode(node);
+		});
+		it('render produces non-empty string', () => {
+			const node = ir.typeParamsItems(
+				...[{ $type: TSKindId.TypeParamTypeVar, name: { $type: TSKindId.Identifier, text: 'test' } as never } as never]
+			);
+			expect(node.$render!().length).toBeGreaterThan(0);
+		});
+	});
+
 	describe('tuple_pattern_elements', () => {
 		it('factory produces correct type', () => {
 			const node = ir.tuplePatternElements(...[{ $type: TSKindId.Identifier, text: 'test' } as never]);
@@ -4519,30 +4497,6 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 			});
 			const rendered = node.$render!();
 			expect(rendered.length).toBeGreaterThan(0);
-		});
-	});
-
-	describe('print_statement_chevron sub-factories', () => {
-		it('printChevronArguments builds the parent', () => {
-			const node = ir.printStatementChevron.printChevronArguments({
-				chevron: {
-					$type: TSKindId.Chevron,
-					expression: { $type: TSKindId.Identifier, text: 'test' } as never
-				} as never,
-				printChevronArguments: [{ $type: TSKindId.Identifier, text: 'test' } as never]
-			});
-			expect(node.$type).toBe(TSKindId.PrintStatementChevron);
-			expect((node as any).printChevronArguments()).toBeDefined();
-			expect(node.$render!().length).toBeGreaterThan(0);
-		});
-		it('comma builds the parent', () => {
-			const node = ir.printStatementChevron.comma({
-				chevron: { $type: TSKindId.Chevron, expression: { $type: TSKindId.Identifier, text: 'test' } as never } as never
-			});
-			expect(node.$type).toBe(TSKindId.PrintStatementChevron);
-			const seated = (node as any).printChevronArguments();
-			expect(seated?.$text?.() ?? seated).toBe(TSKindId.Comma);
-			expect(node.$render!().length).toBeGreaterThan(0);
 		});
 	});
 
@@ -4904,30 +4858,6 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 		});
 	});
 
-	describe('match_block_block', () => {
-		it('factory produces correct type', () => {
-			const node = ir.matchBlockBlock();
-			expect(node.$type).toBe(TSKindId.MatchBlockBlock);
-			expectBuiltNode(node);
-		});
-		it('render does not throw on minimal config', () => {
-			const node = ir.matchBlockBlock();
-			expect(() => node.$render!()).not.toThrow();
-		});
-	});
-
-	describe('match_block_empty', () => {
-		it('factory produces correct type', () => {
-			const node = ir.matchBlockEmpty(TSKindId.Newline as never);
-			expect(node.$type).toBe(TSKindId.MatchBlockEmpty);
-			expectBuiltNode(node);
-		});
-		it('render does not throw on minimal config', () => {
-			const node = ir.matchBlockEmpty(TSKindId.Newline as never);
-			expect(() => node.$render!()).not.toThrow();
-		});
-	});
-
 	describe('suite_inline', () => {
 		it('factory produces correct type', () => {
 			const node = ir.suiteInline(ir.simpleStatementsElements(TSKindId.PassStatement as never) as never);
@@ -4966,12 +4896,44 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 		});
 	});
 
-	describe('string_start', () => {
+	describe('type_param_type_var', () => {
 		it('factory produces correct type', () => {
-			const node = ir.stringStart('a"');
-			expect(node.$type).toBe(TSKindId.StringStart);
+			const node = ir.typeParamTypeVar({ name: { $type: TSKindId.Identifier, text: 'test' } as never });
+			expect(node.$type).toBe(TSKindId.TypeParamTypeVar);
 			expectBuiltNode(node);
-			expect(node.$text()).toBe('a"');
+		});
+		it('render produces non-empty string', () => {
+			const node = ir.typeParamTypeVar({ name: { $type: TSKindId.Identifier, text: 'test' } as never });
+			const rendered = node.$render!();
+			expect(rendered.length).toBeGreaterThan(0);
+		});
+	});
+
+	describe('type_param_type_var_tuple', () => {
+		it('factory produces correct type', () => {
+			const node = ir.typeParamTypeVarTuple({ $type: TSKindId.Identifier, text: 'test' } as never);
+			expect(node.$type).toBe(TSKindId.TypeParamTypeVarTuple);
+			expectBuiltNode(node);
+		});
+		it('render produces non-empty string', () => {
+			const node = ir.typeParamTypeVarTuple({ $type: TSKindId.Identifier, text: 'test' } as never);
+			const rendered = node.$render!();
+			expect(rendered.length).toBeGreaterThan(0);
+			expect(rendered).toContain('test');
+		});
+	});
+
+	describe('type_param_param_spec', () => {
+		it('factory produces correct type', () => {
+			const node = ir.typeParamParamSpec({ $type: TSKindId.Identifier, text: 'test' } as never);
+			expect(node.$type).toBe(TSKindId.TypeParamParamSpec);
+			expectBuiltNode(node);
+		});
+		it('render produces non-empty string', () => {
+			const node = ir.typeParamParamSpec({ $type: TSKindId.Identifier, text: 'test' } as never);
+			const rendered = node.$render!();
+			expect(rendered.length).toBeGreaterThan(0);
+			expect(rendered).toContain('test');
 		});
 	});
 
@@ -4990,15 +4952,6 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 			expect(node.$type).toBe(TSKindId.EscapeInterpolation);
 			expectBuiltNode(node);
 			expect(node.$text()).toBe('{{');
-		});
-	});
-
-	describe('string_end', () => {
-		it('factory produces correct type', () => {
-			const node = ir.stringEnd('\\"');
-			expect(node.$type).toBe(TSKindId.StringEnd);
-			expectBuiltNode(node);
-			expect(node.$text()).toBe('\\"');
 		});
 	});
 

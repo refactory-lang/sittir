@@ -33,6 +33,7 @@ fn choice(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Toke
     let mut routes_table: Vec<TokenStream> = vec![quote!(__no_routes); data.variants.len()];
     let mut routers_table: Vec<TokenStream> = vec![quote!(__no_router); data.variants.len()];
     let mut units_table: Vec<TokenStream> = vec![quote!(__no_unit); data.variants.len()];
+    let mut delimiters_table: Vec<TokenStream> = vec![quote!(__no_delimiter); data.variants.len()];
     let mut variant_fns = Vec::new();
     let mut blank = None;
     let mut payloads: Vec<(&Ident, &Type)> = Vec::new();
@@ -193,6 +194,7 @@ fn choice(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Toke
                 routes_table[at] = quote!(<#ty as __rt::ReadNode>::routes);
                 routers_table[at] = quote!(<#ty as __rt::ReadNode>::router);
                 units_table[at] = quote!(<#ty as __rt::ReadNode>::unit_id);
+                delimiters_table[at] = quote!(<#ty as __rt::ReadNode>::delimiter);
             }
             _ => return Err(syn::Error::new_spanned(variant, "a choice's variant is a unit or holds one node")),
         }
@@ -292,11 +294,15 @@ fn choice(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Toke
             fn __no_unit(_cursor: &mut ::tree_sitter::TreeCursor<'_>) -> ::core::option::Option<__Kind> {
                 ::core::option::Option::None
             }
+            fn __no_delimiter(_cursor: &mut ::tree_sitter::TreeCursor<'_>) -> ::core::option::Option<::sittir_core::types::Delimiter> {
+                ::core::option::Option::None
+            }
             #(#variant_fns)*
             const __READS: &[__Read<#ident>] = &[#(#read_table),*];
             const __ROUTES: &[fn(&mut ::tree_sitter::TreeCursor<'_>) -> ::core::option::Option<__rt::Routed>] = &[#(#routes_table),*];
             const __ROUTERS: &[fn(__Kind, __Kind) -> ::core::option::Option<__rt::Router>] = &[#(#routers_table),*];
             const __UNITS: &[__rt::UnitId] = &[#(#units_table),*];
+            const __DELIMITERS: &[fn(&mut ::tree_sitter::TreeCursor<'_>) -> ::core::option::Option<::sittir_core::types::Delimiter>] = &[#(#delimiters_table),*];
             const __READS_BOXED: &[__Read<::std::boxed::Box<#ident>>] = &[#(#boxed_table),*];
             #own_stamp
             fn __variant(grammar: __Kind, display: __Kind) -> ::core::option::Option<u16> {
@@ -359,6 +365,10 @@ fn choice(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Toke
                 fn unit_id(cursor: &mut ::tree_sitter::TreeCursor<'_>) -> ::core::option::Option<__Kind> {
                     let node = cursor.node();
                     __variant(::sittir_core::read::grammar_id(&node), __rt::display_id(&node)).and_then(|i| __UNITS[i as usize](cursor))
+                }
+                fn delimiter(cursor: &mut ::tree_sitter::TreeCursor<'_>) -> ::core::option::Option<::sittir_core::types::Delimiter> {
+                    let node = cursor.node();
+                    __variant(::sittir_core::read::grammar_id(&node), __rt::display_id(&node)).and_then(|i| __DELIMITERS[i as usize](cursor))
                 }
             }
             #has_layout
@@ -794,17 +804,25 @@ fn interior_body(ident: &Ident, fields: &[Field<'_>], pattern: &LitStr, height: 
     regex::Regex::new(&flagged)
         .map_err(|e| syn::Error::new_spanned(pattern, format!("`{ident}`'s token interior does not compile as a Rust regex: {e}")))?;
     let flagged = LitStr::new(&flagged, pattern.span());
+    if !fields.iter().any(|f| f.ident == "verbatim" && is_text(f.ty)) {
+        return Err(syn::Error::new_spanned(ident, "a token interior has a `verbatim: Option<String>` field, the text a spelling outside the interior reads as"));
+    }
     let layout = fields.iter().find(|field| matches!(field.role, Role::Layout)).map(|field| field.ident);
     let mut inits = common_inits(fields, layout, false);
+    let mut opaque = inits.clone();
+    inits.push(quote!(verbatim: ::core::option::Option::None,));
+    opaque.push(quote!(verbatim: ::core::option::Option::Some(::std::string::ToString::to_string(text)),));
     let captured = capture_fields(fields)?;
     for (field, capture) in &captured {
         let (name, ty) = (field.ident, field.ty);
         inits.push(quote!(#name: __rt::capture::<#ty>(&captures, #capture, __rt::SlotSite { kind: __KIND, slot: #capture, index })?,));
+        opaque.push(quote!(#name: ::core::default::Default::default(),));
     }
     let captures: Vec<&LitStr> = captured.iter().map(|&(_, capture)| capture).collect();
     let spans = match layout {
         Some(layout) => {
             inits.push(quote!(#layout: Some(__layout),));
+            opaque.push(quote!(#layout: Some(ctx.layout(index, __at, true)),));
             quote! {
                 let base = ::sittir_core::types::Span::of(&cursor.node()).start;
                 let mut __layout = ctx.layout(index, __at, true);
@@ -815,6 +833,7 @@ fn interior_body(ident: &Ident, fields: &[Field<'_>], pattern: &LitStr, height: 
     };
     let pass = pass(0);
     let router = spelling_router();
+    let opaque_built = built(&quote!(#(#opaque)*), height);
     let built = built(&quote!(#(#inits)*), height);
     Ok(Body {
         routes: quote! {
@@ -828,11 +847,14 @@ fn interior_body(ident: &Ident, fields: &[Field<'_>], pattern: &LitStr, height: 
         },
         read: quote! {
             #pass
-            let captures = __INTERIOR
-                .captures(ctx.text(&cursor.node()))
-                .ok_or(__rt::ReadError::Interior { kind: __KIND, index })?;
-            #spans
-            ::core::result::Result::Ok(#built)
+            let text = ctx.text(&cursor.node());
+            match __INTERIOR.captures(text) {
+                ::core::option::Option::Some(captures) => {
+                    #spans
+                    ::core::result::Result::Ok(#built)
+                }
+                ::core::option::Option::None => ::core::result::Result::Ok(#opaque_built),
+            }
         },
     })
 }
@@ -844,6 +866,7 @@ fn interior_body(ident: &Ident, fields: &[Field<'_>], pattern: &LitStr, height: 
 pub(crate) fn capture_fields<'f, 'a>(fields: &'f [Field<'a>]) -> syn::Result<Vec<(&'f Field<'a>, &'f LitStr)>> {
     fields
         .iter()
+        .filter(|field| field.ident != "verbatim")
         .filter_map(|field| match &field.role {
             Role::Slot(slot) => Some((field, slot)),
             _ => None,
@@ -1032,6 +1055,14 @@ fn routed_body(attrs: &KindAttrs, fields: &[Field<'_>], height: Option<&Ident>) 
         inits.push(quote!(#name: <#ty as __rt::ReadSlot>::finish(#acc, __rt::SlotSite { kind: __KIND, slot: #label, index })?,));
     }
     inits.extend(list_inits(attrs, fields, &slots)?);
+    let delimiter = flank_delimiter(attrs, fields, &slots)?.map(|call| {
+        quote! {
+            fn delimiter(cursor: &mut ::tree_sitter::TreeCursor<'_>) -> ::core::option::Option<::sittir_core::types::Delimiter> {
+                let __rt::Routed { children, routes, .. } = <Self as __rt::ReadNode>::routes(cursor)?;
+                ::core::option::Option::Some(#call)
+            }
+        }
+    });
     let pass = pass(attrs.min_depth.unwrap_or(0));
     let built = built(&quote!(#(#inits)*), height);
 
@@ -1049,6 +1080,7 @@ fn routed_body(attrs: &KindAttrs, fields: &[Field<'_>], height: Option<&Ident>) 
             fn router(grammar: __Kind, display: __Kind) -> ::core::option::Option<__rt::Router> {
                 <Self as __rt::ReadNode>::admits(grammar, display).then_some(__rt::Router::Children(__route, __unit))
             }
+            #delimiter
         },
         items: quote! {
             #[allow(unused_variables)]
@@ -1144,25 +1176,40 @@ fn list_inits(attrs: &KindAttrs, fields: &[Field<'_>], slots: &[(u16, &Field<'_>
         let name = field.ident;
         match &field.role {
             Role::Flank(flank) => {
-                let item = attrs
-                    .item
-                    .as_ref()
-                    .ok_or_else(|| syn::Error::new_spanned(name, "a list's flank needs `#[node(item = …)]`"))?;
-                let slot = slots
-                    .iter()
-                    .find(|(_, f, _)| f.ident == item)
-                    .map(|&(i, ..)| slot_id(i))
-                    .ok_or_else(|| syn::Error::new_spanned(item, "`item` names one of the list's slots"))?;
-                let (leading, trailing) = (option(flank.leading), option(flank.trailing));
-                inits.push(quote! {
-                    #name: ::core::option::Option::Some(__rt::delimiter(&cursor.node(), &children, &routes, #slot, #leading, #trailing)),
-                });
+                let call = delimiter_call(attrs, slots, name, flank)?;
+                inits.push(quote!(#name: ::core::option::Option::Some(#call),));
             }
             Role::SeparatorKind(_) => inits.push(quote!(#name: ::core::option::Option::None,)),
             _ => {}
         }
     }
     Ok(inits)
+}
+
+/// The read's delimiter call for the list's flank field, over the `children`
+/// and `routes` of the node the cursor is on; `None` for a node with no flank.
+fn flank_delimiter(attrs: &KindAttrs, fields: &[Field<'_>], slots: &[(u16, &Field<'_>, &SlotAttrs)]) -> syn::Result<Option<TokenStream>> {
+    fields
+        .iter()
+        .find_map(|field| match &field.role {
+            Role::Flank(flank) => Some(delimiter_call(attrs, slots, field.ident, flank)),
+            _ => None,
+        })
+        .transpose()
+}
+
+fn delimiter_call(attrs: &KindAttrs, slots: &[(u16, &Field<'_>, &SlotAttrs)], name: &Ident, flank: &FlankAttrs) -> syn::Result<TokenStream> {
+    let item = attrs
+        .item
+        .as_ref()
+        .ok_or_else(|| syn::Error::new_spanned(name, "a list's flank needs `#[node(item = …)]`"))?;
+    let slot = slots
+        .iter()
+        .find(|(_, f, _)| f.ident == item)
+        .map(|&(i, ..)| slot_id(i))
+        .ok_or_else(|| syn::Error::new_spanned(item, "`item` names one of the list's slots"))?;
+    let (leading, trailing) = (option(flank.leading), option(flank.trailing));
+    Ok(quote!(__rt::delimiter(&cursor.node(), &children, &routes, #slot, #leading, #trailing)))
 }
 
 /// A slot position as the `SlotId` a route names it by.

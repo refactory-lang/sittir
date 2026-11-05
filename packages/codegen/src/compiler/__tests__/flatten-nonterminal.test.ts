@@ -169,6 +169,19 @@ describe('flattenRules terminality stamps', () => {
 		]);
 	});
 
+	it("a fielded literal arm whose field no other arm of the choice carries is a slot: it records which arm was taken", () => {
+		const out = flattenRules({
+			comma: str(','),
+			plus: str('+'),
+			minus: str('-'),
+			owner: { type: SEQ, members: [sym('chevron'), { type: 'CHOICE', members: [{ type: FIELD, name: 'arguments', content: sym('list') }, { type: FIELD, name: 'trailing_comma', content: sym('comma') }] }] } as Rule,
+			shared: { type: SEQ, members: [sym('left'), { type: 'CHOICE', members: [{ type: FIELD, name: 'operator', content: sym('plus') }, { type: FIELD, name: 'operator', content: sym('minus') }] }, sym('right')] } as Rule
+		});
+		const arms = (rule: string) => ((out[rule] as { members: Rule[] }).members[1] as { members: Rule[] }).members.map((m) => [m.fieldName, m.nonterminal]);
+		expect(arms('owner')).toEqual([['arguments', true], ['trailing_comma', true]]);
+		expect(arms('shared')).toEqual([['operator', false], ['operator', false]]);
+	});
+
 	it('a fielded reference to a literal stays terminal', () => {
 		const out = flattenRules({
 			kw: str('in'),

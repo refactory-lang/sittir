@@ -70,6 +70,31 @@ export const expressionStatement$constBlock =
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 
+export const rawStringLiteral$flatten$rawStringLiteralStart =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config?: unknown, options?: unknown): ReturnType<PF> => {
+		const keys: Record<string, string> = { prefix: 'prefix' };
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config ?? {}))) {
+			if (Object.hasOwn(keys, key)) inner[keys[key]!] = value;
+			else rest[key] = value;
+		}
+		return _fwd<ReturnType<PF>>(parent, { ...rest, rawStringLiteralStart: _c(child)(inner['prefix']) }, options);
+	};
+export const rawStringLiteral$flatten$rawStringLiteralEnd =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config?: unknown, options?: unknown): ReturnType<PF> => {
+		const keys: Record<string, string> = {};
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config ?? {}))) {
+			if (Object.hasOwn(keys, key)) inner[keys[key]!] = value;
+			else rest[key] = value;
+		}
+		return _fwd<ReturnType<PF>>(parent, { ...rest, rawStringLiteralEnd: _c(child)(inner) }, options);
+	};
+
 export const attribute$input =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'input'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
@@ -421,13 +446,6 @@ export const tupleExpression$elements = <
 		return _fwd<ReturnType<PF>>(parent, { ..._o(config), elements: _c(child)(...seat) }, options);
 	};
 };
-
-export const matchBlock$flatten$matchBlockArms =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config?: unknown, options?: unknown): ReturnType<PF> =>
-		config === undefined || _built(config)
-			? _fwd<ReturnType<PF>>(parent, config, options)
-			: _fwd<ReturnType<PF>>(parent, _c(child)(config), options);
 
 export const lastMatchArm$flatten$match =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>

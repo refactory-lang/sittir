@@ -120,7 +120,8 @@
    "special": ["dunder", "magic"],
    "foreign": ["extern"],
    "internal": ["crate"],
-   "index": ["indexer"]
+   "index": ["indexer"],
+   "parameters": ["param_spec"]
   },
   "element": {"spread": ["splat", "unpack"], "map": ["dictionary", "dict"]},
   "expression": {

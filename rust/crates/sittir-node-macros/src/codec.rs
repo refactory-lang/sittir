@@ -1062,6 +1062,9 @@ mod tests {
                 #[wire(key = "_content")]
                 #[slot(capture = "content")]
                 pub content: String,
+                #[wire(key = "$verbatim")]
+                #[slot]
+                pub verbatim: Option<String>,
             }
         });
         assert!(leaf.contains("a node with no child slot is height 0 by its kind"), "{leaf}");
@@ -1225,6 +1228,9 @@ mod tests {
                 #[wire(key = "_content")]
                 #[slot(capture = "content")]
                 pub content: String,
+                #[wire(key = "$verbatim")]
+                #[slot]
+                pub verbatim: Option<String>,
             }
         });
         assert!(has(&out, r#"content: unsafe { ::sittir_core::boundary::required(env, obj, c"_content", "CommentNode")? },"#));

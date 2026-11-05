@@ -12,7 +12,7 @@
 use crate::heap::HeapBytes;
 use crate::options::{Edges, Side};
 use crate::prepare::{Prepare, RenderContext};
-use crate::render::{CoordinateError, Render, RenderResult, RenderSink};
+use crate::render::{Render, RenderError, RenderResult, RenderSink};
 use crate::slot::NodeCoordinate;
 use crate::trivia::{Framing, NodeTrivia, TriviaSeam};
 use crate::types::KindId;
@@ -619,7 +619,14 @@ pub fn render_framed<F: Framing + ?Sized>(
     w.open_frame(origin);
     let line_terminated = kind.is_some_and(|kind| w.kind_has(kind, crate::options::KindFlags::LINE_TERMINATED));
     let outer = line_terminated.then(|| w.swallow_cr(true));
-    body(w)?;
+    if let Some(kind) = kind {
+        w.enter_kind(kind);
+    }
+    let written = body(w);
+    if kind.is_some() {
+        w.exit_kind();
+    }
+    written?;
     if let Some(outer) = outer {
         w.swallow_cr(outer);
     }
@@ -660,7 +667,7 @@ pub fn slots_or_source(own: Vec<SlotLayout>, from: Option<&NodeCoordinate>, sour
 }
 
 impl<T: Prepare + TriviaSeam + 'static> Prepare for NodeLayout<T> {
-    fn prepare(&mut self, ctx: &RenderContext<'_>) -> Result<(), CoordinateError> {
+    fn prepare(&mut self, ctx: &RenderContext<'_>) -> Result<(), RenderError> {
         merge_source_sides(&mut self.trivia, self.sides.as_ref(), ctx.sources);
         self.slots = slots_or_source(std::mem::take(&mut self.slots), self.sides.as_ref(), ctx.sources);
         let changed = std::mem::take(&mut self.changed);
@@ -878,7 +885,7 @@ mod tests {
     }
 
     impl crate::prepare::Prepare for MockTrivia {
-        fn prepare(&mut self, _: &crate::prepare::RenderContext<'_>) -> Result<(), crate::render::CoordinateError> {
+        fn prepare(&mut self, _: &crate::prepare::RenderContext<'_>) -> Result<(), crate::render::RenderError> {
             Ok(())
         }
     }

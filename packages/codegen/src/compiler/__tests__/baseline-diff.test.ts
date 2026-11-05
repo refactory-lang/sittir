@@ -10,6 +10,7 @@ import { readFileSync, existsSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { generate } from '../generate.ts';
 import { stableGrammars } from '../../grammars.ts';
+import { FULL_PIPELINE_TIMEOUT } from '../../__tests__/helpers/timeouts.ts';
 
 const baselineDir = resolve(import.meta.dirname!, '../../../../../specs/005-five-phase-compiler/baseline');
 
@@ -58,7 +59,7 @@ for (const grammar of stableGrammars()) {
 				outputDir: `/tmp/sittir-baseline-${grammar}`
 			});
 			expect(result).toBeDefined();
-		}, 30000);
+		}, FULL_PIPELINE_TIMEOUT);
 
 		for (const [key, filename] of Object.entries(FILE_MAP)) {
 			it(`${filename} — diff summary`, () => {

@@ -30,6 +30,7 @@ export {
 	buildElifClause,
 	buildElseClause,
 	buildMatchStatement,
+	buildMatchBlock,
 	buildCaseClause,
 	buildForStatement,
 	buildWhileStatement,
@@ -137,6 +138,8 @@ export {
 	buildDictionaryElements,
 	buildSliceGroup,
 	buildFormatSpecifierText,
+	buildTypeParams,
+	buildTypeParamsItems,
 	buildTuplePatternElements,
 	buildCasePatternList,
 	buildTupleElements,
@@ -179,17 +182,16 @@ export {
 	buildExpressionStatementTuple,
 	buildWithClauseBare,
 	buildWithClauseParen,
-	buildMatchBlockBlock,
-	buildMatchBlockEmpty,
 	buildSuiteInline,
 	buildSuiteBlock,
 	buildSuiteEmpty,
 	buildComparisonOperatorComparator,
 	buildYieldFromClause,
-	buildStringStart,
+	buildTypeParamTypeVar,
+	buildTypeParamTypeVarTuple,
+	buildTypeParamParamSpec,
 	buildStringFragment,
 	buildEscapeInterpolation,
-	buildStringEnd,
 	buildIndent,
 	buildDedent,
 	buildTight,
@@ -208,10 +210,15 @@ export {
 	buildMethodDeclaration
 } from './raw.js';
 
-export const subscript$seated: Seat<
-	T.Subscript.BuildArgs,
-	ReturnType<typeof F.buildSubscript>
-> = K.subscript$subscripts(F.buildSubscript, F.buildSubscripts);
+export const string$seated: Seat<T.String.BuildArgs, ReturnType<typeof F.buildString>> = K.string$flatten$stringEnd(
+	K.string$flatten$stringStart(F.buildString, F.buildStringStart),
+	F.buildStringEnd
+);
+
+export const subscript$seated: Seat<T.Subscript.BuildArgs, ReturnType<typeof F.buildSubscript>> = K.subscript$index(
+	F.buildSubscript,
+	F.buildSubscripts
+);
 
 export const comparisonOperator$seated: Seat<
 	T.ComparisonOperator.BuildArgs,
@@ -221,7 +228,7 @@ export const comparisonOperator$seated: Seat<
 export const matchStatement$seated: Seat<
 	T.MatchStatement.BuildArgs,
 	ReturnType<typeof F.buildMatchStatement>
-> = K.matchStatement$subjects(F.buildMatchStatement, F.buildSubjects);
+> = K.matchStatement$subject(F.buildMatchStatement, F.buildSubjects);
 
 export const classPattern$seated: Seat<
 	T.ClassPattern.BuildArgs,

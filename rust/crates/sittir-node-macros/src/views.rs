@@ -79,7 +79,7 @@ struct ViewField {
     accessor: TokenStream,
 }
 
-fn view_field(owner: &Ident, field: &Field<'_>, trivia: &TokenStream) -> syn::Result<ViewField> {
+fn view_field(owner: &Ident, field: &Field<'_>, trivia: &TokenStream, facet: Option<&Ident>) -> syn::Result<ViewField> {
     let (name, ty) = (field.ident, field.ty);
     let assoc = camel(name);
     let cell_at = |slot: &crate::attrs::SlotAttrs| -> syn::Result<(u32, usize, usize)> {
@@ -152,13 +152,24 @@ fn view_field(owner: &Ident, field: &Field<'_>, trivia: &TokenStream) -> syn::Re
         }
         (Role::Slot(slot), Shape::OptionalText) => {
             let (_, shape) = shape_of(slot)?;
+            let stored = quote! {
+                match ctx.slot_cell(words, at, #shape)? {
+                    ::sittir_core::arena::Cell::Absent => ::core::option::Option::None,
+                    cell => ::core::option::Option::Some(ctx.cell_text(cell)?),
+                }
+            };
+            let read = if facet == Some(name) {
+                quote!(match site.and_then(|site| ctx.prepared().facet(site)) {
+                    ::core::option::Option::Some(filled) => ::core::option::Option::Some(filled),
+                    ::core::option::Option::None => #stored,
+                })
+            } else {
+                stored
+            };
             ViewField {
                 member: quote!(#name: ::core::option::Option<&'a str>,),
                 init: quote! {
-                    #name: match ctx.slot_cell(words, at, #shape)? {
-                        ::sittir_core::arena::Cell::Absent => ::core::option::Option::None,
-                        cell => ::core::option::Option::Some(ctx.cell_text(cell)?),
-                    },
+                    #name: #read,
                 },
                 accessor: quote!(fn #name(&self) -> ::core::option::Option<&str> { self.#name }),
             }
@@ -228,7 +239,7 @@ pub fn structure(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn:
             parts.push(ViewField { member: quote!(#name: &'a str,), init: TokenStream::new(), accessor: quote!(fn #name(&self) -> &str { self.#name }) });
             continue;
         }
-        parts.push(view_field(ident, field, &trivia)?);
+        parts.push(view_field(ident, field, &trivia, attrs.facet.as_ref())?);
     }
     let reads_words = fields.iter().any(|field| matches!(field.role, Role::Slot(_)) && matches!(shape(field), Ok(Shape::Child | Shape::OptionalChild)));
     let members = parts.iter().map(|part| &part.member);
@@ -591,7 +602,7 @@ mod tests {
     #[test]
     fn a_view_with_no_child_keeps_no_words() {
         let out = expand(&parse_quote! {
-            #[node(kind = kind::DECIMAL, interior = "(?<whole>[0-9]+)(?<suffix>[a-z]+)?", words = 6, built_words = 4, fields = DecimalFields, view = DecimalNodeRecord, prepare_fn = prepare_decimal)]
+            #[node(kind = kind::DECIMAL, interior = "(?<whole>[0-9]+)(?<suffix>[a-z]+)?", words = 8, built_words = 5, fields = DecimalFields, view = DecimalNodeRecord, prepare_fn = prepare_decimal)]
             pub struct DecimalNode {
                 #[wire(key = "$_layout")]
                 #[layout]
@@ -602,6 +613,9 @@ mod tests {
                 #[wire(key = "_suffix")]
                 #[slot(capture = "suffix", word = 4, width = 2, forms = 4, built = 3)]
                 pub suffix: Option<String>,
+                #[wire(key = "$verbatim")]
+                #[slot(word = 6, width = 2, forms = 4, built = 4)]
+                pub verbatim: Option<String>,
             }
         })
         .expect("expands");

@@ -18,8 +18,8 @@ use syn::Ident;
 /// place.
 fn slot_bound(field: &Field<'_>, slot: &SlotAttrs) -> syn::Result<Option<TokenStream>> {
     let ident = field.ident;
-    if slot.cell.bit.is_some() || slot.capture.is_some() {
-        if slot.seated || slot.defaulted {
+    if slot.cell.bit.is_some() || slot.capture.is_some() || ident == "verbatim" {
+        if slot.seated || slot.defaulted || slot.delimiter || slot.bounded {
             return Err(syn::Error::new_spanned(ident, format!("`{ident}` is a presence or a capture, which prepare neither seats nor defaults")));
         }
         return Ok(None);
@@ -41,6 +41,12 @@ fn slot_bound(field: &Field<'_>, slot: &SlotAttrs) -> syn::Result<Option<TokenSt
     if slot.seated {
         bound.extend(quote!(+ ::sittir_core::prepare::SeatSlot<Self::Overlay>));
     }
+    if slot.delimiter {
+        bound.extend(quote!(+ ::sittir_core::delimiters::DelimiterSlot<Self::Overlay>));
+    }
+    if slot.bounded {
+        bound.extend(quote!(+ ::sittir_core::prepare::RenderSlot<Self::Overlay>));
+    }
     Ok(Some(bound))
 }
 
@@ -61,9 +67,9 @@ fn record_handle(field: &Field<'_>, trivia: &TokenStream) -> syn::Result<(TokenS
     match &field.role {
         Role::Layout => Ok((quote!(#arena::LayoutAt<'r, #trivia>), quote!(self.layout()))),
         Role::Slot(slot) => {
-            let node = crate::views::held(field.ty).map(|(node, _)| node).ok_or_else(|| syn::Error::new_spanned(field.ty, "a prepared slot holds a `SlotValue<…>`"))?;
+            let (node, adjacent) = crate::views::held(field.ty).ok_or_else(|| syn::Error::new_spanned(field.ty, "a prepared slot holds a `SlotValue<…>`"))?;
             let shape = crate::views::cell_shape(field, &slot.cell)?;
-            Ok((quote!(#arena::SlotAt<'r, #trivia, #node>), quote!(self.slot::<#node>(#shape))))
+            Ok((quote!(#arena::SlotAt<'r, #trivia, #node, #adjacent>), quote!(self.slot::<#node, #adjacent>(#shape))))
         }
         Role::Flank(_) => setting(quote!(Delimiter)),
         Role::SeparatorKind(_) => setting(quote!(SeparatorKind)),

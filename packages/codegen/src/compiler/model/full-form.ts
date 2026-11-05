@@ -2,7 +2,7 @@ import type { RenderRule } from '../../types/rule.ts';
 import { CHOICE, PATTERN, SEQ, STRING, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
 import { isSoleEnumContent } from '../token-interior.ts';
 import {
-	AbstractAssembledCompound,
+	AbstractAssembledCompound, AssembledLexedPattern,
 	AssembledPattern,
 	AssembledPolymorph,
 	charEdgeClass,
@@ -93,7 +93,7 @@ function maySpace(seam: { readonly left: SeamEdgeClass; readonly right: SeamEdge
 }
 
 function isSeparated(node: AbstractAssembledCompound, form: FullForm, content: RenderRule, ctx: EdgeClassCtx): boolean {
-	if (node.lexedInterior) return false;
+	if (node instanceof AssembledLexedPattern) return false;
 	const edges = contentEdges(content, ctx);
 	const openEnd = affixEdge(form.open, 'ends', ctx);
 	const closeStart = affixEdge(form.close, 'starts', ctx);

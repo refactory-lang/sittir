@@ -5,8 +5,10 @@ export namespace Literal {
 	export namespace String {
 		export namespace Bytes {
 			export interface Raw<G extends GrammarContext<G>> extends SubKindOf<V.Literal.String.Bytes<G>> {
-				// claimed by p
+				// claimed by pr
 				readonly $kind: 'literal.string.bytes.raw';
+				readonly content?: G['slots']['literal.string.bytes.raw']['content'];
+				// r only
 			}
 			export namespace Raw {
 				export interface Multiline<G extends GrammarContext<G>> extends SubKindOf<V.Literal.String.Bytes.Raw<G>> {
@@ -16,6 +18,18 @@ export namespace Literal {
 			}
 		}
 		export namespace Interpolated {
+			export namespace Deferred {
+				export interface Raw<G extends GrammarContext<G>> extends SubKindOf<V.Literal.String.Interpolated.Deferred<G>> {
+					// claimed by p
+					readonly $kind: 'literal.string.interpolated.deferred.raw';
+				}
+				export namespace Raw {
+					export interface Multiline<G extends GrammarContext<G>> extends SubKindOf<V.Literal.String.Interpolated.Deferred.Raw<G>> {
+						// claimed by p
+						readonly $kind: 'literal.string.interpolated.deferred.raw.multiline';
+					}
+				}
+			}
 			export interface Raw<G extends GrammarContext<G>> extends SubKindOf<V.Literal.String.Interpolated<G>> {
 				// claimed by p
 				readonly $kind: 'literal.string.interpolated.raw';

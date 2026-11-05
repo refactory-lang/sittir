@@ -6,7 +6,7 @@ export namespace Expression {
 		export interface Struct<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Collection<G>> {
 			// claimed by r
 			readonly $kind: 'expression.collection.struct';
-			readonly body: V.Element.Struct.Any<G>[];
+			readonly body: (V.Element.Struct.Base<G> | V.Element.Struct.Field<G>)[];
 			readonly name: G['slots']['expression.collection.struct']['name'];
 		}
 	}

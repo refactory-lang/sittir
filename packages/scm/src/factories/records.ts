@@ -1624,8 +1624,8 @@ export const builtViews: BuiltViews = Object.freeze({
 		64: withNamedNodeGroupAnchoredLast
 	}),
 	words: Object.freeze({
-		1: 3,
-		11: 3,
+		1: 4,
+		11: 4,
 		33: 3,
 		39: 3,
 		40: 3,

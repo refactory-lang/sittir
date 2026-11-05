@@ -179,33 +179,52 @@ fn routed(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn::Result
 fn interior(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>], _pattern: &LitStr) -> syn::Result<TokenStream> {
     let words = words_of(ident, attrs)?;
     let mut cells = Vec::new();
+    let mut opaque = Vec::new();
+    let empty = quote!(::core::option::Option::Some(::sittir_core::arena::Hydrated::Text { span: ::sittir_core::types::Span { start: base, end: base } }));
     for (field, capture) in capture_fields(fields)? {
         let Role::Slot(slot) = &field.role else { continue };
         if let Some(bit) = slot.cell.bit {
             let word = slot.cell.word.ok_or_else(|| syn::Error::new_spanned(field.ident, "a capture's bit states its `word`"))?;
             cells.push(quote!(records.flag(__draft, #word, #bit, captures.name(#capture).is_some())?;));
+            opaque.push(quote!(records.flag(__draft, #word, #bit, false)?;));
             continue;
         }
         let shape = crate::views::cell_shape(field, &slot.cell)?;
         let span = quote!(__rt::capture_span(&captures, #capture, base).map(|span| ::sittir_core::arena::Hydrated::Text { span }));
-        cells.push(if inner_of(field.ty, "Option").is_some() {
-            quote!(records.cell(__draft, #shape, #span)?;)
+        if inner_of(field.ty, "Option").is_some() {
+            cells.push(quote!(records.cell(__draft, #shape, #span)?;));
+            opaque.push(quote!(records.cell(__draft, #shape, ::core::option::Option::None)?;));
         } else {
-            quote! {
+            cells.push(quote! {
                 let __text = #span.ok_or(__rt::ReadError::Missing { kind: __KIND, slot: #capture, index })?;
                 records.cell(__draft, #shape, ::core::option::Option::Some(__text))?;
-            }
-        });
+            });
+            opaque.push(quote!(records.cell(__draft, #shape, #empty)?;));
+        }
     }
+    let verbatim = fields
+        .iter()
+        .find_map(|field| match &field.role {
+            Role::Slot(slot) if field.ident == "verbatim" => Some(crate::views::cell_shape(field, &slot.cell)),
+            _ => None,
+        })
+        .transpose()?
+        .ok_or_else(|| syn::Error::new_spanned(ident, "a token interior's record has a `verbatim` cell, the text a spelling outside the interior reads as"))?;
     let start = record_start(words);
     let end = record_end(&quote!(::core::option::Option::None));
     Ok(quote! {
         #start
-        let captures = __INTERIOR
-            .captures(ctx.text(&__node))
-            .ok_or(__rt::ReadError::Interior { kind: __KIND, index })?;
         let base = ::sittir_core::types::Span::of(&__node).start;
-        #(#cells)*
+        match __INTERIOR.captures(ctx.text(&__node)) {
+            ::core::option::Option::Some(captures) => {
+                records.cell(__draft, #verbatim, ::core::option::Option::None)?;
+                #(#cells)*
+            }
+            ::core::option::Option::None => {
+                records.cell(__draft, #verbatim, ::core::option::Option::Some(::sittir_core::arena::Hydrated::Text { span: ::sittir_core::types::Span::of(&__node) }))?;
+                #(#opaque)*
+            }
+        }
         #end
     })
 }

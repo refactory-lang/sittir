@@ -9,13 +9,25 @@ export namespace Declaration {
 		export interface Call<G extends GrammarContext<G>> extends SubKindOf<V.Declaration.Signature<G>> {
 			// claimed by t
 			readonly $kind: 'declaration.signature.call';
-			readonly parameters: V.Declaration.Parameter.Any<G>[];
+			readonly parameters: (
+				| V.Declaration.Parameter<G>
+				| V.Declaration.Parameter.Private<G>
+				| V.Declaration.Parameter.Protected<G>
+				| V.Declaration.Parameter.Public<G>
+				| V.Declaration.Parameter.Receiver<G>
+			)[];
 			readonly returnType?: G['slots']['declaration.signature.call']['returnType'];
 		}
 		export interface Construct<G extends GrammarContext<G>> extends SubKindOf<V.Declaration.Signature<G>> {
 			// claimed by t
 			readonly $kind: 'declaration.signature.construct';
-			readonly parameters: V.Declaration.Parameter.Any<G>[];
+			readonly parameters: (
+				| V.Declaration.Parameter<G>
+				| V.Declaration.Parameter.Private<G>
+				| V.Declaration.Parameter.Protected<G>
+				| V.Declaration.Parameter.Public<G>
+				| V.Declaration.Parameter.Receiver<G>
+			)[];
 			readonly type?: G['slots']['declaration.signature.construct']['type'];
 		}
 		export interface Index<G extends GrammarContext<G>> extends SubKindOf<V.Declaration.Signature<G>> {

@@ -2,7 +2,7 @@ import { CHOICE, PATTERN, SEQ, STRING } from '../types/rule-types.ts'; // @rule-
 import type { RenderRule } from '../types/rule.ts';
 import { escapeRegexLiteral } from '../util/word-matcher.ts';
 import {
-	AbstractAssembledCompound,
+	AbstractAssembledCompound, AssembledLexedPattern,
 	AssembledNonterminal,
 	AssembledPattern,
 	isPatternValue,
@@ -150,7 +150,7 @@ function walkInterior(node: AbstractAssembledCompound, members: readonly RenderR
 }
 
 function interiorTreeOf(node: AssembledNode): InteriorNode[] | undefined {
-	if (!(node instanceof AbstractAssembledCompound) || !node.lexedInterior) return undefined;
+	if (!(node instanceof AssembledLexedPattern)) return undefined;
 	const rule = node.renderRule;
 	if (rule.type !== SEQ) unsupported(node.kind, `its render rule is a ${rule.type}, not a sequence of literals and slots`);
 	return walkInterior(node, rule.members);

@@ -206,8 +206,6 @@ export interface NativeEngineLike<TNode = unknown> {
 	readRecordStub?(treeId: number, index: number, depth?: number): number[] | null;
 	/** Materializes parsed records to `depth` (default one, Infinity for all), including children of cached parents. Returns only an address; chunk copies are requested separately. Present when the addon carries the record codec. */
 	hydrateRecord?(treeId: number, index: number, depth?: number): number | null;
-	/** JSON pairs of coordinates and native record addresses for the hydrated typed subtree, including nested content but no node fields or words. */
-	recordCandidates?(treeId: number, index: number): string;
 	/** Chunk `n` of the tree's arena over its native memory, every word of it, with no copy; disposing the tree detaches it. Present when the addon carries the record codec. */
 	chunk?(treeId: number, n: number): ChunkWords;
 	/** The address of the record the parsed cell at `word`, item `item`, of the record at `holder` names: on the first read through it, written `depth` levels down and the cell rewritten to name it. Present when the addon carries the record codec. */
@@ -245,8 +243,6 @@ export interface NativeEngineLike<TNode = unknown> {
 	writeBuiltLeafSide?(sites: readonly number[], side: TriviaSideName, entries: readonly unknown[]): void;
 	builtLeafSide?(holder: number, word: number, item: number, side: TriviaSideName): unknown[] | null;
 	copyBuiltSites?(from: number, to: number, skip: readonly number[]): void;
-	/** Renders a parsed candidate from its native record, or its recordless coordinate, excluding its outer trivia. */
-	renderCandidate?(treeId: number, index: number, options?: object): string;
 	/**
 	 * The siblings that hold sides beside each node at descendant `indexes` of tree `treeId`, eight words a node: the
 	 * previous sibling, then the next, each as 1, its kind, its start and its end, or as four zeros for none.
@@ -321,7 +317,6 @@ const TREE_FUNCTIONS = [
 	'readRecord',
 	'readRecordStub',
 	'hydrateRecord',
-	'recordCandidates',
 	'chunk',
 	'readCell',
 	'coordinate',
@@ -340,7 +335,6 @@ const ENGINE_FUNCTIONS = [
 	'renderRecord',
 	'renderBuilt',
 	'renderBuiltLeaf',
-	'renderCandidate',
 	'builtWords',
 	'builtBytes',
 	'builtBump',
@@ -519,16 +513,6 @@ function recordReader<TNode>(engine: NativeEngineLike<TNode>, treeId: number, fo
 			if (engine.hydrateRecord === undefined)
 				throw new Error('native record hydration needs an addon with hydrateRecord');
 			return engine.hydrateRecord(treeId, index, depth) ?? undefined;
-		},
-		candidates(index) {
-			if (engine.recordCandidates === undefined)
-				throw new Error('native candidate enumeration needs an addon with recordCandidates');
-			return JSON.parse(engine.recordCandidates(treeId, index));
-		},
-		renderCandidate(index) {
-			if (engine.renderCandidate === undefined)
-				throw new Error('native candidate rendering needs an addon with renderCandidate');
-			return engine.renderCandidate(treeId, index);
 		},
 		render: (address, leading, trailing) => renderRecord.call(engine, treeId, address, leading, trailing),
 		object: (index, depth = 1) => readObjectAt(index, depth),

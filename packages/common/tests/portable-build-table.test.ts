@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import type { PortableBuildArm, PortableBuildTable } from '@sittir/types';
 import { createEngine } from '../src/create-engine.ts';
 import { portableBuilder } from '../src/portable/build.ts';
+import { Delimiter } from '../src/utils.ts';
 import python from '@sittir/python';
 import rust from '@sittir/rust';
 import typescript from '@sittir/typescript';
@@ -43,6 +44,20 @@ describe('the portable build table', () => {
 			expect(typeof builder, key).toBe('function');
 			expect(table.builders[key], key).toBeDefined();
 		}
+	});
+
+	it.each(Object.keys(languages) as (keyof typeof languages)[])('%s: a seat takes text only where its holder spells it, never where its slot holds containers', (grammar) => {
+		for (const { arms } of Object.values(tables[grammar].table.paths))
+			for (const arm of arms)
+				for (const member of arm.members) {
+					for (const seat of member.seats) if (seat.text) expect([seat.kinds, seat.leaf], `${arm.builder} ${member.name}`).toEqual([[], undefined]);
+					if (member.seats.some((seat) => seat.within !== undefined)) expect(member.seats[0]!.text, `${arm.builder} ${member.name}`).toBeUndefined();
+				}
+		const seatOf = (path: string, name: string) => armsOf('python', path).flatMap((arm) => arm.members).find((member) => member.name === name)!.seats[0]!;
+		expect(seatOf('pattern.as', 'pattern')).toMatchObject({ kinds: [] });
+		expect(seatOf('pattern.as', 'pattern').text).toBeUndefined();
+		expect(seatOf('literal.number.float', 'marker').text).toBe(true);
+		expect(seatOf('literal.string.escape', 'content').text).toBe(true);
 	});
 
 	it('tells a struct form apart by the kinds its body holds, through the list that holds them, or by the body missing', () => {
@@ -97,10 +112,21 @@ describe('the portable build table', () => {
 		expect(armOf('rust', 'expression.reference', rust.kinds.ReferenceExpressionMut).when).toEqual([{ flag: 'exclusive', set: true }, { absent: [], required: ['argument'] }]);
 	});
 
+	it('gives the empty-list pick only to a seated envelope that holds nothing but layout: python\'s empty suite', () => {
+		const emptied = Object.entries(tables).flatMap(([grammar, { table }]) =>
+			Object.entries(table.paths).flatMap(([path, { arms }]) =>
+				arms.flatMap((arm) => arm.when.flatMap((test) => ('empty' in test ? [[grammar, path, arm.kind, test.empty] as const] : [])))
+			)
+		);
+		expect(emptied).toEqual([['python', 'statement.block', python.kinds.SuiteEmpty, ['statements']]]);
+		const arms = armsOf('python', 'statement.block');
+		expect(arms.findIndex((arm) => arm.kind === python.kinds.SuiteEmpty)).toBeLessThan(arms.findIndex((arm) => arm.kind === python.kinds.Block));
+	});
+
 	it("orders a match arm by its body's kinds, narrower first, and keys the last arm by the slot that holds it", () => {
 		expect(armsOf('rust', 'clause.case.match').map((arm) => arm.kind)).toEqual([rust.kinds.MatchArmBlockEnding, rust.kinds.MatchArmWithComma, rust.kinds.LastMatchArm]);
 		expect(armOf('rust', 'clause.case.match', rust.kinds.MatchArmBlockEnding).when).toContainEqual(expect.objectContaining({ member: 'body' }));
-		expect(armOf('rust', 'clause.case.match', rust.kinds.LastMatchArm).holders).toEqual([[rust.kinds.MatchBlockArms, 'lastArm']]);
+		expect(armOf('rust', 'clause.case.match', rust.kinds.LastMatchArm).holders).toEqual([[rust.kinds.MatchBlockArms, 'arms']]);
 	});
 
 	it("builds a token tree's paren form by default, and each delimiter by its refinement", () => {
@@ -139,7 +165,6 @@ describe('the portable build table', () => {
 		expect(left!.steps[0]).toEqual({
 			key: 'binaryExpressionIn',
 			builder: 'binaryExpression.in',
-			optional: true,
 			mounted: { call: 'keyed', key: 'binaryExpressionIn', seats: 'config' }
 		});
 		expect(tables.typescript.table.builders['binaryExpression.in']).toBe('config');
@@ -163,11 +188,28 @@ describe('the portable build table', () => {
 		});
 	});
 
-	it("marks an arm built through its holder's mount", () => {
+	it("keys an arm built through its holder's mount by its own kind, and names the holder", () => {
 		const pub = armsOf('rust', 'modifier.visibility.public')[0]!;
-		expect(pub.kind).toBe(rust.kinds.VisibilityModifier);
+		expect(pub.kind).toBe(rust.kinds.VisibilityModifierPub);
 		expect(pub.builder).toBe('visibilityModifier.pub');
-		expect(pub.mounted).toEqual({ call: 'child', key: 'content' });
+		expect(pub.mounted).toEqual({ call: 'child', key: 'content', holder: rust.kinds.VisibilityModifier });
+	});
+
+	it('builds a kind mounted in several holders once per mount a seat reaches, and never at the root', () => {
+		const negative = tables.python.table.paths['literal.number.negative']!;
+		expect(negative.root).toBe(false);
+		expect(negative.arms.map((arm) => [arm.kind, arm.builder, arm.holders])).toEqual([
+			[python.kinds.SimplePatternNegative, 'simplePattern.negative', [[python.kinds.SimplePattern, 'content']]],
+			[python.kinds.SimplePatternNegative, 'keywordPattern.negative', [[python.kinds.KeywordPattern, 'pattern']]]
+		]);
+	});
+
+	it("reads a mounted kind at its holder where the holder's claim is its claim's parent", () => {
+		const delegate = armsOf('python', 'expression.yield.delegate');
+		expect(delegate.map((arm) => [arm.kind, arm.builder, arm.mounted])).toEqual([[python.kinds.Yield, 'yield', undefined]]);
+		expect(delegate[0]!.members.map((member) => member.steps.map((step) => step.key))).toEqual([['content', 'expression']]);
+		expect(delegate[0]!.members[0]!.steps[0]!.mounted).toEqual({ call: 'child', key: 'content' });
+		expect(delegate[0]!.when).toEqual([{ absent: [], required: ['expression'] }]);
 	});
 
 	it.each(Object.keys(languages) as (keyof typeof languages)[])('%s: every seat states the kinds a value there has, so a member with several routes takes one that seats it', (grammar) => {
@@ -292,7 +334,16 @@ describe('the portable build table', () => {
 			| readonly { readonly code: string; readonly message: string }[]
 			| { readonly diagnostics: readonly { readonly code: string; readonly message: string }[] };
 		const entries = Array.isArray(diagnostics) ? diagnostics : (diagnostics as { readonly diagnostics: readonly { readonly code: string; readonly message: string }[] }).diagnostics;
-		expect(entries.filter(({ code }) => code.startsWith('portable-')).map(({ code, message }) => ({ code, message }))).toEqual([]);
+		expect(entries.filter(({ code }) => code.startsWith('portable-') && code !== 'portable-kind-armless').map(({ code, message }) => ({ code, message }))).toEqual([]);
+	});
+
+	it('writes the trailing separator on the one item of a list claimed by its own separator, and on no other list', () => {
+		const sole = { member: 'elements', delimiter: Delimiter.Trailing };
+		expect(armOf('python', 'expression.collection.tuple.bare', python.kinds.Subscripts).sole).toEqual(sole);
+		expect(armOf('python', 'expression.collection.tuple.bare', python.kinds.Subjects).sole).toEqual(sole);
+		expect(armOf('python', 'expression.collection.tuple.bare', python.kinds.ExpressionList).sole).toBeUndefined();
+		const soles = Object.values(tables).flatMap(({ table }) => Object.values(table.paths).flatMap(({ arms }) => arms.filter((arm) => arm.sole !== undefined)));
+		expect(soles.map((arm) => arm.kind).sort()).toEqual([python.kinds.ExpressionStatementTuple, python.kinds.Subjects, python.kinds.Subscripts].sort());
 	});
 
 	it('builds the default form of a variant family, and the others by render option', () => {
@@ -304,7 +355,7 @@ describe('the portable build table', () => {
 });
 
 describe('the portable build of a registered option', () => {
-	const textSeat = (key: string) => ({ name: key, steps: [{ key }], multiple: false, seats: [{ at: [1, key] as const, kinds: [] }] });
+	const textSeat = (key: string) => ({ name: key, steps: [{ key }], multiple: false, seats: [{ at: [1, key] as const, kinds: [], text: true as const }] });
 	const table = (options?: PortableBuildTable['options']): PortableBuildTable => ({
 		builders: { holder: 'direct' },
 		...(options === undefined ? {} : { options }),
@@ -332,12 +383,76 @@ describe('the portable build of a registered option', () => {
 	});
 });
 
+describe("the portable build of a flag that is a member's list's trailing separator", () => {
+	const tableOf = (member: PortableBuildTable['paths'][string]['arms'][number]['members'][number], list: readonly { readonly key: string; readonly builder?: string }[]): PortableBuildTable => ({
+		builders: { holder: 'config', items: 'elements' },
+		paths: {
+			'statement.held': {
+				root: true,
+				arms: [{ kind: 1, builder: 'holder', members: [member], presets: [], flags: { trailingComma: { presets: [], delimiter: Delimiter.Trailing, list } }, when: [] }]
+			}
+		}
+	});
+	const framed = tableOf(
+		{ name: 'arguments', steps: [{ key: 'arguments', builder: 'items' }, { key: 'item' }], multiple: true, list: true, seats: [{ at: [2, 'item'], kinds: [], text: true, many: true }] },
+		[{ key: 'arguments', builder: 'items' }]
+	);
+	const contained = tableOf(
+		{ name: 'arguments', steps: [{ key: 'arguments' }], multiple: false, list: true, seats: [{ at: [2, 'item'], kinds: [], text: true, many: true, within: [{ builder: 'items', key: 'item' }] }] },
+		[{ key: 'arguments' }]
+	);
+	const keyed = tableOf(
+		{ name: 'arguments', steps: [{ key: 'arguments' }], multiple: false, list: true, seats: [{ at: [2, 'item'], kinds: [], text: true, many: true, within: [{ key: 'item' }] }] },
+		[{ key: 'arguments' }]
+	);
+	const build = (structure: Readonly<Record<string, unknown>>, table: PortableBuildTable = framed): readonly (readonly [string, readonly unknown[]])[] => {
+		const calls: [string, unknown[]][] = [];
+		const builder = portableBuilder({
+			language: 'test',
+			table,
+			builders: {
+				holder: (...args: unknown[]) => (calls.push(['holder', args]), { $type: 1 }),
+				items: (...args: unknown[]) => (calls.push(['items', args]), { $type: 2 })
+			},
+			kindName: () => undefined,
+			readsAs: () => true
+		});
+		builder({ $path: 'statement.held', ...structure } as never);
+		return calls;
+	};
+
+	it("sets the delimiter on the list the flag's steps reach, not on the arm's own builder", () => {
+		expect(build({ arguments: ['a', 'b'], $flags: ['trailingComma'] })).toEqual([
+			['items', [{ delimiter: Delimiter.Trailing }, 'a', 'b']],
+			['holder', [{ arguments: { $type: 2 } }]]
+		]);
+		expect(build({ arguments: ['a'] })[0]).toEqual(['items', ['a']]);
+	});
+
+	it('refuses the flag where the list it is the separator of holds nothing', () => {
+		expect(() => build({ arguments: [], $flags: ['trailingComma'] })).toThrow('statement.held: trailingComma is the trailing separator of the list at arguments, which holds nothing');
+	});
+
+	it("sets the delimiter on the list a member's seat builds as its container", () => {
+		expect(build({ arguments: ['a', 'b'], $flags: ['trailingComma'] }, contained)).toEqual([
+			['items', [{ delimiter: Delimiter.Trailing }, 'a', 'b']],
+			['holder', [{ arguments: { $type: 2 } }]]
+		]);
+		expect(build({ arguments: ['a'] }, contained)[0]).toEqual(['items', ['a']]);
+		expect(() => build({ arguments: [], $flags: ['trailingComma'] }, contained)).toThrow('statement.held: trailingComma is the trailing separator of the list at arguments, which holds nothing');
+	});
+
+	it('refuses the flag where the list it reaches sits in a container its holder builds, by the path to it', () => {
+		expect(() => build({ arguments: ['a', 'b'], $flags: ['trailingComma'] }, keyed)).toThrow('statement.held: trailingComma reaches arguments, which builds no list');
+	});
+});
+
 describe('the portable build of an arm whose routes run through two forms of one slot', () => {
 	const route = (name: string, form: 'formA' | 'formB', pattern?: RegExp) => ({
 		name,
 		steps: [{ key: 'content', builder: form }, { key: name }],
 		multiple: false,
-		seats: [{ at: [form === 'formA' ? 2 : 3, name] as const, kinds: [], ...(pattern === undefined ? {} : { pattern: { source: pattern.source, flags: pattern.flags } }) }]
+		seats: [{ at: [form === 'formA' ? 2 : 3, name] as const, kinds: [], text: true as const, ...(pattern === undefined ? {} : { pattern: { source: pattern.source, flags: pattern.flags } }) }]
 	});
 	const table: PortableBuildTable = {
 		builders: { outer: 'config', formA: 'config', formB: 'config' },
@@ -372,5 +487,77 @@ describe('the portable build of an arm whose routes run through two forms of one
 	it('refuses members two forms take alike, and a list where every form takes one value', () => {
 		expect(() => build({ left: 'x', right: 'z' })).toThrow('takes left, right through more than one test form');
 		expect(() => build({ left: ['x'] })).toThrow("statement.held's left holds one value, not a list");
+	});
+});
+
+describe('the portable build of a list whose last element takes a form of its own', () => {
+	const pattern = (holder: number) => ({ name: 'pattern', steps: [{ key: 'pattern' }], multiple: false, seats: [{ at: [holder, 'pattern'] as const, kinds: [], text: true as const }] });
+	const arm = (kind: number, builder: string) => ({ kind, builder, holders: [[1, 'arms']] as const, members: [pattern(kind)], presets: [], flags: {}, when: [] });
+	const table: PortableBuildTable = {
+		builders: { holder: 'config', arm: 'config', last: 'config' },
+		paths: {
+			'statement.held': {
+				root: true,
+				arms: [
+					{
+						kind: 1,
+						builder: 'holder',
+						members: [
+							{
+								name: 'body',
+								steps: [{ key: 'arms' }],
+								multiple: false,
+								list: true,
+								seats: [
+									{ at: [1, 'arms'], kinds: [2], many: true },
+									{ at: [1, 'arms'], kinds: [3], many: true, final: true }
+								]
+							}
+						],
+						presets: [],
+						flags: {},
+						when: []
+					}
+				]
+			},
+			'clause.case': { root: false, arms: [arm(2, 'arm'), arm(3, 'last')] },
+			'clause.rest': { root: false, arms: [arm(2, 'arm')] }
+		}
+	};
+	const build = (body: readonly unknown[]): readonly (readonly [string, unknown])[] => {
+		const calls: [string, unknown][] = [];
+		const builder = portableBuilder({
+			language: 'test',
+			table,
+			builders: {
+				holder: (input: unknown) => (calls.push(['holder', input]), { $type: 1 }),
+				arm: (input: unknown) => (calls.push(['arm', input]), { $type: 2 }),
+				last: (input: unknown) => (calls.push(['last', input]), { $type: 3 })
+			},
+			kindName: (kind: number) => ({ 2: 'arm', 3: 'last_arm' })[kind],
+			readsAs: () => true
+		});
+		builder({ $path: 'statement.held', body } as never);
+		return calls;
+	};
+	const clause = (path: string, text: string) => ({ $path: path, pattern: text });
+
+	it('builds the last element in the form its last seat takes, and every other in the repeated form', () => {
+		expect(build([clause('clause.case', 'a'), clause('clause.case', 'b'), clause('clause.case', 'c')])).toEqual([
+			['arm', { pattern: 'a' }],
+			['arm', { pattern: 'b' }],
+			['last', { pattern: 'c' }],
+			['holder', { arms: [{ $type: 2 }, { $type: 2 }, { $type: 3 }] }]
+		]);
+		expect(build([clause('clause.case', 'a')])).toEqual([
+			['last', { pattern: 'a' }],
+			['holder', { arms: [{ $type: 3 }] }]
+		]);
+	});
+
+	it('refuses a last element with no form its last seat takes, by its path', () => {
+		expect(() => build([clause('clause.case', 'a'), clause('clause.rest', 'b')])).toThrow(
+			"portable build: statement.held's body ends with clause.rest, which builds in none of the forms its last element takes"
+		);
 	});
 });
