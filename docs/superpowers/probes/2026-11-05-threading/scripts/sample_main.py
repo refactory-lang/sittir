@@ -1,6 +1,7 @@
 """Split the main thread of a macOS `sample` report by napi entry and by image.
 
-Usage: python3 -I sample_main.py <sample.txt>
+Usage: python3 -I sample_main.py <sample.txt> [entries to list by frame]
+       python3 -I sample_main.py <sample.txt> --inclusive <entry> <frame> [frame ...]
 
 Builds the main thread's call tree, takes each node's self samples (its
 count less its children's) and charges them to the nearest napi entry above
@@ -8,6 +9,10 @@ it (a `c_callback` frame, the addon function JS called) and to the image the
 frame belongs to: the addon (sittir and tree-sitter code, movable off the JS
 thread), libnode (V8, Node and napi, bound to the JS thread), malloc, kernel,
 or `???` (JIT-compiled JS).
+
+With --inclusive, it prints instead the samples of each frame whose symbol contains <frame>, children included,
+under the napi entry whose name contains <entry>, as a share of that entry's: a frame counts once on a path,
+at its top-most match.
 """
 import re
 import sys
@@ -30,12 +35,13 @@ for line in lines[start + 1:]:
     rest = m.group('rest')
     image = re.search(r'\(in ([^)]+)\)', rest)
     node = {'col': col, 'count': int(m.group('count')), 'symbol': rest.split('  (in ')[0].split(' (in ')[0].strip(),
-            'image': image.group(1) if image else '???', 'children': 0, 'entry': None}
+            'image': image.group(1) if image else '???', 'children': 0, 'entry': None, 'parent': None}
     while stack and stack[-1]['col'] >= col:
         stack.pop()
     if stack:
         stack[-1]['children'] += node['count']
         node['entry'] = stack[-1]['entry']
+        node['parent'] = stack[-1]
     if 'c_callback' in node['symbol'] or '__napi__' in node['symbol']:
         name = re.sub(r'.*?(?:SittirEngine_\d+|__napi__)', '', node['symbol'])
         name = re.sub(r'^\d+', '', name)
@@ -58,6 +64,25 @@ def bucket(node):
         return 'kernel'
     return 'other'
 
+
+if len(sys.argv) > 3 and sys.argv[2] == '--inclusive':
+    entry, watched = sys.argv[3], sys.argv[4:]
+
+    def within(node, frame):
+        up = node['parent']
+        while up is not None and up['entry'] is not None and entry in up['entry']:
+            if frame in up['symbol']:
+                return True
+            up = up['parent']
+        return False
+
+    roots = [n for n in nodes if n['entry'] and entry in n['entry'] and not (n['parent'] and n['parent']['entry'] and entry in n['parent']['entry'])]
+    total = sum(n['count'] for n in roots)
+    print(f'{entry}: {total} samples, children included')
+    for frame in watched:
+        held = sum(n['count'] for n in nodes if n['entry'] and entry in n['entry'] and frame in n['symbol'] and not within(n, frame))
+        print(f'  {frame:30} {held:7d}  {100 * held / max(total, 1):5.1f}%')
+    sys.exit()
 
 table = defaultdict(lambda: defaultdict(int))
 total = 0

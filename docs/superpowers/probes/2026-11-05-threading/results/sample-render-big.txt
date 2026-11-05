@@ -1,0 +1,50 @@
+== pipeline loop over the four largest files, arena, dist, plain node; main thread by napi entry ==
+main thread self samples: 11706
+entry                                        addon      v8  malloc     jit  kernel   other   total   share
+RNvCsaa9yvrA5Y6h_17sittir_typescript27rend    2496      73      61       0      13      37    2680   22.9%
+parse_c_callback                              2458      85      54       0      11      27    2635   22.5%
+RNvCsaa9yvrA5Y6h_17sittir_typescript25hydr    2078       0     140       0       5      69    2292   19.6%
+(outside napi)                                   5    1800       5      74      22     109    2015   17.2%
+RNvCsaa9yvrA5Y6h_17sittir_typescript28reco    1465      63       8       0      62     150    1748   14.9%
+RNvCsaa9yvrA5Y6h_17sittir_typescript23disp      95       0     212       0      18       0     325    2.8%
+RNvCsaa9yvrA5Y6h_17sittir_typescript22tree      11       0       0       0       0       0      11    0.1%
+all                                           8608    2021     480      74     131     392   11706
+
+RNvCsaa9yvrA5Y6h_17sittir_typescript27render_candidate_c_cal
+     612 addon   ts_tree_cursor_child_iterator_next
+     481 addon   RNvMse_Nt11sittir_core12trivia_tableNtB5_11TriviaTable4push
+     182 addon   ts_tree_cursor_goto_sibling_internal
+     132 addon   ts_tree_cursor_goto_first_child_internal
+     115 addon   RNvNt11sittir_core12trivia_table4walk
+     110 addon   RNvMse_Nt11sittir_core12trivia_tableNtB5_11TriviaTable6assign
+      72 addon   RNvMs8_Nt11sittir_core12trivia_tableNtB5_5Nodes6common
+      71 addon   RNCNvMse_Nt11sittir_core12trivia_tableNtB7_11TriviaTable6assignsc_0B9_
+      67 addon   ts_tree_cursor_current_node
+
+parse_c_callback
+     688 addon   ts_parser_parse
+     266 addon   ts_subtree_summarize_children
+     237 addon   ts_lex
+     206 addon   ts_stack_push
+     200 addon   stack__iter
+     197 addon   ts_lexer__advance
+     106 addon   ts_language_next_state
+      85 v8      unibrow::Utf8::Encode<unsigned short>(v8::base::Vector<unsigned short const>, char*, unsigned long, bool, bool
+      80 addon   ts_parser__reduce
+
+RNvCsaa9yvrA5Y6h_17sittir_typescript25hydrate_record_c_callb
+     608 addon   ts_tree_cursor_child_iterator_next
+     208 addon   ts_tree_cursor_goto_sibling_internal
+     117 addon   ts_tree_cursor_goto_first_child_internal
+      83 addon   ts_tree_cursor_current_field_id
+      74 addon   ts_tree_cursor_current_node
+      42 addon   RNvMs1_Nt9hashbrown3mapINtB5_7HashMapNtNt11sittir_core5arena7AddressuNtNtNt3std4hash6random11RandomStateE6inse
+      42 other   _platform_memset
+      39 addon   RNvNt11sittir_core4read5stamp
+      36 malloc  _xzm_free_tc
+
+render_candidate: 2680 samples, children included
+  TriviaTable6assign                2004   74.8%
+  trivia_table4walk                  875   32.6%
+  TriviaTable4push                   631   23.5%
+  LineTable                           31    1.2%

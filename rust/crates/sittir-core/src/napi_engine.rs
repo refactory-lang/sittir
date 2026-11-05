@@ -1210,6 +1210,16 @@ macro_rules! napi_engine {
                 Ok($crate::napi_engine::parse_render_batch::<$grammar, $any>(&options, &sources, claims, threads))
             }
 
+            /// Where each of `sources`' render time goes, by subtree, as
+            /// JSON (`render_inventory`): run on this thread, one tree at a
+            /// time, each dropped once its row is written.
+            #[::napi_derive::napi(ts_args_type = "engine: object, sources: string[], depth: number")]
+            pub fn render_inventory(engine: &::napi::bindgen_prelude::External<EngineCell>, env: ::napi::Env, sources: Vec<String>, depth: u32) -> ::napi::Result<String> {
+                let options = engine_of(engine)?.options().clone();
+                let claims = sources.iter().map(|_| $crate::napi_engine::claim_tree_id(&env)).collect::<::napi::Result<Vec<_>>>()?;
+                Ok($crate::napi_engine::render_inventory::<$grammar, $any>(&options, &sources, claims, depth))
+            }
+
             /// What the record-chunk pool has done in this process
             /// (`arena::memory::pool_stats`).
             #[::napi_derive::napi]
@@ -2062,6 +2072,119 @@ pub struct BatchRender {
     pub wall_ms: f64,
 }
 
+/// The node at `index` of `parsed` rendered as `render_candidate` renders
+/// it, through the table `read` holds, its line endings spelled.
+#[cfg(feature = "arena")]
+fn render_row<G, N>(
+    engine: &crate::engine::Engine<G>,
+    read: &crate::engine::ReadTrees<'_, G>,
+    parsed: &crate::engine::ParsedTree<G>,
+    table: &crate::options::ResolvedOptions,
+    index: crate::types::NodeIndex,
+) -> Result<String, String>
+where
+    G: crate::arena::RecordGrammar,
+    G::Trivia: crate::boundary::DecodesKind,
+    N: crate::arena::HydrateNode + crate::arena::RecordCells,
+{
+    let canonical = entry_sources(engine.grammar(), read, |sources| parsed.render_candidate::<N>(index, table, sources))
+        .map_err(|e| format!("render_candidate failed: {e}"))?;
+    Ok(crate::line_endings::spell(canonical, &table.newline))
+}
+
+/// Where a tree's render time goes, by subtree: for each of `sources`, one
+/// JSON row, once its records are hydrated to every depth, with the time its
+/// trivia table takes to build, its root's first render after that and a
+/// second one, and then, `depth` levels down from the root, each level's
+/// named children: how many nodes the unit and its largest child hold, and
+/// what the children's first renders take, the trivia table built. The
+/// largest child by nodes opens the next level. A child whose render is
+/// refused counts as refused and takes no time.
+///
+/// # Errors
+///
+/// None: a source that fails to parse, hydrate or render whole is a row
+/// naming the failure.
+#[cfg(feature = "arena")]
+#[must_use]
+pub fn render_inventory<G, N>(options: &crate::options::ResolvedOptions, sources: &[String], claims: Vec<crate::engine::TreeClaim>, depth: u32) -> String
+where
+    G: crate::arena::RecordGrammar + Default,
+    G::Trivia: crate::boundary::DecodesKind,
+    N: crate::arena::HydrateNode + crate::arena::RecordCells,
+{
+    let rows = match crate::engine::Engine::with_store(G::default(), options.clone(), engine_store::<G>()) {
+        Ok(mut engine) => sources
+            .iter()
+            .zip(claims)
+            .map(|(source, claim)| inventory_of::<G, N>(&mut engine, source, claim, depth).unwrap_or_else(|error| serde_json::json!({ "error": error })))
+            .collect(),
+        Err(error) => vec![serde_json::json!({ "error": format!("the inventory could not build an engine: {error}") })],
+    };
+    serde_json::Value::Array(rows).to_string()
+}
+
+#[cfg(feature = "arena")]
+fn inventory_of<G, N>(engine: &mut crate::engine::Engine<G>, source: &str, claim: crate::engine::TreeClaim, depth: u32) -> Result<serde_json::Value, String>
+where
+    G: crate::arena::RecordGrammar,
+    G::Trivia: crate::boundary::DecodesKind,
+    N: crate::arena::HydrateNode + crate::arena::RecordCells,
+{
+    use std::time::Instant;
+    let ms = |at: Instant| at.elapsed().as_secs_f64() * 1000.0;
+    let tree_id = claim.id();
+    let trees = std::collections::HashMap::from([(tree_id, engine.parse(source, claim)?)]);
+    let read = crate::engine::ReadTrees::new(&trees);
+    let parsed = read.get(tree_id).ok_or_else(|| format!("the inventory lost tree {}", tree_id.0))?;
+    parsed.hydrate_record::<N>(crate::types::NodeIndex::ROOT, crate::read::Depth::All)?;
+    let table = parsed.inferred().over(engine.options());
+    let timed = |index| -> Result<f64, String> {
+        let at = Instant::now();
+        render_row::<G, N>(engine, &read, parsed, &table, index)?;
+        Ok(ms(at))
+    };
+    let at = Instant::now();
+    let _ = parsed.trivia_table();
+    let trivia = ms(at);
+    let first = timed(crate::types::NodeIndex::ROOT)?;
+    let again = timed(crate::types::NodeIndex::ROOT)?;
+    let mut cursor = parsed.tree().walk();
+    let nodes = crate::read::descendant_count(&cursor.node());
+    let mut levels = Vec::new();
+    let mut unit = nodes;
+    for _ in 0..depth {
+        if !cursor.goto_first_child() {
+            break;
+        }
+        let mut children: Vec<(usize, String, u32, f64)> = Vec::new();
+        let (mut refused, mut position) = (0, 0);
+        loop {
+            if cursor.node().is_named() {
+                let held = crate::read::descendant_count(&cursor.node());
+                match timed(crate::read::index_of(&cursor)) {
+                    Ok(spent) => children.push((position, cursor.node().kind().to_owned(), held, spent)),
+                    Err(_) => refused += 1,
+                }
+            }
+            position += 1;
+            if !cursor.goto_next_sibling() {
+                break;
+            }
+        }
+        cursor.goto_parent();
+        let Some((at, kind, largest, largest_ms)) = children.iter().max_by_key(|child| child.2).cloned() else { break };
+        let rendered: f64 = children.iter().map(|child| child.3).sum();
+        levels.push(serde_json::json!({ "unitNodes": unit, "children": children.len(), "refused": refused, "largestNodes": largest, "largestKind": kind, "childrenFirstMs": rendered, "largestFirstMs": largest_ms }));
+        cursor.goto_first_child();
+        for _ in 0..at {
+            cursor.goto_next_sibling();
+        }
+        unit = largest;
+    }
+    Ok(serde_json::json!({ "bytes": source.len(), "nodes": nodes, "triviaMs": trivia, "firstMs": first, "againMs": again, "levels": levels }))
+}
+
 /// Parses each of `sources` under its claim, hydrates its root's records to
 /// every depth and renders its root, on `threads` threads, each on its own
 /// engine of grammar `G` over `options`. A thread drops each tree once its
@@ -2122,10 +2245,9 @@ where
                 let render_at = Instant::now();
                 spent[1] += render_at - read_at;
                 let table = parsed.inferred().over(engine.options());
-                let canonical = entry_sources(engine.grammar(), &read, |table_of| parsed.render_candidate::<N>(crate::types::NodeIndex::ROOT, &table, table_of))
-                    .map_err(|e| format!("render_candidate failed: {e}"))?;
+                let rendered = render_row::<G, N>(&engine, &read, parsed, &table, crate::types::NodeIndex::ROOT);
                 spent[2] += render_at.elapsed();
-                Ok(crate::line_endings::spell(canonical, &table.newline))
+                rendered
             }))
             .unwrap_or_else(|payload| Err(crate::panic_msg(&*payload, "the batch panicked")));
             drop(trees);

@@ -46,6 +46,7 @@ export interface PipelineOptions {
 	workers?: number;
 	release?: boolean;
 	schedule?: 'size' | 'path';
+	inventoryDepth?: number;
 }
 
 interface BatchRender {
@@ -59,6 +60,8 @@ interface BatchRender {
 }
 
 type ParseRenderBatch = (engine: object, sources: string[], threads: number) => BatchRender;
+
+type RenderInventory = (engine: object, sources: string[], depth: number) => string;
 
 export interface BatchRound {
 	threads: number;
@@ -354,6 +357,19 @@ async function batch(options: PipelineOptions, threads: number) {
 	return { storage: options.storage, threads, loader, chunkPool: chunkPoolOf(backend), pid: process.pid, node: process.version, peakRssBytes: process.resourceUsage().maxRSS * 1024, rounds };
 }
 
+async function inventory(options: PipelineOptions, depth: number) {
+	if (options.storage !== 'arena')
+		throw new Error(`a render inventory reads arena records, so it refuses ${options.storage} storage`);
+	const backend = await nativeBackendOf('typescript');
+	const renderInventory = (backend as { renderInventory?: RenderInventory }).renderInventory;
+	if (renderInventory === undefined) throw new Error("typescript's addon has no renderInventory: rebuild it on this branch");
+	const { handle } = new backend.SittirEngine();
+	const paths = pathsOf(options);
+	const load = loadavg();
+	const rows = (JSON.parse(renderInventory(handle, paths.map((path) => readFileSync(path, 'utf8')), depth)) as object[]).map((row, n) => ({ path: paths[n], ...row }));
+	return { storage: options.storage, depth, loader, load, pid: process.pid, node: process.version, rows };
+}
+
 async function workerMain(options: PipelineOptions, port: MessagePort): Promise<void> {
 	const ctx = await contextOf(options.storage);
 	const paths = pathsOf(options);
@@ -433,6 +449,7 @@ async function pooled(options: PipelineOptions, workers: number) {
 }
 
 export async function pipeline(options: PipelineOptions) {
+	if (options.inventoryDepth !== undefined) return inventory(options, options.inventoryDepth);
 	if (options.batchThreads !== undefined) return batch(options, options.batchThreads);
 	if (options.workers !== undefined) return pooled(options, options.workers);
 	const ctx = await contextOf(options.storage);

@@ -1,0 +1,64 @@
+inventory: depth 6, 2410 files, load 18.5, loader dist (--expose-gc)
+inventory: depth 6, 2410 files, load 18.5, loader dist (--expose-gc)
+inventory: depth 6, 2410 files, load 18.6, loader dist (--expose-gc)
+
+files 2410, refused 0, children refused along the chains 0
+render on hydrated trees, corpus total: trivia table 436 ms (76%), first render 137 ms (24%); a second render 6 ms
+
+largest files by render cost: trivia + first render ms, share of the corpus, then per level the children and the largest child's share of the file's nodes
+    59.2 +  16.6 ms 13.2%  2.65 MB  spec.ts: [4] 100% export_statement_default_declaration  [1] 100% lexical_declaration  [1] 100% variable_declarator_plain  [2] 100% call_expression_call  [2] 100% arguments  [1] 100% object
+    41.3 +  11.4 ms  9.2%  1.76 MB  spec.ts: [4] 100% export_statement_default_declaration  [1] 100% lexical_declaration  [1] 100% variable_declarator_plain  [2] 100% call_expression_call  [2] 100% arguments  [1] 100% object
+    35.2 +   9.8 ms  7.9%  1.49 MB  spec.ts: [4] 100% export_statement_default_declaration  [1] 100% lexical_declaration  [1] 100% variable_declarator_plain  [2] 100% call_expression_call  [2] 100% arguments  [1] 100% object
+    16.8 +   4.8 ms  3.8%  0.41 MB  chip.ts: [4] 100% export_statement_default_declaration  [1] 100% lexical_declaration  [1] 100% variable_declarator_plain  [2] 100% call_expression_call  [2] 100% arguments  [1] 100% object
+     4.9 +   1.4 ms  1.1%  0.17 MB  DoorLock.ts: [6] 100% export_statement_default_declaration  [1] 100% lexical_declaration  [1] 100% variable_declarator_plain  [2] 100% call_expression_call  [2] 100% arguments  [1] 100% object
+     4.2 +   1.4 ms  1.0%  0.11 MB  kelvinToXy.ts: [8] 99% lexical_declaration  [1] 99% variable_declarator_plain  [3] 99% object  [1901] 0% pair  [2] 0% object  [2] 0% pair
+     3.8 +   1.2 ms  0.9%  0.10 MB  MatterNodeStructureTest.ts: [30] 92% expression_statement  [1] 92% call_expression_call  [2] 92% arguments  [2] 92% arrow_function  [2] 92% statement_block  [3] 68% expression_statement
+     3.0 +   1.0 ms  0.7%  0.09 MB  IntegrationTest.ts: [41] 97% expression_statement  [1] 97% call_expression_call  [2] 97% arguments  [2] 97% arrow_function  [2] 97% statement_block  [35] 15% expression_statement
+
+one file on P threads, split at level L: speedup ceiling for the largest file / median file / files over 64 KiB
+  L=0: P=2: 1.00x / 1.71x / 1.01x   P=4: 1.00x / 1.71x / 1.01x   P=8: 1.00x / 1.71x / 1.01x
+  L=1: P=2: 1.00x / 1.86x / 1.01x   P=4: 1.00x / 1.86x / 1.01x   P=8: 1.00x / 1.86x / 1.01x
+  L=2: P=2: 1.00x / 2.00x / 1.01x   P=4: 1.00x / 2.65x / 1.01x   P=8: 1.00x / 2.65x / 1.01x
+  L=3: P=2: 1.00x / 2.00x / 1.03x   P=4: 1.00x / 4.00x / 1.03x   P=8: 1.00x / 5.83x / 1.03x
+  L=4: P=2: 1.00x / 2.00x / 1.03x   P=4: 1.00x / 4.00x / 1.03x   P=8: 1.00x / 7.58x / 1.03x
+  L=5: P=2: 1.00x / 2.00x / 1.47x   P=4: 1.00x / 4.00x / 1.47x   P=8: 1.00x / 8.00x / 1.47x
+
+the corpus's renders on P file workers: floor without a split, then split at each level
+  P=2:  286.5 ms  L=0:  286.5  L=1:  286.5  L=2:  286.5  L=3:  286.5  L=4:  286.5  L=5:  286.5
+  P=4:  143.3 ms  L=0:  143.3  L=1:  143.3  L=2:  143.3  L=3:  143.3  L=4:  143.3  L=5:  143.3
+  P=8:   75.8 ms  L=0:   75.7  L=1:   75.7  L=2:   75.7  L=3:   75.7  L=4:   75.7  L=5:   75.7
+
+[exited with code 0]
+
+== the four largest files, 14 levels deep ==
+inventory: depth 14, 4 files, load 18.5, loader dist (--expose-gc)
+
+files 4, refused 0, children refused along the chains 0
+render on hydrated trees, corpus total: trivia table 163 ms (78%), first render 46 ms (22%); a second render 1 ms
+
+largest files by render cost: trivia + first render ms, share of the corpus, then per level the children and the largest child's share of the file's nodes
+    62.4 +  17.3 ms 38.1%  2.65 MB  spec.ts: [4] 100% export_statement_default_declaration  [1] 100% lexical_declaration  [1] 100% variable_declarator_plain  [2] 100% call_expression_call  [2] 100% arguments  [1] 100% object  [2] 100% pair  [2] 100% array  [273] 9% call_expression_call  [2] 9% arguments  [1] 9% object  [7] 9% pair  [2] 9% array  [129] 0% call_expression_call
+    42.6 +  11.6 ms 26.0%  1.76 MB  spec.ts: [4] 100% export_statement_default_declaration  [1] 100% lexical_declaration  [1] 100% variable_declarator_plain  [2] 100% call_expression_call  [2] 100% arguments  [1] 100% object  [2] 100% pair  [2] 100% array  [131] 7% call_expression_call  [2] 7% arguments  [1] 7% object  [5] 7% pair  [2] 7% array  [115] 0% call_expression_call
+    38.9 +  10.0 ms 23.4%  1.49 MB  spec.ts: [4] 100% export_statement_default_declaration  [1] 100% lexical_declaration  [1] 100% variable_declarator_plain  [2] 100% call_expression_call  [2] 100% arguments  [1] 100% object  [2] 100% pair  [2] 100% array  [109] 8% call_expression_call  [2] 8% arguments  [1] 8% object  [5] 8% pair  [2] 8% array  [114] 0% call_expression_call
+    18.8 +   7.2 ms 12.5%  0.41 MB  chip.ts: [4] 100% export_statement_default_declaration  [1] 100% lexical_declaration  [1] 100% variable_declarator_plain  [2] 100% call_expression_call  [2] 100% arguments  [1] 100% object  [2] 100% pair  [2] 100% array  [71] 10% call_expression_call  [2] 10% arguments  [1] 10% object  [5] 10% pair  [2] 10% array  [86] 0% call_expression_call
+
+one file on P threads, split at level L: speedup ceiling for the largest file / median file / files over 64 KiB
+  L=0: P=2: 1.00x / 1.00x / 1.00x   P=4: 1.00x / 1.00x / 1.00x   P=8: 1.00x / 1.00x / 1.00x
+  L=1: P=2: 1.00x / 1.00x / 1.00x   P=4: 1.00x / 1.00x / 1.00x   P=8: 1.00x / 1.00x / 1.00x
+  L=2: P=2: 1.00x / 1.00x / 1.00x   P=4: 1.00x / 1.00x / 1.00x   P=8: 1.00x / 1.00x / 1.00x
+  L=3: P=2: 1.00x / 1.00x / 1.00x   P=4: 1.00x / 1.00x / 1.00x   P=8: 1.00x / 1.00x / 1.00x
+  L=4: P=2: 1.00x / 1.00x / 1.00x   P=4: 1.00x / 1.00x / 1.00x   P=8: 1.00x / 1.00x / 1.00x
+  L=5: P=2: 1.00x / 1.00x / 1.00x   P=4: 1.00x / 1.00x / 1.00x   P=8: 1.00x / 1.00x / 1.00x
+  L=6: P=2: 1.00x / 1.00x / 1.00x   P=4: 1.00x / 1.00x / 1.00x   P=8: 1.00x / 1.00x / 1.00x
+  L=7: P=2: 1.00x / 1.00x / 1.00x   P=4: 1.00x / 1.00x / 1.00x   P=8: 1.00x / 1.00x / 1.00x
+  L=8: P=2: 2.00x / 2.00x / 2.00x   P=4: 4.00x / 4.00x / 4.00x   P=8: 8.00x / 8.00x / 8.00x
+  L=9: P=2: 2.00x / 2.00x / 2.00x   P=4: 4.00x / 4.00x / 4.00x   P=8: 8.00x / 8.00x / 8.00x
+  L=10: P=2: 2.00x / 2.00x / 2.00x   P=4: 4.00x / 4.00x / 4.00x   P=8: 8.00x / 8.00x / 8.00x
+  L=11: P=2: 2.00x / 2.00x / 2.00x   P=4: 4.00x / 4.00x / 4.00x   P=8: 8.00x / 8.00x / 8.00x
+  L=12: P=2: 2.00x / 2.00x / 2.00x   P=4: 4.00x / 4.00x / 4.00x   P=8: 8.00x / 8.00x / 8.00x
+  L=13: P=2: 2.00x / 2.00x / 2.00x   P=4: 4.00x / 4.00x / 4.00x   P=8: 8.00x / 8.00x / 8.00x
+
+the corpus's renders on P file workers: floor without a split, then split at each level
+  P=2:  104.5 ms  L=0:  104.5  L=1:  104.5  L=2:  104.5  L=3:  104.5  L=4:  104.5  L=5:  104.5  L=6:  104.5  L=7:  104.5  L=8:  104.5  L=9:  104.5  L=10:  104.5  L=11:  104.5  L=12:  104.5  L=13:  104.5
+  P=4:   79.7 ms  L=0:   79.7  L=1:   79.7  L=2:   79.7  L=3:   79.7  L=4:   79.7  L=5:   79.7  L=6:   79.7  L=7:   79.7  L=8:   52.2  L=9:   52.2  L=10:   52.2  L=11:   52.2  L=12:   52.2  L=13:   52.2
+  P=8:   79.7 ms  L=0:   79.7  L=1:   79.7  L=2:   79.7  L=3:   79.7  L=4:   79.7  L=5:   79.7  L=6:   79.7  L=7:   79.7  L=8:   26.1  L=9:   26.1  L=10:   26.1  L=11:   26.1  L=12:   26.1  L=13:   26.1

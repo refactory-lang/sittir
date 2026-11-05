@@ -894,6 +894,7 @@ module.exports.render = nativeBinding.render
 module.exports.renderBuilt = nativeBinding.renderBuilt
 module.exports.renderBuiltLeaf = nativeBinding.renderBuiltLeaf
 module.exports.renderCandidate = nativeBinding.renderCandidate
+module.exports.renderInventory = nativeBinding.renderInventory
 module.exports.renderRecord = nativeBinding.renderRecord
 module.exports.renderToFile = nativeBinding.renderToFile
 module.exports.separatorBefore = nativeBinding.separatorBefore

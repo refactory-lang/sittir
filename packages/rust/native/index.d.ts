@@ -565,6 +565,13 @@ export declare function renderBuiltLeaf(engine: object, owner: object, kind: num
 export declare function renderCandidate(engine: object, treeId: number, index: number, options?: object | undefined | null): string
 
 /**
+ * r" Where each of `sources`' render time goes, by subtree, as
+ * r" JSON (`render_inventory`): run on this thread, one tree at a
+ * r" time, each dropped once its row is written.
+ */
+export declare function renderInventory(engine: object, sources: string[], depth: number): string
+
+/**
  * r" The record at `address` of the live tree `treeId` rendered, as
  * r" `render` renders a node read from the tree: a render root
  * r" whose `leading` and `trailing` edges have no neighbour, as
