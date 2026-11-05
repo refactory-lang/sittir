@@ -33,6 +33,13 @@ describe('a built string takes the quote its content derives', () => {
 		expect(rendered(b.string({ contents: content('doc') }, { quote: '"""' }))).toBe('"""doc"""');
 	});
 
+	it('takes a spelling in the prefix closure on the loose surface, and refuses text outside it by the slot', () => {
+		expect(rendered(b.string({ prefix: 'Rb', contents: content('x') }))).toBe('Rb"x"');
+		for (const prefix of ['zz', 'bf']) {
+			expect(() => b.string({ prefix: prefix as never, contents: content('x') })).toThrow(`string_start.prefix: text does not match pattern: ${prefix}`);
+		}
+	});
+
 	it('refuses content that ends in an unpaired backslash, naming the kind', () => {
 		expect(() => rendered(b.string({ contents: content('a\\') }))).toThrow(/string: no delimiter fits its content: it ends in an unpaired `\\`/);
 	});
