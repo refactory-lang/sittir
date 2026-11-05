@@ -141,19 +141,19 @@ fn read<T: ReadNode>(tree: &tree_sitter::Tree, source: &str, depth: Depth) -> Re
     T::read(&mut tree.walk(), &mut ReadCtx::new(source, sittir_core::types::TreeId(7), T::shows), depth)
 }
 
-/// A tree's trivia table as a read's side lookup, each entry as a parsed
-/// tree gives it: an extra or an `ERROR` as its coordinate, a layout run as
-/// `NoTrivia`.
+/// A tree's trivia, every region placed, as a read's side lookup, each
+/// entry as a parsed tree gives it: an extra or an `ERROR` as its
+/// coordinate, a layout run as `NoTrivia`.
 struct Table<'t> {
     tree: &'t tree_sitter::Tree,
     source: &'t str,
-    trivia: sittir_core::trivia_table::TriviaTable,
+    trivia: sittir_parity_tests::PlacedTrivia,
 }
 
 impl<'t> Table<'t> {
     /// The table of a rust `tree`.
     fn of(tree: &'t tree_sitter::Tree, source: &'t str) -> Self {
-        Table { tree, source, trivia: sittir_core::trivia_table::TriviaTable::assign(tree, source, kind::SURFACE_KINDS, 4) }
+        Table { tree, source, trivia: sittir_parity_tests::PlacedTrivia::of(tree, source, kind::SURFACE_KINDS, 4) }
     }
 }
 

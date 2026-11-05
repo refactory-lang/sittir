@@ -48,8 +48,8 @@ pub trait EngineGrammar: Copy {
     type Trivia: crate::trivia::FromTriviaText + crate::trivia::TriviaItem;
     /// The grammar's whitespace table, and its layout kinds (the table's domain).
     fn whitespace(self) -> (&'static crate::render::WhitespaceTable, &'static [KindId]);
-    /// The grammar's surface kinds the trivia table's assignment reads
-    /// (`TriviaTable::assign`).
+    /// The grammar's surface kinds the trivia placement reads
+    /// (`Placement`).
     fn surface_kinds(self) -> crate::trivia_table::SurfaceKinds;
     /// The grammar's option tables: each site's arms and the address an
     /// options object names it by.
@@ -1261,7 +1261,7 @@ impl<G: EngineGrammar> ParsedTree<G> {
         self.lookups().baseline_gap(run, whole)
     }
 
-    /// Every run of whitespace a side takes (`TriviaTable::runs`), each with
+    /// Every run of whitespace a side takes (`Placement::runs`), each with
     /// what the read-time options write there (`baseline_gap`).
     pub fn baseline_runs(&self, whole: bool) -> Result<Vec<(crate::trivia_table::LayoutRun, Option<crate::baseline::Tally>)>, String> {
         let mut lookups = self.lookups();
@@ -1342,7 +1342,7 @@ impl<G: EngineGrammar> ParsedTree<G> {
     /// read-time options as its member (`Lookups::deviation`), the layout
     /// members, and the depth members. A member the source fixes in place
     /// with its adjacency (a line continuation with whitespace beside it,
-    /// `TriviaTable::adjacency`) is no layout: it is an entry of the source,
+    /// `Placement::adjacency`) is no layout: it is an entry of the source,
     /// as an `ERROR` is.
     fn assigned_side<'t, N: Nodes<'t>>(&'t self, nodes: &mut N, index: crate::types::NodeIndex, side: TriviaSide, deviation: Option<Deviation<N, G::Trivia>>) -> Vec<SideEntry<G::Trivia>> {
         self.cover_side(&mut |at| nodes.node(at), index, side);
@@ -1936,7 +1936,7 @@ impl<G: EngineGrammar> ParsedTree<G> {
     /// `entries` gives each node's, outermost first, each frame's leading,
     /// trailing and inner sides: the node's own, then a frame for each item
     /// a list at its start or its end passes the extras and `ERROR`s of that
-    /// edge to (`TriviaTable::edge_item`), holding that one side, as the item
+    /// edge to (`Placement::edge_item`), holding that one side, as the item
     /// frames itself where the list is read as a node. The coordinate's bytes
     /// hold each item's.
     fn frame_levels<E>(&self, index: crate::types::NodeIndex, mut entries: impl FnMut(crate::types::NodeIndex, TriviaSide) -> Vec<E>) -> Vec<[Vec<E>; 3]> {

@@ -37,8 +37,8 @@ pub struct Separator {
 
 /// One separator gap between two items of a list slot: the items'
 /// descendant indexes, its runs before and after its separator by their
-/// places among the trivia table's runs (`TriviaTable::runs`), where the
-/// table has one there, and its separator.
+/// ids among the runs the tree's trivia placement placed
+/// (`Placement::run_at`), where it placed one there, and its separator.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct SlotGap {
     pub items: (crate::types::NodeIndex, crate::types::NodeIndex),

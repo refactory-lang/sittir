@@ -1,6 +1,6 @@
 //! A parsed tree's trivia placed a region at a time, on the first read of a
-//! side the region holds: the assignment `TriviaTable::assign` makes, read
-//! from the nodes around each gap instead of from a walk of the whole tree.
+//! side the region holds: each gap read from the nodes around it, never
+//! from a walk of the whole tree.
 //!
 //! Every node but the root begins and ends on a token of the walk, its edge
 //! tokens included, so a gap's owner, the smallest node holding both its
@@ -14,8 +14,8 @@
 //! An owner's runs measure their excess from where the gap before its first
 //! token left it, and nothing below the owner moves it between two of the
 //! owner's gaps: each owner below ends, restoring its excess, before the
-//! next one. A region's writes go in the order the whole-tree assignment
-//! makes them: by the byte their gap starts at, the restores of the owners
+//! next one. A region's writes go in the order a walk of the whole tree
+//! would make them: by the byte their gap starts at, the restores of the owners
 //! ending there first, innermost first, then each gap by its left token.
 //!
 //! A placement finds the nodes it reads through the reader that asks it,
@@ -336,7 +336,8 @@ impl Placement {
     }
 
     /// The item the list node at `index` passes the extras and `ERROR`s of
-    /// its `side` to (`TriviaTable::edge_item`).
+    /// its `side` to, so a coordinate of the list frames with that item's
+    /// side too; `None` for a node that is no list or passes none.
     #[must_use]
     pub fn edge_item<'t>(&self, source: Source<'t>, nodes: Lookup<'_, 't>, index: NodeIndex, side: TriviaSide) -> Option<NodeIndex> {
         self.with(source, Some(nodes), |placer| {
@@ -349,7 +350,8 @@ impl Placement {
     }
 
     /// The adjacency of the entry at `index` when the source fixes it in
-    /// place (`TriviaTable::adjacency`).
+    /// place (`Adjacency`): an `ERROR`'s always, a line continuation's when
+    /// whitespace lies beside it.
     #[must_use]
     pub fn adjacency<'t>(&self, source: Source<'t>, nodes: Lookup<'_, 't>, index: NodeIndex) -> Option<Adjacency> {
         self.with(source, Some(nodes), |placer| {
@@ -390,6 +392,18 @@ impl Placement {
             placer.place_all();
             placer.hand_over(fill);
         });
+    }
+
+    /// Every depth stretch the templates of the tree's nodes open, sorted
+    /// by where it opens, the outer of two that open together first: the
+    /// stretches structural indentation is measured from. It places no
+    /// region.
+    #[must_use]
+    pub fn depth_stretches(&self, source: Source<'_>) -> Vec<(u32, u32)> {
+        self.with(source, None, |placer| {
+            placer.measure_stretches();
+            placer.stretches()
+        })
     }
 
     /// Every run placed so far, in source order.
@@ -836,6 +850,40 @@ impl<'t> Placer<'t, '_, '_> {
         }
     }
 
+    /// The depth stretches of every node of the tree measured, from one
+    /// walk of it, a parent's shape before its children's.
+    fn measure_stretches(&mut self) {
+        let mut cursor = self.source.tree.walk();
+        loop {
+            let node = cursor.node();
+            let index = crate::read::index_of(&cursor);
+            self.nodes.insert(index, node);
+            let kid = Kid::of(&node, index);
+            if !kid.entry && !kid.leaf {
+                self.shape(index);
+            }
+            self.level(index);
+            if !kid.entry && cursor.goto_first_child() {
+                continue;
+            }
+            loop {
+                if cursor.goto_next_sibling() {
+                    break;
+                }
+                if !cursor.goto_parent() {
+                    return;
+                }
+            }
+        }
+    }
+
+    /// The depth stretches measured so far (`Placement::depth_stretches`).
+    fn stretches(&self) -> Vec<(u32, u32)> {
+        let mut stretches: Vec<(u32, u32)> = self.state.stretches.values().flat_map(|level| level.own.iter().map(|stretch| (stretch.open, stretch.close))).collect();
+        stretches.sort_by_key(|&(open, close)| (open, std::cmp::Reverse(close)));
+        stretches
+    }
+
     /// The region of the node at `top`, which is no list or the root and
     /// whose parent the placement knows, placed.
     fn place_region(&mut self, top: NodeIndex) {
@@ -1034,8 +1082,9 @@ impl<'t> Placer<'t, '_, '_> {
         }
     }
 
-    /// The structural indentation width at byte `at` (`Structure::structural`):
-    /// the innermost stretch's holding it among those from `level` up.
+    /// The structural indentation width at byte `at`: the innermost
+    /// stretch's holding it among those from `level` up, none when no
+    /// stretch does.
     fn structural(&self, mut level: Option<NodeIndex>, at: u32) -> i64 {
         while let Some(node) = level {
             let Some(stretches) = self.state.stretches.get(&node) else { break };
@@ -1232,7 +1281,8 @@ impl<'t> Placer<'t, '_, '_> {
     }
 
     /// The item a list node passes the extras and `ERROR`s of its `side`
-    /// to (`Nodes::edge_item`).
+    /// to: its first (leading) or last (trailing) holder child, when that
+    /// child lies at the list's edge and is not a unit kind.
     fn edge_item(&mut self, list: &Kid, side: TriviaSide) -> Option<Kid> {
         if list.leaf || list.entry || !self.kinds.lists.contains(&list.kind) {
             return None;
@@ -1343,7 +1393,9 @@ impl<'t> Placer<'t, '_, '_> {
     }
 
     /// The width of the stretch from `open` to `close` of the node at
-    /// `index` inside one of width `around` (`Structure::opened`).
+    /// `index` inside one of width `around`: set by the line of its first
+    /// token, or one unit past `around` when that token does not start its
+    /// line or the stretch holds none.
     fn opened(&mut self, index: NodeIndex, open: u32, close: u32, around: i64) -> i64 {
         let unit = i64::from(self.unit);
         match self.first_from(index, open).filter(|&start| start < close) {
@@ -1387,8 +1439,8 @@ impl<'t> Placer<'t, '_, '_> {
     }
 
     /// The adjacency of the entry `entry` when the source fixes it in place
-    /// (`TriviaTable::adjacency`): an entry carries the in-line run after
-    /// the entry before it when that one is fixed too.
+    /// (`Placement::adjacency`): an entry carries the in-line run after the
+    /// entry before it when that one is fixed too.
     fn adjacency(&mut self, entry: &Kid) -> Option<Adjacency> {
         let fixes = |kinds: &SurfaceKinds, kid: &Kid| kid.kind == KindId::ERROR || kinds.layout.contains(&kid.kind);
         if !fixes(&self.kinds, entry) {

@@ -1,12 +1,14 @@
 //! The stretches a grammar's templates indent nest: two either lie apart or
-//! one holds the other. The assignment measures each line's structural
-//! indentation from the stretches open around it, each measured once as it
-//! opens, so a grammar whose stretches crossed would give wrong widths.
+//! one holds the other. The placement measures each line's structural
+//! indentation from the innermost stretch holding it, each measured once
+//! inside the stretch around it, so a grammar whose stretches crossed would
+//! give wrong widths.
 //! Checked over every round-trip fixture source of the five grammars.
 
 use sittir_core::engine::EngineGrammar;
 use sittir_core::options::ResolvedOptions;
-use sittir_core::types::NodeIndex;
+use sittir_core::points::LineTable;
+use sittir_core::trivia_table::{Placement, Source};
 use sittir_parity_tests::{each_grammar, fixture_sources, parsed};
 
 /// The stretches of every distinct round-trip fixture source of `name`,
@@ -15,9 +17,9 @@ fn stretches_nest<G: EngineGrammar + Copy>(name: &str, grammar: G, options: fn()
     let mut checked = 0;
     for source in &fixture_sources(name) {
         let tree = parsed(grammar, options(), source);
-        let walk = sittir_core::trivia_table::walk(tree.tree().root_node(), NodeIndex::ROOT, source);
+        let lines = LineTable::new(source);
         let mut open: Vec<(u32, u32)> = Vec::new();
-        for (start, end) in walk.depth_stretches(source, grammar.surface_kinds().depth) {
+        for (start, end) in Placement::new(grammar.surface_kinds(), 4).depth_stretches(Source { tree: tree.tree(), source, lines: &lines }) {
             while open.last().is_some_and(|&(_, close)| close <= start) {
                 open.pop();
             }

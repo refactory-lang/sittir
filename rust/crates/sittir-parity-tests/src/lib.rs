@@ -189,6 +189,45 @@ pub fn parsed<G: sittir_core::engine::EngineGrammar>(grammar: G, options: sittir
     engine.parse(source, sittir_core::engine::claim_tree_id().expect("a tree id")).expect("a parse")
 }
 
+/// A tree's trivia with every region placed, and the sides placing them
+/// handed over (`Placement::place_all`).
+pub struct PlacedTrivia {
+    pub placement: sittir_core::trivia_table::Placement,
+    pub sides: sittir_core::trivia_table::PlacedSides,
+}
+
+impl PlacedTrivia {
+    /// The trivia of `tree`, parsed from `source`, whose grammar's surface
+    /// kinds are `kinds` and whose indentation level is `unit` spaces wide.
+    #[must_use]
+    pub fn of(tree: &tree_sitter::Tree, source: &str, kinds: sittir_core::trivia_table::SurfaceKinds, unit: u32) -> Self {
+        let lines = sittir_core::points::LineTable::new(source);
+        let placement = sittir_core::trivia_table::Placement::new(kinds, unit);
+        let mut sides = sittir_core::trivia_table::PlacedSides::new();
+        placement.place_all(sittir_core::trivia_table::Source { tree, source, lines: &lines }, |placed| sides = placed);
+        Self { placement, sides }
+    }
+
+    /// The entries placing every region gives `side` of the node at
+    /// `index`, in source order.
+    #[must_use]
+    pub fn side(&self, index: sittir_core::types::NodeIndex, side: sittir_core::trivia_table::TriviaSide) -> &[sittir_core::trivia_table::Assigned] {
+        self.sides.get(&(index, side)).map_or(&[], Vec::as_slice)
+    }
+
+    /// The entries no side takes, in source order.
+    #[must_use]
+    pub fn unowned(&self) -> Vec<sittir_core::types::NodeIndex> {
+        self.placement.unowned()
+    }
+
+    /// Every run of whitespace a side takes, in source order.
+    #[must_use]
+    pub fn runs(&self) -> Vec<sittir_core::trivia_table::LayoutRun> {
+        self.placement.runs().into_iter().map(|(_, run)| run).collect()
+    }
+}
+
 /// A fresh parse of the rust `source` under the default options (`parsed`).
 ///
 /// # Panics

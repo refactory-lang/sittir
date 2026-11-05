@@ -294,8 +294,9 @@ id_newtype! {
 }
 
 id_newtype! {
-    /// A run of whitespace a side takes: its place among a trivia table's
-    /// runs, in source order (`TriviaTable::runs`).
+    /// A run of whitespace a side takes: its place among the runs its tree's
+    /// trivia placement has placed, in the order it placed them
+    /// (`Placement::run`).
     RunId(u32)
 }
 
