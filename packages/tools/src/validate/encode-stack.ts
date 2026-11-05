@@ -53,6 +53,7 @@ export interface BinaryImage {
 	readonly int32: (address: number) => number | undefined;
 	readonly threadLocal: (address: number) => boolean;
 	readonly frames?: ReadonlyMap<number, number>;
+	readonly extents?: ReadonlyMap<number, number>;
 }
 
 export interface Image extends Slots, BinaryImage {}
@@ -364,6 +365,8 @@ const TABLE_REACH = 12;
 const TABLE_ROUNDS = 8;
 const ELF_MAGIC = 0x464c457f;
 const SHT_PROGBITS = 1;
+const SHT_SYMTAB = 2;
+const STT_FUNC = 2;
 const MZ_MAGIC = 0x5a4d;
 const PE_MAGIC = 0x4550;
 const PE32_PLUS = 0x20b;
@@ -390,17 +393,37 @@ interface Section {
 	readonly size: number;
 }
 
-function elfSections(bytes: Buffer): Section[] {
-	const sections: Section[] = [];
+function elfHeaders(bytes: Buffer, type: number): number[] {
 	const table = Number(bytes.readBigUInt64LE(0x28));
 	const entry = bytes.readUInt16LE(0x3a);
-	for (let at = 0; at < bytes.readUInt16LE(0x3c); at++) {
-		const header = table + at * entry;
+	return Array.from({ length: bytes.readUInt16LE(0x3c) }, (_, at) => table + at * entry).filter(
+		(header) => bytes.readUInt32LE(header + 4) === type
+	);
+}
+
+function elfSections(bytes: Buffer): Section[] {
+	return elfHeaders(bytes, SHT_PROGBITS).flatMap((header) => {
 		const address = Number(bytes.readBigUInt64LE(header + 0x10));
-		if (bytes.readUInt32LE(header + 4) !== SHT_PROGBITS || !address) continue;
-		sections.push({ name: '', address, offset: Number(bytes.readBigUInt64LE(header + 0x18)), size: Number(bytes.readBigUInt64LE(header + 0x20)) });
+		return address
+			? [{ name: '', address, offset: Number(bytes.readBigUInt64LE(header + 0x18)), size: Number(bytes.readBigUInt64LE(header + 0x20)) }]
+			: [];
+	});
+}
+
+function elfExtents(bytes: Buffer): Map<number, number> {
+	const extents = new Map<number, number>();
+	for (const header of elfHeaders(bytes, SHT_SYMTAB)) {
+		const offset = Number(bytes.readBigUInt64LE(header + 0x18));
+		const end = offset + Number(bytes.readBigUInt64LE(header + 0x20));
+		const width = Number(bytes.readBigUInt64LE(header + 0x38));
+		for (let symbol = offset; width && symbol + width <= end; symbol += width) {
+			const size = Number(bytes.readBigUInt64LE(symbol + 16));
+			if ((bytes[symbol + 4]! & 0xf) !== STT_FUNC || !size) continue;
+			const start = Number(bytes.readBigUInt64LE(symbol + 8));
+			extents.set(start, Math.max(extents.get(start) ?? 0, size));
+		}
 	}
-	return sections;
+	return extents;
 }
 
 function machoSections(bytes: Buffer): Section[] {
@@ -518,7 +541,8 @@ export function imageOf(bytes: Buffer): BinaryImage {
 			return at === undefined ? undefined : bytes.readInt32LE(at);
 		},
 		threadLocal: (address) => variables.some((section) => address >= section.address && address < section.address + section.size),
-		...(pe ? { frames: peFrames(bytes, pe) } : {})
+		...(pe ? { frames: peFrames(bytes, pe) } : {}),
+		...(elf ? { extents: elfExtents(bytes) } : {})
 	};
 }
 
@@ -619,7 +643,7 @@ interface Collected {
 	readonly name: string;
 	readonly start: number;
 	readonly prologue: string[];
-	readonly targets: (readonly [string, number])[];
+	readonly targets: (readonly [string, number, Unresolved])[];
 	readonly slots: (readonly [string, number, Unresolved])[];
 	readonly addresses: (readonly [string, number, Unresolved])[];
 	readonly descriptors: (readonly [number, Unresolved])[];
@@ -1000,7 +1024,7 @@ function readBody(fn: Collected, listed: readonly Instruction[], image: Image, i
 			fn.unresolved.push(site);
 		} else {
 			const to = ins.endsWith('>') ? ADDRESS.exec(operands(ins)) : null;
-			if (to) fn.targets.push([op, hex(to[1]!)]);
+			if (to) fn.targets.push([op, hex(to[1]!), site]);
 		}
 	}
 }
@@ -1019,6 +1043,7 @@ export async function disassemble(
 	let isa = X86;
 	const collected = new Map<number, Collected>();
 	const starts = new Map<string, number[]>();
+	const unowned = new Set<number>();
 	let current: Collected | undefined;
 	let stubs = false;
 	let body: Instruction[] = [];
@@ -1061,7 +1086,11 @@ export async function disassemble(
 			.replace(/\s+/g, ' ')
 			.trim()
 			.replace(PREFIX, '');
-		if (ins) body.push({ address: Number.parseInt(line.slice(0, colon).trim(), 16), ins });
+		if (!ins) continue;
+		const address = Number.parseInt(line.slice(0, colon).trim(), 16);
+		const extent = image.extents?.get(current.start);
+		if (extent !== undefined && address >= current.start + extent) unowned.add(address);
+		else body.push({ address, ins });
 	}
 	flush();
 	if (!arch) throw new Error('the disassembly names no x86-64 or arm64 file format');
@@ -1075,7 +1104,10 @@ export async function disassemble(
 			if (CALL_OPS.has(op)) calls.add(callee);
 			else if (TAIL_OPS.test(op)) tails.add(callee);
 		};
-		for (const [op, callee] of targets) edge(op, callee);
+		for (const [op, callee, at] of targets) {
+			if (unowned.has(callee) && (CALL_OPS.has(op) || TAIL_OPS.test(op))) unread.push(at);
+			else edge(op, callee);
+		}
 		for (const [op, slot, at] of through) {
 			const target = image.internal.get(slot);
 			const held = target === undefined ? undefined : collected.get(target);
