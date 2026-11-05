@@ -2,11 +2,12 @@ import type { PortableBuildArm, PortableBuildTable, PortableContainer, PortableD
 import { nodeText } from '../node-data.ts';
 import { hasKind, type PortableClassifier } from './classify.ts';
 import { tokenText } from './facts.ts';
+import { slotItems } from '../query-holds.ts';
 
 type Node = { readonly $type: number };
 
 export type PortableCarry =
-	| { readonly reason: 'unclaimed' | 'scalar' | 'text' | 'preset' }
+	| { readonly reason: 'unclaimed' | 'scalar' | 'text' | 'preset' | 'opaque' }
 	| { readonly reason: 'flags'; readonly flags: readonly string[] }
 	| { readonly reason: 'unread'; readonly slot: string };
 
@@ -27,6 +28,8 @@ export interface PortableReadContext {
 	readonly readSlots: (node: Node, path: string, flags: readonly string[]) => ReadonlySet<string>;
 	readonly otherTested: (node: Node, path: string) => ReadonlySet<string>;
 }
+
+const opaque = (item: unknown): boolean => hasKind(item) && typeof (item as { readonly $verbatim?: unknown }).$verbatim === 'string';
 
 const present = (value: unknown): boolean => value !== undefined && value !== null && !(Array.isArray(value) && value.length === 0);
 
@@ -213,6 +216,8 @@ export function portableReader({ table, classify, flagHolds, flagsOf, textOf, sl
 	const readValue = (value: unknown, carried: PortableCarried | undefined, seats?: readonly PortableSeat[]): unknown => {
 		const kind = kindOfValue(value);
 		if (kind === undefined) return value;
+		if (typeof value !== 'number' && (opaque(value) || (table.tokens?.[kind] ?? []).some((accessor) => slotItems(value as object, accessor).some(opaque))))
+			return kept(value as Node, { reason: 'opaque' }, carried);
 		const path = classify(typeof value === 'number' ? value : (value as Node));
 		const claimed = path === undefined ? [] : armsAt(path, kind);
 		if (path === undefined || claimed.length === 0) {
@@ -278,6 +283,15 @@ export function portableReader({ table, classify, flagHolds, flagsOf, textOf, sl
 		for (const test of arms.flatMap((arm) => arm.when)) if ('empty' in test) for (const name of test.empty) if (!(name in structure)) structure[name] = [];
 		return structure;
 	};
+	const meaningfulText = (item: Node): string => {
+		const facets = table.delimiters?.[item.$type];
+		if (facets === undefined) return textOf(item) ?? '';
+		return facets.map((facet) => {
+			const held = (item as unknown as Record<string, unknown>)[facet];
+			const value = typeof held === 'function' ? (held as () => unknown).call(item) : held;
+			return typeof value === 'string' ? value : (textOf(value) ?? '');
+		}).join('');
+	};
 	const unreadIn = (frame: ReadonlyMap<object, Read>): PortableCarry | undefined => {
 		for (const [node, { path, flags, extra }] of frame) {
 			if (extra !== undefined) return { reason: 'unread', slot: extra };
@@ -286,7 +300,7 @@ export function portableReader({ table, classify, flagHolds, flagsOf, textOf, sl
 			const meaning = path === undefined ? new Set<string>() : otherTested(node as Node, path);
 			for (const [slot, items] of slotsOf(node as Node)) {
 				if (keys.has(slot) || tested.has(slot)) continue;
-				const lost = items.some((item) => (hasKind(item) ? (textOf(item) ?? '') !== '' : typeof item === 'number' && meaning.has(slot)));
+				const lost = items.some((item) => (hasKind(item) ? meaningfulText(item) !== '' : typeof item === 'number' && meaning.has(slot)));
 				if (lost) return { reason: 'unread', slot };
 			}
 		}

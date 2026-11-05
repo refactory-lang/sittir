@@ -1956,7 +1956,7 @@ mod tests {
     }
 
     impl crate::prepare::Prepare for TestTrivia {
-        fn prepare(&mut self, _: &crate::prepare::RenderContext<'_>) -> Result<(), crate::render::CoordinateError> {
+        fn prepare(&mut self, _: &crate::prepare::RenderContext<'_>) -> Result<(), crate::render::RenderError> {
             Ok(())
         }
     }

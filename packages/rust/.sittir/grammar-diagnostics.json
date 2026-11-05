@@ -447,14 +447,5 @@
       "shape": "choice[5]",
       "ruleId": "rule:_let_chain:root"
     }
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-kind-armless",
-    "severity": "warning",
-    "canProceed": true,
-    "ownerKind": "raw_string_literal",
-    "message": "literal.string.raw: raw_string_literal reads as a vocabulary path, but no arm builds it (nothing fills raw_string_literal.raw_string_literal_end, raw_string_literal.raw_string_literal_start), so every read carries it"
   }
 ]

@@ -703,9 +703,13 @@ fn interior_body(ident: &Ident, fields: &[Field<'_>], pattern: &LitStr) -> syn::
     regex::Regex::new(&flagged)
         .map_err(|e| syn::Error::new_spanned(pattern, format!("`{ident}`'s token interior does not compile as a Rust regex: {e}")))?;
     let flagged = LitStr::new(&flagged, pattern.span());
-    let mut inits = common_inits(fields, "", false);
+    if !fields.iter().any(|f| f.ident == "verbatim" && is_text(f.ty)) {
+        return Err(syn::Error::new_spanned(ident, "a token interior has a `verbatim: Option<String>` field, the text a spelling outside the interior reads as"));
+    }
+    let mut inits = common_inits(fields, "verbatim", false);
+    let mut opaque = inits.clone();
     let mut captures = Vec::new();
-    for field in fields {
+    for field in fields.iter().filter(|field| field.ident != "verbatim") {
         if let Role::Slot(slot) = &field.role {
             let capture = slot
                 .capture
@@ -713,6 +717,7 @@ fn interior_body(ident: &Ident, fields: &[Field<'_>], pattern: &LitStr) -> syn::
                 .ok_or_else(|| syn::Error::new_spanned(field.ident, "a token interior's slot names its capture"))?;
             let (name, ty) = (field.ident, field.ty);
             inits.push(quote!(#name: __rt::capture::<#ty>(&captures, #capture, __rt::SlotSite { kind: __KIND, slot: #capture, index })?,));
+            opaque.push(quote!(#name: ::core::default::Default::default(),));
             captures.push(capture);
         }
     }
@@ -730,10 +735,14 @@ fn interior_body(ident: &Ident, fields: &[Field<'_>], pattern: &LitStr) -> syn::
         },
         read: quote! {
             #pass
-            let captures = __INTERIOR
-                .captures(ctx.text(&cursor.node()))
-                .ok_or(__rt::ReadError::Interior { kind: __KIND, index })?;
-            ::core::result::Result::Ok(Self { #(#inits)* })
+            let text = ctx.text(&cursor.node());
+            match __INTERIOR.captures(text) {
+                ::core::option::Option::Some(captures) => ::core::result::Result::Ok(Self { verbatim: ::core::option::Option::None, #(#inits)* }),
+                ::core::option::Option::None => ::core::result::Result::Ok(Self {
+                    verbatim: ::core::option::Option::Some(::std::string::ToString::to_string(text)),
+                    #(#opaque)*
+                }),
+            }
         },
     })
 }

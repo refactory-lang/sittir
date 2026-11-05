@@ -241,7 +241,7 @@
       "members": [
         {
           "type": "FIELD",
-          "name": "prefix",
+          "name": "dots",
           "content": {
             "type": "SYMBOL",
             "name": "import_prefix"

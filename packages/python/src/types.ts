@@ -2101,17 +2101,17 @@ export interface ImportStatement {
 
 export interface RelativeImport {
 	readonly $type: TSKindId.RelativeImport;
-	readonly _prefix: ImportPrefix;
+	readonly _dots: ImportPrefix;
 	readonly _name?: DottedName;
 	readonly __slotNames__?: {
-		readonly _prefix: 'prefix';
+		readonly _dots: 'dots';
 		readonly _name: 'name';
 	};
 	readonly __slotHints__?: {
-		readonly prefix: SlotHint<T.ImportPrefix>;
+		readonly dots: SlotHint<T.ImportPrefix>;
 		readonly name: SlotHint<T.DottedName, true>;
 	};
-	readonly prefix: () => ImportPrefix;
+	readonly dots: () => ImportPrefix;
 	readonly name: () => DottedName | undefined;
 }
 
@@ -4553,6 +4553,9 @@ export interface String {
 		readonly stringStart: SlotHint<T.StringStart>;
 		readonly contents: SlotHint<(T.Interpolation | T.StringContent)[], true, true>;
 		readonly stringEnd: SlotHint<T.StringEnd>;
+		readonly $flat:
+			| FlatHint<'stringStart', T.StringStart, { readonly prefix: 'prefix' }, false, '_string_start'>
+			| FlatHint<'stringEnd', T.StringEnd, {}, false, '_string_end'>;
 	};
 	readonly stringStart: () => StringStart;
 	readonly contents: () => readonly (Interpolation | StringContent)[];
@@ -5655,6 +5658,115 @@ export interface TypeParamParamSpec {
 	readonly name: () => Identifier;
 }
 
+export interface StringStart {
+	readonly $type: TSKindId.StringStart;
+	readonly _prefix?:
+		| 'r'
+		| 'R'
+		| 'b'
+		| 'B'
+		| 'f'
+		| 'F'
+		| 't'
+		| 'T'
+		| 'u'
+		| 'U'
+		| 'rb'
+		| 'rB'
+		| 'Rb'
+		| 'RB'
+		| 'br'
+		| 'bR'
+		| 'Br'
+		| 'BR'
+		| 'rf'
+		| 'rF'
+		| 'Rf'
+		| 'RF'
+		| 'fr'
+		| 'fR'
+		| 'Fr'
+		| 'FR'
+		| 'rt'
+		| 'rT'
+		| 'Rt'
+		| 'RT'
+		| 'tr'
+		| 'tR'
+		| 'Tr'
+		| 'TR'
+		| 'ur'
+		| 'uR'
+		| 'Ur'
+		| 'UR';
+	readonly _quote: '"' | "'" | '"""' | "'''" | '`';
+	readonly __slotNames__?: {
+		readonly _prefix: 'prefix';
+		readonly _quote: 'quote';
+	};
+	readonly __slotHints__?: {
+		readonly prefix: SlotHint<'r' | 'b' | 'f' | 't' | 'u' | 'rb' | 'rf' | 'rt', true>;
+		readonly quote: SlotHint<'"' | "'" | '"""' | "'''">;
+	};
+	readonly prefix: () =>
+		| 'r'
+		| 'R'
+		| 'b'
+		| 'B'
+		| 'f'
+		| 'F'
+		| 't'
+		| 'T'
+		| 'u'
+		| 'U'
+		| 'rb'
+		| 'rB'
+		| 'Rb'
+		| 'RB'
+		| 'br'
+		| 'bR'
+		| 'Br'
+		| 'BR'
+		| 'rf'
+		| 'rF'
+		| 'Rf'
+		| 'RF'
+		| 'fr'
+		| 'fR'
+		| 'Fr'
+		| 'FR'
+		| 'rt'
+		| 'rT'
+		| 'Rt'
+		| 'RT'
+		| 'tr'
+		| 'tR'
+		| 'Tr'
+		| 'TR'
+		| 'ur'
+		| 'uR'
+		| 'Ur'
+		| 'UR'
+		| undefined;
+	readonly quote: () => '"' | "'" | '"""' | "'''" | '`';
+}
+
+export interface StringEnd {
+	readonly $type: TSKindId.StringEnd;
+	readonly _content: string;
+	readonly _quote: '"' | "'" | '"""' | "'''" | '`';
+	readonly __slotNames__?: {
+		readonly _content: 'content';
+		readonly _quote: 'quote';
+	};
+	readonly __slotHints__?: {
+		readonly content: SlotHint<string>;
+		readonly quote: SlotHint<'"' | "'" | '"""' | "'''">;
+	};
+	readonly content: () => string;
+	readonly quote: () => '"' | "'" | '"""' | "'''" | '`';
+}
+
 export interface ConstructorDeclaration {
 	readonly $type: TSKindId.ConstructorDeclaration;
 	readonly _async: boolean;
@@ -5875,10 +5987,8 @@ export type IntegerDecimalImaginary = Terminal<TSKindId.IntegerDecimalImaginary,
 export type IntegerDecimalPlain = Terminal<TSKindId.IntegerDecimalPlain, string>;
 export type LineContinuationNewline = Terminal<TSKindId.LineContinuationNewline, string> & TriviaFlanks;
 export type LineContinuationNul = TSKindId.LineContinuationNul;
-export type StringStart = Terminal<TSKindId.StringStart, string>;
 export type StringFragment = Terminal<TSKindId.StringFragment, string>;
 export type EscapeInterpolation = Terminal<TSKindId.EscapeInterpolation, string>;
-export type StringEnd = Terminal<TSKindId.StringEnd, string>;
 export type Indent = TSKindId.Indent;
 export type Dedent = TSKindId.Dedent;
 export type Tight = TSKindId.Tight;
@@ -10785,6 +10895,34 @@ export interface TypeParamParamSpecNs extends NodeNs<
 	readonly BuildArgs: TypeParamParamSpec.BuildArgs;
 	readonly LooseArgs: TypeParamParamSpec.LooseArgs;
 }
+export interface StringStartNs extends NodeNs<
+	StringStart,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	StringStart.Bound,
+	never,
+	never,
+	StringStart.Parsed,
+	never
+> {
+	readonly BuildArgs: StringStart.BuildArgs;
+	readonly LooseArgs: StringStart.LooseArgs;
+}
+export interface StringEndNs extends NodeNs<
+	StringEnd,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	StringEnd.Bound,
+	never,
+	never,
+	StringEnd.Parsed,
+	never
+> {
+	readonly BuildArgs: StringEnd.BuildArgs;
+	readonly LooseArgs: StringEnd.LooseArgs;
+}
 export interface ConstructorDeclarationNs extends NodeNs<
 	ConstructorDeclaration,
 	LeafScalarMap,
@@ -10968,7 +11106,6 @@ export interface LineContinuationNewlineNs extends LeafNs<
 	LineContinuationNewline.Bound,
 	TSKindId.LineContinuationNewline
 > {}
-export interface StringStartNs extends LeafNs<StringStart, string, StringStart.Bound, TSKindId.StringStart> {}
 export interface StringFragmentNs extends LeafNs<
 	StringFragment,
 	string,
@@ -10981,7 +11118,6 @@ export interface EscapeInterpolationNs extends LeafNs<
 	EscapeInterpolation.Bound,
 	TSKindId.EscapeInterpolation
 > {}
-export interface StringEndNs extends LeafNs<StringEnd, string, StringEnd.Bound, TSKindId.StringEnd> {}
 
 export interface NamespaceMap {
 	[TSKindId.Module]: ModuleNs;
@@ -11149,6 +11285,8 @@ export interface NamespaceMap {
 	[TSKindId.TypeParamTypeVar]: TypeParamTypeVarNs;
 	[TSKindId.TypeParamTypeVarTuple]: TypeParamTypeVarTupleNs;
 	[TSKindId.TypeParamParamSpec]: TypeParamParamSpecNs;
+	[TSKindId.StringStart]: StringStartNs;
+	[TSKindId.StringEnd]: StringEndNs;
 	[TSKindId.ConstructorDeclaration]: ConstructorDeclarationNs;
 	[TSKindId.BlockClassDeclaration]: BlockClassDeclarationNs;
 	[TSKindId.SuiteBlockClassDeclaration]: SuiteBlockClassDeclarationNs;
@@ -11186,10 +11324,8 @@ export interface NamespaceMap {
 	[TSKindId.IntegerDecimalImaginary]: IntegerDecimalImaginaryNs;
 	[TSKindId.IntegerDecimalPlain]: IntegerDecimalPlainNs;
 	[TSKindId.LineContinuationNewline]: LineContinuationNewlineNs;
-	[TSKindId.StringStart]: StringStartNs;
 	[TSKindId.StringFragment]: StringFragmentNs;
 	[TSKindId.EscapeInterpolation]: EscapeInterpolationNs;
-	[TSKindId.StringEnd]: StringEndNs;
 }
 
 export interface BoundByKindId {
@@ -11358,6 +11494,8 @@ export interface BoundByKindId {
 	[TSKindId.TypeParamTypeVar]: TypeParamTypeVar.Bound;
 	[TSKindId.TypeParamTypeVarTuple]: TypeParamTypeVarTuple.Bound;
 	[TSKindId.TypeParamParamSpec]: TypeParamParamSpec.Bound;
+	[TSKindId.StringStart]: StringStart.Bound;
+	[TSKindId.StringEnd]: StringEnd.Bound;
 	[TSKindId.ConstructorDeclaration]: ConstructorDeclaration.Bound;
 	[TSKindId.BlockClassDeclaration]: BlockClassDeclaration.Bound;
 	[TSKindId.SuiteBlockClassDeclaration]: SuiteBlockClassDeclaration.Bound;
@@ -11374,10 +11512,8 @@ export interface BoundByKindId {
 	[TSKindId.IntegerDecimalImaginary]: IntegerDecimalImaginary.Bound;
 	[TSKindId.IntegerDecimalPlain]: IntegerDecimalPlain.Bound;
 	[TSKindId.LineContinuationNewline]: LineContinuationNewline.Bound;
-	[TSKindId.StringStart]: StringStart.Bound;
 	[TSKindId.StringFragment]: StringFragment.Bound;
 	[TSKindId.EscapeInterpolation]: EscapeInterpolation.Bound;
-	[TSKindId.StringEnd]: StringEnd.Bound;
 }
 
 export interface ParsedByKindId {
@@ -11546,6 +11682,8 @@ export interface ParsedByKindId {
 	[TSKindId.TypeParamTypeVar]: TypeParamTypeVar.Parsed;
 	[TSKindId.TypeParamTypeVarTuple]: TypeParamTypeVarTuple.Parsed;
 	[TSKindId.TypeParamParamSpec]: TypeParamParamSpec.Parsed;
+	[TSKindId.StringStart]: StringStart.Parsed;
+	[TSKindId.StringEnd]: StringEnd.Parsed;
 	[TSKindId.ConstructorDeclaration]: ConstructorDeclaration.Parsed;
 	[TSKindId.BlockClassDeclaration]: BlockClassDeclaration.Parsed;
 	[TSKindId.SuiteBlockClassDeclaration]: SuiteBlockClassDeclaration.Parsed;
@@ -11562,10 +11700,8 @@ export interface ParsedByKindId {
 	[TSKindId.IntegerDecimalImaginary]: IntegerDecimalImaginary.Parsed;
 	[TSKindId.IntegerDecimalPlain]: IntegerDecimalPlain.Parsed;
 	[TSKindId.LineContinuationNewline]: LineContinuationNewline.Parsed;
-	[TSKindId.StringStart]: StringStart.Parsed;
 	[TSKindId.StringFragment]: StringFragment.Parsed;
 	[TSKindId.EscapeInterpolation]: EscapeInterpolation.Parsed;
-	[TSKindId.StringEnd]: StringEnd.Parsed;
 }
 
 export interface PortableReads {}
@@ -11845,6 +11981,8 @@ export interface TypeKeyOf {
 	[TSKindId.TypeParamTypeVar]: 'typeParamTypeVar';
 	[TSKindId.TypeParamTypeVarTuple]: 'typeParamTypeVarTuple';
 	[TSKindId.TypeParamParamSpec]: 'typeParamParamSpec';
+	[TSKindId.StringStart]: 'stringStart';
+	[TSKindId.StringEnd]: 'stringEnd';
 	[TSKindId.ConstructorDeclaration]: 'constructorDeclaration';
 	[TSKindId.BlockClassDeclaration]: 'blockClassDeclaration';
 	[TSKindId.SuiteBlockClassDeclaration]: 'suiteBlockClassDeclaration';
@@ -11882,10 +12020,8 @@ export interface TypeKeyOf {
 	[TSKindId.IntegerDecimalImaginary]: 'integerDecimalImaginary';
 	[TSKindId.IntegerDecimalPlain]: 'integerDecimalPlain';
 	[TSKindId.LineContinuationNewline]: 'lineContinuationNewline';
-	[TSKindId.StringStart]: 'stringStart';
 	[TSKindId.StringFragment]: 'stringFragment';
 	[TSKindId.EscapeInterpolation]: 'escapeInterpolation';
-	[TSKindId.StringEnd]: 'stringEnd';
 }
 
 export type ConfigFor<K extends keyof NamespaceMap> = NamespaceMap[K]['Config'];
@@ -14766,15 +14902,17 @@ export namespace ConcatenatedString {
 }
 export namespace String {
 	export type Config = ConfigFor<TSKindId.String>;
-	export interface Bound extends BoundOf<T.String, BoundByKindId>, NodeMethodsOf, HoldsSource {
+	export type Options = { readonly quote?: '"' | "'" | '"""' | "'''" };
+	interface BoundSurface extends BoundOf<T.String, BoundByKindId>, NodeMethodsOf, HoldsSource {
 		readonly $type: T.String['$type'];
-		readonly $with: BoundWithNode<this, BoundByKindId>;
+		readonly $with: BoundWithNode<Bound, BoundByKindId, BoundSurface>;
 	}
-	export interface Parsed extends ParsedOf<T.String, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
+	export type Bound = BoundSurface & FlatShapesOf<BoundSurface, T.String, BoundByKindId>;
+	interface ParsedSurface extends ParsedOf<T.String, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
 		readonly $type: T.String['$type'];
-		readonly $with: WithNode<this, BoundByKindId>;
+		readonly $with: WithNode<Parsed, BoundByKindId, ParsedSurface>;
 		readonly $query: () => QueryFacet<
-			this,
+			Parsed,
 			ParsedByKindId,
 			PortableQueryIds<PortableReads>,
 			KindMembers,
@@ -14782,10 +14920,25 @@ export namespace String {
 		>;
 		readonly $snapshot: () => Snapshot<T.String['$type']>;
 	}
+	export type Parsed = ParsedSurface & FlatShapesOf<ParsedSurface, T.String, ParsedByKindId>;
 	export type Loose = LooseFor<TSKindId.String>;
 	export type LooseConfig = LooseConfigFor<TSKindId.String>;
-	export type BuildArgs = [config: ConfigOf<T.String>];
-	export type LooseArgs = [config: T.String.Loose];
+	export type BuildArgs = [
+		config?: OmitEach<
+			NonNullable<
+				OmitEach<NonNullable<Partial<ConfigOf<T.String>>>, 'stringStart'> & { prefix?: T.StringStart.BuildArgs[0] }
+			>,
+			'stringEnd'
+		>,
+		options?: T.String.Options
+	];
+	export type LooseArgs = [
+		config?: OmitEach<
+			NonNullable<OmitEach<NonNullable<T.String.Loose>, 'stringStart'> & { prefix?: T.StringStart.LooseArgs[0] }>,
+			'stringEnd'
+		>,
+		options?: T.String.Options
+	];
 	export type Kind = TSKindId.String;
 }
 export namespace StringContent {
@@ -16985,6 +17138,62 @@ export namespace TypeParamParamSpec {
 	export type LooseArgs = [value: T.TypeParamParamSpec.Loose];
 	export type Kind = TSKindId.TypeParamParamSpec;
 }
+export namespace StringStart {
+	export type Config = OmitEach<ConfigFor<TSKindId.StringStart>, 'quote'>;
+	export type Options = { readonly quote?: '"' | "'" | '"""' | "'''" };
+	export interface Bound extends BoundOf<T.StringStart, BoundByKindId>, NodeMethodsOf, HoldsSource {
+		readonly $type: T.StringStart['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.StringStart, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
+		readonly $type: T.StringStart['$type'];
+		readonly $with: WithNode<this, BoundByKindId>;
+		readonly $query: () => QueryFacet<
+			this,
+			ParsedByKindId,
+			PortableQueryIds<PortableReads>,
+			KindMembers,
+			FixedTextKindId
+		>;
+		readonly $snapshot: () => Snapshot<T.StringStart['$type']>;
+	}
+	export type Loose = OmitEach<LooseFor<TSKindId.StringStart>, 'quote'> | string;
+	export type LooseConfig = OmitEach<LooseConfigFor<TSKindId.StringStart>, 'quote'>;
+	export type BuildArgs = [
+		value?: Admit<'r' | 'b' | 'f' | 't' | 'u' | 'rb' | 'rf' | 'rt'>,
+		options?: T.StringStart.Options
+	];
+	export type LooseArgs = [value?: T.StringStart.Loose, options?: T.StringStart.Options];
+	export type Kind = TSKindId.StringStart;
+}
+export namespace StringEnd {
+	export type Config = OmitEach<ConfigFor<TSKindId.StringEnd>, 'content' | 'quote'>;
+	export type Options = { readonly content?: string; readonly quote?: '"' | "'" | '"""' | "'''" };
+	export interface Bound extends BoundOf<T.StringEnd, BoundByKindId>, NodeMethodsOf, HoldsSource {
+		readonly $type: T.StringEnd['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.StringEnd, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
+		readonly $type: T.StringEnd['$type'];
+		readonly $with: WithNode<this, BoundByKindId>;
+		readonly $query: () => QueryFacet<
+			this,
+			ParsedByKindId,
+			PortableQueryIds<PortableReads>,
+			KindMembers,
+			FixedTextKindId
+		>;
+		readonly $snapshot: () => Snapshot<T.StringEnd['$type']>;
+	}
+	export type Loose = OmitEach<LooseFor<TSKindId.StringEnd>, 'content' | 'quote'> | string;
+	export type LooseConfig = OmitEach<LooseConfigFor<TSKindId.StringEnd>, 'content' | 'quote'>;
+	export type BuildArgs = [
+		config?: Partial<OmitRegistered<ConfigOf<T.StringEnd>, 'content' | 'quote'>>,
+		options?: T.StringEnd.Options
+	];
+	export type LooseArgs = [config?: T.StringEnd.Loose, options?: T.StringEnd.Options];
+	export type Kind = TSKindId.StringEnd;
+}
 export namespace ConstructorDeclaration {
 	export type Config = ConfigFor<TSKindId.ConstructorDeclaration>;
 	export interface Bound extends BoundOf<T.ConstructorDeclaration, BoundByKindId>, NodeMethodsOf, HoldsSource {
@@ -17581,24 +17790,6 @@ export namespace LineContinuationNewline {
 	export type LooseArgs = LineContinuationNewlineNs['LooseArgs'];
 	export type Kind = TSKindId.LineContinuationNewline;
 }
-export namespace StringStart {
-	export type Config = StringStartNs['Config'];
-	export interface Bound extends NodeMethodsOf, HoldsSource {
-		readonly $type: TSKindId.StringStart;
-		readonly $named: true;
-		$text(): string;
-	}
-	export interface Parsed extends NodeMethodsOf, HoldsSource, HoldsTree {
-		readonly $type: TSKindId.StringStart;
-		readonly $named: true;
-		$text(): string;
-	}
-	export type Loose = StringStartNs['Loose'];
-	export type LooseConfig = StringStartNs['LooseConfig'];
-	export type BuildArgs = StringStartNs['BuildArgs'];
-	export type LooseArgs = StringStartNs['LooseArgs'];
-	export type Kind = TSKindId.StringStart;
-}
 export namespace StringFragment {
 	export type Config = StringFragmentNs['Config'];
 	export interface Bound extends NodeMethodsOf, HoldsSource {
@@ -17634,24 +17825,6 @@ export namespace EscapeInterpolation {
 	export type BuildArgs = EscapeInterpolationNs['BuildArgs'];
 	export type LooseArgs = EscapeInterpolationNs['LooseArgs'];
 	export type Kind = TSKindId.EscapeInterpolation;
-}
-export namespace StringEnd {
-	export type Config = StringEndNs['Config'];
-	export interface Bound extends NodeMethodsOf, HoldsSource {
-		readonly $type: TSKindId.StringEnd;
-		readonly $named: true;
-		$text(): string;
-	}
-	export interface Parsed extends NodeMethodsOf, HoldsSource, HoldsTree {
-		readonly $type: TSKindId.StringEnd;
-		readonly $named: true;
-		$text(): string;
-	}
-	export type Loose = StringEndNs['Loose'];
-	export type LooseConfig = StringEndNs['LooseConfig'];
-	export type BuildArgs = StringEndNs['BuildArgs'];
-	export type LooseArgs = StringEndNs['LooseArgs'];
-	export type Kind = TSKindId.StringEnd;
 }
 
 export interface PythonTypeMap extends GrammarTypeMap {

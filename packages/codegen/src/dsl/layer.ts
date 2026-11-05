@@ -19,6 +19,7 @@ import type { ExternalRole } from '../types/ir.ts';
 import { layerRecordOf, mergedRecords, synthesizedOf, withLayerRecord, type LayerFixpoint, type LayerRecord, type LayerRecords, type StageBases } from './layer-record.ts';
 import { withRoleScope } from './primitives/role.ts';
 import { isRecord, type GrammarRecord } from './rule-patterns.ts';
+import { spellingFieldsOf } from './primitives/spellings.ts';
 import { RuleWalker } from './rule-walker.ts';
 import type { DisplayFamilies } from './rule-transforms.ts';
 import { baseRulesOf, VERIFIED_TREE_SITTER } from './shared.ts';
@@ -599,6 +600,7 @@ export function ownRecordsOf(wire: WireContext, facts: OwnRecordFacts): LayerRec
 	return {
 		options: nonEmpty(wire.options),
 		renderAs: normalizedBodies(wire.renderAs),
+		spellings: spellingFieldsOf(wire.renderAs),
 		visibleExternals: normalizedBodies(wire.visibleExternals),
 		reparseHosts: wire.reparseHosts,
 		refineForms: wire.refineForms.size === 0 ? undefined : new Map(wire.refineForms),

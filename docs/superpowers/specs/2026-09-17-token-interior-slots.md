@@ -368,6 +368,10 @@ builder type and the preference arms all derive from that stamp.
 A read-only member reads, because the parser accepts it, but the reference (CPython 3) rejects it. It is in neither
 the builder type nor the preference arms.
 
+`spellings()` also authors the two line facts the validator needs: `singleLine` on each quote member that cannot
+enclose a line break (`"` and `'`), and `escape` on the choice whose content pairs a character with the one after it
+(python's `\`). Link stamps both on the enum beside member → spellings.
+
 **The end token can hold content.** In a raw string, the scanner steps over a backslash and the character after it
 without counting either as content (tree-sitter-python 0.25.0 `src/scanner.c`, the `is_raw(delimiter)` branch of the
 `STRING_CONTENT` loop). A raw string whose content is only such pairs reaches its quote with nothing consumed, so
@@ -384,6 +388,12 @@ start's `quote` member. A string has one content fact on the portable surface, w
   - every spelling in a member's closure, read-only ones included, selects the same claims as the member's
     canonical spelling;
   - every spelling a claim can match is in the enum.
+- A spelling the parser accepts outside the enum (`bf`, `rr`, `ub`) reads opaque: the start token's text fails its
+  interior, so the token reads whole and verbatim, its facets read as absent, and its holder is carried whole with a
+  stated (kind, reason) pair. The low-level read type is the union of the faceted and the opaque shape; the builder
+  type is the faceted one only. An opaque token renders its source bytes unchanged, also when its holder is edited.
+  The claims still test its text, so the first claim that matches it holds: `bf` reads as
+  `literal.string.interpolated`, `rr` as `literal.string.raw`, `ub` as `literal.string.bytes`.
 - A t-string is `literal.string.interpolated.deferred`, with crossings `.raw`, `.multiline` and `.raw.multiline`.
   Its value is a `Template`, not a `str`; CPython's AST has `TemplateStr` beside `JoinedStr`.
 - A u-string is `literal.string.unicode`, the `unicode-strings` feature, with no crossings.
@@ -393,10 +403,14 @@ start's `quote` member. A string has one content fact on the portable surface, w
 - `py.build.string({ prefix: 'rb', content })` and `rs.build.rawStringLiteral({ prefix: 'br', content })`.
 - `prefix` is typed as the enum's canonical members. A non-canonical spelling (`'Rb'`, `'br'` for python) does not
   type-check.
-- The delimiter tokens have no builders on the public surface.
-- The factory-source emitter writes the canonical member from a read, so `BR"x"` rebuilds as `prefix: 'rb'`. The
-  built lanes judge ruled spelling (prefix case and order, quote) by the reference AST, as a named normalized class
-  rather than a mismatch.
+- The delimiter tokens have no builders on the public surface. Each one seats on its composite as an always-built
+  flatten seat keyed by its input facets: the composite's config takes `prefix` directly and builds the token from it.
+  The key is optional where the facet is.
+- The quote is the composite's registered preference: the builder's trailing options take it (`{ quote: "'" }`), and
+  Prepare keeps it while the content fits it. Rust's hash run has no preference, so its builder takes no options.
+- The factory-source emitter writes the canonical member from a read, so `BR"x"` rebuilds as `prefix: 'rb'`, and it
+  writes the quote preference only where the read's quote differs from the default. The built lanes judge ruled
+  spelling (prefix case and order, quote) by the reference AST, as a named normalized class rather than a mismatch.
 
 **A delimiter facet is derived, a compile-time fact stamped on the model**, when:
 - it has a registered preference (the quote, through `options:`, as `radix_prefix` does);
@@ -420,7 +434,9 @@ read.
 - A carried delimiter that the content invalidates falls back to the derivation:
   - a carried `'` whose content gains `'` becomes `"`;
   - a carried `r#"` whose content gains `"#` becomes `r##"`.
-- When no candidate fits, the build refuses, naming the kind and why no delimiter fits.
+- When no candidate fits, the build refuses, naming the kind and why no delimiter fits. Prepare returns the refusal
+  as `RenderError::Delimiter`, so a render fails with `<kind>: no delimiter fits its content: <why>`; it never falls
+  back to a delimiter the content invalidates.
 
 The composites with fixed delimiters (rust `block_comment`, typescript `comment_block`, the regex kinds) are the
 one-candidate case and join this validator later; until then the parse-back check covers them.
@@ -431,6 +447,7 @@ one-candidate case and join this validator later; until then the parse-back chec
 - Each fallback case above, and each refusal.
 - The claims-and-enum guard.
 - A type test rejecting a non-canonical prefix.
-- `grammar.json` and `parser.c` byte-identical.
+- `grammar.json` and `parser.c` byte-identical, apart from python `relative_import`'s field, named `dots` so that
+  `prefix` names one class of value.
 - `vocabulary-features --check`.
 - After these fixes, a corpus guard in the portable round trip.

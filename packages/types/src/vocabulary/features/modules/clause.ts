@@ -69,8 +69,8 @@ export namespace Clause {
 		export interface Relative<G extends GrammarContext<G>> extends SubKindOf<V.Clause.Import<G>> {
 			// claimed by p
 			readonly $kind: 'clause.import.relative';
+			readonly dots?: V.Clause.Import.Relative.Prefix<G>;
 			readonly name?: V.Identifier.Qualified<G>;
-			readonly prefix?: V.Clause.Import.Relative.Prefix<G>;
 		}
 		export namespace Relative {
 			export interface Prefix<G extends GrammarContext<G>> extends SubKindOf<V.Clause.Import.Relative<G>> {

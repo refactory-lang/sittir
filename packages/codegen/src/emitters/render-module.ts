@@ -5,7 +5,7 @@ import { depthMembersOf } from '../compiler/model/layout-kinds.ts';
 import type { SlotBearingCompound } from '../compiler/model/node-map.ts';
 import { isDepthText, INDENT_TEXT, DEPTH_BREAK } from '../dsl/primitives/spacing.ts';
 import type { SpacingAddress } from '../types/spacing.ts';
-import { isFixedTextLeaf, isTerminalNode, layoutDisplaysOf, layoutNodeOf, separatorCandidateTexts } from '../compiler/model/node-map.ts';
+import { isFixedTextLeaf, isLexicalToken, isTerminalNode, layoutDisplaysOf, layoutNodeOf, separatorCandidateTexts } from '../compiler/model/node-map.ts';
 import { CONTINUATION_KINDS, NEWLINE_KINDS, PREFERRED_NEWLINE, breakingKindsOfText, TIGHT_KINDS, layoutKindsOfText, leafEdgesOf } from '../compiler/model/layout-kinds.ts';
 import { STRING } from '../types/rule-types.ts'; // @rule-type-consts
 import { wordCharAsciiTable } from '../util/word-matcher.ts';
@@ -39,6 +39,7 @@ import {
 	isSurfaceHiddenIn,
 	isLeftImmediateKind,
 	isKindIdStored,
+	isDelimiterToken,
 	fixedTextOfKind
 } from '../compiler/model/node-map.ts';
 import { assertNever } from '../polymorph-variant.ts';
@@ -66,7 +67,7 @@ import { interiorOf } from './interior.ts';
 import { ENVELOPE_PINS, assertEnvelopeExtrasPinned, type EnvelopeClaims, type EnvelopePin } from './envelope-claims.ts';
 import { boxedPayloadsOf, PAYLOAD_CEILING_BYTES } from './boxed-payloads.ts';
 import { getNodeProjection } from './node-projection-cache.ts';
-import { RECORD_HEADER_WORDS, recordArgs, recordLayoutOf, slotRecordForm, type RecordLayout, type RecordPlace } from './record-layout.ts';
+import { CELL_WORDS, RECORD_HEADER_WORDS, recordArgs, recordLayoutOf, slotRecordForm, type RecordLayout, type RecordPlace } from './record-layout.ts';
 import {
 	RESERVED_SUPERTYPE_ENUM_NAMES,
 	RUST_KEYWORDS,
@@ -780,7 +781,7 @@ function leafTextWrite(node: AssembledNode, on: string): string {
 }
 
 function isImmediateLeaf(node: AssembledNode): boolean {
-	return node instanceof AssembledLeaf && node.immediate;
+	return isLexicalToken(node) && node.immediate;
 }
 
 function leafEdgesCall(node: AssembledNode, nodeMap: NodeMap, kindId: number | undefined): string | undefined {
@@ -1596,7 +1597,7 @@ function supertypeAdmitsVerbatim(supertypeNode: AssembledSupertype, nodeMap: Nod
 function supertypeVerbatimIsImmediate(supertypeNode: AssembledSupertype, nodeMap: NodeMap): boolean {
 	let sawScalar = false;
 	for (const { node } of expandConcreteNodeKinds([supertypeNode.kind], nodeMap)) {
-		if (!(node instanceof AssembledLeaf)) continue;
+		if (!isLexicalToken(node)) continue;
 		sawScalar = true;
 		if (!node.immediate) return false;
 	}
@@ -1718,8 +1719,16 @@ function anyNodePrepareArms(
 	];
 }
 
-function isPrepareFilled(slot: AssembledNonterminal): boolean {
+function isOptionFilled(slot: AssembledNonterminal): boolean {
 	return slot.registeredOption === 'choice' && !isMultiple(slot);
+}
+
+function isDelimiterDerived(slot: AssembledNonterminal): boolean {
+	return slot.delimiterRole !== undefined && slot.delimiterRole !== 'input';
+}
+
+function isPrepareFilled(slot: AssembledNonterminal): boolean {
+	return isOptionFilled(slot) || isDelimiterDerived(slot);
 }
 
 function isNodeRequired(slot: AssembledNonterminal): boolean {
@@ -2124,7 +2133,7 @@ function hasAnyConcreteChildKind(kinds: readonly string[], nodeMap: NodeMap): bo
 
 function isImmediateLeafKind(kind: string, nodeMap: NodeMap): boolean {
 	const node = nodeMap.nodes.get(kind);
-	return node instanceof AssembledLeaf && node.immediate;
+	return isLexicalToken(node) && node.immediate;
 }
 
 function slotVerbatimIsImmediate(slot: AssembledNonterminal, nodeMap: NodeMap): boolean {
@@ -2137,7 +2146,7 @@ function slotVerbatimIsImmediate(slot: AssembledNonterminal, nodeMap: NodeMap): 
 			const kind = storageKindOfValue(v);
 			if (kind === undefined) continue;
 			const node = nodeMap.nodes.get(kind);
-			if (node instanceof AssembledLeaf) {
+			if (isLexicalToken(node)) {
 				sawScalarSource = true;
 				if (!node.immediate) return false;
 			}
@@ -2737,7 +2746,7 @@ function renderTriviaNodeSupport(
 const PREPARE_MOD = '::sittir_core::prepare';
 const TRIVIA_TEXT = '::sittir_core::trivia::TriviaText';
 const BLANK_VARIANT = 'Blank';
-const PREPARE_SIG = `fn prepare(&mut self, ctx: &${PREPARE_MOD}::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {`;
+const PREPARE_SIG = `fn prepare(&mut self, ctx: &${PREPARE_MOD}::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {`;
 const READ_COORDINATE = [
 	`    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {`,
 	`        Some(::sittir_core::read::read_coordinate(tree, ctx, index))`,
@@ -3205,7 +3214,7 @@ function optionDefaultFills(plan: RenderPlan, node: AssembledNode, choices: Choi
 	const kind = node.kind;
 	const slotModel = renderSlotModelOf(node);
 	return [...slotModel.named, ...slotModel.unnamed]
-		.filter(isPrepareFilled)
+		.filter(isOptionFilled)
 		.map((slot) => {
 			const site = plan.spacingSites.find(
 				(candidate) =>
@@ -3293,6 +3302,7 @@ function prepareStructImpl(
 		}
 		body.push(...optionDefaultFills(plan, node, choices));
 		for (const f of fillFields) body.push(`        self.${f}.prepare(ctx)?;`);
+		body.push(...delimiterFill(node));
 	}
 	return [
 		`impl ${PREPARE_MOD}::Prepare for ${structName} {`,
@@ -3426,7 +3436,10 @@ function renderNodeDataStruct(
 	admit(read, structName, node instanceof AssembledAlias ? [node.aliasTypeId] : ownId === undefined ? [] : [ownId, ...displayIds]);
 	const layout = recordLayoutOf(
 		isCompoundOf(node)
-			? printedSlots.map(({ slot }) => ({ field: rustFieldIdent(slot.storageName), form: slotRecordForm(nodeSlotShapeOf(slot, nodeMap), isMultiple(slot)) }))
+			? [
+					...printedSlots.map(({ slot }) => ({ field: rustFieldIdent(slot.storageName), form: slotRecordForm(nodeSlotShapeOf(slot, nodeMap), isMultiple(slot)) })),
+					...(interiorOf(node) === undefined ? [] : [{ field: VERBATIM_FIELD, form: { tag: 'cell', width: CELL_WORDS.text } } as const])
+				]
 			: []
 	);
 	read.records.set(structName, layout);
@@ -3435,6 +3448,8 @@ function renderNodeDataStruct(
 	if (displayIds.length > 0) lines.push(...renderKindField());
 	if (isCompoundOf(node)) {
 		lines.push(...renderLayoutField());
+		const verbatim = placeOf.get(VERBATIM_FIELD);
+		if (verbatim !== undefined) lines.push(...renderVerbatimField(verbatim));
 		for (const { slot, owner, forceOptional } of printedSlots) {
 			const field = rustFieldIdent(slot.storageName);
 			lines.push(...renderNodeField(slot, owner.kind, owner.typeName, nodeMap, choices, slotAttr(slot, owner, node, nodeMap, read, placeOf.get(field)), forceOptional));
@@ -3465,14 +3480,67 @@ function renderNodeDataStruct(
 	lines.push(
 		`    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {`
 	);
-	const body = isLeafNode ? leafRenderExpr(node, 'self', nodeMap, ownId) : `${rustTypedRenderFnName(node.typeName)}(self, w)`;
+	const typed = `${rustTypedRenderFnName(node.typeName)}(self, w)`;
+	const body = isLeafNode
+		? leafRenderExpr(node, 'self', nodeMap, ownId)
+		: interiorOf(node) === undefined
+			? typed
+			: `match &self.verbatim { Some(text) => w.text(text), None => ${typed} }`;
 	const owner = !isLeafNode || ownsTrivia(kindEntries, node.kind);
 	lines.push(`        ${layoutRenderCall('self.layout.as_deref()', ownKind, owner, body)}`);
 	lines.push(`    }`);
 	lines.push(`}`);
 	lines.push('');
 	lines.push(...prepareStructImpl(structName, node, fillFields, plan, isCompoundOf(node), nodeMap, choices, kindEntries));
+	lines.push(...delimiterTokenImpl(structName, node));
 	return lines;
+}
+
+function rustStr(text: string): string {
+	return JSON.stringify(text);
+}
+
+function rustChar(text: string | undefined): string {
+	if (text === undefined) return 'None';
+	if ([...text].length !== 1) throw new Error(`render-module: '${text}' is not one character`);
+	return `Some('${text === '\\' || text === "'" ? `\\${text}` : text}')`;
+}
+
+function delimiterFill(node: AssembledNode): string[] {
+	if (!(node instanceof AbstractAssembledCompound) || node.delimiterFacets === undefined) return [];
+	const facts = node.delimiterFacets;
+	const field = (name: string): string => {
+		const slot = node.slots.find((candidate) => candidate.name === name);
+		if (slot === undefined) throw new Error(`render-module: '${node.kind}' is delimited in '${name}', which is none of its slots`);
+		return `self.${rustFieldIdent(slot.storageName)}`;
+	};
+	const content = node.slots
+		.filter((slot) => slot.name !== facts.open && slot.name !== facts.close)
+		.map((slot) => {
+			const ident = `self.${rustFieldIdent(slot.storageName)}`;
+			if (isMultiple(slot)) return `for item in ${hasOptionalElements(slot) ? `${ident}.iter().flatten()` : `&${ident}`} { ::sittir_core::render::Render::render(item, w)?; }`;
+			return isNodeRequired(slot) ? `::sittir_core::render::Render::render(&${ident}, w)?;` : `if let Some(item) = &${ident} { ::sittir_core::render::Render::render(item, w)?; }`;
+		});
+	const arms = facts.arms.map((arm) => `::sittir_core::delimiters::DelimiterArm { text: ${rustStr(arm.text)}, single_line: ${arm.singleLine} }`);
+	const spec = `::sittir_core::delimiters::DelimiterSpec { kind: ${rustStr(node.kind)}, arms: &[${arms.join(', ')}], run: ${rustChar(facts.run)}, close_lead: ${rustStr(facts.closeLead)}, escape: ${rustChar(facts.escape)} }`;
+	return [`        ::sittir_core::delimiters::fill(&mut ${field(facts.open)}, &mut ${field(facts.close)}, &${spec}, ctx, |w| { ${[...content, 'Ok(())'].join(' ')} })?;`];
+}
+
+function delimiterTokenImpl(structName: string, node: AssembledNode): string[] {
+	if (!isDelimiterToken(node)) return [];
+	const facet = node.slots.filter((slot) => slot.delimiterRole === 'preferred' || slot.delimiterRole === 'run' || slot.delimiterRole === 'mirror');
+	if (facet.length !== 1) throw new Error(`render-module: delimiter token '${node.kind}' derives ${facet.length} facets`);
+	const ident = rustFieldIdent(facet[0]!.storageName);
+	const content = node.slots.find((slot) => slot.delimiterRole === 'content');
+	return [
+		`impl ::sittir_core::delimiters::DelimiterToken for ${structName} {`,
+		`    fn facet(&self) -> Option<&str> { self.${ident}.as_deref() }`,
+		`    fn set_facet(&mut self, text: String) { self.${ident} = Some(text); }`,
+		...(content === undefined ? [] : [`    fn content(&self) -> Option<&str> { self.${rustFieldIdent(content.storageName)}.as_deref() }`]),
+		`    fn opaque(&self) -> bool { self.verbatim.is_some() }`,
+		`}`,
+		''
+	];
 }
 
 interface FixedLiteral {
@@ -3649,6 +3717,12 @@ function wireKeyAttr(key: string): string {
 
 function renderLayoutField(): string[] {
 	return [wireKeyAttr(LAYOUT_FIELD.wireKey), `    pub ${LAYOUT_FIELD.rustName}: ${LAYOUT_FIELD.rustType},`];
+}
+
+const VERBATIM_FIELD = 'verbatim';
+
+function renderVerbatimField(place: RecordPlace): string[] {
+	return [wireKeyAttr('$verbatim'), `    #[slot(${recordArgs(place)})]`, `    pub ${VERBATIM_FIELD}: Option<String>,`];
 }
 
 function renderLeafTextField(): string[] {

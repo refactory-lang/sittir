@@ -254,8 +254,6 @@ export {
 	buildRawStringLiteralContent,
 	buildOuterDocCommentMarker,
 	buildInnerDocCommentMarker,
-	buildRawStringLiteralStart,
-	buildRawStringLiteralEnd,
 	buildDocComment,
 	buildBlockCommentContent,
 	buildTight,
@@ -283,6 +281,14 @@ export {
 	buildMethodDeclaration,
 	buildSignatureMethodDeclaration
 } from './raw.js';
+
+export const rawStringLiteral$seated: Seat<
+	T.RawStringLiteral.BuildArgs,
+	ReturnType<typeof F.buildRawStringLiteral>
+> = K.rawStringLiteral$flatten$rawStringLiteralEnd(
+	K.rawStringLiteral$flatten$rawStringLiteralStart(F.buildRawStringLiteral, F.buildRawStringLiteralStart),
+	F.buildRawStringLiteralEnd
+);
 
 export const enumVariantListElements$seated: Seat<
 	T.EnumVariantListElements.BuildArgs,

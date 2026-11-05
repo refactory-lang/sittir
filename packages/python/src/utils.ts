@@ -98,11 +98,19 @@ export const querySlots: QuerySlots = Object.freeze({
 	103: [['content', 0, undefined, '_content']],
 	104: [['content', 0, undefined, '_content']],
 	105: [['content', 0, undefined, '_content']],
+	119: [
+		['prefix', 0, undefined, '_prefix'],
+		['quote', 1, undefined, '_quote']
+	],
+	122: [
+		['content', 0, undefined, '_content'],
+		['quote', 1, undefined, '_quote']
+	],
 	128: [['statements', 0, undefined, '_statements']],
 	130: [['elements', 0, undefined, '_elements']],
 	131: [['names', 0, undefined, '_names']],
 	133: [
-		['prefix', 0, undefined, '_prefix'],
+		['dots', 0, undefined, '_dots'],
 		['name', 1, undefined, '_name']
 	],
 	134: [['content', 0, undefined, '_content']],
@@ -506,7 +514,7 @@ export const jsonFacts: NodeJSONFacts = Object.freeze({
 		128, 136, 141, 155, 170, 171, 180, 181, 193, 194, 218, 243, 247, 249, 254, 260, 261, 262, 263, 264, 265, 266, 267,
 		268, 273, 274, 275, 276, 280, 281, 286, 289, 296, 297, 309, 353
 	]),
-	leaves: new Set<number>([1, 65, 88, 93, 94, 95, 106, 119, 120, 121, 122, 132]),
+	leaves: new Set<number>([1, 65, 88, 93, 94, 95, 106, 120, 121, 132]),
 	textEnvelopes: new Map<number, number>([]),
 	units: new Set<number>([
 		2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 30, 31, 32, 33,
@@ -521,6 +529,8 @@ export const jsonFacts: NodeJSONFacts = Object.freeze({
 		96: ['marker'],
 		97: ['marker'],
 		98: ['marker'],
+		119: ['quote'],
+		122: ['content', 'quote'],
 		244: ['trailingComma']
 	})
 });
@@ -627,6 +637,61 @@ export const structure: StructureTable = Object.freeze({
 		required: [['_content', 'content']],
 		single: [['_content', 'EscapeSequenceNamed.content']]
 	},
+	119: {
+		kind: 'string_start',
+		texts: [
+			[
+				'_prefix',
+				'StringStart.prefix',
+				[
+					'r',
+					'R',
+					'b',
+					'B',
+					'f',
+					'F',
+					't',
+					'T',
+					'u',
+					'U',
+					'rb',
+					'rB',
+					'Rb',
+					'RB',
+					'br',
+					'bR',
+					'Br',
+					'BR',
+					'rf',
+					'rF',
+					'Rf',
+					'RF',
+					'fr',
+					'fR',
+					'Fr',
+					'FR',
+					'rt',
+					'rT',
+					'Rt',
+					'RT',
+					'tr',
+					'tR',
+					'Tr',
+					'TR',
+					'ur',
+					'uR',
+					'Ur',
+					'UR'
+				]
+			],
+			['_quote', 'StringStart.quote', ['"', "'", '"""', "'''", '`']]
+		]
+	},
+	122: {
+		kind: 'string_end',
+		texts: [['_quote', 'StringEnd.quote', ['"', "'", '"""', "'''", '`']]],
+		config: ['content', 'quote']
+	},
 	128: {
 		kind: 'module',
 		nodeOnly: [['_statements', 'Module.statements', 'a built Statement', [129]]],
@@ -646,16 +711,16 @@ export const structure: StructureTable = Object.freeze({
 	},
 	133: {
 		kind: 'relative_import',
-		required: [['_prefix', 'prefix']],
+		required: [['_dots', 'dots']],
 		single: [
-			['_prefix', 'RelativeImport.prefix'],
+			['_dots', 'RelativeImport.dots'],
 			['_name', 'RelativeImport.name']
 		],
 		nodeOnly: [
-			['_prefix', 'RelativeImport.prefix', 'buildImportPrefix(…)', [132]],
+			['_dots', 'RelativeImport.dots', 'buildImportPrefix(…)', [132]],
 			['_name', 'RelativeImport.name', 'a built DottedName', [182]]
 		],
-		config: ['prefix', 'name']
+		config: ['dots', 'name']
 	},
 	134: {
 		kind: 'future_import_statement',
@@ -1828,9 +1893,9 @@ export const structure: StructureTable = Object.freeze({
 			['_string_end', 'String.stringEnd']
 		],
 		nodeOnly: [
-			['_string_start', 'String.stringStart', 'buildStringStart(…)', [119]],
+			['_string_start', 'String.stringStart', 'a built StringStart', [119]],
 			['_content', 'String.contents', 'a built Interpolation / StringContent', [249, 250]],
-			['_string_end', 'String.stringEnd', 'buildStringEnd(…)', [122]]
+			['_string_end', 'String.stringEnd', 'a built StringEnd', [122]]
 		],
 		config: ['stringStart', 'contents', 'stringEnd'],
 		lists: [['contents', false, 'key']]

@@ -299,8 +299,12 @@ function subFactoriesInternal(
 	return result;
 }
 
-function isHoistedAt(value: NodeBackedRef, group: AssembledNode | undefined): boolean {
-	return group?.seated === true || value.flattened === true;
+function isHoistedAt(value: NodeBackedRef, group: AssembledNode | undefined, owner?: AssembledNode): boolean {
+	return group?.seated === true || value.flattened === true || isDelimiterOf(group, owner);
+}
+
+function isDelimiterOf(group: AssembledNode | undefined, owner: AssembledNode | undefined): boolean {
+	return group instanceof AbstractAssembledCompound && group.delimiterOf !== undefined && group.delimiterOf === owner?.kind;
 }
 
 export interface FlattenKey {
@@ -316,6 +320,7 @@ export interface FlattenSeat {
 
 export interface FlattenedSeat extends FlattenSeat {
 	readonly keys: readonly FlattenKey[];
+	readonly always: boolean;
 }
 
 export function prefixedKey(seat: string, field: string): string {
@@ -345,11 +350,17 @@ export function flattenSeatsOf(node: AssembledNode, nodeMap: NodeMap): readonly 
 		if (!isNodeRef(value)) continue;
 		if (value.variant !== undefined) continue;
 		const group = nodeMap.nodes.get(storageKindOfRef(value.node));
-		if (!(group instanceof AbstractAssembledCompound) || !isHoistedAt(value, group)) continue;
+		if (!(group instanceof AbstractAssembledCompound) || !isHoistedAt(value, group, node)) continue;
 		if (group.rawFactoryName === undefined) continue;
 		const shape = classifyFactoryShape(group, nodeMap);
 		const direct = shape === 'direct' ? resolveDirectFactorySlot(group, nodeMap) : undefined;
-		const fields = shape === 'config' ? configKeysOf(group) : direct === undefined ? undefined : [direct.propertyName];
+		const fields = isDelimiterOf(group, node)
+			? group.configSlots.map((slot) => slot.propertyName)
+			: shape === 'config'
+				? configKeysOf(group)
+				: direct === undefined
+					? undefined
+					: [direct.propertyName];
 		if (fields === undefined) continue;
 		found.push(direct === undefined ? { slot, group, fields } : { slot, group, directKey: direct.propertyName, fields });
 	}
@@ -361,7 +372,11 @@ export function flattenSeatsOf(node: AssembledNode, nodeMap: NodeMap): readonly 
 			...node.slots.map((other) => other.propertyName),
 			...found.filter((other) => other.slot !== seat.slot).flatMap((other) => other.fields)
 		]);
-		return { ...seat, keys: fields.map((field) => ({ key: taken.has(field) ? prefixedKey(seat.slot.propertyName, field) : field, field })) };
+		return {
+			...seat,
+			keys: fields.map((field) => ({ key: taken.has(field) ? prefixedKey(seat.slot.propertyName, field) : field, field })),
+			always: isDelimiterOf(seat.group, node)
+		};
 	});
 	const claimed = new Map<string, FlattenedSeat>();
 	for (const seat of seats) {
@@ -435,6 +450,7 @@ export interface Seat {
 	readonly seated?: true;
 	readonly call?: PortableMountCall;
 	readonly nested?: Readonly<Record<string, PortableMountCall>>;
+	readonly always?: true;
 }
 
 export interface SeatSource {
@@ -453,7 +469,7 @@ export function seatOf(
 ): Seat | undefined {
 	if (!isNodeRef(value)) return undefined;
 	const child = nodeMap.nodes.get(storageKindOfRef(value.node));
-	if (child === undefined || !isHoistedAt(value, child)) return undefined;
+	if (child === undefined || !isHoistedAt(value, child, parent)) return undefined;
 	const forwarded: Seat | undefined = classifyFactoryShape(child, nodeMap) === 'forwarded' ? { kind: child.kind, shape: 'forwarded' } : undefined;
 	if (classifyFactoryShape(parent, nodeMap) === 'forwarded' && tupleSeatOf(parent, nodeMap).some((e) => e.slot === slot && e.group === child)) {
 		return { kind: child.kind, shape: 'tuple' };
@@ -481,7 +497,7 @@ export function seatOf(
 		};
 	}
 	if ((source.flattens ?? []).some((e) => e.slot === slot && e.group === child)) {
-		return { kind: child.kind, shape: 'flatten' };
+		return { kind: child.kind, shape: 'flatten', ...(isDelimiterOf(child, parent) ? { always: true as const } : {}) };
 	}
 	if ((source.elements ?? []).some((e) => e.slot === slot && e.group === child)) {
 		return { kind: child.kind, shape: 'elements' };

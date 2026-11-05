@@ -390,6 +390,7 @@ const RECORD_RENAMES = {
 	visibleExternals: 'keysAndBodies',
 	reparseHosts: 'reparseHosts',
 	refineForms: 'keys',
+	spellings: 'keys',
 	ruleCauses: 'keys',
 	undeclaredRules: 'names',
 	patchSites: { entry: 'ownerKind' },

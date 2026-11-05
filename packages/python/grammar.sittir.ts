@@ -20,12 +20,31 @@ import {
 	rule,
 	prec,
 	token,
+	spellings,
 	reauthored,
 	vocabulary,
 	enrich,
 	wire,
 	edit
 } from '../codegen/src/dsl/dsl-authoring.ts';
+
+const ANY_CASE_EITHER_ORDER = { case: true, order: true } as const;
+
+const STRING_PREFIXES = {
+	r: ANY_CASE_EITHER_ORDER,
+	b: ANY_CASE_EITHER_ORDER,
+	f: ANY_CASE_EITHER_ORDER,
+	t: ANY_CASE_EITHER_ORDER,
+	u: ANY_CASE_EITHER_ORDER,
+	rb: ANY_CASE_EITHER_ORDER,
+	rf: ANY_CASE_EITHER_ORDER,
+	rt: ANY_CASE_EITHER_ORDER,
+	ur: { case: true, readOnly: true }
+} as const;
+
+const STRING_QUOTES = { '"': { singleLine: true }, "'": { singleLine: true }, '"""': {}, "'''": {}, '`': { readOnly: true } } as const;
+
+const STRING_ESCAPE = { escape: '\\' } as const;
 
 const comprehensionClauses = rule('comprehension_clauses', ($) =>
 	field('content', repeat1(choice($.for_in_clause, $.if_clause)))
@@ -105,10 +124,10 @@ export default grammar(enrich(base), wire({
 
 	// See docs/python-grammar-sittir-glossary.md::renderAs
 	renderAs: (_$) => ({
-		string_start: /[a-zA-Z]*["'`]+/,
+		string_start: token(seq(field('prefix', optional(spellings(STRING_PREFIXES))), field('quote', spellings(STRING_QUOTES, STRING_ESCAPE)))),
 		_string_content: token.immediate(/[\s\S]+/),
 		escape_interpolation: token.immediate(/\{\{|\}\}/),
-		string_end: token.immediate(/\\*["'`]+/)
+		string_end: token.immediate(seq(field('content', /(?:\\[\s\S])*/), field('quote', spellings(STRING_QUOTES, STRING_ESCAPE))))
 	}),
 	reparseHosts: {
 		hosts: {
@@ -158,6 +177,7 @@ export default grammar(enrich(base), wire({
 		decorator: { '"@"/after': preference('tight') },
 		indent: preference('    '),
 		gap: { separator: preference('tight') },
+		string_start: { 'quote:': preference('"') },
 		integer_hex: { 'radix_prefix:': preference('0x') },
 		integer_octal: { 'radix_prefix:': preference('0o') },
 		integer_binary: { 'radix_prefix:': preference('0b') },
@@ -420,7 +440,7 @@ export default grammar(enrich(base), wire({
 			2: field('right')
 		},
 
-		relative_import: { 0: field('prefix'), '1/0': field('name') },
+		relative_import: { 0: field('dots'), '1/0': field('name') },
 		global_statement: { 1: field('names') },
 		nonlocal_statement: { 1: field('names') },
 		dotted_name: {

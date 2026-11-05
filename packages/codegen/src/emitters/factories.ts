@@ -8,7 +8,7 @@ import { findOwnKindEntry, reservedWordset, reservedWordsAdmittedIn } from '../d
 import { GLOBAL_WORDSET } from '../dsl/rule-metadata.ts';
 import type { AuthoredCompound } from '../compiler/model/node-map.ts';
 import type { NodeMap } from '../compiler/types.ts';
-import { holdsFixedText, isBuilderTextLeaf, isPatternValue, isHiddenPresenceMarker, separatorRequired, slotFilledWhenOmitted, storesNodes } from '../compiler/model/node-map.ts';
+import { buildableMembersOf, delimiterPreferenceOf, holdsFixedText, isBuilderTextLeaf, isPatternValue, isHiddenPresenceMarker, separatorRequired, slotFilledWhenOmitted, storesNodes } from '../compiler/model/node-map.ts';
 import { BLANK_KIND_ID } from '@sittir/common/blank-arm';
 import { hasBlankArm } from '../compiler/model/site-preferences.ts';
 import {
@@ -159,6 +159,7 @@ function collectStorageCoercionImports(nodeMap: NodeMap, kindEntries: readonly K
 		}
 		if (node instanceof AssembledList && slotAliases(buildSeparatedListContentSlot(node), nodeMap).length > 0)
 			imports.add('admitAliasContent');
+		if (delimiterPreferenceOf(node) !== undefined) imports.add('preferredFacet');
 	}
 	for (const [kind, node] of nodeMap.nodes) {
 		if (numericSlotKeys(node).length > 0 || numericLeafShape(kind, node) !== undefined) imports.add('numberText');
@@ -1170,11 +1171,18 @@ export function builtTypeSurfaceOf(
 	}
 }
 
+function buildableSpellingType(slot: AssembledNonterminal): string | undefined {
+	return buildableMembersOf(slot)?.map((member) => JSON.stringify(member)).join(' | ');
+}
+
 export function constructionChildElementType(
 	node: { children: readonly AssembledNonterminal[] },
 	nodeMap: NodeMap,
 	kindEntries: readonly KindEnumEntry[]
 ): string {
+	const [sole] = node.children;
+	const spelled = node.children.length === 1 && sole !== undefined ? buildableSpellingType(sole) : undefined;
+	if (spelled !== undefined) return spelled;
 	const base = childElementType(node, nodeMap, kindEntries);
 	const admitted = admittedTypes(node.children, nodeMap);
 	return admitted.length === 0 ? base : `(${[base, ...admitted].join(' | ')})`;
@@ -1185,6 +1193,8 @@ export function constructionFieldElementType(
 	nodeMap: NodeMap,
 	kindEntries: readonly KindEnumEntry[]
 ): string {
+	const spelled = buildableSpellingType(f);
+	if (spelled !== undefined) return spelled;
 	const type = withAdmittedTypes(fieldElementType(f, nodeMap, kindEntries), f, nodeMap);
 	const shape = numericSlotShape(f);
 	return shape === undefined ? type : `${type} | ${numberInputType(shape)}`;
@@ -1372,7 +1382,10 @@ function registeredSlotSource(
 	if (slot.registeredOption === 'choice') {
 		return storedSlotValueExpr(slot, blankFromInput(hasBlankArm(slot), `options?.${slot.propertyName}`), nodeMap, kindEntries, node.typeName, true);
 	}
-	const value = `options?.${slot.propertyName} ?? ${JSON.stringify(slot.optionDefaultArm)}`;
+	const value =
+		slot.delimiterRole !== undefined || slot.optionDefaultArm === undefined
+			? `options?.${slot.propertyName}`
+			: `options?.${slot.propertyName} ?? ${JSON.stringify(slot.optionDefaultArm)}`;
 	const peers = hasConfig ? optionalGroupPeers(node, slot.name) : undefined;
 	const present = (peers ?? [])
 		.map((name) => node.slots.find((candidate) => candidate.name === name))
@@ -1387,7 +1400,8 @@ export function omitRegistered(type: string, node: { readonly slots: readonly As
 }
 
 export function spellingTypeOf(node: { readonly slots: readonly AssembledNonterminal[] }, nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[]): string | undefined {
-	const registered = registeredSlots(node);
+	const preference = delimiterPreferenceOf(node);
+	const registered = [...registeredSlots(node), ...(preference === undefined ? [] : [preference.facet])];
 	if (registered.length === 0) return undefined;
 	return `{ ${registered.map((slot) => `readonly ${slot.propertyName}?: ${constructionFieldElementType(slot, nodeMap, kindEntries)}${hasBlankArm(slot) ? ' | null' : ''}`).join('; ')} }`;
 }
@@ -1879,9 +1893,13 @@ function emitFieldCarryingFactory(
 		];
 	} else {
 		const configAccess = 'config';
-		valueSourceFor = (f) => slotStorageExpr(f, configAccess, nodeMap, kindEntries, node.typeName);
+		const preference = delimiterPreferenceOf(node);
+		valueSourceFor = (f) => {
+			const stored = slotStorageExpr(f, configAccess, nodeMap, kindEntries, node.typeName);
+			return f === preference?.open ? `preferredFacet(${stored}, ${JSON.stringify(preference.facet.propertyName)}, options?.${preference.facet.propertyName})` : stored;
+		};
 		setters = [];
-		const optionsArg = registered.length === 0 ? '' : ', options';
+		const optionsArg = registered.length === 0 && preference === undefined ? '' : ', options';
 		for (const f of slots) {
 			if (registeredSet.has(f)) continue;
 			const method = f.propertyName;

@@ -147773,7 +147773,8 @@
               "$type": 333,
               "_raw_string_literal_start": {
                 "$type": 159,
-                "$text": "r#\""
+                "_prefix": "r",
+                "_hashes": "#"
               },
               "_string_content": {
                 "$type": 160,
@@ -147781,7 +147782,7 @@
               },
               "_raw_string_literal_end": {
                 "$type": 161,
-                "$text": "\"#"
+                "_hashes": "#"
               }
             }
           }
@@ -147794,7 +147795,8 @@
               "$type": 333,
               "_raw_string_literal_start": {
                 "$type": 159,
-                "$text": "r##\""
+                "_prefix": "r",
+                "_hashes": "##"
               },
               "_string_content": {
                 "$type": 160,
@@ -147802,7 +147804,7 @@
               },
               "_raw_string_literal_end": {
                 "$type": 161,
-                "$text": "\"##"
+                "_hashes": "##"
               }
             }
           },
@@ -147822,7 +147824,8 @@
               "$type": 333,
               "_raw_string_literal_start": {
                 "$type": 159,
-                "$text": "r##\""
+                "_prefix": "r",
+                "_hashes": "##"
               },
               "_string_content": {
                 "$type": 160,
@@ -147830,7 +147833,7 @@
               },
               "_raw_string_literal_end": {
                 "$type": 161,
-                "$text": "\"##"
+                "_hashes": "##"
               }
             }
           }
@@ -147843,7 +147846,8 @@
               "$type": 333,
               "_raw_string_literal_start": {
                 "$type": 159,
-                "$text": "r###\""
+                "_prefix": "r",
+                "_hashes": "###"
               },
               "_string_content": {
                 "$type": 160,
@@ -147851,7 +147855,7 @@
               },
               "_raw_string_literal_end": {
                 "$type": 161,
-                "$text": "\"###"
+                "_hashes": "###"
               }
             }
           }
@@ -147864,7 +147868,8 @@
               "$type": 333,
               "_raw_string_literal_start": {
                 "$type": 159,
-                "$text": "r######\""
+                "_prefix": "r",
+                "_hashes": "######"
               },
               "_string_content": {
                 "$type": 160,
@@ -147872,7 +147877,7 @@
               },
               "_raw_string_literal_end": {
                 "$type": 161,
-                "$text": "\"######"
+                "_hashes": "######"
               }
             }
           }
@@ -147910,7 +147915,8 @@
           "$type": 333,
           "_raw_string_literal_start": {
             "$type": 159,
-            "$text": "r#\""
+            "_prefix": "r",
+            "_hashes": "#"
           },
           "_string_content": {
             "$type": 160,
@@ -147918,7 +147924,7 @@
           },
           "_raw_string_literal_end": {
             "$type": 161,
-            "$text": "\"#"
+            "_hashes": "#"
           }
         }
       }
@@ -147953,7 +147959,8 @@
           "$type": 333,
           "_raw_string_literal_start": {
             "$type": 159,
-            "$text": "r##\""
+            "_prefix": "r",
+            "_hashes": "##"
           },
           "_string_content": {
             "$type": 160,
@@ -147961,7 +147968,7 @@
           },
           "_raw_string_literal_end": {
             "$type": 161,
-            "$text": "\"##"
+            "_hashes": "##"
           }
         }
       }
@@ -147996,7 +148003,8 @@
           "$type": 333,
           "_raw_string_literal_start": {
             "$type": 159,
-            "$text": "r##\""
+            "_prefix": "r",
+            "_hashes": "##"
           },
           "_string_content": {
             "$type": 160,
@@ -148004,7 +148012,7 @@
           },
           "_raw_string_literal_end": {
             "$type": 161,
-            "$text": "\"##"
+            "_hashes": "##"
           }
         }
       }
@@ -148039,7 +148047,8 @@
           "$type": 333,
           "_raw_string_literal_start": {
             "$type": 159,
-            "$text": "r###\""
+            "_prefix": "r",
+            "_hashes": "###"
           },
           "_string_content": {
             "$type": 160,
@@ -148047,7 +148056,7 @@
           },
           "_raw_string_literal_end": {
             "$type": 161,
-            "$text": "\"###"
+            "_hashes": "###"
           }
         }
       }
@@ -148082,7 +148091,8 @@
           "$type": 333,
           "_raw_string_literal_start": {
             "$type": 159,
-            "$text": "r######\""
+            "_prefix": "r",
+            "_hashes": "######"
           },
           "_string_content": {
             "$type": 160,
@@ -148090,7 +148100,7 @@
           },
           "_raw_string_literal_end": {
             "$type": 161,
-            "$text": "\"######"
+            "_hashes": "######"
           }
         }
       }
@@ -148123,7 +148133,8 @@
         "$type": 333,
         "_raw_string_literal_start": {
           "$type": 159,
-          "$text": "r#\""
+          "_prefix": "r",
+          "_hashes": "#"
         },
         "_string_content": {
           "$type": 160,
@@ -148131,7 +148142,7 @@
         },
         "_raw_string_literal_end": {
           "$type": 161,
-          "$text": "\"#"
+          "_hashes": "#"
         }
       }
     },
@@ -148163,7 +148174,8 @@
         "$type": 333,
         "_raw_string_literal_start": {
           "$type": 159,
-          "$text": "r##\""
+          "_prefix": "r",
+          "_hashes": "##"
         },
         "_string_content": {
           "$type": 160,
@@ -148171,7 +148183,7 @@
         },
         "_raw_string_literal_end": {
           "$type": 161,
-          "$text": "\"##"
+          "_hashes": "##"
         }
       }
     },
@@ -148203,7 +148215,8 @@
         "$type": 333,
         "_raw_string_literal_start": {
           "$type": 159,
-          "$text": "r##\""
+          "_prefix": "r",
+          "_hashes": "##"
         },
         "_string_content": {
           "$type": 160,
@@ -148211,7 +148224,7 @@
         },
         "_raw_string_literal_end": {
           "$type": 161,
-          "$text": "\"##"
+          "_hashes": "##"
         }
       }
     },
@@ -148243,7 +148256,8 @@
         "$type": 333,
         "_raw_string_literal_start": {
           "$type": 159,
-          "$text": "r###\""
+          "_prefix": "r",
+          "_hashes": "###"
         },
         "_string_content": {
           "$type": 160,
@@ -148251,7 +148265,7 @@
         },
         "_raw_string_literal_end": {
           "$type": 161,
-          "$text": "\"###"
+          "_hashes": "###"
         }
       }
     },
@@ -148283,7 +148297,8 @@
         "$type": 333,
         "_raw_string_literal_start": {
           "$type": 159,
-          "$text": "r######\""
+          "_prefix": "r",
+          "_hashes": "######"
         },
         "_string_content": {
           "$type": 160,
@@ -148291,7 +148306,7 @@
         },
         "_raw_string_literal_end": {
           "$type": 161,
-          "$text": "\"######"
+          "_hashes": "######"
         }
       }
     },
@@ -148321,7 +148336,8 @@
       "$type": 333,
       "_raw_string_literal_start": {
         "$type": 159,
-        "$text": "r#\""
+        "_prefix": "r",
+        "_hashes": "#"
       },
       "_string_content": {
         "$type": 160,
@@ -148329,7 +148345,7 @@
       },
       "_raw_string_literal_end": {
         "$type": 161,
-        "$text": "\"#"
+        "_hashes": "#"
       }
     },
     "expectedOutput": "r#\"abc\"#",
@@ -148358,7 +148374,8 @@
       "$type": 333,
       "_raw_string_literal_start": {
         "$type": 159,
-        "$text": "r##\""
+        "_prefix": "r",
+        "_hashes": "##"
       },
       "_string_content": {
         "$type": 160,
@@ -148366,7 +148383,7 @@
       },
       "_raw_string_literal_end": {
         "$type": 161,
-        "$text": "\"##"
+        "_hashes": "##"
       }
     },
     "expectedOutput": "r##\"ok\"##",
@@ -148395,7 +148412,8 @@
       "$type": 333,
       "_raw_string_literal_start": {
         "$type": 159,
-        "$text": "r##\""
+        "_prefix": "r",
+        "_hashes": "##"
       },
       "_string_content": {
         "$type": 160,
@@ -148403,7 +148421,7 @@
       },
       "_raw_string_literal_end": {
         "$type": 161,
-        "$text": "\"##"
+        "_hashes": "##"
       }
     },
     "expectedOutput": "r##\"foo #\"# bar\"##",
@@ -148432,7 +148450,8 @@
       "$type": 333,
       "_raw_string_literal_start": {
         "$type": 159,
-        "$text": "r###\""
+        "_prefix": "r",
+        "_hashes": "###"
       },
       "_string_content": {
         "$type": 160,
@@ -148440,7 +148459,7 @@
       },
       "_raw_string_literal_end": {
         "$type": 161,
-        "$text": "\"###"
+        "_hashes": "###"
       }
     },
     "expectedOutput": "r###\"foo ##\"## bar\"###",
@@ -148469,7 +148488,8 @@
       "$type": 333,
       "_raw_string_literal_start": {
         "$type": 159,
-        "$text": "r######\""
+        "_prefix": "r",
+        "_hashes": "######"
       },
       "_string_content": {
         "$type": 160,
@@ -148477,7 +148497,7 @@
       },
       "_raw_string_literal_end": {
         "$type": 161,
-        "$text": "\"######"
+        "_hashes": "######"
       }
     },
     "expectedOutput": "r######\"foo ##### bar\"######",
@@ -148513,7 +148533,8 @@
               "$type": 333,
               "_raw_string_literal_start": {
                 "$type": 159,
-                "$text": "br#\""
+                "_prefix": "br",
+                "_hashes": "#"
               },
               "_string_content": {
                 "$type": 160,
@@ -148521,7 +148542,7 @@
               },
               "_raw_string_literal_end": {
                 "$type": 161,
-                "$text": "\"#"
+                "_hashes": "#"
               }
             }
           }
@@ -148534,7 +148555,8 @@
               "$type": 333,
               "_raw_string_literal_start": {
                 "$type": 159,
-                "$text": "br##\""
+                "_prefix": "br",
+                "_hashes": "##"
               },
               "_string_content": {
                 "$type": 160,
@@ -148542,7 +148564,7 @@
               },
               "_raw_string_literal_end": {
                 "$type": 161,
-                "$text": "\"##"
+                "_hashes": "##"
               }
             }
           }
@@ -148580,7 +148602,8 @@
           "$type": 333,
           "_raw_string_literal_start": {
             "$type": 159,
-            "$text": "br#\""
+            "_prefix": "br",
+            "_hashes": "#"
           },
           "_string_content": {
             "$type": 160,
@@ -148588,7 +148611,7 @@
           },
           "_raw_string_literal_end": {
             "$type": 161,
-            "$text": "\"#"
+            "_hashes": "#"
           }
         }
       }
@@ -148623,7 +148646,8 @@
           "$type": 333,
           "_raw_string_literal_start": {
             "$type": 159,
-            "$text": "br##\""
+            "_prefix": "br",
+            "_hashes": "##"
           },
           "_string_content": {
             "$type": 160,
@@ -148631,7 +148655,7 @@
           },
           "_raw_string_literal_end": {
             "$type": 161,
-            "$text": "\"##"
+            "_hashes": "##"
           }
         }
       }
@@ -148664,7 +148688,8 @@
         "$type": 333,
         "_raw_string_literal_start": {
           "$type": 159,
-          "$text": "br#\""
+          "_prefix": "br",
+          "_hashes": "#"
         },
         "_string_content": {
           "$type": 160,
@@ -148672,7 +148697,7 @@
         },
         "_raw_string_literal_end": {
           "$type": 161,
-          "$text": "\"#"
+          "_hashes": "#"
         }
       }
     },
@@ -148704,7 +148729,8 @@
         "$type": 333,
         "_raw_string_literal_start": {
           "$type": 159,
-          "$text": "br##\""
+          "_prefix": "br",
+          "_hashes": "##"
         },
         "_string_content": {
           "$type": 160,
@@ -148712,7 +148738,7 @@
         },
         "_raw_string_literal_end": {
           "$type": 161,
-          "$text": "\"##"
+          "_hashes": "##"
         }
       }
     },
@@ -148742,7 +148768,8 @@
       "$type": 333,
       "_raw_string_literal_start": {
         "$type": 159,
-        "$text": "br#\""
+        "_prefix": "br",
+        "_hashes": "#"
       },
       "_string_content": {
         "$type": 160,
@@ -148750,7 +148777,7 @@
       },
       "_raw_string_literal_end": {
         "$type": 161,
-        "$text": "\"#"
+        "_hashes": "#"
       }
     },
     "expectedOutput": "br#\"abc\"#",
@@ -148779,7 +148806,8 @@
       "$type": 333,
       "_raw_string_literal_start": {
         "$type": 159,
-        "$text": "br##\""
+        "_prefix": "br",
+        "_hashes": "##"
       },
       "_string_content": {
         "$type": 160,
@@ -148787,7 +148815,7 @@
       },
       "_raw_string_literal_end": {
         "$type": 161,
-        "$text": "\"##"
+        "_hashes": "##"
       }
     },
     "expectedOutput": "br##\"abc\"##",
@@ -148823,7 +148851,8 @@
               "$type": 333,
               "_raw_string_literal_start": {
                 "$type": 159,
-                "$text": "cr#\""
+                "_prefix": "cr",
+                "_hashes": "#"
               },
               "_string_content": {
                 "$type": 160,
@@ -148831,7 +148860,7 @@
               },
               "_raw_string_literal_end": {
                 "$type": 161,
-                "$text": "\"#"
+                "_hashes": "#"
               }
             }
           }
@@ -148844,7 +148873,8 @@
               "$type": 333,
               "_raw_string_literal_start": {
                 "$type": 159,
-                "$text": "cr##\""
+                "_prefix": "cr",
+                "_hashes": "##"
               },
               "_string_content": {
                 "$type": 160,
@@ -148852,7 +148882,7 @@
               },
               "_raw_string_literal_end": {
                 "$type": 161,
-                "$text": "\"##"
+                "_hashes": "##"
               }
             }
           }
@@ -148890,7 +148920,8 @@
           "$type": 333,
           "_raw_string_literal_start": {
             "$type": 159,
-            "$text": "cr#\""
+            "_prefix": "cr",
+            "_hashes": "#"
           },
           "_string_content": {
             "$type": 160,
@@ -148898,7 +148929,7 @@
           },
           "_raw_string_literal_end": {
             "$type": 161,
-            "$text": "\"#"
+            "_hashes": "#"
           }
         }
       }
@@ -148933,7 +148964,8 @@
           "$type": 333,
           "_raw_string_literal_start": {
             "$type": 159,
-            "$text": "cr##\""
+            "_prefix": "cr",
+            "_hashes": "##"
           },
           "_string_content": {
             "$type": 160,
@@ -148941,7 +148973,7 @@
           },
           "_raw_string_literal_end": {
             "$type": 161,
-            "$text": "\"##"
+            "_hashes": "##"
           }
         }
       }
@@ -148974,7 +149006,8 @@
         "$type": 333,
         "_raw_string_literal_start": {
           "$type": 159,
-          "$text": "cr#\""
+          "_prefix": "cr",
+          "_hashes": "#"
         },
         "_string_content": {
           "$type": 160,
@@ -148982,7 +149015,7 @@
         },
         "_raw_string_literal_end": {
           "$type": 161,
-          "$text": "\"#"
+          "_hashes": "#"
         }
       }
     },
@@ -149014,7 +149047,8 @@
         "$type": 333,
         "_raw_string_literal_start": {
           "$type": 159,
-          "$text": "cr##\""
+          "_prefix": "cr",
+          "_hashes": "##"
         },
         "_string_content": {
           "$type": 160,
@@ -149022,7 +149056,7 @@
         },
         "_raw_string_literal_end": {
           "$type": 161,
-          "$text": "\"##"
+          "_hashes": "##"
         }
       }
     },
@@ -149052,7 +149086,8 @@
       "$type": 333,
       "_raw_string_literal_start": {
         "$type": 159,
-        "$text": "cr#\""
+        "_prefix": "cr",
+        "_hashes": "#"
       },
       "_string_content": {
         "$type": 160,
@@ -149060,7 +149095,7 @@
       },
       "_raw_string_literal_end": {
         "$type": 161,
-        "$text": "\"#"
+        "_hashes": "#"
       }
     },
     "expectedOutput": "cr#\"abc\"#",
@@ -149089,7 +149124,8 @@
       "$type": 333,
       "_raw_string_literal_start": {
         "$type": 159,
-        "$text": "cr##\""
+        "_prefix": "cr",
+        "_hashes": "##"
       },
       "_string_content": {
         "$type": 160,
@@ -149097,7 +149133,7 @@
       },
       "_raw_string_literal_end": {
         "$type": 161,
-        "$text": "\"##"
+        "_hashes": "##"
       }
     },
     "expectedOutput": "cr##\"abc\"##",

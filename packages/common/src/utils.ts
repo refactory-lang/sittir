@@ -545,6 +545,11 @@ export function orDefault<V>(value: V | undefined, make: () => NoInfer<V>): V {
 	return value ?? make();
 }
 
+export function preferredFacet<V>(token: V, facet: string, preference: string | undefined): V {
+	if (preference === undefined) return token;
+	return (token as { readonly $with: Readonly<Record<string, (value: string) => V>> }).$with[facet]!(preference);
+}
+
 export function configFieldOr(input: unknown, key: string, orElse: () => unknown): unknown {
 	return input !== null && typeof input === 'object' && !Array.isArray(input) && !isNodeValue(input) && (key in input || Object.keys(input).length === 0)
 		? (input as Record<string, unknown>)[key]

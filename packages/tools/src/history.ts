@@ -46,6 +46,8 @@ export interface ValidationRun {
 	builtRenderParseAstMatchPass?: number;
 	/** Built nodes whose AST matched only by taking another of a list's separators; absent on rows recorded before the row existed. */
 	builtRenderParseSeparatorTolerated?: number;
+	/** Built nodes whose AST matched only where a delimiter token spells the same input and content facets differently; absent on rows recorded before the row existed. */
+	builtRenderParseSpellingNormalized?: number;
 	/** Trivia-only losses, kept out of the totals; absent on rows recorded before the trivia row existed. */
 	fromTrivia?: number;
 	readRenderParseTrivia?: number;

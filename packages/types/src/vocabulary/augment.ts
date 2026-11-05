@@ -82,6 +82,7 @@ import type * as typeAliases from './features/type-aliases/index.ts';
 import type * as typeAnnotations from './features/type-annotations/index.ts';
 import type * as typeOnlyImports from './features/modules/type-only-imports/index.ts';
 import type * as typeclasses from './features/open-type-extension/typeclasses/index.ts';
+import type * as unicodeStrings from './features/unicode-strings/index.ts';
 import type * as unsafeCode from './features/unsafe-code/index.ts';
 import type * as untaggedUnions from './features/untagged-unions/index.ts';
 import type * as visibility from './features/visibility/index.ts';
@@ -2614,6 +2615,25 @@ declare module './literal.ts' {
 			interface C<G extends GrammarContext<G>> extends cStrings.Literal.String.C<G> {}
 			interface Interpolated<G extends GrammarContext<G>> extends stringInterpolation.Literal.String.Interpolated<G> {}
 			namespace Interpolated {
+				interface Deferred<G extends GrammarContext<G>> extends stringInterpolation.Literal.String.Interpolated
+					.Deferred<G> {}
+				namespace Deferred {
+					interface Multiline<G extends GrammarContext<G>> extends stringInterpolation.Literal.String.Interpolated
+						.Deferred.Multiline<G> {}
+					interface Raw<G extends GrammarContext<G>> extends rawStrings.Literal.String.Interpolated.Deferred.Raw<G> {}
+					namespace Raw {
+						interface Multiline<G extends GrammarContext<G>> extends rawStrings.Literal.String.Interpolated.Deferred.Raw
+							.Multiline<G> {}
+						type Any<G extends GrammarContext<G>> =
+							| V.Literal.String.Interpolated.Deferred.Raw<G>
+							| V.Literal.String.Interpolated.Deferred.Raw.Multiline<G>;
+					}
+					type Any<G extends GrammarContext<G>> =
+						| V.Literal.String.Interpolated.Deferred<G>
+						| V.Literal.String.Interpolated.Deferred.Multiline<G>
+						| V.Literal.String.Interpolated.Deferred.Raw<G>
+						| V.Literal.String.Interpolated.Deferred.Raw.Multiline<G>;
+				}
 				interface Multiline<G extends GrammarContext<G>> extends stringInterpolation.Literal.String.Interpolated
 					.Multiline<G> {}
 				interface Raw<G extends GrammarContext<G>> extends rawStrings.Literal.String.Interpolated.Raw<G> {}
@@ -2626,6 +2646,10 @@ declare module './literal.ts' {
 				}
 				type Any<G extends GrammarContext<G>> =
 					| V.Literal.String.Interpolated<G>
+					| V.Literal.String.Interpolated.Deferred<G>
+					| V.Literal.String.Interpolated.Deferred.Multiline<G>
+					| V.Literal.String.Interpolated.Deferred.Raw<G>
+					| V.Literal.String.Interpolated.Deferred.Raw.Multiline<G>
 					| V.Literal.String.Interpolated.Multiline<G>
 					| V.Literal.String.Interpolated.Raw<G>
 					| V.Literal.String.Interpolated.Raw.Multiline<G>;
@@ -2635,6 +2659,7 @@ declare module './literal.ts' {
 				interface Multiline<G extends GrammarContext<G>> extends rawStrings.Literal.String.Raw.Multiline<G> {}
 				type Any<G extends GrammarContext<G>> = V.Literal.String.Raw<G> | V.Literal.String.Raw.Multiline<G>;
 			}
+			interface Unicode<G extends GrammarContext<G>> extends unicodeStrings.Literal.String.Unicode<G> {}
 			type Any<G extends GrammarContext<G>> =
 				| V.Literal.String<G>
 				| V.Literal.String.Bytes<G>
@@ -2645,13 +2670,18 @@ declare module './literal.ts' {
 				| V.Literal.String.Concatenated<G>
 				| V.Literal.String.Escape<G>
 				| V.Literal.String.Interpolated<G>
+				| V.Literal.String.Interpolated.Deferred<G>
+				| V.Literal.String.Interpolated.Deferred.Multiline<G>
+				| V.Literal.String.Interpolated.Deferred.Raw<G>
+				| V.Literal.String.Interpolated.Deferred.Raw.Multiline<G>
 				| V.Literal.String.Interpolated.Multiline<G>
 				| V.Literal.String.Interpolated.Raw<G>
 				| V.Literal.String.Interpolated.Raw.Multiline<G>
 				| V.Literal.String.Multiline<G>
 				| V.Literal.String.Raw<G>
 				| V.Literal.String.Raw.Multiline<G>
-				| V.Literal.String.Text<G>;
+				| V.Literal.String.Text<G>
+				| V.Literal.String.Unicode<G>;
 		}
 		type Any<G extends GrammarContext<G>> =
 			| V.Literal<G>
@@ -2688,13 +2718,18 @@ declare module './literal.ts' {
 			| V.Literal.String.Concatenated<G>
 			| V.Literal.String.Escape<G>
 			| V.Literal.String.Interpolated<G>
+			| V.Literal.String.Interpolated.Deferred<G>
+			| V.Literal.String.Interpolated.Deferred.Multiline<G>
+			| V.Literal.String.Interpolated.Deferred.Raw<G>
+			| V.Literal.String.Interpolated.Deferred.Raw.Multiline<G>
 			| V.Literal.String.Interpolated.Multiline<G>
 			| V.Literal.String.Interpolated.Raw<G>
 			| V.Literal.String.Interpolated.Raw.Multiline<G>
 			| V.Literal.String.Multiline<G>
 			| V.Literal.String.Raw<G>
 			| V.Literal.String.Raw.Multiline<G>
-			| V.Literal.String.Text<G>;
+			| V.Literal.String.Text<G>
+			| V.Literal.String.Unicode<G>;
 	}
 }
 

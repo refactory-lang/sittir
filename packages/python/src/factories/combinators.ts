@@ -59,6 +59,31 @@ export const printStatement$plain =
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 
+export const string$flatten$stringStart =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config?: unknown, options?: unknown): ReturnType<PF> => {
+		const keys: Record<string, string> = { prefix: 'prefix' };
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config ?? {}))) {
+			if (Object.hasOwn(keys, key)) inner[keys[key]!] = value;
+			else rest[key] = value;
+		}
+		return _fwd<ReturnType<PF>>(parent, { ...rest, stringStart: _c(child)(inner['prefix']) }, options);
+	};
+export const string$flatten$stringEnd =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config?: unknown, options?: unknown): ReturnType<PF> => {
+		const keys: Record<string, string> = {};
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config ?? {}))) {
+			if (Object.hasOwn(keys, key)) inner[keys[key]!] = value;
+			else rest[key] = value;
+		}
+		return _fwd<ReturnType<PF>>(parent, { ...rest, stringEnd: _c(child)(inner) }, options);
+	};
+
 export const subscript$index = <PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(
 	parent: PF,
 	child: CF

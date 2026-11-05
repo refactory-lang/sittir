@@ -6,7 +6,7 @@
 
 use crate::options::{EdgeArm, Edged, Edges, ResolvedOptions, Side};
 use crate::types::{KindId, SiteId};
-use crate::render::{CoordinateError, SourceTable};
+use crate::render::{CoordinateError, RenderError, SourceTable};
 use crate::slot::{CoordinateEdges, NodeCoordinate, SeamArm, SlotValue};
 
 /// Everything a render reads that is not the node itself.
@@ -381,7 +381,7 @@ impl SnapshotEdge {
 }
 
 pub trait Prepare {
-    fn prepare(&mut self, ctx: &RenderContext<'_>) -> Result<(), CoordinateError>;
+    fn prepare(&mut self, ctx: &RenderContext<'_>) -> Result<(), RenderError>;
 
     /// Where this value lies, when it is a snapshot node (`NodeLayout::span`).
     fn snapshot_edge(&self) -> Option<SnapshotEdge> {
@@ -431,7 +431,7 @@ impl<T: Prepare, const ADJACENT: bool> Prepare for SlotValue<T, ADJACENT> {
     /// grammar kind's, the kind its node renders by. A read node whose
     /// source renders it (`SourceTable::renders_as_source`) is its
     /// coordinate: it prepares as one, the seams its holder gave it seated.
-    fn prepare(&mut self, ctx: &RenderContext<'_>) -> Result<(), CoordinateError> {
+    fn prepare(&mut self, ctx: &RenderContext<'_>) -> Result<(), RenderError> {
         if let SlotValue::Node(node) = self {
             if let Some(at) = node.source_coordinate().filter(|at| ctx.sources.renders_as_source(at)).cloned() {
                 let seated = node.gap_edges().and_then(|edges| seated_edges(*edges));
@@ -517,24 +517,24 @@ pub fn seated_edges(edges: Edges) -> Option<CoordinateEdges> {
 }
 
 /// Prepare every item of a list.
-fn prepare_items<T: Prepare>(items: &mut [T], ctx: &RenderContext<'_>) -> Result<(), CoordinateError> {
+fn prepare_items<T: Prepare>(items: &mut [T], ctx: &RenderContext<'_>) -> Result<(), RenderError> {
     items.iter_mut().try_for_each(|item| item.prepare(ctx))
 }
 
 impl<T: Prepare> Prepare for Vec<T> {
-    fn prepare(&mut self, ctx: &RenderContext<'_>) -> Result<(), CoordinateError> {
+    fn prepare(&mut self, ctx: &RenderContext<'_>) -> Result<(), RenderError> {
         prepare_items(self, ctx)
     }
 }
 
 impl<T: Prepare> Prepare for crate::NonEmptyVec<T> {
-    fn prepare(&mut self, ctx: &RenderContext<'_>) -> Result<(), CoordinateError> {
+    fn prepare(&mut self, ctx: &RenderContext<'_>) -> Result<(), RenderError> {
         prepare_items(self, ctx)
     }
 }
 
 impl<T: Prepare> Prepare for Option<T> {
-    fn prepare(&mut self, ctx: &RenderContext<'_>) -> Result<(), CoordinateError> {
+    fn prepare(&mut self, ctx: &RenderContext<'_>) -> Result<(), RenderError> {
         match self {
             Some(item) => item.prepare(ctx),
             None => Ok(()),
@@ -559,7 +559,7 @@ impl<T: Prepare> Prepare for Option<T> {
 }
 
 impl<T: Prepare> Prepare for Box<T> {
-    fn prepare(&mut self, ctx: &RenderContext<'_>) -> Result<(), CoordinateError> {
+    fn prepare(&mut self, ctx: &RenderContext<'_>) -> Result<(), RenderError> {
         (**self).prepare(ctx)
     }
 
@@ -587,7 +587,7 @@ impl<T: Prepare> Prepare for Box<T> {
 macro_rules! inert {
     ($($t:ty),*) => {$(
         impl Prepare for $t {
-            fn prepare(&mut self, _: &RenderContext<'_>) -> Result<(), CoordinateError> { Ok(()) }
+            fn prepare(&mut self, _: &RenderContext<'_>) -> Result<(), RenderError> { Ok(()) }
         }
     )*};
 }

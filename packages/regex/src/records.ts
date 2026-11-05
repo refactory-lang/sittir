@@ -50,7 +50,7 @@ export const records = {
 	UnicodePropertyValueNode: { words: 2 },
 	ControlEscapeNode: { words: 2 },
 	ControlLetterEscapeNode: { words: 2 },
-	IdentityEscapeNode: { words: 6, content: { word: 2, width: 4 } },
+	IdentityEscapeNode: { words: 10, content: { word: 2, width: 4 }, verbatim: { word: 6, width: 4 } },
 	GroupNameNode: { words: 2 },
 	DecimalDigitsNode: { words: 2 },
 	TermGroupNode: { words: 12, content: { word: 2, width: 5 }, quantifier: { word: 7, width: 5 } },

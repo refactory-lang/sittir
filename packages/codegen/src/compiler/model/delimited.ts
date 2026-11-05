@@ -5,12 +5,14 @@ import {
 	AbstractAssembledCompound,
 	AssembledPattern,
 	isFixedTextLeaf,
+	isLexicalToken,
 	wordCharPredicate,
 	type AssembledNode,
 	type Delimited,
 	type DelimiterEnd
 } from './node-map.ts';
 import { CharSet, LINE_TERMINATORS, admitsInside, leadingChars, patternDfa } from './pattern-automaton.ts';
+import { delimiterOwners } from './delimiter-facets.ts';
 
 function firstChars(text: string): CharSet {
 	return text === '' ? CharSet.EMPTY : CharSet.chars(text[0]!);
@@ -132,8 +134,8 @@ function endOf(member: RenderRule, nodes: ReadonlyMap<string, AssembledNode>): D
 	if (member.type !== SYMBOL) return undefined;
 	const node = nodes.get(member.name);
 	if (node === undefined) return undefined;
-	if (node instanceof AssembledPattern) return { slot: member.fieldName ?? member.name };
-	return isFixedTextLeaf(node) ? { text: node.text } : undefined;
+	if (isFixedTextLeaf(node)) return { text: node.text };
+	return isLexicalToken(node) ? { slot: member.fieldName ?? member.name } : undefined;
 }
 
 const WORD_PROBE_LIMIT = 4096;
@@ -221,8 +223,9 @@ function leafSafety(
 export function stampDelimited(nodes: ReadonlyMap<string, AssembledNode>, wordMatcher: RegExp | undefined): void {
 	const facts = new DelimitedFacts(nodes);
 	const isWordChar = wordCharPredicate(wordMatcher);
+	const derived = delimiterOwners(nodes);
 	for (const node of nodes.values()) {
-		if (node instanceof AbstractAssembledCompound) node.delimited = delimitedVerdictOf(node, facts, nodes, isWordChar)?.delimited;
+		if (node instanceof AbstractAssembledCompound && !derived.has(node.kind)) node.delimited = delimitedVerdictOf(node, facts, nodes, isWordChar)?.delimited;
 	}
 }
 
@@ -234,9 +237,10 @@ export function delimitedLeafVerdicts(
 	const facts = new DelimitedFacts(nodes);
 	const isWordChar = wordCharPredicate(wordMatcher);
 	const reserved = reservedTexts(grammar.reserved, nodes);
+	const derived = delimiterOwners(nodes);
 	const out: DelimitedLeafVerdict[] = [];
 	for (const [kind, node] of nodes) {
-		if (!(node instanceof AbstractAssembledCompound)) continue;
+		if (!(node instanceof AbstractAssembledCompound) || derived.has(kind)) continue;
 		const skipped = delimitedVerdictOf(node, facts, nodes, isWordChar)?.skipped;
 		if (skipped === undefined) continue;
 		const leaves = new Map(skipped.content.flatMap((arm) => facts.textLeaves(arm)).map((leaf) => [leaf.name ?? `/${leaf.pattern}/`, leaf]));

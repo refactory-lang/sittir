@@ -73,6 +73,7 @@ export interface Routes<Table extends AnyTable> {
 		readonly chevron: Routes<Table>['printStatement$chevron'];
 		readonly plain: Routes<Table>['printStatement$plain'];
 	};
+	readonly string: Table['string$seated'];
 	readonly subscript: Table['subscript$seated'];
 	readonly comparisonOperator: Table['comparisonOperator$seated'];
 	readonly namedExpression$identifier: <
@@ -319,12 +320,12 @@ export interface Routes<Table extends AnyTable> {
 		options?: OptionsArg<Table['buildKeywordPattern']>
 	) => ReturnType<Table['buildKeywordPattern']>;
 	readonly keywordPattern$string: <
-		const V extends OmitEach<ArgsOf<Table['buildKeywordPattern']>[0], 'pattern'> & ArgsOf<Table['buildString']>[0]
+		const V extends OmitEach<ArgsOf<Table['buildKeywordPattern']>[0], 'pattern'> & ArgsOf<Routes<Table>['string']>[0]
 	>(
 		config: V &
 			RefuseUndeclared<
 				V,
-				OmitEach<ArgsOf<Table['buildKeywordPattern']>[0], 'pattern'> & ArgsOf<Table['buildString']>[0]
+				OmitEach<ArgsOf<Table['buildKeywordPattern']>[0], 'pattern'> & ArgsOf<Routes<Table>['string']>[0]
 			>,
 		options?: OptionsArg<Table['buildKeywordPattern']>
 	) => ReturnType<Table['buildKeywordPattern']>;
@@ -576,7 +577,7 @@ export interface Routes<Table extends AnyTable> {
 		ReturnType<typeof F.buildSimplePattern>
 	>;
 	readonly simplePattern$dictPattern: Seat<ArgsOf<Table['buildDictPattern']>, ReturnType<typeof F.buildSimplePattern>>;
-	readonly simplePattern$string: Seat<ArgsOf<Table['buildString']>, ReturnType<typeof F.buildSimplePattern>>;
+	readonly simplePattern$string: Seat<ArgsOf<Routes<Table>['string']>, ReturnType<typeof F.buildSimplePattern>>;
 	readonly simplePattern$concatenatedString: Seat<
 		ArgsOf<Table['buildConcatenatedString']>,
 		ReturnType<typeof F.buildSimplePattern>
@@ -1029,10 +1030,13 @@ export interface Routes<Table extends AnyTable> {
 		options?: OptionsArg<Table['buildKeyValuePattern']>
 	) => ReturnType<Table['buildKeyValuePattern']>;
 	readonly keyValuePattern$string: <
-		const V extends OmitEach<ArgsOf<Table['buildKeyValuePattern']>[0], 'key'> & ArgsOf<Table['buildString']>[0]
+		const V extends OmitEach<ArgsOf<Table['buildKeyValuePattern']>[0], 'key'> & ArgsOf<Routes<Table>['string']>[0]
 	>(
 		config: V &
-			RefuseUndeclared<V, OmitEach<ArgsOf<Table['buildKeyValuePattern']>[0], 'key'> & ArgsOf<Table['buildString']>[0]>,
+			RefuseUndeclared<
+				V,
+				OmitEach<ArgsOf<Table['buildKeyValuePattern']>[0], 'key'> & ArgsOf<Routes<Table>['string']>[0]
+			>,
 		options?: OptionsArg<Table['buildKeyValuePattern']>
 	) => ReturnType<Table['buildKeyValuePattern']>;
 	readonly keyValuePattern$concatenatedString: <
@@ -1253,7 +1257,7 @@ export interface Routes<Table extends AnyTable> {
 		readonly await: Table['buildAwait'];
 		readonly binary: Table['buildBinaryOperator'];
 		readonly identifier: typeof F.buildIdentifier;
-		readonly string: Table['buildString'];
+		readonly string: Routes<Table>['string'];
 		readonly concatenatedString: Table['buildConcatenatedString'];
 		readonly integer: Routes<Table>['integer'];
 		readonly float: Routes<Table>['float'];
@@ -1305,7 +1309,7 @@ export interface Routes<Table extends AnyTable> {
 		ReturnType<typeof F.buildYieldFromClause>
 	>;
 	readonly yieldFromClause$primary$string: Seat<
-		ArgsOf<Table['buildString']>,
+		ArgsOf<Routes<Table>['string']>,
 		ReturnType<typeof F.buildYieldFromClause>
 	>;
 	readonly yieldFromClause$primary$concatenatedString: Seat<
@@ -1528,7 +1532,7 @@ export interface Routes<Table extends AnyTable> {
 	readonly yield_$primary$await: Seat<ArgsOf<Table['buildAwait']>, ReturnType<typeof F.buildYield>>;
 	readonly yield_$primary$binary: Seat<ArgsOf<Table['buildBinaryOperator']>, ReturnType<typeof F.buildYield>>;
 	readonly yield_$primary$identifier: Seat<ArgsOf<Table['buildIdentifier']>, ReturnType<typeof F.buildYield>>;
-	readonly yield_$primary$string: Seat<ArgsOf<Table['buildString']>, ReturnType<typeof F.buildYield>>;
+	readonly yield_$primary$string: Seat<ArgsOf<Routes<Table>['string']>, ReturnType<typeof F.buildYield>>;
 	readonly yield_$primary$concatenatedString: Seat<
 		ArgsOf<Table['buildConcatenatedString']>,
 		ReturnType<typeof F.buildYield>
@@ -1691,7 +1695,7 @@ export interface Routes<Table extends AnyTable> {
 		ReturnType<typeof F.buildExpressionStatement>
 	>;
 	readonly expressionStatement$primary$string: Seat<
-		ArgsOf<Table['buildString']>,
+		ArgsOf<Routes<Table>['string']>,
 		ReturnType<typeof F.buildExpressionStatement>
 	>;
 	readonly expressionStatement$primary$concatenatedString: Seat<
@@ -2186,7 +2190,7 @@ export interface Routes<Table extends AnyTable> {
 		ReturnType<typeof F.buildReturnStatement>
 	>;
 	readonly returnStatement$primary$string: Seat<
-		ArgsOf<Table['buildString']>,
+		ArgsOf<Routes<Table>['string']>,
 		ReturnType<typeof F.buildReturnStatement>
 	>;
 	readonly returnStatement$primary$concatenatedString: Seat<
@@ -2317,7 +2321,7 @@ export interface Routes<Table extends AnyTable> {
 		ReturnType<typeof F.buildDeleteStatement>
 	>;
 	readonly deleteStatement$primary$string: Seat<
-		ArgsOf<Table['buildString']>,
+		ArgsOf<Routes<Table>['string']>,
 		ReturnType<typeof F.buildDeleteStatement>
 	>;
 	readonly deleteStatement$primary$concatenatedString: Seat<
@@ -2552,13 +2556,15 @@ export interface Routes<Table extends AnyTable> {
 	) => ReturnType<Table['buildRaiseStatement']>;
 	readonly raiseStatement$primary$string: <
 		const V extends OmitEach<ArgsOf<Table['buildRaiseStatement']>[0], 'expressions'> & {
-			expressions: ArgsOf<Table['buildString']>;
+			expressions: ArgsOf<Routes<Table>['string']>;
 		}
 	>(
 		config: V &
 			RefuseUndeclared<
 				V,
-				OmitEach<ArgsOf<Table['buildRaiseStatement']>[0], 'expressions'> & { expressions: ArgsOf<Table['buildString']> }
+				OmitEach<ArgsOf<Table['buildRaiseStatement']>[0], 'expressions'> & {
+					expressions: ArgsOf<Routes<Table>['string']>;
+				}
 			>,
 		options?: OptionsArg<Table['buildRaiseStatement']>
 	) => ReturnType<Table['buildRaiseStatement']>;
@@ -2856,7 +2862,7 @@ export interface Routes<Table extends AnyTable> {
 	readonly type$primary$await: Seat<ArgsOf<Table['buildAwait']>, ReturnType<typeof F.buildType>>;
 	readonly type$primary$binary: Seat<ArgsOf<Table['buildBinaryOperator']>, ReturnType<typeof F.buildType>>;
 	readonly type$primary$identifier: Seat<ArgsOf<Table['buildIdentifier']>, ReturnType<typeof F.buildType>>;
-	readonly type$primary$string: Seat<ArgsOf<Table['buildString']>, ReturnType<typeof F.buildType>>;
+	readonly type$primary$string: Seat<ArgsOf<Routes<Table>['string']>, ReturnType<typeof F.buildType>>;
 	readonly type$primary$concatenatedString: Seat<
 		ArgsOf<Table['buildConcatenatedString']>,
 		ReturnType<typeof F.buildType>
@@ -3060,7 +3066,7 @@ export interface Ir<Table extends AnyTable> {
 	readonly ifClause: Table['buildIfClause'];
 	readonly conditionalExpression: Table['buildConditionalExpression'];
 	readonly concatenatedString: Table['buildConcatenatedString'];
-	readonly string: Table['buildString'];
+	readonly string: Routes<Table>['string'];
 	readonly stringContent: Table['buildStringContent'];
 	readonly interpolation: Table['buildInterpolation'];
 	readonly formatSpecifier: Table['buildFormatSpecifier'];
@@ -3155,10 +3161,8 @@ export interface Ir<Table extends AnyTable> {
 	readonly typeConversion: typeof F.buildTypeConversion;
 	readonly identifier: typeof F.buildIdentifier;
 	readonly formatSpecifierText: typeof F.buildFormatSpecifierText;
-	readonly stringStart: typeof F.buildStringStart;
 	readonly stringFragment: typeof F.buildStringFragment;
 	readonly escapeInterpolation: typeof F.buildEscapeInterpolation;
-	readonly stringEnd: typeof F.buildStringEnd;
 	readonly statement: {
 		readonly if: Table['buildIfStatement'];
 		readonly for: Table['buildForStatement'];
@@ -3219,6 +3223,7 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 			plain: printStatement$plain
 		} as const)
 	);
+	const string: Routes<Table>['string'] = $at('string$seated');
 	const subscript: Routes<Table>['subscript'] = $at('subscript$seated');
 	const comparisonOperator: Routes<Table>['comparisonOperator'] = $at('comparisonOperator$seated');
 	const namedExpression$identifier: Routes<Table>['namedExpression$identifier'] = K.namedExpression$identifier(
@@ -3379,7 +3384,7 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 	);
 	const keywordPattern$string: Routes<Table>['keywordPattern$string'] = K.keywordPattern$string(
 		$at('buildKeywordPattern'),
-		$at('buildString')
+		string
 	);
 	const keywordPattern$concatenatedString: Routes<Table>['keywordPattern$concatenatedString'] =
 		K.keywordPattern$concatenatedString($at('buildKeywordPattern'), $at('buildConcatenatedString'));
@@ -3508,7 +3513,7 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 	);
 	const simplePattern$string: Routes<Table>['simplePattern$string'] = K.simplePattern$string(
 		F.buildSimplePattern,
-		$at('buildString')
+		string
 	);
 	const simplePattern$concatenatedString: Routes<Table>['simplePattern$concatenatedString'] =
 		K.simplePattern$concatenatedString(F.buildSimplePattern, $at('buildConcatenatedString'));
@@ -3826,7 +3831,7 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 	);
 	const keyValuePattern$string: Routes<Table>['keyValuePattern$string'] = K.keyValuePattern$string(
 		$at('buildKeyValuePattern'),
-		$at('buildString')
+		string
 	);
 	const keyValuePattern$concatenatedString: Routes<Table>['keyValuePattern$concatenatedString'] =
 		K.keyValuePattern$concatenatedString($at('buildKeyValuePattern'), $at('buildConcatenatedString'));
@@ -3937,7 +3942,7 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 		await: $at('buildAwait'),
 		binary: $at('buildBinaryOperator'),
 		identifier: F.buildIdentifier,
-		string: $at('buildString'),
+		string: string,
 		concatenatedString: $at('buildConcatenatedString'),
 		integer: integer,
 		float: float,
@@ -5363,7 +5368,7 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 		ifClause: $at('buildIfClause'),
 		conditionalExpression: $at('buildConditionalExpression'),
 		concatenatedString: $at('buildConcatenatedString'),
-		string: $at('buildString'),
+		string: string,
 		stringContent: $at('buildStringContent'),
 		interpolation: $at('buildInterpolation'),
 		formatSpecifier: $at('buildFormatSpecifier'),
@@ -5458,10 +5463,8 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 		typeConversion: F.buildTypeConversion,
 		identifier: F.buildIdentifier,
 		formatSpecifierText: F.buildFormatSpecifierText,
-		stringStart: F.buildStringStart,
 		stringFragment: F.buildStringFragment,
 		escapeInterpolation: F.buildEscapeInterpolation,
-		stringEnd: F.buildStringEnd,
 		statement: Object.freeze({
 			if: $at('buildIfStatement'),
 			for: $at('buildForStatement'),

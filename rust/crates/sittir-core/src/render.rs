@@ -17,6 +17,8 @@ pub enum RenderError {
     /// A built list's item at this position, past the last index an
     /// `ItemIndex` holds.
     ItemIndex(usize),
+    /// No delimiter a composite derives fits its content.
+    Delimiter(crate::delimiters::DelimiterRefusal),
 }
 
 impl fmt::Display for RenderError {
@@ -25,6 +27,7 @@ impl fmt::Display for RenderError {
             Self::Fmt(e) => fmt::Display::fmt(e, f),
             Self::Coordinate(e) => fmt::Display::fmt(e, f),
             Self::ItemIndex(at) => write!(f, "list item {at} is past the last item index a u32 holds"),
+            Self::Delimiter(refusal) => fmt::Display::fmt(refusal, f),
         }
     }
 }
@@ -371,7 +374,7 @@ pub trait RenderSink {
     /// The frames a coordinate's bytes render between, from the tree table
     /// this writer holds (`SourceTable::frames`), each prepared as a slot's
     /// trivia is; a sink with no table answers none.
-    fn frames(&self, coord: &crate::slot::NodeCoordinate) -> Result<crate::trivia::Frames, CoordinateError> {
+    fn frames(&self, coord: &crate::slot::NodeCoordinate) -> Result<crate::trivia::Frames, RenderError> {
         let _ = coord;
         Ok(crate::trivia::Frames::default())
     }

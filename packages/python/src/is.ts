@@ -732,6 +732,12 @@ export interface IsGuards {
 	typeParamParamSpec<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.TypeParamParamSpec };
+	stringStart<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.StringStart };
+	stringEnd<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.StringEnd };
 	constructorDeclaration<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ConstructorDeclaration };
@@ -1197,18 +1203,12 @@ export interface IsGuards {
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.FormatSpecifierText };
 	wildcardPattern<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, TSKindId.WildcardPattern>;
-	stringStart<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.StringStart };
 	stringFragment<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.StringFragment };
 	escapeInterpolation<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.EscapeInterpolation };
-	stringEnd<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.StringEnd };
 	indent<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, TSKindId.Indent>;
 	dedent<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, TSKindId.Dedent>;
 	newline<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, TSKindId.Newline>;
@@ -1489,6 +1489,8 @@ export function guardsWith(test: KindTest): IsGuards {
 	const _kind_PrintChevronArguments_guard = _g(TSKindId.PrintChevronArguments);
 	const _kind_ComprehensionClauses_guard = _g(TSKindId.ComprehensionClauses);
 	const _kind_ComparisonOperatorComparator_guard = _g(TSKindId.ComparisonOperatorComparator);
+	const _kind_StringStart_guard = _g(TSKindId.StringStart);
+	const _kind_StringEnd_guard = _g(TSKindId.StringEnd);
 	const _kind_ConstructorDeclaration_guard = _g(TSKindId.ConstructorDeclaration);
 	const _kind_BlockClassDeclaration_guard = _g(TSKindId.BlockClassDeclaration);
 	const _kind_SuiteBlockClassDeclaration_guard = _g(TSKindId.SuiteBlockClassDeclaration);
@@ -1501,10 +1503,8 @@ export function guardsWith(test: KindTest): IsGuards {
 	const _kind_NotEscapeSequence_guard = _mg(TSKindId.NotEscapeSequence);
 	const _kind_TypeConversion_guard = _g(TSKindId.TypeConversion);
 	const _kind_FormatSpecifierText_guard = _g(TSKindId.FormatSpecifierText);
-	const _kind_StringStart_guard = _g(TSKindId.StringStart);
 	const _kind_StringFragment_guard = _g(TSKindId.StringFragment);
 	const _kind_EscapeInterpolation_guard = _g(TSKindId.EscapeInterpolation);
-	const _kind_StringEnd_guard = _g(TSKindId.StringEnd);
 	const _kind_Indent_guard = _mg(TSKindId.Indent);
 	const _kind_Dedent_guard = _mg(TSKindId.Dedent);
 	const _kind_Newline_guard = _mg(TSKindId.Newline);
@@ -1893,6 +1893,8 @@ export function guardsWith(test: KindTest): IsGuards {
 		typeParamTypeVar: _kind_TypeParamTypeVar_guard,
 		typeParamTypeVarTuple: _kind_TypeParamTypeVarTuple_guard,
 		typeParamParamSpec: _kind_TypeParamParamSpec_guard,
+		stringStart: _kind_StringStart_guard,
+		stringEnd: _kind_StringEnd_guard,
 		constructorDeclaration: _kind_ConstructorDeclaration_guard,
 		blockClassDeclaration: _kind_BlockClassDeclaration_guard,
 		suiteBlockClassDeclaration: _kind_SuiteBlockClassDeclaration_guard,
@@ -1936,10 +1938,8 @@ export function guardsWith(test: KindTest): IsGuards {
 		keywordSeparator: _kind_KeywordSeparator_guard,
 		formatSpecifierText: _kind_FormatSpecifierText_guard,
 		wildcardPattern: _kind_WildcardPattern_guard,
-		stringStart: _kind_StringStart_guard,
 		stringFragment: _kind_StringFragment_guard,
 		escapeInterpolation: _kind_EscapeInterpolation_guard,
-		stringEnd: _kind_StringEnd_guard,
 		indent: _kind_Indent_guard,
 		dedent: _kind_Dedent_guard,
 		newline: _kind_Newline_guard

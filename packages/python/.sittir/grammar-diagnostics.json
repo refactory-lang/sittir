@@ -556,14 +556,5 @@
       "form": "rule",
       "name": "comprehension_clauses"
     }
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-kind-armless",
-    "severity": "warning",
-    "canProceed": true,
-    "ownerKind": "string",
-    "message": "literal.string: string reads as a vocabulary path, but no arm builds it (nothing fills string.string_end, string.string_start), so every read carries it"
   }
 ]

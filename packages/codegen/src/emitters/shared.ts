@@ -12,6 +12,7 @@ import {
 	suppliesNoContent,
 	isBuilderlessPunctuationLeaf,
 	isHiddenPresenceMarker,
+	isDelimiterToken,
 	storageKindIdByNameOf
 } from '../compiler/model/node-map.ts';
 import type {
@@ -878,7 +879,7 @@ export function scalarLeafKinds(nodeMap: NodeMap): ScalarLeafKinds {
 }
 
 export function lexedContentSlot(node: AssembledNode): AssembledNonterminal | undefined {
-	if (!(node instanceof AssembledLexedPattern)) return undefined;
+	if (!(node instanceof AssembledLexedPattern) || isDelimiterToken(node)) return undefined;
 	const text = node.slots.filter((slot) => slot.values.every(isPatternValue));
 	return text.length === 1 && isRequired(text[0]!) ? text[0] : undefined;
 }
@@ -1226,11 +1227,13 @@ export type FromEmission =
 	| 'emit'
 	| Exclude<ParserSymbolEmission, 'emit'>
 	| 'skip-hidden-kind'
+	| 'skip-delimiter-token'
 	| 'skip-no-raw-factory'
 	| 'skip-no-from-surface';
 
 export function classifyFromEmission(kind: string, node: AssembledNode, context: FromDispatchContext): FromEmission {
 	if (node.surfaceHidden && !node.userFacing) return 'skip-hidden-kind';
+	if (isDelimiterToken(node)) return 'skip-delimiter-token';
 	if (classifyFactoryEmission(kind, node, context) !== 'emit') return 'skip-no-raw-factory';
 	const parserSymbolEmission = classifyParserSymbolEmission(kind, { kindEntries: context.kindEntries });
 	if (parserSymbolEmission !== 'emit') return parserSymbolEmission;

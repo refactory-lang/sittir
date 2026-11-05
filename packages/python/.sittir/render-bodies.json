@@ -3829,7 +3829,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "prefix"
+			"name": "dots"
 		},
 		{
 			"kind": "if",
@@ -4162,6 +4162,42 @@
 		{
 			"kind": "slot",
 			"name": "elements"
+		}
+	],
+	"string_end": [
+		{
+			"kind": "slot",
+			"name": "content"
+		},
+		{
+			"kind": "adjacent"
+		},
+		{
+			"kind": "slot",
+			"name": "quote"
+		}
+	],
+	"string_start": [
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "prefix",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "prefix"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "adjacent"
+		},
+		{
+			"kind": "slot",
+			"name": "quote"
 		}
 	],
 	"subjects": [

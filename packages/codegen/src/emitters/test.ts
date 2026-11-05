@@ -3,7 +3,7 @@ import type { NodeMap } from '../compiler/types.ts';
 import { samplePattern } from '../types/runtime-shapes.ts';
 import { SEQ, SYMBOL } from '../types/rule-types.ts'; // @rule-type-consts
 import { patternDfa, shortestAccepted } from '../compiler/model/pattern-automaton.ts';
-import { isFixedTextLeaf, isPatternValue } from '../compiler/model/node-map.ts';
+import { isDelimiterToken, isFixedTextLeaf, isPatternValue } from '../compiler/model/node-map.ts';
 import { isBuilderTextLeaf } from '../compiler/model/node-map.ts';
 import type { AssembledNode, AssembledNonterminal } from '../compiler/model/node-map.ts';
 import {
@@ -248,9 +248,7 @@ function factoryCallArgs(
 	const typeConfigParts: string[] = [];
 	for (const f of node.slots) {
 		if (registeredSet.has(f)) continue;
-		if (isRequired(f)) {
-			typeConfigParts.push(`${f.propertyName}: ${dummyValue(f, nodeMap, kindEntries, strict)}`);
-		}
+		if (isRequired(f)) typeConfigParts.push(...fieldDummyParts(f, nodeMap, kindEntries, strict));
 	}
 	const renderConfigParts = [...typeConfigParts];
 
@@ -390,7 +388,13 @@ function requiredFieldParts(
 	nodeMap: NodeMap,
 	kindEntries: readonly KindEnumEntry[]
 ): string[] {
-	return slots.filter(isRequired).map((f) => `${f.propertyName}: ${dummyValue(f, nodeMap, kindEntries)}`);
+	return slots.filter(isRequired).flatMap((f) => fieldDummyParts(f, nodeMap, kindEntries));
+}
+
+function fieldDummyParts(f: AssembledNonterminal, nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[], strict = false): string[] {
+	const token = f.values.filter(isNodeRef).map((value) => nodeMap.nodes.get(storageKindOfRef(value.node))).find(isDelimiterToken);
+	if (token === undefined) return [`${f.propertyName}: ${dummyValue(f, nodeMap, kindEntries, strict)}`];
+	return token.configSlots.filter(isRequired).map((facet) => `${facet.propertyName}: ${dummyValue(facet, nodeMap, kindEntries, strict)}`);
 }
 
 function objectLiteralInner(text: string): string | undefined {

@@ -10,7 +10,7 @@ export const records = {
 	SimpleStatementsNode: { words: 7, elements: { word: 2, width: 5 } },
 	ImportStatementNode: { words: 7, names: { word: 2, width: 5 } },
 	ImportPrefixNode: { words: 2 },
-	RelativeImportNode: { words: 12, prefix: { word: 2, width: 5 }, name: { word: 7, width: 5 } },
+	RelativeImportNode: { words: 12, dots: { word: 2, width: 5 }, name: { word: 7, width: 5 } },
 	FutureImportStatementNode: { words: 7, content: { word: 2, width: 5 } },
 	ImportFromStatementNode: { words: 12, module_name: { word: 2, width: 5 }, content: { word: 7, width: 5 } },
 	ImportListNode: { words: 4, name: { word: 2, width: 2, run: 5 } },
@@ -222,7 +222,7 @@ export const records = {
 	TypeConversionNode: { words: 2 },
 	IdentifierNode: { words: 2 },
 	AwaitNode: { words: 7, expression: { word: 2, width: 5 } },
-	CommentNode: { words: 6, content: { word: 2, width: 4 } },
+	CommentNode: { words: 10, content: { word: 2, width: 4 }, verbatim: { word: 6, width: 4 } },
 	SimpleStatementsElementsNode: { words: 4, item: { word: 2, width: 2, run: 5 } },
 	SubjectsNode: { words: 4, elements: { word: 2, width: 2, run: 5 } },
 	WithClauseWithItemsNode: { words: 4, item: { word: 2, width: 2, run: 5 } },
@@ -248,45 +248,63 @@ export const records = {
 	PrintStatementPlainNode: { words: 7, arguments: { word: 2, width: 5 } },
 	ParenthesizedImportListNode: { words: 7, import_list: { word: 2, width: 5 } },
 	ComprehensionClausesNode: { words: 4, content: { word: 2, width: 2, run: 5 } },
-	IntegerHexNode: { words: 10, radix_prefix: { word: 2, width: 4 }, content: { word: 6, width: 4 } },
-	IntegerOctalNode: { words: 10, radix_prefix: { word: 2, width: 4 }, content: { word: 6, width: 4 } },
-	IntegerBinaryNode: { words: 10, radix_prefix: { word: 2, width: 4 }, content: { word: 6, width: 4 } },
+	IntegerHexNode: {
+		words: 14,
+		radix_prefix: { word: 2, width: 4 },
+		content: { word: 6, width: 4 },
+		verbatim: { word: 10, width: 4 }
+	},
+	IntegerOctalNode: {
+		words: 14,
+		radix_prefix: { word: 2, width: 4 },
+		content: { word: 6, width: 4 },
+		verbatim: { word: 10, width: 4 }
+	},
+	IntegerBinaryNode: {
+		words: 14,
+		radix_prefix: { word: 2, width: 4 },
+		content: { word: 6, width: 4 },
+		verbatim: { word: 10, width: 4 }
+	},
 	IntegerDecimalLongNode: { words: 2 },
 	IntegerDecimalImaginaryNode: { words: 2 },
 	IntegerDecimalPlainNode: { words: 2 },
 	FloatPointNode: {
-		words: 26,
+		words: 30,
 		integer: { word: 2, width: 4 },
 		fraction: { word: 6, width: 4 },
 		marker: { word: 10, width: 4 },
 		exponent_sign: { word: 14, width: 4 },
 		exponent: { word: 18, width: 4 },
-		imaginary: { word: 22, width: 4 }
+		imaginary: { word: 22, width: 4 },
+		verbatim: { word: 26, width: 4 }
 	},
 	FloatLeadingPointNode: {
-		words: 26,
+		words: 30,
 		integer: { word: 2, width: 4 },
 		fraction: { word: 6, width: 4 },
 		marker: { word: 10, width: 4 },
 		exponent_sign: { word: 14, width: 4 },
 		exponent: { word: 18, width: 4 },
-		imaginary: { word: 22, width: 4 }
+		imaginary: { word: 22, width: 4 },
+		verbatim: { word: 26, width: 4 }
 	},
 	FloatScientificNode: {
-		words: 22,
+		words: 26,
 		integer: { word: 2, width: 4 },
 		marker: { word: 6, width: 4 },
 		exponent_sign: { word: 10, width: 4 },
 		exponent: { word: 14, width: 4 },
-		imaginary: { word: 18, width: 4 }
+		imaginary: { word: 18, width: 4 },
+		verbatim: { word: 22, width: 4 }
 	},
-	EscapeSequenceUnicodeFixedNode: { words: 6, content: { word: 2, width: 4 } },
-	EscapeSequenceUnicodeWideNode: { words: 6, content: { word: 2, width: 4 } },
-	EscapeSequenceHexNode: { words: 6, content: { word: 2, width: 4 } },
-	EscapeSequenceOctalNode: { words: 6, content: { word: 2, width: 4 } },
-	EscapeSequenceLineBreakNode: { words: 6, content: { word: 2, width: 4 } },
-	EscapeSequenceSimpleNode: { words: 6, content: { word: 2, width: 4 } },
-	EscapeSequenceNamedNode: { words: 6, content: { word: 2, width: 4 } },
+	EscapeSequenceUnicodeFixedNode: { words: 10, content: { word: 2, width: 4 }, verbatim: { word: 6, width: 4 } },
+	EscapeSequenceUnicodeWideNode: { words: 10, content: { word: 2, width: 4 }, verbatim: { word: 6, width: 4 } },
+	EscapeSequenceHexNode: { words: 10, content: { word: 2, width: 4 }, verbatim: { word: 6, width: 4 } },
+	EscapeSequenceOctalNode: { words: 10, content: { word: 2, width: 4 }, verbatim: { word: 6, width: 4 } },
+	EscapeSequenceLineBreakNode: { words: 10, content: { word: 2, width: 4 }, verbatim: { word: 6, width: 4 } },
+	EscapeSequenceSimpleNode: { words: 10, content: { word: 2, width: 4 }, verbatim: { word: 6, width: 4 } },
+	EscapeSequenceNamedNode: { words: 10, content: { word: 2, width: 4 }, verbatim: { word: 6, width: 4 } },
 	LineContinuationNewlineNode: { words: 2 },
 	SimplePatternNegativeNode: { words: 7, value: { word: 2, width: 5 } },
 	ExceptClauseExceptionListNode: { words: 4, value: { word: 2, width: 2, run: 5 } },
@@ -316,10 +334,20 @@ export const records = {
 	TypeParamTypeVarNode: { words: 12, name: { word: 2, width: 5 }, bounds: { word: 7, width: 5 } },
 	TypeParamTypeVarTupleNode: { words: 7, name: { word: 2, width: 5 } },
 	TypeParamParamSpecNode: { words: 7, name: { word: 2, width: 5 } },
-	StringStartNode: { words: 2 },
+	StringStartNode: {
+		words: 14,
+		prefix: { word: 2, width: 4 },
+		quote: { word: 6, width: 4 },
+		verbatim: { word: 10, width: 4 }
+	},
 	StringFragmentNode: { words: 2 },
 	EscapeInterpolationNode: { words: 2 },
-	StringEndNode: { words: 2 },
+	StringEndNode: {
+		words: 14,
+		content: { word: 2, width: 4 },
+		quote: { word: 6, width: 4 },
+		verbatim: { word: 10, width: 4 }
+	},
 	ConstructorDeclarationNode: {
 		words: 23,
 		async_: { word: 2, bit: 0 },

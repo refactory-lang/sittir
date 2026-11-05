@@ -13,8 +13,8 @@ it('keeps both physical Python lambda factories in the from validation universe'
 	ordinary.mockRestore();
 	restricted.mockRestore();
 	expect(result.errors).toEqual([]);
-	expect(result.total).toBe(187);
-	expect(result.pass).toBe(187);
+	expect(result.total).toBe(185);
+	expect(result.pass).toBe(185);
 	expect(result.excluded.filter((entry) => entry.kind === 'lambda_expression')).toEqual([]);
 }, 120000);
 

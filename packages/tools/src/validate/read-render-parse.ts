@@ -59,7 +59,9 @@ import {
 	type ValidatorSkip,
 	loadNativeEngine,
 	loadNativeRender,
-	kindViewOf
+	kindViewOf,
+	sameSpelledMeaning,
+	type DelimiterSpelling
 } from './common.ts';
 import { deriveReparseHosts } from './reparse-derive.ts';
 import { requireGrammarModule } from '../grammar-internals.ts';
@@ -215,6 +217,8 @@ function extrasDiff(a: TSNode, b: TSNode): string | null {
 export interface AstTolerance {
 	readonly listSeparators: Readonly<Record<string, readonly string[]>>;
 	readonly tolerated: string[];
+	readonly delimiters?: Readonly<Record<string, DelimiterSpelling>>;
+	readonly normalized?: string[];
 }
 
 export function astStructuralDiff(
@@ -241,6 +245,11 @@ function structuralDiff(
 		return `${path || 'root'}: grammar type ${a.grammarType} ≠ ${b.grammarType}`;
 	}
 	if (a.isNamed && a.childCount === 0 && b.childCount === 0 && a.text !== b.text) {
+		const delimiter = tolerance?.delimiters?.[a.type];
+		if (delimiter !== undefined && sameSpelledMeaning(a.text, b.text, a.type, delimiter)) {
+			tolerance?.normalized?.push(`${path || a.type}: spelling ${JSON.stringify(a.text)} ≠ ${JSON.stringify(b.text)}`);
+			return null;
+		}
 		return `${path || a.type}: text ${JSON.stringify(a.text)} ≠ ${JSON.stringify(b.text)}`;
 	}
 	const aChildren = collectVisibleChildren(a);
@@ -916,6 +925,7 @@ export async function validateReadRenderParse(
 	const view = kindViewOf(nativeEngine);
 	// The kinds the renderer can handle are those with an emitted body.
 	const ruleKinds = deriveRuleKinds(grammar);
+	const { delimiterTokens } = await loadNodeModel(grammar);
 
 	const readNode = await readNodeOf(grammar).catch((e: unknown) => new Error(`[validate-read-render-parse] ${(e as Error).message}`));
 	if (readNode instanceof Error)
@@ -1002,7 +1012,7 @@ export async function validateReadRenderParse(
 						// template filenames carry canonical spellings, so hidden minted
 						// kinds (whose display name differs) are admitted and probed
 						// against their own templates rather than silently skipped.
-						if (sourceKind === undefined || !ruleKinds.has(sourceKind)) return;
+						if (sourceKind === undefined || !ruleKinds.has(sourceKind) || delimiterTokens.has(sourceKind)) return;
 						const span = spanOf(w);
 						if (span == null) return;
 						const dedup = `${sourceKind}@${span.start}:${span.end}`;

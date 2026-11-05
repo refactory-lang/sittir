@@ -3,6 +3,9 @@ import type { Rule } from '../types/rule.ts';
 import { makeRuleMetadata } from '../dsl/rule-metadata.ts';
 import { composeTokenText, isBlank, optionalContentOf, withOptionalContent } from '../dsl/rule-patterns.ts';
 import type { DiagnosticSink } from '../types/diagnostics.ts';
+import { createRuleId } from './rule-catalog.ts';
+import type { RulePathSegment } from './types.ts';
+import type { SpellingFields, SpellingGroup } from '../dsl/primitives/spellings.ts';
 
 type LinkRule = Rule<'link'>;
 
@@ -207,7 +210,8 @@ function structureSeq(
 	const classes = members.map(memberClass);
 	const patternSlot = members.some((m, i) => (classes[i] === 'slot' || classes[i] === 'group') && containsPattern(m));
 	const enumIsContent = isSoleEnumContent(classes.map((c) => (c === 'slot' || c === 'group' ? 'content' : c === 'enum' ? 'enum' : 'literal')));
-	if (!patternSlot && !enumIsContent) return undefined;
+	const namedOnly = members.some(isField) && members.every((m) => m.type === STRING || isField(m));
+	if (!patternSlot && !enumIsContent && !namedOnly) return undefined;
 	if (!containsField(seq) && !classes.some((c) => c === 'template' || c === 'flag' || c === 'enum' || c === 'group')) return undefined;
 	const slotCount = classes.filter(
 		(c, i) => c === 'slot' && !isField(members[i]!) && (classes[i - 1] !== 'slot' || isField(members[i - 1]!))
@@ -223,6 +227,7 @@ function structureInterior(
 	diagnostics: DiagnosticSink
 ): LinkRule | undefined {
 	if (content.type === SEQ) return structureSeq(kind, content as LinkRule & { type: typeof SEQ }, lookup, diagnostics);
+	if (content.type === PATTERN) return structurePattern(kind, content as LinkRule & { type: typeof PATTERN }, [{ edge: 'content' }], diagnostics);
 	return undefined;
 }
 
@@ -288,14 +293,21 @@ function namedGroupParts(kind: string, source: string, diagnostics: DiagnosticSi
 	return parts;
 }
 
-function structurePattern(kind: string, rule: LinkRule & { type: typeof PATTERN }, diagnostics: DiagnosticSink): LinkRule | undefined {
+function structurePattern(
+	kind: string,
+	rule: LinkRule & { type: typeof PATTERN },
+	path: readonly RulePathSegment[],
+	diagnostics: DiagnosticSink
+): LinkRule | undefined {
 	const parts = namedGroupParts(kind, rule.value, diagnostics);
 	if (parts === undefined) return undefined;
-	const members: LinkRule[] = parts.map((part) =>
-		'lit' in part
-			? ({ type: STRING, value: part.lit } as LinkRule)
-			: fieldOf(part.group, { type: PATTERN, value: part.pattern } as LinkRule, rule.id)
-	);
+	const members: LinkRule[] = parts.map((part, index) => {
+		const id = rule.id === undefined ? undefined : createRuleId(kind, { path: [...path, { edge: 'members', index }] });
+		const ided = id === undefined ? {} : { id };
+		return 'lit' in part
+			? ({ type: STRING, value: part.lit, ...ided } as LinkRule)
+			: fieldOf(part.group, { type: PATTERN, value: part.pattern, ...ided } as LinkRule, id);
+	});
 	return { type: SEQ, members, lexed: true, ...(rule.id !== undefined ? { id: rule.id } : {}) } as unknown as LinkRule;
 }
 
@@ -303,12 +315,42 @@ export function structureTokenInterior(rules: Record<string, LinkRule>, diagnost
 	const lookup = (name: string): LinkRule | undefined => rules[name];
 	for (const [kind, rule] of Object.entries(rules)) {
 		if (rule.type === PATTERN) {
-			const structuredPattern = structurePattern(kind, rule, diagnostics);
+			const structuredPattern = structurePattern(kind, rule, [], diagnostics);
 			if (structuredPattern !== undefined) rules[kind] = structuredPattern;
 			continue;
 		}
 		if (rule.type !== TOKEN) continue;
 		const structured = structureInterior(kind, rule.content, lookup, diagnostics);
 		if (structured !== undefined) rules[kind] = { ...rule, content: structured } as LinkRule;
+	}
+}
+
+function spelledIn(kind: string, rule: LinkRule, fields: ReadonlyMap<string, readonly SpellingGroup[]>, groups: ReadonlyMap<string, SpellingGroup> | undefined): LinkRule {
+	if (rule.type === STRING && groups !== undefined) {
+		const group = groups.get(rule.value);
+		if (group === undefined) throw new Error(`token interior: '${kind}' spells '${rule.value}', which no spellings() member holds`);
+		return {
+			...rule,
+			canonical: group.member,
+			...(group.readOnly ? { readOnly: true } : {}),
+			...(group.singleLine ? { singleLine: true } : {}),
+			...(group.escape === undefined ? {} : { escape: group.escape })
+		} as LinkRule;
+	}
+	const inner = rule.type === FIELD ? spellingIndex(fields.get(rule.name)) ?? groups : groups;
+	if ('members' in rule && Array.isArray(rule.members)) return { ...rule, members: rule.members.map((member: LinkRule) => spelledIn(kind, member, fields, inner)) } as LinkRule;
+	if ('content' in rule && rule.content !== undefined) return { ...rule, content: spelledIn(kind, rule.content as LinkRule, fields, inner) } as LinkRule;
+	return rule;
+}
+
+function spellingIndex(groups: readonly SpellingGroup[] | undefined): ReadonlyMap<string, SpellingGroup> | undefined {
+	return groups === undefined ? undefined : new Map(groups.flatMap((group) => group.spellings.map((spelling): [string, SpellingGroup] => [spelling, group])));
+}
+
+export function stampSpellings(rules: Record<string, LinkRule>, spellings: SpellingFields | undefined): void {
+	for (const [kind, fields] of spellings ?? []) {
+		const rule = rules[kind];
+		if (rule === undefined) throw new Error(`token interior: spellings() names '${kind}', which has no rule`);
+		rules[kind] = spelledIn(kind, rule, fields, undefined);
 	}
 }

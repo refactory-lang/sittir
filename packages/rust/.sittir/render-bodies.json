@@ -5705,6 +5705,39 @@
 			"field": "raw_string_literal_after"
 		}
 	],
+	"raw_string_literal_end": [
+		{
+			"kind": "text",
+			"text": "\""
+		},
+		{
+			"kind": "adjacent"
+		},
+		{
+			"kind": "slot",
+			"name": "hashes"
+		}
+	],
+	"raw_string_literal_start": [
+		{
+			"kind": "slot",
+			"name": "prefix"
+		},
+		{
+			"kind": "adjacent"
+		},
+		{
+			"kind": "slot",
+			"name": "hashes"
+		},
+		{
+			"kind": "adjacent"
+		},
+		{
+			"kind": "text",
+			"text": "\""
+		}
+	],
 	"receiver_parameter_declaration": [
 		{
 			"kind": "seam",

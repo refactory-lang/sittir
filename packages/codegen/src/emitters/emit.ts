@@ -104,6 +104,9 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 		(spaced) => stampStaticSpacing(nodeMap, grammar, spaced, kindEntries)
 	);
 
+	const renderRules = resolvedRules.seamed;
+	const sitePreferences = collectSitePreferences({ nodeMap, kindEntries, renderRules, options: optionsBlock });
+
 	const factoryEmitter = new FactoryEmitter({
 		grammar,
 		nodeMap,
@@ -130,8 +133,6 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 		rootKind
 	});
 
-	const renderRules = resolvedRules.seamed;
-	const sitePreferences = collectSitePreferences({ nodeMap, kindEntries, renderRules, options: optionsBlock });
 	const addressTables = addressTablesFor(nodeMap, kindEntries, sitePreferences, optionsBlock);
 	const templateEmitter = new TemplateEmitter({ grammar, nodeMap, renderRules, kindEntries, diagnostics });
 

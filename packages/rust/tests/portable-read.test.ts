@@ -60,12 +60,16 @@ describe('the portable read', () => {
 	});
 
 	it('reads a value no path claims as its node, which builds back as it is', () => {
-		const statement = statementsOf('r"x";')[0];
-		if (statement === undefined || !runtime.engine.is.expressionStatement(statement)) throw new Error('expected an expression statement');
-		const content = statement.content();
-		if (!runtime.engine.is.expressionStatementWithSemi(content)) throw new Error('expected a statement with its semicolon');
-		expect((runtime.read(statement) as Read).content).toBe(content.expression());
+		const statement = statementsOf('impl !Send for S {}')[0]!;
+		expect((runtime.read(statement) as Read).traitClause).toBe((statement as unknown as { traitClause(): unknown }).traitClause());
+		expect(roundTrip('impl !Send for S {}')).toBe('impl !Send for S {}\n');
+	});
+
+	it('reads a raw string as its path with its content, and builds it back with the shortest hash run its content fits', () => {
+		expect(readFirst('r"x";')).toEqual({ $path: 'statement.expression', content: { $path: 'literal.string.raw', content: 'x' } });
 		expect(roundTrip('r"x";')).toBe('r"x";\n');
+		expect(roundTrip('r##"x"##;')).toBe('r"x";\n');
+		expect(roundTrip('r#"a"b"#;')).toBe('r#"a"b"#;\n');
 	});
 
 	it('reads an empty list as an empty list, so its form builds back', () => {

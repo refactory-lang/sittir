@@ -1519,7 +1519,8 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 				| V.Literal.String.Multiline<G>
 				| V.Literal.String.Raw.Any<G>
 				| V.Literal.String.Bytes.Any<G>
-				| V.Literal.String.Interpolated.Any<G>;
+				| V.Literal.String.Interpolated.Any<G>
+				| V.Literal.String.Unicode<G>;
 			readonly inClauses:
 				| G['expression']
 				| G['identifier']

@@ -17,6 +17,8 @@ import {
 	isNonEmpty,
 	valueParseKindsOf,
 	storageKindOfRef,
+	delimiterPreferenceOf,
+	type DelimiterFacetRole,
 	AssembledList
 } from '../compiler/model/node-map.ts';
 import { buildFactoryMap } from './factory-map.ts';
@@ -45,6 +47,8 @@ interface SerializedValue {
 	parseKind?: string;
 	unresolved?: boolean;
 	value?: string;
+	canonical?: string;
+	readOnly?: true;
 	seat?: Seat;
 	default?: true;
 }
@@ -59,6 +63,7 @@ interface SerializedSlot {
 	blank?: true;
 	optionDefault?: number | string;
 	separator?: { default?: number };
+	delimiterRole?: DelimiterFacetRole;
 	values: SerializedValue[];
 }
 
@@ -90,6 +95,8 @@ interface SerializedCompoundNode extends SerializedNodeBase {
 	slots: SerializedSlot[];
 	fullForm?: FullForm;
 	interiorPart?: string;
+	delimiterOf?: string;
+	preference?: { readonly name: string; readonly slot: string; readonly open: string; readonly default: string };
 }
 
 interface SerializedLeaf extends SerializedNodeBase {
@@ -333,6 +340,9 @@ function serializeCompoundNode(
 		slots: node.slots.map((slot) => serializeSlot(node, slot, nodeMap, wires, factorySlots))
 	};
 	if (node.fullForm !== undefined) out.fullForm = node.fullForm;
+	if (node.delimiterOf !== undefined) out.delimiterOf = node.delimiterOf;
+	const preference = delimiterPreferenceOf(node);
+	if (preference !== undefined) out.preference = { name: preference.facet.propertyName, slot: preference.facet.name, open: preference.open.name, default: preference.facet.optionDefaultArm! };
 	const parts = interiorOf(node)?.slots ?? [];
 	if (parts.length === 1 && parts[0]!.flag !== true) out.interiorPart = parts[0]!.name;
 	return out;
@@ -356,6 +366,7 @@ function serializeSlot(
 		...(meta?.blank === true ? { blank: true } : {}),
 		...(meta?.optionDefault === undefined ? {} : { optionDefault: meta.optionDefault }),
 		...(meta?.separator === undefined ? {} : { separator: meta.separator }),
+		...(slot.delimiterRole === undefined ? {} : { delimiterRole: slot.delimiterRole }),
 		values: slot.values.map((v) =>
 			serializeValue(v, spelledSeat(parent.kind, seatOf(parent, slot, v, nodeMap, wires.byKind.get(parent.kind)), wires))
 		)
@@ -382,6 +393,8 @@ function serializeValue(v: NodeOrTerminal, seat: Seat | undefined): SerializedVa
 		multiplicity: v.multiplicity,
 		value: v.value
 	};
+	if (v.canonical !== undefined && v.canonical !== v.value) out.canonical = v.canonical;
+	if (v.readOnly === true) out.readOnly = true;
 	if (v.parseKind?.name !== undefined) out.parseKind = v.parseKind.name;
 	return out;
 }

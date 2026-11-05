@@ -74,27 +74,22 @@ export function rebuildKeywordOpenersPythonLoose() {
 			name: "u",
 			value: py.build.dictionary(py.build.pair({
 				key: py.build.string({
-					stringStart: "\"",
 					contents: [py.build.stringContent("k")],
-					stringEnd: "\"",
 				}),
 				value: py.build.parenthesizedExpression("1"),
 			}), py.build.pair({
 				key: py.build.string({
-					stringStart: "\"",
 					contents: [py.build.stringContent("j")],
-					stringEnd: "\"",
 				}),
 				value: py.build.list("2"),
 			})),
 		})), py.build.simpleStatements(py.build.assignmentEq({
 			name: "s",
 			value: py.build.string({
-				stringStart: "f\"",
+				prefix: "f",
 				contents: [py.build.stringContent("a"), py.build.interpolation({
 					expression: py.build.parenthesizedExpression("x"),
 				})],
-				stringEnd: "\"",
 			}),
 		})), py.build.simpleStatements(py.build.returnStatement(py.build.tuple("a", "b")))),
 	}));

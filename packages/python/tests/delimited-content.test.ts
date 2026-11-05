@@ -1,47 +1,85 @@
 import { describe, expect, it } from 'vitest';
 import python from '../src/index.ts';
 import { createEngine } from '@sittir/common';
-import { buildString, buildStringContent, buildStringEnd, buildStringFragment, buildStringStart } from '../src/factories/raw.ts';
 
 const py = await createEngine(python);
 const b = py.build;
 
-const quoted = (start: string, content: string, end: string) =>
-	b.string({ stringStart: b.stringStart(start), contents: [b.stringContent(content)], stringEnd: b.stringEnd(end) });
+const rendered = (node: { $render(): unknown }): string => String(node.$render());
+const content = (text: string) => [b.stringContent(text)];
 
-describe('a string whose content or delimiters would not read back as one string', () => {
+describe('a built string takes the quote its content derives', () => {
 	it.each([
-		['the content ends the string and runs code', `"`, `x" + __import__('os').system('id') + "`, `"`],
-		['mismatched quotes', `"`, 'abc', `'`],
-		['a triple start closed by one quote', `'''`, 'x', `"`],
-		['a quote inside a single-quoted string', `'`, "it's", `'`],
-		['an interpolation smuggled into an f-string', `f'`, '{evil()}', `'`]
-	])('refuses %s', (_why, start, content, end) => {
-		expect(() => quoted(start, content, end)).toThrow(/string: content .* cannot sit between/);
+		['takes the preferred quote for content it fits', 'abc', '"abc"'],
+		['moves to the next quote when the preferred one occurs in the content', 'a"b', `'a"b'`],
+		['keeps an escaped quote inside the preferred one', 'a\\"b', '"a\\"b"'],
+		['takes a multi-line quote for a line break', 'a\nb', '"""a\nb"""'],
+		['keeps a single-line quote across an escaped line break', 'multiline \\\nstring', '"multiline \\\nstring"'],
+		['keeps content that would close any single quote inside a triple one', `x" + __import__('os').system('id') + "`, `'''x" + __import__('os').system('id') + "'''`]
+	])('%s', (_why, text, expected) => {
+		expect(rendered(b.string({ contents: content(text) }))).toBe(expected);
 	});
 
+	it('keeps the prefix on the string it builds', () => {
+		expect(rendered(b.string({ prefix: 'rb', contents: content('x') }))).toBe('rb"x"');
+		expect(rendered(b.string({ prefix: 'f', contents: content('a{{b}}') }))).toBe('f"a{{b}}"');
+	});
+
+	it('keeps a preferred quote while the content fits it, and falls back when it no longer does', () => {
+		const preferred = b.string({ contents: content('it') }, { quote: "'" });
+		expect(rendered(preferred)).toBe("'it'");
+		expect(rendered(b.string({ contents: content("it's") }, { quote: "'" }))).toBe(`"it's"`);
+		expect(rendered(preferred.$with.contents(...content('a"b')))).toBe(`'a"b'`);
+		expect(rendered(b.string({ contents: content('doc') }, { quote: '"""' }))).toBe('"""doc"""');
+	});
+
+	it('refuses content that ends in an unpaired backslash, naming the kind', () => {
+		expect(() => rendered(b.string({ contents: content('a\\') }))).toThrow(/string: no delimiter fits its content: it ends in an unpaired `\\`/);
+	});
+});
+
+type ReadString = { prefix(): string | undefined; contents(): readonly unknown[]; stringEnd(): { content(): string | undefined } };
+
+const readString = (source: string): ReadString =>
+	(py.parse(`${source}\n`) as unknown as { statements(): readonly { elements(): readonly { content(): ReadString }[] }[] }).statements()[0]!.elements()[0]!.content();
+
+const contentOf = (string: ReadString): string => string.contents().map(String).join('') + (string.stringEnd().content() ?? '');
+
+describe('a raw string whose content is only escape pairs reads the pairs as content and builds them back', () => {
 	it.each([
-		[`'`, 'abc', `'`],
-		[`"`, 'a b', `"`],
-		[`"""`, 'a"b', `"""`],
-		[`f'`, 'a{{b}}', `'`]
-	])('accepts %j %j %j', (start, content, end) => {
-		expect(quoted(start, content, end).$render()).toBe(`${start}${content}${end}`);
+		['r"\\\\"', 'r', 'r"\\\\"'],
+		['r"\\""', 'r', 'r"\\""'],
+		["r'\\''", 'r', `r"\\'"`],
+		['rb"\\\\"', 'rb', 'rb"\\\\"'],
+		['r"""\\\\"""', 'r', 'r"\\\\"'],
+		['r"\\\\\\\\"', 'r', 'r"\\\\\\\\"'],
+		['r"a\\\\"', 'r', 'r"a\\\\"']
+	] as const)('%s', (source, prefix, built) => {
+		expect(py.render(py.parse(`${source}\n`)).toString()).toBe(`${source}\n`);
+		const read = readString(source);
+		expect(read.prefix()).toBe(prefix);
+		const text = contentOf(read);
+		const out = rendered(b.string({ prefix, contents: content(text) }));
+		expect(out).toBe(built);
+		expect(readString(out).prefix()).toBe(prefix);
+		expect(contentOf(readString(out))).toBe(text);
+	});
+});
+
+describe('a quote carried from a read', () => {
+	const read = (source: string) => readString(source) as unknown as { readonly $with: { contents(...items: unknown[]): { $render(): unknown } } };
+
+	it('stays while the edited content fits it', () => {
+		expect(rendered(read("'a'").$with.contents(...content('b')))).toBe("'b'");
 	});
 
-	it('round-trips a string the parser read with a quote of the other kind inside', () => {
-		const read = py.parse(`x = 'a"b'\n`);
-		expect(py.render(read).toString()).toBe(`x = 'a"b'\n`);
+	it("falls back to the derivation when the edited content gains it", () => {
+		expect(rendered(read("'a'").$with.contents(...content("it's")))).toBe(`"it's"`);
 	});
+});
 
-	it('refuses a varying delimiter pair without an engine, whatever an engine confirmed before', () => {
-		const raw = (start: string, content: string, end: string) =>
-			buildString({
-				stringStart: buildStringStart(start),
-				contents: [buildStringContent(buildStringFragment(content))],
-				stringEnd: buildStringEnd(end)
-			});
-		quoted('"', 'abc', '"');
-		expect(() => raw('"', 'abc', '"')).toThrow(/its delimiters need an engine/);
+describe('a read string keeps the quote it was read with', () => {
+	it.each([`x = 'a"b'\n`, `x = """doc"""\n`, `x = rb'q'\n`, `x = f"a{b}"\n`, 'x = `a`\n', `x = r'a\\\\'\n`, `x = r'''a'''\n`])('round-trips %j', (source) => {
+		expect(py.render(py.parse(source)).toString()).toBe(source);
 	});
 });

@@ -14,10 +14,8 @@ import type {
 	RefusingConfig,
 	WidenSlots
 } from '@sittir/types';
-import type { DelimitedSpec } from '@sittir/common/utils';
 import {
 	currentHandle,
-	checkDelimited,
 	listSlotWith,
 	LIST_ITEMS,
 	LIST_READ,
@@ -53,6 +51,7 @@ import {
 	listStorage,
 	numberText,
 	orDefault,
+	preferredFacet,
 	rejectKeywordText,
 	strictBooleanStorage,
 	unaffixed
@@ -103,10 +102,8 @@ export const _leafRe_buildIntegerDecimalLong = /^(?:(?:(?:[0-9]+_?))+(?:[Ll]))$/
 export const _leafRe_buildIntegerDecimalImaginary = /^(?:(?:(?:[0-9]+_?))+(?:[jJ]))$/u;
 export const _leafRe_buildIntegerDecimalPlain = /^(?:(?:(?:[0-9]+_?))+)$/u;
 export const _leafRe_buildLineContinuationNewline = /^(?:\\(?:\r)?\n)$/u;
-export const _leafRe_buildStringStart = /^(?:(?:[a-zA-Z]*["'`]+))$/u;
 export const _leafRe_buildStringFragment = /^(?:(?:[\s\S]+))$/u;
 export const _leafRe_buildEscapeInterpolation = /^(?:(?:\{\{|\}\}))$/u;
-export const _leafRe_buildStringEnd = /^(?:(?:\\*["'`]+))$/u;
 export const _slotRe_buildComment_content = /^(?:(?:.*))$/u;
 export const _slotRe_buildIntegerHex_radix_prefix = /^(?:0x|0X)$/u;
 export const _slotRe_buildIntegerHex_content = /^(?:(?:(?:_?[A-Fa-f0-9]+))+(?:(?:[Ll]))?)$/u;
@@ -138,13 +135,11 @@ export const _slotRe_buildEscapeSequenceOctal_content = /^(?:(?:\d{1,3}))$/u;
 export const _slotRe_buildEscapeSequenceLineBreak_content = /^(?:(?:\r?\n))$/u;
 export const _slotRe_buildEscapeSequenceSimple_content = /^(?:(?:['"abfrntv\\]))$/u;
 export const _slotRe_buildEscapeSequenceNamed_content = /^(?:(?:N\{[^}]+\}))$/u;
-const _delimited_buildString: DelimitedSpec = {
-	kind: 'string',
-	id: TSKindId.String as const,
-	excluded: /[\u{a}\u{d}\u{22}\u{27}\u{5c}\u{60}\u{7b}\u{7d}\u{2028}-\u{2029}]/u,
-	host: '_ = ($r)',
-	nodeKinds: [TSKindId.Interpolation as const, TSKindId.EscapeSequence as const]
-};
+export const _slotRe_buildStringStart_prefix =
+	/^(?:rb|rB|Rb|RB|br|bR|Br|BR|rf|rF|Rf|RF|fr|fR|Fr|FR|rt|rT|Rt|RT|tr|tR|Tr|TR|ur|uR|Ur|UR|r|R|b|B|f|F|t|T|u|U)$/u;
+export const _slotRe_buildStringStart_quote = /^(?:"""|'''|"|'|`)$/u;
+export const _slotRe_buildStringEnd_content = /^(?:(?:(?:\\[\s\S])*))$/u;
+export const _slotRe_buildStringEnd_quote = _slotRe_buildStringStart_quote;
 
 export function buildModule(): T.EmptyModule;
 export function buildModule<A extends Admit<T.Statement[]>>(...children: A & RefuseUndeclared<A>): T.Module.Bound;
@@ -331,26 +326,26 @@ export function buildImportPrefix(text: string): T.ImportPrefix.Bound {
 }
 
 export function buildRelativeImport<
-	PrefixSlot extends T.RelativeImport.Config['prefix'],
+	DotsSlot extends T.RelativeImport.Config['dots'],
 	NameSlot extends T.RelativeImport.Config['name']
->(config: RefusingConfig<T.RelativeImport.Config, { prefix: PrefixSlot; name: NameSlot }>): T.RelativeImport.Bound;
+>(config: RefusingConfig<T.RelativeImport.Config, { dots: DotsSlot; name: NameSlot }>): T.RelativeImport.Bound;
 export function buildRelativeImport(config: T.RelativeImport.Config): T.RelativeImport.Bound {
 	currentHandle()?.admit(TSKindId.RelativeImport, [config]);
-	const _prefix = config.prefix;
+	const _dots = config.dots;
 	const _name = config.name;
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.RelativeImport as const,
 		$named: true as const,
-		_prefix,
+		_dots,
 		_name,
 		$with: {
-			prefix: (value: Admit<T.ImportPrefix>) =>
-				rebuilt(node, handle, () => buildRelativeImport({ ...config, prefix: value })),
+			dots: (value: Admit<T.ImportPrefix>) =>
+				rebuilt(node, handle, () => buildRelativeImport({ ...config, dots: value })),
 			name: (value?: Admit<T.DottedName>) =>
 				rebuilt(node, handle, () => buildRelativeImport({ ...config, name: value }))
 		},
-		prefix: () => hydrateStoredSlot(node, '_prefix'),
+		dots: () => hydrateStoredSlot(node, '_dots'),
 		name: () => hydrateStoredSlot(node, '_name'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -4519,16 +4514,22 @@ export function buildString<
 	ContentsSlot extends T.String.Config['contents'],
 	StringEndSlot extends T.String.Config['stringEnd']
 >(
-	config: RefusingConfig<
-		T.String.Config,
+	config?: RefusingConfig<
+		Partial<T.String.Config>,
 		{ stringStart: StringStartSlot; contents: ContentsSlot; stringEnd: StringEndSlot }
-	>
+	>,
+	options?: T.String.Options
 ): T.String.Bound;
-export function buildString(config: T.String.Config): T.String.Bound {
+export function buildString(config: Partial<T.String.Config> = {}, options?: T.String.Options): T.String.Bound {
 	currentHandle()?.admit(TSKindId.String, [config]);
-	const _string_start = config.stringStart;
+	const _string_start = preferredFacet(
+		orDefault(config.stringStart, () => buildStringStart()),
+		'quote',
+		options?.quote
+	);
 	const _content = listStorage<NonNullable<T.String['_content']>>(config.contents ?? []);
-	const _string_end = config.stringEnd;
+	const _string_end = orDefault(config.stringEnd, () => buildStringEnd());
+	const readGroup_stringStart = () => _string_start;
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.String as const,
@@ -4538,15 +4539,31 @@ export function buildString(config: T.String.Config): T.String.Bound {
 		_string_end,
 		$with: {
 			stringStart: (value: Admit<T.StringStart>) =>
-				rebuilt(node, handle, () => buildString({ ...config, stringStart: value })),
+				rebuilt(node, handle, () => buildString({ ...config, stringStart: value }, options)),
 			contents: (...values: Admit<(T.Interpolation | T.StringContent)[]>) =>
-				rebuilt(node, handle, () => buildString({ ...config, contents: restItems('contents', values) })),
+				rebuilt(node, handle, () => buildString({ ...config, contents: restItems('contents', values) }, options)),
 			stringEnd: (value: Admit<T.StringEnd>) =>
-				rebuilt(node, handle, () => buildString({ ...config, stringEnd: value }))
+				rebuilt(node, handle, () => buildString({ ...config, stringEnd: value }, options)),
+			prefix: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					seatWith(
+						{
+							slot: 'stringStart',
+							stored: '_string_start',
+							make: buildStringStart,
+							keys: [{ name: 'prefix', rest: false }]
+						},
+						'prefix',
+						args,
+						(value: Admit<T.StringStart>) => buildString({ ...config, stringStart: value }, options),
+						() => readGroup_stringStart.call(node)
+					)
+				)
 		},
 		stringStart: () => hydrateStoredSlot(node, '_string_start'),
 		contents: () => hydrateStoredSlots(node, '_content'),
 		stringEnd: () => hydrateStoredSlot(node, '_string_end'),
+		prefix: _string_start === undefined ? undefined : () => groupField(readGroup_stringStart.call(node), 'prefix'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),
@@ -4556,7 +4573,6 @@ export function buildString(config: T.String.Config): T.String.Bound {
 		},
 		$engine: handle && (() => handle.current)
 	};
-	checkDelimited(handle, node, _delimited_buildString, [_content], _string_start, _string_end);
 	return stampBuilt(node) as unknown as T.String.Bound;
 }
 
@@ -7823,16 +7839,37 @@ export function buildTypeParamParamSpec(value: Admit<T.Identifier>): T.TypeParam
 	return stampBuilt(node) as unknown as T.TypeParamParamSpec.Bound;
 }
 
-export function buildStringStart(text: string): T.StringStart.Bound {
-	if (typeof text !== 'string') throw new Error(`string_start: text must be a string: ${describeValue(text)}`);
-	if (text.length === 0) throw new Error(`string_start: text must be non-empty`);
-	if (!_leafRe_buildStringStart.test(text))
-		throw new Error(`string_start: text does not match pattern: ${describeValue(text)}`);
+export function buildStringStart<V extends Admit<'r' | 'b' | 'f' | 't' | 'u' | 'rb' | 'rf' | 'rt'>>(
+	...value: [value?: V, options?: T.StringStart.Options] & RefuseUndeclared<V>
+): T.StringStart.Bound;
+export function buildStringStart(
+	value?: Admit<'r' | 'b' | 'f' | 't' | 'u' | 'rb' | 'rf' | 'rt'>,
+	options?: T.StringStart.Options
+): T.StringStart.Bound {
+	const _prefix = value;
+	if (_prefix !== undefined && typeof _prefix !== 'string')
+		throw new Error(`string_start.prefix: text must be a string: ${describeValue(_prefix)}`);
+	if (_prefix !== undefined && !_slotRe_buildStringStart_prefix.test(_prefix))
+		throw new Error(`string_start.prefix: text does not match pattern: ${describeValue(_prefix)}`);
+	const _quote = options?.quote;
+	if (_quote !== undefined && typeof _quote !== 'string')
+		throw new Error(`string_start.quote: text must be a string: ${describeValue(_quote)}`);
+	if (_quote !== undefined && !_slotRe_buildStringStart_quote.test(_quote))
+		throw new Error(`string_start.quote: text does not match pattern: ${describeValue(_quote)}`);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.StringStart as const,
 		$named: true as const,
-		$text: () => text,
+		_prefix,
+		_quote,
+		$with: {
+			prefix: (value?: Admit<'r' | 'b' | 'f' | 't' | 'u' | 'rb' | 'rf' | 'rt'>) =>
+				rebuilt(node, handle, () => buildStringStart(value, options)),
+			quote: (spelling: '"' | "'" | '"""' | "'''") =>
+				rebuilt(node, handle, () => buildStringStart(value, { ...options, quote: spelling }))
+		},
+		prefix: () => hydrateStoredSlot(node, '_prefix'),
+		quote: () => hydrateStoredSlot(node, '_quote'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),
@@ -7889,16 +7926,35 @@ export function buildEscapeInterpolation(text: string): T.EscapeInterpolation.Bo
 	return stampBuilt(node) as unknown as T.EscapeInterpolation.Bound;
 }
 
-export function buildStringEnd(text: string): T.StringEnd.Bound {
-	if (typeof text !== 'string') throw new Error(`string_end: text must be a string: ${describeValue(text)}`);
-	if (text.length === 0) throw new Error(`string_end: text must be non-empty`);
-	if (!_leafRe_buildStringEnd.test(text))
-		throw new Error(`string_end: text does not match pattern: ${describeValue(text)}`);
+export function buildStringEnd(
+	config: Partial<T.StringEnd.Config> = {},
+	options?: T.StringEnd.Options
+): T.StringEnd.Bound {
+	currentHandle()?.admit(TSKindId.StringEnd, [config]);
+	const _content = options?.content;
+	if (_content !== undefined && typeof _content !== 'string')
+		throw new Error(`string_end.content: text must be a string: ${describeValue(_content)}`);
+	if (_content !== undefined && !_slotRe_buildStringEnd_content.test(_content))
+		throw new Error(`string_end.content: text does not match pattern: ${describeValue(_content)}`);
+	const _quote = options?.quote;
+	if (_quote !== undefined && typeof _quote !== 'string')
+		throw new Error(`string_end.quote: text must be a string: ${describeValue(_quote)}`);
+	if (_quote !== undefined && !_slotRe_buildStringEnd_quote.test(_quote))
+		throw new Error(`string_end.quote: text does not match pattern: ${describeValue(_quote)}`);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.StringEnd as const,
 		$named: true as const,
-		$text: () => text,
+		_content,
+		_quote,
+		$with: {
+			content: (spelling: string) =>
+				rebuilt(node, handle, () => buildStringEnd(config, { ...options, content: spelling })),
+			quote: (spelling: '"' | "'" | '"""' | "'''") =>
+				rebuilt(node, handle, () => buildStringEnd(config, { ...options, quote: spelling }))
+		},
+		content: () => hydrateStoredSlot(node, '_content'),
+		quote: () => hydrateStoredSlot(node, '_quote'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),
@@ -8526,10 +8582,10 @@ export type FluentKindMap = {
 	type_param_type_var: T.TypeParamTypeVar.Bound;
 	type_param_type_var_tuple: T.TypeParamTypeVarTuple.Bound;
 	type_param_param_spec: T.TypeParamParamSpec.Bound;
-	string_start: T.StringStart;
+	string_start: T.StringStart.Bound;
 	string_fragment: T.StringFragment;
 	escape_interpolation: T.EscapeInterpolation;
-	string_end: T.StringEnd;
+	string_end: T.StringEnd.Bound;
 	_indent: T.Indent;
 	_dedent: T.Dedent;
 	_tight: T.Tight;

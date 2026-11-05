@@ -25,6 +25,8 @@ import { nodeText, placeOf, slotSeparatorOf, spanOf } from '@sittir/common/utils
 import type { TreeHandle } from '@sittir/common/utils';
 import type { FactoryShape, FactorySlotMeta } from '../codegen-surface.ts';
 import { load } from '../codegen-surface.ts';
+
+const { storageKeyOf } = await load('modelNodeMap');
 import { requireGrammarModule, type FactoryEntry } from '../grammar-internals.ts';
 import { deriveRuleKinds } from './render-bodies.ts';
 
@@ -53,7 +55,8 @@ import {
 	loadScopedFactoryMap,
 	loadNativeRender,
 	loadStorageKindNameFromId,
-	FAILED_RUN
+	FAILED_RUN,
+	loadDelimiterSpellings
 } from './common.ts';
 import { hostlessReason, loadRenderReparseContext, renderReparse, wrapRendered, type AstTolerance } from './read-render-parse.ts';
 import {
@@ -115,6 +118,8 @@ function isComparableNode(v: unknown): v is Record<string, unknown> {
 interface CompareCtx {
 	readonly factoryShapes: Record<string, FactoryShape>;
 	readonly kindNameFromId?: (id: number) => string | undefined;
+	readonly derivedSlots: Record<string, ReadonlySet<string>>;
+	readonly factorySlots?: Record<string, Record<string, FactorySlotMeta>>;
 }
 
 function kindOf(node: Record<string, unknown>, ctx: CompareCtx): string | undefined {
@@ -144,8 +149,9 @@ function isTextShapeNode(node: Record<string, unknown>, ctx: CompareCtx): boolea
  * kinds — see `isTextShapeNode`), and dehoisted `_<field>` keys.
  */
 function storageKeysOf(v: Record<string, unknown>, ctx: CompareCtx): string[] {
+	const derived = ctx.derivedSlots[kindOf(v, ctx) ?? ''];
 	return Object.keys(v).filter((k) => {
-		if (IGNORED_NODE_KEYS.has(k)) return false;
+		if (IGNORED_NODE_KEYS.has(k) || derived?.has(k) === true) return false;
 		if (k === '$text') return isTextShapeNode(v, ctx);
 		return k === '$type' || k.startsWith('_');
 	});
@@ -216,6 +222,11 @@ function compareStorageValue(expected: unknown, actual: unknown, path: string, c
  * @param path - Field-path accumulator for error messages (empty at the root).
  * @param ctx - Factory-shape lookup used to decide whether `$text` applies.
  */
+function memberOf(node: Record<string, unknown>, key: string, ctx: CompareCtx): (value: unknown) => unknown {
+	const spellings = Object.entries(ctx.factorySlots?.[kindOf(node, ctx) ?? ''] ?? {}).find(([name]) => storageKeyOf(name) === key)?.[1].spellings;
+	return (value) => (typeof value === 'string' ? (spellings?.[value] ?? value) : value);
+}
+
 function compareNodeStorage(
 	expected: Record<string, unknown>,
 	actual: Record<string, unknown>,
@@ -238,7 +249,8 @@ function compareNodeStorage(
 			if (isEmptyStorageValue(ev)) continue;
 			return `${path || 'root'}.${key}: missing on factory output`;
 		}
-		const diff = compareStorageValue(ev, storageValueOf(actual, key), `${path || 'root'}.${key}`, ctx);
+		const member = memberOf(expected, key, ctx);
+		const diff = compareStorageValue(member(ev), member(storageValueOf(actual, key)), `${path || 'root'}.${key}`, ctx);
 		if (diff) return diff;
 	}
 	for (const key of actualKeys) {
@@ -342,6 +354,7 @@ interface FactoryArtifacts {
 	readonly fieldAliasMap: Record<string, Record<string, string>>;
 	readonly factoryFields: Record<string, readonly string[]>;
 	readonly factorySlots: Record<string, Record<string, FactorySlotMeta>>;
+	readonly derivedSlots: Record<string, ReadonlySet<string>>;
 	readonly kindNameFromId: (id: number) => string | undefined;
 	readonly readNode: Awaited<ReturnType<typeof readNodeOf>>;
 }
@@ -349,13 +362,14 @@ interface FactoryArtifacts {
 async function loadFactoryModuleForGrammar(grammar: string): Promise<FactoryArtifacts | { readonly importFailure: string }> {
 	try {
 		const factoryModule = await requireGrammarModule(grammar, 'factories/raw.ts');
-		const { factoryShapes, fieldAliasMap, factoryFields, factorySlots } = await loadNodeModel(grammar);
+		const { factoryShapes, fieldAliasMap, factoryFields, factorySlots, derivedSlots } = await loadNodeModel(grammar);
 		return {
 			factoryMap: await loadScopedFactoryMap(grammar, factoryModule._factoryMap),
 			factoryShapes,
 			fieldAliasMap,
 			factoryFields,
 			factorySlots,
+			derivedSlots,
 			kindNameFromId: await loadStorageKindNameFromId(grammar),
 			readNode: await readNodeOf(grammar)
 		};
@@ -450,14 +464,16 @@ export async function validateFactoryStorage(
 
 	loadRawEntries(grammar);
 	const ruleKinds = deriveRuleKinds(grammar);
+	const { delimiterTokens } = await loadNodeModel(grammar);
 
 	const loaded = await loadFactoryModuleForGrammar(grammar);
 	if ('importFailure' in loaded) return failedRun(grammar, [{ kind: '(factory-module-load)', message: loaded.importFailure }]);
-	const { factoryMap, factoryShapes, fieldAliasMap, factoryFields, factorySlots, kindNameFromId, readNode } = loaded;
+	const { factoryMap, factoryShapes, fieldAliasMap, factoryFields, factorySlots, derivedSlots, kindNameFromId, readNode } = loaded;
 
 	const surface = options.surface === 'ir' ? await loadIrSurface(grammar) : undefined;
 	const renderReparseContext = await loadRenderReparseContext(grammar, parser, await loadNativeRender(grammar));
 	const { listSeparators } = await loadNodeModel(grammar);
+	const delimiters = await loadDelimiterSpellings(grammar);
 	const accessorOf = await loadSlotAccessorOf(grammar);
 	const render = emptyBuiltRenderRun();
 
@@ -522,7 +538,7 @@ export async function validateFactoryStorage(
 		walkWrappedTree(wrappedRoot, accessorOf, (w: TypedNode) => {
 			if (w.$named === false) return;
 			const sourceKind = kindNameFromId(w.$type);
-			if (sourceKind === undefined || !ruleKinds.has(sourceKind)) return;
+			if (sourceKind === undefined || !ruleKinds.has(sourceKind) || delimiterTokens.has(sourceKind)) return;
 			if (surface !== undefined && surface.entries[sourceKind] === undefined) return;
 			const span = spanOf(w);
 			if (span == null) return;
@@ -635,7 +651,7 @@ export async function validateFactoryStorage(
 					render.errors.push(renderFailure('built node carries source identity'));
 				} else {
 					try {
-						const tolerance: AstTolerance = { listSeparators, tolerated: [] };
+						const tolerance: AstTolerance = { listSeparators, tolerated: [], delimiters, normalized: [] };
 						const outcome = renderReparse(
 							builtTree,
 							kind,
@@ -655,6 +671,7 @@ export async function validateFactoryStorage(
 							if (outcome.astDiff === null) {
 								render.astMatchPass++;
 								if (tolerance.tolerated.length > 0) render.separatorTolerated++;
+								if (tolerance.normalized!.length > 0) render.spellingNormalized++;
 							} else render.astMismatches.push(renderFailure(outcome.astDiff, outcome.rendered));
 						}
 					} catch (e) {
@@ -667,7 +684,7 @@ export async function validateFactoryStorage(
 					referenceData as unknown as Record<string, unknown>,
 					factoryData as unknown as Record<string, unknown>,
 					'',
-					{ factoryShapes, kindNameFromId }
+					{ factoryShapes, kindNameFromId, derivedSlots, factorySlots }
 				);
 				if (diff) {
 					astMismatches.push({

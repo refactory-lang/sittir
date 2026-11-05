@@ -254,14 +254,18 @@ export interface PortableValueBuild {
 }
 
 /**
- * A bound grammar's portable build table: each strict builder's call shape by its key in the strict table, each vocabulary path's arms, and, at
- * a path with no arms of its own, the paths a `$value` builds through (`values`).
+ * A bound grammar's portable build table: each strict builder's call shape by its key in the strict table, each vocabulary path's arms, at
+ * a path with no arms of its own, the paths a `$value` builds through (`values`), and, by kind id, the accessors of the slots that can hold a
+ * token read by its interior (`tokens`), and, by delimiter token kind id, the accessors of its facets that carry meaning (`delimiters`): a
+ * delimiter's other facets are spelled from its content, so reading none of them loses nothing.
  */
 export interface PortableBuildTable {
 	readonly builders: Readonly<Record<string, PortableCallShape>>;
 	readonly options?: Readonly<Record<string, readonly string[]>>;
 	readonly paths: Readonly<Record<string, PortableBuildPath>>;
 	readonly values?: Readonly<Record<string, PortableValueBuild>>;
+	readonly tokens?: Readonly<Record<number, readonly string[]>>;
+	readonly delimiters?: Readonly<Record<number, readonly string[]>>;
 }
 
 /**

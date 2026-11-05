@@ -4876,6 +4876,8 @@ export function wrapStringLiteral(data: T.StringLiteral, tree: TreeHandle): T.St
 
 export function wrapRawStringLiteral(data: T.RawStringLiteral, tree: TreeHandle): T.RawStringLiteral.Parsed {
 	const handle = currentHandle();
+	const readGroup_rawStringLiteralStart = () =>
+		hydrateSlot<T.RawStringLiteralStart | undefined>(node, '_raw_string_literal_start', tree);
 	const node = {
 		...data,
 		$type: TSKindId.RawStringLiteral as const,
@@ -4894,8 +4896,28 @@ export function wrapRawStringLiteral(data: T.RawStringLiteral, tree: TreeHandle)
 			stringContent: (v: NonNullable<T.RawStringLiteral['_string_content']>) =>
 				rebuilt(node, handle, () => wrapRawStringLiteral({ ...$edited(data), _string_content: v }, tree)),
 			rawStringLiteralEnd: (v: NonNullable<T.RawStringLiteral['_raw_string_literal_end']>) =>
-				rebuilt(node, handle, () => wrapRawStringLiteral({ ...$edited(data), _raw_string_literal_end: v }, tree))
+				rebuilt(node, handle, () => wrapRawStringLiteral({ ...$edited(data), _raw_string_literal_end: v }, tree)),
+			prefix: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					seatWith(
+						{
+							slot: 'rawStringLiteralStart',
+							stored: '_raw_string_literal_start',
+							make: RAW.buildRawStringLiteralStart,
+							keys: [{ name: 'prefix', rest: false, required: true }]
+						},
+						'prefix',
+						args,
+						(v: NonNullable<T.RawStringLiteral['_raw_string_literal_start']>) =>
+							wrapRawStringLiteral({ ...$edited(data), _raw_string_literal_start: v }, tree),
+						() => readGroup_rawStringLiteralStart.call(node)
+					)
+				)
 		},
+		prefix:
+			data._raw_string_literal_start === undefined
+				? undefined
+				: () => groupField(readGroup_rawStringLiteralStart.call(node), 'prefix'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),
@@ -8591,6 +8613,66 @@ export function wrapMatchBlockArms(data: T.MatchBlockArms, tree: TreeHandle): T.
 	return node as unknown as T.MatchBlockArms.Parsed;
 }
 
+export function wrapRawStringLiteralStart(
+	data: T.RawStringLiteralStart,
+	tree: TreeHandle
+): T.RawStringLiteralStart.Parsed {
+	const handle = currentHandle();
+	const node = {
+		...data,
+		$type: TSKindId.RawStringLiteralStart as const,
+		prefix() {
+			return hydrateSlot<'r' | 'br' | 'cr'>(this, '_prefix', tree);
+		},
+		hashes() {
+			return hydrateSlot<string>(this, '_hashes', tree);
+		},
+		$with: {
+			prefix: (v: NonNullable<T.RawStringLiteralStart['_prefix']>) =>
+				rebuilt(node, handle, () => wrapRawStringLiteralStart({ ...$edited(data), _prefix: v }, tree)),
+			hashes: (v: NonNullable<T.RawStringLiteralStart['_hashes']>) =>
+				rebuilt(node, handle, () => wrapRawStringLiteralStart({ ...$edited(data), _hashes: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.RawStringLiteralStart.Parsed;
+}
+
+export function wrapRawStringLiteralEnd(data: T.RawStringLiteralEnd, tree: TreeHandle): T.RawStringLiteralEnd.Parsed {
+	const handle = currentHandle();
+	const node = {
+		...data,
+		$type: TSKindId.RawStringLiteralEnd as const,
+		hashes() {
+			return hydrateSlot<string>(this, '_hashes', tree);
+		},
+		$with: {
+			hashes: (v: NonNullable<T.RawStringLiteralEnd['_hashes']>) =>
+				rebuilt(node, handle, () => wrapRawStringLiteralEnd({ ...$edited(data), _hashes: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.RawStringLiteralEnd.Parsed;
+}
+
 export function wrapTraitInterfaceDeclarationBody(
 	data: T.TraitInterfaceDeclarationBody,
 	tree: TreeHandle
@@ -9494,6 +9576,8 @@ const _wrapTable: Record<number, (data: _UntypedNode, tree: TreeHandle) => unkno
 	[TSKindId.AttributedOrderedField]: (d, t) => wrapAttributedOrderedField(d as unknown as T.AttributedOrderedField, t),
 	[TSKindId.TypeArgument]: (d, t) => wrapTypeArgument(d as unknown as T.TypeArgument, t),
 	[TSKindId.MatchBlockArms]: (d, t) => wrapMatchBlockArms(d as unknown as T.MatchBlockArms, t),
+	[TSKindId.RawStringLiteralStart]: (d, t) => wrapRawStringLiteralStart(d as unknown as T.RawStringLiteralStart, t),
+	[TSKindId.RawStringLiteralEnd]: (d, t) => wrapRawStringLiteralEnd(d as unknown as T.RawStringLiteralEnd, t),
 	[TSKindId.TraitInterfaceDeclarationBody]: (d, t) =>
 		wrapTraitInterfaceDeclarationBody(d as unknown as T.TraitInterfaceDeclarationBody, t),
 	[TSKindId.ExtensionDeclarationBody]: (d, t) =>
@@ -9527,8 +9611,6 @@ const _wrapTable: Record<number, (data: _UntypedNode, tree: TreeHandle) => unkno
 	[TSKindId.FloatLiteral]: (d, t) => wrapLeaf(d, t),
 	[TSKindId.StringContent]: (d, t) => wrapLeaf(d, t),
 	[TSKindId.RawStringLiteralContent]: (d, t) => wrapLeaf(d, t),
-	[TSKindId.RawStringLiteralStart]: (d, t) => wrapLeaf(d, t),
-	[TSKindId.RawStringLiteralEnd]: (d, t) => wrapLeaf(d, t),
 	[TSKindId.DocComment]: (d, t) => wrapInteriorLeaf(d, t),
 	[TSKindId.BlockCommentContent]: (d, t) => wrapInteriorLeaf(d, t)
 };

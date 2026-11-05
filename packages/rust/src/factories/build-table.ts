@@ -69,6 +69,7 @@ export interface Routes<Table extends AnyTable> {
 		readonly forExpression: Routes<Table>['expressionStatement$forExpression'];
 		readonly constBlock: Routes<Table>['expressionStatement$constBlock'];
 	};
+	readonly rawStringLiteral: Table['rawStringLiteral$seated'];
 	readonly attribute$input: <
 		const V extends OmitEach<ArgsOf<Table['buildAttribute']>[0], 'input'> & ArgsOf<Table['buildAttributeInput']>[0]
 	>(
@@ -698,7 +699,7 @@ export interface Routes<Table extends AnyTable> {
 	};
 	readonly nonSpecialToken$string: Seat<ArgsOf<Table['buildStringLiteral']>, ReturnType<typeof F.buildNonSpecialToken>>;
 	readonly nonSpecialToken$rawString: Seat<
-		ArgsOf<Table['buildRawStringLiteral']>,
+		ArgsOf<Routes<Table>['rawStringLiteral']>,
 		ReturnType<typeof F.buildNonSpecialToken>
 	>;
 	readonly nonSpecialToken$char: Seat<ArgsOf<Routes<Table>['charLiteral']>, ReturnType<typeof F.buildNonSpecialToken>>;
@@ -896,7 +897,7 @@ export interface Ir<Table extends AnyTable> {
 	readonly referencePattern: Table['buildReferencePattern'];
 	readonly negativeLiteral: Table['buildNegativeLiteral'];
 	readonly stringLiteral: Table['buildStringLiteral'];
-	readonly rawStringLiteral: Table['buildRawStringLiteral'];
+	readonly rawStringLiteral: Routes<Table>['rawStringLiteral'];
 	readonly lineComment: Routes<Table>['lineComment'];
 	readonly blockComment: Routes<Table>['blockComment'];
 	readonly macroRules: Table['buildMacroRules'];
@@ -1031,8 +1032,6 @@ export interface Ir<Table extends AnyTable> {
 	readonly floatLiteral: typeof F.buildFloatLiteral;
 	readonly stringContent: typeof F.buildStringContent;
 	readonly rawStringLiteralContent: typeof F.buildRawStringLiteralContent;
-	readonly rawStringLiteralStart: typeof F.buildRawStringLiteralStart;
-	readonly rawStringLiteralEnd: typeof F.buildRawStringLiteralEnd;
 	readonly docComment: typeof F.buildDocComment;
 	readonly blockCommentContent: typeof F.buildBlockCommentContent;
 	readonly statement: {
@@ -1138,14 +1137,14 @@ export interface Ir<Table extends AnyTable> {
 	};
 	readonly literal: {
 		readonly string: Table['buildStringLiteral'];
-		readonly rawString: Table['buildRawStringLiteral'];
+		readonly rawString: Routes<Table>['rawStringLiteral'];
 		readonly char: Routes<Table>['charLiteral'];
 		readonly integer: Routes<Table>['integerLiteral'];
 		readonly float: typeof F.buildFloatLiteral;
 	};
 	readonly literalPattern: {
 		readonly string: Table['buildStringLiteral'];
-		readonly rawString: Table['buildRawStringLiteral'];
+		readonly rawString: Routes<Table>['rawStringLiteral'];
 		readonly char: Routes<Table>['charLiteral'];
 		readonly integer: Routes<Table>['integerLiteral'];
 		readonly float: typeof F.buildFloatLiteral;
@@ -1213,6 +1212,7 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 			constBlock: expressionStatement$constBlock
 		} as const)
 	);
+	const rawStringLiteral: Routes<Table>['rawStringLiteral'] = $at('rawStringLiteral$seated');
 	const attribute$input: Routes<Table>['attribute$input'] = K.attribute$input(
 		$at('buildAttribute'),
 		$at('buildAttributeInput')
@@ -1735,7 +1735,7 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 	);
 	const nonSpecialToken$rawString: Routes<Table>['nonSpecialToken$rawString'] = K.nonSpecialToken$rawString(
 		F.buildNonSpecialToken,
-		$at('buildRawStringLiteral')
+		rawStringLiteral
 	);
 	const nonSpecialToken$char: Routes<Table>['nonSpecialToken$char'] = K.nonSpecialToken$char(
 		F.buildNonSpecialToken,
@@ -1940,7 +1940,7 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 		referencePattern: $at('buildReferencePattern'),
 		negativeLiteral: $at('buildNegativeLiteral'),
 		stringLiteral: $at('buildStringLiteral'),
-		rawStringLiteral: $at('buildRawStringLiteral'),
+		rawStringLiteral: rawStringLiteral,
 		lineComment: lineComment,
 		blockComment: blockComment,
 		macroRules: $at('buildMacroRules'),
@@ -2075,8 +2075,6 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 		floatLiteral: F.buildFloatLiteral,
 		stringContent: F.buildStringContent,
 		rawStringLiteralContent: F.buildRawStringLiteralContent,
-		rawStringLiteralStart: F.buildRawStringLiteralStart,
-		rawStringLiteralEnd: F.buildRawStringLiteralEnd,
 		docComment: F.buildDocComment,
 		blockCommentContent: F.buildBlockCommentContent,
 		statement: Object.freeze({
@@ -2182,14 +2180,14 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 		} as const),
 		literal: Object.freeze({
 			string: $at('buildStringLiteral'),
-			rawString: $at('buildRawStringLiteral'),
+			rawString: rawStringLiteral,
 			char: charLiteral,
 			integer: integerLiteral,
 			float: F.buildFloatLiteral
 		} as const),
 		literalPattern: Object.freeze({
 			string: $at('buildStringLiteral'),
-			rawString: $at('buildRawStringLiteral'),
+			rawString: rawStringLiteral,
 			char: charLiteral,
 			integer: integerLiteral,
 			float: F.buildFloatLiteral,

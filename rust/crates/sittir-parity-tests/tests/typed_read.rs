@@ -24,7 +24,7 @@ impl sittir_core::render::Render for NoTrivia {
 impl sittir_core::trivia::TriviaSeam for NoTrivia {}
 
 impl sittir_core::prepare::Prepare for NoTrivia {
-    fn prepare(&mut self, _: &sittir_core::prepare::RenderContext<'_>) -> Result<(), sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, _: &sittir_core::prepare::RenderContext<'_>) -> Result<(), sittir_core::render::RenderError> {
         Ok(())
     }
 }
@@ -639,6 +639,8 @@ fn an_absent_slot_with_a_blank_arm_reads_as_its_blank() {
 struct Decimal {
     #[wire(key = "$_layout")]
     layout: Option<Box<sittir_core::layout::NodeLayout<NoTrivia>>>,
+    #[wire(key = "$verbatim")]
+    verbatim: Option<String>,
     #[wire(key = "_content")]
     #[slot(capture = "content")]
     content: String,
@@ -689,7 +691,7 @@ fn a_token_interior_reads_its_slots_from_its_text() {
     let source = "const X: u8 = 1_000u8;";
     let tree = parse_rust(source);
     let decimal: Decimal = read_nth(&tree, source, kind::INTEGER_LITERAL_DECIMAL, 0, Depth::ONE).unwrap();
-    assert_eq!((decimal.content.as_str(), decimal.suffix.as_deref()), ("1_000", Some("u8")));
+    assert_eq!((decimal.content.as_str(), decimal.suffix.as_deref(), decimal.verbatim.as_deref()), ("1_000", Some("u8"), None));
 }
 
 /// The layout an envelope's content keeps: the coordinate the envelope holds, which names the content's node, and nothing else.

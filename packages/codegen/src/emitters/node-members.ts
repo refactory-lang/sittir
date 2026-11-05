@@ -115,7 +115,7 @@ export function groupSeatParts(
 	storedOf: (stored: string) => string = (stored) => stored
 ): { readonly prelude: string[]; readonly members: string[] } {
 	if (plan.groups.length === 0) return { prelude: [], members: [] };
-	const prelude = plan.groups.map(({ hint }) => `  const ${readGroupName(hint.slot)} = ${readOf(hint)};`);
+	const prelude = plan.groups.filter(({ hint }) => hint.keys.length > 0).map(({ hint }) => `  const ${readGroupName(hint.slot)} = ${readOf(hint)};`);
 	const members = plan.groups.flatMap(({ hint }) =>
 		hint.keys.map(
 			(key) =>

@@ -3727,22 +3727,22 @@
     "type": "relative_import",
     "named": true,
     "fields": {
+      "dots": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "import_prefix",
+            "named": true
+          }
+        ]
+      },
       "name": {
         "multiple": false,
         "required": false,
         "types": [
           {
             "type": "qualified_identifier",
-            "named": true
-          }
-        ]
-      },
-      "prefix": {
-        "multiple": false,
-        "required": true,
-        "types": [
-          {
-            "type": "import_prefix",
             "named": true
           }
         ]

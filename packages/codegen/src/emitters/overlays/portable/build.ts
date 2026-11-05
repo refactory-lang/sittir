@@ -22,12 +22,17 @@ import type { ChildTest, GrammarRoutes, MemberRoute, ReadEntry, SlotStep } from 
 import { concreteKinds, guaranteedBy, heldSteps, modelNode, mountHoldersOf, reachedBy, shownSlots, valueTokensOf, type Guaranteed, type MountHolder } from '../../../bindings/routes.ts';
 import type { ModelMount, ModelSlot, SlotModel } from '../../../bindings/facts.ts';
 import type { NodeMap } from '../../../compiler/types.ts';
+import { SEQ, STRING } from '../../../types/rule-types.ts'; // @rule-type-consts
+import type { RenderRule } from '../../../types/rule.ts';
 import {
 	AbstractAssembledCompound,
 	AssembledLexedPattern,
 	AssembledPattern,
 	AssembledSupertype,
+	buildableMembersOf,
+	isDelimiterToken,
 	isMultiple,
+	isNodeRef,
 	isRequired,
 	slotFilledWhenOmitted,
 	storageKindOfRef,
@@ -664,6 +669,38 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 			site.path.length === path.length && seats.length > 0 && seats.every((seat) => seat.kinds.size > 0 && [...seat.kinds].every((held) => tested.includes(held)));
 		return reaching.every(fills) ? only.name : undefined;
 	};
+	const tokenTexts = (token: AbstractAssembledCompound, member: string | null): readonly string[] => {
+		const parts = (rule: RenderRule): readonly string[] => {
+			if (rule.type === SEQ) return rule.members.reduce<readonly string[]>((texts, part) => parts(part).flatMap((text) => texts.map((head) => head + text)), ['']);
+			const slot = rule.fieldName === undefined ? undefined : token.slots.find((candidate) => candidate.fieldName === rule.fieldName);
+			if (slot?.delimiterRole === 'input') return [member ?? ''];
+			if (slot?.delimiterRole === 'preferred') return buildableMembersOf(slot) ?? [];
+			if (slot !== undefined) return [''];
+			if (rule.type === STRING) return [rule.value];
+			return 'content' in rule && rule.content !== undefined ? parts(rule.content as RenderRule) : [''];
+		};
+		return parts(token.renderRule);
+	};
+	const prefixPreset = (kind: string, entry: ReadEntry): Placed | undefined => {
+		const node = nodeOf(kind);
+		if (!(node instanceof AbstractAssembledCompound) || node.delimiterFacets === undefined) return undefined;
+		const open = node.delimiterFacets.open;
+		const opener = node.slots.find((slot) => slot.name === open)?.values.find(isNodeRef);
+		const token = opener === undefined ? undefined : nodeMap.nodes.get(storageKindOfRef(opener.node));
+		if (!isDelimiterToken(token)) return undefined;
+		const input = token.slots.find((slot) => slot.delimiterRole === 'input');
+		if (input === undefined) return undefined;
+		const onToken = (predicate: ReadEntry['claim']['predicates'][number]): boolean =>
+			predicate.operator === 'match' && predicate.subject !== null && held(kind, predicate.subject)?.[0]?.slot === open;
+		const spelled = [...(routes.readEntries.get(kind) ?? [])]
+			.filter((other) => other.claim.predicates.every(onToken))
+			.sort((a, b) => b.claim.predicates.length - a.claim.predicates.length || a.index - b.index);
+		const winner = (text: string): string | undefined =>
+			spelled.find((other) => other.claim.predicates.every((predicate) => predicate.arguments.some((argument) => 'text' in argument && new RegExp(argument.text).test(text))))?.vocab;
+		const candidates = [...(isRequired(input) ? [] : [null]), ...(buildableMembersOf(input) ?? [])];
+		const member = candidates.find((candidate) => tokenTexts(token, candidate).some((text) => winner(text) === entry.vocab));
+		return member === undefined || member === null ? undefined : placedText([{ owner: kind, slot: open }, { owner: token.kind, slot: input.name }], member);
+	};
 	const armsOf = (kind: string, entry: ReadEntry): Arm[] => {
 		const node = nodeOf(kind);
 		const id = typeOf(kind);
@@ -700,6 +737,7 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 		});
 		const tested = new Set<string>();
 		const claimed = [
+			...[prefixPreset(kind, entry)].filter((placed) => placed !== undefined),
 			...entry.pins.flatMap((pin) => {
 				const path = held(kind, { up: 0, down: [{ field: pin.slot, kind: null, after: null, anchor: null }] });
 				const placed = path === undefined ? undefined : placedText(path, pin.text);
@@ -1159,12 +1197,29 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 		};
 	}
 	const values = valueBuilds(paths, decided, (kinds) => grammarDefault(kinds)?.kind, diagnostics);
+	const tokens = [...model.values()]
+		.flatMap((holder) => {
+			const id = typeOf(holder.kind);
+			const accessors = holder.slots.filter((slot) => concreteKinds(model, slot.kinds).some((kind) => nodeOf(kind) instanceof AssembledLexedPattern)).map((slot) => slot.propertyName);
+			return id === undefined || accessors.length === 0 ? [] : [[id, accessors] as const];
+		})
+		.sort(([a], [b]) => a - b);
+	const delimiters = [...nodeMap.nodes.values()]
+		.filter(isDelimiterToken)
+		.flatMap((token) => {
+			const id = typeOf(token.kind);
+			const meaning = token.slots.filter((slot) => slot.delimiterRole === 'input' || slot.delimiterRole === 'content').map((slot) => slot.propertyName);
+			return id === undefined ? [] : [[id, meaning] as const];
+		})
+		.sort(([a], [b]) => a - b);
 	return {
 		table: {
 			builders: Object.fromEntries([...builders].sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0))),
 			...(optionKeys.size === 0 ? {} : { options: Object.fromEntries([...optionKeys].sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0))) }),
 			paths,
-			...(Object.keys(values).length === 0 ? {} : { values })
+			...(Object.keys(values).length === 0 ? {} : { values }),
+			...(tokens.length === 0 ? {} : { tokens: Object.fromEntries(tokens) }),
+			...(delimiters.length === 0 ? {} : { delimiters: Object.fromEntries(delimiters) })
 		},
 		diagnostics
 	};

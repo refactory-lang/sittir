@@ -145,6 +145,7 @@ export namespace Literal {
 				| V.Literal.String.Raw.Any<G>
 				| V.Literal.String.Bytes.Any<G>
 				| V.Literal.String.Interpolated.Any<G>
+				| V.Literal.String.Unicode<G>
 			)[];
 		}
 		export interface Escape<G extends GrammarContext<G>> extends SubKindOf<V.Literal.String<G>> {

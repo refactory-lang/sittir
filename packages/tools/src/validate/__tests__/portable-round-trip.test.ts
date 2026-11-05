@@ -3,19 +3,23 @@ import { runPortableRoundTrip } from '../portable-round-trip.ts';
 
 const CARRIED_CEILING = {
 	python: 37,
-	rust: 15,
+	rust: 14,
 	typescript: 8
 };
 
 const CARRIED_PAIRS: Record<keyof typeof CARRIED_CEILING, readonly string[]> = {
 	python: [
+		'escape_interpolation text',
 		'float_point scalar',
 		'float_scientific scalar',
+		'format_specifier_text unclaimed',
 		'if_statement unread',
 		'integer_decimal_imaginary text',
 		'integer_decimal_long text',
 		'key_value_pattern unclaimed',
-		'string unclaimed'
+		'string preset',
+		'string unread',
+		'string_fragment text'
 	],
 	rust: [
 		'array_expression_list unread',
@@ -28,7 +32,7 @@ const CARRIED_PAIRS: Record<keyof typeof CARRIED_CEILING, readonly string[]> = {
 		'integer_literal_hex scalar',
 		'integer_literal_octal scalar',
 		'method_declaration flags',
-		'raw_string_literal unclaimed',
+		'raw_string_literal preset',
 		'token_repetition_pattern_text unclaimed',
 		'use_wildcard_group unclaimed'
 	],

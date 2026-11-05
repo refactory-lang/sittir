@@ -1,8 +1,8 @@
 {
 	"grammars": {
-		"python": {"digest":"0b4f09c6d39183bb953213f16e2aab331b6cbf4eea142128de21ee1279c2c6ea","counts":{"conflict-resolution":{"info":10},"conflict-unnecessary-upstream":{"info":3},"conflict-dynamic-precedence-authored":{"info":1},"portable-kind-armless":{"warning":1}},"blocking":{"rule-reauthored-without-cause":{"error":4},"patch-without-cause":{"error":4}}},
+		"python": {"digest":"1007a40404aa053a6c98bc215b83e90a7089226a14df406db4a9ac537c684549","counts":{"conflict-resolution":{"info":10},"conflict-unnecessary-upstream":{"info":3},"conflict-dynamic-precedence-authored":{"info":1}},"blocking":{"rule-reauthored-without-cause":{"error":4},"patch-without-cause":{"error":4}}},
 		"regex": {"digest":"d5827129060789840ec92799e6f10a5f883d7877e2bca483b3f47e06ae12b2f7","counts":{"conflict-resolution":{"info":2}},"blocking":{}},
-		"rust": {"digest":"a88866cfb21d8cd1e382efc4d18c7772aa9df00fbd209ef6b20b382269454bc4","counts":{"conflict-resolution":{"info":9},"conflict-unnecessary-upstream":{"info":3},"portable-kind-armless":{"warning":1}},"blocking":{"rule-reauthored-without-cause":{"error":3},"unclassifiable-shape":{"error":1}}},
+		"rust": {"digest":"a372b16c795a24537bbf5fbdb5686be8c4781d20ea52e37ce6a30bcf47594fd3","counts":{"conflict-resolution":{"info":9},"conflict-unnecessary-upstream":{"info":3}},"blocking":{"rule-reauthored-without-cause":{"error":3},"unclassifiable-shape":{"error":1}}},
 		"scm": {"digest":"57f8d34d368f69844ffc80a90b96e70f992169bb0cf4cd2978acab6eec81e965","counts":{},"blocking":{"unclassifiable-shape":{"error":1}}},
 		"typescript": {"digest":"65876e31c1eae409ebea253b2fb446a7ba0bef78574e88ce7958b691b4679886","counts":{"conflict-resolution":{"info":75},"conflict-unnecessary-upstream":{"info":9}},"blocking":{"rule-reauthored-without-cause":{"error":1},"unclassifiable-shape":{"error":2},"union-slot-mixed-row":{"error":1}}}
 	},

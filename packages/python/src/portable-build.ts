@@ -1224,17 +1224,17 @@ export const build: PortableBuildTable = {
 					builder: 'relativeImport',
 					members: [
 						{
-							name: 'prefix',
+							name: 'dots',
 							steps: [
 								{
-									key: 'prefix'
+									key: 'dots'
 								}
 							],
 							multiple: false,
 							list: false,
 							seats: [
 								{
-									at: [133, 'prefix'],
+									at: [133, 'dots'],
 									kinds: [132],
 									leaf: 'importPrefix',
 									texts: [132],
@@ -1268,7 +1268,7 @@ export const build: PortableBuildTable = {
 					when: [
 						{
 							absent: [],
-							required: ['prefix']
+							required: ['dots']
 						}
 					]
 				}
@@ -11018,24 +11018,290 @@ export const build: PortableBuildTable = {
 			]
 		},
 		'literal.string': {
-			root: false,
-			arms: []
+			root: true,
+			arms: [
+				{
+					kind: 248,
+					builder: 'string',
+					members: [
+						{
+							name: 'elements',
+							steps: [
+								{
+									key: 'contents',
+									optional: true
+								}
+							],
+							multiple: true,
+							list: true,
+							seats: [
+								{
+									at: [248, 'contents'],
+									kinds: [250],
+									many: true
+								},
+								{
+									at: [249, 'elements'],
+									kinds: [99, 100, 101, 102, 103, 104, 105, 120, 121, 252, 253],
+									tokens: {
+										'\\': 253
+									},
+									within: [
+										{
+											builder: 'stringContent',
+											key: 'elements'
+										}
+									],
+									many: true
+								}
+							]
+						}
+					],
+					presets: [],
+					flags: {},
+					when: []
+				}
+			]
 		},
 		'literal.string.bytes': {
-			root: false,
-			arms: []
+			root: true,
+			arms: [
+				{
+					kind: 248,
+					builder: 'string',
+					members: [
+						{
+							name: 'elements',
+							steps: [
+								{
+									key: 'contents',
+									optional: true
+								}
+							],
+							multiple: true,
+							list: true,
+							seats: [
+								{
+									at: [248, 'contents'],
+									kinds: [250],
+									many: true
+								},
+								{
+									at: [249, 'elements'],
+									kinds: [99, 100, 101, 102, 103, 104, 105, 120, 121, 252, 253],
+									tokens: {
+										'\\': 253
+									},
+									within: [
+										{
+											builder: 'stringContent',
+											key: 'elements'
+										}
+									],
+									many: true
+								}
+							]
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'stringStart',
+									flatten: true
+								},
+								{
+									key: 'prefix',
+									optional: true
+								}
+							],
+							text: 'b'
+						}
+					],
+					flags: {},
+					when: []
+				}
+			]
 		},
 		'literal.string.bytes.multiline': {
-			root: false,
-			arms: []
+			root: true,
+			arms: [
+				{
+					kind: 248,
+					builder: 'string',
+					members: [
+						{
+							name: 'elements',
+							steps: [
+								{
+									key: 'contents',
+									optional: true
+								}
+							],
+							multiple: true,
+							list: true,
+							seats: [
+								{
+									at: [248, 'contents'],
+									kinds: [250],
+									many: true
+								},
+								{
+									at: [249, 'elements'],
+									kinds: [99, 100, 101, 102, 103, 104, 105, 120, 121, 252, 253],
+									tokens: {
+										'\\': 253
+									},
+									within: [
+										{
+											builder: 'stringContent',
+											key: 'elements'
+										}
+									],
+									many: true
+								}
+							]
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'stringStart',
+									flatten: true
+								},
+								{
+									key: 'prefix',
+									optional: true
+								}
+							],
+							text: 'b'
+						}
+					],
+					flags: {},
+					when: []
+				}
+			]
 		},
 		'literal.string.bytes.raw': {
-			root: false,
-			arms: []
+			root: true,
+			arms: [
+				{
+					kind: 248,
+					builder: 'string',
+					members: [
+						{
+							name: 'elements',
+							steps: [
+								{
+									key: 'contents',
+									optional: true
+								}
+							],
+							multiple: true,
+							list: true,
+							seats: [
+								{
+									at: [248, 'contents'],
+									kinds: [250],
+									many: true
+								},
+								{
+									at: [249, 'elements'],
+									kinds: [99, 100, 101, 102, 103, 104, 105, 120, 121, 252, 253],
+									tokens: {
+										'\\': 253
+									},
+									within: [
+										{
+											builder: 'stringContent',
+											key: 'elements'
+										}
+									],
+									many: true
+								}
+							]
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'stringStart',
+									flatten: true
+								},
+								{
+									key: 'prefix',
+									optional: true
+								}
+							],
+							text: 'rb'
+						}
+					],
+					flags: {},
+					when: []
+				}
+			]
 		},
 		'literal.string.bytes.raw.multiline': {
-			root: false,
-			arms: []
+			root: true,
+			arms: [
+				{
+					kind: 248,
+					builder: 'string',
+					members: [
+						{
+							name: 'elements',
+							steps: [
+								{
+									key: 'contents',
+									optional: true
+								}
+							],
+							multiple: true,
+							list: true,
+							seats: [
+								{
+									at: [248, 'contents'],
+									kinds: [250],
+									many: true
+								},
+								{
+									at: [249, 'elements'],
+									kinds: [99, 100, 101, 102, 103, 104, 105, 120, 121, 252, 253],
+									tokens: {
+										'\\': 253
+									},
+									within: [
+										{
+											builder: 'stringContent',
+											key: 'elements'
+										}
+									],
+									many: true
+								}
+							]
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'stringStart',
+									flatten: true
+								},
+								{
+									key: 'prefix',
+									optional: true
+								}
+							],
+							text: 'rb'
+						}
+					],
+					flags: {},
+					when: []
+				}
+			]
 		},
 		'literal.string.concatenated': {
 			root: true,
@@ -11367,32 +11633,650 @@ export const build: PortableBuildTable = {
 			]
 		},
 		'literal.string.interpolated': {
-			root: false,
-			arms: []
+			root: true,
+			arms: [
+				{
+					kind: 248,
+					builder: 'string',
+					members: [
+						{
+							name: 'elements',
+							steps: [
+								{
+									key: 'contents',
+									optional: true
+								}
+							],
+							multiple: true,
+							list: true,
+							seats: [
+								{
+									at: [248, 'contents'],
+									kinds: [250],
+									many: true
+								},
+								{
+									at: [249, 'elements'],
+									kinds: [99, 100, 101, 102, 103, 104, 105, 120, 121, 252, 253],
+									tokens: {
+										'\\': 253
+									},
+									within: [
+										{
+											builder: 'stringContent',
+											key: 'elements'
+										}
+									],
+									many: true
+								}
+							]
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'stringStart',
+									flatten: true
+								},
+								{
+									key: 'prefix',
+									optional: true
+								}
+							],
+							text: 'f'
+						}
+					],
+					flags: {},
+					when: []
+				}
+			]
+		},
+		'literal.string.interpolated.deferred': {
+			root: true,
+			arms: [
+				{
+					kind: 248,
+					builder: 'string',
+					members: [
+						{
+							name: 'elements',
+							steps: [
+								{
+									key: 'contents',
+									optional: true
+								}
+							],
+							multiple: true,
+							list: true,
+							seats: [
+								{
+									at: [248, 'contents'],
+									kinds: [250],
+									many: true
+								},
+								{
+									at: [249, 'elements'],
+									kinds: [99, 100, 101, 102, 103, 104, 105, 120, 121, 252, 253],
+									tokens: {
+										'\\': 253
+									},
+									within: [
+										{
+											builder: 'stringContent',
+											key: 'elements'
+										}
+									],
+									many: true
+								}
+							]
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'stringStart',
+									flatten: true
+								},
+								{
+									key: 'prefix',
+									optional: true
+								}
+							],
+							text: 't'
+						}
+					],
+					flags: {},
+					when: []
+				}
+			]
+		},
+		'literal.string.interpolated.deferred.multiline': {
+			root: true,
+			arms: [
+				{
+					kind: 248,
+					builder: 'string',
+					members: [
+						{
+							name: 'elements',
+							steps: [
+								{
+									key: 'contents',
+									optional: true
+								}
+							],
+							multiple: true,
+							list: true,
+							seats: [
+								{
+									at: [248, 'contents'],
+									kinds: [250],
+									many: true
+								},
+								{
+									at: [249, 'elements'],
+									kinds: [99, 100, 101, 102, 103, 104, 105, 120, 121, 252, 253],
+									tokens: {
+										'\\': 253
+									},
+									within: [
+										{
+											builder: 'stringContent',
+											key: 'elements'
+										}
+									],
+									many: true
+								}
+							]
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'stringStart',
+									flatten: true
+								},
+								{
+									key: 'prefix',
+									optional: true
+								}
+							],
+							text: 't'
+						}
+					],
+					flags: {},
+					when: []
+				}
+			]
+		},
+		'literal.string.interpolated.deferred.raw': {
+			root: true,
+			arms: [
+				{
+					kind: 248,
+					builder: 'string',
+					members: [
+						{
+							name: 'elements',
+							steps: [
+								{
+									key: 'contents',
+									optional: true
+								}
+							],
+							multiple: true,
+							list: true,
+							seats: [
+								{
+									at: [248, 'contents'],
+									kinds: [250],
+									many: true
+								},
+								{
+									at: [249, 'elements'],
+									kinds: [99, 100, 101, 102, 103, 104, 105, 120, 121, 252, 253],
+									tokens: {
+										'\\': 253
+									},
+									within: [
+										{
+											builder: 'stringContent',
+											key: 'elements'
+										}
+									],
+									many: true
+								}
+							]
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'stringStart',
+									flatten: true
+								},
+								{
+									key: 'prefix',
+									optional: true
+								}
+							],
+							text: 'rt'
+						}
+					],
+					flags: {},
+					when: []
+				}
+			]
+		},
+		'literal.string.interpolated.deferred.raw.multiline': {
+			root: true,
+			arms: [
+				{
+					kind: 248,
+					builder: 'string',
+					members: [
+						{
+							name: 'elements',
+							steps: [
+								{
+									key: 'contents',
+									optional: true
+								}
+							],
+							multiple: true,
+							list: true,
+							seats: [
+								{
+									at: [248, 'contents'],
+									kinds: [250],
+									many: true
+								},
+								{
+									at: [249, 'elements'],
+									kinds: [99, 100, 101, 102, 103, 104, 105, 120, 121, 252, 253],
+									tokens: {
+										'\\': 253
+									},
+									within: [
+										{
+											builder: 'stringContent',
+											key: 'elements'
+										}
+									],
+									many: true
+								}
+							]
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'stringStart',
+									flatten: true
+								},
+								{
+									key: 'prefix',
+									optional: true
+								}
+							],
+							text: 'rt'
+						}
+					],
+					flags: {},
+					when: []
+				}
+			]
 		},
 		'literal.string.interpolated.multiline': {
-			root: false,
-			arms: []
+			root: true,
+			arms: [
+				{
+					kind: 248,
+					builder: 'string',
+					members: [
+						{
+							name: 'elements',
+							steps: [
+								{
+									key: 'contents',
+									optional: true
+								}
+							],
+							multiple: true,
+							list: true,
+							seats: [
+								{
+									at: [248, 'contents'],
+									kinds: [250],
+									many: true
+								},
+								{
+									at: [249, 'elements'],
+									kinds: [99, 100, 101, 102, 103, 104, 105, 120, 121, 252, 253],
+									tokens: {
+										'\\': 253
+									},
+									within: [
+										{
+											builder: 'stringContent',
+											key: 'elements'
+										}
+									],
+									many: true
+								}
+							]
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'stringStart',
+									flatten: true
+								},
+								{
+									key: 'prefix',
+									optional: true
+								}
+							],
+							text: 'f'
+						}
+					],
+					flags: {},
+					when: []
+				}
+			]
 		},
 		'literal.string.interpolated.raw': {
-			root: false,
-			arms: []
+			root: true,
+			arms: [
+				{
+					kind: 248,
+					builder: 'string',
+					members: [
+						{
+							name: 'elements',
+							steps: [
+								{
+									key: 'contents',
+									optional: true
+								}
+							],
+							multiple: true,
+							list: true,
+							seats: [
+								{
+									at: [248, 'contents'],
+									kinds: [250],
+									many: true
+								},
+								{
+									at: [249, 'elements'],
+									kinds: [99, 100, 101, 102, 103, 104, 105, 120, 121, 252, 253],
+									tokens: {
+										'\\': 253
+									},
+									within: [
+										{
+											builder: 'stringContent',
+											key: 'elements'
+										}
+									],
+									many: true
+								}
+							]
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'stringStart',
+									flatten: true
+								},
+								{
+									key: 'prefix',
+									optional: true
+								}
+							],
+							text: 'rf'
+						}
+					],
+					flags: {},
+					when: []
+				}
+			]
 		},
 		'literal.string.interpolated.raw.multiline': {
-			root: false,
-			arms: []
+			root: true,
+			arms: [
+				{
+					kind: 248,
+					builder: 'string',
+					members: [
+						{
+							name: 'elements',
+							steps: [
+								{
+									key: 'contents',
+									optional: true
+								}
+							],
+							multiple: true,
+							list: true,
+							seats: [
+								{
+									at: [248, 'contents'],
+									kinds: [250],
+									many: true
+								},
+								{
+									at: [249, 'elements'],
+									kinds: [99, 100, 101, 102, 103, 104, 105, 120, 121, 252, 253],
+									tokens: {
+										'\\': 253
+									},
+									within: [
+										{
+											builder: 'stringContent',
+											key: 'elements'
+										}
+									],
+									many: true
+								}
+							]
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'stringStart',
+									flatten: true
+								},
+								{
+									key: 'prefix',
+									optional: true
+								}
+							],
+							text: 'rf'
+						}
+					],
+					flags: {},
+					when: []
+				}
+			]
 		},
 		'literal.string.multiline': {
-			root: false,
-			arms: []
+			root: true,
+			arms: [
+				{
+					kind: 248,
+					builder: 'string',
+					members: [
+						{
+							name: 'elements',
+							steps: [
+								{
+									key: 'contents',
+									optional: true
+								}
+							],
+							multiple: true,
+							list: true,
+							seats: [
+								{
+									at: [248, 'contents'],
+									kinds: [250],
+									many: true
+								},
+								{
+									at: [249, 'elements'],
+									kinds: [99, 100, 101, 102, 103, 104, 105, 120, 121, 252, 253],
+									tokens: {
+										'\\': 253
+									},
+									within: [
+										{
+											builder: 'stringContent',
+											key: 'elements'
+										}
+									],
+									many: true
+								}
+							]
+						}
+					],
+					presets: [],
+					flags: {},
+					when: []
+				}
+			]
 		},
 		'literal.string.raw': {
-			root: false,
-			arms: []
+			root: true,
+			arms: [
+				{
+					kind: 248,
+					builder: 'string',
+					members: [
+						{
+							name: 'elements',
+							steps: [
+								{
+									key: 'contents',
+									optional: true
+								}
+							],
+							multiple: true,
+							list: true,
+							seats: [
+								{
+									at: [248, 'contents'],
+									kinds: [250],
+									many: true
+								},
+								{
+									at: [249, 'elements'],
+									kinds: [99, 100, 101, 102, 103, 104, 105, 120, 121, 252, 253],
+									tokens: {
+										'\\': 253
+									},
+									within: [
+										{
+											builder: 'stringContent',
+											key: 'elements'
+										}
+									],
+									many: true
+								}
+							]
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'stringStart',
+									flatten: true
+								},
+								{
+									key: 'prefix',
+									optional: true
+								}
+							],
+							text: 'r'
+						}
+					],
+					flags: {},
+					when: []
+				}
+			]
 		},
 		'literal.string.raw.multiline': {
-			root: false,
-			arms: []
+			root: true,
+			arms: [
+				{
+					kind: 248,
+					builder: 'string',
+					members: [
+						{
+							name: 'elements',
+							steps: [
+								{
+									key: 'contents',
+									optional: true
+								}
+							],
+							multiple: true,
+							list: true,
+							seats: [
+								{
+									at: [248, 'contents'],
+									kinds: [250],
+									many: true
+								},
+								{
+									at: [249, 'elements'],
+									kinds: [99, 100, 101, 102, 103, 104, 105, 120, 121, 252, 253],
+									tokens: {
+										'\\': 253
+									},
+									within: [
+										{
+											builder: 'stringContent',
+											key: 'elements'
+										}
+									],
+									many: true
+								}
+							]
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'stringStart',
+									flatten: true
+								},
+								{
+									key: 'prefix',
+									optional: true
+								}
+							],
+							text: 'r'
+						}
+					],
+					flags: {},
+					when: []
+				}
+			]
 		},
 		'literal.string.text': {
 			root: true,
@@ -11402,6 +12286,66 @@ export const build: PortableBuildTable = {
 					builder: 'stringFragment',
 					members: [],
 					presets: [],
+					flags: {},
+					when: []
+				}
+			]
+		},
+		'literal.string.unicode': {
+			root: true,
+			arms: [
+				{
+					kind: 248,
+					builder: 'string',
+					members: [
+						{
+							name: 'elements',
+							steps: [
+								{
+									key: 'contents',
+									optional: true
+								}
+							],
+							multiple: true,
+							list: true,
+							seats: [
+								{
+									at: [248, 'contents'],
+									kinds: [250],
+									many: true
+								},
+								{
+									at: [249, 'elements'],
+									kinds: [99, 100, 101, 102, 103, 104, 105, 120, 121, 252, 253],
+									tokens: {
+										'\\': 253
+									},
+									within: [
+										{
+											builder: 'stringContent',
+											key: 'elements'
+										}
+									],
+									many: true
+								}
+							]
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'stringStart',
+									flatten: true
+								},
+								{
+									key: 'prefix',
+									optional: true
+								}
+							],
+							text: 'u'
+						}
+					],
 					flags: {},
 					when: []
 				}
@@ -14693,5 +15637,81 @@ export const build: PortableBuildTable = {
 			integer: 'literal.number.integer',
 			float: 'literal.number.float'
 		}
+	},
+	tokens: {
+		'140': ['expression'],
+		'141': ['expressions'],
+		'142': ['content'],
+		'143': ['right'],
+		'145': ['expressions'],
+		'146': ['expressions'],
+		'147': ['expressions', 'cause'],
+		'151': ['condition'],
+		'152': ['condition'],
+		'157': ['right'],
+		'158': ['condition'],
+		'164': ['value'],
+		'168': ['expression'],
+		'169': ['expression'],
+		'172': ['inClauses'],
+		'179': ['expression'],
+		'181': ['elements'],
+		'184': ['content'],
+		'186': ['left', 'right'],
+		'188': ['key'],
+		'189': ['pattern'],
+		'192': ['real', 'imaginary'],
+		'199': ['default'],
+		'200': ['default'],
+		'203': ['expression'],
+		'207': ['argument'],
+		'208': ['left', 'right'],
+		'209': ['left', 'right'],
+		'210': ['argument'],
+		'213': ['left'],
+		'214': ['body'],
+		'215': ['body'],
+		'217': ['right'],
+		'220': ['content'],
+		'221': ['object'],
+		'222': ['object'],
+		'223': ['start', 'stop'],
+		'224': ['function'],
+		'226': ['content'],
+		'232': ['value'],
+		'237': ['key', 'value'],
+		'238': ['body'],
+		'240': ['body'],
+		'241': ['body'],
+		'242': ['expression'],
+		'243': ['items'],
+		'244': ['rights'],
+		'245': ['condition'],
+		'246': ['consequence', 'condition', 'alternative'],
+		'248': ['stringStart', 'stringEnd'],
+		'249': ['elements'],
+		'250': ['expression'],
+		'257': ['expression'],
+		'261': ['elements'],
+		'264': ['items'],
+		'267': ['elements'],
+		'269': ['expression'],
+		'276': ['items'],
+		'277': ['value', 'alias'],
+		'280': ['items'],
+		'281': ['items'],
+		'288': ['value'],
+		'289': ['values'],
+		'293': ['value'],
+		'295': ['value'],
+		'296': ['elements'],
+		'302': ['primaryExpression'],
+		'303': ['expression'],
+		'350': ['content'],
+		'351': ['expression']
+	},
+	delimiters: {
+		'119': ['prefix'],
+		'122': ['content']
 	}
 };

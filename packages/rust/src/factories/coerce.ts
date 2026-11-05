@@ -124,8 +124,6 @@ const _leafRegistry: { readonly [kind: string]: _LeafEntry } = {
 	},
 	outer_doc_comment_marker: { values: ['*'], factory: () => F.buildOuterDocCommentMarker },
 	inner_doc_comment_marker: { values: ['!'], factory: () => F.buildInnerDocCommentMarker },
-	raw_string_literal_start: { pattern: F._leafRe_buildRawStringLiteralStart, factory: F.buildRawStringLiteralStart },
-	raw_string_literal_end: { pattern: F._leafRe_buildRawStringLiteralEnd, factory: F.buildRawStringLiteralEnd },
 	doc_comment: { pattern: F._leafRe_buildDocComment, factory: F.buildDocComment },
 	_block_comment_content: { pattern: F._leafRe_buildBlockCommentContent, factory: F.buildBlockCommentContent },
 	_tight: { values: [''], factory: () => F.buildTight },
@@ -190,8 +188,6 @@ const _SLOTLESS_TEXT_KINDS: ReadonlySet<string> = new Set([
 	'raw_string_literal_content',
 	'outer_doc_comment_marker',
 	'inner_doc_comment_marker',
-	'raw_string_literal_start',
-	'raw_string_literal_end',
 	'doc_comment',
 	'_block_comment_content',
 	'_tight',
@@ -215,10 +211,8 @@ function _buildGuardedText(v: string, kind: string): AnyUntypedNode | number {
 }
 
 const _TEXT_KINDS_BY_RANK: readonly string[] = [
-	'raw_string_literal_start',
 	'raw_string_literal_content',
 	'string_content',
-	'raw_string_literal_end',
 	'float_literal',
 	'outer_doc_comment_marker',
 	'inner_doc_comment_marker',
@@ -291,6 +285,13 @@ function _resolveBareText(v: string, kinds: readonly string[]): AnyUntypedNode |
 	return undefined;
 }
 
+const _DELIMITER_TOKENS: { readonly [kind: string]: (bag: Readonly<Record<string, unknown>>) => unknown } = {
+	raw_string_literal_start: (bag) =>
+		(F.buildRawStringLiteralStart as (...args: unknown[]) => unknown)(bag['prefix'], { hashes: bag['hashes'] }),
+	raw_string_literal_end: (bag) =>
+		(F.buildRawStringLiteralEnd as (...args: unknown[]) => unknown)({}, { hashes: bag['hashes'] })
+};
+
 function _isFromKind(k: string): k is keyof _FromMap {
 	return k in _fromMap;
 }
@@ -324,6 +325,8 @@ function _resolveByKind<K extends keyof _FromMap>(kind: K, rest: _LooseFieldInpu
 }
 
 export function buildByKind(kind: string, ...input: unknown[]): unknown {
+	if (Object.hasOwn(_DELIMITER_TOKENS, kind))
+		return _DELIMITER_TOKENS[kind]!(Object.assign({}, ...input) as Readonly<Record<string, unknown>>);
 	if (!Object.hasOwn(_fromMap, kind)) throw new Error(`no builder for kind ${JSON.stringify(kind)}`);
 	if (input.length === 1) return _resolveByKind(kind as keyof _FromMap, input[0] as _LooseFieldInput);
 	return (_fromMap[kind as keyof _FromMap] as (...args: unknown[]) => unknown)(...input);
@@ -7066,7 +7069,7 @@ export const coerceToStringLiteral: ConfigSeat<T.StringLiteral.Loose, ReturnType
 export function resolveRawStringLiteral_rawStringLiteralStart(
 	value: T.RawStringLiteral.LooseConfig['rawStringLiteralStart']
 ): Admit<T.RawStringLiteral['_raw_string_literal_start']> {
-	return _resolveOneLeaf<T.RawStringLiteralStart>(value, 'raw_string_literal_start');
+	return _resolveOneBranch<T.RawStringLiteralStart>(value, 'raw_string_literal_start');
 }
 
 export function resolveRawStringLiteral_stringContent(
@@ -7078,7 +7081,7 @@ export function resolveRawStringLiteral_stringContent(
 export function resolveRawStringLiteral_rawStringLiteralEnd(
 	value: T.RawStringLiteral.LooseConfig['rawStringLiteralEnd']
 ): Admit<T.RawStringLiteral['_raw_string_literal_end']> {
-	return _resolveOneLeaf<T.RawStringLiteralEnd>(value, 'raw_string_literal_end');
+	return _resolveOneBranch<T.RawStringLiteralEnd>(value, 'raw_string_literal_end');
 }
 
 export const coerceToRawStringLiteral: ConfigSeat<
@@ -7091,7 +7094,8 @@ export const coerceToRawStringLiteral: ConfigSeat<
 	return F.buildRawStringLiteral({
 		rawStringLiteralStart: resolveRawStringLiteral_rawStringLiteralStart(input.rawStringLiteralStart),
 		stringContent: resolveRawStringLiteral_stringContent(input.stringContent),
-		rawStringLiteralEnd: resolveRawStringLiteral_rawStringLiteralEnd(input.rawStringLiteralEnd)
+		rawStringLiteralEnd:
+			resolveRawStringLiteral_rawStringLiteralEnd(input.rawStringLiteralEnd) ?? F.buildRawStringLiteralEnd()
 	});
 };
 
@@ -10853,22 +10857,6 @@ export function coerceToInnerDocCommentMarker(
 	return F.buildInnerDocCommentMarker;
 }
 
-export const coerceToRawStringLiteralStart: ConfigSeat<
-	T.RawStringLiteralStart.Loose,
-	ReturnType<typeof F.buildRawStringLiteralStart>
-> = (input: T.RawStringLiteralStart.Loose): ReturnType<typeof F.buildRawStringLiteralStart> => {
-	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildRawStringLiteralStart>;
-	return F.buildRawStringLiteralStart(input as Parameters<typeof F.buildRawStringLiteralStart>[0]);
-};
-
-export const coerceToRawStringLiteralEnd: ConfigSeat<
-	T.RawStringLiteralEnd.Loose,
-	ReturnType<typeof F.buildRawStringLiteralEnd>
-> = (input: T.RawStringLiteralEnd.Loose): ReturnType<typeof F.buildRawStringLiteralEnd> => {
-	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildRawStringLiteralEnd>;
-	return F.buildRawStringLiteralEnd(input as Parameters<typeof F.buildRawStringLiteralEnd>[0]);
-};
-
 export const coerceToDocComment: ConfigSeat<T.DocComment.Loose, ReturnType<typeof F.buildDocComment>> = (
 	input: T.DocComment.Loose
 ): ReturnType<typeof F.buildDocComment> => {
@@ -11762,8 +11750,6 @@ export interface _FromMap {
 	readonly raw_string_literal_content: typeof coerceToRawStringLiteralContent;
 	readonly outer_doc_comment_marker: typeof coerceToOuterDocCommentMarker;
 	readonly inner_doc_comment_marker: typeof coerceToInnerDocCommentMarker;
-	readonly raw_string_literal_start: typeof coerceToRawStringLiteralStart;
-	readonly raw_string_literal_end: typeof coerceToRawStringLiteralEnd;
 	readonly doc_comment: typeof coerceToDocComment;
 	readonly _block_comment_content: typeof coerceToBlockCommentContent;
 	readonly _tight: typeof coerceToTight;
@@ -12040,8 +12026,6 @@ export const _fromMap: _FromMap = {
 	raw_string_literal_content: coerceToRawStringLiteralContent,
 	outer_doc_comment_marker: coerceToOuterDocCommentMarker,
 	inner_doc_comment_marker: coerceToInnerDocCommentMarker,
-	raw_string_literal_start: coerceToRawStringLiteralStart,
-	raw_string_literal_end: coerceToRawStringLiteralEnd,
 	doc_comment: coerceToDocComment,
 	_block_comment_content: coerceToBlockCommentContent,
 	_tight: coerceToTight,

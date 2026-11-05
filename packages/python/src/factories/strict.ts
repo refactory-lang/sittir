@@ -190,10 +190,8 @@ export {
 	buildTypeParamTypeVar,
 	buildTypeParamTypeVarTuple,
 	buildTypeParamParamSpec,
-	buildStringStart,
 	buildStringFragment,
 	buildEscapeInterpolation,
-	buildStringEnd,
 	buildIndent,
 	buildDedent,
 	buildTight,
@@ -211,6 +209,11 @@ export {
 	buildFormatExpression,
 	buildMethodDeclaration
 } from './raw.js';
+
+export const string$seated: Seat<T.String.BuildArgs, ReturnType<typeof F.buildString>> = K.string$flatten$stringEnd(
+	K.string$flatten$stringStart(F.buildString, F.buildStringStart),
+	F.buildStringEnd
+);
 
 export const subscript$seated: Seat<T.Subscript.BuildArgs, ReturnType<typeof F.buildSubscript>> = K.subscript$index(
 	F.buildSubscript,

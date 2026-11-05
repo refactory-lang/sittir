@@ -12,6 +12,7 @@
 pub mod baseline;
 pub mod boundary;
 pub mod classify;
+pub mod delimiters;
 pub mod engine;
 pub mod error_read;
 pub mod layout;

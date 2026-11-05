@@ -4,13 +4,17 @@
 //! asserts, per slot, that the slot's type fits the cell stamped for it, and
 //! computes nothing else.
 //!
-//! A derived interior node accepts a four-word text cell:
+//! A derived interior node accepts a four-word text cell for each capture and
+//! for the verbatim text a spelling outside its interior reads as:
 //!
 //! ```
 //! # const KIND: sittir_core::types::KindId = sittir_core::types::KindId(1);
 //! #[derive(sittir_core::Node)]
-//! #[node(kind = KIND, interior = "(?<value>.*)", words = 6)]
+//! #[node(kind = KIND, interior = "(?<value>.*)", words = 10)]
 //! struct Example {
+//!     #[wire(key = "$verbatim")]
+//!     #[slot(word = 6, width = 4)]
+//!     verbatim: Option<String>,
 //!     #[wire(key = "_value")]
 //!     #[slot(capture = "value", word = 2, width = 4)]
 //!     value: String,
@@ -22,8 +26,11 @@
 //! ```compile_fail
 //! # const KIND: sittir_core::types::KindId = sittir_core::types::KindId(1);
 //! #[derive(sittir_core::Node)]
-//! #[node(kind = KIND, interior = "(?<value>.*)", words = 6)]
+//! #[node(kind = KIND, interior = "(?<value>.*)", words = 10)]
 //! struct Example {
+//!     #[wire(key = "$verbatim")]
+//!     #[slot(word = 6, width = 4)]
+//!     verbatim: Option<String>,
 //!     #[wire(key = "_value")]
 //!     #[slot(capture = "value", word = 2, width = 3)]
 //!     value: String,
@@ -35,8 +42,11 @@
 //! ```compile_fail
 //! # const KIND: sittir_core::types::KindId = sittir_core::types::KindId(1);
 //! #[derive(sittir_core::Node)]
-//! #[node(kind = KIND, interior = "(?<value>.*)", words = 6)]
+//! #[node(kind = KIND, interior = "(?<value>.*)", words = 10)]
 //! struct Example {
+//!     #[wire(key = "$verbatim")]
+//!     #[slot(word = 6, width = 4)]
+//!     verbatim: Option<String>,
 //!     #[wire(key = "_value")]
 //!     #[slot(capture = "value", word = 1, width = 4)]
 //!     value: String,

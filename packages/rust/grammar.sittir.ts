@@ -19,6 +19,7 @@ import {
 	regex,
 	prec,
 	token,
+	spellings,
 	preference,
 	reauthored,
 	vocabulary,
@@ -730,8 +731,8 @@ export default grammar(enrich(base), wire({
 		raw_string_literal_content: token.immediate(/[\s\S]*/),
 		_outer_block_doc_comment_marker: token.immediate('*'),
 		_inner_block_doc_comment_marker: token.immediate('!'),
-		_raw_string_literal_start: /[bc]?r#*"/,
-		_raw_string_literal_end: token.immediate(/"#*/),
+		_raw_string_literal_start: token(seq(field('prefix', spellings({ r: {}, br: {}, cr: {} })), field('hashes', /#*/), '"')),
+		_raw_string_literal_end: token.immediate(seq('"', field('hashes', /#*/))),
 		_line_doc_content: token.immediate(/.*\n?/),
 		_block_comment_content: token.immediate(/[^]*/)
 	}),

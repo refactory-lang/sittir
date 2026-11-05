@@ -125,10 +125,8 @@ const _leafRegistry: { readonly [kind: string]: _LeafEntry } = {
 		factory: F.buildLineContinuationNewline
 	},
 	line_continuation_nul: { values: ['\\\u0000'], factory: () => F.buildLineContinuationNul },
-	string_start: { pattern: F._leafRe_buildStringStart, factory: F.buildStringStart },
 	string_fragment: { pattern: F._leafRe_buildStringFragment, factory: F.buildStringFragment },
 	escape_interpolation: { pattern: F._leafRe_buildEscapeInterpolation, factory: F.buildEscapeInterpolation },
-	string_end: { pattern: F._leafRe_buildStringEnd, factory: F.buildStringEnd },
 	_indent: { values: ['﷐\n'], factory: () => F.buildIndent },
 	_dedent: { values: ['﷑\n'], factory: () => F.buildDedent },
 	_tight: { values: [''], factory: () => F.buildTight },
@@ -170,10 +168,8 @@ const _SLOTLESS_TEXT_KINDS: ReadonlySet<string> = new Set([
 	'integer_decimal_plain',
 	'line_continuation_newline',
 	'line_continuation_nul',
-	'string_start',
 	'string_fragment',
 	'escape_interpolation',
-	'string_end',
 	'_indent',
 	'_dedent',
 	'_tight',
@@ -196,10 +192,8 @@ const _TEXT_KINDS_BY_RANK: readonly string[] = [
 	'_newline',
 	'_indent',
 	'_dedent',
-	'string_start',
 	'string_fragment',
 	'escape_interpolation',
-	'string_end',
 	'_tight',
 	'_space',
 	'_tab',
@@ -271,6 +265,13 @@ function _resolveBareText(v: string, kinds: readonly string[]): AnyUntypedNode |
 	return undefined;
 }
 
+const _DELIMITER_TOKENS: { readonly [kind: string]: (bag: Readonly<Record<string, unknown>>) => unknown } = {
+	string_start: (bag) =>
+		(F.buildStringStart as (...args: unknown[]) => unknown)(bag['prefix'], { quote: bag['quote'] }),
+	string_end: (bag) =>
+		(F.buildStringEnd as (...args: unknown[]) => unknown)({}, { content: bag['content'], quote: bag['quote'] })
+};
+
 function _isFromKind(k: string): k is keyof _FromMap {
 	return k in _fromMap;
 }
@@ -304,6 +305,8 @@ function _resolveByKind<K extends keyof _FromMap>(kind: K, rest: _LooseFieldInpu
 }
 
 export function buildByKind(kind: string, ...input: unknown[]): unknown {
+	if (Object.hasOwn(_DELIMITER_TOKENS, kind))
+		return _DELIMITER_TOKENS[kind]!(Object.assign({}, ...input) as Readonly<Record<string, unknown>>);
 	if (!Object.hasOwn(_fromMap, kind)) throw new Error(`no builder for kind ${JSON.stringify(kind)}`);
 	if (input.length === 1) return _resolveByKind(kind as keyof _FromMap, input[0] as _LooseFieldInput);
 	return (_fromMap[kind as keyof _FromMap] as (...args: unknown[]) => unknown)(...input);
@@ -2013,9 +2016,9 @@ export const coerceToImportPrefix: ConfigSeat<T.ImportPrefix.Loose, ReturnType<t
 	return F.buildImportPrefix(input as Parameters<typeof F.buildImportPrefix>[0]);
 };
 
-export function resolveRelativeImport_prefix(
-	value: T.RelativeImport.LooseConfig['prefix']
-): Admit<T.RelativeImport['_prefix']> {
+export function resolveRelativeImport_dots(
+	value: T.RelativeImport.LooseConfig['dots']
+): Admit<T.RelativeImport['_dots']> {
 	return _resolveOneLeaf<T.ImportPrefix>(value, 'import_prefix');
 }
 
@@ -2032,7 +2035,7 @@ export const coerceToRelativeImport: ConfigSeat<T.RelativeImport.Loose, ReturnTy
 		return input as unknown as ReturnType<typeof F.buildRelativeImport>;
 	currentHandle()?.admit(TSKindId.RelativeImport, [input]);
 	return F.buildRelativeImport({
-		prefix: resolveRelativeImport_prefix(input.prefix),
+		dots: resolveRelativeImport_dots(input.dots),
 		name: resolveRelativeImport_name(input.name)
 	});
 };
@@ -5124,30 +5127,37 @@ export const coerceToConcatenatedString: Seat<
 };
 
 export function resolveString_stringStart(
-	value: T.String.LooseConfig['stringStart']
+	value: T.String.LooseConfig['stringStart'] | undefined
 ): Admit<T.String['_string_start']> {
-	return _resolveOneLeaf<T.StringStart>(value, 'string_start');
+	return _resolveOneBranch<T.StringStart>(value, 'string_start');
 }
 
 export function resolveString_contents(value: T.String.LooseConfig['contents']): Admit<T.String['_content']> {
 	return _resolveMany<T.Interpolation | T.StringContent>(value, _K0, _K36);
 }
 
-export function resolveString_stringEnd(value: T.String.LooseConfig['stringEnd']): Admit<T.String['_string_end']> {
-	return _resolveOneLeaf<T.StringEnd>(value, 'string_end');
+export function resolveString_stringEnd(
+	value: T.String.LooseConfig['stringEnd'] | undefined
+): Admit<T.String['_string_end']> {
+	return _resolveOneBranch<T.StringEnd>(value, 'string_end');
 }
 
-export const coerceToString: ConfigSeat<T.String.Loose, ReturnType<typeof F.buildString>> = (
-	input: T.String.Loose
-): ReturnType<typeof F.buildString> => {
-	if (!_isLooseConfig<T.String.LooseConfig>(input)) return input as unknown as ReturnType<typeof F.buildString>;
+export function coerceToString<const I extends T.String.Loose>(
+	...input: [input?: I, options?: T.String.Options] & RefuseUndeclared<I, T.String.Loose>
+): ReturnType<typeof F.buildString>;
+export function coerceToString(input?: T.String.Loose, options?: T.String.Options): ReturnType<typeof F.buildString> {
+	if (!_isLooseConfig<T.String.LooseConfig | undefined>(input))
+		return input as unknown as ReturnType<typeof F.buildString>;
 	currentHandle()?.admit(TSKindId.String, [input]);
-	return F.buildString({
-		stringStart: resolveString_stringStart(input.stringStart),
-		contents: resolveString_contents(input.contents),
-		stringEnd: resolveString_stringEnd(input.stringEnd)
-	});
-};
+	return F.buildString(
+		{
+			stringStart: resolveString_stringStart(input?.stringStart) ?? F.buildStringStart(),
+			contents: resolveString_contents(input?.contents),
+			stringEnd: resolveString_stringEnd(input?.stringEnd) ?? F.buildStringEnd()
+		},
+		options
+	);
+}
 
 export const coerceToStringContent: Seat<T.StringContent.LooseArgs, ReturnType<typeof F.buildStringContent>> = (
 	...input: T.StringContent.LooseArgs
@@ -7451,13 +7461,6 @@ export const coerceToTypeParamParamSpec: ConfigSeat<
 	);
 };
 
-export const coerceToStringStart: ConfigSeat<T.StringStart.Loose, ReturnType<typeof F.buildStringStart>> = (
-	input: T.StringStart.Loose
-): ReturnType<typeof F.buildStringStart> => {
-	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildStringStart>;
-	return F.buildStringStart(input as Parameters<typeof F.buildStringStart>[0]);
-};
-
 export const coerceToStringFragment: ConfigSeat<T.StringFragment.Loose, ReturnType<typeof F.buildStringFragment>> = (
 	input: T.StringFragment.Loose
 ): ReturnType<typeof F.buildStringFragment> => {
@@ -7471,13 +7474,6 @@ export const coerceToEscapeInterpolation: ConfigSeat<
 > = (input: T.EscapeInterpolation.Loose): ReturnType<typeof F.buildEscapeInterpolation> => {
 	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildEscapeInterpolation>;
 	return F.buildEscapeInterpolation(input as Parameters<typeof F.buildEscapeInterpolation>[0]);
-};
-
-export const coerceToStringEnd: ConfigSeat<T.StringEnd.Loose, ReturnType<typeof F.buildStringEnd>> = (
-	input: T.StringEnd.Loose
-): ReturnType<typeof F.buildStringEnd> => {
-	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildStringEnd>;
-	return F.buildStringEnd(input as Parameters<typeof F.buildStringEnd>[0]);
 };
 
 export function coerceToIndent(_input?: T.Indent.Loose): typeof F.buildIndent {
@@ -7988,10 +7984,8 @@ export interface _FromMap {
 	readonly type_param_type_var: typeof coerceToTypeParamTypeVar;
 	readonly type_param_type_var_tuple: typeof coerceToTypeParamTypeVarTuple;
 	readonly type_param_param_spec: typeof coerceToTypeParamParamSpec;
-	readonly string_start: typeof coerceToStringStart;
 	readonly string_fragment: typeof coerceToStringFragment;
 	readonly escape_interpolation: typeof coerceToEscapeInterpolation;
-	readonly string_end: typeof coerceToStringEnd;
 	readonly _indent: typeof coerceToIndent;
 	readonly _dedent: typeof coerceToDedent;
 	readonly _tight: typeof coerceToTight;
@@ -8195,10 +8189,8 @@ export const _fromMap: _FromMap = {
 	type_param_type_var: coerceToTypeParamTypeVar,
 	type_param_type_var_tuple: coerceToTypeParamTypeVarTuple,
 	type_param_param_spec: coerceToTypeParamParamSpec,
-	string_start: coerceToStringStart,
 	string_fragment: coerceToStringFragment,
 	escape_interpolation: coerceToEscapeInterpolation,
-	string_end: coerceToStringEnd,
 	_indent: coerceToIndent,
 	_dedent: coerceToDedent,
 	_tight: coerceToTight,

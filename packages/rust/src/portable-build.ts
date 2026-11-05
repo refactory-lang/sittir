@@ -45377,8 +45377,58 @@ export const build: PortableBuildTable = {
 			]
 		},
 		'literal.string.raw': {
-			root: false,
-			arms: []
+			root: true,
+			arms: [
+				{
+					kind: 333,
+					builder: 'rawStringLiteral',
+					members: [
+						{
+							name: 'content',
+							steps: [
+								{
+									key: 'stringContent'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [333, 'stringContent'],
+									kinds: [160],
+									leaf: 'rawStringLiteralContent',
+									texts: [160],
+									pattern: {
+										source: '^(?:(?:[\\s\\S]*))$',
+										flags: 'u'
+									}
+								}
+							]
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'rawStringLiteralStart',
+									flatten: true
+								},
+								{
+									key: 'prefix'
+								}
+							],
+							text: 'r'
+						}
+					],
+					flags: {},
+					when: [
+						{
+							absent: [],
+							required: ['content']
+						}
+					]
+				}
+			]
 		},
 		'literal.string.text': {
 			root: false,
@@ -50621,5 +50671,123 @@ export const build: PortableBuildTable = {
 			integer: 'literal.number.integer',
 			float: 'literal.number.float'
 		}
+	},
+	tokens: {
+		'176': ['shebang'],
+		'184': ['name'],
+		'185': ['tokenPatterns'],
+		'188': ['tokens'],
+		'189': ['content'],
+		'192': ['path'],
+		'200': ['value'],
+		'202': ['type'],
+		'205': ['type', 'value'],
+		'206': ['type', 'value'],
+		'207': ['value'],
+		'208': ['name', 'returnType'],
+		'209': ['name', 'returnType'],
+		'216': ['bounds'],
+		'217': ['type'],
+		'218': ['type'],
+		'220': ['type', 'default'],
+		'221': ['default'],
+		'223': ['name', 'type', 'value'],
+		'224': ['argument'],
+		'226': ['path'],
+		'228': ['name'],
+		'232': ['pattern'],
+		'233': ['name', 'type'],
+		'237': ['type'],
+		'238': ['type', 'alias'],
+		'240': ['element', 'length'],
+		'242': ['returnType'],
+		'248': ['left', 'right'],
+		'251': ['type'],
+		'252': ['type'],
+		'263': ['qualifier'],
+		'264': ['qualifier'],
+		'265': ['qualifier'],
+		'267': ['argument'],
+		'268': ['argument'],
+		'270': ['left', 'right'],
+		'271': ['left', 'right'],
+		'272': ['left', 'right'],
+		'273': ['expression', 'type'],
+		'274': ['expression'],
+		'275': ['expression'],
+		'276': ['function'],
+		'279': ['expression'],
+		'285': ['field', 'value'],
+		'286': ['value'],
+		'287': ['condition'],
+		'288': ['pattern', 'value'],
+		'289': ['left', 'rights'],
+		'292': ['subject'],
+		'295': ['body'],
+		'296': ['pattern', 'condition'],
+		'297': ['condition'],
+		'299': ['left', 'right'],
+		'304': ['expression'],
+		'306': ['object', 'index'],
+		'307': ['expression'],
+		'308': ['object', 'property'],
+		'313': ['trailingExpression'],
+		'322': ['pattern'],
+		'324': ['pattern'],
+		'325': ['pattern'],
+		'326': ['pattern'],
+		'330': ['value'],
+		'332': ['elements'],
+		'333': ['rawStringLiteralStart', 'rawStringLiteralEnd'],
+		'348': ['items'],
+		'351': ['items'],
+		'355': ['items'],
+		'357': ['items'],
+		'358': ['items'],
+		'360': ['path'],
+		'366': ['element', 'length'],
+		'368': ['value'],
+		'369': ['returnType'],
+		'370': ['body'],
+		'371': ['argument'],
+		'372': ['argument'],
+		'373': ['argument'],
+		'374': ['argument'],
+		'377': ['type'],
+		'378': ['type'],
+		'379': ['path'],
+		'386': ['left', 'right'],
+		'387': ['right'],
+		'388': ['type'],
+		'389': ['type'],
+		'390': ['start', 'end'],
+		'391': ['start'],
+		'392': ['end'],
+		'394': ['expression'],
+		'397': ['body'],
+		'405': ['tokenPatterns'],
+		'406': ['tokenPatterns'],
+		'407': ['tokenPatterns'],
+		'408': ['tokens'],
+		'409': ['tokens'],
+		'410': ['tokens'],
+		'415': ['pattern'],
+		'419': ['right'],
+		'420': ['right'],
+		'422': ['left'],
+		'429': ['content'],
+		'430': ['content'],
+		'431': ['expression'],
+		'432': ['type'],
+		'433': ['content'],
+		'437': ['expression'],
+		'439': ['type'],
+		'476': ['content'],
+		'480': ['name', 'returnType'],
+		'483': ['name', 'returnType']
+	},
+	delimiters: {
+		'159': ['prefix'],
+		'161': []
 	}
 };

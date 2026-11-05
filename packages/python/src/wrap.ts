@@ -184,15 +184,15 @@ export function wrapRelativeImport(data: T.RelativeImport, tree: TreeHandle): T.
 	const node = {
 		...data,
 		$type: TSKindId.RelativeImport as const,
-		prefix() {
-			return hydrateSlot<T.ImportPrefix>(this, '_prefix', tree);
+		dots() {
+			return hydrateSlot<T.ImportPrefix>(this, '_dots', tree);
 		},
 		name() {
 			return hydrateSlot<T.DottedName | undefined>(this, '_name', tree);
 		},
 		$with: {
-			prefix: (v: NonNullable<T.RelativeImport['_prefix']>) =>
-				rebuilt(node, handle, () => wrapRelativeImport({ ...$edited(data), _prefix: v }, tree)),
+			dots: (v: NonNullable<T.RelativeImport['_dots']>) =>
+				rebuilt(node, handle, () => wrapRelativeImport({ ...$edited(data), _dots: v }, tree)),
 			name: (v: NonNullable<T.RelativeImport['_name']>) =>
 				rebuilt(node, handle, () => wrapRelativeImport({ ...$edited(data), _name: v }, tree))
 		},
@@ -3686,6 +3686,7 @@ export function wrapConcatenatedString(data: T.ConcatenatedString, tree: TreeHan
 
 export function wrapString(data: T.String, tree: TreeHandle): T.String.Parsed {
 	const handle = currentHandle();
+	const readGroup_stringStart = () => hydrateSlot<T.StringStart | undefined>(node, '_string_start', tree);
 	const node = {
 		...data,
 		$type: TSKindId.String as const,
@@ -3704,8 +3705,24 @@ export function wrapString(data: T.String, tree: TreeHandle): T.String.Parsed {
 			contents: (...v: NonNullable<T.String['_content']>[number][]) =>
 				rebuilt(node, handle, () => wrapString({ ...$edited(data), _content: restItems('contents', v) }, tree)),
 			stringEnd: (v: NonNullable<T.String['_string_end']>) =>
-				rebuilt(node, handle, () => wrapString({ ...$edited(data), _string_end: v }, tree))
+				rebuilt(node, handle, () => wrapString({ ...$edited(data), _string_end: v }, tree)),
+			prefix: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					seatWith(
+						{
+							slot: 'stringStart',
+							stored: '_string_start',
+							make: RAW.buildStringStart,
+							keys: [{ name: 'prefix', rest: false }]
+						},
+						'prefix',
+						args,
+						(v: NonNullable<T.String['_string_start']>) => wrapString({ ...$edited(data), _string_start: v }, tree),
+						() => readGroup_stringStart.call(node)
+					)
+				)
 		},
+		prefix: data._string_start === undefined ? undefined : () => groupField(readGroup_stringStart.call(node), 'prefix'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),
@@ -5779,6 +5796,108 @@ export function wrapTypeParamParamSpec(data: T.TypeParamParamSpec, tree: TreeHan
 	return node as unknown as T.TypeParamParamSpec.Parsed;
 }
 
+export function wrapStringStart(data: T.StringStart, tree: TreeHandle): T.StringStart.Parsed {
+	const handle = currentHandle();
+	const node = {
+		...data,
+		$type: TSKindId.StringStart as const,
+		prefix() {
+			return hydrateSlot<
+				| 'r'
+				| 'R'
+				| 'b'
+				| 'B'
+				| 'f'
+				| 'F'
+				| 't'
+				| 'T'
+				| 'u'
+				| 'U'
+				| 'rb'
+				| 'rB'
+				| 'Rb'
+				| 'RB'
+				| 'br'
+				| 'bR'
+				| 'Br'
+				| 'BR'
+				| 'rf'
+				| 'rF'
+				| 'Rf'
+				| 'RF'
+				| 'fr'
+				| 'fR'
+				| 'Fr'
+				| 'FR'
+				| 'rt'
+				| 'rT'
+				| 'Rt'
+				| 'RT'
+				| 'tr'
+				| 'tR'
+				| 'Tr'
+				| 'TR'
+				| 'ur'
+				| 'uR'
+				| 'Ur'
+				| 'UR'
+				| undefined
+			>(this, '_prefix', tree);
+		},
+		quote() {
+			return hydrateSlot<'"' | "'" | '"""' | "'''" | '`'>(this, '_quote', tree);
+		},
+		$with: {
+			prefix: (v: NonNullable<T.StringStart['_prefix']>) =>
+				rebuilt(node, handle, () => wrapStringStart({ ...$edited(data), _prefix: v }, tree)),
+			quote: (v: NonNullable<T.StringStart['_quote']>) =>
+				rebuilt(node, handle, () => wrapStringStart({ ...$edited(data), _quote: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.StringStart.Parsed;
+}
+
+export function wrapStringEnd(data: T.StringEnd, tree: TreeHandle): T.StringEnd.Parsed {
+	const handle = currentHandle();
+	const node = {
+		...data,
+		$type: TSKindId.StringEnd as const,
+		content() {
+			return hydrateSlot<string>(this, '_content', tree);
+		},
+		quote() {
+			return hydrateSlot<'"' | "'" | '"""' | "'''" | '`'>(this, '_quote', tree);
+		},
+		$with: {
+			content: (v: NonNullable<T.StringEnd['_content']>) =>
+				rebuilt(node, handle, () => wrapStringEnd({ ...$edited(data), _content: v }, tree)),
+			quote: (v: NonNullable<T.StringEnd['_quote']>) =>
+				rebuilt(node, handle, () => wrapStringEnd({ ...$edited(data), _quote: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.StringEnd.Parsed;
+}
+
 export function wrapConstructorDeclaration(
 	data: T.ConstructorDeclaration,
 	tree: TreeHandle
@@ -6318,6 +6437,8 @@ const _wrapTable: Record<number, (data: _UntypedNode, tree: TreeHandle) => unkno
 	[TSKindId.TypeParamTypeVar]: (d, t) => wrapTypeParamTypeVar(d as unknown as T.TypeParamTypeVar, t),
 	[TSKindId.TypeParamTypeVarTuple]: (d, t) => wrapTypeParamTypeVarTuple(d as unknown as T.TypeParamTypeVarTuple, t),
 	[TSKindId.TypeParamParamSpec]: (d, t) => wrapTypeParamParamSpec(d as unknown as T.TypeParamParamSpec, t),
+	[TSKindId.StringStart]: (d, t) => wrapStringStart(d as unknown as T.StringStart, t),
+	[TSKindId.StringEnd]: (d, t) => wrapStringEnd(d as unknown as T.StringEnd, t),
 	[TSKindId.ConstructorDeclaration]: (d, t) => wrapConstructorDeclaration(d as unknown as T.ConstructorDeclaration, t),
 	[TSKindId.BlockClassDeclaration]: (d, t) => wrapBlockClassDeclaration(d as unknown as T.BlockClassDeclaration, t),
 	[TSKindId.SuiteBlockClassDeclaration]: (d, t) =>
@@ -6336,10 +6457,8 @@ const _wrapTable: Record<number, (data: _UntypedNode, tree: TreeHandle) => unkno
 	[TSKindId.IntegerDecimalImaginary]: (d, t) => wrapLeaf(d, t),
 	[TSKindId.IntegerDecimalPlain]: (d, t) => wrapLeaf(d, t),
 	[TSKindId.LineContinuationNewline]: (d, t) => wrapInteriorLeaf(d, t),
-	[TSKindId.StringStart]: (d, t) => wrapLeaf(d, t),
 	[TSKindId.StringFragment]: (d, t) => wrapLeaf(d, t),
-	[TSKindId.EscapeInterpolation]: (d, t) => wrapLeaf(d, t),
-	[TSKindId.StringEnd]: (d, t) => wrapLeaf(d, t)
+	[TSKindId.EscapeInterpolation]: (d, t) => wrapLeaf(d, t)
 };
 
 /** The wrapped root of a whole-source parse — what `engine.parse()` returns. */

@@ -6305,13 +6305,13 @@
       ],
       "members": [
         {
-          "name": "prefix",
+          "name": "dots",
           "route": "slot",
-          "slot": "prefix",
+          "slot": "dots",
           "path": [
             {
               "owner": "relative_import",
-              "slot": "prefix"
+              "slot": "dots"
             }
           ]
         },
@@ -6624,6 +6624,47 @@
       "vocab": "literal.string",
       "read": [
         {
+          "vocab": "literal.string.interpolated.deferred.raw.multiline",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "match",
+                "pattern": "^[a-zA-Z]*[tT]",
+                "slots": {
+                  "248": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "match",
+                "pattern": "^[a-zA-Z]*[rR]",
+                "slots": {
+                  "248": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "match",
+                "pattern": "\"\"\"|'''",
+                "slots": {
+                  "248": 0
+                }
+              }
+            }
+          ]
+        },
+        {
           "vocab": "literal.string.interpolated.raw.multiline",
           "toplevel": true,
           "within": [],
@@ -6634,7 +6675,7 @@
               "via": [],
               "plan": {
                 "op": "match",
-                "pattern": "^[a-zA-Z]*[fFtT]",
+                "pattern": "^[a-zA-Z]*[fF]",
                 "slots": {
                   "248": 0
                 }
@@ -6706,6 +6747,66 @@
           ]
         },
         {
+          "vocab": "literal.string.interpolated.deferred.raw",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "match",
+                "pattern": "^[a-zA-Z]*[tT]",
+                "slots": {
+                  "248": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "match",
+                "pattern": "^[a-zA-Z]*[rR]",
+                "slots": {
+                  "248": 0
+                }
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "literal.string.interpolated.deferred.multiline",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "match",
+                "pattern": "^[a-zA-Z]*[tT]",
+                "slots": {
+                  "248": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "match",
+                "pattern": "\"\"\"|'''",
+                "slots": {
+                  "248": 0
+                }
+              }
+            }
+          ]
+        },
+        {
           "vocab": "literal.string.interpolated.raw",
           "toplevel": true,
           "within": [],
@@ -6716,7 +6817,7 @@
               "via": [],
               "plan": {
                 "op": "match",
-                "pattern": "^[a-zA-Z]*[fFtT]",
+                "pattern": "^[a-zA-Z]*[fF]",
                 "slots": {
                   "248": 0
                 }
@@ -6746,7 +6847,7 @@
               "via": [],
               "plan": {
                 "op": "match",
-                "pattern": "^[a-zA-Z]*[fFtT]",
+                "pattern": "^[a-zA-Z]*[fF]",
                 "slots": {
                   "248": 0
                 }
@@ -6856,6 +6957,25 @@
           ]
         },
         {
+          "vocab": "literal.string.interpolated.deferred",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "match",
+                "pattern": "^[a-zA-Z]*[tT]",
+                "slots": {
+                  "248": 0
+                }
+              }
+            }
+          ]
+        },
+        {
           "vocab": "literal.string.interpolated",
           "toplevel": true,
           "within": [],
@@ -6866,7 +6986,7 @@
               "via": [],
               "plan": {
                 "op": "match",
-                "pattern": "^[a-zA-Z]*[fFtT]",
+                "pattern": "^[a-zA-Z]*[fF]",
                 "slots": {
                   "248": 0
                 }
@@ -6905,6 +7025,25 @@
               "plan": {
                 "op": "match",
                 "pattern": "^[a-zA-Z]*[rR]",
+                "slots": {
+                  "248": 0
+                }
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "literal.string.unicode",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "match",
+                "pattern": "^[a-zA-Z]*[uU]",
                 "slots": {
                   "248": 0
                 }
@@ -8249,21 +8388,27 @@
       },
       {
         "depth": 3,
-        "paths": 64,
+        "paths": 65,
         "kinds": 59,
-        "refinements": 42
+        "refinements": 43
       },
       {
         "depth": 4,
-        "paths": 62,
+        "paths": 63,
         "kinds": 18,
-        "refinements": 29
+        "refinements": 30
       },
       {
         "depth": 5,
-        "paths": 4,
+        "paths": 6,
         "kinds": 3,
-        "refinements": 4
+        "refinements": 6
+      },
+      {
+        "depth": 6,
+        "paths": 1,
+        "kinds": 1,
+        "refinements": 1
       }
     ]
   }
