@@ -15,6 +15,7 @@ import { holdSideEntries, readCoordinateOf, refuseForeignEntry } from './side-en
 
 export { Delimiter } from './delimiter.ts';
 export { BLANK_KIND_ID, blankArmRead, blankArmStored } from './blank-arm.ts';
+export { spelledMember } from './spelled.ts';
 export { nodeJSON } from './node-json.ts';
 export { Source };
 export { ERROR_KIND_ID, ERROR_KIND_NAME } from './error-kind.ts';
@@ -480,10 +481,6 @@ interface GroupSeatSpec {
 
 export function groupField(group: object | undefined, field: string): unknown {
 	return (group as Members | undefined)?.[field]?.call(group);
-}
-
-export function spelledMember<T>(text: T, spellings: Readonly<Record<string, string>>): T {
-	return (typeof text === 'string' && Object.hasOwn(spellings, text) ? spellings[text] : text) as T;
 }
 
 /**

@@ -46,8 +46,7 @@ export function tokenText(kind: number, seats: readonly PortableSeat[] | undefin
 
 export function tokenKind(text: string, seats: readonly PortableSeat[]): number | undefined {
 	for (const seat of seats) {
-		const kind = seat.tokens?.[text];
-		if (kind !== undefined) return kind;
+		if (seat.tokens !== undefined && Object.hasOwn(seat.tokens, text)) return seat.tokens[text];
 	}
 	return undefined;
 }

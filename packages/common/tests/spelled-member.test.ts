@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { spelledMember } from '../src/utils.ts';
+import { spelledMember } from '../src/spelled.ts';
 
 describe('spelledMember', () => {
 	const spellings = { BR: 'rb', F: 'f' };
@@ -8,6 +8,7 @@ describe('spelledMember', () => {
 		expect(spelledMember('BR', spellings)).toBe('rb');
 		expect(spelledMember('rb', spellings)).toBe('rb');
 		expect(spelledMember(undefined, spellings)).toBeUndefined();
+		expect(spelledMember('BR', undefined)).toBe('BR');
 	});
 
 	it("reads only the map's own spellings, never an inherited property", () => {

@@ -21,7 +21,7 @@
  */
 
 import type { AnyUntypedNode, NodeTrivia } from '@sittir/types';
-import { nodeText, placeOf, slotSeparatorOf, spanOf } from '@sittir/common/utils';
+import { nodeText, placeOf, slotSeparatorOf, spanOf, spelledMember } from '@sittir/common/utils';
 import type { TreeHandle } from '@sittir/common/utils';
 import type { FactoryShape, FactorySlotMeta } from '../codegen-surface.ts';
 import { load } from '../codegen-surface.ts';
@@ -224,7 +224,7 @@ function compareStorageValue(expected: unknown, actual: unknown, path: string, c
  */
 function memberOf(node: Record<string, unknown>, key: string, ctx: CompareCtx): (value: unknown) => unknown {
 	const spellings = Object.entries(ctx.factorySlots?.[kindOf(node, ctx) ?? ''] ?? {}).find(([name]) => storageKeyOf(name) === key)?.[1].spellings;
-	return (value) => (typeof value === 'string' ? (spellings?.[value] ?? value) : value);
+	return (value) => spelledMember(value, spellings);
 }
 
 function compareNodeStorage(

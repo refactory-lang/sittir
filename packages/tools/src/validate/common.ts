@@ -13,7 +13,7 @@ import {
 	type HostedText,
 	type ReparseHosts
 } from '@sittir/common';
-import { blankArmStored, hydrateTriviaEntry } from '@sittir/common/utils';
+import { blankArmStored, hydrateTriviaEntry, spelledMember } from '@sittir/common/utils';
 import { scopeBuilders } from '@sittir/common/engine';
 import {
 	carryRead,
@@ -693,8 +693,7 @@ export function sameSpelledMeaning(left: string, right: string, kind: string, sp
 	return Object.entries(spelling.facets).every(([name, { role, spellings }]) => {
 		if (role === 'content') return a[name] === b[name];
 		if (role !== 'input') return true;
-		const member = (value: unknown): unknown => (typeof value === 'string' ? (spellings?.[value] ?? value) : value);
-		return member(a[name]) === member(b[name]);
+		return spelledMember(a[name], spellings) === spelledMember(b[name], spellings);
 	});
 }
 
@@ -1720,7 +1719,7 @@ function normalizeConfigSlotValue(
 ): unknown {
 	const narrowed = narrowSingularUnnamedChildrenValue(slot, value, childOpts, slotMeta);
 	const read = resolveMemberValue(narrowed, childOpts);
-	const resolved = typeof read === 'string' ? (slotMeta?.spellings?.[read] ?? read) : read;
+	const resolved = spelledMember(read, slotMeta?.spellings);
 	if (shouldNormalizeConfigSlotAsMany(slot, slotMeta)) {
 		const items: readonly unknown[] = Array.isArray(resolved) ? resolved : resolved == null ? [] : [resolved];
 		if (slotMeta?.nonEmpty && items.length === 0) {

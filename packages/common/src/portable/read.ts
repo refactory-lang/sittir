@@ -1,5 +1,6 @@
 import type { PortableBuildArm, PortableBuildTable, PortableContainer, PortableDecimalParts, PortableMemberStep, PortablePreset, PortableSeat, PortableSlotStep } from '@sittir/types';
 import { nodeText } from '../node-data.ts';
+import { spelledMember } from '../spelled.ts';
 import { hasKind, type PortableClassifier } from './classify.ts';
 import { textBuilt, tokenText } from './facts.ts';
 import { slotItems } from '../query-holds.ts';
@@ -187,7 +188,7 @@ export function portableReader({ table, classify, flagHolds, flagsOf, textOf, sl
 		return arm.scalar === 'float' ? floatOf(text) : integerOf(text);
 	};
 	const armsAt = (path: string, kind: number): readonly PortableBuildArm[] => (table.paths[path]?.arms ?? []).filter((arm) => arm.kind === kind);
-	const canonicalOf = (token: unknown, facet: string, text: string): string => (hasKind(token) ? (table.delimiters?.[token.$type]?.spellings?.[facet]?.[text] ?? text) : text);
+	const canonicalOf = (token: unknown, facet: string, text: string): string => (hasKind(token) ? spelledMember(text, table.delimiters?.[token.$type]?.spellings?.[facet]) : text);
 	const contradicts = (node: Node, preset: PortablePreset): boolean => {
 		if ((preset.text === undefined && preset.kind === undefined) || preset.steps.at(-1)?.mounted !== undefined) return false;
 		const held = walk(node, stepHops(preset.steps));
