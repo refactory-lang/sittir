@@ -1,7 +1,8 @@
 # The one Rust version builds and CI use. The stack ceilings in
 # sittir-parity-tests/tests/typed_read_nesting.rs are measured with it, so a
 # change of version re-measures them in the same change. llvm-tools carries
-# the llvm-strip build-native strips a release binding with off Apple.
+# the llvm-strip build-native strips a release binding with off Apple, and the
+# llvm-objdump the encode stack guard reads one with.
 [toolchain]
 channel = "1.99.0"
 components = ["llvm-tools"]

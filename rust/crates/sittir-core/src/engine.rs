@@ -2689,6 +2689,7 @@ mod tests {
     }
 
     crate::refuse_napi_codec!(TestTrivia);
+    crate::grammar_nodes!(TestTrivia; TestTrivia);
 
     impl FromTriviaText for TestTrivia {
         fn from_text(text: TriviaText) -> Self {

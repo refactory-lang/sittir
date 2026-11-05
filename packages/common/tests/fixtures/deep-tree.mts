@@ -1,0 +1,130 @@
+// Run with `node --import tsx <object|arena> <render|read|chains|decode|refuse>
+// <levels> <main|worker>`: builds and renders a rust expression nested
+// <levels> parentheses deep (render), reads a type nesting tuple types
+// <levels> deep at depth Infinity and renders it (read), reads and renders
+// `fn f() { 1; }` with its literal in every nesting of parentheses from none
+// to <levels> deep, the source typed_read_nesting.rs stamps heights on
+// (chains), or hands the native
+// render a wire value with no JS walk in front: one nested <levels> deep,
+// which the addon decodes and releases (decode), or a tuple whose first item
+// is nested <levels> deep and whose second is malformed, which the addon
+// refuses after decoding the first, then renders whole once both items are
+// restored, on the same thread (refuse). On the main thread or a Worker.
+// Prints one JSON line: `{ ok: true }`, or the JS error it refused with. A
+// child process, because a native stack overflow ends the process.
+import { createRequire } from 'node:module';
+import { fileURLToPath } from 'node:url';
+import { Worker, isMainThread, parentPort, workerData } from 'node:worker_threads';
+import { createEngine } from '../../src/index.ts';
+import rust from '../../../rust/src/index.ts';
+
+interface Case {
+	storage: 'object' | 'arena';
+	side: 'render' | 'read' | 'chains' | 'decode' | 'refuse';
+	levels: number;
+}
+
+type Outcome = { ok: true } | { ok: false; refusal: string };
+
+type NativeRender = (engine: object, node: object, ...rest: unknown[]) => string;
+
+const native = createRequire(import.meta.url)('../../../rust/native/index.cjs') as { render: NativeRender };
+const render = native.render;
+type Wire = Record<string, unknown>;
+let lastRender: [object, Wire] | undefined;
+native.render = (engine, node, ...rest) => {
+	lastRender = [engine, node as Wire];
+	return render(engine, node, ...rest);
+};
+
+function expect(actual: string, expected: string): void {
+	if (actual !== expected) throw new Error(`rendered ${actual.length} characters, expected ${expected.length}`);
+}
+
+const isWire = (value: unknown): value is Wire => value !== null && typeof value === 'object' && !Array.isArray(value);
+
+const refusalOf = (error: unknown): Outcome => ({ ok: false, refusal: String((error as Error).stack ?? error).split('\n')[0] ?? '' });
+
+function wireOf(rendered: () => unknown): [object, Wire] {
+	rendered();
+	return lastRender as [object, Wire];
+}
+
+function nest(shell: Wire, levels: number, from?: Wire): Wire {
+	const key = Object.keys(shell).find((name) => isWire(shell[name])) as string;
+	let wire = from ?? (shell[key] as Wire);
+	for (let at = 0; at < levels; at += 1) wire = { ...shell, [key]: wire };
+	return wire;
+}
+
+function itemPair(value: unknown): unknown[] | undefined {
+	if (Array.isArray(value)) {
+		if (value.length === 2 && isWire(value[0]) && Object.values(value[0]).some((child) => isWire(child) && child._content === '1')) return value;
+		return value.map(itemPair).find((found) => found !== undefined);
+	}
+	return isWire(value) ? Object.values(value).map(itemPair).find((found) => found !== undefined) : undefined;
+}
+
+async function run({ storage, side, levels }: Case): Promise<Outcome> {
+	const rs: any = await createEngine(rust, { nodeStorage: storage });
+	try {
+		const parens = `${'('.repeat(levels)}1${')'.repeat(levels)}`;
+		if (side === 'render') {
+			let expression = rs.build.integerLiteral('1');
+			for (let at = 0; at < levels; at += 1) expression = rs.build.parenthesizedExpression(expression);
+			expect(rs.build.expressionStatement(expression).$render(), `${parens};`);
+		} else if (side === 'read') {
+			const source = `type T = ${'('.repeat(levels)}u8${',)'.repeat(levels)};\n`;
+			expect(rs.render(rs.parse(source, { depth: Infinity })).toString(), source);
+		} else if (side === 'chains') {
+			for (let at = 0; at <= levels; at += 1) {
+				const source = `fn f() { ${'('.repeat(at)}1${')'.repeat(at)}; }`;
+				expect(rs.render(rs.parse(source, { depth: Infinity })).toString(), source);
+			}
+		} else if (side === 'decode') {
+			const [engine, shell] = wireOf(() => rs.render(rs.build.parenthesizedExpression(rs.build.integerLiteral('1'))).toString());
+			expect(render(engine, nest(shell, levels)), parens);
+		} else {
+			const source = 'fn f() { ((1), 2); }\n';
+			const [engine, root] = wireOf(() => rs.render(rs.parse(source, { depth: Infinity }).$snapshot()).toString());
+			const pair = itemPair(root) as [Wire, unknown];
+			const [first, second] = pair;
+			pair[0] = nest(first, levels, first);
+			pair[1] = { $type: 'not a kind' };
+			let refused: Outcome = { ok: true };
+			try {
+				render(engine, root);
+			} catch (error) {
+				refused = refusalOf(error);
+			}
+			pair[0] = first;
+			pair[1] = second;
+			expect(render(engine, root), source);
+			return refused;
+		}
+		return { ok: true };
+	} catch (error) {
+		return refusalOf(error);
+	} finally {
+		rs.dispose();
+	}
+}
+
+if (isMainThread) {
+	const [storage, side, levels, thread] = process.argv.slice(2);
+	const args = { storage, side, levels: Number(levels) } as Case;
+	const outcome =
+		thread === 'worker'
+			? await new Promise<Outcome>((resolve, reject) => {
+					const worker = new Worker(fileURLToPath(import.meta.url), {
+						workerData: args,
+						execArgv: ['--import', 'tsx']
+					});
+					worker.once('message', resolve);
+					worker.once('error', reject);
+				})
+			: await run(args);
+	console.log(JSON.stringify(outcome));
+} else {
+	parentPort?.postMessage(await run(workerData as Case));
+}

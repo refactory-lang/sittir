@@ -209,6 +209,8 @@ mod tests {
                 #[wire(key = "$_layout")]
                 #[layout]
                 pub layout: Option<Box<NodeLayout>>,
+                #[height]
+                height: u16,
                 #[wire(key = "_async")]
                 #[slot(presence = kind::ASYNC, word = 2, bit = 3)]
                 pub r#async: bool,
@@ -285,6 +287,8 @@ mod tests {
                 #[wire(key = "$_layout")]
                 #[layout]
                 pub layout: Option<Box<NodeLayout>>,
+                #[height]
+                height: u16,
                 #[wire(key = "_key")]
                 #[slot(field = field::KEY)]
                 pub key: SlotValue<KeyNode>,

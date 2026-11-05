@@ -65,7 +65,7 @@ import {
 import { listViewOwners, wrappedItemLists } from './factories.ts';
 import { interiorOf } from './interior.ts';
 import { ENVELOPE_PINS, assertEnvelopeExtrasPinned, type EnvelopeClaims, type EnvelopePin } from './envelope-claims.ts';
-import { boxedPayloadsOf, PAYLOAD_CEILING_BYTES } from './boxed-payloads.ts';
+import { boxedPayloadsOf, nodeSizesOf, PAYLOAD_CEILING_BYTES } from './boxed-payloads.ts';
 import { getNodeProjection } from './node-projection-cache.ts';
 import { RECORD_HEADER_WORDS, STORED, recordArgs, recordLayoutOf, slotRecordForm, type RecordLayout, type RecordPlace } from './record-layout.ts';
 import {
@@ -1125,7 +1125,8 @@ export function emitRenderModule(
 			'use super::{field_ids as field, kind_ids as kind};',
 			'use ::sittir_core::VerbatimNode;',
 			'',
-			support.text
+			support.text,
+			...exactSizeAssertions(support.text)
 		].join('\n') + '\n';
 	if (support.boundaries.dropped.length > 0) {
 		const arms = support.boundaries.dropped.map((arm) => `  ${arm.drop} ${arm.kind} ${arm.side} next=${arm.next ?? '-'}: ${arm.variants.join(' | ')}`);
@@ -1554,15 +1555,15 @@ function renderNodeSupport(
 		].join('\n')
 	);
 	return {
-		text: [rendered, '', grammarTriviaStatement(read.nodes)].join('\n'),
+		text: [rendered, '', grammarNodesStatement(read.nodes)].join('\n'),
 		records: read.records,
 		choicePayloads: read.choicePayloads,
 		boundaries: boundaryTableFor(structs, nodeMap, plan, meta, generatedIdTables, read)
 	};
 }
 
-function grammarTriviaStatement(nodes: ReadonlySet<string>): string {
-	return `::sittir_core::grammar_trivia!(TriviaNode; ${[...nodes].join(', ')});`;
+function grammarNodesStatement(nodes: ReadonlySet<string>): string {
+	return `::sittir_core::grammar_nodes!(${TRIVIA_NODE}; ${[...nodes].join(', ')});`;
 }
 
 function supertypeAdmitsVerbatim(supertypeNode: AssembledSupertype, nodeMap: NodeMap): boolean {
@@ -1710,6 +1711,13 @@ function choicePayloadType(node: AssembledNode, read: ReadPrint): string {
 	const name = rustNodeStructName(node);
 	read.choicePayloads.add(name);
 	return boxedInEnum(node, read.boxedPayloads) ? `Box<${name}>` : name;
+}
+
+export function exactSizeAssertions(nodeRs: string): string[] {
+	return [...nodeSizesOf(nodeRs)].flatMap(([name, size]) => [
+		'#[cfg(target_pointer_width = "64")]',
+		`const _: () = assert!(::core::mem::size_of::<${name}>() == ${size}, "${name} is not the ${size} bytes the byte rule in boxed-payloads.ts sizes it");`
+	]);
 }
 
 export function payloadCeilingAssertions(pinned: readonly string[], payloads: ReadonlySet<string>): string[] {
@@ -2651,9 +2659,12 @@ function renderNodeEntry(): string[] {
 		"    ctx: &::sittir_core::prepare::RenderContext<'_>,",
 		'    recording: Option<&mut ::sittir_core::baseline::Baseline>,',
 		') -> Result<(NodeSource, String), ::sittir_core::render::RenderError> {',
-		'    ::sittir_core::prepare::Prepare::prepare(&mut node, ctx)?;',
-		'    let rendered = render_node_dispatch(&node, ctx, recording)?;',
-		'    Ok((NodeSource::Factory, rendered))',
+		'    let rendered = match ::sittir_core::prepare::Prepare::prepare(&mut node, ctx) {',
+		'        Ok(()) => render_node_dispatch(&node, ctx, recording),',
+		'        Err(error) => Err(error.into()),',
+		'    };',
+		`    ::sittir_core::codec::release::<${TRIVIA_NODE}, _>(node);`,
+		'    Ok((NodeSource::Factory, rendered?))',
 		'}'
 	];
 }
@@ -3652,6 +3663,7 @@ function renderNodeDataStruct(
 	if (displayIds.length > 0) lines.push(...renderKindField());
 	if (isCompoundOf(node)) {
 		lines.push(...renderLayoutField());
+		if (printedSlots.some(({ slot }) => slotHoldsNodes(slot, nodeMap))) lines.push(...renderHeightField());
 		for (const { slot, owner, forceOptional } of printedSlots) {
 			const field = rustFieldIdent(slot.storageName);
 			const place = placeOf.get(field);
@@ -3920,6 +3932,15 @@ function spaceAttr(
 
 function renderLayoutField(): string[] {
 	return [wireKeyAttr(LAYOUT_FIELD.wireKey), '    #[layout]', `    pub ${LAYOUT_FIELD.rustName}: ${LAYOUT_FIELD.rustType},`];
+}
+
+function renderHeightField(): string[] {
+	return ['    #[height]', '    height: u16,'];
+}
+
+function slotHoldsNodes(slot: AssembledNonterminal, nodeMap: NodeMap): boolean {
+	const { tag } = nodeSlotShapeOf(slot, nodeMap);
+	return tag !== 'presence' && tag !== 'text';
 }
 
 function renderLeafTextField(): string[] {

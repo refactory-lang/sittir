@@ -41,12 +41,12 @@ jobs:
         id: compiled
         with:
           path: ${{ runner.temp }}/arena-runtime-typescript
-          key: arena-runtime-v1-${{ runner.os }}-${{ runner.arch }}-node26.12.0-${{ github.sha }}-typescript
+          key: arena-runtime-v2-${{ runner.os }}-${{ runner.arch }}-node26.12.0-${{ github.sha }}-typescript
       - name: Compile committed TypeScript packages
         if: steps.compiled.outputs.cache-hit != 'true'
         run: |
           pnpm -r --filter './packages/*' --workspace-concurrency=4 run build
-          node scripts/ci/arena-benchmark-runtime.mjs pack "$RUNNER_TEMP/arena-runtime-typescript" typescript packages/*/dist
+          node scripts/ci/arena-benchmark-runtime.mjs pack "$RUNNER_TEMP/arena-runtime-typescript" typescript packages/*/dist packages/*/tsconfig.build.tsbuildinfo
       - uses: actions/upload-artifact@v4
         with:
           name: ${{ steps.plan.outputs.prefix }}-typescript

@@ -15,9 +15,7 @@ export async function reportFor(args: string[]) {
 		await promisify(execFile)(
 			process.execPath,
 			[
-				'--import',
-				'tsx',
-				fileURLToPath(new URL('../../cli/src/cli.ts', import.meta.url)),
+				fileURLToPath(new URL('../../cli/dist/cli.js', import.meta.url)),
 				'tool',
 				'bench-storage',
 				...args,

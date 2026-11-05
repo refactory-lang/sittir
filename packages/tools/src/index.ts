@@ -22,7 +22,6 @@ export { run as probeValidate, type ProbeValidateOptions } from './probe/validat
 export { run as profile, type ProfileOptions } from './profile/failures.ts';
 export { run as profileFactory, type ProfileFactoryOptions } from './profile/factory.ts';
 export { run as bench, type BenchOptions } from './profile/bench.ts';
-export { run as benchCodemod, type BenchCodemodOptions } from './profile/codemod.ts';
 export { run as benchStorage, type StorageBenchOptions } from './profile/storage.ts';
 export { run as diffFailures, type DiffFailuresOptions } from './validate/diff.ts';
 export { run as defectHistogram, type DefectHistogramOptions } from './validate/defect-histogram.ts';
@@ -59,6 +58,7 @@ export { run as checkBaseline, type CheckBaselineOptions } from './validate/base
 export { run as propose14, type Propose14Options } from './validate/propose-14.ts';
 export { run as glossaryKeys, type GlossaryKeysOptions } from './validate/glossary-keys.ts';
 export { run as checkPerf, type CheckPerfOptions } from './validate/perf.ts';
+export { run as encodeStack, type EncodeStackOptions } from './validate/encode-stack.ts';
 export { run as classify, type ClassifyOptions } from './discover/classify.ts';
 export { run as phantomKinds, type PhantomKindsOptions } from './discover/phantom.ts';
 export { run as fieldProvenance, type FieldProvenanceOptions } from './discover/provenance.ts';

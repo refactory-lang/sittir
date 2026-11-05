@@ -2,6 +2,7 @@ import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { performance } from 'node:perf_hooks';
 import { createEngine } from '@sittir/common';
+import { measureBuilt } from '../built.ts';
 import { languageByName } from '../languages.ts';
 import { loadSlotAccessorOf, wrappedNodesOf, type TypedNode } from '../validate/common.ts';
 
@@ -52,6 +53,7 @@ export async function measureTriviaTiming(options: Omit<TriviaTimingOptions, 'js
 }
 
 export async function run(options: TriviaTimingOptions): Promise<number> {
+	measureBuilt('trivia-timing');
 	const timing = await measureTriviaTiming(options);
 	if (options.json) {
 		console.log(JSON.stringify(timing));
