@@ -1949,8 +1949,6 @@ export enum AssignmentKind {
 export enum RightHandSideKind {
 	Expression = 'expression',
 	ExpressionList = 'expression_list',
-	Assignment = 'assignment',
-	AugmentedAssignment = 'augmented_assignment',
 	PatternList = 'pattern_list',
 	Yield = 'yield'
 }
@@ -3848,7 +3846,7 @@ export interface AugmentedAssignment {
 		| TSKindId.AmpEq
 		| TSKindId.CaretEq
 		| TSKindId.PipeEq;
-	readonly _right: Expression | ExpressionList | Assignment | AugmentedAssignment | PatternList | Yield;
+	readonly _right: Expression | ExpressionList | PatternList | Yield;
 	readonly __slotNames__?: {
 		readonly _left: 'left';
 		readonly _operator: 'operator';
@@ -3875,8 +3873,6 @@ export interface AugmentedAssignment {
 			| KindEnum<'True' | 'False' | 'None' | '...', TSKindId.True | TSKindId.False | TSKindId.None | TSKindId.Ellipsis>
 			| Expression
 			| ExpressionList
-			| Assignment
-			| AugmentedAssignment
 			| PatternList
 			| Yield;
 	};
@@ -3900,7 +3896,7 @@ export interface AugmentedAssignment {
 		| TSKindId.AmpEq
 		| TSKindId.CaretEq
 		| TSKindId.PipeEq;
-	readonly right: () => Expression | ExpressionList | Assignment | AugmentedAssignment | PatternList | Yield;
+	readonly right: () => Expression | ExpressionList | PatternList | Yield;
 }
 
 export interface PatternList {
@@ -5370,7 +5366,7 @@ export interface SplatPatternDictionary {
 export interface AssignmentEq {
 	readonly $type: TSKindId.AssignmentEq;
 	readonly _name: Pattern | PatternList;
-	readonly _value: Expression | ExpressionList | Assignment | AugmentedAssignment | PatternList | Yield;
+	readonly _value: Expression | ExpressionList | PatternList | Yield | Assignment;
 	readonly __slotNames__?: {
 		readonly _name: 'name';
 		readonly _value: 'value';
@@ -5380,17 +5376,16 @@ export interface AssignmentEq {
 			| KindEnum<'True' | 'False' | 'None' | '...', TSKindId.True | TSKindId.False | TSKindId.None | TSKindId.Ellipsis>
 			| Expression
 			| ExpressionList
-			| Assignment
-			| AugmentedAssignment
 			| PatternList
-			| Yield;
+			| Yield
+			| Assignment;
 	};
 	readonly __slotHints__?: {
 		readonly name: SlotHint<T.Pattern | T.PatternList>;
 		readonly value: SlotHint<NonNullable<T.AssignmentEq.Config>['value']>;
 	};
 	readonly name: () => Pattern | PatternList;
-	readonly value: () => Expression | ExpressionList | Assignment | AugmentedAssignment | PatternList | Yield;
+	readonly value: () => Expression | ExpressionList | PatternList | Yield | Assignment;
 }
 
 export interface AssignmentType {
@@ -5416,7 +5411,7 @@ export interface AssignmentTyped {
 	readonly $type: TSKindId.AssignmentTyped;
 	readonly _name: Pattern | PatternList;
 	readonly _type: Type;
-	readonly _value: Expression | ExpressionList | Assignment | AugmentedAssignment | PatternList | Yield;
+	readonly _value: Expression | ExpressionList | PatternList | Yield;
 	readonly __slotNames__?: {
 		readonly _name: 'name';
 		readonly _type: 'type';
@@ -5427,8 +5422,6 @@ export interface AssignmentTyped {
 			| KindEnum<'True' | 'False' | 'None' | '...', TSKindId.True | TSKindId.False | TSKindId.None | TSKindId.Ellipsis>
 			| Expression
 			| ExpressionList
-			| Assignment
-			| AugmentedAssignment
 			| PatternList
 			| Yield;
 	};
@@ -5442,7 +5435,7 @@ export interface AssignmentTyped {
 	};
 	readonly name: () => Pattern | PatternList;
 	readonly type: () => Type;
-	readonly value: () => Expression | ExpressionList | Assignment | AugmentedAssignment | PatternList | Yield;
+	readonly value: () => Expression | ExpressionList | PatternList | Yield;
 }
 
 export interface ExpressionStatementTuple {

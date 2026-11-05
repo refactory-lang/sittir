@@ -1637,10 +1637,6 @@ const _K29: readonly string[] = [
 	'named_expression',
 	'as_pattern',
 	'expression_list',
-	'assignment_eq',
-	'assignment_type',
-	'assignment_typed',
-	'augmented_assignment',
 	'pattern_list',
 	'yield'
 ];
@@ -1791,46 +1787,10 @@ const _K35: readonly string[] = [
 ];
 const _K36: readonly string[] = ['interpolation', 'string_content'];
 const _K37: readonly string[] = ['escape_interpolation', 'not_escape_sequence', 'string_fragment'];
-const _K38: readonly string[] = [
-	'comparison_operator',
-	'not_operator',
-	'boolean_operator',
-	'lambda',
-	'await',
-	'binary_operator',
-	'string',
-	'concatenated_string',
-	'integer_hex',
-	'integer_octal',
-	'integer_binary',
-	'float_point',
-	'float_leading_point',
-	'float_scientific',
-	'unary_operator',
-	'attribute',
-	'subscript',
-	'call',
-	'list',
-	'list_comprehension',
-	'dictionary',
-	'dictionary_comprehension',
-	'set',
-	'set_comprehension',
-	'tuple',
-	'parenthesized_expression',
-	'generator_expression',
-	'list_splat_pattern',
-	'conditional_expression',
-	'named_expression',
-	'as_pattern',
-	'expression_list',
-	'pattern_list',
-	'yield'
-];
-const _K39: readonly string[] = ['format_specifier_text'];
-const _K40: readonly string[] = ['format_expression'];
-const _K41: readonly string[] = ['pass_statement', 'break_statement', 'continue_statement'];
-const _K42: readonly string[] = [
+const _K38: readonly string[] = ['format_specifier_text'];
+const _K39: readonly string[] = ['format_expression'];
+const _K40: readonly string[] = ['pass_statement', 'break_statement', 'continue_statement'];
+const _K41: readonly string[] = [
 	'future_import_statement',
 	'import_statement',
 	'import_from_statement',
@@ -1845,7 +1805,7 @@ const _K42: readonly string[] = [
 	'exec_statement',
 	'type_alias_statement'
 ];
-const _K43: readonly string[] = [
+const _K42: readonly string[] = [
 	'comparison_operator',
 	'not_operator',
 	'boolean_operator',
@@ -1882,8 +1842,8 @@ const _K43: readonly string[] = [
 	'parenthesized_list_splat',
 	'keyword_argument'
 ];
-const _K44: readonly string[] = ['key_value_pattern', 'splat_pattern_list', 'splat_pattern_dictionary'];
-const _K45: readonly string[] = [
+const _K43: readonly string[] = ['key_value_pattern', 'splat_pattern_list', 'splat_pattern_dictionary'];
+const _K44: readonly string[] = [
 	'comparison_operator',
 	'not_operator',
 	'boolean_operator',
@@ -1917,9 +1877,48 @@ const _K45: readonly string[] = [
 	'as_pattern',
 	'slice'
 ];
-const _K46: readonly string[] = ['pair', 'dictionary_splat'];
-const _K47: readonly string[] = ['for_in_clause', 'if_clause'];
-const _K48: readonly string[] = ['except_clause_exception_as', 'except_clause_exception_list'];
+const _K45: readonly string[] = ['pair', 'dictionary_splat'];
+const _K46: readonly string[] = ['for_in_clause', 'if_clause'];
+const _K47: readonly string[] = ['except_clause_exception_as', 'except_clause_exception_list'];
+const _K48: readonly string[] = [
+	'comparison_operator',
+	'not_operator',
+	'boolean_operator',
+	'lambda',
+	'await',
+	'binary_operator',
+	'string',
+	'concatenated_string',
+	'integer_hex',
+	'integer_octal',
+	'integer_binary',
+	'float_point',
+	'float_leading_point',
+	'float_scientific',
+	'unary_operator',
+	'attribute',
+	'subscript',
+	'call',
+	'list',
+	'list_comprehension',
+	'dictionary',
+	'dictionary_comprehension',
+	'set',
+	'set_comprehension',
+	'tuple',
+	'parenthesized_expression',
+	'generator_expression',
+	'list_splat_pattern',
+	'conditional_expression',
+	'named_expression',
+	'as_pattern',
+	'expression_list',
+	'pattern_list',
+	'yield',
+	'assignment_eq',
+	'assignment_type',
+	'assignment_typed'
+];
 const _K49: readonly string[] = [
 	'_simple_statements',
 	'if_statement',
@@ -4292,11 +4291,7 @@ export function resolveAugmentedAssignment_right(
 ): Admit<T.AugmentedAssignment['_right']> {
 	return coerceMixedEnumStorage(
 		_resolveKindEnum(value, [], () =>
-			_resolveOne<T.Expression | T.ExpressionList | T.Assignment | T.AugmentedAssignment | T.PatternList | T.Yield>(
-				value,
-				_K7,
-				_K29
-			)
+			_resolveOne<T.Expression | T.ExpressionList | T.PatternList | T.Yield>(value, _K7, _K29)
 		),
 		[]
 	);
@@ -5207,7 +5202,7 @@ export function resolveInterpolation_expression(
 ): Admit<T.Interpolation['_expression']> {
 	return coerceMixedEnumStorage(
 		_resolveKindEnum(value, [], () =>
-			_resolveOne<T.Expression | T.ExpressionList | T.PatternList | T.Yield>(value, _K7, _K38)
+			_resolveOne<T.Expression | T.ExpressionList | T.PatternList | T.Yield>(value, _K7, _K29)
 		),
 		[]
 	);
@@ -5258,7 +5253,7 @@ export const coerceToFormatSpecifier: Seat<T.FormatSpecifier.LooseArgs, ReturnTy
 		const stored = (data as unknown as { _elements?: unknown })._elements;
 		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
 		return F.buildFormatSpecifier(
-			...(_resolveMany<T.FormatSpecifierText | T.FormatExpression>(children, _K39, _K40) as unknown as Parameters<
+			...(_resolveMany<T.FormatSpecifierText | T.FormatExpression>(children, _K38, _K39) as unknown as Parameters<
 				typeof F.buildFormatSpecifier
 			>)
 		);
@@ -5272,7 +5267,7 @@ export const coerceToFormatSpecifier: Seat<T.FormatSpecifier.LooseArgs, ReturnTy
 		return Array.isArray(v) ? v : [v];
 	})();
 	return F.buildFormatSpecifier(
-		...(_resolveMany<T.FormatSpecifierText | T.FormatExpression>(_elems, _K39, _K40) as unknown as Parameters<
+		...(_resolveMany<T.FormatSpecifierText | T.FormatExpression>(_elems, _K38, _K39) as unknown as Parameters<
 			typeof F.buildFormatSpecifier
 		>)
 	);
@@ -5384,7 +5379,7 @@ export const coerceToSimpleStatementsElements: Seat<
 			undefined,
 			(els) =>
 				listStorage(
-					_resolveKindEnumItems(els, [], (_v) => _resolveMany<T.SimpleStatement>(_v, _K41, _K42)),
+					_resolveKindEnumItems(els, [], (_v) => _resolveMany<T.SimpleStatement>(_v, _K40, _K41)),
 					(item) => coerceMixedEnumStorage(item, [])
 				),
 			[
@@ -5565,7 +5560,7 @@ export const coerceToArgumentListElements: Seat<
 						_resolveMany<T.Expression | T.ListSplat | T.DictionarySplat | T.ParenthesizedListSplat | T.KeywordArgument>(
 							_v,
 							_K7,
-							_K43
+							_K42
 						)
 					),
 					(item) => coerceMixedEnumStorage(item, [])
@@ -5675,7 +5670,7 @@ export const coerceToDictPatternElements: Seat<
 			input,
 			['delimiter'],
 			undefined,
-			(els) => _resolveMany<T.KeyValuePattern | T.SplatPattern>(els, _K0, _K44),
+			(els) => _resolveMany<T.KeyValuePattern | T.SplatPattern>(els, _K0, _K43),
 			['key_value_pattern', 'splat_pattern_list', 'splat_pattern_dictionary']
 		) as unknown as NonEmptyArray<Admit<T.KeyValuePattern | T.SplatPattern>>)
 	);
@@ -5706,7 +5701,7 @@ export const coerceToSubscripts: Seat<T.Subscripts.LooseArgs, ReturnType<typeof 
 			undefined,
 			(els) =>
 				listStorage(
-					_resolveKindEnumItems(els, [], (_v) => _resolveMany<T.Expression | T.Slice>(_v, _K7, _K45)),
+					_resolveKindEnumItems(els, [], (_v) => _resolveMany<T.Expression | T.Slice>(_v, _K7, _K44)),
 					(item) => coerceMixedEnumStorage(item, [])
 				),
 			[
@@ -5779,7 +5774,7 @@ export const coerceToDictionaryElements: Seat<
 			input,
 			['delimiter'],
 			undefined,
-			(els) => _resolveMany<T.Pair | T.DictionarySplat>(els, _K0, _K46),
+			(els) => _resolveMany<T.Pair | T.DictionarySplat>(els, _K0, _K45),
 			['pair', 'dictionary_splat']
 		) as unknown as NonEmptyArray<Admit<T.Pair | T.DictionarySplat>>)
 	);
@@ -6336,7 +6331,7 @@ export const coerceToComprehensionClauses: Seat<
 		const stored = (data as unknown as { _content?: unknown })._content;
 		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
 		return F.buildComprehensionClauses(
-			...(_resolveMany<T.ForInClause | T.IfClause>(children, _K0, _K47) as unknown as Parameters<
+			...(_resolveMany<T.ForInClause | T.IfClause>(children, _K0, _K46) as unknown as Parameters<
 				typeof F.buildComprehensionClauses
 			>)
 		);
@@ -6350,7 +6345,7 @@ export const coerceToComprehensionClauses: Seat<
 		return Array.isArray(v) ? v : [v];
 	})();
 	return F.buildComprehensionClauses(
-		...(_resolveMany<T.ForInClause | T.IfClause>(_elems, _K0, _K47) as unknown as Parameters<
+		...(_resolveMany<T.ForInClause | T.IfClause>(_elems, _K0, _K46) as unknown as Parameters<
 			typeof F.buildComprehensionClauses
 		>)
 	);
@@ -6927,7 +6922,7 @@ export const coerceToExceptClauseExceptionList: Seat<
 export function resolveExceptClauseException_content(
 	value: T.ExceptClauseException.LooseConfig['content']
 ): Admit<T.ExceptClauseException['_content']> {
-	return _resolveOne<T.ExceptClauseExceptionAs | T.ExceptClauseExceptionList>(value, _K0, _K48);
+	return _resolveOne<T.ExceptClauseExceptionAs | T.ExceptClauseExceptionList>(value, _K0, _K47);
 }
 
 export const coerceToExceptClauseException: ConfigSeat<
@@ -6940,7 +6935,7 @@ export const coerceToExceptClauseException: ConfigSeat<
 		_resolveOne<T.ExceptClauseExceptionAs | T.ExceptClauseExceptionList>(
 			configFieldOr(input, 'content', () => input),
 			_K0,
-			_K48
+			_K47
 		)
 	);
 };
@@ -7032,11 +7027,7 @@ export function resolveAssignmentEq_name(value: T.AssignmentEq.LooseConfig['name
 export function resolveAssignmentEq_value(value: T.AssignmentEq.LooseConfig['value']): Admit<T.AssignmentEq['_value']> {
 	return coerceMixedEnumStorage(
 		_resolveKindEnum(value, [], () =>
-			_resolveOne<T.Expression | T.ExpressionList | T.Assignment | T.AugmentedAssignment | T.PatternList | T.Yield>(
-				value,
-				_K7,
-				_K29
-			)
+			_resolveOne<T.Expression | T.ExpressionList | T.PatternList | T.Yield | T.Assignment>(value, _K7, _K48)
 		),
 		[]
 	);
@@ -7095,11 +7086,7 @@ export function resolveAssignmentTyped_value(
 ): Admit<T.AssignmentTyped['_value']> {
 	return coerceMixedEnumStorage(
 		_resolveKindEnum(value, [], () =>
-			_resolveOne<T.Expression | T.ExpressionList | T.Assignment | T.AugmentedAssignment | T.PatternList | T.Yield>(
-				value,
-				_K7,
-				_K29
-			)
+			_resolveOne<T.Expression | T.ExpressionList | T.PatternList | T.Yield>(value, _K7, _K29)
 		),
 		[]
 	);
@@ -7706,7 +7693,7 @@ export function resolveFormatExpression_expression(
 ): Admit<T.FormatExpression['_expression']> {
 	return coerceMixedEnumStorage(
 		_resolveKindEnum(value, [], () =>
-			_resolveOne<T.Expression | T.ExpressionList | T.PatternList | T.Yield>(value, _K7, _K38)
+			_resolveOne<T.Expression | T.ExpressionList | T.PatternList | T.Yield>(value, _K7, _K29)
 		),
 		[]
 	);

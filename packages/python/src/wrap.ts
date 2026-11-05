@@ -2678,9 +2678,7 @@ export function wrapAugmentedAssignment(data: T.AugmentedAssignment, tree: TreeH
 			return this._operator;
 		},
 		right() {
-			return hydrateSlot<
-				T.Expression | T.ExpressionList | T.Assignment | T.AugmentedAssignment | T.PatternList | T.Yield
-			>(this, '_right', tree);
+			return hydrateSlot<T.Expression | T.ExpressionList | T.PatternList | T.Yield>(this, '_right', tree);
 		},
 		$with: {
 			left: (v: NonNullable<T.AugmentedAssignment['_left']>) =>
@@ -5335,9 +5333,11 @@ export function wrapAssignmentEq(data: T.AssignmentEq, tree: TreeHandle): T.Assi
 			return hydrateSlot<T.Pattern | T.PatternList>(this, '_name', tree);
 		},
 		value() {
-			return hydrateSlot<
-				T.Expression | T.ExpressionList | T.Assignment | T.AugmentedAssignment | T.PatternList | T.Yield
-			>(this, '_value', tree);
+			return hydrateSlot<T.Expression | T.ExpressionList | T.PatternList | T.Yield | T.Assignment>(
+				this,
+				'_value',
+				tree
+			);
 		},
 		$with: {
 			name: (v: NonNullable<T.AssignmentEq['_name']>) =>
@@ -5402,9 +5402,7 @@ export function wrapAssignmentTyped(data: T.AssignmentTyped, tree: TreeHandle): 
 			return hydrateSlot<T.Type>(this, '_type', tree);
 		},
 		value() {
-			return hydrateSlot<
-				T.Expression | T.ExpressionList | T.Assignment | T.AugmentedAssignment | T.PatternList | T.Yield
-			>(this, '_value', tree);
+			return hydrateSlot<T.Expression | T.ExpressionList | T.PatternList | T.Yield>(this, '_value', tree);
 		},
 		$with: {
 			name: (v: NonNullable<T.AssignmentTyped['_name']>) =>

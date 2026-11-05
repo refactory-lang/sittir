@@ -65,6 +65,19 @@ const MATCH_BLOCK_WITNESSES = [
 	}
 ] as const;
 
+const ASSIGNMENT_PRODUCTION =
+	'CPython assignment: (star_targets "=")+ (yield_expr | star_expressions) | single_target augassign ~ (yield_expr | star_expressions) | single_target ":" expression ["=" annotated_rhs]; annotated_rhs: yield_expr | star_expressions';
+
+const RIGHT_HAND_SIDE_WITNESSES = [
+	{ text: 'x += y = 1\n', form: [{ symbol: '_left_hand_side' }, '+=', { symbol: 'assignment' }], kind: 'augmented_assignment', production: ASSIGNMENT_PRODUCTION },
+	{ text: 'x += y += 1\n', form: [{ symbol: '_left_hand_side' }, '+=', { symbol: 'augmented_assignment' }], kind: 'augmented_assignment', production: ASSIGNMENT_PRODUCTION },
+	{ text: 'x: int = y = 1\n', form: [{ symbol: '_left_hand_side' }, ':', { symbol: 'type' }, '=', { symbol: 'assignment' }], kind: 'assignment', production: ASSIGNMENT_PRODUCTION }
+] as const;
+
+const ASSIGNMENT_WITNESSES = [
+	{ text: 'x = y += 1\n', form: [{ symbol: '_left_hand_side' }, '=', { symbol: 'augmented_assignment' }], kind: 'assignment', production: ASSIGNMENT_PRODUCTION }
+] as const;
+
 const TYPE_PARAM_PRODUCTION = 'CPython type_params: "[" ",".type_param+ [","] "]"; type_param: NAME [type_param_bound] | "*" NAME | "**" NAME';
 
 const FUNCTION_TYPE_PARAMS_WITNESSES = [
@@ -483,6 +496,10 @@ export default grammar(enrich(base), wire({
 	},
 	rules: {
 		_match_block: reauthored('accepts-invalid-syntax', MATCH_BLOCK_WITNESSES, ($, original) => original.members[0]),
+		_right_hand_side: reauthored('accepts-invalid-syntax', RIGHT_HAND_SIDE_WITNESSES, ($) => choice($.expression, $.expression_list, $.pattern_list, $.yield)),
+		assignment: reauthored('accepts-invalid-syntax', ASSIGNMENT_WITNESSES, ($, original) =>
+			edit(original, { '1/0/1': field('right', choice($._right_hand_side, $.assignment)) })
+		),
 		function_definition: reauthored('accepts-invalid-syntax', FUNCTION_TYPE_PARAMS_WITNESSES, ($, original) =>
 			edit(original, { 3: field('type_parameters', optional($.type_params)) })
 		),

@@ -4611,22 +4611,6 @@
           }
         },
         {
-          "type": "SYMBOL",
-          "name": "assignment",
-          "annotations": {
-            "variant": "assignment",
-            "variantOf": "_right_hand_side"
-          }
-        },
-        {
-          "type": "SYMBOL",
-          "name": "augmented_assignment",
-          "annotations": {
-            "variant": "augmented_assignment",
-            "variantOf": "_right_hand_side"
-          }
-        },
-        {
           "type": "ALIAS",
           "content": {
             "type": "SYMBOL",
@@ -5956,46 +5940,8 @@
       ]
     },
     "_f_expression": {
-      "type": "CHOICE",
-      "members": [
-        {
-          "type": "SYMBOL",
-          "name": "expression",
-          "annotations": {
-            "variant": "expression",
-            "variantOf": "_f_expression"
-          }
-        },
-        {
-          "type": "SYMBOL",
-          "name": "expression_list",
-          "annotations": {
-            "variant": "list",
-            "variantOf": "_f_expression"
-          }
-        },
-        {
-          "type": "ALIAS",
-          "content": {
-            "type": "SYMBOL",
-            "name": "pattern_list",
-            "annotations": {
-              "variant": "pattern_list",
-              "variantOf": "_f_expression"
-            }
-          },
-          "named": true,
-          "value": "bare_tuple_pattern"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "yield",
-          "annotations": {
-            "variant": "yield",
-            "variantOf": "_f_expression"
-          }
-        }
-      ]
+      "type": "SYMBOL",
+      "name": "_right_hand_side"
     },
     "escape_sequence": {
       "type": "CHOICE",
@@ -9041,8 +8987,17 @@
               "type": "FIELD",
               "name": "value",
               "content": {
-                "type": "SYMBOL",
-                "name": "_right_hand_side"
+                "type": "CHOICE",
+                "members": [
+                  {
+                    "type": "SYMBOL",
+                    "name": "_right_hand_side"
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "assignment"
+                  }
+                ]
               },
               "metadata": {
                 "fieldSource": "override"
@@ -10089,9 +10044,9 @@
     "line_continuation",
     "_layout",
     "_statement",
+    "assignment",
     "type_param",
     "splat_pattern",
-    "assignment",
     "with_clause",
     "_suite",
     "_compound_statement_class_definition",

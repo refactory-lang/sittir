@@ -1,5 +1,5 @@
 {
-	"grammarHash": "6244a93c84741dbe5fae74142259d3ac03e0b984f330dfef73ac4a0e2530d1cf",
+	"grammarHash": "7825b1a37c501d9d6876cf1eaa0a72a834abfbceeaa98d1f0af3c576667cc6ab",
 	"resolutions": [
 		{"resolution":{"kind":"AddConflict","symbols":["as_pattern","except_clause_exception_as"]},"step":"default","sourceChains":[["as_pattern"],["except_clause_exception_as","except_clause_exception","except_clause"]],"conflict":{"symbolSequence":["'try'","':'","suite_inline","'except'","expression","'as'","expression"],"lookahead":"':'","interpretations":["as_pattern","except_clause_exception_as"]}},
 		{"resolution":{"kind":"AddConflict","symbols":["except_clause_exception_as","except_clause_exception_list"]},"step":"default","sourceChains":[["except_clause_exception_as","except_clause_exception","except_clause"],["except_clause_exception_list","except_clause_exception","except_clause"]],"conflict":{"symbolSequence":["'try'","':'","suite_inline","'except'","expression"],"lookahead":"':'","interpretations":["except_clause_exception_as","except_clause_exception_list"]}},
@@ -13,7 +13,7 @@
 		{"resolution":{"kind":"AddConflict","symbols":["with_item","_tuple_elements"]},"step":"default","sourceChains":[["with_item"],["_tuple_elements"]],"conflict":{"symbolSequence":["'with'","'('","expression"],"lookahead":"','","interpretations":["with_item","_tuple_elements","_tuple_elements","_tuple_elements","_tuple_elements","_tuple_elements","_tuple_elements","_tuple_elements","_tuple_elements","_tuple_elements","_tuple_elements"]}}
 	],
 	"bound": {
-		"grammarHash": "ffe5b4abdf3e7206837f895eef48146e4eb820a1fb5e707730f26c7c8dbd55ef",
+		"grammarHash": "ac6fef021ca4b35c52c882a22dc8f4ceef2ea62af13a2f0c43cbbfb2afe02eb1",
 		"resolutions": []
 	}
 }

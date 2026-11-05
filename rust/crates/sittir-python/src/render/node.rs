@@ -175,7 +175,7 @@ pub enum AnyNode {
     #[kind(kind::LAMBDA_WITHIN_FOR_IN_CLAUSE)]
     LambdaWithinForInClause(LambdaWithinForInClauseNode),
     #[kind(kind::AUGMENTED_ASSIGNMENT)]
-    AugmentedAssignment(AugmentedAssignmentNode),
+    AugmentedAssignment(Box<AugmentedAssignmentNode>),
     #[kind(kind::PATTERN_LIST)]
     PatternList(PatternListNode),
     #[kind(kind::YIELD)]
@@ -349,7 +349,7 @@ pub enum AnyNode {
     #[kind(kind::ASSIGNMENT_TYPE)]
     AssignmentType(AssignmentTypeNode),
     #[kind(kind::ASSIGNMENT_TYPED)]
-    AssignmentTyped(AssignmentTypedNode),
+    AssignmentTyped(Box<AssignmentTypedNode>),
     #[kind(kind::EXPRESSION_STATEMENT_TUPLE)]
     ExpressionStatementTuple(ExpressionStatementTupleNode),
     #[kind(kind::WITH_CLAUSE_BARE)]
@@ -4586,9 +4586,9 @@ pub enum ExpressionStatementContentNodeSlot {
     #[kind(kind::ASSIGNMENT_TYPE)]
     AssignmentType(AssignmentTypeNode),
     #[kind(kind::ASSIGNMENT_TYPED)]
-    AssignmentTyped(AssignmentTypedNode),
+    AssignmentTyped(Box<AssignmentTypedNode>),
     #[kind(kind::AUGMENTED_ASSIGNMENT)]
-    AugmentedAssignment(AugmentedAssignmentNode),
+    AugmentedAssignment(Box<AugmentedAssignmentNode>),
     #[kind(kind::YIELD)]
     Yield(YieldNode),
     #[kind(kind::TRUE)]
@@ -4957,8 +4957,8 @@ impl ::sittir_core::render::Render for ExpressionStatementContentNodeSlot {
             ExpressionStatementContentNodeSlot::ExpressionStatementTuple(inner) => inner.render(w),
             ExpressionStatementContentNodeSlot::AssignmentEq(inner) => inner.render(w),
             ExpressionStatementContentNodeSlot::AssignmentType(inner) => inner.render(w),
-            ExpressionStatementContentNodeSlot::AssignmentTyped(inner) => inner.render(w),
-            ExpressionStatementContentNodeSlot::AugmentedAssignment(inner) => inner.render(w),
+            ExpressionStatementContentNodeSlot::AssignmentTyped(inner) => inner.as_ref().render(w),
+            ExpressionStatementContentNodeSlot::AugmentedAssignment(inner) => inner.as_ref().render(w),
             ExpressionStatementContentNodeSlot::Yield(inner) => inner.render(w),
             ExpressionStatementContentNodeSlot::True(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(69), edges, w, render_true),
             ExpressionStatementContentNodeSlot::False(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(70), edges, w, render_false),
@@ -7288,14 +7288,6 @@ pub enum AugmentedAssignmentRightNodeSlot {
     AsPattern(AsPatternNode),
     #[kind(kind::EXPRESSION_LIST)]
     ExpressionList(ExpressionListNode),
-    #[kind(kind::ASSIGNMENT_EQ)]
-    AssignmentEq(AssignmentEqNode),
-    #[kind(kind::ASSIGNMENT_TYPE)]
-    AssignmentType(AssignmentTypeNode),
-    #[kind(kind::ASSIGNMENT_TYPED)]
-    AssignmentTyped(AssignmentTypedNode),
-    #[kind(kind::AUGMENTED_ASSIGNMENT)]
-    AugmentedAssignment(AugmentedAssignmentNode),
     #[kind(kind::PATTERN_LIST)]
     PatternList(PatternListNode),
     #[kind(kind::YIELD)]
@@ -7355,10 +7347,6 @@ impl ::sittir_core::prepare::Prepare for AugmentedAssignmentRightNodeSlot {
             AugmentedAssignmentRightNodeSlot::NamedExpression(t) => t.prepare(ctx),
             AugmentedAssignmentRightNodeSlot::AsPattern(t) => t.prepare(ctx),
             AugmentedAssignmentRightNodeSlot::ExpressionList(t) => t.prepare(ctx),
-            AugmentedAssignmentRightNodeSlot::AssignmentEq(t) => t.prepare(ctx),
-            AugmentedAssignmentRightNodeSlot::AssignmentType(t) => t.prepare(ctx),
-            AugmentedAssignmentRightNodeSlot::AssignmentTyped(t) => t.prepare(ctx),
-            AugmentedAssignmentRightNodeSlot::AugmentedAssignment(t) => t.prepare(ctx),
             AugmentedAssignmentRightNodeSlot::PatternList(t) => t.prepare(ctx),
             AugmentedAssignmentRightNodeSlot::Yield(t) => t.prepare(ctx),
             AugmentedAssignmentRightNodeSlot::True(_) => Ok(()),
@@ -7406,10 +7394,6 @@ impl ::sittir_core::prepare::Prepare for AugmentedAssignmentRightNodeSlot {
             AugmentedAssignmentRightNodeSlot::NamedExpression(t) => t.gap_edges(),
             AugmentedAssignmentRightNodeSlot::AsPattern(t) => t.gap_edges(),
             AugmentedAssignmentRightNodeSlot::ExpressionList(t) => t.gap_edges(),
-            AugmentedAssignmentRightNodeSlot::AssignmentEq(t) => t.gap_edges(),
-            AugmentedAssignmentRightNodeSlot::AssignmentType(t) => t.gap_edges(),
-            AugmentedAssignmentRightNodeSlot::AssignmentTyped(t) => t.gap_edges(),
-            AugmentedAssignmentRightNodeSlot::AugmentedAssignment(t) => t.gap_edges(),
             AugmentedAssignmentRightNodeSlot::PatternList(t) => t.gap_edges(),
             AugmentedAssignmentRightNodeSlot::Yield(t) => t.gap_edges(),
             AugmentedAssignmentRightNodeSlot::True(edges) => Some(edges),
@@ -7457,10 +7441,6 @@ impl ::sittir_core::prepare::Prepare for AugmentedAssignmentRightNodeSlot {
             AugmentedAssignmentRightNodeSlot::NamedExpression(t) => t.snapshot_edge(),
             AugmentedAssignmentRightNodeSlot::AsPattern(t) => t.snapshot_edge(),
             AugmentedAssignmentRightNodeSlot::ExpressionList(t) => t.snapshot_edge(),
-            AugmentedAssignmentRightNodeSlot::AssignmentEq(t) => t.snapshot_edge(),
-            AugmentedAssignmentRightNodeSlot::AssignmentType(t) => t.snapshot_edge(),
-            AugmentedAssignmentRightNodeSlot::AssignmentTyped(t) => t.snapshot_edge(),
-            AugmentedAssignmentRightNodeSlot::AugmentedAssignment(t) => t.snapshot_edge(),
             AugmentedAssignmentRightNodeSlot::PatternList(t) => t.snapshot_edge(),
             AugmentedAssignmentRightNodeSlot::Yield(t) => t.snapshot_edge(),
             AugmentedAssignmentRightNodeSlot::True(_) => None,
@@ -7508,10 +7488,6 @@ impl ::sittir_core::prepare::Prepare for AugmentedAssignmentRightNodeSlot {
             AugmentedAssignmentRightNodeSlot::NamedExpression(t) => t.source_coordinate(),
             AugmentedAssignmentRightNodeSlot::AsPattern(t) => t.source_coordinate(),
             AugmentedAssignmentRightNodeSlot::ExpressionList(t) => t.source_coordinate(),
-            AugmentedAssignmentRightNodeSlot::AssignmentEq(t) => t.source_coordinate(),
-            AugmentedAssignmentRightNodeSlot::AssignmentType(t) => t.source_coordinate(),
-            AugmentedAssignmentRightNodeSlot::AssignmentTyped(t) => t.source_coordinate(),
-            AugmentedAssignmentRightNodeSlot::AugmentedAssignment(t) => t.source_coordinate(),
             AugmentedAssignmentRightNodeSlot::PatternList(t) => t.source_coordinate(),
             AugmentedAssignmentRightNodeSlot::Yield(t) => t.source_coordinate(),
             AugmentedAssignmentRightNodeSlot::True(_) => None,
@@ -7559,10 +7535,6 @@ impl ::sittir_core::prepare::Prepare for AugmentedAssignmentRightNodeSlot {
             AugmentedAssignmentRightNodeSlot::NamedExpression(t) => t.source_separator(ctx),
             AugmentedAssignmentRightNodeSlot::AsPattern(t) => t.source_separator(ctx),
             AugmentedAssignmentRightNodeSlot::ExpressionList(t) => t.source_separator(ctx),
-            AugmentedAssignmentRightNodeSlot::AssignmentEq(t) => t.source_separator(ctx),
-            AugmentedAssignmentRightNodeSlot::AssignmentType(t) => t.source_separator(ctx),
-            AugmentedAssignmentRightNodeSlot::AssignmentTyped(t) => t.source_separator(ctx),
-            AugmentedAssignmentRightNodeSlot::AugmentedAssignment(t) => t.source_separator(ctx),
             AugmentedAssignmentRightNodeSlot::PatternList(t) => t.source_separator(ctx),
             AugmentedAssignmentRightNodeSlot::Yield(t) => t.source_separator(ctx),
             AugmentedAssignmentRightNodeSlot::True(_) => None,
@@ -7616,10 +7588,6 @@ impl ::sittir_core::view::KindOf for AugmentedAssignmentRightNodeSlot {
             Self::NamedExpression(inner) => inner.kind_in(kinds),
             Self::AsPattern(inner) => inner.kind_in(kinds),
             Self::ExpressionList(inner) => inner.kind_in(kinds),
-            Self::AssignmentEq(inner) => inner.kind_in(kinds),
-            Self::AssignmentType(inner) => inner.kind_in(kinds),
-            Self::AssignmentTyped(inner) => inner.kind_in(kinds),
-            Self::AugmentedAssignment(inner) => inner.kind_in(kinds),
             Self::PatternList(inner) => inner.kind_in(kinds),
             Self::Yield(inner) => inner.kind_in(kinds),
             Self::True(_) => [::sittir_core::types::KindId(69)].iter().any(|k| kinds.contains(k)),
@@ -7670,10 +7638,6 @@ impl ::sittir_core::render::Render for AugmentedAssignmentRightNodeSlot {
             AugmentedAssignmentRightNodeSlot::NamedExpression(inner) => inner.render(w),
             AugmentedAssignmentRightNodeSlot::AsPattern(inner) => inner.render(w),
             AugmentedAssignmentRightNodeSlot::ExpressionList(inner) => inner.render(w),
-            AugmentedAssignmentRightNodeSlot::AssignmentEq(inner) => inner.render(w),
-            AugmentedAssignmentRightNodeSlot::AssignmentType(inner) => inner.render(w),
-            AugmentedAssignmentRightNodeSlot::AssignmentTyped(inner) => inner.render(w),
-            AugmentedAssignmentRightNodeSlot::AugmentedAssignment(inner) => inner.render(w),
             AugmentedAssignmentRightNodeSlot::PatternList(inner) => inner.render(w),
             AugmentedAssignmentRightNodeSlot::Yield(inner) => inner.render(w),
             AugmentedAssignmentRightNodeSlot::True(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(69), edges, w, render_true),
@@ -9817,442 +9781,6 @@ impl ::sittir_core::render::Render for StringContentElementsNodeSlot {
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
 #[node(choice, stamp = stamp)]
-pub enum InterpolationExpressionNodeSlot {
-    #[kind(kind::COMPARISON_OPERATOR)]
-    ComparisonOperator(ComparisonOperatorNode),
-    #[kind(kind::NOT_OPERATOR)]
-    NotOperator(NotOperatorNode),
-    #[kind(kind::BOOLEAN_OPERATOR)]
-    BooleanOperator(BooleanOperatorNode),
-    #[kind(kind::LAMBDA)]
-    Lambda(LambdaNode),
-    #[kind(kind::AWAIT)]
-    Await(AwaitNode),
-    #[kind(kind::BINARY_OPERATOR)]
-    BinaryOperator(BinaryOperatorNode),
-    #[kind(kind::IDENTIFIER, folded(kind::__INIT_U_KEYWORD), folded(kind::TYPE_KEYWORD), folded(kind::PRINT_KEYWORD), folded(kind::EXEC_KEYWORD), folded(kind::ASYNC_KEYWORD), folded(kind::AWAIT_KEYWORD), folded(kind::MATCH_KEYWORD))]
-    Identifier(IdentifierNode),
-    #[kind(kind::STRING)]
-    String(StringNode),
-    #[kind(kind::CONCATENATED_STRING)]
-    ConcatenatedString(ConcatenatedStringNode),
-    #[kind(kind::INTEGER_HEX)]
-    IntegerHex(IntegerHexNode),
-    #[kind(kind::INTEGER_OCTAL)]
-    IntegerOctal(IntegerOctalNode),
-    #[kind(kind::INTEGER_BINARY)]
-    IntegerBinary(IntegerBinaryNode),
-    #[kind(kind::INTEGER_DECIMAL_LONG)]
-    IntegerDecimalLong(IntegerDecimalLongNode),
-    #[kind(kind::INTEGER_DECIMAL_IMAGINARY)]
-    IntegerDecimalImaginary(IntegerDecimalImaginaryNode),
-    #[kind(kind::INTEGER_DECIMAL_PLAIN)]
-    IntegerDecimalPlain(IntegerDecimalPlainNode),
-    #[kind(kind::FLOAT_POINT)]
-    FloatPoint(FloatPointNode),
-    #[kind(kind::FLOAT_LEADING_POINT)]
-    FloatLeadingPoint(FloatLeadingPointNode),
-    #[kind(kind::FLOAT_SCIENTIFIC)]
-    FloatScientific(FloatScientificNode),
-    #[kind(kind::UNARY_OPERATOR)]
-    UnaryOperator(UnaryOperatorNode),
-    #[kind(kind::ATTRIBUTE)]
-    Attribute(AttributeNode),
-    #[kind(kind::SUBSCRIPT)]
-    Subscript(SubscriptNode),
-    #[kind(kind::CALL)]
-    Call(CallNode),
-    #[kind(kind::LIST)]
-    List(ListNode),
-    #[kind(kind::LIST_COMPREHENSION)]
-    ListComprehension(ListComprehensionNode),
-    #[kind(kind::DICTIONARY)]
-    Dictionary(DictionaryNode),
-    #[kind(kind::DICTIONARY_COMPREHENSION)]
-    DictionaryComprehension(DictionaryComprehensionNode),
-    #[kind(kind::SET)]
-    Set(SetNode),
-    #[kind(kind::SET_COMPREHENSION)]
-    SetComprehension(SetComprehensionNode),
-    #[kind(kind::TUPLE)]
-    Tuple(TupleNode),
-    #[kind(kind::PARENTHESIZED_EXPRESSION)]
-    ParenthesizedExpression(ParenthesizedExpressionNode),
-    #[kind(kind::GENERATOR_EXPRESSION)]
-    GeneratorExpression(GeneratorExpressionNode),
-    #[kind(kind::LIST_SPLAT_PATTERN)]
-    ListSplatPattern(ListSplatPatternNode),
-    #[kind(kind::CONDITIONAL_EXPRESSION)]
-    ConditionalExpression(ConditionalExpressionNode),
-    #[kind(kind::NAMED_EXPRESSION)]
-    NamedExpression(NamedExpressionNode),
-    #[kind(kind::AS_PATTERN)]
-    AsPattern(AsPatternNode),
-    #[kind(kind::EXPRESSION_LIST)]
-    ExpressionList(ExpressionListNode),
-    #[kind(kind::PATTERN_LIST)]
-    PatternList(PatternListNode),
-    #[kind(kind::YIELD)]
-    Yield(YieldNode),
-    #[kind(kind::TRUE)]
-    #[node(edged)]
-    True(::sittir_core::options::Edges),
-    #[kind(kind::FALSE)]
-    #[node(edged)]
-    False(::sittir_core::options::Edges),
-    #[kind(kind::NONE)]
-    #[node(edged)]
-    None(::sittir_core::options::Edges),
-    #[kind(kind::ELLIPSIS)]
-    #[node(edged)]
-    Ellipsis(::sittir_core::options::Edges),
-    #[node(verbatim)]
-    Verbatim(VerbatimNode),
-}
-
-impl ::sittir_core::prepare::Prepare for InterpolationExpressionNodeSlot {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
-        match self {
-            InterpolationExpressionNodeSlot::ComparisonOperator(t) => t.prepare(ctx),
-            InterpolationExpressionNodeSlot::NotOperator(t) => t.prepare(ctx),
-            InterpolationExpressionNodeSlot::BooleanOperator(t) => t.prepare(ctx),
-            InterpolationExpressionNodeSlot::Lambda(t) => t.prepare(ctx),
-            InterpolationExpressionNodeSlot::Await(t) => t.prepare(ctx),
-            InterpolationExpressionNodeSlot::BinaryOperator(t) => t.prepare(ctx),
-            InterpolationExpressionNodeSlot::Identifier(t) => t.prepare(ctx),
-            InterpolationExpressionNodeSlot::String(t) => t.prepare(ctx),
-            InterpolationExpressionNodeSlot::ConcatenatedString(t) => t.prepare(ctx),
-            InterpolationExpressionNodeSlot::IntegerHex(t) => t.prepare(ctx),
-            InterpolationExpressionNodeSlot::IntegerOctal(t) => t.prepare(ctx),
-            InterpolationExpressionNodeSlot::IntegerBinary(t) => t.prepare(ctx),
-            InterpolationExpressionNodeSlot::IntegerDecimalLong(t) => t.prepare(ctx),
-            InterpolationExpressionNodeSlot::IntegerDecimalImaginary(t) => t.prepare(ctx),
-            InterpolationExpressionNodeSlot::IntegerDecimalPlain(t) => t.prepare(ctx),
-            InterpolationExpressionNodeSlot::FloatPoint(t) => t.prepare(ctx),
-            InterpolationExpressionNodeSlot::FloatLeadingPoint(t) => t.prepare(ctx),
-            InterpolationExpressionNodeSlot::FloatScientific(t) => t.prepare(ctx),
-            InterpolationExpressionNodeSlot::UnaryOperator(t) => t.prepare(ctx),
-            InterpolationExpressionNodeSlot::Attribute(t) => t.prepare(ctx),
-            InterpolationExpressionNodeSlot::Subscript(t) => t.prepare(ctx),
-            InterpolationExpressionNodeSlot::Call(t) => t.prepare(ctx),
-            InterpolationExpressionNodeSlot::List(t) => t.prepare(ctx),
-            InterpolationExpressionNodeSlot::ListComprehension(t) => t.prepare(ctx),
-            InterpolationExpressionNodeSlot::Dictionary(t) => t.prepare(ctx),
-            InterpolationExpressionNodeSlot::DictionaryComprehension(t) => t.prepare(ctx),
-            InterpolationExpressionNodeSlot::Set(t) => t.prepare(ctx),
-            InterpolationExpressionNodeSlot::SetComprehension(t) => t.prepare(ctx),
-            InterpolationExpressionNodeSlot::Tuple(t) => t.prepare(ctx),
-            InterpolationExpressionNodeSlot::ParenthesizedExpression(t) => t.prepare(ctx),
-            InterpolationExpressionNodeSlot::GeneratorExpression(t) => t.prepare(ctx),
-            InterpolationExpressionNodeSlot::ListSplatPattern(t) => t.prepare(ctx),
-            InterpolationExpressionNodeSlot::ConditionalExpression(t) => t.prepare(ctx),
-            InterpolationExpressionNodeSlot::NamedExpression(t) => t.prepare(ctx),
-            InterpolationExpressionNodeSlot::AsPattern(t) => t.prepare(ctx),
-            InterpolationExpressionNodeSlot::ExpressionList(t) => t.prepare(ctx),
-            InterpolationExpressionNodeSlot::PatternList(t) => t.prepare(ctx),
-            InterpolationExpressionNodeSlot::Yield(t) => t.prepare(ctx),
-            InterpolationExpressionNodeSlot::True(_) => Ok(()),
-            InterpolationExpressionNodeSlot::False(_) => Ok(()),
-            InterpolationExpressionNodeSlot::None(_) => Ok(()),
-            InterpolationExpressionNodeSlot::Ellipsis(_) => Ok(()),
-            InterpolationExpressionNodeSlot::Verbatim(t) => t.prepare(ctx),
-        }
-    }
-    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        match self {
-            InterpolationExpressionNodeSlot::ComparisonOperator(t) => t.gap_edges(),
-            InterpolationExpressionNodeSlot::NotOperator(t) => t.gap_edges(),
-            InterpolationExpressionNodeSlot::BooleanOperator(t) => t.gap_edges(),
-            InterpolationExpressionNodeSlot::Lambda(t) => t.gap_edges(),
-            InterpolationExpressionNodeSlot::Await(t) => t.gap_edges(),
-            InterpolationExpressionNodeSlot::BinaryOperator(t) => t.gap_edges(),
-            InterpolationExpressionNodeSlot::Identifier(t) => t.gap_edges(),
-            InterpolationExpressionNodeSlot::String(t) => t.gap_edges(),
-            InterpolationExpressionNodeSlot::ConcatenatedString(t) => t.gap_edges(),
-            InterpolationExpressionNodeSlot::IntegerHex(t) => t.gap_edges(),
-            InterpolationExpressionNodeSlot::IntegerOctal(t) => t.gap_edges(),
-            InterpolationExpressionNodeSlot::IntegerBinary(t) => t.gap_edges(),
-            InterpolationExpressionNodeSlot::IntegerDecimalLong(t) => t.gap_edges(),
-            InterpolationExpressionNodeSlot::IntegerDecimalImaginary(t) => t.gap_edges(),
-            InterpolationExpressionNodeSlot::IntegerDecimalPlain(t) => t.gap_edges(),
-            InterpolationExpressionNodeSlot::FloatPoint(t) => t.gap_edges(),
-            InterpolationExpressionNodeSlot::FloatLeadingPoint(t) => t.gap_edges(),
-            InterpolationExpressionNodeSlot::FloatScientific(t) => t.gap_edges(),
-            InterpolationExpressionNodeSlot::UnaryOperator(t) => t.gap_edges(),
-            InterpolationExpressionNodeSlot::Attribute(t) => t.gap_edges(),
-            InterpolationExpressionNodeSlot::Subscript(t) => t.gap_edges(),
-            InterpolationExpressionNodeSlot::Call(t) => t.gap_edges(),
-            InterpolationExpressionNodeSlot::List(t) => t.gap_edges(),
-            InterpolationExpressionNodeSlot::ListComprehension(t) => t.gap_edges(),
-            InterpolationExpressionNodeSlot::Dictionary(t) => t.gap_edges(),
-            InterpolationExpressionNodeSlot::DictionaryComprehension(t) => t.gap_edges(),
-            InterpolationExpressionNodeSlot::Set(t) => t.gap_edges(),
-            InterpolationExpressionNodeSlot::SetComprehension(t) => t.gap_edges(),
-            InterpolationExpressionNodeSlot::Tuple(t) => t.gap_edges(),
-            InterpolationExpressionNodeSlot::ParenthesizedExpression(t) => t.gap_edges(),
-            InterpolationExpressionNodeSlot::GeneratorExpression(t) => t.gap_edges(),
-            InterpolationExpressionNodeSlot::ListSplatPattern(t) => t.gap_edges(),
-            InterpolationExpressionNodeSlot::ConditionalExpression(t) => t.gap_edges(),
-            InterpolationExpressionNodeSlot::NamedExpression(t) => t.gap_edges(),
-            InterpolationExpressionNodeSlot::AsPattern(t) => t.gap_edges(),
-            InterpolationExpressionNodeSlot::ExpressionList(t) => t.gap_edges(),
-            InterpolationExpressionNodeSlot::PatternList(t) => t.gap_edges(),
-            InterpolationExpressionNodeSlot::Yield(t) => t.gap_edges(),
-            InterpolationExpressionNodeSlot::True(edges) => Some(edges),
-            InterpolationExpressionNodeSlot::False(edges) => Some(edges),
-            InterpolationExpressionNodeSlot::None(edges) => Some(edges),
-            InterpolationExpressionNodeSlot::Ellipsis(edges) => Some(edges),
-            InterpolationExpressionNodeSlot::Verbatim(t) => t.gap_edges(),
-        }
-    }
-    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
-        match self {
-            InterpolationExpressionNodeSlot::ComparisonOperator(t) => t.snapshot_edge(),
-            InterpolationExpressionNodeSlot::NotOperator(t) => t.snapshot_edge(),
-            InterpolationExpressionNodeSlot::BooleanOperator(t) => t.snapshot_edge(),
-            InterpolationExpressionNodeSlot::Lambda(t) => t.snapshot_edge(),
-            InterpolationExpressionNodeSlot::Await(t) => t.snapshot_edge(),
-            InterpolationExpressionNodeSlot::BinaryOperator(t) => t.snapshot_edge(),
-            InterpolationExpressionNodeSlot::Identifier(t) => t.snapshot_edge(),
-            InterpolationExpressionNodeSlot::String(t) => t.snapshot_edge(),
-            InterpolationExpressionNodeSlot::ConcatenatedString(t) => t.snapshot_edge(),
-            InterpolationExpressionNodeSlot::IntegerHex(t) => t.snapshot_edge(),
-            InterpolationExpressionNodeSlot::IntegerOctal(t) => t.snapshot_edge(),
-            InterpolationExpressionNodeSlot::IntegerBinary(t) => t.snapshot_edge(),
-            InterpolationExpressionNodeSlot::IntegerDecimalLong(t) => t.snapshot_edge(),
-            InterpolationExpressionNodeSlot::IntegerDecimalImaginary(t) => t.snapshot_edge(),
-            InterpolationExpressionNodeSlot::IntegerDecimalPlain(t) => t.snapshot_edge(),
-            InterpolationExpressionNodeSlot::FloatPoint(t) => t.snapshot_edge(),
-            InterpolationExpressionNodeSlot::FloatLeadingPoint(t) => t.snapshot_edge(),
-            InterpolationExpressionNodeSlot::FloatScientific(t) => t.snapshot_edge(),
-            InterpolationExpressionNodeSlot::UnaryOperator(t) => t.snapshot_edge(),
-            InterpolationExpressionNodeSlot::Attribute(t) => t.snapshot_edge(),
-            InterpolationExpressionNodeSlot::Subscript(t) => t.snapshot_edge(),
-            InterpolationExpressionNodeSlot::Call(t) => t.snapshot_edge(),
-            InterpolationExpressionNodeSlot::List(t) => t.snapshot_edge(),
-            InterpolationExpressionNodeSlot::ListComprehension(t) => t.snapshot_edge(),
-            InterpolationExpressionNodeSlot::Dictionary(t) => t.snapshot_edge(),
-            InterpolationExpressionNodeSlot::DictionaryComprehension(t) => t.snapshot_edge(),
-            InterpolationExpressionNodeSlot::Set(t) => t.snapshot_edge(),
-            InterpolationExpressionNodeSlot::SetComprehension(t) => t.snapshot_edge(),
-            InterpolationExpressionNodeSlot::Tuple(t) => t.snapshot_edge(),
-            InterpolationExpressionNodeSlot::ParenthesizedExpression(t) => t.snapshot_edge(),
-            InterpolationExpressionNodeSlot::GeneratorExpression(t) => t.snapshot_edge(),
-            InterpolationExpressionNodeSlot::ListSplatPattern(t) => t.snapshot_edge(),
-            InterpolationExpressionNodeSlot::ConditionalExpression(t) => t.snapshot_edge(),
-            InterpolationExpressionNodeSlot::NamedExpression(t) => t.snapshot_edge(),
-            InterpolationExpressionNodeSlot::AsPattern(t) => t.snapshot_edge(),
-            InterpolationExpressionNodeSlot::ExpressionList(t) => t.snapshot_edge(),
-            InterpolationExpressionNodeSlot::PatternList(t) => t.snapshot_edge(),
-            InterpolationExpressionNodeSlot::Yield(t) => t.snapshot_edge(),
-            InterpolationExpressionNodeSlot::True(_) => None,
-            InterpolationExpressionNodeSlot::False(_) => None,
-            InterpolationExpressionNodeSlot::None(_) => None,
-            InterpolationExpressionNodeSlot::Ellipsis(_) => None,
-            InterpolationExpressionNodeSlot::Verbatim(t) => t.snapshot_edge(),
-        }
-    }
-    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
-        match self {
-            InterpolationExpressionNodeSlot::ComparisonOperator(t) => t.source_coordinate(),
-            InterpolationExpressionNodeSlot::NotOperator(t) => t.source_coordinate(),
-            InterpolationExpressionNodeSlot::BooleanOperator(t) => t.source_coordinate(),
-            InterpolationExpressionNodeSlot::Lambda(t) => t.source_coordinate(),
-            InterpolationExpressionNodeSlot::Await(t) => t.source_coordinate(),
-            InterpolationExpressionNodeSlot::BinaryOperator(t) => t.source_coordinate(),
-            InterpolationExpressionNodeSlot::Identifier(t) => t.source_coordinate(),
-            InterpolationExpressionNodeSlot::String(t) => t.source_coordinate(),
-            InterpolationExpressionNodeSlot::ConcatenatedString(t) => t.source_coordinate(),
-            InterpolationExpressionNodeSlot::IntegerHex(t) => t.source_coordinate(),
-            InterpolationExpressionNodeSlot::IntegerOctal(t) => t.source_coordinate(),
-            InterpolationExpressionNodeSlot::IntegerBinary(t) => t.source_coordinate(),
-            InterpolationExpressionNodeSlot::IntegerDecimalLong(t) => t.source_coordinate(),
-            InterpolationExpressionNodeSlot::IntegerDecimalImaginary(t) => t.source_coordinate(),
-            InterpolationExpressionNodeSlot::IntegerDecimalPlain(t) => t.source_coordinate(),
-            InterpolationExpressionNodeSlot::FloatPoint(t) => t.source_coordinate(),
-            InterpolationExpressionNodeSlot::FloatLeadingPoint(t) => t.source_coordinate(),
-            InterpolationExpressionNodeSlot::FloatScientific(t) => t.source_coordinate(),
-            InterpolationExpressionNodeSlot::UnaryOperator(t) => t.source_coordinate(),
-            InterpolationExpressionNodeSlot::Attribute(t) => t.source_coordinate(),
-            InterpolationExpressionNodeSlot::Subscript(t) => t.source_coordinate(),
-            InterpolationExpressionNodeSlot::Call(t) => t.source_coordinate(),
-            InterpolationExpressionNodeSlot::List(t) => t.source_coordinate(),
-            InterpolationExpressionNodeSlot::ListComprehension(t) => t.source_coordinate(),
-            InterpolationExpressionNodeSlot::Dictionary(t) => t.source_coordinate(),
-            InterpolationExpressionNodeSlot::DictionaryComprehension(t) => t.source_coordinate(),
-            InterpolationExpressionNodeSlot::Set(t) => t.source_coordinate(),
-            InterpolationExpressionNodeSlot::SetComprehension(t) => t.source_coordinate(),
-            InterpolationExpressionNodeSlot::Tuple(t) => t.source_coordinate(),
-            InterpolationExpressionNodeSlot::ParenthesizedExpression(t) => t.source_coordinate(),
-            InterpolationExpressionNodeSlot::GeneratorExpression(t) => t.source_coordinate(),
-            InterpolationExpressionNodeSlot::ListSplatPattern(t) => t.source_coordinate(),
-            InterpolationExpressionNodeSlot::ConditionalExpression(t) => t.source_coordinate(),
-            InterpolationExpressionNodeSlot::NamedExpression(t) => t.source_coordinate(),
-            InterpolationExpressionNodeSlot::AsPattern(t) => t.source_coordinate(),
-            InterpolationExpressionNodeSlot::ExpressionList(t) => t.source_coordinate(),
-            InterpolationExpressionNodeSlot::PatternList(t) => t.source_coordinate(),
-            InterpolationExpressionNodeSlot::Yield(t) => t.source_coordinate(),
-            InterpolationExpressionNodeSlot::True(_) => None,
-            InterpolationExpressionNodeSlot::False(_) => None,
-            InterpolationExpressionNodeSlot::None(_) => None,
-            InterpolationExpressionNodeSlot::Ellipsis(_) => None,
-            InterpolationExpressionNodeSlot::Verbatim(t) => t.source_coordinate(),
-        }
-    }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
-        match self {
-            InterpolationExpressionNodeSlot::ComparisonOperator(t) => t.source_separator(ctx),
-            InterpolationExpressionNodeSlot::NotOperator(t) => t.source_separator(ctx),
-            InterpolationExpressionNodeSlot::BooleanOperator(t) => t.source_separator(ctx),
-            InterpolationExpressionNodeSlot::Lambda(t) => t.source_separator(ctx),
-            InterpolationExpressionNodeSlot::Await(t) => t.source_separator(ctx),
-            InterpolationExpressionNodeSlot::BinaryOperator(t) => t.source_separator(ctx),
-            InterpolationExpressionNodeSlot::Identifier(t) => t.source_separator(ctx),
-            InterpolationExpressionNodeSlot::String(t) => t.source_separator(ctx),
-            InterpolationExpressionNodeSlot::ConcatenatedString(t) => t.source_separator(ctx),
-            InterpolationExpressionNodeSlot::IntegerHex(t) => t.source_separator(ctx),
-            InterpolationExpressionNodeSlot::IntegerOctal(t) => t.source_separator(ctx),
-            InterpolationExpressionNodeSlot::IntegerBinary(t) => t.source_separator(ctx),
-            InterpolationExpressionNodeSlot::IntegerDecimalLong(t) => t.source_separator(ctx),
-            InterpolationExpressionNodeSlot::IntegerDecimalImaginary(t) => t.source_separator(ctx),
-            InterpolationExpressionNodeSlot::IntegerDecimalPlain(t) => t.source_separator(ctx),
-            InterpolationExpressionNodeSlot::FloatPoint(t) => t.source_separator(ctx),
-            InterpolationExpressionNodeSlot::FloatLeadingPoint(t) => t.source_separator(ctx),
-            InterpolationExpressionNodeSlot::FloatScientific(t) => t.source_separator(ctx),
-            InterpolationExpressionNodeSlot::UnaryOperator(t) => t.source_separator(ctx),
-            InterpolationExpressionNodeSlot::Attribute(t) => t.source_separator(ctx),
-            InterpolationExpressionNodeSlot::Subscript(t) => t.source_separator(ctx),
-            InterpolationExpressionNodeSlot::Call(t) => t.source_separator(ctx),
-            InterpolationExpressionNodeSlot::List(t) => t.source_separator(ctx),
-            InterpolationExpressionNodeSlot::ListComprehension(t) => t.source_separator(ctx),
-            InterpolationExpressionNodeSlot::Dictionary(t) => t.source_separator(ctx),
-            InterpolationExpressionNodeSlot::DictionaryComprehension(t) => t.source_separator(ctx),
-            InterpolationExpressionNodeSlot::Set(t) => t.source_separator(ctx),
-            InterpolationExpressionNodeSlot::SetComprehension(t) => t.source_separator(ctx),
-            InterpolationExpressionNodeSlot::Tuple(t) => t.source_separator(ctx),
-            InterpolationExpressionNodeSlot::ParenthesizedExpression(t) => t.source_separator(ctx),
-            InterpolationExpressionNodeSlot::GeneratorExpression(t) => t.source_separator(ctx),
-            InterpolationExpressionNodeSlot::ListSplatPattern(t) => t.source_separator(ctx),
-            InterpolationExpressionNodeSlot::ConditionalExpression(t) => t.source_separator(ctx),
-            InterpolationExpressionNodeSlot::NamedExpression(t) => t.source_separator(ctx),
-            InterpolationExpressionNodeSlot::AsPattern(t) => t.source_separator(ctx),
-            InterpolationExpressionNodeSlot::ExpressionList(t) => t.source_separator(ctx),
-            InterpolationExpressionNodeSlot::PatternList(t) => t.source_separator(ctx),
-            InterpolationExpressionNodeSlot::Yield(t) => t.source_separator(ctx),
-            InterpolationExpressionNodeSlot::True(_) => None,
-            InterpolationExpressionNodeSlot::False(_) => None,
-            InterpolationExpressionNodeSlot::None(_) => None,
-            InterpolationExpressionNodeSlot::Ellipsis(_) => None,
-            InterpolationExpressionNodeSlot::Verbatim(t) => t.source_separator(ctx),
-        }
-    }
-    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
-        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
-    }
-}
-
-impl ::sittir_core::view::KindOf for InterpolationExpressionNodeSlot {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        match self {
-            Self::ComparisonOperator(inner) => inner.kind_in(kinds),
-            Self::NotOperator(inner) => inner.kind_in(kinds),
-            Self::BooleanOperator(inner) => inner.kind_in(kinds),
-            Self::Lambda(inner) => inner.kind_in(kinds),
-            Self::Await(inner) => inner.kind_in(kinds),
-            Self::BinaryOperator(inner) => inner.kind_in(kinds),
-            Self::Identifier(inner) => inner.kind_in(kinds),
-            Self::String(inner) => inner.kind_in(kinds),
-            Self::ConcatenatedString(inner) => inner.kind_in(kinds),
-            Self::IntegerHex(inner) => inner.kind_in(kinds),
-            Self::IntegerOctal(inner) => inner.kind_in(kinds),
-            Self::IntegerBinary(inner) => inner.kind_in(kinds),
-            Self::IntegerDecimalLong(inner) => inner.kind_in(kinds),
-            Self::IntegerDecimalImaginary(inner) => inner.kind_in(kinds),
-            Self::IntegerDecimalPlain(inner) => inner.kind_in(kinds),
-            Self::FloatPoint(inner) => inner.kind_in(kinds),
-            Self::FloatLeadingPoint(inner) => inner.kind_in(kinds),
-            Self::FloatScientific(inner) => inner.kind_in(kinds),
-            Self::UnaryOperator(inner) => inner.kind_in(kinds),
-            Self::Attribute(inner) => inner.kind_in(kinds),
-            Self::Subscript(inner) => inner.kind_in(kinds),
-            Self::Call(inner) => inner.kind_in(kinds),
-            Self::List(inner) => inner.kind_in(kinds),
-            Self::ListComprehension(inner) => inner.kind_in(kinds),
-            Self::Dictionary(inner) => inner.kind_in(kinds),
-            Self::DictionaryComprehension(inner) => inner.kind_in(kinds),
-            Self::Set(inner) => inner.kind_in(kinds),
-            Self::SetComprehension(inner) => inner.kind_in(kinds),
-            Self::Tuple(inner) => inner.kind_in(kinds),
-            Self::ParenthesizedExpression(inner) => inner.kind_in(kinds),
-            Self::GeneratorExpression(inner) => inner.kind_in(kinds),
-            Self::ListSplatPattern(inner) => inner.kind_in(kinds),
-            Self::ConditionalExpression(inner) => inner.kind_in(kinds),
-            Self::NamedExpression(inner) => inner.kind_in(kinds),
-            Self::AsPattern(inner) => inner.kind_in(kinds),
-            Self::ExpressionList(inner) => inner.kind_in(kinds),
-            Self::PatternList(inner) => inner.kind_in(kinds),
-            Self::Yield(inner) => inner.kind_in(kinds),
-            Self::True(_) => [::sittir_core::types::KindId(69)].iter().any(|k| kinds.contains(k)),
-            Self::False(_) => [::sittir_core::types::KindId(70)].iter().any(|k| kinds.contains(k)),
-            Self::None(_) => [::sittir_core::types::KindId(71)].iter().any(|k| kinds.contains(k)),
-            Self::Ellipsis(_) => [::sittir_core::types::KindId(63)].iter().any(|k| kinds.contains(k)),
-            Self::Verbatim(_) => [::sittir_core::types::KindId(1), ::sittir_core::types::KindId(93), ::sittir_core::types::KindId(94), ::sittir_core::types::KindId(95)].iter().any(|k| kinds.contains(k)),
-        }
-    }
-}
-
-impl ::sittir_core::render::Render for InterpolationExpressionNodeSlot {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        match self {
-            InterpolationExpressionNodeSlot::ComparisonOperator(inner) => inner.render(w),
-            InterpolationExpressionNodeSlot::NotOperator(inner) => inner.render(w),
-            InterpolationExpressionNodeSlot::BooleanOperator(inner) => inner.render(w),
-            InterpolationExpressionNodeSlot::Lambda(inner) => inner.render(w),
-            InterpolationExpressionNodeSlot::Await(inner) => inner.render(w),
-            InterpolationExpressionNodeSlot::BinaryOperator(inner) => inner.render(w),
-            InterpolationExpressionNodeSlot::Identifier(inner) => inner.render(w),
-            InterpolationExpressionNodeSlot::String(inner) => inner.render(w),
-            InterpolationExpressionNodeSlot::ConcatenatedString(inner) => inner.render(w),
-            InterpolationExpressionNodeSlot::IntegerHex(inner) => inner.render(w),
-            InterpolationExpressionNodeSlot::IntegerOctal(inner) => inner.render(w),
-            InterpolationExpressionNodeSlot::IntegerBinary(inner) => inner.render(w),
-            InterpolationExpressionNodeSlot::IntegerDecimalLong(inner) => inner.render(w),
-            InterpolationExpressionNodeSlot::IntegerDecimalImaginary(inner) => inner.render(w),
-            InterpolationExpressionNodeSlot::IntegerDecimalPlain(inner) => inner.render(w),
-            InterpolationExpressionNodeSlot::FloatPoint(inner) => inner.render(w),
-            InterpolationExpressionNodeSlot::FloatLeadingPoint(inner) => inner.render(w),
-            InterpolationExpressionNodeSlot::FloatScientific(inner) => inner.render(w),
-            InterpolationExpressionNodeSlot::UnaryOperator(inner) => inner.render(w),
-            InterpolationExpressionNodeSlot::Attribute(inner) => inner.render(w),
-            InterpolationExpressionNodeSlot::Subscript(inner) => inner.render(w),
-            InterpolationExpressionNodeSlot::Call(inner) => inner.render(w),
-            InterpolationExpressionNodeSlot::List(inner) => inner.render(w),
-            InterpolationExpressionNodeSlot::ListComprehension(inner) => inner.render(w),
-            InterpolationExpressionNodeSlot::Dictionary(inner) => inner.render(w),
-            InterpolationExpressionNodeSlot::DictionaryComprehension(inner) => inner.render(w),
-            InterpolationExpressionNodeSlot::Set(inner) => inner.render(w),
-            InterpolationExpressionNodeSlot::SetComprehension(inner) => inner.render(w),
-            InterpolationExpressionNodeSlot::Tuple(inner) => inner.render(w),
-            InterpolationExpressionNodeSlot::ParenthesizedExpression(inner) => inner.render(w),
-            InterpolationExpressionNodeSlot::GeneratorExpression(inner) => inner.render(w),
-            InterpolationExpressionNodeSlot::ListSplatPattern(inner) => inner.render(w),
-            InterpolationExpressionNodeSlot::ConditionalExpression(inner) => inner.render(w),
-            InterpolationExpressionNodeSlot::NamedExpression(inner) => inner.render(w),
-            InterpolationExpressionNodeSlot::AsPattern(inner) => inner.render(w),
-            InterpolationExpressionNodeSlot::ExpressionList(inner) => inner.render(w),
-            InterpolationExpressionNodeSlot::PatternList(inner) => inner.render(w),
-            InterpolationExpressionNodeSlot::Yield(inner) => inner.render(w),
-            InterpolationExpressionNodeSlot::True(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(69), edges, w, render_true),
-            InterpolationExpressionNodeSlot::False(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(70), edges, w, render_false),
-            InterpolationExpressionNodeSlot::None(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(71), edges, w, render_none),
-            InterpolationExpressionNodeSlot::Ellipsis(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(63), edges, w, render_ellipsis),
-            InterpolationExpressionNodeSlot::Verbatim(inner) => inner.render(w),
-        }
-    }
-}
-
-#[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice, stamp = stamp)]
 pub enum FormatSpecifierElementsNodeSlot {
     #[kind(kind::FORMAT_SPECIFIER_TEXT)]
     FormatSpecifierText(FormatSpecifierTextNode),
@@ -11597,6 +11125,469 @@ impl ::sittir_core::render::Render for SplatPatternDictionaryPatternNodeSlot {
                 Ok(())
             }
             SplatPatternDictionaryPatternNodeSlot::Verbatim(inner) => inner.render(w),
+        }
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
+#[node(choice, stamp = stamp)]
+pub enum AssignmentEqValueNodeSlot {
+    #[kind(kind::COMPARISON_OPERATOR)]
+    ComparisonOperator(ComparisonOperatorNode),
+    #[kind(kind::NOT_OPERATOR)]
+    NotOperator(NotOperatorNode),
+    #[kind(kind::BOOLEAN_OPERATOR)]
+    BooleanOperator(BooleanOperatorNode),
+    #[kind(kind::LAMBDA)]
+    Lambda(LambdaNode),
+    #[kind(kind::AWAIT)]
+    Await(AwaitNode),
+    #[kind(kind::BINARY_OPERATOR)]
+    BinaryOperator(BinaryOperatorNode),
+    #[kind(kind::IDENTIFIER, folded(kind::__INIT_U_KEYWORD), folded(kind::TYPE_KEYWORD), folded(kind::PRINT_KEYWORD), folded(kind::EXEC_KEYWORD), folded(kind::ASYNC_KEYWORD), folded(kind::AWAIT_KEYWORD), folded(kind::MATCH_KEYWORD))]
+    Identifier(IdentifierNode),
+    #[kind(kind::STRING)]
+    String(StringNode),
+    #[kind(kind::CONCATENATED_STRING)]
+    ConcatenatedString(ConcatenatedStringNode),
+    #[kind(kind::INTEGER_HEX)]
+    IntegerHex(IntegerHexNode),
+    #[kind(kind::INTEGER_OCTAL)]
+    IntegerOctal(IntegerOctalNode),
+    #[kind(kind::INTEGER_BINARY)]
+    IntegerBinary(IntegerBinaryNode),
+    #[kind(kind::INTEGER_DECIMAL_LONG)]
+    IntegerDecimalLong(IntegerDecimalLongNode),
+    #[kind(kind::INTEGER_DECIMAL_IMAGINARY)]
+    IntegerDecimalImaginary(IntegerDecimalImaginaryNode),
+    #[kind(kind::INTEGER_DECIMAL_PLAIN)]
+    IntegerDecimalPlain(IntegerDecimalPlainNode),
+    #[kind(kind::FLOAT_POINT)]
+    FloatPoint(FloatPointNode),
+    #[kind(kind::FLOAT_LEADING_POINT)]
+    FloatLeadingPoint(FloatLeadingPointNode),
+    #[kind(kind::FLOAT_SCIENTIFIC)]
+    FloatScientific(FloatScientificNode),
+    #[kind(kind::UNARY_OPERATOR)]
+    UnaryOperator(UnaryOperatorNode),
+    #[kind(kind::ATTRIBUTE)]
+    Attribute(AttributeNode),
+    #[kind(kind::SUBSCRIPT)]
+    Subscript(SubscriptNode),
+    #[kind(kind::CALL)]
+    Call(CallNode),
+    #[kind(kind::LIST)]
+    List(ListNode),
+    #[kind(kind::LIST_COMPREHENSION)]
+    ListComprehension(ListComprehensionNode),
+    #[kind(kind::DICTIONARY)]
+    Dictionary(DictionaryNode),
+    #[kind(kind::DICTIONARY_COMPREHENSION)]
+    DictionaryComprehension(DictionaryComprehensionNode),
+    #[kind(kind::SET)]
+    Set(SetNode),
+    #[kind(kind::SET_COMPREHENSION)]
+    SetComprehension(SetComprehensionNode),
+    #[kind(kind::TUPLE)]
+    Tuple(TupleNode),
+    #[kind(kind::PARENTHESIZED_EXPRESSION)]
+    ParenthesizedExpression(ParenthesizedExpressionNode),
+    #[kind(kind::GENERATOR_EXPRESSION)]
+    GeneratorExpression(GeneratorExpressionNode),
+    #[kind(kind::LIST_SPLAT_PATTERN)]
+    ListSplatPattern(ListSplatPatternNode),
+    #[kind(kind::CONDITIONAL_EXPRESSION)]
+    ConditionalExpression(ConditionalExpressionNode),
+    #[kind(kind::NAMED_EXPRESSION)]
+    NamedExpression(NamedExpressionNode),
+    #[kind(kind::AS_PATTERN)]
+    AsPattern(AsPatternNode),
+    #[kind(kind::EXPRESSION_LIST)]
+    ExpressionList(ExpressionListNode),
+    #[kind(kind::PATTERN_LIST)]
+    PatternList(PatternListNode),
+    #[kind(kind::YIELD)]
+    Yield(YieldNode),
+    #[kind(kind::ASSIGNMENT_EQ)]
+    AssignmentEq(AssignmentEqNode),
+    #[kind(kind::ASSIGNMENT_TYPE)]
+    AssignmentType(AssignmentTypeNode),
+    #[kind(kind::ASSIGNMENT_TYPED)]
+    AssignmentTyped(Box<AssignmentTypedNode>),
+    #[kind(kind::TRUE)]
+    #[node(edged)]
+    True(::sittir_core::options::Edges),
+    #[kind(kind::FALSE)]
+    #[node(edged)]
+    False(::sittir_core::options::Edges),
+    #[kind(kind::NONE)]
+    #[node(edged)]
+    None(::sittir_core::options::Edges),
+    #[kind(kind::ELLIPSIS)]
+    #[node(edged)]
+    Ellipsis(::sittir_core::options::Edges),
+    #[node(verbatim)]
+    Verbatim(VerbatimNode),
+}
+
+impl ::sittir_core::prepare::Prepare for AssignmentEqValueNodeSlot {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
+        match self {
+            AssignmentEqValueNodeSlot::ComparisonOperator(t) => t.prepare(ctx),
+            AssignmentEqValueNodeSlot::NotOperator(t) => t.prepare(ctx),
+            AssignmentEqValueNodeSlot::BooleanOperator(t) => t.prepare(ctx),
+            AssignmentEqValueNodeSlot::Lambda(t) => t.prepare(ctx),
+            AssignmentEqValueNodeSlot::Await(t) => t.prepare(ctx),
+            AssignmentEqValueNodeSlot::BinaryOperator(t) => t.prepare(ctx),
+            AssignmentEqValueNodeSlot::Identifier(t) => t.prepare(ctx),
+            AssignmentEqValueNodeSlot::String(t) => t.prepare(ctx),
+            AssignmentEqValueNodeSlot::ConcatenatedString(t) => t.prepare(ctx),
+            AssignmentEqValueNodeSlot::IntegerHex(t) => t.prepare(ctx),
+            AssignmentEqValueNodeSlot::IntegerOctal(t) => t.prepare(ctx),
+            AssignmentEqValueNodeSlot::IntegerBinary(t) => t.prepare(ctx),
+            AssignmentEqValueNodeSlot::IntegerDecimalLong(t) => t.prepare(ctx),
+            AssignmentEqValueNodeSlot::IntegerDecimalImaginary(t) => t.prepare(ctx),
+            AssignmentEqValueNodeSlot::IntegerDecimalPlain(t) => t.prepare(ctx),
+            AssignmentEqValueNodeSlot::FloatPoint(t) => t.prepare(ctx),
+            AssignmentEqValueNodeSlot::FloatLeadingPoint(t) => t.prepare(ctx),
+            AssignmentEqValueNodeSlot::FloatScientific(t) => t.prepare(ctx),
+            AssignmentEqValueNodeSlot::UnaryOperator(t) => t.prepare(ctx),
+            AssignmentEqValueNodeSlot::Attribute(t) => t.prepare(ctx),
+            AssignmentEqValueNodeSlot::Subscript(t) => t.prepare(ctx),
+            AssignmentEqValueNodeSlot::Call(t) => t.prepare(ctx),
+            AssignmentEqValueNodeSlot::List(t) => t.prepare(ctx),
+            AssignmentEqValueNodeSlot::ListComprehension(t) => t.prepare(ctx),
+            AssignmentEqValueNodeSlot::Dictionary(t) => t.prepare(ctx),
+            AssignmentEqValueNodeSlot::DictionaryComprehension(t) => t.prepare(ctx),
+            AssignmentEqValueNodeSlot::Set(t) => t.prepare(ctx),
+            AssignmentEqValueNodeSlot::SetComprehension(t) => t.prepare(ctx),
+            AssignmentEqValueNodeSlot::Tuple(t) => t.prepare(ctx),
+            AssignmentEqValueNodeSlot::ParenthesizedExpression(t) => t.prepare(ctx),
+            AssignmentEqValueNodeSlot::GeneratorExpression(t) => t.prepare(ctx),
+            AssignmentEqValueNodeSlot::ListSplatPattern(t) => t.prepare(ctx),
+            AssignmentEqValueNodeSlot::ConditionalExpression(t) => t.prepare(ctx),
+            AssignmentEqValueNodeSlot::NamedExpression(t) => t.prepare(ctx),
+            AssignmentEqValueNodeSlot::AsPattern(t) => t.prepare(ctx),
+            AssignmentEqValueNodeSlot::ExpressionList(t) => t.prepare(ctx),
+            AssignmentEqValueNodeSlot::PatternList(t) => t.prepare(ctx),
+            AssignmentEqValueNodeSlot::Yield(t) => t.prepare(ctx),
+            AssignmentEqValueNodeSlot::AssignmentEq(t) => t.prepare(ctx),
+            AssignmentEqValueNodeSlot::AssignmentType(t) => t.prepare(ctx),
+            AssignmentEqValueNodeSlot::AssignmentTyped(t) => t.prepare(ctx),
+            AssignmentEqValueNodeSlot::True(_) => Ok(()),
+            AssignmentEqValueNodeSlot::False(_) => Ok(()),
+            AssignmentEqValueNodeSlot::None(_) => Ok(()),
+            AssignmentEqValueNodeSlot::Ellipsis(_) => Ok(()),
+            AssignmentEqValueNodeSlot::Verbatim(t) => t.prepare(ctx),
+        }
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        match self {
+            AssignmentEqValueNodeSlot::ComparisonOperator(t) => t.gap_edges(),
+            AssignmentEqValueNodeSlot::NotOperator(t) => t.gap_edges(),
+            AssignmentEqValueNodeSlot::BooleanOperator(t) => t.gap_edges(),
+            AssignmentEqValueNodeSlot::Lambda(t) => t.gap_edges(),
+            AssignmentEqValueNodeSlot::Await(t) => t.gap_edges(),
+            AssignmentEqValueNodeSlot::BinaryOperator(t) => t.gap_edges(),
+            AssignmentEqValueNodeSlot::Identifier(t) => t.gap_edges(),
+            AssignmentEqValueNodeSlot::String(t) => t.gap_edges(),
+            AssignmentEqValueNodeSlot::ConcatenatedString(t) => t.gap_edges(),
+            AssignmentEqValueNodeSlot::IntegerHex(t) => t.gap_edges(),
+            AssignmentEqValueNodeSlot::IntegerOctal(t) => t.gap_edges(),
+            AssignmentEqValueNodeSlot::IntegerBinary(t) => t.gap_edges(),
+            AssignmentEqValueNodeSlot::IntegerDecimalLong(t) => t.gap_edges(),
+            AssignmentEqValueNodeSlot::IntegerDecimalImaginary(t) => t.gap_edges(),
+            AssignmentEqValueNodeSlot::IntegerDecimalPlain(t) => t.gap_edges(),
+            AssignmentEqValueNodeSlot::FloatPoint(t) => t.gap_edges(),
+            AssignmentEqValueNodeSlot::FloatLeadingPoint(t) => t.gap_edges(),
+            AssignmentEqValueNodeSlot::FloatScientific(t) => t.gap_edges(),
+            AssignmentEqValueNodeSlot::UnaryOperator(t) => t.gap_edges(),
+            AssignmentEqValueNodeSlot::Attribute(t) => t.gap_edges(),
+            AssignmentEqValueNodeSlot::Subscript(t) => t.gap_edges(),
+            AssignmentEqValueNodeSlot::Call(t) => t.gap_edges(),
+            AssignmentEqValueNodeSlot::List(t) => t.gap_edges(),
+            AssignmentEqValueNodeSlot::ListComprehension(t) => t.gap_edges(),
+            AssignmentEqValueNodeSlot::Dictionary(t) => t.gap_edges(),
+            AssignmentEqValueNodeSlot::DictionaryComprehension(t) => t.gap_edges(),
+            AssignmentEqValueNodeSlot::Set(t) => t.gap_edges(),
+            AssignmentEqValueNodeSlot::SetComprehension(t) => t.gap_edges(),
+            AssignmentEqValueNodeSlot::Tuple(t) => t.gap_edges(),
+            AssignmentEqValueNodeSlot::ParenthesizedExpression(t) => t.gap_edges(),
+            AssignmentEqValueNodeSlot::GeneratorExpression(t) => t.gap_edges(),
+            AssignmentEqValueNodeSlot::ListSplatPattern(t) => t.gap_edges(),
+            AssignmentEqValueNodeSlot::ConditionalExpression(t) => t.gap_edges(),
+            AssignmentEqValueNodeSlot::NamedExpression(t) => t.gap_edges(),
+            AssignmentEqValueNodeSlot::AsPattern(t) => t.gap_edges(),
+            AssignmentEqValueNodeSlot::ExpressionList(t) => t.gap_edges(),
+            AssignmentEqValueNodeSlot::PatternList(t) => t.gap_edges(),
+            AssignmentEqValueNodeSlot::Yield(t) => t.gap_edges(),
+            AssignmentEqValueNodeSlot::AssignmentEq(t) => t.gap_edges(),
+            AssignmentEqValueNodeSlot::AssignmentType(t) => t.gap_edges(),
+            AssignmentEqValueNodeSlot::AssignmentTyped(t) => t.gap_edges(),
+            AssignmentEqValueNodeSlot::True(edges) => Some(edges),
+            AssignmentEqValueNodeSlot::False(edges) => Some(edges),
+            AssignmentEqValueNodeSlot::None(edges) => Some(edges),
+            AssignmentEqValueNodeSlot::Ellipsis(edges) => Some(edges),
+            AssignmentEqValueNodeSlot::Verbatim(t) => t.gap_edges(),
+        }
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        match self {
+            AssignmentEqValueNodeSlot::ComparisonOperator(t) => t.snapshot_edge(),
+            AssignmentEqValueNodeSlot::NotOperator(t) => t.snapshot_edge(),
+            AssignmentEqValueNodeSlot::BooleanOperator(t) => t.snapshot_edge(),
+            AssignmentEqValueNodeSlot::Lambda(t) => t.snapshot_edge(),
+            AssignmentEqValueNodeSlot::Await(t) => t.snapshot_edge(),
+            AssignmentEqValueNodeSlot::BinaryOperator(t) => t.snapshot_edge(),
+            AssignmentEqValueNodeSlot::Identifier(t) => t.snapshot_edge(),
+            AssignmentEqValueNodeSlot::String(t) => t.snapshot_edge(),
+            AssignmentEqValueNodeSlot::ConcatenatedString(t) => t.snapshot_edge(),
+            AssignmentEqValueNodeSlot::IntegerHex(t) => t.snapshot_edge(),
+            AssignmentEqValueNodeSlot::IntegerOctal(t) => t.snapshot_edge(),
+            AssignmentEqValueNodeSlot::IntegerBinary(t) => t.snapshot_edge(),
+            AssignmentEqValueNodeSlot::IntegerDecimalLong(t) => t.snapshot_edge(),
+            AssignmentEqValueNodeSlot::IntegerDecimalImaginary(t) => t.snapshot_edge(),
+            AssignmentEqValueNodeSlot::IntegerDecimalPlain(t) => t.snapshot_edge(),
+            AssignmentEqValueNodeSlot::FloatPoint(t) => t.snapshot_edge(),
+            AssignmentEqValueNodeSlot::FloatLeadingPoint(t) => t.snapshot_edge(),
+            AssignmentEqValueNodeSlot::FloatScientific(t) => t.snapshot_edge(),
+            AssignmentEqValueNodeSlot::UnaryOperator(t) => t.snapshot_edge(),
+            AssignmentEqValueNodeSlot::Attribute(t) => t.snapshot_edge(),
+            AssignmentEqValueNodeSlot::Subscript(t) => t.snapshot_edge(),
+            AssignmentEqValueNodeSlot::Call(t) => t.snapshot_edge(),
+            AssignmentEqValueNodeSlot::List(t) => t.snapshot_edge(),
+            AssignmentEqValueNodeSlot::ListComprehension(t) => t.snapshot_edge(),
+            AssignmentEqValueNodeSlot::Dictionary(t) => t.snapshot_edge(),
+            AssignmentEqValueNodeSlot::DictionaryComprehension(t) => t.snapshot_edge(),
+            AssignmentEqValueNodeSlot::Set(t) => t.snapshot_edge(),
+            AssignmentEqValueNodeSlot::SetComprehension(t) => t.snapshot_edge(),
+            AssignmentEqValueNodeSlot::Tuple(t) => t.snapshot_edge(),
+            AssignmentEqValueNodeSlot::ParenthesizedExpression(t) => t.snapshot_edge(),
+            AssignmentEqValueNodeSlot::GeneratorExpression(t) => t.snapshot_edge(),
+            AssignmentEqValueNodeSlot::ListSplatPattern(t) => t.snapshot_edge(),
+            AssignmentEqValueNodeSlot::ConditionalExpression(t) => t.snapshot_edge(),
+            AssignmentEqValueNodeSlot::NamedExpression(t) => t.snapshot_edge(),
+            AssignmentEqValueNodeSlot::AsPattern(t) => t.snapshot_edge(),
+            AssignmentEqValueNodeSlot::ExpressionList(t) => t.snapshot_edge(),
+            AssignmentEqValueNodeSlot::PatternList(t) => t.snapshot_edge(),
+            AssignmentEqValueNodeSlot::Yield(t) => t.snapshot_edge(),
+            AssignmentEqValueNodeSlot::AssignmentEq(t) => t.snapshot_edge(),
+            AssignmentEqValueNodeSlot::AssignmentType(t) => t.snapshot_edge(),
+            AssignmentEqValueNodeSlot::AssignmentTyped(t) => t.snapshot_edge(),
+            AssignmentEqValueNodeSlot::True(_) => None,
+            AssignmentEqValueNodeSlot::False(_) => None,
+            AssignmentEqValueNodeSlot::None(_) => None,
+            AssignmentEqValueNodeSlot::Ellipsis(_) => None,
+            AssignmentEqValueNodeSlot::Verbatim(t) => t.snapshot_edge(),
+        }
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        match self {
+            AssignmentEqValueNodeSlot::ComparisonOperator(t) => t.source_coordinate(),
+            AssignmentEqValueNodeSlot::NotOperator(t) => t.source_coordinate(),
+            AssignmentEqValueNodeSlot::BooleanOperator(t) => t.source_coordinate(),
+            AssignmentEqValueNodeSlot::Lambda(t) => t.source_coordinate(),
+            AssignmentEqValueNodeSlot::Await(t) => t.source_coordinate(),
+            AssignmentEqValueNodeSlot::BinaryOperator(t) => t.source_coordinate(),
+            AssignmentEqValueNodeSlot::Identifier(t) => t.source_coordinate(),
+            AssignmentEqValueNodeSlot::String(t) => t.source_coordinate(),
+            AssignmentEqValueNodeSlot::ConcatenatedString(t) => t.source_coordinate(),
+            AssignmentEqValueNodeSlot::IntegerHex(t) => t.source_coordinate(),
+            AssignmentEqValueNodeSlot::IntegerOctal(t) => t.source_coordinate(),
+            AssignmentEqValueNodeSlot::IntegerBinary(t) => t.source_coordinate(),
+            AssignmentEqValueNodeSlot::IntegerDecimalLong(t) => t.source_coordinate(),
+            AssignmentEqValueNodeSlot::IntegerDecimalImaginary(t) => t.source_coordinate(),
+            AssignmentEqValueNodeSlot::IntegerDecimalPlain(t) => t.source_coordinate(),
+            AssignmentEqValueNodeSlot::FloatPoint(t) => t.source_coordinate(),
+            AssignmentEqValueNodeSlot::FloatLeadingPoint(t) => t.source_coordinate(),
+            AssignmentEqValueNodeSlot::FloatScientific(t) => t.source_coordinate(),
+            AssignmentEqValueNodeSlot::UnaryOperator(t) => t.source_coordinate(),
+            AssignmentEqValueNodeSlot::Attribute(t) => t.source_coordinate(),
+            AssignmentEqValueNodeSlot::Subscript(t) => t.source_coordinate(),
+            AssignmentEqValueNodeSlot::Call(t) => t.source_coordinate(),
+            AssignmentEqValueNodeSlot::List(t) => t.source_coordinate(),
+            AssignmentEqValueNodeSlot::ListComprehension(t) => t.source_coordinate(),
+            AssignmentEqValueNodeSlot::Dictionary(t) => t.source_coordinate(),
+            AssignmentEqValueNodeSlot::DictionaryComprehension(t) => t.source_coordinate(),
+            AssignmentEqValueNodeSlot::Set(t) => t.source_coordinate(),
+            AssignmentEqValueNodeSlot::SetComprehension(t) => t.source_coordinate(),
+            AssignmentEqValueNodeSlot::Tuple(t) => t.source_coordinate(),
+            AssignmentEqValueNodeSlot::ParenthesizedExpression(t) => t.source_coordinate(),
+            AssignmentEqValueNodeSlot::GeneratorExpression(t) => t.source_coordinate(),
+            AssignmentEqValueNodeSlot::ListSplatPattern(t) => t.source_coordinate(),
+            AssignmentEqValueNodeSlot::ConditionalExpression(t) => t.source_coordinate(),
+            AssignmentEqValueNodeSlot::NamedExpression(t) => t.source_coordinate(),
+            AssignmentEqValueNodeSlot::AsPattern(t) => t.source_coordinate(),
+            AssignmentEqValueNodeSlot::ExpressionList(t) => t.source_coordinate(),
+            AssignmentEqValueNodeSlot::PatternList(t) => t.source_coordinate(),
+            AssignmentEqValueNodeSlot::Yield(t) => t.source_coordinate(),
+            AssignmentEqValueNodeSlot::AssignmentEq(t) => t.source_coordinate(),
+            AssignmentEqValueNodeSlot::AssignmentType(t) => t.source_coordinate(),
+            AssignmentEqValueNodeSlot::AssignmentTyped(t) => t.source_coordinate(),
+            AssignmentEqValueNodeSlot::True(_) => None,
+            AssignmentEqValueNodeSlot::False(_) => None,
+            AssignmentEqValueNodeSlot::None(_) => None,
+            AssignmentEqValueNodeSlot::Ellipsis(_) => None,
+            AssignmentEqValueNodeSlot::Verbatim(t) => t.source_coordinate(),
+        }
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
+        match self {
+            AssignmentEqValueNodeSlot::ComparisonOperator(t) => t.source_separator(ctx),
+            AssignmentEqValueNodeSlot::NotOperator(t) => t.source_separator(ctx),
+            AssignmentEqValueNodeSlot::BooleanOperator(t) => t.source_separator(ctx),
+            AssignmentEqValueNodeSlot::Lambda(t) => t.source_separator(ctx),
+            AssignmentEqValueNodeSlot::Await(t) => t.source_separator(ctx),
+            AssignmentEqValueNodeSlot::BinaryOperator(t) => t.source_separator(ctx),
+            AssignmentEqValueNodeSlot::Identifier(t) => t.source_separator(ctx),
+            AssignmentEqValueNodeSlot::String(t) => t.source_separator(ctx),
+            AssignmentEqValueNodeSlot::ConcatenatedString(t) => t.source_separator(ctx),
+            AssignmentEqValueNodeSlot::IntegerHex(t) => t.source_separator(ctx),
+            AssignmentEqValueNodeSlot::IntegerOctal(t) => t.source_separator(ctx),
+            AssignmentEqValueNodeSlot::IntegerBinary(t) => t.source_separator(ctx),
+            AssignmentEqValueNodeSlot::IntegerDecimalLong(t) => t.source_separator(ctx),
+            AssignmentEqValueNodeSlot::IntegerDecimalImaginary(t) => t.source_separator(ctx),
+            AssignmentEqValueNodeSlot::IntegerDecimalPlain(t) => t.source_separator(ctx),
+            AssignmentEqValueNodeSlot::FloatPoint(t) => t.source_separator(ctx),
+            AssignmentEqValueNodeSlot::FloatLeadingPoint(t) => t.source_separator(ctx),
+            AssignmentEqValueNodeSlot::FloatScientific(t) => t.source_separator(ctx),
+            AssignmentEqValueNodeSlot::UnaryOperator(t) => t.source_separator(ctx),
+            AssignmentEqValueNodeSlot::Attribute(t) => t.source_separator(ctx),
+            AssignmentEqValueNodeSlot::Subscript(t) => t.source_separator(ctx),
+            AssignmentEqValueNodeSlot::Call(t) => t.source_separator(ctx),
+            AssignmentEqValueNodeSlot::List(t) => t.source_separator(ctx),
+            AssignmentEqValueNodeSlot::ListComprehension(t) => t.source_separator(ctx),
+            AssignmentEqValueNodeSlot::Dictionary(t) => t.source_separator(ctx),
+            AssignmentEqValueNodeSlot::DictionaryComprehension(t) => t.source_separator(ctx),
+            AssignmentEqValueNodeSlot::Set(t) => t.source_separator(ctx),
+            AssignmentEqValueNodeSlot::SetComprehension(t) => t.source_separator(ctx),
+            AssignmentEqValueNodeSlot::Tuple(t) => t.source_separator(ctx),
+            AssignmentEqValueNodeSlot::ParenthesizedExpression(t) => t.source_separator(ctx),
+            AssignmentEqValueNodeSlot::GeneratorExpression(t) => t.source_separator(ctx),
+            AssignmentEqValueNodeSlot::ListSplatPattern(t) => t.source_separator(ctx),
+            AssignmentEqValueNodeSlot::ConditionalExpression(t) => t.source_separator(ctx),
+            AssignmentEqValueNodeSlot::NamedExpression(t) => t.source_separator(ctx),
+            AssignmentEqValueNodeSlot::AsPattern(t) => t.source_separator(ctx),
+            AssignmentEqValueNodeSlot::ExpressionList(t) => t.source_separator(ctx),
+            AssignmentEqValueNodeSlot::PatternList(t) => t.source_separator(ctx),
+            AssignmentEqValueNodeSlot::Yield(t) => t.source_separator(ctx),
+            AssignmentEqValueNodeSlot::AssignmentEq(t) => t.source_separator(ctx),
+            AssignmentEqValueNodeSlot::AssignmentType(t) => t.source_separator(ctx),
+            AssignmentEqValueNodeSlot::AssignmentTyped(t) => t.source_separator(ctx),
+            AssignmentEqValueNodeSlot::True(_) => None,
+            AssignmentEqValueNodeSlot::False(_) => None,
+            AssignmentEqValueNodeSlot::None(_) => None,
+            AssignmentEqValueNodeSlot::Ellipsis(_) => None,
+            AssignmentEqValueNodeSlot::Verbatim(t) => t.source_separator(ctx),
+        }
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
+}
+
+impl ::sittir_core::view::KindOf for AssignmentEqValueNodeSlot {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::ComparisonOperator(inner) => inner.kind_in(kinds),
+            Self::NotOperator(inner) => inner.kind_in(kinds),
+            Self::BooleanOperator(inner) => inner.kind_in(kinds),
+            Self::Lambda(inner) => inner.kind_in(kinds),
+            Self::Await(inner) => inner.kind_in(kinds),
+            Self::BinaryOperator(inner) => inner.kind_in(kinds),
+            Self::Identifier(inner) => inner.kind_in(kinds),
+            Self::String(inner) => inner.kind_in(kinds),
+            Self::ConcatenatedString(inner) => inner.kind_in(kinds),
+            Self::IntegerHex(inner) => inner.kind_in(kinds),
+            Self::IntegerOctal(inner) => inner.kind_in(kinds),
+            Self::IntegerBinary(inner) => inner.kind_in(kinds),
+            Self::IntegerDecimalLong(inner) => inner.kind_in(kinds),
+            Self::IntegerDecimalImaginary(inner) => inner.kind_in(kinds),
+            Self::IntegerDecimalPlain(inner) => inner.kind_in(kinds),
+            Self::FloatPoint(inner) => inner.kind_in(kinds),
+            Self::FloatLeadingPoint(inner) => inner.kind_in(kinds),
+            Self::FloatScientific(inner) => inner.kind_in(kinds),
+            Self::UnaryOperator(inner) => inner.kind_in(kinds),
+            Self::Attribute(inner) => inner.kind_in(kinds),
+            Self::Subscript(inner) => inner.kind_in(kinds),
+            Self::Call(inner) => inner.kind_in(kinds),
+            Self::List(inner) => inner.kind_in(kinds),
+            Self::ListComprehension(inner) => inner.kind_in(kinds),
+            Self::Dictionary(inner) => inner.kind_in(kinds),
+            Self::DictionaryComprehension(inner) => inner.kind_in(kinds),
+            Self::Set(inner) => inner.kind_in(kinds),
+            Self::SetComprehension(inner) => inner.kind_in(kinds),
+            Self::Tuple(inner) => inner.kind_in(kinds),
+            Self::ParenthesizedExpression(inner) => inner.kind_in(kinds),
+            Self::GeneratorExpression(inner) => inner.kind_in(kinds),
+            Self::ListSplatPattern(inner) => inner.kind_in(kinds),
+            Self::ConditionalExpression(inner) => inner.kind_in(kinds),
+            Self::NamedExpression(inner) => inner.kind_in(kinds),
+            Self::AsPattern(inner) => inner.kind_in(kinds),
+            Self::ExpressionList(inner) => inner.kind_in(kinds),
+            Self::PatternList(inner) => inner.kind_in(kinds),
+            Self::Yield(inner) => inner.kind_in(kinds),
+            Self::AssignmentEq(inner) => inner.kind_in(kinds),
+            Self::AssignmentType(inner) => inner.kind_in(kinds),
+            Self::AssignmentTyped(inner) => inner.kind_in(kinds),
+            Self::True(_) => [::sittir_core::types::KindId(69)].iter().any(|k| kinds.contains(k)),
+            Self::False(_) => [::sittir_core::types::KindId(70)].iter().any(|k| kinds.contains(k)),
+            Self::None(_) => [::sittir_core::types::KindId(71)].iter().any(|k| kinds.contains(k)),
+            Self::Ellipsis(_) => [::sittir_core::types::KindId(63)].iter().any(|k| kinds.contains(k)),
+            Self::Verbatim(_) => [::sittir_core::types::KindId(1), ::sittir_core::types::KindId(93), ::sittir_core::types::KindId(94), ::sittir_core::types::KindId(95)].iter().any(|k| kinds.contains(k)),
+        }
+    }
+}
+
+impl ::sittir_core::render::Render for AssignmentEqValueNodeSlot {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        match self {
+            AssignmentEqValueNodeSlot::ComparisonOperator(inner) => inner.render(w),
+            AssignmentEqValueNodeSlot::NotOperator(inner) => inner.render(w),
+            AssignmentEqValueNodeSlot::BooleanOperator(inner) => inner.render(w),
+            AssignmentEqValueNodeSlot::Lambda(inner) => inner.render(w),
+            AssignmentEqValueNodeSlot::Await(inner) => inner.render(w),
+            AssignmentEqValueNodeSlot::BinaryOperator(inner) => inner.render(w),
+            AssignmentEqValueNodeSlot::Identifier(inner) => inner.render(w),
+            AssignmentEqValueNodeSlot::String(inner) => inner.render(w),
+            AssignmentEqValueNodeSlot::ConcatenatedString(inner) => inner.render(w),
+            AssignmentEqValueNodeSlot::IntegerHex(inner) => inner.render(w),
+            AssignmentEqValueNodeSlot::IntegerOctal(inner) => inner.render(w),
+            AssignmentEqValueNodeSlot::IntegerBinary(inner) => inner.render(w),
+            AssignmentEqValueNodeSlot::IntegerDecimalLong(inner) => inner.render(w),
+            AssignmentEqValueNodeSlot::IntegerDecimalImaginary(inner) => inner.render(w),
+            AssignmentEqValueNodeSlot::IntegerDecimalPlain(inner) => inner.render(w),
+            AssignmentEqValueNodeSlot::FloatPoint(inner) => inner.render(w),
+            AssignmentEqValueNodeSlot::FloatLeadingPoint(inner) => inner.render(w),
+            AssignmentEqValueNodeSlot::FloatScientific(inner) => inner.render(w),
+            AssignmentEqValueNodeSlot::UnaryOperator(inner) => inner.render(w),
+            AssignmentEqValueNodeSlot::Attribute(inner) => inner.render(w),
+            AssignmentEqValueNodeSlot::Subscript(inner) => inner.render(w),
+            AssignmentEqValueNodeSlot::Call(inner) => inner.render(w),
+            AssignmentEqValueNodeSlot::List(inner) => inner.render(w),
+            AssignmentEqValueNodeSlot::ListComprehension(inner) => inner.render(w),
+            AssignmentEqValueNodeSlot::Dictionary(inner) => inner.render(w),
+            AssignmentEqValueNodeSlot::DictionaryComprehension(inner) => inner.render(w),
+            AssignmentEqValueNodeSlot::Set(inner) => inner.render(w),
+            AssignmentEqValueNodeSlot::SetComprehension(inner) => inner.render(w),
+            AssignmentEqValueNodeSlot::Tuple(inner) => inner.render(w),
+            AssignmentEqValueNodeSlot::ParenthesizedExpression(inner) => inner.render(w),
+            AssignmentEqValueNodeSlot::GeneratorExpression(inner) => inner.render(w),
+            AssignmentEqValueNodeSlot::ListSplatPattern(inner) => inner.render(w),
+            AssignmentEqValueNodeSlot::ConditionalExpression(inner) => inner.render(w),
+            AssignmentEqValueNodeSlot::NamedExpression(inner) => inner.render(w),
+            AssignmentEqValueNodeSlot::AsPattern(inner) => inner.render(w),
+            AssignmentEqValueNodeSlot::ExpressionList(inner) => inner.render(w),
+            AssignmentEqValueNodeSlot::PatternList(inner) => inner.render(w),
+            AssignmentEqValueNodeSlot::Yield(inner) => inner.render(w),
+            AssignmentEqValueNodeSlot::AssignmentEq(inner) => inner.render(w),
+            AssignmentEqValueNodeSlot::AssignmentType(inner) => inner.render(w),
+            AssignmentEqValueNodeSlot::AssignmentTyped(inner) => inner.as_ref().render(w),
+            AssignmentEqValueNodeSlot::True(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(69), edges, w, render_true),
+            AssignmentEqValueNodeSlot::False(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(70), edges, w, render_false),
+            AssignmentEqValueNodeSlot::None(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(71), edges, w, render_none),
+            AssignmentEqValueNodeSlot::Ellipsis(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(63), edges, w, render_ellipsis),
+            AssignmentEqValueNodeSlot::Verbatim(inner) => inner.render(w),
         }
     }
 }
@@ -16202,7 +16193,7 @@ pub struct AugmentedAssignmentNode {
     pub operator: ::sittir_core::SlotValue<AugmentedAssignmentOperatorNodeSlot>,
     #[wire(key = "_right")]
     #[slot(field = field::RIGHT, word = 12, width = 5)]
-    pub right: ::sittir_core::SlotValue<Box<AugmentedAssignmentRightNodeSlot>>,
+    pub right: ::sittir_core::SlotValue<AugmentedAssignmentRightNodeSlot>,
 }
 
 impl ::sittir_core::view::KindOf for AugmentedAssignmentNode {
@@ -18052,7 +18043,7 @@ pub struct InterpolationNode {
     pub layout: Option<Box<NodeLayout>>,
     #[wire(key = "_expression")]
     #[slot(field = field::EXPRESSION, word = 3, width = 5)]
-    pub expression: ::sittir_core::SlotValue<InterpolationExpressionNodeSlot>,
+    pub expression: ::sittir_core::SlotValue<AugmentedAssignmentRightNodeSlot>,
     #[wire(key = "_debug")]
     #[slot(field = field::DEBUG, presence = kind::EQ, word = 2, bit = 0)]
     pub debug: bool,
@@ -21430,7 +21421,7 @@ pub struct AssignmentEqNode {
     pub name: ::sittir_core::SlotValue<ForStatementLeftNodeSlot>,
     #[wire(key = "_value")]
     #[slot(field = field::VALUE, word = 7, width = 5)]
-    pub value: ::sittir_core::SlotValue<Box<AugmentedAssignmentRightNodeSlot>>,
+    pub value: ::sittir_core::SlotValue<Box<AssignmentEqValueNodeSlot>>,
 }
 
 impl ::sittir_core::view::KindOf for AssignmentEqNode {
@@ -21545,7 +21536,7 @@ pub struct AssignmentTypedNode {
     pub type_: ::sittir_core::SlotValue<TypeNode>,
     #[wire(key = "_value")]
     #[slot(field = field::VALUE, word = 12, width = 5)]
-    pub value: ::sittir_core::SlotValue<Box<AugmentedAssignmentRightNodeSlot>>,
+    pub value: ::sittir_core::SlotValue<AugmentedAssignmentRightNodeSlot>,
 }
 
 impl ::sittir_core::view::KindOf for AssignmentTypedNode {
@@ -26864,10 +26855,6 @@ impl ::sittir_core::prepare::SeatTarget for AugmentedAssignmentRightNodeSlot {
             Self::ConditionalExpression(t) => t.seat_target(table, ctx),
             Self::NamedExpression(t) => t.seat_target(table, ctx),
             Self::AsPattern(t) => t.seat_target(table, ctx),
-            Self::AssignmentEq(t) => t.seat_target(table, ctx),
-            Self::AssignmentType(t) => t.seat_target(table, ctx),
-            Self::AssignmentTyped(t) => t.seat_target(table, ctx),
-            Self::AugmentedAssignment(t) => t.seat_target(table, ctx),
             Self::Yield(t) => t.seat_target(table, ctx),
             Self::Identifier { .. } | Self::IntegerHex { .. } | Self::IntegerOctal { .. } | Self::IntegerBinary { .. } | Self::IntegerDecimalLong { .. } | Self::IntegerDecimalImaginary { .. } | Self::IntegerDecimalPlain { .. } | Self::FloatPoint { .. } | Self::FloatLeadingPoint { .. } | Self::FloatScientific { .. } | Self::ExpressionList { .. } | Self::PatternList { .. } | Self::Verbatim { .. } => None,
         }
@@ -27050,44 +27037,6 @@ impl ::sittir_core::prepare::SeatTarget for CollectionElementsItemNodeSlot {
     }
 }
 
-impl ::sittir_core::prepare::SeatTarget for InterpolationExpressionNodeSlot {
-    fn seat_target(&mut self, table: &[Option<::sittir_core::types::SiteId>], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, ::sittir_core::types::SiteId)> {
-        match self {
-            Self::ComparisonOperator(t) => t.seat_target(table, ctx),
-            Self::NotOperator(t) => t.seat_target(table, ctx),
-            Self::BooleanOperator(t) => t.seat_target(table, ctx),
-            Self::Lambda(t) => t.seat_target(table, ctx),
-            Self::Await(t) => t.seat_target(table, ctx),
-            Self::BinaryOperator(t) => t.seat_target(table, ctx),
-            Self::String(t) => t.seat_target(table, ctx),
-            Self::ConcatenatedString(t) => t.seat_target(table, ctx),
-            Self::True(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(69)).map(|site| (edges, site)),
-            Self::False(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(70)).map(|site| (edges, site)),
-            Self::None(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(71)).map(|site| (edges, site)),
-            Self::UnaryOperator(t) => t.seat_target(table, ctx),
-            Self::Attribute(t) => t.seat_target(table, ctx),
-            Self::Subscript(t) => t.seat_target(table, ctx),
-            Self::Call(t) => t.seat_target(table, ctx),
-            Self::List(t) => t.seat_target(table, ctx),
-            Self::ListComprehension(t) => t.seat_target(table, ctx),
-            Self::Dictionary(t) => t.seat_target(table, ctx),
-            Self::DictionaryComprehension(t) => t.seat_target(table, ctx),
-            Self::Set(t) => t.seat_target(table, ctx),
-            Self::SetComprehension(t) => t.seat_target(table, ctx),
-            Self::Tuple(t) => t.seat_target(table, ctx),
-            Self::ParenthesizedExpression(t) => t.seat_target(table, ctx),
-            Self::GeneratorExpression(t) => t.seat_target(table, ctx),
-            Self::Ellipsis(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(63)).map(|site| (edges, site)),
-            Self::ListSplatPattern(t) => t.seat_target(table, ctx),
-            Self::ConditionalExpression(t) => t.seat_target(table, ctx),
-            Self::NamedExpression(t) => t.seat_target(table, ctx),
-            Self::AsPattern(t) => t.seat_target(table, ctx),
-            Self::Yield(t) => t.seat_target(table, ctx),
-            Self::Identifier { .. } | Self::IntegerHex { .. } | Self::IntegerOctal { .. } | Self::IntegerBinary { .. } | Self::IntegerDecimalLong { .. } | Self::IntegerDecimalImaginary { .. } | Self::IntegerDecimalPlain { .. } | Self::FloatPoint { .. } | Self::FloatLeadingPoint { .. } | Self::FloatScientific { .. } | Self::ExpressionList { .. } | Self::PatternList { .. } | Self::Verbatim { .. } => None,
-        }
-    }
-}
-
 impl ::sittir_core::prepare::SeatTarget for ArgumentListElementsItemNodeSlot {
     fn seat_target(&mut self, table: &[Option<::sittir_core::types::SiteId>], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, ::sittir_core::types::SiteId)> {
         match self {
@@ -27191,6 +27140,47 @@ impl ::sittir_core::prepare::SeatTarget for ComprehensionClausesContentNodeSlot 
         match self {
             Self::ForInClause(t) => t.seat_target(table, ctx),
             Self::IfClause(t) => t.seat_target(table, ctx),
+        }
+    }
+}
+
+impl ::sittir_core::prepare::SeatTarget for AssignmentEqValueNodeSlot {
+    fn seat_target(&mut self, table: &[Option<::sittir_core::types::SiteId>], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, ::sittir_core::types::SiteId)> {
+        match self {
+            Self::ComparisonOperator(t) => t.seat_target(table, ctx),
+            Self::NotOperator(t) => t.seat_target(table, ctx),
+            Self::BooleanOperator(t) => t.seat_target(table, ctx),
+            Self::Lambda(t) => t.seat_target(table, ctx),
+            Self::Await(t) => t.seat_target(table, ctx),
+            Self::BinaryOperator(t) => t.seat_target(table, ctx),
+            Self::String(t) => t.seat_target(table, ctx),
+            Self::ConcatenatedString(t) => t.seat_target(table, ctx),
+            Self::True(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(69)).map(|site| (edges, site)),
+            Self::False(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(70)).map(|site| (edges, site)),
+            Self::None(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(71)).map(|site| (edges, site)),
+            Self::UnaryOperator(t) => t.seat_target(table, ctx),
+            Self::Attribute(t) => t.seat_target(table, ctx),
+            Self::Subscript(t) => t.seat_target(table, ctx),
+            Self::Call(t) => t.seat_target(table, ctx),
+            Self::List(t) => t.seat_target(table, ctx),
+            Self::ListComprehension(t) => t.seat_target(table, ctx),
+            Self::Dictionary(t) => t.seat_target(table, ctx),
+            Self::DictionaryComprehension(t) => t.seat_target(table, ctx),
+            Self::Set(t) => t.seat_target(table, ctx),
+            Self::SetComprehension(t) => t.seat_target(table, ctx),
+            Self::Tuple(t) => t.seat_target(table, ctx),
+            Self::ParenthesizedExpression(t) => t.seat_target(table, ctx),
+            Self::GeneratorExpression(t) => t.seat_target(table, ctx),
+            Self::Ellipsis(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(63)).map(|site| (edges, site)),
+            Self::ListSplatPattern(t) => t.seat_target(table, ctx),
+            Self::ConditionalExpression(t) => t.seat_target(table, ctx),
+            Self::NamedExpression(t) => t.seat_target(table, ctx),
+            Self::AsPattern(t) => t.seat_target(table, ctx),
+            Self::Yield(t) => t.seat_target(table, ctx),
+            Self::AssignmentEq(t) => t.seat_target(table, ctx),
+            Self::AssignmentType(t) => t.seat_target(table, ctx),
+            Self::AssignmentTyped(t) => t.seat_target(table, ctx),
+            Self::Identifier { .. } | Self::IntegerHex { .. } | Self::IntegerOctal { .. } | Self::IntegerBinary { .. } | Self::IntegerDecimalLong { .. } | Self::IntegerDecimalImaginary { .. } | Self::IntegerDecimalPlain { .. } | Self::FloatPoint { .. } | Self::FloatLeadingPoint { .. } | Self::FloatScientific { .. } | Self::ExpressionList { .. } | Self::PatternList { .. } | Self::Verbatim { .. } => None,
         }
     }
 }
@@ -31210,9 +31200,9 @@ const _: () = assert!(::core::mem::size_of::<AsPatternTargetNode>() <= 256, "AsP
 const _: () = assert!(::core::mem::size_of::<AssertStatementNode>() <= 256, "AssertStatementNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 const _: () = assert!(::core::mem::size_of::<AssignmentEqNode>() <= 256, "AssignmentEqNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 const _: () = assert!(::core::mem::size_of::<AssignmentTypeNode>() <= 256, "AssignmentTypeNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
-const _: () = assert!(::core::mem::size_of::<AssignmentTypedNode>() <= 256, "AssignmentTypedNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<AssignmentTypedNode>() > 256, "AssignmentTypedNode is within the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it over");
 const _: () = assert!(::core::mem::size_of::<AttributeNode>() <= 256, "AttributeNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
-const _: () = assert!(::core::mem::size_of::<AugmentedAssignmentNode>() <= 256, "AugmentedAssignmentNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<AugmentedAssignmentNode>() > 256, "AugmentedAssignmentNode is within the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it over");
 const _: () = assert!(::core::mem::size_of::<AwaitNode>() <= 256, "AwaitNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 const _: () = assert!(::core::mem::size_of::<BinaryOperatorNode>() <= 256, "BinaryOperatorNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 const _: () = assert!(::core::mem::size_of::<BlockClassDeclarationNode>() <= 256, "BlockClassDeclarationNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
@@ -31391,4 +31381,4 @@ const _: () = assert!(::core::mem::size_of::<WithStatementNode>() <= 256, "WithS
 const _: () = assert!(::core::mem::size_of::<YieldFromClauseNode>() <= 256, "YieldFromClauseNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 const _: () = assert!(::core::mem::size_of::<YieldNode>() <= 256, "YieldNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 
-::sittir_core::grammar_trivia!(TriviaNode; AnyNode, StatementNode, SimpleStatementNode, CompoundStatementNode, WithClauseNode, SuiteNode, ParameterNode, PatternNode, ExpressionNode, PrimaryExpressionNode, IntegerNode, FloatNode, TypeParamNode, IntegerDecimalNode, CompoundStatementClassDefinitionNode, StatementClassDefinitionNode, SuiteClassDefinitionNode, FutureImportStatementContentNodeSlot, ImportFromStatementModuleNameNodeSlot, ImportFromStatementContentNodeSlot, ImportListNameNodeSlot, PrintStatementContentNodeSlot, ExpressionStatementContentNodeSlot, ReturnStatementExpressionsNodeSlot, IfStatementAlternativeNodeSlot, CaseClausePatternNodeSlot, ForStatementLeftNodeSlot, ExecStatementCodeNodeSlot, ParenthesizedListSplatContentNodeSlot, DecoratedDefinitionDefinitionNodeSlot, CasePatternContentNodeSlot, SimplePatternContentNodeSlot, ComplexPatternRealNodeSlot, ComplexPatternOperatorNodeSlot, DefaultParameterNameNodeSlot, ListSplatPatternPatternNodeSlot, BooleanOperatorOperatorNodeSlot, BinaryOperatorOperatorNodeSlot, UnaryOperatorOperatorNodeSlot, LambdaWithinForInClauseBodyNodeSlot, AugmentedAssignmentOperatorNodeSlot, AugmentedAssignmentRightNodeSlot, YieldContentNodeSlot, CallArgumentsNodeSlot, TypedParameterNameNodeSlot, TypeContentNodeSlot, ParenthesizedExpressionExpressionNodeSlot, CollectionElementsItemNodeSlot, ForInClauseTrailingCommaNodeSlot, StringContentNodeSlot, StringContentElementsNodeSlot, InterpolationExpressionNodeSlot, FormatSpecifierElementsNodeSlot, ArgumentListElementsItemNodeSlot, DictPatternElementsItemNodeSlot, SubscriptsElementsNodeSlot, DictionaryElementsItemNodeSlot, ComprehensionClausesContentNodeSlot, ExceptClauseExceptionContentNodeSlot, SplatPatternListPatternNodeSlot, SplatPatternDictionaryPatternNodeSlot, ComparisonOperatorComparatorOperatorsNodeSlot, DecoratedDefinitionClassDeclarationDefinitionNodeSlot, ModuleNode, SimpleStatementsNode, ImportStatementNode, ImportPrefixNode, RelativeImportNode, FutureImportStatementNode, ImportFromStatementNode, ImportListNode, AliasedImportNode, WildcardImportNode, PrintStatementNode, ChevronNode, AssertStatementNode, ExpressionStatementNode, NamedExpressionNode, NamedExpressionLhsNode, ReturnStatementNode, DeleteStatementNode, RaiseStatementNode, PassStatementNode, BreakStatementNode, ContinueStatementNode, IfStatementNode, ElifClauseNode, ElseClauseNode, MatchStatementNode, MatchBlockNode, CaseClauseNode, ForStatementNode, WhileStatementNode, TryStatementNode, ExceptClauseNode, FinallyClauseNode, WithStatementNode, WithItemNode, FunctionDefinitionNode, ParametersNode, LambdaParametersNode, ListSplatNode, DictionarySplatNode, GlobalStatementNode, NonlocalStatementNode, ExecStatementNode, TypeAliasStatementNode, ClassDefinitionNode, TypeParameterNode, ParenthesizedListSplatNode, ArgumentListNode, DecoratedDefinitionNode, DecoratorNode, BlockNode, ExpressionListNode, DottedNameNode, CasePatternNode, SimplePatternNode, CaseAsPatternNode, UnionPatternNode, DictPatternNode, KeyValuePatternNode, KeywordPatternNode, ClassPatternNode, ComplexPatternNode, ParametersElementsNode, PatternsNode, TuplePatternNode, ListPatternNode, DefaultParameterNode, TypedDefaultParameterNode, ListSplatPatternNode, DictionarySplatPatternNode, AsPatternNode, NotOperatorNode, BooleanOperatorNode, BinaryOperatorNode, UnaryOperatorNode, ComparisonOperatorNode, LambdaNode, LambdaWithinForInClauseNode, AugmentedAssignmentNode, PatternListNode, YieldNode, AttributeNode, SubscriptNode, SliceNode, EllipsisNode, CallNode, TypedParameterNode, TypeNode, SplatTypeNode, GenericTypeNode, UnionTypeNode, ConstrainedTypeNode, MemberTypeNode, KeywordArgumentNode, ListNode, SetNode, TupleNode, DictionaryNode, PairNode, ListComprehensionNode, DictionaryComprehensionNode, SetComprehensionNode, GeneratorExpressionNode, ParenthesizedExpressionNode, CollectionElementsNode, ForInClauseNode, IfClauseNode, ConditionalExpressionNode, ConcatenatedStringNode, StringNode, StringContentNode, InterpolationNode, NotEscapeSequenceNode, FormatSpecifierNode, TypeConversionNode, IdentifierNode, TrueNode, FalseNode, NoneNode, AwaitNode, CommentNode, PositionalSeparatorNode, KeywordSeparatorNode, SimpleStatementsElementsNode, SubjectsNode, WithClauseWithItemsNode, TypesNode, ArgumentListElementsNode, ListPatternCasePatternsNode, DictPatternElementsNode, SubscriptsNode, DictionaryElementsNode, SliceGroupNode, FormatSpecifierTextNode, TypeParamsNode, TypeParamsItemsNode, TuplePatternElementsNode, CasePatternListNode, TupleElementsNode, ExceptClauseExceptionAsNode, CaseTuplePatternNode, CaseListPatternNode, PrintArgumentsNode, PrintChevronArgumentsNode, PrintStatementChevronNode, PrintStatementPlainNode, WildcardPatternNode, ParenthesizedImportListNode, ComprehensionClausesNode, IntegerHexNode, IntegerOctalNode, IntegerBinaryNode, IntegerDecimalLongNode, IntegerDecimalImaginaryNode, IntegerDecimalPlainNode, FloatPointNode, FloatLeadingPointNode, FloatScientificNode, EscapeSequenceUnicodeFixedNode, EscapeSequenceUnicodeWideNode, EscapeSequenceHexNode, EscapeSequenceOctalNode, EscapeSequenceLineBreakNode, EscapeSequenceSimpleNode, EscapeSequenceNamedNode, LineContinuationNewlineNode, LineContinuationNulNode, SimplePatternNegativeNode, ExceptClauseExceptionListNode, ExceptClauseExceptionNode, SplatPatternListNode, SplatPatternDictionaryNode, AssignmentEqNode, AssignmentTypeNode, AssignmentTypedNode, ExpressionStatementTupleNode, WithClauseBareNode, WithClauseParenNode, SuiteInlineNode, SuiteBlockNode, SuiteEmptyNode, ComparisonOperatorComparatorNode, YieldFromClauseNode, TypeParamTypeVarNode, TypeParamTypeVarTupleNode, TypeParamParamSpecNode, StringStartNode, StringFragmentNode, EscapeInterpolationNode, StringEndNode, IndentNode, DedentNode, TightNode, SpaceNode, TabNode, NewlineNode, BlanklineNode, DoubleBlanklineNode, ConstructorDeclarationNode, BlockClassDeclarationNode, SuiteBlockClassDeclarationNode, DecoratedDefinitionClassDeclarationNode, AsPatternTargetNode, ImportKeywordNode, DotNode, FromKeywordNode, FutureUKeywordNode, AsKeywordNode, StarNode, GtGtNode, AssertKeywordNode, ColonEqNode, ReturnKeywordNode, DelKeywordNode, RaiseKeywordNode, PassKeywordNode, BreakKeywordNode, ContinueKeywordNode, IfKeywordNode, ColonNode, ElifKeywordNode, ElseKeywordNode, MatchKeywordNode, CaseKeywordNode, AsyncKeywordNode, ForKeywordNode, InKeywordNode, WhileKeywordNode, TryKeywordNode, ExceptKeywordNode, FinallyKeywordNode, WithKeywordNode, DefKeywordNode, DashGtNode, LparenNode, RparenNode, StarStarNode, GlobalKeywordNode, NonlocalKeywordNode, ExecKeywordNode, TypeKeywordNode, EqNode, ClassKeywordNode, LbrackNode, RbrackNode, AtNode, PipeNode, LbraceNode, RbraceNode, DashNode, PlusNode, NotKeywordNode, AndKeywordNode, OrKeywordNode, SlashNode, PercentNode, SlashSlashNode, AmpNode, CaretNode, LtLtNode, TildeNode, LambdaKeywordNode, PlusEqNode, DashEqNode, StarEqNode, SlashEqNode, AtEqNode, SlashSlashEqNode, PercentEqNode, StarStarEqNode, GtGtEqNode, LtLtEqNode, AmpEqNode, CaretEqNode, PipeEqNode, YieldKeywordNode, CommaNode, BslashNode, AwaitKeywordNode, PrintKeywordNode, UnderscoreNode, LtNode, LtEqNode, EqEqNode, BangEqNode, GtEqNode, GtNode, LtGtNode, NotInNode, IsKeywordNode, IsNotNode, InitUKeywordNode, TriviaNode);
+::sittir_core::grammar_trivia!(TriviaNode; AnyNode, StatementNode, SimpleStatementNode, CompoundStatementNode, WithClauseNode, SuiteNode, ParameterNode, PatternNode, ExpressionNode, PrimaryExpressionNode, IntegerNode, FloatNode, TypeParamNode, IntegerDecimalNode, CompoundStatementClassDefinitionNode, StatementClassDefinitionNode, SuiteClassDefinitionNode, FutureImportStatementContentNodeSlot, ImportFromStatementModuleNameNodeSlot, ImportFromStatementContentNodeSlot, ImportListNameNodeSlot, PrintStatementContentNodeSlot, ExpressionStatementContentNodeSlot, ReturnStatementExpressionsNodeSlot, IfStatementAlternativeNodeSlot, CaseClausePatternNodeSlot, ForStatementLeftNodeSlot, ExecStatementCodeNodeSlot, ParenthesizedListSplatContentNodeSlot, DecoratedDefinitionDefinitionNodeSlot, CasePatternContentNodeSlot, SimplePatternContentNodeSlot, ComplexPatternRealNodeSlot, ComplexPatternOperatorNodeSlot, DefaultParameterNameNodeSlot, ListSplatPatternPatternNodeSlot, BooleanOperatorOperatorNodeSlot, BinaryOperatorOperatorNodeSlot, UnaryOperatorOperatorNodeSlot, LambdaWithinForInClauseBodyNodeSlot, AugmentedAssignmentOperatorNodeSlot, AugmentedAssignmentRightNodeSlot, YieldContentNodeSlot, CallArgumentsNodeSlot, TypedParameterNameNodeSlot, TypeContentNodeSlot, ParenthesizedExpressionExpressionNodeSlot, CollectionElementsItemNodeSlot, ForInClauseTrailingCommaNodeSlot, StringContentNodeSlot, StringContentElementsNodeSlot, FormatSpecifierElementsNodeSlot, ArgumentListElementsItemNodeSlot, DictPatternElementsItemNodeSlot, SubscriptsElementsNodeSlot, DictionaryElementsItemNodeSlot, ComprehensionClausesContentNodeSlot, ExceptClauseExceptionContentNodeSlot, SplatPatternListPatternNodeSlot, SplatPatternDictionaryPatternNodeSlot, AssignmentEqValueNodeSlot, ComparisonOperatorComparatorOperatorsNodeSlot, DecoratedDefinitionClassDeclarationDefinitionNodeSlot, ModuleNode, SimpleStatementsNode, ImportStatementNode, ImportPrefixNode, RelativeImportNode, FutureImportStatementNode, ImportFromStatementNode, ImportListNode, AliasedImportNode, WildcardImportNode, PrintStatementNode, ChevronNode, AssertStatementNode, ExpressionStatementNode, NamedExpressionNode, NamedExpressionLhsNode, ReturnStatementNode, DeleteStatementNode, RaiseStatementNode, PassStatementNode, BreakStatementNode, ContinueStatementNode, IfStatementNode, ElifClauseNode, ElseClauseNode, MatchStatementNode, MatchBlockNode, CaseClauseNode, ForStatementNode, WhileStatementNode, TryStatementNode, ExceptClauseNode, FinallyClauseNode, WithStatementNode, WithItemNode, FunctionDefinitionNode, ParametersNode, LambdaParametersNode, ListSplatNode, DictionarySplatNode, GlobalStatementNode, NonlocalStatementNode, ExecStatementNode, TypeAliasStatementNode, ClassDefinitionNode, TypeParameterNode, ParenthesizedListSplatNode, ArgumentListNode, DecoratedDefinitionNode, DecoratorNode, BlockNode, ExpressionListNode, DottedNameNode, CasePatternNode, SimplePatternNode, CaseAsPatternNode, UnionPatternNode, DictPatternNode, KeyValuePatternNode, KeywordPatternNode, ClassPatternNode, ComplexPatternNode, ParametersElementsNode, PatternsNode, TuplePatternNode, ListPatternNode, DefaultParameterNode, TypedDefaultParameterNode, ListSplatPatternNode, DictionarySplatPatternNode, AsPatternNode, NotOperatorNode, BooleanOperatorNode, BinaryOperatorNode, UnaryOperatorNode, ComparisonOperatorNode, LambdaNode, LambdaWithinForInClauseNode, AugmentedAssignmentNode, PatternListNode, YieldNode, AttributeNode, SubscriptNode, SliceNode, EllipsisNode, CallNode, TypedParameterNode, TypeNode, SplatTypeNode, GenericTypeNode, UnionTypeNode, ConstrainedTypeNode, MemberTypeNode, KeywordArgumentNode, ListNode, SetNode, TupleNode, DictionaryNode, PairNode, ListComprehensionNode, DictionaryComprehensionNode, SetComprehensionNode, GeneratorExpressionNode, ParenthesizedExpressionNode, CollectionElementsNode, ForInClauseNode, IfClauseNode, ConditionalExpressionNode, ConcatenatedStringNode, StringNode, StringContentNode, InterpolationNode, NotEscapeSequenceNode, FormatSpecifierNode, TypeConversionNode, IdentifierNode, TrueNode, FalseNode, NoneNode, AwaitNode, CommentNode, PositionalSeparatorNode, KeywordSeparatorNode, SimpleStatementsElementsNode, SubjectsNode, WithClauseWithItemsNode, TypesNode, ArgumentListElementsNode, ListPatternCasePatternsNode, DictPatternElementsNode, SubscriptsNode, DictionaryElementsNode, SliceGroupNode, FormatSpecifierTextNode, TypeParamsNode, TypeParamsItemsNode, TuplePatternElementsNode, CasePatternListNode, TupleElementsNode, ExceptClauseExceptionAsNode, CaseTuplePatternNode, CaseListPatternNode, PrintArgumentsNode, PrintChevronArgumentsNode, PrintStatementChevronNode, PrintStatementPlainNode, WildcardPatternNode, ParenthesizedImportListNode, ComprehensionClausesNode, IntegerHexNode, IntegerOctalNode, IntegerBinaryNode, IntegerDecimalLongNode, IntegerDecimalImaginaryNode, IntegerDecimalPlainNode, FloatPointNode, FloatLeadingPointNode, FloatScientificNode, EscapeSequenceUnicodeFixedNode, EscapeSequenceUnicodeWideNode, EscapeSequenceHexNode, EscapeSequenceOctalNode, EscapeSequenceLineBreakNode, EscapeSequenceSimpleNode, EscapeSequenceNamedNode, LineContinuationNewlineNode, LineContinuationNulNode, SimplePatternNegativeNode, ExceptClauseExceptionListNode, ExceptClauseExceptionNode, SplatPatternListNode, SplatPatternDictionaryNode, AssignmentEqNode, AssignmentTypeNode, AssignmentTypedNode, ExpressionStatementTupleNode, WithClauseBareNode, WithClauseParenNode, SuiteInlineNode, SuiteBlockNode, SuiteEmptyNode, ComparisonOperatorComparatorNode, YieldFromClauseNode, TypeParamTypeVarNode, TypeParamTypeVarTupleNode, TypeParamParamSpecNode, StringStartNode, StringFragmentNode, EscapeInterpolationNode, StringEndNode, IndentNode, DedentNode, TightNode, SpaceNode, TabNode, NewlineNode, BlanklineNode, DoubleBlanklineNode, ConstructorDeclarationNode, BlockClassDeclarationNode, SuiteBlockClassDeclarationNode, DecoratedDefinitionClassDeclarationNode, AsPatternTargetNode, ImportKeywordNode, DotNode, FromKeywordNode, FutureUKeywordNode, AsKeywordNode, StarNode, GtGtNode, AssertKeywordNode, ColonEqNode, ReturnKeywordNode, DelKeywordNode, RaiseKeywordNode, PassKeywordNode, BreakKeywordNode, ContinueKeywordNode, IfKeywordNode, ColonNode, ElifKeywordNode, ElseKeywordNode, MatchKeywordNode, CaseKeywordNode, AsyncKeywordNode, ForKeywordNode, InKeywordNode, WhileKeywordNode, TryKeywordNode, ExceptKeywordNode, FinallyKeywordNode, WithKeywordNode, DefKeywordNode, DashGtNode, LparenNode, RparenNode, StarStarNode, GlobalKeywordNode, NonlocalKeywordNode, ExecKeywordNode, TypeKeywordNode, EqNode, ClassKeywordNode, LbrackNode, RbrackNode, AtNode, PipeNode, LbraceNode, RbraceNode, DashNode, PlusNode, NotKeywordNode, AndKeywordNode, OrKeywordNode, SlashNode, PercentNode, SlashSlashNode, AmpNode, CaretNode, LtLtNode, TildeNode, LambdaKeywordNode, PlusEqNode, DashEqNode, StarEqNode, SlashEqNode, AtEqNode, SlashSlashEqNode, PercentEqNode, StarStarEqNode, GtGtEqNode, LtLtEqNode, AmpEqNode, CaretEqNode, PipeEqNode, YieldKeywordNode, CommaNode, BslashNode, AwaitKeywordNode, PrintKeywordNode, UnderscoreNode, LtNode, LtEqNode, EqEqNode, BangEqNode, GtEqNode, GtNode, LtGtNode, NotInNode, IsKeywordNode, IsNotNode, InitUKeywordNode, TriviaNode);

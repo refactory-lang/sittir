@@ -1522,8 +1522,8 @@ export const structure: StructureTable = Object.freeze({
 			[
 				'_right',
 				'AugmentedAssignment.right',
-				'a built Expression / ExpressionList / Assignment / AugmentedAssignment / PatternList / Yield',
-				[181, 205, 216, 217, 218, 220]
+				'a built Expression / ExpressionList / PatternList / Yield',
+				[181, 205, 218, 220]
 			]
 		],
 		kindIds: [['_operator', 'AugmentedAssignment.operator', [75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87]]],
@@ -2159,8 +2159,8 @@ export const structure: StructureTable = Object.freeze({
 			[
 				'_value',
 				'AssignmentEq.value',
-				'a built Expression / ExpressionList / Assignment / AugmentedAssignment / PatternList / Yield',
-				[181, 205, 216, 217, 218, 220]
+				'a built Expression / ExpressionList / PatternList / Yield / Assignment',
+				[181, 205, 216, 218, 220]
 			]
 		],
 		config: ['name', 'value']
@@ -2199,8 +2199,8 @@ export const structure: StructureTable = Object.freeze({
 			[
 				'_value',
 				'AssignmentTyped.value',
-				'a built Expression / ExpressionList / Assignment / AugmentedAssignment / PatternList / Yield',
-				[181, 205, 216, 217, 218, 220]
+				'a built Expression / ExpressionList / PatternList / Yield',
+				[181, 205, 218, 220]
 			]
 		],
 		config: ['name', 'type', 'value']

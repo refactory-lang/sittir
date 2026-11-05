@@ -653,10 +653,6 @@
             "named": true
           },
           {
-            "type": "augmented_assignment",
-            "named": true
-          },
-          {
             "type": "bare_tuple_pattern",
             "named": true
           },
@@ -738,14 +734,6 @@
         "multiple": false,
         "required": true,
         "types": [
-          {
-            "type": "assignment",
-            "named": true
-          },
-          {
-            "type": "augmented_assignment",
-            "named": true
-          },
           {
             "type": "bare_tuple_pattern",
             "named": true
@@ -872,14 +860,6 @@
         "multiple": false,
         "required": true,
         "types": [
-          {
-            "type": "assignment",
-            "named": true
-          },
-          {
-            "type": "augmented_assignment",
-            "named": true
-          },
           {
             "type": "bare_tuple_pattern",
             "named": true

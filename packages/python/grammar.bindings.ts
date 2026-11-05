@@ -97,7 +97,6 @@ export default grammar(
 		generated: true,
 		edits: {
 			_expression_within_for_in_clause: { "-1": alias("lambda_expression") },
-			_f_expression: { "-2": alias("bare_tuple_pattern") },
 			_import_list: { "0/0/0": alias("qualified_identifier"), "1/0/1/0/0": alias("qualified_identifier") },
 			_left_hand_side: { "-1": alias("bare_tuple_pattern") },
 			_right_hand_side: { "-2": alias("bare_tuple_pattern") },
