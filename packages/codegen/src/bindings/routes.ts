@@ -352,6 +352,12 @@ const textsOfKind = (model: SlotModel, kind: string): readonly string[] => {
 	return isFixedText(node) ? [node.text] : (node?.enumMembers ?? []).map((member) => member.text);
 };
 
+function onlyTextOf(model: SlotModel, kinds: readonly string[]): string | undefined {
+	const texts = kinds.map((kind) => textsOfKind(model, kind));
+	const [only, ...more] = new Set(texts.flat());
+	return kinds.length > 0 && texts.every((own) => own.length > 0) && more.length === 0 ? only : undefined;
+}
+
 function fixedValues(model: SlotModel, slot: ModelSlot): readonly string[] | undefined {
 	const texts = slot.kinds.map((kind) => textsOfKind(model, kind));
 	return texts.every((own) => own.length > 0) ? [...slot.terminals, ...texts.flat()] : undefined;
@@ -751,11 +757,12 @@ function membersOf(
 	input: GrammarInput,
 	kind: string,
 	entries: readonly ReadEntry[],
+	entry: ReadEntry,
 	slotNamesOf: (kind: string) => SlotNames,
-	guaranteed: Guaranteed,
-	inherited: ReadonlySet<number>,
 	claimed: (kind: string) => boolean
 ): MemberRoute[] {
+	const guaranteed = guaranteedBy(input.model, entry);
+	const inherited = inheritedClaims(entry, entries);
 	const node = modelNode(input.model, kind);
 	if (node === undefined) return [];
 	if (node.modelType === 'list') {
@@ -883,8 +890,7 @@ function membersOf(
 		return slot === undefined ? [] : [[m, slot] as const];
 	}));
 	const capturesOf = (slot: ModelSlot) => captures.filter((m) => slotFor(input.model, slots, m) === slot);
-	const unrouted = (slot: ModelSlot, why: string): void => {
-		const [capture] = capturesOf(slot);
+	const unrouted = (slot: ModelSlot, why: string, [capture] = capturesOf(slot)): void => {
 		if (capture !== undefined) throw new Error(`bindings: ${kind}'s capture @${capture.name} reaches no member: its ${slot.name} slot ${why}; capture a slot a member reads, or mark it @dropped`);
 	};
 	const routes: MemberRoute[] = [];
@@ -911,14 +917,21 @@ function membersOf(
 		const read = except.length === 0 ? slot : { ...slot, kinds: slot.kinds.filter((k) => !except.includes(k)) };
 		const rest = except.length === 0 ? slot : { ...read, required: false };
 		const captured = capturesOf(slot).length > 0;
-		const present = captured ? [] : concreteKinds(input.model, rest.kinds).filter((k) => guaranteed.present(pathTo(slot))?.includes(k) === true);
-		const pin = captured ? undefined : guaranteed.pinned(pathTo(slot));
-		const tested =
+		const present = concreteKinds(input.model, rest.kinds).filter((k) => guaranteed.present(pathTo(slot))?.includes(k) === true);
+		const pin = guaranteed.pinned(pathTo(slot));
+		const narrowed =
 			present.length > 0
 				? { ...rest, required: true, terminals: [], kinds: present }
 				: pin !== undefined
 					? { ...rest, required: true, terminals: rest.terminals.filter((t) => t === pin), kinds: concreteKinds(input.model, rest.kinds).filter((k) => textOfKind(input.model, k) === pin) }
-					: rest;
+					: undefined;
+		const name = memberNameOf(names, slot.name, slot.propertyName);
+		const flag = entries.some((entry) => input.bindings.flagsByPath?.get(entry.vocab)?.has(name) === true) ? { flag: true as const } : {};
+		if (captured && flag.flag !== true && !slot.multiple && (pin ?? onlyTextOf(input.model, guaranteed.present(pathTo(slot)) ?? [])) !== undefined) {
+			unrouted(slot, 'is pinned to one fixed text by the same claim', capturesOf(slot).filter((m) => m.claims?.includes(entry.index) === true));
+			continue;
+		}
+		const tested = captured ? rest : (narrowed ?? rest);
 		if (toldByRead(input.model, tested, told.get(slot.name) ?? new Set<string>())) {
 			unrouted(slot, 'is told by the read');
 			continue;
@@ -928,9 +941,7 @@ function membersOf(
 			refuseHidden(slot, hidden);
 			continue;
 		}
-		const name = memberNameOf(names, slot.name, slot.propertyName);
 		const path = pathTo(slot);
-		const flag = entries.some((entry) => input.bindings.flagsByPath?.get(entry.vocab)?.has(name) === true) ? { flag: true as const } : {};
 		const part = interiorPartOf(input.model, read, claimed);
 		if (part !== undefined) {
 			routes.push({ route: 'slot', name, slot: part.slot, path: [...path, part.step], ...flag });
@@ -1363,7 +1374,7 @@ export function resolveRoutes(input: GrammarInput): GrammarRoutes {
 	for (const [kind, entries] of readEntries)
 		readEntries.set(
 			kind,
-			entries.map((entry) => ({ ...entry, members: membersOf(input, kind, entries, slotNamesOf, guaranteedBy(input.model, entry), inheritedClaims(entry, entries), (held) => reads.has(held)).map((route) => declaredArity(input.vocabulary, entry.vocab, flaggedDelimiter(kind, route))) }))
+			entries.map((entry) => ({ ...entry, members: membersOf(input, kind, entries, entry, slotNamesOf, (held) => reads.has(held)).map((route) => declaredArity(input.vocabulary, entry.vocab, flaggedDelimiter(kind, route))) }))
 		);
 	const claims = refineClaims(input.bindings.claims, (kind) => formsOf(input.model, kind), (kind) => mountHoldersOf(input.model, kind).map(({ holder }) => holder));
 	liftMounted(input.model, claims, readEntries, order);

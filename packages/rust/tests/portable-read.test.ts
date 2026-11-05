@@ -91,6 +91,14 @@ describe('the portable read', () => {
 		expect(roundTrip('pub(in a::b) struct S {}')).toBe('pub(in a::b) struct S {}\n');
 	});
 
+	it('reads a `self` parameter with a type as the receiver with no name, and builds the `self` back', () => {
+		const source = 'fn f(self: Box<Self>, x: u8) {}\n';
+		const receiver = readFirst(source).receiver;
+		expect(receiver).toMatchObject({ $path: 'declaration.parameter.receiver', type: { $path: 'type.generic', type: 'Box' } });
+		expect(receiver).not.toHaveProperty('name');
+		expect(roundTrip(source)).toBe(source);
+	});
+
 	it('reads an integer through its digit separators, and carries one whose value it cannot read', () => {
 		const read = readFirst('let x = 1_000 + 1_000u32;');
 		expect(read.value).toMatchObject({ left: { $path: 'literal.number.integer', $value: 1000 }, right: { $type: rust.kinds.IntegerLiteralDecimal } });

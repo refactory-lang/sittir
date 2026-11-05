@@ -302,7 +302,7 @@ describe('resolveRoutes', () => {
 					'((function_definition name: (identifier) @name) @declaration.constructor (#eq? @name "__init__"))',
 					'((function_definition name: (identifier) @name) @declaration.method.special (#match? @name "^__(?<stem>.*)__$"))',
 					'(decorated (function_definition name: (identifier) @name) @declaration.method.static (#eq? @name "staticmethod"))',
-					'(binary operator: "+" @operator) @expression.binary.add',
+					'(binary operator: "+") @expression.binary.add',
 					'(binary) @expression.binary'
 				].join('\n')
 			)
@@ -1045,11 +1045,18 @@ describe("keptKinds over a supertype the slot holds", () => {
 		expect(routes.members.get('char_text')?.map((r) => r.name)).toEqual(['content']);
 	});
 
-	it("routes no member through a slot the entry's test narrows to a fixed-text kind, though the slot holds other kinds, and keeps one a capture names", async () => {
+	it("routes no member through a slot the entry's test narrows to a fixed-text kind, though the slot holds other kinds or a base claim captures it, and refuses the entry's own capture there", async () => {
 		const names = async (bindings: string) => (resolveRoutes(await grammar(bindings)).members.get('param_x') ?? []).map((r) => r.name);
 		expect(await names('(param_x name: (self_kw)) @identifier.receiver')).toEqual([]);
-		expect(await names('(param_x name: (self_kw) @name) @identifier.receiver')).toEqual(['name']);
 		expect(await names('(param_x) @declaration.parameter')).toEqual(['name']);
+		await expect(names('(param_x name: (self_kw) @name) @identifier.receiver')).rejects.toThrow(/param_x's capture @name reaches no member: its name slot is pinned to one fixed text by the same claim.*@dropped/);
+		const routes = resolveRoutes(
+			await grammar(['(param_x name: (_) @name) @declaration.parameter', '(param_x name: (self_kw)) @declaration.parameter.receiver', '(param_x name: (identifier)) @declaration.parameter.named'].join('\n'))
+		);
+		const membersOf = (vocab: string) => routes.readEntries.get('param_x')?.find((entry) => entry.vocab === vocab)?.members.map((r) => r.name);
+		expect(membersOf('declaration.parameter')).toEqual(['name']);
+		expect(membersOf('declaration.parameter.receiver')).toEqual([]);
+		expect(membersOf('declaration.parameter.named')).toEqual(['name']);
 	});
 
 	it("routes a slot that holds only an unclaimed token on into the token's one interior part, and stops at a claimed one", async () => {

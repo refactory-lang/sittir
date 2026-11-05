@@ -139,6 +139,14 @@ describe('the portable read', () => {
 		expect(is.literal.null('null')).toBe(false);
 	});
 
+	it('reads a `this` parameter as the receiver with no name, and builds the `this` back', () => {
+		const source = 'function f(this: T, x: number) {}\n';
+		const receiver = (firstOf(source) as Read).receiver;
+		expect(receiver).toMatchObject({ $path: 'declaration.parameter.receiver', type: 'T' });
+		expect(receiver).not.toHaveProperty('name');
+		expect(roundTrip(source)).toBe(source);
+	});
+
 	it('reads the `this` type as the receiver type, by its text', () => {
 		const source = 'class C {\n  m(): this {\n    return this;\n  }\n}\n';
 		expect(firstOf(source)).toMatchObject({ body: [{ $path: 'declaration.method', returnType: 'this' }] });
