@@ -341,55 +341,96 @@ for the reader.
 
 ### String delimiters are derived, not read
 
-A string's delimiters are spelling, not meaning. Python's `string_start` and `string_end` and Rust's
-`raw_string_literal_start` and `_end` are `renderAs` bare patterns whose named groups say which characters are
-which:
+A string's delimiters are mostly spelling. The one part that carries meaning is a Python string's prefix. Python's
+`string_start` and `string_end` and Rust's `raw_string_literal_start` and `_end` are scanner tokens, so their
+`renderAs` bodies are sittir-only. Each body is a structured token whose fields name the facets:
 
-| token | `renderAs` |
+| token | facets |
 | --- | --- |
-| python `string_start` | `` /(?<prefix>[a-zA-Z]*)(?<quote>["'`]+)/ `` |
-| python `string_end` | `` token.immediate(/(?<content>(?:\\[\s\S])*)(?<quote>["'`]+)/) `` |
-| rust `raw_string_literal_start` | `/(?<prefix>[bc]?r)(?<hashes>#*)"/` |
-| rust `raw_string_literal_end` | `token.immediate(/"(?<hashes>#*)/)` |
+| python `string_start` | `prefix` (optional enum), `quote` (enum) |
+| python `string_end` | `content` (the pattern `(?:\\[\s\S])*`), `quote` (enum) |
+| rust `raw_string_literal_start` | `prefix` (enum `r`, `br`, `cr`), `hashes` (the pattern `#*`), the literal `"` |
+| rust `raw_string_literal_end` | the literal `"`, `hashes` (the pattern `#*`) |
+
+**An enum facet groups its spellings under canonical members.** The grammar authors the canonical members and the
+language's closure rule as data, never the spellings. `spellings()` expands them to a `CHOICE` of `STRING` over every
+spelling, which is what tree-sitter would see. The grouping travels as authored metadata through the wire context,
+as `refine()`'s forms do, and link stamps member → spellings on the enum. The guard, the read projection, the
+builder type and the preference arms all derive from that stamp.
+
+- Python's prefix:
+  - canonical members `r`, `b`, `f`, `t`, `u`, `rb`, `rf`, `rt`, any case and either order of a pair (`rb` also
+    reads `br`, `Rb`, `BR`);
+  - `ur`, case variants only, read-only.
+- Python's quote: `"""`, `'''`, `"`, `'`, and a read-only backtick.
+- Rust's raw prefix: `r`, `br`, `cr`, whose members are their spellings.
+
+A read-only member reads, because the parser accepts it, but the reference (CPython 3) rejects it. It is in neither
+the builder type nor the preference arms.
 
 **The end token can hold content.** In a raw string, the scanner steps over a backslash and the character after it
 without counting either as content (tree-sitter-python 0.25.0 `src/scanner.c`, the `is_raw(delimiter)` branch of the
 `STRING_CONTENT` loop). A raw string whose content is only such pairs reaches its quote with nothing consumed, so
 `STRING_END` takes the pairs: `r"\\"`, `r"\""`, `r'\''`, `rb"\\"`, `r"""\\"""` and `r"\\\\"` all parse with an
 empty `string_content` and the pairs in `string_end`. Those characters are content, as CPython's `Constant` value
-says. The read appends the end's `content` group to the string's content facet. The closing quote's length is the
-start's `quote` group. A string has one content fact on the portable surface, wherever the scanner put it.
+says. The read appends the end's `content` facet to the string's content, and the closing quote's length is the
+start's `quote` member. A string has one content fact on the portable surface, wherever the scanner put it.
 
-**The read takes meaning from the vocabulary path alone.** No delimiter group reaches the portable surface. A Python
-prefix is already the path (`literal.string.bytes.raw` is `rb`), and the quote and the hash run are preferences or
-derivations.
+**Meaning is read from the claims and the prefix enum; delimiters are not read.**
 
-**The build fills every delimiter in native Prepare, and JS computes none.**
+- The `literal.string.*` claims stay `#match?` tests on `string_start`'s text, which tree-sitter's own `Query`
+  compiles. The bindings inventory compiles every claim that way, so a facet cannot appear as query structure.
+- A guard test keeps the claims and the enum from drifting:
+  - every spelling in a member's closure, read-only ones included, selects the same claims as the member's
+    canonical spelling;
+  - every spelling a claim can match is in the enum.
+- A t-string is `literal.string.interpolated.deferred`, with crossings `.raw`, `.multiline` and `.raw.multiline`.
+  Its value is a `Template`, not a `str`; CPython's AST has `TemplateStr` beside `JoinedStr`.
+- A u-string is `literal.string.unicode`, the `unicode-strings` feature, with no crossings.
 
-- *Prefix:* a preset from the path, spelled canonically: lowercase letters in the order `r`, `b`, `f`, `u`
-  (`literal.string.bytes.raw` → `rb`).
-- *Python quote:* the registered preference channel. The default is `"`, or `"""` when the content holds a line
-  break.
-- *Rust hashes:* a derivation. The fewest `#` such that `"` followed by that run does not occur in the content.
+**The low-level builder takes meaning, never a delimiter.**
 
-**One validator.** Prepare checks every delimiter against its content, whether the delimiter was filled or carried
-from a read. A carried delimiter that the content invalidates falls back to the preference or the derivation:
-- a carried `'` whose content gains `'` becomes `"`;
-- a carried `r#"` whose content gains `"#` becomes `r##"`.
+- `py.build.string({ prefix: 'rb', content })` and `rs.build.rawStringLiteral({ prefix: 'br', content })`.
+- `prefix` is typed as the enum's canonical members. A non-canonical spelling (`'Rb'`, `'br'` for python) does not
+  type-check.
+- The delimiter tokens have no builders on the public surface.
+- The factory-source emitter writes the canonical member from a read, so `BR"x"` rebuilds as `prefix: 'rb'`. The
+  built lanes judge ruled spelling (prefix case and order, quote) by the reference AST, as a named normalized class
+  rather than a mismatch.
 
-Python's raw-string rules hold in the same validator:
-- a quote in raw content is allowed only when escaped (`\"` keeps both characters);
-- raw content may not end in an odd run of backslashes (`r"\"` is not a string).
+**A delimiter facet is derived, a compile-time fact stamped on the model**, when:
+- it has a registered preference (the quote, through `options:`, as `radix_prefix` does);
+- it is a repeat run its closer mirrors (rust `hashes`, the shortest valid run);
+- or it is the closer's mirror of either.
 
-When no delimiter fits, the build refuses, naming the kind and why no quote fits, rather than emitting text that does
-not parse.
+A delimiter facet that is neither input nor derivable is a compile-time diagnostic.
 
-**Unicode strings are a feature.** Python's `u` prefix is `literal.string.unicode`. Like byte strings, it is a
-feature with no crossings.
+**Native Prepare fills every derived facet, and JS computes none.** One generic validator in `sittir-core`, driven
+by the stamped facts, checks every delimiter against the content, whether the delimiter was filled or carried from a
+read.
+
+- The content is the content children rendered.
+- A candidate closer is invalid when it occurs in the content outside an escape pair. The escape is python's `\`;
+  rust raw strings have none.
+- A single quote is also invalid when the content holds a line break.
+- Python raw content ending in an odd run of backslashes fails by the same pair rule: the last backslash would pair
+  with the closer.
+- A quote inside an f-string interpolation counts as occurring.
+- Candidates are the preferred arm first, then the other arms (never a read-only member), or the shortest run.
+- A carried delimiter that the content invalidates falls back to the derivation:
+  - a carried `'` whose content gains `'` becomes `"`;
+  - a carried `r#"` whose content gains `"#` becomes `r##"`.
+- When no candidate fits, the build refuses, naming the kind and why no delimiter fits.
+
+The composites with fixed delimiters (rust `block_comment`, typescript `comment_block`, the regex kinds) are the
+one-candidate case and join this validator later; until then the parse-back check covers them.
 
 **Gates.**
 - Round trips, in both directions, for each raw string whose content is only escape pairs (the six above, plus
   `r"a\\"`): the read gives content X; building from X renders the pairs in content and reparses to the same tree.
 - Each fallback case above, and each refusal.
+- The claims-and-enum guard.
+- A type test rejecting a non-canonical prefix.
+- `grammar.json` and `parser.c` byte-identical.
 - `vocabulary-features --check`.
 - After these fixes, a corpus guard in the portable round trip.
