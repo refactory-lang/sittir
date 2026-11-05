@@ -171,6 +171,20 @@ pub fn tuple_chain(levels: usize) -> String {
     format!("type T = {}u8{};\n", "(".repeat(levels), ",)".repeat(levels))
 }
 
+/// `tuple_chain`'s chain with each token on a line of its own, so every
+/// level's gaps break the line.
+#[must_use]
+pub fn multiline_tuple_chain(levels: usize) -> String {
+    format!("type T = {}u8{};\n", "(\n".repeat(levels), ",\n)".repeat(levels))
+}
+
+/// `levels` rust blocks, each holding the one before it, each brace on a
+/// line of its own: every level is a stretch its template indents.
+#[must_use]
+pub fn block_chain(levels: usize) -> String {
+    format!("fn f() {}{}\n", "{\n".repeat(levels), "}\n".repeat(levels))
+}
+
 /// What `f` answers, run on a thread whose 64 MiB stack every read these
 /// tests make of a deep tree fits on, a 64,000-level chain included.
 ///
