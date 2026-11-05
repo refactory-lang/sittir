@@ -51,18 +51,6 @@ fn is_option(ty: &Type) -> bool {
     crate::expand::last_segment(ty).as_deref() == Some("Option")
 }
 
-/// A list whose items may each be absent: `Vec<Option<_>>` or
-/// `NonEmptyVec<Option<_>>`, encoded through `boundary::holes`.
-fn holds_absent_items(ty: &Type) -> bool {
-    let Type::Path(path) = ty else { return false };
-    let Some(list) = path.path.segments.last() else { return false };
-    if list.ident != "Vec" && list.ident != "NonEmptyVec" {
-        return false;
-    }
-    let syn::PathArguments::AngleBracketed(args) = &list.arguments else { return false };
-    matches!(args.args.first(), Some(syn::GenericArgument::Type(item)) if is_option(item))
-}
-
 pub(crate) fn is_kind_key(key: &LitStr) -> bool {
     key.value() == "$type"
 }
@@ -130,8 +118,6 @@ fn struct_encode(ident: &Ident, fields: &[WireField<'_>]) -> syn::Result<TokenSt
         let (name, key) = (field.ident, c_key(field.key)?);
         entries.push(if is_option(field.ty) {
             quote!(::sittir_core::boundary::present(env, #key, #name)?,)
-        } else if holds_absent_items(field.ty) {
-            quote!(::core::option::Option::Some((#key, ::sittir_core::boundary::holes(env, ::std::vec::Vec::from(#name))?)),)
         } else {
             quote!(::core::option::Option::Some((#key, #napi::bindgen_prelude::ToNapiValue::to_napi_value(env, #name)?)),)
         });

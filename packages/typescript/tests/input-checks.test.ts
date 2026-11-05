@@ -56,9 +56,9 @@ describe("verifyStructure: 'runtime' refuses what a builder was not given a plac
 		expect(switchCase(verifyingStrict)({ value, bodies: [] }).$render()).toBe('case a:');
 	});
 
-	it('accepts an absent item in a list that holds holes', () => {
+	it('accepts a null hole in a list that holds holes', () => {
 		const a = verifying.build.identifier('a');
-		expect(array(verifying)(a, undefined, a).$render()).toBe('[a,, a]');
+		expect(array(verifying)(a, null, a).$render()).toBe('[a,, a]');
 	});
 });
 

@@ -186,6 +186,7 @@ describe('deriveGrammarBindings', () => {
 			variantOf: '_item',
 			splitFrom: null,
 			aliasStorage: null,
+			interiorPart: null,
 			shownAs: [],
 			...extra
 		});
@@ -220,6 +221,7 @@ describe('deriveGrammarBindings', () => {
 			variantOf: '_item',
 			splitFrom: null,
 			aliasStorage: null,
+			interiorPart: null,
 			shownAs: [],
 			...extra
 		});
@@ -369,6 +371,21 @@ describe('deriveGrammarBindings', () => {
 				as: 'method_declaration'
 			}
 		]);
+	});
+
+	it('places a split at a site that shows a hidden rule as a copy of that rule, stepping over the group lift that holds the site', () => {
+		const symbol = (name: string) => ({ type: 'SYMBOL', name });
+		const shown = { type: 'ALIAS', named: true, value: 'arg_z', content: symbol('_arg_z') };
+		const rules = {
+			...base.rules,
+			call_z: { type: 'SEQ', members: [{ type: 'STRING', value: '(' }, { type: 'SYMBOL', name: 'call_z_elements', metadata: { symbolSource: 'group-lift' } }, { type: 'STRING', value: ')' }] },
+			call_z_elements: { type: 'REPEAT', content: shown },
+			list_z: { type: 'SEQ', members: [{ type: 'STRING', value: '[' }, { type: 'REPEAT', content: shown }, { type: 'STRING', value: ']' }] },
+			_arg_z: { type: 'SEQ', members: [{ type: 'STRING', value: '#' }, symbol('identifier')] }
+		};
+		const facts: BindingFacts = { ...FACTS, claims: [claim('declaration.method', 'arg_z', { toplevel: false, within: ['call_z_elements', 'call_z'] })], members: [] };
+		const { bindings } = bind({ file: FILE, facts, base: { ...base, rules }, vocabMembers: VOCABULARY, routes: ROUTES, model: NO_MODEL } as never);
+		expect(bindings.splits).toEqual([{ owner: 'call_z', path: [{ field: null, kind: 'arg_z', as: null }], as: 'method_declaration', copies: '_arg_z' }]);
 	});
 
 	it('leaves a supertype a split path enters unnamed, so its clone stays hidden', () => {
@@ -613,6 +630,13 @@ export default grammar(
 		expect(text).toContain('trait_item: { "body:/(declaration_list as trait_body)/(function_item)": alias("method_declaration") }');
 	});
 
+	it('prints a split at a site that shows a hidden rule as an alias of a copy of the rule', () => {
+		const split: Split = { owner: 'arguments', path: [{ field: null, kind: 'attributed_argument', as: null }], as: 'argument', copies: '_attributed_argument' };
+		const text = printBindingsModule({ patches: new Map(), renames: {}, leads: [], splits: [split] }, 'h');
+		expect(text).toContain("import { alias, copy, enrich, wire } from '../codegen/src/dsl/dsl-authoring.ts';");
+		expect(text).toContain('arguments: { "(attributed_argument)": ($) => alias(copy("_attributed_argument"), $.argument) }');
+	});
+
 	it('prints a split on a literal as a narrowed copy beside its source, nesting the copy of each hidden rule a blanked field sits in', () => {
 		const split: Split = {
 			owner: 'member_m',
@@ -782,6 +806,7 @@ describe('a child that shares a union slot', () => {
 					variantOf: null,
 					splitFrom: null,
 					aliasStorage: null,
+					interiorPart: null,
 					shownAs: []
 				} as ModelNode
 			]
@@ -857,6 +882,7 @@ describe('a claim on a supertype owner', () => {
 		variantOf: null,
 		splitFrom: null,
 		aliasStorage: null,
+		interiorPart: null,
 		shownAs: [],
 		...extra
 	});

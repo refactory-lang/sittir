@@ -5,7 +5,7 @@ export namespace Declaration {
 	export interface Enum<G extends GrammarContext<G>> extends SubKindOf<V.Declaration<G>> {
 		// claimed by rt
 		readonly $kind: 'declaration.enum';
-		readonly body: V.Declaration.EnumMember<G> | V.Declaration.EnumMember<G>[];
+		readonly body: V.Declaration.EnumMember<G>[];
 		readonly const?: Flag;
 		// t only
 		readonly name: G['identifier'];

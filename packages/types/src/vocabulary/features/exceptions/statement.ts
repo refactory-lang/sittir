@@ -16,6 +16,6 @@ export namespace Statement {
 		// p only
 		readonly body: G['slots']['statement.try']['body'];
 		readonly finalizer?: V.Clause.Finally<G>;
-		readonly handlers?: G['clause'] | G['clause'][];
+		readonly handlers?: G['clause'][];
 	}
 }

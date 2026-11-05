@@ -24,6 +24,10 @@ export namespace Modifier {
 				// claimed by r
 				readonly $kind: 'modifier.visibility.public.internal';
 			}
+			export interface Parent<G extends GrammarContext<G>> extends SubKindOf<V.Modifier.Visibility.Public<G>> {
+				// claimed by r
+				readonly $kind: 'modifier.visibility.public.parent';
+			}
 			export interface Restricted<G extends GrammarContext<G>> extends SubKindOf<V.Modifier.Visibility.Public<G>> {
 				// claimed by r
 				readonly $kind: 'modifier.visibility.public.restricted';

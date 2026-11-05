@@ -815,7 +815,7 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 		});
 		it('delegate.instantiation builds the parent', () => {
 			const node = ir.yieldExpression.delegate.instantiation({
-				expression: TSKindId.Undefined as never,
+				function: TSKindId.Undefined as never,
 				typeArguments: { $type: TSKindId.TypeArguments, types: ir.types(TSKindId.ThisType as never) as never } as never
 			});
 			expect(node.$type).toBe(TSKindId.YieldExpression);
@@ -1886,7 +1886,7 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 	describe('instantiation_expression', () => {
 		it('factory produces correct type', () => {
 			const node = ir.instantiationExpression({
-				expression: TSKindId.Undefined as never,
+				function: TSKindId.Undefined as never,
 				typeArguments: { $type: TSKindId.TypeArguments, types: ir.types(TSKindId.ThisType as never) as never } as never
 			});
 			expect(node.$type).toBe(TSKindId.InstantiationExpression);
@@ -1894,7 +1894,7 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 		});
 		it('render produces non-empty string', () => {
 			const node = ir.instantiationExpression({
-				expression: TSKindId.Undefined as never,
+				function: TSKindId.Undefined as never,
 				typeArguments: { $type: TSKindId.TypeArguments, types: ir.types(TSKindId.ThisType as never) as never } as never
 			});
 			const rendered = node.$render!();

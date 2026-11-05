@@ -67,7 +67,6 @@ import {
 	isRequired,
 	isMultiple,
 	isNonEmpty,
-	hasOptionalElements,
 	slotKindNames,
 	slotLiteralValues,
 	referencedKinds,
@@ -107,9 +106,11 @@ import {
 	separatedListSurface,
 	listOptionStorageMembers,
 	slotSetter,
+	withHoles,
 	type BuiltTypeSurface
 } from './factories.ts';
 import { hasBlankArm } from '../compiler/model/site-preferences.ts';
+import { BLANK_KIND_ID } from '@sittir/common/blank-arm';
 import { resolveBitflagConstName } from './consts.ts';
 import { refineFormTypeName, collectRefineKindInfos } from './refine-emit.ts';
 import type { RefineKindInfo } from './refine-emit.ts';
@@ -1013,7 +1014,7 @@ function emitInterface(
 				isRequired(f) || storageInfo.kind === 'boolean' || (isMultiple(f) && !storageInfo.collapsesMultiplicity) ? '' : '?';
 			const storageType = storageFieldTypeExpr(f, nodeMap, typeExpr, kindEntries);
 			if (isMultiple(f) && !storageInfo.collapsesMultiplicity) {
-				const elemType = hasOptionalElements(f) ? `${storageType} | undefined` : storageType;
+				const elemType = withHoles(f, storageType);
 				emitFieldArrayDeclaration(lines, f.storageKey, opt, elemType, isNonEmpty(f));
 			} else {
 				lines.push(`  readonly ${f.storageKey}${opt}: ${storageType};`);
@@ -1035,7 +1036,7 @@ function emitInterface(
 			const storageType = storageFieldTypeExpr(f, nodeMap, typeExpr, kindEntries);
 			const opt = isRequired(f) || storageInfo.kind === 'boolean' ? '' : '?';
 			if (isMultiple(f) && !storageInfo.collapsesMultiplicity) {
-				const elemType = hasOptionalElements(f) ? `${storageType} | undefined` : storageType;
+				const elemType = withHoles(f, storageType);
 				const arrType = isNonEmpty(f) ? `NonEmptyArray<${elemType}>` : `readonly (${elemType})[]`;
 				lines.push(`  readonly ${propName}: () => ${arrType};`);
 			} else if (hasBlankArm(f)) {
@@ -1189,7 +1190,8 @@ function storageFieldTypeExpr(
 		return 'number';
 	}
 	if (storageInfo.kind === 'kindEnum') {
-		return 'number';
+		const ids = enumStorageDiscriminantExpr(storageInfo, nodeMap, kindEntries);
+		return hasBlankArm(f) ? `${ids} | ${BLANK_KIND_ID}` : ids;
 	}
 	if (storageInfo.kind === 'mixedEnum') {
 		return mixedEnumStorageTypeExpr(f, nodeMap, kindEntries) ?? typeExpr;

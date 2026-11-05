@@ -1,13 +1,20 @@
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { join, posix, sep } from 'node:path';
 import { type BindingFacts, type ClaimFact, isNamedMember, type NamedMemberFact, type SlotModel, VOCABULARY_DIR } from './facts.ts';
-import { capturePaths, envelopeTargets, kindVocabs, memberTargets, readsByKind } from './routes.ts';
+import { capturePaths, envelopeTargets, kindVocabs, memberTargets, readsByKind, refinedContainers } from './routes.ts';
 import { camel, snake } from './names.ts';
+import { grammarDisplayName } from '../grammars.ts';
 import { runPinned } from './read.ts';
 
 export const AUGMENTATION = 'augment.ts';
+export const COMPOSITIONS = 'compositions.ts';
+
+export const compositionOf = (grammar: string): string => `${grammarDisplayName(grammar)}Features`;
 export const FEATURES = 'features';
 export const FLAG = 'Flag';
+export const FLAGGED = 'Flagged';
+export const TEXTS = 'texts';
+export const CONTEXT = 'GrammarContext';
 export const REFINED_BY = 'RefinedBy';
 export const SYNONYMS = 'Synonyms';
 
@@ -15,9 +22,11 @@ export interface Member {
 	readonly name: string;
 	readonly optional: boolean;
 	readonly type: string;
+	readonly arity?: MemberArity;
 	readonly flag: boolean;
 	readonly references: readonly string[];
 	readonly literals: readonly string[];
+	readonly keys?: readonly string[];
 }
 
 export interface Declared {
@@ -25,7 +34,9 @@ export interface Declared {
 	readonly path: string | undefined;
 	readonly parent: string | undefined;
 	readonly refines: string | undefined;
+	readonly heritage: readonly string[];
 	readonly members: readonly Member[];
+	readonly text?: true;
 }
 
 export interface DeclaredKind extends Declared {
@@ -57,6 +68,8 @@ export interface VocabularySource {
 	readonly modules: ReadonlyMap<string, string>;
 	readonly synonyms: Synonyms;
 	readonly features: readonly Feature[];
+	readonly compositions: ReadonlyMap<string, readonly string[]>;
+	readonly texts: readonly string[];
 }
 
 export interface FeatureIndex {
@@ -64,9 +77,13 @@ export interface FeatureIndex {
 	readonly exports: readonly string[];
 }
 
+export type MemberArity = 'list' | 'either';
+
 export interface VocabularyMember {
 	readonly optional: boolean;
+	readonly arity?: MemberArity;
 	readonly flag: boolean;
+	readonly features?: readonly string[];
 }
 
 export interface VocabularyKind {
@@ -81,6 +98,8 @@ export interface Vocabulary {
 	readonly flags: ReadonlySet<string>;
 	readonly synonyms: Synonyms;
 	members(path: string): ReadonlyMap<string, VocabularyMember>;
+	featuresOf(composition: string): ReadonlySet<string>;
+	composedAs(composition: string): Vocabulary;
 }
 
 const FEATURE_INDEX = 'index.ts';
@@ -119,6 +138,8 @@ export async function readVocabularySource(dir: string): Promise<VocabularySourc
 	const modules = new Map<string, string>();
 	const levels = new Map<string, SynonymTable>();
 	const flags: Declared[] = [];
+	const compositions = new Map<string, readonly string[]>();
+	const texts: string[] = [];
 	const declared = await Promise.all(files.map((file) => declaredIn(dir, file)));
 	for (const [i, file] of files.entries()) {
 		const all = declared[i] ?? [];
@@ -127,11 +148,13 @@ export async function readVocabularySource(dir: string): Promise<VocabularySourc
 			kinds.push(d);
 			modules.set(d.qname.replace(/\..*$/, ''), file);
 		}
+		if (file === COMPOSITIONS) for (const d of all) compositions.set(d.qname, d.heritage);
 		for (const d of all) {
 			const level = levelOf.get(d.qname);
 			if (level !== undefined && levels.has(level)) throw new Error(`vocabulary: ${d.qname} is declared more than once; a level has one table`);
 			if (level !== undefined) levels.set(level, synonymTable(d));
 			if (d.qname === `${FLAG}${SYNONYMS}`) flags.push(d);
+			if (d.qname === CONTEXT) texts.push(...(d.members.find((member) => member.name === TEXTS)?.keys ?? []));
 		}
 	}
 	if (flags.length > 1) throw new Error(`vocabulary: ${FLAG}${SYNONYMS} is declared ${flags.length} times; the flags have one table`);
@@ -140,7 +163,9 @@ export async function readVocabularySource(dir: string): Promise<VocabularySourc
 		kinds,
 		modules,
 		synonyms: { levels, flags: flags[0] === undefined ? new Map() : synonymTable(flags[0]) },
-		features: existsSync(root) ? await readFeatures(dir, sources) : []
+		features: existsSync(root) ? await readFeatures(dir, sources) : [],
+		compositions,
+		texts: texts.sort(byCodepoint)
 	};
 }
 
@@ -211,24 +236,56 @@ export async function readVocabulary(dir: string): Promise<Vocabulary> {
 	const stubs = source.features.flatMap((feature) => feature.stubs);
 	const declared = [...source.kinds, ...stubs.filter(isKind)];
 	const pathByName = new Map(declared.map((d) => [d.qname, d.path]));
-	const own = new Map(declared.map((d) => [d.qname, new Map(d.members.map((m) => [m.name, { optional: m.optional, flag: m.flag }]))]));
-	for (const stub of stubs) {
-		const members = own.get(stub.qname);
-		if (isKind(stub) || members === undefined) continue;
-		for (const m of stub.members) members.set(m.name, { optional: m.optional || members.get(m.name)?.optional === true, flag: m.flag });
-	}
+	const own = new Map<string, Map<string, VocabularyMember>>(declared.map((d) => [d.qname, new Map(d.members.map((m) => [m.name, { optional: m.optional, ...(m.arity === undefined ? {} : { arity: m.arity }), flag: m.flag }]))]));
+	for (const feature of source.features)
+		for (const stub of feature.stubs) {
+			const members = own.get(stub.qname);
+			if (isKind(stub) || members === undefined) continue;
+			for (const m of stub.members) {
+				const held = members.get(m.name);
+				const features = held === undefined ? [feature.name] : held.features === undefined ? undefined : [...held.features, feature.name];
+				members.set(m.name, { optional: m.optional || held?.optional === true, ...((m.arity ?? held?.arity) === undefined ? {} : { arity: m.arity ?? held?.arity }), flag: m.flag, ...(features === undefined ? {} : { features }) });
+			}
+		}
 	const kinds = new Map<string, VocabularyKind>();
 	const pathOf = (qname: string | undefined): string | undefined => (qname === undefined ? undefined : pathByName.get(qname));
 	for (const d of declared) {
 		kinds.set(d.path, { name: d.qname, own: own.get(d.qname) ?? new Map(), parent: pathOf(d.parent), refines: pathOf(d.refines) });
 	}
-	const members = (path: string): ReadonlyMap<string, VocabularyMember> => {
+	const membersWithin = (composed: ReadonlySet<string> | undefined) => (path: string): ReadonlyMap<string, VocabularyMember> => {
 		const all = new Map<string, VocabularyMember>();
-		for (const at of lineageOf(path, (line) => kinds.get(line))) for (const [name, member] of kinds.get(at)?.own ?? []) if (!all.has(name)) all.set(name, member);
+		for (const at of lineageOf(path, (line) => kinds.get(line)))
+			for (const [name, member] of kinds.get(at)?.own ?? [])
+				if (!all.has(name) && (composed === undefined || member.features === undefined || member.features.some((feature) => composed.has(feature)))) all.set(name, member);
 		return all;
 	};
 	const flags = new Set([...kinds.values()].flatMap((kind) => [...kind.own].flatMap(([name, member]) => (member.flag ? [name] : []))));
-	return { kinds, flags, synonyms: source.synonyms, members };
+	const parentsOf = new Map(source.features.map((feature) => [feature.name, feature.parents]));
+	const featuresOf = (composition: string): ReadonlySet<string> => {
+		const heritage = source.compositions.get(composition);
+		if (heritage === undefined) throw new Error(`vocabulary: ${COMPOSITIONS} declares no composition ${composition}`);
+		const found = new Set<string>();
+		const add = (name: string): void => {
+			if (found.has(name)) return;
+			const composed = source.compositions.get(name);
+			if (composed !== undefined) return composed.forEach(add);
+			const parents = parentsOf.get(name);
+			if (parents === undefined) throw new Error(`vocabulary: ${composition} extends ${name}, which is neither a feature nor a composition`);
+			found.add(name);
+			parents.forEach(add);
+		};
+		heritage.forEach(add);
+		return found;
+	};
+	const view = (composed: ReadonlySet<string> | undefined): Vocabulary => ({
+		kinds,
+		flags,
+		synonyms: source.synonyms,
+		members: membersWithin(composed),
+		featuresOf,
+		composedAs: (composition) => view(featuresOf(composition))
+	});
+	return view(undefined);
 }
 
 export function flagSegment(vocabulary: Vocabulary, path: string): { readonly parent: string; readonly flag: string } | undefined {
@@ -295,7 +352,7 @@ export function canonicalFacts(facts: BindingFacts, vocabulary: Vocabulary, mode
 		return vocab === claim.vocab ? claim : { ...claim, vocab };
 	});
 	const reads = readsByKind(model, flagResolved(vocabulary, claims));
-	const vocabs = kindVocabs(model, reads);
+	const vocabs = kindVocabs(model, reads, refinedContainers(model, reads, facts.containers));
 	const readable = capturePaths(model, reads);
 	const attached = memberTargets(model, reads);
 	const pathsOf = (member: NamedMemberFact): string[] => {

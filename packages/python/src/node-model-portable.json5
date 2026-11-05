@@ -795,19 +795,6 @@
         "list": false
       }
     },
-    "bare_tuple_pattern": {
-      "vocab": "pattern.tuple.bare",
-      "read": [
-        {
-          "vocab": "pattern.tuple.bare",
-          "toplevel": true,
-          "within": [],
-          "pins": [],
-          "test": []
-        }
-      ],
-      "members": []
-    },
     "binary_operator": {
       "vocab": "expression.binary",
       "read": [
@@ -1727,11 +1714,11 @@
               "slot": "body"
             },
             {
-              "owner": "suite_block",
-              "slot": "block"
+              "owner": "suite_block_class_declaration",
+              "slot": "block_class_declaration"
             },
             {
-              "owner": "block",
+              "owner": "block_class_declaration",
               "slot": "statements",
               "anchor": "first"
             },
@@ -2165,6 +2152,17 @@
           ]
         },
         {
+          "name": "comparators",
+          "route": "slot",
+          "slot": "comparators",
+          "path": [
+            {
+              "owner": "comparison_operator",
+              "slot": "comparators"
+            }
+          ]
+        },
+        {
           "name": "right",
           "route": "nested",
           "via": [
@@ -2195,17 +2193,6 @@
             {
               "owner": "comparison_operator_comparator",
               "slot": "primary_expression"
-            }
-          ]
-        },
-        {
-          "name": "comparators",
-          "route": "slot",
-          "slot": "comparators",
-          "path": [
-            {
-              "owner": "comparison_operator",
-              "slot": "comparators"
             }
           ]
         }
@@ -2515,6 +2502,13 @@
       "vocab": "pattern.complex",
       "read": [
         {
+          "vocab": "pattern.complex",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        },
+        {
           "vocab": "pattern.complex.add",
           "toplevel": true,
           "within": [],
@@ -2563,13 +2557,6 @@
               }
             }
           ]
-        },
-        {
-          "vocab": "pattern.complex",
-          "toplevel": true,
-          "within": [],
-          "pins": [],
-          "test": []
         }
       ],
       "members": [
@@ -4094,7 +4081,8 @@
               "owner": "for_in_clause",
               "slot": "trailing_comma"
             }
-          ]
+          ],
+          "flag": true
         }
       ]
     },
@@ -4996,26 +4984,6 @@
         }
       ]
     },
-    "lambda_expression": {
-      "vocab": "expression.lambda",
-      "read": [
-        {
-          "vocab": "expression.lambda",
-          "toplevel": true,
-          "within": [],
-          "pins": [],
-          "test": []
-        },
-        {
-          "vocab": "expression.lambda",
-          "toplevel": true,
-          "within": [],
-          "pins": [],
-          "test": []
-        }
-      ],
-      "members": []
-    },
     "lambda_parameters": {
       "container": {
         "slot": "parameters_elements",
@@ -5246,26 +5214,6 @@
         }
       ]
     },
-    "map_rest_pattern": {
-      "vocab": "pattern.rest.map",
-      "read": [
-        {
-          "vocab": "pattern.rest.map",
-          "toplevel": true,
-          "within": [],
-          "pins": [],
-          "test": []
-        },
-        {
-          "vocab": "pattern.rest.map",
-          "toplevel": true,
-          "within": [],
-          "pins": [],
-          "test": []
-        }
-      ],
-      "members": []
-    },
     "match_block_block": {
       "container": {
         "slot": "alternative",
@@ -5383,6 +5331,20 @@
       "vocab": "declaration.method",
       "read": [
         {
+          "vocab": "declaration.method",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        },
+        {
+          "vocab": "declaration.method",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        },
+        {
           "vocab": "declaration.constructor",
           "toplevel": true,
           "within": [],
@@ -5426,20 +5388,6 @@
               "stem"
             ]
           }
-        },
-        {
-          "vocab": "declaration.method",
-          "toplevel": true,
-          "within": [],
-          "pins": [],
-          "test": []
-        },
-        {
-          "vocab": "declaration.method",
-          "toplevel": true,
-          "within": [],
-          "pins": [],
-          "test": []
         }
       ],
       "members": [
@@ -5454,6 +5402,17 @@
             }
           ],
           "flag": true
+        },
+        {
+          "name": "name",
+          "route": "slot",
+          "slot": "name",
+          "path": [
+            {
+              "owner": "method_declaration",
+              "slot": "name"
+            }
+          ]
         },
         {
           "name": "name",
@@ -5507,6 +5466,73 @@
             {
               "owner": "method_declaration",
               "slot": "body"
+            }
+          ]
+        },
+        {
+          "name": "doc",
+          "route": "nested",
+          "via": [
+            {
+              "field": "item",
+              "kind": "expression_statement",
+              "after": null,
+              "anchor": "first"
+            },
+            {
+              "field": null,
+              "kind": "simple_statements_elements",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "simple_statements",
+              "after": null,
+              "anchor": "first"
+            },
+            {
+              "field": null,
+              "kind": "block",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": "body",
+              "kind": "suite_block",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "expression_statement",
+          "slot": "content",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "method_declaration",
+              "slot": "body"
+            },
+            {
+              "owner": "suite_block",
+              "slot": "block"
+            },
+            {
+              "owner": "block",
+              "slot": "statements",
+              "anchor": "first"
+            },
+            {
+              "owner": "_simple_statements",
+              "slot": "elements"
+            },
+            {
+              "owner": "simple_statements_elements",
+              "slot": "item",
+              "anchor": "first"
+            },
+            {
+              "owner": "expression_statement",
+              "slot": "content"
             }
           ]
         },
@@ -6021,19 +6047,6 @@
         "list": false
       }
     },
-    "qualified_identifier": {
-      "vocab": "identifier.qualified",
-      "read": [
-        {
-          "vocab": "identifier.qualified",
-          "toplevel": true,
-          "within": [],
-          "pins": [],
-          "test": []
-        }
-      ],
-      "members": []
-    },
     "raise_statement": {
       "vocab": "statement.throw",
       "read": [
@@ -6105,26 +6118,6 @@
           ]
         }
       ]
-    },
-    "rest_pattern": {
-      "vocab": "pattern.rest",
-      "read": [
-        {
-          "vocab": "pattern.rest",
-          "toplevel": true,
-          "within": [],
-          "pins": [],
-          "test": []
-        },
-        {
-          "vocab": "pattern.rest",
-          "toplevel": true,
-          "within": [],
-          "pins": [],
-          "test": []
-        }
-      ],
-      "members": []
     },
     "return_statement": {
       "vocab": "statement.return",
@@ -7510,6 +7503,19 @@
       ],
       "members": []
     },
+    "wildcard_pattern": {
+      "vocab": "pattern.wildcard",
+      "read": [
+        {
+          "vocab": "pattern.wildcard",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": []
+    },
     "with_clause": {
       "vocab": "clause.resource",
       "read": [
@@ -7809,14 +7815,14 @@
       },
       {
         "depth": 2,
-        "paths": 76,
-        "kinds": 81,
+        "paths": 77,
+        "kinds": 79,
         "refinements": 5
       },
       {
         "depth": 3,
         "paths": 65,
-        "kinds": 62,
+        "kinds": 60,
         "refinements": 42
       },
       {

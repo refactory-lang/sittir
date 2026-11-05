@@ -68,9 +68,9 @@ describe('a leaf that is its own text', () => {
 describe('a slot that holds a leaf that is its own text', () => {
 	it('still takes the content, the text spelled in full, or the built leaf', () => {
 		const rendered = '#!/usr/bin/env node\nx;\n';
-		expect(ir.program({ hashBangLine: '/usr/bin/env node', statements: [statement()] }).$render()).toBe(rendered);
-		expect(ir.program({ hashBangLine: '#!/usr/bin/env node', statements: [statement()] }).$render()).toBe(rendered);
-		expect(ir.program({ hashBangLine: ir.hashBangLine('/usr/bin/env node'), statements: [statement()] }).$render()).toBe(rendered);
+		expect(ir.program({ shebang: '/usr/bin/env node', statements: [statement()] }).$render()).toBe(rendered);
+		expect(ir.program({ shebang: '#!/usr/bin/env node', statements: [statement()] }).$render()).toBe(rendered);
+		expect(ir.program({ shebang: ir.hashBangLine('/usr/bin/env node'), statements: [statement()] }).$render()).toBe(rendered);
 	});
 });
 

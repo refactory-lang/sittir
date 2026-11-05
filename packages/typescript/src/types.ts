@@ -2880,20 +2880,20 @@ export enum MethodDefinitionClassBodyMemberMethodKind {
 // Node types — concrete interfaces
 export interface Program {
 	readonly $type: TSKindId.Program;
-	readonly _hash_bang_line?: HashBangLine;
+	readonly _shebang?: HashBangLine;
 	readonly _statements: readonly Statement[];
 	readonly __slotNames__?: {
-		readonly _hash_bang_line: 'hashBangLine';
+		readonly _shebang: 'shebang';
 		readonly _statements: 'statements';
 	};
 	readonly __inputHints__?: {
 		readonly statements?: readonly (KindEnum<';', TSKindId.Semi> | Statement)[];
 	};
 	readonly __slotHints__?: {
-		readonly hashBangLine: SlotHint<T.HashBangLine, true>;
+		readonly shebang: SlotHint<T.HashBangLine, true>;
 		readonly statements: SlotHint<NonNullable<NonNullable<T.Program.Config>['statements']>[number][], true, true>;
 	};
-	readonly hashBangLine: () => HashBangLine | undefined;
+	readonly shebang: () => HashBangLine | undefined;
 	readonly statements: () => readonly Statement[];
 }
 
@@ -2951,7 +2951,7 @@ export interface ExportClause {
 
 export interface ExportSpecifier {
 	readonly $type: TSKindId.ExportSpecifier;
-	readonly _type_keyword?: number;
+	readonly _type_keyword?: TSKindId.TypeKeyword | TSKindId.TypeofKeyword;
 	readonly _name: Identifier | String | TSKindId.DefaultKeyword;
 	readonly _alias?: Identifier | String | TSKindId.DefaultKeyword;
 	readonly __slotNames__?: {
@@ -2969,17 +2969,17 @@ export interface ExportSpecifier {
 		readonly name: SlotHint<NonNullable<T.ExportSpecifier.Config>['name']>;
 		readonly alias: SlotHint<NonNullable<T.ExportSpecifier.Config>['alias'], true>;
 	};
-	readonly typeKeyword: () => number | undefined;
+	readonly typeKeyword: () => TSKindId.TypeKeyword | TSKindId.TypeofKeyword | undefined;
 	readonly name: () => Identifier | String | TSKindId.DefaultKeyword;
 	readonly alias: () => Identifier | String | TSKindId.DefaultKeyword | undefined;
 }
 
 export interface ImportStatement {
 	readonly $type: TSKindId.ImportStatement;
-	readonly _type_keyword?: number;
+	readonly _type_keyword?: TSKindId.TypeKeyword | TSKindId.TypeofKeyword;
 	readonly _from_clause: ImportStatementClauseFrom | ImportRequireClause | String;
 	readonly _import_attribute?: ImportAttribute;
-	readonly _terminator: number;
+	readonly _terminator: TSKindId.AutomaticSemicolon | TSKindId.Semi;
 	readonly __slotNames__?: {
 		readonly _type_keyword: 'typeKeyword';
 		readonly _from_clause: 'fromClause';
@@ -2996,10 +2996,10 @@ export interface ImportStatement {
 		readonly importAttribute: SlotHint<T.ImportAttribute, true>;
 		readonly terminator: SlotHint<NonNullable<T.ImportStatement.Options>['terminator']>;
 	};
-	readonly typeKeyword: () => number | undefined;
+	readonly typeKeyword: () => TSKindId.TypeKeyword | TSKindId.TypeofKeyword | undefined;
 	readonly fromClause: () => ImportStatementClauseFrom | ImportRequireClause | String;
 	readonly importAttribute: () => ImportAttribute | undefined;
-	readonly terminator: () => number;
+	readonly terminator: () => TSKindId.AutomaticSemicolon | TSKindId.Semi;
 }
 
 export interface ImportClause {
@@ -3047,7 +3047,7 @@ export interface NamedImports {
 
 export interface ImportAttribute {
 	readonly $type: TSKindId.ImportAttribute;
-	readonly _attribute_kind: number;
+	readonly _attribute_kind: TSKindId.WithKeyword | TSKindId.AssertKeyword;
 	readonly _object: Object;
 	readonly __slotNames__?: {
 		readonly _attribute_kind: 'attributeKind';
@@ -3063,14 +3063,14 @@ export interface ImportAttribute {
 		readonly attributeKind: SlotHint<NonNullable<T.ImportAttribute.Config>['attributeKind']>;
 		readonly object: SlotHint<T.Object>;
 	};
-	readonly attributeKind: () => number;
+	readonly attributeKind: () => TSKindId.WithKeyword | TSKindId.AssertKeyword;
 	readonly object: () => Object;
 }
 
 export interface ExpressionStatement {
 	readonly $type: TSKindId.ExpressionStatement;
 	readonly _expression: Expression | SequenceExpression;
-	readonly _terminator: number;
+	readonly _terminator: TSKindId.AutomaticSemicolon | TSKindId.Semi;
 	readonly __slotNames__?: {
 		readonly _expression: 'expression';
 		readonly _terminator: 'terminator';
@@ -3095,13 +3095,13 @@ export interface ExpressionStatement {
 		readonly terminator: SlotHint<NonNullable<T.ExpressionStatement.Options>['terminator']>;
 	};
 	readonly expression: () => Expression | SequenceExpression;
-	readonly terminator: () => number;
+	readonly terminator: () => TSKindId.AutomaticSemicolon | TSKindId.Semi;
 }
 
 export interface VariableDeclaration {
 	readonly $type: TSKindId.VariableDeclaration;
 	readonly _declarators: NonEmptyArray<VariableDeclarator>;
-	readonly _terminator: number;
+	readonly _terminator: TSKindId.AutomaticSemicolon | TSKindId.Semi;
 	readonly __slotNames__?: {
 		readonly _declarators: 'declarators';
 		readonly _terminator: 'terminator';
@@ -3114,14 +3114,14 @@ export interface VariableDeclaration {
 		readonly terminator: SlotHint<NonNullable<T.VariableDeclaration.Options>['terminator']>;
 	};
 	readonly declarators: () => NonEmptyArray<VariableDeclarator>;
-	readonly terminator: () => number;
+	readonly terminator: () => TSKindId.AutomaticSemicolon | TSKindId.Semi;
 }
 
 export interface LexicalDeclaration {
 	readonly $type: TSKindId.LexicalDeclaration;
-	readonly _kind: number;
+	readonly _kind: TSKindId.LetKeyword | TSKindId.ConstKeyword;
 	readonly _declarators: NonEmptyArray<VariableDeclarator>;
-	readonly _terminator: number;
+	readonly _terminator: TSKindId.AutomaticSemicolon | TSKindId.Semi;
 	readonly __slotNames__?: {
 		readonly _kind: 'kind';
 		readonly _declarators: 'declarators';
@@ -3136,16 +3136,16 @@ export interface LexicalDeclaration {
 		readonly declarators: SlotHint<NonEmptyArray<T.VariableDeclarator>, false, true>;
 		readonly terminator: SlotHint<NonNullable<T.LexicalDeclaration.Options>['terminator']>;
 	};
-	readonly kind: () => number;
+	readonly kind: () => TSKindId.LetKeyword | TSKindId.ConstKeyword;
 	readonly declarators: () => NonEmptyArray<VariableDeclarator>;
-	readonly terminator: () => number;
+	readonly terminator: () => TSKindId.AutomaticSemicolon | TSKindId.Semi;
 }
 
 export interface UsingDeclaration {
 	readonly $type: TSKindId.UsingDeclaration;
-	readonly _kind: number;
+	readonly _kind: TSKindId.UsingKeyword | TSKindId.UsingDeclarationArm;
 	readonly _variable_declarator: NonEmptyArray<VariableDeclarator>;
-	readonly _automatic_semicolon: number;
+	readonly _automatic_semicolon: TSKindId.AutomaticSemicolon | TSKindId.Semi;
 	readonly __slotNames__?: {
 		readonly _kind: 'kind';
 		readonly _variable_declarator: 'variableDeclarators';
@@ -3160,15 +3160,15 @@ export interface UsingDeclaration {
 		readonly variableDeclarators: SlotHint<NonEmptyArray<T.VariableDeclarator>, false, true>;
 		readonly automaticSemicolon: SlotHint<NonNullable<T.UsingDeclaration.Options>['automaticSemicolon']>;
 	};
-	readonly kind: () => number;
+	readonly kind: () => TSKindId.UsingKeyword | TSKindId.UsingDeclarationArm;
 	readonly variableDeclarators: () => NonEmptyArray<VariableDeclarator>;
-	readonly automaticSemicolon: () => number;
+	readonly automaticSemicolon: () => TSKindId.AutomaticSemicolon | TSKindId.Semi;
 }
 
 export interface StatementBlock {
 	readonly $type: TSKindId.StatementBlock;
 	readonly _statements: readonly Statement[];
-	readonly _terminator?: number;
+	readonly _terminator?: TSKindId.AutomaticSemicolon | 0;
 	readonly __slotNames__?: {
 		readonly _statements: 'statements';
 		readonly _terminator: 'terminator';
@@ -3371,7 +3371,7 @@ export interface DoStatement {
 	readonly $type: TSKindId.DoStatement;
 	readonly _body: Statement;
 	readonly _condition: ParenthesizedExpression;
-	readonly _terminator?: number;
+	readonly _terminator?: TSKindId.AutomaticSemicolon | TSKindId.Semi | 0;
 	readonly __slotNames__?: {
 		readonly _body: 'body';
 		readonly _condition: 'condition';
@@ -3437,7 +3437,7 @@ export interface WithStatement {
 export interface BreakStatement {
 	readonly $type: TSKindId.BreakStatement;
 	readonly _label?: StatementIdentifier;
-	readonly _terminator: number;
+	readonly _terminator: TSKindId.AutomaticSemicolon | TSKindId.Semi;
 	readonly __slotNames__?: {
 		readonly _label: 'label';
 		readonly _terminator: 'terminator';
@@ -3453,13 +3453,13 @@ export interface BreakStatement {
 		readonly terminator: SlotHint<NonNullable<T.BreakStatement.Options>['terminator']>;
 	};
 	readonly label: () => StatementIdentifier | undefined;
-	readonly terminator: () => number;
+	readonly terminator: () => TSKindId.AutomaticSemicolon | TSKindId.Semi;
 }
 
 export interface ContinueStatement {
 	readonly $type: TSKindId.ContinueStatement;
 	readonly _label?: StatementIdentifier;
-	readonly _terminator: number;
+	readonly _terminator: TSKindId.AutomaticSemicolon | TSKindId.Semi;
 	readonly __slotNames__?: {
 		readonly _label: 'label';
 		readonly _terminator: 'terminator';
@@ -3475,12 +3475,12 @@ export interface ContinueStatement {
 		readonly terminator: SlotHint<NonNullable<T.ContinueStatement.Options>['terminator']>;
 	};
 	readonly label: () => StatementIdentifier | undefined;
-	readonly terminator: () => number;
+	readonly terminator: () => TSKindId.AutomaticSemicolon | TSKindId.Semi;
 }
 
 export interface DebuggerStatement {
 	readonly $type: TSKindId.DebuggerStatement;
-	readonly _terminator: number;
+	readonly _terminator: TSKindId.AutomaticSemicolon | TSKindId.Semi;
 	readonly __slotNames__?: {
 		readonly _terminator: 'terminator';
 	};
@@ -3490,13 +3490,13 @@ export interface DebuggerStatement {
 	readonly __slotHints__?: {
 		readonly terminator: SlotHint<NonNullable<T.DebuggerStatement.Options>['terminator']>;
 	};
-	readonly terminator: () => number;
+	readonly terminator: () => TSKindId.AutomaticSemicolon | TSKindId.Semi;
 }
 
 export interface ReturnStatement {
 	readonly $type: TSKindId.ReturnStatement;
 	readonly _expression?: Expression | SequenceExpression;
-	readonly _terminator: number;
+	readonly _terminator: TSKindId.AutomaticSemicolon | TSKindId.Semi;
 	readonly __slotNames__?: {
 		readonly _expression: 'expression';
 		readonly _terminator: 'terminator';
@@ -3521,13 +3521,13 @@ export interface ReturnStatement {
 		readonly terminator: SlotHint<NonNullable<T.ReturnStatement.Options>['terminator']>;
 	};
 	readonly expression: () => Expression | SequenceExpression | undefined;
-	readonly terminator: () => number;
+	readonly terminator: () => TSKindId.AutomaticSemicolon | TSKindId.Semi;
 }
 
 export interface ThrowStatement {
 	readonly $type: TSKindId.ThrowStatement;
 	readonly _expression: Expression | SequenceExpression;
-	readonly _terminator: number;
+	readonly _terminator: TSKindId.AutomaticSemicolon | TSKindId.Semi;
 	readonly __slotNames__?: {
 		readonly _expression: 'expression';
 		readonly _terminator: 'terminator';
@@ -3552,7 +3552,7 @@ export interface ThrowStatement {
 		readonly terminator: SlotHint<NonNullable<T.ThrowStatement.Options>['terminator']>;
 	};
 	readonly expression: () => Expression | SequenceExpression;
-	readonly terminator: () => number;
+	readonly terminator: () => TSKindId.AutomaticSemicolon | TSKindId.Semi;
 }
 
 export interface LabeledStatement {
@@ -3704,7 +3704,7 @@ export interface YieldExpression {
 
 export interface Object {
 	readonly $type: TSKindId.Object;
-	readonly _properties: readonly (Pair | SpreadElement | MethodDefinition | ShorthandPropertyIdentifier | undefined)[];
+	readonly _properties: readonly (Pair | SpreadElement | MethodDefinition | ShorthandPropertyIdentifier | null)[];
 	readonly __slotNames__?: {
 		readonly _properties: 'properties';
 	};
@@ -3715,19 +3715,13 @@ export interface Object {
 						| (T.Pair | T.SpreadElement | T.MethodDefinition | T.ShorthandPropertyIdentifier)
 						| T.ShorthandPropertyIdentifier.Types
 				  )
-				| undefined
+				| null
 			)[],
 			false,
 			true
 		>;
 	};
-	readonly properties: () => readonly (
-		| Pair
-		| SpreadElement
-		| MethodDefinition
-		| ShorthandPropertyIdentifier
-		| undefined
-	)[];
+	readonly properties: () => readonly (Pair | SpreadElement | MethodDefinition | ShorthandPropertyIdentifier | null)[];
 }
 
 export interface ObjectPattern {
@@ -3737,7 +3731,7 @@ export interface ObjectPattern {
 		| RestPattern
 		| ObjectAssignmentPattern
 		| ShorthandPropertyIdentifierPattern
-		| undefined
+		| null
 	)[];
 	readonly __slotNames__?: {
 		readonly _properties: 'properties';
@@ -3749,7 +3743,7 @@ export interface ObjectPattern {
 						| (T.PairPattern | T.RestPattern | T.ObjectAssignmentPattern | T.ShorthandPropertyIdentifierPattern)
 						| T.ShorthandPropertyIdentifierPattern.Types
 				  )
-				| undefined
+				| null
 			)[],
 			false,
 			true
@@ -3760,7 +3754,7 @@ export interface ObjectPattern {
 		| RestPattern
 		| ObjectAssignmentPattern
 		| ShorthandPropertyIdentifierPattern
-		| undefined
+		| null
 	)[];
 }
 
@@ -3829,7 +3823,7 @@ export interface ObjectAssignmentPattern {
 
 export interface Array {
 	readonly $type: TSKindId.Array;
-	readonly _elements: readonly (Expression | SpreadElement | undefined)[];
+	readonly _elements: readonly (Expression | SpreadElement | null)[];
 	readonly __slotNames__?: {
 		readonly _elements: 'elements';
 	};
@@ -3849,21 +3843,21 @@ export interface Array {
 		)[];
 	};
 	readonly __slotHints__?: {
-		readonly elements: SlotHint<((T.Expression | T.SpreadElement) | undefined)[], false, true>;
+		readonly elements: SlotHint<((T.Expression | T.SpreadElement) | null)[], false, true>;
 	};
-	readonly elements: () => readonly (Expression | SpreadElement | undefined)[];
+	readonly elements: () => readonly (Expression | SpreadElement | null)[];
 }
 
 export interface ArrayPattern {
 	readonly $type: TSKindId.ArrayPattern;
-	readonly _elements: readonly (Pattern | AssignmentPattern | undefined)[];
+	readonly _elements: readonly (Pattern | AssignmentPattern | null)[];
 	readonly __slotNames__?: {
 		readonly _elements: 'elements';
 	};
 	readonly __slotHints__?: {
-		readonly elements: SlotHint<((T.Pattern | T.AssignmentPattern) | undefined)[], false, true>;
+		readonly elements: SlotHint<((T.Pattern | T.AssignmentPattern) | null)[], false, true>;
 	};
-	readonly elements: () => readonly (Pattern | AssignmentPattern | undefined)[];
+	readonly elements: () => readonly (Pattern | AssignmentPattern | null)[];
 }
 
 export interface NestedIdentifier {
@@ -3932,7 +3926,7 @@ export interface ClassDeclaration {
 	readonly _type_parameters?: TypeParameters;
 	readonly _heritage?: ClassHeritage;
 	readonly _body: ClassBody;
-	readonly _terminator?: number;
+	readonly _terminator?: TSKindId.AutomaticSemicolon | 0;
 	readonly __slotNames__?: {
 		readonly _decorator: 'decorators';
 		readonly _name: 'name';
@@ -4038,7 +4032,7 @@ export interface FunctionDeclaration {
 	readonly _parameters: FormalParameters;
 	readonly _return_type?: TypeAnnotation | AssertsAnnotation | TypePredicateAnnotation;
 	readonly _body: StatementBlock;
-	readonly _terminator?: number;
+	readonly _terminator?: TSKindId.AutomaticSemicolon | 0;
 	readonly __slotNames__?: {
 		readonly _async: 'async';
 		readonly _name: 'name';
@@ -4135,7 +4129,7 @@ export interface GeneratorFunctionDeclaration {
 	readonly _parameters: FormalParameters;
 	readonly _return_type?: TypeAnnotation | AssertsAnnotation | TypePredicateAnnotation;
 	readonly _body: StatementBlock;
-	readonly _terminator?: number;
+	readonly _terminator?: TSKindId.AutomaticSemicolon | 0;
 	readonly __slotNames__?: {
 		readonly _async: 'async';
 		readonly _name: 'name';
@@ -4284,7 +4278,7 @@ export interface AwaitExpression {
 export interface MemberExpression {
 	readonly $type: TSKindId.MemberExpression;
 	readonly _object: Expression | PrimaryExpression | TSKindId.Import;
-	readonly _operator: number;
+	readonly _operator: TSKindId.Dot | TSKindId.OptionalChain | TSKindId.QmarkDot;
 	readonly _property: PrivatePropertyIdentifier | PropertyIdentifier;
 	readonly __slotNames__?: {
 		readonly _object: 'object';
@@ -4314,7 +4308,7 @@ export interface MemberExpression {
 		readonly property: SlotHint<T.PrivatePropertyIdentifier | T.PropertyIdentifier | T.PropertyIdentifier.Types>;
 	};
 	readonly object: () => Expression | PrimaryExpression | TSKindId.Import;
-	readonly operator: () => number;
+	readonly operator: () => TSKindId.Dot | TSKindId.OptionalChain | TSKindId.QmarkDot;
 	readonly property: () => PrivatePropertyIdentifier | PropertyIdentifier;
 }
 
@@ -4448,7 +4442,22 @@ export interface AssignmentExpression {
 export interface AugmentedAssignmentExpression {
 	readonly $type: TSKindId.AugmentedAssignmentExpression;
 	readonly _left: MemberExpression | SubscriptExpression | Identifier | ParenthesizedExpression | NonNullExpression;
-	readonly _operator: number;
+	readonly _operator:
+		| TSKindId.PlusEq
+		| TSKindId.DashEq
+		| TSKindId.StarEq
+		| TSKindId.SlashEq
+		| TSKindId.PercentEq
+		| TSKindId.CaretEq
+		| TSKindId.AmpEq
+		| TSKindId.PipeEq
+		| TSKindId.GtGtEq
+		| TSKindId.GtGtGtEq
+		| TSKindId.LtLtEq
+		| TSKindId.StarStarEq
+		| TSKindId.AmpAmpEq
+		| TSKindId.PipePipeEq
+		| TSKindId.QmarkQmarkEq;
 	readonly _right: Expression;
 	readonly __slotNames__?: {
 		readonly _left: 'left';
@@ -4499,7 +4508,22 @@ export interface AugmentedAssignmentExpression {
 		| Identifier
 		| ParenthesizedExpression
 		| NonNullExpression;
-	readonly operator: () => number;
+	readonly operator: () =>
+		| TSKindId.PlusEq
+		| TSKindId.DashEq
+		| TSKindId.StarEq
+		| TSKindId.SlashEq
+		| TSKindId.PercentEq
+		| TSKindId.CaretEq
+		| TSKindId.AmpEq
+		| TSKindId.PipeEq
+		| TSKindId.GtGtEq
+		| TSKindId.GtGtGtEq
+		| TSKindId.LtLtEq
+		| TSKindId.StarStarEq
+		| TSKindId.AmpAmpEq
+		| TSKindId.PipePipeEq
+		| TSKindId.QmarkQmarkEq;
 	readonly right: () => Expression;
 }
 
@@ -4586,7 +4610,31 @@ export interface TernaryExpression {
 export interface BinaryExpression {
 	readonly $type: TSKindId.BinaryExpression;
 	readonly _left?: Expression;
-	readonly _operator?: number;
+	readonly _operator?:
+		| TSKindId.AmpAmp
+		| TSKindId.PipePipe
+		| TSKindId.GtGt
+		| TSKindId.GtGtGt
+		| TSKindId.LtLt
+		| TSKindId.Amp
+		| TSKindId.Caret
+		| TSKindId.Pipe
+		| TSKindId.Plus
+		| TSKindId.Dash
+		| TSKindId.Star
+		| TSKindId.Slash
+		| TSKindId.Percent
+		| TSKindId.StarStar
+		| TSKindId.Lt
+		| TSKindId.LtEq
+		| TSKindId.EqEq
+		| TSKindId.EqEqEq
+		| TSKindId.BangEq
+		| TSKindId.BangEqEq
+		| TSKindId.GtEq
+		| TSKindId.Gt
+		| TSKindId.QmarkQmark
+		| TSKindId.InstanceofKeyword;
 	readonly _right?: Expression;
 	readonly _binary_expression_in?: BinaryExpressionIn;
 	readonly __slotNames__?: {
@@ -4676,14 +4724,46 @@ export interface BinaryExpression {
 		readonly binaryExpressionIn: SlotHint<T.BinaryExpressionIn, true>;
 	};
 	readonly left: () => Expression | undefined;
-	readonly operator: () => number | undefined;
+	readonly operator: () =>
+		| TSKindId.AmpAmp
+		| TSKindId.PipePipe
+		| TSKindId.GtGt
+		| TSKindId.GtGtGt
+		| TSKindId.LtLt
+		| TSKindId.Amp
+		| TSKindId.Caret
+		| TSKindId.Pipe
+		| TSKindId.Plus
+		| TSKindId.Dash
+		| TSKindId.Star
+		| TSKindId.Slash
+		| TSKindId.Percent
+		| TSKindId.StarStar
+		| TSKindId.Lt
+		| TSKindId.LtEq
+		| TSKindId.EqEq
+		| TSKindId.EqEqEq
+		| TSKindId.BangEq
+		| TSKindId.BangEqEq
+		| TSKindId.GtEq
+		| TSKindId.Gt
+		| TSKindId.QmarkQmark
+		| TSKindId.InstanceofKeyword
+		| undefined;
 	readonly right: () => Expression | undefined;
 	readonly binaryExpressionIn: () => BinaryExpressionIn | undefined;
 }
 
 export interface UnaryExpression {
 	readonly $type: TSKindId.UnaryExpression;
-	readonly _operator: number;
+	readonly _operator:
+		| TSKindId.Bang
+		| TSKindId.Tilde
+		| TSKindId.Dash
+		| TSKindId.Plus
+		| TSKindId.TypeofKeyword
+		| TSKindId.VoidKeyword
+		| TSKindId.DeleteKeyword;
 	readonly _argument: Expression;
 	readonly __slotNames__?: {
 		readonly _operator: 'operator';
@@ -4716,7 +4796,14 @@ export interface UnaryExpression {
 		readonly operator: SlotHint<NonNullable<T.UnaryExpression.Config>['operator']>;
 		readonly argument: SlotHint<NonNullable<T.UnaryExpression.Config>['argument']>;
 	};
-	readonly operator: () => number;
+	readonly operator: () =>
+		| TSKindId.Bang
+		| TSKindId.Tilde
+		| TSKindId.Dash
+		| TSKindId.Plus
+		| TSKindId.TypeofKeyword
+		| TSKindId.VoidKeyword
+		| TSKindId.DeleteKeyword;
 	readonly argument: () => Expression;
 }
 
@@ -4826,7 +4913,7 @@ export interface PrivatePropertyIdentifier {
 
 export interface Arguments {
 	readonly $type: TSKindId.Arguments;
-	readonly _elements: readonly (Expression | SpreadElement | undefined)[];
+	readonly _elements: readonly (Expression | SpreadElement | null)[];
 	readonly __slotNames__?: {
 		readonly _elements: 'elements';
 	};
@@ -4846,9 +4933,9 @@ export interface Arguments {
 		)[];
 	};
 	readonly __slotHints__?: {
-		readonly elements: SlotHint<((T.Expression | T.SpreadElement) | undefined)[], false, true>;
+		readonly elements: SlotHint<((T.Expression | T.SpreadElement) | null)[], false, true>;
 	};
-	readonly elements: () => readonly (Expression | SpreadElement | undefined)[];
+	readonly elements: () => readonly (Expression | SpreadElement | null)[];
 }
 
 export interface Decorator {
@@ -4954,7 +5041,7 @@ export interface FormalParameters {
 
 export interface ClassStaticBlock {
 	readonly $type: TSKindId.ClassStaticBlock;
-	readonly _terminator?: number;
+	readonly _terminator?: TSKindId.AutomaticSemicolon | 0;
 	readonly _body: StatementBlock;
 	readonly __slotNames__?: {
 		readonly _terminator: 'terminator';
@@ -5139,7 +5226,7 @@ export interface FunctionSignature {
 	readonly _type_parameters?: TypeParameters;
 	readonly _parameters: FormalParameters;
 	readonly _return_type?: TypeAnnotation | AssertsAnnotation | TypePredicateAnnotation;
-	readonly _terminator: number;
+	readonly _terminator: TSKindId.AutomaticSemicolon | TSKindId.Semi | TSKindId.FunctionSignatureAutomaticSemicolon;
 	readonly __slotNames__?: {
 		readonly _async: 'async';
 		readonly _name: 'name';
@@ -5178,7 +5265,7 @@ export interface FunctionSignature {
 	readonly typeParameters: () => TypeParameters | undefined;
 	readonly parameters: () => FormalParameters;
 	readonly returnType: () => TypeAnnotation | AssertsAnnotation | TypePredicateAnnotation | undefined;
-	readonly terminator: () => number;
+	readonly terminator: () => TSKindId.AutomaticSemicolon | TSKindId.Semi | TSKindId.FunctionSignatureAutomaticSemicolon;
 }
 
 export interface DecoratorParenthesizedExpression {
@@ -5349,14 +5436,14 @@ export interface SatisfiesExpression {
 
 export interface InstantiationExpression {
 	readonly $type: TSKindId.InstantiationExpression;
-	readonly _expression: Expression;
+	readonly _function: Expression;
 	readonly _type_arguments: TypeArguments;
 	readonly __slotNames__?: {
-		readonly _expression: 'expression';
+		readonly _function: 'function';
 		readonly _type_arguments: 'typeArguments';
 	};
 	readonly __inputHints__?: {
-		readonly expression:
+		readonly function:
 			| KindEnum<
 					'undefined' | 'this' | 'super' | 'true' | 'false' | 'null',
 					| TSKindId.Undefined
@@ -5372,7 +5459,7 @@ export interface InstantiationExpression {
 		readonly type_arguments: readonly Type[];
 	};
 	readonly __slotHints__?: {
-		readonly expression: SlotHint<NonNullable<T.InstantiationExpression.Config>['expression']>;
+		readonly function: SlotHint<NonNullable<T.InstantiationExpression.Config>['function']>;
 		readonly typeArguments: SlotHint<T.TypeArguments>;
 		readonly $listSlots: {
 			readonly typeArguments: ListSlotHint<
@@ -5381,7 +5468,7 @@ export interface InstantiationExpression {
 			>;
 		};
 	};
-	readonly expression: () => Expression;
+	readonly function: () => Expression;
 	readonly typeArguments: () => TypeArguments;
 }
 
@@ -5588,7 +5675,7 @@ export interface ImportAlias {
 	readonly $type: TSKindId.ImportAlias;
 	readonly _name: Identifier;
 	readonly _value: Identifier | NestedIdentifier;
-	readonly _terminator: number;
+	readonly _terminator: TSKindId.AutomaticSemicolon | TSKindId.Semi;
 	readonly __slotNames__?: {
 		readonly _name: 'name';
 		readonly _value: 'value';
@@ -5604,7 +5691,7 @@ export interface ImportAlias {
 	};
 	readonly name: () => Identifier;
 	readonly value: () => Identifier | NestedIdentifier;
-	readonly terminator: () => number;
+	readonly terminator: () => TSKindId.AutomaticSemicolon | TSKindId.Semi;
 }
 
 export interface NestedTypeIdentifier {
@@ -5766,7 +5853,7 @@ export interface TypeAliasDeclaration {
 	readonly _name: TypeIdentifier;
 	readonly _type_parameters?: TypeParameters;
 	readonly _value: Type;
-	readonly _terminator: number;
+	readonly _terminator: TSKindId.AutomaticSemicolon | TSKindId.Semi;
 	readonly __slotNames__?: {
 		readonly _name: 'name';
 		readonly _type_parameters: 'typeParameters';
@@ -5823,13 +5910,13 @@ export interface TypeAliasDeclaration {
 	readonly name: () => TypeIdentifier;
 	readonly typeParameters: () => TypeParameters | undefined;
 	readonly value: () => Type;
-	readonly terminator: () => number;
+	readonly terminator: () => TSKindId.AutomaticSemicolon | TSKindId.Semi;
 }
 
 export interface RequiredParameter {
 	readonly $type: TSKindId.RequiredParameter;
 	readonly _decorator: readonly Decorator[];
-	readonly _accessibility_modifier?: number;
+	readonly _accessibility_modifier?: TSKindId.PublicKeyword | TSKindId.PrivateKeyword | TSKindId.ProtectedKeyword;
 	readonly _override: boolean;
 	readonly _readonly: boolean;
 	readonly _name: Pattern;
@@ -5877,7 +5964,11 @@ export interface RequiredParameter {
 		readonly value: SlotHint<NonNullable<T.RequiredParameter.Config>['value'], true>;
 	};
 	readonly decorators: () => readonly Decorator[];
-	readonly accessibilityModifier: () => number | undefined;
+	readonly accessibilityModifier: () =>
+		| TSKindId.PublicKeyword
+		| TSKindId.PrivateKeyword
+		| TSKindId.ProtectedKeyword
+		| undefined;
 	readonly override: () => boolean;
 	readonly readonly: () => boolean;
 	readonly name: () => Pattern;
@@ -5888,7 +5979,7 @@ export interface RequiredParameter {
 export interface OptionalParameter {
 	readonly $type: TSKindId.OptionalParameter;
 	readonly _decorator: readonly Decorator[];
-	readonly _accessibility_modifier?: number;
+	readonly _accessibility_modifier?: TSKindId.PublicKeyword | TSKindId.PrivateKeyword | TSKindId.ProtectedKeyword;
 	readonly _override: boolean;
 	readonly _readonly: boolean;
 	readonly _name: Pattern | TSKindId.This;
@@ -5937,7 +6028,11 @@ export interface OptionalParameter {
 		readonly value: SlotHint<NonNullable<T.OptionalParameter.Config>['value'], true>;
 	};
 	readonly decorators: () => readonly Decorator[];
-	readonly accessibilityModifier: () => number | undefined;
+	readonly accessibilityModifier: () =>
+		| TSKindId.PublicKeyword
+		| TSKindId.PrivateKeyword
+		| TSKindId.ProtectedKeyword
+		| undefined;
 	readonly override: () => boolean;
 	readonly readonly: () => boolean;
 	readonly name: () => Pattern | TSKindId.This;
@@ -6766,7 +6861,7 @@ export interface TypeQueryMemberExpression {
 		| TypeQuerySubscriptExpression
 		| TypeQueryMemberExpression
 		| TypeQueryCallExpression;
-	readonly _operator: number;
+	readonly _operator: TSKindId.Dot | TSKindId.QmarkDot;
 	readonly _property: PrivatePropertyIdentifier | PropertyIdentifier;
 	readonly __slotNames__?: {
 		readonly _object: 'object';
@@ -6793,7 +6888,7 @@ export interface TypeQueryMemberExpression {
 		| TypeQuerySubscriptExpression
 		| TypeQueryMemberExpression
 		| TypeQueryCallExpression;
-	readonly operator: () => number;
+	readonly operator: () => TSKindId.Dot | TSKindId.QmarkDot;
 	readonly property: () => PrivatePropertyIdentifier | PropertyIdentifier;
 }
 
@@ -7345,9 +7440,9 @@ export interface TypeArguments {
 
 export interface ObjectType {
 	readonly $type: TSKindId.ObjectType;
-	readonly _opening: number;
+	readonly _opening: TSKindId.Lbrace | TSKindId.LbracePipe;
 	readonly _members?: ObjectTypeContent;
-	readonly _closing: number;
+	readonly _closing: TSKindId.Rbrace | TSKindId.PipeRbrace;
 	readonly __slotNames__?: {
 		readonly _opening: 'opening';
 		readonly _members: 'members';
@@ -7386,9 +7481,9 @@ export interface ObjectType {
 			>;
 		};
 	};
-	readonly opening: () => number;
+	readonly opening: () => TSKindId.Lbrace | TSKindId.LbracePipe;
 	readonly members: () => ObjectTypeContent | undefined;
-	readonly closing: () => number;
+	readonly closing: () => TSKindId.Rbrace | TSKindId.PipeRbrace;
 }
 
 export interface CallSignature {
@@ -7423,7 +7518,7 @@ export interface CallSignature {
 
 export interface PropertySignature {
 	readonly $type: TSKindId.PropertySignature;
-	readonly _accessibility_modifier?: number;
+	readonly _accessibility_modifier?: TSKindId.PublicKeyword | TSKindId.PrivateKeyword | TSKindId.ProtectedKeyword;
 	readonly _static: boolean;
 	readonly _override: boolean;
 	readonly _readonly: boolean;
@@ -7469,7 +7564,11 @@ export interface PropertySignature {
 		readonly optional: SlotHint<NonNullable<T.PropertySignature.Config>['optional'], true>;
 		readonly type: SlotHint<T.TypeAnnotation, true>;
 	};
-	readonly accessibilityModifier: () => number | undefined;
+	readonly accessibilityModifier: () =>
+		| TSKindId.PublicKeyword
+		| TSKindId.PrivateKeyword
+		| TSKindId.ProtectedKeyword
+		| undefined;
 	readonly static: () => boolean;
 	readonly override: () => boolean;
 	readonly readonly: () => boolean;
@@ -7579,7 +7678,7 @@ export interface DefaultType {
 
 export interface Constraint {
 	readonly $type: TSKindId.Constraint;
-	readonly _operator: number;
+	readonly _operator: TSKindId.ExtendsKeyword | TSKindId.Colon;
 	readonly _bounds: Type;
 	readonly __slotNames__?: {
 		readonly _operator: 'operator';
@@ -7620,7 +7719,7 @@ export interface Constraint {
 		readonly bounds: SlotHint<NonNullable<T.Type | T.TypeIdentifier.Types>>;
 		readonly operator: SlotHint<NonNullable<T.Constraint.Options>['operator']>;
 	};
-	readonly operator: () => number;
+	readonly operator: () => TSKindId.ExtendsKeyword | TSKindId.Colon;
 	readonly bounds: () => Type;
 }
 
@@ -8194,7 +8293,7 @@ export interface AmbientDeclarationModule {
 	readonly $type: TSKindId.AmbientDeclarationModule;
 	readonly _name: PropertyIdentifier;
 	readonly _type: Type;
-	readonly _terminator?: number;
+	readonly _terminator?: TSKindId.AutomaticSemicolon | TSKindId.Semi | 0;
 	readonly __slotNames__?: {
 		readonly _name: 'name';
 		readonly _type: 'type';
@@ -8290,7 +8389,7 @@ export interface ObjectTypeContent {
 export interface ExportStatementNamespaceExport {
 	readonly $type: TSKindId.ExportStatementNamespaceExport;
 	readonly _name: Identifier;
-	readonly _terminator: number;
+	readonly _terminator: TSKindId.AutomaticSemicolon | TSKindId.Semi;
 	readonly __slotNames__?: {
 		readonly _name: 'name';
 		readonly _terminator: 'terminator';
@@ -8303,13 +8402,13 @@ export interface ExportStatementNamespaceExport {
 		readonly terminator: SlotHint<NonNullable<T.ExportStatementNamespaceExport.Options>['terminator']>;
 	};
 	readonly name: () => Identifier;
-	readonly terminator: () => number;
+	readonly terminator: () => TSKindId.AutomaticSemicolon | TSKindId.Semi;
 }
 
 export interface ExportStatementEqualsExport {
 	readonly $type: TSKindId.ExportStatementEqualsExport;
 	readonly _value: Expression;
-	readonly _terminator: number;
+	readonly _terminator: TSKindId.AutomaticSemicolon | TSKindId.Semi;
 	readonly __slotNames__?: {
 		readonly _value: 'value';
 		readonly _terminator: 'terminator';
@@ -8333,7 +8432,7 @@ export interface ExportStatementEqualsExport {
 		readonly terminator: SlotHint<NonNullable<T.ExportStatementEqualsExport.Options>['terminator']>;
 	};
 	readonly value: () => Expression;
-	readonly terminator: () => number;
+	readonly terminator: () => TSKindId.AutomaticSemicolon | TSKindId.Semi;
 }
 
 export interface CommentLine {
@@ -8589,7 +8688,7 @@ export interface ClassBodyMemberMethod {
 	readonly $type: TSKindId.ClassBodyMemberMethod;
 	readonly _decorator: readonly Decorator[];
 	readonly _method_definition: MethodDefinitionClassBodyMemberMethod;
-	readonly _terminator?: number;
+	readonly _terminator?: TSKindId.AutomaticSemicolon | TSKindId.Semi | 0;
 	readonly __slotNames__?: {
 		readonly _decorator: 'decorators';
 		readonly _method_definition: 'methodDefinition';
@@ -8611,7 +8710,7 @@ export interface ClassBodyMemberMethod {
 export interface ClassBodyMemberMethodSig {
 	readonly $type: TSKindId.ClassBodyMemberMethodSig;
 	readonly _method_signature: MethodSignature;
-	readonly _terminator: number;
+	readonly _terminator: TSKindId.FunctionSignatureAutomaticSemicolon | TSKindId.Comma;
 	readonly __slotNames__?: {
 		readonly _method_signature: 'methodSignature';
 		readonly _terminator: 'terminator';
@@ -8624,13 +8723,13 @@ export interface ClassBodyMemberMethodSig {
 		readonly terminator: SlotHint<NonNullable<T.ClassBodyMemberMethodSig.Options>['terminator']>;
 	};
 	readonly methodSignature: () => MethodSignature;
-	readonly terminator: () => number;
+	readonly terminator: () => TSKindId.FunctionSignatureAutomaticSemicolon | TSKindId.Comma;
 }
 
 export interface ClassBodyMemberDeclaration {
 	readonly $type: TSKindId.ClassBodyMemberDeclaration;
 	readonly _member: AbstractMethodSignature | IndexSignature | MethodSignature | PublicFieldDefinition;
-	readonly _terminator: number;
+	readonly _terminator: TSKindId.AutomaticSemicolon | TSKindId.Semi | TSKindId.Comma;
 	readonly __slotNames__?: {
 		readonly _member: 'member';
 		readonly _terminator: 'terminator';
@@ -8645,12 +8744,12 @@ export interface ClassBodyMemberDeclaration {
 		readonly terminator: SlotHint<NonNullable<T.ClassBodyMemberDeclaration.Options>['terminator']>;
 	};
 	readonly member: () => AbstractMethodSignature | IndexSignature | MethodSignature | PublicFieldDefinition;
-	readonly terminator: () => number;
+	readonly terminator: () => TSKindId.AutomaticSemicolon | TSKindId.Semi | TSKindId.Comma;
 }
 
 export interface IndexSignatureColon {
 	readonly $type: TSKindId.IndexSignatureColon;
-	readonly _sign?: number;
+	readonly _sign?: TSKindId.Dash | TSKindId.Plus;
 	readonly _readonly: boolean;
 	readonly _name: Identifier;
 	readonly _index_type: Type;
@@ -8703,7 +8802,7 @@ export interface IndexSignatureColon {
 			T.TypeAnnotation | T.OmittingTypeAnnotation | T.AddingTypeAnnotation | T.OptingTypeAnnotation
 		>;
 	};
-	readonly sign: () => number | undefined;
+	readonly sign: () => TSKindId.Dash | TSKindId.Plus | undefined;
 	readonly readonly: () => boolean;
 	readonly name: () => Identifier;
 	readonly indexType: () => Type;
@@ -8712,7 +8811,7 @@ export interface IndexSignatureColon {
 
 export interface IndexSignatureMappedTypeClause {
 	readonly $type: TSKindId.IndexSignatureMappedTypeClause;
-	readonly _sign?: number;
+	readonly _sign?: TSKindId.Dash | TSKindId.Plus;
 	readonly _readonly: boolean;
 	readonly _mapped_type_clause: MappedTypeClause;
 	readonly _type: TypeAnnotation | OmittingTypeAnnotation | AddingTypeAnnotation | OptingTypeAnnotation;
@@ -8734,7 +8833,7 @@ export interface IndexSignatureMappedTypeClause {
 			T.TypeAnnotation | T.OmittingTypeAnnotation | T.AddingTypeAnnotation | T.OptingTypeAnnotation
 		>;
 	};
-	readonly sign: () => number | undefined;
+	readonly sign: () => TSKindId.Dash | TSKindId.Plus | undefined;
 	readonly readonly: () => boolean;
 	readonly mappedTypeClause: () => MappedTypeClause;
 	readonly type: () => TypeAnnotation | OmittingTypeAnnotation | AddingTypeAnnotation | OptingTypeAnnotation;
@@ -8786,7 +8885,7 @@ export interface YieldExpressionDelegate {
 
 export interface ImportSpecifierName {
 	readonly $type: TSKindId.ImportSpecifierName;
-	readonly _type_keyword?: number;
+	readonly _type_keyword?: TSKindId.TypeKeyword | TSKindId.TypeofKeyword;
 	readonly _name: Identifier;
 	readonly __slotNames__?: {
 		readonly _type_keyword: 'typeKeyword';
@@ -8799,13 +8898,13 @@ export interface ImportSpecifierName {
 		readonly typeKeyword: SlotHint<NonNullable<T.ImportSpecifierName.Config>['typeKeyword'], true>;
 		readonly name: SlotHint<T.Identifier>;
 	};
-	readonly typeKeyword: () => number | undefined;
+	readonly typeKeyword: () => TSKindId.TypeKeyword | TSKindId.TypeofKeyword | undefined;
 	readonly name: () => Identifier;
 }
 
 export interface ImportSpecifierAs {
 	readonly $type: TSKindId.ImportSpecifierAs;
-	readonly _type_keyword?: number;
+	readonly _type_keyword?: TSKindId.TypeKeyword | TSKindId.TypeofKeyword;
 	readonly _name: Identifier | String | TSKindId.DefaultKeyword;
 	readonly _alias: Identifier;
 	readonly __slotNames__?: {
@@ -8822,7 +8921,7 @@ export interface ImportSpecifierAs {
 		readonly name: SlotHint<NonNullable<T.ImportSpecifierAs.Config>['name']>;
 		readonly alias: SlotHint<T.Identifier>;
 	};
-	readonly typeKeyword: () => number | undefined;
+	readonly typeKeyword: () => TSKindId.TypeKeyword | TSKindId.TypeofKeyword | undefined;
 	readonly name: () => Identifier | String | TSKindId.DefaultKeyword;
 	readonly alias: () => Identifier;
 }
@@ -9022,7 +9121,7 @@ export interface StringSingle {
 export interface UpdateExpressionPostfix {
 	readonly $type: TSKindId.UpdateExpressionPostfix;
 	readonly _argument: Expression;
-	readonly _operator: number;
+	readonly _operator: TSKindId.PlusPlus | TSKindId.DashDash;
 	readonly __slotNames__?: {
 		readonly _argument: 'argument';
 		readonly _operator: 'operator';
@@ -9046,12 +9145,12 @@ export interface UpdateExpressionPostfix {
 		readonly operator: SlotHint<NonNullable<T.UpdateExpressionPostfix.Config>['operator']>;
 	};
 	readonly argument: () => Expression;
-	readonly operator: () => number;
+	readonly operator: () => TSKindId.PlusPlus | TSKindId.DashDash;
 }
 
 export interface UpdateExpressionPrefix {
 	readonly $type: TSKindId.UpdateExpressionPrefix;
-	readonly _operator: number;
+	readonly _operator: TSKindId.PlusPlus | TSKindId.DashDash;
 	readonly _argument: Expression;
 	readonly __slotNames__?: {
 		readonly _operator: 'operator';
@@ -9075,7 +9174,7 @@ export interface UpdateExpressionPrefix {
 		readonly operator: SlotHint<NonNullable<T.UpdateExpressionPrefix.Config>['operator']>;
 		readonly argument: SlotHint<NonNullable<T.UpdateExpressionPrefix.Config>['argument']>;
 	};
-	readonly operator: () => number;
+	readonly operator: () => TSKindId.PlusPlus | TSKindId.DashDash;
 	readonly argument: () => Expression;
 }
 
@@ -9137,7 +9236,7 @@ export interface ExportStatementDefaultFrom {
 		| ExportStatementDefaultFromStarFrom
 		| ExportStatementDefaultFromNsFrom
 		| ExportStatementDefaultFromClauseFrom;
-	readonly _terminator: number;
+	readonly _terminator: TSKindId.AutomaticSemicolon | TSKindId.Semi;
 	readonly __slotNames__?: {
 		readonly _type_only: 'typeOnly';
 		readonly _content: 'content';
@@ -9159,7 +9258,7 @@ export interface ExportStatementDefaultFrom {
 		| ExportStatementDefaultFromStarFrom
 		| ExportStatementDefaultFromNsFrom
 		| ExportStatementDefaultFromClauseFrom;
-	readonly terminator: () => number;
+	readonly terminator: () => TSKindId.AutomaticSemicolon | TSKindId.Semi;
 }
 
 export interface ExportStatementDefaultDeclaration {
@@ -9249,7 +9348,7 @@ export interface ExportStatementDefaultDeclarationDefaultKw {
 export interface ExportStatementDefaultDeclarationDefaultKwValue {
 	readonly $type: TSKindId.ExportStatementDefaultDeclarationDefaultKwValue;
 	readonly _value: Expression;
-	readonly _automatic_semicolon: number;
+	readonly _automatic_semicolon: TSKindId.AutomaticSemicolon | TSKindId.Semi;
 	readonly __slotNames__?: {
 		readonly _value: 'value';
 		readonly _automatic_semicolon: 'automaticSemicolon';
@@ -9275,7 +9374,7 @@ export interface ExportStatementDefaultDeclarationDefaultKwValue {
 		>;
 	};
 	readonly value: () => Expression;
-	readonly automaticSemicolon: () => number;
+	readonly automaticSemicolon: () => TSKindId.AutomaticSemicolon | TSKindId.Semi;
 }
 
 export interface VariableDeclaratorPlain {
@@ -9336,7 +9435,7 @@ export interface VariableDeclaratorDefinite {
 export interface ForHeaderLhs {
 	readonly $type: TSKindId.ForHeaderLhs;
 	readonly _left: LhsExpression | ParenthesizedExpression;
-	readonly _operator: number;
+	readonly _operator: TSKindId.InKeyword | TSKindId.OfKeyword;
 	readonly _right: Expression | SequenceExpression;
 	readonly __slotNames__?: {
 		readonly _left: 'left';
@@ -9364,7 +9463,7 @@ export interface ForHeaderLhs {
 		readonly right: SlotHint<NonNullable<T.ForHeaderLhs.Config>['right']>;
 	};
 	readonly left: () => LhsExpression | ParenthesizedExpression;
-	readonly operator: () => number;
+	readonly operator: () => TSKindId.InKeyword | TSKindId.OfKeyword;
 	readonly right: () => Expression | SequenceExpression;
 }
 
@@ -9372,7 +9471,7 @@ export interface ForHeaderVarKind {
 	readonly $type: TSKindId.ForHeaderVarKind;
 	readonly _left: Identifier | ObjectPattern | ArrayPattern;
 	readonly _value?: Expression;
-	readonly _operator: number;
+	readonly _operator: TSKindId.InKeyword | TSKindId.OfKeyword;
 	readonly _right: Expression | SequenceExpression;
 	readonly __slotNames__?: {
 		readonly _left: 'left';
@@ -9414,16 +9513,16 @@ export interface ForHeaderVarKind {
 	};
 	readonly left: () => Identifier | ObjectPattern | ArrayPattern;
 	readonly value: () => Expression | undefined;
-	readonly operator: () => number;
+	readonly operator: () => TSKindId.InKeyword | TSKindId.OfKeyword;
 	readonly right: () => Expression | SequenceExpression;
 }
 
 export interface ForHeaderLetConstKind {
 	readonly $type: TSKindId.ForHeaderLetConstKind;
-	readonly _kind: number;
+	readonly _kind: TSKindId.LetKeyword | TSKindId.ConstKeyword;
 	readonly _left: Identifier | ObjectPattern | ArrayPattern;
-	readonly _terminator?: number;
-	readonly _operator: number;
+	readonly _terminator?: TSKindId.AutomaticSemicolon | 0;
+	readonly _operator: TSKindId.InKeyword | TSKindId.OfKeyword;
 	readonly _right: Expression | SequenceExpression;
 	readonly __slotNames__?: {
 		readonly _kind: 'kind';
@@ -9456,19 +9555,19 @@ export interface ForHeaderLetConstKind {
 		readonly right: SlotHint<NonNullable<T.ForHeaderLetConstKind.Config>['right']>;
 		readonly terminator: SlotHint<NonNullable<T.ForHeaderLetConstKind.Options>['terminator'], true>;
 	};
-	readonly kind: () => number;
+	readonly kind: () => TSKindId.LetKeyword | TSKindId.ConstKeyword;
 	readonly left: () => Identifier | ObjectPattern | ArrayPattern;
 	readonly terminator: () => NonNullable<T.ForHeaderLetConstKind.Options>['terminator'] | undefined;
-	readonly operator: () => number;
+	readonly operator: () => TSKindId.InKeyword | TSKindId.OfKeyword;
 	readonly right: () => Expression | SequenceExpression;
 }
 
 export interface ForHeaderUsingKind {
 	readonly $type: TSKindId.ForHeaderUsingKind;
-	readonly _kind: number;
+	readonly _kind: TSKindId.UsingKeyword | TSKindId.UsingDeclarationArm;
 	readonly _left: Identifier | ObjectPattern | ArrayPattern;
-	readonly _terminator?: number;
-	readonly _operator: number;
+	readonly _terminator?: TSKindId.AutomaticSemicolon | 0;
+	readonly _operator: TSKindId.InKeyword | TSKindId.OfKeyword;
 	readonly _right: Expression | SequenceExpression;
 	readonly __slotNames__?: {
 		readonly _kind: 'kind';
@@ -9501,10 +9600,10 @@ export interface ForHeaderUsingKind {
 		readonly right: SlotHint<NonNullable<T.ForHeaderUsingKind.Config>['right']>;
 		readonly terminator: SlotHint<NonNullable<T.ForHeaderUsingKind.Options>['terminator'], true>;
 	};
-	readonly kind: () => number;
+	readonly kind: () => TSKindId.UsingKeyword | TSKindId.UsingDeclarationArm;
 	readonly left: () => Identifier | ObjectPattern | ArrayPattern;
 	readonly terminator: () => NonNullable<T.ForHeaderUsingKind.Options>['terminator'] | undefined;
-	readonly operator: () => number;
+	readonly operator: () => TSKindId.InKeyword | TSKindId.OfKeyword;
 	readonly right: () => Expression | SequenceExpression;
 }
 
@@ -9538,7 +9637,7 @@ export interface FormalParametersElementsSetAccessorSignature {
 export interface SetterParameter {
 	readonly $type: TSKindId.SetterParameter;
 	readonly _decorator: readonly Decorator[];
-	readonly _accessibility_modifier?: number;
+	readonly _accessibility_modifier?: TSKindId.PublicKeyword | TSKindId.PrivateKeyword | TSKindId.ProtectedKeyword;
 	readonly _override: boolean;
 	readonly _readonly: boolean;
 	readonly _pattern: LhsExpression | TSKindId.This;
@@ -9573,7 +9672,11 @@ export interface SetterParameter {
 		readonly type: SlotHint<T.TypeAnnotation, true>;
 	};
 	readonly decorators: () => readonly Decorator[];
-	readonly accessibilityModifier: () => number | undefined;
+	readonly accessibilityModifier: () =>
+		| TSKindId.PublicKeyword
+		| TSKindId.PrivateKeyword
+		| TSKindId.ProtectedKeyword
+		| undefined;
 	readonly override: () => boolean;
 	readonly readonly: () => boolean;
 	readonly pattern: () => LhsExpression | TSKindId.This;
@@ -9582,7 +9685,7 @@ export interface SetterParameter {
 
 export interface MethodDefinitionPlain {
 	readonly $type: TSKindId.MethodDefinitionPlain;
-	readonly _accessibility_modifier?: number;
+	readonly _accessibility_modifier?: TSKindId.PublicKeyword | TSKindId.PrivateKeyword | TSKindId.ProtectedKeyword;
 	readonly _static: boolean;
 	readonly _override: boolean;
 	readonly _readonly: boolean;
@@ -9656,7 +9759,11 @@ export interface MethodDefinitionPlain {
 			>;
 		};
 	};
-	readonly accessibilityModifier: () => number | undefined;
+	readonly accessibilityModifier: () =>
+		| TSKindId.PublicKeyword
+		| TSKindId.PrivateKeyword
+		| TSKindId.ProtectedKeyword
+		| undefined;
 	readonly static: () => boolean;
 	readonly override: () => boolean;
 	readonly readonly: () => boolean;
@@ -9672,7 +9779,7 @@ export interface MethodDefinitionPlain {
 
 export interface MethodDefinitionGetter {
 	readonly $type: TSKindId.MethodDefinitionGetter;
-	readonly _accessibility_modifier?: number;
+	readonly _accessibility_modifier?: TSKindId.PublicKeyword | TSKindId.PrivateKeyword | TSKindId.ProtectedKeyword;
 	readonly _static: boolean;
 	readonly _override: boolean;
 	readonly _name: PropertyIdentifier | PrivatePropertyIdentifier | String | Number | ComputedPropertyName;
@@ -9716,7 +9823,11 @@ export interface MethodDefinitionGetter {
 		readonly type: SlotHint<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation, true>;
 		readonly body: SlotHint<T.StatementBlock>;
 	};
-	readonly accessibilityModifier: () => number | undefined;
+	readonly accessibilityModifier: () =>
+		| TSKindId.PublicKeyword
+		| TSKindId.PrivateKeyword
+		| TSKindId.ProtectedKeyword
+		| undefined;
 	readonly static: () => boolean;
 	readonly override: () => boolean;
 	readonly name: () => PropertyIdentifier | PrivatePropertyIdentifier | String | Number | ComputedPropertyName;
@@ -9726,7 +9837,7 @@ export interface MethodDefinitionGetter {
 
 export interface MethodDefinitionSetter {
 	readonly $type: TSKindId.MethodDefinitionSetter;
-	readonly _accessibility_modifier?: number;
+	readonly _accessibility_modifier?: TSKindId.PublicKeyword | TSKindId.PrivateKeyword | TSKindId.ProtectedKeyword;
 	readonly _static: boolean;
 	readonly _override: boolean;
 	readonly _name: PropertyIdentifier | PrivatePropertyIdentifier | String | Number | ComputedPropertyName;
@@ -9771,7 +9882,11 @@ export interface MethodDefinitionSetter {
 		readonly parameters: SlotHint<T.FormalParametersSetAccessorSignature>;
 		readonly body: SlotHint<T.StatementBlock>;
 	};
-	readonly accessibilityModifier: () => number | undefined;
+	readonly accessibilityModifier: () =>
+		| TSKindId.PublicKeyword
+		| TSKindId.PrivateKeyword
+		| TSKindId.ProtectedKeyword
+		| undefined;
 	readonly static: () => boolean;
 	readonly override: () => boolean;
 	readonly name: () => PropertyIdentifier | PrivatePropertyIdentifier | String | Number | ComputedPropertyName;
@@ -9781,7 +9896,7 @@ export interface MethodDefinitionSetter {
 
 export interface MethodSignaturePlain {
 	readonly $type: TSKindId.MethodSignaturePlain;
-	readonly _accessibility_modifier?: number;
+	readonly _accessibility_modifier?: TSKindId.PublicKeyword | TSKindId.PrivateKeyword | TSKindId.ProtectedKeyword;
 	readonly _static: boolean;
 	readonly _override: boolean;
 	readonly _readonly: boolean;
@@ -9848,7 +9963,11 @@ export interface MethodSignaturePlain {
 			>;
 		};
 	};
-	readonly accessibilityModifier: () => number | undefined;
+	readonly accessibilityModifier: () =>
+		| TSKindId.PublicKeyword
+		| TSKindId.PrivateKeyword
+		| TSKindId.ProtectedKeyword
+		| undefined;
 	readonly static: () => boolean;
 	readonly override: () => boolean;
 	readonly readonly: () => boolean;
@@ -9863,7 +9982,7 @@ export interface MethodSignaturePlain {
 
 export interface MethodSignatureGetter {
 	readonly $type: TSKindId.MethodSignatureGetter;
-	readonly _accessibility_modifier?: number;
+	readonly _accessibility_modifier?: TSKindId.PublicKeyword | TSKindId.PrivateKeyword | TSKindId.ProtectedKeyword;
 	readonly _static: boolean;
 	readonly _override: boolean;
 	readonly _name: PropertyIdentifier | PrivatePropertyIdentifier | String | Number | ComputedPropertyName;
@@ -9903,7 +10022,11 @@ export interface MethodSignatureGetter {
 		>;
 		readonly type: SlotHint<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation, true>;
 	};
-	readonly accessibilityModifier: () => number | undefined;
+	readonly accessibilityModifier: () =>
+		| TSKindId.PublicKeyword
+		| TSKindId.PrivateKeyword
+		| TSKindId.ProtectedKeyword
+		| undefined;
 	readonly static: () => boolean;
 	readonly override: () => boolean;
 	readonly name: () => PropertyIdentifier | PrivatePropertyIdentifier | String | Number | ComputedPropertyName;
@@ -9912,7 +10035,7 @@ export interface MethodSignatureGetter {
 
 export interface MethodSignatureSetter {
 	readonly $type: TSKindId.MethodSignatureSetter;
-	readonly _accessibility_modifier?: number;
+	readonly _accessibility_modifier?: TSKindId.PublicKeyword | TSKindId.PrivateKeyword | TSKindId.ProtectedKeyword;
 	readonly _static: boolean;
 	readonly _override: boolean;
 	readonly _name: PropertyIdentifier | PrivatePropertyIdentifier | String | Number | ComputedPropertyName;
@@ -9953,7 +10076,11 @@ export interface MethodSignatureSetter {
 		>;
 		readonly parameters: SlotHint<T.FormalParametersSetAccessorSignature>;
 	};
-	readonly accessibilityModifier: () => number | undefined;
+	readonly accessibilityModifier: () =>
+		| TSKindId.PublicKeyword
+		| TSKindId.PrivateKeyword
+		| TSKindId.ProtectedKeyword
+		| undefined;
 	readonly static: () => boolean;
 	readonly override: () => boolean;
 	readonly name: () => PropertyIdentifier | PrivatePropertyIdentifier | String | Number | ComputedPropertyName;
@@ -9962,7 +10089,7 @@ export interface MethodSignatureSetter {
 
 export interface AbstractMethodSignaturePlain {
 	readonly $type: TSKindId.AbstractMethodSignaturePlain;
-	readonly _accessibility_modifier?: number;
+	readonly _accessibility_modifier?: TSKindId.PublicKeyword | TSKindId.PrivateKeyword | TSKindId.ProtectedKeyword;
 	readonly _override: boolean;
 	readonly _generator: boolean;
 	readonly _name: PropertyIdentifier | PrivatePropertyIdentifier | String | Number | ComputedPropertyName;
@@ -10020,7 +10147,11 @@ export interface AbstractMethodSignaturePlain {
 			>;
 		};
 	};
-	readonly accessibilityModifier: () => number | undefined;
+	readonly accessibilityModifier: () =>
+		| TSKindId.PublicKeyword
+		| TSKindId.PrivateKeyword
+		| TSKindId.ProtectedKeyword
+		| undefined;
 	readonly override: () => boolean;
 	readonly generator: () => boolean;
 	readonly name: () => PropertyIdentifier | PrivatePropertyIdentifier | String | Number | ComputedPropertyName;
@@ -10032,7 +10163,7 @@ export interface AbstractMethodSignaturePlain {
 
 export interface AbstractMethodSignatureGetter {
 	readonly $type: TSKindId.AbstractMethodSignatureGetter;
-	readonly _accessibility_modifier?: number;
+	readonly _accessibility_modifier?: TSKindId.PublicKeyword | TSKindId.PrivateKeyword | TSKindId.ProtectedKeyword;
 	readonly _override: boolean;
 	readonly _name: PropertyIdentifier | PrivatePropertyIdentifier | String | Number | ComputedPropertyName;
 	readonly _type?: TypeAnnotation | AssertsAnnotation | TypePredicateAnnotation;
@@ -10068,7 +10199,11 @@ export interface AbstractMethodSignatureGetter {
 		>;
 		readonly type: SlotHint<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation, true>;
 	};
-	readonly accessibilityModifier: () => number | undefined;
+	readonly accessibilityModifier: () =>
+		| TSKindId.PublicKeyword
+		| TSKindId.PrivateKeyword
+		| TSKindId.ProtectedKeyword
+		| undefined;
 	readonly override: () => boolean;
 	readonly name: () => PropertyIdentifier | PrivatePropertyIdentifier | String | Number | ComputedPropertyName;
 	readonly type: () => TypeAnnotation | AssertsAnnotation | TypePredicateAnnotation | undefined;
@@ -10076,7 +10211,7 @@ export interface AbstractMethodSignatureGetter {
 
 export interface AbstractMethodSignatureSetter {
 	readonly $type: TSKindId.AbstractMethodSignatureSetter;
-	readonly _accessibility_modifier?: number;
+	readonly _accessibility_modifier?: TSKindId.PublicKeyword | TSKindId.PrivateKeyword | TSKindId.ProtectedKeyword;
 	readonly _override: boolean;
 	readonly _name: PropertyIdentifier | PrivatePropertyIdentifier | String | Number | ComputedPropertyName;
 	readonly _parameters: FormalParametersSetAccessorSignature;
@@ -10113,7 +10248,11 @@ export interface AbstractMethodSignatureSetter {
 		>;
 		readonly parameters: SlotHint<T.FormalParametersSetAccessorSignature>;
 	};
-	readonly accessibilityModifier: () => number | undefined;
+	readonly accessibilityModifier: () =>
+		| TSKindId.PublicKeyword
+		| TSKindId.PrivateKeyword
+		| TSKindId.ProtectedKeyword
+		| undefined;
 	readonly override: () => boolean;
 	readonly name: () => PropertyIdentifier | PrivatePropertyIdentifier | String | Number | ComputedPropertyName;
 	readonly parameters: () => FormalParametersSetAccessorSignature;
@@ -10123,13 +10262,13 @@ export interface PublicFieldDefinitionPlain {
 	readonly $type: TSKindId.PublicFieldDefinitionPlain;
 	readonly _decorator: readonly Decorator[];
 	readonly _declare: boolean;
-	readonly _accessibility_modifier?: number;
+	readonly _accessibility_modifier?: TSKindId.PublicKeyword | TSKindId.PrivateKeyword | TSKindId.ProtectedKeyword;
 	readonly _static: boolean;
 	readonly _override: boolean;
 	readonly _readonly: boolean;
 	readonly _abstract: boolean;
 	readonly _name: PropertyIdentifier | PrivatePropertyIdentifier | String | Number | ComputedPropertyName;
-	readonly _optionality?: number;
+	readonly _optionality?: TSKindId.Qmark | TSKindId.Bang;
 	readonly _type?: TypeAnnotation;
 	readonly _value?: Expression;
 	readonly __slotNames__?: {
@@ -10197,13 +10336,17 @@ export interface PublicFieldDefinitionPlain {
 	};
 	readonly decorators: () => readonly Decorator[];
 	readonly declare: () => boolean;
-	readonly accessibilityModifier: () => number | undefined;
+	readonly accessibilityModifier: () =>
+		| TSKindId.PublicKeyword
+		| TSKindId.PrivateKeyword
+		| TSKindId.ProtectedKeyword
+		| undefined;
 	readonly static: () => boolean;
 	readonly override: () => boolean;
 	readonly readonly: () => boolean;
 	readonly abstract: () => boolean;
 	readonly name: () => PropertyIdentifier | PrivatePropertyIdentifier | String | Number | ComputedPropertyName;
-	readonly optionality: () => number | undefined;
+	readonly optionality: () => TSKindId.Qmark | TSKindId.Bang | undefined;
 	readonly type: () => TypeAnnotation | undefined;
 	readonly value: () => Expression | undefined;
 }
@@ -10211,7 +10354,7 @@ export interface PublicFieldDefinitionPlain {
 export interface PublicFieldDefinitionAccessor {
 	readonly $type: TSKindId.PublicFieldDefinitionAccessor;
 	readonly _decorator: readonly Decorator[];
-	readonly _accessibility_modifier?: number;
+	readonly _accessibility_modifier?: TSKindId.PublicKeyword | TSKindId.PrivateKeyword | TSKindId.ProtectedKeyword;
 	readonly _static: boolean;
 	readonly _abstract: boolean;
 	readonly _override: boolean;
@@ -10273,7 +10416,11 @@ export interface PublicFieldDefinitionAccessor {
 		readonly value: SlotHint<NonNullable<T.PublicFieldDefinitionAccessor.Config>['value'], true>;
 	};
 	readonly decorators: () => readonly Decorator[];
-	readonly accessibilityModifier: () => number | undefined;
+	readonly accessibilityModifier: () =>
+		| TSKindId.PublicKeyword
+		| TSKindId.PrivateKeyword
+		| TSKindId.ProtectedKeyword
+		| undefined;
 	readonly static: () => boolean;
 	readonly abstract: () => boolean;
 	readonly override: () => boolean;
@@ -10284,7 +10431,7 @@ export interface PublicFieldDefinitionAccessor {
 
 export interface ConstructorDeclaration {
 	readonly $type: TSKindId.ConstructorDeclaration;
-	readonly _accessibility_modifier?: number;
+	readonly _accessibility_modifier?: TSKindId.PublicKeyword | TSKindId.PrivateKeyword | TSKindId.ProtectedKeyword;
 	readonly _parameters: FormalParameters;
 	readonly _body: StatementBlock;
 	readonly __slotNames__?: {
@@ -10310,7 +10457,11 @@ export interface ConstructorDeclaration {
 		readonly parameters: SlotHint<T.FormalParameters>;
 		readonly body: SlotHint<T.StatementBlock>;
 	};
-	readonly accessibilityModifier: () => number | undefined;
+	readonly accessibilityModifier: () =>
+		| TSKindId.PublicKeyword
+		| TSKindId.PrivateKeyword
+		| TSKindId.ProtectedKeyword
+		| undefined;
 	readonly parameters: () => FormalParameters;
 	readonly body: () => StatementBlock;
 }
@@ -10318,7 +10469,7 @@ export interface ConstructorDeclaration {
 export interface ReceiverParameterDeclaration {
 	readonly $type: TSKindId.ReceiverParameterDeclaration;
 	readonly _decorator: readonly Decorator[];
-	readonly _accessibility_modifier?: number;
+	readonly _accessibility_modifier?: TSKindId.PublicKeyword | TSKindId.PrivateKeyword | TSKindId.ProtectedKeyword;
 	readonly _override: boolean;
 	readonly _readonly: boolean;
 	readonly _type?: TypeAnnotation;
@@ -10366,7 +10517,11 @@ export interface ReceiverParameterDeclaration {
 		readonly value: SlotHint<NonNullable<T.ReceiverParameterDeclaration.Config>['value'], true>;
 	};
 	readonly decorators: () => readonly Decorator[];
-	readonly accessibilityModifier: () => number | undefined;
+	readonly accessibilityModifier: () =>
+		| TSKindId.PublicKeyword
+		| TSKindId.PrivateKeyword
+		| TSKindId.ProtectedKeyword
+		| undefined;
 	readonly override: () => boolean;
 	readonly readonly: () => boolean;
 	readonly type: () => TypeAnnotation | undefined;
@@ -10490,9 +10645,9 @@ export interface TypeIdentifier {
 
 export interface InterfaceBody {
 	readonly $type: TSKindId.InterfaceBody;
-	readonly _opening: number;
+	readonly _opening: TSKindId.Lbrace | TSKindId.LbracePipe;
 	readonly _members?: ObjectTypeContent;
-	readonly _closing: number;
+	readonly _closing: TSKindId.Rbrace | TSKindId.PipeRbrace;
 	readonly __slotNames__?: {
 		readonly _opening: 'opening';
 		readonly _members: 'members';
@@ -10531,9 +10686,9 @@ export interface InterfaceBody {
 			>;
 		};
 	};
-	readonly opening: () => number;
+	readonly opening: () => TSKindId.Lbrace | TSKindId.LbracePipe;
 	readonly members: () => ObjectTypeContent | undefined;
-	readonly closing: () => number;
+	readonly closing: () => TSKindId.Rbrace | TSKindId.PipeRbrace;
 }
 
 // Leaf node types

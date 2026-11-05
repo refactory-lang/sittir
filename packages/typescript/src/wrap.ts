@@ -117,8 +117,8 @@ export function wrapProgram(data: T.Program, tree: TreeHandle): T.Program.Parsed
 	const node = {
 		...data,
 		$type: TSKindId.Program as const,
-		hashBangLine() {
-			return hydrateSlot<T.HashBangLine | undefined>(this, '_hash_bang_line', tree);
+		shebang() {
+			return hydrateSlot<T.HashBangLine | undefined>(this, '_shebang', tree);
 		},
 		statements() {
 			return hydrateSlots<T.Statement>(this, '_statements', tree);
@@ -137,9 +137,9 @@ export function wrapProgram(data: T.Program, tree: TreeHandle): T.Program.Parsed
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		hashBangLine: (v: NonNullable<T.Program['_hash_bang_line']>) =>
+		shebang: (v: NonNullable<T.Program['_shebang']>) =>
 			rebuilt(node, handle, () =>
-				wrapProgram({ ...$edited(data), _hash_bang_line: admitSlot(handle, 'program', 'hashBangLine', v) }, tree)
+				wrapProgram({ ...$edited(data), _shebang: admitSlot(handle, 'program', 'shebang', v) }, tree)
 			),
 		statements: (...v: NonNullable<T.Program['_statements']>[number][]) =>
 			rebuilt(node, handle, () =>
@@ -4463,8 +4463,8 @@ export function wrapInstantiationExpression(
 	const node = {
 		...data,
 		$type: TSKindId.InstantiationExpression as const,
-		expression() {
-			return hydrateSlot<T.Expression>(this, '_expression', tree);
+		function() {
+			return hydrateSlot<T.Expression>(this, '_function', tree);
 		},
 		typeArguments() {
 			return hydrateSlot<T.TypeArguments>(this, '_type_arguments', tree);
@@ -4482,10 +4482,10 @@ export function wrapInstantiationExpression(
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		expression: (v: NonNullable<T.InstantiationExpression['_expression']>) =>
+		function: (v: NonNullable<T.InstantiationExpression['_function']>) =>
 			rebuilt(node, handle, () =>
 				wrapInstantiationExpression(
-					{ ...$edited(data), _expression: admitSlot(handle, 'instantiation_expression', 'expression', v) },
+					{ ...$edited(data), _function: admitSlot(handle, 'instantiation_expression', 'function', v) },
 					tree
 				)
 			),
@@ -13496,7 +13496,7 @@ export function wrapInterfaceBody(data: T.InterfaceBody, tree: TreeHandle): T.In
 	return node as unknown as T.InterfaceBody.Parsed;
 }
 
-function viewProgram$hashBangLine(this: RecordHandle) {
+function viewProgram$shebang(this: RecordHandle) {
 	return viewSlot<T.HashBangLine | undefined>(this, 2, 4, 8, 4, 2);
 }
 function viewProgram$statements(this: RecordHandle) {
@@ -13511,7 +13511,7 @@ function viewProgram(data: RecordPosition, tree: TreeHandle): T.Program.Parsed {
 		$cache: undefined as Record<number, unknown> | undefined,
 		$_layout: data.$_layout,
 		$errors: (data as { readonly $errors?: unknown }).$errors,
-		hashBangLine: viewProgram$hashBangLine,
+		shebang: viewProgram$shebang,
 		statements: viewProgram$statements,
 		$with: undefined as unknown as object,
 		$render: handleRender,
@@ -13523,7 +13523,7 @@ function viewProgram(data: RecordPosition, tree: TreeHandle): T.Program.Parsed {
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { hashBangLine: $with$hashBangLine, statements: $with$statements, [RECEIVER]: node };
+	node.$with = { shebang: $with$shebang, statements: $with$statements, [RECEIVER]: node };
 	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, inner: $trivia$inner, [RECEIVER]: node };
 	return node as unknown as T.Program.Parsed;
 }
@@ -16460,7 +16460,7 @@ function viewSatisfiesExpression(data: RecordPosition, tree: TreeHandle): T.Sati
 	return node as unknown as T.SatisfiesExpression.Parsed;
 }
 
-function viewInstantiationExpression$expression(this: RecordHandle) {
+function viewInstantiationExpression$function(this: RecordHandle) {
 	return viewSlot<T.Expression>(this, 2, 4, 3, 0, 2);
 }
 function viewInstantiationExpression$typeArguments(this: RecordHandle) {
@@ -16474,7 +16474,7 @@ function viewInstantiationExpression(data: RecordPosition, tree: TreeHandle): T.
 		$words: positionWords(data),
 		$cache: undefined as Record<number, unknown> | undefined,
 		$_layout: data.$_layout,
-		expression: viewInstantiationExpression$expression,
+		function: viewInstantiationExpression$function,
 		typeArguments: viewInstantiationExpression$typeArguments,
 		$with: undefined as unknown as object,
 		$render: handleRender,
@@ -16486,7 +16486,7 @@ function viewInstantiationExpression(data: RecordPosition, tree: TreeHandle): T.
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { expression: $with$expression, typeArguments: $with$typeArguments, [RECEIVER]: node };
+	node.$with = { function: $with$function, typeArguments: $with$typeArguments, [RECEIVER]: node };
 	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.InstantiationExpression.Parsed;
 }
@@ -22703,9 +22703,6 @@ function $with$generator(this: Received<RecordPosition>, ...args: unknown[]): un
 function $with$handlers(this: Received<RecordPosition>, ...args: unknown[]): unknown {
 	return rowWith(this[RECEIVER], _wrap, 'handlers', args);
 }
-function $with$hashBangLine(this: Received<RecordPosition>, ...args: unknown[]): unknown {
-	return rowWith(this[RECEIVER], _wrap, 'hashBangLine', args);
-}
 function $with$header(this: Received<RecordPosition>, ...args: unknown[]): unknown {
 	return rowWith(this[RECEIVER], _wrap, 'header', args);
 }
@@ -22852,6 +22849,9 @@ function $with$separator(this: Received<RecordPosition>, ...args: unknown[]): un
 }
 function $with$sequenceExpression(this: Received<RecordPosition>, ...args: unknown[]): unknown {
 	return rowWith(this[RECEIVER], _wrap, 'sequenceExpression', args);
+}
+function $with$shebang(this: Received<RecordPosition>, ...args: unknown[]): unknown {
+	return rowWith(this[RECEIVER], _wrap, 'shebang', args);
 }
 function $with$sign(this: Received<RecordPosition>, ...args: unknown[]): unknown {
 	return rowWith(this[RECEIVER], _wrap, 'sign', args);

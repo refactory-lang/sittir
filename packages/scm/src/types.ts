@@ -675,9 +675,9 @@ export interface NegatedField {
 
 export interface Predicate {
 	readonly $type: TSKindId.Predicate;
-	readonly _prefix: number;
+	readonly _prefix: TSKindId.Pound | TSKindId.Dot;
 	readonly _name: ImmediateIdentifier;
-	readonly _type: number;
+	readonly _type: TSKindId.Qmark | TSKindId.Bang;
 	readonly _parameters?: Parameters;
 	readonly __slotNames__?: {
 		readonly _prefix: 'prefix';
@@ -698,15 +698,15 @@ export interface Predicate {
 		readonly type: SlotHint<NonNullable<T.Predicate.Config>['type']>;
 		readonly parameters: SlotHint<T.Parameters, true>;
 	};
-	readonly prefix: () => number;
+	readonly prefix: () => TSKindId.Pound | TSKindId.Dot;
 	readonly name: () => ImmediateIdentifier;
-	readonly type: () => number;
+	readonly type: () => TSKindId.Qmark | TSKindId.Bang;
 	readonly parameters: () => Parameters | undefined;
 }
 
 export interface ListElementQuantifier {
 	readonly $type: TSKindId.ListElementQuantifier;
-	readonly _quantifier: number;
+	readonly _quantifier: TSKindId.Star | TSKindId.Plus | TSKindId.Qmark;
 	readonly __slotNames__?: {
 		readonly _quantifier: 'quantifier';
 	};
@@ -716,7 +716,7 @@ export interface ListElementQuantifier {
 	readonly __slotHints__?: {
 		readonly quantifier: SlotHint<NonNullable<TSKindId.Star | TSKindId.Plus | TSKindId.Qmark>>;
 	};
-	readonly quantifier: () => number;
+	readonly quantifier: () => TSKindId.Star | TSKindId.Plus | TSKindId.Qmark;
 }
 
 export interface GroupExpressionArm {

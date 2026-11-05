@@ -6,7 +6,7 @@ import { grammarPackageDir } from '@sittir/codegen/grammars';
 
 const CEILING: Readonly<Record<string, readonly string[]>> = {
 	python: [],
-	rust: ['impl_item_body.implements'],
+	rust: [],
 	typescript: []
 };
 

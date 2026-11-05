@@ -133,10 +133,6 @@ jobs:
             host: macos-14
             cross: false
             buildFlag: ""
-          - target: x86_64-apple-darwin
-            host: macos-13
-            cross: false
-            buildFlag: ""
           - target: x86_64-unknown-linux-gnu
             host: ubuntu-22.04
             cross: false
@@ -192,19 +188,21 @@ jobs:
       # `shell: bash` is required here: this `for` loop is bash syntax, but
       # windows-latest runners default `run:` steps to PowerShell, which
       # can't parse it ("Missing opening '(' after keyword 'for'").
+      # build-native owns a binding's build, as in CI: the record codec in,
+      # stripped after the build.
       - name: napi build (release) — grammar-owned native packages
         shell: bash
         run: |
           grammars=$(npx tsx packages/tools/src/scripts/list-grammars.ts stable)
           for crate in $grammars; do
-            pnpm -C "rust/crates/sittir-${crate}" exec napi build --platform --release --target "${{ matrix.target }}" ${{ matrix.buildFlag }}
+            npx tsx scripts/build-native.mts "${crate}" --release --target "${{ matrix.target }}" ${{ matrix.buildFlag }}
           done
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: bindings-${{ matrix.target }}
           path: |
-            rust/crates/sittir-*/*.node
+            packages/*/native/*.node
           if-no-files-found: error
 
   napi-artifacts-publish:
@@ -233,17 +231,19 @@ jobs:
           path: artifacts
           pattern: bindings-*
           merge-multiple: false
+      # `napi artifacts` writes each binding into its platform package and
+      # creates no directory, so the packages are created first.
       - name: napi artifacts — repack into platform subpackages
         run: |
           grammars=$(npx tsx packages/tools/src/scripts/list-grammars.ts stable)
           for crate in $grammars; do
-            (cd "rust/crates/sittir-${crate}" && pnpm exec napi artifacts --dir ../../../artifacts)
+            (cd "rust/crates/sittir-${crate}" && pnpm exec napi create-npm-dirs && pnpm exec napi artifacts --output-dir ../../../artifacts)
           done
       - name: Publish platform subpackages to npm
         run: |
           grammars=$(npx tsx packages/tools/src/scripts/list-grammars.ts stable)
           for crate in $grammars; do
-            (cd "rust/crates/sittir-${crate}" && pnpm exec napi prepublish --tag latest --skip-gh-release)
+            (cd "rust/crates/sittir-${crate}" && pnpm exec napi pre-publish)
           done
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}

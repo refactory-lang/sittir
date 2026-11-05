@@ -1,14 +1,17 @@
 import { cpSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join, relative } from 'node:path';
-import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import {
 	type BuildSetting,
 	assertNativeBinaryFresh,
 	hostBinaryFreshnessFor,
 	hostBinaryName,
+	llvmTool,
 	nativeBuildFingerprint,
 	nativeBuildFreshness,
+	nativeBuildStamp,
+	unstrippedBinaryPath,
 	writeNativeBuildStamp
 } from '../native-binary-freshness.ts';
 
@@ -222,6 +225,29 @@ describe('a binary built elsewhere', () => {
 			expect(() => assertNativeBinaryFresh(consumer, 'rust')).not.toThrow();
 		} finally {
 			rmSync(consumer, { recursive: true, force: true });
+		}
+	});
+});
+
+describe('a stripped release binary', () => {
+	it('records its unstripped copy beside its stamp, by path from the checkout and by hash', () => {
+		const copy = unstrippedBinaryPath(root, 'rust', BINARY);
+		write(relative(root, copy), 'binary v1 with its symbols');
+		writeNativeBuildStamp(root, 'rust', 'release', BINARY, nativeBuildFingerprint(root, 'rust', current), copy);
+		expect(nativeBuildStamp(root, 'rust', BINARY)?.unstripped).toEqual({ path: `node_modules/.cache/sittir/native-build/rust/${BINARY}`, sha256: expect.stringMatching(/^[0-9a-f]{64}$/) });
+		expect(hostBinaryFreshnessFor(root, 'rust')).toEqual([expect.objectContaining({ stale: false, profile: 'release' })]);
+	});
+
+	it('records no copy for a build it does not strip', () => {
+		expect(nativeBuildStamp(root, 'rust', BINARY)?.unstripped).toBeUndefined();
+	});
+
+	it('strips with the llvm tool its variable names, when one is named', () => {
+		vi.stubEnv('LLVM_STRIP', '/tools/llvm-strip');
+		try {
+			expect(llvmTool('llvm-strip', root)).toBe('/tools/llvm-strip');
+		} finally {
+			vi.unstubAllEnvs();
 		}
 	});
 });
