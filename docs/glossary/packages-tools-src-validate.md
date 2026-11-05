@@ -1303,21 +1303,13 @@ The node storage this process's validation engines read trees as. It is one sett
 
 Sets the run's node storage (`validationNodeStorage`), which `createNativeEngine` passes to each engine as `nodeStorage`. It refuses a change once an engine has loaded, since a cached engine reads its trees one way. `runCountsCli` calls it from `--node-storage`, and hands the same value to each isolate worker.
 
-### `packages/tools/src/validate/common.ts::parseConstruction`
-
-A `--construction` value as the construction it names (`CONSTRUCTIONS`), refused when it names none: `objects`, the object builders, or `records`, the record builders an arena engine runs once `useRecordConstruction` gives it them.
-
-### `packages/tools/src/validate/common.ts::useValidationConstruction`
-
-Sets how this process's validation engines build nodes, which `createNativeEngine` applies to each engine it makes, giving it the grammar's record builders (`useRecordConstruction` with `factories/records.ts`) under `records`. Like the node storage it is one setting per process, refused once an engine has loaded. Record construction needs engines that read trees as records, so it is refused unless the node storage is `arena`. `runCountsCli` calls it from `--construction` and hands the same value to each isolate worker.
-
 ### `packages/tools/src/validate/common.ts::materializeBuildInput`
 
-A read tree as the plain data a validator hands to builders (`materialize`). Under record construction the data holds the tree it was read from (`holdingTreeOf`), so an untouched child it passes to a builder still has its tree's token and its tree, and a built record links it rather than refusing it. Under object construction the data is `materialize`'s, unchanged.
+A read tree as the plain data a validator hands to builders (`materialize`). Under arena storage, whose builders write records, the data holds the tree it was read from (`holdingTreeOf`), so an untouched child it passes to a builder still has its tree's token and its tree, and a built record links it rather than refusing it. Under object storage the data is `materialize`'s, unchanged.
 
 ### `packages/tools/src/validate/common.ts::builtStorageOf`
 
-A builder's output as the stored values a storage comparison reads. An object node is its own storage. A record's view keeps no storage keys, so under record construction its values are read through the slot readers (`materialize`), the same derivation the reference data takes.
+A builder's output as the stored values a storage comparison reads. An object node is its own storage. A record's view keeps no storage keys, so under arena storage its values are read through the slot readers (`materialize`), the same derivation the reference data takes.
 
 ### `packages/tools/src/validate/common.ts::validationStorage`
 

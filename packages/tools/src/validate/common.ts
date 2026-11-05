@@ -22,7 +22,7 @@ import {
 	writtenSides,
 	type RefusedSlot
 } from '@sittir/common/utils';
-import { nodeStorageOf, scopeBuilders } from '@sittir/common/engine';
+import { scopeBuilders } from '@sittir/common/engine';
 import {
 	carryRead,
 	carryPlace,
@@ -53,7 +53,7 @@ import {
 import type * as TS from 'web-tree-sitter';
 import type { DisplayFamilies } from './display-families.ts';
 
-import type { AnyUntypedNode, Engine, LanguageAPI, NativeLanguageEngine, NodeConstruction, NodeLayout, NodeStorage, NodeTrivia, ParseOptions, NodeCoordinate, QuerySlotEntry, QuerySlots, TriviaEntry } from '@sittir/types';
+import type { AnyUntypedNode, Engine, LanguageAPI, NativeLanguageEngine, NodeLayout, NodeStorage, NodeTrivia, ParseOptions, NodeCoordinate, QuerySlotEntry, QuerySlots, TriviaEntry } from '@sittir/types';
 import type { TriviaSides } from '@sittir/common';
 import type { TreeHandle } from '@sittir/common/utils';
 import { invoke, load } from '../codegen-surface.ts';
@@ -197,30 +197,18 @@ export function parseNodeStorage(value: string): NodeStorage {
 	return storage;
 }
 
-let validationNodeStorage = nodeStorageOf({ nodeStorage: 'object' });
+let validationNodeStorage: NodeStorage = 'object';
 
 export function useValidationNodeStorage(storage: NodeStorage): void {
-	if (storage === validationNodeStorage.nodeStorage) return;
+	if (storage === validationNodeStorage) return;
 	if (cachedNativeEngines.size > 0) {
-		throw new Error(`validation reads trees as '${validationNodeStorage.nodeStorage}' storage already; choose '${storage}' before the first engine loads`);
+		throw new Error(`validation reads trees as '${validationNodeStorage}' storage already; choose '${storage}' before the first engine loads`);
 	}
-	validationNodeStorage = nodeStorageOf({ nodeStorage: storage });
+	validationNodeStorage = storage;
 }
 
 export function validationStorage(): NodeStorage {
-	return validationNodeStorage.nodeStorage;
-}
-
-const CONSTRUCTIONS: readonly NodeConstruction[] = ['object', 'record'];
-
-export function parseConstruction(value: string): NodeConstruction {
-	const construction = CONSTRUCTIONS.find((known) => known === value);
-	if (construction === undefined) throw new Error(`construction '${value}' is none of ${CONSTRUCTIONS.join(', ')}`);
-	return construction;
-}
-
-export function useValidationConstruction(construction: NodeConstruction): void {
-	nodeStorageOf({ nodeStorage: validationNodeStorage.nodeStorage, nodeConstruction: construction });
+	return validationNodeStorage;
 }
 
 function releaseEngine<E extends { readonly diagnostics: { readonly buildProfile?: string | undefined } }>(grammar: string, engine: E): E {
@@ -235,11 +223,11 @@ function releaseEngine<E extends { readonly diagnostics: { readonly buildProfile
 }
 
 async function createNativeEngine(grammar: string): Promise<NativeEngine> {
-	return releaseEngine(grammar, await createEngine(await languageByName(grammar), { verifyStructure: 'runtime', ...validationNodeStorage }));
+	return releaseEngine(grammar, await createEngine(await languageByName(grammar), { verifyStructure: 'runtime', nodeStorage: validationNodeStorage }));
 }
 
 export async function createStrictNativeEngine(grammar: string): Promise<Engine<LanguageAPI, 'strict'>> {
-	return releaseEngine(grammar, await createEngine(await languageByName(grammar), { api: 'strict', verifyStructure: 'runtime', ...validationNodeStorage }));
+	return releaseEngine(grammar, await createEngine(await languageByName(grammar), { api: 'strict', verifyStructure: 'runtime', nodeStorage: validationNodeStorage }));
 }
 
 export function loadNativeEngine(grammar: string): Promise<NativeEngine> {
@@ -821,11 +809,11 @@ export function materializeBuildInput(
 	onAccessorThrow?: (rec: AccessorThrowRecord) => void
 ): AnyUntypedNode {
 	const data = materialize(root, accessorOf, onAccessorThrow);
-	return validationNodeStorage.nodeConstruction === 'record' ? holdingTreeOf(root, data) : data;
+	return validationNodeStorage === 'arena' ? holdingTreeOf(root, data) : data;
 }
 
 export function builtStorageOf(node: unknown, accessorOf: SlotAccessorOf): unknown {
-	return validationNodeStorage.nodeConstruction === 'record' ? materialize(node, accessorOf) : node;
+	return validationNodeStorage === 'arena' ? materialize(node, accessorOf) : node;
 }
 
 export function materializeDetached(

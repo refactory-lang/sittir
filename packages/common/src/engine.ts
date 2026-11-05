@@ -572,7 +572,7 @@ export function createNativeEngine<
 		return { engine: null, reason: status.reason ?? `active backend is '${status.name}', not 'native'` };
 	}
 
-	const { nodeStorage } = nodeStorageOf(options);
+	const nodeStorage = nodeStorageOf(options);
 	const cellFormat = nodeStorage === 'arena' ? cellFormatOf(status.native) : undefined;
 	if (nodeStorage === 'arena' && cellFormat === undefined) {
 		return { engine: null, reason: 'arena node storage needs an addon built with the `arena` feature' };
