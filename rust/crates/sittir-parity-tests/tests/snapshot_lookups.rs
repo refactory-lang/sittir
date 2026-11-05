@@ -10,7 +10,7 @@ use sittir_core::layout::LayoutWork;
 use sittir_core::read::{Depth, ReadNode, SnapshotCtx};
 use sittir_core::types::NodeIndex;
 use sittir_rust::render::AnyNode;
-use sittir_parity_tests::{block_chain, on_deep_stack, parsed_rust, probe_input, tuple_chain};
+use sittir_parity_tests::{block_chain, indented_block_line, on_deep_stack, parsed_rust, probe_input, tuple_chain};
 use sittir_rust::RustGrammar;
 
 /// Lists inside lists, each with runs and comments beside its items.
@@ -77,6 +77,12 @@ fn the_trivia_table_of_a_chain_steps_through_the_same_children_at_each_level() {
 fn the_trivia_table_of_a_chain_of_blocks_opens_and_closes_each_depth_stretch_once() {
     let [one, two, four] = [100, 200, 400].map(|levels| parsed_rust(&block_chain(levels)).trivia_table().stretch_steps());
     assert_ne!(one, 0, "every block is a stretch");
+    assert_eq!(four - two, 2 * (two - one), "stretch steps at 100, 200 and 400 levels: {one}, {two}, {four}");
+}
+
+#[test]
+fn the_trivia_table_of_blocks_opened_on_one_indented_line_reads_its_indentation_once() {
+    let [one, two, four] = [100, 200, 400].map(|levels| parsed_rust(&indented_block_line(levels)).trivia_table().stretch_steps());
     assert_eq!(four - two, 2 * (two - one), "stretch steps at 100, 200 and 400 levels: {one}, {two}, {four}");
 }
 

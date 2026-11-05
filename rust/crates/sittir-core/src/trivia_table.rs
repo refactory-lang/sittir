@@ -826,8 +826,10 @@ impl TriviaTable {
         self.steps
     }
 
-    /// The depth stretches the assignment opened and closed to measure the
-    /// structural indentation of each line a run breaks to.
+    /// The steps the assignment took to measure the structural indentation
+    /// of each line a run breaks to: each depth stretch it opened and
+    /// closed, and each byte it read of the lines the stretches' first
+    /// tokens lie on (`Structure::line_blanks`).
     #[must_use]
     pub fn stretch_steps(&self) -> u64 {
         self.stretch_steps
@@ -931,7 +933,8 @@ impl Parted {
 
 /// The structural indentation of a tree: the stretches its kinds' templates
 /// indent (`depth_stretches`), and, measured in source order, the ones
-/// holding the last byte measured, outermost first, each with its width.
+/// holding the last byte measured, outermost first, each with its width;
+/// and how far the line the last stretch's first token lies on is blank.
 struct Structure<'t> {
     source: &'t str,
     tokens: &'t [Token],
@@ -941,18 +944,40 @@ struct Structure<'t> {
     next: usize,
     open: Vec<(u32, i64)>,
     measured: u32,
+    line: Option<LineScan>,
     steps: u64,
+}
+
+/// How far a line is blank from its start (`Structure::line_blanks`): its
+/// first byte, the first byte not yet read, the blanks' width up to it, and
+/// whether that byte was read and is not blank.
+#[derive(Clone, Copy)]
+struct LineScan {
+    start: u32,
+    at: u32,
+    width: i64,
+    blocked: bool,
 }
 
 impl<'t> Structure<'t> {
     fn new(nodes: &Nodes, base: NodeIndex, source: &'t str, regions: &'static [DepthRegion], tokens: &'t [Token], lines: &'t crate::points::LineTable, unit: u32) -> Self {
         let stretches = depth_stretches(nodes, base, source, regions, tokens);
-        Self { source, tokens, lines, unit: unit.max(1), stretches, next: 0, open: Vec::new(), measured: 0, steps: 0 }
+        Self { source, tokens, lines, unit: unit.max(1), stretches, next: 0, open: Vec::new(), measured: 0, line: None, steps: 0 }
+    }
+
+    /// The columns a blank byte indents by: a space's one, a tab's `unit`;
+    /// none for any other byte.
+    fn blank(&self, byte: u8) -> Option<i64> {
+        match byte {
+            b' ' => Some(1),
+            b'\t' => Some(i64::from(self.unit)),
+            _ => None,
+        }
     }
 
     /// The width of `indentation`: its spaces, and `unit` per tab.
     fn width(&self, indentation: &str) -> i64 {
-        indentation.chars().map(|c| if c == '\t' { i64::from(self.unit) } else { i64::from(c == ' ') }).sum()
+        indentation.bytes().filter_map(|byte| self.blank(byte)).sum()
     }
 
     /// The excess of a line indented by `indentation` whose first token
@@ -992,16 +1017,33 @@ impl<'t> Structure<'t> {
     /// `around`: set by the line of its first token, or one unit past
     /// `around` when that token does not start its line or the stretch
     /// holds none.
-    fn opened(&self, open: u32, close: u32, around: i64) -> i64 {
+    fn opened(&mut self, open: u32, close: u32, around: i64) -> i64 {
         let first = self.tokens.partition_point(|token| token.start < open);
-        let Some(token) = self.tokens.get(first).filter(|token| token.start < close) else { return around + i64::from(self.unit) };
-        let line_start = self.lines.point(token.start).map_or(0, |point| token.start - point.column);
-        let before = &self.source[line_start as usize..token.start as usize];
-        if before.bytes().all(|byte| byte == b' ' || byte == b'\t') {
-            self.width(before)
-        } else {
-            around + i64::from(self.unit)
+        let Some(start) = self.tokens.get(first).map(|token| token.start).filter(|&start| start < close) else { return around + i64::from(self.unit) };
+        self.line_blanks(start).unwrap_or(around + i64::from(self.unit))
+    }
+
+    /// The width of the blanks from the start of the line holding byte `at`
+    /// to `at`, or none when a byte that is not blank lies between. The
+    /// stretches open in source order, so their first tokens are asked in
+    /// order, and a line's bytes are read forward from where the last ask on
+    /// it stopped, each at most once.
+    fn line_blanks(&mut self, at: u32) -> Option<i64> {
+        let start = self.lines.point(at).map_or(0, |point| at - point.column);
+        let mut line = self.line.filter(|line| line.start == start).unwrap_or(LineScan { start, at: start, width: 0, blocked: false });
+        debug_assert!(at >= line.at, "a line's blanks are read in source order: {at} after {}", line.at);
+        while !line.blocked && line.at < at {
+            self.steps += 1;
+            match self.blank(self.source.as_bytes()[line.at as usize]) {
+                Some(width) => {
+                    line.width += width;
+                    line.at += 1;
+                }
+                None => line.blocked = true,
+            }
         }
+        self.line = Some(line);
+        (line.at == at).then_some(line.width)
     }
 }
 

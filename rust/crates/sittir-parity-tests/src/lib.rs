@@ -219,6 +219,15 @@ pub fn block_chain(levels: usize) -> String {
     format!("fn f() {}{}\n", "{\n".repeat(levels), "}\n".repeat(levels))
 }
 
+/// `levels` rust blocks, each holding the one before it, all opened on one
+/// line indented `levels` spaces, after two functions indented two spaces
+/// so the source's unit stays two spaces: every block's first token lies
+/// on that line.
+#[must_use]
+pub fn indented_block_line(levels: usize) -> String {
+    format!("fn a() {{\n  a;\n}}\nfn b() {{\n  b;\n}}\nfn f() {{\n{}{}\n{}\n}}\n", " ".repeat(levels), "{".repeat(levels), "}".repeat(levels))
+}
+
 /// What `f` answers, run on a thread whose 64 MiB stack every read these
 /// tests make of a deep tree fits on, a 64,000-level chain included.
 ///
