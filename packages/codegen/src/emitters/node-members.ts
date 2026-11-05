@@ -19,8 +19,23 @@ export interface StoredAccessor {
 	readonly hydrates?: 'one' | 'many';
 }
 
+export type HeldKey = 'INPUT' | 'OPTIONS' | 'READ_TREE';
+
+export interface HeldLocal {
+	readonly local: string;
+	readonly type: string;
+	readonly key: HeldKey;
+}
+
+export interface SharedSetters {
+	readonly prefix: string;
+	readonly entries: readonly SetterEntry[];
+	readonly held: readonly HeldLocal[];
+	readonly readers?: readonly string[];
+}
+
 export interface NodeMemberSpec {
-	readonly setters?: readonly SetterEntry[];
+	readonly setters?: SharedSetters;
 	readonly accessors: readonly StoredAccessor[];
 	readonly trivia: TriviaPositions | undefined;
 	readonly extra?: readonly string[];
@@ -38,7 +53,7 @@ export function triviaPositionsOf(kind: string, nodeMap: NodeMap): TriviaPositio
 
 export function triviaInnerImports(nodeMap: NodeMap): readonly string[] {
 	if (emptyForms(nodeMap).size === 0) return [];
-	return ['triviaInner'];
+	return ['objectInner'];
 }
 
 function accessorRead(accessor: StoredAccessor): string {
@@ -56,8 +71,24 @@ export function receivedMembers(member: '$with' | '$trivia', entries: readonly s
 	return `  node.${member} = { ${[...entries, '[RECEIVER]: node'].join(', ')} };`;
 }
 
-function withEntry(entry: SetterEntry): string {
-	return `${entry.name}: (${entry.params}) => rebuilt(node, handle, () => ${entry.body})`;
+function sharedSetterName(prefix: string, entry: SetterEntry): string {
+	return `${prefix}$with$${entry.name}`;
+}
+
+function appliedSetter(entry: SetterEntry): string {
+	return `applySetter(args, (${entry.params}) => rebuilt(node, handle, () => ${entry.body}))`;
+}
+
+function sharedSetterLines(setters: SharedSetters, entry: SetterEntry): string[] {
+	return [
+		`function ${sharedSetterName(setters.prefix, entry)}(this: Received<Held>, ...args: unknown[]): unknown {`,
+		`  const node = receiverOf(this, ${JSON.stringify(`$with.${entry.name}`)});`,
+		'  const handle = node[HANDLE];',
+		...setters.held.map((field) => `  const ${field.local} = node[${field.key}] as ${field.type};`),
+		...(setters.readers ?? []),
+		`  return ${appliedSetter(entry)};`,
+		'}'
+	];
 }
 
 export function builtWithLines(name: string, kind: string, inputs: readonly string[], setters: readonly SetterEntry[]): string[] {
@@ -70,7 +101,7 @@ export function builtWithLines(name: string, kind: string, inputs: readonly stri
 					'  const handle = handleOf(node as RecordHandle);',
 					...(inputs.length === 0 ? [] : ['  const inputs = builtInputs(node);', ...inputs]),
 					'  switch (setter) {',
-					...setters.flatMap((entry) => [`    case ${JSON.stringify(entry.name)}:`, `      return applySetter(args, (${entry.params}) => rebuilt(node, handle, () => ${entry.body}));`]),
+					...setters.flatMap((entry) => [`    case ${JSON.stringify(entry.name)}:`, `      return ${appliedSetter(entry)};`]),
 					'  }'
 				]),
 		`  throw new Error(\`${kind} has no $with.\${setter}\`);`,
@@ -78,16 +109,17 @@ export function builtWithLines(name: string, kind: string, inputs: readonly stri
 	];
 }
 
-function triviaMember(side: TriviaSide): string {
-	return side === 'inner' ? 'inner: (...items: unknown[]) => triviaInner(node, handle, items)' : `${side}: (...items: unknown[]) => triviaSide(node, handle, '${side}', items)`;
-}
+const OBJECT_TRIVIA: Readonly<Record<TriviaSide, string>> = { leading: 'objectLeading', trailing: 'objectTrailing', inner: 'objectInner' };
 
 export interface NodeMemberParts {
 	readonly members: readonly string[];
 	readonly after: readonly string[];
+	readonly hoisted: readonly string[];
 }
 
 export function nodeMemberParts(spec: NodeMemberSpec): NodeMemberParts {
+	const setters = spec.setters;
+	const sets = setters !== undefined && setters.entries.length > 0;
 	const lines: string[] = spec.parsed ? [] : ['    $_layout: undefined,'];
 	if (spec.setters !== undefined) lines.push('    $with: undefined as unknown as object,');
 	for (const accessor of spec.accessors) lines.push(`    ${accessor.name}: () => ${accessorRead(accessor)},`);
@@ -109,13 +141,15 @@ export function nodeMemberParts(spec: NodeMemberSpec): NodeMemberParts {
 		...(spec.tail ?? []),
 		...(spec.parsed ? ['    [TREE]: treeTokenOf(data) ?? null,'] : []),
 		`    [SOURCE]: ${spec.parsed ? 'treeTokenOf(data) === undefined ? Source.Factory : Source.Ts' : 'Source.Factory'},`,
+		...(sets || spec.trivia !== undefined ? ['    [HANDLE]: handle,'] : []),
+		...(sets ? setters.held.map((field) => `    [${field.key}]: ${field.local},`) : []),
 		'    [Symbol.dispose]: releaseNothing'
 	);
 	const after = [
-		...(spec.setters === undefined ? [] : [receivedMembers('$with', spec.setters.map(withEntry))]),
-		...(spec.trivia === undefined ? [] : [receivedMembers('$trivia', triviaSides(spec.trivia).map(triviaMember))])
+		...(setters === undefined ? [] : [receivedMembers('$with', setters.entries.map((entry) => `${entry.name}: ${sharedSetterName(setters.prefix, entry)}`))]),
+		...(spec.trivia === undefined ? [] : [receivedMembers('$trivia', triviaSides(spec.trivia).map((side) => `${side}: ${OBJECT_TRIVIA[side]}`))])
 	];
-	return { members: lines, after };
+	return { members: lines, after, hoisted: setters === undefined ? [] : setters.entries.flatMap((entry) => sharedSetterLines(setters, entry)) };
 }
 
 const readGroupName = (slot: string): string => `readGroup_${slot}`;

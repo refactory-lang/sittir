@@ -17,7 +17,6 @@ export const RECORD_CONSTRUCTION_IMPORTS = [
 	'patchFlag',
 	'patchList',
 	'patchListOptions',
-	'applySetter',
 	'handleOf',
 	'leafText',
 	'leafLeading',

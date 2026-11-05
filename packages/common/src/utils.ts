@@ -13,7 +13,7 @@ import { sourceOf } from './source-stamp.ts';
 import { spelledForm } from './interior.ts';
 import { snapshotOf } from './snapshot.ts';
 import { chosenSeparatorOf, liveWords, recordOf, recordSlot, recordSlots, rowTrivia, storedSlotValues } from './record-view.ts';
-import { RECEIVER, type LeafHandle, type Received, type RecordHandle, type RecordPosition } from './handle.ts';
+import { HANDLE, receiverOf, type Held, type LeafHandle, type Received, type RecordHandle, type RecordPosition } from './handle.ts';
 import { builtLeafOf, builtRefOf, handleArenaOf, siteOf } from './built-ref.ts';
 import { holdSideEntries, isBuiltNode, refuseBuiltEntries, refuseForeignEntry, sideEntryOf, type BuiltArena } from './built-arena.ts';
 
@@ -92,15 +92,33 @@ export function leafText(this: LeafHandle): string {
 }
 
 export function leafLeading(this: Received<LeafHandle>, ...items: unknown[]): AnyUntypedNode | readonly TriviaEntry[] {
-	return triviaSide(this[RECEIVER], handleOf(this[RECEIVER]), 'leading', items);
+	const node = receiverOf(this, '$trivia.leading');
+	return triviaSide(node, handleOf(node), 'leading', items);
 }
 
 export function leafTrailing(this: Received<LeafHandle>, ...items: unknown[]): AnyUntypedNode | readonly TriviaEntry[] {
-	return triviaSide(this[RECEIVER], handleOf(this[RECEIVER]), 'trailing', items);
+	const node = receiverOf(this, '$trivia.trailing');
+	return triviaSide(node, handleOf(node), 'trailing', items);
 }
 
 export function leafInner(this: Received<LeafHandle>, ...items: unknown[]): AnyUntypedNode | readonly TriviaEntry[] {
-	return triviaInner(this[RECEIVER], handleOf(this[RECEIVER]), items);
+	const node = receiverOf(this, '$trivia.inner');
+	return triviaInner(node, handleOf(node), items);
+}
+
+export function objectLeading(this: Received<Held>, ...items: unknown[]): AnyUntypedNode | readonly TriviaEntry[] {
+	const node = receiverOf(this, '$trivia.leading');
+	return triviaSide(node, node[HANDLE], 'leading', items);
+}
+
+export function objectTrailing(this: Received<Held>, ...items: unknown[]): AnyUntypedNode | readonly TriviaEntry[] {
+	const node = receiverOf(this, '$trivia.trailing');
+	return triviaSide(node, node[HANDLE], 'trailing', items);
+}
+
+export function objectInner(this: Received<Held>, ...items: unknown[]): AnyUntypedNode | readonly TriviaEntry[] {
+	const node = receiverOf(this, '$trivia.inner');
+	return triviaInner(node, node[HANDLE], items);
 }
 
 export function rebuilt<R>(source: object, handle: EngineHandle | undefined, build: () => R): R {
@@ -903,7 +921,7 @@ export {
 	storedSlotValues,
 	type RefusedSlot
 } from './record-view.ts';
-export { handleDispose, isLeafHandle, isRecordPosition, RECEIVER, releaseNothing, type LeafHandle, type LeafMaker, type LeafSite, type Received, type RecordHandle, type RecordPosition } from './handle.ts';
+export { HANDLE, handleDispose, INPUT, isLeafHandle, isRecordPosition, OPTIONS, READ_TREE, RECEIVER, receiverOf, releaseNothing, type Held, type LeafHandle, type LeafMaker, type LeafSite, type Received, type RecordHandle, type RecordPosition } from './handle.ts';
 
 export { BuiltArena, builtRecordOf, isBuiltNode, patchCell, patchFlag, patchList, patchListOptions, storeCell, storeFlag, storeList, storeListOptions, type BuiltDraft, type BuiltPlace, type BuiltText, type BuiltViews, type BuiltWith } from './built-arena.ts';
 export { LEAF_SITES } from './built-ref.ts';

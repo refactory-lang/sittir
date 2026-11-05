@@ -14,6 +14,7 @@ import type {
 	WidenSlots
 } from '@sittir/types';
 import type { DelimitedSpec } from '@sittir/common/utils';
+import type { Held, Received } from '@sittir/common/utils';
 import {
 	currentHandle,
 	admitChildren,
@@ -41,8 +42,14 @@ import {
 	Source,
 	hydrateStoredSlot,
 	hydrateStoredSlots,
-	triviaSide,
-	triviaInner,
+	HANDLE,
+	INPUT,
+	OPTIONS,
+	receiverOf,
+	applySetter,
+	objectLeading,
+	objectTrailing,
+	objectInner,
 	describeValue,
 	restItems,
 	blankArmRead,
@@ -166,20 +173,20 @@ export function buildModule(...children: Admit<T.Statement[]>): T.Module.Bound {
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		statements: (...vs: Admit<T.Statement>[]) =>
-			rebuilt(node, handle, () => buildModule(...restItems('statements', vs))),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		inner: (...items: unknown[]) => triviaInner(node, handle, items),
-		[RECEIVER]: node
-	};
+	node.$with = { statements: buildModule$with$statements, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, inner: objectInner, [RECEIVER]: node };
 	return node as unknown as T.Module.Bound;
+}
+
+function buildModule$with$statements(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.statements');
+	const handle = node[HANDLE];
+	return applySetter(args, (...vs: Admit<T.Statement>[]) =>
+		rebuilt(node, handle, () => buildModule(...restItems('statements', vs)))
+	);
 }
 
 export function buildSimpleStatements<V extends Admit<T.SimpleStatementsElements>>(
@@ -259,26 +266,27 @@ function _buildSimpleStatements(value: Admit<T.SimpleStatementsElements>): T.Sim
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		elements: (...args: unknown[]) =>
-			rebuilt(node, handle, () =>
-				listSlotWith(
-					args,
-					{ kind: TSKindId.SimpleStatementsElements as const, optional: false, make: buildSimpleStatementsElements },
-					(value: Admit<T.SimpleStatementsElements>) => _buildSimpleStatements(value)
-				)
-			),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { elements: buildSimpleStatements$with$elements, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	holdListItems(node, heldItems(listView.list));
 	return node as unknown as T.SimpleStatements.Bound;
+}
+
+function buildSimpleStatements$with$elements(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.elements');
+	const handle = node[HANDLE];
+	return applySetter(args, (...args: unknown[]) =>
+		rebuilt(node, handle, () =>
+			listSlotWith(
+				args,
+				{ kind: TSKindId.SimpleStatementsElements as const, optional: false, make: buildSimpleStatementsElements },
+				(value: Admit<T.SimpleStatementsElements>) => _buildSimpleStatements(value)
+			)
+		)
+	);
 }
 
 export function buildImportStatement<V extends Admit<T.Names>>(
@@ -356,26 +364,27 @@ function _buildImportStatement(value: Admit<T.Names>): T.ImportStatement.Bound {
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		names: (...args: unknown[]) =>
-			rebuilt(node, handle, () =>
-				listSlotWith(
-					args,
-					{ kind: TSKindId.Names as const, optional: false, make: buildNames },
-					(value: Admit<T.Names>) => _buildImportStatement(value)
-				)
-			),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { names: buildImportStatement$with$names, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	holdListItems(node, heldItems(listView.list));
 	return node as unknown as T.ImportStatement.Bound;
+}
+
+function buildImportStatement$with$names(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.names');
+	const handle = node[HANDLE];
+	return applySetter(args, (...args: unknown[]) =>
+		rebuilt(node, handle, () =>
+			listSlotWith(
+				args,
+				{ kind: TSKindId.Names as const, optional: false, make: buildNames },
+				(value: Admit<T.Names>) => _buildImportStatement(value)
+			)
+		)
+	);
 }
 
 export function buildImportPrefix(text: string): T.ImportPrefix.Bound {
@@ -394,13 +403,10 @@ export function buildImportPrefix(text: string): T.ImportPrefix.Bound {
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.ImportPrefix.Bound;
 }
 
@@ -428,20 +434,30 @@ export function buildRelativeImport(config: T.RelativeImport.Config): T.Relative
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		prefix: (value: Admit<T.ImportPrefix>) =>
-			rebuilt(node, handle, () => buildRelativeImport({ ...config, prefix: value })),
-		name: (value?: Admit<T.DottedName>) => rebuilt(node, handle, () => buildRelativeImport({ ...config, name: value })),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { prefix: buildRelativeImport$with$prefix, name: buildRelativeImport$with$name, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.RelativeImport.Bound;
+}
+
+function buildRelativeImport$with$prefix(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.prefix');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.RelativeImport.Config;
+	return applySetter(args, (value: Admit<T.ImportPrefix>) =>
+		rebuilt(node, handle, () => buildRelativeImport({ ...config, prefix: value }))
+	);
+}
+function buildRelativeImport$with$name(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.name');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.RelativeImport.Config;
+	return applySetter(args, (value?: Admit<T.DottedName>) =>
+		rebuilt(node, handle, () => buildRelativeImport({ ...config, name: value }))
+	);
 }
 
 export function buildFutureImportStatement<V extends Admit<T.ImportList | T.ParenthesizedImportList>>(
@@ -465,19 +481,20 @@ export function buildFutureImportStatement(
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		content: (value: Admit<T.ImportList | T.ParenthesizedImportList>) =>
-			rebuilt(node, handle, () => buildFutureImportStatement(value)),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { content: buildFutureImportStatement$with$content, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.FutureImportStatement.Bound;
+}
+
+function buildFutureImportStatement$with$content(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.content');
+	const handle = node[HANDLE];
+	return applySetter(args, (value: Admit<T.ImportList | T.ParenthesizedImportList>) =>
+		rebuilt(node, handle, () => buildFutureImportStatement(value))
+	);
 }
 
 export function buildImportFromStatement<
@@ -507,21 +524,34 @@ export function buildImportFromStatement(config: T.ImportFromStatement.Config): 
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		moduleName: (value: Admit<T.RelativeImport | T.DottedName>) =>
-			rebuilt(node, handle, () => buildImportFromStatement({ ...config, moduleName: value })),
-		content: (value: Admit<NonNullable<T.ImportFromStatement.Config>['content']>) =>
-			rebuilt(node, handle, () => buildImportFromStatement({ ...config, content: value })),
+		moduleName: buildImportFromStatement$with$moduleName,
+		content: buildImportFromStatement$with$content,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.ImportFromStatement.Bound;
+}
+
+function buildImportFromStatement$with$moduleName(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.moduleName');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.ImportFromStatement.Config;
+	return applySetter(args, (value: Admit<T.RelativeImport | T.DottedName>) =>
+		rebuilt(node, handle, () => buildImportFromStatement({ ...config, moduleName: value }))
+	);
+}
+function buildImportFromStatement$with$content(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.content');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.ImportFromStatement.Config;
+	return applySetter(args, (value: Admit<NonNullable<T.ImportFromStatement.Config>['content']>) =>
+		rebuilt(node, handle, () => buildImportFromStatement({ ...config, content: value }))
+	);
 }
 
 export function buildImportList<A extends NonEmptyArray<Admit<T.DottedName | T.AliasedImport>>>(
@@ -602,22 +632,34 @@ function _buildImportList(
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: elements,
+		[OPTIONS]: options,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		names: (...vs: NonEmptyArray<Admit<T.DottedName | T.AliasedImport>>) =>
-			rebuilt(node, handle, () => buildImportList(options, ...vs)),
-		delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
-			rebuilt(node, handle, () => buildImportList({ ...options, delimiter: v }, ...elements)),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { names: buildImportList$with$names, delimiter: buildImportList$with$delimiter, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	holdBuiltItems(node, listedItems);
 	return node as unknown as T.ImportList.Bound;
+}
+
+function buildImportList$with$names(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.names');
+	const handle = node[HANDLE];
+	const elements = node[INPUT] as NonEmptyArray<Admit<T.DottedName | T.AliasedImport>>;
+	const options = node[OPTIONS] as { delimiter?: Delimiter.None | Delimiter.Trailing };
+	return applySetter(args, (...vs: NonEmptyArray<Admit<T.DottedName | T.AliasedImport>>) =>
+		rebuilt(node, handle, () => buildImportList(options, ...vs))
+	);
+}
+function buildImportList$with$delimiter(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.delimiter');
+	const handle = node[HANDLE];
+	const elements = node[INPUT] as NonEmptyArray<Admit<T.DottedName | T.AliasedImport>>;
+	const options = node[OPTIONS] as { delimiter?: Delimiter.None | Delimiter.Trailing };
+	return applySetter(args, (v?: Delimiter.None | Delimiter.Trailing) =>
+		rebuilt(node, handle, () => buildImportList({ ...options, delimiter: v }, ...elements))
+	);
 }
 
 export function buildAliasedImport<
@@ -644,19 +686,30 @@ export function buildAliasedImport(config: T.AliasedImport.Config): T.AliasedImp
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		name: (value: Admit<T.DottedName>) => rebuilt(node, handle, () => buildAliasedImport({ ...config, name: value })),
-		alias: (value: Admit<T.Identifier>) => rebuilt(node, handle, () => buildAliasedImport({ ...config, alias: value })),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { name: buildAliasedImport$with$name, alias: buildAliasedImport$with$alias, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.AliasedImport.Bound;
+}
+
+function buildAliasedImport$with$name(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.name');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.AliasedImport.Config;
+	return applySetter(args, (value: Admit<T.DottedName>) =>
+		rebuilt(node, handle, () => buildAliasedImport({ ...config, name: value }))
+	);
+}
+function buildAliasedImport$with$alias(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.alias');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.AliasedImport.Config;
+	return applySetter(args, (value: Admit<T.Identifier>) =>
+		rebuilt(node, handle, () => buildAliasedImport({ ...config, alias: value }))
+	);
 }
 
 export const buildWildcardImport: TSKindId.WildcardImport = TSKindId.WildcardImport;
@@ -682,19 +735,20 @@ export function buildPrintStatement(
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		content: (value: Admit<T.PrintStatementChevron | T.PrintStatementPlain>) =>
-			rebuilt(node, handle, () => buildPrintStatement(value)),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { content: buildPrintStatement$with$content, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.PrintStatement.Bound;
+}
+
+function buildPrintStatement$with$content(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.content');
+	const handle = node[HANDLE];
+	return applySetter(args, (value: Admit<T.PrintStatementChevron | T.PrintStatementPlain>) =>
+		rebuilt(node, handle, () => buildPrintStatement(value))
+	);
 }
 
 export function buildChevron<V extends Admit<T.Expression>>(value: V & RefuseUndeclared<V>): T.Chevron.Bound;
@@ -714,18 +768,20 @@ export function buildChevron(value: Admit<T.Expression>): T.Chevron.Bound {
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		expression: (value: Admit<NonNullable<T.Expression>>) => rebuilt(node, handle, () => buildChevron(value)),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { expression: buildChevron$with$expression, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.Chevron.Bound;
+}
+
+function buildChevron$with$expression(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.expression');
+	const handle = node[HANDLE];
+	return applySetter(args, (value: Admit<NonNullable<T.Expression>>) =>
+		rebuilt(node, handle, () => buildChevron(value))
+	);
 }
 
 export function buildAssertStatement<A extends NonEmptyArray<Admit<T.Expression>>>(
@@ -748,19 +804,20 @@ export function buildAssertStatement(...children: NonEmptyArray<Admit<T.Expressi
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		expressions: (...vs: NonEmptyArray<Admit<T.Expression>>) =>
-			rebuilt(node, handle, () => buildAssertStatement(...restItems('expressions', vs))),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { expressions: buildAssertStatement$with$expressions, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.AssertStatement.Bound;
+}
+
+function buildAssertStatement$with$expressions(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.expressions');
+	const handle = node[HANDLE];
+	return applySetter(args, (...vs: NonEmptyArray<Admit<T.Expression>>) =>
+		rebuilt(node, handle, () => buildAssertStatement(...restItems('expressions', vs)))
+	);
 }
 
 export function buildExpressionStatement<
@@ -784,22 +841,25 @@ export function buildExpressionStatement(
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		content: (
+	node.$with = { content: buildExpressionStatement$with$content, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
+	return node as unknown as T.ExpressionStatement.Bound;
+}
+
+function buildExpressionStatement$with$content(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.content');
+	const handle = node[HANDLE];
+	return applySetter(
+		args,
+		(
 			value: Admit<
 				NonNullable<T.Expression | T.ExpressionStatementTuple | T.Assignment | T.AugmentedAssignment | T.Yield>
 			>
-		) => rebuilt(node, handle, () => buildExpressionStatement(value)),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
-	return node as unknown as T.ExpressionStatement.Bound;
+		) => rebuilt(node, handle, () => buildExpressionStatement(value))
+	);
 }
 
 export function buildNamedExpression<
@@ -826,20 +886,30 @@ export function buildNamedExpression(config: T.NamedExpression.Config): T.NamedE
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		left: (value: Admit<T.Identifier>) => rebuilt(node, handle, () => buildNamedExpression({ ...config, left: value })),
-		right: (value: Admit<NonNullable<T.NamedExpression.Config>['right']>) =>
-			rebuilt(node, handle, () => buildNamedExpression({ ...config, right: value })),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { left: buildNamedExpression$with$left, right: buildNamedExpression$with$right, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.NamedExpression.Bound;
+}
+
+function buildNamedExpression$with$left(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.left');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.NamedExpression.Config;
+	return applySetter(args, (value: Admit<T.Identifier>) =>
+		rebuilt(node, handle, () => buildNamedExpression({ ...config, left: value }))
+	);
+}
+function buildNamedExpression$with$right(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.right');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.NamedExpression.Config;
+	return applySetter(args, (value: Admit<NonNullable<T.NamedExpression.Config>['right']>) =>
+		rebuilt(node, handle, () => buildNamedExpression({ ...config, right: value }))
+	);
 }
 
 export function buildNamedExpressionLhs<IdentifierSlot extends T.NamedExpressionLhs.Config['identifier']>(
@@ -862,19 +932,22 @@ export function buildNamedExpressionLhs(config: T.NamedExpressionLhs.Config): T.
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		identifier: (value: Admit<T.Identifier>) =>
-			rebuilt(node, handle, () => buildNamedExpressionLhs({ ...config, identifier: value })),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { identifier: buildNamedExpressionLhs$with$identifier, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.NamedExpressionLhs.Bound;
+}
+
+function buildNamedExpressionLhs$with$identifier(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.identifier');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.NamedExpressionLhs.Config;
+	return applySetter(args, (value: Admit<T.Identifier>) =>
+		rebuilt(node, handle, () => buildNamedExpressionLhs({ ...config, identifier: value }))
+	);
 }
 
 export function buildReturnStatement<V extends Admit<T.Expression | T.ExpressionList>>(
@@ -896,19 +969,20 @@ export function buildReturnStatement(value?: Admit<T.Expression | T.ExpressionLi
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		expressions: (value?: Admit<NonNullable<T.Expression | T.ExpressionList>>) =>
-			rebuilt(node, handle, () => buildReturnStatement(value)),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { expressions: buildReturnStatement$with$expressions, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.ReturnStatement.Bound;
+}
+
+function buildReturnStatement$with$expressions(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.expressions');
+	const handle = node[HANDLE];
+	return applySetter(args, (value?: Admit<NonNullable<T.Expression | T.ExpressionList>>) =>
+		rebuilt(node, handle, () => buildReturnStatement(value))
+	);
 }
 
 export function buildDeleteStatement<V extends Admit<T.Expression | T.ExpressionList>>(
@@ -930,19 +1004,20 @@ export function buildDeleteStatement(value: Admit<T.Expression | T.ExpressionLis
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		expressions: (value: Admit<NonNullable<T.Expression | T.ExpressionList>>) =>
-			rebuilt(node, handle, () => buildDeleteStatement(value)),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { expressions: buildDeleteStatement$with$expressions, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.DeleteStatement.Bound;
+}
+
+function buildDeleteStatement$with$expressions(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.expressions');
+	const handle = node[HANDLE];
+	return applySetter(args, (value: Admit<NonNullable<T.Expression | T.ExpressionList>>) =>
+		rebuilt(node, handle, () => buildDeleteStatement(value))
+	);
 }
 
 export function buildRaiseStatement<
@@ -971,21 +1046,34 @@ export function buildRaiseStatement(config: Partial<T.RaiseStatement.Config> = {
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		expressions: (value?: Admit<NonNullable<T.RaiseStatement.Config>['expressions']>) =>
-			rebuilt(node, handle, () => buildRaiseStatement({ ...config, expressions: value })),
-		cause: (value?: Admit<NonNullable<T.RaiseStatement.Config>['cause']>) =>
-			rebuilt(node, handle, () => buildRaiseStatement({ ...config, cause: value })),
+		expressions: buildRaiseStatement$with$expressions,
+		cause: buildRaiseStatement$with$cause,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.RaiseStatement.Bound;
+}
+
+function buildRaiseStatement$with$expressions(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.expressions');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.RaiseStatement.Config;
+	return applySetter(args, (value?: Admit<NonNullable<T.RaiseStatement.Config>['expressions']>) =>
+		rebuilt(node, handle, () => buildRaiseStatement({ ...config, expressions: value }))
+	);
+}
+function buildRaiseStatement$with$cause(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.cause');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.RaiseStatement.Config;
+	return applySetter(args, (value?: Admit<NonNullable<T.RaiseStatement.Config>['cause']>) =>
+		rebuilt(node, handle, () => buildRaiseStatement({ ...config, cause: value }))
+	);
 }
 
 export const buildPassStatement: TSKindId.PassStatement = TSKindId.PassStatement;
@@ -1032,23 +1120,43 @@ export function buildIfStatement(config: T.IfStatement.Config): T.IfStatement.Bo
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		condition: (value: Admit<NonNullable<T.IfStatement.Config>['condition']>) =>
-			rebuilt(node, handle, () => buildIfStatement({ ...config, condition: value })),
-		consequence: (value: Admit<T.Suite>) =>
-			rebuilt(node, handle, () => buildIfStatement({ ...config, consequence: value })),
-		alternatives: (...values: Admit<(T.ElifClause | T.ElseClause)[]>) =>
-			rebuilt(node, handle, () => buildIfStatement({ ...config, alternatives: restItems('alternatives', values) })),
+		condition: buildIfStatement$with$condition,
+		consequence: buildIfStatement$with$consequence,
+		alternatives: buildIfStatement$with$alternatives,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.IfStatement.Bound;
+}
+
+function buildIfStatement$with$condition(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.condition');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.IfStatement.Config;
+	return applySetter(args, (value: Admit<NonNullable<T.IfStatement.Config>['condition']>) =>
+		rebuilt(node, handle, () => buildIfStatement({ ...config, condition: value }))
+	);
+}
+function buildIfStatement$with$consequence(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.consequence');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.IfStatement.Config;
+	return applySetter(args, (value: Admit<T.Suite>) =>
+		rebuilt(node, handle, () => buildIfStatement({ ...config, consequence: value }))
+	);
+}
+function buildIfStatement$with$alternatives(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.alternatives');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.IfStatement.Config;
+	return applySetter(args, (...values: Admit<(T.ElifClause | T.ElseClause)[]>) =>
+		rebuilt(node, handle, () => buildIfStatement({ ...config, alternatives: restItems('alternatives', values) }))
+	);
 }
 
 export function buildElifClause<
@@ -1077,21 +1185,34 @@ export function buildElifClause(config: T.ElifClause.Config): T.ElifClause.Bound
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		condition: (value: Admit<NonNullable<T.ElifClause.Config>['condition']>) =>
-			rebuilt(node, handle, () => buildElifClause({ ...config, condition: value })),
-		consequence: (value: Admit<T.Suite>) =>
-			rebuilt(node, handle, () => buildElifClause({ ...config, consequence: value })),
+		condition: buildElifClause$with$condition,
+		consequence: buildElifClause$with$consequence,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.ElifClause.Bound;
+}
+
+function buildElifClause$with$condition(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.condition');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.ElifClause.Config;
+	return applySetter(args, (value: Admit<NonNullable<T.ElifClause.Config>['condition']>) =>
+		rebuilt(node, handle, () => buildElifClause({ ...config, condition: value }))
+	);
+}
+function buildElifClause$with$consequence(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.consequence');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.ElifClause.Config;
+	return applySetter(args, (value: Admit<T.Suite>) =>
+		rebuilt(node, handle, () => buildElifClause({ ...config, consequence: value }))
+	);
 }
 
 export function buildElseClause<V extends Admit<T.Suite>>(value: V & RefuseUndeclared<V>): T.ElseClause.Bound;
@@ -1111,18 +1232,18 @@ export function buildElseClause(value: Admit<T.Suite>): T.ElseClause.Bound {
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		body: (value: Admit<T.Suite>) => rebuilt(node, handle, () => buildElseClause(value)),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { body: buildElseClause$with$body, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.ElseClause.Bound;
+}
+
+function buildElseClause$with$body(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.body');
+	const handle = node[HANDLE];
+	return applySetter(args, (value: Admit<T.Suite>) => rebuilt(node, handle, () => buildElseClause(value)));
 }
 
 export function buildMatchStatement<
@@ -1149,26 +1270,36 @@ export function buildMatchStatement(config: T.MatchStatement.Config): T.MatchSta
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		subjects: (...args: unknown[]) =>
-			rebuilt(node, handle, () =>
-				listSlotWith(
-					args,
-					{ kind: TSKindId.Subjects as const, optional: false, make: buildSubjects },
-					(value: Admit<T.Subjects>) => buildMatchStatement({ ...config, subjects: value })
-				)
-			),
-		body: (value: Admit<T.MatchBlock>) => rebuilt(node, handle, () => buildMatchStatement({ ...config, body: value })),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { subjects: buildMatchStatement$with$subjects, body: buildMatchStatement$with$body, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.MatchStatement.Bound;
+}
+
+function buildMatchStatement$with$subjects(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.subjects');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.MatchStatement.Config;
+	return applySetter(args, (...args: unknown[]) =>
+		rebuilt(node, handle, () =>
+			listSlotWith(
+				args,
+				{ kind: TSKindId.Subjects as const, optional: false, make: buildSubjects },
+				(value: Admit<T.Subjects>) => buildMatchStatement({ ...config, subjects: value })
+			)
+		)
+	);
+}
+function buildMatchStatement$with$body(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.body');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.MatchStatement.Config;
+	return applySetter(args, (value: Admit<T.MatchBlock>) =>
+		rebuilt(node, handle, () => buildMatchStatement({ ...config, body: value }))
+	);
 }
 
 export function buildCaseClause<
@@ -1201,21 +1332,43 @@ export function buildCaseClause(config: T.CaseClause.Config): T.CaseClause.Bound
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		pattern: (value: Admit<T.CasePattern | T.CasePatternList>) =>
-			rebuilt(node, handle, () => buildCaseClause({ ...config, pattern: value })),
-		guard: (value?: Admit<T.IfClause>) => rebuilt(node, handle, () => buildCaseClause({ ...config, guard: value })),
-		body: (value: Admit<T.Suite>) => rebuilt(node, handle, () => buildCaseClause({ ...config, body: value })),
+		pattern: buildCaseClause$with$pattern,
+		guard: buildCaseClause$with$guard,
+		body: buildCaseClause$with$body,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.CaseClause.Bound;
+}
+
+function buildCaseClause$with$pattern(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.pattern');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.CaseClause.Config;
+	return applySetter(args, (value: Admit<T.CasePattern | T.CasePatternList>) =>
+		rebuilt(node, handle, () => buildCaseClause({ ...config, pattern: value }))
+	);
+}
+function buildCaseClause$with$guard(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.guard');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.CaseClause.Config;
+	return applySetter(args, (value?: Admit<T.IfClause>) =>
+		rebuilt(node, handle, () => buildCaseClause({ ...config, guard: value }))
+	);
+}
+function buildCaseClause$with$body(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.body');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.CaseClause.Config;
+	return applySetter(args, (value: Admit<T.Suite>) =>
+		rebuilt(node, handle, () => buildCaseClause({ ...config, body: value }))
+	);
 }
 
 export function buildForStatement<
@@ -1265,26 +1418,61 @@ export function buildForStatement(config: T.ForStatement.Config): T.ForStatement
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		async: (value?: Admit<NonNullable<T.ForStatement.Config>['async']>) =>
-			rebuilt(node, handle, () => buildForStatement({ ...config, async: value })),
-		left: (value: Admit<T.Pattern | T.PatternList>) =>
-			rebuilt(node, handle, () => buildForStatement({ ...config, left: value })),
-		right: (value: Admit<NonNullable<T.ForStatement.Config>['right']>) =>
-			rebuilt(node, handle, () => buildForStatement({ ...config, right: value })),
-		body: (value: Admit<T.Suite>) => rebuilt(node, handle, () => buildForStatement({ ...config, body: value })),
-		alternative: (value?: Admit<T.ElseClause>) =>
-			rebuilt(node, handle, () => buildForStatement({ ...config, alternative: value })),
+		async: buildForStatement$with$async,
+		left: buildForStatement$with$left,
+		right: buildForStatement$with$right,
+		body: buildForStatement$with$body,
+		alternative: buildForStatement$with$alternative,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.ForStatement.Bound;
+}
+
+function buildForStatement$with$async(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.async');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.ForStatement.Config;
+	return applySetter(args, (value?: Admit<NonNullable<T.ForStatement.Config>['async']>) =>
+		rebuilt(node, handle, () => buildForStatement({ ...config, async: value }))
+	);
+}
+function buildForStatement$with$left(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.left');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.ForStatement.Config;
+	return applySetter(args, (value: Admit<T.Pattern | T.PatternList>) =>
+		rebuilt(node, handle, () => buildForStatement({ ...config, left: value }))
+	);
+}
+function buildForStatement$with$right(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.right');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.ForStatement.Config;
+	return applySetter(args, (value: Admit<NonNullable<T.ForStatement.Config>['right']>) =>
+		rebuilt(node, handle, () => buildForStatement({ ...config, right: value }))
+	);
+}
+function buildForStatement$with$body(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.body');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.ForStatement.Config;
+	return applySetter(args, (value: Admit<T.Suite>) =>
+		rebuilt(node, handle, () => buildForStatement({ ...config, body: value }))
+	);
+}
+function buildForStatement$with$alternative(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.alternative');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.ForStatement.Config;
+	return applySetter(args, (value?: Admit<T.ElseClause>) =>
+		rebuilt(node, handle, () => buildForStatement({ ...config, alternative: value }))
+	);
 }
 
 export function buildWhileStatement<
@@ -1321,22 +1509,43 @@ export function buildWhileStatement(config: T.WhileStatement.Config): T.WhileSta
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		condition: (value: Admit<NonNullable<T.WhileStatement.Config>['condition']>) =>
-			rebuilt(node, handle, () => buildWhileStatement({ ...config, condition: value })),
-		body: (value: Admit<T.Suite>) => rebuilt(node, handle, () => buildWhileStatement({ ...config, body: value })),
-		alternative: (value?: Admit<T.ElseClause>) =>
-			rebuilt(node, handle, () => buildWhileStatement({ ...config, alternative: value })),
+		condition: buildWhileStatement$with$condition,
+		body: buildWhileStatement$with$body,
+		alternative: buildWhileStatement$with$alternative,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.WhileStatement.Bound;
+}
+
+function buildWhileStatement$with$condition(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.condition');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.WhileStatement.Config;
+	return applySetter(args, (value: Admit<NonNullable<T.WhileStatement.Config>['condition']>) =>
+		rebuilt(node, handle, () => buildWhileStatement({ ...config, condition: value }))
+	);
+}
+function buildWhileStatement$with$body(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.body');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.WhileStatement.Config;
+	return applySetter(args, (value: Admit<T.Suite>) =>
+		rebuilt(node, handle, () => buildWhileStatement({ ...config, body: value }))
+	);
+}
+function buildWhileStatement$with$alternative(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.alternative');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.WhileStatement.Config;
+	return applySetter(args, (value?: Admit<T.ElseClause>) =>
+		rebuilt(node, handle, () => buildWhileStatement({ ...config, alternative: value }))
+	);
 }
 
 export function buildTryStatement<
@@ -1382,24 +1591,52 @@ export function buildTryStatement(config: T.TryStatement.Config): T.TryStatement
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		body: (value: Admit<T.Suite>) => rebuilt(node, handle, () => buildTryStatement({ ...config, body: value })),
-		handlers: (...values: Admit<T.ExceptClause[]>) =>
-			rebuilt(node, handle, () => buildTryStatement({ ...config, handlers: restItems('handlers', values) })),
-		alternative: (value?: Admit<T.ElseClause>) =>
-			rebuilt(node, handle, () => buildTryStatement({ ...config, alternative: value })),
-		finalizer: (value?: Admit<T.FinallyClause>) =>
-			rebuilt(node, handle, () => buildTryStatement({ ...config, finalizer: value })),
+		body: buildTryStatement$with$body,
+		handlers: buildTryStatement$with$handlers,
+		alternative: buildTryStatement$with$alternative,
+		finalizer: buildTryStatement$with$finalizer,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.TryStatement.Bound;
+}
+
+function buildTryStatement$with$body(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.body');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.TryStatement.Config;
+	return applySetter(args, (value: Admit<T.Suite>) =>
+		rebuilt(node, handle, () => buildTryStatement({ ...config, body: value }))
+	);
+}
+function buildTryStatement$with$handlers(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.handlers');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.TryStatement.Config;
+	return applySetter(args, (...values: Admit<T.ExceptClause[]>) =>
+		rebuilt(node, handle, () => buildTryStatement({ ...config, handlers: restItems('handlers', values) }))
+	);
+}
+function buildTryStatement$with$alternative(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.alternative');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.TryStatement.Config;
+	return applySetter(args, (value?: Admit<T.ElseClause>) =>
+		rebuilt(node, handle, () => buildTryStatement({ ...config, alternative: value }))
+	);
+}
+function buildTryStatement$with$finalizer(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.finalizer');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.TryStatement.Config;
+	return applySetter(args, (value?: Admit<T.FinallyClause>) =>
+		rebuilt(node, handle, () => buildTryStatement({ ...config, finalizer: value }))
+	);
 }
 
 export function buildExceptClause<
@@ -1430,22 +1667,43 @@ export function buildExceptClause(config: T.ExceptClause.Config): T.ExceptClause
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		group: (value?: Admit<NonNullable<T.ExceptClause.Config>['group']>) =>
-			rebuilt(node, handle, () => buildExceptClause({ ...config, group: value })),
-		exception: (value?: Admit<T.ExceptClauseException>) =>
-			rebuilt(node, handle, () => buildExceptClause({ ...config, exception: value })),
-		body: (value: Admit<T.Suite>) => rebuilt(node, handle, () => buildExceptClause({ ...config, body: value })),
+		group: buildExceptClause$with$group,
+		exception: buildExceptClause$with$exception,
+		body: buildExceptClause$with$body,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.ExceptClause.Bound;
+}
+
+function buildExceptClause$with$group(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.group');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.ExceptClause.Config;
+	return applySetter(args, (value?: Admit<NonNullable<T.ExceptClause.Config>['group']>) =>
+		rebuilt(node, handle, () => buildExceptClause({ ...config, group: value }))
+	);
+}
+function buildExceptClause$with$exception(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.exception');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.ExceptClause.Config;
+	return applySetter(args, (value?: Admit<T.ExceptClauseException>) =>
+		rebuilt(node, handle, () => buildExceptClause({ ...config, exception: value }))
+	);
+}
+function buildExceptClause$with$body(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.body');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.ExceptClause.Config;
+	return applySetter(args, (value: Admit<T.Suite>) =>
+		rebuilt(node, handle, () => buildExceptClause({ ...config, body: value }))
+	);
 }
 
 export function buildFinallyClause<V extends Admit<T.Suite>>(value: V & RefuseUndeclared<V>): T.FinallyClause.Bound;
@@ -1465,18 +1723,18 @@ export function buildFinallyClause(value: Admit<T.Suite>): T.FinallyClause.Bound
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		body: (value: Admit<T.Suite>) => rebuilt(node, handle, () => buildFinallyClause(value)),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { body: buildFinallyClause$with$body, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.FinallyClause.Bound;
+}
+
+function buildFinallyClause$with$body(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.body');
+	const handle = node[HANDLE];
+	return applySetter(args, (value: Admit<T.Suite>) => rebuilt(node, handle, () => buildFinallyClause(value)));
 }
 
 export function buildWithStatement<
@@ -1509,22 +1767,43 @@ export function buildWithStatement(config: T.WithStatement.Config): T.WithStatem
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		async: (value?: Admit<NonNullable<T.WithStatement.Config>['async']>) =>
-			rebuilt(node, handle, () => buildWithStatement({ ...config, async: value })),
-		withClause: (value: Admit<T.WithClause>) =>
-			rebuilt(node, handle, () => buildWithStatement({ ...config, withClause: value })),
-		body: (value: Admit<T.Suite>) => rebuilt(node, handle, () => buildWithStatement({ ...config, body: value })),
+		async: buildWithStatement$with$async,
+		withClause: buildWithStatement$with$withClause,
+		body: buildWithStatement$with$body,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.WithStatement.Bound;
+}
+
+function buildWithStatement$with$async(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.async');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.WithStatement.Config;
+	return applySetter(args, (value?: Admit<NonNullable<T.WithStatement.Config>['async']>) =>
+		rebuilt(node, handle, () => buildWithStatement({ ...config, async: value }))
+	);
+}
+function buildWithStatement$with$withClause(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.withClause');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.WithStatement.Config;
+	return applySetter(args, (value: Admit<T.WithClause>) =>
+		rebuilt(node, handle, () => buildWithStatement({ ...config, withClause: value }))
+	);
+}
+function buildWithStatement$with$body(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.body');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.WithStatement.Config;
+	return applySetter(args, (value: Admit<T.Suite>) =>
+		rebuilt(node, handle, () => buildWithStatement({ ...config, body: value }))
+	);
 }
 
 export function buildWithItem<V extends Admit<T.Expression>>(value: V & RefuseUndeclared<V>): T.WithItem.Bound;
@@ -1544,18 +1823,20 @@ export function buildWithItem(value: Admit<T.Expression>): T.WithItem.Bound {
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		value: (value: Admit<NonNullable<T.Expression>>) => rebuilt(node, handle, () => buildWithItem(value)),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { value: buildWithItem$with$value, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.WithItem.Bound;
+}
+
+function buildWithItem$with$value(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.value');
+	const handle = node[HANDLE];
+	return applySetter(args, (value: Admit<NonNullable<T.Expression>>) =>
+		rebuilt(node, handle, () => buildWithItem(value))
+	);
 }
 
 export function buildFunctionDefinition<
@@ -1616,40 +1897,82 @@ export function buildFunctionDefinition(config: T.FunctionDefinition.Config): T.
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		async: (value?: Admit<NonNullable<T.FunctionDefinition.Config>['async']>) =>
-			rebuilt(node, handle, () => buildFunctionDefinition({ ...config, async: value })),
-		name: (value: Admit<T.Identifier>) =>
-			rebuilt(node, handle, () => buildFunctionDefinition({ ...config, name: value })),
-		typeParameters: (...args: unknown[]) =>
-			rebuilt(node, handle, () =>
-				listSlotWith(
-					args,
-					{ kind: TSKindId.TypeParameter as const, optional: true, make: buildTypeParameter },
-					(value?: Admit<T.TypeParameter>) => buildFunctionDefinition({ ...config, typeParameters: value })
-				)
-			),
-		parameters: (...args: unknown[]) =>
-			rebuilt(node, handle, () =>
-				listSlotWith(
-					args,
-					{ kind: TSKindId.Parameters as const, optional: false, make: buildParameters },
-					(value: Admit<T.Parameters>) => buildFunctionDefinition({ ...config, parameters: value })
-				)
-			),
-		returnType: (value?: Admit<T.Type>) =>
-			rebuilt(node, handle, () => buildFunctionDefinition({ ...config, returnType: value })),
-		body: (value: Admit<T.Suite>) => rebuilt(node, handle, () => buildFunctionDefinition({ ...config, body: value })),
+		async: buildFunctionDefinition$with$async,
+		name: buildFunctionDefinition$with$name,
+		typeParameters: buildFunctionDefinition$with$typeParameters,
+		parameters: buildFunctionDefinition$with$parameters,
+		returnType: buildFunctionDefinition$with$returnType,
+		body: buildFunctionDefinition$with$body,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.FunctionDefinition.Bound;
+}
+
+function buildFunctionDefinition$with$async(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.async');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.FunctionDefinition.Config;
+	return applySetter(args, (value?: Admit<NonNullable<T.FunctionDefinition.Config>['async']>) =>
+		rebuilt(node, handle, () => buildFunctionDefinition({ ...config, async: value }))
+	);
+}
+function buildFunctionDefinition$with$name(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.name');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.FunctionDefinition.Config;
+	return applySetter(args, (value: Admit<T.Identifier>) =>
+		rebuilt(node, handle, () => buildFunctionDefinition({ ...config, name: value }))
+	);
+}
+function buildFunctionDefinition$with$typeParameters(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.typeParameters');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.FunctionDefinition.Config;
+	return applySetter(args, (...args: unknown[]) =>
+		rebuilt(node, handle, () =>
+			listSlotWith(
+				args,
+				{ kind: TSKindId.TypeParameter as const, optional: true, make: buildTypeParameter },
+				(value?: Admit<T.TypeParameter>) => buildFunctionDefinition({ ...config, typeParameters: value })
+			)
+		)
+	);
+}
+function buildFunctionDefinition$with$parameters(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.parameters');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.FunctionDefinition.Config;
+	return applySetter(args, (...args: unknown[]) =>
+		rebuilt(node, handle, () =>
+			listSlotWith(
+				args,
+				{ kind: TSKindId.Parameters as const, optional: false, make: buildParameters },
+				(value: Admit<T.Parameters>) => buildFunctionDefinition({ ...config, parameters: value })
+			)
+		)
+	);
+}
+function buildFunctionDefinition$with$returnType(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.returnType');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.FunctionDefinition.Config;
+	return applySetter(args, (value?: Admit<T.Type>) =>
+		rebuilt(node, handle, () => buildFunctionDefinition({ ...config, returnType: value }))
+	);
+}
+function buildFunctionDefinition$with$body(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.body');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.FunctionDefinition.Config;
+	return applySetter(args, (value: Admit<T.Suite>) =>
+		rebuilt(node, handle, () => buildFunctionDefinition({ ...config, body: value }))
+	);
 }
 
 export function buildParameters(): T.EmptyParameters;
@@ -1728,27 +2051,27 @@ function _buildParameters(value?: Admit<T.ParametersElements>): T.Parameters.Bou
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		elements: (...args: unknown[]) =>
-			rebuilt(node, handle, () =>
-				listSlotWith(
-					args,
-					{ kind: TSKindId.ParametersElements as const, optional: true, make: buildParametersElements },
-					(value?: Admit<T.ParametersElements>) => _buildParameters(value)
-				)
-			),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		inner: (...items: unknown[]) => triviaInner(node, handle, items),
-		[RECEIVER]: node
-	};
+	node.$with = { elements: buildParameters$with$elements, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, inner: objectInner, [RECEIVER]: node };
 	holdListItems(node, heldItems(listView.list));
 	return node as unknown as T.Parameters.Bound;
+}
+
+function buildParameters$with$elements(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.elements');
+	const handle = node[HANDLE];
+	return applySetter(args, (...args: unknown[]) =>
+		rebuilt(node, handle, () =>
+			listSlotWith(
+				args,
+				{ kind: TSKindId.ParametersElements as const, optional: true, make: buildParametersElements },
+				(value?: Admit<T.ParametersElements>) => _buildParameters(value)
+			)
+		)
+	);
 }
 
 export function buildLambdaParameters<V extends Admit<T.ParametersElements>>(
@@ -1828,26 +2151,27 @@ function _buildLambdaParameters(value: Admit<T.ParametersElements>): T.LambdaPar
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		parametersElements: (...args: unknown[]) =>
-			rebuilt(node, handle, () =>
-				listSlotWith(
-					args,
-					{ kind: TSKindId.ParametersElements as const, optional: false, make: buildParametersElements },
-					(value: Admit<T.ParametersElements>) => _buildLambdaParameters(value)
-				)
-			),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { parametersElements: buildLambdaParameters$with$parametersElements, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	holdListItems(node, heldItems(listView.list));
 	return node as unknown as T.LambdaParameters.Bound;
+}
+
+function buildLambdaParameters$with$parametersElements(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.parametersElements');
+	const handle = node[HANDLE];
+	return applySetter(args, (...args: unknown[]) =>
+		rebuilt(node, handle, () =>
+			listSlotWith(
+				args,
+				{ kind: TSKindId.ParametersElements as const, optional: false, make: buildParametersElements },
+				(value: Admit<T.ParametersElements>) => _buildLambdaParameters(value)
+			)
+		)
+	);
 }
 
 export function buildListSplat<V extends Admit<T.Expression>>(value: V & RefuseUndeclared<V>): T.ListSplat.Bound;
@@ -1867,18 +2191,20 @@ export function buildListSplat(value: Admit<T.Expression>): T.ListSplat.Bound {
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		expression: (value: Admit<NonNullable<T.Expression>>) => rebuilt(node, handle, () => buildListSplat(value)),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { expression: buildListSplat$with$expression, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.ListSplat.Bound;
+}
+
+function buildListSplat$with$expression(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.expression');
+	const handle = node[HANDLE];
+	return applySetter(args, (value: Admit<NonNullable<T.Expression>>) =>
+		rebuilt(node, handle, () => buildListSplat(value))
+	);
 }
 
 export function buildDictionarySplat<V extends Admit<T.Expression>>(
@@ -1900,18 +2226,20 @@ export function buildDictionarySplat(value: Admit<T.Expression>): T.DictionarySp
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		expression: (value: Admit<NonNullable<T.Expression>>) => rebuilt(node, handle, () => buildDictionarySplat(value)),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { expression: buildDictionarySplat$with$expression, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.DictionarySplat.Bound;
+}
+
+function buildDictionarySplat$with$expression(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.expression');
+	const handle = node[HANDLE];
+	return applySetter(args, (value: Admit<NonNullable<T.Expression>>) =>
+		rebuilt(node, handle, () => buildDictionarySplat(value))
+	);
 }
 
 export function buildGlobalStatement<A extends NonEmptyArray<Admit<T.Identifier>>>(
@@ -1934,19 +2262,20 @@ export function buildGlobalStatement(...children: NonEmptyArray<Admit<T.Identifi
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		names: (...vs: NonEmptyArray<Admit<T.Identifier>>) =>
-			rebuilt(node, handle, () => buildGlobalStatement(...restItems('names', vs))),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { names: buildGlobalStatement$with$names, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.GlobalStatement.Bound;
+}
+
+function buildGlobalStatement$with$names(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.names');
+	const handle = node[HANDLE];
+	return applySetter(args, (...vs: NonEmptyArray<Admit<T.Identifier>>) =>
+		rebuilt(node, handle, () => buildGlobalStatement(...restItems('names', vs)))
+	);
 }
 
 export function buildNonlocalStatement<A extends NonEmptyArray<Admit<T.Identifier>>>(
@@ -1969,19 +2298,20 @@ export function buildNonlocalStatement(...children: NonEmptyArray<Admit<T.Identi
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		names: (...vs: NonEmptyArray<Admit<T.Identifier>>) =>
-			rebuilt(node, handle, () => buildNonlocalStatement(...restItems('names', vs))),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { names: buildNonlocalStatement$with$names, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.NonlocalStatement.Bound;
+}
+
+function buildNonlocalStatement$with$names(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.names');
+	const handle = node[HANDLE];
+	return applySetter(args, (...vs: NonEmptyArray<Admit<T.Identifier>>) =>
+		rebuilt(node, handle, () => buildNonlocalStatement(...restItems('names', vs)))
+	);
 }
 
 export function buildExecStatement<
@@ -2008,21 +2338,32 @@ export function buildExecStatement(config: T.ExecStatement.Config): T.ExecStatem
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		code: (value: Admit<T.String | T.Identifier>) =>
-			rebuilt(node, handle, () => buildExecStatement({ ...config, code: value })),
-		inClauses: (...values: Admit<NonNullable<NonNullable<T.ExecStatement.Config>['inClauses']>[number][]>) =>
-			rebuilt(node, handle, () => buildExecStatement({ ...config, inClauses: restItems('inClauses', values) })),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { code: buildExecStatement$with$code, inClauses: buildExecStatement$with$inClauses, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.ExecStatement.Bound;
+}
+
+function buildExecStatement$with$code(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.code');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.ExecStatement.Config;
+	return applySetter(args, (value: Admit<T.String | T.Identifier>) =>
+		rebuilt(node, handle, () => buildExecStatement({ ...config, code: value }))
+	);
+}
+function buildExecStatement$with$inClauses(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.inClauses');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.ExecStatement.Config;
+	return applySetter(
+		args,
+		(...values: Admit<NonNullable<NonNullable<T.ExecStatement.Config>['inClauses']>[number][]>) =>
+			rebuilt(node, handle, () => buildExecStatement({ ...config, inClauses: restItems('inClauses', values) }))
+	);
 }
 
 export function buildTypeAliasStatement<
@@ -2051,19 +2392,30 @@ export function buildTypeAliasStatement(config: T.TypeAliasStatement.Config): T.
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		left: (value: Admit<T.Type>) => rebuilt(node, handle, () => buildTypeAliasStatement({ ...config, left: value })),
-		right: (value: Admit<T.Type>) => rebuilt(node, handle, () => buildTypeAliasStatement({ ...config, right: value })),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { left: buildTypeAliasStatement$with$left, right: buildTypeAliasStatement$with$right, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.TypeAliasStatement.Bound;
+}
+
+function buildTypeAliasStatement$with$left(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.left');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.TypeAliasStatement.Config;
+	return applySetter(args, (value: Admit<T.Type>) =>
+		rebuilt(node, handle, () => buildTypeAliasStatement({ ...config, left: value }))
+	);
+}
+function buildTypeAliasStatement$with$right(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.right');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.TypeAliasStatement.Config;
+	return applySetter(args, (value: Admit<T.Type>) =>
+		rebuilt(node, handle, () => buildTypeAliasStatement({ ...config, right: value }))
+	);
 }
 
 export function buildClassDefinition<
@@ -2109,36 +2461,64 @@ export function buildClassDefinition(config: T.ClassDefinition.Config): T.ClassD
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		name: (value: Admit<T.Identifier>) => rebuilt(node, handle, () => buildClassDefinition({ ...config, name: value })),
-		typeParameters: (...args: unknown[]) =>
-			rebuilt(node, handle, () =>
-				listSlotWith(
-					args,
-					{ kind: TSKindId.TypeParameter as const, optional: true, make: buildTypeParameter },
-					(value?: Admit<T.TypeParameter>) => buildClassDefinition({ ...config, typeParameters: value })
-				)
-			),
-		bases: (...args: unknown[]) =>
-			rebuilt(node, handle, () =>
-				listSlotWith(
-					args,
-					{ kind: TSKindId.ArgumentList as const, optional: true, make: buildArgumentList },
-					(value?: Admit<T.ArgumentList>) => buildClassDefinition({ ...config, bases: value })
-				)
-			),
-		body: (value: Admit<T.SuiteClassDefinition>) =>
-			rebuilt(node, handle, () => buildClassDefinition({ ...config, body: value })),
+		name: buildClassDefinition$with$name,
+		typeParameters: buildClassDefinition$with$typeParameters,
+		bases: buildClassDefinition$with$bases,
+		body: buildClassDefinition$with$body,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.ClassDefinition.Bound;
+}
+
+function buildClassDefinition$with$name(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.name');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.ClassDefinition.Config;
+	return applySetter(args, (value: Admit<T.Identifier>) =>
+		rebuilt(node, handle, () => buildClassDefinition({ ...config, name: value }))
+	);
+}
+function buildClassDefinition$with$typeParameters(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.typeParameters');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.ClassDefinition.Config;
+	return applySetter(args, (...args: unknown[]) =>
+		rebuilt(node, handle, () =>
+			listSlotWith(
+				args,
+				{ kind: TSKindId.TypeParameter as const, optional: true, make: buildTypeParameter },
+				(value?: Admit<T.TypeParameter>) => buildClassDefinition({ ...config, typeParameters: value })
+			)
+		)
+	);
+}
+function buildClassDefinition$with$bases(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.bases');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.ClassDefinition.Config;
+	return applySetter(args, (...args: unknown[]) =>
+		rebuilt(node, handle, () =>
+			listSlotWith(
+				args,
+				{ kind: TSKindId.ArgumentList as const, optional: true, make: buildArgumentList },
+				(value?: Admit<T.ArgumentList>) => buildClassDefinition({ ...config, bases: value })
+			)
+		)
+	);
+}
+function buildClassDefinition$with$body(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.body');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.ClassDefinition.Config;
+	return applySetter(args, (value: Admit<T.SuiteClassDefinition>) =>
+		rebuilt(node, handle, () => buildClassDefinition({ ...config, body: value }))
+	);
 }
 
 export function buildTypeParameter<V extends Admit<T.Types>>(
@@ -2216,26 +2596,27 @@ function _buildTypeParameter(value: Admit<T.Types>): T.TypeParameter.Bound {
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		types: (...args: unknown[]) =>
-			rebuilt(node, handle, () =>
-				listSlotWith(
-					args,
-					{ kind: TSKindId.Types as const, optional: false, make: buildTypes },
-					(value: Admit<T.Types>) => _buildTypeParameter(value)
-				)
-			),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { types: buildTypeParameter$with$types, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	holdListItems(node, heldItems(listView.list));
 	return node as unknown as T.TypeParameter.Bound;
+}
+
+function buildTypeParameter$with$types(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.types');
+	const handle = node[HANDLE];
+	return applySetter(args, (...args: unknown[]) =>
+		rebuilt(node, handle, () =>
+			listSlotWith(
+				args,
+				{ kind: TSKindId.Types as const, optional: false, make: buildTypes },
+				(value: Admit<T.Types>) => _buildTypeParameter(value)
+			)
+		)
+	);
 }
 
 export function buildParenthesizedListSplat<V extends Admit<T.ParenthesizedListSplat | T.ListSplat>>(
@@ -2259,19 +2640,20 @@ export function buildParenthesizedListSplat(
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		content: (value: Admit<T.ParenthesizedListSplat | T.ListSplat>) =>
-			rebuilt(node, handle, () => buildParenthesizedListSplat(value)),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { content: buildParenthesizedListSplat$with$content, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.ParenthesizedListSplat.Bound;
+}
+
+function buildParenthesizedListSplat$with$content(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.content');
+	const handle = node[HANDLE];
+	return applySetter(args, (value: Admit<T.ParenthesizedListSplat | T.ListSplat>) =>
+		rebuilt(node, handle, () => buildParenthesizedListSplat(value))
+	);
 }
 
 export function buildArgumentList(): T.EmptyArgumentList;
@@ -2356,27 +2738,27 @@ function _buildArgumentList(value?: Admit<T.ArgumentListElements>): T.ArgumentLi
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		arguments: (...args: unknown[]) =>
-			rebuilt(node, handle, () =>
-				listSlotWith(
-					args,
-					{ kind: TSKindId.ArgumentListElements as const, optional: true, make: buildArgumentListElements },
-					(value?: Admit<T.ArgumentListElements>) => _buildArgumentList(value)
-				)
-			),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		inner: (...items: unknown[]) => triviaInner(node, handle, items),
-		[RECEIVER]: node
-	};
+	node.$with = { arguments: buildArgumentList$with$arguments, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, inner: objectInner, [RECEIVER]: node };
 	holdListItems(node, heldItems(listView.list));
 	return node as unknown as T.ArgumentList.Bound;
+}
+
+function buildArgumentList$with$arguments(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.arguments');
+	const handle = node[HANDLE];
+	return applySetter(args, (...args: unknown[]) =>
+		rebuilt(node, handle, () =>
+			listSlotWith(
+				args,
+				{ kind: TSKindId.ArgumentListElements as const, optional: true, make: buildArgumentListElements },
+				(value?: Admit<T.ArgumentListElements>) => _buildArgumentList(value)
+			)
+		)
+	);
 }
 
 export function buildDecoratedDefinition<
@@ -2406,21 +2788,34 @@ export function buildDecoratedDefinition(config: T.DecoratedDefinition.Config): 
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		decorators: (...values: Admit<NonEmptyArray<T.Decorator>>) =>
-			rebuilt(node, handle, () => buildDecoratedDefinition({ ...config, decorators: restItems('decorators', values) })),
-		definition: (value: Admit<T.ClassDefinition | T.FunctionDefinition>) =>
-			rebuilt(node, handle, () => buildDecoratedDefinition({ ...config, definition: value })),
+		decorators: buildDecoratedDefinition$with$decorators,
+		definition: buildDecoratedDefinition$with$definition,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.DecoratedDefinition.Bound;
+}
+
+function buildDecoratedDefinition$with$decorators(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.decorators');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.DecoratedDefinition.Config;
+	return applySetter(args, (...values: Admit<NonEmptyArray<T.Decorator>>) =>
+		rebuilt(node, handle, () => buildDecoratedDefinition({ ...config, decorators: restItems('decorators', values) }))
+	);
+}
+function buildDecoratedDefinition$with$definition(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.definition');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.DecoratedDefinition.Config;
+	return applySetter(args, (value: Admit<T.ClassDefinition | T.FunctionDefinition>) =>
+		rebuilt(node, handle, () => buildDecoratedDefinition({ ...config, definition: value }))
+	);
 }
 
 export function buildDecorator<V extends Admit<T.Expression>>(value: V & RefuseUndeclared<V>): T.Decorator.Bound;
@@ -2440,18 +2835,20 @@ export function buildDecorator(value: Admit<T.Expression>): T.Decorator.Bound {
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		expression: (value: Admit<NonNullable<T.Expression>>) => rebuilt(node, handle, () => buildDecorator(value)),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { expression: buildDecorator$with$expression, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.Decorator.Bound;
+}
+
+function buildDecorator$with$expression(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.expression');
+	const handle = node[HANDLE];
+	return applySetter(args, (value: Admit<NonNullable<T.Expression>>) =>
+		rebuilt(node, handle, () => buildDecorator(value))
+	);
 }
 
 export function buildBlock<A extends Admit<T.Statement[]>>(...children: A & RefuseUndeclared<A>): T.Block.Bound;
@@ -2472,19 +2869,20 @@ export function buildBlock(...children: Admit<T.Statement[]>): T.Block.Bound {
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		statements: (...vs: Admit<T.Statement>[]) =>
-			rebuilt(node, handle, () => buildBlock(...restItems('statements', vs))),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { statements: buildBlock$with$statements, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.Block.Bound;
+}
+
+function buildBlock$with$statements(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.statements');
+	const handle = node[HANDLE];
+	return applySetter(args, (...vs: Admit<T.Statement>[]) =>
+		rebuilt(node, handle, () => buildBlock(...restItems('statements', vs)))
+	);
 }
 
 export function buildExpressionList<A extends NonEmptyArray<Admit<T.Expression>>>(
@@ -2563,22 +2961,38 @@ function _buildExpressionList(
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: elements,
+		[OPTIONS]: options,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		items: (...vs: NonEmptyArray<Admit<T.Expression>>) =>
-			rebuilt(node, handle, () => buildExpressionList(options, ...vs)),
-		delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
-			rebuilt(node, handle, () => buildExpressionList({ ...options, delimiter: v }, ...elements)),
+		items: buildExpressionList$with$items,
+		delimiter: buildExpressionList$with$delimiter,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	holdBuiltItems(node, listedItems);
 	return node as unknown as T.ExpressionList.Bound;
+}
+
+function buildExpressionList$with$items(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.items');
+	const handle = node[HANDLE];
+	const elements = node[INPUT] as NonEmptyArray<Admit<T.Expression>>;
+	const options = node[OPTIONS] as { delimiter?: Delimiter.None | Delimiter.Trailing };
+	return applySetter(args, (...vs: NonEmptyArray<Admit<T.Expression>>) =>
+		rebuilt(node, handle, () => buildExpressionList(options, ...vs))
+	);
+}
+function buildExpressionList$with$delimiter(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.delimiter');
+	const handle = node[HANDLE];
+	const elements = node[INPUT] as NonEmptyArray<Admit<T.Expression>>;
+	const options = node[OPTIONS] as { delimiter?: Delimiter.None | Delimiter.Trailing };
+	return applySetter(args, (v?: Delimiter.None | Delimiter.Trailing) =>
+		rebuilt(node, handle, () => buildExpressionList({ ...options, delimiter: v }, ...elements))
+	);
 }
 
 export function buildDottedName<
@@ -2605,20 +3019,30 @@ export function buildDottedName(config: T.DottedName.Config): T.DottedName.Bound
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		qualifier: (value?: Admit<T.DottedName>) =>
-			rebuilt(node, handle, () => buildDottedName({ ...config, qualifier: value })),
-		name: (value: Admit<T.Identifier>) => rebuilt(node, handle, () => buildDottedName({ ...config, name: value })),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { qualifier: buildDottedName$with$qualifier, name: buildDottedName$with$name, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.DottedName.Bound;
+}
+
+function buildDottedName$with$qualifier(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.qualifier');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.DottedName.Config;
+	return applySetter(args, (value?: Admit<T.DottedName>) =>
+		rebuilt(node, handle, () => buildDottedName({ ...config, qualifier: value }))
+	);
+}
+function buildDottedName$with$name(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.name');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.DottedName.Config;
+	return applySetter(args, (value: Admit<T.Identifier>) =>
+		rebuilt(node, handle, () => buildDottedName({ ...config, name: value }))
+	);
 }
 
 export function buildCasePattern<V extends Admit<T.CaseAsPattern | T.KeywordPattern | T.SimplePattern>>(
@@ -2642,19 +3066,20 @@ export function buildCasePattern(
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		content: (value: Admit<T.CaseAsPattern | T.KeywordPattern | T.SimplePattern>) =>
-			rebuilt(node, handle, () => buildCasePattern(value)),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { content: buildCasePattern$with$content, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.CasePattern.Bound;
+}
+
+function buildCasePattern$with$content(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.content');
+	const handle = node[HANDLE];
+	return applySetter(args, (value: Admit<T.CaseAsPattern | T.KeywordPattern | T.SimplePattern>) =>
+		rebuilt(node, handle, () => buildCasePattern(value))
+	);
 }
 
 export function buildSimplePattern<
@@ -2714,10 +3139,20 @@ export function buildSimplePattern(
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		content: (
+	node.$with = { content: buildSimplePattern$with$content, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
+	return node as unknown as T.SimplePattern.Bound;
+}
+
+function buildSimplePattern$with$content(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.content');
+	const handle = node[HANDLE];
+	return applySetter(
+		args,
+		(
 			value: Admit<
 				NonNullable<
 					| T.ClassPattern
@@ -2739,15 +3174,8 @@ export function buildSimplePattern(
 					| TSKindId.WildcardPattern
 				>
 			>
-		) => rebuilt(node, handle, () => buildSimplePattern(value)),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
-	return node as unknown as T.SimplePattern.Bound;
+		) => rebuilt(node, handle, () => buildSimplePattern(value))
+	);
 }
 
 export function buildCaseAsPattern<
@@ -2777,21 +3205,34 @@ export function buildCaseAsPattern(config: T.CaseAsPattern.Config): T.CaseAsPatt
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		casePattern: (value: Admit<T.CasePattern>) =>
-			rebuilt(node, handle, () => buildCaseAsPattern({ ...config, casePattern: value })),
-		identifier: (value: Admit<T.Identifier>) =>
-			rebuilt(node, handle, () => buildCaseAsPattern({ ...config, identifier: value })),
+		casePattern: buildCaseAsPattern$with$casePattern,
+		identifier: buildCaseAsPattern$with$identifier,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.CaseAsPattern.Bound;
+}
+
+function buildCaseAsPattern$with$casePattern(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.casePattern');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.CaseAsPattern.Config;
+	return applySetter(args, (value: Admit<T.CasePattern>) =>
+		rebuilt(node, handle, () => buildCaseAsPattern({ ...config, casePattern: value }))
+	);
+}
+function buildCaseAsPattern$with$identifier(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.identifier');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.CaseAsPattern.Config;
+	return applySetter(args, (value: Admit<T.Identifier>) =>
+		rebuilt(node, handle, () => buildCaseAsPattern({ ...config, identifier: value }))
+	);
 }
 
 export function buildUnionPattern<
@@ -2833,21 +3274,30 @@ export function buildUnionPattern(
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		left: (value: Admit<NonNullable<T.UnionPattern.Config>['left']>) =>
-			rebuilt(node, handle, () => buildUnionPattern({ ...config, left: value })),
-		right: (value: Admit<NonNullable<T.UnionPattern.Config>['right']>) =>
-			rebuilt(node, handle, () => buildUnionPattern({ ...config, right: value })),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { left: buildUnionPattern$with$left, right: buildUnionPattern$with$right, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.UnionPattern.Bound;
+}
+
+function buildUnionPattern$with$left(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.left');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.UnionPattern.Config;
+	return applySetter(args, (value: Admit<NonNullable<T.UnionPattern.Config>['left']>) =>
+		rebuilt(node, handle, () => buildUnionPattern({ ...config, left: value }))
+	);
+}
+function buildUnionPattern$with$right(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.right');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.UnionPattern.Config;
+	return applySetter(args, (value: Admit<NonNullable<T.UnionPattern.Config>['right']>) =>
+		rebuilt(node, handle, () => buildUnionPattern({ ...config, right: value }))
+	);
 }
 
 export function buildDictPattern(): T.EmptyDictPattern;
@@ -2926,27 +3376,27 @@ function _buildDictPattern(value?: Admit<T.DictPatternElements>): T.DictPattern.
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		elements: (...args: unknown[]) =>
-			rebuilt(node, handle, () =>
-				listSlotWith(
-					args,
-					{ kind: TSKindId.DictPatternElements as const, optional: true, make: buildDictPatternElements },
-					(value?: Admit<T.DictPatternElements>) => _buildDictPattern(value)
-				)
-			),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		inner: (...items: unknown[]) => triviaInner(node, handle, items),
-		[RECEIVER]: node
-	};
+	node.$with = { elements: buildDictPattern$with$elements, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, inner: objectInner, [RECEIVER]: node };
 	holdListItems(node, heldItems(listView.list));
 	return node as unknown as T.DictPattern.Bound;
+}
+
+function buildDictPattern$with$elements(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.elements');
+	const handle = node[HANDLE];
+	return applySetter(args, (...args: unknown[]) =>
+		rebuilt(node, handle, () =>
+			listSlotWith(
+				args,
+				{ kind: TSKindId.DictPatternElements as const, optional: true, make: buildDictPatternElements },
+				(value?: Admit<T.DictPatternElements>) => _buildDictPattern(value)
+			)
+		)
+	);
 }
 
 export function buildKeyValuePattern<
@@ -2984,21 +3434,30 @@ export function buildKeyValuePattern(
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		key: (value: Admit<NonNullable<T.KeyValuePattern.Config>['key']>) =>
-			rebuilt(node, handle, () => buildKeyValuePattern({ ...config, key: value })),
-		value: (value: Admit<T.CasePattern>) =>
-			rebuilt(node, handle, () => buildKeyValuePattern({ ...config, value: value })),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { key: buildKeyValuePattern$with$key, value: buildKeyValuePattern$with$value, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.KeyValuePattern.Bound;
+}
+
+function buildKeyValuePattern$with$key(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.key');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.KeyValuePattern.Config;
+	return applySetter(args, (value: Admit<NonNullable<T.KeyValuePattern.Config>['key']>) =>
+		rebuilt(node, handle, () => buildKeyValuePattern({ ...config, key: value }))
+	);
+}
+function buildKeyValuePattern$with$value(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.value');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.KeyValuePattern.Config;
+	return applySetter(args, (value: Admit<T.CasePattern>) =>
+		rebuilt(node, handle, () => buildKeyValuePattern({ ...config, value: value }))
+	);
 }
 
 export function buildKeywordPattern<
@@ -3036,20 +3495,30 @@ export function buildKeywordPattern(
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		name: (value: Admit<T.Identifier>) => rebuilt(node, handle, () => buildKeywordPattern({ ...config, name: value })),
-		pattern: (value: Admit<NonNullable<T.KeywordPattern.Config>['pattern']>) =>
-			rebuilt(node, handle, () => buildKeywordPattern({ ...config, pattern: value })),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { name: buildKeywordPattern$with$name, pattern: buildKeywordPattern$with$pattern, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.KeywordPattern.Bound;
+}
+
+function buildKeywordPattern$with$name(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.name');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.KeywordPattern.Config;
+	return applySetter(args, (value: Admit<T.Identifier>) =>
+		rebuilt(node, handle, () => buildKeywordPattern({ ...config, name: value }))
+	);
+}
+function buildKeywordPattern$with$pattern(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.pattern');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.KeywordPattern.Config;
+	return applySetter(args, (value: Admit<NonNullable<T.KeywordPattern.Config>['pattern']>) =>
+		rebuilt(node, handle, () => buildKeywordPattern({ ...config, pattern: value }))
+	);
 }
 
 export function buildClassPattern<
@@ -3076,26 +3545,36 @@ export function buildClassPattern(config: T.ClassPattern.Config): T.ClassPattern
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		type: (value: Admit<T.DottedName>) => rebuilt(node, handle, () => buildClassPattern({ ...config, type: value })),
-		fields: (...args: unknown[]) =>
-			rebuilt(node, handle, () =>
-				listSlotWith(
-					args,
-					{ kind: TSKindId.ListPatternCasePatterns as const, optional: true, make: buildListPatternCasePatterns },
-					(value?: Admit<T.ListPatternCasePatterns>) => buildClassPattern({ ...config, fields: value })
-				)
-			),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { type: buildClassPattern$with$type, fields: buildClassPattern$with$fields, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.ClassPattern.Bound;
+}
+
+function buildClassPattern$with$type(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.type');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.ClassPattern.Config;
+	return applySetter(args, (value: Admit<T.DottedName>) =>
+		rebuilt(node, handle, () => buildClassPattern({ ...config, type: value }))
+	);
+}
+function buildClassPattern$with$fields(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.fields');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.ClassPattern.Config;
+	return applySetter(args, (...args: unknown[]) =>
+		rebuilt(node, handle, () =>
+			listSlotWith(
+				args,
+				{ kind: TSKindId.ListPatternCasePatterns as const, optional: true, make: buildListPatternCasePatterns },
+				(value?: Admit<T.ListPatternCasePatterns>) => buildClassPattern({ ...config, fields: value })
+			)
+		)
+	);
 }
 
 export function buildComplexPattern<
@@ -3131,25 +3610,52 @@ export function buildComplexPattern(config: T.ComplexPattern.Config): T.ComplexP
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		sign: (value?: Admit<NonNullable<T.ComplexPattern.Config>['sign']>) =>
-			rebuilt(node, handle, () => buildComplexPattern({ ...config, sign: value })),
-		real: (value: Admit<T.Integer | T.Float>) =>
-			rebuilt(node, handle, () => buildComplexPattern({ ...config, real: value })),
-		operator: (value: Admit<NonNullable<T.ComplexPattern.Config>['operator']>) =>
-			rebuilt(node, handle, () => buildComplexPattern({ ...config, operator: value })),
-		imaginary: (value: Admit<T.Integer | T.Float>) =>
-			rebuilt(node, handle, () => buildComplexPattern({ ...config, imaginary: value })),
+		sign: buildComplexPattern$with$sign,
+		real: buildComplexPattern$with$real,
+		operator: buildComplexPattern$with$operator,
+		imaginary: buildComplexPattern$with$imaginary,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.ComplexPattern.Bound;
+}
+
+function buildComplexPattern$with$sign(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.sign');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.ComplexPattern.Config;
+	return applySetter(args, (value?: Admit<NonNullable<T.ComplexPattern.Config>['sign']>) =>
+		rebuilt(node, handle, () => buildComplexPattern({ ...config, sign: value }))
+	);
+}
+function buildComplexPattern$with$real(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.real');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.ComplexPattern.Config;
+	return applySetter(args, (value: Admit<T.Integer | T.Float>) =>
+		rebuilt(node, handle, () => buildComplexPattern({ ...config, real: value }))
+	);
+}
+function buildComplexPattern$with$operator(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.operator');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.ComplexPattern.Config;
+	return applySetter(args, (value: Admit<NonNullable<T.ComplexPattern.Config>['operator']>) =>
+		rebuilt(node, handle, () => buildComplexPattern({ ...config, operator: value }))
+	);
+}
+function buildComplexPattern$with$imaginary(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.imaginary');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.ComplexPattern.Config;
+	return applySetter(args, (value: Admit<T.Integer | T.Float>) =>
+		rebuilt(node, handle, () => buildComplexPattern({ ...config, imaginary: value }))
+	);
 }
 
 export function buildParametersElements<A extends NonEmptyArray<Admit<T.Parameter>>>(
@@ -3228,22 +3734,38 @@ function _buildParametersElements(
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: elements,
+		[OPTIONS]: options,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		items: (...vs: NonEmptyArray<Admit<T.Parameter>>) =>
-			rebuilt(node, handle, () => buildParametersElements(options, ...vs)),
-		delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
-			rebuilt(node, handle, () => buildParametersElements({ ...options, delimiter: v }, ...elements)),
+		items: buildParametersElements$with$items,
+		delimiter: buildParametersElements$with$delimiter,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	holdBuiltItems(node, listedItems);
 	return node as unknown as T.ParametersElements.Bound;
+}
+
+function buildParametersElements$with$items(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.items');
+	const handle = node[HANDLE];
+	const elements = node[INPUT] as NonEmptyArray<Admit<T.Parameter>>;
+	const options = node[OPTIONS] as { delimiter?: Delimiter.None | Delimiter.Trailing };
+	return applySetter(args, (...vs: NonEmptyArray<Admit<T.Parameter>>) =>
+		rebuilt(node, handle, () => buildParametersElements(options, ...vs))
+	);
+}
+function buildParametersElements$with$delimiter(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.delimiter');
+	const handle = node[HANDLE];
+	const elements = node[INPUT] as NonEmptyArray<Admit<T.Parameter>>;
+	const options = node[OPTIONS] as { delimiter?: Delimiter.None | Delimiter.Trailing };
+	return applySetter(args, (v?: Delimiter.None | Delimiter.Trailing) =>
+		rebuilt(node, handle, () => buildParametersElements({ ...options, delimiter: v }, ...elements))
+	);
 }
 
 export function buildPatterns<A extends NonEmptyArray<Admit<T.Pattern>>>(
@@ -3320,21 +3842,34 @@ function _buildPatterns(
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: elements,
+		[OPTIONS]: options,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		items: (...vs: NonEmptyArray<Admit<T.Pattern>>) => rebuilt(node, handle, () => buildPatterns(options, ...vs)),
-		delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
-			rebuilt(node, handle, () => buildPatterns({ ...options, delimiter: v }, ...elements)),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { items: buildPatterns$with$items, delimiter: buildPatterns$with$delimiter, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	holdBuiltItems(node, listedItems);
 	return node as unknown as T.Patterns.Bound;
+}
+
+function buildPatterns$with$items(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.items');
+	const handle = node[HANDLE];
+	const elements = node[INPUT] as NonEmptyArray<Admit<T.Pattern>>;
+	const options = node[OPTIONS] as { delimiter?: Delimiter.None | Delimiter.Trailing };
+	return applySetter(args, (...vs: NonEmptyArray<Admit<T.Pattern>>) =>
+		rebuilt(node, handle, () => buildPatterns(options, ...vs))
+	);
+}
+function buildPatterns$with$delimiter(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.delimiter');
+	const handle = node[HANDLE];
+	const elements = node[INPUT] as NonEmptyArray<Admit<T.Pattern>>;
+	const options = node[OPTIONS] as { delimiter?: Delimiter.None | Delimiter.Trailing };
+	return applySetter(args, (v?: Delimiter.None | Delimiter.Trailing) =>
+		rebuilt(node, handle, () => buildPatterns({ ...options, delimiter: v }, ...elements))
+	);
 }
 
 export function buildTuplePattern(): T.EmptyTuplePattern;
@@ -3413,27 +3948,27 @@ function _buildTuplePattern(value?: Admit<T.TuplePatternElements>): T.TuplePatte
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		elements: (...args: unknown[]) =>
-			rebuilt(node, handle, () =>
-				listSlotWith(
-					args,
-					{ kind: TSKindId.TuplePatternElements as const, optional: true, make: buildTuplePatternElements },
-					(value?: Admit<T.TuplePatternElements>) => _buildTuplePattern(value)
-				)
-			),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		inner: (...items: unknown[]) => triviaInner(node, handle, items),
-		[RECEIVER]: node
-	};
+	node.$with = { elements: buildTuplePattern$with$elements, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, inner: objectInner, [RECEIVER]: node };
 	holdListItems(node, heldItems(listView.list));
 	return node as unknown as T.TuplePattern.Bound;
+}
+
+function buildTuplePattern$with$elements(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.elements');
+	const handle = node[HANDLE];
+	return applySetter(args, (...args: unknown[]) =>
+		rebuilt(node, handle, () =>
+			listSlotWith(
+				args,
+				{ kind: TSKindId.TuplePatternElements as const, optional: true, make: buildTuplePatternElements },
+				(value?: Admit<T.TuplePatternElements>) => _buildTuplePattern(value)
+			)
+		)
+	);
 }
 
 export function buildListPattern(): T.EmptyListPattern;
@@ -3512,27 +4047,27 @@ function _buildListPattern(value?: Admit<T.Patterns>): T.ListPattern.Bound {
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		elements: (...args: unknown[]) =>
-			rebuilt(node, handle, () =>
-				listSlotWith(
-					args,
-					{ kind: TSKindId.Patterns as const, optional: true, make: buildPatterns },
-					(value?: Admit<T.Patterns>) => _buildListPattern(value)
-				)
-			),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		inner: (...items: unknown[]) => triviaInner(node, handle, items),
-		[RECEIVER]: node
-	};
+	node.$with = { elements: buildListPattern$with$elements, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, inner: objectInner, [RECEIVER]: node };
 	holdListItems(node, heldItems(listView.list));
 	return node as unknown as T.ListPattern.Bound;
+}
+
+function buildListPattern$with$elements(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.elements');
+	const handle = node[HANDLE];
+	return applySetter(args, (...args: unknown[]) =>
+		rebuilt(node, handle, () =>
+			listSlotWith(
+				args,
+				{ kind: TSKindId.Patterns as const, optional: true, make: buildPatterns },
+				(value?: Admit<T.Patterns>) => _buildListPattern(value)
+			)
+		)
+	);
 }
 
 export function buildDefaultParameter<
@@ -3561,21 +4096,30 @@ export function buildDefaultParameter(config: T.DefaultParameter.Config): T.Defa
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		name: (value: Admit<T.Identifier | T.TuplePattern>) =>
-			rebuilt(node, handle, () => buildDefaultParameter({ ...config, name: value })),
-		default: (value: Admit<NonNullable<T.DefaultParameter.Config>['default']>) =>
-			rebuilt(node, handle, () => buildDefaultParameter({ ...config, default: value })),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { name: buildDefaultParameter$with$name, default: buildDefaultParameter$with$default, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.DefaultParameter.Bound;
+}
+
+function buildDefaultParameter$with$name(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.name');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.DefaultParameter.Config;
+	return applySetter(args, (value: Admit<T.Identifier | T.TuplePattern>) =>
+		rebuilt(node, handle, () => buildDefaultParameter({ ...config, name: value }))
+	);
+}
+function buildDefaultParameter$with$default(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.default');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.DefaultParameter.Config;
+	return applySetter(args, (value: Admit<NonNullable<T.DefaultParameter.Config>['default']>) =>
+		rebuilt(node, handle, () => buildDefaultParameter({ ...config, default: value }))
+	);
 }
 
 export function buildTypedDefaultParameter<
@@ -3609,22 +4153,43 @@ export function buildTypedDefaultParameter(config: T.TypedDefaultParameter.Confi
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		name: (value: Admit<T.Identifier>) =>
-			rebuilt(node, handle, () => buildTypedDefaultParameter({ ...config, name: value })),
-		type: (value: Admit<T.Type>) => rebuilt(node, handle, () => buildTypedDefaultParameter({ ...config, type: value })),
-		default: (value: Admit<NonNullable<T.TypedDefaultParameter.Config>['default']>) =>
-			rebuilt(node, handle, () => buildTypedDefaultParameter({ ...config, default: value })),
+		name: buildTypedDefaultParameter$with$name,
+		type: buildTypedDefaultParameter$with$type,
+		default: buildTypedDefaultParameter$with$default,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.TypedDefaultParameter.Bound;
+}
+
+function buildTypedDefaultParameter$with$name(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.name');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.TypedDefaultParameter.Config;
+	return applySetter(args, (value: Admit<T.Identifier>) =>
+		rebuilt(node, handle, () => buildTypedDefaultParameter({ ...config, name: value }))
+	);
+}
+function buildTypedDefaultParameter$with$type(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.type');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.TypedDefaultParameter.Config;
+	return applySetter(args, (value: Admit<T.Type>) =>
+		rebuilt(node, handle, () => buildTypedDefaultParameter({ ...config, type: value }))
+	);
+}
+function buildTypedDefaultParameter$with$default(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.default');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.TypedDefaultParameter.Config;
+	return applySetter(args, (value: Admit<NonNullable<T.TypedDefaultParameter.Config>['default']>) =>
+		rebuilt(node, handle, () => buildTypedDefaultParameter({ ...config, default: value }))
+	);
 }
 
 export function buildListSplatPattern<V extends Admit<T.Identifier | T.Subscript | T.Attribute>>(
@@ -3648,19 +4213,20 @@ export function buildListSplatPattern(
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		pattern: (value: Admit<T.Identifier | T.Subscript | T.Attribute>) =>
-			rebuilt(node, handle, () => buildListSplatPattern(value)),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { pattern: buildListSplatPattern$with$pattern, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.ListSplatPattern.Bound;
+}
+
+function buildListSplatPattern$with$pattern(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.pattern');
+	const handle = node[HANDLE];
+	return applySetter(args, (value: Admit<T.Identifier | T.Subscript | T.Attribute>) =>
+		rebuilt(node, handle, () => buildListSplatPattern(value))
+	);
 }
 
 export function buildDictionarySplatPattern<V extends Admit<T.Identifier | T.Subscript | T.Attribute>>(
@@ -3684,19 +4250,20 @@ export function buildDictionarySplatPattern(
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		pattern: (value: Admit<T.Identifier | T.Subscript | T.Attribute>) =>
-			rebuilt(node, handle, () => buildDictionarySplatPattern(value)),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { pattern: buildDictionarySplatPattern$with$pattern, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.DictionarySplatPattern.Bound;
+}
+
+function buildDictionarySplatPattern$with$pattern(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.pattern');
+	const handle = node[HANDLE];
+	return applySetter(args, (value: Admit<T.Identifier | T.Subscript | T.Attribute>) =>
+		rebuilt(node, handle, () => buildDictionarySplatPattern(value))
+	);
 }
 
 export function buildAsPattern<
@@ -3731,21 +4298,30 @@ export function buildAsPattern(config: T.AsPattern.Config): T.AsPattern.Bound {
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		expression: (value: Admit<NonNullable<T.AsPattern.Config>['expression']>) =>
-			rebuilt(node, handle, () => buildAsPattern({ ...config, expression: value })),
-		alias: (value: Admit<T.AsPatternTarget | T.AsPatternTarget.Types>) =>
-			rebuilt(node, handle, () => buildAsPattern({ ...config, alias: value })),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { expression: buildAsPattern$with$expression, alias: buildAsPattern$with$alias, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.AsPattern.Bound;
+}
+
+function buildAsPattern$with$expression(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.expression');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.AsPattern.Config;
+	return applySetter(args, (value: Admit<NonNullable<T.AsPattern.Config>['expression']>) =>
+		rebuilt(node, handle, () => buildAsPattern({ ...config, expression: value }))
+	);
+}
+function buildAsPattern$with$alias(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.alias');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.AsPattern.Config;
+	return applySetter(args, (value: Admit<T.AsPatternTarget | T.AsPatternTarget.Types>) =>
+		rebuilt(node, handle, () => buildAsPattern({ ...config, alias: value }))
+	);
 }
 
 export function buildNotOperator<V extends Admit<T.Expression>>(value: V & RefuseUndeclared<V>): T.NotOperator.Bound;
@@ -3765,18 +4341,20 @@ export function buildNotOperator(value: Admit<T.Expression>): T.NotOperator.Boun
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		argument: (value: Admit<NonNullable<T.Expression>>) => rebuilt(node, handle, () => buildNotOperator(value)),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { argument: buildNotOperator$with$argument, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.NotOperator.Bound;
+}
+
+function buildNotOperator$with$argument(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.argument');
+	const handle = node[HANDLE];
+	return applySetter(args, (value: Admit<NonNullable<T.Expression>>) =>
+		rebuilt(node, handle, () => buildNotOperator(value))
+	);
 }
 
 export function buildBooleanOperator<
@@ -3807,23 +4385,43 @@ export function buildBooleanOperator(config: T.BooleanOperator.Config): T.Boolea
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		left: (value: Admit<NonNullable<T.BooleanOperator.Config>['left']>) =>
-			rebuilt(node, handle, () => buildBooleanOperator({ ...config, left: value })),
-		operator: (value: Admit<NonNullable<T.BooleanOperator.Config>['operator']>) =>
-			rebuilt(node, handle, () => buildBooleanOperator({ ...config, operator: value })),
-		right: (value: Admit<NonNullable<T.BooleanOperator.Config>['right']>) =>
-			rebuilt(node, handle, () => buildBooleanOperator({ ...config, right: value })),
+		left: buildBooleanOperator$with$left,
+		operator: buildBooleanOperator$with$operator,
+		right: buildBooleanOperator$with$right,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.BooleanOperator.Bound;
+}
+
+function buildBooleanOperator$with$left(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.left');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.BooleanOperator.Config;
+	return applySetter(args, (value: Admit<NonNullable<T.BooleanOperator.Config>['left']>) =>
+		rebuilt(node, handle, () => buildBooleanOperator({ ...config, left: value }))
+	);
+}
+function buildBooleanOperator$with$operator(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.operator');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.BooleanOperator.Config;
+	return applySetter(args, (value: Admit<NonNullable<T.BooleanOperator.Config>['operator']>) =>
+		rebuilt(node, handle, () => buildBooleanOperator({ ...config, operator: value }))
+	);
+}
+function buildBooleanOperator$with$right(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.right');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.BooleanOperator.Config;
+	return applySetter(args, (value: Admit<NonNullable<T.BooleanOperator.Config>['right']>) =>
+		rebuilt(node, handle, () => buildBooleanOperator({ ...config, right: value }))
+	);
 }
 
 export function buildBinaryOperator<
@@ -3854,23 +4452,43 @@ export function buildBinaryOperator(config: T.BinaryOperator.Config): T.BinaryOp
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		left: (value: Admit<NonNullable<T.BinaryOperator.Config>['left']>) =>
-			rebuilt(node, handle, () => buildBinaryOperator({ ...config, left: value })),
-		operator: (value: Admit<NonNullable<T.BinaryOperator.Config>['operator']>) =>
-			rebuilt(node, handle, () => buildBinaryOperator({ ...config, operator: value })),
-		right: (value: Admit<NonNullable<T.BinaryOperator.Config>['right']>) =>
-			rebuilt(node, handle, () => buildBinaryOperator({ ...config, right: value })),
+		left: buildBinaryOperator$with$left,
+		operator: buildBinaryOperator$with$operator,
+		right: buildBinaryOperator$with$right,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.BinaryOperator.Bound;
+}
+
+function buildBinaryOperator$with$left(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.left');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.BinaryOperator.Config;
+	return applySetter(args, (value: Admit<NonNullable<T.BinaryOperator.Config>['left']>) =>
+		rebuilt(node, handle, () => buildBinaryOperator({ ...config, left: value }))
+	);
+}
+function buildBinaryOperator$with$operator(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.operator');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.BinaryOperator.Config;
+	return applySetter(args, (value: Admit<NonNullable<T.BinaryOperator.Config>['operator']>) =>
+		rebuilt(node, handle, () => buildBinaryOperator({ ...config, operator: value }))
+	);
+}
+function buildBinaryOperator$with$right(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.right');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.BinaryOperator.Config;
+	return applySetter(args, (value: Admit<NonNullable<T.BinaryOperator.Config>['right']>) =>
+		rebuilt(node, handle, () => buildBinaryOperator({ ...config, right: value }))
+	);
 }
 
 export function buildUnaryOperator<ArgumentSlot extends T.UnaryOperator.Config['argument']>(
@@ -3896,21 +4514,34 @@ export function buildUnaryOperator(config: T.UnaryOperator.Config): T.UnaryOpera
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		operator: (value: Admit<NonNullable<T.UnaryOperator.Config>['operator']>) =>
-			rebuilt(node, handle, () => buildUnaryOperator({ ...config, operator: value })),
-		argument: (value: Admit<NonNullable<T.UnaryOperator.Config>['argument']>) =>
-			rebuilt(node, handle, () => buildUnaryOperator({ ...config, argument: value })),
+		operator: buildUnaryOperator$with$operator,
+		argument: buildUnaryOperator$with$argument,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.UnaryOperator.Bound;
+}
+
+function buildUnaryOperator$with$operator(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.operator');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.UnaryOperator.Config;
+	return applySetter(args, (value: Admit<NonNullable<T.UnaryOperator.Config>['operator']>) =>
+		rebuilt(node, handle, () => buildUnaryOperator({ ...config, operator: value }))
+	);
+}
+function buildUnaryOperator$with$argument(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.argument');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.UnaryOperator.Config;
+	return applySetter(args, (value: Admit<NonNullable<T.UnaryOperator.Config>['argument']>) =>
+		rebuilt(node, handle, () => buildUnaryOperator({ ...config, argument: value }))
+	);
 }
 
 export function buildComparisonOperator<
@@ -3939,28 +4570,41 @@ export function buildComparisonOperator(config: T.ComparisonOperator.Config): T.
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		left: (value: Admit<NonNullable<T.ComparisonOperator.Config>['left']>) =>
-			rebuilt(node, handle, () => buildComparisonOperator({ ...config, left: value })),
-		comparators: (...args: unknown[]) =>
-			rebuilt(node, handle, () =>
-				elementsWith(
-					args,
-					{ slot: 'comparators', keys: ['operators', 'primaryExpression'], make: buildComparisonOperatorComparator },
-					(...values: Admit<NonEmptyArray<T.ComparisonOperatorComparator>>) =>
-						buildComparisonOperator({ ...config, comparators: restItems('comparators', values) })
-				)
-			),
+		left: buildComparisonOperator$with$left,
+		comparators: buildComparisonOperator$with$comparators,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.ComparisonOperator.Bound;
+}
+
+function buildComparisonOperator$with$left(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.left');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.ComparisonOperator.Config;
+	return applySetter(args, (value: Admit<NonNullable<T.ComparisonOperator.Config>['left']>) =>
+		rebuilt(node, handle, () => buildComparisonOperator({ ...config, left: value }))
+	);
+}
+function buildComparisonOperator$with$comparators(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.comparators');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.ComparisonOperator.Config;
+	return applySetter(args, (...args: unknown[]) =>
+		rebuilt(node, handle, () =>
+			elementsWith(
+				args,
+				{ slot: 'comparators', keys: ['operators', 'primaryExpression'], make: buildComparisonOperatorComparator },
+				(...values: Admit<NonEmptyArray<T.ComparisonOperatorComparator>>) =>
+					buildComparisonOperator({ ...config, comparators: restItems('comparators', values) })
+			)
+		)
+	);
 }
 
 export function buildLambda<
@@ -3987,27 +4631,36 @@ export function buildLambda(config: T.Lambda.Config): T.Lambda.Bound {
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		parameters: (...args: unknown[]) =>
-			rebuilt(node, handle, () =>
-				listSlotWith(
-					args,
-					{ kind: TSKindId.LambdaParameters as const, optional: true, make: buildLambdaParameters },
-					(value?: Admit<T.LambdaParameters>) => buildLambda({ ...config, parameters: value })
-				)
-			),
-		body: (value: Admit<NonNullable<T.Lambda.Config>['body']>) =>
-			rebuilt(node, handle, () => buildLambda({ ...config, body: value })),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { parameters: buildLambda$with$parameters, body: buildLambda$with$body, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.Lambda.Bound;
+}
+
+function buildLambda$with$parameters(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.parameters');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.Lambda.Config;
+	return applySetter(args, (...args: unknown[]) =>
+		rebuilt(node, handle, () =>
+			listSlotWith(
+				args,
+				{ kind: TSKindId.LambdaParameters as const, optional: true, make: buildLambdaParameters },
+				(value?: Admit<T.LambdaParameters>) => buildLambda({ ...config, parameters: value })
+			)
+		)
+	);
+}
+function buildLambda$with$body(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.body');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.Lambda.Config;
+	return applySetter(args, (value: Admit<NonNullable<T.Lambda.Config>['body']>) =>
+		rebuilt(node, handle, () => buildLambda({ ...config, body: value }))
+	);
 }
 
 export function buildLambdaWithinForInClause<
@@ -4039,27 +4692,40 @@ export function buildLambdaWithinForInClause(
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		parameters: (...args: unknown[]) =>
-			rebuilt(node, handle, () =>
-				listSlotWith(
-					args,
-					{ kind: TSKindId.LambdaParameters as const, optional: true, make: buildLambdaParameters },
-					(value?: Admit<T.LambdaParameters>) => buildLambdaWithinForInClause({ ...config, parameters: value })
-				)
-			),
-		body: (value: Admit<NonNullable<T.LambdaWithinForInClause.Config>['body']>) =>
-			rebuilt(node, handle, () => buildLambdaWithinForInClause({ ...config, body: value })),
+		parameters: buildLambdaWithinForInClause$with$parameters,
+		body: buildLambdaWithinForInClause$with$body,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.LambdaWithinForInClause.Bound;
+}
+
+function buildLambdaWithinForInClause$with$parameters(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.parameters');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.LambdaWithinForInClause.Config;
+	return applySetter(args, (...args: unknown[]) =>
+		rebuilt(node, handle, () =>
+			listSlotWith(
+				args,
+				{ kind: TSKindId.LambdaParameters as const, optional: true, make: buildLambdaParameters },
+				(value?: Admit<T.LambdaParameters>) => buildLambdaWithinForInClause({ ...config, parameters: value })
+			)
+		)
+	);
+}
+function buildLambdaWithinForInClause$with$body(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.body');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.LambdaWithinForInClause.Config;
+	return applySetter(args, (value: Admit<NonNullable<T.LambdaWithinForInClause.Config>['body']>) =>
+		rebuilt(node, handle, () => buildLambdaWithinForInClause({ ...config, body: value }))
+	);
 }
 
 export function buildAugmentedAssignment<
@@ -4092,23 +4758,43 @@ export function buildAugmentedAssignment(config: T.AugmentedAssignment.Config): 
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		left: (value: Admit<T.Pattern | T.PatternList>) =>
-			rebuilt(node, handle, () => buildAugmentedAssignment({ ...config, left: value })),
-		operator: (value: Admit<NonNullable<T.AugmentedAssignment.Config>['operator']>) =>
-			rebuilt(node, handle, () => buildAugmentedAssignment({ ...config, operator: value })),
-		right: (value: Admit<NonNullable<T.AugmentedAssignment.Config>['right']>) =>
-			rebuilt(node, handle, () => buildAugmentedAssignment({ ...config, right: value })),
+		left: buildAugmentedAssignment$with$left,
+		operator: buildAugmentedAssignment$with$operator,
+		right: buildAugmentedAssignment$with$right,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.AugmentedAssignment.Bound;
+}
+
+function buildAugmentedAssignment$with$left(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.left');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.AugmentedAssignment.Config;
+	return applySetter(args, (value: Admit<T.Pattern | T.PatternList>) =>
+		rebuilt(node, handle, () => buildAugmentedAssignment({ ...config, left: value }))
+	);
+}
+function buildAugmentedAssignment$with$operator(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.operator');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.AugmentedAssignment.Config;
+	return applySetter(args, (value: Admit<NonNullable<T.AugmentedAssignment.Config>['operator']>) =>
+		rebuilt(node, handle, () => buildAugmentedAssignment({ ...config, operator: value }))
+	);
+}
+function buildAugmentedAssignment$with$right(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.right');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.AugmentedAssignment.Config;
+	return applySetter(args, (value: Admit<NonNullable<T.AugmentedAssignment.Config>['right']>) =>
+		rebuilt(node, handle, () => buildAugmentedAssignment({ ...config, right: value }))
+	);
 }
 
 export function buildPatternList<A extends NonEmptyArray<Admit<T.Pattern>>>(
@@ -4185,21 +4871,34 @@ function _buildPatternList(
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: elements,
+		[OPTIONS]: options,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		items: (...vs: NonEmptyArray<Admit<T.Pattern>>) => rebuilt(node, handle, () => buildPatternList(options, ...vs)),
-		delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
-			rebuilt(node, handle, () => buildPatternList({ ...options, delimiter: v }, ...elements)),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { items: buildPatternList$with$items, delimiter: buildPatternList$with$delimiter, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	holdBuiltItems(node, listedItems);
 	return node as unknown as T.PatternList.Bound;
+}
+
+function buildPatternList$with$items(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.items');
+	const handle = node[HANDLE];
+	const elements = node[INPUT] as NonEmptyArray<Admit<T.Pattern>>;
+	const options = node[OPTIONS] as { delimiter?: Delimiter.None | Delimiter.Trailing };
+	return applySetter(args, (...vs: NonEmptyArray<Admit<T.Pattern>>) =>
+		rebuilt(node, handle, () => buildPatternList(options, ...vs))
+	);
+}
+function buildPatternList$with$delimiter(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.delimiter');
+	const handle = node[HANDLE];
+	const elements = node[INPUT] as NonEmptyArray<Admit<T.Pattern>>;
+	const options = node[OPTIONS] as { delimiter?: Delimiter.None | Delimiter.Trailing };
+	return applySetter(args, (v?: Delimiter.None | Delimiter.Trailing) =>
+		rebuilt(node, handle, () => buildPatternList({ ...options, delimiter: v }, ...elements))
+	);
 }
 
 export function buildYield<V extends Admit<T.YieldFromClause | T.Expression | T.ExpressionList>>(
@@ -4221,19 +4920,20 @@ export function buildYield(value?: Admit<T.YieldFromClause | T.Expression | T.Ex
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		content: (value?: Admit<NonNullable<T.YieldFromClause | T.Expression | T.ExpressionList>>) =>
-			rebuilt(node, handle, () => buildYield(value)),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { content: buildYield$with$content, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.Yield.Bound;
+}
+
+function buildYield$with$content(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.content');
+	const handle = node[HANDLE];
+	return applySetter(args, (value?: Admit<NonNullable<T.YieldFromClause | T.Expression | T.ExpressionList>>) =>
+		rebuilt(node, handle, () => buildYield(value))
+	);
 }
 
 export function buildAttribute<
@@ -4260,21 +4960,30 @@ export function buildAttribute(config: T.Attribute.Config): T.Attribute.Bound {
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		object: (value: Admit<NonNullable<T.Attribute.Config>['object']>) =>
-			rebuilt(node, handle, () => buildAttribute({ ...config, object: value })),
-		property: (value: Admit<T.Identifier>) =>
-			rebuilt(node, handle, () => buildAttribute({ ...config, property: value })),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { object: buildAttribute$with$object, property: buildAttribute$with$property, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.Attribute.Bound;
+}
+
+function buildAttribute$with$object(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.object');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.Attribute.Config;
+	return applySetter(args, (value: Admit<NonNullable<T.Attribute.Config>['object']>) =>
+		rebuilt(node, handle, () => buildAttribute({ ...config, object: value }))
+	);
+}
+function buildAttribute$with$property(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.property');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.Attribute.Config;
+	return applySetter(args, (value: Admit<T.Identifier>) =>
+		rebuilt(node, handle, () => buildAttribute({ ...config, property: value }))
+	);
 }
 
 export function buildSubscript<
@@ -4301,27 +5010,36 @@ export function buildSubscript(config: T.Subscript.Config): T.Subscript.Bound {
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		object: (value: Admit<NonNullable<T.Subscript.Config>['object']>) =>
-			rebuilt(node, handle, () => buildSubscript({ ...config, object: value })),
-		subscripts: (...args: unknown[]) =>
-			rebuilt(node, handle, () =>
-				listSlotWith(
-					args,
-					{ kind: TSKindId.Subscripts as const, optional: false, make: buildSubscripts },
-					(value: Admit<T.Subscripts>) => buildSubscript({ ...config, subscripts: value })
-				)
-			),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { object: buildSubscript$with$object, subscripts: buildSubscript$with$subscripts, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.Subscript.Bound;
+}
+
+function buildSubscript$with$object(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.object');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.Subscript.Config;
+	return applySetter(args, (value: Admit<NonNullable<T.Subscript.Config>['object']>) =>
+		rebuilt(node, handle, () => buildSubscript({ ...config, object: value }))
+	);
+}
+function buildSubscript$with$subscripts(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.subscripts');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.Subscript.Config;
+	return applySetter(args, (...args: unknown[]) =>
+		rebuilt(node, handle, () =>
+			listSlotWith(
+				args,
+				{ kind: TSKindId.Subscripts as const, optional: false, make: buildSubscripts },
+				(value: Admit<T.Subscripts>) => buildSubscript({ ...config, subscripts: value })
+			)
+		)
+	);
 }
 
 export function buildSlice<
@@ -4356,32 +5074,64 @@ export function buildSlice(config: Partial<T.Slice.Config> = {}): T.Slice.Bound 
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		start: (value?: Admit<NonNullable<T.Slice.Config>['start']>) =>
-			rebuilt(node, handle, () => buildSlice({ ...config, start: value })),
-		stop: (value?: Admit<NonNullable<T.Slice.Config>['stop']>) =>
-			rebuilt(node, handle, () => buildSlice({ ...config, stop: value })),
-		step: (value?: Admit<T.SliceGroup>) => rebuilt(node, handle, () => buildSlice({ ...config, step: value })),
-		expression: (...args: unknown[]) =>
-			rebuilt(node, handle, () =>
-				seatWith(
-					{ slot: 'step', stored: '_step', make: buildSliceGroup, keys: [{ name: 'expression', rest: false }] },
-					'expression',
-					args,
-					(value?: Admit<T.SliceGroup>) => buildSlice({ ...config, step: value }),
-					() => readGroup_step.call(node)
-				)
-			),
+		start: buildSlice$with$start,
+		stop: buildSlice$with$stop,
+		step: buildSlice$with$step,
+		expression: buildSlice$with$expression,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.Slice.Bound;
+}
+
+function buildSlice$with$start(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.start');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.Slice.Config;
+	const readGroup_step = () => (node as unknown as Readonly<Record<string, object | undefined>>)['_step'];
+	return applySetter(args, (value?: Admit<NonNullable<T.Slice.Config>['start']>) =>
+		rebuilt(node, handle, () => buildSlice({ ...config, start: value }))
+	);
+}
+function buildSlice$with$stop(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.stop');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.Slice.Config;
+	const readGroup_step = () => (node as unknown as Readonly<Record<string, object | undefined>>)['_step'];
+	return applySetter(args, (value?: Admit<NonNullable<T.Slice.Config>['stop']>) =>
+		rebuilt(node, handle, () => buildSlice({ ...config, stop: value }))
+	);
+}
+function buildSlice$with$step(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.step');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.Slice.Config;
+	const readGroup_step = () => (node as unknown as Readonly<Record<string, object | undefined>>)['_step'];
+	return applySetter(args, (value?: Admit<T.SliceGroup>) =>
+		rebuilt(node, handle, () => buildSlice({ ...config, step: value }))
+	);
+}
+function buildSlice$with$expression(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.expression');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.Slice.Config;
+	const readGroup_step = () => (node as unknown as Readonly<Record<string, object | undefined>>)['_step'];
+	return applySetter(args, (...args: unknown[]) =>
+		rebuilt(node, handle, () =>
+			seatWith(
+				{ slot: 'step', stored: '_step', make: buildSliceGroup, keys: [{ name: 'expression', rest: false }] },
+				'expression',
+				args,
+				(value?: Admit<T.SliceGroup>) => buildSlice({ ...config, step: value }),
+				() => readGroup_step.call(node)
+			)
+		)
+	);
 }
 
 export const buildEllipsis: TSKindId.Ellipsis = TSKindId.Ellipsis;
@@ -4410,21 +5160,30 @@ export function buildCall(config: T.Call.Config): T.Call.Bound {
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		function: (value: Admit<NonNullable<T.Call.Config>['function']>) =>
-			rebuilt(node, handle, () => buildCall({ ...config, function: value })),
-		arguments: (value: Admit<T.GeneratorExpression | T.ArgumentList>) =>
-			rebuilt(node, handle, () => buildCall({ ...config, arguments: value })),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { function: buildCall$with$function, arguments: buildCall$with$arguments, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.Call.Bound;
+}
+
+function buildCall$with$function(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.function');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.Call.Config;
+	return applySetter(args, (value: Admit<NonNullable<T.Call.Config>['function']>) =>
+		rebuilt(node, handle, () => buildCall({ ...config, function: value }))
+	);
+}
+function buildCall$with$arguments(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.arguments');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.Call.Config;
+	return applySetter(args, (value: Admit<T.GeneratorExpression | T.ArgumentList>) =>
+		rebuilt(node, handle, () => buildCall({ ...config, arguments: value }))
+	);
 }
 
 export function buildTypedParameter<
@@ -4451,20 +5210,30 @@ export function buildTypedParameter(config: T.TypedParameter.Config): T.TypedPar
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		name: (value: Admit<T.Identifier | T.ListSplatPattern | T.DictionarySplatPattern>) =>
-			rebuilt(node, handle, () => buildTypedParameter({ ...config, name: value })),
-		type: (value: Admit<T.Type>) => rebuilt(node, handle, () => buildTypedParameter({ ...config, type: value })),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { name: buildTypedParameter$with$name, type: buildTypedParameter$with$type, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.TypedParameter.Bound;
+}
+
+function buildTypedParameter$with$name(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.name');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.TypedParameter.Config;
+	return applySetter(args, (value: Admit<T.Identifier | T.ListSplatPattern | T.DictionarySplatPattern>) =>
+		rebuilt(node, handle, () => buildTypedParameter({ ...config, name: value }))
+	);
+}
+function buildTypedParameter$with$type(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.type');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.TypedParameter.Config;
+	return applySetter(args, (value: Admit<T.Type>) =>
+		rebuilt(node, handle, () => buildTypedParameter({ ...config, type: value }))
+	);
 }
 
 export function buildType<
@@ -4488,22 +5257,25 @@ export function buildType(
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		content: (
+	node.$with = { content: buildType$with$content, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
+	return node as unknown as T.Type.Bound;
+}
+
+function buildType$with$content(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.content');
+	const handle = node[HANDLE];
+	return applySetter(
+		args,
+		(
 			value: Admit<
 				NonNullable<T.Expression | T.SplatType | T.GenericType | T.UnionType | T.ConstrainedType | T.MemberType>
 			>
-		) => rebuilt(node, handle, () => buildType(value)),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
-	return node as unknown as T.Type.Bound;
+		) => rebuilt(node, handle, () => buildType(value))
+	);
 }
 
 export function buildSplatType<TypeSlot extends T.SplatType.Config['type']>(
@@ -4529,20 +5301,30 @@ export function buildSplatType(config: T.SplatType.Config): T.SplatType.Bound {
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		operator: (value: Admit<NonNullable<T.SplatType.Config>['operator']>) =>
-			rebuilt(node, handle, () => buildSplatType({ ...config, operator: value })),
-		type: (value: Admit<T.Identifier>) => rebuilt(node, handle, () => buildSplatType({ ...config, type: value })),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { operator: buildSplatType$with$operator, type: buildSplatType$with$type, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.SplatType.Bound;
+}
+
+function buildSplatType$with$operator(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.operator');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.SplatType.Config;
+	return applySetter(args, (value: Admit<NonNullable<T.SplatType.Config>['operator']>) =>
+		rebuilt(node, handle, () => buildSplatType({ ...config, operator: value }))
+	);
+}
+function buildSplatType$with$type(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.type');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.SplatType.Config;
+	return applySetter(args, (value: Admit<T.Identifier>) =>
+		rebuilt(node, handle, () => buildSplatType({ ...config, type: value }))
+	);
 }
 
 export function buildGenericType<
@@ -4571,26 +5353,40 @@ export function buildGenericType(config: T.GenericType.Config): T.GenericType.Bo
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		name: (value: Admit<T.Identifier>) => rebuilt(node, handle, () => buildGenericType({ ...config, name: value })),
-		typeParameter: (...args: unknown[]) =>
-			rebuilt(node, handle, () =>
-				listSlotWith(
-					args,
-					{ kind: TSKindId.TypeParameter as const, optional: false, make: buildTypeParameter },
-					(value: Admit<T.TypeParameter>) => buildGenericType({ ...config, typeParameter: value })
-				)
-			),
+		name: buildGenericType$with$name,
+		typeParameter: buildGenericType$with$typeParameter,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.GenericType.Bound;
+}
+
+function buildGenericType$with$name(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.name');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.GenericType.Config;
+	return applySetter(args, (value: Admit<T.Identifier>) =>
+		rebuilt(node, handle, () => buildGenericType({ ...config, name: value }))
+	);
+}
+function buildGenericType$with$typeParameter(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.typeParameter');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.GenericType.Config;
+	return applySetter(args, (...args: unknown[]) =>
+		rebuilt(node, handle, () =>
+			listSlotWith(
+				args,
+				{ kind: TSKindId.TypeParameter as const, optional: false, make: buildTypeParameter },
+				(value: Admit<T.TypeParameter>) => buildGenericType({ ...config, typeParameter: value })
+			)
+		)
+	);
 }
 
 export function buildUnionType<
@@ -4617,19 +5413,30 @@ export function buildUnionType(config: T.UnionType.Config): T.UnionType.Bound {
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		left: (value: Admit<T.Type>) => rebuilt(node, handle, () => buildUnionType({ ...config, left: value })),
-		right: (value: Admit<T.Type>) => rebuilt(node, handle, () => buildUnionType({ ...config, right: value })),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { left: buildUnionType$with$left, right: buildUnionType$with$right, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.UnionType.Bound;
+}
+
+function buildUnionType$with$left(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.left');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.UnionType.Config;
+	return applySetter(args, (value: Admit<T.Type>) =>
+		rebuilt(node, handle, () => buildUnionType({ ...config, left: value }))
+	);
+}
+function buildUnionType$with$right(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.right');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.UnionType.Config;
+	return applySetter(args, (value: Admit<T.Type>) =>
+		rebuilt(node, handle, () => buildUnionType({ ...config, right: value }))
+	);
 }
 
 export function buildConstrainedType<
@@ -4659,21 +5466,34 @@ export function buildConstrainedType(config: T.ConstrainedType.Config): T.Constr
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		baseType: (value: Admit<T.Type>) =>
-			rebuilt(node, handle, () => buildConstrainedType({ ...config, baseType: value })),
-		constraint: (value: Admit<T.Type>) =>
-			rebuilt(node, handle, () => buildConstrainedType({ ...config, constraint: value })),
+		baseType: buildConstrainedType$with$baseType,
+		constraint: buildConstrainedType$with$constraint,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.ConstrainedType.Bound;
+}
+
+function buildConstrainedType$with$baseType(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.baseType');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.ConstrainedType.Config;
+	return applySetter(args, (value: Admit<T.Type>) =>
+		rebuilt(node, handle, () => buildConstrainedType({ ...config, baseType: value }))
+	);
+}
+function buildConstrainedType$with$constraint(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.constraint');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.ConstrainedType.Config;
+	return applySetter(args, (value: Admit<T.Type>) =>
+		rebuilt(node, handle, () => buildConstrainedType({ ...config, constraint: value }))
+	);
 }
 
 export function buildMemberType<
@@ -4700,19 +5520,30 @@ export function buildMemberType(config: T.MemberType.Config): T.MemberType.Bound
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		qualifier: (value: Admit<T.Type>) => rebuilt(node, handle, () => buildMemberType({ ...config, qualifier: value })),
-		name: (value: Admit<T.Identifier>) => rebuilt(node, handle, () => buildMemberType({ ...config, name: value })),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { qualifier: buildMemberType$with$qualifier, name: buildMemberType$with$name, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.MemberType.Bound;
+}
+
+function buildMemberType$with$qualifier(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.qualifier');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.MemberType.Config;
+	return applySetter(args, (value: Admit<T.Type>) =>
+		rebuilt(node, handle, () => buildMemberType({ ...config, qualifier: value }))
+	);
+}
+function buildMemberType$with$name(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.name');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.MemberType.Config;
+	return applySetter(args, (value: Admit<T.Identifier>) =>
+		rebuilt(node, handle, () => buildMemberType({ ...config, name: value }))
+	);
 }
 
 export function buildKeywordArgument<
@@ -4739,20 +5570,30 @@ export function buildKeywordArgument(config: T.KeywordArgument.Config): T.Keywor
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		name: (value: Admit<T.Identifier>) => rebuilt(node, handle, () => buildKeywordArgument({ ...config, name: value })),
-		value: (value: Admit<NonNullable<T.KeywordArgument.Config>['value']>) =>
-			rebuilt(node, handle, () => buildKeywordArgument({ ...config, value: value })),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { name: buildKeywordArgument$with$name, value: buildKeywordArgument$with$value, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.KeywordArgument.Bound;
+}
+
+function buildKeywordArgument$with$name(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.name');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.KeywordArgument.Config;
+	return applySetter(args, (value: Admit<T.Identifier>) =>
+		rebuilt(node, handle, () => buildKeywordArgument({ ...config, name: value }))
+	);
+}
+function buildKeywordArgument$with$value(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.value');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.KeywordArgument.Config;
+	return applySetter(args, (value: Admit<NonNullable<T.KeywordArgument.Config>['value']>) =>
+		rebuilt(node, handle, () => buildKeywordArgument({ ...config, value: value }))
+	);
 }
 
 export function buildList(): T.EmptyList;
@@ -4833,27 +5674,27 @@ function _buildList(value?: Admit<T.CollectionElements>): T.List.Bound {
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		elements: (...args: unknown[]) =>
-			rebuilt(node, handle, () =>
-				listSlotWith(
-					args,
-					{ kind: TSKindId.CollectionElements as const, optional: true, make: buildCollectionElements },
-					(value?: Admit<T.CollectionElements>) => _buildList(value)
-				)
-			),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		inner: (...items: unknown[]) => triviaInner(node, handle, items),
-		[RECEIVER]: node
-	};
+	node.$with = { elements: buildList$with$elements, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, inner: objectInner, [RECEIVER]: node };
 	holdListItems(node, heldItems(listView.list));
 	return node as unknown as T.List.Bound;
+}
+
+function buildList$with$elements(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.elements');
+	const handle = node[HANDLE];
+	return applySetter(args, (...args: unknown[]) =>
+		rebuilt(node, handle, () =>
+			listSlotWith(
+				args,
+				{ kind: TSKindId.CollectionElements as const, optional: true, make: buildCollectionElements },
+				(value?: Admit<T.CollectionElements>) => _buildList(value)
+			)
+		)
+	);
 }
 
 export function buildSet<V extends Admit<T.CollectionElements>>(
@@ -4931,26 +5772,27 @@ function _buildSet(value: Admit<T.CollectionElements>): T.Set.Bound {
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		elements: (...args: unknown[]) =>
-			rebuilt(node, handle, () =>
-				listSlotWith(
-					args,
-					{ kind: TSKindId.CollectionElements as const, optional: false, make: buildCollectionElements },
-					(value: Admit<T.CollectionElements>) => _buildSet(value)
-				)
-			),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { elements: buildSet$with$elements, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	holdListItems(node, heldItems(listView.list));
 	return node as unknown as T.Set.Bound;
+}
+
+function buildSet$with$elements(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.elements');
+	const handle = node[HANDLE];
+	return applySetter(args, (...args: unknown[]) =>
+		rebuilt(node, handle, () =>
+			listSlotWith(
+				args,
+				{ kind: TSKindId.CollectionElements as const, optional: false, make: buildCollectionElements },
+				(value: Admit<T.CollectionElements>) => _buildSet(value)
+			)
+		)
+	);
 }
 
 export function buildTuple(): T.EmptyTuple;
@@ -5029,27 +5871,27 @@ function _buildTuple(value?: Admit<T.TupleElements>): T.Tuple.Bound {
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		elements: (...args: unknown[]) =>
-			rebuilt(node, handle, () =>
-				listSlotWith(
-					args,
-					{ kind: TSKindId.TupleElements as const, optional: true, make: buildTupleElements },
-					(value?: Admit<T.TupleElements>) => _buildTuple(value)
-				)
-			),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		inner: (...items: unknown[]) => triviaInner(node, handle, items),
-		[RECEIVER]: node
-	};
+	node.$with = { elements: buildTuple$with$elements, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, inner: objectInner, [RECEIVER]: node };
 	holdListItems(node, heldItems(listView.list));
 	return node as unknown as T.Tuple.Bound;
+}
+
+function buildTuple$with$elements(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.elements');
+	const handle = node[HANDLE];
+	return applySetter(args, (...args: unknown[]) =>
+		rebuilt(node, handle, () =>
+			listSlotWith(
+				args,
+				{ kind: TSKindId.TupleElements as const, optional: true, make: buildTupleElements },
+				(value?: Admit<T.TupleElements>) => _buildTuple(value)
+			)
+		)
+	);
 }
 
 export function buildDictionary(): T.EmptyDictionary;
@@ -5128,27 +5970,27 @@ function _buildDictionary(value?: Admit<T.DictionaryElements>): T.Dictionary.Bou
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		elements: (...args: unknown[]) =>
-			rebuilt(node, handle, () =>
-				listSlotWith(
-					args,
-					{ kind: TSKindId.DictionaryElements as const, optional: true, make: buildDictionaryElements },
-					(value?: Admit<T.DictionaryElements>) => _buildDictionary(value)
-				)
-			),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		inner: (...items: unknown[]) => triviaInner(node, handle, items),
-		[RECEIVER]: node
-	};
+	node.$with = { elements: buildDictionary$with$elements, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, inner: objectInner, [RECEIVER]: node };
 	holdListItems(node, heldItems(listView.list));
 	return node as unknown as T.Dictionary.Bound;
+}
+
+function buildDictionary$with$elements(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.elements');
+	const handle = node[HANDLE];
+	return applySetter(args, (...args: unknown[]) =>
+		rebuilt(node, handle, () =>
+			listSlotWith(
+				args,
+				{ kind: TSKindId.DictionaryElements as const, optional: true, make: buildDictionaryElements },
+				(value?: Admit<T.DictionaryElements>) => _buildDictionary(value)
+			)
+		)
+	);
 }
 
 export function buildPair<KeySlot extends T.Pair.Config['key'], ValueSlot extends T.Pair.Config['value']>(
@@ -5174,21 +6016,30 @@ export function buildPair(config: T.Pair.Config): T.Pair.Bound {
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		key: (value: Admit<NonNullable<T.Pair.Config>['key']>) =>
-			rebuilt(node, handle, () => buildPair({ ...config, key: value })),
-		value: (value: Admit<NonNullable<T.Pair.Config>['value']>) =>
-			rebuilt(node, handle, () => buildPair({ ...config, value: value })),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { key: buildPair$with$key, value: buildPair$with$value, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.Pair.Bound;
+}
+
+function buildPair$with$key(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.key');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.Pair.Config;
+	return applySetter(args, (value: Admit<NonNullable<T.Pair.Config>['key']>) =>
+		rebuilt(node, handle, () => buildPair({ ...config, key: value }))
+	);
+}
+function buildPair$with$value(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.value');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.Pair.Config;
+	return applySetter(args, (value: Admit<NonNullable<T.Pair.Config>['value']>) =>
+		rebuilt(node, handle, () => buildPair({ ...config, value: value }))
+	);
 }
 
 export function buildListComprehension<
@@ -5217,21 +6068,34 @@ export function buildListComprehension(config: T.ListComprehension.Config): T.Li
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		body: (value: Admit<NonNullable<T.ListComprehension.Config>['body']>) =>
-			rebuilt(node, handle, () => buildListComprehension({ ...config, body: value })),
-		clauses: (value: Admit<T.ComprehensionClauses>) =>
-			rebuilt(node, handle, () => buildListComprehension({ ...config, clauses: value })),
+		body: buildListComprehension$with$body,
+		clauses: buildListComprehension$with$clauses,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.ListComprehension.Bound;
+}
+
+function buildListComprehension$with$body(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.body');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.ListComprehension.Config;
+	return applySetter(args, (value: Admit<NonNullable<T.ListComprehension.Config>['body']>) =>
+		rebuilt(node, handle, () => buildListComprehension({ ...config, body: value }))
+	);
+}
+function buildListComprehension$with$clauses(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.clauses');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.ListComprehension.Config;
+	return applySetter(args, (value: Admit<T.ComprehensionClauses>) =>
+		rebuilt(node, handle, () => buildListComprehension({ ...config, clauses: value }))
+	);
 }
 
 export function buildDictionaryComprehension<
@@ -5262,21 +6126,34 @@ export function buildDictionaryComprehension(
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		body: (value: Admit<T.Pair>) =>
-			rebuilt(node, handle, () => buildDictionaryComprehension({ ...config, body: value })),
-		clauses: (value: Admit<T.ComprehensionClauses>) =>
-			rebuilt(node, handle, () => buildDictionaryComprehension({ ...config, clauses: value })),
+		body: buildDictionaryComprehension$with$body,
+		clauses: buildDictionaryComprehension$with$clauses,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.DictionaryComprehension.Bound;
+}
+
+function buildDictionaryComprehension$with$body(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.body');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.DictionaryComprehension.Config;
+	return applySetter(args, (value: Admit<T.Pair>) =>
+		rebuilt(node, handle, () => buildDictionaryComprehension({ ...config, body: value }))
+	);
+}
+function buildDictionaryComprehension$with$clauses(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.clauses');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.DictionaryComprehension.Config;
+	return applySetter(args, (value: Admit<T.ComprehensionClauses>) =>
+		rebuilt(node, handle, () => buildDictionaryComprehension({ ...config, clauses: value }))
+	);
 }
 
 export function buildSetComprehension<
@@ -5305,21 +6182,30 @@ export function buildSetComprehension(config: T.SetComprehension.Config): T.SetC
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		body: (value: Admit<NonNullable<T.SetComprehension.Config>['body']>) =>
-			rebuilt(node, handle, () => buildSetComprehension({ ...config, body: value })),
-		clauses: (value: Admit<T.ComprehensionClauses>) =>
-			rebuilt(node, handle, () => buildSetComprehension({ ...config, clauses: value })),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { body: buildSetComprehension$with$body, clauses: buildSetComprehension$with$clauses, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.SetComprehension.Bound;
+}
+
+function buildSetComprehension$with$body(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.body');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.SetComprehension.Config;
+	return applySetter(args, (value: Admit<NonNullable<T.SetComprehension.Config>['body']>) =>
+		rebuilt(node, handle, () => buildSetComprehension({ ...config, body: value }))
+	);
+}
+function buildSetComprehension$with$clauses(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.clauses');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.SetComprehension.Config;
+	return applySetter(args, (value: Admit<T.ComprehensionClauses>) =>
+		rebuilt(node, handle, () => buildSetComprehension({ ...config, clauses: value }))
+	);
 }
 
 export function buildGeneratorExpression<
@@ -5348,21 +6234,34 @@ export function buildGeneratorExpression(config: T.GeneratorExpression.Config): 
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		body: (value: Admit<NonNullable<T.GeneratorExpression.Config>['body']>) =>
-			rebuilt(node, handle, () => buildGeneratorExpression({ ...config, body: value })),
-		clauses: (value: Admit<T.ComprehensionClauses>) =>
-			rebuilt(node, handle, () => buildGeneratorExpression({ ...config, clauses: value })),
+		body: buildGeneratorExpression$with$body,
+		clauses: buildGeneratorExpression$with$clauses,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.GeneratorExpression.Bound;
+}
+
+function buildGeneratorExpression$with$body(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.body');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.GeneratorExpression.Config;
+	return applySetter(args, (value: Admit<NonNullable<T.GeneratorExpression.Config>['body']>) =>
+		rebuilt(node, handle, () => buildGeneratorExpression({ ...config, body: value }))
+	);
+}
+function buildGeneratorExpression$with$clauses(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.clauses');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.GeneratorExpression.Config;
+	return applySetter(args, (value: Admit<T.ComprehensionClauses>) =>
+		rebuilt(node, handle, () => buildGeneratorExpression({ ...config, clauses: value }))
+	);
 }
 
 export function buildParenthesizedExpression<V extends Admit<T.Expression | T.Yield>>(
@@ -5384,19 +6283,20 @@ export function buildParenthesizedExpression(value: Admit<T.Expression | T.Yield
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		expression: (value: Admit<NonNullable<T.Expression | T.Yield>>) =>
-			rebuilt(node, handle, () => buildParenthesizedExpression(value)),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { expression: buildParenthesizedExpression$with$expression, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.ParenthesizedExpression.Bound;
+}
+
+function buildParenthesizedExpression$with$expression(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.expression');
+	const handle = node[HANDLE];
+	return applySetter(args, (value: Admit<NonNullable<T.Expression | T.Yield>>) =>
+		rebuilt(node, handle, () => buildParenthesizedExpression(value))
+	);
 }
 
 export function buildCollectionElements<
@@ -5482,22 +6382,40 @@ function _buildCollectionElements(
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: elements,
+		[OPTIONS]: options,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		items: (...vs: NonEmptyArray<Admit<T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat>>) =>
-			rebuilt(node, handle, () => buildCollectionElements(options, ...vs)),
-		delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
-			rebuilt(node, handle, () => buildCollectionElements({ ...options, delimiter: v }, ...elements)),
+		items: buildCollectionElements$with$items,
+		delimiter: buildCollectionElements$with$delimiter,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	holdBuiltItems(node, listedItems);
 	return node as unknown as T.CollectionElements.Bound;
+}
+
+function buildCollectionElements$with$items(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.items');
+	const handle = node[HANDLE];
+	const elements = node[INPUT] as NonEmptyArray<Admit<T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat>>;
+	const options = node[OPTIONS] as { delimiter?: Delimiter.None | Delimiter.Trailing };
+	return applySetter(
+		args,
+		(...vs: NonEmptyArray<Admit<T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat>>) =>
+			rebuilt(node, handle, () => buildCollectionElements(options, ...vs))
+	);
+}
+function buildCollectionElements$with$delimiter(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.delimiter');
+	const handle = node[HANDLE];
+	const elements = node[INPUT] as NonEmptyArray<Admit<T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat>>;
+	const options = node[OPTIONS] as { delimiter?: Delimiter.None | Delimiter.Trailing };
+	return applySetter(args, (v?: Delimiter.None | Delimiter.Trailing) =>
+		rebuilt(node, handle, () => buildCollectionElements({ ...options, delimiter: v }, ...elements))
+	);
 }
 
 export function buildForInClause<
@@ -5542,25 +6460,59 @@ export function buildForInClause(config: T.ForInClause.Config, options?: T.ForIn
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
+		[OPTIONS]: options,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		async: (value?: Admit<NonNullable<T.ForInClause.Config>['async']>) =>
-			rebuilt(node, handle, () => buildForInClause({ ...config, async: value }, options)),
-		left: (value: Admit<T.Pattern | T.PatternList>) =>
-			rebuilt(node, handle, () => buildForInClause({ ...config, left: value }, options)),
-		rights: (...values: Admit<NonEmptyArray<NonNullable<NonNullable<T.ForInClause.Config>['rights']>[number]>>) =>
-			rebuilt(node, handle, () => buildForInClause({ ...config, rights: restItems('rights', values) }, options)),
-		trailingComma: (spelling: TSKindId.Comma | null) =>
-			rebuilt(node, handle, () => buildForInClause(config, { ...options, trailingComma: spelling })),
+		async: buildForInClause$with$async,
+		left: buildForInClause$with$left,
+		rights: buildForInClause$with$rights,
+		trailingComma: buildForInClause$with$trailingComma,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.ForInClause.Bound;
+}
+
+function buildForInClause$with$async(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.async');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.ForInClause.Config;
+	const options = node[OPTIONS] as T.ForInClause.Options;
+	return applySetter(args, (value?: Admit<NonNullable<T.ForInClause.Config>['async']>) =>
+		rebuilt(node, handle, () => buildForInClause({ ...config, async: value }, options))
+	);
+}
+function buildForInClause$with$left(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.left');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.ForInClause.Config;
+	const options = node[OPTIONS] as T.ForInClause.Options;
+	return applySetter(args, (value: Admit<T.Pattern | T.PatternList>) =>
+		rebuilt(node, handle, () => buildForInClause({ ...config, left: value }, options))
+	);
+}
+function buildForInClause$with$rights(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.rights');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.ForInClause.Config;
+	const options = node[OPTIONS] as T.ForInClause.Options;
+	return applySetter(
+		args,
+		(...values: Admit<NonEmptyArray<NonNullable<NonNullable<T.ForInClause.Config>['rights']>[number]>>) =>
+			rebuilt(node, handle, () => buildForInClause({ ...config, rights: restItems('rights', values) }, options))
+	);
+}
+function buildForInClause$with$trailingComma(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.trailingComma');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.ForInClause.Config;
+	const options = node[OPTIONS] as T.ForInClause.Options;
+	return applySetter(args, (spelling: TSKindId.Comma | null) =>
+		rebuilt(node, handle, () => buildForInClause(config, { ...options, trailingComma: spelling }))
+	);
 }
 
 export function buildIfClause<V extends Admit<T.Expression>>(value: V & RefuseUndeclared<V>): T.IfClause.Bound;
@@ -5580,18 +6532,20 @@ export function buildIfClause(value: Admit<T.Expression>): T.IfClause.Bound {
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		condition: (value: Admit<NonNullable<T.Expression>>) => rebuilt(node, handle, () => buildIfClause(value)),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { condition: buildIfClause$with$condition, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.IfClause.Bound;
+}
+
+function buildIfClause$with$condition(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.condition');
+	const handle = node[HANDLE];
+	return applySetter(args, (value: Admit<NonNullable<T.Expression>>) =>
+		rebuilt(node, handle, () => buildIfClause(value))
+	);
 }
 
 export function buildConditionalExpression<
@@ -5632,23 +6586,43 @@ export function buildConditionalExpression(config: T.ConditionalExpression.Confi
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		consequence: (value: Admit<NonNullable<T.ConditionalExpression.Config>['consequence']>) =>
-			rebuilt(node, handle, () => buildConditionalExpression({ ...config, consequence: value })),
-		condition: (value: Admit<NonNullable<T.ConditionalExpression.Config>['condition']>) =>
-			rebuilt(node, handle, () => buildConditionalExpression({ ...config, condition: value })),
-		alternative: (value: Admit<NonNullable<T.ConditionalExpression.Config>['alternative']>) =>
-			rebuilt(node, handle, () => buildConditionalExpression({ ...config, alternative: value })),
+		consequence: buildConditionalExpression$with$consequence,
+		condition: buildConditionalExpression$with$condition,
+		alternative: buildConditionalExpression$with$alternative,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.ConditionalExpression.Bound;
+}
+
+function buildConditionalExpression$with$consequence(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.consequence');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.ConditionalExpression.Config;
+	return applySetter(args, (value: Admit<NonNullable<T.ConditionalExpression.Config>['consequence']>) =>
+		rebuilt(node, handle, () => buildConditionalExpression({ ...config, consequence: value }))
+	);
+}
+function buildConditionalExpression$with$condition(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.condition');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.ConditionalExpression.Config;
+	return applySetter(args, (value: Admit<NonNullable<T.ConditionalExpression.Config>['condition']>) =>
+		rebuilt(node, handle, () => buildConditionalExpression({ ...config, condition: value }))
+	);
+}
+function buildConditionalExpression$with$alternative(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.alternative');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.ConditionalExpression.Config;
+	return applySetter(args, (value: Admit<NonNullable<T.ConditionalExpression.Config>['alternative']>) =>
+		rebuilt(node, handle, () => buildConditionalExpression({ ...config, alternative: value }))
+	);
 }
 
 export function buildConcatenatedString<A extends NonEmptyArray<Admit<T.String>>>(
@@ -5671,19 +6645,20 @@ export function buildConcatenatedString(...children: NonEmptyArray<Admit<T.Strin
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		strings: (...vs: NonEmptyArray<Admit<T.String>>) =>
-			rebuilt(node, handle, () => buildConcatenatedString(...restItems('strings', vs))),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { strings: buildConcatenatedString$with$strings, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.ConcatenatedString.Bound;
+}
+
+function buildConcatenatedString$with$strings(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.strings');
+	const handle = node[HANDLE];
+	return applySetter(args, (...vs: NonEmptyArray<Admit<T.String>>) =>
+		rebuilt(node, handle, () => buildConcatenatedString(...restItems('strings', vs)))
+	);
 }
 
 export function buildString<
@@ -5720,23 +6695,44 @@ export function buildString(config: T.String.Config): T.String.Bound {
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		stringStart: (value: Admit<T.StringStart>) =>
-			rebuilt(node, handle, () => buildString({ ...config, stringStart: value })),
-		contents: (...values: Admit<(T.Interpolation | T.StringContent)[]>) =>
-			rebuilt(node, handle, () => buildString({ ...config, contents: restItems('contents', values) })),
-		stringEnd: (value: Admit<T.StringEnd>) => rebuilt(node, handle, () => buildString({ ...config, stringEnd: value })),
+		stringStart: buildString$with$stringStart,
+		contents: buildString$with$contents,
+		stringEnd: buildString$with$stringEnd,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	checkDelimited(handle, node, _delimited_buildString, [_content], _string_start, _string_end);
 	return node as unknown as T.String.Bound;
+}
+
+function buildString$with$stringStart(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.stringStart');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.String.Config;
+	return applySetter(args, (value: Admit<T.StringStart>) =>
+		rebuilt(node, handle, () => buildString({ ...config, stringStart: value }))
+	);
+}
+function buildString$with$contents(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.contents');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.String.Config;
+	return applySetter(args, (...values: Admit<(T.Interpolation | T.StringContent)[]>) =>
+		rebuilt(node, handle, () => buildString({ ...config, contents: restItems('contents', values) }))
+	);
+}
+function buildString$with$stringEnd(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.stringEnd');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.String.Config;
+	return applySetter(args, (value: Admit<T.StringEnd>) =>
+		rebuilt(node, handle, () => buildString({ ...config, stringEnd: value }))
+	);
 }
 
 export function buildStringContent<
@@ -5765,22 +6761,25 @@ export function buildStringContent(
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		elements: (
+	node.$with = { elements: buildStringContent$with$elements, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
+	return node as unknown as T.StringContent.Bound;
+}
+
+function buildStringContent$with$elements(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.elements');
+	const handle = node[HANDLE];
+	return applySetter(
+		args,
+		(
 			...vs: NonEmptyArray<
 				Admit<T.EscapeInterpolation | T.EscapeSequence | TSKindId.NotEscapeSequence | T.StringFragment>
 			>
-		) => rebuilt(node, handle, () => buildStringContent(...restItems('elements', vs))),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
-	return node as unknown as T.StringContent.Bound;
+		) => rebuilt(node, handle, () => buildStringContent(...restItems('elements', vs)))
+	);
 }
 
 export function buildInterpolation<
@@ -5825,25 +6824,52 @@ export function buildInterpolation(config: T.Interpolation.Config): T.Interpolat
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		expression: (value: Admit<NonNullable<T.Interpolation.Config>['expression']>) =>
-			rebuilt(node, handle, () => buildInterpolation({ ...config, expression: value })),
-		debug: (value?: Admit<NonNullable<T.Interpolation.Config>['debug']>) =>
-			rebuilt(node, handle, () => buildInterpolation({ ...config, debug: value })),
-		typeConversion: (value?: Admit<T.TypeConversion>) =>
-			rebuilt(node, handle, () => buildInterpolation({ ...config, typeConversion: value })),
-		formatSpecifier: (value?: Admit<T.FormatSpecifier>) =>
-			rebuilt(node, handle, () => buildInterpolation({ ...config, formatSpecifier: value })),
+		expression: buildInterpolation$with$expression,
+		debug: buildInterpolation$with$debug,
+		typeConversion: buildInterpolation$with$typeConversion,
+		formatSpecifier: buildInterpolation$with$formatSpecifier,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.Interpolation.Bound;
+}
+
+function buildInterpolation$with$expression(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.expression');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.Interpolation.Config;
+	return applySetter(args, (value: Admit<NonNullable<T.Interpolation.Config>['expression']>) =>
+		rebuilt(node, handle, () => buildInterpolation({ ...config, expression: value }))
+	);
+}
+function buildInterpolation$with$debug(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.debug');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.Interpolation.Config;
+	return applySetter(args, (value?: Admit<NonNullable<T.Interpolation.Config>['debug']>) =>
+		rebuilt(node, handle, () => buildInterpolation({ ...config, debug: value }))
+	);
+}
+function buildInterpolation$with$typeConversion(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.typeConversion');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.Interpolation.Config;
+	return applySetter(args, (value?: Admit<T.TypeConversion>) =>
+		rebuilt(node, handle, () => buildInterpolation({ ...config, typeConversion: value }))
+	);
+}
+function buildInterpolation$with$formatSpecifier(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.formatSpecifier');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.Interpolation.Config;
+	return applySetter(args, (value?: Admit<T.FormatSpecifier>) =>
+		rebuilt(node, handle, () => buildInterpolation({ ...config, formatSpecifier: value }))
+	);
 }
 
 export const buildNotEscapeSequence: TSKindId.NotEscapeSequence = TSKindId.NotEscapeSequence;
@@ -5870,19 +6896,20 @@ export function buildFormatSpecifier(
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		elements: (...vs: Admit<T.FormatSpecifierText | T.FormatExpression>[]) =>
-			rebuilt(node, handle, () => buildFormatSpecifier(...restItems('elements', vs))),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { elements: buildFormatSpecifier$with$elements, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.FormatSpecifier.Bound;
+}
+
+function buildFormatSpecifier$with$elements(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.elements');
+	const handle = node[HANDLE];
+	return applySetter(args, (...vs: Admit<T.FormatSpecifierText | T.FormatExpression>[]) =>
+		rebuilt(node, handle, () => buildFormatSpecifier(...restItems('elements', vs)))
+	);
 }
 
 export function buildTypeConversion(text: string): T.TypeConversion.Bound {
@@ -5901,13 +6928,10 @@ export function buildTypeConversion(text: string): T.TypeConversion.Bound {
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.TypeConversion.Bound;
 }
 
@@ -5930,13 +6954,10 @@ export function buildIdentifier<const W extends string>(
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.Identifier.Bound;
 }
 
@@ -5963,18 +6984,20 @@ export function buildAwait(value: Admit<T.PrimaryExpression>): T.Await.Bound {
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		expression: (value: Admit<NonNullable<T.PrimaryExpression>>) => rebuilt(node, handle, () => buildAwait(value)),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { expression: buildAwait$with$expression, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.Await.Bound;
+}
+
+function buildAwait$with$expression(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.expression');
+	const handle = node[HANDLE];
+	return applySetter(args, (value: Admit<NonNullable<T.PrimaryExpression>>) =>
+		rebuilt(node, handle, () => buildAwait(value))
+	);
 }
 
 export function buildComment(content: string, affix?: true): T.Comment.Bound;
@@ -6003,13 +7026,17 @@ export function buildComment(input: string, affix: boolean = true): T.Comment.Bo
 		toJSON: refuseJSON,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		content: (value: Admit<string>) => rebuilt(node, handle, () => buildComment(value)),
-		[RECEIVER]: node
-	};
+	node.$with = { content: buildComment$with$content, [RECEIVER]: node };
 	return node as unknown as T.Comment.Bound;
+}
+
+function buildComment$with$content(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.content');
+	const handle = node[HANDLE];
+	return applySetter(args, (value: Admit<string>) => rebuilt(node, handle, () => buildComment(value)));
 }
 
 export const buildPositionalSeparator: TSKindId.PositionalSeparator = TSKindId.PositionalSeparator;
@@ -6092,22 +7119,38 @@ function _buildSimpleStatementsElements(
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: elements,
+		[OPTIONS]: options,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		items: (...vs: NonEmptyArray<Admit<T.SimpleStatement>>) =>
-			rebuilt(node, handle, () => buildSimpleStatementsElements(options, ...vs)),
-		delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
-			rebuilt(node, handle, () => buildSimpleStatementsElements({ ...options, delimiter: v }, ...elements)),
+		items: buildSimpleStatementsElements$with$items,
+		delimiter: buildSimpleStatementsElements$with$delimiter,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	holdBuiltItems(node, listedItems);
 	return node as unknown as T.SimpleStatementsElements.Bound;
+}
+
+function buildSimpleStatementsElements$with$items(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.items');
+	const handle = node[HANDLE];
+	const elements = node[INPUT] as NonEmptyArray<Admit<T.SimpleStatement>>;
+	const options = node[OPTIONS] as { delimiter?: Delimiter.None | Delimiter.Trailing };
+	return applySetter(args, (...vs: NonEmptyArray<Admit<T.SimpleStatement>>) =>
+		rebuilt(node, handle, () => buildSimpleStatementsElements(options, ...vs))
+	);
+}
+function buildSimpleStatementsElements$with$delimiter(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.delimiter');
+	const handle = node[HANDLE];
+	const elements = node[INPUT] as NonEmptyArray<Admit<T.SimpleStatement>>;
+	const options = node[OPTIONS] as { delimiter?: Delimiter.None | Delimiter.Trailing };
+	return applySetter(args, (v?: Delimiter.None | Delimiter.Trailing) =>
+		rebuilt(node, handle, () => buildSimpleStatementsElements({ ...options, delimiter: v }, ...elements))
+	);
 }
 
 export function buildSubjects<A extends NonEmptyArray<Admit<T.Expression>>>(
@@ -6184,21 +7227,34 @@ function _buildSubjects(
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: elements,
+		[OPTIONS]: options,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		subjects: (...vs: NonEmptyArray<Admit<T.Expression>>) => rebuilt(node, handle, () => buildSubjects(options, ...vs)),
-		delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
-			rebuilt(node, handle, () => buildSubjects({ ...options, delimiter: v }, ...elements)),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { subjects: buildSubjects$with$subjects, delimiter: buildSubjects$with$delimiter, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	holdBuiltItems(node, listedItems);
 	return node as unknown as T.Subjects.Bound;
+}
+
+function buildSubjects$with$subjects(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.subjects');
+	const handle = node[HANDLE];
+	const elements = node[INPUT] as NonEmptyArray<Admit<T.Expression>>;
+	const options = node[OPTIONS] as { delimiter?: Delimiter.None | Delimiter.Trailing };
+	return applySetter(args, (...vs: NonEmptyArray<Admit<T.Expression>>) =>
+		rebuilt(node, handle, () => buildSubjects(options, ...vs))
+	);
+}
+function buildSubjects$with$delimiter(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.delimiter');
+	const handle = node[HANDLE];
+	const elements = node[INPUT] as NonEmptyArray<Admit<T.Expression>>;
+	const options = node[OPTIONS] as { delimiter?: Delimiter.None | Delimiter.Trailing };
+	return applySetter(args, (v?: Delimiter.None | Delimiter.Trailing) =>
+		rebuilt(node, handle, () => buildSubjects({ ...options, delimiter: v }, ...elements))
+	);
 }
 
 export function buildWithClauseWithItems<A extends NonEmptyArray<Admit<T.WithItem>>>(
@@ -6277,22 +7333,38 @@ function _buildWithClauseWithItems(
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: elements,
+		[OPTIONS]: options,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		items: (...vs: NonEmptyArray<Admit<T.WithItem>>) =>
-			rebuilt(node, handle, () => buildWithClauseWithItems(options, ...vs)),
-		delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
-			rebuilt(node, handle, () => buildWithClauseWithItems({ ...options, delimiter: v }, ...elements)),
+		items: buildWithClauseWithItems$with$items,
+		delimiter: buildWithClauseWithItems$with$delimiter,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	holdBuiltItems(node, listedItems);
 	return node as unknown as T.WithClauseWithItems.Bound;
+}
+
+function buildWithClauseWithItems$with$items(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.items');
+	const handle = node[HANDLE];
+	const elements = node[INPUT] as NonEmptyArray<Admit<T.WithItem>>;
+	const options = node[OPTIONS] as { delimiter?: Delimiter.None | Delimiter.Trailing };
+	return applySetter(args, (...vs: NonEmptyArray<Admit<T.WithItem>>) =>
+		rebuilt(node, handle, () => buildWithClauseWithItems(options, ...vs))
+	);
+}
+function buildWithClauseWithItems$with$delimiter(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.delimiter');
+	const handle = node[HANDLE];
+	const elements = node[INPUT] as NonEmptyArray<Admit<T.WithItem>>;
+	const options = node[OPTIONS] as { delimiter?: Delimiter.None | Delimiter.Trailing };
+	return applySetter(args, (v?: Delimiter.None | Delimiter.Trailing) =>
+		rebuilt(node, handle, () => buildWithClauseWithItems({ ...options, delimiter: v }, ...elements))
+	);
 }
 
 export function buildTypes<A extends NonEmptyArray<Admit<T.Type>>>(
@@ -6369,21 +7441,34 @@ function _buildTypes(
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: elements,
+		[OPTIONS]: options,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		items: (...vs: NonEmptyArray<Admit<T.Type>>) => rebuilt(node, handle, () => buildTypes(options, ...vs)),
-		delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
-			rebuilt(node, handle, () => buildTypes({ ...options, delimiter: v }, ...elements)),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { items: buildTypes$with$items, delimiter: buildTypes$with$delimiter, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	holdBuiltItems(node, listedItems);
 	return node as unknown as T.Types.Bound;
+}
+
+function buildTypes$with$items(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.items');
+	const handle = node[HANDLE];
+	const elements = node[INPUT] as NonEmptyArray<Admit<T.Type>>;
+	const options = node[OPTIONS] as { delimiter?: Delimiter.None | Delimiter.Trailing };
+	return applySetter(args, (...vs: NonEmptyArray<Admit<T.Type>>) =>
+		rebuilt(node, handle, () => buildTypes(options, ...vs))
+	);
+}
+function buildTypes$with$delimiter(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.delimiter');
+	const handle = node[HANDLE];
+	const elements = node[INPUT] as NonEmptyArray<Admit<T.Type>>;
+	const options = node[OPTIONS] as { delimiter?: Delimiter.None | Delimiter.Trailing };
+	return applySetter(args, (v?: Delimiter.None | Delimiter.Trailing) =>
+		rebuilt(node, handle, () => buildTypes({ ...options, delimiter: v }, ...elements))
+	);
 }
 
 export function buildArgumentListElements<
@@ -6475,25 +7560,47 @@ function _buildArgumentListElements(
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: elements,
+		[OPTIONS]: options,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		items: (
+		items: buildArgumentListElements$with$items,
+		delimiter: buildArgumentListElements$with$delimiter,
+		[RECEIVER]: node
+	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
+	holdBuiltItems(node, listedItems);
+	return node as unknown as T.ArgumentListElements.Bound;
+}
+
+function buildArgumentListElements$with$items(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.items');
+	const handle = node[HANDLE];
+	const elements = node[INPUT] as NonEmptyArray<
+		Admit<T.Expression | T.ListSplat | T.DictionarySplat | T.ParenthesizedListSplat | T.KeywordArgument>
+	>;
+	const options = node[OPTIONS] as { delimiter?: Delimiter.None | Delimiter.Trailing };
+	return applySetter(
+		args,
+		(
 			...vs: NonEmptyArray<
 				Admit<T.Expression | T.ListSplat | T.DictionarySplat | T.ParenthesizedListSplat | T.KeywordArgument>
 			>
-		) => rebuilt(node, handle, () => buildArgumentListElements(options, ...vs)),
-		delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
-			rebuilt(node, handle, () => buildArgumentListElements({ ...options, delimiter: v }, ...elements)),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
-	holdBuiltItems(node, listedItems);
-	return node as unknown as T.ArgumentListElements.Bound;
+		) => rebuilt(node, handle, () => buildArgumentListElements(options, ...vs))
+	);
+}
+function buildArgumentListElements$with$delimiter(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.delimiter');
+	const handle = node[HANDLE];
+	const elements = node[INPUT] as NonEmptyArray<
+		Admit<T.Expression | T.ListSplat | T.DictionarySplat | T.ParenthesizedListSplat | T.KeywordArgument>
+	>;
+	const options = node[OPTIONS] as { delimiter?: Delimiter.None | Delimiter.Trailing };
+	return applySetter(args, (v?: Delimiter.None | Delimiter.Trailing) =>
+		rebuilt(node, handle, () => buildArgumentListElements({ ...options, delimiter: v }, ...elements))
+	);
 }
 
 export function buildListPatternCasePatterns<A extends NonEmptyArray<Admit<T.CasePattern>>>(
@@ -6572,22 +7679,38 @@ function _buildListPatternCasePatterns(
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: elements,
+		[OPTIONS]: options,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		items: (...vs: NonEmptyArray<Admit<T.CasePattern>>) =>
-			rebuilt(node, handle, () => buildListPatternCasePatterns(options, ...vs)),
-		delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
-			rebuilt(node, handle, () => buildListPatternCasePatterns({ ...options, delimiter: v }, ...elements)),
+		items: buildListPatternCasePatterns$with$items,
+		delimiter: buildListPatternCasePatterns$with$delimiter,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	holdBuiltItems(node, listedItems);
 	return node as unknown as T.ListPatternCasePatterns.Bound;
+}
+
+function buildListPatternCasePatterns$with$items(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.items');
+	const handle = node[HANDLE];
+	const elements = node[INPUT] as NonEmptyArray<Admit<T.CasePattern>>;
+	const options = node[OPTIONS] as { delimiter?: Delimiter.None | Delimiter.Trailing };
+	return applySetter(args, (...vs: NonEmptyArray<Admit<T.CasePattern>>) =>
+		rebuilt(node, handle, () => buildListPatternCasePatterns(options, ...vs))
+	);
+}
+function buildListPatternCasePatterns$with$delimiter(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.delimiter');
+	const handle = node[HANDLE];
+	const elements = node[INPUT] as NonEmptyArray<Admit<T.CasePattern>>;
+	const options = node[OPTIONS] as { delimiter?: Delimiter.None | Delimiter.Trailing };
+	return applySetter(args, (v?: Delimiter.None | Delimiter.Trailing) =>
+		rebuilt(node, handle, () => buildListPatternCasePatterns({ ...options, delimiter: v }, ...elements))
+	);
 }
 
 export function buildDictPatternElements<A extends NonEmptyArray<Admit<T.KeyValuePattern | T.SplatPattern>>>(
@@ -6668,22 +7791,38 @@ function _buildDictPatternElements(
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: elements,
+		[OPTIONS]: options,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		items: (...vs: NonEmptyArray<Admit<T.KeyValuePattern | T.SplatPattern>>) =>
-			rebuilt(node, handle, () => buildDictPatternElements(options, ...vs)),
-		delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
-			rebuilt(node, handle, () => buildDictPatternElements({ ...options, delimiter: v }, ...elements)),
+		items: buildDictPatternElements$with$items,
+		delimiter: buildDictPatternElements$with$delimiter,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	holdBuiltItems(node, listedItems);
 	return node as unknown as T.DictPatternElements.Bound;
+}
+
+function buildDictPatternElements$with$items(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.items');
+	const handle = node[HANDLE];
+	const elements = node[INPUT] as NonEmptyArray<Admit<T.KeyValuePattern | T.SplatPattern>>;
+	const options = node[OPTIONS] as { delimiter?: Delimiter.None | Delimiter.Trailing };
+	return applySetter(args, (...vs: NonEmptyArray<Admit<T.KeyValuePattern | T.SplatPattern>>) =>
+		rebuilt(node, handle, () => buildDictPatternElements(options, ...vs))
+	);
+}
+function buildDictPatternElements$with$delimiter(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.delimiter');
+	const handle = node[HANDLE];
+	const elements = node[INPUT] as NonEmptyArray<Admit<T.KeyValuePattern | T.SplatPattern>>;
+	const options = node[OPTIONS] as { delimiter?: Delimiter.None | Delimiter.Trailing };
+	return applySetter(args, (v?: Delimiter.None | Delimiter.Trailing) =>
+		rebuilt(node, handle, () => buildDictPatternElements({ ...options, delimiter: v }, ...elements))
+	);
 }
 
 export function buildSubscripts<A extends NonEmptyArray<Admit<T.Expression | T.Slice>>>(
@@ -6762,22 +7901,38 @@ function _buildSubscripts(
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: elements,
+		[OPTIONS]: options,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		subscripts: (...vs: NonEmptyArray<Admit<T.Expression | T.Slice>>) =>
-			rebuilt(node, handle, () => buildSubscripts(options, ...vs)),
-		delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
-			rebuilt(node, handle, () => buildSubscripts({ ...options, delimiter: v }, ...elements)),
+		subscripts: buildSubscripts$with$subscripts,
+		delimiter: buildSubscripts$with$delimiter,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	holdBuiltItems(node, listedItems);
 	return node as unknown as T.Subscripts.Bound;
+}
+
+function buildSubscripts$with$subscripts(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.subscripts');
+	const handle = node[HANDLE];
+	const elements = node[INPUT] as NonEmptyArray<Admit<T.Expression | T.Slice>>;
+	const options = node[OPTIONS] as { delimiter?: Delimiter.None | Delimiter.Trailing };
+	return applySetter(args, (...vs: NonEmptyArray<Admit<T.Expression | T.Slice>>) =>
+		rebuilt(node, handle, () => buildSubscripts(options, ...vs))
+	);
+}
+function buildSubscripts$with$delimiter(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.delimiter');
+	const handle = node[HANDLE];
+	const elements = node[INPUT] as NonEmptyArray<Admit<T.Expression | T.Slice>>;
+	const options = node[OPTIONS] as { delimiter?: Delimiter.None | Delimiter.Trailing };
+	return applySetter(args, (v?: Delimiter.None | Delimiter.Trailing) =>
+		rebuilt(node, handle, () => buildSubscripts({ ...options, delimiter: v }, ...elements))
+	);
 }
 
 export function buildDictionaryElements<A extends NonEmptyArray<Admit<T.Pair | T.DictionarySplat>>>(
@@ -6856,22 +8011,38 @@ function _buildDictionaryElements(
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: elements,
+		[OPTIONS]: options,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		items: (...vs: NonEmptyArray<Admit<T.Pair | T.DictionarySplat>>) =>
-			rebuilt(node, handle, () => buildDictionaryElements(options, ...vs)),
-		delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
-			rebuilt(node, handle, () => buildDictionaryElements({ ...options, delimiter: v }, ...elements)),
+		items: buildDictionaryElements$with$items,
+		delimiter: buildDictionaryElements$with$delimiter,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	holdBuiltItems(node, listedItems);
 	return node as unknown as T.DictionaryElements.Bound;
+}
+
+function buildDictionaryElements$with$items(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.items');
+	const handle = node[HANDLE];
+	const elements = node[INPUT] as NonEmptyArray<Admit<T.Pair | T.DictionarySplat>>;
+	const options = node[OPTIONS] as { delimiter?: Delimiter.None | Delimiter.Trailing };
+	return applySetter(args, (...vs: NonEmptyArray<Admit<T.Pair | T.DictionarySplat>>) =>
+		rebuilt(node, handle, () => buildDictionaryElements(options, ...vs))
+	);
+}
+function buildDictionaryElements$with$delimiter(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.delimiter');
+	const handle = node[HANDLE];
+	const elements = node[INPUT] as NonEmptyArray<Admit<T.Pair | T.DictionarySplat>>;
+	const options = node[OPTIONS] as { delimiter?: Delimiter.None | Delimiter.Trailing };
+	return applySetter(args, (v?: Delimiter.None | Delimiter.Trailing) =>
+		rebuilt(node, handle, () => buildDictionaryElements({ ...options, delimiter: v }, ...elements))
+	);
 }
 
 export function buildSliceGroup<V extends Admit<T.Expression>>(
@@ -6893,18 +8064,20 @@ export function buildSliceGroup(value?: Admit<T.Expression>): T.SliceGroup.Bound
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		expression: (value?: Admit<NonNullable<T.Expression>>) => rebuilt(node, handle, () => buildSliceGroup(value)),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { expression: buildSliceGroup$with$expression, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.SliceGroup.Bound;
+}
+
+function buildSliceGroup$with$expression(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.expression');
+	const handle = node[HANDLE];
+	return applySetter(args, (value?: Admit<NonNullable<T.Expression>>) =>
+		rebuilt(node, handle, () => buildSliceGroup(value))
+	);
 }
 
 export function buildFormatSpecifierText(text: string): T.FormatSpecifierText.Bound {
@@ -6923,13 +8096,10 @@ export function buildFormatSpecifierText(text: string): T.FormatSpecifierText.Bo
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.FormatSpecifierText.Bound;
 }
 
@@ -7009,22 +8179,38 @@ function _buildTuplePatternElements(
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: elements,
+		[OPTIONS]: options,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		items: (...vs: NonEmptyArray<Admit<T.Pattern>>) =>
-			rebuilt(node, handle, () => buildTuplePatternElements(options, ...vs)),
-		delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
-			rebuilt(node, handle, () => buildTuplePatternElements({ ...options, delimiter: v }, ...elements)),
+		items: buildTuplePatternElements$with$items,
+		delimiter: buildTuplePatternElements$with$delimiter,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	holdBuiltItems(node, listedItems);
 	return node as unknown as T.TuplePatternElements.Bound;
+}
+
+function buildTuplePatternElements$with$items(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.items');
+	const handle = node[HANDLE];
+	const elements = node[INPUT] as NonEmptyArray<Admit<T.Pattern>>;
+	const options = node[OPTIONS] as { delimiter?: Delimiter.None | Delimiter.Trailing };
+	return applySetter(args, (...vs: NonEmptyArray<Admit<T.Pattern>>) =>
+		rebuilt(node, handle, () => buildTuplePatternElements(options, ...vs))
+	);
+}
+function buildTuplePatternElements$with$delimiter(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.delimiter');
+	const handle = node[HANDLE];
+	const elements = node[INPUT] as NonEmptyArray<Admit<T.Pattern>>;
+	const options = node[OPTIONS] as { delimiter?: Delimiter.None | Delimiter.Trailing };
+	return applySetter(args, (v?: Delimiter.None | Delimiter.Trailing) =>
+		rebuilt(node, handle, () => buildTuplePatternElements({ ...options, delimiter: v }, ...elements))
+	);
 }
 
 export function buildCasePatternList<A extends NonEmptyArray<Admit<T.CasePattern>>>(
@@ -7103,22 +8289,38 @@ function _buildCasePatternList(
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: elements,
+		[OPTIONS]: options,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		items: (...vs: NonEmptyArray<Admit<T.CasePattern>>) =>
-			rebuilt(node, handle, () => buildCasePatternList(options, ...vs)),
-		delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
-			rebuilt(node, handle, () => buildCasePatternList({ ...options, delimiter: v }, ...elements)),
+		items: buildCasePatternList$with$items,
+		delimiter: buildCasePatternList$with$delimiter,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	holdBuiltItems(node, listedItems);
 	return node as unknown as T.CasePatternList.Bound;
+}
+
+function buildCasePatternList$with$items(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.items');
+	const handle = node[HANDLE];
+	const elements = node[INPUT] as NonEmptyArray<Admit<T.CasePattern>>;
+	const options = node[OPTIONS] as { delimiter?: Delimiter.None | Delimiter.Trailing };
+	return applySetter(args, (...vs: NonEmptyArray<Admit<T.CasePattern>>) =>
+		rebuilt(node, handle, () => buildCasePatternList(options, ...vs))
+	);
+}
+function buildCasePatternList$with$delimiter(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.delimiter');
+	const handle = node[HANDLE];
+	const elements = node[INPUT] as NonEmptyArray<Admit<T.CasePattern>>;
+	const options = node[OPTIONS] as { delimiter?: Delimiter.None | Delimiter.Trailing };
+	return applySetter(args, (v?: Delimiter.None | Delimiter.Trailing) =>
+		rebuilt(node, handle, () => buildCasePatternList({ ...options, delimiter: v }, ...elements))
+	);
 }
 
 export function buildTupleElements<
@@ -7204,22 +8406,36 @@ function _buildTupleElements(
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: elements,
+		[OPTIONS]: options,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		items: (...vs: NonEmptyArray<Admit<T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat>>) =>
-			rebuilt(node, handle, () => buildTupleElements(options, ...vs)),
-		delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
-			rebuilt(node, handle, () => buildTupleElements({ ...options, delimiter: v }, ...elements)),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { items: buildTupleElements$with$items, delimiter: buildTupleElements$with$delimiter, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	holdBuiltItems(node, listedItems);
 	return node as unknown as T.TupleElements.Bound;
+}
+
+function buildTupleElements$with$items(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.items');
+	const handle = node[HANDLE];
+	const elements = node[INPUT] as NonEmptyArray<Admit<T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat>>;
+	const options = node[OPTIONS] as { delimiter?: Delimiter.None | Delimiter.Trailing };
+	return applySetter(
+		args,
+		(...vs: NonEmptyArray<Admit<T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat>>) =>
+			rebuilt(node, handle, () => buildTupleElements(options, ...vs))
+	);
+}
+function buildTupleElements$with$delimiter(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.delimiter');
+	const handle = node[HANDLE];
+	const elements = node[INPUT] as NonEmptyArray<Admit<T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat>>;
+	const options = node[OPTIONS] as { delimiter?: Delimiter.None | Delimiter.Trailing };
+	return applySetter(args, (v?: Delimiter.None | Delimiter.Trailing) =>
+		rebuilt(node, handle, () => buildTupleElements({ ...options, delimiter: v }, ...elements))
+	);
 }
 
 export function buildExceptClauseExceptionAs<
@@ -7250,21 +8466,34 @@ export function buildExceptClauseExceptionAs(
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		value: (value: Admit<NonNullable<T.ExceptClauseExceptionAs.Config>['value']>) =>
-			rebuilt(node, handle, () => buildExceptClauseExceptionAs({ ...config, value: value })),
-		alias: (value?: Admit<NonNullable<T.ExceptClauseExceptionAs.Config>['alias']>) =>
-			rebuilt(node, handle, () => buildExceptClauseExceptionAs({ ...config, alias: value })),
+		value: buildExceptClauseExceptionAs$with$value,
+		alias: buildExceptClauseExceptionAs$with$alias,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.ExceptClauseExceptionAs.Bound;
+}
+
+function buildExceptClauseExceptionAs$with$value(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.value');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.ExceptClauseExceptionAs.Config;
+	return applySetter(args, (value: Admit<NonNullable<T.ExceptClauseExceptionAs.Config>['value']>) =>
+		rebuilt(node, handle, () => buildExceptClauseExceptionAs({ ...config, value: value }))
+	);
+}
+function buildExceptClauseExceptionAs$with$alias(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.alias');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.ExceptClauseExceptionAs.Config;
+	return applySetter(args, (value?: Admit<NonNullable<T.ExceptClauseExceptionAs.Config>['alias']>) =>
+		rebuilt(node, handle, () => buildExceptClauseExceptionAs({ ...config, alias: value }))
+	);
 }
 
 export function buildCaseTuplePattern(): T.EmptyCaseTuplePattern;
@@ -7345,27 +8574,27 @@ function _buildCaseTuplePattern(value?: Admit<T.ListPatternCasePatterns>): T.Cas
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		elements: (...args: unknown[]) =>
-			rebuilt(node, handle, () =>
-				listSlotWith(
-					args,
-					{ kind: TSKindId.ListPatternCasePatterns as const, optional: true, make: buildListPatternCasePatterns },
-					(value?: Admit<T.ListPatternCasePatterns>) => _buildCaseTuplePattern(value)
-				)
-			),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		inner: (...items: unknown[]) => triviaInner(node, handle, items),
-		[RECEIVER]: node
-	};
+	node.$with = { elements: buildCaseTuplePattern$with$elements, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, inner: objectInner, [RECEIVER]: node };
 	holdListItems(node, heldItems(listView.list));
 	return node as unknown as T.CaseTuplePattern.Bound;
+}
+
+function buildCaseTuplePattern$with$elements(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.elements');
+	const handle = node[HANDLE];
+	return applySetter(args, (...args: unknown[]) =>
+		rebuilt(node, handle, () =>
+			listSlotWith(
+				args,
+				{ kind: TSKindId.ListPatternCasePatterns as const, optional: true, make: buildListPatternCasePatterns },
+				(value?: Admit<T.ListPatternCasePatterns>) => _buildCaseTuplePattern(value)
+			)
+		)
+	);
 }
 
 export function buildCaseListPattern(): T.EmptyCaseListPattern;
@@ -7446,27 +8675,27 @@ function _buildCaseListPattern(value?: Admit<T.ListPatternCasePatterns>): T.Case
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		elements: (...args: unknown[]) =>
-			rebuilt(node, handle, () =>
-				listSlotWith(
-					args,
-					{ kind: TSKindId.ListPatternCasePatterns as const, optional: true, make: buildListPatternCasePatterns },
-					(value?: Admit<T.ListPatternCasePatterns>) => _buildCaseListPattern(value)
-				)
-			),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		inner: (...items: unknown[]) => triviaInner(node, handle, items),
-		[RECEIVER]: node
-	};
+	node.$with = { elements: buildCaseListPattern$with$elements, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, inner: objectInner, [RECEIVER]: node };
 	holdListItems(node, heldItems(listView.list));
 	return node as unknown as T.CaseListPattern.Bound;
+}
+
+function buildCaseListPattern$with$elements(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.elements');
+	const handle = node[HANDLE];
+	return applySetter(args, (...args: unknown[]) =>
+		rebuilt(node, handle, () =>
+			listSlotWith(
+				args,
+				{ kind: TSKindId.ListPatternCasePatterns as const, optional: true, make: buildListPatternCasePatterns },
+				(value?: Admit<T.ListPatternCasePatterns>) => _buildCaseListPattern(value)
+			)
+		)
+	);
 }
 
 export function buildPrintArguments<A extends NonEmptyArray<Admit<T.Expression>>>(
@@ -7545,22 +8774,38 @@ function _buildPrintArguments(
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: elements,
+		[OPTIONS]: options,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		items: (...vs: NonEmptyArray<Admit<T.Expression>>) =>
-			rebuilt(node, handle, () => buildPrintArguments(options, ...vs)),
-		delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
-			rebuilt(node, handle, () => buildPrintArguments({ ...options, delimiter: v }, ...elements)),
+		items: buildPrintArguments$with$items,
+		delimiter: buildPrintArguments$with$delimiter,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	holdBuiltItems(node, listedItems);
 	return node as unknown as T.PrintArguments.Bound;
+}
+
+function buildPrintArguments$with$items(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.items');
+	const handle = node[HANDLE];
+	const elements = node[INPUT] as NonEmptyArray<Admit<T.Expression>>;
+	const options = node[OPTIONS] as { delimiter?: Delimiter.None | Delimiter.Trailing };
+	return applySetter(args, (...vs: NonEmptyArray<Admit<T.Expression>>) =>
+		rebuilt(node, handle, () => buildPrintArguments(options, ...vs))
+	);
+}
+function buildPrintArguments$with$delimiter(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.delimiter');
+	const handle = node[HANDLE];
+	const elements = node[INPUT] as NonEmptyArray<Admit<T.Expression>>;
+	const options = node[OPTIONS] as { delimiter?: Delimiter.None | Delimiter.Trailing };
+	return applySetter(args, (v?: Delimiter.None | Delimiter.Trailing) =>
+		rebuilt(node, handle, () => buildPrintArguments({ ...options, delimiter: v }, ...elements))
+	);
 }
 
 export function buildPrintChevronArguments<A extends NonEmptyArray<Admit<T.Expression>>>(
@@ -7639,22 +8884,38 @@ function _buildPrintChevronArguments(
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: elements,
+		[OPTIONS]: options,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		items: (...vs: NonEmptyArray<Admit<T.Expression>>) =>
-			rebuilt(node, handle, () => buildPrintChevronArguments(options, ...vs)),
-		delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
-			rebuilt(node, handle, () => buildPrintChevronArguments({ ...options, delimiter: v }, ...elements)),
+		items: buildPrintChevronArguments$with$items,
+		delimiter: buildPrintChevronArguments$with$delimiter,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	holdBuiltItems(node, listedItems);
 	return node as unknown as T.PrintChevronArguments.Bound;
+}
+
+function buildPrintChevronArguments$with$items(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.items');
+	const handle = node[HANDLE];
+	const elements = node[INPUT] as NonEmptyArray<Admit<T.Expression>>;
+	const options = node[OPTIONS] as { delimiter?: Delimiter.None | Delimiter.Trailing };
+	return applySetter(args, (...vs: NonEmptyArray<Admit<T.Expression>>) =>
+		rebuilt(node, handle, () => buildPrintChevronArguments(options, ...vs))
+	);
+}
+function buildPrintChevronArguments$with$delimiter(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.delimiter');
+	const handle = node[HANDLE];
+	const elements = node[INPUT] as NonEmptyArray<Admit<T.Expression>>;
+	const options = node[OPTIONS] as { delimiter?: Delimiter.None | Delimiter.Trailing };
+	return applySetter(args, (v?: Delimiter.None | Delimiter.Trailing) =>
+		rebuilt(node, handle, () => buildPrintChevronArguments({ ...options, delimiter: v }, ...elements))
+	);
 }
 
 export function buildPrintStatementChevron<
@@ -7692,28 +8953,41 @@ export function buildPrintStatementChevron(config: T.PrintStatementChevron.Confi
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		chevron: (value: Admit<T.Chevron>) =>
-			rebuilt(node, handle, () => buildPrintStatementChevron({ ...config, chevron: value })),
-		printChevronArguments: (...args: unknown[]) =>
-			rebuilt(node, handle, () =>
-				listSlotWith(
-					args,
-					{ kind: TSKindId.PrintChevronArguments as const, optional: true, make: buildPrintChevronArguments },
-					(value?: Admit<NonNullable<T.PrintStatementChevron.Config>['printChevronArguments']>) =>
-						buildPrintStatementChevron({ ...config, printChevronArguments: value })
-				)
-			),
+		chevron: buildPrintStatementChevron$with$chevron,
+		printChevronArguments: buildPrintStatementChevron$with$printChevronArguments,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.PrintStatementChevron.Bound;
+}
+
+function buildPrintStatementChevron$with$chevron(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.chevron');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.PrintStatementChevron.Config;
+	return applySetter(args, (value: Admit<T.Chevron>) =>
+		rebuilt(node, handle, () => buildPrintStatementChevron({ ...config, chevron: value }))
+	);
+}
+function buildPrintStatementChevron$with$printChevronArguments(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.printChevronArguments');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.PrintStatementChevron.Config;
+	return applySetter(args, (...args: unknown[]) =>
+		rebuilt(node, handle, () =>
+			listSlotWith(
+				args,
+				{ kind: TSKindId.PrintChevronArguments as const, optional: true, make: buildPrintChevronArguments },
+				(value?: Admit<NonNullable<T.PrintStatementChevron.Config>['printChevronArguments']>) =>
+					buildPrintStatementChevron({ ...config, printChevronArguments: value })
+			)
+		)
+	);
 }
 
 export function buildPrintStatementPlain<V extends Admit<T.PrintArguments>>(
@@ -7793,26 +9067,27 @@ function _buildPrintStatementPlain(value: Admit<T.PrintArguments>): T.PrintState
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		printArguments: (...args: unknown[]) =>
-			rebuilt(node, handle, () =>
-				listSlotWith(
-					args,
-					{ kind: TSKindId.PrintArguments as const, optional: false, make: buildPrintArguments },
-					(value: Admit<T.PrintArguments>) => _buildPrintStatementPlain(value)
-				)
-			),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { printArguments: buildPrintStatementPlain$with$printArguments, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	holdListItems(node, heldItems(listView.list));
 	return node as unknown as T.PrintStatementPlain.Bound;
+}
+
+function buildPrintStatementPlain$with$printArguments(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.printArguments');
+	const handle = node[HANDLE];
+	return applySetter(args, (...args: unknown[]) =>
+		rebuilt(node, handle, () =>
+			listSlotWith(
+				args,
+				{ kind: TSKindId.PrintArguments as const, optional: false, make: buildPrintArguments },
+				(value: Admit<T.PrintArguments>) => _buildPrintStatementPlain(value)
+			)
+		)
+	);
 }
 
 export const buildWildcardPattern: TSKindId.WildcardPattern = TSKindId.WildcardPattern;
@@ -7894,26 +9169,27 @@ function _buildParenthesizedImportList(value: Admit<T.ImportList>): T.Parenthesi
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		importList: (...args: unknown[]) =>
-			rebuilt(node, handle, () =>
-				listSlotWith(
-					args,
-					{ kind: TSKindId.ImportList as const, optional: false, make: buildImportList },
-					(value: Admit<T.ImportList>) => _buildParenthesizedImportList(value)
-				)
-			),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { importList: buildParenthesizedImportList$with$importList, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	holdListItems(node, heldItems(listView.list));
 	return node as unknown as T.ParenthesizedImportList.Bound;
+}
+
+function buildParenthesizedImportList$with$importList(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.importList');
+	const handle = node[HANDLE];
+	return applySetter(args, (...args: unknown[]) =>
+		rebuilt(node, handle, () =>
+			listSlotWith(
+				args,
+				{ kind: TSKindId.ImportList as const, optional: false, make: buildImportList },
+				(value: Admit<T.ImportList>) => _buildParenthesizedImportList(value)
+			)
+		)
+	);
 }
 
 export function buildComprehensionClauses<A extends NonEmptyArray<Admit<T.ForInClause | T.IfClause>>>(
@@ -7938,19 +9214,20 @@ export function buildComprehensionClauses(
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		contents: (...vs: NonEmptyArray<Admit<T.ForInClause | T.IfClause>>) =>
-			rebuilt(node, handle, () => buildComprehensionClauses(...restItems('contents', vs))),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { contents: buildComprehensionClauses$with$contents, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.ComprehensionClauses.Bound;
+}
+
+function buildComprehensionClauses$with$contents(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.contents');
+	const handle = node[HANDLE];
+	return applySetter(args, (...vs: NonEmptyArray<Admit<T.ForInClause | T.IfClause>>) =>
+		rebuilt(node, handle, () => buildComprehensionClauses(...restItems('contents', vs)))
+	);
 }
 
 export function buildIntegerHex<const N extends string | number | bigint>(
@@ -7987,20 +9264,37 @@ export function buildIntegerHex(
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: value,
+		[OPTIONS]: options,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		radixPrefix: (spelling: '0x' | '0X') =>
-			rebuilt(node, handle, () => buildIntegerHex(value, { ...options, radixPrefix: spelling })),
-		content: (value: Admit<string | number | bigint>) => rebuilt(node, handle, () => buildIntegerHex(value, options)),
+		radixPrefix: buildIntegerHex$with$radixPrefix,
+		content: buildIntegerHex$with$content,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.IntegerHex.Bound;
+}
+
+function buildIntegerHex$with$radixPrefix(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.radixPrefix');
+	const handle = node[HANDLE];
+	const value = node[INPUT] as Admit<string | number | bigint>;
+	const options = node[OPTIONS] as T.IntegerHex.Options;
+	return applySetter(args, (spelling: '0x' | '0X') =>
+		rebuilt(node, handle, () => buildIntegerHex(value, { ...options, radixPrefix: spelling }))
+	);
+}
+function buildIntegerHex$with$content(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.content');
+	const handle = node[HANDLE];
+	const value = node[INPUT] as Admit<string | number | bigint>;
+	const options = node[OPTIONS] as T.IntegerHex.Options;
+	return applySetter(args, (value: Admit<string | number | bigint>) =>
+		rebuilt(node, handle, () => buildIntegerHex(value, options))
+	);
 }
 
 export function buildIntegerOctal<const N extends string | number | bigint>(
@@ -8037,20 +9331,37 @@ export function buildIntegerOctal(
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: value,
+		[OPTIONS]: options,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		radixPrefix: (spelling: '0o' | '0O') =>
-			rebuilt(node, handle, () => buildIntegerOctal(value, { ...options, radixPrefix: spelling })),
-		content: (value: Admit<string | number | bigint>) => rebuilt(node, handle, () => buildIntegerOctal(value, options)),
+		radixPrefix: buildIntegerOctal$with$radixPrefix,
+		content: buildIntegerOctal$with$content,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.IntegerOctal.Bound;
+}
+
+function buildIntegerOctal$with$radixPrefix(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.radixPrefix');
+	const handle = node[HANDLE];
+	const value = node[INPUT] as Admit<string | number | bigint>;
+	const options = node[OPTIONS] as T.IntegerOctal.Options;
+	return applySetter(args, (spelling: '0o' | '0O') =>
+		rebuilt(node, handle, () => buildIntegerOctal(value, { ...options, radixPrefix: spelling }))
+	);
+}
+function buildIntegerOctal$with$content(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.content');
+	const handle = node[HANDLE];
+	const value = node[INPUT] as Admit<string | number | bigint>;
+	const options = node[OPTIONS] as T.IntegerOctal.Options;
+	return applySetter(args, (value: Admit<string | number | bigint>) =>
+		rebuilt(node, handle, () => buildIntegerOctal(value, options))
+	);
 }
 
 export function buildIntegerBinary<const N extends string | number | bigint>(
@@ -8087,21 +9398,37 @@ export function buildIntegerBinary(
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: value,
+		[OPTIONS]: options,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		radixPrefix: (spelling: '0b' | '0B') =>
-			rebuilt(node, handle, () => buildIntegerBinary(value, { ...options, radixPrefix: spelling })),
-		content: (value: Admit<string | number | bigint>) =>
-			rebuilt(node, handle, () => buildIntegerBinary(value, options)),
+		radixPrefix: buildIntegerBinary$with$radixPrefix,
+		content: buildIntegerBinary$with$content,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.IntegerBinary.Bound;
+}
+
+function buildIntegerBinary$with$radixPrefix(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.radixPrefix');
+	const handle = node[HANDLE];
+	const value = node[INPUT] as Admit<string | number | bigint>;
+	const options = node[OPTIONS] as T.IntegerBinary.Options;
+	return applySetter(args, (spelling: '0b' | '0B') =>
+		rebuilt(node, handle, () => buildIntegerBinary(value, { ...options, radixPrefix: spelling }))
+	);
+}
+function buildIntegerBinary$with$content(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.content');
+	const handle = node[HANDLE];
+	const value = node[INPUT] as Admit<string | number | bigint>;
+	const options = node[OPTIONS] as T.IntegerBinary.Options;
+	return applySetter(args, (value: Admit<string | number | bigint>) =>
+		rebuilt(node, handle, () => buildIntegerBinary(value, options))
+	);
 }
 
 export function buildIntegerDecimalLong(text: string): T.IntegerDecimalLong.Bound {
@@ -8120,13 +9447,10 @@ export function buildIntegerDecimalLong(text: string): T.IntegerDecimalLong.Boun
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.IntegerDecimalLong.Bound;
 }
 
@@ -8147,13 +9471,10 @@ export function buildIntegerDecimalImaginary(text: string): T.IntegerDecimalImag
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.IntegerDecimalImaginary.Bound;
 }
 
@@ -8177,13 +9498,10 @@ export function buildIntegerDecimalPlain(text: string | number | bigint): T.Inte
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.IntegerDecimalPlain.Bound;
 }
 
@@ -8293,29 +9611,77 @@ export function buildFloatPoint(
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
+		[OPTIONS]: options,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		integer: (value: Admit<string | number | bigint>) =>
-			rebuilt(node, handle, () => buildFloatPoint({ ...config, integer: value }, options)),
-		fraction: (value?: Admit<string | number | bigint>) =>
-			rebuilt(node, handle, () => buildFloatPoint({ ...config, fraction: value }, options)),
-		marker: (spelling: 'e' | 'E') =>
-			rebuilt(node, handle, () => buildFloatPoint(config, { ...options, marker: spelling })),
-		exponentSign: (value?: Admit<'-' | '+'>) =>
-			rebuilt(node, handle, () => buildFloatPoint({ ...config, exponentSign: value }, options)),
-		exponent: (value?: Admit<string | number | bigint>) =>
-			rebuilt(node, handle, () => buildFloatPoint({ ...config, exponent: value }, options)),
-		imaginary: (value?: Admit<string>) =>
-			rebuilt(node, handle, () => buildFloatPoint({ ...config, imaginary: value }, options)),
+		integer: buildFloatPoint$with$integer,
+		fraction: buildFloatPoint$with$fraction,
+		marker: buildFloatPoint$with$marker,
+		exponentSign: buildFloatPoint$with$exponentSign,
+		exponent: buildFloatPoint$with$exponent,
+		imaginary: buildFloatPoint$with$imaginary,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.FloatPoint.Bound;
+}
+
+function buildFloatPoint$with$integer(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.integer');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.FloatPoint.Config;
+	const options = node[OPTIONS] as T.FloatPoint.Options;
+	return applySetter(args, (value: Admit<string | number | bigint>) =>
+		rebuilt(node, handle, () => buildFloatPoint({ ...config, integer: value }, options))
+	);
+}
+function buildFloatPoint$with$fraction(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.fraction');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.FloatPoint.Config;
+	const options = node[OPTIONS] as T.FloatPoint.Options;
+	return applySetter(args, (value?: Admit<string | number | bigint>) =>
+		rebuilt(node, handle, () => buildFloatPoint({ ...config, fraction: value }, options))
+	);
+}
+function buildFloatPoint$with$marker(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.marker');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.FloatPoint.Config;
+	const options = node[OPTIONS] as T.FloatPoint.Options;
+	return applySetter(args, (spelling: 'e' | 'E') =>
+		rebuilt(node, handle, () => buildFloatPoint(config, { ...options, marker: spelling }))
+	);
+}
+function buildFloatPoint$with$exponentSign(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.exponentSign');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.FloatPoint.Config;
+	const options = node[OPTIONS] as T.FloatPoint.Options;
+	return applySetter(args, (value?: Admit<'-' | '+'>) =>
+		rebuilt(node, handle, () => buildFloatPoint({ ...config, exponentSign: value }, options))
+	);
+}
+function buildFloatPoint$with$exponent(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.exponent');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.FloatPoint.Config;
+	const options = node[OPTIONS] as T.FloatPoint.Options;
+	return applySetter(args, (value?: Admit<string | number | bigint>) =>
+		rebuilt(node, handle, () => buildFloatPoint({ ...config, exponent: value }, options))
+	);
+}
+function buildFloatPoint$with$imaginary(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.imaginary');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.FloatPoint.Config;
+	const options = node[OPTIONS] as T.FloatPoint.Options;
+	return applySetter(args, (value?: Admit<string>) =>
+		rebuilt(node, handle, () => buildFloatPoint({ ...config, imaginary: value }, options))
+	);
 }
 
 export function buildFloatLeadingPoint<
@@ -8424,29 +9790,77 @@ export function buildFloatLeadingPoint(
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
+		[OPTIONS]: options,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		integer: (value?: Admit<string | number | bigint>) =>
-			rebuilt(node, handle, () => buildFloatLeadingPoint({ ...config, integer: value }, options)),
-		fraction: (value: Admit<string | number | bigint>) =>
-			rebuilt(node, handle, () => buildFloatLeadingPoint({ ...config, fraction: value }, options)),
-		marker: (spelling: 'e' | 'E') =>
-			rebuilt(node, handle, () => buildFloatLeadingPoint(config, { ...options, marker: spelling })),
-		exponentSign: (value?: Admit<'-' | '+'>) =>
-			rebuilt(node, handle, () => buildFloatLeadingPoint({ ...config, exponentSign: value }, options)),
-		exponent: (value?: Admit<string | number | bigint>) =>
-			rebuilt(node, handle, () => buildFloatLeadingPoint({ ...config, exponent: value }, options)),
-		imaginary: (value?: Admit<string>) =>
-			rebuilt(node, handle, () => buildFloatLeadingPoint({ ...config, imaginary: value }, options)),
+		integer: buildFloatLeadingPoint$with$integer,
+		fraction: buildFloatLeadingPoint$with$fraction,
+		marker: buildFloatLeadingPoint$with$marker,
+		exponentSign: buildFloatLeadingPoint$with$exponentSign,
+		exponent: buildFloatLeadingPoint$with$exponent,
+		imaginary: buildFloatLeadingPoint$with$imaginary,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.FloatLeadingPoint.Bound;
+}
+
+function buildFloatLeadingPoint$with$integer(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.integer');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.FloatLeadingPoint.Config;
+	const options = node[OPTIONS] as T.FloatLeadingPoint.Options;
+	return applySetter(args, (value?: Admit<string | number | bigint>) =>
+		rebuilt(node, handle, () => buildFloatLeadingPoint({ ...config, integer: value }, options))
+	);
+}
+function buildFloatLeadingPoint$with$fraction(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.fraction');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.FloatLeadingPoint.Config;
+	const options = node[OPTIONS] as T.FloatLeadingPoint.Options;
+	return applySetter(args, (value: Admit<string | number | bigint>) =>
+		rebuilt(node, handle, () => buildFloatLeadingPoint({ ...config, fraction: value }, options))
+	);
+}
+function buildFloatLeadingPoint$with$marker(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.marker');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.FloatLeadingPoint.Config;
+	const options = node[OPTIONS] as T.FloatLeadingPoint.Options;
+	return applySetter(args, (spelling: 'e' | 'E') =>
+		rebuilt(node, handle, () => buildFloatLeadingPoint(config, { ...options, marker: spelling }))
+	);
+}
+function buildFloatLeadingPoint$with$exponentSign(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.exponentSign');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.FloatLeadingPoint.Config;
+	const options = node[OPTIONS] as T.FloatLeadingPoint.Options;
+	return applySetter(args, (value?: Admit<'-' | '+'>) =>
+		rebuilt(node, handle, () => buildFloatLeadingPoint({ ...config, exponentSign: value }, options))
+	);
+}
+function buildFloatLeadingPoint$with$exponent(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.exponent');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.FloatLeadingPoint.Config;
+	const options = node[OPTIONS] as T.FloatLeadingPoint.Options;
+	return applySetter(args, (value?: Admit<string | number | bigint>) =>
+		rebuilt(node, handle, () => buildFloatLeadingPoint({ ...config, exponent: value }, options))
+	);
+}
+function buildFloatLeadingPoint$with$imaginary(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.imaginary');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.FloatLeadingPoint.Config;
+	const options = node[OPTIONS] as T.FloatLeadingPoint.Options;
+	return applySetter(args, (value?: Admit<string>) =>
+		rebuilt(node, handle, () => buildFloatLeadingPoint({ ...config, imaginary: value }, options))
+	);
 }
 
 export function buildFloatScientific<
@@ -8524,27 +9938,67 @@ export function buildFloatScientific(
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
+		[OPTIONS]: options,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		integer: (value: Admit<string | number | bigint>) =>
-			rebuilt(node, handle, () => buildFloatScientific({ ...config, integer: value }, options)),
-		marker: (spelling: 'e' | 'E') =>
-			rebuilt(node, handle, () => buildFloatScientific(config, { ...options, marker: spelling })),
-		exponentSign: (value?: Admit<'-' | '+'>) =>
-			rebuilt(node, handle, () => buildFloatScientific({ ...config, exponentSign: value }, options)),
-		exponent: (value: Admit<string | number | bigint>) =>
-			rebuilt(node, handle, () => buildFloatScientific({ ...config, exponent: value }, options)),
-		imaginary: (value?: Admit<string>) =>
-			rebuilt(node, handle, () => buildFloatScientific({ ...config, imaginary: value }, options)),
+		integer: buildFloatScientific$with$integer,
+		marker: buildFloatScientific$with$marker,
+		exponentSign: buildFloatScientific$with$exponentSign,
+		exponent: buildFloatScientific$with$exponent,
+		imaginary: buildFloatScientific$with$imaginary,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.FloatScientific.Bound;
+}
+
+function buildFloatScientific$with$integer(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.integer');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.FloatScientific.Config;
+	const options = node[OPTIONS] as T.FloatScientific.Options;
+	return applySetter(args, (value: Admit<string | number | bigint>) =>
+		rebuilt(node, handle, () => buildFloatScientific({ ...config, integer: value }, options))
+	);
+}
+function buildFloatScientific$with$marker(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.marker');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.FloatScientific.Config;
+	const options = node[OPTIONS] as T.FloatScientific.Options;
+	return applySetter(args, (spelling: 'e' | 'E') =>
+		rebuilt(node, handle, () => buildFloatScientific(config, { ...options, marker: spelling }))
+	);
+}
+function buildFloatScientific$with$exponentSign(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.exponentSign');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.FloatScientific.Config;
+	const options = node[OPTIONS] as T.FloatScientific.Options;
+	return applySetter(args, (value?: Admit<'-' | '+'>) =>
+		rebuilt(node, handle, () => buildFloatScientific({ ...config, exponentSign: value }, options))
+	);
+}
+function buildFloatScientific$with$exponent(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.exponent');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.FloatScientific.Config;
+	const options = node[OPTIONS] as T.FloatScientific.Options;
+	return applySetter(args, (value: Admit<string | number | bigint>) =>
+		rebuilt(node, handle, () => buildFloatScientific({ ...config, exponent: value }, options))
+	);
+}
+function buildFloatScientific$with$imaginary(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.imaginary');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.FloatScientific.Config;
+	const options = node[OPTIONS] as T.FloatScientific.Options;
+	return applySetter(args, (value?: Admit<string>) =>
+		rebuilt(node, handle, () => buildFloatScientific({ ...config, imaginary: value }, options))
+	);
 }
 
 export function buildEscapeSequenceUnicodeFixed(content: string, affix?: true): T.EscapeSequenceUnicodeFixed.Bound;
@@ -8578,18 +10032,20 @@ export function buildEscapeSequenceUnicodeFixed(
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		content: (value: Admit<string>) => rebuilt(node, handle, () => buildEscapeSequenceUnicodeFixed(value)),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { content: buildEscapeSequenceUnicodeFixed$with$content, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.EscapeSequenceUnicodeFixed.Bound;
+}
+
+function buildEscapeSequenceUnicodeFixed$with$content(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.content');
+	const handle = node[HANDLE];
+	return applySetter(args, (value: Admit<string>) =>
+		rebuilt(node, handle, () => buildEscapeSequenceUnicodeFixed(value))
+	);
 }
 
 export function buildEscapeSequenceUnicodeWide(content: string, affix?: true): T.EscapeSequenceUnicodeWide.Bound;
@@ -8623,18 +10079,20 @@ export function buildEscapeSequenceUnicodeWide(
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		content: (value: Admit<string>) => rebuilt(node, handle, () => buildEscapeSequenceUnicodeWide(value)),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { content: buildEscapeSequenceUnicodeWide$with$content, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.EscapeSequenceUnicodeWide.Bound;
+}
+
+function buildEscapeSequenceUnicodeWide$with$content(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.content');
+	const handle = node[HANDLE];
+	return applySetter(args, (value: Admit<string>) =>
+		rebuilt(node, handle, () => buildEscapeSequenceUnicodeWide(value))
+	);
 }
 
 export function buildEscapeSequenceHex(content: string, affix?: true): T.EscapeSequenceHex.Bound;
@@ -8665,18 +10123,18 @@ export function buildEscapeSequenceHex(input: string, affix: boolean = true): T.
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		content: (value: Admit<string>) => rebuilt(node, handle, () => buildEscapeSequenceHex(value)),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { content: buildEscapeSequenceHex$with$content, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.EscapeSequenceHex.Bound;
+}
+
+function buildEscapeSequenceHex$with$content(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.content');
+	const handle = node[HANDLE];
+	return applySetter(args, (value: Admit<string>) => rebuilt(node, handle, () => buildEscapeSequenceHex(value)));
 }
 
 export function buildEscapeSequenceOctal<const N extends string | number | bigint>(
@@ -8713,18 +10171,20 @@ export function buildEscapeSequenceOctal(
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		content: (value: Admit<string | number | bigint>) => rebuilt(node, handle, () => buildEscapeSequenceOctal(value)),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { content: buildEscapeSequenceOctal$with$content, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.EscapeSequenceOctal.Bound;
+}
+
+function buildEscapeSequenceOctal$with$content(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.content');
+	const handle = node[HANDLE];
+	return applySetter(args, (value: Admit<string | number | bigint>) =>
+		rebuilt(node, handle, () => buildEscapeSequenceOctal(value))
+	);
 }
 
 export function buildEscapeSequenceLineBreak(content: string, affix?: true): T.EscapeSequenceLineBreak.Bound;
@@ -8755,18 +10215,18 @@ export function buildEscapeSequenceLineBreak(input: string, affix: boolean = tru
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		content: (value: Admit<string>) => rebuilt(node, handle, () => buildEscapeSequenceLineBreak(value)),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { content: buildEscapeSequenceLineBreak$with$content, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.EscapeSequenceLineBreak.Bound;
+}
+
+function buildEscapeSequenceLineBreak$with$content(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.content');
+	const handle = node[HANDLE];
+	return applySetter(args, (value: Admit<string>) => rebuilt(node, handle, () => buildEscapeSequenceLineBreak(value)));
 }
 
 export function buildEscapeSequenceSimple(content: string, affix?: true): T.EscapeSequenceSimple.Bound;
@@ -8797,18 +10257,18 @@ export function buildEscapeSequenceSimple(input: string, affix: boolean = true):
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		content: (value: Admit<string>) => rebuilt(node, handle, () => buildEscapeSequenceSimple(value)),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { content: buildEscapeSequenceSimple$with$content, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.EscapeSequenceSimple.Bound;
+}
+
+function buildEscapeSequenceSimple$with$content(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.content');
+	const handle = node[HANDLE];
+	return applySetter(args, (value: Admit<string>) => rebuilt(node, handle, () => buildEscapeSequenceSimple(value)));
 }
 
 export function buildEscapeSequenceNamed(content: string, affix?: true): T.EscapeSequenceNamed.Bound;
@@ -8839,18 +10299,18 @@ export function buildEscapeSequenceNamed(input: string, affix: boolean = true): 
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		content: (value: Admit<string>) => rebuilt(node, handle, () => buildEscapeSequenceNamed(value)),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { content: buildEscapeSequenceNamed$with$content, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.EscapeSequenceNamed.Bound;
+}
+
+function buildEscapeSequenceNamed$with$content(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.content');
+	const handle = node[HANDLE];
+	return applySetter(args, (value: Admit<string>) => rebuilt(node, handle, () => buildEscapeSequenceNamed(value)));
 }
 
 export function buildLineContinuationNewline(text: string): T.LineContinuationNewline.Bound {
@@ -8895,18 +10355,20 @@ export function buildSimplePatternNegative(value: Admit<T.Integer | T.Float>): T
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		value: (value: Admit<T.Integer | T.Float>) => rebuilt(node, handle, () => buildSimplePatternNegative(value)),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { value: buildSimplePatternNegative$with$value, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.SimplePatternNegative.Bound;
+}
+
+function buildSimplePatternNegative$with$value(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.value');
+	const handle = node[HANDLE];
+	return applySetter(args, (value: Admit<T.Integer | T.Float>) =>
+		rebuilt(node, handle, () => buildSimplePatternNegative(value))
+	);
 }
 
 export function buildExceptClauseExceptionList<A extends NonEmptyArray<Admit<T.Expression>>>(
@@ -8931,19 +10393,20 @@ export function buildExceptClauseExceptionList(
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		values: (...vs: NonEmptyArray<Admit<T.Expression>>) =>
-			rebuilt(node, handle, () => buildExceptClauseExceptionList(...restItems('values', vs))),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { values: buildExceptClauseExceptionList$with$values, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.ExceptClauseExceptionList.Bound;
+}
+
+function buildExceptClauseExceptionList$with$values(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.values');
+	const handle = node[HANDLE];
+	return applySetter(args, (...vs: NonEmptyArray<Admit<T.Expression>>) =>
+		rebuilt(node, handle, () => buildExceptClauseExceptionList(...restItems('values', vs)))
+	);
 }
 
 export function buildExceptClauseException<V extends Admit<T.ExceptClauseExceptionAs | T.ExceptClauseExceptionList>>(
@@ -8967,19 +10430,20 @@ export function buildExceptClauseException(
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		content: (value: Admit<T.ExceptClauseExceptionAs | T.ExceptClauseExceptionList>) =>
-			rebuilt(node, handle, () => buildExceptClauseException(value)),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { content: buildExceptClauseException$with$content, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.ExceptClauseException.Bound;
+}
+
+function buildExceptClauseException$with$content(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.content');
+	const handle = node[HANDLE];
+	return applySetter(args, (value: Admit<T.ExceptClauseExceptionAs | T.ExceptClauseExceptionList>) =>
+		rebuilt(node, handle, () => buildExceptClauseException(value))
+	);
 }
 
 export function buildSplatPatternList<V extends Admit<T.Identifier | TSKindId.Underscore>>(
@@ -9006,19 +10470,20 @@ export function buildSplatPatternList(value: Admit<T.Identifier | TSKindId.Under
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		pattern: (value: Admit<NonNullable<T.Identifier | TSKindId.Underscore>>) =>
-			rebuilt(node, handle, () => buildSplatPatternList(value)),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { pattern: buildSplatPatternList$with$pattern, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.SplatPatternList.Bound;
+}
+
+function buildSplatPatternList$with$pattern(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.pattern');
+	const handle = node[HANDLE];
+	return applySetter(args, (value: Admit<NonNullable<T.Identifier | TSKindId.Underscore>>) =>
+		rebuilt(node, handle, () => buildSplatPatternList(value))
+	);
 }
 
 export function buildSplatPatternDictionary<V extends Admit<T.Identifier | TSKindId.Underscore>>(
@@ -9047,19 +10512,20 @@ export function buildSplatPatternDictionary(
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		pattern: (value: Admit<NonNullable<T.Identifier | TSKindId.Underscore>>) =>
-			rebuilt(node, handle, () => buildSplatPatternDictionary(value)),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { pattern: buildSplatPatternDictionary$with$pattern, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.SplatPatternDictionary.Bound;
+}
+
+function buildSplatPatternDictionary$with$pattern(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.pattern');
+	const handle = node[HANDLE];
+	return applySetter(args, (value: Admit<NonNullable<T.Identifier | TSKindId.Underscore>>) =>
+		rebuilt(node, handle, () => buildSplatPatternDictionary(value))
+	);
 }
 
 export function buildAssignmentEq<
@@ -9086,21 +10552,30 @@ export function buildAssignmentEq(config: T.AssignmentEq.Config): T.AssignmentEq
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		name: (value: Admit<T.Pattern | T.PatternList>) =>
-			rebuilt(node, handle, () => buildAssignmentEq({ ...config, name: value })),
-		value: (value: Admit<NonNullable<T.AssignmentEq.Config>['value']>) =>
-			rebuilt(node, handle, () => buildAssignmentEq({ ...config, value: value })),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { name: buildAssignmentEq$with$name, value: buildAssignmentEq$with$value, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.AssignmentEq.Bound;
+}
+
+function buildAssignmentEq$with$name(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.name');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.AssignmentEq.Config;
+	return applySetter(args, (value: Admit<T.Pattern | T.PatternList>) =>
+		rebuilt(node, handle, () => buildAssignmentEq({ ...config, name: value }))
+	);
+}
+function buildAssignmentEq$with$value(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.value');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.AssignmentEq.Config;
+	return applySetter(args, (value: Admit<NonNullable<T.AssignmentEq.Config>['value']>) =>
+		rebuilt(node, handle, () => buildAssignmentEq({ ...config, value: value }))
+	);
 }
 
 export function buildAssignmentType<
@@ -9127,20 +10602,30 @@ export function buildAssignmentType(config: T.AssignmentType.Config): T.Assignme
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		name: (value: Admit<T.Pattern | T.PatternList>) =>
-			rebuilt(node, handle, () => buildAssignmentType({ ...config, name: value })),
-		type: (value: Admit<T.Type>) => rebuilt(node, handle, () => buildAssignmentType({ ...config, type: value })),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { name: buildAssignmentType$with$name, type: buildAssignmentType$with$type, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.AssignmentType.Bound;
+}
+
+function buildAssignmentType$with$name(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.name');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.AssignmentType.Config;
+	return applySetter(args, (value: Admit<T.Pattern | T.PatternList>) =>
+		rebuilt(node, handle, () => buildAssignmentType({ ...config, name: value }))
+	);
+}
+function buildAssignmentType$with$type(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.type');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.AssignmentType.Config;
+	return applySetter(args, (value: Admit<T.Type>) =>
+		rebuilt(node, handle, () => buildAssignmentType({ ...config, type: value }))
+	);
 }
 
 export function buildAssignmentTyped<
@@ -9173,22 +10658,43 @@ export function buildAssignmentTyped(config: T.AssignmentTyped.Config): T.Assign
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		name: (value: Admit<T.Pattern | T.PatternList>) =>
-			rebuilt(node, handle, () => buildAssignmentTyped({ ...config, name: value })),
-		type: (value: Admit<T.Type>) => rebuilt(node, handle, () => buildAssignmentTyped({ ...config, type: value })),
-		value: (value: Admit<NonNullable<T.AssignmentTyped.Config>['value']>) =>
-			rebuilt(node, handle, () => buildAssignmentTyped({ ...config, value: value })),
+		name: buildAssignmentTyped$with$name,
+		type: buildAssignmentTyped$with$type,
+		value: buildAssignmentTyped$with$value,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.AssignmentTyped.Bound;
+}
+
+function buildAssignmentTyped$with$name(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.name');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.AssignmentTyped.Config;
+	return applySetter(args, (value: Admit<T.Pattern | T.PatternList>) =>
+		rebuilt(node, handle, () => buildAssignmentTyped({ ...config, name: value }))
+	);
+}
+function buildAssignmentTyped$with$type(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.type');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.AssignmentTyped.Config;
+	return applySetter(args, (value: Admit<T.Type>) =>
+		rebuilt(node, handle, () => buildAssignmentTyped({ ...config, type: value }))
+	);
+}
+function buildAssignmentTyped$with$value(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.value');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.AssignmentTyped.Config;
+	return applySetter(args, (value: Admit<NonNullable<T.AssignmentTyped.Config>['value']>) =>
+		rebuilt(node, handle, () => buildAssignmentTyped({ ...config, value: value }))
+	);
 }
 
 export function buildExpressionStatementTuple<A extends NonEmptyArray<Admit<T.Expression>>>(
@@ -9267,22 +10773,38 @@ function _buildExpressionStatementTuple(
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: elements,
+		[OPTIONS]: options,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		items: (...vs: NonEmptyArray<Admit<T.Expression>>) =>
-			rebuilt(node, handle, () => buildExpressionStatementTuple(options, ...vs)),
-		delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
-			rebuilt(node, handle, () => buildExpressionStatementTuple({ ...options, delimiter: v }, ...elements)),
+		items: buildExpressionStatementTuple$with$items,
+		delimiter: buildExpressionStatementTuple$with$delimiter,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	holdBuiltItems(node, listedItems);
 	return node as unknown as T.ExpressionStatementTuple.Bound;
+}
+
+function buildExpressionStatementTuple$with$items(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.items');
+	const handle = node[HANDLE];
+	const elements = node[INPUT] as NonEmptyArray<Admit<T.Expression>>;
+	const options = node[OPTIONS] as { delimiter?: Delimiter.None | Delimiter.Trailing };
+	return applySetter(args, (...vs: NonEmptyArray<Admit<T.Expression>>) =>
+		rebuilt(node, handle, () => buildExpressionStatementTuple(options, ...vs))
+	);
+}
+function buildExpressionStatementTuple$with$delimiter(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.delimiter');
+	const handle = node[HANDLE];
+	const elements = node[INPUT] as NonEmptyArray<Admit<T.Expression>>;
+	const options = node[OPTIONS] as { delimiter?: Delimiter.None | Delimiter.Trailing };
+	return applySetter(args, (v?: Delimiter.None | Delimiter.Trailing) =>
+		rebuilt(node, handle, () => buildExpressionStatementTuple({ ...options, delimiter: v }, ...elements))
+	);
 }
 
 export function buildWithClauseBare<A extends NonEmptyArray<Admit<T.WithItem>>>(
@@ -9361,22 +10883,38 @@ function _buildWithClauseBare(
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: elements,
+		[OPTIONS]: options,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		items: (...vs: NonEmptyArray<Admit<T.WithItem>>) =>
-			rebuilt(node, handle, () => buildWithClauseBare(options, ...vs)),
-		delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
-			rebuilt(node, handle, () => buildWithClauseBare({ ...options, delimiter: v }, ...elements)),
+		items: buildWithClauseBare$with$items,
+		delimiter: buildWithClauseBare$with$delimiter,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	holdBuiltItems(node, listedItems);
 	return node as unknown as T.WithClauseBare.Bound;
+}
+
+function buildWithClauseBare$with$items(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.items');
+	const handle = node[HANDLE];
+	const elements = node[INPUT] as NonEmptyArray<Admit<T.WithItem>>;
+	const options = node[OPTIONS] as { delimiter?: Delimiter.None | Delimiter.Trailing };
+	return applySetter(args, (...vs: NonEmptyArray<Admit<T.WithItem>>) =>
+		rebuilt(node, handle, () => buildWithClauseBare(options, ...vs))
+	);
+}
+function buildWithClauseBare$with$delimiter(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.delimiter');
+	const handle = node[HANDLE];
+	const elements = node[INPUT] as NonEmptyArray<Admit<T.WithItem>>;
+	const options = node[OPTIONS] as { delimiter?: Delimiter.None | Delimiter.Trailing };
+	return applySetter(args, (v?: Delimiter.None | Delimiter.Trailing) =>
+		rebuilt(node, handle, () => buildWithClauseBare({ ...options, delimiter: v }, ...elements))
+	);
 }
 
 export function buildWithClauseParen<V extends Admit<T.WithClauseWithItems>>(
@@ -9456,26 +10994,27 @@ function _buildWithClauseParen(value: Admit<T.WithClauseWithItems>): T.WithClaus
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		items: (...args: unknown[]) =>
-			rebuilt(node, handle, () =>
-				listSlotWith(
-					args,
-					{ kind: TSKindId.WithClauseWithItems as const, optional: false, make: buildWithClauseWithItems },
-					(value: Admit<T.WithClauseWithItems>) => _buildWithClauseParen(value)
-				)
-			),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { items: buildWithClauseParen$with$items, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	holdListItems(node, heldItems(listView.list));
 	return node as unknown as T.WithClauseParen.Bound;
+}
+
+function buildWithClauseParen$with$items(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.items');
+	const handle = node[HANDLE];
+	return applySetter(args, (...args: unknown[]) =>
+		rebuilt(node, handle, () =>
+			listSlotWith(
+				args,
+				{ kind: TSKindId.WithClauseWithItems as const, optional: false, make: buildWithClauseWithItems },
+				(value: Admit<T.WithClauseWithItems>) => _buildWithClauseParen(value)
+			)
+		)
+	);
 }
 
 export function buildMatchBlockBlock(): T.EmptyMatchBlockBlock;
@@ -9499,20 +11038,20 @@ export function buildMatchBlockBlock(...children: Admit<T.CaseClause[]>): T.Matc
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		alternatives: (...vs: Admit<T.CaseClause>[]) =>
-			rebuilt(node, handle, () => buildMatchBlockBlock(...restItems('alternatives', vs))),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		inner: (...items: unknown[]) => triviaInner(node, handle, items),
-		[RECEIVER]: node
-	};
+	node.$with = { alternatives: buildMatchBlockBlock$with$alternatives, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, inner: objectInner, [RECEIVER]: node };
 	return node as unknown as T.MatchBlockBlock.Bound;
+}
+
+function buildMatchBlockBlock$with$alternatives(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.alternatives');
+	const handle = node[HANDLE];
+	return applySetter(args, (...vs: Admit<T.CaseClause>[]) =>
+		rebuilt(node, handle, () => buildMatchBlockBlock(...restItems('alternatives', vs)))
+	);
 }
 
 export function buildMatchBlockEmpty(): ReturnType<typeof _buildMatchBlockEmpty>;
@@ -9550,18 +11089,20 @@ function _buildMatchBlockEmpty(value?: Admit<TSKindId.Newline>): T.MatchBlockEmp
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		newline: (value: Admit<NonNullable<TSKindId.Newline>>) => rebuilt(node, handle, () => _buildMatchBlockEmpty(value)),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { newline: buildMatchBlockEmpty$with$newline, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.MatchBlockEmpty.Bound;
+}
+
+function buildMatchBlockEmpty$with$newline(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.newline');
+	const handle = node[HANDLE];
+	return applySetter(args, (value: Admit<NonNullable<TSKindId.Newline>>) =>
+		rebuilt(node, handle, () => _buildMatchBlockEmpty(value))
+	);
 }
 
 export function buildSuiteInline<V extends Admit<T.SimpleStatementsElements | Admit<T.SimpleStatements>>>(
@@ -9644,26 +11185,27 @@ function _buildSuiteInline(value: Admit<T.SimpleStatementsElements | Admit<T.Sim
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		elements: (...args: unknown[]) =>
-			rebuilt(node, handle, () =>
-				listSlotWith(
-					args,
-					{ kind: TSKindId.SimpleStatementsElements as const, optional: false, make: buildSimpleStatementsElements },
-					(value: Admit<T.SimpleStatementsElements | Admit<T.SimpleStatements>>) => _buildSuiteInline(value)
-				)
-			),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { elements: buildSuiteInline$with$elements, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	holdListItems(node, heldItems(listView.list));
 	return node as unknown as T.SuiteInline.Bound;
+}
+
+function buildSuiteInline$with$elements(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.elements');
+	const handle = node[HANDLE];
+	return applySetter(args, (...args: unknown[]) =>
+		rebuilt(node, handle, () =>
+			listSlotWith(
+				args,
+				{ kind: TSKindId.SimpleStatementsElements as const, optional: false, make: buildSimpleStatementsElements },
+				(value: Admit<T.SimpleStatementsElements | Admit<T.SimpleStatements>>) => _buildSuiteInline(value)
+			)
+		)
+	);
 }
 
 export function buildSuiteBlock<V extends Admit<T.Block>>(
@@ -9704,18 +11246,18 @@ function _buildSuiteBlock(value: Admit<T.Block>): T.SuiteBlock.Bound {
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		block: (value: Admit<T.Block>) => rebuilt(node, handle, () => _buildSuiteBlock(value)),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { block: buildSuiteBlock$with$block, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.SuiteBlock.Bound;
+}
+
+function buildSuiteBlock$with$block(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.block');
+	const handle = node[HANDLE];
+	return applySetter(args, (value: Admit<T.Block>) => rebuilt(node, handle, () => _buildSuiteBlock(value)));
 }
 
 export function buildSuiteEmpty(): ReturnType<typeof _buildSuiteEmpty>;
@@ -9753,18 +11295,20 @@ function _buildSuiteEmpty(value?: Admit<TSKindId.Newline>): T.SuiteEmpty.Bound {
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		newline: (value: Admit<NonNullable<TSKindId.Newline>>) => rebuilt(node, handle, () => _buildSuiteEmpty(value)),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { newline: buildSuiteEmpty$with$newline, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.SuiteEmpty.Bound;
+}
+
+function buildSuiteEmpty$with$newline(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.newline');
+	const handle = node[HANDLE];
+	return applySetter(args, (value: Admit<NonNullable<TSKindId.Newline>>) =>
+		rebuilt(node, handle, () => _buildSuiteEmpty(value))
+	);
 }
 
 export function buildComparisonOperatorComparator<
@@ -9800,21 +11344,34 @@ export function buildComparisonOperatorComparator(
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		operators: (value: Admit<NonNullable<T.ComparisonOperatorComparator.Config>['operators']>) =>
-			rebuilt(node, handle, () => buildComparisonOperatorComparator({ ...config, operators: value })),
-		primaryExpression: (value: Admit<NonNullable<T.ComparisonOperatorComparator.Config>['primaryExpression']>) =>
-			rebuilt(node, handle, () => buildComparisonOperatorComparator({ ...config, primaryExpression: value })),
+		operators: buildComparisonOperatorComparator$with$operators,
+		primaryExpression: buildComparisonOperatorComparator$with$primaryExpression,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.ComparisonOperatorComparator.Bound;
+}
+
+function buildComparisonOperatorComparator$with$operators(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.operators');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.ComparisonOperatorComparator.Config;
+	return applySetter(args, (value: Admit<NonNullable<T.ComparisonOperatorComparator.Config>['operators']>) =>
+		rebuilt(node, handle, () => buildComparisonOperatorComparator({ ...config, operators: value }))
+	);
+}
+function buildComparisonOperatorComparator$with$primaryExpression(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.primaryExpression');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.ComparisonOperatorComparator.Config;
+	return applySetter(args, (value: Admit<NonNullable<T.ComparisonOperatorComparator.Config>['primaryExpression']>) =>
+		rebuilt(node, handle, () => buildComparisonOperatorComparator({ ...config, primaryExpression: value }))
+	);
 }
 
 export function buildYieldFromClause<V extends Admit<T.Expression>>(
@@ -9836,18 +11393,20 @@ export function buildYieldFromClause(value: Admit<T.Expression>): T.YieldFromCla
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		expression: (value: Admit<NonNullable<T.Expression>>) => rebuilt(node, handle, () => buildYieldFromClause(value)),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { expression: buildYieldFromClause$with$expression, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.YieldFromClause.Bound;
+}
+
+function buildYieldFromClause$with$expression(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.expression');
+	const handle = node[HANDLE];
+	return applySetter(args, (value: Admit<NonNullable<T.Expression>>) =>
+		rebuilt(node, handle, () => buildYieldFromClause(value))
+	);
 }
 
 export function buildStringStart(text: string): T.StringStart.Bound {
@@ -9866,13 +11425,10 @@ export function buildStringStart(text: string): T.StringStart.Bound {
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.StringStart.Bound;
 }
 
@@ -9892,13 +11448,10 @@ export function buildStringFragment(text: string): T.StringFragment.Bound {
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.StringFragment.Bound;
 }
 
@@ -9918,13 +11471,10 @@ export function buildEscapeInterpolation(text: string): T.EscapeInterpolation.Bo
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.EscapeInterpolation.Bound;
 }
 
@@ -9944,13 +11494,10 @@ export function buildStringEnd(text: string): T.StringEnd.Bound {
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.StringEnd.Bound;
 }
 
@@ -10017,39 +11564,73 @@ export function buildConstructorDeclaration(config: T.ConstructorDeclaration.Con
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		async: (value?: Admit<NonNullable<T.ConstructorDeclaration.Config>['async']>) =>
-			rebuilt(node, handle, () => buildConstructorDeclaration({ ...config, async: value })),
-		typeParameters: (...args: unknown[]) =>
-			rebuilt(node, handle, () =>
-				listSlotWith(
-					args,
-					{ kind: TSKindId.TypeParameter as const, optional: true, make: buildTypeParameter },
-					(value?: Admit<T.TypeParameter>) => buildConstructorDeclaration({ ...config, typeParameters: value })
-				)
-			),
-		parameters: (...args: unknown[]) =>
-			rebuilt(node, handle, () =>
-				listSlotWith(
-					args,
-					{ kind: TSKindId.Parameters as const, optional: false, make: buildParameters },
-					(value: Admit<T.Parameters>) => buildConstructorDeclaration({ ...config, parameters: value })
-				)
-			),
-		returnType: (value?: Admit<T.Type>) =>
-			rebuilt(node, handle, () => buildConstructorDeclaration({ ...config, returnType: value })),
-		body: (value: Admit<T.Suite>) =>
-			rebuilt(node, handle, () => buildConstructorDeclaration({ ...config, body: value })),
+		async: buildConstructorDeclaration$with$async,
+		typeParameters: buildConstructorDeclaration$with$typeParameters,
+		parameters: buildConstructorDeclaration$with$parameters,
+		returnType: buildConstructorDeclaration$with$returnType,
+		body: buildConstructorDeclaration$with$body,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.ConstructorDeclaration.Bound;
+}
+
+function buildConstructorDeclaration$with$async(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.async');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.ConstructorDeclaration.Config;
+	return applySetter(args, (value?: Admit<NonNullable<T.ConstructorDeclaration.Config>['async']>) =>
+		rebuilt(node, handle, () => buildConstructorDeclaration({ ...config, async: value }))
+	);
+}
+function buildConstructorDeclaration$with$typeParameters(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.typeParameters');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.ConstructorDeclaration.Config;
+	return applySetter(args, (...args: unknown[]) =>
+		rebuilt(node, handle, () =>
+			listSlotWith(
+				args,
+				{ kind: TSKindId.TypeParameter as const, optional: true, make: buildTypeParameter },
+				(value?: Admit<T.TypeParameter>) => buildConstructorDeclaration({ ...config, typeParameters: value })
+			)
+		)
+	);
+}
+function buildConstructorDeclaration$with$parameters(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.parameters');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.ConstructorDeclaration.Config;
+	return applySetter(args, (...args: unknown[]) =>
+		rebuilt(node, handle, () =>
+			listSlotWith(
+				args,
+				{ kind: TSKindId.Parameters as const, optional: false, make: buildParameters },
+				(value: Admit<T.Parameters>) => buildConstructorDeclaration({ ...config, parameters: value })
+			)
+		)
+	);
+}
+function buildConstructorDeclaration$with$returnType(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.returnType');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.ConstructorDeclaration.Config;
+	return applySetter(args, (value?: Admit<T.Type>) =>
+		rebuilt(node, handle, () => buildConstructorDeclaration({ ...config, returnType: value }))
+	);
+}
+function buildConstructorDeclaration$with$body(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.body');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.ConstructorDeclaration.Config;
+	return applySetter(args, (value: Admit<T.Suite>) =>
+		rebuilt(node, handle, () => buildConstructorDeclaration({ ...config, body: value }))
+	);
 }
 
 export function buildBlockClassDeclaration<A extends Admit<T.StatementClassDefinition[]>>(
@@ -10074,19 +11655,20 @@ export function buildBlockClassDeclaration(
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		statements: (...vs: Admit<T.StatementClassDefinition>[]) =>
-			rebuilt(node, handle, () => buildBlockClassDeclaration(...restItems('statements', vs))),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { statements: buildBlockClassDeclaration$with$statements, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.BlockClassDeclaration.Bound;
+}
+
+function buildBlockClassDeclaration$with$statements(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.statements');
+	const handle = node[HANDLE];
+	return applySetter(args, (...vs: Admit<T.StatementClassDefinition>[]) =>
+		rebuilt(node, handle, () => buildBlockClassDeclaration(...restItems('statements', vs)))
+	);
 }
 
 export function buildSuiteBlockClassDeclaration<V extends Admit<T.BlockClassDeclaration>>(
@@ -10134,19 +11716,20 @@ function _buildSuiteBlockClassDeclaration(value: Admit<T.BlockClassDeclaration>)
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		blockClassDeclaration: (value: Admit<T.BlockClassDeclaration>) =>
-			rebuilt(node, handle, () => _buildSuiteBlockClassDeclaration(value)),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { blockClassDeclaration: buildSuiteBlockClassDeclaration$with$blockClassDeclaration, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.SuiteBlockClassDeclaration.Bound;
+}
+
+function buildSuiteBlockClassDeclaration$with$blockClassDeclaration(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.blockClassDeclaration');
+	const handle = node[HANDLE];
+	return applySetter(args, (value: Admit<T.BlockClassDeclaration>) =>
+		rebuilt(node, handle, () => _buildSuiteBlockClassDeclaration(value))
+	);
 }
 
 export function buildDecoratedDefinitionClassDeclaration<
@@ -10184,23 +11767,36 @@ export function buildDecoratedDefinitionClassDeclaration(
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		decorators: (...values: Admit<NonEmptyArray<T.Decorator>>) =>
-			rebuilt(node, handle, () =>
-				buildDecoratedDefinitionClassDeclaration({ ...config, decorators: restItems('decorators', values) })
-			),
-		definition: (value: Admit<T.ClassDefinition | T.MethodDeclaration | T.ConstructorDeclaration>) =>
-			rebuilt(node, handle, () => buildDecoratedDefinitionClassDeclaration({ ...config, definition: value })),
+		decorators: buildDecoratedDefinitionClassDeclaration$with$decorators,
+		definition: buildDecoratedDefinitionClassDeclaration$with$definition,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.DecoratedDefinitionClassDeclaration.Bound;
+}
+
+function buildDecoratedDefinitionClassDeclaration$with$decorators(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.decorators');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.DecoratedDefinitionClassDeclaration.Config;
+	return applySetter(args, (...values: Admit<NonEmptyArray<T.Decorator>>) =>
+		rebuilt(node, handle, () =>
+			buildDecoratedDefinitionClassDeclaration({ ...config, decorators: restItems('decorators', values) })
+		)
+	);
+}
+function buildDecoratedDefinitionClassDeclaration$with$definition(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.definition');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.DecoratedDefinitionClassDeclaration.Config;
+	return applySetter(args, (value: Admit<T.ClassDefinition | T.MethodDeclaration | T.ConstructorDeclaration>) =>
+		rebuilt(node, handle, () => buildDecoratedDefinitionClassDeclaration({ ...config, definition: value }))
+	);
 }
 
 export function buildNames<A extends NonEmptyArray<Admit<T.DottedName | T.AliasedImport>>>(
@@ -10281,22 +11877,34 @@ function _buildNames(
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: elements,
+		[OPTIONS]: options,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		names: (...vs: NonEmptyArray<Admit<T.DottedName | T.AliasedImport>>) =>
-			rebuilt(node, handle, () => buildNames(options, ...vs)),
-		delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
-			rebuilt(node, handle, () => buildNames({ ...options, delimiter: v }, ...elements)),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { names: buildNames$with$names, delimiter: buildNames$with$delimiter, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	holdBuiltItems(node, listedItems);
 	return node as unknown as T.Names.Bound;
+}
+
+function buildNames$with$names(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.names');
+	const handle = node[HANDLE];
+	const elements = node[INPUT] as NonEmptyArray<Admit<T.DottedName | T.AliasedImport>>;
+	const options = node[OPTIONS] as { delimiter?: Delimiter.None | Delimiter.Trailing };
+	return applySetter(args, (...vs: NonEmptyArray<Admit<T.DottedName | T.AliasedImport>>) =>
+		rebuilt(node, handle, () => buildNames(options, ...vs))
+	);
+}
+function buildNames$with$delimiter(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.delimiter');
+	const handle = node[HANDLE];
+	const elements = node[INPUT] as NonEmptyArray<Admit<T.DottedName | T.AliasedImport>>;
+	const options = node[OPTIONS] as { delimiter?: Delimiter.None | Delimiter.Trailing };
+	return applySetter(args, (v?: Delimiter.None | Delimiter.Trailing) =>
+		rebuilt(node, handle, () => buildNames({ ...options, delimiter: v }, ...elements))
+	);
 }
 
 export function buildAsPatternTarget<V extends Admit<T.Expression>>(
@@ -10318,18 +11926,20 @@ export function buildAsPatternTarget(value: Admit<T.Expression>): T.AsPatternTar
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		content: (value: Admit<NonNullable<T.Expression>>) => rebuilt(node, handle, () => buildAsPatternTarget(value)),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { content: buildAsPatternTarget$with$content, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.AsPatternTarget.Bound;
+}
+
+function buildAsPatternTarget$with$content(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.content');
+	const handle = node[HANDLE];
+	return applySetter(args, (value: Admit<NonNullable<T.Expression>>) =>
+		rebuilt(node, handle, () => buildAsPatternTarget(value))
+	);
 }
 
 export function buildFormatExpression<
@@ -10374,25 +11984,52 @@ export function buildFormatExpression(config: T.FormatExpression.Config): T.Form
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		expression: (value: Admit<NonNullable<T.FormatExpression.Config>['expression']>) =>
-			rebuilt(node, handle, () => buildFormatExpression({ ...config, expression: value })),
-		debug: (value?: Admit<NonNullable<T.FormatExpression.Config>['debug']>) =>
-			rebuilt(node, handle, () => buildFormatExpression({ ...config, debug: value })),
-		typeConversion: (value?: Admit<T.TypeConversion>) =>
-			rebuilt(node, handle, () => buildFormatExpression({ ...config, typeConversion: value })),
-		formatSpecifier: (value?: Admit<T.FormatSpecifier>) =>
-			rebuilt(node, handle, () => buildFormatExpression({ ...config, formatSpecifier: value })),
+		expression: buildFormatExpression$with$expression,
+		debug: buildFormatExpression$with$debug,
+		typeConversion: buildFormatExpression$with$typeConversion,
+		formatSpecifier: buildFormatExpression$with$formatSpecifier,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.FormatExpression.Bound;
+}
+
+function buildFormatExpression$with$expression(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.expression');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.FormatExpression.Config;
+	return applySetter(args, (value: Admit<NonNullable<T.FormatExpression.Config>['expression']>) =>
+		rebuilt(node, handle, () => buildFormatExpression({ ...config, expression: value }))
+	);
+}
+function buildFormatExpression$with$debug(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.debug');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.FormatExpression.Config;
+	return applySetter(args, (value?: Admit<NonNullable<T.FormatExpression.Config>['debug']>) =>
+		rebuilt(node, handle, () => buildFormatExpression({ ...config, debug: value }))
+	);
+}
+function buildFormatExpression$with$typeConversion(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.typeConversion');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.FormatExpression.Config;
+	return applySetter(args, (value?: Admit<T.TypeConversion>) =>
+		rebuilt(node, handle, () => buildFormatExpression({ ...config, typeConversion: value }))
+	);
+}
+function buildFormatExpression$with$formatSpecifier(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.formatSpecifier');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.FormatExpression.Config;
+	return applySetter(args, (value?: Admit<T.FormatSpecifier>) =>
+		rebuilt(node, handle, () => buildFormatExpression({ ...config, formatSpecifier: value }))
+	);
 }
 
 export function buildMethodDeclaration<
@@ -10453,40 +12090,82 @@ export function buildMethodDeclaration(config: T.MethodDeclaration.Config): T.Me
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		async: (value?: Admit<NonNullable<T.MethodDeclaration.Config>['async']>) =>
-			rebuilt(node, handle, () => buildMethodDeclaration({ ...config, async: value })),
-		name: (value: Admit<T.Identifier>) =>
-			rebuilt(node, handle, () => buildMethodDeclaration({ ...config, name: value })),
-		typeParameters: (...args: unknown[]) =>
-			rebuilt(node, handle, () =>
-				listSlotWith(
-					args,
-					{ kind: TSKindId.TypeParameter as const, optional: true, make: buildTypeParameter },
-					(value?: Admit<T.TypeParameter>) => buildMethodDeclaration({ ...config, typeParameters: value })
-				)
-			),
-		parameters: (...args: unknown[]) =>
-			rebuilt(node, handle, () =>
-				listSlotWith(
-					args,
-					{ kind: TSKindId.Parameters as const, optional: false, make: buildParameters },
-					(value: Admit<T.Parameters>) => buildMethodDeclaration({ ...config, parameters: value })
-				)
-			),
-		returnType: (value?: Admit<T.Type>) =>
-			rebuilt(node, handle, () => buildMethodDeclaration({ ...config, returnType: value })),
-		body: (value: Admit<T.Suite>) => rebuilt(node, handle, () => buildMethodDeclaration({ ...config, body: value })),
+		async: buildMethodDeclaration$with$async,
+		name: buildMethodDeclaration$with$name,
+		typeParameters: buildMethodDeclaration$with$typeParameters,
+		parameters: buildMethodDeclaration$with$parameters,
+		returnType: buildMethodDeclaration$with$returnType,
+		body: buildMethodDeclaration$with$body,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.MethodDeclaration.Bound;
+}
+
+function buildMethodDeclaration$with$async(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.async');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.MethodDeclaration.Config;
+	return applySetter(args, (value?: Admit<NonNullable<T.MethodDeclaration.Config>['async']>) =>
+		rebuilt(node, handle, () => buildMethodDeclaration({ ...config, async: value }))
+	);
+}
+function buildMethodDeclaration$with$name(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.name');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.MethodDeclaration.Config;
+	return applySetter(args, (value: Admit<T.Identifier>) =>
+		rebuilt(node, handle, () => buildMethodDeclaration({ ...config, name: value }))
+	);
+}
+function buildMethodDeclaration$with$typeParameters(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.typeParameters');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.MethodDeclaration.Config;
+	return applySetter(args, (...args: unknown[]) =>
+		rebuilt(node, handle, () =>
+			listSlotWith(
+				args,
+				{ kind: TSKindId.TypeParameter as const, optional: true, make: buildTypeParameter },
+				(value?: Admit<T.TypeParameter>) => buildMethodDeclaration({ ...config, typeParameters: value })
+			)
+		)
+	);
+}
+function buildMethodDeclaration$with$parameters(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.parameters');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.MethodDeclaration.Config;
+	return applySetter(args, (...args: unknown[]) =>
+		rebuilt(node, handle, () =>
+			listSlotWith(
+				args,
+				{ kind: TSKindId.Parameters as const, optional: false, make: buildParameters },
+				(value: Admit<T.Parameters>) => buildMethodDeclaration({ ...config, parameters: value })
+			)
+		)
+	);
+}
+function buildMethodDeclaration$with$returnType(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.returnType');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.MethodDeclaration.Config;
+	return applySetter(args, (value?: Admit<T.Type>) =>
+		rebuilt(node, handle, () => buildMethodDeclaration({ ...config, returnType: value }))
+	);
+}
+function buildMethodDeclaration$with$body(this: Received<Held>, ...args: unknown[]): unknown {
+	const node = receiverOf(this, '$with.body');
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.MethodDeclaration.Config;
+	return applySetter(args, (value: Admit<T.Suite>) =>
+		rebuilt(node, handle, () => buildMethodDeclaration({ ...config, body: value }))
+	);
 }
 
 export type FluentKindMap = {

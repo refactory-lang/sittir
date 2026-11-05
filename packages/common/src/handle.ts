@@ -1,5 +1,6 @@
 import type { NodeCoordinate } from '@sittir/types';
 import type { BuiltText } from './built-arena.ts';
+import type { EngineHandle } from './engine-scope.ts';
 import type { ChunkWords, TreeHandle } from './read.ts';
 
 export interface RecordPosition {
@@ -29,6 +30,24 @@ export const RECEIVER: unique symbol = Symbol('receiver');
 
 export interface Received<T> {
 	readonly [RECEIVER]: T;
+}
+
+export function receiverOf<T>(members: Received<T> | undefined, member: string): T {
+	const node = members?.[RECEIVER];
+	if (node === undefined) throw new TypeError(`${member} was called without its node; call it on its node: node.${member}(…)`);
+	return node;
+}
+
+export const HANDLE: unique symbol = Symbol('handle');
+export const INPUT: unique symbol = Symbol('input');
+export const OPTIONS: unique symbol = Symbol('options');
+export const READ_TREE: unique symbol = Symbol('read tree');
+
+export interface Held {
+	readonly [HANDLE]: EngineHandle | undefined;
+	readonly [INPUT]?: unknown;
+	readonly [OPTIONS]?: unknown;
+	readonly [READ_TREE]?: TreeHandle;
 }
 
 export const HANDLE_FIELDS: ReadonlySet<string> = new Set(['$tree', '$at', '$words', '$cache', '$entry', '$site']);
