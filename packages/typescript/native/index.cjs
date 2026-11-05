@@ -878,6 +878,7 @@ module.exports.layoutWork = nativeBinding.layoutWork
 module.exports.lineStartsInsideTokens = nativeBinding.lineStartsInsideTokens
 module.exports.LINK_RECORD_WORDS = nativeBinding.LINK_RECORD_WORDS
 module.exports.liveTreeCount = nativeBinding.liveTreeCount
+module.exports.parseRenderBatch = nativeBinding.parseRenderBatch
 module.exports.planHolds = nativeBinding.planHolds
 module.exports.read = nativeBinding.read
 module.exports.readCell = nativeBinding.readCell

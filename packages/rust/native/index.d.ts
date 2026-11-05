@@ -25,6 +25,22 @@ export interface BaselineRun {
 }
 
 /**
+ * What `parseRenderBatch` answers: by source, its render or its refusal;
+ * the most trees the batch held at once; and the time its threads spent
+ * parsing, reading and rendering, summed over threads, beside its wall
+ * time.
+ */
+export interface BatchRender {
+  rendered: Array<string | undefined | null>
+  errors: Array<string | undefined | null>
+  peakLiveTrees: number
+  parseMs: number
+  readMs: number
+  renderMs: number
+  wallMs: number
+}
+
+/**
  * The work a parsed tree's layout reads have done so far, counted where it
  * is done (`ParsedTree::layout_work`): a diagnostic, so a growth test
  * compares counts, never times. The addon's `layoutWork` answers every
@@ -385,6 +401,14 @@ export declare function liveTreeCount(): number
 
 /** A node index as JavaScript holds it: a whole number. */
 export type NodeIndex = number
+
+/**
+ * r" Parses, reads in full and renders the root of each of
+ * r" `sources` on `threads` threads (`parse_render_batch`), each
+ * r" thread on its own engine over `engine`'s options: by source,
+ * r" its render or its refusal.
+ */
+export declare function parseRenderBatch(engine: object, sources: string[], threads: number): BatchRender
 
 /**
  * Whether each node `addresses` names (a JSON array of

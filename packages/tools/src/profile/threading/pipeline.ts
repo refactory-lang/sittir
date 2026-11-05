@@ -1,5 +1,6 @@
 import { createHash } from 'node:crypto';
 import { readFileSync } from 'node:fs';
+import { loadavg } from 'node:os';
 import { fileURLToPath } from 'node:url';
 import { sourceSpans } from '@sittir/common';
 import { spanOf } from '@sittir/common/utils';
@@ -36,9 +37,39 @@ export interface PipelineOptions {
 	loopStage?: Stage;
 	loopSeconds?: number;
 	yieldEvery?: number;
+	batchThreads?: number;
+}
+
+interface BatchRender {
+	rendered: (string | null | undefined)[];
+	errors: (string | null | undefined)[];
+	peakLiveTrees: number;
+	parseMs: number;
+	readMs: number;
+	renderMs: number;
+	wallMs: number;
+}
+
+type ParseRenderBatch = (engine: object, sources: string[], threads: number) => BatchRender;
+
+export interface BatchRound {
+	threads: number;
+	load: number[];
+	milliseconds: { io: number; batch: number; hash: number };
+	native: { parseMs: number; readMs: number; renderMs: number; wallMs: number };
+	peakLiveTrees: number;
+	liveTreesBefore: number;
+	liveTreesAfter: number;
+	files: number;
+	bytes: number;
+	renderedBytes: number;
+	renderedSha256: string;
+	identical: number;
+	refused: { path: string; error: string }[];
 }
 
 export interface PipelineRound {
+	load: number[];
 	milliseconds: Record<Stage, number>;
 	files: number;
 	bytes: number;
@@ -56,7 +87,74 @@ function zero(): Record<Stage, number> {
 	return Object.fromEntries(stages.map((stage) => [stage, 0])) as Record<Stage, number>;
 }
 
+const loader = `${import.meta.url.endsWith('.js') ? 'dist' : 'src'}${process.execArgv.length > 0 ? ` (${process.execArgv.join(' ')})` : ''}`;
+
+async function batch(options: PipelineOptions, threads: number) {
+	if (options.storage !== 'arena')
+		throw new Error(`a native batch reads arena records, so it refuses ${options.storage} storage`);
+	const backend = await nativeBackendOf('typescript');
+	const parseRenderBatch = (backend as { parseRenderBatch?: ParseRenderBatch }).parseRenderBatch;
+	if (parseRenderBatch === undefined) throw new Error("typescript's addon has no parseRenderBatch: rebuild it on this branch");
+	const { handle } = new backend.SittirEngine();
+	const paths = readFileSync(options.files, 'utf8')
+		.split('\n')
+		.filter(Boolean)
+		.slice(0, options.limit);
+	const once = (): BatchRound => {
+		const load = loadavg();
+		let at = performance.now();
+		const sources = paths.map((path) => readFileSync(path, 'utf8'));
+		const io = performance.now() - at;
+		const liveTreesBefore = backend.liveTreeCount();
+		at = performance.now();
+		const out = parseRenderBatch(handle, sources, threads);
+		const batched = performance.now() - at;
+		const liveTreesAfter = backend.liveTreeCount();
+		at = performance.now();
+		const hash = createHash('sha256');
+		const round: BatchRound = {
+			threads,
+			load,
+			milliseconds: { io, batch: batched, hash: 0 },
+			native: { parseMs: out.parseMs, readMs: out.readMs, renderMs: out.renderMs, wallMs: out.wallMs },
+			peakLiveTrees: out.peakLiveTrees,
+			liveTreesBefore,
+			liveTreesAfter,
+			files: 0,
+			bytes: 0,
+			renderedBytes: 0,
+			renderedSha256: '',
+			identical: 0,
+			refused: []
+		};
+		paths.forEach((path, n) => {
+			const rendered = out.rendered[n];
+			const source = sources[n]!;
+			if (rendered === null || rendered === undefined) {
+				round.refused.push({ path, error: String(out.errors[n]).slice(0, 200) });
+				return;
+			}
+			round.files++;
+			round.bytes += Buffer.byteLength(source);
+			round.renderedBytes += Buffer.byteLength(rendered);
+			round.identical += Number(rendered === source);
+			hash.update(`${path}\0${rendered.length}\0`).update(rendered);
+		});
+		round.renderedSha256 = hash.digest('hex');
+		round.milliseconds.hash = performance.now() - at;
+		return round;
+	};
+	for (let i = 0; i < options.warmup; i++) once();
+	const rounds: BatchRound[] = [];
+	for (let i = 0; i < options.rounds; i++) {
+		(globalThis as { gc?: () => void }).gc?.();
+		rounds.push(once());
+	}
+	return { storage: options.storage, threads, loader, pid: process.pid, node: process.version, peakRssBytes: process.resourceUsage().maxRSS * 1024, rounds };
+}
+
 export async function pipeline(options: PipelineOptions) {
+	if (options.batchThreads !== undefined) return batch(options, options.batchThreads);
 	useValidationNodeStorage(options.storage);
 	const engine = await loadNativeEngine('typescript');
 	const readNode = await readNodeOf('typescript');
@@ -72,6 +170,7 @@ export async function pipeline(options: PipelineOptions) {
 		const milliseconds = zero();
 		const hash = createHash('sha256');
 		const round: PipelineRound = {
+			load: loadavg(),
 			milliseconds,
 			files: 0,
 			bytes: 0,
@@ -163,6 +262,7 @@ export async function pipeline(options: PipelineOptions) {
 	const memory = process.memoryUsage();
 	return {
 		storage: options.storage,
+		loader,
 		pid: process.pid,
 		node: process.version,
 		buildProfile: engine.diagnostics.buildProfile,

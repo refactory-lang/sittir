@@ -307,7 +307,7 @@ macro_rules! napi_engine {
             /// and its error regions.
             #[::napi_derive::napi]
             pub fn parse(&mut self, env: ::napi::Env, source: String) -> ::napi::Result<String> {
-                let claim = self.claim_tree_id(&env)?;
+                let claim = $crate::napi_engine::claim_tree_id(&env)?;
                 let tree_id = claim.id();
                 let parsed = self
                     .engine
@@ -667,32 +667,6 @@ macro_rules! napi_engine {
             match options {
                 Some(opts) => opts.resolve(&base).map_err(::napi::Error::from_reason),
                 None => Ok(base),
-            }
-        }
-
-        impl SittirEngine {
-
-            /// Take the next tree id from the JavaScript process, refusing to wrap.
-            ///
-            /// Every grammar's addon is its own linked image, so a counter in
-            /// Rust static memory would be one counter per addon and a rust
-            /// engine and a typescript engine could both mint tree 0. The
-            /// process's one `globalThis` is the owner every addon shares: the
-            /// next id lives there, so a coordinate minted by any engine names
-            /// no tree in any other, whatever grammar it speaks. Ids are never
-            /// reused, so exhausting them is the honest end state.
-            fn claim_tree_id(&mut self, env: &::napi::Env) -> ::napi::Result<$crate::engine::TreeClaim> {
-                const KEY: &str = "__sittirNextTreeId";
-                let mut global = env.get_global()?;
-                let next: Option<f64> = ::napi::bindgen_prelude::JsObjectValue::get_named_property(&global, KEY)?;
-                let (id, record) = $crate::engine::claim_tree_id_from(next).ok_or_else(|| {
-                    ::napi::Error::from_reason(format!(
-                        "this process exhausted its {} tree ids",
-                        $crate::engine::MAX_TREE_ID
-                    ))
-                })?;
-                ::napi::bindgen_prelude::JsObjectValue::set_named_property(&mut global, KEY, record)?;
-                Ok(id)
             }
         }
 
@@ -1223,6 +1197,17 @@ macro_rules! napi_engine {
                         .map_err(|e| ::napi::Error::from_reason(format!("render_candidate failed: {e}")))?;
                     Ok($crate::line_endings::spell(canonical, &table.newline))
                 })
+            }
+
+            /// Parses, reads in full and renders the root of each of
+            /// `sources` on `threads` threads (`parse_render_batch`), each
+            /// thread on its own engine over `engine`'s options: by source,
+            /// its render or its refusal.
+            #[::napi_derive::napi(ts_args_type = "engine: object, sources: string[], threads: number")]
+            pub fn parse_render_batch(engine: &::napi::bindgen_prelude::External<EngineCell>, env: ::napi::Env, sources: Vec<String>, threads: u32) -> ::napi::Result<$crate::napi_engine::BatchRender> {
+                let options = engine_of(engine)?.options().clone();
+                let claims = sources.iter().map(|_| $crate::napi_engine::claim_tree_id(&env)).collect::<::napi::Result<Vec<_>>>()?;
+                Ok($crate::napi_engine::parse_render_batch::<$grammar, $any>(&options, &sources, claims, threads))
             }
 
             /// The coordinate a read of the live tree `treeId` names the node
@@ -2011,4 +1996,149 @@ pub fn entry_sources<G: crate::engine::EngineGrammar, H: std::hash::BuildHasher,
     f: impl FnOnce(&dyn crate::render::SourceTable) -> R,
 ) -> R {
     f(trees)
+}
+
+/// Takes the next tree id from the JavaScript process, refusing to wrap.
+///
+/// Every grammar's addon is its own linked image, so a counter in Rust
+/// static memory would be one counter per addon and a rust engine and a
+/// typescript engine could both mint tree 0. The process's one `globalThis`
+/// is the owner every addon shares: the next id lives there, so a coordinate
+/// minted by any engine names no tree in any other, whatever grammar it
+/// speaks. Ids are never reused, so exhausting them is the honest end state.
+///
+/// # Errors
+///
+/// A failed read or write of the global, or every id claimed.
+pub fn claim_tree_id(env: &napi::Env) -> napi::Result<crate::engine::TreeClaim> {
+    const KEY: &str = "__sittirNextTreeId";
+    let mut global = env.get_global()?;
+    let next: Option<f64> = napi::bindgen_prelude::JsObjectValue::get_named_property(&global, KEY)?;
+    let (id, record) = crate::engine::claim_tree_id_from(next)
+        .ok_or_else(|| napi::Error::from_reason(format!("this process exhausted its {} tree ids", crate::engine::MAX_TREE_ID)))?;
+    napi::bindgen_prelude::JsObjectValue::set_named_property(&mut global, KEY, record)?;
+    Ok(id)
+}
+
+/// What `parseRenderBatch` answers: by source, its render or its refusal;
+/// the most trees the batch held at once; and the time its threads spent
+/// parsing, reading and rendering, summed over threads, beside its wall
+/// time.
+#[cfg(feature = "arena")]
+#[napi_derive::napi(object)]
+pub struct BatchRender {
+    pub rendered: Vec<Option<String>>,
+    pub errors: Vec<Option<String>>,
+    pub peak_live_trees: u32,
+    pub parse_ms: f64,
+    pub read_ms: f64,
+    pub render_ms: f64,
+    pub wall_ms: f64,
+}
+
+/// Parses each of `sources` under its claim, hydrates its root's records to
+/// every depth and renders its root, on `threads` threads, each on its own
+/// engine of grammar `G` over `options`. A thread drops each tree once its
+/// render is done and touches only Rust data; the answer becomes JavaScript
+/// after the join.
+#[cfg(feature = "arena")]
+#[must_use]
+pub fn parse_render_batch<G, N>(
+    options: &crate::options::ResolvedOptions,
+    sources: &[String],
+    claims: Vec<crate::engine::TreeClaim>,
+    threads: u32,
+) -> BatchRender
+where
+    G: crate::arena::RecordGrammar + Default,
+    G::Trivia: crate::boundary::DecodesKind,
+    N: crate::arena::HydrateNode + crate::arena::RecordCells,
+{
+    use std::sync::atomic::{AtomicUsize, Ordering::Relaxed};
+    use std::time::{Duration, Instant};
+
+    type Done = Vec<(usize, Result<String, String>)>;
+    let start = Instant::now();
+    let queue = std::sync::Mutex::new(sources.iter().enumerate().zip(claims));
+    let live = AtomicUsize::new(0);
+    let peak = AtomicUsize::new(0);
+    let next = || queue.lock().ok().and_then(|mut queue| queue.next());
+    let worker = || -> (Done, [Duration; 3]) {
+        let mut done = Done::new();
+        let mut spent = [Duration::ZERO; 3];
+        let mut engine = match crate::engine::Engine::with_store(G::default(), options.clone(), engine_store::<G>()) {
+            Ok(engine) => engine,
+            Err(error) => {
+                while let Some(((index, _), _)) = next() {
+                    done.push((index, Err(format!("the batch could not build an engine: {error}"))));
+                }
+                return (done, spent);
+            }
+        };
+        while let Some(((index, source), claim)) = next() {
+            let at = Instant::now();
+            let tree_id = claim.id();
+            let parsed = match engine.parse(source, claim) {
+                Ok(parsed) => parsed,
+                Err(error) => {
+                    done.push((index, Err(error)));
+                    continue;
+                }
+            };
+            let trees = std::collections::HashMap::from([(tree_id, parsed)]);
+            peak.fetch_max(live.fetch_add(1, Relaxed) + 1, Relaxed);
+            let read_at = Instant::now();
+            spent[0] += read_at - at;
+            let outcome = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
+                let read = crate::engine::ReadTrees::new(&trees);
+                let parsed = read.get(tree_id).ok_or_else(|| format!("the batch lost tree {}", tree_id.0))?;
+                parsed.hydrate_record::<N>(crate::types::NodeIndex::ROOT, crate::read::Depth::All)?;
+                let render_at = Instant::now();
+                spent[1] += render_at - read_at;
+                let table = parsed.inferred().over(engine.options());
+                let canonical = entry_sources(engine.grammar(), &read, |table_of| parsed.render_candidate::<N>(crate::types::NodeIndex::ROOT, &table, table_of))
+                    .map_err(|e| format!("render_candidate failed: {e}"))?;
+                spent[2] += render_at.elapsed();
+                Ok(crate::line_endings::spell(canonical, &table.newline))
+            }))
+            .unwrap_or_else(|payload| Err(crate::panic_msg(&*payload, "the batch panicked")));
+            drop(trees);
+            live.fetch_sub(1, Relaxed);
+            done.push((index, outcome));
+        }
+        (done, spent)
+    };
+    let threads = usize::try_from(threads.max(1)).unwrap_or(1);
+    let joined: Vec<std::thread::Result<(Done, [Duration; 3])>> =
+        std::thread::scope(|scope| (0..threads).map(|_| scope.spawn(worker)).collect::<Vec<_>>().into_iter().map(std::thread::ScopedJoinHandle::join).collect());
+    let mut rendered = vec![None; sources.len()];
+    let mut errors = vec![None; sources.len()];
+    let mut spent = [Duration::ZERO; 3];
+    for outcome in joined {
+        let Ok((done, thread_spent)) = outcome else { continue };
+        for (index, result) in done {
+            match result {
+                Ok(text) => rendered[index] = Some(text),
+                Err(error) => errors[index] = Some(error),
+            }
+        }
+        for (total, part) in spent.iter_mut().zip(thread_spent) {
+            *total += part;
+        }
+    }
+    for (error, text) in errors.iter_mut().zip(&rendered) {
+        if error.is_none() && text.is_none() {
+            *error = Some("a batch thread ended before this source's render".to_owned());
+        }
+    }
+    let ms = |spent: Duration| spent.as_secs_f64() * 1000.0;
+    BatchRender {
+        rendered,
+        errors,
+        peak_live_trees: crate::types::narrow(peak.load(Relaxed)),
+        parse_ms: ms(spent[0]),
+        read_ms: ms(spent[1]),
+        render_ms: ms(spent[2]),
+        wall_ms: ms(start.elapsed()),
+    }
 }
