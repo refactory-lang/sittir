@@ -2810,9 +2810,9 @@ nothing either way, so it is not reported.
 // node bridge helpers.
 ```
 
-### `packages/codegen/src/emitters/render-module.ts::grammarTriviaStatement`
+### `packages/codegen/src/emitters/render-module.ts::grammarNodesStatement`
 
-The render module's last statement, `::sittir_core::grammar_trivia!(TriviaNode; …)`: it states once, for every native node the module emits (each `pub struct` or `pub enum` deriving `Node`, unit-only enums included), that the grammar's trivia type is `TriviaNode`. A coordinate in any slot then decodes and frames the outside trivia a folded node carries (`HasTrivia`), whatever the slot's native node type. The names come from `ReadPrint.nodes`, which `nodeDeclaration` fills as each native node is printed.
+The render module's last statement, `::sittir_core::grammar_nodes!(TriviaNode; …)`, which names once every native node the module emits (each `pub struct` or `pub enum` deriving `Node`, unit-only enums included). It states that the grammar's trivia type is `TriviaNode` (`HasTrivia`), so a coordinate in any slot decodes and frames the outside trivia a folded node carries, whatever the slot's native node type. It also builds the grammar's wire codec over those nodes: the enum a node is held whole in while the codec's loop hands it down or takes it apart (`codec::Nodes`), and the decode and encode frames that loop runs. The names come from `ReadPrint.nodes`, which `nodeDeclaration` fills as each native node is printed.
 
 ### `packages/codegen/src/emitters/render-module.ts::nodeDeclaration`
 
