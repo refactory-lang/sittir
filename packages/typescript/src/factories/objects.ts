@@ -15,6 +15,7 @@ import type {
 	WidenSlots
 } from '@sittir/types';
 import type { DelimitedSpec } from '@sittir/common/utils';
+import type { Held, Received } from '@sittir/common/utils';
 import {
 	currentHandle,
 	admitChildren,
@@ -41,8 +42,14 @@ import {
 	Source,
 	hydrateStoredSlot,
 	hydrateStoredSlots,
-	triviaSide,
-	triviaInner,
+	HANDLE,
+	INPUT,
+	OPTIONS,
+	receiverOf,
+	applySetter,
+	objectLeading,
+	objectTrailing,
+	objectInner,
 	describeValue,
 	restItems,
 	blankArmRead,
@@ -174,22 +181,35 @@ export function buildProgram(config: Partial<T.Program.Config> = {}): T.Program.
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		shebang: (value?: Admit<T.HashBangLine>) =>
-			rebuilt(node, handle, () => buildProgram({ ...config, shebang: value })),
-		statements: (...values: Admit<NonNullable<NonNullable<T.Program.Config>['statements']>[number][]>) =>
-			rebuilt(node, handle, () => buildProgram({ ...config, statements: restItems('statements', values) })),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		inner: (...items: unknown[]) => triviaInner(node, handle, items),
-		[RECEIVER]: node
-	};
+	node.$with = { shebang: buildProgram$with$shebang, statements: buildProgram$with$statements, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, inner: objectInner, [RECEIVER]: node };
 	return node as unknown as T.Program.Bound;
+}
+
+function buildProgram$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.Program.Config;
+	switch (setter) {
+		case 'shebang':
+			return applySetter(args, (value?: Admit<T.HashBangLine>) =>
+				rebuilt(node, handle, () => buildProgram({ ...config, shebang: value }))
+			);
+		case 'statements':
+			return applySetter(args, (...values: Admit<NonNullable<NonNullable<T.Program.Config>['statements']>[number][]>) =>
+				rebuilt(node, handle, () => buildProgram({ ...config, statements: restItems('statements', values) }))
+			);
+	}
+	throw new Error(`program has no $with.${setter}`);
+}
+function buildProgram$with$shebang(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildProgram$with(receiverOf(this, '$with.shebang'), 'shebang', args);
+}
+function buildProgram$with$statements(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildProgram$with(receiverOf(this, '$with.statements'), 'statements', args);
 }
 
 export function buildHashBangLine(content: string, affix?: true): T.HashBangLine.Bound;
@@ -220,18 +240,24 @@ export function buildHashBangLine(input: string, affix: boolean = true): T.HashB
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		content: (value: Admit<string>) => rebuilt(node, handle, () => buildHashBangLine(value)),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { content: buildHashBangLine$with$content, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.HashBangLine.Bound;
+}
+
+function buildHashBangLine$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	switch (setter) {
+		case 'content':
+			return applySetter(args, (value: Admit<string>) => rebuilt(node, handle, () => buildHashBangLine(value)));
+	}
+	throw new Error(`hash_bang_line has no $with.${setter}`);
+}
+function buildHashBangLine$with$content(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildHashBangLine$with(receiverOf(this, '$with.content'), 'content', args);
 }
 
 export function buildNamespaceExport<V extends Admit<T.Identifier | T.String | TSKindId.DefaultKeyword>>(
@@ -265,19 +291,26 @@ export function buildNamespaceExport(
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		moduleExportName: (value: Admit<NonNullable<T.Identifier | T.String | TSKindId.DefaultKeyword>>) =>
-			rebuilt(node, handle, () => buildNamespaceExport(value)),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { moduleExportName: buildNamespaceExport$with$moduleExportName, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.NamespaceExport.Bound;
+}
+
+function buildNamespaceExport$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	switch (setter) {
+		case 'moduleExportName':
+			return applySetter(args, (value: Admit<NonNullable<T.Identifier | T.String | TSKindId.DefaultKeyword>>) =>
+				rebuilt(node, handle, () => buildNamespaceExport(value))
+			);
+	}
+	throw new Error(`namespace_export has no $with.${setter}`);
+}
+function buildNamespaceExport$with$moduleExportName(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildNamespaceExport$with(receiverOf(this, '$with.moduleExportName'), 'moduleExportName', args);
 }
 
 export function buildExportClause(): T.EmptyExportClause;
@@ -358,27 +391,33 @@ function _buildExportClause(value?: Admit<T.ExportSpecifiers>): T.ExportClause.B
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		exportSpecifiers: (...args: unknown[]) =>
-			rebuilt(node, handle, () =>
-				listSlotWith(
-					args,
-					{ kind: TSKindId.ExportSpecifiers as const, optional: true, make: buildExportSpecifiers },
-					(value?: Admit<T.ExportSpecifiers>) => _buildExportClause(value)
-				)
-			),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		inner: (...items: unknown[]) => triviaInner(node, handle, items),
-		[RECEIVER]: node
-	};
+	node.$with = { exportSpecifiers: buildExportClause$with$exportSpecifiers, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, inner: objectInner, [RECEIVER]: node };
 	holdListItems(node, heldItems(listView.list));
 	return node as unknown as T.ExportClause.Bound;
+}
+
+function buildExportClause$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	switch (setter) {
+		case 'exportSpecifiers':
+			return applySetter(args, (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{ kind: TSKindId.ExportSpecifiers as const, optional: true, make: buildExportSpecifiers },
+						(value?: Admit<T.ExportSpecifiers>) => _buildExportClause(value)
+					)
+				)
+			);
+	}
+	throw new Error(`export_clause has no $with.${setter}`);
+}
+function buildExportClause$with$exportSpecifiers(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildExportClause$with(receiverOf(this, '$with.exportSpecifiers'), 'exportSpecifiers', args);
 }
 
 export function buildExportSpecifier<
@@ -429,23 +468,47 @@ export function buildExportSpecifier(config: T.ExportSpecifier.Config): T.Export
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		typeKeyword: (value?: Admit<NonNullable<T.ExportSpecifier.Config>['typeKeyword']>) =>
-			rebuilt(node, handle, () => buildExportSpecifier({ ...config, typeKeyword: value })),
-		name: (value: Admit<NonNullable<T.ExportSpecifier.Config>['name']>) =>
-			rebuilt(node, handle, () => buildExportSpecifier({ ...config, name: value })),
-		alias: (value?: Admit<NonNullable<T.ExportSpecifier.Config>['alias']>) =>
-			rebuilt(node, handle, () => buildExportSpecifier({ ...config, alias: value })),
+		typeKeyword: buildExportSpecifier$with$typeKeyword,
+		name: buildExportSpecifier$with$name,
+		alias: buildExportSpecifier$with$alias,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.ExportSpecifier.Bound;
+}
+
+function buildExportSpecifier$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.ExportSpecifier.Config;
+	switch (setter) {
+		case 'typeKeyword':
+			return applySetter(args, (value?: Admit<NonNullable<T.ExportSpecifier.Config>['typeKeyword']>) =>
+				rebuilt(node, handle, () => buildExportSpecifier({ ...config, typeKeyword: value }))
+			);
+		case 'name':
+			return applySetter(args, (value: Admit<NonNullable<T.ExportSpecifier.Config>['name']>) =>
+				rebuilt(node, handle, () => buildExportSpecifier({ ...config, name: value }))
+			);
+		case 'alias':
+			return applySetter(args, (value?: Admit<NonNullable<T.ExportSpecifier.Config>['alias']>) =>
+				rebuilt(node, handle, () => buildExportSpecifier({ ...config, alias: value }))
+			);
+	}
+	throw new Error(`export_specifier has no $with.${setter}`);
+}
+function buildExportSpecifier$with$typeKeyword(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildExportSpecifier$with(receiverOf(this, '$with.typeKeyword'), 'typeKeyword', args);
+}
+function buildExportSpecifier$with$name(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildExportSpecifier$with(receiverOf(this, '$with.name'), 'name', args);
+}
+function buildExportSpecifier$with$alias(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildExportSpecifier$with(receiverOf(this, '$with.alias'), 'alias', args);
 }
 
 export const buildImport: TSKindId.Import = TSKindId.Import;
@@ -498,25 +561,57 @@ export function buildImportStatement(
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
+		[OPTIONS]: options,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		typeKeyword: (value?: Admit<NonNullable<T.ImportStatement.Config>['typeKeyword']>) =>
-			rebuilt(node, handle, () => buildImportStatement({ ...config, typeKeyword: value }, options)),
-		fromClause: (value: Admit<T.ImportStatementClauseFrom | T.ImportRequireClause | T.String>) =>
-			rebuilt(node, handle, () => buildImportStatement({ ...config, fromClause: value }, options)),
-		importAttribute: (value?: Admit<T.ImportAttribute>) =>
-			rebuilt(node, handle, () => buildImportStatement({ ...config, importAttribute: value }, options)),
-		terminator: (spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi) =>
-			rebuilt(node, handle, () => buildImportStatement(config, { ...options, terminator: spelling })),
+		typeKeyword: buildImportStatement$with$typeKeyword,
+		fromClause: buildImportStatement$with$fromClause,
+		importAttribute: buildImportStatement$with$importAttribute,
+		terminator: buildImportStatement$with$terminator,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.ImportStatement.Bound;
+}
+
+function buildImportStatement$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.ImportStatement.Config;
+	const options = node[OPTIONS] as T.ImportStatement.Options;
+	switch (setter) {
+		case 'typeKeyword':
+			return applySetter(args, (value?: Admit<NonNullable<T.ImportStatement.Config>['typeKeyword']>) =>
+				rebuilt(node, handle, () => buildImportStatement({ ...config, typeKeyword: value }, options))
+			);
+		case 'fromClause':
+			return applySetter(args, (value: Admit<T.ImportStatementClauseFrom | T.ImportRequireClause | T.String>) =>
+				rebuilt(node, handle, () => buildImportStatement({ ...config, fromClause: value }, options))
+			);
+		case 'importAttribute':
+			return applySetter(args, (value?: Admit<T.ImportAttribute>) =>
+				rebuilt(node, handle, () => buildImportStatement({ ...config, importAttribute: value }, options))
+			);
+		case 'terminator':
+			return applySetter(args, (spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi) =>
+				rebuilt(node, handle, () => buildImportStatement(config, { ...options, terminator: spelling }))
+			);
+	}
+	throw new Error(`import_statement has no $with.${setter}`);
+}
+function buildImportStatement$with$typeKeyword(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildImportStatement$with(receiverOf(this, '$with.typeKeyword'), 'typeKeyword', args);
+}
+function buildImportStatement$with$fromClause(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildImportStatement$with(receiverOf(this, '$with.fromClause'), 'fromClause', args);
+}
+function buildImportStatement$with$importAttribute(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildImportStatement$with(receiverOf(this, '$with.importAttribute'), 'importAttribute', args);
+}
+function buildImportStatement$with$terminator(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildImportStatement$with(receiverOf(this, '$with.terminator'), 'terminator', args);
 }
 
 export function buildImportClause<V extends Admit<T.NamespaceImport | T.NamedImports | T.ImportClauseDefaultImport>>(
@@ -540,19 +635,26 @@ export function buildImportClause(
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		content: (value: Admit<T.NamespaceImport | T.NamedImports | T.ImportClauseDefaultImport>) =>
-			rebuilt(node, handle, () => buildImportClause(value)),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { content: buildImportClause$with$content, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.ImportClause.Bound;
+}
+
+function buildImportClause$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	switch (setter) {
+		case 'content':
+			return applySetter(args, (value: Admit<T.NamespaceImport | T.NamedImports | T.ImportClauseDefaultImport>) =>
+				rebuilt(node, handle, () => buildImportClause(value))
+			);
+	}
+	throw new Error(`import_clause has no $with.${setter}`);
+}
+function buildImportClause$with$content(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildImportClause$with(receiverOf(this, '$with.content'), 'content', args);
 }
 
 export function buildNamespaceImport<V extends Admit<T.Identifier>>(
@@ -574,18 +676,26 @@ export function buildNamespaceImport(value: Admit<T.Identifier>): T.NamespaceImp
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		name: (value: Admit<T.Identifier>) => rebuilt(node, handle, () => buildNamespaceImport(value)),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { name: buildNamespaceImport$with$name, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.NamespaceImport.Bound;
+}
+
+function buildNamespaceImport$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	switch (setter) {
+		case 'name':
+			return applySetter(args, (value: Admit<T.Identifier>) =>
+				rebuilt(node, handle, () => buildNamespaceImport(value))
+			);
+	}
+	throw new Error(`namespace_import has no $with.${setter}`);
+}
+function buildNamespaceImport$with$name(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildNamespaceImport$with(receiverOf(this, '$with.name'), 'name', args);
 }
 
 export function buildNamedImports(): T.EmptyNamedImports;
@@ -664,27 +774,33 @@ function _buildNamedImports(value?: Admit<T.ImportSpecifiers>): T.NamedImports.B
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		importSpecifiers: (...args: unknown[]) =>
-			rebuilt(node, handle, () =>
-				listSlotWith(
-					args,
-					{ kind: TSKindId.ImportSpecifiers as const, optional: true, make: buildImportSpecifiers },
-					(value?: Admit<T.ImportSpecifiers>) => _buildNamedImports(value)
-				)
-			),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		inner: (...items: unknown[]) => triviaInner(node, handle, items),
-		[RECEIVER]: node
-	};
+	node.$with = { importSpecifiers: buildNamedImports$with$importSpecifiers, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, inner: objectInner, [RECEIVER]: node };
 	holdListItems(node, heldItems(listView.list));
 	return node as unknown as T.NamedImports.Bound;
+}
+
+function buildNamedImports$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	switch (setter) {
+		case 'importSpecifiers':
+			return applySetter(args, (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{ kind: TSKindId.ImportSpecifiers as const, optional: true, make: buildImportSpecifiers },
+						(value?: Admit<T.ImportSpecifiers>) => _buildNamedImports(value)
+					)
+				)
+			);
+	}
+	throw new Error(`named_imports has no $with.${setter}`);
+}
+function buildNamedImports$with$importSpecifiers(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildNamedImports$with(receiverOf(this, '$with.importSpecifiers'), 'importSpecifiers', args);
 }
 
 export function buildImportAttribute<ObjectSlot extends T.ImportAttribute.Config['object']>(
@@ -711,20 +827,39 @@ export function buildImportAttribute(config: T.ImportAttribute.Config): T.Import
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		attributeKind: (value: Admit<NonNullable<T.ImportAttribute.Config>['attributeKind']>) =>
-			rebuilt(node, handle, () => buildImportAttribute({ ...config, attributeKind: value })),
-		object: (value: Admit<T.Object>) => rebuilt(node, handle, () => buildImportAttribute({ ...config, object: value })),
+		attributeKind: buildImportAttribute$with$attributeKind,
+		object: buildImportAttribute$with$object,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.ImportAttribute.Bound;
+}
+
+function buildImportAttribute$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.ImportAttribute.Config;
+	switch (setter) {
+		case 'attributeKind':
+			return applySetter(args, (value: Admit<NonNullable<T.ImportAttribute.Config>['attributeKind']>) =>
+				rebuilt(node, handle, () => buildImportAttribute({ ...config, attributeKind: value }))
+			);
+		case 'object':
+			return applySetter(args, (value: Admit<T.Object>) =>
+				rebuilt(node, handle, () => buildImportAttribute({ ...config, object: value }))
+			);
+	}
+	throw new Error(`import_attribute has no $with.${setter}`);
+}
+function buildImportAttribute$with$attributeKind(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildImportAttribute$with(receiverOf(this, '$with.attributeKind'), 'attributeKind', args);
+}
+function buildImportAttribute$with$object(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildImportAttribute$with(receiverOf(this, '$with.object'), 'object', args);
 }
 
 export function buildExpressionStatement<V extends Admit<T.Expression | T.SequenceExpression>>(
@@ -762,21 +897,41 @@ export function buildExpressionStatement(
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: value,
+		[OPTIONS]: options,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		expression: (value: Admit<NonNullable<T.Expression | T.SequenceExpression>>) =>
-			rebuilt(node, handle, () => buildExpressionStatement(value, options)),
-		terminator: (spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi) =>
-			rebuilt(node, handle, () => buildExpressionStatement(value, { ...options, terminator: spelling })),
+		expression: buildExpressionStatement$with$expression,
+		terminator: buildExpressionStatement$with$terminator,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.ExpressionStatement.Bound;
+}
+
+function buildExpressionStatement$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const value = node[INPUT] as Admit<NonNullable<T.Expression | T.SequenceExpression>>;
+	const options = node[OPTIONS] as T.ExpressionStatement.Options;
+	switch (setter) {
+		case 'expression':
+			return applySetter(args, (value: Admit<NonNullable<T.Expression | T.SequenceExpression>>) =>
+				rebuilt(node, handle, () => buildExpressionStatement(value, options))
+			);
+		case 'terminator':
+			return applySetter(args, (spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi) =>
+				rebuilt(node, handle, () => buildExpressionStatement(value, { ...options, terminator: spelling }))
+			);
+	}
+	throw new Error(`expression_statement has no $with.${setter}`);
+}
+function buildExpressionStatement$with$expression(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildExpressionStatement$with(receiverOf(this, '$with.expression'), 'expression', args);
+}
+function buildExpressionStatement$with$terminator(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildExpressionStatement$with(receiverOf(this, '$with.terminator'), 'terminator', args);
 }
 
 export function buildVariableDeclaration<A extends NonEmptyArray<Admit<T.VariableDeclarator>>>(
@@ -818,21 +973,41 @@ export function buildVariableDeclaration(...args: unknown[]): T.VariableDeclarat
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: children,
+		[OPTIONS]: options,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		declarators: (...vs: NonEmptyArray<Admit<T.VariableDeclarator>>) =>
-			rebuilt(node, handle, () => buildVariableDeclaration(options, ...restItems('declarators', vs))),
-		terminator: (spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi) =>
-			rebuilt(node, handle, () => buildVariableDeclaration({ ...options, terminator: spelling }, ...children)),
+		declarators: buildVariableDeclaration$with$declarators,
+		terminator: buildVariableDeclaration$with$terminator,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.VariableDeclaration.Bound;
+}
+
+function buildVariableDeclaration$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const children = node[INPUT] as NonEmptyArray<Admit<T.VariableDeclarator>>;
+	const options = node[OPTIONS] as T.VariableDeclaration.Options;
+	switch (setter) {
+		case 'declarators':
+			return applySetter(args, (...vs: NonEmptyArray<Admit<T.VariableDeclarator>>) =>
+				rebuilt(node, handle, () => buildVariableDeclaration(options, ...restItems('declarators', vs)))
+			);
+		case 'terminator':
+			return applySetter(args, (spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi) =>
+				rebuilt(node, handle, () => buildVariableDeclaration({ ...options, terminator: spelling }, ...children))
+			);
+	}
+	throw new Error(`variable_declaration has no $with.${setter}`);
+}
+function buildVariableDeclaration$with$declarators(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildVariableDeclaration$with(receiverOf(this, '$with.declarators'), 'declarators', args);
+}
+function buildVariableDeclaration$with$terminator(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildVariableDeclaration$with(receiverOf(this, '$with.terminator'), 'terminator', args);
 }
 
 export function buildLexicalDeclaration<DeclaratorsSlot extends T.LexicalDeclaration.Config['declarators']>(
@@ -869,25 +1044,51 @@ export function buildLexicalDeclaration(
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
+		[OPTIONS]: options,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		kind: (value: Admit<NonNullable<T.LexicalDeclaration.Config>['kind']>) =>
-			rebuilt(node, handle, () => buildLexicalDeclaration({ ...config, kind: value }, options)),
-		declarators: (...values: Admit<NonEmptyArray<T.VariableDeclarator>>) =>
-			rebuilt(node, handle, () =>
-				buildLexicalDeclaration({ ...config, declarators: restItems('declarators', values) }, options)
-			),
-		terminator: (spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi) =>
-			rebuilt(node, handle, () => buildLexicalDeclaration(config, { ...options, terminator: spelling })),
+		kind: buildLexicalDeclaration$with$kind,
+		declarators: buildLexicalDeclaration$with$declarators,
+		terminator: buildLexicalDeclaration$with$terminator,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.LexicalDeclaration.Bound;
+}
+
+function buildLexicalDeclaration$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.LexicalDeclaration.Config;
+	const options = node[OPTIONS] as T.LexicalDeclaration.Options;
+	switch (setter) {
+		case 'kind':
+			return applySetter(args, (value: Admit<NonNullable<T.LexicalDeclaration.Config>['kind']>) =>
+				rebuilt(node, handle, () => buildLexicalDeclaration({ ...config, kind: value }, options))
+			);
+		case 'declarators':
+			return applySetter(args, (...values: Admit<NonEmptyArray<T.VariableDeclarator>>) =>
+				rebuilt(node, handle, () =>
+					buildLexicalDeclaration({ ...config, declarators: restItems('declarators', values) }, options)
+				)
+			);
+		case 'terminator':
+			return applySetter(args, (spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi) =>
+				rebuilt(node, handle, () => buildLexicalDeclaration(config, { ...options, terminator: spelling }))
+			);
+	}
+	throw new Error(`lexical_declaration has no $with.${setter}`);
+}
+function buildLexicalDeclaration$with$kind(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildLexicalDeclaration$with(receiverOf(this, '$with.kind'), 'kind', args);
+}
+function buildLexicalDeclaration$with$declarators(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildLexicalDeclaration$with(receiverOf(this, '$with.declarators'), 'declarators', args);
+}
+function buildLexicalDeclaration$with$terminator(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildLexicalDeclaration$with(receiverOf(this, '$with.terminator'), 'terminator', args);
 }
 
 export function buildUsingDeclaration<VariableDeclaratorsSlot extends T.UsingDeclaration.Config['variableDeclarators']>(
@@ -930,25 +1131,51 @@ export function buildUsingDeclaration(
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
+		[OPTIONS]: options,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		kind: (value: Admit<NonNullable<T.UsingDeclaration.Config>['kind']>) =>
-			rebuilt(node, handle, () => buildUsingDeclaration({ ...config, kind: value }, options)),
-		variableDeclarators: (...values: Admit<NonEmptyArray<T.VariableDeclarator>>) =>
-			rebuilt(node, handle, () =>
-				buildUsingDeclaration({ ...config, variableDeclarators: restItems('variableDeclarators', values) }, options)
-			),
-		automaticSemicolon: (spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi) =>
-			rebuilt(node, handle, () => buildUsingDeclaration(config, { ...options, automaticSemicolon: spelling })),
+		kind: buildUsingDeclaration$with$kind,
+		variableDeclarators: buildUsingDeclaration$with$variableDeclarators,
+		automaticSemicolon: buildUsingDeclaration$with$automaticSemicolon,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.UsingDeclaration.Bound;
+}
+
+function buildUsingDeclaration$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.UsingDeclaration.Config;
+	const options = node[OPTIONS] as T.UsingDeclaration.Options;
+	switch (setter) {
+		case 'kind':
+			return applySetter(args, (value: Admit<NonNullable<T.UsingDeclaration.Config>['kind']>) =>
+				rebuilt(node, handle, () => buildUsingDeclaration({ ...config, kind: value }, options))
+			);
+		case 'variableDeclarators':
+			return applySetter(args, (...values: Admit<NonEmptyArray<T.VariableDeclarator>>) =>
+				rebuilt(node, handle, () =>
+					buildUsingDeclaration({ ...config, variableDeclarators: restItems('variableDeclarators', values) }, options)
+				)
+			);
+		case 'automaticSemicolon':
+			return applySetter(args, (spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi) =>
+				rebuilt(node, handle, () => buildUsingDeclaration(config, { ...options, automaticSemicolon: spelling }))
+			);
+	}
+	throw new Error(`using_declaration has no $with.${setter}`);
+}
+function buildUsingDeclaration$with$kind(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildUsingDeclaration$with(receiverOf(this, '$with.kind'), 'kind', args);
+}
+function buildUsingDeclaration$with$variableDeclarators(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildUsingDeclaration$with(receiverOf(this, '$with.variableDeclarators'), 'variableDeclarators', args);
+}
+function buildUsingDeclaration$with$automaticSemicolon(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildUsingDeclaration$with(receiverOf(this, '$with.automaticSemicolon'), 'automaticSemicolon', args);
 }
 
 export function buildStatementBlock(): T.EmptyStatementBlock;
@@ -991,22 +1218,41 @@ export function buildStatementBlock(...args: unknown[]): T.StatementBlock.Bound 
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: children,
+		[OPTIONS]: options,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		statements: (...vs: Admit<T.Statement>[]) =>
-			rebuilt(node, handle, () => buildStatementBlock(options, ...restItems('statements', vs))),
-		terminator: (spelling: TSKindId.AutomaticSemicolon | null) =>
-			rebuilt(node, handle, () => buildStatementBlock({ ...options, terminator: spelling }, ...children)),
+		statements: buildStatementBlock$with$statements,
+		terminator: buildStatementBlock$with$terminator,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		inner: (...items: unknown[]) => triviaInner(node, handle, items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, inner: objectInner, [RECEIVER]: node };
 	return node as unknown as T.StatementBlock.Bound;
+}
+
+function buildStatementBlock$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const children = node[INPUT] as Admit<T.Statement[]>;
+	const options = node[OPTIONS] as T.StatementBlock.Options;
+	switch (setter) {
+		case 'statements':
+			return applySetter(args, (...vs: Admit<T.Statement>[]) =>
+				rebuilt(node, handle, () => buildStatementBlock(options, ...restItems('statements', vs)))
+			);
+		case 'terminator':
+			return applySetter(args, (spelling: TSKindId.AutomaticSemicolon | null) =>
+				rebuilt(node, handle, () => buildStatementBlock({ ...options, terminator: spelling }, ...children))
+			);
+	}
+	throw new Error(`statement_block has no $with.${setter}`);
+}
+function buildStatementBlock$with$statements(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildStatementBlock$with(receiverOf(this, '$with.statements'), 'statements', args);
+}
+function buildStatementBlock$with$terminator(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildStatementBlock$with(receiverOf(this, '$with.terminator'), 'terminator', args);
 }
 
 export function buildElseClause<V extends Admit<T.Statement>>(value: V & RefuseUndeclared<V>): T.ElseClause.Bound;
@@ -1026,18 +1272,26 @@ export function buildElseClause(value: Admit<T.Statement>): T.ElseClause.Bound {
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		body: (value: Admit<NonNullable<T.Statement>>) => rebuilt(node, handle, () => buildElseClause(value)),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { body: buildElseClause$with$body, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.ElseClause.Bound;
+}
+
+function buildElseClause$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	switch (setter) {
+		case 'body':
+			return applySetter(args, (value: Admit<NonNullable<T.Statement>>) =>
+				rebuilt(node, handle, () => buildElseClause(value))
+			);
+	}
+	throw new Error(`else_clause has no $with.${setter}`);
+}
+function buildElseClause$with$body(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildElseClause$with(receiverOf(this, '$with.body'), 'body', args);
 }
 
 export function buildIfStatement<
@@ -1078,23 +1332,47 @@ export function buildIfStatement(config: T.IfStatement.Config): T.IfStatement.Bo
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		condition: (value: Admit<T.ParenthesizedExpression>) =>
-			rebuilt(node, handle, () => buildIfStatement({ ...config, condition: value })),
-		consequence: (value: Admit<NonNullable<T.IfStatement.Config>['consequence']>) =>
-			rebuilt(node, handle, () => buildIfStatement({ ...config, consequence: value })),
-		alternative: (value?: Admit<T.ElseClause>) =>
-			rebuilt(node, handle, () => buildIfStatement({ ...config, alternative: value })),
+		condition: buildIfStatement$with$condition,
+		consequence: buildIfStatement$with$consequence,
+		alternative: buildIfStatement$with$alternative,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.IfStatement.Bound;
+}
+
+function buildIfStatement$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.IfStatement.Config;
+	switch (setter) {
+		case 'condition':
+			return applySetter(args, (value: Admit<T.ParenthesizedExpression>) =>
+				rebuilt(node, handle, () => buildIfStatement({ ...config, condition: value }))
+			);
+		case 'consequence':
+			return applySetter(args, (value: Admit<NonNullable<T.IfStatement.Config>['consequence']>) =>
+				rebuilt(node, handle, () => buildIfStatement({ ...config, consequence: value }))
+			);
+		case 'alternative':
+			return applySetter(args, (value?: Admit<T.ElseClause>) =>
+				rebuilt(node, handle, () => buildIfStatement({ ...config, alternative: value }))
+			);
+	}
+	throw new Error(`if_statement has no $with.${setter}`);
+}
+function buildIfStatement$with$condition(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildIfStatement$with(receiverOf(this, '$with.condition'), 'condition', args);
+}
+function buildIfStatement$with$consequence(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildIfStatement$with(receiverOf(this, '$with.consequence'), 'consequence', args);
+}
+function buildIfStatement$with$alternative(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildIfStatement$with(receiverOf(this, '$with.alternative'), 'alternative', args);
 }
 
 export function buildSwitchStatement<
@@ -1121,20 +1399,35 @@ export function buildSwitchStatement(config: T.SwitchStatement.Config): T.Switch
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		value: (value: Admit<T.ParenthesizedExpression>) =>
-			rebuilt(node, handle, () => buildSwitchStatement({ ...config, value: value })),
-		body: (value: Admit<T.SwitchBody>) => rebuilt(node, handle, () => buildSwitchStatement({ ...config, body: value })),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { value: buildSwitchStatement$with$value, body: buildSwitchStatement$with$body, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.SwitchStatement.Bound;
+}
+
+function buildSwitchStatement$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.SwitchStatement.Config;
+	switch (setter) {
+		case 'value':
+			return applySetter(args, (value: Admit<T.ParenthesizedExpression>) =>
+				rebuilt(node, handle, () => buildSwitchStatement({ ...config, value: value }))
+			);
+		case 'body':
+			return applySetter(args, (value: Admit<T.SwitchBody>) =>
+				rebuilt(node, handle, () => buildSwitchStatement({ ...config, body: value }))
+			);
+	}
+	throw new Error(`switch_statement has no $with.${setter}`);
+}
+function buildSwitchStatement$with$value(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildSwitchStatement$with(receiverOf(this, '$with.value'), 'value', args);
+}
+function buildSwitchStatement$with$body(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildSwitchStatement$with(receiverOf(this, '$with.body'), 'body', args);
 }
 
 export function buildForStatement<
@@ -1195,25 +1488,55 @@ export function buildForStatement(config: T.ForStatement.Config): T.ForStatement
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		initializer: (value: Admit<NonNullable<T.ForStatement.Config>['initializer']>) =>
-			rebuilt(node, handle, () => buildForStatement({ ...config, initializer: value })),
-		condition: (value: Admit<NonNullable<T.ForStatement.Config>['condition']>) =>
-			rebuilt(node, handle, () => buildForStatement({ ...config, condition: value })),
-		increment: (value?: Admit<NonNullable<T.ForStatement.Config>['increment']>) =>
-			rebuilt(node, handle, () => buildForStatement({ ...config, increment: value })),
-		body: (value: Admit<NonNullable<T.ForStatement.Config>['body']>) =>
-			rebuilt(node, handle, () => buildForStatement({ ...config, body: value })),
+		initializer: buildForStatement$with$initializer,
+		condition: buildForStatement$with$condition,
+		increment: buildForStatement$with$increment,
+		body: buildForStatement$with$body,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.ForStatement.Bound;
+}
+
+function buildForStatement$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.ForStatement.Config;
+	switch (setter) {
+		case 'initializer':
+			return applySetter(args, (value: Admit<NonNullable<T.ForStatement.Config>['initializer']>) =>
+				rebuilt(node, handle, () => buildForStatement({ ...config, initializer: value }))
+			);
+		case 'condition':
+			return applySetter(args, (value: Admit<NonNullable<T.ForStatement.Config>['condition']>) =>
+				rebuilt(node, handle, () => buildForStatement({ ...config, condition: value }))
+			);
+		case 'increment':
+			return applySetter(args, (value?: Admit<NonNullable<T.ForStatement.Config>['increment']>) =>
+				rebuilt(node, handle, () => buildForStatement({ ...config, increment: value }))
+			);
+		case 'body':
+			return applySetter(args, (value: Admit<NonNullable<T.ForStatement.Config>['body']>) =>
+				rebuilt(node, handle, () => buildForStatement({ ...config, body: value }))
+			);
+	}
+	throw new Error(`for_statement has no $with.${setter}`);
+}
+function buildForStatement$with$initializer(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildForStatement$with(receiverOf(this, '$with.initializer'), 'initializer', args);
+}
+function buildForStatement$with$condition(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildForStatement$with(receiverOf(this, '$with.condition'), 'condition', args);
+}
+function buildForStatement$with$increment(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildForStatement$with(receiverOf(this, '$with.increment'), 'increment', args);
+}
+function buildForStatement$with$body(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildForStatement$with(receiverOf(this, '$with.body'), 'body', args);
 }
 
 export function buildForInStatement<
@@ -1243,23 +1566,47 @@ export function buildForInStatement(config: T.ForInStatement.Config): T.ForInSta
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		async: (value?: Admit<NonNullable<T.ForInStatement.Config>['async']>) =>
-			rebuilt(node, handle, () => buildForInStatement({ ...config, async: value })),
-		header: (value: Admit<T.ForHeader>) =>
-			rebuilt(node, handle, () => buildForInStatement({ ...config, header: value })),
-		body: (value: Admit<NonNullable<T.ForInStatement.Config>['body']>) =>
-			rebuilt(node, handle, () => buildForInStatement({ ...config, body: value })),
+		async: buildForInStatement$with$async,
+		header: buildForInStatement$with$header,
+		body: buildForInStatement$with$body,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.ForInStatement.Bound;
+}
+
+function buildForInStatement$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.ForInStatement.Config;
+	switch (setter) {
+		case 'async':
+			return applySetter(args, (value?: Admit<NonNullable<T.ForInStatement.Config>['async']>) =>
+				rebuilt(node, handle, () => buildForInStatement({ ...config, async: value }))
+			);
+		case 'header':
+			return applySetter(args, (value: Admit<T.ForHeader>) =>
+				rebuilt(node, handle, () => buildForInStatement({ ...config, header: value }))
+			);
+		case 'body':
+			return applySetter(args, (value: Admit<NonNullable<T.ForInStatement.Config>['body']>) =>
+				rebuilt(node, handle, () => buildForInStatement({ ...config, body: value }))
+			);
+	}
+	throw new Error(`for_in_statement has no $with.${setter}`);
+}
+function buildForInStatement$with$async(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildForInStatement$with(receiverOf(this, '$with.async'), 'async', args);
+}
+function buildForInStatement$with$header(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildForInStatement$with(receiverOf(this, '$with.header'), 'header', args);
+}
+function buildForInStatement$with$body(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildForInStatement$with(receiverOf(this, '$with.body'), 'body', args);
 }
 
 export function buildWhileStatement<
@@ -1288,21 +1635,35 @@ export function buildWhileStatement(config: T.WhileStatement.Config): T.WhileSta
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		condition: (value: Admit<T.ParenthesizedExpression>) =>
-			rebuilt(node, handle, () => buildWhileStatement({ ...config, condition: value })),
-		body: (value: Admit<NonNullable<T.WhileStatement.Config>['body']>) =>
-			rebuilt(node, handle, () => buildWhileStatement({ ...config, body: value })),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { condition: buildWhileStatement$with$condition, body: buildWhileStatement$with$body, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.WhileStatement.Bound;
+}
+
+function buildWhileStatement$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.WhileStatement.Config;
+	switch (setter) {
+		case 'condition':
+			return applySetter(args, (value: Admit<T.ParenthesizedExpression>) =>
+				rebuilt(node, handle, () => buildWhileStatement({ ...config, condition: value }))
+			);
+		case 'body':
+			return applySetter(args, (value: Admit<NonNullable<T.WhileStatement.Config>['body']>) =>
+				rebuilt(node, handle, () => buildWhileStatement({ ...config, body: value }))
+			);
+	}
+	throw new Error(`while_statement has no $with.${setter}`);
+}
+function buildWhileStatement$with$condition(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildWhileStatement$with(receiverOf(this, '$with.condition'), 'condition', args);
+}
+function buildWhileStatement$with$body(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildWhileStatement$with(receiverOf(this, '$with.body'), 'body', args);
 }
 
 export function buildDoStatement<
@@ -1339,23 +1700,49 @@ export function buildDoStatement(config: T.DoStatement.Config, options?: T.DoSta
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
+		[OPTIONS]: options,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		body: (value: Admit<NonNullable<T.DoStatement.Config>['body']>) =>
-			rebuilt(node, handle, () => buildDoStatement({ ...config, body: value }, options)),
-		condition: (value: Admit<T.ParenthesizedExpression>) =>
-			rebuilt(node, handle, () => buildDoStatement({ ...config, condition: value }, options)),
-		terminator: (spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi | null) =>
-			rebuilt(node, handle, () => buildDoStatement(config, { ...options, terminator: spelling })),
+		body: buildDoStatement$with$body,
+		condition: buildDoStatement$with$condition,
+		terminator: buildDoStatement$with$terminator,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.DoStatement.Bound;
+}
+
+function buildDoStatement$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.DoStatement.Config;
+	const options = node[OPTIONS] as T.DoStatement.Options;
+	switch (setter) {
+		case 'body':
+			return applySetter(args, (value: Admit<NonNullable<T.DoStatement.Config>['body']>) =>
+				rebuilt(node, handle, () => buildDoStatement({ ...config, body: value }, options))
+			);
+		case 'condition':
+			return applySetter(args, (value: Admit<T.ParenthesizedExpression>) =>
+				rebuilt(node, handle, () => buildDoStatement({ ...config, condition: value }, options))
+			);
+		case 'terminator':
+			return applySetter(args, (spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi | null) =>
+				rebuilt(node, handle, () => buildDoStatement(config, { ...options, terminator: spelling }))
+			);
+	}
+	throw new Error(`do_statement has no $with.${setter}`);
+}
+function buildDoStatement$with$body(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildDoStatement$with(receiverOf(this, '$with.body'), 'body', args);
+}
+function buildDoStatement$with$condition(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildDoStatement$with(receiverOf(this, '$with.condition'), 'condition', args);
+}
+function buildDoStatement$with$terminator(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildDoStatement$with(receiverOf(this, '$with.terminator'), 'terminator', args);
 }
 
 export function buildTryStatement<
@@ -1392,23 +1779,47 @@ export function buildTryStatement(config: Partial<T.TryStatement.Config> = {}): 
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		body: (value: Admit<T.StatementBlock>) =>
-			rebuilt(node, handle, () => buildTryStatement({ ...config, body: value })),
-		handlers: (value?: Admit<T.CatchClause>) =>
-			rebuilt(node, handle, () => buildTryStatement({ ...config, handlers: value })),
-		finalizer: (value?: Admit<T.FinallyClause>) =>
-			rebuilt(node, handle, () => buildTryStatement({ ...config, finalizer: value })),
+		body: buildTryStatement$with$body,
+		handlers: buildTryStatement$with$handlers,
+		finalizer: buildTryStatement$with$finalizer,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.TryStatement.Bound;
+}
+
+function buildTryStatement$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.TryStatement.Config;
+	switch (setter) {
+		case 'body':
+			return applySetter(args, (value: Admit<T.StatementBlock>) =>
+				rebuilt(node, handle, () => buildTryStatement({ ...config, body: value }))
+			);
+		case 'handlers':
+			return applySetter(args, (value?: Admit<T.CatchClause>) =>
+				rebuilt(node, handle, () => buildTryStatement({ ...config, handlers: value }))
+			);
+		case 'finalizer':
+			return applySetter(args, (value?: Admit<T.FinallyClause>) =>
+				rebuilt(node, handle, () => buildTryStatement({ ...config, finalizer: value }))
+			);
+	}
+	throw new Error(`try_statement has no $with.${setter}`);
+}
+function buildTryStatement$with$body(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildTryStatement$with(receiverOf(this, '$with.body'), 'body', args);
+}
+function buildTryStatement$with$handlers(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildTryStatement$with(receiverOf(this, '$with.handlers'), 'handlers', args);
+}
+function buildTryStatement$with$finalizer(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildTryStatement$with(receiverOf(this, '$with.finalizer'), 'finalizer', args);
 }
 
 export function buildWithStatement<
@@ -1435,21 +1846,35 @@ export function buildWithStatement(config: T.WithStatement.Config): T.WithStatem
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		object: (value: Admit<T.ParenthesizedExpression>) =>
-			rebuilt(node, handle, () => buildWithStatement({ ...config, object: value })),
-		body: (value: Admit<NonNullable<T.WithStatement.Config>['body']>) =>
-			rebuilt(node, handle, () => buildWithStatement({ ...config, body: value })),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { object: buildWithStatement$with$object, body: buildWithStatement$with$body, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.WithStatement.Bound;
+}
+
+function buildWithStatement$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.WithStatement.Config;
+	switch (setter) {
+		case 'object':
+			return applySetter(args, (value: Admit<T.ParenthesizedExpression>) =>
+				rebuilt(node, handle, () => buildWithStatement({ ...config, object: value }))
+			);
+		case 'body':
+			return applySetter(args, (value: Admit<NonNullable<T.WithStatement.Config>['body']>) =>
+				rebuilt(node, handle, () => buildWithStatement({ ...config, body: value }))
+			);
+	}
+	throw new Error(`with_statement has no $with.${setter}`);
+}
+function buildWithStatement$with$object(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildWithStatement$with(receiverOf(this, '$with.object'), 'object', args);
+}
+function buildWithStatement$with$body(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildWithStatement$with(receiverOf(this, '$with.body'), 'body', args);
 }
 
 export function buildBreakStatement<V extends Admit<T.StatementIdentifier | T.StatementIdentifier.Types>>(
@@ -1503,21 +1928,41 @@ function _buildBreakStatement(
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: value,
+		[OPTIONS]: options,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		label: (value?: Admit<T.StatementIdentifier | T.StatementIdentifier.Types>) =>
-			rebuilt(node, handle, () => _buildBreakStatement(value, options)),
-		terminator: (spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi) =>
-			rebuilt(node, handle, () => _buildBreakStatement(value, { ...options, terminator: spelling })),
+		label: buildBreakStatement$with$label,
+		terminator: buildBreakStatement$with$terminator,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.BreakStatement.Bound;
+}
+
+function buildBreakStatement$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const value = node[INPUT] as Admit<T.StatementIdentifier | T.StatementIdentifier.Types> | undefined;
+	const options = node[OPTIONS] as T.BreakStatement.Options;
+	switch (setter) {
+		case 'label':
+			return applySetter(args, (value?: Admit<T.StatementIdentifier | T.StatementIdentifier.Types>) =>
+				rebuilt(node, handle, () => _buildBreakStatement(value, options))
+			);
+		case 'terminator':
+			return applySetter(args, (spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi) =>
+				rebuilt(node, handle, () => _buildBreakStatement(value, { ...options, terminator: spelling }))
+			);
+	}
+	throw new Error(`break_statement has no $with.${setter}`);
+}
+function buildBreakStatement$with$label(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildBreakStatement$with(receiverOf(this, '$with.label'), 'label', args);
+}
+function buildBreakStatement$with$terminator(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildBreakStatement$with(receiverOf(this, '$with.terminator'), 'terminator', args);
 }
 
 export function buildContinueStatement<V extends Admit<T.StatementIdentifier | T.StatementIdentifier.Types>>(
@@ -1574,21 +2019,41 @@ function _buildContinueStatement(
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: value,
+		[OPTIONS]: options,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		label: (value?: Admit<T.StatementIdentifier | T.StatementIdentifier.Types>) =>
-			rebuilt(node, handle, () => _buildContinueStatement(value, options)),
-		terminator: (spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi) =>
-			rebuilt(node, handle, () => _buildContinueStatement(value, { ...options, terminator: spelling })),
+		label: buildContinueStatement$with$label,
+		terminator: buildContinueStatement$with$terminator,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.ContinueStatement.Bound;
+}
+
+function buildContinueStatement$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const value = node[INPUT] as Admit<T.StatementIdentifier | T.StatementIdentifier.Types> | undefined;
+	const options = node[OPTIONS] as T.ContinueStatement.Options;
+	switch (setter) {
+		case 'label':
+			return applySetter(args, (value?: Admit<T.StatementIdentifier | T.StatementIdentifier.Types>) =>
+				rebuilt(node, handle, () => _buildContinueStatement(value, options))
+			);
+		case 'terminator':
+			return applySetter(args, (spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi) =>
+				rebuilt(node, handle, () => _buildContinueStatement(value, { ...options, terminator: spelling }))
+			);
+	}
+	throw new Error(`continue_statement has no $with.${setter}`);
+}
+function buildContinueStatement$with$label(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildContinueStatement$with(receiverOf(this, '$with.label'), 'label', args);
+}
+function buildContinueStatement$with$terminator(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildContinueStatement$with(receiverOf(this, '$with.terminator'), 'terminator', args);
 }
 
 export function buildDebuggerStatement(
@@ -1614,19 +2079,30 @@ export function buildDebuggerStatement(
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
+		[OPTIONS]: options,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		terminator: (spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi) =>
-			rebuilt(node, handle, () => buildDebuggerStatement(config, { ...options, terminator: spelling })),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { terminator: buildDebuggerStatement$with$terminator, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.DebuggerStatement.Bound;
+}
+
+function buildDebuggerStatement$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.DebuggerStatement.Config;
+	const options = node[OPTIONS] as T.DebuggerStatement.Options;
+	switch (setter) {
+		case 'terminator':
+			return applySetter(args, (spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi) =>
+				rebuilt(node, handle, () => buildDebuggerStatement(config, { ...options, terminator: spelling }))
+			);
+	}
+	throw new Error(`debugger_statement has no $with.${setter}`);
+}
+function buildDebuggerStatement$with$terminator(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildDebuggerStatement$with(receiverOf(this, '$with.terminator'), 'terminator', args);
 }
 
 export function buildReturnStatement<V extends Admit<T.Expression | T.SequenceExpression>>(
@@ -1663,21 +2139,41 @@ export function buildReturnStatement(
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: value,
+		[OPTIONS]: options,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		expression: (value?: Admit<NonNullable<T.Expression | T.SequenceExpression>>) =>
-			rebuilt(node, handle, () => buildReturnStatement(value, options)),
-		terminator: (spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi) =>
-			rebuilt(node, handle, () => buildReturnStatement(value, { ...options, terminator: spelling })),
+		expression: buildReturnStatement$with$expression,
+		terminator: buildReturnStatement$with$terminator,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.ReturnStatement.Bound;
+}
+
+function buildReturnStatement$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const value = node[INPUT] as Admit<NonNullable<T.Expression | T.SequenceExpression>> | undefined;
+	const options = node[OPTIONS] as T.ReturnStatement.Options;
+	switch (setter) {
+		case 'expression':
+			return applySetter(args, (value?: Admit<NonNullable<T.Expression | T.SequenceExpression>>) =>
+				rebuilt(node, handle, () => buildReturnStatement(value, options))
+			);
+		case 'terminator':
+			return applySetter(args, (spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi) =>
+				rebuilt(node, handle, () => buildReturnStatement(value, { ...options, terminator: spelling }))
+			);
+	}
+	throw new Error(`return_statement has no $with.${setter}`);
+}
+function buildReturnStatement$with$expression(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildReturnStatement$with(receiverOf(this, '$with.expression'), 'expression', args);
+}
+function buildReturnStatement$with$terminator(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildReturnStatement$with(receiverOf(this, '$with.terminator'), 'terminator', args);
 }
 
 export function buildThrowStatement<V extends Admit<T.Expression | T.SequenceExpression>>(
@@ -1715,21 +2211,41 @@ export function buildThrowStatement(
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: value,
+		[OPTIONS]: options,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		expression: (value: Admit<NonNullable<T.Expression | T.SequenceExpression>>) =>
-			rebuilt(node, handle, () => buildThrowStatement(value, options)),
-		terminator: (spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi) =>
-			rebuilt(node, handle, () => buildThrowStatement(value, { ...options, terminator: spelling })),
+		expression: buildThrowStatement$with$expression,
+		terminator: buildThrowStatement$with$terminator,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.ThrowStatement.Bound;
+}
+
+function buildThrowStatement$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const value = node[INPUT] as Admit<NonNullable<T.Expression | T.SequenceExpression>>;
+	const options = node[OPTIONS] as T.ThrowStatement.Options;
+	switch (setter) {
+		case 'expression':
+			return applySetter(args, (value: Admit<NonNullable<T.Expression | T.SequenceExpression>>) =>
+				rebuilt(node, handle, () => buildThrowStatement(value, options))
+			);
+		case 'terminator':
+			return applySetter(args, (spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi) =>
+				rebuilt(node, handle, () => buildThrowStatement(value, { ...options, terminator: spelling }))
+			);
+	}
+	throw new Error(`throw_statement has no $with.${setter}`);
+}
+function buildThrowStatement$with$expression(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildThrowStatement$with(receiverOf(this, '$with.expression'), 'expression', args);
+}
+function buildThrowStatement$with$terminator(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildThrowStatement$with(receiverOf(this, '$with.terminator'), 'terminator', args);
 }
 
 export const buildEmptyStatement: TSKindId.EmptyStatement = TSKindId.EmptyStatement;
@@ -1761,21 +2277,35 @@ export function buildLabeledStatement(config: T.LabeledStatement.Config): T.Labe
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		label: (value: Admit<T.StatementIdentifier | T.StatementIdentifier.Types>) =>
-			rebuilt(node, handle, () => buildLabeledStatement({ ...config, label: value })),
-		body: (value: Admit<NonNullable<T.LabeledStatement.Config>['body']>) =>
-			rebuilt(node, handle, () => buildLabeledStatement({ ...config, body: value })),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { label: buildLabeledStatement$with$label, body: buildLabeledStatement$with$body, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.LabeledStatement.Bound;
+}
+
+function buildLabeledStatement$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.LabeledStatement.Config;
+	switch (setter) {
+		case 'label':
+			return applySetter(args, (value: Admit<T.StatementIdentifier | T.StatementIdentifier.Types>) =>
+				rebuilt(node, handle, () => buildLabeledStatement({ ...config, label: value }))
+			);
+		case 'body':
+			return applySetter(args, (value: Admit<NonNullable<T.LabeledStatement.Config>['body']>) =>
+				rebuilt(node, handle, () => buildLabeledStatement({ ...config, body: value }))
+			);
+	}
+	throw new Error(`labeled_statement has no $with.${setter}`);
+}
+function buildLabeledStatement$with$label(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildLabeledStatement$with(receiverOf(this, '$with.label'), 'label', args);
+}
+function buildLabeledStatement$with$body(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildLabeledStatement$with(receiverOf(this, '$with.body'), 'body', args);
 }
 
 export function buildSwitchBody(): T.EmptySwitchBody;
@@ -1799,20 +2329,26 @@ export function buildSwitchBody(...children: Admit<(T.SwitchCase | T.SwitchDefau
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		cases: (...vs: Admit<T.SwitchCase | T.SwitchDefault>[]) =>
-			rebuilt(node, handle, () => buildSwitchBody(...restItems('cases', vs))),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		inner: (...items: unknown[]) => triviaInner(node, handle, items),
-		[RECEIVER]: node
-	};
+	node.$with = { cases: buildSwitchBody$with$cases, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, inner: objectInner, [RECEIVER]: node };
 	return node as unknown as T.SwitchBody.Bound;
+}
+
+function buildSwitchBody$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	switch (setter) {
+		case 'cases':
+			return applySetter(args, (...vs: Admit<T.SwitchCase | T.SwitchDefault>[]) =>
+				rebuilt(node, handle, () => buildSwitchBody(...restItems('cases', vs)))
+			);
+	}
+	throw new Error(`switch_body has no $with.${setter}`);
+}
+function buildSwitchBody$with$cases(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildSwitchBody$with(receiverOf(this, '$with.cases'), 'cases', args);
 }
 
 export function buildSwitchCase<
@@ -1844,21 +2380,35 @@ export function buildSwitchCase(config: T.SwitchCase.Config): T.SwitchCase.Bound
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		value: (value: Admit<NonNullable<T.SwitchCase.Config>['value']>) =>
-			rebuilt(node, handle, () => buildSwitchCase({ ...config, value: value })),
-		bodies: (...values: Admit<NonNullable<NonNullable<T.SwitchCase.Config>['bodies']>[number][]>) =>
-			rebuilt(node, handle, () => buildSwitchCase({ ...config, bodies: restItems('bodies', values) })),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { value: buildSwitchCase$with$value, bodies: buildSwitchCase$with$bodies, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.SwitchCase.Bound;
+}
+
+function buildSwitchCase$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.SwitchCase.Config;
+	switch (setter) {
+		case 'value':
+			return applySetter(args, (value: Admit<NonNullable<T.SwitchCase.Config>['value']>) =>
+				rebuilt(node, handle, () => buildSwitchCase({ ...config, value: value }))
+			);
+		case 'bodies':
+			return applySetter(args, (...values: Admit<NonNullable<NonNullable<T.SwitchCase.Config>['bodies']>[number][]>) =>
+				rebuilt(node, handle, () => buildSwitchCase({ ...config, bodies: restItems('bodies', values) }))
+			);
+	}
+	throw new Error(`switch_case has no $with.${setter}`);
+}
+function buildSwitchCase$with$value(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildSwitchCase$with(receiverOf(this, '$with.value'), 'value', args);
+}
+function buildSwitchCase$with$bodies(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildSwitchCase$with(receiverOf(this, '$with.bodies'), 'bodies', args);
 }
 
 export function buildSwitchDefault<A extends Admit<T.Statement[]>>(
@@ -1881,19 +2431,26 @@ export function buildSwitchDefault(...children: Admit<T.Statement[]>): T.SwitchD
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		bodies: (...vs: Admit<T.Statement>[]) =>
-			rebuilt(node, handle, () => buildSwitchDefault(...restItems('bodies', vs))),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { bodies: buildSwitchDefault$with$bodies, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.SwitchDefault.Bound;
+}
+
+function buildSwitchDefault$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	switch (setter) {
+		case 'bodies':
+			return applySetter(args, (...vs: Admit<T.Statement>[]) =>
+				rebuilt(node, handle, () => buildSwitchDefault(...restItems('bodies', vs)))
+			);
+	}
+	throw new Error(`switch_default has no $with.${setter}`);
+}
+function buildSwitchDefault$with$bodies(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildSwitchDefault$with(receiverOf(this, '$with.bodies'), 'bodies', args);
 }
 
 export function buildCatchClause<
@@ -1906,7 +2463,6 @@ export function buildCatchClause(config: Partial<T.CatchClause.Config> = {}): T.
 	currentHandle()?.admit(TSKindId.CatchClause, [config]);
 	const _catch_clause_group = config.catchClauseGroup;
 	const _body = orDefault(config.body, () => buildStatementBlock());
-	const readGroup_catchClauseGroup = () => _catch_clause_group;
 	const handle = currentHandle();
 	if (handle !== undefined)
 		admitChildren(handle, 'catch_clause', { catchClauseGroup: _catch_clause_group, body: _body });
@@ -1918,68 +2474,97 @@ export function buildCatchClause(config: Partial<T.CatchClause.Config> = {}): T.
 		$with: undefined as unknown as object,
 		catchClauseGroup: () => hydrateStoredSlot(node, '_catch_clause_group'),
 		body: () => hydrateStoredSlot(node, '_body'),
-		parameter:
-			_catch_clause_group === undefined
-				? undefined
-				: () => groupField(readGroup_catchClauseGroup.call(node), 'parameter'),
-		type:
-			_catch_clause_group === undefined ? undefined : () => groupField(readGroup_catchClauseGroup.call(node), 'type'),
+		parameter: _catch_clause_group === undefined ? undefined : () => groupField(_catch_clause_group, 'parameter'),
+		type: _catch_clause_group === undefined ? undefined : () => groupField(_catch_clause_group, 'type'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		catchClauseGroup: (value?: Admit<T.CatchClauseGroup>) =>
-			rebuilt(node, handle, () => buildCatchClause({ ...config, catchClauseGroup: value })),
-		body: (value: Admit<T.StatementBlock>) => rebuilt(node, handle, () => buildCatchClause({ ...config, body: value })),
-		parameter: (...args: unknown[]) =>
-			rebuilt(node, handle, () =>
-				seatWith(
-					{
-						slot: 'catchClauseGroup',
-						stored: '_catch_clause_group',
-						make: buildCatchClauseGroup,
-						keys: [
-							{ name: 'parameter', rest: false, required: true },
-							{ name: 'type', rest: false }
-						]
-					},
-					'parameter',
-					args,
-					(value?: Admit<T.CatchClauseGroup>) => buildCatchClause({ ...config, catchClauseGroup: value }),
-					() => readGroup_catchClauseGroup.call(node)
-				)
-			),
-		type: (...args: unknown[]) =>
-			rebuilt(node, handle, () =>
-				seatWith(
-					{
-						slot: 'catchClauseGroup',
-						stored: '_catch_clause_group',
-						make: buildCatchClauseGroup,
-						keys: [
-							{ name: 'parameter', rest: false, required: true },
-							{ name: 'type', rest: false }
-						]
-					},
-					'type',
-					args,
-					(value?: Admit<T.CatchClauseGroup>) => buildCatchClause({ ...config, catchClauseGroup: value }),
-					() => readGroup_catchClauseGroup.call(node)
-				)
-			),
+		catchClauseGroup: buildCatchClause$with$catchClauseGroup,
+		body: buildCatchClause$with$body,
+		parameter: buildCatchClause$with$parameter,
+		type: buildCatchClause$with$type,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.CatchClause.Bound;
+}
+
+function buildCatchClause$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.CatchClause.Config;
+	const readGroup_catchClauseGroup = () =>
+		(node as unknown as Readonly<Record<string, object | undefined>>)['_catch_clause_group'];
+	switch (setter) {
+		case 'catchClauseGroup':
+			return applySetter(args, (value?: Admit<T.CatchClauseGroup>) =>
+				rebuilt(node, handle, () => buildCatchClause({ ...config, catchClauseGroup: value }))
+			);
+		case 'body':
+			return applySetter(args, (value: Admit<T.StatementBlock>) =>
+				rebuilt(node, handle, () => buildCatchClause({ ...config, body: value }))
+			);
+		case 'parameter':
+			return applySetter(args, (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					seatWith(
+						{
+							slot: 'catchClauseGroup',
+							stored: '_catch_clause_group',
+							make: buildCatchClauseGroup,
+							keys: [
+								{ name: 'parameter', rest: false, required: true },
+								{ name: 'type', rest: false }
+							]
+						},
+						'parameter',
+						args,
+						(value?: Admit<T.CatchClauseGroup>) => buildCatchClause({ ...config, catchClauseGroup: value }),
+						() => readGroup_catchClauseGroup.call(node)
+					)
+				)
+			);
+		case 'type':
+			return applySetter(args, (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					seatWith(
+						{
+							slot: 'catchClauseGroup',
+							stored: '_catch_clause_group',
+							make: buildCatchClauseGroup,
+							keys: [
+								{ name: 'parameter', rest: false, required: true },
+								{ name: 'type', rest: false }
+							]
+						},
+						'type',
+						args,
+						(value?: Admit<T.CatchClauseGroup>) => buildCatchClause({ ...config, catchClauseGroup: value }),
+						() => readGroup_catchClauseGroup.call(node)
+					)
+				)
+			);
+	}
+	throw new Error(`catch_clause has no $with.${setter}`);
+}
+function buildCatchClause$with$catchClauseGroup(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildCatchClause$with(receiverOf(this, '$with.catchClauseGroup'), 'catchClauseGroup', args);
+}
+function buildCatchClause$with$body(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildCatchClause$with(receiverOf(this, '$with.body'), 'body', args);
+}
+function buildCatchClause$with$parameter(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildCatchClause$with(receiverOf(this, '$with.parameter'), 'parameter', args);
+}
+function buildCatchClause$with$type(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildCatchClause$with(receiverOf(this, '$with.type'), 'type', args);
 }
 
 export function buildFinallyClause<V extends Admit<T.StatementBlock>>(
@@ -2026,18 +2611,26 @@ function _buildFinallyClause(value: Admit<T.StatementBlock>): T.FinallyClause.Bo
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		body: (value: Admit<T.StatementBlock>) => rebuilt(node, handle, () => _buildFinallyClause(value)),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { body: buildFinallyClause$with$body, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.FinallyClause.Bound;
+}
+
+function buildFinallyClause$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	switch (setter) {
+		case 'body':
+			return applySetter(args, (value: Admit<T.StatementBlock>) =>
+				rebuilt(node, handle, () => _buildFinallyClause(value))
+			);
+	}
+	throw new Error(`finally_clause has no $with.${setter}`);
+}
+function buildFinallyClause$with$body(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildFinallyClause$with(receiverOf(this, '$with.body'), 'body', args);
 }
 
 export function buildYieldExpression<V extends Admit<T.YieldExpressionDelegate | T.Expression>>(
@@ -2064,19 +2657,26 @@ export function buildYieldExpression(value?: Admit<T.YieldExpressionDelegate | T
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		expression: (value?: Admit<NonNullable<T.YieldExpressionDelegate | T.Expression>>) =>
-			rebuilt(node, handle, () => buildYieldExpression(value)),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { expression: buildYieldExpression$with$expression, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.YieldExpression.Bound;
+}
+
+function buildYieldExpression$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	switch (setter) {
+		case 'expression':
+			return applySetter(args, (value?: Admit<NonNullable<T.YieldExpressionDelegate | T.Expression>>) =>
+				rebuilt(node, handle, () => buildYieldExpression(value))
+			);
+	}
+	throw new Error(`yield_expression has no $with.${setter}`);
+}
+function buildYieldExpression$with$expression(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildYieldExpression$with(receiverOf(this, '$with.expression'), 'expression', args);
 }
 
 export function buildObject(): T.EmptyObject;
@@ -2120,24 +2720,32 @@ export function buildObject(
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		properties: (
-			...vs: Admit<
-				| (T.Pair | T.SpreadElement | T.MethodDefinition | T.ShorthandPropertyIdentifier)
-				| T.ShorthandPropertyIdentifier.Types
-			>[]
-		) => rebuilt(node, handle, () => buildObject(...restItems('properties', vs))),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		inner: (...items: unknown[]) => triviaInner(node, handle, items),
-		[RECEIVER]: node
-	};
+	node.$with = { properties: buildObject$with$properties, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, inner: objectInner, [RECEIVER]: node };
 	return node as unknown as T.Object.Bound;
+}
+
+function buildObject$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	switch (setter) {
+		case 'properties':
+			return applySetter(
+				args,
+				(
+					...vs: Admit<
+						| (T.Pair | T.SpreadElement | T.MethodDefinition | T.ShorthandPropertyIdentifier)
+						| T.ShorthandPropertyIdentifier.Types
+					>[]
+				) => rebuilt(node, handle, () => buildObject(...restItems('properties', vs)))
+			);
+	}
+	throw new Error(`object has no $with.${setter}`);
+}
+function buildObject$with$properties(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildObject$with(receiverOf(this, '$with.properties'), 'properties', args);
 }
 
 export function buildObjectPattern(): T.EmptyObjectPattern;
@@ -2181,24 +2789,32 @@ export function buildObjectPattern(
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		properties: (
-			...vs: Admit<
-				| (T.PairPattern | T.RestPattern | T.ObjectAssignmentPattern | T.ShorthandPropertyIdentifierPattern)
-				| T.ShorthandPropertyIdentifierPattern.Types
-			>[]
-		) => rebuilt(node, handle, () => buildObjectPattern(...restItems('properties', vs))),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		inner: (...items: unknown[]) => triviaInner(node, handle, items),
-		[RECEIVER]: node
-	};
+	node.$with = { properties: buildObjectPattern$with$properties, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, inner: objectInner, [RECEIVER]: node };
 	return node as unknown as T.ObjectPattern.Bound;
+}
+
+function buildObjectPattern$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	switch (setter) {
+		case 'properties':
+			return applySetter(
+				args,
+				(
+					...vs: Admit<
+						| (T.PairPattern | T.RestPattern | T.ObjectAssignmentPattern | T.ShorthandPropertyIdentifierPattern)
+						| T.ShorthandPropertyIdentifierPattern.Types
+					>[]
+				) => rebuilt(node, handle, () => buildObjectPattern(...restItems('properties', vs)))
+			);
+	}
+	throw new Error(`object_pattern has no $with.${setter}`);
+}
+function buildObjectPattern$with$properties(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildObjectPattern$with(receiverOf(this, '$with.properties'), 'properties', args);
 }
 
 export function buildAssignmentPattern<
@@ -2230,20 +2846,35 @@ export function buildAssignmentPattern(config: T.AssignmentPattern.Config): T.As
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		left: (value: Admit<T.Pattern>) => rebuilt(node, handle, () => buildAssignmentPattern({ ...config, left: value })),
-		right: (value: Admit<NonNullable<T.AssignmentPattern.Config>['right']>) =>
-			rebuilt(node, handle, () => buildAssignmentPattern({ ...config, right: value })),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { left: buildAssignmentPattern$with$left, right: buildAssignmentPattern$with$right, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.AssignmentPattern.Bound;
+}
+
+function buildAssignmentPattern$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.AssignmentPattern.Config;
+	switch (setter) {
+		case 'left':
+			return applySetter(args, (value: Admit<T.Pattern>) =>
+				rebuilt(node, handle, () => buildAssignmentPattern({ ...config, left: value }))
+			);
+		case 'right':
+			return applySetter(args, (value: Admit<NonNullable<T.AssignmentPattern.Config>['right']>) =>
+				rebuilt(node, handle, () => buildAssignmentPattern({ ...config, right: value }))
+			);
+	}
+	throw new Error(`assignment_pattern has no $with.${setter}`);
+}
+function buildAssignmentPattern$with$left(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildAssignmentPattern$with(receiverOf(this, '$with.left'), 'left', args);
+}
+function buildAssignmentPattern$with$right(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildAssignmentPattern$with(receiverOf(this, '$with.right'), 'right', args);
 }
 
 export function buildObjectAssignmentPattern<
@@ -2287,27 +2918,47 @@ export function buildObjectAssignmentPattern(
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		left: (
-			value: Admit<
-				| T.ShorthandPropertyIdentifierPattern
-				| T.ObjectPattern
-				| T.ArrayPattern
-				| T.ShorthandPropertyIdentifierPattern.Types
-			>
-		) => rebuilt(node, handle, () => buildObjectAssignmentPattern({ ...config, left: value })),
-		right: (value: Admit<NonNullable<T.ObjectAssignmentPattern.Config>['right']>) =>
-			rebuilt(node, handle, () => buildObjectAssignmentPattern({ ...config, right: value })),
+		left: buildObjectAssignmentPattern$with$left,
+		right: buildObjectAssignmentPattern$with$right,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.ObjectAssignmentPattern.Bound;
+}
+
+function buildObjectAssignmentPattern$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.ObjectAssignmentPattern.Config;
+	switch (setter) {
+		case 'left':
+			return applySetter(
+				args,
+				(
+					value: Admit<
+						| T.ShorthandPropertyIdentifierPattern
+						| T.ObjectPattern
+						| T.ArrayPattern
+						| T.ShorthandPropertyIdentifierPattern.Types
+					>
+				) => rebuilt(node, handle, () => buildObjectAssignmentPattern({ ...config, left: value }))
+			);
+		case 'right':
+			return applySetter(args, (value: Admit<NonNullable<T.ObjectAssignmentPattern.Config>['right']>) =>
+				rebuilt(node, handle, () => buildObjectAssignmentPattern({ ...config, right: value }))
+			);
+	}
+	throw new Error(`object_assignment_pattern has no $with.${setter}`);
+}
+function buildObjectAssignmentPattern$with$left(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildObjectAssignmentPattern$with(receiverOf(this, '$with.left'), 'left', args);
+}
+function buildObjectAssignmentPattern$with$right(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildObjectAssignmentPattern$with(receiverOf(this, '$with.right'), 'right', args);
 }
 
 export function buildArray(): T.EmptyArray;
@@ -2336,20 +2987,26 @@ export function buildArray(...children: Admit<(T.Expression | T.SpreadElement)[]
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		elements: (...vs: Admit<T.Expression | T.SpreadElement>[]) =>
-			rebuilt(node, handle, () => buildArray(...restItems('elements', vs))),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		inner: (...items: unknown[]) => triviaInner(node, handle, items),
-		[RECEIVER]: node
-	};
+	node.$with = { elements: buildArray$with$elements, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, inner: objectInner, [RECEIVER]: node };
 	return node as unknown as T.Array.Bound;
+}
+
+function buildArray$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	switch (setter) {
+		case 'elements':
+			return applySetter(args, (...vs: Admit<T.Expression | T.SpreadElement>[]) =>
+				rebuilt(node, handle, () => buildArray(...restItems('elements', vs)))
+			);
+	}
+	throw new Error(`array has no $with.${setter}`);
+}
+function buildArray$with$elements(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildArray$with(receiverOf(this, '$with.elements'), 'elements', args);
 }
 
 export function buildArrayPattern(): T.EmptyArrayPattern;
@@ -2373,20 +3030,26 @@ export function buildArrayPattern(...children: Admit<(T.Pattern | T.AssignmentPa
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		elements: (...vs: Admit<T.Pattern | T.AssignmentPattern>[]) =>
-			rebuilt(node, handle, () => buildArrayPattern(...restItems('elements', vs))),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		inner: (...items: unknown[]) => triviaInner(node, handle, items),
-		[RECEIVER]: node
-	};
+	node.$with = { elements: buildArrayPattern$with$elements, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, inner: objectInner, [RECEIVER]: node };
 	return node as unknown as T.ArrayPattern.Bound;
+}
+
+function buildArrayPattern$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	switch (setter) {
+		case 'elements':
+			return applySetter(args, (...vs: Admit<T.Pattern | T.AssignmentPattern>[]) =>
+				rebuilt(node, handle, () => buildArrayPattern(...restItems('elements', vs)))
+			);
+	}
+	throw new Error(`array_pattern has no $with.${setter}`);
+}
+function buildArrayPattern$with$elements(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildArrayPattern$with(receiverOf(this, '$with.elements'), 'elements', args);
 }
 
 export function buildNestedIdentifier<
@@ -2423,21 +3086,39 @@ export function buildNestedIdentifier(config: T.NestedIdentifier.Config): T.Nest
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		qualifier: (value: Admit<T.Identifier | T.NestedIdentifier>) =>
-			rebuilt(node, handle, () => buildNestedIdentifier({ ...config, qualifier: value })),
-		name: (value: Admit<T.PropertyIdentifier | T.PropertyIdentifier.Types>) =>
-			rebuilt(node, handle, () => buildNestedIdentifier({ ...config, name: value })),
+		qualifier: buildNestedIdentifier$with$qualifier,
+		name: buildNestedIdentifier$with$name,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.NestedIdentifier.Bound;
+}
+
+function buildNestedIdentifier$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.NestedIdentifier.Config;
+	switch (setter) {
+		case 'qualifier':
+			return applySetter(args, (value: Admit<T.Identifier | T.NestedIdentifier>) =>
+				rebuilt(node, handle, () => buildNestedIdentifier({ ...config, qualifier: value }))
+			);
+		case 'name':
+			return applySetter(args, (value: Admit<T.PropertyIdentifier | T.PropertyIdentifier.Types>) =>
+				rebuilt(node, handle, () => buildNestedIdentifier({ ...config, name: value }))
+			);
+	}
+	throw new Error(`nested_identifier has no $with.${setter}`);
+}
+function buildNestedIdentifier$with$qualifier(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildNestedIdentifier$with(receiverOf(this, '$with.qualifier'), 'qualifier', args);
+}
+function buildNestedIdentifier$with$name(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildNestedIdentifier$with(receiverOf(this, '$with.name'), 'name', args);
 }
 
 export function buildClass<
@@ -2497,32 +3178,69 @@ export function buildClass(config: Partial<T.Class.Config> = {}): T.Class.Bound 
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		decorators: (...values: Admit<T.Decorator[]>) =>
-			rebuilt(node, handle, () => buildClass({ ...config, decorators: restItems('decorators', values) })),
-		name: (value?: Admit<T.TypeIdentifier | T.TypeIdentifier.Types>) =>
-			rebuilt(node, handle, () => buildClass({ ...config, name: value })),
-		typeParameters: (...args: unknown[]) =>
-			rebuilt(node, handle, () =>
-				listSlotWith(
-					args,
-					{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
-					(value?: Admit<T.TypeParameters>) => buildClass({ ...config, typeParameters: value })
-				)
-			),
-		heritage: (value?: Admit<T.ClassHeritage>) =>
-			rebuilt(node, handle, () => buildClass({ ...config, heritage: value })),
-		body: (value: Admit<T.ClassBody>) => rebuilt(node, handle, () => buildClass({ ...config, body: value })),
+		decorators: buildClass$with$decorators,
+		name: buildClass$with$name,
+		typeParameters: buildClass$with$typeParameters,
+		heritage: buildClass$with$heritage,
+		body: buildClass$with$body,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.Class.Bound;
+}
+
+function buildClass$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.Class.Config;
+	switch (setter) {
+		case 'decorators':
+			return applySetter(args, (...values: Admit<T.Decorator[]>) =>
+				rebuilt(node, handle, () => buildClass({ ...config, decorators: restItems('decorators', values) }))
+			);
+		case 'name':
+			return applySetter(args, (value?: Admit<T.TypeIdentifier | T.TypeIdentifier.Types>) =>
+				rebuilt(node, handle, () => buildClass({ ...config, name: value }))
+			);
+		case 'typeParameters':
+			return applySetter(args, (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
+						(value?: Admit<T.TypeParameters>) => buildClass({ ...config, typeParameters: value })
+					)
+				)
+			);
+		case 'heritage':
+			return applySetter(args, (value?: Admit<T.ClassHeritage>) =>
+				rebuilt(node, handle, () => buildClass({ ...config, heritage: value }))
+			);
+		case 'body':
+			return applySetter(args, (value: Admit<T.ClassBody>) =>
+				rebuilt(node, handle, () => buildClass({ ...config, body: value }))
+			);
+	}
+	throw new Error(`class has no $with.${setter}`);
+}
+function buildClass$with$decorators(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildClass$with(receiverOf(this, '$with.decorators'), 'decorators', args);
+}
+function buildClass$with$name(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildClass$with(receiverOf(this, '$with.name'), 'name', args);
+}
+function buildClass$with$typeParameters(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildClass$with(receiverOf(this, '$with.typeParameters'), 'typeParameters', args);
+}
+function buildClass$with$heritage(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildClass$with(receiverOf(this, '$with.heritage'), 'heritage', args);
+}
+function buildClass$with$body(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildClass$with(receiverOf(this, '$with.body'), 'body', args);
 }
 
 export function buildClassDeclaration<
@@ -2593,37 +3311,81 @@ export function buildClassDeclaration(
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
+		[OPTIONS]: options,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		decorators: (...values: Admit<T.Decorator[]>) =>
-			rebuilt(node, handle, () =>
-				buildClassDeclaration({ ...config, decorators: restItems('decorators', values) }, options)
-			),
-		name: (value: Admit<T.TypeIdentifier | T.TypeIdentifier.Types>) =>
-			rebuilt(node, handle, () => buildClassDeclaration({ ...config, name: value }, options)),
-		typeParameters: (...args: unknown[]) =>
-			rebuilt(node, handle, () =>
-				listSlotWith(
-					args,
-					{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
-					(value?: Admit<T.TypeParameters>) => buildClassDeclaration({ ...config, typeParameters: value }, options)
-				)
-			),
-		heritage: (value?: Admit<T.ClassHeritage>) =>
-			rebuilt(node, handle, () => buildClassDeclaration({ ...config, heritage: value }, options)),
-		body: (value: Admit<T.ClassBody>) =>
-			rebuilt(node, handle, () => buildClassDeclaration({ ...config, body: value }, options)),
-		terminator: (spelling: TSKindId.AutomaticSemicolon | null) =>
-			rebuilt(node, handle, () => buildClassDeclaration(config, { ...options, terminator: spelling })),
+		decorators: buildClassDeclaration$with$decorators,
+		name: buildClassDeclaration$with$name,
+		typeParameters: buildClassDeclaration$with$typeParameters,
+		heritage: buildClassDeclaration$with$heritage,
+		body: buildClassDeclaration$with$body,
+		terminator: buildClassDeclaration$with$terminator,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.ClassDeclaration.Bound;
+}
+
+function buildClassDeclaration$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.ClassDeclaration.Config;
+	const options = node[OPTIONS] as T.ClassDeclaration.Options;
+	switch (setter) {
+		case 'decorators':
+			return applySetter(args, (...values: Admit<T.Decorator[]>) =>
+				rebuilt(node, handle, () =>
+					buildClassDeclaration({ ...config, decorators: restItems('decorators', values) }, options)
+				)
+			);
+		case 'name':
+			return applySetter(args, (value: Admit<T.TypeIdentifier | T.TypeIdentifier.Types>) =>
+				rebuilt(node, handle, () => buildClassDeclaration({ ...config, name: value }, options))
+			);
+		case 'typeParameters':
+			return applySetter(args, (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
+						(value?: Admit<T.TypeParameters>) => buildClassDeclaration({ ...config, typeParameters: value }, options)
+					)
+				)
+			);
+		case 'heritage':
+			return applySetter(args, (value?: Admit<T.ClassHeritage>) =>
+				rebuilt(node, handle, () => buildClassDeclaration({ ...config, heritage: value }, options))
+			);
+		case 'body':
+			return applySetter(args, (value: Admit<T.ClassBody>) =>
+				rebuilt(node, handle, () => buildClassDeclaration({ ...config, body: value }, options))
+			);
+		case 'terminator':
+			return applySetter(args, (spelling: TSKindId.AutomaticSemicolon | null) =>
+				rebuilt(node, handle, () => buildClassDeclaration(config, { ...options, terminator: spelling }))
+			);
+	}
+	throw new Error(`class_declaration has no $with.${setter}`);
+}
+function buildClassDeclaration$with$decorators(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildClassDeclaration$with(receiverOf(this, '$with.decorators'), 'decorators', args);
+}
+function buildClassDeclaration$with$name(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildClassDeclaration$with(receiverOf(this, '$with.name'), 'name', args);
+}
+function buildClassDeclaration$with$typeParameters(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildClassDeclaration$with(receiverOf(this, '$with.typeParameters'), 'typeParameters', args);
+}
+function buildClassDeclaration$with$heritage(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildClassDeclaration$with(receiverOf(this, '$with.heritage'), 'heritage', args);
+}
+function buildClassDeclaration$with$body(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildClassDeclaration$with(receiverOf(this, '$with.body'), 'body', args);
+}
+function buildClassDeclaration$with$terminator(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildClassDeclaration$with(receiverOf(this, '$with.terminator'), 'terminator', args);
 }
 
 export function buildClassHeritage<V extends Admit<T.ClassHeritageExtendsClause | T.ImplementsClause>>(
@@ -2647,19 +3409,26 @@ export function buildClassHeritage(
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		content: (value: Admit<T.ClassHeritageExtendsClause | T.ImplementsClause>) =>
-			rebuilt(node, handle, () => buildClassHeritage(value)),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { content: buildClassHeritage$with$content, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.ClassHeritage.Bound;
+}
+
+function buildClassHeritage$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	switch (setter) {
+		case 'content':
+			return applySetter(args, (value: Admit<T.ClassHeritageExtendsClause | T.ImplementsClause>) =>
+				rebuilt(node, handle, () => buildClassHeritage(value))
+			);
+	}
+	throw new Error(`class_heritage has no $with.${setter}`);
+}
+function buildClassHeritage$with$content(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildClassHeritage$with(receiverOf(this, '$with.content'), 'content', args);
 }
 
 export function buildFunctionExpression<
@@ -2725,35 +3494,77 @@ export function buildFunctionExpression(config: Partial<T.FunctionExpression.Con
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		async: (value?: Admit<NonNullable<T.FunctionExpression.Config>['async']>) =>
-			rebuilt(node, handle, () => buildFunctionExpression({ ...config, async: value })),
-		name: (value?: Admit<T.Identifier>) =>
-			rebuilt(node, handle, () => buildFunctionExpression({ ...config, name: value })),
-		typeParameters: (...args: unknown[]) =>
-			rebuilt(node, handle, () =>
-				listSlotWith(
-					args,
-					{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
-					(value?: Admit<T.TypeParameters>) => buildFunctionExpression({ ...config, typeParameters: value })
-				)
-			),
-		parameters: (value: Admit<T.FormalParameters>) =>
-			rebuilt(node, handle, () => buildFunctionExpression({ ...config, parameters: value })),
-		returnType: (value?: Admit<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation>) =>
-			rebuilt(node, handle, () => buildFunctionExpression({ ...config, returnType: value })),
-		body: (value: Admit<T.StatementBlock>) =>
-			rebuilt(node, handle, () => buildFunctionExpression({ ...config, body: value })),
+		async: buildFunctionExpression$with$async,
+		name: buildFunctionExpression$with$name,
+		typeParameters: buildFunctionExpression$with$typeParameters,
+		parameters: buildFunctionExpression$with$parameters,
+		returnType: buildFunctionExpression$with$returnType,
+		body: buildFunctionExpression$with$body,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.FunctionExpression.Bound;
+}
+
+function buildFunctionExpression$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.FunctionExpression.Config;
+	switch (setter) {
+		case 'async':
+			return applySetter(args, (value?: Admit<NonNullable<T.FunctionExpression.Config>['async']>) =>
+				rebuilt(node, handle, () => buildFunctionExpression({ ...config, async: value }))
+			);
+		case 'name':
+			return applySetter(args, (value?: Admit<T.Identifier>) =>
+				rebuilt(node, handle, () => buildFunctionExpression({ ...config, name: value }))
+			);
+		case 'typeParameters':
+			return applySetter(args, (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
+						(value?: Admit<T.TypeParameters>) => buildFunctionExpression({ ...config, typeParameters: value })
+					)
+				)
+			);
+		case 'parameters':
+			return applySetter(args, (value: Admit<T.FormalParameters>) =>
+				rebuilt(node, handle, () => buildFunctionExpression({ ...config, parameters: value }))
+			);
+		case 'returnType':
+			return applySetter(args, (value?: Admit<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation>) =>
+				rebuilt(node, handle, () => buildFunctionExpression({ ...config, returnType: value }))
+			);
+		case 'body':
+			return applySetter(args, (value: Admit<T.StatementBlock>) =>
+				rebuilt(node, handle, () => buildFunctionExpression({ ...config, body: value }))
+			);
+	}
+	throw new Error(`function_expression has no $with.${setter}`);
+}
+function buildFunctionExpression$with$async(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildFunctionExpression$with(receiverOf(this, '$with.async'), 'async', args);
+}
+function buildFunctionExpression$with$name(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildFunctionExpression$with(receiverOf(this, '$with.name'), 'name', args);
+}
+function buildFunctionExpression$with$typeParameters(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildFunctionExpression$with(receiverOf(this, '$with.typeParameters'), 'typeParameters', args);
+}
+function buildFunctionExpression$with$parameters(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildFunctionExpression$with(receiverOf(this, '$with.parameters'), 'parameters', args);
+}
+function buildFunctionExpression$with$returnType(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildFunctionExpression$with(receiverOf(this, '$with.returnType'), 'returnType', args);
+}
+function buildFunctionExpression$with$body(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildFunctionExpression$with(receiverOf(this, '$with.body'), 'body', args);
 }
 
 export function buildFunctionDeclaration<
@@ -2830,37 +3641,87 @@ export function buildFunctionDeclaration(
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
+		[OPTIONS]: options,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		async: (value?: Admit<NonNullable<T.FunctionDeclaration.Config>['async']>) =>
-			rebuilt(node, handle, () => buildFunctionDeclaration({ ...config, async: value }, options)),
-		name: (value: Admit<T.Identifier>) =>
-			rebuilt(node, handle, () => buildFunctionDeclaration({ ...config, name: value }, options)),
-		typeParameters: (...args: unknown[]) =>
-			rebuilt(node, handle, () =>
-				listSlotWith(
-					args,
-					{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
-					(value?: Admit<T.TypeParameters>) => buildFunctionDeclaration({ ...config, typeParameters: value }, options)
-				)
-			),
-		parameters: (value: Admit<T.FormalParameters>) =>
-			rebuilt(node, handle, () => buildFunctionDeclaration({ ...config, parameters: value }, options)),
-		returnType: (value?: Admit<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation>) =>
-			rebuilt(node, handle, () => buildFunctionDeclaration({ ...config, returnType: value }, options)),
-		body: (value: Admit<T.StatementBlock>) =>
-			rebuilt(node, handle, () => buildFunctionDeclaration({ ...config, body: value }, options)),
-		terminator: (spelling: TSKindId.AutomaticSemicolon | null) =>
-			rebuilt(node, handle, () => buildFunctionDeclaration(config, { ...options, terminator: spelling })),
+		async: buildFunctionDeclaration$with$async,
+		name: buildFunctionDeclaration$with$name,
+		typeParameters: buildFunctionDeclaration$with$typeParameters,
+		parameters: buildFunctionDeclaration$with$parameters,
+		returnType: buildFunctionDeclaration$with$returnType,
+		body: buildFunctionDeclaration$with$body,
+		terminator: buildFunctionDeclaration$with$terminator,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.FunctionDeclaration.Bound;
+}
+
+function buildFunctionDeclaration$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.FunctionDeclaration.Config;
+	const options = node[OPTIONS] as T.FunctionDeclaration.Options;
+	switch (setter) {
+		case 'async':
+			return applySetter(args, (value?: Admit<NonNullable<T.FunctionDeclaration.Config>['async']>) =>
+				rebuilt(node, handle, () => buildFunctionDeclaration({ ...config, async: value }, options))
+			);
+		case 'name':
+			return applySetter(args, (value: Admit<T.Identifier>) =>
+				rebuilt(node, handle, () => buildFunctionDeclaration({ ...config, name: value }, options))
+			);
+		case 'typeParameters':
+			return applySetter(args, (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
+						(value?: Admit<T.TypeParameters>) => buildFunctionDeclaration({ ...config, typeParameters: value }, options)
+					)
+				)
+			);
+		case 'parameters':
+			return applySetter(args, (value: Admit<T.FormalParameters>) =>
+				rebuilt(node, handle, () => buildFunctionDeclaration({ ...config, parameters: value }, options))
+			);
+		case 'returnType':
+			return applySetter(args, (value?: Admit<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation>) =>
+				rebuilt(node, handle, () => buildFunctionDeclaration({ ...config, returnType: value }, options))
+			);
+		case 'body':
+			return applySetter(args, (value: Admit<T.StatementBlock>) =>
+				rebuilt(node, handle, () => buildFunctionDeclaration({ ...config, body: value }, options))
+			);
+		case 'terminator':
+			return applySetter(args, (spelling: TSKindId.AutomaticSemicolon | null) =>
+				rebuilt(node, handle, () => buildFunctionDeclaration(config, { ...options, terminator: spelling }))
+			);
+	}
+	throw new Error(`function_declaration has no $with.${setter}`);
+}
+function buildFunctionDeclaration$with$async(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildFunctionDeclaration$with(receiverOf(this, '$with.async'), 'async', args);
+}
+function buildFunctionDeclaration$with$name(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildFunctionDeclaration$with(receiverOf(this, '$with.name'), 'name', args);
+}
+function buildFunctionDeclaration$with$typeParameters(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildFunctionDeclaration$with(receiverOf(this, '$with.typeParameters'), 'typeParameters', args);
+}
+function buildFunctionDeclaration$with$parameters(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildFunctionDeclaration$with(receiverOf(this, '$with.parameters'), 'parameters', args);
+}
+function buildFunctionDeclaration$with$returnType(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildFunctionDeclaration$with(receiverOf(this, '$with.returnType'), 'returnType', args);
+}
+function buildFunctionDeclaration$with$body(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildFunctionDeclaration$with(receiverOf(this, '$with.body'), 'body', args);
+}
+function buildFunctionDeclaration$with$terminator(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildFunctionDeclaration$with(receiverOf(this, '$with.terminator'), 'terminator', args);
 }
 
 export function buildGeneratorFunction<
@@ -2926,35 +3787,77 @@ export function buildGeneratorFunction(config: Partial<T.GeneratorFunction.Confi
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		async: (value?: Admit<NonNullable<T.GeneratorFunction.Config>['async']>) =>
-			rebuilt(node, handle, () => buildGeneratorFunction({ ...config, async: value })),
-		name: (value?: Admit<T.Identifier>) =>
-			rebuilt(node, handle, () => buildGeneratorFunction({ ...config, name: value })),
-		typeParameters: (...args: unknown[]) =>
-			rebuilt(node, handle, () =>
-				listSlotWith(
-					args,
-					{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
-					(value?: Admit<T.TypeParameters>) => buildGeneratorFunction({ ...config, typeParameters: value })
-				)
-			),
-		parameters: (value: Admit<T.FormalParameters>) =>
-			rebuilt(node, handle, () => buildGeneratorFunction({ ...config, parameters: value })),
-		returnType: (value?: Admit<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation>) =>
-			rebuilt(node, handle, () => buildGeneratorFunction({ ...config, returnType: value })),
-		body: (value: Admit<T.StatementBlock>) =>
-			rebuilt(node, handle, () => buildGeneratorFunction({ ...config, body: value })),
+		async: buildGeneratorFunction$with$async,
+		name: buildGeneratorFunction$with$name,
+		typeParameters: buildGeneratorFunction$with$typeParameters,
+		parameters: buildGeneratorFunction$with$parameters,
+		returnType: buildGeneratorFunction$with$returnType,
+		body: buildGeneratorFunction$with$body,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.GeneratorFunction.Bound;
+}
+
+function buildGeneratorFunction$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.GeneratorFunction.Config;
+	switch (setter) {
+		case 'async':
+			return applySetter(args, (value?: Admit<NonNullable<T.GeneratorFunction.Config>['async']>) =>
+				rebuilt(node, handle, () => buildGeneratorFunction({ ...config, async: value }))
+			);
+		case 'name':
+			return applySetter(args, (value?: Admit<T.Identifier>) =>
+				rebuilt(node, handle, () => buildGeneratorFunction({ ...config, name: value }))
+			);
+		case 'typeParameters':
+			return applySetter(args, (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
+						(value?: Admit<T.TypeParameters>) => buildGeneratorFunction({ ...config, typeParameters: value })
+					)
+				)
+			);
+		case 'parameters':
+			return applySetter(args, (value: Admit<T.FormalParameters>) =>
+				rebuilt(node, handle, () => buildGeneratorFunction({ ...config, parameters: value }))
+			);
+		case 'returnType':
+			return applySetter(args, (value?: Admit<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation>) =>
+				rebuilt(node, handle, () => buildGeneratorFunction({ ...config, returnType: value }))
+			);
+		case 'body':
+			return applySetter(args, (value: Admit<T.StatementBlock>) =>
+				rebuilt(node, handle, () => buildGeneratorFunction({ ...config, body: value }))
+			);
+	}
+	throw new Error(`generator_function has no $with.${setter}`);
+}
+function buildGeneratorFunction$with$async(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildGeneratorFunction$with(receiverOf(this, '$with.async'), 'async', args);
+}
+function buildGeneratorFunction$with$name(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildGeneratorFunction$with(receiverOf(this, '$with.name'), 'name', args);
+}
+function buildGeneratorFunction$with$typeParameters(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildGeneratorFunction$with(receiverOf(this, '$with.typeParameters'), 'typeParameters', args);
+}
+function buildGeneratorFunction$with$parameters(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildGeneratorFunction$with(receiverOf(this, '$with.parameters'), 'parameters', args);
+}
+function buildGeneratorFunction$with$returnType(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildGeneratorFunction$with(receiverOf(this, '$with.returnType'), 'returnType', args);
+}
+function buildGeneratorFunction$with$body(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildGeneratorFunction$with(receiverOf(this, '$with.body'), 'body', args);
 }
 
 export function buildGeneratorFunctionDeclaration<
@@ -3031,38 +3934,88 @@ export function buildGeneratorFunctionDeclaration(
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
+		[OPTIONS]: options,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		async: (value?: Admit<NonNullable<T.GeneratorFunctionDeclaration.Config>['async']>) =>
-			rebuilt(node, handle, () => buildGeneratorFunctionDeclaration({ ...config, async: value }, options)),
-		name: (value: Admit<T.Identifier>) =>
-			rebuilt(node, handle, () => buildGeneratorFunctionDeclaration({ ...config, name: value }, options)),
-		typeParameters: (...args: unknown[]) =>
-			rebuilt(node, handle, () =>
-				listSlotWith(
-					args,
-					{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
-					(value?: Admit<T.TypeParameters>) =>
-						buildGeneratorFunctionDeclaration({ ...config, typeParameters: value }, options)
-				)
-			),
-		parameters: (value: Admit<T.FormalParameters>) =>
-			rebuilt(node, handle, () => buildGeneratorFunctionDeclaration({ ...config, parameters: value }, options)),
-		returnType: (value?: Admit<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation>) =>
-			rebuilt(node, handle, () => buildGeneratorFunctionDeclaration({ ...config, returnType: value }, options)),
-		body: (value: Admit<T.StatementBlock>) =>
-			rebuilt(node, handle, () => buildGeneratorFunctionDeclaration({ ...config, body: value }, options)),
-		terminator: (spelling: TSKindId.AutomaticSemicolon | null) =>
-			rebuilt(node, handle, () => buildGeneratorFunctionDeclaration(config, { ...options, terminator: spelling })),
+		async: buildGeneratorFunctionDeclaration$with$async,
+		name: buildGeneratorFunctionDeclaration$with$name,
+		typeParameters: buildGeneratorFunctionDeclaration$with$typeParameters,
+		parameters: buildGeneratorFunctionDeclaration$with$parameters,
+		returnType: buildGeneratorFunctionDeclaration$with$returnType,
+		body: buildGeneratorFunctionDeclaration$with$body,
+		terminator: buildGeneratorFunctionDeclaration$with$terminator,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.GeneratorFunctionDeclaration.Bound;
+}
+
+function buildGeneratorFunctionDeclaration$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.GeneratorFunctionDeclaration.Config;
+	const options = node[OPTIONS] as T.GeneratorFunctionDeclaration.Options;
+	switch (setter) {
+		case 'async':
+			return applySetter(args, (value?: Admit<NonNullable<T.GeneratorFunctionDeclaration.Config>['async']>) =>
+				rebuilt(node, handle, () => buildGeneratorFunctionDeclaration({ ...config, async: value }, options))
+			);
+		case 'name':
+			return applySetter(args, (value: Admit<T.Identifier>) =>
+				rebuilt(node, handle, () => buildGeneratorFunctionDeclaration({ ...config, name: value }, options))
+			);
+		case 'typeParameters':
+			return applySetter(args, (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
+						(value?: Admit<T.TypeParameters>) =>
+							buildGeneratorFunctionDeclaration({ ...config, typeParameters: value }, options)
+					)
+				)
+			);
+		case 'parameters':
+			return applySetter(args, (value: Admit<T.FormalParameters>) =>
+				rebuilt(node, handle, () => buildGeneratorFunctionDeclaration({ ...config, parameters: value }, options))
+			);
+		case 'returnType':
+			return applySetter(args, (value?: Admit<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation>) =>
+				rebuilt(node, handle, () => buildGeneratorFunctionDeclaration({ ...config, returnType: value }, options))
+			);
+		case 'body':
+			return applySetter(args, (value: Admit<T.StatementBlock>) =>
+				rebuilt(node, handle, () => buildGeneratorFunctionDeclaration({ ...config, body: value }, options))
+			);
+		case 'terminator':
+			return applySetter(args, (spelling: TSKindId.AutomaticSemicolon | null) =>
+				rebuilt(node, handle, () => buildGeneratorFunctionDeclaration(config, { ...options, terminator: spelling }))
+			);
+	}
+	throw new Error(`generator_function_declaration has no $with.${setter}`);
+}
+function buildGeneratorFunctionDeclaration$with$async(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildGeneratorFunctionDeclaration$with(receiverOf(this, '$with.async'), 'async', args);
+}
+function buildGeneratorFunctionDeclaration$with$name(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildGeneratorFunctionDeclaration$with(receiverOf(this, '$with.name'), 'name', args);
+}
+function buildGeneratorFunctionDeclaration$with$typeParameters(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildGeneratorFunctionDeclaration$with(receiverOf(this, '$with.typeParameters'), 'typeParameters', args);
+}
+function buildGeneratorFunctionDeclaration$with$parameters(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildGeneratorFunctionDeclaration$with(receiverOf(this, '$with.parameters'), 'parameters', args);
+}
+function buildGeneratorFunctionDeclaration$with$returnType(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildGeneratorFunctionDeclaration$with(receiverOf(this, '$with.returnType'), 'returnType', args);
+}
+function buildGeneratorFunctionDeclaration$with$body(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildGeneratorFunctionDeclaration$with(receiverOf(this, '$with.body'), 'body', args);
+}
+function buildGeneratorFunctionDeclaration$with$terminator(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildGeneratorFunctionDeclaration$with(receiverOf(this, '$with.terminator'), 'terminator', args);
 }
 
 export function buildArrowFunction<
@@ -3097,23 +4050,47 @@ export function buildArrowFunction(config: T.ArrowFunction.Config): T.ArrowFunct
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		async: (value?: Admit<NonNullable<T.ArrowFunction.Config>['async']>) =>
-			rebuilt(node, handle, () => buildArrowFunction({ ...config, async: value })),
-		content: (value: Admit<T.ArrowFunctionParameter | T.CallSignature>) =>
-			rebuilt(node, handle, () => buildArrowFunction({ ...config, content: value })),
-		body: (value: Admit<NonNullable<T.ArrowFunction.Config>['body']>) =>
-			rebuilt(node, handle, () => buildArrowFunction({ ...config, body: value })),
+		async: buildArrowFunction$with$async,
+		content: buildArrowFunction$with$content,
+		body: buildArrowFunction$with$body,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.ArrowFunction.Bound;
+}
+
+function buildArrowFunction$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.ArrowFunction.Config;
+	switch (setter) {
+		case 'async':
+			return applySetter(args, (value?: Admit<NonNullable<T.ArrowFunction.Config>['async']>) =>
+				rebuilt(node, handle, () => buildArrowFunction({ ...config, async: value }))
+			);
+		case 'content':
+			return applySetter(args, (value: Admit<T.ArrowFunctionParameter | T.CallSignature>) =>
+				rebuilt(node, handle, () => buildArrowFunction({ ...config, content: value }))
+			);
+		case 'body':
+			return applySetter(args, (value: Admit<NonNullable<T.ArrowFunction.Config>['body']>) =>
+				rebuilt(node, handle, () => buildArrowFunction({ ...config, body: value }))
+			);
+	}
+	throw new Error(`arrow_function has no $with.${setter}`);
+}
+function buildArrowFunction$with$async(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildArrowFunction$with(receiverOf(this, '$with.async'), 'async', args);
+}
+function buildArrowFunction$with$content(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildArrowFunction$with(receiverOf(this, '$with.content'), 'content', args);
+}
+function buildArrowFunction$with$body(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildArrowFunction$with(receiverOf(this, '$with.body'), 'body', args);
 }
 
 export const buildOptionalChain: TSKindId.OptionalChain = TSKindId.OptionalChain;
@@ -3161,29 +4138,53 @@ export function buildNewExpression(config: T.NewExpression.Config): T.NewExpress
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		function: (value: Admit<NonNullable<T.NewExpression.Config>['function']>) =>
-			rebuilt(node, handle, () => buildNewExpression({ ...config, function: value })),
-		typeArguments: (...args: unknown[]) =>
-			rebuilt(node, handle, () =>
-				listSlotWith(
-					args,
-					{ kind: TSKindId.TypeArguments as const, optional: true, make: buildTypeArguments },
-					(value?: Admit<T.TypeArguments>) => buildNewExpression({ ...config, typeArguments: value })
-				)
-			),
-		arguments: (value?: Admit<T.Arguments>) =>
-			rebuilt(node, handle, () => buildNewExpression({ ...config, arguments: value })),
+		function: buildNewExpression$with$function,
+		typeArguments: buildNewExpression$with$typeArguments,
+		arguments: buildNewExpression$with$arguments,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.NewExpression.Bound;
+}
+
+function buildNewExpression$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.NewExpression.Config;
+	switch (setter) {
+		case 'function':
+			return applySetter(args, (value: Admit<NonNullable<T.NewExpression.Config>['function']>) =>
+				rebuilt(node, handle, () => buildNewExpression({ ...config, function: value }))
+			);
+		case 'typeArguments':
+			return applySetter(args, (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{ kind: TSKindId.TypeArguments as const, optional: true, make: buildTypeArguments },
+						(value?: Admit<T.TypeArguments>) => buildNewExpression({ ...config, typeArguments: value })
+					)
+				)
+			);
+		case 'arguments':
+			return applySetter(args, (value?: Admit<T.Arguments>) =>
+				rebuilt(node, handle, () => buildNewExpression({ ...config, arguments: value }))
+			);
+	}
+	throw new Error(`new_expression has no $with.${setter}`);
+}
+function buildNewExpression$with$function(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildNewExpression$with(receiverOf(this, '$with.function'), 'function', args);
+}
+function buildNewExpression$with$typeArguments(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildNewExpression$with(receiverOf(this, '$with.typeArguments'), 'typeArguments', args);
+}
+function buildNewExpression$with$arguments(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildNewExpression$with(receiverOf(this, '$with.arguments'), 'arguments', args);
 }
 
 export function buildAwaitExpression<V extends Admit<T.Expression>>(
@@ -3210,18 +4211,26 @@ export function buildAwaitExpression(value: Admit<T.Expression>): T.AwaitExpress
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		expression: (value: Admit<NonNullable<T.Expression>>) => rebuilt(node, handle, () => buildAwaitExpression(value)),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { expression: buildAwaitExpression$with$expression, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.AwaitExpression.Bound;
+}
+
+function buildAwaitExpression$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	switch (setter) {
+		case 'expression':
+			return applySetter(args, (value: Admit<NonNullable<T.Expression>>) =>
+				rebuilt(node, handle, () => buildAwaitExpression(value))
+			);
+	}
+	throw new Error(`await_expression has no $with.${setter}`);
+}
+function buildAwaitExpression$with$expression(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildAwaitExpression$with(receiverOf(this, '$with.expression'), 'expression', args);
 }
 
 export function buildMemberExpression<
@@ -3262,23 +4271,49 @@ export function buildMemberExpression(config: T.MemberExpression.Config): T.Memb
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		object: (value: Admit<NonNullable<T.MemberExpression.Config>['object']>) =>
-			rebuilt(node, handle, () => buildMemberExpression({ ...config, object: value })),
-		operator: (value: Admit<NonNullable<T.MemberExpression.Config>['operator']>) =>
-			rebuilt(node, handle, () => buildMemberExpression({ ...config, operator: value })),
-		property: (value: Admit<T.PrivatePropertyIdentifier | T.PropertyIdentifier | T.PropertyIdentifier.Types>) =>
-			rebuilt(node, handle, () => buildMemberExpression({ ...config, property: value })),
+		object: buildMemberExpression$with$object,
+		operator: buildMemberExpression$with$operator,
+		property: buildMemberExpression$with$property,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.MemberExpression.Bound;
+}
+
+function buildMemberExpression$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.MemberExpression.Config;
+	switch (setter) {
+		case 'object':
+			return applySetter(args, (value: Admit<NonNullable<T.MemberExpression.Config>['object']>) =>
+				rebuilt(node, handle, () => buildMemberExpression({ ...config, object: value }))
+			);
+		case 'operator':
+			return applySetter(args, (value: Admit<NonNullable<T.MemberExpression.Config>['operator']>) =>
+				rebuilt(node, handle, () => buildMemberExpression({ ...config, operator: value }))
+			);
+		case 'property':
+			return applySetter(
+				args,
+				(value: Admit<T.PrivatePropertyIdentifier | T.PropertyIdentifier | T.PropertyIdentifier.Types>) =>
+					rebuilt(node, handle, () => buildMemberExpression({ ...config, property: value }))
+			);
+	}
+	throw new Error(`member_expression has no $with.${setter}`);
+}
+function buildMemberExpression$with$object(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildMemberExpression$with(receiverOf(this, '$with.object'), 'object', args);
+}
+function buildMemberExpression$with$operator(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildMemberExpression$with(receiverOf(this, '$with.operator'), 'operator', args);
+}
+function buildMemberExpression$with$property(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildMemberExpression$with(receiverOf(this, '$with.property'), 'property', args);
 }
 
 export function buildSubscriptExpression<
@@ -3321,23 +4356,47 @@ export function buildSubscriptExpression(config: T.SubscriptExpression.Config): 
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		object: (value: Admit<NonNullable<T.SubscriptExpression.Config>['object']>) =>
-			rebuilt(node, handle, () => buildSubscriptExpression({ ...config, object: value })),
-		optionalChain: (value?: Admit<NonNullable<T.SubscriptExpression.Config>['optionalChain']>) =>
-			rebuilt(node, handle, () => buildSubscriptExpression({ ...config, optionalChain: value })),
-		index: (value: Admit<NonNullable<T.SubscriptExpression.Config>['index']>) =>
-			rebuilt(node, handle, () => buildSubscriptExpression({ ...config, index: value })),
+		object: buildSubscriptExpression$with$object,
+		optionalChain: buildSubscriptExpression$with$optionalChain,
+		index: buildSubscriptExpression$with$index,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.SubscriptExpression.Bound;
+}
+
+function buildSubscriptExpression$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.SubscriptExpression.Config;
+	switch (setter) {
+		case 'object':
+			return applySetter(args, (value: Admit<NonNullable<T.SubscriptExpression.Config>['object']>) =>
+				rebuilt(node, handle, () => buildSubscriptExpression({ ...config, object: value }))
+			);
+		case 'optionalChain':
+			return applySetter(args, (value?: Admit<NonNullable<T.SubscriptExpression.Config>['optionalChain']>) =>
+				rebuilt(node, handle, () => buildSubscriptExpression({ ...config, optionalChain: value }))
+			);
+		case 'index':
+			return applySetter(args, (value: Admit<NonNullable<T.SubscriptExpression.Config>['index']>) =>
+				rebuilt(node, handle, () => buildSubscriptExpression({ ...config, index: value }))
+			);
+	}
+	throw new Error(`subscript_expression has no $with.${setter}`);
+}
+function buildSubscriptExpression$with$object(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildSubscriptExpression$with(receiverOf(this, '$with.object'), 'object', args);
+}
+function buildSubscriptExpression$with$optionalChain(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildSubscriptExpression$with(receiverOf(this, '$with.optionalChain'), 'optionalChain', args);
+}
+function buildSubscriptExpression$with$index(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildSubscriptExpression$with(receiverOf(this, '$with.index'), 'index', args);
 }
 
 export function buildLhsExpression<
@@ -3387,30 +4446,39 @@ export function buildLhsExpression(
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		content: (
-			value: Admit<
-				NonNullable<
-					| T.MemberExpression
-					| T.SubscriptExpression
-					| TSKindId.Undefined
-					| T.Identifier
-					| T.ObjectPattern
-					| T.ArrayPattern
-					| T.NonNullExpression
-				>
-			>
-		) => rebuilt(node, handle, () => buildLhsExpression(value)),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { content: buildLhsExpression$with$content, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.LhsExpression.Bound;
+}
+
+function buildLhsExpression$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	switch (setter) {
+		case 'content':
+			return applySetter(
+				args,
+				(
+					value: Admit<
+						NonNullable<
+							| T.MemberExpression
+							| T.SubscriptExpression
+							| TSKindId.Undefined
+							| T.Identifier
+							| T.ObjectPattern
+							| T.ArrayPattern
+							| T.NonNullExpression
+						>
+					>
+				) => rebuilt(node, handle, () => buildLhsExpression(value))
+			);
+	}
+	throw new Error(`_lhs_expression has no $with.${setter}`);
+}
+function buildLhsExpression$with$content(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildLhsExpression$with(receiverOf(this, '$with.content'), 'content', args);
 }
 
 export function buildAssignmentExpression<
@@ -3448,23 +4516,47 @@ export function buildAssignmentExpression(config: T.AssignmentExpression.Config)
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		disposable: (value?: Admit<NonNullable<T.AssignmentExpression.Config>['disposable']>) =>
-			rebuilt(node, handle, () => buildAssignmentExpression({ ...config, disposable: value })),
-		left: (value: Admit<T.ParenthesizedExpression | T.LhsExpression>) =>
-			rebuilt(node, handle, () => buildAssignmentExpression({ ...config, left: value })),
-		right: (value: Admit<NonNullable<T.AssignmentExpression.Config>['right']>) =>
-			rebuilt(node, handle, () => buildAssignmentExpression({ ...config, right: value })),
+		disposable: buildAssignmentExpression$with$disposable,
+		left: buildAssignmentExpression$with$left,
+		right: buildAssignmentExpression$with$right,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.AssignmentExpression.Bound;
+}
+
+function buildAssignmentExpression$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.AssignmentExpression.Config;
+	switch (setter) {
+		case 'disposable':
+			return applySetter(args, (value?: Admit<NonNullable<T.AssignmentExpression.Config>['disposable']>) =>
+				rebuilt(node, handle, () => buildAssignmentExpression({ ...config, disposable: value }))
+			);
+		case 'left':
+			return applySetter(args, (value: Admit<T.ParenthesizedExpression | T.LhsExpression>) =>
+				rebuilt(node, handle, () => buildAssignmentExpression({ ...config, left: value }))
+			);
+		case 'right':
+			return applySetter(args, (value: Admit<NonNullable<T.AssignmentExpression.Config>['right']>) =>
+				rebuilt(node, handle, () => buildAssignmentExpression({ ...config, right: value }))
+			);
+	}
+	throw new Error(`assignment_expression has no $with.${setter}`);
+}
+function buildAssignmentExpression$with$disposable(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildAssignmentExpression$with(receiverOf(this, '$with.disposable'), 'disposable', args);
+}
+function buildAssignmentExpression$with$left(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildAssignmentExpression$with(receiverOf(this, '$with.left'), 'left', args);
+}
+function buildAssignmentExpression$with$right(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildAssignmentExpression$with(receiverOf(this, '$with.right'), 'right', args);
 }
 
 export function buildAugmentedAssignmentExpression<
@@ -3509,26 +4601,52 @@ export function buildAugmentedAssignmentExpression(
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		left: (
-			value: Admit<
-				T.MemberExpression | T.SubscriptExpression | T.Identifier | T.ParenthesizedExpression | T.NonNullExpression
-			>
-		) => rebuilt(node, handle, () => buildAugmentedAssignmentExpression({ ...config, left: value })),
-		operator: (value: Admit<NonNullable<T.AugmentedAssignmentExpression.Config>['operator']>) =>
-			rebuilt(node, handle, () => buildAugmentedAssignmentExpression({ ...config, operator: value })),
-		right: (value: Admit<NonNullable<T.AugmentedAssignmentExpression.Config>['right']>) =>
-			rebuilt(node, handle, () => buildAugmentedAssignmentExpression({ ...config, right: value })),
+		left: buildAugmentedAssignmentExpression$with$left,
+		operator: buildAugmentedAssignmentExpression$with$operator,
+		right: buildAugmentedAssignmentExpression$with$right,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.AugmentedAssignmentExpression.Bound;
+}
+
+function buildAugmentedAssignmentExpression$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.AugmentedAssignmentExpression.Config;
+	switch (setter) {
+		case 'left':
+			return applySetter(
+				args,
+				(
+					value: Admit<
+						T.MemberExpression | T.SubscriptExpression | T.Identifier | T.ParenthesizedExpression | T.NonNullExpression
+					>
+				) => rebuilt(node, handle, () => buildAugmentedAssignmentExpression({ ...config, left: value }))
+			);
+		case 'operator':
+			return applySetter(args, (value: Admit<NonNullable<T.AugmentedAssignmentExpression.Config>['operator']>) =>
+				rebuilt(node, handle, () => buildAugmentedAssignmentExpression({ ...config, operator: value }))
+			);
+		case 'right':
+			return applySetter(args, (value: Admit<NonNullable<T.AugmentedAssignmentExpression.Config>['right']>) =>
+				rebuilt(node, handle, () => buildAugmentedAssignmentExpression({ ...config, right: value }))
+			);
+	}
+	throw new Error(`augmented_assignment_expression has no $with.${setter}`);
+}
+function buildAugmentedAssignmentExpression$with$left(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildAugmentedAssignmentExpression$with(receiverOf(this, '$with.left'), 'left', args);
+}
+function buildAugmentedAssignmentExpression$with$operator(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildAugmentedAssignmentExpression$with(receiverOf(this, '$with.operator'), 'operator', args);
+}
+function buildAugmentedAssignmentExpression$with$right(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildAugmentedAssignmentExpression$with(receiverOf(this, '$with.right'), 'right', args);
 }
 
 export function buildSpreadElement<V extends Admit<T.Expression>>(
@@ -3555,18 +4673,26 @@ export function buildSpreadElement(value: Admit<T.Expression>): T.SpreadElement.
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		expression: (value: Admit<NonNullable<T.Expression>>) => rebuilt(node, handle, () => buildSpreadElement(value)),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { expression: buildSpreadElement$with$expression, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.SpreadElement.Bound;
+}
+
+function buildSpreadElement$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	switch (setter) {
+		case 'expression':
+			return applySetter(args, (value: Admit<NonNullable<T.Expression>>) =>
+				rebuilt(node, handle, () => buildSpreadElement(value))
+			);
+	}
+	throw new Error(`spread_element has no $with.${setter}`);
+}
+function buildSpreadElement$with$expression(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildSpreadElement$with(receiverOf(this, '$with.expression'), 'expression', args);
 }
 
 export function buildTernaryExpression<
@@ -3622,23 +4748,47 @@ export function buildTernaryExpression(config: T.TernaryExpression.Config): T.Te
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		condition: (value: Admit<NonNullable<T.TernaryExpression.Config>['condition']>) =>
-			rebuilt(node, handle, () => buildTernaryExpression({ ...config, condition: value })),
-		consequence: (value: Admit<NonNullable<T.TernaryExpression.Config>['consequence']>) =>
-			rebuilt(node, handle, () => buildTernaryExpression({ ...config, consequence: value })),
-		alternative: (value: Admit<NonNullable<T.TernaryExpression.Config>['alternative']>) =>
-			rebuilt(node, handle, () => buildTernaryExpression({ ...config, alternative: value })),
+		condition: buildTernaryExpression$with$condition,
+		consequence: buildTernaryExpression$with$consequence,
+		alternative: buildTernaryExpression$with$alternative,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.TernaryExpression.Bound;
+}
+
+function buildTernaryExpression$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.TernaryExpression.Config;
+	switch (setter) {
+		case 'condition':
+			return applySetter(args, (value: Admit<NonNullable<T.TernaryExpression.Config>['condition']>) =>
+				rebuilt(node, handle, () => buildTernaryExpression({ ...config, condition: value }))
+			);
+		case 'consequence':
+			return applySetter(args, (value: Admit<NonNullable<T.TernaryExpression.Config>['consequence']>) =>
+				rebuilt(node, handle, () => buildTernaryExpression({ ...config, consequence: value }))
+			);
+		case 'alternative':
+			return applySetter(args, (value: Admit<NonNullable<T.TernaryExpression.Config>['alternative']>) =>
+				rebuilt(node, handle, () => buildTernaryExpression({ ...config, alternative: value }))
+			);
+	}
+	throw new Error(`ternary_expression has no $with.${setter}`);
+}
+function buildTernaryExpression$with$condition(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildTernaryExpression$with(receiverOf(this, '$with.condition'), 'condition', args);
+}
+function buildTernaryExpression$with$consequence(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildTernaryExpression$with(receiverOf(this, '$with.consequence'), 'consequence', args);
+}
+function buildTernaryExpression$with$alternative(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildTernaryExpression$with(receiverOf(this, '$with.alternative'), 'alternative', args);
 }
 
 export function buildBinaryExpression<
@@ -3693,25 +4843,55 @@ export function buildBinaryExpression(config: Partial<T.BinaryExpression.Config>
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		left: (value?: Admit<NonNullable<T.BinaryExpression.Config>['left']>) =>
-			rebuilt(node, handle, () => buildBinaryExpression({ ...config, left: value })),
-		operator: (value?: Admit<NonNullable<T.BinaryExpression.Config>['operator']>) =>
-			rebuilt(node, handle, () => buildBinaryExpression({ ...config, operator: value })),
-		right: (value?: Admit<NonNullable<T.BinaryExpression.Config>['right']>) =>
-			rebuilt(node, handle, () => buildBinaryExpression({ ...config, right: value })),
-		binaryExpressionIn: (value?: Admit<T.BinaryExpressionIn>) =>
-			rebuilt(node, handle, () => buildBinaryExpression({ ...config, binaryExpressionIn: value })),
+		left: buildBinaryExpression$with$left,
+		operator: buildBinaryExpression$with$operator,
+		right: buildBinaryExpression$with$right,
+		binaryExpressionIn: buildBinaryExpression$with$binaryExpressionIn,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.BinaryExpression.Bound;
+}
+
+function buildBinaryExpression$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.BinaryExpression.Config;
+	switch (setter) {
+		case 'left':
+			return applySetter(args, (value?: Admit<NonNullable<T.BinaryExpression.Config>['left']>) =>
+				rebuilt(node, handle, () => buildBinaryExpression({ ...config, left: value }))
+			);
+		case 'operator':
+			return applySetter(args, (value?: Admit<NonNullable<T.BinaryExpression.Config>['operator']>) =>
+				rebuilt(node, handle, () => buildBinaryExpression({ ...config, operator: value }))
+			);
+		case 'right':
+			return applySetter(args, (value?: Admit<NonNullable<T.BinaryExpression.Config>['right']>) =>
+				rebuilt(node, handle, () => buildBinaryExpression({ ...config, right: value }))
+			);
+		case 'binaryExpressionIn':
+			return applySetter(args, (value?: Admit<T.BinaryExpressionIn>) =>
+				rebuilt(node, handle, () => buildBinaryExpression({ ...config, binaryExpressionIn: value }))
+			);
+	}
+	throw new Error(`binary_expression has no $with.${setter}`);
+}
+function buildBinaryExpression$with$left(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildBinaryExpression$with(receiverOf(this, '$with.left'), 'left', args);
+}
+function buildBinaryExpression$with$operator(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildBinaryExpression$with(receiverOf(this, '$with.operator'), 'operator', args);
+}
+function buildBinaryExpression$with$right(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildBinaryExpression$with(receiverOf(this, '$with.right'), 'right', args);
+}
+function buildBinaryExpression$with$binaryExpressionIn(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildBinaryExpression$with(receiverOf(this, '$with.binaryExpressionIn'), 'binaryExpressionIn', args);
 }
 
 export function buildUnaryExpression<ArgumentSlot extends T.UnaryExpression.Config['argument']>(
@@ -3742,21 +4922,39 @@ export function buildUnaryExpression(config: T.UnaryExpression.Config): T.UnaryE
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		operator: (value: Admit<NonNullable<T.UnaryExpression.Config>['operator']>) =>
-			rebuilt(node, handle, () => buildUnaryExpression({ ...config, operator: value })),
-		argument: (value: Admit<NonNullable<T.UnaryExpression.Config>['argument']>) =>
-			rebuilt(node, handle, () => buildUnaryExpression({ ...config, argument: value })),
+		operator: buildUnaryExpression$with$operator,
+		argument: buildUnaryExpression$with$argument,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.UnaryExpression.Bound;
+}
+
+function buildUnaryExpression$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.UnaryExpression.Config;
+	switch (setter) {
+		case 'operator':
+			return applySetter(args, (value: Admit<NonNullable<T.UnaryExpression.Config>['operator']>) =>
+				rebuilt(node, handle, () => buildUnaryExpression({ ...config, operator: value }))
+			);
+		case 'argument':
+			return applySetter(args, (value: Admit<NonNullable<T.UnaryExpression.Config>['argument']>) =>
+				rebuilt(node, handle, () => buildUnaryExpression({ ...config, argument: value }))
+			);
+	}
+	throw new Error(`unary_expression has no $with.${setter}`);
+}
+function buildUnaryExpression$with$operator(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildUnaryExpression$with(receiverOf(this, '$with.operator'), 'operator', args);
+}
+function buildUnaryExpression$with$argument(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildUnaryExpression$with(receiverOf(this, '$with.argument'), 'argument', args);
 }
 
 export function buildSequenceExpression<A extends NonEmptyArray<Admit<T.Expression>>>(
@@ -3784,19 +4982,26 @@ export function buildSequenceExpression(...children: NonEmptyArray<Admit<T.Expre
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		expressions: (...vs: NonEmptyArray<Admit<T.Expression>>) =>
-			rebuilt(node, handle, () => buildSequenceExpression(...restItems('expressions', vs))),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { expressions: buildSequenceExpression$with$expressions, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.SequenceExpression.Bound;
+}
+
+function buildSequenceExpression$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	switch (setter) {
+		case 'expressions':
+			return applySetter(args, (...vs: NonEmptyArray<Admit<T.Expression>>) =>
+				rebuilt(node, handle, () => buildSequenceExpression(...restItems('expressions', vs)))
+			);
+	}
+	throw new Error(`sequence_expression has no $with.${setter}`);
+}
+function buildSequenceExpression$with$expressions(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildSequenceExpression$with(receiverOf(this, '$with.expressions'), 'expressions', args);
 }
 
 export function buildUnescapedDoubleStringFragment(text: string): T.UnescapedDoubleStringFragment.Bound {
@@ -3816,13 +5021,10 @@ export function buildUnescapedDoubleStringFragment(text: string): T.UnescapedDou
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.UnescapedDoubleStringFragment.Bound;
 }
 
@@ -3843,13 +5045,10 @@ export function buildUnescapedSingleStringFragment(text: string): T.UnescapedSin
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.UnescapedSingleStringFragment.Bound;
 }
 
@@ -3881,18 +5080,24 @@ export function buildEscapeSequence(input: string, affix: boolean = true): T.Esc
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		content: (value: Admit<string>) => rebuilt(node, handle, () => buildEscapeSequence(value)),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { content: buildEscapeSequence$with$content, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.EscapeSequence.Bound;
+}
+
+function buildEscapeSequence$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	switch (setter) {
+		case 'content':
+			return applySetter(args, (value: Admit<string>) => rebuilt(node, handle, () => buildEscapeSequence(value)));
+	}
+	throw new Error(`escape_sequence has no $with.${setter}`);
+}
+function buildEscapeSequence$with$content(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildEscapeSequence$with(receiverOf(this, '$with.content'), 'content', args);
 }
 
 export function buildTemplateString<A extends Admit<(T.TemplateChars | T.EscapeSequence | T.TemplateSubstitution)[]>>(
@@ -3917,19 +5122,26 @@ export function buildTemplateString(
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		elements: (...vs: Admit<T.TemplateChars | T.EscapeSequence | T.TemplateSubstitution>[]) =>
-			rebuilt(node, handle, () => buildTemplateString(...restItems('elements', vs))),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { elements: buildTemplateString$with$elements, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.TemplateString.Bound;
+}
+
+function buildTemplateString$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	switch (setter) {
+		case 'elements':
+			return applySetter(args, (...vs: Admit<T.TemplateChars | T.EscapeSequence | T.TemplateSubstitution>[]) =>
+				rebuilt(node, handle, () => buildTemplateString(...restItems('elements', vs)))
+			);
+	}
+	throw new Error(`template_string has no $with.${setter}`);
+}
+function buildTemplateString$with$elements(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildTemplateString$with(receiverOf(this, '$with.elements'), 'elements', args);
 }
 
 export function buildTemplateSubstitution<V extends Admit<T.Expression | T.SequenceExpression>>(
@@ -3958,19 +5170,26 @@ export function buildTemplateSubstitution(
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		expression: (value: Admit<NonNullable<T.Expression | T.SequenceExpression>>) =>
-			rebuilt(node, handle, () => buildTemplateSubstitution(value)),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { expression: buildTemplateSubstitution$with$expression, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.TemplateSubstitution.Bound;
+}
+
+function buildTemplateSubstitution$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	switch (setter) {
+		case 'expression':
+			return applySetter(args, (value: Admit<NonNullable<T.Expression | T.SequenceExpression>>) =>
+				rebuilt(node, handle, () => buildTemplateSubstitution(value))
+			);
+	}
+	throw new Error(`template_substitution has no $with.${setter}`);
+}
+function buildTemplateSubstitution$with$expression(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildTemplateSubstitution$with(receiverOf(this, '$with.expression'), 'expression', args);
 }
 
 export function buildRegex<PatternSlot extends T.Regex.Config['pattern'], FlagsSlot extends T.Regex.Config['flags']>(
@@ -3996,19 +5215,35 @@ export function buildRegex(config: T.Regex.Config): T.Regex.Bound {
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		pattern: (value: Admit<T.RegexPattern>) => rebuilt(node, handle, () => buildRegex({ ...config, pattern: value })),
-		flags: (value?: Admit<T.RegexFlags>) => rebuilt(node, handle, () => buildRegex({ ...config, flags: value })),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { pattern: buildRegex$with$pattern, flags: buildRegex$with$flags, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.Regex.Bound;
+}
+
+function buildRegex$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.Regex.Config;
+	switch (setter) {
+		case 'pattern':
+			return applySetter(args, (value: Admit<T.RegexPattern>) =>
+				rebuilt(node, handle, () => buildRegex({ ...config, pattern: value }))
+			);
+		case 'flags':
+			return applySetter(args, (value?: Admit<T.RegexFlags>) =>
+				rebuilt(node, handle, () => buildRegex({ ...config, flags: value }))
+			);
+	}
+	throw new Error(`regex has no $with.${setter}`);
+}
+function buildRegex$with$pattern(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildRegex$with(receiverOf(this, '$with.pattern'), 'pattern', args);
+}
+function buildRegex$with$flags(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildRegex$with(receiverOf(this, '$with.flags'), 'flags', args);
 }
 
 export function buildRegexPattern(text: string): T.RegexPattern.Bound {
@@ -4027,13 +5262,10 @@ export function buildRegexPattern(text: string): T.RegexPattern.Bound {
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.RegexPattern.Bound;
 }
 
@@ -4053,13 +5285,10 @@ export function buildRegexFlags(text: string): T.RegexFlags.Bound {
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.RegexFlags.Bound;
 }
 
@@ -4079,13 +5308,10 @@ export function buildIdentifier(text: string): T.Identifier.Bound {
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.Identifier.Bound;
 }
 
@@ -4105,13 +5331,10 @@ export function buildIdentifierUnreserved(text: string): T.Identifier.Bound {
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.Identifier.Bound;
 }
 
@@ -4146,18 +5369,26 @@ export function buildPrivatePropertyIdentifier(
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		content: (value: Admit<string>) => rebuilt(node, handle, () => buildPrivatePropertyIdentifier(value)),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { content: buildPrivatePropertyIdentifier$with$content, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.PrivatePropertyIdentifier.Bound;
+}
+
+function buildPrivatePropertyIdentifier$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	switch (setter) {
+		case 'content':
+			return applySetter(args, (value: Admit<string>) =>
+				rebuilt(node, handle, () => buildPrivatePropertyIdentifier(value))
+			);
+	}
+	throw new Error(`private_property_identifier has no $with.${setter}`);
+}
+function buildPrivatePropertyIdentifier$with$content(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildPrivatePropertyIdentifier$with(receiverOf(this, '$with.content'), 'content', args);
 }
 
 export const buildThis: TSKindId.This = TSKindId.This;
@@ -4198,20 +5429,26 @@ export function buildArguments(...children: Admit<(T.Expression | T.SpreadElemen
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		elements: (...vs: Admit<T.Expression | T.SpreadElement>[]) =>
-			rebuilt(node, handle, () => buildArguments(...restItems('elements', vs))),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		inner: (...items: unknown[]) => triviaInner(node, handle, items),
-		[RECEIVER]: node
-	};
+	node.$with = { elements: buildArguments$with$elements, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, inner: objectInner, [RECEIVER]: node };
 	return node as unknown as T.Arguments.Bound;
+}
+
+function buildArguments$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	switch (setter) {
+		case 'elements':
+			return applySetter(args, (...vs: Admit<T.Expression | T.SpreadElement>[]) =>
+				rebuilt(node, handle, () => buildArguments(...restItems('elements', vs)))
+			);
+	}
+	throw new Error(`arguments has no $with.${setter}`);
+}
+function buildArguments$with$elements(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildArguments$with(receiverOf(this, '$with.elements'), 'elements', args);
 }
 
 export function buildDecorator<
@@ -4239,22 +5476,31 @@ export function buildDecorator(
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		content: (
-			value: Admit<
-				T.Identifier | T.DecoratorMemberExpression | T.DecoratorCallExpression | T.DecoratorParenthesizedExpression
-			>
-		) => rebuilt(node, handle, () => buildDecorator(value)),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { content: buildDecorator$with$content, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.Decorator.Bound;
+}
+
+function buildDecorator$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	switch (setter) {
+		case 'content':
+			return applySetter(
+				args,
+				(
+					value: Admit<
+						T.Identifier | T.DecoratorMemberExpression | T.DecoratorCallExpression | T.DecoratorParenthesizedExpression
+					>
+				) => rebuilt(node, handle, () => buildDecorator(value))
+			);
+	}
+	throw new Error(`decorator has no $with.${setter}`);
+}
+function buildDecorator$with$content(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildDecorator$with(receiverOf(this, '$with.content'), 'content', args);
 }
 
 export function buildDecoratorMemberExpression<
@@ -4304,21 +5550,39 @@ export function buildDecoratorMemberExpression(
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		object: (value: Admit<NonNullable<T.DecoratorMemberExpression.Config>['object']>) =>
-			rebuilt(node, handle, () => buildDecoratorMemberExpression({ ...config, object: value })),
-		property: (value: Admit<T.PropertyIdentifier | T.PropertyIdentifier.Types>) =>
-			rebuilt(node, handle, () => buildDecoratorMemberExpression({ ...config, property: value })),
+		object: buildDecoratorMemberExpression$with$object,
+		property: buildDecoratorMemberExpression$with$property,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.DecoratorMemberExpression.Bound;
+}
+
+function buildDecoratorMemberExpression$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.DecoratorMemberExpression.Config;
+	switch (setter) {
+		case 'object':
+			return applySetter(args, (value: Admit<NonNullable<T.DecoratorMemberExpression.Config>['object']>) =>
+				rebuilt(node, handle, () => buildDecoratorMemberExpression({ ...config, object: value }))
+			);
+		case 'property':
+			return applySetter(args, (value: Admit<T.PropertyIdentifier | T.PropertyIdentifier.Types>) =>
+				rebuilt(node, handle, () => buildDecoratorMemberExpression({ ...config, property: value }))
+			);
+	}
+	throw new Error(`decorator_member_expression has no $with.${setter}`);
+}
+function buildDecoratorMemberExpression$with$object(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildDecoratorMemberExpression$with(receiverOf(this, '$with.object'), 'object', args);
+}
+function buildDecoratorMemberExpression$with$property(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildDecoratorMemberExpression$with(receiverOf(this, '$with.property'), 'property', args);
 }
 
 export function buildDecoratorCallExpression<
@@ -4366,29 +5630,53 @@ export function buildDecoratorCallExpression(
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		function: (value: Admit<T.Identifier | T.DecoratorMemberExpression>) =>
-			rebuilt(node, handle, () => buildDecoratorCallExpression({ ...config, function: value })),
-		typeArguments: (...args: unknown[]) =>
-			rebuilt(node, handle, () =>
-				listSlotWith(
-					args,
-					{ kind: TSKindId.TypeArguments as const, optional: true, make: buildTypeArguments },
-					(value?: Admit<T.TypeArguments>) => buildDecoratorCallExpression({ ...config, typeArguments: value })
-				)
-			),
-		arguments: (value: Admit<T.Arguments>) =>
-			rebuilt(node, handle, () => buildDecoratorCallExpression({ ...config, arguments: value })),
+		function: buildDecoratorCallExpression$with$function,
+		typeArguments: buildDecoratorCallExpression$with$typeArguments,
+		arguments: buildDecoratorCallExpression$with$arguments,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.DecoratorCallExpression.Bound;
+}
+
+function buildDecoratorCallExpression$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.DecoratorCallExpression.Config;
+	switch (setter) {
+		case 'function':
+			return applySetter(args, (value: Admit<T.Identifier | T.DecoratorMemberExpression>) =>
+				rebuilt(node, handle, () => buildDecoratorCallExpression({ ...config, function: value }))
+			);
+		case 'typeArguments':
+			return applySetter(args, (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{ kind: TSKindId.TypeArguments as const, optional: true, make: buildTypeArguments },
+						(value?: Admit<T.TypeArguments>) => buildDecoratorCallExpression({ ...config, typeArguments: value })
+					)
+				)
+			);
+		case 'arguments':
+			return applySetter(args, (value: Admit<T.Arguments>) =>
+				rebuilt(node, handle, () => buildDecoratorCallExpression({ ...config, arguments: value }))
+			);
+	}
+	throw new Error(`decorator_call_expression has no $with.${setter}`);
+}
+function buildDecoratorCallExpression$with$function(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildDecoratorCallExpression$with(receiverOf(this, '$with.function'), 'function', args);
+}
+function buildDecoratorCallExpression$with$typeArguments(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildDecoratorCallExpression$with(receiverOf(this, '$with.typeArguments'), 'typeArguments', args);
+}
+function buildDecoratorCallExpression$with$arguments(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildDecoratorCallExpression$with(receiverOf(this, '$with.arguments'), 'arguments', args);
 }
 
 export function buildClassBody(): T.EmptyClassBody;
@@ -4412,20 +5700,26 @@ export function buildClassBody(...children: Admit<T.ClassBodyMember[]>): T.Class
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		members: (...vs: Admit<T.ClassBodyMember>[]) =>
-			rebuilt(node, handle, () => buildClassBody(...restItems('members', vs))),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		inner: (...items: unknown[]) => triviaInner(node, handle, items),
-		[RECEIVER]: node
-	};
+	node.$with = { members: buildClassBody$with$members, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, inner: objectInner, [RECEIVER]: node };
 	return node as unknown as T.ClassBody.Bound;
+}
+
+function buildClassBody$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	switch (setter) {
+		case 'members':
+			return applySetter(args, (...vs: Admit<T.ClassBodyMember>[]) =>
+				rebuilt(node, handle, () => buildClassBody(...restItems('members', vs)))
+			);
+	}
+	throw new Error(`class_body has no $with.${setter}`);
+}
+function buildClassBody$with$members(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildClassBody$with(receiverOf(this, '$with.members'), 'members', args);
 }
 
 export function buildFormalParameters(): T.EmptyFormalParameters;
@@ -4450,20 +5744,26 @@ export function buildFormalParameters(
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		elements: (value?: Admit<T.FormalParametersElements | T.FormalParametersElementsReceiver>) =>
-			rebuilt(node, handle, () => buildFormalParameters(value)),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		inner: (...items: unknown[]) => triviaInner(node, handle, items),
-		[RECEIVER]: node
-	};
+	node.$with = { elements: buildFormalParameters$with$elements, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, inner: objectInner, [RECEIVER]: node };
 	return node as unknown as T.FormalParameters.Bound;
+}
+
+function buildFormalParameters$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	switch (setter) {
+		case 'elements':
+			return applySetter(args, (value?: Admit<T.FormalParametersElements | T.FormalParametersElementsReceiver>) =>
+				rebuilt(node, handle, () => buildFormalParameters(value))
+			);
+	}
+	throw new Error(`formal_parameters has no $with.${setter}`);
+}
+function buildFormalParameters$with$elements(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildFormalParameters$with(receiverOf(this, '$with.elements'), 'elements', args);
 }
 
 export function buildClassStaticBlock<V extends Admit<T.StatementBlock>>(
@@ -4516,20 +5816,41 @@ function _buildClassStaticBlock(
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: value,
+		[OPTIONS]: options,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		terminator: (spelling: TSKindId.AutomaticSemicolon | null) =>
-			rebuilt(node, handle, () => _buildClassStaticBlock(value, { ...options, terminator: spelling })),
-		body: (value: Admit<T.StatementBlock>) => rebuilt(node, handle, () => _buildClassStaticBlock(value, options)),
+		terminator: buildClassStaticBlock$with$terminator,
+		body: buildClassStaticBlock$with$body,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.ClassStaticBlock.Bound;
+}
+
+function buildClassStaticBlock$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const value = node[INPUT] as Admit<T.StatementBlock>;
+	const options = node[OPTIONS] as T.ClassStaticBlock.Options;
+	switch (setter) {
+		case 'terminator':
+			return applySetter(args, (spelling: TSKindId.AutomaticSemicolon | null) =>
+				rebuilt(node, handle, () => _buildClassStaticBlock(value, { ...options, terminator: spelling }))
+			);
+		case 'body':
+			return applySetter(args, (value: Admit<T.StatementBlock>) =>
+				rebuilt(node, handle, () => _buildClassStaticBlock(value, options))
+			);
+	}
+	throw new Error(`class_static_block has no $with.${setter}`);
+}
+function buildClassStaticBlock$with$terminator(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildClassStaticBlock$with(receiverOf(this, '$with.terminator'), 'terminator', args);
+}
+function buildClassStaticBlock$with$body(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildClassStaticBlock$with(receiverOf(this, '$with.body'), 'body', args);
 }
 
 export function buildRestPattern<
@@ -4589,33 +5910,42 @@ export function buildRestPattern(
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		lhsExpression: (
-			value: Admit<
-				NonNullable<
-					| (
-							| T.MemberExpression
-							| T.SubscriptExpression
-							| TSKindId.Undefined
-							| T.Identifier
-							| T.ObjectPattern
-							| T.ArrayPattern
-							| T.NonNullExpression
-					  )
-					| Admit<T.LhsExpression>
-				>
-			>
-		) => rebuilt(node, handle, () => buildRestPattern(value)),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { lhsExpression: buildRestPattern$with$lhsExpression, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.RestPattern.Bound;
+}
+
+function buildRestPattern$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	switch (setter) {
+		case 'lhsExpression':
+			return applySetter(
+				args,
+				(
+					value: Admit<
+						NonNullable<
+							| (
+									| T.MemberExpression
+									| T.SubscriptExpression
+									| TSKindId.Undefined
+									| T.Identifier
+									| T.ObjectPattern
+									| T.ArrayPattern
+									| T.NonNullExpression
+							  )
+							| Admit<T.LhsExpression>
+						>
+					>
+				) => rebuilt(node, handle, () => buildRestPattern(value))
+			);
+	}
+	throw new Error(`rest_pattern has no $with.${setter}`);
+}
+function buildRestPattern$with$lhsExpression(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildRestPattern$with(receiverOf(this, '$with.lhsExpression'), 'lhsExpression', args);
 }
 
 export function buildPair<KeySlot extends T.Pair.Config['key'], ValueSlot extends T.Pair.Config['value']>(
@@ -4649,29 +5979,45 @@ export function buildPair(config: T.Pair.Config): T.Pair.Bound {
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		key: (
-			value: Admit<
-				| T.PropertyIdentifier
-				| T.PrivatePropertyIdentifier
-				| T.String
-				| T.Number
-				| T.ComputedPropertyName
-				| T.PropertyIdentifier.Types
-			>
-		) => rebuilt(node, handle, () => buildPair({ ...config, key: value })),
-		value: (value: Admit<NonNullable<T.Pair.Config>['value']>) =>
-			rebuilt(node, handle, () => buildPair({ ...config, value: value })),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { key: buildPair$with$key, value: buildPair$with$value, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.Pair.Bound;
+}
+
+function buildPair$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.Pair.Config;
+	switch (setter) {
+		case 'key':
+			return applySetter(
+				args,
+				(
+					value: Admit<
+						| T.PropertyIdentifier
+						| T.PrivatePropertyIdentifier
+						| T.String
+						| T.Number
+						| T.ComputedPropertyName
+						| T.PropertyIdentifier.Types
+					>
+				) => rebuilt(node, handle, () => buildPair({ ...config, key: value }))
+			);
+		case 'value':
+			return applySetter(args, (value: Admit<NonNullable<T.Pair.Config>['value']>) =>
+				rebuilt(node, handle, () => buildPair({ ...config, value: value }))
+			);
+	}
+	throw new Error(`pair has no $with.${setter}`);
+}
+function buildPair$with$key(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildPair$with(receiverOf(this, '$with.key'), 'key', args);
+}
+function buildPair$with$value(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildPair$with(receiverOf(this, '$with.value'), 'value', args);
 }
 
 export function buildPairPattern<
@@ -4701,29 +6047,45 @@ export function buildPairPattern(config: T.PairPattern.Config): T.PairPattern.Bo
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		key: (
-			value: Admit<
-				| T.PropertyIdentifier
-				| T.PrivatePropertyIdentifier
-				| T.String
-				| T.Number
-				| T.ComputedPropertyName
-				| T.PropertyIdentifier.Types
-			>
-		) => rebuilt(node, handle, () => buildPairPattern({ ...config, key: value })),
-		value: (value: Admit<T.Pattern | T.AssignmentPattern>) =>
-			rebuilt(node, handle, () => buildPairPattern({ ...config, value: value })),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { key: buildPairPattern$with$key, value: buildPairPattern$with$value, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.PairPattern.Bound;
+}
+
+function buildPairPattern$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.PairPattern.Config;
+	switch (setter) {
+		case 'key':
+			return applySetter(
+				args,
+				(
+					value: Admit<
+						| T.PropertyIdentifier
+						| T.PrivatePropertyIdentifier
+						| T.String
+						| T.Number
+						| T.ComputedPropertyName
+						| T.PropertyIdentifier.Types
+					>
+				) => rebuilt(node, handle, () => buildPairPattern({ ...config, key: value }))
+			);
+		case 'value':
+			return applySetter(args, (value: Admit<T.Pattern | T.AssignmentPattern>) =>
+				rebuilt(node, handle, () => buildPairPattern({ ...config, value: value }))
+			);
+	}
+	throw new Error(`pair_pattern has no $with.${setter}`);
+}
+function buildPairPattern$with$key(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildPairPattern$with(receiverOf(this, '$with.key'), 'key', args);
+}
+function buildPairPattern$with$value(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildPairPattern$with(receiverOf(this, '$with.value'), 'value', args);
 }
 
 export function buildComputedPropertyName<V extends Admit<T.Expression>>(
@@ -4750,19 +6112,26 @@ export function buildComputedPropertyName(value: Admit<T.Expression>): T.Compute
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		expression: (value: Admit<NonNullable<T.Expression>>) =>
-			rebuilt(node, handle, () => buildComputedPropertyName(value)),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { expression: buildComputedPropertyName$with$expression, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.ComputedPropertyName.Bound;
+}
+
+function buildComputedPropertyName$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	switch (setter) {
+		case 'expression':
+			return applySetter(args, (value: Admit<NonNullable<T.Expression>>) =>
+				rebuilt(node, handle, () => buildComputedPropertyName(value))
+			);
+	}
+	throw new Error(`computed_property_name has no $with.${setter}`);
+}
+function buildComputedPropertyName$with$expression(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildComputedPropertyName$with(receiverOf(this, '$with.expression'), 'expression', args);
 }
 
 export function buildNonNullExpression<V extends Admit<T.Expression>>(
@@ -4789,18 +6158,26 @@ export function buildNonNullExpression(value: Admit<T.Expression>): T.NonNullExp
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		expression: (value: Admit<NonNullable<T.Expression>>) => rebuilt(node, handle, () => buildNonNullExpression(value)),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { expression: buildNonNullExpression$with$expression, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.NonNullExpression.Bound;
+}
+
+function buildNonNullExpression$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	switch (setter) {
+		case 'expression':
+			return applySetter(args, (value: Admit<NonNullable<T.Expression>>) =>
+				rebuilt(node, handle, () => buildNonNullExpression(value))
+			);
+	}
+	throw new Error(`non_null_expression has no $with.${setter}`);
+}
+function buildNonNullExpression$with$expression(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildNonNullExpression$with(receiverOf(this, '$with.expression'), 'expression', args);
 }
 
 export function buildFunctionSignature<
@@ -4867,36 +6244,81 @@ export function buildFunctionSignature(
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
+		[OPTIONS]: options,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		async: (value?: Admit<NonNullable<T.FunctionSignature.Config>['async']>) =>
-			rebuilt(node, handle, () => buildFunctionSignature({ ...config, async: value }, options)),
-		name: (value: Admit<T.Identifier>) =>
-			rebuilt(node, handle, () => buildFunctionSignature({ ...config, name: value }, options)),
-		typeParameters: (...args: unknown[]) =>
-			rebuilt(node, handle, () =>
-				listSlotWith(
-					args,
-					{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
-					(value?: Admit<T.TypeParameters>) => buildFunctionSignature({ ...config, typeParameters: value }, options)
-				)
-			),
-		parameters: (value: Admit<T.FormalParameters>) =>
-			rebuilt(node, handle, () => buildFunctionSignature({ ...config, parameters: value }, options)),
-		returnType: (value?: Admit<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation>) =>
-			rebuilt(node, handle, () => buildFunctionSignature({ ...config, returnType: value }, options)),
-		terminator: (
-			spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi | TSKindId.FunctionSignatureAutomaticSemicolon
-		) => rebuilt(node, handle, () => buildFunctionSignature(config, { ...options, terminator: spelling })),
+		async: buildFunctionSignature$with$async,
+		name: buildFunctionSignature$with$name,
+		typeParameters: buildFunctionSignature$with$typeParameters,
+		parameters: buildFunctionSignature$with$parameters,
+		returnType: buildFunctionSignature$with$returnType,
+		terminator: buildFunctionSignature$with$terminator,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.FunctionSignature.Bound;
+}
+
+function buildFunctionSignature$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.FunctionSignature.Config;
+	const options = node[OPTIONS] as T.FunctionSignature.Options;
+	switch (setter) {
+		case 'async':
+			return applySetter(args, (value?: Admit<NonNullable<T.FunctionSignature.Config>['async']>) =>
+				rebuilt(node, handle, () => buildFunctionSignature({ ...config, async: value }, options))
+			);
+		case 'name':
+			return applySetter(args, (value: Admit<T.Identifier>) =>
+				rebuilt(node, handle, () => buildFunctionSignature({ ...config, name: value }, options))
+			);
+		case 'typeParameters':
+			return applySetter(args, (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
+						(value?: Admit<T.TypeParameters>) => buildFunctionSignature({ ...config, typeParameters: value }, options)
+					)
+				)
+			);
+		case 'parameters':
+			return applySetter(args, (value: Admit<T.FormalParameters>) =>
+				rebuilt(node, handle, () => buildFunctionSignature({ ...config, parameters: value }, options))
+			);
+		case 'returnType':
+			return applySetter(args, (value?: Admit<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation>) =>
+				rebuilt(node, handle, () => buildFunctionSignature({ ...config, returnType: value }, options))
+			);
+		case 'terminator':
+			return applySetter(
+				args,
+				(spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi | TSKindId.FunctionSignatureAutomaticSemicolon) =>
+					rebuilt(node, handle, () => buildFunctionSignature(config, { ...options, terminator: spelling }))
+			);
+	}
+	throw new Error(`function_signature has no $with.${setter}`);
+}
+function buildFunctionSignature$with$async(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildFunctionSignature$with(receiverOf(this, '$with.async'), 'async', args);
+}
+function buildFunctionSignature$with$name(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildFunctionSignature$with(receiverOf(this, '$with.name'), 'name', args);
+}
+function buildFunctionSignature$with$typeParameters(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildFunctionSignature$with(receiverOf(this, '$with.typeParameters'), 'typeParameters', args);
+}
+function buildFunctionSignature$with$parameters(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildFunctionSignature$with(receiverOf(this, '$with.parameters'), 'parameters', args);
+}
+function buildFunctionSignature$with$returnType(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildFunctionSignature$with(receiverOf(this, '$with.returnType'), 'returnType', args);
+}
+function buildFunctionSignature$with$terminator(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildFunctionSignature$with(receiverOf(this, '$with.terminator'), 'terminator', args);
 }
 
 export function buildDecoratorParenthesizedExpression<
@@ -4925,19 +6347,26 @@ export function buildDecoratorParenthesizedExpression(
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		expression: (value: Admit<T.Identifier | T.DecoratorMemberExpression | T.DecoratorCallExpression>) =>
-			rebuilt(node, handle, () => buildDecoratorParenthesizedExpression(value)),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { expression: buildDecoratorParenthesizedExpression$with$expression, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.DecoratorParenthesizedExpression.Bound;
+}
+
+function buildDecoratorParenthesizedExpression$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	switch (setter) {
+		case 'expression':
+			return applySetter(args, (value: Admit<T.Identifier | T.DecoratorMemberExpression | T.DecoratorCallExpression>) =>
+				rebuilt(node, handle, () => buildDecoratorParenthesizedExpression(value))
+			);
+	}
+	throw new Error(`decorator_parenthesized_expression has no $with.${setter}`);
+}
+function buildDecoratorParenthesizedExpression$with$expression(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildDecoratorParenthesizedExpression$with(receiverOf(this, '$with.expression'), 'expression', args);
 }
 
 export function buildTypeAssertion<
@@ -4972,27 +6401,45 @@ export function buildTypeAssertion(config: T.TypeAssertion.Config): T.TypeAssert
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		typeArguments: (...args: unknown[]) =>
-			rebuilt(node, handle, () =>
-				listSlotWith(
-					args,
-					{ kind: TSKindId.TypeArguments as const, optional: false, make: buildTypeArguments },
-					(value: Admit<T.TypeArguments>) => buildTypeAssertion({ ...config, typeArguments: value })
-				)
-			),
-		expression: (value: Admit<NonNullable<T.TypeAssertion.Config>['expression']>) =>
-			rebuilt(node, handle, () => buildTypeAssertion({ ...config, expression: value })),
+		typeArguments: buildTypeAssertion$with$typeArguments,
+		expression: buildTypeAssertion$with$expression,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.TypeAssertion.Bound;
+}
+
+function buildTypeAssertion$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.TypeAssertion.Config;
+	switch (setter) {
+		case 'typeArguments':
+			return applySetter(args, (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{ kind: TSKindId.TypeArguments as const, optional: false, make: buildTypeArguments },
+						(value: Admit<T.TypeArguments>) => buildTypeAssertion({ ...config, typeArguments: value })
+					)
+				)
+			);
+		case 'expression':
+			return applySetter(args, (value: Admit<NonNullable<T.TypeAssertion.Config>['expression']>) =>
+				rebuilt(node, handle, () => buildTypeAssertion({ ...config, expression: value }))
+			);
+	}
+	throw new Error(`type_assertion has no $with.${setter}`);
+}
+function buildTypeAssertion$with$typeArguments(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildTypeAssertion$with(receiverOf(this, '$with.typeArguments'), 'typeArguments', args);
+}
+function buildTypeAssertion$with$expression(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildTypeAssertion$with(receiverOf(this, '$with.expression'), 'expression', args);
 }
 
 export function buildAsExpression<
@@ -5032,21 +6479,35 @@ export function buildAsExpression(config: T.AsExpression.Config): T.AsExpression
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		expression: (value: Admit<NonNullable<T.AsExpression.Config>['expression']>) =>
-			rebuilt(node, handle, () => buildAsExpression({ ...config, expression: value })),
-		type: (value: Admit<NonNullable<T.AsExpression.Config>['type']>) =>
-			rebuilt(node, handle, () => buildAsExpression({ ...config, type: value })),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { expression: buildAsExpression$with$expression, type: buildAsExpression$with$type, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.AsExpression.Bound;
+}
+
+function buildAsExpression$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.AsExpression.Config;
+	switch (setter) {
+		case 'expression':
+			return applySetter(args, (value: Admit<NonNullable<T.AsExpression.Config>['expression']>) =>
+				rebuilt(node, handle, () => buildAsExpression({ ...config, expression: value }))
+			);
+		case 'type':
+			return applySetter(args, (value: Admit<NonNullable<T.AsExpression.Config>['type']>) =>
+				rebuilt(node, handle, () => buildAsExpression({ ...config, type: value }))
+			);
+	}
+	throw new Error(`as_expression has no $with.${setter}`);
+}
+function buildAsExpression$with$expression(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildAsExpression$with(receiverOf(this, '$with.expression'), 'expression', args);
+}
+function buildAsExpression$with$type(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildAsExpression$with(receiverOf(this, '$with.type'), 'type', args);
 }
 
 export function buildSatisfiesExpression<
@@ -5088,21 +6549,39 @@ export function buildSatisfiesExpression(config: T.SatisfiesExpression.Config): 
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		expression: (value: Admit<NonNullable<T.SatisfiesExpression.Config>['expression']>) =>
-			rebuilt(node, handle, () => buildSatisfiesExpression({ ...config, expression: value })),
-		type: (value: Admit<NonNullable<T.SatisfiesExpression.Config>['type']>) =>
-			rebuilt(node, handle, () => buildSatisfiesExpression({ ...config, type: value })),
+		expression: buildSatisfiesExpression$with$expression,
+		type: buildSatisfiesExpression$with$type,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.SatisfiesExpression.Bound;
+}
+
+function buildSatisfiesExpression$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.SatisfiesExpression.Config;
+	switch (setter) {
+		case 'expression':
+			return applySetter(args, (value: Admit<NonNullable<T.SatisfiesExpression.Config>['expression']>) =>
+				rebuilt(node, handle, () => buildSatisfiesExpression({ ...config, expression: value }))
+			);
+		case 'type':
+			return applySetter(args, (value: Admit<NonNullable<T.SatisfiesExpression.Config>['type']>) =>
+				rebuilt(node, handle, () => buildSatisfiesExpression({ ...config, type: value }))
+			);
+	}
+	throw new Error(`satisfies_expression has no $with.${setter}`);
+}
+function buildSatisfiesExpression$with$expression(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildSatisfiesExpression$with(receiverOf(this, '$with.expression'), 'expression', args);
+}
+function buildSatisfiesExpression$with$type(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildSatisfiesExpression$with(receiverOf(this, '$with.type'), 'type', args);
 }
 
 export function buildInstantiationExpression<
@@ -5139,27 +6618,45 @@ export function buildInstantiationExpression(
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		function: (value: Admit<NonNullable<T.InstantiationExpression.Config>['function']>) =>
-			rebuilt(node, handle, () => buildInstantiationExpression({ ...config, function: value })),
-		typeArguments: (...args: unknown[]) =>
-			rebuilt(node, handle, () =>
-				listSlotWith(
-					args,
-					{ kind: TSKindId.TypeArguments as const, optional: false, make: buildTypeArguments },
-					(value: Admit<T.TypeArguments>) => buildInstantiationExpression({ ...config, typeArguments: value })
-				)
-			),
+		function: buildInstantiationExpression$with$function,
+		typeArguments: buildInstantiationExpression$with$typeArguments,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.InstantiationExpression.Bound;
+}
+
+function buildInstantiationExpression$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.InstantiationExpression.Config;
+	switch (setter) {
+		case 'function':
+			return applySetter(args, (value: Admit<NonNullable<T.InstantiationExpression.Config>['function']>) =>
+				rebuilt(node, handle, () => buildInstantiationExpression({ ...config, function: value }))
+			);
+		case 'typeArguments':
+			return applySetter(args, (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{ kind: TSKindId.TypeArguments as const, optional: false, make: buildTypeArguments },
+						(value: Admit<T.TypeArguments>) => buildInstantiationExpression({ ...config, typeArguments: value })
+					)
+				)
+			);
+	}
+	throw new Error(`instantiation_expression has no $with.${setter}`);
+}
+function buildInstantiationExpression$with$function(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildInstantiationExpression$with(receiverOf(this, '$with.function'), 'function', args);
+}
+function buildInstantiationExpression$with$typeArguments(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildInstantiationExpression$with(receiverOf(this, '$with.typeArguments'), 'typeArguments', args);
 }
 
 export function buildImportRequireClause<
@@ -5193,21 +6690,39 @@ export function buildImportRequireClause(config: T.ImportRequireClause.Config): 
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		name: (value: Admit<T.Identifier>) =>
-			rebuilt(node, handle, () => buildImportRequireClause({ ...config, name: value })),
-		source: (value: Admit<T.String>) =>
-			rebuilt(node, handle, () => buildImportRequireClause({ ...config, source: value })),
+		name: buildImportRequireClause$with$name,
+		source: buildImportRequireClause$with$source,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.ImportRequireClause.Bound;
+}
+
+function buildImportRequireClause$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.ImportRequireClause.Config;
+	switch (setter) {
+		case 'name':
+			return applySetter(args, (value: Admit<T.Identifier>) =>
+				rebuilt(node, handle, () => buildImportRequireClause({ ...config, name: value }))
+			);
+		case 'source':
+			return applySetter(args, (value: Admit<T.String>) =>
+				rebuilt(node, handle, () => buildImportRequireClause({ ...config, source: value }))
+			);
+	}
+	throw new Error(`import_require_clause has no $with.${setter}`);
+}
+function buildImportRequireClause$with$name(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildImportRequireClause$with(receiverOf(this, '$with.name'), 'name', args);
+}
+function buildImportRequireClause$with$source(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildImportRequireClause$with(receiverOf(this, '$with.source'), 'source', args);
 }
 
 export function buildExtendsClause<A extends NonEmptyArray<Admit<T.ExtendsClauseSingle>>>(
@@ -5230,19 +6745,26 @@ export function buildExtendsClause(...children: NonEmptyArray<Admit<T.ExtendsCla
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		types: (...vs: NonEmptyArray<Admit<T.ExtendsClauseSingle>>) =>
-			rebuilt(node, handle, () => buildExtendsClause(...restItems('types', vs))),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { types: buildExtendsClause$with$types, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.ExtendsClause.Bound;
+}
+
+function buildExtendsClause$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	switch (setter) {
+		case 'types':
+			return applySetter(args, (...vs: NonEmptyArray<Admit<T.ExtendsClauseSingle>>) =>
+				rebuilt(node, handle, () => buildExtendsClause(...restItems('types', vs)))
+			);
+	}
+	throw new Error(`extends_clause has no $with.${setter}`);
+}
+function buildExtendsClause$with$types(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildExtendsClause$with(receiverOf(this, '$with.types'), 'types', args);
 }
 
 export function buildExtendsClauseSingle<
@@ -5277,27 +6799,45 @@ export function buildExtendsClauseSingle(config: T.ExtendsClauseSingle.Config): 
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		value: (value: Admit<NonNullable<T.ExtendsClauseSingle.Config>['value']>) =>
-			rebuilt(node, handle, () => buildExtendsClauseSingle({ ...config, value: value })),
-		typeArguments: (...args: unknown[]) =>
-			rebuilt(node, handle, () =>
-				listSlotWith(
-					args,
-					{ kind: TSKindId.TypeArguments as const, optional: true, make: buildTypeArguments },
-					(value?: Admit<T.TypeArguments>) => buildExtendsClauseSingle({ ...config, typeArguments: value })
-				)
-			),
+		value: buildExtendsClauseSingle$with$value,
+		typeArguments: buildExtendsClauseSingle$with$typeArguments,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.ExtendsClauseSingle.Bound;
+}
+
+function buildExtendsClauseSingle$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.ExtendsClauseSingle.Config;
+	switch (setter) {
+		case 'value':
+			return applySetter(args, (value: Admit<NonNullable<T.ExtendsClauseSingle.Config>['value']>) =>
+				rebuilt(node, handle, () => buildExtendsClauseSingle({ ...config, value: value }))
+			);
+		case 'typeArguments':
+			return applySetter(args, (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{ kind: TSKindId.TypeArguments as const, optional: true, make: buildTypeArguments },
+						(value?: Admit<T.TypeArguments>) => buildExtendsClauseSingle({ ...config, typeArguments: value })
+					)
+				)
+			);
+	}
+	throw new Error(`extends_clause_single has no $with.${setter}`);
+}
+function buildExtendsClauseSingle$with$value(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildExtendsClauseSingle$with(receiverOf(this, '$with.value'), 'value', args);
+}
+function buildExtendsClauseSingle$with$typeArguments(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildExtendsClauseSingle$with(receiverOf(this, '$with.typeArguments'), 'typeArguments', args);
 }
 
 export function buildImplementsClause<A extends NonEmptyArray<Admit<T.Type | T.TypeIdentifier.Types>>>(
@@ -5325,19 +6865,26 @@ export function buildImplementsClause(
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		types: (...vs: NonEmptyArray<Admit<T.Type | T.TypeIdentifier.Types>>) =>
-			rebuilt(node, handle, () => buildImplementsClause(...restItems('types', vs))),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { types: buildImplementsClause$with$types, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.ImplementsClause.Bound;
+}
+
+function buildImplementsClause$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	switch (setter) {
+		case 'types':
+			return applySetter(args, (...vs: NonEmptyArray<Admit<T.Type | T.TypeIdentifier.Types>>) =>
+				rebuilt(node, handle, () => buildImplementsClause(...restItems('types', vs)))
+			);
+	}
+	throw new Error(`implements_clause has no $with.${setter}`);
+}
+function buildImplementsClause$with$types(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildImplementsClause$with(receiverOf(this, '$with.types'), 'types', args);
 }
 
 export function buildAmbientDeclaration<
@@ -5361,19 +6908,28 @@ export function buildAmbientDeclaration(
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		content: (value: Admit<T.Declaration | T.AmbientDeclarationGlobal | T.AmbientDeclarationModule>) =>
-			rebuilt(node, handle, () => buildAmbientDeclaration(value)),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { content: buildAmbientDeclaration$with$content, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.AmbientDeclaration.Bound;
+}
+
+function buildAmbientDeclaration$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	switch (setter) {
+		case 'content':
+			return applySetter(
+				args,
+				(value: Admit<T.Declaration | T.AmbientDeclarationGlobal | T.AmbientDeclarationModule>) =>
+					rebuilt(node, handle, () => buildAmbientDeclaration(value))
+			);
+	}
+	throw new Error(`ambient_declaration has no $with.${setter}`);
+}
+function buildAmbientDeclaration$with$content(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildAmbientDeclaration$with(receiverOf(this, '$with.content'), 'content', args);
 }
 
 export function buildAbstractClassDeclaration<
@@ -5440,35 +6996,71 @@ export function buildAbstractClassDeclaration(
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		decorators: (...values: Admit<T.Decorator[]>) =>
-			rebuilt(node, handle, () =>
-				buildAbstractClassDeclaration({ ...config, decorators: restItems('decorators', values) })
-			),
-		name: (value: Admit<T.TypeIdentifier | T.TypeIdentifier.Types>) =>
-			rebuilt(node, handle, () => buildAbstractClassDeclaration({ ...config, name: value })),
-		typeParameters: (...args: unknown[]) =>
-			rebuilt(node, handle, () =>
-				listSlotWith(
-					args,
-					{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
-					(value?: Admit<T.TypeParameters>) => buildAbstractClassDeclaration({ ...config, typeParameters: value })
-				)
-			),
-		heritage: (value?: Admit<T.ClassHeritage>) =>
-			rebuilt(node, handle, () => buildAbstractClassDeclaration({ ...config, heritage: value })),
-		body: (value: Admit<T.ClassBody>) =>
-			rebuilt(node, handle, () => buildAbstractClassDeclaration({ ...config, body: value })),
+		decorators: buildAbstractClassDeclaration$with$decorators,
+		name: buildAbstractClassDeclaration$with$name,
+		typeParameters: buildAbstractClassDeclaration$with$typeParameters,
+		heritage: buildAbstractClassDeclaration$with$heritage,
+		body: buildAbstractClassDeclaration$with$body,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.AbstractClassDeclaration.Bound;
+}
+
+function buildAbstractClassDeclaration$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.AbstractClassDeclaration.Config;
+	switch (setter) {
+		case 'decorators':
+			return applySetter(args, (...values: Admit<T.Decorator[]>) =>
+				rebuilt(node, handle, () =>
+					buildAbstractClassDeclaration({ ...config, decorators: restItems('decorators', values) })
+				)
+			);
+		case 'name':
+			return applySetter(args, (value: Admit<T.TypeIdentifier | T.TypeIdentifier.Types>) =>
+				rebuilt(node, handle, () => buildAbstractClassDeclaration({ ...config, name: value }))
+			);
+		case 'typeParameters':
+			return applySetter(args, (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
+						(value?: Admit<T.TypeParameters>) => buildAbstractClassDeclaration({ ...config, typeParameters: value })
+					)
+				)
+			);
+		case 'heritage':
+			return applySetter(args, (value?: Admit<T.ClassHeritage>) =>
+				rebuilt(node, handle, () => buildAbstractClassDeclaration({ ...config, heritage: value }))
+			);
+		case 'body':
+			return applySetter(args, (value: Admit<T.ClassBody>) =>
+				rebuilt(node, handle, () => buildAbstractClassDeclaration({ ...config, body: value }))
+			);
+	}
+	throw new Error(`abstract_class_declaration has no $with.${setter}`);
+}
+function buildAbstractClassDeclaration$with$decorators(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildAbstractClassDeclaration$with(receiverOf(this, '$with.decorators'), 'decorators', args);
+}
+function buildAbstractClassDeclaration$with$name(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildAbstractClassDeclaration$with(receiverOf(this, '$with.name'), 'name', args);
+}
+function buildAbstractClassDeclaration$with$typeParameters(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildAbstractClassDeclaration$with(receiverOf(this, '$with.typeParameters'), 'typeParameters', args);
+}
+function buildAbstractClassDeclaration$with$heritage(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildAbstractClassDeclaration$with(receiverOf(this, '$with.heritage'), 'heritage', args);
+}
+function buildAbstractClassDeclaration$with$body(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildAbstractClassDeclaration$with(receiverOf(this, '$with.body'), 'body', args);
 }
 
 export function buildModule<NameSlot extends T.Module.Config['name'], BodySlot extends T.Module.Config['body']>(
@@ -5494,20 +7086,35 @@ export function buildModule(config: T.Module.Config): T.Module.Bound {
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		name: (value: Admit<T.String | T.Identifier | T.NestedIdentifier>) =>
-			rebuilt(node, handle, () => buildModule({ ...config, name: value })),
-		body: (value?: Admit<T.StatementBlock>) => rebuilt(node, handle, () => buildModule({ ...config, body: value })),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { name: buildModule$with$name, body: buildModule$with$body, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.Module.Bound;
+}
+
+function buildModule$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.Module.Config;
+	switch (setter) {
+		case 'name':
+			return applySetter(args, (value: Admit<T.String | T.Identifier | T.NestedIdentifier>) =>
+				rebuilt(node, handle, () => buildModule({ ...config, name: value }))
+			);
+		case 'body':
+			return applySetter(args, (value?: Admit<T.StatementBlock>) =>
+				rebuilt(node, handle, () => buildModule({ ...config, body: value }))
+			);
+	}
+	throw new Error(`module has no $with.${setter}`);
+}
+function buildModule$with$name(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildModule$with(receiverOf(this, '$with.name'), 'name', args);
+}
+function buildModule$with$body(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildModule$with(receiverOf(this, '$with.body'), 'body', args);
 }
 
 export function buildInternalModule<
@@ -5539,21 +7146,35 @@ export function buildInternalModule(config: T.InternalModule.Config): T.Internal
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		name: (value: Admit<T.String | T.Identifier | T.NestedIdentifier>) =>
-			rebuilt(node, handle, () => buildInternalModule({ ...config, name: value })),
-		body: (value?: Admit<T.StatementBlock>) =>
-			rebuilt(node, handle, () => buildInternalModule({ ...config, body: value })),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { name: buildInternalModule$with$name, body: buildInternalModule$with$body, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.InternalModule.Bound;
+}
+
+function buildInternalModule$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.InternalModule.Config;
+	switch (setter) {
+		case 'name':
+			return applySetter(args, (value: Admit<T.String | T.Identifier | T.NestedIdentifier>) =>
+				rebuilt(node, handle, () => buildInternalModule({ ...config, name: value }))
+			);
+		case 'body':
+			return applySetter(args, (value?: Admit<T.StatementBlock>) =>
+				rebuilt(node, handle, () => buildInternalModule({ ...config, body: value }))
+			);
+	}
+	throw new Error(`internal_module has no $with.${setter}`);
+}
+function buildInternalModule$with$name(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildInternalModule$with(receiverOf(this, '$with.name'), 'name', args);
+}
+function buildInternalModule$with$body(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildInternalModule$with(receiverOf(this, '$with.body'), 'body', args);
 }
 
 export function buildImportAlias<
@@ -5600,23 +7221,49 @@ export function buildImportAlias(config: T.ImportAlias.Config, options?: T.Impor
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
+		[OPTIONS]: options,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		name: (value: Admit<T.Identifier>) =>
-			rebuilt(node, handle, () => buildImportAlias({ ...config, name: value }, options)),
-		value: (value: Admit<T.Identifier | T.NestedIdentifier>) =>
-			rebuilt(node, handle, () => buildImportAlias({ ...config, value: value }, options)),
-		terminator: (spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi) =>
-			rebuilt(node, handle, () => buildImportAlias(config, { ...options, terminator: spelling })),
+		name: buildImportAlias$with$name,
+		value: buildImportAlias$with$value,
+		terminator: buildImportAlias$with$terminator,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.ImportAlias.Bound;
+}
+
+function buildImportAlias$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.ImportAlias.Config;
+	const options = node[OPTIONS] as T.ImportAlias.Options;
+	switch (setter) {
+		case 'name':
+			return applySetter(args, (value: Admit<T.Identifier>) =>
+				rebuilt(node, handle, () => buildImportAlias({ ...config, name: value }, options))
+			);
+		case 'value':
+			return applySetter(args, (value: Admit<T.Identifier | T.NestedIdentifier>) =>
+				rebuilt(node, handle, () => buildImportAlias({ ...config, value: value }, options))
+			);
+		case 'terminator':
+			return applySetter(args, (spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi) =>
+				rebuilt(node, handle, () => buildImportAlias(config, { ...options, terminator: spelling }))
+			);
+	}
+	throw new Error(`import_alias has no $with.${setter}`);
+}
+function buildImportAlias$with$name(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildImportAlias$with(receiverOf(this, '$with.name'), 'name', args);
+}
+function buildImportAlias$with$value(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildImportAlias$with(receiverOf(this, '$with.value'), 'value', args);
+}
+function buildImportAlias$with$terminator(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildImportAlias$with(receiverOf(this, '$with.terminator'), 'terminator', args);
 }
 
 export function buildNestedTypeIdentifier<
@@ -5653,21 +7300,39 @@ export function buildNestedTypeIdentifier(config: T.NestedTypeIdentifier.Config)
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		qualifier: (value: Admit<T.Identifier | T.NestedIdentifier>) =>
-			rebuilt(node, handle, () => buildNestedTypeIdentifier({ ...config, qualifier: value })),
-		name: (value: Admit<T.TypeIdentifier | T.TypeIdentifier.Types>) =>
-			rebuilt(node, handle, () => buildNestedTypeIdentifier({ ...config, name: value })),
+		qualifier: buildNestedTypeIdentifier$with$qualifier,
+		name: buildNestedTypeIdentifier$with$name,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.NestedTypeIdentifier.Bound;
+}
+
+function buildNestedTypeIdentifier$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.NestedTypeIdentifier.Config;
+	switch (setter) {
+		case 'qualifier':
+			return applySetter(args, (value: Admit<T.Identifier | T.NestedIdentifier>) =>
+				rebuilt(node, handle, () => buildNestedTypeIdentifier({ ...config, qualifier: value }))
+			);
+		case 'name':
+			return applySetter(args, (value: Admit<T.TypeIdentifier | T.TypeIdentifier.Types>) =>
+				rebuilt(node, handle, () => buildNestedTypeIdentifier({ ...config, name: value }))
+			);
+	}
+	throw new Error(`nested_type_identifier has no $with.${setter}`);
+}
+function buildNestedTypeIdentifier$with$qualifier(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildNestedTypeIdentifier$with(receiverOf(this, '$with.qualifier'), 'qualifier', args);
+}
+function buildNestedTypeIdentifier$with$name(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildNestedTypeIdentifier$with(receiverOf(this, '$with.name'), 'name', args);
 }
 
 export function buildInterfaceDeclaration<
@@ -5716,31 +7381,61 @@ export function buildInterfaceDeclaration(config: T.InterfaceDeclaration.Config)
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		name: (value: Admit<T.TypeIdentifier | T.TypeIdentifier.Types>) =>
-			rebuilt(node, handle, () => buildInterfaceDeclaration({ ...config, name: value })),
-		typeParameters: (...args: unknown[]) =>
-			rebuilt(node, handle, () =>
-				listSlotWith(
-					args,
-					{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
-					(value?: Admit<T.TypeParameters>) => buildInterfaceDeclaration({ ...config, typeParameters: value })
-				)
-			),
-		extendsTypeClause: (value?: Admit<T.ExtendsTypeClause>) =>
-			rebuilt(node, handle, () => buildInterfaceDeclaration({ ...config, extendsTypeClause: value })),
-		body: (value: Admit<T.InterfaceBody>) =>
-			rebuilt(node, handle, () => buildInterfaceDeclaration({ ...config, body: value })),
+		name: buildInterfaceDeclaration$with$name,
+		typeParameters: buildInterfaceDeclaration$with$typeParameters,
+		extendsTypeClause: buildInterfaceDeclaration$with$extendsTypeClause,
+		body: buildInterfaceDeclaration$with$body,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.InterfaceDeclaration.Bound;
+}
+
+function buildInterfaceDeclaration$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.InterfaceDeclaration.Config;
+	switch (setter) {
+		case 'name':
+			return applySetter(args, (value: Admit<T.TypeIdentifier | T.TypeIdentifier.Types>) =>
+				rebuilt(node, handle, () => buildInterfaceDeclaration({ ...config, name: value }))
+			);
+		case 'typeParameters':
+			return applySetter(args, (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
+						(value?: Admit<T.TypeParameters>) => buildInterfaceDeclaration({ ...config, typeParameters: value })
+					)
+				)
+			);
+		case 'extendsTypeClause':
+			return applySetter(args, (value?: Admit<T.ExtendsTypeClause>) =>
+				rebuilt(node, handle, () => buildInterfaceDeclaration({ ...config, extendsTypeClause: value }))
+			);
+		case 'body':
+			return applySetter(args, (value: Admit<T.InterfaceBody>) =>
+				rebuilt(node, handle, () => buildInterfaceDeclaration({ ...config, body: value }))
+			);
+	}
+	throw new Error(`interface_declaration has no $with.${setter}`);
+}
+function buildInterfaceDeclaration$with$name(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildInterfaceDeclaration$with(receiverOf(this, '$with.name'), 'name', args);
+}
+function buildInterfaceDeclaration$with$typeParameters(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildInterfaceDeclaration$with(receiverOf(this, '$with.typeParameters'), 'typeParameters', args);
+}
+function buildInterfaceDeclaration$with$extendsTypeClause(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildInterfaceDeclaration$with(receiverOf(this, '$with.extendsTypeClause'), 'extendsTypeClause', args);
+}
+function buildInterfaceDeclaration$with$body(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildInterfaceDeclaration$with(receiverOf(this, '$with.body'), 'body', args);
 }
 
 export function buildExtendsTypeClause<
@@ -5770,20 +7465,31 @@ export function buildExtendsTypeClause(
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		types: (
-			...vs: NonEmptyArray<Admit<(T.TypeIdentifier | T.NestedTypeIdentifier | T.GenericType) | T.TypeIdentifier.Types>>
-		) => rebuilt(node, handle, () => buildExtendsTypeClause(...restItems('types', vs))),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { types: buildExtendsTypeClause$with$types, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.ExtendsTypeClause.Bound;
+}
+
+function buildExtendsTypeClause$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	switch (setter) {
+		case 'types':
+			return applySetter(
+				args,
+				(
+					...vs: NonEmptyArray<
+						Admit<(T.TypeIdentifier | T.NestedTypeIdentifier | T.GenericType) | T.TypeIdentifier.Types>
+					>
+				) => rebuilt(node, handle, () => buildExtendsTypeClause(...restItems('types', vs)))
+			);
+	}
+	throw new Error(`extends_type_clause has no $with.${setter}`);
+}
+function buildExtendsTypeClause$with$types(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildExtendsTypeClause$with(receiverOf(this, '$with.types'), 'types', args);
 }
 
 export function buildEnumDeclaration<
@@ -5818,28 +7524,53 @@ export function buildEnumDeclaration(config: T.EnumDeclaration.Config): T.EnumDe
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		const: (value?: Admit<NonNullable<T.EnumDeclaration.Config>['const']>) =>
-			rebuilt(node, handle, () => buildEnumDeclaration({ ...config, const: value })),
-		name: (value: Admit<T.Identifier>) => rebuilt(node, handle, () => buildEnumDeclaration({ ...config, name: value })),
-		body: (...args: unknown[]) =>
-			rebuilt(node, handle, () =>
-				listSlotWith(
-					args,
-					{ kind: TSKindId.EnumBody as const, optional: false, make: buildEnumBody },
-					(value: Admit<T.EnumBody>) => buildEnumDeclaration({ ...config, body: value })
-				)
-			),
+		const: buildEnumDeclaration$with$const,
+		name: buildEnumDeclaration$with$name,
+		body: buildEnumDeclaration$with$body,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.EnumDeclaration.Bound;
+}
+
+function buildEnumDeclaration$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.EnumDeclaration.Config;
+	switch (setter) {
+		case 'const':
+			return applySetter(args, (value?: Admit<NonNullable<T.EnumDeclaration.Config>['const']>) =>
+				rebuilt(node, handle, () => buildEnumDeclaration({ ...config, const: value }))
+			);
+		case 'name':
+			return applySetter(args, (value: Admit<T.Identifier>) =>
+				rebuilt(node, handle, () => buildEnumDeclaration({ ...config, name: value }))
+			);
+		case 'body':
+			return applySetter(args, (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{ kind: TSKindId.EnumBody as const, optional: false, make: buildEnumBody },
+						(value: Admit<T.EnumBody>) => buildEnumDeclaration({ ...config, body: value })
+					)
+				)
+			);
+	}
+	throw new Error(`enum_declaration has no $with.${setter}`);
+}
+function buildEnumDeclaration$with$const(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildEnumDeclaration$with(receiverOf(this, '$with.const'), 'const', args);
+}
+function buildEnumDeclaration$with$name(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildEnumDeclaration$with(receiverOf(this, '$with.name'), 'name', args);
+}
+function buildEnumDeclaration$with$body(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildEnumDeclaration$with(receiverOf(this, '$with.body'), 'body', args);
 }
 
 export function buildEnumBody(): T.EmptyEnumBody;
@@ -5918,27 +7649,33 @@ function _buildEnumBody(value?: Admit<T.EnumBodyElements>): T.EnumBody.Bound {
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		elements: (...args: unknown[]) =>
-			rebuilt(node, handle, () =>
-				listSlotWith(
-					args,
-					{ kind: TSKindId.EnumBodyElements as const, optional: true, make: buildEnumBodyElements },
-					(value?: Admit<T.EnumBodyElements>) => _buildEnumBody(value)
-				)
-			),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		inner: (...items: unknown[]) => triviaInner(node, handle, items),
-		[RECEIVER]: node
-	};
+	node.$with = { elements: buildEnumBody$with$elements, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, inner: objectInner, [RECEIVER]: node };
 	holdListItems(node, heldItems(listView.list));
 	return node as unknown as T.EnumBody.Bound;
+}
+
+function buildEnumBody$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	switch (setter) {
+		case 'elements':
+			return applySetter(args, (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{ kind: TSKindId.EnumBodyElements as const, optional: true, make: buildEnumBodyElements },
+						(value?: Admit<T.EnumBodyElements>) => _buildEnumBody(value)
+					)
+				)
+			);
+	}
+	throw new Error(`enum_body has no $with.${setter}`);
+}
+function buildEnumBody$with$elements(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildEnumBody$with(receiverOf(this, '$with.elements'), 'elements', args);
 }
 
 export function buildEnumAssignment<
@@ -5973,29 +7710,45 @@ export function buildEnumAssignment(config: T.EnumAssignment.Config): T.EnumAssi
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		name: (
-			value: Admit<
-				| T.PropertyIdentifier
-				| T.PrivatePropertyIdentifier
-				| T.String
-				| T.Number
-				| T.ComputedPropertyName
-				| T.PropertyIdentifier.Types
-			>
-		) => rebuilt(node, handle, () => buildEnumAssignment({ ...config, name: value })),
-		value: (value: Admit<NonNullable<T.EnumAssignment.Config>['value']>) =>
-			rebuilt(node, handle, () => buildEnumAssignment({ ...config, value: value })),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { name: buildEnumAssignment$with$name, value: buildEnumAssignment$with$value, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.EnumAssignment.Bound;
+}
+
+function buildEnumAssignment$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.EnumAssignment.Config;
+	switch (setter) {
+		case 'name':
+			return applySetter(
+				args,
+				(
+					value: Admit<
+						| T.PropertyIdentifier
+						| T.PrivatePropertyIdentifier
+						| T.String
+						| T.Number
+						| T.ComputedPropertyName
+						| T.PropertyIdentifier.Types
+					>
+				) => rebuilt(node, handle, () => buildEnumAssignment({ ...config, name: value }))
+			);
+		case 'value':
+			return applySetter(args, (value: Admit<NonNullable<T.EnumAssignment.Config>['value']>) =>
+				rebuilt(node, handle, () => buildEnumAssignment({ ...config, value: value }))
+			);
+	}
+	throw new Error(`enum_assignment has no $with.${setter}`);
+}
+function buildEnumAssignment$with$name(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildEnumAssignment$with(receiverOf(this, '$with.name'), 'name', args);
+}
+function buildEnumAssignment$with$value(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildEnumAssignment$with(receiverOf(this, '$with.value'), 'value', args);
 }
 
 export function buildTypeAliasDeclaration<
@@ -6058,31 +7811,64 @@ export function buildTypeAliasDeclaration(
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
+		[OPTIONS]: options,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		name: (value: Admit<T.TypeIdentifier | T.TypeIdentifier.Types>) =>
-			rebuilt(node, handle, () => buildTypeAliasDeclaration({ ...config, name: value }, options)),
-		typeParameters: (...args: unknown[]) =>
-			rebuilt(node, handle, () =>
-				listSlotWith(
-					args,
-					{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
-					(value?: Admit<T.TypeParameters>) => buildTypeAliasDeclaration({ ...config, typeParameters: value }, options)
-				)
-			),
-		value: (value: Admit<NonNullable<T.TypeAliasDeclaration.Config>['value']>) =>
-			rebuilt(node, handle, () => buildTypeAliasDeclaration({ ...config, value: value }, options)),
-		terminator: (spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi) =>
-			rebuilt(node, handle, () => buildTypeAliasDeclaration(config, { ...options, terminator: spelling })),
+		name: buildTypeAliasDeclaration$with$name,
+		typeParameters: buildTypeAliasDeclaration$with$typeParameters,
+		value: buildTypeAliasDeclaration$with$value,
+		terminator: buildTypeAliasDeclaration$with$terminator,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.TypeAliasDeclaration.Bound;
+}
+
+function buildTypeAliasDeclaration$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.TypeAliasDeclaration.Config;
+	const options = node[OPTIONS] as T.TypeAliasDeclaration.Options;
+	switch (setter) {
+		case 'name':
+			return applySetter(args, (value: Admit<T.TypeIdentifier | T.TypeIdentifier.Types>) =>
+				rebuilt(node, handle, () => buildTypeAliasDeclaration({ ...config, name: value }, options))
+			);
+		case 'typeParameters':
+			return applySetter(args, (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
+						(value?: Admit<T.TypeParameters>) =>
+							buildTypeAliasDeclaration({ ...config, typeParameters: value }, options)
+					)
+				)
+			);
+		case 'value':
+			return applySetter(args, (value: Admit<NonNullable<T.TypeAliasDeclaration.Config>['value']>) =>
+				rebuilt(node, handle, () => buildTypeAliasDeclaration({ ...config, value: value }, options))
+			);
+		case 'terminator':
+			return applySetter(args, (spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi) =>
+				rebuilt(node, handle, () => buildTypeAliasDeclaration(config, { ...options, terminator: spelling }))
+			);
+	}
+	throw new Error(`type_alias_declaration has no $with.${setter}`);
+}
+function buildTypeAliasDeclaration$with$name(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildTypeAliasDeclaration$with(receiverOf(this, '$with.name'), 'name', args);
+}
+function buildTypeAliasDeclaration$with$typeParameters(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildTypeAliasDeclaration$with(receiverOf(this, '$with.typeParameters'), 'typeParameters', args);
+}
+function buildTypeAliasDeclaration$with$value(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildTypeAliasDeclaration$with(receiverOf(this, '$with.value'), 'value', args);
+}
+function buildTypeAliasDeclaration$with$terminator(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildTypeAliasDeclaration$with(receiverOf(this, '$with.terminator'), 'terminator', args);
 }
 
 export const buildOverrideModifier: TSKindId.OverrideModifier = TSKindId.OverrideModifier;
@@ -6149,30 +7935,79 @@ export function buildRequiredParameter(config: T.RequiredParameter.Config): T.Re
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		decorators: (...values: Admit<T.Decorator[]>) =>
-			rebuilt(node, handle, () => buildRequiredParameter({ ...config, decorators: restItems('decorators', values) })),
-		accessibilityModifier: (value?: Admit<NonNullable<T.RequiredParameter.Config>['accessibilityModifier']>) =>
-			rebuilt(node, handle, () => buildRequiredParameter({ ...config, accessibilityModifier: value })),
-		override: (value?: Admit<NonNullable<T.RequiredParameter.Config>['override']>) =>
-			rebuilt(node, handle, () => buildRequiredParameter({ ...config, override: value })),
-		readonly: (value?: Admit<NonNullable<T.RequiredParameter.Config>['readonly']>) =>
-			rebuilt(node, handle, () => buildRequiredParameter({ ...config, readonly: value })),
-		name: (value: Admit<T.Pattern>) => rebuilt(node, handle, () => buildRequiredParameter({ ...config, name: value })),
-		type: (value?: Admit<T.TypeAnnotation>) =>
-			rebuilt(node, handle, () => buildRequiredParameter({ ...config, type: value })),
-		value: (value?: Admit<NonNullable<T.RequiredParameter.Config>['value']>) =>
-			rebuilt(node, handle, () => buildRequiredParameter({ ...config, value: value })),
+		decorators: buildRequiredParameter$with$decorators,
+		accessibilityModifier: buildRequiredParameter$with$accessibilityModifier,
+		override: buildRequiredParameter$with$override,
+		readonly: buildRequiredParameter$with$readonly,
+		name: buildRequiredParameter$with$name,
+		type: buildRequiredParameter$with$type,
+		value: buildRequiredParameter$with$value,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.RequiredParameter.Bound;
+}
+
+function buildRequiredParameter$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.RequiredParameter.Config;
+	switch (setter) {
+		case 'decorators':
+			return applySetter(args, (...values: Admit<T.Decorator[]>) =>
+				rebuilt(node, handle, () => buildRequiredParameter({ ...config, decorators: restItems('decorators', values) }))
+			);
+		case 'accessibilityModifier':
+			return applySetter(args, (value?: Admit<NonNullable<T.RequiredParameter.Config>['accessibilityModifier']>) =>
+				rebuilt(node, handle, () => buildRequiredParameter({ ...config, accessibilityModifier: value }))
+			);
+		case 'override':
+			return applySetter(args, (value?: Admit<NonNullable<T.RequiredParameter.Config>['override']>) =>
+				rebuilt(node, handle, () => buildRequiredParameter({ ...config, override: value }))
+			);
+		case 'readonly':
+			return applySetter(args, (value?: Admit<NonNullable<T.RequiredParameter.Config>['readonly']>) =>
+				rebuilt(node, handle, () => buildRequiredParameter({ ...config, readonly: value }))
+			);
+		case 'name':
+			return applySetter(args, (value: Admit<T.Pattern>) =>
+				rebuilt(node, handle, () => buildRequiredParameter({ ...config, name: value }))
+			);
+		case 'type':
+			return applySetter(args, (value?: Admit<T.TypeAnnotation>) =>
+				rebuilt(node, handle, () => buildRequiredParameter({ ...config, type: value }))
+			);
+		case 'value':
+			return applySetter(args, (value?: Admit<NonNullable<T.RequiredParameter.Config>['value']>) =>
+				rebuilt(node, handle, () => buildRequiredParameter({ ...config, value: value }))
+			);
+	}
+	throw new Error(`required_parameter has no $with.${setter}`);
+}
+function buildRequiredParameter$with$decorators(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildRequiredParameter$with(receiverOf(this, '$with.decorators'), 'decorators', args);
+}
+function buildRequiredParameter$with$accessibilityModifier(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildRequiredParameter$with(receiverOf(this, '$with.accessibilityModifier'), 'accessibilityModifier', args);
+}
+function buildRequiredParameter$with$override(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildRequiredParameter$with(receiverOf(this, '$with.override'), 'override', args);
+}
+function buildRequiredParameter$with$readonly(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildRequiredParameter$with(receiverOf(this, '$with.readonly'), 'readonly', args);
+}
+function buildRequiredParameter$with$name(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildRequiredParameter$with(receiverOf(this, '$with.name'), 'name', args);
+}
+function buildRequiredParameter$with$type(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildRequiredParameter$with(receiverOf(this, '$with.type'), 'type', args);
+}
+function buildRequiredParameter$with$value(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildRequiredParameter$with(receiverOf(this, '$with.value'), 'value', args);
 }
 
 export function buildOptionalParameter<
@@ -6237,31 +8072,79 @@ export function buildOptionalParameter(config: T.OptionalParameter.Config): T.Op
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		decorators: (...values: Admit<T.Decorator[]>) =>
-			rebuilt(node, handle, () => buildOptionalParameter({ ...config, decorators: restItems('decorators', values) })),
-		accessibilityModifier: (value?: Admit<NonNullable<T.OptionalParameter.Config>['accessibilityModifier']>) =>
-			rebuilt(node, handle, () => buildOptionalParameter({ ...config, accessibilityModifier: value })),
-		override: (value?: Admit<NonNullable<T.OptionalParameter.Config>['override']>) =>
-			rebuilt(node, handle, () => buildOptionalParameter({ ...config, override: value })),
-		readonly: (value?: Admit<NonNullable<T.OptionalParameter.Config>['readonly']>) =>
-			rebuilt(node, handle, () => buildOptionalParameter({ ...config, readonly: value })),
-		name: (value: Admit<NonNullable<T.OptionalParameter.Config>['name']>) =>
-			rebuilt(node, handle, () => buildOptionalParameter({ ...config, name: value })),
-		type: (value?: Admit<T.TypeAnnotation>) =>
-			rebuilt(node, handle, () => buildOptionalParameter({ ...config, type: value })),
-		value: (value?: Admit<NonNullable<T.OptionalParameter.Config>['value']>) =>
-			rebuilt(node, handle, () => buildOptionalParameter({ ...config, value: value })),
+		decorators: buildOptionalParameter$with$decorators,
+		accessibilityModifier: buildOptionalParameter$with$accessibilityModifier,
+		override: buildOptionalParameter$with$override,
+		readonly: buildOptionalParameter$with$readonly,
+		name: buildOptionalParameter$with$name,
+		type: buildOptionalParameter$with$type,
+		value: buildOptionalParameter$with$value,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.OptionalParameter.Bound;
+}
+
+function buildOptionalParameter$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.OptionalParameter.Config;
+	switch (setter) {
+		case 'decorators':
+			return applySetter(args, (...values: Admit<T.Decorator[]>) =>
+				rebuilt(node, handle, () => buildOptionalParameter({ ...config, decorators: restItems('decorators', values) }))
+			);
+		case 'accessibilityModifier':
+			return applySetter(args, (value?: Admit<NonNullable<T.OptionalParameter.Config>['accessibilityModifier']>) =>
+				rebuilt(node, handle, () => buildOptionalParameter({ ...config, accessibilityModifier: value }))
+			);
+		case 'override':
+			return applySetter(args, (value?: Admit<NonNullable<T.OptionalParameter.Config>['override']>) =>
+				rebuilt(node, handle, () => buildOptionalParameter({ ...config, override: value }))
+			);
+		case 'readonly':
+			return applySetter(args, (value?: Admit<NonNullable<T.OptionalParameter.Config>['readonly']>) =>
+				rebuilt(node, handle, () => buildOptionalParameter({ ...config, readonly: value }))
+			);
+		case 'name':
+			return applySetter(args, (value: Admit<NonNullable<T.OptionalParameter.Config>['name']>) =>
+				rebuilt(node, handle, () => buildOptionalParameter({ ...config, name: value }))
+			);
+		case 'type':
+			return applySetter(args, (value?: Admit<T.TypeAnnotation>) =>
+				rebuilt(node, handle, () => buildOptionalParameter({ ...config, type: value }))
+			);
+		case 'value':
+			return applySetter(args, (value?: Admit<NonNullable<T.OptionalParameter.Config>['value']>) =>
+				rebuilt(node, handle, () => buildOptionalParameter({ ...config, value: value }))
+			);
+	}
+	throw new Error(`optional_parameter has no $with.${setter}`);
+}
+function buildOptionalParameter$with$decorators(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildOptionalParameter$with(receiverOf(this, '$with.decorators'), 'decorators', args);
+}
+function buildOptionalParameter$with$accessibilityModifier(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildOptionalParameter$with(receiverOf(this, '$with.accessibilityModifier'), 'accessibilityModifier', args);
+}
+function buildOptionalParameter$with$override(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildOptionalParameter$with(receiverOf(this, '$with.override'), 'override', args);
+}
+function buildOptionalParameter$with$readonly(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildOptionalParameter$with(receiverOf(this, '$with.readonly'), 'readonly', args);
+}
+function buildOptionalParameter$with$name(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildOptionalParameter$with(receiverOf(this, '$with.name'), 'name', args);
+}
+function buildOptionalParameter$with$type(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildOptionalParameter$with(receiverOf(this, '$with.type'), 'type', args);
+}
+function buildOptionalParameter$with$value(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildOptionalParameter$with(receiverOf(this, '$with.value'), 'value', args);
 }
 
 export function buildOmittingTypeAnnotation<V extends Admit<T.Type | T.TypeIdentifier.Types>>(
@@ -6293,19 +8176,26 @@ export function buildOmittingTypeAnnotation(
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		type: (value: Admit<NonNullable<T.Type | T.TypeIdentifier.Types>>) =>
-			rebuilt(node, handle, () => buildOmittingTypeAnnotation(value)),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { type: buildOmittingTypeAnnotation$with$type, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.OmittingTypeAnnotation.Bound;
+}
+
+function buildOmittingTypeAnnotation$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	switch (setter) {
+		case 'type':
+			return applySetter(args, (value: Admit<NonNullable<T.Type | T.TypeIdentifier.Types>>) =>
+				rebuilt(node, handle, () => buildOmittingTypeAnnotation(value))
+			);
+	}
+	throw new Error(`omitting_type_annotation has no $with.${setter}`);
+}
+function buildOmittingTypeAnnotation$with$type(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildOmittingTypeAnnotation$with(receiverOf(this, '$with.type'), 'type', args);
 }
 
 export function buildAddingTypeAnnotation<V extends Admit<T.Type | T.TypeIdentifier.Types>>(
@@ -6335,19 +8225,26 @@ export function buildAddingTypeAnnotation(value: Admit<T.Type | T.TypeIdentifier
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		type: (value: Admit<NonNullable<T.Type | T.TypeIdentifier.Types>>) =>
-			rebuilt(node, handle, () => buildAddingTypeAnnotation(value)),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { type: buildAddingTypeAnnotation$with$type, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.AddingTypeAnnotation.Bound;
+}
+
+function buildAddingTypeAnnotation$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	switch (setter) {
+		case 'type':
+			return applySetter(args, (value: Admit<NonNullable<T.Type | T.TypeIdentifier.Types>>) =>
+				rebuilt(node, handle, () => buildAddingTypeAnnotation(value))
+			);
+	}
+	throw new Error(`adding_type_annotation has no $with.${setter}`);
+}
+function buildAddingTypeAnnotation$with$type(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildAddingTypeAnnotation$with(receiverOf(this, '$with.type'), 'type', args);
 }
 
 export function buildOptingTypeAnnotation<V extends Admit<T.Type | T.TypeIdentifier.Types>>(
@@ -6377,19 +8274,26 @@ export function buildOptingTypeAnnotation(value: Admit<T.Type | T.TypeIdentifier
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		type: (value: Admit<NonNullable<T.Type | T.TypeIdentifier.Types>>) =>
-			rebuilt(node, handle, () => buildOptingTypeAnnotation(value)),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { type: buildOptingTypeAnnotation$with$type, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.OptingTypeAnnotation.Bound;
+}
+
+function buildOptingTypeAnnotation$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	switch (setter) {
+		case 'type':
+			return applySetter(args, (value: Admit<NonNullable<T.Type | T.TypeIdentifier.Types>>) =>
+				rebuilt(node, handle, () => buildOptingTypeAnnotation(value))
+			);
+	}
+	throw new Error(`opting_type_annotation has no $with.${setter}`);
+}
+function buildOptingTypeAnnotation$with$type(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildOptingTypeAnnotation$with(receiverOf(this, '$with.type'), 'type', args);
 }
 
 export function buildTypeAnnotation<V extends Admit<T.Type | T.TypeIdentifier.Types>>(
@@ -6419,19 +8323,26 @@ export function buildTypeAnnotation(value: Admit<T.Type | T.TypeIdentifier.Types
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		type: (value: Admit<NonNullable<T.Type | T.TypeIdentifier.Types>>) =>
-			rebuilt(node, handle, () => buildTypeAnnotation(value)),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { type: buildTypeAnnotation$with$type, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.TypeAnnotation.Bound;
+}
+
+function buildTypeAnnotation$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	switch (setter) {
+		case 'type':
+			return applySetter(args, (value: Admit<NonNullable<T.Type | T.TypeIdentifier.Types>>) =>
+				rebuilt(node, handle, () => buildTypeAnnotation(value))
+			);
+	}
+	throw new Error(`type_annotation has no $with.${setter}`);
+}
+function buildTypeAnnotation$with$type(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildTypeAnnotation$with(receiverOf(this, '$with.type'), 'type', args);
 }
 
 export function buildTypeQueryMemberExpressionInTypeAnnotation<
@@ -6474,21 +8385,50 @@ export function buildTypeQueryMemberExpressionInTypeAnnotation(
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		object: (value: Admit<NonNullable<T.TypeQueryMemberExpressionInTypeAnnotation.Config>['object']>) =>
-			rebuilt(node, handle, () => buildTypeQueryMemberExpressionInTypeAnnotation({ ...config, object: value })),
-		property: (value: Admit<T.PrivatePropertyIdentifier | T.PropertyIdentifier | T.PropertyIdentifier.Types>) =>
-			rebuilt(node, handle, () => buildTypeQueryMemberExpressionInTypeAnnotation({ ...config, property: value })),
+		object: buildTypeQueryMemberExpressionInTypeAnnotation$with$object,
+		property: buildTypeQueryMemberExpressionInTypeAnnotation$with$property,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.TypeQueryMemberExpressionInTypeAnnotation.Bound;
+}
+
+function buildTypeQueryMemberExpressionInTypeAnnotation$with(
+	node: Held,
+	setter: string,
+	args: readonly unknown[]
+): unknown {
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.TypeQueryMemberExpressionInTypeAnnotation.Config;
+	switch (setter) {
+		case 'object':
+			return applySetter(
+				args,
+				(value: Admit<NonNullable<T.TypeQueryMemberExpressionInTypeAnnotation.Config>['object']>) =>
+					rebuilt(node, handle, () => buildTypeQueryMemberExpressionInTypeAnnotation({ ...config, object: value }))
+			);
+		case 'property':
+			return applySetter(
+				args,
+				(value: Admit<T.PrivatePropertyIdentifier | T.PropertyIdentifier | T.PropertyIdentifier.Types>) =>
+					rebuilt(node, handle, () => buildTypeQueryMemberExpressionInTypeAnnotation({ ...config, property: value }))
+			);
+	}
+	throw new Error(`type_query_member_expression_in_type_annotation has no $with.${setter}`);
+}
+function buildTypeQueryMemberExpressionInTypeAnnotation$with$object(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildTypeQueryMemberExpressionInTypeAnnotation$with(receiverOf(this, '$with.object'), 'object', args);
+}
+function buildTypeQueryMemberExpressionInTypeAnnotation$with$property(
+	this: Received<Held>,
+	...args: unknown[]
+): unknown {
+	return buildTypeQueryMemberExpressionInTypeAnnotation$with(receiverOf(this, '$with.property'), 'property', args);
 }
 
 export function buildTypeQueryCallExpressionInTypeAnnotation<
@@ -6526,21 +8466,48 @@ export function buildTypeQueryCallExpressionInTypeAnnotation(
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		function: (value: Admit<NonNullable<T.TypeQueryCallExpressionInTypeAnnotation.Config>['function']>) =>
-			rebuilt(node, handle, () => buildTypeQueryCallExpressionInTypeAnnotation({ ...config, function: value })),
-		arguments: (value: Admit<T.Arguments>) =>
-			rebuilt(node, handle, () => buildTypeQueryCallExpressionInTypeAnnotation({ ...config, arguments: value })),
+		function: buildTypeQueryCallExpressionInTypeAnnotation$with$function,
+		arguments: buildTypeQueryCallExpressionInTypeAnnotation$with$arguments,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.TypeQueryCallExpressionInTypeAnnotation.Bound;
+}
+
+function buildTypeQueryCallExpressionInTypeAnnotation$with(
+	node: Held,
+	setter: string,
+	args: readonly unknown[]
+): unknown {
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.TypeQueryCallExpressionInTypeAnnotation.Config;
+	switch (setter) {
+		case 'function':
+			return applySetter(
+				args,
+				(value: Admit<NonNullable<T.TypeQueryCallExpressionInTypeAnnotation.Config>['function']>) =>
+					rebuilt(node, handle, () => buildTypeQueryCallExpressionInTypeAnnotation({ ...config, function: value }))
+			);
+		case 'arguments':
+			return applySetter(args, (value: Admit<T.Arguments>) =>
+				rebuilt(node, handle, () => buildTypeQueryCallExpressionInTypeAnnotation({ ...config, arguments: value }))
+			);
+	}
+	throw new Error(`type_query_call_expression_in_type_annotation has no $with.${setter}`);
+}
+function buildTypeQueryCallExpressionInTypeAnnotation$with$function(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildTypeQueryCallExpressionInTypeAnnotation$with(receiverOf(this, '$with.function'), 'function', args);
+}
+function buildTypeQueryCallExpressionInTypeAnnotation$with$arguments(
+	this: Received<Held>,
+	...args: unknown[]
+): unknown {
+	return buildTypeQueryCallExpressionInTypeAnnotation$with(receiverOf(this, '$with.arguments'), 'arguments', args);
 }
 
 export function buildAsserts<V extends Admit<T.TypePredicate | T.Identifier | TSKindId.This>>(
@@ -6569,19 +8536,26 @@ export function buildAsserts(value: Admit<T.TypePredicate | T.Identifier | TSKin
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		value: (value: Admit<NonNullable<T.TypePredicate | T.Identifier | TSKindId.This>>) =>
-			rebuilt(node, handle, () => buildAsserts(value)),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { value: buildAsserts$with$value, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.Asserts.Bound;
+}
+
+function buildAsserts$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	switch (setter) {
+		case 'value':
+			return applySetter(args, (value: Admit<NonNullable<T.TypePredicate | T.Identifier | TSKindId.This>>) =>
+				rebuilt(node, handle, () => buildAsserts(value))
+			);
+	}
+	throw new Error(`asserts has no $with.${setter}`);
+}
+function buildAsserts$with$value(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildAsserts$with(receiverOf(this, '$with.value'), 'value', args);
 }
 
 export function buildAssertsAnnotation<V extends Admit<T.Asserts>>(
@@ -6621,18 +8595,26 @@ function _buildAssertsAnnotation(value: Admit<T.Asserts>): T.AssertsAnnotation.B
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		asserts: (value: Admit<T.Asserts>) => rebuilt(node, handle, () => _buildAssertsAnnotation(value)),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { asserts: buildAssertsAnnotation$with$asserts, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.AssertsAnnotation.Bound;
+}
+
+function buildAssertsAnnotation$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	switch (setter) {
+		case 'asserts':
+			return applySetter(args, (value: Admit<T.Asserts>) =>
+				rebuilt(node, handle, () => _buildAssertsAnnotation(value))
+			);
+	}
+	throw new Error(`asserts_annotation has no $with.${setter}`);
+}
+function buildAssertsAnnotation$with$asserts(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildAssertsAnnotation$with(receiverOf(this, '$with.asserts'), 'asserts', args);
 }
 
 export function buildTupleParameter<
@@ -6664,21 +8646,35 @@ export function buildTupleParameter(config: T.TupleParameter.Config): T.TuplePar
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		name: (value: Admit<T.Identifier | T.RestPattern>) =>
-			rebuilt(node, handle, () => buildTupleParameter({ ...config, name: value })),
-		type: (value: Admit<T.TypeAnnotation>) =>
-			rebuilt(node, handle, () => buildTupleParameter({ ...config, type: value })),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { name: buildTupleParameter$with$name, type: buildTupleParameter$with$type, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.TupleParameter.Bound;
+}
+
+function buildTupleParameter$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.TupleParameter.Config;
+	switch (setter) {
+		case 'name':
+			return applySetter(args, (value: Admit<T.Identifier | T.RestPattern>) =>
+				rebuilt(node, handle, () => buildTupleParameter({ ...config, name: value }))
+			);
+		case 'type':
+			return applySetter(args, (value: Admit<T.TypeAnnotation>) =>
+				rebuilt(node, handle, () => buildTupleParameter({ ...config, type: value }))
+			);
+	}
+	throw new Error(`tuple_parameter has no $with.${setter}`);
+}
+function buildTupleParameter$with$name(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildTupleParameter$with(receiverOf(this, '$with.name'), 'name', args);
+}
+function buildTupleParameter$with$type(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildTupleParameter$with(receiverOf(this, '$with.type'), 'type', args);
 }
 
 export function buildOptionalTupleParameter<
@@ -6712,21 +8708,39 @@ export function buildOptionalTupleParameter(config: T.OptionalTupleParameter.Con
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		name: (value: Admit<T.Identifier>) =>
-			rebuilt(node, handle, () => buildOptionalTupleParameter({ ...config, name: value })),
-		type: (value: Admit<T.TypeAnnotation>) =>
-			rebuilt(node, handle, () => buildOptionalTupleParameter({ ...config, type: value })),
+		name: buildOptionalTupleParameter$with$name,
+		type: buildOptionalTupleParameter$with$type,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.OptionalTupleParameter.Bound;
+}
+
+function buildOptionalTupleParameter$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.OptionalTupleParameter.Config;
+	switch (setter) {
+		case 'name':
+			return applySetter(args, (value: Admit<T.Identifier>) =>
+				rebuilt(node, handle, () => buildOptionalTupleParameter({ ...config, name: value }))
+			);
+		case 'type':
+			return applySetter(args, (value: Admit<T.TypeAnnotation>) =>
+				rebuilt(node, handle, () => buildOptionalTupleParameter({ ...config, type: value }))
+			);
+	}
+	throw new Error(`optional_tuple_parameter has no $with.${setter}`);
+}
+function buildOptionalTupleParameter$with$name(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildOptionalTupleParameter$with(receiverOf(this, '$with.name'), 'name', args);
+}
+function buildOptionalTupleParameter$with$type(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildOptionalTupleParameter$with(receiverOf(this, '$with.type'), 'type', args);
 }
 
 export function buildOptionalType<V extends Admit<T.Type | T.TypeIdentifier.Types>>(
@@ -6756,19 +8770,26 @@ export function buildOptionalType(value: Admit<T.Type | T.TypeIdentifier.Types>)
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		type: (value: Admit<NonNullable<T.Type | T.TypeIdentifier.Types>>) =>
-			rebuilt(node, handle, () => buildOptionalType(value)),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { type: buildOptionalType$with$type, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.OptionalType.Bound;
+}
+
+function buildOptionalType$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	switch (setter) {
+		case 'type':
+			return applySetter(args, (value: Admit<NonNullable<T.Type | T.TypeIdentifier.Types>>) =>
+				rebuilt(node, handle, () => buildOptionalType(value))
+			);
+	}
+	throw new Error(`optional_type has no $with.${setter}`);
+}
+function buildOptionalType$with$type(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildOptionalType$with(receiverOf(this, '$with.type'), 'type', args);
 }
 
 export function buildRestType<V extends Admit<T.Type | T.TypeIdentifier.Types>>(
@@ -6798,19 +8819,26 @@ export function buildRestType(value: Admit<T.Type | T.TypeIdentifier.Types>): T.
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		type: (value: Admit<NonNullable<T.Type | T.TypeIdentifier.Types>>) =>
-			rebuilt(node, handle, () => buildRestType(value)),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { type: buildRestType$with$type, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.RestType.Bound;
+}
+
+function buildRestType$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	switch (setter) {
+		case 'type':
+			return applySetter(args, (value: Admit<NonNullable<T.Type | T.TypeIdentifier.Types>>) =>
+				rebuilt(node, handle, () => buildRestType(value))
+			);
+	}
+	throw new Error(`rest_type has no $with.${setter}`);
+}
+function buildRestType$with$type(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildRestType$with(receiverOf(this, '$with.type'), 'type', args);
 }
 
 export function buildConstructorType<
@@ -6863,31 +8891,61 @@ export function buildConstructorType(config: T.ConstructorType.Config): T.Constr
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		abstract: (value?: Admit<NonNullable<T.ConstructorType.Config>['abstract']>) =>
-			rebuilt(node, handle, () => buildConstructorType({ ...config, abstract: value })),
-		typeParameters: (...args: unknown[]) =>
-			rebuilt(node, handle, () =>
-				listSlotWith(
-					args,
-					{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
-					(value?: Admit<T.TypeParameters>) => buildConstructorType({ ...config, typeParameters: value })
-				)
-			),
-		parameters: (value: Admit<T.FormalParameters>) =>
-			rebuilt(node, handle, () => buildConstructorType({ ...config, parameters: value })),
-		type: (value: Admit<NonNullable<T.ConstructorType.Config>['type']>) =>
-			rebuilt(node, handle, () => buildConstructorType({ ...config, type: value })),
+		abstract: buildConstructorType$with$abstract,
+		typeParameters: buildConstructorType$with$typeParameters,
+		parameters: buildConstructorType$with$parameters,
+		type: buildConstructorType$with$type,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.ConstructorType.Bound;
+}
+
+function buildConstructorType$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.ConstructorType.Config;
+	switch (setter) {
+		case 'abstract':
+			return applySetter(args, (value?: Admit<NonNullable<T.ConstructorType.Config>['abstract']>) =>
+				rebuilt(node, handle, () => buildConstructorType({ ...config, abstract: value }))
+			);
+		case 'typeParameters':
+			return applySetter(args, (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
+						(value?: Admit<T.TypeParameters>) => buildConstructorType({ ...config, typeParameters: value })
+					)
+				)
+			);
+		case 'parameters':
+			return applySetter(args, (value: Admit<T.FormalParameters>) =>
+				rebuilt(node, handle, () => buildConstructorType({ ...config, parameters: value }))
+			);
+		case 'type':
+			return applySetter(args, (value: Admit<NonNullable<T.ConstructorType.Config>['type']>) =>
+				rebuilt(node, handle, () => buildConstructorType({ ...config, type: value }))
+			);
+	}
+	throw new Error(`constructor_type has no $with.${setter}`);
+}
+function buildConstructorType$with$abstract(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildConstructorType$with(receiverOf(this, '$with.abstract'), 'abstract', args);
+}
+function buildConstructorType$with$typeParameters(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildConstructorType$with(receiverOf(this, '$with.typeParameters'), 'typeParameters', args);
+}
+function buildConstructorType$with$parameters(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildConstructorType$with(receiverOf(this, '$with.parameters'), 'parameters', args);
+}
+function buildConstructorType$with$type(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildConstructorType$with(receiverOf(this, '$with.type'), 'type', args);
 }
 
 export function buildTemplateType<V extends Admit<(T.PrimaryType | T.InferType) | T.TypeIdentifier.Types>>(
@@ -6919,19 +8977,26 @@ export function buildTemplateType(
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		type: (value: Admit<NonNullable<(T.PrimaryType | T.InferType) | T.TypeIdentifier.Types>>) =>
-			rebuilt(node, handle, () => buildTemplateType(value)),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { type: buildTemplateType$with$type, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.TemplateType.Bound;
+}
+
+function buildTemplateType$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	switch (setter) {
+		case 'type':
+			return applySetter(args, (value: Admit<NonNullable<(T.PrimaryType | T.InferType) | T.TypeIdentifier.Types>>) =>
+				rebuilt(node, handle, () => buildTemplateType(value))
+			);
+	}
+	throw new Error(`template_type has no $with.${setter}`);
+}
+function buildTemplateType$with$type(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildTemplateType$with(receiverOf(this, '$with.type'), 'type', args);
 }
 
 export function buildTemplateLiteralType<A extends Admit<(T.TemplateChars | T.TemplateType)[]>>(
@@ -6956,19 +9021,26 @@ export function buildTemplateLiteralType(
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		elements: (...vs: Admit<T.TemplateChars | T.TemplateType>[]) =>
-			rebuilt(node, handle, () => buildTemplateLiteralType(...restItems('elements', vs))),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { elements: buildTemplateLiteralType$with$elements, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.TemplateLiteralType.Bound;
+}
+
+function buildTemplateLiteralType$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	switch (setter) {
+		case 'elements':
+			return applySetter(args, (...vs: Admit<T.TemplateChars | T.TemplateType>[]) =>
+				rebuilt(node, handle, () => buildTemplateLiteralType(...restItems('elements', vs)))
+			);
+	}
+	throw new Error(`template_literal_type has no $with.${setter}`);
+}
+function buildTemplateLiteralType$with$elements(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildTemplateLiteralType$with(receiverOf(this, '$with.elements'), 'elements', args);
 }
 
 export function buildInferType<
@@ -7006,21 +9078,35 @@ export function buildInferType(config: T.InferType.Config): T.InferType.Bound {
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		name: (value: Admit<T.TypeIdentifier | T.TypeIdentifier.Types>) =>
-			rebuilt(node, handle, () => buildInferType({ ...config, name: value })),
-		type: (value?: Admit<NonNullable<T.InferType.Config>['type']>) =>
-			rebuilt(node, handle, () => buildInferType({ ...config, type: value })),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { name: buildInferType$with$name, type: buildInferType$with$type, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.InferType.Bound;
+}
+
+function buildInferType$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.InferType.Config;
+	switch (setter) {
+		case 'name':
+			return applySetter(args, (value: Admit<T.TypeIdentifier | T.TypeIdentifier.Types>) =>
+				rebuilt(node, handle, () => buildInferType({ ...config, name: value }))
+			);
+		case 'type':
+			return applySetter(args, (value?: Admit<NonNullable<T.InferType.Config>['type']>) =>
+				rebuilt(node, handle, () => buildInferType({ ...config, type: value }))
+			);
+	}
+	throw new Error(`infer_type has no $with.${setter}`);
+}
+function buildInferType$with$name(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildInferType$with(receiverOf(this, '$with.name'), 'name', args);
+}
+function buildInferType$with$type(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildInferType$with(receiverOf(this, '$with.type'), 'type', args);
 }
 
 export function buildConditionalType<
@@ -7098,25 +9184,55 @@ export function buildConditionalType(config: T.ConditionalType.Config): T.Condit
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		left: (value: Admit<NonNullable<T.ConditionalType.Config>['left']>) =>
-			rebuilt(node, handle, () => buildConditionalType({ ...config, left: value })),
-		right: (value: Admit<NonNullable<T.ConditionalType.Config>['right']>) =>
-			rebuilt(node, handle, () => buildConditionalType({ ...config, right: value })),
-		consequence: (value: Admit<NonNullable<T.ConditionalType.Config>['consequence']>) =>
-			rebuilt(node, handle, () => buildConditionalType({ ...config, consequence: value })),
-		alternative: (value: Admit<NonNullable<T.ConditionalType.Config>['alternative']>) =>
-			rebuilt(node, handle, () => buildConditionalType({ ...config, alternative: value })),
+		left: buildConditionalType$with$left,
+		right: buildConditionalType$with$right,
+		consequence: buildConditionalType$with$consequence,
+		alternative: buildConditionalType$with$alternative,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.ConditionalType.Bound;
+}
+
+function buildConditionalType$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.ConditionalType.Config;
+	switch (setter) {
+		case 'left':
+			return applySetter(args, (value: Admit<NonNullable<T.ConditionalType.Config>['left']>) =>
+				rebuilt(node, handle, () => buildConditionalType({ ...config, left: value }))
+			);
+		case 'right':
+			return applySetter(args, (value: Admit<NonNullable<T.ConditionalType.Config>['right']>) =>
+				rebuilt(node, handle, () => buildConditionalType({ ...config, right: value }))
+			);
+		case 'consequence':
+			return applySetter(args, (value: Admit<NonNullable<T.ConditionalType.Config>['consequence']>) =>
+				rebuilt(node, handle, () => buildConditionalType({ ...config, consequence: value }))
+			);
+		case 'alternative':
+			return applySetter(args, (value: Admit<NonNullable<T.ConditionalType.Config>['alternative']>) =>
+				rebuilt(node, handle, () => buildConditionalType({ ...config, alternative: value }))
+			);
+	}
+	throw new Error(`conditional_type has no $with.${setter}`);
+}
+function buildConditionalType$with$left(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildConditionalType$with(receiverOf(this, '$with.left'), 'left', args);
+}
+function buildConditionalType$with$right(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildConditionalType$with(receiverOf(this, '$with.right'), 'right', args);
+}
+function buildConditionalType$with$consequence(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildConditionalType$with(receiverOf(this, '$with.consequence'), 'consequence', args);
+}
+function buildConditionalType$with$alternative(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildConditionalType$with(receiverOf(this, '$with.alternative'), 'alternative', args);
 }
 
 export function buildGenericType<
@@ -7148,27 +9264,45 @@ export function buildGenericType(config: T.GenericType.Config): T.GenericType.Bo
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		name: (value: Admit<T.TypeIdentifier | T.NestedTypeIdentifier | T.TypeIdentifier.Types>) =>
-			rebuilt(node, handle, () => buildGenericType({ ...config, name: value })),
-		typeArguments: (...args: unknown[]) =>
-			rebuilt(node, handle, () =>
-				listSlotWith(
-					args,
-					{ kind: TSKindId.TypeArguments as const, optional: false, make: buildTypeArguments },
-					(value: Admit<T.TypeArguments>) => buildGenericType({ ...config, typeArguments: value })
-				)
-			),
+		name: buildGenericType$with$name,
+		typeArguments: buildGenericType$with$typeArguments,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.GenericType.Bound;
+}
+
+function buildGenericType$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.GenericType.Config;
+	switch (setter) {
+		case 'name':
+			return applySetter(args, (value: Admit<T.TypeIdentifier | T.NestedTypeIdentifier | T.TypeIdentifier.Types>) =>
+				rebuilt(node, handle, () => buildGenericType({ ...config, name: value }))
+			);
+		case 'typeArguments':
+			return applySetter(args, (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{ kind: TSKindId.TypeArguments as const, optional: false, make: buildTypeArguments },
+						(value: Admit<T.TypeArguments>) => buildGenericType({ ...config, typeArguments: value })
+					)
+				)
+			);
+	}
+	throw new Error(`generic_type has no $with.${setter}`);
+}
+function buildGenericType$with$name(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildGenericType$with(receiverOf(this, '$with.name'), 'name', args);
+}
+function buildGenericType$with$typeArguments(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildGenericType$with(receiverOf(this, '$with.typeArguments'), 'typeArguments', args);
 }
 
 export function buildTypePredicate<
@@ -7213,21 +9347,35 @@ export function buildTypePredicate(config: T.TypePredicate.Config): T.TypePredic
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		name: (value: Admit<NonNullable<T.TypePredicate.Config>['name']>) =>
-			rebuilt(node, handle, () => buildTypePredicate({ ...config, name: value })),
-		type: (value: Admit<NonNullable<T.TypePredicate.Config>['type']>) =>
-			rebuilt(node, handle, () => buildTypePredicate({ ...config, type: value })),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { name: buildTypePredicate$with$name, type: buildTypePredicate$with$type, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.TypePredicate.Bound;
+}
+
+function buildTypePredicate$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.TypePredicate.Config;
+	switch (setter) {
+		case 'name':
+			return applySetter(args, (value: Admit<NonNullable<T.TypePredicate.Config>['name']>) =>
+				rebuilt(node, handle, () => buildTypePredicate({ ...config, name: value }))
+			);
+		case 'type':
+			return applySetter(args, (value: Admit<NonNullable<T.TypePredicate.Config>['type']>) =>
+				rebuilt(node, handle, () => buildTypePredicate({ ...config, type: value }))
+			);
+	}
+	throw new Error(`type_predicate has no $with.${setter}`);
+}
+function buildTypePredicate$with$name(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildTypePredicate$with(receiverOf(this, '$with.name'), 'name', args);
+}
+function buildTypePredicate$with$type(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildTypePredicate$with(receiverOf(this, '$with.type'), 'type', args);
 }
 
 export function buildTypePredicateAnnotation<V extends Admit<T.TypePredicate>>(
@@ -7272,18 +9420,26 @@ function _buildTypePredicateAnnotation(value: Admit<T.TypePredicate>): T.TypePre
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		typePredicate: (value: Admit<T.TypePredicate>) => rebuilt(node, handle, () => _buildTypePredicateAnnotation(value)),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { typePredicate: buildTypePredicateAnnotation$with$typePredicate, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.TypePredicateAnnotation.Bound;
+}
+
+function buildTypePredicateAnnotation$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	switch (setter) {
+		case 'typePredicate':
+			return applySetter(args, (value: Admit<T.TypePredicate>) =>
+				rebuilt(node, handle, () => _buildTypePredicateAnnotation(value))
+			);
+	}
+	throw new Error(`type_predicate_annotation has no $with.${setter}`);
+}
+function buildTypePredicateAnnotation$with$typePredicate(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildTypePredicateAnnotation$with(receiverOf(this, '$with.typePredicate'), 'typePredicate', args);
 }
 
 export function buildTypeQueryMemberExpression<
@@ -7340,23 +9496,49 @@ export function buildTypeQueryMemberExpression(
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		object: (value: Admit<NonNullable<T.TypeQueryMemberExpression.Config>['object']>) =>
-			rebuilt(node, handle, () => buildTypeQueryMemberExpression({ ...config, object: value })),
-		operator: (value: Admit<NonNullable<T.TypeQueryMemberExpression.Config>['operator']>) =>
-			rebuilt(node, handle, () => buildTypeQueryMemberExpression({ ...config, operator: value })),
-		property: (value: Admit<T.PrivatePropertyIdentifier | T.PropertyIdentifier | T.PropertyIdentifier.Types>) =>
-			rebuilt(node, handle, () => buildTypeQueryMemberExpression({ ...config, property: value })),
+		object: buildTypeQueryMemberExpression$with$object,
+		operator: buildTypeQueryMemberExpression$with$operator,
+		property: buildTypeQueryMemberExpression$with$property,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.TypeQueryMemberExpression.Bound;
+}
+
+function buildTypeQueryMemberExpression$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.TypeQueryMemberExpression.Config;
+	switch (setter) {
+		case 'object':
+			return applySetter(args, (value: Admit<NonNullable<T.TypeQueryMemberExpression.Config>['object']>) =>
+				rebuilt(node, handle, () => buildTypeQueryMemberExpression({ ...config, object: value }))
+			);
+		case 'operator':
+			return applySetter(args, (value: Admit<NonNullable<T.TypeQueryMemberExpression.Config>['operator']>) =>
+				rebuilt(node, handle, () => buildTypeQueryMemberExpression({ ...config, operator: value }))
+			);
+		case 'property':
+			return applySetter(
+				args,
+				(value: Admit<T.PrivatePropertyIdentifier | T.PropertyIdentifier | T.PropertyIdentifier.Types>) =>
+					rebuilt(node, handle, () => buildTypeQueryMemberExpression({ ...config, property: value }))
+			);
+	}
+	throw new Error(`type_query_member_expression has no $with.${setter}`);
+}
+function buildTypeQueryMemberExpression$with$object(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildTypeQueryMemberExpression$with(receiverOf(this, '$with.object'), 'object', args);
+}
+function buildTypeQueryMemberExpression$with$operator(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildTypeQueryMemberExpression$with(receiverOf(this, '$with.operator'), 'operator', args);
+}
+function buildTypeQueryMemberExpression$with$property(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildTypeQueryMemberExpression$with(receiverOf(this, '$with.property'), 'property', args);
 }
 
 export function buildTypeQuerySubscriptExpression<
@@ -7405,23 +9587,47 @@ export function buildTypeQuerySubscriptExpression(
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		object: (value: Admit<NonNullable<T.TypeQuerySubscriptExpression.Config>['object']>) =>
-			rebuilt(node, handle, () => buildTypeQuerySubscriptExpression({ ...config, object: value })),
-		optionalChain: (value?: Admit<NonNullable<T.TypeQuerySubscriptExpression.Config>['optionalChain']>) =>
-			rebuilt(node, handle, () => buildTypeQuerySubscriptExpression({ ...config, optionalChain: value })),
-		index: (value: Admit<NonNullable<T.TypeQuerySubscriptExpression.Config>['index']>) =>
-			rebuilt(node, handle, () => buildTypeQuerySubscriptExpression({ ...config, index: value })),
+		object: buildTypeQuerySubscriptExpression$with$object,
+		optionalChain: buildTypeQuerySubscriptExpression$with$optionalChain,
+		index: buildTypeQuerySubscriptExpression$with$index,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.TypeQuerySubscriptExpression.Bound;
+}
+
+function buildTypeQuerySubscriptExpression$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.TypeQuerySubscriptExpression.Config;
+	switch (setter) {
+		case 'object':
+			return applySetter(args, (value: Admit<NonNullable<T.TypeQuerySubscriptExpression.Config>['object']>) =>
+				rebuilt(node, handle, () => buildTypeQuerySubscriptExpression({ ...config, object: value }))
+			);
+		case 'optionalChain':
+			return applySetter(args, (value?: Admit<NonNullable<T.TypeQuerySubscriptExpression.Config>['optionalChain']>) =>
+				rebuilt(node, handle, () => buildTypeQuerySubscriptExpression({ ...config, optionalChain: value }))
+			);
+		case 'index':
+			return applySetter(args, (value: Admit<NonNullable<T.TypeQuerySubscriptExpression.Config>['index']>) =>
+				rebuilt(node, handle, () => buildTypeQuerySubscriptExpression({ ...config, index: value }))
+			);
+	}
+	throw new Error(`type_query_subscript_expression has no $with.${setter}`);
+}
+function buildTypeQuerySubscriptExpression$with$object(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildTypeQuerySubscriptExpression$with(receiverOf(this, '$with.object'), 'object', args);
+}
+function buildTypeQuerySubscriptExpression$with$optionalChain(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildTypeQuerySubscriptExpression$with(receiverOf(this, '$with.optionalChain'), 'optionalChain', args);
+}
+function buildTypeQuerySubscriptExpression$with$index(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildTypeQuerySubscriptExpression$with(receiverOf(this, '$with.index'), 'index', args);
 }
 
 export function buildTypeQueryCallExpression<
@@ -7463,21 +9669,39 @@ export function buildTypeQueryCallExpression(
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		function: (value: Admit<NonNullable<T.TypeQueryCallExpression.Config>['function']>) =>
-			rebuilt(node, handle, () => buildTypeQueryCallExpression({ ...config, function: value })),
-		arguments: (value: Admit<T.Arguments>) =>
-			rebuilt(node, handle, () => buildTypeQueryCallExpression({ ...config, arguments: value })),
+		function: buildTypeQueryCallExpression$with$function,
+		arguments: buildTypeQueryCallExpression$with$arguments,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.TypeQueryCallExpression.Bound;
+}
+
+function buildTypeQueryCallExpression$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.TypeQueryCallExpression.Config;
+	switch (setter) {
+		case 'function':
+			return applySetter(args, (value: Admit<NonNullable<T.TypeQueryCallExpression.Config>['function']>) =>
+				rebuilt(node, handle, () => buildTypeQueryCallExpression({ ...config, function: value }))
+			);
+		case 'arguments':
+			return applySetter(args, (value: Admit<T.Arguments>) =>
+				rebuilt(node, handle, () => buildTypeQueryCallExpression({ ...config, arguments: value }))
+			);
+	}
+	throw new Error(`type_query_call_expression has no $with.${setter}`);
+}
+function buildTypeQueryCallExpression$with$function(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildTypeQueryCallExpression$with(receiverOf(this, '$with.function'), 'function', args);
+}
+function buildTypeQueryCallExpression$with$arguments(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildTypeQueryCallExpression$with(receiverOf(this, '$with.arguments'), 'arguments', args);
 }
 
 export function buildTypeQueryInstantiationExpression<
@@ -7525,27 +9749,46 @@ export function buildTypeQueryInstantiationExpression(
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		function: (value: Admit<NonNullable<T.TypeQueryInstantiationExpression.Config>['function']>) =>
-			rebuilt(node, handle, () => buildTypeQueryInstantiationExpression({ ...config, function: value })),
-		typeArguments: (...args: unknown[]) =>
-			rebuilt(node, handle, () =>
-				listSlotWith(
-					args,
-					{ kind: TSKindId.TypeArguments as const, optional: false, make: buildTypeArguments },
-					(value: Admit<T.TypeArguments>) => buildTypeQueryInstantiationExpression({ ...config, typeArguments: value })
-				)
-			),
+		function: buildTypeQueryInstantiationExpression$with$function,
+		typeArguments: buildTypeQueryInstantiationExpression$with$typeArguments,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.TypeQueryInstantiationExpression.Bound;
+}
+
+function buildTypeQueryInstantiationExpression$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.TypeQueryInstantiationExpression.Config;
+	switch (setter) {
+		case 'function':
+			return applySetter(args, (value: Admit<NonNullable<T.TypeQueryInstantiationExpression.Config>['function']>) =>
+				rebuilt(node, handle, () => buildTypeQueryInstantiationExpression({ ...config, function: value }))
+			);
+		case 'typeArguments':
+			return applySetter(args, (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{ kind: TSKindId.TypeArguments as const, optional: false, make: buildTypeArguments },
+						(value: Admit<T.TypeArguments>) =>
+							buildTypeQueryInstantiationExpression({ ...config, typeArguments: value })
+					)
+				)
+			);
+	}
+	throw new Error(`type_query_instantiation_expression has no $with.${setter}`);
+}
+function buildTypeQueryInstantiationExpression$with$function(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildTypeQueryInstantiationExpression$with(receiverOf(this, '$with.function'), 'function', args);
+}
+function buildTypeQueryInstantiationExpression$with$typeArguments(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildTypeQueryInstantiationExpression$with(receiverOf(this, '$with.typeArguments'), 'typeArguments', args);
 }
 
 export function buildTypeQuery<
@@ -7593,29 +9836,38 @@ export function buildTypeQuery(
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		expression: (
-			value: Admit<
-				NonNullable<
-					| T.TypeQuerySubscriptExpression
-					| T.TypeQueryMemberExpression
-					| T.TypeQueryCallExpression
-					| T.TypeQueryInstantiationExpression
-					| T.Identifier
-					| TSKindId.This
-				>
-			>
-		) => rebuilt(node, handle, () => buildTypeQuery(value)),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { expression: buildTypeQuery$with$expression, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.TypeQuery.Bound;
+}
+
+function buildTypeQuery$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	switch (setter) {
+		case 'expression':
+			return applySetter(
+				args,
+				(
+					value: Admit<
+						NonNullable<
+							| T.TypeQuerySubscriptExpression
+							| T.TypeQueryMemberExpression
+							| T.TypeQueryCallExpression
+							| T.TypeQueryInstantiationExpression
+							| T.Identifier
+							| TSKindId.This
+						>
+					>
+				) => rebuilt(node, handle, () => buildTypeQuery(value))
+			);
+	}
+	throw new Error(`type_query has no $with.${setter}`);
+}
+function buildTypeQuery$with$expression(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildTypeQuery$with(receiverOf(this, '$with.expression'), 'expression', args);
 }
 
 export function buildIndexTypeQuery<V extends Admit<T.PrimaryType | T.TypeIdentifier.Types>>(
@@ -7645,19 +9897,26 @@ export function buildIndexTypeQuery(value: Admit<T.PrimaryType | T.TypeIdentifie
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		type: (value: Admit<NonNullable<T.PrimaryType | T.TypeIdentifier.Types>>) =>
-			rebuilt(node, handle, () => buildIndexTypeQuery(value)),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { type: buildIndexTypeQuery$with$type, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.IndexTypeQuery.Bound;
+}
+
+function buildIndexTypeQuery$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	switch (setter) {
+		case 'type':
+			return applySetter(args, (value: Admit<NonNullable<T.PrimaryType | T.TypeIdentifier.Types>>) =>
+				rebuilt(node, handle, () => buildIndexTypeQuery(value))
+			);
+	}
+	throw new Error(`index_type_query has no $with.${setter}`);
+}
+function buildIndexTypeQuery$with$type(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildIndexTypeQuery$with(receiverOf(this, '$with.type'), 'type', args);
 }
 
 export function buildLookupType<
@@ -7700,21 +9959,35 @@ export function buildLookupType(config: T.LookupType.Config): T.LookupType.Bound
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		type: (value: Admit<NonNullable<T.LookupType.Config>['type']>) =>
-			rebuilt(node, handle, () => buildLookupType({ ...config, type: value })),
-		indexType: (value: Admit<NonNullable<T.LookupType.Config>['indexType']>) =>
-			rebuilt(node, handle, () => buildLookupType({ ...config, indexType: value })),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { type: buildLookupType$with$type, indexType: buildLookupType$with$indexType, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.LookupType.Bound;
+}
+
+function buildLookupType$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.LookupType.Config;
+	switch (setter) {
+		case 'type':
+			return applySetter(args, (value: Admit<NonNullable<T.LookupType.Config>['type']>) =>
+				rebuilt(node, handle, () => buildLookupType({ ...config, type: value }))
+			);
+		case 'indexType':
+			return applySetter(args, (value: Admit<NonNullable<T.LookupType.Config>['indexType']>) =>
+				rebuilt(node, handle, () => buildLookupType({ ...config, indexType: value }))
+			);
+	}
+	throw new Error(`lookup_type has no $with.${setter}`);
+}
+function buildLookupType$with$type(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildLookupType$with(receiverOf(this, '$with.type'), 'type', args);
+}
+function buildLookupType$with$indexType(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildLookupType$with(receiverOf(this, '$with.indexType'), 'indexType', args);
 }
 
 export function buildMappedTypeClause<
@@ -7766,23 +10039,47 @@ export function buildMappedTypeClause(config: T.MappedTypeClause.Config): T.Mapp
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		name: (value: Admit<T.TypeIdentifier | T.TypeIdentifier.Types>) =>
-			rebuilt(node, handle, () => buildMappedTypeClause({ ...config, name: value })),
-		type: (value: Admit<NonNullable<T.MappedTypeClause.Config>['type']>) =>
-			rebuilt(node, handle, () => buildMappedTypeClause({ ...config, type: value })),
-		alias: (value?: Admit<NonNullable<T.MappedTypeClause.Config>['alias']>) =>
-			rebuilt(node, handle, () => buildMappedTypeClause({ ...config, alias: value })),
+		name: buildMappedTypeClause$with$name,
+		type: buildMappedTypeClause$with$type,
+		alias: buildMappedTypeClause$with$alias,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.MappedTypeClause.Bound;
+}
+
+function buildMappedTypeClause$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.MappedTypeClause.Config;
+	switch (setter) {
+		case 'name':
+			return applySetter(args, (value: Admit<T.TypeIdentifier | T.TypeIdentifier.Types>) =>
+				rebuilt(node, handle, () => buildMappedTypeClause({ ...config, name: value }))
+			);
+		case 'type':
+			return applySetter(args, (value: Admit<NonNullable<T.MappedTypeClause.Config>['type']>) =>
+				rebuilt(node, handle, () => buildMappedTypeClause({ ...config, type: value }))
+			);
+		case 'alias':
+			return applySetter(args, (value?: Admit<NonNullable<T.MappedTypeClause.Config>['alias']>) =>
+				rebuilt(node, handle, () => buildMappedTypeClause({ ...config, alias: value }))
+			);
+	}
+	throw new Error(`mapped_type_clause has no $with.${setter}`);
+}
+function buildMappedTypeClause$with$name(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildMappedTypeClause$with(receiverOf(this, '$with.name'), 'name', args);
+}
+function buildMappedTypeClause$with$type(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildMappedTypeClause$with(receiverOf(this, '$with.type'), 'type', args);
+}
+function buildMappedTypeClause$with$alias(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildMappedTypeClause$with(receiverOf(this, '$with.alias'), 'alias', args);
 }
 
 export function buildLiteralType<
@@ -7822,30 +10119,39 @@ export function buildLiteralType(
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		content: (
-			value: Admit<
-				NonNullable<
-					| T.LiteralTypeNegativeNumber
-					| T.Number
-					| T.String
-					| TSKindId.True
-					| TSKindId.False
-					| TSKindId.Null
-					| TSKindId.Undefined
-				>
-			>
-		) => rebuilt(node, handle, () => buildLiteralType(value)),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { content: buildLiteralType$with$content, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.LiteralType.Bound;
+}
+
+function buildLiteralType$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	switch (setter) {
+		case 'content':
+			return applySetter(
+				args,
+				(
+					value: Admit<
+						NonNullable<
+							| T.LiteralTypeNegativeNumber
+							| T.Number
+							| T.String
+							| TSKindId.True
+							| TSKindId.False
+							| TSKindId.Null
+							| TSKindId.Undefined
+						>
+					>
+				) => rebuilt(node, handle, () => buildLiteralType(value))
+			);
+	}
+	throw new Error(`literal_type has no $with.${setter}`);
+}
+function buildLiteralType$with$content(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildLiteralType$with(receiverOf(this, '$with.content'), 'content', args);
 }
 
 export const buildExistentialType: TSKindId.ExistentialType = TSKindId.ExistentialType;
@@ -7877,19 +10183,26 @@ export function buildFlowMaybeType(value: Admit<T.PrimaryType | T.TypeIdentifier
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		type: (value: Admit<NonNullable<T.PrimaryType | T.TypeIdentifier.Types>>) =>
-			rebuilt(node, handle, () => buildFlowMaybeType(value)),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { type: buildFlowMaybeType$with$type, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.FlowMaybeType.Bound;
+}
+
+function buildFlowMaybeType$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	switch (setter) {
+		case 'type':
+			return applySetter(args, (value: Admit<NonNullable<T.PrimaryType | T.TypeIdentifier.Types>>) =>
+				rebuilt(node, handle, () => buildFlowMaybeType(value))
+			);
+	}
+	throw new Error(`flow_maybe_type has no $with.${setter}`);
+}
+function buildFlowMaybeType$with$type(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildFlowMaybeType$with(receiverOf(this, '$with.type'), 'type', args);
 }
 
 export function buildParenthesizedType<V extends Admit<T.Type | T.TypeIdentifier.Types>>(
@@ -7919,19 +10232,26 @@ export function buildParenthesizedType(value: Admit<T.Type | T.TypeIdentifier.Ty
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		type: (value: Admit<NonNullable<T.Type | T.TypeIdentifier.Types>>) =>
-			rebuilt(node, handle, () => buildParenthesizedType(value)),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { type: buildParenthesizedType$with$type, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.ParenthesizedType.Bound;
+}
+
+function buildParenthesizedType$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	switch (setter) {
+		case 'type':
+			return applySetter(args, (value: Admit<NonNullable<T.Type | T.TypeIdentifier.Types>>) =>
+				rebuilt(node, handle, () => buildParenthesizedType(value))
+			);
+	}
+	throw new Error(`parenthesized_type has no $with.${setter}`);
+}
+function buildParenthesizedType$with$type(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildParenthesizedType$with(receiverOf(this, '$with.type'), 'type', args);
 }
 
 export function buildTypeArguments<V extends Admit<T.Types>>(
@@ -8009,26 +10329,33 @@ function _buildTypeArguments(value: Admit<T.Types>): T.TypeArguments.Bound {
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		types: (...args: unknown[]) =>
-			rebuilt(node, handle, () =>
-				listSlotWith(
-					args,
-					{ kind: TSKindId.Types as const, optional: false, make: buildTypes },
-					(value: Admit<T.Types>) => _buildTypeArguments(value)
-				)
-			),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { types: buildTypeArguments$with$types, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	holdListItems(node, heldItems(listView.list));
 	return node as unknown as T.TypeArguments.Bound;
+}
+
+function buildTypeArguments$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	switch (setter) {
+		case 'types':
+			return applySetter(args, (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{ kind: TSKindId.Types as const, optional: false, make: buildTypes },
+						(value: Admit<T.Types>) => _buildTypeArguments(value)
+					)
+				)
+			);
+	}
+	throw new Error(`type_arguments has no $with.${setter}`);
+}
+function buildTypeArguments$with$types(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildTypeArguments$with(receiverOf(this, '$with.types'), 'types', args);
 }
 
 export function buildObjectType<MembersSlot extends ConfigOf<T.ObjectType>['members']>(
@@ -8058,29 +10385,53 @@ export function buildObjectType(config: ConfigOf<T.ObjectType>): T.ObjectType.Bo
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		opening: (value: Admit<NonNullable<ConfigOf<T.ObjectType>>['opening']>) =>
-			rebuilt(node, handle, () => buildObjectType({ ...config, opening: value })),
-		members: (...args: unknown[]) =>
-			rebuilt(node, handle, () =>
-				listSlotWith(
-					args,
-					{ kind: TSKindId.ObjectTypeContent as const, optional: true, make: buildObjectTypeContent },
-					(value?: Admit<T.ObjectTypeContent>) => buildObjectType({ ...config, members: value })
-				)
-			),
-		closing: (value: Admit<NonNullable<ConfigOf<T.ObjectType>>['closing']>) =>
-			rebuilt(node, handle, () => buildObjectType({ ...config, closing: value })),
+		opening: buildObjectType$with$opening,
+		members: buildObjectType$with$members,
+		closing: buildObjectType$with$closing,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.ObjectType.Bound;
+}
+
+function buildObjectType$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const config = node[INPUT] as ConfigOf<T.ObjectType>;
+	switch (setter) {
+		case 'opening':
+			return applySetter(args, (value: Admit<NonNullable<ConfigOf<T.ObjectType>>['opening']>) =>
+				rebuilt(node, handle, () => buildObjectType({ ...config, opening: value }))
+			);
+		case 'members':
+			return applySetter(args, (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{ kind: TSKindId.ObjectTypeContent as const, optional: true, make: buildObjectTypeContent },
+						(value?: Admit<T.ObjectTypeContent>) => buildObjectType({ ...config, members: value })
+					)
+				)
+			);
+		case 'closing':
+			return applySetter(args, (value: Admit<NonNullable<ConfigOf<T.ObjectType>>['closing']>) =>
+				rebuilt(node, handle, () => buildObjectType({ ...config, closing: value }))
+			);
+	}
+	throw new Error(`object_type has no $with.${setter}`);
+}
+function buildObjectType$with$opening(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildObjectType$with(receiverOf(this, '$with.opening'), 'opening', args);
+}
+function buildObjectType$with$members(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildObjectType$with(receiverOf(this, '$with.members'), 'members', args);
+}
+function buildObjectType$with$closing(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildObjectType$with(receiverOf(this, '$with.closing'), 'closing', args);
 }
 
 export function buildObjectTypeCurly<MembersSlot extends T.ObjectType.Curly.Config['members']>(
@@ -8110,19 +10461,28 @@ export function buildObjectTypeCurly(config?: T.ObjectType.Curly.Config): T.Obje
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		members: (value?: Admit<T.ObjectTypeContent>) =>
-			rebuilt(node, handle, () => buildObjectTypeCurly({ ...config, members: value })),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { members: buildObjectTypeCurly$with$members, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.ObjectType.Curly.Bound;
+}
+
+function buildObjectTypeCurly$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.ObjectType.Curly.Config;
+	switch (setter) {
+		case 'members':
+			return applySetter(args, (value?: Admit<T.ObjectTypeContent>) =>
+				rebuilt(node, handle, () => buildObjectTypeCurly({ ...config, members: value }))
+			);
+	}
+	throw new Error(`object_type has no $with.${setter}`);
+}
+function buildObjectTypeCurly$with$members(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildObjectTypeCurly$with(receiverOf(this, '$with.members'), 'members', args);
 }
 
 export function buildObjectTypeFlow<MembersSlot extends T.ObjectType.Flow.Config['members']>(
@@ -8152,19 +10512,28 @@ export function buildObjectTypeFlow(config?: T.ObjectType.Flow.Config): T.Object
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		members: (value?: Admit<T.ObjectTypeContent>) =>
-			rebuilt(node, handle, () => buildObjectTypeFlow({ ...config, members: value })),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { members: buildObjectTypeFlow$with$members, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.ObjectType.Flow.Bound;
+}
+
+function buildObjectTypeFlow$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.ObjectType.Flow.Config;
+	switch (setter) {
+		case 'members':
+			return applySetter(args, (value?: Admit<T.ObjectTypeContent>) =>
+				rebuilt(node, handle, () => buildObjectTypeFlow({ ...config, members: value }))
+			);
+	}
+	throw new Error(`object_type has no $with.${setter}`);
+}
+function buildObjectTypeFlow$with$members(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildObjectTypeFlow$with(receiverOf(this, '$with.members'), 'members', args);
 }
 
 export function buildCallSignature<
@@ -8205,29 +10574,53 @@ export function buildCallSignature(config: Partial<T.CallSignature.Config> = {})
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		typeParameters: (...args: unknown[]) =>
-			rebuilt(node, handle, () =>
-				listSlotWith(
-					args,
-					{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
-					(value?: Admit<T.TypeParameters>) => buildCallSignature({ ...config, typeParameters: value })
-				)
-			),
-		parameters: (value: Admit<T.FormalParameters>) =>
-			rebuilt(node, handle, () => buildCallSignature({ ...config, parameters: value })),
-		returnType: (value?: Admit<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation>) =>
-			rebuilt(node, handle, () => buildCallSignature({ ...config, returnType: value })),
+		typeParameters: buildCallSignature$with$typeParameters,
+		parameters: buildCallSignature$with$parameters,
+		returnType: buildCallSignature$with$returnType,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.CallSignature.Bound;
+}
+
+function buildCallSignature$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.CallSignature.Config;
+	switch (setter) {
+		case 'typeParameters':
+			return applySetter(args, (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
+						(value?: Admit<T.TypeParameters>) => buildCallSignature({ ...config, typeParameters: value })
+					)
+				)
+			);
+		case 'parameters':
+			return applySetter(args, (value: Admit<T.FormalParameters>) =>
+				rebuilt(node, handle, () => buildCallSignature({ ...config, parameters: value }))
+			);
+		case 'returnType':
+			return applySetter(args, (value?: Admit<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation>) =>
+				rebuilt(node, handle, () => buildCallSignature({ ...config, returnType: value }))
+			);
+	}
+	throw new Error(`call_signature has no $with.${setter}`);
+}
+function buildCallSignature$with$typeParameters(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildCallSignature$with(receiverOf(this, '$with.typeParameters'), 'typeParameters', args);
+}
+function buildCallSignature$with$parameters(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildCallSignature$with(receiverOf(this, '$with.parameters'), 'parameters', args);
+}
+function buildCallSignature$with$returnType(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildCallSignature$with(receiverOf(this, '$with.returnType'), 'returnType', args);
 }
 
 export function buildPropertySignature<
@@ -8283,39 +10676,89 @@ export function buildPropertySignature(config: T.PropertySignature.Config): T.Pr
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		accessibilityModifier: (value?: Admit<NonNullable<T.PropertySignature.Config>['accessibilityModifier']>) =>
-			rebuilt(node, handle, () => buildPropertySignature({ ...config, accessibilityModifier: value })),
-		static: (value?: Admit<NonNullable<T.PropertySignature.Config>['static']>) =>
-			rebuilt(node, handle, () => buildPropertySignature({ ...config, static: value })),
-		override: (value?: Admit<NonNullable<T.PropertySignature.Config>['override']>) =>
-			rebuilt(node, handle, () => buildPropertySignature({ ...config, override: value })),
-		readonly: (value?: Admit<NonNullable<T.PropertySignature.Config>['readonly']>) =>
-			rebuilt(node, handle, () => buildPropertySignature({ ...config, readonly: value })),
-		name: (
-			value: Admit<
-				| T.PropertyIdentifier
-				| T.PrivatePropertyIdentifier
-				| T.String
-				| T.Number
-				| T.ComputedPropertyName
-				| T.PropertyIdentifier.Types
-			>
-		) => rebuilt(node, handle, () => buildPropertySignature({ ...config, name: value })),
-		optional: (value?: Admit<NonNullable<T.PropertySignature.Config>['optional']>) =>
-			rebuilt(node, handle, () => buildPropertySignature({ ...config, optional: value })),
-		type: (value?: Admit<T.TypeAnnotation>) =>
-			rebuilt(node, handle, () => buildPropertySignature({ ...config, type: value })),
+		accessibilityModifier: buildPropertySignature$with$accessibilityModifier,
+		static: buildPropertySignature$with$static,
+		override: buildPropertySignature$with$override,
+		readonly: buildPropertySignature$with$readonly,
+		name: buildPropertySignature$with$name,
+		optional: buildPropertySignature$with$optional,
+		type: buildPropertySignature$with$type,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.PropertySignature.Bound;
+}
+
+function buildPropertySignature$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.PropertySignature.Config;
+	switch (setter) {
+		case 'accessibilityModifier':
+			return applySetter(args, (value?: Admit<NonNullable<T.PropertySignature.Config>['accessibilityModifier']>) =>
+				rebuilt(node, handle, () => buildPropertySignature({ ...config, accessibilityModifier: value }))
+			);
+		case 'static':
+			return applySetter(args, (value?: Admit<NonNullable<T.PropertySignature.Config>['static']>) =>
+				rebuilt(node, handle, () => buildPropertySignature({ ...config, static: value }))
+			);
+		case 'override':
+			return applySetter(args, (value?: Admit<NonNullable<T.PropertySignature.Config>['override']>) =>
+				rebuilt(node, handle, () => buildPropertySignature({ ...config, override: value }))
+			);
+		case 'readonly':
+			return applySetter(args, (value?: Admit<NonNullable<T.PropertySignature.Config>['readonly']>) =>
+				rebuilt(node, handle, () => buildPropertySignature({ ...config, readonly: value }))
+			);
+		case 'name':
+			return applySetter(
+				args,
+				(
+					value: Admit<
+						| T.PropertyIdentifier
+						| T.PrivatePropertyIdentifier
+						| T.String
+						| T.Number
+						| T.ComputedPropertyName
+						| T.PropertyIdentifier.Types
+					>
+				) => rebuilt(node, handle, () => buildPropertySignature({ ...config, name: value }))
+			);
+		case 'optional':
+			return applySetter(args, (value?: Admit<NonNullable<T.PropertySignature.Config>['optional']>) =>
+				rebuilt(node, handle, () => buildPropertySignature({ ...config, optional: value }))
+			);
+		case 'type':
+			return applySetter(args, (value?: Admit<T.TypeAnnotation>) =>
+				rebuilt(node, handle, () => buildPropertySignature({ ...config, type: value }))
+			);
+	}
+	throw new Error(`property_signature has no $with.${setter}`);
+}
+function buildPropertySignature$with$accessibilityModifier(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildPropertySignature$with(receiverOf(this, '$with.accessibilityModifier'), 'accessibilityModifier', args);
+}
+function buildPropertySignature$with$static(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildPropertySignature$with(receiverOf(this, '$with.static'), 'static', args);
+}
+function buildPropertySignature$with$override(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildPropertySignature$with(receiverOf(this, '$with.override'), 'override', args);
+}
+function buildPropertySignature$with$readonly(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildPropertySignature$with(receiverOf(this, '$with.readonly'), 'readonly', args);
+}
+function buildPropertySignature$with$name(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildPropertySignature$with(receiverOf(this, '$with.name'), 'name', args);
+}
+function buildPropertySignature$with$optional(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildPropertySignature$with(receiverOf(this, '$with.optional'), 'optional', args);
+}
+function buildPropertySignature$with$type(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildPropertySignature$with(receiverOf(this, '$with.type'), 'type', args);
 }
 
 export function buildTypeParameters<V extends Admit<T.TypeParametersElements>>(
@@ -8397,26 +10840,33 @@ function _buildTypeParameters(value: Admit<T.TypeParametersElements>): T.TypePar
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		elements: (...args: unknown[]) =>
-			rebuilt(node, handle, () =>
-				listSlotWith(
-					args,
-					{ kind: TSKindId.TypeParametersElements as const, optional: false, make: buildTypeParametersElements },
-					(value: Admit<T.TypeParametersElements>) => _buildTypeParameters(value)
-				)
-			),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { elements: buildTypeParameters$with$elements, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	holdListItems(node, heldItems(listView.list));
 	return node as unknown as T.TypeParameters.Bound;
+}
+
+function buildTypeParameters$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	switch (setter) {
+		case 'elements':
+			return applySetter(args, (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{ kind: TSKindId.TypeParametersElements as const, optional: false, make: buildTypeParametersElements },
+						(value: Admit<T.TypeParametersElements>) => _buildTypeParameters(value)
+					)
+				)
+			);
+	}
+	throw new Error(`type_parameters has no $with.${setter}`);
+}
+function buildTypeParameters$with$elements(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildTypeParameters$with(receiverOf(this, '$with.elements'), 'elements', args);
 }
 
 export function buildTypeParameter<
@@ -8456,25 +10906,55 @@ export function buildTypeParameter(config: T.TypeParameter.Config): T.TypeParame
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		const: (value?: Admit<NonNullable<T.TypeParameter.Config>['const']>) =>
-			rebuilt(node, handle, () => buildTypeParameter({ ...config, const: value })),
-		name: (value: Admit<T.TypeIdentifier | T.TypeIdentifier.Types>) =>
-			rebuilt(node, handle, () => buildTypeParameter({ ...config, name: value })),
-		constraint: (value?: Admit<T.Constraint>) =>
-			rebuilt(node, handle, () => buildTypeParameter({ ...config, constraint: value })),
-		default: (value?: Admit<T.DefaultType>) =>
-			rebuilt(node, handle, () => buildTypeParameter({ ...config, default: value })),
+		const: buildTypeParameter$with$const,
+		name: buildTypeParameter$with$name,
+		constraint: buildTypeParameter$with$constraint,
+		default: buildTypeParameter$with$default,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.TypeParameter.Bound;
+}
+
+function buildTypeParameter$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.TypeParameter.Config;
+	switch (setter) {
+		case 'const':
+			return applySetter(args, (value?: Admit<NonNullable<T.TypeParameter.Config>['const']>) =>
+				rebuilt(node, handle, () => buildTypeParameter({ ...config, const: value }))
+			);
+		case 'name':
+			return applySetter(args, (value: Admit<T.TypeIdentifier | T.TypeIdentifier.Types>) =>
+				rebuilt(node, handle, () => buildTypeParameter({ ...config, name: value }))
+			);
+		case 'constraint':
+			return applySetter(args, (value?: Admit<T.Constraint>) =>
+				rebuilt(node, handle, () => buildTypeParameter({ ...config, constraint: value }))
+			);
+		case 'default':
+			return applySetter(args, (value?: Admit<T.DefaultType>) =>
+				rebuilt(node, handle, () => buildTypeParameter({ ...config, default: value }))
+			);
+	}
+	throw new Error(`type_parameter has no $with.${setter}`);
+}
+function buildTypeParameter$with$const(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildTypeParameter$with(receiverOf(this, '$with.const'), 'const', args);
+}
+function buildTypeParameter$with$name(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildTypeParameter$with(receiverOf(this, '$with.name'), 'name', args);
+}
+function buildTypeParameter$with$constraint(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildTypeParameter$with(receiverOf(this, '$with.constraint'), 'constraint', args);
+}
+function buildTypeParameter$with$default(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildTypeParameter$with(receiverOf(this, '$with.default'), 'default', args);
 }
 
 export function buildDefaultType<V extends Admit<T.Type | T.TypeIdentifier.Types>>(
@@ -8504,19 +10984,26 @@ export function buildDefaultType(value: Admit<T.Type | T.TypeIdentifier.Types>):
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		type: (value: Admit<NonNullable<T.Type | T.TypeIdentifier.Types>>) =>
-			rebuilt(node, handle, () => buildDefaultType(value)),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { type: buildDefaultType$with$type, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.DefaultType.Bound;
+}
+
+function buildDefaultType$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	switch (setter) {
+		case 'type':
+			return applySetter(args, (value: Admit<NonNullable<T.Type | T.TypeIdentifier.Types>>) =>
+				rebuilt(node, handle, () => buildDefaultType(value))
+			);
+	}
+	throw new Error(`default_type has no $with.${setter}`);
+}
+function buildDefaultType$with$type(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildDefaultType$with(receiverOf(this, '$with.type'), 'type', args);
 }
 
 export function buildConstraint<V extends Admit<T.Type | T.TypeIdentifier.Types>>(
@@ -8556,21 +11043,37 @@ export function buildConstraint(
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: value,
+		[OPTIONS]: options,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		operator: (spelling: TSKindId.ExtendsKeyword | TSKindId.Colon) =>
-			rebuilt(node, handle, () => buildConstraint(value, { ...options, operator: spelling })),
-		bounds: (value: Admit<NonNullable<T.Type | T.TypeIdentifier.Types>>) =>
-			rebuilt(node, handle, () => buildConstraint(value, options)),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { operator: buildConstraint$with$operator, bounds: buildConstraint$with$bounds, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.Constraint.Bound;
+}
+
+function buildConstraint$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const value = node[INPUT] as Admit<NonNullable<T.Type | T.TypeIdentifier.Types>>;
+	const options = node[OPTIONS] as T.Constraint.Options;
+	switch (setter) {
+		case 'operator':
+			return applySetter(args, (spelling: TSKindId.ExtendsKeyword | TSKindId.Colon) =>
+				rebuilt(node, handle, () => buildConstraint(value, { ...options, operator: spelling }))
+			);
+		case 'bounds':
+			return applySetter(args, (value: Admit<NonNullable<T.Type | T.TypeIdentifier.Types>>) =>
+				rebuilt(node, handle, () => buildConstraint(value, options))
+			);
+	}
+	throw new Error(`constraint has no $with.${setter}`);
+}
+function buildConstraint$with$operator(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildConstraint$with(receiverOf(this, '$with.operator'), 'operator', args);
+}
+function buildConstraint$with$bounds(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildConstraint$with(receiverOf(this, '$with.bounds'), 'bounds', args);
 }
 
 export function buildConstructSignature<
@@ -8615,31 +11118,61 @@ export function buildConstructSignature(config: Partial<T.ConstructSignature.Con
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		abstract: (value?: Admit<NonNullable<T.ConstructSignature.Config>['abstract']>) =>
-			rebuilt(node, handle, () => buildConstructSignature({ ...config, abstract: value })),
-		typeParameters: (...args: unknown[]) =>
-			rebuilt(node, handle, () =>
-				listSlotWith(
-					args,
-					{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
-					(value?: Admit<T.TypeParameters>) => buildConstructSignature({ ...config, typeParameters: value })
-				)
-			),
-		parameters: (value: Admit<T.FormalParameters>) =>
-			rebuilt(node, handle, () => buildConstructSignature({ ...config, parameters: value })),
-		type: (value?: Admit<T.TypeAnnotation>) =>
-			rebuilt(node, handle, () => buildConstructSignature({ ...config, type: value })),
+		abstract: buildConstructSignature$with$abstract,
+		typeParameters: buildConstructSignature$with$typeParameters,
+		parameters: buildConstructSignature$with$parameters,
+		type: buildConstructSignature$with$type,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.ConstructSignature.Bound;
+}
+
+function buildConstructSignature$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.ConstructSignature.Config;
+	switch (setter) {
+		case 'abstract':
+			return applySetter(args, (value?: Admit<NonNullable<T.ConstructSignature.Config>['abstract']>) =>
+				rebuilt(node, handle, () => buildConstructSignature({ ...config, abstract: value }))
+			);
+		case 'typeParameters':
+			return applySetter(args, (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
+						(value?: Admit<T.TypeParameters>) => buildConstructSignature({ ...config, typeParameters: value })
+					)
+				)
+			);
+		case 'parameters':
+			return applySetter(args, (value: Admit<T.FormalParameters>) =>
+				rebuilt(node, handle, () => buildConstructSignature({ ...config, parameters: value }))
+			);
+		case 'type':
+			return applySetter(args, (value?: Admit<T.TypeAnnotation>) =>
+				rebuilt(node, handle, () => buildConstructSignature({ ...config, type: value }))
+			);
+	}
+	throw new Error(`construct_signature has no $with.${setter}`);
+}
+function buildConstructSignature$with$abstract(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildConstructSignature$with(receiverOf(this, '$with.abstract'), 'abstract', args);
+}
+function buildConstructSignature$with$typeParameters(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildConstructSignature$with(receiverOf(this, '$with.typeParameters'), 'typeParameters', args);
+}
+function buildConstructSignature$with$parameters(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildConstructSignature$with(receiverOf(this, '$with.parameters'), 'parameters', args);
+}
+function buildConstructSignature$with$type(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildConstructSignature$with(receiverOf(this, '$with.type'), 'type', args);
 }
 
 export function buildArrayType<V extends Admit<T.PrimaryType | T.TypeIdentifier.Types>>(
@@ -8669,19 +11202,26 @@ export function buildArrayType(value: Admit<T.PrimaryType | T.TypeIdentifier.Typ
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		type: (value: Admit<NonNullable<T.PrimaryType | T.TypeIdentifier.Types>>) =>
-			rebuilt(node, handle, () => buildArrayType(value)),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { type: buildArrayType$with$type, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.ArrayType.Bound;
+}
+
+function buildArrayType$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	switch (setter) {
+		case 'type':
+			return applySetter(args, (value: Admit<NonNullable<T.PrimaryType | T.TypeIdentifier.Types>>) =>
+				rebuilt(node, handle, () => buildArrayType(value))
+			);
+	}
+	throw new Error(`array_type has no $with.${setter}`);
+}
+function buildArrayType$with$type(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildArrayType$with(receiverOf(this, '$with.type'), 'type', args);
 }
 
 export function buildTupleType(): T.EmptyTupleType;
@@ -8766,27 +11306,33 @@ function _buildTupleType(value?: Admit<T.TupleTypeMembers>): T.TupleType.Bound {
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		tupleTypeMembers: (...args: unknown[]) =>
-			rebuilt(node, handle, () =>
-				listSlotWith(
-					args,
-					{ kind: TSKindId.TupleTypeMembers as const, optional: true, make: buildTupleTypeMembers },
-					(value?: Admit<T.TupleTypeMembers>) => _buildTupleType(value)
-				)
-			),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		inner: (...items: unknown[]) => triviaInner(node, handle, items),
-		[RECEIVER]: node
-	};
+	node.$with = { tupleTypeMembers: buildTupleType$with$tupleTypeMembers, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, inner: objectInner, [RECEIVER]: node };
 	holdListItems(node, heldItems(listView.list));
 	return node as unknown as T.TupleType.Bound;
+}
+
+function buildTupleType$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	switch (setter) {
+		case 'tupleTypeMembers':
+			return applySetter(args, (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{ kind: TSKindId.TupleTypeMembers as const, optional: true, make: buildTupleTypeMembers },
+						(value?: Admit<T.TupleTypeMembers>) => _buildTupleType(value)
+					)
+				)
+			);
+	}
+	throw new Error(`tuple_type has no $with.${setter}`);
+}
+function buildTupleType$with$tupleTypeMembers(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildTupleType$with(receiverOf(this, '$with.tupleTypeMembers'), 'tupleTypeMembers', args);
 }
 
 export function buildReadonlyType<V extends Admit<T.Type | T.TypeIdentifier.Types>>(
@@ -8816,19 +11362,26 @@ export function buildReadonlyType(value: Admit<T.Type | T.TypeIdentifier.Types>)
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		type: (value: Admit<NonNullable<T.Type | T.TypeIdentifier.Types>>) =>
-			rebuilt(node, handle, () => buildReadonlyType(value)),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { type: buildReadonlyType$with$type, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.ReadonlyType.Bound;
+}
+
+function buildReadonlyType$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	switch (setter) {
+		case 'type':
+			return applySetter(args, (value: Admit<NonNullable<T.Type | T.TypeIdentifier.Types>>) =>
+				rebuilt(node, handle, () => buildReadonlyType(value))
+			);
+	}
+	throw new Error(`readonly_type has no $with.${setter}`);
+}
+function buildReadonlyType$with$type(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildReadonlyType$with(receiverOf(this, '$with.type'), 'type', args);
 }
 
 export function buildUnionType<
@@ -8871,21 +11424,35 @@ export function buildUnionType(config: T.UnionType.Config): T.UnionType.Bound {
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		left: (value?: Admit<NonNullable<T.UnionType.Config>['left']>) =>
-			rebuilt(node, handle, () => buildUnionType({ ...config, left: value })),
-		right: (value: Admit<NonNullable<T.UnionType.Config>['right']>) =>
-			rebuilt(node, handle, () => buildUnionType({ ...config, right: value })),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { left: buildUnionType$with$left, right: buildUnionType$with$right, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.UnionType.Bound;
+}
+
+function buildUnionType$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.UnionType.Config;
+	switch (setter) {
+		case 'left':
+			return applySetter(args, (value?: Admit<NonNullable<T.UnionType.Config>['left']>) =>
+				rebuilt(node, handle, () => buildUnionType({ ...config, left: value }))
+			);
+		case 'right':
+			return applySetter(args, (value: Admit<NonNullable<T.UnionType.Config>['right']>) =>
+				rebuilt(node, handle, () => buildUnionType({ ...config, right: value }))
+			);
+	}
+	throw new Error(`union_type has no $with.${setter}`);
+}
+function buildUnionType$with$left(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildUnionType$with(receiverOf(this, '$with.left'), 'left', args);
+}
+function buildUnionType$with$right(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildUnionType$with(receiverOf(this, '$with.right'), 'right', args);
 }
 
 export function buildIntersectionType<
@@ -8928,21 +11495,35 @@ export function buildIntersectionType(config: T.IntersectionType.Config): T.Inte
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		left: (value?: Admit<NonNullable<T.IntersectionType.Config>['left']>) =>
-			rebuilt(node, handle, () => buildIntersectionType({ ...config, left: value })),
-		right: (value: Admit<NonNullable<T.IntersectionType.Config>['right']>) =>
-			rebuilt(node, handle, () => buildIntersectionType({ ...config, right: value })),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { left: buildIntersectionType$with$left, right: buildIntersectionType$with$right, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.IntersectionType.Bound;
+}
+
+function buildIntersectionType$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.IntersectionType.Config;
+	switch (setter) {
+		case 'left':
+			return applySetter(args, (value?: Admit<NonNullable<T.IntersectionType.Config>['left']>) =>
+				rebuilt(node, handle, () => buildIntersectionType({ ...config, left: value }))
+			);
+		case 'right':
+			return applySetter(args, (value: Admit<NonNullable<T.IntersectionType.Config>['right']>) =>
+				rebuilt(node, handle, () => buildIntersectionType({ ...config, right: value }))
+			);
+	}
+	throw new Error(`intersection_type has no $with.${setter}`);
+}
+function buildIntersectionType$with$left(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildIntersectionType$with(receiverOf(this, '$with.left'), 'left', args);
+}
+function buildIntersectionType$with$right(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildIntersectionType$with(receiverOf(this, '$with.right'), 'right', args);
 }
 
 export function buildFunctionType<
@@ -8991,29 +11572,53 @@ export function buildFunctionType(config: T.FunctionType.Config): T.FunctionType
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		typeParameters: (...args: unknown[]) =>
-			rebuilt(node, handle, () =>
-				listSlotWith(
-					args,
-					{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
-					(value?: Admit<T.TypeParameters>) => buildFunctionType({ ...config, typeParameters: value })
-				)
-			),
-		parameters: (value: Admit<T.FormalParameters>) =>
-			rebuilt(node, handle, () => buildFunctionType({ ...config, parameters: value })),
-		returnType: (value: Admit<NonNullable<T.FunctionType.Config>['returnType']>) =>
-			rebuilt(node, handle, () => buildFunctionType({ ...config, returnType: value })),
+		typeParameters: buildFunctionType$with$typeParameters,
+		parameters: buildFunctionType$with$parameters,
+		returnType: buildFunctionType$with$returnType,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.FunctionType.Bound;
+}
+
+function buildFunctionType$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.FunctionType.Config;
+	switch (setter) {
+		case 'typeParameters':
+			return applySetter(args, (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
+						(value?: Admit<T.TypeParameters>) => buildFunctionType({ ...config, typeParameters: value })
+					)
+				)
+			);
+		case 'parameters':
+			return applySetter(args, (value: Admit<T.FormalParameters>) =>
+				rebuilt(node, handle, () => buildFunctionType({ ...config, parameters: value }))
+			);
+		case 'returnType':
+			return applySetter(args, (value: Admit<NonNullable<T.FunctionType.Config>['returnType']>) =>
+				rebuilt(node, handle, () => buildFunctionType({ ...config, returnType: value }))
+			);
+	}
+	throw new Error(`function_type has no $with.${setter}`);
+}
+function buildFunctionType$with$typeParameters(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildFunctionType$with(receiverOf(this, '$with.typeParameters'), 'typeParameters', args);
+}
+function buildFunctionType$with$parameters(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildFunctionType$with(receiverOf(this, '$with.parameters'), 'parameters', args);
+}
+function buildFunctionType$with$returnType(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildFunctionType$with(receiverOf(this, '$with.returnType'), 'returnType', args);
 }
 
 const buildExportSpecifiers$wrapper = {
@@ -9110,22 +11715,46 @@ function _buildExportSpecifiers(
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: elements,
+		[OPTIONS]: options,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		items: (...vs: NonEmptyArray<Admit<T.ExportSpecifier | T.Identifier | T.String | TSKindId.DefaultKeyword>>) =>
-			rebuilt(node, handle, () => buildExportSpecifiers(options, ...vs)),
-		delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
-			rebuilt(node, handle, () => buildExportSpecifiers({ ...options, delimiter: v }, ...elements)),
+		items: buildExportSpecifiers$with$items,
+		delimiter: buildExportSpecifiers$with$delimiter,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	holdBuiltItems(node, elements, buildExportSpecifiers$wrapper);
 	return node as unknown as T.ExportSpecifiers.Bound;
+}
+
+function buildExportSpecifiers$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const elements = node[INPUT] as NonEmptyArray<
+		Admit<T.ExportSpecifier | T.Identifier | T.String | TSKindId.DefaultKeyword>
+	>;
+	const options = node[OPTIONS] as { delimiter?: Delimiter.None | Delimiter.Trailing };
+	switch (setter) {
+		case 'items':
+			return applySetter(
+				args,
+				(...vs: NonEmptyArray<Admit<T.ExportSpecifier | T.Identifier | T.String | TSKindId.DefaultKeyword>>) =>
+					rebuilt(node, handle, () => buildExportSpecifiers(options, ...vs))
+			);
+		case 'delimiter':
+			return applySetter(args, (v?: Delimiter.None | Delimiter.Trailing) =>
+				rebuilt(node, handle, () => buildExportSpecifiers({ ...options, delimiter: v }, ...elements))
+			);
+	}
+	throw new Error(`export_specifiers has no $with.${setter}`);
+}
+function buildExportSpecifiers$with$items(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildExportSpecifiers$with(receiverOf(this, '$with.items'), 'items', args);
+}
+function buildExportSpecifiers$with$delimiter(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildExportSpecifiers$with(receiverOf(this, '$with.delimiter'), 'delimiter', args);
 }
 
 export function buildImportSpecifiers<A extends NonEmptyArray<Admit<T.ImportSpecifier>>>(
@@ -9204,22 +11833,42 @@ function _buildImportSpecifiers(
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: elements,
+		[OPTIONS]: options,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		items: (...vs: NonEmptyArray<Admit<T.ImportSpecifier>>) =>
-			rebuilt(node, handle, () => buildImportSpecifiers(options, ...vs)),
-		delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
-			rebuilt(node, handle, () => buildImportSpecifiers({ ...options, delimiter: v }, ...elements)),
+		items: buildImportSpecifiers$with$items,
+		delimiter: buildImportSpecifiers$with$delimiter,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	holdBuiltItems(node, listedItems);
 	return node as unknown as T.ImportSpecifiers.Bound;
+}
+
+function buildImportSpecifiers$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const elements = node[INPUT] as NonEmptyArray<Admit<T.ImportSpecifier>>;
+	const options = node[OPTIONS] as { delimiter?: Delimiter.None | Delimiter.Trailing };
+	switch (setter) {
+		case 'items':
+			return applySetter(args, (...vs: NonEmptyArray<Admit<T.ImportSpecifier>>) =>
+				rebuilt(node, handle, () => buildImportSpecifiers(options, ...vs))
+			);
+		case 'delimiter':
+			return applySetter(args, (v?: Delimiter.None | Delimiter.Trailing) =>
+				rebuilt(node, handle, () => buildImportSpecifiers({ ...options, delimiter: v }, ...elements))
+			);
+	}
+	throw new Error(`import_specifiers has no $with.${setter}`);
+}
+function buildImportSpecifiers$with$items(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildImportSpecifiers$with(receiverOf(this, '$with.items'), 'items', args);
+}
+function buildImportSpecifiers$with$delimiter(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildImportSpecifiers$with(receiverOf(this, '$with.delimiter'), 'delimiter', args);
 }
 
 export function buildFormalParametersElements<
@@ -9302,22 +11951,42 @@ function _buildFormalParametersElements(
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: elements,
+		[OPTIONS]: options,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		items: (...vs: NonEmptyArray<Admit<T.RequiredParameter | T.OptionalParameter>>) =>
-			rebuilt(node, handle, () => buildFormalParametersElements(options, ...vs)),
-		delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
-			rebuilt(node, handle, () => buildFormalParametersElements({ ...options, delimiter: v }, ...elements)),
+		items: buildFormalParametersElements$with$items,
+		delimiter: buildFormalParametersElements$with$delimiter,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	holdBuiltItems(node, listedItems);
 	return node as unknown as T.FormalParametersElements.Bound;
+}
+
+function buildFormalParametersElements$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const elements = node[INPUT] as NonEmptyArray<Admit<T.RequiredParameter | T.OptionalParameter>>;
+	const options = node[OPTIONS] as { delimiter?: Delimiter.None | Delimiter.Trailing };
+	switch (setter) {
+		case 'items':
+			return applySetter(args, (...vs: NonEmptyArray<Admit<T.RequiredParameter | T.OptionalParameter>>) =>
+				rebuilt(node, handle, () => buildFormalParametersElements(options, ...vs))
+			);
+		case 'delimiter':
+			return applySetter(args, (v?: Delimiter.None | Delimiter.Trailing) =>
+				rebuilt(node, handle, () => buildFormalParametersElements({ ...options, delimiter: v }, ...elements))
+			);
+	}
+	throw new Error(`formal_parameters_elements has no $with.${setter}`);
+}
+function buildFormalParametersElements$with$items(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildFormalParametersElements$with(receiverOf(this, '$with.items'), 'items', args);
+}
+function buildFormalParametersElements$with$delimiter(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildFormalParametersElements$with(receiverOf(this, '$with.delimiter'), 'delimiter', args);
 }
 
 export function buildEnumBodyElementName<
@@ -9350,23 +12019,32 @@ export function buildEnumBodyElementName(
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		name: (
-			value: Admit<
-				| (T.PropertyIdentifier | T.PrivatePropertyIdentifier | T.String | T.Number | T.ComputedPropertyName)
-				| T.PropertyIdentifier.Types
-			>
-		) => rebuilt(node, handle, () => buildEnumBodyElementName(value)),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { name: buildEnumBodyElementName$with$name, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.EnumBodyElementName.Bound;
+}
+
+function buildEnumBodyElementName$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	switch (setter) {
+		case 'name':
+			return applySetter(
+				args,
+				(
+					value: Admit<
+						| (T.PropertyIdentifier | T.PrivatePropertyIdentifier | T.String | T.Number | T.ComputedPropertyName)
+						| T.PropertyIdentifier.Types
+					>
+				) => rebuilt(node, handle, () => buildEnumBodyElementName(value))
+			);
+	}
+	throw new Error(`enum_body_element_name has no $with.${setter}`);
+}
+function buildEnumBodyElementName$with$name(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildEnumBodyElementName$with(receiverOf(this, '$with.name'), 'name', args);
 }
 
 export function buildEnumBodyElements<A extends NonEmptyArray<Admit<T.EnumBodyElement>>>(
@@ -9445,22 +12123,42 @@ function _buildEnumBodyElements(
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: elements,
+		[OPTIONS]: options,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		items: (...vs: NonEmptyArray<Admit<T.EnumBodyElement>>) =>
-			rebuilt(node, handle, () => buildEnumBodyElements(options, ...vs)),
-		delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
-			rebuilt(node, handle, () => buildEnumBodyElements({ ...options, delimiter: v }, ...elements)),
+		items: buildEnumBodyElements$with$items,
+		delimiter: buildEnumBodyElements$with$delimiter,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	holdBuiltItems(node, listedItems);
 	return node as unknown as T.EnumBodyElements.Bound;
+}
+
+function buildEnumBodyElements$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const elements = node[INPUT] as NonEmptyArray<Admit<T.EnumBodyElement>>;
+	const options = node[OPTIONS] as { delimiter?: Delimiter.None | Delimiter.Trailing };
+	switch (setter) {
+		case 'items':
+			return applySetter(args, (...vs: NonEmptyArray<Admit<T.EnumBodyElement>>) =>
+				rebuilt(node, handle, () => buildEnumBodyElements(options, ...vs))
+			);
+		case 'delimiter':
+			return applySetter(args, (v?: Delimiter.None | Delimiter.Trailing) =>
+				rebuilt(node, handle, () => buildEnumBodyElements({ ...options, delimiter: v }, ...elements))
+			);
+	}
+	throw new Error(`enum_body_elements has no $with.${setter}`);
+}
+function buildEnumBodyElements$with$items(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildEnumBodyElements$with(receiverOf(this, '$with.items'), 'items', args);
+}
+function buildEnumBodyElements$with$delimiter(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildEnumBodyElements$with(receiverOf(this, '$with.delimiter'), 'delimiter', args);
 }
 
 export function buildTypes<A extends NonEmptyArray<Admit<T.Type | T.TypeIdentifier.Types>>>(
@@ -9543,22 +12241,38 @@ function _buildTypes(
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: elements,
+		[OPTIONS]: options,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		items: (...vs: NonEmptyArray<Admit<T.Type | T.TypeIdentifier.Types>>) =>
-			rebuilt(node, handle, () => buildTypes(options, ...vs)),
-		delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
-			rebuilt(node, handle, () => buildTypes({ ...options, delimiter: v }, ...elements)),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { items: buildTypes$with$items, delimiter: buildTypes$with$delimiter, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	holdBuiltItems(node, listedItems);
 	return node as unknown as T.Types.Bound;
+}
+
+function buildTypes$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const elements = node[INPUT] as NonEmptyArray<Admit<T.Type | T.TypeIdentifier.Types>>;
+	const options = node[OPTIONS] as { delimiter?: Delimiter.None | Delimiter.Trailing };
+	switch (setter) {
+		case 'items':
+			return applySetter(args, (...vs: NonEmptyArray<Admit<T.Type | T.TypeIdentifier.Types>>) =>
+				rebuilt(node, handle, () => buildTypes(options, ...vs))
+			);
+		case 'delimiter':
+			return applySetter(args, (v?: Delimiter.None | Delimiter.Trailing) =>
+				rebuilt(node, handle, () => buildTypes({ ...options, delimiter: v }, ...elements))
+			);
+	}
+	throw new Error(`types has no $with.${setter}`);
+}
+function buildTypes$with$items(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildTypes$with(receiverOf(this, '$with.items'), 'items', args);
+}
+function buildTypes$with$delimiter(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildTypes$with(receiverOf(this, '$with.delimiter'), 'delimiter', args);
 }
 
 const buildTypeParametersElements$wrapper = {
@@ -9655,22 +12369,44 @@ function _buildTypeParametersElements(
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: elements,
+		[OPTIONS]: options,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		items: (...vs: NonEmptyArray<Admit<T.TypeParameter | T.TypeIdentifier | T.TypeIdentifier.Types>>) =>
-			rebuilt(node, handle, () => buildTypeParametersElements(options, ...vs)),
-		delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
-			rebuilt(node, handle, () => buildTypeParametersElements({ ...options, delimiter: v }, ...elements)),
+		items: buildTypeParametersElements$with$items,
+		delimiter: buildTypeParametersElements$with$delimiter,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	holdBuiltItems(node, elements, buildTypeParametersElements$wrapper);
 	return node as unknown as T.TypeParametersElements.Bound;
+}
+
+function buildTypeParametersElements$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const elements = node[INPUT] as NonEmptyArray<Admit<T.TypeParameter | T.TypeIdentifier | T.TypeIdentifier.Types>>;
+	const options = node[OPTIONS] as { delimiter?: Delimiter.None | Delimiter.Trailing };
+	switch (setter) {
+		case 'items':
+			return applySetter(
+				args,
+				(...vs: NonEmptyArray<Admit<T.TypeParameter | T.TypeIdentifier | T.TypeIdentifier.Types>>) =>
+					rebuilt(node, handle, () => buildTypeParametersElements(options, ...vs))
+			);
+		case 'delimiter':
+			return applySetter(args, (v?: Delimiter.None | Delimiter.Trailing) =>
+				rebuilt(node, handle, () => buildTypeParametersElements({ ...options, delimiter: v }, ...elements))
+			);
+	}
+	throw new Error(`type_parameters_elements has no $with.${setter}`);
+}
+function buildTypeParametersElements$with$items(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildTypeParametersElements$with(receiverOf(this, '$with.items'), 'items', args);
+}
+function buildTypeParametersElements$with$delimiter(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildTypeParametersElements$with(receiverOf(this, '$with.delimiter'), 'delimiter', args);
 }
 
 export function buildTupleTypeMembers<
@@ -9764,27 +12500,56 @@ function _buildTupleTypeMembers(
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: elements,
+		[OPTIONS]: options,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		items: (
-			...vs: NonEmptyArray<
-				Admit<
-					T.TupleParameter | T.OptionalTupleParameter | T.OptionalType | T.RestType | T.Type | T.TypeIdentifier.Types
-				>
-			>
-		) => rebuilt(node, handle, () => buildTupleTypeMembers(options, ...vs)),
-		delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
-			rebuilt(node, handle, () => buildTupleTypeMembers({ ...options, delimiter: v }, ...elements)),
+		items: buildTupleTypeMembers$with$items,
+		delimiter: buildTupleTypeMembers$with$delimiter,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	holdBuiltItems(node, listedItems);
 	return node as unknown as T.TupleTypeMembers.Bound;
+}
+
+function buildTupleTypeMembers$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const elements = node[INPUT] as NonEmptyArray<
+		Admit<T.TupleParameter | T.OptionalTupleParameter | T.OptionalType | T.RestType | T.Type | T.TypeIdentifier.Types>
+	>;
+	const options = node[OPTIONS] as { delimiter?: Delimiter.None | Delimiter.Trailing };
+	switch (setter) {
+		case 'items':
+			return applySetter(
+				args,
+				(
+					...vs: NonEmptyArray<
+						Admit<
+							| T.TupleParameter
+							| T.OptionalTupleParameter
+							| T.OptionalType
+							| T.RestType
+							| T.Type
+							| T.TypeIdentifier.Types
+						>
+					>
+				) => rebuilt(node, handle, () => buildTupleTypeMembers(options, ...vs))
+			);
+		case 'delimiter':
+			return applySetter(args, (v?: Delimiter.None | Delimiter.Trailing) =>
+				rebuilt(node, handle, () => buildTupleTypeMembers({ ...options, delimiter: v }, ...elements))
+			);
+	}
+	throw new Error(`tuple_type_members has no $with.${setter}`);
+}
+function buildTupleTypeMembers$with$items(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildTupleTypeMembers$with(receiverOf(this, '$with.items'), 'items', args);
+}
+function buildTupleTypeMembers$with$delimiter(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildTupleTypeMembers$with(receiverOf(this, '$with.delimiter'), 'delimiter', args);
 }
 
 export function buildImportClauseGroup<V extends Admit<T.NamespaceImport | T.NamedImports>>(
@@ -9806,19 +12571,26 @@ export function buildImportClauseGroup(value: Admit<T.NamespaceImport | T.NamedI
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		content: (value: Admit<T.NamespaceImport | T.NamedImports>) =>
-			rebuilt(node, handle, () => buildImportClauseGroup(value)),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { content: buildImportClauseGroup$with$content, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.ImportClauseGroup.Bound;
+}
+
+function buildImportClauseGroup$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	switch (setter) {
+		case 'content':
+			return applySetter(args, (value: Admit<T.NamespaceImport | T.NamedImports>) =>
+				rebuilt(node, handle, () => buildImportClauseGroup(value))
+			);
+	}
+	throw new Error(`import_clause_group has no $with.${setter}`);
+}
+function buildImportClauseGroup$with$content(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildImportClauseGroup$with(receiverOf(this, '$with.content'), 'content', args);
 }
 
 export const buildUsingDeclarationArm: TSKindId.UsingDeclarationArm = TSKindId.UsingDeclarationArm;
@@ -9854,21 +12626,39 @@ export function buildCatchClauseGroup(config: T.CatchClauseGroup.Config): T.Catc
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		parameter: (value: Admit<T.Identifier | T.ObjectPattern | T.ArrayPattern>) =>
-			rebuilt(node, handle, () => buildCatchClauseGroup({ ...config, parameter: value })),
-		type: (value?: Admit<T.TypeAnnotation>) =>
-			rebuilt(node, handle, () => buildCatchClauseGroup({ ...config, type: value })),
+		parameter: buildCatchClauseGroup$with$parameter,
+		type: buildCatchClauseGroup$with$type,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.CatchClauseGroup.Bound;
+}
+
+function buildCatchClauseGroup$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.CatchClauseGroup.Config;
+	switch (setter) {
+		case 'parameter':
+			return applySetter(args, (value: Admit<T.Identifier | T.ObjectPattern | T.ArrayPattern>) =>
+				rebuilt(node, handle, () => buildCatchClauseGroup({ ...config, parameter: value }))
+			);
+		case 'type':
+			return applySetter(args, (value?: Admit<T.TypeAnnotation>) =>
+				rebuilt(node, handle, () => buildCatchClauseGroup({ ...config, type: value }))
+			);
+	}
+	throw new Error(`catch_clause_group has no $with.${setter}`);
+}
+function buildCatchClauseGroup$with$parameter(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildCatchClauseGroup$with(receiverOf(this, '$with.parameter'), 'parameter', args);
+}
+function buildCatchClauseGroup$with$type(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildCatchClauseGroup$with(receiverOf(this, '$with.type'), 'type', args);
 }
 
 export function buildGetAccessorSignature<TypeSlot extends T.GetAccessorSignature.Config['type']>(
@@ -9893,19 +12683,28 @@ export function buildGetAccessorSignature(
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		type: (value?: Admit<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation>) =>
-			rebuilt(node, handle, () => buildGetAccessorSignature({ ...config, type: value })),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { type: buildGetAccessorSignature$with$type, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.GetAccessorSignature.Bound;
+}
+
+function buildGetAccessorSignature$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.GetAccessorSignature.Config;
+	switch (setter) {
+		case 'type':
+			return applySetter(args, (value?: Admit<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation>) =>
+				rebuilt(node, handle, () => buildGetAccessorSignature({ ...config, type: value }))
+			);
+	}
+	throw new Error(`_get_accessor_signature has no $with.${setter}`);
+}
+function buildGetAccessorSignature$with$type(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildGetAccessorSignature$with(receiverOf(this, '$with.type'), 'type', args);
 }
 
 export function buildAmbientDeclarationGlobal<V extends Admit<T.StatementBlock>>(
@@ -9956,18 +12755,26 @@ function _buildAmbientDeclarationGlobal(value: Admit<T.StatementBlock>): T.Ambie
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		body: (value: Admit<T.StatementBlock>) => rebuilt(node, handle, () => _buildAmbientDeclarationGlobal(value)),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { body: buildAmbientDeclarationGlobal$with$body, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.AmbientDeclarationGlobal.Bound;
+}
+
+function buildAmbientDeclarationGlobal$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	switch (setter) {
+		case 'body':
+			return applySetter(args, (value: Admit<T.StatementBlock>) =>
+				rebuilt(node, handle, () => _buildAmbientDeclarationGlobal(value))
+			);
+	}
+	throw new Error(`ambient_declaration_global has no $with.${setter}`);
+}
+function buildAmbientDeclarationGlobal$with$body(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildAmbientDeclarationGlobal$with(receiverOf(this, '$with.body'), 'body', args);
 }
 
 export function buildAmbientDeclarationModule<
@@ -10023,23 +12830,49 @@ export function buildAmbientDeclarationModule(
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
+		[OPTIONS]: options,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		name: (value: Admit<T.PropertyIdentifier | T.PropertyIdentifier.Types>) =>
-			rebuilt(node, handle, () => buildAmbientDeclarationModule({ ...config, name: value }, options)),
-		type: (value: Admit<NonNullable<T.AmbientDeclarationModule.Config>['type']>) =>
-			rebuilt(node, handle, () => buildAmbientDeclarationModule({ ...config, type: value }, options)),
-		terminator: (spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi | null) =>
-			rebuilt(node, handle, () => buildAmbientDeclarationModule(config, { ...options, terminator: spelling })),
+		name: buildAmbientDeclarationModule$with$name,
+		type: buildAmbientDeclarationModule$with$type,
+		terminator: buildAmbientDeclarationModule$with$terminator,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.AmbientDeclarationModule.Bound;
+}
+
+function buildAmbientDeclarationModule$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.AmbientDeclarationModule.Config;
+	const options = node[OPTIONS] as T.AmbientDeclarationModule.Options;
+	switch (setter) {
+		case 'name':
+			return applySetter(args, (value: Admit<T.PropertyIdentifier | T.PropertyIdentifier.Types>) =>
+				rebuilt(node, handle, () => buildAmbientDeclarationModule({ ...config, name: value }, options))
+			);
+		case 'type':
+			return applySetter(args, (value: Admit<NonNullable<T.AmbientDeclarationModule.Config>['type']>) =>
+				rebuilt(node, handle, () => buildAmbientDeclarationModule({ ...config, type: value }, options))
+			);
+		case 'terminator':
+			return applySetter(args, (spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi | null) =>
+				rebuilt(node, handle, () => buildAmbientDeclarationModule(config, { ...options, terminator: spelling }))
+			);
+	}
+	throw new Error(`ambient_declaration_module has no $with.${setter}`);
+}
+function buildAmbientDeclarationModule$with$name(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildAmbientDeclarationModule$with(receiverOf(this, '$with.name'), 'name', args);
+}
+function buildAmbientDeclarationModule$with$type(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildAmbientDeclarationModule$with(receiverOf(this, '$with.type'), 'type', args);
+}
+function buildAmbientDeclarationModule$with$terminator(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildAmbientDeclarationModule$with(receiverOf(this, '$with.terminator'), 'terminator', args);
 }
 
 export function buildObjectTypeContent<
@@ -10181,34 +13014,74 @@ function _buildObjectTypeContent(
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: elements,
+		[OPTIONS]: options,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		items: (
-			...vs: NonEmptyArray<
-				Admit<
-					| T.ExportStatement
-					| T.PropertySignature
-					| T.CallSignature
-					| T.ConstructSignature
-					| T.IndexSignature
-					| T.MethodSignature
-				>
-			>
-		) => rebuilt(node, handle, () => buildObjectTypeContent(options, ...vs)),
-		separator: (v: TSKindId.Comma | TSKindId.Semi | TSKindId.AutomaticSemicolon) =>
-			rebuilt(node, handle, () => buildObjectTypeContent({ ...options, separator: v }, ...elements)),
-		delimiter: (v?: Delimiter.None | Delimiter.Leading | Delimiter.Trailing | Delimiter.Both) =>
-			rebuilt(node, handle, () => buildObjectTypeContent({ ...options, delimiter: v }, ...elements)),
+		items: buildObjectTypeContent$with$items,
+		separator: buildObjectTypeContent$with$separator,
+		delimiter: buildObjectTypeContent$with$delimiter,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	holdBuiltItems(node, listedItems);
 	return node as unknown as T.ObjectTypeContent.Bound;
+}
+
+function buildObjectTypeContent$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const elements = node[INPUT] as NonEmptyArray<
+		Admit<
+			| T.ExportStatement
+			| T.PropertySignature
+			| T.CallSignature
+			| T.ConstructSignature
+			| T.IndexSignature
+			| T.MethodSignature
+		>
+	>;
+	const options = node[OPTIONS] as {
+		separator?: TSKindId.Comma | TSKindId.Semi | TSKindId.AutomaticSemicolon;
+		delimiter?: Delimiter.None | Delimiter.Leading | Delimiter.Trailing | Delimiter.Both;
+	};
+	switch (setter) {
+		case 'items':
+			return applySetter(
+				args,
+				(
+					...vs: NonEmptyArray<
+						Admit<
+							| T.ExportStatement
+							| T.PropertySignature
+							| T.CallSignature
+							| T.ConstructSignature
+							| T.IndexSignature
+							| T.MethodSignature
+						>
+					>
+				) => rebuilt(node, handle, () => buildObjectTypeContent(options, ...vs))
+			);
+		case 'separator':
+			return applySetter(args, (v: TSKindId.Comma | TSKindId.Semi | TSKindId.AutomaticSemicolon) =>
+				rebuilt(node, handle, () => buildObjectTypeContent({ ...options, separator: v }, ...elements))
+			);
+		case 'delimiter':
+			return applySetter(args, (v?: Delimiter.None | Delimiter.Leading | Delimiter.Trailing | Delimiter.Both) =>
+				rebuilt(node, handle, () => buildObjectTypeContent({ ...options, delimiter: v }, ...elements))
+			);
+	}
+	throw new Error(`object_type_content has no $with.${setter}`);
+}
+function buildObjectTypeContent$with$items(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildObjectTypeContent$with(receiverOf(this, '$with.items'), 'items', args);
+}
+function buildObjectTypeContent$with$separator(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildObjectTypeContent$with(receiverOf(this, '$with.separator'), 'separator', args);
+}
+function buildObjectTypeContent$with$delimiter(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildObjectTypeContent$with(receiverOf(this, '$with.delimiter'), 'delimiter', args);
 }
 
 export function buildExportStatementNamespaceExport<V extends Admit<T.Identifier>>(
@@ -10246,21 +13119,41 @@ export function buildExportStatementNamespaceExport(
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: value,
+		[OPTIONS]: options,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		name: (value: Admit<T.Identifier>) =>
-			rebuilt(node, handle, () => buildExportStatementNamespaceExport(value, options)),
-		terminator: (spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi) =>
-			rebuilt(node, handle, () => buildExportStatementNamespaceExport(value, { ...options, terminator: spelling })),
+		name: buildExportStatementNamespaceExport$with$name,
+		terminator: buildExportStatementNamespaceExport$with$terminator,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.ExportStatementNamespaceExport.Bound;
+}
+
+function buildExportStatementNamespaceExport$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const value = node[INPUT] as Admit<T.Identifier>;
+	const options = node[OPTIONS] as T.ExportStatementNamespaceExport.Options;
+	switch (setter) {
+		case 'name':
+			return applySetter(args, (value: Admit<T.Identifier>) =>
+				rebuilt(node, handle, () => buildExportStatementNamespaceExport(value, options))
+			);
+		case 'terminator':
+			return applySetter(args, (spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi) =>
+				rebuilt(node, handle, () => buildExportStatementNamespaceExport(value, { ...options, terminator: spelling }))
+			);
+	}
+	throw new Error(`export_statement_namespace_export has no $with.${setter}`);
+}
+function buildExportStatementNamespaceExport$with$name(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildExportStatementNamespaceExport$with(receiverOf(this, '$with.name'), 'name', args);
+}
+function buildExportStatementNamespaceExport$with$terminator(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildExportStatementNamespaceExport$with(receiverOf(this, '$with.terminator'), 'terminator', args);
 }
 
 export function buildExportStatementEqualsExport<V extends Admit<T.Expression>>(
@@ -10298,21 +13191,41 @@ export function buildExportStatementEqualsExport(
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: value,
+		[OPTIONS]: options,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		value: (value: Admit<NonNullable<T.Expression>>) =>
-			rebuilt(node, handle, () => buildExportStatementEqualsExport(value, options)),
-		terminator: (spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi) =>
-			rebuilt(node, handle, () => buildExportStatementEqualsExport(value, { ...options, terminator: spelling })),
+		value: buildExportStatementEqualsExport$with$value,
+		terminator: buildExportStatementEqualsExport$with$terminator,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.ExportStatementEqualsExport.Bound;
+}
+
+function buildExportStatementEqualsExport$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const value = node[INPUT] as Admit<NonNullable<T.Expression>>;
+	const options = node[OPTIONS] as T.ExportStatementEqualsExport.Options;
+	switch (setter) {
+		case 'value':
+			return applySetter(args, (value: Admit<NonNullable<T.Expression>>) =>
+				rebuilt(node, handle, () => buildExportStatementEqualsExport(value, options))
+			);
+		case 'terminator':
+			return applySetter(args, (spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi) =>
+				rebuilt(node, handle, () => buildExportStatementEqualsExport(value, { ...options, terminator: spelling }))
+			);
+	}
+	throw new Error(`export_statement_equals_export has no $with.${setter}`);
+}
+function buildExportStatementEqualsExport$with$value(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildExportStatementEqualsExport$with(receiverOf(this, '$with.value'), 'value', args);
+}
+function buildExportStatementEqualsExport$with$terminator(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildExportStatementEqualsExport$with(receiverOf(this, '$with.terminator'), 'terminator', args);
 }
 
 export function buildCommentLine(content: string, affix?: true): T.CommentLine.Bound;
@@ -10342,13 +13255,23 @@ export function buildCommentLine(input: string, affix: boolean = true): T.Commen
 		toJSON: refuseJSON,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		content: (value: Admit<string>) => rebuilt(node, handle, () => buildCommentLine(value)),
-		[RECEIVER]: node
-	};
+	node.$with = { content: buildCommentLine$with$content, [RECEIVER]: node };
 	return node as unknown as T.CommentLine.Bound;
+}
+
+function buildCommentLine$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	switch (setter) {
+		case 'content':
+			return applySetter(args, (value: Admit<string>) => rebuilt(node, handle, () => buildCommentLine(value)));
+	}
+	throw new Error(`comment_line has no $with.${setter}`);
+}
+function buildCommentLine$with$content(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildCommentLine$with(receiverOf(this, '$with.content'), 'content', args);
 }
 
 export function buildCommentBlock(content: string, affix?: true): T.CommentBlock.Bound;
@@ -10378,14 +13301,24 @@ export function buildCommentBlock(input: string, affix: boolean = true): T.Comme
 		toJSON: refuseJSON,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		content: (value: Admit<string>) => rebuilt(node, handle, () => buildCommentBlock(value)),
-		[RECEIVER]: node
-	};
+	node.$with = { content: buildCommentBlock$with$content, [RECEIVER]: node };
 	checkDelimited(handle, node, _delimited_buildCommentBlock, [_content]);
 	return node as unknown as T.CommentBlock.Bound;
+}
+
+function buildCommentBlock$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	switch (setter) {
+		case 'content':
+			return applySetter(args, (value: Admit<string>) => rebuilt(node, handle, () => buildCommentBlock(value)));
+	}
+	throw new Error(`comment_block has no $with.${setter}`);
+}
+function buildCommentBlock$with$content(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildCommentBlock$with(receiverOf(this, '$with.content'), 'content', args);
 }
 
 export function buildLiteralTypeNegativeNumber<V extends Admit<T.Number>>(
@@ -10407,18 +13340,26 @@ export function buildLiteralTypeNegativeNumber(value: Admit<T.Number>): T.Litera
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		value: (value: Admit<T.Number>) => rebuilt(node, handle, () => buildLiteralTypeNegativeNumber(value)),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { value: buildLiteralTypeNegativeNumber$with$value, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.LiteralTypeNegativeNumber.Bound;
+}
+
+function buildLiteralTypeNegativeNumber$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	switch (setter) {
+		case 'value':
+			return applySetter(args, (value: Admit<T.Number>) =>
+				rebuilt(node, handle, () => buildLiteralTypeNegativeNumber(value))
+			);
+	}
+	throw new Error(`literal_type_negative_number has no $with.${setter}`);
+}
+function buildLiteralTypeNegativeNumber$with$value(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildLiteralTypeNegativeNumber$with(receiverOf(this, '$with.value'), 'value', args);
 }
 
 export function buildNumberHex<const N extends string | number | bigint>(
@@ -10455,20 +13396,37 @@ export function buildNumberHex(
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: value,
+		[OPTIONS]: options,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		radixPrefix: (spelling: '0x' | '0X') =>
-			rebuilt(node, handle, () => buildNumberHex(value, { ...options, radixPrefix: spelling })),
-		content: (value: Admit<string | number | bigint>) => rebuilt(node, handle, () => buildNumberHex(value, options)),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { radixPrefix: buildNumberHex$with$radixPrefix, content: buildNumberHex$with$content, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.NumberHex.Bound;
+}
+
+function buildNumberHex$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const value = node[INPUT] as Admit<string | number | bigint>;
+	const options = node[OPTIONS] as T.NumberHex.Options;
+	switch (setter) {
+		case 'radixPrefix':
+			return applySetter(args, (spelling: '0x' | '0X') =>
+				rebuilt(node, handle, () => buildNumberHex(value, { ...options, radixPrefix: spelling }))
+			);
+		case 'content':
+			return applySetter(args, (value: Admit<string | number | bigint>) =>
+				rebuilt(node, handle, () => buildNumberHex(value, options))
+			);
+	}
+	throw new Error(`number_hex has no $with.${setter}`);
+}
+function buildNumberHex$with$radixPrefix(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildNumberHex$with(receiverOf(this, '$with.radixPrefix'), 'radixPrefix', args);
+}
+function buildNumberHex$with$content(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildNumberHex$with(receiverOf(this, '$with.content'), 'content', args);
 }
 
 export function buildNumberFloatPoint<
@@ -10562,27 +13520,65 @@ export function buildNumberFloatPoint(
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
+		[OPTIONS]: options,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		integer: (value: Admit<string | number | bigint>) =>
-			rebuilt(node, handle, () => buildNumberFloatPoint({ ...config, integer: value }, options)),
-		fraction: (value?: Admit<string | number | bigint>) =>
-			rebuilt(node, handle, () => buildNumberFloatPoint({ ...config, fraction: value }, options)),
-		marker: (spelling: 'e' | 'E') =>
-			rebuilt(node, handle, () => buildNumberFloatPoint(config, { ...options, marker: spelling })),
-		exponentSign: (value?: Admit<'-' | '+'>) =>
-			rebuilt(node, handle, () => buildNumberFloatPoint({ ...config, exponentSign: value }, options)),
-		exponent: (value?: Admit<string | number | bigint>) =>
-			rebuilt(node, handle, () => buildNumberFloatPoint({ ...config, exponent: value }, options)),
+		integer: buildNumberFloatPoint$with$integer,
+		fraction: buildNumberFloatPoint$with$fraction,
+		marker: buildNumberFloatPoint$with$marker,
+		exponentSign: buildNumberFloatPoint$with$exponentSign,
+		exponent: buildNumberFloatPoint$with$exponent,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.NumberFloatPoint.Bound;
+}
+
+function buildNumberFloatPoint$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.NumberFloatPoint.Config;
+	const options = node[OPTIONS] as T.NumberFloatPoint.Options;
+	switch (setter) {
+		case 'integer':
+			return applySetter(args, (value: Admit<string | number | bigint>) =>
+				rebuilt(node, handle, () => buildNumberFloatPoint({ ...config, integer: value }, options))
+			);
+		case 'fraction':
+			return applySetter(args, (value?: Admit<string | number | bigint>) =>
+				rebuilt(node, handle, () => buildNumberFloatPoint({ ...config, fraction: value }, options))
+			);
+		case 'marker':
+			return applySetter(args, (spelling: 'e' | 'E') =>
+				rebuilt(node, handle, () => buildNumberFloatPoint(config, { ...options, marker: spelling }))
+			);
+		case 'exponentSign':
+			return applySetter(args, (value?: Admit<'-' | '+'>) =>
+				rebuilt(node, handle, () => buildNumberFloatPoint({ ...config, exponentSign: value }, options))
+			);
+		case 'exponent':
+			return applySetter(args, (value?: Admit<string | number | bigint>) =>
+				rebuilt(node, handle, () => buildNumberFloatPoint({ ...config, exponent: value }, options))
+			);
+	}
+	throw new Error(`number_float_point has no $with.${setter}`);
+}
+function buildNumberFloatPoint$with$integer(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildNumberFloatPoint$with(receiverOf(this, '$with.integer'), 'integer', args);
+}
+function buildNumberFloatPoint$with$fraction(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildNumberFloatPoint$with(receiverOf(this, '$with.fraction'), 'fraction', args);
+}
+function buildNumberFloatPoint$with$marker(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildNumberFloatPoint$with(receiverOf(this, '$with.marker'), 'marker', args);
+}
+function buildNumberFloatPoint$with$exponentSign(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildNumberFloatPoint$with(receiverOf(this, '$with.exponentSign'), 'exponentSign', args);
+}
+function buildNumberFloatPoint$with$exponent(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildNumberFloatPoint$with(receiverOf(this, '$with.exponent'), 'exponent', args);
 }
 
 export function buildNumberFloatLeadingPoint<
@@ -10662,25 +13658,57 @@ export function buildNumberFloatLeadingPoint(
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
+		[OPTIONS]: options,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		fraction: (value: Admit<string | number | bigint>) =>
-			rebuilt(node, handle, () => buildNumberFloatLeadingPoint({ ...config, fraction: value }, options)),
-		marker: (spelling: 'e' | 'E') =>
-			rebuilt(node, handle, () => buildNumberFloatLeadingPoint(config, { ...options, marker: spelling })),
-		exponentSign: (value?: Admit<'-' | '+'>) =>
-			rebuilt(node, handle, () => buildNumberFloatLeadingPoint({ ...config, exponentSign: value }, options)),
-		exponent: (value?: Admit<string | number | bigint>) =>
-			rebuilt(node, handle, () => buildNumberFloatLeadingPoint({ ...config, exponent: value }, options)),
+		fraction: buildNumberFloatLeadingPoint$with$fraction,
+		marker: buildNumberFloatLeadingPoint$with$marker,
+		exponentSign: buildNumberFloatLeadingPoint$with$exponentSign,
+		exponent: buildNumberFloatLeadingPoint$with$exponent,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.NumberFloatLeadingPoint.Bound;
+}
+
+function buildNumberFloatLeadingPoint$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.NumberFloatLeadingPoint.Config;
+	const options = node[OPTIONS] as T.NumberFloatLeadingPoint.Options;
+	switch (setter) {
+		case 'fraction':
+			return applySetter(args, (value: Admit<string | number | bigint>) =>
+				rebuilt(node, handle, () => buildNumberFloatLeadingPoint({ ...config, fraction: value }, options))
+			);
+		case 'marker':
+			return applySetter(args, (spelling: 'e' | 'E') =>
+				rebuilt(node, handle, () => buildNumberFloatLeadingPoint(config, { ...options, marker: spelling }))
+			);
+		case 'exponentSign':
+			return applySetter(args, (value?: Admit<'-' | '+'>) =>
+				rebuilt(node, handle, () => buildNumberFloatLeadingPoint({ ...config, exponentSign: value }, options))
+			);
+		case 'exponent':
+			return applySetter(args, (value?: Admit<string | number | bigint>) =>
+				rebuilt(node, handle, () => buildNumberFloatLeadingPoint({ ...config, exponent: value }, options))
+			);
+	}
+	throw new Error(`number_float_leading_point has no $with.${setter}`);
+}
+function buildNumberFloatLeadingPoint$with$fraction(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildNumberFloatLeadingPoint$with(receiverOf(this, '$with.fraction'), 'fraction', args);
+}
+function buildNumberFloatLeadingPoint$with$marker(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildNumberFloatLeadingPoint$with(receiverOf(this, '$with.marker'), 'marker', args);
+}
+function buildNumberFloatLeadingPoint$with$exponentSign(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildNumberFloatLeadingPoint$with(receiverOf(this, '$with.exponentSign'), 'exponentSign', args);
+}
+function buildNumberFloatLeadingPoint$with$exponent(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildNumberFloatLeadingPoint$with(receiverOf(this, '$with.exponent'), 'exponent', args);
 }
 
 export function buildNumberFloatScientific<
@@ -10754,25 +13782,57 @@ export function buildNumberFloatScientific(
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
+		[OPTIONS]: options,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		integer: (value: Admit<string | number | bigint>) =>
-			rebuilt(node, handle, () => buildNumberFloatScientific({ ...config, integer: value }, options)),
-		marker: (spelling: 'e' | 'E') =>
-			rebuilt(node, handle, () => buildNumberFloatScientific(config, { ...options, marker: spelling })),
-		exponentSign: (value?: Admit<'-' | '+'>) =>
-			rebuilt(node, handle, () => buildNumberFloatScientific({ ...config, exponentSign: value }, options)),
-		exponent: (value: Admit<string | number | bigint>) =>
-			rebuilt(node, handle, () => buildNumberFloatScientific({ ...config, exponent: value }, options)),
+		integer: buildNumberFloatScientific$with$integer,
+		marker: buildNumberFloatScientific$with$marker,
+		exponentSign: buildNumberFloatScientific$with$exponentSign,
+		exponent: buildNumberFloatScientific$with$exponent,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.NumberFloatScientific.Bound;
+}
+
+function buildNumberFloatScientific$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.NumberFloatScientific.Config;
+	const options = node[OPTIONS] as T.NumberFloatScientific.Options;
+	switch (setter) {
+		case 'integer':
+			return applySetter(args, (value: Admit<string | number | bigint>) =>
+				rebuilt(node, handle, () => buildNumberFloatScientific({ ...config, integer: value }, options))
+			);
+		case 'marker':
+			return applySetter(args, (spelling: 'e' | 'E') =>
+				rebuilt(node, handle, () => buildNumberFloatScientific(config, { ...options, marker: spelling }))
+			);
+		case 'exponentSign':
+			return applySetter(args, (value?: Admit<'-' | '+'>) =>
+				rebuilt(node, handle, () => buildNumberFloatScientific({ ...config, exponentSign: value }, options))
+			);
+		case 'exponent':
+			return applySetter(args, (value: Admit<string | number | bigint>) =>
+				rebuilt(node, handle, () => buildNumberFloatScientific({ ...config, exponent: value }, options))
+			);
+	}
+	throw new Error(`number_float_scientific has no $with.${setter}`);
+}
+function buildNumberFloatScientific$with$integer(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildNumberFloatScientific$with(receiverOf(this, '$with.integer'), 'integer', args);
+}
+function buildNumberFloatScientific$with$marker(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildNumberFloatScientific$with(receiverOf(this, '$with.marker'), 'marker', args);
+}
+function buildNumberFloatScientific$with$exponentSign(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildNumberFloatScientific$with(receiverOf(this, '$with.exponentSign'), 'exponentSign', args);
+}
+function buildNumberFloatScientific$with$exponent(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildNumberFloatScientific$with(receiverOf(this, '$with.exponent'), 'exponent', args);
 }
 
 export function buildNumberDecimal<const N extends string | number | bigint>(
@@ -10795,13 +13855,10 @@ export function buildNumberDecimal(text: string | number | bigint): T.NumberDeci
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.NumberDecimal.Bound;
 }
 
@@ -10839,20 +13896,41 @@ export function buildNumberBinary(
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: value,
+		[OPTIONS]: options,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		radixPrefix: (spelling: '0b' | '0B') =>
-			rebuilt(node, handle, () => buildNumberBinary(value, { ...options, radixPrefix: spelling })),
-		content: (value: Admit<string | number | bigint>) => rebuilt(node, handle, () => buildNumberBinary(value, options)),
+		radixPrefix: buildNumberBinary$with$radixPrefix,
+		content: buildNumberBinary$with$content,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.NumberBinary.Bound;
+}
+
+function buildNumberBinary$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const value = node[INPUT] as Admit<string | number | bigint>;
+	const options = node[OPTIONS] as T.NumberBinary.Options;
+	switch (setter) {
+		case 'radixPrefix':
+			return applySetter(args, (spelling: '0b' | '0B') =>
+				rebuilt(node, handle, () => buildNumberBinary(value, { ...options, radixPrefix: spelling }))
+			);
+		case 'content':
+			return applySetter(args, (value: Admit<string | number | bigint>) =>
+				rebuilt(node, handle, () => buildNumberBinary(value, options))
+			);
+	}
+	throw new Error(`number_binary has no $with.${setter}`);
+}
+function buildNumberBinary$with$radixPrefix(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildNumberBinary$with(receiverOf(this, '$with.radixPrefix'), 'radixPrefix', args);
+}
+function buildNumberBinary$with$content(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildNumberBinary$with(receiverOf(this, '$with.content'), 'content', args);
 }
 
 export function buildNumberOctal<const N extends string | number | bigint>(
@@ -10889,20 +13967,41 @@ export function buildNumberOctal(
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: value,
+		[OPTIONS]: options,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		radixPrefix: (spelling: '0o' | '0O') =>
-			rebuilt(node, handle, () => buildNumberOctal(value, { ...options, radixPrefix: spelling })),
-		content: (value: Admit<string | number | bigint>) => rebuilt(node, handle, () => buildNumberOctal(value, options)),
+		radixPrefix: buildNumberOctal$with$radixPrefix,
+		content: buildNumberOctal$with$content,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.NumberOctal.Bound;
+}
+
+function buildNumberOctal$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const value = node[INPUT] as Admit<string | number | bigint>;
+	const options = node[OPTIONS] as T.NumberOctal.Options;
+	switch (setter) {
+		case 'radixPrefix':
+			return applySetter(args, (spelling: '0o' | '0O') =>
+				rebuilt(node, handle, () => buildNumberOctal(value, { ...options, radixPrefix: spelling }))
+			);
+		case 'content':
+			return applySetter(args, (value: Admit<string | number | bigint>) =>
+				rebuilt(node, handle, () => buildNumberOctal(value, options))
+			);
+	}
+	throw new Error(`number_octal has no $with.${setter}`);
+}
+function buildNumberOctal$with$radixPrefix(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildNumberOctal$with(receiverOf(this, '$with.radixPrefix'), 'radixPrefix', args);
+}
+function buildNumberOctal$with$content(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildNumberOctal$with(receiverOf(this, '$with.content'), 'content', args);
 }
 
 export function buildNumberBigintHex<const N extends string | number | bigint>(
@@ -10936,18 +14035,26 @@ export function buildNumberBigintHex(input: string | number | bigint, affix: boo
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		content: (value: Admit<string | number | bigint>) => rebuilt(node, handle, () => buildNumberBigintHex(value)),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { content: buildNumberBigintHex$with$content, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.NumberBigintHex.Bound;
+}
+
+function buildNumberBigintHex$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	switch (setter) {
+		case 'content':
+			return applySetter(args, (value: Admit<string | number | bigint>) =>
+				rebuilt(node, handle, () => buildNumberBigintHex(value))
+			);
+	}
+	throw new Error(`number_bigint_hex has no $with.${setter}`);
+}
+function buildNumberBigintHex$with$content(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildNumberBigintHex$with(receiverOf(this, '$with.content'), 'content', args);
 }
 
 export function buildNumberBigintBinary<const N extends string | number | bigint>(
@@ -10984,18 +14091,26 @@ export function buildNumberBigintBinary(
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		content: (value: Admit<string | number | bigint>) => rebuilt(node, handle, () => buildNumberBigintBinary(value)),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { content: buildNumberBigintBinary$with$content, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.NumberBigintBinary.Bound;
+}
+
+function buildNumberBigintBinary$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	switch (setter) {
+		case 'content':
+			return applySetter(args, (value: Admit<string | number | bigint>) =>
+				rebuilt(node, handle, () => buildNumberBigintBinary(value))
+			);
+	}
+	throw new Error(`number_bigint_binary has no $with.${setter}`);
+}
+function buildNumberBigintBinary$with$content(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildNumberBigintBinary$with(receiverOf(this, '$with.content'), 'content', args);
 }
 
 export function buildNumberBigintOctal<const N extends string | number | bigint>(
@@ -11032,18 +14147,26 @@ export function buildNumberBigintOctal(
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		content: (value: Admit<string | number | bigint>) => rebuilt(node, handle, () => buildNumberBigintOctal(value)),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { content: buildNumberBigintOctal$with$content, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.NumberBigintOctal.Bound;
+}
+
+function buildNumberBigintOctal$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	switch (setter) {
+		case 'content':
+			return applySetter(args, (value: Admit<string | number | bigint>) =>
+				rebuilt(node, handle, () => buildNumberBigintOctal(value))
+			);
+	}
+	throw new Error(`number_bigint_octal has no $with.${setter}`);
+}
+function buildNumberBigintOctal$with$content(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildNumberBigintOctal$with(receiverOf(this, '$with.content'), 'content', args);
 }
 
 export function buildNumberBigintDecimal<const N extends string | number | bigint>(
@@ -11080,18 +14203,26 @@ export function buildNumberBigintDecimal(
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		content: (value: Admit<string | number | bigint>) => rebuilt(node, handle, () => buildNumberBigintDecimal(value)),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { content: buildNumberBigintDecimal$with$content, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.NumberBigintDecimal.Bound;
+}
+
+function buildNumberBigintDecimal$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	switch (setter) {
+		case 'content':
+			return applySetter(args, (value: Admit<string | number | bigint>) =>
+				rebuilt(node, handle, () => buildNumberBigintDecimal(value))
+			);
+	}
+	throw new Error(`number_bigint_decimal has no $with.${setter}`);
+}
+function buildNumberBigintDecimal$with$content(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildNumberBigintDecimal$with(receiverOf(this, '$with.content'), 'content', args);
 }
 
 export function buildBinaryExpressionIn<
@@ -11130,21 +14261,35 @@ export function buildBinaryExpressionIn(config: T.BinaryExpressionIn.Config): T.
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		left: (value: Admit<NonNullable<T.BinaryExpressionIn.Config>['left']>) =>
-			rebuilt(node, handle, () => buildBinaryExpressionIn({ ...config, left: value })),
-		right: (value: Admit<NonNullable<T.BinaryExpressionIn.Config>['right']>) =>
-			rebuilt(node, handle, () => buildBinaryExpressionIn({ ...config, right: value })),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { left: buildBinaryExpressionIn$with$left, right: buildBinaryExpressionIn$with$right, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.BinaryExpressionIn.Bound;
+}
+
+function buildBinaryExpressionIn$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.BinaryExpressionIn.Config;
+	switch (setter) {
+		case 'left':
+			return applySetter(args, (value: Admit<NonNullable<T.BinaryExpressionIn.Config>['left']>) =>
+				rebuilt(node, handle, () => buildBinaryExpressionIn({ ...config, left: value }))
+			);
+		case 'right':
+			return applySetter(args, (value: Admit<NonNullable<T.BinaryExpressionIn.Config>['right']>) =>
+				rebuilt(node, handle, () => buildBinaryExpressionIn({ ...config, right: value }))
+			);
+	}
+	throw new Error(`binary_expression_in has no $with.${setter}`);
+}
+function buildBinaryExpressionIn$with$left(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildBinaryExpressionIn$with(receiverOf(this, '$with.left'), 'left', args);
+}
+function buildBinaryExpressionIn$with$right(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildBinaryExpressionIn$with(receiverOf(this, '$with.right'), 'right', args);
 }
 
 export const buildEmptyMember: TSKindId.EmptyMember = TSKindId.EmptyMember;
@@ -11193,25 +14338,51 @@ export function buildClassBodyMemberMethod(
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
+		[OPTIONS]: options,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		decorators: (...values: Admit<T.Decorator[]>) =>
-			rebuilt(node, handle, () =>
-				buildClassBodyMemberMethod({ ...config, decorators: restItems('decorators', values) }, options)
-			),
-		methodDefinition: (value: Admit<T.MethodDefinitionClassBodyMemberMethod>) =>
-			rebuilt(node, handle, () => buildClassBodyMemberMethod({ ...config, methodDefinition: value }, options)),
-		terminator: (spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi | null) =>
-			rebuilt(node, handle, () => buildClassBodyMemberMethod(config, { ...options, terminator: spelling })),
+		decorators: buildClassBodyMemberMethod$with$decorators,
+		methodDefinition: buildClassBodyMemberMethod$with$methodDefinition,
+		terminator: buildClassBodyMemberMethod$with$terminator,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.ClassBodyMemberMethod.Bound;
+}
+
+function buildClassBodyMemberMethod$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.ClassBodyMemberMethod.Config;
+	const options = node[OPTIONS] as T.ClassBodyMemberMethod.Options;
+	switch (setter) {
+		case 'decorators':
+			return applySetter(args, (...values: Admit<T.Decorator[]>) =>
+				rebuilt(node, handle, () =>
+					buildClassBodyMemberMethod({ ...config, decorators: restItems('decorators', values) }, options)
+				)
+			);
+		case 'methodDefinition':
+			return applySetter(args, (value: Admit<T.MethodDefinitionClassBodyMemberMethod>) =>
+				rebuilt(node, handle, () => buildClassBodyMemberMethod({ ...config, methodDefinition: value }, options))
+			);
+		case 'terminator':
+			return applySetter(args, (spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi | null) =>
+				rebuilt(node, handle, () => buildClassBodyMemberMethod(config, { ...options, terminator: spelling }))
+			);
+	}
+	throw new Error(`class_body_member_method has no $with.${setter}`);
+}
+function buildClassBodyMemberMethod$with$decorators(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildClassBodyMemberMethod$with(receiverOf(this, '$with.decorators'), 'decorators', args);
+}
+function buildClassBodyMemberMethod$with$methodDefinition(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildClassBodyMemberMethod$with(receiverOf(this, '$with.methodDefinition'), 'methodDefinition', args);
+}
+function buildClassBodyMemberMethod$with$terminator(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildClassBodyMemberMethod$with(receiverOf(this, '$with.terminator'), 'terminator', args);
 }
 
 export function buildClassBodyMemberMethodSig<V extends Admit<T.MethodSignature>>(
@@ -11247,21 +14418,41 @@ export function buildClassBodyMemberMethodSig(
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: value,
+		[OPTIONS]: options,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		methodSignature: (value: Admit<T.MethodSignature>) =>
-			rebuilt(node, handle, () => buildClassBodyMemberMethodSig(value, options)),
-		terminator: (spelling: TSKindId.FunctionSignatureAutomaticSemicolon | TSKindId.Comma) =>
-			rebuilt(node, handle, () => buildClassBodyMemberMethodSig(value, { ...options, terminator: spelling })),
+		methodSignature: buildClassBodyMemberMethodSig$with$methodSignature,
+		terminator: buildClassBodyMemberMethodSig$with$terminator,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.ClassBodyMemberMethodSig.Bound;
+}
+
+function buildClassBodyMemberMethodSig$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const value = node[INPUT] as Admit<T.MethodSignature>;
+	const options = node[OPTIONS] as T.ClassBodyMemberMethodSig.Options;
+	switch (setter) {
+		case 'methodSignature':
+			return applySetter(args, (value: Admit<T.MethodSignature>) =>
+				rebuilt(node, handle, () => buildClassBodyMemberMethodSig(value, options))
+			);
+		case 'terminator':
+			return applySetter(args, (spelling: TSKindId.FunctionSignatureAutomaticSemicolon | TSKindId.Comma) =>
+				rebuilt(node, handle, () => buildClassBodyMemberMethodSig(value, { ...options, terminator: spelling }))
+			);
+	}
+	throw new Error(`class_body_member_method_sig has no $with.${setter}`);
+}
+function buildClassBodyMemberMethodSig$with$methodSignature(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildClassBodyMemberMethodSig$with(receiverOf(this, '$with.methodSignature'), 'methodSignature', args);
+}
+function buildClassBodyMemberMethodSig$with$terminator(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildClassBodyMemberMethodSig$with(receiverOf(this, '$with.terminator'), 'terminator', args);
 }
 
 export function buildClassBodyMemberDeclaration<
@@ -11293,22 +14484,45 @@ export function buildClassBodyMemberDeclaration(
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: value,
+		[OPTIONS]: options,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		member: (
-			value: Admit<T.AbstractMethodSignature | T.IndexSignature | T.MethodSignature | T.PublicFieldDefinition>
-		) => rebuilt(node, handle, () => buildClassBodyMemberDeclaration(value, options)),
-		terminator: (spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi | TSKindId.Comma) =>
-			rebuilt(node, handle, () => buildClassBodyMemberDeclaration(value, { ...options, terminator: spelling })),
+		member: buildClassBodyMemberDeclaration$with$member,
+		terminator: buildClassBodyMemberDeclaration$with$terminator,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.ClassBodyMemberDeclaration.Bound;
+}
+
+function buildClassBodyMemberDeclaration$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const value = node[INPUT] as Admit<
+		T.AbstractMethodSignature | T.IndexSignature | T.MethodSignature | T.PublicFieldDefinition
+	>;
+	const options = node[OPTIONS] as T.ClassBodyMemberDeclaration.Options;
+	switch (setter) {
+		case 'member':
+			return applySetter(
+				args,
+				(value: Admit<T.AbstractMethodSignature | T.IndexSignature | T.MethodSignature | T.PublicFieldDefinition>) =>
+					rebuilt(node, handle, () => buildClassBodyMemberDeclaration(value, options))
+			);
+		case 'terminator':
+			return applySetter(args, (spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi | TSKindId.Comma) =>
+				rebuilt(node, handle, () => buildClassBodyMemberDeclaration(value, { ...options, terminator: spelling }))
+			);
+	}
+	throw new Error(`class_body_member_declaration has no $with.${setter}`);
+}
+function buildClassBodyMemberDeclaration$with$member(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildClassBodyMemberDeclaration$with(receiverOf(this, '$with.member'), 'member', args);
+}
+function buildClassBodyMemberDeclaration$with$terminator(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildClassBodyMemberDeclaration$with(receiverOf(this, '$with.terminator'), 'terminator', args);
 }
 
 export function buildIndexSignatureColon<
@@ -11367,28 +14581,65 @@ export function buildIndexSignatureColon(config: T.IndexSignatureColon.Config): 
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		sign: (value?: Admit<NonNullable<T.IndexSignatureColon.Config>['sign']>) =>
-			rebuilt(node, handle, () => buildIndexSignatureColon({ ...config, sign: value })),
-		readonly: (value?: Admit<NonNullable<T.IndexSignatureColon.Config>['readonly']>) =>
-			rebuilt(node, handle, () => buildIndexSignatureColon({ ...config, readonly: value })),
-		name: (value: Admit<T.Identifier>) =>
-			rebuilt(node, handle, () => buildIndexSignatureColon({ ...config, name: value })),
-		indexType: (value: Admit<NonNullable<T.IndexSignatureColon.Config>['indexType']>) =>
-			rebuilt(node, handle, () => buildIndexSignatureColon({ ...config, indexType: value })),
-		type: (
-			value: Admit<T.TypeAnnotation | T.OmittingTypeAnnotation | T.AddingTypeAnnotation | T.OptingTypeAnnotation>
-		) => rebuilt(node, handle, () => buildIndexSignatureColon({ ...config, type: value })),
+		sign: buildIndexSignatureColon$with$sign,
+		readonly: buildIndexSignatureColon$with$readonly,
+		name: buildIndexSignatureColon$with$name,
+		indexType: buildIndexSignatureColon$with$indexType,
+		type: buildIndexSignatureColon$with$type,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.IndexSignatureColon.Bound;
+}
+
+function buildIndexSignatureColon$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.IndexSignatureColon.Config;
+	switch (setter) {
+		case 'sign':
+			return applySetter(args, (value?: Admit<NonNullable<T.IndexSignatureColon.Config>['sign']>) =>
+				rebuilt(node, handle, () => buildIndexSignatureColon({ ...config, sign: value }))
+			);
+		case 'readonly':
+			return applySetter(args, (value?: Admit<NonNullable<T.IndexSignatureColon.Config>['readonly']>) =>
+				rebuilt(node, handle, () => buildIndexSignatureColon({ ...config, readonly: value }))
+			);
+		case 'name':
+			return applySetter(args, (value: Admit<T.Identifier>) =>
+				rebuilt(node, handle, () => buildIndexSignatureColon({ ...config, name: value }))
+			);
+		case 'indexType':
+			return applySetter(args, (value: Admit<NonNullable<T.IndexSignatureColon.Config>['indexType']>) =>
+				rebuilt(node, handle, () => buildIndexSignatureColon({ ...config, indexType: value }))
+			);
+		case 'type':
+			return applySetter(
+				args,
+				(value: Admit<T.TypeAnnotation | T.OmittingTypeAnnotation | T.AddingTypeAnnotation | T.OptingTypeAnnotation>) =>
+					rebuilt(node, handle, () => buildIndexSignatureColon({ ...config, type: value }))
+			);
+	}
+	throw new Error(`index_signature_colon has no $with.${setter}`);
+}
+function buildIndexSignatureColon$with$sign(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildIndexSignatureColon$with(receiverOf(this, '$with.sign'), 'sign', args);
+}
+function buildIndexSignatureColon$with$readonly(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildIndexSignatureColon$with(receiverOf(this, '$with.readonly'), 'readonly', args);
+}
+function buildIndexSignatureColon$with$name(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildIndexSignatureColon$with(receiverOf(this, '$with.name'), 'name', args);
+}
+function buildIndexSignatureColon$with$indexType(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildIndexSignatureColon$with(receiverOf(this, '$with.indexType'), 'indexType', args);
+}
+function buildIndexSignatureColon$with$type(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildIndexSignatureColon$with(receiverOf(this, '$with.type'), 'type', args);
 }
 
 export function buildIndexSignatureMappedTypeClause<
@@ -11434,26 +14685,57 @@ export function buildIndexSignatureMappedTypeClause(
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		sign: (value?: Admit<NonNullable<T.IndexSignatureMappedTypeClause.Config>['sign']>) =>
-			rebuilt(node, handle, () => buildIndexSignatureMappedTypeClause({ ...config, sign: value })),
-		readonly: (value?: Admit<NonNullable<T.IndexSignatureMappedTypeClause.Config>['readonly']>) =>
-			rebuilt(node, handle, () => buildIndexSignatureMappedTypeClause({ ...config, readonly: value })),
-		mappedTypeClause: (value: Admit<T.MappedTypeClause>) =>
-			rebuilt(node, handle, () => buildIndexSignatureMappedTypeClause({ ...config, mappedTypeClause: value })),
-		type: (
-			value: Admit<T.TypeAnnotation | T.OmittingTypeAnnotation | T.AddingTypeAnnotation | T.OptingTypeAnnotation>
-		) => rebuilt(node, handle, () => buildIndexSignatureMappedTypeClause({ ...config, type: value })),
+		sign: buildIndexSignatureMappedTypeClause$with$sign,
+		readonly: buildIndexSignatureMappedTypeClause$with$readonly,
+		mappedTypeClause: buildIndexSignatureMappedTypeClause$with$mappedTypeClause,
+		type: buildIndexSignatureMappedTypeClause$with$type,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.IndexSignatureMappedTypeClause.Bound;
+}
+
+function buildIndexSignatureMappedTypeClause$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.IndexSignatureMappedTypeClause.Config;
+	switch (setter) {
+		case 'sign':
+			return applySetter(args, (value?: Admit<NonNullable<T.IndexSignatureMappedTypeClause.Config>['sign']>) =>
+				rebuilt(node, handle, () => buildIndexSignatureMappedTypeClause({ ...config, sign: value }))
+			);
+		case 'readonly':
+			return applySetter(args, (value?: Admit<NonNullable<T.IndexSignatureMappedTypeClause.Config>['readonly']>) =>
+				rebuilt(node, handle, () => buildIndexSignatureMappedTypeClause({ ...config, readonly: value }))
+			);
+		case 'mappedTypeClause':
+			return applySetter(args, (value: Admit<T.MappedTypeClause>) =>
+				rebuilt(node, handle, () => buildIndexSignatureMappedTypeClause({ ...config, mappedTypeClause: value }))
+			);
+		case 'type':
+			return applySetter(
+				args,
+				(value: Admit<T.TypeAnnotation | T.OmittingTypeAnnotation | T.AddingTypeAnnotation | T.OptingTypeAnnotation>) =>
+					rebuilt(node, handle, () => buildIndexSignatureMappedTypeClause({ ...config, type: value }))
+			);
+	}
+	throw new Error(`index_signature_mapped_type_clause has no $with.${setter}`);
+}
+function buildIndexSignatureMappedTypeClause$with$sign(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildIndexSignatureMappedTypeClause$with(receiverOf(this, '$with.sign'), 'sign', args);
+}
+function buildIndexSignatureMappedTypeClause$with$readonly(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildIndexSignatureMappedTypeClause$with(receiverOf(this, '$with.readonly'), 'readonly', args);
+}
+function buildIndexSignatureMappedTypeClause$with$mappedTypeClause(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildIndexSignatureMappedTypeClause$with(receiverOf(this, '$with.mappedTypeClause'), 'mappedTypeClause', args);
+}
+function buildIndexSignatureMappedTypeClause$with$type(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildIndexSignatureMappedTypeClause$with(receiverOf(this, '$with.type'), 'type', args);
 }
 
 export function buildImportStatementClauseFrom<
@@ -11485,21 +14767,39 @@ export function buildImportStatementClauseFrom(
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		importClause: (value: Admit<T.ImportClause>) =>
-			rebuilt(node, handle, () => buildImportStatementClauseFrom({ ...config, importClause: value })),
-		source: (value: Admit<T.String>) =>
-			rebuilt(node, handle, () => buildImportStatementClauseFrom({ ...config, source: value })),
+		importClause: buildImportStatementClauseFrom$with$importClause,
+		source: buildImportStatementClauseFrom$with$source,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.ImportStatementClauseFrom.Bound;
+}
+
+function buildImportStatementClauseFrom$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.ImportStatementClauseFrom.Config;
+	switch (setter) {
+		case 'importClause':
+			return applySetter(args, (value: Admit<T.ImportClause>) =>
+				rebuilt(node, handle, () => buildImportStatementClauseFrom({ ...config, importClause: value }))
+			);
+		case 'source':
+			return applySetter(args, (value: Admit<T.String>) =>
+				rebuilt(node, handle, () => buildImportStatementClauseFrom({ ...config, source: value }))
+			);
+	}
+	throw new Error(`import_statement_clause_from has no $with.${setter}`);
+}
+function buildImportStatementClauseFrom$with$importClause(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildImportStatementClauseFrom$with(receiverOf(this, '$with.importClause'), 'importClause', args);
+}
+function buildImportStatementClauseFrom$with$source(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildImportStatementClauseFrom$with(receiverOf(this, '$with.source'), 'source', args);
 }
 
 export function buildYieldExpressionDelegate<V extends Admit<T.Expression>>(
@@ -11526,19 +14826,26 @@ export function buildYieldExpressionDelegate(value: Admit<T.Expression>): T.Yiel
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		expression: (value: Admit<NonNullable<T.Expression>>) =>
-			rebuilt(node, handle, () => buildYieldExpressionDelegate(value)),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { expression: buildYieldExpressionDelegate$with$expression, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.YieldExpressionDelegate.Bound;
+}
+
+function buildYieldExpressionDelegate$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	switch (setter) {
+		case 'expression':
+			return applySetter(args, (value: Admit<NonNullable<T.Expression>>) =>
+				rebuilt(node, handle, () => buildYieldExpressionDelegate(value))
+			);
+	}
+	throw new Error(`yield_expression_delegate has no $with.${setter}`);
+}
+function buildYieldExpressionDelegate$with$expression(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildYieldExpressionDelegate$with(receiverOf(this, '$with.expression'), 'expression', args);
 }
 
 export const buildOptionalChainMarker: TSKindId.OptionalChainMarker = TSKindId.OptionalChainMarker;
@@ -11571,21 +14878,39 @@ export function buildImportSpecifierName(config: T.ImportSpecifierName.Config): 
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		typeKeyword: (value?: Admit<NonNullable<T.ImportSpecifierName.Config>['typeKeyword']>) =>
-			rebuilt(node, handle, () => buildImportSpecifierName({ ...config, typeKeyword: value })),
-		name: (value: Admit<T.Identifier>) =>
-			rebuilt(node, handle, () => buildImportSpecifierName({ ...config, name: value })),
+		typeKeyword: buildImportSpecifierName$with$typeKeyword,
+		name: buildImportSpecifierName$with$name,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.ImportSpecifierName.Bound;
+}
+
+function buildImportSpecifierName$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.ImportSpecifierName.Config;
+	switch (setter) {
+		case 'typeKeyword':
+			return applySetter(args, (value?: Admit<NonNullable<T.ImportSpecifierName.Config>['typeKeyword']>) =>
+				rebuilt(node, handle, () => buildImportSpecifierName({ ...config, typeKeyword: value }))
+			);
+		case 'name':
+			return applySetter(args, (value: Admit<T.Identifier>) =>
+				rebuilt(node, handle, () => buildImportSpecifierName({ ...config, name: value }))
+			);
+	}
+	throw new Error(`import_specifier_name has no $with.${setter}`);
+}
+function buildImportSpecifierName$with$typeKeyword(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildImportSpecifierName$with(receiverOf(this, '$with.typeKeyword'), 'typeKeyword', args);
+}
+function buildImportSpecifierName$with$name(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildImportSpecifierName$with(receiverOf(this, '$with.name'), 'name', args);
 }
 
 export function buildImportSpecifierAs<
@@ -11631,23 +14956,47 @@ export function buildImportSpecifierAs(config: T.ImportSpecifierAs.Config): T.Im
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		typeKeyword: (value?: Admit<NonNullable<T.ImportSpecifierAs.Config>['typeKeyword']>) =>
-			rebuilt(node, handle, () => buildImportSpecifierAs({ ...config, typeKeyword: value })),
-		name: (value: Admit<NonNullable<T.ImportSpecifierAs.Config>['name']>) =>
-			rebuilt(node, handle, () => buildImportSpecifierAs({ ...config, name: value })),
-		alias: (value: Admit<T.Identifier>) =>
-			rebuilt(node, handle, () => buildImportSpecifierAs({ ...config, alias: value })),
+		typeKeyword: buildImportSpecifierAs$with$typeKeyword,
+		name: buildImportSpecifierAs$with$name,
+		alias: buildImportSpecifierAs$with$alias,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.ImportSpecifierAs.Bound;
+}
+
+function buildImportSpecifierAs$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.ImportSpecifierAs.Config;
+	switch (setter) {
+		case 'typeKeyword':
+			return applySetter(args, (value?: Admit<NonNullable<T.ImportSpecifierAs.Config>['typeKeyword']>) =>
+				rebuilt(node, handle, () => buildImportSpecifierAs({ ...config, typeKeyword: value }))
+			);
+		case 'name':
+			return applySetter(args, (value: Admit<NonNullable<T.ImportSpecifierAs.Config>['name']>) =>
+				rebuilt(node, handle, () => buildImportSpecifierAs({ ...config, name: value }))
+			);
+		case 'alias':
+			return applySetter(args, (value: Admit<T.Identifier>) =>
+				rebuilt(node, handle, () => buildImportSpecifierAs({ ...config, alias: value }))
+			);
+	}
+	throw new Error(`import_specifier_as has no $with.${setter}`);
+}
+function buildImportSpecifierAs$with$typeKeyword(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildImportSpecifierAs$with(receiverOf(this, '$with.typeKeyword'), 'typeKeyword', args);
+}
+function buildImportSpecifierAs$with$name(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildImportSpecifierAs$with(receiverOf(this, '$with.name'), 'name', args);
+}
+function buildImportSpecifierAs$with$alias(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildImportSpecifierAs$with(receiverOf(this, '$with.alias'), 'alias', args);
 }
 
 export function buildParenthesizedExpressionTyped<
@@ -11684,21 +15033,39 @@ export function buildParenthesizedExpressionTyped(
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		expression: (value: Admit<NonNullable<T.ParenthesizedExpressionTyped.Config>['expression']>) =>
-			rebuilt(node, handle, () => buildParenthesizedExpressionTyped({ ...config, expression: value })),
-		type: (value?: Admit<T.TypeAnnotation>) =>
-			rebuilt(node, handle, () => buildParenthesizedExpressionTyped({ ...config, type: value })),
+		expression: buildParenthesizedExpressionTyped$with$expression,
+		type: buildParenthesizedExpressionTyped$with$type,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.ParenthesizedExpressionTyped.Bound;
+}
+
+function buildParenthesizedExpressionTyped$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.ParenthesizedExpressionTyped.Config;
+	switch (setter) {
+		case 'expression':
+			return applySetter(args, (value: Admit<NonNullable<T.ParenthesizedExpressionTyped.Config>['expression']>) =>
+				rebuilt(node, handle, () => buildParenthesizedExpressionTyped({ ...config, expression: value }))
+			);
+		case 'type':
+			return applySetter(args, (value?: Admit<T.TypeAnnotation>) =>
+				rebuilt(node, handle, () => buildParenthesizedExpressionTyped({ ...config, type: value }))
+			);
+	}
+	throw new Error(`parenthesized_expression_typed has no $with.${setter}`);
+}
+function buildParenthesizedExpressionTyped$with$expression(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildParenthesizedExpressionTyped$with(receiverOf(this, '$with.expression'), 'expression', args);
+}
+function buildParenthesizedExpressionTyped$with$type(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildParenthesizedExpressionTyped$with(receiverOf(this, '$with.type'), 'type', args);
 }
 
 export function buildParenthesizedExpressionSequence<V extends Admit<T.SequenceExpression>>(
@@ -11745,19 +15112,33 @@ function _buildParenthesizedExpressionSequence(
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		sequenceExpression: (value: Admit<T.SequenceExpression>) =>
-			rebuilt(node, handle, () => _buildParenthesizedExpressionSequence(value)),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { sequenceExpression: buildParenthesizedExpressionSequence$with$sequenceExpression, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.ParenthesizedExpressionSequence.Bound;
+}
+
+function buildParenthesizedExpressionSequence$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	switch (setter) {
+		case 'sequenceExpression':
+			return applySetter(args, (value: Admit<T.SequenceExpression>) =>
+				rebuilt(node, handle, () => _buildParenthesizedExpressionSequence(value))
+			);
+	}
+	throw new Error(`parenthesized_expression_sequence has no $with.${setter}`);
+}
+function buildParenthesizedExpressionSequence$with$sequenceExpression(
+	this: Received<Held>,
+	...args: unknown[]
+): unknown {
+	return buildParenthesizedExpressionSequence$with(
+		receiverOf(this, '$with.sequenceExpression'),
+		'sequenceExpression',
+		args
+	);
 }
 
 export function buildCallExpressionCall<
@@ -11803,29 +15184,53 @@ export function buildCallExpressionCall(config: T.CallExpressionCall.Config): T.
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		function: (value: Admit<NonNullable<T.CallExpressionCall.Config>['function']>) =>
-			rebuilt(node, handle, () => buildCallExpressionCall({ ...config, function: value })),
-		typeArguments: (...args: unknown[]) =>
-			rebuilt(node, handle, () =>
-				listSlotWith(
-					args,
-					{ kind: TSKindId.TypeArguments as const, optional: true, make: buildTypeArguments },
-					(value?: Admit<T.TypeArguments>) => buildCallExpressionCall({ ...config, typeArguments: value })
-				)
-			),
-		arguments: (value: Admit<T.Arguments>) =>
-			rebuilt(node, handle, () => buildCallExpressionCall({ ...config, arguments: value })),
+		function: buildCallExpressionCall$with$function,
+		typeArguments: buildCallExpressionCall$with$typeArguments,
+		arguments: buildCallExpressionCall$with$arguments,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.CallExpressionCall.Bound;
+}
+
+function buildCallExpressionCall$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.CallExpressionCall.Config;
+	switch (setter) {
+		case 'function':
+			return applySetter(args, (value: Admit<NonNullable<T.CallExpressionCall.Config>['function']>) =>
+				rebuilt(node, handle, () => buildCallExpressionCall({ ...config, function: value }))
+			);
+		case 'typeArguments':
+			return applySetter(args, (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{ kind: TSKindId.TypeArguments as const, optional: true, make: buildTypeArguments },
+						(value?: Admit<T.TypeArguments>) => buildCallExpressionCall({ ...config, typeArguments: value })
+					)
+				)
+			);
+		case 'arguments':
+			return applySetter(args, (value: Admit<T.Arguments>) =>
+				rebuilt(node, handle, () => buildCallExpressionCall({ ...config, arguments: value }))
+			);
+	}
+	throw new Error(`call_expression_call has no $with.${setter}`);
+}
+function buildCallExpressionCall$with$function(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildCallExpressionCall$with(receiverOf(this, '$with.function'), 'function', args);
+}
+function buildCallExpressionCall$with$typeArguments(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildCallExpressionCall$with(receiverOf(this, '$with.typeArguments'), 'typeArguments', args);
+}
+function buildCallExpressionCall$with$arguments(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildCallExpressionCall$with(receiverOf(this, '$with.arguments'), 'arguments', args);
 }
 
 export function buildCallExpressionTemplateCall<
@@ -11862,21 +15267,39 @@ export function buildCallExpressionTemplateCall(
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		function: (value: Admit<NonNullable<T.CallExpressionTemplateCall.Config>['function']>) =>
-			rebuilt(node, handle, () => buildCallExpressionTemplateCall({ ...config, function: value })),
-		arguments: (value: Admit<T.TemplateString>) =>
-			rebuilt(node, handle, () => buildCallExpressionTemplateCall({ ...config, arguments: value })),
+		function: buildCallExpressionTemplateCall$with$function,
+		arguments: buildCallExpressionTemplateCall$with$arguments,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.CallExpressionTemplateCall.Bound;
+}
+
+function buildCallExpressionTemplateCall$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.CallExpressionTemplateCall.Config;
+	switch (setter) {
+		case 'function':
+			return applySetter(args, (value: Admit<NonNullable<T.CallExpressionTemplateCall.Config>['function']>) =>
+				rebuilt(node, handle, () => buildCallExpressionTemplateCall({ ...config, function: value }))
+			);
+		case 'arguments':
+			return applySetter(args, (value: Admit<T.TemplateString>) =>
+				rebuilt(node, handle, () => buildCallExpressionTemplateCall({ ...config, arguments: value }))
+			);
+	}
+	throw new Error(`call_expression_template_call has no $with.${setter}`);
+}
+function buildCallExpressionTemplateCall$with$function(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildCallExpressionTemplateCall$with(receiverOf(this, '$with.function'), 'function', args);
+}
+function buildCallExpressionTemplateCall$with$arguments(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildCallExpressionTemplateCall$with(receiverOf(this, '$with.arguments'), 'arguments', args);
 }
 
 export function buildCallExpressionMember<
@@ -11922,29 +15345,53 @@ export function buildCallExpressionMember(config: T.CallExpressionMember.Config)
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		function: (value: Admit<NonNullable<T.CallExpressionMember.Config>['function']>) =>
-			rebuilt(node, handle, () => buildCallExpressionMember({ ...config, function: value })),
-		typeArguments: (...args: unknown[]) =>
-			rebuilt(node, handle, () =>
-				listSlotWith(
-					args,
-					{ kind: TSKindId.TypeArguments as const, optional: true, make: buildTypeArguments },
-					(value?: Admit<T.TypeArguments>) => buildCallExpressionMember({ ...config, typeArguments: value })
-				)
-			),
-		arguments: (value: Admit<T.Arguments>) =>
-			rebuilt(node, handle, () => buildCallExpressionMember({ ...config, arguments: value })),
+		function: buildCallExpressionMember$with$function,
+		typeArguments: buildCallExpressionMember$with$typeArguments,
+		arguments: buildCallExpressionMember$with$arguments,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.CallExpressionMember.Bound;
+}
+
+function buildCallExpressionMember$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.CallExpressionMember.Config;
+	switch (setter) {
+		case 'function':
+			return applySetter(args, (value: Admit<NonNullable<T.CallExpressionMember.Config>['function']>) =>
+				rebuilt(node, handle, () => buildCallExpressionMember({ ...config, function: value }))
+			);
+		case 'typeArguments':
+			return applySetter(args, (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{ kind: TSKindId.TypeArguments as const, optional: true, make: buildTypeArguments },
+						(value?: Admit<T.TypeArguments>) => buildCallExpressionMember({ ...config, typeArguments: value })
+					)
+				)
+			);
+		case 'arguments':
+			return applySetter(args, (value: Admit<T.Arguments>) =>
+				rebuilt(node, handle, () => buildCallExpressionMember({ ...config, arguments: value }))
+			);
+	}
+	throw new Error(`call_expression_member has no $with.${setter}`);
+}
+function buildCallExpressionMember$with$function(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildCallExpressionMember$with(receiverOf(this, '$with.function'), 'function', args);
+}
+function buildCallExpressionMember$with$typeArguments(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildCallExpressionMember$with(receiverOf(this, '$with.typeArguments'), 'typeArguments', args);
+}
+function buildCallExpressionMember$with$arguments(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildCallExpressionMember$with(receiverOf(this, '$with.arguments'), 'arguments', args);
 }
 
 export function buildStringDouble<A extends Admit<(T.UnescapedDoubleStringFragment | T.EscapeSequence)[]>>(
@@ -11969,19 +15416,26 @@ export function buildStringDouble(
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		elements: (...vs: Admit<T.UnescapedDoubleStringFragment | T.EscapeSequence>[]) =>
-			rebuilt(node, handle, () => buildStringDouble(...restItems('elements', vs))),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { elements: buildStringDouble$with$elements, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.StringDouble.Bound;
+}
+
+function buildStringDouble$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	switch (setter) {
+		case 'elements':
+			return applySetter(args, (...vs: Admit<T.UnescapedDoubleStringFragment | T.EscapeSequence>[]) =>
+				rebuilt(node, handle, () => buildStringDouble(...restItems('elements', vs)))
+			);
+	}
+	throw new Error(`string_double has no $with.${setter}`);
+}
+function buildStringDouble$with$elements(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildStringDouble$with(receiverOf(this, '$with.elements'), 'elements', args);
 }
 
 export function buildStringSingle<A extends Admit<(T.UnescapedSingleStringFragment | T.EscapeSequence)[]>>(
@@ -12006,19 +15460,26 @@ export function buildStringSingle(
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		elements: (...vs: Admit<T.UnescapedSingleStringFragment | T.EscapeSequence>[]) =>
-			rebuilt(node, handle, () => buildStringSingle(...restItems('elements', vs))),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { elements: buildStringSingle$with$elements, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.StringSingle.Bound;
+}
+
+function buildStringSingle$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	switch (setter) {
+		case 'elements':
+			return applySetter(args, (...vs: Admit<T.UnescapedSingleStringFragment | T.EscapeSequence>[]) =>
+				rebuilt(node, handle, () => buildStringSingle(...restItems('elements', vs)))
+			);
+	}
+	throw new Error(`string_single has no $with.${setter}`);
+}
+function buildStringSingle$with$elements(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildStringSingle$with(receiverOf(this, '$with.elements'), 'elements', args);
 }
 
 export function buildUpdateExpressionPostfix<ArgumentSlot extends T.UpdateExpressionPostfix.Config['argument']>(
@@ -12052,21 +15513,39 @@ export function buildUpdateExpressionPostfix(
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		argument: (value: Admit<NonNullable<T.UpdateExpressionPostfix.Config>['argument']>) =>
-			rebuilt(node, handle, () => buildUpdateExpressionPostfix({ ...config, argument: value })),
-		operator: (value: Admit<NonNullable<T.UpdateExpressionPostfix.Config>['operator']>) =>
-			rebuilt(node, handle, () => buildUpdateExpressionPostfix({ ...config, operator: value })),
+		argument: buildUpdateExpressionPostfix$with$argument,
+		operator: buildUpdateExpressionPostfix$with$operator,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.UpdateExpressionPostfix.Bound;
+}
+
+function buildUpdateExpressionPostfix$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.UpdateExpressionPostfix.Config;
+	switch (setter) {
+		case 'argument':
+			return applySetter(args, (value: Admit<NonNullable<T.UpdateExpressionPostfix.Config>['argument']>) =>
+				rebuilt(node, handle, () => buildUpdateExpressionPostfix({ ...config, argument: value }))
+			);
+		case 'operator':
+			return applySetter(args, (value: Admit<NonNullable<T.UpdateExpressionPostfix.Config>['operator']>) =>
+				rebuilt(node, handle, () => buildUpdateExpressionPostfix({ ...config, operator: value }))
+			);
+	}
+	throw new Error(`update_expression_postfix has no $with.${setter}`);
+}
+function buildUpdateExpressionPostfix$with$argument(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildUpdateExpressionPostfix$with(receiverOf(this, '$with.argument'), 'argument', args);
+}
+function buildUpdateExpressionPostfix$with$operator(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildUpdateExpressionPostfix$with(receiverOf(this, '$with.operator'), 'operator', args);
 }
 
 export function buildUpdateExpressionPrefix<ArgumentSlot extends T.UpdateExpressionPrefix.Config['argument']>(
@@ -12098,21 +15577,39 @@ export function buildUpdateExpressionPrefix(config: T.UpdateExpressionPrefix.Con
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		operator: (value: Admit<NonNullable<T.UpdateExpressionPrefix.Config>['operator']>) =>
-			rebuilt(node, handle, () => buildUpdateExpressionPrefix({ ...config, operator: value })),
-		argument: (value: Admit<NonNullable<T.UpdateExpressionPrefix.Config>['argument']>) =>
-			rebuilt(node, handle, () => buildUpdateExpressionPrefix({ ...config, argument: value })),
+		operator: buildUpdateExpressionPrefix$with$operator,
+		argument: buildUpdateExpressionPrefix$with$argument,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.UpdateExpressionPrefix.Bound;
+}
+
+function buildUpdateExpressionPrefix$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.UpdateExpressionPrefix.Config;
+	switch (setter) {
+		case 'operator':
+			return applySetter(args, (value: Admit<NonNullable<T.UpdateExpressionPrefix.Config>['operator']>) =>
+				rebuilt(node, handle, () => buildUpdateExpressionPrefix({ ...config, operator: value }))
+			);
+		case 'argument':
+			return applySetter(args, (value: Admit<NonNullable<T.UpdateExpressionPrefix.Config>['argument']>) =>
+				rebuilt(node, handle, () => buildUpdateExpressionPrefix({ ...config, argument: value }))
+			);
+	}
+	throw new Error(`update_expression_prefix has no $with.${setter}`);
+}
+function buildUpdateExpressionPrefix$with$operator(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildUpdateExpressionPrefix$with(receiverOf(this, '$with.operator'), 'operator', args);
+}
+function buildUpdateExpressionPrefix$with$argument(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildUpdateExpressionPrefix$with(receiverOf(this, '$with.argument'), 'argument', args);
 }
 
 export function buildArrowFunctionParameter<V extends Admit<T.Identifier>>(
@@ -12139,18 +15636,26 @@ export function buildArrowFunctionParameter(value: Admit<T.Identifier>): T.Arrow
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		parameter: (value: Admit<T.Identifier>) => rebuilt(node, handle, () => buildArrowFunctionParameter(value)),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { parameter: buildArrowFunctionParameter$with$parameter, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.ArrowFunctionParameter.Bound;
+}
+
+function buildArrowFunctionParameter$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	switch (setter) {
+		case 'parameter':
+			return applySetter(args, (value: Admit<T.Identifier>) =>
+				rebuilt(node, handle, () => buildArrowFunctionParameter(value))
+			);
+	}
+	throw new Error(`arrow_function_parameter has no $with.${setter}`);
+}
+function buildArrowFunctionParameter$with$parameter(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildArrowFunctionParameter$with(receiverOf(this, '$with.parameter'), 'parameter', args);
 }
 
 export function buildClassHeritageExtendsClause<
@@ -12188,21 +15693,39 @@ export function buildClassHeritageExtendsClause(
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		extendsClause: (value: Admit<T.ExtendsClause>) =>
-			rebuilt(node, handle, () => buildClassHeritageExtendsClause({ ...config, extendsClause: value })),
-		implementsClause: (value?: Admit<T.ImplementsClause>) =>
-			rebuilt(node, handle, () => buildClassHeritageExtendsClause({ ...config, implementsClause: value })),
+		extendsClause: buildClassHeritageExtendsClause$with$extendsClause,
+		implementsClause: buildClassHeritageExtendsClause$with$implementsClause,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.ClassHeritageExtendsClause.Bound;
+}
+
+function buildClassHeritageExtendsClause$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.ClassHeritageExtendsClause.Config;
+	switch (setter) {
+		case 'extendsClause':
+			return applySetter(args, (value: Admit<T.ExtendsClause>) =>
+				rebuilt(node, handle, () => buildClassHeritageExtendsClause({ ...config, extendsClause: value }))
+			);
+		case 'implementsClause':
+			return applySetter(args, (value?: Admit<T.ImplementsClause>) =>
+				rebuilt(node, handle, () => buildClassHeritageExtendsClause({ ...config, implementsClause: value }))
+			);
+	}
+	throw new Error(`class_heritage_extends_clause has no $with.${setter}`);
+}
+function buildClassHeritageExtendsClause$with$extendsClause(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildClassHeritageExtendsClause$with(receiverOf(this, '$with.extendsClause'), 'extendsClause', args);
+}
+function buildClassHeritageExtendsClause$with$implementsClause(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildClassHeritageExtendsClause$with(receiverOf(this, '$with.implementsClause'), 'implementsClause', args);
 }
 
 export function buildImportClauseDefaultImport<
@@ -12245,21 +15768,39 @@ export function buildImportClauseDefaultImport(
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		identifier: (value: Admit<T.Identifier>) =>
-			rebuilt(node, handle, () => buildImportClauseDefaultImport({ ...config, identifier: value })),
-		importClauseGroup: (value?: Admit<T.ImportClauseGroup>) =>
-			rebuilt(node, handle, () => buildImportClauseDefaultImport({ ...config, importClauseGroup: value })),
+		identifier: buildImportClauseDefaultImport$with$identifier,
+		importClauseGroup: buildImportClauseDefaultImport$with$importClauseGroup,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.ImportClauseDefaultImport.Bound;
+}
+
+function buildImportClauseDefaultImport$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.ImportClauseDefaultImport.Config;
+	switch (setter) {
+		case 'identifier':
+			return applySetter(args, (value: Admit<T.Identifier>) =>
+				rebuilt(node, handle, () => buildImportClauseDefaultImport({ ...config, identifier: value }))
+			);
+		case 'importClauseGroup':
+			return applySetter(args, (value?: Admit<T.ImportClauseGroup>) =>
+				rebuilt(node, handle, () => buildImportClauseDefaultImport({ ...config, importClauseGroup: value }))
+			);
+	}
+	throw new Error(`import_clause_default_import has no $with.${setter}`);
+}
+function buildImportClauseDefaultImport$with$identifier(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildImportClauseDefaultImport$with(receiverOf(this, '$with.identifier'), 'identifier', args);
+}
+function buildImportClauseDefaultImport$with$importClauseGroup(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildImportClauseDefaultImport$with(receiverOf(this, '$with.importClauseGroup'), 'importClauseGroup', args);
 }
 
 export function buildExportStatementDefaultFrom<ContentSlot extends T.ExportStatementDefaultFrom.Config['content']>(
@@ -12300,28 +15841,56 @@ export function buildExportStatementDefaultFrom(
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
+		[OPTIONS]: options,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		typeOnly: (value?: Admit<NonNullable<T.ExportStatementDefaultFrom.Config>['typeOnly']>) =>
-			rebuilt(node, handle, () => buildExportStatementDefaultFrom({ ...config, typeOnly: value }, options)),
-		content: (
-			value: Admit<
-				| T.ExportStatementDefaultFromStarFrom
-				| T.ExportStatementDefaultFromNsFrom
-				| T.ExportStatementDefaultFromClauseFrom
-			>
-		) => rebuilt(node, handle, () => buildExportStatementDefaultFrom({ ...config, content: value }, options)),
-		terminator: (spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi) =>
-			rebuilt(node, handle, () => buildExportStatementDefaultFrom(config, { ...options, terminator: spelling })),
+		typeOnly: buildExportStatementDefaultFrom$with$typeOnly,
+		content: buildExportStatementDefaultFrom$with$content,
+		terminator: buildExportStatementDefaultFrom$with$terminator,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.ExportStatementDefaultFrom.Bound;
+}
+
+function buildExportStatementDefaultFrom$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.ExportStatementDefaultFrom.Config;
+	const options = node[OPTIONS] as T.ExportStatementDefaultFrom.Options;
+	switch (setter) {
+		case 'typeOnly':
+			return applySetter(args, (value?: Admit<NonNullable<T.ExportStatementDefaultFrom.Config>['typeOnly']>) =>
+				rebuilt(node, handle, () => buildExportStatementDefaultFrom({ ...config, typeOnly: value }, options))
+			);
+		case 'content':
+			return applySetter(
+				args,
+				(
+					value: Admit<
+						| T.ExportStatementDefaultFromStarFrom
+						| T.ExportStatementDefaultFromNsFrom
+						| T.ExportStatementDefaultFromClauseFrom
+					>
+				) => rebuilt(node, handle, () => buildExportStatementDefaultFrom({ ...config, content: value }, options))
+			);
+		case 'terminator':
+			return applySetter(args, (spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi) =>
+				rebuilt(node, handle, () => buildExportStatementDefaultFrom(config, { ...options, terminator: spelling }))
+			);
+	}
+	throw new Error(`export_statement_default_from has no $with.${setter}`);
+}
+function buildExportStatementDefaultFrom$with$typeOnly(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildExportStatementDefaultFrom$with(receiverOf(this, '$with.typeOnly'), 'typeOnly', args);
+}
+function buildExportStatementDefaultFrom$with$content(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildExportStatementDefaultFrom$with(receiverOf(this, '$with.content'), 'content', args);
+}
+function buildExportStatementDefaultFrom$with$terminator(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildExportStatementDefaultFrom$with(receiverOf(this, '$with.terminator'), 'terminator', args);
 }
 
 export function buildExportStatementDefaultDeclaration<
@@ -12358,23 +15927,41 @@ export function buildExportStatementDefaultDeclaration(
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		decorators: (...values: Admit<T.Decorator[]>) =>
-			rebuilt(node, handle, () =>
-				buildExportStatementDefaultDeclaration({ ...config, decorators: restItems('decorators', values) })
-			),
-		content: (value: Admit<T.Declaration | T.ExportStatementDefaultDeclarationDefaultKw>) =>
-			rebuilt(node, handle, () => buildExportStatementDefaultDeclaration({ ...config, content: value })),
+		decorators: buildExportStatementDefaultDeclaration$with$decorators,
+		content: buildExportStatementDefaultDeclaration$with$content,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.ExportStatementDefaultDeclaration.Bound;
+}
+
+function buildExportStatementDefaultDeclaration$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.ExportStatementDefaultDeclaration.Config;
+	switch (setter) {
+		case 'decorators':
+			return applySetter(args, (...values: Admit<T.Decorator[]>) =>
+				rebuilt(node, handle, () =>
+					buildExportStatementDefaultDeclaration({ ...config, decorators: restItems('decorators', values) })
+				)
+			);
+		case 'content':
+			return applySetter(args, (value: Admit<T.Declaration | T.ExportStatementDefaultDeclarationDefaultKw>) =>
+				rebuilt(node, handle, () => buildExportStatementDefaultDeclaration({ ...config, content: value }))
+			);
+	}
+	throw new Error(`export_statement_default_declaration has no $with.${setter}`);
+}
+function buildExportStatementDefaultDeclaration$with$decorators(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildExportStatementDefaultDeclaration$with(receiverOf(this, '$with.decorators'), 'decorators', args);
+}
+function buildExportStatementDefaultDeclaration$with$content(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildExportStatementDefaultDeclaration$with(receiverOf(this, '$with.content'), 'content', args);
 }
 
 export function buildExportStatementDefaultFromStarFrom<V extends Admit<T.String>>(
@@ -12398,18 +15985,26 @@ export function buildExportStatementDefaultFromStarFrom(
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		source: (value: Admit<T.String>) => rebuilt(node, handle, () => buildExportStatementDefaultFromStarFrom(value)),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { source: buildExportStatementDefaultFromStarFrom$with$source, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.ExportStatementDefaultFromStarFrom.Bound;
+}
+
+function buildExportStatementDefaultFromStarFrom$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	switch (setter) {
+		case 'source':
+			return applySetter(args, (value: Admit<T.String>) =>
+				rebuilt(node, handle, () => buildExportStatementDefaultFromStarFrom(value))
+			);
+	}
+	throw new Error(`export_statement_default_from_star_from has no $with.${setter}`);
+}
+function buildExportStatementDefaultFromStarFrom$with$source(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildExportStatementDefaultFromStarFrom$with(receiverOf(this, '$with.source'), 'source', args);
 }
 
 export function buildExportStatementDefaultFromNsFrom<
@@ -12447,21 +16042,39 @@ export function buildExportStatementDefaultFromNsFrom(
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		namespaceExport: (value: Admit<T.NamespaceExport>) =>
-			rebuilt(node, handle, () => buildExportStatementDefaultFromNsFrom({ ...config, namespaceExport: value })),
-		source: (value: Admit<T.String>) =>
-			rebuilt(node, handle, () => buildExportStatementDefaultFromNsFrom({ ...config, source: value })),
+		namespaceExport: buildExportStatementDefaultFromNsFrom$with$namespaceExport,
+		source: buildExportStatementDefaultFromNsFrom$with$source,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.ExportStatementDefaultFromNsFrom.Bound;
+}
+
+function buildExportStatementDefaultFromNsFrom$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.ExportStatementDefaultFromNsFrom.Config;
+	switch (setter) {
+		case 'namespaceExport':
+			return applySetter(args, (value: Admit<T.NamespaceExport>) =>
+				rebuilt(node, handle, () => buildExportStatementDefaultFromNsFrom({ ...config, namespaceExport: value }))
+			);
+		case 'source':
+			return applySetter(args, (value: Admit<T.String>) =>
+				rebuilt(node, handle, () => buildExportStatementDefaultFromNsFrom({ ...config, source: value }))
+			);
+	}
+	throw new Error(`export_statement_default_from_ns_from has no $with.${setter}`);
+}
+function buildExportStatementDefaultFromNsFrom$with$namespaceExport(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildExportStatementDefaultFromNsFrom$with(receiverOf(this, '$with.namespaceExport'), 'namespaceExport', args);
+}
+function buildExportStatementDefaultFromNsFrom$with$source(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildExportStatementDefaultFromNsFrom$with(receiverOf(this, '$with.source'), 'source', args);
 }
 
 export function buildExportStatementDefaultFromClauseFrom<
@@ -12499,28 +16112,49 @@ export function buildExportStatementDefaultFromClauseFrom(
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		exportClause: (...args: unknown[]) =>
-			rebuilt(node, handle, () =>
-				listSlotWith(
-					args,
-					{ kind: TSKindId.ExportClause as const, optional: false, make: buildExportClause },
-					(value: Admit<T.ExportClause>) =>
-						buildExportStatementDefaultFromClauseFrom({ ...config, exportClause: value })
-				)
-			),
-		source: (value?: Admit<T.String>) =>
-			rebuilt(node, handle, () => buildExportStatementDefaultFromClauseFrom({ ...config, source: value })),
+		exportClause: buildExportStatementDefaultFromClauseFrom$with$exportClause,
+		source: buildExportStatementDefaultFromClauseFrom$with$source,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.ExportStatementDefaultFromClauseFrom.Bound;
+}
+
+function buildExportStatementDefaultFromClauseFrom$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.ExportStatementDefaultFromClauseFrom.Config;
+	switch (setter) {
+		case 'exportClause':
+			return applySetter(args, (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{ kind: TSKindId.ExportClause as const, optional: false, make: buildExportClause },
+						(value: Admit<T.ExportClause>) =>
+							buildExportStatementDefaultFromClauseFrom({ ...config, exportClause: value })
+					)
+				)
+			);
+		case 'source':
+			return applySetter(args, (value?: Admit<T.String>) =>
+				rebuilt(node, handle, () => buildExportStatementDefaultFromClauseFrom({ ...config, source: value }))
+			);
+	}
+	throw new Error(`export_statement_default_from_clause_from has no $with.${setter}`);
+}
+function buildExportStatementDefaultFromClauseFrom$with$exportClause(
+	this: Received<Held>,
+	...args: unknown[]
+): unknown {
+	return buildExportStatementDefaultFromClauseFrom$with(receiverOf(this, '$with.exportClause'), 'exportClause', args);
+}
+function buildExportStatementDefaultFromClauseFrom$with$source(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildExportStatementDefaultFromClauseFrom$with(receiverOf(this, '$with.source'), 'source', args);
 }
 
 export function buildExportStatementDefaultDeclarationDefaultKw<
@@ -12545,19 +16179,33 @@ export function buildExportStatementDefaultDeclarationDefaultKw(
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		content: (value: Admit<T.Declaration | T.ExportStatementDefaultDeclarationDefaultKwValue>) =>
-			rebuilt(node, handle, () => buildExportStatementDefaultDeclarationDefaultKw(value)),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { content: buildExportStatementDefaultDeclarationDefaultKw$with$content, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.ExportStatementDefaultDeclarationDefaultKw.Bound;
+}
+
+function buildExportStatementDefaultDeclarationDefaultKw$with(
+	node: Held,
+	setter: string,
+	args: readonly unknown[]
+): unknown {
+	const handle = node[HANDLE];
+	switch (setter) {
+		case 'content':
+			return applySetter(args, (value: Admit<T.Declaration | T.ExportStatementDefaultDeclarationDefaultKwValue>) =>
+				rebuilt(node, handle, () => buildExportStatementDefaultDeclarationDefaultKw(value))
+			);
+	}
+	throw new Error(`export_statement_default_declaration_default_kw has no $with.${setter}`);
+}
+function buildExportStatementDefaultDeclarationDefaultKw$with$content(
+	this: Received<Held>,
+	...args: unknown[]
+): unknown {
+	return buildExportStatementDefaultDeclarationDefaultKw$with(receiverOf(this, '$with.content'), 'content', args);
 }
 
 export function buildExportStatementDefaultDeclarationDefaultKwValue<V extends Admit<T.Expression>>(
@@ -12597,23 +16245,57 @@ export function buildExportStatementDefaultDeclarationDefaultKwValue(
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: value,
+		[OPTIONS]: options,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		value: (value: Admit<NonNullable<T.Expression>>) =>
-			rebuilt(node, handle, () => buildExportStatementDefaultDeclarationDefaultKwValue(value, options)),
-		automaticSemicolon: (spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi) =>
-			rebuilt(node, handle, () =>
-				buildExportStatementDefaultDeclarationDefaultKwValue(value, { ...options, automaticSemicolon: spelling })
-			),
+		value: buildExportStatementDefaultDeclarationDefaultKwValue$with$value,
+		automaticSemicolon: buildExportStatementDefaultDeclarationDefaultKwValue$with$automaticSemicolon,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.ExportStatementDefaultDeclarationDefaultKwValue.Bound;
+}
+
+function buildExportStatementDefaultDeclarationDefaultKwValue$with(
+	node: Held,
+	setter: string,
+	args: readonly unknown[]
+): unknown {
+	const handle = node[HANDLE];
+	const value = node[INPUT] as Admit<NonNullable<T.Expression>>;
+	const options = node[OPTIONS] as T.ExportStatementDefaultDeclarationDefaultKwValue.Options;
+	switch (setter) {
+		case 'value':
+			return applySetter(args, (value: Admit<NonNullable<T.Expression>>) =>
+				rebuilt(node, handle, () => buildExportStatementDefaultDeclarationDefaultKwValue(value, options))
+			);
+		case 'automaticSemicolon':
+			return applySetter(args, (spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi) =>
+				rebuilt(node, handle, () =>
+					buildExportStatementDefaultDeclarationDefaultKwValue(value, { ...options, automaticSemicolon: spelling })
+				)
+			);
+	}
+	throw new Error(`export_statement_default_declaration_default_kw_value has no $with.${setter}`);
+}
+function buildExportStatementDefaultDeclarationDefaultKwValue$with$value(
+	this: Received<Held>,
+	...args: unknown[]
+): unknown {
+	return buildExportStatementDefaultDeclarationDefaultKwValue$with(receiverOf(this, '$with.value'), 'value', args);
+}
+function buildExportStatementDefaultDeclarationDefaultKwValue$with$automaticSemicolon(
+	this: Received<Held>,
+	...args: unknown[]
+): unknown {
+	return buildExportStatementDefaultDeclarationDefaultKwValue$with(
+		receiverOf(this, '$with.automaticSemicolon'),
+		'automaticSemicolon',
+		args
+	);
 }
 
 export function buildVariableDeclaratorPlain<
@@ -12659,23 +16341,47 @@ export function buildVariableDeclaratorPlain(
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		name: (value: Admit<T.Identifier | T.ObjectPattern | T.ArrayPattern>) =>
-			rebuilt(node, handle, () => buildVariableDeclaratorPlain({ ...config, name: value })),
-		type: (value?: Admit<T.TypeAnnotation>) =>
-			rebuilt(node, handle, () => buildVariableDeclaratorPlain({ ...config, type: value })),
-		value: (value?: Admit<NonNullable<T.VariableDeclaratorPlain.Config>['value']>) =>
-			rebuilt(node, handle, () => buildVariableDeclaratorPlain({ ...config, value: value })),
+		name: buildVariableDeclaratorPlain$with$name,
+		type: buildVariableDeclaratorPlain$with$type,
+		value: buildVariableDeclaratorPlain$with$value,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.VariableDeclaratorPlain.Bound;
+}
+
+function buildVariableDeclaratorPlain$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.VariableDeclaratorPlain.Config;
+	switch (setter) {
+		case 'name':
+			return applySetter(args, (value: Admit<T.Identifier | T.ObjectPattern | T.ArrayPattern>) =>
+				rebuilt(node, handle, () => buildVariableDeclaratorPlain({ ...config, name: value }))
+			);
+		case 'type':
+			return applySetter(args, (value?: Admit<T.TypeAnnotation>) =>
+				rebuilt(node, handle, () => buildVariableDeclaratorPlain({ ...config, type: value }))
+			);
+		case 'value':
+			return applySetter(args, (value?: Admit<NonNullable<T.VariableDeclaratorPlain.Config>['value']>) =>
+				rebuilt(node, handle, () => buildVariableDeclaratorPlain({ ...config, value: value }))
+			);
+	}
+	throw new Error(`variable_declarator_plain has no $with.${setter}`);
+}
+function buildVariableDeclaratorPlain$with$name(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildVariableDeclaratorPlain$with(receiverOf(this, '$with.name'), 'name', args);
+}
+function buildVariableDeclaratorPlain$with$type(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildVariableDeclaratorPlain$with(receiverOf(this, '$with.type'), 'type', args);
+}
+function buildVariableDeclaratorPlain$with$value(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildVariableDeclaratorPlain$with(receiverOf(this, '$with.value'), 'value', args);
 }
 
 export function buildVariableDeclaratorDefinite<
@@ -12711,21 +16417,39 @@ export function buildVariableDeclaratorDefinite(
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		name: (value: Admit<T.Identifier>) =>
-			rebuilt(node, handle, () => buildVariableDeclaratorDefinite({ ...config, name: value })),
-		type: (value: Admit<T.TypeAnnotation>) =>
-			rebuilt(node, handle, () => buildVariableDeclaratorDefinite({ ...config, type: value })),
+		name: buildVariableDeclaratorDefinite$with$name,
+		type: buildVariableDeclaratorDefinite$with$type,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.VariableDeclaratorDefinite.Bound;
+}
+
+function buildVariableDeclaratorDefinite$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.VariableDeclaratorDefinite.Config;
+	switch (setter) {
+		case 'name':
+			return applySetter(args, (value: Admit<T.Identifier>) =>
+				rebuilt(node, handle, () => buildVariableDeclaratorDefinite({ ...config, name: value }))
+			);
+		case 'type':
+			return applySetter(args, (value: Admit<T.TypeAnnotation>) =>
+				rebuilt(node, handle, () => buildVariableDeclaratorDefinite({ ...config, type: value }))
+			);
+	}
+	throw new Error(`variable_declarator_definite has no $with.${setter}`);
+}
+function buildVariableDeclaratorDefinite$with$name(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildVariableDeclaratorDefinite$with(receiverOf(this, '$with.name'), 'name', args);
+}
+function buildVariableDeclaratorDefinite$with$type(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildVariableDeclaratorDefinite$with(receiverOf(this, '$with.type'), 'type', args);
 }
 
 export const buildMetaPropertyNewTarget: TSKindId.MetaPropertyNewTarget = TSKindId.MetaPropertyNewTarget;
@@ -12765,23 +16489,47 @@ export function buildForHeaderLhs(config: T.ForHeaderLhs.Config): T.ForHeaderLhs
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		left: (value: Admit<T.LhsExpression | T.ParenthesizedExpression>) =>
-			rebuilt(node, handle, () => buildForHeaderLhs({ ...config, left: value })),
-		operator: (value: Admit<NonNullable<T.ForHeaderLhs.Config>['operator']>) =>
-			rebuilt(node, handle, () => buildForHeaderLhs({ ...config, operator: value })),
-		right: (value: Admit<NonNullable<T.ForHeaderLhs.Config>['right']>) =>
-			rebuilt(node, handle, () => buildForHeaderLhs({ ...config, right: value })),
+		left: buildForHeaderLhs$with$left,
+		operator: buildForHeaderLhs$with$operator,
+		right: buildForHeaderLhs$with$right,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.ForHeaderLhs.Bound;
+}
+
+function buildForHeaderLhs$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.ForHeaderLhs.Config;
+	switch (setter) {
+		case 'left':
+			return applySetter(args, (value: Admit<T.LhsExpression | T.ParenthesizedExpression>) =>
+				rebuilt(node, handle, () => buildForHeaderLhs({ ...config, left: value }))
+			);
+		case 'operator':
+			return applySetter(args, (value: Admit<NonNullable<T.ForHeaderLhs.Config>['operator']>) =>
+				rebuilt(node, handle, () => buildForHeaderLhs({ ...config, operator: value }))
+			);
+		case 'right':
+			return applySetter(args, (value: Admit<NonNullable<T.ForHeaderLhs.Config>['right']>) =>
+				rebuilt(node, handle, () => buildForHeaderLhs({ ...config, right: value }))
+			);
+	}
+	throw new Error(`for_header_lhs has no $with.${setter}`);
+}
+function buildForHeaderLhs$with$left(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildForHeaderLhs$with(receiverOf(this, '$with.left'), 'left', args);
+}
+function buildForHeaderLhs$with$operator(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildForHeaderLhs$with(receiverOf(this, '$with.operator'), 'operator', args);
+}
+function buildForHeaderLhs$with$right(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildForHeaderLhs$with(receiverOf(this, '$with.right'), 'right', args);
 }
 
 export function buildForHeaderVarKind<
@@ -12833,25 +16581,55 @@ export function buildForHeaderVarKind(config: T.ForHeaderVarKind.Config): T.ForH
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		left: (value: Admit<T.Identifier | T.ObjectPattern | T.ArrayPattern>) =>
-			rebuilt(node, handle, () => buildForHeaderVarKind({ ...config, left: value })),
-		value: (value?: Admit<NonNullable<T.ForHeaderVarKind.Config>['value']>) =>
-			rebuilt(node, handle, () => buildForHeaderVarKind({ ...config, value: value })),
-		operator: (value: Admit<NonNullable<T.ForHeaderVarKind.Config>['operator']>) =>
-			rebuilt(node, handle, () => buildForHeaderVarKind({ ...config, operator: value })),
-		right: (value: Admit<NonNullable<T.ForHeaderVarKind.Config>['right']>) =>
-			rebuilt(node, handle, () => buildForHeaderVarKind({ ...config, right: value })),
+		left: buildForHeaderVarKind$with$left,
+		value: buildForHeaderVarKind$with$value,
+		operator: buildForHeaderVarKind$with$operator,
+		right: buildForHeaderVarKind$with$right,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.ForHeaderVarKind.Bound;
+}
+
+function buildForHeaderVarKind$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.ForHeaderVarKind.Config;
+	switch (setter) {
+		case 'left':
+			return applySetter(args, (value: Admit<T.Identifier | T.ObjectPattern | T.ArrayPattern>) =>
+				rebuilt(node, handle, () => buildForHeaderVarKind({ ...config, left: value }))
+			);
+		case 'value':
+			return applySetter(args, (value?: Admit<NonNullable<T.ForHeaderVarKind.Config>['value']>) =>
+				rebuilt(node, handle, () => buildForHeaderVarKind({ ...config, value: value }))
+			);
+		case 'operator':
+			return applySetter(args, (value: Admit<NonNullable<T.ForHeaderVarKind.Config>['operator']>) =>
+				rebuilt(node, handle, () => buildForHeaderVarKind({ ...config, operator: value }))
+			);
+		case 'right':
+			return applySetter(args, (value: Admit<NonNullable<T.ForHeaderVarKind.Config>['right']>) =>
+				rebuilt(node, handle, () => buildForHeaderVarKind({ ...config, right: value }))
+			);
+	}
+	throw new Error(`for_header_var_kind has no $with.${setter}`);
+}
+function buildForHeaderVarKind$with$left(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildForHeaderVarKind$with(receiverOf(this, '$with.left'), 'left', args);
+}
+function buildForHeaderVarKind$with$value(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildForHeaderVarKind$with(receiverOf(this, '$with.value'), 'value', args);
+}
+function buildForHeaderVarKind$with$operator(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildForHeaderVarKind$with(receiverOf(this, '$with.operator'), 'operator', args);
+}
+function buildForHeaderVarKind$with$right(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildForHeaderVarKind$with(receiverOf(this, '$with.right'), 'right', args);
 }
 
 export function buildForHeaderLetConstKind<
@@ -12913,27 +16691,65 @@ export function buildForHeaderLetConstKind(
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
+		[OPTIONS]: options,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		kind: (value: Admit<NonNullable<T.ForHeaderLetConstKind.Config>['kind']>) =>
-			rebuilt(node, handle, () => buildForHeaderLetConstKind({ ...config, kind: value }, options)),
-		left: (value: Admit<T.Identifier | T.ObjectPattern | T.ArrayPattern>) =>
-			rebuilt(node, handle, () => buildForHeaderLetConstKind({ ...config, left: value }, options)),
-		terminator: (spelling: TSKindId.AutomaticSemicolon | null) =>
-			rebuilt(node, handle, () => buildForHeaderLetConstKind(config, { ...options, terminator: spelling })),
-		operator: (value: Admit<NonNullable<T.ForHeaderLetConstKind.Config>['operator']>) =>
-			rebuilt(node, handle, () => buildForHeaderLetConstKind({ ...config, operator: value }, options)),
-		right: (value: Admit<NonNullable<T.ForHeaderLetConstKind.Config>['right']>) =>
-			rebuilt(node, handle, () => buildForHeaderLetConstKind({ ...config, right: value }, options)),
+		kind: buildForHeaderLetConstKind$with$kind,
+		left: buildForHeaderLetConstKind$with$left,
+		terminator: buildForHeaderLetConstKind$with$terminator,
+		operator: buildForHeaderLetConstKind$with$operator,
+		right: buildForHeaderLetConstKind$with$right,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.ForHeaderLetConstKind.Bound;
+}
+
+function buildForHeaderLetConstKind$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.ForHeaderLetConstKind.Config;
+	const options = node[OPTIONS] as T.ForHeaderLetConstKind.Options;
+	switch (setter) {
+		case 'kind':
+			return applySetter(args, (value: Admit<NonNullable<T.ForHeaderLetConstKind.Config>['kind']>) =>
+				rebuilt(node, handle, () => buildForHeaderLetConstKind({ ...config, kind: value }, options))
+			);
+		case 'left':
+			return applySetter(args, (value: Admit<T.Identifier | T.ObjectPattern | T.ArrayPattern>) =>
+				rebuilt(node, handle, () => buildForHeaderLetConstKind({ ...config, left: value }, options))
+			);
+		case 'terminator':
+			return applySetter(args, (spelling: TSKindId.AutomaticSemicolon | null) =>
+				rebuilt(node, handle, () => buildForHeaderLetConstKind(config, { ...options, terminator: spelling }))
+			);
+		case 'operator':
+			return applySetter(args, (value: Admit<NonNullable<T.ForHeaderLetConstKind.Config>['operator']>) =>
+				rebuilt(node, handle, () => buildForHeaderLetConstKind({ ...config, operator: value }, options))
+			);
+		case 'right':
+			return applySetter(args, (value: Admit<NonNullable<T.ForHeaderLetConstKind.Config>['right']>) =>
+				rebuilt(node, handle, () => buildForHeaderLetConstKind({ ...config, right: value }, options))
+			);
+	}
+	throw new Error(`for_header_let_const_kind has no $with.${setter}`);
+}
+function buildForHeaderLetConstKind$with$kind(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildForHeaderLetConstKind$with(receiverOf(this, '$with.kind'), 'kind', args);
+}
+function buildForHeaderLetConstKind$with$left(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildForHeaderLetConstKind$with(receiverOf(this, '$with.left'), 'left', args);
+}
+function buildForHeaderLetConstKind$with$terminator(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildForHeaderLetConstKind$with(receiverOf(this, '$with.terminator'), 'terminator', args);
+}
+function buildForHeaderLetConstKind$with$operator(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildForHeaderLetConstKind$with(receiverOf(this, '$with.operator'), 'operator', args);
+}
+function buildForHeaderLetConstKind$with$right(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildForHeaderLetConstKind$with(receiverOf(this, '$with.right'), 'right', args);
 }
 
 export function buildForHeaderUsingKind<
@@ -12995,27 +16811,65 @@ export function buildForHeaderUsingKind(
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
+		[OPTIONS]: options,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		kind: (value: Admit<NonNullable<T.ForHeaderUsingKind.Config>['kind']>) =>
-			rebuilt(node, handle, () => buildForHeaderUsingKind({ ...config, kind: value }, options)),
-		left: (value: Admit<T.Identifier | T.ObjectPattern | T.ArrayPattern>) =>
-			rebuilt(node, handle, () => buildForHeaderUsingKind({ ...config, left: value }, options)),
-		terminator: (spelling: TSKindId.AutomaticSemicolon | null) =>
-			rebuilt(node, handle, () => buildForHeaderUsingKind(config, { ...options, terminator: spelling })),
-		operator: (value: Admit<NonNullable<T.ForHeaderUsingKind.Config>['operator']>) =>
-			rebuilt(node, handle, () => buildForHeaderUsingKind({ ...config, operator: value }, options)),
-		right: (value: Admit<NonNullable<T.ForHeaderUsingKind.Config>['right']>) =>
-			rebuilt(node, handle, () => buildForHeaderUsingKind({ ...config, right: value }, options)),
+		kind: buildForHeaderUsingKind$with$kind,
+		left: buildForHeaderUsingKind$with$left,
+		terminator: buildForHeaderUsingKind$with$terminator,
+		operator: buildForHeaderUsingKind$with$operator,
+		right: buildForHeaderUsingKind$with$right,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.ForHeaderUsingKind.Bound;
+}
+
+function buildForHeaderUsingKind$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.ForHeaderUsingKind.Config;
+	const options = node[OPTIONS] as T.ForHeaderUsingKind.Options;
+	switch (setter) {
+		case 'kind':
+			return applySetter(args, (value: Admit<NonNullable<T.ForHeaderUsingKind.Config>['kind']>) =>
+				rebuilt(node, handle, () => buildForHeaderUsingKind({ ...config, kind: value }, options))
+			);
+		case 'left':
+			return applySetter(args, (value: Admit<T.Identifier | T.ObjectPattern | T.ArrayPattern>) =>
+				rebuilt(node, handle, () => buildForHeaderUsingKind({ ...config, left: value }, options))
+			);
+		case 'terminator':
+			return applySetter(args, (spelling: TSKindId.AutomaticSemicolon | null) =>
+				rebuilt(node, handle, () => buildForHeaderUsingKind(config, { ...options, terminator: spelling }))
+			);
+		case 'operator':
+			return applySetter(args, (value: Admit<NonNullable<T.ForHeaderUsingKind.Config>['operator']>) =>
+				rebuilt(node, handle, () => buildForHeaderUsingKind({ ...config, operator: value }, options))
+			);
+		case 'right':
+			return applySetter(args, (value: Admit<NonNullable<T.ForHeaderUsingKind.Config>['right']>) =>
+				rebuilt(node, handle, () => buildForHeaderUsingKind({ ...config, right: value }, options))
+			);
+	}
+	throw new Error(`for_header_using_kind has no $with.${setter}`);
+}
+function buildForHeaderUsingKind$with$kind(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildForHeaderUsingKind$with(receiverOf(this, '$with.kind'), 'kind', args);
+}
+function buildForHeaderUsingKind$with$left(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildForHeaderUsingKind$with(receiverOf(this, '$with.left'), 'left', args);
+}
+function buildForHeaderUsingKind$with$terminator(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildForHeaderUsingKind$with(receiverOf(this, '$with.terminator'), 'terminator', args);
+}
+function buildForHeaderUsingKind$with$operator(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildForHeaderUsingKind$with(receiverOf(this, '$with.operator'), 'operator', args);
+}
+function buildForHeaderUsingKind$with$right(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildForHeaderUsingKind$with(receiverOf(this, '$with.right'), 'right', args);
 }
 
 export const buildFormalParametersGetAccessorSignature: TSKindId.FormalParametersGetAccessorSignature =
@@ -13070,19 +16924,26 @@ function _buildFormalParametersSetAccessorSignature(
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		elements: (value: Admit<T.FormalParametersElementsSetAccessorSignature>) =>
-			rebuilt(node, handle, () => _buildFormalParametersSetAccessorSignature(value)),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { elements: buildFormalParametersSetAccessorSignature$with$elements, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.FormalParametersSetAccessorSignature.Bound;
+}
+
+function buildFormalParametersSetAccessorSignature$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	switch (setter) {
+		case 'elements':
+			return applySetter(args, (value: Admit<T.FormalParametersElementsSetAccessorSignature>) =>
+				rebuilt(node, handle, () => _buildFormalParametersSetAccessorSignature(value))
+			);
+	}
+	throw new Error(`_formal_parameters_set_accessor_signature has no $with.${setter}`);
+}
+function buildFormalParametersSetAccessorSignature$with$elements(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildFormalParametersSetAccessorSignature$with(receiverOf(this, '$with.elements'), 'elements', args);
 }
 
 export function buildFormalParametersElementsSetAccessorSignature<V extends Admit<T.SetterParameter>>(
@@ -13135,19 +16996,33 @@ function _buildFormalParametersElementsSetAccessorSignature(
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		item: (value: Admit<T.SetterParameter>) =>
-			rebuilt(node, handle, () => _buildFormalParametersElementsSetAccessorSignature(value)),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { item: buildFormalParametersElementsSetAccessorSignature$with$item, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.FormalParametersElementsSetAccessorSignature.Bound;
+}
+
+function buildFormalParametersElementsSetAccessorSignature$with(
+	node: Held,
+	setter: string,
+	args: readonly unknown[]
+): unknown {
+	const handle = node[HANDLE];
+	switch (setter) {
+		case 'item':
+			return applySetter(args, (value: Admit<T.SetterParameter>) =>
+				rebuilt(node, handle, () => _buildFormalParametersElementsSetAccessorSignature(value))
+			);
+	}
+	throw new Error(`_formal_parameters_elements_set_accessor_signature has no $with.${setter}`);
+}
+function buildFormalParametersElementsSetAccessorSignature$with$item(
+	this: Received<Held>,
+	...args: unknown[]
+): unknown {
+	return buildFormalParametersElementsSetAccessorSignature$with(receiverOf(this, '$with.item'), 'item', args);
 }
 
 export function buildSetterParameter<
@@ -13199,29 +17074,71 @@ export function buildSetterParameter(config: T.SetterParameter.Config): T.Setter
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		decorators: (...values: Admit<T.Decorator[]>) =>
-			rebuilt(node, handle, () => buildSetterParameter({ ...config, decorators: restItems('decorators', values) })),
-		accessibilityModifier: (value?: Admit<NonNullable<T.SetterParameter.Config>['accessibilityModifier']>) =>
-			rebuilt(node, handle, () => buildSetterParameter({ ...config, accessibilityModifier: value })),
-		override: (value?: Admit<NonNullable<T.SetterParameter.Config>['override']>) =>
-			rebuilt(node, handle, () => buildSetterParameter({ ...config, override: value })),
-		readonly: (value?: Admit<NonNullable<T.SetterParameter.Config>['readonly']>) =>
-			rebuilt(node, handle, () => buildSetterParameter({ ...config, readonly: value })),
-		pattern: (value: Admit<NonNullable<T.SetterParameter.Config>['pattern']>) =>
-			rebuilt(node, handle, () => buildSetterParameter({ ...config, pattern: value })),
-		type: (value?: Admit<T.TypeAnnotation>) =>
-			rebuilt(node, handle, () => buildSetterParameter({ ...config, type: value })),
+		decorators: buildSetterParameter$with$decorators,
+		accessibilityModifier: buildSetterParameter$with$accessibilityModifier,
+		override: buildSetterParameter$with$override,
+		readonly: buildSetterParameter$with$readonly,
+		pattern: buildSetterParameter$with$pattern,
+		type: buildSetterParameter$with$type,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.SetterParameter.Bound;
+}
+
+function buildSetterParameter$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.SetterParameter.Config;
+	switch (setter) {
+		case 'decorators':
+			return applySetter(args, (...values: Admit<T.Decorator[]>) =>
+				rebuilt(node, handle, () => buildSetterParameter({ ...config, decorators: restItems('decorators', values) }))
+			);
+		case 'accessibilityModifier':
+			return applySetter(args, (value?: Admit<NonNullable<T.SetterParameter.Config>['accessibilityModifier']>) =>
+				rebuilt(node, handle, () => buildSetterParameter({ ...config, accessibilityModifier: value }))
+			);
+		case 'override':
+			return applySetter(args, (value?: Admit<NonNullable<T.SetterParameter.Config>['override']>) =>
+				rebuilt(node, handle, () => buildSetterParameter({ ...config, override: value }))
+			);
+		case 'readonly':
+			return applySetter(args, (value?: Admit<NonNullable<T.SetterParameter.Config>['readonly']>) =>
+				rebuilt(node, handle, () => buildSetterParameter({ ...config, readonly: value }))
+			);
+		case 'pattern':
+			return applySetter(args, (value: Admit<NonNullable<T.SetterParameter.Config>['pattern']>) =>
+				rebuilt(node, handle, () => buildSetterParameter({ ...config, pattern: value }))
+			);
+		case 'type':
+			return applySetter(args, (value?: Admit<T.TypeAnnotation>) =>
+				rebuilt(node, handle, () => buildSetterParameter({ ...config, type: value }))
+			);
+	}
+	throw new Error(`setter_parameter has no $with.${setter}`);
+}
+function buildSetterParameter$with$decorators(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildSetterParameter$with(receiverOf(this, '$with.decorators'), 'decorators', args);
+}
+function buildSetterParameter$with$accessibilityModifier(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildSetterParameter$with(receiverOf(this, '$with.accessibilityModifier'), 'accessibilityModifier', args);
+}
+function buildSetterParameter$with$override(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildSetterParameter$with(receiverOf(this, '$with.override'), 'override', args);
+}
+function buildSetterParameter$with$readonly(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildSetterParameter$with(receiverOf(this, '$with.readonly'), 'readonly', args);
+}
+function buildSetterParameter$with$pattern(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildSetterParameter$with(receiverOf(this, '$with.pattern'), 'pattern', args);
+}
+function buildSetterParameter$with$type(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildSetterParameter$with(receiverOf(this, '$with.type'), 'type', args);
 }
 
 export function buildMethodDefinitionPlain<
@@ -13311,55 +17228,139 @@ export function buildMethodDefinitionPlain(config: T.MethodDefinitionPlain.Confi
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		accessibilityModifier: (value?: Admit<NonNullable<T.MethodDefinitionPlain.Config>['accessibilityModifier']>) =>
-			rebuilt(node, handle, () => buildMethodDefinitionPlain({ ...config, accessibilityModifier: value })),
-		static: (value?: Admit<NonNullable<T.MethodDefinitionPlain.Config>['static']>) =>
-			rebuilt(node, handle, () => buildMethodDefinitionPlain({ ...config, static: value })),
-		override: (value?: Admit<NonNullable<T.MethodDefinitionPlain.Config>['override']>) =>
-			rebuilt(node, handle, () => buildMethodDefinitionPlain({ ...config, override: value })),
-		readonly: (value?: Admit<NonNullable<T.MethodDefinitionPlain.Config>['readonly']>) =>
-			rebuilt(node, handle, () => buildMethodDefinitionPlain({ ...config, readonly: value })),
-		async: (value?: Admit<NonNullable<T.MethodDefinitionPlain.Config>['async']>) =>
-			rebuilt(node, handle, () => buildMethodDefinitionPlain({ ...config, async: value })),
-		generator: (value?: Admit<NonNullable<T.MethodDefinitionPlain.Config>['generator']>) =>
-			rebuilt(node, handle, () => buildMethodDefinitionPlain({ ...config, generator: value })),
-		name: (
-			value: Admit<
-				| T.PropertyIdentifier
-				| T.PrivatePropertyIdentifier
-				| T.String
-				| T.Number
-				| T.ComputedPropertyName
-				| T.PropertyIdentifier.Types
-			>
-		) => rebuilt(node, handle, () => buildMethodDefinitionPlain({ ...config, name: value })),
-		optional: (value?: Admit<NonNullable<T.MethodDefinitionPlain.Config>['optional']>) =>
-			rebuilt(node, handle, () => buildMethodDefinitionPlain({ ...config, optional: value })),
-		typeParameters: (...args: unknown[]) =>
-			rebuilt(node, handle, () =>
-				listSlotWith(
-					args,
-					{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
-					(value?: Admit<T.TypeParameters>) => buildMethodDefinitionPlain({ ...config, typeParameters: value })
-				)
-			),
-		parameters: (value: Admit<T.FormalParameters>) =>
-			rebuilt(node, handle, () => buildMethodDefinitionPlain({ ...config, parameters: value })),
-		returnType: (value?: Admit<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation>) =>
-			rebuilt(node, handle, () => buildMethodDefinitionPlain({ ...config, returnType: value })),
-		body: (value: Admit<T.StatementBlock>) =>
-			rebuilt(node, handle, () => buildMethodDefinitionPlain({ ...config, body: value })),
+		accessibilityModifier: buildMethodDefinitionPlain$with$accessibilityModifier,
+		static: buildMethodDefinitionPlain$with$static,
+		override: buildMethodDefinitionPlain$with$override,
+		readonly: buildMethodDefinitionPlain$with$readonly,
+		async: buildMethodDefinitionPlain$with$async,
+		generator: buildMethodDefinitionPlain$with$generator,
+		name: buildMethodDefinitionPlain$with$name,
+		optional: buildMethodDefinitionPlain$with$optional,
+		typeParameters: buildMethodDefinitionPlain$with$typeParameters,
+		parameters: buildMethodDefinitionPlain$with$parameters,
+		returnType: buildMethodDefinitionPlain$with$returnType,
+		body: buildMethodDefinitionPlain$with$body,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.MethodDefinitionPlain.Bound;
+}
+
+function buildMethodDefinitionPlain$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.MethodDefinitionPlain.Config;
+	switch (setter) {
+		case 'accessibilityModifier':
+			return applySetter(args, (value?: Admit<NonNullable<T.MethodDefinitionPlain.Config>['accessibilityModifier']>) =>
+				rebuilt(node, handle, () => buildMethodDefinitionPlain({ ...config, accessibilityModifier: value }))
+			);
+		case 'static':
+			return applySetter(args, (value?: Admit<NonNullable<T.MethodDefinitionPlain.Config>['static']>) =>
+				rebuilt(node, handle, () => buildMethodDefinitionPlain({ ...config, static: value }))
+			);
+		case 'override':
+			return applySetter(args, (value?: Admit<NonNullable<T.MethodDefinitionPlain.Config>['override']>) =>
+				rebuilt(node, handle, () => buildMethodDefinitionPlain({ ...config, override: value }))
+			);
+		case 'readonly':
+			return applySetter(args, (value?: Admit<NonNullable<T.MethodDefinitionPlain.Config>['readonly']>) =>
+				rebuilt(node, handle, () => buildMethodDefinitionPlain({ ...config, readonly: value }))
+			);
+		case 'async':
+			return applySetter(args, (value?: Admit<NonNullable<T.MethodDefinitionPlain.Config>['async']>) =>
+				rebuilt(node, handle, () => buildMethodDefinitionPlain({ ...config, async: value }))
+			);
+		case 'generator':
+			return applySetter(args, (value?: Admit<NonNullable<T.MethodDefinitionPlain.Config>['generator']>) =>
+				rebuilt(node, handle, () => buildMethodDefinitionPlain({ ...config, generator: value }))
+			);
+		case 'name':
+			return applySetter(
+				args,
+				(
+					value: Admit<
+						| T.PropertyIdentifier
+						| T.PrivatePropertyIdentifier
+						| T.String
+						| T.Number
+						| T.ComputedPropertyName
+						| T.PropertyIdentifier.Types
+					>
+				) => rebuilt(node, handle, () => buildMethodDefinitionPlain({ ...config, name: value }))
+			);
+		case 'optional':
+			return applySetter(args, (value?: Admit<NonNullable<T.MethodDefinitionPlain.Config>['optional']>) =>
+				rebuilt(node, handle, () => buildMethodDefinitionPlain({ ...config, optional: value }))
+			);
+		case 'typeParameters':
+			return applySetter(args, (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
+						(value?: Admit<T.TypeParameters>) => buildMethodDefinitionPlain({ ...config, typeParameters: value })
+					)
+				)
+			);
+		case 'parameters':
+			return applySetter(args, (value: Admit<T.FormalParameters>) =>
+				rebuilt(node, handle, () => buildMethodDefinitionPlain({ ...config, parameters: value }))
+			);
+		case 'returnType':
+			return applySetter(args, (value?: Admit<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation>) =>
+				rebuilt(node, handle, () => buildMethodDefinitionPlain({ ...config, returnType: value }))
+			);
+		case 'body':
+			return applySetter(args, (value: Admit<T.StatementBlock>) =>
+				rebuilt(node, handle, () => buildMethodDefinitionPlain({ ...config, body: value }))
+			);
+	}
+	throw new Error(`method_definition_plain has no $with.${setter}`);
+}
+function buildMethodDefinitionPlain$with$accessibilityModifier(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildMethodDefinitionPlain$with(
+		receiverOf(this, '$with.accessibilityModifier'),
+		'accessibilityModifier',
+		args
+	);
+}
+function buildMethodDefinitionPlain$with$static(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildMethodDefinitionPlain$with(receiverOf(this, '$with.static'), 'static', args);
+}
+function buildMethodDefinitionPlain$with$override(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildMethodDefinitionPlain$with(receiverOf(this, '$with.override'), 'override', args);
+}
+function buildMethodDefinitionPlain$with$readonly(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildMethodDefinitionPlain$with(receiverOf(this, '$with.readonly'), 'readonly', args);
+}
+function buildMethodDefinitionPlain$with$async(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildMethodDefinitionPlain$with(receiverOf(this, '$with.async'), 'async', args);
+}
+function buildMethodDefinitionPlain$with$generator(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildMethodDefinitionPlain$with(receiverOf(this, '$with.generator'), 'generator', args);
+}
+function buildMethodDefinitionPlain$with$name(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildMethodDefinitionPlain$with(receiverOf(this, '$with.name'), 'name', args);
+}
+function buildMethodDefinitionPlain$with$optional(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildMethodDefinitionPlain$with(receiverOf(this, '$with.optional'), 'optional', args);
+}
+function buildMethodDefinitionPlain$with$typeParameters(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildMethodDefinitionPlain$with(receiverOf(this, '$with.typeParameters'), 'typeParameters', args);
+}
+function buildMethodDefinitionPlain$with$parameters(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildMethodDefinitionPlain$with(receiverOf(this, '$with.parameters'), 'parameters', args);
+}
+function buildMethodDefinitionPlain$with$returnType(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildMethodDefinitionPlain$with(receiverOf(this, '$with.returnType'), 'returnType', args);
+}
+function buildMethodDefinitionPlain$with$body(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildMethodDefinitionPlain$with(receiverOf(this, '$with.body'), 'body', args);
 }
 
 export function buildMethodDefinitionGetter<
@@ -13414,37 +17415,85 @@ export function buildMethodDefinitionGetter(config: T.MethodDefinitionGetter.Con
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		accessibilityModifier: (value?: Admit<NonNullable<T.MethodDefinitionGetter.Config>['accessibilityModifier']>) =>
-			rebuilt(node, handle, () => buildMethodDefinitionGetter({ ...config, accessibilityModifier: value })),
-		static: (value?: Admit<NonNullable<T.MethodDefinitionGetter.Config>['static']>) =>
-			rebuilt(node, handle, () => buildMethodDefinitionGetter({ ...config, static: value })),
-		override: (value?: Admit<NonNullable<T.MethodDefinitionGetter.Config>['override']>) =>
-			rebuilt(node, handle, () => buildMethodDefinitionGetter({ ...config, override: value })),
-		name: (
-			value: Admit<
-				| T.PropertyIdentifier
-				| T.PrivatePropertyIdentifier
-				| T.String
-				| T.Number
-				| T.ComputedPropertyName
-				| T.PropertyIdentifier.Types
-			>
-		) => rebuilt(node, handle, () => buildMethodDefinitionGetter({ ...config, name: value })),
-		type: (value?: Admit<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation>) =>
-			rebuilt(node, handle, () => buildMethodDefinitionGetter({ ...config, type: value })),
-		body: (value: Admit<T.StatementBlock>) =>
-			rebuilt(node, handle, () => buildMethodDefinitionGetter({ ...config, body: value })),
+		accessibilityModifier: buildMethodDefinitionGetter$with$accessibilityModifier,
+		static: buildMethodDefinitionGetter$with$static,
+		override: buildMethodDefinitionGetter$with$override,
+		name: buildMethodDefinitionGetter$with$name,
+		type: buildMethodDefinitionGetter$with$type,
+		body: buildMethodDefinitionGetter$with$body,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.MethodDefinitionGetter.Bound;
+}
+
+function buildMethodDefinitionGetter$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.MethodDefinitionGetter.Config;
+	switch (setter) {
+		case 'accessibilityModifier':
+			return applySetter(args, (value?: Admit<NonNullable<T.MethodDefinitionGetter.Config>['accessibilityModifier']>) =>
+				rebuilt(node, handle, () => buildMethodDefinitionGetter({ ...config, accessibilityModifier: value }))
+			);
+		case 'static':
+			return applySetter(args, (value?: Admit<NonNullable<T.MethodDefinitionGetter.Config>['static']>) =>
+				rebuilt(node, handle, () => buildMethodDefinitionGetter({ ...config, static: value }))
+			);
+		case 'override':
+			return applySetter(args, (value?: Admit<NonNullable<T.MethodDefinitionGetter.Config>['override']>) =>
+				rebuilt(node, handle, () => buildMethodDefinitionGetter({ ...config, override: value }))
+			);
+		case 'name':
+			return applySetter(
+				args,
+				(
+					value: Admit<
+						| T.PropertyIdentifier
+						| T.PrivatePropertyIdentifier
+						| T.String
+						| T.Number
+						| T.ComputedPropertyName
+						| T.PropertyIdentifier.Types
+					>
+				) => rebuilt(node, handle, () => buildMethodDefinitionGetter({ ...config, name: value }))
+			);
+		case 'type':
+			return applySetter(args, (value?: Admit<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation>) =>
+				rebuilt(node, handle, () => buildMethodDefinitionGetter({ ...config, type: value }))
+			);
+		case 'body':
+			return applySetter(args, (value: Admit<T.StatementBlock>) =>
+				rebuilt(node, handle, () => buildMethodDefinitionGetter({ ...config, body: value }))
+			);
+	}
+	throw new Error(`method_definition_getter has no $with.${setter}`);
+}
+function buildMethodDefinitionGetter$with$accessibilityModifier(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildMethodDefinitionGetter$with(
+		receiverOf(this, '$with.accessibilityModifier'),
+		'accessibilityModifier',
+		args
+	);
+}
+function buildMethodDefinitionGetter$with$static(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildMethodDefinitionGetter$with(receiverOf(this, '$with.static'), 'static', args);
+}
+function buildMethodDefinitionGetter$with$override(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildMethodDefinitionGetter$with(receiverOf(this, '$with.override'), 'override', args);
+}
+function buildMethodDefinitionGetter$with$name(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildMethodDefinitionGetter$with(receiverOf(this, '$with.name'), 'name', args);
+}
+function buildMethodDefinitionGetter$with$type(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildMethodDefinitionGetter$with(receiverOf(this, '$with.type'), 'type', args);
+}
+function buildMethodDefinitionGetter$with$body(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildMethodDefinitionGetter$with(receiverOf(this, '$with.body'), 'body', args);
 }
 
 export function buildMethodDefinitionSetter<
@@ -13502,37 +17551,85 @@ export function buildMethodDefinitionSetter(config: T.MethodDefinitionSetter.Con
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		accessibilityModifier: (value?: Admit<NonNullable<T.MethodDefinitionSetter.Config>['accessibilityModifier']>) =>
-			rebuilt(node, handle, () => buildMethodDefinitionSetter({ ...config, accessibilityModifier: value })),
-		static: (value?: Admit<NonNullable<T.MethodDefinitionSetter.Config>['static']>) =>
-			rebuilt(node, handle, () => buildMethodDefinitionSetter({ ...config, static: value })),
-		override: (value?: Admit<NonNullable<T.MethodDefinitionSetter.Config>['override']>) =>
-			rebuilt(node, handle, () => buildMethodDefinitionSetter({ ...config, override: value })),
-		name: (
-			value: Admit<
-				| T.PropertyIdentifier
-				| T.PrivatePropertyIdentifier
-				| T.String
-				| T.Number
-				| T.ComputedPropertyName
-				| T.PropertyIdentifier.Types
-			>
-		) => rebuilt(node, handle, () => buildMethodDefinitionSetter({ ...config, name: value })),
-		parameters: (value: Admit<T.FormalParametersSetAccessorSignature>) =>
-			rebuilt(node, handle, () => buildMethodDefinitionSetter({ ...config, parameters: value })),
-		body: (value: Admit<T.StatementBlock>) =>
-			rebuilt(node, handle, () => buildMethodDefinitionSetter({ ...config, body: value })),
+		accessibilityModifier: buildMethodDefinitionSetter$with$accessibilityModifier,
+		static: buildMethodDefinitionSetter$with$static,
+		override: buildMethodDefinitionSetter$with$override,
+		name: buildMethodDefinitionSetter$with$name,
+		parameters: buildMethodDefinitionSetter$with$parameters,
+		body: buildMethodDefinitionSetter$with$body,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.MethodDefinitionSetter.Bound;
+}
+
+function buildMethodDefinitionSetter$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.MethodDefinitionSetter.Config;
+	switch (setter) {
+		case 'accessibilityModifier':
+			return applySetter(args, (value?: Admit<NonNullable<T.MethodDefinitionSetter.Config>['accessibilityModifier']>) =>
+				rebuilt(node, handle, () => buildMethodDefinitionSetter({ ...config, accessibilityModifier: value }))
+			);
+		case 'static':
+			return applySetter(args, (value?: Admit<NonNullable<T.MethodDefinitionSetter.Config>['static']>) =>
+				rebuilt(node, handle, () => buildMethodDefinitionSetter({ ...config, static: value }))
+			);
+		case 'override':
+			return applySetter(args, (value?: Admit<NonNullable<T.MethodDefinitionSetter.Config>['override']>) =>
+				rebuilt(node, handle, () => buildMethodDefinitionSetter({ ...config, override: value }))
+			);
+		case 'name':
+			return applySetter(
+				args,
+				(
+					value: Admit<
+						| T.PropertyIdentifier
+						| T.PrivatePropertyIdentifier
+						| T.String
+						| T.Number
+						| T.ComputedPropertyName
+						| T.PropertyIdentifier.Types
+					>
+				) => rebuilt(node, handle, () => buildMethodDefinitionSetter({ ...config, name: value }))
+			);
+		case 'parameters':
+			return applySetter(args, (value: Admit<T.FormalParametersSetAccessorSignature>) =>
+				rebuilt(node, handle, () => buildMethodDefinitionSetter({ ...config, parameters: value }))
+			);
+		case 'body':
+			return applySetter(args, (value: Admit<T.StatementBlock>) =>
+				rebuilt(node, handle, () => buildMethodDefinitionSetter({ ...config, body: value }))
+			);
+	}
+	throw new Error(`method_definition_setter has no $with.${setter}`);
+}
+function buildMethodDefinitionSetter$with$accessibilityModifier(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildMethodDefinitionSetter$with(
+		receiverOf(this, '$with.accessibilityModifier'),
+		'accessibilityModifier',
+		args
+	);
+}
+function buildMethodDefinitionSetter$with$static(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildMethodDefinitionSetter$with(receiverOf(this, '$with.static'), 'static', args);
+}
+function buildMethodDefinitionSetter$with$override(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildMethodDefinitionSetter$with(receiverOf(this, '$with.override'), 'override', args);
+}
+function buildMethodDefinitionSetter$with$name(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildMethodDefinitionSetter$with(receiverOf(this, '$with.name'), 'name', args);
+}
+function buildMethodDefinitionSetter$with$parameters(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildMethodDefinitionSetter$with(receiverOf(this, '$with.parameters'), 'parameters', args);
+}
+function buildMethodDefinitionSetter$with$body(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildMethodDefinitionSetter$with(receiverOf(this, '$with.body'), 'body', args);
 }
 
 export function buildMethodSignaturePlain<
@@ -13611,53 +17708,127 @@ export function buildMethodSignaturePlain(config: T.MethodSignaturePlain.Config)
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		accessibilityModifier: (value?: Admit<NonNullable<T.MethodSignaturePlain.Config>['accessibilityModifier']>) =>
-			rebuilt(node, handle, () => buildMethodSignaturePlain({ ...config, accessibilityModifier: value })),
-		static: (value?: Admit<NonNullable<T.MethodSignaturePlain.Config>['static']>) =>
-			rebuilt(node, handle, () => buildMethodSignaturePlain({ ...config, static: value })),
-		override: (value?: Admit<NonNullable<T.MethodSignaturePlain.Config>['override']>) =>
-			rebuilt(node, handle, () => buildMethodSignaturePlain({ ...config, override: value })),
-		readonly: (value?: Admit<NonNullable<T.MethodSignaturePlain.Config>['readonly']>) =>
-			rebuilt(node, handle, () => buildMethodSignaturePlain({ ...config, readonly: value })),
-		async: (value?: Admit<NonNullable<T.MethodSignaturePlain.Config>['async']>) =>
-			rebuilt(node, handle, () => buildMethodSignaturePlain({ ...config, async: value })),
-		generator: (value?: Admit<NonNullable<T.MethodSignaturePlain.Config>['generator']>) =>
-			rebuilt(node, handle, () => buildMethodSignaturePlain({ ...config, generator: value })),
-		name: (
-			value: Admit<
-				| T.PropertyIdentifier
-				| T.PrivatePropertyIdentifier
-				| T.String
-				| T.Number
-				| T.ComputedPropertyName
-				| T.PropertyIdentifier.Types
-			>
-		) => rebuilt(node, handle, () => buildMethodSignaturePlain({ ...config, name: value })),
-		optional: (value?: Admit<NonNullable<T.MethodSignaturePlain.Config>['optional']>) =>
-			rebuilt(node, handle, () => buildMethodSignaturePlain({ ...config, optional: value })),
-		typeParameters: (...args: unknown[]) =>
-			rebuilt(node, handle, () =>
-				listSlotWith(
-					args,
-					{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
-					(value?: Admit<T.TypeParameters>) => buildMethodSignaturePlain({ ...config, typeParameters: value })
-				)
-			),
-		parameters: (value: Admit<T.FormalParameters>) =>
-			rebuilt(node, handle, () => buildMethodSignaturePlain({ ...config, parameters: value })),
-		returnType: (value?: Admit<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation>) =>
-			rebuilt(node, handle, () => buildMethodSignaturePlain({ ...config, returnType: value })),
+		accessibilityModifier: buildMethodSignaturePlain$with$accessibilityModifier,
+		static: buildMethodSignaturePlain$with$static,
+		override: buildMethodSignaturePlain$with$override,
+		readonly: buildMethodSignaturePlain$with$readonly,
+		async: buildMethodSignaturePlain$with$async,
+		generator: buildMethodSignaturePlain$with$generator,
+		name: buildMethodSignaturePlain$with$name,
+		optional: buildMethodSignaturePlain$with$optional,
+		typeParameters: buildMethodSignaturePlain$with$typeParameters,
+		parameters: buildMethodSignaturePlain$with$parameters,
+		returnType: buildMethodSignaturePlain$with$returnType,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.MethodSignaturePlain.Bound;
+}
+
+function buildMethodSignaturePlain$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.MethodSignaturePlain.Config;
+	switch (setter) {
+		case 'accessibilityModifier':
+			return applySetter(args, (value?: Admit<NonNullable<T.MethodSignaturePlain.Config>['accessibilityModifier']>) =>
+				rebuilt(node, handle, () => buildMethodSignaturePlain({ ...config, accessibilityModifier: value }))
+			);
+		case 'static':
+			return applySetter(args, (value?: Admit<NonNullable<T.MethodSignaturePlain.Config>['static']>) =>
+				rebuilt(node, handle, () => buildMethodSignaturePlain({ ...config, static: value }))
+			);
+		case 'override':
+			return applySetter(args, (value?: Admit<NonNullable<T.MethodSignaturePlain.Config>['override']>) =>
+				rebuilt(node, handle, () => buildMethodSignaturePlain({ ...config, override: value }))
+			);
+		case 'readonly':
+			return applySetter(args, (value?: Admit<NonNullable<T.MethodSignaturePlain.Config>['readonly']>) =>
+				rebuilt(node, handle, () => buildMethodSignaturePlain({ ...config, readonly: value }))
+			);
+		case 'async':
+			return applySetter(args, (value?: Admit<NonNullable<T.MethodSignaturePlain.Config>['async']>) =>
+				rebuilt(node, handle, () => buildMethodSignaturePlain({ ...config, async: value }))
+			);
+		case 'generator':
+			return applySetter(args, (value?: Admit<NonNullable<T.MethodSignaturePlain.Config>['generator']>) =>
+				rebuilt(node, handle, () => buildMethodSignaturePlain({ ...config, generator: value }))
+			);
+		case 'name':
+			return applySetter(
+				args,
+				(
+					value: Admit<
+						| T.PropertyIdentifier
+						| T.PrivatePropertyIdentifier
+						| T.String
+						| T.Number
+						| T.ComputedPropertyName
+						| T.PropertyIdentifier.Types
+					>
+				) => rebuilt(node, handle, () => buildMethodSignaturePlain({ ...config, name: value }))
+			);
+		case 'optional':
+			return applySetter(args, (value?: Admit<NonNullable<T.MethodSignaturePlain.Config>['optional']>) =>
+				rebuilt(node, handle, () => buildMethodSignaturePlain({ ...config, optional: value }))
+			);
+		case 'typeParameters':
+			return applySetter(args, (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
+						(value?: Admit<T.TypeParameters>) => buildMethodSignaturePlain({ ...config, typeParameters: value })
+					)
+				)
+			);
+		case 'parameters':
+			return applySetter(args, (value: Admit<T.FormalParameters>) =>
+				rebuilt(node, handle, () => buildMethodSignaturePlain({ ...config, parameters: value }))
+			);
+		case 'returnType':
+			return applySetter(args, (value?: Admit<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation>) =>
+				rebuilt(node, handle, () => buildMethodSignaturePlain({ ...config, returnType: value }))
+			);
+	}
+	throw new Error(`method_signature_plain has no $with.${setter}`);
+}
+function buildMethodSignaturePlain$with$accessibilityModifier(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildMethodSignaturePlain$with(receiverOf(this, '$with.accessibilityModifier'), 'accessibilityModifier', args);
+}
+function buildMethodSignaturePlain$with$static(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildMethodSignaturePlain$with(receiverOf(this, '$with.static'), 'static', args);
+}
+function buildMethodSignaturePlain$with$override(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildMethodSignaturePlain$with(receiverOf(this, '$with.override'), 'override', args);
+}
+function buildMethodSignaturePlain$with$readonly(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildMethodSignaturePlain$with(receiverOf(this, '$with.readonly'), 'readonly', args);
+}
+function buildMethodSignaturePlain$with$async(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildMethodSignaturePlain$with(receiverOf(this, '$with.async'), 'async', args);
+}
+function buildMethodSignaturePlain$with$generator(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildMethodSignaturePlain$with(receiverOf(this, '$with.generator'), 'generator', args);
+}
+function buildMethodSignaturePlain$with$name(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildMethodSignaturePlain$with(receiverOf(this, '$with.name'), 'name', args);
+}
+function buildMethodSignaturePlain$with$optional(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildMethodSignaturePlain$with(receiverOf(this, '$with.optional'), 'optional', args);
+}
+function buildMethodSignaturePlain$with$typeParameters(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildMethodSignaturePlain$with(receiverOf(this, '$with.typeParameters'), 'typeParameters', args);
+}
+function buildMethodSignaturePlain$with$parameters(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildMethodSignaturePlain$with(receiverOf(this, '$with.parameters'), 'parameters', args);
+}
+function buildMethodSignaturePlain$with$returnType(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildMethodSignaturePlain$with(receiverOf(this, '$with.returnType'), 'returnType', args);
 }
 
 export function buildMethodSignatureGetter<
@@ -13707,35 +17878,77 @@ export function buildMethodSignatureGetter(config: T.MethodSignatureGetter.Confi
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		accessibilityModifier: (value?: Admit<NonNullable<T.MethodSignatureGetter.Config>['accessibilityModifier']>) =>
-			rebuilt(node, handle, () => buildMethodSignatureGetter({ ...config, accessibilityModifier: value })),
-		static: (value?: Admit<NonNullable<T.MethodSignatureGetter.Config>['static']>) =>
-			rebuilt(node, handle, () => buildMethodSignatureGetter({ ...config, static: value })),
-		override: (value?: Admit<NonNullable<T.MethodSignatureGetter.Config>['override']>) =>
-			rebuilt(node, handle, () => buildMethodSignatureGetter({ ...config, override: value })),
-		name: (
-			value: Admit<
-				| T.PropertyIdentifier
-				| T.PrivatePropertyIdentifier
-				| T.String
-				| T.Number
-				| T.ComputedPropertyName
-				| T.PropertyIdentifier.Types
-			>
-		) => rebuilt(node, handle, () => buildMethodSignatureGetter({ ...config, name: value })),
-		type: (value?: Admit<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation>) =>
-			rebuilt(node, handle, () => buildMethodSignatureGetter({ ...config, type: value })),
+		accessibilityModifier: buildMethodSignatureGetter$with$accessibilityModifier,
+		static: buildMethodSignatureGetter$with$static,
+		override: buildMethodSignatureGetter$with$override,
+		name: buildMethodSignatureGetter$with$name,
+		type: buildMethodSignatureGetter$with$type,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.MethodSignatureGetter.Bound;
+}
+
+function buildMethodSignatureGetter$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.MethodSignatureGetter.Config;
+	switch (setter) {
+		case 'accessibilityModifier':
+			return applySetter(args, (value?: Admit<NonNullable<T.MethodSignatureGetter.Config>['accessibilityModifier']>) =>
+				rebuilt(node, handle, () => buildMethodSignatureGetter({ ...config, accessibilityModifier: value }))
+			);
+		case 'static':
+			return applySetter(args, (value?: Admit<NonNullable<T.MethodSignatureGetter.Config>['static']>) =>
+				rebuilt(node, handle, () => buildMethodSignatureGetter({ ...config, static: value }))
+			);
+		case 'override':
+			return applySetter(args, (value?: Admit<NonNullable<T.MethodSignatureGetter.Config>['override']>) =>
+				rebuilt(node, handle, () => buildMethodSignatureGetter({ ...config, override: value }))
+			);
+		case 'name':
+			return applySetter(
+				args,
+				(
+					value: Admit<
+						| T.PropertyIdentifier
+						| T.PrivatePropertyIdentifier
+						| T.String
+						| T.Number
+						| T.ComputedPropertyName
+						| T.PropertyIdentifier.Types
+					>
+				) => rebuilt(node, handle, () => buildMethodSignatureGetter({ ...config, name: value }))
+			);
+		case 'type':
+			return applySetter(args, (value?: Admit<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation>) =>
+				rebuilt(node, handle, () => buildMethodSignatureGetter({ ...config, type: value }))
+			);
+	}
+	throw new Error(`method_signature_getter has no $with.${setter}`);
+}
+function buildMethodSignatureGetter$with$accessibilityModifier(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildMethodSignatureGetter$with(
+		receiverOf(this, '$with.accessibilityModifier'),
+		'accessibilityModifier',
+		args
+	);
+}
+function buildMethodSignatureGetter$with$static(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildMethodSignatureGetter$with(receiverOf(this, '$with.static'), 'static', args);
+}
+function buildMethodSignatureGetter$with$override(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildMethodSignatureGetter$with(receiverOf(this, '$with.override'), 'override', args);
+}
+function buildMethodSignatureGetter$with$name(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildMethodSignatureGetter$with(receiverOf(this, '$with.name'), 'name', args);
+}
+function buildMethodSignatureGetter$with$type(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildMethodSignatureGetter$with(receiverOf(this, '$with.type'), 'type', args);
 }
 
 export function buildMethodSignatureSetter<
@@ -13785,35 +17998,77 @@ export function buildMethodSignatureSetter(config: T.MethodSignatureSetter.Confi
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		accessibilityModifier: (value?: Admit<NonNullable<T.MethodSignatureSetter.Config>['accessibilityModifier']>) =>
-			rebuilt(node, handle, () => buildMethodSignatureSetter({ ...config, accessibilityModifier: value })),
-		static: (value?: Admit<NonNullable<T.MethodSignatureSetter.Config>['static']>) =>
-			rebuilt(node, handle, () => buildMethodSignatureSetter({ ...config, static: value })),
-		override: (value?: Admit<NonNullable<T.MethodSignatureSetter.Config>['override']>) =>
-			rebuilt(node, handle, () => buildMethodSignatureSetter({ ...config, override: value })),
-		name: (
-			value: Admit<
-				| T.PropertyIdentifier
-				| T.PrivatePropertyIdentifier
-				| T.String
-				| T.Number
-				| T.ComputedPropertyName
-				| T.PropertyIdentifier.Types
-			>
-		) => rebuilt(node, handle, () => buildMethodSignatureSetter({ ...config, name: value })),
-		parameters: (value: Admit<T.FormalParametersSetAccessorSignature>) =>
-			rebuilt(node, handle, () => buildMethodSignatureSetter({ ...config, parameters: value })),
+		accessibilityModifier: buildMethodSignatureSetter$with$accessibilityModifier,
+		static: buildMethodSignatureSetter$with$static,
+		override: buildMethodSignatureSetter$with$override,
+		name: buildMethodSignatureSetter$with$name,
+		parameters: buildMethodSignatureSetter$with$parameters,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.MethodSignatureSetter.Bound;
+}
+
+function buildMethodSignatureSetter$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.MethodSignatureSetter.Config;
+	switch (setter) {
+		case 'accessibilityModifier':
+			return applySetter(args, (value?: Admit<NonNullable<T.MethodSignatureSetter.Config>['accessibilityModifier']>) =>
+				rebuilt(node, handle, () => buildMethodSignatureSetter({ ...config, accessibilityModifier: value }))
+			);
+		case 'static':
+			return applySetter(args, (value?: Admit<NonNullable<T.MethodSignatureSetter.Config>['static']>) =>
+				rebuilt(node, handle, () => buildMethodSignatureSetter({ ...config, static: value }))
+			);
+		case 'override':
+			return applySetter(args, (value?: Admit<NonNullable<T.MethodSignatureSetter.Config>['override']>) =>
+				rebuilt(node, handle, () => buildMethodSignatureSetter({ ...config, override: value }))
+			);
+		case 'name':
+			return applySetter(
+				args,
+				(
+					value: Admit<
+						| T.PropertyIdentifier
+						| T.PrivatePropertyIdentifier
+						| T.String
+						| T.Number
+						| T.ComputedPropertyName
+						| T.PropertyIdentifier.Types
+					>
+				) => rebuilt(node, handle, () => buildMethodSignatureSetter({ ...config, name: value }))
+			);
+		case 'parameters':
+			return applySetter(args, (value: Admit<T.FormalParametersSetAccessorSignature>) =>
+				rebuilt(node, handle, () => buildMethodSignatureSetter({ ...config, parameters: value }))
+			);
+	}
+	throw new Error(`method_signature_setter has no $with.${setter}`);
+}
+function buildMethodSignatureSetter$with$accessibilityModifier(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildMethodSignatureSetter$with(
+		receiverOf(this, '$with.accessibilityModifier'),
+		'accessibilityModifier',
+		args
+	);
+}
+function buildMethodSignatureSetter$with$static(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildMethodSignatureSetter$with(receiverOf(this, '$with.static'), 'static', args);
+}
+function buildMethodSignatureSetter$with$override(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildMethodSignatureSetter$with(receiverOf(this, '$with.override'), 'override', args);
+}
+function buildMethodSignatureSetter$with$name(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildMethodSignatureSetter$with(receiverOf(this, '$with.name'), 'name', args);
+}
+function buildMethodSignatureSetter$with$parameters(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildMethodSignatureSetter$with(receiverOf(this, '$with.parameters'), 'parameters', args);
 }
 
 export function buildAbstractMethodSignaturePlain<
@@ -13887,48 +18142,112 @@ export function buildAbstractMethodSignaturePlain(
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		accessibilityModifier: (
-			value?: Admit<NonNullable<T.AbstractMethodSignaturePlain.Config>['accessibilityModifier']>
-		) => rebuilt(node, handle, () => buildAbstractMethodSignaturePlain({ ...config, accessibilityModifier: value })),
-		override: (value?: Admit<NonNullable<T.AbstractMethodSignaturePlain.Config>['override']>) =>
-			rebuilt(node, handle, () => buildAbstractMethodSignaturePlain({ ...config, override: value })),
-		generator: (value?: Admit<NonNullable<T.AbstractMethodSignaturePlain.Config>['generator']>) =>
-			rebuilt(node, handle, () => buildAbstractMethodSignaturePlain({ ...config, generator: value })),
-		name: (
-			value: Admit<
-				| T.PropertyIdentifier
-				| T.PrivatePropertyIdentifier
-				| T.String
-				| T.Number
-				| T.ComputedPropertyName
-				| T.PropertyIdentifier.Types
-			>
-		) => rebuilt(node, handle, () => buildAbstractMethodSignaturePlain({ ...config, name: value })),
-		optional: (value?: Admit<NonNullable<T.AbstractMethodSignaturePlain.Config>['optional']>) =>
-			rebuilt(node, handle, () => buildAbstractMethodSignaturePlain({ ...config, optional: value })),
-		typeParameters: (...args: unknown[]) =>
-			rebuilt(node, handle, () =>
-				listSlotWith(
-					args,
-					{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
-					(value?: Admit<T.TypeParameters>) => buildAbstractMethodSignaturePlain({ ...config, typeParameters: value })
-				)
-			),
-		parameters: (value: Admit<T.FormalParameters>) =>
-			rebuilt(node, handle, () => buildAbstractMethodSignaturePlain({ ...config, parameters: value })),
-		returnType: (value?: Admit<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation>) =>
-			rebuilt(node, handle, () => buildAbstractMethodSignaturePlain({ ...config, returnType: value })),
+		accessibilityModifier: buildAbstractMethodSignaturePlain$with$accessibilityModifier,
+		override: buildAbstractMethodSignaturePlain$with$override,
+		generator: buildAbstractMethodSignaturePlain$with$generator,
+		name: buildAbstractMethodSignaturePlain$with$name,
+		optional: buildAbstractMethodSignaturePlain$with$optional,
+		typeParameters: buildAbstractMethodSignaturePlain$with$typeParameters,
+		parameters: buildAbstractMethodSignaturePlain$with$parameters,
+		returnType: buildAbstractMethodSignaturePlain$with$returnType,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.AbstractMethodSignaturePlain.Bound;
+}
+
+function buildAbstractMethodSignaturePlain$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.AbstractMethodSignaturePlain.Config;
+	switch (setter) {
+		case 'accessibilityModifier':
+			return applySetter(
+				args,
+				(value?: Admit<NonNullable<T.AbstractMethodSignaturePlain.Config>['accessibilityModifier']>) =>
+					rebuilt(node, handle, () => buildAbstractMethodSignaturePlain({ ...config, accessibilityModifier: value }))
+			);
+		case 'override':
+			return applySetter(args, (value?: Admit<NonNullable<T.AbstractMethodSignaturePlain.Config>['override']>) =>
+				rebuilt(node, handle, () => buildAbstractMethodSignaturePlain({ ...config, override: value }))
+			);
+		case 'generator':
+			return applySetter(args, (value?: Admit<NonNullable<T.AbstractMethodSignaturePlain.Config>['generator']>) =>
+				rebuilt(node, handle, () => buildAbstractMethodSignaturePlain({ ...config, generator: value }))
+			);
+		case 'name':
+			return applySetter(
+				args,
+				(
+					value: Admit<
+						| T.PropertyIdentifier
+						| T.PrivatePropertyIdentifier
+						| T.String
+						| T.Number
+						| T.ComputedPropertyName
+						| T.PropertyIdentifier.Types
+					>
+				) => rebuilt(node, handle, () => buildAbstractMethodSignaturePlain({ ...config, name: value }))
+			);
+		case 'optional':
+			return applySetter(args, (value?: Admit<NonNullable<T.AbstractMethodSignaturePlain.Config>['optional']>) =>
+				rebuilt(node, handle, () => buildAbstractMethodSignaturePlain({ ...config, optional: value }))
+			);
+		case 'typeParameters':
+			return applySetter(args, (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
+						(value?: Admit<T.TypeParameters>) => buildAbstractMethodSignaturePlain({ ...config, typeParameters: value })
+					)
+				)
+			);
+		case 'parameters':
+			return applySetter(args, (value: Admit<T.FormalParameters>) =>
+				rebuilt(node, handle, () => buildAbstractMethodSignaturePlain({ ...config, parameters: value }))
+			);
+		case 'returnType':
+			return applySetter(args, (value?: Admit<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation>) =>
+				rebuilt(node, handle, () => buildAbstractMethodSignaturePlain({ ...config, returnType: value }))
+			);
+	}
+	throw new Error(`abstract_method_signature_plain has no $with.${setter}`);
+}
+function buildAbstractMethodSignaturePlain$with$accessibilityModifier(
+	this: Received<Held>,
+	...args: unknown[]
+): unknown {
+	return buildAbstractMethodSignaturePlain$with(
+		receiverOf(this, '$with.accessibilityModifier'),
+		'accessibilityModifier',
+		args
+	);
+}
+function buildAbstractMethodSignaturePlain$with$override(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildAbstractMethodSignaturePlain$with(receiverOf(this, '$with.override'), 'override', args);
+}
+function buildAbstractMethodSignaturePlain$with$generator(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildAbstractMethodSignaturePlain$with(receiverOf(this, '$with.generator'), 'generator', args);
+}
+function buildAbstractMethodSignaturePlain$with$name(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildAbstractMethodSignaturePlain$with(receiverOf(this, '$with.name'), 'name', args);
+}
+function buildAbstractMethodSignaturePlain$with$optional(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildAbstractMethodSignaturePlain$with(receiverOf(this, '$with.optional'), 'optional', args);
+}
+function buildAbstractMethodSignaturePlain$with$typeParameters(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildAbstractMethodSignaturePlain$with(receiverOf(this, '$with.typeParameters'), 'typeParameters', args);
+}
+function buildAbstractMethodSignaturePlain$with$parameters(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildAbstractMethodSignaturePlain$with(receiverOf(this, '$with.parameters'), 'parameters', args);
+}
+function buildAbstractMethodSignaturePlain$with$returnType(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildAbstractMethodSignaturePlain$with(receiverOf(this, '$with.returnType'), 'returnType', args);
 }
 
 export function buildAbstractMethodSignatureGetter<
@@ -13981,34 +18300,74 @@ export function buildAbstractMethodSignatureGetter(
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		accessibilityModifier: (
-			value?: Admit<NonNullable<T.AbstractMethodSignatureGetter.Config>['accessibilityModifier']>
-		) => rebuilt(node, handle, () => buildAbstractMethodSignatureGetter({ ...config, accessibilityModifier: value })),
-		override: (value?: Admit<NonNullable<T.AbstractMethodSignatureGetter.Config>['override']>) =>
-			rebuilt(node, handle, () => buildAbstractMethodSignatureGetter({ ...config, override: value })),
-		name: (
-			value: Admit<
-				| T.PropertyIdentifier
-				| T.PrivatePropertyIdentifier
-				| T.String
-				| T.Number
-				| T.ComputedPropertyName
-				| T.PropertyIdentifier.Types
-			>
-		) => rebuilt(node, handle, () => buildAbstractMethodSignatureGetter({ ...config, name: value })),
-		type: (value?: Admit<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation>) =>
-			rebuilt(node, handle, () => buildAbstractMethodSignatureGetter({ ...config, type: value })),
+		accessibilityModifier: buildAbstractMethodSignatureGetter$with$accessibilityModifier,
+		override: buildAbstractMethodSignatureGetter$with$override,
+		name: buildAbstractMethodSignatureGetter$with$name,
+		type: buildAbstractMethodSignatureGetter$with$type,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.AbstractMethodSignatureGetter.Bound;
+}
+
+function buildAbstractMethodSignatureGetter$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.AbstractMethodSignatureGetter.Config;
+	switch (setter) {
+		case 'accessibilityModifier':
+			return applySetter(
+				args,
+				(value?: Admit<NonNullable<T.AbstractMethodSignatureGetter.Config>['accessibilityModifier']>) =>
+					rebuilt(node, handle, () => buildAbstractMethodSignatureGetter({ ...config, accessibilityModifier: value }))
+			);
+		case 'override':
+			return applySetter(args, (value?: Admit<NonNullable<T.AbstractMethodSignatureGetter.Config>['override']>) =>
+				rebuilt(node, handle, () => buildAbstractMethodSignatureGetter({ ...config, override: value }))
+			);
+		case 'name':
+			return applySetter(
+				args,
+				(
+					value: Admit<
+						| T.PropertyIdentifier
+						| T.PrivatePropertyIdentifier
+						| T.String
+						| T.Number
+						| T.ComputedPropertyName
+						| T.PropertyIdentifier.Types
+					>
+				) => rebuilt(node, handle, () => buildAbstractMethodSignatureGetter({ ...config, name: value }))
+			);
+		case 'type':
+			return applySetter(args, (value?: Admit<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation>) =>
+				rebuilt(node, handle, () => buildAbstractMethodSignatureGetter({ ...config, type: value }))
+			);
+	}
+	throw new Error(`abstract_method_signature_getter has no $with.${setter}`);
+}
+function buildAbstractMethodSignatureGetter$with$accessibilityModifier(
+	this: Received<Held>,
+	...args: unknown[]
+): unknown {
+	return buildAbstractMethodSignatureGetter$with(
+		receiverOf(this, '$with.accessibilityModifier'),
+		'accessibilityModifier',
+		args
+	);
+}
+function buildAbstractMethodSignatureGetter$with$override(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildAbstractMethodSignatureGetter$with(receiverOf(this, '$with.override'), 'override', args);
+}
+function buildAbstractMethodSignatureGetter$with$name(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildAbstractMethodSignatureGetter$with(receiverOf(this, '$with.name'), 'name', args);
+}
+function buildAbstractMethodSignatureGetter$with$type(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildAbstractMethodSignatureGetter$with(receiverOf(this, '$with.type'), 'type', args);
 }
 
 export function buildAbstractMethodSignatureSetter<
@@ -14061,34 +18420,74 @@ export function buildAbstractMethodSignatureSetter(
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		accessibilityModifier: (
-			value?: Admit<NonNullable<T.AbstractMethodSignatureSetter.Config>['accessibilityModifier']>
-		) => rebuilt(node, handle, () => buildAbstractMethodSignatureSetter({ ...config, accessibilityModifier: value })),
-		override: (value?: Admit<NonNullable<T.AbstractMethodSignatureSetter.Config>['override']>) =>
-			rebuilt(node, handle, () => buildAbstractMethodSignatureSetter({ ...config, override: value })),
-		name: (
-			value: Admit<
-				| T.PropertyIdentifier
-				| T.PrivatePropertyIdentifier
-				| T.String
-				| T.Number
-				| T.ComputedPropertyName
-				| T.PropertyIdentifier.Types
-			>
-		) => rebuilt(node, handle, () => buildAbstractMethodSignatureSetter({ ...config, name: value })),
-		parameters: (value: Admit<T.FormalParametersSetAccessorSignature>) =>
-			rebuilt(node, handle, () => buildAbstractMethodSignatureSetter({ ...config, parameters: value })),
+		accessibilityModifier: buildAbstractMethodSignatureSetter$with$accessibilityModifier,
+		override: buildAbstractMethodSignatureSetter$with$override,
+		name: buildAbstractMethodSignatureSetter$with$name,
+		parameters: buildAbstractMethodSignatureSetter$with$parameters,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.AbstractMethodSignatureSetter.Bound;
+}
+
+function buildAbstractMethodSignatureSetter$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.AbstractMethodSignatureSetter.Config;
+	switch (setter) {
+		case 'accessibilityModifier':
+			return applySetter(
+				args,
+				(value?: Admit<NonNullable<T.AbstractMethodSignatureSetter.Config>['accessibilityModifier']>) =>
+					rebuilt(node, handle, () => buildAbstractMethodSignatureSetter({ ...config, accessibilityModifier: value }))
+			);
+		case 'override':
+			return applySetter(args, (value?: Admit<NonNullable<T.AbstractMethodSignatureSetter.Config>['override']>) =>
+				rebuilt(node, handle, () => buildAbstractMethodSignatureSetter({ ...config, override: value }))
+			);
+		case 'name':
+			return applySetter(
+				args,
+				(
+					value: Admit<
+						| T.PropertyIdentifier
+						| T.PrivatePropertyIdentifier
+						| T.String
+						| T.Number
+						| T.ComputedPropertyName
+						| T.PropertyIdentifier.Types
+					>
+				) => rebuilt(node, handle, () => buildAbstractMethodSignatureSetter({ ...config, name: value }))
+			);
+		case 'parameters':
+			return applySetter(args, (value: Admit<T.FormalParametersSetAccessorSignature>) =>
+				rebuilt(node, handle, () => buildAbstractMethodSignatureSetter({ ...config, parameters: value }))
+			);
+	}
+	throw new Error(`abstract_method_signature_setter has no $with.${setter}`);
+}
+function buildAbstractMethodSignatureSetter$with$accessibilityModifier(
+	this: Received<Held>,
+	...args: unknown[]
+): unknown {
+	return buildAbstractMethodSignatureSetter$with(
+		receiverOf(this, '$with.accessibilityModifier'),
+		'accessibilityModifier',
+		args
+	);
+}
+function buildAbstractMethodSignatureSetter$with$override(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildAbstractMethodSignatureSetter$with(receiverOf(this, '$with.override'), 'override', args);
+}
+function buildAbstractMethodSignatureSetter$with$name(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildAbstractMethodSignatureSetter$with(receiverOf(this, '$with.name'), 'name', args);
+}
+function buildAbstractMethodSignatureSetter$with$parameters(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildAbstractMethodSignatureSetter$with(receiverOf(this, '$with.parameters'), 'parameters', args);
 }
 
 export function buildPublicFieldDefinitionPlain<
@@ -14179,49 +18578,129 @@ export function buildPublicFieldDefinitionPlain(
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		decorators: (...values: Admit<T.Decorator[]>) =>
-			rebuilt(node, handle, () =>
-				buildPublicFieldDefinitionPlain({ ...config, decorators: restItems('decorators', values) })
-			),
-		declare: (value?: Admit<NonNullable<T.PublicFieldDefinitionPlain.Config>['declare']>) =>
-			rebuilt(node, handle, () => buildPublicFieldDefinitionPlain({ ...config, declare: value })),
-		accessibilityModifier: (value?: Admit<NonNullable<T.PublicFieldDefinitionPlain.Config>['accessibilityModifier']>) =>
-			rebuilt(node, handle, () => buildPublicFieldDefinitionPlain({ ...config, accessibilityModifier: value })),
-		static: (value?: Admit<NonNullable<T.PublicFieldDefinitionPlain.Config>['static']>) =>
-			rebuilt(node, handle, () => buildPublicFieldDefinitionPlain({ ...config, static: value })),
-		override: (value?: Admit<NonNullable<T.PublicFieldDefinitionPlain.Config>['override']>) =>
-			rebuilt(node, handle, () => buildPublicFieldDefinitionPlain({ ...config, override: value })),
-		readonly: (value?: Admit<NonNullable<T.PublicFieldDefinitionPlain.Config>['readonly']>) =>
-			rebuilt(node, handle, () => buildPublicFieldDefinitionPlain({ ...config, readonly: value })),
-		abstract: (value?: Admit<NonNullable<T.PublicFieldDefinitionPlain.Config>['abstract']>) =>
-			rebuilt(node, handle, () => buildPublicFieldDefinitionPlain({ ...config, abstract: value })),
-		name: (
-			value: Admit<
-				| T.PropertyIdentifier
-				| T.PrivatePropertyIdentifier
-				| T.String
-				| T.Number
-				| T.ComputedPropertyName
-				| T.PropertyIdentifier.Types
-			>
-		) => rebuilt(node, handle, () => buildPublicFieldDefinitionPlain({ ...config, name: value })),
-		optionality: (value?: Admit<NonNullable<T.PublicFieldDefinitionPlain.Config>['optionality']>) =>
-			rebuilt(node, handle, () => buildPublicFieldDefinitionPlain({ ...config, optionality: value })),
-		type: (value?: Admit<T.TypeAnnotation>) =>
-			rebuilt(node, handle, () => buildPublicFieldDefinitionPlain({ ...config, type: value })),
-		value: (value?: Admit<NonNullable<T.PublicFieldDefinitionPlain.Config>['value']>) =>
-			rebuilt(node, handle, () => buildPublicFieldDefinitionPlain({ ...config, value: value })),
+		decorators: buildPublicFieldDefinitionPlain$with$decorators,
+		declare: buildPublicFieldDefinitionPlain$with$declare,
+		accessibilityModifier: buildPublicFieldDefinitionPlain$with$accessibilityModifier,
+		static: buildPublicFieldDefinitionPlain$with$static,
+		override: buildPublicFieldDefinitionPlain$with$override,
+		readonly: buildPublicFieldDefinitionPlain$with$readonly,
+		abstract: buildPublicFieldDefinitionPlain$with$abstract,
+		name: buildPublicFieldDefinitionPlain$with$name,
+		optionality: buildPublicFieldDefinitionPlain$with$optionality,
+		type: buildPublicFieldDefinitionPlain$with$type,
+		value: buildPublicFieldDefinitionPlain$with$value,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.PublicFieldDefinitionPlain.Bound;
+}
+
+function buildPublicFieldDefinitionPlain$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.PublicFieldDefinitionPlain.Config;
+	switch (setter) {
+		case 'decorators':
+			return applySetter(args, (...values: Admit<T.Decorator[]>) =>
+				rebuilt(node, handle, () =>
+					buildPublicFieldDefinitionPlain({ ...config, decorators: restItems('decorators', values) })
+				)
+			);
+		case 'declare':
+			return applySetter(args, (value?: Admit<NonNullable<T.PublicFieldDefinitionPlain.Config>['declare']>) =>
+				rebuilt(node, handle, () => buildPublicFieldDefinitionPlain({ ...config, declare: value }))
+			);
+		case 'accessibilityModifier':
+			return applySetter(
+				args,
+				(value?: Admit<NonNullable<T.PublicFieldDefinitionPlain.Config>['accessibilityModifier']>) =>
+					rebuilt(node, handle, () => buildPublicFieldDefinitionPlain({ ...config, accessibilityModifier: value }))
+			);
+		case 'static':
+			return applySetter(args, (value?: Admit<NonNullable<T.PublicFieldDefinitionPlain.Config>['static']>) =>
+				rebuilt(node, handle, () => buildPublicFieldDefinitionPlain({ ...config, static: value }))
+			);
+		case 'override':
+			return applySetter(args, (value?: Admit<NonNullable<T.PublicFieldDefinitionPlain.Config>['override']>) =>
+				rebuilt(node, handle, () => buildPublicFieldDefinitionPlain({ ...config, override: value }))
+			);
+		case 'readonly':
+			return applySetter(args, (value?: Admit<NonNullable<T.PublicFieldDefinitionPlain.Config>['readonly']>) =>
+				rebuilt(node, handle, () => buildPublicFieldDefinitionPlain({ ...config, readonly: value }))
+			);
+		case 'abstract':
+			return applySetter(args, (value?: Admit<NonNullable<T.PublicFieldDefinitionPlain.Config>['abstract']>) =>
+				rebuilt(node, handle, () => buildPublicFieldDefinitionPlain({ ...config, abstract: value }))
+			);
+		case 'name':
+			return applySetter(
+				args,
+				(
+					value: Admit<
+						| T.PropertyIdentifier
+						| T.PrivatePropertyIdentifier
+						| T.String
+						| T.Number
+						| T.ComputedPropertyName
+						| T.PropertyIdentifier.Types
+					>
+				) => rebuilt(node, handle, () => buildPublicFieldDefinitionPlain({ ...config, name: value }))
+			);
+		case 'optionality':
+			return applySetter(args, (value?: Admit<NonNullable<T.PublicFieldDefinitionPlain.Config>['optionality']>) =>
+				rebuilt(node, handle, () => buildPublicFieldDefinitionPlain({ ...config, optionality: value }))
+			);
+		case 'type':
+			return applySetter(args, (value?: Admit<T.TypeAnnotation>) =>
+				rebuilt(node, handle, () => buildPublicFieldDefinitionPlain({ ...config, type: value }))
+			);
+		case 'value':
+			return applySetter(args, (value?: Admit<NonNullable<T.PublicFieldDefinitionPlain.Config>['value']>) =>
+				rebuilt(node, handle, () => buildPublicFieldDefinitionPlain({ ...config, value: value }))
+			);
+	}
+	throw new Error(`public_field_definition_plain has no $with.${setter}`);
+}
+function buildPublicFieldDefinitionPlain$with$decorators(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildPublicFieldDefinitionPlain$with(receiverOf(this, '$with.decorators'), 'decorators', args);
+}
+function buildPublicFieldDefinitionPlain$with$declare(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildPublicFieldDefinitionPlain$with(receiverOf(this, '$with.declare'), 'declare', args);
+}
+function buildPublicFieldDefinitionPlain$with$accessibilityModifier(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildPublicFieldDefinitionPlain$with(
+		receiverOf(this, '$with.accessibilityModifier'),
+		'accessibilityModifier',
+		args
+	);
+}
+function buildPublicFieldDefinitionPlain$with$static(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildPublicFieldDefinitionPlain$with(receiverOf(this, '$with.static'), 'static', args);
+}
+function buildPublicFieldDefinitionPlain$with$override(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildPublicFieldDefinitionPlain$with(receiverOf(this, '$with.override'), 'override', args);
+}
+function buildPublicFieldDefinitionPlain$with$readonly(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildPublicFieldDefinitionPlain$with(receiverOf(this, '$with.readonly'), 'readonly', args);
+}
+function buildPublicFieldDefinitionPlain$with$abstract(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildPublicFieldDefinitionPlain$with(receiverOf(this, '$with.abstract'), 'abstract', args);
+}
+function buildPublicFieldDefinitionPlain$with$name(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildPublicFieldDefinitionPlain$with(receiverOf(this, '$with.name'), 'name', args);
+}
+function buildPublicFieldDefinitionPlain$with$optionality(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildPublicFieldDefinitionPlain$with(receiverOf(this, '$with.optionality'), 'optionality', args);
+}
+function buildPublicFieldDefinitionPlain$with$type(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildPublicFieldDefinitionPlain$with(receiverOf(this, '$with.type'), 'type', args);
+}
+function buildPublicFieldDefinitionPlain$with$value(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildPublicFieldDefinitionPlain$with(receiverOf(this, '$with.value'), 'value', args);
 }
 
 export function buildPublicFieldDefinitionAccessor<
@@ -14300,44 +18779,108 @@ export function buildPublicFieldDefinitionAccessor(
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		decorators: (...values: Admit<T.Decorator[]>) =>
-			rebuilt(node, handle, () =>
-				buildPublicFieldDefinitionAccessor({ ...config, decorators: restItems('decorators', values) })
-			),
-		accessibilityModifier: (
-			value?: Admit<NonNullable<T.PublicFieldDefinitionAccessor.Config>['accessibilityModifier']>
-		) => rebuilt(node, handle, () => buildPublicFieldDefinitionAccessor({ ...config, accessibilityModifier: value })),
-		static: (value?: Admit<NonNullable<T.PublicFieldDefinitionAccessor.Config>['static']>) =>
-			rebuilt(node, handle, () => buildPublicFieldDefinitionAccessor({ ...config, static: value })),
-		abstract: (value?: Admit<NonNullable<T.PublicFieldDefinitionAccessor.Config>['abstract']>) =>
-			rebuilt(node, handle, () => buildPublicFieldDefinitionAccessor({ ...config, abstract: value })),
-		override: (value?: Admit<NonNullable<T.PublicFieldDefinitionAccessor.Config>['override']>) =>
-			rebuilt(node, handle, () => buildPublicFieldDefinitionAccessor({ ...config, override: value })),
-		name: (
-			value: Admit<
-				| T.PropertyIdentifier
-				| T.PrivatePropertyIdentifier
-				| T.String
-				| T.Number
-				| T.ComputedPropertyName
-				| T.PropertyIdentifier.Types
-			>
-		) => rebuilt(node, handle, () => buildPublicFieldDefinitionAccessor({ ...config, name: value })),
-		type: (value?: Admit<T.TypeAnnotation>) =>
-			rebuilt(node, handle, () => buildPublicFieldDefinitionAccessor({ ...config, type: value })),
-		value: (value?: Admit<NonNullable<T.PublicFieldDefinitionAccessor.Config>['value']>) =>
-			rebuilt(node, handle, () => buildPublicFieldDefinitionAccessor({ ...config, value: value })),
+		decorators: buildPublicFieldDefinitionAccessor$with$decorators,
+		accessibilityModifier: buildPublicFieldDefinitionAccessor$with$accessibilityModifier,
+		static: buildPublicFieldDefinitionAccessor$with$static,
+		abstract: buildPublicFieldDefinitionAccessor$with$abstract,
+		override: buildPublicFieldDefinitionAccessor$with$override,
+		name: buildPublicFieldDefinitionAccessor$with$name,
+		type: buildPublicFieldDefinitionAccessor$with$type,
+		value: buildPublicFieldDefinitionAccessor$with$value,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.PublicFieldDefinitionAccessor.Bound;
+}
+
+function buildPublicFieldDefinitionAccessor$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.PublicFieldDefinitionAccessor.Config;
+	switch (setter) {
+		case 'decorators':
+			return applySetter(args, (...values: Admit<T.Decorator[]>) =>
+				rebuilt(node, handle, () =>
+					buildPublicFieldDefinitionAccessor({ ...config, decorators: restItems('decorators', values) })
+				)
+			);
+		case 'accessibilityModifier':
+			return applySetter(
+				args,
+				(value?: Admit<NonNullable<T.PublicFieldDefinitionAccessor.Config>['accessibilityModifier']>) =>
+					rebuilt(node, handle, () => buildPublicFieldDefinitionAccessor({ ...config, accessibilityModifier: value }))
+			);
+		case 'static':
+			return applySetter(args, (value?: Admit<NonNullable<T.PublicFieldDefinitionAccessor.Config>['static']>) =>
+				rebuilt(node, handle, () => buildPublicFieldDefinitionAccessor({ ...config, static: value }))
+			);
+		case 'abstract':
+			return applySetter(args, (value?: Admit<NonNullable<T.PublicFieldDefinitionAccessor.Config>['abstract']>) =>
+				rebuilt(node, handle, () => buildPublicFieldDefinitionAccessor({ ...config, abstract: value }))
+			);
+		case 'override':
+			return applySetter(args, (value?: Admit<NonNullable<T.PublicFieldDefinitionAccessor.Config>['override']>) =>
+				rebuilt(node, handle, () => buildPublicFieldDefinitionAccessor({ ...config, override: value }))
+			);
+		case 'name':
+			return applySetter(
+				args,
+				(
+					value: Admit<
+						| T.PropertyIdentifier
+						| T.PrivatePropertyIdentifier
+						| T.String
+						| T.Number
+						| T.ComputedPropertyName
+						| T.PropertyIdentifier.Types
+					>
+				) => rebuilt(node, handle, () => buildPublicFieldDefinitionAccessor({ ...config, name: value }))
+			);
+		case 'type':
+			return applySetter(args, (value?: Admit<T.TypeAnnotation>) =>
+				rebuilt(node, handle, () => buildPublicFieldDefinitionAccessor({ ...config, type: value }))
+			);
+		case 'value':
+			return applySetter(args, (value?: Admit<NonNullable<T.PublicFieldDefinitionAccessor.Config>['value']>) =>
+				rebuilt(node, handle, () => buildPublicFieldDefinitionAccessor({ ...config, value: value }))
+			);
+	}
+	throw new Error(`public_field_definition_accessor has no $with.${setter}`);
+}
+function buildPublicFieldDefinitionAccessor$with$decorators(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildPublicFieldDefinitionAccessor$with(receiverOf(this, '$with.decorators'), 'decorators', args);
+}
+function buildPublicFieldDefinitionAccessor$with$accessibilityModifier(
+	this: Received<Held>,
+	...args: unknown[]
+): unknown {
+	return buildPublicFieldDefinitionAccessor$with(
+		receiverOf(this, '$with.accessibilityModifier'),
+		'accessibilityModifier',
+		args
+	);
+}
+function buildPublicFieldDefinitionAccessor$with$static(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildPublicFieldDefinitionAccessor$with(receiverOf(this, '$with.static'), 'static', args);
+}
+function buildPublicFieldDefinitionAccessor$with$abstract(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildPublicFieldDefinitionAccessor$with(receiverOf(this, '$with.abstract'), 'abstract', args);
+}
+function buildPublicFieldDefinitionAccessor$with$override(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildPublicFieldDefinitionAccessor$with(receiverOf(this, '$with.override'), 'override', args);
+}
+function buildPublicFieldDefinitionAccessor$with$name(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildPublicFieldDefinitionAccessor$with(receiverOf(this, '$with.name'), 'name', args);
+}
+function buildPublicFieldDefinitionAccessor$with$type(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildPublicFieldDefinitionAccessor$with(receiverOf(this, '$with.type'), 'type', args);
+}
+function buildPublicFieldDefinitionAccessor$with$value(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildPublicFieldDefinitionAccessor$with(receiverOf(this, '$with.value'), 'value', args);
 }
 
 export function buildHtmlComment(text: string): T.HtmlComment.Bound {
@@ -14376,13 +18919,10 @@ export function buildJsxText(text: string): T.JsxText.Bound {
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.JsxText.Bound;
 }
 
@@ -14402,13 +18942,10 @@ export function buildTemplateChars(text: string): T.TemplateChars.Bound {
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.TemplateChars.Bound;
 }
 
@@ -14471,23 +19008,51 @@ export function buildConstructorDeclaration(
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		accessibilityModifier: (value?: Admit<NonNullable<T.ConstructorDeclaration.Config>['accessibilityModifier']>) =>
-			rebuilt(node, handle, () => buildConstructorDeclaration({ ...config, accessibilityModifier: value })),
-		parameters: (value: Admit<T.FormalParameters>) =>
-			rebuilt(node, handle, () => buildConstructorDeclaration({ ...config, parameters: value })),
-		body: (value: Admit<T.StatementBlock>) =>
-			rebuilt(node, handle, () => buildConstructorDeclaration({ ...config, body: value })),
+		accessibilityModifier: buildConstructorDeclaration$with$accessibilityModifier,
+		parameters: buildConstructorDeclaration$with$parameters,
+		body: buildConstructorDeclaration$with$body,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.ConstructorDeclaration.Bound;
+}
+
+function buildConstructorDeclaration$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.ConstructorDeclaration.Config;
+	switch (setter) {
+		case 'accessibilityModifier':
+			return applySetter(args, (value?: Admit<NonNullable<T.ConstructorDeclaration.Config>['accessibilityModifier']>) =>
+				rebuilt(node, handle, () => buildConstructorDeclaration({ ...config, accessibilityModifier: value }))
+			);
+		case 'parameters':
+			return applySetter(args, (value: Admit<T.FormalParameters>) =>
+				rebuilt(node, handle, () => buildConstructorDeclaration({ ...config, parameters: value }))
+			);
+		case 'body':
+			return applySetter(args, (value: Admit<T.StatementBlock>) =>
+				rebuilt(node, handle, () => buildConstructorDeclaration({ ...config, body: value }))
+			);
+	}
+	throw new Error(`constructor_declaration has no $with.${setter}`);
+}
+function buildConstructorDeclaration$with$accessibilityModifier(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildConstructorDeclaration$with(
+		receiverOf(this, '$with.accessibilityModifier'),
+		'accessibilityModifier',
+		args
+	);
+}
+function buildConstructorDeclaration$with$parameters(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildConstructorDeclaration$with(receiverOf(this, '$with.parameters'), 'parameters', args);
+}
+function buildConstructorDeclaration$with$body(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildConstructorDeclaration$with(receiverOf(this, '$with.body'), 'body', args);
 }
 
 export function buildReceiverParameterDeclaration<
@@ -14549,32 +19114,82 @@ export function buildReceiverParameterDeclaration(
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		decorators: (...values: Admit<T.Decorator[]>) =>
-			rebuilt(node, handle, () =>
-				buildReceiverParameterDeclaration({ ...config, decorators: restItems('decorators', values) })
-			),
-		accessibilityModifier: (
-			value?: Admit<NonNullable<T.ReceiverParameterDeclaration.Config>['accessibilityModifier']>
-		) => rebuilt(node, handle, () => buildReceiverParameterDeclaration({ ...config, accessibilityModifier: value })),
-		override: (value?: Admit<NonNullable<T.ReceiverParameterDeclaration.Config>['override']>) =>
-			rebuilt(node, handle, () => buildReceiverParameterDeclaration({ ...config, override: value })),
-		readonly: (value?: Admit<NonNullable<T.ReceiverParameterDeclaration.Config>['readonly']>) =>
-			rebuilt(node, handle, () => buildReceiverParameterDeclaration({ ...config, readonly: value })),
-		type: (value?: Admit<T.TypeAnnotation>) =>
-			rebuilt(node, handle, () => buildReceiverParameterDeclaration({ ...config, type: value })),
-		value: (value?: Admit<NonNullable<T.ReceiverParameterDeclaration.Config>['value']>) =>
-			rebuilt(node, handle, () => buildReceiverParameterDeclaration({ ...config, value: value })),
+		decorators: buildReceiverParameterDeclaration$with$decorators,
+		accessibilityModifier: buildReceiverParameterDeclaration$with$accessibilityModifier,
+		override: buildReceiverParameterDeclaration$with$override,
+		readonly: buildReceiverParameterDeclaration$with$readonly,
+		type: buildReceiverParameterDeclaration$with$type,
+		value: buildReceiverParameterDeclaration$with$value,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.ReceiverParameterDeclaration.Bound;
+}
+
+function buildReceiverParameterDeclaration$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.ReceiverParameterDeclaration.Config;
+	switch (setter) {
+		case 'decorators':
+			return applySetter(args, (...values: Admit<T.Decorator[]>) =>
+				rebuilt(node, handle, () =>
+					buildReceiverParameterDeclaration({ ...config, decorators: restItems('decorators', values) })
+				)
+			);
+		case 'accessibilityModifier':
+			return applySetter(
+				args,
+				(value?: Admit<NonNullable<T.ReceiverParameterDeclaration.Config>['accessibilityModifier']>) =>
+					rebuilt(node, handle, () => buildReceiverParameterDeclaration({ ...config, accessibilityModifier: value }))
+			);
+		case 'override':
+			return applySetter(args, (value?: Admit<NonNullable<T.ReceiverParameterDeclaration.Config>['override']>) =>
+				rebuilt(node, handle, () => buildReceiverParameterDeclaration({ ...config, override: value }))
+			);
+		case 'readonly':
+			return applySetter(args, (value?: Admit<NonNullable<T.ReceiverParameterDeclaration.Config>['readonly']>) =>
+				rebuilt(node, handle, () => buildReceiverParameterDeclaration({ ...config, readonly: value }))
+			);
+		case 'type':
+			return applySetter(args, (value?: Admit<T.TypeAnnotation>) =>
+				rebuilt(node, handle, () => buildReceiverParameterDeclaration({ ...config, type: value }))
+			);
+		case 'value':
+			return applySetter(args, (value?: Admit<NonNullable<T.ReceiverParameterDeclaration.Config>['value']>) =>
+				rebuilt(node, handle, () => buildReceiverParameterDeclaration({ ...config, value: value }))
+			);
+	}
+	throw new Error(`receiver_parameter_declaration has no $with.${setter}`);
+}
+function buildReceiverParameterDeclaration$with$decorators(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildReceiverParameterDeclaration$with(receiverOf(this, '$with.decorators'), 'decorators', args);
+}
+function buildReceiverParameterDeclaration$with$accessibilityModifier(
+	this: Received<Held>,
+	...args: unknown[]
+): unknown {
+	return buildReceiverParameterDeclaration$with(
+		receiverOf(this, '$with.accessibilityModifier'),
+		'accessibilityModifier',
+		args
+	);
+}
+function buildReceiverParameterDeclaration$with$override(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildReceiverParameterDeclaration$with(receiverOf(this, '$with.override'), 'override', args);
+}
+function buildReceiverParameterDeclaration$with$readonly(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildReceiverParameterDeclaration$with(receiverOf(this, '$with.readonly'), 'readonly', args);
+}
+function buildReceiverParameterDeclaration$with$type(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildReceiverParameterDeclaration$with(receiverOf(this, '$with.type'), 'type', args);
+}
+function buildReceiverParameterDeclaration$with$value(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildReceiverParameterDeclaration$with(receiverOf(this, '$with.value'), 'value', args);
 }
 
 export function buildFormalParametersElementsReceiver<
@@ -14613,32 +19228,58 @@ export function buildFormalParametersElementsReceiver(
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		receiver: (value: Admit<T.ReceiverParameterDeclaration>) =>
-			rebuilt(node, handle, () => buildFormalParametersElementsReceiver({ ...config, receiver: value })),
-		formalParametersElementsReceiverGroup: (...args: unknown[]) =>
-			rebuilt(node, handle, () =>
-				listSlotWith(
-					args,
-					{
-						kind: TSKindId.FormalParametersElementsReceiverGroup as const,
-						optional: true,
-						make: buildFormalParametersElementsReceiverGroup
-					},
-					(value?: Admit<T.FormalParametersElementsReceiverGroup>) =>
-						buildFormalParametersElementsReceiver({ ...config, formalParametersElementsReceiverGroup: value })
-				)
-			),
+		receiver: buildFormalParametersElementsReceiver$with$receiver,
+		formalParametersElementsReceiverGroup:
+			buildFormalParametersElementsReceiver$with$formalParametersElementsReceiverGroup,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.FormalParametersElementsReceiver.Bound;
+}
+
+function buildFormalParametersElementsReceiver$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.FormalParametersElementsReceiver.Config;
+	switch (setter) {
+		case 'receiver':
+			return applySetter(args, (value: Admit<T.ReceiverParameterDeclaration>) =>
+				rebuilt(node, handle, () => buildFormalParametersElementsReceiver({ ...config, receiver: value }))
+			);
+		case 'formalParametersElementsReceiverGroup':
+			return applySetter(args, (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{
+							kind: TSKindId.FormalParametersElementsReceiverGroup as const,
+							optional: true,
+							make: buildFormalParametersElementsReceiverGroup
+						},
+						(value?: Admit<T.FormalParametersElementsReceiverGroup>) =>
+							buildFormalParametersElementsReceiver({ ...config, formalParametersElementsReceiverGroup: value })
+					)
+				)
+			);
+	}
+	throw new Error(`formal_parameters_elements_receiver has no $with.${setter}`);
+}
+function buildFormalParametersElementsReceiver$with$receiver(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildFormalParametersElementsReceiver$with(receiverOf(this, '$with.receiver'), 'receiver', args);
+}
+function buildFormalParametersElementsReceiver$with$formalParametersElementsReceiverGroup(
+	this: Received<Held>,
+	...args: unknown[]
+): unknown {
+	return buildFormalParametersElementsReceiver$with(
+		receiverOf(this, '$with.formalParametersElementsReceiverGroup'),
+		'formalParametersElementsReceiverGroup',
+		args
+	);
 }
 
 export function buildFormalParametersElementsReceiverGroup<V extends Admit<T.FormalParametersElements>>(
@@ -14726,26 +19367,37 @@ function _buildFormalParametersElementsReceiverGroup(
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		elements: (...args: unknown[]) =>
-			rebuilt(node, handle, () =>
-				listSlotWith(
-					args,
-					{ kind: TSKindId.FormalParametersElements as const, optional: true, make: buildFormalParametersElements },
-					(value?: Admit<T.FormalParametersElements>) => _buildFormalParametersElementsReceiverGroup(value)
-				)
-			),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { elements: buildFormalParametersElementsReceiverGroup$with$elements, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	holdListItems(node, heldItems(listView.list));
 	return node as unknown as T.FormalParametersElementsReceiverGroup.Bound;
+}
+
+function buildFormalParametersElementsReceiverGroup$with(
+	node: Held,
+	setter: string,
+	args: readonly unknown[]
+): unknown {
+	const handle = node[HANDLE];
+	switch (setter) {
+		case 'elements':
+			return applySetter(args, (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{ kind: TSKindId.FormalParametersElements as const, optional: true, make: buildFormalParametersElements },
+						(value?: Admit<T.FormalParametersElements>) => _buildFormalParametersElementsReceiverGroup(value)
+					)
+				)
+			);
+	}
+	throw new Error(`formal_parameters_elements_receiver_group has no $with.${setter}`);
+}
+function buildFormalParametersElementsReceiverGroup$with$elements(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildFormalParametersElementsReceiverGroup$with(receiverOf(this, '$with.elements'), 'elements', args);
 }
 
 export function buildTernaryQmark(text: string): T.TernaryQmark.Bound {
@@ -14762,13 +19414,10 @@ export function buildTernaryQmark(text: string): T.TernaryQmark.Bound {
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.TernaryQmark.Bound;
 }
 
@@ -14786,13 +19435,10 @@ export function buildErrorRecovery(text: string): T.ErrorRecovery.Bound {
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.ErrorRecovery.Bound;
 }
 
@@ -14820,18 +19466,26 @@ export function buildStatementIdentifier(value: Admit<T.Identifier>): T.Statemen
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		content: (value: Admit<T.Identifier>) => rebuilt(node, handle, () => buildStatementIdentifier(value)),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { content: buildStatementIdentifier$with$content, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.StatementIdentifier.Bound;
+}
+
+function buildStatementIdentifier$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	switch (setter) {
+		case 'content':
+			return applySetter(args, (value: Admit<T.Identifier>) =>
+				rebuilt(node, handle, () => buildStatementIdentifier(value))
+			);
+	}
+	throw new Error(`statement_identifier has no $with.${setter}`);
+}
+function buildStatementIdentifier$with$content(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildStatementIdentifier$with(receiverOf(this, '$with.content'), 'content', args);
 }
 
 export function buildShorthandPropertyIdentifier<V extends Admit<T.Identifier>>(
@@ -14858,18 +19512,26 @@ export function buildShorthandPropertyIdentifier(value: Admit<T.Identifier>): T.
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		content: (value: Admit<T.Identifier>) => rebuilt(node, handle, () => buildShorthandPropertyIdentifier(value)),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { content: buildShorthandPropertyIdentifier$with$content, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.ShorthandPropertyIdentifier.Bound;
+}
+
+function buildShorthandPropertyIdentifier$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	switch (setter) {
+		case 'content':
+			return applySetter(args, (value: Admit<T.Identifier>) =>
+				rebuilt(node, handle, () => buildShorthandPropertyIdentifier(value))
+			);
+	}
+	throw new Error(`shorthand_property_identifier has no $with.${setter}`);
+}
+function buildShorthandPropertyIdentifier$with$content(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildShorthandPropertyIdentifier$with(receiverOf(this, '$with.content'), 'content', args);
 }
 
 export function buildShorthandPropertyIdentifierPattern<V extends Admit<T.Identifier>>(
@@ -14898,19 +19560,26 @@ export function buildShorthandPropertyIdentifierPattern(
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		content: (value: Admit<T.Identifier>) =>
-			rebuilt(node, handle, () => buildShorthandPropertyIdentifierPattern(value)),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { content: buildShorthandPropertyIdentifierPattern$with$content, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.ShorthandPropertyIdentifierPattern.Bound;
+}
+
+function buildShorthandPropertyIdentifierPattern$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	switch (setter) {
+		case 'content':
+			return applySetter(args, (value: Admit<T.Identifier>) =>
+				rebuilt(node, handle, () => buildShorthandPropertyIdentifierPattern(value))
+			);
+	}
+	throw new Error(`shorthand_property_identifier_pattern has no $with.${setter}`);
+}
+function buildShorthandPropertyIdentifierPattern$with$content(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildShorthandPropertyIdentifierPattern$with(receiverOf(this, '$with.content'), 'content', args);
 }
 
 export function buildPropertyIdentifierContent<V extends Admit<T.Identifier>>(
@@ -14932,18 +19601,26 @@ export function buildPropertyIdentifierContent(value: Admit<T.Identifier>): T.Pr
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		content: (value: Admit<T.Identifier>) => rebuilt(node, handle, () => buildPropertyIdentifierContent(value)),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { content: buildPropertyIdentifierContent$with$content, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.PropertyIdentifier.Bound;
+}
+
+function buildPropertyIdentifierContent$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	switch (setter) {
+		case 'content':
+			return applySetter(args, (value: Admit<T.Identifier>) =>
+				rebuilt(node, handle, () => buildPropertyIdentifierContent(value))
+			);
+	}
+	throw new Error(`property_identifier has no $with.${setter}`);
+}
+function buildPropertyIdentifierContent$with$content(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildPropertyIdentifierContent$with(receiverOf(this, '$with.content'), 'content', args);
 }
 
 export function buildPropertyIdentifier<V extends string | Parameters<typeof buildPropertyIdentifierContent>[0]>(
@@ -14981,18 +19658,24 @@ export function buildTypeIdentifier(value: Admit<T.Identifier>): T.TypeIdentifie
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		content: (value: Admit<T.Identifier>) => rebuilt(node, handle, () => buildTypeIdentifier(value)),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { content: buildTypeIdentifier$with$content, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.TypeIdentifier.Bound;
+}
+
+function buildTypeIdentifier$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	switch (setter) {
+		case 'content':
+			return applySetter(args, (value: Admit<T.Identifier>) => rebuilt(node, handle, () => buildTypeIdentifier(value)));
+	}
+	throw new Error(`type_identifier has no $with.${setter}`);
+}
+function buildTypeIdentifier$with$content(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildTypeIdentifier$with(receiverOf(this, '$with.content'), 'content', args);
 }
 
 export function buildInterfaceBody<MembersSlot extends ConfigOf<T.InterfaceBody>['members']>(
@@ -15022,29 +19705,53 @@ export function buildInterfaceBody(config: ConfigOf<T.InterfaceBody>): T.Interfa
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		opening: (value: Admit<NonNullable<ConfigOf<T.InterfaceBody>>['opening']>) =>
-			rebuilt(node, handle, () => buildInterfaceBody({ ...config, opening: value })),
-		members: (...args: unknown[]) =>
-			rebuilt(node, handle, () =>
-				listSlotWith(
-					args,
-					{ kind: TSKindId.ObjectTypeContent as const, optional: true, make: buildObjectTypeContent },
-					(value?: Admit<T.ObjectTypeContent>) => buildInterfaceBody({ ...config, members: value })
-				)
-			),
-		closing: (value: Admit<NonNullable<ConfigOf<T.InterfaceBody>>['closing']>) =>
-			rebuilt(node, handle, () => buildInterfaceBody({ ...config, closing: value })),
+		opening: buildInterfaceBody$with$opening,
+		members: buildInterfaceBody$with$members,
+		closing: buildInterfaceBody$with$closing,
 		[RECEIVER]: node
 	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.InterfaceBody.Bound;
+}
+
+function buildInterfaceBody$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const config = node[INPUT] as ConfigOf<T.InterfaceBody>;
+	switch (setter) {
+		case 'opening':
+			return applySetter(args, (value: Admit<NonNullable<ConfigOf<T.InterfaceBody>>['opening']>) =>
+				rebuilt(node, handle, () => buildInterfaceBody({ ...config, opening: value }))
+			);
+		case 'members':
+			return applySetter(args, (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{ kind: TSKindId.ObjectTypeContent as const, optional: true, make: buildObjectTypeContent },
+						(value?: Admit<T.ObjectTypeContent>) => buildInterfaceBody({ ...config, members: value })
+					)
+				)
+			);
+		case 'closing':
+			return applySetter(args, (value: Admit<NonNullable<ConfigOf<T.InterfaceBody>>['closing']>) =>
+				rebuilt(node, handle, () => buildInterfaceBody({ ...config, closing: value }))
+			);
+	}
+	throw new Error(`interface_body has no $with.${setter}`);
+}
+function buildInterfaceBody$with$opening(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildInterfaceBody$with(receiverOf(this, '$with.opening'), 'opening', args);
+}
+function buildInterfaceBody$with$members(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildInterfaceBody$with(receiverOf(this, '$with.members'), 'members', args);
+}
+function buildInterfaceBody$with$closing(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildInterfaceBody$with(receiverOf(this, '$with.closing'), 'closing', args);
 }
 
 export function buildInterfaceBodyCurly<MembersSlot extends T.InterfaceBody.Curly.Config['members']>(
@@ -15074,19 +19781,28 @@ export function buildInterfaceBodyCurly(config?: T.InterfaceBody.Curly.Config): 
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		members: (value?: Admit<T.ObjectTypeContent>) =>
-			rebuilt(node, handle, () => buildInterfaceBodyCurly({ ...config, members: value })),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { members: buildInterfaceBodyCurly$with$members, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.InterfaceBody.Curly.Bound;
+}
+
+function buildInterfaceBodyCurly$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.InterfaceBody.Curly.Config;
+	switch (setter) {
+		case 'members':
+			return applySetter(args, (value?: Admit<T.ObjectTypeContent>) =>
+				rebuilt(node, handle, () => buildInterfaceBodyCurly({ ...config, members: value }))
+			);
+	}
+	throw new Error(`interface_body has no $with.${setter}`);
+}
+function buildInterfaceBodyCurly$with$members(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildInterfaceBodyCurly$with(receiverOf(this, '$with.members'), 'members', args);
 }
 
 export function buildInterfaceBodyFlow<MembersSlot extends T.InterfaceBody.Flow.Config['members']>(
@@ -15116,19 +19832,28 @@ export function buildInterfaceBodyFlow(config?: T.InterfaceBody.Flow.Config): T.
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		members: (value?: Admit<T.ObjectTypeContent>) =>
-			rebuilt(node, handle, () => buildInterfaceBodyFlow({ ...config, members: value })),
-		[RECEIVER]: node
-	};
-	node.$trivia = {
-		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
-	};
+	node.$with = { members: buildInterfaceBodyFlow$with$members, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.InterfaceBody.Flow.Bound;
+}
+
+function buildInterfaceBodyFlow$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.InterfaceBody.Flow.Config;
+	switch (setter) {
+		case 'members':
+			return applySetter(args, (value?: Admit<T.ObjectTypeContent>) =>
+				rebuilt(node, handle, () => buildInterfaceBodyFlow({ ...config, members: value }))
+			);
+	}
+	throw new Error(`interface_body has no $with.${setter}`);
+}
+function buildInterfaceBodyFlow$with$members(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildInterfaceBodyFlow$with(receiverOf(this, '$with.members'), 'members', args);
 }
 
 export const buildThisType: TSKindId.ThisType = TSKindId.ThisType;

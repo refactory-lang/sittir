@@ -3,7 +3,7 @@ import { LIST_VIEW_MEMBERS } from '@sittir/common/utils';
 import { hostTemplateFor } from '@sittir/common';
 import type { ReparseHostsConfig } from '../dsl/wire/reparse-hosts.ts';
 import { REPARSE_HOST_PRIORITY } from '../dsl/wire/reparse-hosts.ts';
-import { groupSeatParts, triviaPositionsOf, listSelfViewParts, nodeMemberParts, ownerViewParts, seatedSetters, triviaInnerImports, type SetterEntry, type StoredAccessor } from './node-members.ts';
+import { groupSeatMembers, groupSeatReaders, triviaPositionsOf, listSelfViewParts, nodeMemberParts, ownerViewParts, seatedSetters, triviaInnerImports, type HeldLocal, type SetterEntry, type StoredAccessor } from './node-members.ts';
 import { findOwnKindEntry, reservedWordset, reservedWordsAdmittedIn } from '../dsl/symbol-table.ts';
 import { GLOBAL_WORDSET } from '../dsl/rule-metadata.ts';
 import type { AuthoredCompound } from '../compiler/model/node-map.ts';
@@ -1842,6 +1842,18 @@ function listContentStorageKey(node: AssembledList): string {
 	return node.slots.length > 1 ? '_content' : canonicalSeparatedListField(node).storageKey;
 }
 
+interface FactoryHeld extends HeldLocal {
+	readonly recorded: string;
+}
+
+function recordInputLines(held: readonly FactoryHeld[]): string[] {
+	return held.map((field) => `  const ${field.local} = ${field.recorded} as ${field.type};`);
+}
+
+function storedRead(hint: GroupSeatHint): string {
+	return `(node as unknown as Readonly<Record<string, object | undefined>>)[${JSON.stringify(hint.stored)}]`;
+}
+
 function builderHandleLines(kind: string, slots: readonly (readonly [name: string, storage: string])[]): string[] {
 	const handle = '  const handle = currentHandle();';
 	if (slots.length === 0) return [handle];
@@ -1996,23 +2008,23 @@ function fieldCarryingFactoryText(
 		}
 	}
 	const view = plan.viewPlan === undefined || owner === undefined ? undefined : ownerViewParts(plan.viewPlan, owner.storage, owner.accessor, 'factory', fn);
-	const groups = groupSeatParts(plan, (hint) => `() => ${hint.stored}`);
-	lines.push(...(view?.prelude ?? []), ...(backend === 'records' ? [] : groups.prelude));
+	lines.push(...(view?.prelude ?? []));
 	lines.push(...builderHandleLines(node.kind, slotsToEmit.map((f) => [f.propertyName, f.storageKey] as const)));
 	const seated = seatedSetters(inSlotOrder(setters, node.slots), plan);
 	const trivia = triviaPositionsOf(typeKind, nodeMap);
 	const check = delimitedCheckCall(node, slotsToEmit, leafReConsts);
 	const typeExpr = factoryTypeDiscriminant(typeKind, nodeMap, kindEntries);
+	const optionsType = leadingOptions?.type ?? `T.${node.typeName}.Options`;
+	const held: FactoryHeld[] = [
+		...(spreadFacts !== null && registered.length > 0 ? [{ local: 'children', type: strictParamType(surface.param), key: 'INPUT' as const, recorded: 'inputs.elements' }] : []),
+		...(singleField !== undefined && registered.length > 0
+			? [{ local: 'value', type: valueType, key: 'INPUT' as const, recorded: `inputs.config[${JSON.stringify(singleField.propertyName)}]` }]
+			: []),
+		...(spreadFacts === null && singleField === undefined && setters.length > 0 ? [{ local: 'config', type: configType, key: 'INPUT' as const, recorded: 'inputs.config' }] : []),
+		...(leadingOptions !== undefined || registered.length > 0 ? [{ local: 'options', type: optionsType, key: 'OPTIONS' as const, recorded: 'inputs.options' }] : [])
+	];
 	if (backend === 'records') {
-		const optionsType = leadingOptions?.type ?? `T.${node.typeName}.Options`;
-		const takesOptions = leadingOptions !== undefined || registered.length > 0;
-		const inputs = [
-			...(spreadFacts !== null && registered.length > 0 ? [`  const children = inputs.elements as ${strictParamType(surface.param)};`] : []),
-			...(singleField !== undefined && registered.length > 0 ? [`  const value = inputs.config[${JSON.stringify(singleField.propertyName)}] as ${valueType};`] : []),
-			...(spreadFacts === null && singleField === undefined && setters.length > 0 ? [`  const config = inputs.config as ${configType};`] : []),
-			...(takesOptions ? [`  const options = inputs.options as ${optionsType};`] : []),
-			...groupSeatParts(plan, (hint) => `() => inputs.config[${JSON.stringify(hint.slot)}] as object | undefined`).prelude
-		];
+		const inputs = [...recordInputLines(held), ...groupSeatReaders(plan, (hint) => `inputs.config[${JSON.stringify(hint.slot)}] as object | undefined`)];
 		const parts = recordParts({ node, kind: typeExpr, slots: slotsToEmit, setters: seated, inputs, check, result: builtName }, nodeMap, viewTable(views));
 		if (parts.patchTail !== undefined) after.push(renameUnusedConfigParam(patchTwinLines(lines, fn, forwardTarget === null ? fn : `_${fn}`, parts.patchTail)));
 		lines.push(...parts.tail);
@@ -2024,9 +2036,9 @@ function fieldCarryingFactoryText(
 			lines.push(`    ${f.storageKey},`);
 		}
 		const members = nodeMemberParts({
-			setters: seated,
+			setters: { kind: node.kind, prefix: fn, entries: seated, held, readers: groupSeatReaders(plan, storedRead) },
 			accessors: slotsToEmit.map((f) => storedAccessor(f.propertyName, f.storageKey, f, nodeMap)),
-			extra: [...(view?.members ?? []), ...groups.members],
+			extra: [...(view?.members ?? []), ...groupSeatMembers(plan, (hint) => hint.stored)],
 			tail: view?.tail,
 			trivia
 		});
@@ -2034,6 +2046,7 @@ function fieldCarryingFactoryText(
 		lines.push(...(view?.postlude ?? []));
 		if (check !== undefined) lines.push(`  ${check};`);
 		lines.push(`  return node as unknown as ${builtName};`);
+		after.push(...members.hoisted);
 	}
 	lines.push('}');
 
@@ -2239,6 +2252,7 @@ function emitRefineFormFactory(
 	lines.push(...builderHandleLines(node.kind, allSlots.map((f) => [f.propertyName, f.storageKey] as const)));
 	const typeExpr = factoryTypeDiscriminant(node.kind, nodeMap, kindEntries);
 	const trivia = triviaPositionsOf(node.kind, nodeMap);
+	const hoisted: string[] = [];
 	if (backend === 'records') {
 		lines.push(...recordParts({ node, kind: typeExpr, slots: allSlots, setters: formSetters, inputs: 'kind', result: formBuiltName }, nodeMap, viewTable(views)).tail);
 	} else {
@@ -2247,16 +2261,22 @@ function emitRefineFormFactory(
 		for (const f of allSlots) {
 			lines.push(`    ${f.storageKey},`);
 		}
+		const held: HeldLocal[] = [
+			{ local: 'config', type: formConfigType, key: 'INPUT' },
+			...(registered.length === 0 ? [] : [{ local: 'options', type: `T.${info.typeName}.${formShortName}.Options`, key: 'OPTIONS' as const }])
+		];
 		const members = nodeMemberParts({
-			setters: formSetters,
+			setters: { kind: node.kind, prefix: formFn, entries: formSetters, held },
 			accessors: allSlots.map((f) => storedAccessor(f.propertyName, f.storageKey, f, nodeMap)),
 			trivia
 		});
 		lines.push(...members.members, '  };', ...members.after);
 		lines.push(`  return node as unknown as ${formBuiltName};`);
+		hoisted.push(...members.hoisted);
 	}
 	lines.push('}');
-	return renameUnusedConfigParam(lines);
+	const text = renameUnusedConfigParam(lines);
+	return hoisted.length === 0 ? text : [text, '', ...hoisted].join('\n');
 }
 
 export function refineFormBuiltTypeSurfaceOf(
@@ -2897,6 +2917,10 @@ function emitSeparatedListFactory(
 		const seated = seatedSetters(setters, plan);
 		const trivia = triviaPositionsOf(node.kind, nodeMap);
 		const after: string[] = [];
+		const held: FactoryHeld[] = [
+			...(hasSeparatorKindOption || hasDelimiterOption ? [{ local: 'elements', type: elementsType, key: 'INPUT' as const, recorded: 'inputs.elements' }] : []),
+			...(hasOptions ? [{ local: 'options', type: optionsType, key: 'OPTIONS' as const, recorded: 'inputs.options' }] : [])
+		];
 		if (backend === 'records' && canonical === undefined) {
 			lines.push(...recordRefusalLines(node));
 		} else if (backend === 'records') {
@@ -2907,10 +2931,7 @@ function emitSeparatedListFactory(
 					slots: [canonical!],
 					listOptions: { delimiter: hasDelimiterOption, separator: hasSeparatorKindOption },
 					setters: seated,
-					inputs: [
-						...(hasSeparatorKindOption || hasDelimiterOption ? [`  const elements = inputs.elements as ${elementsType};`] : []),
-						...(hasOptions ? [`  const options = inputs.options as ${optionsType};`] : [])
-					],
+					inputs: recordInputLines(held),
 					result: listBuiltName
 				},
 				nodeMap,
@@ -2926,7 +2947,7 @@ function emitSeparatedListFactory(
 			if (hasSeparatorKindOption) lines.push('    _separator,');
 			if (hasDelimiterOption) lines.push('    _delimiter,');
 			const members = nodeMemberParts({
-				setters: seated,
+				setters: { kind: node.kind, prefix: fn, entries: seated, held },
 				accessors: [storedAccessor(contentAccessorName, contentStorageKey, buildSeparatedListContentSlot(node), nodeMap)],
 				extra: view.members,
 				tail: view.tail,
@@ -2935,6 +2956,7 @@ function emitSeparatedListFactory(
 			lines.push(...members.members, '  };', ...members.after);
 			lines.push(...view.postlude);
 			lines.push(`  return node as unknown as ${listBuiltName};`);
+			after.push(...members.hoisted);
 		}
 		lines.push('}');
 		return [...lines, ...(after.length === 0 ? [] : ['', ...after])].join('\n');
@@ -3036,7 +3058,8 @@ export class FactoryEmitter implements CodegenEmitter<string> {
 		const storageCoercionImports = collectStorageCoercionImports(nodeMap, kindEntries);
 		lines.push(`import type { ${SITTIR_TYPES_IMPORT_CANDIDATES.join(', ')} } from '@sittir/types';`);
 		if (hasDelimited(nodeMap)) lines.push(`import type { DelimitedSpec } from '@sittir/common/utils';`);
-		const utilsImports = ['currentHandle', 'admitChildren', ...(hasDelimited(nodeMap) ? ['checkDelimited'] : []), ...seatedSetterImports(nodeMap, kindEntries), 'rebuilt', 'renderText', 'refuseJSON', 'releaseNothing', 'RECEIVER', 'SOURCE', 'Source', 'hydrateStoredSlot', 'hydrateStoredSlots', 'triviaSide', ...triviaInnerImports(nodeMap), 'describeValue', 'restItems', ...blankArmImports(nodeMap), ...(usesElementWrap ? ['isNodeOfKind'] : []), ...storageCoercionImports];
+		lines.push(`import type { ${OBJECT_MEMBER_TYPES.join(', ')} } from '@sittir/common/utils';`);
+		const utilsImports = ['currentHandle', 'admitChildren', ...(hasDelimited(nodeMap) ? ['checkDelimited'] : []), ...seatedSetterImports(nodeMap, kindEntries), 'rebuilt', 'renderText', 'refuseJSON', 'releaseNothing', 'RECEIVER', 'SOURCE', 'Source', 'hydrateStoredSlot', 'hydrateStoredSlots', ...OBJECT_MEMBER_VALUES, ...triviaInnerImports(nodeMap), 'describeValue', 'restItems', ...blankArmImports(nodeMap), ...(usesElementWrap ? ['isNodeOfKind'] : []), ...storageCoercionImports];
 		const utilsImportAt = lines.length;
 		lines.push(utilsImportLine(utilsImports));
 		lines.push('');
@@ -3195,9 +3218,12 @@ export class FactoryEmitter implements CodegenEmitter<string> {
 		if (backend === 'records') lines.push(...this.#views.tableLines(), '');
 
 		const tailImports = backend === 'records' ? ['DelimitedSpec', ...this.#utilsImports, ...RECORD_CONSTRUCTION_IMPORTS, ...RECORD_VIEW_TYPES] : [];
-		return pruneUnusedImports(lines, ['Delimiter', 'describeValue', ...SITTIR_TYPES_IMPORT_CANDIDATES, ...tailImports]).join('\n');
+		return pruneUnusedImports(lines, ['Delimiter', 'describeValue', ...SITTIR_TYPES_IMPORT_CANDIDATES, ...OBJECT_MEMBER_VALUES, 'objectInner', ...OBJECT_MEMBER_TYPES, ...tailImports]).join('\n');
 	}
 
 }
+
+const OBJECT_MEMBER_VALUES = ['HANDLE', 'INPUT', 'OPTIONS', 'receiverOf', 'applySetter', 'objectLeading', 'objectTrailing'];
+const OBJECT_MEMBER_TYPES = ['Held', 'Received'];
 
 const SITTIR_TYPES_IMPORT_CANDIDATES = ['Admit', 'ListOptions', 'AnyUntypedNode', 'ConfigOf', 'LooseValue', 'NonEmptyArray', 'NumericConfig', 'NumericLiteral', 'RefuseUndeclared', 'RefusingConfig', 'WidenSlots'];

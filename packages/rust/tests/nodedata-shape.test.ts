@@ -21,6 +21,7 @@
 import { describe, it, expect } from 'vitest';
 import rust from '../src/index.ts';
 import { createEngine, Source, sourceOf } from '@sittir/common';
+import { HANDLE } from '@sittir/common/utils';
 
 const rs = await createEngine(rust, { nodeStorage: 'object' });
 const verifying = await createEngine(rust, { verifyStructure: 'runtime', nodeStorage: 'object' });
@@ -180,10 +181,10 @@ describe('$with namespace', () => {
 		const original = verifying.build.functionItem({ name: 'original', parameters: [], body: minimalBlock } as any);
 		const withNs = (original as unknown as Record<string, unknown>)['$with'] as Record<string, unknown>;
 		expect(withNs).toBeDefined();
-		const nameFn = withNs['name'] as (v: unknown) => unknown;
-		expect(typeof nameFn).toBe('function');
-		expect(() => nameFn('updated')).toThrow(/a strict factory takes a built node, not a string/);
-		const updated = nameFn(rs.build.identifier('updated')) as unknown as { $render(): string };
+		const setters = withNs as { name(v: unknown): unknown };
+		expect(typeof setters.name).toBe('function');
+		expect(() => setters.name('updated')).toThrow(/a strict factory takes a built node, not a string/);
+		const updated = setters.name(rs.build.identifier('updated')) as unknown as { $render(): string };
 		expect(updated.$render()).toContain('updated');
 	});
 
@@ -257,5 +258,43 @@ describe('$fields absent from factory output', () => {
 	it.each(nodes.map((n, i) => [`node[${i}]`, n] as const))('SC-001: %s has no $fields key', (_label, n) => {
 		expect((n as unknown as Record<string, unknown>)['$fields']).toBeUndefined();
 		expect(Object.keys(n)).not.toContain('$fields');
+	});
+});
+
+// ---------- object storage: shared members ----------
+
+type Members = Record<string, unknown>;
+const membersOf = (node: object, member: '$with' | '$trivia'): Members => (node as unknown as Record<string, Members>)[member]!;
+
+describe('object storage: a kind shares its member functions, and a spread copy is a node', () => {
+	const statement = (name: string) => rs.build.expressionStatement(rs.build.identifier(name));
+	const built = () => [rs.build.block({ statements: [] }), rs.build.block({ statements: [statement('a')] })] as const;
+	const read = () => [rs.parse('fn f() {}\n'), rs.parse('fn g() { h(); }\n')] as const;
+
+	it.each([
+		['built', built],
+		['read', read]
+	] as const)('two %s nodes of one kind call the same $with and $trivia functions', (_label, pair) => {
+		const [a, b] = pair();
+		for (const member of ['$with', '$trivia'] as const) {
+			const names = Object.keys(membersOf(a, member));
+			expect(names.length).toBeGreaterThan(0);
+			for (const name of names) expect(membersOf(a, member)[name]).toBe(membersOf(b, member)[name]);
+		}
+	});
+
+	it('a spread copy of a built or read node carries its handle, renders, edits and is a child as the node is', () => {
+		const block = rs.build.block({ statements: [statement('a')] });
+		const file = rs.parse('fn f() { a; }\n');
+		for (const node of [block, file] as const) {
+			const copy = { ...node };
+			expect((copy as unknown as Record<symbol, unknown>)[HANDLE]).toBe((node as unknown as Record<symbol, unknown>)[HANDLE]);
+			expect(copy.$render()).toBe(node.$render());
+			expect(copy.$trivia.leading()).toEqual(node.$trivia.leading());
+		}
+		expect({ ...block }.$with.statements(statement('b')).$render()).toBe(block.$with.statements(statement('b')).$render());
+		expect({ ...file }.$with.statements(...file.statements()).$render()).toBe(file.$with.statements(...file.statements()).$render());
+		const fn = (body: object) => rs.build.functionItem({ name: 'f', parameters: rs.build.parameters(), body } as never).$render();
+		expect(fn({ ...block })).toBe(fn(block));
 	});
 });

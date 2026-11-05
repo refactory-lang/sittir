@@ -131,7 +131,7 @@ describe('factories emitter — separatedList', () => {
 		expect(emitted).toContain('const _delimiter = options.delimiter;');
 		expect(emitted).toContain('const _separator = options.separator;');
 		expect(emitted).not.toContain('options.separator ??');
-		expect(emitted).toContain('separator: (v: TSKindId.Comma | TSKindId.Semi) =>');
+		expect(emitted).toMatch(/case "separator":\s+return applySetter\(args, \(v: TSKindId\.Comma \| TSKindId\.Semi\) =>/);
 		expect(emitted).not.toContain('Record<string, number>');
 	});
 
@@ -220,7 +220,7 @@ describe('factories emitter — separatedList', () => {
 		// Same guard applies to the element setter's rest-param type. The
 		// setter is named after the canonical element slot — `content` when
 		// the grammar left it unnamed — not a sigil.
-		expect(emitted).toContain('content: (...vs: Admit<T.MemberA | T.MemberB>[])');
+		expect(emitted).toMatch(/case "content":\s+return applySetter\(args, \(\.\.\.vs: Admit<T\.MemberA \| T\.MemberB>\[\]\) =>/);
 	});
 
 	it('an envelope forwarding to a repeat1 separated list gets the options-first overload, then the NonEmptyArray elements-only overload declared last', () => {
