@@ -65,12 +65,18 @@ export function buildProgram(...children: Admit<T.Definition[]>): T.Program.Boun
 	return node as unknown as T.Program.Bound;
 }
 
-function buildProgram$with$definitions(this: Received<Held>, ...args: unknown[]): unknown {
-	const node = receiverOf(this, '$with.definitions');
+function buildProgram$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
-	return applySetter(args, (...vs: Admit<T.Definition>[]) =>
-		rebuilt(node, handle, () => buildProgram(...restItems('definitions', vs)))
-	);
+	switch (setter) {
+		case 'definitions':
+			return applySetter(args, (...vs: Admit<T.Definition>[]) =>
+				rebuilt(node, handle, () => buildProgram(...restItems('definitions', vs)))
+			);
+	}
+	throw new Error(`program has no $with.${setter}`);
+}
+function buildProgram$with$definitions(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildProgram$with(receiverOf(this, '$with.definitions'), 'definitions', args);
 }
 
 export function buildEscapeSequence(content: string, affix?: true): T.EscapeSequence.Bound;
@@ -109,10 +115,16 @@ export function buildEscapeSequence(input: string, affix: boolean = true): T.Esc
 	return node as unknown as T.EscapeSequence.Bound;
 }
 
-function buildEscapeSequence$with$content(this: Received<Held>, ...args: unknown[]): unknown {
-	const node = receiverOf(this, '$with.content');
+function buildEscapeSequence$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
-	return applySetter(args, (value: Admit<string>) => rebuilt(node, handle, () => buildEscapeSequence(value)));
+	switch (setter) {
+		case 'content':
+			return applySetter(args, (value: Admit<string>) => rebuilt(node, handle, () => buildEscapeSequence(value)));
+	}
+	throw new Error(`escape_sequence has no $with.${setter}`);
+}
+function buildEscapeSequence$with$content(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildEscapeSequence$with(receiverOf(this, '$with.content'), 'content', args);
 }
 
 export function buildIdentifier(text: string): T.Identifier.Bound {
@@ -186,10 +198,18 @@ export function buildCapture(value: Admit<T.ImmediateIdentifier>): T.Capture.Bou
 	return node as unknown as T.Capture.Bound;
 }
 
-function buildCapture$with$name(this: Received<Held>, ...args: unknown[]): unknown {
-	const node = receiverOf(this, '$with.name');
+function buildCapture$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
-	return applySetter(args, (value: Admit<T.ImmediateIdentifier>) => rebuilt(node, handle, () => buildCapture(value)));
+	switch (setter) {
+		case 'name':
+			return applySetter(args, (value: Admit<T.ImmediateIdentifier>) =>
+				rebuilt(node, handle, () => buildCapture(value))
+			);
+	}
+	throw new Error(`capture has no $with.${setter}`);
+}
+function buildCapture$with$name(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildCapture$with(receiverOf(this, '$with.name'), 'name', args);
 }
 
 export function buildString<V extends Admit<T.StringContent>>(
@@ -235,10 +255,16 @@ function _buildString(value?: Admit<T.StringContent>): T.String.Bound {
 	return node as unknown as T.String.Bound;
 }
 
-function buildString$with$stringContent(this: Received<Held>, ...args: unknown[]): unknown {
-	const node = receiverOf(this, '$with.stringContent');
+function buildString$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
-	return applySetter(args, (value?: Admit<T.StringContent>) => rebuilt(node, handle, () => _buildString(value)));
+	switch (setter) {
+		case 'stringContent':
+			return applySetter(args, (value?: Admit<T.StringContent>) => rebuilt(node, handle, () => _buildString(value)));
+	}
+	throw new Error(`string has no $with.${setter}`);
+}
+function buildString$with$stringContent(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildString$with(receiverOf(this, '$with.stringContent'), 'stringContent', args);
 }
 
 export function buildImmediateString<V extends Admit<T.StringContent>>(
@@ -286,12 +312,18 @@ function _buildImmediateString(value?: Admit<T.StringContent>): T.ImmediateStrin
 	return node as unknown as T.ImmediateString.Bound;
 }
 
-function buildImmediateString$with$stringContent(this: Received<Held>, ...args: unknown[]): unknown {
-	const node = receiverOf(this, '$with.stringContent');
+function buildImmediateString$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
-	return applySetter(args, (value?: Admit<T.StringContent>) =>
-		rebuilt(node, handle, () => _buildImmediateString(value))
-	);
+	switch (setter) {
+		case 'stringContent':
+			return applySetter(args, (value?: Admit<T.StringContent>) =>
+				rebuilt(node, handle, () => _buildImmediateString(value))
+			);
+	}
+	throw new Error(`immediate_string has no $with.${setter}`);
+}
+function buildImmediateString$with$stringContent(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildImmediateString$with(receiverOf(this, '$with.stringContent'), 'stringContent', args);
 }
 
 export function buildStringContent<A extends NonEmptyArray<Admit<T.StringContentText | T.EscapeSequence>>>(
@@ -324,12 +356,18 @@ export function buildStringContent(
 	return node as unknown as T.StringContent.Bound;
 }
 
-function buildStringContent$with$contents(this: Received<Held>, ...args: unknown[]): unknown {
-	const node = receiverOf(this, '$with.contents');
+function buildStringContent$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
-	return applySetter(args, (...vs: NonEmptyArray<Admit<T.StringContentText | T.EscapeSequence>>) =>
-		rebuilt(node, handle, () => buildStringContent(...restItems('contents', vs)))
-	);
+	switch (setter) {
+		case 'contents':
+			return applySetter(args, (...vs: NonEmptyArray<Admit<T.StringContentText | T.EscapeSequence>>) =>
+				rebuilt(node, handle, () => buildStringContent(...restItems('contents', vs)))
+			);
+	}
+	throw new Error(`string_content has no $with.${setter}`);
+}
+function buildStringContent$with$contents(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildStringContent$with(receiverOf(this, '$with.contents'), 'contents', args);
 }
 
 export function buildParameters<A extends NonEmptyArray<Admit<T.Capture | T.String | T.Identifier>>>(
@@ -362,12 +400,18 @@ export function buildParameters(
 	return node as unknown as T.Parameters.Bound;
 }
 
-function buildParameters$with$elements(this: Received<Held>, ...args: unknown[]): unknown {
-	const node = receiverOf(this, '$with.elements');
+function buildParameters$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
-	return applySetter(args, (...vs: NonEmptyArray<Admit<T.Capture | T.String | T.Identifier>>) =>
-		rebuilt(node, handle, () => buildParameters(...restItems('elements', vs)))
-	);
+	switch (setter) {
+		case 'elements':
+			return applySetter(args, (...vs: NonEmptyArray<Admit<T.Capture | T.String | T.Identifier>>) =>
+				rebuilt(node, handle, () => buildParameters(...restItems('elements', vs)))
+			);
+	}
+	throw new Error(`parameters has no $with.${setter}`);
+}
+function buildParameters$with$elements(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildParameters$with(receiverOf(this, '$with.elements'), 'elements', args);
 }
 
 export function buildComment(content: string, affix?: true): T.Comment.Bound;
@@ -403,10 +447,16 @@ export function buildComment(input: string, affix: boolean = true): T.Comment.Bo
 	return node as unknown as T.Comment.Bound;
 }
 
-function buildComment$with$content(this: Received<Held>, ...args: unknown[]): unknown {
-	const node = receiverOf(this, '$with.content');
+function buildComment$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
-	return applySetter(args, (value: Admit<string>) => rebuilt(node, handle, () => buildComment(value)));
+	switch (setter) {
+		case 'content':
+			return applySetter(args, (value: Admit<string>) => rebuilt(node, handle, () => buildComment(value)));
+	}
+	throw new Error(`comment has no $with.${setter}`);
+}
+function buildComment$with$content(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildComment$with(receiverOf(this, '$with.content'), 'content', args);
 }
 
 export function buildList<
@@ -442,21 +492,26 @@ export function buildList(config: T.List.Config): T.List.Bound {
 	return node as unknown as T.List.Bound;
 }
 
-function buildList$with$definitions(this: Received<Held>, ...args: unknown[]): unknown {
-	const node = receiverOf(this, '$with.definitions');
+function buildList$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
 	const config = node[INPUT] as T.List.Config;
-	return applySetter(args, (...values: Admit<NonEmptyArray<T.Definition>>) =>
-		rebuilt(node, handle, () => buildList({ ...config, definitions: restItems('definitions', values) }))
-	);
+	switch (setter) {
+		case 'definitions':
+			return applySetter(args, (...values: Admit<NonEmptyArray<T.Definition>>) =>
+				rebuilt(node, handle, () => buildList({ ...config, definitions: restItems('definitions', values) }))
+			);
+		case 'elements':
+			return applySetter(args, (...values: Admit<T.ListElement[]>) =>
+				rebuilt(node, handle, () => buildList({ ...config, elements: restItems('elements', values) }))
+			);
+	}
+	throw new Error(`list has no $with.${setter}`);
+}
+function buildList$with$definitions(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildList$with(receiverOf(this, '$with.definitions'), 'definitions', args);
 }
 function buildList$with$elements(this: Received<Held>, ...args: unknown[]): unknown {
-	const node = receiverOf(this, '$with.elements');
-	const handle = node[HANDLE];
-	const config = node[INPUT] as T.List.Config;
-	return applySetter(args, (...values: Admit<T.ListElement[]>) =>
-		rebuilt(node, handle, () => buildList({ ...config, elements: restItems('elements', values) }))
-	);
+	return buildList$with(receiverOf(this, '$with.elements'), 'elements', args);
 }
 
 export function buildGrouping<
@@ -498,28 +553,33 @@ export function buildGrouping(config: T.Grouping.Config): T.Grouping.Bound {
 	return node as unknown as T.Grouping.Bound;
 }
 
-function buildGrouping$with$groupingGroups(this: Received<Held>, ...args: unknown[]): unknown {
-	const node = receiverOf(this, '$with.groupingGroups');
+function buildGrouping$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
 	const config = node[INPUT] as T.Grouping.Config;
-	return applySetter(args, (...args: unknown[]) =>
-		rebuilt(node, handle, () =>
-			elementsWith(
-				args,
-				{ slot: 'groupingGroups', keys: ['groupExpression', 'anchor'], make: buildGroupingGroup },
-				(...values: Admit<NonEmptyArray<T.GroupingGroup>>) =>
-					buildGrouping({ ...config, groupingGroups: restItems('groupingGroups', values) })
-			)
-		)
-	);
+	switch (setter) {
+		case 'groupingGroups':
+			return applySetter(args, (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					elementsWith(
+						args,
+						{ slot: 'groupingGroups', keys: ['groupExpression', 'anchor'], make: buildGroupingGroup },
+						(...values: Admit<NonEmptyArray<T.GroupingGroup>>) =>
+							buildGrouping({ ...config, groupingGroups: restItems('groupingGroups', values) })
+					)
+				)
+			);
+		case 'elements':
+			return applySetter(args, (...values: Admit<T.ListElement[]>) =>
+				rebuilt(node, handle, () => buildGrouping({ ...config, elements: restItems('elements', values) }))
+			);
+	}
+	throw new Error(`grouping has no $with.${setter}`);
+}
+function buildGrouping$with$groupingGroups(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildGrouping$with(receiverOf(this, '$with.groupingGroups'), 'groupingGroups', args);
 }
 function buildGrouping$with$elements(this: Received<Held>, ...args: unknown[]): unknown {
-	const node = receiverOf(this, '$with.elements');
-	const handle = node[HANDLE];
-	const config = node[INPUT] as T.Grouping.Config;
-	return applySetter(args, (...values: Admit<T.ListElement[]>) =>
-		rebuilt(node, handle, () => buildGrouping({ ...config, elements: restItems('elements', values) }))
-	);
+	return buildGrouping$with(receiverOf(this, '$with.elements'), 'elements', args);
 }
 
 export function buildMissingNode(): T.EmptyMissingNode;
@@ -558,21 +618,26 @@ export function buildMissingNode(config: Partial<T.MissingNode.Config> = {}): T.
 	return node as unknown as T.MissingNode.Bound;
 }
 
-function buildMissingNode$with$name(this: Received<Held>, ...args: unknown[]): unknown {
-	const node = receiverOf(this, '$with.name');
+function buildMissingNode$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
 	const config = node[INPUT] as T.MissingNode.Config;
-	return applySetter(args, (value?: Admit<T.Identifier | T.String>) =>
-		rebuilt(node, handle, () => buildMissingNode({ ...config, name: value }))
-	);
+	switch (setter) {
+		case 'name':
+			return applySetter(args, (value?: Admit<T.Identifier | T.String>) =>
+				rebuilt(node, handle, () => buildMissingNode({ ...config, name: value }))
+			);
+		case 'elements':
+			return applySetter(args, (...values: Admit<T.ListElement[]>) =>
+				rebuilt(node, handle, () => buildMissingNode({ ...config, elements: restItems('elements', values) }))
+			);
+	}
+	throw new Error(`missing_node has no $with.${setter}`);
+}
+function buildMissingNode$with$name(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildMissingNode$with(receiverOf(this, '$with.name'), 'name', args);
 }
 function buildMissingNode$with$elements(this: Received<Held>, ...args: unknown[]): unknown {
-	const node = receiverOf(this, '$with.elements');
-	const handle = node[HANDLE];
-	const config = node[INPUT] as T.MissingNode.Config;
-	return applySetter(args, (...values: Admit<T.ListElement[]>) =>
-		rebuilt(node, handle, () => buildMissingNode({ ...config, elements: restItems('elements', values) }))
-	);
+	return buildMissingNode$with(receiverOf(this, '$with.elements'), 'elements', args);
 }
 
 export function buildAnonymousNode<
@@ -608,21 +673,26 @@ export function buildAnonymousNode(config: T.AnonymousNode.Config): T.AnonymousN
 	return node as unknown as T.AnonymousNode.Bound;
 }
 
-function buildAnonymousNode$with$name(this: Received<Held>, ...args: unknown[]): unknown {
-	const node = receiverOf(this, '$with.name');
+function buildAnonymousNode$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
 	const config = node[INPUT] as T.AnonymousNode.Config;
-	return applySetter(args, (value: Admit<NonNullable<T.AnonymousNode.Config>['name']>) =>
-		rebuilt(node, handle, () => buildAnonymousNode({ ...config, name: value }))
-	);
+	switch (setter) {
+		case 'name':
+			return applySetter(args, (value: Admit<NonNullable<T.AnonymousNode.Config>['name']>) =>
+				rebuilt(node, handle, () => buildAnonymousNode({ ...config, name: value }))
+			);
+		case 'elements':
+			return applySetter(args, (...values: Admit<T.ListElement[]>) =>
+				rebuilt(node, handle, () => buildAnonymousNode({ ...config, elements: restItems('elements', values) }))
+			);
+	}
+	throw new Error(`anonymous_node has no $with.${setter}`);
+}
+function buildAnonymousNode$with$name(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildAnonymousNode$with(receiverOf(this, '$with.name'), 'name', args);
 }
 function buildAnonymousNode$with$elements(this: Received<Held>, ...args: unknown[]): unknown {
-	const node = receiverOf(this, '$with.elements');
-	const handle = node[HANDLE];
-	const config = node[INPUT] as T.AnonymousNode.Config;
-	return applySetter(args, (...values: Admit<T.ListElement[]>) =>
-		rebuilt(node, handle, () => buildAnonymousNode({ ...config, elements: restItems('elements', values) }))
-	);
+	return buildAnonymousNode$with(receiverOf(this, '$with.elements'), 'elements', args);
 }
 
 export function buildFieldDefinition<
@@ -664,21 +734,26 @@ export function buildFieldDefinition(config: T.FieldDefinition.Config): T.FieldD
 	return node as unknown as T.FieldDefinition.Bound;
 }
 
-function buildFieldDefinition$with$name(this: Received<Held>, ...args: unknown[]): unknown {
-	const node = receiverOf(this, '$with.name');
+function buildFieldDefinition$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
 	const config = node[INPUT] as T.FieldDefinition.Config;
-	return applySetter(args, (value: Admit<T.Identifier>) =>
-		rebuilt(node, handle, () => buildFieldDefinition({ ...config, name: value }))
-	);
+	switch (setter) {
+		case 'name':
+			return applySetter(args, (value: Admit<T.Identifier>) =>
+				rebuilt(node, handle, () => buildFieldDefinition({ ...config, name: value }))
+			);
+		case 'definition':
+			return applySetter(args, (value: Admit<T.Definition>) =>
+				rebuilt(node, handle, () => buildFieldDefinition({ ...config, definition: value }))
+			);
+	}
+	throw new Error(`field_definition has no $with.${setter}`);
+}
+function buildFieldDefinition$with$name(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildFieldDefinition$with(receiverOf(this, '$with.name'), 'name', args);
 }
 function buildFieldDefinition$with$definition(this: Received<Held>, ...args: unknown[]): unknown {
-	const node = receiverOf(this, '$with.definition');
-	const handle = node[HANDLE];
-	const config = node[INPUT] as T.FieldDefinition.Config;
-	return applySetter(args, (value: Admit<T.Definition>) =>
-		rebuilt(node, handle, () => buildFieldDefinition({ ...config, definition: value }))
-	);
+	return buildFieldDefinition$with(receiverOf(this, '$with.definition'), 'definition', args);
 }
 
 export function buildNegatedField<V extends Admit<T.Identifier>>(value: V & RefuseUndeclared<V>): T.NegatedField.Bound;
@@ -706,10 +781,16 @@ export function buildNegatedField(value: Admit<T.Identifier>): T.NegatedField.Bo
 	return node as unknown as T.NegatedField.Bound;
 }
 
-function buildNegatedField$with$identifier(this: Received<Held>, ...args: unknown[]): unknown {
-	const node = receiverOf(this, '$with.identifier');
+function buildNegatedField$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
-	return applySetter(args, (value: Admit<T.Identifier>) => rebuilt(node, handle, () => buildNegatedField(value)));
+	switch (setter) {
+		case 'identifier':
+			return applySetter(args, (value: Admit<T.Identifier>) => rebuilt(node, handle, () => buildNegatedField(value)));
+	}
+	throw new Error(`negated_field has no $with.${setter}`);
+}
+function buildNegatedField$with$identifier(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildNegatedField$with(receiverOf(this, '$with.identifier'), 'identifier', args);
 }
 
 export function buildPredicate<
@@ -758,37 +839,40 @@ export function buildPredicate(config: T.Predicate.Config): T.Predicate.Bound {
 	return node as unknown as T.Predicate.Bound;
 }
 
-function buildPredicate$with$prefix(this: Received<Held>, ...args: unknown[]): unknown {
-	const node = receiverOf(this, '$with.prefix');
+function buildPredicate$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
 	const config = node[INPUT] as T.Predicate.Config;
-	return applySetter(args, (value: Admit<NonNullable<T.Predicate.Config>['prefix']>) =>
-		rebuilt(node, handle, () => buildPredicate({ ...config, prefix: value }))
-	);
+	switch (setter) {
+		case 'prefix':
+			return applySetter(args, (value: Admit<NonNullable<T.Predicate.Config>['prefix']>) =>
+				rebuilt(node, handle, () => buildPredicate({ ...config, prefix: value }))
+			);
+		case 'name':
+			return applySetter(args, (value: Admit<T.ImmediateIdentifier>) =>
+				rebuilt(node, handle, () => buildPredicate({ ...config, name: value }))
+			);
+		case 'type':
+			return applySetter(args, (value: Admit<NonNullable<T.Predicate.Config>['type']>) =>
+				rebuilt(node, handle, () => buildPredicate({ ...config, type: value }))
+			);
+		case 'parameters':
+			return applySetter(args, (value?: Admit<T.Parameters>) =>
+				rebuilt(node, handle, () => buildPredicate({ ...config, parameters: value }))
+			);
+	}
+	throw new Error(`predicate has no $with.${setter}`);
+}
+function buildPredicate$with$prefix(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildPredicate$with(receiverOf(this, '$with.prefix'), 'prefix', args);
 }
 function buildPredicate$with$name(this: Received<Held>, ...args: unknown[]): unknown {
-	const node = receiverOf(this, '$with.name');
-	const handle = node[HANDLE];
-	const config = node[INPUT] as T.Predicate.Config;
-	return applySetter(args, (value: Admit<T.ImmediateIdentifier>) =>
-		rebuilt(node, handle, () => buildPredicate({ ...config, name: value }))
-	);
+	return buildPredicate$with(receiverOf(this, '$with.name'), 'name', args);
 }
 function buildPredicate$with$type(this: Received<Held>, ...args: unknown[]): unknown {
-	const node = receiverOf(this, '$with.type');
-	const handle = node[HANDLE];
-	const config = node[INPUT] as T.Predicate.Config;
-	return applySetter(args, (value: Admit<NonNullable<T.Predicate.Config>['type']>) =>
-		rebuilt(node, handle, () => buildPredicate({ ...config, type: value }))
-	);
+	return buildPredicate$with(receiverOf(this, '$with.type'), 'type', args);
 }
 function buildPredicate$with$parameters(this: Received<Held>, ...args: unknown[]): unknown {
-	const node = receiverOf(this, '$with.parameters');
-	const handle = node[HANDLE];
-	const config = node[INPUT] as T.Predicate.Config;
-	return applySetter(args, (value?: Admit<T.Parameters>) =>
-		rebuilt(node, handle, () => buildPredicate({ ...config, parameters: value }))
-	);
+	return buildPredicate$with(receiverOf(this, '$with.parameters'), 'parameters', args);
 }
 
 export function buildListElementQuantifier<V extends Admit<TSKindId.Star | TSKindId.Plus | TSKindId.Qmark>>(
@@ -820,12 +904,18 @@ export function buildListElementQuantifier(
 	return node as unknown as T.ListElementQuantifier.Bound;
 }
 
-function buildListElementQuantifier$with$quantifier(this: Received<Held>, ...args: unknown[]): unknown {
-	const node = receiverOf(this, '$with.quantifier');
+function buildListElementQuantifier$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
-	return applySetter(args, (value: Admit<NonNullable<TSKindId.Star | TSKindId.Plus | TSKindId.Qmark>>) =>
-		rebuilt(node, handle, () => buildListElementQuantifier(value))
-	);
+	switch (setter) {
+		case 'quantifier':
+			return applySetter(args, (value: Admit<NonNullable<TSKindId.Star | TSKindId.Plus | TSKindId.Qmark>>) =>
+				rebuilt(node, handle, () => buildListElementQuantifier(value))
+			);
+	}
+	throw new Error(`list_element_quantifier has no $with.${setter}`);
+}
+function buildListElementQuantifier$with$quantifier(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildListElementQuantifier$with(receiverOf(this, '$with.quantifier'), 'quantifier', args);
 }
 
 export function buildGroupExpressionArm<
@@ -863,21 +953,26 @@ export function buildGroupExpressionArm(config: T.GroupExpressionArm.Config): T.
 	return node as unknown as T.GroupExpressionArm.Bound;
 }
 
-function buildGroupExpressionArm$with$left(this: Received<Held>, ...args: unknown[]): unknown {
-	const node = receiverOf(this, '$with.left');
+function buildGroupExpressionArm$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
 	const config = node[INPUT] as T.GroupExpressionArm.Config;
-	return applySetter(args, (value: Admit<T.Definition | T.GroupExpressionArm>) =>
-		rebuilt(node, handle, () => buildGroupExpressionArm({ ...config, left: value }))
-	);
+	switch (setter) {
+		case 'left':
+			return applySetter(args, (value: Admit<T.Definition | T.GroupExpressionArm>) =>
+				rebuilt(node, handle, () => buildGroupExpressionArm({ ...config, left: value }))
+			);
+		case 'right':
+			return applySetter(args, (value: Admit<T.Definition | T.GroupExpressionArm>) =>
+				rebuilt(node, handle, () => buildGroupExpressionArm({ ...config, right: value }))
+			);
+	}
+	throw new Error(`group_expression_arm has no $with.${setter}`);
+}
+function buildGroupExpressionArm$with$left(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildGroupExpressionArm$with(receiverOf(this, '$with.left'), 'left', args);
 }
 function buildGroupExpressionArm$with$right(this: Received<Held>, ...args: unknown[]): unknown {
-	const node = receiverOf(this, '$with.right');
-	const handle = node[HANDLE];
-	const config = node[INPUT] as T.GroupExpressionArm.Config;
-	return applySetter(args, (value: Admit<T.Definition | T.GroupExpressionArm>) =>
-		rebuilt(node, handle, () => buildGroupExpressionArm({ ...config, right: value }))
-	);
+	return buildGroupExpressionArm$with(receiverOf(this, '$with.right'), 'right', args);
 }
 
 export function buildNamedNodeExpressionArm<
@@ -919,21 +1014,26 @@ export function buildNamedNodeExpressionArm(config: T.NamedNodeExpressionArm.Con
 	return node as unknown as T.NamedNodeExpressionArm.Bound;
 }
 
-function buildNamedNodeExpressionArm$with$left(this: Received<Held>, ...args: unknown[]): unknown {
-	const node = receiverOf(this, '$with.left');
+function buildNamedNodeExpressionArm$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
 	const config = node[INPUT] as T.NamedNodeExpressionArm.Config;
-	return applySetter(args, (value: Admit<T.Definition | T.NegatedField | T.NamedNodeExpressionArm>) =>
-		rebuilt(node, handle, () => buildNamedNodeExpressionArm({ ...config, left: value }))
-	);
+	switch (setter) {
+		case 'left':
+			return applySetter(args, (value: Admit<T.Definition | T.NegatedField | T.NamedNodeExpressionArm>) =>
+				rebuilt(node, handle, () => buildNamedNodeExpressionArm({ ...config, left: value }))
+			);
+		case 'right':
+			return applySetter(args, (value: Admit<T.Definition | T.NegatedField | T.NamedNodeExpressionArm>) =>
+				rebuilt(node, handle, () => buildNamedNodeExpressionArm({ ...config, right: value }))
+			);
+	}
+	throw new Error(`named_node_expression_arm has no $with.${setter}`);
+}
+function buildNamedNodeExpressionArm$with$left(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildNamedNodeExpressionArm$with(receiverOf(this, '$with.left'), 'left', args);
 }
 function buildNamedNodeExpressionArm$with$right(this: Received<Held>, ...args: unknown[]): unknown {
-	const node = receiverOf(this, '$with.right');
-	const handle = node[HANDLE];
-	const config = node[INPUT] as T.NamedNodeExpressionArm.Config;
-	return applySetter(args, (value: Admit<T.Definition | T.NegatedField | T.NamedNodeExpressionArm>) =>
-		rebuilt(node, handle, () => buildNamedNodeExpressionArm({ ...config, right: value }))
-	);
+	return buildNamedNodeExpressionArm$with(receiverOf(this, '$with.right'), 'right', args);
 }
 
 export function buildGroupingGroup<GroupExpressionSlot extends T.GroupingGroup.Config['groupExpression']>(
@@ -973,21 +1073,26 @@ export function buildGroupingGroup(config: T.GroupingGroup.Config): T.GroupingGr
 	return node as unknown as T.GroupingGroup.Bound;
 }
 
-function buildGroupingGroup$with$groupExpression(this: Received<Held>, ...args: unknown[]): unknown {
-	const node = receiverOf(this, '$with.groupExpression');
+function buildGroupingGroup$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
 	const config = node[INPUT] as T.GroupingGroup.Config;
-	return applySetter(args, (value: Admit<T.Definition | T.GroupExpressionArm>) =>
-		rebuilt(node, handle, () => buildGroupingGroup({ ...config, groupExpression: value }))
-	);
+	switch (setter) {
+		case 'groupExpression':
+			return applySetter(args, (value: Admit<T.Definition | T.GroupExpressionArm>) =>
+				rebuilt(node, handle, () => buildGroupingGroup({ ...config, groupExpression: value }))
+			);
+		case 'anchor':
+			return applySetter(args, (value?: Admit<NonNullable<T.GroupingGroup.Config>['anchor']>) =>
+				rebuilt(node, handle, () => buildGroupingGroup({ ...config, anchor: value }))
+			);
+	}
+	throw new Error(`grouping_group has no $with.${setter}`);
+}
+function buildGroupingGroup$with$groupExpression(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildGroupingGroup$with(receiverOf(this, '$with.groupExpression'), 'groupExpression', args);
 }
 function buildGroupingGroup$with$anchor(this: Received<Held>, ...args: unknown[]): unknown {
-	const node = receiverOf(this, '$with.anchor');
-	const handle = node[HANDLE];
-	const config = node[INPUT] as T.GroupingGroup.Config;
-	return applySetter(args, (value?: Admit<NonNullable<T.GroupingGroup.Config>['anchor']>) =>
-		rebuilt(node, handle, () => buildGroupingGroup({ ...config, anchor: value }))
-	);
+	return buildGroupingGroup$with(receiverOf(this, '$with.anchor'), 'anchor', args);
 }
 
 export function buildStringContentText(text: string): T.StringContentText.Bound {
@@ -1063,29 +1168,33 @@ export function buildNamedNodePlain(config: T.NamedNodePlain.Config): T.NamedNod
 	return node as unknown as T.NamedNodePlain.Bound;
 }
 
-function buildNamedNodePlain$with$name(this: Received<Held>, ...args: unknown[]): unknown {
-	const node = receiverOf(this, '$with.name');
+function buildNamedNodePlain$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
 	const config = node[INPUT] as T.NamedNodePlain.Config;
-	return applySetter(args, (value: Admit<NonNullable<T.NamedNodePlain.Config>['name']>) =>
-		rebuilt(node, handle, () => buildNamedNodePlain({ ...config, name: value }))
-	);
+	switch (setter) {
+		case 'name':
+			return applySetter(args, (value: Admit<NonNullable<T.NamedNodePlain.Config>['name']>) =>
+				rebuilt(node, handle, () => buildNamedNodePlain({ ...config, name: value }))
+			);
+		case 'namedNodeGroup':
+			return applySetter(args, (value?: Admit<T.NamedNodeGroup>) =>
+				rebuilt(node, handle, () => buildNamedNodePlain({ ...config, namedNodeGroup: value }))
+			);
+		case 'elements':
+			return applySetter(args, (...values: Admit<T.ListElement[]>) =>
+				rebuilt(node, handle, () => buildNamedNodePlain({ ...config, elements: restItems('elements', values) }))
+			);
+	}
+	throw new Error(`named_node_plain has no $with.${setter}`);
+}
+function buildNamedNodePlain$with$name(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildNamedNodePlain$with(receiverOf(this, '$with.name'), 'name', args);
 }
 function buildNamedNodePlain$with$namedNodeGroup(this: Received<Held>, ...args: unknown[]): unknown {
-	const node = receiverOf(this, '$with.namedNodeGroup');
-	const handle = node[HANDLE];
-	const config = node[INPUT] as T.NamedNodePlain.Config;
-	return applySetter(args, (value?: Admit<T.NamedNodeGroup>) =>
-		rebuilt(node, handle, () => buildNamedNodePlain({ ...config, namedNodeGroup: value }))
-	);
+	return buildNamedNodePlain$with(receiverOf(this, '$with.namedNodeGroup'), 'namedNodeGroup', args);
 }
 function buildNamedNodePlain$with$elements(this: Received<Held>, ...args: unknown[]): unknown {
-	const node = receiverOf(this, '$with.elements');
-	const handle = node[HANDLE];
-	const config = node[INPUT] as T.NamedNodePlain.Config;
-	return applySetter(args, (...values: Admit<T.ListElement[]>) =>
-		rebuilt(node, handle, () => buildNamedNodePlain({ ...config, elements: restItems('elements', values) }))
-	);
+	return buildNamedNodePlain$with(receiverOf(this, '$with.elements'), 'elements', args);
 }
 
 export function buildNamedNodeSupertyped<
@@ -1146,37 +1255,40 @@ export function buildNamedNodeSupertyped(config: T.NamedNodeSupertyped.Config): 
 	return node as unknown as T.NamedNodeSupertyped.Bound;
 }
 
-function buildNamedNodeSupertyped$with$supertype(this: Received<Held>, ...args: unknown[]): unknown {
-	const node = receiverOf(this, '$with.supertype');
+function buildNamedNodeSupertyped$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
 	const config = node[INPUT] as T.NamedNodeSupertyped.Config;
-	return applySetter(args, (value: Admit<T.Identifier>) =>
-		rebuilt(node, handle, () => buildNamedNodeSupertyped({ ...config, supertype: value }))
-	);
+	switch (setter) {
+		case 'supertype':
+			return applySetter(args, (value: Admit<T.Identifier>) =>
+				rebuilt(node, handle, () => buildNamedNodeSupertyped({ ...config, supertype: value }))
+			);
+		case 'name':
+			return applySetter(args, (value: Admit<T.ImmediateIdentifier | T.ImmediateString>) =>
+				rebuilt(node, handle, () => buildNamedNodeSupertyped({ ...config, name: value }))
+			);
+		case 'namedNodeGroup':
+			return applySetter(args, (value?: Admit<T.NamedNodeGroup>) =>
+				rebuilt(node, handle, () => buildNamedNodeSupertyped({ ...config, namedNodeGroup: value }))
+			);
+		case 'elements':
+			return applySetter(args, (...values: Admit<T.ListElement[]>) =>
+				rebuilt(node, handle, () => buildNamedNodeSupertyped({ ...config, elements: restItems('elements', values) }))
+			);
+	}
+	throw new Error(`named_node_supertyped has no $with.${setter}`);
+}
+function buildNamedNodeSupertyped$with$supertype(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildNamedNodeSupertyped$with(receiverOf(this, '$with.supertype'), 'supertype', args);
 }
 function buildNamedNodeSupertyped$with$name(this: Received<Held>, ...args: unknown[]): unknown {
-	const node = receiverOf(this, '$with.name');
-	const handle = node[HANDLE];
-	const config = node[INPUT] as T.NamedNodeSupertyped.Config;
-	return applySetter(args, (value: Admit<T.ImmediateIdentifier | T.ImmediateString>) =>
-		rebuilt(node, handle, () => buildNamedNodeSupertyped({ ...config, name: value }))
-	);
+	return buildNamedNodeSupertyped$with(receiverOf(this, '$with.name'), 'name', args);
 }
 function buildNamedNodeSupertyped$with$namedNodeGroup(this: Received<Held>, ...args: unknown[]): unknown {
-	const node = receiverOf(this, '$with.namedNodeGroup');
-	const handle = node[HANDLE];
-	const config = node[INPUT] as T.NamedNodeSupertyped.Config;
-	return applySetter(args, (value?: Admit<T.NamedNodeGroup>) =>
-		rebuilt(node, handle, () => buildNamedNodeSupertyped({ ...config, namedNodeGroup: value }))
-	);
+	return buildNamedNodeSupertyped$with(receiverOf(this, '$with.namedNodeGroup'), 'namedNodeGroup', args);
 }
 function buildNamedNodeSupertyped$with$elements(this: Received<Held>, ...args: unknown[]): unknown {
-	const node = receiverOf(this, '$with.elements');
-	const handle = node[HANDLE];
-	const config = node[INPUT] as T.NamedNodeSupertyped.Config;
-	return applySetter(args, (...values: Admit<T.ListElement[]>) =>
-		rebuilt(node, handle, () => buildNamedNodeSupertyped({ ...config, elements: restItems('elements', values) }))
-	);
+	return buildNamedNodeSupertyped$with(receiverOf(this, '$with.elements'), 'elements', args);
 }
 
 export function buildNamedNodeGroupChildren<
@@ -1223,28 +1335,36 @@ export function buildNamedNodeGroupChildren(config: T.NamedNodeGroupChildren.Con
 	return node as unknown as T.NamedNodeGroupChildren.Bound;
 }
 
-function buildNamedNodeGroupChildren$with$anchor(this: Received<Held>, ...args: unknown[]): unknown {
-	const node = receiverOf(this, '$with.anchor');
+function buildNamedNodeGroupChildren$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
 	const config = node[INPUT] as T.NamedNodeGroupChildren.Config;
-	return applySetter(args, (value?: Admit<NonNullable<T.NamedNodeGroupChildren.Config>['anchor']>) =>
-		rebuilt(node, handle, () => buildNamedNodeGroupChildren({ ...config, anchor: value }))
-	);
+	switch (setter) {
+		case 'anchor':
+			return applySetter(args, (value?: Admit<NonNullable<T.NamedNodeGroupChildren.Config>['anchor']>) =>
+				rebuilt(node, handle, () => buildNamedNodeGroupChildren({ ...config, anchor: value }))
+			);
+		case 'namedNodeExpressions':
+			return applySetter(args, (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					elementsWith(
+						args,
+						{ slot: 'namedNodeExpressions', keys: ['left', 'right'], make: buildNamedNodeExpressionArm },
+						(...values: Admit<NonEmptyArray<T.Definition | T.NegatedField | T.NamedNodeExpressionArm>>) =>
+							buildNamedNodeGroupChildren({
+								...config,
+								namedNodeExpressions: restItems('namedNodeExpressions', values)
+							})
+					)
+				)
+			);
+	}
+	throw new Error(`named_node_group_children has no $with.${setter}`);
+}
+function buildNamedNodeGroupChildren$with$anchor(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildNamedNodeGroupChildren$with(receiverOf(this, '$with.anchor'), 'anchor', args);
 }
 function buildNamedNodeGroupChildren$with$namedNodeExpressions(this: Received<Held>, ...args: unknown[]): unknown {
-	const node = receiverOf(this, '$with.namedNodeExpressions');
-	const handle = node[HANDLE];
-	const config = node[INPUT] as T.NamedNodeGroupChildren.Config;
-	return applySetter(args, (...args: unknown[]) =>
-		rebuilt(node, handle, () =>
-			elementsWith(
-				args,
-				{ slot: 'namedNodeExpressions', keys: ['left', 'right'], make: buildNamedNodeExpressionArm },
-				(...values: Admit<NonEmptyArray<T.Definition | T.NegatedField | T.NamedNodeExpressionArm>>) =>
-					buildNamedNodeGroupChildren({ ...config, namedNodeExpressions: restItems('namedNodeExpressions', values) })
-			)
-		)
-	);
+	return buildNamedNodeGroupChildren$with(receiverOf(this, '$with.namedNodeExpressions'), 'namedNodeExpressions', args);
 }
 
 export function buildNamedNodeGroupAnchoredLast<
@@ -1302,39 +1422,47 @@ export function buildNamedNodeGroupAnchoredLast(
 	return node as unknown as T.NamedNodeGroupAnchoredLast.Bound;
 }
 
-function buildNamedNodeGroupAnchoredLast$with$anchor(this: Received<Held>, ...args: unknown[]): unknown {
-	const node = receiverOf(this, '$with.anchor');
+function buildNamedNodeGroupAnchoredLast$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
 	const config = node[INPUT] as T.NamedNodeGroupAnchoredLast.Config;
-	return applySetter(args, (value?: Admit<NonNullable<T.NamedNodeGroupAnchoredLast.Config>['anchor']>) =>
-		rebuilt(node, handle, () => buildNamedNodeGroupAnchoredLast({ ...config, anchor: value }))
-	);
+	switch (setter) {
+		case 'anchor':
+			return applySetter(args, (value?: Admit<NonNullable<T.NamedNodeGroupAnchoredLast.Config>['anchor']>) =>
+				rebuilt(node, handle, () => buildNamedNodeGroupAnchoredLast({ ...config, anchor: value }))
+			);
+		case 'namedNodeExpressions':
+			return applySetter(args, (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					elementsWith(
+						args,
+						{ slot: 'namedNodeExpressions', keys: ['left', 'right'], make: buildNamedNodeExpressionArm },
+						(...values: Admit<(T.Definition | T.NegatedField | T.NamedNodeExpressionArm)[]>) =>
+							buildNamedNodeGroupAnchoredLast({
+								...config,
+								namedNodeExpressions: restItems('namedNodeExpressions', values)
+							})
+					)
+				)
+			);
+		case 'last':
+			return applySetter(args, (value: Admit<T.Definition | T.NegatedField | T.NamedNodeExpressionArm>) =>
+				rebuilt(node, handle, () => buildNamedNodeGroupAnchoredLast({ ...config, last: value }))
+			);
+	}
+	throw new Error(`named_node_group_anchored_last has no $with.${setter}`);
+}
+function buildNamedNodeGroupAnchoredLast$with$anchor(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildNamedNodeGroupAnchoredLast$with(receiverOf(this, '$with.anchor'), 'anchor', args);
 }
 function buildNamedNodeGroupAnchoredLast$with$namedNodeExpressions(this: Received<Held>, ...args: unknown[]): unknown {
-	const node = receiverOf(this, '$with.namedNodeExpressions');
-	const handle = node[HANDLE];
-	const config = node[INPUT] as T.NamedNodeGroupAnchoredLast.Config;
-	return applySetter(args, (...args: unknown[]) =>
-		rebuilt(node, handle, () =>
-			elementsWith(
-				args,
-				{ slot: 'namedNodeExpressions', keys: ['left', 'right'], make: buildNamedNodeExpressionArm },
-				(...values: Admit<(T.Definition | T.NegatedField | T.NamedNodeExpressionArm)[]>) =>
-					buildNamedNodeGroupAnchoredLast({
-						...config,
-						namedNodeExpressions: restItems('namedNodeExpressions', values)
-					})
-			)
-		)
+	return buildNamedNodeGroupAnchoredLast$with(
+		receiverOf(this, '$with.namedNodeExpressions'),
+		'namedNodeExpressions',
+		args
 	);
 }
 function buildNamedNodeGroupAnchoredLast$with$last(this: Received<Held>, ...args: unknown[]): unknown {
-	const node = receiverOf(this, '$with.last');
-	const handle = node[HANDLE];
-	const config = node[INPUT] as T.NamedNodeGroupAnchoredLast.Config;
-	return applySetter(args, (value: Admit<T.Definition | T.NegatedField | T.NamedNodeExpressionArm>) =>
-		rebuilt(node, handle, () => buildNamedNodeGroupAnchoredLast({ ...config, last: value }))
-	);
+	return buildNamedNodeGroupAnchoredLast$with(receiverOf(this, '$with.last'), 'last', args);
 }
 
 export const buildTight: TSKindId.Tight = TSKindId.Tight;

@@ -267,7 +267,7 @@ function emitSeparatedListWrap(node: AssembledList, kindEntries: readonly KindEn
 	const plan = seatPlanOf(node, nodeMap, kindEntries, 'RAW.');
 	const view = listSelfViewParts(listSelfViewPlan(node, nodeMap, kindEntries), { elements: dataAccessExpr('data', canonical.storageKey) }, canonical.propertyName, 'wrap', `wrap${node.typeName}`);
 	const members = nodeMemberParts({
-		setters: { prefix: `wrap${node.typeName}`, entries: settersOf(node, nodeMap, kindEntries, plan), held: wrapHeld(node) },
+		setters: { kind: node.kind, prefix: `wrap${node.typeName}`, entries: settersOf(node, nodeMap, kindEntries, plan), held: wrapHeld(node) },
 		accessors: [],
 		extra: view.members,
 		tail: view.tail,
@@ -305,7 +305,7 @@ function emitFieldCarryingWrap(node: AuthoredCompound, kindEntries: readonly Kin
 		(stored) => `${dataAccessExpr('data', stored)} === undefined`
 	);
 	const members = nodeMemberParts({
-		setters: { prefix: `wrap${node.typeName}`, entries: settersOf(node, nodeMap, kindEntries, plan), held: wrapHeld(node), readers: groups.prelude },
+		setters: { kind: node.kind, prefix: `wrap${node.typeName}`, entries: settersOf(node, nodeMap, kindEntries, plan), held: wrapHeld(node), readers: groups.prelude },
 		accessors: [],
 		extra: [...(view?.members ?? []), ...groups.members],
 		tail: view?.tail,

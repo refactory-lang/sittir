@@ -2037,7 +2037,7 @@ function fieldCarryingFactoryText(
 			lines.push(`    ${f.storageKey},`);
 		}
 		const members = nodeMemberParts({
-			setters: { prefix: fn, entries: seated, held, readers: groupSeatParts(plan, storedRead).prelude },
+			setters: { kind: node.kind, prefix: fn, entries: seated, held, readers: groupSeatParts(plan, storedRead).prelude },
 			accessors: slotsToEmit.map((f) => storedAccessor(f.propertyName, f.storageKey, f, nodeMap)),
 			extra: [...(view?.members ?? []), ...groups.members],
 			tail: view?.tail,
@@ -2267,7 +2267,7 @@ function emitRefineFormFactory(
 			...(registered.length === 0 ? [] : [{ local: 'options', type: `T.${info.typeName}.${formShortName}.Options`, key: 'OPTIONS' as const }])
 		];
 		const members = nodeMemberParts({
-			setters: { prefix: formFn, entries: formSetters, held },
+			setters: { kind: node.kind, prefix: formFn, entries: formSetters, held },
 			accessors: allSlots.map((f) => storedAccessor(f.propertyName, f.storageKey, f, nodeMap)),
 			trivia
 		});
@@ -2948,7 +2948,7 @@ function emitSeparatedListFactory(
 			if (hasSeparatorKindOption) lines.push('    _separator,');
 			if (hasDelimiterOption) lines.push('    _delimiter,');
 			const members = nodeMemberParts({
-				setters: { prefix: fn, entries: seated, held },
+				setters: { kind: node.kind, prefix: fn, entries: seated, held },
 				accessors: [storedAccessor(contentAccessorName, contentStorageKey, buildSeparatedListContentSlot(node), nodeMap)],
 				extra: view.members,
 				tail: view.tail,

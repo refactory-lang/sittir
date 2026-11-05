@@ -28,6 +28,7 @@ export interface HeldLocal {
 }
 
 export interface SharedSetters {
+	readonly kind: string;
 	readonly prefix: string;
 	readonly entries: readonly SetterEntry[];
 	readonly held: readonly HeldLocal[];
@@ -79,33 +80,36 @@ function appliedSetter(entry: SetterEntry): string {
 	return `applySetter(args, (${entry.params}) => rebuilt(node, handle, () => ${entry.body}))`;
 }
 
-function sharedSetterLines(setters: SharedSetters, entry: SetterEntry): string[] {
-	return [
-		`function ${sharedSetterName(setters.prefix, entry)}(this: Received<Held>, ...args: unknown[]): unknown {`,
-		`  const node = receiverOf(this, ${JSON.stringify(`$with.${entry.name}`)});`,
-		'  const handle = node[HANDLE];',
-		...setters.held.map((field) => `  const ${field.local} = node[${field.key}] as ${field.type};`),
-		...(setters.readers ?? []),
-		`  return ${appliedSetter(entry)};`,
-		'}'
-	];
-}
-
-export function builtWithLines(name: string, kind: string, inputs: readonly string[], setters: readonly SetterEntry[]): string[] {
+function withLines(name: string, kind: string, nodeType: string, prelude: readonly string[], setters: readonly SetterEntry[]): string[] {
 	const unread = setters.length === 0 ? '_' : '';
 	return [
-		`function ${name}(${unread}node: object, setter: string, ${unread}args: readonly unknown[]): unknown {`,
+		`function ${name}(${unread}node: ${nodeType}, setter: string, ${unread}args: readonly unknown[]): unknown {`,
 		...(setters.length === 0
 			? []
 			: [
-					'  const handle = handleOf(node as RecordHandle);',
-					...(inputs.length === 0 ? [] : ['  const inputs = builtInputs(node);', ...inputs]),
+					...prelude,
 					'  switch (setter) {',
 					...setters.flatMap((entry) => [`    case ${JSON.stringify(entry.name)}:`, `      return ${appliedSetter(entry)};`]),
 					'  }'
 				]),
 		`  throw new Error(\`${kind} has no $with.\${setter}\`);`,
 		'}'
+	];
+}
+
+export function builtWithLines(name: string, kind: string, inputs: readonly string[], setters: readonly SetterEntry[]): string[] {
+	return withLines(name, kind, 'object', ['  const handle = handleOf(node as RecordHandle);', ...(inputs.length === 0 ? [] : ['  const inputs = builtInputs(node);', ...inputs])], setters);
+}
+
+function sharedSetterLines(setters: SharedSetters): string[] {
+	const dispatch = `${setters.prefix}$with`;
+	return [
+		...withLines(dispatch, setters.kind, 'Held', ['  const handle = node[HANDLE];', ...setters.held.map((field) => `  const ${field.local} = node[${field.key}] as ${field.type};`), ...(setters.readers ?? [])], setters.entries),
+		...setters.entries.flatMap((entry) => [
+			`function ${sharedSetterName(setters.prefix, entry)}(this: Received<Held>, ...args: unknown[]): unknown {`,
+			`  return ${dispatch}(receiverOf(this, ${JSON.stringify(`$with.${entry.name}`)}), ${JSON.stringify(entry.name)}, args);`,
+			'}'
+		])
 	];
 }
 
@@ -149,7 +153,7 @@ export function nodeMemberParts(spec: NodeMemberSpec): NodeMemberParts {
 		...(setters === undefined ? [] : [receivedMembers('$with', setters.entries.map((entry) => `${entry.name}: ${sharedSetterName(setters.prefix, entry)}`))]),
 		...(spec.trivia === undefined ? [] : [receivedMembers('$trivia', triviaSides(spec.trivia).map((side) => `${side}: ${OBJECT_TRIVIA[side]}`))])
 	];
-	return { members: lines, after, hoisted: setters === undefined ? [] : setters.entries.flatMap((entry) => sharedSetterLines(setters, entry)) };
+	return { members: lines, after, hoisted: sets ? sharedSetterLines(setters) : [] };
 }
 
 const readGroupName = (slot: string): string => `readGroup_${slot}`;
