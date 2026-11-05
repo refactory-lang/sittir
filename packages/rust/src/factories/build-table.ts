@@ -400,6 +400,7 @@ export interface Routes<Table extends AnyTable> {
 		readonly regular: Routes<Table>['blockComment$regular'];
 	};
 	readonly parametersElements: Table['parametersElements$seated'];
+	readonly arrayExpressionListElements: Table['arrayExpressionListElements$seated'];
 	readonly arrayExpressionList: Table['arrayExpressionList$seated'];
 	readonly implItemBody$positiveClause: <
 		const V extends OmitEach<ArgsOf<Table['buildImplItemBody']>[0], 'traitClause'> & {
@@ -971,6 +972,7 @@ export interface Ir<Table extends AnyTable> {
 	readonly structItemUnit: Table['buildStructItemUnit'];
 	readonly traitInterfaceDeclarationBody: Table['buildTraitInterfaceDeclarationBody'];
 	readonly extensionDeclarationBody: Table['buildExtensionDeclarationBody'];
+	readonly arrayExpressionListElements: Routes<Table>['arrayExpressionListElements'];
 	readonly receiverParameterDeclaration: Table['buildReceiverParameterDeclaration'];
 	readonly parametersElementsReceiver: Routes<Table>['parametersElementsReceiver'];
 	readonly methodDeclaration: Table['buildMethodDeclaration'];
@@ -1496,6 +1498,9 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 		} as const)
 	);
 	const parametersElements: Routes<Table>['parametersElements'] = $at('parametersElements$seated');
+	const arrayExpressionListElements: Routes<Table>['arrayExpressionListElements'] = $at(
+		'arrayExpressionListElements$seated'
+	);
 	const arrayExpressionList: Routes<Table>['arrayExpressionList'] = $at('arrayExpressionList$seated');
 	const implItemBody$positiveClause: Routes<Table>['implItemBody$positiveClause'] = K.implItemBody$positiveClause(
 		$at('buildImplItemBody'),
@@ -2012,6 +2017,7 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 		structItemUnit: $at('buildStructItemUnit'),
 		traitInterfaceDeclarationBody: $at('buildTraitInterfaceDeclarationBody'),
 		extensionDeclarationBody: $at('buildExtensionDeclarationBody'),
+		arrayExpressionListElements: arrayExpressionListElements,
 		receiverParameterDeclaration: $at('buildReceiverParameterDeclaration'),
 		parametersElementsReceiver: parametersElementsReceiver,
 		methodDeclaration: $at('buildMethodDeclaration'),

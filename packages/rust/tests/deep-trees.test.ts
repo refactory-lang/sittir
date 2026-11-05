@@ -45,6 +45,14 @@ describe('a tree nested thousands of levels deep', () => {
 		120_000
 	);
 
+	it.each(['main', 'worker'])(
+		'reads whole every nesting up to 300 levels, past the codec recursion limit typed_read_nesting.rs places inside it, on the %s thread',
+		async (thread) => {
+			expect(await runCase('object', 'chains', '300', thread)).toEqual({ status: 0, signal: null, outcome: { ok: true } });
+		},
+		120_000
+	);
+
 	it('decodes and releases a wire value 100000 levels deep on a Worker', async () => {
 		expect(await runCase('object', 'decode', '100000', 'worker')).toEqual({
 			status: 0,
@@ -53,7 +61,7 @@ describe('a tree nested thousands of levels deep', () => {
 		});
 	}, 120_000);
 
-	it('refuses a malformed item after one 400000 levels deep on a Worker, and releases what it decoded', async () => {
+	it('refuses a malformed item after one 400000 levels deep on a Worker, releases what it decoded, and decodes the next tree on that thread', async () => {
 		const { status, signal, outcome } = await runCase('object', 'refuse', '400000', 'worker');
 		expect({ status, signal }).toEqual({ status: 0, signal: null });
 		expect(outcome).toEqual({

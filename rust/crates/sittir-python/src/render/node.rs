@@ -77,7 +77,7 @@ pub enum AnyNode {
     #[kind(kind::WHILE_STATEMENT)]
     WhileStatement(Box<WhileStatementNode>),
     #[kind(kind::TRY_STATEMENT)]
-    TryStatement(TryStatementNode),
+    TryStatement(Box<TryStatementNode>),
     #[kind(kind::EXCEPT_CLAUSE)]
     ExceptClause(ExceptClauseNode),
     #[kind(kind::FINALLY_CLAUSE)]
@@ -151,7 +151,7 @@ pub enum AnyNode {
     #[kind(kind::DEFAULT_PARAMETER)]
     DefaultParameter(DefaultParameterNode),
     #[kind(kind::TYPED_DEFAULT_PARAMETER)]
-    TypedDefaultParameter(TypedDefaultParameterNode),
+    TypedDefaultParameter(Box<TypedDefaultParameterNode>),
     #[kind(kind::LIST_SPLAT_PATTERN)]
     ListSplatPattern(ListSplatPatternNode),
     #[kind(kind::DICTIONARY_SPLAT_PATTERN)]
@@ -237,7 +237,7 @@ pub enum AnyNode {
     #[kind(kind::STRING_CONTENT)]
     StringContent(StringContentNode),
     #[kind(kind::INTERPOLATION)]
-    Interpolation(InterpolationNode),
+    Interpolation(Box<InterpolationNode>),
     #[kind(kind::FORMAT_SPECIFIER)]
     FormatSpecifier(FormatSpecifierNode),
     #[kind(kind::TYPE_CONVERSION)]
@@ -373,7 +373,7 @@ pub enum AnyNode {
     #[kind(kind::STRING_END)]
     StringEnd(StringEndNode),
     #[kind(kind::_CONSTRUCTOR_DECLARATION)]
-    ConstructorDeclaration(ConstructorDeclarationNode),
+    ConstructorDeclaration(Box<ConstructorDeclarationNode>),
     #[kind(kind::_BLOCK_CLASS_DECLARATION)]
     BlockClassDeclaration(BlockClassDeclarationNode),
     #[kind(kind::_SUITE_BLOCK_CLASS_DECLARATION)]
@@ -385,7 +385,7 @@ pub enum AnyNode {
     #[kind(kind::_AS_PATTERN_TARGET, display)]
     AsPatternTarget(AsPatternTargetNode),
     #[kind(display(kind::_FORMAT_EXPRESSION))]
-    FormatExpression(InterpolationNode),
+    FormatExpression(Box<InterpolationNode>),
     #[kind(display(kind::_METHOD_DECLARATION))]
     MethodDeclaration(Box<FunctionDefinitionNode>),
     #[kind(kind::WILDCARD_IMPORT)]
@@ -2313,7 +2313,7 @@ pub enum StatementNode {
     IfStatement(Box<IfStatementNode>),
     ForStatement(Box<ForStatementNode>),
     WhileStatement(Box<WhileStatementNode>),
-    TryStatement(TryStatementNode),
+    TryStatement(Box<TryStatementNode>),
     WithStatement(WithStatementNode),
     FunctionDefinition(Box<FunctionDefinitionNode>),
     ClassDefinition(ClassDefinitionNode),
@@ -2670,7 +2670,7 @@ pub enum CompoundStatementNode {
     #[kind(kind::WHILE_STATEMENT)]
     WhileStatement(Box<WhileStatementNode>),
     #[kind(kind::TRY_STATEMENT)]
-    TryStatement(TryStatementNode),
+    TryStatement(Box<TryStatementNode>),
     #[kind(kind::WITH_STATEMENT)]
     WithStatement(WithStatementNode),
     #[kind(kind::FUNCTION_DEFINITION)]
@@ -3068,7 +3068,7 @@ pub enum ParameterNode {
     #[kind(kind::DEFAULT_PARAMETER)]
     DefaultParameter(DefaultParameterNode),
     #[kind(kind::TYPED_DEFAULT_PARAMETER)]
-    TypedDefaultParameter(TypedDefaultParameterNode),
+    TypedDefaultParameter(Box<TypedDefaultParameterNode>),
     #[kind(kind::LIST_SPLAT_PATTERN)]
     ListSplatPattern(ListSplatPatternNode),
     #[kind(kind::TUPLE_PATTERN)]
@@ -4128,13 +4128,13 @@ pub enum CompoundStatementClassDefinitionNode {
     #[kind(kind::WHILE_STATEMENT)]
     WhileStatement(Box<WhileStatementNode>),
     #[kind(kind::TRY_STATEMENT)]
-    TryStatement(TryStatementNode),
+    TryStatement(Box<TryStatementNode>),
     #[kind(kind::WITH_STATEMENT)]
     WithStatement(WithStatementNode),
     #[kind(display(kind::_METHOD_DECLARATION))]
     MethodDeclaration(Box<FunctionDefinitionNode>),
     #[kind(kind::_CONSTRUCTOR_DECLARATION)]
-    ConstructorDeclaration(ConstructorDeclarationNode),
+    ConstructorDeclaration(Box<ConstructorDeclarationNode>),
     #[kind(kind::CLASS_DEFINITION)]
     ClassDefinition(ClassDefinitionNode),
     #[kind(kind::_DECORATED_DEFINITION_CLASS_DECLARATION)]
@@ -4293,10 +4293,10 @@ pub enum StatementClassDefinitionNode {
     IfStatement(Box<IfStatementNode>),
     ForStatement(Box<ForStatementNode>),
     WhileStatement(Box<WhileStatementNode>),
-    TryStatement(TryStatementNode),
+    TryStatement(Box<TryStatementNode>),
     WithStatement(WithStatementNode),
     MethodDeclaration(Box<FunctionDefinitionNode>),
-    ConstructorDeclaration(ConstructorDeclarationNode),
+    ConstructorDeclaration(Box<ConstructorDeclarationNode>),
     ClassDefinition(ClassDefinitionNode),
     DecoratedDefinitionClassDeclaration(Box<DecoratedDefinitionClassDeclarationNode>),
     MatchStatement(MatchStatementNode),
@@ -11290,7 +11290,7 @@ impl ::sittir_core::render::Render for ForInClauseTrailingCommaNodeSlot {
 #[node(choice, stamp = stamp, view = StringContentNodeSlotRecord)]
 pub enum StringContentNodeSlot {
     #[kind(kind::INTERPOLATION)]
-    Interpolation(InterpolationNode),
+    Interpolation(Box<InterpolationNode>),
     #[kind(kind::STRING_CONTENT)]
     StringContent(StringContentNode),
 }
@@ -11343,7 +11343,7 @@ impl ::sittir_core::view::KindOf for StringContentNodeSlot {
 impl ::sittir_core::render::Render for StringContentNodeSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            StringContentNodeSlot::Interpolation(inner) => inner.render(w),
+            StringContentNodeSlot::Interpolation(inner) => inner.as_ref().render(w),
             StringContentNodeSlot::StringContent(inner) => inner.render(w),
         }
     }
@@ -12095,7 +12095,7 @@ pub enum FormatSpecifierElementsNodeSlot {
     #[kind(kind::FORMAT_SPECIFIER_TEXT)]
     FormatSpecifierText(FormatSpecifierTextNode),
     #[kind(display(kind::_FORMAT_EXPRESSION))]
-    FormatExpression(InterpolationNode),
+    FormatExpression(Box<InterpolationNode>),
     #[node(verbatim)]
     Verbatim(VerbatimNode),
 }
@@ -12155,7 +12155,7 @@ impl ::sittir_core::render::Render for FormatSpecifierElementsNodeSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
             FormatSpecifierElementsNodeSlot::FormatSpecifierText(inner) => inner.render(w),
-            FormatSpecifierElementsNodeSlot::FormatExpression(inner) => inner.render(w),
+            FormatSpecifierElementsNodeSlot::FormatExpression(inner) => inner.as_ref().render(w),
             FormatSpecifierElementsNodeSlot::Verbatim(inner) => { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); inner.render(w) },
         }
     }
@@ -14039,7 +14039,7 @@ pub enum DecoratedDefinitionClassDeclarationDefinitionNodeSlot {
     #[kind(display(kind::_METHOD_DECLARATION))]
     MethodDeclaration(Box<FunctionDefinitionNode>),
     #[kind(kind::_CONSTRUCTOR_DECLARATION)]
-    ConstructorDeclaration(ConstructorDeclarationNode),
+    ConstructorDeclaration(Box<ConstructorDeclarationNode>),
 }
 
 impl ::sittir_core::prepare::Prepare for DecoratedDefinitionClassDeclarationDefinitionNodeSlot {
@@ -14098,7 +14098,7 @@ impl ::sittir_core::render::Render for DecoratedDefinitionClassDeclarationDefini
         match self {
             DecoratedDefinitionClassDeclarationDefinitionNodeSlot::ClassDefinition(inner) => inner.render(w),
             DecoratedDefinitionClassDeclarationDefinitionNodeSlot::MethodDeclaration(inner) => inner.as_ref().render(w),
-            DecoratedDefinitionClassDeclarationDefinitionNodeSlot::ConstructorDeclaration(inner) => inner.render(w),
+            DecoratedDefinitionClassDeclarationDefinitionNodeSlot::ConstructorDeclaration(inner) => inner.as_ref().render(w),
         }
     }
 }
@@ -14132,6 +14132,8 @@ pub struct ModuleNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_statements")]
     #[slot(field = field::STATEMENTS, word = 2, width = 1, run = 3, forms = 1, built = 2, seated)]
     pub statements: Vec<::sittir_core::SlotValue<StatementNode>>,
@@ -14217,6 +14219,8 @@ pub struct SimpleStatementsNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_elements")]
     #[slot(field = field::ELEMENTS, word = 2, width = 3, inline = 3, forms = 8, built = 2)]
     pub elements: ::sittir_core::SlotValue<SimpleStatementsElementsNode>,
@@ -14290,6 +14294,8 @@ pub struct ImportStatementNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_names")]
     #[slot(word = 2, width = 3, inline = 3, forms = 8, built = 2)]
     pub names: ::sittir_core::SlotValue<ImportListNode>,
@@ -14434,6 +14440,8 @@ pub struct RelativeImportNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_prefix")]
     #[slot(field = field::PREFIX, word = 2, width = 3, forms = 1, built = 2)]
     pub prefix: ::sittir_core::SlotValue<ImportPrefixNode>,
@@ -14511,6 +14519,8 @@ pub struct FutureImportStatementNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_content")]
     #[slot(word = 2, width = 5, inline = 5, forms = 8, built = 2)]
     pub content: ::sittir_core::SlotValue<FutureImportStatementContentNodeSlot>,
@@ -14584,6 +14594,8 @@ pub struct ImportFromStatementNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_module_name")]
     #[slot(field = field::MODULE_NAME, word = 2, width = 3, forms = 1, built = 2)]
     pub module_name: ::sittir_core::SlotValue<ImportFromStatementModuleNameNodeSlot>,
@@ -14663,6 +14675,8 @@ pub struct ImportListNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_name")]
     #[slot(field = field::NAME, separator = kind::COMMA, word = 2, width = 1, run = 3, forms = 1, built = 2, seated)]
     pub name: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<ImportListNameNodeSlot>>,
@@ -14750,6 +14764,8 @@ pub struct AliasedImportNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_name")]
     #[slot(field = field::NAME, word = 2, width = 3, forms = 1, built = 2)]
     pub name: ::sittir_core::SlotValue<DottedNameNode>,
@@ -14855,6 +14871,8 @@ pub struct PrintStatementNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_content")]
     #[slot(word = 2, width = 12, inline = 12, forms = 8, built = 2)]
     pub content: ::sittir_core::SlotValue<PrintStatementContentNodeSlot>,
@@ -14927,6 +14945,8 @@ pub struct ChevronNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_expression")]
     #[slot(field = field::EXPRESSION, word = 2, width = 4, forms = 3, built = 2)]
     pub expression: ::sittir_core::SlotValue<ExpressionNode>,
@@ -15000,6 +15020,8 @@ pub struct AssertStatementNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_expression")]
     #[slot(field = field::EXPRESSION, separator = kind::COMMA, word = 2, width = 1, run = 4, forms = 3, built = 2, seated)]
     pub expression: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<ExpressionNode>>,
@@ -15083,6 +15105,8 @@ pub struct ExpressionStatementNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_content")]
     #[slot(word = 2, width = 4, forms = 3, built = 2)]
     pub content: ::sittir_core::SlotValue<ExpressionStatementContentNodeSlot>,
@@ -15155,6 +15179,8 @@ pub struct NamedExpressionNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_left")]
     #[slot(field = field::LEFT, word = 2, width = 3, forms = 1, built = 2)]
     pub left: ::sittir_core::SlotValue<IdentifierNode>,
@@ -15232,6 +15258,8 @@ pub struct NamedExpressionLhsNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_identifier")]
     #[slot(word = 2, width = 3, forms = 1, built = 2)]
     pub identifier: ::sittir_core::SlotValue<IdentifierNode>,
@@ -15304,6 +15332,8 @@ pub struct ReturnStatementNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_expressions")]
     #[slot(word = 2, width = 4, forms = 3, built = 2)]
     pub expressions: Option<::sittir_core::SlotValue<ReturnStatementExpressionsNodeSlot>>,
@@ -15377,6 +15407,8 @@ pub struct DeleteStatementNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_expressions")]
     #[slot(word = 2, width = 4, forms = 3, built = 2)]
     pub expressions: ::sittir_core::SlotValue<ReturnStatementExpressionsNodeSlot>,
@@ -15450,6 +15482,8 @@ pub struct RaiseStatementNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_expressions")]
     #[slot(word = 2, width = 4, forms = 3, built = 2)]
     pub expressions: Option<::sittir_core::SlotValue<ReturnStatementExpressionsNodeSlot>>,
@@ -15686,6 +15720,8 @@ pub struct IfStatementNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_condition")]
     #[slot(field = field::CONDITION, word = 2, width = 4, forms = 3, built = 2)]
     pub condition: ::sittir_core::SlotValue<ExpressionNode>,
@@ -15773,6 +15809,8 @@ pub struct ElifClauseNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_condition")]
     #[slot(field = field::CONDITION, word = 2, width = 4, forms = 3, built = 2)]
     pub condition: ::sittir_core::SlotValue<ExpressionNode>,
@@ -15850,6 +15888,8 @@ pub struct ElseClauseNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_body")]
     #[slot(field = field::BODY, word = 2, width = 5, inline = 5, forms = 8, built = 2)]
     pub body: ::sittir_core::SlotValue<SuiteNode>,
@@ -15923,6 +15963,8 @@ pub struct MatchStatementNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_subjects")]
     #[slot(word = 2, width = 3, inline = 3, forms = 8, built = 2)]
     pub subjects: ::sittir_core::SlotValue<SubjectsNode>,
@@ -16000,6 +16042,8 @@ pub struct CaseClauseNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_pattern")]
     #[slot(field = field::PATTERN, word = 2, width = 3, forms = 1, built = 2)]
     pub pattern: ::sittir_core::SlotValue<CaseClausePatternNodeSlot>,
@@ -16081,6 +16125,8 @@ pub struct ForStatementNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_async")]
     #[slot(field = field::ASYNC, presence = kind::ASYNC_KEYWORD, word = 2, bit = 0)]
     pub async_: bool,
@@ -16169,6 +16215,8 @@ pub struct WhileStatementNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_condition")]
     #[slot(field = field::CONDITION, word = 2, width = 4, forms = 3, built = 2)]
     pub condition: ::sittir_core::SlotValue<ExpressionNode>,
@@ -16250,6 +16298,8 @@ pub struct TryStatementNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_body")]
     #[slot(field = field::BODY, word = 2, width = 5, inline = 5, forms = 8, built = 2)]
     pub body: ::sittir_core::SlotValue<SuiteNode>,
@@ -16341,6 +16391,8 @@ pub struct ExceptClauseNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_group")]
     #[slot(field = field::GROUP, presence = kind::STAR | kind::STAR2, word = 2, bit = 0)]
     pub group: bool,
@@ -16421,6 +16473,8 @@ pub struct FinallyClauseNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_body")]
     #[slot(field = field::BODY, word = 2, width = 5, inline = 5, forms = 8, built = 2)]
     pub body: ::sittir_core::SlotValue<SuiteNode>,
@@ -16494,6 +16548,8 @@ pub struct WithStatementNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_async")]
     #[slot(field = field::ASYNC, presence = kind::ASYNC_KEYWORD, word = 2, bit = 0)]
     pub async_: bool,
@@ -16574,6 +16630,8 @@ pub struct WithItemNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_value")]
     #[slot(field = field::VALUE, word = 2, width = 4, forms = 3, built = 2)]
     pub value: ::sittir_core::SlotValue<ExpressionNode>,
@@ -16648,6 +16706,8 @@ pub struct FunctionDefinitionNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_async")]
     #[slot(field = field::ASYNC, presence = kind::ASYNC_KEYWORD, word = 2, bit = 0)]
     pub async_: bool,
@@ -16740,6 +16800,8 @@ pub struct ParametersNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_elements")]
     #[slot(field = field::ELEMENTS, word = 2, width = 3, inline = 3, forms = 8, built = 2)]
     pub elements: Option<::sittir_core::SlotValue<ParametersElementsNode>>,
@@ -16813,6 +16875,8 @@ pub struct LambdaParametersNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_parameters_elements")]
     #[slot(word = 2, width = 3, inline = 3, forms = 8, built = 2)]
     pub parameters_elements: ::sittir_core::SlotValue<ParametersElementsNode>,
@@ -16885,6 +16949,8 @@ pub struct ListSplatNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_expression")]
     #[slot(field = field::EXPRESSION, word = 2, width = 4, forms = 3, built = 2)]
     pub expression: ::sittir_core::SlotValue<ExpressionNode>,
@@ -16958,6 +17024,8 @@ pub struct DictionarySplatNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_expression")]
     #[slot(field = field::EXPRESSION, word = 2, width = 4, forms = 3, built = 2)]
     pub expression: ::sittir_core::SlotValue<ExpressionNode>,
@@ -17031,6 +17099,8 @@ pub struct GlobalStatementNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_names")]
     #[slot(field = field::NAMES, separator = kind::COMMA, word = 2, width = 1, run = 3, forms = 1, built = 2)]
     pub names: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<IdentifierNode>>,
@@ -17113,6 +17183,8 @@ pub struct NonlocalStatementNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_names")]
     #[slot(field = field::NAMES, separator = kind::COMMA, word = 2, width = 1, run = 3, forms = 1, built = 2)]
     pub names: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<IdentifierNode>>,
@@ -17195,6 +17267,8 @@ pub struct ExecStatementNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_code")]
     #[slot(field = field::CODE, word = 2, width = 10, inline = 9, forms = 9, built = 2)]
     pub code: ::sittir_core::SlotValue<ExecStatementCodeNodeSlot>,
@@ -17282,6 +17356,8 @@ pub struct TypeAliasStatementNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_left")]
     #[slot(field = field::LEFT, word = 2, width = 3, forms = 1, built = 2)]
     pub left: ::sittir_core::SlotValue<TypeNode>,
@@ -17359,6 +17435,8 @@ pub struct ClassDefinitionNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_name")]
     #[slot(field = field::NAME, word = 2, width = 3, forms = 1, built = 2)]
     pub name: ::sittir_core::SlotValue<IdentifierNode>,
@@ -17444,6 +17522,8 @@ pub struct TypeParameterNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_types")]
     #[slot(field = field::TYPES, word = 2, width = 3, inline = 3, forms = 8, built = 2)]
     pub types: ::sittir_core::SlotValue<TypesNode>,
@@ -17517,6 +17597,8 @@ pub struct ParenthesizedListSplatNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_content")]
     #[slot(field = field::CONTENT, word = 2, width = 3, forms = 1, built = 2)]
     pub content: ::sittir_core::SlotValue<Box<ParenthesizedListSplatContentNodeSlot>>,
@@ -17590,6 +17672,8 @@ pub struct ArgumentListNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_arguments")]
     #[slot(field = field::ARGUMENTS, word = 2, width = 3, inline = 3, forms = 8, built = 2)]
     pub arguments: Option<::sittir_core::SlotValue<ArgumentListElementsNode>>,
@@ -17663,6 +17747,8 @@ pub struct DecoratedDefinitionNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_decorator")]
     #[slot(word = 2, width = 1, run = 3, forms = 1, built = 2, seated)]
     pub decorator: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<DecoratorNode>>,
@@ -17746,6 +17832,8 @@ pub struct DecoratorNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_expression")]
     #[slot(field = field::EXPRESSION, word = 2, width = 4, forms = 3, built = 2)]
     pub expression: ::sittir_core::SlotValue<ExpressionNode>,
@@ -17819,6 +17907,8 @@ pub struct BlockNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_statements")]
     #[slot(field = field::STATEMENTS, word = 2, width = 1, run = 3, forms = 1, built = 2, seated)]
     pub statements: Vec<::sittir_core::SlotValue<StatementNode>>,
@@ -17898,6 +17988,8 @@ pub struct ExpressionListNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_item")]
     #[slot(field = field::ITEM, separator = kind::COMMA, word = 2, width = 1, run = 4, forms = 3, built = 2, seated)]
     pub item: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<ExpressionNode>>,
@@ -17985,6 +18077,8 @@ pub struct DottedNameNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_qualifier")]
     #[slot(field = field::QUALIFIER, separator = kind::DOT, word = 2, width = 3, forms = 1, built = 2)]
     pub qualifier: Option<::sittir_core::SlotValue<Box<DottedNameNode>>>,
@@ -18062,6 +18156,8 @@ pub struct CasePatternNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_content")]
     #[slot(word = 2, width = 3, forms = 1, built = 2)]
     pub content: ::sittir_core::SlotValue<Box<CasePatternContentNodeSlot>>,
@@ -18134,6 +18230,8 @@ pub struct SimplePatternNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_content")]
     #[slot(word = 2, width = 4, forms = 3, built = 2)]
     pub content: ::sittir_core::SlotValue<SimplePatternContentNodeSlot>,
@@ -18206,6 +18304,8 @@ pub struct CaseAsPatternNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_case_pattern")]
     #[slot(word = 2, width = 3, forms = 1, built = 2)]
     pub case_pattern: ::sittir_core::SlotValue<Box<CasePatternNode>>,
@@ -18283,6 +18383,8 @@ pub struct UnionPatternNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_left")]
     #[slot(field = field::LEFT, word = 2, width = 4, forms = 3, built = 2)]
     pub left: ::sittir_core::SlotValue<Box<SimplePatternContentNodeSlot>>,
@@ -18360,6 +18462,8 @@ pub struct DictPatternNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_elements")]
     #[slot(field = field::ELEMENTS, word = 2, width = 3, inline = 3, forms = 8, built = 2)]
     pub elements: Option<::sittir_core::SlotValue<DictPatternElementsNode>>,
@@ -18433,6 +18537,8 @@ pub struct KeyValuePatternNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_key")]
     #[slot(field = field::KEY, word = 2, width = 4, forms = 3, built = 2)]
     pub key: ::sittir_core::SlotValue<SimplePatternContentNodeSlot>,
@@ -18510,6 +18616,8 @@ pub struct KeywordPatternNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_name")]
     #[slot(field = field::NAME, word = 2, width = 3, forms = 1, built = 2)]
     pub name: ::sittir_core::SlotValue<IdentifierNode>,
@@ -18587,6 +18695,8 @@ pub struct ClassPatternNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_type")]
     #[slot(field = field::TYPE, word = 2, width = 3, forms = 1, built = 2)]
     pub type_: ::sittir_core::SlotValue<DottedNameNode>,
@@ -18664,6 +18774,8 @@ pub struct ComplexPatternNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_sign")]
     #[slot(field = field::SIGN, presence = kind::DASH, word = 2, bit = 0)]
     pub sign: bool,
@@ -18748,6 +18860,8 @@ pub struct ParametersElementsNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_item")]
     #[slot(field = field::ITEM, separator = kind::COMMA, word = 2, width = 1, run = 4, forms = 3, built = 2, seated)]
     pub item: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<ParameterNode>>,
@@ -18835,6 +18949,8 @@ pub struct PatternsNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_item")]
     #[slot(field = field::ITEM, separator = kind::COMMA, word = 2, width = 1, run = 3, forms = 1, built = 2, seated)]
     pub item: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<PatternNode>>,
@@ -18922,6 +19038,8 @@ pub struct TuplePatternNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_elements")]
     #[slot(field = field::ELEMENTS, word = 2, width = 3, inline = 3, forms = 8, built = 2)]
     pub elements: Option<::sittir_core::SlotValue<TuplePatternElementsNode>>,
@@ -18995,6 +19113,8 @@ pub struct ListPatternNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_elements")]
     #[slot(field = field::ELEMENTS, word = 2, width = 3, inline = 3, forms = 8, built = 2)]
     pub elements: Option<::sittir_core::SlotValue<PatternsNode>>,
@@ -19068,6 +19188,8 @@ pub struct DefaultParameterNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_name")]
     #[slot(field = field::NAME, word = 2, width = 6, inline = 5, forms = 9, built = 2)]
     pub name: ::sittir_core::SlotValue<DefaultParameterNameNodeSlot>,
@@ -19145,6 +19267,8 @@ pub struct TypedDefaultParameterNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_name")]
     #[slot(field = field::NAME, word = 2, width = 3, forms = 1, built = 2)]
     pub name: ::sittir_core::SlotValue<IdentifierNode>,
@@ -19226,6 +19350,8 @@ pub struct ListSplatPatternNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_pattern")]
     #[slot(field = field::PATTERN, word = 2, width = 3, forms = 1, built = 2)]
     pub pattern: ::sittir_core::SlotValue<Box<ListSplatPatternPatternNodeSlot>>,
@@ -19299,6 +19425,8 @@ pub struct DictionarySplatPatternNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_pattern")]
     #[slot(field = field::PATTERN, word = 2, width = 3, forms = 1, built = 2)]
     pub pattern: ::sittir_core::SlotValue<ListSplatPatternPatternNodeSlot>,
@@ -19372,6 +19500,8 @@ pub struct AsPatternNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_expression")]
     #[slot(field = field::EXPRESSION, word = 2, width = 4, forms = 3, built = 2)]
     pub expression: ::sittir_core::SlotValue<Box<ExpressionNode>>,
@@ -19449,6 +19579,8 @@ pub struct NotOperatorNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_argument")]
     #[slot(field = field::ARGUMENT, word = 2, width = 4, forms = 3, built = 2)]
     pub argument: ::sittir_core::SlotValue<Box<ExpressionNode>>,
@@ -19522,6 +19654,8 @@ pub struct BooleanOperatorNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_left")]
     #[slot(field = field::LEFT, word = 2, width = 4, forms = 3, built = 2)]
     pub left: ::sittir_core::SlotValue<Box<ExpressionNode>>,
@@ -19603,6 +19737,8 @@ pub struct BinaryOperatorNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_left")]
     #[slot(field = field::LEFT, word = 2, width = 4, forms = 3, built = 2)]
     pub left: ::sittir_core::SlotValue<Box<PrimaryExpressionNode>>,
@@ -19684,6 +19820,8 @@ pub struct UnaryOperatorNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_operator")]
     #[slot(field = field::OPERATOR, word = 2, width = 1, forms = 2, built = 2)]
     pub operator: ::sittir_core::SlotValue<UnaryOperatorOperatorNodeSlot>,
@@ -19761,6 +19899,8 @@ pub struct ComparisonOperatorNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_left")]
     #[slot(field = field::LEFT, word = 2, width = 4, forms = 3, built = 2)]
     pub left: ::sittir_core::SlotValue<Box<PrimaryExpressionNode>>,
@@ -19844,6 +19984,8 @@ pub struct LambdaNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_parameters")]
     #[slot(field = field::PARAMETERS, word = 2, width = 5, inline = 5, forms = 8, built = 2)]
     pub parameters: Option<::sittir_core::SlotValue<LambdaParametersNode>>,
@@ -19921,6 +20063,8 @@ pub struct LambdaWithinForInClauseNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_parameters")]
     #[slot(field = field::PARAMETERS, word = 2, width = 5, inline = 5, forms = 8, built = 2)]
     pub parameters: Option<::sittir_core::SlotValue<LambdaParametersNode>>,
@@ -19998,6 +20142,8 @@ pub struct AugmentedAssignmentNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_left")]
     #[slot(field = field::LEFT, word = 2, width = 3, forms = 1, built = 2)]
     pub left: ::sittir_core::SlotValue<ForStatementLeftNodeSlot>,
@@ -20079,6 +20225,8 @@ pub struct PatternListNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_item")]
     #[slot(field = field::ITEM, separator = kind::COMMA, word = 2, width = 1, run = 3, forms = 1, built = 2, seated)]
     pub item: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<PatternNode>>,
@@ -20166,6 +20314,8 @@ pub struct YieldNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_content")]
     #[slot(word = 2, width = 4, forms = 3, built = 2)]
     pub content: Option<::sittir_core::SlotValue<Box<YieldContentNodeSlot>>>,
@@ -20239,6 +20389,8 @@ pub struct AttributeNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_object")]
     #[slot(field = field::OBJECT, word = 2, width = 4, forms = 3, built = 2)]
     pub object: ::sittir_core::SlotValue<Box<PrimaryExpressionNode>>,
@@ -20316,6 +20468,8 @@ pub struct SubscriptNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_object")]
     #[slot(field = field::OBJECT, word = 2, width = 4, forms = 3, built = 2)]
     pub object: ::sittir_core::SlotValue<Box<PrimaryExpressionNode>>,
@@ -20393,6 +20547,8 @@ pub struct SliceNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_start")]
     #[slot(field = field::START, word = 2, width = 4, forms = 3, built = 2)]
     pub start: Option<::sittir_core::SlotValue<ExpressionNode>>,
@@ -20527,6 +20683,8 @@ pub struct CallNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_function")]
     #[slot(field = field::FUNCTION, word = 2, width = 4, forms = 3, built = 2)]
     pub function: ::sittir_core::SlotValue<Box<PrimaryExpressionNode>>,
@@ -20604,6 +20762,8 @@ pub struct TypedParameterNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_name")]
     #[slot(field = field::NAME, word = 2, width = 3, forms = 1, built = 2)]
     pub name: ::sittir_core::SlotValue<TypedParameterNameNodeSlot>,
@@ -20681,6 +20841,8 @@ pub struct TypeNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_content")]
     #[slot(word = 2, width = 4, forms = 3, built = 2)]
     pub content: ::sittir_core::SlotValue<Box<TypeContentNodeSlot>>,
@@ -20753,6 +20915,8 @@ pub struct SplatTypeNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_operator")]
     #[slot(field = field::OPERATOR, word = 2, width = 1, forms = 2, built = 2)]
     pub operator: ::sittir_core::SlotValue<SplatTypeOperatorNodeSlot>,
@@ -20830,6 +20994,8 @@ pub struct GenericTypeNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_name")]
     #[slot(field = field::NAME, word = 2, width = 3, forms = 1, built = 2)]
     pub name: ::sittir_core::SlotValue<IdentifierNode>,
@@ -20907,6 +21073,8 @@ pub struct UnionTypeNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_left")]
     #[slot(field = field::LEFT, word = 2, width = 3, forms = 1, built = 2)]
     pub left: ::sittir_core::SlotValue<Box<TypeNode>>,
@@ -20984,6 +21152,8 @@ pub struct ConstrainedTypeNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_base_type")]
     #[slot(field = field::BASE_TYPE, word = 2, width = 3, forms = 1, built = 2)]
     pub base_type: ::sittir_core::SlotValue<Box<TypeNode>>,
@@ -21061,6 +21231,8 @@ pub struct MemberTypeNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_qualifier")]
     #[slot(field = field::QUALIFIER, word = 2, width = 3, forms = 1, built = 2)]
     pub qualifier: ::sittir_core::SlotValue<Box<TypeNode>>,
@@ -21138,6 +21310,8 @@ pub struct KeywordArgumentNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_name")]
     #[slot(field = field::NAME, word = 2, width = 3, forms = 1, built = 2)]
     pub name: ::sittir_core::SlotValue<IdentifierNode>,
@@ -21215,6 +21389,8 @@ pub struct ListNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_elements")]
     #[slot(field = field::ELEMENTS, word = 2, width = 3, inline = 3, forms = 8, built = 2)]
     pub elements: Option<::sittir_core::SlotValue<CollectionElementsNode>>,
@@ -21288,6 +21464,8 @@ pub struct SetNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_elements")]
     #[slot(field = field::ELEMENTS, word = 2, width = 3, inline = 3, forms = 8, built = 2)]
     pub elements: ::sittir_core::SlotValue<CollectionElementsNode>,
@@ -21361,6 +21539,8 @@ pub struct TupleNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_elements")]
     #[slot(field = field::ELEMENTS, word = 2, width = 3, inline = 3, forms = 8, built = 2)]
     pub elements: Option<::sittir_core::SlotValue<TupleElementsNode>>,
@@ -21434,6 +21614,8 @@ pub struct DictionaryNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_elements")]
     #[slot(field = field::ELEMENTS, word = 2, width = 3, inline = 3, forms = 8, built = 2)]
     pub elements: Option<::sittir_core::SlotValue<DictionaryElementsNode>>,
@@ -21507,6 +21689,8 @@ pub struct PairNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_key")]
     #[slot(field = field::KEY, word = 2, width = 4, forms = 3, built = 2)]
     pub key: ::sittir_core::SlotValue<Box<ExpressionNode>>,
@@ -21584,6 +21768,8 @@ pub struct ListComprehensionNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_body")]
     #[slot(field = field::BODY, word = 2, width = 4, forms = 3, built = 2)]
     pub body: ::sittir_core::SlotValue<Box<ExpressionNode>>,
@@ -21661,6 +21847,8 @@ pub struct DictionaryComprehensionNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_body")]
     #[slot(field = field::BODY, word = 2, width = 3, forms = 1, built = 2)]
     pub body: ::sittir_core::SlotValue<Box<PairNode>>,
@@ -21738,6 +21926,8 @@ pub struct SetComprehensionNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_body")]
     #[slot(field = field::BODY, word = 2, width = 4, forms = 3, built = 2)]
     pub body: ::sittir_core::SlotValue<Box<ExpressionNode>>,
@@ -21815,6 +22005,8 @@ pub struct GeneratorExpressionNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_body")]
     #[slot(field = field::BODY, word = 2, width = 4, forms = 3, built = 2)]
     pub body: ::sittir_core::SlotValue<Box<ExpressionNode>>,
@@ -21892,6 +22084,8 @@ pub struct ParenthesizedExpressionNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_expression")]
     #[slot(field = field::EXPRESSION, word = 2, width = 4, forms = 3, built = 2)]
     pub expression: ::sittir_core::SlotValue<Box<ParenthesizedExpressionExpressionNodeSlot>>,
@@ -21965,6 +22159,8 @@ pub struct CollectionElementsNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_item")]
     #[slot(field = field::ITEM, separator = kind::COMMA, word = 2, width = 1, run = 4, forms = 3, built = 2, seated)]
     pub item: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<CollectionElementsItemNodeSlot>>,
@@ -22052,6 +22248,8 @@ pub struct ForInClauseNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_async")]
     #[slot(field = field::ASYNC, presence = kind::ASYNC_KEYWORD, word = 2, bit = 0)]
     pub async_: bool,
@@ -22147,6 +22345,8 @@ pub struct IfClauseNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_condition")]
     #[slot(field = field::CONDITION, word = 2, width = 4, forms = 3, built = 2)]
     pub condition: ::sittir_core::SlotValue<ExpressionNode>,
@@ -22220,6 +22420,8 @@ pub struct ConditionalExpressionNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_consequence")]
     #[slot(field = field::CONSEQUENCE, word = 2, width = 4, forms = 3, built = 2)]
     pub consequence: ::sittir_core::SlotValue<Box<ExpressionNode>>,
@@ -22301,6 +22503,8 @@ pub struct ConcatenatedStringNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_string")]
     #[slot(word = 2, width = 1, run = 3, forms = 1, built = 2, seated)]
     pub string: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<StringNode>>,
@@ -22380,6 +22584,8 @@ pub struct StringNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_string_start")]
     #[slot(field = field::STRING_START, word = 2, width = 3, forms = 1, built = 2)]
     pub string_start: ::sittir_core::SlotValue<StringStartNode>,
@@ -22462,6 +22668,8 @@ pub struct StringContentNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_elements")]
     #[slot(field = field::ELEMENTS, word = 2, width = 1, run = 4, forms = 3, built = 2)]
     pub elements: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<StringContentElementsNodeSlot, true>>,
@@ -22537,6 +22745,8 @@ pub struct InterpolationNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_expression")]
     #[slot(field = field::EXPRESSION, word = 3, width = 4, forms = 3, built = 3)]
     pub expression: ::sittir_core::SlotValue<InterpolationExpressionNodeSlot>,
@@ -22649,6 +22859,8 @@ pub struct FormatSpecifierNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_elements")]
     #[slot(field = field::ELEMENTS, word = 2, width = 1, run = 3, forms = 1, built = 2)]
     pub elements: Vec<::sittir_core::SlotValue<FormatSpecifierElementsNodeSlot, true>>,
@@ -23024,6 +23236,8 @@ pub struct AwaitNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_expression")]
     #[slot(field = field::EXPRESSION, word = 2, width = 4, forms = 3, built = 2)]
     pub expression: ::sittir_core::SlotValue<Box<PrimaryExpressionNode>>,
@@ -23274,6 +23488,8 @@ pub struct SimpleStatementsElementsNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_item")]
     #[slot(field = field::ITEM, separator = kind::SEMI, word = 2, width = 1, run = 4, forms = 3, built = 2, seated)]
     pub item: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<SimpleStatementNode>>,
@@ -23361,6 +23577,8 @@ pub struct SubjectsNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_subject")]
     #[slot(field = field::SUBJECT, separator = kind::COMMA, word = 2, width = 1, run = 4, forms = 3, built = 2, seated)]
     pub subject: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<ExpressionNode>>,
@@ -23448,6 +23666,8 @@ pub struct WithClauseWithItemsNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_item")]
     #[slot(field = field::ITEM, separator = kind::COMMA, word = 2, width = 1, run = 3, forms = 1, built = 2)]
     pub item: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<WithItemNode>>,
@@ -23534,6 +23754,8 @@ pub struct TypesNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_item")]
     #[slot(field = field::ITEM, separator = kind::COMMA, word = 2, width = 1, run = 3, forms = 1, built = 2, seated)]
     pub item: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<TypeNode>>,
@@ -23621,6 +23843,8 @@ pub struct ArgumentListElementsNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_item")]
     #[slot(field = field::ITEM, separator = kind::COMMA, word = 2, width = 1, run = 4, forms = 3, built = 2, seated)]
     pub item: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<ArgumentListElementsItemNodeSlot>>,
@@ -23708,6 +23932,8 @@ pub struct ListPatternCasePatternsNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_item")]
     #[slot(field = field::ITEM, separator = kind::COMMA, word = 2, width = 1, run = 3, forms = 1, built = 2, seated)]
     pub item: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<CasePatternNode>>,
@@ -23795,6 +24021,8 @@ pub struct DictPatternElementsNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_item")]
     #[slot(field = field::ITEM, separator = kind::COMMA, word = 2, width = 1, run = 3, forms = 1, built = 2, seated)]
     pub item: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<DictPatternElementsItemNodeSlot>>,
@@ -23882,6 +24110,8 @@ pub struct SubscriptsNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_subscript")]
     #[slot(field = field::SUBSCRIPT, separator = kind::COMMA, word = 2, width = 1, run = 4, forms = 3, built = 2, seated)]
     pub subscript: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<SubscriptsSubscriptNodeSlot>>,
@@ -23969,6 +24199,8 @@ pub struct DictionaryElementsNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_item")]
     #[slot(field = field::ITEM, separator = kind::COMMA, word = 2, width = 1, run = 3, forms = 1, built = 2, seated)]
     pub item: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<DictionaryElementsItemNodeSlot>>,
@@ -24056,6 +24288,8 @@ pub struct SliceGroupNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_expression")]
     #[slot(word = 2, width = 4, forms = 3, built = 2)]
     pub expression: Option<::sittir_core::SlotValue<ExpressionNode>>,
@@ -24200,6 +24434,8 @@ pub struct TuplePatternElementsNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_item")]
     #[slot(field = field::ITEM, separator = kind::COMMA, word = 2, width = 1, run = 3, forms = 1, built = 2, seated)]
     pub item: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<PatternNode>>,
@@ -24287,6 +24523,8 @@ pub struct CasePatternListNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_item")]
     #[slot(field = field::ITEM, separator = kind::COMMA, word = 2, width = 1, run = 3, forms = 1, built = 2, seated)]
     pub item: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<CasePatternNode>>,
@@ -24374,6 +24612,8 @@ pub struct TupleElementsNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_item")]
     #[slot(field = field::ITEM, separator = kind::COMMA, word = 2, width = 1, run = 4, forms = 3, built = 2, seated)]
     pub item: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<CollectionElementsItemNodeSlot>>,
@@ -24461,6 +24701,8 @@ pub struct ExceptClauseExceptionAsNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_value")]
     #[slot(field = field::VALUE, word = 2, width = 4, forms = 3, built = 2)]
     pub value: ::sittir_core::SlotValue<ExpressionNode>,
@@ -24538,6 +24780,8 @@ pub struct CaseTuplePatternNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_elements")]
     #[slot(field = field::ELEMENTS, word = 2, width = 3, inline = 3, forms = 8, built = 2)]
     pub elements: Option<::sittir_core::SlotValue<ListPatternCasePatternsNode>>,
@@ -24611,6 +24855,8 @@ pub struct CaseListPatternNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_elements")]
     #[slot(field = field::ELEMENTS, word = 2, width = 3, inline = 3, forms = 8, built = 2)]
     pub elements: Option<::sittir_core::SlotValue<ListPatternCasePatternsNode>>,
@@ -24684,6 +24930,8 @@ pub struct PrintArgumentsNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_item")]
     #[slot(field = field::ITEM, separator = kind::COMMA, word = 2, width = 1, run = 4, forms = 3, built = 2, seated)]
     pub item: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<ExpressionNode>>,
@@ -24771,6 +25019,8 @@ pub struct PrintChevronArgumentsNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_item")]
     #[slot(field = field::ITEM, separator = kind::COMMA, word = 2, width = 1, run = 4, forms = 3, built = 2, seated)]
     pub item: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<ExpressionNode>>,
@@ -24858,6 +25108,8 @@ pub struct PrintStatementChevronNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_chevron")]
     #[slot(field = field::CHEVRON, word = 2, width = 6, inline = 6, forms = 8, built = 2)]
     pub chevron: ::sittir_core::SlotValue<ChevronNode>,
@@ -24935,6 +25187,8 @@ pub struct PrintStatementPlainNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_print_arguments")]
     #[slot(word = 2, width = 3, inline = 3, forms = 8, built = 2)]
     pub print_arguments: ::sittir_core::SlotValue<PrintArgumentsNode>,
@@ -25036,6 +25290,8 @@ pub struct ParenthesizedImportListNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_import_list")]
     #[slot(word = 2, width = 3, inline = 3, forms = 8, built = 2)]
     pub import_list: ::sittir_core::SlotValue<ImportListNode>,
@@ -25109,6 +25365,8 @@ pub struct ComprehensionClausesNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_content")]
     #[slot(field = field::CONTENT, word = 2, width = 1, run = 3, forms = 1, built = 2, seated)]
     pub content: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<ComprehensionClausesContentNodeSlot>>,
@@ -26473,6 +26731,8 @@ pub struct SimplePatternNegativeNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_value")]
     #[slot(field = field::VALUE, word = 2, width = 15, inline = 14, forms = 9, built = 2)]
     pub value: ::sittir_core::SlotValue<ComplexPatternRealNodeSlot>,
@@ -26546,6 +26806,8 @@ pub struct ExceptClauseExceptionListNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_value")]
     #[slot(field = field::VALUE, separator = kind::COMMA, word = 2, width = 1, run = 4, forms = 3, built = 2, seated)]
     pub value: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<ExpressionNode>>,
@@ -26628,6 +26890,8 @@ pub struct ExceptClauseExceptionNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_content")]
     #[slot(word = 2, width = 10, inline = 10, forms = 8, built = 2)]
     pub content: ::sittir_core::SlotValue<ExceptClauseExceptionContentNodeSlot>,
@@ -26700,6 +26964,8 @@ pub struct SplatPatternListNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_pattern")]
     #[slot(field = field::PATTERN, word = 2, width = 4, forms = 3, built = 2)]
     pub pattern: ::sittir_core::SlotValue<SplatPatternListPatternNodeSlot>,
@@ -26773,6 +27039,8 @@ pub struct SplatPatternDictionaryNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_pattern")]
     #[slot(field = field::PATTERN, word = 2, width = 4, forms = 3, built = 2)]
     pub pattern: ::sittir_core::SlotValue<SplatPatternDictionaryPatternNodeSlot>,
@@ -26846,6 +27114,8 @@ pub struct AssignmentEqNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_name")]
     #[slot(field = field::NAME, word = 2, width = 3, forms = 1, built = 2)]
     pub name: ::sittir_core::SlotValue<ForStatementLeftNodeSlot>,
@@ -26923,6 +27193,8 @@ pub struct AssignmentTypeNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_name")]
     #[slot(field = field::NAME, word = 2, width = 3, forms = 1, built = 2)]
     pub name: ::sittir_core::SlotValue<ForStatementLeftNodeSlot>,
@@ -27000,6 +27272,8 @@ pub struct AssignmentTypedNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_name")]
     #[slot(field = field::NAME, word = 2, width = 3, forms = 1, built = 2)]
     pub name: ::sittir_core::SlotValue<ForStatementLeftNodeSlot>,
@@ -27081,6 +27355,8 @@ pub struct ExpressionStatementTupleNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_item")]
     #[slot(field = field::ITEM, separator = kind::COMMA, word = 2, width = 1, run = 4, forms = 3, built = 2, seated)]
     pub item: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<ExpressionNode>>,
@@ -27168,6 +27444,8 @@ pub struct WithClauseBareNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_items")]
     #[slot(field = field::ITEMS, separator = kind::COMMA, word = 2, width = 1, run = 3, forms = 1, built = 2)]
     pub items: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<WithItemNode>>,
@@ -27254,6 +27532,8 @@ pub struct WithClauseParenNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_items")]
     #[slot(field = field::ITEMS, word = 2, width = 3, inline = 3, forms = 8, built = 2)]
     pub items: ::sittir_core::SlotValue<WithClauseWithItemsNode>,
@@ -27327,6 +27607,8 @@ pub struct MatchBlockBlockNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_alternative")]
     #[slot(field = field::ALTERNATIVE, word = 2, width = 1, run = 3, forms = 1, built = 2, seated)]
     pub alternative: Vec<::sittir_core::SlotValue<CaseClauseNode>>,
@@ -27406,6 +27688,8 @@ pub struct MatchBlockEmptyNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_newline")]
     #[slot(word = 2, width = 1, forms = 2, built = 2)]
     pub newline: ::sittir_core::SlotValue<NewlineNode>,
@@ -27478,6 +27762,8 @@ pub struct SuiteInlineNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_elements")]
     #[slot(field = field::ELEMENTS, word = 2, width = 3, inline = 3, forms = 8, built = 2)]
     pub elements: ::sittir_core::SlotValue<SimpleStatementsElementsNode>,
@@ -27551,6 +27837,8 @@ pub struct SuiteBlockNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_block")]
     #[slot(word = 2, width = 3, inline = 3, forms = 8, built = 2)]
     pub block: ::sittir_core::SlotValue<BlockNode>,
@@ -27624,6 +27912,8 @@ pub struct SuiteEmptyNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_newline")]
     #[slot(word = 2, width = 1, forms = 2, built = 2)]
     pub newline: ::sittir_core::SlotValue<NewlineNode>,
@@ -27696,6 +27986,8 @@ pub struct ComparisonOperatorComparatorNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_operators")]
     #[slot(field = field::OPERATORS, word = 2, width = 1, forms = 2, built = 2)]
     pub operators: ::sittir_core::SlotValue<ComparisonOperatorComparatorOperatorsNodeSlot>,
@@ -27773,6 +28065,8 @@ pub struct YieldFromClauseNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_expression")]
     #[slot(word = 2, width = 4, forms = 3, built = 2)]
     pub expression: ::sittir_core::SlotValue<Box<ExpressionNode>>,
@@ -28354,6 +28648,8 @@ pub struct ConstructorDeclarationNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_async")]
     #[slot(field = field::ASYNC, presence = kind::ASYNC_KEYWORD, word = 2, bit = 0)]
     pub async_: bool,
@@ -28442,6 +28738,8 @@ pub struct BlockClassDeclarationNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_statements")]
     #[slot(field = field::STATEMENTS, word = 2, width = 1, run = 3, forms = 1, built = 2, seated)]
     pub statements: Vec<::sittir_core::SlotValue<StatementClassDefinitionNode>>,
@@ -28521,6 +28819,8 @@ pub struct SuiteBlockClassDeclarationNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_block_class_declaration")]
     #[slot(word = 2, width = 3, inline = 3, forms = 8, built = 2)]
     pub block_class_declaration: ::sittir_core::SlotValue<BlockClassDeclarationNode>,
@@ -28594,6 +28894,8 @@ pub struct DecoratedDefinitionClassDeclarationNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_decorator")]
     #[slot(word = 2, width = 1, run = 3, forms = 1, built = 2, seated)]
     pub decorator: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<DecoratorNode>>,
@@ -28677,6 +28979,8 @@ pub struct AsPatternTargetNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_content")]
     #[slot(word = 2, width = 4, forms = 3, built = 2)]
     pub content: ::sittir_core::SlotValue<Box<ExpressionNode>>,
@@ -36044,7 +36348,7 @@ fn render_statement(t: &StatementNode, w: &mut dyn ::sittir_core::render::Render
         StatementNode::IfStatement(inner) => inner.as_ref().render(w),
         StatementNode::ForStatement(inner) => inner.as_ref().render(w),
         StatementNode::WhileStatement(inner) => inner.as_ref().render(w),
-        StatementNode::TryStatement(inner) => inner.render(w),
+        StatementNode::TryStatement(inner) => inner.as_ref().render(w),
         StatementNode::WithStatement(inner) => inner.render(w),
         StatementNode::FunctionDefinition(inner) => inner.as_ref().render(w),
         StatementNode::ClassDefinition(inner) => inner.render(w),
@@ -36122,7 +36426,7 @@ fn render_compound_statement(t: &CompoundStatementNode, w: &mut dyn ::sittir_cor
         CompoundStatementNode::IfStatement(inner) => inner.as_ref().render(w),
         CompoundStatementNode::ForStatement(inner) => inner.as_ref().render(w),
         CompoundStatementNode::WhileStatement(inner) => inner.as_ref().render(w),
-        CompoundStatementNode::TryStatement(inner) => inner.render(w),
+        CompoundStatementNode::TryStatement(inner) => inner.as_ref().render(w),
         CompoundStatementNode::WithStatement(inner) => inner.render(w),
         CompoundStatementNode::FunctionDefinition(inner) => inner.as_ref().render(w),
         CompoundStatementNode::ClassDefinition(inner) => inner.render(w),
@@ -36206,7 +36510,7 @@ fn render_parameter(t: &ParameterNode, w: &mut dyn ::sittir_core::render::Render
         ParameterNode::Identifier(inner) => inner.render(w),
         ParameterNode::TypedParameter(inner) => inner.render(w),
         ParameterNode::DefaultParameter(inner) => inner.render(w),
-        ParameterNode::TypedDefaultParameter(inner) => inner.render(w),
+        ParameterNode::TypedDefaultParameter(inner) => inner.as_ref().render(w),
         ParameterNode::ListSplatPattern(inner) => inner.render(w),
         ParameterNode::TuplePattern(inner) => inner.render(w),
         ParameterNode::KeywordSeparator(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(259), edges, w, render_keyword_separator),
@@ -36425,10 +36729,10 @@ fn render_compound_statement_class_definition(t: &CompoundStatementClassDefiniti
         CompoundStatementClassDefinitionNode::IfStatement(inner) => inner.as_ref().render(w),
         CompoundStatementClassDefinitionNode::ForStatement(inner) => inner.as_ref().render(w),
         CompoundStatementClassDefinitionNode::WhileStatement(inner) => inner.as_ref().render(w),
-        CompoundStatementClassDefinitionNode::TryStatement(inner) => inner.render(w),
+        CompoundStatementClassDefinitionNode::TryStatement(inner) => inner.as_ref().render(w),
         CompoundStatementClassDefinitionNode::WithStatement(inner) => inner.render(w),
         CompoundStatementClassDefinitionNode::MethodDeclaration(inner) => inner.as_ref().render(w),
-        CompoundStatementClassDefinitionNode::ConstructorDeclaration(inner) => inner.render(w),
+        CompoundStatementClassDefinitionNode::ConstructorDeclaration(inner) => inner.as_ref().render(w),
         CompoundStatementClassDefinitionNode::ClassDefinition(inner) => inner.render(w),
         CompoundStatementClassDefinitionNode::DecoratedDefinitionClassDeclaration(inner) => inner.as_ref().render(w),
         CompoundStatementClassDefinitionNode::MatchStatement(inner) => inner.render(w),
@@ -36460,10 +36764,10 @@ fn render_statement_class_definition(t: &StatementClassDefinitionNode, w: &mut d
         StatementClassDefinitionNode::IfStatement(inner) => inner.as_ref().render(w),
         StatementClassDefinitionNode::ForStatement(inner) => inner.as_ref().render(w),
         StatementClassDefinitionNode::WhileStatement(inner) => inner.as_ref().render(w),
-        StatementClassDefinitionNode::TryStatement(inner) => inner.render(w),
+        StatementClassDefinitionNode::TryStatement(inner) => inner.as_ref().render(w),
         StatementClassDefinitionNode::WithStatement(inner) => inner.render(w),
         StatementClassDefinitionNode::MethodDeclaration(inner) => inner.as_ref().render(w),
-        StatementClassDefinitionNode::ConstructorDeclaration(inner) => inner.render(w),
+        StatementClassDefinitionNode::ConstructorDeclaration(inner) => inner.as_ref().render(w),
         StatementClassDefinitionNode::ClassDefinition(inner) => inner.render(w),
         StatementClassDefinitionNode::DecoratedDefinitionClassDeclaration(inner) => inner.as_ref().render(w),
         StatementClassDefinitionNode::MatchStatement(inner) => inner.render(w),
@@ -37851,7 +38155,7 @@ const _: () = assert!(::core::mem::size_of::<ComprehensionClausesNode>() <= 256,
 const _: () = assert!(::core::mem::size_of::<ConcatenatedStringNode>() <= 256, "ConcatenatedStringNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 const _: () = assert!(::core::mem::size_of::<ConditionalExpressionNode>() <= 256, "ConditionalExpressionNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 const _: () = assert!(::core::mem::size_of::<ConstrainedTypeNode>() <= 256, "ConstrainedTypeNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
-const _: () = assert!(::core::mem::size_of::<ConstructorDeclarationNode>() <= 256, "ConstructorDeclarationNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<ConstructorDeclarationNode>() > 256, "ConstructorDeclarationNode is within the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it over");
 const _: () = assert!(::core::mem::size_of::<DecoratedDefinitionClassDeclarationNode>() > 256, "DecoratedDefinitionClassDeclarationNode is within the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it over");
 const _: () = assert!(::core::mem::size_of::<DecoratedDefinitionNode>() > 256, "DecoratedDefinitionNode is within the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it over");
 const _: () = assert!(::core::mem::size_of::<DecoratorNode>() <= 256, "DecoratorNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
@@ -37912,7 +38216,7 @@ const _: () = assert!(::core::mem::size_of::<IntegerDecimalPlainNode>() <= 256, 
 const _: () = assert!(::core::mem::size_of::<IntegerHexNode>() <= 256, "IntegerHexNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 const _: () = assert!(::core::mem::size_of::<IntegerNode>() <= 256, "IntegerNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 const _: () = assert!(::core::mem::size_of::<IntegerOctalNode>() <= 256, "IntegerOctalNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
-const _: () = assert!(::core::mem::size_of::<InterpolationNode>() <= 256, "InterpolationNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<InterpolationNode>() > 256, "InterpolationNode is within the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it over");
 const _: () = assert!(::core::mem::size_of::<KeyValuePatternNode>() <= 256, "KeyValuePatternNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 const _: () = assert!(::core::mem::size_of::<KeywordArgumentNode>() <= 256, "KeywordArgumentNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 const _: () = assert!(::core::mem::size_of::<KeywordPatternNode>() <= 256, "KeywordPatternNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
@@ -37975,7 +38279,7 @@ const _: () = assert!(::core::mem::size_of::<SuiteBlockClassDeclarationNode>() <
 const _: () = assert!(::core::mem::size_of::<SuiteBlockNode>() <= 256, "SuiteBlockNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 const _: () = assert!(::core::mem::size_of::<SuiteEmptyNode>() <= 256, "SuiteEmptyNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 const _: () = assert!(::core::mem::size_of::<SuiteInlineNode>() <= 256, "SuiteInlineNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
-const _: () = assert!(::core::mem::size_of::<TryStatementNode>() <= 256, "TryStatementNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<TryStatementNode>() > 256, "TryStatementNode is within the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it over");
 const _: () = assert!(::core::mem::size_of::<TupleElementsNode>() <= 256, "TupleElementsNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 const _: () = assert!(::core::mem::size_of::<TupleNode>() <= 256, "TupleNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 const _: () = assert!(::core::mem::size_of::<TuplePatternElementsNode>() <= 256, "TuplePatternElementsNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
@@ -37984,7 +38288,7 @@ const _: () = assert!(::core::mem::size_of::<TypeAliasStatementNode>() <= 256, "
 const _: () = assert!(::core::mem::size_of::<TypeConversionNode>() <= 256, "TypeConversionNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 const _: () = assert!(::core::mem::size_of::<TypeNode>() <= 256, "TypeNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 const _: () = assert!(::core::mem::size_of::<TypeParameterNode>() <= 256, "TypeParameterNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
-const _: () = assert!(::core::mem::size_of::<TypedDefaultParameterNode>() <= 256, "TypedDefaultParameterNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<TypedDefaultParameterNode>() > 256, "TypedDefaultParameterNode is within the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it over");
 const _: () = assert!(::core::mem::size_of::<TypedParameterNode>() <= 256, "TypedParameterNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 const _: () = assert!(::core::mem::size_of::<TypesNode>() <= 256, "TypesNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 const _: () = assert!(::core::mem::size_of::<UnaryOperatorNode>() <= 256, "UnaryOperatorNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
@@ -38000,3 +38304,711 @@ const _: () = assert!(::core::mem::size_of::<YieldFromClauseNode>() <= 256, "Yie
 const _: () = assert!(::core::mem::size_of::<YieldNode>() <= 256, "YieldNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 
 ::sittir_core::grammar_nodes!(TriviaNode; AnyNode, StatementNode, SimpleStatementNode, CompoundStatementNode, MatchBlockNode, WithClauseNode, SuiteNode, ParameterNode, PatternNode, ExpressionNode, PrimaryExpressionNode, IntegerNode, FloatNode, IntegerDecimalNode, CompoundStatementClassDefinitionNode, StatementClassDefinitionNode, SuiteClassDefinitionNode, FutureImportStatementContentNodeSlot, ImportFromStatementModuleNameNodeSlot, ImportFromStatementContentNodeSlot, ImportListNameNodeSlot, PrintStatementContentNodeSlot, ExpressionStatementContentNodeSlot, ReturnStatementExpressionsNodeSlot, IfStatementAlternativeNodeSlot, CaseClausePatternNodeSlot, ForStatementLeftNodeSlot, ExecStatementCodeNodeSlot, ParenthesizedListSplatContentNodeSlot, DecoratedDefinitionDefinitionNodeSlot, CasePatternContentNodeSlot, SimplePatternContentNodeSlot, ComplexPatternRealNodeSlot, ComplexPatternOperatorNodeSlot, DefaultParameterNameNodeSlot, ListSplatPatternPatternNodeSlot, BooleanOperatorOperatorNodeSlot, BinaryOperatorOperatorNodeSlot, UnaryOperatorOperatorNodeSlot, LambdaWithinForInClauseBodyNodeSlot, AugmentedAssignmentOperatorNodeSlot, AugmentedAssignmentRightNodeSlot, YieldContentNodeSlot, CallArgumentsNodeSlot, TypedParameterNameNodeSlot, TypeContentNodeSlot, SplatTypeOperatorNodeSlot, ParenthesizedExpressionExpressionNodeSlot, CollectionElementsItemNodeSlot, ForInClauseTrailingCommaNodeSlot, StringContentNodeSlot, StringContentElementsNodeSlot, InterpolationExpressionNodeSlot, FormatSpecifierElementsNodeSlot, ArgumentListElementsItemNodeSlot, DictPatternElementsItemNodeSlot, SubscriptsSubscriptNodeSlot, DictionaryElementsItemNodeSlot, PrintStatementChevronPrintChevronArgumentsNodeSlot, ComprehensionClausesContentNodeSlot, ExceptClauseExceptionContentNodeSlot, SplatPatternListPatternNodeSlot, SplatPatternDictionaryPatternNodeSlot, ComparisonOperatorComparatorOperatorsNodeSlot, DecoratedDefinitionClassDeclarationDefinitionNodeSlot, ModuleNode, SimpleStatementsNode, ImportStatementNode, ImportPrefixNode, RelativeImportNode, FutureImportStatementNode, ImportFromStatementNode, ImportListNode, AliasedImportNode, WildcardImportNode, PrintStatementNode, ChevronNode, AssertStatementNode, ExpressionStatementNode, NamedExpressionNode, NamedExpressionLhsNode, ReturnStatementNode, DeleteStatementNode, RaiseStatementNode, PassStatementNode, BreakStatementNode, ContinueStatementNode, IfStatementNode, ElifClauseNode, ElseClauseNode, MatchStatementNode, CaseClauseNode, ForStatementNode, WhileStatementNode, TryStatementNode, ExceptClauseNode, FinallyClauseNode, WithStatementNode, WithItemNode, FunctionDefinitionNode, ParametersNode, LambdaParametersNode, ListSplatNode, DictionarySplatNode, GlobalStatementNode, NonlocalStatementNode, ExecStatementNode, TypeAliasStatementNode, ClassDefinitionNode, TypeParameterNode, ParenthesizedListSplatNode, ArgumentListNode, DecoratedDefinitionNode, DecoratorNode, BlockNode, ExpressionListNode, DottedNameNode, CasePatternNode, SimplePatternNode, CaseAsPatternNode, UnionPatternNode, DictPatternNode, KeyValuePatternNode, KeywordPatternNode, ClassPatternNode, ComplexPatternNode, ParametersElementsNode, PatternsNode, TuplePatternNode, ListPatternNode, DefaultParameterNode, TypedDefaultParameterNode, ListSplatPatternNode, DictionarySplatPatternNode, AsPatternNode, NotOperatorNode, BooleanOperatorNode, BinaryOperatorNode, UnaryOperatorNode, ComparisonOperatorNode, LambdaNode, LambdaWithinForInClauseNode, AugmentedAssignmentNode, PatternListNode, YieldNode, AttributeNode, SubscriptNode, SliceNode, EllipsisNode, CallNode, TypedParameterNode, TypeNode, SplatTypeNode, GenericTypeNode, UnionTypeNode, ConstrainedTypeNode, MemberTypeNode, KeywordArgumentNode, ListNode, SetNode, TupleNode, DictionaryNode, PairNode, ListComprehensionNode, DictionaryComprehensionNode, SetComprehensionNode, GeneratorExpressionNode, ParenthesizedExpressionNode, CollectionElementsNode, ForInClauseNode, IfClauseNode, ConditionalExpressionNode, ConcatenatedStringNode, StringNode, StringContentNode, InterpolationNode, NotEscapeSequenceNode, FormatSpecifierNode, TypeConversionNode, IdentifierNode, TrueNode, FalseNode, NoneNode, AwaitNode, CommentNode, PositionalSeparatorNode, KeywordSeparatorNode, SimpleStatementsElementsNode, SubjectsNode, WithClauseWithItemsNode, TypesNode, ArgumentListElementsNode, ListPatternCasePatternsNode, DictPatternElementsNode, SubscriptsNode, DictionaryElementsNode, SliceGroupNode, FormatSpecifierTextNode, TuplePatternElementsNode, CasePatternListNode, TupleElementsNode, ExceptClauseExceptionAsNode, CaseTuplePatternNode, CaseListPatternNode, PrintArgumentsNode, PrintChevronArgumentsNode, PrintStatementChevronNode, PrintStatementPlainNode, WildcardPatternNode, ParenthesizedImportListNode, ComprehensionClausesNode, IntegerHexNode, IntegerOctalNode, IntegerBinaryNode, IntegerDecimalLongNode, IntegerDecimalImaginaryNode, IntegerDecimalPlainNode, FloatPointNode, FloatLeadingPointNode, FloatScientificNode, EscapeSequenceUnicodeFixedNode, EscapeSequenceUnicodeWideNode, EscapeSequenceHexNode, EscapeSequenceOctalNode, EscapeSequenceLineBreakNode, EscapeSequenceSimpleNode, EscapeSequenceNamedNode, LineContinuationNewlineNode, LineContinuationNulNode, SimplePatternNegativeNode, ExceptClauseExceptionListNode, ExceptClauseExceptionNode, SplatPatternListNode, SplatPatternDictionaryNode, AssignmentEqNode, AssignmentTypeNode, AssignmentTypedNode, ExpressionStatementTupleNode, WithClauseBareNode, WithClauseParenNode, MatchBlockBlockNode, MatchBlockEmptyNode, SuiteInlineNode, SuiteBlockNode, SuiteEmptyNode, ComparisonOperatorComparatorNode, YieldFromClauseNode, StringStartNode, StringFragmentNode, EscapeInterpolationNode, StringEndNode, IndentNode, DedentNode, TightNode, SpaceNode, TabNode, NewlineNode, BlanklineNode, DoubleBlanklineNode, ConstructorDeclarationNode, BlockClassDeclarationNode, SuiteBlockClassDeclarationNode, DecoratedDefinitionClassDeclarationNode, AsPatternTargetNode, ImportKeywordNode, DotNode, FromKeywordNode, FutureUKeywordNode, AsKeywordNode, StarNode, GtGtNode, AssertKeywordNode, ColonEqNode, ReturnKeywordNode, DelKeywordNode, RaiseKeywordNode, PassKeywordNode, BreakKeywordNode, ContinueKeywordNode, IfKeywordNode, ColonNode, ElifKeywordNode, ElseKeywordNode, MatchKeywordNode, CaseKeywordNode, AsyncKeywordNode, ForKeywordNode, InKeywordNode, WhileKeywordNode, TryKeywordNode, ExceptKeywordNode, FinallyKeywordNode, WithKeywordNode, DefKeywordNode, DashGtNode, LparenNode, RparenNode, StarStarNode, GlobalKeywordNode, NonlocalKeywordNode, ExecKeywordNode, TypeKeywordNode, EqNode, ClassKeywordNode, LbrackNode, RbrackNode, AtNode, PipeNode, LbraceNode, RbraceNode, DashNode, PlusNode, NotKeywordNode, AndKeywordNode, OrKeywordNode, SlashNode, PercentNode, SlashSlashNode, AmpNode, CaretNode, LtLtNode, TildeNode, LambdaKeywordNode, PlusEqNode, DashEqNode, StarEqNode, SlashEqNode, AtEqNode, SlashSlashEqNode, PercentEqNode, StarStarEqNode, GtGtEqNode, LtLtEqNode, AmpEqNode, CaretEqNode, PipeEqNode, YieldKeywordNode, CommaNode, BslashNode, AwaitKeywordNode, PrintKeywordNode, UnderscoreNode, LtNode, LtEqNode, EqEqNode, BangEqNode, GtEqNode, GtNode, LtGtNode, NotInNode, IsKeywordNode, IsNotNode, InitUKeywordNode, TriviaNode);
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<AliasedImportNode>() == 152, "AliasedImportNode is not the 152 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<AmpEqNode>() == 0, "AmpEqNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<AmpNode>() == 0, "AmpNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<AndKeywordNode>() == 0, "AndKeywordNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<AnyNode>() == 264, "AnyNode is not the 264 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<ArgumentListElementsItemNodeSlot>() == 216, "ArgumentListElementsItemNodeSlot is not the 216 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<ArgumentListElementsNode>() == 48, "ArgumentListElementsNode is not the 48 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<ArgumentListNode>() == 64, "ArgumentListNode is not the 64 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<AsKeywordNode>() == 0, "AsKeywordNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<AsPatternNode>() == 96, "AsPatternNode is not the 96 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<AsPatternTargetNode>() == 56, "AsPatternTargetNode is not the 56 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<AssertKeywordNode>() == 0, "AssertKeywordNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<AssertStatementNode>() == 48, "AssertStatementNode is not the 48 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<AssignmentEqNode>() == 160, "AssignmentEqNode is not the 160 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<AssignmentTypeNode>() == 176, "AssignmentTypeNode is not the 176 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<AssignmentTypedNode>() == 216, "AssignmentTypedNode is not the 216 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<AsyncKeywordNode>() == 0, "AsyncKeywordNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<AtEqNode>() == 0, "AtEqNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<AtNode>() == 0, "AtNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<AttributeNode>() == 96, "AttributeNode is not the 96 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<AugmentedAssignmentNode>() == 200, "AugmentedAssignmentNode is not the 200 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<AugmentedAssignmentOperatorNodeSlot>() == 1, "AugmentedAssignmentOperatorNodeSlot is not the 1 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<AugmentedAssignmentRightNodeSlot>() == 216, "AugmentedAssignmentRightNodeSlot is not the 216 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<AwaitKeywordNode>() == 0, "AwaitKeywordNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<AwaitNode>() == 56, "AwaitNode is not the 56 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<BangEqNode>() == 0, "BangEqNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<BinaryOperatorNode>() == 136, "BinaryOperatorNode is not the 136 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<BinaryOperatorOperatorNodeSlot>() == 1, "BinaryOperatorOperatorNodeSlot is not the 1 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<BlanklineNode>() == 0, "BlanklineNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<BlockClassDeclarationNode>() == 40, "BlockClassDeclarationNode is not the 40 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<BlockNode>() == 40, "BlockNode is not the 40 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<BooleanOperatorNode>() == 136, "BooleanOperatorNode is not the 136 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<BooleanOperatorOperatorNodeSlot>() == 1, "BooleanOperatorOperatorNodeSlot is not the 1 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<BreakKeywordNode>() == 0, "BreakKeywordNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<BreakStatementNode>() == 8, "BreakStatementNode is not the 8 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<BslashNode>() == 0, "BslashNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<CallArgumentsNodeSlot>() == 104, "CallArgumentsNodeSlot is not the 104 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<CallNode>() == 96, "CallNode is not the 96 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<CaretEqNode>() == 0, "CaretEqNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<CaretNode>() == 0, "CaretNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<CaseAsPatternNode>() == 96, "CaseAsPatternNode is not the 96 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<CaseClauseNode>() == 328, "CaseClauseNode is not the 328 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<CaseClausePatternNodeSlot>() == 64, "CaseClausePatternNodeSlot is not the 64 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<CaseKeywordNode>() == 0, "CaseKeywordNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<CaseListPatternNode>() == 64, "CaseListPatternNode is not the 64 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<CasePatternContentNodeSlot>() == 232, "CasePatternContentNodeSlot is not the 232 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<CasePatternListNode>() == 48, "CasePatternListNode is not the 48 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<CasePatternNode>() == 56, "CasePatternNode is not the 56 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<CaseTuplePatternNode>() == 64, "CaseTuplePatternNode is not the 64 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<ChevronNode>() == 176, "ChevronNode is not the 176 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<ClassDefinitionNode>() == 256, "ClassDefinitionNode is not the 256 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<ClassKeywordNode>() == 0, "ClassKeywordNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<ClassPatternNode>() == 160, "ClassPatternNode is not the 160 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<CollectionElementsItemNodeSlot>() == 176, "CollectionElementsItemNodeSlot is not the 176 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<CollectionElementsNode>() == 48, "CollectionElementsNode is not the 48 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<ColonEqNode>() == 0, "ColonEqNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<ColonNode>() == 0, "ColonNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<CommaNode>() == 0, "CommaNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<CommentNode>() == 32, "CommentNode is not the 32 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<ComparisonOperatorComparatorNode>() == 216, "ComparisonOperatorComparatorNode is not the 216 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<ComparisonOperatorComparatorOperatorsNodeSlot>() == 1, "ComparisonOperatorComparatorOperatorsNodeSlot is not the 1 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<ComparisonOperatorNode>() == 80, "ComparisonOperatorNode is not the 80 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<ComplexPatternNode>() == 376, "ComplexPatternNode is not the 376 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<ComplexPatternOperatorNodeSlot>() == 1, "ComplexPatternOperatorNodeSlot is not the 1 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<ComplexPatternRealNodeSlot>() == 160, "ComplexPatternRealNodeSlot is not the 160 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<CompoundStatementClassDefinitionNode>() == 256, "CompoundStatementClassDefinitionNode is not the 256 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<CompoundStatementNode>() == 256, "CompoundStatementNode is not the 256 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<ComprehensionClausesContentNodeSlot>() == 192, "ComprehensionClausesContentNodeSlot is not the 192 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<ComprehensionClausesNode>() == 40, "ComprehensionClausesNode is not the 40 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<ConcatenatedStringNode>() == 40, "ConcatenatedStringNode is not the 40 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<ConditionalExpressionNode>() == 136, "ConditionalExpressionNode is not the 136 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<ConstrainedTypeNode>() == 96, "ConstrainedTypeNode is not the 96 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<ConstructorDeclarationNode>() == 272, "ConstructorDeclarationNode is not the 272 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<ContinueKeywordNode>() == 0, "ContinueKeywordNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<ContinueStatementNode>() == 8, "ContinueStatementNode is not the 8 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<DashEqNode>() == 0, "DashEqNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<DashGtNode>() == 0, "DashGtNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<DashNode>() == 0, "DashNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<DecoratedDefinitionClassDeclarationDefinitionNodeSlot>() == 256, "DecoratedDefinitionClassDeclarationDefinitionNodeSlot is not the 256 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<DecoratedDefinitionClassDeclarationNode>() == 296, "DecoratedDefinitionClassDeclarationNode is not the 296 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<DecoratedDefinitionDefinitionNodeSlot>() == 256, "DecoratedDefinitionDefinitionNodeSlot is not the 256 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<DecoratedDefinitionNode>() == 296, "DecoratedDefinitionNode is not the 296 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<DecoratorNode>() == 176, "DecoratorNode is not the 176 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<DedentNode>() == 0, "DedentNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<DefKeywordNode>() == 0, "DefKeywordNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<DefaultParameterNameNodeSlot>() == 64, "DefaultParameterNameNodeSlot is not the 64 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<DefaultParameterNode>() == 240, "DefaultParameterNode is not the 240 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<DelKeywordNode>() == 0, "DelKeywordNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<DeleteStatementNode>() == 176, "DeleteStatementNode is not the 176 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<DictPatternElementsItemNodeSlot>() == 248, "DictPatternElementsItemNodeSlot is not the 248 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<DictPatternElementsNode>() == 48, "DictPatternElementsNode is not the 48 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<DictPatternNode>() == 64, "DictPatternNode is not the 64 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<DictionaryComprehensionNode>() == 104, "DictionaryComprehensionNode is not the 104 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<DictionaryElementsItemNodeSlot>() == 176, "DictionaryElementsItemNodeSlot is not the 176 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<DictionaryElementsNode>() == 48, "DictionaryElementsNode is not the 48 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<DictionaryNode>() == 64, "DictionaryNode is not the 64 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<DictionarySplatNode>() == 176, "DictionarySplatNode is not the 176 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<DictionarySplatPatternNode>() == 120, "DictionarySplatPatternNode is not the 120 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<DotNode>() == 0, "DotNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<DottedNameNode>() == 96, "DottedNameNode is not the 96 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<DoubleBlanklineNode>() == 0, "DoubleBlanklineNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<ElifClauseNode>() == 248, "ElifClauseNode is not the 248 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<ElifKeywordNode>() == 0, "ElifKeywordNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<EllipsisNode>() == 8, "EllipsisNode is not the 8 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<ElseClauseNode>() == 88, "ElseClauseNode is not the 88 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<ElseKeywordNode>() == 0, "ElseKeywordNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<EqEqNode>() == 0, "EqEqNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<EqNode>() == 0, "EqNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<EscapeInterpolationNode>() == 32, "EscapeInterpolationNode is not the 32 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<EscapeSequenceHexNode>() == 32, "EscapeSequenceHexNode is not the 32 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<EscapeSequenceLineBreakNode>() == 32, "EscapeSequenceLineBreakNode is not the 32 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<EscapeSequenceNamedNode>() == 32, "EscapeSequenceNamedNode is not the 32 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<EscapeSequenceOctalNode>() == 32, "EscapeSequenceOctalNode is not the 32 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<EscapeSequenceSimpleNode>() == 32, "EscapeSequenceSimpleNode is not the 32 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<EscapeSequenceUnicodeFixedNode>() == 32, "EscapeSequenceUnicodeFixedNode is not the 32 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<EscapeSequenceUnicodeWideNode>() == 32, "EscapeSequenceUnicodeWideNode is not the 32 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<ExceptClauseExceptionAsNode>() == 336, "ExceptClauseExceptionAsNode is not the 336 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<ExceptClauseExceptionContentNodeSlot>() == 48, "ExceptClauseExceptionContentNodeSlot is not the 48 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<ExceptClauseExceptionListNode>() == 48, "ExceptClauseExceptionListNode is not the 48 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<ExceptClauseExceptionNode>() == 64, "ExceptClauseExceptionNode is not the 64 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<ExceptClauseNode>() == 152, "ExceptClauseNode is not the 152 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<ExceptKeywordNode>() == 0, "ExceptKeywordNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<ExecKeywordNode>() == 0, "ExecKeywordNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<ExecStatementCodeNodeSlot>() == 120, "ExecStatementCodeNodeSlot is not the 120 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<ExecStatementNode>() == 168, "ExecStatementNode is not the 168 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<ExpressionListNode>() == 48, "ExpressionListNode is not the 48 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<ExpressionNode>() == 160, "ExpressionNode is not the 160 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<ExpressionStatementContentNodeSlot>() == 216, "ExpressionStatementContentNodeSlot is not the 216 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<ExpressionStatementNode>() == 232, "ExpressionStatementNode is not the 232 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<ExpressionStatementTupleNode>() == 48, "ExpressionStatementTupleNode is not the 48 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<FalseNode>() == 8, "FalseNode is not the 8 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<FinallyClauseNode>() == 88, "FinallyClauseNode is not the 88 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<FinallyKeywordNode>() == 0, "FinallyKeywordNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<FloatLeadingPointNode>() == 152, "FloatLeadingPointNode is not the 152 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<FloatNode>() == 160, "FloatNode is not the 160 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<FloatPointNode>() == 152, "FloatPointNode is not the 152 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<FloatScientificNode>() == 128, "FloatScientificNode is not the 128 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<ForInClauseNode>() == 192, "ForInClauseNode is not the 192 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<ForInClauseTrailingCommaNodeSlot>() == 1, "ForInClauseTrailingCommaNodeSlot is not the 1 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<ForKeywordNode>() == 0, "ForKeywordNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<ForStatementLeftNodeSlot>() == 104, "ForStatementLeftNodeSlot is not the 104 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<ForStatementNode>() == 440, "ForStatementNode is not the 440 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<FormatSpecifierElementsNodeSlot>() == 40, "FormatSpecifierElementsNodeSlot is not the 40 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<FormatSpecifierNode>() == 40, "FormatSpecifierNode is not the 40 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<FormatSpecifierTextNode>() == 32, "FormatSpecifierTextNode is not the 32 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<FromKeywordNode>() == 0, "FromKeywordNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<FunctionDefinitionNode>() == 312, "FunctionDefinitionNode is not the 312 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<FutureImportStatementContentNodeSlot>() == 64, "FutureImportStatementContentNodeSlot is not the 64 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<FutureImportStatementNode>() == 80, "FutureImportStatementNode is not the 80 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<FutureUKeywordNode>() == 0, "FutureUKeywordNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<GeneratorExpressionNode>() == 104, "GeneratorExpressionNode is not the 104 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<GenericTypeNode>() == 120, "GenericTypeNode is not the 120 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<GlobalKeywordNode>() == 0, "GlobalKeywordNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<GlobalStatementNode>() == 48, "GlobalStatementNode is not the 48 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<GtEqNode>() == 0, "GtEqNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<GtGtEqNode>() == 0, "GtGtEqNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<GtGtNode>() == 0, "GtGtNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<GtNode>() == 0, "GtNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<IdentifierNode>() == 32, "IdentifierNode is not the 32 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<IfClauseNode>() == 176, "IfClauseNode is not the 176 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<IfKeywordNode>() == 0, "IfKeywordNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<IfStatementAlternativeNodeSlot>() == 248, "IfStatementAlternativeNodeSlot is not the 248 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<IfStatementNode>() == 272, "IfStatementNode is not the 272 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<ImportFromStatementContentNodeSlot>() == 64, "ImportFromStatementContentNodeSlot is not the 64 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<ImportFromStatementModuleNameNodeSlot>() == 152, "ImportFromStatementModuleNameNodeSlot is not the 152 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<ImportFromStatementNode>() == 232, "ImportFromStatementNode is not the 232 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<ImportKeywordNode>() == 0, "ImportKeywordNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<ImportListNameNodeSlot>() == 152, "ImportListNameNodeSlot is not the 152 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<ImportListNode>() == 48, "ImportListNode is not the 48 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<ImportPrefixNode>() == 32, "ImportPrefixNode is not the 32 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<ImportStatementNode>() == 64, "ImportStatementNode is not the 64 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<InKeywordNode>() == 0, "InKeywordNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<IndentNode>() == 0, "IndentNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<InitUKeywordNode>() == 0, "InitUKeywordNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<IntegerBinaryNode>() == 56, "IntegerBinaryNode is not the 56 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<IntegerDecimalImaginaryNode>() == 32, "IntegerDecimalImaginaryNode is not the 32 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<IntegerDecimalLongNode>() == 32, "IntegerDecimalLongNode is not the 32 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<IntegerDecimalNode>() == 40, "IntegerDecimalNode is not the 40 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<IntegerDecimalPlainNode>() == 32, "IntegerDecimalPlainNode is not the 32 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<IntegerHexNode>() == 56, "IntegerHexNode is not the 56 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<IntegerNode>() == 64, "IntegerNode is not the 64 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<IntegerOctalNode>() == 56, "IntegerOctalNode is not the 56 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<InterpolationExpressionNodeSlot>() == 160, "InterpolationExpressionNodeSlot is not the 160 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<InterpolationNode>() == 264, "InterpolationNode is not the 264 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<IsKeywordNode>() == 0, "IsKeywordNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<IsNotNode>() == 0, "IsNotNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<KeyValuePatternNode>() == 248, "KeyValuePatternNode is not the 248 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<KeywordArgumentNode>() == 216, "KeywordArgumentNode is not the 216 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<KeywordPatternNode>() == 232, "KeywordPatternNode is not the 232 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<KeywordSeparatorNode>() == 8, "KeywordSeparatorNode is not the 8 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<LambdaKeywordNode>() == 0, "LambdaKeywordNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<LambdaNode>() == 120, "LambdaNode is not the 120 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<LambdaParametersNode>() == 64, "LambdaParametersNode is not the 64 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<LambdaWithinForInClauseBodyNodeSlot>() == 160, "LambdaWithinForInClauseBodyNodeSlot is not the 160 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<LambdaWithinForInClauseNode>() == 120, "LambdaWithinForInClauseNode is not the 120 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<LbraceNode>() == 0, "LbraceNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<LbrackNode>() == 0, "LbrackNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<LineContinuationNewlineNode>() == 32, "LineContinuationNewlineNode is not the 32 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<LineContinuationNulNode>() == 0, "LineContinuationNulNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<ListComprehensionNode>() == 104, "ListComprehensionNode is not the 104 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<ListNode>() == 64, "ListNode is not the 64 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<ListPatternCasePatternsNode>() == 48, "ListPatternCasePatternsNode is not the 48 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<ListPatternNode>() == 64, "ListPatternNode is not the 64 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<ListSplatNode>() == 176, "ListSplatNode is not the 176 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<ListSplatPatternNode>() == 56, "ListSplatPatternNode is not the 56 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<ListSplatPatternPatternNodeSlot>() == 104, "ListSplatPatternPatternNodeSlot is not the 104 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<LparenNode>() == 0, "LparenNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<LtEqNode>() == 0, "LtEqNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<LtGtNode>() == 0, "LtGtNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<LtLtEqNode>() == 0, "LtLtEqNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<LtLtNode>() == 0, "LtLtNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<LtNode>() == 0, "LtNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<MatchBlockBlockNode>() == 40, "MatchBlockBlockNode is not the 40 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<MatchBlockEmptyNode>() == 56, "MatchBlockEmptyNode is not the 56 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<MatchBlockNode>() == 56, "MatchBlockNode is not the 56 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<MatchKeywordNode>() == 0, "MatchKeywordNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<MatchStatementNode>() == 120, "MatchStatementNode is not the 120 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<MemberTypeNode>() == 96, "MemberTypeNode is not the 96 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<ModuleNode>() == 40, "ModuleNode is not the 40 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<NamedExpressionLhsNode>() == 56, "NamedExpressionLhsNode is not the 56 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<NamedExpressionNode>() == 96, "NamedExpressionNode is not the 96 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<NewlineNode>() == 0, "NewlineNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<NoneNode>() == 8, "NoneNode is not the 8 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<NonlocalKeywordNode>() == 0, "NonlocalKeywordNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<NonlocalStatementNode>() == 48, "NonlocalStatementNode is not the 48 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<NotEscapeSequenceNode>() == 0, "NotEscapeSequenceNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<NotInNode>() == 0, "NotInNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<NotKeywordNode>() == 0, "NotKeywordNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<NotOperatorNode>() == 56, "NotOperatorNode is not the 56 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<OrKeywordNode>() == 0, "OrKeywordNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<PairNode>() == 96, "PairNode is not the 96 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<ParameterNode>() == 240, "ParameterNode is not the 240 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<ParametersElementsNode>() == 48, "ParametersElementsNode is not the 48 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<ParametersNode>() == 64, "ParametersNode is not the 64 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<ParenthesizedExpressionExpressionNodeSlot>() == 160, "ParenthesizedExpressionExpressionNodeSlot is not the 160 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<ParenthesizedExpressionNode>() == 56, "ParenthesizedExpressionNode is not the 56 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<ParenthesizedImportListNode>() == 64, "ParenthesizedImportListNode is not the 64 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<ParenthesizedListSplatContentNodeSlot>() == 176, "ParenthesizedListSplatContentNodeSlot is not the 176 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<ParenthesizedListSplatNode>() == 56, "ParenthesizedListSplatNode is not the 56 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<PassKeywordNode>() == 0, "PassKeywordNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<PassStatementNode>() == 8, "PassStatementNode is not the 8 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<PatternListNode>() == 48, "PatternListNode is not the 48 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<PatternNode>() == 104, "PatternNode is not the 104 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<PatternsNode>() == 48, "PatternsNode is not the 48 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<PercentEqNode>() == 0, "PercentEqNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<PercentNode>() == 0, "PercentNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<PipeEqNode>() == 0, "PipeEqNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<PipeNode>() == 0, "PipeNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<PlusEqNode>() == 0, "PlusEqNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<PlusNode>() == 0, "PlusNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<PositionalSeparatorNode>() == 8, "PositionalSeparatorNode is not the 8 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<PrimaryExpressionNode>() == 160, "PrimaryExpressionNode is not the 160 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<PrintArgumentsNode>() == 48, "PrintArgumentsNode is not the 48 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<PrintChevronArgumentsNode>() == 48, "PrintChevronArgumentsNode is not the 48 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<PrintKeywordNode>() == 0, "PrintKeywordNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<PrintStatementChevronNode>() == 240, "PrintStatementChevronNode is not the 240 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<PrintStatementChevronPrintChevronArgumentsNodeSlot>() == 48, "PrintStatementChevronPrintChevronArgumentsNodeSlot is not the 48 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<PrintStatementContentNodeSlot>() == 240, "PrintStatementContentNodeSlot is not the 240 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<PrintStatementNode>() == 256, "PrintStatementNode is not the 256 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<PrintStatementPlainNode>() == 64, "PrintStatementPlainNode is not the 64 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<RaiseKeywordNode>() == 0, "RaiseKeywordNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<RaiseStatementNode>() == 336, "RaiseStatementNode is not the 336 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<RbraceNode>() == 0, "RbraceNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<RbrackNode>() == 0, "RbrackNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<RelativeImportNode>() == 152, "RelativeImportNode is not the 152 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<ReturnKeywordNode>() == 0, "ReturnKeywordNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<ReturnStatementExpressionsNodeSlot>() == 160, "ReturnStatementExpressionsNodeSlot is not the 160 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<ReturnStatementNode>() == 176, "ReturnStatementNode is not the 176 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<RparenNode>() == 0, "RparenNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<SetComprehensionNode>() == 104, "SetComprehensionNode is not the 104 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<SetNode>() == 64, "SetNode is not the 64 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<SimplePatternContentNodeSlot>() == 176, "SimplePatternContentNodeSlot is not the 176 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<SimplePatternNegativeNode>() == 176, "SimplePatternNegativeNode is not the 176 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<SimplePatternNode>() == 192, "SimplePatternNode is not the 192 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<SimpleStatementNode>() == 256, "SimpleStatementNode is not the 256 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<SimpleStatementsElementsNode>() == 48, "SimpleStatementsElementsNode is not the 48 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<SimpleStatementsNode>() == 64, "SimpleStatementsNode is not the 64 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<SlashEqNode>() == 0, "SlashEqNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<SlashNode>() == 0, "SlashNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<SlashSlashEqNode>() == 0, "SlashSlashEqNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<SlashSlashNode>() == 0, "SlashSlashNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<SliceGroupNode>() == 176, "SliceGroupNode is not the 176 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<SliceNode>() == 512, "SliceNode is not the 512 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<SpaceNode>() == 0, "SpaceNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<SplatPatternDictionaryNode>() == 64, "SplatPatternDictionaryNode is not the 64 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<SplatPatternDictionaryPatternNodeSlot>() == 40, "SplatPatternDictionaryPatternNodeSlot is not the 40 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<SplatPatternListNode>() == 64, "SplatPatternListNode is not the 64 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<SplatPatternListPatternNodeSlot>() == 40, "SplatPatternListPatternNodeSlot is not the 40 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<SplatTypeNode>() == 96, "SplatTypeNode is not the 96 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<SplatTypeOperatorNodeSlot>() == 1, "SplatTypeOperatorNodeSlot is not the 1 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<StarEqNode>() == 0, "StarEqNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<StarNode>() == 0, "StarNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<StarStarEqNode>() == 0, "StarStarEqNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<StarStarNode>() == 0, "StarStarNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<StatementClassDefinitionNode>() == 264, "StatementClassDefinitionNode is not the 264 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<StatementNode>() == 264, "StatementNode is not the 264 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<StringContentElementsNodeSlot>() == 40, "StringContentElementsNodeSlot is not the 40 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<StringContentNode>() == 40, "StringContentNode is not the 40 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<StringContentNodeSlot>() == 40, "StringContentNodeSlot is not the 40 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<StringEndNode>() == 32, "StringEndNode is not the 32 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<StringFragmentNode>() == 32, "StringFragmentNode is not the 32 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<StringNode>() == 120, "StringNode is not the 120 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<StringStartNode>() == 32, "StringStartNode is not the 32 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<SubjectsNode>() == 48, "SubjectsNode is not the 48 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<SubscriptNode>() == 104, "SubscriptNode is not the 104 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<SubscriptsNode>() == 48, "SubscriptsNode is not the 48 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<SubscriptsSubscriptNodeSlot>() == 160, "SubscriptsSubscriptNodeSlot is not the 160 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<SuiteBlockClassDeclarationNode>() == 64, "SuiteBlockClassDeclarationNode is not the 64 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<SuiteBlockNode>() == 64, "SuiteBlockNode is not the 64 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<SuiteClassDefinitionNode>() == 72, "SuiteClassDefinitionNode is not the 72 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<SuiteEmptyNode>() == 56, "SuiteEmptyNode is not the 56 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<SuiteInlineNode>() == 64, "SuiteInlineNode is not the 64 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<SuiteNode>() == 72, "SuiteNode is not the 72 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<TabNode>() == 0, "TabNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<TightNode>() == 0, "TightNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<TildeNode>() == 0, "TildeNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<TriviaNode>() == 120, "TriviaNode is not the 120 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<TrueNode>() == 8, "TrueNode is not the 8 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<TryKeywordNode>() == 0, "TryKeywordNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<TryStatementNode>() == 288, "TryStatementNode is not the 288 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<TupleElementsNode>() == 48, "TupleElementsNode is not the 48 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<TupleNode>() == 64, "TupleNode is not the 64 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<TuplePatternElementsNode>() == 48, "TuplePatternElementsNode is not the 48 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<TuplePatternNode>() == 64, "TuplePatternNode is not the 64 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<TypeAliasStatementNode>() == 128, "TypeAliasStatementNode is not the 128 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<TypeContentNodeSlot>() == 160, "TypeContentNodeSlot is not the 160 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<TypeConversionNode>() == 32, "TypeConversionNode is not the 32 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<TypeKeywordNode>() == 0, "TypeKeywordNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<TypeNode>() == 56, "TypeNode is not the 56 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<TypeParameterNode>() == 64, "TypeParameterNode is not the 64 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<TypedDefaultParameterNode>() == 272, "TypedDefaultParameterNode is not the 272 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<TypedParameterNameNodeSlot>() == 120, "TypedParameterNameNodeSlot is not the 120 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<TypedParameterNode>() == 192, "TypedParameterNode is not the 192 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<TypesNode>() == 48, "TypesNode is not the 48 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<UnaryOperatorNode>() == 96, "UnaryOperatorNode is not the 96 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<UnaryOperatorOperatorNodeSlot>() == 1, "UnaryOperatorOperatorNodeSlot is not the 1 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<UnderscoreNode>() == 0, "UnderscoreNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<UnionPatternNode>() == 96, "UnionPatternNode is not the 96 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<UnionTypeNode>() == 96, "UnionTypeNode is not the 96 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<WhileKeywordNode>() == 0, "WhileKeywordNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<WhileStatementNode>() == 336, "WhileStatementNode is not the 336 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<WildcardImportNode>() == 0, "WildcardImportNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<WildcardPatternNode>() == 0, "WildcardPatternNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<WithClauseBareNode>() == 48, "WithClauseBareNode is not the 48 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<WithClauseNode>() == 64, "WithClauseNode is not the 64 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<WithClauseParenNode>() == 64, "WithClauseParenNode is not the 64 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<WithClauseWithItemsNode>() == 48, "WithClauseWithItemsNode is not the 48 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<WithItemNode>() == 176, "WithItemNode is not the 176 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<WithKeywordNode>() == 0, "WithKeywordNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<WithStatementNode>() == 152, "WithStatementNode is not the 152 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<YieldContentNodeSlot>() == 160, "YieldContentNodeSlot is not the 160 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<YieldFromClauseNode>() == 56, "YieldFromClauseNode is not the 56 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<YieldKeywordNode>() == 0, "YieldKeywordNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<YieldNode>() == 56, "YieldNode is not the 56 bytes the byte rule in boxed-payloads.ts sizes it");

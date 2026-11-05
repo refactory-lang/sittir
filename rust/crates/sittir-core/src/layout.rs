@@ -9,6 +9,7 @@
 //! payload one pointer, and reads it through `Layout`, so an absent layout
 //! reads as an empty one.
 
+use crate::heap::HeapBytes;
 use crate::options::{Edges, Side};
 use crate::prepare::{Prepare, RenderContext};
 use crate::render::{CoordinateError, Render, RenderResult, RenderSink};
@@ -75,6 +76,23 @@ pub struct NodeLayout<T> {
     pub unit_rows: Vec<UnitRow>,
 }
 
+impl<T: HeapBytes> HeapBytes for NodeLayout<T> {
+    fn heap_bytes(&self) -> usize {
+        let Self { trivia, edges, at, span, flanks, sides, changed: crate::slot::ChangedEdges { leading: _, trailing: _ }, units, slots, separator, captures, unit_rows } = self;
+        trivia.heap_bytes()
+            + edges.heap_bytes()
+            + at.heap_bytes()
+            + span.heap_bytes()
+            + flanks.heap_bytes()
+            + sides.heap_bytes()
+            + units.heap_bytes()
+            + slots.heap_bytes()
+            + separator.heap_bytes()
+            + captures.heap_bytes()
+            + unit_rows.heap_bytes()
+    }
+}
+
 /// The row of one unit child a read took inline, by the slot that holds it
 /// (its wire key) and its item in that slot.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -82,6 +100,13 @@ pub struct UnitRow {
     pub slot: &'static str,
     pub item: crate::types::ItemIndex,
     pub row: crate::types::NodeIndex,
+}
+
+impl HeapBytes for UnitRow {
+    fn heap_bytes(&self) -> usize {
+        let Self { slot, item: _, row: _ } = self;
+        slot.heap_bytes()
+    }
 }
 
 /// A list slot's layout: the class its separator gaps take before and after
@@ -101,6 +126,13 @@ pub struct SlotLayout {
     /// another than the slot's (`prepare::SlotTarget::separators`). The
     /// prepare walk fills it; it never crosses.
     pub tokens: Vec<Option<KindId>>,
+}
+
+impl HeapBytes for SlotLayout {
+    fn heap_bytes(&self) -> usize {
+        let Self { slot, before, after, separator, tokens } = self;
+        slot.heap_bytes() + before.heap_bytes() + after.heap_bytes() + separator.heap_bytes() + tokens.heap_bytes()
+    }
 }
 
 impl SlotLayout {
@@ -125,13 +157,36 @@ pub struct StoredLayout {
 
 /// The work a parsed tree's layout reads have done so far, counted where it
 /// is done (`ParsedTree::layout_work`): a diagnostic, so a growth test
-/// compares counts, never times.
+/// compares counts, never times. The addon's `layoutWork` answers every
+/// count.
 #[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
+#[cfg_attr(feature = "napi-bindings", napi_derive::napi(object))]
 pub struct LayoutWork {
     /// The nodes the region-depth walks entered (`ParsedTree::region_depth`).
     pub region_nodes: u32,
     /// The items the sibling lookups visited (`ParsedTree::siblings`).
     pub sibling_items: u32,
+    /// The nodes a region's render looked up outside the region, each found
+    /// from the tree's root (`Region::node`).
+    pub region_fallbacks: u32,
+    /// The levels the lookup cursors of the tree's calls climbed to reach
+    /// the nodes they looked up (`read::goto_from`), which bound the levels
+    /// they descended.
+    pub cursor_climbs: u32,
+    /// The nodes the depth moves of the tree's slices walked, its depth
+    /// members found once for every move (`DepthMembers::of`).
+    pub depth_nodes: u32,
+    /// The nodes the renders of the tree's layout records entered, region
+    /// records and full-depth ones alike: each node a render framed and
+    /// each source slice it wrote (`baseline::Baseline::entered`).
+    pub record_nodes: u32,
+    /// The layout records rendered (`ParsedTree::records_rendered`).
+    pub records_rendered: u32,
+    /// The steps the gaps no anchor measures took through their frames: the
+    /// children visited and items compared building each frame's source
+    /// items and aligning them to what the frame wrote, once a frame
+    /// (`Lookups::aligned`), and one for each gap measured from them.
+    pub gap_items: u32,
 }
 
 /// The running counts behind [`LayoutWork`], kept on the tree.
@@ -139,6 +194,11 @@ pub struct LayoutWork {
 pub struct LayoutWorkCounter {
     region_nodes: std::sync::atomic::AtomicU64,
     sibling_items: std::sync::atomic::AtomicU64,
+    region_fallbacks: std::sync::atomic::AtomicU64,
+    cursor_climbs: std::sync::atomic::AtomicU64,
+    depth_nodes: std::sync::atomic::AtomicU64,
+    record_nodes: std::sync::atomic::AtomicU64,
+    gap_items: std::sync::atomic::AtomicU64,
 }
 
 impl LayoutWorkCounter {
@@ -150,9 +210,30 @@ impl LayoutWorkCounter {
         self.sibling_items.fetch_add(n as u64, std::sync::atomic::Ordering::Relaxed);
     }
 
-    pub fn counts(&self) -> LayoutWork {
+    pub fn region_fallbacks(&self, n: usize) {
+        self.region_fallbacks.fetch_add(n as u64, std::sync::atomic::Ordering::Relaxed);
+    }
+
+    pub fn cursor_climbs(&self, n: u32) {
+        self.cursor_climbs.fetch_add(u64::from(n), std::sync::atomic::Ordering::Relaxed);
+    }
+
+    pub fn depth_nodes(&self, n: u32) {
+        self.depth_nodes.fetch_add(u64::from(n), std::sync::atomic::Ordering::Relaxed);
+    }
+
+    pub fn record_nodes(&self, n: u32) {
+        self.record_nodes.fetch_add(u64::from(n), std::sync::atomic::Ordering::Relaxed);
+    }
+
+    pub fn gap_items(&self, n: u64) {
+        self.gap_items.fetch_add(n, std::sync::atomic::Ordering::Relaxed);
+    }
+
+    /// The counts so far, with the tree's `records_rendered`.
+    pub fn counts(&self, records_rendered: u32) -> LayoutWork {
         let read = |count: &std::sync::atomic::AtomicU64| u32::try_from(count.load(std::sync::atomic::Ordering::Relaxed)).unwrap_or(u32::MAX);
-        LayoutWork { region_nodes: read(&self.region_nodes), sibling_items: read(&self.sibling_items) }
+        LayoutWork { region_nodes: read(&self.region_nodes), sibling_items: read(&self.sibling_items), region_fallbacks: read(&self.region_fallbacks), cursor_climbs: read(&self.cursor_climbs), depth_nodes: read(&self.depth_nodes), record_nodes: read(&self.record_nodes), records_rendered, gap_items: read(&self.gap_items) }
     }
 }
 
@@ -202,6 +283,13 @@ pub struct UnitSides<T> {
     pub slot: String,
     pub item: crate::types::ItemIndex,
     pub trivia: NodeTrivia<T>,
+}
+
+impl<T: HeapBytes> HeapBytes for UnitSides<T> {
+    fn heap_bytes(&self) -> usize {
+        let Self { slot, item: _, trivia } = self;
+        slot.heap_bytes() + trivia.heap_bytes()
+    }
 }
 
 /// The sides `units` holds for the unit at item `item` of the slot `slot`.
@@ -717,21 +805,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for SlotLayout {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for LayoutWork {
-    /// `{ regionNodes, siblingItems }`.
-    unsafe fn to_napi_value(env: ::napi::sys::napi_env, val: Self) -> ::napi::Result<::napi::sys::napi_value> {
-        use crate::boundary::{object_with_present, present};
-        // SAFETY: napi calls `to_napi_value` with a live `env`, and every value encoded here is created in it.
-        unsafe {
-            object_with_present(env, &[
-                present(env, c"regionNodes", Some(val.region_nodes))?,
-                present(env, c"siblingItems", Some(val.sibling_items))?,
-            ])
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::ToNapiValue for StoredLayout {
     /// `{ deviations, slots, separators }`.
     unsafe fn to_napi_value(env: ::napi::sys::napi_env, val: Self) -> ::napi::Result<::napi::sys::napi_value> {
@@ -784,6 +857,12 @@ mod tests {
     /// grammar's comment template.
     #[derive(Debug, Clone, PartialEq)]
     struct MockTrivia(String);
+
+    impl crate::heap::HeapBytes for MockTrivia {
+        fn heap_bytes(&self) -> usize {
+            self.0.capacity()
+        }
+    }
 
     crate::refuse_napi_codec!(MockTrivia);
     crate::grammar_nodes!(MockTrivia; MockTrivia);

@@ -19,8 +19,6 @@ export namespace Identifier {
 		readonly name: G['identifier'];
 		readonly qualifier?: G['slots']['identifier.qualified']['qualifier'];
 	}
-	export interface Super<G extends GrammarContext<G>> extends SubKindOf<V.Identifier<G>> {
-		// claimed by t
-		readonly $kind: 'identifier.super';
-	}
+	// claimed by t
+	export type Super<G extends GrammarContext<G>> = G['texts']['identifier.super'];
 }

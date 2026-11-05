@@ -26,8 +26,8 @@ function snapshotTreeOf(value: object, fallback: SnapshotTree | undefined): Snap
  *   each node (writes included) turned into text with spans; a built record written into one of
  *   those sides is the snapshot of its node.
  * - A built node keeps its data with no span, and its sides (`sidesOf`): the ones it holds, else
- *   those of the node it was rebuilt from. A tree-backed node under it is measured from its own
- *   start, since a built node has no points.
+ *   those of the node it was rebuilt from. A tree-backed node under it is measured from where it
+ *   or its leading side begins, since a built node has no points.
  */
 export function snapshotOf(value: object): Snapshot {
 	return snapshotIn(value, undefined, undefined) as Snapshot;

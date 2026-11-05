@@ -131,7 +131,7 @@ fn a_comment_between_a_trailing_separator_and_the_closer_trails_the_last_item() 
 #[test]
 fn a_comment_after_a_trailing_separator_trails_the_list_node_holding_the_separator() {
     let case = Case::new(rust(), "fn f() { [a, b, // c\n]; }\n");
-    case.holds("arguments_elements", "a, b,", Trailing, "line_comment", "// c");
+    case.holds("array_expression_list_elements", "a, b,", Trailing, "line_comment", "// c");
     let case = Case::new(python(), "x = [a, b, # c\n]\n");
     case.holds("collection_elements", "a, b,", Trailing, "comment", "# c");
     assert_eq!(case.table.unowned(), []);

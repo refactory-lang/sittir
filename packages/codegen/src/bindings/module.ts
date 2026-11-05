@@ -62,8 +62,9 @@ function literalArm(split: Split & { readonly literal: NonNullable<Split['litera
 function siteEdit(splits: readonly Split[]): string {
 	const shown = splits.find((s) => s.literal === undefined);
 	const arms = splits.filter((s): s is Split & { readonly literal: NonNullable<Split['literal']> } => s.literal !== undefined).map(literalArm);
-	if (arms.length === 0) return `alias(${q(shown!.as)})`;
-	return `($, member) => choice(${shown === undefined ? 'member' : `alias(member, $.${shown.as})`}, ${arms.join(', ')})`;
+	const copied = shown?.copies === undefined ? undefined : `alias(copy(${q(shown.copies)}), $.${shown.as})`;
+	if (arms.length === 0) return copied === undefined ? `alias(${q(shown!.as)})` : `($) => ${copied}`;
+	return `($, member) => choice(${copied ?? (shown === undefined ? 'member' : `alias(member, $.${shown.as})`)}, ${arms.join(', ')})`;
 }
 
 function splitSet(splits: readonly Split[]): string {
@@ -106,7 +107,7 @@ export function printBindingsModule(bindings: GrammarBindings, hash: string): st
 	const edits = [...bindings.patches.values()].flat(2).map((p) => p.edit);
 	const helpers = [
 		...(edits.some((e) => 'alias' in e) || bindings.splits.length > 0 ? ['alias'] : []),
-		...(bindings.splits.some((s) => s.literal !== undefined) ? ['copy', 'edit'] : []),
+		...(bindings.splits.some((s) => s.literal !== undefined) ? ['copy', 'edit'] : bindings.splits.some((s) => s.copies !== undefined) ? ['copy'] : []),
 		'enrich',
 		...(edits.some((e) => 'field' in e) ? ['field'] : []),
 		...(bindings.leads.length > 0 ? ['lead'] : []),

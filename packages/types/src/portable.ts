@@ -28,11 +28,15 @@ export interface PortablePath {
 	readonly exact: boolean;
 }
 
-/** A bound grammar's portable classification: each path's kind ids, each kind's read entries in the order they are tried, and the text of each fixed-literal kind id. */
+/**
+ * A bound grammar's portable classification: each path's kind ids, each kind's read entries in the order they are tried, the text of each
+ * fixed-literal kind id, and the fixed-literal kinds whose meaning is a value, which read as their path and not as their text.
+ */
 export interface PortableTable {
 	readonly paths: Readonly<Record<string, PortablePath>>;
 	readonly entries: Readonly<Record<number, readonly PortableReadEntry[]>>;
 	readonly fixedText: Readonly<Record<number, string>>;
+	readonly literals: readonly number[];
 }
 
 /** What a bound grammar's engine reads portable classifications from: its {@link PortableTable}, the slots its conditions name, and each kind's flag plans. */
@@ -106,15 +110,18 @@ export interface PortableContainer {
 }
 
 /**
- * A place a member's value sits: the holder kind and key it is picked at (an arm's `holders` names them), the kinds a value there has, the
- * builder text given for the seat builds through (`leaf`) and the kinds whose text that builder builds back (`texts`), and the containers the
- * build puts around it, outermost first. A seat that holds many (`many`) takes a list.
+ * A place a member's value sits: the holder kind and key it is picked at (an arm's `holders` names them), the kinds a value there has and,
+ * of those, the kinds it holds only when one of their claims reads them (`refined`; any other value of such a kind sits through its container), the
+ * builder text given for the seat builds through (`leaf`) and the kinds whose text that builder builds back (`texts`), the kind each
+ * fixed-text token the seat admits has, keyed by its text (`tokens`), and the containers the build puts around it, outermost first. A seat that holds many (`many`) takes a list.
  */
 export interface PortableSeat {
 	readonly at: readonly [holder: number, key: string];
 	readonly kinds: readonly number[];
+	readonly refined?: readonly number[];
 	readonly leaf?: string;
 	readonly texts?: readonly number[];
+	readonly tokens?: Readonly<Record<string, number>>;
 	readonly pattern?: { readonly source: string; readonly flags: string };
 	readonly within?: readonly PortableContainer[];
 	readonly many?: true;
@@ -122,6 +129,8 @@ export interface PortableSeat {
 
 /**
  * A member of a build arm: the steps to its slot, whether the slot holds a list, and the seats a value finds in the slot, the slot's own first.
+ * `list` is the member's arity as the vocabulary declares it: a list member reads and builds as a list whatever its slot holds, and a member
+ * of one value reads one value from a slot that holds many. It is absent for a member the vocabulary does not declare.
  * A route that enters a kind the arm does not make `requires` other members to fill that kind's required slots: each group names the members
  * any one of which fills one slot, so the route is taken only when every group has a member present. `reads` lists the kinds the member
  * reads from its slot where its binding captures only some of what the slot holds; a read keeps only values of those kinds.
@@ -130,6 +139,7 @@ export interface PortableMemberStep {
 	readonly name: string;
 	readonly steps: readonly PortableSlotStep[];
 	readonly multiple: boolean;
+	readonly list?: boolean;
 	readonly seats: readonly PortableSeat[];
 	readonly requires?: readonly (readonly string[])[];
 	readonly reads?: readonly number[];
@@ -175,7 +185,10 @@ export interface PortableDecimalParts {
  * that takes each part of its decimal spelling. A structure stating one of those members beside its `$value` refuses. A `template`
  * spells its member from the named holes. A `mounted` arm's builder is a mount that builds its holder with the
  * arm's kind seated in it. A text its claim fixes is a preset; its claim's other tests (a pattern its text matches, a kind it
- * holds) are the path's read tests, which a built node must pass.
+ * holds) are the path's read tests, which a built node must pass. Where the arm's routes run through different forms of one slot, `owners`
+ * lists each set of routes (by index into `members`) that build together; a structure builds through the one owner whose routes take every
+ * member it states, by the member's kinds and whether it is a list. A `literal` arm's kind is a token whose meaning is a value: it reads as its
+ * path, with the `$value` its claim declares, never as its text.
  */
 export interface PortableBuildArm {
 	readonly kind: number;
@@ -184,9 +197,11 @@ export interface PortableBuildArm {
 	readonly seated?: PortableCallShape;
 	readonly scalar?: 'integer' | 'float';
 	readonly numeric?: string | PortableDecimalParts;
+	readonly literal?: { readonly value?: boolean };
 	readonly when: readonly PortablePickTest[];
 	readonly holders?: readonly (readonly [holder: number, key: string])[];
 	readonly members: readonly PortableMemberStep[];
+	readonly owners?: readonly (readonly number[])[];
 	readonly presets: readonly PortablePreset[];
 	readonly flags: Readonly<Record<string, PortableFlagStep>>;
 	readonly template?: { readonly member: string; readonly pattern: string; readonly holes: readonly string[] };
@@ -230,21 +245,26 @@ export interface PortableBuildTable {
 }
 
 /**
- * Whether `value` reads as a vocabulary path or one under it, narrowing it to the grammar kinds read there.
+ * Whether `value` reads as a vocabulary path or one under it, narrowing it to the grammar kinds read there, or to their texts.
  *
  * @typeParam Ids - The grammar kinds read at or under the path.
  * @typeParam Node - The grammar's node union; a node of another language, or one whose language is unknown, is refused.
  * @typeParam Kind - The grammar's kind-id enum: a bare kind id of the language is read by its kind and fixed text. A value typed as
  * a plain `number` is still admitted by the type, since a numeric enum accepts one.
- * @param value - A node of the language, parsed or built, read by the rows of the engine that stamped it, or a kind id of the
- * language, read by the rows its engine loaded.
- * @throws When given a kind id before an engine of the language has loaded.
+ * @typeParam Text - The fixed texts of the tokens read at or under the path. Where there are any, a string is admitted and holds when
+ * it is the text of one of those tokens.
+ * @param value - A node of the language, parsed or built, read by the rows of the engine that stamped it, a kind id of the
+ * language, or a token's text, each read by the rows its engine loaded.
+ * @throws When given a kind id or a text before an engine of the language has loaded.
  */
-export type PortableGuard<Ids extends number, Node extends { readonly $type: number } = { readonly $type: number }, Kind extends number = never> = <
-	T extends Node | Kind
->(
+export type PortableGuard<
+	Ids extends number,
+	Node extends { readonly $type: number } = { readonly $type: number },
+	Kind extends number = never,
+	Text extends string = never
+> = <T extends Node | Kind | ([Text] extends [never] ? never : string)>(
 	value: T
-) => value is T extends number ? T & Ids : T & { readonly $type: Ids };
+) => value is T extends string ? T & Text : T extends number ? T & Ids : T & { readonly $type: Ids };
 
 /** What a bound grammar adds for the portable engine: its vocabulary namespaces of kind ids and of guards. */
 export interface PortableSurface {

@@ -18,8 +18,7 @@ import { isGrammar, stableGrammars, type GrammarName } from '@sittir/codegen/gra
 import { appendHistory, commitHistory, readHistory, type ValidationRun } from './history.ts';
 import { readTestHistory } from './test-history.ts';
 import { warnIfNativeBinaryStale } from './native-staleness.ts';
-import type { NodeConstruction, NodeStorage } from '@sittir/types';
-import { nodeStorageOf } from '@sittir/common/engine';
+import type { NodeStorage } from '@sittir/types';
 import { cachedNativeEngineProfile, useValidationNodeStorage, validationStorage, type ValidatorSkip } from './validate/common.ts';
 import type { ReadRenderParseFailure } from './validate/read-render-parse.ts';
 import { readGrammarDiagnostics } from './validate/grammar-diagnostics-file.ts';
@@ -345,8 +344,7 @@ export function resolveCliEntryArgs(): { tsxBin: string; cliPath: string } {
  */
 export async function spawnIsolatedGrammarWorker(
 	grammar: GrammarName,
-	nodeStorage: NodeStorage = 'object',
-	construction?: NodeConstruction
+	nodeStorage: NodeStorage = 'object'
 ): Promise<{
 	status: 'ok' | 'crashed' | 'error';
 	stdout: string;
@@ -354,11 +352,10 @@ export async function spawnIsolatedGrammarWorker(
 	exitCode: number | null;
 	signal: NodeJS.Signals | null;
 }> {
-	const storage = nodeStorageOf({ nodeStorage, nodeConstruction: construction });
 	const { tsxBin, cliPath } = resolveCliEntryArgs();
 	// Build child argv: validate counts <grammar> --_isolate-worker (native-only;
 	// the `validate` CLI no longer accepts --backend).
-	const childArgs = [cliPath, 'validate', 'counts', grammar, '--_isolate-worker', '--node-storage', storage.nodeStorage, '--construction', storage.nodeConstruction];
+	const childArgs = [cliPath, 'validate', 'counts', grammar, '--_isolate-worker', '--node-storage', nodeStorage];
 
 	return new Promise((resolve) => {
 		const childEnv: NodeJS.ProcessEnv = {
@@ -638,12 +635,10 @@ export function enforceCodeCeilings(grammars: readonly GrammarName[], report: Va
 export async function runCountsCli(
 	args: string[],
 	backendMode: CliBackend = 'native',
-	options: { recursive?: boolean; isolate?: boolean; isolateWorker?: boolean; nodeStorage?: NodeStorage; construction?: NodeConstruction } = {}
+	options: { recursive?: boolean; isolate?: boolean; isolateWorker?: boolean; nodeStorage?: NodeStorage } = {}
 ): Promise<void> {
 	const { isolate = false, isolateWorker = false, nodeStorage = 'object' } = options;
-	const storage = nodeStorageOf({ nodeStorage, nodeConstruction: options.construction });
-	const construction = storage.nodeConstruction;
-	useValidationNodeStorage(storage.nodeStorage);
+	useValidationNodeStorage(nodeStorage);
 
 	// When running as an isolation worker, activate the progress breadcrumb
 	// env var so that read-render-parse.ts emits per-kind lines to stderr.
@@ -666,7 +661,7 @@ export async function runCountsCli(
 		// every worker's (or crash's) entries and performs exactly one merged write below.
 		const validatorFailuresByGrammar: Record<string, ValidatorDiagnostic[]> = {};
 		for (const grammar of grammars) {
-			const result = await spawnIsolatedGrammarWorker(grammar, nodeStorage, construction);
+			const result = await spawnIsolatedGrammarWorker(grammar, nodeStorage);
 			if (result.status === 'ok') {
 				const { entries, remaining } = extractIsolateReportJson(result.stdout);
 				if (remaining) process.stdout.write(remaining);

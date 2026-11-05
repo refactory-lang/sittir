@@ -1,19 +1,18 @@
+import type { NodeStorage } from '@sittir/types';
 import { expect, it } from 'vitest';
 import { RoundtripProfile } from '../src/validate/roundtrip-profile.ts';
 import {
 	summarizeValidationStorage,
 	validationBuckets,
 	validationPhases,
-	type StorageMode,
 	type ValidationBucketSample,
 	type ValidationStorageRun
 } from '../src/profile/validation-storage.ts';
 
-function sample(storage: StorageMode, round = 0): ValidationStorageRun & { round: number } {
+function sample(storage: NodeStorage, round = 0): ValidationStorageRun & { round: number } {
 	return {
 		grammar: 'regex',
 		storage,
-		construction: 'object',
 		round,
 		pid: storage === 'object' ? 1 : 2,
 		corpus: { entries: 1, bytes: 6, sha256: 'corpus' },

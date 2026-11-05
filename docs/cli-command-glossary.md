@@ -68,7 +68,6 @@ Per-grammar raw pass/total counts for all four validators
 
 - `--isolate` — Run each grammar in a child process; attributes SIGSEGV to the last attempted kind (default: `false`)
 - `--node-storage <storage>` — Node backend: parsed/built objects (object), or arena views with record builders (arena) (default: `object`)
-- `--construction <construction>` — Deprecated: assert object construction for object storage, or record construction for arena storage
 - `--_isolate-worker` — Internal: run as an isolation worker for a single grammar (default: `false`)
 
 **Example**
@@ -211,7 +210,6 @@ Measure native workflows or paired backend validation buckets
 - `--limit <n>` — Use only the first n corpus entries (smoke runs)
 - `--native-depth <depth>` — Native hydration depth: a positive integer or all (default: `all`)
 - `--validation` — Profile deep read, factory and IR render/parse validators under both paired backends
-- `--construction <construction>` — Deprecated: validation profiles pair object storage/builders with arena storage/record builders; only record is accepted
 - `--idle-gate <path>` — Run a shell idle gate before each worker, passing the current directory
 - `--output <path>` — Write the complete JSON report to this file
 
@@ -456,6 +454,27 @@ Print the strict factory source that rebuilds a source file
 
 ```sh
 pnpm exec tsx packages/cli/src/cli.ts tool emit-factory-source [options]
+```
+
+### `tool encode-stack`
+
+Check each built release addon's whole-encode stack, RECURSION_LIMIT levels and the one-time frames, against ENCODE_STACK_BUDGET
+
+**Arguments**
+
+- `grammars…` (optional) — Grammars whose built addons to check (default: every stable grammar)
+
+**Options**
+
+- `--addon <paths...>` — Unstripped addon files to check instead of the copy each release build keeps (sittir-<grammar>.<platform>.node)
+- `--objdump <path>` — llvm-objdump to disassemble with (default: $LLVM_OBJDUMP, then the pinned Rust toolchain's llvm-tools)
+- `--paths` — Print every costliest path, not only those over budget
+- `--json` — Print the measurements as JSON
+
+**Example**
+
+```sh
+pnpm exec tsx packages/cli/src/cli.ts tool encode-stack [grammars] [options]
 ```
 
 ### `tool exercise`

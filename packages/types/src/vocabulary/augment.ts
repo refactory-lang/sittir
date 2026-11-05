@@ -87,6 +87,9 @@ import type * as untaggedUnions from './features/untagged-unions/index.ts';
 import type * as visibility from './features/visibility/index.ts';
 
 declare module './argument.ts' {
+	interface Argument<G extends GrammarContext<G>> {
+		readonly attributes?: gate.In<G, features.Attributes, attributes.Argument<G>['attributes']>;
+	}
 	namespace Argument {
 		interface Named<G extends GrammarContext<G>> extends namedArguments.Argument.Named<G> {}
 		type Any<G extends GrammarContext<G>> = V.Argument<G> | V.Argument.Named<G>;
@@ -226,7 +229,8 @@ declare module './clause.ts' {
 				| V.Clause.Import.Require<G>
 				| V.Clause.Import.Specifier<G>
 				| V.Clause.Import.Specifier.Typeof<G>
-				| V.Clause.Import.Wildcard<G>;
+				| V.Clause.Import.Wildcard<G>
+				| G['texts']['clause.import.wildcard'];
 		}
 		interface Let<G extends GrammarContext<G>> extends matchExpressions.Clause.Let<G> {}
 		namespace Let {
@@ -304,7 +308,8 @@ declare module './clause.ts' {
 			| V.Clause.Resource<G>
 			| V.Clause.Resource.Item<G>
 			| V.Clause.Where<G>
-			| V.Clause.Where.Predicate<G>;
+			| V.Clause.Where.Predicate<G>
+			| G['texts']['clause.import.wildcard'];
 	}
 }
 
@@ -358,18 +363,20 @@ declare module './declaration.ts' {
 			>;
 		}
 		interface Constant<G extends GrammarContext<G>> {
-			readonly type: gate.In<G, features.TypeAnnotations, typeAnnotations.Declaration.Constant<G>['type']>;
+			readonly type?: gate.In<G, features.TypeAnnotations, typeAnnotations.Declaration.Constant<G>['type']>;
 		}
 		namespace Constant {
 			interface Private<G extends GrammarContext<G>> extends visibility.Declaration.Constant.Private<G> {}
 			interface Public<G extends GrammarContext<G>> extends visibility.Declaration.Constant.Public<G> {}
 			namespace Public {
 				interface Internal<G extends GrammarContext<G>> extends visibility.Declaration.Constant.Public.Internal<G> {}
+				interface Parent<G extends GrammarContext<G>> extends visibility.Declaration.Constant.Public.Parent<G> {}
 				interface Restricted<G extends GrammarContext<G>> extends visibility.Declaration.Constant.Public
 					.Restricted<G> {}
 				type Any<G extends GrammarContext<G>> =
 					| V.Declaration.Constant.Public<G>
 					| V.Declaration.Constant.Public.Internal<G>
+					| V.Declaration.Constant.Public.Parent<G>
 					| V.Declaration.Constant.Public.Restricted<G>;
 			}
 			type Any<G extends GrammarContext<G>> =
@@ -377,6 +384,7 @@ declare module './declaration.ts' {
 				| V.Declaration.Constant.Private<G>
 				| V.Declaration.Constant.Public<G>
 				| V.Declaration.Constant.Public.Internal<G>
+				| V.Declaration.Constant.Public.Parent<G>
 				| V.Declaration.Constant.Public.Restricted<G>;
 		}
 		interface Constructor<G extends GrammarContext<G>> extends classes.Declaration.Constructor<G> {
@@ -420,10 +428,12 @@ declare module './declaration.ts' {
 			interface Public<G extends GrammarContext<G>> extends visibility.Declaration.Enum.Public<G> {}
 			namespace Public {
 				interface Internal<G extends GrammarContext<G>> extends visibility.Declaration.Enum.Public.Internal<G> {}
+				interface Parent<G extends GrammarContext<G>> extends visibility.Declaration.Enum.Public.Parent<G> {}
 				interface Restricted<G extends GrammarContext<G>> extends visibility.Declaration.Enum.Public.Restricted<G> {}
 				type Any<G extends GrammarContext<G>> =
 					| V.Declaration.Enum.Public<G>
 					| V.Declaration.Enum.Public.Internal<G>
+					| V.Declaration.Enum.Public.Parent<G>
 					| V.Declaration.Enum.Public.Restricted<G>;
 			}
 			type Any<G extends GrammarContext<G>> =
@@ -431,6 +441,7 @@ declare module './declaration.ts' {
 				| V.Declaration.Enum.Private<G>
 				| V.Declaration.Enum.Public<G>
 				| V.Declaration.Enum.Public.Internal<G>
+				| V.Declaration.Enum.Public.Parent<G>
 				| V.Declaration.Enum.Public.Restricted<G>;
 		}
 		interface EnumMember<G extends GrammarContext<G>> extends enumerations.Declaration.EnumMember<G> {
@@ -441,11 +452,13 @@ declare module './declaration.ts' {
 			interface Public<G extends GrammarContext<G>> extends visibility.Declaration.EnumMember.Public<G> {}
 			namespace Public {
 				interface Internal<G extends GrammarContext<G>> extends visibility.Declaration.EnumMember.Public.Internal<G> {}
+				interface Parent<G extends GrammarContext<G>> extends visibility.Declaration.EnumMember.Public.Parent<G> {}
 				interface Restricted<G extends GrammarContext<G>> extends visibility.Declaration.EnumMember.Public
 					.Restricted<G> {}
 				type Any<G extends GrammarContext<G>> =
 					| V.Declaration.EnumMember.Public<G>
 					| V.Declaration.EnumMember.Public.Internal<G>
+					| V.Declaration.EnumMember.Public.Parent<G>
 					| V.Declaration.EnumMember.Public.Restricted<G>;
 			}
 			interface Struct<G extends GrammarContext<G>> extends algebraicDataTypes.Declaration.EnumMember.Struct<G> {}
@@ -455,11 +468,14 @@ declare module './declaration.ts' {
 				namespace Public {
 					interface Internal<G extends GrammarContext<G>> extends visibility.Declaration.EnumMember.Struct.Public
 						.Internal<G> {}
+					interface Parent<G extends GrammarContext<G>> extends visibility.Declaration.EnumMember.Struct.Public
+						.Parent<G> {}
 					interface Restricted<G extends GrammarContext<G>> extends visibility.Declaration.EnumMember.Struct.Public
 						.Restricted<G> {}
 					type Any<G extends GrammarContext<G>> =
 						| V.Declaration.EnumMember.Struct.Public<G>
 						| V.Declaration.EnumMember.Struct.Public.Internal<G>
+						| V.Declaration.EnumMember.Struct.Public.Parent<G>
 						| V.Declaration.EnumMember.Struct.Public.Restricted<G>;
 				}
 				type Any<G extends GrammarContext<G>> =
@@ -467,6 +483,7 @@ declare module './declaration.ts' {
 					| V.Declaration.EnumMember.Struct.Private<G>
 					| V.Declaration.EnumMember.Struct.Public<G>
 					| V.Declaration.EnumMember.Struct.Public.Internal<G>
+					| V.Declaration.EnumMember.Struct.Public.Parent<G>
 					| V.Declaration.EnumMember.Struct.Public.Restricted<G>;
 			}
 			interface Tuple<G extends GrammarContext<G>> extends algebraicDataTypes.Declaration.EnumMember.Tuple<G> {}
@@ -476,11 +493,14 @@ declare module './declaration.ts' {
 				namespace Public {
 					interface Internal<G extends GrammarContext<G>> extends visibility.Declaration.EnumMember.Tuple.Public
 						.Internal<G> {}
+					interface Parent<G extends GrammarContext<G>> extends visibility.Declaration.EnumMember.Tuple.Public
+						.Parent<G> {}
 					interface Restricted<G extends GrammarContext<G>> extends visibility.Declaration.EnumMember.Tuple.Public
 						.Restricted<G> {}
 					type Any<G extends GrammarContext<G>> =
 						| V.Declaration.EnumMember.Tuple.Public<G>
 						| V.Declaration.EnumMember.Tuple.Public.Internal<G>
+						| V.Declaration.EnumMember.Tuple.Public.Parent<G>
 						| V.Declaration.EnumMember.Tuple.Public.Restricted<G>;
 				}
 				type Any<G extends GrammarContext<G>> =
@@ -488,6 +508,7 @@ declare module './declaration.ts' {
 					| V.Declaration.EnumMember.Tuple.Private<G>
 					| V.Declaration.EnumMember.Tuple.Public<G>
 					| V.Declaration.EnumMember.Tuple.Public.Internal<G>
+					| V.Declaration.EnumMember.Tuple.Public.Parent<G>
 					| V.Declaration.EnumMember.Tuple.Public.Restricted<G>;
 			}
 			type Any<G extends GrammarContext<G>> =
@@ -495,16 +516,19 @@ declare module './declaration.ts' {
 				| V.Declaration.EnumMember.Private<G>
 				| V.Declaration.EnumMember.Public<G>
 				| V.Declaration.EnumMember.Public.Internal<G>
+				| V.Declaration.EnumMember.Public.Parent<G>
 				| V.Declaration.EnumMember.Public.Restricted<G>
 				| V.Declaration.EnumMember.Struct<G>
 				| V.Declaration.EnumMember.Struct.Private<G>
 				| V.Declaration.EnumMember.Struct.Public<G>
 				| V.Declaration.EnumMember.Struct.Public.Internal<G>
+				| V.Declaration.EnumMember.Struct.Public.Parent<G>
 				| V.Declaration.EnumMember.Struct.Public.Restricted<G>
 				| V.Declaration.EnumMember.Tuple<G>
 				| V.Declaration.EnumMember.Tuple.Private<G>
 				| V.Declaration.EnumMember.Tuple.Public<G>
 				| V.Declaration.EnumMember.Tuple.Public.Internal<G>
+				| V.Declaration.EnumMember.Tuple.Public.Parent<G>
 				| V.Declaration.EnumMember.Tuple.Public.Restricted<G>;
 		}
 		interface Extension<G extends GrammarContext<G>> extends openTypeExtension.Declaration.Extension<G> {
@@ -557,10 +581,12 @@ declare module './declaration.ts' {
 			interface Public<G extends GrammarContext<G>> extends visibility.Declaration.Field.Public<G> {}
 			namespace Public {
 				interface Internal<G extends GrammarContext<G>> extends visibility.Declaration.Field.Public.Internal<G> {}
+				interface Parent<G extends GrammarContext<G>> extends visibility.Declaration.Field.Public.Parent<G> {}
 				interface Restricted<G extends GrammarContext<G>> extends visibility.Declaration.Field.Public.Restricted<G> {}
 				type Any<G extends GrammarContext<G>> =
 					| V.Declaration.Field.Public<G>
 					| V.Declaration.Field.Public.Internal<G>
+					| V.Declaration.Field.Public.Parent<G>
 					| V.Declaration.Field.Public.Restricted<G>;
 			}
 			interface Signature<G extends GrammarContext<G>> extends interfaces.Declaration.Field.Signature<G> {
@@ -598,6 +624,7 @@ declare module './declaration.ts' {
 				| V.Declaration.Field.Protected<G>
 				| V.Declaration.Field.Public<G>
 				| V.Declaration.Field.Public.Internal<G>
+				| V.Declaration.Field.Public.Parent<G>
 				| V.Declaration.Field.Public.Restricted<G>
 				| V.Declaration.Field.Signature<G>
 				| V.Declaration.Field.Signature.Private<G>
@@ -638,15 +665,22 @@ declare module './declaration.ts' {
 			interface Public<G extends GrammarContext<G>> extends visibility.Declaration.Function.Public<G> {}
 			namespace Public {
 				interface Internal<G extends GrammarContext<G>> extends visibility.Declaration.Function.Public.Internal<G> {}
+				interface Parent<G extends GrammarContext<G>> extends visibility.Declaration.Function.Public.Parent<G> {}
 				interface Restricted<G extends GrammarContext<G>> extends visibility.Declaration.Function.Public
 					.Restricted<G> {}
 				type Any<G extends GrammarContext<G>> =
 					| V.Declaration.Function.Public<G>
 					| V.Declaration.Function.Public.Internal<G>
+					| V.Declaration.Function.Public.Parent<G>
 					| V.Declaration.Function.Public.Restricted<G>;
 			}
 			interface Signature<G extends GrammarContext<G>> {
 				readonly async?: gate.In<G, features.AsyncAwait, asyncAwait.Declaration.Function.Signature<G>['async']>;
+				readonly receiver?: gate.In<
+					G,
+					features.ExplicitReceivers,
+					explicitReceivers.Declaration.Function.Signature<G>['receiver']
+				>;
 				readonly returnType?: gate.In<
 					G,
 					features.TypeAnnotations,
@@ -669,11 +703,14 @@ declare module './declaration.ts' {
 				namespace Public {
 					interface Internal<G extends GrammarContext<G>> extends visibility.Declaration.Function.Signature.Public
 						.Internal<G> {}
+					interface Parent<G extends GrammarContext<G>> extends visibility.Declaration.Function.Signature.Public
+						.Parent<G> {}
 					interface Restricted<G extends GrammarContext<G>> extends visibility.Declaration.Function.Signature.Public
 						.Restricted<G> {}
 					type Any<G extends GrammarContext<G>> =
 						| V.Declaration.Function.Signature.Public<G>
 						| V.Declaration.Function.Signature.Public.Internal<G>
+						| V.Declaration.Function.Signature.Public.Parent<G>
 						| V.Declaration.Function.Signature.Public.Restricted<G>;
 				}
 				type Any<G extends GrammarContext<G>> =
@@ -681,6 +718,7 @@ declare module './declaration.ts' {
 					| V.Declaration.Function.Signature.Private<G>
 					| V.Declaration.Function.Signature.Public<G>
 					| V.Declaration.Function.Signature.Public.Internal<G>
+					| V.Declaration.Function.Signature.Public.Parent<G>
 					| V.Declaration.Function.Signature.Public.Restricted<G>;
 			}
 			type Any<G extends GrammarContext<G>> =
@@ -688,11 +726,13 @@ declare module './declaration.ts' {
 				| V.Declaration.Function.Private<G>
 				| V.Declaration.Function.Public<G>
 				| V.Declaration.Function.Public.Internal<G>
+				| V.Declaration.Function.Public.Parent<G>
 				| V.Declaration.Function.Public.Restricted<G>
 				| V.Declaration.Function.Signature<G>
 				| V.Declaration.Function.Signature.Private<G>
 				| V.Declaration.Function.Signature.Public<G>
 				| V.Declaration.Function.Signature.Public.Internal<G>
+				| V.Declaration.Function.Signature.Public.Parent<G>
 				| V.Declaration.Function.Signature.Public.Restricted<G>;
 		}
 		interface Interface<G extends GrammarContext<G>> extends interfaces.Declaration.Interface<G> {
@@ -722,11 +762,14 @@ declare module './declaration.ts' {
 				namespace Public {
 					interface Internal<G extends GrammarContext<G>> extends visibility.Declaration.Interface.Trait.Public
 						.Internal<G> {}
+					interface Parent<G extends GrammarContext<G>> extends visibility.Declaration.Interface.Trait.Public
+						.Parent<G> {}
 					interface Restricted<G extends GrammarContext<G>> extends visibility.Declaration.Interface.Trait.Public
 						.Restricted<G> {}
 					type Any<G extends GrammarContext<G>> =
 						| V.Declaration.Interface.Trait.Public<G>
 						| V.Declaration.Interface.Trait.Public.Internal<G>
+						| V.Declaration.Interface.Trait.Public.Parent<G>
 						| V.Declaration.Interface.Trait.Public.Restricted<G>;
 				}
 				type Any<G extends GrammarContext<G>> =
@@ -734,6 +777,7 @@ declare module './declaration.ts' {
 					| V.Declaration.Interface.Trait.Private<G>
 					| V.Declaration.Interface.Trait.Public<G>
 					| V.Declaration.Interface.Trait.Public.Internal<G>
+					| V.Declaration.Interface.Trait.Public.Parent<G>
 					| V.Declaration.Interface.Trait.Public.Restricted<G>;
 			}
 			type Any<G extends GrammarContext<G>> =
@@ -742,6 +786,7 @@ declare module './declaration.ts' {
 				| V.Declaration.Interface.Trait.Private<G>
 				| V.Declaration.Interface.Trait.Public<G>
 				| V.Declaration.Interface.Trait.Public.Internal<G>
+				| V.Declaration.Interface.Trait.Public.Parent<G>
 				| V.Declaration.Interface.Trait.Public.Restricted<G>;
 		}
 		interface Macro<G extends GrammarContext<G>> extends syntacticMetaprogramming.Declaration.Macro<G> {}
@@ -790,10 +835,12 @@ declare module './declaration.ts' {
 			interface Public<G extends GrammarContext<G>> extends visibility.Declaration.Method.Public<G> {}
 			namespace Public {
 				interface Internal<G extends GrammarContext<G>> extends visibility.Declaration.Method.Public.Internal<G> {}
+				interface Parent<G extends GrammarContext<G>> extends visibility.Declaration.Method.Public.Parent<G> {}
 				interface Restricted<G extends GrammarContext<G>> extends visibility.Declaration.Method.Public.Restricted<G> {}
 				type Any<G extends GrammarContext<G>> =
 					| V.Declaration.Method.Public<G>
 					| V.Declaration.Method.Public.Internal<G>
+					| V.Declaration.Method.Public.Parent<G>
 					| V.Declaration.Method.Public.Restricted<G>;
 			}
 			interface Signature<G extends GrammarContext<G>> extends methods.Declaration.Method.Signature<G> {
@@ -812,6 +859,11 @@ declare module './declaration.ts' {
 					G,
 					features.ReadonlyMembers,
 					readonlyMembers.Declaration.Method.Signature<G>['readonly']
+				>;
+				readonly receiver?: gate.In<
+					G,
+					features.ExplicitReceivers,
+					explicitReceivers.Declaration.Method.Signature<G>['receiver']
 				>;
 				readonly returnType?: gate.In<
 					G,
@@ -872,11 +924,14 @@ declare module './declaration.ts' {
 				namespace Public {
 					interface Internal<G extends GrammarContext<G>> extends visibility.Declaration.Method.Signature.Public
 						.Internal<G> {}
+					interface Parent<G extends GrammarContext<G>> extends visibility.Declaration.Method.Signature.Public
+						.Parent<G> {}
 					interface Restricted<G extends GrammarContext<G>> extends visibility.Declaration.Method.Signature.Public
 						.Restricted<G> {}
 					type Any<G extends GrammarContext<G>> =
 						| V.Declaration.Method.Signature.Public<G>
 						| V.Declaration.Method.Signature.Public.Internal<G>
+						| V.Declaration.Method.Signature.Public.Parent<G>
 						| V.Declaration.Method.Signature.Public.Restricted<G>;
 				}
 				type Any<G extends GrammarContext<G>> =
@@ -889,6 +944,7 @@ declare module './declaration.ts' {
 					| V.Declaration.Method.Signature.Protected<G>
 					| V.Declaration.Method.Signature.Public<G>
 					| V.Declaration.Method.Signature.Public.Internal<G>
+					| V.Declaration.Method.Signature.Public.Parent<G>
 					| V.Declaration.Method.Signature.Public.Restricted<G>;
 			}
 			interface Special<G extends GrammarContext<G>> extends methods.Declaration.Method.Special<G> {}
@@ -898,6 +954,7 @@ declare module './declaration.ts' {
 				| V.Declaration.Method.Protected<G>
 				| V.Declaration.Method.Public<G>
 				| V.Declaration.Method.Public.Internal<G>
+				| V.Declaration.Method.Public.Parent<G>
 				| V.Declaration.Method.Public.Restricted<G>
 				| V.Declaration.Method.Signature<G>
 				| V.Declaration.Method.Signature.Abstract<G>
@@ -908,6 +965,7 @@ declare module './declaration.ts' {
 				| V.Declaration.Method.Signature.Protected<G>
 				| V.Declaration.Method.Signature.Public<G>
 				| V.Declaration.Method.Signature.Public.Internal<G>
+				| V.Declaration.Method.Signature.Public.Parent<G>
 				| V.Declaration.Method.Signature.Public.Restricted<G>
 				| V.Declaration.Method.Special<G>;
 		}
@@ -921,10 +979,12 @@ declare module './declaration.ts' {
 			interface Public<G extends GrammarContext<G>> extends visibility.Declaration.Module.Public<G> {}
 			namespace Public {
 				interface Internal<G extends GrammarContext<G>> extends visibility.Declaration.Module.Public.Internal<G> {}
+				interface Parent<G extends GrammarContext<G>> extends visibility.Declaration.Module.Public.Parent<G> {}
 				interface Restricted<G extends GrammarContext<G>> extends visibility.Declaration.Module.Public.Restricted<G> {}
 				type Any<G extends GrammarContext<G>> =
 					| V.Declaration.Module.Public<G>
 					| V.Declaration.Module.Public.Internal<G>
+					| V.Declaration.Module.Public.Parent<G>
 					| V.Declaration.Module.Public.Restricted<G>;
 			}
 			type Any<G extends GrammarContext<G>> =
@@ -934,6 +994,7 @@ declare module './declaration.ts' {
 				| V.Declaration.Module.Private<G>
 				| V.Declaration.Module.Public<G>
 				| V.Declaration.Module.Public.Internal<G>
+				| V.Declaration.Module.Public.Parent<G>
 				| V.Declaration.Module.Public.Restricted<G>;
 		}
 		interface ModuleProperty<G extends GrammarContext<G>> extends ambientDeclarations.Declaration.ModuleProperty<G> {}
@@ -1223,10 +1284,12 @@ declare module './declaration.ts' {
 			interface Public<G extends GrammarContext<G>> extends visibility.Declaration.Struct.Public<G> {}
 			namespace Public {
 				interface Internal<G extends GrammarContext<G>> extends visibility.Declaration.Struct.Public.Internal<G> {}
+				interface Parent<G extends GrammarContext<G>> extends visibility.Declaration.Struct.Public.Parent<G> {}
 				interface Restricted<G extends GrammarContext<G>> extends visibility.Declaration.Struct.Public.Restricted<G> {}
 				type Any<G extends GrammarContext<G>> =
 					| V.Declaration.Struct.Public<G>
 					| V.Declaration.Struct.Public.Internal<G>
+					| V.Declaration.Struct.Public.Parent<G>
 					| V.Declaration.Struct.Public.Restricted<G>;
 			}
 			interface Tuple<G extends GrammarContext<G>> extends structs.Declaration.Struct.Tuple<G> {}
@@ -1236,11 +1299,13 @@ declare module './declaration.ts' {
 				namespace Public {
 					interface Internal<G extends GrammarContext<G>> extends visibility.Declaration.Struct.Tuple.Public
 						.Internal<G> {}
+					interface Parent<G extends GrammarContext<G>> extends visibility.Declaration.Struct.Tuple.Public.Parent<G> {}
 					interface Restricted<G extends GrammarContext<G>> extends visibility.Declaration.Struct.Tuple.Public
 						.Restricted<G> {}
 					type Any<G extends GrammarContext<G>> =
 						| V.Declaration.Struct.Tuple.Public<G>
 						| V.Declaration.Struct.Tuple.Public.Internal<G>
+						| V.Declaration.Struct.Tuple.Public.Parent<G>
 						| V.Declaration.Struct.Tuple.Public.Restricted<G>;
 				}
 				type Any<G extends GrammarContext<G>> =
@@ -1248,6 +1313,7 @@ declare module './declaration.ts' {
 					| V.Declaration.Struct.Tuple.Private<G>
 					| V.Declaration.Struct.Tuple.Public<G>
 					| V.Declaration.Struct.Tuple.Public.Internal<G>
+					| V.Declaration.Struct.Tuple.Public.Parent<G>
 					| V.Declaration.Struct.Tuple.Public.Restricted<G>;
 			}
 			interface Unit<G extends GrammarContext<G>> extends structs.Declaration.Struct.Unit<G> {}
@@ -1257,11 +1323,13 @@ declare module './declaration.ts' {
 				namespace Public {
 					interface Internal<G extends GrammarContext<G>> extends visibility.Declaration.Struct.Unit.Public
 						.Internal<G> {}
+					interface Parent<G extends GrammarContext<G>> extends visibility.Declaration.Struct.Unit.Public.Parent<G> {}
 					interface Restricted<G extends GrammarContext<G>> extends visibility.Declaration.Struct.Unit.Public
 						.Restricted<G> {}
 					type Any<G extends GrammarContext<G>> =
 						| V.Declaration.Struct.Unit.Public<G>
 						| V.Declaration.Struct.Unit.Public.Internal<G>
+						| V.Declaration.Struct.Unit.Public.Parent<G>
 						| V.Declaration.Struct.Unit.Public.Restricted<G>;
 				}
 				type Any<G extends GrammarContext<G>> =
@@ -1269,6 +1337,7 @@ declare module './declaration.ts' {
 					| V.Declaration.Struct.Unit.Private<G>
 					| V.Declaration.Struct.Unit.Public<G>
 					| V.Declaration.Struct.Unit.Public.Internal<G>
+					| V.Declaration.Struct.Unit.Public.Parent<G>
 					| V.Declaration.Struct.Unit.Public.Restricted<G>;
 			}
 			type Any<G extends GrammarContext<G>> =
@@ -1276,16 +1345,19 @@ declare module './declaration.ts' {
 				| V.Declaration.Struct.Private<G>
 				| V.Declaration.Struct.Public<G>
 				| V.Declaration.Struct.Public.Internal<G>
+				| V.Declaration.Struct.Public.Parent<G>
 				| V.Declaration.Struct.Public.Restricted<G>
 				| V.Declaration.Struct.Tuple<G>
 				| V.Declaration.Struct.Tuple.Private<G>
 				| V.Declaration.Struct.Tuple.Public<G>
 				| V.Declaration.Struct.Tuple.Public.Internal<G>
+				| V.Declaration.Struct.Tuple.Public.Parent<G>
 				| V.Declaration.Struct.Tuple.Public.Restricted<G>
 				| V.Declaration.Struct.Unit<G>
 				| V.Declaration.Struct.Unit.Private<G>
 				| V.Declaration.Struct.Unit.Public<G>
 				| V.Declaration.Struct.Unit.Public.Internal<G>
+				| V.Declaration.Struct.Unit.Public.Parent<G>
 				| V.Declaration.Struct.Unit.Public.Restricted<G>;
 		}
 		interface TypeAlias<G extends GrammarContext<G>> extends typeAliases.Declaration.TypeAlias<G> {
@@ -1322,11 +1394,13 @@ declare module './declaration.ts' {
 			interface Public<G extends GrammarContext<G>> extends visibility.Declaration.TypeAlias.Public<G> {}
 			namespace Public {
 				interface Internal<G extends GrammarContext<G>> extends visibility.Declaration.TypeAlias.Public.Internal<G> {}
+				interface Parent<G extends GrammarContext<G>> extends visibility.Declaration.TypeAlias.Public.Parent<G> {}
 				interface Restricted<G extends GrammarContext<G>> extends visibility.Declaration.TypeAlias.Public
 					.Restricted<G> {}
 				type Any<G extends GrammarContext<G>> =
 					| V.Declaration.TypeAlias.Public<G>
 					| V.Declaration.TypeAlias.Public.Internal<G>
+					| V.Declaration.TypeAlias.Public.Parent<G>
 					| V.Declaration.TypeAlias.Public.Restricted<G>;
 			}
 			type Any<G extends GrammarContext<G>> =
@@ -1335,6 +1409,7 @@ declare module './declaration.ts' {
 				| V.Declaration.TypeAlias.Private<G>
 				| V.Declaration.TypeAlias.Public<G>
 				| V.Declaration.TypeAlias.Public.Internal<G>
+				| V.Declaration.TypeAlias.Public.Parent<G>
 				| V.Declaration.TypeAlias.Public.Restricted<G>;
 		}
 		interface TypeParameter<G extends GrammarContext<G>> extends parametricPolymorphism.Declaration.TypeParameter<G> {
@@ -1382,10 +1457,12 @@ declare module './declaration.ts' {
 			interface Public<G extends GrammarContext<G>> extends visibility.Declaration.Union.Public<G> {}
 			namespace Public {
 				interface Internal<G extends GrammarContext<G>> extends visibility.Declaration.Union.Public.Internal<G> {}
+				interface Parent<G extends GrammarContext<G>> extends visibility.Declaration.Union.Public.Parent<G> {}
 				interface Restricted<G extends GrammarContext<G>> extends visibility.Declaration.Union.Public.Restricted<G> {}
 				type Any<G extends GrammarContext<G>> =
 					| V.Declaration.Union.Public<G>
 					| V.Declaration.Union.Public.Internal<G>
+					| V.Declaration.Union.Public.Parent<G>
 					| V.Declaration.Union.Public.Restricted<G>;
 			}
 			type Any<G extends GrammarContext<G>> =
@@ -1393,6 +1470,7 @@ declare module './declaration.ts' {
 				| V.Declaration.Union.Private<G>
 				| V.Declaration.Union.Public<G>
 				| V.Declaration.Union.Public.Internal<G>
+				| V.Declaration.Union.Public.Parent<G>
 				| V.Declaration.Union.Public.Restricted<G>;
 		}
 		interface Variable<G extends GrammarContext<G>> {
@@ -1409,11 +1487,13 @@ declare module './declaration.ts' {
 			interface Public<G extends GrammarContext<G>> extends visibility.Declaration.Variable.Public<G> {}
 			namespace Public {
 				interface Internal<G extends GrammarContext<G>> extends visibility.Declaration.Variable.Public.Internal<G> {}
+				interface Parent<G extends GrammarContext<G>> extends visibility.Declaration.Variable.Public.Parent<G> {}
 				interface Restricted<G extends GrammarContext<G>> extends visibility.Declaration.Variable.Public
 					.Restricted<G> {}
 				type Any<G extends GrammarContext<G>> =
 					| V.Declaration.Variable.Public<G>
 					| V.Declaration.Variable.Public.Internal<G>
+					| V.Declaration.Variable.Public.Parent<G>
 					| V.Declaration.Variable.Public.Restricted<G>;
 			}
 			namespace Reassignable {
@@ -1428,6 +1508,7 @@ declare module './declaration.ts' {
 				| V.Declaration.Variable.Private<G>
 				| V.Declaration.Variable.Public<G>
 				| V.Declaration.Variable.Public.Internal<G>
+				| V.Declaration.Variable.Public.Parent<G>
 				| V.Declaration.Variable.Public.Restricted<G>
 				| V.Declaration.Variable.Reassignable<G>
 				| V.Declaration.Variable.Reassignable.FunctionScoped<G>;
@@ -1440,6 +1521,7 @@ declare module './declaration.ts' {
 			| V.Declaration.Constant.Private<G>
 			| V.Declaration.Constant.Public<G>
 			| V.Declaration.Constant.Public.Internal<G>
+			| V.Declaration.Constant.Public.Parent<G>
 			| V.Declaration.Constant.Public.Restricted<G>
 			| V.Declaration.Constructor<G>
 			| V.Declaration.Constructor.Private<G>
@@ -1449,21 +1531,25 @@ declare module './declaration.ts' {
 			| V.Declaration.Enum.Private<G>
 			| V.Declaration.Enum.Public<G>
 			| V.Declaration.Enum.Public.Internal<G>
+			| V.Declaration.Enum.Public.Parent<G>
 			| V.Declaration.Enum.Public.Restricted<G>
 			| V.Declaration.EnumMember<G>
 			| V.Declaration.EnumMember.Private<G>
 			| V.Declaration.EnumMember.Public<G>
 			| V.Declaration.EnumMember.Public.Internal<G>
+			| V.Declaration.EnumMember.Public.Parent<G>
 			| V.Declaration.EnumMember.Public.Restricted<G>
 			| V.Declaration.EnumMember.Struct<G>
 			| V.Declaration.EnumMember.Struct.Private<G>
 			| V.Declaration.EnumMember.Struct.Public<G>
 			| V.Declaration.EnumMember.Struct.Public.Internal<G>
+			| V.Declaration.EnumMember.Struct.Public.Parent<G>
 			| V.Declaration.EnumMember.Struct.Public.Restricted<G>
 			| V.Declaration.EnumMember.Tuple<G>
 			| V.Declaration.EnumMember.Tuple.Private<G>
 			| V.Declaration.EnumMember.Tuple.Public<G>
 			| V.Declaration.EnumMember.Tuple.Public.Internal<G>
+			| V.Declaration.EnumMember.Tuple.Public.Parent<G>
 			| V.Declaration.EnumMember.Tuple.Public.Restricted<G>
 			| V.Declaration.Extension<G>
 			| V.Declaration.Extension.Conformance<G>
@@ -1472,6 +1558,7 @@ declare module './declaration.ts' {
 			| V.Declaration.Field.Protected<G>
 			| V.Declaration.Field.Public<G>
 			| V.Declaration.Field.Public.Internal<G>
+			| V.Declaration.Field.Public.Parent<G>
 			| V.Declaration.Field.Public.Restricted<G>
 			| V.Declaration.Field.Signature<G>
 			| V.Declaration.Field.Signature.Private<G>
@@ -1481,17 +1568,20 @@ declare module './declaration.ts' {
 			| V.Declaration.Function.Private<G>
 			| V.Declaration.Function.Public<G>
 			| V.Declaration.Function.Public.Internal<G>
+			| V.Declaration.Function.Public.Parent<G>
 			| V.Declaration.Function.Public.Restricted<G>
 			| V.Declaration.Function.Signature<G>
 			| V.Declaration.Function.Signature.Private<G>
 			| V.Declaration.Function.Signature.Public<G>
 			| V.Declaration.Function.Signature.Public.Internal<G>
+			| V.Declaration.Function.Signature.Public.Parent<G>
 			| V.Declaration.Function.Signature.Public.Restricted<G>
 			| V.Declaration.Interface<G>
 			| V.Declaration.Interface.Trait<G>
 			| V.Declaration.Interface.Trait.Private<G>
 			| V.Declaration.Interface.Trait.Public<G>
 			| V.Declaration.Interface.Trait.Public.Internal<G>
+			| V.Declaration.Interface.Trait.Public.Parent<G>
 			| V.Declaration.Interface.Trait.Public.Restricted<G>
 			| V.Declaration.Macro<G>
 			| V.Declaration.Macro.Brace<G>
@@ -1502,6 +1592,7 @@ declare module './declaration.ts' {
 			| V.Declaration.Method.Protected<G>
 			| V.Declaration.Method.Public<G>
 			| V.Declaration.Method.Public.Internal<G>
+			| V.Declaration.Method.Public.Parent<G>
 			| V.Declaration.Method.Public.Restricted<G>
 			| V.Declaration.Method.Signature<G>
 			| V.Declaration.Method.Signature.Abstract<G>
@@ -1512,6 +1603,7 @@ declare module './declaration.ts' {
 			| V.Declaration.Method.Signature.Protected<G>
 			| V.Declaration.Method.Signature.Public<G>
 			| V.Declaration.Method.Signature.Public.Internal<G>
+			| V.Declaration.Method.Signature.Public.Parent<G>
 			| V.Declaration.Method.Signature.Public.Restricted<G>
 			| V.Declaration.Method.Special<G>
 			| V.Declaration.Module<G>
@@ -1520,6 +1612,7 @@ declare module './declaration.ts' {
 			| V.Declaration.Module.Private<G>
 			| V.Declaration.Module.Public<G>
 			| V.Declaration.Module.Public.Internal<G>
+			| V.Declaration.Module.Public.Parent<G>
 			| V.Declaration.Module.Public.Restricted<G>
 			| V.Declaration.ModuleProperty<G>
 			| V.Declaration.Parameter<G>
@@ -1570,22 +1663,26 @@ declare module './declaration.ts' {
 			| V.Declaration.Struct.Private<G>
 			| V.Declaration.Struct.Public<G>
 			| V.Declaration.Struct.Public.Internal<G>
+			| V.Declaration.Struct.Public.Parent<G>
 			| V.Declaration.Struct.Public.Restricted<G>
 			| V.Declaration.Struct.Tuple<G>
 			| V.Declaration.Struct.Tuple.Private<G>
 			| V.Declaration.Struct.Tuple.Public<G>
 			| V.Declaration.Struct.Tuple.Public.Internal<G>
+			| V.Declaration.Struct.Tuple.Public.Parent<G>
 			| V.Declaration.Struct.Tuple.Public.Restricted<G>
 			| V.Declaration.Struct.Unit<G>
 			| V.Declaration.Struct.Unit.Private<G>
 			| V.Declaration.Struct.Unit.Public<G>
 			| V.Declaration.Struct.Unit.Public.Internal<G>
+			| V.Declaration.Struct.Unit.Public.Parent<G>
 			| V.Declaration.Struct.Unit.Public.Restricted<G>
 			| V.Declaration.TypeAlias<G>
 			| V.Declaration.TypeAlias.Associated<G>
 			| V.Declaration.TypeAlias.Private<G>
 			| V.Declaration.TypeAlias.Public<G>
 			| V.Declaration.TypeAlias.Public.Internal<G>
+			| V.Declaration.TypeAlias.Public.Parent<G>
 			| V.Declaration.TypeAlias.Public.Restricted<G>
 			| V.Declaration.TypeParameter<G>
 			| V.Declaration.TypeParameter.Lifetime<G>
@@ -1594,6 +1691,7 @@ declare module './declaration.ts' {
 			| V.Declaration.Union.Private<G>
 			| V.Declaration.Union.Public<G>
 			| V.Declaration.Union.Public.Internal<G>
+			| V.Declaration.Union.Public.Parent<G>
 			| V.Declaration.Union.Public.Restricted<G>
 			| V.Declaration.Variable<G>
 			| V.Declaration.Variable.Constant<G>
@@ -1601,6 +1699,7 @@ declare module './declaration.ts' {
 			| V.Declaration.Variable.Private<G>
 			| V.Declaration.Variable.Public<G>
 			| V.Declaration.Variable.Public.Internal<G>
+			| V.Declaration.Variable.Public.Parent<G>
 			| V.Declaration.Variable.Public.Restricted<G>
 			| V.Declaration.Variable.Reassignable<G>
 			| V.Declaration.Variable.Reassignable.FunctionScoped<G>;
@@ -1657,7 +1756,7 @@ declare module './element.ts' {
 		}
 		interface Macro<G extends GrammarContext<G>> extends syntacticMetaprogramming.Element.Macro<G> {}
 		namespace Macro {
-			interface Fragment<G extends GrammarContext<G>> extends syntacticMetaprogramming.Element.Macro.Fragment<G> {}
+			type Fragment<G extends GrammarContext<G>> = syntacticMetaprogramming.Element.Macro.Fragment<G>;
 			interface TokenBinding<G extends GrammarContext<G>> extends syntacticMetaprogramming.Element.Macro
 				.TokenBinding<G> {}
 			interface TokenRepetition<G extends GrammarContext<G>> extends syntacticMetaprogramming.Element.Macro
@@ -2033,7 +2132,7 @@ declare module './expression.ts' {
 					parametricPolymorphism.Expression.Call.Construct<G>['typeArguments']
 				>;
 			}
-			interface Import<G extends GrammarContext<G>> extends modules.Expression.Call.Import<G> {}
+			type Import<G extends GrammarContext<G>> = modules.Expression.Call.Import<G>;
 			interface Macro<G extends GrammarContext<G>> extends syntacticMetaprogramming.Expression.Call.Macro<G> {}
 			interface Member<G extends GrammarContext<G>> {
 				readonly typeArguments?: gate.In<
@@ -2207,7 +2306,7 @@ declare module './expression.ts' {
 				| V.Expression.Unary.Typeof<G>
 				| V.Expression.Unary.Void<G>;
 		}
-		interface Unit<G extends GrammarContext<G>> extends tuples.Expression.Unit<G> {}
+		type Unit<G extends GrammarContext<G>> = tuples.Expression.Unit<G>;
 		namespace Update {
 			type Any<G extends GrammarContext<G>> =
 				| V.Expression.Update<G>
@@ -2348,7 +2447,8 @@ declare module './expression.ts' {
 			| V.Expression.Update.Decrement<G>
 			| V.Expression.Update.Increment<G>
 			| V.Expression.Yield<G>
-			| V.Expression.Yield.Delegate<G>;
+			| V.Expression.Yield.Delegate<G>
+			| G['texts']['expression.meta'];
 	}
 }
 
@@ -2365,7 +2465,7 @@ declare module './identifier.ts' {
 		interface Metavariable<G extends GrammarContext<G>> extends syntacticMetaprogramming.Identifier.Metavariable<G> {
 			readonly attributes?: gate.In<G, features.Attributes, attributes.Identifier.Metavariable<G>['attributes']>;
 		}
-		interface Receiver<G extends GrammarContext<G>> extends methods.Identifier.Receiver<G> {}
+		type Receiver<G extends GrammarContext<G>> = methods.Identifier.Receiver<G>;
 		type Any<G extends GrammarContext<G>> =
 			| V.Identifier<G>
 			| V.Identifier.Label<G>
@@ -2373,7 +2473,8 @@ declare module './identifier.ts' {
 			| V.Identifier.Metavariable<G>
 			| V.Identifier.Qualified<G>
 			| V.Identifier.Receiver<G>
-			| V.Identifier.Super<G>;
+			| V.Identifier.Super<G>
+			| G['texts']['identifier'];
 	}
 }
 
@@ -2579,6 +2680,7 @@ declare module './modifier.ts' {
 			interface Public<G extends GrammarContext<G>> extends visibility.Modifier.Visibility.Public<G> {}
 			namespace Public {
 				interface Internal<G extends GrammarContext<G>> extends visibility.Modifier.Visibility.Public.Internal<G> {}
+				interface Parent<G extends GrammarContext<G>> extends visibility.Modifier.Visibility.Public.Parent<G> {}
 				interface Restricted<G extends GrammarContext<G>> extends visibility.Modifier.Visibility.Public.Restricted<G> {
 					readonly scope: gate.In<
 						G,
@@ -2589,7 +2691,10 @@ declare module './modifier.ts' {
 				type Any<G extends GrammarContext<G>> =
 					| V.Modifier.Visibility.Public<G>
 					| V.Modifier.Visibility.Public.Internal<G>
-					| V.Modifier.Visibility.Public.Restricted<G>;
+					| V.Modifier.Visibility.Public.Parent<G>
+					| V.Modifier.Visibility.Public.Restricted<G>
+					| G['texts']['modifier.visibility.public']
+					| G['texts']['modifier.visibility.public.internal'];
 			}
 			type Any<G extends GrammarContext<G>> =
 				| V.Modifier.Visibility<G>
@@ -2597,7 +2702,13 @@ declare module './modifier.ts' {
 				| V.Modifier.Visibility.Protected<G>
 				| V.Modifier.Visibility.Public<G>
 				| V.Modifier.Visibility.Public.Internal<G>
-				| V.Modifier.Visibility.Public.Restricted<G>;
+				| V.Modifier.Visibility.Public.Parent<G>
+				| V.Modifier.Visibility.Public.Restricted<G>
+				| G['texts']['modifier.visibility']
+				| G['texts']['modifier.visibility.private']
+				| G['texts']['modifier.visibility.protected']
+				| G['texts']['modifier.visibility.public']
+				| G['texts']['modifier.visibility.public.internal'];
 		}
 		type Any<G extends GrammarContext<G>> =
 			| V.Modifier<G>
@@ -2607,7 +2718,13 @@ declare module './modifier.ts' {
 			| V.Modifier.Visibility.Protected<G>
 			| V.Modifier.Visibility.Public<G>
 			| V.Modifier.Visibility.Public.Internal<G>
-			| V.Modifier.Visibility.Public.Restricted<G>;
+			| V.Modifier.Visibility.Public.Parent<G>
+			| V.Modifier.Visibility.Public.Restricted<G>
+			| G['texts']['modifier.visibility']
+			| G['texts']['modifier.visibility.private']
+			| G['texts']['modifier.visibility.protected']
+			| G['texts']['modifier.visibility.public']
+			| G['texts']['modifier.visibility.public.internal'];
 	}
 }
 
@@ -2666,7 +2783,7 @@ declare module './pattern.ts' {
 		interface Struct<G extends GrammarContext<G>> extends structs.Pattern.Struct<G> {}
 		namespace Struct {
 			interface Field<G extends GrammarContext<G>> extends structs.Pattern.Struct.Field<G> {}
-			interface Rest<G extends GrammarContext<G>> extends structs.Pattern.Struct.Rest<G> {}
+			type Rest<G extends GrammarContext<G>> = structs.Pattern.Struct.Rest<G>;
 			type Any<G extends GrammarContext<G>> =
 				| V.Pattern.Struct<G>
 				| V.Pattern.Struct.Field<G>
@@ -2677,7 +2794,7 @@ declare module './pattern.ts' {
 			interface Bare<G extends GrammarContext<G>> extends destructuring.Pattern.Tuple.Bare<G> {}
 			type Any<G extends GrammarContext<G>> = V.Pattern.Tuple<G> | V.Pattern.Tuple.Bare<G>;
 		}
-		interface Wildcard<G extends GrammarContext<G>> extends destructuring.Pattern.Wildcard<G> {}
+		type Wildcard<G extends GrammarContext<G>> = destructuring.Pattern.Wildcard<G>;
 		type Any<G extends GrammarContext<G>> =
 			| V.Pattern<G>
 			| V.Pattern.As<G>
@@ -2754,11 +2871,13 @@ declare module './statement.ts' {
 				namespace Public {
 					interface Internal<G extends GrammarContext<G>> extends visibility.Statement.Import.Package.Public
 						.Internal<G> {}
+					interface Parent<G extends GrammarContext<G>> extends visibility.Statement.Import.Package.Public.Parent<G> {}
 					interface Restricted<G extends GrammarContext<G>> extends visibility.Statement.Import.Package.Public
 						.Restricted<G> {}
 					type Any<G extends GrammarContext<G>> =
 						| V.Statement.Import.Package.Public<G>
 						| V.Statement.Import.Package.Public.Internal<G>
+						| V.Statement.Import.Package.Public.Parent<G>
 						| V.Statement.Import.Package.Public.Restricted<G>;
 				}
 				type Any<G extends GrammarContext<G>> =
@@ -2766,16 +2885,19 @@ declare module './statement.ts' {
 					| V.Statement.Import.Package.Private<G>
 					| V.Statement.Import.Package.Public<G>
 					| V.Statement.Import.Package.Public.Internal<G>
+					| V.Statement.Import.Package.Public.Parent<G>
 					| V.Statement.Import.Package.Public.Restricted<G>;
 			}
 			interface Private<G extends GrammarContext<G>> extends visibility.Statement.Import.Private<G> {}
 			interface Public<G extends GrammarContext<G>> extends visibility.Statement.Import.Public<G> {}
 			namespace Public {
 				interface Internal<G extends GrammarContext<G>> extends visibility.Statement.Import.Public.Internal<G> {}
+				interface Parent<G extends GrammarContext<G>> extends visibility.Statement.Import.Public.Parent<G> {}
 				interface Restricted<G extends GrammarContext<G>> extends visibility.Statement.Import.Public.Restricted<G> {}
 				type Any<G extends GrammarContext<G>> =
 					| V.Statement.Import.Public<G>
 					| V.Statement.Import.Public.Internal<G>
+					| V.Statement.Import.Public.Parent<G>
 					| V.Statement.Import.Public.Restricted<G>;
 			}
 			interface Typeof<G extends GrammarContext<G>> extends modules.Statement.Import.Typeof<G> {}
@@ -2788,10 +2910,12 @@ declare module './statement.ts' {
 				| V.Statement.Import.Package.Private<G>
 				| V.Statement.Import.Package.Public<G>
 				| V.Statement.Import.Package.Public.Internal<G>
+				| V.Statement.Import.Package.Public.Parent<G>
 				| V.Statement.Import.Package.Public.Restricted<G>
 				| V.Statement.Import.Private<G>
 				| V.Statement.Import.Public<G>
 				| V.Statement.Import.Public.Internal<G>
+				| V.Statement.Import.Public.Parent<G>
 				| V.Statement.Import.Public.Restricted<G>
 				| V.Statement.Import.Typeof<G>;
 		}
@@ -2855,10 +2979,12 @@ declare module './statement.ts' {
 			| V.Statement.Import.Package.Private<G>
 			| V.Statement.Import.Package.Public<G>
 			| V.Statement.Import.Package.Public.Internal<G>
+			| V.Statement.Import.Package.Public.Parent<G>
 			| V.Statement.Import.Package.Public.Restricted<G>
 			| V.Statement.Import.Private<G>
 			| V.Statement.Import.Public<G>
 			| V.Statement.Import.Public.Internal<G>
+			| V.Statement.Import.Public.Parent<G>
 			| V.Statement.Import.Public.Restricted<G>
 			| V.Statement.Import.Typeof<G>
 			| V.Statement.Labeled<G>
@@ -2876,7 +3002,9 @@ declare module './statement.ts' {
 			| V.Statement.Scope<G>
 			| V.Statement.Switch<G>
 			| V.Statement.Throw<G>
-			| V.Statement.Try<G>;
+			| V.Statement.Try<G>
+			| G['texts']['statement.break']
+			| G['texts']['statement.continue'];
 	}
 }
 
@@ -2901,7 +3029,7 @@ declare module './type.ts' {
 			>;
 		}
 		interface Dynamic<G extends GrammarContext<G>> extends typeAnnotations.Type.Dynamic<G> {}
-		interface Existential<G extends GrammarContext<G>> extends typeAnnotations.Type.Existential<G> {}
+		type Existential<G extends GrammarContext<G>> = typeAnnotations.Type.Existential<G>;
 		interface Function<G extends GrammarContext<G>> extends typeAnnotations.Type.Function<G> {
 			readonly forLifetimes?: gate.In<G, features.Lifetimes, lifetimes.Type.Function<G>['forLifetimes']>;
 			readonly receiver?: gate.In<G, features.ExplicitReceivers, explicitReceivers.Type.Function<G>['receiver']>;
@@ -2932,6 +3060,7 @@ declare module './type.ts' {
 			interface Turbofish<G extends GrammarContext<G>> extends typeAnnotations.Type.Generic.Turbofish<G> {}
 			type Any<G extends GrammarContext<G>> = V.Type.Generic<G> | V.Type.Generic.Turbofish<G>;
 		}
+		interface Import<G extends GrammarContext<G>> extends modules.Type.Import<G> {}
 		interface IndexQuery<G extends GrammarContext<G>> extends typeAnnotations.Type.IndexQuery<G> {}
 		interface Infer<G extends GrammarContext<G>> extends typeAnnotations.Type.Infer<G> {}
 		interface Intersection<G extends GrammarContext<G>> extends typeAnnotations.Type.Intersection<G> {}
@@ -2949,27 +3078,27 @@ declare module './type.ts' {
 			interface Asserts<G extends GrammarContext<G>> extends typeAnnotations.Type.Predicate.Asserts<G> {}
 			type Any<G extends GrammarContext<G>> = V.Type.Predicate<G> | V.Type.Predicate.Asserts<G>;
 		}
-		interface Primitive<G extends GrammarContext<G>> extends typeAnnotations.Type.Primitive<G> {}
+		type Primitive<G extends GrammarContext<G>> = typeAnnotations.Type.Primitive<G>;
 		namespace Primitive {
-			interface Boolean<G extends GrammarContext<G>> extends typeAnnotations.Type.Primitive.Boolean<G> {}
-			interface Character<G extends GrammarContext<G>> extends characters.Type.Primitive.Character<G> {}
-			interface Floating<G extends GrammarContext<G>> extends typeAnnotations.Type.Primitive.Floating<G> {}
+			type Boolean<G extends GrammarContext<G>> = typeAnnotations.Type.Primitive.Boolean<G>;
+			type Character<G extends GrammarContext<G>> = characters.Type.Primitive.Character<G>;
+			type Floating<G extends GrammarContext<G>> = typeAnnotations.Type.Primitive.Floating<G>;
 			namespace Floating {
-				interface Float32<G extends GrammarContext<G>> extends typeAnnotations.Type.Primitive.Floating.Float32<G> {}
-				interface Float64<G extends GrammarContext<G>> extends typeAnnotations.Type.Primitive.Floating.Float64<G> {}
+				type Float32<G extends GrammarContext<G>> = typeAnnotations.Type.Primitive.Floating.Float32<G>;
+				type Float64<G extends GrammarContext<G>> = typeAnnotations.Type.Primitive.Floating.Float64<G>;
 				type Any<G extends GrammarContext<G>> =
 					| V.Type.Primitive.Floating<G>
 					| V.Type.Primitive.Floating.Float32<G>
 					| V.Type.Primitive.Floating.Float64<G>;
 			}
-			interface Integral<G extends GrammarContext<G>> extends typeAnnotations.Type.Primitive.Integral<G> {}
+			type Integral<G extends GrammarContext<G>> = typeAnnotations.Type.Primitive.Integral<G>;
 			namespace Integral {
-				interface Int128<G extends GrammarContext<G>> extends typeAnnotations.Type.Primitive.Integral.Int128<G> {}
-				interface Int16<G extends GrammarContext<G>> extends typeAnnotations.Type.Primitive.Integral.Int16<G> {}
-				interface Int32<G extends GrammarContext<G>> extends typeAnnotations.Type.Primitive.Integral.Int32<G> {}
-				interface Int64<G extends GrammarContext<G>> extends typeAnnotations.Type.Primitive.Integral.Int64<G> {}
-				interface Int8<G extends GrammarContext<G>> extends typeAnnotations.Type.Primitive.Integral.Int8<G> {}
-				interface Size<G extends GrammarContext<G>> extends typeAnnotations.Type.Primitive.Integral.Size<G> {}
+				type Int128<G extends GrammarContext<G>> = typeAnnotations.Type.Primitive.Integral.Int128<G>;
+				type Int16<G extends GrammarContext<G>> = typeAnnotations.Type.Primitive.Integral.Int16<G>;
+				type Int32<G extends GrammarContext<G>> = typeAnnotations.Type.Primitive.Integral.Int32<G>;
+				type Int64<G extends GrammarContext<G>> = typeAnnotations.Type.Primitive.Integral.Int64<G>;
+				type Int8<G extends GrammarContext<G>> = typeAnnotations.Type.Primitive.Integral.Int8<G>;
+				type Size<G extends GrammarContext<G>> = typeAnnotations.Type.Primitive.Integral.Size<G>;
 				type Any<G extends GrammarContext<G>> =
 					| V.Type.Primitive.Integral<G>
 					| V.Type.Primitive.Integral.Int128<G>
@@ -2979,13 +3108,13 @@ declare module './type.ts' {
 					| V.Type.Primitive.Integral.Int8<G>
 					| V.Type.Primitive.Integral.Size<G>;
 			}
-			interface Never<G extends GrammarContext<G>> extends typeAnnotations.Type.Primitive.Never<G> {}
-			interface Object<G extends GrammarContext<G>> extends typeAnnotations.Type.Primitive.Object<G> {}
-			interface String<G extends GrammarContext<G>> extends typeAnnotations.Type.Primitive.String<G> {}
-			interface Symbol<G extends GrammarContext<G>> extends typeAnnotations.Type.Primitive.Symbol<G> {}
-			interface Unchecked<G extends GrammarContext<G>> extends typeAnnotations.Type.Primitive.Unchecked<G> {}
-			interface Unknown<G extends GrammarContext<G>> extends typeAnnotations.Type.Primitive.Unknown<G> {}
-			interface Void<G extends GrammarContext<G>> extends typeAnnotations.Type.Primitive.Void<G> {}
+			type Never<G extends GrammarContext<G>> = typeAnnotations.Type.Primitive.Never<G>;
+			type Object<G extends GrammarContext<G>> = typeAnnotations.Type.Primitive.Object<G>;
+			type String<G extends GrammarContext<G>> = typeAnnotations.Type.Primitive.String<G>;
+			type Symbol<G extends GrammarContext<G>> = typeAnnotations.Type.Primitive.Symbol<G>;
+			type Unchecked<G extends GrammarContext<G>> = typeAnnotations.Type.Primitive.Unchecked<G>;
+			type Unknown<G extends GrammarContext<G>> = typeAnnotations.Type.Primitive.Unknown<G>;
+			type Void<G extends GrammarContext<G>> = typeAnnotations.Type.Primitive.Void<G>;
 			type Any<G extends GrammarContext<G>> =
 				| V.Type.Primitive<G>
 				| V.Type.Primitive.Boolean<G>
@@ -3011,6 +3140,7 @@ declare module './type.ts' {
 		interface Qualified<G extends GrammarContext<G>> extends typeAnnotations.Type.Qualified<G> {}
 		interface Query<G extends GrammarContext<G>> extends typeAnnotations.Type.Query<G> {}
 		interface Readonly<G extends GrammarContext<G>> extends typeAnnotations.Type.Readonly<G> {}
+		type Receiver<G extends GrammarContext<G>> = explicitReceivers.Type.Receiver<G>;
 		interface Reference<G extends GrammarContext<G>> extends typeAnnotations.Type.Reference<G> {
 			readonly exclusive?: gate.In<G, features.References, references.Type.Reference<G>['exclusive']>;
 			readonly lifetime?: gate.In<G, features.Lifetimes, lifetimes.Type.Reference<G>['lifetime']>;
@@ -3023,7 +3153,7 @@ declare module './type.ts' {
 		interface Template<G extends GrammarContext<G>> extends typeAnnotations.Type.Template<G> {}
 		interface Tuple<G extends GrammarContext<G>> extends typeAnnotations.Type.Tuple<G> {}
 		interface Union<G extends GrammarContext<G>> extends typeAnnotations.Type.Union<G> {}
-		interface Unit<G extends GrammarContext<G>> extends typeAnnotations.Type.Unit<G> {}
+		type Unit<G extends GrammarContext<G>> = typeAnnotations.Type.Unit<G>;
 		type Any<G extends GrammarContext<G>> =
 			| V.Type<G>
 			| V.Type.Abstract<G>
@@ -3038,6 +3168,7 @@ declare module './type.ts' {
 			| V.Type.Function.Constructor<G>
 			| V.Type.Generic<G>
 			| V.Type.Generic.Turbofish<G>
+			| V.Type.Import<G>
 			| V.Type.IndexQuery<G>
 			| V.Type.Infer<G>
 			| V.Type.Intersection<G>
@@ -3073,6 +3204,7 @@ declare module './type.ts' {
 			| V.Type.Qualified<G>
 			| V.Type.Query<G>
 			| V.Type.Readonly<G>
+			| V.Type.Receiver<G>
 			| V.Type.Reference<G>
 			| V.Type.Rest<G>
 			| V.Type.Rest.Map<G>

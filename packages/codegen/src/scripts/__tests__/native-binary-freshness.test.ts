@@ -1,14 +1,20 @@
 import { cpSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
-import { dirname, join, relative } from 'node:path';
-import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { dirname, join, posix, relative, win32 } from 'node:path';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import {
 	type BuildSetting,
 	assertNativeBinaryFresh,
+	checkoutPath,
 	hostBinaryFreshnessFor,
 	hostBinaryName,
+	linkerMapOf,
+	llvmTool,
 	nativeBuildFingerprint,
 	nativeBuildFreshness,
+	nativeBuildStamp,
+	unstrippedBinaryPath,
+	unstrippedReleaseBinary,
 	writeNativeBuildStamp
 } from '../native-binary-freshness.ts';
 
@@ -222,6 +228,69 @@ describe('a binary built elsewhere', () => {
 			expect(() => assertNativeBinaryFresh(consumer, 'rust')).not.toThrow();
 		} finally {
 			rmSync(consumer, { recursive: true, force: true });
+		}
+	});
+});
+
+describe('a path a stamp records from the checkout', () => {
+	it('is written with forward slashes on every host', () => {
+		expect(checkoutPath('C:\\repo', 'C:\\repo\\node_modules\\.cache\\sittir\\native-build\\rust\\x.node', win32)).toBe('node_modules/.cache/sittir/native-build/rust/x.node');
+		expect(checkoutPath('/repo', '/repo/node_modules/.cache/sittir/native-build/rust/x.node', posix)).toBe('node_modules/.cache/sittir/native-build/rust/x.node');
+	});
+});
+
+describe('a stripped release binary', () => {
+	it('records its unstripped copy beside its stamp, by path from the checkout and by hash', () => {
+		const copy = unstrippedBinaryPath(root, 'rust', BINARY);
+		write(relative(root, copy), 'binary v1 with its symbols');
+		writeNativeBuildStamp(root, 'rust', 'release', BINARY, nativeBuildFingerprint(root, 'rust', current), copy);
+		expect(nativeBuildStamp(root, 'rust', BINARY)?.unstripped).toEqual({ path: `node_modules/.cache/sittir/native-build/rust/${BINARY}`, sha256: expect.stringMatching(/^[0-9a-f]{64}$/) });
+		expect(hostBinaryFreshnessFor(root, 'rust')).toEqual([expect.objectContaining({ stale: false, profile: 'release' })]);
+	});
+
+	it('records no copy for a build it does not strip', () => {
+		expect(nativeBuildStamp(root, 'rust', BINARY)?.unstripped).toBeUndefined();
+	});
+
+	it('names the unstripped copy of a current release build', () => {
+		const copy = unstrippedBinaryPath(root, 'rust', BINARY);
+		write(relative(root, copy), 'binary v1 with its symbols');
+		writeNativeBuildStamp(root, 'rust', 'release', BINARY, nativeBuildFingerprint(root, 'rust', current), copy);
+		expect(unstrippedReleaseBinary(root, 'rust', BINARY)).toBe(copy);
+	});
+
+	it('names no copy for a build that kept none, a build that is not release, a copy that changed or a stale build', () => {
+		expect(() => unstrippedReleaseBinary(root, 'rust', BINARY)).toThrow('built under the gate profile, not release');
+		writeNativeBuildStamp(root, 'rust', 'release', BINARY, nativeBuildFingerprint(root, 'rust', current));
+		expect(() => unstrippedReleaseBinary(root, 'rust', BINARY)).toThrow('its build kept no unstripped copy');
+		const copy = unstrippedBinaryPath(root, 'rust', BINARY);
+		write(relative(root, copy), 'binary v1 with its symbols');
+		writeNativeBuildStamp(root, 'rust', 'release', BINARY, nativeBuildFingerprint(root, 'rust', current), copy);
+		write(relative(root, copy), 'another build');
+		expect(() => unstrippedReleaseBinary(root, 'rust', BINARY)).toThrow('is not the unstripped copy its build kept');
+		write('rust/crates/sittir-rust/src/lib.rs', 'pub fn changed() {}\n');
+		expect(() => unstrippedReleaseBinary(root, 'rust', BINARY)).toThrow('changed since the build');
+	});
+
+	it('records the linker map its build wrote beside the copy, and names no copy once the map changed', () => {
+		const copy = unstrippedBinaryPath(root, 'rust', BINARY);
+		const map = linkerMapOf(copy);
+		expect(map).toBe(`${copy}.map`);
+		write(relative(root, copy), 'binary v1 with its symbols');
+		write(relative(root, map), ' 0001:00000010       f 0000000180001010 f   x.o\n');
+		writeNativeBuildStamp(root, 'rust', 'release', BINARY, nativeBuildFingerprint(root, 'rust', current), copy, map);
+		expect(nativeBuildStamp(root, 'rust', BINARY)?.linkerMap).toEqual({ path: `node_modules/.cache/sittir/native-build/rust/${BINARY}.map`, sha256: expect.stringMatching(/^[0-9a-f]{64}$/) });
+		expect(unstrippedReleaseBinary(root, 'rust', BINARY)).toBe(copy);
+		write(relative(root, map), 'another map');
+		expect(() => unstrippedReleaseBinary(root, 'rust', BINARY)).toThrow(`${BINARY}.map is not the linker map its build kept`);
+	});
+
+	it('strips with the llvm tool its variable names, when one is named', () => {
+		vi.stubEnv('LLVM_STRIP', '/tools/llvm-strip');
+		try {
+			expect(llvmTool('llvm-strip', root)).toBe('/tools/llvm-strip');
+		} finally {
+			vi.unstubAllEnvs();
 		}
 	});
 });

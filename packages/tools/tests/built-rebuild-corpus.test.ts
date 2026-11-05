@@ -17,7 +17,6 @@ import {
 	loadScopedFactoryMap,
 	loadSlotAccessorOf,
 	loadStorageKindNameFromId,
-	useValidationConstruction,
 	useValidationNodeStorage,
 	type FactoryDispatchArtifacts,
 	type ReadNodeLike
@@ -27,7 +26,6 @@ import { requireGrammarModule } from '../src/grammar-internals.ts';
 import { structureOf } from '../../../examples/helpers.ts';
 
 useValidationNodeStorage('arena');
-useValidationConstruction('record');
 
 async function artifactsOf(grammar: string): Promise<FactoryDispatchArtifacts> {
 	const model = await loadNodeModel(grammar);

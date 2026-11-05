@@ -273,6 +273,8 @@ export const buildIndent = O.buildIndent;
 export const buildDedent = O.buildDedent;
 export const buildTraitInterfaceDeclarationBody = dispatched(() => backend().buildTraitInterfaceDeclarationBody);
 export const buildExtensionDeclarationBody = dispatched(() => backend().buildExtensionDeclarationBody);
+export const buildArgument = dispatched(() => backend().buildArgument);
+export const buildArrayExpressionListElements = dispatched(() => backend().buildArrayExpressionListElements);
 export const buildReceiverParameterDeclaration = dispatched(() => backend().buildReceiverParameterDeclaration);
 export const buildAttributedParameterReceiver = dispatched(() => backend().buildAttributedParameterReceiver);
 export const buildParametersElementsReceiver = dispatched(() => backend().buildParametersElementsReceiver);
@@ -550,6 +552,8 @@ export const _factoryMap = {
 	_dedent: buildDedent,
 	trait_interface_declaration_body: buildTraitInterfaceDeclarationBody,
 	extension_declaration_body: buildExtensionDeclarationBody,
+	argument: buildArgument,
+	array_expression_list_elements: buildArrayExpressionListElements,
 	receiver_parameter_declaration: buildReceiverParameterDeclaration,
 	attributed_parameter_receiver: buildAttributedParameterReceiver,
 	parameters_elements_receiver: buildParametersElementsReceiver,

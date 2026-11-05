@@ -8,9 +8,9 @@
 //! leaf's captured text) is held by its tree, by its row, here: the one place
 //! a row names a record. The map never leaves native code.
 
+use crate::heap::{CountedMap, HeapBytes};
 use super::{Address, Arena, ArenaError, ArenaMark};
 use crate::types::NodeIndex;
-use std::collections::{HashMap, HashSet};
 
 /// What a tree's arena holds: its chunks' written words, its record starts
 /// and its held rows, each in order.
@@ -25,20 +25,34 @@ pub(super) struct Snapshot {
 /// One parsed tree's records, and those no cell names, by their rows.
 #[derive(Debug)]
 pub struct TreeArena {
+    /// Whether a write grew the arena since the last `take_grown`.
+    grown: bool,
     arena: Arena,
-    held: HashMap<NodeIndex, Address>,
+    held: CountedMap<NodeIndex, Address>,
     nodes: u32,
     /// Native record starts, including an embedded record, which starts
     /// inside its holder's.
-    records: HashSet<Address>,
+    records: CountedMap<Address>,
+}
+
+impl HeapBytes for TreeArena {
+    fn heap_bytes(&self) -> usize {
+        let Self { grown: _, arena, held, nodes: _, records } = self;
+        arena.heap_bytes() + held.heap_bytes() + records.heap_bytes()
+    }
 }
 
 impl TreeArena {
-    /// The arena of a tree of `rows` nodes whose kind fields take
-    /// `kind_bits` bits.
+    /// The arena of a tree of `rows` nodes, whose kind fields take
+    /// `kind_bits` bits: grown, since nothing has taken its growth yet.
     #[must_use]
     pub fn new(kind_bits: u32, rows: u32) -> Self {
-        Self { arena: Arena::with_kind_bits(kind_bits), held: HashMap::new(), nodes: rows, records: HashSet::new() }
+        Self { grown: true, arena: Arena::with_kind_bits(kind_bits), held: CountedMap::default(), nodes: rows, records: CountedMap::default() }
+    }
+
+    /// Whether a write grew the arena since the last call.
+    pub fn take_grown(&mut self) -> bool {
+        std::mem::take(&mut self.grown)
     }
 
     #[must_use]
@@ -54,6 +68,7 @@ impl TreeArena {
     }
 
     pub(super) fn arena_mut(&mut self) -> &mut Arena {
+        self.grown = true;
         &mut self.arena
     }
 
@@ -61,13 +76,14 @@ impl TreeArena {
     /// included; side records and list runs never enter the set of record
     /// starts.
     pub(super) fn keep_record(&mut self, at: Address) {
-        self.records.insert(at);
+        self.grown = true;
+        self.records.insert(at, ());
     }
 
     #[must_use]
     /// Whether the native writer wrote a record at `at`.
     pub(super) fn contains_record(&self, at: Address) -> bool {
-        self.records.contains(&at)
+        self.records.contains_key(&at)
     }
 
     /// Where the tree's writes stand now.
@@ -79,8 +95,8 @@ impl TreeArena {
     /// record starts and held rows that name them.
     pub(super) fn rewind(&mut self, mark: ArenaMark) {
         self.arena.rewind(mark);
-        self.records.retain(|&at| !mark.precedes(at));
-        self.held.retain(|_, at| !mark.precedes(*at));
+        self.records = std::mem::take(&mut self.records).kept(|&at, ()| !mark.precedes(at));
+        self.held = std::mem::take(&mut self.held).kept(|_, &at| !mark.precedes(at));
     }
 
     /// Every chunk's written words, the record starts in order, and the held
@@ -88,7 +104,7 @@ impl TreeArena {
     #[cfg(test)]
     pub(super) fn snapshot(&self) -> Snapshot {
         let chunks = (0..).map_while(|n| self.arena.chunk(n).map(<[u32]>::to_vec)).collect();
-        let mut records: Vec<_> = self.records.iter().copied().collect();
+        let mut records: Vec<_> = self.records.iter().map(|(&at, ())| at).collect();
         records.sort_unstable();
         let mut held: Vec<_> = self.held.iter().map(|(&row, &at)| (row, at)).collect();
         held.sort_unstable();
@@ -111,6 +127,7 @@ impl TreeArena {
         if self.held.contains_key(&row) {
             return Err(ArenaError::Unwritable("a second record for a row"));
         }
+        self.grown = true;
         self.held.insert(row, at);
         Ok(())
     }
@@ -181,5 +198,18 @@ mod tests {
         let at = record(&mut tree, &[7, 0]);
         assert_eq!(tree.hold(NodeIndex(4), at), Err(ArenaError::Malformed { what: "record row", word: 4 }));
         assert_eq!(tree.held(NodeIndex(4)), None);
+    }
+
+    #[test]
+    fn each_write_marks_the_arena_grown_until_a_take() {
+        let mut tree = TreeArena::new(crate::record::PARSED_KIND_BITS, 4);
+        assert!(tree.take_grown(), "a new arena's growth has not been taken");
+        assert!(!tree.take_grown(), "a take clears it");
+        let at = record(&mut tree, &[7, 0]);
+        assert!(tree.take_grown(), "a record written");
+        assert_eq!(tree.held(NodeIndex(1)), None);
+        assert!(!tree.take_grown(), "a read writes nothing");
+        tree.hold(NodeIndex(1), at).expect("the row had none");
+        assert!(tree.take_grown(), "a row held");
     }
 }

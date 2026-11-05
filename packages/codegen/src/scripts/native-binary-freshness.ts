@@ -1,7 +1,7 @@
 import { execFileSync } from 'node:child_process';
 import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
 import { homedir } from 'node:os';
-import { basename, dirname, join, normalize, relative } from 'node:path';
+import { basename, dirname, join, normalize, posix, relative, sep } from 'node:path';
 import { hostPlatform, platformSuffix } from '@sittir/common/engine';
 import { moduleClosure } from './module-closure.ts';
 import { sha256File } from '../util/content-hash.ts';
@@ -13,6 +13,8 @@ export type NativeProfile = 'release' | 'gate' | 'dev';
 export interface NativeBuildStamp {
 	readonly profile: NativeProfile;
 	readonly binarySha256: string;
+	readonly unstripped?: { readonly path: string; readonly sha256: string };
+	readonly linkerMap?: { readonly path: string; readonly sha256: string };
 	readonly toolchain: string;
 	readonly config: Readonly<Record<string, string>>;
 	readonly inputs: Readonly<Record<string, string>>;
@@ -57,6 +59,19 @@ function rustToolchain(repoRoot: string): string {
 	return toolchain;
 }
 
+export type LlvmTool = 'llvm-strip' | 'llvm-objdump';
+
+export function llvmTool(name: LlvmTool, repoRoot: string = REPO_ROOT): string {
+	const variable = name.toUpperCase().replace('-', '_');
+	const named = process.env[variable];
+	if (named) return named;
+	const host = /^host: (.+)$/m.exec(rustToolchain(repoRoot))?.[1];
+	const sysroot = execFileSync('rustc', ['--print', 'sysroot'], { cwd: repoRoot, encoding: 'utf8' }).trim();
+	const tool = join(sysroot, 'lib', 'rustlib', host ?? '', 'bin', process.platform === 'win32' ? `${name}.exe` : name);
+	if (host !== undefined && existsSync(tool)) return tool;
+	throw new Error(`${name} is not in the Rust toolchain: add its llvm-tools component (rustup component add llvm-tools), or name one in ${variable}`);
+}
+
 function walk(path: string, out: string[]): void {
 	if (!existsSync(path)) return;
 	const stat = statSync(path);
@@ -98,6 +113,10 @@ function quotedIncludeClosure(file: string, seen: Set<string>): void {
 	}
 }
 
+export function checkoutPath(repoRoot: string, file: string, flavor: Pick<typeof posix, 'relative' | 'sep'> = { relative, sep }): string {
+	return flavor.relative(repoRoot, file).split(flavor.sep).join(posix.sep);
+}
+
 export function nativeInputs(repoRoot: string, grammar: string): Record<string, string> {
 	const parserSources = join(repoRoot, relative(REPO_ROOT, grammarPackageDir(grammar)), '.sittir/src');
 	const roots = [
@@ -113,7 +132,7 @@ export function nativeInputs(repoRoot: string, grammar: string): Record<string, 
 		quotedIncludeClosure(scanner, scannerIncludes);
 	}
 	const inputs: Record<string, string> = {};
-	for (const file of [...new Set([...files, ...scannerIncludes])].sort()) inputs[relative(repoRoot, file)] = sha256File(file);
+	for (const file of [...new Set([...files, ...scannerIncludes])].sort()) inputs[checkoutPath(repoRoot, file)] = sha256File(file);
 	return inputs;
 }
 
@@ -130,12 +149,20 @@ function cargoConfigFiles(repoRoot: string, grammar: string, env: NodeJS.Process
 export function nativeBuildConfig(repoRoot: string, grammar: string, env: NodeJS.ProcessEnv): Record<string, string> {
 	const config: Record<string, string> = {};
 	for (const name of Object.keys(env).filter((name) => BUILD_ENV.test(name)).sort()) config[name] = env[name] ?? '';
-	for (const file of cargoConfigFiles(repoRoot, grammar, env)) config[relative(repoRoot, file)] = sha256File(file);
+	for (const file of cargoConfigFiles(repoRoot, grammar, env)) config[checkoutPath(repoRoot, file)] = sha256File(file);
 	return config;
 }
 
 function stampPath(repoRoot: string, grammar: string, binary: string): string {
 	return join(repoRoot, STAMP_DIR, grammar, `${binary}.json`);
+}
+
+export function unstrippedBinaryPath(repoRoot: string, grammar: string, binary: string): string {
+	return join(repoRoot, STAMP_DIR, grammar, binary);
+}
+
+export function linkerMapOf(copy: string): string {
+	return `${copy}.map`;
 }
 
 export function nativeBuildStamp(repoRoot: string, grammar: string, binary: string = hostBinaryName(grammar)): NativeBuildStamp | undefined {
@@ -151,8 +178,14 @@ export function nativeBuildFingerprint(repoRoot: string, grammar: string, settin
 	};
 }
 
-export function writeNativeBuildStamp(repoRoot: string, grammar: string, profile: NativeProfile, binary: string, built: NativeBuildFingerprint): void {
-	const stamp: NativeBuildStamp = { profile, binarySha256: sha256File(join(repoRoot, nativeBindingRelDir(grammar), binary)), ...built };
+export function writeNativeBuildStamp(repoRoot: string, grammar: string, profile: NativeProfile, binary: string, built: NativeBuildFingerprint, unstripped?: string, linkerMap?: string): void {
+	const stamp: NativeBuildStamp = {
+		profile,
+		binarySha256: sha256File(join(repoRoot, nativeBindingRelDir(grammar), binary)),
+		...(unstripped === undefined ? {} : { unstripped: { path: checkoutPath(repoRoot, unstripped), sha256: sha256File(unstripped) } }),
+		...(linkerMap === undefined ? {} : { linkerMap: { path: checkoutPath(repoRoot, linkerMap), sha256: sha256File(linkerMap) } }),
+		...built
+	};
 	writeFileAtomic(stampPath(repoRoot, grammar, binary), JSON.stringify(stamp, null, 2) + '\n');
 }
 
@@ -165,6 +198,21 @@ function staleness(repoRoot: string, grammar: string, binary: string, stamp: Nat
 	if (stamp.binarySha256 !== sha256File(join(repoRoot, nativeBindingRelDir(grammar), binary))) return `${binary} is not the binary the last build wrote`;
 	const changed = changedKey(stamp.inputs, nativeInputs(repoRoot, grammar));
 	return changed === undefined ? undefined : `${changed} changed since the build`;
+}
+
+export function unstrippedReleaseBinary(repoRoot: string, grammar: string, binary: string): string {
+	const stamp = nativeBuildStamp(repoRoot, grammar, binary);
+	const stale = staleness(repoRoot, grammar, binary, stamp);
+	if (stamp === undefined || stale !== undefined) throw new Error(`${binary}: ${stale}`);
+	if (stamp.profile !== 'release') throw new Error(`${binary}: built under the ${stamp.profile} profile, not release`);
+	const copy = stamp.unstripped;
+	if (copy === undefined) throw new Error(`${binary}: its build kept no unstripped copy`);
+	const path = join(repoRoot, copy.path);
+	if (!existsSync(path) || sha256File(path) !== copy.sha256) throw new Error(`${binary}: ${copy.path} is not the unstripped copy its build kept`);
+	const map = stamp.linkerMap;
+	if (map !== undefined && (!existsSync(join(repoRoot, map.path)) || sha256File(join(repoRoot, map.path)) !== map.sha256))
+		throw new Error(`${binary}: ${map.path} is not the linker map its build kept`);
+	return path;
 }
 
 export function hostBinaryFreshnessFor(repoRoot: string, grammar: string): HostBinaryFreshness[] {

@@ -24,6 +24,60 @@ export interface BaselineRun {
   tabs?: number
 }
 
+/**
+ * The work a parsed tree's layout reads have done so far, counted where it
+ * is done (`ParsedTree::layout_work`): a diagnostic, so a growth test
+ * compares counts, never times. The addon's `layoutWork` answers every
+ * count.
+ */
+export interface LayoutWork {
+  /** The nodes the region-depth walks entered (`ParsedTree::region_depth`). */
+  regionNodes: number
+  /** The items the sibling lookups visited (`ParsedTree::siblings`). */
+  siblingItems: number
+  /**
+   * The nodes a region's render looked up outside the region, each found
+   * from the tree's root (`Region::node`).
+   */
+  regionFallbacks: number
+  /**
+   * The levels the lookup cursors of the tree's calls climbed to reach
+   * the nodes they looked up (`read::goto_from`), which bound the levels
+   * they descended.
+   */
+  cursorClimbs: number
+  /**
+   * The nodes the depth moves of the tree's slices walked, its depth
+   * members found once for every move (`DepthMembers::of`).
+   */
+  depthNodes: number
+  /**
+   * The nodes the renders of the tree's layout records entered, region
+   * records and full-depth ones alike: each node a render framed and
+   * each source slice it wrote (`baseline::Baseline::entered`).
+   */
+  recordNodes: number
+  /** The layout records rendered (`ParsedTree::records_rendered`). */
+  recordsRendered: number
+  /**
+   * The steps the gaps no anchor measures took through their frames: the
+   * children visited and items compared building each frame's source
+   * items and aligning them to what the frame wrote, once a frame
+   * (`Lookups::aligned`), and one for each gap measured from them.
+   */
+  gapItems: number
+}
+
+/**
+ * What the live trees hold natively and what their reports have told V8
+ * (`tree_memory`), in bytes.
+ */
+export interface TreeMemory {
+  trees: number
+  counted: number
+  reported: number
+}
+
 export declare class SittirEngine {
   constructor(options?: EngineOptions | undefined | null)
   /**
@@ -305,10 +359,10 @@ export declare function layoutBaseline(treeId: TreeId, whole?: boolean | undefin
 
 /**
  * The work the live tree `treeId`'s layout reads have done so far
- * (`ParsedTree::layout_work`): `{ regionNodes, siblingItems }`. A
- * diagnostic. Refuses a tree that is not live.
+ * (`ParsedTree::layout_work`). A diagnostic. Refuses a tree that is
+ * not live.
  */
-export declare function layoutWork(treeId: TreeId): { regionNodes: number; siblingItems: number }
+export declare function layoutWork(treeId: TreeId): LayoutWork
 
 /**
  * The byte offsets of the lines under the node at `index` of the
@@ -556,8 +610,10 @@ export declare function slotSeparator(treeId: TreeId, index: NodeIndex): import(
  * node read at every depth into plain data with no tree, each
  * node with its span (`$_layout.span`) from the native node that
  * holds it and each placed extra with its text, the node itself
- * measured from the byte `holderByte`, or from its own start when
- * absent. Refuses as `read` does.
+ * measured from the byte `holderByte`, or, when absent, from where
+ * it or its leading side begins, whichever is first. Refuses as
+ * `read` does, and a `holderByte` after the first byte the snapshot
+ * measures.
  */
 export declare function snapshot(treeId: TreeId, index: NodeIndex, holderByte?: number | undefined | null): object
 
@@ -580,6 +636,14 @@ export declare function text(treeId: number, span: { start: number; end: number 
 
 /** A tree id as JavaScript holds it: a whole number. */
 export type TreeId = number
+
+/**
+ * What the live trees hold natively and what their reports have
+ * told V8, once every tree that grew is reported: `{ trees, counted,
+ * reported }`. A diagnostic: the two agree, and both are 0 once
+ * every tree is disposed.
+ */
+export declare function treeMemory(): { trees: number; counted: number; reported: number }
 
 /**
  * The entries of `side` (`leading`, `trailing` or `inner`) of the

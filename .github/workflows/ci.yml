@@ -417,7 +417,7 @@ jobs:
           fi
 
   # Spec 012 Phase 4 — platform matrix for napi `.node` artifact builds
-  # (T053 macOS arm64/x64, T054 Linux x64 glibc/musl, T055 Linux arm64
+  # (T053 macOS arm64, T054 Linux x64 glibc/musl, T055 Linux arm64
   # glibc/musl, T056 Windows x64). Each matrix job runs the parity
   # suite as well (T061 — SC-006 requires platform coverage be parity-
   # gated, not just compile-gated).
@@ -438,9 +438,9 @@ jobs:
       # Only x86_64-unknown-linux-gnu builds on every push/PR — it's the
       # sole artifact regression-checker-native + perf-regression-checker
       # (below) actually consume; nothing else in ci.yml touches the
-      # other 6 legs' output. Those 6 are pure "does it compile on
+      # other 5 legs' output. Those 5 are pure "does it compile on
       # platform X" checks with no per-PR consumer: release.yml's
-      # napi-publish job already builds (and verifies) all 7 targets
+      # napi-publish job already builds (and verifies) all 6 targets
       # independently on tag push before publishing, so building them
       # again here on every PR was pure duplicated CI time, and a tag
       # run's legs do not gate (continue-on-error above). Gated to tag
@@ -452,7 +452,7 @@ jobs:
       # itself has to be conditional — computed via fromJSON rather than
       # a plain `include:` list.
       matrix:
-        include: ${{ startsWith(github.ref, 'refs/tags/v') && fromJSON('[{"target":"aarch64-apple-darwin","host":"macos-14","cross":false,"buildFlag":""},{"target":"x86_64-apple-darwin","host":"macos-13","cross":false,"buildFlag":""},{"target":"x86_64-unknown-linux-gnu","host":"ubuntu-22.04","cross":false,"buildFlag":""},{"target":"x86_64-unknown-linux-musl","host":"ubuntu-22.04","cross":true,"buildFlag":"--cross-compile"},{"target":"aarch64-unknown-linux-gnu","host":"ubuntu-22.04","cross":true,"buildFlag":"--use-napi-cross"},{"target":"aarch64-unknown-linux-musl","host":"ubuntu-22.04","cross":true,"buildFlag":"--cross-compile"},{"target":"x86_64-pc-windows-msvc","host":"windows-2022","cross":false,"buildFlag":""}]') || fromJSON('[{"target":"x86_64-unknown-linux-gnu","host":"ubuntu-22.04","cross":false,"buildFlag":""}]') }}
+        include: ${{ startsWith(github.ref, 'refs/tags/v') && fromJSON('[{"target":"aarch64-apple-darwin","host":"macos-14","cross":false,"buildFlag":""},{"target":"x86_64-unknown-linux-gnu","host":"ubuntu-22.04","cross":false,"buildFlag":""},{"target":"x86_64-unknown-linux-musl","host":"ubuntu-22.04","cross":true,"buildFlag":"--cross-compile"},{"target":"aarch64-unknown-linux-gnu","host":"ubuntu-22.04","cross":true,"buildFlag":"--use-napi-cross"},{"target":"aarch64-unknown-linux-musl","host":"ubuntu-22.04","cross":true,"buildFlag":"--cross-compile"},{"target":"x86_64-pc-windows-msvc","host":"windows-2022","cross":false,"buildFlag":""}]') || fromJSON('[{"target":"x86_64-unknown-linux-gnu","host":"ubuntu-22.04","cross":false,"buildFlag":""}]') }}
     steps:
       - uses: actions/checkout@v6
       - name: Install pnpm
@@ -500,6 +500,14 @@ jobs:
           for crate in $grammars; do
             npx tsx scripts/build-native.mts "${crate}" --release --target "${{ matrix.target }}" ${{ matrix.buildFlag }}
           done
+      # Each release addon just built, read from the unstripped copy its
+      # build keeps: the limit's count of its grammar's costliest whole-encode
+      # level, with the one-time frames, must fit ENCODE_STACK_BUDGET. Over
+      # it, the step fails with the costliest paths and the largest limit
+      # that fits. It only disassembles, so cross-compiled legs run it too.
+      - name: encode stack budget
+        shell: bash
+        run: npx tsx packages/cli/src/cli.ts tool encode-stack
       # `--no-default-features` is required for a bare `cargo test
       # --workspace`: sittir-{rust,typescript,python} default to
       # `napi-bindings` ON (needed for `napi build` above), and workspace

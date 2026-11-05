@@ -151,16 +151,6 @@ impl<G: EngineGrammar> ParsedTree<G> {
         self.tree_arena().arena().chunk_memory(n)
     }
 
-    /// The bytes the tree's arena takes: none before a call made it.
-    #[must_use]
-    pub fn arena_bytes(&self) -> usize {
-        if self.made_arena() {
-            self.tree_arena().arena().allocated_bytes()
-        } else {
-            0
-        }
-    }
-
     /// The words of chunk `n` of the tree's arena that records fill, copied:
     /// a later read that appends to the chunk leaves the copy as it was.
     #[must_use]

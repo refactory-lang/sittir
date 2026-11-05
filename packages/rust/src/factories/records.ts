@@ -25,6 +25,7 @@ import {
 	elementsWith,
 	rebuilt,
 	refuseJSON,
+	RECEIVER,
 	describeValue,
 	restItems,
 	blankArmStored,
@@ -6716,7 +6717,7 @@ function withCallExpression(node: object, setter: string, args: readonly unknown
 							kind: TSKindId.Arguments as const,
 							optional: false,
 							make: buildArguments,
-							element: { keys: ['attributeItems', 'expression'], make: buildAttributedArgument }
+							element: { keys: ['attributeItems', 'expression'], make: buildArgument }
 						},
 						(value: Admit<T.Arguments>) => buildCallExpression$patch(node, { ...config, arguments: value })
 					)
@@ -6730,11 +6731,11 @@ export function buildArguments(): T.EmptyArguments;
 export function buildArguments<V extends Admit<T.ArgumentsElements>>(
 	...value: [value?: V] & RefuseUndeclared<V>
 ): ReturnType<typeof _buildArguments>;
-export function buildArguments<A extends NonEmptyArray<Admit<T.AttributedArgument | T.Expression>>>(
+export function buildArguments<A extends NonEmptyArray<Admit<T.Argument | T.Expression>>>(
 	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
 	...elements: A & RefuseUndeclared<A>
 ): ReturnType<typeof _buildArguments>;
-export function buildArguments<A extends NonEmptyArray<Admit<T.AttributedArgument | T.Expression>>>(
+export function buildArguments<A extends NonEmptyArray<Admit<T.Argument | T.Expression>>>(
 	...elements: A & RefuseUndeclared<A>
 ): ReturnType<typeof _buildArguments>;
 export function buildArguments(...args: unknown[]) {
@@ -6795,7 +6796,7 @@ function withArguments(node: object, setter: string, args: readonly unknown[]): 
 							kind: TSKindId.ArgumentsElements as const,
 							optional: true,
 							make: buildArgumentsElements,
-							element: { keys: ['attributeItems', 'expression'], make: buildAttributedArgument }
+							element: { keys: ['attributeItems', 'expression'], make: buildArgument }
 						},
 						(value?: Admit<T.ArgumentsElements>) => _buildArguments$patch(node, value)
 					)
@@ -9631,7 +9632,7 @@ function leafIdentifier(tree: TreeHandle, entry: BuiltText, site: LeafSite | und
 		[LEAF_SITES]: null,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$trivia = { node, leading: leafLeading, trailing: leafTrailing };
+	node.$trivia = { leading: leafLeading, trailing: leafTrailing, [RECEIVER]: node };
 	return node;
 }
 
@@ -11060,15 +11061,15 @@ function withTypeArgumentsElements(node: object, setter: string, args: readonly 
 	throw new Error(`type_arguments_elements has no $with.${setter}`);
 }
 
-export function buildArgumentsElements<A extends NonEmptyArray<Admit<T.AttributedArgument | T.Expression>>>(
+export function buildArgumentsElements<A extends NonEmptyArray<Admit<T.Argument | T.Expression>>>(
 	...elements: A & RefuseUndeclared<A>
 ): ReturnType<typeof _buildArgumentsElements>;
-export function buildArgumentsElements<A extends NonEmptyArray<Admit<T.AttributedArgument | T.Expression>>>(
+export function buildArgumentsElements<A extends NonEmptyArray<Admit<T.Argument | T.Expression>>>(
 	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
 	...elements: A & RefuseUndeclared<A>
 ): ReturnType<typeof _buildArgumentsElements>;
 export function buildArgumentsElements(
-	...args: ({ delimiter?: Delimiter.None | Delimiter.Trailing } | Admit<T.AttributedArgument | T.Expression>)[]
+	...args: ({ delimiter?: Delimiter.None | Delimiter.Trailing } | Admit<T.Argument | T.Expression>)[]
 ) {
 	const _optsFirst =
 		typeof args[0] === 'object' &&
@@ -11077,23 +11078,19 @@ export function buildArgumentsElements(
 		!('$type' in (args[0] as object)) &&
 		Object.keys(args[0] as object).every((k) => ['delimiter'].includes(k));
 	const options = (_optsFirst ? (args[0] as unknown) : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
-	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<
-		Admit<T.AttributedArgument | T.Expression>
-	>;
+	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<Admit<T.Argument | T.Expression>>;
 	return _buildArgumentsElements(elements, options);
 }
 function _buildArgumentsElements(
-	elements: NonEmptyArray<Admit<T.AttributedArgument | T.Expression>>,
+	elements: NonEmptyArray<Admit<T.Argument | T.Expression>>,
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T.ArgumentsElements.Bound {
 	currentHandle()?.admit(TSKindId.ArgumentsElements, elements);
 	const _mapped = elements.map(
-		(e): T.AttributedArgument =>
-			(isNodeOfKind(e, TSKindId.AttributedArgument)
+		(e): T.Argument =>
+			(isNodeOfKind(e, TSKindId.Argument)
 				? (e as unknown)
-				: buildAttributedArgument({ expression: e } as Parameters<
-						typeof buildAttributedArgument
-					>[0])) as T.AttributedArgument
+				: buildArgument({ expression: e } as Parameters<typeof buildArgument>[0])) as T.Argument
 	);
 	const _item = _mapped;
 	const _delimiter = options.delimiter;
@@ -11112,17 +11109,15 @@ function _buildArgumentsElements(
 
 function _buildArgumentsElements$patch(
 	source: object,
-	elements: NonEmptyArray<Admit<T.AttributedArgument | T.Expression>>,
+	elements: NonEmptyArray<Admit<T.Argument | T.Expression>>,
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T.ArgumentsElements.Bound {
 	currentHandle()?.admit(TSKindId.ArgumentsElements, elements);
 	const _mapped = elements.map(
-		(e): T.AttributedArgument =>
-			(isNodeOfKind(e, TSKindId.AttributedArgument)
+		(e): T.Argument =>
+			(isNodeOfKind(e, TSKindId.Argument)
 				? (e as unknown)
-				: buildAttributedArgument({ expression: e } as Parameters<
-						typeof buildAttributedArgument
-					>[0])) as T.AttributedArgument
+				: buildArgument({ expression: e } as Parameters<typeof buildArgument>[0])) as T.Argument
 	);
 	const _item = _mapped;
 	const _delimiter = options.delimiter;
@@ -11141,7 +11136,7 @@ function _buildArgumentsElements$patch(
 function withArgumentsElements(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
 	const inputs = builtInputs(node);
-	const elements = inputs.elements as NonEmptyArray<Admit<T.AttributedArgument | T.Expression>>;
+	const elements = inputs.elements as NonEmptyArray<Admit<T.Argument | T.Expression>>;
 	const options = inputs.options as { delimiter?: Delimiter.None | Delimiter.Trailing };
 	switch (setter) {
 		case 'items':
@@ -11149,9 +11144,8 @@ function withArgumentsElements(node: object, setter: string, args: readonly unkn
 				rebuilt(node, handle, () =>
 					elementsWith(
 						args,
-						{ slot: 'items', keys: ['attributeItems', 'expression'], make: buildAttributedArgument },
-						(...vs: NonEmptyArray<Admit<T.AttributedArgument | T.Expression>>) =>
-							_buildArgumentsElements$patch(node, vs, options)
+						{ slot: 'items', keys: ['attributeItems', 'expression'], make: buildArgument },
+						(...vs: NonEmptyArray<Admit<T.Argument | T.Expression>>) => _buildArgumentsElements$patch(node, vs, options)
 					)
 				)
 			);
@@ -11671,7 +11665,7 @@ function leafTokenRepetitionPatternText(tree: TreeHandle, entry: BuiltText, site
 		[LEAF_SITES]: null,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$trivia = { node, leading: leafLeading, trailing: leafTrailing };
+	node.$trivia = { leading: leafLeading, trailing: leafTrailing, [RECEIVER]: node };
 	return node;
 }
 
@@ -11700,7 +11694,7 @@ function leafStringOpen(tree: TreeHandle, entry: BuiltText, site: LeafSite | und
 		[LEAF_SITES]: null,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$trivia = { node, leading: leafLeading, trailing: leafTrailing };
+	node.$trivia = { leading: leafLeading, trailing: leafTrailing, [RECEIVER]: node };
 	return node;
 }
 
@@ -12198,7 +12192,7 @@ function leafCharLiteralEmpty(tree: TreeHandle, entry: BuiltText, site: LeafSite
 		[LEAF_SITES]: null,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$trivia = { node, leading: leafLeading, trailing: leafTrailing };
+	node.$trivia = { leading: leafLeading, trailing: leafTrailing, [RECEIVER]: node };
 	return node;
 }
 
@@ -12880,12 +12874,13 @@ function withArrayExpressionList(node: object, setter: string, args: readonly un
 					listSlotWith(
 						args,
 						{
-							kind: TSKindId.ArgumentsElements as const,
+							kind: TSKindId.ArrayExpressionListElements as const,
 							optional: true,
-							make: buildArgumentsElements,
+							make: buildArrayExpressionListElements,
 							element: { keys: ['attributeItems', 'expression'], make: buildAttributedArgument }
 						},
-						(value?: Admit<T.ArgumentsElements>) => buildArrayExpressionList$patch(node, { ...config, elements: value })
+						(value?: Admit<T.ArrayExpressionListElements>) =>
+							buildArrayExpressionList$patch(node, { ...config, elements: value })
 					)
 				)
 			);
@@ -17231,7 +17226,7 @@ function leafFloatLiteral(tree: TreeHandle, entry: BuiltText, site: LeafSite | u
 		[LEAF_SITES]: null,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$trivia = { node, leading: leafLeading, trailing: leafTrailing };
+	node.$trivia = { leading: leafLeading, trailing: leafTrailing, [RECEIVER]: node };
 	return node;
 }
 
@@ -17260,7 +17255,7 @@ function leafStringContent(tree: TreeHandle, entry: BuiltText, site: LeafSite | 
 		[LEAF_SITES]: null,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$trivia = { node, leading: leafLeading, trailing: leafTrailing };
+	node.$trivia = { leading: leafLeading, trailing: leafTrailing, [RECEIVER]: node };
 	return node;
 }
 
@@ -17289,7 +17284,7 @@ function leafRawStringLiteralContent(tree: TreeHandle, entry: BuiltText, site: L
 		[LEAF_SITES]: null,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$trivia = { node, leading: leafLeading, trailing: leafTrailing };
+	node.$trivia = { leading: leafLeading, trailing: leafTrailing, [RECEIVER]: node };
 	return node;
 }
 
@@ -17323,7 +17318,7 @@ function leafRawStringLiteralStart(tree: TreeHandle, entry: BuiltText, site: Lea
 		[LEAF_SITES]: null,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$trivia = { node, leading: leafLeading, trailing: leafTrailing };
+	node.$trivia = { leading: leafLeading, trailing: leafTrailing, [RECEIVER]: node };
 	return node;
 }
 
@@ -17353,7 +17348,7 @@ function leafRawStringLiteralEnd(tree: TreeHandle, entry: BuiltText, site: LeafS
 		[LEAF_SITES]: null,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$trivia = { node, leading: leafLeading, trailing: leafTrailing };
+	node.$trivia = { leading: leafLeading, trailing: leafTrailing, [RECEIVER]: node };
 	return node;
 }
 
@@ -17522,6 +17517,171 @@ function withExtensionDeclarationBody(node: object, setter: string, args: readon
 			);
 	}
 	throw new Error(`extension_declaration_body has no $with.${setter}`);
+}
+
+export function buildArgument<
+	AttributeItemsSlot extends T.Argument.Config['attributeItems'],
+	ExpressionSlot extends T.Argument.Config['expression']
+>(
+	config: RefusingConfig<T.Argument.Config, { attributeItems: AttributeItemsSlot; expression: ExpressionSlot }>
+): T.Argument.Bound;
+export function buildArgument(config: T.Argument.Config): T.Argument.Bound {
+	currentHandle()?.admit(TSKindId.Argument, [config]);
+	const _attribute_item = listStorage<NonNullable<T.Argument['_attribute_item']>>(config.attributeItems ?? []);
+	const _expression = kindIdStorage<NonNullable<T.Argument['_expression']>>(config.expression);
+	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'argument', { attributeItems: _attribute_item, expression: _expression });
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.Argument as const, { _attribute_item, _expression });
+	return arena.scope(() => {
+		const record = arena.record(TSKindId.Argument as const);
+		storeList(arena, record, 2, 2, _attribute_item);
+		storeCell(arena, record, 3, 3, _expression);
+		const node = arena.view(record);
+		return node as unknown as T.Argument.Bound;
+	});
+}
+
+function buildArgument$patch(source: object, config: T.Argument.Config): T.Argument.Bound {
+	currentHandle()?.admit(TSKindId.Argument, [config]);
+	const _attribute_item = listStorage<NonNullable<T.Argument['_attribute_item']>>(config.attributeItems ?? []);
+	const _expression = kindIdStorage<NonNullable<T.Argument['_expression']>>(config.expression);
+	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'argument', { attributeItems: _attribute_item, expression: _expression });
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.Argument as const, { _attribute_item, _expression });
+	return arena.scope(() => {
+		const record = arena.copy(source, TSKindId.Argument as const);
+		patchList(arena, record, 2, 2, _attribute_item);
+		patchCell(arena, record, 3, 3, carriedSlot(source, 'expression', _expression));
+		const node = arena.view(record);
+		return node as unknown as T.Argument.Bound;
+	});
+}
+function withArgument(node: object, setter: string, args: readonly unknown[]): unknown {
+	const handle = handleOf(node as RecordHandle);
+	const inputs = builtInputs(node);
+	const config = inputs.config as T.Argument.Config;
+	switch (setter) {
+		case 'attributeItems':
+			return applySetter(args, (...values: Admit<T.AttributeItem[]>) =>
+				rebuilt(node, handle, () =>
+					buildArgument$patch(node, { ...config, attributeItems: restItems('attributeItems', values) })
+				)
+			);
+		case 'expression':
+			return applySetter(args, (value: Admit<NonNullable<T.Argument.Config>['expression']>) =>
+				rebuilt(node, handle, () => buildArgument$patch(node, { ...config, expression: value }))
+			);
+	}
+	throw new Error(`argument has no $with.${setter}`);
+}
+
+export function buildArrayExpressionListElements<A extends NonEmptyArray<Admit<T.AttributedArgument | T.Expression>>>(
+	...elements: A & RefuseUndeclared<A>
+): ReturnType<typeof _buildArrayExpressionListElements>;
+export function buildArrayExpressionListElements<A extends NonEmptyArray<Admit<T.AttributedArgument | T.Expression>>>(
+	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
+	...elements: A & RefuseUndeclared<A>
+): ReturnType<typeof _buildArrayExpressionListElements>;
+export function buildArrayExpressionListElements(
+	...args: ({ delimiter?: Delimiter.None | Delimiter.Trailing } | Admit<T.AttributedArgument | T.Expression>)[]
+) {
+	const _optsFirst =
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		!Array.isArray(args[0]) &&
+		!('$type' in (args[0] as object)) &&
+		Object.keys(args[0] as object).every((k) => ['delimiter'].includes(k));
+	const options = (_optsFirst ? (args[0] as unknown) : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
+	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<
+		Admit<T.AttributedArgument | T.Expression>
+	>;
+	return _buildArrayExpressionListElements(elements, options);
+}
+function _buildArrayExpressionListElements(
+	elements: NonEmptyArray<Admit<T.AttributedArgument | T.Expression>>,
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
+): T.ArrayExpressionListElements.Bound {
+	currentHandle()?.admit(TSKindId.ArrayExpressionListElements, elements);
+	const _mapped = elements.map(
+		(e): T.AttributedArgument =>
+			(isNodeOfKind(e, TSKindId.AttributedArgument)
+				? (e as unknown)
+				: buildAttributedArgument({ expression: e } as Parameters<
+						typeof buildAttributedArgument
+					>[0])) as T.AttributedArgument
+	);
+	const _item = _mapped;
+	const _delimiter = options.delimiter;
+	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'array_expression_list_elements', { items: _item });
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.ArrayExpressionListElements as const, { _item });
+	return arena.scope(() => {
+		const record = arena.record(TSKindId.ArrayExpressionListElements as const);
+		storeList(arena, record, 2, 2, _item);
+		storeListOptions(arena, record, _delimiter, undefined);
+		const node = arena.view(record);
+		return node as unknown as T.ArrayExpressionListElements.Bound;
+	});
+}
+
+function _buildArrayExpressionListElements$patch(
+	source: object,
+	elements: NonEmptyArray<Admit<T.AttributedArgument | T.Expression>>,
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
+): T.ArrayExpressionListElements.Bound {
+	currentHandle()?.admit(TSKindId.ArrayExpressionListElements, elements);
+	const _mapped = elements.map(
+		(e): T.AttributedArgument =>
+			(isNodeOfKind(e, TSKindId.AttributedArgument)
+				? (e as unknown)
+				: buildAttributedArgument({ expression: e } as Parameters<
+						typeof buildAttributedArgument
+					>[0])) as T.AttributedArgument
+	);
+	const _item = _mapped;
+	const _delimiter = options.delimiter;
+	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'array_expression_list_elements', { items: _item });
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.ArrayExpressionListElements as const, { _item });
+	return arena.scope(() => {
+		const record = arena.copy(source, TSKindId.ArrayExpressionListElements as const);
+		patchList(arena, record, 2, 2, _item);
+		patchListOptions(arena, record, _delimiter, undefined);
+		const node = arena.view(record);
+		return node as unknown as T.ArrayExpressionListElements.Bound;
+	});
+}
+function withArrayExpressionListElements(node: object, setter: string, args: readonly unknown[]): unknown {
+	const handle = handleOf(node as RecordHandle);
+	const inputs = builtInputs(node);
+	const elements = inputs.elements as NonEmptyArray<Admit<T.AttributedArgument | T.Expression>>;
+	const options = inputs.options as { delimiter?: Delimiter.None | Delimiter.Trailing };
+	switch (setter) {
+		case 'items':
+			return applySetter(args, (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					elementsWith(
+						args,
+						{ slot: 'items', keys: ['attributeItems', 'expression'], make: buildAttributedArgument },
+						(...vs: NonEmptyArray<Admit<T.AttributedArgument | T.Expression>>) =>
+							_buildArrayExpressionListElements$patch(node, vs, options)
+					)
+				)
+			);
+		case 'delimiter':
+			return applySetter(args, (v?: Delimiter.None | Delimiter.Trailing) =>
+				rebuilt(node, handle, () =>
+					_buildArrayExpressionListElements$patch(node, elements, { ...options, delimiter: v })
+				)
+			);
+	}
+	throw new Error(`array_expression_list_elements has no $with.${setter}`);
 }
 
 export function buildReceiverParameterDeclaration<TypeSlot extends T.ReceiverParameterDeclaration.Config['type']>(
@@ -17913,7 +18073,7 @@ function leafErrorSentinel(tree: TreeHandle, entry: BuiltText, site: LeafSite | 
 		[LEAF_SITES]: null,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$trivia = { node, leading: leafLeading, trailing: leafTrailing };
+	node.$trivia = { leading: leafLeading, trailing: leafTrailing, [RECEIVER]: node };
 	return node;
 }
 
@@ -18715,6 +18875,8 @@ export type FluentKindMap = {
 	_dedent: T.Dedent;
 	trait_interface_declaration_body: T.TraitInterfaceDeclarationBody.Bound;
 	extension_declaration_body: T.ExtensionDeclarationBody.Bound;
+	argument: T.Argument.Bound;
+	array_expression_list_elements: T.ArrayExpressionListElements.Bound;
 	receiver_parameter_declaration: T.ReceiverParameterDeclaration.Bound;
 	attributed_parameter_receiver: T.AttributedParameterReceiver.Bound;
 	parameters_elements_receiver: T.ParametersElementsReceiver.Bound;
@@ -18993,6 +19155,8 @@ export const _factoryMap = {
 	_dedent: buildDedent,
 	trait_interface_declaration_body: buildTraitInterfaceDeclarationBody,
 	extension_declaration_body: buildExtensionDeclarationBody,
+	argument: buildArgument,
+	array_expression_list_elements: buildArrayExpressionListElements,
 	receiver_parameter_declaration: buildReceiverParameterDeclaration,
 	attributed_parameter_receiver: buildAttributedParameterReceiver,
 	parameters_elements_receiver: buildParametersElementsReceiver,
@@ -19236,16 +19400,18 @@ export const builtViews: BuiltViews = Object.freeze({
 		434: withMatchBlockArms,
 		435: withTraitInterfaceDeclarationBody,
 		436: withExtensionDeclarationBody,
-		437: withReceiverParameterDeclaration,
-		438: withAttributedParameterReceiver,
-		439: withParametersElementsReceiver,
-		440: withParametersElementsReceiverGroup,
-		473: withClosureParameter,
-		475: withFieldIdentifier,
-		477: withMethodDeclaration,
-		479: withShorthandFieldIdentifier,
-		480: withSignatureMethodDeclaration,
-		481: withTypeIdentifier
+		437: withArgument,
+		438: withArrayExpressionListElements,
+		439: withReceiverParameterDeclaration,
+		440: withAttributedParameterReceiver,
+		441: withParametersElementsReceiver,
+		442: withParametersElementsReceiverGroup,
+		476: withClosureParameter,
+		478: withFieldIdentifier,
+		480: withMethodDeclaration,
+		482: withShorthandFieldIdentifier,
+		483: withSignatureMethodDeclaration,
+		484: withTypeIdentifier
 	}),
 	words: Object.freeze({
 		123: 3,
@@ -19474,15 +19640,17 @@ export const builtViews: BuiltViews = Object.freeze({
 		435: 3,
 		436: 3,
 		437: 4,
-		438: 4,
+		438: 3,
 		439: 4,
-		440: 3,
-		473: 3,
-		475: 3,
-		477: 10,
-		479: 3,
-		480: 9,
-		481: 3
+		440: 4,
+		441: 4,
+		442: 3,
+		476: 3,
+		478: 3,
+		480: 10,
+		482: 3,
+		483: 9,
+		484: 3
 	}),
 	cells: Object.freeze({
 		123: 2,
@@ -19710,16 +19878,18 @@ export const builtViews: BuiltViews = Object.freeze({
 		434: 2,
 		435: 2,
 		436: 2,
-		437: 3,
+		437: 2,
 		438: 2,
-		439: 2,
+		439: 3,
 		440: 2,
-		473: 2,
-		475: 2,
-		477: 2,
-		479: 2,
+		441: 2,
+		442: 2,
+		476: 2,
+		478: 2,
 		480: 2,
-		481: 2
+		482: 2,
+		483: 2,
+		484: 2
 	}),
 	leaves: Object.freeze({
 		1: leafIdentifier,

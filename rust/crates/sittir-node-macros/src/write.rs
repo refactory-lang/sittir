@@ -165,7 +165,7 @@ pub fn choice(ident: &Ident, variants: &[WireVariant<'_>]) -> syn::Result<TokenS
         arms.push(write);
     }
     Ok(gated(&quote! {
-        impl<__T: ::core::clone::Clone> ::sittir_core::arena::WriteCell<__T> for #ident
+        impl<__T: ::core::clone::Clone + ::sittir_core::heap::HeapBytes> ::sittir_core::arena::WriteCell<__T> for #ident
         where
             #(#bounds)*
         {
@@ -181,7 +181,7 @@ pub fn choice(ident: &Ident, variants: &[WireVariant<'_>]) -> syn::Result<TokenS
 /// An enum kind's record writer: a member is a unit, written as its kind.
 pub fn members(ident: &Ident) -> TokenStream {
     gated(&quote! {
-        impl<__T: ::core::clone::Clone> ::sittir_core::arena::WriteCell<__T> for #ident {
+        impl<__T: ::core::clone::Clone + ::sittir_core::heap::HeapBytes> ::sittir_core::arena::WriteCell<__T> for #ident {
             fn write_cell(&self, _: &mut ::sittir_core::arena::RecordSink<'_, __T>) -> ::core::result::Result<::sittir_core::arena::CellWord, ::sittir_core::arena::ArenaError> {
                 ::sittir_core::arena::CellWord::unit(__id(self))
             }
@@ -209,6 +209,8 @@ mod tests {
                 #[wire(key = "$_layout")]
                 #[layout]
                 pub layout: Option<Box<NodeLayout>>,
+                #[height]
+                height: u16,
                 #[wire(key = "_async")]
                 #[slot(presence = kind::ASYNC, word = 2, bit = 3)]
                 pub r#async: bool,
@@ -285,6 +287,8 @@ mod tests {
                 #[wire(key = "$_layout")]
                 #[layout]
                 pub layout: Option<Box<NodeLayout>>,
+                #[height]
+                height: u16,
                 #[wire(key = "_key")]
                 #[slot(field = field::KEY)]
                 pub key: SlotValue<KeyNode>,
@@ -315,7 +319,7 @@ mod tests {
             }
         })
         .expect("expands");
-        assert!(has(&out, "impl<__T: ::core::clone::Clone> ::sittir_core::arena::WriteCell<__T> for PatternNode where IdentifierNode: ::sittir_core::arena::WriteCell<__T>, Box<TuplePatternNode>: ::sittir_core::arena::WriteCell<__T>, VerbatimNode: ::sittir_core::arena::WriteCell<__T>,"));
+        assert!(has(&out, "impl<__T: ::core::clone::Clone + ::sittir_core::heap::HeapBytes> ::sittir_core::arena::WriteCell<__T> for PatternNode where IdentifierNode: ::sittir_core::arena::WriteCell<__T>, Box<TuplePatternNode>: ::sittir_core::arena::WriteCell<__T>, VerbatimNode: ::sittir_core::arena::WriteCell<__T>,"));
         assert!(has(&out, "Self::Identifier(payload) => ::sittir_core::arena::WriteCell::<__T>::write_cell(payload, __sink),"));
         assert!(has(&out, "Self::Wildcard(_) => ::sittir_core::arena::CellWord::unit(kind::WILDCARD),"));
         assert!(has(&out, "Self::SelfArm => ::sittir_core::arena::CellWord::unit(kind::SELF),"));

@@ -2,18 +2,17 @@
 //! native writer, so they are admitted as they cross in (`admit`), and the
 //! parsed trees its cells link are held for the render.
 
-use std::collections::HashMap;
 use std::hash::BuildHasher;
 
 use super::{admit, Address, ArenaError, ArenaRead, Cell, CellAt, CellWord, HeldArenas, RecordGrammar};
-use crate::engine::{encode_handle, Engine, EngineGrammar, ParsedTree};
+use crate::engine::{encode_handle, Engine, EngineGrammar, ReadTrees};
 use crate::prepare::RenderContext;
 use crate::render::{CoordinateError, RenderError, RenderResult, RenderSink};
 use crate::slot::ChangedEdges;
 use crate::trivia::{BuiltEntry, NodeTrivia, TriviaEntry};
 use crate::trivia_store::{Place, Site, TriviaStore};
 use crate::trivia_table::TriviaSide;
-use crate::types::{KindId, NodeIndex, TreeId};
+use crate::types::{KindId, NodeIndex};
 
 impl<G: EngineGrammar> Engine<G> {
     /// The entries a write gave `side` of the built record at `at`, or
@@ -135,7 +134,7 @@ impl<G: RecordGrammar> Engine<G> {
         arena: &dyn ArenaRead,
         at: Address,
         changed: ChangedEdges,
-        trees: &HashMap<TreeId, ParsedTree<G>, H>,
+        trees: &ReadTrees<'_, G, H>,
         ctx: &RenderContext<'_>,
     ) -> Result<String, RenderError> {
         let (root, mut held) = admitted_root::<G, H>(arena, at, changed, trees)?;
@@ -197,7 +196,7 @@ pub fn render_record_entry<G: RecordGrammar, H: BuildHasher>(
     arena: &dyn ArenaRead,
     record: BuiltEntry,
     store: &TriviaStore<G::Trivia>,
-    trees: &HashMap<TreeId, ParsedTree<G>, H>,
+    trees: &ReadTrees<'_, G, H>,
     ctx: &RenderContext<'_>,
     w: &mut dyn RenderSink,
 ) -> RenderResult {
@@ -212,14 +211,14 @@ fn admitted_root<'t, G: RecordGrammar, H: BuildHasher>(
     arena: &dyn ArenaRead,
     at: Address,
     changed: ChangedEdges,
-    trees: &'t HashMap<TreeId, ParsedTree<G>, H>,
+    trees: &ReadTrees<'t, G, H>,
 ) -> Result<(CellAt, HeldArenas<'t>), RenderError> {
     let kind = arena.header_kind(at, G::KIND_BITS).map_err(RenderError::Record)?;
     let linked = admit(arena, at, G::shape, G::KIND_BITS).map_err(RenderError::Record)?;
     let held = linked
         .into_iter()
         .map(|tree| {
-            let parsed = trees.get(&tree).ok_or(CoordinateError::UnknownTree { handle: encode_handle(tree, NodeIndex::ROOT), tree_id: tree })?;
+            let parsed = trees.get(tree).ok_or(CoordinateError::UnknownTree { handle: encode_handle(tree, NodeIndex::ROOT), tree_id: tree })?;
             Ok((tree, parsed.tree_arena()))
         })
         .collect::<Result<Vec<_>, CoordinateError>>()?;

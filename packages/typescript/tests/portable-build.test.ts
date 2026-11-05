@@ -20,6 +20,26 @@ describe('the portable build through the strict table', () => {
 		expect(render(runtime.build({ $path: 'statement.export', exportClause: { $path: 'clause.export.namespace', moduleExportName: 'ns' }, source }))).toBe('export * as ns from "m";');
 	});
 
+	it('builds an export from a module through the form that takes the clause and the source together, in either order, and refuses the source alone', () => {
+		const source = { $path: 'literal.string', elements: ['m'] };
+		const exportClause = { $path: 'clause.export', exportSpecifiers: [{ $path: 'clause.export.specifier', name: 'a' }] };
+		for (const structure of [{ $path: 'statement.export', source, exportClause }, { $path: 'statement.export', exportClause, source }]) {
+			const built = runtime.build(structure);
+			expect(render(built)).toBe('export { a } from "m";');
+			expect(runtime.read(built as never)).toEqual({ $path: 'statement.export', exportClause, source });
+		}
+		expect(() => runtime.build({ $path: 'statement.export', source })).toThrow('statement.export builds this structure (members source); it needs exportClause');
+	});
+
+	it('builds an exported declaration in the plain form at statement.export and through the default keyword at statement.export.default, each reading back as its path', () => {
+		const declaration = { $path: 'declaration.class', name: 'C', body: [], decorators: [] };
+		for (const [path, text] of [['statement.export', 'export class C {}'], ['statement.export.default', 'export default class C {}']] as const) {
+			const built = runtime.build({ $path: path, declaration });
+			expect(render(built)).toBe(text);
+			expect(runtime.read(built as never)).toMatchObject({ $path: path, declaration });
+		}
+	});
+
 	it("writes a member access's dot when the optional chain flag is unset, and gives a flag's preset builder the member's text", () => {
 		const member = { $path: 'expression.member', object: 'a', property: 'b' };
 		expect(render(runtime.build(member))).toBe('a.b');

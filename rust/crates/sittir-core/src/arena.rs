@@ -38,6 +38,7 @@ pub mod side;
 mod small;
 mod write;
 
+use crate::heap::HeapBytes;
 use std::collections::HashMap;
 use std::fmt;
 use std::sync::Arc;
@@ -154,12 +155,25 @@ impl Address {
     }
 }
 
+impl HeapBytes for Address {
+    fn heap_bytes(&self) -> usize {
+        0
+    }
+}
+
 /// A string in the arena's table: its chunk, its first byte and its length.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct StringRef {
     pub chunk: u32,
     pub byte: u32,
     pub len: u32,
+}
+
+impl HeapBytes for StringRef {
+    fn heap_bytes(&self) -> usize {
+        let Self { chunk: _, byte: _, len: _ } = self;
+        0
+    }
 }
 
 impl StringRef {
@@ -239,6 +253,13 @@ impl std::error::Error for ArenaError {}
 struct Chunk<T: ChunkUnit> {
     mem: Arc<ChunkMem<T>>,
     written: u32,
+}
+
+impl<T: ChunkUnit> HeapBytes for Chunk<T> {
+    fn heap_bytes(&self) -> usize {
+        let Self { mem, written: _ } = self;
+        crate::heap::ARC_COUNTS + std::mem::size_of::<ChunkMem<T>>() + mem.byte_len()
+    }
 }
 
 impl<T: ChunkUnit> Chunk<T> {
@@ -322,8 +343,17 @@ pub struct Arena {
     strings: Vec<Chunk<u8>>,
     /// The shared string chunk strings are appended to, once one is.
     open_strings: Option<u32>,
-    interned: HashMap<Box<str>, StringRef>,
+    interned: crate::heap::CountedMap<Box<str>, StringRef>,
+    /// The bytes of every text `interned` keys: a key is never removed.
+    interned_text: usize,
     kind_bits: u32,
+}
+
+impl HeapBytes for Arena {
+    fn heap_bytes(&self) -> usize {
+        let Self { chunks, open: _, strings, open_strings: _, interned, interned_text, kind_bits: _ } = self;
+        chunks.heap_bytes() + strings.heap_bytes() + interned.allocation() + interned_text
+    }
 }
 
 impl Default for Arena {
@@ -345,7 +375,7 @@ impl Arena {
     pub fn with_kind_bits(kind_bits: u32) -> Self {
         let mut first = Chunk::with_limit(FIRST_CHUNK_WORDS);
         first.extend(1);
-        Self { chunks: vec![first], open: 0, strings: Vec::new(), open_strings: None, interned: HashMap::new(), kind_bits }
+        Self { chunks: vec![first], open: 0, strings: Vec::new(), open_strings: None, interned: crate::heap::CountedMap::default(), interned_text: 0, kind_bits }
     }
 
     /// The bits the kind fields this arena writes take.
@@ -431,12 +461,6 @@ impl Arena {
         self.chunks.get(n as usize).map(|chunk| Arc::clone(&chunk.mem))
     }
 
-    /// The bytes every chunk of the arena takes, words and strings.
-    #[must_use]
-    pub fn allocated_bytes(&self) -> usize {
-        self.chunks.iter().map(|chunk| chunk.mem.byte_len()).chain(self.strings.iter().map(|chunk| chunk.mem.byte_len())).sum()
-    }
-
     /// `text` in the string table, written once however often it is stored.
     pub fn intern(&mut self, text: &str) -> Result<StringRef, ArenaError> {
         if let Some(&at) = self.interned.get(text) {
@@ -467,6 +491,7 @@ impl Arena {
         bytes.written_mut()[byte as usize..].copy_from_slice(text.as_bytes());
         let at = StringRef { chunk, byte, len };
         self.interned.insert(text.into(), at);
+        self.interned_text += text.len();
         Ok(at)
     }
 

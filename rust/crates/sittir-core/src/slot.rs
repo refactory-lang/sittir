@@ -6,6 +6,7 @@
 //! not a third shape: a slot whose members render from their own text admits
 //! a `VerbatimNode`, and everywhere else a bare string is an error.
 
+use crate::heap::HeapBytes;
 use crate::engine::encode_handle;
 use crate::render::{CoordinateError, SourceTable};
 use crate::types::Span;
@@ -35,6 +36,13 @@ pub struct NodeCoordinate {
     pub writes: Option<Box<CoordinateWrites>>,
 }
 
+impl HeapBytes for NodeCoordinate {
+    fn heap_bytes(&self) -> usize {
+        let Self { tree: _, index: _, end: _, span: _, kind: _, edges, writes } = self;
+        edges.heap_bytes() + writes.heap_bytes()
+    }
+}
+
 /// What JavaScript writes on a coordinate it sends back, kept off the read's
 /// own path in one box (`NodeCoordinate::writes`): a coordinate the reader
 /// built carries neither.
@@ -43,6 +51,13 @@ pub struct CoordinateWrites {
     /// The edges whose neighbour a built holder changed (`$_layout.changed`):
     /// the node's sides there drop their layout runs.
     pub changed: ChangedEdges,
+}
+
+impl HeapBytes for CoordinateWrites {
+    fn heap_bytes(&self) -> usize {
+        let Self { changed: ChangedEdges { leading: _, trailing: _ } } = self;
+        0
+    }
 }
 
 /// The edges of a node whose neighbour is not the one its source had there.
@@ -78,11 +93,25 @@ pub struct SeamArm {
     pub strength: crate::spacing::SeamStrength,
 }
 
+impl HeapBytes for SeamArm {
+    fn heap_bytes(&self) -> usize {
+        let Self { arm: _, strength: _ } = self;
+        0
+    }
+}
+
 /// The seams a kind writes before and after itself.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct CoordinateEdges {
     pub before: Option<SeamArm>,
     pub after: Option<SeamArm>,
+}
+
+impl HeapBytes for CoordinateEdges {
+    fn heap_bytes(&self) -> usize {
+        let Self { before, after } = self;
+        before.heap_bytes() + after.heap_bytes()
+    }
 }
 
 impl NodeCoordinate {
@@ -178,6 +207,15 @@ pub enum SlotValue<T, const ADJACENT: bool = false> {
     Coord(NodeCoordinate),
     /// The content is in this message.
     Node(T),
+}
+
+impl<T: HeapBytes, const ADJACENT: bool> HeapBytes for SlotValue<T, ADJACENT> {
+    fn heap_bytes(&self) -> usize {
+        match self {
+            Self::Coord(coord) => coord.heap_bytes(),
+            Self::Node(node) => node.heap_bytes(),
+        }
+    }
 }
 
 impl<T, const ADJACENT: bool> SlotValue<T, ADJACENT> {

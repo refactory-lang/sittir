@@ -43,7 +43,7 @@ describe('the portable build through the strict table', () => {
 	});
 
 	it('places a parameter in the container its list holds, and hands a kind id to its slot as it is', () => {
-		expect(render(runtime.build({ ...fn, parameters: [parameter(rust.kinds.U8Keyword)] }))).toBe('fn f(x: u8) {}');
+		expect(render(runtime.build({ ...fn, parameters: [parameter('u8')] }))).toBe('fn f(x: u8) {}');
 	});
 
 	it('picks a qualified identifier by the slot that holds it, and refuses to build one with no holder', () => {
@@ -67,13 +67,14 @@ describe('the portable build through the strict table', () => {
 	});
 
 	it("builds a function type with no trait through the fn form, which its sibling arm presets", () => {
-		expect(render(runtime.build({ $path: 'type.function', parameters: [], returnType: rust.kinds.U8Keyword }))).toBe('fn() -> u8');
+		expect(render(runtime.build({ $path: 'type.function', parameters: [], returnType: 'u8' }))).toBe('fn() -> u8');
 		expect(render(runtime.build({ $path: 'type.function', $flags: ['unsafe'], parameters: [] }))).toBe('unsafe fn()');
 		expect(() => runtime.build({ $path: 'type.function', trait: 'Fn', extern: 'x', parameters: [] })).toThrow(/no rust form of type\.function/);
 	});
 
-	it("builds a restricted visibility's scope as given, a path through the scope's path form in place of the token the first claim fixes", () => {
-		expect(render(runtime.build({ $path: 'modifier.visibility.public.restricted', scope: rust.kinds.Super }))).toBe('pub(super)');
+	it("builds parent visibility as `pub(super)`, and a restricted visibility's scope through the scope's path form, a keyword scope included", () => {
+		expect(render(runtime.build({ $path: 'modifier.visibility.public.parent' }))).toBe('pub(super)');
+		expect(render(runtime.build({ $path: 'modifier.visibility.public.restricted', scope: 'super' }))).toBe('pub(in super)');
 		expect(render(runtime.build({ $path: 'modifier.visibility.public.restricted', scope: 'a' }))).toBe('pub(in a)');
 	});
 
@@ -123,7 +124,7 @@ describe('the portable build through the strict table', () => {
 
 	it("places a receiver at the key its holder takes flattened, and the parameters after it in the group the holder takes as arguments", () => {
 		const receiver = { $path: 'declaration.parameter.receiver', reference: true };
-		expect(render(runtime.build({ $path: 'declaration.method', name: 'f', receiver, parameters: [parameter(rust.kinds.U8Keyword)], body: fn.body }))).toBe('fn f(&self, x: u8) {}');
+		expect(render(runtime.build({ $path: 'declaration.method', name: 'f', receiver, parameters: [parameter('u8')], body: fn.body }))).toBe('fn f(&self, x: u8) {}');
 	});
 
 	it('puts a built node in place of the slot a refinement presets, and a list in the seat that seats every item', () => {

@@ -5,6 +5,7 @@
 //! re-using `tree_sitter::Range` — row/column info never crosses the
 //! boundary and would be serialized dead weight on every hop.
 
+use crate::heap::HeapBytes;
 use serde::{Deserialize, Serialize};
 
 /// A byte offset, descendant index or count that tree-sitter produced, or
@@ -101,6 +102,12 @@ macro_rules! id_newtype {
             }
             pub const fn get(self) -> $repr {
                 self.0
+            }
+        }
+
+        impl $crate::heap::HeapBytes for $name {
+            fn heap_bytes(&self) -> usize {
+                0
             }
         }
 
@@ -373,6 +380,13 @@ impl napi::bindgen_prelude::TypeName for Source {
 pub struct Span {
     pub start: u32,
     pub end: u32,
+}
+
+impl HeapBytes for Span {
+    fn heap_bytes(&self) -> usize {
+        let Self { start: _, end: _ } = self;
+        0
+    }
 }
 
 impl Span {

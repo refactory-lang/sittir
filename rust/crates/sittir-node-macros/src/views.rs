@@ -504,6 +504,8 @@ mod tests {
                 #[wire(key = "$_layout")]
                 #[layout]
                 pub layout: Option<Box<NodeLayout>>,
+                #[height]
+                height: u16,
                 #[wire(key = "_async")]
                 #[slot(presence = kind::ASYNC, word = 2, bit = 3)]
                 pub r#async: bool,
@@ -548,6 +550,8 @@ mod tests {
                 #[wire(key = "$_layout")]
                 #[layout]
                 pub layout: Option<Box<NodeLayout>>,
+                #[height]
+                height: u16,
                 #[wire(key = "_statements")]
                 #[slot(field = field::STATEMENTS, word = 2, width = 1, run = 3, forms = 1, built = 2)]
                 pub statements: ::sittir_core::NonEmptyVec<SlotValue<StatementNode>>,
@@ -567,6 +571,8 @@ mod tests {
                 #[wire(key = "$_layout")]
                 #[layout]
                 pub layout: Option<Box<NodeLayout>>,
+                #[height]
+                height: u16,
                 #[wire(key = "_name")]
                 #[slot(field = field::NAME, word = 2, width = 3, forms = 1, built = 2)]
                 pub name: SlotValue<NameNode>,
@@ -713,6 +719,8 @@ mod tests {
                 #[wire(key = "$_layout")]
                 #[layout]
                 pub layout: Option<Box<NodeLayout>>,
+                #[height]
+                height: u16,
                 #[wire(key = "_key")]
                 #[slot(field = field::KEY, word = 2, width = 3, forms = 1, built = 2)]
                 pub key: SlotValue<KeyNode>,

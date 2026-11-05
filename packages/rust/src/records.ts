@@ -997,6 +997,13 @@ export const records = {
 		builtWords: 3,
 		declarations: { word: 2, width: 1, run: 4, forms: 3, built: 2 }
 	},
+	ArgumentNode: {
+		words: 7,
+		builtWords: 4,
+		attribute_item: { word: 2, width: 1, run: 3, forms: 1, built: 2 },
+		expression: { word: 3, width: 4, forms: 3, built: 3 }
+	},
+	ArrayExpressionListElementsNode: { words: 3, builtWords: 3, item: { word: 2, width: 1, run: 3, forms: 1, built: 2 } },
 	ReceiverParameterDeclarationNode: {
 		words: 7,
 		builtWords: 4,

@@ -30,6 +30,7 @@
 //! in a gap of a list slot, from the class the slot stores
 //! (`ParsedTree::deviation`, `list_slots`).
 
+use crate::heap::HeapBytes;
 use crate::types::{KindId, NodeIndex, RunId, Span};
 use std::collections::BTreeMap;
 
@@ -40,6 +41,14 @@ pub enum TriviaSide {
     Leading,
     Trailing,
     Inner,
+}
+
+impl HeapBytes for TriviaSide {
+    fn heap_bytes(&self) -> usize {
+        match self {
+            Self::Leading | Self::Trailing | Self::Inner => 0,
+        }
+    }
 }
 
 /// One token of the walk, by its bytes and the node it is (a leaf) or belongs
@@ -80,6 +89,14 @@ pub enum Assigned {
     Layout { run: RunId, start: u32, end: u32, owner: NodeIndex, depth: i32 },
     Member(NodeIndex),
     Depth(i32),
+}
+
+impl HeapBytes for Assigned {
+    fn heap_bytes(&self) -> usize {
+        match self {
+            Self::Extra(_) | Self::Error(_) | Self::Member(_) | Self::Depth(_) | Self::Layout { run: _, start: _, end: _, owner: _, depth: _ } => 0,
+        }
+    }
 }
 
 /// Where a template indents a node's children: after a literal child (the
@@ -133,6 +150,73 @@ impl SurfaceKinds {
     }
 }
 
+/// A tree's depth members (`SurfaceKinds::indent`, `dedent`) by descendant
+/// index, each with the levels the members up to it open net of those they
+/// close, so the members of any subtree are counted by two searches
+/// (`between`).
+#[derive(Debug, Default)]
+pub struct DepthMembers {
+    at: Vec<NodeIndex>,
+    net: Vec<i32>,
+    walked: u32,
+}
+
+impl DepthMembers {
+    /// The depth members of `tree`, found by one walk over every node, the
+    /// interiors of extras and `ERROR`s included; none where `kinds` has no
+    /// depth member.
+    #[must_use]
+    pub fn of(tree: &tree_sitter::Tree, kinds: SurfaceKinds) -> Self {
+        let mut members = Self::default();
+        if !kinds.has_depth_members() {
+            return members;
+        }
+        let mut cursor = tree.walk();
+        let mut net = 0;
+        loop {
+            members.walked += 1;
+            let kind = crate::read::grammar_id(&cursor.node());
+            if kinds.is_depth_member(kind) {
+                net += i32::from(kind == kinds.indent) - i32::from(kind == kinds.dedent);
+                members.at.push(crate::read::index_of(&cursor));
+                members.net.push(net);
+            }
+            if cursor.goto_first_child() {
+                continue;
+            }
+            while !cursor.goto_next_sibling() {
+                if !cursor.goto_parent() {
+                    return members;
+                }
+            }
+        }
+    }
+
+    /// The levels the members at the descendant indexes `from..to` open net
+    /// of those they close.
+    #[must_use]
+    pub fn between(&self, from: NodeIndex, to: NodeIndex) -> i32 {
+        self.before(to) - self.before(from)
+    }
+
+    fn before(&self, index: NodeIndex) -> i32 {
+        self.at.partition_point(|&at| at < index).checked_sub(1).map_or(0, |last| self.net[last])
+    }
+
+    /// The nodes the walk that found the members visited.
+    #[must_use]
+    pub fn walked(&self) -> u32 {
+        self.walked
+    }
+}
+
+impl HeapBytes for DepthMembers {
+    fn heap_bytes(&self) -> usize {
+        let Self { at, net, walked: _ } = self;
+        at.heap_bytes() + net.heap_bytes()
+    }
+}
+
 /// The nodes of a tree by descendant index, as far as the walk reads them.
 struct Nodes {
     kind: Vec<KindId>,
@@ -142,7 +226,42 @@ struct Nodes {
     end: Vec<u32>,
     holder: Vec<bool>,
     holds: Vec<bool>,
+    named: Vec<bool>,
     count: Vec<u32>,
+    last: Vec<u32>,
+    prev: Vec<u32>,
+    steps: std::cell::Cell<u64>,
+}
+
+/// The children of one node, from either end: forward by each child's
+/// descendant count, back by each child's previous sibling.
+struct Children<'n> {
+    nodes: &'n Nodes,
+    ends: Option<(u32, u32)>,
+}
+
+impl<'n> Children<'n> {
+    fn of(nodes: &'n Nodes, parent: u32) -> Self {
+        let last = nodes.last[parent as usize];
+        Children { nodes, ends: (last != NONE).then_some((parent + 1, last)) }
+    }
+}
+
+impl Iterator for Children<'_> {
+    type Item = u32;
+    fn next(&mut self) -> Option<u32> {
+        let (front, back) = self.ends?;
+        self.ends = (front != back).then(|| (front + self.nodes.count[front as usize], back));
+        Some(self.nodes.stepped(front))
+    }
+}
+
+impl DoubleEndedIterator for Children<'_> {
+    fn next_back(&mut self) -> Option<u32> {
+        let (front, back) = self.ends?;
+        self.ends = (front != back).then(|| (front, self.nodes.prev[back as usize]));
+        Some(self.nodes.stepped(back))
+    }
 }
 
 const NONE: u32 = u32::MAX;
@@ -153,8 +272,25 @@ const NONE: u32 = u32::MAX;
 pub struct Walk {
     pub tokens: Vec<Token>,
     pub entries: Vec<NodeIndex>,
+    /// The bounds the walk folded into the nodes it was inside (`Bounds`):
+    /// one for each token it pushed inside a node and one for each node it
+    /// left inside another.
+    pub folds: u32,
     nodes: Nodes,
     base: NodeIndex,
+}
+
+/// The first start and last end of the tokens pushed inside a node, its
+/// descendants' included, kept as the walk pushes them, so a node's own
+/// tokens need no second look when the walk leaves it.
+#[derive(Default)]
+struct Bounds(Option<(u32, u32)>);
+
+impl Bounds {
+    fn widen(&mut self, start: u32, end: u32, folds: &mut u32) {
+        *folds += 1;
+        self.0 = Some(self.0.map_or((start, end), |(first, last)| (first.min(start), last.max(end))));
+    }
 }
 
 impl Walk {
@@ -163,6 +299,14 @@ impl Walk {
     pub fn span(&self, index: NodeIndex) -> (u32, u32) {
         let at = index.offset_from(self.base) as usize;
         (self.nodes.start[at], self.nodes.end[at])
+    }
+
+    /// Every stretch the depth regions `regions` indent in the walked tree,
+    /// as the assignment measures them (`depth_stretches`): sorted by start,
+    /// the outer of two that start together first.
+    #[must_use]
+    pub fn depth_stretches(&self, source: &str, regions: &'static [DepthRegion]) -> Vec<(u32, u32)> {
+        depth_stretches(&self.nodes, self.base, source, regions, &self.tokens)
     }
 }
 
@@ -195,8 +339,8 @@ pub fn is_empty(node: &tree_sitter::Node<'_>) -> bool {
 pub fn walk(node: tree_sitter::Node<'_>, index: NodeIndex, source: &str) -> Walk {
     struct Frame {
         at_index: u32,
-        before: usize,
         at: u32,
+        bounds: Bounds,
     }
     let count = crate::read::descendant_count(&node) as usize;
     let mut nodes = Nodes {
@@ -207,19 +351,30 @@ pub fn walk(node: tree_sitter::Node<'_>, index: NodeIndex, source: &str) -> Walk
         end: vec![0; count],
         holder: vec![false; count],
         holds: vec![false; count],
+        named: vec![false; count],
         count: vec![0; count],
+        last: vec![NONE; count],
+        prev: vec![NONE; count],
+        steps: std::cell::Cell::new(0),
     };
     let mut tokens: Vec<Token> = Vec::new();
     let mut entries: Vec<NodeIndex> = Vec::new();
     let mut frames: Vec<Frame> = Vec::new();
-    let hidden = |tokens: &mut Vec<Token>, owner: u32, from: u32, to: u32| {
-        let Some(text) = source.get(from as usize..to as usize) else { return };
+    let mut folds = 0;
+    let hidden = |owner: u32, from: u32, to: u32| {
+        let text = source.get(from as usize..to as usize)?;
         let trimmed = text.trim();
         if trimmed.is_empty() {
-            return;
+            return None;
         }
         let start = from + crate::types::narrow(text.len() - text.trim_start().len());
-        tokens.push(Token { start, end: start + crate::types::narrow(trimmed.len()), node: index + owner, own: true });
+        Some(Token { start, end: start + crate::types::narrow(trimmed.len()), node: index + owner, own: true })
+    };
+    let push = |tokens: &mut Vec<Token>, bounds: Option<&mut Bounds>, folds: &mut u32, token: Token| {
+        if let Some(bounds) = bounds {
+            bounds.widen(token.start, token.end, folds);
+        }
+        tokens.push(token);
     };
     let mut cursor = node.walk();
     loop {
@@ -231,11 +386,16 @@ pub fn walk(node: tree_sitter::Node<'_>, index: NodeIndex, source: &str) -> Walk
         nodes.start[i] = start;
         nodes.end[i] = end;
         nodes.count[i] = crate::read::descendant_count(&node);
+        nodes.named[i] = node.is_named();
         let depth = crate::types::narrow(frames.len());
-        if let Some(frame) = frames.last() {
+        if let Some(frame) = frames.last_mut() {
             nodes.parent[i] = frame.at_index;
             nodes.depth[i] = depth;
-            hidden(&mut tokens, frame.at_index, frame.at, start);
+            nodes.prev[i] = nodes.last[frame.at_index as usize];
+            nodes.last[frame.at_index as usize] = local;
+            if let Some(token) = hidden(frame.at_index, frame.at, start) {
+                push(&mut tokens, Some(&mut frame.bounds), &mut folds, token);
+            }
         }
         let entry = is_entry(&node);
         nodes.holder[i] = holds_sides(&node);
@@ -245,9 +405,9 @@ pub fn walk(node: tree_sitter::Node<'_>, index: NodeIndex, source: &str) -> Walk
         if entry {
             entries.push(index + local);
         } else if node.child_count() == 0 {
-            tokens.push(Token { start, end, node: index + local, own: false });
+            push(&mut tokens, frames.last_mut().map(|frame| &mut frame.bounds), &mut folds, Token { start, end, node: index + local, own: false });
         } else {
-            frames.push(Frame { at_index: local, before: tokens.len(), at: start });
+            frames.push(Frame { at_index: local, at: start, bounds: Bounds::default() });
             cursor.goto_first_child();
             continue;
         }
@@ -258,26 +418,30 @@ pub fn walk(node: tree_sitter::Node<'_>, index: NodeIndex, source: &str) -> Walk
             if !frames.is_empty() && cursor.goto_next_sibling() {
                 break;
             }
-            let Some(frame) = frames.pop() else {
+            let Some(mut frame) = frames.pop() else {
                 tokens.sort_by_key(|token| (token.start, token.end));
-                return Walk { tokens, entries, nodes, base: index };
+                return Walk { tokens, entries, folds, nodes, base: index };
             };
             cursor.goto_parent();
             let (start, end) = (nodes.start[frame.at_index as usize], nodes.end[frame.at_index as usize]);
-            hidden(&mut tokens, frame.at_index, frame.at, end);
+            if let Some(token) = hidden(frame.at_index, frame.at, end) {
+                push(&mut tokens, Some(&mut frame.bounds), &mut folds, token);
+            }
             if frame.at_index != 0 {
-                let own = &tokens[frame.before..];
-                let first = own.iter().map(|token| token.start).min();
-                let last = own.iter().map(|token| token.end).max();
-                if first.is_some_and(|first| start < first) {
-                    tokens.push(Token { start, end: start, node: index + frame.at_index, own: true });
-                }
-                if last.is_some_and(|last| end > last) {
-                    tokens.push(Token { start: end, end, node: index + frame.at_index, own: true });
+                if let Some((first, last)) = frame.bounds.0 {
+                    if start < first {
+                        push(&mut tokens, Some(&mut frame.bounds), &mut folds, Token { start, end: start, node: index + frame.at_index, own: true });
+                    }
+                    if end > last {
+                        push(&mut tokens, Some(&mut frame.bounds), &mut folds, Token { start: end, end, node: index + frame.at_index, own: true });
+                    }
                 }
             }
             if let Some(parent) = frames.last_mut() {
                 parent.at = end;
+                if let Some((first, last)) = frame.bounds.0 {
+                    parent.bounds.widen(first, last, &mut folds);
+                }
             }
         }
     }
@@ -293,6 +457,11 @@ pub fn tokens(tree: &tree_sitter::Tree, source: &str, index: NodeIndex) -> Vec<T
 }
 
 impl Nodes {
+    fn stepped(&self, child: u32) -> u32 {
+        self.steps.set(self.steps.get() + 1);
+        child
+    }
+
     fn common(&self, mut a: u32, mut b: u32) -> u32 {
         while self.depth[a as usize] > self.depth[b as usize] {
             a = self.parent[a as usize];
@@ -361,7 +530,7 @@ impl Nodes {
 
     /// The children of `parent` that hold trivia, in source order.
     fn holders(&self, parent: u32) -> impl DoubleEndedIterator<Item = u32> + '_ {
-        (parent + 1..parent + self.count[parent as usize]).filter(move |&at| self.parent[at as usize] == parent && self.holder[at as usize])
+        Children::of(self, parent).filter(move |&at| self.holder[at as usize])
     }
 
     /// `child`, or, while it is a list node, its first (for a `Leading`
@@ -393,7 +562,7 @@ impl Nodes {
 }
 
 /// Where the assignment puts an entry of a gap.
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, PartialEq, Eq)]
 enum Place {
     Side(NodeIndex, TriviaSide),
     Unowned,
@@ -401,8 +570,9 @@ enum Place {
 
 /// A run of whitespace between two tokens or entries that a side takes,
 /// with or without a line break, and empty where they touch: its bytes, the
-/// side, its owner (`Assigned::Layout`), and whether it carries the layout
-/// written between the tokens around it. The file's two edges are none.
+/// side, its owner (`Assigned::Layout`), whether it carries the layout
+/// written between the tokens around it, and whether an entry's adjacency
+/// spells it (`TriviaTable::adjacency`). The file's two edges are none.
 ///
 /// Gaps that only a zero-width token parts (an automatic semicolon, a
 /// dedent) are one gap to a render, which writes nothing for the token: the
@@ -416,6 +586,62 @@ pub struct LayoutRun {
     pub side: TriviaSide,
     pub owner: NodeIndex,
     pub carries: bool,
+    pub spelled: bool,
+}
+
+impl HeapBytes for LayoutRun {
+    fn heap_bytes(&self) -> usize {
+        let Self { start: _, end: _, node: _, side: _, owner: _, carries: _, spelled: _ } = self;
+        0
+    }
+}
+
+/// The in-line runs an entry the source fixes in place carries before and
+/// after its own bytes, up to the tokens beside it on its line: an
+/// `ERROR`'s, since a seam cannot be trusted beside what did not parse, and
+/// a line continuation's that has whitespace beside it, whose line ends
+/// inside it. A side is empty where the entry touches the text beside it,
+/// and `None` where a line break or the file's edge lies between them, or
+/// where the run is that of an entry before it.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct Adjacency {
+    pub before: Option<Span>,
+    pub after: Option<Span>,
+}
+
+impl Adjacency {
+    /// The adjacency of the entry spanning `span` of `source`, as the source
+    /// spells it.
+    fn of(source: &str, span: Span) -> Self {
+        let bytes = source.as_bytes();
+        let in_line = |byte: u8| byte == b' ' || byte == b'\t';
+        let breaks = |byte: u8| matches!(byte, b'\n' | b'\r');
+        let std::ops::Range { start, end } = span.range();
+        let mut after = end;
+        while after < bytes.len() && in_line(bytes[after]) {
+            after += 1;
+        }
+        let mut before = start;
+        while before > 0 && in_line(bytes[before - 1]) {
+            before -= 1;
+        }
+        Self {
+            before: (before > 0 && !breaks(bytes[before - 1])).then(|| Span { start: crate::types::narrow(before), end: span.start }),
+            after: (after < bytes.len() && !breaks(bytes[after])).then(|| Span { start: span.end, end: crate::types::narrow(after) }),
+        }
+    }
+
+    /// Whether either side holds whitespace.
+    fn holds_whitespace(self) -> bool {
+        [self.before, self.after].into_iter().flatten().any(|run| run.start < run.end)
+    }
+}
+
+impl HeapBytes for Adjacency {
+    fn heap_bytes(&self) -> usize {
+        let Self { before: _, after: _ } = self;
+        0
+    }
 }
 
 /// The trivia of a parsed tree, assigned once to its nodes' sides.
@@ -425,6 +651,25 @@ pub struct TriviaTable {
     edge_items: BTreeMap<(NodeIndex, TriviaSide), NodeIndex>,
     unowned: Vec<NodeIndex>,
     runs: Vec<LayoutRun>,
+    adjacency: BTreeMap<NodeIndex, Adjacency>,
+    /// The heap the table holds, walked once it is assigned: an assigned
+    /// table never changes.
+    heap: usize,
+    steps: u64,
+    stretch_steps: u64,
+}
+
+impl TriviaTable {
+    fn walked(&self) -> usize {
+        let Self { sides, edge_items, unowned, runs, adjacency, heap: _, steps: _, stretch_steps: _ } = self;
+        sides.heap_bytes() + edge_items.heap_bytes() + unowned.heap_bytes() + runs.heap_bytes() + adjacency.heap_bytes()
+    }
+}
+
+impl HeapBytes for TriviaTable {
+    fn heap_bytes(&self) -> usize {
+        self.heap
+    }
 }
 
 impl TriviaTable {
@@ -432,7 +677,7 @@ impl TriviaTable {
     /// kinds are `kinds` and whose indentation level is `unit` spaces wide.
     #[must_use]
     pub fn assign(tree: &tree_sitter::Tree, source: &str, kinds: SurfaceKinds, unit: u32) -> Self {
-        let Walk { tokens, entries, nodes, base } = walk(tree.root_node(), NodeIndex::ROOT, source);
+        let Walk { tokens, entries, folds: _, nodes, base } = walk(tree.root_node(), NodeIndex::ROOT, source);
         let local = |index: NodeIndex| index.offset_from(base);
         let global = |at: u32| base + at;
         let lines = crate::points::LineTable::new(source);
@@ -445,7 +690,22 @@ impl TriviaTable {
                 }
             }
         }
-        let mut structure = Structure::new(tree, source, base, kinds.depth, &tokens, unit);
+        let mut taken: Option<Span> = None;
+        for &index in &entries {
+            let at = local(index) as usize;
+            let span = Span { start: nodes.start[at], end: nodes.end[at] };
+            let carried = taken.take().filter(|run| run.end == span.start);
+            let spelled = Adjacency::of(source, span);
+            let adjacency = Adjacency { before: carried.or(spelled.before), ..spelled };
+            if nodes.kind[at] == KindId::ERROR || (kinds.layout.contains(&nodes.kind[at]) && adjacency.holds_whitespace()) {
+                taken = adjacency.after;
+                table.adjacency.insert(index, if carried.is_some() { Adjacency { before: None, ..adjacency } } else { adjacency });
+            }
+        }
+        let mut spelled: Vec<Span> = table.adjacency.values().flat_map(|adjacency| [adjacency.before, adjacency.after]).flatten().collect();
+        spelled.sort_unstable_by_key(|run| (run.start, run.end));
+        let spelled = |start: u32, end: u32| spelled[..spelled.partition_point(|run| run.start <= start)].iter().rev().take(2).any(|run| end <= run.end);
+        let mut structure = Structure::new(&nodes, base, source, kinds.depth, &tokens, &lines, unit);
         let mut excess = Excess::default();
         let owner_of = |left: Option<&Token>, right: Option<&Token>| match (left, right) {
             (Some(left), Some(right)) => nodes.common(local(left.node), local(right.node)),
@@ -487,17 +747,16 @@ impl TriviaTable {
             let left_row = left.map(|token| row(token.end));
             excess.close_until(from, &mut table);
             let mut at = from;
-            let mut led = None;
-            let mut run = |at: u32, until: u32, led: Option<NodeIndex>, table: &mut TriviaTable, excess: &mut Excess| {
+            let mut run = |at: u32, until: u32, beside: Option<Place>, table: &mut TriviaTable, excess: &mut Excess| {
                 let Some(text) = source.get(at as usize..until as usize) else { return };
-                let place = led.map_or_else(|| place(left, right, false, None), |node| Place::Side(node, TriviaSide::Leading));
+                let place = beside.unwrap_or_else(|| place(left, right, false, None));
                 let owner = match place {
                     Place::Side(node, TriviaSide::Inner) => local(node),
                     Place::Side(_, _) | Place::Unowned => owner_of(left, right),
                 };
                 let edge = at == 0 || until as usize == source.len();
                 let depth = if text.contains('\n') {
-                    let reach = structure.excess(&nodes, right.map_or(0, |right| local(right.node)), until, text.rsplit('\n').next().unwrap_or_default());
+                    let reach = structure.excess(until, text.rsplit('\n').next().unwrap_or_default());
                     excess.change(owner, nodes.end[owner as usize], reach, || {
                         let (node, side) = nodes.restore_side(owner, kinds);
                         (global(node), side)
@@ -509,7 +768,7 @@ impl TriviaTable {
                     Place::Side(node, side) if !edge => {
                         let joined = at == from && left.is_some_and(|left| left.start == left.end) && table.runs.last().is_some_and(|run| run.end == at);
                         let run = RunId(crate::types::narrow(table.runs.len()));
-                        table.runs.push(LayoutRun { start: at, end: until, node, side, owner: global(owner), carries: true });
+                        table.runs.push(LayoutRun { start: at, end: until, node, side, owner: global(owner), carries: true, spelled: spelled(at, until) });
                         parted.placed(&mut table.runs, joined);
                         table.push(place, Assigned::Layout { run, start: at, end: until, owner: global(owner), depth });
                     }
@@ -517,23 +776,36 @@ impl TriviaTable {
                     _ => {}
                 }
             };
+            let mut gap = Vec::new();
             while let Some(&&index) = next.peek() {
                 let (start, end) = (nodes.start[local(index) as usize], nodes.end[local(index) as usize]);
                 if start >= to && !(start == to && right.is_some_and(|right| right.start == right.end && right.start == start && start < end)) {
                     break;
                 }
                 next.next();
-                run(at, start, led, &mut table, &mut excess);
-                if kinds.layout.contains(&nodes.kind[local(index) as usize]) {
-                    table.push(place(left, right, false, None), Assigned::Member(index));
-                } else {
-                    let entry = if is_error_index(tree, index) { Assigned::Error(index) } else { Assigned::Extra(index) };
-                    let placed = place(left, right, left_row == Some(row(start)), Some(kinds));
-                    led = match placed {
-                        Place::Side(node, TriviaSide::Leading) => Some(node),
-                        _ => None,
-                    };
-                    table.push(placed, entry);
+                let placed = (!kinds.layout.contains(&nodes.kind[local(index) as usize])).then(|| place(left, right, left_row == Some(row(start)), Some(kinds)));
+                gap.push((index, start, end, placed));
+            }
+            let trailed = gap.iter().rposition(|&(.., placed)| matches!(placed, Some(Place::Side(_, TriviaSide::Trailing))));
+            let moved = trailed.and_then(|last| gap[last].3).filter(|&side| side != place(left, right, false, None));
+            let held = excess.current;
+            let mut led = None;
+            for (i, &(index, start, end, placed)) in gap.iter().enumerate() {
+                let beside = trailed.filter(|&last| i <= last).map_or(led, |last| gap[last].3);
+                run(at, start, beside, &mut table, &mut excess);
+                match placed {
+                    None => table.push(beside.unwrap_or_else(|| place(left, right, false, None)), Assigned::Member(index)),
+                    Some(placed) => {
+                        let entry = if nodes.kind[local(index) as usize] == KindId::ERROR { Assigned::Error(index) } else { Assigned::Extra(index) };
+                        led = matches!(placed, Place::Side(_, TriviaSide::Leading)).then_some(placed);
+                        table.push(placed, entry);
+                    }
+                }
+                if let Some(side) = moved.filter(|_| trailed == Some(i)) {
+                    let depth = excess.reset(held);
+                    if depth != 0 {
+                        table.push(side, Assigned::Depth(depth));
+                    }
                 }
                 at = end;
             }
@@ -541,7 +813,26 @@ impl TriviaTable {
         }
         parted.finish(&mut table.runs);
         excess.close_until(u32::MAX, &mut table);
+        table.heap = table.walked();
+        table.steps = nodes.steps.get();
+        table.stretch_steps = structure.steps;
         table
+    }
+
+    /// The children the assignment stepped through to find the nodes beside
+    /// each gap and at each list's edges that take trivia.
+    #[must_use]
+    pub fn steps(&self) -> u64 {
+        self.steps
+    }
+
+    /// The steps the assignment took to measure the structural indentation
+    /// of each line a run breaks to: each depth stretch it opened and
+    /// closed, and each byte it read of the lines the stretches' first
+    /// tokens lie on (`Structure::line_blanks`).
+    #[must_use]
+    pub fn stretch_steps(&self) -> u64 {
+        self.stretch_steps
     }
 
     fn push(&mut self, place: Place, entry: Assigned) {
@@ -561,6 +852,14 @@ impl TriviaTable {
     #[must_use]
     pub fn edge_item(&self, index: NodeIndex, side: TriviaSide) -> Option<NodeIndex> {
         self.edge_items.get(&(index, side)).copied()
+    }
+
+    /// The adjacency of the entry at `index` when the source fixes it in
+    /// place (`Adjacency`): an `ERROR`'s always, a line continuation's when
+    /// whitespace lies beside it.
+    #[must_use]
+    pub fn adjacency(&self, index: NodeIndex) -> Option<Adjacency> {
+        self.adjacency.get(&index).copied()
     }
 
     /// The entries the assignment gives `side` of the node at `index`, in source order.
@@ -632,106 +931,165 @@ impl Parted {
     }
 }
 
-/// The structural indentation of a tree: per node, the stretches its kind's
-/// template indents (`DepthRegion`), as byte ranges, resolved on first use.
+/// The structural indentation of a tree: the stretches its kinds' templates
+/// indent (`depth_stretches`), and, measured in source order, the ones
+/// holding the last byte measured, outermost first, each with its width;
+/// and how far the line the last stretch's first token lies on is blank.
 struct Structure<'t> {
-    tree: &'t tree_sitter::Tree,
     source: &'t str,
-    base: NodeIndex,
-    regions: &'static [DepthRegion],
     tokens: &'t [Token],
+    lines: &'t crate::points::LineTable,
     unit: u32,
-    spans: std::collections::HashMap<u32, Vec<(u32, u32)>>,
+    stretches: Vec<(u32, u32)>,
+    next: usize,
+    open: Vec<(u32, i64)>,
+    measured: u32,
+    line: Option<LineScan>,
+    steps: u64,
+}
+
+/// How far a line is blank from its start (`Structure::line_blanks`): its
+/// first byte, the first byte not yet read, the blanks' width up to it, and
+/// whether that byte was read and is not blank.
+#[derive(Clone, Copy)]
+struct LineScan {
+    start: u32,
+    at: u32,
+    width: i64,
+    blocked: bool,
 }
 
 impl<'t> Structure<'t> {
-    fn new(tree: &'t tree_sitter::Tree, source: &'t str, base: NodeIndex, regions: &'static [DepthRegion], tokens: &'t [Token], unit: u32) -> Self {
-        Self { tree, source, base, regions, tokens, unit: unit.max(1), spans: std::collections::HashMap::new() }
+    fn new(nodes: &Nodes, base: NodeIndex, source: &'t str, regions: &'static [DepthRegion], tokens: &'t [Token], lines: &'t crate::points::LineTable, unit: u32) -> Self {
+        let stretches = depth_stretches(nodes, base, source, regions, tokens);
+        Self { source, tokens, lines, unit: unit.max(1), stretches, next: 0, open: Vec::new(), measured: 0, line: None, steps: 0 }
+    }
+
+    /// The columns a blank byte indents by: a space's one, a tab's `unit`;
+    /// none for any other byte.
+    fn blank(&self, byte: u8) -> Option<i64> {
+        match byte {
+            b' ' => Some(1),
+            b'\t' => Some(i64::from(self.unit)),
+            _ => None,
+        }
     }
 
     /// The width of `indentation`: its spaces, and `unit` per tab.
     fn width(&self, indentation: &str) -> i64 {
-        indentation.chars().map(|c| if c == '\t' { i64::from(self.unit) } else { i64::from(c == ' ') }).sum()
+        indentation.bytes().filter_map(|byte| self.blank(byte)).sum()
     }
 
     /// The excess of a line indented by `indentation` whose first token
-    /// starts at byte `at`, held by the node at `index`.
-    fn excess(&mut self, nodes: &Nodes, index: u32, at: u32, indentation: &str) -> i32 {
+    /// starts at byte `at`, at or past the byte the last call measured.
+    fn excess(&mut self, at: u32, indentation: &str) -> i32 {
         let unit = i64::from(self.unit);
-        let reach = self.width(indentation) - self.structural(nodes, index, at);
+        let reach = self.width(indentation) - self.structural(at);
         i32::try_from(reach.div_euclid(unit)).unwrap_or(0)
     }
 
-    /// The structural indentation width at byte `at`: the stretches holding
-    /// it, outermost first, each set by the line of its first token, or one
-    /// unit past the stretch around it when that token does not start a line
-    /// or the stretch holds none.
-    fn structural(&mut self, nodes: &Nodes, index: u32, at: u32) -> i64 {
-        if self.regions.is_empty() {
-            return 0;
+    /// The structural indentation width at byte `at`: the innermost
+    /// stretch's holding it, none when no stretch does. The stretches
+    /// holding a byte nest, so those holding `at` are the ones the last
+    /// byte measured left open that still hold it, then the ones that
+    /// opened since; each is measured once, as it opens.
+    fn structural(&mut self, at: u32) -> i64 {
+        debug_assert!(at >= self.measured, "the structure is measured in source order: {at} after {}", self.measured);
+        self.measured = at;
+        while self.open.last().is_some_and(|&(close, _)| close <= at) {
+            self.steps += 1;
+            self.open.pop();
         }
-        let mut holding = Vec::new();
-        let mut node = index;
-        while node != NONE {
-            if self.regions.iter().any(|region| region.kind == nodes.kind[node as usize]) {
-                holding.extend(self.spans_of(node).iter().copied().filter(|&(open, close)| open <= at && at < close));
+        while let Some(&(open, close)) = self.stretches.get(self.next).filter(|&&(open, _)| open <= at) {
+            self.steps += 1;
+            self.next += 1;
+            if close > at {
+                debug_assert!(self.open.last().is_none_or(|&(outer, _)| close <= outer), "the depth stretch {open}..{close} crosses the end of the one holding it");
+                let around = self.open.last().map_or(0, |&(_, width)| width);
+                let width = self.opened(open, close, around);
+                self.open.push((close, width));
             }
-            node = nodes.parent[node as usize];
         }
-        holding.sort_unstable();
-        holding.iter().fold(0, |around, &(open, close)| {
-            let first = self.tokens.partition_point(|token| token.start < open);
-            let Some(token) = self.tokens.get(first).filter(|token| token.start < close) else { return around + i64::from(self.unit) };
-            let line_start = self.source[..token.start as usize].rfind('\n').map_or(0, |at| at + 1);
-            let before = &self.source[line_start..token.start as usize];
-            if before.chars().all(|c| c == ' ' || c == '\t') {
-                self.width(before)
-            } else {
-                around + i64::from(self.unit)
-            }
-        })
+        self.open.last().map_or(0, |&(_, width)| width)
     }
 
-    /// The node's stretches: from after its `open` anchor (its start, or the
-    /// end of the literal child) to before its `close` anchor (its end, or
-    /// the start of the literal child). A region whose literal the node
-    /// lacks indents nothing.
-    fn spans_of(&mut self, index: u32) -> &[(u32, u32)] {
-        let (tree, source, base, regions) = (self.tree, self.source, self.base, self.regions);
-        self.spans.entry(index).or_insert_with(|| {
-            let mut cursor = tree.walk();
-            crate::read::goto(&mut cursor, base + index);
-            let node = cursor.node();
-            let literals: Vec<(u32, u32, &str)> = {
-                let mut children = node.walk();
-                node.children(&mut children)
-                    .filter(|child| !child.is_named())
-                    .filter_map(|child| {
-                        let span = Span::of(&child);
-                        source.get(span.range()).map(|text| (span.start, span.end, text))
-                    })
-                    .collect()
-            };
-            let kind = crate::read::grammar_id(&node);
-            regions
-                .iter()
-                .filter(|region| region.kind == kind)
-                .filter_map(|region| {
-                    let open = match region.open {
-                        DepthAnchor::Start => Span::of(&node).start + 1,
-                        DepthAnchor::After(texts) => literals.iter().find(|(_, _, text)| texts.contains(text))?.1,
-                        DepthAnchor::End | DepthAnchor::Before(_) => return None,
-                    };
-                    let close = match region.close {
-                        DepthAnchor::End => Span::of(&node).end,
-                        DepthAnchor::Before(texts) => literals.iter().rev().find(|(_, _, text)| texts.contains(text))?.0,
-                        DepthAnchor::Start | DepthAnchor::After(_) => return None,
-                    };
-                    Some((open, close))
-                })
-                .collect()
-        })
+    /// The width of the stretch from `open` to `close` inside one of width
+    /// `around`: set by the line of its first token, or one unit past
+    /// `around` when that token does not start its line or the stretch
+    /// holds none.
+    fn opened(&mut self, open: u32, close: u32, around: i64) -> i64 {
+        let first = self.tokens.partition_point(|token| token.start < open);
+        let Some(start) = self.tokens.get(first).map(|token| token.start).filter(|&start| start < close) else { return around + i64::from(self.unit) };
+        self.line_blanks(start).unwrap_or(around + i64::from(self.unit))
     }
+
+    /// The width of the blanks from the start of the line holding byte `at`
+    /// to `at`, or none when a byte that is not blank lies between. The
+    /// stretches open in source order, so their first tokens are asked in
+    /// order, and a line's bytes are read forward from where the last ask on
+    /// it stopped, each at most once.
+    fn line_blanks(&mut self, at: u32) -> Option<i64> {
+        let start = self.lines.point(at).map_or(0, |point| at - point.column);
+        let mut line = self.line.filter(|line| line.start == start).unwrap_or(LineScan { start, at: start, width: 0, blocked: false });
+        debug_assert!(at >= line.at, "a line's blanks are read in source order: {at} after {}", line.at);
+        while !line.blocked && line.at < at {
+            self.steps += 1;
+            match self.blank(self.source.as_bytes()[line.at as usize]) {
+                Some(width) => {
+                    line.width += width;
+                    line.at += 1;
+                }
+                None => line.blocked = true,
+            }
+        }
+        self.line = Some(line);
+        (line.at == at).then_some(line.width)
+    }
+}
+
+/// Every stretch the depth regions of a walked tree indent, sorted by its
+/// start, the outer of two that start together first: per node of a
+/// region's kind, from after its `open` anchor (its start, or the end of
+/// its literal child) to before its `close` anchor (its end, or the start
+/// of its literal child). A region whose literal the node lacks indents
+/// nothing.
+fn depth_stretches(nodes: &Nodes, base: NodeIndex, source: &str, regions: &'static [DepthRegion], tokens: &[Token]) -> Vec<(u32, u32)> {
+    if regions.is_empty() {
+        return Vec::new();
+    }
+    let indents = |at: usize| regions.iter().any(|region| region.kind == nodes.kind[at]);
+    let mut literals: BTreeMap<u32, Vec<(u32, u32, &str)>> = BTreeMap::new();
+    for token in tokens.iter().filter(|token| !token.own) {
+        let leaf = token.node.offset_from(base) as usize;
+        let parent = nodes.parent[leaf];
+        if !nodes.named[leaf] && parent != NONE && indents(parent as usize) {
+            if let Some(text) = source.get(token.start as usize..token.end as usize) {
+                literals.entry(parent).or_default().push((token.start, token.end, text));
+            }
+        }
+    }
+    let mut stretches: Vec<(u32, u32)> = (0..crate::types::narrow(nodes.kind.len()))
+        .filter(|&at| indents(at as usize))
+        .flat_map(|at| {
+            let literals = literals.get(&at).map_or(&[][..], Vec::as_slice);
+            let (start, end, kind) = (nodes.start[at as usize], nodes.end[at as usize], nodes.kind[at as usize]);
+            regions.iter().filter(move |region| region.kind == kind).filter_map(move |region| {
+                let open = match region.open {
+                    DepthAnchor::Start => start + 1,
+                    DepthAnchor::After(texts) => literals.iter().find(|(_, _, text)| texts.contains(text))?.1,
+                    DepthAnchor::End | DepthAnchor::Before(_) => return None,
+                };
+                let close = match region.close {
+                    DepthAnchor::End => end,
+                    DepthAnchor::Before(texts) => literals.iter().rev().find(|(_, _, text)| texts.contains(text))?.0,
+                    DepthAnchor::Start | DepthAnchor::After(_) => return None,
+                };
+                Some((open, close))
+            })
+        })
+        .collect();
+    stretches.sort_unstable_by_key(|&(open, close)| (open, std::cmp::Reverse(close)));
+    stretches
 }
 
 /// The running excess of an assignment, in source order, and the owners
@@ -762,6 +1120,15 @@ impl Excess {
         depth
     }
 
+    /// The change from the running excess back to `excess`, which it
+    /// becomes: what restores the excess at the end of a side whose frame
+    /// closes before the rest of its gap renders.
+    fn reset(&mut self, excess: i32) -> i32 {
+        let depth = excess - self.current;
+        self.current = excess;
+        depth
+    }
+
     /// Restore the excess of each owner that ends by byte `at`.
     fn close_until(&mut self, at: u32, table: &mut TriviaTable) {
         while let Some(open) = self.open.pop_if(|open| open.end <= at) {
@@ -772,10 +1139,4 @@ impl Excess {
             self.current = open.restore;
         }
     }
-}
-
-fn is_error_index(tree: &tree_sitter::Tree, index: NodeIndex) -> bool {
-    let mut cursor = tree.walk();
-    crate::read::goto(&mut cursor, index);
-    cursor.node().is_error()
 }

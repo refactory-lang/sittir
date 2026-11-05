@@ -9,12 +9,14 @@ use syn::{Data, DataEnum, DataStruct, DeriveInput, Fields, GenericArgument, Iden
 
 pub fn derive(input: &DeriveInput) -> syn::Result<TokenStream> {
     let attrs = attrs::kind_attrs(&input.attrs)?;
-    match &input.data {
+    let node = match &input.data {
         Data::Struct(data) => structure(&input.ident, &attrs, data),
         Data::Enum(data) if attrs.choice => choice(&input.ident, &attrs, data),
         Data::Enum(data) => members(&input.ident, &attrs, data),
         Data::Union(_) => Err(syn::Error::new_spanned(&input.ident, "a node is a struct or an enum")),
-    }
+    }?;
+    let heap = crate::heap::heap_bytes(input);
+    Ok(quote!(#node #heap))
 }
 
 fn choice(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<TokenStream> {
@@ -505,19 +507,39 @@ fn role_of(field: &syn::Field, ident: &Ident, key: Option<&LitStr>) -> syn::Resu
     Ok(role)
 }
 
-fn fields_of<'a>(owner: &Ident, data: &'a DataStruct) -> syn::Result<Vec<Field<'a>>> {
+/// A struct's fields by role, and its `#[height]` field apart: the height is
+/// stamped where the node is built and read by the codec, and no other part
+/// of the node sees it.
+fn fields_of<'a>(owner: &Ident, data: &'a DataStruct) -> syn::Result<(Vec<Field<'a>>, Option<&'a Ident>)> {
     let Fields::Named(named) = &data.fields else {
         return Err(syn::Error::new_spanned(owner, "a node struct has named fields"));
     };
-    named
-        .named
-        .iter()
-        .map(|field| {
-            let ident = field.ident.as_ref().expect("a named field");
-            let key = attrs::wire_key(&field.attrs)?;
-            Ok(Field { ident, ty: &field.ty, role: role_of(field, ident, key.as_ref())?, key })
-        })
-        .collect()
+    let mut fields = Vec::new();
+    let mut height = None;
+    for field in &named.named {
+        let ident = field.ident.as_ref().expect("a named field");
+        if attrs::marker(&field.attrs, "height")? {
+            if field.attrs.len() != 1 || last_segment(&field.ty).as_deref() != Some("u16") {
+                return Err(syn::Error::new_spanned(ident, "a `#[height]` field is a `u16` with no other stamp"));
+            }
+            if height.replace(ident).is_some() {
+                return Err(syn::Error::new_spanned(ident, "a node keeps one height"));
+            }
+            continue;
+        }
+        let key = attrs::wire_key(&field.attrs)?;
+        fields.push(Field { ident, ty: &field.ty, role: role_of(field, ident, key.as_ref())?, key });
+    }
+    Ok((fields, height))
+}
+
+/// `Self` built from `inits`, with its height stamped when it keeps one.
+fn built(inits: &TokenStream, height: Option<&Ident>) -> TokenStream {
+    if let Some(height) = height {
+        quote!(Self { #inits #height: 0 }.__stamped())
+    } else {
+        quote!(Self { #inits })
+    }
 }
 
 pub(crate) fn last_segment(ty: &Type) -> Option<String> {
@@ -556,7 +578,7 @@ fn structure(ident: &Ident, attrs: &KindAttrs, data: &DataStruct) -> syn::Result
         .kind
         .as_ref()
         .ok_or_else(|| syn::Error::new_spanned(ident, "`#[node(kind = …)]` names the struct's kind"))?;
-    let fields = fields_of(ident, data)?;
+    let (fields, height) = fields_of(ident, data)?;
     let stamped: Vec<_> = fields
         .iter()
         .filter_map(|field| match &field.role {
@@ -587,11 +609,11 @@ fn structure(ident: &Ident, attrs: &KindAttrs, data: &DataStruct) -> syn::Result
     let Body { items, read, routes } = if let Some(fixed) = &attrs.text {
         text_body(ident, &fields, fixed.as_ref())?
     } else if let Some(pattern) = &attrs.interior {
-        interior_body(ident, &fields, pattern)?
-        } else if attrs.content.is_some() {
-        envelope_body(ident, attrs, &fields)?
+        interior_body(ident, &fields, pattern, height)?
+    } else if attrs.content.is_some() {
+        envelope_body(ident, attrs, &fields, height)?
     } else {
-        routed_body(attrs, &fields)?
+        routed_body(attrs, &fields, height)?
     };
     let separator_kind_of = fields.iter().find_map(|field| match &field.role {
         Role::SeparatorKind(separator) => Some(separator),
@@ -628,8 +650,8 @@ fn structure(ident: &Ident, attrs: &KindAttrs, data: &DataStruct) -> syn::Result
         })
         .collect::<syn::Result<Vec<_>>>()?;
     let codec = match &attrs.text {
-        Some(fixed) => codec::text_leaf(ident, &wire, fixed.as_ref(), attrs.kind.as_ref())?,
-        None => codec::structure(ident, &wire)?,
+        Some(fixed) => codec::text_leaf(ident, &wire, fixed.as_ref(), attrs.kind.as_ref(), height)?,
+        None => codec::structure(ident, &wire, height)?,
     };
     let writer = crate::write::structure(ident, attrs, &fields)?;
     let hydrate = crate::hydrate::structure(ident, attrs, &fields)?;
@@ -767,7 +789,7 @@ fn text_body(ident: &Ident, fields: &[Field<'_>], fixed: Option<&LitStr>) -> syn
     })
 }
 
-fn interior_body(ident: &Ident, fields: &[Field<'_>], pattern: &LitStr) -> syn::Result<Body> {
+fn interior_body(ident: &Ident, fields: &[Field<'_>], pattern: &LitStr, height: Option<&Ident>) -> syn::Result<Body> {
     let flagged = format!("(?s){}", pattern.value());
     regex::Regex::new(&flagged)
         .map_err(|e| syn::Error::new_spanned(pattern, format!("`{ident}`'s token interior does not compile as a Rust regex: {e}")))?;
@@ -793,6 +815,7 @@ fn interior_body(ident: &Ident, fields: &[Field<'_>], pattern: &LitStr) -> syn::
     };
     let pass = pass(0);
     let router = spelling_router();
+    let built = built(&quote!(#(#inits)*), height);
     Ok(Body {
         routes: quote! {
             fn router(grammar: __Kind, display: __Kind) -> ::core::option::Option<__rt::Router> {
@@ -809,7 +832,7 @@ fn interior_body(ident: &Ident, fields: &[Field<'_>], pattern: &LitStr) -> syn::
                 .captures(ctx.text(&cursor.node()))
                 .ok_or(__rt::ReadError::Interior { kind: __KIND, index })?;
             #spans
-            ::core::result::Result::Ok(Self { #(#inits)* })
+            ::core::result::Result::Ok(#built)
         },
     })
 }
@@ -829,7 +852,7 @@ pub(crate) fn capture_fields<'f, 'a>(fields: &'f [Field<'a>]) -> syn::Result<Vec
         .collect()
 }
 
-fn envelope_body(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn::Result<Body> {
+fn envelope_body(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>], height: Option<&Ident>) -> syn::Result<Body> {
     let content = attrs
         .content
         .as_ref()
@@ -854,6 +877,7 @@ fn envelope_body(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn:
             _ => quote!(#name: ::core::default::Default::default(),),
         }
     });
+    let built = built(&quote!(#(#inits)*), height);
     let (hidden, restore) = if attrs.wraps_hidden {
         (
             quote! {
@@ -885,7 +909,7 @@ fn envelope_body(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn:
             #restore
             let mut content = content?;
             let layout: #layout_ty = Some(__rt::envelope_layout(<#inner as __rt::HasLayout<#layout_ty>>::take_layout(&mut content), __index, __at, __unit, ctx));
-            ::core::result::Result::Ok(Self { #(#inits)* })
+            ::core::result::Result::Ok(#built)
         },
     })
 }
@@ -912,7 +936,7 @@ fn slot_kind<'a>(field: &Field<'a>, slot: &'a SlotAttrs) -> SlotKind<'a> {
     }
 }
 
-fn routed_body(attrs: &KindAttrs, fields: &[Field<'_>]) -> syn::Result<Body> {
+fn routed_body(attrs: &KindAttrs, fields: &[Field<'_>], height: Option<&Ident>) -> syn::Result<Body> {
     let slot_fields: Vec<(&Field<'_>, &SlotAttrs)> = fields
         .iter()
         .filter_map(|field| match &field.role {
@@ -1009,6 +1033,7 @@ fn routed_body(attrs: &KindAttrs, fields: &[Field<'_>]) -> syn::Result<Body> {
     }
     inits.extend(list_inits(attrs, fields, &slots)?);
     let pass = pass(attrs.min_depth.unwrap_or(0));
+    let built = built(&quote!(#(#inits)*), height);
 
     Ok(Body {
         routes: quote! {
@@ -1107,7 +1132,7 @@ fn routed_body(attrs: &KindAttrs, fields: &[Field<'_>]) -> syn::Result<Body> {
                 cursor.goto_parent();
             }
             #unit_positions
-            ::core::result::Result::Ok(Self { #(#inits)* })
+            ::core::result::Result::Ok(#built)
             }
         },
     })
@@ -1169,6 +1194,8 @@ mod tests {
                 #[wire(key = "$_layout")]
                 #[layout]
                 pub layout: Option<Box<NodeLayout>>,
+                #[height]
+                height: u16,
                 #[wire(key = "_key")]
                 #[slot(field = field::KEY)]
                 pub key: SlotValue<KeyNode>,

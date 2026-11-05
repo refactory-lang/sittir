@@ -59,6 +59,7 @@ export { run as checkBaseline, type CheckBaselineOptions } from './validate/base
 export { run as propose14, type Propose14Options } from './validate/propose-14.ts';
 export { run as glossaryKeys, type GlossaryKeysOptions } from './validate/glossary-keys.ts';
 export { run as checkPerf, type CheckPerfOptions } from './validate/perf.ts';
+export { run as encodeStack, type EncodeStackOptions } from './validate/encode-stack.ts';
 export { run as classify, type ClassifyOptions } from './discover/classify.ts';
 export { run as phantomKinds, type PhantomKindsOptions } from './discover/phantom.ts';
 export { run as fieldProvenance, type FieldProvenanceOptions } from './discover/provenance.ts';
@@ -123,7 +124,7 @@ export {
 	resolveGrammars,
 	resolveBackends
 } from './commands.ts';
-export { parseConstruction, parseNodeStorage } from './validate/common.ts';
+export { parseNodeStorage } from './validate/common.ts';
 export { run as emitFactorySource, type EmitFactorySourceOptions } from './emit/factory-source.ts';
 export { run as hoistedCensus, type HoistedCensusOptions } from './census/hoisted.ts';
 export { run as spelledTrivia, type SpelledTriviaOptions } from './census/spelled-trivia.ts';

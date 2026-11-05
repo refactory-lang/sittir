@@ -25,11 +25,13 @@ import {
 	seatWith,
 	rebuilt,
 	refuseJSON,
+	RECEIVER,
 	describeValue,
 	restItems,
 	blankArmStored,
 	isNodeOfKind,
 	admitAliasContent,
+	admitHoles,
 	admitSplicedEnvelope,
 	coerceKindEnumStorage,
 	kindIdStorage,
@@ -109,23 +111,22 @@ import {
 
 export function buildProgram(): T.EmptyProgram;
 export function buildProgram<
-	HashBangLineSlot extends T.Program.Config['hashBangLine'],
+	ShebangSlot extends T.Program.Config['shebang'],
 	StatementsSlot extends T.Program.Config['statements']
 >(
-	config?: RefusingConfig<Partial<T.Program.Config>, { hashBangLine: HashBangLineSlot; statements: StatementsSlot }>
+	config?: RefusingConfig<Partial<T.Program.Config>, { shebang: ShebangSlot; statements: StatementsSlot }>
 ): T.Program.Bound;
 export function buildProgram(config: Partial<T.Program.Config> = {}): T.Program.Bound {
 	currentHandle()?.admit(TSKindId.Program, [config]);
-	const _hash_bang_line = config.hashBangLine;
+	const _shebang = config.shebang;
 	const _statements = listStorage<NonNullable<T.Program['_statements']>>(config.statements ?? [], kindIdStorage);
 	const handle = currentHandle();
-	if (handle !== undefined)
-		admitChildren(handle, 'program', { hashBangLine: _hash_bang_line, statements: _statements });
+	if (handle !== undefined) admitChildren(handle, 'program', { shebang: _shebang, statements: _statements });
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.Program as const, { _hash_bang_line, _statements });
+	handle?.verifyStored?.(TSKindId.Program as const, { _shebang, _statements });
 	return arena.scope(() => {
 		const record = arena.record(TSKindId.Program as const);
-		storeCell(arena, record, 2, 2, _hash_bang_line);
+		storeCell(arena, record, 2, 2, _shebang);
 		storeList(arena, record, 3, 6, _statements);
 		const node = arena.view(record);
 		return node as unknown as T.Program.Bound;
@@ -134,16 +135,15 @@ export function buildProgram(config: Partial<T.Program.Config> = {}): T.Program.
 
 function buildProgram$patch(source: object, config: Partial<T.Program.Config> = {}): T.Program.Bound {
 	currentHandle()?.admit(TSKindId.Program, [config]);
-	const _hash_bang_line = config.hashBangLine;
+	const _shebang = config.shebang;
 	const _statements = listStorage<NonNullable<T.Program['_statements']>>(config.statements ?? [], kindIdStorage);
 	const handle = currentHandle();
-	if (handle !== undefined)
-		admitChildren(handle, 'program', { hashBangLine: _hash_bang_line, statements: _statements });
+	if (handle !== undefined) admitChildren(handle, 'program', { shebang: _shebang, statements: _statements });
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.Program as const, { _hash_bang_line, _statements });
+	handle?.verifyStored?.(TSKindId.Program as const, { _shebang, _statements });
 	return arena.scope(() => {
 		const record = arena.copy(source, TSKindId.Program as const);
-		patchCell(arena, record, 2, 2, carriedSlot(source, 'hashBangLine', _hash_bang_line));
+		patchCell(arena, record, 2, 2, carriedSlot(source, 'shebang', _shebang));
 		patchList(arena, record, 3, 6, _statements);
 		const node = arena.view(record);
 		return node as unknown as T.Program.Bound;
@@ -154,9 +154,9 @@ function withProgram(node: object, setter: string, args: readonly unknown[]): un
 	const inputs = builtInputs(node);
 	const config = inputs.config as T.Program.Config;
 	switch (setter) {
-		case 'hashBangLine':
+		case 'shebang':
 			return applySetter(args, (value?: Admit<T.HashBangLine>) =>
-				rebuilt(node, handle, () => buildProgram$patch(node, { ...config, hashBangLine: value }))
+				rebuilt(node, handle, () => buildProgram$patch(node, { ...config, shebang: value }))
 			);
 		case 'statements':
 			return applySetter(args, (...values: Admit<NonNullable<NonNullable<T.Program.Config>['statements']>[number][]>) =>
@@ -2687,7 +2687,12 @@ export function buildObject(
 ): T.Object.Bound {
 	currentHandle()?.admit(TSKindId.Object, children);
 	const _properties = admitAliasContent<NonNullable<T.Object['_properties']>>(
-		rejectReservedText(children, 'Object.properties', TSKindId.Identifier, _reservedWords_buildIdentifier),
+		rejectReservedText(
+			admitHoles(children, 'Object.properties'),
+			'Object.properties',
+			TSKindId.Identifier,
+			_reservedWords_buildIdentifier
+		),
 		[[[1], (v: unknown) => buildShorthandPropertyIdentifier(v as never)]]
 	);
 	const handle = currentHandle();
@@ -2713,7 +2718,12 @@ function buildObject$patch(
 ): T.Object.Bound {
 	currentHandle()?.admit(TSKindId.Object, children);
 	const _properties = admitAliasContent<NonNullable<T.Object['_properties']>>(
-		rejectReservedText(children, 'Object.properties', TSKindId.Identifier, _reservedWords_buildIdentifier),
+		rejectReservedText(
+			admitHoles(children, 'Object.properties'),
+			'Object.properties',
+			TSKindId.Identifier,
+			_reservedWords_buildIdentifier
+		),
 		[[[1], (v: unknown) => buildShorthandPropertyIdentifier(v as never)]]
 	);
 	const handle = currentHandle();
@@ -2763,7 +2773,12 @@ export function buildObjectPattern(
 ): T.ObjectPattern.Bound {
 	currentHandle()?.admit(TSKindId.ObjectPattern, children);
 	const _properties = admitAliasContent<NonNullable<T.ObjectPattern['_properties']>>(
-		rejectReservedText(children, 'ObjectPattern.properties', TSKindId.Identifier, _reservedWords_buildIdentifier),
+		rejectReservedText(
+			admitHoles(children, 'ObjectPattern.properties'),
+			'ObjectPattern.properties',
+			TSKindId.Identifier,
+			_reservedWords_buildIdentifier
+		),
 		[[[1], (v: unknown) => buildShorthandPropertyIdentifierPattern(v as never)]]
 	);
 	const handle = currentHandle();
@@ -2789,7 +2804,12 @@ function buildObjectPattern$patch(
 ): T.ObjectPattern.Bound {
 	currentHandle()?.admit(TSKindId.ObjectPattern, children);
 	const _properties = admitAliasContent<NonNullable<T.ObjectPattern['_properties']>>(
-		rejectReservedText(children, 'ObjectPattern.properties', TSKindId.Identifier, _reservedWords_buildIdentifier),
+		rejectReservedText(
+			admitHoles(children, 'ObjectPattern.properties'),
+			'ObjectPattern.properties',
+			TSKindId.Identifier,
+			_reservedWords_buildIdentifier
+		),
 		[[[1], (v: unknown) => buildShorthandPropertyIdentifierPattern(v as never)]]
 	);
 	const handle = currentHandle();
@@ -2985,7 +3005,12 @@ export function buildArray<A extends Admit<(T.Expression | T.SpreadElement)[]>>(
 ): T.Array.Bound;
 export function buildArray(...children: Admit<(T.Expression | T.SpreadElement)[]>): T.Array.Bound {
 	currentHandle()?.admit(TSKindId.Array, children);
-	const _elements = rejectReservedText(children, 'Array.elements', TSKindId.Identifier, _reservedWords_buildIdentifier);
+	const _elements = rejectReservedText(
+		admitHoles(children, 'Array.elements'),
+		'Array.elements',
+		TSKindId.Identifier,
+		_reservedWords_buildIdentifier
+	);
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'array', { elements: _elements });
 	const arena = builtArenaOf(handle);
@@ -3000,7 +3025,12 @@ export function buildArray(...children: Admit<(T.Expression | T.SpreadElement)[]
 
 function buildArray$patch(source: object, ...children: Admit<(T.Expression | T.SpreadElement)[]>): T.Array.Bound {
 	currentHandle()?.admit(TSKindId.Array, children);
-	const _elements = rejectReservedText(children, 'Array.elements', TSKindId.Identifier, _reservedWords_buildIdentifier);
+	const _elements = rejectReservedText(
+		admitHoles(children, 'Array.elements'),
+		'Array.elements',
+		TSKindId.Identifier,
+		_reservedWords_buildIdentifier
+	);
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'array', { elements: _elements });
 	const arena = builtArenaOf(handle);
@@ -3029,7 +3059,7 @@ export function buildArrayPattern<A extends Admit<(T.Pattern | T.AssignmentPatte
 ): T.ArrayPattern.Bound;
 export function buildArrayPattern(...children: Admit<(T.Pattern | T.AssignmentPattern)[]>): T.ArrayPattern.Bound {
 	currentHandle()?.admit(TSKindId.ArrayPattern, children);
-	const _elements = children;
+	const _elements = admitHoles(children, 'ArrayPattern.elements');
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'array_pattern', { elements: _elements });
 	const arena = builtArenaOf(handle);
@@ -3047,7 +3077,7 @@ function buildArrayPattern$patch(
 	...children: Admit<(T.Pattern | T.AssignmentPattern)[]>
 ): T.ArrayPattern.Bound {
 	currentHandle()?.admit(TSKindId.ArrayPattern, children);
-	const _elements = children;
+	const _elements = admitHoles(children, 'ArrayPattern.elements');
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'array_pattern', { elements: _elements });
 	const arena = builtArenaOf(handle);
@@ -5208,7 +5238,7 @@ function leafUnescapedDoubleStringFragment(tree: TreeHandle, entry: BuiltText, s
 		[LEAF_SITES]: null,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$trivia = { node, leading: leafLeading, trailing: leafTrailing };
+	node.$trivia = { leading: leafLeading, trailing: leafTrailing, [RECEIVER]: node };
 	return node;
 }
 
@@ -5241,7 +5271,7 @@ function leafUnescapedSingleStringFragment(tree: TreeHandle, entry: BuiltText, s
 		[LEAF_SITES]: null,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$trivia = { node, leading: leafLeading, trailing: leafTrailing };
+	node.$trivia = { leading: leafLeading, trailing: leafTrailing, [RECEIVER]: node };
 	return node;
 }
 
@@ -5487,7 +5517,7 @@ function leafRegexPattern(tree: TreeHandle, entry: BuiltText, site: LeafSite | u
 		[LEAF_SITES]: null,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$trivia = { node, leading: leafLeading, trailing: leafTrailing };
+	node.$trivia = { leading: leafLeading, trailing: leafTrailing, [RECEIVER]: node };
 	return node;
 }
 
@@ -5516,7 +5546,7 @@ function leafRegexFlags(tree: TreeHandle, entry: BuiltText, site: LeafSite | und
 		[LEAF_SITES]: null,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$trivia = { node, leading: leafLeading, trailing: leafTrailing };
+	node.$trivia = { leading: leafLeading, trailing: leafTrailing, [RECEIVER]: node };
 	return node;
 }
 
@@ -5545,7 +5575,7 @@ function leafIdentifier(tree: TreeHandle, entry: BuiltText, site: LeafSite | und
 		[LEAF_SITES]: null,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$trivia = { node, leading: leafLeading, trailing: leafTrailing };
+	node.$trivia = { leading: leafLeading, trailing: leafTrailing, [RECEIVER]: node };
 	return node;
 }
 
@@ -5644,7 +5674,7 @@ export function buildArguments<A extends Admit<(T.Expression | T.SpreadElement)[
 export function buildArguments(...children: Admit<(T.Expression | T.SpreadElement)[]>): T.Arguments.Bound {
 	currentHandle()?.admit(TSKindId.Arguments, children);
 	const _elements = rejectReservedText(
-		children,
+		admitHoles(children, 'Arguments.elements'),
 		'Arguments.elements',
 		TSKindId.Identifier,
 		_reservedWords_buildIdentifier
@@ -5667,7 +5697,7 @@ function buildArguments$patch(
 ): T.Arguments.Bound {
 	currentHandle()?.admit(TSKindId.Arguments, children);
 	const _elements = rejectReservedText(
-		children,
+		admitHoles(children, 'Arguments.elements'),
 		'Arguments.elements',
 		TSKindId.Identifier,
 		_reservedWords_buildIdentifier
@@ -6116,13 +6146,13 @@ function withClassStaticBlock(node: object, setter: string, args: readonly unkno
 	const value = inputs.config['body'] as Admit<T.StatementBlock>;
 	const options = inputs.options as T.ClassStaticBlock.Options;
 	switch (setter) {
-		case 'body':
-			return applySetter(args, (value: Admit<T.StatementBlock>) =>
-				rebuilt(node, handle, () => _buildClassStaticBlock$patch(node, value, options))
-			);
 		case 'terminator':
 			return applySetter(args, (spelling: TSKindId.AutomaticSemicolon | null) =>
 				rebuilt(node, handle, () => _buildClassStaticBlock$patch(node, value, { ...options, terminator: spelling }))
+			);
+		case 'body':
+			return applySetter(args, (value: Admit<T.StatementBlock>) =>
+				rebuilt(node, handle, () => _buildClassStaticBlock$patch(node, value, options))
 			);
 	}
 	throw new Error(`class_static_block has no $with.${setter}`);
@@ -6957,33 +6987,30 @@ function withSatisfiesExpression(node: object, setter: string, args: readonly un
 }
 
 export function buildInstantiationExpression<
-	ExpressionSlot extends T.InstantiationExpression.Config['expression'],
+	FunctionSlot extends T.InstantiationExpression.Config['function'],
 	TypeArgumentsSlot extends T.InstantiationExpression.Config['typeArguments']
 >(
-	config: RefusingConfig<
-		T.InstantiationExpression.Config,
-		{ expression: ExpressionSlot; typeArguments: TypeArgumentsSlot }
-	>
+	config: RefusingConfig<T.InstantiationExpression.Config, { function: FunctionSlot; typeArguments: TypeArgumentsSlot }>
 ): T.InstantiationExpression.Bound;
 export function buildInstantiationExpression(
 	config: T.InstantiationExpression.Config
 ): T.InstantiationExpression.Bound {
 	currentHandle()?.admit(TSKindId.InstantiationExpression, [config]);
-	const _expression = rejectReservedText(
-		kindIdStorage<NonNullable<T.InstantiationExpression['_expression']>>(config.expression),
-		'InstantiationExpression.expression',
+	const _function = rejectReservedText(
+		kindIdStorage<NonNullable<T.InstantiationExpression['_function']>>(config.function),
+		'InstantiationExpression.function',
 		TSKindId.Identifier,
 		_reservedWords_buildIdentifier
 	);
 	const _type_arguments = config.typeArguments;
 	const handle = currentHandle();
 	if (handle !== undefined)
-		admitChildren(handle, 'instantiation_expression', { expression: _expression, typeArguments: _type_arguments });
+		admitChildren(handle, 'instantiation_expression', { function: _function, typeArguments: _type_arguments });
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.InstantiationExpression as const, { _expression, _type_arguments });
+	handle?.verifyStored?.(TSKindId.InstantiationExpression as const, { _function, _type_arguments });
 	return arena.scope(() => {
 		const record = arena.record(TSKindId.InstantiationExpression as const);
-		storeCell(arena, record, 2, 2, _expression);
+		storeCell(arena, record, 2, 2, _function);
 		storeCell(arena, record, 3, 6, _type_arguments);
 		const node = arena.view(record);
 		return node as unknown as T.InstantiationExpression.Bound;
@@ -6995,21 +7022,21 @@ function buildInstantiationExpression$patch(
 	config: T.InstantiationExpression.Config
 ): T.InstantiationExpression.Bound {
 	currentHandle()?.admit(TSKindId.InstantiationExpression, [config]);
-	const _expression = rejectReservedText(
-		kindIdStorage<NonNullable<T.InstantiationExpression['_expression']>>(config.expression),
-		'InstantiationExpression.expression',
+	const _function = rejectReservedText(
+		kindIdStorage<NonNullable<T.InstantiationExpression['_function']>>(config.function),
+		'InstantiationExpression.function',
 		TSKindId.Identifier,
 		_reservedWords_buildIdentifier
 	);
 	const _type_arguments = config.typeArguments;
 	const handle = currentHandle();
 	if (handle !== undefined)
-		admitChildren(handle, 'instantiation_expression', { expression: _expression, typeArguments: _type_arguments });
+		admitChildren(handle, 'instantiation_expression', { function: _function, typeArguments: _type_arguments });
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.InstantiationExpression as const, { _expression, _type_arguments });
+	handle?.verifyStored?.(TSKindId.InstantiationExpression as const, { _function, _type_arguments });
 	return arena.scope(() => {
 		const record = arena.copy(source, TSKindId.InstantiationExpression as const);
-		patchCell(arena, record, 2, 2, carriedSlot(source, 'expression', _expression));
+		patchCell(arena, record, 2, 2, carriedSlot(source, 'function', _function));
 		patchCell(arena, record, 3, 6, carriedSlot(source, 'typeArguments', _type_arguments));
 		const node = arena.view(record);
 		return node as unknown as T.InstantiationExpression.Bound;
@@ -7020,9 +7047,9 @@ function withInstantiationExpression(node: object, setter: string, args: readonl
 	const inputs = builtInputs(node);
 	const config = inputs.config as T.InstantiationExpression.Config;
 	switch (setter) {
-		case 'expression':
-			return applySetter(args, (value: Admit<NonNullable<T.InstantiationExpression.Config>['expression']>) =>
-				rebuilt(node, handle, () => buildInstantiationExpression$patch(node, { ...config, expression: value }))
+		case 'function':
+			return applySetter(args, (value: Admit<NonNullable<T.InstantiationExpression.Config>['function']>) =>
+				rebuilt(node, handle, () => buildInstantiationExpression$patch(node, { ...config, function: value }))
 			);
 		case 'typeArguments':
 			return applySetter(args, (...args: unknown[]) =>
@@ -11726,13 +11753,13 @@ function withConstraint(node: object, setter: string, args: readonly unknown[]):
 	const value = inputs.config['bounds'] as Admit<NonNullable<T.Type | T.TypeIdentifier.Types>>;
 	const options = inputs.options as T.Constraint.Options;
 	switch (setter) {
-		case 'bounds':
-			return applySetter(args, (value: Admit<NonNullable<T.Type | T.TypeIdentifier.Types>>) =>
-				rebuilt(node, handle, () => buildConstraint$patch(node, value, options))
-			);
 		case 'operator':
 			return applySetter(args, (spelling: TSKindId.ExtendsKeyword | TSKindId.Colon) =>
 				rebuilt(node, handle, () => buildConstraint$patch(node, value, { ...options, operator: spelling }))
+			);
+		case 'bounds':
+			return applySetter(args, (value: Admit<NonNullable<T.Type | T.TypeIdentifier.Types>>) =>
+				rebuilt(node, handle, () => buildConstraint$patch(node, value, options))
 			);
 	}
 	throw new Error(`constraint has no $with.${setter}`);
@@ -13922,13 +13949,13 @@ function withNumberHex(node: object, setter: string, args: readonly unknown[]): 
 	const value = inputs.config['content'] as Admit<string | number | bigint>;
 	const options = inputs.options as T.NumberHex.Options;
 	switch (setter) {
-		case 'content':
-			return applySetter(args, (value: Admit<string | number | bigint>) =>
-				rebuilt(node, handle, () => buildNumberHex$patch(node, value, options))
-			);
 		case 'radixPrefix':
 			return applySetter(args, (spelling: '0x' | '0X') =>
 				rebuilt(node, handle, () => buildNumberHex$patch(node, value, { ...options, radixPrefix: spelling }))
+			);
+		case 'content':
+			return applySetter(args, (value: Admit<string | number | bigint>) =>
+				rebuilt(node, handle, () => buildNumberHex$patch(node, value, options))
 			);
 	}
 	throw new Error(`number_hex has no $with.${setter}`);
@@ -14102,6 +14129,10 @@ function withNumberFloatPoint(node: object, setter: string, args: readonly unkno
 			return applySetter(args, (value?: Admit<string | number | bigint>) =>
 				rebuilt(node, handle, () => buildNumberFloatPoint$patch(node, { ...config, fraction: value }, options))
 			);
+		case 'marker':
+			return applySetter(args, (spelling: 'e' | 'E') =>
+				rebuilt(node, handle, () => buildNumberFloatPoint$patch(node, config, { ...options, marker: spelling }))
+			);
 		case 'exponentSign':
 			return applySetter(args, (value?: Admit<'-' | '+'>) =>
 				rebuilt(node, handle, () => buildNumberFloatPoint$patch(node, { ...config, exponentSign: value }, options))
@@ -14109,10 +14140,6 @@ function withNumberFloatPoint(node: object, setter: string, args: readonly unkno
 		case 'exponent':
 			return applySetter(args, (value?: Admit<string | number | bigint>) =>
 				rebuilt(node, handle, () => buildNumberFloatPoint$patch(node, { ...config, exponent: value }, options))
-			);
-		case 'marker':
-			return applySetter(args, (spelling: 'e' | 'E') =>
-				rebuilt(node, handle, () => buildNumberFloatPoint$patch(node, config, { ...options, marker: spelling }))
 			);
 	}
 	throw new Error(`number_float_point has no $with.${setter}`);
@@ -14251,6 +14278,10 @@ function withNumberFloatLeadingPoint(node: object, setter: string, args: readonl
 			return applySetter(args, (value: Admit<string | number | bigint>) =>
 				rebuilt(node, handle, () => buildNumberFloatLeadingPoint$patch(node, { ...config, fraction: value }, options))
 			);
+		case 'marker':
+			return applySetter(args, (spelling: 'e' | 'E') =>
+				rebuilt(node, handle, () => buildNumberFloatLeadingPoint$patch(node, config, { ...options, marker: spelling }))
+			);
 		case 'exponentSign':
 			return applySetter(args, (value?: Admit<'-' | '+'>) =>
 				rebuilt(node, handle, () =>
@@ -14260,10 +14291,6 @@ function withNumberFloatLeadingPoint(node: object, setter: string, args: readonl
 		case 'exponent':
 			return applySetter(args, (value?: Admit<string | number | bigint>) =>
 				rebuilt(node, handle, () => buildNumberFloatLeadingPoint$patch(node, { ...config, exponent: value }, options))
-			);
-		case 'marker':
-			return applySetter(args, (spelling: 'e' | 'E') =>
-				rebuilt(node, handle, () => buildNumberFloatLeadingPoint$patch(node, config, { ...options, marker: spelling }))
 			);
 	}
 	throw new Error(`number_float_leading_point has no $with.${setter}`);
@@ -14393,6 +14420,10 @@ function withNumberFloatScientific(node: object, setter: string, args: readonly 
 			return applySetter(args, (value: Admit<string | number | bigint>) =>
 				rebuilt(node, handle, () => buildNumberFloatScientific$patch(node, { ...config, integer: value }, options))
 			);
+		case 'marker':
+			return applySetter(args, (spelling: 'e' | 'E') =>
+				rebuilt(node, handle, () => buildNumberFloatScientific$patch(node, config, { ...options, marker: spelling }))
+			);
 		case 'exponentSign':
 			return applySetter(args, (value?: Admit<'-' | '+'>) =>
 				rebuilt(node, handle, () => buildNumberFloatScientific$patch(node, { ...config, exponentSign: value }, options))
@@ -14400,10 +14431,6 @@ function withNumberFloatScientific(node: object, setter: string, args: readonly 
 		case 'exponent':
 			return applySetter(args, (value: Admit<string | number | bigint>) =>
 				rebuilt(node, handle, () => buildNumberFloatScientific$patch(node, { ...config, exponent: value }, options))
-			);
-		case 'marker':
-			return applySetter(args, (spelling: 'e' | 'E') =>
-				rebuilt(node, handle, () => buildNumberFloatScientific$patch(node, config, { ...options, marker: spelling }))
 			);
 	}
 	throw new Error(`number_float_scientific has no $with.${setter}`);
@@ -14438,7 +14465,7 @@ function leafNumberDecimal(tree: TreeHandle, entry: BuiltText, site: LeafSite | 
 		[LEAF_SITES]: null,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$trivia = { node, leading: leafLeading, trailing: leafTrailing };
+	node.$trivia = { leading: leafLeading, trailing: leafTrailing, [RECEIVER]: node };
 	return node;
 }
 
@@ -14506,13 +14533,13 @@ function withNumberBinary(node: object, setter: string, args: readonly unknown[]
 	const value = inputs.config['content'] as Admit<string | number | bigint>;
 	const options = inputs.options as T.NumberBinary.Options;
 	switch (setter) {
-		case 'content':
-			return applySetter(args, (value: Admit<string | number | bigint>) =>
-				rebuilt(node, handle, () => buildNumberBinary$patch(node, value, options))
-			);
 		case 'radixPrefix':
 			return applySetter(args, (spelling: '0b' | '0B') =>
 				rebuilt(node, handle, () => buildNumberBinary$patch(node, value, { ...options, radixPrefix: spelling }))
+			);
+		case 'content':
+			return applySetter(args, (value: Admit<string | number | bigint>) =>
+				rebuilt(node, handle, () => buildNumberBinary$patch(node, value, options))
 			);
 	}
 	throw new Error(`number_binary has no $with.${setter}`);
@@ -14582,13 +14609,13 @@ function withNumberOctal(node: object, setter: string, args: readonly unknown[])
 	const value = inputs.config['content'] as Admit<string | number | bigint>;
 	const options = inputs.options as T.NumberOctal.Options;
 	switch (setter) {
-		case 'content':
-			return applySetter(args, (value: Admit<string | number | bigint>) =>
-				rebuilt(node, handle, () => buildNumberOctal$patch(node, value, options))
-			);
 		case 'radixPrefix':
 			return applySetter(args, (spelling: '0o' | '0O') =>
 				rebuilt(node, handle, () => buildNumberOctal$patch(node, value, { ...options, radixPrefix: spelling }))
+			);
+		case 'content':
+			return applySetter(args, (value: Admit<string | number | bigint>) =>
+				rebuilt(node, handle, () => buildNumberOctal$patch(node, value, options))
 			);
 	}
 	throw new Error(`number_octal has no $with.${setter}`);
@@ -17539,6 +17566,12 @@ function withForHeaderLetConstKind(node: object, setter: string, args: readonly 
 			return applySetter(args, (value: Admit<T.Identifier | T.ObjectPattern | T.ArrayPattern>) =>
 				rebuilt(node, handle, () => buildForHeaderLetConstKind$patch(node, { ...config, left: value }, options))
 			);
+		case 'terminator':
+			return applySetter(args, (spelling: TSKindId.AutomaticSemicolon | null) =>
+				rebuilt(node, handle, () =>
+					buildForHeaderLetConstKind$patch(node, config, { ...options, terminator: spelling })
+				)
+			);
 		case 'operator':
 			return applySetter(args, (value: Admit<NonNullable<T.ForHeaderLetConstKind.Config>['operator']>) =>
 				rebuilt(node, handle, () => buildForHeaderLetConstKind$patch(node, { ...config, operator: value }, options))
@@ -17546,12 +17579,6 @@ function withForHeaderLetConstKind(node: object, setter: string, args: readonly 
 		case 'right':
 			return applySetter(args, (value: Admit<NonNullable<T.ForHeaderLetConstKind.Config>['right']>) =>
 				rebuilt(node, handle, () => buildForHeaderLetConstKind$patch(node, { ...config, right: value }, options))
-			);
-		case 'terminator':
-			return applySetter(args, (spelling: TSKindId.AutomaticSemicolon | null) =>
-				rebuilt(node, handle, () =>
-					buildForHeaderLetConstKind$patch(node, config, { ...options, terminator: spelling })
-				)
 			);
 	}
 	throw new Error(`for_header_let_const_kind has no $with.${setter}`);
@@ -17670,6 +17697,10 @@ function withForHeaderUsingKind(node: object, setter: string, args: readonly unk
 			return applySetter(args, (value: Admit<T.Identifier | T.ObjectPattern | T.ArrayPattern>) =>
 				rebuilt(node, handle, () => buildForHeaderUsingKind$patch(node, { ...config, left: value }, options))
 			);
+		case 'terminator':
+			return applySetter(args, (spelling: TSKindId.AutomaticSemicolon | null) =>
+				rebuilt(node, handle, () => buildForHeaderUsingKind$patch(node, config, { ...options, terminator: spelling }))
+			);
 		case 'operator':
 			return applySetter(args, (value: Admit<NonNullable<T.ForHeaderUsingKind.Config>['operator']>) =>
 				rebuilt(node, handle, () => buildForHeaderUsingKind$patch(node, { ...config, operator: value }, options))
@@ -17677,10 +17708,6 @@ function withForHeaderUsingKind(node: object, setter: string, args: readonly unk
 		case 'right':
 			return applySetter(args, (value: Admit<NonNullable<T.ForHeaderUsingKind.Config>['right']>) =>
 				rebuilt(node, handle, () => buildForHeaderUsingKind$patch(node, { ...config, right: value }, options))
-			);
-		case 'terminator':
-			return applySetter(args, (spelling: TSKindId.AutomaticSemicolon | null) =>
-				rebuilt(node, handle, () => buildForHeaderUsingKind$patch(node, config, { ...options, terminator: spelling }))
 			);
 	}
 	throw new Error(`for_header_using_kind has no $with.${setter}`);
@@ -19905,7 +19932,7 @@ function leafJsxText(tree: TreeHandle, entry: BuiltText, site: LeafSite | undefi
 		[LEAF_SITES]: null,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$trivia = { node, leading: leafLeading, trailing: leafTrailing };
+	node.$trivia = { leading: leafLeading, trailing: leafTrailing, [RECEIVER]: node };
 	return node;
 }
 
@@ -19934,7 +19961,7 @@ function leafTemplateChars(tree: TreeHandle, entry: BuiltText, site: LeafSite | 
 		[LEAF_SITES]: null,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$trivia = { node, leading: leafLeading, trailing: leafTrailing };
+	node.$trivia = { leading: leafLeading, trailing: leafTrailing, [RECEIVER]: node };
 	return node;
 }
 
@@ -20400,7 +20427,7 @@ function leafTernaryQmark(tree: TreeHandle, entry: BuiltText, site: LeafSite | u
 		[LEAF_SITES]: null,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$trivia = { node, leading: leafLeading, trailing: leafTrailing };
+	node.$trivia = { leading: leafLeading, trailing: leafTrailing, [RECEIVER]: node };
 	return node;
 }
 
@@ -20427,7 +20454,7 @@ function leafErrorRecovery(tree: TreeHandle, entry: BuiltText, site: LeafSite | 
 		[LEAF_SITES]: null,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$trivia = { node, leading: leafLeading, trailing: leafTrailing };
+	node.$trivia = { leading: leafLeading, trailing: leafTrailing, [RECEIVER]: node };
 	return node;
 }
 
