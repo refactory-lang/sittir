@@ -1210,6 +1210,13 @@ macro_rules! napi_engine {
                 Ok($crate::napi_engine::parse_render_batch::<$grammar, $any>(&options, &sources, claims, threads))
             }
 
+            /// What the record-chunk pool has done in this process
+            /// (`arena::memory::pool_stats`).
+            #[::napi_derive::napi]
+            pub fn chunk_pool_stats() -> $crate::napi_engine::ChunkPoolStats {
+                $crate::napi_engine::ChunkPoolStats::from($crate::arena::memory::pool_stats())
+            }
+
             /// The coordinate a read of the live tree `treeId` names the node
             /// at `index` by, as `[kind, end]`: the kind the read stamps on
             /// it and the row after its subtree (`ParsedTree::row_coordinate`),
@@ -2018,6 +2025,25 @@ pub fn claim_tree_id(env: &napi::Env) -> napi::Result<crate::engine::TreeClaim> 
         .ok_or_else(|| napi::Error::from_reason(format!("this process exhausted its {} tree ids", crate::engine::MAX_TREE_ID)))?;
     napi::bindgen_prelude::JsObjectValue::set_named_property(&mut global, KEY, record)?;
     Ok(id)
+}
+
+/// The record-chunk pool's counts, as JavaScript reads them: chunks
+/// allocated fresh and taken from a pool, and chunks freed and kept in one.
+#[cfg(feature = "arena")]
+#[napi_derive::napi(object)]
+pub struct ChunkPoolStats {
+    pub fresh: f64,
+    pub reused: f64,
+    pub freed: f64,
+    pub pooled: f64,
+}
+
+#[cfg(feature = "arena")]
+impl From<crate::arena::memory::PoolStats> for ChunkPoolStats {
+    #[allow(clippy::cast_precision_loss, reason = "a count below 2^53, which a double holds exactly")]
+    fn from(stats: crate::arena::memory::PoolStats) -> Self {
+        Self { fresh: stats.fresh as f64, reused: stats.reused as f64, freed: stats.freed as f64, pooled: stats.pooled as f64 }
+    }
 }
 
 /// What `parseRenderBatch` answers: by source, its render or its refusal;

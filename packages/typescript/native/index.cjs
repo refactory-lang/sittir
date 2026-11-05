@@ -857,6 +857,7 @@ module.exports.CELL_TAG_NODE = nativeBinding.CELL_TAG_NODE
 module.exports.CELL_TAG_TEXT = nativeBinding.CELL_TAG_TEXT
 module.exports.CELL_TAG_UNIT = nativeBinding.CELL_TAG_UNIT
 module.exports.chunk = nativeBinding.chunk
+module.exports.chunkPoolStats = nativeBinding.chunkPoolStats
 module.exports.coordinate = nativeBinding.coordinate
 module.exports.copyBuiltSites = nativeBinding.copyBuiltSites
 module.exports.COUNT_OWNED = nativeBinding.COUNT_OWNED

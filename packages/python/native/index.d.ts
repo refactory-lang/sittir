@@ -41,6 +41,17 @@ export interface BatchRender {
 }
 
 /**
+ * The record-chunk pool's counts, as JavaScript reads them: chunks
+ * allocated fresh and taken from a pool, and chunks freed and kept in one.
+ */
+export interface ChunkPoolStats {
+  fresh: number
+  reused: number
+  freed: number
+  pooled: number
+}
+
+/**
  * The work a parsed tree's layout reads have done so far, counted where it
  * is done (`ParsedTree::layout_work`): a diagnostic, so a growth test
  * compares counts, never times. The addon's `layoutWork` answers every
@@ -244,6 +255,12 @@ export type ChildPosition = number
  * r" buffers.
  */
 export declare function chunk(treeId: TreeId, n: number): Uint32Array
+
+/**
+ * r" What the record-chunk pool has done in this process
+ * r" (`arena::memory::pool_stats`).
+ */
+export declare function chunkPoolStats(): ChunkPoolStats
 
 /**
  * r" The coordinate a read of the live tree `treeId` names the node

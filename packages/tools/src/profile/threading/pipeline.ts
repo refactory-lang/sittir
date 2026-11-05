@@ -144,6 +144,11 @@ function addTally(into: Tally, part: Tally): void {
 
 const loader = `${import.meta.url.endsWith('.js') ? 'dist' : 'src'}${process.execArgv.length > 0 ? ` (${process.execArgv.join(' ')})` : ''}`;
 
+function chunkPoolOf(native: object) {
+	const stats = (native as { chunkPoolStats?: () => { fresh: number; reused: number; freed: number; pooled: number } }).chunkPoolStats?.();
+	return { on: process.env.SITTIR_CHUNK_POOL === '1', ...stats };
+}
+
 const collect = (): void => (globalThis as { gc?: () => void }).gc?.();
 
 const yielded = (): Promise<void> => new Promise((resolve) => setImmediate(resolve));
@@ -346,7 +351,7 @@ async function batch(options: PipelineOptions, threads: number) {
 		collect();
 		rounds.push(once());
 	}
-	return { storage: options.storage, threads, loader, pid: process.pid, node: process.version, peakRssBytes: process.resourceUsage().maxRSS * 1024, rounds };
+	return { storage: options.storage, threads, loader, chunkPool: chunkPoolOf(backend), pid: process.pid, node: process.version, peakRssBytes: process.resourceUsage().maxRSS * 1024, rounds };
 }
 
 async function workerMain(options: PipelineOptions, port: MessagePort): Promise<void> {
@@ -423,7 +428,8 @@ async function pooled(options: PipelineOptions, workers: number) {
 	const rounds: PooledRound[] = [];
 	for (let i = 0; i < options.rounds; i++) rounds.push(await once());
 	await Promise.all(pool.map((worker) => worker.terminate()));
-	return { storage: options.storage, workers, schedule, chunks: chunks.length, loader, pid: process.pid, node: process.version, startupMs, peakRssBytes: process.resourceUsage().maxRSS * 1024, rounds };
+	const chunkPool = chunkPoolOf(await nativeBackendOf('typescript'));
+	return { storage: options.storage, workers, schedule, chunks: chunks.length, loader, chunkPool, pid: process.pid, node: process.version, startupMs, peakRssBytes: process.resourceUsage().maxRSS * 1024, rounds };
 }
 
 export async function pipeline(options: PipelineOptions) {
@@ -460,6 +466,7 @@ export async function pipeline(options: PipelineOptions) {
 	return {
 		storage: options.storage,
 		loader,
+		chunkPool: chunkPoolOf(ctx.backend),
 		pid: process.pid,
 		node: process.version,
 		buildProfile: ctx.engine.diagnostics.buildProfile,
