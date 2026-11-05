@@ -81,6 +81,19 @@ fn the_trivia_table_of_a_chain_of_blocks_opens_and_closes_each_depth_stretch_onc
 }
 
 #[test]
+fn the_record_of_a_chain_of_blocks_tallies_the_same_text_at_each_level() {
+    let [one, two, four] = [100, 200, 400].map(|levels| {
+        on_deep_stack(move || {
+            let tree = parsed_rust(&block_chain(levels));
+            tree.snapshot::<AnyNode>(NodeIndex::ROOT, None).expect("a snapshot");
+            tree.records_scanned()
+        })
+    });
+    assert_ne!(one, 0, "the snapshot renders a record");
+    assert_eq!(four - two, 2 * (two - one), "bytes tallied at 100, 200 and 400 levels: {one}, {two}, {four}");
+}
+
+#[test]
 fn the_depth_moves_of_every_node_of_a_chain_walk_its_nodes_once() {
     use sittir_core::render::SourceTable;
     for levels in [100, 200, 400] {

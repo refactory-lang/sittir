@@ -79,6 +79,40 @@ pub fn load_fixtures(grammar: &str) -> Vec<ParityFixture> {
         .unwrap_or_else(|e| panic!("failed to parse fixtures for {grammar}: {e}"))
 }
 
+/// Every distinct round-trip fixture source of the grammar `grammar`.
+///
+/// # Panics
+///
+/// If the grammar's fixtures cannot be loaded (`load_fixtures`).
+#[must_use]
+pub fn fixture_sources(grammar: &str) -> Vec<String> {
+    let mut sources: Vec<String> = load_fixtures(grammar)
+        .into_iter()
+        .filter_map(|fixture| match fixture {
+            ParityFixture::RoundTrip(fixture) => Some(fixture.source_in),
+            ParityFixture::Render { .. } => None,
+        })
+        .collect();
+    sources.sort_unstable();
+    sources.dedup();
+    sources
+}
+
+/// What `$check` answers for each of the five grammars, by name: called
+/// with the grammar's name, the grammar, and its default options.
+#[macro_export]
+macro_rules! each_grammar {
+    ($check:ident) => {
+        [
+            ("python", $check("python", ::sittir_python::PythonGrammar, ::sittir_python::render::options::defaults)),
+            ("regex", $check("regex", ::sittir_regex::RegexGrammar, ::sittir_regex::render::options::defaults)),
+            ("rust", $check("rust", ::sittir_rust::RustGrammar, ::sittir_rust::render::options::defaults)),
+            ("scm", $check("scm", ::sittir_scm::ScmGrammar, ::sittir_scm::render::options::defaults)),
+            ("typescript", $check("typescript", ::sittir_typescript::TypeScriptGrammar, ::sittir_typescript::render::options::defaults)),
+        ]
+    };
+}
+
 /// Writes the node at `index` its own inner side back, unchanged: a write in
 /// its range, so its render is its template's, with no text changed. A test
 /// harness only; no engine path writes a side to force a template.

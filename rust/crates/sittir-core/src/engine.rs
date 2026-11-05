@@ -62,11 +62,12 @@ pub trait EngineGrammar: Copy {
         Vec::new()
     }
     /// Renders the node the cursor is on, read by `ctx` `depth` levels
-    /// down, from its templates under `render` (`Lookups::recorded`), and
-    /// answers the text. Refuses a read the model has no route for, naming
-    /// it, and a render that fails. A grammar with no nodes renders nothing.
-    /// The cursor was created at the tree's root, and a read that succeeds
-    /// leaves it where it started (`ReadNode::read`).
+    /// down, from its templates under `render`, recording what it writes
+    /// into `baseline` (`Lookups::recorded`); a recording render writes no
+    /// text (`SpacingWriter::with_recording`). Refuses a read the model has
+    /// no route for, naming it, and a render that fails. A grammar with no
+    /// nodes renders nothing. The cursor was created at the tree's root, and
+    /// a read that succeeds leaves it where it started (`ReadNode::read`).
     fn render_read(
         self,
         cursor: &mut tree_sitter::TreeCursor<'_>,
@@ -74,9 +75,9 @@ pub trait EngineGrammar: Copy {
         ctx: &mut crate::read::ReadCtx<'_>,
         render: &crate::prepare::RenderContext<'_>,
         baseline: &mut crate::baseline::Baseline,
-    ) -> Result<String, String> {
+    ) -> Result<(), String> {
         let _ = (cursor, depth, ctx, render, baseline);
-        Ok(String::new())
+        Ok(())
     }
     /// The children of the node the cursor is on as its read routes them
     /// (`ReadNode::routes`); none for a node read without routes, or a
@@ -1193,6 +1194,13 @@ impl<G: EngineGrammar> ParsedTree<G> {
         self.records.lock().unwrap_or_else(std::sync::PoisonError::into_inner).len()
     }
 
+    /// The bytes of text the tree's records tallied a character at a time
+    /// (`baseline::Baseline::scanned`), over every record rendered; a
+    /// record whose render refused holds none.
+    pub fn records_scanned(&self) -> u64 {
+        self.records.lock().unwrap_or_else(std::sync::PoisonError::into_inner).values().filter_map(|record| record.as_ref().as_ref().ok()).map(crate::baseline::Baseline::scanned).sum()
+    }
+
     /// How far the region of the node `region` is read for `run`: deep enough
     /// that every node between it and the run whose span starts or ends
     /// inside the run or at its edges renders from its template, and at least
@@ -1684,7 +1692,7 @@ impl<'t, G: EngineGrammar> Lookups<'t, G> {
         let render = crate::prepare::RenderContext { options: &tree.read_options, sources: &sides };
         let rendered = tree.grammar.render_read(&mut self.cursor, depth, &mut ctx, &render, &mut recorded);
         tree.work.record_nodes(recorded.entered());
-        let record = Arc::new(rendered.map(|_| recorded));
+        let record = Arc::new(rendered.map(|()| recorded));
         let replaced = tree.records.lock().unwrap_or_else(std::sync::PoisonError::into_inner).insert((index, depth), Arc::clone(&record));
         tree.count_cached(&record, replaced.as_ref());
         record

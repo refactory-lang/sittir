@@ -374,7 +374,9 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
     }
 
     /// Records the line breaks the render writes at each gap into
-    /// `baseline`, when one is given (`baseline::Recorder`).
+    /// `baseline`, when one is given (`baseline::Recorder`). A recording
+    /// render measures what it writes: its recorder counts the text, and no
+    /// text reaches the output (`emit`, `pay_indent`).
     #[must_use]
     pub fn with_recording(mut self, baseline: Option<&'a mut crate::baseline::Baseline>) -> Self {
         self.recorder = baseline.map(crate::baseline::Recorder::new);
@@ -399,9 +401,12 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
         self
     }
 
-    /// The text written once per depth level after every newline.
+    /// The text written once per depth level after every newline. It holds
+    /// no line break, so a line's indentation is that many copies of it and
+    /// tallies as that many of its tally (`pay_indent`).
     #[must_use]
     pub fn with_indent(mut self, indent: &'a str) -> Self {
+        debug_assert!(!indent.contains('\n'), "an indentation unit holds no line break: {indent:?}");
         self.indent = indent;
         self
     }
@@ -427,6 +432,12 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
     /// not itself a newline pays it at the depth current at that moment, so a
     /// dedent between the newline and a closing delimiter puts the delimiter
     /// at the outer depth and blank lines carry no trailing spaces.
+    ///
+    /// A recording render pays it by count: its recorder tallies the unit
+    /// once for each level, and the line's last character is the unit's
+    /// (`baseline::Recorder::indented`). While a trailing run defers, the
+    /// indentation is written into the run as text, which the writer writes
+    /// later (`write_deferred`).
     fn pay_indent(&mut self, first: char) -> std::fmt::Result {
         if first == '\n' {
             return Ok(());
@@ -436,12 +447,35 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
         }
         self.indent_pending = false;
         self.line_depth = self.levels();
-        let indent = self.indent.repeat(self.line_depth);
-        self.emit(&indent)?;
-        if let Some(last) = indent.chars().next_back() {
+        let deferring = self.deferring.is_some();
+        let paid = self.recorder.as_mut().filter(|_| !deferring).map(|recorder| recorder.indented(self.indent, self.line_depth));
+        if let Some(paid) = paid {
+            if cfg!(debug_assertions) {
+                self.check_paid(paid);
+            }
+        } else {
+            let indent = self.indent.repeat(self.line_depth);
+            self.emit(&indent)?;
+        }
+        if let Some(last) = self.indent_last() {
             self.last = Some(last);
         }
         Ok(())
+    }
+
+    /// The last character of the current line's indentation: its unit's,
+    /// when the line indents.
+    fn indent_last(&self) -> Option<char> {
+        self.indent.chars().next_back().filter(|_| self.line_depth > 0)
+    }
+
+    /// The indentation a recording render paid by count, checked against
+    /// the text the writer writes for it: the same tally, and the same last
+    /// character. Run in unoptimized builds alone, since writing the text is
+    /// the cost the count saves.
+    fn check_paid(&self, paid: crate::baseline::Tally) {
+        let text = self.indent.repeat(self.line_depth);
+        assert_eq!((paid, self.indent_last()), (crate::baseline::Tally::of(&text), text.chars().next_back()), "{} levels of {:?} paid by count", self.line_depth, self.indent);
     }
 
     /// The levels the next line indents: the template's depth and the
@@ -496,6 +530,7 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
     }
 
     /// Where written text goes: the output, or the buffer of a deferred run.
+    /// A recording render's text reaches its recorder alone.
     fn emit(&mut self, s: &str) -> std::fmt::Result {
         if let Some(recorder) = self.recorder.as_mut() {
             recorder.emitted(s);
@@ -505,6 +540,7 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
                 buffer.push_str(s);
                 Ok(())
             }
+            None if self.recorder.is_some() => Ok(()),
             None => self.inner.write_str(s),
         }
     }

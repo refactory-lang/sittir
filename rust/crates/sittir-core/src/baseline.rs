@@ -65,6 +65,11 @@ impl Tally {
         Self { breaks: self.breaks + other.breaks, spaces: self.spaces + other.spaces, tabs: self.tabs + other.tabs }
     }
 
+    /// The tally of `n` copies of the text this tallies.
+    fn times(self, n: u32) -> Self {
+        Self { breaks: self.breaks * n, spaces: self.spaces * n, tabs: self.tabs * n }
+    }
+
     /// The whitespace a gap of this tally writes, as a layout class reads it:
     /// its line breaks alone when it breaks the line, its spaces and tabs
     /// otherwise.
@@ -122,6 +127,7 @@ pub struct Baseline {
     closes: CountedMap<u32, (Tally, Tally)>,
     frames: CountedMap<NodeIndex, FrameItems>,
     entered: u32,
+    scanned: u64,
 }
 
 impl HeapBytes for Tally {
@@ -156,7 +162,7 @@ impl HeapBytes for FrameItems {
 
 impl HeapBytes for Baseline {
     fn heap_bytes(&self) -> usize {
-        let Self { opens, closes, frames, entered: _ } = self;
+        let Self { opens, closes, frames, entered: _, scanned: _ } = self;
         opens.heap_bytes() + closes.heap_bytes() + frames.heap_bytes()
     }
 }
@@ -185,6 +191,14 @@ impl Baseline {
     #[must_use]
     pub fn entered(&self) -> u32 {
         self.entered
+    }
+
+    /// The bytes of text the recording render tallied a character at a
+    /// time: all it wrote but the indentation it paid by count
+    /// (`Recorder::indented`).
+    #[must_use]
+    pub fn scanned(&self) -> u64 {
+        self.scanned
     }
 }
 
@@ -252,7 +266,20 @@ impl<'a> Recorder<'a> {
 
     /// Text reached the output, or the run being deferred.
     pub fn emitted(&mut self, s: &str) {
-        let tally = Tally::of(s);
+        self.baseline.scanned += s.len() as u64;
+        self.tallied(Tally::of(s));
+    }
+
+    /// A line's indentation reached the output, `levels` copies of `unit`,
+    /// counted rather than written: what it tallies. The unit holds no line
+    /// break (`SpacingWriter::with_indent`).
+    pub fn indented(&mut self, unit: &str, levels: usize) -> Tally {
+        let tally = Tally::of(unit).times(crate::types::narrow(levels));
+        self.tallied(tally);
+        tally
+    }
+
+    fn tallied(&mut self, tally: Tally) {
         match self.deferring.as_mut() {
             Some(run) => run.written = run.written.plus(tally),
             None => self.written = self.written.plus(tally),

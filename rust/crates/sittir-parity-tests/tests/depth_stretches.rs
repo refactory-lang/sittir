@@ -7,22 +7,13 @@
 use sittir_core::engine::EngineGrammar;
 use sittir_core::options::ResolvedOptions;
 use sittir_core::types::NodeIndex;
-use sittir_parity_tests::{load_fixtures, parsed, ParityFixture};
+use sittir_parity_tests::{each_grammar, fixture_sources, parsed};
 
 /// The stretches of every distinct round-trip fixture source of `name`,
 /// each checked to lie inside the one open around it, if any: their count.
 fn stretches_nest<G: EngineGrammar + Copy>(name: &str, grammar: G, options: fn() -> ResolvedOptions) -> usize {
-    let mut sources: Vec<String> = load_fixtures(name)
-        .into_iter()
-        .filter_map(|fixture| match fixture {
-            ParityFixture::RoundTrip(fixture) => Some(fixture.source_in),
-            ParityFixture::Render { .. } => None,
-        })
-        .collect();
-    sources.sort_unstable();
-    sources.dedup();
     let mut checked = 0;
-    for source in &sources {
+    for source in &fixture_sources(name) {
         let tree = parsed(grammar, options(), source);
         let walk = sittir_core::trivia_table::walk(tree.tree().root_node(), NodeIndex::ROOT, source);
         let mut open: Vec<(u32, u32)> = Vec::new();
@@ -42,13 +33,7 @@ fn stretches_nest<G: EngineGrammar + Copy>(name: &str, grammar: G, options: fn()
 
 #[test]
 fn every_fixture_source_s_depth_stretches_nest() {
-    let counts = [
-        ("python", stretches_nest("python", sittir_python::PythonGrammar, sittir_python::render::options::defaults)),
-        ("regex", stretches_nest("regex", sittir_regex::RegexGrammar, sittir_regex::render::options::defaults)),
-        ("rust", stretches_nest("rust", sittir_rust::RustGrammar, sittir_rust::render::options::defaults)),
-        ("scm", stretches_nest("scm", sittir_scm::ScmGrammar, sittir_scm::render::options::defaults)),
-        ("typescript", stretches_nest("typescript", sittir_typescript::TypeScriptGrammar, sittir_typescript::render::options::defaults)),
-    ];
+    let counts = each_grammar!(stretches_nest);
     eprintln!("stretches checked: {counts:?}");
     assert!(counts.iter().filter(|(_, count)| *count > 0).count() >= 3, "the grammars that declare depth regions have stretches: {counts:?}");
 }
