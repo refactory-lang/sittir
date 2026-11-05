@@ -60,7 +60,7 @@ describe('the portable round trip', () => {
 });
 
 describe.each(Object.entries(CARRIED_CEILING))('the portable round trip over the %s corpus', (grammar, ceiling) => {
-	it(`carries ${ceiling} entries whole, by a fixed set of kinds and reasons: a new carry or a new carried kind is a regression, and both only shrink as the bindings claim the kinds and flags carried`, async () => {
+	it(`carries ${ceiling} entries whole, by a fixed set of kinds and reasons: a new carry or a new carried kind is a regression, and both only shrink as the bindings claim the kinds and flags carried; no node a path claims is carried as unclaimed`, async () => {
 		const result = await runPortableRoundTrip(grammar);
 		const pairs = [
 			...new Set(
@@ -69,5 +69,6 @@ describe.each(Object.entries(CARRIED_CEILING))('the portable round trip over the
 		].sort();
 		expect(pairs).toEqual(CARRIED_PAIRS[grammar as keyof typeof CARRIED_CEILING]);
 		expect(result?.carried.length).toBe(ceiling);
+		expect(result?.armless).toEqual([]);
 	}, 300_000);
 });
