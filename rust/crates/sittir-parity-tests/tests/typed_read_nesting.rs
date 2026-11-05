@@ -9,11 +9,16 @@ const TWO_MIB: usize = 2 * 1024 * 1024;
 const LEVELS: [usize; 4] = [1, 10, 40, 200];
 
 /// What the typed read may cost in stack, pinned per target and profile from
-/// the measured values (frames are fixed at compile time, so there is no jitter
-/// to pad for): the least stack, in KiB, at each of `LEVELS`. The slope between
-/// two levels is not gated, since one level's 8 KiB search granularity swings
-/// it. Each only tightens. A target with no row fails with its own
-/// measurement, so pinning it is one edit.
+/// the measured values, unpadded: the least stack, in KiB, at each of
+/// `LEVELS`. The read's frames are fixed at compile time, so its need repeats
+/// exactly, and so does what a thread of a given size leaves it, except on
+/// Windows: there a thread's stack is reserved in 64 KiB steps, and where the
+/// thread starts moves by up to about 2 KiB from one launch to the next. A
+/// Windows value is the 64 KiB step that suffices, and a need within that
+/// jitter of a step's edge reads a step apart in different runs. The slope
+/// between two levels is not gated, since one level's 8 KiB search
+/// granularity swings it. Each only tightens. A target with no row fails with
+/// its own measurement, so pinning it is one edit.
 struct Ceilings {
     os: &'static str,
     arch: &'static str,
