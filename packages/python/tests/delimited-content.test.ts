@@ -60,6 +60,10 @@ describe("an interpolating string's built free text", () => {
 		);
 	});
 
+	it('refuses a brace after a backslash, which escapes nothing before a brace', () => {
+		expect(() => rendered(b.string({ prefix: 'f', contents: content('\\{evil()}') }))).toThrow('holds `{`');
+	});
+
 	it('refuses a brace under an opaque prefix', () => {
 		const read = readString('bf"y"') as unknown as { prefix(): string | undefined; readonly $with: { contents(...items: unknown[]): { $render(): unknown } } };
 		expect(read.prefix()).toBeUndefined();
