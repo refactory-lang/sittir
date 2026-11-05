@@ -1,0 +1,11 @@
+inventory: depth 1, 2410 files, load 26.5, loader dist (--expose-gc)
+
+files 2410, refused 0, children refused along the chains 0
+render on hydrated trees, corpus total: trivia table 785 ms (80%), first render 194 ms (20%); a second render 8 ms
+trivia table step counts per node, by file size in nodes:
+            all: 2410 files,  2924955 nodes, 0.050 steps, 0.092 stretch steps
+         0-2000: 2147 files,   748493 nodes, 0.053 steps, 0.132 stretch steps
+     2000-20000:  255 files,  1069316 nodes, 0.052 steps, 0.158 stretch steps
+   20000-100000:    4 files,   111846 nodes, 0.030 steps, 0.018 stretch steps
+        100000+:    4 files,   995300 nodes, 0.047 steps, 0.000 stretch steps
+

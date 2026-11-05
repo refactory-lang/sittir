@@ -7,7 +7,9 @@ its largest child's. A file's render cost is its trivia build plus its first ren
 the largest unit at L on its critical path, so on P threads it renders in at least cost * max(share_L, 1 / P),
 share_L being the largest unit's nodes over the file's: a ceiling that charges nothing for the split or the join.
 With files already spread over P workers, a corpus's renders take at least max(total / P, the largest file's
-bound). Several inventories of the same files are averaged per file first."""
+bound). Several inventories of the same files are averaged per file first. Rows that carry the trivia table's step
+counts (triviaSteps, stretchSteps) also get those counts per node, by file size; they are counts, so load can't
+move them."""
 import json, statistics, sys
 
 THREADS = (2, 4, 8)
@@ -36,6 +38,8 @@ for path, rows in by_path.items():
         'firstMs': mean(rows, 'firstMs'),
         'againMs': mean(rows, 'againMs'),
         'levels': rows[0]['levels'],
+        'triviaSteps': rows[0].get('triviaSteps'),
+        'stretchSteps': rows[0].get('stretchSteps'),
         'childrenFirstMs': [statistics.fmean(row['levels'][l]['childrenFirstMs'] for row in rows) for l in range(len(rows[0]['levels']))],
     }
     files[path]['costMs'] = files[path]['triviaMs'] + files[path]['firstMs']
@@ -58,6 +62,14 @@ again = sum(f['againMs'] for f in files.values())
 total = trivia + first
 print(f'\nfiles {len(files)}, refused {len(failed)}, children refused along the chains {sum(x["refused"] for f in files.values() for x in f["levels"])}')
 print(f'render on hydrated trees, corpus total: trivia table {trivia:.0f} ms ({trivia / total:.0%}), first render {first:.0f} ms ({first / total:.0%}); a second render {again:.0f} ms')
+if all(f['triviaSteps'] is not None for f in files.values()):
+    print('trivia table step counts per node, by file size in nodes:')
+    for low, high in ((0, None), (0, 2000), (2000, 20000), (20000, 100000), (100000, None)):
+        band = [f for f in files.values() if f['nodes'] >= low and (high is None or f['nodes'] < high)]
+        if band:
+            nodes = sum(f['nodes'] for f in band)
+            label = 'all' if (low, high) == (0, None) else f"{low}+" if high is None else f'{low}-{high}'
+            print(f"  {label:>13}: {len(band):4} files, {nodes:8} nodes, {sum(f['triviaSteps'] for f in band) / nodes:.3f} steps, {sum(f['stretchSteps'] for f in band) / nodes:.3f} stretch steps")
 
 print('\nlargest files by render cost: trivia + first render ms, share of the corpus, then per level the children and the largest child\'s share of the file\'s nodes')
 for path, f in sorted(files.items(), key=lambda kv: -kv[1]['costMs'])[:8]:

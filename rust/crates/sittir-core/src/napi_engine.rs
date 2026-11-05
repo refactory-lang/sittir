@@ -2145,8 +2145,9 @@ where
         Ok(ms(at))
     };
     let at = Instant::now();
-    let _ = parsed.trivia_table();
+    let built = parsed.trivia_table();
     let trivia = ms(at);
+    let (steps, stretch_steps) = (built.steps(), built.stretch_steps());
     let first = timed(crate::types::NodeIndex::ROOT)?;
     let again = timed(crate::types::NodeIndex::ROOT)?;
     let mut cursor = parsed.tree().walk();
@@ -2182,7 +2183,7 @@ where
         }
         unit = largest;
     }
-    Ok(serde_json::json!({ "bytes": source.len(), "nodes": nodes, "triviaMs": trivia, "firstMs": first, "againMs": again, "levels": levels }))
+    Ok(serde_json::json!({ "bytes": source.len(), "nodes": nodes, "triviaMs": trivia, "triviaSteps": steps, "stretchSteps": stretch_steps, "firstMs": first, "againMs": again, "levels": levels }))
 }
 
 /// Parses each of `sources` under its claim, hydrates its root's records to
