@@ -11,12 +11,12 @@ import {
 	SYMBOL,
 	TOKEN
 } from '../types/rule-types.ts'; // @rule-type-consts
-import { isPrecWrapper, isTokenWrapperType } from '../types/runtime-shapes.ts';
+import { isPrecWrapper, isTokenWrapperType, type RuntimeRule } from '../types/runtime-shapes.ts';
 import type { AnyRule, Rule, RuleBase, RepeatRule, Repeat1Rule, SeqRule, DelimiterMode } from '../types/rule.ts';
 import { RuleWalker, SyntacticRuleWalker } from './rule-walker.ts';
 import { absorbIds, withId } from './rule-attrs.ts';
 import { isVisibleGroupAlias } from './rule-metadata.ts';
-import { choiceArmsOf, isParserHiddenName, terminalContentOf, type SymbolSource } from './rule-patterns.ts';
+import { choiceArmsOf, isParserHiddenName, rulesEqual, terminalContentOf, type SymbolSource } from './rule-patterns.ts';
 
 export type LeafMultiplicity = 'optional' | 'single' | 'array' | 'nonEmptyArray' | undefined;
 
@@ -92,8 +92,7 @@ export function isInlineTokenBody(rule: AnyRule): boolean {
 }
 
 export function isTerminalRootRule(rule: AnyRule): boolean {
-	const root = peelPrec(rule);
-	return root.type === PATTERN || root.type === STRING || isTokenWrapperType(root.type);
+	return isInlineTokenBody(rule) || peelPrec(rule).type === STRING;
 }
 
 export function isLiteralOnlyRule(rule: AnyRule): boolean {
@@ -237,7 +236,7 @@ export function mintInlineLiteralAliasStorage<R extends AnyRule>(rules: Record<s
 	for (const [display, { literals, body }] of byDisplay) {
 		const name = `_${display}`;
 		const reused = Object.hasOwn(rules, name);
-		if (literals.size === 1 && (!reused || JSON.stringify(rules[name]) === JSON.stringify(body))) storage.set(display, { name, body, reused });
+		if (literals.size === 1 && (!reused || rulesEqual(rules[name] as RuntimeRule, body as RuntimeRule))) storage.set(display, { name, body, reused });
 	}
 	if (storage.size === 0) return { rules, storageNames: [] };
 	const visit = (r: R): R => {
