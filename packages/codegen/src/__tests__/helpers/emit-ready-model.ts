@@ -10,7 +10,7 @@ export async function emitReadyModel(grammar: string) {
 	const { raw, nodeMap, generatedIdTables } = await compileGrammar({ package: grammarPackage(grammar) });
 	nodeMap.scc = computeNodeSCC(nodeMap);
 	const kindEntries = collectKindEntries(nodeMap, generatedIdTables);
-	const rulesConfig = { nodeMap, kindEntries, options: raw.options, whitespaceText: whitespaceTextOf(raw.visibleExternals, nodeMap) };
+	const rulesConfig = { nodeMap, kindEntries, options: raw.options, whitespaceText: whitespaceTextOf(raw.renderAs, nodeMap) };
 	const renderRules = resolveRenderRules(rulesConfig, (spaced) => stampStaticSpacing(nodeMap, grammar, spaced, kindEntries)).seamed;
 	collectSitePreferences({ nodeMap, kindEntries, renderRules, options: raw.options });
 	return { raw, nodeMap, kindEntries, generatedIdTables, renderRules };

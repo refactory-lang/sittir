@@ -1,3 +1,4 @@
+import { isWhitespaceBody } from './whitespace.ts';
 import {
 	ALIAS,
 	CHOICE,
@@ -497,9 +498,9 @@ export interface GeneratedKindEntry {
 
 export function stampVisibleExternals(
 	tables: GeneratedIdTables,
-	grammar: { readonly visibleExternals?: Readonly<Record<string, unknown>> }
+	grammar: { readonly visibleAs?: Readonly<Record<string, string>>; readonly renderAs?: Readonly<Record<string, { readonly type: string; readonly value?: unknown }>> }
 ): GeneratedIdTables {
-	const declared = Object.keys(grammar.visibleExternals ?? {});
+	const declared = Object.keys(grammar.visibleAs ?? {}).filter((name) => isWhitespaceBody(grammar.renderAs?.[name]));
 	if (declared.length === 0) return tables;
 	const stamped = new Map(toEntries(tables.kindIds));
 	for (const name of declared) {
@@ -1465,7 +1466,10 @@ export interface PredictedKindCatalog {
 	readonly keyCollisions: readonly KindKeyCollision[];
 }
 
-type PredictableGrammar = PredictedGrammar & { readonly visibleExternals?: Readonly<Record<string, unknown>> };
+type PredictableGrammar = PredictedGrammar & {
+	readonly visibleAs?: Readonly<Record<string, string>>;
+	readonly renderAs?: Readonly<Record<string, { readonly type: string; readonly value?: unknown }>>;
+};
 
 export function predictKindCatalog(grammar: PredictableGrammar): PredictedKindCatalog {
 	const table = predictSymbolTable(grammar);
@@ -1484,7 +1488,7 @@ export function predictKindCatalog(grammar: PredictableGrammar): PredictedKindCa
 }
 
 export function predictedKindsOf(
-	grammar: PredictedGrammar & { readonly visibleExternals?: Readonly<Record<string, unknown>> }
+	grammar: PredictableGrammar
 ): PredictedKinds {
 	try {
 		const { tables, entries, undefinedNames, keyCollisions } = predictKindCatalog(grammar);
@@ -1527,10 +1531,7 @@ export function renameAwareSymbolSource(facts: CatalogSymbolFacts): SymbolSource
 }
 
 export function predictedSymbolSourceOf(
-	grammar: PredictedGrammar & {
-		readonly rules: Readonly<Record<string, AnyRule>>;
-		readonly visibleExternals?: Readonly<Record<string, unknown>>;
-	}
+	grammar: PredictableGrammar & { readonly rules: Readonly<Record<string, AnyRule>> }
 ): SymbolSource {
 	return renameAwareSymbolSource({ ...symbolFactsOf(grammar), kindEntries: predictKindCatalog(grammar).entries });
 }

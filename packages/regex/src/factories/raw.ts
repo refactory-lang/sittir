@@ -44,6 +44,7 @@ export const buildControlLetterEscape = dispatched(() => backend().buildControlL
 export const buildIdentityEscape = dispatched(() => backend().buildIdentityEscape);
 export const buildGroupName = dispatched(() => backend().buildGroupName);
 export const buildDecimalDigits = dispatched(() => backend().buildDecimalDigits);
+export const buildLazy = O.buildLazy;
 export const buildTermGroup = dispatched(() => backend().buildTermGroup);
 export const buildCountQuantifierGroup = dispatched(() => backend().buildCountQuantifierGroup);
 export const buildCountQuantifierArm = dispatched(() => backend().buildCountQuantifierArm);
@@ -61,7 +62,6 @@ export const buildTight = O.buildTight;
 export const buildNewline = O.buildNewline;
 export const buildBlankline = O.buildBlankline;
 export const buildDoubleBlankline = O.buildDoubleBlankline;
-export const buildLazy = O.buildLazy;
 export const buildUnicodePropertyName = dispatched(() => backend().buildUnicodePropertyName);
 
 export const _factoryMap = {
@@ -102,6 +102,7 @@ export const _factoryMap = {
 	identity_escape: buildIdentityEscape,
 	group_name: buildGroupName,
 	decimal_digits: buildDecimalDigits,
+	lazy: buildLazy,
 	term_group: buildTermGroup,
 	count_quantifier_group: buildCountQuantifierGroup,
 	count_quantifier_arm: buildCountQuantifierArm,
@@ -117,7 +118,6 @@ export const _factoryMap = {
 	_newline: buildNewline,
 	_blankline: buildBlankline,
 	_double_blankline: buildDoubleBlankline,
-	lazy: buildLazy,
 	unicode_property_name: buildUnicodePropertyName
 } as const;
 export type _FactoryMap = typeof _factoryMap;

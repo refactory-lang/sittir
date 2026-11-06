@@ -55,6 +55,7 @@ const _leafRegistry: { readonly [kind: string]: _LeafEntry } = {
 	identity_escape: { factory: (content: string) => _resolveByKind('identity_escape', content) },
 	group_name: { pattern: F._leafRe_buildGroupName, factory: F.buildGroupName },
 	decimal_digits: { pattern: F._leafRe_buildDecimalDigits, factory: F.buildDecimalDigits },
+	lazy: { values: ['?'], factory: () => F.buildLazy },
 	character_class_escape_text1: {
 		pattern: F._leafRe_buildCharacterClassEscapeText1,
 		factory: F.buildCharacterClassEscapeText1
@@ -68,7 +69,6 @@ const _leafRegistry: { readonly [kind: string]: _LeafEntry } = {
 	_newline: { values: ['\n'], factory: () => F.buildNewline },
 	_blankline: { values: ['\n\n'], factory: () => F.buildBlankline },
 	_double_blankline: { values: ['\n\n\n'], factory: () => F.buildDoubleBlankline },
-	lazy: { values: ['?'], factory: () => F.buildLazy },
 	unicode_property_name: { pattern: F._leafRe_buildUnicodePropertyName, factory: F.buildUnicodePropertyName }
 };
 const _AFFIXED_KINDS: ReadonlySet<string> = new Set(['identity_escape']);
@@ -89,6 +89,7 @@ const _SLOTLESS_TEXT_KINDS: ReadonlySet<string> = new Set([
 	'control_letter_escape',
 	'group_name',
 	'decimal_digits',
+	'lazy',
 	'character_class_escape_text1',
 	'character_class_escape_text2',
 	'negation',
@@ -96,7 +97,6 @@ const _SLOTLESS_TEXT_KINDS: ReadonlySet<string> = new Set([
 	'_newline',
 	'_blankline',
 	'_double_blankline',
-	'lazy',
 	'unicode_property_name'
 ]);
 
@@ -241,7 +241,7 @@ const _STRING_CAPABLE_BRANCHES: ReadonlySet<string> = new Set([
 ]);
 const _KIND_ID_STORED: ReadonlySet<number> = new Set([
 	2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 14, 15, 16, 17, 19, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 40, 47,
-	48, 49, 50, 54, 82, 89
+	48, 49, 50, 54, 77, 83
 ]);
 const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 	pattern: new Set([52, 53]),
@@ -251,7 +251,7 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 	non_capturing_group: new Set([51, 52, 53]),
 	backreference_escape: new Set([38]),
 	named_group_backreference: new Set([38]),
-	character_class_escape: new Set([41, 74, 80]),
+	character_class_escape: new Set([41, 74, 81]),
 	count_quantifier_group: new Set([39]),
 	unicode_property_value_expression_group: new Set([90])
 };
@@ -1227,6 +1227,10 @@ export const coerceToDecimalDigits: ConfigSeat<T.DecimalDigits.Loose, ReturnType
 	return F.buildDecimalDigits(input as Parameters<typeof F.buildDecimalDigits>[0]);
 };
 
+export function coerceToLazy(_input?: T.Lazy.Loose): typeof F.buildLazy {
+	return F.buildLazy;
+}
+
 export function resolveTermGroup_content(value: T.TermGroup.LooseConfig['content']): Admit<T.TermGroup['_content']> {
 	return coerceMixedEnumStorage(
 		_resolveKindEnum(
@@ -1513,10 +1517,6 @@ export function coerceToDoubleBlankline(_input?: T.DoubleBlankline.Loose): typeo
 	return F.buildDoubleBlankline;
 }
 
-export function coerceToLazy(_input?: T.Lazy.Loose): typeof F.buildLazy {
-	return F.buildLazy;
-}
-
 export const coerceToUnicodePropertyName: ConfigSeat<
 	T.UnicodePropertyName.Loose,
 	ReturnType<typeof F.buildUnicodePropertyName>
@@ -1563,6 +1563,7 @@ export interface _FromMap {
 	readonly identity_escape: typeof coerceToIdentityEscape;
 	readonly group_name: typeof coerceToGroupName;
 	readonly decimal_digits: typeof coerceToDecimalDigits;
+	readonly lazy: typeof coerceToLazy;
 	readonly term_group: typeof coerceToTermGroup;
 	readonly count_quantifier_group: typeof coerceToCountQuantifierGroup;
 	readonly count_quantifier_arm: typeof coerceToCountQuantifierArm;
@@ -1578,7 +1579,6 @@ export interface _FromMap {
 	readonly _newline: typeof coerceToNewline;
 	readonly _blankline: typeof coerceToBlankline;
 	readonly _double_blankline: typeof coerceToDoubleBlankline;
-	readonly lazy: typeof coerceToLazy;
 	readonly unicode_property_name: typeof coerceToUnicodePropertyName;
 }
 export const _fromMap: _FromMap = {
@@ -1619,6 +1619,7 @@ export const _fromMap: _FromMap = {
 	identity_escape: coerceToIdentityEscape,
 	group_name: coerceToGroupName,
 	decimal_digits: coerceToDecimalDigits,
+	lazy: coerceToLazy,
 	term_group: coerceToTermGroup,
 	count_quantifier_group: coerceToCountQuantifierGroup,
 	count_quantifier_arm: coerceToCountQuantifierArm,
@@ -1634,6 +1635,5 @@ export const _fromMap: _FromMap = {
 	_newline: coerceToNewline,
 	_blankline: coerceToBlankline,
 	_double_blankline: coerceToDoubleBlankline,
-	lazy: coerceToLazy,
 	unicode_property_name: coerceToUnicodePropertyName
 };

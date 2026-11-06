@@ -4,6 +4,7 @@ import { assemble, AssembleCtx, type AssembledNodeMap } from '../../compiler/ass
 import { stampIrSurface } from '../../compiler/model/ir-surface.ts';
 import { collectGrammarDiagnosticsForGrammar } from '../../compiler/diagnostics/grammar-diagnostics.ts';
 import { predictedIdTablesOf, predictedKindsOf, type GeneratedIdEntry, type GeneratedIdTables } from '../../dsl/symbol-table.ts';
+import { buildRuleCatalog } from '../../compiler/rule-catalog.ts';
 import type { LinkedGrammar, RawGrammar } from '../../compiler/types.ts';
 import type { NodeMapWithIdTables } from './node-map-fixtures.ts';
 
@@ -39,4 +40,24 @@ export function assemblePredicted(
 
 export function diagnosePredicted(raw: RawGrammar): ReturnType<typeof collectGrammarDiagnosticsForGrammar> {
 	return collectGrammarDiagnosticsForGrammar({ rawGrammar: raw, generatedIdTables: rawIdTablesOf(raw) });
+}
+
+export function predictedRawGrammarOf(rules: Record<string, unknown>, supertypes: string[] = []): RawGrammar {
+	const { rules: catalogRules, ruleCatalog } = buildRuleCatalog(rules as never);
+	return withPredictedKinds({
+		name: 'synth',
+		fileTypes: [],
+		rules: catalogRules,
+		ruleCatalog,
+		evaluateSynthesized: new Set<string>(),
+		extras: [],
+		externals: [],
+		supertypes,
+		factoryInline: [],
+		inline: [],
+		conflicts: [],
+		precedences: [],
+		word: null,
+		references: []
+	});
 }

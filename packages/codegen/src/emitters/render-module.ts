@@ -175,7 +175,7 @@ export interface RenderModuleBundle {
 export interface RenderOptionsInputs {
 	readonly renderRules?: RenderRules;
 	readonly options?: OptionsConfig;
-	readonly visibleExternals?: Readonly<Record<string, Rule<'evaluate'>>>;
+	readonly renderAs?: Readonly<Record<string, Rule<'evaluate'>>>;
 	readonly sites?: readonly SitePreference[];
 	readonly addresses?: AddressTables;
 	readonly envelopePins?: Readonly<Record<string, EnvelopePin>>;
@@ -205,7 +205,7 @@ function synthesizeRenderModuleBundle(config: SynthesizeRenderModuleBundleConfig
 		generatedIdTables,
 		templates,
 		renderRules,
-		visibleExternals,
+		renderAs,
 		options,
 		sites,
 		addresses
@@ -213,7 +213,7 @@ function synthesizeRenderModuleBundle(config: SynthesizeRenderModuleBundleConfig
 	return {
 		emit: emitRenderModule(grammar, templates, nodeMap, generatedIdTables, {
 			renderRules,
-			visibleExternals,
+			renderAs,
 			options,
 			sites,
 			addresses
@@ -233,7 +233,7 @@ export class RenderModuleEmitter implements CodegenEmitter<RenderModuleBundle, E
 		this.#generatedIdTables = config.generatedIdTables;
 		this.#options = {
 			renderRules: config.renderRules,
-			visibleExternals: config.visibleExternals,
+			renderAs: config.renderAs,
 			options: config.options,
 			sites: config.sites,
 			addresses: config.addresses
@@ -1088,7 +1088,7 @@ function planRenderOptionsFor(
 		sites,
 		kindEntries,
 		nodeMap,
-		whitespaceTextOf(inputs.visibleExternals, nodeMap),
+		whitespaceTextOf(inputs.renderAs, nodeMap),
 		declaredIndent,
 		lang,
 		depthRegionsOf(inputs.renderRules, nodeMap),
@@ -3879,7 +3879,12 @@ function collectFixedLiterals(
 	for (const literal of projection.literals) {
 		if (projection.nodeKinds.has(literal.kind) || fixed.has(literal.kind)) continue;
 		const id = resolveLiteralKindId(literal, kindEntries);
-		if (id === undefined) continue;
+		if (id === undefined) {
+			if (literal.storesKindId !== true) continue;
+			throw new Error(
+				`render-module: ${literal.owner}.${literal.slot} stores '${literal.kind}' (text ${JSON.stringify(literal.text)}) as a kind id, but no kind entry carries it`
+			);
+		}
 		const member = kindEntries.find((entry) => entry.id === id)?.member;
 		if (member === undefined) {
 			throw new Error(`render-module: fixed literal '${literal.kind}' resolves kind id ${id}, which no kind entry has`);

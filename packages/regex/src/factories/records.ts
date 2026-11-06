@@ -1522,6 +1522,8 @@ function leafDecimalDigits(tree: TreeHandle, entry: BuiltText, site: LeafSite | 
 	return node;
 }
 
+export const buildLazy: TSKindId.Lazy = TSKindId.Lazy;
+
 export function buildTermGroup<
 	ContentSlot extends T.TermGroup.Config['content'],
 	QuantifierSlot extends T.TermGroup.Config['quantifier']
@@ -2093,8 +2095,6 @@ export const buildBlankline: TSKindId.Blankline = TSKindId.Blankline;
 
 export const buildDoubleBlankline: TSKindId.DoubleBlankline = TSKindId.DoubleBlankline;
 
-export const buildLazy: TSKindId.Lazy = TSKindId.Lazy;
-
 export function buildUnicodePropertyName(text: string): T.UnicodePropertyName.Bound {
 	if (typeof text !== 'string') throw new Error(`unicode_property_name: text must be a string: ${describeValue(text)}`);
 	if (text.length === 0) throw new Error(`unicode_property_name: text must be non-empty`);
@@ -2162,6 +2162,7 @@ export type FluentKindMap = {
 	identity_escape: T.IdentityEscape.Bound;
 	group_name: T.GroupName;
 	decimal_digits: T.DecimalDigits;
+	lazy: T.Lazy;
 	term_group: T.TermGroup.Bound;
 	count_quantifier_group: T.CountQuantifierGroup.Bound;
 	count_quantifier_arm: T.CountQuantifierArm.Bound;
@@ -2177,7 +2178,6 @@ export type FluentKindMap = {
 	_newline: T.Newline;
 	_blankline: T.Blankline;
 	_double_blankline: T.DoubleBlankline;
-	lazy: T.Lazy;
 	unicode_property_name: T.UnicodePropertyName;
 };
 
@@ -2219,6 +2219,7 @@ export const _factoryMap = {
 	identity_escape: buildIdentityEscape,
 	group_name: buildGroupName,
 	decimal_digits: buildDecimalDigits,
+	lazy: buildLazy,
 	term_group: buildTermGroup,
 	count_quantifier_group: buildCountQuantifierGroup,
 	count_quantifier_arm: buildCountQuantifierArm,
@@ -2234,7 +2235,6 @@ export const _factoryMap = {
 	_newline: buildNewline,
 	_blankline: buildBlankline,
 	_double_blankline: buildDoubleBlankline,
-	lazy: buildLazy,
 	unicode_property_name: buildUnicodePropertyName
 } as const;
 export type _FactoryMap = typeof _factoryMap;
@@ -2262,14 +2262,14 @@ export const builtViews: BuiltViews = Object.freeze({
 		72: withNamedGroupBackreference,
 		73: withCharacterClassEscape,
 		75: withUnicodePropertyValueExpression,
-		77: withTermGroup,
-		78: withCountQuantifierGroup,
-		79: withCountQuantifierArm,
-		80: withCharacterClassEscapeArm,
-		81: withUnicodePropertyValueExpressionGroup,
-		83: withInlineFlagsGroupEnable,
-		84: withInlineFlagsGroupToggle,
-		85: withInlineFlagsGroupDisable
+		78: withTermGroup,
+		79: withCountQuantifierGroup,
+		80: withCountQuantifierArm,
+		81: withCharacterClassEscapeArm,
+		82: withUnicodePropertyValueExpressionGroup,
+		84: withInlineFlagsGroupEnable,
+		85: withInlineFlagsGroupToggle,
+		86: withInlineFlagsGroupDisable
 	}),
 	words: Object.freeze({
 		37: 4,
@@ -2293,14 +2293,14 @@ export const builtViews: BuiltViews = Object.freeze({
 		72: 3,
 		73: 3,
 		75: 4,
-		77: 4,
-		78: 3,
-		79: 4,
+		78: 4,
+		79: 3,
 		80: 4,
-		81: 3,
-		83: 4,
-		84: 5,
-		85: 4
+		81: 4,
+		82: 3,
+		84: 4,
+		85: 5,
+		86: 4
 	}),
 	cells: Object.freeze({
 		37: 2,
@@ -2324,14 +2324,14 @@ export const builtViews: BuiltViews = Object.freeze({
 		72: 2,
 		73: 2,
 		75: 2,
-		77: 2,
 		78: 2,
 		79: 2,
 		80: 2,
 		81: 2,
-		83: 2,
+		82: 2,
 		84: 2,
-		85: 2
+		85: 2,
+		86: 2
 	}),
 	leaves: Object.freeze({
 		12: leafPatternCharacter,

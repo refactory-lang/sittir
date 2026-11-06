@@ -959,6 +959,12 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 		});
 	});
 
+	describe('lazy', () => {
+		it('is the kind id', () => {
+			expect(ir.lazy).toBe(TSKindId.Lazy);
+		});
+	});
+
 	describe('character_class_escape_text1', () => {
 		it('factory produces correct type', () => {
 			const node = ir.characterClassEscapeText1('\\d');
@@ -1025,12 +1031,6 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 			const node = ir.inlineFlagsGroupDisable({ disabled: { $type: TSKindId.Flags, text: 'test' } as never });
 			const rendered = node.$render!();
 			expect(rendered.length).toBeGreaterThan(0);
-		});
-	});
-
-	describe('lazy', () => {
-		it('is the kind id', () => {
-			expect(ir.lazy).toBe(TSKindId.Lazy);
 		});
 	});
 

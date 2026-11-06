@@ -29,6 +29,10 @@ import type { NodeSlotShape } from './render-module.ts';
 
 const SCALAR_STORAGE: ReadonlySet<string> = new Set(['boolean', 'bitflag', 'kindEnum', 'mixedEnum']);
 
+function isKindIdStorage(slot: AssembledNonterminal): boolean {
+	return slot.storageInfo?.kind === 'kindEnum' || slot.storageInfo?.kind === 'mixedEnum';
+}
+
 function isScalarStorage(slot: AssembledNonterminal): boolean {
 	const info = slot.storageInfo;
 	return info !== undefined && SCALAR_STORAGE.has(info.kind) && info.enumKindsById.size > 0;
@@ -40,6 +44,9 @@ export interface NodeLiteral {
 	readonly resolvedKindId?: number;
 	readonly immediate?: boolean;
 	readonly enumKind?: string;
+	readonly owner?: string;
+	readonly slot?: string;
+	readonly storesKindId?: boolean;
 }
 
 export interface NodeProjection {
@@ -111,7 +118,7 @@ function collectNodeLiterals(
 
 	for (const node of nodes) {
 		for (const field of node.slots) {
-			for (const { literal, fromKind } of fieldNodeLiterals(field, nodeMap)) add(literal, fromKind);
+			for (const { literal, fromKind } of fieldNodeLiterals(field, nodeMap)) add({ ...literal, owner: node.kind, slot: field.name, storesKindId: isKindIdStorage(field) }, fromKind);
 		}
 	}
 	return { literals, wireIds };

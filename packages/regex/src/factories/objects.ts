@@ -1427,6 +1427,8 @@ export function buildDecimalDigits(text: string | number | bigint): T.DecimalDig
 	return node as unknown as T.DecimalDigits.Bound;
 }
 
+export const buildLazy: TSKindId.Lazy = TSKindId.Lazy;
+
 export function buildTermGroup<
 	ContentSlot extends T.TermGroup.Config['content'],
 	QuantifierSlot extends T.TermGroup.Config['quantifier']
@@ -1993,8 +1995,6 @@ export const buildBlankline: TSKindId.Blankline = TSKindId.Blankline;
 
 export const buildDoubleBlankline: TSKindId.DoubleBlankline = TSKindId.DoubleBlankline;
 
-export const buildLazy: TSKindId.Lazy = TSKindId.Lazy;
-
 export function buildUnicodePropertyName(text: string): T.UnicodePropertyName.Bound {
 	if (typeof text !== 'string') throw new Error(`unicode_property_name: text must be a string: ${describeValue(text)}`);
 	if (text.length === 0) throw new Error(`unicode_property_name: text must be non-empty`);
@@ -2056,6 +2056,7 @@ export type FluentKindMap = {
 	identity_escape: T.IdentityEscape.Bound;
 	group_name: T.GroupName;
 	decimal_digits: T.DecimalDigits;
+	lazy: T.Lazy;
 	term_group: T.TermGroup.Bound;
 	count_quantifier_group: T.CountQuantifierGroup.Bound;
 	count_quantifier_arm: T.CountQuantifierArm.Bound;
@@ -2071,7 +2072,6 @@ export type FluentKindMap = {
 	_newline: T.Newline;
 	_blankline: T.Blankline;
 	_double_blankline: T.DoubleBlankline;
-	lazy: T.Lazy;
 	unicode_property_name: T.UnicodePropertyName;
 };
 
@@ -2113,6 +2113,7 @@ export const _factoryMap = {
 	identity_escape: buildIdentityEscape,
 	group_name: buildGroupName,
 	decimal_digits: buildDecimalDigits,
+	lazy: buildLazy,
 	term_group: buildTermGroup,
 	count_quantifier_group: buildCountQuantifierGroup,
 	count_quantifier_arm: buildCountQuantifierArm,
@@ -2128,7 +2129,6 @@ export const _factoryMap = {
 	_newline: buildNewline,
 	_blankline: buildBlankline,
 	_double_blankline: buildDoubleBlankline,
-	lazy: buildLazy,
 	unicode_property_name: buildUnicodePropertyName
 } as const;
 export type _FactoryMap = typeof _factoryMap;

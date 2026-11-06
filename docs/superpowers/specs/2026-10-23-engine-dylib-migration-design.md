@@ -1,6 +1,9 @@
 # The shared engine library: migration
 
-**Status**: Approved shape (A). The migration starts once `feat/records` is stable and on master.
+**Status**: Approved shape (A). The migration starts once `feat/records` is stable and on master. It's planned in two parts. The shared library (`docs/superpowers/plans/2026-11-06-engine-dylib-library.md`) comes first, then trees as objects and coordinates that carry their tree. Those two sections were amended on 2026-11-06 against what `feat/records` shipped:
+- napi was already at `napi10`;
+- lazy trivia's tree-owned sides took their writes through the live-tree table;
+- an arena link record carries its tree in one word, so the maintainer chose an arena-held slot over a pointer per link.
 **Scope**: the native crates (`sittir-engine`, `sittir-core`, the grammar crates), the native crate emitter, the grammar packages' build and packaging, and the JavaScript loader.
 **Evidence**: the probe report on `probe/engine-dylib` at 3923f9de6, `docs/superpowers/probes/2026-10-23-engine-dylib/README.md`. That branch does not merge; it is the record.
 
@@ -60,21 +63,40 @@ Under shape A, anything in sittir-core is one per addon, so a fact the process m
 
 ## Trees as objects
 
-A parsed tree is a JavaScript object that owns its `ParsedTree` and frees itself, replacing the live-tree table.
+A parsed tree is a JavaScript object, and it's freed when its last holder drops it. This replaces the live-tree table.
 
-- `napi_engine!` expands a `Tree` class in each grammar crate, so each grammar's class carries its own napi type tag. A tree of another grammar is refused, never cast.
-  - The tags come with `napi8`, so sittir-core's napi feature moves from `napi4` to `napi8`.
-- The engine parses into a `Tree`, reads through it, and renders with it as the source table (`ParsedTree` is already a `SourceTable`).
-- The JavaScript engine reads, renders and disposes through tree objects. The `FinalizationRegistry`, `disposeTree` and the live-tree table go.
+- **The class.** `napi_engine!` expands a `Tree` class in each grammar crate, so each grammar's class carries its own napi type tag (the workspace is already on `napi10`). A tree of another grammar is refused, never cast.
+- **Ownership.** A `Tree` object wraps a shared handle (an `Arc`) to the tree's cell, which holds the `ParsedTree` and its borrow.
+  - The holders are the `Tree` objects that wrap the handle and the arenas whose records link the tree (below).
+  - The tree is freed when the last holder drops it. Nothing else keeps a tree alive.
+  - There's no explicit tree dispose, as today.
+- **Exclusive writes, per tree.** Today a write borrows the whole live-tree table mutably, and a render holds a shared borrow of the whole table for the call, so any write during any render is refused. After the migration each tree carries its own borrow, taken without blocking:
+  - a render takes a read borrow of each tree its node reaches, for the length of the call;
+  - a write takes its tree's write borrow, and is refused by name while that tree is being read;
+  - a write to one tree during the render of another is allowed;
+  - placed sides stay lock-free inside the tree, as lazy trivia built them, and built records' sides stay engine-owned.
+- **Ready for threading.** `ParsedTree` is asserted `Send + Sync` at compile time, and the borrow is one a pool thread could take. So threading can parse on a pool thread and wrap the result on the JavaScript thread without changing this shape. No napi or V8 call runs off the JavaScript thread.
+- **Parse, read and render.** The engine parses into a `Tree`, reads through it, and renders with it as the source table (`ParsedTree` is already a `SourceTable`).
+- **What goes.** The JavaScript engine reads and renders through tree objects. The `FinalizationRegistry`, `disposeTree` and the live-tree table go. The two tools that call `disposeTree` directly (`validate/layout-runs.ts` and `profile/native-hydration.ts`) drop their holds instead.
 
 ### A coordinate carries its tree
 
-A parsed node's coordinate holds its `Tree` itself, not the tree's id. The render reads each coordinate's tree from the coordinate, and holding a node keeps its tree alive. The accepted cost is a pointer per reference, and a long-lived built node keeps its source trees in memory.
+A parsed node's coordinate reaches its tree through a holder, not through the tree's id. The render reads each coordinate's tree from it, and holding a node keeps its tree alive. A long-lived built node keeps its source trees in memory.
 
-- **The wire.** A coordinate crosses as its tree object, its descendant index and its span. `$treeHandle` packs no tree id, and nothing looks a tree up by id. The tree keeps its id as its identity (`TreeClaim`), never as the way to reach it.
-- **The hold is the coordinate.** Today a read object holds its tree through a token (`holdTree`) while its coordinate names the tree by id, and dropping the token (`detachCoordinates`) leaves a bare handle that the render refuses until the tree is held again. After the migration a copy of a node copies its coordinates and so holds their trees. The token, `holdTree`, `detachCoordinates` and the validators' detach-then-hold pairs go. A bare handle with no tree object does not exist.
-- **Built slots.** A built node's slot that takes a parsed node holds that node's coordinate, tree object included, where today it holds a handle whose tree the table must still have. A built node made from the nodes of two trees holds both, and each coordinate slices its own tree's source. It renders with no tree layer of options (render options spec, Precedence). One made from one tree's nodes renders over that tree's layer, found from its coordinates.
-- **The render takes no tree.** `render(node, options)` finds every source it needs on the node, and the tree argument that today names the one tree a render reads goes.
+- **Object storage.** A coordinate holds its `Tree` object, its descendant index and its span, and it crosses the boundary that way. `$treeHandle` packs no tree id. The generated wrappers' per-kind `[TREE]` stamp holds the `Tree` object instead of a token.
+- **Arena storage.** A link record stays 8 words. Its tree word holds a 32-bit slot into the arena's own table of the trees its records link.
+  - Each entry holds its tree, and is counted by the links to it. The last link's release drops the entry.
+  - The table is a holder, not a registry: it holds only trees the arena's own records reach, and nothing outside the arena looks a tree up in it.
+  - It replaces the JavaScript-side `BuiltArena` map of tree tokens.
+- **The hold is the coordinate.**
+  - *Today:* a read object holds its tree through a token (`holdTree`), while its coordinate names the tree by id. Dropping the token (`detachCoordinates`) leaves a bare handle, which the render refuses until the tree is held again.
+  - *After the migration:* a copy of a node copies its coordinates, and so holds their trees.
+  - What goes: the tokens, `holdTree`, `holdReadTree`, `carryReadTree`, `detachCoordinates`, and the validators' detach-then-hold pairs. A bare handle with no tree object doesn't exist.
+- **Identity.** The tree's id stays its identity (`TreeClaim`), never the way to reach it.
+- **Built slots.** A built node's slot that takes a parsed node holds that node's coordinate, tree included.
+  - A built node made from the nodes of two trees holds both, and each coordinate slices its own tree's source. It renders with no tree layer of options (render options spec, Precedence).
+  - One made from one tree's nodes renders over that tree's layer, found from its coordinates.
+- **The render takes no tree.** The public `render(node, options)` already takes none. Natively, `render`, `render_to_file`, `render_record` and `render_built` lose their tree-id argument. The options layer comes from the node's coordinates, and the sources come from the trees the node reaches, not from every live tree.
 
 ## Packaging
 
@@ -94,18 +116,23 @@ A parsed node's coordinate holds its `Tree` itself, not the tree's id. The rende
 
 engine-api reviews the sittir-core parts:
 - the counter's move and `TreeClaim`;
-- the `napi8` move;
-- the `Tree` class in `napi_engine!`;
+- the `Tree` class in `napi_engine!`, its per-tree borrow, and the `Send + Sync` assertion;
 - the end of the live-tree table;
-- the coordinate's tree object: the wire, the hold, built slots, and the render without a tree argument.
+- the coordinate's tree: the wire, the hold, the arena's held-tree table, built slots, and the render without a tree argument.
 
 ## Verification
 
-On every platform of the release matrix (macOS arm64; Linux x64 and arm64 with glibc; Linux x64 with musl; Windows x64), with real grammar packages laid out as they ship:
+On every platform of the release matrix, with real grammar packages laid out as they ship:
+- the platforms: macOS arm64; Linux x64 and arm64 with glibc; Linux x64 and arm64 with musl; Windows x64;
 - one engine image and one std image mapped after loading two grammars, from the first package's directory;
 - the runtime defined only in the engine; no addon defines a `ts_*` symbol, and each imports only what its scanner reads;
 - one tree-id counter, with `globalThis` untouched;
-- tree objects: a full read renders back the source; trees made and dropped are freed by GC; a tree of another grammar is refused;
+- tree objects:
+  - a full read renders back the source;
+  - trees made and dropped are freed once their last holder goes;
+  - a tree of another grammar is refused;
+  - a write to a tree during its own render is refused by name, and a write to another tree is allowed;
+- the arena: a link record stays 8 words, and a tree is freed after its last link's release and its last `Tree` object's collection;
 - coordinates: a built node holding nodes of two trees renders both sources with no tree layer, and one holding one tree's nodes renders over that tree's layer; a built node alone keeps its source trees alive, and dropping it frees them; no coordinate crosses the boundary without its tree object;
 - version skew refused both ways: the same version with another stamp at load, and a new version through the mapped loader error;
 - the standing gates: `validate:native` rows identical, the full suite, `cargo test --workspace --no-default-features`, workspace type-check and lint;

@@ -16,7 +16,7 @@ const token = (content: LinkRule): LinkRule => ({ type: TOKEN, content, immediat
 function structuredWithRecords(rule: LinkRule): { readonly rule: LinkRule; readonly diagnostics: DiagnosticSink } {
 	const rules: Record<string, LinkRule> = { kind: rule };
 	const diagnostics = new DiagnosticSink();
-	structureTokenInterior(rules, diagnostics);
+	structureTokenInterior(rules, { diagnostics, wordMatcher: /[a-z]+/ });
 	return { rule: rules.kind!, diagnostics };
 }
 
@@ -189,6 +189,26 @@ describe('structureTokenInterior — named parts inside nested structure', () =>
 				message: expect.stringMatching(/names a part inside an optional group next to an unnamed pattern/)
 			})
 		]);
+	});
+
+	it('records an unnamed optional punctuation literal as a blocking shape, proposes field(...) and leaves the token opaque', () => {
+		const original = token(seq(str('0x'), named('integer', pat('[0-9a-f]+')), optional(str('.')), named('fraction', pat('[0-9a-f]+'))));
+		const { rule, diagnostics } = structuredWithRecords(original);
+		expect(rule).toBe(original);
+		expect(diagnostics.all()).toEqual([
+			expect.objectContaining({
+				code: 'token-interior-unstructurable',
+				ownerKind: 'kind',
+				canProceed: false,
+				details: { shape: 'unnamed-flag', text: '.' },
+				message: expect.stringMatching(/field\('<name>'/)
+			})
+		]);
+	});
+
+	it('names the flag of an optional punctuation literal the author gives a field', () => {
+		const members = membersOf(structured(token(seq(str('0x'), named('integer', pat('[0-9a-f]+')), named('point', optional(str('.'))), named('fraction', pat('[0-9a-f]+'))))));
+		expect(members.map((m) => (m as { name?: string }).name)).toEqual([undefined, 'integer', 'point', 'fraction']);
 	});
 
 	it('leaves a token with no named part on the composed path, so its output does not change', () => {

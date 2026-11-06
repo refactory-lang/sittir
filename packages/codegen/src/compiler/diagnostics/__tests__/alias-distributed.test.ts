@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { diagnoseDistributedAliases, diagnoseMixedDisplayUnions } from '../alias-distributed.ts';
+import { diagnoseDistributedAliases, diagnoseInlineTokenAliases, diagnoseMixedDisplayUnions } from '../alias-distributed.ts';
 import { symbolFactsOf, type SymbolSource } from '../../../dsl/rule-patterns.ts';
 import { catalogSymbolSource, predictedSymbolSourceOf, type KindEntryLike } from '../../../dsl/symbol-table.ts';
 import type { AnyRule } from '../../../types/rule.ts';
@@ -122,5 +122,60 @@ describe('display-union-mixed', () => {
 			symbols: symbolsOf(rules, { kindEntries })
 		});
 		expect(out.map((d) => [d.code, d.details])).toEqual([['display-union-unknown-member', { display: 'shown', member: 'ghost' }]]);
+	});
+});
+
+describe('alias-inline-token', () => {
+	const body = { type: 'IMMEDIATE_TOKEN', content: { type: 'PATTERN', value: 'x+' } };
+	const other = { type: 'TOKEN', content: { type: 'PATTERN', value: 'y+' } };
+	const inlineToken = (rules: Record<string, unknown>, word?: string) =>
+		diagnoseInlineTokenAliases({ grammar: 'demo', symbols: symbolsOf(rules), word });
+
+	it('names a display that is also a terminal rule', () => {
+		const out = inlineToken({ p: alias(body, 'content'), content: P('z') });
+		expect(out).toHaveLength(1);
+		expect(out[0]).toMatchObject({ code: 'alias-inline-token', ownerKind: 'p', canProceed: false, details: { display: 'content', reason: 'display-is-rule' } });
+		expect(out[0]!.message).toMatch(/'content' is also a rule of this grammar/);
+	});
+	it('names a display that is a nonterminal rule too, which display-union-mixed does not report', () => {
+		const out = inlineToken({ p: alias(body, 'content'), content: { type: 'SEQ', members: [S('a'), sym('p')] } });
+		expect(out).toHaveLength(1);
+		expect(out[0]!.details).toMatchObject({ reason: 'display-is-rule' });
+	});
+	it('names a display of the word rule', () => {
+		const out = inlineToken({ p: alias(body, 'content'), q: alias(sym('ident'), 'content'), ident: P('[a-z]+') }, 'ident');
+		expect(out).toHaveLength(1);
+		expect(out[0]!.details).toMatchObject({ reason: 'word-display' });
+		expect(out[0]!.message).toMatch(/'content' is a display of the word rule/);
+	});
+	it('names a hidden name taken with a different body and proposes another name', () => {
+		const out = inlineToken({ p: alias(body, 'content'), _content: P('y') });
+		expect(out).toHaveLength(1);
+		expect(out[0]!.details).toMatchObject({ reason: 'storage-name-taken' });
+		expect(out[0]!.message).toMatch(/the rule '_content' already exists with a different body/);
+		expect(out[0]!.proposal).toMatch(/_content_token/);
+	});
+	it('proposes one hidden rule per distinct body when the bodies disagree, each site aliasing its own', () => {
+		const out = inlineToken({ p: alias(body, 'content'), q: alias(other, 'content') });
+		expect(out.map((d) => d.details)).toMatchObject([{ reason: 'bodies-disagree', bodyCount: 2 }, { reason: 'bodies-disagree', bodyCount: 2 }]);
+		expect(out[0]!.proposal).toMatch(/alias\(\$\._content_1, \$\.content\)/);
+		expect(out[1]!.proposal).toMatch(/alias\(\$\._content_2, \$\.content\)/);
+		expect(out[0]!.proposal).toMatch(/no site changes what it accepts/);
+	});
+	it('does not fire when the mint covers the site: free name, or an identical body already there', () => {
+		expect(inlineToken({ p: alias(body, 'content') })).toEqual([]);
+		expect(inlineToken({ p: alias(body, 'content'), _content: body })).toEqual([]);
+	});
+	it('fires on a bare pattern and through precedence', () => {
+		expect(inlineToken({ p: alias(P('x'), 'c'), c: P('z') })).toHaveLength(1);
+		expect(inlineToken({ p: alias({ type: 'PREC', value: 1, content: body }, 'c'), c: P('z') })).toHaveLength(1);
+	});
+	it('does not fire on an alias of a symbol or of a literal', () => {
+		expect(inlineToken({ p: alias(sym('_c'), 'c'), _c: body })).toEqual([]);
+		expect(inlineToken({ p: alias(S('x'), 'c') })).toEqual([]);
+	});
+	it('is silent on a literal alias whose display is a terminal rule or the word rule, which reads as the display kind', () => {
+		expect(inlineToken({ p: alias(S('a'), 'content'), content: P('z') })).toEqual([]);
+		expect(inlineToken({ p: alias(S('a'), 'content'), q: alias(sym('ident'), 'content'), ident: P('[a-z]+') }, 'ident')).toEqual([]);
 	});
 });

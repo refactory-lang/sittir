@@ -11,12 +11,12 @@ import {
 	SYMBOL,
 	TOKEN
 } from '../types/rule-types.ts'; // @rule-type-consts
-import { isPrecWrapper, isTokenWrapperType } from '../types/runtime-shapes.ts';
+import { isPrecWrapper, isTokenWrapperType, type RuntimeRule } from '../types/runtime-shapes.ts';
 import type { AnyRule, Rule, RuleBase, RepeatRule, Repeat1Rule, SeqRule, DelimiterMode } from '../types/rule.ts';
 import { RuleWalker, SyntacticRuleWalker } from './rule-walker.ts';
 import { absorbIds, withId } from './rule-attrs.ts';
 import { isVisibleGroupAlias } from './rule-metadata.ts';
-import { choiceArmsOf, isParserHiddenName, terminalContentOf, type SymbolSource } from './rule-patterns.ts';
+import { choiceArmsOf, isInlineTokenBody, isParserHiddenName, isTerminalRootRule, rulesEqual, terminalContentOf, type SymbolSource } from './rule-patterns.ts';
 
 export type LeafMultiplicity = 'optional' | 'single' | 'array' | 'nonEmptyArray' | undefined;
 
@@ -82,13 +82,8 @@ export interface InlineTextTokens<R> {
 	readonly owners: Readonly<Record<string, readonly string[]>>;
 }
 
-function peelPrec<R extends AnyRule>(r: R): R {
+export function peelPrec<R extends AnyRule>(r: R): R {
 	return isPrecWrapper(r) ? peelPrec((r as unknown as { content: R }).content) : r;
-}
-
-export function isTerminalRootRule(rule: AnyRule): boolean {
-	const root = peelPrec(rule);
-	return root.type === PATTERN || root.type === STRING || isTokenWrapperType(root.type);
 }
 
 export function isLiteralOnlyRule(rule: AnyRule): boolean {
@@ -200,46 +195,120 @@ export function wordDisplaysOf<R extends AnyRule>(rules: Record<string, R>, ctx:
 	return displays;
 }
 
-export function mintInlineLiteralAliasStorage<R extends AnyRule>(rules: Record<string, R>, ctx: WordDisplayCtx): LiteralAliasStorage<R> {
+export type InlineTokenAliasSkip = 'display-is-rule' | 'word-display' | 'storage-name-taken' | 'bodies-disagree';
+
+export interface InlineTokenAliasSkipSite {
+	readonly owner: string;
+	readonly display: string;
+	readonly reason: InlineTokenAliasSkip;
+	readonly bodyIndex: number;
+	readonly bodyCount: number;
+}
+
+interface LiteralAliasSite<R> {
+	readonly display: string;
+	readonly body: R;
+	readonly literals: string;
+	readonly inlineToken: boolean;
+	readonly early: 'display-is-rule' | 'word-display' | undefined;
+}
+
+interface DisplayStorage<R> {
+	readonly literals: string[];
+	readonly body: R;
+	readonly inlineToken: boolean;
+	readonly skip: InlineTokenAliasSkip | undefined;
+}
+
+function literalAliasStoragePlan<R extends AnyRule>(rules: Record<string, R>, ctx: WordDisplayCtx) {
 	const walker = new SyntacticRuleWalker<R>();
 	const wordDisplays = wordDisplaysOf(rules, ctx);
-	const literalAliasOf = (r: R): { display: string; body: R; literals: string } | undefined => {
+	const siteOf = (r: R): LiteralAliasSite<R> | undefined => {
 		const alias = r as unknown as NamedAliasShape<R>;
-		if (alias.type !== ALIAS || alias.named !== true || !alias.value || Object.hasOwn(rules, alias.value) || wordDisplays.has(alias.value)) return undefined;
-		const arms = choiceArmsOf(innermostNamedAliasContent(alias.content));
-		if (arms === undefined || !arms.every((arm) => arm.type === STRING)) return undefined;
-		const body = { type: CHOICE, members: arms } as unknown as R;
-		const literals = JSON.stringify(arms.map((arm) => (arm as unknown as { value: string }).value));
-		return { display: alias.value, body, literals };
+		if (alias.type !== ALIAS || alias.named !== true || !alias.value) return undefined;
+		const early = Object.hasOwn(rules, alias.value) ? 'display-is-rule' : wordDisplays.has(alias.value) ? 'word-display' : undefined;
+		const content = innermostNamedAliasContent(alias.content);
+		const arms = choiceArmsOf(content);
+		if (arms !== undefined && arms.every((arm) => arm.type === STRING)) {
+			const body = { type: CHOICE, members: arms } as unknown as R;
+			const literals = JSON.stringify(arms.map((arm) => (arm as unknown as { value: string }).value));
+			return { display: alias.value, body, literals, inlineToken: false, early };
+		}
+		if (!isTerminalRootRule(content)) return undefined;
+		return { display: alias.value, body: content, literals: JSON.stringify(content), inlineToken: isInlineTokenBody(content), early };
 	};
-	const byDisplay = new Map<string, { literals: Set<string>; body: R }>();
+	const byDisplay = new Map<string, { literals: string[]; body: R; inlineToken: boolean }>();
 	for (const rule of Object.values(rules)) {
 		walker.fold(rule, byDisplay, (acc, r) => {
-			const site = literalAliasOf(r);
-			if (site === undefined) return acc;
+			const site = siteOf(r);
+			if (site === undefined || site.early !== undefined) return acc;
 			const entry = acc.get(site.display);
-			if (entry === undefined) {
-				acc.set(site.display, { literals: new Set([site.literals]), body: site.body });
-			} else entry.literals.add(site.literals);
+			if (entry === undefined) acc.set(site.display, { literals: [site.literals], body: site.body, inlineToken: site.inlineToken });
+			else if (!entry.literals.includes(site.literals)) entry.literals.push(site.literals);
 			return acc;
 		});
 	}
-	const storage = new Map<string, { name: string; body: R }>();
-	for (const [display, { literals, body }] of byDisplay) {
+	const displays = new Map<string, DisplayStorage<R>>();
+	for (const [display, entry] of byDisplay) {
 		const name = `_${display}`;
-		if (literals.size === 1 && !Object.hasOwn(rules, name)) storage.set(display, { name, body });
+		const skip: InlineTokenAliasSkip | undefined =
+			entry.literals.length !== 1
+				? 'bodies-disagree'
+				: Object.hasOwn(rules, name) && !rulesEqual(rules[name] as RuntimeRule, entry.body as RuntimeRule)
+					? 'storage-name-taken'
+					: undefined;
+		displays.set(display, { ...entry, skip });
+	}
+	return { walker, siteOf, displays };
+}
+
+export function inlineTokenAliasSkipsOf<R extends AnyRule>(rules: Record<string, R>, ctx: WordDisplayCtx): InlineTokenAliasSkipSite[] {
+	const { walker, siteOf, displays } = literalAliasStoragePlan(rules, ctx);
+	const out: InlineTokenAliasSkipSite[] = [];
+	const seen = new Set<string>();
+	for (const [owner, rule] of Object.entries(rules)) {
+		walker.fold(rule, out, (acc, r) => {
+			const site = siteOf(r);
+			if (site === undefined || !site.inlineToken) return acc;
+			const entry = displays.get(site.display);
+			const reason = site.early ?? entry?.skip;
+			if (reason === undefined) return acc;
+			const key = `${owner}\0${site.display}\0${site.literals}`;
+			if (seen.has(key)) return acc;
+			seen.add(key);
+			acc.push({
+				owner,
+				display: site.display,
+				reason,
+				bodyIndex: Math.max(0, entry?.literals.indexOf(site.literals) ?? 0),
+				bodyCount: entry?.literals.length ?? 1
+			});
+			return acc;
+		});
+	}
+	return out;
+}
+
+export function mintInlineLiteralAliasStorage<R extends AnyRule>(rules: Record<string, R>, ctx: WordDisplayCtx): LiteralAliasStorage<R> {
+	const { walker, siteOf, displays } = literalAliasStoragePlan(rules, ctx);
+	const storage = new Map<string, { name: string; body: R; reused: boolean }>();
+	for (const [display, { body, skip }] of displays) {
+		if (skip !== undefined) continue;
+		const name = `_${display}`;
+		storage.set(display, { name, body, reused: Object.hasOwn(rules, name) });
 	}
 	if (storage.size === 0) return { rules, storageNames: [] };
 	const visit = (r: R): R => {
-		const site = literalAliasOf(r);
-		const minted = site === undefined ? undefined : storage.get(site.display);
+		const site = siteOf(r);
+		const minted = site === undefined || site.early !== undefined ? undefined : storage.get(site.display);
 		if (site === undefined || minted === undefined) return r;
 		return { type: ALIAS, named: true, value: site.display, content: { type: SYMBOL, name: minted.name } } as unknown as R;
 	};
 	const out: Record<string, R> = {};
 	for (const [name, rule] of Object.entries(rules)) out[name] = visit(walker.map(rule, visit));
-	for (const { name, body } of storage.values()) out[name] = body;
-	return { rules: out, storageNames: [...storage.values()].map(({ name }) => name) };
+	const minted = [...storage.values()].filter(({ reused }) => !reused);
+	for (const { name, body } of minted) out[name] = body;
+	return { rules: out, storageNames: minted.map(({ name }) => name) };
 }
 
 export function liftAliasedHiddenRuleBodies<R extends AnyRule>(rules: Record<string, R>): Record<string, R> {

@@ -227,6 +227,7 @@ export interface IsGuards {
 	decimalDigits<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.DecimalDigits };
+	lazy<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, TSKindId.Lazy>;
 	characterClassEscapeText1<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.CharacterClassEscapeText1 };
@@ -234,13 +235,12 @@ export interface IsGuards {
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.CharacterClassEscapeText2 };
 	negation<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, TSKindId.Negation>;
-	lazy<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, TSKindId.Lazy>;
 	unicodePropertyName<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.UnicodePropertyName };
 }
 
-const _supertype_inlineFlagsGroup_ids = new Set<number>([83, 84, 85]);
+const _supertype_inlineFlagsGroup_ids = new Set<number>([84, 85, 86]);
 const _supertype_layout_ids = new Set<number>([47, 48, 49, 50]);
 
 const _members = new Map<number, ReadonlySet<number>>([[TSKindId.InlineFlagsGroup, _supertype_inlineFlagsGroup_ids]]);
@@ -332,10 +332,10 @@ export function guardsWith(test: KindTest): IsGuards {
 	const _kind_ControlLetterEscape_guard = _g(TSKindId.ControlLetterEscape);
 	const _kind_GroupName_guard = _g(TSKindId.GroupName);
 	const _kind_DecimalDigits_guard = _g(TSKindId.DecimalDigits);
+	const _kind_Lazy_guard = _mg(TSKindId.Lazy);
 	const _kind_CharacterClassEscapeText1_guard = _g(TSKindId.CharacterClassEscapeText1);
 	const _kind_CharacterClassEscapeText2_guard = _g(TSKindId.CharacterClassEscapeText2);
 	const _kind_Negation_guard = _mg(TSKindId.Negation);
-	const _kind_Lazy_guard = _mg(TSKindId.Lazy);
 	const _kind_UnicodePropertyName_guard = _g(TSKindId.UnicodePropertyName);
 	const _form_Pattern_guard = _vg(_g(TSKindId.Pattern), {
 		alternation: _at(_kind_Pattern_guard, 'content', _kind_Alternation_guard),
@@ -455,10 +455,10 @@ export function guardsWith(test: KindTest): IsGuards {
 		controlLetterEscape: _kind_ControlLetterEscape_guard,
 		groupName: _kind_GroupName_guard,
 		decimalDigits: _kind_DecimalDigits_guard,
+		lazy: _kind_Lazy_guard,
 		characterClassEscapeText1: _kind_CharacterClassEscapeText1_guard,
 		characterClassEscapeText2: _kind_CharacterClassEscapeText2_guard,
 		negation: _kind_Negation_guard,
-		lazy: _kind_Lazy_guard,
 		unicodePropertyName: _kind_UnicodePropertyName_guard
 	}) as unknown as IsGuards;
 }

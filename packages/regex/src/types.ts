@@ -47,12 +47,12 @@ export type LeafStringMap = {
 	[TSKindId.EndAssertion]: '$';
 	[TSKindId.BoundaryAssertion]: '\\b';
 	[TSKindId.NonBoundaryAssertion]: '\\B';
+	[TSKindId.Lazy]: '?';
 	[TSKindId.Negation]: '^';
 	[TSKindId.Tight]: '';
 	[TSKindId.Newline]: '\n';
 	[TSKindId.Blankline]: '\n\n';
 	[TSKindId.DoubleBlankline]: '\n\n\n';
-	[TSKindId.Lazy]: '?';
 	[TSKindId.Caret]: '^';
 	[TSKindId.LparenQmark]: '(?';
 	[TSKindId.Eq]: '=';
@@ -70,8 +70,8 @@ export type LeafStringMap = {
 	[TSKindId.Gt]: '>';
 	[TSKindId.LparenQmarkColon]: '(?:';
 	[TSKindId.Star]: '*';
-	[TSKindId.Qmark]: '?';
 	[TSKindId.Plus]: '+';
+	[TSKindId.Qmark]: '?';
 	[TSKindId.Lbrace]: '{';
 	[TSKindId.Rbrace]: '}';
 	[TSKindId.Bslashk]: '\\k';
@@ -107,8 +107,8 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[23, 'gt'],
 	[24, 'lparen_qmark_colon'],
 	[25, 'star'],
-	[26, 'qmark'],
-	[27, 'plus'],
+	[26, 'plus'],
+	[27, 'qmark'],
 	[28, 'lbrace'],
 	[29, 'comma'],
 	[30, 'rbrace'],
@@ -158,19 +158,19 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[74, 'unicode_character_escape'],
 	[75, 'unicode_property_value_expression'],
 	[76, 'control_escape'],
-	[77, 'term_group'],
-	[78, 'count_quantifier_group'],
-	[79, 'count_quantifier_arm'],
-	[80, 'character_class_escape_arm'],
-	[81, 'unicode_property_value_expression_group'],
-	[82, 'negation'],
-	[83, 'inline_flags_group_enable'],
-	[84, 'inline_flags_group_toggle'],
-	[85, 'inline_flags_group_disable'],
-	[86, 'alternation_repeat1'],
-	[87, 'term_repeat1'],
-	[88, 'character_class_repeat1'],
-	[89, 'lazy'],
+	[77, 'lazy'],
+	[78, 'term_group'],
+	[79, 'count_quantifier_group'],
+	[80, 'count_quantifier_arm'],
+	[81, 'character_class_escape_arm'],
+	[82, 'unicode_property_value_expression_group'],
+	[83, 'negation'],
+	[84, 'inline_flags_group_enable'],
+	[85, 'inline_flags_group_toggle'],
+	[86, 'inline_flags_group_disable'],
+	[87, 'alternation_repeat1'],
+	[88, 'term_repeat1'],
+	[89, 'character_class_repeat1'],
 	[90, 'unicode_property_name'],
 	[65535, 'ERROR']
 ]);
@@ -202,8 +202,8 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[23, '>'],
 	[24, '(?:'],
 	[25, '*'],
-	[26, '?'],
-	[27, '+'],
+	[26, '+'],
+	[27, '?'],
 	[28, '{'],
 	[29, ','],
 	[30, '}'],
@@ -253,19 +253,19 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[74, 'unicode_character_escape'],
 	[75, 'unicode_property_value_expression'],
 	[76, 'control_escape'],
-	[77, 'term_group'],
-	[78, 'count_quantifier_group'],
-	[79, 'count_quantifier_arm'],
-	[80, 'character_class_escape_arm'],
-	[81, 'unicode_property_value_expression_group'],
-	[82, 'negation'],
-	[83, 'inline_flags_group_enable'],
-	[84, 'inline_flags_group_toggle'],
-	[85, 'inline_flags_group_disable'],
-	[86, 'alternation_repeat1'],
-	[87, 'term_repeat1'],
-	[88, 'character_class_repeat1'],
-	[89, 'lazy'],
+	[77, 'lazy'],
+	[78, 'term_group'],
+	[79, 'count_quantifier_group'],
+	[80, 'count_quantifier_arm'],
+	[81, 'character_class_escape_arm'],
+	[82, 'unicode_property_value_expression_group'],
+	[83, 'negation'],
+	[84, 'inline_flags_group_enable'],
+	[85, 'inline_flags_group_toggle'],
+	[86, 'inline_flags_group_disable'],
+	[87, 'alternation_repeat1'],
+	[88, 'term_repeat1'],
+	[89, 'character_class_repeat1'],
 	[90, 'unicode_property_name'],
 	[65535, 'ERROR']
 ]);
@@ -325,10 +325,10 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.LparenQmarkColon;
 		case 'star':
 			return TSKindId.Star;
-		case 'qmark':
-			return TSKindId.Qmark;
 		case 'plus':
 			return TSKindId.Plus;
+		case 'qmark':
+			return TSKindId.Qmark;
 		case 'lbrace':
 			return TSKindId.Lbrace;
 		case 'comma':
@@ -427,6 +427,8 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.UnicodePropertyValueExpression;
 		case 'control_escape':
 			return TSKindId.ControlEscape;
+		case 'lazy':
+			return TSKindId.Lazy;
 		case 'term_group':
 			return TSKindId.TermGroup;
 		case 'count_quantifier_group':
@@ -451,8 +453,6 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.TermRepeat1;
 		case 'character_class_repeat1':
 			return TSKindId.CharacterClassRepeat1;
-		case 'lazy':
-			return TSKindId.Lazy;
 		case 'unicode_property_name':
 			return TSKindId.UnicodePropertyName;
 		case 'ERROR':
@@ -491,10 +491,10 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.LparenQmarkColon;
 		case '*':
 			return TSKindId.Star;
-		case '?':
-			return TSKindId.Qmark;
 		case '+':
 			return TSKindId.Plus;
+		case '?':
+			return TSKindId.Qmark;
 		case '{':
 			return TSKindId.Lbrace;
 		case ',':
@@ -1118,6 +1118,7 @@ export type ControlEscape = Terminal<TSKindId.ControlEscape, string>;
 export type ControlLetterEscape = Terminal<TSKindId.ControlLetterEscape, string>;
 export type GroupName = Terminal<TSKindId.GroupName, string>;
 export type DecimalDigits = Terminal<TSKindId.DecimalDigits, string>;
+export type Lazy = TSKindId.Lazy;
 export type CharacterClassEscapeText1 = Terminal<TSKindId.CharacterClassEscapeText1, string>;
 export type CharacterClassEscapeText2 = Terminal<TSKindId.CharacterClassEscapeText2, string>;
 export type Negation = TSKindId.Negation;
@@ -1125,7 +1126,6 @@ export type Tight = TSKindId.Tight;
 export type Newline = TSKindId.Newline;
 export type Blankline = TSKindId.Blankline;
 export type DoubleBlankline = TSKindId.DoubleBlankline;
-export type Lazy = TSKindId.Lazy;
 export type UnicodePropertyName = Terminal<TSKindId.UnicodePropertyName, string>;
 
 // Supertype unions
@@ -1306,6 +1306,7 @@ export namespace ZeroOrMore {
 		readonly __optionsHint__?: {
 			readonly after?: WhitespaceKindId;
 			readonly before?: WhitespaceKindId;
+			readonly qmark?: { readonly before?: WhitespaceKindId };
 			readonly star?: { readonly after?: WhitespaceKindId };
 		};
 	}
@@ -1317,6 +1318,7 @@ export namespace OneOrMore {
 			readonly after?: WhitespaceKindId;
 			readonly before?: WhitespaceKindId;
 			readonly plus?: { readonly after?: WhitespaceKindId };
+			readonly qmark?: { readonly before?: WhitespaceKindId };
 		};
 	}
 }
@@ -1326,7 +1328,7 @@ export namespace Optional {
 		readonly __optionsHint__?: {
 			readonly after?: WhitespaceKindId;
 			readonly before?: WhitespaceKindId;
-			readonly qmark?: { readonly after?: WhitespaceKindId };
+			readonly qmark?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
 		};
 	}
 }
@@ -1337,6 +1339,7 @@ export namespace CountQuantifier {
 			readonly after?: WhitespaceKindId;
 			readonly before?: WhitespaceKindId;
 			readonly lbrace?: { readonly after?: WhitespaceKindId };
+			readonly qmark?: { readonly before?: WhitespaceKindId };
 			readonly rbrace?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
 		};
 	}
@@ -1876,12 +1879,12 @@ export interface NonBoundaryAssertionNs extends KeywordNs<
 	'\\B',
 	TSKindId.NonBoundaryAssertion
 > {}
+export interface LazyNs extends KeywordNs<TSKindId.Lazy, '?', TSKindId.Lazy> {}
 export interface NegationNs extends KeywordNs<TSKindId.Negation, '^', TSKindId.Negation> {}
 export interface TightNs extends KeywordNs<TSKindId.Tight, '', TSKindId.Tight> {}
 export interface NewlineNs extends KeywordNs<TSKindId.Newline, '\n', TSKindId.Newline> {}
 export interface BlanklineNs extends KeywordNs<TSKindId.Blankline, '\n\n', TSKindId.Blankline> {}
 export interface DoubleBlanklineNs extends KeywordNs<TSKindId.DoubleBlankline, '\n\n\n', TSKindId.DoubleBlankline> {}
-export interface LazyNs extends KeywordNs<TSKindId.Lazy, '?', TSKindId.Lazy> {}
 export interface PatternCharacterNs extends LeafNs<
 	PatternCharacter,
 	string,
@@ -1982,12 +1985,12 @@ export interface NamespaceMap {
 	[TSKindId.EndAssertion]: EndAssertionNs;
 	[TSKindId.BoundaryAssertion]: BoundaryAssertionNs;
 	[TSKindId.NonBoundaryAssertion]: NonBoundaryAssertionNs;
+	[TSKindId.Lazy]: LazyNs;
 	[TSKindId.Negation]: NegationNs;
 	[TSKindId.Tight]: TightNs;
 	[TSKindId.Newline]: NewlineNs;
 	[TSKindId.Blankline]: BlanklineNs;
 	[TSKindId.DoubleBlankline]: DoubleBlanklineNs;
-	[TSKindId.Lazy]: LazyNs;
 	[TSKindId.PatternCharacter]: PatternCharacterNs;
 	[TSKindId.PosixClassName]: PosixClassNameNs;
 	[TSKindId.ClassCharacter]: ClassCharacterNs;
@@ -2104,11 +2107,11 @@ export type FixedTextKindId =
 	| TSKindId.EndAssertion
 	| TSKindId.BoundaryAssertion
 	| TSKindId.NonBoundaryAssertion
+	| TSKindId.Lazy
 	| TSKindId.Negation
 	| TSKindId.Newline
 	| TSKindId.Blankline
 	| TSKindId.DoubleBlankline
-	| TSKindId.Lazy
 	| TSKindId.Caret
 	| TSKindId.LparenQmark
 	| TSKindId.Eq
@@ -2126,8 +2129,8 @@ export type FixedTextKindId =
 	| TSKindId.Gt
 	| TSKindId.LparenQmarkColon
 	| TSKindId.Star
-	| TSKindId.Qmark
 	| TSKindId.Plus
+	| TSKindId.Qmark
 	| TSKindId.Lbrace
 	| TSKindId.Rbrace
 	| TSKindId.Bslashk
@@ -2171,12 +2174,12 @@ export interface TypeKeyOf {
 	[TSKindId.EndAssertion]: 'endAssertion';
 	[TSKindId.BoundaryAssertion]: 'boundaryAssertion';
 	[TSKindId.NonBoundaryAssertion]: 'nonBoundaryAssertion';
+	[TSKindId.Lazy]: 'lazy';
 	[TSKindId.Negation]: 'negation';
 	[TSKindId.Tight]: 'tight';
 	[TSKindId.Newline]: 'newline';
 	[TSKindId.Blankline]: 'blankline';
 	[TSKindId.DoubleBlankline]: 'doubleBlankline';
-	[TSKindId.Lazy]: 'lazy';
 	[TSKindId.PatternCharacter]: 'patternCharacter';
 	[TSKindId.PosixClassName]: 'posixClassName';
 	[TSKindId.ClassCharacter]: 'classCharacter';
@@ -2990,6 +2993,16 @@ export namespace NonBoundaryAssertion {
 	export type LooseArgs = NonBoundaryAssertionNs['LooseArgs'];
 	export type Kind = TSKindId.NonBoundaryAssertion;
 }
+export namespace Lazy {
+	export type Config = LazyNs['Config'];
+	export type Bound = LazyNs['Bound'];
+	export type Parsed = LazyNs['Bound'];
+	export type Loose = LazyNs['Loose'];
+	export type LooseConfig = LazyNs['LooseConfig'];
+	export type BuildArgs = LazyNs['BuildArgs'];
+	export type LooseArgs = LazyNs['LooseArgs'];
+	export type Kind = TSKindId.Lazy;
+}
 export namespace Negation {
 	export type Config = NegationNs['Config'];
 	export type Bound = NegationNs['Bound'];
@@ -3039,16 +3052,6 @@ export namespace DoubleBlankline {
 	export type BuildArgs = DoubleBlanklineNs['BuildArgs'];
 	export type LooseArgs = DoubleBlanklineNs['LooseArgs'];
 	export type Kind = TSKindId.DoubleBlankline;
-}
-export namespace Lazy {
-	export type Config = LazyNs['Config'];
-	export type Bound = LazyNs['Bound'];
-	export type Parsed = LazyNs['Bound'];
-	export type Loose = LazyNs['Loose'];
-	export type LooseConfig = LazyNs['LooseConfig'];
-	export type BuildArgs = LazyNs['BuildArgs'];
-	export type LooseArgs = LazyNs['LooseArgs'];
-	export type Kind = TSKindId.Lazy;
 }
 export namespace PatternCharacter {
 	export type Config = PatternCharacterNs['Config'];

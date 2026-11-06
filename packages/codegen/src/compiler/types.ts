@@ -1,6 +1,7 @@
 import type { AutomaticVariants } from '../dsl/automatic-variants.ts';
 import type { IrSurface } from './model/ir-surface.ts';
 import type { WhitespaceCollision } from '../dsl/whitespace.ts';
+import type { AuthoredExternalAlias, ExternalAliasSite, RenderAsAliasProblem } from '../dsl/wire/render-as-visibility.ts';
 import type { RuleListEntry } from '../dsl/rule-patterns.ts';
 import type { GeneratedIdTables, PredictedKinds } from '../dsl/symbol-table.ts';
 import type { AnyRule, PhaseName, Rule, RenderRule, SimplifiedRule, RuleId, SymbolRef } from '../types/rule.ts';
@@ -133,7 +134,10 @@ export interface RawGrammar {
 	readonly spellings?: SpellingFields;
 	readonly groups?: Record<string, Record<string, string> | undefined>;
 	readonly renderAs?: Record<string, Rule<'evaluate'>>;
-	readonly visibleExternals?: Record<string, Rule<'evaluate'>>;
+	readonly visibleAs?: Readonly<Record<string, string>>;
+	readonly renderAsProblems?: readonly RenderAsAliasProblem[];
+	readonly externalAliases?: readonly AuthoredExternalAlias[];
+	readonly upstreamAliasSites?: readonly ExternalAliasSite[];
 	readonly whitespaceCollisions?: readonly WhitespaceCollision[];
 	readonly options?: OptionsConfig;
 	readonly bindingEffects?: readonly BindingEffect[];
@@ -301,6 +305,7 @@ export interface NodeMap {
 	readonly name: string;
 	readonly root?: string;
 	readonly nodes: Map<string, AssembledNode>;
+	readonly droppedKinds?: ReadonlySet<string>;
 	readonly nodeByRuleId: ReadonlyMap<RuleId, AssembledNode>;
 	readonly nodeByKindId: ReadonlyMap<number, AssembledNode>;
 	readonly slotByRuleId: ReadonlyMap<RuleId, AssembledNonterminal>;

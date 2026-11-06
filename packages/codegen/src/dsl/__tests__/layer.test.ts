@@ -284,7 +284,7 @@ describe('an edits key that names no rule', () => {
 
 describe('a config key wire does not know', () => {
 	const KNOWN =
-		'name, rules, edits, resolutions, supertypes, inline, extras, externals, word, conflicts, precedences, reserved, groups, options, renderAs, visibleExternals, reparseHosts, factoryInline, expectDiagnostics, expectTestFailures, contexts, generated';
+		'name, rules, edits, resolutions, supertypes, inline, extras, externals, word, conflicts, precedences, reserved, groups, options, renderAs, reparseHosts, factoryInline, expectDiagnostics, expectTestFailures, contexts, generated';
 
 	it('is config-key-unknown on the record, naming the key and every known key, and the key has no effect', async () => {
 		await withDslGlobals(async () => {
@@ -628,7 +628,6 @@ describe('the fixture chain', () => {
 				word: vi.fn(($: Record<string, unknown>) => $.item),
 				reserved: vi.fn(() => ['let']),
 				group: vi.fn(($: Symbols) => seq('(', $.item!, ')')),
-				visibleExternals: vi.fn(() => ({ _hidden: 'h' })),
 				renderAs: vi.fn(() => ({ marker: 'm' }))
 			};
 			layer(upstream(), {
@@ -641,7 +640,6 @@ describe('the fixture chain', () => {
 				word: spies.word,
 				reserved: { global: spies.reserved },
 				groups: { item_group: spies.group },
-				visibleExternals: spies.visibleExternals,
 				renderAs: spies.renderAs
 			} as Config);
 			for (const [name, spy] of Object.entries(spies)) expect(spy, name).toHaveBeenCalledTimes(1);

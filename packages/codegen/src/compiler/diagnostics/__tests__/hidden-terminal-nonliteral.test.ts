@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { hiddenTerminalNonliteralSites } from '../grammar-diagnostics.ts';
+import { hiddenTerminalNonliteralDiagnostics, hiddenTerminalNonliteralSites } from '../grammar-diagnostics.ts';
 import type { RawGrammar } from '../../types.ts';
 import { evaluatePackage } from '../../../dsl/evaluate-package.ts';
 import { diagnoseEvaluationStages } from '../../stage.ts';
@@ -48,6 +48,23 @@ describe('hiddenTerminalNonliteralSites', () => {
 			])
 		});
 		expect(hiddenTerminalNonliteralSites(layout)).toEqual([]);
+	});
+});
+
+describe('hiddenTerminalNonliteralDiagnostics proposal', () => {
+	const diagnose = (rules: Record<string, R>) => hiddenTerminalNonliteralDiagnostics({ name: 'demo', ...grammar(rules) } as RawGrammar);
+
+	it('names renderAs when the target is a scanner external', () => {
+		const [diagnostic] = diagnose({ comment: seq(str('/*'), sym('_content'), str('*/')) });
+		expect(diagnostic?.proposal).toContain('renderAs');
+		expect(diagnostic?.proposal).toContain('_content');
+		expect(diagnostic?.proposal).not.toContain('rule()');
+	});
+
+	it('keeps the rule() patch advice when the target is a hidden rule', () => {
+		const [diagnostic] = diagnose({ capture: seq(str('@'), sym('_name')), _name: pattern('[a-z]+') });
+		expect(diagnostic?.proposal).toContain('rule()');
+		expect(diagnostic?.proposal).not.toContain('renderAs');
 	});
 });
 

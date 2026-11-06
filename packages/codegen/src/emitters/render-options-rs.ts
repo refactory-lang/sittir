@@ -270,7 +270,7 @@ export function planRenderOptions(
 	for (const s of depthCapable) depthSites.set(s.display, [...(depthSites.get(s.display) ?? []), spacing.indexOf(s)]);
 	const idOfText = (text: string): number => {
 		const kind = [...whitespaceText].find(([, t]) => t === text)?.[0];
-		return kind === undefined ? 0 : idOf(kindEntries, kind, 'visibleExternals');
+		return kind === undefined ? 0 : idOf(kindEntries, kind, 'renderAs');
 	};
 	return {
 		displayUnions: nodeMap.displayUnions,
@@ -289,7 +289,7 @@ export function planRenderOptions(
 		indentId: idOfText(INDENT_TEXT),
 		dedentId: idOfText(DEDENT_TEXT),
 		whitespaceText: [...whitespaceText]
-			.map(([kind, text]) => ({ id: idOf(kindEntries, kind, 'visibleExternals'), text }))
+			.map(([kind, text]) => ({ id: idOf(kindEntries, kind, 'renderAs'), text }))
 			.sort((a, b) => a.id - b.id),
 		kindFlags: kindFlagsOf(kindEntries, nodeMap),
 		leafEdges: leafEdgesTable(kindEntries, nodeMap),
@@ -297,7 +297,7 @@ export function planRenderOptions(
 		gaps: [...whitespaceText.keys()]
 			.flatMap((kind) => {
 				const bit = LAYOUT_KIND_BITS[`_${kind}`];
-				return bit === undefined ? [] : [{ bit, id: idOf(kindEntries, kind, 'visibleExternals') }];
+				return bit === undefined ? [] : [{ bit, id: idOf(kindEntries, kind, 'renderAs') }];
 			})
 			.sort((a, b) => a.bit - b.bit),
 		indentChars: indentChars(nodeMap),

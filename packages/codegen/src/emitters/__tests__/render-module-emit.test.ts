@@ -121,7 +121,7 @@ async function getNodeRsForGrammar(grammar: 'rust' | 'typescript' | 'scm' | 'pyt
 		templates,
 		nodeMap,
 		generatedIdTables,
-		{ ...grammarRenderInputs(grammar, { renderRules, visibleExternals: raw.visibleExternals, options: raw.options }), envelopePins: undefined }
+		{ ...grammarRenderInputs(grammar, { renderRules, renderAs: raw.renderAs, options: raw.options }), envelopePins: undefined }
 	);
 	if (grammar === 'rust') _rustOptionsRs = emit.optionsRs.contents;
 	return emit.nodeRs.contents;
@@ -910,7 +910,7 @@ describe('the envelope pin gate is wired to the real pipeline', () => {
 
 	it('refuses a full emission that carries a pin for an enum it does not print', async () => {
 		const { raw, nodeMap, generatedIdTables, templates, renderRules } = await modelFor('typescript');
-		const inputs = grammarRenderInputs('typescript', { renderRules, visibleExternals: raw.visibleExternals, options: raw.options });
+		const inputs = grammarRenderInputs('typescript', { renderRules, renderAs: raw.renderAs, options: raw.options });
 		const stale = { ...inputs.envelopePins, 'GoneNodeSlot.Variant': { display: '_property_identifier', extras: [] } };
 		expect(() => emitRenderModule('typescript', templates, nodeMap, generatedIdTables, { ...inputs, envelopePins: stale })).toThrow(
 			/typescript GoneNodeSlot\.Variant pins an enum codegen does not print/
