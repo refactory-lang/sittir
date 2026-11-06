@@ -347,7 +347,7 @@ export declare const KIND_BITS: number
 
 /**
  * Every run of whitespace a side of the live tree `treeId` takes
- * (`TriviaTable::runs`), each with the line breaks the options in
+ * (`Placement::runs`), each with the line breaks the options in
  * effect at read time write there (`ParsedTree::baseline_gap`),
  * absent where nothing the record wrote is anchored: read from
  * each run's region, or from the record of the whole tree when
@@ -648,7 +648,7 @@ export declare function treeMemory(): { trees: number; counted: number; reported
 /**
  * The entries of `side` (`leading`, `trailing` or `inner`) of the
  * node at `index` of the live tree `treeId`: the ones a write gave
- * it, else the ones the tree's trivia table assigns it. Refuses a
+ * it, else the ones the tree's trivia placement assigns it. Refuses a
  * tree that is not live, an index naming no node of it, and any
  * other side.
  */
