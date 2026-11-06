@@ -5,7 +5,7 @@ export namespace Literal {
 	export namespace String {
 		export interface Unicode<G extends GrammarMap, K extends Under<'literal.string.unicode'> = 'literal.string.unicode'> extends SubKindOf<V.Literal.String<G, K>> {
 			// claimed by p
-			readonly $kind: K;
+			readonly $path: K;
 		}
 	}
 }

@@ -34,12 +34,12 @@ function feature(dir: string, marker: string, stubs: Readonly<Record<string, str
 }
 
 const DECLARATION = `export interface Declaration<G extends GrammarMap, K extends Under<'declaration'> = 'declaration'> {
-	readonly $kind: K;
+	readonly $path: K;
 	readonly name: G['identifier'];
 }
 export namespace Declaration {
 	export interface Function<G extends GrammarMap, K extends Under<'declaration.function'> = 'declaration.function'> extends SubKindOf<V.Declaration<G>> {
-		readonly $kind: K;
+		readonly $path: K;
 		readonly parameters: readonly unknown[];
 	}
 }
@@ -57,12 +57,12 @@ const ASYNC_AWAIT = feature('async-await', 'export interface AsyncAwait {\n\trea
 const METHODS = feature('methods', 'export interface Methods {\n\treadonly methods: true;\n}', {
 	'declaration.ts': `export namespace Declaration {
 	export interface Method<G extends GrammarMap, K extends Under<'declaration.method'> = 'declaration.method'> extends SubKindOf<V.Declaration<G>> {
-		readonly $kind: K;
+		readonly $path: K;
 		readonly static?: Flag;
 	}
 	export namespace Method {
 		export interface Getter<G extends GrammarMap, K extends Under<'declaration.method.getter'> = 'declaration.method.getter'> extends SubKindOf<V.Declaration.Method<G>> {
-			readonly $kind: K;
+			readonly $path: K;
 		}
 	}
 }
@@ -88,7 +88,7 @@ const CLEAN = { 'declaration.ts': DECLARATION, ...ASYNC_AWAIT, ...METHODS, ...AC
 const MACROS = feature('macros', 'export interface Macros {\n\treadonly macros: true;\n}', {
 	'macro.ts': `export namespace Macro {
 	export interface Rule<G extends GrammarMap, K extends Under<'macro.rule'> = 'macro.rule'> {
-		readonly $kind: K;
+		readonly $path: K;
 	}
 }
 `
@@ -183,7 +183,7 @@ describe('plan', () => {
 			`\t}
 	export namespace Function {
 		export interface Arrow<G extends GrammarMap, K extends Under<'declaration.function.arrow'> = 'declaration.function.arrow'> extends SubKindOf<V.Declaration.Function<G>> {
-			readonly $kind: K;
+			readonly $path: K;
 			readonly async?: Flag;
 		}
 	}
@@ -204,7 +204,7 @@ describe('plan', () => {
 		const lambdas = feature('lambdas', 'export interface Lambdas {\n\treadonly lambdas: true;\n}', {
 			'declaration.ts': `export namespace Declaration {
 	export interface Function<G extends GrammarMap, K extends Under<'declaration.lambda'> = 'declaration.lambda'> extends SubKindOf<V.Declaration<G>> {
-		readonly $kind: K;
+		readonly $path: K;
 	}
 }
 `
@@ -219,7 +219,7 @@ describe('plan', () => {
 			'\t}\n}\n',
 			`\t}
 	export interface Public<G extends GrammarMap, K extends Under<'declaration.public'> = 'declaration.public'> extends RefinedBy<V.Declaration<G>, V.Declaration.Function.Any<G>> {
-		readonly $kind: K;
+		readonly $path: K;
 	}
 }
 `
@@ -232,7 +232,7 @@ describe('plan', () => {
 			'declaration.ts': `export namespace Declaration {
 	export namespace Method {
 		export interface Static<G extends GrammarMap, K extends Under<'declaration.method.static'> = 'declaration.method.static'> extends SubKindOf<V.Declaration.Method<G>> {
-			readonly $kind: K;
+			readonly $path: K;
 		}
 	}
 }
@@ -298,12 +298,12 @@ describe('the synonym collision rule', () => {
 			`\t}
 	export namespace Slot {
 		export interface Receiver<G extends GrammarMap, K extends Under<'declaration.slot.receiver'> = 'declaration.slot.receiver'> extends SubKindOf<V.Declaration<G>> {
-			readonly $kind: K;
+			readonly $path: K;
 		}
 	}
 	export namespace Port {
 		export interface Receiver<G extends GrammarMap, K extends Under<'declaration.port.receiver'> = 'declaration.port.receiver'> extends SubKindOf<V.Declaration<G>> {
-			readonly $kind: K;
+			readonly $path: K;
 		}
 	}
 }
@@ -320,16 +320,16 @@ export interface DeclarationSynonyms {
 			'\t}\n}\n',
 			`\t}
 	export interface Marker<G extends GrammarMap, K extends Under<'declaration.marker'> = 'declaration.marker'> extends SubKindOf<V.Declaration<G>> {
-		readonly $kind: K;
+		readonly $path: K;
 		readonly sealed?: Flag;
 	}
 	export namespace Function {
 		export interface Marked<G extends GrammarMap, K extends Under<'declaration.function.marked'> = 'declaration.function.marked'> extends RefinedBy<V.Declaration.Function<G>, V.Declaration.Marker<G>> {
-			readonly $kind: K;
+			readonly $path: K;
 		}
 		export namespace Marked {
 			export interface Inner<G extends GrammarMap, K extends Under<'declaration.function.marked.inner'> = 'declaration.function.marked.inner'> extends SubKindOf<V.Declaration.Function.Marked<G>> {
-				readonly $kind: K;
+				readonly $path: K;
 			}
 		}
 	}
@@ -352,7 +352,7 @@ export interface DeclarationSynonyms {
 	export namespace Function {
 		export namespace Port {
 			export interface Inner<G extends GrammarMap, K extends Under<'declaration.function.port.inner'> = 'declaration.function.port.inner'> extends SubKindOf<V.Declaration.Function<G>> {
-				readonly $kind: K;
+				readonly $path: K;
 			}
 		}
 	}

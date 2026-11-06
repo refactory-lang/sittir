@@ -3,7 +3,7 @@ import type { SubKindOf, Under } from './utils.ts';
 import type * as V from './index.ts';
 export interface Attribute<G extends GrammarMap, K extends Under<'attribute'> = 'attribute'> {
 	// claimed by r
-	readonly $kind: K;
+	readonly $path: K;
 	readonly content?: Slot<
 		G,
 		K,
@@ -20,7 +20,7 @@ export interface Attribute<G extends GrammarMap, K extends Under<'attribute'> = 
 export namespace Attribute {
 	export interface Content<G extends GrammarMap, K extends Under<'attribute.content'> = 'attribute.content'> extends SubKindOf<V.Attribute<G, K>> {
 		// claimed by r
-		readonly $kind: K;
+		readonly $path: K;
 		readonly input?: Slot<
 			G,
 			K,

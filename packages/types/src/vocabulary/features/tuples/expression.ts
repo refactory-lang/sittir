@@ -5,7 +5,7 @@ export namespace Expression {
 	export namespace Collection {
 		export interface Tuple<G extends GrammarMap, K extends Under<'expression.collection.tuple'> = 'expression.collection.tuple'> extends SubKindOf<V.Expression.Collection<G, K>> {
 			// claimed by pr
-			readonly $kind: K;
+			readonly $path: K;
 			readonly elements?: Slot<
 				G,
 				K,
@@ -23,7 +23,7 @@ export namespace Expression {
 		export namespace Tuple {
 			export interface Bare<G extends GrammarMap, K extends Under<'expression.collection.tuple.bare'> = 'expression.collection.tuple.bare'> extends SubKindOf<V.Expression.Collection.Tuple<G, K>> {
 				// claimed by p
-				readonly $kind: K;
+				readonly $path: K;
 				readonly trailingComma?: Flag;
 			}
 		}

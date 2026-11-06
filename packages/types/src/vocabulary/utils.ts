@@ -2,7 +2,7 @@ import type { GrammarMap } from './map.ts';
 
 export type Under<P extends string> = P | `${P}.${string}`;
 
-export type SubKindOf<T extends { readonly $kind: string }, Restated extends keyof T = never> = {
+export type SubKindOf<T extends { readonly $path: string }, Restated extends keyof T = never> = {
 	readonly [K in keyof T as K extends Restated ? never : K]: T[K];
 };
 
@@ -13,11 +13,11 @@ export type SubKindOf<T extends { readonly $kind: string }, Restated extends key
 export type Flagged<T, F extends string> = [F] extends [never] ? T : T;
 
 /**
- * An owner refined by one value of an axis many owners share: the owner's members, with a `$kind` beneath the owner's,
+ * An owner refined by one value of an axis many owners share: the owner's members, with a `$path` beneath the owner's,
  * and the members the value's kind adds.
  */
-export type RefinedBy<Owner extends { readonly $kind: string }, Value extends { readonly $kind: string }> = SubKindOf<Owner> &
-	Omit<Value, '$kind'>;
+export type RefinedBy<Owner extends { readonly $path: string }, Value extends { readonly $path: string }> = SubKindOf<Owner> &
+	Omit<Value, '$path'>;
 
 /**
  * `T` where the grammar map `G` has the feature `F`, else `never`: a member the map's features lack is absent, so a

@@ -4,7 +4,7 @@ import type * as V from '../../index.ts';
 export namespace Pattern {
 	export interface Struct<G extends GrammarMap, K extends Under<'pattern.struct'> = 'pattern.struct'> extends SubKindOf<V.Pattern<G, K>> {
 		// claimed by pr
-		readonly $kind: K;
+		readonly $path: K;
 		readonly fields?: Slot<
 			G,
 			K,
@@ -28,7 +28,7 @@ export namespace Pattern {
 	export namespace Struct {
 		export interface Field<G extends GrammarMap, K extends Under<'pattern.struct.field'> = 'pattern.struct.field'> extends SubKindOf<V.Pattern.Struct<G, K>> {
 			// claimed by pr
-			readonly $kind: K;
+			readonly $path: K;
 			readonly byReference?: Flag;
 			readonly mutable?: Flag;
 			readonly name: Slot<G, K, 'name', V.Identifier.Any<G>>;

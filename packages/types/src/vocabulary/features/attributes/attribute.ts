@@ -4,7 +4,7 @@ import type * as V from '../../index.ts';
 export namespace Attribute {
 	export interface Inner<G extends GrammarMap, K extends Under<'attribute.inner'> = 'attribute.inner'> extends SubKindOf<V.Attribute<G, K>> {
 		// claimed by r
-		readonly $kind: K;
+		readonly $path: K;
 		readonly content: Slot<G, K, 'content', V.Attribute.Content<G>>;
 	}
 }

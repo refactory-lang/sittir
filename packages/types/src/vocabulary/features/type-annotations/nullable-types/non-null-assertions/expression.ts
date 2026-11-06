@@ -5,7 +5,7 @@ export namespace Expression {
 	export namespace Cast {
 		export interface NonNull<G extends GrammarMap, K extends Under<'expression.cast.non_null'> = 'expression.cast.non_null'> extends SubKindOf<V.Expression.Cast<G, K>> {
 			// claimed by t
-			readonly $kind: K;
+			readonly $path: K;
 			readonly expression: Slot<
 				G,
 				K,

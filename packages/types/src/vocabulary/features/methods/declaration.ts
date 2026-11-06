@@ -8,7 +8,7 @@ export namespace Declaration {
 	}
 	export interface Method<G extends GrammarMap, K extends Under<'declaration.method'> = 'declaration.method'> extends SubKindOf<V.Declaration<G, K>> {
 		// claimed by prt
-		readonly $kind: K;
+		readonly $path: K;
 		readonly body?: Slot<G, K, 'body', V.Declaration.TypeAlias<G> | V.Statement.Any<G>>;
 		readonly default?: Flag;
 		// rt only
@@ -42,7 +42,7 @@ export namespace Declaration {
 	export namespace Method {
 		export interface Signature<G extends GrammarMap, K extends Under<'declaration.method.signature'> = 'declaration.method.signature'> extends SubKindOf<V.Declaration.Method<G, K>> {
 			// claimed by rt
-			readonly $kind: K;
+			readonly $path: K;
 			readonly functionModifiers?: Slot<G, K, 'functionModifiers', V.Modifier.Extern<G> | string>[];
 			// r only
 			readonly name: Slot<
@@ -75,7 +75,7 @@ export namespace Declaration {
 			// t only
 		}
 		export interface Special<G extends GrammarMap, K extends Under<'declaration.method.special'> = 'declaration.method.special'> extends SubKindOf<V.Declaration.Method<G, K>, 'name'> {
-			readonly $kind: K;
+			readonly $path: K;
 			readonly name: `__${string}__`;
 			readonly stem: string;
 		}

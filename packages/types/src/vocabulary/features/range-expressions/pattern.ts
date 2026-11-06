@@ -4,23 +4,23 @@ import type * as V from '../../index.ts';
 export namespace Pattern {
 	export interface Range<G extends GrammarMap, K extends Under<'pattern.range'> = 'pattern.range'> extends SubKindOf<V.Pattern<G, K>> {
 		// claimed by r
-		readonly $kind: K;
+		readonly $path: K;
 		readonly left?: Slot<G, K, 'left', V.Identifier.Any<G> | V.Literal.Any<G> | string>;
 		readonly right?: Slot<G, K, 'right', V.Identifier.Any<G> | V.Literal.Any<G> | string>;
 	}
 	export namespace Range {
 		export interface Exclusive<G extends GrammarMap, K extends Under<'pattern.range.exclusive'> = 'pattern.range.exclusive'> extends SubKindOf<V.Pattern.Range<G, K>> {
 			// claimed by r
-			readonly $kind: K;
+			readonly $path: K;
 		}
 		export interface Inclusive<G extends GrammarMap, K extends Under<'pattern.range.inclusive'> = 'pattern.range.inclusive'> extends SubKindOf<V.Pattern.Range<G, K>> {
 			// claimed by r
-			readonly $kind: K;
+			readonly $path: K;
 		}
 		export namespace Inclusive {
 			export interface Legacy<G extends GrammarMap, K extends Under<'pattern.range.inclusive.legacy'> = 'pattern.range.inclusive.legacy'> extends SubKindOf<V.Pattern.Range.Inclusive<G, K>> {
 				// claimed by r
-				readonly $kind: K;
+				readonly $path: K;
 			}
 		}
 	}

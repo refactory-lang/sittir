@@ -4,7 +4,7 @@ import type * as V from '../../index.ts';
 export namespace Identifier {
 	export interface Label<G extends GrammarMap, K extends Under<'identifier.label'> = 'identifier.label'> extends SubKindOf<V.Identifier<G, K>> {
 		// claimed by rt
-		readonly $kind: K;
+		readonly $path: K;
 		readonly name?: Slot<G, K, 'name', V.Identifier.Any<G>>;
 		// r only
 	}

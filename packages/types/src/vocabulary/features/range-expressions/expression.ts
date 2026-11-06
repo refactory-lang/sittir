@@ -4,7 +4,7 @@ import type * as V from '../../index.ts';
 export namespace Expression {
 	export interface Range<G extends GrammarMap, K extends Under<'expression.range'> = 'expression.range'> extends SubKindOf<V.Expression<G, K>> {
 		// claimed by r
-		readonly $kind: K;
+		readonly $path: K;
 		readonly end?: Slot<
 			G,
 			K,
@@ -29,16 +29,16 @@ export namespace Expression {
 	export namespace Range {
 		export interface Exclusive<G extends GrammarMap, K extends Under<'expression.range.exclusive'> = 'expression.range.exclusive'> extends SubKindOf<V.Expression.Range<G, K>> {
 			// claimed by r
-			readonly $kind: K;
+			readonly $path: K;
 		}
 		export interface Inclusive<G extends GrammarMap, K extends Under<'expression.range.inclusive'> = 'expression.range.inclusive'> extends SubKindOf<V.Expression.Range<G, K>> {
 			// claimed by r
-			readonly $kind: K;
+			readonly $path: K;
 		}
 		export namespace Inclusive {
 			export interface Legacy<G extends GrammarMap, K extends Under<'expression.range.inclusive.legacy'> = 'expression.range.inclusive.legacy'> extends SubKindOf<V.Expression.Range.Inclusive<G, K>> {
 				// claimed by r
-				readonly $kind: K;
+				readonly $path: K;
 			}
 		}
 	}

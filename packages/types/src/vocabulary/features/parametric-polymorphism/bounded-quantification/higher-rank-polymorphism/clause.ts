@@ -5,7 +5,7 @@ export namespace Clause {
 	export namespace Bounds {
 		export interface HigherRanked<G extends GrammarMap, K extends Under<'clause.bounds.higher_ranked'> = 'clause.bounds.higher_ranked'> extends SubKindOf<V.Clause.Bounds<G, K>> {
 			// claimed by r
-			readonly $kind: K;
+			readonly $path: K;
 			readonly type: Slot<
 				G,
 				K,

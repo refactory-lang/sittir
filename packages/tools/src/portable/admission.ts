@@ -87,7 +87,7 @@ function kindsOf(checker: ts.TypeChecker, type: ts.Type, out: Set<string>): Set<
 	else if (checker.isArrayType(type) || checker.isTupleType(type))
 		for (const t of checker.getTypeArguments(type as ts.TypeReference)) kindsOf(checker, t, out);
 	else {
-		const kind = type.getProperty('$kind');
+		const kind = type.getProperty('$path');
 		if (kind !== undefined) {
 			const value = checker.getNonNullableType(checker.getTypeOfSymbol(kind));
 			for (const t of value.isUnion() ? value.types : [value]) if (t.isStringLiteral()) out.add(t.value);

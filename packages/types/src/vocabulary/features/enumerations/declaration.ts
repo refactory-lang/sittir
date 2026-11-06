@@ -4,7 +4,7 @@ import type * as V from '../../index.ts';
 export namespace Declaration {
 	export interface Enum<G extends GrammarMap, K extends Under<'declaration.enum'> = 'declaration.enum'> extends SubKindOf<V.Declaration<G, K>> {
 		// claimed by rt
-		readonly $kind: K;
+		readonly $path: K;
 		readonly body: Slot<G, K, 'body', V.Declaration.EnumMember.Any<G>>[];
 		readonly const?: Flag;
 		// t only
@@ -12,7 +12,7 @@ export namespace Declaration {
 	}
 	export interface EnumMember<G extends GrammarMap, K extends Under<'declaration.enum_member'> = 'declaration.enum_member'> extends SubKindOf<V.Declaration<G, K>> {
 		// claimed by rt
-		readonly $kind: K;
+		readonly $path: K;
 		readonly body?: Slot<
 			G,
 			K,

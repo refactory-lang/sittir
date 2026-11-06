@@ -5,7 +5,7 @@ export namespace Declaration {
 	export namespace TypeParameter {
 		export interface Value<G extends GrammarMap, K extends Under<'declaration.type_parameter.value'> = 'declaration.type_parameter.value'> extends SubKindOf<V.Declaration.TypeParameter<G, K>> {
 			// claimed by r
-			readonly $kind: K;
+			readonly $path: K;
 			readonly const?: never;
 			readonly default?: Slot<
 				G,

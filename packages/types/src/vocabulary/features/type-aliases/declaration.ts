@@ -4,7 +4,7 @@ import type * as V from '../../index.ts';
 export namespace Declaration {
 	export interface TypeAlias<G extends GrammarMap, K extends Under<'declaration.type_alias'> = 'declaration.type_alias'> extends SubKindOf<V.Declaration<G, K>> {
 		// claimed by prt
-		readonly $kind: K;
+		readonly $path: K;
 		readonly name?: Slot<G, K, 'name', V.Identifier.Any<G>>;
 		readonly value?: Slot<
 			G,

@@ -4,7 +4,7 @@ import type * as V from '../../../index.ts';
 export namespace Clause {
 	export interface Lifetimes<G extends GrammarMap, K extends Under<'clause.lifetimes'> = 'clause.lifetimes'> extends SubKindOf<V.Clause<G, K>> {
 		// claimed by r
-		readonly $kind: K;
+		readonly $path: K;
 		readonly lifetimes: Slot<G, K, 'lifetimes', V.Identifier.Lifetime<G>>[];
 	}
 }

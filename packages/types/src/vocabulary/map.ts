@@ -49,12 +49,12 @@ type Defaults<G extends GrammarMap> = Paths<Contract<G['features']>>;
 
 type Element<T> = T extends readonly (infer E)[] ? E : T;
 
-type KindOf<T> = T extends { readonly $kind: infer K } ? K : never;
+type PathOf<T> = T extends { readonly $path: infer K } ? K : never;
 
 type Within<O, D> = unknown extends D
 	? true
-	: [KindOf<O>] extends [KindOf<D>]
-		? [Exclude<O, { readonly $kind: string }>] extends [Exclude<D, { readonly $kind: string }>]
+	: [PathOf<O>] extends [PathOf<D>]
+		? [Exclude<O, { readonly $path: string }>] extends [Exclude<D, { readonly $path: string }>]
 			? true
 			: false
 		: false;

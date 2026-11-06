@@ -4,6 +4,6 @@ import type * as V from '../../index.ts';
 export namespace Identifier {
 	export interface Metavariable<G extends GrammarMap, K extends Under<'identifier.metavariable'> = 'identifier.metavariable'> extends SubKindOf<V.Identifier<G, K>> {
 		// claimed by r
-		readonly $kind: K;
+		readonly $path: K;
 	}
 }

@@ -20,7 +20,7 @@ export namespace Literal {
 		export namespace Integer {
 			export interface Imaginary<G extends GrammarMap, K extends Under<'literal.number.integer.imaginary'> = 'literal.number.integer.imaginary'> extends SubKindOf<V.Literal.Number.Integer<G, K>> {
 				// claimed by p
-				readonly $kind: K;
+				readonly $path: K;
 			}
 		}
 	}

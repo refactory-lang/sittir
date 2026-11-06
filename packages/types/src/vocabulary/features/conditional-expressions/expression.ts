@@ -4,7 +4,7 @@ import type * as V from '../../index.ts';
 export namespace Expression {
 	export interface Conditional<G extends GrammarMap, K extends Under<'expression.conditional'> = 'expression.conditional'> extends SubKindOf<V.Expression<G, K>> {
 		// claimed by pt
-		readonly $kind: K;
+		readonly $path: K;
 		readonly alternative: Slot<
 			G,
 			K,

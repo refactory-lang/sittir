@@ -4,7 +4,7 @@ import type * as V from '../../index.ts';
 export namespace Statement {
 	export interface Throw<G extends GrammarMap, K extends Under<'statement.throw'> = 'statement.throw'> extends SubKindOf<V.Statement<G, K>> {
 		// claimed by pt
-		readonly $kind: K;
+		readonly $path: K;
 		readonly cause?: Slot<
 			G,
 			K,
@@ -28,7 +28,7 @@ export namespace Statement {
 	}
 	export interface Try<G extends GrammarMap, K extends Under<'statement.try'> = 'statement.try'> extends SubKindOf<V.Statement<G, K>> {
 		// claimed by pt
-		readonly $kind: K;
+		readonly $path: K;
 		readonly alternative?: Slot<G, K, 'alternative', V.Clause.Else<G>>;
 		// p only
 		readonly body: Slot<G, K, 'body', V.Declaration.TypeAlias<G> | V.Statement.Any<G>>;

@@ -2,7 +2,7 @@ import type { GrammarMap, Slot } from './map.ts';
 import type { Flag, SubKindOf, Under } from './utils.ts';
 import type * as V from './index.ts';
 export interface Declaration<G extends GrammarMap, K extends Under<'declaration'> = 'declaration'> {
-	readonly $kind: K;
+	readonly $path: K;
 }
 
 export interface DeclarationSynonyms {
@@ -23,7 +23,7 @@ export interface DeclarationSynonyms {
 export namespace Declaration {
 	export interface Constant<G extends GrammarMap, K extends Under<'declaration.constant'> = 'declaration.constant'> extends SubKindOf<V.Declaration<G, K>> {
 		// claimed by pr
-		readonly $kind: K;
+		readonly $path: K;
 		readonly name: Slot<G, K, 'name', V.Identifier.Any<G>>;
 		// r only
 		readonly value?: Slot<
@@ -39,7 +39,7 @@ export namespace Declaration {
 	}
 	export interface Field<G extends GrammarMap, K extends Under<'declaration.field'> = 'declaration.field'> extends SubKindOf<V.Declaration<G, K>> {
 		// claimed by rt
-		readonly $kind: K;
+		readonly $path: K;
 		readonly name?: Slot<
 			G,
 			K,
@@ -63,7 +63,7 @@ export namespace Declaration {
 	}
 	export interface Function<G extends GrammarMap, K extends Under<'declaration.function'> = 'declaration.function'> extends SubKindOf<V.Declaration<G, K>> {
 		// claimed by prt
-		readonly $kind: K;
+		readonly $path: K;
 		readonly body?: Slot<G, K, 'body', V.Declaration.TypeAlias<G> | V.Statement.Any<G>>;
 		readonly doc?: Slot<G, K, 'doc', V.Literal.String.Any<G>>;
 		// p only
@@ -84,7 +84,7 @@ export namespace Declaration {
 	export namespace Function {
 		export interface Signature<G extends GrammarMap, K extends Under<'declaration.function.signature'> = 'declaration.function.signature'> extends SubKindOf<V.Declaration.Function<G, K>> {
 			// claimed by rt
-			readonly $kind: K;
+			readonly $path: K;
 			readonly functionModifiers?: Slot<G, K, 'functionModifiers', V.Modifier.Extern<G> | string>[];
 			// r only
 			readonly name: Slot<G, K, 'name', V.Identifier.Any<G>>;
@@ -108,7 +108,7 @@ export namespace Declaration {
 	}
 	export interface Parameter<G extends GrammarMap, K extends Under<'declaration.parameter'> = 'declaration.parameter'> extends SubKindOf<V.Declaration<G, K>> {
 		// claimed by prt
-		readonly $kind: K;
+		readonly $path: K;
 		readonly mutable?: Flag;
 		// r only
 		readonly name?: Slot<G, K, 'name', unknown>;
@@ -116,23 +116,23 @@ export namespace Declaration {
 	export namespace Parameter {
 		export interface Default<G extends GrammarMap, K extends Under<'declaration.parameter.default'> = 'declaration.parameter.default'> extends SubKindOf<V.Declaration.Parameter<G, K>> {
 			// claimed by p
-			readonly $kind: K;
+			readonly $path: K;
 			readonly name: Slot<G, K, 'name', V.Identifier.Any<G> | V.Pattern.Tuple<G>>;
 		}
 		export interface Typed<G extends GrammarMap, K extends Under<'declaration.parameter.typed'> = 'declaration.parameter.typed'> extends SubKindOf<V.Declaration.Parameter<G, K>> {
 			// claimed by p
-			readonly $kind: K;
+			readonly $path: K;
 			readonly name: Slot<G, K, 'name', V.Identifier.Any<G> | V.Pattern.Rest.Any<G>>;
 		}
 		export interface TypedDefault<G extends GrammarMap, K extends Under<'declaration.parameter.typed_default'> = 'declaration.parameter.typed_default'> extends SubKindOf<V.Declaration.Parameter<G, K>> {
 			// claimed by p
-			readonly $kind: K;
+			readonly $path: K;
 			readonly name: Slot<G, K, 'name', V.Identifier.Any<G>>;
 		}
 	}
 	export interface Variable<G extends GrammarMap, K extends Under<'declaration.variable'> = 'declaration.variable'> extends SubKindOf<V.Declaration<G, K>> {
 		// claimed by prt
-		readonly $kind: K;
+		readonly $path: K;
 		readonly alternative?: Slot<G, K, 'alternative', V.Statement.Block<G>>;
 		// r only
 		readonly declarators?: Slot<
@@ -163,7 +163,7 @@ export namespace Declaration {
 	export namespace Variable {
 		export interface Constant<G extends GrammarMap, K extends Under<'declaration.variable.constant'> = 'declaration.variable.constant'> extends SubKindOf<V.Declaration.Variable<G, K>> {
 			// claimed by t
-			readonly $kind: K;
+			readonly $path: K;
 			readonly declarators: Slot<
 				G,
 				K,
@@ -176,7 +176,7 @@ export namespace Declaration {
 		}
 		export interface Pattern<G extends GrammarMap, K extends Under<'declaration.variable.pattern'> = 'declaration.variable.pattern'> extends SubKindOf<V.Declaration.Variable<G, K>> {
 			// claimed by t
-			readonly $kind: K;
+			readonly $path: K;
 			readonly name: Slot<G, K, 'name', V.Identifier.Any<G> | V.Pattern.Any<G>>;
 			readonly value?: Slot<
 				G,
@@ -190,7 +190,7 @@ export namespace Declaration {
 		}
 		export interface Reassignable<G extends GrammarMap, K extends Under<'declaration.variable.reassignable'> = 'declaration.variable.reassignable'> extends SubKindOf<V.Declaration.Variable<G, K>> {
 			// claimed by t
-			readonly $kind: K;
+			readonly $path: K;
 			readonly declarators: Slot<
 				G,
 				K,
@@ -204,7 +204,7 @@ export namespace Declaration {
 		export namespace Reassignable {
 			export interface FunctionScoped<G extends GrammarMap, K extends Under<'declaration.variable.reassignable.function_scoped'> = 'declaration.variable.reassignable.function_scoped'> extends SubKindOf<V.Declaration.Variable.Reassignable<G, K>> {
 				// claimed by t
-				readonly $kind: K;
+				readonly $path: K;
 			}
 		}
 	}

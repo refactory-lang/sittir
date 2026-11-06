@@ -5,7 +5,7 @@ export namespace Declaration {
 	export namespace Field {
 		export interface Signature<G extends GrammarMap, K extends Under<'declaration.field.signature'> = 'declaration.field.signature'> extends SubKindOf<V.Declaration.Field<G, K>> {
 			// claimed by t
-			readonly $kind: K;
+			readonly $path: K;
 			readonly name: Slot<
 				G,
 				K,
@@ -21,7 +21,7 @@ export namespace Declaration {
 	}
 	export interface Interface<G extends GrammarMap, K extends Under<'declaration.interface'> = 'declaration.interface'> extends SubKindOf<V.Declaration<G, K>> {
 		// claimed by t
-		readonly $kind: K;
+		readonly $path: K;
 		readonly body: Slot<
 			G,
 			K,
@@ -50,7 +50,7 @@ export namespace Declaration {
 	export namespace Interface {
 		export interface Trait<G extends GrammarMap, K extends Under<'declaration.interface.trait'> = 'declaration.interface.trait'> extends SubKindOf<V.Declaration.Interface<G, K>> {
 			// claimed by r
-			readonly $kind: K;
+			readonly $path: K;
 			readonly body: Slot<
 				G,
 				K,

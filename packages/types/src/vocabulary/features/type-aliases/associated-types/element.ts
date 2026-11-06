@@ -4,7 +4,7 @@ import type * as V from '../../../index.ts';
 export namespace Element {
 	export interface TypeBinding<G extends GrammarMap, K extends Under<'element.type_binding'> = 'element.type_binding'> extends SubKindOf<V.Element<G, K>> {
 		// claimed by r
-		readonly $kind: K;
+		readonly $path: K;
 		readonly name: Slot<G, K, 'name', V.Identifier.Any<G>>;
 		readonly type: Slot<
 			G,

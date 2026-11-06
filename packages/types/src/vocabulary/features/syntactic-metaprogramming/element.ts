@@ -3,20 +3,20 @@ import type { SubKindOf, Under } from '../../utils.ts';
 import type * as V from '../../index.ts';
 export namespace Element {
 	export interface Macro<G extends GrammarMap, K extends Under<'element.macro'> = 'element.macro'> extends SubKindOf<V.Element<G, K>> {
-		readonly $kind: K;
+		readonly $path: K;
 	}
 	export namespace Macro {
 		// claimed by r
 		export type Fragment<G extends GrammarMap> = Text<G, 'element.macro.fragment'>;
 		export interface TokenBinding<G extends GrammarMap, K extends Under<'element.macro.token_binding'> = 'element.macro.token_binding'> extends SubKindOf<V.Element.Macro<G, K>> {
 			// claimed by r
-			readonly $kind: K;
+			readonly $path: K;
 			readonly name: Slot<G, K, 'name', V.Identifier.Metavariable<G>>;
 			readonly fragment: Slot<G, K, 'fragment', V.Element.Macro.Fragment<G>>;
 		}
 		export interface TokenRepetition<G extends GrammarMap, K extends Under<'element.macro.token_repetition'> = 'element.macro.token_repetition'> extends SubKindOf<V.Element.Macro<G, K>> {
 			// claimed by r
-			readonly $kind: K;
+			readonly $path: K;
 			readonly operator: Slot<G, K, 'operator', string>;
 			readonly separator?: Slot<G, K, 'separator', string>;
 			readonly tokens?: Slot<
@@ -33,7 +33,7 @@ export namespace Element {
 		export namespace TokenRepetition {
 			export interface Pattern<G extends GrammarMap, K extends Under<'element.macro.token_repetition.pattern'> = 'element.macro.token_repetition.pattern'> extends SubKindOf<V.Element.Macro.TokenRepetition<G, K>> {
 				// claimed by r
-				readonly $kind: K;
+				readonly $path: K;
 				readonly operator: Slot<G, K, 'operator', string>;
 				readonly separator?: Slot<G, K, 'separator', string>;
 				readonly tokenPatterns?: Slot<
@@ -54,7 +54,7 @@ export namespace Element {
 		}
 		export interface TokenTree<G extends GrammarMap, K extends Under<'element.macro.token_tree'> = 'element.macro.token_tree'> extends SubKindOf<V.Element.Macro<G, K>> {
 			// claimed by r
-			readonly $kind: K;
+			readonly $path: K;
 			readonly tokens?: Slot<
 				G,
 				K,
@@ -78,51 +78,51 @@ export namespace Element {
 		export namespace TokenTree {
 			export interface Delimited<G extends GrammarMap, K extends Under<'element.macro.token_tree.delimited'> = 'element.macro.token_tree.delimited'> extends SubKindOf<V.Element.Macro.TokenTree<G, K>> {
 				// claimed by r
-				readonly $kind: K;
+				readonly $path: K;
 			}
 			export namespace Delimited {
 				export interface Paren<G extends GrammarMap, K extends Under<'element.macro.token_tree.delimited.paren'> = 'element.macro.token_tree.delimited.paren'> extends SubKindOf<V.Element.Macro.TokenTree.Delimited<G, K>> {
 					// claimed by r
-					readonly $kind: K;
+					readonly $path: K;
 				}
 				export interface Bracket<G extends GrammarMap, K extends Under<'element.macro.token_tree.delimited.bracket'> = 'element.macro.token_tree.delimited.bracket'> extends SubKindOf<V.Element.Macro.TokenTree.Delimited<G, K>> {
 					// claimed by r
-					readonly $kind: K;
+					readonly $path: K;
 				}
 				export interface Brace<G extends GrammarMap, K extends Under<'element.macro.token_tree.delimited.brace'> = 'element.macro.token_tree.delimited.brace'> extends SubKindOf<V.Element.Macro.TokenTree.Delimited<G, K>> {
 					// claimed by r
-					readonly $kind: K;
+					readonly $path: K;
 				}
 			}
 			export interface Pattern<G extends GrammarMap, K extends Under<'element.macro.token_tree.pattern'> = 'element.macro.token_tree.pattern'> extends SubKindOf<V.Element.Macro.TokenTree<G, K>> {
 				// claimed by r
-				readonly $kind: K;
+				readonly $path: K;
 			}
 			export namespace Pattern {
 				export interface Paren<G extends GrammarMap, K extends Under<'element.macro.token_tree.pattern.paren'> = 'element.macro.token_tree.pattern.paren'> extends SubKindOf<V.Element.Macro.TokenTree.Pattern<G, K>> {
 					// claimed by r
-					readonly $kind: K;
+					readonly $path: K;
 				}
 				export interface Bracket<G extends GrammarMap, K extends Under<'element.macro.token_tree.pattern.bracket'> = 'element.macro.token_tree.pattern.bracket'> extends SubKindOf<V.Element.Macro.TokenTree.Pattern<G, K>> {
 					// claimed by r
-					readonly $kind: K;
+					readonly $path: K;
 				}
 				export interface Brace<G extends GrammarMap, K extends Under<'element.macro.token_tree.pattern.brace'> = 'element.macro.token_tree.pattern.brace'> extends SubKindOf<V.Element.Macro.TokenTree.Pattern<G, K>> {
 					// claimed by r
-					readonly $kind: K;
+					readonly $path: K;
 				}
 			}
 			export interface Paren<G extends GrammarMap, K extends Under<'element.macro.token_tree.paren'> = 'element.macro.token_tree.paren'> extends SubKindOf<V.Element.Macro.TokenTree<G, K>> {
 				// claimed by r
-				readonly $kind: K;
+				readonly $path: K;
 			}
 			export interface Bracket<G extends GrammarMap, K extends Under<'element.macro.token_tree.bracket'> = 'element.macro.token_tree.bracket'> extends SubKindOf<V.Element.Macro.TokenTree<G, K>> {
 				// claimed by r
-				readonly $kind: K;
+				readonly $path: K;
 			}
 			export interface Brace<G extends GrammarMap, K extends Under<'element.macro.token_tree.brace'> = 'element.macro.token_tree.brace'> extends SubKindOf<V.Element.Macro.TokenTree<G, K>> {
 				// claimed by r
-				readonly $kind: K;
+				readonly $path: K;
 			}
 		}
 	}

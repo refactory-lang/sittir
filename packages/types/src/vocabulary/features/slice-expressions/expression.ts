@@ -4,7 +4,7 @@ import type * as V from '../../index.ts';
 export namespace Expression {
 	export interface Slice<G extends GrammarMap, K extends Under<'expression.slice'> = 'expression.slice'> extends SubKindOf<V.Expression<G, K>> {
 		// claimed by p
-		readonly $kind: K;
+		readonly $path: K;
 		readonly start?: Slot<
 			G,
 			K,

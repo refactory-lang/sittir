@@ -3,7 +3,7 @@ import type { SubKindOf, Under } from '../../utils.ts';
 import type * as V from '../../index.ts';
 export namespace Expression {
 	export interface Cast<G extends GrammarMap, K extends Under<'expression.cast'> = 'expression.cast'> extends SubKindOf<V.Expression<G, K>> {
-		readonly $kind: K;
+		readonly $path: K;
 		readonly expression?: Slot<
 			G,
 			K,
@@ -18,7 +18,7 @@ export namespace Expression {
 	export namespace Cast {
 		export interface Assertion<G extends GrammarMap, K extends Under<'expression.cast.assertion'> = 'expression.cast.assertion'> extends SubKindOf<V.Expression.Cast<G, K>> {
 			// claimed by t
-			readonly $kind: K;
+			readonly $path: K;
 			readonly expression: Slot<
 				G,
 				K,
@@ -33,12 +33,12 @@ export namespace Expression {
 		export namespace Assertion {
 			export interface AngleBracket<G extends GrammarMap, K extends Under<'expression.cast.assertion.angle_bracket'> = 'expression.cast.assertion.angle_bracket'> extends SubKindOf<V.Expression.Cast.Assertion<G, K>> {
 				// claimed by t
-				readonly $kind: K;
+				readonly $path: K;
 			}
 		}
 		export interface Conversion<G extends GrammarMap, K extends Under<'expression.cast.conversion'> = 'expression.cast.conversion'> extends SubKindOf<V.Expression.Cast<G, K>, 'expression'> {
 			// claimed by r
-			readonly $kind: K;
+			readonly $path: K;
 			readonly expression: Slot<
 				G,
 				K,
@@ -60,7 +60,7 @@ export namespace Expression {
 		}
 		export interface Satisfies<G extends GrammarMap, K extends Under<'expression.cast.satisfies'> = 'expression.cast.satisfies'> extends SubKindOf<V.Expression.Cast<G, K>> {
 			// claimed by t
-			readonly $kind: K;
+			readonly $path: K;
 			readonly expression: Slot<
 				G,
 				K,

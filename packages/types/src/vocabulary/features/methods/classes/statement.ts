@@ -5,7 +5,7 @@ export namespace Statement {
 	export namespace Block {
 		export interface Static<G extends GrammarMap, K extends Under<'statement.block.static'> = 'statement.block.static'> extends SubKindOf<V.Statement.Block<G, K>> {
 			// claimed by t
-			readonly $kind: K;
+			readonly $path: K;
 			readonly body: Slot<G, K, 'body', V.Statement.Block<G>>;
 		}
 	}

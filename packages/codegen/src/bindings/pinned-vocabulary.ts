@@ -162,7 +162,7 @@ function declare(declaration: InterfaceDeclaration.Parsed, scope: readonly strin
 		const name = identifier(member.name(), [K.PropertyIdentifier], source);
 		const typed = member.type();
 		const annotation = typed?.type();
-		if (name === '$kind') {
+		if (name === '$path') {
 			path = kindPath(declaration, annotation, source);
 			continue;
 		}
@@ -195,12 +195,12 @@ function kindPath(declaration: InterfaceDeclaration.Parsed, annotation: Annotati
 	const { K, text } = source;
 	if (!isNode(annotation)) return undefined;
 	const name = text(declaration.name());
-	if (annotation.$type === K.LiteralType && stringIndex(annotation, source) !== undefined) throw new Error(`vocabulary: ${name} spells its $kind; declare it as a type parameter whose default is its path`);
+	if (annotation.$type === K.LiteralType && stringIndex(annotation, source) !== undefined) throw new Error(`vocabulary: ${name} spells its $path; declare it as a type parameter whose default is its path`);
 	if (annotation.$type !== K.TypeIdentifier) return undefined;
 	const parameter = text(annotation);
 	const declared = (declaration.typeParameters()?.elements().items() ?? []).find((at) => text(at.name()) === parameter);
 	const path = stringIndex(declared?.default()?.type(), source);
-	if (path === undefined) throw new Error(`vocabulary: ${name} declares $kind as ${parameter}, which is no type parameter whose default is its path`);
+	if (path === undefined) throw new Error(`vocabulary: ${name} declares $path as ${parameter}, which is no type parameter whose default is its path`);
 	return path;
 }
 

@@ -4,7 +4,7 @@ import type * as V from '../../index.ts';
 export namespace Argument {
 	export interface Named<G extends GrammarMap, K extends Under<'argument.named'> = 'argument.named'> extends SubKindOf<V.Argument<G, K>> {
 		// claimed by p
-		readonly $kind: K;
+		readonly $path: K;
 		readonly name: Slot<G, K, 'name', V.Identifier.Any<G>>;
 		readonly value: Slot<
 			G,

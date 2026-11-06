@@ -4,7 +4,7 @@ import type * as V from '../../index.ts';
 export namespace Clause {
 	export interface Default<G extends GrammarMap, K extends Under<'clause.default'> = 'clause.default'> extends SubKindOf<V.Clause<G, K>> {
 		// claimed by t
-		readonly $kind: K;
+		readonly $path: K;
 		readonly type: Slot<G, K, 'type', V.Identifier.Any<G> | V.Type.Any<G>>;
 	}
 }

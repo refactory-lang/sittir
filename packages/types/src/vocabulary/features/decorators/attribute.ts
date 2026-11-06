@@ -5,7 +5,7 @@ export namespace Attribute {
 	export namespace Content {
 		export interface Call<G extends GrammarMap, K extends Under<'attribute.content.call'> = 'attribute.content.call'> extends SubKindOf<V.Attribute.Content<G, K>> {
 			// claimed by t
-			readonly $kind: K;
+			readonly $path: K;
 			readonly arguments: Slot<
 				G,
 				K,
@@ -21,13 +21,13 @@ export namespace Attribute {
 		}
 		export interface Member<G extends GrammarMap, K extends Under<'attribute.content.member'> = 'attribute.content.member'> extends SubKindOf<V.Attribute.Content<G, K>> {
 			// claimed by t
-			readonly $kind: K;
+			readonly $path: K;
 			readonly object: Slot<G, K, 'object', V.Attribute.Content.Member<G> | V.Identifier.Any<G>>;
 			readonly property: Slot<G, K, 'property', V.Identifier.Any<G>>;
 		}
 		export interface Parenthesized<G extends GrammarMap, K extends Under<'attribute.content.parenthesized'> = 'attribute.content.parenthesized'> extends SubKindOf<V.Attribute.Content<G, K>> {
 			// claimed by t
-			readonly $kind: K;
+			readonly $path: K;
 			readonly expression: Slot<
 				G,
 				K,
@@ -40,7 +40,7 @@ export namespace Attribute {
 	}
 	export interface Decorator<G extends GrammarMap, K extends Under<'attribute.decorator'> = 'attribute.decorator'> extends SubKindOf<V.Attribute<G, K>> {
 		// claimed by pt
-		readonly $kind: K;
+		readonly $path: K;
 		readonly content: Slot<
 			G,
 			K,

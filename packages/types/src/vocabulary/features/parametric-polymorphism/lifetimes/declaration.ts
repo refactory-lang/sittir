@@ -11,7 +11,7 @@ export namespace Declaration {
 	export namespace TypeParameter {
 		export interface Lifetime<G extends GrammarMap, K extends Under<'declaration.type_parameter.lifetime'> = 'declaration.type_parameter.lifetime'> extends SubKindOf<V.Declaration.TypeParameter<G, K>> {
 			// claimed by r
-			readonly $kind: K;
+			readonly $path: K;
 			readonly const?: never;
 			readonly default?: never;
 			readonly name: Slot<G, K, 'name', V.Identifier.Lifetime<G>>;

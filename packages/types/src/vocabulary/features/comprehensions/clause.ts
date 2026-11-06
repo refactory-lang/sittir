@@ -4,13 +4,13 @@ import type * as V from '../../index.ts';
 export namespace Clause {
 	export interface Comprehension<G extends GrammarMap, K extends Under<'clause.comprehension'> = 'clause.comprehension'> extends SubKindOf<V.Clause<G, K>> {
 		// claimed by p
-		readonly $kind: K;
+		readonly $path: K;
 		readonly contents?: Slot<G, K, 'contents', V.Clause.Comprehension.For<G> | V.Clause.Comprehension.If<G>>[];
 	}
 	export namespace Comprehension {
 		export interface For<G extends GrammarMap, K extends Under<'clause.comprehension.for'> = 'clause.comprehension.for'> extends SubKindOf<V.Clause.Comprehension<G, K>> {
 			// claimed by p
-			readonly $kind: K;
+			readonly $path: K;
 			readonly trailingComma?: Flag;
 			readonly left: Slot<
 				G,
@@ -32,7 +32,7 @@ export namespace Clause {
 		}
 		export interface If<G extends GrammarMap, K extends Under<'clause.comprehension.if'> = 'clause.comprehension.if'> extends SubKindOf<V.Clause.Comprehension<G, K>> {
 			// claimed by p
-			readonly $kind: K;
+			readonly $path: K;
 			readonly condition: Slot<
 				G,
 				K,

@@ -4,18 +4,18 @@ import type * as V from '../../index.ts';
 export namespace Pattern {
 	export interface As<G extends GrammarMap, K extends Under<'pattern.as'> = 'pattern.as'> extends SubKindOf<V.Pattern<G, K>> {
 		// claimed by pr
-		readonly $kind: K;
+		readonly $path: K;
 		readonly name: Slot<G, K, 'name', V.Identifier.Any<G>>;
 		readonly pattern: Slot<G, K, 'pattern', unknown>;
 	}
 	export interface Map<G extends GrammarMap, K extends Under<'pattern.map'> = 'pattern.map'> extends SubKindOf<V.Pattern<G, K>> {
 		// claimed by p
-		readonly $kind: K;
+		readonly $path: K;
 		readonly elements?: Slot<G, K, 'elements', unknown>[];
 	}
 	export interface Or<G extends GrammarMap, K extends Under<'pattern.or'> = 'pattern.or'> extends SubKindOf<V.Pattern<G, K>> {
 		// claimed by pr
-		readonly $kind: K;
+		readonly $path: K;
 		readonly left?: Slot<
 			G,
 			K,

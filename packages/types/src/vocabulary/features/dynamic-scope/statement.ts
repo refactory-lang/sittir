@@ -4,7 +4,7 @@ import type * as V from '../../index.ts';
 export namespace Statement {
 	export interface Scope<G extends GrammarMap, K extends Under<'statement.scope'> = 'statement.scope'> extends SubKindOf<V.Statement<G, K>> {
 		// claimed by t
-		readonly $kind: K;
+		readonly $path: K;
 		readonly body: Slot<G, K, 'body', V.Declaration.Any<G> | V.Statement.Any<G>>;
 		readonly object: Slot<G, K, 'object', V.Expression.Parenthesized<G>>;
 	}

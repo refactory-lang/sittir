@@ -4,7 +4,7 @@ import type * as V from '../../index.ts';
 export namespace Declaration {
 	export interface Struct<G extends GrammarMap, K extends Under<'declaration.struct'> = 'declaration.struct'> extends SubKindOf<V.Declaration<G, K>> {
 		// claimed by r
-		readonly $kind: K;
+		readonly $path: K;
 		readonly body?: Slot<
 			G,
 			K,
@@ -28,7 +28,7 @@ export namespace Declaration {
 	export namespace Struct {
 		export interface Tuple<G extends GrammarMap, K extends Under<'declaration.struct.tuple'> = 'declaration.struct.tuple'> extends SubKindOf<V.Declaration.Struct<G, K>> {
 			// claimed by r
-			readonly $kind: K;
+			readonly $path: K;
 			readonly body: Slot<
 				G,
 				K,
@@ -40,7 +40,7 @@ export namespace Declaration {
 		}
 		export interface Unit<G extends GrammarMap, K extends Under<'declaration.struct.unit'> = 'declaration.struct.unit'> extends SubKindOf<V.Declaration.Struct<G, K>> {
 			// claimed by r
-			readonly $kind: K;
+			readonly $path: K;
 		}
 	}
 }

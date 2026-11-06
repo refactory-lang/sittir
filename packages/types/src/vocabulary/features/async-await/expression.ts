@@ -4,7 +4,7 @@ import type * as V from '../../index.ts';
 export namespace Expression {
 	export interface Await<G extends GrammarMap, K extends Under<'expression.await'> = 'expression.await'> extends SubKindOf<V.Expression<G, K>> {
 		// claimed by prt
-		readonly $kind: K;
+		readonly $path: K;
 		readonly expression: Slot<
 			G,
 			K,

@@ -39,20 +39,20 @@ type Core = Contract<{}>;
 
 // An ordinary function needs a name and parameters, nothing accessor-shaped.
 export function fn(name: Identifier.Any<Core>): Declaration.Function<Core> {
-	return { $kind: 'declaration.function', name, parameters: [] };
+	return { $path: 'declaration.function', name, parameters: [] };
 }
 
 // A method without an accessor is a plain method, and every method has a name and parameters.
 export function method(name: Identifier.Any<Core>): Declaration.Method<Core> {
-	return { $kind: 'declaration.method', name, parameters: [] };
+	return { $path: 'declaration.method', name, parameters: [] };
 }
 export function nameless(): Declaration.Method<Core> {
 	// @ts-expect-error a method supplies its name
-	return { $kind: 'declaration.method', parameters: [] };
+	return { $path: 'declaration.method', parameters: [] };
 }
 export function parameterless(name: Identifier.Any<Core>): Declaration.Method<Core> {
 	// @ts-expect-error a method supplies its parameters
-	return { $kind: 'declaration.method', name };
+	return { $path: 'declaration.method', name };
 }
 
 // A contract composing the features whose members the checks below set, and one composing none.
@@ -61,7 +61,7 @@ type Bare = Contract<{}>;
 
 // A getter is a property's accessor kind, which `accessors` owns: no member holds `get`.
 export function getter(name: Declaration.Property.Getter<Composed>['name']): Declaration.Property.Getter<Composed> {
-	return { $kind: 'declaration.property.getter', name, parameters: [], body: { $kind: 'statement.block' } };
+	return { $path: 'declaration.property.getter', name, parameters: [], body: { $path: 'statement.block' } };
 }
 export function getterWithAccessor(name: Declaration.Property.Getter<Composed>['name']): Declaration.Property.Getter<Composed> {
 	return {
@@ -79,11 +79,11 @@ export function accessorOptionality(
 }
 type Optional = Contract<Accessors & OptionalMembers>;
 export function markedAccessor(name: Declaration.Property<Optional>['name']): Declaration.Property<Optional> {
-	return { $kind: 'declaration.property', name, optionality: '!' };
+	return { $path: 'declaration.property', name, optionality: '!' };
 }
 export function bareMarked(name: Declaration.Property<Bare>['name']): Declaration.Property<Bare> {
 	return {
-		$kind: 'declaration.property',
+		$path: 'declaration.property',
 		name,
 		// @ts-expect-error a context without optional members has no optionality
 		optionality: '!'
@@ -92,12 +92,12 @@ export function bareMarked(name: Declaration.Property<Bare>['name']): Declaratio
 
 // An owner's access level is its refinement kind, and no member holds the level. A deeper level refines it further.
 export function crateFn(name: Identifier.Any<Composed>): Declaration.Function.Public.Internal<Composed> {
-	return { $kind: 'declaration.function.public.internal', name, parameters: [] };
+	return { $path: 'declaration.function.public.internal', name, parameters: [] };
 }
-export const anyPublic: Declaration.Function.Public.Any<Composed> = crateFn({ $kind: 'identifier' });
+export const anyPublic: Declaration.Function.Public.Any<Composed> = crateFn({ $path: 'identifier' });
 export function privateFn(name: Identifier.Any<Composed>): Declaration.Function.Private<Composed> {
 	return {
-		$kind: 'declaration.function.private',
+		$path: 'declaration.function.private',
 		name,
 		parameters: [],
 		// @ts-expect-error no member holds the level
@@ -106,10 +106,10 @@ export function privateFn(name: Identifier.Any<Composed>): Declaration.Function.
 }
 // The restricted level adds the module it names, and every owner's restricted refinement has it.
 export function superFn(name: Identifier.Any<Composed>, scope: Identifier.Any<Composed>): Declaration.Function.Public.Restricted<Composed> {
-	return { $kind: 'declaration.function.public.restricted', name, parameters: [], scope };
+	return { $path: 'declaration.function.public.restricted', name, parameters: [], scope };
 }
 // @ts-expect-error a context without scoped visibility has no scope
-export const noScope: Declaration.Function.Public.Restricted<Bare>['scope'] = { $kind: 'identifier' };
+export const noScope: Declaration.Function.Public.Restricted<Bare>['scope'] = { $path: 'identifier' };
 
 // A member the contract's features lack is absent: code over the core reads it as its type or undefined, and a
 // contract without the feature refuses a value for it.
@@ -118,8 +118,8 @@ export function asyncOf(f: Declaration.Function<Core>): Flag | undefined {
 }
 declare const asyncFlag: Flag;
 export const bareAsync: Declaration.Function<Bare> = {
-	$kind: 'declaration.function',
-	name: { $kind: 'identifier' },
+	$path: 'declaration.function',
+	name: { $path: 'identifier' },
 	parameters: [],
 	// @ts-expect-error a contract without async-await has no async
 	async: asyncFlag
@@ -127,15 +127,15 @@ export const bareAsync: Declaration.Function<Bare> = {
 
 // A call carries no operator; a binary expression carries no arguments.
 export function call(callee: Identifier.Any<Core>): Expression.Call<Core> {
-	return { $kind: 'expression.call', function: callee, arguments: [] };
+	return { $path: 'expression.call', function: callee, arguments: [] };
 }
 export function binary(left: Identifier.Any<Core>, right: Identifier.Any<Core>): Expression.Binary<Core> {
-	return { $kind: 'expression.binary', left, right };
+	return { $path: 'expression.binary', left, right };
 }
 
 // A refinement pins its operator.
 export function add(): Expression.Binary.Arithmetic.Add<Core> {
-	return { $kind: 'expression.binary.arithmetic.add', operator: '+' };
+	return { $path: 'expression.binary.arithmetic.add', operator: '+' };
 }
 export function notAdd(): Expression.Binary.Arithmetic.Add<Core> {
 	return {
@@ -147,7 +147,7 @@ export function notAdd(): Expression.Binary.Arithmetic.Add<Core> {
 
 // Every comparison pins the one converged operator member.
 export function equal(left: Identifier.Any<Core>, right: Identifier.Any<Core>): Expression.Binary.Comparison.Equal<Core> {
-	return { $kind: 'expression.binary.comparison.equal', left, right, operator: '==' };
+	return { $path: 'expression.binary.comparison.equal', left, right, operator: '==' };
 }
 export function notEqual(left: Identifier.Any<Core>, right: Identifier.Any<Core>): Expression.Binary.Comparison.Equal<Core> {
 	return {
@@ -163,7 +163,7 @@ export function strictEqual(left: Identifier.Any<Core>, right: Identifier.Any<Co
 }
 export function looseEqual(left: Identifier.Any<Core>, right: Identifier.Any<Core>): Expression.Binary.Comparison.LooseEqual<Core> {
 	return {
-		$kind: 'expression.binary.comparison.loose_equal',
+		$path: 'expression.binary.comparison.loose_equal',
 		left,
 		right,
 		// @ts-expect-error a coercing comparison is never strict
@@ -173,7 +173,7 @@ export function looseEqual(left: Identifier.Any<Core>, right: Identifier.Any<Cor
 
 // A trait is an interface with more: a refinement carries its own kind and the members its parent lacks.
 export function trait(name: Declaration.Interface.Trait<Composed>['name'], whereClause: Clause.Where<Composed>): Declaration.Interface.Trait<Composed> {
-	return { $kind: 'declaration.interface.trait', name, body: [], whereClause };
+	return { $path: 'declaration.interface.trait', name, body: [], whereClause };
 }
 // A flag is no member: a structure states its flags in `$flags`.
 export function unsafeTrait(name: Declaration.Interface.Trait<Composed>['name'], whereClause: Clause.Where<Composed>): Declaration.Interface.Trait<Composed> {
@@ -184,15 +184,15 @@ export function unsafeTrait(name: Declaration.Interface.Trait<Composed>['name'],
 	};
 }
 
-// The kind-set is the type for "any declaration": shared members read directly, the rest after narrowing on `$kind`.
+// The kind-set is the type for "any declaration": shared members read directly, the rest after narrowing on `$path`.
 export function nameOf(d: Declaration.Any<Core>): unknown {
-	if (d.$kind === 'declaration.function') return d.parameters;
-	return d.$kind;
+	if (d.$path === 'declaration.function') return d.parameters;
+	return d.$path;
 }
 
 // The root of a file is `file`, and `module` names only a module declared in a file.
 export function file(statements: File<Core>['statements']): File<Core> {
-	return { $kind: 'file', statements };
+	return { $path: 'file', statements };
 }
 export function declaredModuleAsFile(m: Declaration.Module<Core>): File<Core> {
 	// @ts-expect-error a module declared in a file is no file
@@ -201,12 +201,12 @@ export function declaredModuleAsFile(m: Declaration.Module<Core>): File<Core> {
 
 // A loop family: the shared for-each is a refinement of loop, and needs its subject and body.
 export function forEach(right: Identifier.Any<Core>, body: Statement.Block<Core>): Statement.Loop.ForEach<Core> {
-	return { $kind: 'statement.loop.for_each', right, body };
+	return { $path: 'statement.loop.for_each', right, body };
 }
 
 // A switch holds its cases, each naming its value, and its default, which names none; a match case is no clause of a switch.
 export function switchBody(value: Clause.Case.Switch<Core>['value']): Statement.Switch<Core>['body'] {
-	return [{ $kind: 'clause.case.switch', value }, { $kind: 'clause.case.default' }];
+	return [{ $path: 'clause.case.switch', value }, { $path: 'clause.case.default' }];
 }
 export function matchInSwitch(c: Clause.Case.Match<Core>): Statement.Switch<Core>['body'] {
 	// @ts-expect-error a match case is no clause of a switch
@@ -215,7 +215,7 @@ export function matchInSwitch(c: Clause.Case.Match<Core>): Statement.Switch<Core
 
 // A handler is one kind in every language: it names what it binds and the type it catches, and holds its body.
 export function handler(name: Identifier.Any<Core>, type: Type.Any<Core>, body: Clause.Catch<Core>['body']): Clause.Catch<Core> {
-	return { $kind: 'clause.catch', name, type, body };
+	return { $path: 'clause.catch', name, type, body };
 }
 export function handlerException(c: Clause.Catch<Core>): unknown {
 	// @ts-expect-error what a handler catches is its `type`, in every language
@@ -223,10 +223,10 @@ export function handlerException(c: Clause.Catch<Core>): unknown {
 }
 
 // A member reads as its default under a contract: a kind of its namespace, the text of a token it admits, or an unclaimed
-// kind's low-level node, told apart by `typeof` and `$kind`.
+// kind's low-level node, told apart by `typeof` and `$path`.
 export function nameKind(f: Declaration.Function<Core>): string {
 	const name: Identifier.Any<Core> | Unmapped = f.name;
-	return typeof name === 'string' ? name : '$kind' in name ? name.$kind : 'unmapped';
+	return typeof name === 'string' ? name : '$path' in name ? name.$path : 'unmapped';
 }
 
 // A level is whole: it holds the kinds a feature adds, for every context.
@@ -244,8 +244,8 @@ interface Narrowed extends GrammarMap {
 	readonly inputs: {};
 }
 export type NarrowedFits = Assert<Fits<Narrowed>>;
-const self: Identifier<Narrowed> = { $kind: 'identifier' };
-export const narrowed: Declaration.Function<Narrowed> = { $kind: 'declaration.function', name: self, parameters: [self] };
+const self: Identifier<Narrowed> = { $path: 'identifier' };
+export const narrowed: Declaration.Function<Narrowed> = { $path: 'declaration.function', name: self, parameters: [self] };
 // @ts-expect-error the narrowed name refuses an arm the grammar leaves out
 export const textName: Declaration.Function<Narrowed> = { ...narrowed, name: 'self' };
 // @ts-expect-error the narrowed parameters refuse an arm the grammar leaves out
@@ -261,13 +261,13 @@ export function unchecked(any: Text<Core, 'type.primitive.unchecked'>): Type.Pri
 type Elided = Contract<Elisions>;
 export function elided(x: Expression.Any<Elided>, p: Pattern.Any<Elided>): readonly [Expression.Collection.List<Elided>, Pattern.List<Elided>] {
 	return [
-		{ $kind: 'expression.collection.list', elements: [x, null, x] },
-		{ $kind: 'pattern.list', elements: [p, null, p] }
+		{ $path: 'expression.collection.list', elements: [x, null, x] },
+		{ $path: 'pattern.list', elements: [p, null, p] }
 	];
 }
 export function unelided(x: Expression.Any<Bare>): Expression.Collection.List<Bare> {
 	// @ts-expect-error a context without elisions has no holes
-	return { $kind: 'expression.collection.list', elements: [x, null, x] };
+	return { $path: 'expression.collection.list', elements: [x, null, x] };
 }
 
 // Every default admits an unclaimed kind, typed as its low-level node, and a grammar registers each of its unclaimed kinds

@@ -4,7 +4,7 @@ import type * as V from '../../../index.ts';
 export namespace Declaration {
 	export interface Class<G extends GrammarMap, K extends Under<'declaration.class'> = 'declaration.class'> extends SubKindOf<V.Declaration<G, K>> {
 		// claimed by pt
-		readonly $kind: K;
+		readonly $path: K;
 		readonly body: Slot<G, K, 'body', V.Declaration.Any<G> | V.Statement.Any<G>> | Slot<G, K, 'body', V.Declaration.Any<G> | V.Statement.Any<G>>[];
 		readonly doc?: Slot<G, K, 'doc', V.Literal.String.Any<G>>;
 		// p only
@@ -12,7 +12,7 @@ export namespace Declaration {
 	}
 	export interface Constructor<G extends GrammarMap, K extends Under<'declaration.constructor'> = 'declaration.constructor'> extends SubKindOf<V.Declaration<G, K>> {
 		// claimed by pt
-		readonly $kind: K;
+		readonly $path: K;
 		readonly body: Slot<G, K, 'body', V.Statement.Block<G> | V.Declaration.TypeAlias<G> | V.Statement.Any<G>>;
 		readonly parameters: Slot<
 			G,

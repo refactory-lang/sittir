@@ -5,7 +5,7 @@ export namespace Expression {
 	export namespace Call {
 		export interface Template<G extends GrammarMap, K extends Under<'expression.call.template'> = 'expression.call.template'> extends SubKindOf<V.Expression.Call<G, K>> {
 			// claimed by t
-			readonly $kind: K;
+			readonly $path: K;
 			readonly arguments: Slot<G, K, 'arguments', V.Literal.String.Interpolated<G>>;
 			readonly function: Slot<
 				G,
@@ -19,7 +19,7 @@ export namespace Expression {
 	}
 	export interface Interpolation<G extends GrammarMap, K extends Under<'expression.interpolation'> = 'expression.interpolation'> extends SubKindOf<V.Expression<G, K>> {
 		// claimed by pt
-		readonly $kind: K;
+		readonly $path: K;
 		readonly debug?: Flag;
 		// p only
 		readonly expression?: Slot<
@@ -40,11 +40,11 @@ export namespace Expression {
 	export namespace Interpolation {
 		export interface Conversion<G extends GrammarMap, K extends Under<'expression.interpolation.conversion'> = 'expression.interpolation.conversion'> extends SubKindOf<V.Expression.Interpolation<G, K>> {
 			// claimed by p
-			readonly $kind: K;
+			readonly $path: K;
 		}
 		export interface Format<G extends GrammarMap, K extends Under<'expression.interpolation.format'> = 'expression.interpolation.format'> extends SubKindOf<V.Expression.Interpolation<G, K>> {
 			// claimed by p
-			readonly $kind: K;
+			readonly $path: K;
 			readonly elements?: Slot<G, K, 'elements', V.Expression.Interpolation<G> | string>[];
 		}
 	}

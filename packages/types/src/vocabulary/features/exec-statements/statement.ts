@@ -4,7 +4,7 @@ import type * as V from '../../index.ts';
 export namespace Statement {
 	export interface Exec<G extends GrammarMap, K extends Under<'statement.exec'> = 'statement.exec'> extends SubKindOf<V.Statement<G, K>> {
 		// claimed by p
-		readonly $kind: K;
+		readonly $path: K;
 		readonly code: Slot<
 			G,
 			K,

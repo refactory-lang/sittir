@@ -8,7 +8,7 @@ export namespace Expression {
 	}
 	export interface Reference<G extends GrammarMap, K extends Under<'expression.reference'> = 'expression.reference'> extends SubKindOf<V.Expression<G, K>> {
 		// claimed by r
-		readonly $kind: K;
+		readonly $path: K;
 		readonly argument: Slot<
 			G,
 			K,
@@ -25,7 +25,7 @@ export namespace Expression {
 	}
 	export namespace Unary {
 		export interface Deref<G extends GrammarMap, K extends Under<'expression.unary.deref'> = 'expression.unary.deref'> extends SubKindOf<V.Expression.Unary<G, K>> {
-			readonly $kind: K;
+			readonly $path: K;
 		}
 	}
 }

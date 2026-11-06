@@ -5,7 +5,7 @@ export namespace Declaration {
 	export namespace TypeAlias {
 		export interface Associated<G extends GrammarMap, K extends Under<'declaration.type_alias.associated'> = 'declaration.type_alias.associated'> extends SubKindOf<V.Declaration.TypeAlias<G, K>> {
 			// claimed by r
-			readonly $kind: K;
+			readonly $path: K;
 			readonly bounds?: Slot<
 				G,
 				K,

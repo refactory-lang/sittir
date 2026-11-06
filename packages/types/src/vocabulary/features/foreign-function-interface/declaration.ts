@@ -13,14 +13,14 @@ export namespace Declaration {
 	export namespace Module {
 		export interface Foreign<G extends GrammarMap, K extends Under<'declaration.module.foreign'> = 'declaration.module.foreign'> extends SubKindOf<V.Declaration.Module<G, K>> {
 			// claimed by r
-			readonly $kind: K;
+			readonly $path: K;
 			readonly extern: Slot<G, K, 'extern', V.Modifier.Extern<G>>;
 		}
 	}
 	export namespace Parameter {
 		export interface Variadic<G extends GrammarMap, K extends Under<'declaration.parameter.variadic'> = 'declaration.parameter.variadic'> extends SubKindOf<V.Declaration.Parameter<G, K>> {
 			// claimed by r
-			readonly $kind: K;
+			readonly $path: K;
 			readonly mutable?: Flag;
 			readonly pattern?: Slot<G, K, 'pattern', unknown>;
 		}

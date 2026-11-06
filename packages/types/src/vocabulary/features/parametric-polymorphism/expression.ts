@@ -23,7 +23,7 @@ export namespace Expression {
 	}
 	export interface Instantiation<G extends GrammarMap, K extends Under<'expression.instantiation'> = 'expression.instantiation'> extends SubKindOf<V.Expression<G, K>> {
 		// claimed by rt
-		readonly $kind: K;
+		readonly $path: K;
 		readonly function: Slot<
 			G,
 			K,

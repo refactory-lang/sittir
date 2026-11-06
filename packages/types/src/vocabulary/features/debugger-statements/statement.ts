@@ -4,6 +4,6 @@ import type * as V from '../../index.ts';
 export namespace Statement {
 	export interface Debugger<G extends GrammarMap, K extends Under<'statement.debugger'> = 'statement.debugger'> extends SubKindOf<V.Statement<G, K>> {
 		// claimed by t
-		readonly $kind: K;
+		readonly $path: K;
 	}
 }

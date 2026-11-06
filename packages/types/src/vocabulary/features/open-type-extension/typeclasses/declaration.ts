@@ -5,7 +5,7 @@ export namespace Declaration {
 	export namespace Extension {
 		export interface Conformance<G extends GrammarMap, K extends Under<'declaration.extension.conformance'> = 'declaration.extension.conformance'> extends SubKindOf<V.Declaration.Extension<G, K>> {
 			// claimed by r
-			readonly $kind: K;
+			readonly $path: K;
 			readonly body: Slot<
 				G,
 				K,

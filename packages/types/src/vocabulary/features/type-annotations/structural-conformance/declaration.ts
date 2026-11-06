@@ -3,12 +3,12 @@ import type { Flag, SubKindOf, Under } from '../../../utils.ts';
 import type * as V from '../../../index.ts';
 export namespace Declaration {
 	export interface Signature<G extends GrammarMap, K extends Under<'declaration.signature'> = 'declaration.signature'> extends SubKindOf<V.Declaration<G, K>> {
-		readonly $kind: K;
+		readonly $path: K;
 	}
 	export namespace Signature {
 		export interface Call<G extends GrammarMap, K extends Under<'declaration.signature.call'> = 'declaration.signature.call'> extends SubKindOf<V.Declaration.Signature<G, K>> {
 			// claimed by t
-			readonly $kind: K;
+			readonly $path: K;
 			readonly parameters: Slot<
 				G,
 				K,
@@ -23,7 +23,7 @@ export namespace Declaration {
 		}
 		export interface Construct<G extends GrammarMap, K extends Under<'declaration.signature.construct'> = 'declaration.signature.construct'> extends SubKindOf<V.Declaration.Signature<G, K>> {
 			// claimed by t
-			readonly $kind: K;
+			readonly $path: K;
 			readonly parameters: Slot<
 				G,
 				K,
@@ -38,7 +38,7 @@ export namespace Declaration {
 		}
 		export interface Index<G extends GrammarMap, K extends Under<'declaration.signature.index'> = 'declaration.signature.index'> extends SubKindOf<V.Declaration.Signature<G, K>> {
 			// claimed by t
-			readonly $kind: K;
+			readonly $path: K;
 			readonly indexType?: Slot<G, K, 'indexType', V.Identifier.Any<G> | V.Type.Any<G>>;
 			readonly name?: Slot<G, K, 'name', V.Identifier.Any<G> | string>;
 			readonly readonly?: Flag;
@@ -48,7 +48,7 @@ export namespace Declaration {
 		export namespace Index {
 			export interface Mapped<G extends GrammarMap, K extends Under<'declaration.signature.index.mapped'> = 'declaration.signature.index.mapped'> extends SubKindOf<V.Declaration.Signature.Index<G, K>> {
 				// claimed by t
-				readonly $kind: K;
+				readonly $path: K;
 				readonly mappedTypeClause: Slot<G, K, 'mappedTypeClause', V.Clause.MappedType<G>>;
 			}
 		}

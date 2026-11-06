@@ -3,7 +3,7 @@ import type { SubKindOf, Under } from '../../utils.ts';
 import type * as V from '../../index.ts';
 export namespace Expression {
 	export interface Comprehension<G extends GrammarMap, K extends Under<'expression.comprehension'> = 'expression.comprehension'> extends SubKindOf<V.Expression<G, K>> {
-		readonly $kind: K;
+		readonly $path: K;
 		readonly body: Slot<
 			G,
 			K,
@@ -21,7 +21,7 @@ export namespace Expression {
 	export namespace Comprehension {
 		export interface Generator<G extends GrammarMap, K extends Under<'expression.comprehension.generator'> = 'expression.comprehension.generator'> extends SubKindOf<V.Expression.Comprehension<G, K>> {
 			// claimed by p
-			readonly $kind: K;
+			readonly $path: K;
 			readonly body: Slot<
 				G,
 				K,
@@ -35,7 +35,7 @@ export namespace Expression {
 		}
 		export interface List<G extends GrammarMap, K extends Under<'expression.comprehension.list'> = 'expression.comprehension.list'> extends SubKindOf<V.Expression.Comprehension<G, K>> {
 			// claimed by p
-			readonly $kind: K;
+			readonly $path: K;
 			readonly body: Slot<
 				G,
 				K,
@@ -49,13 +49,13 @@ export namespace Expression {
 		}
 		export interface Map<G extends GrammarMap, K extends Under<'expression.comprehension.map'> = 'expression.comprehension.map'> extends SubKindOf<V.Expression.Comprehension<G, K>> {
 			// claimed by p
-			readonly $kind: K;
+			readonly $path: K;
 			readonly body: Slot<G, K, 'body', V.Element.Pair<G>>;
 			readonly clauses: Slot<G, K, 'clauses', V.Clause.Comprehension<G>>;
 		}
 		export interface Set<G extends GrammarMap, K extends Under<'expression.comprehension.set'> = 'expression.comprehension.set'> extends SubKindOf<V.Expression.Comprehension<G, K>> {
 			// claimed by p
-			readonly $kind: K;
+			readonly $path: K;
 			readonly body: Slot<
 				G,
 				K,

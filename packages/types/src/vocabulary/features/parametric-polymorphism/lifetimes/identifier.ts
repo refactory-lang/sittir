@@ -4,7 +4,7 @@ import type * as V from '../../../index.ts';
 export namespace Identifier {
 	export interface Lifetime<G extends GrammarMap, K extends Under<'identifier.lifetime'> = 'identifier.lifetime'> extends SubKindOf<V.Identifier<G, K>> {
 		// claimed by r
-		readonly $kind: K;
+		readonly $path: K;
 		readonly name: Slot<G, K, 'name', V.Identifier.Any<G>>;
 	}
 }

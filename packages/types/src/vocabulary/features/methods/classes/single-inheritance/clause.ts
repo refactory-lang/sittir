@@ -4,7 +4,7 @@ import type * as V from '../../../../index.ts';
 export namespace Clause {
 	export interface Extends<G extends GrammarMap, K extends Under<'clause.extends'> = 'clause.extends'> extends SubKindOf<V.Clause<G, K>> {
 		// claimed by t
-		readonly $kind: K;
+		readonly $path: K;
 		readonly types?: Slot<G, K, 'types', unknown>[];
 	}
 }

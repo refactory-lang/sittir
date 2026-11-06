@@ -4,7 +4,7 @@ import type * as V from '../../index.ts';
 export namespace Pattern {
 	export interface Assignment<G extends GrammarMap, K extends Under<'pattern.assignment'> = 'pattern.assignment'> extends SubKindOf<V.Pattern<G, K>> {
 		// claimed by t
-		readonly $kind: K;
+		readonly $path: K;
 		readonly left: Slot<
 			G,
 			K,
@@ -26,18 +26,18 @@ export namespace Pattern {
 	}
 	export interface List<G extends GrammarMap, K extends Under<'pattern.list'> = 'pattern.list'> extends SubKindOf<V.Pattern<G, K>> {
 		// claimed by prt
-		readonly $kind: K;
+		readonly $path: K;
 		readonly elements?: Slot<G, K, 'elements', unknown>[];
 	}
 	export interface Object<G extends GrammarMap, K extends Under<'pattern.object'> = 'pattern.object'> extends SubKindOf<V.Pattern<G, K>> {
 		// claimed by t
-		readonly $kind: K;
+		readonly $path: K;
 		readonly properties?: Slot<G, K, 'properties', V.Identifier.Any<G> | V.Pattern.Any<G> | string>[];
 	}
 	export namespace Object {
 		export interface Assignment<G extends GrammarMap, K extends Under<'pattern.object.assignment'> = 'pattern.object.assignment'> extends SubKindOf<V.Pattern.Object<G, K>> {
 			// claimed by t
-			readonly $kind: K;
+			readonly $path: K;
 			readonly left: Slot<G, K, 'left', V.Identifier.Any<G> | V.Pattern.Any<G> | string>;
 			readonly right: Slot<
 				G,
@@ -51,7 +51,7 @@ export namespace Pattern {
 		}
 		export interface Pair<G extends GrammarMap, K extends Under<'pattern.object.pair'> = 'pattern.object.pair'> extends SubKindOf<V.Pattern.Object<G, K>> {
 			// claimed by t
-			readonly $kind: K;
+			readonly $path: K;
 			readonly key: Slot<
 				G,
 				K,
@@ -76,7 +76,7 @@ export namespace Pattern {
 	}
 	export interface Rest<G extends GrammarMap, K extends Under<'pattern.rest'> = 'pattern.rest'> extends SubKindOf<V.Pattern<G, K>> {
 		// claimed by pt
-		readonly $kind: K;
+		readonly $path: K;
 		readonly pattern: Slot<
 			G,
 			K,
@@ -91,12 +91,12 @@ export namespace Pattern {
 	export namespace Rest {
 		export interface Map<G extends GrammarMap, K extends Under<'pattern.rest.map'> = 'pattern.rest.map'> extends SubKindOf<V.Pattern.Rest<G, K>> {
 			// claimed by p
-			readonly $kind: K;
+			readonly $path: K;
 		}
 	}
 	export interface Tuple<G extends GrammarMap, K extends Under<'pattern.tuple'> = 'pattern.tuple'> extends SubKindOf<V.Pattern<G, K>> {
 		// claimed by pr
-		readonly $kind: K;
+		readonly $path: K;
 		readonly elements?: Slot<
 			G,
 			K,
@@ -111,7 +111,7 @@ export namespace Pattern {
 	export namespace Tuple {
 		export interface Bare<G extends GrammarMap, K extends Under<'pattern.tuple.bare'> = 'pattern.tuple.bare'> extends SubKindOf<V.Pattern.Tuple<G, K>> {
 			// claimed by p
-			readonly $kind: K;
+			readonly $path: K;
 			readonly trailingComma?: Flag;
 		}
 	}

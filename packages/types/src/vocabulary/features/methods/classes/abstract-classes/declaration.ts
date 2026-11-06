@@ -14,7 +14,7 @@ export namespace Declaration {
 		export namespace Signature {
 			export interface Abstract<G extends GrammarMap, K extends Under<'declaration.method.signature.abstract'> = 'declaration.method.signature.abstract'> extends SubKindOf<V.Declaration.Method.Signature<G, K>> {
 				// claimed by t
-				readonly $kind: K;
+				readonly $path: K;
 				readonly name: Slot<
 					G,
 					K,

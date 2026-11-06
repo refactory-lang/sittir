@@ -5,7 +5,7 @@ export namespace Expression {
 	export namespace Call {
 		export interface Macro<G extends GrammarMap, K extends Under<'expression.call.macro'> = 'expression.call.macro'> extends SubKindOf<V.Expression.Call<G, K>> {
 			// claimed by r
-			readonly $kind: K;
+			readonly $path: K;
 			readonly arguments:
 				Slot<
 				G,

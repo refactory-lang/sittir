@@ -196,7 +196,7 @@ export namespace Declaration {
 	}
 	export interface TypeParameter<G extends GrammarMap, K extends Under<'declaration.type_parameter'> = 'declaration.type_parameter'> extends SubKindOf<V.Declaration<G, K>> {
 		// claimed by prt
-		readonly $kind: K;
+		readonly $path: K;
 		readonly const?: Flag;
 		// t only
 		readonly default?: Slot<
@@ -216,13 +216,13 @@ export namespace Declaration {
 	export namespace TypeParameter {
 		export interface Parameters<G extends GrammarMap, K extends Under<'declaration.type_parameter.parameters'> = 'declaration.type_parameter.parameters'> extends SubKindOf<V.Declaration.TypeParameter<G, K>> {
 			// claimed by p
-			readonly $kind: K;
+			readonly $path: K;
 			readonly const?: never;
 			readonly name: Slot<G, K, 'name', V.Identifier.Any<G>>;
 		}
 		export interface Variadic<G extends GrammarMap, K extends Under<'declaration.type_parameter.variadic'> = 'declaration.type_parameter.variadic'> extends SubKindOf<V.Declaration.TypeParameter<G, K>> {
 			// claimed by p
-			readonly $kind: K;
+			readonly $path: K;
 			readonly const?: never;
 			readonly name: Slot<G, K, 'name', V.Identifier.Any<G>>;
 		}

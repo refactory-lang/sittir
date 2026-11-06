@@ -5,7 +5,7 @@ export namespace Clause {
 	export namespace Case {
 		export interface Match<G extends GrammarMap, K extends Under<'clause.case.match'> = 'clause.case.match'> extends SubKindOf<V.Clause.Case<G, K>> {
 			// claimed by pr
-			readonly $kind: K;
+			readonly $path: K;
 			readonly body: Slot<
 				G,
 				K,
@@ -42,7 +42,7 @@ export namespace Clause {
 	}
 	export interface Let<G extends GrammarMap, K extends Under<'clause.let'> = 'clause.let'> extends SubKindOf<V.Clause<G, K>> {
 		// claimed by r
-		readonly $kind: K;
+		readonly $path: K;
 		readonly pattern?: Slot<G, K, 'pattern', unknown>;
 		readonly value?: Slot<
 			G,
@@ -57,7 +57,7 @@ export namespace Clause {
 	export namespace Let {
 		export interface Chain<G extends GrammarMap, K extends Under<'clause.let.chain'> = 'clause.let.chain'> extends SubKindOf<V.Clause.Let<G, K>> {
 			// claimed by r
-			readonly $kind: K;
+			readonly $path: K;
 			readonly left: Slot<
 				G,
 				K,

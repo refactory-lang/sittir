@@ -4,7 +4,7 @@ import type * as V from '../../index.ts';
 export namespace Declaration {
 	export interface Extension<G extends GrammarMap, K extends Under<'declaration.extension'> = 'declaration.extension'> extends SubKindOf<V.Declaration<G, K>> {
 		// claimed by r
-		readonly $kind: K;
+		readonly $path: K;
 		readonly body: Slot<
 			G,
 			K,

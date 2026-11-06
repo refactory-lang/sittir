@@ -59,7 +59,7 @@ export namespace Declaration {
 	export namespace Parameter {
 		export interface Receiver<G extends GrammarMap, K extends Under<'declaration.parameter.receiver'> = 'declaration.parameter.receiver'> extends SubKindOf<V.Declaration.Parameter<G, K>> {
 			// claimed by rt
-			readonly $kind: K;
+			readonly $path: K;
 			readonly name?: never;
 			readonly mutable?: Flag;
 			// r only
