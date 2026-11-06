@@ -53,6 +53,7 @@ import {
 	slotFilledWhenOmitted,
 	isTextStorage,
 	textStoragesOf,
+	unresolvedEnumTexts,
 	valueParseKindsOf,
 	valueParseLabelsOf
 } from '../compiler/model/node-map.ts';
@@ -586,6 +587,7 @@ function classifyFieldStorageInfo(
 		};
 	}
 	if (walked.verbatim || walked.arms.length === 0) return verbatim();
+	if (unresolvedEnumTexts(walked.texts, walked).length > 0) return verbatim();
 	const enumKindsById = new Map<string, number>();
 	for (const arm of walked.arms) if (arm.id !== undefined) enumKindsById.set(arm.kind, arm.id);
 	return {
@@ -595,6 +597,12 @@ function classifyFieldStorageInfo(
 		enumKindsById,
 		collapsesMultiplicity: false
 	};
+}
+
+export function unresolvedEnumTextsOf(field: AssembledNonterminal, nodeMap: NodeMap, owner?: AssembledNode): string[] {
+	if (owner instanceof AssembledLexedPattern) return [];
+	const walked = enumArmsOf(field, nodeMap);
+	return walked.verbatim || walked.arms.length === 0 ? [] : unresolvedEnumTexts(walked.texts, walked);
 }
 
 export function isTextEnum(info: FieldStorageInfo): boolean {

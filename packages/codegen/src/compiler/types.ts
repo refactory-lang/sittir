@@ -301,6 +301,7 @@ export interface NodeMap {
 	readonly name: string;
 	readonly root?: string;
 	readonly nodes: Map<string, AssembledNode>;
+	readonly droppedKinds?: ReadonlySet<string>;
 	readonly nodeByRuleId: ReadonlyMap<RuleId, AssembledNode>;
 	readonly nodeByKindId: ReadonlyMap<number, AssembledNode>;
 	readonly slotByRuleId: ReadonlyMap<RuleId, AssembledNonterminal>;

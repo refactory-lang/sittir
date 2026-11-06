@@ -171,6 +171,15 @@ describe('enrich is a fixpoint of its own output', () => {
 		expect(again(grammar)).toEqual({ names: [], minted: [] });
 	});
 
+	it('field-wraps the choice arms of a group-lift rule it minted, so a second pass adds no field', () => {
+		const prec = (content: unknown) => ({ type: 'PREC_RIGHT', value: 0, content });
+		const subpattern = prec(seq(optional(choice(seq(sym('expression'), S(':')), seq(sym('identifier'), S(':')))), field('pattern', sym('pattern'))));
+		const grammar = grammarWith({ subpattern, expression: P('[a-z]+'), identifier: P('[A-Z]+'), pattern: P('[0-9]+') });
+		const arm = rulesOf(enrich(structuredClone(grammar) as never, {})).subpattern_arm;
+		expect(JSON.stringify(arm)).toContain('"name":"expression","content"');
+		expect(again(grammar)).toEqual({ names: [], minted: [] });
+	});
+
 	it('carries the automatic-label provenance through a second pass', () => {
 		const grammar = grammarWith({ source: choice(sym('word'), sym('num')), word: P('[a-z]+'), num: P('[0-9]+') });
 		const first = enrich(structuredClone(grammar) as never, {});

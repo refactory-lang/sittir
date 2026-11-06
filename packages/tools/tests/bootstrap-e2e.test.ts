@@ -29,7 +29,6 @@ const templateVars = (name: string): GrammarTemplateVars => ({
 function entrySource(name: string, floors: Readonly<Record<string, readonly string[]>>): string {
 	const template = grammarPackageFiles(templateVars(name)).find((file) => file.path === 'grammar.sittir.ts')!.contents;
 	return template
-		.replace(`'tree-sitter-${name}/grammar.js'`, JSON.stringify(codegenRequire.resolve(`tree-sitter-${name}/grammar.js`)))
 		.replace("'../codegen/src/dsl/index.ts'", JSON.stringify(resolve(__dirname, '../../codegen/src/dsl/index.ts')))
 		.replace(`name: '${name}'`, `name: '${name}',\n\texpectDiagnostics: ${JSON.stringify(floors)}`);
 }

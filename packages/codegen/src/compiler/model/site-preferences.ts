@@ -262,7 +262,7 @@ function tokenKind(text: string, config: SitePreferencesConfig): string | undefi
 function armKind(v: NodeOrTerminal, config: SitePreferencesConfig): string | undefined {
 	if (v.parseKind !== undefined) return displayOfParserName(v.parseKind.name);
 	const storage = v.resolvedKind ?? (isNodeRef(v) ? storageKindOfRef(v.node) : undefined);
-	if (storage !== undefined) return displayNameOf(storage, config.nodeMap);
+	if (storage !== undefined) return config.nodeMap.droppedKinds?.has(storage) === true ? undefined : displayNameOf(storage, config.nodeMap);
 	return isTerminalValue(v) ? tokenKind(v.value, config) : undefined;
 }
 

@@ -3605,7 +3605,12 @@ function collectFixedLiterals(
 	for (const literal of projection.literals) {
 		if (projection.nodeKinds.has(literal.kind) || fixed.has(literal.kind)) continue;
 		const id = resolveLiteralKindId(literal, kindEntries);
-		if (id === undefined) continue;
+		if (id === undefined) {
+			if (literal.storesKindId !== true) continue;
+			throw new Error(
+				`render-module: ${literal.owner}.${literal.slot} stores '${literal.kind}' (text ${JSON.stringify(literal.text)}) as a kind id, but no kind entry carries it`
+			);
+		}
 		const member = kindEntries.find((entry) => entry.id === id)?.member;
 		if (member === undefined) {
 			throw new Error(`render-module: fixed literal '${literal.kind}' resolves kind id ${id}, which no kind entry has`);
