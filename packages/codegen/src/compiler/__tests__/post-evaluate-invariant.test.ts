@@ -161,6 +161,7 @@ describe('post-evaluate invariant', () => {
 				'visibleAs',
 				'renderAsProblems',
 				'externalAliases',
+				'upstreamAliasSites',
 				// The `options:` block, carried unread — resolved against the
 				// site universe in seamRenderRules, which is the first place
 				// the sites an address names exist.

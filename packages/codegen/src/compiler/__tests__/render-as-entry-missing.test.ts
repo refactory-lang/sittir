@@ -27,3 +27,26 @@ describe('a visible external scanner token with no renderAs shape', () => {
 		expect(await codesOf("renderAs: (_$) => ({ tok_open: token.immediate('<'), tok_close: token.immediate('>') })")).toEqual([]);
 	}, 60_000);
 });
+
+describe('an upstream-aliased external scanner token with no renderAs shape', () => {
+	const ALIASED = {
+		extras: '/\\s/',
+		externals: '$.interp_content',
+		rules: "source: ($) => repeat(choice($.word, $.str)), str: ($) => seq('\"', repeat(alias($.interp_content, $.string_content)), '\"')"
+	};
+	const diagnose = async (config: string) => {
+		const raw = await evaluateTempGrammar(ALIASED, config);
+		return diagnosePredicted(raw).diagnostics.filter((d) => d.code === 'render-as-entry-missing' || d.code === 'render-only-not-external');
+	};
+
+	it('names the external rule, not the node it is aliased to', async () => {
+		const found = await diagnose('');
+		expect(found.map((d) => d.ownerKind)).toEqual(['interp_content']);
+		expect(found[0]!.proposal).toContain('interp_content:');
+		expect(found[0]!.proposal).not.toContain('string_content:');
+	}, 60_000);
+
+	it('is cleared by the proposed key, and render-only-not-external does not fire', async () => {
+		expect(await diagnose("renderAs: (_$) => ({ interp_content: token.immediate(/[^\"]+/) })")).toEqual([]);
+	}, 60_000);
+});

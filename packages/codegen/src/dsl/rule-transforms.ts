@@ -16,7 +16,7 @@ import type { AnyRule, Rule, RuleBase, RepeatRule, Repeat1Rule, SeqRule, Delimit
 import { RuleWalker, SyntacticRuleWalker } from './rule-walker.ts';
 import { absorbIds, withId } from './rule-attrs.ts';
 import { isVisibleGroupAlias } from './rule-metadata.ts';
-import { choiceArmsOf, isParserHiddenName, rulesEqual, terminalContentOf, type SymbolSource } from './rule-patterns.ts';
+import { choiceArmsOf, isInlineTokenBody, isParserHiddenName, isTerminalRootRule, rulesEqual, terminalContentOf, type SymbolSource } from './rule-patterns.ts';
 
 export type LeafMultiplicity = 'optional' | 'single' | 'array' | 'nonEmptyArray' | undefined;
 
@@ -84,15 +84,6 @@ export interface InlineTextTokens<R> {
 
 export function peelPrec<R extends AnyRule>(r: R): R {
 	return isPrecWrapper(r) ? peelPrec((r as unknown as { content: R }).content) : r;
-}
-
-export function isInlineTokenBody(rule: AnyRule): boolean {
-	const root = peelPrec(rule);
-	return root.type === PATTERN || isTokenWrapperType(root.type);
-}
-
-export function isTerminalRootRule(rule: AnyRule): boolean {
-	return isInlineTokenBody(rule) || peelPrec(rule).type === STRING;
 }
 
 export function isLiteralOnlyRule(rule: AnyRule): boolean {

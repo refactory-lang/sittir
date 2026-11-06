@@ -102,3 +102,14 @@ export function visibleAsOf(renderAs: Readonly<Record<string, unknown>> | undefi
 	}
 	return { visibleAs, problems };
 }
+
+export function externalsReadAs(
+	kind: string,
+	ctx: { readonly externals: ReadonlySet<string>; readonly sites: readonly ExternalAliasSite[]; readonly visibleAs: Readonly<Record<string, string>> }
+): string[] {
+	const owners = new Set<string>();
+	for (const [external, name] of Object.entries(ctx.visibleAs)) if (name === kind) owners.add(external);
+	for (const site of ctx.sites) if (site.name === kind) owners.add(site.external);
+	if (ctx.externals.has(kind)) owners.add(kind);
+	return owners.size === 0 ? [kind] : [...owners].sort();
+}
