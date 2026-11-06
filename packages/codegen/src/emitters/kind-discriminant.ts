@@ -4,6 +4,7 @@ import { collectGeneratedKindEntries, findEntryForKindName, findEntryForLiteralT
 import { kindIdText } from '../compiler/model/node-map.ts';
 import { compareOrdinal } from './shared.ts';
 import { kindTypeName } from '../compiler/model/casing.ts';
+import { ERROR_KIND_ID, ERROR_KIND_NAME } from '@sittir/common/error-kind';
 
 
 export interface KindEnumEntry extends GeneratedKindEntry {
@@ -40,6 +41,12 @@ export function collectKindEntries(nodeMap: NodeMap, generatedIdTables: Generate
 
 export function findKindEntry(kindEntries: readonly KindEnumEntry[], kind: string): KindEnumEntry | undefined {
 	return findEntryForKindName(kindEntries, kind);
+}
+
+export function errorKindEntry(kindEntries: readonly KindEnumEntry[], where: string): KindEnumEntry {
+	const entry = kindEntries.find((candidate) => candidate.id === ERROR_KIND_ID);
+	if (entry === undefined) throw new Error(`${where}: the kind catalog has no ${ERROR_KIND_NAME} entry`);
+	return entry;
 }
 
 export function findKindEntryForLiteral(

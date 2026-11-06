@@ -64,14 +64,16 @@ function fakeLanguage(name = 'fake', loaders: { readonly default?: TableLoader; 
 	};
 }
 
+const OBJECT = { nodeStorage: 'object' } as const;
+
 const engineOf = async (options?: object, f = fakeLanguage()) =>
-	(await createEngine(f.language as never, options as never)) as any;
+	(await createEngine(f.language as never, { ...OBJECT, ...options } as never)) as any;
 
 describe('createEngine', () => {
 	it('loads a language once', async () => {
 		const f = fakeLanguage();
-		await createEngine(f.language as never);
-		await createEngine(f.language as never);
+		await createEngine(f.language as never, OBJECT as never);
+		await createEngine(f.language as never, OBJECT as never);
 		expect(f.loads()).toBe(1);
 	});
 
@@ -130,7 +132,7 @@ describe('createEngine', () => {
 
 	it('maps the render option onto the native engine options', async () => {
 		const f = fakeLanguage();
-		await createEngine(f.language as never, { render: { indent: '>' } } as never);
+		await createEngine(f.language as never, { ...OBJECT, render: { indent: '>' } } as never);
 		expect(f.created).toEqual([{ indent: '>' }]);
 	});
 
@@ -190,8 +192,8 @@ describe('createEngine', () => {
 
 	it('accepts interceptor options', async () => {
 		const f = fakeLanguage();
-		await expect(createEngine(f.language as never, { intercept: [{}] } as never)).resolves.toBeDefined();
-		await expect(createEngine(f.language as never, { api: 'default', intercept: [] } as never)).resolves.toBeDefined();
+		await expect(createEngine(f.language as never, { ...OBJECT, intercept: [{}] } as never)).resolves.toBeDefined();
+		await expect(createEngine(f.language as never, { ...OBJECT, api: 'default', intercept: [] } as never)).resolves.toBeDefined();
 	});
 
 	it('refuses a portable engine for a language whose grammar has no bindings', async () => {

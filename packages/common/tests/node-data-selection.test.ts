@@ -1,15 +1,14 @@
 import { describe, expect, it } from 'vitest';
 import { PLAIN_KINDS, toNodeData } from '../src/node-data.ts';
 import { isDataKey, isEmptyNode, isNode } from '../src/utils.ts';
-import { stampBuilt } from '../src/source-stamp.ts';
+import { factoryNode } from './support/factory-node.ts';
 
 const LIST_ITEMS = Symbol('items');
 
 const newShapeList = () => {
 	const items = ['a', 'b'];
-	return stampBuilt({
+	return factoryNode({
 		$type: 7,
-		$named: true,
 		_elements: items,
 		$with: { elements: () => undefined },
 		elements: () => items,
@@ -28,7 +27,7 @@ const newShapeList = () => {
 
 describe('a node is selected by key', () => {
 	it('names storage and $ metadata as data, and members as not', () => {
-		for (const key of ['_elements', '$other', '$type', '$named', '$text', '$span', '$handle', '$_trivia']) {
+		for (const key of ['_elements', '$other', '$type', '$text', '$span', '$handle', '$_trivia']) {
 			expect(isDataKey(key)).toBe(true);
 		}
 		for (const key of ['$with', '$trivia', '$engine', '$render', 'elements', 'length', '0', 'delimiter', 'map']) {
@@ -37,7 +36,7 @@ describe('a node is selected by key', () => {
 	});
 
 	it('toNodeData copies storage and $ metadata and nothing else, the source stamp and its getter included', () => {
-		expect(toNodeData(newShapeList() as never, PLAIN_KINDS)).toEqual({ $type: 7, $named: true, _elements: ['a', 'b'] });
+		expect(toNodeData(newShapeList() as never, PLAIN_KINDS)).toEqual({ $type: 7, _elements: ['a', 'b'] });
 	});
 
 	it('reads only the keys it selects, so a getter that throws is never called', () => {

@@ -3053,12 +3053,10 @@ export namespace PatternCharacter {
 	export type Config = PatternCharacterNs['Config'];
 	export interface Bound extends NodeMethodsOf, HoldsSource {
 		readonly $type: TSKindId.PatternCharacter;
-		readonly $named: true;
 		$text(): string;
 	}
 	export interface Parsed extends NodeMethodsOf, HoldsSource, HoldsTree {
 		readonly $type: TSKindId.PatternCharacter;
-		readonly $named: true;
 		$text(): string;
 	}
 	export type Loose = PatternCharacterNs['Loose'];
@@ -3071,12 +3069,10 @@ export namespace PosixClassName {
 	export type Config = PosixClassNameNs['Config'];
 	export interface Bound extends NodeMethodsOf, HoldsSource {
 		readonly $type: TSKindId.PosixClassName;
-		readonly $named: true;
 		$text(): string;
 	}
 	export interface Parsed extends NodeMethodsOf, HoldsSource, HoldsTree {
 		readonly $type: TSKindId.PosixClassName;
-		readonly $named: true;
 		$text(): string;
 	}
 	export type Loose = PosixClassNameNs['Loose'];
@@ -3089,12 +3085,10 @@ export namespace ClassCharacter {
 	export type Config = ClassCharacterNs['Config'];
 	export interface Bound extends NodeMethodsOf, HoldsSource {
 		readonly $type: TSKindId.ClassCharacter;
-		readonly $named: true;
 		$text(): string;
 	}
 	export interface Parsed extends NodeMethodsOf, HoldsSource, HoldsTree {
 		readonly $type: TSKindId.ClassCharacter;
-		readonly $named: true;
 		$text(): string;
 	}
 	export type Loose = ClassCharacterNs['Loose'];
@@ -3107,12 +3101,10 @@ export namespace Flags {
 	export type Config = FlagsNs['Config'];
 	export interface Bound extends NodeMethodsOf, HoldsSource {
 		readonly $type: TSKindId.Flags;
-		readonly $named: true;
 		$text(): string;
 	}
 	export interface Parsed extends NodeMethodsOf, HoldsSource, HoldsTree {
 		readonly $type: TSKindId.Flags;
-		readonly $named: true;
 		$text(): string;
 	}
 	export type Loose = FlagsNs['Loose'];
@@ -3125,12 +3117,10 @@ export namespace DecimalEscape {
 	export type Config = DecimalEscapeNs['Config'];
 	export interface Bound extends NodeMethodsOf, HoldsSource {
 		readonly $type: TSKindId.DecimalEscape;
-		readonly $named: true;
 		$text(): string;
 	}
 	export interface Parsed extends NodeMethodsOf, HoldsSource, HoldsTree {
 		readonly $type: TSKindId.DecimalEscape;
-		readonly $named: true;
 		$text(): string;
 	}
 	export type Loose = DecimalEscapeNs['Loose'];
@@ -3143,12 +3133,10 @@ export namespace UnicodeCharacterEscape {
 	export type Config = UnicodeCharacterEscapeNs['Config'];
 	export interface Bound extends NodeMethodsOf, HoldsSource {
 		readonly $type: TSKindId.UnicodeCharacterEscape;
-		readonly $named: true;
 		$text(): string;
 	}
 	export interface Parsed extends NodeMethodsOf, HoldsSource, HoldsTree {
 		readonly $type: TSKindId.UnicodeCharacterEscape;
-		readonly $named: true;
 		$text(): string;
 	}
 	export type Loose = UnicodeCharacterEscapeNs['Loose'];
@@ -3161,12 +3149,10 @@ export namespace UnicodePropertyValue {
 	export type Config = UnicodePropertyValueNs['Config'];
 	export interface Bound extends NodeMethodsOf, HoldsSource {
 		readonly $type: TSKindId.UnicodePropertyValue;
-		readonly $named: true;
 		$text(): string;
 	}
 	export interface Parsed extends NodeMethodsOf, HoldsSource, HoldsTree {
 		readonly $type: TSKindId.UnicodePropertyValue;
-		readonly $named: true;
 		$text(): string;
 	}
 	export type Loose = UnicodePropertyValueNs['Loose'];
@@ -3179,12 +3165,10 @@ export namespace ControlEscape {
 	export type Config = ControlEscapeNs['Config'];
 	export interface Bound extends NodeMethodsOf, HoldsSource {
 		readonly $type: TSKindId.ControlEscape;
-		readonly $named: true;
 		$text(): string;
 	}
 	export interface Parsed extends NodeMethodsOf, HoldsSource, HoldsTree {
 		readonly $type: TSKindId.ControlEscape;
-		readonly $named: true;
 		$text(): string;
 	}
 	export type Loose = ControlEscapeNs['Loose'];
@@ -3197,12 +3181,10 @@ export namespace ControlLetterEscape {
 	export type Config = ControlLetterEscapeNs['Config'];
 	export interface Bound extends NodeMethodsOf, HoldsSource {
 		readonly $type: TSKindId.ControlLetterEscape;
-		readonly $named: true;
 		$text(): string;
 	}
 	export interface Parsed extends NodeMethodsOf, HoldsSource, HoldsTree {
 		readonly $type: TSKindId.ControlLetterEscape;
-		readonly $named: true;
 		$text(): string;
 	}
 	export type Loose = ControlLetterEscapeNs['Loose'];
@@ -3215,12 +3197,10 @@ export namespace GroupName {
 	export type Config = GroupNameNs['Config'];
 	export interface Bound extends NodeMethodsOf, HoldsSource {
 		readonly $type: TSKindId.GroupName;
-		readonly $named: true;
 		$text(): string;
 	}
 	export interface Parsed extends NodeMethodsOf, HoldsSource, HoldsTree {
 		readonly $type: TSKindId.GroupName;
-		readonly $named: true;
 		$text(): string;
 	}
 	export type Loose = GroupNameNs['Loose'];
@@ -3233,12 +3213,10 @@ export namespace DecimalDigits {
 	export type Config = DecimalDigitsNs['Config'];
 	export interface Bound extends NodeMethodsOf, HoldsSource {
 		readonly $type: TSKindId.DecimalDigits;
-		readonly $named: true;
 		$text(): string;
 	}
 	export interface Parsed extends NodeMethodsOf, HoldsSource, HoldsTree {
 		readonly $type: TSKindId.DecimalDigits;
-		readonly $named: true;
 		$text(): string;
 	}
 	export type Loose = DecimalDigitsNs['Loose'];
@@ -3251,12 +3229,10 @@ export namespace CharacterClassEscapeText1 {
 	export type Config = CharacterClassEscapeText1Ns['Config'];
 	export interface Bound extends NodeMethodsOf, HoldsSource {
 		readonly $type: TSKindId.CharacterClassEscapeText1;
-		readonly $named: true;
 		$text(): string;
 	}
 	export interface Parsed extends NodeMethodsOf, HoldsSource, HoldsTree {
 		readonly $type: TSKindId.CharacterClassEscapeText1;
-		readonly $named: true;
 		$text(): string;
 	}
 	export type Loose = CharacterClassEscapeText1Ns['Loose'];
@@ -3269,12 +3245,10 @@ export namespace CharacterClassEscapeText2 {
 	export type Config = CharacterClassEscapeText2Ns['Config'];
 	export interface Bound extends NodeMethodsOf, HoldsSource {
 		readonly $type: TSKindId.CharacterClassEscapeText2;
-		readonly $named: true;
 		$text(): string;
 	}
 	export interface Parsed extends NodeMethodsOf, HoldsSource, HoldsTree {
 		readonly $type: TSKindId.CharacterClassEscapeText2;
-		readonly $named: true;
 		$text(): string;
 	}
 	export type Loose = CharacterClassEscapeText2Ns['Loose'];
@@ -3287,12 +3261,10 @@ export namespace UnicodePropertyName {
 	export type Config = UnicodePropertyNameNs['Config'];
 	export interface Bound extends NodeMethodsOf, HoldsSource {
 		readonly $type: TSKindId.UnicodePropertyName;
-		readonly $named: true;
 		$text(): string;
 	}
 	export interface Parsed extends NodeMethodsOf, HoldsSource, HoldsTree {
 		readonly $type: TSKindId.UnicodePropertyName;
-		readonly $named: true;
 		$text(): string;
 	}
 	export type Loose = UnicodePropertyNameNs['Loose'];

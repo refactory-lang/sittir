@@ -3,7 +3,7 @@ import rust from '@sittir/rust';
 import { createEngine } from '@sittir/common';
 import { decodeIndex, isCoordinate, type TreeHandle } from '../src/read.ts';
 
-const rs = await createEngine(rust);
+const rs = await createEngine(rust, { nodeStorage: 'object' });
 
 type Sides = Required<Pick<TreeHandle, 'triviaSide' | 'writeTriviaSide' | 'editedWithin'>>;
 
@@ -23,7 +23,7 @@ function parsed(source: string): { statements: number[]; sides: Sides } {
 describe('the trivia table through the tree handle', () => {
 	it("reads a parsed function's leading comment as its coordinate, and the blank line after it, where the options write one break, as layout", () => {
 		const { statements, sides } = parsed('// c\n\nfn f() {}\n');
-		const [comment, layout, ...rest] = sides.triviaSide(statements[0] ?? -1, 'leading');
+		const [comment, layout, ...rest] = sides.triviaSide(statements[0] ?? -1, 'leading') ?? [];
 		if (!isCoordinate(comment)) throw new Error('expected the comment as a coordinate');
 		expect([comment.$type, comment.$span]).toEqual([rs.kinds.LineComment, { start: 0, end: 4 }]);
 		expect(layout).toBe(rs.kinds.Blankline);

@@ -1,7 +1,12 @@
 //! A tree id is minted once and never reused: the in-image counter and the
 //! process-shared claim both stop at `MAX_TREE_ID` instead of wrapping.
-use sittir_core::engine::{claim_tree_id, claim_tree_id_from, MAX_TREE_ID};
+use sittir_core::engine::{claim_tree_id, MAX_TREE_ID};
 use sittir_core::types::TreeId;
+
+/// The id a process-shared claim is on, and the value it records next.
+fn claim_tree_id_from(next: Option<f64>) -> Option<(TreeId, f64)> {
+    sittir_core::engine::claim_tree_id_from(next).map(|(claim, record)| (claim.id(), record))
+}
 
 #[test]
 fn the_shared_claim_starts_at_zero_and_records_the_next_id() {
@@ -26,7 +31,7 @@ fn the_shared_claim_refuses_a_value_that_is_not_a_counter() {
 
 #[test]
 fn the_in_image_counter_is_monotonic() {
-    let first = claim_tree_id().expect("an id");
-    let second = claim_tree_id().expect("an id");
+    let first = claim_tree_id().expect("an id").id();
+    let second = claim_tree_id().expect("an id").id();
     assert!(second > first);
 }

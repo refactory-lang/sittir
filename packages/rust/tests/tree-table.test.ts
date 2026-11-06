@@ -7,6 +7,7 @@ import { fileURLToPath } from 'node:url';
 import { Worker } from 'node:worker_threads';
 import { describe, expect, it } from 'vitest';
 import { createEngine } from '@sittir/common';
+import { nativeEngineOf } from '@sittir/common/engine';
 import { getActiveBackend } from '../src/backend.js';
 import rust from '../src/index.ts';
 
@@ -23,8 +24,8 @@ describe('the live tree table of a language', () => {
 	it('is one table for every engine of the addon', () => {
 		const native = addon();
 		const before = native.liveTreeCount();
-		const a = new native.SittirEngine();
-		const b = new native.SittirEngine();
+		const a = nativeEngineOf(native);
+		const b = nativeEngineOf(native);
 		const first = treeIdOf(a.parse('fn a() {}'));
 		const second = treeIdOf(b.parse('fn b() {}'));
 		expect(native.liveTreeCount()).toBe(before + 2);
@@ -41,7 +42,7 @@ describe('the live tree table of a language', () => {
 		const id = treeIdOf(a.parse('fn kept() {}'));
 		a.dispose();
 		expect(native.liveTreeCount()).toBe(before + 1);
-		expect(new native.SittirEngine().read(id, 0)).toBeDefined();
+		expect(nativeEngineOf(native).read(id, 0)).toBeDefined();
 		native.disposeTree(id);
 		expect(native.liveTreeCount()).toBe(before);
 	});
@@ -81,6 +82,21 @@ describe('the live tree table of a language', () => {
 			orphanCount: 3,
 			afterOrphanCount: 2
 		});
+	}, 60_000);
+});
+
+describe('the native memory the live trees report to V8', () => {
+	it('is what the trees hold while they are read, rendered and edited, and is given back by every release', () => {
+		// A collection can only be forced under `--expose-gc`, so the case runs
+		// in a child process that reports both storages.
+		const fixture = fileURLToPath(new URL('../../common/tests/fixtures/tree-memory-balance.mts', import.meta.url));
+		const out = execFileSync(process.execPath, ['--expose-gc', '--import', 'tsx', fixture], {
+			cwd: fileURLToPath(new URL('..', import.meta.url)),
+			encoding: 'utf8',
+			env: { ...process.env, SITTIR_BACKEND: 'native' }
+		});
+		const balanced = { grew: true, agrees: true, disposeTree: true, engineDispose: true, back: true };
+		expect(JSON.parse(out.trim().split('\n').at(-1) ?? '')).toEqual({ object: balanced, record: balanced, final: { trees: 0, counted: 0, reported: 0 } });
 	}, 60_000);
 });
 

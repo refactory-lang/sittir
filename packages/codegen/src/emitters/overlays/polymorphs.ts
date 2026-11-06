@@ -1,6 +1,6 @@
 import type { PortableMountCall } from '@sittir/types';
 import type { NodeMap } from '../../compiler/types.ts';
-import { AbstractAssembledCompound, AssembledEnum, AssembledList, AssembledSupertype, isKindIdStored, isRequired, separatorRequired, type AssembledNode } from '../../compiler/model/node-map.ts';
+import { AbstractAssembledCompound, AssembledEnum, AssembledList, AssembledSupertype, delimiterPreferenceOf, isKindIdStored, isRequired, separatorRequired, type AssembledNode } from '../../compiler/model/node-map.ts';
 import {
 	classifyFactoryShape,
 	classifyFromEmission,
@@ -674,9 +674,9 @@ function flattenShape(
 	m: string,
 	positional: boolean,
 	directKey: string | undefined,
-	always: { readonly optional: boolean } | undefined
+	always: { readonly optional: boolean; readonly preferred: string | undefined } | undefined
 ): SeatShape {
-	if (always !== undefined) return alwaysFlattenShape(k, keys, m, directKey, always.optional);
+	if (always !== undefined) return alwaysFlattenShape(k, keys, m, directKey, always.optional, always.preferred);
 	if (positional) {
 		const typeFor = (p: string, c: string): string => `${p} | ${c}[0]`;
 		return {
@@ -727,10 +727,11 @@ function flattenShape(
 	};
 }
 
-function alwaysFlattenShape(k: string, keys: readonly FlattenKey[], m: string, directKey: string | undefined, optional: boolean): SeatShape {
+function alwaysFlattenShape(k: string, keys: readonly FlattenKey[], m: string, directKey: string | undefined, optional: boolean, preferred: string | undefined): SeatShape {
 	const keyOf = Object.fromEntries(keys.map(({ key, field }) => [key, field]));
 	const groupOf = (config: string): string => (directKey === undefined ? config : `{ ${keys.find(({ field }) => field === directKey)?.key ?? directKey}${optional ? '?' : ''}: ${config} }`);
-	const buildGroup = directKey === undefined ? `${CALL_C}(inner)` : `${CALL_C}(inner[${JSON.stringify(directKey)}])`;
+	const childOptions = preferred === undefined ? '' : `, { ${preferred}: (options as { readonly ${preferred}?: unknown } | undefined)?.${preferred} }`;
+	const buildGroup = directKey === undefined ? `${CALL_C}(inner${childOptions})` : `${CALL_C}(inner[${JSON.stringify(directKey)}]${childOptions})`;
 	return {
 		method: [
 			`export const ${m} = <${PF}, ${CF}>(parent: PF, child: CF) =>`,
@@ -820,6 +821,11 @@ interface SeatEmission {
 	readonly spread: boolean;
 }
 
+function preferredFacetOf(parent: AssembledNode, seat: FlattenSeat | FlattenedSeat): string | undefined {
+	const preference = delimiterPreferenceOf(parent);
+	return preference !== undefined && preference.open.storageKey === seat.slot.storageKey ? preference.facet.propertyName : undefined;
+}
+
 function flattenedKeysOf(seat: FlattenSeat | FlattenedSeat): readonly FlattenKey[] {
 	if (!('keys' in seat)) throw new Error(`flattenedKeysOf: '${seat.group.kind}' in '${seat.slot.propertyName}' is not a flatten seat`);
 	return seat.keys;
@@ -852,7 +858,19 @@ function seatEmission(
 		kind === 'tuple'
 			? tupleShape(seat.slot.propertyName, m)
 			: kind === 'flatten'
-			? flattenShape(seat.slot.propertyName, flattenedKeysOf(seat), m, direct, seat.directKey, 'always' in seat && seat.always ? { optional: seat.directKey !== undefined && !isRequired(seat.group.slots.find((slot) => slot.propertyName === seat.directKey)!) } : undefined)
+			? flattenShape(
+					seat.slot.propertyName,
+					flattenedKeysOf(seat),
+					m,
+					direct,
+					seat.directKey,
+					'always' in seat && seat.always
+						? {
+								optional: seat.directKey !== undefined && !isRequired(seat.group.slots.find((slot) => slot.propertyName === seat.directKey)!),
+								preferred: preferredFacetOf(parent, seat)
+							}
+						: undefined
+				)
 			: elementsShape(
 					seat.slot.propertyName,
 					configKeysOf(seat.group),

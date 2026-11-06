@@ -18,7 +18,7 @@ describe('a strict builder with render options given its target\'s argument', ()
 	it('refuses a lone string, which the loose entry takes', () => {
 		// @ts-expect-error text to a leaf is coercion: the loose entry takes it
 		expect(() => verifyingStrict.build.exportStatement.namespaceExport('ns')).toThrow(/a strict factory takes a built node, not a string/);
-		expect(tsStrict.build.exportStatement.namespaceExport(ts.build.identifier('ns')).$render()).toBe('export as namespace ns;');
+		expect(tsStrict.build.exportStatement.namespaceExport(tsStrict.build.identifier('ns')).$render()).toBe('export as namespace ns;');
 		expect(ts.build.exportStatement.namespaceExport('ns').$render()).toBe('export as namespace ns;');
 	});
 });

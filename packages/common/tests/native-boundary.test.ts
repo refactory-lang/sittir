@@ -8,7 +8,6 @@ describe('native boundary', () => {
 			assertRenderableUntypedNode({
 				$type: 1,
 				
-				$named: true,
 				_kind: 16,
 				$text: 'const'
 			} as AnyUntypedNode)
@@ -20,7 +19,6 @@ describe('native boundary', () => {
 			assertRenderableUntypedNode({
 				$type: 1,
 				
-				$named: true,
 				_optional: true
 			} as AnyUntypedNode)
 		).not.toThrow();

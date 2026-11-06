@@ -1,6 +1,6 @@
-//! A block whose body is empty must still close the indent its parent
-//! opened: `finish` asserts the depth returned to zero, and that assertion
-//! only runs in a debug build.
+//! A built block with an empty body closes the indent it opened: `finish`
+//! asserts the depth returned to zero, and that assertion only runs in a
+//! debug build.
 
 use sittir_core::prepare::RenderContext;
 use sittir_core::render::SourceTable;
@@ -21,17 +21,10 @@ impl SourceTable for NoSources {
 #[test]
 fn an_empty_suite_block_closes_the_indent_it_opened() {
     let options = options::defaults();
-    let ctx = RenderContext { options: &options, sources: &NoSources, recording: None };
-    let block = BlockNode {
-        layout: None,
-        statements: Vec::new(),
-        statements_separator_space: None,
-    };
-    let suite = SuiteBlockNode {
-        layout: None,
-        block: ::sittir_core::SlotValue::Node(block),
-    };
+    let ctx = RenderContext { options: &options, sources: &NoSources };
+    let block = BlockNode::new(None, Vec::new(), None);
+    let suite = SuiteBlockNode::new(None, ::sittir_core::SlotValue::Node(block));
     let root: RenderRoot = ::sittir_core::SlotValue::Node(AnyNode::SuiteBlock(suite));
-    let (_, rendered) = render_node_parts(root, &ctx).expect("render");
+    let (_, rendered) = render_node_parts(root, &ctx, None).expect("render");
     assert!(!rendered.contains('\u{FDD0}'));
 }

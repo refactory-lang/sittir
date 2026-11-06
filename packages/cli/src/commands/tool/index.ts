@@ -5,9 +5,9 @@ import { registerNamespace } from '../../framework/command-module.ts';
 import { astDiff } from './ast-diff.ts';
 import { assembleShapeCensus } from './assemble-shape-census.ts';
 import { bench } from './bench.ts';
+import { benchStorage } from './bench-storage.ts';
 import { bootstrapGrammar } from './bootstrap-grammar.ts';
 import { fetchCorpus } from './fetch-corpus.ts';
-import { benchCodemod } from './bench-codemod.ts';
 import { checkBaseline } from './check-baseline.ts';
 import { checkPerf } from './check-perf.ts';
 import { classify } from './classify.ts';
@@ -20,6 +20,7 @@ import { dumpAstMismatches } from './dump-ast-mismatches.ts';
 import { bindingsInventory } from './bindings-inventory.ts';
 import { syncBase } from './sync-base.ts';
 import { emitFactorySource } from './emit-factory-source.ts';
+import { encodeStack } from './encode-stack.ts';
 import { exercise } from './exercise.ts';
 import { fieldProvenance } from './field-provenance.ts';
 import { glossaryKeys } from './glossary-keys.ts';
@@ -28,7 +29,6 @@ import { hoistedCensus } from './hoisted-census.ts';
 import { inspectRefs } from './inspect-refs.ts';
 import { inspectType } from './inspect-type.ts';
 import { listKinds } from './list-kinds.ts';
-import { nodeJsonCensus } from './node-json-census.ts';
 import { outputGate } from './output-gate.ts';
 import { overrideCensus } from './override-census.ts';
 import { phantomKinds } from './phantom-kinds.ts';
@@ -58,7 +58,7 @@ export const toolModules: readonly CommandModule[] = [
 	assembleShapeCensus,
 	astDiff,
 	bench,
-	benchCodemod,
+	benchStorage,
 	bootstrapGrammar,
 	fetchCorpus,
 	checkBaseline,
@@ -73,6 +73,7 @@ export const toolModules: readonly CommandModule[] = [
 	bindingsInventory,
 	syncBase,
 	emitFactorySource,
+	encodeStack,
 	exercise,
 	fieldProvenance,
 	glossaryKeys,
@@ -81,7 +82,6 @@ export const toolModules: readonly CommandModule[] = [
 	inspectRefs,
 	inspectType,
 	listKinds,
-	nodeJsonCensus,
 	outputGate,
 	overrideCensus,
 	phantomKinds,

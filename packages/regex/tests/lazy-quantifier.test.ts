@@ -12,6 +12,7 @@ function quantifierOf(source: string): Record<string, unknown> {
 		seen.add(value);
 		if (typeof (value as Partial<Quantified>).quantifier === 'function') return value as Quantified;
 		for (const [key, child] of Object.entries(value)) {
+			if (key.startsWith('$')) continue;
 			const next = typeof child === 'function' && /^[a-z]/.test(key) ? (child as () => unknown).call(value) : child;
 			const found = find(next, seen);
 			if (found !== undefined) return found;

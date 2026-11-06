@@ -1,4 +1,5 @@
 import { beforeAll, describe, expect, it } from 'vitest';
+import { FULL_PIPELINE_TIMEOUT } from '../../__tests__/helpers/timeouts.ts';
 import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { evaluate } from '../../dsl/evaluate.ts';
@@ -29,7 +30,7 @@ describe('evaluation stages', () => {
 
 		beforeAll(async () => {
 			typescript = await evaluatePackage(grammarPackage('typescript'));
-		});
+		}, FULL_PIPELINE_TIMEOUT);
 
 		it('the raw stage is the base before enrich, the enriched stage the base after it', () => {
 			const { raw: before, enriched: after } = typescript.stages!;

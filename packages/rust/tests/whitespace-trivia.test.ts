@@ -5,6 +5,7 @@ import { decodeIndex, isCoordinate, readNode, type TreeHandle } from '../../comm
 import rust from '../src/index.ts';
 
 const rs = await createEngine(rust);
+const objects = await createEngine(rust, { nodeStorage: 'object' });
 const { Blankline: blankline, Newline: newline, Space: space } = rs.kinds;
 
 const statementsOf = (source: string, deep = false) => {
@@ -78,7 +79,7 @@ describe('a read node carries the whitespace before it that differs from the rea
 
 	it('finds every node of a deep read by its coordinate, a zero-width comment content included', () => {
 		const source = '\n//!\n\n/*!*/\n\n//\n\n///\nlet x;\n';
-		const { root, tree: read } = rs.diagnostics.parseAndRead(source, { depth: Infinity });
+		const { root, tree: read } = objects.diagnostics.parseAndRead(source, { depth: Infinity });
 		const tree: TreeHandle = read;
 		const coordinates: NodeCoordinate[] = [];
 		const visit = (value: unknown): void => {
@@ -99,6 +100,6 @@ describe('a read node carries the whitespace before it that differs from the rea
 		};
 		visit(root);
 		expect(coordinates.some(({ $span }) => $span.start === $span.end)).toBe(true);
-		for (const { $treeHandle } of coordinates) expect(() => tree.siblings?.(decodeIndex($treeHandle))).not.toThrow();
+		for (const { $treeHandle } of coordinates) expect(() => tree.siblings?.([decodeIndex($treeHandle)])).not.toThrow();
 	});
 });
