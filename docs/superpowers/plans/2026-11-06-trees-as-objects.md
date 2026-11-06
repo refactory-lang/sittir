@@ -1,18 +1,18 @@
-# Trees as Objects Implementation Plan
+# Tree Holders Implementation Plan
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task by task. This repo's rule is no subagents for code. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** a parsed tree is a JavaScript object, and it's freed when its last holder drops it. A coordinate reaches its tree through a holder, never by id, and the live-tree table, the tree tokens and the native render's tree argument go away.
+**Goal:** a parsed tree is freed when its last holder drops it. In object storage the holder is a `Tree` object the garbage collector tracks. In arena storage it's a counted slot in the engine's arena. A coordinate reaches its tree through its holder, never by looking up its id. The live-tree table, the tree tokens and the native render's tree argument go away.
 
 **Architecture:**
 - Each tree lives in a `TreeCell` behind an `Arc`. The cell carries its own non-blocking borrow.
-- `napi_engine!` expands a per-grammar `Tree` class that wraps the `Arc`.
-- Object-storage coordinates hold the `Tree` object. An arena link record's tree word is a slot into the arena's own held-tree table, counted by links.
+- Object storage: `napi_engine!` expands a per-grammar `Tree` class that wraps the `Arc`, and coordinates hold the `Tree` object.
+- Arena storage: no `Tree` object. The engine's arena holds each tree in a held-tree table slot, counted once by the parse root and once by each link record. A read handle names its tree by slot and tree id, as an uncounted borrow.
 - The native render finds its sources and options layer from the node.
 
 **Tech stack:** Rust (sittir-core, napi-rs 3.15 at `napi10`), the TypeScript engine in `packages/common`, the wrap emitter in `packages/codegen`, and the tools' validators.
 
-**Spec:** `docs/superpowers/specs/2026-10-23-engine-dylib-migration-design.md`, sections "Trees as objects" and "A coordinate carries its tree" (amended 2026-11-06, master 0a6722a2a). Read them first.
+**Spec:** `docs/superpowers/specs/2026-10-23-engine-dylib-migration-design.md`, sections "Tree holders" and "A coordinate carries its tree" (amended on 2026-11-06, most recently for the per-storage holders). Read them first.
 
 **Facts this plan starts from:** engine-api's audit at f06a0922.
 - `LIVE_TREES` is in core `napi_engine.rs:65-71`, with writes through `with_live_tree`/`change_trees` (:114-125, `engine.rs:2183-2185`) and renders through `with_live_trees` (:146-160).
@@ -29,7 +29,7 @@
 - **Worktree and branch:** engine-api's existing worktree, on a new branch `feat/trees-as-objects` from `origin/master`. No new worktrees. Pathspec commits. No force, stash, amend, rebase, revert or abort. Push by literal sha. Merge master in whenever it moves.
 - **No napi or V8 call runs off the JavaScript thread.** Parallel output stays byte-identical, and render stays a recursive descent.
 - **A borrow never blocks.** A borrow that's already held is refused, by a message naming the tree and the operation.
-- **There's no explicit tree dispose,** and none is added. A tree is freed only when its last holder goes.
+- **No tree dispose API is added.** A tree is freed only when its last holder goes. In object storage a node's `[Symbol.dispose]` stays a no-op. In arena storage the parse root's existing `[Symbol.dispose]` and `engine.release(node)` drop its count, and releasing any other read handle still does nothing.
 - **The arena link record stays 8 words.**
 - **Generated outputs are never hand-edited.** The `[TREE]` stamps come from the wrap emitter. Regenerate every grammar, and commit the manifests through the pre-commit check.
 - **Three-way verification** before every commit that can change what the pipeline reads, renders, parses or validates: targeted probes of the wrap and render layers, `validate:history` compared with numbers, and the full suite. Also `cargo test --workspace` in plain and arena builds, and clippy in the four CI configurations.
@@ -40,10 +40,10 @@
 
 ## Review Focus
 
-1. **A node held alone.** A node read from a tree is stored in a long-lived structure, and every other reference to that tree is dropped. Expected: the tree stays alive, and the node renders and reads. Once the node is dropped and collected, the tree is freed. Owned by Task 3.
+1. **A node held alone, object storage.** A node read from a tree is stored in a long-lived structure, and every other reference to that tree is dropped. Expected: the tree stays alive, and the node renders and reads. Once the node is dropped and collected, the tree is freed. Owned by Task 3.
 2. **A write during a render of the same tree,** for example from a callback the render reaches. Expected: refused by name, with no deadlock. A write to another tree in the same call succeeds. Owned by Tasks 1 and 5.
 3. **A parsed node from another grammar's tree placed in a built node.** Expected: refused by name, as the interim admission rule does today. Never a cast across type tags. Owned by Task 3.
-4. **Arena slot reuse.** Expected: a slot whose count reaches 0 is reused only after its last link is gone, so a later link never reaches a freed or reused tree. Owned by Task 4.
+4. **Arena slots: reuse and stale read handles.** Expected: a slot is reused only after its count reaches 0, meaning its root is released and its last link is gone. A read handle kept past that point is refused by name through the slot's tree-id check. It never reads the tree that a reused slot now holds. Owned by Task 4.
 5. **A `Tree` object or a node posted to another worker.** Expected: refused by name, never a crash. Owned by Task 3.
 
 ---
@@ -83,7 +83,7 @@
 
 **Interfaces:**
 - Consumes: Task 1's `TreeRef`.
-- Produces: the JavaScript engine gets a `Tree` object from every parse, and the existing token helpers carry it unchanged.
+- Produces: the JavaScript engine gets a `Tree` object from every parse, and the existing token helpers carry it unchanged. In arena storage this is interim: Task 4 replaces the `Tree` object with a counted slot, so each task stays green on its own.
 
 - [ ] **Step 1: Failing tests, run under `--expose-gc`:**
   - 100 parses whose results are all dropped, then `gc()`, leave the native live count at 0, read through a test-only `liveTreeCount()`;
@@ -120,25 +120,38 @@
 - [ ] **Step 4: Run the three-way verification,** plus targeted probes on each grammar's wrap and render layers.
 - [ ] **Step 5: Commit:** `feat(common): a coordinate holds its tree; tree tokens go`.
 
-### Task 4: The arena's held-tree table
+### Task 4: Arena storage holds its trees in counted slots
 
 **Files:**
 - Modify: core `arena/built_image.rs` (the LINK record's tree word becomes a slot) and the arena's store (a new held-tree table).
+- Modify: `napi_engine.rs`. In arena storage, `parse` holds its tree in the engine arena's table and returns the slot and tree id, not a `Tree` object. Every call from a read handle passes both.
 - Modify: `packages/common/src/built-arena.ts`. `#trees` and the `holdTree` calls in `link` and `rebuiltFrom` go, and the JavaScript LINK twin (`:829-845`) reads the slot.
+- Modify: `packages/common/src/{read,record-view,handle,engine,create-engine}.ts`. An arena `TreeHandle` carries the slot and tree id, and holds no `Tree` object. `handleDispose` on a parse root releases the root's count.
+- Modify: `packages/tools/src/validate/layout-runs.ts` and `packages/tools/src/profile/native-hydration.ts`, which release their roots in arena storage.
 - Test: `rust/crates/sittir-core/tests/arena_held_trees.rs` and `packages/common/tests/arena-held-trees.test.ts`.
 
 **Interfaces:**
 - Consumes: Task 1's `TreeRef`, and Task 3's coordinate.
-- Produces: `HeldTrees::hold(&mut self, tree: &TreeRef) -> u32`, `HeldTrees::release(&mut self, slot: u32)` and `HeldTrees::get(&self, slot: u32) -> &TreeRef`. A slot is reused only when its count is 0.
+- Produces:
+  - `HeldTrees::hold(&mut self, tree: &TreeRef) -> u32`, which adds an entry at count 1 or adds 1 to the tree's entry;
+  - `HeldTrees::release(&mut self, slot: u32)`;
+  - `HeldTrees::get(&self, slot: u32) -> &TreeRef`, for a counted holder (a link, or the root before its release);
+  - `HeldTrees::borrowed(&self, slot: u32, tree: TreeId) -> Result<&TreeRef, TreeReleased>`, for every call from a read handle. `TreeReleased`'s message names the tree's id;
+  - a slot is reused only when its count is 0.
 
 - [ ] **Step 1: Failing tests:**
-  - a built node linking a parsed node keeps its tree alive after every JavaScript holder is collected, and releasing the built node frees it;
-  - **Review Focus 4:** 10,000 hold/release cycles over 3 trees, each step asserting under the debug checks that no live link's slot reaches a tree with count 0;
+  - a parse root's release frees its tree when nothing links it. 100 parses, each released, leave the table empty;
+  - 100 parses that are never released are freed at the engine's dispose;
+  - a built node linking a parsed node keeps its tree alive after its root's release, and releasing the built node frees it;
+  - releasing a read handle that isn't a root does nothing;
+  - **Review Focus 4:** a read handle kept past its root's release, with nothing linking the tree, is refused by `TreeReleased` naming the tree's id. After a new parse reuses the slot, the stale handle is still refused, and never reads the new tree;
+  - **Review Focus 4:** 10,000 hold/release cycles over 3 trees. Each step asserts, under the debug checks, that no live link's slot reaches a tree with count 0;
+  - a parse in arena storage makes no `Tree` instance, counted through a test-only hook;
   - the LINK record is still 8 words, asserted on `size_of` and in the JavaScript twin.
 - [ ] **Step 2:** Run them. They fail.
-- [ ] **Step 3: Implement.**
+- [ ] **Step 3: Implement.** Task 2's interim `Tree` object leaves arena storage.
 - [ ] **Step 4: Run the three-way verification** in arena storage, plus the record parity tests.
-- [ ] **Step 5: Commit:** `feat(arena): built records hold their trees through the arena's own table`.
+- [ ] **Step 5: Commit:** `feat(arena): arena storage holds its trees in counted slots, released with the parse root`.
 
 ### Task 5: The native render takes no tree, and the live-tree table goes
 
