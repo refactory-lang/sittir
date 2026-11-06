@@ -7,7 +7,7 @@ import type { PortableBuildTable, PortableCondition } from '@sittir/types';
 import type { NodeMap } from '../../../compiler/types.ts';
 import { hasCatalogEntry, kindDiscriminantExpr, kindIdMemberName, type KindEnumEntry } from '../../kind-discriminant.ts';
 import { exactReadsOf, exactSlotsOf, type ExactSlots } from './exact.ts';
-import { PORTABLE_MAP_FILE, emitGrammarMap, grammarMapName, unmappedKindsBlock, unmappedName } from './grammar-map.ts';
+import { PORTABLE_MAP_FILE, emitGrammarMap, grammarMapName, unmappedKindsBlock, unmappedName, type UnformedTest } from './grammar-map.ts';
 
 export interface PortableTypedInput {
 	readonly routes: GrammarRoutes;
@@ -31,6 +31,7 @@ export interface PortableTypedOutput {
 	readonly map: string;
 	readonly unemitted: readonly PortableTypedUnemitted[];
 	readonly exact: ExactSlots;
+	readonly unformed: readonly UnformedTest[];
 }
 
 export const PORTABLE_TYPED_FILE = 'portable.typed.ts';
@@ -390,5 +391,6 @@ export function emitPortableTyped(typedInput: PortableTypedInput): PortableTyped
 		}
 	}
 	emit('', ...unmappedKindsBlock(VOCABULARY_INDEX, input.grammar, nodeMap, unmappedViews));
-	return { source: `${lines.join('\n').trimEnd()}\n`, map: emitGrammarMap(typedInput, exact), unemitted, exact };
+	const grammarMap = emitGrammarMap(typedInput, exact);
+	return { source: `${lines.join('\n').trimEnd()}\n`, map: grammarMap.source, unemitted, exact, unformed: grammarMap.unformed };
 }

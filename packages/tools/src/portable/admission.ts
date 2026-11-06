@@ -19,10 +19,17 @@ export interface AdmissionRaw {
 	readonly value: number;
 }
 
+export interface AdmissionUnformed {
+	readonly grammar: string;
+	readonly path: string;
+	readonly member: string;
+}
+
 export interface AdmissionReport {
 	readonly untyped: readonly string[];
 	readonly members: readonly AdmissionMember[];
 	readonly raw: readonly AdmissionRaw[];
+	readonly unformed: readonly AdmissionUnformed[];
 }
 
 export const excessOf = (admitted: ReadonlySet<string>, exact: Pick<ExactSet, 'kinds'>): readonly string[] => {
@@ -101,6 +108,7 @@ const nameOf = (name: ts.PropertyName, source: ts.SourceFile): string => (ts.isS
 export async function portableAdmission(grammars: readonly string[] = bindingGrammars()): Promise<AdmissionReport> {
 	const members: AdmissionMember[] = [];
 	const raw: AdmissionRaw[] = [];
+	const unformed: AdmissionUnformed[] = [];
 	for (const grammar of grammars) {
 		const typed = await writeTypedModule(grammar);
 		if (typed === undefined) continue;
@@ -125,8 +133,9 @@ export async function portableAdmission(grammars: readonly string[] = bindingGra
 		const groups = { kind: 0, value: 0 };
 		for (const [, at] of typed.exact) for (const [, set] of at) for (const arm of set.raw) groups[rawGroupOf(arm.reasons)]++;
 		raw.push({ grammar, ...groups });
+		for (const test of typed.unformed) unformed.push({ grammar, ...test });
 	}
-	return { untyped: untypedSlots(), members, raw };
+	return { untyped: untypedSlots(), members, raw, unformed };
 }
 
 export function formatAdmission(report: AdmissionReport): string {
@@ -135,8 +144,14 @@ export function formatAdmission(report: AdmissionReport): string {
 	for (const grammar of new Set(report.raw.map((r) => r.grammar))) {
 		const over = report.members.filter((m) => m.grammar === grammar);
 		const raw = report.raw.find((r) => r.grammar === grammar)!;
-		lines.push(`${grammar}: ${over.length} members admit a kind outside their exact set; raw-node arms ${raw.kind} per kind, ${raw.value} per value`);
+		const unformed = report.unformed.filter((u) => u.grammar === grammar);
+		lines.push(
+			`${grammar}: ${over.length} members admit a kind outside their exact set; raw-node arms ${raw.kind} per kind, ${raw.value} per value; ${unformed.length} build kind tests at a member with no exact set`
+		);
 		for (const m of over) lines.push(`  ${m.path}.${m.member}: ${m.excess.join(' ')}`);
+		const sites = new Map<string, number>();
+		for (const u of unformed) sites.set(`${u.path}.${u.member}`, (sites.get(`${u.path}.${u.member}`) ?? 0) + 1);
+		for (const [site, count] of sites) lines.push(`  unformed ${site}: ${count}`);
 	}
 	return lines.join('\n');
 }
