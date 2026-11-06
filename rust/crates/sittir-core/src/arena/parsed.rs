@@ -204,6 +204,6 @@ impl<G: RecordGrammar> ParsedTree<G> {
     ) -> Result<String, RenderError> {
         let ctx = RenderContext { options, sources };
         let mut arenas = HeldArenas::of([(self.tree_id(), self.tree_arena())]);
-        self.grammar().render_record(root, &mut arenas, &Arena::new(), self.written(), &ctx)
+        self.grammar().render_record(root, &mut arenas, &Arena::new(), self.store(), &ctx)
     }
 }

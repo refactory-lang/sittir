@@ -459,9 +459,14 @@ pub struct ParsedTree<G: EngineGrammar> {
     grown: std::sync::atomic::AtomicBool,
     /// The work its layout reads have done (`layout_work`).
     work: crate::layout::LayoutWorkCounter,
-    /// The tree's sides in the store of the engine that parsed it: the ones
-    /// a write set, and the ones its placement assigned.
-    written: TriviaStore<G::Trivia>,
+    /// The store of the engine that parsed the tree: the built arena the
+    /// records its written sides name come from, and the sides its
+    /// placement assigned.
+    store: TriviaStore<G::Trivia>,
+    /// The sides writes set, by row: the tree's own, written through
+    /// `&mut self` alone (`write_trivia_side`), so no read of them ever
+    /// meets a write and none takes a lock.
+    sides: crate::trivia_store::SideRows<NodeIndex, G::Trivia>,
     /// The tree's records, each written on its node's first read, and those
     /// no cell names, which it holds by row (`tree_arena`): made on the
     /// first call that reaches them.
@@ -676,7 +681,8 @@ impl<G: EngineGrammar> ParsedTree<G> {
             cached,
             grown: _,
             work: _,
-            written,
+            store,
+            sides,
             #[cfg(feature = "arena")]
             arena,
         } = self;
@@ -694,7 +700,8 @@ impl<G: EngineGrammar> ParsedTree<G> {
             + read_options.heap_bytes()
             + tables
             + cached.load(std::sync::atomic::Ordering::Relaxed)
-            + written.tree_bytes(*tree_id)
+            + store.tree_bytes(*tree_id)
+            + sides.bytes()
             + arena
     }
 
@@ -736,12 +743,15 @@ impl<G: EngineGrammar> ParsedTree<G> {
         self.arena.get().is_some()
     }
 
-    /// Drops the tree's sides from its engine's store, answering whether one
-    /// held a built record (`TriviaStore::drop_tree`). Dropping the tree
-    /// drops them too; once dropped, a release finds none.
+    /// Drops the tree's assigned sides from its engine's store
+    /// (`TriviaStore::drop_tree`) and its written sides, releasing the built
+    /// records those held (`TriviaStore::release_rows`), and answers whether
+    /// one did. Dropping the tree releases them too; once released, a
+    /// release finds none.
     #[must_use]
-    pub fn release_sides(&self) -> bool {
-        self.written.drop_tree(self.tree_id)
+    pub fn release_sides(&mut self) -> bool {
+        self.store.drop_tree(self.tree_id);
+        self.store.release_rows(&self.sides.take())
     }
 
     /// The parsed tree-sitter tree.
@@ -1316,7 +1326,7 @@ impl<G: EngineGrammar> ParsedTree<G> {
     /// the store.
     pub fn placed_trivia(&self) -> &Placement {
         self.grew();
-        self.trivia.place_all(self.trivia_source(), |placed| self.written.fill(self.tree_id, placed));
+        self.trivia.place_all(self.trivia_source(), |placed| self.store.fill(self.tree_id, placed));
         &self.trivia
     }
 
@@ -1325,7 +1335,7 @@ impl<G: EngineGrammar> ParsedTree<G> {
     /// the store.
     fn cover_side<'t>(&'t self, nodes: crate::trivia_table::Lookup<'_, 't>, index: crate::types::NodeIndex, side: TriviaSide) {
         self.grew();
-        self.trivia.cover(self.trivia_source(), nodes, index, side, |placed| self.written.fill(self.tree_id, placed));
+        self.trivia.cover(self.trivia_source(), nodes, index, side, |placed| self.store.fill(self.tree_id, placed));
     }
 
     /// The entries of `side` of the node at `index`: the ones a write gave it,
@@ -1356,7 +1366,7 @@ impl<G: EngineGrammar> ParsedTree<G> {
     /// as an `ERROR` is.
     fn assigned_side<'t, N: Nodes<'t>>(&'t self, nodes: &mut N, index: crate::types::NodeIndex, side: TriviaSide, deviation: Option<Deviation<N, G::Trivia>>) -> Vec<SideEntry<G::Trivia>> {
         self.cover_side(&mut |at| nodes.node(at), index, side);
-        let assigned = self.written.assigned(Place::Row { tree: self.tree_id, row: index }, side).unwrap_or_default();
+        let assigned = self.store.assigned(Place::Row { tree: self.tree_id, row: index }, side).unwrap_or_default();
         if assigned.is_empty() {
             return Vec::new();
         }
@@ -1417,26 +1427,29 @@ impl<G: EngineGrammar> ParsedTree<G> {
         node_at_index(&self.tree, index).is_some_and(|node| crate::trivia_table::is_empty(&node))
     }
 
-    /// The store of the tree's sides, the engine's that parsed it: the ones
-    /// a write set, and the ones its placement assigned.
-    pub fn written(&self) -> &TriviaStore<G::Trivia> {
-        &self.written
+    /// The store of the engine that parsed the tree: the built arena the
+    /// records its written sides name come from, and what answers them.
+    pub fn store(&self) -> &TriviaStore<G::Trivia> {
+        &self.store
     }
 
     /// Replace `side` of the node at `index` with `entries`, holding the
-    /// built records among them (`TriviaStore::write_held_side`), and mark
-    /// the tree grown: its rows count in its native bytes. The tree is
-    /// marked even when the write is refused, since a refused release comes
-    /// after the side is written.
+    /// built records among them (`TriviaStore::hold`) and releasing those the
+    /// side held, and mark the tree grown: its rows count in its native
+    /// bytes. The tree is marked even when the release is refused, since it
+    /// comes after the side is written.
     ///
     /// # Errors
     ///
-    /// What holding or releasing a built record refuses.
+    /// What holding or releasing a built record refuses, before the side is
+    /// written when a new entry's record is refused.
     #[cfg(feature = "arena")]
-    pub fn write_trivia_side(&self, index: crate::types::NodeIndex, side: TriviaSide, entries: Vec<TriviaEntry<G::Trivia>>) -> Result<(), String> {
-        let written = self.written.write_held_side(Place::Row { tree: self.tree_id, row: index }, side, entries);
+    pub fn write_trivia_side(&mut self, index: crate::types::NodeIndex, side: TriviaSide, entries: Vec<TriviaEntry<G::Trivia>>) -> Result<(), String> {
+        let entries = crate::trivia_store::kept(entries);
+        self.store.hold(&entries).map_err(|e| e.to_string())?;
+        let replaced = self.sides.insert(index, side, entries);
         self.grew();
-        written.map_err(|e| e.to_string())
+        self.store.release_entries(replaced.as_deref().unwrap_or_default()).map_err(|e| e.to_string())
     }
 
     /// Replace `side` of the node at `index` with `entries`, and mark the
@@ -1446,18 +1459,21 @@ impl<G: EngineGrammar> ParsedTree<G> {
     ///
     /// None: no entry names a built record.
     #[cfg(not(feature = "arena"))]
-    pub fn write_trivia_side(&self, index: crate::types::NodeIndex, side: TriviaSide, entries: Vec<TriviaEntry<G::Trivia>>) -> Result<(), String> {
-        self.written.write_side(Place::Row { tree: self.tree_id, row: index }, side, entries);
+    pub fn write_trivia_side(&mut self, index: crate::types::NodeIndex, side: TriviaSide, entries: Vec<TriviaEntry<G::Trivia>>) -> Result<(), String> {
+        self.sides.insert(index, side, crate::trivia_store::kept(entries));
         self.grew();
         Ok(())
     }
 
     /// Whether a write replaced a side of a node under the node at `index`:
     /// of a descendant, or of the node's own `inner`, and of its own leading
-    /// and trailing too when `own_sides` is set.
+    /// and trailing too when `own_sides` is set. It walks the written rows
+    /// alone (`TriviaStore::edit_walks`).
     pub fn edited_within(&self, index: crate::types::NodeIndex, own_sides: bool) -> bool {
         let Some(node) = node_at_index(&self.tree, index) else { return false };
-        self.written.edited_within(self.tree_id, index, index + crate::read::descendant_count(&node), own_sides)
+        let (edited, walked) = self.sides.edited_within(index, index + crate::read::descendant_count(&node), own_sides);
+        self.store.walked(walked);
+        edited
     }
 }
 
@@ -1825,8 +1841,8 @@ impl<'t, G: EngineGrammar> Lookups<'t, G> {
     /// deviation found by `deviation` when given).
     fn seated(&mut self, index: NodeIndex, side: TriviaSide, deviation: Option<Deviation<Self, G::Trivia>>) -> Vec<SideEntry<G::Trivia>> {
         let tree = self.tree;
-        match tree.written.side(Place::Row { tree: tree.tree_id, row: index }, side) {
-            Some(written) => written.into_iter().map(SideEntry::Written).collect(),
+        match tree.sides.get(index, side) {
+            Some(written) => tree.store.answered(written).into_iter().map(SideEntry::Written).collect(),
             None => tree.assigned_side(self, index, side, deviation),
         }
     }
@@ -2151,7 +2167,8 @@ impl<G: EngineGrammar> Engine<G> {
             cached: std::sync::atomic::AtomicUsize::new(0),
             grown: std::sync::atomic::AtomicBool::new(true),
             work: crate::layout::LayoutWorkCounter::default(),
-            written: self.written.clone(),
+            store: self.written.clone(),
+            sides: crate::trivia_store::SideRows::default(),
             #[cfg(feature = "arena")]
             arena: std::sync::OnceLock::new(),
         })
@@ -2161,6 +2178,17 @@ impl<G: EngineGrammar> Engine<G> {
         Err("find_and_read not yet implemented — ast-grep-core integration pending".to_string())
     }
 
+}
+
+/// `trees`, borrowed to change: refused by name while a read holds them,
+/// so a call that changes a live tree inside a read of the live trees fails
+/// as an error instead of meeting that read.
+///
+/// # Errors
+///
+/// While a read of `trees` is in progress.
+pub fn change_trees<T>(trees: &std::cell::RefCell<T>) -> Result<std::cell::RefMut<'_, T>, String> {
+    trees.try_borrow_mut().map_err(|_| "a live tree can't change while the live trees are being read".to_owned())
 }
 
 #[must_use]
@@ -3143,7 +3171,7 @@ mod tests {
 
     #[test]
     fn a_written_side_replaces_the_assigned_one_and_marks_its_ancestors_edited() {
-        let (tree, _) = parsed("fn f() { a(); }\nfn g() {}\n");
+        let (mut tree, _) = parsed("fn f() { a(); }\nfn g() {}\n");
         let f = index_of_kind(&tree, "function_item", 0);
         let g = index_of_kind(&tree, "function_item", 1);
         let a = index_of_kind(&tree, "expression_statement", 0);
@@ -3159,7 +3187,7 @@ mod tests {
 
     #[test]
     fn a_written_inner_side_is_within_its_own_node() {
-        let (tree, _) = parsed("fn f() {}\n");
+        let (mut tree, _) = parsed("fn f() {}\n");
         let block = index_of_kind(&tree, "block", 0);
         tree.write_trivia_side(block, TriviaSide::Inner, Vec::new()).expect("a side write");
         assert!(tree.edited_within(block, false));
@@ -3168,7 +3196,7 @@ mod tests {
     #[test]
     fn a_written_side_shadows_the_assigned_one_and_the_source_s_own_view_still_reads_the_source() {
         for read_first in [true, false] {
-            let (tree, _) = parsed("// c\nfn f() {}\n");
+            let (mut tree, _) = parsed("// c\nfn f() {}\n");
             let f = index_of_kind(&tree, "function_item", 0);
             let comment = index_of_kind(&tree, "line_comment", 0);
             if read_first {
@@ -3204,7 +3232,7 @@ mod tests {
                 let _ = tree.trivia_side(index, side);
             }
         }
-        let store = tree.written().clone();
+        let store = tree.store().clone();
         assert!(store.assigned_len() > 0, "the reads filled the source's sides");
         let coordinates: Vec<NodeCoordinate> = (0..count).map(|at| coordinate(&tree, NodeIndex::new(at))).collect();
         let walked = store.edit_walks();
@@ -3217,18 +3245,17 @@ mod tests {
     }
 
     #[test]
-    fn an_engine_s_trees_write_to_its_store_and_take_their_sides_with_them() {
+    fn each_tree_keeps_the_sides_written_to_it_and_takes_them_with_it() {
         let mut engine = Engine::new(TestGrammar, ResolvedOptions::default()).expect("engine");
-        let first = engine.parse("fn f() {}\n", claim()).expect("parse");
-        let second = engine.parse("fn f() {}\n", claim()).expect("parse");
+        let mut first = engine.parse("fn f() {}\n", claim()).expect("parse");
+        let mut second = engine.parse("fn f() {}\n", claim()).expect("parse");
         let f = index_of_kind(&first, "function_item", 0);
         first.write_trivia_side(f, TriviaSide::Leading, Vec::new()).expect("a side write");
         second.write_trivia_side(f, TriviaSide::Trailing, Vec::new()).expect("a side write");
         assert!(first.edited_within(NodeIndex::ROOT, false));
         assert_eq!(second.trivia_side(f, TriviaSide::Leading), first.trivia_side(f, TriviaSide::Trailing), "each tree reads its own writes");
-        assert_eq!(engine.written.len(), 2);
+        assert_eq!((first.sides.len(), second.sides.len(), engine.written.len()), (1, 1, 0), "each tree holds its own writes, and the engine's store none");
         drop(first);
-        assert_eq!(engine.written.len(), 1, "a dropped tree's sides leave the store");
         assert!(second.edited_within(NodeIndex::ROOT, false));
     }
 
@@ -3250,7 +3277,7 @@ mod tests {
         let note = TriviaEntry::Value(SlotValue::Node(TestTrivia::Text(TriviaText::of(KindId(3), "// a note"))));
         tree.write_trivia_side(f, TriviaSide::Leading, vec![note]).expect("a side write");
         assert!(tree.take_grown(), "a write to a row marks its tree grown");
-        let row = std::mem::size_of::<((Place, TriviaSide), Vec<TriviaEntry<TestTrivia>>)>();
+        let row = std::mem::size_of::<((NodeIndex, TriviaSide), Vec<TriviaEntry<TestTrivia>>)>();
         let entry = std::mem::size_of::<TriviaEntry<TestTrivia>>() + "// a note".len();
         assert_eq!(tree.native_bytes(), read + row + entry, "the row and its entry");
         tree.write_trivia_side(f, TriviaSide::Leading, Vec::new()).expect("a side write");
@@ -3263,10 +3290,10 @@ mod tests {
     #[test]
     fn a_tree_that_never_made_its_arena_answers_that_its_sides_held_a_built_record() {
         let mut engine = Engine::new(TestGrammar, ResolvedOptions::default()).expect("engine");
-        let tree = engine.parse("fn f() {}\n", claim()).expect("parse");
+        let mut tree = engine.parse("fn f() {}\n", claim()).expect("parse");
         assert!(!tree.release_sides(), "a tree with no sides");
         let record = crate::trivia::RecordEntry { record: crate::trivia::BuiltEntry { kind: KindId(1), at: crate::arena::Address(5) }, store: None };
-        tree.written().write_side(Place::Row { tree: tree.tree_id(), row: NodeIndex::ROOT }, TriviaSide::Leading, vec![TriviaEntry::Record(record)]);
+        tree.sides.insert(NodeIndex::ROOT, TriviaSide::Leading, vec![TriviaEntry::Record(record)]);
         assert!(tree.release_sides(), "its side held a built record");
         assert!(!tree.made_arena(), "holding a record made no arena");
         assert!(!tree.release_sides(), "once released, none is left");
@@ -3277,14 +3304,13 @@ mod tests {
     fn a_side_write_refused_after_its_row_changed_still_marks_its_tree_grown() {
         let mut engine = Engine::new(TestGrammar, ResolvedOptions::default()).expect("engine");
         let mut tree = engine.parse("fn f() {}\n", claim()).expect("parse");
-        let place = Place::Row { tree: tree.tree_id(), row: NodeIndex::ROOT };
         let record = crate::trivia::RecordEntry { record: crate::trivia::BuiltEntry { kind: KindId(1), at: crate::arena::Address(5) }, store: None };
-        tree.written().write_side(place, TriviaSide::Leading, vec![TriviaEntry::Record(record)]);
+        tree.sides.insert(NodeIndex::ROOT, TriviaSide::Leading, vec![TriviaEntry::Record(record)]);
         let _ = tree.take_grown();
         let note = TriviaEntry::Value(SlotValue::Node(TestTrivia::Text(TriviaText::of(KindId(3), "// a note"))));
         assert!(tree.write_trivia_side(NodeIndex::ROOT, TriviaSide::Leading, vec![note]).is_err(), "the record the side named holds no count to release");
-        let written = tree.written().side(place, TriviaSide::Leading).expect("a written side");
-        assert!(matches!(written.as_slice(), [TriviaEntry::Value(_)]), "the new side was written before the release was refused");
+        let written = tree.sides.get(NodeIndex::ROOT, TriviaSide::Leading).expect("a written side");
+        assert!(matches!(written, [TriviaEntry::Value(_)]), "the new side was written before the release was refused");
         assert!(tree.take_grown(), "so its tree grew");
     }
 
@@ -3318,8 +3344,25 @@ mod tests {
     }
 
     #[test]
+    fn a_change_to_the_live_trees_while_a_read_holds_them_is_refused_as_an_error() {
+        let (tree, _) = parsed("fn f() {}\n");
+        let f = index_of_kind(&tree, "function_item", 0);
+        let trees = std::cell::RefCell::new(table(tree));
+        let read = trees.borrow();
+        let reading = ReadTrees::new(&read);
+        let refused = change_trees(&trees).map(|_| ()).expect_err("a write while the trees are being read");
+        assert!(refused.contains("being read"), "refused by name: {refused}");
+        assert!(!reading.edited_within(&coordinate(&read[&read.keys().next().copied().expect("a tree")], f)), "the read saw no write");
+        drop(read);
+        let mut trees = change_trees(&trees).expect("a write once the read is over");
+        let tree = trees.values_mut().next().expect("a tree");
+        tree.write_trivia_side(f, TriviaSide::Leading, Vec::new()).expect("a side write");
+        assert!(tree.edited_within(NodeIndex::ROOT, false));
+    }
+
+    #[test]
     fn the_tree_table_answers_whether_a_coordinates_range_holds_a_write() {
-        let (tree, _) = parsed("fn f() { a(); }\nfn g() {}\n");
+        let (mut tree, _) = parsed("fn f() { a(); }\nfn g() {}\n");
         let f = coordinate(&tree, index_of_kind(&tree, "function_item", 0));
         let g = coordinate(&tree, index_of_kind(&tree, "function_item", 1));
         tree.write_trivia_side(index_of_kind(&tree, "expression_statement", 0), TriviaSide::Leading, Vec::new()).expect("a side write");

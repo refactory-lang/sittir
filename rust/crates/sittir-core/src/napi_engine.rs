@@ -117,7 +117,7 @@ macro_rules! napi_engine {
             f: impl FnOnce(&mut $crate::ParsedTree<$grammar>) -> ::napi::Result<R>,
         ) -> ::napi::Result<R> {
             LIVE_TREES.with(|trees| {
-                let mut trees = trees.borrow_mut();
+                let mut trees = $crate::engine::change_trees(trees).map_err(::napi::Error::from_reason)?;
                 let parsed = trees.get_mut(&tree_id).ok_or_else(|| $crate::napi_engine::tree_not_live(tree_id))?;
                 let out = f(parsed);
                 report_tree(env, tree_id, parsed)?;
@@ -153,7 +153,7 @@ macro_rules! napi_engine {
                 (f(&read), read.read())
             });
             LIVE_TREES.with(|trees| {
-                let mut trees = trees.borrow_mut();
+                let mut trees = $crate::engine::change_trees(trees).map_err(::napi::Error::from_reason)?;
                 read.into_iter().try_for_each(|tree_id| trees.get_mut(&tree_id).map_or(Ok(()), |parsed| report_tree(env, tree_id, parsed)))
             })?;
             out
@@ -162,7 +162,7 @@ macro_rules! napi_engine {
         /// Reports each live tree that grew since its last report
         /// (`report_tree`).
         fn report_live(env: &::napi::Env) -> ::napi::Result<()> {
-            LIVE_TREES.with(|trees| trees.borrow_mut().iter_mut().try_for_each(|(&tree_id, parsed)| report_tree(env, tree_id, parsed)))
+            LIVE_TREES.with(|trees| $crate::engine::change_trees(trees).map_err(::napi::Error::from_reason)?.iter_mut().try_for_each(|(&tree_id, parsed)| report_tree(env, tree_id, parsed)))
         }
 
         /// Reports to V8 what the live tree `tree_id` holds natively now
@@ -185,9 +185,9 @@ macro_rules! napi_engine {
         pub fn tree_memory(env: ::napi::Env) -> ::napi::Result<$crate::napi_engine::TreeMemory> {
             report_live(&env)?;
             let (trees, counted) = LIVE_TREES.with(|trees| {
-                let mut trees = trees.borrow_mut();
-                (trees.len(), trees.values_mut().map($crate::ParsedTree::native_bytes).sum::<usize>())
-            });
+                let mut trees = $crate::engine::change_trees(trees).map_err(::napi::Error::from_reason)?;
+                ::napi::Result::Ok((trees.len(), trees.values_mut().map($crate::ParsedTree::native_bytes).sum::<usize>()))
+            })?;
             Ok($crate::napi_engine::TreeMemory::new(trees, counted, TREES_REPORTED.with(::std::cell::Cell::get)))
         }
 
@@ -321,7 +321,7 @@ macro_rules! napi_engine {
                     "errors": parsed.error_regions(),
                 })
                 .to_string();
-                LIVE_TREES.with(|trees| trees.borrow_mut().insert(tree_id, parsed));
+                LIVE_TREES.with(|trees| $crate::engine::change_trees(trees).map(|mut trees| trees.insert(tree_id, parsed))).map_err(::napi::Error::from_reason)?;
                 with_live_tree(&env, tree_id, |_| Ok(()))?;
                 Ok(json)
             }
@@ -435,7 +435,7 @@ macro_rules! napi_engine {
             let side = $crate::napi_engine::trivia_side_from_wire(&side)?;
             let store = with_live_node(&env, tree_id, index, |parsed, index| {
                 parsed.write_trivia_side(index, side, entries).map_err(::napi::Error::from_reason)?;
-                Ok(parsed.written().clone())
+                Ok(parsed.store().clone())
             })?;
             $crate::napi_engine::settle(&env, &store)
         }
@@ -1807,11 +1807,11 @@ pub fn settle<T>(_env: &napi::Env, _store: &crate::trivia_store::TriviaStore<T>)
 ///
 /// What `settle` refuses.
 #[cfg(feature = "arena")]
-pub fn dispose<G: crate::engine::EngineGrammar>(env: &napi::Env, tree: crate::engine::ParsedTree<G>) -> napi::Result<()> {
+pub fn dispose<G: crate::engine::EngineGrammar>(env: &napi::Env, mut tree: crate::engine::ParsedTree<G>) -> napi::Result<()> {
     if !(tree.release_sides() || tree.made_arena()) {
         return Ok(());
     }
-    let store = tree.written().clone();
+    let store = tree.store().clone();
     drop(tree);
     settle(env, &store)
 }

@@ -70,7 +70,7 @@ impl<G: RecordGrammar, N: ReadNode + WriteCell<G::Trivia> + HydrateNode + Record
         let ctx = RenderContext { options, sources: tree };
         twice(|| {
             let mut arenas = HeldArenas::of([(tree.tree_id(), tree.tree_arena())]);
-            (self.record)(root, &mut arenas, built, tree.written(), &ctx).map_err(|e| format!("record: {e}"))
+            (self.record)(root, &mut arenas, built, tree.store(), &ctx).map_err(|e| format!("record: {e}"))
         })
     }
 
@@ -162,8 +162,8 @@ impl<G: RecordGrammar, N: ReadNode + WriteCell<G::Trivia> + HydrateNode + Record
                 NodeAlike::Panicking => counts[2] += 1,
                 NodeAlike::Unread => {}
             }
-            let edited = Self::parse(&mut engine, source);
-            edit_in_place(&edited, index);
+            let mut edited = Self::parse(&mut engine, source);
+            edit_in_place(&mut edited, index);
             match self.node_alike(&edited, index, &options).map_err(|e| format!("edited {e}"))? {
                 NodeAlike::Rendered => counts[1] += 1,
                 NodeAlike::Panicking => counts[2] += 1,
@@ -250,10 +250,10 @@ fn renders_as_its_source<G: RecordGrammar, N: ReadNode + WriteCell<G::Trivia> + 
     let mut engine = renders.engine();
     let options = engine.options().clone();
     for edited in [false, true] {
-        let tree = Renders::<G, N>::parse(&mut engine, source);
+        let mut tree = Renders::<G, N>::parse(&mut engine, source);
         let index = node_spanning(&tree, source, kind, text);
         if edited {
-            edit_in_place(&tree, index);
+            edit_in_place(&mut tree, index);
         }
         let native = renders.native(&tree, index, &options).expect("a native read").expect("a native render");
         let record = Renders::<G, N>::parsed(&tree, tree.read_record::<N>(index, Depth::ONE).expect("a record write").expect("a record"), &options).expect("a record render");
@@ -282,20 +282,21 @@ fn where_a_parsed_record_renders_never_depends_on_what_was_read() {
             let at = tree.read_record::<sittir_python::render::AnyNode>(tuple, Depth::ONE).expect("a record write").expect("a record");
             Renders::<sittir_python::PythonGrammar, sittir_python::render::AnyNode>::parsed(tree, at, &options).expect("a record render")
         };
-        let tree = Renders::<sittir_python::PythonGrammar, sittir_python::render::AnyNode>::parse(&mut engine, source);
+        let mut tree = Renders::<sittir_python::PythonGrammar, sittir_python::render::AnyNode>::parse(&mut engine, source);
         let tuple = node_spanning(&tree, source, "tuple", tuple_text);
         if edited {
-            edit_in_place(&tree, tuple);
+            edit_in_place(&mut tree, tuple);
         }
         let first = render(&tree);
         tree.read_record::<sittir_python::render::AnyNode>(node_spanning(&tree, source, "call", "g(y)"), Depth::ONE).expect("a record write").expect("a record");
         let after_child = render(&tree);
         tree.read_record::<sittir_python::render::AnyNode>(NodeIndex::ROOT, Depth::All).expect("a record write").expect("a record");
         let after_all = render(&tree);
-        let whole = Renders::<sittir_python::PythonGrammar, sittir_python::render::AnyNode>::parse(&mut engine, source);
+        let mut whole = Renders::<sittir_python::PythonGrammar, sittir_python::render::AnyNode>::parse(&mut engine, source);
         whole.read_record::<sittir_python::render::AnyNode>(NodeIndex::ROOT, Depth::All).expect("a record write").expect("a record");
         if edited {
-            edit_in_place(&whole, node_spanning(&whole, source, "tuple", tuple_text));
+            let tuple = node_spanning(&whole, source, "tuple", tuple_text);
+            edit_in_place(&mut whole, tuple);
         }
         let from_whole = render(&whole);
         let native = renders.native(&tree, tuple, &options).expect("a native read").expect("a native render");
@@ -349,7 +350,7 @@ fn an_edited_parent_renders_from_its_record_and_an_untouched_child_holding_a_com
     let mut engine = renders.engine();
     let options = engine.options().clone();
     for depth in [Depth::ONE, Depth::All] {
-        let tree = RustRenders::parse(&mut engine, EDITED);
+        let mut tree = RustRenders::parse(&mut engine, EDITED);
         let statement = index_of(&tree, rust_kinds::EXPRESSION_STATEMENT, 1);
         tree.write_trivia_side(statement, sittir_core::trivia_table::TriviaSide::Leading, line_comment("// written")).expect("a side write");
         let native = renders.native(&tree, NodeIndex::ROOT, &options).expect("a root").expect("a native render");
@@ -391,7 +392,7 @@ fn built_record<G: RecordGrammar, N: WriteCell<G::Trivia> + HydrateNode + Record
             None => Ok(Linked::Leaf(tree.source()[coord.span.range()].to_owned())),
         }
     };
-    let word = node.write_cell(&mut RecordSink::built(&mut built, tree.written(), &mut link)).expect("a built record");
+    let word = node.write_cell(&mut RecordSink::built(&mut built, tree.store(), &mut link)).expect("a built record");
     let cell = Cell::decode_built(word, &built, G::KIND_BITS).expect("a built root");
     (built, CellAt { cell, tree: None, site: None }, linked)
 }

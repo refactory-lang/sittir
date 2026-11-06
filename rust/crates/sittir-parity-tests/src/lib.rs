@@ -120,7 +120,7 @@ macro_rules! each_grammar {
 /// # Panics
 ///
 /// When the store refuses the write.
-pub fn edit_in_place<G: sittir_core::engine::EngineGrammar>(tree: &sittir_core::engine::ParsedTree<G>, index: sittir_core::types::NodeIndex) {
+pub fn edit_in_place<G: sittir_core::engine::EngineGrammar>(tree: &mut sittir_core::engine::ParsedTree<G>, index: sittir_core::types::NodeIndex) {
     let inner = sittir_core::trivia_table::TriviaSide::Inner;
     tree.write_trivia_side(index, inner, tree.trivia_side(index, inner)).expect("the node's own side writes back");
 }
@@ -156,8 +156,8 @@ macro_rules! snapshot_rendered {
 macro_rules! edited_rendered {
     ($krate:ident, $grammar:expr, $source:expr) => {{
         let mut engine = ::sittir_core::engine::Engine::new($grammar, $krate::render::options::defaults()).expect("an engine");
-        let tree = engine.parse($source, ::sittir_core::engine::claim_tree_id().expect("a tree id")).expect("a parse");
-        (0..::sittir_core::read::descendant_count(&tree.tree().root_node())).map(::sittir_core::types::NodeIndex::new).for_each(|index| $crate::edit_in_place(&tree, index));
+        let mut tree = engine.parse($source, ::sittir_core::engine::claim_tree_id().expect("a tree id")).expect("a parse");
+        (0..::sittir_core::read::descendant_count(&tree.tree().root_node())).map(::sittir_core::types::NodeIndex::new).for_each(|index| $crate::edit_in_place(&mut tree, index));
         let root: $krate::render::AnyNode = ::sittir_core::read::read_at(&mut tree.tree().walk(), &mut tree.seating_ctx(), ::sittir_core::types::NodeIndex::ROOT, ::sittir_core::read::Depth::All).expect("a root");
         let options = engine.options().clone();
         let ctx = ::sittir_core::prepare::RenderContext { options: &options, sources: &tree };

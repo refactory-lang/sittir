@@ -32,7 +32,7 @@ enum Write {
 /// its sides, and rendered.
 fn rendered(source: &str, depth: Depth, write: Write) -> String {
     let mut engine = Engine::new(sittir_python::PythonGrammar, options::defaults()).expect("an engine");
-    let tree = engine.parse(source, claim_tree_id().expect("a tree id")).expect("a parse");
+    let mut tree = engine.parse(source, claim_tree_id().expect("a tree id")).expect("a parse");
     let indices = (0..sittir_core::read::descendant_count(&tree.tree().root_node())).map(NodeIndex::new);
     match write {
         Write::Nothing => {}
@@ -45,7 +45,7 @@ fn rendered(source: &str, depth: Depth, write: Write) -> String {
             let entries = [TriviaNode::Text(comment), TriviaNode::Newline].into_iter().map(|entry| sittir_core::trivia::TriviaEntry::new(sittir_core::SlotValue::Node(entry))).collect();
             tree.write_trivia_side(index, sittir_core::trivia_table::TriviaSide::Leading, entries).expect("a side write");
         }
-        Write::EveryNode => indices.for_each(|index| edit_in_place(&tree, index)),
+        Write::EveryNode => indices.for_each(|index| edit_in_place(&mut tree, index)),
     }
     let root: AnyNode = read_at(&mut tree.tree().walk(), &mut tree.seating_ctx(), NodeIndex::ROOT, depth).expect("a root");
     let options = engine.options().clone();
