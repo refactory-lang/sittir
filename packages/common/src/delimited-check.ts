@@ -1,7 +1,9 @@
 import type { AnyUntypedNode } from '@sittir/types';
 import { isLive, type EngineHandle, type LiveEngine } from './engine-scope.ts';
 import { applyHost } from './reparse.ts';
-import { nodeText, spanOf } from './utils.ts';
+import { enterPath, Leave } from './node-data.ts';
+import { storedSlotValues } from './record-view.ts';
+import { isNode, nodeText, spanOf } from './utils.ts';
 
 export interface DelimitedSpec {
 	readonly kind: string;
@@ -28,16 +30,32 @@ const pairings = new WeakMap<DelimitedSpec, Set<string>>();
 
 
 function leafTexts(value: unknown, skip: ReadonlySet<number>, into: string[]): string[] {
-	if (value === undefined || value === null) return into;
-	if (Array.isArray(value)) {
-		for (const item of value) leafTexts(item, skip, into);
-		return into;
+	const work: unknown[] = [value];
+	const path = new Set<object>();
+	const pushReversed = (items: readonly unknown[]): void => {
+		for (let at = items.length - 1; at >= 0; at -= 1) work.push(items[at]);
+	};
+	while (work.length > 0) {
+		const next = work.pop();
+		if (next instanceof Leave) {
+			path.delete(next.value);
+			continue;
+		}
+		if (next === undefined || next === null) continue;
+		if (typeof next === 'object') {
+			enterPath(path, next);
+			work.push(new Leave(next));
+		}
+		if (typeof next === 'object' && !isNode(next) && Symbol.iterator in next) {
+			pushReversed([...(next as Iterable<unknown>)]);
+			continue;
+		}
+		const node = next as Record<string, unknown>;
+		if (typeof node.$type === 'number' && skip.has(node.$type)) continue;
+		const text = nodeText(node);
+		if (text !== undefined) into.push(text);
+		else if (typeof next === 'object') pushReversed(storedSlotValues(next).map(([, child]) => child));
 	}
-	const node = value as Record<string, unknown>;
-	if (typeof node.$type === 'number' && skip.has(node.$type)) return into;
-	const text = nodeText(node);
-	if (text !== undefined) into.push(text);
-	else for (const key of Object.keys(node)) if (key.startsWith('_')) leafTexts(node[key], skip, into);
 	return into;
 }
 

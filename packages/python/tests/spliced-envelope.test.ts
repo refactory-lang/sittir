@@ -2,8 +2,8 @@ import { describe, expect, it } from 'vitest';
 import python from '../src/index.ts';
 import { createEngine } from '@sittir/common';
 
-const py = await createEngine(python);
-const pyStrict = await createEngine(python, { api: 'strict' });
+const py = await createEngine(python, { nodeStorage: 'object' });
+const pyStrict = await createEngine(python, { api: 'strict', nodeStorage: 'object' });
 
 const two = () => py.build.integerDecimal.plain('2');
 const negativeOne = () => pyStrict.build.simplePattern.negative(py.build.integerDecimal.plain('1'));

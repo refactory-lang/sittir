@@ -8,32 +8,43 @@ import {
 	detachCoordinates,
 	dumpMetrics,
 	hostTemplateFor,
-	sliceSpan,
 	type HostOptions,
 	type HostedText,
 	type ReparseHosts
 } from '@sittir/common';
-import { blankArmStored, hydrateTriviaEntry, spelledMember } from '@sittir/common/utils';
+import {
+	coordinateOf,
+	hydrateTriviaEntry,
+	listSeparatorOf,
+	slotValuesOf as readSlotValues,
+	storedSlotValues as readStoredSlotValues,
+	spelledMember,
+	writeTrivia,
+	writtenSides,
+	type RefusedSlot
+} from '@sittir/common/utils';
 import { scopeBuilders } from '@sittir/common/engine';
 import {
 	carryRead,
 	carryPlace,
-	carrySourceStamp,
+	SOURCE,
+	Source,
+	sourceOf,
 	holdTree,
-	slotSeparatorOf,
 	sideOf,
 	sidesOf,
 	nodeText,
 	spanOf,
+	sourceTextOf,
 	treeTokenOf,
 	type KindView
 } from '@sittir/common/utils';
 import {
+	isFactoryNode,
 	isNode,
 	treeOf,
 	type TriviaSideName,
 	isCoordinate,
-	readNode,
 	metricsEnabled,
 	mapTriviaEntries,
 	projectInterior,
@@ -43,7 +54,7 @@ import {
 import type * as TS from 'web-tree-sitter';
 import type { DisplayFamilies } from './display-families.ts';
 
-import type { AnyUntypedNode, Engine, LanguageAPI, NativeLanguageEngine, NodeLayout, NodeTrivia, ParseOptions, NodeCoordinate, TriviaEntry } from '@sittir/types';
+import type { AnyUntypedNode, Engine, LanguageAPI, NativeLanguageEngine, NodeLayout, NodeStorage, NodeTrivia, ParseOptions, NodeCoordinate, QuerySlotEntry, QuerySlots, TriviaEntry } from '@sittir/types';
 import type { TriviaSides } from '@sittir/common';
 import type { TreeHandle } from '@sittir/common/utils';
 import { invoke, load } from '../codegen-surface.ts';
@@ -70,7 +81,7 @@ const loadWebTreeSitter: CodegenSurface['engineLoader']['loadWebTreeSitter'] = (
 	.loadWebTreeSitter;
 const { opaqueFacts, readFacts } = await load('opaqueFacts');
 const { assertNativeBinaryFresh, hostBinaryFreshnessFor } = await load('nativeBinaryFreshness');
-const { slotPropertyName, storageKeyOf } = await load('modelNodeMap');
+const { storageKeyOf } = await load('modelNodeMap');
 const { factorySlotMetaOf, slotKindsOf, valueNameOf } = await load('nodeModelRead');
 
 type SlotArity = 'one' | 'many';
@@ -180,6 +191,28 @@ const cachedNativeEngines = new Map<
 	{ engine: Promise<NativeEngine>; binaryMtimeMs: number; profile?: string | undefined }
 >();
 
+const NODE_STORAGES: readonly NodeStorage[] = ['object', 'arena'];
+
+export function parseNodeStorage(value: string): NodeStorage {
+	const storage = NODE_STORAGES.find((known) => known === value);
+	if (storage === undefined) throw new Error(`node storage '${value}' is none of ${NODE_STORAGES.join(', ')}`);
+	return storage;
+}
+
+let validationNodeStorage: NodeStorage = 'object';
+
+export function useValidationNodeStorage(storage: NodeStorage): void {
+	if (storage === validationNodeStorage) return;
+	if (cachedNativeEngines.size > 0) {
+		throw new Error(`validation reads trees as '${validationNodeStorage}' storage already; choose '${storage}' before the first engine loads`);
+	}
+	validationNodeStorage = storage;
+}
+
+export function validationStorage(): NodeStorage {
+	return validationNodeStorage;
+}
+
 function releaseEngine<E extends { readonly diagnostics: { readonly buildProfile?: string | undefined } }>(grammar: string, engine: E): E {
 	if (engine.diagnostics.buildProfile === 'debug' && process.env.SITTIR_ALLOW_DEBUG_VALIDATE !== '1') {
 		throw new Error(
@@ -192,11 +225,11 @@ function releaseEngine<E extends { readonly diagnostics: { readonly buildProfile
 }
 
 async function createNativeEngine(grammar: string): Promise<NativeEngine> {
-	return releaseEngine(grammar, await createEngine(await languageByName(grammar), { verifyStructure: 'runtime' }));
+	return releaseEngine(grammar, await createEngine(await languageByName(grammar), { verifyStructure: 'runtime', nodeStorage: validationNodeStorage }));
 }
 
 export async function createStrictNativeEngine(grammar: string): Promise<Engine<LanguageAPI, 'strict'>> {
-	return releaseEngine(grammar, await createEngine(await languageByName(grammar), { api: 'strict', verifyStructure: 'runtime' }));
+	return releaseEngine(grammar, await createEngine(await languageByName(grammar), { api: 'strict', verifyStructure: 'runtime', nodeStorage: validationNodeStorage }));
 }
 
 export function loadNativeEngine(grammar: string): Promise<NativeEngine> {
@@ -248,44 +281,12 @@ export function readNativeTree(
 	return engine.diagnostics.parseAndRead(source, options) as { root: AnyUntypedNode; tree: TreeHandle };
 }
 
+export function parseNativeTree(engine: NativeEngine, source: string): TreeHandle {
+	return engine.diagnostics.parseTree(source) as TreeHandle;
+}
+
 export async function buildReadHandle(grammar: string, source: string): Promise<TreeHandle> {
-	return readNativeTree(await loadNativeEngine(grammar), source).tree;
-}
-
-/** Where a native search found a node: its coordinate when it has one, and the native node as the whole-tree read holds it, or neither for the root. */
-export interface NativeNodeCoords {
-	coordinate?: NodeCoordinate;
-	embeddedData?: AnyUntypedNode;
-}
-
-/** The node a native search found, read one level down. */
-export function readNativeAt(handle: TreeHandle, coords: NativeNodeCoords): AnyUntypedNode {
-	if (coords.embeddedData !== undefined) return coords.embeddedData;
-	if (handle.read === undefined) throw new Error('readNativeAt: the tree has no native read');
-	return (coords.coordinate === undefined ? handle.read(0) : readNode(handle, coords.coordinate)) as AnyUntypedNode;
-}
-
-function storedChildren(d: AnyUntypedNode): readonly AnyUntypedNode[] {
-	const out: AnyUntypedNode[] = [];
-	for (const [key, value] of Object.entries(d)) {
-		if (!key.startsWith('_')) continue;
-		for (const entry of Array.isArray(value) ? value : [value]) {
-			if (entry !== null && typeof entry === 'object' && '$type' in entry) out.push(entry as AnyUntypedNode);
-		}
-	}
-	return out;
-}
-
-function sideEntries(d: AnyUntypedNode): readonly AnyUntypedNode[] {
-	const sides = sidesOf(d);
-	if (sides === undefined) return [];
-	return [sides.leading, sides.trailing, sides.inner].flatMap((entries) => (entries ?? []).filter((entry): entry is AnyUntypedNode => typeof entry === 'object'));
-}
-
-function coordsOf(d: AnyUntypedNode): NativeNodeCoords {
-	if (isCoordinate(d)) return { coordinate: d };
-	const at = d.$_layout?.at;
-	return at === undefined ? { embeddedData: d } : { coordinate: at, embeddedData: d };
+	return parseNativeTree(await loadNativeEngine(grammar), source);
 }
 
 export function nativeNodeIsKind(
@@ -296,40 +297,40 @@ export function nativeNodeIsKind(
 	return (kindNameFromId?.(d.$type) ?? String(d.$type)) === kind;
 }
 
-/** Every node of `kind` in the tree, in document order, each with where it was found and its span. */
-export function walkNativeForKind(
-	handle: TreeHandle,
+export interface WrappedCandidate {
+	readonly node: TypedNode;
+	readonly span: { start: number; end: number } | undefined;
+}
+
+export function wrappedNodesOfKind(
+	root: unknown,
+	accessorOf: SlotAccessorOf,
 	kind: string,
-	kindNameFromId?: (id: number) => string | undefined
-): NativeCandidateCoords[] {
-	if (handle.read === undefined) return [];
-	const results: NativeCandidateCoords[] = [];
-	const visit = (d: AnyUntypedNode, coords: NativeNodeCoords): void => {
-		if (nativeNodeIsKind(d, kind, kindNameFromId)) results.push({ coords, span: spanOf(d) });
-		const node = isCoordinate(d) ? (readNode(handle, d, Infinity) as AnyUntypedNode) : d;
-		for (const entry of sideEntries(node)) visit(entry, coordsOf(entry));
-		for (const child of storedChildren(node)) visit(child, coordsOf(child));
+	kindNameFromId: ((id: number) => string | undefined) | undefined
+): WrappedCandidate[] {
+	const found: WrappedCandidate[] = [];
+	const visit = (node: TypedNode): void => {
+		if (nativeNodeIsKind(node as unknown as AnyUntypedNode, kind, kindNameFromId)) found.push({ node, span: spanOf(node) });
+		const sides = sidesOf(node);
+		if (sides === undefined) return;
+		for (const entries of [sides.leading, sides.trailing, sides.inner]) {
+			for (const entry of entries ?? []) if (typeof entry === 'object') walkWrappedTree(hydrateTriviaEntry(entry), accessorOf, visit);
+		}
 	};
-	visit(handle.read(0, Infinity) as AnyUntypedNode, {});
-	return results;
+	walkWrappedTree(root, accessorOf, visit);
+	return found;
 }
 
-/** The first node of `kind` (at `span` when given), or null. */
-export function findNativeNodeId(
-	handle: TreeHandle,
+export function findWrappedNode(
+	root: unknown,
+	accessorOf: SlotAccessorOf,
 	kind: string,
-	kindNameFromId?: (id: number) => string | undefined,
+	kindNameFromId: ((id: number) => string | undefined) | undefined,
 	span?: { readonly start: number; readonly end: number }
-): NativeNodeCoords | null {
-	const found = walkNativeForKind(handle, kind, kindNameFromId).find(
+): TypedNode | undefined {
+	return wrappedNodesOfKind(root, accessorOf, kind, kindNameFromId).find(
 		(candidate) => span === undefined || (candidate.span?.start === span.start && candidate.span?.end === span.end)
-	);
-	return found?.coords ?? null;
-}
-
-export interface NativeCandidateCoords {
-	coords: NativeNodeCoords;
-	span: { start: number; end: number } | undefined;
+	)?.node;
 }
 
 function nodeType(node: TS.Node): string {
@@ -456,10 +457,6 @@ export async function readNodeOf(grammar: string): Promise<(tree: TreeHandle, co
 	};
 }
 
-export async function loadWrapNode(grammar: string): Promise<(data: AnyUntypedNode, tree: TreeHandle) => unknown> {
-	return (await requireGrammarModule(grammar, 'wrap.ts')).wrapNode;
-}
-
 export async function hydrateOf(grammar: string): Promise<Hydrate> {
 	return (await requireGrammarModule(grammar, 'wrap.ts')).hydrate;
 }
@@ -491,7 +488,6 @@ export interface LoadedNodeModel {
 	readonly slotStorage: Record<string, Record<string, string>>;
 	/** Each kind's slots by storage key, to the accessor that reads it; a kind with no slots maps to `{}`. */
 	readonly slotAccessors: Record<string, Record<string, string>>;
-	readonly slotBlankArms: Record<string, ReadonlySet<string>>;
 	readonly derivedSlots: Record<string, ReadonlySet<string>>;
 	readonly factoryShapes: Record<string, FactoryShape>;
 	readonly factoryFields: Record<string, readonly string[]>;
@@ -558,12 +554,12 @@ interface ParsedNodeModel {
 		splitFrom?: string;
 		slots?: ReadonlyArray<{
 			name: string;
+			accessor: string;
 			required?: boolean;
 			multiple?: boolean;
 			nonEmpty?: boolean;
 			storage?: string;
 			registered?: boolean;
-			blank?: boolean;
 			optionDefault?: number | string;
 			separator?: { readonly default?: number };
 			delimiterRole?: DelimiterFacetRole;
@@ -616,7 +612,6 @@ const EMPTY_NODE_MODEL: LoadedNodeModel = {
 	slotNames: {},
 	slotStorage: {},
 	slotAccessors: {},
-	slotBlankArms: {},
 	derivedSlots: {},
 	factoryShapes: {},
 	factoryFields: {},
@@ -726,7 +721,6 @@ export function parseNodeModel(text: string): LoadedNodeModel {
 	const slotNames: Record<string, readonly string[]> = {};
 	const slotStorage: Record<string, Record<string, string>> = {};
 	const slotAccessors: Record<string, Record<string, string>> = {};
-	const slotBlankArms: Record<string, ReadonlySet<string>> = {};
 	const derivedSlots: Record<string, ReadonlySet<string>> = {};
 	const factoryShapes: Record<string, FactoryShape> = {};
 	const factoryFields: Record<string, readonly string[]> = {};
@@ -757,9 +751,7 @@ export function parseNodeModel(text: string): LoadedNodeModel {
 		if (node.seated === true) hoistedKinds.add(node.kind);
 		if (node.unit === true) unitKinds.add(node.kind);
 		for (const seat of node.elementSeats ?? []) seatAt(node.kind, '*', seat);
-		slotAccessors[node.kind] = Object.fromEntries((node.slots ?? []).map((slot) => [storageKeyOf(slot.name), slotPropertyName(slot)]));
-		const blankArms = (node.slots ?? []).filter((slot) => slot.blank === true).map((slot) => storageKeyOf(slot.name));
-		if (blankArms.length > 0) slotBlankArms[node.kind] = new Set(blankArms);
+		slotAccessors[node.kind] = Object.fromEntries((node.slots ?? []).map((slot) => [storageKeyOf(slot.name), slot.accessor]));
 		const derived = (node.slots ?? []).filter((slot) => isDerivedRole(slot.delimiterRole)).map((slot) => storageKeyOf(slot.name));
 		if (derived.length > 0) derivedSlots[node.kind] = new Set(derived);
 		if (node.slots !== undefined) {
@@ -768,11 +760,11 @@ export function parseNodeModel(text: string): LoadedNodeModel {
 					if (value.seat !== undefined) seatAt(node.kind, slot.name, value.seat);
 					const valueName = valueNameOf(value);
 					if (value.default === true && valueName !== undefined) {
-						(slotDefaults[node.kind] ??= {})[slotPropertyName(slot)] = valueName;
+						(slotDefaults[node.kind] ??= {})[slot.accessor] = valueName;
 					}
 				}
 			}
-			slotKinds[node.kind] = Object.fromEntries(node.slots.map((slot) => [slotPropertyName(slot), slotKindsOf(slot)]));
+			slotKinds[node.kind] = Object.fromEntries(node.slots.map((slot) => [slot.accessor, slotKindsOf(slot)]));
 			slotNames[node.kind] = node.slots.map((slot) => slot.name);
 			if (node.factoryShape !== undefined) {
 				factorySlots[node.kind] = Object.fromEntries(node.slots.map((slot) => [slot.name, factorySlotMetaOf(slot)]));
@@ -782,13 +774,13 @@ export function parseNodeModel(text: string): LoadedNodeModel {
 				}
 			}
 			slotRequired[node.kind] = Object.fromEntries(
-				node.slots.map((slot) => [slotPropertyName(slot), slot.required === true])
+				node.slots.map((slot) => [slot.accessor, slot.required === true])
 			);
 			slotMultiple[node.kind] = Object.fromEntries(
-				node.slots.map((slot) => [slotPropertyName(slot), slot.multiple === true])
+				node.slots.map((slot) => [slot.accessor, slot.multiple === true])
 			);
 			slotStorage[node.kind] = Object.fromEntries(
-				node.slots.flatMap((slot) => (slot.storage === undefined ? [] : [[slotPropertyName(slot), slot.storage]]))
+				node.slots.flatMap((slot) => (slot.storage === undefined ? [] : [[slot.accessor, slot.storage]]))
 			);
 		}
 		if (node.factoryShape !== undefined) factoryShapes[node.kind] = node.factoryShape;
@@ -827,7 +819,6 @@ export function parseNodeModel(text: string): LoadedNodeModel {
 		slotNames,
 		slotStorage,
 		slotAccessors,
-		slotBlankArms,
 		derivedSlots,
 		factoryShapes,
 		factoryFields,
@@ -854,6 +845,12 @@ export function parseNodeModel(text: string): LoadedNodeModel {
 	};
 }
 
+export function wrappedNodesOf(root: unknown, accessorOf: SlotAccessorOf): TypedNode[] {
+	const nodes: TypedNode[] = [];
+	walkWrappedTree(root, accessorOf, (node) => nodes.push(node));
+	return nodes;
+}
+
 export function walkWrappedTree(
 	root: unknown,
 	accessorOf: SlotAccessorOf,
@@ -868,11 +865,7 @@ export function walkWrappedTree(
 			seen.add(w.$treeHandle);
 		}
 		visit(w);
-		let slots: KindSlots | undefined;
-		for (const k of Object.keys(w)) {
-			if (!k.startsWith('_')) continue;
-			slots ??= accessorOf(w.$type);
-			const v = resolveWrappedStorageValue(w, k, slots, onAccessorThrow);
+		for (const [, v] of slotValuesOf(w, accessorOf, onAccessorThrow)) {
 			if (hasNumericType(v)) recurse(v);
 			else if (Array.isArray(v)) for (const x of v) if (hasNumericType(x)) recurse(x);
 		}
@@ -880,12 +873,21 @@ export function walkWrappedTree(
 	recurse(root);
 }
 
-export function materialize(
+export function materialize(root: unknown, accessorOf: SlotAccessorOf, onAccessorThrow?: (rec: AccessorThrowRecord) => void): AnyUntypedNode {
+	return materializeValue(root, accessorOf, onAccessorThrow) as AnyUntypedNode;
+}
+
+export function materializeBuildInput(
 	root: unknown,
 	accessorOf: SlotAccessorOf,
 	onAccessorThrow?: (rec: AccessorThrowRecord) => void
 ): AnyUntypedNode {
-	return materializeValue(root, accessorOf, onAccessorThrow) as AnyUntypedNode;
+	const data = materialize(root, accessorOf, onAccessorThrow);
+	return validationNodeStorage === 'arena' ? holdingTreeOf(root, data) : data;
+}
+
+export function builtStorageOf(node: unknown, accessorOf: SlotAccessorOf): unknown {
+	return validationNodeStorage === 'arena' ? materialize(node, accessorOf) : node;
 }
 
 export function materializeDetached(
@@ -894,6 +896,21 @@ export function materializeDetached(
 	onAccessorThrow?: (rec: AccessorThrowRecord) => void
 ): AnyUntypedNode {
 	return holdingTreeOf(root, detachCoordinates(materialize(root, accessorOf, onAccessorThrow)));
+}
+
+export function materializeShallow(
+	root: unknown,
+	accessorOf: SlotAccessorOf,
+	onAccessorThrow?: (rec: AccessorThrowRecord) => void
+): AnyUntypedNode {
+	const ownRow = typeof root === 'object' && root !== null ? coordinateOf(root)?.$treeHandle : undefined;
+	const asCoordinate = (value: unknown): unknown => {
+		if (Array.isArray(value)) return value.map(asCoordinate);
+		if (!hasNumericType(value)) return value;
+		const at = coordinateOf(value);
+		return at !== undefined && at.$treeHandle !== ownRow ? holdingTreeOf(value, at) : materializeValue(value, accessorOf, onAccessorThrow);
+	};
+	return holdingTreeOf(root, materializeValue(root, accessorOf, onAccessorThrow, asCoordinate) as AnyUntypedNode);
 }
 
 /**
@@ -936,13 +953,14 @@ export interface ValidatorSkip {
 function materializeValue(
 	value: unknown,
 	accessorOf: SlotAccessorOf,
-	onAccessorThrow?: (rec: AccessorThrowRecord) => void
+	onAccessorThrow?: (rec: AccessorThrowRecord) => void,
+	slotValue: (value: unknown) => unknown = (inner) => materializeValue(inner, accessorOf, onAccessorThrow)
 ): unknown {
 	if (Array.isArray(value)) {
-		return value.map((entry) => materializeValue(entry, accessorOf, onAccessorThrow));
+		return value.map((entry) => materializeValue(entry, accessorOf, onAccessorThrow, slotValue));
 	}
 	if (!hasNumericType(value)) return value;
-	let slots: KindSlots | undefined;
+	const { accessors } = accessorOf(value.$type);
 	const materialized: Record<string, unknown> = {};
 	for (const key of Object.keys(value)) {
 		if (!isDataKey(key)) continue;
@@ -965,62 +983,63 @@ function materializeValue(
 						};
 			continue;
 		}
-		if (key.startsWith('_')) {
-			slots ??= accessorOf(value.$type);
-			const resolved = resolveWrappedStorageValue(value, key, slots, onAccessorThrow);
-			if (resolved === undefined) continue;
-			materialized[key] = materializeValue(resolved, accessorOf, onAccessorThrow);
-			continue;
-		}
+		if (key.startsWith('_') && accessors[key] !== undefined) continue;
 		materialized[key] = materializeValue(raw, accessorOf, onAccessorThrow);
 	}
+	for (const [storageKey, resolved] of slotValuesOf(value, accessorOf, onAccessorThrow)) {
+		if (resolved !== undefined) materialized[storageKey] = slotValue(resolved);
+	}
 	carryPlace(value, materialized);
-	carrySourceStamp(value, materialized);
+	const source = sourceOf(value);
+	if (source !== undefined) (materialized as { [SOURCE]?: Source })[SOURCE] = source;
 	return carryRead(value, materialized);
 }
 
-function resolveWrappedStorageValue(
+export function slotValuesOf(
 	node: TypedNode,
-	storageKey: string,
-	slots: KindSlots,
+	accessorOf: SlotAccessorOf,
 	onAccessorThrow?: (rec: AccessorThrowRecord) => void
-): unknown {
-	const accessorName = slots.accessors[storageKey];
-	if (accessorName === undefined) return node[storageKey];
-	const accessor = (node as Record<string, unknown>)[accessorName];
-	if (typeof accessor !== 'function' || accessor.length !== 0) {
-		throw new Error(`resolveWrappedStorageValue: ${slots.kind} stores ${storageKey}, but has no reader ${accessorName}()`);
-	}
-	try {
-		const read = (accessor as () => unknown).call(node);
-		return slots.blankArms.has(storageKey) ? blankArmStored(read) : read;
-	} catch (e) {
-		const message = (e as Error).message;
-		const type = node.$type;
-		process.stderr.write(`[accessor-throw] key=${storageKey} accessor=${accessorName} type=${type} err=${message}\n`);
-		onAccessorThrow?.({ key: storageKey, accessor: accessorName, type, message });
-		return node[storageKey];
-	}
+): [storageKey: string, value: unknown][] {
+	return readSlotValues(node, accessorOf(node.$type).slots, accessorThrown(node, onAccessorThrow));
 }
 
-/** A kind and its slots: each storage key to the accessor that reads it. */
+export function storedSlotValues(node: object, accessorOf: SlotAccessorOf): [storageKey: string, value: unknown][] {
+	return readStoredSlotValues(node, (kind) => accessorOf(kind).slots, hasNumericType(node) ? accessorThrown(node) : undefined);
+}
+
+function accessorThrown(node: TypedNode, onAccessorThrow?: (rec: AccessorThrowRecord) => void): (slot: RefusedSlot) => void {
+	return ({ storageKey, accessor, error }) => {
+		process.stderr.write(`[accessor-throw] key=${storageKey} accessor=${accessor} type=${node.$type} err=${error.message}\n`);
+		onAccessorThrow?.({ key: storageKey, accessor, type: node.$type, message: error.message });
+	};
+}
+
 export interface KindSlots {
 	readonly kind: string;
+	readonly slots: readonly QuerySlotEntry[];
 	readonly accessors: Readonly<Record<string, string>>;
-	readonly blankArms: ReadonlySet<string>;
+	readonly separator: boolean;
 }
 
 /** A kind's slots, by the node's stamped kind id. */
 export type SlotAccessorOf = (typeId: number) => KindSlots;
 
-const NO_BLANK_ARMS: ReadonlySet<string> = new Set();
-
-export function slotAccessorOf(model: LoadedNodeModel, kindNameFromId: (id: number) => string | undefined): SlotAccessorOf {
+export function slotAccessorOf(
+	table: QuerySlots,
+	model: Pick<LoadedNodeModel, 'listSeparators'>,
+	kindNameFromId: (id: number) => string | undefined
+): SlotAccessorOf {
+	const known = new Map<number, KindSlots>();
 	return (typeId) => {
+		const held = known.get(typeId);
+		if (held !== undefined) return held;
 		const kind = kindNameFromId(typeId);
-		const accessors = kind === undefined ? undefined : model.slotAccessors[kind];
-		if (kind === undefined || accessors === undefined) throw new Error(`slotAccessorOf: ${kind ?? `kind id ${typeId}`} is not in the node model`);
-		return { kind, accessors, blankArms: model.slotBlankArms[kind] ?? NO_BLANK_ARMS };
+		if (kind === undefined) throw new Error(`slotAccessorOf: kind id ${typeId} is not in the node model`);
+		const slots = table[typeId] ?? [];
+		const accessors = Object.fromEntries(slots.map(([accessor, , , storageKey]) => [storageKey, accessor]));
+		const read: KindSlots = { kind, slots, accessors, separator: model.listSeparators[kind] !== undefined };
+		known.set(typeId, read);
+		return read;
 	};
 }
 
@@ -1034,7 +1053,8 @@ export function slotNameOf(model: Pick<LoadedNodeModel, 'slotAccessors'>): (kind
 }
 
 export async function loadSlotAccessorOf(grammar: string): Promise<SlotAccessorOf> {
-	return slotAccessorOf(await loadNodeModel(grammar), await loadStorageKindNameFromId(grammar));
+	const { querySlots } = await requireGrammarModule(grammar, 'utils.ts');
+	return slotAccessorOf(querySlots as QuerySlots, await loadNodeModel(grammar), await loadStorageKindNameFromId(grammar));
 }
 
 export interface TypedNode {
@@ -1128,6 +1148,7 @@ export async function loadLanguageForGrammar(grammar: string): Promise<{
 export type { FactoryEntry, Hydrate } from '../grammar-internals.ts';
 
 export interface NodeToConfigOpts {
+	readonly accessorOf: SlotAccessorOf;
 	readonly placeText?: boolean;
 	readonly shownKind?: string;
 	readonly interiorOf?: (kind: string) => TokenInterior | undefined;
@@ -1153,12 +1174,7 @@ export interface NodeToConfigOpts {
 export interface ReadNodeLike {
 	readonly $type?: number;
 	readonly $text?: string | (() => string);
-	readonly $named?: boolean;
 	readonly $_layout?: NodeLayout;
-}
-
-function isAnonTokenPassthrough(c: ReadNodeLike): boolean {
-	return c.$named === false;
 }
 
 function pathOf(opts: NodeToConfigOpts): string {
@@ -1185,16 +1201,13 @@ function resolveChild(child: unknown, opts: NodeToConfigOpts): unknown {
 	if (typeof child !== 'object') return child;
 	const c = child as ReadNodeLike;
 	const { tree, factoryMap, fieldAliasMap, _depth = 0, _parentKind, _fieldName } = opts;
-	if (isAnonTokenPassthrough(c)) {
-		if (tree === undefined) return child;
-		throw new Error(`nodeToConfig: an anonymous token (${String(c.$type)}) reached a builder input at ${pathOf(opts)}`);
-	}
 	if (!tree || !factoryMap) return child;
 	const hydrated = hydrateForConfig(c, opts);
 	if (opts.placeText === true && _parentKind !== undefined && opts.factoryShapes?.[_parentKind] === 'placed') {
 		const text = readNodeText(hydrated, opts);
 		if (text !== '') return text;
 	}
+	if (isFactoryNode(hydrated)) return hydrated;
 	const rawTypeId = hydrated.$type ?? c.$type;
 	const rawKind = rawTypeId !== undefined ? (opts.kindNameFromId?.(rawTypeId) ?? String(rawTypeId)) : undefined;
 	if (!rawKind) return hydrated;
@@ -1217,11 +1230,14 @@ function resolveChild(child: unknown, opts: NodeToConfigOpts): unknown {
 	return buildWithFactory(hydrated, kind, factory, { ...opts, _depth: _depth + 1 });
 }
 
+function wrappedValues(node: ReadNodeLike, opts: NodeToConfigOpts): unknown[] {
+	return storedSlotValues(node, opts.accessorOf).flatMap(([, value]) => (value === undefined ? [] : [value]));
+}
+
 function soleWrappedNode(hydrated: ReadNodeLike, opts: NodeToConfigOpts): ReadNodeLike | undefined {
-	const rec = hydrated as unknown as Record<string, unknown>;
-	const keys = Object.keys(rec).filter((k) => k.startsWith('_') && rec[k] !== undefined);
-	if (keys.length !== 1) return undefined;
-	const value = rec[keys[0]!];
+	const values = wrappedValues(hydrated, opts);
+	if (values.length !== 1) return undefined;
+	const value = values[0];
 	if (value === null || typeof value !== 'object' || Array.isArray(value)) return undefined;
 	const kind = rawChildKindName(value, opts.kindNameFromId);
 	if (kind === undefined) return undefined;
@@ -1230,14 +1246,10 @@ function soleWrappedNode(hydrated: ReadNodeLike, opts: NodeToConfigOpts): ReadNo
 }
 
 function readNodeText(node: ReadNodeLike, opts: NodeToConfigOpts): string {
-	const own = nodeText(node);
-	if (own !== undefined) return own;
-	const source = (opts.tree ?? treeOf(node as object))?.source;
-	const span = spanOf(node);
-	if (span !== undefined && source !== undefined) return sliceSpan(source, span);
-	const rec = node as unknown as Record<string, unknown>;
-	const keys = Object.keys(rec).filter((k) => k.startsWith('_') && rec[k] !== undefined);
-	const wrapped = keys.length === 1 ? rec[keys[0]!] : undefined;
+	const text = sourceTextOf(node as object, opts.tree);
+	if (text !== undefined) return text;
+	const values = wrappedValues(node, opts);
+	const wrapped = values.length === 1 ? values[0] : undefined;
 	return wrapped !== null && typeof wrapped === 'object' && !Array.isArray(wrapped) ? readNodeText(wrapped as ReadNodeLike, opts) : '';
 }
 
@@ -1304,6 +1316,15 @@ export function seatKindOf(config: unknown): string | undefined {
 	return typeof config === 'object' && config !== null ? (config as { [SEAT_KIND]?: string })[SEAT_KIND] : undefined;
 }
 
+function projects(seat: Seat, item: unknown, opts: NodeToConfigOpts): boolean {
+	return seat.shape !== 'forwarded' && (seat.shape !== 'elements' || readValueKind(item, opts) === seat.kind);
+}
+
+export function seatProjects(parentKind: string, slotName: string, value: unknown, item: unknown, opts: NodeToConfigOpts): boolean {
+	const seat = seatForSlotValue(parentKind, slotName, value, opts);
+	return seat !== undefined && projects(seat, item, opts);
+}
+
 function childOpts(opts: NodeToConfigOpts): NodeToConfigOpts {
 	return { ...opts, _depth: (opts._depth ?? 0) + 1 };
 }
@@ -1316,7 +1337,7 @@ function projectElements(
 	opts: NodeToConfigOpts
 ): unknown[] {
 	return items.map((item) => {
-		if (readValueKind(item, opts) !== seat.kind) {
+		if (!projects(seat, item, opts)) {
 			return resolveChild(item, memberValueOpts(opts, parentKind, slotName));
 		}
 		const element = hydrateForConfig(item as ReadNodeLike, opts);
@@ -1352,10 +1373,8 @@ function carryGroupTrivia(group: ReadNodeLike, seat: string, container: Record<s
 			seatedTriviaEdges.push({ seat, group: String(group.$type), children: at === undefined ? 'none' : typeof child });
 			return;
 		}
-		const built = child as { $_layout?: NodeLayout };
-		const existing = built.$_layout?.trivia as Record<string, readonly unknown[] | undefined> | undefined;
-		const trivia = { ...existing, [side]: side === 'leading' ? [...entries, ...(existing?.leading ?? [])] : [...(existing?.trailing ?? []), ...entries] } as NodeTrivia;
-		at.holder[at.key] = Object.assign(Object.create(Object.getPrototypeOf(built)), built, { $_layout: { ...built.$_layout, trivia } });
+		const existing = writtenSides(child);
+		writeTrivia(child, { [side]: side === 'leading' ? [...entries, ...(existing?.leading ?? [])] : [...(existing?.trailing ?? []), ...entries] } as NodeTrivia);
 	};
 	const nodes = (entries: readonly unknown[] | undefined) => entries?.filter((entry) => typeof entry !== 'number');
 	move(holders[0], 'leading', nodes(resolved.leading));
@@ -1506,7 +1525,7 @@ export function factoryArgs(
 	const route = armRouteOf(config);
 	if (shape === 'config') {
 		const { base, registered } = splitRegisteredSlots(kind, config, opts);
-		const listOptions = separatedListFactoryOptions(referenceData, opts.factorySlots?.[kind], opts.omitOptionDefaults === true);
+		const listOptions = separatedListFactoryOptions(referenceData, opts.accessorOf, opts.factorySlots?.[kind], opts.omitOptionDefaults === true);
 		const options = {
 			...(listOptions?.separator !== undefined && !('separator' in base) ? { separator: listOptions.separator } : {}),
 			...(listOptions?.delimiter !== undefined && !('delimiter' in base) ? { delimiter: listOptions.delimiter } : {}),
@@ -1526,7 +1545,7 @@ export function factoryArgs(
 	}
 	const { base, registered } = splitRegisteredSlots(kind, config, opts);
 	const elements = getChildFactoryArgs(kind, base, opts.factorySlots, opts.factoryFields);
-	const options = shape === 'elements' ? separatedListFactoryOptions(referenceData, opts.factorySlots?.[kind], opts.omitOptionDefaults === true) : registered;
+	const options = shape === 'elements' ? separatedListFactoryOptions(referenceData, opts.accessorOf, opts.factorySlots?.[kind], opts.omitOptionDefaults === true) : registered;
 	return options !== undefined ? [options, ...elements] : elements;
 }
 
@@ -1569,11 +1588,12 @@ function buildWithFactory(
 	return writeSides(referenceData, built, opts);
 }
 
-export function tableSides(source: ReadNodeLike, tree: TreeHandle, build: (read: unknown) => unknown): NodeTrivia | undefined {
+export function tableSides(source: ReadNodeLike, accessorOf: SlotAccessorOf, build: (read: unknown) => unknown): NodeTrivia | undefined {
 	const entries = (side: TriviaSideName): readonly TriviaEntry[] =>
 		sideOf(source as object, side).flatMap((entry): TriviaEntry[] => {
 			if (!isCoordinate(entry)) return isNode(entry) || typeof entry === 'number' ? [entry] : [];
-			const built = build(readNode(tree, entry, Infinity));
+			const comment = hydrateTriviaEntry(entry);
+			const built = build(holdingTreeOf(comment, materialize(comment, accessorOf)));
 			if (!isNode(built)) throw new Error(`ir lane: a comment built to ${JSON.stringify(built)}, not a node`);
 			return [built];
 		});
@@ -1582,20 +1602,17 @@ export function tableSides(source: ReadNodeLike, tree: TreeHandle, build: (read:
 	return { leading, trailing, ...(inner.length > 0 && { inner }) };
 }
 
-/** A read node's sides as the call builds them: from its tree's table while it holds one, else the trivia its copy carries. */
 function groupSides(source: ReadNodeLike, opts: NodeToConfigOpts): NodeTrivia | undefined {
 	const tree = treeOf(source as object);
-	const carried = source.$_layout?.trivia;
-	if (tree !== undefined) return tableSides(source, tree, (read) => resolveChild(read, { ...childOpts(opts), tree }));
-	return carried && (mapTriviaEntries(carried, (entries) => entries.map((entry) => resolveChild(entry, childOpts(opts)))) as NodeTrivia);
+	if (tree !== undefined) return tableSides(source, opts.accessorOf, (read) => resolveChild(read, { ...childOpts(opts), tree }));
+	const carried = writtenSides(source as object);
+	return carried &&(mapTriviaEntries(carried, (entries) => entries.map((entry) => resolveChild(entry, childOpts(opts)))) as NodeTrivia);
 }
 
 function writeSides(source: ReadNodeLike, built: unknown, opts: NodeToConfigOpts): unknown {
 	if (built === null || typeof built !== 'object') return built;
 	const trivia = groupSides(source, opts);
-	if (trivia === undefined) return built;
-	const record = built as { $_layout?: NodeLayout };
-	record.$_layout = { ...record.$_layout, trivia };
+	if (trivia !== undefined) writeTrivia(built, trivia);
 	return built;
 }
 
@@ -1704,9 +1721,7 @@ function narrowSingularUnnamedChildrenValue(
 		const hinted = value.filter((item) => rawChildKindName(item, childOpts.kindNameFromId) === hintedKind);
 		if (hinted.length === 1) return hinted[0]!;
 	}
-	const named = value.filter(
-		(item): item is ReadNodeLike => item != null && typeof item === 'object' && (item as ReadNodeLike).$named !== false
-	);
+	const named = value.filter((item): item is ReadNodeLike => item != null && typeof item === 'object');
 	if (named.length === 1) return named[0];
 	return value;
 }
@@ -1777,96 +1792,26 @@ function assignSlotToConfig(
 	}
 }
 
-function getMissingDeclaredFields(
-	parentKind: string,
-	declaredFields: readonly string[],
-	factorySlots: NodeToConfigOpts['factorySlots'],
-	out: Record<string, unknown>
-): string[] {
-	return declaredFields.filter((name) => out[slotKeyOf(factorySlots, parentKind, name)] === undefined);
-}
-
-function isAnonymousTokenNode(value: unknown): value is ReadNodeLike {
-	return value != null && typeof value === 'object' && (value as ReadNodeLike).$named === false;
-}
-
-function isOpeningDelimiter(text: string | undefined): boolean {
-	return text === '{' || text === '{|' || text === '[' || text === '(' || text === '<';
-}
-
-function isClosingDelimiter(text: string | undefined): boolean {
-	return text === '}' || text === '|}' || text === ']' || text === ')' || text === '>';
-}
-
-function promoteAnonymousTokenFields(
-	declaredFields: readonly string[] | undefined,
-	namedSlotEntries: readonly [string, unknown][],
-	opts: NodeToConfigOpts,
-	parentKind: string | undefined,
-	out: Record<string, unknown>
-): void {
-	if (!declaredFields || !parentKind) return;
-	const missing = new Set(getMissingDeclaredFields(parentKind, declaredFields, opts.factorySlots, out));
-	if (missing.size === 0) return;
-	const anonymousEntries = namedSlotEntries.filter(
-		([key, value]) => !isIdentifierShapedFieldKey(key) && isAnonymousTokenNode(value)
-	);
-	const used = new Set<number>();
-	const assign = (fieldName: string, entryIndex: number): void => {
-		const entry = anonymousEntries[entryIndex]?.[1];
-		if (!entry) return;
-		assignSlotToConfig(
-			createNamedSlotModel(fieldName, slotKeyOf(opts.factorySlots, parentKind, fieldName), 'one'),
-			entry,
-			memberValueOpts(opts, parentKind, fieldName),
-			out
-		);
-		missing.delete(fieldName);
-		used.add(entryIndex);
-	};
-
-	if (missing.has('semicolon')) {
-		const semicolonIndex = anonymousEntries.findIndex(([, value]) => nodeText(value) === ';');
-		if (semicolonIndex >= 0) assign('semicolon', semicolonIndex);
-	}
-	if (missing.has('opening')) {
-		const openingIndex = anonymousEntries.findIndex(
-			([, value], index) => !used.has(index) && isOpeningDelimiter(nodeText(value))
-		);
-		if (openingIndex >= 0) assign('opening', openingIndex);
-	}
-	if (missing.has('closing')) {
-		const closingIndex = anonymousEntries.findLastIndex(
-			([, value], index) => !used.has(index) && isClosingDelimiter(nodeText(value))
-		);
-		if (closingIndex >= 0) assign('closing', closingIndex);
-	}
-}
-
 function isDerivedRole(role: DelimiterFacetRole | undefined): boolean {
 	return role !== undefined && role !== 'input';
 }
 
-export function nodeToConfig(data: ReadNodeLike, opts: NodeToConfigOpts = {}): Record<string, unknown> {
+export function nodeToConfig(data: ReadNodeLike, opts: NodeToConfigOpts): Record<string, unknown> {
 	const out: Record<string, unknown> = {};
 	const rec = data as unknown as Record<string, unknown>;
 	const interior = opts.shownKind === undefined ? undefined : opts.interiorOf?.(opts.shownKind);
 	const text = nodeText(data);
+	const stored = storedSlotValues(rec, opts.accessorOf);
 	const unprojected =
 		interior !== undefined &&
 		text !== undefined &&
-		!interior.slots.some((slot) => rec[`_${slot.name}`] !== undefined);
+		!interior.slots.some((slot) => stored.some(([key, value]) => key === storageKeyOf(slot.name) && value !== undefined));
 	const parentKind = unprojected
 		? opts.shownKind
 		: data.$type !== undefined
 			? (opts.kindNameFromId?.(data.$type) ?? String(data.$type))
 			: undefined;
-	const namedSlotEntries: [string, unknown][] = [];
-	for (const key of Object.keys(rec)) {
-		if (key.startsWith('_')) {
-			namedSlotEntries.push([key.slice(1), rec[key]]);
-		}
-	}
+	const namedSlotEntries = stored.map(([key, value]): [string, unknown] => [key.slice(1), value]);
 	if (unprojected) {
 		for (const [name, value] of Object.entries(projectInterior(text!, interior, opts.shownKind!))) {
 			if (value !== undefined && value !== false) namedSlotEntries.push([name, value]);
@@ -1884,13 +1829,6 @@ export function nodeToConfig(data: ReadNodeLike, opts: NodeToConfigOpts = {}): R
 		}
 		assignSlotToConfig(slot, v, memberValueOpts(opts, parentKind, k), out);
 	}
-	promoteAnonymousTokenFields(
-		parentKind ? opts.factoryFields?.[parentKind] : undefined,
-		namedSlotEntries,
-		opts,
-		parentKind,
-		out
-	);
 	return out;
 }
 
@@ -1914,14 +1852,17 @@ export function dedupeMismatchesByContainment<T extends { entry?: string; start:
 
 export function separatedListFactoryOptions(
 	data: unknown,
+	accessorOf: SlotAccessorOf,
 	slots?: Record<string, FactorySlotMeta>,
 	omitDefault = false
 ): { separator?: number; delimiter?: number } | undefined {
-	const rec = (data ?? {}) as Record<string, unknown>;
+	if (data === null || typeof data !== 'object') return undefined;
+	const stored = new Map(storedSlotValues(data, accessorOf));
+	const delimiterValue = stored.get(storageKeyOf('delimiter'));
+	const delimiter = typeof delimiterValue === 'number' ? delimiterValue : undefined;
 	const option = Object.values(slots ?? {}).find((meta) => meta.separator !== undefined)?.separator;
-	const delimiter = typeof rec['_delimiter'] === 'number' ? rec['_delimiter'] : undefined;
-	const stored = typeof rec['_separator'] === 'number' ? rec['_separator'] : slotSeparatorOf(rec);
-	const separator = option === undefined ? undefined : stored;
+	const read = option !== undefined && hasNumericType(data) && accessorOf(data.$type).separator ? listSeparatorOf(data) : undefined;
+	const separator = typeof read === 'number' ? read : undefined;
 	const options: { separator?: number; delimiter?: number } = {};
 	if (separator !== undefined && !(omitDefault && separator === option?.default)) options.separator = separator;
 	if (delimiter !== undefined) options.delimiter = delimiter;
@@ -1943,7 +1884,8 @@ export interface FactoryDispatchOpts {
 	readonly firstNamedChildKindHint?: string;
 	readonly namedChildKindHints?: readonly string[];
 	readonly kindNameFromId?: (id: number) => string | undefined;
-	readonly tree?: unknown;
+	readonly accessorOf: SlotAccessorOf;
+	readonly tree?: TreeHandle;
 	readonly hydrate?: Hydrate;
 	readonly placeText?: boolean;
 }
@@ -1952,7 +1894,7 @@ export function buildFactoryNodeFromReference(
 	referenceData: ReadNodeLike,
 	kind: string,
 	artifacts: FactoryDispatchArtifacts,
-	opts: FactoryDispatchOpts = {}
+	opts: FactoryDispatchOpts
 ): unknown | null {
 	const { factoryMap, factoryShapes, fieldAliasMap, factoryFields, factorySlots, surface, omitOptionDefaults } =
 		artifacts;
@@ -1970,6 +1912,7 @@ export function buildFactoryNodeFromReference(
 		firstNamedChildKindHint: opts.firstNamedChildKindHint,
 		namedChildKindHints: opts.namedChildKindHints,
 		kindNameFromId: opts.kindNameFromId,
+		accessorOf: opts.accessorOf,
 		tree: opts.tree,
 		hydrate: opts.hydrate,
 		placeText: opts.placeText

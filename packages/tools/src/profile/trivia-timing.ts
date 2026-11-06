@@ -2,8 +2,9 @@ import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { performance } from 'node:perf_hooks';
 import { createEngine } from '@sittir/common';
+import { measureBuilt } from '../built.ts';
 import { languageByName } from '../languages.ts';
-import { loadSlotAccessorOf, walkWrappedTree, type SlotAccessorOf } from '../validate/common.ts';
+import { loadSlotAccessorOf, wrappedNodesOf, type TypedNode } from '../validate/common.ts';
 
 export interface TriviaTimingOptions {
 	readonly grammar: string;
@@ -21,16 +22,8 @@ export interface TriviaTiming {
 	readonly usPerNode: number;
 }
 
-interface ReadNode {
-	readonly $type?: unknown;
+interface ReadNode extends TypedNode {
 	readonly $trivia?: { readonly leading?: () => unknown };
-	readonly [key: string]: unknown;
-}
-
-export function timedNodesOf(root: unknown, accessorOf: SlotAccessorOf): ReadNode[] {
-	const nodes: ReadNode[] = [];
-	walkWrappedTree(root, accessorOf, (node) => nodes.push(node as ReadNode));
-	return nodes;
 }
 
 export async function measureTriviaTiming(options: Omit<TriviaTimingOptions, 'json'>): Promise<TriviaTiming> {
@@ -43,7 +36,7 @@ export async function measureTriviaTiming(options: Omit<TriviaTimingOptions, 'js
 	let bestMs = Infinity;
 	let nodes = 0;
 	for (let round = 0; round < options.rounds; round++) {
-		const read = timedNodesOf(engine.parse(source, { depth: Infinity }), accessorOf);
+		const read: readonly ReadNode[] = wrappedNodesOf(engine.parse(source, { depth: Infinity }), accessorOf);
 		const start = performance.now();
 		for (const node of read) node.$trivia?.leading?.();
 		bestMs = Math.min(bestMs, performance.now() - start);
@@ -60,6 +53,7 @@ export async function measureTriviaTiming(options: Omit<TriviaTimingOptions, 'js
 }
 
 export async function run(options: TriviaTimingOptions): Promise<number> {
+	measureBuilt('trivia-timing');
 	const timing = await measureTriviaTiming(options);
 	if (options.json) {
 		console.log(JSON.stringify(timing));

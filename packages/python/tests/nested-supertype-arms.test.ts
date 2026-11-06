@@ -6,7 +6,7 @@ import python from '../src/index.ts';
 import { createEngine } from '@sittir/common';
 
 const py = await createEngine(python);
-const pyNative = (await python.load()).createNative();
+const pyNative = (await python.load()).createNative({ nodeStorage: 'object' });
 
 function kindsOf(kind: number, value: unknown, out: string[] = []): string[] {
 	if (Array.isArray(value)) for (const item of value) kindsOf(kind, item, out);

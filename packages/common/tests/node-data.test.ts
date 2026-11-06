@@ -1,7 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { markEdited, detachCoordinates, carryPlace, holdTree, PLAIN_KINDS, sideOf, toNodeData, treeHandleOf, type KindView } from '../src/node-data.ts';
+import { markEdited, detachCoordinates, carryPlace, holdReadTree, holdTree, PLAIN_KINDS, sideOf, toNodeData, treeHandleOf, type KindView } from '../src/node-data.ts';
 import { mintTreeToken, registerTree, treeTokenOf } from '../src/tree-token.ts';
-import type { Siblings } from '../src/read.ts';
 
 // A coordinate crosses only while it holds its tree, so a copy of each
 // hand-written node below is given one, the way a read gives it to what it
@@ -23,7 +22,7 @@ const rootAt = ($type: number, start: number, end: number) => ({ ...at($type, st
 const coordinate = (start: number, end: number) => at(2, start, end);
 /** A child a read expanded: its storage and the coordinate it was read at. */
 const deep = (start: number, end: number, storage: Record<string, unknown>) => ({ $type: 4, $_layout: { at: at(4, start, end) }, ...storage });
-const built = (storage: Record<string, unknown> = {}) => ({ $type: 9, $named: true, ...storage });
+const built = (storage: Record<string, unknown> = {}) => ({ $type: 9, ...storage });
 
 describe('toNodeData', () => {
 	it('folds an unedited node with only coordinates and leaves below it to its coordinate', () => {
@@ -186,11 +185,13 @@ describe('the tree token a parsed object holds', () => {
 	});
 });
 
-/** A live tree whose table answers each side as `<index>:<side>`, and whose siblings are `siblings`. */
-function tableTree(id: number, siblings: (index: number) => Siblings = () => ({ previous: null, next: null })) {
+const NO_SIBLINGS: readonly number[] = [0, 0, 0, 0, 0, 0, 0, 0];
+
+/** A live tree whose table answers each side as `<index>:<side>`, and whose siblings are `siblings`, eight words a node. */
+function tableTree(id: number, siblings: (index: number) => readonly number[] = () => NO_SIBLINGS) {
 	const token = mintTreeToken(id);
 	const written: string[] = [];
-	registerTree(token, { id, triviaSide: (index, side) => [`${index}:${side}`], writeTriviaSide: (index, side) => written.push(`${index}:${side}`), siblings });
+	registerTree(token, { id, triviaSide: (index, side) => [`${index}:${side}`], writeTriviaSide: (index, side) => written.push(`${index}:${side}`), siblings: (indexes) => indexes.flatMap(siblings) });
 	return { token, written };
 }
 
@@ -215,18 +216,18 @@ describe('sideOf', () => {
 });
 
 describe('the edges of the render root', () => {
-	const comment = { $type: 3, $named: true, $text: '// c' };
+	const comment = { $type: 3, $text: '// c' };
 	const both = { leading: true, trailing: true };
 
 	it('are changed, since it renders with no neighbour: a built root crosses with its trivia and both edges named', () => {
-		const node = { $type: 5, $named: true, $text: 'b', $_layout: { trivia: { leading: [9, comment, 8], trailing: [8] } } };
+		const node = { $type: 5, $text: 'b', $_layout: { trivia: { leading: [9, comment, 8], trailing: [8] } } };
 		expect(toNodeData(node as never, PLAIN_KINDS)).toEqual({ ...node, $_layout: { trivia: node.$_layout.trivia, changed: both } });
 	});
 
 	it("are the root's only: a node below it keeps its edges", () => {
-		const child = { $type: 5, $named: true, $text: 'b', $_layout: { trivia: { leading: [9], trailing: [8] } } };
-		const root = { $type: 6, $named: true, _body: child, $_layout: { trivia: { leading: [9] } } };
-		expect(toNodeData(root as never, PLAIN_KINDS)).toEqual({ $type: 6, $named: true, _body: child, $_layout: { trivia: { leading: [9] }, changed: both } });
+		const child = { $type: 5, $text: 'b', $_layout: { trivia: { leading: [9], trailing: [8] } } };
+		const root = { $type: 6, _body: child, $_layout: { trivia: { leading: [9] } } };
+		expect(toNodeData(root as never, PLAIN_KINDS)).toEqual({ $type: 6, _body: child, $_layout: { trivia: { leading: [9] }, changed: both } });
 	});
 
 	it("are the document's when the root is its tree's root: they are not changed", () => {
@@ -253,7 +254,7 @@ describe("a rebuilt list item's changed edges", () => {
 	const ATTRIBUTED = 20;
 	const ALIAS_ENVELOPE = 21;
 	const OTHER = 30;
-	const { token } = tableTree(1, (index) => (index === 3 ? { previous: { start: 1, end: 2, kind: OTHER }, next: null } : { previous: null, next: null }));
+	const { token } = tableTree(1, (index) => (index === 3 ? [1, OTHER, 1, 2, 0, 0, 0, 0] : NO_SIBLINGS));
 	const a = deep(1, 2, {});
 	const b = deep(3, 4, {});
 	const owner = deep(0, 5, {});
@@ -284,5 +285,27 @@ describe("a rebuilt list item's changed edges", () => {
 	it('names the changed edge on the content a rebuilt wrapper holds, not on the wrapper', () => {
 		const wrapper = { $type: ATTRIBUTED, _content: b };
 		expect(second(other, wrapper).$_layout).toBeUndefined();
+	});
+});
+
+describe('holding a tree', () => {
+	const CYCLE = 'a node tree holds itself: a value is its own descendant';
+
+	it('refuses, by name, a copy that holds itself', () => {
+		const node: { $type: number; _items: unknown[] } = { $type: 1, _items: [] };
+		node._items.push(node);
+		expect(() => holdTree(node, mintTreeToken(1))).toThrow(CYCLE);
+	});
+
+	it('holds a child two slots share, through both', () => {
+		const shared = { $type: 2 };
+		const token = mintTreeToken(1);
+		holdTree({ $type: 1, _left: shared, _right: shared }, token);
+		expect(treeTokenOf(shared)).toBe(token);
+	});
+
+	it("walks unchecked only what a read returned", () => {
+		// @ts-expect-error a tree a caller built is not a read's output
+		holdReadTree({ $type: 1 }, mintTreeToken(1));
 	});
 });

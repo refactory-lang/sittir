@@ -203,3 +203,38 @@ describe('a read string keeps the quote it was read with', () => {
 		expect(py.render(py.parse(source)).toString()).toBe(source);
 	});
 });
+
+describe.each([
+	['objects', await createEngine(python, { nodeStorage: 'object' })],
+	['records', py]
+] as const)('a read string edited under %s construction', (_construction, engine) => {
+	type Read = { readonly $type: number; readonly $with?: Record<string, unknown> } & Record<string, unknown>;
+	type Quoted = { contents(): readonly unknown[]; readonly $with: { contents(...items: unknown[]): { $render(): string } } };
+	const stringIn = (node: Read): Quoted | undefined => {
+		if (typeof node.stringStart === 'function' && typeof node.contents === 'function') return node as unknown as Quoted;
+		for (const key of Object.keys(node.$with ?? {})) {
+			const value = typeof node[key] === 'function' ? (node[key] as () => unknown)() : undefined;
+			for (const child of Array.isArray(value) ? value : [value]) {
+				const found = child !== null && typeof child === 'object' ? stringIn(child as Read) : undefined;
+				if (found !== undefined) return found;
+			}
+		}
+		return undefined;
+	};
+	const contentsOf = (source: string): Quoted => stringIn(engine.parse(source) as unknown as Read)!;
+
+	it.each([
+		[`f"""a"{b}c"""\n`, `f'c{b}a"'`],
+		[`f"""a""{b}c"""\n`, `f'c{b}a""'`]
+	])('moves %j off its read quote when the edited contents end in one, and reads back the same', (source, expected) => {
+		const string = contentsOf(source);
+		const edited = string.$with.contents(...[...string.contents()].reverse()).$render();
+		expect(edited).toBe(expected);
+		expect(engine.render(engine.parse(`${edited}\n`)).toString()).toBe(`${edited}\n`);
+	});
+
+	it('accepts contents that read back as the same string', () => {
+		const string = contentsOf(`f"""a"{b}c"""\n`);
+		expect(string.$with.contents(...string.contents().slice(1)).$render()).toBe('f"""{b}c"""');
+	});
+});

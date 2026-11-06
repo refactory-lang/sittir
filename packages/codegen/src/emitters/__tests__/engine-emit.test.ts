@@ -63,8 +63,8 @@ describe('emitApi', () => {
 		expect(output).toContain('createNative: (options) => nativeLanguageEngine<PythonAPI, IndentChar>(createRenderEngine(options)),');
 		expect(output).toContain('wrap: (root, tree) => wrapNode(root as ModuleRoot & ParsedRoot, tree as TreeHandle)');
 		expect(output).toContain('trivia: triviaFacts,');
-		expect(output).toContain('\tbuildByKind,');
-		expect(output).toContain("import { buildByKind } from './factories/coerce.js';");
+		expect(output).not.toContain('buildByKind');
+		expect(output).not.toContain('factories/coerce.js');
 	});
 
 	it('carries the comment builder in the trivia hook when the grammar has a comment coercer', () => {
@@ -75,7 +75,7 @@ describe('emitApi', () => {
 			commentCoercer: 'coerceToComment'
 		});
 		expect(withComment).toContain('trivia: Object.freeze({ ...triviaFacts, comment: coerceToComment }),');
-		expect(withComment).toContain("import { buildByKind, coerceToComment } from './factories/coerce.js';");
+		expect(withComment).toContain("import { coerceToComment } from './factories/coerce.js';");
 	});
 
 	it('types the language API\'s kind ids by the grammar\'s kind enum', () => {
@@ -110,7 +110,9 @@ describe('emitDescriptor', () => {
 		expect(output).toContain('export const kinds = TSKindId;');
 		expect(output).toContain('export const is = languageGuards(guardsWith, rust);');
 		expect(output).toContain("export const load: Language<RustAPI>['load'] = () => import('./api.js').then((m) => m.hooks);");
-		expect(output).toContain("export const createEngine: Language<RustAPI>['createEngine'] = (options) => import('@sittir/common').then((m) => m.createEngine(rust, options));");
+		expect(output).toContain(
+			"export const createEngine: Language<RustAPI>['createEngine'] = <const R extends RustAPI['options'], const M extends BuilderMode>(options?: CreateEngineOptions<RustAPI, R, M>) =>\n\timport('@sittir/common').then((m) => m.createEngine<RustAPI, R, M>(rust, options));"
+		);
 		expect(output).toContain('void (rust satisfies Language<RustAPI>);');
 	});
 

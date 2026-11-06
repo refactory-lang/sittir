@@ -15,7 +15,7 @@ const edited = (source: string, text: string) => {
 		return span !== undefined && source.slice(span.start, span.end) === text;
 	});
 	if (index === undefined) throw new Error(`no node spells ${JSON.stringify(text)}`);
-	tree.writeTriviaSide!(index, 'inner', [...tree.triviaSide!(index, 'inner')]);
+	tree.writeTriviaSide!(index, 'inner', [...(tree.triviaSide!(index, 'inner') ?? [])]);
 	return { root, node: tree.read!(index, 1) };
 };
 

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { boxedPayloadsOf } from '../boxed-payloads.ts';
+import { boxedPayloadsOf, nodeSizesOf } from '../boxed-payloads.ts';
 
 const struct = (name: string, fields: readonly string[]): string => `pub struct ${name} {\n${fields.map((type, i) => `    pub f${i}: ${type},\n`).join('')}}\n`;
 const choice = (name: string, variants: readonly string[]): string => `pub enum ${name} {\n${variants.map((variant) => `    ${variant},\n`).join('')}}\n`;
@@ -26,6 +26,15 @@ describe('the payload byte rule', () => {
 		expect(boxedPayloadsOf(nodeRs, new Set(['Holder']))).toEqual([]);
 		const wider = [struct('Held', strings(10)), struct('Holder', ['::sittir_core::SlotValue<Held>', ...strings(1), 'bool']), choice('Choice', ['Holder(Holder)'])].join('\n');
 		expect(boxedPayloadsOf(wider, new Set(['Holder']))).toEqual(['Holder']);
+	});
+
+	it('sizes a verbatim payload as its text and the kind it is shown as', () => {
+		const nodeRs = [choice('Choice', ['Verbatim(VerbatimNode)', 'Blank']), struct('Holder', ['VerbatimNode', 'bool'])].join('\n');
+		expect(nodeSizesOf(nodeRs)).toEqual(new Map([['Choice', 32], ['Holder', 40]]));
+	});
+
+	it('counts a field the struct keeps private', () => {
+		expect(nodeSizesOf('pub struct Framed {\n    pub layout: Option<Box<NodeLayout>>,\n    height: u16,\n}\n')).toEqual(new Map([['Framed', 16]]));
 	});
 
 	it('refuses a type it has no layout for', () => {

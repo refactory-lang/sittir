@@ -38,13 +38,13 @@ describe('engine', () => {
 			})
 		}));
 
-		const engine = await createEngine(await descriptor());
+		const engine = await createEngine(await descriptor(), { nodeStorage: 'object' });
 
 		// The engine exposes parse, render, edit and dispose; the native engine exposes the read path
 		expect(typeof engine.parse).toBe('function');
 		expect(typeof engine.render).toBe('function');
 		expect(typeof engine.dispose).toBe('function');
-		const native = (await (await descriptor()).load()).createNative();
+		const native = (await (await descriptor()).load()).createNative({ nodeStorage: 'object' });
 		expect(typeof native.parseAndRead).toBe('function');
 	});
 

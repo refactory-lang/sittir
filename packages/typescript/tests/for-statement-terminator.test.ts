@@ -34,12 +34,12 @@ describe('for_statement.condition', () => {
 					initializer: tsStrict.build.lexicalDeclaration(
 						{
 							kind: ts.kinds.LetKeyword,
-							declarators: [tsStrict.build.variableDeclarator.plain({ name: ts.build.identifier('i'), value: ts.build.number('0') })]
+							declarators: [tsStrict.build.variableDeclarator.plain({ name: tsStrict.build.identifier('i'), value: tsStrict.build.number('0') })]
 						},
 						{ terminator: ts.kinds.Semi }
 					),
-					condition: tsStrict.build.binaryExpression({ left: ts.build.identifier('i'), operator: ts.kinds.Lt, right: ts.build.number('3') }),
-					increment: tsStrict.build.updateExpression.postfix({ argument: ts.build.identifier('i'), operator: ts.kinds.PlusPlus }),
+					condition: tsStrict.build.binaryExpression({ left: tsStrict.build.identifier('i'), operator: ts.kinds.Lt, right: tsStrict.build.number('3') }),
+					increment: tsStrict.build.updateExpression.postfix({ argument: tsStrict.build.identifier('i'), operator: ts.kinds.PlusPlus }),
 					body: tsStrict.build.statementBlock({ terminator: ts.kinds.AutomaticSemicolon })
 				})
 			]

@@ -42,6 +42,7 @@ import { fixtureReplayOf, type FixtureReplay } from '../validate/common.ts';
 import { KindCases, type CasesByKind } from '../validate/kind-cases.ts';
 import { deriveRuleKinds } from '../validate/render-bodies.ts';
 import { load } from '../codegen-surface.ts';
+import { measureBuilt } from '../built.ts';
 import { REPO_ROOT, stableGrammars, type GrammarName } from '@sittir/codegen/grammars';
 
 const { renderModuleFixturesPath, renderModuleLeftOutPath } = await load('renderModulePaths');
@@ -462,6 +463,7 @@ const isCli = (() => {
 })();
 
 export async function run(_argv: string[]): Promise<number> {
+	if (process.env['SITTIR_METRICS'] === '1') measureBuilt('collect-baseline');
 	const baseline = await collectBaseline();
 	await new Promise<void>((resolve, reject) => {
 		process.stdout.write(serialiseBaseline(baseline), (error) => (error ? reject(error) : resolve()));

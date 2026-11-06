@@ -1040,7 +1040,8 @@ export function emptyDefaultOf(
 	field: AssembledNonterminal,
 	nodeMap: NodeMap,
 	kindEntries: readonly KindEnumEntry[],
-	factoryNs = ''
+	factoryNs = '',
+	args = ''
 ): string | null {
 	if (!isRequired(field) || !slotFilledWhenOmitted(field, nodeMap)) return null;
 	const sole = field.values[0]!;
@@ -1048,7 +1049,7 @@ export function emptyDefaultOf(
 	if (fixed !== undefined) return `${fixed.discriminant} as const`;
 	if (!isNodeRef(sole) || sole.storageKindId === undefined) return null;
 	const target = nodeMap.nodeByKindId.get(sole.storageKindId);
-	return target?.rawFactoryName === undefined || isFixedTextLeaf(target) ? null : `${factoryNs}${target.rawFactoryName}()`;
+	return target?.rawFactoryName === undefined || isFixedTextLeaf(target) ? null : `${factoryNs}${target.rawFactoryName}(${args})`;
 }
 
 export function assertOmittedSlotsFilled(
@@ -1102,7 +1103,6 @@ export function spelledReadType(slot: AssembledNonterminal): string | undefined 
 export interface LeadingOptions {
 	readonly type: string;
 	readonly keys: readonly string[];
-	readonly storageKeys: readonly string[];
 }
 
 export function leadingOptionsOf(node: AssembledNode, nodeMap: NodeMap): LeadingOptions | undefined {
@@ -1110,7 +1110,7 @@ export function leadingOptionsOf(node: AssembledNode, nodeMap: NodeMap): Leading
 	const registered = registeredSlots(node);
 	return registered.length === 0
 		? undefined
-		: { type: `T.${node.typeName}.Options`, keys: registered.map((slot) => slot.propertyName), storageKeys: registered.map((slot) => slot.storageKey) };
+		: { type: `T.${node.typeName}.Options`, keys: registered.map((slot) => slot.propertyName) };
 }
 
 export function classifyFactoryShape(
