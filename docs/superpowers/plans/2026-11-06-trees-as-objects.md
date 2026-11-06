@@ -112,6 +112,9 @@
   - **Review Focus 3:** a built node given a parsed node of another grammar is refused by name.
   - **Review Focus 5:** `structuredClone` of a node with a coordinate throws a named error.
   - A copy of a node copies its coordinates, and the copy renders after the original is dropped.
+  - An edit that rebuilds a node drops that node's own hold. With every other reference to the tree dropped except one untouched descendant, the tree stays alive. Once that descendant is dropped and collected, the tree is freed.
+  - A fully materialized node, with no coordinates left under it, still holds its tree and renders its source byte for byte.
+  - No package entry point exports the `Tree` class.
 - [ ] **Step 2:** Run them. They fail.
 - [ ] **Step 3: Implement,** and regenerate every grammar.
 - [ ] **Step 4: Run the three-way verification,** plus targeted probes on each grammar's wrap and render layers.

@@ -70,6 +70,8 @@ A parsed tree is a JavaScript object, and it's freed when its last holder drops 
   - The holders are the `Tree` objects that wrap the handle and the arenas whose records link the tree (below).
   - The tree is freed when the last holder drops it. Nothing else keeps a tree alive.
   - There's no explicit tree dispose, as today.
+  - **The `Tree` object is internal.** It's reached only through a node's `[TREE]` property, and it isn't part of the public API.
+  - **It lives on the JavaScript heap** because only the garbage collector knows when a tree's last node becomes unreachable, and native code learns that only through the object's finalizer. One holder per tree gives that lifetime with one finalizer per tree instead of one per node.
 - **Exclusive writes, per tree.** Today a write borrows the whole live-tree table mutably, and a render holds a shared borrow of the whole table for the call, so any write during any render is refused. After the migration each tree carries its own borrow, taken without blocking:
   - a render takes a read borrow of each tree its node reaches, for the length of the call;
   - a write takes its tree's write borrow, and is refused by name while that tree is being read;
@@ -91,6 +93,7 @@ A parsed node's coordinate reaches its tree through a holder, not through the tr
 - **The hold is the coordinate.**
   - *Today:* a read object holds its tree through a token (`holdTree`), while its coordinate names the tree by id. Dropping the token (`detachCoordinates`) leaves a bare handle, which the render refuses until the tree is held again.
   - *After the migration:* a copy of a node copies its coordinates, and so holds their trees.
+  - *An edit:* an edit that rebuilds a node drops that node's own hold, since its content is now built and renders from its options. Its untouched parsed descendants keep theirs. Materializing a coordinate keeps the hold: the node still renders from its tree's source, and in arena storage its content is the tree's own records.
   - What goes: the tokens, `holdTree`, `holdReadTree`, `carryReadTree`, `detachCoordinates`, and the validators' detach-then-hold pairs. A bare handle with no tree object doesn't exist.
 - **Identity.** The tree's id stays its identity (`TreeClaim`), never the way to reach it.
 - **Built slots.** A built node's slot that takes a parsed node holds that node's coordinate, tree included.
