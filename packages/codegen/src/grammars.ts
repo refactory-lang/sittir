@@ -1,6 +1,6 @@
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
-import { join } from 'node:path';
+import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 export type GrammarName = string;
@@ -76,10 +76,34 @@ export function sittirDirOf(pkg: Pick<GrammarPackage, 'dir'>): string {
 	return join(pkg.dir, '.sittir');
 }
 
+export interface UpstreamGrammarEntry {
+	readonly name?: unknown;
+	readonly 'file-types'?: unknown;
+}
+
+export function upstreamGrammarEntry(pkg: Pick<GrammarPackage, 'dir' | 'name'>): { readonly entry: UpstreamGrammarEntry; readonly configPath: string } {
+	const packageDir = dirname(packageRequire(pkg).resolve(`${upstreamPackage(pkg.name)}/package.json`));
+	const configPath = join(packageDir, 'tree-sitter.json');
+	if (!existsSync(configPath)) {
+		throw new Error(`upstreamFileTypes: ${upstreamPackage(pkg.name)} has no tree-sitter.json at ${configPath}`);
+	}
+	const config = JSON.parse(readFileSync(configPath, 'utf8')) as { grammars?: readonly UpstreamGrammarEntry[] };
+	const entries = config.grammars ?? [];
+	const entry = entries.length === 1 ? entries[0] : entries.find((candidate) => candidate.name === pkg.name);
+	if (entry === undefined) {
+		throw new Error(`upstreamFileTypes: ${configPath} declares ${entries.length} grammars and none is named "${pkg.name}"`);
+	}
+	return { entry, configPath };
+}
+
 export function parserNameOf(pkg: Pick<GrammarPackage, 'dir' | 'name'>): string {
-	const path = join(sittirDirOf(pkg), 'src', 'grammar.json');
-	if (!existsSync(path)) return pkg.name;
-	return (JSON.parse(readFileSync(path, 'utf8')) as { name: string }).name;
+	const generated = join(sittirDirOf(pkg), 'src', 'grammar.json');
+	if (existsSync(generated)) return (JSON.parse(readFileSync(generated, 'utf8')) as { name: string }).name;
+	try {
+		const { name } = upstreamGrammarEntry(pkg).entry;
+		if (typeof name === 'string') return name;
+	} catch {}
+	return pkg.name;
 }
 
 export function topLayerPath(pkg: Pick<GrammarPackage, 'dir'>): string {

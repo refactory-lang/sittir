@@ -1,6 +1,6 @@
 import { mkdirSync, existsSync, writeFileSync, copyFileSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import { basename, dirname, join, posix } from 'node:path';
-import { GRAMMAR_ENTRY, grammarTypePrefix, layerPath, packageRequire, sittirDirOf, topLayerPath, upstreamPackage, type GrammarPackage } from '../grammars.ts';
+import { GRAMMAR_ENTRY, grammarTypePrefix, layerPath, packageRequire, parserNameOf, sittirDirOf, topLayerPath, upstreamPackage, type GrammarPackage } from '../grammars.ts';
 import { upstreamFileTypes } from '../compiler/upstream-file-types.ts';
 import { ensureConflictResolutions } from './conflict-resolutions-file.ts';
 
@@ -24,7 +24,7 @@ export interface TranspileResult {
 }
 
 export function transpileOverrides(opts: TranspileOptions): TranspileResult {
-	const grammar = opts.package.name;
+	const grammar = parserNameOf(opts.package);
 	const inputPath = layerPath(opts.package, 'sittir');
 	const outputDir = sittirDirOf(opts.package);
 	const outputPath = join(outputDir, 'grammar.js');
@@ -37,7 +37,7 @@ export function transpileOverrides(opts: TranspileOptions): TranspileResult {
 	mkdirSync(outputDir, { recursive: true });
 	ensureConflictResolutions(opts.package);
 
-	copyExternalScannerSources(opts.package, outputDir);
+	copyExternalScannerSources(opts.package, grammar, outputDir);
 
 	writeFileIfChanged(
 		join(outputDir, 'package.json'),
@@ -104,7 +104,7 @@ function stubScannerSource(grammar: string): string {
 	].join('\n');
 }
 
-function copyExternalScannerSources(pkg: GrammarPackage, outputDir: string): void {
+function copyExternalScannerSources(pkg: GrammarPackage, parserName: string, outputDir: string): void {
 	const grammar = pkg.name;
 	let basePkgPath: string;
 	try {
@@ -119,7 +119,7 @@ function copyExternalScannerSources(pkg: GrammarPackage, outputDir: string): voi
 	);
 	if (!hasUpstreamScanner) {
 		mkdirSync(targetSrc, { recursive: true });
-		writeFileIfChanged(join(targetSrc, 'scanner.c'), stubScannerSource(grammar));
+		writeFileIfChanged(join(targetSrc, 'scanner.c'), stubScannerSource(parserName));
 		return;
 	}
 	const baseSrc = join(basePkgPath, 'src');
