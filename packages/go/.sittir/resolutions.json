@@ -1,10 +1,11 @@
 {
-	"grammarHash": "66c906e670a1e22752b7abc8cb39f7086c4492895e3d9dc90a793bf83e123d54",
+	"grammarHash": "7c510ddbf085018a52387ddb0c5ec60861caefdd93446466ae3196a530b86c85",
 	"resolutions": [
 		{"resolution":{"kind":"AddConflict","symbols":["_expression","qualified_type"]},"step":"upstream-declared","sourceChains":[["_expression"],["qualified_type"]],"conflict":{"symbolSequence":["identifier"],"lookahead":"'.'","interpretations":["_expression","qualified_type"]}},
 		{"resolution":{"kind":"AddConflict","symbols":["_simple_type","_expression"]},"step":"upstream-declared","sourceChains":[["_simple_type"],["_expression"]],"conflict":{"symbolSequence":["identifier"],"lookahead":"'('","interpretations":["_simple_type","_expression"]}},
 		{"resolution":{"kind":"AddConflict","symbols":["_simple_type","generic_type","_expression"]},"step":"upstream-declared","sourceChains":[["_simple_type"],["generic_type"],["_expression"]],"conflict":{"symbolSequence":["identifier"],"lookahead":"'['","interpretations":["_simple_type","generic_type","_expression"]}},
 		{"resolution":{"kind":"AddConflict","symbols":["_simple_type","generic_type"]},"step":"upstream-declared","sourceChains":[["_simple_type"],["generic_type"]],"conflict":{"symbolSequence":["negated_type"],"lookahead":"'['","interpretations":["_simple_type","generic_type"]}},
+		{"resolution":{"kind":"AddConflict","symbols":["channel_type_bidirectional","channel_type_receive_only"]},"step":"default","sourceChains":[["channel_type_bidirectional","channel_type"],["channel_type_receive_only","channel_type"]],"conflict":{"symbolSequence":["'<-'","'chan'","parenthesized_type"],"lookahead":"'('","interpretations":["channel_type_bidirectional","channel_type_receive_only"]}},
 		{"resolution":{"kind":"AddConflict","symbols":["field_declarations"]},"step":"default","sourceChains":[["field_declarations","field_declaration_list_group"]],"conflict":{"symbolSequence":["'struct'","'{'","field_declaration"],"lookahead":"';'","interpretations":["field_declarations","field_declarations"]}},
 		{"resolution":{"kind":"AddConflict","symbols":["import_specs"]},"step":"default","sourceChains":[["import_specs","import_spec_list_group"]],"conflict":{"symbolSequence":["'import'","'('","import_spec"],"lookahead":"';'","interpretations":["import_specs","import_specs"]}},
 		{"resolution":{"kind":"AddConflict","symbols":["interface_elems"]},"step":"default","sourceChains":[["interface_elems","interface_type_group"]],"conflict":{"symbolSequence":["'interface'","'{'","method_elem"],"lookahead":"';'","interpretations":["interface_elems","interface_elems"]}},
@@ -16,7 +17,7 @@
 		{"resolution":{"kind":"AddConflict","symbols":["type_parameter_declaration","_simple_type","generic_type","_expression"]},"step":"upstream-declared","sourceChains":[["type_parameter_declaration"],["_simple_type"],["generic_type"],["_expression"]],"conflict":{"symbolSequence":["'type'","identifier","'['","identifier"],"lookahead":"'['","interpretations":["type_parameter_declaration","_simple_type","generic_type","_expression"]}}
 	],
 	"bound": {
-		"grammarHash": "66c906e670a1e22752b7abc8cb39f7086c4492895e3d9dc90a793bf83e123d54",
+		"grammarHash": "7c510ddbf085018a52387ddb0c5ec60861caefdd93446466ae3196a530b86c85",
 		"resolutions": []
 	}
 }

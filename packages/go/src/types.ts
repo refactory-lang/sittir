@@ -95,9 +95,8 @@ export type LeafStringMap = {
 	[TSKindId.Rbrace]: '}';
 	[TSKindId.InterfaceKeyword]: 'interface';
 	[TSKindId.MapKeyword]: 'map';
-	[TSKindId.ChanKeyword]: 'chan';
-	[TSKindId.LtDash]: '<-';
 	[TSKindId.Semi]: ';';
+	[TSKindId.LtDash]: '<-';
 	[TSKindId.PlusPlus]: '++';
 	[TSKindId.DashDash]: '--';
 	[TSKindId.StarEq]: '*=';
@@ -151,6 +150,7 @@ export type LeafStringMap = {
 	[TSKindId.Bquote]: '`';
 	[TSKindId.Dquote]: '"';
 	[TSKindId.Null]: '\u0000';
+	[TSKindId.ChanKeyword]: 'chan';
 };
 
 export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
@@ -180,104 +180,104 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[24, 'interface_keyword'],
 	[25, 'pipe'],
 	[26, 'map_keyword'],
-	[27, 'chan_keyword'],
-	[28, 'lt_dash'],
-	[29, 'plus_plus'],
-	[30, 'dash_dash'],
-	[31, 'colon_eq'],
-	[32, 'colon'],
-	[33, 'fallthrough_keyword'],
-	[34, 'break_keyword'],
-	[35, 'continue_keyword'],
-	[36, 'goto_keyword'],
-	[37, 'return_keyword'],
-	[38, 'go_keyword'],
-	[39, 'defer_keyword'],
-	[40, 'if_keyword'],
-	[41, 'for_keyword'],
-	[42, 'range_keyword'],
-	[43, 'switch_keyword'],
-	[44, 'case_keyword'],
-	[45, 'default_keyword'],
-	[46, 'select_keyword'],
-	[47, 'new_keyword'],
-	[48, 'make_keyword'],
-	[49, 'plus'],
-	[50, 'dash'],
-	[51, 'bang'],
-	[52, 'caret'],
-	[53, 'amp'],
-	[54, 'slash'],
-	[55, 'percent'],
-	[56, 'lt_lt'],
-	[57, 'gt_gt'],
-	[58, 'amp_caret'],
-	[59, 'eq_eq'],
-	[60, 'bang_eq'],
-	[61, 'lt'],
-	[62, 'lt_eq'],
-	[63, 'gt'],
-	[64, 'gt_eq'],
-	[65, 'amp_amp'],
-	[66, 'pipe_pipe'],
-	[67, 'bquote'],
-	[68, 'raw_string_literal_content'],
-	[69, 'dquote'],
-	[70, 'interpreted_string_literal_content'],
-	[71, 'dquote2'],
-	[72, 'nil'],
-	[73, 'true'],
-	[74, 'false'],
-	[75, 'iota'],
-	[76, 'escape_sequence_arm1'],
-	[77, 'escape_sequence_arm2'],
-	[78, 'escape_sequence_arm3'],
-	[79, 'escape_sequence_arm4'],
-	[80, 'escape_sequence_arm5'],
-	[81, 'int_literal_arm1'],
-	[82, 'int_literal_arm2'],
-	[83, 'int_literal_arm3'],
-	[84, 'int_literal_arm4'],
-	[85, 'int_literal_arm5'],
-	[86, 'float_literal_arm1'],
-	[87, 'float_literal_arm2'],
-	[88, 'float_literal_arm3'],
-	[89, 'float_literal_arm4_arm1'],
-	[90, 'float_literal_arm4_arm2'],
-	[91, 'float_literal_arm4_arm3'],
-	[92, 'imaginary_literal_arm1'],
-	[93, 'imaginary_literal_arm2'],
-	[94, 'imaginary_literal_arm3'],
-	[95, 'imaginary_literal_arm4'],
-	[96, 'imaginary_literal_arm5'],
-	[97, 'imaginary_literal_arm6'],
-	[98, 'imaginary_literal_arm7'],
-	[99, 'imaginary_literal_arm8'],
-	[100, 'imaginary_literal_arm9'],
-	[101, 'imaginary_literal_arm10_arm1'],
-	[102, 'imaginary_literal_arm10_arm2'],
-	[103, 'imaginary_literal_arm10_arm3'],
-	[104, 'rune_literal_arm1'],
-	[105, 'rune_literal_arm2_arm1'],
-	[106, 'rune_literal_arm2_arm2'],
-	[107, 'rune_literal_arm2_arm3'],
-	[108, 'rune_literal_arm2_arm4'],
-	[109, 'rune_literal_arm2_arm5'],
-	[110, 'comment_arm1'],
-	[111, 'comment_arm2'],
-	[112, 'else_keyword'],
-	[113, 'star_eq'],
-	[114, 'slash_eq'],
-	[115, 'percent_eq'],
-	[116, 'lt_lt_eq'],
-	[117, 'gt_gt_eq'],
-	[118, 'amp_eq'],
-	[119, 'amp_caret_eq'],
-	[120, 'plus_eq'],
-	[121, 'dash_eq'],
-	[122, 'pipe_eq'],
-	[123, 'caret_eq'],
-	[124, 'source_file_text'],
+	[27, 'lt_dash'],
+	[28, 'plus_plus'],
+	[29, 'dash_dash'],
+	[30, 'colon_eq'],
+	[31, 'colon'],
+	[32, 'fallthrough_keyword'],
+	[33, 'break_keyword'],
+	[34, 'continue_keyword'],
+	[35, 'goto_keyword'],
+	[36, 'return_keyword'],
+	[37, 'go_keyword'],
+	[38, 'defer_keyword'],
+	[39, 'if_keyword'],
+	[40, 'for_keyword'],
+	[41, 'range_keyword'],
+	[42, 'switch_keyword'],
+	[43, 'case_keyword'],
+	[44, 'default_keyword'],
+	[45, 'select_keyword'],
+	[46, 'new_keyword'],
+	[47, 'make_keyword'],
+	[48, 'plus'],
+	[49, 'dash'],
+	[50, 'bang'],
+	[51, 'caret'],
+	[52, 'amp'],
+	[53, 'slash'],
+	[54, 'percent'],
+	[55, 'lt_lt'],
+	[56, 'gt_gt'],
+	[57, 'amp_caret'],
+	[58, 'eq_eq'],
+	[59, 'bang_eq'],
+	[60, 'lt'],
+	[61, 'lt_eq'],
+	[62, 'gt'],
+	[63, 'gt_eq'],
+	[64, 'amp_amp'],
+	[65, 'pipe_pipe'],
+	[66, 'bquote'],
+	[67, 'raw_string_literal_content'],
+	[68, 'dquote'],
+	[69, 'interpreted_string_literal_content'],
+	[70, 'dquote2'],
+	[71, 'nil'],
+	[72, 'true'],
+	[73, 'false'],
+	[74, 'iota'],
+	[75, 'escape_sequence_arm1'],
+	[76, 'escape_sequence_arm2'],
+	[77, 'escape_sequence_arm3'],
+	[78, 'escape_sequence_arm4'],
+	[79, 'escape_sequence_arm5'],
+	[80, 'int_literal_arm1'],
+	[81, 'int_literal_arm2'],
+	[82, 'int_literal_arm3'],
+	[83, 'int_literal_arm4'],
+	[84, 'int_literal_arm5'],
+	[85, 'float_literal_arm1'],
+	[86, 'float_literal_arm2'],
+	[87, 'float_literal_arm3'],
+	[88, 'float_literal_arm4_arm1'],
+	[89, 'float_literal_arm4_arm2'],
+	[90, 'float_literal_arm4_arm3'],
+	[91, 'imaginary_literal_arm1'],
+	[92, 'imaginary_literal_arm2'],
+	[93, 'imaginary_literal_arm3'],
+	[94, 'imaginary_literal_arm4'],
+	[95, 'imaginary_literal_arm5'],
+	[96, 'imaginary_literal_arm6'],
+	[97, 'imaginary_literal_arm7'],
+	[98, 'imaginary_literal_arm8'],
+	[99, 'imaginary_literal_arm9'],
+	[100, 'imaginary_literal_arm10_arm1'],
+	[101, 'imaginary_literal_arm10_arm2'],
+	[102, 'imaginary_literal_arm10_arm3'],
+	[103, 'rune_literal_arm1'],
+	[104, 'rune_literal_arm2_arm1'],
+	[105, 'rune_literal_arm2_arm2'],
+	[106, 'rune_literal_arm2_arm3'],
+	[107, 'rune_literal_arm2_arm4'],
+	[108, 'rune_literal_arm2_arm5'],
+	[109, 'comment_arm1'],
+	[110, 'comment_arm2'],
+	[111, 'else_keyword'],
+	[112, 'star_eq'],
+	[113, 'slash_eq'],
+	[114, 'percent_eq'],
+	[115, 'lt_lt_eq'],
+	[116, 'gt_gt_eq'],
+	[117, 'amp_eq'],
+	[118, 'amp_caret_eq'],
+	[119, 'plus_eq'],
+	[120, 'dash_eq'],
+	[121, 'pipe_eq'],
+	[122, 'caret_eq'],
+	[123, 'source_file_text'],
+	[124, 'chan_keyword'],
 	[125, '_tight'],
 	[126, '_space'],
 	[127, '_tab'],
@@ -419,36 +419,39 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[263, 'statement_list_arm'],
 	[264, 'receive_statement_group'],
 	[265, 'special_argument_list_group'],
-	[266, 'source_file_repeat1'],
-	[267, 'const_spec_repeat1'],
-	[268, 'var_spec_repeat1'],
-	[269, 'var_spec_list_repeat1'],
-	[270, 'expression_list_repeat1'],
-	[271, 'field_declaration_repeat1'],
-	[272, 'type_elem_repeat1'],
-	[273, 'expression_switch_statement_repeat1'],
-	[274, 'type_switch_statement_repeat1'],
-	[275, 'type_case_repeat1'],
-	[276, 'select_statement_repeat1'],
-	[277, 'interpreted_string_literal_repeat1'],
-	[278, 'import_specs_repeat1'],
-	[279, 'type_parameter_declarations_repeat1'],
-	[280, 'parameter_list_elements_repeat1'],
-	[281, 'type_declaration_elements_repeat1'],
-	[282, 'type_elems_repeat1'],
-	[283, 'field_declarations_repeat1'],
-	[284, 'interface_elems_repeat1'],
-	[285, 'statements_repeat1'],
-	[286, 'argument_list_elements_repeat1'],
-	[287, 'types_repeat1'],
-	[288, 'literal_value_elements_repeat1'],
-	[289, 'const_declaration_arm_repeat1'],
-	[290, 'special_argument_list_group_repeat1'],
-	[291, 'field_identifier'],
-	[292, 'label_name'],
-	[293, 'package_identifier'],
-	[294, 'type_constraint'],
-	[295, 'type_identifier'],
+	[266, 'channel_type_bidirectional'],
+	[267, 'channel_type_send_only'],
+	[268, 'channel_type_receive_only'],
+	[269, 'source_file_repeat1'],
+	[270, 'const_spec_repeat1'],
+	[271, 'var_spec_repeat1'],
+	[272, 'var_spec_list_repeat1'],
+	[273, 'expression_list_repeat1'],
+	[274, 'field_declaration_repeat1'],
+	[275, 'type_elem_repeat1'],
+	[276, 'expression_switch_statement_repeat1'],
+	[277, 'type_switch_statement_repeat1'],
+	[278, 'type_case_repeat1'],
+	[279, 'select_statement_repeat1'],
+	[280, 'interpreted_string_literal_repeat1'],
+	[281, 'import_specs_repeat1'],
+	[282, 'type_parameter_declarations_repeat1'],
+	[283, 'parameter_list_elements_repeat1'],
+	[284, 'type_declaration_elements_repeat1'],
+	[285, 'type_elems_repeat1'],
+	[286, 'field_declarations_repeat1'],
+	[287, 'interface_elems_repeat1'],
+	[288, 'statements_repeat1'],
+	[289, 'argument_list_elements_repeat1'],
+	[290, 'types_repeat1'],
+	[291, 'literal_value_elements_repeat1'],
+	[292, 'const_declaration_arm_repeat1'],
+	[293, 'special_argument_list_group_repeat1'],
+	[294, 'field_identifier'],
+	[295, 'label_name'],
+	[296, 'package_identifier'],
+	[297, 'type_constraint'],
+	[298, 'type_identifier'],
 	[65535, 'ERROR']
 ]);
 
@@ -480,104 +483,104 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[24, 'interface'],
 	[25, '|'],
 	[26, 'map'],
-	[27, 'chan'],
-	[28, '<-'],
-	[29, '++'],
-	[30, '--'],
-	[31, ':='],
-	[32, ':'],
-	[33, 'fallthrough'],
-	[34, 'break'],
-	[35, 'continue'],
-	[36, 'goto'],
-	[37, 'return'],
-	[38, 'go'],
-	[39, 'defer'],
-	[40, 'if'],
-	[41, 'for'],
-	[42, 'range'],
-	[43, 'switch'],
-	[44, 'case'],
-	[45, 'default'],
-	[46, 'select'],
+	[27, '<-'],
+	[28, '++'],
+	[29, '--'],
+	[30, ':='],
+	[31, ':'],
+	[32, 'fallthrough'],
+	[33, 'break'],
+	[34, 'continue'],
+	[35, 'goto'],
+	[36, 'return'],
+	[37, 'go'],
+	[38, 'defer'],
+	[39, 'if'],
+	[40, 'for'],
+	[41, 'range'],
+	[42, 'switch'],
+	[43, 'case'],
+	[44, 'default'],
+	[45, 'select'],
+	[46, 'identifier'],
 	[47, 'identifier'],
-	[48, 'identifier'],
-	[49, '+'],
-	[50, '-'],
-	[51, '!'],
-	[52, '^'],
-	[53, '&'],
-	[54, '/'],
-	[55, '%'],
-	[56, '<<'],
-	[57, '>>'],
-	[58, '&^'],
-	[59, '=='],
-	[60, '!='],
-	[61, '<'],
-	[62, '<='],
-	[63, '>'],
-	[64, '>='],
-	[65, '&&'],
-	[66, '||'],
-	[67, '`'],
-	[68, 'raw_string_literal_content'],
-	[69, '"'],
-	[70, 'interpreted_string_literal_content'],
-	[71, '"'],
-	[72, 'nil'],
-	[73, 'true'],
-	[74, 'false'],
-	[75, 'iota'],
-	[76, 'escape_sequence_arm1'],
-	[77, 'escape_sequence_arm2'],
-	[78, 'escape_sequence_arm3'],
-	[79, 'escape_sequence_arm4'],
-	[80, 'escape_sequence_arm5'],
-	[81, 'int_literal_arm1'],
-	[82, 'int_literal_arm2'],
-	[83, 'int_literal_arm3'],
-	[84, 'int_literal_arm4'],
-	[85, 'int_literal_arm5'],
-	[86, 'float_literal_arm1'],
-	[87, 'float_literal_arm2'],
-	[88, 'float_literal_arm3'],
-	[89, 'float_literal_arm4_arm1'],
-	[90, 'float_literal_arm4_arm2'],
-	[91, 'float_literal_arm4_arm3'],
-	[92, 'imaginary_literal_arm1'],
-	[93, 'imaginary_literal_arm2'],
-	[94, 'imaginary_literal_arm3'],
-	[95, 'imaginary_literal_arm4'],
-	[96, 'imaginary_literal_arm5'],
-	[97, 'imaginary_literal_arm6'],
-	[98, 'imaginary_literal_arm7'],
-	[99, 'imaginary_literal_arm8'],
-	[100, 'imaginary_literal_arm9'],
-	[101, 'imaginary_literal_arm10_arm1'],
-	[102, 'imaginary_literal_arm10_arm2'],
-	[103, 'imaginary_literal_arm10_arm3'],
-	[104, 'rune_literal_arm1'],
-	[105, 'rune_literal_arm2_arm1'],
-	[106, 'rune_literal_arm2_arm2'],
-	[107, 'rune_literal_arm2_arm3'],
-	[108, 'rune_literal_arm2_arm4'],
-	[109, 'rune_literal_arm2_arm5'],
-	[110, 'comment_arm1'],
-	[111, 'comment_arm2'],
-	[112, 'else'],
-	[113, '*='],
-	[114, '/='],
-	[115, '%='],
-	[116, '<<='],
-	[117, '>>='],
-	[118, '&='],
-	[119, '&^='],
-	[120, '+='],
-	[121, '-='],
-	[122, '|='],
-	[123, '^='],
-	[124, 'source_file_text'],
+	[48, '+'],
+	[49, '-'],
+	[50, '!'],
+	[51, '^'],
+	[52, '&'],
+	[53, '/'],
+	[54, '%'],
+	[55, '<<'],
+	[56, '>>'],
+	[57, '&^'],
+	[58, '=='],
+	[59, '!='],
+	[60, '<'],
+	[61, '<='],
+	[62, '>'],
+	[63, '>='],
+	[64, '&&'],
+	[65, '||'],
+	[66, '`'],
+	[67, 'raw_string_literal_content'],
+	[68, '"'],
+	[69, 'interpreted_string_literal_content'],
+	[70, '"'],
+	[71, 'nil'],
+	[72, 'true'],
+	[73, 'false'],
+	[74, 'iota'],
+	[75, 'escape_sequence_arm1'],
+	[76, 'escape_sequence_arm2'],
+	[77, 'escape_sequence_arm3'],
+	[78, 'escape_sequence_arm4'],
+	[79, 'escape_sequence_arm5'],
+	[80, 'int_literal_arm1'],
+	[81, 'int_literal_arm2'],
+	[82, 'int_literal_arm3'],
+	[83, 'int_literal_arm4'],
+	[84, 'int_literal_arm5'],
+	[85, 'float_literal_arm1'],
+	[86, 'float_literal_arm2'],
+	[87, 'float_literal_arm3'],
+	[88, 'float_literal_arm4_arm1'],
+	[89, 'float_literal_arm4_arm2'],
+	[90, 'float_literal_arm4_arm3'],
+	[91, 'imaginary_literal_arm1'],
+	[92, 'imaginary_literal_arm2'],
+	[93, 'imaginary_literal_arm3'],
+	[94, 'imaginary_literal_arm4'],
+	[95, 'imaginary_literal_arm5'],
+	[96, 'imaginary_literal_arm6'],
+	[97, 'imaginary_literal_arm7'],
+	[98, 'imaginary_literal_arm8'],
+	[99, 'imaginary_literal_arm9'],
+	[100, 'imaginary_literal_arm10_arm1'],
+	[101, 'imaginary_literal_arm10_arm2'],
+	[102, 'imaginary_literal_arm10_arm3'],
+	[103, 'rune_literal_arm1'],
+	[104, 'rune_literal_arm2_arm1'],
+	[105, 'rune_literal_arm2_arm2'],
+	[106, 'rune_literal_arm2_arm3'],
+	[107, 'rune_literal_arm2_arm4'],
+	[108, 'rune_literal_arm2_arm5'],
+	[109, 'comment_arm1'],
+	[110, 'comment_arm2'],
+	[111, 'else'],
+	[112, '*='],
+	[113, '/='],
+	[114, '%='],
+	[115, '<<='],
+	[116, '>>='],
+	[117, '&='],
+	[118, '&^='],
+	[119, '+='],
+	[120, '-='],
+	[121, '|='],
+	[122, '^='],
+	[123, 'source_file_text'],
+	[124, 'chan'],
 	[125, '_tight'],
 	[126, '_space'],
 	[127, '_tab'],
@@ -719,42 +722,45 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[263, 'statement_list_arm'],
 	[264, 'receive_statement_group'],
 	[265, 'special_argument_list_group'],
-	[266, 'source_file_repeat1'],
-	[267, 'const_spec_repeat1'],
-	[268, 'var_spec_repeat1'],
-	[269, 'var_spec_list_repeat1'],
-	[270, 'expression_list_repeat1'],
-	[271, 'field_declaration_repeat1'],
-	[272, 'type_elem_repeat1'],
-	[273, 'expression_switch_statement_repeat1'],
-	[274, 'type_switch_statement_repeat1'],
-	[275, 'type_case_repeat1'],
-	[276, 'select_statement_repeat1'],
-	[277, 'interpreted_string_literal_repeat1'],
-	[278, 'import_specs_repeat1'],
-	[279, 'type_parameter_declarations_repeat1'],
-	[280, 'parameter_list_elements_repeat1'],
-	[281, 'type_declaration_elements_repeat1'],
-	[282, 'type_elems_repeat1'],
-	[283, 'field_declarations_repeat1'],
-	[284, 'interface_elems_repeat1'],
-	[285, 'statements_repeat1'],
-	[286, 'argument_list_elements_repeat1'],
-	[287, 'types_repeat1'],
-	[288, 'literal_value_elements_repeat1'],
-	[289, 'const_declaration_arm_repeat1'],
-	[290, 'special_argument_list_group_repeat1'],
-	[291, 'field_identifier'],
-	[292, 'label_name'],
-	[293, 'package_identifier'],
-	[294, 'type_constraint'],
-	[295, 'type_identifier'],
+	[266, 'channel_type_bidirectional'],
+	[267, 'channel_type_send_only'],
+	[268, 'channel_type_receive_only'],
+	[269, 'source_file_repeat1'],
+	[270, 'const_spec_repeat1'],
+	[271, 'var_spec_repeat1'],
+	[272, 'var_spec_list_repeat1'],
+	[273, 'expression_list_repeat1'],
+	[274, 'field_declaration_repeat1'],
+	[275, 'type_elem_repeat1'],
+	[276, 'expression_switch_statement_repeat1'],
+	[277, 'type_switch_statement_repeat1'],
+	[278, 'type_case_repeat1'],
+	[279, 'select_statement_repeat1'],
+	[280, 'interpreted_string_literal_repeat1'],
+	[281, 'import_specs_repeat1'],
+	[282, 'type_parameter_declarations_repeat1'],
+	[283, 'parameter_list_elements_repeat1'],
+	[284, 'type_declaration_elements_repeat1'],
+	[285, 'type_elems_repeat1'],
+	[286, 'field_declarations_repeat1'],
+	[287, 'interface_elems_repeat1'],
+	[288, 'statements_repeat1'],
+	[289, 'argument_list_elements_repeat1'],
+	[290, 'types_repeat1'],
+	[291, 'literal_value_elements_repeat1'],
+	[292, 'const_declaration_arm_repeat1'],
+	[293, 'special_argument_list_group_repeat1'],
+	[294, 'field_identifier'],
+	[295, 'label_name'],
+	[296, 'package_identifier'],
+	[297, 'type_constraint'],
+	[298, 'type_identifier'],
 	[65535, 'ERROR']
 ]);
 
 /** Reverse of a separatedList kind's own separator-candidate resolution (factories.ts's emitSeparatedListFactory) — the exact string each candidate resolves to, keyed by its resolved id. NOT a general anonymous-token→text map: entry.symbolName (tree-sitter's raw parser production name) is unreliable for that — it can be shared across many distinct catalog kinds aliased to one token-producing rule (e.g. rust's primitive_type family), so it is deliberately not used here. Built by walking every separatedList's separatorRule with the SAME resolver (findKindEntry) the forward direction (factories.ts) already uses, guaranteeing round-trip correctness by construction. Absent for kinds that never appear as a separator candidate. */
 export const KIND_LITERAL_TEXT: ReadonlyMap<number, string> = new Map([
-	[124, 'source_file_text'],
+	[123, 'source_file_text'],
 	[12, ';'],
 	[13, '\u0000']
 ]);
@@ -813,8 +819,6 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.Pipe;
 		case 'map_keyword':
 			return TSKindId.MapKeyword;
-		case 'chan_keyword':
-			return TSKindId.ChanKeyword;
 		case 'lt_dash':
 			return TSKindId.LtDash;
 		case 'plus_plus':
@@ -1009,6 +1013,8 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.CaretEq;
 		case 'source_file_text':
 			return TSKindId.SourceFileText;
+		case 'chan_keyword':
+			return TSKindId.ChanKeyword;
 		case '_tight':
 			return TSKindId.Tight;
 		case '_space':
@@ -1291,6 +1297,12 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.ReceiveStatementGroup;
 		case 'special_argument_list_group':
 			return TSKindId.SpecialArgumentListGroup;
+		case 'channel_type_bidirectional':
+			return TSKindId.ChannelTypeBidirectional;
+		case 'channel_type_send_only':
+			return TSKindId.ChannelTypeSendOnly;
+		case 'channel_type_receive_only':
+			return TSKindId.ChannelTypeReceiveOnly;
 		case 'source_file_repeat1':
 			return TSKindId.SourceFileRepeat1;
 		case 'const_spec_repeat1':
@@ -1401,8 +1413,6 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.Pipe;
 		case 'map':
 			return TSKindId.MapKeyword;
-		case 'chan':
-			return TSKindId.ChanKeyword;
 		case '<-':
 			return TSKindId.LtDash;
 		case '++':
@@ -1505,6 +1515,8 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.PipeEq;
 		case '^=':
 			return TSKindId.CaretEq;
+		case 'chan':
+			return TSKindId.ChanKeyword;
 		default:
 			throw new TypeError(`unknown kind name ${kindName}`);
 	}
@@ -1552,6 +1564,12 @@ export enum SimpleTypeKind {
 	ChannelType = 'channel_type',
 	FunctionType = 'function_type',
 	NegatedType = 'negated_type'
+}
+
+export enum ChannelTypeKind {
+	ChannelTypeBidirectional = 'channel_type_bidirectional',
+	ChannelTypeSendOnly = 'channel_type_send_only',
+	ChannelTypeReceiveOnly = 'channel_type_receive_only'
 }
 
 export enum StatementKind {
@@ -2389,25 +2407,6 @@ export interface MapType {
 		readonly value: SlotHint<T.Type | T.TypeIdentifier.Types>;
 	};
 	readonly key: () => Type;
-	readonly value: () => Type;
-}
-
-export interface ChannelType {
-	readonly $type: TSKindId.ChannelType;
-	readonly _operator: TSKindId.ChanKeyword;
-	readonly _value: Type;
-	readonly __slotNames__?: {
-		readonly _operator: 'operator';
-		readonly _value: 'value';
-	};
-	readonly __inputHints__?: {
-		readonly operator: KindEnum<'chan' | 'chan<-' | '<-chan', TSKindId.ChanKeyword>;
-	};
-	readonly __slotHints__?: {
-		readonly operator: SlotHint<NonNullable<T.ChannelType.Config>['operator']>;
-		readonly value: SlotHint<T.Type | T.TypeIdentifier.Types>;
-	};
-	readonly operator: () => TSKindId.ChanKeyword;
 	readonly value: () => Type;
 }
 
@@ -4583,6 +4582,42 @@ export interface SpecialArgumentListGroup {
 	readonly expressions: () => readonly Expression[];
 }
 
+export interface ChannelTypeBidirectional {
+	readonly $type: TSKindId.ChannelTypeBidirectional;
+	readonly _value: Type;
+	readonly __slotNames__?: {
+		readonly _value: 'value';
+	};
+	readonly __slotHints__?: {
+		readonly value: SlotHint<T.Type | T.TypeIdentifier.Types>;
+	};
+	readonly value: () => Type;
+}
+
+export interface ChannelTypeSendOnly {
+	readonly $type: TSKindId.ChannelTypeSendOnly;
+	readonly _value: Type;
+	readonly __slotNames__?: {
+		readonly _value: 'value';
+	};
+	readonly __slotHints__?: {
+		readonly value: SlotHint<T.Type | T.TypeIdentifier.Types>;
+	};
+	readonly value: () => Type;
+}
+
+export interface ChannelTypeReceiveOnly {
+	readonly $type: TSKindId.ChannelTypeReceiveOnly;
+	readonly _value: Type;
+	readonly __slotNames__?: {
+		readonly _value: 'value';
+	};
+	readonly __slotHints__?: {
+		readonly value: SlotHint<T.Type | T.TypeIdentifier.Types>;
+	};
+	readonly value: () => Type;
+}
+
 export interface PackageIdentifier {
 	readonly $type: TSKindId.PackageIdentifier;
 	readonly _content: Identifier;
@@ -4691,6 +4726,8 @@ export type SimpleType =
 	| FunctionType
 	| NegatedType;
 
+export type ChannelType = ChannelTypeBidirectional | ChannelTypeSendOnly | ChannelTypeReceiveOnly;
+
 export type Statement =
 	| ConstDeclaration
 	| TypeDeclaration
@@ -4795,6 +4832,12 @@ export namespace SimpleType {
 	export type Kind = '_simple_type';
 	export type Bound = SupertypeSurface<SimpleType, BoundByKindId>;
 	export type Parsed = SupertypeSurface<SimpleType, ParsedByKindId>;
+}
+
+export namespace ChannelType {
+	export type Kind = 'channel_type';
+	export type Bound = SupertypeSurface<ChannelType, BoundByKindId>;
+	export type Parsed = SupertypeSurface<ChannelType, ParsedByKindId>;
 }
 
 export namespace Statement {
@@ -4916,7 +4959,6 @@ export interface OptionsHintMap {
 	methodElem: MethodElem.Hints;
 	typeElem: TypeElem.Hints;
 	mapType: MapType.Hints;
-	channelType: ChannelType.Hints;
 	functionType: FunctionType.Hints;
 	block: Block.Hints;
 	sendStatement: SendStatement.Hints;
@@ -4990,6 +5032,9 @@ export interface OptionsHintMap {
 	statementListArm: StatementListArm.Hints;
 	receiveStatementGroup: ReceiveStatementGroup.Hints;
 	specialArgumentListGroup: SpecialArgumentListGroup.Hints;
+	channelTypeBidirectional: ChannelTypeBidirectional.Hints;
+	channelTypeSendOnly: ChannelTypeSendOnly.Hints;
+	channelTypeReceiveOnly: ChannelTypeReceiveOnly.Hints;
 	rawStringLiteral: RawStringLiteral.Hints;
 	floatLiteralArm2: FloatLiteralArm2.Hints;
 }
@@ -5411,7 +5456,9 @@ export namespace TypeElem {
 			readonly before?: LayoutKindId;
 			readonly type?: {
 				readonly arrayType?: { readonly after?: LayoutKindId };
-				readonly channelType?: { readonly after?: LayoutKindId };
+				readonly channelTypeBidirectional?: { readonly after?: LayoutKindId };
+				readonly channelTypeReceiveOnly?: { readonly after?: LayoutKindId };
+				readonly channelTypeSendOnly?: { readonly after?: LayoutKindId };
 				readonly end?: LayoutKindId;
 				readonly functionType?: { readonly after?: LayoutKindId };
 				readonly genericType?: { readonly after?: LayoutKindId };
@@ -5440,17 +5487,6 @@ export namespace MapType {
 			readonly lbrack?: { readonly after?: LayoutKindId; readonly before?: LayoutKindId };
 			readonly mapKeyword?: { readonly after?: LayoutKindId };
 			readonly rbrack?: { readonly after?: LayoutKindId; readonly before?: LayoutKindId };
-		};
-	}
-}
-
-export namespace ChannelType {
-	export interface Hints {
-		readonly __optionsHint__?: {
-			readonly after?: LayoutKindId;
-			readonly before?: LayoutKindId;
-			readonly chanKeyword?: { readonly after?: LayoutKindId; readonly before?: LayoutKindId };
-			readonly ltDash?: { readonly after?: LayoutKindId; readonly before?: LayoutKindId };
 		};
 	}
 }
@@ -5730,7 +5766,9 @@ export namespace TypeCase {
 			readonly colon?: { readonly after?: LayoutKindId; readonly before?: LayoutKindId };
 			readonly type?: {
 				readonly arrayType?: { readonly after?: LayoutKindId };
-				readonly channelType?: { readonly after?: LayoutKindId };
+				readonly channelTypeBidirectional?: { readonly after?: LayoutKindId };
+				readonly channelTypeReceiveOnly?: { readonly after?: LayoutKindId };
+				readonly channelTypeSendOnly?: { readonly after?: LayoutKindId };
 				readonly end?: LayoutKindId;
 				readonly functionType?: { readonly after?: LayoutKindId };
 				readonly genericType?: { readonly after?: LayoutKindId };
@@ -6208,7 +6246,9 @@ export namespace Types {
 			readonly before?: LayoutKindId;
 			readonly item?: {
 				readonly arrayType?: { readonly after?: LayoutKindId };
-				readonly channelType?: { readonly after?: LayoutKindId };
+				readonly channelTypeBidirectional?: { readonly after?: LayoutKindId };
+				readonly channelTypeReceiveOnly?: { readonly after?: LayoutKindId };
+				readonly channelTypeSendOnly?: { readonly after?: LayoutKindId };
 				readonly delimiter?: Delimiter.None | Delimiter.Trailing;
 				readonly end?: LayoutKindId;
 				readonly functionType?: { readonly after?: LayoutKindId };
@@ -6407,6 +6447,38 @@ export namespace SpecialArgumentListGroup {
 				readonly typeInstantiationExpression?: { readonly after?: LayoutKindId };
 				readonly unaryExpression?: { readonly after?: LayoutKindId };
 			};
+		};
+	}
+}
+
+export namespace ChannelTypeBidirectional {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: LayoutKindId;
+			readonly before?: LayoutKindId;
+			readonly chanKeyword?: { readonly after?: LayoutKindId };
+		};
+	}
+}
+
+export namespace ChannelTypeSendOnly {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: LayoutKindId;
+			readonly before?: LayoutKindId;
+			readonly chanKeyword?: { readonly after?: LayoutKindId };
+			readonly ltDash?: { readonly after?: LayoutKindId; readonly before?: LayoutKindId };
+		};
+	}
+}
+
+export namespace ChannelTypeReceiveOnly {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: LayoutKindId;
+			readonly before?: LayoutKindId;
+			readonly chanKeyword?: { readonly after?: LayoutKindId; readonly before?: LayoutKindId };
+			readonly ltDash?: { readonly after?: LayoutKindId };
 		};
 	}
 }
@@ -6930,20 +7002,6 @@ export interface MapTypeNs extends NodeNs<
 > {
 	readonly BuildArgs: MapType.BuildArgs;
 	readonly LooseArgs: MapType.LooseArgs;
-}
-export interface ChannelTypeNs extends NodeNs<
-	ChannelType,
-	LeafScalarMap,
-	LeafStringMap,
-	NamespaceMap,
-	ChannelType.Bound,
-	never,
-	TSKindId.ChannelType,
-	ChannelType.Parsed,
-	never
-> {
-	readonly BuildArgs: ChannelType.BuildArgs;
-	readonly LooseArgs: ChannelType.LooseArgs;
 }
 export interface FunctionTypeNs extends NodeNs<
 	FunctionType,
@@ -8471,6 +8529,48 @@ export interface SpecialArgumentListGroupNs extends NodeNs<
 	readonly BuildArgs: SpecialArgumentListGroup.BuildArgs;
 	readonly LooseArgs: SpecialArgumentListGroup.LooseArgs;
 }
+export interface ChannelTypeBidirectionalNs extends NodeNs<
+	ChannelTypeBidirectional,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	ChannelTypeBidirectional.Bound,
+	'value',
+	TSKindId.ChannelTypeBidirectional,
+	ChannelTypeBidirectional.Parsed,
+	never
+> {
+	readonly BuildArgs: ChannelTypeBidirectional.BuildArgs;
+	readonly LooseArgs: ChannelTypeBidirectional.LooseArgs;
+}
+export interface ChannelTypeSendOnlyNs extends NodeNs<
+	ChannelTypeSendOnly,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	ChannelTypeSendOnly.Bound,
+	'value',
+	TSKindId.ChannelTypeSendOnly,
+	ChannelTypeSendOnly.Parsed,
+	never
+> {
+	readonly BuildArgs: ChannelTypeSendOnly.BuildArgs;
+	readonly LooseArgs: ChannelTypeSendOnly.LooseArgs;
+}
+export interface ChannelTypeReceiveOnlyNs extends NodeNs<
+	ChannelTypeReceiveOnly,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	ChannelTypeReceiveOnly.Bound,
+	'value',
+	TSKindId.ChannelTypeReceiveOnly,
+	ChannelTypeReceiveOnly.Parsed,
+	never
+> {
+	readonly BuildArgs: ChannelTypeReceiveOnly.BuildArgs;
+	readonly LooseArgs: ChannelTypeReceiveOnly.LooseArgs;
+}
 export interface PackageIdentifierNs extends NodeNs<
 	PackageIdentifier,
 	LeafScalarMap,
@@ -8636,7 +8736,6 @@ export interface NamespaceMap {
 	[TSKindId.MethodElem]: MethodElemNs;
 	[TSKindId.TypeElem]: TypeElemNs;
 	[TSKindId.MapType]: MapTypeNs;
-	[TSKindId.ChannelType]: ChannelTypeNs;
 	[TSKindId.FunctionType]: FunctionTypeNs;
 	[TSKindId.Block]: BlockNs;
 	[TSKindId.StatementList]: StatementListNs;
@@ -8746,6 +8845,9 @@ export interface NamespaceMap {
 	[TSKindId.StatementListArm]: StatementListArmNs;
 	[TSKindId.ReceiveStatementGroup]: ReceiveStatementGroupNs;
 	[TSKindId.SpecialArgumentListGroup]: SpecialArgumentListGroupNs;
+	[TSKindId.ChannelTypeBidirectional]: ChannelTypeBidirectionalNs;
+	[TSKindId.ChannelTypeSendOnly]: ChannelTypeSendOnlyNs;
+	[TSKindId.ChannelTypeReceiveOnly]: ChannelTypeReceiveOnlyNs;
 	[TSKindId.PackageIdentifier]: PackageIdentifierNs;
 	[TSKindId.FieldIdentifier]: FieldIdentifierNs;
 	[TSKindId.TypeConstraint]: TypeConstraintNs;
@@ -8814,7 +8916,6 @@ export interface BoundByKindId {
 	[TSKindId.MethodElem]: MethodElem.Bound;
 	[TSKindId.TypeElem]: TypeElem.Bound;
 	[TSKindId.MapType]: MapType.Bound;
-	[TSKindId.ChannelType]: ChannelType.Bound;
 	[TSKindId.FunctionType]: FunctionType.Bound;
 	[TSKindId.Block]: Block.Bound;
 	[TSKindId.StatementList]: StatementList.Bound;
@@ -8924,6 +9025,9 @@ export interface BoundByKindId {
 	[TSKindId.StatementListArm]: StatementListArm.Bound;
 	[TSKindId.ReceiveStatementGroup]: ReceiveStatementGroup.Bound;
 	[TSKindId.SpecialArgumentListGroup]: SpecialArgumentListGroup.Bound;
+	[TSKindId.ChannelTypeBidirectional]: ChannelTypeBidirectional.Bound;
+	[TSKindId.ChannelTypeSendOnly]: ChannelTypeSendOnly.Bound;
+	[TSKindId.ChannelTypeReceiveOnly]: ChannelTypeReceiveOnly.Bound;
 	[TSKindId.PackageIdentifier]: PackageIdentifier.Bound;
 	[TSKindId.FieldIdentifier]: FieldIdentifier.Bound;
 	[TSKindId.TypeConstraint]: TypeConstraint.Bound;
@@ -8974,7 +9078,6 @@ export interface ParsedByKindId {
 	[TSKindId.MethodElem]: MethodElem.Parsed;
 	[TSKindId.TypeElem]: TypeElem.Parsed;
 	[TSKindId.MapType]: MapType.Parsed;
-	[TSKindId.ChannelType]: ChannelType.Parsed;
 	[TSKindId.FunctionType]: FunctionType.Parsed;
 	[TSKindId.Block]: Block.Parsed;
 	[TSKindId.StatementList]: StatementList.Parsed;
@@ -9084,6 +9187,9 @@ export interface ParsedByKindId {
 	[TSKindId.StatementListArm]: StatementListArm.Parsed;
 	[TSKindId.ReceiveStatementGroup]: ReceiveStatementGroup.Parsed;
 	[TSKindId.SpecialArgumentListGroup]: SpecialArgumentListGroup.Parsed;
+	[TSKindId.ChannelTypeBidirectional]: ChannelTypeBidirectional.Parsed;
+	[TSKindId.ChannelTypeSendOnly]: ChannelTypeSendOnly.Parsed;
+	[TSKindId.ChannelTypeReceiveOnly]: ChannelTypeReceiveOnly.Parsed;
 	[TSKindId.PackageIdentifier]: PackageIdentifier.Parsed;
 	[TSKindId.FieldIdentifier]: FieldIdentifier.Parsed;
 	[TSKindId.TypeConstraint]: TypeConstraint.Parsed;
@@ -9135,9 +9241,8 @@ export type FixedTextKindId =
 	| TSKindId.Rbrace
 	| TSKindId.InterfaceKeyword
 	| TSKindId.MapKeyword
-	| TSKindId.ChanKeyword
-	| TSKindId.LtDash
 	| TSKindId.Semi
+	| TSKindId.LtDash
 	| TSKindId.PlusPlus
 	| TSKindId.DashDash
 	| TSKindId.StarEq
@@ -9190,7 +9295,8 @@ export type FixedTextKindId =
 	| TSKindId.PipePipe
 	| TSKindId.Bquote
 	| TSKindId.Dquote
-	| TSKindId.Null;
+	| TSKindId.Null
+	| TSKindId.ChanKeyword;
 
 export interface TypeKeyOf {
 	[TSKindId.SourceFile]: 'sourceFile';
@@ -9229,7 +9335,6 @@ export interface TypeKeyOf {
 	[TSKindId.MethodElem]: 'methodElem';
 	[TSKindId.TypeElem]: 'typeElem';
 	[TSKindId.MapType]: 'mapType';
-	[TSKindId.ChannelType]: 'channelType';
 	[TSKindId.FunctionType]: 'functionType';
 	[TSKindId.Block]: 'block';
 	[TSKindId.StatementList]: 'statementList';
@@ -9339,6 +9444,9 @@ export interface TypeKeyOf {
 	[TSKindId.StatementListArm]: 'statementListArm';
 	[TSKindId.ReceiveStatementGroup]: 'receiveStatementGroup';
 	[TSKindId.SpecialArgumentListGroup]: 'specialArgumentListGroup';
+	[TSKindId.ChannelTypeBidirectional]: 'channelTypeBidirectional';
+	[TSKindId.ChannelTypeSendOnly]: 'channelTypeSendOnly';
+	[TSKindId.ChannelTypeReceiveOnly]: 'channelTypeReceiveOnly';
 	[TSKindId.PackageIdentifier]: 'packageIdentifier';
 	[TSKindId.FieldIdentifier]: 'fieldIdentifier';
 	[TSKindId.TypeConstraint]: 'typeConstraint';
@@ -10307,30 +10415,6 @@ export namespace MapType {
 	export type BuildArgs = [config: ConfigOf<T.MapType>];
 	export type LooseArgs = [config: T.MapType.Loose];
 	export type Kind = TSKindId.MapType;
-}
-export namespace ChannelType {
-	export type Config = ConfigFor<TSKindId.ChannelType>;
-	export interface Bound extends BoundOf<T.ChannelType, BoundByKindId>, NodeMethodsOf, HoldsSource {
-		readonly $type: T.ChannelType['$type'];
-		readonly $with: BoundWithNode<this, BoundByKindId>;
-	}
-	export interface Parsed extends ParsedOf<T.ChannelType, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
-		readonly $type: T.ChannelType['$type'];
-		readonly $with: WithNode<this, BoundByKindId>;
-		readonly $query: () => QueryFacet<
-			this,
-			ParsedByKindId,
-			PortableQueryIds<PortableReads>,
-			KindMembers,
-			FixedTextKindId
-		>;
-		readonly $snapshot: () => Snapshot<T.ChannelType['$type']>;
-	}
-	export type Loose = LooseFor<TSKindId.ChannelType>;
-	export type LooseConfig = LooseConfigFor<TSKindId.ChannelType>;
-	export type BuildArgs = [config: ConfigOf<T.ChannelType>];
-	export type LooseArgs = [config: T.ChannelType.Loose];
-	export type Kind = TSKindId.ChannelType;
 }
 export namespace FunctionType {
 	export type Config = ConfigFor<TSKindId.FunctionType>;
@@ -13396,6 +13480,81 @@ export namespace SpecialArgumentListGroup {
 	export type BuildArgs = [config: ConfigOf<T.SpecialArgumentListGroup>];
 	export type LooseArgs = [config: T.SpecialArgumentListGroup.Loose];
 	export type Kind = TSKindId.SpecialArgumentListGroup;
+}
+export namespace ChannelTypeBidirectional {
+	export type Config = ConfigFor<TSKindId.ChannelTypeBidirectional>;
+	export interface Bound extends BoundOf<T.ChannelTypeBidirectional, BoundByKindId>, NodeMethodsOf, HoldsSource {
+		readonly $type: T.ChannelTypeBidirectional['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId>;
+	}
+	export interface Parsed
+		extends ParsedOf<T.ChannelTypeBidirectional, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
+		readonly $type: T.ChannelTypeBidirectional['$type'];
+		readonly $with: WithNode<this, BoundByKindId>;
+		readonly $query: () => QueryFacet<
+			this,
+			ParsedByKindId,
+			PortableQueryIds<PortableReads>,
+			KindMembers,
+			FixedTextKindId
+		>;
+		readonly $snapshot: () => Snapshot<T.ChannelTypeBidirectional['$type']>;
+	}
+	export type Loose = LooseFor<TSKindId.ChannelTypeBidirectional>;
+	export type LooseConfig = LooseConfigFor<TSKindId.ChannelTypeBidirectional>;
+	export type BuildArgs = [value: Admit<T.Type | T.TypeIdentifier.Types>];
+	export type LooseArgs = [value: T.ChannelTypeBidirectional.Loose];
+	export type Kind = TSKindId.ChannelTypeBidirectional;
+}
+export namespace ChannelTypeSendOnly {
+	export type Config = ConfigFor<TSKindId.ChannelTypeSendOnly>;
+	export interface Bound extends BoundOf<T.ChannelTypeSendOnly, BoundByKindId>, NodeMethodsOf, HoldsSource {
+		readonly $type: T.ChannelTypeSendOnly['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId>;
+	}
+	export interface Parsed
+		extends ParsedOf<T.ChannelTypeSendOnly, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
+		readonly $type: T.ChannelTypeSendOnly['$type'];
+		readonly $with: WithNode<this, BoundByKindId>;
+		readonly $query: () => QueryFacet<
+			this,
+			ParsedByKindId,
+			PortableQueryIds<PortableReads>,
+			KindMembers,
+			FixedTextKindId
+		>;
+		readonly $snapshot: () => Snapshot<T.ChannelTypeSendOnly['$type']>;
+	}
+	export type Loose = LooseFor<TSKindId.ChannelTypeSendOnly>;
+	export type LooseConfig = LooseConfigFor<TSKindId.ChannelTypeSendOnly>;
+	export type BuildArgs = [value: Admit<T.Type | T.TypeIdentifier.Types>];
+	export type LooseArgs = [value: T.ChannelTypeSendOnly.Loose];
+	export type Kind = TSKindId.ChannelTypeSendOnly;
+}
+export namespace ChannelTypeReceiveOnly {
+	export type Config = ConfigFor<TSKindId.ChannelTypeReceiveOnly>;
+	export interface Bound extends BoundOf<T.ChannelTypeReceiveOnly, BoundByKindId>, NodeMethodsOf, HoldsSource {
+		readonly $type: T.ChannelTypeReceiveOnly['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId>;
+	}
+	export interface Parsed
+		extends ParsedOf<T.ChannelTypeReceiveOnly, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
+		readonly $type: T.ChannelTypeReceiveOnly['$type'];
+		readonly $with: WithNode<this, BoundByKindId>;
+		readonly $query: () => QueryFacet<
+			this,
+			ParsedByKindId,
+			PortableQueryIds<PortableReads>,
+			KindMembers,
+			FixedTextKindId
+		>;
+		readonly $snapshot: () => Snapshot<T.ChannelTypeReceiveOnly['$type']>;
+	}
+	export type Loose = LooseFor<TSKindId.ChannelTypeReceiveOnly>;
+	export type LooseConfig = LooseConfigFor<TSKindId.ChannelTypeReceiveOnly>;
+	export type BuildArgs = [value: Admit<T.Type | T.TypeIdentifier.Types>];
+	export type LooseArgs = [value: T.ChannelTypeReceiveOnly.Loose];
+	export type Kind = TSKindId.ChannelTypeReceiveOnly;
 }
 export namespace PackageIdentifier {
 	export type Config = ConfigFor<TSKindId.PackageIdentifier>;

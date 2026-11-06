@@ -580,19 +580,10 @@ export interface Routes<Table extends AnyTable> {
 	readonly literalElement: Table['buildLiteralElement'] & {
 		readonly literalValue: Routes<Table>['literalElement$literalValue'];
 	};
-	readonly simpleType: {
-		readonly identifier: Table['buildTypeIdentifier'];
-		readonly generic: Table['buildGenericType'];
-		readonly qualified: Table['buildQualifiedType'];
-		readonly pointer: Table['buildPointerType'];
-		readonly struct: Table['buildStructType'];
-		readonly interface: Routes<Table>['interfaceType'];
-		readonly array: Table['buildArrayType'];
-		readonly slice: Table['buildSliceType'];
-		readonly map: Table['buildMapType'];
-		readonly channel: Table['buildChannelType'];
-		readonly function: Table['buildFunctionType'];
-		readonly negated: Table['buildNegatedType'];
+	readonly channelType: {
+		readonly bidirectional: Table['buildChannelTypeBidirectional'];
+		readonly sendOnly: Table['buildChannelTypeSendOnly'];
+		readonly receiveOnly: Table['buildChannelTypeReceiveOnly'];
 	};
 	readonly simpleStatement: {
 		readonly expression: Table['buildExpressionStatement'];
@@ -637,9 +628,19 @@ export interface Routes<Table extends AnyTable> {
 		readonly arm4: typeof F.buildRuneLiteralArm2Arm4;
 		readonly arm5: Table['buildRuneLiteralArm2Arm5'];
 	};
-	readonly type: {
-		readonly simple: Routes<Table>['simpleType'];
-		readonly parenthesized: Table['buildParenthesizedType'];
+	readonly simpleType: {
+		readonly identifier: Table['buildTypeIdentifier'];
+		readonly generic: Table['buildGenericType'];
+		readonly qualified: Table['buildQualifiedType'];
+		readonly pointer: Table['buildPointerType'];
+		readonly struct: Table['buildStructType'];
+		readonly interface: Routes<Table>['interfaceType'];
+		readonly array: Table['buildArrayType'];
+		readonly slice: Table['buildSliceType'];
+		readonly map: Table['buildMapType'];
+		readonly channel: Routes<Table>['channelType'];
+		readonly function: Table['buildFunctionType'];
+		readonly negated: Table['buildNegatedType'];
 	};
 	readonly floatLiteral: typeof F.buildFloatLiteralArm2 & {
 		readonly arm1: Table['buildFloatLiteralArm1'];
@@ -662,6 +663,10 @@ export interface Routes<Table extends AnyTable> {
 	readonly runeLiteral: typeof F.buildRuneLiteralArm1 & {
 		readonly arm1: typeof F.buildRuneLiteralArm1;
 		readonly arm2: Routes<Table>['runeLiteralArm2'];
+	};
+	readonly type: {
+		readonly simple: Routes<Table>['simpleType'];
+		readonly parenthesized: Table['buildParenthesizedType'];
 	};
 }
 
@@ -702,7 +707,6 @@ export interface Ir<Table extends AnyTable> {
 	readonly methodElem: Table['buildMethodElem'];
 	readonly typeElem: Table['buildTypeElem'];
 	readonly mapType: Table['buildMapType'];
-	readonly channelType: Table['buildChannelType'];
 	readonly functionType: Table['buildFunctionType'];
 	readonly block: Table['buildBlock'];
 	readonly statementList: Routes<Table>['statementList'];
@@ -772,7 +776,10 @@ export interface Ir<Table extends AnyTable> {
 	readonly types: Table['buildTypes'];
 	readonly literalValueElements: Table['buildLiteralValueElements'];
 	readonly constDeclarationArm: Table['buildConstDeclarationArm'];
-	readonly simpleType: Routes<Table>['simpleType'];
+	readonly channelTypeBidirectional: Table['buildChannelTypeBidirectional'];
+	readonly channelTypeSendOnly: Table['buildChannelTypeSendOnly'];
+	readonly channelTypeReceiveOnly: Table['buildChannelTypeReceiveOnly'];
+	readonly channelType: Routes<Table>['channelType'];
 	readonly simpleStatement: Routes<Table>['simpleStatement'];
 	readonly escapeSequence: Routes<Table>['escapeSequence'];
 	readonly intLiteral: Routes<Table>['intLiteral'];
@@ -780,10 +787,11 @@ export interface Ir<Table extends AnyTable> {
 	readonly floatLiteralArm4: Routes<Table>['floatLiteralArm4'];
 	readonly imaginaryLiteralArm10: Routes<Table>['imaginaryLiteralArm10'];
 	readonly runeLiteralArm2: Routes<Table>['runeLiteralArm2'];
-	readonly type: Routes<Table>['type'];
+	readonly simpleType: Routes<Table>['simpleType'];
 	readonly floatLiteral: Routes<Table>['floatLiteral'];
 	readonly imaginaryLiteral: Routes<Table>['imaginaryLiteral'];
 	readonly runeLiteral: Routes<Table>['runeLiteral'];
+	readonly type: Routes<Table>['type'];
 	readonly dot: typeof F.buildDot;
 	readonly blankIdentifier: typeof F.buildBlankIdentifier;
 	readonly emptyStatement: typeof F.buildEmptyStatement;
@@ -1196,19 +1204,10 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 	const literalElement: Routes<Table>['literalElement'] = Object.freeze(
 		Object.assign(delegate($at('buildLiteralElement')), { literalValue: literalElement$literalValue } as const)
 	);
-	const simpleType: Routes<Table>['simpleType'] = Object.freeze({
-		identifier: $at('buildTypeIdentifier'),
-		generic: $at('buildGenericType'),
-		qualified: $at('buildQualifiedType'),
-		pointer: $at('buildPointerType'),
-		struct: $at('buildStructType'),
-		interface: interfaceType,
-		array: $at('buildArrayType'),
-		slice: $at('buildSliceType'),
-		map: $at('buildMapType'),
-		channel: $at('buildChannelType'),
-		function: $at('buildFunctionType'),
-		negated: $at('buildNegatedType')
+	const channelType: Routes<Table>['channelType'] = Object.freeze({
+		bidirectional: $at('buildChannelTypeBidirectional'),
+		sendOnly: $at('buildChannelTypeSendOnly'),
+		receiveOnly: $at('buildChannelTypeReceiveOnly')
 	} as const);
 	const simpleStatement: Routes<Table>['simpleStatement'] = Object.freeze({
 		expression: $at('buildExpressionStatement'),
@@ -1262,9 +1261,19 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 			arm5: $at('buildRuneLiteralArm2Arm5')
 		} as const)
 	);
-	const type: Routes<Table>['type'] = Object.freeze({
-		simple: simpleType,
-		parenthesized: $at('buildParenthesizedType')
+	const simpleType: Routes<Table>['simpleType'] = Object.freeze({
+		identifier: $at('buildTypeIdentifier'),
+		generic: $at('buildGenericType'),
+		qualified: $at('buildQualifiedType'),
+		pointer: $at('buildPointerType'),
+		struct: $at('buildStructType'),
+		interface: interfaceType,
+		array: $at('buildArrayType'),
+		slice: $at('buildSliceType'),
+		map: $at('buildMapType'),
+		channel: channelType,
+		function: $at('buildFunctionType'),
+		negated: $at('buildNegatedType')
 	} as const);
 	const floatLiteral: Routes<Table>['floatLiteral'] = Object.freeze(
 		Object.assign(delegate(F.buildFloatLiteralArm2), {
@@ -1291,6 +1300,10 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 	const runeLiteral: Routes<Table>['runeLiteral'] = Object.freeze(
 		Object.assign(delegate(F.buildRuneLiteralArm1), { arm1: F.buildRuneLiteralArm1, arm2: runeLiteralArm2 } as const)
 	);
+	const type: Routes<Table>['type'] = Object.freeze({
+		simple: simpleType,
+		parenthesized: $at('buildParenthesizedType')
+	} as const);
 	return Object.freeze({
 		sourceFile: sourceFile,
 		packageClause: $at('buildPackageClause'),
@@ -1328,7 +1341,6 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 		methodElem: $at('buildMethodElem'),
 		typeElem: $at('buildTypeElem'),
 		mapType: $at('buildMapType'),
-		channelType: $at('buildChannelType'),
 		functionType: $at('buildFunctionType'),
 		block: $at('buildBlock'),
 		statementList: statementList,
@@ -1398,7 +1410,10 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 		types: $at('buildTypes'),
 		literalValueElements: $at('buildLiteralValueElements'),
 		constDeclarationArm: $at('buildConstDeclarationArm'),
-		simpleType: simpleType,
+		channelTypeBidirectional: $at('buildChannelTypeBidirectional'),
+		channelTypeSendOnly: $at('buildChannelTypeSendOnly'),
+		channelTypeReceiveOnly: $at('buildChannelTypeReceiveOnly'),
+		channelType: channelType,
 		simpleStatement: simpleStatement,
 		escapeSequence: escapeSequence,
 		intLiteral: intLiteral,
@@ -1406,10 +1421,11 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 		floatLiteralArm4: floatLiteralArm4,
 		imaginaryLiteralArm10: imaginaryLiteralArm10,
 		runeLiteralArm2: runeLiteralArm2,
-		type: type,
+		simpleType: simpleType,
 		floatLiteral: floatLiteral,
 		imaginaryLiteral: imaginaryLiteral,
 		runeLiteral: runeLiteral,
+		type: type,
 		dot: F.buildDot,
 		blankIdentifier: F.buildBlankIdentifier,
 		emptyStatement: F.buildEmptyStatement,

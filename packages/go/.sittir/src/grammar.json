@@ -1682,46 +1682,18 @@
         "type": "CHOICE",
         "members": [
           {
-            "type": "SEQ",
-            "members": [
-              {
-                "type": "STRING",
-                "value": "chan"
-              },
-              {
-                "type": "FIELD",
-                "name": "value",
-                "content": {
-                  "type": "SYMBOL",
-                  "name": "_type"
-                }
-              }
-            ],
+            "type": "SYMBOL",
+            "name": "channel_type_bidirectional",
             "annotations": {
+              "variant": "bidirectional",
               "variantOf": "channel_type"
             }
           },
           {
-            "type": "SEQ",
-            "members": [
-              {
-                "type": "STRING",
-                "value": "chan"
-              },
-              {
-                "type": "STRING",
-                "value": "<-"
-              },
-              {
-                "type": "FIELD",
-                "name": "value",
-                "content": {
-                  "type": "SYMBOL",
-                  "name": "_type"
-                }
-              }
-            ],
+            "type": "SYMBOL",
+            "name": "channel_type_send_only",
             "annotations": {
+              "variant": "send_only",
               "variantOf": "channel_type"
             }
           },
@@ -1729,26 +1701,10 @@
             "type": "PREC",
             "value": 6,
             "content": {
-              "type": "SEQ",
-              "members": [
-                {
-                  "type": "STRING",
-                  "value": "<-"
-                },
-                {
-                  "type": "STRING",
-                  "value": "chan"
-                },
-                {
-                  "type": "FIELD",
-                  "name": "value",
-                  "content": {
-                    "type": "SYMBOL",
-                    "name": "_type"
-                  }
-                }
-              ],
+              "type": "SYMBOL",
+              "name": "channel_type_receive_only",
               "annotations": {
+                "variant": "receive_only",
                 "variantOf": "channel_type"
               }
             }
@@ -9612,6 +9568,93 @@
           "value": "dedent"
         }
       ]
+    },
+    "channel_type_bidirectional": {
+      "type": "PREC_LEFT",
+      "value": 0,
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "STRING",
+            "value": "chan"
+          },
+          {
+            "type": "FIELD",
+            "name": "value",
+            "content": {
+              "type": "SYMBOL",
+              "name": "_type"
+            }
+          }
+        ],
+        "annotations": {
+          "variantOf": "channel_type",
+          "hoisted": true
+        }
+      }
+    },
+    "channel_type_send_only": {
+      "type": "PREC_LEFT",
+      "value": 0,
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "STRING",
+            "value": "chan"
+          },
+          {
+            "type": "STRING",
+            "value": "<-"
+          },
+          {
+            "type": "FIELD",
+            "name": "value",
+            "content": {
+              "type": "SYMBOL",
+              "name": "_type"
+            }
+          }
+        ],
+        "annotations": {
+          "variantOf": "channel_type",
+          "hoisted": true
+        }
+      }
+    },
+    "channel_type_receive_only": {
+      "type": "PREC_LEFT",
+      "value": 0,
+      "content": {
+        "type": "PREC",
+        "value": 6,
+        "content": {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "STRING",
+              "value": "<-"
+            },
+            {
+              "type": "STRING",
+              "value": "chan"
+            },
+            {
+              "type": "FIELD",
+              "name": "value",
+              "content": {
+                "type": "SYMBOL",
+                "name": "_type"
+              }
+            }
+          ],
+          "annotations": {
+            "variantOf": "channel_type",
+            "hoisted": true
+          }
+        }
+      }
     }
   },
   "extras": [
@@ -9645,6 +9688,10 @@
     [
       "_simple_type",
       "generic_type"
+    ],
+    [
+      "channel_type_bidirectional",
+      "channel_type_receive_only"
     ],
     [
       "field_declarations"
@@ -9746,7 +9793,8 @@
     "rune_literal",
     "rune_literal_arm2",
     "comment",
-    "_layout"
+    "_layout",
+    "channel_type"
   ],
   "reserved": {
     "global": [

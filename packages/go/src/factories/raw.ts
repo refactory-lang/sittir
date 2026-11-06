@@ -840,7 +840,10 @@ export function buildTypeParameterDeclaration(
 	currentHandle()?.admit(TSKindId.TypeParameterDeclaration, [config]);
 	const _name = listStorage<NonNullable<T.TypeParameterDeclaration['_name']>>(config.names);
 	const _type = admitAliasContent<NonNullable<T.TypeParameterDeclaration['_type']>>(config.type, [
-		[[295, 158, 226, 160, 164, 168, 161, 163, 171, 172, 173, 165, 156], (v: unknown) => buildTypeConstraint(v as never)]
+		[
+			[298, 158, 226, 160, 164, 168, 161, 163, 171, 266, 267, 268, 173, 165, 156],
+			(v: unknown) => buildTypeConstraint(v as never)
+		]
 	]);
 	const handle = currentHandle();
 	const node = {
@@ -1844,41 +1847,6 @@ export function buildMapType(config: T.MapType.Config): T.MapType.Bound {
 		$engine: handle && (() => handle.current)
 	};
 	return stampBuilt(node) as unknown as T.MapType.Bound;
-}
-
-export function buildChannelType<ValueSlot extends T.ChannelType.Config['value']>(
-	config: RefusingConfig<T.ChannelType.Config, { value: ValueSlot }>
-): T.ChannelType.Bound;
-export function buildChannelType(config: T.ChannelType.Config): T.ChannelType.Bound {
-	currentHandle()?.admit(TSKindId.ChannelType, [config]);
-	const _operator = kindIdStorage<NonNullable<T.ChannelType['_operator']>>(config.operator);
-	const _value = admitAliasContent<NonNullable<T.ChannelType['_value']>>(config.value, [
-		[[1], (v: unknown) => buildTypeIdentifier(v as never)]
-	]);
-	const handle = currentHandle();
-	const node = {
-		$type: TSKindId.ChannelType as const,
-		$named: true as const,
-		_operator,
-		_value,
-		$with: {
-			operator: (value: Admit<NonNullable<T.ChannelType.Config>['operator']>) =>
-				rebuilt(node, handle, () => buildChannelType({ ...config, operator: value })),
-			value: (value: Admit<T.Type | T.TypeIdentifier.Types>) =>
-				rebuilt(node, handle, () => buildChannelType({ ...config, value: value }))
-		},
-		operator: () => _operator,
-		value: () => hydrateStoredSlot(node, '_value'),
-		$render: () => renderText(handle, node),
-		toString: () => node.$render(),
-		toJSON: () => nodeJSON(node, jsonFacts),
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
-		$engine: handle && (() => handle.current)
-	};
-	return stampBuilt(node) as unknown as T.ChannelType.Bound;
 }
 
 export function buildFunctionType<
@@ -6767,6 +6735,97 @@ export function buildSourceFileText(text: string): T.SourceFileText.Bound {
 	return stampBuilt(node) as unknown as T.SourceFileText.Bound;
 }
 
+export function buildChannelTypeBidirectional<V extends Admit<T.Type | T.TypeIdentifier.Types>>(
+	value: V & RefuseUndeclared<V>
+): T.ChannelTypeBidirectional.Bound;
+export function buildChannelTypeBidirectional(
+	value: Admit<T.Type | T.TypeIdentifier.Types>
+): T.ChannelTypeBidirectional.Bound {
+	const _value = admitAliasContent<NonNullable<T.ChannelTypeBidirectional['_value']>>(value, [
+		[[1], (v: unknown) => buildTypeIdentifier(v as never)]
+	]);
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.ChannelTypeBidirectional as const,
+		$named: true as const,
+		_value,
+		$with: {
+			value: (value: Admit<T.Type | T.TypeIdentifier.Types>) =>
+				rebuilt(node, handle, () => buildChannelTypeBidirectional(value))
+		},
+		value: () => hydrateStoredSlot(node, '_value'),
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return stampBuilt(node) as unknown as T.ChannelTypeBidirectional.Bound;
+}
+
+export function buildChannelTypeSendOnly<V extends Admit<T.Type | T.TypeIdentifier.Types>>(
+	value: V & RefuseUndeclared<V>
+): T.ChannelTypeSendOnly.Bound;
+export function buildChannelTypeSendOnly(value: Admit<T.Type | T.TypeIdentifier.Types>): T.ChannelTypeSendOnly.Bound {
+	const _value = admitAliasContent<NonNullable<T.ChannelTypeSendOnly['_value']>>(value, [
+		[[1], (v: unknown) => buildTypeIdentifier(v as never)]
+	]);
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.ChannelTypeSendOnly as const,
+		$named: true as const,
+		_value,
+		$with: {
+			value: (value: Admit<T.Type | T.TypeIdentifier.Types>) =>
+				rebuilt(node, handle, () => buildChannelTypeSendOnly(value))
+		},
+		value: () => hydrateStoredSlot(node, '_value'),
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return stampBuilt(node) as unknown as T.ChannelTypeSendOnly.Bound;
+}
+
+export function buildChannelTypeReceiveOnly<V extends Admit<T.Type | T.TypeIdentifier.Types>>(
+	value: V & RefuseUndeclared<V>
+): T.ChannelTypeReceiveOnly.Bound;
+export function buildChannelTypeReceiveOnly(
+	value: Admit<T.Type | T.TypeIdentifier.Types>
+): T.ChannelTypeReceiveOnly.Bound {
+	const _value = admitAliasContent<NonNullable<T.ChannelTypeReceiveOnly['_value']>>(value, [
+		[[1], (v: unknown) => buildTypeIdentifier(v as never)]
+	]);
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.ChannelTypeReceiveOnly as const,
+		$named: true as const,
+		_value,
+		$with: {
+			value: (value: Admit<T.Type | T.TypeIdentifier.Types>) =>
+				rebuilt(node, handle, () => buildChannelTypeReceiveOnly(value))
+		},
+		value: () => hydrateStoredSlot(node, '_value'),
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return stampBuilt(node) as unknown as T.ChannelTypeReceiveOnly.Bound;
+}
+
 export const buildTight: TSKindId.Tight = TSKindId.Tight;
 
 export const buildSpace: TSKindId.Space = TSKindId.Space;
@@ -6956,7 +7015,6 @@ export type FluentKindMap = {
 	method_elem: T.MethodElem.Bound;
 	type_elem: T.TypeElem.Bound;
 	map_type: T.MapType.Bound;
-	channel_type: T.ChannelType.Bound;
 	function_type: T.FunctionType.Bound;
 	block: T.Block.Bound;
 	statement_list: T.StatementList.Bound;
@@ -7080,6 +7138,9 @@ export type FluentKindMap = {
 	receive_statement_group: T.ReceiveStatementGroup.Bound;
 	special_argument_list_group: T.SpecialArgumentListGroup.Bound;
 	source_file_text: T.SourceFileText;
+	channel_type_bidirectional: T.ChannelTypeBidirectional.Bound;
+	channel_type_send_only: T.ChannelTypeSendOnly.Bound;
+	channel_type_receive_only: T.ChannelTypeReceiveOnly.Bound;
 	_tight: T.Tight;
 	_space: T.Space;
 	_tab: T.Tab;
@@ -7134,7 +7195,6 @@ export const _factoryMap = {
 	method_elem: buildMethodElem,
 	type_elem: buildTypeElem,
 	map_type: buildMapType,
-	channel_type: buildChannelType,
 	function_type: buildFunctionType,
 	block: buildBlock,
 	statement_list: buildStatementList,
@@ -7258,6 +7318,9 @@ export const _factoryMap = {
 	receive_statement_group: buildReceiveStatementGroup,
 	special_argument_list_group: buildSpecialArgumentListGroup,
 	source_file_text: buildSourceFileText,
+	channel_type_bidirectional: buildChannelTypeBidirectional,
+	channel_type_send_only: buildChannelTypeSendOnly,
+	channel_type_receive_only: buildChannelTypeReceiveOnly,
 	_tight: buildTight,
 	_space: buildSpace,
 	_tab: buildTab,

@@ -1,0 +1,690 @@
+[
+  {
+    "scope": "grammar",
+    "code": "conflict-resolution",
+    "severity": "info",
+    "grammar": "java",
+    "message": "conflict between _unannotated_type, generic_type on '<' resolved by AddConflict (upstream-declared)",
+    "canProceed": true,
+    "details": {
+      "resolution": {
+        "kind": "AddConflict",
+        "symbols": [
+          "_unannotated_type",
+          "generic_type"
+        ]
+      },
+      "step": "upstream-declared",
+      "sourceChains": [
+        [
+          "_unannotated_type"
+        ],
+        [
+          "generic_type"
+        ]
+      ],
+      "conflict": {
+        "symbolSequence": [
+          "expression",
+          "'instanceof'",
+          "identifier"
+        ],
+        "lookahead": "'<'",
+        "interpretations": [
+          "_unannotated_type",
+          "generic_type"
+        ]
+      }
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "conflict-resolution",
+    "severity": "info",
+    "grammar": "java",
+    "message": "conflict between _unannotated_type, scoped_type_identifier on '.' resolved by AddConflict (upstream-declared)",
+    "canProceed": true,
+    "details": {
+      "resolution": {
+        "kind": "AddConflict",
+        "symbols": [
+          "_unannotated_type",
+          "scoped_type_identifier"
+        ]
+      },
+      "step": "upstream-declared",
+      "sourceChains": [
+        [
+          "_unannotated_type"
+        ],
+        [
+          "scoped_type_identifier"
+        ]
+      ],
+      "conflict": {
+        "symbolSequence": [
+          "scoped_type_identifier"
+        ],
+        "lookahead": "'.'",
+        "interpretations": [
+          "_unannotated_type",
+          "scoped_type_identifier",
+          "scoped_type_identifier"
+        ]
+      }
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "conflict-resolution",
+    "severity": "info",
+    "grammar": "java",
+    "message": "conflict between argument_list, record_pattern_body on '->' resolved by AddConflict (upstream-declared)",
+    "canProceed": true,
+    "details": {
+      "resolution": {
+        "kind": "AddConflict",
+        "symbols": [
+          "argument_list",
+          "record_pattern_body"
+        ]
+      },
+      "step": "upstream-declared",
+      "sourceChains": [
+        [
+          "argument_list"
+        ],
+        [
+          "record_pattern_body"
+        ]
+      ],
+      "conflict": {
+        "symbolSequence": [
+          "'switch'",
+          "parenthesized_expression",
+          "'{'",
+          "'case'",
+          "identifier",
+          "'('",
+          "')'"
+        ],
+        "lookahead": "'->'",
+        "interpretations": [
+          "argument_list",
+          "record_pattern_body"
+        ]
+      }
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "conflict-resolution",
+    "severity": "info",
+    "grammar": "java",
+    "message": "conflict between expression, statement on '<' resolved by AddConflict (upstream-declared)",
+    "canProceed": true,
+    "details": {
+      "resolution": {
+        "kind": "AddConflict",
+        "symbols": [
+          "expression",
+          "statement"
+        ]
+      },
+      "step": "upstream-declared",
+      "sourceChains": [
+        [
+          "expression"
+        ],
+        [
+          "statement"
+        ]
+      ],
+      "conflict": {
+        "symbolSequence": [
+          "switch_expression"
+        ],
+        "lookahead": "'<'",
+        "interpretations": [
+          "expression",
+          "statement"
+        ]
+      }
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "conflict-resolution",
+    "severity": "info",
+    "grammar": "java",
+    "message": "conflict between inferred_parameters, primary_expression, _unannotated_type on ')' resolved by AddConflict (upstream-declared)",
+    "canProceed": true,
+    "details": {
+      "resolution": {
+        "kind": "AddConflict",
+        "symbols": [
+          "inferred_parameters",
+          "primary_expression",
+          "_unannotated_type"
+        ]
+      },
+      "step": "upstream-declared",
+      "sourceChains": [
+        [
+          "inferred_parameters"
+        ],
+        [
+          "primary_expression"
+        ],
+        [
+          "_unannotated_type"
+        ]
+      ],
+      "conflict": {
+        "symbolSequence": [
+          "'('",
+          "identifier"
+        ],
+        "lookahead": "')'",
+        "interpretations": [
+          "primary_expression",
+          "_unannotated_type",
+          "inferred_parameters"
+        ]
+      }
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "conflict-resolution",
+    "severity": "info",
+    "grammar": "java",
+    "message": "conflict between inferred_parameters, primary_expression on ')' resolved by AddConflict (upstream-declared)",
+    "canProceed": true,
+    "details": {
+      "resolution": {
+        "kind": "AddConflict",
+        "symbols": [
+          "inferred_parameters",
+          "primary_expression"
+        ]
+      },
+      "step": "upstream-declared",
+      "sourceChains": [
+        [
+          "inferred_parameters"
+        ],
+        [
+          "primary_expression"
+        ]
+      ],
+      "conflict": {
+        "symbolSequence": [
+          "'('",
+          "_reserved_identifier"
+        ],
+        "lookahead": "')'",
+        "interpretations": [
+          "primary_expression",
+          "inferred_parameters"
+        ]
+      }
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "conflict-resolution",
+    "severity": "info",
+    "grammar": "java",
+    "message": "conflict between lambda_expression, primary_expression on '->' resolved by AddConflict (upstream-declared)",
+    "canProceed": true,
+    "details": {
+      "resolution": {
+        "kind": "AddConflict",
+        "symbols": [
+          "lambda_expression",
+          "primary_expression"
+        ]
+      },
+      "step": "upstream-declared",
+      "sourceChains": [
+        [
+          "lambda_expression"
+        ],
+        [
+          "primary_expression"
+        ]
+      ],
+      "conflict": {
+        "symbolSequence": [
+          "'switch'",
+          "parenthesized_expression",
+          "'{'",
+          "'case'",
+          "identifier"
+        ],
+        "lookahead": "'->'",
+        "interpretations": [
+          "lambda_expression",
+          "lambda_expression",
+          "primary_expression"
+        ]
+      }
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "conflict-resolution",
+    "severity": "info",
+    "grammar": "java",
+    "message": "conflict between modifiers, annotated_type, receiver_parameter on '@' resolved by AddConflict (upstream-declared)",
+    "canProceed": true,
+    "details": {
+      "resolution": {
+        "kind": "AddConflict",
+        "symbols": [
+          "modifiers",
+          "annotated_type",
+          "receiver_parameter"
+        ]
+      },
+      "step": "upstream-declared",
+      "sourceChains": [
+        [
+          "modifiers"
+        ],
+        [
+          "annotated_type"
+        ],
+        [
+          "receiver_parameter"
+        ]
+      ],
+      "conflict": {
+        "symbolSequence": [
+          "'('",
+          "_annotation"
+        ],
+        "lookahead": "'@'",
+        "interpretations": [
+          "array_creation_expression_repeat1",
+          "modifiers_repeat1"
+        ]
+      }
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "conflict-resolution",
+    "severity": "info",
+    "grammar": "java",
+    "message": "conflict between module_declaration, package_declaration, modifiers, annotated_type on '@' resolved by AddConflict (upstream-declared)",
+    "canProceed": true,
+    "details": {
+      "resolution": {
+        "kind": "AddConflict",
+        "symbols": [
+          "module_declaration",
+          "package_declaration",
+          "modifiers",
+          "annotated_type"
+        ]
+      },
+      "step": "upstream-declared",
+      "sourceChains": [
+        [
+          "module_declaration"
+        ],
+        [
+          "package_declaration"
+        ],
+        [
+          "modifiers"
+        ],
+        [
+          "annotated_type"
+        ]
+      ],
+      "conflict": {
+        "symbolSequence": [
+          "_annotation"
+        ],
+        "lookahead": "'@'",
+        "interpretations": [
+          "array_creation_expression_repeat1",
+          "modifiers_repeat1"
+        ]
+      }
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "conflict-resolution",
+    "severity": "info",
+    "grammar": "java",
+    "message": "conflict between primary_expression, _unannotated_type, scoped_type_identifier on '.' resolved by AddConflict (upstream-declared)",
+    "canProceed": true,
+    "details": {
+      "resolution": {
+        "kind": "AddConflict",
+        "symbols": [
+          "primary_expression",
+          "_unannotated_type",
+          "scoped_type_identifier"
+        ]
+      },
+      "step": "upstream-declared",
+      "sourceChains": [
+        [
+          "primary_expression"
+        ],
+        [
+          "_unannotated_type"
+        ],
+        [
+          "scoped_type_identifier"
+        ]
+      ],
+      "conflict": {
+        "symbolSequence": [
+          "identifier"
+        ],
+        "lookahead": "'.'",
+        "interpretations": [
+          "primary_expression",
+          "_unannotated_type",
+          "scoped_type_identifier",
+          "scoped_type_identifier"
+        ]
+      }
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "conflict-resolution",
+    "severity": "info",
+    "grammar": "java",
+    "message": "conflict between primary_expression, _unannotated_type on '[' resolved by AddConflict (upstream-declared)",
+    "canProceed": true,
+    "details": {
+      "resolution": {
+        "kind": "AddConflict",
+        "symbols": [
+          "primary_expression",
+          "_unannotated_type"
+        ]
+      },
+      "step": "upstream-declared",
+      "sourceChains": [
+        [
+          "primary_expression"
+        ],
+        [
+          "_unannotated_type"
+        ]
+      ],
+      "conflict": {
+        "symbolSequence": [
+          "identifier"
+        ],
+        "lookahead": "'['",
+        "interpretations": [
+          "primary_expression",
+          "_unannotated_type"
+        ]
+      }
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "conflict-resolution",
+    "severity": "info",
+    "grammar": "java",
+    "message": "conflict between primary_expression, generic_type on '<' resolved by AddConflict (upstream-declared)",
+    "canProceed": true,
+    "details": {
+      "resolution": {
+        "kind": "AddConflict",
+        "symbols": [
+          "primary_expression",
+          "generic_type"
+        ]
+      },
+      "step": "upstream-declared",
+      "sourceChains": [
+        [
+          "primary_expression"
+        ],
+        [
+          "generic_type"
+        ]
+      ],
+      "conflict": {
+        "symbolSequence": [
+          "identifier"
+        ],
+        "lookahead": "'<'",
+        "interpretations": [
+          "primary_expression",
+          "generic_type"
+        ]
+      }
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "conflict-resolution",
+    "severity": "info",
+    "grammar": "java",
+    "message": "conflict between yield_statement, _reserved_identifier on '(' resolved by AddConflict (upstream-declared)",
+    "canProceed": true,
+    "details": {
+      "resolution": {
+        "kind": "AddConflict",
+        "symbols": [
+          "yield_statement",
+          "_reserved_identifier"
+        ]
+      },
+      "step": "upstream-declared",
+      "sourceChains": [
+        [
+          "yield_statement"
+        ],
+        [
+          "_reserved_identifier"
+        ]
+      ],
+      "conflict": {
+        "symbolSequence": [
+          "'yield'"
+        ],
+        "lookahead": "'('",
+        "interpretations": [
+          "yield_statement",
+          "_reserved_identifier"
+        ]
+      }
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "unclassifiable-shape",
+    "severity": "error",
+    "grammar": "java",
+    "ownerKind": "cast_expression",
+    "message": "[collect-slots] kind 'cast_expression': member rule:cast_expression:root is not a leaf or a choice of leaves (choice-with-structured-arms: choice[2]). Resolve with rule(name, body) in edits: naming the structured arm as its own rule",
+    "canProceed": false,
+    "details": {
+      "bucket": "choice-with-structured-arms",
+      "shape": "choice[2]",
+      "ruleId": "rule:cast_expression:root"
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "union-slot-mixed-row",
+    "severity": "error",
+    "grammar": "java",
+    "ownerKind": "cast_expression",
+    "message": "[collect-slots] kind 'cast_expression': choice rule:cast_expression:root is a singular mixed row — structured named arm(s) [seq[2](_type choice)] alongside union arm(s) [cast_expression_arm]. Resolve with variant(name) in edits: splitting the row, until the structured-arm enrich mint gives each structured arm a kind of its own in the union slot.",
+    "canProceed": false
+  },
+  {
+    "scope": "grammar",
+    "code": "union-slot-routed",
+    "severity": "warning",
+    "grammar": "java",
+    "ownerKind": "instanceof_expression",
+    "message": "[collect-slots] kind 'instanceof_expression': choice rule:instanceof_expression:root routes 1 unnamed-nonterminal arm(s) [instanceof_expression_arm] into one union slot alongside 1 label-routed arm(s) [field(pattern):record_pattern]",
+    "canProceed": true,
+    "details": {
+      "unionSlot": "content",
+      "degenerateFields": [
+        "pattern"
+      ]
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "unclassifiable-shape",
+    "severity": "error",
+    "grammar": "java",
+    "ownerKind": "_unqualified_object_creation_expression",
+    "message": "[collect-slots] kind '_unqualified_object_creation_expression': member rule:_unqualified_object_creation_expression:root is not a leaf or a choice of leaves (choice-with-structured-arms: choice[3]). Resolve with rule(name, body) in edits: naming the structured arm as its own rule",
+    "canProceed": false,
+    "details": {
+      "bucket": "choice-with-structured-arms",
+      "shape": "choice[3]",
+      "ruleId": "rule:_unqualified_object_creation_expression:root"
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "union-slot-routed",
+    "severity": "warning",
+    "grammar": "java",
+    "ownerKind": "method_invocation",
+    "message": "[collect-slots] kind 'method_invocation': choice rule:method_invocation:root routes 1 unnamed-nonterminal arm(s) [method_invocation_arm] into one union slot alongside 1 label-routed arm(s) [field(name):identifier]",
+    "canProceed": true,
+    "details": {
+      "unionSlot": "content",
+      "degenerateFields": [
+        "name"
+      ]
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "union-slot-routed",
+    "severity": "warning",
+    "grammar": "java",
+    "ownerKind": "assert_statement",
+    "message": "[collect-slots] kind 'assert_statement': choice rule:assert_statement:root routes 1 unnamed-nonterminal arm(s) [assert_statement_arm] into one union slot alongside 1 label-routed arm(s) [field(expression):expression]",
+    "canProceed": true,
+    "details": {
+      "unionSlot": "content",
+      "degenerateFields": [
+        "expression"
+      ]
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "union-slot-routed",
+    "severity": "warning",
+    "grammar": "java",
+    "ownerKind": "for_statement",
+    "message": "[collect-slots] kind 'for_statement': choice rule:for_statement:root routes 1 unnamed-nonterminal arm(s) [for_statement_arm] into one union slot alongside 1 label-routed arm(s) [field(init):local_variable_declaration]",
+    "canProceed": true,
+    "details": {
+      "unionSlot": "content",
+      "degenerateFields": [
+        "init"
+      ]
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "union-slot-routed-repeated",
+    "severity": "error",
+    "grammar": "java",
+    "ownerKind": "annotation_argument_list",
+    "message": "[collect-slots] kind 'annotation_argument_list': choice rule:annotation_argument_list:root routes 4 unnamed-nonterminal arm(s) [expression, element_value_array_initializer, marker_annotation, annotation] into one union slot alongside 1 label-routed arm(s) [field(element_value_pair):element_value_pair]. The list mixes slot topologies, so its elements cannot be read in order: give each label-routed arm a kind of its own (variant(name) in edits:)",
+    "canProceed": false,
+    "details": {
+      "unionSlot": "content",
+      "degenerateFields": [
+        "element_value_pair"
+      ]
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "unclassifiable-shape",
+    "severity": "error",
+    "grammar": "java",
+    "ownerKind": "object_creation_expression_arm",
+    "message": "[collect-slots] kind 'object_creation_expression_arm': member rule:object_creation_expression_arm:root is not a leaf or a choice of leaves (choice-with-structured-arms: choice[2]). Resolve with rule(name, body) in edits: naming the structured arm as its own rule",
+    "canProceed": false,
+    "details": {
+      "bucket": "choice-with-structured-arms",
+      "shape": "choice[2]",
+      "ruleId": "rule:object_creation_expression_arm:root"
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "storagename-collision",
+    "severity": "error",
+    "grammar": "java",
+    "ownerKind": "object_creation_expression_arm",
+    "message": "[assemble] storageName collision: kind 'object_creation_expression_arm' has 2 slots with storageName 'class_body':\n    class_body (positional, multiplicity: optional, values: [class_body])\n    class_body (positional, multiplicity: optional, values: [class_body])",
+    "canProceed": false,
+    "details": {
+      "storageName": "class_body",
+      "slotCount": 2
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "union-slot-routed-repeated",
+    "severity": "error",
+    "grammar": "java",
+    "ownerKind": "switch_label_arm",
+    "message": "[collect-slots] kind 'switch_label_arm': choice rule:switch_label_arm:root routes 1 unnamed-nonterminal arm(s) [pattern] into one union slot alongside 1 label-routed arm(s) [field(expression):expression]. The list mixes slot topologies, so its elements cannot be read in order: give each label-routed arm a kind of its own (variant(name) in edits:)",
+    "canProceed": false,
+    "details": {
+      "unionSlot": "content",
+      "degenerateFields": [
+        "expression"
+      ]
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "storagename-collision",
+    "severity": "error",
+    "grammar": "java",
+    "ownerKind": "assert_statement_arm",
+    "message": "[assemble] storageName collision: kind 'assert_statement_arm' has 2 slots with storageName 'expression':\n    expression (named, multiplicity: single, values: [expression])\n    expression (positional, multiplicity: single, values: [expression])",
+    "canProceed": false,
+    "details": {
+      "storageName": "expression",
+      "slotCount": 2
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "content-collision",
+    "severity": "warning",
+    "grammar": "java",
+    "ownerKind": "method_reference",
+    "message": "Kind 'method_reference' has 2 anonymous 'content' slots that would share the '_content' storage key.",
+    "proposal": "Kind 'method_reference' has 2 anonymous 'content' slots that would share the '_content' storage key (an unemittable ambiguity). field()-name at least one in grammar.sittir.ts.",
+    "canProceed": false,
+    "details": {
+      "slotCount": 2
+    }
+  }
+]

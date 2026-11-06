@@ -294,6 +294,20 @@
     ]
   },
   {
+    "type": "formal_parameters",
+    "named": true,
+    "subtypes": [
+      {
+        "type": "formal_parameters_list",
+        "named": true
+      },
+      {
+        "type": "formal_parameters_receiver",
+        "named": true
+      }
+    ]
+  },
+  {
     "type": "hex_floating_point_literal",
     "named": true,
     "subtypes": [
@@ -473,6 +487,20 @@
       },
       {
         "type": "yield_statement",
+        "named": true
+      }
+    ]
+  },
+  {
+    "type": "try_statement",
+    "named": true,
+    "subtypes": [
+      {
+        "type": "try_statement_catches",
+        "named": true
+      },
+      {
+        "type": "try_statement_finally",
         "named": true
       }
     ]
@@ -2498,7 +2526,7 @@
     }
   },
   {
-    "type": "formal_parameters",
+    "type": "formal_parameters_list",
     "named": true,
     "fields": {
       "element": {
@@ -2519,6 +2547,21 @@
     "children": {
       "multiple": false,
       "required": false,
+      "types": [
+        {
+          "type": "receiver_parameter",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "formal_parameters_receiver",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
       "types": [
         {
           "type": "receiver_parameter",
@@ -4538,7 +4581,33 @@
     }
   },
   {
-    "type": "try_statement",
+    "type": "try_statement_catches",
+    "named": true,
+    "fields": {
+      "body": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "block",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "catch_clause",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "try_statement_finally",
     "named": true,
     "fields": {
       "body": {

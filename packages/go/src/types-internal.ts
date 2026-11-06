@@ -10,6 +10,9 @@ export namespace Declaration {
 }
 
 export interface SubBuilderRowKind {
+	'channelType.bidirectional': TSKindId.ChannelTypeBidirectional;
+	'channelType.receiveOnly': TSKindId.ChannelTypeReceiveOnly;
+	'channelType.sendOnly': TSKindId.ChannelTypeSendOnly;
 	comment: TSKindId.CommentArm1;
 	'comment.arm1': TSKindId.CommentArm1;
 	'comment.arm2': TSKindId.CommentArm2;
@@ -76,7 +79,9 @@ export interface SubBuilderRowKind {
 	'simpleStatement.send': TSKindId.SendStatement;
 	'simpleStatement.shortVar': TSKindId.ShortVarDeclaration;
 	'simpleType.array': TSKindId.ArrayType;
-	'simpleType.channel': TSKindId.ChannelType;
+	'simpleType.channel.bidirectional': TSKindId.ChannelTypeBidirectional;
+	'simpleType.channel.receiveOnly': TSKindId.ChannelTypeReceiveOnly;
+	'simpleType.channel.sendOnly': TSKindId.ChannelTypeSendOnly;
 	'simpleType.function': TSKindId.FunctionType;
 	'simpleType.generic': TSKindId.GenericType;
 	'simpleType.identifier': TSKindId.TypeIdentifier;
@@ -89,7 +94,9 @@ export interface SubBuilderRowKind {
 	'simpleType.struct': TSKindId.StructType;
 	'type.parenthesized': TSKindId.ParenthesizedType;
 	'type.simple.array': TSKindId.ArrayType;
-	'type.simple.channel': TSKindId.ChannelType;
+	'type.simple.channel.bidirectional': TSKindId.ChannelTypeBidirectional;
+	'type.simple.channel.receiveOnly': TSKindId.ChannelTypeReceiveOnly;
+	'type.simple.channel.sendOnly': TSKindId.ChannelTypeSendOnly;
 	'type.simple.function': TSKindId.FunctionType;
 	'type.simple.generic': TSKindId.GenericType;
 	'type.simple.identifier': TSKindId.TypeIdentifier;

@@ -153,6 +153,46 @@
     "code": "conflict-resolution",
     "severity": "info",
     "grammar": "go",
+    "message": "conflict between channel_type_bidirectional, channel_type_receive_only on '(' resolved by AddConflict (default)",
+    "canProceed": true,
+    "details": {
+      "resolution": {
+        "kind": "AddConflict",
+        "symbols": [
+          "channel_type_bidirectional",
+          "channel_type_receive_only"
+        ]
+      },
+      "step": "default",
+      "sourceChains": [
+        [
+          "channel_type_bidirectional",
+          "channel_type"
+        ],
+        [
+          "channel_type_receive_only",
+          "channel_type"
+        ]
+      ],
+      "conflict": {
+        "symbolSequence": [
+          "'<-'",
+          "'chan'",
+          "parenthesized_type"
+        ],
+        "lookahead": "'('",
+        "interpretations": [
+          "channel_type_bidirectional",
+          "channel_type_receive_only"
+        ]
+      }
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "conflict-resolution",
+    "severity": "info",
+    "grammar": "go",
     "message": "conflict between field_declarations on ';' resolved by AddConflict (default)",
     "canProceed": true,
     "details": {

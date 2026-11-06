@@ -264,6 +264,24 @@
     ]
   },
   {
+    "type": "channel_type",
+    "named": true,
+    "subtypes": [
+      {
+        "type": "channel_type_bidirectional",
+        "named": true
+      },
+      {
+        "type": "channel_type_receive_only",
+        "named": true
+      },
+      {
+        "type": "channel_type_send_only",
+        "named": true
+      }
+    ]
+  },
+  {
     "type": "escape_sequence",
     "named": true,
     "subtypes": [
@@ -826,7 +844,47 @@
     }
   },
   {
-    "type": "channel_type",
+    "type": "channel_type_bidirectional",
+    "named": true,
+    "fields": {
+      "value": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "_simple_type",
+            "named": true
+          },
+          {
+            "type": "parenthesized_type",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "channel_type_receive_only",
+    "named": true,
+    "fields": {
+      "value": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "_simple_type",
+            "named": true
+          },
+          {
+            "type": "parenthesized_type",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "channel_type_send_only",
     "named": true,
     "fields": {
       "value": {

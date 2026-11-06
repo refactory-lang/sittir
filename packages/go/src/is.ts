@@ -19,9 +19,15 @@ export interface KindMembers {
 		| TSKindId.ArrayType
 		| TSKindId.SliceType
 		| TSKindId.MapType
-		| TSKindId.ChannelType
+		| TSKindId.ChannelTypeBidirectional
+		| TSKindId.ChannelTypeSendOnly
+		| TSKindId.ChannelTypeReceiveOnly
 		| TSKindId.FunctionType
 		| TSKindId.NegatedType;
+	[TSKindId.ChannelType]:
+		| TSKindId.ChannelTypeBidirectional
+		| TSKindId.ChannelTypeSendOnly
+		| TSKindId.ChannelTypeReceiveOnly;
 	[TSKindId.Statement]:
 		| TSKindId.ConstDeclaration
 		| TSKindId.TypeDeclaration
@@ -294,9 +300,6 @@ export interface IsGuards {
 	mapType<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.MapType };
-	channelType<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ChannelType };
 	functionType<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.FunctionType };
@@ -660,6 +663,15 @@ export interface IsGuards {
 	specialArgumentListGroup<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.SpecialArgumentListGroup };
+	channelTypeBidirectional<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ChannelTypeBidirectional };
+	channelTypeSendOnly<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ChannelTypeSendOnly };
+	channelTypeReceiveOnly<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ChannelTypeReceiveOnly };
 	packageIdentifier<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.PackageIdentifier };
@@ -687,7 +699,9 @@ export interface IsGuards {
 			| TSKindId.ArrayType
 			| TSKindId.SliceType
 			| TSKindId.MapType
-			| TSKindId.ChannelType
+			| TSKindId.ChannelTypeBidirectional
+			| TSKindId.ChannelTypeSendOnly
+			| TSKindId.ChannelTypeReceiveOnly
 			| TSKindId.FunctionType
 			| TSKindId.NegatedType
 			| TSKindId.ParenthesizedType
@@ -726,15 +740,25 @@ export interface IsGuards {
 		map<T extends { readonly $type: number } | number>(
 			v: T
 		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.MapType };
-		channel<T extends { readonly $type: number } | number>(
-			v: T
-		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ChannelType };
+		channel: IsGuards['channelType'];
 		function<T extends { readonly $type: number } | number>(
 			v: T
 		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.FunctionType };
 		negated<T extends { readonly $type: number } | number>(
 			v: T
 		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.NegatedType };
+	};
+	readonly channelType: {
+		<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, KindMembers[TSKindId.ChannelType]>;
+		bidirectional<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ChannelTypeBidirectional };
+		sendOnly<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ChannelTypeSendOnly };
+		receiveOnly<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ChannelTypeReceiveOnly };
 	};
 	statement<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, KindMembers[TSKindId.Statement]>;
 	readonly simpleStatement: {
@@ -934,29 +958,35 @@ export interface IsGuards {
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.SourceFileText };
 }
 
-const _supertype_type_ids = new Set<number>([295, 158, 226, 160, 164, 168, 161, 163, 171, 172, 173, 165, 156]);
-const _supertype_simpleType_ids = new Set<number>([295, 158, 226, 160, 164, 168, 161, 163, 171, 172, 173, 165]);
+const _supertype_type_ids = new Set<number>([
+	298, 158, 226, 160, 164, 168, 161, 163, 171, 266, 267, 268, 173, 165, 156
+]);
+const _supertype_simpleType_ids = new Set<number>([
+	298, 158, 226, 160, 164, 168, 161, 163, 171, 266, 267, 268, 173, 165
+]);
+const _supertype_channelType_ids = new Set<number>([266, 267, 268]);
 const _supertype_statement_ids = new Set<number>([
 	140, 153, 142, 179, 180, 182, 183, 184, 185, 192, 193, 194, 195, 196, 199, 202, 205, 186, 188, 189, 190, 191, 174, 177
 ]);
 const _supertype_simpleStatement_ids = new Set<number>([179, 180, 182, 183, 184, 185]);
 const _supertype_expression_ids = new Set<number>([
-	224, 225, 213, 214, 215, 209, 216, 217, 218, 1, 219, 223, 227, 228, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92,
-	93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 72, 73, 74, 75, 208
+	224, 225, 213, 214, 215, 209, 216, 217, 218, 1, 219, 223, 227, 228, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91,
+	92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 71, 72, 73, 74, 208
 ]);
-const _supertype_escapeSequence_ids = new Set<number>([76, 77, 78, 79, 80]);
-const _supertype_intLiteral_ids = new Set<number>([81, 82, 83, 84, 85]);
-const _supertype_floatLiteral_ids = new Set<number>([86, 87, 88, 89, 90, 91]);
-const _supertype_imaginaryLiteral_ids = new Set<number>([92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103]);
-const _supertype_runeLiteral_ids = new Set<number>([104, 105, 106, 107, 108, 109]);
-const _supertype_comment_ids = new Set<number>([110, 111]);
-const _supertype_floatLiteralArm4_ids = new Set<number>([89, 90, 91]);
-const _supertype_imaginaryLiteralArm10_ids = new Set<number>([101, 102, 103]);
-const _supertype_runeLiteralArm2_ids = new Set<number>([105, 106, 107, 108, 109]);
+const _supertype_escapeSequence_ids = new Set<number>([75, 76, 77, 78, 79]);
+const _supertype_intLiteral_ids = new Set<number>([80, 81, 82, 83, 84]);
+const _supertype_floatLiteral_ids = new Set<number>([85, 86, 87, 88, 89, 90]);
+const _supertype_imaginaryLiteral_ids = new Set<number>([91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102]);
+const _supertype_runeLiteral_ids = new Set<number>([103, 104, 105, 106, 107, 108]);
+const _supertype_comment_ids = new Set<number>([109, 110]);
+const _supertype_floatLiteralArm4_ids = new Set<number>([88, 89, 90]);
+const _supertype_imaginaryLiteralArm10_ids = new Set<number>([100, 101, 102]);
+const _supertype_runeLiteralArm2_ids = new Set<number>([104, 105, 106, 107, 108]);
 const _supertype_layout_ids = new Set<number>([125, 126, 127, 128, 129, 130, 131, 132]);
 
 const _members = new Map<number, ReadonlySet<number>>([
 	[TSKindId.SimpleType, _supertype_simpleType_ids],
+	[TSKindId.ChannelType, _supertype_channelType_ids],
 	[TSKindId.Statement, _supertype_statement_ids],
 	[TSKindId.SimpleStatement, _supertype_simpleStatement_ids],
 	[TSKindId.Expression, _supertype_expression_ids],
@@ -1022,9 +1052,11 @@ export function guardsWith(test: KindTest): IsGuards {
 	const _kind_ArrayType_guard = _g(TSKindId.ArrayType);
 	const _kind_SliceType_guard = _g(TSKindId.SliceType);
 	const _kind_MapType_guard = _g(TSKindId.MapType);
-	const _kind_ChannelType_guard = _g(TSKindId.ChannelType);
 	const _kind_FunctionType_guard = _g(TSKindId.FunctionType);
 	const _kind_NegatedType_guard = _g(TSKindId.NegatedType);
+	const _kind_ChannelTypeBidirectional_guard = _g(TSKindId.ChannelTypeBidirectional);
+	const _kind_ChannelTypeSendOnly_guard = _g(TSKindId.ChannelTypeSendOnly);
+	const _kind_ChannelTypeReceiveOnly_guard = _g(TSKindId.ChannelTypeReceiveOnly);
 	const _kind_ExpressionStatement_guard = _g(TSKindId.ExpressionStatement);
 	const _kind_SendStatement_guard = _g(TSKindId.SendStatement);
 	const _kind_IncStatement_guard = _g(TSKindId.IncStatement);
@@ -1240,19 +1272,10 @@ export function guardsWith(test: KindTest): IsGuards {
 	const _form_LiteralElement_guard = _vg(_g(TSKindId.LiteralElement), {
 		literalValue: _at(_kind_LiteralElement_guard, 'content', _kind_LiteralValue_guard)
 	});
-	const _supertype_simpleType_guard = _vg(_mg(157), {
-		identifier: _kind_TypeIdentifier_guard,
-		generic: _kind_GenericType_guard,
-		qualified: _kind_QualifiedType_guard,
-		pointer: _kind_PointerType_guard,
-		struct: _kind_StructType_guard,
-		interface: _kind_InterfaceType_guard,
-		array: _kind_ArrayType_guard,
-		slice: _kind_SliceType_guard,
-		map: _kind_MapType_guard,
-		channel: _kind_ChannelType_guard,
-		function: _kind_FunctionType_guard,
-		negated: _kind_NegatedType_guard
+	const _supertype_channelType_guard = _vg(_mg(172), {
+		bidirectional: _kind_ChannelTypeBidirectional_guard,
+		sendOnly: _kind_ChannelTypeSendOnly_guard,
+		receiveOnly: _kind_ChannelTypeReceiveOnly_guard
 	});
 	const _supertype_simpleStatement_guard = _vg(_mg(178), {
 		expression: _kind_ExpressionStatement_guard,
@@ -1297,9 +1320,19 @@ export function guardsWith(test: KindTest): IsGuards {
 		arm4: _kind_RuneLiteralArm2Arm4_guard,
 		arm5: _kind_RuneLiteralArm2Arm5_guard
 	});
-	const _supertype_type_guard = _vg(_sg(_supertype_type_ids), {
-		simple: _supertype_simpleType_guard,
-		parenthesized: _kind_ParenthesizedType_guard
+	const _supertype_simpleType_guard = _vg(_mg(157), {
+		identifier: _kind_TypeIdentifier_guard,
+		generic: _kind_GenericType_guard,
+		qualified: _kind_QualifiedType_guard,
+		pointer: _kind_PointerType_guard,
+		struct: _kind_StructType_guard,
+		interface: _kind_InterfaceType_guard,
+		array: _kind_ArrayType_guard,
+		slice: _kind_SliceType_guard,
+		map: _kind_MapType_guard,
+		channel: _supertype_channelType_guard,
+		function: _kind_FunctionType_guard,
+		negated: _kind_NegatedType_guard
 	});
 	const _supertype_floatLiteral_guard = _vg(_mg(231), {
 		arm1: _kind_FloatLiteralArm1_guard,
@@ -1322,6 +1355,10 @@ export function guardsWith(test: KindTest): IsGuards {
 	const _supertype_runeLiteral_guard = _vg(_mg(233), {
 		arm1: _kind_RuneLiteralArm1_guard,
 		arm2: _supertype_runeLiteralArm2_guard
+	});
+	const _supertype_type_guard = _vg(_sg(_supertype_type_ids), {
+		simple: _supertype_simpleType_guard,
+		parenthesized: _kind_ParenthesizedType_guard
 	});
 	return Object.freeze({
 		sourceFile: _kind_SourceFile_guard,
@@ -1360,7 +1397,6 @@ export function guardsWith(test: KindTest): IsGuards {
 		methodElem: _kind_MethodElem_guard,
 		typeElem: _kind_TypeElem_guard,
 		mapType: _kind_MapType_guard,
-		channelType: _kind_ChannelType_guard,
 		functionType: _kind_FunctionType_guard,
 		block: _kind_Block_guard,
 		statementList: _form_StatementList_guard,
@@ -1470,6 +1506,9 @@ export function guardsWith(test: KindTest): IsGuards {
 		statementListArm: _kind_StatementListArm_guard,
 		receiveStatementGroup: _kind_ReceiveStatementGroup_guard,
 		specialArgumentListGroup: _kind_SpecialArgumentListGroup_guard,
+		channelTypeBidirectional: _kind_ChannelTypeBidirectional_guard,
+		channelTypeSendOnly: _kind_ChannelTypeSendOnly_guard,
+		channelTypeReceiveOnly: _kind_ChannelTypeReceiveOnly_guard,
 		packageIdentifier: _kind_PackageIdentifier_guard,
 		fieldIdentifier: _kind_FieldIdentifier_guard,
 		typeConstraint: _kind_TypeConstraint_guard,
@@ -1477,6 +1516,7 @@ export function guardsWith(test: KindTest): IsGuards {
 		kind: (v: { readonly $type: number }, k: number): boolean => typeof v !== 'number' && test(v, _kinds(k)),
 		type: _supertype_type_guard,
 		simpleType: _supertype_simpleType_guard,
+		channelType: _supertype_channelType_guard,
 		statement: _mg(176),
 		simpleStatement: _supertype_simpleStatement_guard,
 		expression: _mg(207),

@@ -279,14 +279,18 @@
 			"field": "call_expression_arm2_after"
 		}
 	],
-	"channel_type": [
+	"channel_type_bidirectional": [
 		{
 			"kind": "seam",
-			"field": "channel_type_before"
+			"field": "channel_type_bidirectional_before"
 		},
 		{
-			"kind": "slot",
-			"name": "operator"
+			"kind": "text",
+			"text": "chan"
+		},
+		{
+			"kind": "seam",
+			"field": "chan_keyword_after"
 		},
 		{
 			"kind": "slot",
@@ -294,7 +298,75 @@
 		},
 		{
 			"kind": "seam",
-			"field": "channel_type_after"
+			"field": "channel_type_bidirectional_after"
+		}
+	],
+	"channel_type_receive_only": [
+		{
+			"kind": "seam",
+			"field": "channel_type_receive_only_before"
+		},
+		{
+			"kind": "text",
+			"text": "<-"
+		},
+		{
+			"kind": "seam",
+			"field": "lt_dash_after"
+		},
+		{
+			"kind": "seam",
+			"field": "chan_keyword_before"
+		},
+		{
+			"kind": "text",
+			"text": "chan"
+		},
+		{
+			"kind": "seam",
+			"field": "chan_keyword_after"
+		},
+		{
+			"kind": "slot",
+			"name": "value"
+		},
+		{
+			"kind": "seam",
+			"field": "channel_type_receive_only_after"
+		}
+	],
+	"channel_type_send_only": [
+		{
+			"kind": "seam",
+			"field": "channel_type_send_only_before"
+		},
+		{
+			"kind": "text",
+			"text": "chan"
+		},
+		{
+			"kind": "seam",
+			"field": "chan_keyword_after"
+		},
+		{
+			"kind": "seam",
+			"field": "lt_dash_before"
+		},
+		{
+			"kind": "text",
+			"text": "<-"
+		},
+		{
+			"kind": "seam",
+			"field": "lt_dash_after"
+		},
+		{
+			"kind": "slot",
+			"name": "value"
+		},
+		{
+			"kind": "seam",
+			"field": "channel_type_send_only_after"
 		}
 	],
 	"comment_arm1": [

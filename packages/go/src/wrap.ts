@@ -1468,37 +1468,6 @@ export function wrapMapType(data: T.MapType, tree: TreeHandle): T.MapType.Parsed
 	return node as unknown as T.MapType.Parsed;
 }
 
-export function wrapChannelType(data: T.ChannelType, tree: TreeHandle): T.ChannelType.Parsed {
-	const handle = currentHandle();
-	const node = {
-		...data,
-		$type: TSKindId.ChannelType as const,
-		operator() {
-			return this._operator;
-		},
-		value() {
-			return hydrateSlot<T.Type>(this, '_value', tree);
-		},
-		$with: {
-			operator: (v: NonNullable<T.ChannelType['_operator']>) =>
-				rebuilt(node, handle, () => wrapChannelType({ ...$edited(data), _operator: v }, tree)),
-			value: (v: NonNullable<T.ChannelType['_value']>) =>
-				rebuilt(node, handle, () => wrapChannelType({ ...$edited(data), _value: v }, tree))
-		},
-		$render: () => renderText(handle, node),
-		toString: () => node.$render(),
-		toJSON: () => nodeJSON(node, jsonFacts),
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
-		$engine: handle && (() => handle.current)
-	};
-	return node as unknown as T.ChannelType.Parsed;
-}
-
 export function wrapFunctionType(data: T.FunctionType, tree: TreeHandle): T.FunctionType.Parsed {
 	const handle = currentHandle();
 	const node = {
@@ -5057,6 +5026,90 @@ export function wrapSpecialArgumentListGroup(
 	return node as unknown as T.SpecialArgumentListGroup.Parsed;
 }
 
+export function wrapChannelTypeBidirectional(
+	data: T.ChannelTypeBidirectional,
+	tree: TreeHandle
+): T.ChannelTypeBidirectional.Parsed {
+	const handle = currentHandle();
+	const node = {
+		...data,
+		$type: TSKindId.ChannelTypeBidirectional as const,
+		value() {
+			return hydrateSlot<T.Type>(this, '_value', tree);
+		},
+		$with: {
+			value: (v: NonNullable<T.ChannelTypeBidirectional['_value']>) =>
+				rebuilt(node, handle, () => wrapChannelTypeBidirectional({ ...$edited(data), _value: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.ChannelTypeBidirectional.Parsed;
+}
+
+export function wrapChannelTypeSendOnly(data: T.ChannelTypeSendOnly, tree: TreeHandle): T.ChannelTypeSendOnly.Parsed {
+	const handle = currentHandle();
+	const node = {
+		...data,
+		$type: TSKindId.ChannelTypeSendOnly as const,
+		value() {
+			return hydrateSlot<T.Type>(this, '_value', tree);
+		},
+		$with: {
+			value: (v: NonNullable<T.ChannelTypeSendOnly['_value']>) =>
+				rebuilt(node, handle, () => wrapChannelTypeSendOnly({ ...$edited(data), _value: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.ChannelTypeSendOnly.Parsed;
+}
+
+export function wrapChannelTypeReceiveOnly(
+	data: T.ChannelTypeReceiveOnly,
+	tree: TreeHandle
+): T.ChannelTypeReceiveOnly.Parsed {
+	const handle = currentHandle();
+	const node = {
+		...data,
+		$type: TSKindId.ChannelTypeReceiveOnly as const,
+		value() {
+			return hydrateSlot<T.Type>(this, '_value', tree);
+		},
+		$with: {
+			value: (v: NonNullable<T.ChannelTypeReceiveOnly['_value']>) =>
+				rebuilt(node, handle, () => wrapChannelTypeReceiveOnly({ ...$edited(data), _value: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.ChannelTypeReceiveOnly.Parsed;
+}
+
 export function wrapPackageIdentifier(data: T.PackageIdentifier, tree: TreeHandle): T.PackageIdentifier.Parsed {
 	const handle = currentHandle();
 	const node = {
@@ -5246,7 +5299,6 @@ const _wrapTable: Record<number, (data: _UntypedNode, tree: TreeHandle) => unkno
 	[TSKindId.MethodElem]: (d, t) => wrapMethodElem(d as unknown as T.MethodElem, t),
 	[TSKindId.TypeElem]: (d, t) => wrapTypeElem(d as unknown as T.TypeElem, t),
 	[TSKindId.MapType]: (d, t) => wrapMapType(d as unknown as T.MapType, t),
-	[TSKindId.ChannelType]: (d, t) => wrapChannelType(d as unknown as T.ChannelType, t),
 	[TSKindId.FunctionType]: (d, t) => wrapFunctionType(d as unknown as T.FunctionType, t),
 	[TSKindId.Block]: (d, t) => wrapBlock(d as unknown as T.Block, t),
 	[TSKindId.StatementList]: (d, t) => wrapStatementList(d as unknown as T.StatementList, t),
@@ -5369,6 +5421,10 @@ const _wrapTable: Record<number, (data: _UntypedNode, tree: TreeHandle) => unkno
 	[TSKindId.ReceiveStatementGroup]: (d, t) => wrapReceiveStatementGroup(d as unknown as T.ReceiveStatementGroup, t),
 	[TSKindId.SpecialArgumentListGroup]: (d, t) =>
 		wrapSpecialArgumentListGroup(d as unknown as T.SpecialArgumentListGroup, t),
+	[TSKindId.ChannelTypeBidirectional]: (d, t) =>
+		wrapChannelTypeBidirectional(d as unknown as T.ChannelTypeBidirectional, t),
+	[TSKindId.ChannelTypeSendOnly]: (d, t) => wrapChannelTypeSendOnly(d as unknown as T.ChannelTypeSendOnly, t),
+	[TSKindId.ChannelTypeReceiveOnly]: (d, t) => wrapChannelTypeReceiveOnly(d as unknown as T.ChannelTypeReceiveOnly, t),
 	[TSKindId.PackageIdentifier]: (d, t) => wrapPackageIdentifier(d as unknown as T.PackageIdentifier, t),
 	[TSKindId.FieldIdentifier]: (d, t) => wrapFieldIdentifier(d as unknown as T.FieldIdentifier, t),
 	[TSKindId.TypeConstraint]: (d, t) => wrapTypeConstraint(d as unknown as T.TypeConstraint, t),

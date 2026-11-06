@@ -1793,45 +1793,6 @@ describe('map_type', () => {
 	});
 });
 
-describe('channel_type', () => {
-	it('factory produces correct type', () => {
-		const node = ir.channelType({
-			operator: 'chan',
-			value: stampBuilt({
-				$type: TSKindId.ParenthesizedType,
-				$text: 'test',
-				$named: true,
-				_type: stampBuilt({
-					$type: TSKindId.TypeIdentifier,
-					$text: 'test',
-					$named: true,
-					_content: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
-				}) as any
-			}) as any
-		});
-		expect(node.$type).toBe(TSKindId.ChannelType);
-		expectBuiltNode(node);
-	});
-	it('render produces non-empty string', () => {
-		const node = ir.channelType({
-			operator: 'chan',
-			value: stampBuilt({
-				$type: TSKindId.ParenthesizedType,
-				$text: 'test',
-				$named: true,
-				_type: stampBuilt({
-					$type: TSKindId.TypeIdentifier,
-					$text: 'test',
-					$named: true,
-					_content: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
-				}) as any
-			}) as any
-		});
-		const rendered = node.$render!();
-		expect(rendered.length).toBeGreaterThan(0);
-	});
-});
-
 describe('function_type', () => {
 	it('factory produces correct type', () => {
 		const node = ir.functionType({
@@ -4234,5 +4195,119 @@ describe('source_file_text', () => {
 		expect(node.$type).toBe(TSKindId.SourceFileText);
 		expectBuiltNode(node);
 		expect(node.$text()).toBe('\n');
+	});
+});
+
+describe('channel_type_bidirectional', () => {
+	it('factory produces correct type', () => {
+		const node = ir.channelTypeBidirectional(
+			stampBuilt({
+				$type: TSKindId.ParenthesizedType,
+				$text: 'test',
+				$named: true,
+				_type: stampBuilt({
+					$type: TSKindId.TypeIdentifier,
+					$text: 'test',
+					$named: true,
+					_content: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
+				}) as any
+			}) as any
+		);
+		expect(node.$type).toBe(TSKindId.ChannelTypeBidirectional);
+		expectBuiltNode(node);
+	});
+	it('render produces non-empty string', () => {
+		const node = ir.channelTypeBidirectional(
+			stampBuilt({
+				$type: TSKindId.ParenthesizedType,
+				$text: 'test',
+				$named: true,
+				_type: stampBuilt({
+					$type: TSKindId.TypeIdentifier,
+					$text: 'test',
+					$named: true,
+					_content: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
+				}) as any
+			}) as any
+		);
+		const rendered = node.$render!();
+		expect(rendered.length).toBeGreaterThan(0);
+		expect(rendered).toContain('test');
+	});
+});
+
+describe('channel_type_send_only', () => {
+	it('factory produces correct type', () => {
+		const node = ir.channelTypeSendOnly(
+			stampBuilt({
+				$type: TSKindId.ParenthesizedType,
+				$text: 'test',
+				$named: true,
+				_type: stampBuilt({
+					$type: TSKindId.TypeIdentifier,
+					$text: 'test',
+					$named: true,
+					_content: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
+				}) as any
+			}) as any
+		);
+		expect(node.$type).toBe(TSKindId.ChannelTypeSendOnly);
+		expectBuiltNode(node);
+	});
+	it('render produces non-empty string', () => {
+		const node = ir.channelTypeSendOnly(
+			stampBuilt({
+				$type: TSKindId.ParenthesizedType,
+				$text: 'test',
+				$named: true,
+				_type: stampBuilt({
+					$type: TSKindId.TypeIdentifier,
+					$text: 'test',
+					$named: true,
+					_content: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
+				}) as any
+			}) as any
+		);
+		const rendered = node.$render!();
+		expect(rendered.length).toBeGreaterThan(0);
+		expect(rendered).toContain('test');
+	});
+});
+
+describe('channel_type_receive_only', () => {
+	it('factory produces correct type', () => {
+		const node = ir.channelTypeReceiveOnly(
+			stampBuilt({
+				$type: TSKindId.ParenthesizedType,
+				$text: 'test',
+				$named: true,
+				_type: stampBuilt({
+					$type: TSKindId.TypeIdentifier,
+					$text: 'test',
+					$named: true,
+					_content: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
+				}) as any
+			}) as any
+		);
+		expect(node.$type).toBe(TSKindId.ChannelTypeReceiveOnly);
+		expectBuiltNode(node);
+	});
+	it('render produces non-empty string', () => {
+		const node = ir.channelTypeReceiveOnly(
+			stampBuilt({
+				$type: TSKindId.ParenthesizedType,
+				$text: 'test',
+				$named: true,
+				_type: stampBuilt({
+					$type: TSKindId.TypeIdentifier,
+					$text: 'test',
+					$named: true,
+					_content: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
+				}) as any
+			}) as any
+		);
+		const rendered = node.$render!();
+		expect(rendered.length).toBeGreaterThan(0);
+		expect(rendered).toContain('test');
 	});
 });
