@@ -2,6 +2,7 @@ import { execFileSync } from 'node:child_process';
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import {
+	BOOTSTRAP_INDENT_UNIT,
 	REPO_ROOT,
 	grammarDisplayName,
 	grammarPackageDir,
@@ -129,6 +130,7 @@ export async function bootstrapGrammar(opts: BootstrapGrammarOptions): Promise<n
 	];
 	for (const path of written) process.stdout.write(`${dryRun ? 'would write' : 'wrote'} ${path}\n`);
 	process.stdout.write(`${vars.upstreamDependency}: ${vars.upstreamRange}\n`);
+	process.stdout.write(`indent: preference('${BOOTSTRAP_INDENT_UNIT}') is a default; confirm it against the indent characters the first gen reports\n`);
 	if (dryRun) return 0;
 
 	run('pnpm', ['exec', 'oxfmt', ...written.filter((path) => /\.(ts|json|md)$/.test(path))]);

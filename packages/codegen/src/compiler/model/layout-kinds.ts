@@ -103,19 +103,43 @@ export function newlineArms(nodeMap: NodeMap): readonly string[] {
 
 export const PREFERRED_NEWLINE = canonicalText(NEWLINE_MEMBER);
 
-export function indentUnitOf(nodeMap: NodeMap, declared: string | undefined, grammar: string): string {
-	const chars = indentChars(nodeMap);
+export interface IndentProblem {
+	readonly code: 'indent-undeclared' | 'indent-not-admitted';
+	readonly message: string;
+	readonly proposal: string;
+}
+
+export function indentProblemOf(chars: readonly string[], declared: string | undefined, grammar: string): IndentProblem | undefined {
 	if (chars.length === 0) {
-		if (declared !== undefined) throw new Error(`options: ${grammar} declares indent ${JSON.stringify(declared)} but its whitespace admits no indent characters`);
-		return '';
+		return declared === undefined
+			? undefined
+			: {
+					code: 'indent-not-admitted',
+					message: `options: ${grammar} declares indent ${JSON.stringify(declared)} but its whitespace admits no indent characters`,
+					proposal: `Remove indent from the options of ${grammar}.`
+				};
 	}
 	if (declared === undefined) {
-		throw new Error(`options: ${grammar} admits indent characters ${JSON.stringify(chars)} but declares no indent; add indent: preference(unit) to its options`);
+		return {
+			code: 'indent-undeclared',
+			message: `options: ${grammar} admits indent characters ${JSON.stringify(chars)} but declares no indent`,
+			proposal: `Add indent: preference(unit) to its options, where unit is one or more of ${JSON.stringify(chars)}.`
+		};
 	}
 	if (declared === '' || ![...declared].every((c) => chars.includes(c))) {
-		throw new Error(`options: ${grammar} indent ${JSON.stringify(declared)} is not one or more of ${JSON.stringify(chars)}`);
+		return {
+			code: 'indent-not-admitted',
+			message: `options: ${grammar} indent ${JSON.stringify(declared)} is not one or more of ${JSON.stringify(chars)}`,
+			proposal: `Declare indent: preference(unit) with a unit made of ${JSON.stringify(chars)}.`
+		};
 	}
-	return declared;
+	return undefined;
+}
+
+export function indentUnitOf(nodeMap: NodeMap, declared: string | undefined, grammar: string): string {
+	const problem = indentProblemOf(indentChars(nodeMap), declared, grammar);
+	if (problem !== undefined) throw new Error(`${problem.message}; ${problem.proposal}`);
+	return declared ?? '';
 }
 
 export const LAYOUT_KIND_BITS: Readonly<Record<string, number>> = {

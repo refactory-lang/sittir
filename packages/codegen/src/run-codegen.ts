@@ -25,7 +25,8 @@ import { generateWithDerivedConflicts } from './transpile/conflict-driver.ts';
 import { assertGrammarRuntimeFloor } from './transpile/tree-sitter-cli.ts';
 import { renderModuleSrcDir } from './emitters/render-module-paths.ts';
 import { manifestPath, recordNativeBuild, recordedGeneration, sourceFingerprint, writeManifestForGrammar, type SourceFingerprint } from './scripts/generated-manifest.ts';
-import { grammarPackage, isGrammar, nativeCrateDir, nativeCrateRelDir, sittirDirOf, type GrammarPackage } from './grammars.ts';
+import { GRAMMAR_ENTRY, grammarPackage, isGrammar, nativeCrateDir, nativeCrateRelDir, sittirDirOf, type GrammarPackage } from './grammars.ts';
+import { conflictResolutionsPath } from './transpile/conflict-resolutions-file.ts';
 import { nativeCrateFiles } from './emitters/native-crate.ts';
 import type { NodeMap } from './compiler/types.ts';
 import { formatEmitDiff } from './scripts/emit-diff.ts';
@@ -150,7 +151,26 @@ interface GatedCompilation {
 	readonly compilation?: Compilation;
 }
 
+export function missingTranspileDiagnostics(pkg: GrammarPackage): GrammarDiagnostic[] {
+	const path = conflictResolutionsPath(pkg);
+	if (existsSync(path)) return [];
+	return [
+		{
+			scope: 'grammar',
+			code: 'transpile-missing',
+			severity: 'error',
+			grammar: pkg.name,
+			message: `${path} is missing: ${GRAMMAR_ENTRY} imports it, and only the full chain writes it.`,
+			proposal: `Run gen --grammar ${pkg.name} --all once, which transpiles the grammar and runs tree-sitter generate.`,
+			canProceed: false,
+			details: { path }
+		}
+	];
+}
+
 async function gatedCompilation(pkg: GrammarPackage, allowDiagnostics: ReadonlySet<string>): Promise<GatedCompilation> {
+	const missing = blockedRecords(missingTranspileDiagnostics(pkg), undefined, allowDiagnostics);
+	if (missing.length > 0) return { records: missing, blocked: missing };
 	const gated = await compileGrammar({
 		package: pkg,
 		allowDiagnostics,

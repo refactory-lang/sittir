@@ -1,4 +1,4 @@
-import { GRAMMAR_ENTRY, GRAMMAR_TSCONFIG, GRAMMAR_TYPECHECK_CEILING, GRAMMAR_TYPECHECK_SCRIPT, PORTABLE_TYPE_TESTS } from '@sittir/codegen/grammars';
+import { BASE_ENTRY, BOOTSTRAP_INDENT_UNIT, GRAMMAR_ENTRY, GRAMMAR_TSCONFIG, GRAMMAR_TYPECHECK_CEILING, GRAMMAR_TYPECHECK_SCRIPT, PORTABLE_TYPE_TESTS } from '@sittir/codegen/grammars';
 
 export interface GrammarTemplateVars {
 	readonly name: string;
@@ -96,15 +96,25 @@ export function grammarPackageFiles(v: GrammarTemplateVars): TemplateFile[] {
 			contents: json({ [GRAMMAR_ENTRY]: 1 })
 		},
 		{
-			path: 'grammar.sittir.ts',
+			path: BASE_ENTRY,
+			contents: `// The upstream tree-sitter grammar. tsconfig \`paths\` types this specifier as the grammar's
+// generated shape (grammar-shapes/upstream/), so \`raw\` needs no cast; Node loads the real grammar.js.
+// Node's type stripping loads this file, so it stays erasable.
+import raw from '${v.upstreamDependency}/grammar.js';
+export default raw;
+`
+		},
+		{
+			path: GRAMMAR_ENTRY,
 			contents: `/// <reference path="../codegen/src/dsl/authoring-globals.d.ts" />
-import base from '${v.upstreamDependency}/grammar.js';
+import base from './${BASE_ENTRY}';
 import resolutions from './.sittir/resolutions.json' with { type: 'json' };
-import { enrich, wire } from '../codegen/src/dsl/index.ts';
+import { enrich, preference, wire } from '../codegen/src/dsl/index.ts';
 
 export default grammar(enrich(base), wire({
-	resolutions,
-	name: '${v.name}'
+\tresolutions,
+\tname: '${v.name}',
+\toptions: { indent: preference('${BOOTSTRAP_INDENT_UNIT}') }
 }));
 `
 		},

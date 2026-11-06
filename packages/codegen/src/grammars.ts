@@ -19,6 +19,7 @@ export const BINDINGS_MODULE = 'grammar.bindings.ts';
 export const GRAMMAR_LAYERS = ['sittir', 'top'] as const;
 export type GrammarLayer = (typeof GRAMMAR_LAYERS)[number];
 export const BASE_ENTRY = 'base.ts';
+export const BOOTSTRAP_INDENT_UNIT = '    ';
 export const GRAMMAR_TSCONFIG = 'tsconfig.grammar-sittir.json';
 export const PORTABLE_TYPE_TESTS = 'tests/*.portable.test-d.ts';
 export const GRAMMAR_TYPECHECK_SCRIPT = 'type-check:grammar';

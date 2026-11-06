@@ -5,6 +5,8 @@ import { describe, expect, it } from 'vitest';
 import { allGrammars, BINDINGS_MODULE, grammarPackage, grammarPackageDir, grammarRequire, topLayerPath } from '@sittir/codegen/grammars';
 import { evaluate } from '../../codegen/src/dsl/evaluate.ts';
 import { NO_FILE_TYPES } from '../../codegen/src/compiler/upstream-file-types.ts';
+import { BOOTSTRAP_INDENT_UNIT } from '@sittir/codegen/grammars';
+import { indentProblemOf } from '../../codegen/src/compiler/model/layout-kinds.ts';
 import { grammarPackageFiles } from '../src/bootstrap/templates.ts';
 import { ensureConflictResolutions } from '../../codegen/src/transpile/conflict-resolutions-file.ts';
 
@@ -40,6 +42,25 @@ function expectStockShape(source: string, shape: RegExp = STOCK_SHAPE): void {
 	expect(source.match(LAYER_HALVES)).toEqual(['enrich(', 'wire(']);
 }
 
+describe('the bootstrap template writes what the pipeline reads', () => {
+	const file = (path: string) => python.find((f) => f.path === path)!.contents;
+
+	it('writes base.ts importing the upstream through the dependency alias', () => {
+		expect(file('base.ts')).toContain("import raw from 'tree-sitter-python/grammar.js';");
+		expect(file('base.ts')).toContain('export default raw;');
+	});
+
+	it('imports base.ts from the grammar entry, not the upstream package', () => {
+		expect(file('grammar.sittir.ts')).toContain("import base from './base.ts';");
+		expect(file('grammar.sittir.ts')).not.toContain('tree-sitter-python/grammar.js');
+	});
+
+	it('declares an indent default that passes the check the emitter runs for space and tab indentation', () => {
+		expect(file('grammar.sittir.ts')).toContain(`indent: preference(${JSON.stringify(BOOTSTRAP_INDENT_UNIT).replace(/"/g, "'")})`);
+		expect(indentProblemOf([' ', '\t'], BOOTSTRAP_INDENT_UNIT, 'python')).toBeUndefined();
+	});
+});
+
 describe('grammar composition is one entry, whose base enrich() and wire() complete together', () => {
 	it('the bootstrap template is in the stock shape', () => {
 		expectStockShape(python.find((f) => f.path === 'grammar.sittir.ts')!.contents);
@@ -59,18 +80,19 @@ describe('grammar composition is one entry, whose base enrich() and wire() compl
 
 describe('a bootstrapped grammar hand-writes no rule', () => {
 	it('the template grammar compiles the upstream rules as is, with the layout supertype minted by enrich', async () => {
-		const template = grammarPackageFiles({
+		const files = grammarPackageFiles({
 			name: 'regex',
 			Name: 'Regex',
 			upstreamDependency: 'tree-sitter-regex',
 			upstreamRange: '^0.25.0'
-		}).find((f) => f.path === 'grammar.sittir.ts')!.contents;
-		const source = template
-			.replace("'tree-sitter-regex/grammar.js'", JSON.stringify(grammarRequire('regex').resolve('tree-sitter-regex/grammar.js')))
-			.replace("'../codegen/src/dsl/index.ts'", JSON.stringify(resolve(__dirname, '../../codegen/src/dsl/index.ts')));
+		});
+		const contentsOf = (path: string) => files.find((f) => f.path === path)!.contents;
+		const source = contentsOf('grammar.sittir.ts').replace("'../codegen/src/dsl/index.ts'", JSON.stringify(resolve(__dirname, '../../codegen/src/dsl/index.ts')));
+		const base = contentsOf('base.ts').replace("'tree-sitter-regex/grammar.js'", JSON.stringify(grammarRequire('regex').resolve('tree-sitter-regex/grammar.js')));
 		const dir = mkdtempSync(join(tmpdir(), 'sittir-bootstrap-template-'));
 		const entry = join(dir, 'grammar.sittir.ts');
 		writeFileSync(entry, source, 'utf8');
+		writeFileSync(join(dir, 'base.ts'), base, 'utf8');
 		ensureConflictResolutions({ dir });
 		try {
 			const raw = await evaluate(entry, NO_FILE_TYPES);
