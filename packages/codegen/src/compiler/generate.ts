@@ -134,7 +134,7 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 			expectTestFailures: raw.expectTestFailures,
 			reparseHosts: raw.reparseHosts,
 			options: raw.options,
-			visibleExternals: raw.visibleExternals,
+			renderAs: raw.renderAs,
 			diagnostics: compilation.diagnostics
 		});
 

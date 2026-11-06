@@ -132,7 +132,7 @@ export class LinkCtx extends BaseCtx<'evaluate'> {
 		this.inline = init.inline;
 		this.hiddenNamedArmChoices = init.hiddenNamedArmChoices;
 		this.kindEntries = init.kindEntries;
-		this.renderAsStamps = renderAsStampsOf(init.grammar.renderAs ?? {});
+		this.renderAsStamps = renderAsStampsOf(init.grammar.renderAs ?? {}, init.grammar.visibleAs ?? {});
 		this.root = rootRuleName(init.grammar.rules);
 	}
 
@@ -864,7 +864,7 @@ function renameRules(raw: RawGrammar, renames: ReadonlyMap<string, string>): Raw
 				? undefined
 				: Object.fromEntries(Object.entries(raw.groups).map(([key, arms]) => [rename(key), renameGroupArms(arms)])),
 		renderAs: renameRuleRecord(raw.renderAs),
-		visibleExternals: renameRuleRecord(raw.visibleExternals),
+		visibleAs: renameGroupArms(raw.visibleAs),
 		options: renameRecord(raw.options),
 		expectDiagnostics: renameRecord(raw.expectDiagnostics),
 		expectTestFailures: renameRecord(raw.expectTestFailures),
@@ -2387,10 +2387,11 @@ export interface RenderAsStamps {
 	readonly blanks: ReadonlySet<string>;
 }
 
-export function renderAsStampsOf(renderAs: Readonly<Record<string, Rule<'evaluate'>>>): RenderAsStamps {
+export function renderAsStampsOf(renderAs: Readonly<Record<string, Rule<'evaluate'>>>, visibleAs: Readonly<Record<string, string>> = {}): RenderAsStamps {
 	const literals: Record<string, RenderAsLiteralStamp> = {};
 	const blanks = new Set<string>();
 	for (const [sym, body] of Object.entries(renderAs)) {
+		if (Object.hasOwn(visibleAs, sym)) continue;
 		if (body.type === STRING) literals[sym] = { value: body.value, immediate: false };
 		else if (body.type === TOKEN && body.content.type === STRING) literals[sym] = { value: body.content.value, immediate: isImmediateToken(body) };
 		else if (isBlank(body)) blanks.add(sym);

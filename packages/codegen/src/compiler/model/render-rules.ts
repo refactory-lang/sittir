@@ -41,12 +41,12 @@ export interface Flanks {
 }
 
 export function whitespaceTextOf(
-	visibleExternals: Readonly<Record<string, Rule<'evaluate'>>> | undefined,
+	renderAs: Readonly<Record<string, Rule<'evaluate'>>> | undefined,
 	nodeMap: NodeMap
 ): ReadonlyMap<string, string> {
 	const out = new Map<string, string>();
 	for (const [arm, symbol] of layoutSymbolsOf(nodeMap)) {
-		const r = visibleExternals?.[symbol] as { type?: unknown; value?: unknown } | undefined;
+		const r = renderAs?.[symbol] as { type?: unknown; value?: unknown } | undefined;
 		if (r?.type === STRING && typeof r.value === 'string') out.set(arm, r.value);
 	}
 	return out;

@@ -297,7 +297,7 @@ export function hiddenTerminalNonliteralDiagnostics(grammar: RawGrammar): Gramma
 		ownerKind,
 		message: `kind '${ownerKind}' references the hidden terminal '${target}' bare; its text has no kind the parse tree reports.`,
 		proposal: externals.has(target)
-			? `Give the scanner token '${target}' its text under visibleExternals in grammar.sittir.ts: visibleExternals: (_$) => ({ ${target}: string(…) }).`
+			? `Give the scanner token '${target}' its text under renderAs in grammar.sittir.ts: renderAs: (_$) => ({ ${target}: string(…) }).`
 			: `Give the text a visible rule of its own with a rule() patch.`,
 		canProceed: false,
 		details: { target }
@@ -424,6 +424,8 @@ const UNEXPECTABLE_CODES: ReadonlySet<string> = new Set([
 	'render-only-not-external',
 	'vocabulary-replaces-upstream',
 	'whitespace-mint-collision',
+	'external-alias-outside-render-as',
+	'render-as-alias-invalid',
 	'conflict-authored',
 	'conflict-unresolvable',
 	'conflict-resolutions-stale',

@@ -39,7 +39,7 @@ describe('predicted symbol facts', () => {
 	};
 	const symbols: SymbolSource = predictedSymbolSourceOf({
 		...grammarOf(rules, { externals: ['_ext', '_declared'] }),
-		visibleExternals: { _declared: true }
+		visibleAs: { _declared: 'declared' }
 	});
 
 	it('a hidden rule every reference aliases to one name is not hidden', () => {

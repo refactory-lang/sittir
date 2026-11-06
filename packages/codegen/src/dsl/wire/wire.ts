@@ -36,6 +36,15 @@ import { aliasOf, isBlank, isComplexBody, isParserHiddenName, onlyAliasedSymbols
 import { predictedSymbolSourceOf } from '../symbol-table.ts';
 import { getEnrichElementSupertypes, getEnrichFieldBackings, getEnrichHiddenSubsequences, getEnrichMints, getEnrichTextTokens, getEnrichVisibleSubsequenceSources, getEnrichWhitespace, nativeRuleFn, type AuthoredFieldSite, type GrammarResult } from '../enrich.ts';
 import type { WhitespaceCollision } from '../whitespace.ts';
+import {
+	externalAliasKey,
+	externalAliasSitesOf,
+	splitRenderAsAliases,
+	upstreamAliasSitesOf,
+	visibleAsOf,
+	type AuthoredExternalAlias,
+	type RenderAsAliasProblem
+} from './render-as-visibility.ts';
 import { relabelledArm, seedAutomaticVariants, withoutLabel, type AutomaticVariants } from '../automatic-variants.ts';
 import { polymorphVisibleName } from '../arm-names.ts';
 import { extrasClosure } from '../extras.ts';
@@ -45,9 +54,7 @@ import type { IsPath, TransformPatchMap } from '../../grammar-shapes/path-type.t
 import { ruleCauseOf, type RuleCauseDeclaration } from '../primitives/rule-cause.ts';
 import { baseRulesOf, VERIFIED_TREE_SITTER } from '../shared.ts';
 
-export type RenderAsConfig = ($: Record<string, unknown>) => Record<string, unknown>;
-
-export type VisibleExternalsConfig = ($: Record<string, unknown>) => Record<string, unknown>;
+export type RenderAsConfig = ($: Record<string, AuthoringRule>) => Record<string, unknown>;
 
 export type PatchForm =
 	| 'field'
@@ -84,7 +91,11 @@ export interface WireContext {
 	readonly refineForms: Map<string, RefineForm[]>;
 	readonly groups?: GroupsConfig;
 	readonly renderAs?: Readonly<Record<string, unknown>>;
-	readonly visibleExternals?: Readonly<Record<string, unknown>>;
+	readonly visibleAs?: Readonly<Record<string, string>>;
+	readonly renderAsProblems?: readonly RenderAsAliasProblem[];
+	readonly externalNames: ReadonlySet<string>;
+	readonly upstreamAliasKeys: ReadonlySet<string>;
+	readonly externalAliases: Map<string, AuthoredExternalAlias>;
 	readonly whitespaceCollisions?: readonly WhitespaceCollision[];
 	readonly expectDiagnostics?: Partial<Record<string, readonly string[]>>;
 	readonly expectTestFailures?: Partial<Record<string, string>>;
@@ -149,7 +160,11 @@ export const WIRE_ENTRY_ROLES = {
 	refineForms: 'undone',
 	groups: 'outside',
 	renderAs: 'outside',
-	visibleExternals: 'outside',
+	visibleAs: 'outside',
+	renderAsProblems: 'outside',
+	externalNames: 'outside',
+	upstreamAliasKeys: 'outside',
+	externalAliases: 'outside',
 	whitespaceCollisions: 'outside',
 	expectDiagnostics: 'outside',
 	expectTestFailures: 'outside',
@@ -797,6 +812,9 @@ export function withWireContext<T>(
 		refineForms: new Map(),
 		groups: undefined,
 		renderAs: undefined,
+		externalNames: new Set(),
+		upstreamAliasKeys: new Set(),
+		externalAliases: new Map(),
 		options: undefined,
 		currentRuleKind: ruleKind,
 		currentLift: null,
@@ -975,7 +993,6 @@ export type WireConfig<B extends GrammarJson, NewRules extends string = string> 
 	readonly edits?: EditsConfig<B>;
 	readonly options?: OptionsConfig;
 	readonly renderAs?: RenderAsConfig;
-	readonly visibleExternals?: VisibleExternalsConfig;
 	readonly expectDiagnostics?: Partial<Record<string, readonly string[]>>;
 	readonly expectTestFailures?: Partial<Record<string, string>>;
 	readonly reparseHosts?: ReparseHostsConfig;
@@ -1016,7 +1033,15 @@ export function wireWithoutConfig(name: string, base: GrammarResult): WiredOpts 
 
 export function wireImpl(cfg: WireConfig<any>, base: unknown, source: unknown, layer?: WireLayer, declared: EvaluatedConfig = evaluatedConfig(cfg)): WiredOpts {
 	const baseArg = base as BaseArg | undefined;
-	const { visibleExternals, whitespaceCollisions } = withEnrichedWhitespace(declared.visibleExternals, base);
+	const externalNames = baseExternalNames(baseArg);
+	const { renderAs, minted, whitespaceCollisions } = withEnrichedWhitespace(declared.renderAs, base);
+	const upstreamSites = upstreamAliasSitesOf(baseRuleBodiesOf(baseArg), externalNames);
+	const { visibleAs, problems: renderAsProblems } = visibleAsOf(renderAs, {
+		externals: externalNames,
+		minted,
+		upstreamSites,
+		entryAliases: { names: declared.names, anonymous: declared.anonymous }
+	});
 	assertNoSpacingAddressPatches(cfg.edits ?? {}, knownRuleNames(cfg, baseArg));
 	assertNoDeclaredGroupPatches(cfg.edits ?? {}, cfg.groups);
 	const context: WireContext = {
@@ -1028,8 +1053,12 @@ export function wireImpl(cfg: WireConfig<any>, base: unknown, source: unknown, l
 		liftNames: new Map(),
 		refineForms: new Map(),
 		groups: cfg.groups,
-		renderAs: declared.renderAs,
-		visibleExternals,
+		renderAs,
+		visibleAs,
+		renderAsProblems,
+		externalNames,
+		upstreamAliasKeys: new Set(upstreamSites.map(externalAliasKey)),
+		externalAliases: new Map(),
 		whitespaceCollisions,
 		expectDiagnostics: cfg.expectDiagnostics,
 		expectTestFailures: cfg.expectTestFailures,
@@ -1084,7 +1113,7 @@ export function wireImpl(cfg: WireConfig<any>, base: unknown, source: unknown, l
 	wrapAllRuleFns(outRules, context);
 	memoizeLayerRules(outRules, context);
 	applyWirePatternReplacement(outRules, context.authoredRuleNames, declared.patterns, context);
-	applyWireVisibleExternalsRewrite(outRules, visibleExternals);
+	applyWireVisibleExternalsRewrite(outRules, context);
 
 	if (baseArg) {
 		for (const name of getEnrichHiddenSubsequences(base)) {
@@ -1145,7 +1174,7 @@ function refuseFoldedDisplays(bodies: ReadonlyMap<string, unknown>, context: Wir
 }
 
 export function protectedWireRuleNames(context: WireContext): string[] {
-	return [...context.deposits.keys(), ...Object.keys(context.renderAs ?? {}), ...Object.keys(context.visibleExternals ?? {})];
+	return [...context.deposits.keys(), ...Object.keys(context.renderAs ?? {})];
 }
 
 function declaredRuleCauses(rules: Record<string, RuleFn>): Pick<WireContext, 'ruleCauses' | 'undeclaredRules'> {
@@ -1790,13 +1819,14 @@ export interface DeclaredPattern {
 export interface EvaluatedConfig {
 	readonly patterns: readonly DeclaredPattern[];
 	readonly renderAs: Readonly<Record<string, unknown>> | undefined;
-	readonly visibleExternals: Readonly<Record<string, unknown>> | undefined;
+	readonly names: Readonly<Record<string, string>>;
+	readonly anonymous: ReadonlySet<string>;
 }
 
-export function evaluatedConfig(cfg: Pick<WireConfig<any>, 'groups' | 'renderAs' | 'visibleExternals'>): EvaluatedConfig {
-	const bodies = (config: RenderAsConfig | VisibleExternalsConfig | undefined): Readonly<Record<string, unknown>> | undefined =>
-		config === undefined ? undefined : (withStringGlobalShim(() => config(layerSymbols())) ?? undefined);
-	return { patterns: declaredPatterns(cfg.groups), renderAs: bodies(cfg.renderAs), visibleExternals: bodies(cfg.visibleExternals) };
+export function evaluatedConfig(cfg: Pick<WireConfig<any>, 'groups' | 'renderAs'>): EvaluatedConfig {
+	const evaluated = cfg.renderAs === undefined ? undefined : (withStringGlobalShim(() => cfg.renderAs!(layerSymbols() as Record<string, AuthoringRule>)) ?? undefined);
+	const { bodies, names, anonymous } = splitRenderAsAliases(evaluated);
+	return { patterns: declaredPatterns(cfg.groups), renderAs: evaluated === undefined ? undefined : bodies, names, anonymous };
 }
 
 export function factoryInlineNamesOf(cfg: Pick<WireConfig<any>, 'factoryInline'>): ReadonlySet<string> {
@@ -1907,6 +1937,12 @@ function withStringGlobalShim<T>(fn: () => T): T {
 	}
 }
 
+function namedAliasOf(rule: unknown, name: string): unknown {
+	const native = (globalThis as { alias?: (content: unknown, value: unknown) => unknown }).alias;
+	if (typeof native !== 'function') throw new Error('renderAs: no global alias() found; a visible external is aliased inside a runtime that injects alias()');
+	return native(rule, { type: 'SYMBOL', name });
+}
+
 function rewriteVisibleExternalRefsRt(rule: unknown, hiddenToVisible: ReadonlyMap<string, string>): unknown {
 	if (!rule || typeof rule !== 'object') return rule;
 	const r = rule as { type: string; members?: unknown[]; content?: { readonly type?: string }; name?: string };
@@ -1915,7 +1951,7 @@ function rewriteVisibleExternalRefsRt(rule: unknown, hiddenToVisible: ReadonlyMa
 	if (t === 'SYMBOL') {
 		const visibleName = hiddenToVisible.get(r.name ?? '');
 		if (visibleName === undefined) return rule;
-		return { type: 'ALIAS', content: rule, named: true, value: visibleName };
+		return namedAliasOf(rule, visibleName);
 	}
 	if (t === 'SEQ' || t === 'CHOICE') {
 		const members = r.members;
@@ -1953,9 +1989,16 @@ function stampHoistedFn(fn: RuleFn): RuleFn {
 	};
 }
 
-function buildVisibleExternalsRewritingFn(fn: RuleFn, hiddenToVisible: ReadonlyMap<string, string>): RuleFn {
+function recordAuthoredExternalAliases(ruleName: string, result: unknown, context: WireContext): void {
+	for (const site of externalAliasSitesOf(result, context.externalNames)) {
+		if (!context.upstreamAliasKeys.has(externalAliasKey(site))) context.externalAliases.set(`${ruleName}\0${externalAliasKey(site)}`, { rule: ruleName, ...site });
+	}
+}
+
+function buildVisibleExternalsRewritingFn(ruleName: string, fn: RuleFn, context: WireContext, hiddenToVisible: ReadonlyMap<string, string>): RuleFn {
 	return function visibleExternalsRewritingRuleFn($, previous) {
 		const result = fn($, previous);
+		recordAuthoredExternalAliases(ruleName, result, context);
 		return rewriteVisibleExternalRefsRt(result, hiddenToVisible);
 	};
 }
@@ -1964,7 +2007,8 @@ function withEnrichedWhitespace(
 	declared: Readonly<Record<string, unknown>> | undefined,
 	base: unknown
 ): {
-	readonly visibleExternals: Readonly<Record<string, unknown>> | undefined;
+	readonly renderAs: Readonly<Record<string, unknown>> | undefined;
+	readonly minted: ReadonlySet<string>;
 	readonly whitespaceCollisions: readonly WhitespaceCollision[];
 } {
 	const { bodies, collisions } = getEnrichWhitespace(base);
@@ -1972,20 +2016,17 @@ function withEnrichedWhitespace(
 		...collisions,
 		...Object.keys(declared ?? {})
 			.filter((name) => Object.hasOwn(bodies, name))
-			.map((name) => ({ name, site: 'visibleExternals' as const }))
+			.map((name) => ({ name, site: 'renderAs' as const }))
 	];
-	if (Object.keys(bodies).length === 0) return { visibleExternals: declared, whitespaceCollisions };
-	return { visibleExternals: { ...declared, ...bodies }, whitespaceCollisions };
+	if (Object.keys(bodies).length === 0) return { renderAs: declared, minted: new Set<string>(), whitespaceCollisions };
+	return { renderAs: { ...declared, ...bodies }, minted: new Set(Object.keys(bodies)), whitespaceCollisions };
 }
 
-function applyWireVisibleExternalsRewrite(
-	rules: Record<string, RuleFn>,
-	visibleExternals: Readonly<Record<string, unknown>> | undefined
-): void {
-	const hiddenToVisible = new Map(Object.keys(visibleExternals ?? {}).map((hiddenName) => [hiddenName, hiddenName.replace(/^_+/, '')]));
-	if (hiddenToVisible.size === 0) return;
+function applyWireVisibleExternalsRewrite(rules: Record<string, RuleFn>, context: WireContext): void {
+	const hiddenToVisible = new Map(Object.entries(context.visibleAs ?? {}));
+	if (hiddenToVisible.size === 0 && context.externalNames.size === 0) return;
 	for (const [name, fn] of Object.entries(rules)) {
-		rules[name] = buildVisibleExternalsRewritingFn(fn, hiddenToVisible);
+		rules[name] = buildVisibleExternalsRewritingFn(name, fn, context, hiddenToVisible);
 	}
 }
 

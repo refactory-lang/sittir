@@ -432,16 +432,8 @@ export default grammar(enrich(base), wire({
 		// survives as a captured slot.
 		string_literal: [{ 0: alias('string_open') }, { 0: field('string_open') }],
 
-		// raw_string_literal's delimiters are HIDDEN external-scanner
-		// tokens (`$._raw_string_literal_start`/`_end`) — invisible in
-		// the CST, so their per-occurrence text (the hash-run width:
-		// `r#"` vs `r###"`) never reaches the read layer, and the render
-		// had to invent a fixed single-hash spelling that corrupts any
-		// raw string whose content embeds `#"`-runs. Same fix as
-		// `string_literal`/`string_open`: name the tokens via alias so
-		// each occurrence's real text survives as a captured slot.
+		// raw_string_literal's delimiters are visible through renderAs; the field patch captures each occurrence's hash-run text as a slot.
 		raw_string_literal: [
-			{ '0': alias('raw_string_literal_start'), '2': alias('raw_string_literal_end') },
 			{
 				0: field('raw_string_literal_start'),
 				1: field('string_content'),

@@ -239,7 +239,7 @@ function grammarFn(
 }
 
 function withRecords(grammar: EvaluatedGrammar, records: LayerRecords, synthesized: readonly SynthesizedRules[]): EvaluatedGrammar {
-	const bodies: Readonly<Record<string, Rule<'evaluate'>>> = { ...records.renderAs, ...records.visibleExternals };
+	const bodies: Readonly<Record<string, Rule<'evaluate'>>> = { ...records.renderAs };
 	return { ...grammar, ...records, rules: withSynthesizedRules(grammar.rules, synthesized, bodies), evaluateSynthesized: new Set(Object.keys(bodies)) };
 }
 

@@ -387,7 +387,7 @@ type RecordRename = 'optionPaths' | 'keysAndBodies' | 'keys' | 'names' | 'repars
 const RECORD_RENAMES = {
 	options: 'optionPaths',
 	renderAs: 'keysAndBodies',
-	visibleExternals: 'keysAndBodies',
+	visibleAs: 'keysAndBodies',
 	reparseHosts: 'reparseHosts',
 	refineForms: 'keys',
 	spellings: 'keys',
@@ -399,6 +399,8 @@ const RECORD_RENAMES = {
 	expectTestFailures: 'keys',
 	protectedRuleNames: 'names',
 	whitespaceCollisions: { entry: 'name' },
+	renderAsProblems: { entry: 'external' },
+	externalAliases: { entry: 'external' },
 	bodyPatternZeroMatches: 'names'
 } as const satisfies { readonly [K in keyof LayerRecords]-?: RecordRename };
 

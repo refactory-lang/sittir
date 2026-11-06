@@ -48,7 +48,7 @@ export interface EmitAllConfig {
 	expectTestFailures?: Readonly<Record<string, string>>;
 	reparseHosts?: ReparseHostsConfig;
 	options?: OptionsConfig;
-	visibleExternals?: Readonly<Record<string, EvaluatedRule<'evaluate'>>>;
+	renderAs?: Readonly<Record<string, EvaluatedRule<'evaluate'>>>;
 	diagnostics?: DiagnosticSink;
 }
 
@@ -93,14 +93,14 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 		expectTestFailures,
 		reparseHosts,
 		options: optionsBlock,
-		visibleExternals,
+		renderAs,
 		diagnostics
 	} = config;
 	assertReparseHostKeys(grammar, reparseHosts, new Set([...nodeMap.nodes.keys(), ...collectGeneratedKindEntries(generatedIdTables).flatMap((entry) => (entry.parseName === undefined ? [entry.kind] : [entry.kind, entry.parseName]))]));
 	const renderModuleEmission = classifyRenderModuleEmission(grammar, emitRenderModule);
 	const kindEntries = collectKindEntries(nodeMap, generatedIdTables);
 	const resolvedRules = resolveRenderRules(
-		{ nodeMap, kindEntries, options: optionsBlock, whitespaceText: whitespaceTextOf(visibleExternals, nodeMap) },
+		{ nodeMap, kindEntries, options: optionsBlock, whitespaceText: whitespaceTextOf(renderAs, nodeMap) },
 		(spaced) => stampStaticSpacing(nodeMap, grammar, spaced, kindEntries)
 	);
 
@@ -145,7 +145,7 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 					...grammarRenderInputs(renderModuleEmission.validGrammar, {
 						renderRules,
 						options: optionsBlock,
-						visibleExternals,
+						renderAs,
 						sites: sitePreferences,
 						addresses: addressTables
 					})

@@ -131,18 +131,16 @@ export default grammar(enrich(base), wire({
 		role($._newline, 'newline');
 		return prev ?? [];
 	},
-	visibleExternals: (_$) => ({
-		_indent: indent(),
-		_dedent: dedent()
-	}),
 	inline: ($, previous) => [...(previous ?? []), $._except_clause_exception_as_optional1],
 
 	// See docs/python-grammar-sittir-glossary.md::renderAs
-	renderAs: (_$) => ({
+	renderAs: ($) => ({
 		string_start: token(seq(field('prefix', optional(spellings(STRING_PREFIXES))), field('quote', spellings(STRING_QUOTES, STRING_ESCAPE)))),
-		_string_content: token.immediate(/[\s\S]+/),
+		_string_content: alias(token.immediate(/[\s\S]+/), $.string_fragment),
 		escape_interpolation: token.immediate(/\{\{|\}\}/),
-		string_end: token.immediate(seq(field('content', /(?:\\[\s\S])*/), field('quote', spellings(STRING_QUOTES, STRING_ESCAPE))))
+		string_end: token.immediate(seq(field('content', /(?:\\[\s\S])*/), field('quote', spellings(STRING_QUOTES, STRING_ESCAPE)))),
+		_indent: indent(),
+		_dedent: dedent()
 	}),
 	reparseHosts: {
 		hosts: {
@@ -576,7 +574,7 @@ export default grammar(enrich(base), wire({
 							$.escape_interpolation,
 							$.escape_sequence,
 							alias($._not_escape_sequence, $.not_escape_sequence),
-							alias($._string_content, $.string_fragment)
+							$._string_content
 						)
 					)
 				)

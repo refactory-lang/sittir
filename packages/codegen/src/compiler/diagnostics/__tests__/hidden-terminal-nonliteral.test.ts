@@ -54,9 +54,9 @@ describe('hiddenTerminalNonliteralSites', () => {
 describe('hiddenTerminalNonliteralDiagnostics proposal', () => {
 	const diagnose = (rules: Record<string, R>) => hiddenTerminalNonliteralDiagnostics({ name: 'demo', ...grammar(rules) } as RawGrammar);
 
-	it('names visibleExternals when the target is a scanner external', () => {
+	it('names renderAs when the target is a scanner external', () => {
 		const [diagnostic] = diagnose({ comment: seq(str('/*'), sym('_content'), str('*/')) });
-		expect(diagnostic?.proposal).toContain('visibleExternals');
+		expect(diagnostic?.proposal).toContain('renderAs');
 		expect(diagnostic?.proposal).toContain('_content');
 		expect(diagnostic?.proposal).not.toContain('rule()');
 	});
@@ -64,7 +64,7 @@ describe('hiddenTerminalNonliteralDiagnostics proposal', () => {
 	it('keeps the rule() patch advice when the target is a hidden rule', () => {
 		const [diagnostic] = diagnose({ capture: seq(str('@'), sym('_name')), _name: pattern('[a-z]+') });
 		expect(diagnostic?.proposal).toContain('rule()');
-		expect(diagnostic?.proposal).not.toContain('visibleExternals');
+		expect(diagnostic?.proposal).not.toContain('renderAs');
 	});
 });
 
