@@ -31,6 +31,7 @@ import { rootRuleName } from '../../util/reachable-rules.ts';
 import type { Rule } from '../../types/rule.ts';
 import { lineTerminated, triviaKinds } from '../model/trivia.ts';
 import { indentChars, indentProblemOf } from '../model/layout-kinds.ts';
+import { unresolvedEnumTextsOf } from '../../emitters/shared.ts';
 import { displayedKinds } from '../model/display-name.ts';
 import { readOptionsBlock } from '../../dsl/wire/options-block.ts';
 import type { NodeMap } from '../types.ts';
@@ -241,6 +242,30 @@ export function hiddenTerminalNonliteralSites(grammar: Pick<RawGrammar, 'rules' 
 		walk(ownerKind, rule);
 	}
 	return sites;
+}
+
+export function unresolvedEnumTextDiagnostics(grammar: string, nodeMap: NodeMap): GrammarDiagnostic[] {
+	return [...nodeMap.nodes].flatMap(([ownerKind, node]) =>
+		node.slots.flatMap((slot): GrammarDiagnostic[] => {
+			if (slot.name === undefined || slot.storageInfo?.kind !== 'verbatim') return [];
+			const texts = unresolvedEnumTextsOf(slot, nodeMap, node);
+			if (texts.length === 0) return [];
+			return [
+				{
+					scope: 'grammar',
+					code: 'unresolved-enum-text',
+					severity: 'error',
+					grammar,
+					ownerKind,
+					slotName: slot.name,
+					message: `kind '${ownerKind}': ${slot.name} stores ${texts.map((text) => JSON.stringify(text)).join(', ')} as a kind id, but no single token carries that text.`,
+					proposal: `An enum value is exactly one token. Give each alternative that spells several tokens its own kind with variant(...) in grammar.sittir.ts.`,
+					canProceed: false,
+					details: { texts }
+				}
+			];
+		})
+	);
 }
 
 export function indentDiagnostics(grammar: string, config: Pick<SitePreferencesConfig, 'options'> & { readonly nodeMap: NodeMap }): GrammarDiagnostic[] {
@@ -496,6 +521,7 @@ export function collectGrammarDiagnosticsForGrammar(input: {
 			...hiddenTerminalNonliteralDiagnostics(rawGrammar),
 			...undeclaredSeparatorDiagnostics(rawGrammar.name, { nodeMap, kindEntries, options: rawGrammar.options }),
 			...indentDiagnostics(rawGrammar.name, { nodeMap, options: rawGrammar.options }),
+			...unresolvedEnumTextDiagnostics(rawGrammar.name, nodeMap),
 			...surfacedCompilerDiagnostics
 		])
 	};

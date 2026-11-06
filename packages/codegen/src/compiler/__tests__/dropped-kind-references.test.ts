@@ -1,6 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { diagnosePredicted, rawIdTablesOf, withPredictedKinds } from '../../__tests__/helpers/linked.ts';
-import { buildRuleCatalog } from '../rule-catalog.ts';
+import { diagnosePredicted, predictedRawGrammarOf as rawGrammarOf, rawIdTablesOf } from '../../__tests__/helpers/linked.ts';
 import { undeclaredSeparatorSites } from '../model/site-preferences.ts';
 import { collectGeneratedKindEntries } from '../../dsl/symbol-table.ts';
 import type { RawGrammar } from '../types.ts';
@@ -8,26 +7,6 @@ import type { RawGrammar } from '../types.ts';
 const str = (value: string) => ({ type: 'STRING', value });
 const seq = (...members: unknown[]) => ({ type: 'SEQ', members });
 const variantSym = (name: string, variant: string, variantOf: string) => ({ type: 'SYMBOL', name, annotations: { variant, variantOf } });
-
-function rawGrammarOf(rules: Record<string, unknown>, supertypes: string[]): RawGrammar {
-	const { rules: catalogRules, ruleCatalog } = buildRuleCatalog(rules as never);
-	return withPredictedKinds({
-		name: 'synth',
-		fileTypes: [],
-		rules: catalogRules,
-		ruleCatalog,
-		evaluateSynthesized: new Set<string>(),
-		extras: [],
-		externals: [],
-		supertypes,
-		factoryInline: [],
-		inline: [],
-		conflicts: [],
-		precedences: [],
-		word: null,
-		references: []
-	});
-}
 
 function supertypeOverDroppedVariant(): RawGrammar {
 	return rawGrammarOf(

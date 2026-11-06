@@ -2332,6 +2332,15 @@ export function enumValuesOf(rule: ChoiceRule): string[] {
 	return [...new Set(enumLiteralMembersOf(rule).map((m) => literalTextOf(m) ?? '').filter(Boolean))];
 }
 
+export interface EnumArmsCtx {
+	readonly arms: readonly { readonly text: string }[];
+}
+
+export function unresolvedEnumTexts(texts: readonly string[], ctx: EnumArmsCtx): string[] {
+	const carried = new Set(ctx.arms.map((arm) => arm.text));
+	return texts.filter((text) => !carried.has(text));
+}
+
 export interface EnumChoiceCtx {
 	readonly renderRule?: RenderRule | undefined;
 }
