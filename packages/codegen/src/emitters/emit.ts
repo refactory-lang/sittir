@@ -24,7 +24,7 @@ import { TemplateEmitter, stampStaticSpacing } from './templates.ts';
 import { emitClientUtils } from './client-utils.ts';
 import { collectKindEntries, type KindEnumEntry } from './kind-discriminant.ts';
 import { grammarRenderInputs, RenderModuleEmitter } from './render-module.ts';
-import { collectingEmitDiagnostics, guardOwner } from '../compiler/diagnostics/emit-diagnostics.ts';
+import { collectingEmitDiagnostics, type EmitCollector } from '../compiler/diagnostics/emit-diagnostics.ts';
 import { isGrammar } from '../grammars.ts';
 import {
 	classifyFactoryEmission,
@@ -83,11 +83,10 @@ function classifyRenderModuleEmission(grammar: string, emitRenderModule: boolean
 }
 
 export function emitAll(config: EmitAllConfig): EmitAllResult {
-	return collectingEmitDiagnostics(config.grammar, () => emitStages(config));
+	return collectingEmitDiagnostics(config.grammar, (collector) => emitStages(config, collector));
 }
 
-function emitStages(config: EmitAllConfig): EmitAllResult {
-	const stage = <T>(run: () => T): T => guardOwner(undefined as T, run);
+function emitStages(config: EmitAllConfig, collector: EmitCollector): EmitAllResult {
 	const {
 		grammar,
 		nodeMap,
@@ -162,36 +161,60 @@ function emitStages(config: EmitAllConfig): EmitAllResult {
 
 	dispatchNodeMapByTaxonomy(
 		{ factoryEmitter, fromEmitter, wrapEmitter, templateEmitter, renderModuleEmitterInst },
-		{ nodeMap, kindEntries, inlineKinds, synthesizedKinds }
+		{ nodeMap, kindEntries, inlineKinds, synthesizedKinds },
+		collector
 	);
 
-	const factories = stage(() => factoryEmitter.finalize());
-	const factoriesRecords = stage(() => factoryEmitter.finalizeRecords());
-	const factoriesDispatch = factories === undefined ? undefined! : stage(() => factoryEmitter.finalizeDispatch(factories));
-	const from = stage(() => fromEmitter.finalize());
-	const wrap = stage(() => wrapEmitter.finalize());
-	const templates = stage(() => templateEmitter.finalize());
-	const renderModule = templates === undefined ? undefined : stage(() => renderModuleEmitterInst?.finalize(templates));
+	const factories = collector.guard(() => factoryEmitter.finalize());
+	const factoriesRecords = collector.guard(() => factoryEmitter.finalizeRecords());
+	const factoriesDispatch = factories === undefined ? undefined : collector.guard(() => factoryEmitter.finalizeDispatch(factories));
+	const from = collector.guard(() => fromEmitter.finalize());
+	const wrap = collector.guard(() => wrapEmitter.finalize());
+	const templates = collector.guard(() => templateEmitter.finalize());
+	const renderModule = templates === undefined ? undefined : collector.guard(() => renderModuleEmitterInst?.finalize(templates));
 
-	const wires = collectPolymorphWires(nodeMap);
-	const tables = builderTables(nodeMap, wires);
-	const { types, internal: typesInternal, kinds } = stage(() =>
-		emitTypesModules({
-			grammar,
-			nodeMap,
-			generatedIdTables,
-			sites: sitePreferences,
-			addresses: addressTables,
-			triviaKinds,
-			wires,
-			entryRows: tables.entryRows
-		})
-	) ?? ({} as ReturnType<typeof emitTypesModules>);
-	const consts = stage(() => emitConsts({ grammar, nodeMap }));
-	const options = stage(() => emitOptions({ nodeMap, kindEntries, renderRules, options: optionsBlock, sites: sitePreferences, addresses: addressTables }));
-	const is = stage(() => emitIs({ grammar, nodeMap, generatedIdTables }));
-	const tests = templates === undefined ? undefined! : stage(() => emitTests({ grammar, nodeMap, generatedIdTables, expectTestFailures, renderBodies: templates.bodies }));
-	const utils = stage(() => emitClientUtils({ grammar, nodeMap, triviaKinds, structure: factoryEmitter.structure }));
+	const wires = collector.guard(() => collectPolymorphWires(nodeMap));
+	const tables = wires === undefined ? undefined : collector.guard(() => builderTables(nodeMap, wires));
+	const typeModules =
+		wires === undefined || tables === undefined
+			? undefined
+			: collector.guard(() =>
+					emitTypesModules({
+						grammar,
+						nodeMap,
+						generatedIdTables,
+						sites: sitePreferences,
+						addresses: addressTables,
+						triviaKinds,
+						wires,
+						entryRows: tables.entryRows
+					})
+				);
+	const consts = collector.guard(() => emitConsts({ grammar, nodeMap }));
+	const options = collector.guard(() => emitOptions({ nodeMap, kindEntries, renderRules, options: optionsBlock, sites: sitePreferences, addresses: addressTables }));
+	const is = collector.guard(() => emitIs({ grammar, nodeMap, generatedIdTables }));
+	const tests = templates === undefined ? undefined : collector.guard(() => emitTests({ grammar, nodeMap, generatedIdTables, expectTestFailures, renderBodies: templates.bodies }));
+	const utils = collector.guard(() => emitClientUtils({ grammar, nodeMap, triviaKinds, structure: factoryEmitter.structure }));
+
+	collector.assertClear();
+	if (
+		factories === undefined ||
+		factoriesRecords === undefined ||
+		factoriesDispatch === undefined ||
+		from === undefined ||
+		wrap === undefined ||
+		templates === undefined ||
+		tables === undefined ||
+		typeModules === undefined ||
+		consts === undefined ||
+		options === undefined ||
+		is === undefined ||
+		tests === undefined ||
+		utils === undefined
+	) {
+		throw new Error('an emission stage produced nothing though no diagnostic was collected');
+	}
+	const { types, internal: typesInternal, kinds } = typeModules;
 
 	return {
 		factories,
@@ -231,12 +254,12 @@ interface NodeDispatchContext {
 	readonly synthesizedKinds: ReadonlySet<string> | undefined;
 }
 
-function dispatchNodeMapByTaxonomy(emitters: NodeDispatchEmitters, ctx: NodeDispatchContext): void {
+function dispatchNodeMapByTaxonomy(emitters: NodeDispatchEmitters, ctx: NodeDispatchContext, collector: EmitCollector): void {
 	const { factoryEmitter, fromEmitter, wrapEmitter, templateEmitter, renderModuleEmitterInst } = emitters;
 	const { nodeMap, kindEntries, inlineKinds, synthesizedKinds } = ctx;
 
 	for (const [kind, node] of nodeMap.nodes) {
-		guardOwner(undefined, () => {
+		collector.guard(() => {
 			const factoryEmission = classifyFactoryEmission(kind, node, {
 				nodeMap,
 				kindEntries,

@@ -6,7 +6,7 @@ import { AssembledSupertype, storageKeyOf, type AssembledNonterminal } from '../
 import { hasBlankArm } from '../compiler/model/site-preferences.ts';
 import { grammarTypeMapName } from './engine.ts';
 import { nodeSlotNumbers } from './render-module.ts';
-import { emitShapeFailure, guardOwner } from '../compiler/diagnostics/emit-diagnostics.ts';
+import { EmitCollector, emitShapeFailure } from '../compiler/diagnostics/emit-diagnostics.ts';
 import { layoutTriviaKindIds, listKindIds, namedUnitKindIds, rebuildWrapperKindIds } from './wrap.ts';
 
 export interface EmitClientUtilsConfig {
@@ -81,10 +81,11 @@ export function queryRoutesOf(slot: AssembledNonterminal, nodeMap: NodeMap): Wir
 
 export function querySlotRows(nodeMap: NodeMap): ReadonlyMap<number, readonly QuerySlotEntry[]> {
 	const rows = new Map<number, readonly QuerySlotEntry[]>();
+	const collector = new EmitCollector('');
 	for (const node of nodeMap.nodes.values()) {
 		if (node.kindId === undefined || node.slots.length === 0) continue;
 		const kindId = node.kindId;
-		guardOwner(undefined, () => {
+		collector.guard(() => {
 			const numbers = nodeSlotNumbers(node, nodeMap);
 			const row = node.slots.map((slot): QuerySlotEntry => {
 				if (slot.propertyName === RECORDER_FLAG_KEY)
@@ -112,6 +113,7 @@ export function querySlotRows(nodeMap: NodeMap): ReadonlyMap<number, readonly Qu
 			rows.set(kindId, row);
 		});
 	}
+	collector.assertClear();
 	return new Map([...rows].sort(([a], [b]) => a - b));
 }
 

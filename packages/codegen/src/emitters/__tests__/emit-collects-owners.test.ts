@@ -1,6 +1,5 @@
 import { describe, expect, it } from 'vitest';
 import { querySlotRows } from '../client-utils.ts';
-import { collectingEmitDiagnostics } from '../../compiler/diagnostics/emit-diagnostics.ts';
 import { assemblePredicted, predictedRawGrammarOf } from '../../__tests__/helpers/linked.ts';
 import { EmitHaltedError } from '../../types/diagnostics.ts';
 
@@ -19,7 +18,7 @@ describe('one emission reports every owner that breaks', () => {
 		const { nodeMap } = assemblePredicted(raw);
 		let halted: EmitHaltedError | undefined;
 		try {
-			collectingEmitDiagnostics('demo', () => querySlotRows(nodeMap));
+			querySlotRows(nodeMap);
 		} catch (error) {
 			halted = error as EmitHaltedError;
 		}

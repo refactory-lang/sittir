@@ -9,51 +9,72 @@ export interface EmitShapeFailure {
 	readonly details?: Record<string, unknown>;
 }
 
-interface EmitScope {
-	readonly grammar: string;
-	readonly collected: GrammarDiagnostic[];
-}
-
-const scopes: EmitScope[] = [];
-
-function diagnosticOf(failure: EmitShapeFailure): GrammarDiagnostic {
-	return { scope: 'grammar', severity: 'error', canProceed: false, grammar: scopes.at(-1)?.grammar ?? '', ...failure };
-}
-
 export function emitShapeFailure(failure: EmitShapeFailure): EmitHaltedError {
-	return new EmitHaltedError([diagnosticOf(failure)]);
+	const diagnostic: GrammarDiagnostic = { scope: 'grammar', severity: 'error', canProceed: false, grammar: '', ...failure };
+	return new EmitHaltedError([diagnostic]);
 }
 
-export function emitFailuresSoFar(): boolean {
-	return (scopes.at(-1)?.collected.length ?? 0) > 0;
-}
+export class EmitCollector {
+	readonly #collected: GrammarDiagnostic[] = [];
+	readonly grammar: string;
 
-export function guardOwner<T>(fallback: T, run: () => T): T {
-	const scope = scopes.at(-1);
-	if (scope === undefined) return run();
-	try {
-		return run();
-	} catch (error) {
-		if (!(error instanceof EmitHaltedError)) throw error;
-		scope.collected.push(...(error.blocking as readonly GrammarDiagnostic[]));
-		return fallback;
+	constructor(grammar: string) {
+		this.grammar = grammar;
+	}
+
+	get failed(): boolean {
+		return this.#collected.length > 0;
+	}
+
+	guard<T>(run: () => T): T | undefined {
+		try {
+			return run();
+		} catch (error) {
+			if (!(error instanceof EmitHaltedError)) throw error;
+			this.record(error);
+			return undefined;
+		}
+	}
+
+	record(error: EmitHaltedError): void {
+		for (const diagnostic of error.blocking as readonly GrammarDiagnostic[]) {
+			this.#collected.push(diagnostic.grammar === '' ? { ...diagnostic, grammar: this.grammar } : diagnostic);
+		}
+	}
+
+	cascade(error: Error): EmitHaltedError {
+		const after: GrammarDiagnostic = {
+			scope: 'grammar',
+			severity: 'error',
+			canProceed: false,
+			grammar: this.grammar,
+			code: 'emit-aborted-after-failure',
+			message: `emission stopped on an internal error after ${this.#collected.length} diagnostic(s), likely a consequence of them: ${error.message}`,
+			details: { cascade: true }
+		};
+		return new EmitHaltedError(distinct([...this.#collected, after]));
+	}
+
+	assertClear(): void {
+		if (this.failed) throw new EmitHaltedError(distinct(this.#collected));
 	}
 }
 
-export function collectingEmitDiagnostics<T>(grammar: string, run: () => T): T {
-	const scope: EmitScope = { grammar, collected: [] };
-	scopes.push(scope);
-	let result: T | undefined;
+export function collectingEmitDiagnostics<T>(grammar: string, run: (collector: EmitCollector) => T): T {
+	const collector = new EmitCollector(grammar);
+	let result: T;
 	try {
-		result = run();
+		result = run(collector);
 	} catch (error) {
-		if (!(error instanceof EmitHaltedError)) throw error;
-		scope.collected.push(...(error.blocking as readonly GrammarDiagnostic[]));
-	} finally {
-		scopes.pop();
+		if (error instanceof EmitHaltedError) {
+			collector.record(error);
+			collector.assertClear();
+		}
+		if (collector.failed && error instanceof Error) throw collector.cascade(error);
+		throw error;
 	}
-	if (scope.collected.length > 0) throw new EmitHaltedError(distinct(scope.collected));
-	return result as T;
+	collector.assertClear();
+	return result;
 }
 
 function distinct(diagnostics: readonly GrammarDiagnostic[]): GrammarDiagnostic[] {
