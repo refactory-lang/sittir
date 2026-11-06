@@ -270,7 +270,8 @@ export interface PortableDelimiterToken {
  * A bound grammar's portable build table: each strict builder's call shape by its key in the strict table, each vocabulary path's arms, at
  * a path with no arms of its own, the paths a `$value` builds through (`values`), and, by kind id, the accessors of the slots that can hold a
  * token read by its interior (`tokens`), and, by delimiter token kind id, its facets that carry meaning (`delimiters`): a delimiter's other
- * facets are spelled from its content, so reading none of them loses nothing.
+ * facets are spelled from its content, so reading none of them loses nothing. `features` names the vocabulary features the grammar composes,
+ * so a build naming a path of a feature it lacks refuses by that feature.
  */
 export interface PortableBuildTable {
 	readonly builders: Readonly<Record<string, PortableCallShape>>;
@@ -279,6 +280,7 @@ export interface PortableBuildTable {
 	readonly values?: Readonly<Record<string, PortableValueBuild>>;
 	readonly tokens?: Readonly<Record<number, readonly string[]>>;
 	readonly delimiters?: Readonly<Record<number, PortableDelimiterToken>>;
+	readonly features?: readonly string[];
 }
 
 /**

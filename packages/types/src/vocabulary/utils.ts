@@ -19,13 +19,20 @@ export type Flagged<T, F extends string> = [F] extends [never] ? T : T;
 export type RefinedBy<Owner extends { readonly $path: string }, Value extends { readonly $path: string }> = SubKindOf<Owner> &
 	Omit<Value, '$path'>;
 
+type Composing<C, F, T> = C extends F ? T : Missing<F>;
+
 /**
- * `T` where the grammar map `G` has the feature `F`, else `never`: a member the map's features lack is absent, so a
- * language without the feature refuses it, and a node from such a language conforms wherever the member is present.
- * Over a union of maps it is the union of each map's, so a union of maps is a supertype of each of them, member by
- * member.
+ * `T` where the grammar map `G` has the feature `F`, else `Missing<F>`: a path or member the map's features lack
+ * holds no value, so a language without the feature refuses it by naming the feature. Over a union of maps it is the
+ * union of each map's, so a union of maps is a supertype of each of them, member by member.
  */
-export type In<G extends GrammarMap, F, T> = G extends GrammarMap ? (G['features'] extends F ? T : never) : never;
+export type In<G extends GrammarMap, F, T> = Composing<G['features'], F, T>;
+
+/** What a path or member of the feature `F` is under a grammar map without `F`: a type no value has. */
+export interface Missing<F> {
+	readonly $missing: F;
+	readonly $absent: never;
+}
 
 declare const flag: unique symbol;
 

@@ -11,6 +11,8 @@ export const readsFitInputs: [Unfit] extends [never] ? true : Unfit = true;
 declare const sequence: At<'expression.sequence'>;
 declare const type: NonNullable<At<'expression.parenthesized'>['type']>;
 
+declare const typed: { readonly $path: 'expression.parenthesized'; readonly expression: typeof sequence; readonly type: typeof type };
+
 export const grouped: In<'expression.parenthesized'> = { $path: 'expression.parenthesized', expression: sequence };
 // @ts-expect-error a parenthesized sequence takes no type
-export const typedSequence: In<'expression.parenthesized'> = { $path: 'expression.parenthesized', expression: sequence, type };
+export const typedSequence: In<'expression.parenthesized'> = typed;

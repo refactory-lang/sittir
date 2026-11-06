@@ -1,6 +1,6 @@
-import type { GrammarMap, Slot } from '../../map.ts';
-import type { SubKindOf, Under } from '../../utils.ts';
-import type * as V from '../../index.ts';
+import type { GrammarMap, Slot } from '../../../map.ts';
+import type { SubKindOf, Under } from '../../../utils.ts';
+import type * as V from '../../../index.ts';
 export namespace Declaration {
 	export interface Struct<G extends GrammarMap, K extends Under<'declaration.struct'> = 'declaration.struct'> extends SubKindOf<V.Declaration<G, K>> {
 		// claimed by r

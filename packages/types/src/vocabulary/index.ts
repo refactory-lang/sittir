@@ -14,6 +14,7 @@ export * from './statement.ts';
 export * from './type.ts';
 export type * from './map.ts';
 export type * from './input.ts';
+export type { Missing } from './utils.ts';
 export type * from './augment.ts';
 export type * from './compositions.ts';
 export type * from './features/index.ts';

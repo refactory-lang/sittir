@@ -12,6 +12,7 @@
 
 import type {
 	Accessors,
+	AsyncAwait,
 	BoundedQuantification,
 	Clause,
 	Comment,
@@ -24,6 +25,7 @@ import type {
 	Fits,
 	GrammarMap,
 	Identifier,
+	Missing,
 	OptionalMembers,
 	Pattern,
 	ScopedVisibility,
@@ -111,9 +113,9 @@ export function superFn(name: Identifier.Any<Composed>, scope: Identifier.Any<Co
 // @ts-expect-error a context without scoped visibility has no scope
 export const noScope: Declaration.Function.Public.Restricted<Bare>['scope'] = { $path: 'identifier' };
 
-// A member the contract's features lack is absent: code over the core reads it as its type or undefined, and a
-// contract without the feature refuses a value for it.
-export function asyncOf(f: Declaration.Function<Core>): Flag | undefined {
+// A member the contract's features lack holds no value: code over the core reads it as the feature it needs or
+// undefined, and a contract without the feature refuses a value for it.
+export function asyncOf(f: Declaration.Function<Core>): Missing<AsyncAwait> | undefined {
 	return f.async;
 }
 declare const asyncFlag: Flag;

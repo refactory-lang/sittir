@@ -1,6 +1,6 @@
-import type { GrammarMap, Slot } from '../../map.ts';
-import type { SubKindOf, Under } from '../../utils.ts';
-import type * as V from '../../index.ts';
+import type { GrammarMap, Slot } from '../../../map.ts';
+import type { SubKindOf, Under } from '../../../utils.ts';
+import type * as V from '../../../index.ts';
 export namespace Element {
 	export interface Struct<G extends GrammarMap, K extends Under<'element.struct'> = 'element.struct'> extends SubKindOf<V.Element<G, K>> {
 		readonly $path: K;

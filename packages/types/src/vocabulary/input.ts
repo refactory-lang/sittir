@@ -1,4 +1,5 @@
 import type { Formed, GrammarMap, Paths, Read } from './map.ts';
+import type { Missing } from './utils.ts';
 
 type Extra<G extends GrammarMap, P> = P extends keyof G['inputs'] ? G['inputs'][P] : never;
 
@@ -16,4 +17,4 @@ type TextReads<G extends GrammarMap> = {
 	readonly [P in keyof G['overrides']]: G['overrides'][P] extends { readonly $text: infer T } ? T : never;
 }[keyof G['overrides']];
 
-export type ReadOf<G extends GrammarMap> = { readonly [P in keyof Paths<G>]: Read<G, P> }[keyof Paths<G>] | TextReads<G>;
+export type ReadOf<G extends GrammarMap> = Exclude<{ readonly [P in keyof Paths<G>]: Read<G, P> }[keyof Paths<G>], Missing<unknown>> | TextReads<G>;

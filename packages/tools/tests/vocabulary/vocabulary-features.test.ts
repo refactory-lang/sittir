@@ -390,7 +390,7 @@ describe('the generated files', () => {
 		p = plan(source);
 	});
 
-	it('augment each kind a feature touches and declare every level, nested by namespace', async () => {
+	it('augment each kind a feature touches, declare every level nested by namespace, and gate the paths a feature adds', async () => {
 		expect(augmentation(source, p)).toBe(
 			[
 				HEADER,
@@ -424,8 +424,8 @@ describe('the generated files', () => {
 				'\tinterface Paths<G extends GrammarMap> {',
 				"\t\treadonly 'declaration': V.Declaration<G>;",
 				"\t\treadonly 'declaration.function': V.Declaration.Function<G>;",
-				"\t\treadonly 'declaration.method': V.Declaration.Method<G>;",
-				"\t\treadonly 'declaration.method.getter': V.Declaration.Method.Getter<G>;",
+				"\t\treadonly 'declaration.method': gate.In<G, features.Methods, V.Declaration.Method<G>>;",
+				"\t\treadonly 'declaration.method.getter': gate.In<G, features.Methods, V.Declaration.Method.Getter<G>>;",
 				'\t}',
 				'}',
 				''

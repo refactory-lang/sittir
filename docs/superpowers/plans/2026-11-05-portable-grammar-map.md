@@ -260,8 +260,10 @@ The admission census (`tool portable-admission`) owns both counts. It already re
 **Interfaces:**
 - Produces: `PortableEngine<C>`, the portable surface over `Contract<C>`. A grammar engine is assignable to `PortableEngine<C>` exactly when its features include `C`.
 - Outside the composition, a value reads as its nearest ancestor inside it (the `SubKindOf` rule), else as its namespace's opaque member.
+- The level unions (`V.X.Any`) gate here, where `C` is concrete: the generic vocabulary can't gate them, since a plain kind doesn't relate to a deferred feature conditional and parent and child interfaces stop fitting. A contract never reads content outside its composition as a lacked kind.
 
 - [ ] **Step 1: The failing tests:**
+  - under `Contract<PythonFeatures>`, `Declaration.Any` doesn't admit `Struct`, and a struct read from a grammar that has Structs reads as its nearest ancestor in the composition or as the namespace's opaque member;
   - the python engine is assignable to `PortableEngine` (the core);
   - the rust engine isn't assignable to a package containing a feature rust lacks;
   - under `PortableEngine<C>`, a python-only subkind reads as its nearest ancestor in `C`;

@@ -74,7 +74,8 @@ import type * as singleInheritance from './features/methods/classes/single-inher
 import type * as sliceExpressions from './features/slice-expressions/index.ts';
 import type * as staticStorage from './features/static-storage/index.ts';
 import type * as stringInterpolation from './features/string-interpolation/index.ts';
-import type * as structs from './features/structs/index.ts';
+import type * as structPatterns from './features/struct-patterns/index.ts';
+import type * as structs from './features/struct-patterns/structs/index.ts';
 import type * as structuralConformance from './features/type-annotations/structural-conformance/index.ts';
 import type * as syntacticMetaprogramming from './features/syntactic-metaprogramming/index.ts';
 import type * as tuples from './features/tuples/index.ts';
@@ -3925,13 +3926,15 @@ declare module './pattern.ts' {
 			> extends destructuring.Pattern.Rest.Map<G, K> {}
 			type Any<G extends GrammarMap> = V.Pattern.Rest<G> | V.Pattern.Rest.Map<G>;
 		}
-		interface Struct<G extends GrammarMap, K extends gate.Under<'pattern.struct'> = 'pattern.struct'> extends structs
-			.Pattern.Struct<G, K> {}
+		interface Struct<
+			G extends GrammarMap,
+			K extends gate.Under<'pattern.struct'> = 'pattern.struct'
+		> extends structPatterns.Pattern.Struct<G, K> {}
 		namespace Struct {
 			interface Field<
 				G extends GrammarMap,
 				K extends gate.Under<'pattern.struct.field'> = 'pattern.struct.field'
-			> extends structs.Pattern.Struct.Field<G, K> {}
+			> extends structPatterns.Pattern.Struct.Field<G, K> {}
 			type Rest<G extends GrammarMap> = structs.Pattern.Struct.Rest<G>;
 			type Any<G extends GrammarMap> = V.Pattern.Struct<G> | V.Pattern.Struct.Field<G> | V.Pattern.Struct.Rest<G>;
 		}
@@ -4550,61 +4553,65 @@ declare module './type.ts' {
 declare module './map.ts' {
 	interface Paths<G extends GrammarMap> {
 		readonly argument: V.Argument<G>;
-		readonly 'argument.named': V.Argument.Named<G>;
+		readonly 'argument.named': gate.In<G, features.NamedArguments, V.Argument.Named<G>>;
 		readonly attribute: V.Attribute<G>;
 		readonly 'attribute.content': V.Attribute.Content<G>;
-		readonly 'attribute.content.call': V.Attribute.Content.Call<G>;
-		readonly 'attribute.content.member': V.Attribute.Content.Member<G>;
-		readonly 'attribute.content.parenthesized': V.Attribute.Content.Parenthesized<G>;
-		readonly 'attribute.decorator': V.Attribute.Decorator<G>;
-		readonly 'attribute.inner': V.Attribute.Inner<G>;
+		readonly 'attribute.content.call': gate.In<G, features.Decorators, V.Attribute.Content.Call<G>>;
+		readonly 'attribute.content.member': gate.In<G, features.Decorators, V.Attribute.Content.Member<G>>;
+		readonly 'attribute.content.parenthesized': gate.In<G, features.Decorators, V.Attribute.Content.Parenthesized<G>>;
+		readonly 'attribute.decorator': gate.In<G, features.Decorators, V.Attribute.Decorator<G>>;
+		readonly 'attribute.inner': gate.In<G, features.Attributes, V.Attribute.Inner<G>>;
 		readonly clause: V.Clause<G>;
-		readonly 'clause.bounds': V.Clause.Bounds<G>;
-		readonly 'clause.bounds.higher_ranked': V.Clause.Bounds.HigherRanked<G>;
-		readonly 'clause.bounds.removed': V.Clause.Bounds.Removed<G>;
-		readonly 'clause.bounds.use': V.Clause.Bounds.Use<G>;
+		readonly 'clause.bounds': gate.In<G, features.BoundedQuantification, V.Clause.Bounds<G>>;
+		readonly 'clause.bounds.higher_ranked': gate.In<
+			G,
+			features.HigherRankPolymorphism,
+			V.Clause.Bounds.HigherRanked<G>
+		>;
+		readonly 'clause.bounds.removed': gate.In<G, features.BoundedQuantification, V.Clause.Bounds.Removed<G>>;
+		readonly 'clause.bounds.use': gate.In<G, features.BoundedQuantification, V.Clause.Bounds.Use<G>>;
 		readonly 'clause.case': V.Clause.Case<G>;
-		readonly 'clause.case.default': V.Clause.Case.Default<G>;
-		readonly 'clause.case.match': V.Clause.Case.Match<G>;
-		readonly 'clause.case.switch': V.Clause.Case.Switch<G>;
-		readonly 'clause.catch': V.Clause.Catch<G>;
-		readonly 'clause.comprehension': V.Clause.Comprehension<G>;
-		readonly 'clause.comprehension.for': V.Clause.Comprehension.For<G>;
-		readonly 'clause.comprehension.if': V.Clause.Comprehension.If<G>;
-		readonly 'clause.default': V.Clause.Default<G>;
+		readonly 'clause.case.default': gate.In<G, features.MultiwayBranch, V.Clause.Case.Default<G>>;
+		readonly 'clause.case.match': gate.In<G, features.MatchExpressions, V.Clause.Case.Match<G>>;
+		readonly 'clause.case.switch': gate.In<G, features.MultiwayBranch, V.Clause.Case.Switch<G>>;
+		readonly 'clause.catch': gate.In<G, features.Exceptions, V.Clause.Catch<G>>;
+		readonly 'clause.comprehension': gate.In<G, features.Comprehensions, V.Clause.Comprehension<G>>;
+		readonly 'clause.comprehension.for': gate.In<G, features.Comprehensions, V.Clause.Comprehension.For<G>>;
+		readonly 'clause.comprehension.if': gate.In<G, features.Comprehensions, V.Clause.Comprehension.If<G>>;
+		readonly 'clause.default': gate.In<G, features.ParametricPolymorphism, V.Clause.Default<G>>;
 		readonly 'clause.else': V.Clause.Else<G>;
 		readonly 'clause.else_if': V.Clause.ElseIf<G>;
-		readonly 'clause.export': V.Clause.Export<G>;
-		readonly 'clause.export.namespace': V.Clause.Export.Namespace<G>;
-		readonly 'clause.export.specifier': V.Clause.Export.Specifier<G>;
-		readonly 'clause.export.specifier.typeof': V.Clause.Export.Specifier.Typeof<G>;
-		readonly 'clause.extends': V.Clause.Extends<G>;
-		readonly 'clause.extends.type': V.Clause.Extends.Type<G>;
-		readonly 'clause.finally': V.Clause.Finally<G>;
-		readonly 'clause.implements': V.Clause.Implements<G>;
-		readonly 'clause.import': V.Clause.Import<G>;
-		readonly 'clause.import.alias': V.Clause.Import.Alias<G>;
-		readonly 'clause.import.attribute': V.Clause.Import.Attribute<G>;
-		readonly 'clause.import.list': V.Clause.Import.List<G>;
-		readonly 'clause.import.list.scoped': V.Clause.Import.List.Scoped<G>;
-		readonly 'clause.import.names': V.Clause.Import.Names<G>;
-		readonly 'clause.import.namespace': V.Clause.Import.Namespace<G>;
-		readonly 'clause.import.relative': V.Clause.Import.Relative<G>;
-		readonly 'clause.import.relative.prefix': V.Clause.Import.Relative.Prefix<G>;
-		readonly 'clause.import.require': V.Clause.Import.Require<G>;
-		readonly 'clause.import.specifier': V.Clause.Import.Specifier<G>;
-		readonly 'clause.import.specifier.typeof': V.Clause.Import.Specifier.Typeof<G>;
-		readonly 'clause.import.wildcard': V.Clause.Import.Wildcard<G>;
-		readonly 'clause.let': V.Clause.Let<G>;
-		readonly 'clause.let.chain': V.Clause.Let.Chain<G>;
-		readonly 'clause.lifetimes': V.Clause.Lifetimes<G>;
-		readonly 'clause.macro': V.Clause.Macro<G>;
-		readonly 'clause.macro.rule': V.Clause.Macro.Rule<G>;
-		readonly 'clause.mapped_type': V.Clause.MappedType<G>;
-		readonly 'clause.resource': V.Clause.Resource<G>;
-		readonly 'clause.resource.item': V.Clause.Resource.Item<G>;
-		readonly 'clause.where': V.Clause.Where<G>;
-		readonly 'clause.where.predicate': V.Clause.Where.Predicate<G>;
+		readonly 'clause.export': gate.In<G, features.Modules, V.Clause.Export<G>>;
+		readonly 'clause.export.namespace': gate.In<G, features.Modules, V.Clause.Export.Namespace<G>>;
+		readonly 'clause.export.specifier': gate.In<G, features.Modules, V.Clause.Export.Specifier<G>>;
+		readonly 'clause.export.specifier.typeof': gate.In<G, features.Modules, V.Clause.Export.Specifier.Typeof<G>>;
+		readonly 'clause.extends': gate.In<G, features.SingleInheritance, V.Clause.Extends<G>>;
+		readonly 'clause.extends.type': gate.In<G, features.Interfaces, V.Clause.Extends.Type<G>>;
+		readonly 'clause.finally': gate.In<G, features.Exceptions, V.Clause.Finally<G>>;
+		readonly 'clause.implements': gate.In<G, features.InterfaceConformance, V.Clause.Implements<G>>;
+		readonly 'clause.import': gate.In<G, features.Modules, V.Clause.Import<G>>;
+		readonly 'clause.import.alias': gate.In<G, features.Modules, V.Clause.Import.Alias<G>>;
+		readonly 'clause.import.attribute': gate.In<G, features.Modules, V.Clause.Import.Attribute<G>>;
+		readonly 'clause.import.list': gate.In<G, features.Modules, V.Clause.Import.List<G>>;
+		readonly 'clause.import.list.scoped': gate.In<G, features.Modules, V.Clause.Import.List.Scoped<G>>;
+		readonly 'clause.import.names': gate.In<G, features.Modules, V.Clause.Import.Names<G>>;
+		readonly 'clause.import.namespace': gate.In<G, features.Modules, V.Clause.Import.Namespace<G>>;
+		readonly 'clause.import.relative': gate.In<G, features.Modules, V.Clause.Import.Relative<G>>;
+		readonly 'clause.import.relative.prefix': gate.In<G, features.Modules, V.Clause.Import.Relative.Prefix<G>>;
+		readonly 'clause.import.require': gate.In<G, features.Modules, V.Clause.Import.Require<G>>;
+		readonly 'clause.import.specifier': gate.In<G, features.Modules, V.Clause.Import.Specifier<G>>;
+		readonly 'clause.import.specifier.typeof': gate.In<G, features.Modules, V.Clause.Import.Specifier.Typeof<G>>;
+		readonly 'clause.import.wildcard': gate.In<G, features.Modules, V.Clause.Import.Wildcard<G>>;
+		readonly 'clause.let': gate.In<G, features.MatchExpressions, V.Clause.Let<G>>;
+		readonly 'clause.let.chain': gate.In<G, features.MatchExpressions, V.Clause.Let.Chain<G>>;
+		readonly 'clause.lifetimes': gate.In<G, features.Lifetimes, V.Clause.Lifetimes<G>>;
+		readonly 'clause.macro': gate.In<G, features.SyntacticMetaprogramming, V.Clause.Macro<G>>;
+		readonly 'clause.macro.rule': gate.In<G, features.SyntacticMetaprogramming, V.Clause.Macro.Rule<G>>;
+		readonly 'clause.mapped_type': gate.In<G, features.TypeAnnotations, V.Clause.MappedType<G>>;
+		readonly 'clause.resource': gate.In<G, features.ResourceManagement, V.Clause.Resource<G>>;
+		readonly 'clause.resource.item': gate.In<G, features.ResourceManagement, V.Clause.Resource.Item<G>>;
+		readonly 'clause.where': gate.In<G, features.BoundedQuantification, V.Clause.Where<G>>;
+		readonly 'clause.where.predicate': gate.In<G, features.BoundedQuantification, V.Clause.Where.Predicate<G>>;
 		readonly comment: V.Comment<G>;
 		readonly 'comment.block': V.Comment.Block<G>;
 		readonly 'comment.block.doc': V.Comment.Block.Doc<G>;
@@ -4615,194 +4622,606 @@ declare module './map.ts' {
 		readonly 'comment.line.doc.inner': V.Comment.Line.Doc.Inner<G>;
 		readonly 'comment.text': V.Comment.Text<G>;
 		readonly declaration: V.Declaration<G>;
-		readonly 'declaration.ambient': V.Declaration.Ambient<G>;
-		readonly 'declaration.class': V.Declaration.Class<G>;
+		readonly 'declaration.ambient': gate.In<G, features.AmbientDeclarations, V.Declaration.Ambient<G>>;
+		readonly 'declaration.class': gate.In<G, features.Classes, V.Declaration.Class<G>>;
 		readonly 'declaration.constant': V.Declaration.Constant<G>;
-		readonly 'declaration.constant.private': V.Declaration.Constant.Private<G>;
-		readonly 'declaration.constant.public': V.Declaration.Constant.Public<G>;
-		readonly 'declaration.constant.public.internal': V.Declaration.Constant.Public.Internal<G>;
-		readonly 'declaration.constant.public.parent': V.Declaration.Constant.Public.Parent<G>;
-		readonly 'declaration.constant.public.restricted': V.Declaration.Constant.Public.Restricted<G>;
-		readonly 'declaration.constructor': V.Declaration.Constructor<G>;
-		readonly 'declaration.constructor.private': V.Declaration.Constructor.Private<G>;
-		readonly 'declaration.constructor.protected': V.Declaration.Constructor.Protected<G>;
-		readonly 'declaration.constructor.public': V.Declaration.Constructor.Public<G>;
-		readonly 'declaration.enum': V.Declaration.Enum<G>;
-		readonly 'declaration.enum.private': V.Declaration.Enum.Private<G>;
-		readonly 'declaration.enum.public': V.Declaration.Enum.Public<G>;
-		readonly 'declaration.enum.public.internal': V.Declaration.Enum.Public.Internal<G>;
-		readonly 'declaration.enum.public.parent': V.Declaration.Enum.Public.Parent<G>;
-		readonly 'declaration.enum.public.restricted': V.Declaration.Enum.Public.Restricted<G>;
-		readonly 'declaration.enum_member': V.Declaration.EnumMember<G>;
-		readonly 'declaration.enum_member.private': V.Declaration.EnumMember.Private<G>;
-		readonly 'declaration.enum_member.public': V.Declaration.EnumMember.Public<G>;
-		readonly 'declaration.enum_member.public.internal': V.Declaration.EnumMember.Public.Internal<G>;
-		readonly 'declaration.enum_member.public.parent': V.Declaration.EnumMember.Public.Parent<G>;
-		readonly 'declaration.enum_member.public.restricted': V.Declaration.EnumMember.Public.Restricted<G>;
-		readonly 'declaration.enum_member.struct': V.Declaration.EnumMember.Struct<G>;
-		readonly 'declaration.enum_member.struct.private': V.Declaration.EnumMember.Struct.Private<G>;
-		readonly 'declaration.enum_member.struct.public': V.Declaration.EnumMember.Struct.Public<G>;
-		readonly 'declaration.enum_member.struct.public.internal': V.Declaration.EnumMember.Struct.Public.Internal<G>;
-		readonly 'declaration.enum_member.struct.public.parent': V.Declaration.EnumMember.Struct.Public.Parent<G>;
-		readonly 'declaration.enum_member.struct.public.restricted': V.Declaration.EnumMember.Struct.Public.Restricted<G>;
-		readonly 'declaration.enum_member.tuple': V.Declaration.EnumMember.Tuple<G>;
-		readonly 'declaration.enum_member.tuple.private': V.Declaration.EnumMember.Tuple.Private<G>;
-		readonly 'declaration.enum_member.tuple.public': V.Declaration.EnumMember.Tuple.Public<G>;
-		readonly 'declaration.enum_member.tuple.public.internal': V.Declaration.EnumMember.Tuple.Public.Internal<G>;
-		readonly 'declaration.enum_member.tuple.public.parent': V.Declaration.EnumMember.Tuple.Public.Parent<G>;
-		readonly 'declaration.enum_member.tuple.public.restricted': V.Declaration.EnumMember.Tuple.Public.Restricted<G>;
-		readonly 'declaration.extension': V.Declaration.Extension<G>;
-		readonly 'declaration.extension.conformance': V.Declaration.Extension.Conformance<G>;
+		readonly 'declaration.constant.private': gate.In<G, features.Visibility, V.Declaration.Constant.Private<G>>;
+		readonly 'declaration.constant.public': gate.In<G, features.Visibility, V.Declaration.Constant.Public<G>>;
+		readonly 'declaration.constant.public.internal': gate.In<
+			G,
+			features.Visibility,
+			V.Declaration.Constant.Public.Internal<G>
+		>;
+		readonly 'declaration.constant.public.parent': gate.In<
+			G,
+			features.Visibility,
+			V.Declaration.Constant.Public.Parent<G>
+		>;
+		readonly 'declaration.constant.public.restricted': gate.In<
+			G,
+			features.Visibility,
+			V.Declaration.Constant.Public.Restricted<G>
+		>;
+		readonly 'declaration.constructor': gate.In<G, features.Classes, V.Declaration.Constructor<G>>;
+		readonly 'declaration.constructor.private': gate.In<G, features.Visibility, V.Declaration.Constructor.Private<G>>;
+		readonly 'declaration.constructor.protected': gate.In<
+			G,
+			features.Visibility,
+			V.Declaration.Constructor.Protected<G>
+		>;
+		readonly 'declaration.constructor.public': gate.In<G, features.Visibility, V.Declaration.Constructor.Public<G>>;
+		readonly 'declaration.enum': gate.In<G, features.Enumerations, V.Declaration.Enum<G>>;
+		readonly 'declaration.enum.private': gate.In<G, features.Visibility, V.Declaration.Enum.Private<G>>;
+		readonly 'declaration.enum.public': gate.In<G, features.Visibility, V.Declaration.Enum.Public<G>>;
+		readonly 'declaration.enum.public.internal': gate.In<G, features.Visibility, V.Declaration.Enum.Public.Internal<G>>;
+		readonly 'declaration.enum.public.parent': gate.In<G, features.Visibility, V.Declaration.Enum.Public.Parent<G>>;
+		readonly 'declaration.enum.public.restricted': gate.In<
+			G,
+			features.Visibility,
+			V.Declaration.Enum.Public.Restricted<G>
+		>;
+		readonly 'declaration.enum_member': gate.In<G, features.Enumerations, V.Declaration.EnumMember<G>>;
+		readonly 'declaration.enum_member.private': gate.In<G, features.Visibility, V.Declaration.EnumMember.Private<G>>;
+		readonly 'declaration.enum_member.public': gate.In<G, features.Visibility, V.Declaration.EnumMember.Public<G>>;
+		readonly 'declaration.enum_member.public.internal': gate.In<
+			G,
+			features.Visibility,
+			V.Declaration.EnumMember.Public.Internal<G>
+		>;
+		readonly 'declaration.enum_member.public.parent': gate.In<
+			G,
+			features.Visibility,
+			V.Declaration.EnumMember.Public.Parent<G>
+		>;
+		readonly 'declaration.enum_member.public.restricted': gate.In<
+			G,
+			features.Visibility,
+			V.Declaration.EnumMember.Public.Restricted<G>
+		>;
+		readonly 'declaration.enum_member.struct': gate.In<
+			G,
+			features.AlgebraicDataTypes,
+			V.Declaration.EnumMember.Struct<G>
+		>;
+		readonly 'declaration.enum_member.struct.private': gate.In<
+			G,
+			features.Visibility,
+			V.Declaration.EnumMember.Struct.Private<G>
+		>;
+		readonly 'declaration.enum_member.struct.public': gate.In<
+			G,
+			features.Visibility,
+			V.Declaration.EnumMember.Struct.Public<G>
+		>;
+		readonly 'declaration.enum_member.struct.public.internal': gate.In<
+			G,
+			features.Visibility,
+			V.Declaration.EnumMember.Struct.Public.Internal<G>
+		>;
+		readonly 'declaration.enum_member.struct.public.parent': gate.In<
+			G,
+			features.Visibility,
+			V.Declaration.EnumMember.Struct.Public.Parent<G>
+		>;
+		readonly 'declaration.enum_member.struct.public.restricted': gate.In<
+			G,
+			features.Visibility,
+			V.Declaration.EnumMember.Struct.Public.Restricted<G>
+		>;
+		readonly 'declaration.enum_member.tuple': gate.In<
+			G,
+			features.AlgebraicDataTypes,
+			V.Declaration.EnumMember.Tuple<G>
+		>;
+		readonly 'declaration.enum_member.tuple.private': gate.In<
+			G,
+			features.Visibility,
+			V.Declaration.EnumMember.Tuple.Private<G>
+		>;
+		readonly 'declaration.enum_member.tuple.public': gate.In<
+			G,
+			features.Visibility,
+			V.Declaration.EnumMember.Tuple.Public<G>
+		>;
+		readonly 'declaration.enum_member.tuple.public.internal': gate.In<
+			G,
+			features.Visibility,
+			V.Declaration.EnumMember.Tuple.Public.Internal<G>
+		>;
+		readonly 'declaration.enum_member.tuple.public.parent': gate.In<
+			G,
+			features.Visibility,
+			V.Declaration.EnumMember.Tuple.Public.Parent<G>
+		>;
+		readonly 'declaration.enum_member.tuple.public.restricted': gate.In<
+			G,
+			features.Visibility,
+			V.Declaration.EnumMember.Tuple.Public.Restricted<G>
+		>;
+		readonly 'declaration.extension': gate.In<G, features.OpenTypeExtension, V.Declaration.Extension<G>>;
+		readonly 'declaration.extension.conformance': gate.In<
+			G,
+			features.Typeclasses,
+			V.Declaration.Extension.Conformance<G>
+		>;
 		readonly 'declaration.field': V.Declaration.Field<G>;
-		readonly 'declaration.field.private': V.Declaration.Field.Private<G>;
-		readonly 'declaration.field.protected': V.Declaration.Field.Protected<G>;
-		readonly 'declaration.field.public': V.Declaration.Field.Public<G>;
-		readonly 'declaration.field.public.internal': V.Declaration.Field.Public.Internal<G>;
-		readonly 'declaration.field.public.parent': V.Declaration.Field.Public.Parent<G>;
-		readonly 'declaration.field.public.restricted': V.Declaration.Field.Public.Restricted<G>;
-		readonly 'declaration.field.signature': V.Declaration.Field.Signature<G>;
-		readonly 'declaration.field.signature.private': V.Declaration.Field.Signature.Private<G>;
-		readonly 'declaration.field.signature.protected': V.Declaration.Field.Signature.Protected<G>;
-		readonly 'declaration.field.signature.public': V.Declaration.Field.Signature.Public<G>;
+		readonly 'declaration.field.private': gate.In<G, features.Visibility, V.Declaration.Field.Private<G>>;
+		readonly 'declaration.field.protected': gate.In<G, features.Visibility, V.Declaration.Field.Protected<G>>;
+		readonly 'declaration.field.public': gate.In<G, features.Visibility, V.Declaration.Field.Public<G>>;
+		readonly 'declaration.field.public.internal': gate.In<
+			G,
+			features.Visibility,
+			V.Declaration.Field.Public.Internal<G>
+		>;
+		readonly 'declaration.field.public.parent': gate.In<G, features.Visibility, V.Declaration.Field.Public.Parent<G>>;
+		readonly 'declaration.field.public.restricted': gate.In<
+			G,
+			features.Visibility,
+			V.Declaration.Field.Public.Restricted<G>
+		>;
+		readonly 'declaration.field.signature': gate.In<G, features.Interfaces, V.Declaration.Field.Signature<G>>;
+		readonly 'declaration.field.signature.private': gate.In<
+			G,
+			features.Visibility,
+			V.Declaration.Field.Signature.Private<G>
+		>;
+		readonly 'declaration.field.signature.protected': gate.In<
+			G,
+			features.Visibility,
+			V.Declaration.Field.Signature.Protected<G>
+		>;
+		readonly 'declaration.field.signature.public': gate.In<
+			G,
+			features.Visibility,
+			V.Declaration.Field.Signature.Public<G>
+		>;
 		readonly 'declaration.function': V.Declaration.Function<G>;
-		readonly 'declaration.function.private': V.Declaration.Function.Private<G>;
-		readonly 'declaration.function.public': V.Declaration.Function.Public<G>;
-		readonly 'declaration.function.public.internal': V.Declaration.Function.Public.Internal<G>;
-		readonly 'declaration.function.public.parent': V.Declaration.Function.Public.Parent<G>;
-		readonly 'declaration.function.public.restricted': V.Declaration.Function.Public.Restricted<G>;
+		readonly 'declaration.function.private': gate.In<G, features.Visibility, V.Declaration.Function.Private<G>>;
+		readonly 'declaration.function.public': gate.In<G, features.Visibility, V.Declaration.Function.Public<G>>;
+		readonly 'declaration.function.public.internal': gate.In<
+			G,
+			features.Visibility,
+			V.Declaration.Function.Public.Internal<G>
+		>;
+		readonly 'declaration.function.public.parent': gate.In<
+			G,
+			features.Visibility,
+			V.Declaration.Function.Public.Parent<G>
+		>;
+		readonly 'declaration.function.public.restricted': gate.In<
+			G,
+			features.Visibility,
+			V.Declaration.Function.Public.Restricted<G>
+		>;
 		readonly 'declaration.function.signature': V.Declaration.Function.Signature<G>;
-		readonly 'declaration.function.signature.private': V.Declaration.Function.Signature.Private<G>;
-		readonly 'declaration.function.signature.public': V.Declaration.Function.Signature.Public<G>;
-		readonly 'declaration.function.signature.public.internal': V.Declaration.Function.Signature.Public.Internal<G>;
-		readonly 'declaration.function.signature.public.parent': V.Declaration.Function.Signature.Public.Parent<G>;
-		readonly 'declaration.function.signature.public.restricted': V.Declaration.Function.Signature.Public.Restricted<G>;
-		readonly 'declaration.interface': V.Declaration.Interface<G>;
-		readonly 'declaration.interface.trait': V.Declaration.Interface.Trait<G>;
-		readonly 'declaration.interface.trait.private': V.Declaration.Interface.Trait.Private<G>;
-		readonly 'declaration.interface.trait.public': V.Declaration.Interface.Trait.Public<G>;
-		readonly 'declaration.interface.trait.public.internal': V.Declaration.Interface.Trait.Public.Internal<G>;
-		readonly 'declaration.interface.trait.public.parent': V.Declaration.Interface.Trait.Public.Parent<G>;
-		readonly 'declaration.interface.trait.public.restricted': V.Declaration.Interface.Trait.Public.Restricted<G>;
-		readonly 'declaration.macro': V.Declaration.Macro<G>;
-		readonly 'declaration.macro.brace': V.Declaration.Macro.Brace<G>;
-		readonly 'declaration.macro.bracket': V.Declaration.Macro.Bracket<G>;
-		readonly 'declaration.macro.paren': V.Declaration.Macro.Paren<G>;
-		readonly 'declaration.method': V.Declaration.Method<G>;
-		readonly 'declaration.method.private': V.Declaration.Method.Private<G>;
-		readonly 'declaration.method.protected': V.Declaration.Method.Protected<G>;
-		readonly 'declaration.method.public': V.Declaration.Method.Public<G>;
-		readonly 'declaration.method.public.internal': V.Declaration.Method.Public.Internal<G>;
-		readonly 'declaration.method.public.parent': V.Declaration.Method.Public.Parent<G>;
-		readonly 'declaration.method.public.restricted': V.Declaration.Method.Public.Restricted<G>;
-		readonly 'declaration.method.signature': V.Declaration.Method.Signature<G>;
-		readonly 'declaration.method.signature.abstract': V.Declaration.Method.Signature.Abstract<G>;
-		readonly 'declaration.method.signature.abstract.private': V.Declaration.Method.Signature.Abstract.Private<G>;
-		readonly 'declaration.method.signature.abstract.protected': V.Declaration.Method.Signature.Abstract.Protected<G>;
-		readonly 'declaration.method.signature.abstract.public': V.Declaration.Method.Signature.Abstract.Public<G>;
-		readonly 'declaration.method.signature.private': V.Declaration.Method.Signature.Private<G>;
-		readonly 'declaration.method.signature.protected': V.Declaration.Method.Signature.Protected<G>;
-		readonly 'declaration.method.signature.public': V.Declaration.Method.Signature.Public<G>;
-		readonly 'declaration.method.signature.public.internal': V.Declaration.Method.Signature.Public.Internal<G>;
-		readonly 'declaration.method.signature.public.parent': V.Declaration.Method.Signature.Public.Parent<G>;
-		readonly 'declaration.method.signature.public.restricted': V.Declaration.Method.Signature.Public.Restricted<G>;
-		readonly 'declaration.method.special': V.Declaration.Method.Special<G>;
-		readonly 'declaration.module': V.Declaration.Module<G>;
-		readonly 'declaration.module.external': V.Declaration.Module.External<G>;
-		readonly 'declaration.module.foreign': V.Declaration.Module.Foreign<G>;
-		readonly 'declaration.module.private': V.Declaration.Module.Private<G>;
-		readonly 'declaration.module.public': V.Declaration.Module.Public<G>;
-		readonly 'declaration.module.public.internal': V.Declaration.Module.Public.Internal<G>;
-		readonly 'declaration.module.public.parent': V.Declaration.Module.Public.Parent<G>;
-		readonly 'declaration.module.public.restricted': V.Declaration.Module.Public.Restricted<G>;
-		readonly 'declaration.module_property': V.Declaration.ModuleProperty<G>;
+		readonly 'declaration.function.signature.private': gate.In<
+			G,
+			features.Visibility,
+			V.Declaration.Function.Signature.Private<G>
+		>;
+		readonly 'declaration.function.signature.public': gate.In<
+			G,
+			features.Visibility,
+			V.Declaration.Function.Signature.Public<G>
+		>;
+		readonly 'declaration.function.signature.public.internal': gate.In<
+			G,
+			features.Visibility,
+			V.Declaration.Function.Signature.Public.Internal<G>
+		>;
+		readonly 'declaration.function.signature.public.parent': gate.In<
+			G,
+			features.Visibility,
+			V.Declaration.Function.Signature.Public.Parent<G>
+		>;
+		readonly 'declaration.function.signature.public.restricted': gate.In<
+			G,
+			features.Visibility,
+			V.Declaration.Function.Signature.Public.Restricted<G>
+		>;
+		readonly 'declaration.interface': gate.In<G, features.Interfaces, V.Declaration.Interface<G>>;
+		readonly 'declaration.interface.trait': gate.In<G, features.Interfaces, V.Declaration.Interface.Trait<G>>;
+		readonly 'declaration.interface.trait.private': gate.In<
+			G,
+			features.Visibility,
+			V.Declaration.Interface.Trait.Private<G>
+		>;
+		readonly 'declaration.interface.trait.public': gate.In<
+			G,
+			features.Visibility,
+			V.Declaration.Interface.Trait.Public<G>
+		>;
+		readonly 'declaration.interface.trait.public.internal': gate.In<
+			G,
+			features.Visibility,
+			V.Declaration.Interface.Trait.Public.Internal<G>
+		>;
+		readonly 'declaration.interface.trait.public.parent': gate.In<
+			G,
+			features.Visibility,
+			V.Declaration.Interface.Trait.Public.Parent<G>
+		>;
+		readonly 'declaration.interface.trait.public.restricted': gate.In<
+			G,
+			features.Visibility,
+			V.Declaration.Interface.Trait.Public.Restricted<G>
+		>;
+		readonly 'declaration.macro': gate.In<G, features.SyntacticMetaprogramming, V.Declaration.Macro<G>>;
+		readonly 'declaration.macro.brace': gate.In<G, features.SyntacticMetaprogramming, V.Declaration.Macro.Brace<G>>;
+		readonly 'declaration.macro.bracket': gate.In<G, features.SyntacticMetaprogramming, V.Declaration.Macro.Bracket<G>>;
+		readonly 'declaration.macro.paren': gate.In<G, features.SyntacticMetaprogramming, V.Declaration.Macro.Paren<G>>;
+		readonly 'declaration.method': gate.In<G, features.Methods, V.Declaration.Method<G>>;
+		readonly 'declaration.method.private': gate.In<G, features.Visibility, V.Declaration.Method.Private<G>>;
+		readonly 'declaration.method.protected': gate.In<G, features.Visibility, V.Declaration.Method.Protected<G>>;
+		readonly 'declaration.method.public': gate.In<G, features.Visibility, V.Declaration.Method.Public<G>>;
+		readonly 'declaration.method.public.internal': gate.In<
+			G,
+			features.Visibility,
+			V.Declaration.Method.Public.Internal<G>
+		>;
+		readonly 'declaration.method.public.parent': gate.In<G, features.Visibility, V.Declaration.Method.Public.Parent<G>>;
+		readonly 'declaration.method.public.restricted': gate.In<
+			G,
+			features.Visibility,
+			V.Declaration.Method.Public.Restricted<G>
+		>;
+		readonly 'declaration.method.signature': gate.In<G, features.Methods, V.Declaration.Method.Signature<G>>;
+		readonly 'declaration.method.signature.abstract': gate.In<
+			G,
+			features.AbstractClasses,
+			V.Declaration.Method.Signature.Abstract<G>
+		>;
+		readonly 'declaration.method.signature.abstract.private': gate.In<
+			G,
+			features.Visibility,
+			V.Declaration.Method.Signature.Abstract.Private<G>
+		>;
+		readonly 'declaration.method.signature.abstract.protected': gate.In<
+			G,
+			features.Visibility,
+			V.Declaration.Method.Signature.Abstract.Protected<G>
+		>;
+		readonly 'declaration.method.signature.abstract.public': gate.In<
+			G,
+			features.Visibility,
+			V.Declaration.Method.Signature.Abstract.Public<G>
+		>;
+		readonly 'declaration.method.signature.private': gate.In<
+			G,
+			features.Visibility,
+			V.Declaration.Method.Signature.Private<G>
+		>;
+		readonly 'declaration.method.signature.protected': gate.In<
+			G,
+			features.Visibility,
+			V.Declaration.Method.Signature.Protected<G>
+		>;
+		readonly 'declaration.method.signature.public': gate.In<
+			G,
+			features.Visibility,
+			V.Declaration.Method.Signature.Public<G>
+		>;
+		readonly 'declaration.method.signature.public.internal': gate.In<
+			G,
+			features.Visibility,
+			V.Declaration.Method.Signature.Public.Internal<G>
+		>;
+		readonly 'declaration.method.signature.public.parent': gate.In<
+			G,
+			features.Visibility,
+			V.Declaration.Method.Signature.Public.Parent<G>
+		>;
+		readonly 'declaration.method.signature.public.restricted': gate.In<
+			G,
+			features.Visibility,
+			V.Declaration.Method.Signature.Public.Restricted<G>
+		>;
+		readonly 'declaration.method.special': gate.In<G, features.Methods, V.Declaration.Method.Special<G>>;
+		readonly 'declaration.module': gate.In<G, features.ModuleDeclarations, V.Declaration.Module<G>>;
+		readonly 'declaration.module.external': gate.In<G, features.ModuleDeclarations, V.Declaration.Module.External<G>>;
+		readonly 'declaration.module.foreign': gate.In<
+			G,
+			features.ForeignFunctionInterface,
+			V.Declaration.Module.Foreign<G>
+		>;
+		readonly 'declaration.module.private': gate.In<G, features.Visibility, V.Declaration.Module.Private<G>>;
+		readonly 'declaration.module.public': gate.In<G, features.Visibility, V.Declaration.Module.Public<G>>;
+		readonly 'declaration.module.public.internal': gate.In<
+			G,
+			features.Visibility,
+			V.Declaration.Module.Public.Internal<G>
+		>;
+		readonly 'declaration.module.public.parent': gate.In<G, features.Visibility, V.Declaration.Module.Public.Parent<G>>;
+		readonly 'declaration.module.public.restricted': gate.In<
+			G,
+			features.Visibility,
+			V.Declaration.Module.Public.Restricted<G>
+		>;
+		readonly 'declaration.module_property': gate.In<G, features.AmbientDeclarations, V.Declaration.ModuleProperty<G>>;
 		readonly 'declaration.parameter': V.Declaration.Parameter<G>;
 		readonly 'declaration.parameter.default': V.Declaration.Parameter.Default<G>;
-		readonly 'declaration.parameter.private': V.Declaration.Parameter.Private<G>;
-		readonly 'declaration.parameter.protected': V.Declaration.Parameter.Protected<G>;
-		readonly 'declaration.parameter.public': V.Declaration.Parameter.Public<G>;
-		readonly 'declaration.parameter.receiver': V.Declaration.Parameter.Receiver<G>;
+		readonly 'declaration.parameter.private': gate.In<G, features.Visibility, V.Declaration.Parameter.Private<G>>;
+		readonly 'declaration.parameter.protected': gate.In<G, features.Visibility, V.Declaration.Parameter.Protected<G>>;
+		readonly 'declaration.parameter.public': gate.In<G, features.Visibility, V.Declaration.Parameter.Public<G>>;
+		readonly 'declaration.parameter.receiver': gate.In<
+			G,
+			features.ExplicitReceivers,
+			V.Declaration.Parameter.Receiver<G>
+		>;
 		readonly 'declaration.parameter.typed': V.Declaration.Parameter.Typed<G>;
 		readonly 'declaration.parameter.typed_default': V.Declaration.Parameter.TypedDefault<G>;
-		readonly 'declaration.parameter.variadic': V.Declaration.Parameter.Variadic<G>;
-		readonly 'declaration.property': V.Declaration.Property<G>;
-		readonly 'declaration.property.getter': V.Declaration.Property.Getter<G>;
-		readonly 'declaration.property.getter.private': V.Declaration.Property.Getter.Private<G>;
-		readonly 'declaration.property.getter.protected': V.Declaration.Property.Getter.Protected<G>;
-		readonly 'declaration.property.getter.public': V.Declaration.Property.Getter.Public<G>;
-		readonly 'declaration.property.private': V.Declaration.Property.Private<G>;
-		readonly 'declaration.property.protected': V.Declaration.Property.Protected<G>;
-		readonly 'declaration.property.public': V.Declaration.Property.Public<G>;
-		readonly 'declaration.property.setter': V.Declaration.Property.Setter<G>;
-		readonly 'declaration.property.setter.private': V.Declaration.Property.Setter.Private<G>;
-		readonly 'declaration.property.setter.protected': V.Declaration.Property.Setter.Protected<G>;
-		readonly 'declaration.property.setter.public': V.Declaration.Property.Setter.Public<G>;
-		readonly 'declaration.property.signature': V.Declaration.Property.Signature<G>;
-		readonly 'declaration.property.signature.abstract': V.Declaration.Property.Signature.Abstract<G>;
-		readonly 'declaration.property.signature.abstract.getter': V.Declaration.Property.Signature.Abstract.Getter<G>;
-		readonly 'declaration.property.signature.abstract.getter.private': V.Declaration.Property.Signature.Abstract.Getter.Private<G>;
-		readonly 'declaration.property.signature.abstract.getter.protected': V.Declaration.Property.Signature.Abstract.Getter.Protected<G>;
-		readonly 'declaration.property.signature.abstract.getter.public': V.Declaration.Property.Signature.Abstract.Getter.Public<G>;
-		readonly 'declaration.property.signature.abstract.setter': V.Declaration.Property.Signature.Abstract.Setter<G>;
-		readonly 'declaration.property.signature.abstract.setter.private': V.Declaration.Property.Signature.Abstract.Setter.Private<G>;
-		readonly 'declaration.property.signature.abstract.setter.protected': V.Declaration.Property.Signature.Abstract.Setter.Protected<G>;
-		readonly 'declaration.property.signature.abstract.setter.public': V.Declaration.Property.Signature.Abstract.Setter.Public<G>;
-		readonly 'declaration.property.signature.getter': V.Declaration.Property.Signature.Getter<G>;
-		readonly 'declaration.property.signature.getter.private': V.Declaration.Property.Signature.Getter.Private<G>;
-		readonly 'declaration.property.signature.getter.protected': V.Declaration.Property.Signature.Getter.Protected<G>;
-		readonly 'declaration.property.signature.getter.public': V.Declaration.Property.Signature.Getter.Public<G>;
-		readonly 'declaration.property.signature.setter': V.Declaration.Property.Signature.Setter<G>;
-		readonly 'declaration.property.signature.setter.private': V.Declaration.Property.Signature.Setter.Private<G>;
-		readonly 'declaration.property.signature.setter.protected': V.Declaration.Property.Signature.Setter.Protected<G>;
-		readonly 'declaration.property.signature.setter.public': V.Declaration.Property.Signature.Setter.Public<G>;
-		readonly 'declaration.signature': V.Declaration.Signature<G>;
-		readonly 'declaration.signature.call': V.Declaration.Signature.Call<G>;
-		readonly 'declaration.signature.construct': V.Declaration.Signature.Construct<G>;
-		readonly 'declaration.signature.index': V.Declaration.Signature.Index<G>;
-		readonly 'declaration.signature.index.mapped': V.Declaration.Signature.Index.Mapped<G>;
-		readonly 'declaration.struct': V.Declaration.Struct<G>;
-		readonly 'declaration.struct.private': V.Declaration.Struct.Private<G>;
-		readonly 'declaration.struct.public': V.Declaration.Struct.Public<G>;
-		readonly 'declaration.struct.public.internal': V.Declaration.Struct.Public.Internal<G>;
-		readonly 'declaration.struct.public.parent': V.Declaration.Struct.Public.Parent<G>;
-		readonly 'declaration.struct.public.restricted': V.Declaration.Struct.Public.Restricted<G>;
-		readonly 'declaration.struct.tuple': V.Declaration.Struct.Tuple<G>;
-		readonly 'declaration.struct.tuple.private': V.Declaration.Struct.Tuple.Private<G>;
-		readonly 'declaration.struct.tuple.public': V.Declaration.Struct.Tuple.Public<G>;
-		readonly 'declaration.struct.tuple.public.internal': V.Declaration.Struct.Tuple.Public.Internal<G>;
-		readonly 'declaration.struct.tuple.public.parent': V.Declaration.Struct.Tuple.Public.Parent<G>;
-		readonly 'declaration.struct.tuple.public.restricted': V.Declaration.Struct.Tuple.Public.Restricted<G>;
-		readonly 'declaration.struct.unit': V.Declaration.Struct.Unit<G>;
-		readonly 'declaration.struct.unit.private': V.Declaration.Struct.Unit.Private<G>;
-		readonly 'declaration.struct.unit.public': V.Declaration.Struct.Unit.Public<G>;
-		readonly 'declaration.struct.unit.public.internal': V.Declaration.Struct.Unit.Public.Internal<G>;
-		readonly 'declaration.struct.unit.public.parent': V.Declaration.Struct.Unit.Public.Parent<G>;
-		readonly 'declaration.struct.unit.public.restricted': V.Declaration.Struct.Unit.Public.Restricted<G>;
-		readonly 'declaration.type_alias': V.Declaration.TypeAlias<G>;
-		readonly 'declaration.type_alias.associated': V.Declaration.TypeAlias.Associated<G>;
-		readonly 'declaration.type_alias.private': V.Declaration.TypeAlias.Private<G>;
-		readonly 'declaration.type_alias.public': V.Declaration.TypeAlias.Public<G>;
-		readonly 'declaration.type_alias.public.internal': V.Declaration.TypeAlias.Public.Internal<G>;
-		readonly 'declaration.type_alias.public.parent': V.Declaration.TypeAlias.Public.Parent<G>;
-		readonly 'declaration.type_alias.public.restricted': V.Declaration.TypeAlias.Public.Restricted<G>;
-		readonly 'declaration.type_parameter': V.Declaration.TypeParameter<G>;
-		readonly 'declaration.type_parameter.lifetime': V.Declaration.TypeParameter.Lifetime<G>;
-		readonly 'declaration.type_parameter.parameters': V.Declaration.TypeParameter.Parameters<G>;
-		readonly 'declaration.type_parameter.value': V.Declaration.TypeParameter.Value<G>;
-		readonly 'declaration.type_parameter.variadic': V.Declaration.TypeParameter.Variadic<G>;
-		readonly 'declaration.union': V.Declaration.Union<G>;
-		readonly 'declaration.union.private': V.Declaration.Union.Private<G>;
-		readonly 'declaration.union.public': V.Declaration.Union.Public<G>;
-		readonly 'declaration.union.public.internal': V.Declaration.Union.Public.Internal<G>;
-		readonly 'declaration.union.public.parent': V.Declaration.Union.Public.Parent<G>;
-		readonly 'declaration.union.public.restricted': V.Declaration.Union.Public.Restricted<G>;
+		readonly 'declaration.parameter.variadic': gate.In<
+			G,
+			features.ForeignFunctionInterface,
+			V.Declaration.Parameter.Variadic<G>
+		>;
+		readonly 'declaration.property': gate.In<G, features.Accessors, V.Declaration.Property<G>>;
+		readonly 'declaration.property.getter': gate.In<G, features.Accessors, V.Declaration.Property.Getter<G>>;
+		readonly 'declaration.property.getter.private': gate.In<
+			G,
+			features.Visibility,
+			V.Declaration.Property.Getter.Private<G>
+		>;
+		readonly 'declaration.property.getter.protected': gate.In<
+			G,
+			features.Visibility,
+			V.Declaration.Property.Getter.Protected<G>
+		>;
+		readonly 'declaration.property.getter.public': gate.In<
+			G,
+			features.Visibility,
+			V.Declaration.Property.Getter.Public<G>
+		>;
+		readonly 'declaration.property.private': gate.In<G, features.Visibility, V.Declaration.Property.Private<G>>;
+		readonly 'declaration.property.protected': gate.In<G, features.Visibility, V.Declaration.Property.Protected<G>>;
+		readonly 'declaration.property.public': gate.In<G, features.Visibility, V.Declaration.Property.Public<G>>;
+		readonly 'declaration.property.setter': gate.In<G, features.Accessors, V.Declaration.Property.Setter<G>>;
+		readonly 'declaration.property.setter.private': gate.In<
+			G,
+			features.Visibility,
+			V.Declaration.Property.Setter.Private<G>
+		>;
+		readonly 'declaration.property.setter.protected': gate.In<
+			G,
+			features.Visibility,
+			V.Declaration.Property.Setter.Protected<G>
+		>;
+		readonly 'declaration.property.setter.public': gate.In<
+			G,
+			features.Visibility,
+			V.Declaration.Property.Setter.Public<G>
+		>;
+		readonly 'declaration.property.signature': gate.In<G, features.Accessors, V.Declaration.Property.Signature<G>>;
+		readonly 'declaration.property.signature.abstract': gate.In<
+			G,
+			features.Accessors,
+			V.Declaration.Property.Signature.Abstract<G>
+		>;
+		readonly 'declaration.property.signature.abstract.getter': gate.In<
+			G,
+			features.Accessors,
+			V.Declaration.Property.Signature.Abstract.Getter<G>
+		>;
+		readonly 'declaration.property.signature.abstract.getter.private': gate.In<
+			G,
+			features.Visibility,
+			V.Declaration.Property.Signature.Abstract.Getter.Private<G>
+		>;
+		readonly 'declaration.property.signature.abstract.getter.protected': gate.In<
+			G,
+			features.Visibility,
+			V.Declaration.Property.Signature.Abstract.Getter.Protected<G>
+		>;
+		readonly 'declaration.property.signature.abstract.getter.public': gate.In<
+			G,
+			features.Visibility,
+			V.Declaration.Property.Signature.Abstract.Getter.Public<G>
+		>;
+		readonly 'declaration.property.signature.abstract.setter': gate.In<
+			G,
+			features.Accessors,
+			V.Declaration.Property.Signature.Abstract.Setter<G>
+		>;
+		readonly 'declaration.property.signature.abstract.setter.private': gate.In<
+			G,
+			features.Visibility,
+			V.Declaration.Property.Signature.Abstract.Setter.Private<G>
+		>;
+		readonly 'declaration.property.signature.abstract.setter.protected': gate.In<
+			G,
+			features.Visibility,
+			V.Declaration.Property.Signature.Abstract.Setter.Protected<G>
+		>;
+		readonly 'declaration.property.signature.abstract.setter.public': gate.In<
+			G,
+			features.Visibility,
+			V.Declaration.Property.Signature.Abstract.Setter.Public<G>
+		>;
+		readonly 'declaration.property.signature.getter': gate.In<
+			G,
+			features.Accessors,
+			V.Declaration.Property.Signature.Getter<G>
+		>;
+		readonly 'declaration.property.signature.getter.private': gate.In<
+			G,
+			features.Visibility,
+			V.Declaration.Property.Signature.Getter.Private<G>
+		>;
+		readonly 'declaration.property.signature.getter.protected': gate.In<
+			G,
+			features.Visibility,
+			V.Declaration.Property.Signature.Getter.Protected<G>
+		>;
+		readonly 'declaration.property.signature.getter.public': gate.In<
+			G,
+			features.Visibility,
+			V.Declaration.Property.Signature.Getter.Public<G>
+		>;
+		readonly 'declaration.property.signature.setter': gate.In<
+			G,
+			features.Accessors,
+			V.Declaration.Property.Signature.Setter<G>
+		>;
+		readonly 'declaration.property.signature.setter.private': gate.In<
+			G,
+			features.Visibility,
+			V.Declaration.Property.Signature.Setter.Private<G>
+		>;
+		readonly 'declaration.property.signature.setter.protected': gate.In<
+			G,
+			features.Visibility,
+			V.Declaration.Property.Signature.Setter.Protected<G>
+		>;
+		readonly 'declaration.property.signature.setter.public': gate.In<
+			G,
+			features.Visibility,
+			V.Declaration.Property.Signature.Setter.Public<G>
+		>;
+		readonly 'declaration.signature': gate.In<G, features.StructuralConformance, V.Declaration.Signature<G>>;
+		readonly 'declaration.signature.call': gate.In<G, features.StructuralConformance, V.Declaration.Signature.Call<G>>;
+		readonly 'declaration.signature.construct': gate.In<
+			G,
+			features.StructuralConformance,
+			V.Declaration.Signature.Construct<G>
+		>;
+		readonly 'declaration.signature.index': gate.In<
+			G,
+			features.StructuralConformance,
+			V.Declaration.Signature.Index<G>
+		>;
+		readonly 'declaration.signature.index.mapped': gate.In<
+			G,
+			features.StructuralConformance,
+			V.Declaration.Signature.Index.Mapped<G>
+		>;
+		readonly 'declaration.struct': gate.In<G, features.Structs, V.Declaration.Struct<G>>;
+		readonly 'declaration.struct.private': gate.In<G, features.Visibility, V.Declaration.Struct.Private<G>>;
+		readonly 'declaration.struct.public': gate.In<G, features.Visibility, V.Declaration.Struct.Public<G>>;
+		readonly 'declaration.struct.public.internal': gate.In<
+			G,
+			features.Visibility,
+			V.Declaration.Struct.Public.Internal<G>
+		>;
+		readonly 'declaration.struct.public.parent': gate.In<G, features.Visibility, V.Declaration.Struct.Public.Parent<G>>;
+		readonly 'declaration.struct.public.restricted': gate.In<
+			G,
+			features.Visibility,
+			V.Declaration.Struct.Public.Restricted<G>
+		>;
+		readonly 'declaration.struct.tuple': gate.In<G, features.Structs, V.Declaration.Struct.Tuple<G>>;
+		readonly 'declaration.struct.tuple.private': gate.In<G, features.Visibility, V.Declaration.Struct.Tuple.Private<G>>;
+		readonly 'declaration.struct.tuple.public': gate.In<G, features.Visibility, V.Declaration.Struct.Tuple.Public<G>>;
+		readonly 'declaration.struct.tuple.public.internal': gate.In<
+			G,
+			features.Visibility,
+			V.Declaration.Struct.Tuple.Public.Internal<G>
+		>;
+		readonly 'declaration.struct.tuple.public.parent': gate.In<
+			G,
+			features.Visibility,
+			V.Declaration.Struct.Tuple.Public.Parent<G>
+		>;
+		readonly 'declaration.struct.tuple.public.restricted': gate.In<
+			G,
+			features.Visibility,
+			V.Declaration.Struct.Tuple.Public.Restricted<G>
+		>;
+		readonly 'declaration.struct.unit': gate.In<G, features.Structs, V.Declaration.Struct.Unit<G>>;
+		readonly 'declaration.struct.unit.private': gate.In<G, features.Visibility, V.Declaration.Struct.Unit.Private<G>>;
+		readonly 'declaration.struct.unit.public': gate.In<G, features.Visibility, V.Declaration.Struct.Unit.Public<G>>;
+		readonly 'declaration.struct.unit.public.internal': gate.In<
+			G,
+			features.Visibility,
+			V.Declaration.Struct.Unit.Public.Internal<G>
+		>;
+		readonly 'declaration.struct.unit.public.parent': gate.In<
+			G,
+			features.Visibility,
+			V.Declaration.Struct.Unit.Public.Parent<G>
+		>;
+		readonly 'declaration.struct.unit.public.restricted': gate.In<
+			G,
+			features.Visibility,
+			V.Declaration.Struct.Unit.Public.Restricted<G>
+		>;
+		readonly 'declaration.type_alias': gate.In<G, features.TypeAliases, V.Declaration.TypeAlias<G>>;
+		readonly 'declaration.type_alias.associated': gate.In<
+			G,
+			features.AssociatedTypes,
+			V.Declaration.TypeAlias.Associated<G>
+		>;
+		readonly 'declaration.type_alias.private': gate.In<G, features.Visibility, V.Declaration.TypeAlias.Private<G>>;
+		readonly 'declaration.type_alias.public': gate.In<G, features.Visibility, V.Declaration.TypeAlias.Public<G>>;
+		readonly 'declaration.type_alias.public.internal': gate.In<
+			G,
+			features.Visibility,
+			V.Declaration.TypeAlias.Public.Internal<G>
+		>;
+		readonly 'declaration.type_alias.public.parent': gate.In<
+			G,
+			features.Visibility,
+			V.Declaration.TypeAlias.Public.Parent<G>
+		>;
+		readonly 'declaration.type_alias.public.restricted': gate.In<
+			G,
+			features.Visibility,
+			V.Declaration.TypeAlias.Public.Restricted<G>
+		>;
+		readonly 'declaration.type_parameter': gate.In<G, features.ParametricPolymorphism, V.Declaration.TypeParameter<G>>;
+		readonly 'declaration.type_parameter.lifetime': gate.In<
+			G,
+			features.Lifetimes,
+			V.Declaration.TypeParameter.Lifetime<G>
+		>;
+		readonly 'declaration.type_parameter.parameters': gate.In<
+			G,
+			features.ParametricPolymorphism,
+			V.Declaration.TypeParameter.Parameters<G>
+		>;
+		readonly 'declaration.type_parameter.value': gate.In<
+			G,
+			features.ConstGenerics,
+			V.Declaration.TypeParameter.Value<G>
+		>;
+		readonly 'declaration.type_parameter.variadic': gate.In<
+			G,
+			features.ParametricPolymorphism,
+			V.Declaration.TypeParameter.Variadic<G>
+		>;
+		readonly 'declaration.union': gate.In<G, features.UntaggedUnions, V.Declaration.Union<G>>;
+		readonly 'declaration.union.private': gate.In<G, features.Visibility, V.Declaration.Union.Private<G>>;
+		readonly 'declaration.union.public': gate.In<G, features.Visibility, V.Declaration.Union.Public<G>>;
+		readonly 'declaration.union.public.internal': gate.In<
+			G,
+			features.Visibility,
+			V.Declaration.Union.Public.Internal<G>
+		>;
+		readonly 'declaration.union.public.parent': gate.In<G, features.Visibility, V.Declaration.Union.Public.Parent<G>>;
+		readonly 'declaration.union.public.restricted': gate.In<
+			G,
+			features.Visibility,
+			V.Declaration.Union.Public.Restricted<G>
+		>;
 		readonly 'declaration.variable': V.Declaration.Variable<G>;
 		readonly 'declaration.variable.constant': V.Declaration.Variable.Constant<G>;
 		readonly 'declaration.variable.pattern': V.Declaration.Variable.Pattern<G>;
-		readonly 'declaration.variable.private': V.Declaration.Variable.Private<G>;
-		readonly 'declaration.variable.public': V.Declaration.Variable.Public<G>;
-		readonly 'declaration.variable.public.internal': V.Declaration.Variable.Public.Internal<G>;
-		readonly 'declaration.variable.public.parent': V.Declaration.Variable.Public.Parent<G>;
-		readonly 'declaration.variable.public.restricted': V.Declaration.Variable.Public.Restricted<G>;
+		readonly 'declaration.variable.private': gate.In<G, features.Visibility, V.Declaration.Variable.Private<G>>;
+		readonly 'declaration.variable.public': gate.In<G, features.Visibility, V.Declaration.Variable.Public<G>>;
+		readonly 'declaration.variable.public.internal': gate.In<
+			G,
+			features.Visibility,
+			V.Declaration.Variable.Public.Internal<G>
+		>;
+		readonly 'declaration.variable.public.parent': gate.In<
+			G,
+			features.Visibility,
+			V.Declaration.Variable.Public.Parent<G>
+		>;
+		readonly 'declaration.variable.public.restricted': gate.In<
+			G,
+			features.Visibility,
+			V.Declaration.Variable.Public.Restricted<G>
+		>;
 		readonly 'declaration.variable.reassignable': V.Declaration.Variable.Reassignable<G>;
 		readonly 'declaration.variable.reassignable.function_scoped': V.Declaration.Variable.Reassignable.FunctionScoped<G>;
 		readonly element: V.Element<G>;
@@ -4821,37 +5240,93 @@ declare module './map.ts' {
 		readonly 'element.comparator.membership': V.Element.Comparator.Membership<G>;
 		readonly 'element.comparator.membership.in': V.Element.Comparator.Membership.In<G>;
 		readonly 'element.comparator.membership.not_in': V.Element.Comparator.Membership.NotIn<G>;
-		readonly 'element.macro': V.Element.Macro<G>;
-		readonly 'element.macro.fragment': V.Element.Macro.Fragment<G>;
-		readonly 'element.macro.token_binding': V.Element.Macro.TokenBinding<G>;
-		readonly 'element.macro.token_repetition': V.Element.Macro.TokenRepetition<G>;
-		readonly 'element.macro.token_repetition.pattern': V.Element.Macro.TokenRepetition.Pattern<G>;
-		readonly 'element.macro.token_tree': V.Element.Macro.TokenTree<G>;
-		readonly 'element.macro.token_tree.brace': V.Element.Macro.TokenTree.Brace<G>;
-		readonly 'element.macro.token_tree.bracket': V.Element.Macro.TokenTree.Bracket<G>;
-		readonly 'element.macro.token_tree.delimited': V.Element.Macro.TokenTree.Delimited<G>;
-		readonly 'element.macro.token_tree.delimited.brace': V.Element.Macro.TokenTree.Delimited.Brace<G>;
-		readonly 'element.macro.token_tree.delimited.bracket': V.Element.Macro.TokenTree.Delimited.Bracket<G>;
-		readonly 'element.macro.token_tree.delimited.paren': V.Element.Macro.TokenTree.Delimited.Paren<G>;
-		readonly 'element.macro.token_tree.paren': V.Element.Macro.TokenTree.Paren<G>;
-		readonly 'element.macro.token_tree.pattern': V.Element.Macro.TokenTree.Pattern<G>;
-		readonly 'element.macro.token_tree.pattern.brace': V.Element.Macro.TokenTree.Pattern.Brace<G>;
-		readonly 'element.macro.token_tree.pattern.bracket': V.Element.Macro.TokenTree.Pattern.Bracket<G>;
-		readonly 'element.macro.token_tree.pattern.paren': V.Element.Macro.TokenTree.Pattern.Paren<G>;
+		readonly 'element.macro': gate.In<G, features.SyntacticMetaprogramming, V.Element.Macro<G>>;
+		readonly 'element.macro.fragment': gate.In<G, features.SyntacticMetaprogramming, V.Element.Macro.Fragment<G>>;
+		readonly 'element.macro.token_binding': gate.In<
+			G,
+			features.SyntacticMetaprogramming,
+			V.Element.Macro.TokenBinding<G>
+		>;
+		readonly 'element.macro.token_repetition': gate.In<
+			G,
+			features.SyntacticMetaprogramming,
+			V.Element.Macro.TokenRepetition<G>
+		>;
+		readonly 'element.macro.token_repetition.pattern': gate.In<
+			G,
+			features.SyntacticMetaprogramming,
+			V.Element.Macro.TokenRepetition.Pattern<G>
+		>;
+		readonly 'element.macro.token_tree': gate.In<G, features.SyntacticMetaprogramming, V.Element.Macro.TokenTree<G>>;
+		readonly 'element.macro.token_tree.brace': gate.In<
+			G,
+			features.SyntacticMetaprogramming,
+			V.Element.Macro.TokenTree.Brace<G>
+		>;
+		readonly 'element.macro.token_tree.bracket': gate.In<
+			G,
+			features.SyntacticMetaprogramming,
+			V.Element.Macro.TokenTree.Bracket<G>
+		>;
+		readonly 'element.macro.token_tree.delimited': gate.In<
+			G,
+			features.SyntacticMetaprogramming,
+			V.Element.Macro.TokenTree.Delimited<G>
+		>;
+		readonly 'element.macro.token_tree.delimited.brace': gate.In<
+			G,
+			features.SyntacticMetaprogramming,
+			V.Element.Macro.TokenTree.Delimited.Brace<G>
+		>;
+		readonly 'element.macro.token_tree.delimited.bracket': gate.In<
+			G,
+			features.SyntacticMetaprogramming,
+			V.Element.Macro.TokenTree.Delimited.Bracket<G>
+		>;
+		readonly 'element.macro.token_tree.delimited.paren': gate.In<
+			G,
+			features.SyntacticMetaprogramming,
+			V.Element.Macro.TokenTree.Delimited.Paren<G>
+		>;
+		readonly 'element.macro.token_tree.paren': gate.In<
+			G,
+			features.SyntacticMetaprogramming,
+			V.Element.Macro.TokenTree.Paren<G>
+		>;
+		readonly 'element.macro.token_tree.pattern': gate.In<
+			G,
+			features.SyntacticMetaprogramming,
+			V.Element.Macro.TokenTree.Pattern<G>
+		>;
+		readonly 'element.macro.token_tree.pattern.brace': gate.In<
+			G,
+			features.SyntacticMetaprogramming,
+			V.Element.Macro.TokenTree.Pattern.Brace<G>
+		>;
+		readonly 'element.macro.token_tree.pattern.bracket': gate.In<
+			G,
+			features.SyntacticMetaprogramming,
+			V.Element.Macro.TokenTree.Pattern.Bracket<G>
+		>;
+		readonly 'element.macro.token_tree.pattern.paren': gate.In<
+			G,
+			features.SyntacticMetaprogramming,
+			V.Element.Macro.TokenTree.Pattern.Paren<G>
+		>;
 		readonly 'element.pair': V.Element.Pair<G>;
 		readonly 'element.spread': V.Element.Spread<G>;
 		readonly 'element.spread.map': V.Element.Spread.Map<G>;
 		readonly 'element.spread.parenthesized': V.Element.Spread.Parenthesized<G>;
-		readonly 'element.struct': V.Element.Struct<G>;
-		readonly 'element.struct.base': V.Element.Struct.Base<G>;
-		readonly 'element.struct.field': V.Element.Struct.Field<G>;
-		readonly 'element.template': V.Element.Template<G>;
-		readonly 'element.template.substitution': V.Element.Template.Substitution<G>;
-		readonly 'element.tuple': V.Element.Tuple<G>;
-		readonly 'element.tuple.member': V.Element.Tuple.Member<G>;
-		readonly 'element.tuple.member.optional': V.Element.Tuple.Member.Optional<G>;
-		readonly 'element.type_argument': V.Element.TypeArgument<G>;
-		readonly 'element.type_binding': V.Element.TypeBinding<G>;
+		readonly 'element.struct': gate.In<G, features.Structs, V.Element.Struct<G>>;
+		readonly 'element.struct.base': gate.In<G, features.Structs, V.Element.Struct.Base<G>>;
+		readonly 'element.struct.field': gate.In<G, features.Structs, V.Element.Struct.Field<G>>;
+		readonly 'element.template': gate.In<G, features.TypeAnnotations, V.Element.Template<G>>;
+		readonly 'element.template.substitution': gate.In<G, features.TypeAnnotations, V.Element.Template.Substitution<G>>;
+		readonly 'element.tuple': gate.In<G, features.TypeAnnotations, V.Element.Tuple<G>>;
+		readonly 'element.tuple.member': gate.In<G, features.TypeAnnotations, V.Element.Tuple.Member<G>>;
+		readonly 'element.tuple.member.optional': gate.In<G, features.TypeAnnotations, V.Element.Tuple.Member.Optional<G>>;
+		readonly 'element.type_argument': gate.In<G, features.ParametricPolymorphism, V.Element.TypeArgument<G>>;
+		readonly 'element.type_binding': gate.In<G, features.AssociatedTypes, V.Element.TypeBinding<G>>;
 		readonly expression: V.Expression<G>;
 		readonly 'expression.assignment': V.Expression.Assignment<G>;
 		readonly 'expression.assignment.compound': V.Expression.Assignment.Compound<G>;
@@ -4872,7 +5347,7 @@ declare module './map.ts' {
 		readonly 'expression.assignment.compound.shift_right': V.Expression.Assignment.Compound.ShiftRight<G>;
 		readonly 'expression.assignment.compound.shift_right_unsigned': V.Expression.Assignment.Compound.ShiftRightUnsigned<G>;
 		readonly 'expression.assignment.compound.subtract': V.Expression.Assignment.Compound.Subtract<G>;
-		readonly 'expression.await': V.Expression.Await<G>;
+		readonly 'expression.await': gate.In<G, features.AsyncAwait, V.Expression.Await<G>>;
 		readonly 'expression.binary': V.Expression.Binary<G>;
 		readonly 'expression.binary.arithmetic': V.Expression.Binary.Arithmetic<G>;
 		readonly 'expression.binary.arithmetic.add': V.Expression.Binary.Arithmetic.Add<G>;
@@ -4894,8 +5369,16 @@ declare module './map.ts' {
 		readonly 'expression.binary.comparison.greater_equal': V.Expression.Binary.Comparison.GreaterEqual<G>;
 		readonly 'expression.binary.comparison.less': V.Expression.Binary.Comparison.Less<G>;
 		readonly 'expression.binary.comparison.less_equal': V.Expression.Binary.Comparison.LessEqual<G>;
-		readonly 'expression.binary.comparison.loose_equal': V.Expression.Binary.Comparison.LooseEqual<G>;
-		readonly 'expression.binary.comparison.loose_not_equal': V.Expression.Binary.Comparison.LooseNotEqual<G>;
+		readonly 'expression.binary.comparison.loose_equal': gate.In<
+			G,
+			features.CoerciveEquality,
+			V.Expression.Binary.Comparison.LooseEqual<G>
+		>;
+		readonly 'expression.binary.comparison.loose_not_equal': gate.In<
+			G,
+			features.CoerciveEquality,
+			V.Expression.Binary.Comparison.LooseNotEqual<G>
+		>;
 		readonly 'expression.binary.comparison.not_equal': V.Expression.Binary.Comparison.NotEqual<G>;
 		readonly 'expression.binary.comparison.not_equal.legacy': V.Expression.Binary.Comparison.NotEqual.Legacy<G>;
 		readonly 'expression.binary.identity': V.Expression.Binary.Identity<G>;
@@ -4914,87 +5397,107 @@ declare module './map.ts' {
 		readonly 'expression.binary.shift.right': V.Expression.Binary.Shift.Right<G>;
 		readonly 'expression.binary.shift.right_unsigned': V.Expression.Binary.Shift.RightUnsigned<G>;
 		readonly 'expression.block': V.Expression.Block<G>;
-		readonly 'expression.block.async': V.Expression.Block.Async<G>;
-		readonly 'expression.block.const': V.Expression.Block.Const<G>;
-		readonly 'expression.block.generator': V.Expression.Block.Generator<G>;
-		readonly 'expression.block.try': V.Expression.Block.Try<G>;
-		readonly 'expression.block.unsafe': V.Expression.Block.Unsafe<G>;
+		readonly 'expression.block.async': gate.In<G, features.AsyncBlocks, V.Expression.Block.Async<G>>;
+		readonly 'expression.block.const': gate.In<G, features.CompileTimeEvaluation, V.Expression.Block.Const<G>>;
+		readonly 'expression.block.generator': gate.In<G, features.Coroutines, V.Expression.Block.Generator<G>>;
+		readonly 'expression.block.try': gate.In<G, features.ErrorPropagation, V.Expression.Block.Try<G>>;
+		readonly 'expression.block.unsafe': gate.In<G, features.UnsafeCode, V.Expression.Block.Unsafe<G>>;
 		readonly 'expression.call': V.Expression.Call<G>;
-		readonly 'expression.call.construct': V.Expression.Call.Construct<G>;
-		readonly 'expression.call.construct.bare': V.Expression.Call.Construct.Bare<G>;
-		readonly 'expression.call.import': V.Expression.Call.Import<G>;
-		readonly 'expression.call.macro': V.Expression.Call.Macro<G>;
+		readonly 'expression.call.construct': gate.In<G, features.Classes, V.Expression.Call.Construct<G>>;
+		readonly 'expression.call.construct.bare': gate.In<G, features.Classes, V.Expression.Call.Construct.Bare<G>>;
+		readonly 'expression.call.import': gate.In<G, features.Modules, V.Expression.Call.Import<G>>;
+		readonly 'expression.call.macro': gate.In<G, features.SyntacticMetaprogramming, V.Expression.Call.Macro<G>>;
 		readonly 'expression.call.member': V.Expression.Call.Member<G>;
 		readonly 'expression.call.qualified': V.Expression.Call.Qualified<G>;
-		readonly 'expression.call.template': V.Expression.Call.Template<G>;
-		readonly 'expression.cast': V.Expression.Cast<G>;
-		readonly 'expression.cast.assertion': V.Expression.Cast.Assertion<G>;
-		readonly 'expression.cast.assertion.angle_bracket': V.Expression.Cast.Assertion.AngleBracket<G>;
-		readonly 'expression.cast.conversion': V.Expression.Cast.Conversion<G>;
-		readonly 'expression.cast.non_null': V.Expression.Cast.NonNull<G>;
-		readonly 'expression.cast.satisfies': V.Expression.Cast.Satisfies<G>;
-		readonly 'expression.class': V.Expression.Class<G>;
+		readonly 'expression.call.template': gate.In<G, features.StringInterpolation, V.Expression.Call.Template<G>>;
+		readonly 'expression.cast': gate.In<G, features.TypeAnnotations, V.Expression.Cast<G>>;
+		readonly 'expression.cast.assertion': gate.In<G, features.TypeAnnotations, V.Expression.Cast.Assertion<G>>;
+		readonly 'expression.cast.assertion.angle_bracket': gate.In<
+			G,
+			features.TypeAnnotations,
+			V.Expression.Cast.Assertion.AngleBracket<G>
+		>;
+		readonly 'expression.cast.conversion': gate.In<G, features.TypeAnnotations, V.Expression.Cast.Conversion<G>>;
+		readonly 'expression.cast.non_null': gate.In<G, features.NonNullAssertions, V.Expression.Cast.NonNull<G>>;
+		readonly 'expression.cast.satisfies': gate.In<G, features.TypeAnnotations, V.Expression.Cast.Satisfies<G>>;
+		readonly 'expression.class': gate.In<G, features.Classes, V.Expression.Class<G>>;
 		readonly 'expression.collection': V.Expression.Collection<G>;
 		readonly 'expression.collection.list': V.Expression.Collection.List<G>;
 		readonly 'expression.collection.list.repeat': V.Expression.Collection.List.Repeat<G>;
 		readonly 'expression.collection.map': V.Expression.Collection.Map<G>;
 		readonly 'expression.collection.object': V.Expression.Collection.Object<G>;
 		readonly 'expression.collection.set': V.Expression.Collection.Set<G>;
-		readonly 'expression.collection.struct': V.Expression.Collection.Struct<G>;
-		readonly 'expression.collection.tuple': V.Expression.Collection.Tuple<G>;
-		readonly 'expression.collection.tuple.bare': V.Expression.Collection.Tuple.Bare<G>;
-		readonly 'expression.comprehension': V.Expression.Comprehension<G>;
-		readonly 'expression.comprehension.generator': V.Expression.Comprehension.Generator<G>;
-		readonly 'expression.comprehension.list': V.Expression.Comprehension.List<G>;
-		readonly 'expression.comprehension.map': V.Expression.Comprehension.Map<G>;
-		readonly 'expression.comprehension.set': V.Expression.Comprehension.Set<G>;
-		readonly 'expression.conditional': V.Expression.Conditional<G>;
+		readonly 'expression.collection.struct': gate.In<G, features.Structs, V.Expression.Collection.Struct<G>>;
+		readonly 'expression.collection.tuple': gate.In<G, features.Tuples, V.Expression.Collection.Tuple<G>>;
+		readonly 'expression.collection.tuple.bare': gate.In<G, features.Tuples, V.Expression.Collection.Tuple.Bare<G>>;
+		readonly 'expression.comprehension': gate.In<G, features.Comprehensions, V.Expression.Comprehension<G>>;
+		readonly 'expression.comprehension.generator': gate.In<
+			G,
+			features.Comprehensions,
+			V.Expression.Comprehension.Generator<G>
+		>;
+		readonly 'expression.comprehension.list': gate.In<G, features.Comprehensions, V.Expression.Comprehension.List<G>>;
+		readonly 'expression.comprehension.map': gate.In<G, features.Comprehensions, V.Expression.Comprehension.Map<G>>;
+		readonly 'expression.comprehension.set': gate.In<G, features.Comprehensions, V.Expression.Comprehension.Set<G>>;
+		readonly 'expression.conditional': gate.In<G, features.ConditionalExpressions, V.Expression.Conditional<G>>;
 		readonly 'expression.function': V.Expression.Function<G>;
-		readonly 'expression.instantiation': V.Expression.Instantiation<G>;
-		readonly 'expression.interpolation': V.Expression.Interpolation<G>;
-		readonly 'expression.interpolation.conversion': V.Expression.Interpolation.Conversion<G>;
-		readonly 'expression.interpolation.format': V.Expression.Interpolation.Format<G>;
+		readonly 'expression.instantiation': gate.In<G, features.ParametricPolymorphism, V.Expression.Instantiation<G>>;
+		readonly 'expression.interpolation': gate.In<G, features.StringInterpolation, V.Expression.Interpolation<G>>;
+		readonly 'expression.interpolation.conversion': gate.In<
+			G,
+			features.StringInterpolation,
+			V.Expression.Interpolation.Conversion<G>
+		>;
+		readonly 'expression.interpolation.format': gate.In<
+			G,
+			features.StringInterpolation,
+			V.Expression.Interpolation.Format<G>
+		>;
 		readonly 'expression.lambda': V.Expression.Lambda<G>;
 		readonly 'expression.member': V.Expression.Member<G>;
 		readonly 'expression.meta': V.Expression.Meta<G>;
 		readonly 'expression.parenthesized': V.Expression.Parenthesized<G>;
-		readonly 'expression.propagate': V.Expression.Propagate<G>;
-		readonly 'expression.range': V.Expression.Range<G>;
-		readonly 'expression.range.exclusive': V.Expression.Range.Exclusive<G>;
-		readonly 'expression.range.inclusive': V.Expression.Range.Inclusive<G>;
-		readonly 'expression.range.inclusive.legacy': V.Expression.Range.Inclusive.Legacy<G>;
-		readonly 'expression.reference': V.Expression.Reference<G>;
+		readonly 'expression.propagate': gate.In<G, features.ErrorPropagation, V.Expression.Propagate<G>>;
+		readonly 'expression.range': gate.In<G, features.RangeExpressions, V.Expression.Range<G>>;
+		readonly 'expression.range.exclusive': gate.In<G, features.RangeExpressions, V.Expression.Range.Exclusive<G>>;
+		readonly 'expression.range.inclusive': gate.In<G, features.RangeExpressions, V.Expression.Range.Inclusive<G>>;
+		readonly 'expression.range.inclusive.legacy': gate.In<
+			G,
+			features.RangeExpressions,
+			V.Expression.Range.Inclusive.Legacy<G>
+		>;
+		readonly 'expression.reference': gate.In<G, features.References, V.Expression.Reference<G>>;
 		readonly 'expression.sequence': V.Expression.Sequence<G>;
-		readonly 'expression.slice': V.Expression.Slice<G>;
+		readonly 'expression.slice': gate.In<G, features.SliceExpressions, V.Expression.Slice<G>>;
 		readonly 'expression.subscript': V.Expression.Subscript<G>;
 		readonly 'expression.unary': V.Expression.Unary<G>;
 		readonly 'expression.unary.bitwise_not': V.Expression.Unary.BitwiseNot<G>;
 		readonly 'expression.unary.delete': V.Expression.Unary.Delete<G>;
-		readonly 'expression.unary.deref': V.Expression.Unary.Deref<G>;
+		readonly 'expression.unary.deref': gate.In<G, features.References, V.Expression.Unary.Deref<G>>;
 		readonly 'expression.unary.negation': V.Expression.Unary.Negation<G>;
 		readonly 'expression.unary.not': V.Expression.Unary.Not<G>;
 		readonly 'expression.unary.plus': V.Expression.Unary.Plus<G>;
 		readonly 'expression.unary.typeof': V.Expression.Unary.Typeof<G>;
 		readonly 'expression.unary.void': V.Expression.Unary.Void<G>;
-		readonly 'expression.unit': V.Expression.Unit<G>;
+		readonly 'expression.unit': gate.In<G, features.Tuples, V.Expression.Unit<G>>;
 		readonly 'expression.update': V.Expression.Update<G>;
 		readonly 'expression.update.decrement': V.Expression.Update.Decrement<G>;
 		readonly 'expression.update.increment': V.Expression.Update.Increment<G>;
-		readonly 'expression.yield': V.Expression.Yield<G>;
-		readonly 'expression.yield.delegate': V.Expression.Yield.Delegate<G>;
+		readonly 'expression.yield': gate.In<G, features.Coroutines, V.Expression.Yield<G>>;
+		readonly 'expression.yield.delegate': gate.In<G, features.Generators, V.Expression.Yield.Delegate<G>>;
 		readonly file: V.File<G>;
 		readonly identifier: V.Identifier<G>;
-		readonly 'identifier.label': V.Identifier.Label<G>;
-		readonly 'identifier.lifetime': V.Identifier.Lifetime<G>;
-		readonly 'identifier.metavariable': V.Identifier.Metavariable<G>;
+		readonly 'identifier.label': gate.In<G, features.LabeledControlFlow, V.Identifier.Label<G>>;
+		readonly 'identifier.lifetime': gate.In<G, features.Lifetimes, V.Identifier.Lifetime<G>>;
+		readonly 'identifier.metavariable': gate.In<G, features.SyntacticMetaprogramming, V.Identifier.Metavariable<G>>;
 		readonly 'identifier.qualified': V.Identifier.Qualified<G>;
-		readonly 'identifier.receiver': V.Identifier.Receiver<G>;
+		readonly 'identifier.receiver': gate.In<G, features.Methods, V.Identifier.Receiver<G>>;
 		readonly 'identifier.super': V.Identifier.Super<G>;
 		readonly literal: V.Literal<G>;
 		readonly 'literal.boolean': V.Literal.Boolean<G>;
 		readonly 'literal.boolean.false': V.Literal.Boolean.False<G>;
 		readonly 'literal.boolean.true': V.Literal.Boolean.True<G>;
-		readonly 'literal.character': V.Literal.Character<G>;
+		readonly 'literal.character': gate.In<G, features.Characters, V.Literal.Character<G>>;
 		readonly 'literal.ellipsis': V.Literal.Ellipsis<G>;
 		readonly 'literal.null': V.Literal.Null<G>;
 		readonly 'literal.null.undefined': V.Literal.Null.Undefined<G>;
@@ -5003,179 +5506,271 @@ declare module './map.ts' {
 		readonly 'literal.number.float.leading_point': V.Literal.Number.Float.LeadingPoint<G>;
 		readonly 'literal.number.float.scientific': V.Literal.Number.Float.Scientific<G>;
 		readonly 'literal.number.integer': V.Literal.Number.Integer<G>;
-		readonly 'literal.number.integer.big': V.Literal.Number.Integer.Big<G>;
-		readonly 'literal.number.integer.big.binary': V.Literal.Number.Integer.Big.Binary<G>;
-		readonly 'literal.number.integer.big.hex': V.Literal.Number.Integer.Big.Hex<G>;
-		readonly 'literal.number.integer.big.octal': V.Literal.Number.Integer.Big.Octal<G>;
+		readonly 'literal.number.integer.big': gate.In<
+			G,
+			features.ArbitraryPrecisionIntegers,
+			V.Literal.Number.Integer.Big<G>
+		>;
+		readonly 'literal.number.integer.big.binary': gate.In<
+			G,
+			features.ArbitraryPrecisionIntegers,
+			V.Literal.Number.Integer.Big.Binary<G>
+		>;
+		readonly 'literal.number.integer.big.hex': gate.In<
+			G,
+			features.ArbitraryPrecisionIntegers,
+			V.Literal.Number.Integer.Big.Hex<G>
+		>;
+		readonly 'literal.number.integer.big.octal': gate.In<
+			G,
+			features.ArbitraryPrecisionIntegers,
+			V.Literal.Number.Integer.Big.Octal<G>
+		>;
 		readonly 'literal.number.integer.binary': V.Literal.Number.Integer.Binary<G>;
 		readonly 'literal.number.integer.hex': V.Literal.Number.Integer.Hex<G>;
-		readonly 'literal.number.integer.imaginary': V.Literal.Number.Integer.Imaginary<G>;
+		readonly 'literal.number.integer.imaginary': gate.In<
+			G,
+			features.ComplexNumbers,
+			V.Literal.Number.Integer.Imaginary<G>
+		>;
 		readonly 'literal.number.integer.octal': V.Literal.Number.Integer.Octal<G>;
 		readonly 'literal.number.negative': V.Literal.Number.Negative<G>;
-		readonly 'literal.regex': V.Literal.Regex<G>;
-		readonly 'literal.regex.flags': V.Literal.Regex.Flags<G>;
-		readonly 'literal.regex.pattern': V.Literal.Regex.Pattern<G>;
+		readonly 'literal.regex': gate.In<G, features.RegularExpressions, V.Literal.Regex<G>>;
+		readonly 'literal.regex.flags': gate.In<G, features.RegularExpressions, V.Literal.Regex.Flags<G>>;
+		readonly 'literal.regex.pattern': gate.In<G, features.RegularExpressions, V.Literal.Regex.Pattern<G>>;
 		readonly 'literal.string': V.Literal.String<G>;
-		readonly 'literal.string.bytes': V.Literal.String.Bytes<G>;
-		readonly 'literal.string.bytes.multiline': V.Literal.String.Bytes.Multiline<G>;
-		readonly 'literal.string.bytes.raw': V.Literal.String.Bytes.Raw<G>;
-		readonly 'literal.string.bytes.raw.multiline': V.Literal.String.Bytes.Raw.Multiline<G>;
-		readonly 'literal.string.c': V.Literal.String.C<G>;
-		readonly 'literal.string.c.raw': V.Literal.String.C.Raw<G>;
+		readonly 'literal.string.bytes': gate.In<G, features.ByteStrings, V.Literal.String.Bytes<G>>;
+		readonly 'literal.string.bytes.multiline': gate.In<G, features.ByteStrings, V.Literal.String.Bytes.Multiline<G>>;
+		readonly 'literal.string.bytes.raw': gate.In<G, features.RawStrings, V.Literal.String.Bytes.Raw<G>>;
+		readonly 'literal.string.bytes.raw.multiline': gate.In<
+			G,
+			features.RawStrings,
+			V.Literal.String.Bytes.Raw.Multiline<G>
+		>;
+		readonly 'literal.string.c': gate.In<G, features.CStrings, V.Literal.String.C<G>>;
+		readonly 'literal.string.c.raw': gate.In<G, features.CStrings, V.Literal.String.C.Raw<G>>;
 		readonly 'literal.string.concatenated': V.Literal.String.Concatenated<G>;
 		readonly 'literal.string.escape': V.Literal.String.Escape<G>;
-		readonly 'literal.string.interpolated': V.Literal.String.Interpolated<G>;
-		readonly 'literal.string.interpolated.deferred': V.Literal.String.Interpolated.Deferred<G>;
-		readonly 'literal.string.interpolated.deferred.multiline': V.Literal.String.Interpolated.Deferred.Multiline<G>;
-		readonly 'literal.string.interpolated.deferred.raw': V.Literal.String.Interpolated.Deferred.Raw<G>;
-		readonly 'literal.string.interpolated.deferred.raw.multiline': V.Literal.String.Interpolated.Deferred.Raw.Multiline<G>;
-		readonly 'literal.string.interpolated.multiline': V.Literal.String.Interpolated.Multiline<G>;
-		readonly 'literal.string.interpolated.raw': V.Literal.String.Interpolated.Raw<G>;
-		readonly 'literal.string.interpolated.raw.multiline': V.Literal.String.Interpolated.Raw.Multiline<G>;
+		readonly 'literal.string.interpolated': gate.In<G, features.StringInterpolation, V.Literal.String.Interpolated<G>>;
+		readonly 'literal.string.interpolated.deferred': gate.In<
+			G,
+			features.StringInterpolation,
+			V.Literal.String.Interpolated.Deferred<G>
+		>;
+		readonly 'literal.string.interpolated.deferred.multiline': gate.In<
+			G,
+			features.StringInterpolation,
+			V.Literal.String.Interpolated.Deferred.Multiline<G>
+		>;
+		readonly 'literal.string.interpolated.deferred.raw': gate.In<
+			G,
+			features.RawStrings,
+			V.Literal.String.Interpolated.Deferred.Raw<G>
+		>;
+		readonly 'literal.string.interpolated.deferred.raw.multiline': gate.In<
+			G,
+			features.RawStrings,
+			V.Literal.String.Interpolated.Deferred.Raw.Multiline<G>
+		>;
+		readonly 'literal.string.interpolated.multiline': gate.In<
+			G,
+			features.StringInterpolation,
+			V.Literal.String.Interpolated.Multiline<G>
+		>;
+		readonly 'literal.string.interpolated.raw': gate.In<G, features.RawStrings, V.Literal.String.Interpolated.Raw<G>>;
+		readonly 'literal.string.interpolated.raw.multiline': gate.In<
+			G,
+			features.RawStrings,
+			V.Literal.String.Interpolated.Raw.Multiline<G>
+		>;
 		readonly 'literal.string.multiline': V.Literal.String.Multiline<G>;
-		readonly 'literal.string.raw': V.Literal.String.Raw<G>;
-		readonly 'literal.string.raw.multiline': V.Literal.String.Raw.Multiline<G>;
+		readonly 'literal.string.raw': gate.In<G, features.RawStrings, V.Literal.String.Raw<G>>;
+		readonly 'literal.string.raw.multiline': gate.In<G, features.RawStrings, V.Literal.String.Raw.Multiline<G>>;
 		readonly 'literal.string.text': V.Literal.String.Text<G>;
-		readonly 'literal.string.unicode': V.Literal.String.Unicode<G>;
+		readonly 'literal.string.unicode': gate.In<G, features.UnicodeStrings, V.Literal.String.Unicode<G>>;
 		readonly modifier: V.Modifier<G>;
-		readonly 'modifier.extern': V.Modifier.Extern<G>;
-		readonly 'modifier.visibility': V.Modifier.Visibility<G>;
-		readonly 'modifier.visibility.private': V.Modifier.Visibility.Private<G>;
-		readonly 'modifier.visibility.protected': V.Modifier.Visibility.Protected<G>;
-		readonly 'modifier.visibility.public': V.Modifier.Visibility.Public<G>;
-		readonly 'modifier.visibility.public.internal': V.Modifier.Visibility.Public.Internal<G>;
-		readonly 'modifier.visibility.public.parent': V.Modifier.Visibility.Public.Parent<G>;
-		readonly 'modifier.visibility.public.restricted': V.Modifier.Visibility.Public.Restricted<G>;
+		readonly 'modifier.extern': gate.In<G, features.ForeignFunctionInterface, V.Modifier.Extern<G>>;
+		readonly 'modifier.visibility': gate.In<G, features.Visibility, V.Modifier.Visibility<G>>;
+		readonly 'modifier.visibility.private': gate.In<G, features.Visibility, V.Modifier.Visibility.Private<G>>;
+		readonly 'modifier.visibility.protected': gate.In<G, features.Visibility, V.Modifier.Visibility.Protected<G>>;
+		readonly 'modifier.visibility.public': gate.In<G, features.Visibility, V.Modifier.Visibility.Public<G>>;
+		readonly 'modifier.visibility.public.internal': gate.In<
+			G,
+			features.Visibility,
+			V.Modifier.Visibility.Public.Internal<G>
+		>;
+		readonly 'modifier.visibility.public.parent': gate.In<
+			G,
+			features.Visibility,
+			V.Modifier.Visibility.Public.Parent<G>
+		>;
+		readonly 'modifier.visibility.public.restricted': gate.In<
+			G,
+			features.Visibility,
+			V.Modifier.Visibility.Public.Restricted<G>
+		>;
 		readonly pattern: V.Pattern<G>;
-		readonly 'pattern.as': V.Pattern.As<G>;
-		readonly 'pattern.assignment': V.Pattern.Assignment<G>;
-		readonly 'pattern.complex': V.Pattern.Complex<G>;
-		readonly 'pattern.complex.add': V.Pattern.Complex.Add<G>;
-		readonly 'pattern.complex.subtract': V.Pattern.Complex.Subtract<G>;
-		readonly 'pattern.generic': V.Pattern.Generic<G>;
-		readonly 'pattern.list': V.Pattern.List<G>;
-		readonly 'pattern.map': V.Pattern.Map<G>;
+		readonly 'pattern.as': gate.In<G, features.MatchExpressions, V.Pattern.As<G>>;
+		readonly 'pattern.assignment': gate.In<G, features.Destructuring, V.Pattern.Assignment<G>>;
+		readonly 'pattern.complex': gate.In<G, features.ComplexNumbers, V.Pattern.Complex<G>>;
+		readonly 'pattern.complex.add': gate.In<G, features.ComplexNumbers, V.Pattern.Complex.Add<G>>;
+		readonly 'pattern.complex.subtract': gate.In<G, features.ComplexNumbers, V.Pattern.Complex.Subtract<G>>;
+		readonly 'pattern.generic': gate.In<G, features.ParametricPolymorphism, V.Pattern.Generic<G>>;
+		readonly 'pattern.list': gate.In<G, features.Destructuring, V.Pattern.List<G>>;
+		readonly 'pattern.map': gate.In<G, features.MatchExpressions, V.Pattern.Map<G>>;
 		readonly 'pattern.mutable': V.Pattern.Mutable<G>;
-		readonly 'pattern.object': V.Pattern.Object<G>;
-		readonly 'pattern.object.assignment': V.Pattern.Object.Assignment<G>;
-		readonly 'pattern.object.pair': V.Pattern.Object.Pair<G>;
-		readonly 'pattern.or': V.Pattern.Or<G>;
-		readonly 'pattern.range': V.Pattern.Range<G>;
-		readonly 'pattern.range.exclusive': V.Pattern.Range.Exclusive<G>;
-		readonly 'pattern.range.inclusive': V.Pattern.Range.Inclusive<G>;
-		readonly 'pattern.range.inclusive.legacy': V.Pattern.Range.Inclusive.Legacy<G>;
-		readonly 'pattern.reference': V.Pattern.Reference<G>;
-		readonly 'pattern.reference.value': V.Pattern.Reference.Value<G>;
-		readonly 'pattern.rest': V.Pattern.Rest<G>;
-		readonly 'pattern.rest.map': V.Pattern.Rest.Map<G>;
-		readonly 'pattern.struct': V.Pattern.Struct<G>;
-		readonly 'pattern.struct.field': V.Pattern.Struct.Field<G>;
-		readonly 'pattern.struct.rest': V.Pattern.Struct.Rest<G>;
-		readonly 'pattern.tuple': V.Pattern.Tuple<G>;
-		readonly 'pattern.tuple.bare': V.Pattern.Tuple.Bare<G>;
-		readonly 'pattern.wildcard': V.Pattern.Wildcard<G>;
+		readonly 'pattern.object': gate.In<G, features.Destructuring, V.Pattern.Object<G>>;
+		readonly 'pattern.object.assignment': gate.In<G, features.Destructuring, V.Pattern.Object.Assignment<G>>;
+		readonly 'pattern.object.pair': gate.In<G, features.Destructuring, V.Pattern.Object.Pair<G>>;
+		readonly 'pattern.or': gate.In<G, features.MatchExpressions, V.Pattern.Or<G>>;
+		readonly 'pattern.range': gate.In<G, features.RangeExpressions, V.Pattern.Range<G>>;
+		readonly 'pattern.range.exclusive': gate.In<G, features.RangeExpressions, V.Pattern.Range.Exclusive<G>>;
+		readonly 'pattern.range.inclusive': gate.In<G, features.RangeExpressions, V.Pattern.Range.Inclusive<G>>;
+		readonly 'pattern.range.inclusive.legacy': gate.In<
+			G,
+			features.RangeExpressions,
+			V.Pattern.Range.Inclusive.Legacy<G>
+		>;
+		readonly 'pattern.reference': gate.In<G, features.References, V.Pattern.Reference<G>>;
+		readonly 'pattern.reference.value': gate.In<G, features.References, V.Pattern.Reference.Value<G>>;
+		readonly 'pattern.rest': gate.In<G, features.Destructuring, V.Pattern.Rest<G>>;
+		readonly 'pattern.rest.map': gate.In<G, features.Destructuring, V.Pattern.Rest.Map<G>>;
+		readonly 'pattern.struct': gate.In<G, features.StructPatterns, V.Pattern.Struct<G>>;
+		readonly 'pattern.struct.field': gate.In<G, features.StructPatterns, V.Pattern.Struct.Field<G>>;
+		readonly 'pattern.struct.rest': gate.In<G, features.Structs, V.Pattern.Struct.Rest<G>>;
+		readonly 'pattern.tuple': gate.In<G, features.Destructuring, V.Pattern.Tuple<G>>;
+		readonly 'pattern.tuple.bare': gate.In<G, features.Destructuring, V.Pattern.Tuple.Bare<G>>;
+		readonly 'pattern.wildcard': gate.In<G, features.Destructuring, V.Pattern.Wildcard<G>>;
 		readonly statement: V.Statement<G>;
-		readonly 'statement.assert': V.Statement.Assert<G>;
+		readonly 'statement.assert': gate.In<G, features.Assertions, V.Statement.Assert<G>>;
 		readonly 'statement.block': V.Statement.Block<G>;
-		readonly 'statement.block.static': V.Statement.Block.Static<G>;
+		readonly 'statement.block.static': gate.In<G, features.Classes, V.Statement.Block.Static<G>>;
 		readonly 'statement.break': V.Statement.Break<G>;
 		readonly 'statement.continue': V.Statement.Continue<G>;
-		readonly 'statement.debugger': V.Statement.Debugger<G>;
+		readonly 'statement.debugger': gate.In<G, features.DebuggerStatements, V.Statement.Debugger<G>>;
 		readonly 'statement.delete': V.Statement.Delete<G>;
 		readonly 'statement.empty': V.Statement.Empty<G>;
-		readonly 'statement.exec': V.Statement.Exec<G>;
-		readonly 'statement.export': V.Statement.Export<G>;
-		readonly 'statement.export.all': V.Statement.Export.All<G>;
-		readonly 'statement.export.default': V.Statement.Export.Default<G>;
+		readonly 'statement.exec': gate.In<G, features.ExecStatements, V.Statement.Exec<G>>;
+		readonly 'statement.export': gate.In<G, features.Modules, V.Statement.Export<G>>;
+		readonly 'statement.export.all': gate.In<G, features.Modules, V.Statement.Export.All<G>>;
+		readonly 'statement.export.default': gate.In<G, features.Modules, V.Statement.Export.Default<G>>;
 		readonly 'statement.expression': V.Statement.Expression<G>;
-		readonly 'statement.global': V.Statement.Global<G>;
+		readonly 'statement.global': gate.In<G, features.ScopeDeclarations, V.Statement.Global<G>>;
 		readonly 'statement.if': V.Statement.If<G>;
-		readonly 'statement.import': V.Statement.Import<G>;
-		readonly 'statement.import.alias': V.Statement.Import.Alias<G>;
-		readonly 'statement.import.from': V.Statement.Import.From<G>;
-		readonly 'statement.import.future': V.Statement.Import.Future<G>;
-		readonly 'statement.import.package': V.Statement.Import.Package<G>;
-		readonly 'statement.import.package.private': V.Statement.Import.Package.Private<G>;
-		readonly 'statement.import.package.public': V.Statement.Import.Package.Public<G>;
-		readonly 'statement.import.package.public.internal': V.Statement.Import.Package.Public.Internal<G>;
-		readonly 'statement.import.package.public.parent': V.Statement.Import.Package.Public.Parent<G>;
-		readonly 'statement.import.package.public.restricted': V.Statement.Import.Package.Public.Restricted<G>;
-		readonly 'statement.import.private': V.Statement.Import.Private<G>;
-		readonly 'statement.import.public': V.Statement.Import.Public<G>;
-		readonly 'statement.import.public.internal': V.Statement.Import.Public.Internal<G>;
-		readonly 'statement.import.public.parent': V.Statement.Import.Public.Parent<G>;
-		readonly 'statement.import.public.restricted': V.Statement.Import.Public.Restricted<G>;
-		readonly 'statement.import.typeof': V.Statement.Import.Typeof<G>;
-		readonly 'statement.labeled': V.Statement.Labeled<G>;
+		readonly 'statement.import': gate.In<G, features.Modules, V.Statement.Import<G>>;
+		readonly 'statement.import.alias': gate.In<G, features.Modules, V.Statement.Import.Alias<G>>;
+		readonly 'statement.import.from': gate.In<G, features.Modules, V.Statement.Import.From<G>>;
+		readonly 'statement.import.future': gate.In<G, features.Modules, V.Statement.Import.Future<G>>;
+		readonly 'statement.import.package': gate.In<G, features.Modules, V.Statement.Import.Package<G>>;
+		readonly 'statement.import.package.private': gate.In<G, features.Visibility, V.Statement.Import.Package.Private<G>>;
+		readonly 'statement.import.package.public': gate.In<G, features.Visibility, V.Statement.Import.Package.Public<G>>;
+		readonly 'statement.import.package.public.internal': gate.In<
+			G,
+			features.Visibility,
+			V.Statement.Import.Package.Public.Internal<G>
+		>;
+		readonly 'statement.import.package.public.parent': gate.In<
+			G,
+			features.Visibility,
+			V.Statement.Import.Package.Public.Parent<G>
+		>;
+		readonly 'statement.import.package.public.restricted': gate.In<
+			G,
+			features.Visibility,
+			V.Statement.Import.Package.Public.Restricted<G>
+		>;
+		readonly 'statement.import.private': gate.In<G, features.Visibility, V.Statement.Import.Private<G>>;
+		readonly 'statement.import.public': gate.In<G, features.Visibility, V.Statement.Import.Public<G>>;
+		readonly 'statement.import.public.internal': gate.In<G, features.Visibility, V.Statement.Import.Public.Internal<G>>;
+		readonly 'statement.import.public.parent': gate.In<G, features.Visibility, V.Statement.Import.Public.Parent<G>>;
+		readonly 'statement.import.public.restricted': gate.In<
+			G,
+			features.Visibility,
+			V.Statement.Import.Public.Restricted<G>
+		>;
+		readonly 'statement.import.typeof': gate.In<G, features.Modules, V.Statement.Import.Typeof<G>>;
+		readonly 'statement.labeled': gate.In<G, features.LabeledControlFlow, V.Statement.Labeled<G>>;
 		readonly 'statement.loop': V.Statement.Loop<G>;
-		readonly 'statement.loop.counted': V.Statement.Loop.Counted<G>;
-		readonly 'statement.loop.do_while': V.Statement.Loop.DoWhile<G>;
+		readonly 'statement.loop.counted': gate.In<G, features.CountedLoops, V.Statement.Loop.Counted<G>>;
+		readonly 'statement.loop.do_while': gate.In<G, features.PostTestLoops, V.Statement.Loop.DoWhile<G>>;
 		readonly 'statement.loop.for_each': V.Statement.Loop.ForEach<G>;
 		readonly 'statement.loop.while': V.Statement.Loop.While<G>;
-		readonly 'statement.match': V.Statement.Match<G>;
-		readonly 'statement.nonlocal': V.Statement.Nonlocal<G>;
-		readonly 'statement.print': V.Statement.Print<G>;
-		readonly 'statement.resource': V.Statement.Resource<G>;
+		readonly 'statement.match': gate.In<G, features.MatchExpressions, V.Statement.Match<G>>;
+		readonly 'statement.nonlocal': gate.In<G, features.ScopeDeclarations, V.Statement.Nonlocal<G>>;
+		readonly 'statement.print': gate.In<G, features.PrintStatements, V.Statement.Print<G>>;
+		readonly 'statement.resource': gate.In<G, features.ResourceManagement, V.Statement.Resource<G>>;
 		readonly 'statement.return': V.Statement.Return<G>;
-		readonly 'statement.scope': V.Statement.Scope<G>;
-		readonly 'statement.switch': V.Statement.Switch<G>;
-		readonly 'statement.throw': V.Statement.Throw<G>;
-		readonly 'statement.try': V.Statement.Try<G>;
+		readonly 'statement.scope': gate.In<G, features.DynamicScope, V.Statement.Scope<G>>;
+		readonly 'statement.switch': gate.In<G, features.MultiwayBranch, V.Statement.Switch<G>>;
+		readonly 'statement.throw': gate.In<G, features.Exceptions, V.Statement.Throw<G>>;
+		readonly 'statement.try': gate.In<G, features.Exceptions, V.Statement.Try<G>>;
 		readonly type: V.Type<G>;
-		readonly 'type.abstract': V.Type.Abstract<G>;
-		readonly 'type.array': V.Type.Array<G>;
-		readonly 'type.bounded': V.Type.Bounded<G>;
-		readonly 'type.bracketed': V.Type.Bracketed<G>;
-		readonly 'type.conditional': V.Type.Conditional<G>;
-		readonly 'type.constrained': V.Type.Constrained<G>;
-		readonly 'type.dynamic': V.Type.Dynamic<G>;
-		readonly 'type.existential': V.Type.Existential<G>;
-		readonly 'type.function': V.Type.Function<G>;
-		readonly 'type.function.constructor': V.Type.Function.Constructor<G>;
-		readonly 'type.generic': V.Type.Generic<G>;
-		readonly 'type.generic.turbofish': V.Type.Generic.Turbofish<G>;
-		readonly 'type.import': V.Type.Import<G>;
-		readonly 'type.index_query': V.Type.IndexQuery<G>;
-		readonly 'type.infer': V.Type.Infer<G>;
-		readonly 'type.intersection': V.Type.Intersection<G>;
-		readonly 'type.literal': V.Type.Literal<G>;
-		readonly 'type.lookup': V.Type.Lookup<G>;
-		readonly 'type.nullable': V.Type.Nullable<G>;
-		readonly 'type.object': V.Type.Object<G>;
-		readonly 'type.optional': V.Type.Optional<G>;
-		readonly 'type.parenthesized': V.Type.Parenthesized<G>;
-		readonly 'type.pointer': V.Type.Pointer<G>;
-		readonly 'type.predicate': V.Type.Predicate<G>;
-		readonly 'type.predicate.asserts': V.Type.Predicate.Asserts<G>;
-		readonly 'type.primitive': V.Type.Primitive<G>;
-		readonly 'type.primitive.boolean': V.Type.Primitive.Boolean<G>;
-		readonly 'type.primitive.character': V.Type.Primitive.Character<G>;
-		readonly 'type.primitive.floating': V.Type.Primitive.Floating<G>;
-		readonly 'type.primitive.floating.float32': V.Type.Primitive.Floating.Float32<G>;
-		readonly 'type.primitive.floating.float64': V.Type.Primitive.Floating.Float64<G>;
-		readonly 'type.primitive.integral': V.Type.Primitive.Integral<G>;
-		readonly 'type.primitive.integral.int128': V.Type.Primitive.Integral.Int128<G>;
-		readonly 'type.primitive.integral.int16': V.Type.Primitive.Integral.Int16<G>;
-		readonly 'type.primitive.integral.int32': V.Type.Primitive.Integral.Int32<G>;
-		readonly 'type.primitive.integral.int64': V.Type.Primitive.Integral.Int64<G>;
-		readonly 'type.primitive.integral.int8': V.Type.Primitive.Integral.Int8<G>;
-		readonly 'type.primitive.integral.size': V.Type.Primitive.Integral.Size<G>;
-		readonly 'type.primitive.never': V.Type.Primitive.Never<G>;
-		readonly 'type.primitive.object': V.Type.Primitive.Object<G>;
-		readonly 'type.primitive.string': V.Type.Primitive.String<G>;
-		readonly 'type.primitive.symbol': V.Type.Primitive.Symbol<G>;
-		readonly 'type.primitive.unchecked': V.Type.Primitive.Unchecked<G>;
-		readonly 'type.primitive.unknown': V.Type.Primitive.Unknown<G>;
-		readonly 'type.primitive.void': V.Type.Primitive.Void<G>;
-		readonly 'type.qualified': V.Type.Qualified<G>;
-		readonly 'type.query': V.Type.Query<G>;
-		readonly 'type.readonly': V.Type.Readonly<G>;
-		readonly 'type.receiver': V.Type.Receiver<G>;
-		readonly 'type.reference': V.Type.Reference<G>;
-		readonly 'type.rest': V.Type.Rest<G>;
-		readonly 'type.template': V.Type.Template<G>;
-		readonly 'type.tuple': V.Type.Tuple<G>;
-		readonly 'type.union': V.Type.Union<G>;
-		readonly 'type.unit': V.Type.Unit<G>;
+		readonly 'type.abstract': gate.In<G, features.TypeAnnotations, V.Type.Abstract<G>>;
+		readonly 'type.array': gate.In<G, features.TypeAnnotations, V.Type.Array<G>>;
+		readonly 'type.bounded': gate.In<G, features.TypeAnnotations, V.Type.Bounded<G>>;
+		readonly 'type.bracketed': gate.In<G, features.TypeAnnotations, V.Type.Bracketed<G>>;
+		readonly 'type.conditional': gate.In<G, features.TypeAnnotations, V.Type.Conditional<G>>;
+		readonly 'type.constrained': gate.In<G, features.TypeAnnotations, V.Type.Constrained<G>>;
+		readonly 'type.dynamic': gate.In<G, features.TypeAnnotations, V.Type.Dynamic<G>>;
+		readonly 'type.existential': gate.In<G, features.TypeAnnotations, V.Type.Existential<G>>;
+		readonly 'type.function': gate.In<G, features.TypeAnnotations, V.Type.Function<G>>;
+		readonly 'type.function.constructor': gate.In<G, features.TypeAnnotations, V.Type.Function.Constructor<G>>;
+		readonly 'type.generic': gate.In<G, features.TypeAnnotations, V.Type.Generic<G>>;
+		readonly 'type.generic.turbofish': gate.In<G, features.TypeAnnotations, V.Type.Generic.Turbofish<G>>;
+		readonly 'type.import': gate.In<G, features.Modules, V.Type.Import<G>>;
+		readonly 'type.index_query': gate.In<G, features.TypeAnnotations, V.Type.IndexQuery<G>>;
+		readonly 'type.infer': gate.In<G, features.TypeAnnotations, V.Type.Infer<G>>;
+		readonly 'type.intersection': gate.In<G, features.TypeAnnotations, V.Type.Intersection<G>>;
+		readonly 'type.literal': gate.In<G, features.TypeAnnotations, V.Type.Literal<G>>;
+		readonly 'type.lookup': gate.In<G, features.TypeAnnotations, V.Type.Lookup<G>>;
+		readonly 'type.nullable': gate.In<G, features.NullableTypes, V.Type.Nullable<G>>;
+		readonly 'type.object': gate.In<G, features.TypeAnnotations, V.Type.Object<G>>;
+		readonly 'type.optional': gate.In<G, features.TypeAnnotations, V.Type.Optional<G>>;
+		readonly 'type.parenthesized': gate.In<G, features.TypeAnnotations, V.Type.Parenthesized<G>>;
+		readonly 'type.pointer': gate.In<G, features.TypeAnnotations, V.Type.Pointer<G>>;
+		readonly 'type.predicate': gate.In<G, features.TypeAnnotations, V.Type.Predicate<G>>;
+		readonly 'type.predicate.asserts': gate.In<G, features.TypeAnnotations, V.Type.Predicate.Asserts<G>>;
+		readonly 'type.primitive': gate.In<G, features.TypeAnnotations, V.Type.Primitive<G>>;
+		readonly 'type.primitive.boolean': gate.In<G, features.TypeAnnotations, V.Type.Primitive.Boolean<G>>;
+		readonly 'type.primitive.character': gate.In<G, features.Characters, V.Type.Primitive.Character<G>>;
+		readonly 'type.primitive.floating': gate.In<G, features.TypeAnnotations, V.Type.Primitive.Floating<G>>;
+		readonly 'type.primitive.floating.float32': gate.In<
+			G,
+			features.TypeAnnotations,
+			V.Type.Primitive.Floating.Float32<G>
+		>;
+		readonly 'type.primitive.floating.float64': gate.In<
+			G,
+			features.TypeAnnotations,
+			V.Type.Primitive.Floating.Float64<G>
+		>;
+		readonly 'type.primitive.integral': gate.In<G, features.TypeAnnotations, V.Type.Primitive.Integral<G>>;
+		readonly 'type.primitive.integral.int128': gate.In<
+			G,
+			features.TypeAnnotations,
+			V.Type.Primitive.Integral.Int128<G>
+		>;
+		readonly 'type.primitive.integral.int16': gate.In<G, features.TypeAnnotations, V.Type.Primitive.Integral.Int16<G>>;
+		readonly 'type.primitive.integral.int32': gate.In<G, features.TypeAnnotations, V.Type.Primitive.Integral.Int32<G>>;
+		readonly 'type.primitive.integral.int64': gate.In<G, features.TypeAnnotations, V.Type.Primitive.Integral.Int64<G>>;
+		readonly 'type.primitive.integral.int8': gate.In<G, features.TypeAnnotations, V.Type.Primitive.Integral.Int8<G>>;
+		readonly 'type.primitive.integral.size': gate.In<G, features.TypeAnnotations, V.Type.Primitive.Integral.Size<G>>;
+		readonly 'type.primitive.never': gate.In<G, features.TypeAnnotations, V.Type.Primitive.Never<G>>;
+		readonly 'type.primitive.object': gate.In<G, features.TypeAnnotations, V.Type.Primitive.Object<G>>;
+		readonly 'type.primitive.string': gate.In<G, features.TypeAnnotations, V.Type.Primitive.String<G>>;
+		readonly 'type.primitive.symbol': gate.In<G, features.TypeAnnotations, V.Type.Primitive.Symbol<G>>;
+		readonly 'type.primitive.unchecked': gate.In<G, features.TypeAnnotations, V.Type.Primitive.Unchecked<G>>;
+		readonly 'type.primitive.unknown': gate.In<G, features.TypeAnnotations, V.Type.Primitive.Unknown<G>>;
+		readonly 'type.primitive.void': gate.In<G, features.TypeAnnotations, V.Type.Primitive.Void<G>>;
+		readonly 'type.qualified': gate.In<G, features.TypeAnnotations, V.Type.Qualified<G>>;
+		readonly 'type.query': gate.In<G, features.TypeAnnotations, V.Type.Query<G>>;
+		readonly 'type.readonly': gate.In<G, features.TypeAnnotations, V.Type.Readonly<G>>;
+		readonly 'type.receiver': gate.In<G, features.ExplicitReceivers, V.Type.Receiver<G>>;
+		readonly 'type.reference': gate.In<G, features.TypeAnnotations, V.Type.Reference<G>>;
+		readonly 'type.rest': gate.In<G, features.TypeAnnotations, V.Type.Rest<G>>;
+		readonly 'type.template': gate.In<G, features.TypeAnnotations, V.Type.Template<G>>;
+		readonly 'type.tuple': gate.In<G, features.TypeAnnotations, V.Type.Tuple<G>>;
+		readonly 'type.union': gate.In<G, features.TypeAnnotations, V.Type.Union<G>>;
+		readonly 'type.unit': gate.In<G, features.TypeAnnotations, V.Type.Unit<G>>;
 	}
 }

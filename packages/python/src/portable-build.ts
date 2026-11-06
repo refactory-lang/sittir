@@ -15864,5 +15864,46 @@ export const build: PortableBuildTable = {
 				reads: 120
 			}
 		}
-	}
+	},
+	features: [
+		'AbstractClasses',
+		'Accessors',
+		'ArbitraryPrecisionIntegers',
+		'Assertions',
+		'AsyncAwait',
+		'BoundedQuantification',
+		'ByteStrings',
+		'Classes',
+		'ComplexNumbers',
+		'Comprehensions',
+		'ConditionalExpressions',
+		'Coroutines',
+		'Decorators',
+		'DefaultArguments',
+		'Destructuring',
+		'Exceptions',
+		'ExecStatements',
+		'ExplicitOverrides',
+		'Generators',
+		'MatchExpressions',
+		'Methods',
+		'Modules',
+		'MultipleInheritance',
+		'NamedArguments',
+		'NullableTypes',
+		'OperatorOverloading',
+		'ParametricPolymorphism',
+		'PrintStatements',
+		'RawStrings',
+		'ResourceManagement',
+		'ScopeDeclarations',
+		'SliceExpressions',
+		'StringInterpolation',
+		'StructPatterns',
+		'Tuples',
+		'TypeAliases',
+		'TypeAnnotations',
+		'UnicodeStrings',
+		'Visibility'
+	]
 };

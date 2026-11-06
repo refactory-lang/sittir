@@ -79,6 +79,11 @@ export function augmentation(source: VocabularySource, p: Plan): string {
 		add(kind.qname, lines.length === 0 ? [`${head} {}`] : [`${head} {`, ...lines, '}']);
 	}
 	const pathOf = new Map([...p.kinds.values()].map((kind) => [kind.qname, kind.path]));
+	const byName = new Map([...p.kinds.values()].map((kind) => [kind.qname, kind]));
+	const gatedBy = (qname: string, type: string): string => {
+		const feature = byName.get(qname)?.feature;
+		return feature === undefined ? type : `gate.In<G, features.${feature.name}, ${type}>`;
+	};
 	const mixed = source.texts;
 	const stated = mixed.filter((key) => p.kinds.get(key)?.text === true);
 	if (stated.length > 0) throw new Error(`vocabulary: TextPaths lists ${stated.join(', ')}, which the vocabulary declares as Text; list only kinds a token may also read as`);
@@ -100,7 +105,7 @@ export function augmentation(source: VocabularySource, p: Plan): string {
 		...[...byModule].sort(([a], [b]) => byCodepoint(a, b)).flatMap(([file, entries]) => [`declare module './${file}' {`, ...nest(entries, '\t'), '}', '']),
 		`declare module './${MAP}' {`,
 		'\tinterface Paths<G extends GrammarMap> {',
-		...[...p.kinds.values()].sort((a, b) => byCodepoint(a.path, b.path)).map((kind) => `\t\treadonly '${kind.path}': V.${kind.qname}<G>;`),
+		...[...p.kinds.values()].sort((a, b) => byCodepoint(a.path, b.path)).map((kind) => `\t\treadonly '${kind.path}': ${gatedBy(kind.qname, `V.${kind.qname}<G>`)};`),
 		'\t}',
 		'}',
 		''

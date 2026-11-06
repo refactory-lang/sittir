@@ -81,6 +81,7 @@ export interface PortableBuildInput {
 	readonly nodeMap: NodeMap;
 	readonly kindEntries: readonly KindEnumEntry[];
 	readonly flagPlans: ReadonlyMap<string, ReadonlyMap<string, QueryPlan | null>>;
+	readonly features: readonly string[];
 }
 
 export interface PortableBuildOutput {
@@ -183,7 +184,7 @@ const sortedIds = (ids: Iterable<number>): readonly number[] => [...new Set(ids)
 const disjoint = (sets: readonly ReadonlySet<number>[]): boolean =>
 	sets.every((a, i) => sets.every((b, j) => i === j || [...a].every((id) => !b.has(id))));
 
-export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPlans }: PortableBuildInput): PortableBuildOutput {
+export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPlans, features }: PortableBuildInput): PortableBuildOutput {
 	const typeOf = (kind: string): number | undefined => findKindEntry(kindEntries, kind)?.id;
 	const shapes = buildFactoryMap(nodeMap, kindEntries).factoryShapes;
 	const fixedText = new Map(fixedTextKinds(nodeMap, kindEntries));
@@ -1260,7 +1261,8 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 			paths,
 			...(Object.keys(values).length === 0 ? {} : { values }),
 			...(tokens.length === 0 ? {} : { tokens: Object.fromEntries(tokens) }),
-			...(delimiters.length === 0 ? {} : { delimiters: Object.fromEntries(delimiters) })
+			...(delimiters.length === 0 ? {} : { delimiters: Object.fromEntries(delimiters) }),
+			features
 		},
 		diagnostics
 	};

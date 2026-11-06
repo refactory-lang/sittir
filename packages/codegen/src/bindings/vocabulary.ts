@@ -98,6 +98,7 @@ export interface VocabularyKind {
 	readonly parent: string | undefined;
 	readonly refines: string | undefined;
 	readonly text?: true;
+	readonly feature?: string;
 }
 
 export interface Vocabulary {
@@ -242,6 +243,7 @@ export async function readVocabulary(dir: string): Promise<Vocabulary> {
 	const source = await readVocabularySource(dir);
 	const stubs = source.features.flatMap((feature) => feature.stubs);
 	const declared = [...source.kinds, ...stubs.filter(isKind)];
+	const featureOf = new Map(source.features.flatMap((feature) => feature.stubs.filter(isKind).map((stub) => [stub.qname, feature.name] as const)));
 	const pathByName = new Map(declared.map((d) => [d.qname, d.path]));
 	const slotted = (m: Member): { readonly slot?: true } => (m.slotted === true ? { slot: true } : {});
 	const own = new Map<string, Map<string, VocabularyMember>>(declared.map((d) => [d.qname, new Map(d.members.map((m) => [m.name, { optional: m.optional, ...(m.arity === undefined ? {} : { arity: m.arity }), flag: m.flag, ...slotted(m), ...(m.type === NEVER ? { excluded: true as const } : {}) }]))]));
@@ -258,7 +260,8 @@ export async function readVocabulary(dir: string): Promise<Vocabulary> {
 	const kinds = new Map<string, VocabularyKind>();
 	const pathOf = (qname: string | undefined): string | undefined => (qname === undefined ? undefined : pathByName.get(qname));
 	for (const d of declared) {
-		kinds.set(d.path, { name: d.qname, own: own.get(d.qname) ?? new Map(), parent: pathOf(d.parent), refines: pathOf(d.refines), ...(d.text === true ? { text: true as const } : {}) });
+		const feature = featureOf.get(d.qname);
+		kinds.set(d.path, { name: d.qname, own: own.get(d.qname) ?? new Map(), parent: pathOf(d.parent), refines: pathOf(d.refines), ...(d.text === true ? { text: true as const } : {}), ...(feature === undefined ? {} : { feature }) });
 	}
 	const membersWithin = (composed: ReadonlySet<string> | undefined) => (path: string): ReadonlyMap<string, VocabularyMember> => {
 		const all = new Map<string, VocabularyMember>();

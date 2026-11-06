@@ -18,6 +18,7 @@ import type {
 } from '@sittir/types';
 import { hasKind } from './classify.ts';
 import { textBuilt, tokenKind, tokenText } from './facts.ts';
+import { vocabularyPathFeatures } from './vocabulary-paths.ts';
 
 export interface PortableBuildContext {
 	readonly language: string;
@@ -266,6 +267,9 @@ export function portableBuilder({ language, table, builders, kindName, readsAs }
 			const build = valueBuildOf(structure);
 			if (build !== undefined && structure.$value !== undefined)
 				throw new Error(`portable build: ${structure.$path} builds only ${Object.keys(build).join(' and ')} values in ${language}, not ${spelledValue(structure.$value)}`);
+			const feature = Object.hasOwn(vocabularyPathFeatures, structure.$path) ? vocabularyPathFeatures[structure.$path] : undefined;
+			if (feature !== undefined && !(table.features ?? []).includes(feature))
+				throw new Error(`portable build: ${structure.$path} is a path of ${feature}, which ${language} lacks`);
 			throw new Error(`portable build: ${structure.$path} is not a path ${language} builds`);
 		};
 		const slotsOf = (seats: readonly PortableSeat[]): string => [...new Set(seats.map(({ at: [holder, key] }) => `${nameOf(holder)}.${key}`))].sort().join(', ');

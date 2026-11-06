@@ -76,7 +76,8 @@ export type { SingleInheritance } from './methods/classes/single-inheritance/ind
 export type { SliceExpressions } from './slice-expressions/index.ts';
 export type { StaticStorage } from './static-storage/index.ts';
 export type { StringInterpolation } from './string-interpolation/index.ts';
-export type { Structs } from './structs/index.ts';
+export type { StructPatterns } from './struct-patterns/index.ts';
+export type { Structs } from './struct-patterns/structs/index.ts';
 export type { StructuralConformance } from './type-annotations/structural-conformance/index.ts';
 export type { SyntacticMetaprogramming } from './syntactic-metaprogramming/index.ts';
 export type { Tuples } from './tuples/index.ts';

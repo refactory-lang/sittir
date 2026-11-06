@@ -65,4 +65,8 @@ describe('the portable build through the strict table', () => {
 		expect(render(runtime.build({ $path: 'expression.binary.membership.in', left: 'a', right: 'b' }))).toBe('a in b');
 		expect(render(runtime.build({ $path: 'literal.number.float.scientific', $value: 0.001 }))).toBe('1e-3');
 	});
+
+	it('refuses a path from a feature the grammar does not compose, naming the feature', () => {
+		expect(() => runtime.build({ $path: 'declaration.struct', name: 'S' })).toThrow(/declaration\.struct is a path of Structs, which python lacks/);
+	});
 });

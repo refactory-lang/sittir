@@ -61,7 +61,7 @@ const PRELUDE = [
 	'',
 	'type Member<I, P extends keyof I> = I[P];',
 	'',
-	"type Kept<I, P extends keyof I> = P extends '$path' ? never : [Member<I, P>] extends [never] ? never : [NonNullable<Member<I, P>>] extends [Flag] ? never : P;",
+	"type Kept<I, P extends keyof I> = P extends '$path' ? never : [Member<I, P>] extends [never] ? never : [NonNullable<Member<I, P>>] extends [Flag | V.Missing<unknown>] ? never : P;",
 	'',
 	'type Resolved<R> = R extends readonly (infer E)[]',
 	'\t? readonly Resolved<E>[]',

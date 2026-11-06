@@ -1,4 +1,4 @@
-import type { GrammarMap, Slot, Text } from '../../map.ts';
+import type { GrammarMap, Slot } from '../../map.ts';
 import type { Flag, SubKindOf, Under } from '../../utils.ts';
 import type * as V from '../../index.ts';
 export namespace Pattern {
@@ -43,7 +43,5 @@ export namespace Pattern {
 				| V.Type.Primitive<G>
 			>;
 		}
-		// claimed by r
-		export type Rest<G extends GrammarMap> = Text<G, 'pattern.struct.rest'>;
 	}
 }
