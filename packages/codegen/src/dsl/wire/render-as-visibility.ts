@@ -1,4 +1,4 @@
-import { isParserHiddenName } from '../rule-patterns.ts';
+import { isParserHiddenName, unwrapPrec } from '../rule-patterns.ts';
 
 interface Walked {
 	readonly type?: string;
@@ -50,7 +50,7 @@ export function externalAliasSitesOf(rule: unknown, externals: ReadonlySet<strin
 		if (node === null || typeof node !== 'object') return;
 		const walked = node as Walked;
 		if (walked.type === 'ALIAS' && typeof walked.value === 'string') {
-			const content = walked.content as Walked | undefined;
+			const content = unwrapPrec(walked.content) as Walked | undefined;
 			if (content?.type === 'SYMBOL' && typeof content.name === 'string' && externals.has(content.name)) {
 				sites.push({ external: content.name, name: walked.value });
 			}

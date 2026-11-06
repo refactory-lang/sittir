@@ -84,6 +84,24 @@ describe('an authored alias of an external outside renderAs', () => {
 	});
 });
 
+describe('a prec-wrapped alias of an external', () => {
+	const UPSTREAM_PREC = {
+		...UPSTREAM,
+		rules: 'item: ($) => seq($.word, alias(prec(1, $._marker), $.mark)), other: ($) => seq("x", $._marker), source2: ($) => repeat(choice($.item, $.other))'
+	};
+
+	it('is an authored alias outside renderAs', async () => {
+		const { diagnostics } = await diagnosticsOf(UPSTREAM, 'rules: { extra: ($) => seq("y", alias(prec(1, $._marker), $.mark2)) }');
+		expect(diagnostics.filter((d) => d.code === 'external-alias-outside-render-as')).toMatchObject([{ canProceed: false, ownerKind: '_marker' }]);
+	}, 60_000);
+
+	it('counts as an upstream site: the external stays out of visibleAs and the copy is exempt', async () => {
+		const { raw, diagnostics } = await diagnosticsOf(UPSTREAM_PREC, "renderAs: ($) => ({ _marker: string('m') }), rules: { extra: ($) => seq('y', alias(prec(1, $._marker), $.mark)) }");
+		expect(raw.visibleAs?._marker).toBeUndefined();
+		expect(diagnostics.filter((d) => d.code === 'external-alias-outside-render-as')).toEqual([]);
+	}, 60_000);
+});
+
 describe('an entry alias that names nothing', () => {
 	it('is refused when it is a string', async () => {
 		const { diagnostics } = await diagnosticsOf(UPSTREAM, "renderAs: ($) => ({ _marker: alias(string('m'), 'mark') })");
