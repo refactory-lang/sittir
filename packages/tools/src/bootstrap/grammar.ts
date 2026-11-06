@@ -3,6 +3,7 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import {
 	BOOTSTRAP_INDENT_UNIT,
+	GRAMMAR_ENTRY,
 	REPO_ROOT,
 	grammarDisplayName,
 	grammarPackageDir,
@@ -108,6 +109,11 @@ export function plannedRegistrations(name: string, root: string = REPO_ROOT): Te
 	});
 }
 
+export function formattablePaths(written: readonly string[], packageDir: string): string[] {
+	const entry = join(packageDir, GRAMMAR_ENTRY);
+	return written.filter((path) => path !== entry && /\.(ts|json|md)$/.test(path));
+}
+
 function run(cmd: string, args: readonly string[]): void {
 	execFileSync(cmd, args, { cwd: REPO_ROOT, stdio: 'inherit' });
 }
@@ -133,7 +139,7 @@ export async function bootstrapGrammar(opts: BootstrapGrammarOptions): Promise<n
 	process.stdout.write(`indent: preference('${BOOTSTRAP_INDENT_UNIT}') is a default; confirm it against the indent characters the first gen reports\n`);
 	if (dryRun) return 0;
 
-	run('pnpm', ['exec', 'oxfmt', ...written.filter((path) => /\.(ts|json|md)$/.test(path))]);
+	run('pnpm', ['exec', 'oxfmt', ...formattablePaths(written, packageDir)]);
 	if (opts.install !== false) {
 		run('pnpm', ['install']);
 		const corpus = await fetchUpstreamCorpus({ grammar: opts.name });

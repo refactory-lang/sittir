@@ -1,8 +1,10 @@
-import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { execFileSync } from 'node:child_process';
+import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
-import { join, resolve } from 'node:path';
+import { dirname, join, resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
-import { allGrammars, BINDINGS_MODULE, grammarPackage, grammarPackageDir, grammarRequire, topLayerPath } from '@sittir/codegen/grammars';
+import { formattablePaths } from '../src/bootstrap/grammar.ts';
+import { allGrammars, BINDINGS_MODULE, GRAMMAR_ENTRY, grammarPackage, grammarPackageDir, grammarRequire, REPO_ROOT, topLayerPath } from '@sittir/codegen/grammars';
 import { evaluate } from '../../codegen/src/dsl/evaluate.ts';
 import { NO_FILE_TYPES } from '../../codegen/src/compiler/upstream-file-types.ts';
 import { BOOTSTRAP_INDENT_UNIT } from '@sittir/codegen/grammars';
@@ -76,6 +78,24 @@ describe('grammar composition is one entry, whose base enrich() and wire() compl
 			expectStockShape(readFileSync(topLayerPath(grammarPackage(grammar)), 'utf8'), GENERATED_SHAPE);
 		});
 	}
+});
+
+describe('bootstrap formatting leaves the grammar entry in the stock shape', () => {
+	it('a bootstrapped grammar.sittir.ts passes the stock shape after the formatting step', () => {
+		const dir = mkdtempSync(join(tmpdir(), 'sittir-bootstrap-format-'));
+		try {
+			const written = python.map((file) => {
+				const path = join(dir, file.path);
+				mkdirSync(dirname(path), { recursive: true });
+				writeFileSync(path, file.contents, 'utf8');
+				return path;
+			});
+			execFileSync('pnpm', ['exec', 'oxfmt', ...formattablePaths(written, dir)], { cwd: REPO_ROOT });
+			expectStockShape(readFileSync(join(dir, GRAMMAR_ENTRY), 'utf8'));
+		} finally {
+			rmSync(dir, { recursive: true, force: true });
+		}
+	}, 60_000);
 });
 
 describe('a bootstrapped grammar hand-writes no rule', () => {
