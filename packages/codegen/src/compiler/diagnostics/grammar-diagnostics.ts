@@ -25,7 +25,7 @@ import {
 	type KindEntryLike
 } from '../../dsl/symbol-table.ts';
 import type { CompilerDiagnostic, GrammarDiagnostic } from '../../types/diagnostics.ts';
-import { diagnoseDistributedAliases, diagnoseMixedDisplayUnions } from './alias-distributed.ts';
+import { diagnoseDistributedAliases, diagnoseInlineTokenAliases, diagnoseMixedDisplayUnions } from './alias-distributed.ts';
 import { isParserHiddenName, ruleListParts, symbolFactsOf } from '../../dsl/rule-patterns.ts';
 import { ALIAS, SYMBOL } from '../../types/rule-types.ts';
 import { eofPlacements } from '../../dsl/eof-placement.ts';
@@ -428,6 +428,7 @@ const UNEXPECTABLE_CODES: ReadonlySet<string> = new Set([
 	'whitespace-mint-collision',
 	'external-alias-outside-render-as',
 	'render-as-alias-invalid',
+	'alias-inline-token',
 	'conflict-authored',
 	'conflict-unresolvable',
 	'conflict-resolutions-stale',
@@ -531,6 +532,7 @@ export function collectGrammarDiagnosticsForGrammar(input: {
 			}).diagnostics,
 			...contentAliasDiagnostics,
 			...diagnoseDistributedAliases({ grammar: rawGrammar.name, symbols }),
+			...diagnoseInlineTokenAliases({ grammar: rawGrammar.name, symbols, word: rawGrammar.word ?? undefined }),
 			...diagnoseMixedDisplayUnions({ grammar: rawGrammar.name, displayUnions: linked.displayUnions, symbols }),
 			...reservedMemberDiagnostics(rawGrammar.name, nodeMap.reserved, kindEntries),
 			...triviaLineEndDiagnostics(rawGrammar.name, nodeMap),
