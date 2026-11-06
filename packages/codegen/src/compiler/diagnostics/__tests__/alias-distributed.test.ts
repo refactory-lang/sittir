@@ -137,8 +137,10 @@ describe('alias-inline-token', () => {
 		expect(out[0]).toMatchObject({ code: 'alias-inline-token', ownerKind: 'p', canProceed: false, details: { display: 'content', reason: 'display-is-rule' } });
 		expect(out[0]!.message).toMatch(/'content' is also a rule of this grammar/);
 	});
-	it('leaves a display that names a nonterminal rule to display-union-mixed', () => {
-		expect(inlineToken({ p: alias(body, 'content'), content: { type: 'SEQ', members: [S('a'), sym('p')] } })).toEqual([]);
+	it('names a display that is a nonterminal rule too, which display-union-mixed does not report', () => {
+		const out = inlineToken({ p: alias(body, 'content'), content: { type: 'SEQ', members: [S('a'), sym('p')] } });
+		expect(out).toHaveLength(1);
+		expect(out[0]!.details).toMatchObject({ reason: 'display-is-rule' });
 	});
 	it('names a display of the word rule', () => {
 		const out = inlineToken({ p: alias(body, 'content'), q: alias(sym('ident'), 'content'), ident: P('[a-z]+') }, 'ident');

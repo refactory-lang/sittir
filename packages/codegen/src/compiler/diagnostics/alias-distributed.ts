@@ -5,7 +5,7 @@ import type { DisplayUnions } from '../types.ts';
 import { isPrecWrapper } from '../../types/runtime-shapes.ts';
 import { RuleWalker } from '../../dsl/rule-walker.ts';
 import type { SymbolSource } from '../../dsl/rule-patterns.ts';
-import { inlineTokenAliasSkipsOf, isTerminalRootRule, type InlineTokenAliasSkip, type InlineTokenAliasSkipSite } from '../../dsl/rule-transforms.ts';
+import { inlineTokenAliasSkipsOf, type InlineTokenAliasSkip, type InlineTokenAliasSkipSite } from '../../dsl/rule-transforms.ts';
 import { assertNever } from '../../polymorph-variant.ts';
 
 type R = Rule<'evaluate'>;
@@ -116,7 +116,6 @@ function inlineTokenAliasProposal(site: InlineTokenAliasSkipSite): string {
 export function diagnoseInlineTokenAliases(input: { grammar: string; symbols: SymbolSource; word: string | undefined }): GrammarDiagnostic[] {
 	const rules = input.symbols.rules as Readonly<Record<string, R>>;
 	return inlineTokenAliasSkipsOf({ ...rules }, { word: input.word })
-		.filter((site) => !(site.reason === 'display-is-rule' && !isTerminalRootRule(rules[site.display] as R)))
 		.map((site) => ({
 			scope: 'grammar',
 			code: 'alias-inline-token',
