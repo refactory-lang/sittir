@@ -2,7 +2,9 @@ import type { GeneratedKindEntry } from '../../symbol-table.ts';
 import { describe, expect, it } from 'vitest';
 import { readOptionsBlock } from '../options-block.ts';
 import { preference } from '../../primitives/preference.ts';
-import { indentUnitOf } from '../../../compiler/model/layout-kinds.ts';
+import { indentProblemOf, indentUnitOf } from '../../../compiler/model/layout-kinds.ts';
+import { indentDiagnostics } from '../../../compiler/diagnostics/grammar-diagnostics.ts';
+import { BOOTSTRAP_INDENT_UNIT } from '../../../grammars.ts';
 import { AssembledKeyword, AssembledSupertype } from '../../../compiler/model/node-map.ts';
 import type { AssembledNode } from '../../../compiler/model/node-map.ts';
 import { makeNodeMapWith, withGeneratedIdTables } from '../../../__tests__/helpers/node-map-fixtures.ts';
@@ -60,5 +62,31 @@ describe('indentUnitOf', () => {
 	it('refuses a declaration on a grammar whose whitespace admits no indent characters', () => {
 		expect(() => indentUnitOf(makeNodeMapWith(new Map()), '  ', 'regex')).toThrow(/regex declares indent "  " but its whitespace admits no indent characters/);
 		expect(indentUnitOf(makeNodeMapWith(new Map()), undefined, 'regex')).toBe('');
+	});
+});
+
+describe('indent as a grammar diagnostic', () => {
+	const nodeMap = () => withGeneratedIdTables((kindEntries) => whitespaceMap(kindEntries)).nodeMap;
+
+	it('is blocking and names the option and the admitted characters when none is declared', () => {
+		const [diagnostic] = indentDiagnostics('typescript', { nodeMap: nodeMap(), options: undefined });
+		expect(diagnostic).toMatchObject({ code: 'indent-undeclared', canProceed: false, grammar: 'typescript' });
+		expect(diagnostic?.proposal).toContain('indent: preference(unit)');
+		expect(diagnostic?.proposal).toContain('" "');
+	});
+
+	it('names a declared unit outside the admitted characters', () => {
+		const [diagnostic] = indentDiagnostics('typescript', { nodeMap: nodeMap(), options: { indent: preference(' x') } as never });
+		expect(diagnostic).toMatchObject({ code: 'indent-not-admitted', canProceed: false });
+	});
+
+	it('is silent for a declared admitted unit and for a grammar that admits no indent', () => {
+		expect(indentDiagnostics('typescript', { nodeMap: nodeMap(), options: { indent: preference('  ') } as never })).toEqual([]);
+		expect(indentDiagnostics('regex', { nodeMap: makeNodeMapWith(new Map()), options: undefined })).toEqual([]);
+	});
+
+	it('is the check indentUnitOf throws from, and the one the bootstrap default passes', () => {
+		expect(indentProblemOf([' ', '\t'], undefined, 'go')?.code).toBe('indent-undeclared');
+		expect(indentProblemOf([' ', '\t'], BOOTSTRAP_INDENT_UNIT, 'go')).toBeUndefined();
 	});
 });

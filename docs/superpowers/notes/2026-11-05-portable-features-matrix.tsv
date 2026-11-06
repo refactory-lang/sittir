@@ -1,0 +1,868 @@
+# Construct x language matrix for the portable features proposal. One row per vocabulary kind (K) or member (M).
+# Cells: H has, L lacks, D different shape (the language spells the construct on another node).
+# Measured from bindings claims through derive(): p r t (the stable grammars) and go c (probe bindings on probe/feature-scrub).
+#   A measured cell is H when the grammar claims the path (or routes the member); otherwise the paper judgment says L or D.
+# Paper (language knowledge, checked against each upstream node-types.json and grammar.json at the pinned tag): java csharp swift cpp.
+# Pins: go v0.25.0, java v0.23.5, c-sharp v0.23.5, c v0.24.2, cpp v0.23.4, swift 0.7.3 (alex-pinkus).
+row	path	member	feature	p	r	t	go	java	csharp	c	swift	cpp
+K	argument		core	H	H	L	L	H	H	L	H	H
+K	argument.named		NamedArguments	H	L	L	L	L	H	L	H	L
+K	attribute		core	H	H	H	L	H	H	H	H	H
+K	attribute.content		core	L	H	H	L	H	H	H	H	H
+K	attribute.content.call		Decorators	L	L	H	L	L	L	L	L	L
+K	attribute.content.member		Decorators	L	L	H	L	L	L	L	L	L
+K	attribute.content.parenthesized		Decorators	L	L	H	L	L	L	L	L	L
+K	attribute.decorator		Decorators	H	L	H	L	L	L	L	L	L
+K	attribute.inner		Attributes	L	H	L	L	L	D	L	L	L
+K	clause		core	H	H	H	H	H	H	H	H	H
+K	clause.bounds		BoundedQuantification	L	H	H	H	H	H	L	H	D
+K	clause.bounds.higher_ranked		HigherRankPolymorphism	L	H	L	L	L	L	L	L	L
+K	clause.bounds.removed		BoundedQuantification	L	H	L	L	L	L	L	L	L
+K	clause.bounds.use		BoundedQuantification	L	H	L	L	L	L	L	L	L
+K	clause.case		core	H	H	H	H	H	H	H	H	H
+K	clause.case.default		MultiwayBranch	L	L	H	H	H	H	H	H	H
+K	clause.case.match		MatchExpressions	H	H	L	L	H	H	L	H	L
+K	clause.case.switch		MultiwayBranch	L	L	H	H	H	H	H	D	H
+K	clause.catch		Exceptions	H	L	H	L	H	H	L	H	H
+K	clause.comprehension		Comprehensions	H	L	L	L	L	D	L	L	L
+K	clause.comprehension.for		Comprehensions	H	L	L	L	L	D	L	L	L
+K	clause.comprehension.if		Comprehensions	H	L	L	L	L	D	L	L	L
+K	clause.default		ParametricPolymorphism	L	L	H	L	L	L	L	L	H
+K	clause.else		core	H	H	H	L	H	H	H	H	H
+K	clause.else_if		core	H	L	L	D	D	D	D	D	D
+K	clause.export		Modules	L	L	H	L	L	L	L	L	L
+K	clause.export.namespace		Modules	L	L	H	L	L	L	L	L	L
+K	clause.export.specifier		Modules	L	L	H	L	L	L	L	L	L
+K	clause.export.specifier.typeof		Modules	L	L	H	L	L	L	L	L	L
+K	clause.extends		SingleInheritance	L	L	H	L	H	D	L	D	D
+K	clause.extends.type		Interfaces	L	L	H	D	H	D	L	D	L
+K	clause.finally		Exceptions	H	L	H	L	H	H	L	L	L
+K	clause.implements		InterfaceConformance	L	L	H	L	H	D	L	D	L
+K	clause.import		Modules	H	H	H	H	H	H	D	H	D
+K	clause.import.alias		Modules	H	H	L	H	L	H	L	L	D
+K	clause.import.attribute		Modules	L	L	H	L	L	L	L	L	L
+K	clause.import.list		Modules	L	H	L	D	L	L	L	L	L
+K	clause.import.list.scoped		Modules	L	H	L	D	L	L	L	L	L
+K	clause.import.names		Modules	L	L	H	L	D	L	L	D	L
+K	clause.import.namespace		Modules	L	L	H	D	L	L	L	L	L
+K	clause.import.relative		Modules	H	L	L	L	L	L	D	L	L
+K	clause.import.relative.prefix		Modules	H	L	L	L	L	L	D	L	L
+K	clause.import.require		Modules	L	L	H	L	L	L	L	L	L
+K	clause.import.specifier		Modules	L	L	H	L	D	L	L	L	L
+K	clause.import.specifier.typeof		Modules	L	L	H	L	L	L	L	L	L
+K	clause.import.wildcard		Modules	H	H	L	H	H	D	L	D	H
+K	clause.let		MatchExpressions	L	H	L	D	D	D	L	H	D
+K	clause.let.chain		MatchExpressions	L	H	L	L	D	D	L	H	L
+K	clause.lifetimes		Lifetimes	L	H	L	L	L	L	L	L	L
+K	clause.macro		SyntacticMetaprogramming	L	H	L	L	L	L	D	D	D
+K	clause.macro.rule		SyntacticMetaprogramming	L	H	L	L	L	L	D	D	D
+K	clause.mapped_type		TypeAnnotations	L	L	H	L	L	L	L	L	L
+K	clause.resource		ResourceManagement	H	L	L	L	H	H	L	L	L
+K	clause.resource.item		ResourceManagement	H	L	L	L	H	H	L	L	L
+K	clause.where		BoundedQuantification	L	H	L	L	L	H	L	H	D
+K	clause.where.predicate		BoundedQuantification	L	H	L	L	L	H	L	H	D
+K	comment		core	H	H	H	H	H	H	H	H	H
+K	comment.block		core	L	H	H	H	H	H	H	H	H
+K	comment.block.doc		core	L	H	H	D	H	H	L	H	H
+K	comment.block.doc.inner		core	L	H	L	L	L	L	L	L	L
+K	comment.html		core	L	L	H	L	L	L	L	L	L
+K	comment.line		core	H	H	H	H	H	H	H	H	H
+K	comment.line.doc		core	L	H	L	D	L	H	L	H	H
+K	comment.line.doc.inner		core	L	H	L	L	L	L	L	L	L
+K	comment.text		core	L	H	L	D	D	D	D	D	D
+K	declaration		core	H	H	H	H	H	H	H	H	H
+K	declaration.ambient		AmbientDeclarations	L	L	H	L	L	L	L	L	L
+K	declaration.class		Classes	H	L	H	L	H	H	L	H	H
+K	declaration.constant		core	H	H	L	H	D	H	D	D	H
+K	declaration.constant.private		Visibility	L	H	L	H	D	H	D	D	H
+K	declaration.constant.public		Visibility	L	H	L	H	D	H	L	D	H
+K	declaration.constant.public.internal		Visibility	L	H	L	L	D	H	L	D	L
+K	declaration.constant.public.parent		Visibility	L	H	L	L	L	L	L	L	L
+K	declaration.constant.public.restricted		Visibility	L	H	L	L	L	L	L	L	L
+K	declaration.constructor		Classes	H	L	H	L	H	H	L	H	H
+K	declaration.constructor.private		Visibility	L	L	H	L	H	H	L	H	H
+K	declaration.constructor.protected		Visibility	L	L	H	L	H	H	L	L	H
+K	declaration.constructor.public		Visibility	L	L	H	L	H	H	L	H	H
+K	declaration.enum		Enumerations	L	H	H	L	H	H	H	H	H
+K	declaration.enum.private		Visibility	L	H	L	L	H	H	D	H	H
+K	declaration.enum.public		Visibility	L	H	L	L	H	H	L	H	H
+K	declaration.enum.public.internal		Visibility	L	H	L	L	D	H	L	H	L
+K	declaration.enum.public.parent		Visibility	L	H	L	L	L	L	L	L	L
+K	declaration.enum.public.restricted		Visibility	L	H	L	L	L	L	L	L	L
+K	declaration.enum_member		Enumerations	L	H	H	L	H	H	H	H	H
+K	declaration.enum_member.private		Visibility	L	H	L	L	H	H	D	H	H
+K	declaration.enum_member.public		Visibility	L	H	L	L	H	H	L	H	H
+K	declaration.enum_member.public.internal		Visibility	L	H	L	L	D	H	L	H	L
+K	declaration.enum_member.public.parent		Visibility	L	H	L	L	L	L	L	L	L
+K	declaration.enum_member.public.restricted		Visibility	L	H	L	L	L	L	L	L	L
+K	declaration.enum_member.struct		AlgebraicDataTypes	L	H	L	L	L	L	L	D	L
+K	declaration.enum_member.struct.private		Visibility	L	H	L	L	L	L	L	D	L
+K	declaration.enum_member.struct.public		Visibility	L	H	L	L	L	L	L	D	L
+K	declaration.enum_member.struct.public.internal		Visibility	L	H	L	L	L	L	L	D	L
+K	declaration.enum_member.struct.public.parent		Visibility	L	H	L	L	L	L	L	L	L
+K	declaration.enum_member.struct.public.restricted		Visibility	L	H	L	L	L	L	L	L	L
+K	declaration.enum_member.tuple		AlgebraicDataTypes	L	H	L	L	D	L	L	H	L
+K	declaration.enum_member.tuple.private		Visibility	L	H	L	L	D	L	L	H	L
+K	declaration.enum_member.tuple.public		Visibility	L	H	L	L	D	L	L	H	L
+K	declaration.enum_member.tuple.public.internal		Visibility	L	H	L	L	D	L	L	H	L
+K	declaration.enum_member.tuple.public.parent		Visibility	L	H	L	L	L	L	L	L	L
+K	declaration.enum_member.tuple.public.restricted		Visibility	L	H	L	L	L	L	L	L	L
+K	declaration.extension		OpenTypeExtension	L	H	L	D	L	D	L	H	L
+K	declaration.extension.conformance		Typeclasses	L	H	L	L	L	L	L	H	L
+K	declaration.field		core	L	H	H	H	H	H	H	H	H
+K	declaration.field.private		Visibility	L	H	H	H	H	H	D	H	H
+K	declaration.field.protected		Visibility	L	L	H	L	H	H	L	L	H
+K	declaration.field.public		Visibility	L	H	H	H	H	H	L	H	H
+K	declaration.field.public.internal		Visibility	L	H	L	L	D	H	L	H	L
+K	declaration.field.public.parent		Visibility	L	H	L	L	L	L	L	L	L
+K	declaration.field.public.restricted		Visibility	L	H	L	L	L	L	L	L	L
+K	declaration.field.signature		Interfaces	L	L	H	L	D	H	L	H	L
+K	declaration.field.signature.private		Visibility	L	L	H	L	D	H	L	H	L
+K	declaration.field.signature.protected		Visibility	L	L	H	L	D	H	L	L	L
+K	declaration.field.signature.public		Visibility	L	L	H	L	D	H	L	H	L
+K	declaration.function		core	H	H	H	H	D	H	H	H	H
+K	declaration.function.private		Visibility	L	H	L	H	D	H	H	H	H
+K	declaration.function.public		Visibility	L	H	L	H	D	H	L	H	H
+K	declaration.function.public.internal		Visibility	L	H	L	L	D	H	L	H	L
+K	declaration.function.public.parent		Visibility	L	H	L	L	L	L	L	L	L
+K	declaration.function.public.restricted		Visibility	L	H	L	L	L	L	L	L	L
+K	declaration.function.signature		core	L	H	H	H	L	L	H	L	H
+K	declaration.function.signature.private		Visibility	L	H	L	D	L	L	D	L	H
+K	declaration.function.signature.public		Visibility	L	H	L	D	L	L	L	L	H
+K	declaration.function.signature.public.internal		Visibility	L	H	L	L	L	L	L	L	L
+K	declaration.function.signature.public.parent		Visibility	L	H	L	L	L	L	L	L	L
+K	declaration.function.signature.public.restricted		Visibility	L	H	L	L	L	L	L	L	L
+K	declaration.interface		Interfaces	L	H	H	H	H	H	L	H	D
+K	declaration.interface.trait		Interfaces	L	H	L	L	L	L	L	H	D
+K	declaration.interface.trait.private		Visibility	L	H	L	L	L	L	L	H	D
+K	declaration.interface.trait.public		Visibility	L	H	L	L	L	L	L	H	D
+K	declaration.interface.trait.public.internal		Visibility	L	H	L	L	L	L	L	H	L
+K	declaration.interface.trait.public.parent		Visibility	L	H	L	L	L	L	L	L	L
+K	declaration.interface.trait.public.restricted		Visibility	L	H	L	L	L	L	L	L	L
+K	declaration.macro		SyntacticMetaprogramming	L	H	L	L	L	L	D	D	D
+K	declaration.macro.brace		SyntacticMetaprogramming	L	H	L	L	L	L	D	D	D
+K	declaration.macro.bracket		SyntacticMetaprogramming	L	H	L	L	L	L	D	D	D
+K	declaration.macro.paren		SyntacticMetaprogramming	L	H	L	L	L	L	D	D	D
+K	declaration.method		Methods	H	H	H	H	H	H	L	H	H
+K	declaration.method.private		Visibility	L	H	H	H	H	H	L	H	H
+K	declaration.method.protected		Visibility	L	L	H	L	H	H	L	L	H
+K	declaration.method.public		Visibility	L	H	H	H	H	H	L	H	H
+K	declaration.method.public.internal		Visibility	L	H	L	L	D	H	L	H	L
+K	declaration.method.public.parent		Visibility	L	H	L	L	L	L	L	L	L
+K	declaration.method.public.restricted		Visibility	L	H	L	L	L	L	L	L	L
+K	declaration.method.signature		Methods	L	H	H	H	H	H	L	H	H
+K	declaration.method.signature.abstract		AbstractClasses	L	L	H	L	H	H	L	L	H
+K	declaration.method.signature.abstract.private		Visibility	L	L	H	L	H	H	L	L	H
+K	declaration.method.signature.abstract.protected		Visibility	L	L	H	L	H	H	L	L	H
+K	declaration.method.signature.abstract.public		Visibility	L	L	H	L	H	H	L	L	H
+K	declaration.method.signature.private		Visibility	L	H	H	D	H	H	L	H	H
+K	declaration.method.signature.protected		Visibility	L	L	H	L	H	H	L	L	H
+K	declaration.method.signature.public		Visibility	L	H	H	D	H	H	L	H	H
+K	declaration.method.signature.public.internal		Visibility	L	H	L	L	D	H	L	H	L
+K	declaration.method.signature.public.parent		Visibility	L	H	L	L	L	L	L	L	L
+K	declaration.method.signature.public.restricted		Visibility	L	H	L	L	L	L	L	L	L
+K	declaration.method.special		Methods	H	L	L	L	L	D	L	D	D
+K	declaration.module		ModuleDeclarations	L	H	H	D	D	H	L	L	H
+K	declaration.module.external		ModuleDeclarations	L	L	H	L	L	L	L	L	L
+K	declaration.module.foreign		ForeignFunctionInterface	L	H	L	L	D	D	L	L	H
+K	declaration.module.private		Visibility	L	H	L	D	D	H	L	L	H
+K	declaration.module.public		Visibility	L	H	L	D	D	H	L	L	H
+K	declaration.module.public.internal		Visibility	L	H	L	L	D	H	L	L	L
+K	declaration.module.public.parent		Visibility	L	H	L	L	L	L	L	L	L
+K	declaration.module.public.restricted		Visibility	L	H	L	L	L	L	L	L	L
+K	declaration.module_property		AmbientDeclarations	L	L	H	L	L	L	L	L	L
+K	declaration.parameter		core	H	H	H	H	H	H	H	H	H
+K	declaration.parameter.default		core	H	L	L	L	L	D	L	D	D
+K	declaration.parameter.private		Visibility	L	L	H	D	H	H	D	H	H
+K	declaration.parameter.protected		Visibility	L	L	H	L	H	H	L	L	H
+K	declaration.parameter.public		Visibility	L	L	H	D	H	H	L	H	H
+K	declaration.parameter.receiver		ExplicitReceivers	L	H	H	L	D	D	L	L	H
+K	declaration.parameter.typed		core	H	L	L	D	D	D	D	D	D
+K	declaration.parameter.typed_default		core	H	L	L	L	L	D	L	D	D
+K	declaration.parameter.variadic		ForeignFunctionInterface	L	H	L	H	H	H	H	H	H
+K	declaration.property		Accessors	L	L	H	L	L	H	L	H	L
+K	declaration.property.getter		Accessors	L	L	H	L	L	H	L	H	L
+K	declaration.property.getter.private		Visibility	L	L	H	L	L	H	L	H	L
+K	declaration.property.getter.protected		Visibility	L	L	H	L	L	H	L	L	L
+K	declaration.property.getter.public		Visibility	L	L	H	L	L	H	L	H	L
+K	declaration.property.private		Visibility	L	L	H	L	L	H	L	H	L
+K	declaration.property.protected		Visibility	L	L	H	L	L	H	L	L	L
+K	declaration.property.public		Visibility	L	L	H	L	L	H	L	H	L
+K	declaration.property.setter		Accessors	L	L	H	L	L	H	L	H	L
+K	declaration.property.setter.private		Visibility	L	L	H	L	L	H	L	H	L
+K	declaration.property.setter.protected		Visibility	L	L	H	L	L	H	L	L	L
+K	declaration.property.setter.public		Visibility	L	L	H	L	L	H	L	H	L
+K	declaration.property.signature		Accessors	L	L	H	L	L	H	L	H	L
+K	declaration.property.signature.abstract		Accessors	L	L	H	L	L	H	L	L	L
+K	declaration.property.signature.abstract.getter		Accessors	L	L	H	L	L	H	L	L	L
+K	declaration.property.signature.abstract.getter.private		Visibility	L	L	H	L	L	H	L	L	L
+K	declaration.property.signature.abstract.getter.protected		Visibility	L	L	H	L	L	H	L	L	L
+K	declaration.property.signature.abstract.getter.public		Visibility	L	L	H	L	L	H	L	L	L
+K	declaration.property.signature.abstract.setter		Accessors	L	L	H	L	L	H	L	L	L
+K	declaration.property.signature.abstract.setter.private		Visibility	L	L	H	L	L	H	L	L	L
+K	declaration.property.signature.abstract.setter.protected		Visibility	L	L	H	L	L	H	L	L	L
+K	declaration.property.signature.abstract.setter.public		Visibility	L	L	H	L	L	H	L	L	L
+K	declaration.property.signature.getter		Accessors	L	L	H	L	L	H	L	H	L
+K	declaration.property.signature.getter.private		Visibility	L	L	H	L	L	H	L	H	L
+K	declaration.property.signature.getter.protected		Visibility	L	L	H	L	L	H	L	L	L
+K	declaration.property.signature.getter.public		Visibility	L	L	H	L	L	H	L	H	L
+K	declaration.property.signature.setter		Accessors	L	L	H	L	L	H	L	H	L
+K	declaration.property.signature.setter.private		Visibility	L	L	H	L	L	H	L	H	L
+K	declaration.property.signature.setter.protected		Visibility	L	L	H	L	L	H	L	L	L
+K	declaration.property.signature.setter.public		Visibility	L	L	H	L	L	H	L	H	L
+K	declaration.signature		StructuralConformance	L	L	H	L	L	H	L	H	L
+K	declaration.signature.call		StructuralConformance	L	L	H	L	L	L	L	L	L
+K	declaration.signature.construct		StructuralConformance	L	L	H	L	L	L	L	H	L
+K	declaration.signature.index		StructuralConformance	L	L	H	L	L	H	L	H	L
+K	declaration.signature.index.mapped		StructuralConformance	L	L	H	L	L	L	L	L	L
+K	declaration.struct		Structs	L	H	L	H	D	H	H	H	H
+K	declaration.struct.private		Visibility	L	H	L	H	D	H	D	H	H
+K	declaration.struct.public		Visibility	L	H	L	H	D	H	L	H	H
+K	declaration.struct.public.internal		Visibility	L	H	L	L	D	H	L	H	L
+K	declaration.struct.public.parent		Visibility	L	H	L	L	L	L	L	L	L
+K	declaration.struct.public.restricted		Visibility	L	H	L	L	L	L	L	L	L
+K	declaration.struct.tuple		Structs	L	H	L	L	L	L	L	L	L
+K	declaration.struct.tuple.private		Visibility	L	H	L	L	L	L	L	L	L
+K	declaration.struct.tuple.public		Visibility	L	H	L	L	L	L	L	L	L
+K	declaration.struct.tuple.public.internal		Visibility	L	H	L	L	L	L	L	L	L
+K	declaration.struct.tuple.public.parent		Visibility	L	H	L	L	L	L	L	L	L
+K	declaration.struct.tuple.public.restricted		Visibility	L	H	L	L	L	L	L	L	L
+K	declaration.struct.unit		Structs	L	H	L	L	L	L	L	L	L
+K	declaration.struct.unit.private		Visibility	L	H	L	L	L	L	L	L	L
+K	declaration.struct.unit.public		Visibility	L	H	L	L	L	L	L	L	L
+K	declaration.struct.unit.public.internal		Visibility	L	H	L	L	L	L	L	L	L
+K	declaration.struct.unit.public.parent		Visibility	L	H	L	L	L	L	L	L	L
+K	declaration.struct.unit.public.restricted		Visibility	L	H	L	L	L	L	L	L	L
+K	declaration.type_alias		TypeAliases	H	H	H	H	L	H	H	H	H
+K	declaration.type_alias.associated		AssociatedTypes	L	H	L	L	L	L	L	H	L
+K	declaration.type_alias.private		Visibility	L	H	L	H	L	H	D	H	H
+K	declaration.type_alias.public		Visibility	L	H	L	H	L	H	L	H	H
+K	declaration.type_alias.public.internal		Visibility	L	H	L	L	L	H	L	H	L
+K	declaration.type_alias.public.parent		Visibility	L	H	L	L	L	L	L	L	L
+K	declaration.type_alias.public.restricted		Visibility	L	H	L	L	L	L	L	L	L
+K	declaration.type_parameter		ParametricPolymorphism	H	H	H	H	H	H	L	H	H
+K	declaration.type_parameter.lifetime		Lifetimes	L	H	L	L	L	L	L	L	L
+K	declaration.type_parameter.parameters		ParametricPolymorphism	H	L	L	L	L	L	L	L	L
+K	declaration.type_parameter.value		ConstGenerics	L	H	L	L	L	L	L	L	H
+K	declaration.type_parameter.variadic		ParametricPolymorphism	H	L	L	L	L	L	L	H	H
+K	declaration.union		UntaggedUnions	L	H	L	L	L	L	H	L	H
+K	declaration.union.private		Visibility	L	H	L	L	L	L	D	L	H
+K	declaration.union.public		Visibility	L	H	L	L	L	L	L	L	H
+K	declaration.union.public.internal		Visibility	L	H	L	L	L	L	L	L	L
+K	declaration.union.public.parent		Visibility	L	H	L	L	L	L	L	L	L
+K	declaration.union.public.restricted		Visibility	L	H	L	L	L	L	L	L	L
+K	declaration.variable		core	H	H	H	H	H	H	H	H	H
+K	declaration.variable.constant		core	L	L	H	L	H	L	H	H	H
+K	declaration.variable.pattern		core	L	L	H	D	L	H	L	H	H
+K	declaration.variable.private		Visibility	L	H	L	H	H	H	D	H	H
+K	declaration.variable.public		Visibility	L	H	L	H	H	H	L	H	H
+K	declaration.variable.public.internal		Visibility	L	H	L	L	D	H	L	H	L
+K	declaration.variable.public.parent		Visibility	L	H	L	L	L	L	L	L	L
+K	declaration.variable.public.restricted		Visibility	L	H	L	L	L	L	L	L	L
+K	declaration.variable.reassignable		core	L	L	H	L	H	H	L	H	H
+K	declaration.variable.reassignable.function_scoped		core	L	L	H	L	L	L	L	L	L
+K	element		core	H	H	H	H	H	H	H	H	H
+K	element.comparator		core	H	L	L	L	L	L	L	L	L
+K	element.comparator.comparison		core	H	L	L	L	L	L	L	L	L
+K	element.comparator.comparison.equal		core	H	L	L	L	L	L	L	L	L
+K	element.comparator.comparison.greater		core	H	L	L	L	L	L	L	L	L
+K	element.comparator.comparison.greater_equal		core	H	L	L	L	L	L	L	L	L
+K	element.comparator.comparison.less		core	H	L	L	L	L	L	L	L	L
+K	element.comparator.comparison.less_equal		core	H	L	L	L	L	L	L	L	L
+K	element.comparator.comparison.not_equal		core	H	L	L	L	L	L	L	L	L
+K	element.comparator.comparison.not_equal.legacy		core	H	L	L	L	L	L	L	L	L
+K	element.comparator.identity		core	H	L	L	L	L	L	L	L	L
+K	element.comparator.identity.is		core	H	L	L	L	L	L	L	L	L
+K	element.comparator.identity.is_not		core	H	L	L	L	L	L	L	L	L
+K	element.comparator.membership		core	H	L	L	L	L	L	L	L	L
+K	element.comparator.membership.in		core	H	L	L	L	L	L	L	L	L
+K	element.comparator.membership.not_in		core	H	L	L	L	L	L	L	L	L
+K	element.macro		SyntacticMetaprogramming	L	H	L	L	L	L	D	L	D
+K	element.macro.fragment		SyntacticMetaprogramming	L	H	L	L	L	L	D	L	D
+K	element.macro.token_binding		SyntacticMetaprogramming	L	H	L	L	L	L	D	L	D
+K	element.macro.token_repetition		SyntacticMetaprogramming	L	H	L	L	L	L	D	L	D
+K	element.macro.token_repetition.pattern		SyntacticMetaprogramming	L	H	L	L	L	L	D	L	D
+K	element.macro.token_tree		SyntacticMetaprogramming	L	H	L	L	L	L	D	L	D
+K	element.macro.token_tree.brace		SyntacticMetaprogramming	L	H	L	L	L	L	D	L	D
+K	element.macro.token_tree.bracket		SyntacticMetaprogramming	L	H	L	L	L	L	D	L	D
+K	element.macro.token_tree.delimited		SyntacticMetaprogramming	L	H	L	L	L	L	D	L	D
+K	element.macro.token_tree.delimited.brace		SyntacticMetaprogramming	L	H	L	L	L	L	D	L	D
+K	element.macro.token_tree.delimited.bracket		SyntacticMetaprogramming	L	H	L	L	L	L	D	L	D
+K	element.macro.token_tree.delimited.paren		SyntacticMetaprogramming	L	H	L	L	L	L	D	L	D
+K	element.macro.token_tree.paren		SyntacticMetaprogramming	L	H	L	L	L	L	D	L	D
+K	element.macro.token_tree.pattern		SyntacticMetaprogramming	L	H	L	L	L	L	D	L	D
+K	element.macro.token_tree.pattern.brace		SyntacticMetaprogramming	L	H	L	L	L	L	D	L	D
+K	element.macro.token_tree.pattern.bracket		SyntacticMetaprogramming	L	H	L	L	L	L	D	L	D
+K	element.macro.token_tree.pattern.paren		SyntacticMetaprogramming	L	H	L	L	L	L	D	L	D
+K	element.pair		core	H	L	H	H	L	D	D	H	D
+K	element.spread		core	H	L	H	H	L	H	L	L	D
+K	element.spread.map		core	H	L	L	L	L	L	L	L	L
+K	element.spread.parenthesized		core	H	L	L	L	L	L	L	L	L
+K	element.struct		Structs	L	H	L	L	L	D	H	D	H
+K	element.struct.base		Structs	L	H	L	L	L	D	L	L	L
+K	element.struct.field		Structs	L	H	L	L	L	D	H	D	H
+K	element.template		TypeAnnotations	L	L	H	L	L	L	L	L	L
+K	element.template.substitution		TypeAnnotations	L	L	H	L	L	L	L	L	L
+K	element.tuple		TypeAnnotations	L	L	H	L	L	H	L	H	L
+K	element.tuple.member		TypeAnnotations	L	L	H	L	L	H	L	H	L
+K	element.tuple.member.optional		TypeAnnotations	L	L	H	L	L	L	L	L	L
+K	element.type_argument		ParametricPolymorphism	L	H	L	L	H	H	L	H	H
+K	element.type_binding		AssociatedTypes	L	H	L	L	L	L	L	D	L
+K	expression		core	H	H	H	H	H	H	H	H	H
+K	expression.assignment		core	H	H	H	H	H	H	H	H	H
+K	expression.assignment.compound		core	H	H	H	H	H	H	H	H	H
+K	expression.assignment.compound.add		core	H	H	H	H	H	H	H	H	H
+K	expression.assignment.compound.and		core	L	L	H	L	L	L	L	L	L
+K	expression.assignment.compound.bitwise_and		core	H	H	H	H	H	H	H	H	H
+K	expression.assignment.compound.bitwise_or		core	H	H	H	H	H	H	H	H	H
+K	expression.assignment.compound.bitwise_xor		core	H	H	H	H	H	H	H	H	H
+K	expression.assignment.compound.coalesce		core	L	L	H	L	L	H	L	L	L
+K	expression.assignment.compound.divide		core	H	H	H	H	H	H	H	H	H
+K	expression.assignment.compound.exponent		core	H	L	H	L	L	L	L	L	L
+K	expression.assignment.compound.floor_divide		core	H	L	L	L	L	L	L	L	L
+K	expression.assignment.compound.matrix_multiply		core	H	L	L	L	L	L	L	L	L
+K	expression.assignment.compound.modulo		core	H	H	H	H	H	H	H	H	H
+K	expression.assignment.compound.multiply		core	H	H	H	H	H	H	H	H	H
+K	expression.assignment.compound.or		core	L	L	H	L	L	L	L	L	L
+K	expression.assignment.compound.shift_left		core	H	H	H	H	H	H	H	H	H
+K	expression.assignment.compound.shift_right		core	H	H	H	H	H	H	H	H	H
+K	expression.assignment.compound.shift_right_unsigned		core	L	L	H	L	H	H	L	L	L
+K	expression.assignment.compound.subtract		core	H	H	H	H	H	H	H	H	H
+K	expression.await		AsyncAwait	H	H	H	L	L	H	L	H	H
+K	expression.binary		core	H	H	H	H	H	H	H	H	H
+K	expression.binary.arithmetic		core	H	H	H	H	H	H	H	H	H
+K	expression.binary.arithmetic.add		core	H	H	H	H	H	H	H	H	H
+K	expression.binary.arithmetic.divide		core	H	H	H	H	H	H	H	H	H
+K	expression.binary.arithmetic.exponent		core	H	L	H	L	L	L	L	L	L
+K	expression.binary.arithmetic.floor_divide		core	H	L	L	L	L	L	L	L	L
+K	expression.binary.arithmetic.modulo		core	H	H	H	H	H	H	H	H	H
+K	expression.binary.arithmetic.multiply		core	H	H	H	H	H	H	H	H	H
+K	expression.binary.arithmetic.subtract		core	H	H	H	H	H	H	H	H	H
+K	expression.binary.bitwise		core	H	H	H	H	H	H	H	H	H
+K	expression.binary.bitwise.and		core	H	H	H	H	H	H	H	H	H
+K	expression.binary.bitwise.or		core	H	H	H	H	H	H	H	H	H
+K	expression.binary.bitwise.xor		core	H	H	H	H	H	H	H	H	H
+K	expression.binary.coalesce		core	L	L	H	L	L	H	L	H	L
+K	expression.binary.comparison		core	H	H	H	H	H	H	H	H	H
+K	expression.binary.comparison.chain		core	H	L	L	L	L	L	L	L	L
+K	expression.binary.comparison.equal		core	H	H	H	H	H	H	H	H	H
+K	expression.binary.comparison.greater		core	H	H	H	H	H	H	H	H	H
+K	expression.binary.comparison.greater_equal		core	H	H	H	H	H	H	H	H	H
+K	expression.binary.comparison.less		core	H	H	H	H	H	H	H	H	H
+K	expression.binary.comparison.less_equal		core	H	H	H	H	H	H	H	H	H
+K	expression.binary.comparison.loose_equal		CoerciveEquality	L	L	H	L	L	L	L	L	L
+K	expression.binary.comparison.loose_not_equal		CoerciveEquality	L	L	H	L	L	L	L	L	L
+K	expression.binary.comparison.not_equal		core	H	H	H	H	H	H	H	H	H
+K	expression.binary.comparison.not_equal.legacy		core	H	L	L	L	L	L	L	L	L
+K	expression.binary.identity		core	H	L	L	L	D	D	D	H	D
+K	expression.binary.identity.is		core	H	L	L	L	D	D	D	H	D
+K	expression.binary.identity.is_not		core	H	L	L	L	D	D	D	H	D
+K	expression.binary.logical		core	H	H	H	H	H	H	H	H	H
+K	expression.binary.logical.and		core	H	H	H	H	H	H	H	H	H
+K	expression.binary.logical.or		core	H	H	H	H	H	H	H	H	H
+K	expression.binary.matrix_multiply		core	H	L	L	L	L	L	L	L	L
+K	expression.binary.membership		core	H	L	H	L	L	L	L	L	L
+K	expression.binary.membership.in		core	H	L	H	L	L	L	L	L	L
+K	expression.binary.membership.instanceof		core	L	L	H	D	H	H	L	H	D
+K	expression.binary.membership.not_in		core	H	L	L	L	L	L	L	L	L
+K	expression.binary.shift		core	H	H	H	H	H	H	H	H	H
+K	expression.binary.shift.left		core	H	H	H	H	H	H	H	H	H
+K	expression.binary.shift.right		core	H	H	H	H	H	H	H	H	H
+K	expression.binary.shift.right_unsigned		core	L	L	H	L	H	H	L	L	L
+K	expression.block		core	L	H	L	L	L	L	D	L	L
+K	expression.block.async		AsyncBlocks	L	H	L	L	L	L	L	D	L
+K	expression.block.const		CompileTimeEvaluation	L	H	L	L	L	L	L	L	L
+K	expression.block.generator		Coroutines	L	H	L	L	L	L	L	L	L
+K	expression.block.try		ErrorPropagation	L	H	L	L	L	L	L	L	L
+K	expression.block.unsafe		UnsafeCode	L	H	L	L	L	H	L	L	L
+K	expression.call		core	H	H	H	H	H	H	H	H	H
+K	expression.call.construct		Classes	L	L	H	D	H	H	L	L	H
+K	expression.call.construct.bare		Classes	L	L	H	L	L	L	L	L	H
+K	expression.call.import		Modules	L	L	H	L	L	L	L	L	L
+K	expression.call.macro		SyntacticMetaprogramming	L	H	L	L	L	L	D	H	D
+K	expression.call.member		core	H	H	H	H	H	H	H	H	H
+K	expression.call.qualified		core	L	H	L	L	D	L	L	L	H
+K	expression.call.template		StringInterpolation	L	L	H	L	L	L	L	L	L
+K	expression.cast		TypeAnnotations	L	H	H	H	H	H	H	H	H
+K	expression.cast.assertion		TypeAnnotations	L	L	H	L	L	L	L	L	L
+K	expression.cast.assertion.angle_bracket		TypeAnnotations	L	L	H	L	L	L	L	L	L
+K	expression.cast.conversion		TypeAnnotations	L	H	L	H	D	D	D	D	H
+K	expression.cast.non_null		NonNullAssertions	L	L	H	L	L	H	L	H	L
+K	expression.cast.satisfies		TypeAnnotations	L	L	H	L	L	L	L	L	L
+K	expression.class		Classes	L	L	H	L	D	L	L	L	L
+K	expression.collection		core	H	H	H	H	D	H	H	H	D
+K	expression.collection.list		core	H	H	H	H	D	H	H	H	D
+K	expression.collection.list.repeat		core	L	H	L	L	L	L	L	L	L
+K	expression.collection.map		core	H	L	L	H	L	D	L	H	D
+K	expression.collection.object		core	L	L	H	D	L	H	D	L	L
+K	expression.collection.set		core	H	L	L	L	L	L	L	D	L
+K	expression.collection.struct		Structs	L	H	L	H	L	D	H	D	H
+K	expression.collection.tuple		Tuples	H	H	L	L	L	H	L	H	D
+K	expression.collection.tuple.bare		Tuples	H	L	L	L	L	L	L	L	L
+K	expression.comprehension		Comprehensions	H	L	L	L	L	D	L	L	L
+K	expression.comprehension.generator		Comprehensions	H	L	L	L	L	D	L	L	L
+K	expression.comprehension.list		Comprehensions	H	L	L	L	L	D	L	L	L
+K	expression.comprehension.map		Comprehensions	H	L	L	L	L	D	L	L	L
+K	expression.comprehension.set		Comprehensions	H	L	L	L	L	D	L	L	L
+K	expression.conditional		ConditionalExpressions	H	L	H	L	H	H	H	H	H
+K	expression.function		core	L	L	H	H	L	H	L	L	L
+K	expression.instantiation		ParametricPolymorphism	L	H	H	H	D	H	L	H	H
+K	expression.interpolation		StringInterpolation	H	L	H	L	L	H	L	H	L
+K	expression.interpolation.conversion		StringInterpolation	H	L	L	L	L	L	L	L	L
+K	expression.interpolation.format		StringInterpolation	H	L	L	L	L	H	L	L	L
+K	expression.lambda		core	H	H	H	D	H	H	L	H	H
+K	expression.member		core	H	H	H	H	H	H	H	H	H
+K	expression.meta		core	L	L	H	L	L	L	L	L	L
+K	expression.parenthesized		core	H	H	H	H	H	H	H	H	H
+K	expression.propagate		ErrorPropagation	L	H	L	L	L	L	L	D	L
+K	expression.range		RangeExpressions	L	H	L	L	L	H	L	H	L
+K	expression.range.exclusive		RangeExpressions	L	H	L	L	L	H	L	H	L
+K	expression.range.inclusive		RangeExpressions	L	H	L	L	L	L	L	H	L
+K	expression.range.inclusive.legacy		RangeExpressions	L	H	L	L	L	L	L	L	L
+K	expression.reference		References	L	H	L	H	L	D	H	D	H
+K	expression.sequence		core	L	L	H	L	L	L	H	L	H
+K	expression.slice		SliceExpressions	H	L	L	H	L	D	L	D	L
+K	expression.subscript		core	H	H	H	H	H	H	H	H	H
+K	expression.unary		core	H	H	H	H	H	H	H	H	H
+K	expression.unary.bitwise_not		core	H	L	H	H	H	H	H	H	H
+K	expression.unary.delete		core	L	L	H	L	L	L	L	L	L
+K	expression.unary.deref		References	L	H	L	H	L	H	H	L	H
+K	expression.unary.negation		core	H	H	H	H	H	H	H	H	H
+K	expression.unary.not		core	H	H	H	H	H	H	H	H	H
+K	expression.unary.plus		core	H	L	H	H	H	H	H	H	H
+K	expression.unary.typeof		core	L	L	H	L	L	D	D	L	D
+K	expression.unary.void		core	L	L	H	L	L	L	L	L	L
+K	expression.unit		Tuples	L	H	L	L	L	L	L	H	L
+K	expression.update		core	L	L	H	H	H	H	H	L	H
+K	expression.update.decrement		core	L	L	H	H	H	H	H	L	H
+K	expression.update.increment		core	L	L	H	H	H	H	H	L	H
+K	expression.yield		Coroutines	H	H	H	L	L	H	L	L	H
+K	expression.yield.delegate		Generators	H	L	H	L	L	L	L	L	L
+K	file		core	H	H	H	H	H	H	H	H	H
+K	identifier		core	H	H	H	H	H	H	H	H	H
+K	identifier.label		LabeledControlFlow	L	H	H	H	H	H	H	H	H
+K	identifier.lifetime		Lifetimes	L	H	L	L	L	L	L	L	L
+K	identifier.metavariable		SyntacticMetaprogramming	L	H	L	L	L	L	L	L	L
+K	identifier.qualified		core	H	H	H	H	H	H	L	H	H
+K	identifier.receiver		Methods	L	H	H	L	H	H	L	H	H
+K	identifier.super		core	L	L	H	L	H	H	L	H	L
+K	literal		core	H	H	H	H	H	H	H	H	H
+K	literal.boolean		core	H	H	H	H	H	H	H	H	H
+K	literal.boolean.false		core	H	H	H	H	H	H	H	H	H
+K	literal.boolean.true		core	H	H	H	H	H	H	H	H	H
+K	literal.character		Characters	L	H	L	H	H	H	H	L	H
+K	literal.ellipsis		core	H	L	L	L	L	L	L	L	L
+K	literal.null		core	H	L	H	H	H	H	H	H	H
+K	literal.null.undefined		core	L	L	H	L	L	L	L	L	L
+K	literal.number		core	H	H	H	H	H	H	H	H	H
+K	literal.number.float		core	H	H	H	H	H	H	L	H	H
+K	literal.number.float.leading_point		core	H	L	H	L	H	H	L	L	H
+K	literal.number.float.scientific		core	H	L	H	L	H	H	L	H	H
+K	literal.number.integer		core	H	H	H	H	H	H	L	H	H
+K	literal.number.integer.big		ArbitraryPrecisionIntegers	H	L	H	L	L	L	L	L	L
+K	literal.number.integer.big.binary		ArbitraryPrecisionIntegers	L	L	H	L	L	L	L	L	L
+K	literal.number.integer.big.hex		ArbitraryPrecisionIntegers	L	L	H	L	L	L	L	L	L
+K	literal.number.integer.big.octal		ArbitraryPrecisionIntegers	L	L	H	L	L	L	L	L	L
+K	literal.number.integer.binary		core	H	H	H	H	H	H	L	H	H
+K	literal.number.integer.hex		core	H	H	H	H	H	H	L	H	H
+K	literal.number.integer.imaginary		ComplexNumbers	H	L	L	H	L	L	D	L	D
+K	literal.number.integer.octal		core	H	H	H	H	H	L	L	H	H
+K	literal.number.negative		core	H	H	H	L	H	H	L	H	H
+K	literal.regex		RegularExpressions	L	L	H	L	L	L	L	H	L
+K	literal.regex.flags		RegularExpressions	L	L	H	L	L	L	L	D	L
+K	literal.regex.pattern		RegularExpressions	L	L	H	L	L	L	L	H	L
+K	literal.string		core	H	H	H	H	H	H	H	H	H
+K	literal.string.bytes		ByteStrings	H	H	L	L	L	L	L	L	L
+K	literal.string.bytes.multiline		ByteStrings	H	L	L	L	L	L	L	L	L
+K	literal.string.bytes.raw		RawStrings	H	H	L	L	L	L	L	L	L
+K	literal.string.bytes.raw.multiline		RawStrings	H	L	L	L	L	L	L	L	L
+K	literal.string.c		CStrings	L	H	L	L	L	L	D	L	L
+K	literal.string.c.raw		CStrings	L	H	L	L	L	L	D	L	L
+K	literal.string.concatenated		core	H	L	L	L	L	L	H	L	H
+K	literal.string.escape		core	H	H	H	H	H	H	H	H	H
+K	literal.string.interpolated		StringInterpolation	H	L	H	L	L	H	L	H	L
+K	literal.string.interpolated.deferred		StringInterpolation	H	L	L	L	L	L	L	L	L
+K	literal.string.interpolated.deferred.multiline		StringInterpolation	H	L	L	L	L	L	L	L	L
+K	literal.string.interpolated.deferred.raw		RawStrings	H	L	L	L	L	L	L	L	L
+K	literal.string.interpolated.deferred.raw.multiline		RawStrings	H	L	L	L	L	L	L	L	L
+K	literal.string.interpolated.multiline		StringInterpolation	H	L	L	L	L	H	L	H	L
+K	literal.string.interpolated.raw		RawStrings	H	L	L	L	L	H	L	H	L
+K	literal.string.interpolated.raw.multiline		RawStrings	H	L	L	L	L	H	L	H	L
+K	literal.string.multiline		core	H	L	L	H	H	H	L	H	L
+K	literal.string.raw		RawStrings	H	H	L	H	L	H	L	H	H
+K	literal.string.raw.multiline		RawStrings	H	L	L	L	L	H	L	H	H
+K	literal.string.text		core	H	H	H	H	H	H	H	H	H
+K	literal.string.unicode		UnicodeStrings	H	L	L	L	L	L	D	L	D
+K	modifier		core	L	H	H	L	H	H	H	H	H
+K	modifier.extern		ForeignFunctionInterface	L	H	L	L	D	H	L	L	H
+K	modifier.visibility		Visibility	L	H	H	D	H	H	L	H	D
+K	modifier.visibility.private		Visibility	L	H	H	D	H	H	L	H	D
+K	modifier.visibility.protected		Visibility	L	L	H	L	H	H	L	L	D
+K	modifier.visibility.public		Visibility	L	H	H	D	H	H	L	H	D
+K	modifier.visibility.public.internal		Visibility	L	H	L	L	D	H	L	H	L
+K	modifier.visibility.public.parent		Visibility	L	H	L	L	L	L	L	L	L
+K	modifier.visibility.public.restricted		Visibility	L	H	L	L	L	L	L	L	L
+K	pattern		core	H	H	H	H	D	H	L	H	D
+K	pattern.as		MatchExpressions	H	H	L	L	D	D	L	D	L
+K	pattern.assignment		Destructuring	L	L	H	L	L	L	L	L	L
+K	pattern.complex		ComplexNumbers	H	L	L	L	L	L	L	L	L
+K	pattern.complex.add		ComplexNumbers	H	L	L	L	L	L	L	L	L
+K	pattern.complex.subtract		ComplexNumbers	H	L	L	L	L	L	L	L	L
+K	pattern.generic		ParametricPolymorphism	L	H	L	L	L	L	L	L	L
+K	pattern.list		Destructuring	H	H	H	L	L	H	L	L	L
+K	pattern.map		MatchExpressions	H	L	L	L	L	L	L	L	L
+K	pattern.mutable		core	L	H	L	L	L	L	L	D	L
+K	pattern.object		Destructuring	L	L	H	L	L	H	L	L	L
+K	pattern.object.assignment		Destructuring	L	L	H	L	L	L	L	L	L
+K	pattern.object.pair		Destructuring	L	L	H	L	L	H	L	L	L
+K	pattern.or		MatchExpressions	H	H	L	L	D	H	L	D	L
+K	pattern.range		RangeExpressions	L	H	L	L	L	D	L	H	L
+K	pattern.range.exclusive		RangeExpressions	L	H	L	L	L	D	L	H	L
+K	pattern.range.inclusive		RangeExpressions	L	H	L	L	L	D	L	H	L
+K	pattern.range.inclusive.legacy		RangeExpressions	L	H	L	L	L	L	L	L	L
+K	pattern.reference		References	L	H	L	L	L	L	L	L	L
+K	pattern.reference.value		References	L	H	L	L	L	L	L	L	L
+K	pattern.rest		Destructuring	H	L	H	L	L	H	L	L	L
+K	pattern.rest.map		Destructuring	H	L	L	L	L	L	L	L	L
+K	pattern.struct		Structs	H	H	L	L	H	H	L	D	L
+K	pattern.struct.field		Structs	H	H	L	L	D	H	L	L	L
+K	pattern.struct.rest		Structs	L	H	L	L	L	L	L	L	L
+K	pattern.tuple		Destructuring	H	H	L	L	D	H	L	H	D
+K	pattern.tuple.bare		Destructuring	H	L	L	L	L	L	L	L	L
+K	pattern.wildcard		Destructuring	H	H	L	H	H	H	L	H	L
+K	statement		core	H	H	H	H	H	H	H	H	H
+K	statement.assert		Assertions	H	L	L	L	H	L	D	D	D
+K	statement.block		core	H	H	H	H	H	H	H	H	H
+K	statement.block.static		Classes	L	L	H	L	H	D	L	L	L
+K	statement.break		core	H	H	H	H	H	H	H	H	H
+K	statement.continue		core	H	H	H	H	H	H	H	H	H
+K	statement.debugger		DebuggerStatements	L	L	H	L	L	L	L	L	L
+K	statement.delete		core	H	L	L	L	L	L	L	L	L
+K	statement.empty		core	H	H	H	H	H	H	L	H	H
+K	statement.exec		ExecStatements	H	L	L	L	L	L	L	L	L
+K	statement.export		Modules	L	L	H	L	L	L	L	L	L
+K	statement.export.all		Modules	L	L	H	L	L	L	L	L	L
+K	statement.export.default		Modules	L	L	H	L	L	L	L	L	L
+K	statement.expression		core	H	H	H	H	H	H	H	H	H
+K	statement.global		ScopeDeclarations	H	L	L	L	L	L	L	L	L
+K	statement.if		core	H	H	H	H	H	H	H	H	H
+K	statement.import		Modules	H	H	H	H	H	H	D	H	D
+K	statement.import.alias		Modules	L	L	H	L	L	D	L	L	L
+K	statement.import.from		Modules	H	L	L	L	L	L	L	L	L
+K	statement.import.future		Modules	H	L	L	L	L	L	L	L	L
+K	statement.import.package		Modules	L	H	L	L	L	L	L	L	L
+K	statement.import.package.private		Visibility	L	H	L	L	L	L	L	L	L
+K	statement.import.package.public		Visibility	L	H	L	L	L	L	L	L	L
+K	statement.import.package.public.internal		Visibility	L	H	L	L	L	L	L	L	L
+K	statement.import.package.public.parent		Visibility	L	H	L	L	L	L	L	L	L
+K	statement.import.package.public.restricted		Visibility	L	H	L	L	L	L	L	L	L
+K	statement.import.private		Visibility	L	H	L	D	H	H	D	H	D
+K	statement.import.public		Visibility	L	H	L	D	H	H	L	H	D
+K	statement.import.public.internal		Visibility	L	H	L	L	D	H	L	H	L
+K	statement.import.public.parent		Visibility	L	H	L	L	L	L	L	L	L
+K	statement.import.public.restricted		Visibility	L	H	L	L	L	L	L	L	L
+K	statement.import.typeof		Modules	L	L	H	L	L	L	L	L	L
+K	statement.labeled		LabeledControlFlow	L	L	H	H	H	H	H	D	H
+K	statement.loop		core	H	H	H	H	H	H	H	H	H
+K	statement.loop.counted		CountedLoops	L	L	H	H	H	H	H	L	H
+K	statement.loop.do_while		PostTestLoops	L	L	H	L	H	H	H	H	H
+K	statement.loop.for_each		core	H	H	H	H	H	H	L	H	H
+K	statement.loop.while		core	H	H	H	D	H	H	H	H	H
+K	statement.match		MatchExpressions	H	H	L	L	H	H	L	H	L
+K	statement.nonlocal		ScopeDeclarations	H	L	L	L	L	L	L	L	L
+K	statement.print		PrintStatements	H	L	L	L	L	L	L	L	L
+K	statement.resource		ResourceManagement	H	L	L	L	H	H	L	L	L
+K	statement.return		core	H	H	H	H	H	H	H	H	H
+K	statement.scope		DynamicScope	L	L	H	L	L	L	L	L	L
+K	statement.switch		MultiwayBranch	L	L	H	H	H	H	H	D	H
+K	statement.throw		Exceptions	H	L	H	L	H	H	L	H	H
+K	statement.try		Exceptions	H	L	H	L	H	H	L	D	H
+K	type		core	H	H	H	H	H	H	H	H	H
+K	type.abstract		TypeAnnotations	L	H	L	L	L	L	L	H	D
+K	type.array		TypeAnnotations	L	H	H	H	H	H	H	H	H
+K	type.bounded		TypeAnnotations	L	H	L	L	D	L	L	H	L
+K	type.bracketed		TypeAnnotations	L	H	L	L	L	L	L	L	D
+K	type.conditional		TypeAnnotations	L	L	H	L	L	L	L	L	L
+K	type.constrained		TypeAnnotations	H	L	L	D	L	L	L	L	L
+K	type.dynamic		TypeAnnotations	L	H	L	D	D	D	L	H	L
+K	type.existential		TypeAnnotations	L	L	H	L	L	L	L	L	L
+K	type.function		TypeAnnotations	L	H	H	H	L	D	H	H	D
+K	type.function.constructor		TypeAnnotations	L	L	H	L	L	L	L	L	L
+K	type.generic		TypeAnnotations	H	H	H	H	H	H	L	H	H
+K	type.generic.turbofish		TypeAnnotations	L	H	L	L	L	L	L	L	L
+K	type.import		Modules	L	L	H	L	L	L	L	L	L
+K	type.index_query		TypeAnnotations	L	L	H	L	L	L	L	L	L
+K	type.infer		TypeAnnotations	L	L	H	L	L	L	L	L	L
+K	type.intersection		TypeAnnotations	L	L	H	L	L	L	L	L	L
+K	type.literal		TypeAnnotations	L	L	H	L	L	L	L	L	L
+K	type.lookup		TypeAnnotations	L	L	H	L	L	L	L	L	L
+K	type.nullable		NullableTypes	L	L	H	L	L	H	L	H	D
+K	type.object		TypeAnnotations	L	L	H	H	L	L	D	L	D
+K	type.optional		TypeAnnotations	L	L	H	L	L	L	L	L	L
+K	type.parenthesized		TypeAnnotations	L	L	H	H	L	L	D	H	D
+K	type.pointer		TypeAnnotations	L	H	L	H	L	H	H	D	H
+K	type.predicate		TypeAnnotations	L	L	H	L	L	L	L	L	L
+K	type.predicate.asserts		TypeAnnotations	L	L	H	L	L	L	L	L	L
+K	type.primitive		TypeAnnotations	L	H	H	H	H	H	H	D	H
+K	type.primitive.boolean		TypeAnnotations	L	H	H	H	H	H	H	D	H
+K	type.primitive.character		Characters	L	H	L	H	H	H	H	H	H
+K	type.primitive.floating		TypeAnnotations	L	H	H	H	H	H	H	D	H
+K	type.primitive.floating.float32		TypeAnnotations	L	H	L	H	H	H	H	D	H
+K	type.primitive.floating.float64		TypeAnnotations	L	H	H	H	H	H	H	D	H
+K	type.primitive.integral		TypeAnnotations	L	H	L	H	H	H	H	D	H
+K	type.primitive.integral.int128		TypeAnnotations	L	H	L	L	L	D	D	D	D
+K	type.primitive.integral.int16		TypeAnnotations	L	H	L	H	H	H	H	D	H
+K	type.primitive.integral.int32		TypeAnnotations	L	H	L	H	H	H	H	D	H
+K	type.primitive.integral.int64		TypeAnnotations	L	H	L	H	H	H	H	D	H
+K	type.primitive.integral.int8		TypeAnnotations	L	H	L	H	H	H	H	D	H
+K	type.primitive.integral.size		TypeAnnotations	L	H	L	H	L	H	H	D	D
+K	type.primitive.never		TypeAnnotations	L	H	H	L	L	L	D	D	D
+K	type.primitive.object		TypeAnnotations	L	L	H	L	D	H	L	L	L
+K	type.primitive.string		TypeAnnotations	L	H	H	H	D	H	L	D	D
+K	type.primitive.symbol		TypeAnnotations	L	L	H	L	L	L	L	L	L
+K	type.primitive.unchecked		TypeAnnotations	L	L	H	H	L	H	D	D	L
+K	type.primitive.unknown		TypeAnnotations	L	L	H	L	L	L	L	L	L
+K	type.primitive.void		TypeAnnotations	L	L	H	L	H	H	H	H	H
+K	type.qualified		TypeAnnotations	L	H	L	L	L	L	L	D	H
+K	type.query		TypeAnnotations	L	L	H	L	L	L	D	L	H
+K	type.readonly		TypeAnnotations	L	L	H	L	L	L	D	L	D
+K	type.receiver		ExplicitReceivers	L	L	H	L	L	L	L	H	L
+K	type.reference		TypeAnnotations	L	H	L	L	L	D	L	L	H
+K	type.rest		TypeAnnotations	H	L	H	L	L	L	L	D	D
+K	type.template		TypeAnnotations	L	L	H	L	L	L	L	L	L
+K	type.tuple		TypeAnnotations	L	H	H	L	L	H	L	H	D
+K	type.union		TypeAnnotations	H	L	H	D	L	L	L	L	L
+K	type.unit		TypeAnnotations	L	H	L	L	L	L	L	H	L
+M	argument	attributes	Attributes	L	H	L	L	H	H	L	H	H
+M	attribute.content	input	core	L	H	L	L	H	H	L	H	H
+M	attribute.content	path	core	L	H	L	L	H	H	L	H	H
+M	clause.case.match	attributes	Attributes	L	H	L	L	H	H	L	H	L
+M	clause.comprehension.for	async	AsyncAwait	H	L	L	L	L	D	L	L	L
+M	clause.export.specifier	typeOnly	TypeOnlyImports	L	L	H	L	L	L	L	L	L
+M	clause.import.specifier	typeOnly	TypeOnlyImports	L	L	H	L	L	L	L	L	L
+M	comment.block.doc	content	core	L	H	L	D	H	H	L	H	H
+M	declaration.class	abstract	AbstractClasses	L	L	H	L	H	H	L	L	H
+M	declaration.class	bases	MultipleInheritance	H	L	L	L	D	D	L	D	D
+M	declaration.class	decorators	Decorators	H	L	H	L	L	L	L	L	L
+M	declaration.class	extends	SingleInheritance	L	L	H	L	H	D	L	D	D
+M	declaration.class	implements	InterfaceConformance	L	L	H	L	H	D	L	D	L
+M	declaration.class	typeParameters	ParametricPolymorphism	H	L	H	L	H	H	L	H	H
+M	declaration.constant	name	core	L	H	L	L	D	H	D	D	H
+M	declaration.constant	type	TypeAnnotations	L	H	L	L	D	H	D	D	H
+M	declaration.constant	value	core	L	H	L	L	D	H	D	D	H
+M	declaration.constructor	async	AsyncAwait	H	L	L	L	L	L	L	L	L
+M	declaration.constructor	decorators	Decorators	H	L	H	L	L	L	L	L	L
+M	declaration.constructor	returnType	TypeAnnotations	H	L	L	L	L	L	L	L	L
+M	declaration.constructor	typeParameters	ParametricPolymorphism	H	L	L	L	H	H	L	H	H
+M	declaration.enum	typeParameters	ParametricPolymorphism	L	H	L	L	H	H	L	H	H
+M	declaration.enum	whereClause	BoundedQuantification	L	H	L	L	L	H	L	H	D
+M	declaration.enum_member	attributes	Attributes	L	H	L	L	H	H	L	H	H
+M	declaration.extension	typeParameters	ParametricPolymorphism	L	H	L	D	L	D	L	H	L
+M	declaration.extension	unsafe	UnsafeCode	L	H	L	L	L	D	L	L	L
+M	declaration.extension	whereClause	BoundedQuantification	L	H	L	L	L	D	L	H	L
+M	declaration.extension.conformance	typeParameters	ParametricPolymorphism	L	H	L	L	L	L	L	H	L
+M	declaration.extension.conformance	unsafe	UnsafeCode	L	H	L	L	L	L	L	L	L
+M	declaration.extension.conformance	whereClause	BoundedQuantification	L	H	L	L	L	L	L	H	L
+M	declaration.field	abstract	AbstractClasses	L	L	H	L	H	H	L	L	H
+M	declaration.field	attributes	Attributes	L	H	L	L	H	H	L	H	H
+M	declaration.field	computed	ComputedKeys	L	L	H	L	L	L	L	L	L
+M	declaration.field	declare	AmbientDeclarations	L	L	H	L	L	L	L	L	L
+M	declaration.field	decorators	Decorators	L	L	H	L	L	L	L	L	L
+M	declaration.field	definite	NonNullAssertions	L	L	H	L	L	L	L	L	L
+M	declaration.field	optional	OptionalMembers	L	L	H	L	L	L	L	H	L
+M	declaration.field	optionality	OptionalMembers	L	L	H	L	L	H	L	H	L
+M	declaration.field	override	ExplicitOverrides	L	L	H	L	D	H	L	H	D
+M	declaration.field	privateName	Encapsulation	L	L	H	L	L	L	L	L	L
+M	declaration.field	readonly	ReadonlyMembers	L	L	H	L	D	H	L	L	L
+M	declaration.field	static	Classes	L	L	H	L	H	H	L	H	H
+M	declaration.field	type	TypeAnnotations	L	H	H	H	H	H	H	H	H
+M	declaration.field	value	core	L	L	H	L	H	H	L	H	H
+M	declaration.field.signature	optional	OptionalMembers	L	L	H	L	L	L	L	H	L
+M	declaration.field.signature	override	ExplicitOverrides	L	L	H	L	D	H	L	H	L
+M	declaration.field.signature	readonly	ReadonlyMembers	L	L	H	L	D	H	L	L	L
+M	declaration.field.signature	static	Classes	L	L	H	L	D	H	L	H	L
+M	declaration.field.signature	type	TypeAnnotations	L	L	H	L	D	H	L	H	L
+M	declaration.function	async	AsyncAwait	H	H	H	L	L	H	L	H	L
+M	declaration.function	const	CompileTimeEvaluation	L	H	L	L	L	L	L	L	D
+M	declaration.function	decorators	Decorators	H	L	L	L	L	L	L	L	L
+M	declaration.function	default	Methods	L	H	L	L	L	L	L	L	L
+M	declaration.function	doc	core	H	L	L	L	L	L	L	L	L
+M	declaration.function	extern	ForeignFunctionInterface	L	H	L	L	D	H	L	L	H
+M	declaration.function	generator	Generators	L	L	H	L	L	L	L	L	L
+M	declaration.function	receiver	ExplicitReceivers	L	H	H	L	D	D	L	L	H
+M	declaration.function	returnType	TypeAnnotations	H	H	H	H	D	H	H	H	H
+M	declaration.function	typeParameters	ParametricPolymorphism	H	H	H	H	D	H	L	H	H
+M	declaration.function	unsafe	UnsafeCode	L	H	L	L	L	H	L	L	L
+M	declaration.function	whereClause	BoundedQuantification	L	H	L	L	L	H	L	H	D
+M	declaration.function.signature	async	AsyncAwait	L	L	H	L	L	L	L	L	L
+M	declaration.function.signature	functionModifiers	core	L	H	L	L	L	L	L	L	H
+M	declaration.function.signature	receiver	ExplicitReceivers	L	H	H	L	L	L	L	L	H
+M	declaration.function.signature	returnType	TypeAnnotations	L	H	H	H	L	L	L	L	H
+M	declaration.function.signature	typeParameters	ParametricPolymorphism	L	H	H	H	L	L	L	L	H
+M	declaration.function.signature	whereClause	BoundedQuantification	L	H	L	L	L	L	L	L	D
+M	declaration.interface	typeParameters	ParametricPolymorphism	L	H	H	H	H	H	L	H	D
+M	declaration.interface.trait	typeParameters	ParametricPolymorphism	L	H	L	L	L	L	L	H	D
+M	declaration.interface.trait	unsafe	UnsafeCode	L	H	L	L	L	L	L	L	L
+M	declaration.interface.trait	whereClause	BoundedQuantification	L	H	L	L	L	L	L	H	D
+M	declaration.method	async	AsyncAwait	H	H	H	L	L	H	L	H	L
+M	declaration.method	computed	ComputedKeys	L	L	H	L	L	L	L	L	L
+M	declaration.method	const	CompileTimeEvaluation	L	H	L	L	L	L	L	L	D
+M	declaration.method	decorators	Decorators	H	L	H	L	L	L	L	L	L
+M	declaration.method	extern	ForeignFunctionInterface	L	H	L	L	D	H	L	L	H
+M	declaration.method	generator	Generators	L	L	H	L	L	L	L	L	L
+M	declaration.method	optional	OptionalMembers	L	L	H	L	L	L	L	H	L
+M	declaration.method	override	ExplicitOverrides	L	L	H	L	D	H	L	H	D
+M	declaration.method	privateName	Encapsulation	L	L	H	L	L	L	L	L	L
+M	declaration.method	readonly	ReadonlyMembers	L	L	H	L	D	H	L	L	L
+M	declaration.method	receiver	ExplicitReceivers	L	H	H	H	D	D	L	L	H
+M	declaration.method	returnType	TypeAnnotations	H	H	H	H	H	H	L	H	H
+M	declaration.method	typeParameters	ParametricPolymorphism	H	H	H	L	H	H	L	H	H
+M	declaration.method	unsafe	UnsafeCode	L	H	L	L	L	H	L	L	L
+M	declaration.method	whereClause	BoundedQuantification	L	H	L	L	L	H	L	H	D
+M	declaration.method.signature	async	AsyncAwait	L	L	H	L	L	H	L	H	L
+M	declaration.method.signature	optional	OptionalMembers	L	L	H	L	L	L	L	H	L
+M	declaration.method.signature	override	ExplicitOverrides	L	L	H	L	D	H	L	H	D
+M	declaration.method.signature	readonly	ReadonlyMembers	L	L	H	L	D	H	L	L	L
+M	declaration.method.signature	receiver	ExplicitReceivers	L	H	H	L	D	D	L	L	H
+M	declaration.method.signature	returnType	TypeAnnotations	L	H	H	H	H	H	L	H	H
+M	declaration.method.signature	typeParameters	ParametricPolymorphism	L	H	H	L	H	H	L	H	H
+M	declaration.method.signature	whereClause	BoundedQuantification	L	H	L	L	L	H	L	H	D
+M	declaration.method.signature.abstract	optional	OptionalMembers	L	L	H	L	L	L	L	L	L
+M	declaration.method.signature.abstract	override	ExplicitOverrides	L	L	H	L	D	H	L	L	D
+M	declaration.method.signature.abstract	returnType	TypeAnnotations	L	L	H	L	H	H	L	L	H
+M	declaration.method.signature.abstract	typeParameters	ParametricPolymorphism	L	L	H	L	H	H	L	L	H
+M	declaration.module.foreign	unsafe	UnsafeCode	L	H	L	L	L	D	L	L	L
+M	declaration.parameter	attributes	Attributes	L	H	L	L	H	H	L	H	H
+M	declaration.parameter	decorators	Decorators	L	L	H	L	L	L	L	L	L
+M	declaration.parameter	default	DefaultArguments	H	L	H	L	L	H	L	H	H
+M	declaration.parameter	mutable	core	L	H	L	L	L	L	L	D	L
+M	declaration.parameter	optional	OptionalMembers	L	L	H	L	L	L	L	H	L
+M	declaration.parameter	override	ExplicitOverrides	L	L	H	L	D	H	L	H	D
+M	declaration.parameter	readonly	ReadonlyMembers	L	L	H	L	D	H	L	L	L
+M	declaration.parameter	type	TypeAnnotations	H	H	H	H	H	H	H	H	H
+M	declaration.parameter.default	default	DefaultArguments	H	L	L	L	L	D	L	D	D
+M	declaration.parameter.receiver	lifetime	Lifetimes	L	H	L	L	L	L	L	L	L
+M	declaration.parameter.receiver	reference	References	L	H	L	L	L	L	L	L	L
+M	declaration.parameter.typed	type	TypeAnnotations	H	L	L	D	D	D	D	D	D
+M	declaration.parameter.typed_default	default	DefaultArguments	H	L	L	L	L	D	L	D	D
+M	declaration.parameter.typed_default	type	TypeAnnotations	H	L	L	L	L	D	L	D	D
+M	declaration.property	computed	ComputedKeys	L	L	H	L	L	L	L	L	L
+M	declaration.property	decorators	Decorators	L	L	H	L	L	L	L	L	L
+M	declaration.property	definite	NonNullAssertions	L	L	L	L	L	L	L	L	L
+M	declaration.property	optionality	OptionalMembers	L	L	L	L	L	H	L	H	L
+M	declaration.property	override	ExplicitOverrides	L	L	H	L	L	H	L	H	L
+M	declaration.property	privateName	Encapsulation	L	L	H	L	L	L	L	L	L
+M	declaration.property	static	Classes	L	L	H	L	L	H	L	H	L
+M	declaration.property	type	TypeAnnotations	L	L	H	L	L	H	L	H	L
+M	declaration.property.getter	returnType	TypeAnnotations	L	L	L	L	L	H	L	H	L
+M	declaration.property.signature.abstract.getter	returnType	TypeAnnotations	L	L	L	L	L	H	L	L	L
+M	declaration.property.signature.getter	returnType	TypeAnnotations	L	L	L	L	L	H	L	H	L
+M	declaration.signature.call	receiver	ExplicitReceivers	L	L	H	L	L	L	L	L	L
+M	declaration.signature.call	typeParameters	ParametricPolymorphism	L	L	H	L	L	L	L	L	L
+M	declaration.signature.construct	abstract	AbstractClasses	L	L	H	L	L	L	L	L	L
+M	declaration.signature.construct	typeParameters	ParametricPolymorphism	L	L	H	L	L	L	L	H	L
+M	declaration.type_alias	trailingWhereClause	BoundedQuantification	L	H	L	L	L	L	L	L	L
+M	declaration.type_alias	typeParameters	ParametricPolymorphism	H	H	H	H	L	H	L	H	H
+M	declaration.type_alias	whereClause	BoundedQuantification	L	H	L	L	L	H	L	H	D
+M	declaration.type_alias.associated	typeParameters	ParametricPolymorphism	L	H	L	L	L	L	L	H	L
+M	declaration.type_alias.associated	whereClause	BoundedQuantification	L	H	L	L	L	L	L	H	L
+M	declaration.type_parameter	attributes	Attributes	L	H	L	L	H	H	L	H	H
+M	declaration.type_parameter	bounds	BoundedQuantification	H	H	H	H	H	H	L	H	D
+M	declaration.type_parameter.lifetime	attributes	Attributes	L	H	L	L	L	L	L	L	L
+M	declaration.type_parameter.parameters	bounds	BoundedQuantification	L	L	L	L	L	L	L	L	L
+M	declaration.type_parameter.value	attributes	Attributes	L	H	L	L	L	L	L	L	H
+M	declaration.type_parameter.value	bounds	BoundedQuantification	L	L	L	L	L	L	L	L	D
+M	declaration.type_parameter.variadic	bounds	BoundedQuantification	L	L	L	L	L	L	L	H	D
+M	declaration.union	typeParameters	ParametricPolymorphism	L	H	L	L	L	L	L	L	H
+M	declaration.union	whereClause	BoundedQuantification	L	H	L	L	L	L	L	L	D
+M	declaration.variable	alternative	core	L	H	L	L	L	L	L	H	L
+M	declaration.variable	byReference	References	L	H	L	L	L	L	L	L	L
+M	declaration.variable	declarators	core	L	L	H	L	H	H	H	L	H
+M	declaration.variable	definite	NonNullAssertions	L	L	H	L	L	L	L	L	L
+M	declaration.variable	mutable	core	L	H	L	L	L	L	L	D	L
+M	declaration.variable	static	StaticStorage	L	H	L	L	L	L	L	H	H
+M	declaration.variable	type	TypeAnnotations	H	H	H	L	H	H	H	H	H
+M	declaration.variable.pattern	type	TypeAnnotations	L	L	H	D	L	H	L	H	H
+M	element.pair	computed	ComputedKeys	L	L	H	L	L	L	L	L	L
+M	element.struct.field	attributes	Attributes	L	H	L	L	L	D	L	D	H
+M	element.type_argument	bounds	BoundedQuantification	L	H	L	D	H	H	L	H	D
+M	expression.assignment	disposable	ResourceManagement	L	L	H	L	L	L	L	L	L
+M	expression.binary.logical	left	core	H	L	L	L	H	H	L	H	H
+M	expression.binary.logical	right	core	H	L	L	L	H	H	L	H	H
+M	expression.call	optionalChain	OptionalChaining	L	L	H	L	L	H	L	H	L
+M	expression.call	typeArguments	ParametricPolymorphism	L	L	H	H	D	H	L	H	H
+M	expression.call.construct	typeArguments	ParametricPolymorphism	L	L	H	D	D	H	L	L	H
+M	expression.call.member	typeArguments	ParametricPolymorphism	L	L	H	H	D	H	L	H	H
+M	expression.class	decorators	Decorators	L	L	H	L	L	L	L	L	L
+M	expression.class	extends	SingleInheritance	L	L	H	L	D	L	L	L	L
+M	expression.class	implements	InterfaceConformance	L	L	H	L	D	L	L	L	L
+M	expression.class	typeParameters	ParametricPolymorphism	L	L	H	L	D	L	L	L	L
+M	expression.collection.list	attributes	Attributes	L	H	L	L	D	H	D	H	D
+M	expression.collection.tuple	attributes	Attributes	L	H	L	L	L	H	L	H	D
+M	expression.function	async	AsyncAwait	L	L	H	L	L	H	L	L	L
+M	expression.function	generator	Generators	L	L	H	L	L	L	L	L	L
+M	expression.function	receiver	ExplicitReceivers	L	L	H	L	L	D	L	L	L
+M	expression.function	returnType	TypeAnnotations	L	L	H	H	L	H	L	L	L
+M	expression.function	typeParameters	ParametricPolymorphism	L	L	H	L	L	H	L	L	L
+M	expression.lambda	async	AsyncAwait	L	H	H	L	L	H	L	H	L
+M	expression.lambda	move	References	L	H	L	L	L	L	L	L	L
+M	expression.lambda	returnType	core	L	H	H	L	L	L	L	H	H
+M	expression.lambda	static	Coroutines	L	H	L	L	L	H	L	L	L
+M	expression.lambda	typeParameters	GenericLambdas	L	L	H	D	H	H	L	H	H
+M	expression.member	optionalChain	OptionalChaining	L	L	H	L	L	H	L	H	L
+M	expression.member	privateName	Encapsulation	L	L	H	L	L	L	L	L	L
+M	expression.parenthesized	type	core	L	L	H	L	L	L	L	L	L
+M	expression.subscript	optionalChain	OptionalChaining	L	L	H	L	L	H	L	H	L
+M	file	shebang	core	L	H	H	L	L	L	L	H	L
+M	identifier.metavariable	attributes	Attributes	L	H	L	L	L	L	L	L	L
+M	literal.number.float	exponent	core	H	L	H	L	H	H	L	H	H
+M	literal.number.float	exponentSign	core	H	L	H	L	H	H	L	H	H
+M	literal.number.float	fraction	core	H	L	H	L	H	H	L	H	H
+M	literal.number.float	imaginary	ComplexNumbers	H	L	L	L	L	L	D	L	L
+M	literal.number.float	integer	core	H	L	H	L	H	H	L	H	H
+M	literal.number.float	marker	core	H	L	H	L	H	H	L	H	H
+M	literal.number.float.leading_point	imaginary	ComplexNumbers	H	L	L	L	L	L	D	L	L
+M	literal.number.float.leading_point	integer	core	H	L	L	L	H	H	L	L	H
+M	literal.number.float.scientific	imaginary	ComplexNumbers	H	L	L	L	L	L	D	L	L
+M	literal.number.integer	suffix	core	L	H	L	L	H	H	L	L	H
+M	literal.number.integer.binary	radixPrefix	core	H	L	H	L	H	H	L	H	H
+M	literal.number.integer.binary	suffix	core	L	H	L	L	H	H	L	L	H
+M	literal.number.integer.hex	radixPrefix	core	H	L	H	L	H	H	L	H	H
+M	literal.number.integer.hex	suffix	core	L	H	L	L	H	H	L	L	H
+M	literal.number.integer.octal	radixPrefix	core	H	L	H	L	H	L	L	H	H
+M	literal.number.integer.octal	suffix	core	L	H	L	L	H	L	L	L	H
+M	modifier.visibility.public.restricted	scope	ScopedVisibility	L	H	L	L	L	L	L	L	L
+M	pattern.object.pair	computed	ComputedKeys	L	L	H	L	L	L	L	L	L
+M	statement.block	label	LabeledControlFlow	L	H	L	L	H	L	L	D	L
+M	statement.block	trailingExpression	core	L	H	L	L	L	L	L	L	L
+M	statement.break	expression	core	L	H	L	L	L	L	L	L	L
+M	statement.break	label	LabeledControlFlow	L	H	H	H	H	L	L	H	L
+M	statement.continue	label	LabeledControlFlow	L	H	H	H	H	L	L	H	L
+M	statement.export	typeOnly	TypeOnlyImports	L	L	H	L	L	L	L	L	L
+M	statement.expression	content	core	H	H	L	L	H	H	H	H	H
+M	statement.expression	expression	core	L	L	H	H	H	H	L	H	H
+M	statement.if	alternative	core	L	H	H	H	H	H	H	H	H
+M	statement.if	alternatives	core	H	L	L	D	D	D	D	D	D
+M	statement.import	typeOnly	TypeOnlyImports	L	L	H	L	L	L	L	L	L
+M	statement.loop	label	LabeledControlFlow	L	H	L	L	H	L	L	D	L
+M	statement.loop.for_each	alternative	core	H	L	L	L	L	L	L	L	L
+M	statement.loop.for_each	async	AsyncAwait	H	L	H	L	L	H	L	H	L
+M	statement.loop.for_each	header	core	L	L	H	L	L	L	L	L	L
+M	statement.loop.for_each	label	LabeledControlFlow	L	H	L	L	H	L	L	D	L
+M	statement.loop.for_each	left	core	H	H	L	L	H	H	L	H	H
+M	statement.loop.for_each	right	core	H	H	L	L	H	H	L	H	H
+M	statement.loop.while	alternative	core	H	L	L	L	L	L	L	L	L
+M	statement.loop.while	label	LabeledControlFlow	L	H	L	D	H	L	L	D	L
+M	statement.resource	async	AsyncAwait	H	L	L	L	L	H	L	L	L
+M	type	content	core	H	L	H	L	H	H	L	H	H
+M	type.abstract	typeParameters	ParametricPolymorphism	L	H	L	L	L	L	L	H	D
+M	type.constrained	constraint	BoundedQuantification	H	L	L	D	L	L	L	L	L
+M	type.function	forLifetimes	Lifetimes	L	H	L	L	L	L	L	L	L
+M	type.function	receiver	ExplicitReceivers	L	L	H	L	L	D	L	L	D
+M	type.function	typeParameters	ParametricPolymorphism	L	L	H	L	L	D	L	H	D
+M	type.function	unsafe	UnsafeCode	L	H	L	L	L	D	L	L	L
+M	type.function.constructor	abstract	AbstractClasses	L	L	H	L	L	L	L	L	L
+M	type.function.constructor	typeParameters	ParametricPolymorphism	L	L	H	L	L	L	L	L	L
+M	type.pointer	writable	References	L	H	L	L	L	L	L	L	L
+M	type.reference	exclusive	References	L	H	L	L	L	L	L	L	L
+M	type.reference	lifetime	Lifetimes	L	H	L	L	L	L	L	L	L

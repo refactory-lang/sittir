@@ -47,13 +47,14 @@ import type {
 	SubtypeRef,
 	UnresolvedRef
 } from './model/node-map.ts';
-import { armFactsOf, separatorArmsOf } from './model/node-map.ts';
+import { armFactsOf, separatorArmsOf, type EnumChoiceCtx } from './model/node-map.ts';
 import {
 	AbstractAssembledCompound,
 	AssembledPattern,
 	AssembledKeyword,
 	AssembledPunctuation,
 	AssembledEnum,
+	enumChoiceOf,
 	enumValuesOf,
 	AssembledSupertype,
 	AssembledList,
@@ -242,11 +243,12 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 				break;
 			}
 			case 'enum': {
-				if (renderRule.type !== CHOICE) {
+				const enumChoice = enumChoiceOf(simplifiedRule, { renderRule });
+				if (enumChoice === undefined) {
 					recordDroppedKind(kindShapeMismatch(kind, 'a choice of literals', renderRule.type), dropCtx);
 					continue;
 				}
-				const values = enumValuesOf(renderRule);
+				const values = enumValuesOf(enumChoice);
 				if (values.length < 2) {
 					recordDroppedKind(
 						{
@@ -261,7 +263,7 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 					);
 					continue;
 				}
-				nodes.set(kind, new AssembledEnum(kind, renderRule, facts));
+				nodes.set(kind, new AssembledEnum(kind, enumChoice, facts));
 				break;
 			}
 			case 'list': {
@@ -1089,7 +1091,7 @@ export function classifyNode(
 		return compound();
 	}
 	if (rule.fieldName === undefined && rule.multiplicity === undefined) {
-		if (isEnumChoiceRule(rule)) return 'enum';
+		if (enumChoiceOf(rule, opts) !== undefined) return 'enum';
 		switch (rule.type) {
 			case SUPERTYPE:
 				return 'supertype';
@@ -1102,7 +1104,7 @@ export function classifyNode(
 	if (isSeparatedListShape(rule)) return 'list';
 	if (hasSlotBearingContent(rule)) return compound();
 	if (opts.renderRule !== undefined && referencesKind(opts.renderRule)) return compound();
-	return classifyTerminalFallback(rule);
+	return classifyTerminalFallback(rule, opts);
 }
 
 function referencesKind(rule: RenderRule): boolean {
@@ -1152,8 +1154,8 @@ function hasSlotBearingContent(rule: SimplifiedRule): boolean {
 	}
 }
 
-function classifyTerminalFallback(rule: RenderRule): ModelType | undefined {
-	if (isEnumChoiceRule(rule)) return 'enum';
+function classifyTerminalFallback(rule: RenderRule, ctx: EnumChoiceCtx): ModelType | undefined {
+	if (enumChoiceOf(rule, ctx) !== undefined) return 'enum';
 	if (isAllTextShape(rule)) return 'pattern';
 	return undefined;
 }

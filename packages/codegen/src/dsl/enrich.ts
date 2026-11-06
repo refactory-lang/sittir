@@ -245,6 +245,10 @@ export function enrich<B = GrammarResult>(baseInput: B, authored: EnrichAuthored
 			clauseGroupRules[groupName] = withHoistedAnnotation(groupBody);
 		}
 	}
+	for (const groupName of Object.keys(clauseGroupRules)) {
+		const groupBody = clauseGroupRules[groupName];
+		if (groupBody) clauseGroupRules[groupName] = applyFieldWrapPasses(groupName, groupBody, hoistCtx);
+	}
 	const mergedRules = { ...enrichedRules, ...kwRules, ...clauseGroupRules };
 	collapseSingletonMintOrdinals(mergedRules, clauseGroupRules, ruleOrigins);
 	for (const parent of tokenFormParents) annotateTokenFormArms(parent, mergedRules, isSupertypeOwner(parent, mergedRules, supertypeNames, inlineNames));

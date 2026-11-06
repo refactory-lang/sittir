@@ -30,6 +30,10 @@ import { eofPlacements } from '../../dsl/eof-placement.ts';
 import { rootRuleName } from '../../util/reachable-rules.ts';
 import type { Rule } from '../../types/rule.ts';
 import { lineTerminated, triviaKinds } from '../model/trivia.ts';
+import { indentChars, indentProblemOf } from '../model/layout-kinds.ts';
+import { unresolvedEnumTextsOf } from '../../emitters/shared.ts';
+import { displayedKinds } from '../model/display-name.ts';
+import { readOptionsBlock } from '../../dsl/wire/options-block.ts';
 import type { NodeMap } from '../types.ts';
 import { ENRICH_SHAPES } from '../../dsl/enrich-shapes.ts';
 import { SITE_EDITS_KEY } from '../../dsl/wire/wire.ts';
@@ -240,7 +244,51 @@ export function hiddenTerminalNonliteralSites(grammar: Pick<RawGrammar, 'rules' 
 	return sites;
 }
 
+export function unresolvedEnumTextDiagnostics(grammar: string, nodeMap: NodeMap): GrammarDiagnostic[] {
+	return [...nodeMap.nodes].flatMap(([ownerKind, node]) =>
+		node.slots.flatMap((slot): GrammarDiagnostic[] => {
+			if (slot.name === undefined || slot.storageInfo?.kind !== 'verbatim') return [];
+			const texts = unresolvedEnumTextsOf(slot, nodeMap, node);
+			if (texts.length === 0) return [];
+			return [
+				{
+					scope: 'grammar',
+					code: 'unresolved-enum-text',
+					severity: 'error',
+					grammar,
+					ownerKind,
+					slotName: slot.name,
+					message: `kind '${ownerKind}': ${slot.name} stores ${texts.map((text) => JSON.stringify(text)).join(', ')} as a kind id, but no single token carries that text.`,
+					proposal: `An enum value is exactly one token. Give each alternative that spells several tokens its own kind with variant(...) in grammar.sittir.ts.`,
+					canProceed: false,
+					details: { texts }
+				}
+			];
+		})
+	);
+}
+
+export function indentDiagnostics(grammar: string, config: Pick<SitePreferencesConfig, 'options'> & { readonly nodeMap: NodeMap }): GrammarDiagnostic[] {
+	const declared = config.options === undefined ? undefined : readOptionsBlock(config.options, displayedKinds(config.nodeMap)).indent;
+	const admitted = indentChars(config.nodeMap);
+	const problem = indentProblemOf(admitted, declared, grammar);
+	if (problem === undefined) return [];
+	return [
+		{
+			scope: 'grammar',
+			code: problem.code,
+			severity: 'error',
+			grammar,
+			message: problem.message,
+			proposal: problem.proposal,
+			canProceed: false,
+			details: { declared, admitted }
+		}
+	];
+}
+
 export function hiddenTerminalNonliteralDiagnostics(grammar: RawGrammar): GrammarDiagnostic[] {
+	const externals = new Set(ruleListParts(grammar.externals).names);
 	return hiddenTerminalNonliteralSites(grammar).map(({ ownerKind, target }) => ({
 		scope: 'grammar' as const,
 		code: 'hidden-terminal-nonliteral',
@@ -248,7 +296,9 @@ export function hiddenTerminalNonliteralDiagnostics(grammar: RawGrammar): Gramma
 		grammar: grammar.name,
 		ownerKind,
 		message: `kind '${ownerKind}' references the hidden terminal '${target}' bare; its text has no kind the parse tree reports.`,
-		proposal: `Give the text a visible rule of its own with a rule() patch.`,
+		proposal: externals.has(target)
+			? `Give the scanner token '${target}' its text under visibleExternals in grammar.sittir.ts: visibleExternals: (_$) => ({ ${target}: string(…) }).`
+			: `Give the text a visible rule of its own with a rule() patch.`,
 		canProceed: false,
 		details: { target }
 	}));
@@ -470,6 +520,8 @@ export function collectGrammarDiagnosticsForGrammar(input: {
 			...optionalFlankFieldDiagnostics(rawGrammar.name, nodeMap),
 			...hiddenTerminalNonliteralDiagnostics(rawGrammar),
 			...undeclaredSeparatorDiagnostics(rawGrammar.name, { nodeMap, kindEntries, options: rawGrammar.options }),
+			...indentDiagnostics(rawGrammar.name, { nodeMap, options: rawGrammar.options }),
+			...unresolvedEnumTextDiagnostics(rawGrammar.name, nodeMap),
 			...surfacedCompilerDiagnostics
 		])
 	};
