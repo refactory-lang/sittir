@@ -241,7 +241,7 @@
       "members": [
         {
           "type": "FIELD",
-          "name": "prefix",
+          "name": "dots",
           "content": {
             "type": "SYMBOL",
             "name": "import_prefix"
@@ -1015,10 +1015,17 @@
           "value": "match"
         },
         {
-          "type": "SYMBOL",
-          "name": "subjects",
+          "type": "FIELD",
+          "name": "subject",
+          "content": {
+            "type": "SYMBOL",
+            "name": "subjects",
+            "metadata": {
+              "symbolSource": "group-lift"
+            }
+          },
           "metadata": {
-            "symbolSource": "group-lift"
+            "fieldSource": "override"
           }
         },
         {
@@ -1029,33 +1036,53 @@
           "type": "FIELD",
           "name": "body",
           "content": {
-            "type": "SYMBOL",
-            "name": "_match_block"
+            "type": "ALIAS",
+            "content": {
+              "type": "SYMBOL",
+              "name": "_match_block"
+            },
+            "named": true,
+            "value": "match_block"
           }
         }
       ]
     },
     "_match_block": {
-      "type": "CHOICE",
+      "type": "SEQ",
       "members": [
         {
-          "type": "SYMBOL",
-          "name": "match_block_block",
-          "annotations": {
-            "variant": "block",
-            "variantOf": "_match_block",
-            "default": true
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_indent"
+          },
+          "named": true,
+          "value": "indent"
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "FIELD",
+            "name": "alternative",
+            "content": {
+              "type": "SYMBOL",
+              "name": "case_clause"
+            }
           }
         },
         {
-          "type": "SYMBOL",
-          "name": "match_block_empty",
-          "annotations": {
-            "variant": "empty",
-            "variantOf": "_match_block"
-          }
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_dedent"
+          },
+          "named": true,
+          "value": "dedent"
         }
-      ]
+      ],
+      "annotations": {
+        "variantOf": "_match_block"
+      }
     },
     "case_clause": {
       "type": "SEQ",
@@ -1557,12 +1584,15 @@
             "members": [
               {
                 "type": "SYMBOL",
-                "name": "type_parameter"
+                "name": "type_params"
               },
               {
                 "type": "BLANK"
               }
             ]
+          },
+          "metadata": {
+            "fieldSource": "override"
           }
         },
         {
@@ -1840,11 +1870,33 @@
           },
           {
             "type": "FIELD",
-            "name": "left",
+            "name": "name",
             "content": {
               "type": "SYMBOL",
-              "name": "type"
+              "name": "identifier"
+            },
+            "metadata": {
+              "fieldSource": "override"
             }
+          },
+          {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "FIELD",
+                "name": "type_parameters",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "type_params"
+                },
+                "metadata": {
+                  "fieldSource": "override"
+                }
+              },
+              {
+                "type": "BLANK"
+              }
+            ]
           },
           {
             "type": "STRING",
@@ -1852,10 +1904,13 @@
           },
           {
             "type": "FIELD",
-            "name": "right",
+            "name": "value",
             "content": {
               "type": "SYMBOL",
               "name": "type"
+            },
+            "metadata": {
+              "fieldSource": "override"
             }
           }
         ]
@@ -1884,12 +1939,15 @@
             "members": [
               {
                 "type": "SYMBOL",
-                "name": "type_parameter"
+                "name": "type_params"
               },
               {
                 "type": "BLANK"
               }
             ]
+          },
+          "metadata": {
+            "fieldSource": "override"
           }
         },
         {
@@ -1933,17 +1991,10 @@
           "value": "["
         },
         {
-          "type": "FIELD",
+          "type": "SYMBOL",
           "name": "types",
-          "content": {
-            "type": "SYMBOL",
-            "name": "types",
-            "metadata": {
-              "symbolSource": "group-lift"
-            }
-          },
           "metadata": {
-            "fieldSource": "override"
+            "symbolSource": "group-lift"
           }
         },
         {
@@ -2105,7 +2156,8 @@
           "name": "suite_block",
           "annotations": {
             "variant": "block",
-            "variantOf": "_suite"
+            "variantOf": "_suite",
+            "default": true
           }
         },
         {
@@ -2154,13 +2206,13 @@
         "members": [
           {
             "type": "FIELD",
-            "name": "item",
+            "name": "elements",
             "content": {
               "type": "SYMBOL",
               "name": "expression"
             },
             "metadata": {
-              "fieldSource": "enriched"
+              "fieldSource": "override"
             }
           },
           {
@@ -2184,13 +2236,13 @@
                         },
                         {
                           "type": "FIELD",
-                          "name": "item",
+                          "name": "elements",
                           "content": {
                             "type": "SYMBOL",
                             "name": "expression"
                           },
                           "metadata": {
-                            "fieldSource": "enriched"
+                            "fieldSource": "override"
                           }
                         }
                       ]
@@ -4479,13 +4531,13 @@
       "members": [
         {
           "type": "FIELD",
-          "name": "item",
+          "name": "elements",
           "content": {
             "type": "SYMBOL",
             "name": "pattern"
           },
           "metadata": {
-            "fieldSource": "enriched"
+            "fieldSource": "override"
           }
         },
         {
@@ -4509,13 +4561,13 @@
                       },
                       {
                         "type": "FIELD",
-                        "name": "item",
+                        "name": "elements",
                         "content": {
                           "type": "SYMBOL",
                           "name": "pattern"
                         },
                         "metadata": {
-                          "fieldSource": "enriched"
+                          "fieldSource": "override"
                         }
                       }
                     ]
@@ -4555,22 +4607,6 @@
           "name": "expression_list",
           "annotations": {
             "variant": "expression_list",
-            "variantOf": "_right_hand_side"
-          }
-        },
-        {
-          "type": "SYMBOL",
-          "name": "assignment",
-          "annotations": {
-            "variant": "assignment",
-            "variantOf": "_right_hand_side"
-          }
-        },
-        {
-          "type": "SYMBOL",
-          "name": "augmented_assignment",
-          "annotations": {
-            "variant": "augmented_assignment",
             "variantOf": "_right_hand_side"
           }
         },
@@ -4694,10 +4730,17 @@
             "value": "["
           },
           {
-            "type": "SYMBOL",
-            "name": "subscripts",
+            "type": "FIELD",
+            "name": "index",
+            "content": {
+              "type": "SYMBOL",
+              "name": "subscripts",
+              "metadata": {
+                "symbolSource": "group-lift"
+              }
+            },
             "metadata": {
-              "symbolSource": "group-lift"
+              "fieldSource": "override"
             }
           },
           {
@@ -4938,24 +4981,8 @@
         "type": "SEQ",
         "members": [
           {
-            "type": "FIELD",
-            "name": "operator",
-            "content": {
-              "type": "CHOICE",
-              "members": [
-                {
-                  "type": "STRING",
-                  "value": "*"
-                },
-                {
-                  "type": "STRING",
-                  "value": "**"
-                }
-              ]
-            },
-            "metadata": {
-              "fieldSource": "override"
-            }
+            "type": "STRING",
+            "value": "*"
           },
           {
             "type": "FIELD",
@@ -5913,46 +5940,8 @@
       ]
     },
     "_f_expression": {
-      "type": "CHOICE",
-      "members": [
-        {
-          "type": "SYMBOL",
-          "name": "expression",
-          "annotations": {
-            "variant": "expression",
-            "variantOf": "_f_expression"
-          }
-        },
-        {
-          "type": "SYMBOL",
-          "name": "expression_list",
-          "annotations": {
-            "variant": "list",
-            "variantOf": "_f_expression"
-          }
-        },
-        {
-          "type": "ALIAS",
-          "content": {
-            "type": "SYMBOL",
-            "name": "pattern_list",
-            "annotations": {
-              "variant": "pattern_list",
-              "variantOf": "_f_expression"
-            }
-          },
-          "named": true,
-          "value": "bare_tuple_pattern"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "yield",
-          "annotations": {
-            "variant": "yield",
-            "variantOf": "_f_expression"
-          }
-        }
-      ]
+      "type": "SYMBOL",
+      "name": "_right_hand_side"
     },
     "escape_sequence": {
       "type": "CHOICE",
@@ -6420,10 +6409,13 @@
       "members": [
         {
           "type": "FIELD",
-          "name": "subject",
+          "name": "elements",
           "content": {
             "type": "SYMBOL",
             "name": "expression"
+          },
+          "metadata": {
+            "fieldSource": "override"
           }
         },
         {
@@ -6437,10 +6429,13 @@
               },
               {
                 "type": "FIELD",
-                "name": "subject",
+                "name": "elements",
                 "content": {
                   "type": "SYMBOL",
                   "name": "expression"
+                },
+                "metadata": {
+                  "fieldSource": "override"
                 }
               }
             ]
@@ -6888,7 +6883,7 @@
         "members": [
           {
             "type": "FIELD",
-            "name": "subscript",
+            "name": "elements",
             "content": {
               "type": "CHOICE",
               "members": [
@@ -6901,6 +6896,9 @@
                   "name": "slice"
                 }
               ]
+            },
+            "metadata": {
+              "fieldSource": "override"
             }
           },
           {
@@ -6914,7 +6912,7 @@
                 },
                 {
                   "type": "FIELD",
-                  "name": "subscript",
+                  "name": "elements",
                   "content": {
                     "type": "CHOICE",
                     "members": [
@@ -6927,6 +6925,9 @@
                         "name": "slice"
                       }
                     ]
+                  },
+                  "metadata": {
+                    "fieldSource": "override"
                   }
                 }
               ]
@@ -7153,6 +7154,130 @@
         }
       }
     },
+    "type_param": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "type_param_type_var",
+          "annotations": {
+            "variant": "type_var",
+            "variantOf": "type_param"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "type_param_type_var_tuple",
+          "annotations": {
+            "variant": "type_var_tuple",
+            "variantOf": "type_param"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "type_param_param_spec",
+          "annotations": {
+            "variant": "param_spec",
+            "variantOf": "type_param"
+          }
+        }
+      ]
+    },
+    "_type_param_optional1": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": ":"
+        },
+        {
+          "type": "FIELD",
+          "name": "bounds",
+          "content": {
+            "type": "SYMBOL",
+            "name": "type"
+          },
+          "metadata": {
+            "fieldSource": "override"
+          }
+        }
+      ]
+    },
+    "type_params": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "["
+        },
+        {
+          "type": "FIELD",
+          "name": "items",
+          "content": {
+            "type": "SYMBOL",
+            "name": "type_params_items"
+          },
+          "metadata": {
+            "fieldSource": "override"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": "]"
+        }
+      ]
+    },
+    "type_params_items": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "FIELD",
+          "name": "item",
+          "content": {
+            "type": "SYMBOL",
+            "name": "type_param"
+          },
+          "metadata": {
+            "fieldSource": "override"
+          }
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "STRING",
+                "value": ","
+              },
+              {
+                "type": "FIELD",
+                "name": "item",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "type_param"
+                },
+                "metadata": {
+                  "fieldSource": "override"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "STRING",
+              "value": ","
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        }
+      ]
+    },
     "_tuple_pattern_elements": {
       "type": "SEQ",
       "members": [
@@ -7228,7 +7353,7 @@
           "members": [
             {
               "type": "FIELD",
-              "name": "item",
+              "name": "elements",
               "content": {
                 "type": "SYMBOL",
                 "name": "case_pattern"
@@ -7250,7 +7375,7 @@
             "members": [
               {
                 "type": "FIELD",
-                "name": "item",
+                "name": "elements",
                 "content": {
                   "type": "SYMBOL",
                   "name": "case_pattern"
@@ -7271,7 +7396,7 @@
           "members": [
             {
               "type": "FIELD",
-              "name": "item",
+              "name": "elements",
               "content": {
                 "type": "SYMBOL",
                 "name": "case_pattern"
@@ -7630,29 +7755,20 @@
           "type": "CHOICE",
           "members": [
             {
-              "type": "CHOICE",
-              "members": [
-                {
-                  "type": "ALIAS",
-                  "content": {
-                    "type": "SYMBOL",
-                    "name": "_print_chevron_arguments",
-                    "annotations": {
-                      "variant": "print_chevron_arguments",
-                      "variantOf": "print_statement_chevron"
-                    }
-                  },
-                  "named": true,
-                  "value": "print_chevron_arguments"
+              "type": "FIELD",
+              "name": "arguments",
+              "content": {
+                "type": "ALIAS",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "_print_chevron_arguments"
                 },
-                {
-                  "type": "STRING",
-                  "value": ",",
-                  "annotations": {
-                    "variantOf": "print_statement_chevron"
-                  }
-                }
-              ]
+                "named": true,
+                "value": "print_chevron_arguments"
+              },
+              "metadata": {
+                "fieldSource": "override"
+              }
             },
             {
               "type": "BLANK"
@@ -7669,13 +7785,20 @@
           "value": "print"
         },
         {
-          "type": "ALIAS",
+          "type": "FIELD",
+          "name": "arguments",
           "content": {
-            "type": "SYMBOL",
-            "name": "_print_arguments"
+            "type": "ALIAS",
+            "content": {
+              "type": "SYMBOL",
+              "name": "_print_arguments"
+            },
+            "named": true,
+            "value": "print_arguments"
           },
-          "named": true,
-          "value": "print_arguments"
+          "metadata": {
+            "fieldSource": "override"
+          }
         }
       ]
     },
@@ -8864,8 +8987,17 @@
               "type": "FIELD",
               "name": "value",
               "content": {
-                "type": "SYMBOL",
-                "name": "_right_hand_side"
+                "type": "CHOICE",
+                "members": [
+                  {
+                    "type": "SYMBOL",
+                    "name": "_right_hand_side"
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "assignment"
+                  }
+                ]
               },
               "metadata": {
                 "fieldSource": "override"
@@ -8979,13 +9111,13 @@
       "members": [
         {
           "type": "FIELD",
-          "name": "item",
+          "name": "elements",
           "content": {
             "type": "SYMBOL",
             "name": "expression"
           },
           "metadata": {
-            "fieldSource": "enriched"
+            "fieldSource": "override"
           }
         },
         {
@@ -8999,13 +9131,13 @@
               },
               {
                 "type": "FIELD",
-                "name": "item",
+                "name": "elements",
                 "content": {
                   "type": "SYMBOL",
                   "name": "expression"
                 },
                 "metadata": {
-                  "fieldSource": "enriched"
+                  "fieldSource": "override"
                 }
               }
             ]
@@ -9111,55 +9243,6 @@
       "annotations": {
         "hoisted": true
       }
-    },
-    "match_block_block": {
-      "type": "SEQ",
-      "members": [
-        {
-          "type": "ALIAS",
-          "content": {
-            "type": "SYMBOL",
-            "name": "_indent"
-          },
-          "named": true,
-          "value": "indent"
-        },
-        {
-          "type": "REPEAT",
-          "content": {
-            "type": "FIELD",
-            "name": "alternative",
-            "content": {
-              "type": "SYMBOL",
-              "name": "case_clause"
-            }
-          }
-        },
-        {
-          "type": "ALIAS",
-          "content": {
-            "type": "SYMBOL",
-            "name": "_dedent"
-          },
-          "named": true,
-          "value": "dedent"
-        }
-      ],
-      "annotations": {
-        "hoisted": true
-      }
-    },
-    "match_block_empty": {
-      "type": "ALIAS",
-      "content": {
-        "type": "SYMBOL",
-        "name": "_newline",
-        "annotations": {
-          "hoisted": true
-        }
-      },
-      "named": true,
-      "value": "newline"
     },
     "suite_inline": {
       "type": "SYMBOL",
@@ -9295,6 +9378,83 @@
         "hoisted": true
       }
     },
+    "type_param_type_var": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "FIELD",
+          "name": "name",
+          "content": {
+            "type": "SYMBOL",
+            "name": "identifier"
+          },
+          "metadata": {
+            "fieldSource": "override"
+          }
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "_type_param_optional1"
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        }
+      ],
+      "annotations": {
+        "hoisted": true
+      }
+    },
+    "type_param_type_var_tuple": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "*"
+        },
+        {
+          "type": "FIELD",
+          "name": "name",
+          "content": {
+            "type": "SYMBOL",
+            "name": "identifier"
+          },
+          "metadata": {
+            "fieldSource": "override"
+          }
+        }
+      ],
+      "annotations": {
+        "hoisted": true
+      }
+    },
+    "type_param_param_spec": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "**"
+        },
+        {
+          "type": "FIELD",
+          "name": "name",
+          "content": {
+            "type": "SYMBOL",
+            "name": "identifier"
+          },
+          "metadata": {
+            "fieldSource": "override"
+          }
+        }
+      ],
+      "annotations": {
+        "hoisted": true
+      }
+    },
     "_layout": {
       "type": "CHOICE",
       "members": [
@@ -9401,12 +9561,15 @@
             "members": [
               {
                 "type": "SYMBOL",
-                "name": "type_parameter"
+                "name": "type_params"
               },
               {
                 "type": "BLANK"
               }
             ]
+          },
+          "metadata": {
+            "fieldSource": "override"
           }
         },
         {
@@ -9773,10 +9936,6 @@
       "tuple"
     ],
     [
-      "type_alias_statement",
-      "primary_expression"
-    ],
-    [
       "with_item",
       "_tuple_elements"
     ]
@@ -9885,10 +10044,10 @@
     "line_continuation",
     "_layout",
     "_statement",
-    "splat_pattern",
     "assignment",
+    "type_param",
+    "splat_pattern",
     "with_clause",
-    "_match_block",
     "_suite",
     "_compound_statement_class_definition",
     "_statement_class_definition",

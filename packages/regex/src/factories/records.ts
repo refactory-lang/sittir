@@ -2272,7 +2272,7 @@ export const builtViews: BuiltViews = Object.freeze({
 		85: withInlineFlagsGroupDisable
 	}),
 	words: Object.freeze({
-		37: 3,
+		37: 4,
 		51: 3,
 		52: 3,
 		53: 3,

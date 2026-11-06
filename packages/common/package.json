@@ -38,6 +38,11 @@
 			"import": "./src/blank-arm.ts",
 			"default": "./src/blank-arm.ts"
 		},
+		"./delimiter": {
+			"types": "./src/delimiter.ts",
+			"import": "./src/delimiter.ts",
+			"default": "./src/delimiter.ts"
+		},
 		"./error-kind": {
 			"types": "./src/error-kind.ts",
 			"import": "./src/error-kind.ts",

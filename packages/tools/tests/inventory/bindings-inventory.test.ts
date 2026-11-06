@@ -94,7 +94,7 @@ describe('deriveVocabulary', () => {
 		const body = levelMembers(d, 'statement.match').get('body');
 		expect(body?.kinds).toContain('clause.case.match');
 		expect(d.unmapped.has('<python:_match_block>')).toBe(false);
-		expect(d.unmapped.has('<python:match_block_empty>')).toBe(false);
+		expect(d.unmapped.has('<python:match_block>')).toBe(false);
 	});
 	it('keeps the unmapped count at or below the recorded ceiling', () => {
 		const total = [...d.unmapped.values()].reduce((a, b) => a + b, 0);
@@ -125,12 +125,14 @@ describe('deriveVocabulary', () => {
 		for (const v of [
 			'declaration.enum_member',
 			'declaration.field',
+			'declaration.parameter',
+			'declaration.parameter.receiver',
+			'declaration.parameter.variadic',
 			'declaration.type_parameter',
 			'declaration.type_parameter.lifetime',
 			'declaration.type_parameter.value'
 		])
 			expect(d.members.get(v)?.get('attributes')?.grammars.has('rust'), v).toBe(true);
-		expect(d.members.get('declaration.parameter')?.has('attributes')).toBe(false);
 		for (const v of ['statement.block', 'declaration.function', 'declaration.class', 'declaration.variable'])
 			expect(d.members.get(v)?.has('declare') ?? false, v).toBe(false);
 		expect(d.untargeted).toEqual([]);

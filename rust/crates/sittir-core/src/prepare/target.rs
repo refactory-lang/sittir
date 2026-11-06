@@ -12,7 +12,7 @@ use std::borrow::Cow;
 use super::{fill_seated_gaps, fill_slot_gaps, slot_separators, EdgeItem, EdgeItems, Prepare, RenderContext, SeatTarget, SnapshotEdge};
 use crate::layout::{Layout, NodeLayout, SlotLayout};
 use crate::options::Edges;
-use crate::render::CoordinateError;
+use crate::render::{Render, RenderError, RenderResult, RenderSink};
 use crate::slot::{NodeCoordinate, SlotValue};
 use crate::trivia::TriviaSeam;
 use crate::types::{KindId, SiteId};
@@ -29,7 +29,7 @@ pub trait LayoutTarget<O> {
     ///
     /// The coordinate a trivia entry or a unit's side holds that its tree
     /// refuses.
-    fn prepare(&mut self, overlay: &mut O, ctx: &RenderContext<'_>) -> Result<(), CoordinateError>;
+    fn prepare(&mut self, overlay: &mut O, ctx: &RenderContext<'_>) -> Result<(), RenderError>;
     /// The node's own edges, for prepare to fill.
     fn edges_mut<'s>(&'s mut self, overlay: &'s mut O) -> &'s mut Edges;
     /// Store `tokens` as the per-item separators of list slot `slot`.
@@ -47,7 +47,7 @@ pub trait LayoutTarget<O> {
 }
 
 impl<T: Prepare + TriviaSeam + 'static> LayoutTarget<()> for Option<Box<NodeLayout<T>>> {
-    fn prepare(&mut self, (): &mut (), ctx: &RenderContext<'_>) -> Result<(), CoordinateError> {
+    fn prepare(&mut self, (): &mut (), ctx: &RenderContext<'_>) -> Result<(), RenderError> {
         Prepare::prepare(self, ctx)
     }
 
@@ -81,7 +81,7 @@ impl<T: Prepare + TriviaSeam + 'static> LayoutTarget<()> for Option<Box<NodeLayo
 }
 
 impl<O, L: LayoutTarget<O> + ?Sized> LayoutTarget<O> for &mut L {
-    fn prepare(&mut self, overlay: &mut O, ctx: &RenderContext<'_>) -> Result<(), CoordinateError> {
+    fn prepare(&mut self, overlay: &mut O, ctx: &RenderContext<'_>) -> Result<(), RenderError> {
         (**self).prepare(overlay, ctx)
     }
 
@@ -123,12 +123,24 @@ pub trait SlotTarget<O>: EdgeItems<O> {
     /// # Errors
     ///
     /// The coordinate a value holds that its tree refuses.
-    fn prepare(&mut self, overlay: &mut O, ctx: &RenderContext<'_>) -> Result<(), CoordinateError>;
+    fn prepare(&mut self, overlay: &mut O, ctx: &RenderContext<'_>) -> Result<(), RenderError>;
     /// Give the gaps between the slot's present items the classes its stored
     /// layout holds (`prepare::fill_slot_gaps`).
     fn fill_gaps(&mut self, overlay: &mut O, slot: Option<&SlotLayout>);
     /// The slot's items' own separators (`prepare::slot_separators`).
     fn separators(&self, overlay: &O, kind_of: fn(KindId) -> Option<KindId>, ctx: &RenderContext<'_>) -> Option<Vec<Option<KindId>>>;
+}
+
+/// A slot a composite's prepare renders on its own, as its render would
+/// render it, its values prepared so far: the content a derived delimiter
+/// bounds (`delimiters::fill`). An absent value renders nothing.
+pub trait RenderSlot<O> {
+    /// Render every value the slot holds into `w`.
+    ///
+    /// # Errors
+    ///
+    /// What rendering a value refuses.
+    fn render_slot(&self, overlay: &O, ctx: &RenderContext<'_>, w: &mut dyn RenderSink) -> RenderResult;
 }
 
 /// A slot whose gaps a seat table fills (`prepare::fill_seated_gaps`): its
@@ -164,7 +176,7 @@ pub trait FromKindId: Sized {
 macro_rules! slot_target {
     ($ty:ty, |$s:ident| $items_mut:expr, |$r:ident| $items:expr) => {
         impl<T: Prepare, const ADJACENT: bool> SlotTarget<()> for $ty {
-            fn prepare(&mut self, (): &mut (), ctx: &RenderContext<'_>) -> Result<(), CoordinateError> {
+            fn prepare(&mut self, (): &mut (), ctx: &RenderContext<'_>) -> Result<(), RenderError> {
                 Prepare::prepare(self, ctx)
             }
 
@@ -188,6 +200,32 @@ macro_rules! slot_target {
     };
 }
 
+/// `RenderSlot` for one field type that holds slot values, by the values it
+/// holds, present or absent.
+macro_rules! render_slot {
+    ($ty:ty, |$r:ident| $items:expr) => {
+        impl<T: Render, const ADJACENT: bool> RenderSlot<()> for $ty {
+            fn render_slot(&self, (): &(), _: &RenderContext<'_>, w: &mut dyn RenderSink) -> RenderResult {
+                let $r = self;
+                $items.flatten().try_for_each(|value| Render::render(value, w))
+            }
+        }
+    };
+}
+
+render_slot!(SlotValue<T, ADJACENT>, |s| std::iter::once(Some(s)));
+render_slot!(Option<SlotValue<T, ADJACENT>>, |s| std::iter::once(s.as_ref()));
+render_slot!(Vec<SlotValue<T, ADJACENT>>, |s| s.iter().map(Some));
+render_slot!(Vec<Option<SlotValue<T, ADJACENT>>>, |s| s.iter().map(Option::as_ref));
+render_slot!(crate::NonEmptyVec<SlotValue<T, ADJACENT>>, |s| s.iter().map(Some));
+render_slot!(crate::NonEmptyVec<Option<SlotValue<T, ADJACENT>>>, |s| s.iter().map(Option::as_ref));
+
+impl<O, S: RenderSlot<O> + ?Sized> RenderSlot<O> for &mut S {
+    fn render_slot(&self, overlay: &O, ctx: &RenderContext<'_>, w: &mut dyn RenderSink) -> RenderResult {
+        (**self).render_slot(overlay, ctx, w)
+    }
+}
+
 slot_target!(SlotValue<T, ADJACENT>, |s| std::iter::once(Some(s)), |s| std::iter::once(Some(s)));
 slot_target!(Option<SlotValue<T, ADJACENT>>, |s| std::iter::once(s.as_mut()), |s| std::iter::once(s.as_ref()));
 slot_target!(Vec<SlotValue<T, ADJACENT>>, |s| s.iter_mut().map(Some), |s| s.iter().map(Some));
@@ -196,7 +234,7 @@ slot_target!(crate::NonEmptyVec<SlotValue<T, ADJACENT>>, |s| s.iter_mut().map(So
 slot_target!(crate::NonEmptyVec<Option<SlotValue<T, ADJACENT>>>, |s| s.iter_mut().map(Option::as_mut), |s| s.iter().map(Option::as_ref));
 
 impl<O, S: SlotTarget<O> + ?Sized> SlotTarget<O> for &mut S {
-    fn prepare(&mut self, overlay: &mut O, ctx: &RenderContext<'_>) -> Result<(), CoordinateError> {
+    fn prepare(&mut self, overlay: &mut O, ctx: &RenderContext<'_>) -> Result<(), RenderError> {
         (**self).prepare(overlay, ctx)
     }
 

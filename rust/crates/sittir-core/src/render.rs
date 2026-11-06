@@ -20,6 +20,8 @@ pub enum RenderError {
     /// A record's cell or word that no record writer writes, met by a view.
     #[cfg(feature = "arena")]
     Record(crate::arena::ArenaError),
+    /// No delimiter a composite derives fits its content.
+    Delimiter(crate::delimiters::DelimiterRefusal),
 }
 
 impl fmt::Display for RenderError {
@@ -30,6 +32,7 @@ impl fmt::Display for RenderError {
             Self::ItemIndex(at) => write!(f, "list item {at} is past the last item index a u32 holds"),
             #[cfg(feature = "arena")]
             Self::Record(e) => fmt::Display::fmt(e, f),
+            Self::Delimiter(refusal) => fmt::Display::fmt(refusal, f),
         }
     }
 }
@@ -52,10 +55,18 @@ impl From<CoordinateError> for RenderError {
     }
 }
 
+#[cfg(feature = "arena")]
+impl From<crate::arena::ArenaError> for RenderError {
+    fn from(e: crate::arena::ArenaError) -> Self {
+        Self::Record(e)
+    }
+}
+
 pub type RenderResult = Result<(), RenderError>;
 
 /// The grammar's whitespace vocabulary as the writer needs it: the text of
 /// each arm by kind id, and which two ids are the depth arms.
+#[derive(Debug)]
 pub struct WhitespaceTable {
     pub text_of: fn(KindId) -> &'static str,
     pub indent: KindId,
@@ -116,6 +127,14 @@ pub trait SourceTable {
     fn kind_of(&self, coord: &crate::slot::NodeCoordinate) -> Option<KindId> {
         let _ = coord;
         None
+    }
+
+    /// Visits the node a coordinate names and each node under it, in source
+    /// order, with its kind and source text; a visit that answers `false`
+    /// skips that node's children. A table of bare sources knows no nodes and
+    /// visits none.
+    fn for_each_descendant(&self, coord: &crate::slot::NodeCoordinate, visit: &mut dyn FnMut(KindId, &str) -> bool) {
+        let _ = (coord, visit);
     }
 
     /// The byte offsets of the lines under the node a coordinate names that
@@ -342,6 +361,11 @@ pub trait RenderSink {
     fn leaf_kind(&mut self, kind: KindId) {
         let _ = kind;
     }
+    /// A node of `kind` begins its body; `exit_kind` ends the one begun last.
+    fn enter_kind(&mut self, kind: KindId) {
+        let _ = kind;
+    }
+    fn exit_kind(&mut self) {}
     fn leaf_edges(&mut self, leading: crate::layout_kinds::LayoutKinds, trailing: crate::layout_kinds::LayoutKinds) {
         let _ = (leading, trailing);
     }
@@ -438,7 +462,7 @@ pub trait RenderSink {
     /// The frames a coordinate's bytes render between, from the tree table
     /// this writer holds (`SourceTable::frames`), each prepared as a slot's
     /// trivia is; a sink with no table answers none.
-    fn frames(&self, coord: &crate::slot::NodeCoordinate) -> Result<crate::trivia::Frames, CoordinateError> {
+    fn frames(&self, coord: &crate::slot::NodeCoordinate) -> Result<crate::trivia::Frames, RenderError> {
         let _ = coord;
         Ok(crate::trivia::Frames::default())
     }

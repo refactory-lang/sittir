@@ -11,6 +11,20 @@ const roundTrip = (source: string): string => String(runtime.engine.render(runti
 const firstOf = (source: string): unknown => (read(source).statements as readonly Read[])[0];
 
 describe('the portable read', () => {
+	it.each(['function* f() {\n  yield* x;\n}\n', 'type T = -1;\n'])('reads a kind its holder mounts as its own path, carrying nothing, and builds it back through the mount: %j', (source) => {
+		const parsed = read(source);
+		expect(JSON.stringify(parsed)).not.toContain('"$type"');
+		const built = runtime.build(parsed);
+		expect(runtime.read(built as never)).toEqual(parsed);
+		expect(String(runtime.engine.render(built as never))).toBe(source);
+	});
+
+	it('reads a delegating yield at its holder and a negative literal type in its seat, and builds the delegate only with its operand', () => {
+		expect(firstOf('function* f() {\n  yield* x;\n}\n')).toMatchObject({ body: { statements: [{ expression: { $path: 'expression.yield.delegate', expression: 'x' } }] } });
+		expect(firstOf('type T = -1;\n')).toMatchObject({ value: { $path: 'type.literal', content: { $path: 'literal.number.negative', value: { $path: 'literal.number.integer', $value: 1 } } } });
+		expect(() => runtime.build({ $path: 'expression.yield.delegate' } as never)).toThrow('it needs expression');
+	});
+
 	it('reads the members a binding captures from its slot, and builds an import back', () => {
 		const clause = { $path: 'clause.import.names', content: [{ $path: 'clause.import.specifier', name: 'a' }, { $path: 'clause.import.specifier', name: 'b', alias: 'c' }] };
 		expect(firstOf('import {a, b as c} from "x";')).toMatchObject({ importClause: clause });
@@ -31,6 +45,12 @@ describe('the portable read', () => {
 		const field = (firstOf('class C { static readonly x = 1; }') as { readonly body: readonly unknown[] }).body[0];
 		expect(field).toEqual({ $path: 'declaration.field', $flags: ['static', 'readonly'], decorators: [], name: 'x', value: { $path: 'literal.number.integer', $value: 1 } });
 		expect(roundTrip('class C { static readonly x = 1; }')).toBe('class C {\n  static readonly x = 1;\n}\n');
+	});
+
+	it('reads a construct call without parentheses as the bare refinement with no arguments, and one with empty parentheses as the call with none, and builds each back', () => {
+		expect(firstOf('new X;')).toEqual({ $path: 'statement.expression', expression: { $path: 'expression.call.construct.bare', function: 'X', typeArguments: [] } });
+		expect(firstOf('new X();')).toEqual({ $path: 'statement.expression', expression: { $path: 'expression.call.construct', function: 'X', arguments: [], typeArguments: [] } });
+		for (const source of ['new X;', 'new X();', 'new X(a);', 'new X<T>;', 'new X<T>();', 'new new X()();']) expect(roundTrip(source)).toBe(`${source}\n`);
 	});
 
 	it('builds a string in the quote form whose spelling admits its text, and in the default form when both do', () => {
@@ -117,6 +137,14 @@ describe('the portable read', () => {
 		expect(is.type.primitive('u8')).toBe(false);
 		// @ts-expect-error a value token reads as its path and value, so its guard takes no text
 		expect(is.literal.null('null')).toBe(false);
+	});
+
+	it('reads a `this` parameter as the receiver with no name, and builds the `this` back', () => {
+		const source = 'function f(this: T, x: number) {}\n';
+		const receiver = (firstOf(source) as Read).receiver;
+		expect(receiver).toMatchObject({ $path: 'declaration.parameter.receiver', type: 'T' });
+		expect(receiver).not.toHaveProperty('name');
+		expect(roundTrip(source)).toBe(source);
 	});
 
 	it('reads the `this` type as the receiver type, by its text', () => {

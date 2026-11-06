@@ -8,6 +8,16 @@ export namespace Literal {
 			readonly $kind: 'literal.string.interpolated';
 		}
 		export namespace Interpolated {
+			export interface Deferred<G extends GrammarContext<G>> extends SubKindOf<V.Literal.String.Interpolated<G>> {
+				// claimed by p
+				readonly $kind: 'literal.string.interpolated.deferred';
+			}
+			export namespace Deferred {
+				export interface Multiline<G extends GrammarContext<G>> extends SubKindOf<V.Literal.String.Interpolated.Deferred<G>> {
+					// claimed by p
+					readonly $kind: 'literal.string.interpolated.deferred.multiline';
+				}
+			}
 			export interface Multiline<G extends GrammarContext<G>> extends SubKindOf<V.Literal.String.Interpolated<G>> {
 				// claimed by p
 				readonly $kind: 'literal.string.interpolated.multiline';

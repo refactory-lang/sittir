@@ -2527,6 +2527,7 @@ function viewIdentityEscape(data: RecordPosition, tree: TreeHandle): T.IdentityE
 		$words: positionWords(data),
 		$cache: undefined as Record<number, unknown> | undefined,
 		$_layout: data.$_layout,
+		$verbatim: undefined as string | undefined,
 		content: viewIdentityEscape$content,
 		$with: undefined as unknown as object,
 		$render: handleRender,
@@ -2540,6 +2541,7 @@ function viewIdentityEscape(data: RecordPosition, tree: TreeHandle): T.IdentityE
 	};
 	node.$with = { content: $with$content, [RECEIVER]: node };
 	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
+	node.$verbatim = viewSlot<string | undefined>(node, 4, 2, 4, 0, 3);
 	return node as unknown as T.IdentityEscape.Parsed;
 }
 

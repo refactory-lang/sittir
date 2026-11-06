@@ -11,6 +11,13 @@ const readFirst = (source: string): Read => runtime.read(statementsOf(source)[0]
 const roundTrip = (source: string): string => String(runtime.engine.render(runtime.build(runtime.read(runtime.engine.parse(source)) as Read) as never));
 
 describe('the portable read', () => {
+	it('reads a metavariable as its path with its name as the value, and builds the $ back', () => {
+		expect(readFirst('struct S<$t>;\n')).toMatchObject({ $path: 'declaration.struct.unit', typeParameters: [{ $path: 'identifier.metavariable', $value: 't' }] });
+		expect(runtime.build({ $path: 'identifier.metavariable', $value: 'x' } as never)).toBeDefined();
+		expect(String(runtime.engine.render(runtime.build({ $path: 'identifier.metavariable', $value: 'x' } as never) as never))).toBe('$x');
+		expect(roundTrip('struct S<$t>;\n')).toBe('struct S<$t>;\n');
+	});
+
 	const visibilities = [
 		['pub(super)', 'public.parent', undefined],
 		['pub(in super)', 'public.restricted', 'super'],
@@ -53,12 +60,16 @@ describe('the portable read', () => {
 	});
 
 	it('reads a value no path claims as its node, which builds back as it is', () => {
-		const statement = statementsOf('r"x";')[0];
-		if (statement === undefined || !runtime.engine.is.expressionStatement(statement)) throw new Error('expected an expression statement');
-		const content = statement.content();
-		if (!runtime.engine.is.expressionStatementWithSemi(content)) throw new Error('expected a statement with its semicolon');
-		expect((runtime.read(statement) as Read).content).toBe(content.expression());
+		const statement = statementsOf('impl !Send for S {}')[0]!;
+		expect((runtime.read(statement) as Read).traitClause).toBe((statement as unknown as { traitClause(): unknown }).traitClause());
+		expect(roundTrip('impl !Send for S {}')).toBe('impl !Send for S {}\n');
+	});
+
+	it('reads a raw string as its path with its content, and builds it back with the shortest hash run its content fits', () => {
+		expect(readFirst('r"x";')).toEqual({ $path: 'statement.expression', content: { $path: 'literal.string.raw', content: 'x' } });
 		expect(roundTrip('r"x";')).toBe('r"x";\n');
+		expect(roundTrip('r##"x"##;')).toBe('r"x";\n');
+		expect(roundTrip('r#"a"b"#;')).toBe('r#"a"b"#;\n');
 	});
 
 	it('reads an empty list as an empty list, so its form builds back', () => {
@@ -78,6 +89,14 @@ describe('the portable read', () => {
 	it('reads a receiver and the parameters after it, and a scope through the containers its mount stands in for', () => {
 		expect(roundTrip('impl S { fn f(&self, a: u8) {} }')).toBe('impl S {\n    fn f(&self, a: u8) {}\n}\n');
 		expect(roundTrip('pub(in a::b) struct S {}')).toBe('pub(in a::b) struct S {}\n');
+	});
+
+	it('reads a `self` parameter with a type as the receiver with no name, and builds the `self` back', () => {
+		const source = 'fn f(self: Box<Self>, x: u8) {}\n';
+		const receiver = readFirst(source).receiver;
+		expect(receiver).toMatchObject({ $path: 'declaration.parameter.receiver', type: { $path: 'type.generic', type: 'Box' } });
+		expect(receiver).not.toHaveProperty('name');
+		expect(roundTrip(source)).toBe(source);
 	});
 
 	it('reads an integer through its digit separators, and carries one whose value it cannot read', () => {
@@ -104,7 +123,8 @@ describe('the portable read', () => {
 		expect((runtime.read(range) as Read).value).toMatchObject({ $path: 'expression.range.inclusive.legacy' });
 		expect(rust.is.portable.expression.range.inclusive(node)).toBe(true);
 		expect(rust.is.portable.expression.range.inclusive.legacy(node)).toBe(true);
-		for (const source of ['let r = a...b;', 'let r = a..=b;', 'match x { 1...2 => {} }', 'match x { 1..=2 => {} }']) expect(roundTrip(source)).toBe(`${source}\n`);
+		for (const source of ['let r = a...b;', 'let r = a..=b;']) expect(roundTrip(source)).toBe(`${source}\n`);
+		for (const operator of ['...', '..=']) expect(roundTrip(`match x { 1${operator}2 => {} }`)).toBe(`match x {\n    1${operator}2 => {}\n}\n`);
 	});
 
 	it('carries a node whose flags its path cannot build: a byte literal stays a byte', () => {
@@ -169,6 +189,21 @@ describe('the portable read', () => {
 		const source = '#!/usr/bin/env run-cargo-script\nfn main() {}\n';
 		expect(runtime.read(runtime.engine.parse(source))).toMatchObject({ $path: 'file', shebang: '/usr/bin/env run-cargo-script' });
 		expect(roundTrip(source)).toBe(source);
+	});
+
+	it('reads a macro repetition\'s separator as its text, which the separator seat builds back', () => {
+		const source = 'macro_rules! m { ($($x:expr),*) => {}; }';
+		expect(readFirst(source)).toMatchObject({ rules: [{ left: { tokens: [{ $path: 'element.macro.token_repetition.pattern', separator: ',', operator: '*' }] } }] });
+		expect(roundTrip(source)).toContain('($($x:expr),*)');
+	});
+
+	it.each([
+		['r#"abc"#', 'literal.string.raw', 'r"abc"'],
+		['br#"abc"#', 'literal.string.bytes.raw', 'br"abc"'],
+		['cr##"a"#b"##', 'literal.string.c.raw', 'cr##"a"#b"##']
+	])('reads the raw string %s as %s and builds it back with the shortest hash run its content takes', (string, path, built) => {
+		expect(readFirst(`const X: () = ${string};\n`)).toMatchObject({ value: { $path: path } });
+		expect(roundTrip(`const X: () = ${string};\n`)).toBe(`const X: () = ${built};\n`);
 	});
 
 	it('builds a trait impl through the clause its implemented trait sits in, and refuses a method call given no callee', () => {

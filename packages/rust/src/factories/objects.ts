@@ -77,8 +77,6 @@ export const _leafRe_buildFloatLiteral =
 	/^(?:(?:[0-9][0-9_]*(?:\.[0-9_]*(?:[eE][+-]?[0-9_]+)?|[eE][+-]?[0-9_]+)(?:[uif][0-9]+)?))$/u;
 export const _leafRe_buildStringContent = /^(?:(?:[^"\\]+))$/u;
 export const _leafRe_buildRawStringLiteralContent = /^(?:(?:[\s\S]*))$/u;
-export const _leafRe_buildRawStringLiteralStart = /^(?:(?:[bc]?r#*"))$/u;
-export const _leafRe_buildRawStringLiteralEnd = /^(?:(?:"#*))$/u;
 export const _leafRe_buildDocComment = /^(?:(?:.*\n?))$/u;
 export const _leafRe_buildBlockCommentContent = _leafRe_buildBlockCommentRegular;
 export const _slotRe_buildShebang_content = /^(?:[\r\f\t\v ]*(?:[^[\n].*)?)$/u;
@@ -101,13 +99,9 @@ export const _slotRe_buildEscapeSequenceSimple_content = /^(?:(?:[^xu]))$/u;
 export const _slotRe_buildEscapeSequenceUnicodeFixed_content = /^(?:(?:u[0-9a-fA-F]{4}))$/u;
 export const _slotRe_buildEscapeSequenceUnicodeBraced_content = /^(?:(?:u\{[0-9a-fA-F]+\}))$/u;
 export const _slotRe_buildEscapeSequenceHex_content = /^(?:(?:x[0-9a-fA-F]{2}))$/u;
-export const _delimited_buildRawStringLiteral: DelimitedSpec = {
-	kind: 'raw_string_literal',
-	id: TSKindId.RawStringLiteral as const,
-	excluded: /[\u{a}\u{d}\u{22}\u{2028}-\u{2029}]/u,
-	host: 'fn _f() { let _ = $r; }',
-	nodeKinds: []
-};
+export const _slotRe_buildRawStringLiteralStart_prefix = /^(?:br|cr|r)$/u;
+export const _slotRe_buildRawStringLiteralStart_hashes = /^(?:(?:#*))$/u;
+export const _slotRe_buildRawStringLiteralEnd_hashes = _slotRe_buildRawStringLiteralStart_hashes;
 export const _delimited_buildBlockComment: DelimitedSpec = {
 	kind: 'block_comment',
 	id: TSKindId.BlockComment as const,
@@ -7679,8 +7673,26 @@ function buildMatchExpression$with$body(this: Received<Held>, ...args: unknown[]
 export function buildMatchBlock(): T.EmptyMatchBlock;
 export function buildMatchBlock<V extends Admit<T.MatchBlockArms>>(
 	...value: [value?: V] & RefuseUndeclared<V>
-): T.MatchBlock.Bound;
-export function buildMatchBlock(value?: Admit<T.MatchBlockArms>): T.MatchBlock.Bound {
+): ReturnType<typeof _buildMatchBlock>;
+export function buildMatchBlock<A extends Admit<[...T.MatchArm[], T.LastMatchArm]>>(
+	...children: A & RefuseUndeclared<A>
+): ReturnType<typeof _buildMatchBlock>;
+export function buildMatchBlock(...args: unknown[]) {
+	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
+		return _buildMatchBlock(args[0] as Parameters<typeof _buildMatchBlock>[0]);
+	}
+	const prebuilt =
+		args.length === 1 &&
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		(args[0] as { $type?: unknown }).$type === (TSKindId.MatchBlockArms as const);
+	return prebuilt
+		? _buildMatchBlock(args[0] as Parameters<typeof _buildMatchBlock>[0])
+		: _buildMatchBlock(
+				(buildMatchBlockArms as (...a: unknown[]) => unknown)(...args) as Parameters<typeof _buildMatchBlock>[0]
+			);
+}
+function _buildMatchBlock(value?: Admit<T.MatchBlockArms>): T.MatchBlock.Bound {
 	const _match_block_arms = value;
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'match_block', { matchBlockArms: _match_block_arms });
@@ -7690,8 +7702,6 @@ export function buildMatchBlock(value?: Admit<T.MatchBlockArms>): T.MatchBlock.B
 		$_layout: undefined,
 		$with: undefined as unknown as object,
 		matchBlockArms: () => hydrateStoredSlot(node, '_match_block_arms'),
-		arms: _match_block_arms === undefined ? undefined : () => groupField(_match_block_arms, 'arms'),
-		lastArm: _match_block_arms === undefined ? undefined : () => groupField(_match_block_arms, 'lastArm'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -7701,76 +7711,23 @@ export function buildMatchBlock(value?: Admit<T.MatchBlockArms>): T.MatchBlock.B
 		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		matchBlockArms: buildMatchBlock$with$matchBlockArms,
-		arms: buildMatchBlock$with$arms,
-		lastArm: buildMatchBlock$with$lastArm,
-		[RECEIVER]: node
-	};
+	node.$with = { matchBlockArms: buildMatchBlock$with$matchBlockArms, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, inner: objectInner, [RECEIVER]: node };
 	return node as unknown as T.MatchBlock.Bound;
 }
 
 function buildMatchBlock$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
-	const readGroup_matchBlockArms = () =>
-		(node as unknown as Readonly<Record<string, object | undefined>>)['_match_block_arms'];
 	switch (setter) {
 		case 'matchBlockArms':
 			return applySetter(args, (value?: Admit<T.MatchBlockArms>) =>
-				rebuilt(node, handle, () => buildMatchBlock(value))
-			);
-		case 'arms':
-			return applySetter(args, (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					seatWith(
-						{
-							slot: 'matchBlockArms',
-							stored: '_match_block_arms',
-							make: buildMatchBlockArms,
-							keys: [
-								{ name: 'arms', rest: true },
-								{ name: 'lastArm', rest: false, required: true }
-							]
-						},
-						'arms',
-						args,
-						(value?: Admit<T.MatchBlockArms>) => buildMatchBlock(value),
-						() => readGroup_matchBlockArms.call(node)
-					)
-				)
-			);
-		case 'lastArm':
-			return applySetter(args, (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					seatWith(
-						{
-							slot: 'matchBlockArms',
-							stored: '_match_block_arms',
-							make: buildMatchBlockArms,
-							keys: [
-								{ name: 'arms', rest: true },
-								{ name: 'lastArm', rest: false, required: true }
-							]
-						},
-						'lastArm',
-						args,
-						(value?: Admit<T.MatchBlockArms>) => buildMatchBlock(value),
-						() => readGroup_matchBlockArms.call(node)
-					)
-				)
+				rebuilt(node, handle, () => _buildMatchBlock(value))
 			);
 	}
 	throw new Error(`match_block has no $with.${setter}`);
 }
 function buildMatchBlock$with$matchBlockArms(this: Received<Held>, ...args: unknown[]): unknown {
 	return buildMatchBlock$with(receiverOf(this, '$with.matchBlockArms'), 'matchBlockArms', args);
-}
-function buildMatchBlock$with$arms(this: Received<Held>, ...args: unknown[]): unknown {
-	return buildMatchBlock$with(receiverOf(this, '$with.arms'), 'arms', args);
-}
-function buildMatchBlock$with$lastArm(this: Received<Held>, ...args: unknown[]): unknown {
-	return buildMatchBlock$with(receiverOf(this, '$with.lastArm'), 'lastArm', args);
 }
 
 export function buildLastMatchArm<
@@ -9664,7 +9621,7 @@ export function buildRawStringLiteral(config: T.RawStringLiteral.Config): T.RawS
 	currentHandle()?.admit(TSKindId.RawStringLiteral, [config]);
 	const _raw_string_literal_start = config.rawStringLiteralStart;
 	const _string_content = config.stringContent;
-	const _raw_string_literal_end = config.rawStringLiteralEnd;
+	const _raw_string_literal_end = orDefault(config.rawStringLiteralEnd, () => buildRawStringLiteralEnd());
 	const handle = currentHandle();
 	if (handle !== undefined)
 		admitChildren(handle, 'raw_string_literal', {
@@ -9682,6 +9639,7 @@ export function buildRawStringLiteral(config: T.RawStringLiteral.Config): T.RawS
 		rawStringLiteralStart: () => hydrateStoredSlot(node, '_raw_string_literal_start'),
 		stringContent: () => hydrateStoredSlot(node, '_string_content'),
 		rawStringLiteralEnd: () => hydrateStoredSlot(node, '_raw_string_literal_end'),
+		prefix: _raw_string_literal_start === undefined ? undefined : () => groupField(_raw_string_literal_start, 'prefix'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -9696,23 +9654,18 @@ export function buildRawStringLiteral(config: T.RawStringLiteral.Config): T.RawS
 		rawStringLiteralStart: buildRawStringLiteral$with$rawStringLiteralStart,
 		stringContent: buildRawStringLiteral$with$stringContent,
 		rawStringLiteralEnd: buildRawStringLiteral$with$rawStringLiteralEnd,
+		prefix: buildRawStringLiteral$with$prefix,
 		[RECEIVER]: node
 	};
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
-	checkDelimited(
-		handle,
-		node,
-		_delimited_buildRawStringLiteral,
-		[_string_content],
-		_raw_string_literal_start,
-		_raw_string_literal_end
-	);
 	return node as unknown as T.RawStringLiteral.Bound;
 }
 
 function buildRawStringLiteral$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
 	const config = node[INPUT] as T.RawStringLiteral.Config;
+	const readGroup_rawStringLiteralStart = () =>
+		(node as unknown as Readonly<Record<string, object | undefined>>)['_raw_string_literal_start'];
 	switch (setter) {
 		case 'rawStringLiteralStart':
 			return applySetter(args, (value: Admit<T.RawStringLiteralStart>) =>
@@ -9726,6 +9679,24 @@ function buildRawStringLiteral$with(node: Held, setter: string, args: readonly u
 			return applySetter(args, (value: Admit<T.RawStringLiteralEnd>) =>
 				rebuilt(node, handle, () => buildRawStringLiteral({ ...config, rawStringLiteralEnd: value }))
 			);
+		case 'prefix':
+			return applySetter(args, (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					seatWith(
+						{
+							slot: 'rawStringLiteralStart',
+							stored: '_raw_string_literal_start',
+							make: buildRawStringLiteralStart,
+							keys: [{ name: 'prefix', rest: false, required: true }]
+						},
+						'prefix',
+						args,
+						(value: Admit<T.RawStringLiteralStart>) =>
+							buildRawStringLiteral({ ...config, rawStringLiteralStart: value }),
+						() => readGroup_rawStringLiteralStart.call(node)
+					)
+				)
+			);
 	}
 	throw new Error(`raw_string_literal has no $with.${setter}`);
 }
@@ -9737,6 +9708,9 @@ function buildRawStringLiteral$with$stringContent(this: Received<Held>, ...args:
 }
 function buildRawStringLiteral$with$rawStringLiteralEnd(this: Received<Held>, ...args: unknown[]): unknown {
 	return buildRawStringLiteral$with(receiverOf(this, '$with.rawStringLiteralEnd'), 'rawStringLiteralEnd', args);
+}
+function buildRawStringLiteral$with$prefix(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildRawStringLiteral$with(receiverOf(this, '$with.prefix'), 'prefix', args);
 }
 
 export function buildLineComment<
@@ -11789,6 +11763,8 @@ function _buildExpressions(
 	currentHandle()?.admit(TSKindId.Expressions, elements);
 	const _item = elements;
 	const _delimiter = options.delimiter;
+	if (elements.length === 1 && _delimiter === Delimiter.None)
+		throw new Error('expressions: one element always spells its trailing separator, so its delimiter is never None');
 	const listedItems = storedElements(_item);
 	const listedLength = listedItems.length;
 	const handle = currentHandle();
@@ -11856,7 +11832,12 @@ function buildExpressions$with(node: Held, setter: string, args: readonly unknow
 	switch (setter) {
 		case 'items':
 			return applySetter(args, (...vs: NonEmptyArray<Admit<T.Expression>>) =>
-				rebuilt(node, handle, () => buildExpressions(options, ...vs))
+				rebuilt(node, handle, () =>
+					buildExpressions(
+						vs.length === 1 && options.delimiter === Delimiter.None ? { ...options, delimiter: undefined } : options,
+						...vs
+					)
+				)
 			);
 		case 'delimiter':
 			return applySetter(args, (v?: Delimiter.None | Delimiter.Trailing) =>
@@ -17670,24 +17651,20 @@ function buildTypeArgument$with$traitBounds(this: Received<Held>, ...args: unkno
 	return buildTypeArgument$with(receiverOf(this, '$with.traitBounds'), 'traitBounds', args);
 }
 
-export function buildMatchBlockArms<
-	ArmsSlot extends T.MatchBlockArms.Config['arms'],
-	LastArmSlot extends T.MatchBlockArms.Config['lastArm']
->(config: RefusingConfig<T.MatchBlockArms.Config, { arms: ArmsSlot; lastArm: LastArmSlot }>): T.MatchBlockArms.Bound;
-export function buildMatchBlockArms(config: T.MatchBlockArms.Config): T.MatchBlockArms.Bound {
-	currentHandle()?.admit(TSKindId.MatchBlockArms, [config]);
-	const _arms = listStorage<NonNullable<T.MatchBlockArms['_arms']>>(config.arms ?? []);
-	const _last_arm = config.lastArm;
+export function buildMatchBlockArms<A extends Admit<[...T.MatchArm[], T.LastMatchArm]>>(
+	...children: A & RefuseUndeclared<A>
+): T.MatchBlockArms.Bound;
+export function buildMatchBlockArms(...children: Admit<[...T.MatchArm[], T.LastMatchArm]>): T.MatchBlockArms.Bound {
+	currentHandle()?.admit(TSKindId.MatchBlockArms, children);
+	const _arms = children;
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'match_block_arms', { arms: _arms, lastArm: _last_arm });
+	if (handle !== undefined) admitChildren(handle, 'match_block_arms', { arms: _arms });
 	const node = {
 		$type: TSKindId.MatchBlockArms as const,
 		_arms,
-		_last_arm,
 		$_layout: undefined,
 		$with: undefined as unknown as object,
 		arms: () => hydrateStoredSlots(node, '_arms'),
-		lastArm: () => hydrateStoredSlot(node, '_last_arm'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -17695,34 +17672,25 @@ export function buildMatchBlockArms(config: T.MatchBlockArms.Config): T.MatchBlo
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
-		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = { arms: buildMatchBlockArms$with$arms, lastArm: buildMatchBlockArms$with$lastArm, [RECEIVER]: node };
+	node.$with = { arms: buildMatchBlockArms$with$arms, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.MatchBlockArms.Bound;
 }
 
 function buildMatchBlockArms$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
-	const config = node[INPUT] as T.MatchBlockArms.Config;
 	switch (setter) {
 		case 'arms':
-			return applySetter(args, (...values: Admit<T.MatchArm[]>) =>
-				rebuilt(node, handle, () => buildMatchBlockArms({ ...config, arms: restItems('arms', values) }))
-			);
-		case 'lastArm':
-			return applySetter(args, (value: Admit<T.LastMatchArm>) =>
-				rebuilt(node, handle, () => buildMatchBlockArms({ ...config, lastArm: value }))
+			return applySetter(args, (...vs: [...Admit<T.MatchArm>[], Admit<T.LastMatchArm>]) =>
+				rebuilt(node, handle, () => buildMatchBlockArms(...restItems('arms', vs)))
 			);
 	}
 	throw new Error(`match_block_arms has no $with.${setter}`);
 }
 function buildMatchBlockArms$with$arms(this: Received<Held>, ...args: unknown[]): unknown {
 	return buildMatchBlockArms$with(receiverOf(this, '$with.arms'), 'arms', args);
-}
-function buildMatchBlockArms$with$lastArm(this: Received<Held>, ...args: unknown[]): unknown {
-	return buildMatchBlockArms$with(receiverOf(this, '$with.lastArm'), 'lastArm', args);
 }
 
 export function buildFloatLiteral<const N extends string | number>(
@@ -17802,17 +17770,34 @@ export const buildOuterDocCommentMarker: TSKindId.OuterDocCommentMarker = TSKind
 
 export const buildInnerDocCommentMarker: TSKindId.InnerDocCommentMarker = TSKindId.InnerDocCommentMarker;
 
-export function buildRawStringLiteralStart(text: string): T.RawStringLiteralStart.Bound {
-	if (typeof text !== 'string')
-		throw new Error(`raw_string_literal_start: text must be a string: ${describeValue(text)}`);
-	if (text.length === 0) throw new Error(`raw_string_literal_start: text must be non-empty`);
-	if (!_leafRe_buildRawStringLiteralStart.test(text))
-		throw new Error(`raw_string_literal_start: text does not match pattern: ${describeValue(text)}`);
+export function buildRawStringLiteralStart<V extends Admit<'r' | 'br' | 'cr'>>(
+	value: V & RefuseUndeclared<V>,
+	options?: T.RawStringLiteralStart.Options
+): T.RawStringLiteralStart.Bound;
+export function buildRawStringLiteralStart(
+	value: Admit<'r' | 'br' | 'cr'>,
+	options?: T.RawStringLiteralStart.Options
+): T.RawStringLiteralStart.Bound {
+	const _prefix = value;
+	if (typeof _prefix !== 'string')
+		throw new Error(`raw_string_literal_start.prefix: text must be a string: ${describeValue(_prefix)}`);
+	if (!_slotRe_buildRawStringLiteralStart_prefix.test(_prefix))
+		throw new Error(`raw_string_literal_start.prefix: text does not match pattern: ${describeValue(_prefix)}`);
+	const _hashes = options?.hashes;
+	if (_hashes !== undefined && typeof _hashes !== 'string')
+		throw new Error(`raw_string_literal_start.hashes: text must be a string: ${describeValue(_hashes)}`);
+	if (_hashes !== undefined && !_slotRe_buildRawStringLiteralStart_hashes.test(_hashes))
+		throw new Error(`raw_string_literal_start.hashes: text does not match pattern: ${describeValue(_hashes)}`);
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'raw_string_literal_start', { prefix: _prefix, hashes: _hashes });
 	const node = {
 		$type: TSKindId.RawStringLiteralStart as const,
+		_prefix,
+		_hashes,
 		$_layout: undefined,
-		$text: () => text,
+		$with: undefined as unknown as object,
+		prefix: () => hydrateStoredSlot(node, '_prefix'),
+		hashes: () => hydrateStoredSlot(node, '_hashes'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -17820,23 +17805,60 @@ export function buildRawStringLiteralStart(text: string): T.RawStringLiteralStar
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
+		[INPUT]: value,
+		[OPTIONS]: options,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		prefix: buildRawStringLiteralStart$with$prefix,
+		hashes: buildRawStringLiteralStart$with$hashes,
+		[RECEIVER]: node
 	};
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.RawStringLiteralStart.Bound;
 }
 
-export function buildRawStringLiteralEnd(text: string): T.RawStringLiteralEnd.Bound {
-	if (typeof text !== 'string')
-		throw new Error(`raw_string_literal_end: text must be a string: ${describeValue(text)}`);
-	if (text.length === 0) throw new Error(`raw_string_literal_end: text must be non-empty`);
-	if (!_leafRe_buildRawStringLiteralEnd.test(text))
-		throw new Error(`raw_string_literal_end: text does not match pattern: ${describeValue(text)}`);
+function buildRawStringLiteralStart$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const value = node[INPUT] as Admit<'r' | 'br' | 'cr'>;
+	const options = node[OPTIONS] as T.RawStringLiteralStart.Options;
+	switch (setter) {
+		case 'prefix':
+			return applySetter(args, (value: Admit<'r' | 'br' | 'cr'>) =>
+				rebuilt(node, handle, () => buildRawStringLiteralStart(value, options))
+			);
+		case 'hashes':
+			return applySetter(args, (spelling: string) =>
+				rebuilt(node, handle, () => buildRawStringLiteralStart(value, { ...options, hashes: spelling }))
+			);
+	}
+	throw new Error(`raw_string_literal_start has no $with.${setter}`);
+}
+function buildRawStringLiteralStart$with$prefix(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildRawStringLiteralStart$with(receiverOf(this, '$with.prefix'), 'prefix', args);
+}
+function buildRawStringLiteralStart$with$hashes(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildRawStringLiteralStart$with(receiverOf(this, '$with.hashes'), 'hashes', args);
+}
+
+export function buildRawStringLiteralEnd(
+	config: Partial<T.RawStringLiteralEnd.Config> = {},
+	options?: T.RawStringLiteralEnd.Options
+): T.RawStringLiteralEnd.Bound {
+	currentHandle()?.admit(TSKindId.RawStringLiteralEnd, [config]);
+	const _hashes = options?.hashes;
+	if (_hashes !== undefined && typeof _hashes !== 'string')
+		throw new Error(`raw_string_literal_end.hashes: text must be a string: ${describeValue(_hashes)}`);
+	if (_hashes !== undefined && !_slotRe_buildRawStringLiteralEnd_hashes.test(_hashes))
+		throw new Error(`raw_string_literal_end.hashes: text does not match pattern: ${describeValue(_hashes)}`);
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'raw_string_literal_end', { hashes: _hashes });
 	const node = {
 		$type: TSKindId.RawStringLiteralEnd as const,
+		_hashes,
 		$_layout: undefined,
-		$text: () => text,
+		$with: undefined as unknown as object,
+		hashes: () => hydrateStoredSlot(node, '_hashes'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -17844,10 +17866,29 @@ export function buildRawStringLiteralEnd(text: string): T.RawStringLiteralEnd.Bo
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
+		[INPUT]: config,
+		[OPTIONS]: options,
 		[Symbol.dispose]: releaseNothing
 	};
+	node.$with = { hashes: buildRawStringLiteralEnd$with$hashes, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.RawStringLiteralEnd.Bound;
+}
+
+function buildRawStringLiteralEnd$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.RawStringLiteralEnd.Config;
+	const options = node[OPTIONS] as T.RawStringLiteralEnd.Options;
+	switch (setter) {
+		case 'hashes':
+			return applySetter(args, (spelling: string) =>
+				rebuilt(node, handle, () => buildRawStringLiteralEnd(config, { ...options, hashes: spelling }))
+			);
+	}
+	throw new Error(`raw_string_literal_end has no $with.${setter}`);
+}
+function buildRawStringLiteralEnd$with$hashes(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildRawStringLiteralEnd$with(receiverOf(this, '$with.hashes'), 'hashes', args);
 }
 
 export function buildDocComment(text: string): T.DocComment.Bound {
@@ -19364,8 +19405,8 @@ export type FluentKindMap = {
 	raw_string_literal_content: T.RawStringLiteralContent;
 	outer_doc_comment_marker: T.OuterDocCommentMarker;
 	inner_doc_comment_marker: T.InnerDocCommentMarker;
-	raw_string_literal_start: T.RawStringLiteralStart;
-	raw_string_literal_end: T.RawStringLiteralEnd;
+	raw_string_literal_start: T.RawStringLiteralStart.Bound;
+	raw_string_literal_end: T.RawStringLiteralEnd.Bound;
 	doc_comment: T.DocComment;
 	_block_comment_content: T.BlockCommentContent;
 	_tight: T.Tight;

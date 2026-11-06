@@ -154,6 +154,8 @@ describe('post-evaluate invariant', () => {
 				// wire() config sidecars — drained from __wireContext__ in evaluate.ts.
 				'groups',
 				'renderAs',
+				// The spelling groups each spellings() choice declares, by kind and field — stamped onto the linked rules.
+				'spellings',
 				// The wire context's automatic-variant record; link reads definedBy from it.
 				'automaticVariants',
 				// visibleExternals: — externals auto-aliased visible with a

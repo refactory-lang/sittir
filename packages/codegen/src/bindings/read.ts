@@ -56,7 +56,7 @@ interface PinnedReader {
 
 const requireFromHere = createRequire(import.meta.url);
 
-const CHILD_ENTRY = fileURLToPath(new URL('./pinned-reader.child.ts', import.meta.url));
+export const CHILD_ENTRY = fileURLToPath(new URL('./pinned-reader.child.ts', import.meta.url));
 
 const CHILD_TSCONFIG = fileURLToPath(new URL('../../tsconfig.pinned.json', import.meta.url));
 

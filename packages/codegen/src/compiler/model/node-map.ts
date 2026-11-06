@@ -237,6 +237,11 @@ export interface NodeRef<T extends AssembledNode = AssembledNode> {
 	readonly storageKindId?: number;
 	storage?: ValueStorage;
 	readonly value?: string;
+	readonly canonical?: string;
+	readonly readOnly?: true;
+	readonly singleLine?: true;
+	readonly interpolating?: true;
+	readonly escape?: string;
 	readonly pattern?: string;
 	readonly resolvedKind?: string;
 	readonly resolvedKindId?: number;
@@ -257,6 +262,7 @@ export interface NodeRef<T extends AssembledNode = AssembledNode> {
 	readonly immediate?: boolean;
 	readonly tokenized?: boolean;
 	readonly copyOf?: string;
+	readonly final?: true;
 }
 
 export type NodeOrTerminal = NodeRef;
@@ -274,6 +280,46 @@ export function isNodeRef(v: NodeOrTerminal): v is NodeBackedRef {
 
 export function isTerminalValue(v: NodeOrTerminal): v is NodeRef & { value: string } {
 	return v.value !== undefined;
+}
+
+type SpelledFacts = Pick<NodeRef, 'canonical' | 'readOnly' | 'singleLine' | 'interpolating' | 'escape'>;
+
+function spelledFactsOf(rule: SpelledFacts): SpelledFacts {
+	return {
+		...(rule.canonical === undefined ? {} : { canonical: rule.canonical }),
+		...(rule.readOnly === true ? { readOnly: true } : {}),
+		...(rule.singleLine === true ? { singleLine: true } : {}),
+		...(rule.interpolating === true ? { interpolating: true } : {}),
+		...(rule.escape === undefined ? {} : { escape: rule.escape })
+	};
+}
+
+export function memberOf(v: NodeOrTerminal): string | undefined {
+	return v.canonical ?? v.value;
+}
+
+type SpelledSlot = { readonly values: readonly NodeOrTerminal[] };
+
+function memberValuesOf(slot: SpelledSlot): readonly (NodeRef & { value: string })[] | undefined {
+	if (!slot.values.some((v) => v.canonical !== undefined || v.readOnly === true)) return undefined;
+	return slot.values.filter((v): v is NodeRef & { value: string } => isTerminalValue(v) && memberOf(v) === v.value);
+}
+
+export function buildableMembersOf(slot: SpelledSlot): readonly string[] | undefined {
+	return memberValuesOf(slot)
+		?.filter((v) => v.readOnly !== true)
+		.map((v) => v.value);
+}
+
+export interface SpelledRead {
+	readonly members: readonly string[];
+	readonly spellings: Readonly<Record<string, string>>;
+}
+
+export function spelledReadOf(slot: SpelledSlot): SpelledRead | undefined {
+	const members = memberValuesOf(slot);
+	const spellings = slot.values.flatMap((v) => (isTerminalValue(v) && memberOf(v) !== v.value ? [[v.value, memberOf(v)!] as const] : []));
+	return members === undefined || spellings.length === 0 ? undefined : { members: members.map((v) => v.value), spellings: Object.fromEntries(spellings) };
 }
 
 export function isPatternValue(v: NodeOrTerminal): v is NodeRef & { pattern: string } {
@@ -497,7 +543,22 @@ export function mergeDelimiterMode(
 	return a === b ? a : 'optional';
 }
 
-function mergeSlotsByName(slots: AssembledNonterminal[]): AssembledNonterminal[] {
+const isListValue = (v: NodeOrTerminal): boolean => v.multiplicity === 'array' || v.multiplicity === 'nonEmptyArray';
+
+function valueKind(v: NodeOrTerminal): string | undefined {
+	return isNodeRef(v) ? storageKindOfRef(v.node) : undefined;
+}
+
+function sequenceValues([rest, last]: readonly [AssembledNonterminal, AssembledNonterminal]): NodeOrTerminal[] {
+	const settled = rest.values.map(({ final: _final, ...v }) => v as NodeOrTerminal);
+	const finalSeat =
+		rest.values.every((v) => isListValue(v) && v.final !== true) &&
+		last.values.every((v) => v.multiplicity === 'single' && isNodeRef(v)) &&
+		last.values.some((v) => !rest.values.some((r) => valueKind(r) === valueKind(v)));
+	return dedupeValues([...settled, ...(finalSeat ? last.values.map((v) => ({ ...v, final: true as const })) : last.values)]);
+}
+
+export function mergeSlotsByName(slots: AssembledNonterminal[]): AssembledNonterminal[] {
 	if (slots.length <= 1) return slots;
 	const out: AssembledNonterminal[] = [];
 	const namedIndexByName = new Map<string, number>();
@@ -514,7 +575,7 @@ function mergeSlotsByName(slots: AssembledNonterminal[]): AssembledNonterminal[]
 		}
 		const existing = out[idx]!;
 		out[idx] = existing.with({
-			values: dedupeValues([...existing.values, ...f.values]),
+			values: sequenceValues([existing, f]),
 			hasTrailingDelimiter: existing.hasTrailingDelimiter || f.hasTrailingDelimiter,
 			hasLeadingDelimiter: existing.hasLeadingDelimiter || f.hasLeadingDelimiter,
 			trailingDelimiter: mergeDelimiterMode([existing.trailingDelimiter, f.trailingDelimiter]),
@@ -861,6 +922,7 @@ export function deriveValuesForRule(
 				return [
 					{
 						value: rule.value,
+						...(rule.type === STRING ? spelledFactsOf(rule) : {}),
 						resolvedKind: rk,
 						resolvedKindId: rule.resolvedKindId,
 						parseKind: rk !== undefined ? { kind: 'unresolved-ref', name: rk } : undefined,
@@ -875,6 +937,7 @@ export function deriveValuesForRule(
 			return [
 				{
 					value: rule.value,
+					...(rule.type === STRING ? spelledFactsOf(rule) : {}),
 					resolvedKind: rk,
 					resolvedKindId: entry?.id,
 					parseKind: rk !== undefined ? { kind: 'unresolved-ref', name: rk } : undefined,
@@ -896,6 +959,7 @@ export function deriveValuesForRule(
 					const rk = entry?.kind ?? symName;
 					return {
 						value: text,
+						...(m.type === STRING ? spelledFactsOf(m) : {}),
 						resolvedKind: rk,
 						resolvedKindId: entry?.id,
 						parseKind: rk !== undefined ? { kind: 'unresolved-ref' as const, name: rk } : undefined,
@@ -1014,6 +1078,7 @@ export type ModelType =
 	| 'keyword'
 	| 'punctuation'
 	| 'pattern'
+	| 'lexedPattern'
 	| 'list';
 
 export interface KindFacts {
@@ -1210,6 +1275,8 @@ export class AssembledNonterminal {
 	optionDefaultArm?: string;
 	optionDefaultKind?: string;
 	registeredOption?: 'spelling' | 'choice';
+	delimiterRole?: DelimiterFacetRole;
+	contentLeaf?: string;
 	effectiveWordsets?: readonly string[];
 	checksReserved?: boolean;
 	splicedEnvelope?: string;
@@ -1601,6 +1668,10 @@ export function isTerminalNode(node: AssembledNode): node is AssembledPattern | 
 	return node.modelType === 'pattern' || isKindIdStored(node);
 }
 
+export function isLexicalToken(node: AssembledNode | undefined): node is Extract<AssembledNode, AssembledLeaf> | AssembledLexedPattern {
+	return node instanceof AssembledLeaf || node instanceof AssembledLexedPattern;
+}
+
 export function isPatternLeaf(node: AssembledNode): node is AssembledPattern {
 	return node instanceof AssembledPattern;
 }
@@ -1704,6 +1775,35 @@ export interface DelimiterEnd {
 	readonly slot?: string;
 }
 
+export type DelimiterFacetRole = 'input' | 'preferred' | 'run' | 'mirror' | 'content';
+
+export interface DelimiterArm {
+	readonly text: string;
+	readonly singleLine: boolean;
+}
+
+export interface DelimiterFacets {
+	readonly open: string;
+	readonly close: string;
+	readonly arms: readonly DelimiterArm[];
+	readonly run?: string;
+	readonly closeLead: string;
+	readonly escape?: string;
+}
+
+export interface FreeTextGate {
+	readonly token: string;
+	readonly facet: string;
+	readonly spellings: readonly string[];
+}
+
+export interface FreeText {
+	readonly leaves: readonly string[];
+	readonly excluded: readonly (readonly [number, number])[];
+	readonly opened: readonly string[];
+	readonly gate?: FreeTextGate;
+}
+
 export interface Delimited {
 	readonly open: DelimiterEnd;
 	readonly close: DelimiterEnd;
@@ -1718,6 +1818,10 @@ export abstract class AbstractAssembledCompound<R extends RenderRule = RenderRul
 	readonly variantChildKinds: readonly VariantChild[];
 	fullForm?: FullForm;
 	delimited?: Delimited;
+	delimiterFacets?: DelimiterFacets;
+	delimiterPreference?: DelimiterPreference;
+	freeText?: FreeText;
+	delimiterOf?: string;
 
 	protected readonly _slots: readonly AssembledNonterminal[];
 
@@ -1802,6 +1906,7 @@ export abstract class AbstractAssembledCompound<R extends RenderRule = RenderRul
 	}
 
 	get configSlots(): readonly AssembledNonterminal[] {
+		if (this.delimiterOf !== undefined) return this._slots.filter((slot) => slot.delimiterRole === 'input');
 		const real = this._slots.filter((slot) => slot.registeredOption === undefined);
 		return real.length > 0 || this._slots.every((slot) => slot.values.every(isFixedTextValue)) ? real : this._slots;
 	}
@@ -1817,10 +1922,6 @@ export abstract class AbstractAssembledCompound<R extends RenderRule = RenderRul
 		if (lead === undefined || lead.type !== STRING) return undefined;
 		if (!this._slots.every((f) => !isRequired(f))) return undefined;
 		return lead.value;
-	}
-
-	get lexedInterior(): boolean {
-		return this.renderRule.tokenized === true || this.renderRule.lexed === true;
 	}
 
 	get innerSite(): InnerGap | undefined {
@@ -1940,6 +2041,32 @@ export class AssembledBranch extends AbstractAssembledCompound {
 	readonly modelType = 'branch' as const;
 }
 
+export class AssembledLexedPattern extends AbstractAssembledCompound {
+	readonly modelType = 'lexedPattern' as const;
+
+	get immediate(): boolean {
+		return this.renderRule.immediate === true;
+	}
+}
+
+export function isDelimiterToken(node: AssembledNode | undefined): node is AssembledLexedPattern & { readonly delimiterOf: string } {
+	return node instanceof AssembledLexedPattern && node.delimiterOf !== undefined;
+}
+
+export interface DelimiterPreference {
+	readonly open: AssembledNonterminal;
+	readonly token: AssembledLexedPattern;
+	readonly facet: AssembledNonterminal;
+}
+
+export function delimiterPreferenceOf(node: object): DelimiterPreference | undefined {
+	return node instanceof AbstractAssembledCompound ? node.delimiterPreference : undefined;
+}
+
+export function isLexedRule(rule: RenderRule): boolean {
+	return rule.tokenized === true || rule.lexed === true;
+}
+
 export class AssembledEnvelope<
 	R extends RenderRule = RenderRule,
 	M extends 'envelope' | 'polymorph' | 'list' | 'alias' = 'envelope'
@@ -1986,7 +2113,7 @@ export function isLeafShapedMember(rule: SimplifiedRule): boolean {
 	}
 }
 
-export type AuthoredCompound = AssembledBranch | AssembledEnvelope | AssembledPolymorph | AssembledAlias;
+export type AuthoredCompound = AssembledBranch | AssembledLexedPattern | AssembledEnvelope | AssembledPolymorph | AssembledAlias;
 
 export function isAuthoredCompound(node: AssembledNode): node is AuthoredCompound {
 	return node instanceof AbstractAssembledCompound && !(node instanceof AssembledList);
@@ -2005,6 +2132,7 @@ export type SlotBearingCompound = AuthoredCompound | AssembledList;
 
 export type CompoundClass =
 	| typeof AssembledBranch
+	| typeof AssembledLexedPattern
 	| typeof AssembledEnvelope
 	| typeof AssembledPolymorph
 	| typeof AssembledAlias;
@@ -2068,6 +2196,8 @@ export function branchClassFor(kind: string, simplifiedRule: SimplifiedRule, ctx
 }
 
 export abstract class AssembledLeaf<R extends AnyRule = RenderRule> extends AssembledNodeBase<R> {
+	freeText?: true;
+
 	get immediate(): boolean {
 		return 'immediate' in this.rule && this.rule.immediate === true;
 	}
@@ -2445,6 +2575,7 @@ export class AssembledList extends AssembledEnvelope<SeparatedListElementRule, '
 }
 export type AssembledNode =
 	| AssembledBranch
+	| AssembledLexedPattern
 	| AssembledEnvelope
 	| AssembledPolymorph
 	| AssembledAlias
@@ -2468,7 +2599,7 @@ export const isNullableMultiplicity = (rule: RenderRule): boolean =>
 
 export function isLeftImmediateKind(kind: string, ctx: LeftImmediateCtx): boolean {
 	const node = ctx.nodes.get(kind);
-	if (node instanceof AssembledLeaf) return node.immediate;
+	if (isLexicalToken(node)) return node.immediate;
 	const rules = ctx.normalizedRules;
 	if (!rules) return false;
 	return leftmostTerminalImmediate(rules[kind], { rules, visiting: new Set([kind]) });

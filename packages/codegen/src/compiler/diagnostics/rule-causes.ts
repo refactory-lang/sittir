@@ -11,6 +11,7 @@ import {
 } from '../../dsl/primitives/rule-cause.ts';
 import type { Rule } from '../../types/rule.ts';
 import { copyBaseOf } from '../../dsl/automatic-variants.ts';
+import { ruleListParts } from '../../dsl/rule-patterns.ts';
 import {
 	ALIAS,
 	CHOICE,
@@ -85,7 +86,9 @@ export function authoredRuleNames(raw: Pick<RawGrammar, 'ruleCauses' | 'undeclar
 	return [...Object.keys(raw.ruleCauses ?? {}), ...(raw.undeclaredRules ?? [])];
 }
 
-export function unverifiedRuleNames(raw: Pick<RawGrammar, 'ruleCauses' | 'undeclaredRules' | 'references' | 'stages' | 'splitFrom'>): string[] {
+export function unverifiedRuleNames(
+	raw: Pick<RawGrammar, 'ruleCauses' | 'undeclaredRules' | 'references' | 'stages' | 'splitFrom'> & Partial<Pick<RawGrammar, 'rules' | 'extras' | 'externals' | 'word'>>
+): string[] {
 	const causes = raw.ruleCauses ?? {};
 	const authored = new Set(authoredRuleNames(raw));
 	const upstream = new Set(Object.keys(raw.stages?.raw.grammar.rules ?? {}));
@@ -107,15 +110,30 @@ export function unverifiedRuleNames(raw: Pick<RawGrammar, 'ruleCauses' | 'undecl
 		}
 		return found;
 	};
+	const roots = new Set([
+		...Object.keys(raw.rules ?? {}).slice(0, 1),
+		...ruleListParts(raw.extras ?? []).names,
+		...ruleListParts(raw.externals ?? []).names,
+		...(raw.word == null ? [] : [raw.word])
+	]);
+	const reachedBy = new Map(
+		Object.entries(causes).flatMap(([name, declaration]) => (declaration.kind === 'vocabulary' ? [[name, reachers(name)] as const] : []))
+	);
+	const verifiedHelpers = new Set([...reachedBy].flatMap(([name, reached]) => (roots.has(name) || reached.length === 0 ? [] : [name])));
 	const isVerifiedReacher = (name: string): boolean => {
 		const declaration = causes[name];
-		return declaration !== undefined && isWitnessVerified(declaration);
+		return verifiedHelpers.has(name) || (declaration?.kind === 'reauthored' && isWitnessVerified(declaration));
 	};
-	const isVerified = (name: string, declaration: RuleCauseDeclaration): boolean => {
-		if (declaration.kind === 'reauthored') return isWitnessVerified(declaration);
-		const reached = reachers(name);
-		return reached.length > 0 && reached.every(isVerifiedReacher);
-	};
+	for (let changed = true; changed; ) {
+		changed = false;
+		for (const name of verifiedHelpers)
+			if (!(reachedBy.get(name) ?? []).every(isVerifiedReacher)) {
+				verifiedHelpers.delete(name);
+				changed = true;
+			}
+	}
+	const isVerified = (name: string, declaration: RuleCauseDeclaration): boolean =>
+		declaration.kind === 'reauthored' ? isWitnessVerified(declaration) : verifiedHelpers.has(name);
 	const unverified = Object.entries(causes).filter(([name, declaration]) => !isVerified(name, declaration));
 	return [...unverified.map(([name]) => name), ...(raw.undeclaredRules ?? [])].sort();
 }

@@ -17,22 +17,15 @@ import { emitRenderModule, grammarRenderInputs, payloadCeilingAssertions, rustNo
 import { PAYLOAD_CEILING_BYTES } from '../boxed-payloads.ts';
 import { ENVELOPE_PINS } from '../envelope-claims.ts';
 import { collectKindEntries, findKindEntry } from '../kind-discriminant.ts';
-import { resolveRenderRules, seamRenderRules, spaceRenderRules, whitespaceTextOf } from '../../compiler/model/render-rules.ts';
-import { collectSitePreferences } from '../../compiler/model/site-preferences.ts';
-import { link } from '../../compiler/link.ts';
-import { normalizeGrammar } from '../../compiler/normalize.ts';
-import { assemble, AssembleCtx } from '../../compiler/assemble.ts';
-import { loadGeneratedIdTables } from '../../compiler/generated-metadata.ts';
-import { computeNodeSCC } from '../../compiler/scc.ts';
-import { runTemplateEmitter, stampStaticSpacing } from '../templates.ts';
+import { emitReadyModel } from '../../__tests__/helpers/emit-ready-model.ts';
+import { runTemplateEmitter } from '../templates.ts';
 import type { NodeMap } from '../../compiler/types.ts';
-import { evaluatePackage } from '../../dsl/evaluate-package.ts';
-import { grammarPackage } from '../../grammars.ts';
 import { generatedFieldIds } from '../../dsl/symbol-table.ts';
 import { listViewOwners, wrappedItemLists } from '../factories.ts';
 import { isTextLeaf, slotKindNames } from '../shared.ts';
 import {
 	AbstractAssembledCompound,
+	AssembledLexedPattern,
 	AssembledList,
 	AssembledSupertype,
 	type AssembledNode,
@@ -107,27 +100,7 @@ let _rustOptionsRs: string | undefined;
 const _models = new Map<string, ReturnType<typeof buildModel>>();
 
 async function buildModel(grammar: 'rust' | 'typescript' | 'scm' | 'python') {
-	const raw = await evaluatePackage(grammarPackage(grammar));
-	const generatedIdTables = await loadGeneratedIdTables(grammar);
-	if (generatedIdTables === undefined) throw new Error(`no generated id tables for ${grammar}`);
-	const linked = link(raw, { generatedIdTables });
-	const normalized = normalizeGrammar(linked);
-	const nodeMap = assemble(
-		AssembleCtx.from({ ...normalized, generatedIdTables: generatedIdTables })
-	);
-	nodeMap.scc = computeNodeSCC(nodeMap);
-
-	const kindEntries = collectKindEntries(nodeMap, generatedIdTables);
-	const rulesConfig = {
-		nodeMap,
-		kindEntries,
-		options: raw.options,
-		whitespaceText: whitespaceTextOf(raw.visibleExternals, nodeMap)
-	};
-	const prepass = spaceRenderRules(rulesConfig);
-	stampStaticSpacing(nodeMap, grammar, prepass, kindEntries);
-	collectSitePreferences({ nodeMap, kindEntries, renderRules: seamRenderRules(prepass, rulesConfig), options: raw.options });
-	const renderRules = resolveRenderRules(rulesConfig, (spaced) => stampStaticSpacing(nodeMap, grammar, spaced, kindEntries)).seamed;
+	const { raw, nodeMap, kindEntries, generatedIdTables, renderRules } = await emitReadyModel(grammar);
 	const templates = runTemplateEmitter({ grammar, nodeMap, kindEntries, renderRules });
 	return { raw, nodeMap, kindEntries, generatedIdTables, templates, renderRules };
 }
@@ -548,7 +521,7 @@ describe('the typed sink replaces the mark-based Display path', () => {
 		expect(nodeRs).not.toContain('FillOptions');
 		expect(nodeRs).toContain('impl ::sittir_core::prepare::Prepare for FunctionItemNode {');
 		expect(nodeRs).toContain(
-			"fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {"
+			"fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {"
 		);
 		expect(nodeRs).toMatch(/::sittir_core::prepare::Setting::fill\(&mut parts\.\w+, overlay, ctx\.options\.site_arm\(options::/);
 		expect(nodeRs).toContain('        prepare_function_item(self, &mut (), ctx)\n');
@@ -660,7 +633,7 @@ describe('node read facts', () => {
 	it('reads a layout token from its stamp and refuses one with none', () => {
 		const n = node('UseBoundsNode');
 		expect(() => nodeArgs(n, ownId(n), ctx, n.slots)).not.toThrow();
-		const unstamped = { kind: 'use_bounds', lexedInterior: false, renderRule: { type: 'STRING', value: '<' } };
+		const unstamped = { kind: 'use_bounds', renderRule: { type: 'STRING', value: '<' } };
 		expect(() => layoutTokenIds(unstamped as unknown as AbstractAssembledCompound, ctx, [])).toThrow(
 			/'use_bounds' layout token "<" has no stamped kind id/
 		);
@@ -810,9 +783,9 @@ describe('node attributes', () => {
 		const src = await getRustTemplatesRs();
 		expect(src).toContain('use super::{field_ids as field, kind_ids as kind};');
 		expect(src).toMatch(
-			/#\[derive\(Debug, Clone, PartialEq, ::sittir_core::Node\)\]\n#\[node\(kind = kind::FUNCTION_ITEM, displays = \[kind::_METHOD_DECLARATION\], layout = \[kind::FN_KEYWORD, kind::DASH_GT\], words = 44, built_words = 10, fields = FunctionItemFields, prepare = FunctionItemPrepare, view = FunctionItemNodeRecord, prepare_fn = prepare_function_item\)\]\npub struct FunctionItemNode \{\n    #\[wire\(key = "\$type"\)\]\n    pub kind: KindId,/
+			/#\[derive\(Debug, Clone, PartialEq, ::sittir_core::Node\)\]\n#\[node\(kind = kind::FUNCTION_ITEM, displays = \[kind::_METHOD_DECLARATION\], layout = \[kind::FN_KEYWORD, kind::DASH_GT\], words = 46, built_words = 10, fields = FunctionItemFields, prepare = FunctionItemPrepare, view = FunctionItemNodeRecord, prepare_fn = prepare_function_item\)\]\npub struct FunctionItemNode \{\n    #\[wire\(key = "\$type"\)\]\n    pub kind: KindId,/
 		);
-		expect(extractStructBody(src, 'FunctionItemNode')).toMatch(/    #\[slot\(field = field::NAME, word = 19, width = 5, inline = 4, forms = 9, built = 4\)\]\n    pub name: /);
+		expect(extractStructBody(src, 'FunctionItemNode')).toMatch(/    #\[slot\(field = field::NAME, word = 19, width = 7, inline = 6, forms = 9, built = 4\)\]\n    pub name: /);
 		expect(extractStructBody(src, 'ParametersElementsNode')).toMatch(/    #\[flank\(trailing = 0\)\]\n    pub delimiter: Option<::sittir_core::types::Delimiter>,/);
 	});
 
@@ -860,6 +833,15 @@ describe('a slot whose only scalar source is an enum of immediate tokens', () =>
 	}, 120_000);
 });
 
+describe('a slot holding an immediate lexed token', () => {
+	it('keeps its adjacency flag', async () => {
+		const python = await getNodeRsForGrammar('python');
+		expect(extractStructBody(python, 'StringNode')).toContain('pub string_end: ::sittir_core::SlotValue<StringEndNode, true>,');
+		const rust = await getNodeRsForGrammar('rust');
+		expect(extractStructBody(rust, 'RawStringLiteralNode')).toContain('pub raw_string_literal_end: ::sittir_core::SlotValue<RawStringLiteralEndNode, true>,');
+	}, 120_000);
+});
+
 describe('every string a kind writes is stamped', () => {
 	const RENDER_ONLY: ReadonlySet<string> = new Set([INDENT_TEXT, DEDENT_TEXT]);
 	const unstampedStrings = (rule: unknown, found: Set<string> = new Set()): Set<string> => {
@@ -874,7 +856,7 @@ describe('every string a kind writes is stamped', () => {
 		it(`${grammar}: no compound's render rule holds an unstamped string`, async () => {
 			const { nodeMap } = await modelFor(grammar);
 			const compounds: AbstractAssembledCompound[] = [];
-			for (const node of nodeMap.nodes.values()) if (node instanceof AbstractAssembledCompound && !node.lexedInterior) compounds.push(node);
+			for (const node of nodeMap.nodes.values()) if (node instanceof AbstractAssembledCompound && !(node instanceof AssembledLexedPattern)) compounds.push(node);
 			const unstamped = compounds.flatMap((node) => [...unstampedStrings(node.renderRule)].filter((text) => !RENDER_ONLY.has(text)).map((text) => `${node.kind} ${JSON.stringify(text)}`));
 			expect(unstamped).toEqual([]);
 		}, 120_000);
@@ -890,7 +872,7 @@ describe('the wire codec facts', () => {
 		expect(src).toContain('use ::sittir_core::VerbatimNode;');
 		const item = extractStructBody(src, 'FunctionItemNode');
 		expect(item).toMatch(/    #\[wire\(key = "\$_layout"\)\]\n    #\[layout\]\n    pub layout: Option<Box<NodeLayout>>,/);
-		expect(item).toMatch(/    #\[wire\(key = "_name"\)\]\n    #\[slot\(field = field::NAME, word = 19, width = 5, inline = 4, forms = 9, built = 4\)\]\n    pub name: /);
+		expect(item).toMatch(/    #\[wire\(key = "_name"\)\]\n    #\[slot\(field = field::NAME, word = 19, width = 7, inline = 6, forms = 9, built = 4\)\]\n    pub name: /);
 		expect(extractStructBody(src, 'IdentifierNode')).toMatch(/    #\[wire\(key = "\$text"\)\]\n    #\[text\]\n    pub text: String,/);
 	});
 

@@ -652,8 +652,8 @@ impl<'a, T, V: RecordView<'a, T>, const ADJACENT: bool> RecordSlot<'a, T, V, ADJ
 
 impl<'a, T, V: RecordView<'a, T> + Render, const ADJACENT: bool> Render for RecordSlot<'a, T, V, ADJACENT> {
     /// A parsed node renders as its source, unless a write set a side in its
-    /// rows: then it renders through its record, which its prepare wrote
-    /// when no read had.
+    /// rows or prepare gave it a derived delimiter facet: then it renders
+    /// through its record, which its prepare wrote when no read had.
     fn render(&self, w: &mut dyn RenderSink) -> RenderResult {
         match &self.cell {
             SlotCell::Absent => Err(RenderError::Record(ArenaError::MissingField(self.key))),
@@ -661,7 +661,7 @@ impl<'a, T, V: RecordView<'a, T> + Render, const ADJACENT: bool> Render for Reco
             SlotCell::Refused(refused) => Err(RenderError::Record(refused.clone())),
             &SlotCell::Parsed(row, cell) => {
                 let coord = self.coordinate(row).map_err(RenderError::Record)?;
-                if !self.ctx.sources.edited_within(&coord) {
+                if !self.ctx.sources.edited_within(&coord) && self.ctx.prepared.facet(self.site).is_none() {
                     return crate::slot::write_coordinate(&coord, ADJACENT, w);
                 }
                 self.edited(cell).map_err(RenderError::Record)?.render(w)

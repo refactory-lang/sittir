@@ -1,6 +1,6 @@
 import type { PortableMountCall } from '@sittir/types';
 import type { NodeMap } from '../../compiler/types.ts';
-import { AbstractAssembledCompound, AssembledEnum, AssembledList, AssembledSupertype, isKindIdStored, isRequired, separatorRequired, type AssembledNode } from '../../compiler/model/node-map.ts';
+import { AbstractAssembledCompound, AssembledEnum, AssembledList, AssembledSupertype, delimiterPreferenceOf, isKindIdStored, isRequired, separatorRequired, type AssembledNode } from '../../compiler/model/node-map.ts';
 import {
 	classifyFactoryShape,
 	classifyFromEmission,
@@ -229,7 +229,7 @@ export function collectPolymorphWires(nodeMap: NodeMap, options: { silent?: bool
 		const elements = emittedElementsSeats(node, nodeMap, kindEntries);
 		const forwarded = forwardedSeatsOf(node);
 		const claimed = new Set(subs.map((sub) => sub.slot));
-		const tuples = tupleSeatOf(node, nodeMap).filter((e) => isEmitted(e.group.kind) && !claimed.has(e.slot));
+		const tuples = classifyFactoryShape(node, nodeMap) === 'forwarded' ? [] : tupleSeatOf(node, nodeMap).filter((e) => isEmitted(e.group.kind) && !claimed.has(e.slot));
 		visiting.add(node.kind);
 		for (const s of [...flattens, ...elements, ...tuples, ...(forwarded?.elements ?? [])]) visit(s.group);
 		if (forwarded !== undefined) visit(forwarded.list);
@@ -673,8 +673,10 @@ function flattenShape(
 	keys: readonly FlattenKey[],
 	m: string,
 	positional: boolean,
-	directKey: string | undefined
+	directKey: string | undefined,
+	always: { readonly optional: boolean; readonly preferred: string | undefined } | undefined
 ): SeatShape {
+	if (always !== undefined) return alwaysFlattenShape(k, keys, m, directKey, always.optional, always.preferred);
 	if (positional) {
 		const typeFor = (p: string, c: string): string => `${p} | ${c}[0]`;
 		return {
@@ -722,6 +724,29 @@ function flattenShape(
 			`	};`
 		],
 		typeFor: flattened
+	};
+}
+
+function alwaysFlattenShape(k: string, keys: readonly FlattenKey[], m: string, directKey: string | undefined, optional: boolean, preferred: string | undefined): SeatShape {
+	const keyOf = Object.fromEntries(keys.map(({ key, field }) => [key, field]));
+	const groupOf = (config: string): string => (directKey === undefined ? config : `{ ${keys.find(({ field }) => field === directKey)?.key ?? directKey}${optional ? '?' : ''}: ${config} }`);
+	const childOptions = preferred === undefined ? '' : `, { ${preferred}: (options as { readonly ${preferred}?: unknown } | undefined)?.${preferred} }`;
+	const buildGroup = directKey === undefined ? `${CALL_C}(inner${childOptions})` : `${CALL_C}(inner[${JSON.stringify(directKey)}]${childOptions})`;
+	return {
+		method: [
+			`export const ${m} = <${PF}, ${CF}>(parent: PF, child: CF) =>`,
+			`	(config?: unknown, ${OPTS}): ReturnType<PF> => {`,
+			`		const keys: Record<string, string> = ${JSON.stringify(keyOf)};`,
+			`		const rest: Record<string, unknown> = {};`,
+			`		const inner: Record<string, unknown> = {};`,
+			`		for (const [key, value] of Object.entries(_o(config ?? {}))) {`,
+			`			if (Object.hasOwn(keys, key)) inner[keys[key]!] = value;`,
+			`			else rest[key] = value;`,
+			`		}`,
+			`		return ${CALL_PO(`{ ...rest, ${k}: ${buildGroup} }`)};`,
+			`	};`
+		],
+		typeFor: (p, c) => (keys.length === 0 ? `OmitEach<NonNullable<${p}>, '${k}'>` : `OmitEach<NonNullable<${p}>, '${k}'> & ${groupOf(`${c}[0]`)}`)
 	};
 }
 
@@ -796,6 +821,11 @@ interface SeatEmission {
 	readonly spread: boolean;
 }
 
+function preferredFacetOf(parent: AssembledNode, seat: FlattenSeat | FlattenedSeat): string | undefined {
+	const preference = delimiterPreferenceOf(parent);
+	return preference !== undefined && preference.open.storageKey === seat.slot.storageKey ? preference.facet.propertyName : undefined;
+}
+
 function flattenedKeysOf(seat: FlattenSeat | FlattenedSeat): readonly FlattenKey[] {
 	if (!('keys' in seat)) throw new Error(`flattenedKeysOf: '${seat.group.kind}' in '${seat.slot.propertyName}' is not a flatten seat`);
 	return seat.keys;
@@ -818,13 +848,29 @@ function seatEmission(
 			? { strict: seatedKeyOf(wires.byKind.get(seat.group.kind)!.parentKey), coerce: seatedKeyOf(wires.byKind.get(seat.group.kind)!.parentKey), set: seat.group.kind }
 			: {
 					strict: `F.${seat.group.rawFactoryName}`,
-					coerce: wires.coerceEmitted(seat.group) ? `C.${seat.group.fromFunctionName}` : undefined
+					coerce: wires.coerceEmitted(seat.group)
+						? `C.${seat.group.fromFunctionName}`
+						: 'always' in seat && seat.always
+							? `F.${seat.group.rawFactoryName}`
+							: undefined
 				};
 	const s =
 		kind === 'tuple'
 			? tupleShape(seat.slot.propertyName, m)
 			: kind === 'flatten'
-			? flattenShape(seat.slot.propertyName, flattenedKeysOf(seat), m, direct, seat.directKey)
+			? flattenShape(
+					seat.slot.propertyName,
+					flattenedKeysOf(seat),
+					m,
+					direct,
+					seat.directKey,
+					'always' in seat && seat.always
+						? {
+								optional: seat.directKey !== undefined && !isRequired(seat.group.slots.find((slot) => slot.propertyName === seat.directKey)!),
+								preferred: preferredFacetOf(parent, seat)
+							}
+						: undefined
+				)
 			: elementsShape(
 					seat.slot.propertyName,
 					configKeysOf(seat.group),

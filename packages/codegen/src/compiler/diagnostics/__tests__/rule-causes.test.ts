@@ -508,6 +508,60 @@ describe('unverifiedRuleNames counts a vocabulary helper only when every rule re
 		expect(unverifiedRuleNames(raw(causes, references, ['root'], { _verified_copy: 'verified' }))).toEqual([]);
 		expect(unverifiedRuleNames(raw(causes, references, ['root']))).toEqual(['helper']);
 	});
+
+	it('does not count a helper reached only through helpers that verified rules reach', () => {
+		const causes = { verified, outer: { kind: 'vocabulary' }, inner: { kind: 'vocabulary' } };
+		const references = [
+			{ from: 'verified', to: 'outer' },
+			{ from: 'outer', to: 'inner' }
+		];
+		expect(unverifiedRuleNames(raw(causes, references))).toEqual([]);
+	});
+
+	it('counts a nested helper whose outer helper an upstream rule or an unverified declaration also reaches', () => {
+		const loose = { kind: 'reauthored' as const, causes: [{ cause: 'alias-shape' as const }] };
+		const causes = { verified, loose, outer: { kind: 'vocabulary' }, inner: { kind: 'vocabulary' } };
+		const nested = [
+			{ from: 'verified', to: 'outer' },
+			{ from: 'outer', to: 'inner' }
+		];
+		expect(unverifiedRuleNames(raw(causes, [...nested, { from: 'root', to: 'outer' }], ['root']))).toEqual(['inner', 'loose', 'outer']);
+		expect(unverifiedRuleNames(raw(causes, [...nested, { from: 'loose', to: 'outer' }]))).toEqual(['inner', 'loose', 'outer']);
+	});
+
+	it('does not count a helper cycle that only verified rules reach, and terminates', () => {
+		const causes = { verified, a: { kind: 'vocabulary' }, b: { kind: 'vocabulary' } };
+		const references = [
+			{ from: 'verified', to: 'a' },
+			{ from: 'a', to: 'b' },
+			{ from: 'b', to: 'a' }
+		];
+		expect(unverifiedRuleNames(raw(causes, references))).toEqual([]);
+	});
+
+	it('counts the same helper cycle when an upstream root also reaches it', () => {
+		const causes = { verified, a: { kind: 'vocabulary' }, b: { kind: 'vocabulary' } };
+		const references = [
+			{ from: 'verified', to: 'a' },
+			{ from: 'a', to: 'b' },
+			{ from: 'b', to: 'a' },
+			{ from: 'root', to: 'b' }
+		];
+		expect(unverifiedRuleNames(raw(causes, references, ['root']))).toEqual(['a', 'b']);
+	});
+
+	it('counts a helper that is itself a root: the start rule, an extra, an external or the word', () => {
+		const causes = { verified, start: { kind: 'vocabulary' }, extra: { kind: 'vocabulary' }, external: { kind: 'vocabulary' }, word: { kind: 'vocabulary' } };
+		const references = ['start', 'extra', 'external', 'word'].map((to) => ({ from: 'verified', to }));
+		const rooted = {
+			...(raw(causes, references) as object),
+			rules: { start: {}, verified: {} },
+			extras: [{ type: 'SYMBOL', name: 'extra' }],
+			externals: [{ type: 'SYMBOL', name: 'external' }],
+			word: 'word'
+		} as never;
+		expect(unverifiedRuleNames(rooted)).toEqual(['external', 'extra', 'start', 'word']);
+	});
 });
 
 describe('a reauthored declaration with an empty cause list', () => {

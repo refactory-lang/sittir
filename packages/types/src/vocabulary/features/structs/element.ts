@@ -14,7 +14,12 @@ export namespace Element {
 		export interface Field<G extends GrammarContext<G>> extends SubKindOf<V.Element.Struct<G>> {
 			// claimed by r
 			readonly $kind: 'element.struct.field';
-			readonly field: G['identifier'] | V.Literal.Number.Integer<G>;
+			readonly field:
+				| G['identifier']
+				| V.Literal.Number.Integer<G>
+				| V.Literal.Number.Integer.Binary<G>
+				| V.Literal.Number.Integer.Hex<G>
+				| V.Literal.Number.Integer.Octal<G>;
 			readonly value?: G['slots']['element.struct.field']['value'];
 		}
 	}

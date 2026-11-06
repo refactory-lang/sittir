@@ -11,13 +11,13 @@ const CEILING: Readonly<Record<string, readonly string[]>> = {
 };
 
 interface PortableModel {
-	readonly kinds: Readonly<Record<string, { readonly members?: readonly { readonly name: string; readonly path: unknown; readonly spelled?: true }[] }>>;
+	readonly kinds: Readonly<Record<string, { readonly members?: readonly { readonly name: string; readonly route: string; readonly path: unknown; readonly spelled?: true }[] }>>;
 }
 
 const unbuildable = (grammar: string): string[] => {
 	const model = JSON.parse(readFileSync(join(grammarPackageDir(grammar), 'src', 'node-model-portable.json5'), 'utf8')) as PortableModel;
 	return Object.entries(model.kinds)
-		.flatMap(([kind, { members = [] }]) => members.filter((m) => m.path === null && m.spelled !== true).map((m) => `${kind}.${m.name}`))
+		.flatMap(([kind, { members = [] }]) => members.filter((m) => m.path === null && m.spelled !== true && m.route !== 'delimiter').map((m) => `${kind}.${m.name}`))
 		.sort();
 };
 

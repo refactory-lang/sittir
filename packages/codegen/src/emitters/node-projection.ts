@@ -3,7 +3,7 @@ import { assertNever } from '../polymorph-variant.ts';
 import { isParserHiddenKind } from '../dsl/symbol-table.ts';
 import type { AssembledNonterminal, AssembledNode } from '../compiler/model/node-map.ts';
 import {
-	AbstractAssembledCompound,
+	AbstractAssembledCompound, AssembledLexedPattern,
 	AssembledAlias,
 	AssembledList,
 	AssembledSupertype,
@@ -76,6 +76,7 @@ function isConcreteNodeNode(node: AssembledNode): boolean {
 		case 'enum':
 		case 'list':
 		case 'branch':
+		case 'lexedPattern':
 		case 'envelope':
 		case 'polymorph':
 		case 'alias':
@@ -248,7 +249,7 @@ export function layoutTokenIds(node: AbstractAssembledCompound, ctx: ReadFactsCt
 			}
 		}
 	};
-	if (!node.lexedInterior) walk(node.renderRule);
+	if (!(node instanceof AssembledLexedPattern)) walk(node.renderRule);
 	return ids;
 }
 

@@ -720,11 +720,32 @@ export function supertypesOf(grammar: GrammarRecord): ReadonlySet<string> {
 	return listedNames(grammar.supertypes);
 }
 
+function ownSymbolNames(rule: unknown, out: Set<string> = new Set()): Set<string> {
+	if (Array.isArray(rule)) for (const r of rule) ownSymbolNames(r, out);
+	else if (isRecord(rule) && !(rule.type === 'ALIAS' && rule.named === true)) {
+		if (rule.type === 'SYMBOL' && typeof rule.name === 'string') out.add(rule.name);
+		for (const value of Object.values(rule)) ownSymbolNames(value, out);
+	}
+	return out;
+}
+
+const armSymbolNames = (rule: unknown): Set<string> => {
+	const core = unwrapPrec(rule);
+	if (!isRecord(core) || core.type !== 'CHOICE' || !Array.isArray(core.members)) return ownSymbolNames(rule);
+	const out = new Set<string>();
+	for (const member of core.members) {
+		const arm = unwrapPrec(member);
+		ownSymbolNames(isRecord(arm) && arm.type === 'ALIAS' && arm.named === true ? arm.content : member, out);
+	}
+	return out;
+};
+
 export function transparentReach(rules: GrammarRecord, from: string, stop: ReadonlySet<string>): Set<string> {
 	const out = new Set<string>([from]);
 	const queue = [from];
 	while (queue.length > 0) {
-		for (const ref of symbolNames(rules[queue.pop()!])) {
+		const at = queue.pop()!;
+		for (const ref of (stop.has(at) ? armSymbolNames : ownSymbolNames)(rules[at])) {
 			if (isParserHiddenName(ref) && ref in rules && !stop.has(ref) && !out.has(ref)) {
 				out.add(ref);
 				queue.push(ref);

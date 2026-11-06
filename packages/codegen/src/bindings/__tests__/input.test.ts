@@ -22,7 +22,12 @@ const RECORD = {
 			]
 		},
 		{ kind: 'call_expression', renamedFrom: 'call', subtypes: [] },
-		{ kind: 'items', modelType: 'list', elementKinds: ['item'] }
+		{
+			kind: 'items',
+			modelType: 'list',
+			elementKinds: ['entry'],
+			slots: [{ name: 'item', accessor: 'items', multiple: true, values: [{ kind: 'node-ref', multiplicity: 'array', name: 'item', parseKind: 'entry' }] }]
+		}
 	]
 };
 
@@ -34,7 +39,7 @@ describe('slotModelOf', () => {
 			{ name: 'operator', propertyName: 'operator', required: true, multiple: false, storage: 'verbatim', kinds: ['minus'], terminals: ['+'] },
 			{ name: 'argument', propertyName: 'arguments', required: false, multiple: true, storage: 'verbatim', kinds: ['expr'], terminals: [] }
 		]);
-		expect(model.get('items')).toMatchObject({ modelType: 'list', elementKinds: ['item'], slots: [] });
+		expect(model.get('items')).toMatchObject({ modelType: 'list', elementKinds: ['item'] });
 		expect(model.get('call_expression')?.modelType).toBe('branch');
 	});
 });

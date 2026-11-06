@@ -27,12 +27,9 @@ describe('a text leaf slot takes a built node strictly and its text loosely', ()
 		}
 	);
 
-	it.each([['`'], ["r'"], ['"""']])('builds the string start %j the scanner reads', (text) => {
-		expect(py.build.stringStart(text).$text()).toBe(text);
-	});
-
-	it.each([['`'], ["\\'"], ['\\\\"']])('builds the string end %j the scanner reads, backslashes of a raw string included', (text) => {
-		expect(py.build.stringEnd(text).$text()).toBe(text);
+	it('builds no string delimiter on its own: the string derives them', () => {
+		expect('stringStart' in py.build).toBe(false);
+		expect('stringEnd' in py.build).toBe(false);
 	});
 
 	it('rejects bare text strictly in a node slot', () => {

@@ -702,52 +702,29 @@ fn a_record_rendered_as_a_render_root_drops_the_seams_its_holder_gave_it() {
 }
 
 #[test]
-fn a_native_candidate_keeps_inner_trivia_and_leaves_the_tree_s_sides_unchanged() {
+fn a_record_rendered_as_a_render_root_keeps_its_inner_trivia_and_leaves_the_tree_s_render_unchanged() {
     let mut engine = rust().engine();
     let options = engine.options().clone();
     let source = "fn f() {\n  // outside\n  call(/* inside */ arg); // tail\n}\n";
     let tree = RustRenders::parse(&mut engine, source);
-    let statement = node_spanning(
-        &tree,
-        source,
-        "expression_statement",
-        "call(/* inside */ arg);",
-    );
-    let at = tree
+    let statement = node_spanning(&tree, source, "expression_statement", "call(/* inside */ arg);");
+    let record = tree
         .hydrate_record::<sittir_rust::render::AnyNode>(statement, Depth::All)
-        .expect("a deep read");
-    let record = at.expect("a statement record");
-    let ordinary = tree
-        .render_record(record, ChangedEdges::default(), &options, &tree)
-        .expect("the ordinary render");
-    assert_eq!(
-        tree.render_candidate::<sittir_rust::render::AnyNode>(statement, &options, &tree)
-            .expect("the candidate render"),
-        "call(/* inside */ arg);"
-    );
-    assert_eq!(
-        tree.render_record(record, ChangedEdges::default(), &options, &tree)
-            .expect("the ordinary render after the candidate"),
-        ordinary
-    );
-
-    let leaf = node_spanning(&tree, source, "identifier", "arg");
-    let at = tree
-        .hydrate_record::<sittir_rust::render::AnyNode>(leaf, Depth::All)
-        .expect("a leaf read");
-    assert_eq!(at, None);
-    assert_eq!(
-        tree.render_candidate::<sittir_rust::render::AnyNode>(leaf, &options, &tree)
-            .expect("a recordless candidate"),
-        "arg"
-    );
+        .expect("a deep read")
+        .expect("a statement record");
+    let ordinary = tree.render_record(record, ChangedEdges::default(), &options, &tree).expect("the ordinary render");
+    let both = ChangedEdges { leading: true, trailing: true };
+    assert_eq!(tree.render_record(record, both, &options, &tree).expect("the root render"), "// outside\ncall(/* inside */ arg); // tail\n");
+    assert_eq!(tree.render_record(record, ChangedEdges::default(), &options, &tree).expect("the ordinary render after the root render"), ordinary);
 }
 
 #[test]
-fn a_list_candidate_keeps_the_trailing_comment_of_its_child() {
+fn a_list_record_rendered_as_a_render_root_keeps_the_trailing_comment_of_its_child() {
+    type Python = Renders<sittir_python::PythonGrammar, sittir_python::render::AnyNode>;
     let renders = python();
     let mut engine = renders.engine();
     let options = engine.options().clone();
+    let both = ChangedEdges { leading: true, trailing: true };
     for (source, expected) in [
         ("print b # bye\n", "print b # bye\n"),
         ("# outside\nprint b # bye\n", "print b # bye\n"),
@@ -755,40 +732,32 @@ fn a_list_candidate_keeps_the_trailing_comment_of_its_child() {
         ("a; b # tail\n", "a; b # tail\n"),
         ("type IntFunc[**P] = Callable[P, int] # ParamSpec\n", "type IntFunc[**P] = Callable[P, int] # ParamSpec\n"),
     ] {
-        let tree = Renders::<sittir_python::PythonGrammar, sittir_python::render::AnyNode>::parse(&mut engine, source);
-        Renders::<sittir_python::PythonGrammar, sittir_python::render::AnyNode>::first_read(&tree, Depth::All).expect("a deep read");
-        let candidate = tree
-            .record_candidates::<sittir_python::render::AnyNode>(NodeIndex::ROOT)
-            .expect("the stored candidates")
-            .into_iter()
-            .find(|coord| coord.kind == Some(sittir_python::render::kind_ids::SIMPLE_STATEMENTS_ELEMENTS))
-            .expect("the statement list");
         for depth in [Depth::ONE, Depth::All] {
-            let tree = Renders::<sittir_python::PythonGrammar, sittir_python::render::AnyNode>::parse(&mut engine, source);
-            tree.read_record::<sittir_python::render::AnyNode>(candidate.index, depth).expect("the candidate read");
+            let tree = Python::parse(&mut engine, source);
+            let list = index_of(&tree, sittir_python::render::kind_ids::SIMPLE_STATEMENTS_ELEMENTS, 0);
+            let record = tree
+                .read_record::<sittir_python::render::AnyNode>(list, depth)
+                .expect("the list read")
+                .expect("a list record");
             for _ in 0..2 {
-                assert_eq!(
-                    tree.render_candidate::<sittir_python::render::AnyNode>(candidate.index, &options, &tree)
-                        .expect("the list candidate"),
-                    expected,
-                    "{source:?}, depth: {depth:?}"
-                );
+                assert_eq!(tree.render_record(record, both, &options, &tree).expect("the list render"), expected, "{source:?}, depth: {depth:?}");
             }
         }
     }
 }
 
 #[test]
-fn a_candidate_keeps_line_breaks_between_unmodified_control_flow_children() {
+fn a_record_rendered_as_a_render_root_keeps_line_breaks_between_unmodified_control_flow_children() {
+    type TypeScript = Renders<sittir_typescript::TypeScriptGrammar, sittir_typescript::render::AnyNode>;
     let mut engine = Engine::new(sittir_typescript::TypeScriptGrammar, sittir_typescript::render::options::defaults()).expect("an engine");
     let options = engine.options().clone();
     let source = "try {}\ncatch (e: unknown) {}\nfinally {}";
-    let tree = Renders::<sittir_typescript::TypeScriptGrammar, sittir_typescript::render::AnyNode>::parse(&mut engine, source);
-    Renders::<sittir_typescript::TypeScriptGrammar, sittir_typescript::render::AnyNode>::first_read(&tree, Depth::All).expect("a deep read");
-    let candidate = node_spanning(&tree, source, "try_statement", source);
+    let tree = TypeScript::parse(&mut engine, source);
+    TypeScript::first_read(&tree, Depth::All).expect("a deep read");
+    let statement = node_spanning(&tree, source, "try_statement", source);
+    let record = tree.written_record::<sittir_typescript::render::AnyNode>(statement).expect("a statement record");
     assert_eq!(
-        tree.render_candidate::<sittir_typescript::render::AnyNode>(candidate, &options, &tree)
-            .expect("the control-flow candidate"),
+        tree.render_record(record, ChangedEdges { leading: true, trailing: true }, &options, &tree).expect("the root render"),
         source
     );
 }

@@ -54,15 +54,6 @@ it.each(['result', 'cases', 'output', 'calls', 'corpus'] as const)(
 	}
 );
 
-it('retains different deep-read formatting across storages when work and canonical results agree', () => {
-	const object = sample('object'),
-		arena = sample('arena');
-	arena.buckets[0]!.render.bytes++;
-	arena.buckets[0]!.render.sha256 = 'native-source-formatting';
-	const rows = summarizeValidationStorage([object, arena]);
-	expect(rows[0]!.render).toEqual({ object: object.buckets[0]!.render, arena: arena.buckets[0]!.render });
-});
-
 it.each(['read-render-parse', 'factory-render-parse', 'ir-render-parse'] as const)(
 	'refuses output drift within %s storage rounds',
 	(bucket) => {
@@ -72,7 +63,7 @@ it.each(['read-render-parse', 'factory-render-parse', 'ir-render-parse'] as cons
 	}
 );
 
-it.each([1, 2])('requires exact built output for bucket index %s across storages', (index) => {
+it.each([0, 1, 2])('requires exact output for bucket index %s across storages', (index) => {
 	const object = sample('object'),
 		arena = sample('arena');
 	arena.buckets[index]!.render.bytes++;

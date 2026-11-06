@@ -26,13 +26,13 @@ export interface ValidationStorageRun {
 	};
 }
 
-export function bucketFingerprint(row: ValidationBucketSample, includeRenderedBytes = true): string {
+export function bucketFingerprint(row: ValidationBucketSample): string {
 	return JSON.stringify([
 		row.bucket,
 		row.resultSha256,
 		row.counts,
 		row.work,
-		includeRenderedBytes ? row.render : { calls: row.render.calls },
+		row.render,
 		roundtripPhases.map((phase) => [phase, row.phases[phase].calls, row.phases[phase].throws])
 	]);
 }
@@ -44,18 +44,8 @@ export function summarizeValidationStorage(samples: readonly (ValidationStorageR
 		if (JSON.stringify(first.buckets.map((bucket) => bucket.bucket)) !== JSON.stringify(validationBuckets))
 			throw new Error(`missing validation bucket for ${grammar}`);
 		const byMode = (storage: NodeStorage) => rows.filter((row) => row.storage === storage);
-		const fingerprint = (row: ValidationStorageRun, exactOutput = true) =>
-			JSON.stringify([
-				row.corpus,
-				row.buckets.map((bucket) => bucketFingerprint(bucket, exactOutput || bucket.bucket !== 'read-render-parse'))
-			]);
-		for (const row of rows) {
-			if (
-				fingerprint(row, false) !== fingerprint(first, false) ||
-				fingerprint(row) !== fingerprint(byMode(row.storage)[0]!)
-			)
-				throw new Error(`validation workload mismatch for ${grammar}`);
-		}
+		const fingerprint = (row: ValidationStorageRun) => JSON.stringify([row.corpus, row.buckets.map((bucket) => bucketFingerprint(bucket))]);
+		for (const row of rows) if (fingerprint(row) !== fingerprint(first)) throw new Error(`validation workload mismatch for ${grammar}`);
 		const rounds = (storage: NodeStorage) =>
 			byMode(storage)
 				.map((row) => row.round)

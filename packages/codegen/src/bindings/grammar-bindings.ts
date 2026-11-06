@@ -21,8 +21,8 @@ import { isPrecWrapper } from '../types/runtime-shapes.ts';
 import type { EvaluatedGrammar, RawGrammar } from '../compiler/types.ts';
 import { isEnrichGroupLiftSymbol } from '../dsl/transform/transform-path.ts';
 import { groupLiftNames, isGroupLiftReference, isVisibleGroupAlias } from '../dsl/rule-metadata.ts';
-import { type BindingFacts, type LiteralText, type MemberFact, type ModelSlot, type RefinedClaim, type SlotModel, WILDCARD, isNamedMember, literalClaimOf, refineClaims } from './facts.ts';
-import { type GrammarRoutes, type MemberRoute, formsOf } from './routes.ts';
+import { type BindingFacts, type LiteralText, type MemberFact, type ModelSlot, type RefinedClaim, type SlotModel, WILDCARD, isNamedMember, literalClaimOf } from './facts.ts';
+import { type GrammarRoutes, type MemberRoute, formsOf, memberTargets, readsByKind } from './routes.ts';
 import { boundKindName } from './names.ts';
 import { deriveLeads } from './leads.ts';
 import { isParserHiddenName, symbolFactsOf, type SymbolSource } from '../dsl/rule-patterns.ts';
@@ -69,7 +69,7 @@ export interface GrammarBindingsInput {
 	readonly wordMatcher: RegExp | undefined;
 	readonly layerRules: EvaluatedGrammar['rules'];
 	readonly vocabMembers: ReadonlyMap<string, ReadonlySet<string>>;
-	readonly routes: Pick<GrammarRoutes, 'members' | 'vocabOf'>;
+	readonly routes: Pick<GrammarRoutes, 'members' | 'vocabOf' | 'claims'>;
 	readonly model: SlotModel;
 }
 
@@ -329,7 +329,7 @@ export function deriveGrammarBindings(input: GrammarBindingsInput): {
 	const left = (cause: string, row: string): void => {
 		residue.push({ cause, row });
 	};
-	const claims = refineClaims(facts.claims, (kind) => formsOf(input.model, kind));
+	const claims = routes.claims;
 	const placed = (c: RefinedClaim): boolean => c.within.length > 0;
 	const naming = new Map<string, RefinedClaim>();
 	for (const c of claims)
@@ -543,10 +543,11 @@ export function deriveGrammarBindings(input: GrammarBindingsInput): {
 	const realizedMembers: string[] = [];
 	const candidates: { row: string; request: FieldRequest; group?: string }[] = [];
 	const named = facts.members.filter(isNamedMember);
+	const targets = memberTargets(model, readsByKind(model, facts.claims));
 	for (const m of named) {
 		const row = `${m.owner}.${m.name}`;
-		const vocab = routes.vocabOf.get(m.owner);
-		if (vocab !== undefined && vocabMembers.get(vocab)?.has(m.name) === false) {
+		const paths = targets(m);
+		if (paths.length > 0 && paths.every((path) => vocabMembers.get(path)?.has(m.name) === false)) {
 			left('member not in the vocabulary', row);
 			continue;
 		}
@@ -557,6 +558,10 @@ export function deriveGrammarBindings(input: GrammarBindingsInput): {
 		}
 		if (m.route === 'nested') {
 			left('nested route', row);
+			continue;
+		}
+		if (m.route === 'presence' && m.anchor !== undefined) {
+			realizedMembers.push(row);
 			continue;
 		}
 		if (m.route === 'presence' && m.via.length > 0) {

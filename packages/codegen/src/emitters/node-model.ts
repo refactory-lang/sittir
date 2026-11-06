@@ -17,6 +17,8 @@ import {
 	isNonEmpty,
 	valueParseKindsOf,
 	storageKindOfRef,
+	delimiterPreferenceOf,
+	type DelimiterFacetRole,
 	AssembledList
 } from '../compiler/model/node-map.ts';
 import { buildFactoryMap } from './factory-map.ts';
@@ -28,6 +30,7 @@ import { relaxationTable, type RelaxationTable } from './kind-id-rust.ts';
 import { bareAcceptClosure, transparentEnvelopeTextLeaves } from './from.ts';
 import { interiorOf } from './interior.ts';
 import { declaredDelimiterDefault } from './factories.ts';
+import { layoutTokenKindsOf } from '../compiler/model/layout-kinds.ts';
 import type { FactoryShape, FactorySlotMeta } from './factory-map.ts';
 import type { PolymorphVariantMap } from '../polymorph-variant.ts';
 
@@ -44,6 +47,8 @@ interface SerializedValue {
 	parseKind?: string;
 	unresolved?: boolean;
 	value?: string;
+	canonical?: string;
+	readOnly?: true;
 	seat?: Seat;
 	default?: true;
 }
@@ -59,6 +64,7 @@ interface SerializedSlot {
 	blank?: true;
 	optionDefault?: number | string;
 	separator?: { default?: number };
+	delimiterRole?: DelimiterFacetRole;
 	values: SerializedValue[];
 }
 
@@ -71,6 +77,7 @@ interface SerializedNodeBase {
 	builderPathAlternates?: readonly (readonly string[])[];
 	seated?: true;
 	unit?: true;
+	layout?: true;
 	renamedFrom?: string;
 	splitFrom?: string;
 	aliasStorage?: string;
@@ -85,10 +92,12 @@ interface SerializedNodeBase {
 }
 
 interface SerializedCompoundNode extends SerializedNodeBase {
-	modelType: 'branch' | 'envelope' | 'polymorph' | 'alias';
+	modelType: 'branch' | 'lexedPattern' | 'envelope' | 'polymorph' | 'alias';
 	slots: SerializedSlot[];
 	fullForm?: FullForm;
 	interiorPart?: string;
+	delimiterOf?: string;
+	preference?: { readonly name: string; readonly slot: string; readonly open: string; readonly default: string };
 }
 
 interface SerializedLeaf extends SerializedNodeBase {
@@ -111,6 +120,7 @@ interface SerializedEnum extends SerializedNodeBase {
 interface SerializedSupertype extends SerializedNodeBase {
 	modelType: 'supertype';
 	subtypes: string[];
+	defaultSubtype?: string;
 }
 
 interface SerializedList extends SerializedNodeBase {
@@ -118,7 +128,9 @@ interface SerializedList extends SerializedNodeBase {
 	nonEmpty: boolean;
 	leadingDelimiter: 'mandatory' | 'optional' | 'none';
 	trailingDelimiter: 'mandatory' | 'optional' | 'none';
+	singleElementNeedsTrailing?: true;
 	defaultDelimiter: string;
+	separator?: string;
 	separatorCandidates?: string[];
 	elementKinds: string[];
 	elementSeats?: Seat[];
@@ -163,6 +175,7 @@ export function buildNodeModel(nodeMap: NodeMap, generatedIdTables: GeneratedIdT
 	if (unshown.length > 0)
 		throw new Error(`node model: ${unshown.join(', ')} show as a display but have no node to carry it`);
 
+	const layoutKinds = layoutTokenKindsOf(nodeMap);
 	const nodes: SerializedNode[] = [];
 	const kinds = Array.from(nodeMap.nodes.keys()).sort();
 	for (const kind of kinds) {
@@ -172,7 +185,7 @@ export function buildNodeModel(nodeMap: NodeMap, generatedIdTables: GeneratedIdT
 		if (factorySlots !== undefined && factoryData.factoryShapes[kind] === undefined) {
 			throw new Error(`node model: '${kind}' has factory slots but no factory shape, so its readers cannot tell it has a factory`);
 		}
-		const serialized = serializeNode(node, nodeMap, wires, factorySlots);
+		const serialized = serializeNode(node, nodeMap, wires, factorySlots, layoutKinds);
 		const factoryShape = factoryData.factoryShapes[kind];
 		if (factoryShape !== undefined) serialized.factoryShape = factoryShape;
 		const forwardsTo = factoryData.forwardsTo[kind];
@@ -228,7 +241,7 @@ function enumMembersOf(node: AssembledEnum): { kind: string; text: string }[] {
 
 type FactorySlots = Readonly<Record<string, FactorySlotMeta>> | undefined;
 
-function serializeNode(node: AssembledNode, nodeMap: NodeMap, wires: PolymorphWires, factorySlots: FactorySlots): SerializedNode {
+function serializeNode(node: AssembledNode, nodeMap: NodeMap, wires: PolymorphWires, factorySlots: FactorySlots, layoutKinds: ReadonlySet<string>): SerializedNode {
 	const base: SerializedNodeBase = {
 		kind: node.kind,
 		modelType: node.modelType,
@@ -238,6 +251,7 @@ function serializeNode(node: AssembledNode, nodeMap: NodeMap, wires: PolymorphWi
 		...(node.builderPathAlternates === undefined ? {} : { builderPathAlternates: node.builderPathAlternates }),
 		...(node.seated ? { seated: true } : {}),
 		...(node.unit ? { unit: true } : {}),
+		...(layoutKinds.has(node.kind) ? { layout: true } : {}),
 		...(node.renamedFrom !== undefined ? { renamedFrom: node.renamedFrom } : {}),
 		...(node.splitFrom !== undefined ? { splitFrom: node.splitFrom } : {}),
 		...(node.aliasStorage !== undefined ? { aliasStorage: node.aliasStorage } : {}),
@@ -245,12 +259,18 @@ function serializeNode(node: AssembledNode, nodeMap: NodeMap, wires: PolymorphWi
 	};
 	switch (node.modelType) {
 		case 'branch':
+		case 'lexedPattern':
 		case 'envelope':
 		case 'polymorph':
 		case 'alias':
 			return serializeCompoundNode(node, base, nodeMap, wires, factorySlots);
 		case 'supertype':
-			return { ...base, modelType: 'supertype', subtypes: [...node.subtypeNames].sort() };
+			return {
+				...base,
+				modelType: 'supertype',
+				subtypes: [...node.subtypeNames].sort(),
+				...(node.defaultVariantSubtype === undefined ? {} : { defaultSubtype: storageKindOfRef(node.defaultVariantSubtype.node) })
+			};
 		case 'pattern':
 			return {
 				...base,
@@ -275,7 +295,9 @@ function serializeNode(node: AssembledNode, nodeMap: NodeMap, wires: PolymorphWi
 				nonEmpty: node.nonEmpty,
 				leadingDelimiter: node.leadingDelimiter,
 				trailingDelimiter: node.trailingDelimiter,
+				...(node.singleElementNeedsTrailing ? { singleElementNeedsTrailing: true as const } : {}),
 				defaultDelimiter: declaredDelimiterDefault(node),
+				...(node.separator === undefined ? {} : { separator: node.separator }),
 				...(node.separatorRule === undefined ? {} : { separatorCandidates: [...node.separatorCandidateKindNames] }),
 				elementKinds: [...valueParseKindsOf({ values: node.elements })],
 				...seatsOfList(node, nodeMap, wires),
@@ -319,6 +341,9 @@ function serializeCompoundNode(
 		slots: node.slots.map((slot) => serializeSlot(node, slot, nodeMap, wires, factorySlots))
 	};
 	if (node.fullForm !== undefined) out.fullForm = node.fullForm;
+	if (node.delimiterOf !== undefined) out.delimiterOf = node.delimiterOf;
+	const preference = delimiterPreferenceOf(node);
+	if (preference !== undefined) out.preference = { name: preference.facet.propertyName, slot: preference.facet.name, open: preference.open.name, default: preference.facet.optionDefaultArm! };
 	const parts = interiorOf(node)?.slots ?? [];
 	if (parts.length === 1 && parts[0]!.flag !== true) out.interiorPart = parts[0]!.name;
 	return out;
@@ -343,6 +368,7 @@ function serializeSlot(
 		...(meta?.blank === true ? { blank: true } : {}),
 		...(meta?.optionDefault === undefined ? {} : { optionDefault: meta.optionDefault }),
 		...(meta?.separator === undefined ? {} : { separator: meta.separator }),
+		...(slot.delimiterRole === undefined ? {} : { delimiterRole: slot.delimiterRole }),
 		values: slot.values.map((v) =>
 			serializeValue(v, spelledSeat(parent.kind, seatOf(parent, slot, v, nodeMap, wires.byKind.get(parent.kind)), wires))
 		)
@@ -369,6 +395,8 @@ function serializeValue(v: NodeOrTerminal, seat: Seat | undefined): SerializedVa
 		multiplicity: v.multiplicity,
 		value: v.value
 	};
+	if (v.canonical !== undefined && v.canonical !== v.value) out.canonical = v.canonical;
+	if (v.readOnly === true) out.readOnly = true;
 	if (v.parseKind?.name !== undefined) out.parseKind = v.parseKind.name;
 	return out;
 }

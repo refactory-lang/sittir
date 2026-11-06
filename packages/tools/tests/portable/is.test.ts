@@ -183,18 +183,15 @@ describe('portable is: python', async () => {
 		}
 	});
 
-	it('reads a splat as a rest pattern or type, and a double splat as its map refinement', () => {
-		const SOURCE = 'def f(*a, **k): pass\ndef g(a: *Ts, b: **P): pass\n';
+	it('reads a splat as a rest pattern or type, and a double splat pattern as its map refinement', () => {
+		const SOURCE = 'def f(*a, **k): pass\ndef g(a: *Ts): pass\n';
 		const rest = find(SOURCE, 'list_splat_pattern');
 		const map = find(SOURCE, 'dictionary_splat_pattern');
 		const restType = find(SOURCE, 'splat_type');
-		const mapType = find(SOURCE, 'splat_type', undefined, 1);
 		expect(at('pattern.rest')(rest)).toBe(true);
 		expect(at('pattern.rest.map')(rest)).toBe(false);
 		expect(at('pattern.rest.map')(map)).toBe(true);
 		expect(at('type.rest')(restType)).toBe(true);
-		expect(at('type.rest.map')(restType)).toBe(false);
-		expect(at('type.rest.map')(mapType)).toBe(true);
 	});
 
 	it('reads a renamed import as the import alias', () => {

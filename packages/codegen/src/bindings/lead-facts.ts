@@ -1,6 +1,6 @@
 import type { LeadEffect, LeadMatch } from '../dsl/verbs/effects.ts';
 import { bindFacts, type BindingFacts, type CaptureSite, type ChildFact, type ClaimFact, type MemberFact, type SlotModel, type SlotSelector } from './facts.ts';
-import { concreteKinds, formsOf, heldInto, heldSteps, reachedBy, shownSlots } from './routes.ts';
+import { concreteKinds, formsOf, heldInto, heldSteps, holdsCapture, holdsContainer, reachedBy, shownSlots } from './routes.ts';
 
 const selector = (kind: string, field: string | null = null): SlotSelector => ({
 	field,
@@ -237,9 +237,11 @@ function projectedMembers(facts: BindingFacts, variants: BindingFacts, effect: L
 				...headMembers(member, effect, model).map((head) => memberWithClaims(head, indices, 'head'))
 			].filter((member) => member !== undefined);
 		}
-		if (member.owner in effect.variants) return [
-			memberWithClaims(member, indices, 'plain'), memberWithClaims(variants.members[index]!, indices, 'head')
-		].filter((member) => member !== undefined);
+		if (member.owner in effect.variants) {
+			const copy = variants.members[index]!;
+			const held = !((copy.route === 'rename' && copy.flag !== true) || copy.route === 'dropped') || holdsCapture(model, copy);
+			return [memberWithClaims(member, indices, 'plain'), held ? memberWithClaims(copy, indices, 'head') : undefined].filter((member) => member !== undefined);
+		}
 		const unchanged = memberWithClaims(member, indices, 'both');
 		return unchanged === undefined ? [] : [unchanged];
 	});
@@ -270,7 +272,7 @@ function projectLead(facts: BindingFacts, effect: LeadEffect, model: SlotModel):
 		...facts,
 		claims,
 		members: projectedMembers(facts, variants, effect, indices, model),
-		containers: [...facts.containers, ...variants.containers.filter((_, index) => facts.containers[index]!.kind in effect.variants)],
+		containers: [...facts.containers, ...variants.containers.filter((copy, index) => facts.containers[index]!.kind in effect.variants && holdsContainer(model, copy))],
 		unclaimed: [...facts.unclaimed, ...variants.unclaimed.filter((_, index) => facts.unclaimed[index]!.kind in effect.variants)]
 	};
 }

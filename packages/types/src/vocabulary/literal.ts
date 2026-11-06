@@ -127,7 +127,7 @@ export namespace Literal {
 		export interface Negative<G extends GrammarContext<G>> extends SubKindOf<V.Literal.Number<G>> {
 			// claimed by prt
 			readonly $kind: 'literal.number.negative';
-			readonly value: V.Literal.Number.Any<G>;
+			readonly value: V.Literal.Number.Integer.Any<G> | V.Literal.Number.Float.Any<G>;
 		}
 	}
 	export interface String<G extends GrammarContext<G>> extends SubKindOf<V.Literal<G>> {
@@ -139,7 +139,14 @@ export namespace Literal {
 		export interface Concatenated<G extends GrammarContext<G>> extends SubKindOf<V.Literal.String<G>> {
 			// claimed by p
 			readonly $kind: 'literal.string.concatenated';
-			readonly strings: V.Literal.String<G>[];
+			readonly strings: (
+				| V.Literal.String<G>
+				| V.Literal.String.Multiline<G>
+				| V.Literal.String.Raw.Any<G>
+				| V.Literal.String.Bytes.Any<G>
+				| V.Literal.String.Interpolated.Any<G>
+				| V.Literal.String.Unicode<G>
+			)[];
 		}
 		export interface Escape<G extends GrammarContext<G>> extends SubKindOf<V.Literal.String<G>> {
 			// claimed by prt

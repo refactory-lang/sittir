@@ -69,10 +69,8 @@ export interface RecordReader extends RecordWords {
 	cell(holder: number, word: number, item: number, depth?: number): number;
 	/** Materializes records to `depth`, including beneath cached parents, without exporting their words. */
 	hydrate(index: number, depth?: number): number | undefined;
-	candidates(index: number): readonly NodeCoordinate[];
 	/** Renders a native record address without exporting its words. The edge flags follow the native render-root convention. */
 	render(address: number, leading: boolean, trailing: boolean): string;
-	renderCandidate(index: number): string;
 	/** The node at descendant `index` read as an object, `depth` levels down (one when absent): the row a view's writes, queries and snapshots read once. */
 	object(index: number, depth?: number): unknown;
 	/** The kind and subtree end a read names the node at descendant `index` by: the coordinate the read stamps (the addon's `coordinate`), so a cell's view and the object wire name one coordinate. */

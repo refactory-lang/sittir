@@ -7,20 +7,24 @@
 
 ; ── declaration ────────────────────────────────────────────────────────────────
 (function_definition) @declaration.function
+(function_definition type_parameters: (type_params (_) @typeParameters))
 (function_definition body: (suite_block (block . (simple_statements (simple_statements_elements . item: (expression_statement (string) @doc))))))
 (class_definition superclasses: (_)? @bases) @declaration.class
+(class_definition type_parameters: (type_params (_) @typeParameters))
 (class_definition body: (suite_block (block . (simple_statements (simple_statements_elements . item: (expression_statement (string) @doc))))))
 (class_definition body: (suite_block (block (function_definition) @declaration.method)))
 (class_definition body: (suite_block (block (decorated_definition definition: (function_definition) @declaration.method))))
 ((method_declaration name: (identifier) @name) @declaration.constructor (#eq? @name "__init__"))
 (constructor_declaration) @declaration.constructor
 ((method_declaration name: (identifier) @name) @declaration.method.special (#match? @name "^__(?<stem>.*)__$"))
-((decorated_definition_class_declaration (decorator (identifier) @static) definition: (method_declaration) @element) (#eq? @static "staticmethod"))
 (decorated_definition (decorator)* @decorators definition: (_) @element)
 (typed_parameter) @declaration.parameter.typed
 (default_parameter value: (_)? @default) @declaration.parameter.default
 (typed_default_parameter value: (_)? @default) @declaration.parameter.typed_default
-(type_parameter) @declaration.type_parameter
+(type_param_type_var) @declaration.type_parameter
+(type_param_type_var (type) @bounds)
+(type_param_type_var_tuple) @declaration.type_parameter.variadic
+(type_param_param_spec) @declaration.type_parameter.parameters
 (assignment_eq left: (_) @name right: (_) @value) @declaration.variable
 (assignment_typed left: (_) @name right: (_) @value) @declaration.variable
 (assignment_type left: (_) @name) @declaration.variable
@@ -28,6 +32,7 @@
 ((assignment_typed left: (identifier) @name) @declaration.constant (#match? @name "^[A-Z][A-Z_0-9]*$"))
 ((assignment_type left: (identifier) @name) @declaration.constant (#match? @name "^[A-Z][A-Z_0-9]*$"))
 (type_alias_statement) @declaration.type_alias
+(type_alias_statement type_parameters: (type_params (_) @typeParameters))
 
 ; ── statement ──────────────────────────────────────────────────────────────────
 (block) @statement.block
@@ -39,7 +44,11 @@
 (raise_statement (_)? @expression) @statement.raise
 (import_statement) @statement.import
 (import_from_statement) @statement.import.from
-(match_statement (subjects subject: (_)+ @subject)) @statement.match
+(match_statement (subjects) @subject) @statement.match
+(subjects ",") @expression.collection.tuple.bare
+(subjects subject: (_) @elements)
+(subjects "," @trailingComma .)
+((subjects (_) @element) (#set! reason "a subject list with a comma reads as a tuple; one subject without one reads as itself"))
 (with_statement) @statement.resource
 (assert_statement) @statement.assert
 (delete_statement) @statement.delete
@@ -49,10 +58,17 @@
 (global_statement) @statement.global
 (nonlocal_statement) @statement.nonlocal
 (expression_statement) @statement.expression
+(expression_statement_tuple ",") @expression.collection.tuple.bare
+(expression_statement_tuple item: (_) @elements)
+(expression_statement_tuple "," @trailingComma .)
 (future_import_statement) @statement.import.future
-(print_statement) @statement.print
 (print_statement_plain) @statement.print
-(print_statement_chevron) @statement.print.chevron
+(print_statement_plain (print_arguments) @arguments)
+(print_statement_plain (print_arguments "," @trailingComma .))
+(print_statement_chevron) @statement.print
+(print_statement_chevron chevron: (chevron expression: (_) @destination))
+(print_statement_chevron (print_chevron_arguments) @arguments)
+(print_statement_chevron (print_chevron_arguments "," @trailingComma .))
 (exec_statement) @statement.exec
 
 ; ── clause ─────────────────────────────────────────────────────────────────────
@@ -74,7 +90,6 @@
 (with_item value: (as_pattern alias: (_) @name))
 (for_in_clause) @clause.comprehension.for
 (if_clause) @clause.comprehension.if
-(chevron) @clause.print.chevron
 (relative_import) @clause.import.relative
 (import_prefix) @clause.import.relative.prefix
 (aliased_import) @clause.import.alias
@@ -160,13 +175,18 @@
 (named_expression name: (_) @left value: (_) @right) @expression.assignment
 (conditional_expression body: (_)? @consequence) @expression.conditional
 (attribute attribute: (_) @property) @expression.attribute
-(subscript value: (_) @object (subscripts subscript: (_)+ @index)) @expression.subscript
+(subscript value: (_) @object (subscripts) @index) @expression.subscript
+(subscripts ",") @expression.collection.tuple.bare
+(subscripts subscript: (_) @elements)
+(subscripts "," @trailingComma .)
+((subscripts (_) @element) (#set! reason "a subscript list with a comma reads as a tuple; one subscript without one reads as itself"))
 (slice) @expression.slice
 (lambda) @expression.lambda
 (await (_)? @expression) @expression.await
 (yield) @expression.yield
 (yield_from_clause (_) @expression) @expression.yield.delegate
 (interpolation) @expression.interpolation
+(format_expression) @expression.interpolation
 (list_comprehension) @expression.comprehension.list
 (set_comprehension) @expression.comprehension.set
 (dictionary_comprehension) @expression.comprehension.dictionary
@@ -175,6 +195,8 @@
 (list (collection_elements)? @elements) @expression.collection.list
 (tuple) @expression.collection.tuple
 (expression_list) @expression.collection.tuple.bare
+(expression_list item: (_) @elements)
+(expression_list "," @trailingComma .)
 (set (collection_elements) @elements) @expression.collection.set
 (dictionary) @expression.collection.dictionary
 (ellipsis) @literal.ellipsis
@@ -184,7 +206,11 @@
 ; ── pattern ────────────────────────────────────────────────────────────────────
 (tuple_pattern) @pattern.tuple
 (pattern_list) @pattern.tuple.bare
+(pattern_list item: (_) @elements)
+(pattern_list "," @trailingComma .)
 (case_pattern_list) @pattern.tuple.bare
+(case_pattern_list item: (_) @elements)
+(case_pattern_list "," @trailingComma .)
 (list_pattern (patterns)? @elements) @pattern.list
 (list_splat_pattern) @pattern.splat
 (list_splat_pattern target: (_) @pattern)
@@ -211,14 +237,13 @@
 ; ── type ───────────────────────────────────────────────────────────────────────
 (type) @type
 (generic_type) @type.generic
+(generic_type (type_parameter (_) @typeArguments))
 (union_type) @type.union
 (constrained_type) @type.constrained
 (member_type) @identifier.qualified
 (member_type base_type: (_) @qualifier)
 (splat_type) @type.splat
 (splat_type name: (_) @type)
-(splat_type operator: "**") @type.splat.map
-((splat_type operator: ["*" "**"] @dropped) (#set! reason "the rest kind and its map refinement determine the marker"))
 
 ; ── literal ────────────────────────────────────────────────────────────────────
 (string [(interpolation) (string_content)]* @elements) @literal.string
@@ -226,16 +251,21 @@
 (escape_interpolation) @literal.string.escape
 (string_fragment) @literal.string.text
 (concatenated_string) @literal.string.concatenated
-((string (string_start) @_p) @literal.string.interpolated.raw.multiline (#match? @_p "^[a-zA-Z]*[fFtT]") (#match? @_p "^[a-zA-Z]*[rR]") (#match? @_p "\"\"\"|'''"))
+((string (string_start) @_p) @literal.string.interpolated.deferred.raw.multiline (#match? @_p "^[a-zA-Z]*[tT]") (#match? @_p "^[a-zA-Z]*[rR]") (#match? @_p "\"\"\"|'''"))
+((string (string_start) @_p) @literal.string.interpolated.deferred.raw (#match? @_p "^[a-zA-Z]*[tT]") (#match? @_p "^[a-zA-Z]*[rR]"))
+((string (string_start) @_p) @literal.string.interpolated.deferred.multiline (#match? @_p "^[a-zA-Z]*[tT]") (#match? @_p "\"\"\"|'''"))
+((string (string_start) @_p) @literal.string.interpolated.deferred (#match? @_p "^[a-zA-Z]*[tT]"))
+((string (string_start) @_p) @literal.string.interpolated.raw.multiline (#match? @_p "^[a-zA-Z]*[fF]") (#match? @_p "^[a-zA-Z]*[rR]") (#match? @_p "\"\"\"|'''"))
 ((string (string_start) @_p) @literal.string.bytes.raw.multiline (#match? @_p "^[a-zA-Z]*[bB]") (#match? @_p "^[a-zA-Z]*[rR]") (#match? @_p "\"\"\"|'''"))
-((string (string_start) @_p) @literal.string.interpolated.raw (#match? @_p "^[a-zA-Z]*[fFtT]") (#match? @_p "^[a-zA-Z]*[rR]"))
-((string (string_start) @_p) @literal.string.interpolated.multiline (#match? @_p "^[a-zA-Z]*[fFtT]") (#match? @_p "\"\"\"|'''"))
+((string (string_start) @_p) @literal.string.interpolated.raw (#match? @_p "^[a-zA-Z]*[fF]") (#match? @_p "^[a-zA-Z]*[rR]"))
+((string (string_start) @_p) @literal.string.interpolated.multiline (#match? @_p "^[a-zA-Z]*[fF]") (#match? @_p "\"\"\"|'''"))
 ((string (string_start) @_p) @literal.string.bytes.raw (#match? @_p "^[a-zA-Z]*[bB]") (#match? @_p "^[a-zA-Z]*[rR]"))
 ((string (string_start) @_p) @literal.string.bytes.multiline (#match? @_p "^[a-zA-Z]*[bB]") (#match? @_p "\"\"\"|'''"))
 ((string (string_start) @_p) @literal.string.raw.multiline (#match? @_p "^[a-zA-Z]*[rR]") (#match? @_p "\"\"\"|'''"))
-((string (string_start) @_p) @literal.string.interpolated (#match? @_p "^[a-zA-Z]*[fFtT]"))
+((string (string_start) @_p) @literal.string.interpolated (#match? @_p "^[a-zA-Z]*[fF]"))
 ((string (string_start) @_p) @literal.string.bytes (#match? @_p "^[a-zA-Z]*[bB]"))
 ((string (string_start) @_p) @literal.string.raw (#match? @_p "^[a-zA-Z]*[rR]"))
+((string (string_start) @_p) @literal.string.unicode (#match? @_p "^[a-zA-Z]*[uU]"))
 ((string (string_start) @_p) @literal.string.multiline (#match? @_p "\"\"\"|'''"))
 (integer_decimal_plain) @literal.number.integer
 (integer_decimal_long) @literal.number.integer.big

@@ -90,71 +90,68 @@ export function rebuildSpliceGenerated() {
 				body: rs.build.block({
 					statements: [rs.build.expressionStatement(rs.build.matchExpression({
 						subject: rs.kinds.Self,
-						body: rs.build.matchBlock({
-							arms: [rs.build.matchArmBlockEnding({
-								pattern: rs.build.structPattern({
-									type: rs.build.scopedTypeIdentifier({
-										qualifier: rs.build.identifier("SpliceError"),
-										name: rs.build.identifier("InvalidRange"),
-									}),
-									fields: [rs.build.fieldPatternShorthand({
-										name: rs.build.identifier("start"),
-									}), rs.build.fieldPatternShorthand({
-										name: rs.build.identifier("end"),
-									})],
+						body: rs.build.matchBlock(rs.build.matchArmBlockEnding({
+							pattern: rs.build.structPattern({
+								type: rs.build.scopedTypeIdentifier({
+									qualifier: rs.build.identifier("SpliceError"),
+									name: rs.build.identifier("InvalidRange"),
 								}),
-								body: rs.build.block({
-									trailingExpression: rs.build.macroInvocation({
-										function: rs.build.identifier("write"),
-										arguments: rs.build.delimTokenTreeParen(rs.build.nonSpecialToken(rs.build.identifier("f")), rs.build.nonSpecialToken(rs.kinds.Comma), rs.build.nonSpecialToken(rs.build.stringLiteral({
-											stringOpen: rs.build.stringOpen("\""),
-											elements: [rs.build.stringContent("invalid edit range: start={start}, end={end}")],
-										}))),
-									}),
-								}),
-							}), rs.build.matchArmWithComma({
-								pattern: rs.build.structPattern({
-									type: rs.build.scopedTypeIdentifier({
-										qualifier: rs.build.identifier("SpliceError"),
-										name: rs.build.identifier("OutOfBounds"),
-									}),
-									fields: [rs.build.fieldPatternShorthand({
-										name: rs.build.identifier("end"),
-									}), rs.build.fieldPatternShorthand({
-										name: rs.build.identifier("source_len"),
-									})],
-								}),
-								body: rs.build.macroInvocation({
-									function: rs.build.identifier("write"),
-									arguments: rs.build.delimTokenTreeParen(rs.build.nonSpecialToken(rs.build.identifier("f")), rs.build.nonSpecialToken(rs.kinds.Comma), rs.build.nonSpecialToken(rs.build.stringLiteral({
-										stringOpen: rs.build.stringOpen("\""),
-										elements: [rs.build.stringContent("edit out of bounds: end={end} > source length={source_len}")],
-									}))),
-								}),
-							})],
-							lastArm: rs.build.lastMatchArm({
-								pattern: rs.build.structPattern({
-									type: rs.build.scopedTypeIdentifier({
-										qualifier: rs.build.identifier("SpliceError"),
-										name: rs.build.identifier("NonCharBoundary"),
-									}),
-									fields: [rs.build.fieldPatternShorthand({
-										name: rs.build.identifier("start"),
-									}), rs.build.fieldPatternShorthand({
-										name: rs.build.identifier("end"),
-									})],
-								}),
-								body: rs.build.macroInvocation({
-									function: rs.build.identifier("write"),
-									arguments: rs.build.delimTokenTreeParen(rs.build.nonSpecialToken(rs.build.identifier("f")), rs.build.nonSpecialToken(rs.kinds.Comma), rs.build.nonSpecialToken(rs.build.stringLiteral({
-										stringOpen: rs.build.stringOpen("\""),
-										elements: [rs.build.stringContent("edit range not at UTF-8 char boundary: start={start}, end={end}")],
-									}))),
-								}),
-							}, {
-								trailingComma: rs.kinds.Comma,
+								fields: [rs.build.fieldPatternShorthand({
+									name: rs.build.identifier("start"),
+								}), rs.build.fieldPatternShorthand({
+									name: rs.build.identifier("end"),
+								})],
 							}),
-						}),
+							body: rs.build.block({
+								trailingExpression: rs.build.macroInvocation({
+									function: rs.build.identifier("write"),
+									arguments: rs.build.delimTokenTreeParen(rs.build.nonSpecialToken(rs.build.identifier("f")), rs.build.nonSpecialToken(rs.kinds.Comma), rs.build.nonSpecialToken(rs.build.stringLiteral({
+										stringOpen: rs.build.stringOpen("\""),
+										elements: [rs.build.stringContent("invalid edit range: start={start}, end={end}")],
+									}))),
+								}),
+							}),
+						}), rs.build.matchArmWithComma({
+							pattern: rs.build.structPattern({
+								type: rs.build.scopedTypeIdentifier({
+									qualifier: rs.build.identifier("SpliceError"),
+									name: rs.build.identifier("OutOfBounds"),
+								}),
+								fields: [rs.build.fieldPatternShorthand({
+									name: rs.build.identifier("end"),
+								}), rs.build.fieldPatternShorthand({
+									name: rs.build.identifier("source_len"),
+								})],
+							}),
+							body: rs.build.macroInvocation({
+								function: rs.build.identifier("write"),
+								arguments: rs.build.delimTokenTreeParen(rs.build.nonSpecialToken(rs.build.identifier("f")), rs.build.nonSpecialToken(rs.kinds.Comma), rs.build.nonSpecialToken(rs.build.stringLiteral({
+									stringOpen: rs.build.stringOpen("\""),
+									elements: [rs.build.stringContent("edit out of bounds: end={end} > source length={source_len}")],
+								}))),
+							}),
+						}), rs.build.lastMatchArm({
+							pattern: rs.build.structPattern({
+								type: rs.build.scopedTypeIdentifier({
+									qualifier: rs.build.identifier("SpliceError"),
+									name: rs.build.identifier("NonCharBoundary"),
+								}),
+								fields: [rs.build.fieldPatternShorthand({
+									name: rs.build.identifier("start"),
+								}), rs.build.fieldPatternShorthand({
+									name: rs.build.identifier("end"),
+								})],
+							}),
+							body: rs.build.macroInvocation({
+								function: rs.build.identifier("write"),
+								arguments: rs.build.delimTokenTreeParen(rs.build.nonSpecialToken(rs.build.identifier("f")), rs.build.nonSpecialToken(rs.kinds.Comma), rs.build.nonSpecialToken(rs.build.stringLiteral({
+									stringOpen: rs.build.stringOpen("\""),
+									elements: [rs.build.stringContent("edit range not at UTF-8 char boundary: start={start}, end={end}")],
+								}))),
+							}),
+						}, {
+							trailingComma: rs.kinds.Comma,
+						})),
 					}))],
 				}),
 			})),

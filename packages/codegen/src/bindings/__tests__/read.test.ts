@@ -9,6 +9,15 @@ describe('readBindings', () => {
 			{ route: 'kind', owner: 'public_field_definition', name: 'private', member: 'name', kind: 'private_property_identifier' }
 		]);
 	});
+	it('stamps a capture its pattern\'s predicates name as tested, and no other', async () => {
+		const facts = await readBindings('((method_declaration name: (identifier) @name body: (_) @body) @declaration.constructor (#eq? @name "__init__"))');
+		expect(facts.members.map((member) => ['name' in member ? member.name : null, member.tested])).toEqual([
+			['name', true],
+			['body', undefined]
+		]);
+		const [container] = (await readBindings('((wrapper (decorator (identifier) @static) (_) @element) (#eq? @static "staticmethod"))')).containers;
+		expect(container?.captures.map((capture) => [capture.name, capture.tested])).toEqual([['static', true]]);
+	});
 	it('reads a single-segment capture beside the top node\'s claim as a further claim: no member sits on the claimed node itself', async () => {
 		const facts = await readBindings('(shorthand_property_identifier) @element.pair @key');
 		expect(facts.claims.map((c) => [c.vocab, c.kind])).toEqual([
@@ -121,7 +130,7 @@ describe('readBindings', () => {
 				anchor: null,
 				claims: [0]
 			},
-			{ route: 'rename', owner: 'function_definition', name: 'name', field: 'name', kind: 'identifier', after: null, anchor: null, claims: [2] }
+			{ route: 'rename', owner: 'function_definition', name: 'name', field: 'name', kind: 'identifier', after: null, anchor: null, claims: [2], tested: true }
 		]);
 		expect(facts.containers).toEqual([
 			{

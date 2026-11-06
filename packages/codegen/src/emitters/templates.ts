@@ -4,7 +4,7 @@ import { isBuilderTextLeaf, seamNeedsSpace, wordCharPredicate } from '../compile
 import { isNonterminalRuleType, collectFixedLiteral, ruleListParts } from '../dsl/rule-patterns.ts';
 import type { NodeMap } from '../compiler/types.ts';
 import {
-	AbstractAssembledCompound,
+	AbstractAssembledCompound, AssembledLexedPattern,
 	isMultiple,
 	isRequired,
 	kindsOf,
@@ -393,6 +393,7 @@ function emitOne(node: AssembledNode, ctx: EmitCtx): Body | undefined {
 	const ctxK: EmitCtx = { ...ctx, currentKind: node.kind };
 	switch (node.modelType) {
 		case 'branch':
+		case 'lexedPattern':
 		case 'envelope':
 			return emitBranchTemplate(node, ctxK);
 		case 'polymorph':
@@ -418,7 +419,7 @@ export function emitBranchTemplate(node: SlotBearingCompound, ctx: EmitCtx): Bod
 	const ctxWithSlots: EmitCtx = {
 		...ctx,
 		ownerSlots: ownerSlotsFor(node),
-		...(node instanceof AbstractAssembledCompound && node.lexedInterior ? { lexedTop: top } : {})
+		...(node instanceof AssembledLexedPattern ? { lexedTop: top } : {})
 	};
 	return emitRule(top, ctxWithSlots);
 }
@@ -1529,6 +1530,7 @@ export function runTemplateEmitter(config: EmitTemplatesConfig): EmittedTemplate
 				if (isBuilderTextLeaf(node)) te.emitLeaf(node);
 				break;
 			case 'branch':
+			case 'lexedPattern':
 			case 'envelope':
 				te.emitBranch(node);
 				break;

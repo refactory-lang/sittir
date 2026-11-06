@@ -161,7 +161,19 @@ export namespace Expression {
 			export interface Chain<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Binary.Comparison<G>> {
 				// claimed by p
 				readonly $kind: 'expression.binary.comparison.chain';
-				readonly comparators: V.Element.Comparator.Any<G>[];
+				readonly comparators: (
+					| V.Element.Comparator<G>
+					| V.Element.Comparator.Comparison.Equal<G>
+					| V.Element.Comparator.Comparison.Greater<G>
+					| V.Element.Comparator.Comparison.GreaterEqual<G>
+					| V.Element.Comparator.Comparison.Less<G>
+					| V.Element.Comparator.Comparison.LessEqual<G>
+					| V.Element.Comparator.Comparison.NotEqual.Any<G>
+					| V.Element.Comparator.Identity.Is<G>
+					| V.Element.Comparator.Identity.IsNot<G>
+					| V.Element.Comparator.Membership.In<G>
+					| V.Element.Comparator.Membership.NotIn<G>
+				)[];
 			}
 			export interface Equal<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Binary<G>> {
 				readonly $kind: 'expression.binary.comparison.equal';
@@ -317,8 +329,6 @@ export namespace Expression {
 		export interface List<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Collection<G>> {
 			// claimed by prt
 			readonly $kind: 'expression.collection.list';
-			readonly attributes?: G['attribute'][];
-			// r only
 			readonly elements?: G['slots']['expression.collection.list']['elements'][];
 		}
 		export namespace List {
@@ -350,7 +360,13 @@ export namespace Expression {
 		readonly $kind: 'expression.function';
 		readonly body: V.Statement.Block<G>;
 		readonly name?: G['identifier'];
-		readonly parameters: V.Declaration.Parameter.Any<G>[];
+		readonly parameters: (
+			| V.Declaration.Parameter<G>
+			| V.Declaration.Parameter.Private<G>
+			| V.Declaration.Parameter.Protected<G>
+			| V.Declaration.Parameter.Public<G>
+			| V.Declaration.Parameter.Receiver<G>
+		)[];
 	}
 	export interface Lambda<G extends GrammarContext<G>> extends SubKindOf<V.Expression<G>> {
 		// claimed by prt
@@ -387,7 +403,7 @@ export namespace Expression {
 	export interface Subscript<G extends GrammarContext<G>> extends SubKindOf<V.Expression<G>> {
 		// claimed by prt
 		readonly $kind: 'expression.subscript';
-		readonly index?: G['slots']['expression.subscript']['index'] | G['slots']['expression.subscript']['index'][];
+		readonly index?: G['slots']['expression.subscript']['index'];
 		readonly object: G['slots']['expression.subscript']['object'];
 	}
 	export interface Unary<G extends GrammarContext<G>> extends SubKindOf<V.Expression<G>> {

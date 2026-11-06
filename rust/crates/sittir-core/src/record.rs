@@ -4,16 +4,20 @@
 //! asserts, per slot, that the slot's type is stored as the forms stamped
 //! for it in a cell of the stamped width, and computes nothing else.
 //!
-//! A derived interior node accepts a two-word text cell:
+//! A derived interior node accepts a two-word text cell for each capture and
+//! for the verbatim text a spelling outside its interior reads as:
 //!
 //! ```
 //! # const KIND: sittir_core::types::KindId = sittir_core::types::KindId(1);
 //! #[derive(sittir_core::Node)]
-//! #[node(kind = KIND, interior = "(?<value>.*)", words = 4, built_words = 3)]
+//! #[node(kind = KIND, interior = "(?<value>.*)", words = 6, built_words = 4)]
 //! struct Example {
 //!     #[wire(key = "$_layout")]
 //!     #[layout]
 //!     layout: Option<Box<sittir_core::layout::NodeLayout<sittir_core::trivia::TriviaText>>>,
+//!     #[wire(key = "$verbatim")]
+//!     #[slot(word = 4, width = 2, forms = 4, built = 3)]
+//!     verbatim: Option<String>,
 //!     #[wire(key = "_value")]
 //!     #[slot(capture = "value", word = 2, width = 2, forms = 4, built = 2)]
 //!     value: String,
@@ -25,11 +29,14 @@
 //! ```compile_fail
 //! # const KIND: sittir_core::types::KindId = sittir_core::types::KindId(1);
 //! #[derive(sittir_core::Node)]
-//! #[node(kind = KIND, interior = "(?<value>.*)", words = 4, built_words = 3)]
+//! #[node(kind = KIND, interior = "(?<value>.*)", words = 6, built_words = 4)]
 //! struct Example {
 //!     #[wire(key = "$_layout")]
 //!     #[layout]
 //!     layout: Option<Box<sittir_core::layout::NodeLayout<sittir_core::trivia::TriviaText>>>,
+//!     #[wire(key = "$verbatim")]
+//!     #[slot(word = 4, width = 2, forms = 4, built = 3)]
+//!     verbatim: Option<String>,
 //!     #[wire(key = "_value")]
 //!     #[slot(capture = "value", word = 2, width = 1, forms = 4, built = 2)]
 //!     value: String,
@@ -41,11 +48,14 @@
 //! ```compile_fail
 //! # const KIND: sittir_core::types::KindId = sittir_core::types::KindId(1);
 //! #[derive(sittir_core::Node)]
-//! #[node(kind = KIND, interior = "(?<value>.*)", words = 4, built_words = 3)]
+//! #[node(kind = KIND, interior = "(?<value>.*)", words = 6, built_words = 4)]
 //! struct Example {
 //!     #[wire(key = "$_layout")]
 //!     #[layout]
 //!     layout: Option<Box<sittir_core::layout::NodeLayout<sittir_core::trivia::TriviaText>>>,
+//!     #[wire(key = "$verbatim")]
+//!     #[slot(word = 4, width = 2, forms = 4, built = 3)]
+//!     verbatim: Option<String>,
 //!     #[wire(key = "_value")]
 //!     #[slot(capture = "value", word = 1, width = 2, forms = 4, built = 2)]
 //!     value: String,

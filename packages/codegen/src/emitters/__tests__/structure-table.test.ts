@@ -75,9 +75,9 @@ describe('the structure table: what a built node of each kind must hold', () => 
 		expect(list).toBeInstanceOf(AssembledList);
 		expect(listStructureRow(list as AssembledList, nodeMap)).toEqual({
 			kind: 'expression_list',
-			nonEmpty: [['_item', 'expression_list.elements']],
-			nodeOnly: [['_item', 'ExpressionList.items', 'a built Expression', [node('expression').kindId!]]],
-			lists: [['items', false, 0]]
+			nonEmpty: [['_elements', 'expression_list.elements']],
+			nodeOnly: [['_elements', 'ExpressionList.elements', 'a built Expression', [node('expression').kindId!]]],
+			lists: [['elements', false, 0]]
 		});
 	});
 

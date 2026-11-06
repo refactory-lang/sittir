@@ -1093,6 +1093,12 @@ export interface IsGuards {
 	matchBlockArms<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.MatchBlockArms };
+	rawStringLiteralStart<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.RawStringLiteralStart };
+	rawStringLiteralEnd<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.RawStringLiteralEnd };
 	traitInterfaceDeclarationBody<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.TraitInterfaceDeclarationBody };
@@ -1576,12 +1582,6 @@ export interface IsGuards {
 	innerDocCommentMarker<T extends { readonly $type: number } | number>(
 		v: T
 	): v is NarrowTo<T, TSKindId.InnerDocCommentMarker>;
-	rawStringLiteralStart<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.RawStringLiteralStart };
-	rawStringLiteralEnd<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.RawStringLiteralEnd };
 	docComment<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.DocComment };
@@ -1981,6 +1981,8 @@ export function guardsWith(test: KindTest): IsGuards {
 	const _kind_AttributedOrderedField_guard = _g(TSKindId.AttributedOrderedField);
 	const _kind_TypeArgument_guard = _g(TSKindId.TypeArgument);
 	const _kind_MatchBlockArms_guard = _g(TSKindId.MatchBlockArms);
+	const _kind_RawStringLiteralStart_guard = _g(TSKindId.RawStringLiteralStart);
+	const _kind_RawStringLiteralEnd_guard = _g(TSKindId.RawStringLiteralEnd);
 	const _kind_TraitInterfaceDeclarationBody_guard = _g(TSKindId.TraitInterfaceDeclarationBody);
 	const _kind_ExtensionDeclarationBody_guard = _g(TSKindId.ExtensionDeclarationBody);
 	const _kind_Argument_guard = _g(TSKindId.Argument);
@@ -2015,8 +2017,6 @@ export function guardsWith(test: KindTest): IsGuards {
 	const _kind_RawStringLiteralContent_guard = _g(TSKindId.RawStringLiteralContent);
 	const _kind_OuterDocCommentMarker_guard = _mg(TSKindId.OuterDocCommentMarker);
 	const _kind_InnerDocCommentMarker_guard = _mg(TSKindId.InnerDocCommentMarker);
-	const _kind_RawStringLiteralStart_guard = _g(TSKindId.RawStringLiteralStart);
-	const _kind_RawStringLiteralEnd_guard = _g(TSKindId.RawStringLiteralEnd);
 	const _kind_DocComment_guard = _g(TSKindId.DocComment);
 	const _kind_BlockCommentContent_guard = _g(TSKindId.BlockCommentContent);
 	const _kind_ErrorSentinel_guard = _g(TSKindId.ErrorSentinel);
@@ -2419,6 +2419,8 @@ export function guardsWith(test: KindTest): IsGuards {
 		attributedOrderedField: _kind_AttributedOrderedField_guard,
 		typeArgument: _kind_TypeArgument_guard,
 		matchBlockArms: _kind_MatchBlockArms_guard,
+		rawStringLiteralStart: _kind_RawStringLiteralStart_guard,
+		rawStringLiteralEnd: _kind_RawStringLiteralEnd_guard,
 		traitInterfaceDeclarationBody: _kind_TraitInterfaceDeclarationBody_guard,
 		extensionDeclarationBody: _kind_ExtensionDeclarationBody_guard,
 		argument: _kind_Argument_guard,
@@ -2494,8 +2496,6 @@ export function guardsWith(test: KindTest): IsGuards {
 		rawStringLiteralContent: _kind_RawStringLiteralContent_guard,
 		outerDocCommentMarker: _kind_OuterDocCommentMarker_guard,
 		innerDocCommentMarker: _kind_InnerDocCommentMarker_guard,
-		rawStringLiteralStart: _kind_RawStringLiteralStart_guard,
-		rawStringLiteralEnd: _kind_RawStringLiteralEnd_guard,
 		docComment: _kind_DocComment_guard,
 		blockCommentContent: _kind_BlockCommentContent_guard,
 		errorSentinel: _kind_ErrorSentinel_guard,

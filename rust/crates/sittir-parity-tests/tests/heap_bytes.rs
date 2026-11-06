@@ -11,10 +11,10 @@ use sittir_python::render::node::{CommentNode, TriviaNode};
 #[test]
 fn a_comment_counts_its_content_and_its_layout() {
     let content = || String::with_capacity(24) + "# note";
-    let bare = TriviaNode::Comment(CommentNode { layout: None, content: content() });
+    let bare = TriviaNode::Comment(CommentNode { layout: None, verbatim: None, content: content() });
     assert_eq!(bare.heap_bytes(), 24, "the content's capacity");
     let layout = NodeLayout { slots: Vec::with_capacity(2), ..NodeLayout::default() };
-    let laid = TriviaNode::Comment(CommentNode { layout: Some(Box::new(layout)), content: content() });
+    let laid = TriviaNode::Comment(CommentNode { layout: Some(Box::new(layout)), verbatim: None, content: content() });
     let slots = 2 * std::mem::size_of::<sittir_core::layout::SlotLayout>();
     assert_eq!(laid.heap_bytes(), 24 + std::mem::size_of::<NodeLayout<TriviaNode>>() + slots, "the boxed layout and its slot table beside the content");
 }

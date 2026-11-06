@@ -32,7 +32,6 @@ describe('the stamps a separator and a field-tagged literal carry', () => {
 
 	it('keeps two stamped symbols of one spelling under a field', () => {
 		const owner = {
-			lexedInterior: false,
 			renderRule: {
 				type: 'FIELD',
 				fieldName: 'right',

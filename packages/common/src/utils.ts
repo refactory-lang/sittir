@@ -20,6 +20,7 @@ import { holdSideEntries, isBuiltNode, refuseBuiltEntries, refuseForeignEntry, s
 export { Delimiter } from './delimiter.ts';
 export { BLANK_KIND_ID, blankArmRead, blankArmStored } from './blank-arm.ts';
 export { refuseJSON } from './json-refusal.ts';
+export { spelledMember } from './spelled.ts';
 export { Source };
 export { ERROR_KIND_ID, ERROR_KIND_NAME } from './error-kind.ts';
 export type { ErrorNode };
@@ -737,6 +738,14 @@ export function withOptions<N>(node: N, options: object): N {
 
 export function orDefault<V>(value: V | undefined, make: () => NoInfer<V>): V {
 	return value ?? make();
+}
+
+export function preferredFacet<V>(token: V, facet: string, preference: string | undefined): V {
+	if (preference === undefined) return token;
+	const faceted = token as { readonly $with: Readonly<Record<string, (value: string) => V>> } & Readonly<Record<string, unknown>>;
+	const read = faceted[facet];
+	if (typeof read === 'function' && (read as () => unknown).call(token) === preference) return token;
+	return faceted.$with[facet]!(preference);
 }
 
 export function configFieldOr(input: unknown, key: string, orElse: () => unknown, own: unknown): unknown {
