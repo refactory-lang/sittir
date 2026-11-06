@@ -1,4 +1,5 @@
 import { relaxedDisplayIds, relaxedKeywordIds } from './kind-id-rust.ts';
+import { emitShapeFailure, guardOwner } from '../compiler/diagnostics/emit-diagnostics.ts';
 import { BLANK_KIND_ID } from '@sittir/common/blank-arm';
 import { ERROR_KIND_ID } from '@sittir/common/error-kind';
 import { depthMembersOf } from '../compiler/model/layout-kinds.ts';
@@ -316,9 +317,12 @@ function collectEffectiveSupertypeNodeShape(
 		const variantName = rustTypeIdent(subNode.typeName);
 		const existingKind = variantKindByName.get(variantName);
 		if (existingKind !== undefined && existingKind !== subKind) {
-			throw new Error(
-				`reserved supertype flattening collision: ${supertypeNode.kind} emits variant ${variantName} for both ${existingKind} and ${subKind}`
-			);
+			throw emitShapeFailure({
+				code: 'supertype-variant-collision',
+				ownerKind: supertypeNode.kind,
+				message: `reserved supertype flattening collision: ${supertypeNode.kind} emits variant ${variantName} for both ${existingKind} and ${subKind}`,
+				details: { variant: variantName, kinds: [existingKind, subKind] }
+			});
 		}
 		variantKindByName.set(variantName, subKind);
 		subtypes.push({ subKind, subNode });
@@ -1132,7 +1136,11 @@ export function emitRenderModule(
 		].join('\n') + '\n';
 	if (support.boundaries.dropped.length > 0) {
 		const arms = support.boundaries.dropped.map((arm) => `  ${arm.drop} ${arm.kind} ${arm.side} next=${arm.next ?? '-'}: ${arm.variants.join(' | ')}`);
-		throw new Error(`render-module: ${lang} has boundary arms it cannot emit, so a coordinate at these edges would lose its holder's marks:\n${arms.join('\n')}`);
+		throw emitShapeFailure({
+			code: 'boundary-arm-unemittable',
+			message: `${lang} has boundary arms it cannot emit, so a coordinate at these edges would lose its holder's marks:\n${arms.join('\n')}`,
+			details: { arms: support.boundaries.dropped.map((arm) => ({ kind: arm.kind, side: arm.side })) }
+		});
 	}
 	const optionsRs = renderOptionsRs(plan, addresses, optionsKindEntries, support.boundaries.rows);
 	const { hashRs, hashTs } = emitHashFiles(lang, [
@@ -1509,9 +1517,11 @@ function renderNodeSupport(
 	const perSlotEnumLines: string[] = choices.emitted.flatMap(({ lines }) => lines);
 	const bodyOf = new Map(structs.map((struct) => [struct.kind, struct.body]));
 	const structLines = owned.flatMap((node) =>
-		isFixedTextLeaf(node)
-			? renderFixedLiteralNode(rustNodeStructName(node), fixedLiteralOf(fixed, node.kind), read)
-			: renderNodeStruct(node, nodeMap, choices.names, kindEntries, plan, read, bodyOf.get(node.kind))
+		guardOwner([], () =>
+			isFixedTextLeaf(node)
+				? renderFixedLiteralNode(rustNodeStructName(node), fixedLiteralOf(fixed, node.kind), read)
+				: renderNodeStruct(node, nodeMap, choices.names, kindEntries, plan, read, bodyOf.get(node.kind))
+		)
 	);
 	assertReadableNodes(owned, nodeMap, choices.names, read);
 	assertEnvelopeExtrasPinned(read.grammar, envelopePins, read.envelopeExtras, read.printedEnums, kindEntries);
@@ -2323,9 +2333,13 @@ function choiceUnitsOf(
 			seams !== undefined &&
 			(prior.seams.before !== seams.before || prior.seams.after !== seams.after)
 		) {
-			throw new Error(
-				`render-module: ${entry.ownerKind}.${entry.fieldName} stores the fixed literal '${literal.kind}' at two sites with different seams`
-			);
+			throw emitShapeFailure({
+				code: 'fixed-literal-seam-conflict',
+				ownerKind: entry.ownerKind,
+				slotName: entry.fieldName,
+				message: `${entry.ownerKind}.${entry.fieldName} stores the fixed literal '${literal.kind}' at two sites with different seams`,
+				details: { literal: literal.kind }
+			});
 		}
 		units.set(unit.variant, {
 			fixed: unit,
@@ -2693,7 +2707,12 @@ function renderTriviaNodeSupport(
 		.filter((node): node is AssembledNode => node !== undefined && !(node instanceof AssembledSupertype));
 	const unitOf = (node: AssembledNode): FixedLiteral | undefined => {
 		const unit = isFixedTextLeaf(node) ? fixedLiteralOf(fixed, node.kind) : undefined;
-		if (unit?.edged === true) throw new Error(`trivia kind '${node.kind}' is a unit a list seats, but trivia holds no edges`);
+		if (unit?.edged === true)
+			throw emitShapeFailure({
+				code: 'trivia-unit-has-edges',
+				ownerKind: node.kind,
+				message: `trivia kind '${node.kind}' is a unit a list seats, but trivia holds no edges`
+			});
 		return unit;
 	};
 
@@ -2981,7 +3000,12 @@ function edgeArmSlotsOf(
 		if (arms.length === 0) return;
 		const slot = body[written.side === 'before' ? i + 1 : i - 1];
 		if (slot?.kind !== 'slot') {
-			throw new Error(`kind '${node.kind}' has edge arm sites on its ${written.side} edge, but the member beside that edge is not a slot to read the arm from`);
+			throw emitShapeFailure({
+				code: 'edge-arm-without-slot',
+				ownerKind: node.kind,
+				message: `kind '${node.kind}' has edge arm sites on its ${written.side} edge, but the member beside that edge is not a slot to read the arm from`,
+				details: { side: written.side }
+			});
 		}
 		out[written.side] = slot.name;
 	});
@@ -3001,7 +3025,12 @@ function sourceTrailingSeparator(
 	if (node.trailingDelimiter !== 'optional') return undefined;
 	const idOf = (entry: KindEnumEntry | undefined, spelled: string): number => {
 		if (entry === undefined) {
-			throw new Error(`list '${node.kind}' has an optional trailing separator ${JSON.stringify(spelled)} with no kind id to find in its source`);
+			throw emitShapeFailure({
+				code: 'trailing-separator-without-kind-id',
+				ownerKind: node.kind,
+				message: `list '${node.kind}' has an optional trailing separator ${JSON.stringify(spelled)} with no kind id to find in its source`,
+				details: { separator: spelled }
+			});
 		}
 		return entry.id;
 	};
@@ -3334,9 +3363,12 @@ function defaultedSlots(plan: RenderPlan, node: AssembledNode): DefaultedSlot[] 
 					candidate.seat === undefined
 			);
 			if (site === undefined) {
-				throw new Error(
-					`render-module: ${kind}.${slot.name} is a registered choice option with no option site to fill it from`
-				);
+				throw emitShapeFailure({
+					code: 'choice-option-without-site',
+					ownerKind: kind,
+					slotName: slot.name,
+					message: `${kind}.${slot.name} is a registered choice option with no option site to fill it from`
+				});
 			}
 			return { ident: rustFieldIdent(slot.storageName), site };
 		});
@@ -3797,7 +3829,13 @@ function delimiterTokenFacets(node: AssembledNode, nodeMap: NodeMap): DelimiterT
 	const owner = nodeMap.nodes.get(node.delimiterOf);
 	const gate = owner instanceof AbstractAssembledCompound && owner.freeText?.gate?.token === node.kind ? node.slots.find((slot) => slot.name === owner.freeText!.gate!.facet) : undefined;
 	const facet = node.slots.filter((slot) => slot.delimiterRole === 'preferred' || slot.delimiterRole === 'run' || slot.delimiterRole === 'mirror');
-	if (facet.length !== 1) throw new Error(`render-module: delimiter token '${node.kind}' derives ${facet.length} facets`);
+	if (facet.length !== 1)
+		throw emitShapeFailure({
+			code: 'delimiter-facet-count',
+			ownerKind: node.kind,
+			message: `delimiter token '${node.kind}' derives ${facet.length} facets, and it must have exactly one preferred, run or mirror facet`,
+			details: { facets: facet.length }
+		});
 	return { facet: facet[0]!, content: node.slots.find((slot) => slot.delimiterRole === 'content'), gate };
 }
 
@@ -3881,9 +3919,13 @@ function collectFixedLiterals(
 		const id = resolveLiteralKindId(literal, kindEntries);
 		if (id === undefined) {
 			if (literal.storesKindId !== true) continue;
-			throw new Error(
-				`render-module: ${literal.owner}.${literal.slot} stores '${literal.kind}' (text ${JSON.stringify(literal.text)}) as a kind id, but no kind entry carries it`
-			);
+			throw emitShapeFailure({
+				code: 'kind-id-literal-not-in-parser',
+				ownerKind: literal.owner,
+				slotName: literal.slot,
+				message: `${literal.owner}.${literal.slot} stores '${literal.kind}' (text ${JSON.stringify(literal.text)}) as a kind id, but no kind entry carries it`,
+				details: { literal: literal.kind, text: literal.text }
+			});
 		}
 		const member = kindEntries.find((entry) => entry.id === id)?.member;
 		if (member === undefined) {
@@ -3905,7 +3947,12 @@ function collectFixedLiterals(
 	for (const literal of fixed.values()) {
 		const prior = kindByVariant.get(literal.variant);
 		if (prior !== undefined) {
-			throw new Error(`render-module: fixed literals '${prior}' and '${literal.kind}' are both named ${literal.variant}`);
+			throw emitShapeFailure({
+				code: 'fixed-literal-variant-collision',
+				ownerKind: literal.kind,
+				message: `fixed literals '${prior}' and '${literal.kind}' are both named ${literal.variant}`,
+				details: { variant: literal.variant, kinds: [prior, literal.kind] }
+			});
 		}
 		kindByVariant.set(literal.variant, literal.kind);
 	}
@@ -3945,7 +3992,11 @@ function fixedRenderArm(path: string, fixed: FixedLiteral): string {
 
 function fixedSeatArm(path: string, fixed: FixedLiteral): string {
 	if (!fixed.edged || fixed.ownId === undefined) {
-		throw new Error(`kind '${fixed.kind}' is a fixed literal, a unit variant with no edges, but a list seats it`);
+		throw emitShapeFailure({
+			code: 'fixed-literal-seated-in-list',
+			ownerKind: fixed.kind,
+			message: `kind '${fixed.kind}' is a fixed literal, a unit variant with no edges, but a list seats it`
+		});
 	}
 	return `${path}(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(${fixed.ownId})).map(|site| (edges, site)),`;
 }
@@ -4174,28 +4225,33 @@ function assertReadableNodes(
 ): void {
 	for (const node of nodes) {
 		if (isFixedTextLeaf(node) || node instanceof AssembledEnum || !(node instanceof AbstractAssembledCompound) || !readsItsSlots(node)) continue;
-		const untagged: { name: string; ids: readonly number[] }[] = [];
-		for (const { slot, owner } of structSlotsOf(node, renderSlotModelOf(node), nodeMap)) {
-			const shape = nodeSlotShapeOf(slot, nodeMap);
-			const typeName = shape.tag === 'presence' || shape.tag === 'text' ? undefined : slotNodeTypeName(slot, shape, choices, owner.typeName);
-			const blank = typeName !== undefined && read.blankChoices.has(typeName);
-			if (blank !== hasBlankArm(slot)) {
-				throw new Error(
-					`render-module: ${node.kind}.${slot.name} ${hasBlankArm(slot) ? 'is' : 'is not'} registered as a blank option, but its choice ${typeName ?? '(none)'} ${blank ? 'has' : 'has no'} blank arm`
-				);
-			}
-			if (!takesUntagged(slot, read.ctx)) continue;
-			const ids =
-				shape.tag === 'presence'
-					? [presenceKeyword(shape, owner, slot, read.ctx).id]
-					: typeName === undefined
-						? []
-						: read.admitted.get(typeName);
-			if (ids === undefined) throw new Error(`render-module: ${node.kind}.${slot.name} is typed ${typeName}, which printed no admitted kind ids`);
-			untagged.push({ name: slot.name, ids });
-		}
-		assertOneUntaggedSlot(node.kind, untagged, read.ctx.kindEntries);
+		guardOwner(undefined, () => assertReadableNode(node, nodeMap, choices, read));
 	}
+}
+
+function assertReadableNode(node: AssembledNode, nodeMap: NodeMap, choices: ChoiceNames, read: ReadPrint): void {
+	if (!(node instanceof AbstractAssembledCompound)) return;
+	const untagged: { name: string; ids: readonly number[] }[] = [];
+	for (const { slot, owner } of structSlotsOf(node, renderSlotModelOf(node), nodeMap)) {
+		const shape = nodeSlotShapeOf(slot, nodeMap);
+		const typeName = shape.tag === 'presence' || shape.tag === 'text' ? undefined : slotNodeTypeName(slot, shape, choices, owner.typeName);
+		const blank = typeName !== undefined && read.blankChoices.has(typeName);
+		if (blank !== hasBlankArm(slot)) {
+			throw new Error(
+				`render-module: ${node.kind}.${slot.name} ${hasBlankArm(slot) ? 'is' : 'is not'} registered as a blank option, but its choice ${typeName ?? '(none)'} ${blank ? 'has' : 'has no'} blank arm`
+			);
+		}
+		if (!takesUntagged(slot, read.ctx)) continue;
+		const ids =
+			shape.tag === 'presence'
+				? [presenceKeyword(shape, owner, slot, read.ctx).id]
+				: typeName === undefined
+					? []
+					: read.admitted.get(typeName);
+		if (ids === undefined) throw new Error(`render-module: ${node.kind}.${slot.name} is typed ${typeName}, which printed no admitted kind ids`);
+		untagged.push({ name: slot.name, ids });
+	}
+	assertOneUntaggedSlot(node.kind, untagged, read.ctx.kindEntries);
 }
 
 function renderNodeField(

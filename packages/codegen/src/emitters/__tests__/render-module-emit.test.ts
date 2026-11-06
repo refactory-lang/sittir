@@ -691,10 +691,10 @@ describe('node read facts', () => {
 		const [content] = envelope.slots.flatMap((s) => slotKindNames(s));
 		const holding = (held: AssembledNode): ReadFactsCtx => ({ ...ctx, nodeMap: { ...ctx.nodeMap, nodes: new Map([...ctx.nodeMap.nodes, [content!, held]]) } });
 		expect(() => nodeArgs(envelope, ownId(envelope), holding(model.nodeMap.nodes.get('mutable_specifier')!), envelope.slots)).toThrow(
-			`node read facts: the envelope ${envelope.kind} holds the unit ${content}`
+			`envelope-holds-unit: the envelope ${envelope.kind} holds the unit ${content}`
 		);
 		expect(() => nodeArgs(envelope, ownId(envelope), holding(node('ParametersNode')), envelope.slots)).toThrow(
-			`node read facts: the envelope ${envelope.kind} shares its row with ${content}, which is not a text leaf`
+			`envelope-shares-row-with-nonleaf: the envelope ${envelope.kind} shares its row with ${content}, which is not a text leaf`
 		);
 	});
 

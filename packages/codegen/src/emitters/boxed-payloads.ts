@@ -1,3 +1,5 @@
+import { emitShapeFailure } from '../compiler/diagnostics/emit-diagnostics.ts';
+
 export const PAYLOAD_CEILING_BYTES = 256;
 
 interface Niche {
@@ -283,7 +285,13 @@ function layoutsOf(declarations: ReadonlyMap<string, Declaration>, boxed: (name:
 		if (open.includes(name)) throw new Error(`${[...open.slice(open.indexOf(name)), name].join(' -> ')} holds itself by value`);
 		open.push(name);
 		const declaration = declarations.get(name);
-		if (declaration === undefined) throw new Error(`${name} is no type the payload byte rule knows: declare its layout in boxed-payloads.ts`);
+		if (declaration === undefined)
+			throw emitShapeFailure({
+				code: 'payload-type-undeclared',
+				ownerKind: name,
+				message: `${name} is held as an enum payload, but the emitted node.rs declares no struct or enum of that name, so its size cannot be computed`,
+				details: { type: name }
+			});
 		const layout =
 			declaration.tag === 'struct'
 				? structLayout(declaration.fields.map(typeLayout))

@@ -1,4 +1,5 @@
 import { type ModelNode, type ModelSlot } from '../../../bindings/facts.ts';
+import { emitShapeFailure } from '../../../compiler/diagnostics/emit-diagnostics.ts';
 import { armClass, collapsedKinds, derive, levelMembers, levelsWithMembers, soleRole, type Derivation, type MemberFacts } from '../../../bindings/derive.ts';
 import { tsname } from '../../../bindings/names.ts';
 import { stringLiteral as q } from '../../../util/string-literal.ts';
@@ -575,7 +576,7 @@ function slotArmOf(
 	const setOf = (path: string): string => {
 		const family = [...vocabulary.kinds.keys()].filter((member) => member === path || member.startsWith(`${path}.`)).sort();
 		const forms = family.filter((member) => read.has(member)).map((member) => ({ base: `V.${qname(member)}<Ctx>`, forms: formsAt(member, `V.${qname(member)}<Ctx>`) }));
-		if (forms.length === 0) throw new Error(`a slot holds the ${path} family, but nothing in the grammar reads as any of its paths`);
+		if (forms.length === 0) throw emitShapeFailure({ code: 'portable-family-unread', message: `a slot holds the ${path} family, but nothing in the grammar reads as any of its paths`, details: { path } });
 		return forms.length === family.length && forms.every(({ base, forms: [only, ...rest] }) => only === base && rest.length === 0) ? `V.${qname(path)}.Any<Ctx>` : forms.flatMap(({ forms: arms }) => arms).join(' | ');
 	};
 	return (k) => {

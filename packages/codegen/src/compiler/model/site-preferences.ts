@@ -1,4 +1,5 @@
 import type { NodeMap } from '../types.ts';
+import { emitShapeFailure } from '../diagnostics/emit-diagnostics.ts';
 import { findEntryForLiteralText, type KindEntryLike } from '../../dsl/symbol-table.ts';
 import { STRING } from '../../types/rule-types.ts'; // @rule-type-consts
 import type { SeamOrigin } from '../../types/rule.ts';
@@ -204,9 +205,9 @@ function withDeclaredArms(
 	]) {
 		const hits = matchAddress(addressSegments(address), addressed, membersOf);
 		if (hits.length > 0 && !hits.some((site) => admitsArm(site, arm))) {
-			throw new Error(
+			throw emitShapeFailure({ code: 'option-site-invalid', message: 
 				`options: '${address}' is '${arm}', which no site it names admits (${[...new Set(hits.flatMap((site) => site.arms.map((a) => a.value)))].join(', ')})`
-			);
+			 });
 		}
 	}
 
@@ -245,11 +246,11 @@ function separatorArmKinds(node: AssembledList, config: SitePreferencesConfig): 
 	return node.separatorTokenArms.map((arm) => {
 		if (arm.type === STRING) {
 			const name = tokenKind(arm.value, config);
-			if (name === undefined) throw new Error(`defaults: separator token '${arm.value}' of ${displayNameOf(node.kind, config.nodeMap)} has no kind in the catalog`);
+			if (name === undefined) throw emitShapeFailure({ code: 'separator-token-without-kind', message: `defaults: separator token '${arm.value}' of ${displayNameOf(node.kind, config.nodeMap)} has no kind in the catalog` });
 			return name;
 		}
 		const entry = arm.kindId === undefined ? undefined : config.kindEntries.find((candidate) => candidate.id === arm.kindId);
-		if (entry === undefined) throw new Error(`defaults: separator token '${arm.name}' of ${displayNameOf(node.kind, config.nodeMap)} has no kind in the catalog`);
+		if (entry === undefined) throw emitShapeFailure({ code: 'separator-token-without-kind', message: `defaults: separator token '${arm.name}' of ${displayNameOf(node.kind, config.nodeMap)} has no kind in the catalog` });
 		return displayNameOfEntry(entry, config.kindEntries);
 	});
 }

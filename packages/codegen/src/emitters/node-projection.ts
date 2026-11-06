@@ -1,5 +1,7 @@
 import type { NodeMap } from '../compiler/types.ts';
 import { assertNever } from '../polymorph-variant.ts';
+import { EmitHaltedError, type GrammarDiagnostic } from '../types/diagnostics.ts';
+import { emitShapeFailure } from '../compiler/diagnostics/emit-diagnostics.ts';
 import { isParserHiddenKind } from '../dsl/symbol-table.ts';
 import type { AssembledNonterminal, AssembledNode } from '../compiler/model/node-map.ts';
 import {
@@ -268,9 +270,20 @@ export function listItemSlot(node: AssembledNode): AssembledNonterminal | undefi
 
 function refuseSharedRowContent(envelope: string, name: string, content: AssembledNode | undefined): void {
 	if (content instanceof AssembledSupertype) return;
-	if (content?.unit === true) throw new Error(`node read facts: the envelope ${envelope} holds the unit ${name}`);
+	if (content?.unit === true)
+		throw emitShapeFailure({
+			code: 'envelope-holds-unit',
+			ownerKind: envelope,
+			message: `the envelope ${envelope} holds the unit ${name}, which has no text of its own for the envelope to share its row with`,
+			details: { envelope, content: name }
+		});
 	if (content === undefined || !isTextLeaf(content))
-		throw new Error(`node read facts: the envelope ${envelope} shares its row with ${name}, which is not a text leaf`);
+		throw emitShapeFailure({
+			code: 'envelope-shares-row-with-nonleaf',
+			ownerKind: envelope,
+			message: `the envelope ${envelope} shares its row with ${name}, which is not a text leaf, so the reader cannot tell the two apart`,
+			details: { envelope, content: name }
+		});
 }
 
 export function nodeArgs(
@@ -285,7 +298,13 @@ export function nodeArgs(
 		const wraps = contents.some(([, content]) => content instanceof AssembledSupertype);
 		return `kind = ${ctx.names.kind(node.aliasTypeId)}, display, content = content${wraps ? ', wraps_hidden' : ''}`;
 	}
-	if (ownId === undefined) throw new Error(`node read facts: ${node.kind} has no parser symbol, so no reader can claim it`);
+	if (ownId === undefined)
+		throw emitShapeFailure({
+			code: 'kind-without-parser-symbol',
+			ownerKind: node.kind,
+			message: `${node.kind} has no parser symbol, so no reader can claim it: a kind minted only after the parser was generated cannot be read`,
+			proposal: `declare ${node.kind} in the grammar so the parser issues it, or stop referring to it from a slot`
+		});
 	const folded = foldedTokens(ownId, ctx);
 	const displays = layoutDisplaysOf(node).flatMap((display) => findKindEntry(ctx.kindEntries, display.kind)?.id ?? []);
 	const kind = [
@@ -333,10 +352,14 @@ function refuseFlatListCycle(
 			if (held instanceof AssembledAlias) {
 				for (const content of envelopeContentKinds(held)) reach(content, from, [...envelopes, kind]);
 			} else if (held !== undefined && listItemSlot(held) !== undefined) {
-				const through = envelopes.length === 0 ? '' : ` through the envelope ${envelopes.join(', then ')}`;
-				throw new Error(
-					`node read facts: the list ${list.kind} reads its items at its own depth, and ${from} can be the list ${kind}${through}, which would read its own items there too, without end`
-				);
+				const path = [from, ...envelopes, kind].join(' -> ');
+				throw emitShapeFailure({
+					code: 'flat-list-cycle',
+					ownerKind: list.kind,
+					message: `the list ${list.kind} reads its items at its own depth, and ${from} can be the list ${kind}${envelopes.length === 0 ? '' : ` through the envelope ${envelopes.join(', then ')}`}, which would read its own items there too, without end (${path})`,
+					proposal: `break the cycle in the grammar layer: give ${from} a variant or field that keeps ${kind} from standing for ${list.kind}'s item, or make the envelope hold a different node`,
+					details: { list: list.kind, path: [from, ...envelopes, kind], envelopes }
+				});
 			}
 		}
 	};
@@ -368,7 +391,13 @@ export function presenceKeyword(
 		return { id: marker.resolvedKindId, envelope: false };
 	}
 	const keyword = shape.kind === undefined ? undefined : findKindEntry(ctx.kindEntries, shape.kind.kind);
-	if (keyword === undefined) throw new Error(`node read facts: ${owner.kind}.${slot.name}'s keyword has no stamped parser symbol`);
+	if (keyword === undefined)
+		throw emitShapeFailure({
+			code: 'presence-keyword-without-parser-symbol',
+			ownerKind: owner.kind,
+			slotName: slot.name,
+			message: `${owner.kind}.${slot.name}'s presence keyword has no parser symbol, so the reader cannot tell whether the slot is present`
+		});
 	return { id: keyword.id, envelope: false };
 }
 
@@ -446,14 +475,26 @@ export function assertOneUntaggedSlot(
 	slots: readonly { readonly name: string; readonly ids: readonly number[] }[],
 	kindEntries: readonly KindEnumEntry[]
 ): void {
+	const failures: GrammarDiagnostic[] = [];
 	for (let i = 0; i < slots.length; i++) {
 		for (let j = i + 1; j < slots.length; j++) {
 			const shared = slots[i]!.ids.find((id) => slots[j]!.ids.includes(id));
 			if (shared === undefined) continue;
 			const name = kindEntries.find((entry) => entry.id === shared)?.kind ?? '?';
-			throw new Error(
-				`node read facts: ${kind} has two slots, '${slots[i]!.name}' and '${slots[j]!.name}', that take an untagged ${name} (kind ${shared}); the reader could not choose between them`
-			);
+			const [a, b] = [slots[i]!.name, slots[j]!.name];
+			failures.push({
+				scope: 'grammar',
+				severity: 'error',
+				canProceed: false,
+				grammar: '',
+				code: 'untagged-slot-ambiguous',
+				ownerKind: kind,
+				slotName: a,
+				message: `${kind} has two slots, '${a}' and '${b}', that take an untagged ${name} (kind ${shared}); the reader could not choose between them`,
+				proposal: `tag one of them with a field in the grammar layer: edits: { ${kind}: { <position>: field('<name>') } } on the arm that fills '${a}' or '${b}'`,
+				details: { slots: [a, b], sharedKind: name, sharedKindId: shared }
+			});
 		}
 	}
+	if (failures.length > 0) throw new EmitHaltedError(failures);
 }

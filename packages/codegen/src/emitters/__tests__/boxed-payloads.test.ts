@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { boxedPayloadsOf, nodeSizesOf } from '../boxed-payloads.ts';
+import { EmitHaltedError } from '../../types/diagnostics.ts';
 
 const struct = (name: string, fields: readonly string[]): string => `pub struct ${name} {\n${fields.map((type, i) => `    pub f${i}: ${type},\n`).join('')}}\n`;
 const choice = (name: string, variants: readonly string[]): string => `pub enum ${name} {\n${variants.map((variant) => `    ${variant},\n`).join('')}}\n`;
@@ -37,7 +38,14 @@ describe('the payload byte rule', () => {
 		expect(nodeSizesOf('pub struct Framed {\n    pub layout: Option<Box<NodeLayout>>,\n    height: u16,\n}\n')).toEqual(new Map([['Framed', 16]]));
 	});
 
-	it('refuses a type it has no layout for', () => {
-		expect(() => boxedPayloadsOf(struct('Holder', ['Mystery']), new Set(['Holder']))).toThrow('Mystery is no type the payload byte rule knows');
+	it('reports a payload type the emitted source never declares, as a named diagnostic', () => {
+		let halted: EmitHaltedError | undefined;
+		try {
+			boxedPayloadsOf(struct('Holder', ['Mystery']), new Set(['Holder']));
+		} catch (error) {
+			halted = error as EmitHaltedError;
+		}
+		expect(halted).toBeInstanceOf(EmitHaltedError);
+		expect(halted!.blocking).toMatchObject([{ code: 'payload-type-undeclared', ownerKind: 'Mystery', canProceed: false }]);
 	});
 });

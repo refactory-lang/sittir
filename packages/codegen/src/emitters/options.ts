@@ -1,4 +1,5 @@
 import type { NodeMap } from '../compiler/types.ts';
+import { emitShapeFailure } from '../compiler/diagnostics/emit-diagnostics.ts';
 import { snakeToCamel } from '../compiler/model/node-map.ts';
 import { admitsDepth, type RenderRules } from '../compiler/model/render-rules.ts';
 import { findEntryForKindName, findEntryForLiteralText, type KindEntryLike } from '../dsl/symbol-table.ts';
@@ -24,7 +25,12 @@ export function kindIdArmType(kindEntries: readonly KindEnumEntry[]): ArmTypeRes
 	return (arm) => {
 		if (arm.kind === undefined) return arm.value === BLANK_ARM ? 'null' : arm.value;
 		const entry = findEntryForKindName(kindEntries, arm.kind);
-		if (entry === undefined) throw new Error(`options: arm '${arm.value}' names kind '${arm.kind}', which has no kind id`);
+		if (entry === undefined)
+			throw emitShapeFailure({
+				code: 'option-arm-kind-unknown',
+				ownerKind: arm.kind,
+				message: `options: arm '${arm.value}' names kind '${arm.kind}', which has no kind id`
+			});
 		return `TSKindId.${entry.member}`;
 	};
 }
@@ -59,7 +65,12 @@ export function nestedKey(segment: PreferenceSegment, kindEntries: readonly Kind
 	switch (segment.kind) {
 		case 'literal': {
 			const entry = findEntryForLiteralText(kindEntries, segment.text);
-			if (entry === undefined) throw new Error(`options: literal ${JSON.stringify(segment.text)} has no kind name`);
+			if (entry === undefined)
+				throw emitShapeFailure({
+					code: 'option-literal-unknown',
+					message: `options: literal ${JSON.stringify(segment.text)} has no kind name`,
+					details: { text: segment.text }
+				});
 			return entry.kind;
 		}
 		case 'index':
@@ -139,7 +150,12 @@ export function hintEmitterOf(addresses: AddressTables, kindEntries: readonly Ki
 		return `{ ${members.join('; ')} }`;
 	};
 	const roots = (childIndex.get(formatPreferencePath([])) ?? []).map((child) => {
-		if (child.branch === undefined) throw new Error(`options: address '${child.leaf!.path}' is a site at the root, which has no hint home`);
+		if (child.branch === undefined)
+			throw emitShapeFailure({
+				code: 'option-address-at-root',
+				message: `options: address '${child.leaf!.path}' is a site at the root, which has no hint home`,
+				details: { address: child.leaf!.path }
+			});
 		return { name: child.name, key: child.key, hint: bodyOf(child.branch.segments), label: !kinds.has(child.name) };
 	});
 	return { roots };
@@ -161,7 +177,11 @@ export function deriveAddressTables(
 	const assertSameSegments = (path: string, segments: readonly PreferenceSegment[]): void => {
 		const prior = branchSegments.get(path) ?? leaves.get(path)?.segments;
 		if (prior !== undefined && formatPreferencePath(prior) !== formatPreferencePath(segments)) {
-			throw new Error(`options: address '${path}' names two segments`);
+			throw emitShapeFailure({
+				code: 'option-address-conflict',
+				message: `options: address '${path}' names two segments`,
+				details: { address: path }
+			});
 		}
 	};
 	for (const site of addressSites(sites, kindEntries, nodeMap)) {
@@ -179,7 +199,12 @@ export function deriveAddressTables(
 		const type = site.arms.map(armType).join(' | ');
 		const path = keys.join('/');
 		const prior = leaves.get(path);
-		if (prior !== undefined && prior.type !== type) throw new Error(`options: address '${path}' resolves to two types`);
+		if (prior !== undefined && prior.type !== type)
+			throw emitShapeFailure({
+				code: 'option-address-conflict',
+				message: `options: address '${path}' resolves to two types`,
+				details: { address: path }
+			});
 		assertSameSegments(path, site.path);
 		leaves.set(path, { type, canonical: [site.path], segments: site.path });
 	}
@@ -216,7 +241,12 @@ export function deriveAddressTables(
 	}
 
 	for (const path of leaves.keys()) {
-		if (branches.has(path)) throw new Error(`options: address '${path}' is both a site and a path`);
+		if (branches.has(path))
+			throw emitShapeFailure({
+				code: 'option-address-conflict',
+				message: `options: address '${path}' is both a site and a path`,
+				details: { address: path }
+			});
 	}
 	const byPath = <T extends { readonly path: string }>(a: T, b: T): number => (a.path < b.path ? -1 : a.path > b.path ? 1 : 0);
 	return {
