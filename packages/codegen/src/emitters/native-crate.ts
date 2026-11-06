@@ -10,8 +10,8 @@ export interface NativeCrateFile {
 
 const json = (value: unknown): string => `${JSON.stringify(value, null, '\t')}\n`;
 
-export function nativeCrateFiles(name: GrammarName): NativeCrateFile[] {
-	const v = { name, Name: grammarDisplayName(name) };
+export function nativeCrateFiles(name: GrammarName, parserName: string = name): NativeCrateFile[] {
+	const v = { name, parserName, Name: grammarDisplayName(name) };
 	return [
 		{
 			path: 'Cargo.toml',
@@ -166,14 +166,14 @@ pub mod render;
 use tree_sitter_language::LanguageFn;
 
 unsafe extern "C" {
-    fn tree_sitter_${v.name}() -> *const ();
+    fn tree_sitter_${v.parserName}() -> *const ();
 }
 
 /// The generated \`.sittir\` ${v.Name} parser.
-// SAFETY: \`tree_sitter_${v.name}\` is the generated parser's entry point, compiled
+// SAFETY: \`tree_sitter_${v.parserName}\` is the generated parser's entry point, compiled
 // and linked by build.rs; it returns the parser's static \`TSLanguage\`, which is
 // the pointer \`LanguageFn::from_raw\` expects.
-pub const LANGUAGE: LanguageFn = unsafe { LanguageFn::from_raw(tree_sitter_${v.name}) };
+pub const LANGUAGE: LanguageFn = unsafe { LanguageFn::from_raw(tree_sitter_${v.parserName}) };
 
 #[must_use]
 pub fn language() -> tree_sitter::Language {
