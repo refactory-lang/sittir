@@ -1,6 +1,9 @@
 # Trivia table
 
-Status: the parsed tree's table is built (`ParsedTree::trivia_table`). The written-sides store holds every write: parsed writes go there from the shared arena's record step's first commit, and built nodes' trivia from its record writer, until which a built node carries its trivia on the node.
+Status: built, on master since the shared arena landed (2026-11-06).
+- A parsed tree's table is placed lazily, one layout owner at a time, on the first read of a side that owner holds (`ParsedTree::cover_side`).
+- Writes are native. A parsed node's written sides are kept by its tree and row. In arena storage, a built record's are kept by its address, and a built unit's or leaf's by its site (`Place`).
+- In object storage, a built node still carries its trivia on the node.
 
 ## 1. The model
 
