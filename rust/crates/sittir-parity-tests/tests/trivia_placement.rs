@@ -1,55 +1,52 @@
 //! A side read alone, in either order, holds on its first read what placing
-//! every region gives it, and so do the edge items and adjacencies read
-//! beside it; each side is handed over once. Runs are compared by their
-//! bytes and sides rather than by id, over each grammar's fixtures. The
-//! depth changes where regions meet are pinned.
+//! every region gives it, and so do the edge items and the adjacencies of
+//! its entries; one table holds each side. Runs are compared by their bytes
+//! and sides rather than by id, over each grammar's fixtures. The depth
+//! changes where regions meet are pinned.
 
 use sittir_core::engine::EngineGrammar;
 use sittir_core::points::LineTable;
-use sittir_core::trivia_table::{Assigned, PlacedSides, Placement, Source, TriviaSide};
+use sittir_core::trivia_table::{Adjacency, Assigned, Placement, Source, Table, TriviaSide};
 use sittir_core::types::NodeIndex;
 use sittir_parity_tests::{each_grammar, fixture_sources, parsed, probe_input};
 
 const SIDES: [TriviaSide; 3] = [TriviaSide::Leading, TriviaSide::Trailing, TriviaSide::Inner];
 
-/// An assigned entry with its run's content in place of its id.
+/// An assigned entry with its run's content in place of its id, and an
+/// `ERROR`'s or a layout member's adjacency.
 #[derive(Debug, PartialEq, Eq)]
 enum Entry {
     Assigned(Assigned),
+    Fixed { entry: Assigned, adjacency: Option<Adjacency> },
     Layout { run: sittir_core::trivia_table::LayoutRun, from: u32, owner: NodeIndex, depth: i32 },
 }
 
-/// The sides a placement handed over, by node and side, and each side it
-/// handed over more than once.
-#[derive(Default)]
-struct Filled {
-    sides: PlacedSides,
-    twice: Vec<(NodeIndex, TriviaSide)>,
+/// The entries `table` gives `side` of the node at `index`, each run as
+/// its content in `placement`.
+fn entries(placement: &Placement, table: Option<&Table>, index: NodeIndex, side: TriviaSide) -> Vec<Entry> {
+    let Some(table) = table else { return Vec::new() };
+    table
+        .side(index, side)
+        .iter()
+        .map(|&entry| match entry {
+            Assigned::Layout { run, owner, depth, .. } => Entry::Layout { run: placement.run(run), from: placement.run_from(run), owner, depth },
+            Assigned::Error(at) | Assigned::Member(at) => Entry::Fixed { entry, adjacency: table.adjacency(at) },
+            other => Entry::Assigned(other),
+        })
+        .collect()
 }
 
-impl Filled {
-    fn fill(&mut self, placed: PlacedSides) {
-        for (key, entries) in placed {
-            if self.sides.insert(key, entries).is_some() {
-                self.twice.push(key);
-            }
-        }
-    }
+/// A side, by its node and which side it is.
+type Side = (NodeIndex, TriviaSide);
 
-    /// The entries of `side` of the node at `index`, each run as its
-    /// content in `placement`.
-    fn entries(&self, placement: &Placement, index: NodeIndex, side: TriviaSide) -> Vec<Entry> {
-        self.sides
-            .get(&(index, side))
-            .map(Vec::as_slice)
-            .unwrap_or_default()
-            .iter()
-            .map(|&entry| match entry {
-                Assigned::Layout { run, owner, depth, .. } => Entry::Layout { run: placement.run(run), from: placement.run_from(run), owner, depth },
-                other => Entry::Assigned(other),
-            })
-            .collect()
-    }
+/// Every side the tables of `placement` hold, and each side more than one
+/// of them holds.
+fn published(placement: &Placement) -> (Vec<Side>, Vec<Side>) {
+    let mut sides: Vec<Side> = placement.tables().flat_map(|table| table.sides().map(|(key, _)| key).collect::<Vec<_>>()).collect();
+    sides.sort_unstable();
+    let twice = sides.windows(2).filter(|pair| pair[0] == pair[1]).map(|pair| pair[0]).collect();
+    sides.dedup();
+    (sides, twice)
 }
 
 /// The differences among the placements of `source`, each named.
@@ -62,19 +59,18 @@ fn differences<G: EngineGrammar>(grammar: G, options: sittir_core::options::Reso
     let mut from_root = |index: NodeIndex| sittir_core::engine::node_at_index(tree, index);
     let count = sittir_core::read::descendant_count(&tree.root_node());
     let whole = Placement::new(kinds, unit);
-    let mut placed = Filled::default();
-    whole.place_all(at, |sides| placed.fill(sides));
+    whole.place_all(at);
+    let (placed, twice) = published(&whole);
     let mut found = Vec::new();
-    if !placed.twice.is_empty() {
-        found.push(format!("sides handed over twice placing every region: {:?}", placed.twice));
+    if !twice.is_empty() {
+        found.push(format!("sides two tables hold placing every region: {twice:?}"));
     }
     for (order, indices) in [("in reverse preorder", (0..count).rev().map(NodeIndex::new).collect::<Vec<_>>()), ("in preorder", (0..count).map(NodeIndex::new).collect())] {
         let alone = Placement::new(kinds, unit);
-        let mut read = Filled::default();
         for &index in &indices {
             for side in SIDES {
-                alone.cover(at, &mut from_root, index, side, |sides| read.fill(sides));
-                let (got, want) = (read.entries(&alone, index, side), placed.entries(&whole, index, side));
+                let got = entries(&alone, alone.cover(at, &mut from_root, index, side), index, side);
+                let want = entries(&whole, whole.cover(at, &mut from_root, index, side), index, side);
                 if got != want {
                     found.push(format!("side {index} {side:?} read alone {order}: {got:?}, placed with every region: {want:?}"));
                 }
@@ -85,16 +81,13 @@ fn differences<G: EngineGrammar>(grammar: G, options: sittir_core::options::Reso
                     }
                 }
             }
-            let (got, want) = (alone.adjacency(at, &mut from_root, index), whole.adjacency(at, &mut from_root, index));
-            if got != want {
-                found.push(format!("adjacency {index} read alone {order}: {got:?}, placed with every region: {want:?}"));
-            }
         }
-        if read.sides.keys().ne(placed.sides.keys()) {
+        let (read, twice) = published(&alone);
+        if read != placed {
             found.push(format!("the sides read alone {order} are not those placed with every region"));
         }
-        if !read.twice.is_empty() {
-            found.push(format!("sides handed over twice reading alone {order}: {:?}", read.twice));
+        if !twice.is_empty() {
+            found.push(format!("sides two tables hold reading alone {order}: {twice:?}"));
         }
     }
     found
@@ -153,7 +146,7 @@ fn numbered(tree: &tree_sitter::Tree) -> Vec<(NodeIndex, String, usize)> {
         .collect()
 }
 
-fn depths(tree: &tree_sitter::Tree, side_of: impl Fn(NodeIndex, TriviaSide) -> Vec<Assigned>) -> Depths {
+fn depths(tree: &tree_sitter::Tree, mut side_of: impl FnMut(NodeIndex, TriviaSide) -> Vec<Assigned>) -> Depths {
     numbered(tree)
         .into_iter()
         .flat_map(|(index, kind, nth)| SIDES.map(|side| (kind.clone(), nth, side, changes(&side_of(index, side)))))
@@ -178,9 +171,8 @@ fn pinned<G: EngineGrammar>(grammar: G, options: sittir_core::options::ResolvedO
     let want: Depths = want.iter().map(|&(kind, nth, side, changes)| (kind.to_owned(), nth, side, changes.to_vec())).collect();
     let mut found = Vec::new();
     let whole = Placement::new(kinds, unit);
-    let mut placed = Filled::default();
-    whole.place_all(at, |sides| placed.fill(sides));
-    let got = depths(tree, |index, side| placed.sides.get(&(index, side)).cloned().unwrap_or_default());
+    whole.place_all(at);
+    let got = depths(tree, |index, side| whole.cover(at, &mut from_root, index, side).map_or_else(Vec::new, |table| table.side(index, side).to_vec()));
     if got != want {
         found.push(format!("placed with every region:\n{}", listed(&got)));
     }
@@ -191,9 +183,7 @@ fn pinned<G: EngineGrammar>(grammar: G, options: sittir_core::options::ResolvedO
             continue;
         };
         let alone = Placement::new(kinds, unit);
-        let mut read = Filled::default();
-        alone.cover(at, &mut from_root, index, *side, |sides| read.fill(sides));
-        let got = self::changes(read.sides.get(&(index, *side)).map(Vec::as_slice).unwrap_or_default());
+        let got = self::changes(alone.cover(at, &mut from_root, index, *side).map_or(&[][..], |table| table.side(index, *side)));
         if got != *changes {
             found.push(format!("{kind} {nth} {side:?} read alone: {got:?}, pinned {changes:?}"));
         }

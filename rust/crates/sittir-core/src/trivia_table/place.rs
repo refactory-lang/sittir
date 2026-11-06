@@ -22,13 +22,20 @@
 //! from the nodes it has read before: each node of a shape it builds knows
 //! its parent, so a read of a side next to one already placed costs the
 //! nodes around it, not the path from the root.
+//!
+//! A region is placed once, under the placement's lock, and published as a
+//! table that never changes (`Table`), its slots stored after it
+//! (`Published`): a read of a side whose region is placed loads its node's
+//! slot and reads the table, taking no lock. What the placement keeps to
+//! place further regions stays under the lock.
 
 use super::{holds_sides, is_entry, Adjacency, Assigned, DepthAnchor, LayoutRun, Place, SurfaceKinds, TriviaSide};
-use crate::heap::{btree_allocation, vec_allocation, CountedMap, HeapBytes, IndexState, ARC_COUNTS};
+use crate::heap::{btree_allocation, CountedMap, HeapBytes, IndexState, ARC_COUNTS};
 use crate::points::LineTable;
 use crate::types::{narrow, KindId, NodeIndex, RunId, Span};
 use std::collections::{BTreeMap, HashMap};
-use std::sync::{Arc, Mutex, PoisonError};
+use std::sync::atomic::{AtomicBool, AtomicU32, Ordering};
+use std::sync::{Arc, Mutex, OnceLock, PoisonError};
 
 /// Where a token falls in the walk's order: by its bytes, then as the walk
 /// pushes it, so the tokens at one byte keep the walk's order. A leaf goes
@@ -257,6 +264,159 @@ struct Placed {
     from: u32,
 }
 
+/// Values set once each, at their index, and read without a lock: chunk
+/// `k` holds `2^k` of them and is made by the first value set in it, so a
+/// value set never moves.
+#[derive(Debug)]
+struct Chunks<T> {
+    chunks: Box<[OnceLock<Chunk<T>>]>,
+}
+
+type Chunk<T> = Box<[OnceLock<T>]>;
+
+impl<T> Chunks<T> {
+    /// Room for `capacity` values.
+    fn new(capacity: usize) -> Self {
+        Self { chunks: (0..usize::BITS - capacity.leading_zeros()).map(|_| OnceLock::new()).collect() }
+    }
+
+    /// The chunk the value at `index` falls in, and its place there.
+    fn locate(index: usize) -> (usize, usize) {
+        let at = index + 1;
+        let chunk = (usize::BITS - 1 - at.leading_zeros()) as usize;
+        (chunk, at - (1 << chunk))
+    }
+
+    fn get(&self, index: usize) -> Option<&T> {
+        let (chunk, at) = Self::locate(index);
+        self.chunks.get(chunk)?.get()?.get(at)?.get()
+    }
+
+    /// Sets the value at `index`, which none holds, answering the heap a
+    /// chunk made for it takes.
+    fn set(&self, index: usize, value: T) -> usize {
+        let (chunk, at) = Self::locate(index);
+        let mut made = 0;
+        let values = self.chunks[chunk].get_or_init(|| {
+            made = std::mem::size_of::<OnceLock<T>>() << chunk;
+            (0..1usize << chunk).map(|_| OnceLock::new()).collect()
+        });
+        let set = values[at].set(value);
+        debug_assert!(set.is_ok(), "a value is set once");
+        made
+    }
+
+    /// The values set, by index, up to the first index none holds.
+    fn values(&self) -> impl Iterator<Item = &T> + '_ {
+        self.chunks.iter().map_while(OnceLock::get).flat_map(|values| values.iter()).map_while(OnceLock::get)
+    }
+
+    /// The heap the directory and the chunks made take.
+    fn allocation(&self) -> usize {
+        std::mem::size_of_val::<[OnceLock<Chunk<T>>]>(&self.chunks) + self.chunks.iter().filter_map(OnceLock::get).map(|values| std::mem::size_of_val::<[OnceLock<T>]>(values)).sum::<usize>()
+    }
+}
+
+/// The sides one region placed, published once and read without a lock:
+/// each side's entries in source order, the adjacency of each `ERROR` and
+/// line continuation among them, and the item each list of the region
+/// passes the extras and `ERROR`s of an edge to.
+#[derive(Debug, Default)]
+pub struct Table {
+    sides: Box<[(NodeIndex, TriviaSide, u32)]>,
+    entries: Box<[Assigned]>,
+    adjacency: Box<[(NodeIndex, Adjacency)]>,
+    edges: Box<[(NodeIndex, TriviaSide, NodeIndex)]>,
+}
+
+impl Table {
+    /// The entries the region gives `side` of the node at `index`, in
+    /// source order.
+    #[must_use]
+    pub fn side(&self, index: NodeIndex, side: TriviaSide) -> &[Assigned] {
+        let Ok(at) = self.sides.binary_search_by_key(&(index, side), |&(node, side, _)| (node, side)) else { return &[] };
+        &self.entries[self.start(at)..self.sides[at].2 as usize]
+    }
+
+    fn start(&self, at: usize) -> usize {
+        at.checked_sub(1).map_or(0, |before| self.sides[before].2 as usize)
+    }
+
+    /// Every side the region placed, by node and side, with its entries.
+    pub fn sides(&self) -> impl Iterator<Item = ((NodeIndex, TriviaSide), &[Assigned])> + '_ {
+        self.sides.iter().enumerate().map(|(at, &(node, side, end))| ((node, side), &self.entries[self.start(at)..end as usize]))
+    }
+
+    /// The adjacency of the entry at `index`, an `ERROR` or a layout member
+    /// a side of the region holds, where the source fixes it in place
+    /// (`Adjacency`): an `ERROR`'s always, a line continuation's when
+    /// whitespace lies beside it.
+    #[must_use]
+    pub fn adjacency(&self, index: NodeIndex) -> Option<Adjacency> {
+        self.adjacency.binary_search_by_key(&index, |&(at, _)| at).ok().map(|at| self.adjacency[at].1)
+    }
+
+    fn edge_item(&self, index: NodeIndex, side: TriviaSide) -> Option<NodeIndex> {
+        self.edges.binary_search_by_key(&(index, side), |&(list, side, _)| (list, side)).ok().map(|at| self.edges[at].2)
+    }
+}
+
+impl HeapBytes for Table {
+    fn heap_bytes(&self) -> usize {
+        let Self { sides, entries, adjacency, edges } = self;
+        std::mem::size_of_val::<[(NodeIndex, TriviaSide, u32)]>(sides) + std::mem::size_of_val::<[Assigned]>(entries) + std::mem::size_of_val::<[(NodeIndex, Adjacency)]>(adjacency) + std::mem::size_of_val::<[(NodeIndex, TriviaSide, NodeIndex)]>(edges)
+    }
+}
+
+/// A node's slot before its side's region is placed.
+const UNPLACED: u32 = 0;
+/// A node's slot once its side's region is placed and published no table:
+/// the region placed nothing, or no region holds the side.
+const EMPTY: u32 = u32::MAX;
+
+/// What a placement publishes as it places its regions, read without a
+/// lock. Each node has two slots, its leading and trailing sides' and its
+/// inner's, naming the table of the region that holds them by its id plus
+/// one, `UNPLACED` or `EMPTY`. A region's runs and table are set before
+/// its slots are stored, with release ordering, so a read that loads a
+/// slot with acquire ordering finds them.
+#[derive(Debug)]
+struct Published {
+    slots: Box<[AtomicU32]>,
+    tables: Chunks<Table>,
+    runs: Chunks<Placed>,
+}
+
+impl Published {
+    /// The slots of a tree of `nodes` nodes, all unplaced.
+    fn new(nodes: u32) -> Self {
+        Self { slots: (0..2 * nodes).map(|_| AtomicU32::new(UNPLACED)).collect(), tables: Chunks::new(nodes as usize), runs: Chunks::new(u32::MAX as usize) }
+    }
+
+    fn slot(&self, index: NodeIndex, side: TriviaSide) -> Option<&AtomicU32> {
+        self.slots.get(2 * index.get() as usize + usize::from(side == TriviaSide::Inner))
+    }
+
+    /// The slot of `side` of the node at `index`; `EMPTY` for a node the
+    /// tree does not hold.
+    fn load(&self, index: NodeIndex, side: TriviaSide) -> u32 {
+        self.slot(index, side).map_or(EMPTY, |slot| slot.load(Ordering::Acquire))
+    }
+
+    fn table(&self, slot: u32) -> Option<&Table> {
+        (slot != EMPTY && slot != UNPLACED).then(|| self.tables.get(slot as usize - 1)).flatten()
+    }
+
+    fn placed(&self, id: RunId) -> Placed {
+        *self.runs.get(id.index()).expect("a placed side holds the run")
+    }
+
+    /// The heap the slots and the directories take, and the chunks made.
+    fn allocation(&self) -> usize {
+        std::mem::size_of_val::<[AtomicU32]>(&self.slots) + self.tables.allocation() + self.runs.allocation()
+    }
+}
+
 #[derive(Debug, Default)]
 struct State {
     shapes: CountedMap<NodeIndex, Arc<Shape>>,
@@ -275,17 +435,17 @@ struct State {
     wide: CountedMap<u32, Option<Kid>>,
     ending: CountedMap<u32, Option<Kid>>,
     adjacency: CountedMap<NodeIndex, Option<Adjacency>>,
-    placed: CountedMap<NodeIndex>,
-    members: CountedMap<NodeIndex>,
-    framed: CountedMap<NodeIndex>,
-    settled: CountedMap<(NodeIndex, TriviaSide)>,
     unowned: BTreeMap<Order, NodeIndex>,
-    runs: Vec<Placed>,
     order: BTreeMap<(u32, u32, Order), RunId>,
+    runs: u32,
+    tables: u32,
     /// The heap the values of `shapes`, `sims` and `stretches` hold, added
     /// as each is inserted (`hold`): what a count reads instead of walking
     /// them.
     held: usize,
+    /// The heap what the placement published takes (`Published`): its
+    /// slots and directories, each chunk made, and each table's heap.
+    published: usize,
     steps: u64,
     stretch_steps: u64,
 }
@@ -299,12 +459,16 @@ fn hold<K: Eq + std::hash::Hash, V: HeapBytes>(held: &mut usize, map: &mut Count
     }
 }
 
-/// A parsed tree's trivia, placed a region at a time on first read.
+/// A parsed tree's trivia, placed a region at a time on first read. A
+/// region is placed under the placement's lock, once, and published
+/// (`Published`); a read of a side whose region is placed takes no lock.
 #[derive(Debug, Default)]
 pub struct Placement {
     kinds: SurfaceKinds,
     unit: u32,
     state: Mutex<State>,
+    published: OnceLock<Published>,
+    grown: AtomicBool,
 }
 
 /// The tree a placement reads: its tree, source and row starts.
@@ -319,71 +483,68 @@ pub struct Source<'t> {
 /// reader's own lookup, which moves from where it last read.
 pub type Lookup<'n, 't> = &'n mut dyn FnMut(NodeIndex) -> Option<tree_sitter::Node<'t>>;
 
-/// The sides one call placed, by node and side, each side's entries in
-/// source order: every entry a side holds, since a side is placed with the
-/// region that holds it, once.
-pub type PlacedSides = BTreeMap<(NodeIndex, TriviaSide), Vec<Assigned>>;
+/// The sides one region placed, by node and side, each side's entries in
+/// source order.
+type PlacedSides = BTreeMap<(NodeIndex, TriviaSide), Vec<Assigned>>;
 
 impl Placement {
     /// The placement of a tree whose grammar's surface kinds are `kinds`
     /// and whose indentation level is `unit` spaces wide.
     #[must_use]
     pub fn new(kinds: SurfaceKinds, unit: u32) -> Self {
-        Self { kinds, unit, state: Mutex::default() }
+        Self { kinds, unit, ..Self::default() }
     }
 
     fn with<'t, R>(&self, source: Source<'t>, nodes: Option<Lookup<'_, 't>>, f: impl FnOnce(&mut Placer<'t, '_, '_>) -> R) -> R {
         let mut state = self.state.lock().unwrap_or_else(PoisonError::into_inner);
-        let mut placer = Placer { source, kinds: self.kinds, unit: self.unit.max(1), state: &mut state, lookup: nodes, nodes: HashMap::default(), kids: HashMap::default(), plans: HashMap::default(), placed: PlacedSides::new() };
+        self.grown.store(true, Ordering::Relaxed);
+        let published = self.published.get_or_init(|| {
+            let published = Published::new(crate::read::descendant_count(&source.tree.root_node()));
+            state.published += published.allocation();
+            published
+        });
+        let mut placer = Placer { source, kinds: self.kinds, unit: self.unit.max(1), state: &mut state, published, lookup: nodes, nodes: HashMap::default(), kids: HashMap::default(), plans: HashMap::default(), placed: PlacedSides::new() };
         f(&mut placer)
     }
 
-    /// The region that holds `side` of the node at `index`, placed. The
-    /// sides it placed go to `fill`, before any other read finds the region
-    /// placed; a region placed before hands over none.
-    pub fn cover<'t>(&self, source: Source<'t>, nodes: Lookup<'_, 't>, index: NodeIndex, side: TriviaSide, fill: impl FnOnce(PlacedSides)) {
-        self.with(source, Some(nodes), |placer| {
-            placer.cover(index, side);
-            placer.hand_over(fill);
-        });
+    /// The slot of `side` of the node at `index`, `UNPLACED` before the
+    /// placement published any.
+    fn slot(&self, index: NodeIndex, side: TriviaSide) -> u32 {
+        self.published.get().map_or(UNPLACED, |published| published.load(index, side))
+    }
+
+    /// The region that holds `side` of the node at `index`, placed on the
+    /// first read of a side it holds, each node it reads found through
+    /// `nodes`: the table it published, `None` where it placed nothing or no
+    /// region holds the side. Once the region is placed, a read takes no
+    /// lock.
+    pub fn cover<'t>(&self, source: Source<'t>, nodes: Lookup<'_, 't>, index: NodeIndex, side: TriviaSide) -> Option<&Table> {
+        let slot = match self.slot(index, side) {
+            UNPLACED => self.with(source, Some(nodes), |placer| {
+                placer.cover(index, side);
+                placer.settle(index, side)
+            }),
+            slot => slot,
+        };
+        self.published.get()?.table(slot)
     }
 
     /// The item the list node at `index` passes the extras and `ERROR`s of
     /// its `side` to, so a coordinate of the list frames with that item's
-    /// side too; `None` for a node that is no list or passes none.
-    #[must_use]
+    /// side too, read from the table of the region the list is a member of
+    /// (`cover`); `None` for a node that is no list or passes none.
     pub fn edge_item<'t>(&self, source: Source<'t>, nodes: Lookup<'_, 't>, index: NodeIndex, side: TriviaSide) -> Option<NodeIndex> {
-        self.with(source, Some(nodes), |placer| {
-            let kid = placer.kid(index);
-            if !kid.holder || !placer.kinds.lists.contains(&kid.kind) || !placer.walked(index) {
-                return None;
-            }
-            placer.edge_item(&kid, side).map(|item| item.index)
-        })
+        self.cover(source, nodes, index, TriviaSide::Inner)?.edge_item(index, side)
     }
 
-    /// The adjacency of the entry at `index` when the source fixes it in
-    /// place (`Adjacency`): an `ERROR`'s always, a line continuation's when
-    /// whitespace lies beside it.
-    #[must_use]
-    pub fn adjacency<'t>(&self, source: Source<'t>, nodes: Lookup<'_, 't>, index: NodeIndex) -> Option<Adjacency> {
-        self.with(source, Some(nodes), |placer| {
-            let kid = placer.kid(index);
-            if !kid.entry || !placer.walked(index) {
-                return None;
-            }
-            placer.adjacency(&kid)
-        })
-    }
-
-    /// The run `id` names, which a placed side holds.
+    /// The run `id` names, which a placed side holds, read without a lock.
     ///
     /// # Panics
     ///
     /// When no placed side holds `id`.
     #[must_use]
     pub fn run(&self, id: RunId) -> LayoutRun {
-        self.state.lock().unwrap_or_else(PoisonError::into_inner).runs[id.index()].run
+        self.placed(id).run
     }
 
     /// Where the source text of the run `id` starts as its baseline measures
@@ -395,16 +556,28 @@ impl Placement {
     /// When no placed side holds `id`.
     #[must_use]
     pub fn run_from(&self, id: RunId) -> u32 {
-        self.state.lock().unwrap_or_else(PoisonError::into_inner).runs[id.index()].from
+        self.placed(id).from
     }
 
-    /// Place every region of the tree, the sides placed handed to `fill`
-    /// as `cover` hands them.
-    pub fn place_all(&self, source: Source<'_>, fill: impl FnOnce(PlacedSides)) {
-        self.with(source, None, |placer| {
-            placer.place_all();
-            placer.hand_over(fill);
-        });
+    fn placed(&self, id: RunId) -> Placed {
+        self.published.get().expect("a placed side holds the run").placed(id)
+    }
+
+    /// Place every region of the tree.
+    #[allow(clippy::redundant_closure_for_method_calls, reason = "the method's path fixes the placer's lifetimes, which `with` takes for any")]
+    pub fn place_all(&self, source: Source<'_>) {
+        self.with(source, None, |placer| placer.place_all());
+    }
+
+    /// Every table published so far, in the order the regions were placed.
+    pub fn tables(&self) -> impl Iterator<Item = &Table> + '_ {
+        self.published.get().into_iter().flat_map(|published| published.tables.values())
+    }
+
+    /// Whether the placement placed or read anything under its lock since
+    /// the last call, and so may hold more than at the last count.
+    pub fn take_grown(&mut self) -> bool {
+        std::mem::take(self.grown.get_mut())
     }
 
     /// Every depth stretch the templates of the tree's nodes open, sorted
@@ -423,7 +596,7 @@ impl Placement {
     #[must_use]
     pub fn runs(&self) -> Vec<(RunId, LayoutRun)> {
         let state = self.state.lock().unwrap_or_else(PoisonError::into_inner);
-        state.order.values().map(|&id| (id, state.runs[id.index()].run)).collect()
+        state.order.values().map(|&id| (id, self.run(id))).collect()
     }
 
     /// The first placed run, in source order, spanning `start..end`.
@@ -444,7 +617,8 @@ impl Placement {
     /// what `heap_bytes` counts as it goes.
     #[cfg(test)]
     pub(crate) fn walked_bytes(&self) -> usize {
-        self.state.lock().unwrap_or_else(PoisonError::into_inner).walked()
+        let state = self.state.lock().unwrap_or_else(PoisonError::into_inner);
+        state.walked() + self.published.get().map_or(0, |published| published.allocation() + published.tables.values().map(HeapBytes::heap_bytes).sum::<usize>())
     }
 
     /// The children the placement has stepped through.
@@ -467,6 +641,7 @@ struct Placer<'t, 's, 'l> {
     kinds: SurfaceKinds,
     unit: u32,
     state: &'s mut State,
+    published: &'s Published,
     lookup: Option<Lookup<'l, 't>>,
     nodes: HashMap<NodeIndex, tree_sitter::Node<'t>, IndexState>,
     kids: HashMap<NodeIndex, Arc<[Kid]>, IndexState>,
@@ -477,13 +652,6 @@ struct Placer<'t, 's, 'l> {
 impl<'t> Placer<'t, '_, '_> {
     fn text(&self) -> &'t str {
         self.source.source
-    }
-
-    fn hand_over(&mut self, fill: impl FnOnce(PlacedSides)) {
-        let placed = std::mem::take(&mut self.placed);
-        if !placed.is_empty() {
-            fill(placed);
-        }
     }
 
     fn len(&self) -> u32 {
@@ -818,17 +986,12 @@ impl<'t> Placer<'t, '_, '_> {
         at
     }
 
-    /// Place the region that holds `side` of the node at `index`.
+    /// Place the region that holds `side` of the node at `index`: the
+    /// region its holder, its parent or, for its `inner`, itself, is a
+    /// member of. A node below an entry, and the root's leading and
+    /// trailing, have none.
     fn cover(&mut self, index: NodeIndex, side: TriviaSide) {
-        let held = match side {
-            TriviaSide::Inner => self.state.members.contains_key(&index),
-            TriviaSide::Leading | TriviaSide::Trailing => index == NodeIndex::ROOT || self.state.framed.contains_key(&index),
-        };
-        if held || self.state.settled.contains_key(&(index, side)) {
-            return;
-        }
-        if !self.walked(index) {
-            self.state.settled.insert((index, side), ());
+        if self.published.load(index, side) != UNPLACED || !self.walked(index) {
             return;
         }
         let holder = match side {
@@ -838,6 +1001,19 @@ impl<'t> Placer<'t, '_, '_> {
         let Some(holder) = holder else { return };
         let top = self.top_of(holder);
         self.place_region(top);
+    }
+
+    /// The slot of `side` of the node at `index` once `cover` placed its
+    /// region: `EMPTY` where no region placed it.
+    fn settle(&self, index: NodeIndex, side: TriviaSide) -> u32 {
+        let Some(slot) = self.published.slot(index, side) else { return EMPTY };
+        match slot.load(Ordering::Relaxed) {
+            UNPLACED => {
+                slot.store(EMPTY, Ordering::Release);
+                EMPTY
+            }
+            slot => slot,
+        }
     }
 
     /// Place every region of the tree, from one walk of it, each after the
@@ -907,7 +1083,7 @@ impl<'t> Placer<'t, '_, '_> {
     /// The region of the node at `top`, which is no list or the root and
     /// whose parent the placement knows, placed.
     fn place_region(&mut self, top: NodeIndex) {
-        if self.state.placed.insert(top, ()).is_some() {
+        if self.published.load(top, TriviaSide::Inner) != UNPLACED {
             return;
         }
         let mut members = Vec::new();
@@ -920,8 +1096,6 @@ impl<'t> Placer<'t, '_, '_> {
         let mut events: Vec<(Order, Event)> = Vec::new();
         for &member in &members {
             let shape = self.shape(member);
-            self.state.members.insert(member, ());
-            self.state.framed.extend(shape.kids.iter().map(|kid| (kid.index, ())));
             let entry = self.entry_of(member);
             let (plans, after) = self.walk(&shape, entry);
             let last = after.last().copied().unwrap_or(entry);
@@ -943,6 +1117,67 @@ impl<'t> Placer<'t, '_, '_> {
         for (order, event) in events {
             self.apply(order, event);
         }
+        self.publish(&members);
+    }
+
+    /// Publishes the sides the region of `members` placed: its table, set
+    /// before the slots of its members' `inner` sides and of their
+    /// children's leading and trailing sides name it. A region that placed
+    /// no side and has no list passing an edge publishes none: its slots
+    /// are `EMPTY`.
+    fn publish(&mut self, members: &[NodeIndex]) {
+        let placed = std::mem::take(&mut self.placed);
+        let (mut sides, mut entries) = (Vec::with_capacity(placed.len()), Vec::new());
+        for ((node, side), assigned) in placed {
+            entries.extend(assigned);
+            sides.push((node, side, narrow(entries.len())));
+        }
+        let mut adjacency = Vec::new();
+        for &entry in &entries {
+            if let Assigned::Error(at) | Assigned::Member(at) = entry {
+                let kid = self.kid(at);
+                if let Some(found) = self.adjacency(&kid) {
+                    adjacency.push((at, found));
+                }
+            }
+        }
+        adjacency.sort_unstable_by_key(|&(at, _)| at);
+        adjacency.dedup_by_key(|&mut (at, _)| at);
+        let mut edges = Vec::new();
+        for &member in members {
+            let kid = self.kid(member);
+            if kid.holder && self.kinds.lists.contains(&kid.kind) {
+                for side in [TriviaSide::Leading, TriviaSide::Trailing] {
+                    if let Some(item) = self.edge_item(&kid, side) {
+                        edges.push((member, side, item.index));
+                    }
+                }
+            }
+        }
+        edges.sort_unstable();
+        let slot = if sides.is_empty() && edges.is_empty() {
+            EMPTY
+        } else {
+            let id = self.state.tables;
+            self.state.tables += 1;
+            let table = Table { sides: sides.into(), entries: entries.into(), adjacency: adjacency.into(), edges: edges.into() };
+            self.state.published += table.heap_bytes() + self.published.tables.set(id as usize, table);
+            id + 1
+        };
+        let published = self.published;
+        let store = |index: NodeIndex, side: TriviaSide| {
+            if let Some(at) = published.slot(index, side) {
+                let replaced = at.swap(slot, Ordering::Release);
+                debug_assert_eq!(replaced, UNPLACED, "one region holds a side: {index} {side:?}");
+            }
+        };
+        for &member in members {
+            store(member, TriviaSide::Inner);
+            for kid in self.shape(member).kids.iter() {
+                store(kid.index, TriviaSide::Leading);
+            }
+        }
+        debug_assert!(published.table(slot).is_none_or(|table| table.sides().all(|((node, side), _)| published.load(node, side) == slot)), "every side a table holds names it");
     }
 
     fn apply(&mut self, order: Order, event: Event) {
@@ -957,9 +1192,10 @@ impl<'t> Placer<'t, '_, '_> {
                             let carries = self.carries(pushed);
                             let spelled = self.spelled(gap.0, &plan, at, until);
                             let from = self.text_from(pushed);
-                            let id = RunId(narrow(self.state.runs.len()));
+                            let id = RunId(self.state.runs);
+                            self.state.runs += 1;
                             let owner = gap.0;
-                            self.state.runs.push(Placed { run: LayoutRun { start: at, end: until, node, side, owner, carries, spelled }, from });
+                            self.state.published += self.published.runs.set(id.index(), Placed { run: LayoutRun { start: at, end: until, node, side, owner, carries, spelled }, from });
                             self.state.order.insert((at, until, order), id);
                             self.push(place, Assigned::Layout { run: id, start: at, end: until, owner, depth }, order);
                         }
@@ -1459,7 +1695,7 @@ impl<'t> Placer<'t, '_, '_> {
     }
 
     /// The adjacency of the entry `entry` when the source fixes it in place
-    /// (`Placement::adjacency`): an entry carries the in-line run after the
+    /// (`Table::adjacency`): an entry carries the in-line run after the
     /// entry before it when that one is fixed too.
     fn adjacency(&mut self, entry: &Kid) -> Option<Adjacency> {
         let fixes = |kinds: &SurfaceKinds, kid: &Kid| kid.kind == KindId::ERROR || kinds.layout.contains(&kid.kind);
@@ -1764,14 +2000,12 @@ impl HeapBytes for State {
             wide,
             ending,
             adjacency,
-            placed,
-            members,
-            framed,
-            settled,
             unowned,
-            runs,
             order,
+            runs: _,
+            tables: _,
             held,
+            published,
             steps: _,
             stretch_steps: _,
         } = self;
@@ -1791,14 +2025,10 @@ impl HeapBytes for State {
             + wide.allocation()
             + ending.allocation()
             + adjacency.allocation()
-            + placed.allocation()
-            + members.allocation()
-            + framed.allocation()
-            + settled.allocation()
             + btree_allocation(unowned)
-            + vec_allocation(runs)
             + btree_allocation(order)
             + held
+            + published
     }
 }
 
@@ -1823,14 +2053,12 @@ impl State {
             wide,
             ending,
             adjacency,
-            placed,
-            members,
-            framed,
-            settled,
             unowned,
-            runs,
             order,
+            runs: _,
+            tables: _,
             held: _,
+            published: _,
             steps: _,
             stretch_steps: _,
         } = self;
@@ -1850,20 +2078,16 @@ impl State {
             + wide.heap_bytes()
             + ending.heap_bytes()
             + adjacency.heap_bytes()
-            + placed.heap_bytes()
-            + members.heap_bytes()
-            + framed.heap_bytes()
-            + settled.heap_bytes()
             + unowned.heap_bytes()
-            + runs.heap_bytes()
             + order.heap_bytes()
     }
 }
 
-/// What the placement holds of the regions placed so far.
+/// What the placement holds of the regions placed so far, and what it
+/// published of them.
 impl HeapBytes for Placement {
     fn heap_bytes(&self) -> usize {
-        let Self { kinds: _, unit: _, state } = self;
+        let Self { kinds: _, unit: _, state, published: _, grown: _ } = self;
         state.lock().unwrap_or_else(PoisonError::into_inner).heap_bytes()
     }
 }

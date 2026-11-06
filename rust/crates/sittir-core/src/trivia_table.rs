@@ -35,7 +35,7 @@ use crate::heap::HeapBytes;
 use crate::types::{KindId, NodeIndex, RunId, Span};
 
 mod place;
-pub use place::{Lookup, PlacedSides, Placement, Source};
+pub use place::{Lookup, Placement, Source, Table};
 
 /// A side of a node that holds trivia: before its first token, after its
 /// last, or, for a node with no named child, between its own tokens.
@@ -365,7 +365,7 @@ enum Place {
 /// with or without a line break, and empty where they touch: its bytes, the
 /// side, its owner (`Assigned::Layout`), whether it carries the layout
 /// written between the tokens around it, and whether an entry's adjacency
-/// spells it (`Placement::adjacency`). The file's two edges are none.
+/// spells it (`Table::adjacency`). The file's two edges are none.
 ///
 /// Gaps that only a zero-width token parts (an automatic semicolon, a
 /// dedent) are one gap to a render, which writes nothing for the token: the

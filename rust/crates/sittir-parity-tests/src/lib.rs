@@ -189,11 +189,11 @@ pub fn parsed<G: sittir_core::engine::EngineGrammar>(grammar: G, options: sittir
     engine.parse(source, sittir_core::engine::claim_tree_id().expect("a tree id")).expect("a parse")
 }
 
-/// A tree's trivia with every region placed, and the sides placing them
-/// handed over (`Placement::place_all`).
+/// A tree's trivia with every region placed (`Placement::place_all`), and
+/// the sides its tables hold.
 pub struct PlacedTrivia {
     pub placement: sittir_core::trivia_table::Placement,
-    pub sides: sittir_core::trivia_table::PlacedSides,
+    sides: std::collections::BTreeMap<(sittir_core::types::NodeIndex, sittir_core::trivia_table::TriviaSide), Vec<sittir_core::trivia_table::Assigned>>,
 }
 
 impl PlacedTrivia {
@@ -203,8 +203,8 @@ impl PlacedTrivia {
     pub fn of(tree: &tree_sitter::Tree, source: &str, kinds: sittir_core::trivia_table::SurfaceKinds, unit: u32) -> Self {
         let lines = sittir_core::points::LineTable::new(source);
         let placement = sittir_core::trivia_table::Placement::new(kinds, unit);
-        let mut sides = sittir_core::trivia_table::PlacedSides::new();
-        placement.place_all(sittir_core::trivia_table::Source { tree, source, lines: &lines }, |placed| sides = placed);
+        placement.place_all(sittir_core::trivia_table::Source { tree, source, lines: &lines });
+        let sides = placement.tables().flat_map(|table| table.sides().map(|(key, entries)| (key, entries.to_vec())).collect::<Vec<_>>()).collect();
         Self { placement, sides }
     }
 
