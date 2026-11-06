@@ -8,8 +8,12 @@
 # admitted files' paths, <batches> times; each run is paired with a run of the
 # same command over one empty file from an empty directory, its startup. Each
 # oxlint run records its wall time, peak RSS (wait4) and the time oxlint
-# reports for itself. Each receipt records the one-minute load beside the
-# process. Defaults: 10 batches, 5 rounds.
+# reports for itself. When TS_WALK names a built ts-walk binary, each round
+# also runs its timing mode (tree-sitter's parse, a TreeCursor walk into flat
+# rows and the tree's drop, <batches> passes) as a fifth process, and after
+# the rounds its memory mode once per corpus (<corpus>-ts-memory.json). Each
+# receipt records the one-minute load beside the process. Defaults: 10
+# batches, 5 rounds.
 import datetime, json, os, re, subprocess, sys, time
 from pathlib import Path
 
@@ -19,7 +23,9 @@ tree = Path(sys.argv[2]).resolve()
 corpora = Path(sys.argv[3]).resolve()
 BATCHES = int(sys.argv[4]) if len(sys.argv) > 4 else 10
 ROUNDS = int(sys.argv[5]) if len(sys.argv) > 5 else 5
-TOOLS = ['object', 'arena', 'oxfmt', 'oxlint']
+TS_WALK = os.environ.get('TS_WALK')
+TREE_SITTER = re.search(r'^tree-sitter = "=([^"]+)"', (here / 'ts-walk' / 'Cargo.toml').read_text(), re.M).group(1)
+TOOLS = ['object', 'arena', 'oxfmt', 'oxlint'] + (['ts-walk'] if TS_WALK else [])
 OXLINT_FLAGS = ['--threads=1', '--silent', '--disable-nested-config', '--no-ignore']
 out.mkdir(parents=True, exist_ok=True)
 empty = out / 'oxlint-empty'
@@ -78,6 +84,25 @@ def runOxlint(manifest, result):
         'signature': signature, 'samples': samples}, indent=1) + '\n')
 
 
+def filesOf(manifest):
+    listed = out / f"{manifest['name']}.files.txt"
+    listed.write_text(''.join(f"{f['path']}\n" for f in manifest['files']))
+    return listed
+
+
+def runTsWalk(mode, manifest, result, *passes):
+    command = [TS_WALK, mode, str(corpora / manifest['name']), str(filesOf(manifest)), *passes, str(out / (result + '.json'))]
+    with (out / (result + '.stdout.txt')).open('w') as so, (out / (result + '.stderr.txt')).open('w') as se:
+        code = subprocess.run(command, env=env, stdout=so, stderr=se).returncode
+    if code == 0:
+        measured = json.loads((out / (result + '.json')).read_text())
+        assert measured['files'] == len(manifest['files']), f"ts-walk read {measured['files']} of {len(manifest['files'])} files"
+        (out / (result + '.json')).write_text(json.dumps({
+            'at': now(), 'tree': str(tree), 'tool': 'ts-walk', 'version': TREE_SITTER, 'corpus': manifest['name'], 'commit': manifest['commit'],
+            'node': nodeVersion, 'cpu': cpu, 'loadAverage': list(os.getloadavg()), **measured}, indent=1) + '\n')
+    return command, code
+
+
 def worker(tool, manifestPath, manifest, index):
     label = f"{manifest['name']}-{tool}-{index}"
     load1 = os.getloadavg()[0]
@@ -86,6 +111,8 @@ def worker(tool, manifestPath, manifest, index):
         command = ['oxlint', *OXLINT_FLAGS]
         runOxlint(manifest, label)
         code = 0
+    elif tool == 'ts-walk':
+        command, code = runTsWalk('timing', manifest, label, str(BATCHES))
     else:
         command = ['node', '--expose-gc', str(here / 'reference-worker.mjs'), str(tree), str(manifestPath), str(out / (label + '.json')), tool, str(BATCHES)]
         with (out / (label + '.stdout.txt')).open('w') as so, (out / (label + '.stderr.txt')).open('w') as se:
@@ -103,5 +130,12 @@ for index in range(ROUNDS):
     for path, manifest in manifests:
         for tool in orderOf(index):
             worker(tool, path, manifest, index)
+if TS_WALK:
+    for _, manifest in manifests:
+        command, code = runTsWalk('memory', manifest, f"{manifest['name']}-ts-memory")
+        print(f"{manifest['name']}-ts-memory", code, flush=True)
+        if code:
+            sys.stderr.write((out / f"{manifest['name']}-ts-memory.stderr.txt").read_text())
+            raise SystemExit(code)
 (out / 'complete.json').write_text(json.dumps({'start': start, 'end': now(), 'cpu': cpu, 'node': nodeVersion, 'tree': str(tree), 'batches': BATCHES, 'rounds': ROUNDS, 'workers': len(receipts),
                                                'corpora': [{k: m[k] for k in ('name', 'url', 'commit', 'license')} | {'files': len(m['files']), 'bytes': sum(f['bytes'] for f in m['files']), 'refused': len(m['refused'])} for _, m in manifests]}, indent=2) + '\n')

@@ -68,9 +68,14 @@ def column(row, tool, phase=None):
     return median(processMs(x, phase) for x in row['processes'][tool].values())
 
 
-def ratio(row, storage, phase, tool):
-    paired = [processMs(x, phase) / processMs(row['processes'][tool][k]) for k, x in row['processes'][storage].items() if k in row['processes'][tool]]
+def pairedRatio(row, num, numPhase, den, denPhase=None):
+    procs = row['processes']
+    paired = [processMs(x, numPhase) / processMs(procs[den][k], denPhase) for k, x in procs[num].items() if k in procs.get(den, {})]
     return {'ratio': median(paired), 'range95': interval(paired), 'rounds': len(paired)}
+
+
+def ratio(row, storage, phase, tool):
+    return pairedRatio(row, storage, phase, tool)
 
 
 mbps = lambda row, ms: row['bytes'] / 1e6 / (ms / 1000)
@@ -97,12 +102,27 @@ for (cpu, corpus), row in sorted(rows.items()):
     for tool in STORAGES + TOOLS:
         xs = row['processes'][tool].values()
         entry['peakRssMB'][tool] = median(median(s['peakRssMB'] for s in x['samples']) if tool == 'oxlint' else x['peakRssMB'] for x in xs)
+    if 'ts-walk' in row['processes']:
+        walks = list(row['processes']['ts-walk'].values())
+        nodes = walks[0]['visibleNodes']
+        entry['treeSitter'] = {'visibleNodes': nodes, 'nsPerNode': {ph: column(row, 'ts-walk', ph) * 1e6 / nodes for ph in ('parseMs', 'walkMs', 'dropMs')},
+                               'walk / parse': pairedRatio(row, 'ts-walk', 'walkMs', 'ts-walk', 'parseMs')}
+        for storage in STORAGES:
+            entry['treeSitter'][f'walk / {storage} whole read'] = pairedRatio(row, 'ts-walk', 'walkMs', storage, 'wholeReadMs')
+            entry['treeSitter'][f'parse / {storage} parse'] = pairedRatio(row, 'ts-walk', 'parseMs', storage, 'parseMs')
     summary.append(entry)
+treeMemory = {}
+for d in dirs:
+    for path in sorted((d / 'runs').glob('*-ts-memory.json')):
+        measured = json.loads(path.read_text())
+        kept = treeMemory.setdefault(measured['corpus'], measured)
+        if (kept['treeBytes'], kept['treeAllocations'], kept['visibleNodes']) != (measured['treeBytes'], measured['treeAllocations'], measured['visibleNodes']):
+            mismatches.append(f"{measured['corpus']} tree-sitter memory differs between copies")
 
 commits = sorted({json.loads((d / 'refs.json').read_text())['feature'] for d in dirs if (d / 'refs.json').exists()})
 cell = lambda r: f"{r['ratio']:.2f} [{r['range95'][0]:.2f}, {r['range95'][1]:.2f}]"
 lines = ['## Speed reference: sittir against oxfmt and oxlint', '',
-         f"sittir {', '.join(f'`{c[:12]}`' for c in commits) or '(commit not recorded)'}, {', '.join(sorted({str(versions.get(s)) for s in STORAGES}))} build; oxfmt {versions.get('oxfmt')}, oxlint {versions.get('oxlint')}, node {versions.get('node')}; {len(dirs)} cop{'y' if len(dirs) == 1 else 'ies'}.",
+         f"sittir {', '.join(f'`{c[:12]}`' for c in commits) or '(commit not recorded)'}, {', '.join(sorted({str(versions.get(s)) for s in STORAGES}))} build; oxfmt {versions.get('oxfmt')}, oxlint {versions.get('oxlint')}, node {versions.get('node')}{f", tree-sitter {versions['ts-walk']}" if 'ts-walk' in versions else ''}; {len(dirs)} cop{'y' if len(dirs) == 1 else 'ies'}.",
          'MB/s is admitted source bytes (10^6) over the median process time. A ratio is sittir\'s time over the tool\'s on the same bytes (×N: sittir takes N times as long), the median over rounds with a bootstrap 95% range. oxfmt is format() in process, one awaited call per file; oxlint is its command at --threads=1, net of the median startup of the same command over an empty file. sittir\'s edit is a same-value edit of each root\'s settable members; whole read is a parse with depth: Infinity.',
          f"Output differences: {'; '.join(mismatches) if mismatches else 'none'}.", '']
 for cpu in sorted({e['cpu'] for e in summary}):
@@ -120,10 +140,27 @@ for cpu in sorted({e['cpu'] for e in summary}):
         lines.append(f"| {e['corpus']} | `{e['commit'][:12]}` | {e['files']} | {e['bytes'] / 1e6:.2f} | {e['copies']} | {e['mbps']['oxfmt']:.1f} | {e['mbps']['oxlint']:.1f} | {e['oxlintStartupMs']:.0f} | {e['oxlintReportedMs']:.0f} | "
                      + ' / '.join(f"{e['ms'][f'{s} treeReleaseMs']:.1f}" for s in STORAGES) + ' | '
                      + ' / '.join(f"{e['peakRssMB'][t]:.0f}" for t in STORAGES + TOOLS) + ' |')
+    walked = [e for e in entries if 'treeSitter' in e]
+    if walked:
+        lines += ['', 'tree-sitter alone (ts-walk): its parse, one TreeCursor walk copying every visible node into a flat row, and the tree\'s drop; ratios paired by round with sittir\'s processes on this runner.', '',
+                  '| corpus | visible nodes | parse ns/node | walk ns/node | drop ns/node | walk ÷ parse | walk ÷ whole read, object | walk ÷ whole read, arena | ts parse ÷ sittir parse, object | ts parse ÷ sittir parse, arena |',
+                  '|---|---|---|---|---|---|---|---|---|---|']
+        for e in walked:
+            ts = e['treeSitter']
+            lines.append(f"| {e['corpus']} | {ts['visibleNodes']} | " + ' | '.join(f"{ts['nsPerNode'][ph]:.1f}" for ph in ('parseMs', 'walkMs', 'dropMs')) + ' | '
+                         + ' | '.join(cell(ts[k]) for k in ['walk / parse', 'walk / object whole read', 'walk / arena whole read', 'parse / object parse', 'parse / arena parse']) + ' |')
+    lines.append('')
+if treeMemory:
+    lines += ['### tree-sitter tree memory (any CPU)', '', 'Bytes tree-sitter asked for that a parsed tree holds until its drop (a counting allocator through set_allocator; the parser\'s own buffers and the allocator\'s overhead excluded), against one flat row per visible node.', '',
+              '| corpus | visible nodes | tree MB | bytes / visible node | allocations held | allocations / visible node | flat rows MB | row bytes | tree ÷ flat | largest tree MB | largest parse peak MB |',
+              '|---|---|---|---|---|---|---|---|---|---|---|']
+    for corpus, m in sorted(treeMemory.items()):
+        flat = m['visibleNodes'] * m['rowBytes']
+        lines.append(f"| {corpus} | {m['visibleNodes']} | {m['treeBytes'] / 1e6:.1f} | {m['treeBytes'] / m['visibleNodes']:.1f} | {m['treeAllocations']} | {m['treeAllocations'] / m['visibleNodes']:.2f} | {flat / 1e6:.1f} | {m['rowBytes']} | {m['treeBytes'] / flat:.2f} | {m['largestTreeBytes'] / 1e6:.1f} | {m['largestParsePeakBytes'] / 1e6:.1f} |")
     lines.append('')
 markdown = '\n'.join(lines) + '\n'
 target.write_text(markdown)
-(target.parent / 'summary.json').write_text(json.dumps({'sittir': commits, 'versions': versions, 'mismatches': mismatches, 'rows': summary}, indent=2) + '\n')
+(target.parent / 'summary.json').write_text(json.dumps({'sittir': commits, 'versions': versions, 'mismatches': mismatches, 'rows': summary, 'treeSitterMemory': treeMemory}, indent=2) + '\n')
 if os.environ.get('GITHUB_STEP_SUMMARY'):
     with open(os.environ['GITHUB_STEP_SUMMARY'], 'a') as f:
         f.write(markdown)

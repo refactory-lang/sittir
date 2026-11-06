@@ -64,8 +64,16 @@ jobs:
         env:
           NODE_ENV: production
         run: node scripts/ci/paired-refs/reference/admit.mjs "$RUNNER_TEMP/trees/feature" "$RUNNER_TEMP/oxc-reference/corpora"
-      - name: Measure sittir, oxfmt and oxlint in alternating fresh processes
+      - name: Build the tree-sitter walk probe on sittir's TypeScript parser
         shell: bash
+        env:
+          SITTIR_TS_SRC: ${{ runner.temp }}/trees/feature/packages/typescript/.sittir/src
+          CARGO_TARGET_DIR: ${{ runner.temp }}/ts-walk-target
+        run: cargo build --release --manifest-path scripts/ci/paired-refs/reference/ts-walk/Cargo.toml
+      - name: Measure sittir, oxfmt, oxlint and the walk probe in alternating fresh processes
+        shell: bash
+        env:
+          TS_WALK: ${{ runner.temp }}/ts-walk-target/release/ts-walk
         run: python3 scripts/ci/paired-refs/reference/run.py "$RUNNER_TEMP/oxc-reference/runs" "$RUNNER_TEMP/trees/feature" "$RUNNER_TEMP/oxc-reference/corpora" 2>&1 | tee "$RUNNER_TEMP/oxc-reference/run.log"
       - name: Check the tree did not change during measurement
         shell: bash
