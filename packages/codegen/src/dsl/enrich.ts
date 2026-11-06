@@ -92,7 +92,8 @@ import {
 	withOptionalContent,
 	ruleListEntryOf,
 	ruleListParts,
-	type RuleListEntry
+	type RuleListEntry,
+	unwrapPrec
 } from './rule-patterns.ts';
 import { baseRulesOf } from './shared.ts';
 import { enrichWhitespace, type EnrichedWhitespace } from './whitespace.ts';
@@ -1726,18 +1727,11 @@ function tryPromoteInRepeatSeq(
 }
 
 function applyOptionalKeyword(ruleName: string, rule: Rule, ctx: EnrichCtx): Rule {
-	const inner = peelPrec(rule);
+	const inner = unwrapPrec(rule);
 	const claimed = isSeqType(inner.type) ? collectFieldNamesRuntime(inner) : new Set<string>();
 	return walkOptionalKeyword(ruleName, rule, claimed, ctx) ?? rule;
 }
 
-function peelPrec(rule: Rule): Rule {
-	let cursor: Rule = rule;
-	while (isPrecWrapper(cursor as { type: string })) {
-		cursor = (cursor as unknown as { content: Rule }).content;
-	}
-	return cursor;
-}
 
 function tryPromoteOptionalNode(
 	ruleName: string,
@@ -1982,14 +1976,14 @@ function absorbTrailingListSeparators(members: Rule[], symbols: SymbolSource): R
 }
 
 function isLoneOptionalToken(optionalSeqBody: Rule): boolean {
-	const body = peelPrec(optionalSeqBody);
+	const body = unwrapPrec(optionalSeqBody);
 	if (!isSeqType(body.type)) return false;
 	const members = (body as unknown as { members: Rule[] }).members;
 	if (members.length !== 2) return false;
 	const [token, tail] = members as [Rule, Rule];
 	if (!isStringType(token.type)) return false;
 	const inner = optionalContentOf(tail);
-	return inner !== undefined && isFieldType(peelPrec(inner).type);
+	return inner !== undefined && isFieldType(unwrapPrec(inner).type);
 }
 
 function applyClauseHoist(

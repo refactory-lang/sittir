@@ -1,5 +1,5 @@
 import { isChoiceType, isPrecWrapper, isSeqType, isTokenWrapperType, type RuntimeRule } from '../../types/runtime-shapes.ts';
-import { isBlank, matchesEmpty, optionalContentOf } from '../rule-patterns.ts';
+import { isBlank, matchesEmpty, optionalContentOf, peelPrecs } from '../rule-patterns.ts';
 
 export type TokenChoiceClass = 'presence' | 'spelling' | 'forms';
 
@@ -79,16 +79,6 @@ function dropAt(rule: RuntimeRule, path: readonly number[]): RuntimeRule {
 		return rebuilt(rule, { members: membersOf(rule).map((m, i) => (i === head ? dropAt(m, rest) : m)) });
 	}
 	return rebuilt(rule, { content: dropAt(contentOf(rule), rest) });
-}
-
-function peelPrecs(rule: RuntimeRule): { precs: RuntimeRule[]; core: RuntimeRule } {
-	const precs: RuntimeRule[] = [];
-	let core = rule;
-	while (isPrecWrapper(core)) {
-		precs.push(core);
-		core = contentOf(core);
-	}
-	return { precs, core };
 }
 
 function tokenOverArms(precs: readonly RuntimeRule[], core: RuntimeRule, arms: readonly RuntimeRule[]): RuntimeRule {

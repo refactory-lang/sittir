@@ -1,7 +1,6 @@
 import { ALIAS, CHOICE, FIELD, OPTIONAL, REPEAT, REPEAT1, SEQ, STRING, TOKEN } from '../types/rule-types.ts'; // @rule-type-consts
 import type { AnyRule, SimplifiedRule } from '../types/rule.ts';
-import { isPrecWrapper } from '../types/runtime-shapes.ts';
-import { isNonterminalRuleType, optionalContentOf } from './rule-patterns.ts';
+import { isNonterminalRuleType, unwrapPrecAndOptional } from './rule-patterns.ts';
 
 export interface ArmStage {
 	fieldName(rule: AnyRule): string | undefined;
@@ -21,19 +20,6 @@ export const simplifyArmStage: ArmStage = {
 	isFieldedSlot: (body) => simplifyArmStage.isSlotNode(body),
 	unwrap: (rule) => rule
 };
-
-function unwrapPrecAndOptional(rule: AnyRule): AnyRule {
-	let node = rule;
-	for (;;) {
-		if (isPrecWrapper(node)) {
-			node = (node as { content: AnyRule }).content;
-			continue;
-		}
-		const optional = optionalContentOf(node);
-		if (optional === undefined) return node;
-		node = optional;
-	}
-}
 
 export const dslArmStage: ArmStage = {
 	fieldName: (rule) => (rule.type === FIELD ? rule.name : undefined),

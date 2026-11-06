@@ -93,7 +93,7 @@ import {
 } from '../../types/runtime-shapes.ts';
 import type { RuntimeRule, FieldLike } from '../../types/runtime-shapes.ts';
 import { makeRuleMetadata } from '../rule-metadata.ts';
-import { flattenedListBody, isArmChoice, isBlank, isHiddenKind, lexesAsOneToken, matchesEmpty, optionalContentOf, withOptionalContent } from '../rule-patterns.ts';
+import { flattenedListBody, isArmChoice, isBlank, isHiddenKind, lexesAsOneToken, matchesEmpty, optionalContentOf, peelPrecs, withOptionalContent } from '../rule-patterns.ts';
 import { nativeRuleFn } from '../enrich.ts';
 import { carriedLabel, relabelledArm, withAuthoredLabel, withoutAutomaticVariants } from '../automatic-variants.ts';
 
@@ -541,12 +541,7 @@ function peelPrecWrappersFromRule(rule: RuntimeRule): {
 		if (dbg) console.error(`[sittir] hoist skipped on '${kindFor}': ${reason}`);
 		return null;
 	};
-	const precStack: RuntimeRule[] = [];
-	let core = rule;
-	while (core && isPrecWrapper(core)) {
-		precStack.push(core);
-		core = contentOf(core);
-	}
+	const { precs: precStack, core } = peelPrecs(rule);
 	return { bail, precStack, core };
 }
 

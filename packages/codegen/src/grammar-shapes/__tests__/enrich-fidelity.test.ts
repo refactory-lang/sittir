@@ -17,6 +17,7 @@
  *   - break_expression : Shape 2 of supertype `_expression` LEFT UNWRAPPED (the `_`-prefix gate)
  *   - closure_expression: optional('static'/'async'/'move') wrapped as '<kw>' (pass 3, CHOICE-shaped optional)
  */
+import { unwrapPrec } from '../../dsl/rule-patterns.ts';
 import { describe, it, expect, expectTypeOf, afterAll } from 'vitest';
 import { createRequire } from 'node:module';
 import { enrich } from '../../dsl/enrich.ts';
@@ -232,12 +233,7 @@ describe('EnrichRule<> structural fidelity vs runtime enrich()', () => {
 		const supers = new Set(
 			(gj.supertypes ?? []).map((s) => (typeof s === 'string' ? s : (s as { name: string }).name))
 		);
-		const peelPrec = (r: any): any => {
-			let c = r;
-			while (c && (c.type === 'PREC' || c.type === 'PREC_LEFT' || c.type === 'PREC_RIGHT' || c.type === 'PREC_DYNAMIC'))
-				c = c.content;
-			return c;
-		};
+		const peelPrec = (r: any): any => unwrapPrec(r);
 		const peelOpt = (m: any) => {
 			if (m?.type === 'CHOICE' && m.members?.length === 2) {
 				const b = m.members.findIndex((x: any) => x.type === 'BLANK');

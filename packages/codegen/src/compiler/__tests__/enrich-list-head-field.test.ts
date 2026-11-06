@@ -1,4 +1,5 @@
 import { createRequire } from 'node:module';
+import { unwrapPrec } from '../../dsl/rule-patterns.ts';
 import { describe, expect, it } from 'vitest';
 import { FIELD, REPEAT, SEQ, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
 import { grammarPackage } from '../../grammars.ts';
@@ -10,11 +11,7 @@ const require = createRequire(import.meta.url);
 
 type Node = { readonly type: string; readonly name?: string; readonly content?: Node; readonly members?: readonly Node[] };
 
-const peelPrec = (rule: Node | undefined): Node | undefined => {
-	let cursor = rule;
-	while (cursor?.type.startsWith('PREC')) cursor = cursor.content;
-	return cursor;
-};
+const peelPrec = (rule: Node | undefined): Node | undefined => unwrapPrec(rule);
 
 function headOnlyListFields(rules: RawGrammar['rules']): string[] {
 	const found: string[] = [];

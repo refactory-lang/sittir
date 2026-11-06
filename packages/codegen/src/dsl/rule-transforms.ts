@@ -11,12 +11,12 @@ import {
 	SYMBOL,
 	TOKEN
 } from '../types/rule-types.ts'; // @rule-type-consts
-import { isPrecWrapper, isTokenWrapperType, type RuntimeRule } from '../types/runtime-shapes.ts';
+import { isTokenWrapperType, type RuntimeRule } from '../types/runtime-shapes.ts';
 import type { AnyRule, Rule, RuleBase, RepeatRule, Repeat1Rule, SeqRule, DelimiterMode } from '../types/rule.ts';
 import { RuleWalker, SyntacticRuleWalker } from './rule-walker.ts';
 import { absorbIds, withId } from './rule-attrs.ts';
 import { isVisibleGroupAlias } from './rule-metadata.ts';
-import { choiceArmsOf, isInlineTokenBody, isParserHiddenName, isTerminalRootRule, rulesEqual, terminalContentOf, type SymbolSource } from './rule-patterns.ts';
+import { unwrapPrec, choiceArmsOf, isInlineTokenBody, isParserHiddenName, isTerminalRootRule, rulesEqual, terminalContentOf, type SymbolSource } from './rule-patterns.ts';
 
 export type LeafMultiplicity = 'optional' | 'single' | 'array' | 'nonEmptyArray' | undefined;
 
@@ -82,12 +82,8 @@ export interface InlineTextTokens<R> {
 	readonly owners: Readonly<Record<string, readonly string[]>>;
 }
 
-export function peelPrec<R extends AnyRule>(r: R): R {
-	return isPrecWrapper(r) ? peelPrec((r as unknown as { content: R }).content) : r;
-}
-
 export function isLiteralOnlyRule(rule: AnyRule): boolean {
-	const root = peelPrec(rule);
+	const root = unwrapPrec(rule);
 	if (root.type === STRING) return true;
 	if (isTokenWrapperType(root.type)) return isLiteralOnlyRule((root as unknown as { content: AnyRule }).content);
 	if (root.type === CHOICE || root.type === SEQ) return (root as unknown as { members: readonly AnyRule[] }).members.every(isLiteralOnlyRule);
@@ -112,7 +108,7 @@ interface TextSiteCtx<T> {
 function isTextTokenSite(rule: AnyRule): boolean {
 	return (
 		rule.type === PATTERN ||
-		(isTokenWrapperType(rule.type) && peelPrec((rule as unknown as { content: AnyRule }).content).type !== STRING)
+		(isTokenWrapperType(rule.type) && unwrapPrec((rule as unknown as { content: AnyRule }).content).type !== STRING)
 	);
 }
 

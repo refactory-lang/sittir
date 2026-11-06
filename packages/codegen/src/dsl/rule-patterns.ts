@@ -303,17 +303,27 @@ export function isMultiSlotRepeatElement(content: unknown, symbols: SymbolSource
 	return collectSlots(core.members, symbols.rules).length >= 2;
 }
 
-export function unwrapPrec(rule: unknown): unknown {
-	let cur = rule;
-	while (cur && typeof cur === 'object') {
-		const r = cur as Record<string, unknown>;
-		if (isPrecWrapper(r as { type: string })) {
-			cur = r.content;
-		} else {
-			break;
-		}
+export function peelPrecs<R>(rule: R): { precs: R[]; core: R } {
+	const precs: R[] = [];
+	let core = rule;
+	while (core && typeof core === 'object' && isPrecWrapper(core as unknown as { type: string })) {
+		precs.push(core);
+		core = (core as unknown as { content: R }).content;
 	}
-	return cur;
+	return { precs, core };
+}
+
+export function unwrapPrec<R>(rule: R): R {
+	return peelPrecs(rule).core;
+}
+
+export function unwrapPrecAndOptional<R extends AnyRule>(rule: R): R {
+	let node = unwrapPrec(rule);
+	for (;;) {
+		const optional = optionalContentOf(node);
+		if (optional === undefined) return node;
+		node = unwrapPrec(optional as R);
+	}
 }
 
 function isRepeatLike(t: string): boolean {
