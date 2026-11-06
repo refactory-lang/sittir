@@ -24,7 +24,7 @@
 //! nodes around it, not the path from the root.
 
 use super::{holds_sides, is_entry, Adjacency, Assigned, DepthAnchor, LayoutRun, Place, SurfaceKinds, TriviaSide};
-use crate::heap::{CountedMap, HeapBytes, ARC_COUNTS};
+use crate::heap::{btree_allocation, vec_allocation, CountedMap, HeapBytes, ARC_COUNTS};
 use crate::points::LineTable;
 use crate::types::{narrow, KindId, NodeIndex, RunId, Span};
 use std::collections::{BTreeMap, HashMap};
@@ -282,8 +282,21 @@ struct State {
     unowned: BTreeMap<Order, NodeIndex>,
     runs: Vec<Placed>,
     order: BTreeMap<(u32, u32, Order), RunId>,
+    /// The heap the values of `shapes`, `sims` and `stretches` hold, added
+    /// as each is inserted (`hold`): what a count reads instead of walking
+    /// them.
+    held: usize,
     steps: u64,
     stretch_steps: u64,
+}
+
+/// Holds `value` for `key` in `map`, a map whose values hold heap, keeping
+/// `held` the heap they hold.
+fn hold<K: Eq + std::hash::Hash, V: HeapBytes>(held: &mut usize, map: &mut CountedMap<K, V>, key: K, value: V) {
+    *held += value.heap_bytes();
+    if let Some(replaced) = map.insert(key, value) {
+        *held -= replaced.heap_bytes();
+    }
 }
 
 /// A parsed tree's trivia, placed a region at a time on first read.
@@ -425,6 +438,13 @@ impl Placement {
     #[must_use]
     pub fn unowned(&self) -> Vec<NodeIndex> {
         self.state.lock().unwrap_or_else(PoisonError::into_inner).unowned.values().copied().collect()
+    }
+
+    /// What the placement holds, found by walking every value it holds:
+    /// what `heap_bytes` counts as it goes.
+    #[cfg(test)]
+    pub(crate) fn walked_bytes(&self) -> usize {
+        self.state.lock().unwrap_or_else(PoisonError::into_inner).walked()
     }
 
     /// The children the placement has stepped through.
@@ -728,7 +748,7 @@ impl<'t> Placer<'t, '_, '_> {
         let holds = kids.iter().any(|kid| kid.holder);
         self.kids.remove(&index);
         let shape = Arc::new(Shape { node, root, kids, holds, segments, entries });
-        self.state.shapes.insert(index, Arc::clone(&shape));
+        hold(&mut self.state.held, &mut self.state.shapes, index, Arc::clone(&shape));
         shape
     }
 
@@ -906,7 +926,7 @@ impl<'t> Placer<'t, '_, '_> {
             let (plans, after) = self.walk(&shape, entry);
             let last = after.last().copied().unwrap_or(entry);
             if !self.state.sims.contains_key(&member) {
-                self.state.sims.insert(member, Arc::new(Sim { after }));
+                hold(&mut self.state.held, &mut self.state.sims, member, Arc::new(Sim { after }));
             }
             for (gap, plan) in shape.gaps().zip(plans) {
                 let left = plan.left.map(|token| token.key);
@@ -1027,7 +1047,7 @@ impl<'t> Placer<'t, '_, '_> {
             let shape = self.shape(owner);
             let (_, after) = self.walk(&shape, excess);
             excess = after[gap - shape.gaps().start];
-            self.state.sims.insert(owner, Arc::new(Sim { after }));
+            hold(&mut self.state.held, &mut self.state.sims, owner, Arc::new(Sim { after }));
         }
         excess
     }
@@ -1343,7 +1363,7 @@ impl<'t> Placer<'t, '_, '_> {
         while let Some(at) = pending.pop() {
             let own = self.stretched(at, level);
             if !own.is_empty() {
-                self.state.stretches.insert(at, Level { own, up: level });
+                hold(&mut self.state.held, &mut self.state.stretches, at, Level { own, up: level });
                 level = Some(at);
             }
             self.state.levels.insert(at, level);
@@ -1751,6 +1771,66 @@ impl HeapBytes for State {
             unowned,
             runs,
             order,
+            held,
+            steps: _,
+            stretch_steps: _,
+        } = self;
+        shapes.allocation()
+            + parent.allocation()
+            + positions.allocation()
+            + firsts.allocation()
+            + lasts.allocation()
+            + befores.allocation()
+            + afters.allocation()
+            + first_gaps.allocation()
+            + last_gaps.allocation()
+            + sims.allocation()
+            + levels.allocation()
+            + stretches.allocation()
+            + blanks.allocation()
+            + wide.allocation()
+            + ending.allocation()
+            + adjacency.allocation()
+            + placed.allocation()
+            + members.allocation()
+            + framed.allocation()
+            + settled.allocation()
+            + btree_allocation(unowned)
+            + vec_allocation(runs)
+            + btree_allocation(order)
+            + held
+    }
+}
+
+#[cfg(test)]
+impl State {
+    /// What `heap_bytes` counts, found by walking every value.
+    fn walked(&self) -> usize {
+        let Self {
+            shapes,
+            parent,
+            positions,
+            firsts,
+            lasts,
+            befores,
+            afters,
+            first_gaps,
+            last_gaps,
+            sims,
+            levels,
+            stretches,
+            blanks,
+            wide,
+            ending,
+            adjacency,
+            placed,
+            members,
+            framed,
+            settled,
+            unowned,
+            runs,
+            order,
+            held: _,
             steps: _,
             stretch_steps: _,
         } = self;

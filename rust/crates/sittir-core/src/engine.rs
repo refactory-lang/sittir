@@ -3148,6 +3148,18 @@ mod tests {
     }
 
     #[test]
+    fn a_tree_s_trivia_placement_counts_what_a_walk_of_it_finds_as_its_regions_are_placed() {
+        let (tree, _) = parsed("// a\nfn f() {\n    let v = [\n        1,\n            2,\n    ];\n    g()\n        .h();\n}\nmod m { fn b() -> u8 { 0 } }\n");
+        assert_eq!(tree.trivia.heap_bytes(), tree.trivia.walked_bytes(), "nothing placed");
+        let _ = tree.trivia_side(index_of_kind(&tree, "function_item", 0), TriviaSide::Leading);
+        let _ = tree.trivia_side(index_of_kind(&tree, "block", 0), TriviaSide::Inner);
+        assert!(tree.trivia.walked_bytes() > 0, "the reads placed their regions");
+        assert_eq!(tree.trivia.heap_bytes(), tree.trivia.walked_bytes(), "some regions placed");
+        tree.placed_trivia();
+        assert_eq!(tree.trivia.heap_bytes(), tree.trivia.walked_bytes(), "every region placed");
+    }
+
+    #[test]
     fn an_unedited_tree_s_edit_checks_walk_none_of_the_rows_its_reads_filled() {
         let (tree, _) = parsed("mod m {\n    // c\n    fn f() { a(); }\n}\nfn g() {}\n");
         let count = crate::read::descendant_count(&tree.tree().root_node());

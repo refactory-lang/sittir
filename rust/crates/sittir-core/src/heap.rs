@@ -124,9 +124,23 @@ impl<A: HeapBytes, B: HeapBytes, C: HeapBytes> HeapBytes for (A, B, C) {
     }
 }
 
+/// The bytes a `Vec`'s allocation takes, without what its items hold on the
+/// heap.
+#[must_use]
+pub fn vec_allocation<T>(items: &Vec<T>) -> usize {
+    items.capacity() * size_of::<T>()
+}
+
+/// The bytes a `BTreeMap`'s entries take, without what they hold on the
+/// heap.
+#[must_use]
+pub fn btree_allocation<K, V>(map: &BTreeMap<K, V>) -> usize {
+    map.len() * size_of::<(K, V)>()
+}
+
 impl<T: HeapBytes> HeapBytes for Vec<T> {
     fn heap_bytes(&self) -> usize {
-        self.capacity() * size_of::<T>() + self.iter().map(HeapBytes::heap_bytes).sum::<usize>()
+        vec_allocation(self) + self.iter().map(HeapBytes::heap_bytes).sum::<usize>()
     }
 }
 
@@ -249,7 +263,7 @@ impl<K: Eq + Hash + HeapBytes, V: HeapBytes> HeapBytes for CountedMap<K, V> {
 
 impl<K: HeapBytes, V: HeapBytes> HeapBytes for BTreeMap<K, V> {
     fn heap_bytes(&self) -> usize {
-        self.iter().map(|(key, value)| size_of::<(K, V)>() + key.heap_bytes() + value.heap_bytes()).sum()
+        btree_allocation(self) + self.iter().map(|(key, value)| key.heap_bytes() + value.heap_bytes()).sum::<usize>()
     }
 }
 
