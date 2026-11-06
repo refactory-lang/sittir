@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { hiddenChoiceClass, mapTerminatedListElements, separatedListBodyInfo, separatorOf, rulesEqual, throughEnrichedField, transparentReach } from '../rule-patterns.ts';
+import { isTerminalRootRule, terminalContentOf, hiddenChoiceClass, mapTerminatedListElements, separatedListBodyInfo, separatorOf, rulesEqual, throughEnrichedField, transparentReach } from '../rule-patterns.ts';
 import { childFields } from '../bind.ts';
 import { predictedSymbolSourceOf } from '../symbol-table.ts';
 
@@ -354,5 +354,32 @@ describe('transparentReach', () => {
 		expect(childFields({ rules }, 'print_statement_chevron', { token: ';' })).toEqual({ fields: [], unfielded: false, mixed: false, arm: false });
 		expect(childFields({ rules }, '_print_chevron_arguments', { token: ';' }).unfielded).toBe(true);
 		expect(childFields({ rules }, 'print_statement_chevron', { token: '>>' }).unfielded).toBe(true);
+	});
+});
+
+describe('terminalContentOf and isTerminalRootRule are one predicate for a lexical leaf', () => {
+	const str = { type: 'STRING', value: 'a' };
+	const pattern = { type: 'PATTERN', value: 'a+' };
+	const token = { type: 'TOKEN', content: pattern };
+	const immediate = { type: 'IMMEDIATE_TOKEN', content: pattern };
+	const prec = (content: unknown) => ({ type: 'PREC', value: 1, content });
+	const never = () => false;
+
+	it.each([
+		['a string', str],
+		['a pattern', pattern],
+		['a token', token],
+		['an immediate token', immediate],
+		['a token under prec', prec(token)],
+		['an immediate token under prec', prec(immediate)]
+	])('%s is terminal content and a terminal root', (_name, rule) => {
+		expect(terminalContentOf(rule as never, never)).toBe(true);
+		expect(isTerminalRootRule(rule as never)).toBe(true);
+	});
+
+	it('a sequence is neither', () => {
+		const seq = { type: 'SEQ', members: [str, pattern] };
+		expect(terminalContentOf(seq as never, never)).toBe(false);
+		expect(isTerminalRootRule(seq as never)).toBe(false);
 	});
 });
