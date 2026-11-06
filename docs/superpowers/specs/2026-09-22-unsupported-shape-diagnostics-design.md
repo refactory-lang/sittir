@@ -5,7 +5,8 @@ on `renderAs:`, all five grammars, measured ceilings, upstream taken from the
 base `wire()` receives); amended again 2026-09-26 (diagnostics are checks
 over the evaluated rule tree and gate link, §4); implemented 2026-09-27:
 ceilings typescript 6 / rust 13 / python 14 / scm 1 / regex 1, floors recorded
-in each grammar's `expectDiagnostics`.
+in each grammar's `expectDiagnostics`; amended 2026-11-05 by the maintainer
+(an external's body and its visibility are both declared on `renderAs:`, §1.2).
 
 **Goal:** the compiler refuses every grammar shape it does not model, at the
 site, naming the shape and the patch form that resolves it; and every
@@ -86,13 +87,51 @@ rules: {
 A helper minted by a patch (`rule(name, body)` in `patches:`) is not declared
 in `rules:`; its reason is the patch's claim (§2).
 
-### 1.2 Render bodies stay on `renderAs:`
+### 1.2 External bodies and their visibility live on `renderAs:`
 
-An external token's render body is declared on the grammar's `renderAs:`
-block, the one surface for render-only bodies; it never reaches the parser
-and never appears in `rules:`. Every `renderAs:` key must name an upstream
-external; a key that names a parser rule is `render-only-not-external`,
-blocking.
+An external token's sittir-side body (the text it renders and reads as: a
+literal, a pattern, `spellings(...)`) is declared on the grammar's
+`renderAs:` block, the one surface for external bodies. A body never reaches
+tree-sitter as a rule body and never appears in `rules:`. Every authored
+`renderAs:` key must name an upstream external; a key that names a parser
+rule is `render-only-not-external`, blocking.
+
+A hidden external's body is used only where the parse tree reports the
+token as a node, since a render runs from a node's kind. So a hidden
+external listed in `renderAs:` is visible:
+
+- **Upstream aliases it somewhere:** upstream's aliases stand, under
+  upstream's names, and its bare uses stay bare. Examples: typescript
+  `_template_chars` (`string_fragment`), rust's doc-comment markers and
+  contents (`outer_doc_comment_marker`, `doc_comment`). Rust's plain block
+  comment keeps `_block_comment_content` bare, since sittir builds that
+  comment from its text.
+- **Upstream never aliases it:** `renderAs:` aliases every use visible, in
+  both runtimes. The name is the external's name without its leading
+  underscores, or the name the entry gives with `alias(body, $.name)`.
+  Examples: python `_indent` and `_dedent`, typescript's two automatic
+  semicolons, rust's raw-string start and end, and python's
+  `_string_content`, which the entry names `string_fragment` because
+  `string_content` is another rule.
+- **Enrich's whitespace members** join the same record under their minted
+  names and are aliased the same way. They are exempt from
+  `render-only-not-external`; an authored key that redeclares one is
+  `whitespace-mint-collision` (§4.2).
+
+`renderAs:` is the only way an external becomes visible. There is no
+`visibleExternals:` block, and an authored `alias(...)` of an external in
+`patches:` or in a `rules:` body is blocking. Every consumer of "sittir made
+this external visible" (the catalog's visible-external stamp, the whitespace
+text the render options read, the diagnostics) reads it from this record.
+`hidden-terminal-nonliteral`'s proposal, when its target is an external,
+names a `renderAs:` entry.
+
+Decided by the maintainer: one block, and a hidden external with a body is
+a node wherever sittir renders it, named by its name without the
+underscores unless the entry names it. Calls made in this design: an
+external upstream aliases anywhere keeps upstream's sites (this keeps the
+plain block comment bare); the naming form is tree-sitter's own `alias`;
+an authored alias of an external outside `renderAs:` blocks.
 
 ### 1.3 A replacement must be provoked
 
@@ -219,7 +258,7 @@ gate, per code and per owner, and only shrink.
 | --- | --- | --- |
 | evaluate events | `body-pattern-zero-match`, `desugar-divergence-*` | evaluate's own events |
 | causes and claims | `rule-cause-missing`, `rule-cause-mismatch`, `render-only-not-external`, `vocabulary-replaces-upstream`, `rule-reauthored-without-cause`, `patch-without-cause` | wire declarations, patch sites, the upstream stage's records |
-| whitespace vocabulary | `whitespace-mint-collision` (new; unexpectable) | the collisions enrich and wire stamp: a `visibleExternals:` key or an upstream rule defining a name enrich mints for `_whitespace` differently |
+| whitespace vocabulary | `whitespace-mint-collision` (new; unexpectable) | the collisions enrich and wire stamp: an authored `renderAs:` key or an upstream rule defining a name enrich mints for `_whitespace` differently |
 | alias sites | `display-union-mixed`, `display-union-unknown-member`, `content-alias-noninjective`, `alias-distributed`, `parsekind-noninjective` | ALIAS sites in the rules (display target versus source symbol) |
 | slot shapes | `unclassifiable-shape`, `union-slot-mixed-row`, `union-slot-unaddressable`, `union-slot-routed`, `union-slot-nondegenerate-arm`, `multi-slot-nested-seq`, `content-collision`, `storagename-collision`, `union-slot-content-collision` | the splice view (§4.3): fields, repeat multiplicity and separators, choice-arm partitions, rule classification |
 | token interiors | `token-interior-unstructurable` (new) | the token-interior pass over the linked rules: an opaque token's named parts and the patterns beside them |
@@ -324,8 +363,17 @@ type ResolvedBy = { rule: string } | { patch: { ownerKind: string; path: string;
 ## 6. Acceptance
 
 - Every `rules:` entry in the five grammar files is `reauthored` or
-  `vocabulary`; no bare body remains. Every `renderAs:` key is an upstream
-  external.
+  `vocabulary`; no bare body remains. Every authored `renderAs:` key is an
+  upstream external.
+- `visibleExternals:` is gone from the config surface, and no authored alias
+  of an external remains: python's alias inside `string_content` and rust's
+  raw-string alias patch are gone (rust's field patch stays). Every generated
+  `.sittir/src/grammar.json` and every generated output is byte-identical
+  across the change, and validation history moves +0 −0.
+- Unit fixtures: a hidden external with a body and no upstream alias is
+  aliased at every use; one upstream aliases keeps upstream's sites and its
+  bare uses; an entry's `alias(body, $.name)` names the node; an authored
+  alias of an external outside `renderAs:` blocks.
 - `rule-reauthored-without-cause` is silent on all five grammars outside
   their floors, and fires in a unit fixture where a `reauthored` rule
   replaces a rule the compiler accepts.
