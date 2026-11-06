@@ -379,10 +379,7 @@ export function buildCharacterClass(config: Partial<T.CharacterClass.Config> = {
 	currentHandle()?.admit(TSKindId.CharacterClass, [config]);
 	const _negation = strictBooleanStorage(config.negation);
 	const _leading = strictBooleanStorage(config.leading);
-	const _class_atoms = listStorage<NonNullable<T.CharacterClass['_class_atoms']>>(
-		config.classAtoms ?? [],
-		kindIdStorage
-	);
+	const _class_atoms = listStorage<NonNullable<T.CharacterClass['_class_atoms']>>(config.classAtoms ?? []);
 	const _trailing = strictBooleanStorage(config.trailing);
 	const handle = currentHandle();
 	if (handle !== undefined)
@@ -440,7 +437,19 @@ function buildCharacterClass$with(node: Held, setter: string, args: readonly unk
 		case 'classAtoms':
 			return applySetter(
 				args,
-				(...values: Admit<NonNullable<NonNullable<T.CharacterClass.Config>['classAtoms']>[number][]>) =>
+				(
+					...values: Admit<
+						(
+							| T.ClassCharacter
+							| T.IdentityEscape
+							| T.CharacterClassEscape
+							| T.ControlEscape
+							| T.ControlLetterEscape
+							| T.PosixCharacterClass
+							| T.ClassRange
+						)[]
+					>
+				) =>
 					rebuilt(node, handle, () => buildCharacterClass({ ...config, classAtoms: restItems('classAtoms', values) }))
 			);
 		case 'trailing':

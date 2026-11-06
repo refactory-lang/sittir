@@ -436,11 +436,10 @@ export function wrapCharacterClass(data: T.CharacterClass, tree: TreeHandle): T.
 		classAtoms() {
 			return hydrateSlots<
 				| T.ClassCharacter
-				| TSKindId.BslashDash
+				| T.IdentityEscape
 				| T.CharacterClassEscape
 				| T.ControlEscape
 				| T.ControlLetterEscape
-				| T.IdentityEscape
 				| T.PosixCharacterClass
 				| T.ClassRange
 			>(this, '_class_atoms', tree);
@@ -2086,14 +2085,13 @@ function viewCharacterClass$leading(this: RecordHandle) {
 function viewCharacterClass$classAtoms(this: RecordHandle) {
 	return viewSlots<
 		| T.ClassCharacter
-		| TSKindId.BslashDash
+		| T.IdentityEscape
 		| T.CharacterClassEscape
 		| T.ControlEscape
 		| T.ControlLetterEscape
-		| T.IdentityEscape
 		| T.PosixCharacterClass
 		| T.ClassRange
-	>(this, 3, 1, 4, 3, 0, 3);
+	>(this, 3, 1, 3, 1, 0, 3);
 }
 function viewCharacterClass$trailing(this: RecordHandle) {
 	return recordFlag(this, 2, 2);

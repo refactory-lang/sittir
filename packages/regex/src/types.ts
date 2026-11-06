@@ -630,11 +630,10 @@ export interface CharacterClass {
 	readonly _leading: boolean;
 	readonly _class_atoms: readonly (
 		| ClassCharacter
-		| TSKindId.BslashDash
+		| IdentityEscape
 		| CharacterClassEscape
 		| ControlEscape
 		| ControlLetterEscape
-		| IdentityEscape
 		| PosixCharacterClass
 		| ClassRange
 	)[];
@@ -648,23 +647,21 @@ export interface CharacterClass {
 	readonly __inputHints__?: {
 		readonly negation?: BaseBooleanKeyword<'^'>;
 		readonly leading?: BaseBooleanKeyword<'-'>;
-		readonly class_atoms?: readonly (
-			| KindEnum<'\\-', TSKindId.BslashDash>
-			| ClassCharacter
-			| CharacterClassEscape
-			| ControlEscape
-			| ControlLetterEscape
-			| IdentityEscape
-			| PosixCharacterClass
-			| ClassRange
-		)[];
 		readonly trailing?: BaseBooleanKeyword<'-'>;
 	};
 	readonly __slotHints__?: {
 		readonly negation: SlotHint<NonNullable<T.CharacterClass.Config>['negation'], true>;
 		readonly leading: SlotHint<NonNullable<T.CharacterClass.Config>['leading'], true>;
 		readonly classAtoms: SlotHint<
-			NonNullable<NonNullable<T.CharacterClass.Config>['classAtoms']>[number][],
+			(
+				| T.ClassCharacter
+				| T.IdentityEscape
+				| T.CharacterClassEscape
+				| T.ControlEscape
+				| T.ControlLetterEscape
+				| T.PosixCharacterClass
+				| T.ClassRange
+			)[],
 			true,
 			true
 		>;
@@ -674,11 +671,10 @@ export interface CharacterClass {
 	readonly leading: () => boolean;
 	readonly classAtoms: () => readonly (
 		| ClassCharacter
-		| TSKindId.BslashDash
+		| IdentityEscape
 		| CharacterClassEscape
 		| ControlEscape
 		| ControlLetterEscape
-		| IdentityEscape
 		| PosixCharacterClass
 		| ClassRange
 	)[];

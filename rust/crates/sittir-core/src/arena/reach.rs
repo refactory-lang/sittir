@@ -9,7 +9,7 @@
 use super::{Address, ArenaError, ArenaRead, Cell, CellShape, CellWord, HydrateError, HydrateNode, Hydration, ListCell, RecordCells, SideRecord, TreeArena};
 use crate::read::{Depth, ReadCtx};
 use crate::record::HEADER_WORDS;
-use crate::types::NodeIndex;
+use crate::types::{KindId, NodeIndex};
 use tree_sitter::TreeCursor;
 
 fn malformed(what: &'static str, word: u32) -> ArenaError {
@@ -190,8 +190,8 @@ fn spine(cursor: &mut TreeCursor<'_>, row: NodeIndex) -> Vec<NodeIndex> {
 }
 
 /// Writes the record of the node at `row`, which has none, `depth` levels down.
-fn write<N: HydrateNode>(tree: &mut TreeArena, cursor: &mut TreeCursor<'_>, ctx: &mut ReadCtx<'_>, row: NodeIndex, depth: Depth) -> Result<Option<Address>, HydrateError> {
-    super::hydrate_at::<N>(cursor, ctx, row, depth, &mut Hydration::new(tree))
+fn write<N: HydrateNode>(tree: &mut TreeArena, cursor: &mut TreeCursor<'_>, ctx: &mut ReadCtx<'_>, row: NodeIndex, stamped: Option<KindId>, depth: Depth) -> Result<Option<Address>, HydrateError> {
+    super::hydrate_at::<N>(cursor, ctx, row, stamped, depth, &mut Hydration::new(tree))
 }
 
 /// The record of the node at `row`, which no cell names, held by its tree:
@@ -204,7 +204,7 @@ fn held<N: HydrateNode>(tree: &mut TreeArena, cursor: &mut TreeCursor<'_>, ctx: 
     if !writes || cursor.node().is_error() {
         return Ok(None);
     }
-    let at = write::<N>(tree, cursor, ctx, row, depth)?;
+    let at = write::<N>(tree, cursor, ctx, row, None, depth)?;
     if let Some(at) = at {
         tree.hold(row, at)?;
     }
@@ -234,8 +234,8 @@ pub fn reach<N: HydrateNode + RecordCells>(tree: &mut TreeArena, cursor: &mut Tr
                 let j = i + 1 + j;
                 match cell {
                     Cell::Child { at: child, .. } => Some((j, child)),
-                    Cell::Coordinate { index, .. } if writes => {
-                        let child = write::<N>(tree, cursor, ctx, index, depth_at(j))?.ok_or(malformed("record of a coordinate", index.0))?;
+                    Cell::Coordinate { kind, index, .. } if writes => {
+                        let child = write::<N>(tree, cursor, ctx, index, Some(kind), depth_at(j))?.ok_or(malformed("record of a coordinate", index.0))?;
                         patch(tree, place, child)?;
                         Some((j, child))
                     }
@@ -292,8 +292,8 @@ pub fn read_cell<N: HydrateNode + RecordCells>(tree: &mut TreeArena, cursor: &mu
     let place = slot.item(item)?;
     match cell_at(tree, place)? {
         Cell::Child { at, .. } => Ok(at),
-        Cell::Coordinate { index, .. } => {
-            let at = write::<N>(tree, cursor, ctx, index, depth)?.ok_or(malformed("record of a coordinate", index.0))?;
+        Cell::Coordinate { kind, index, .. } => {
+            let at = write::<N>(tree, cursor, ctx, index, Some(kind), depth)?.ok_or(malformed("record of a coordinate", index.0))?;
             patch(tree, place, at)?;
             Ok(at)
         }
@@ -317,8 +317,8 @@ pub fn deepen<N: HydrateNode + RecordCells>(tree: &mut TreeArena, cursor: &mut T
     }
     for place in places {
         match cell_at(tree, place)? {
-            Cell::Coordinate { index, .. } => {
-                let child = write::<N>(tree, cursor, ctx, index, below)?.ok_or(malformed("record of a coordinate", index.0))?;
+            Cell::Coordinate { kind, index, .. } => {
+                let child = write::<N>(tree, cursor, ctx, index, Some(kind), below)?.ok_or(malformed("record of a coordinate", index.0))?;
                 patch(tree, place, child)?;
             }
             Cell::Child { at: child, .. } => deepen::<N>(tree, cursor, ctx, child, below)?,

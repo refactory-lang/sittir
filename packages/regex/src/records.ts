@@ -28,7 +28,7 @@ export const records = {
 		builtWords: 4,
 		negation: { word: 2, bit: 0 },
 		leading: { word: 2, bit: 1 },
-		class_atoms: { word: 3, width: 1, run: 4, forms: 3, built: 3 },
+		class_atoms: { word: 3, width: 1, run: 3, forms: 1, built: 3 },
 		trailing: { word: 2, bit: 2 }
 	},
 	PosixCharacterClassNode: { words: 5, builtWords: 3, posix_class_name: { word: 2, width: 3, forms: 1, built: 2 } },

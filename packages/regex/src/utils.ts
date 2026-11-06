@@ -156,7 +156,8 @@ export const structure: StructureTable = Object.freeze({
 			[
 				'_class_atoms',
 				'CharacterClass.classAtoms',
-				'buildClassCharacter(…) / buildControlEscape(…) / buildControlLetterEscape(…)'
+				'buildClassCharacter(…) / buildControlEscape(…) / buildControlLetterEscape(…)',
+				[20, 36, 37, 59, 61, 73, 76]
 			]
 		],
 		booleans: [

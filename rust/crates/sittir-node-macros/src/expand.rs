@@ -256,12 +256,15 @@ fn choice(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Toke
             const _: () = {
                 use ::sittir_core::types::KindId as __Kind;
                 #[allow(dead_code)]
-                fn __variant(grammar: __Kind, display: __Kind) -> ::core::option::Option<u16> {
-                    let kind = #stamp(grammar, display);
+                fn __variant_of_kind(kind: __Kind) -> ::core::option::Option<u16> {
                     #(#by_display)*
                     #(#by_grammar)*
                     #(#by_folded)*
                     ::core::option::Option::None
+                }
+                #[allow(dead_code)]
+                fn __variant(grammar: __Kind, display: __Kind) -> ::core::option::Option<u16> {
+                    __variant_of_kind(#stamp(grammar, display))
                 }
                 #own_stamp
                 #codec
@@ -305,12 +308,15 @@ fn choice(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Toke
             const __DELIMITERS: &[fn(&mut ::tree_sitter::TreeCursor<'_>) -> ::core::option::Option<::sittir_core::types::Delimiter>] = &[#(#delimiters_table),*];
             const __READS_BOXED: &[__Read<::std::boxed::Box<#ident>>] = &[#(#boxed_table),*];
             #own_stamp
-            fn __variant(grammar: __Kind, display: __Kind) -> ::core::option::Option<u16> {
-                let kind = #stamp(grammar, display);
+            #[allow(dead_code)]
+            fn __variant_of_kind(kind: __Kind) -> ::core::option::Option<u16> {
                 #(#by_display)*
                 #(#by_grammar)*
                 #(#by_folded)*
                 ::core::option::Option::None
+            }
+            fn __variant(grammar: __Kind, display: __Kind) -> ::core::option::Option<u16> {
+                __variant_of_kind(#stamp(grammar, display))
             }
             impl __rt::ReadNode for #ident {
                 fn admits(grammar: __Kind, display: __Kind) -> bool {

@@ -645,7 +645,7 @@ fn edited_record<T: Clone + 'static, N: HydrateNode>(prep: &mut RecordPrep<'_, T
     let Some((live, read)) = ctx.sources.read_ctx(tree) else { return Ok(None) };
     let mut read = crate::read::ReadCtx { sides: None, changed: None, ..read };
     let arena = prep.trees.tree_mut(tree).ok_or(malformed("record tree", tree.0))?;
-    let record = super::hydrate_at::<N>(&mut live.walk(), &mut read, coord.index, crate::read::Depth::ONE, &mut super::Hydration::new(arena)).map_err(|error| match error {
+    let record = super::hydrate_at::<N>(&mut live.walk(), &mut read, coord.index, Some(kind), crate::read::Depth::ONE, &mut super::Hydration::new(arena)).map_err(|error| match error {
         super::HydrateError::Read(error) => unread(coord, &error),
         super::HydrateError::Arena(error) => error.into(),
     })?;

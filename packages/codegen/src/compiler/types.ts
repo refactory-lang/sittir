@@ -218,6 +218,7 @@ export interface LinkedGrammar {
 	readonly refineForms?: ReadonlyMap<string, readonly LinkedRefineForm[]>;
 	readonly parentAliasedKinds?: ReadonlySet<string>;
 	readonly visibleAliasTargets?: ReadonlyMap<string, readonly string[]>;
+	readonly displayLexemes?: ReadonlyMap<string, readonly string[]>;
 	readonly variantChildren?: ReadonlyMap<string, readonly VariantChild[]>;
 	readonly contentAliasedFrom?: ReadonlyMap<string, string>;
 	readonly contentAliasedTo?: ReadonlyMap<string, readonly string[]>;
@@ -247,6 +248,7 @@ export interface NormalizedGrammar {
 	readonly leafTextPatterns?: ReadonlyMap<string, string>;
 	readonly parentAliasedKinds?: ReadonlySet<string>;
 	readonly visibleAliasTargets?: ReadonlyMap<string, readonly string[]>;
+	readonly displayLexemes?: ReadonlyMap<string, readonly string[]>;
 	readonly variantChildren?: ReadonlyMap<string, readonly VariantChild[]>;
 	readonly terminalAliasWireIds?: ReadonlyMap<string, readonly number[]>;
 	readonly externalRoles?: ReadonlyMap<string, ExternalRole>;
@@ -261,6 +263,7 @@ export interface SimplifiedGrammar {
 	readonly leafTextPatterns?: ReadonlyMap<string, string>;
 	readonly parentAliasedKinds?: ReadonlySet<string>;
 	readonly visibleAliasTargets?: ReadonlyMap<string, readonly string[]>;
+	readonly displayLexemes?: ReadonlyMap<string, readonly string[]>;
 	readonly variantChildren?: ReadonlyMap<string, readonly VariantChild[]>;
 	readonly terminalAliasWireIds?: ReadonlyMap<string, readonly number[]>;
 	readonly externalRoles?: ReadonlyMap<string, ExternalRole>;
