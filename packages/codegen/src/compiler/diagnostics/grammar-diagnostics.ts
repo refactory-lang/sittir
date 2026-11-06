@@ -39,6 +39,7 @@ import { readOptionsBlock } from '../../dsl/wire/options-block.ts';
 import type { NodeMap } from '../types.ts';
 import { ENRICH_SHAPES } from '../../dsl/enrich-shapes.ts';
 import { SITE_EDITS_KEY } from '../../dsl/wire/wire.ts';
+import { externalsReadAs, upstreamAliasSitesOf } from '../../dsl/wire/render-as-visibility.ts';
 
 export type { GrammarDiagnostic };
 
@@ -413,7 +414,14 @@ export function collectGrammarDiagnostics(input: {
 	return { diagnostics: [...parseKindMapped, ...assembleWarningMapped, ...slotGroupingMapped] };
 }
 
-const SURFACED_COMPILER_CODES: ReadonlySet<string> = new Set(['groups-config-invalid', 'refine-config-invalid', 'token-interior-unstructurable']);
+function externalsReadAsOf(raw: RawGrammar): (kind: string) => readonly string[] {
+	const externals = new Set(ruleListParts(raw.externals ?? []).names);
+	const sites = upstreamAliasSitesOf(raw.rules as Readonly<Record<string, unknown>>, externals);
+	const visibleAs = raw.visibleAs ?? {};
+	return (kind) => externalsReadAs(kind, { externals, sites, visibleAs });
+}
+
+export const SURFACED_COMPILER_CODES: ReadonlySet<string> = new Set(['groups-config-invalid', 'refine-config-invalid', 'token-interior-unstructurable']);
 
 const UNEXPECTABLE_CODES: ReadonlySet<string> = new Set([
 	'dangling-internal-ref',
@@ -456,18 +464,23 @@ export function unexpectableExpectEntries(
 		}));
 }
 
-export function renderAsEntryMissingDiagnostics(grammar: string, kinds: readonly string[]): GrammarDiagnostic[] {
-	return kinds.map((kind) => ({
-		scope: 'grammar' as const,
-		code: 'render-as-entry-missing',
-		severity: 'error' as const,
-		grammar,
-		ownerKind: kind,
-		message: `'${kind}' is an external scanner token with a factory and no text shape`,
-		proposal: `Give '${kind}' a renderAs: entry in grammar.sittir.ts: renderAs: ($) => ({ ${kind}: <the text it renders and reads as> }).`,
-		canProceed: false,
-		details: { kind }
-	}));
+export function renderAsEntryMissingDiagnostics(grammar: string, kinds: readonly string[], externalsOf: (kind: string) => readonly string[] = (kind) => [kind]): GrammarDiagnostic[] {
+	return kinds.flatMap((kind) =>
+		externalsOf(kind).map((external) => ({
+			scope: 'grammar' as const,
+			code: 'render-as-entry-missing',
+			severity: 'error' as const,
+			grammar,
+			ownerKind: external,
+			message:
+				external === kind
+					? `'${external}' is an external scanner token with a factory and no text shape`
+					: `'${external}' is an external scanner token, read as '${kind}', with a factory and no text shape`,
+			proposal: `Give '${external}' a renderAs: entry in grammar.sittir.ts: renderAs: ($) => ({ ${external}: <the text it renders and reads as> }).`,
+			canProceed: false,
+			details: { kind, external }
+		}))
+	);
 }
 
 export function collectGrammarDiagnosticsForGrammar(input: {
@@ -540,7 +553,7 @@ export function collectGrammarDiagnosticsForGrammar(input: {
 			...undeclaredSeparatorDiagnostics(rawGrammar.name, { nodeMap, kindEntries, options: rawGrammar.options }),
 			...indentDiagnostics(rawGrammar.name, { nodeMap, options: rawGrammar.options }),
 			...unresolvedEnumTextDiagnostics(rawGrammar.name, nodeMap),
-			...renderAsEntryMissingDiagnostics(rawGrammar.name, textlessLeafKinds(nodeMap, collectKindEntries(nodeMap, linked.generatedIdTables))),
+			...renderAsEntryMissingDiagnostics(rawGrammar.name, textlessLeafKinds(nodeMap, collectKindEntries(nodeMap, linked.generatedIdTables)), externalsReadAsOf(input.rawGrammar)),
 			...surfacedCompilerDiagnostics
 		])
 	};
