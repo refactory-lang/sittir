@@ -14,7 +14,7 @@ export type LayerRecords = Pick<
 	EvaluatedGrammar,
 	| 'options'
 	| 'renderAs'
-	| 'visibleExternals'
+	| 'visibleAs'
 	| 'reparseHosts'
 	| 'refineForms'
 	| 'spellings'
@@ -26,6 +26,9 @@ export type LayerRecords = Pick<
 	| 'expectTestFailures'
 	| 'protectedRuleNames'
 	| 'whitespaceCollisions'
+	| 'renderAsProblems'
+	| 'externalAliases'
+	| 'upstreamAliasSites'
 	| 'bodyPatternZeroMatches'
 >;
 
@@ -100,7 +103,7 @@ function mergedPatchSites(inherited: readonly PatchSite[] | undefined, own: read
 const RECORD_MERGES: { readonly [K in keyof LayerRecords]-?: RecordMerge<K> } = {
 	options: mergedEntries,
 	renderAs: mergedEntries,
-	visibleExternals: mergedEntries,
+	visibleAs: mergedEntries,
 	reparseHosts: (inherited, own) => own ?? inherited,
 	refineForms: mergedMap,
 	spellings: mergedMap,
@@ -112,6 +115,9 @@ const RECORD_MERGES: { readonly [K in keyof LayerRecords]-?: RecordMerge<K> } = 
 	expectTestFailures: mergedEntries,
 	protectedRuleNames: namesOf,
 	whitespaceCollisions: (inherited, own) => own ?? inherited,
+	renderAsProblems: (inherited, own) => (inherited === undefined && own === undefined ? undefined : [...(inherited ?? []), ...(own ?? [])]),
+	externalAliases: (inherited, own) => (inherited === undefined && own === undefined ? undefined : [...(inherited ?? []), ...(own ?? [])]),
+	upstreamAliasSites: (inherited, own) => (inherited === undefined && own === undefined ? undefined : [...(inherited ?? []), ...(own ?? [])]),
 	bodyPatternZeroMatches: (inherited, own) => {
 		const names = [...(inherited ?? []), ...(own ?? [])];
 		return names.length === 0 ? undefined : names;
@@ -129,6 +135,6 @@ export function mergedRecords(inherited: LayerRecords | undefined, own: LayerRec
 }
 
 export function synthesizedOf(after: number, own: LayerRecords): readonly SynthesizedRules[] {
-	const names = Object.keys({ ...own.renderAs, ...own.visibleExternals });
+	const names = Object.keys({ ...own.renderAs });
 	return names.length === 0 ? [] : [{ after, names }];
 }

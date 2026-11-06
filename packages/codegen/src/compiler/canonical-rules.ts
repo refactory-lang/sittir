@@ -135,7 +135,7 @@ function canonicalStages(
 }
 
 export function canonicalGrammar(evaluated: EvaluatedGrammar, fileTypes: readonly string[]): RawGrammar {
-	const { protectedRuleNames, stages, renderAs, visibleExternals, ...rest } = evaluated;
+	const { protectedRuleNames, stages, renderAs, ...rest } = evaluated;
 	const canonical = { rules: canonicalRuleBodies(evaluated.rules), inline: rest.inline, conflicts: rest.conflicts };
 	const roots = [...grammarRootNames(evaluated), ...evaluated.supertypes, ...(protectedRuleNames ?? [])];
 	const { rules, inline, conflicts } = protectedRuleNames === undefined ? canonical : pruneOrphanedRules(canonical, new Set(roots));
@@ -148,7 +148,6 @@ export function canonicalGrammar(evaluated: EvaluatedGrammar, fileTypes: readonl
 		ruleCatalog: identified.ruleCatalog,
 		references: collectReferences(identified.rules, { ruleCatalog: identified.ruleCatalog }),
 		renderAs: renderAs && canonicalRuleBodies(renderAs),
-		visibleExternals: visibleExternals && canonicalRuleBodies(visibleExternals),
 		fileTypes,
 		stages: canonicalStages(stages, fileTypes),
 		predictedKinds: predictKinds(evaluated)

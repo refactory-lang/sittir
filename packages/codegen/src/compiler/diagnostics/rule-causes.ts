@@ -1,3 +1,4 @@
+import type { RenderAsAliasProblemKind } from '../../dsl/wire/render-as-visibility.ts';
 import type { GrammarDiagnostic } from '../../types/diagnostics.ts';
 import {
 	WITNESSED_CAUSES,
@@ -60,15 +61,22 @@ type GrammarRules = Readonly<Record<string, Rule<'evaluate'>>>;
 const ANY_PROVOKING: ReadonlySet<string> = new Set(Object.values(PROVOKING_CODES).flat());
 
 const WHITESPACE_COLLISION_MESSAGES: Readonly<Record<WhitespaceCollision['site'], (name: string) => string>> = {
-	visibleExternals: (name) =>
-		`visibleExternals: '${name}' is a whitespace member enrich mints from the grammar's extras. Delete the entry`,
+	renderAs: (name) =>
+		`renderAs: '${name}' is a whitespace member enrich mints from the grammar's extras. Delete the entry`,
 	upstream: (name) =>
 		`upstream: the grammar defines '${name}', which enrich mints from the grammar's extras with a different definition. The minted one replaces it`
 };
 
+const RENDER_AS_ALIAS_MESSAGES: Readonly<Record<RenderAsAliasProblemKind, (name: string) => string>> = {
+	anonymous: (name) => `renderAs: '${name}' is aliased to a string. An entry's alias must be named: alias(body, $.name)`,
+	'upstream-aliased': (name) =>
+		`renderAs: '${name}' is already aliased by the upstream grammar, whose sites stand and whose bare uses stay bare. Delete the alias from the entry`,
+	visible: (name) => `renderAs: '${name}' is a visible external; it already has a node of its own name. Delete the alias from the entry`
+};
+
 export interface RuleCausesInput {
 	readonly grammar: string;
-	readonly raw: Pick<RawGrammar, 'ruleCauses' | 'undeclaredRules' | 'renderAs' | 'renamedFrom' | 'whitespaceCollisions'>;
+	readonly raw: Pick<RawGrammar, 'ruleCauses' | 'undeclaredRules' | 'renderAs' | 'renamedFrom' | 'whitespaceCollisions' | 'visibleAs' | 'externalAliases' | 'renderAsProblems'>;
 	readonly enriched?: StageDiagnosis;
 	readonly upstreamRules?: GrammarRules;
 	readonly authoredRules?: GrammarRules;
@@ -143,9 +151,23 @@ export function diagnoseRuleCauses(input: RuleCausesInput): GrammarDiagnostic[] 
 	const collisions = (raw.whitespaceCollisions ?? []).map(({ name, site }) =>
 		blocking(grammar, 'whitespace-mint-collision', name, WHITESPACE_COLLISION_MESSAGES[site](name))
 	);
-	if (enriched === undefined) return collisions;
+	const aliases = [
+		...(raw.externalAliases ?? []).map(({ rule, external, name }) =>
+			blocking(
+				grammar,
+				'external-alias-outside-render-as',
+				external,
+				`rules: '${rule}' aliases the external '${external}' as '${name}'. An external is made visible only by renderAs: ${external}: alias(body, $.${name})`
+			)
+		),
+		...(raw.renderAsProblems ?? []).map(({ external, problem }) =>
+			blocking(grammar, 'render-as-alias-invalid', external, RENDER_AS_ALIAS_MESSAGES[problem](external))
+		)
+	];
+	if (enriched === undefined) return [...collisions, ...aliases];
 	const out: GrammarDiagnostic[] = [
 		...collisions,
+		...aliases,
 		...(raw.undeclaredRules ?? []).map((name) =>
 			blocking(
 				grammar,
@@ -156,6 +178,7 @@ export function diagnoseRuleCauses(input: RuleCausesInput): GrammarDiagnostic[] 
 		)
 	];
 	for (const name of Object.keys(raw.renderAs ?? {})) {
+		if (Object.hasOwn(raw.visibleAs ?? {}, name)) continue;
 		if (enriched.externalNames.has(mappedName(raw.renamedFrom, name))) continue;
 		out.push(
 			blocking(

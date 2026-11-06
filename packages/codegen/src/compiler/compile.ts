@@ -6,7 +6,7 @@ import { stampIrSurface } from './model/ir-surface.ts';
 import { hydrateSlotRefs, type AssembledNodeMap } from './assemble.ts';
 import { conflictRecords } from './diagnostics/conflicts.ts';
 import { dynamicPrecedenceRecords } from './diagnostics/dynamic-precedence.ts';
-import { blockedRecords, expectationsInEitherSpelling, collectGrammarDiagnosticsForGrammar, evaluateRecords, GrammarDiagnosticError } from './diagnostics/grammar-diagnostics.ts';
+import { blockedRecords, expectationsInEitherSpelling, collectGrammarDiagnosticsForGrammar, evaluateRecords, GrammarDiagnosticError, SURFACED_COMPILER_CODES } from './diagnostics/grammar-diagnostics.ts';
 import type { SlotGroupingDiagnostic } from './diagnostics/slot-grouping.ts';
 import { DiagnosticSink, EmitHaltedError, type GrammarDiagnostic } from '../types/diagnostics.ts';
 import type { RawGrammar, LinkedGrammar, NormalizedGrammar } from './types.ts';
@@ -149,7 +149,6 @@ export function diagnoseGrammar(cfg: DiagnoseGrammarConfig): GrammarDiagnosis {
 }
 
 export function assertCompilation(compilation: Compilation): void {
-	if (compilation.diagnostics.hasBlocking()) {
-		throw new EmitHaltedError(compilation.diagnostics.all().filter((d) => d.severity === 'fail'));
-	}
+	const halting = compilation.diagnostics.all().filter((d) => d.severity === 'fail' && !SURFACED_COMPILER_CODES.has(d.code));
+	if (halting.length > 0) throw new EmitHaltedError(halting);
 }
