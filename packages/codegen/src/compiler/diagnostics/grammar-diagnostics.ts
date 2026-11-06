@@ -241,6 +241,7 @@ export function hiddenTerminalNonliteralSites(grammar: Pick<RawGrammar, 'rules' 
 }
 
 export function hiddenTerminalNonliteralDiagnostics(grammar: RawGrammar): GrammarDiagnostic[] {
+	const externals = new Set(ruleListParts(grammar.externals).names);
 	return hiddenTerminalNonliteralSites(grammar).map(({ ownerKind, target }) => ({
 		scope: 'grammar' as const,
 		code: 'hidden-terminal-nonliteral',
@@ -248,7 +249,9 @@ export function hiddenTerminalNonliteralDiagnostics(grammar: RawGrammar): Gramma
 		grammar: grammar.name,
 		ownerKind,
 		message: `kind '${ownerKind}' references the hidden terminal '${target}' bare; its text has no kind the parse tree reports.`,
-		proposal: `Give the text a visible rule of its own with a rule() patch.`,
+		proposal: externals.has(target)
+			? `Give the scanner token '${target}' its text under visibleExternals in grammar.sittir.ts: visibleExternals: (_$) => ({ ${target}: string(…) }).`
+			: `Give the text a visible rule of its own with a rule() patch.`,
 		canProceed: false,
 		details: { target }
 	}));
