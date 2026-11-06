@@ -43,6 +43,7 @@ import {
 	upstreamAliasSitesOf,
 	visibleAsOf,
 	type AuthoredExternalAlias,
+	type ExternalAliasSite,
 	type RenderAsAliasProblem
 } from './render-as-visibility.ts';
 import { relabelledArm, seedAutomaticVariants, withoutLabel, type AutomaticVariants } from '../automatic-variants.ts';
@@ -95,6 +96,7 @@ export interface WireContext {
 	readonly renderAsProblems?: readonly RenderAsAliasProblem[];
 	readonly externalNames: ReadonlySet<string>;
 	readonly upstreamAliasKeys: ReadonlySet<string>;
+	readonly upstreamAliasSites: readonly ExternalAliasSite[];
 	readonly externalAliases: Map<string, AuthoredExternalAlias>;
 	readonly whitespaceCollisions?: readonly WhitespaceCollision[];
 	readonly expectDiagnostics?: Partial<Record<string, readonly string[]>>;
@@ -164,6 +166,7 @@ export const WIRE_ENTRY_ROLES = {
 	renderAsProblems: 'outside',
 	externalNames: 'outside',
 	upstreamAliasKeys: 'outside',
+	upstreamAliasSites: 'outside',
 	externalAliases: 'outside',
 	whitespaceCollisions: 'outside',
 	expectDiagnostics: 'outside',
@@ -814,6 +817,7 @@ export function withWireContext<T>(
 		renderAs: undefined,
 		externalNames: new Set(),
 		upstreamAliasKeys: new Set(),
+		upstreamAliasSites: [],
 		externalAliases: new Map(),
 		options: undefined,
 		currentRuleKind: ruleKind,
@@ -1058,6 +1062,7 @@ export function wireImpl(cfg: WireConfig<any>, base: unknown, source: unknown, l
 		renderAsProblems,
 		externalNames,
 		upstreamAliasKeys: new Set(upstreamSites.map(externalAliasKey)),
+		upstreamAliasSites: upstreamSites,
 		externalAliases: new Map(),
 		whitespaceCollisions,
 		expectDiagnostics: cfg.expectDiagnostics,

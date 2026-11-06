@@ -1,6 +1,6 @@
 # The shared engine library: migration
 
-**Status**: Approved shape (A). The migration starts once `feat/records` is stable and on master.
+**Status**: Approved shape (A). The migration starts once `feat/records` is stable and on master. It's planned in two parts. The shared library (`docs/superpowers/plans/2026-11-06-engine-dylib-library.md`) comes first. Trees as objects and coordinates that carry their tree come second, once those sections are revised against what `feat/records` shipped.
 **Scope**: the native crates (`sittir-engine`, `sittir-core`, the grammar crates), the native crate emitter, the grammar packages' build and packaging, and the JavaScript loader.
 **Evidence**: the probe report on `probe/engine-dylib` at 3923f9de6, `docs/superpowers/probes/2026-10-23-engine-dylib/README.md`. That branch does not merge; it is the record.
 

@@ -951,11 +951,21 @@ export function choiceArmsOf<R extends AnyRule>(content: R): readonly R[] | unde
 	return (rule.members as unknown as readonly R[]).flatMap((m) => choiceArmsOf(m) ?? [m]);
 }
 
+export function isInlineTokenBody(rule: AnyRule): boolean {
+	const root = unwrapPrec(rule) as AnyRule;
+	return root.type === PATTERN || isTokenWrapperType(root.type);
+}
+
+export function isTerminalRootRule(rule: AnyRule): boolean {
+	return isInlineTokenBody(rule) || (unwrapPrec(rule) as AnyRule).type === STRING;
+}
+
 export function terminalContentOf(content: AnyRule, isTerminalSymbol: (name: string) => boolean): boolean {
-	if (content.type === SYMBOL) return isTerminalSymbol(content.name);
-	if (content.type === STRING || content.type === PATTERN || content.type === TOKEN) return true;
-	if (content.type === ALIAS) return terminalContentOf(content.content, isTerminalSymbol);
-	const arms = choiceArmsOf(content);
+	const root = unwrapPrec(content) as AnyRule;
+	if (root.type === SYMBOL) return isTerminalSymbol(root.name);
+	if (isTerminalRootRule(root)) return true;
+	if (root.type === ALIAS) return terminalContentOf(root.content, isTerminalSymbol);
+	const arms = choiceArmsOf(root);
 	return arms !== undefined && arms.every((arm) => terminalContentOf(arm, isTerminalSymbol));
 }
 

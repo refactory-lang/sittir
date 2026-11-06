@@ -401,6 +401,7 @@ const RECORD_RENAMES = {
 	whitespaceCollisions: { entry: 'name' },
 	renderAsProblems: { entry: 'external' },
 	externalAliases: { entry: 'external' },
+	upstreamAliasSites: { entry: 'external' },
 	bodyPatternZeroMatches: 'names'
 } as const satisfies { readonly [K in keyof LayerRecords]-?: RecordRename };
 

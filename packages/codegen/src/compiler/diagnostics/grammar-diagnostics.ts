@@ -12,7 +12,7 @@ import { isTerminalNode, optionalFlankSlots, type AssembleWarning, type NamingEv
 import { undeclaredSeparatorSites, type SitePreferencesConfig } from '../model/site-preferences.ts';
 import { makeSlotGroupingCollector } from '../simplify.ts';
 import { diagnoseRepeatedSeqGrouping, type SlotGroupingDiagnostic } from './slot-grouping.ts';
-import { isLiteralOnlyRule, isTerminalRootRule } from '../../dsl/rule-transforms.ts';
+import { isLiteralOnlyRule } from '../../dsl/rule-transforms.ts';
 import { boundNameOf } from '../../dsl/bind.ts';
 import type { RawGrammar, LinkedGrammar, NormalizedGrammar, DesugarDivergenceEvent, ReservedWordsets, RuleCatalog } from '../types.ts';
 import {
@@ -25,8 +25,8 @@ import {
 	type KindEntryLike
 } from '../../dsl/symbol-table.ts';
 import type { CompilerDiagnostic, GrammarDiagnostic } from '../../types/diagnostics.ts';
-import { diagnoseDistributedAliases, diagnoseMixedDisplayUnions } from './alias-distributed.ts';
-import { isParserHiddenName, ruleListParts, symbolFactsOf } from '../../dsl/rule-patterns.ts';
+import { diagnoseDistributedAliases, diagnoseInlineTokenAliases, diagnoseMixedDisplayUnions } from './alias-distributed.ts';
+import { isParserHiddenName, isTerminalRootRule, ruleListParts, symbolFactsOf } from '../../dsl/rule-patterns.ts';
 import { ALIAS, SYMBOL } from '../../types/rule-types.ts';
 import { eofPlacements } from '../../dsl/eof-placement.ts';
 import { rootRuleName } from '../../util/reachable-rules.ts';
@@ -39,6 +39,7 @@ import { readOptionsBlock } from '../../dsl/wire/options-block.ts';
 import type { NodeMap } from '../types.ts';
 import { ENRICH_SHAPES } from '../../dsl/enrich-shapes.ts';
 import { SITE_EDITS_KEY } from '../../dsl/wire/wire.ts';
+import { externalsReadAs } from '../../dsl/wire/render-as-visibility.ts';
 
 export type { GrammarDiagnostic };
 
@@ -413,7 +414,14 @@ export function collectGrammarDiagnostics(input: {
 	return { diagnostics: [...parseKindMapped, ...assembleWarningMapped, ...slotGroupingMapped] };
 }
 
-const SURFACED_COMPILER_CODES: ReadonlySet<string> = new Set(['groups-config-invalid', 'refine-config-invalid', 'token-interior-unstructurable']);
+function externalsReadAsOf(raw: RawGrammar): (kind: string) => readonly string[] {
+	const externals = new Set(ruleListParts(raw.externals ?? []).names);
+	const sites = raw.upstreamAliasSites ?? [];
+	const visibleAs = raw.visibleAs ?? {};
+	return (kind) => externalsReadAs(kind, { externals, sites, visibleAs });
+}
+
+export const SURFACED_COMPILER_CODES: ReadonlySet<string> = new Set(['groups-config-invalid', 'refine-config-invalid', 'token-interior-unstructurable']);
 
 const UNEXPECTABLE_CODES: ReadonlySet<string> = new Set([
 	'dangling-internal-ref',
@@ -428,6 +436,7 @@ const UNEXPECTABLE_CODES: ReadonlySet<string> = new Set([
 	'whitespace-mint-collision',
 	'external-alias-outside-render-as',
 	'render-as-alias-invalid',
+	'alias-inline-token',
 	'conflict-authored',
 	'conflict-unresolvable',
 	'conflict-resolutions-stale',
@@ -456,18 +465,23 @@ export function unexpectableExpectEntries(
 		}));
 }
 
-export function renderAsEntryMissingDiagnostics(grammar: string, kinds: readonly string[]): GrammarDiagnostic[] {
-	return kinds.map((kind) => ({
-		scope: 'grammar' as const,
-		code: 'render-as-entry-missing',
-		severity: 'error' as const,
-		grammar,
-		ownerKind: kind,
-		message: `'${kind}' is an external scanner token with a factory and no text shape`,
-		proposal: `Give '${kind}' a renderAs: entry in grammar.sittir.ts: renderAs: ($) => ({ ${kind}: <the text it renders and reads as> }).`,
-		canProceed: false,
-		details: { kind }
-	}));
+export function renderAsEntryMissingDiagnostics(grammar: string, kinds: readonly string[], externalsOf: (kind: string) => readonly string[] = (kind) => [kind]): GrammarDiagnostic[] {
+	return kinds.flatMap((kind) =>
+		externalsOf(kind).map((external) => ({
+			scope: 'grammar' as const,
+			code: 'render-as-entry-missing',
+			severity: 'error' as const,
+			grammar,
+			ownerKind: external,
+			message:
+				external === kind
+					? `'${external}' is an external scanner token with a factory and no text shape`
+					: `'${external}' is an external scanner token, read as '${kind}', with a factory and no text shape`,
+			proposal: `Give '${external}' a renderAs: entry in grammar.sittir.ts: renderAs: ($) => ({ ${external}: <the text it renders and reads as> }).`,
+			canProceed: false,
+			details: { kind, external }
+		}))
+	);
 }
 
 export function collectGrammarDiagnosticsForGrammar(input: {
@@ -531,6 +545,7 @@ export function collectGrammarDiagnosticsForGrammar(input: {
 			}).diagnostics,
 			...contentAliasDiagnostics,
 			...diagnoseDistributedAliases({ grammar: rawGrammar.name, symbols }),
+			...diagnoseInlineTokenAliases({ grammar: rawGrammar.name, symbols, word: rawGrammar.word ?? undefined }),
 			...diagnoseMixedDisplayUnions({ grammar: rawGrammar.name, displayUnions: linked.displayUnions, symbols }),
 			...reservedMemberDiagnostics(rawGrammar.name, nodeMap.reserved, kindEntries),
 			...triviaLineEndDiagnostics(rawGrammar.name, nodeMap),
@@ -540,7 +555,7 @@ export function collectGrammarDiagnosticsForGrammar(input: {
 			...undeclaredSeparatorDiagnostics(rawGrammar.name, { nodeMap, kindEntries, options: rawGrammar.options }),
 			...indentDiagnostics(rawGrammar.name, { nodeMap, options: rawGrammar.options }),
 			...unresolvedEnumTextDiagnostics(rawGrammar.name, nodeMap),
-			...renderAsEntryMissingDiagnostics(rawGrammar.name, textlessLeafKinds(nodeMap, collectKindEntries(nodeMap, linked.generatedIdTables))),
+			...renderAsEntryMissingDiagnostics(rawGrammar.name, textlessLeafKinds(nodeMap, collectKindEntries(nodeMap, linked.generatedIdTables)), externalsReadAsOf(input.rawGrammar)),
 			...surfacedCompilerDiagnostics
 		])
 	};

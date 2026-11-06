@@ -1,5 +1,6 @@
 import type { NodeMap } from '../types.ts';
-import { isTerminalRootRule, tokenBodyKey } from '../../dsl/rule-transforms.ts';
+import { tokenBodyKey } from '../../dsl/rule-transforms.ts';
+import { isTerminalRootRule } from '../../dsl/rule-patterns.ts';
 import type { GeneratedKindEntry } from '../../dsl/symbol-table.ts';
 import type { AnyRule } from '../../types/rule.ts';
 import { AssembledLexedPattern, AssembledSupertype, isNodeRef, isUnresolvedRef } from '../model/node-map.ts';
