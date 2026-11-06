@@ -239,6 +239,7 @@ The admission census (`tool portable-admission`) owns both counts. It already re
 - `API['portable']` gains `map: <Grammar>Map`.
 - Raw-node arms are the grammar's exact low-level parsed node type, and opaque under a contract.
 - Under single-grammar types, a value read from one engine isn't assignable to another grammar's input.
+- Honest reads owed here: typescript `identifier.qualified`'s exact members, which the census saw for the first time and which raised its raw ceilings (per kind 137 → 141, per value 5310 → 5312). They're `name` (`property_identifier` and `type_identifier`, text and unread) and `qualifier` (`type_query_call_expression` and its `_in_type_annotation`, preset and unread; `type_query_member_expression`, opaque and preset; and its `_in_type_annotation`, opaque). The ceilings go back to base before the PR.
 
 - [ ] **Step 1: The failing tests:**
   - **type test:** `read` of a python `function_definition` node has `$path: 'declaration.function'`;

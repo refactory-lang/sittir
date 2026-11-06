@@ -5,12 +5,12 @@ const UNTYPED = 51;
 
 const MEMBERS: Readonly<Record<string, number>> = { python: 0, rust: 0, typescript: 0 };
 
-const UNFORMED: Readonly<Record<string, number>> = { python: 0, rust: 0, typescript: 66 };
+const UNFORMED: Readonly<Record<string, number>> = { python: 0, rust: 0, typescript: 0 };
 
 const RAW: Readonly<Record<string, { readonly kind: number; readonly value: number }>> = {
 	python: { kind: 144, value: 2892 },
 	rust: { kind: 1682, value: 5878 },
-	typescript: { kind: 137, value: 5310 }
+	typescript: { kind: 141, value: 5312 }
 };
 
 const pinned = (name: string, count: number, ceiling: number, shown: string): void => {

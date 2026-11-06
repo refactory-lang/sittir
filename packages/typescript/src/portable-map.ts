@@ -34416,7 +34416,87 @@ export interface TypeScriptMap extends V.GrammarMap {
 			readonly $text: PortableTexts['identifier'];
 		};
 		readonly 'identifier.qualified': {
-			readonly $forms: V.Form<'name' | 'qualifier'>;
+			readonly name:
+				| V.Read<TypeScriptMap, 'identifier'>
+				| V.Text<TypeScriptMap, 'identifier'>
+				| V.Read<TypeScriptMap, 'identifier.label'>
+				| V.Read<TypeScriptMap, 'identifier.qualified'>
+				| V.Text<TypeScriptMap, 'identifier.receiver'>
+				| V.Text<TypeScriptMap, 'identifier.super'>
+				| T.PropertyIdentifier.Parsed
+				| T.TypeIdentifier.Parsed;
+			readonly qualifier:
+				| V.Text<TypeScriptMap, 'expression.call.import'>
+				| V.Read<TypeScriptMap, 'identifier'>
+				| V.Text<TypeScriptMap, 'identifier'>
+				| V.Read<TypeScriptMap, 'identifier.label'>
+				| V.Read<TypeScriptMap, 'identifier.qualified'>
+				| V.Text<TypeScriptMap, 'identifier.receiver'>
+				| V.Text<TypeScriptMap, 'identifier.super'>
+				| V.Read<TypeScriptMap, 'type.array'>
+				| V.Read<TypeScriptMap, 'type.conditional'>
+				| V.Text<TypeScriptMap, 'type.existential'>
+				| V.Read<TypeScriptMap, 'type.function'>
+				| V.Read<TypeScriptMap, 'type.function.constructor'>
+				| V.Read<TypeScriptMap, 'type.generic'>
+				| V.Read<TypeScriptMap, 'type.import'>
+				| V.Read<TypeScriptMap, 'type.index_query'>
+				| V.Read<TypeScriptMap, 'type.infer'>
+				| V.Read<TypeScriptMap, 'type.intersection'>
+				| V.Read<TypeScriptMap, 'type.literal'>
+				| V.Read<TypeScriptMap, 'type.lookup'>
+				| V.Read<TypeScriptMap, 'type.nullable'>
+				| V.Read<TypeScriptMap, 'type.object'>
+				| V.Read<TypeScriptMap, 'type.optional'>
+				| V.Read<TypeScriptMap, 'type.parenthesized'>
+				| V.Read<TypeScriptMap, 'type.predicate'>
+				| V.Read<TypeScriptMap, 'type.predicate.asserts'>
+				| V.Text<TypeScriptMap, 'type.primitive.boolean'>
+				| V.Text<TypeScriptMap, 'type.primitive.floating.float64'>
+				| V.Text<TypeScriptMap, 'type.primitive.never'>
+				| V.Text<TypeScriptMap, 'type.primitive.object'>
+				| V.Text<TypeScriptMap, 'type.primitive.string'>
+				| V.Text<TypeScriptMap, 'type.primitive.symbol'>
+				| V.Text<TypeScriptMap, 'type.primitive.unchecked'>
+				| V.Text<TypeScriptMap, 'type.primitive.unknown'>
+				| V.Text<TypeScriptMap, 'type.primitive.void'>
+				| V.Read<TypeScriptMap, 'type.query'>
+				| V.Read<TypeScriptMap, 'type.readonly'>
+				| V.Text<TypeScriptMap, 'type.receiver'>
+				| V.Read<TypeScriptMap, 'type.rest'>
+				| V.Read<TypeScriptMap, 'type.template'>
+				| V.Read<TypeScriptMap, 'type.tuple'>
+				| V.Read<TypeScriptMap, 'type.union'>
+				| 'import'
+				| 'this'
+				| V.Unmapped<'typescript:type_query_subscript_expression'>
+				| T.TypeQueryCallExpression.Parsed
+				| T.TypeQueryCallExpressionInTypeAnnotation.Parsed
+				| T.TypeQueryMemberExpression.Parsed
+				| T.TypeQueryMemberExpressionInTypeAnnotation.Parsed;
+			readonly $forms:
+				| V.Form<'name' | 'qualifier'>
+				| V.Form<
+						'name',
+						never,
+						{
+							readonly qualifier:
+								| V.Text<TypeScriptMap, 'expression.call.import'>
+								| V.Read<TypeScriptMap, 'identifier.qualified'>
+								| V.Read<TypeScriptMap, 'type.import'>
+								| 'import';
+						}
+				  >
+				| V.Form<
+						'name',
+						never,
+						{
+							readonly qualifier:
+								| V.Read<TypeScriptMap, 'identifier'>
+								| V.Text<TypeScriptMap, 'identifier'>
+								| V.Read<TypeScriptMap, 'identifier.qualified'>;
+						}
+				  >;
 		};
 		readonly 'identifier.receiver': {
 			readonly $text: PortableTexts['identifier.receiver'];
