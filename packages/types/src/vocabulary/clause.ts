@@ -24,18 +24,4 @@ export namespace Clause {
 		readonly $path: K;
 		readonly body: Slot<G, K, 'body', V.Declaration.Any<G> | V.Statement.Any<G>>;
 	}
-	export interface ElseIf<G extends GrammarMap, K extends Under<'clause.else_if'> = 'clause.else_if'> extends SubKindOf<V.Clause<G, K>> {
-		// claimed by p
-		readonly $path: K;
-		readonly condition: Slot<
-			G,
-			K,
-			'condition',
-			| V.Expression.Any<G>
-			| V.Identifier.Any<G>
-			| V.Literal.Any<G>
-			| V.Pattern.Any<G>
-		>;
-		readonly consequence: Slot<G, K, 'consequence', V.Declaration.TypeAlias<G> | V.Statement.Any<G>>;
-	}
 }

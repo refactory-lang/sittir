@@ -19,6 +19,7 @@ import type {
 	Declaration,
 	Elisions,
 	Expression,
+	ForEachTargets,
 	File,
 	Assert,
 	Contract,
@@ -32,7 +33,8 @@ import type {
 	Statement,
 	Type,
 	Text,
-	Unmapped
+	Unmapped,
+	WhereClauses
 } from '../src/vocabulary/index.ts';
 import type { Flag } from '../src/vocabulary/utils.ts';
 
@@ -58,8 +60,9 @@ export function parameterless(name: Identifier.Any<Core>): Declaration.Method<Co
 }
 
 // A contract composing the features whose members the checks below set, and one composing none.
-type Composed = Contract<Accessors & BoundedQuantification & ScopedVisibility>;
+type Composed = Contract<Accessors & BoundedQuantification & ScopedVisibility & WhereClauses>;
 type Bare = Contract<{}>;
+type Targets = Contract<ForEachTargets>;
 
 // A getter is a property's accessor kind, which `accessors` owns: no member holds `get`.
 export function getter(name: Declaration.Property.Getter<Composed>['name']): Declaration.Property.Getter<Composed> {
@@ -202,7 +205,7 @@ export function declaredModuleAsFile(m: Declaration.Module<Core>): File<Core> {
 }
 
 // A loop family: the shared for-each is a refinement of loop, and needs its subject and body.
-export function forEach(right: Identifier.Any<Core>, body: Statement.Block<Core>): Statement.Loop.ForEach<Core> {
+export function forEach(right: Identifier.Any<Targets>, body: Statement.Block<Targets>): Statement.Loop.ForEach<Targets> {
 	return { $path: 'statement.loop.for_each', right, body };
 }
 

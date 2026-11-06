@@ -118,9 +118,14 @@ export function plan(source: VocabularySource): Plan {
 				if (other === path || list === undefined) continue;
 				const by = owned.get(other)?.get(name)?.feature;
 				if (by === o.feature || (by === undefined && list.every((d) => d.gated))) continue;
-				const declarer = by?.name ?? 'the kind';
-				if (lines.get(other)?.includes(path)) issues.push(`${o.feature.name} owns ${name} at ${path}, and ${declarer} declares it at ${other}, which inherits it`);
-				if (lines.get(path)?.includes(other)) issues.push(`${o.feature.name} owns ${name} at ${path}, and ${declarer} declares it at ${other}, which it inherits from`);
+				const declaring = by ?? kinds.get(other)?.feature;
+				const declarer = by?.name ?? `the kind, which ${owner(declaring)} adds,`;
+				const extending = (descendant: Feature | undefined, ancestor: Feature | undefined): boolean =>
+					descendant !== undefined && ancestor !== undefined && closure(descendant.name, features).has(ancestor.name);
+				if (lines.get(other)?.includes(path) && !extending(declaring, o.feature))
+					issues.push(`${o.feature.name} owns ${name} at ${path}, and ${declarer} declares it at ${other}, which inherits it, without extending ${o.feature.name}`);
+				if (lines.get(path)?.includes(other) && !extending(o.feature, declaring))
+					issues.push(`${o.feature.name} owns ${name} at ${path}, and ${declarer} declares it at ${other}, which it inherits from, and ${o.feature.name} does not extend ${owner(declaring)}`);
 			}
 		}
 	}

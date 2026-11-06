@@ -1,5 +1,5 @@
 import type { GrammarMap, Slot } from '../../map.ts';
-import type { Flag, SubKindOf, Under } from '../../utils.ts';
+import type { SubKindOf, Under } from '../../utils.ts';
 import type * as V from '../../index.ts';
 export namespace Expression {
 	export interface Await<G extends GrammarMap, K extends Under<'expression.await'> = 'expression.await'> extends SubKindOf<V.Expression<G, K>> {
@@ -18,10 +18,7 @@ export namespace Expression {
 		>;
 	}
 	export interface Function<G extends GrammarMap, K extends Under<'expression.function'> = 'expression.function'> {
-		readonly async?: Flag;
 	}
 	export interface Lambda<G extends GrammarMap, K extends Under<'expression.lambda'> = 'expression.lambda'> {
-		readonly async?: Flag;
-		// rt only
 	}
 }

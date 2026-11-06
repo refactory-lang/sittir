@@ -10,12 +10,4 @@ export namespace Declaration {
 			| Slot<G, K, 'body', V.Attribute.Any<G> | V.Declaration.Any<G> | V.Expression.Call.Macro<G> | V.Statement.Any<G>>[];
 		readonly name?: Slot<G, K, 'name', V.Identifier.Any<G> | V.Literal.String<G>>;
 	}
-	export namespace Module {
-		export interface External<G extends GrammarMap, K extends Under<'declaration.module.external'> = 'declaration.module.external'> extends SubKindOf<V.Declaration.Module<G, K>> {
-			// claimed by t
-			readonly $path: K;
-			readonly body?: Slot<G, K, 'body', V.Statement.Block<G>>;
-			readonly name: Slot<G, K, 'name', V.Identifier.Any<G> | V.Literal.String<G>>;
-		}
-	}
 }

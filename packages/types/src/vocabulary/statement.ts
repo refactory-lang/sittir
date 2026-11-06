@@ -26,95 +26,24 @@ export namespace Statement {
 			| V.Expression.Call.Macro<G>
 			| V.Statement.Any<G>
 		>[];
-		readonly trailingExpression?: Slot<
-			G,
-			K,
-			'trailingExpression',
-			| V.Expression.Any<G>
-			| V.Identifier.Any<G>
-			| V.Literal.Any<G>
-			| V.Statement.Any<G>
-		>;
-		// r only
 	}
 	export interface Break<G extends GrammarMap, K extends Under<'statement.break'> = 'statement.break'> extends SubKindOf<V.Statement<G, K>> {
 		// claimed by prt
 		readonly $path: K;
-		readonly expression?: Slot<
-			G,
-			K,
-			'expression',
-			| V.Expression.Any<G>
-			| V.Identifier.Any<G>
-			| V.Literal.Any<G>
-			| V.Statement.Any<G>
-		>;
-		// r only
 	}
 	export interface Continue<G extends GrammarMap, K extends Under<'statement.continue'> = 'statement.continue'> extends SubKindOf<V.Statement<G, K>> {
 		// claimed by prt
 		readonly $path: K;
-	}
-	export interface Delete<G extends GrammarMap, K extends Under<'statement.delete'> = 'statement.delete'> extends SubKindOf<V.Statement<G, K>> {
-		// claimed by p
-		readonly $path: K;
-		readonly expressions: Slot<
-			G,
-			K,
-			'expressions',
-			| V.Expression.Any<G>
-			| V.Identifier.Any<G>
-			| V.Literal.Any<G>
-			| V.Pattern.Any<G>
-		>;
 	}
 	// claimed by prt
 	export type Empty<G extends GrammarMap> = Text<G, 'statement.empty'>;
 	export interface Expression<G extends GrammarMap, K extends Under<'statement.expression'> = 'statement.expression'> extends SubKindOf<V.Statement<G, K>> {
 		// claimed by prt
 		readonly $path: K;
-		readonly content?: Slot<
-			G,
-			K,
-			'content',
-			| V.Declaration.Variable<G>
-			| V.Expression.Any<G>
-			| V.Identifier.Any<G>
-			| V.Literal.Any<G>
-			| V.Pattern.Any<G>
-			| V.Statement.Any<G>
-			| V.Declaration.Constant<G>
-		> | Slot<
-			G,
-			K,
-			'content',
-			| V.Declaration.Variable<G>
-			| V.Expression.Any<G>
-			| V.Identifier.Any<G>
-			| V.Literal.Any<G>
-			| V.Pattern.Any<G>
-			| V.Statement.Any<G>
-			| V.Declaration.Constant<G>
-		>[];
-		// pr only
-		readonly expression?: Slot<
-			G,
-			K,
-			'expression',
-			| V.Declaration.Module<G>
-			| V.Expression.Any<G>
-			| V.Identifier.Any<G>
-			| V.Literal.Any<G>
-		>;
-		// t only
 	}
 	export interface If<G extends GrammarMap, K extends Under<'statement.if'> = 'statement.if'> extends SubKindOf<V.Statement<G, K>> {
 		// claimed by prt
 		readonly $path: K;
-		readonly alternative?: Slot<G, K, 'alternative', V.Clause.Else<G>>;
-		// rt only
-		readonly alternatives?: Slot<G, K, 'alternatives', V.Clause.Any<G>>[];
-		// p only
 		readonly condition: Slot<
 			G,
 			K,
@@ -138,30 +67,11 @@ export namespace Statement {
 		export interface ForEach<G extends GrammarMap, K extends Under<'statement.loop.for_each'> = 'statement.loop.for_each'> extends SubKindOf<V.Statement.Loop<G, K>> {
 			// claimed by prt
 			readonly $path: K;
-			readonly alternative?: Slot<G, K, 'alternative', V.Clause.Else<G>>;
-			// p only
 			readonly body: Slot<G, K, 'body', V.Declaration.Any<G> | V.Statement.Any<G>>;
-			readonly header?: Slot<G, K, 'header', unknown>;
-			// t only
-			readonly left?: Slot<G, K, 'left', unknown>;
-			// pr only
-			readonly right?: Slot<
-				G,
-				K,
-				'right',
-				| V.Expression.Any<G>
-				| V.Identifier.Any<G>
-				| V.Literal.Any<G>
-				| V.Pattern.Any<G>
-				| V.Statement.Any<G>
-			>;
-			// pr only
 		}
 		export interface While<G extends GrammarMap, K extends Under<'statement.loop.while'> = 'statement.loop.while'> extends SubKindOf<V.Statement.Loop<G, K>> {
 			// claimed by prt
 			readonly $path: K;
-			readonly alternative?: Slot<G, K, 'alternative', V.Clause.Else<G>>;
-			// p only
 			readonly body: Slot<G, K, 'body', V.Declaration.Any<G> | V.Statement.Any<G>>;
 			readonly condition: Slot<
 				G,

@@ -7,21 +7,5 @@ export namespace Literal {
 			// claimed by pt
 			readonly $path: K;
 		}
-		export namespace Interpolated {
-			export interface Deferred<G extends GrammarMap, K extends Under<'literal.string.interpolated.deferred'> = 'literal.string.interpolated.deferred'> extends SubKindOf<V.Literal.String.Interpolated<G, K>> {
-				// claimed by p
-				readonly $path: K;
-			}
-			export namespace Deferred {
-				export interface Multiline<G extends GrammarMap, K extends Under<'literal.string.interpolated.deferred.multiline'> = 'literal.string.interpolated.deferred.multiline'> extends SubKindOf<V.Literal.String.Interpolated.Deferred<G, K>> {
-					// claimed by p
-					readonly $path: K;
-				}
-			}
-			export interface Multiline<G extends GrammarMap, K extends Under<'literal.string.interpolated.multiline'> = 'literal.string.interpolated.multiline'> extends SubKindOf<V.Literal.String.Interpolated<G, K>> {
-				// claimed by p
-				readonly $path: K;
-			}
-		}
 	}
 }

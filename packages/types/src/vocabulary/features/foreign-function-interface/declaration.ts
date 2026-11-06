@@ -1,5 +1,5 @@
 import type { GrammarMap, Slot } from '../../map.ts';
-import type { Flag, SubKindOf, Under } from '../../utils.ts';
+import type { SubKindOf, Under } from '../../utils.ts';
 import type * as V from '../../index.ts';
 export namespace Declaration {
 	export interface Function<G extends GrammarMap, K extends Under<'declaration.function'> = 'declaration.function'> {
@@ -21,7 +21,6 @@ export namespace Declaration {
 		export interface Variadic<G extends GrammarMap, K extends Under<'declaration.parameter.variadic'> = 'declaration.parameter.variadic'> extends SubKindOf<V.Declaration.Parameter<G, K>> {
 			// claimed by r
 			readonly $path: K;
-			readonly mutable?: Flag;
 			readonly pattern?: Slot<G, K, 'pattern', unknown>;
 		}
 	}

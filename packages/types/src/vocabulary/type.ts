@@ -1,10 +1,8 @@
-import type { GrammarMap, Slot } from './map.ts';
+import type { GrammarMap } from './map.ts';
 import type { Under } from './utils.ts';
 export interface Type<G extends GrammarMap, K extends Under<'type'> = 'type'> {
 	// claimed by p
 	readonly $path: K;
-	readonly content?: Slot<G, K, 'content', unknown>;
-	// prt only
 }
 
 export interface TypeSynonyms {

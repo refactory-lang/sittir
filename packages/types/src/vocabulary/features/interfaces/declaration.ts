@@ -2,23 +2,6 @@ import type { GrammarMap, Slot } from '../../map.ts';
 import type { SubKindOf, Under } from '../../utils.ts';
 import type * as V from '../../index.ts';
 export namespace Declaration {
-	export namespace Field {
-		export interface Signature<G extends GrammarMap, K extends Under<'declaration.field.signature'> = 'declaration.field.signature'> extends SubKindOf<V.Declaration.Field<G, K>> {
-			// claimed by t
-			readonly $path: K;
-			readonly name: Slot<
-				G,
-				K,
-				'name',
-				| V.Expression.Any<G>
-				| V.Literal.Any<G>
-				| V.Identifier<G>
-				| string
-				| V.Declaration.Module<G>
-				| V.Identifier.Any<G>
-			>;
-		}
-	}
 	export interface Interface<G extends GrammarMap, K extends Under<'declaration.interface'> = 'declaration.interface'> extends SubKindOf<V.Declaration<G, K>> {
 		// claimed by t
 		readonly $path: K;
@@ -46,31 +29,5 @@ export namespace Declaration {
 		// rt only
 		readonly name: Slot<G, K, 'name', V.Identifier.Any<G>>;
 		// rt only
-	}
-	export namespace Interface {
-		export interface Trait<G extends GrammarMap, K extends Under<'declaration.interface.trait'> = 'declaration.interface.trait'> extends SubKindOf<V.Declaration.Interface<G, K>> {
-			// claimed by r
-			readonly $path: K;
-			readonly body: Slot<
-				G,
-				K,
-				'body',
-				| V.Attribute.Any<G>
-				| V.Declaration.Any<G>
-				| V.Expression.Call.Macro<G>
-				| V.Statement.Any<G>
-			>[];
-			readonly extends?: Slot<
-				G,
-				K,
-				'extends',
-				| V.Expression.Call.Macro<G>
-				| V.Identifier.Any<G>
-				| V.Clause.Bounds.HigherRanked<G>
-				| V.Clause.Bounds.Removed<G>
-				| V.Type.Any<G>
-			>[];
-			readonly name: Slot<G, K, 'name', V.Identifier.Any<G>>;
-		}
 	}
 }

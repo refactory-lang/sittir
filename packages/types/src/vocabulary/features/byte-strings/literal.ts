@@ -7,11 +7,5 @@ export namespace Literal {
 			// claimed by p
 			readonly $path: K;
 		}
-		export namespace Bytes {
-			export interface Multiline<G extends GrammarMap, K extends Under<'literal.string.bytes.multiline'> = 'literal.string.bytes.multiline'> extends SubKindOf<V.Literal.String.Bytes<G, K>> {
-				// claimed by p
-				readonly $path: K;
-			}
-		}
 	}
 }

@@ -1,9 +1,9 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 import { readVocabulary, readVocabularySource, VOCABULARY_DIR } from '@sittir/codegen/bindings';
-import { featureGuard, guardRows } from '../src/portable/feature-guard.ts';
+import { featureGuard, guardRows, heldBy, holdsMember, UNHELD_MEMBERS } from '../src/portable/feature-guard.ts';
 import { plan, type Plan } from '../src/vocabulary/plan.ts';
 
-const CEILINGS: Readonly<Record<string, number>> = { python: 338, rust: 153, typescript: 194 };
+const CEILINGS: Readonly<Record<string, number>> = { python: 10, rust: 2, typescript: 3 };
 
 describe('feature guard', () => {
 	let p: Plan;
@@ -15,7 +15,7 @@ describe('feature guard', () => {
 	});
 
 	it('gives one row to a member claimed from a feature the grammar does not compose', () => {
-		const rows = guardRows(p, python, { paths: new Set(['type.reference']), members: new Set(['type.reference.lifetime']) });
+		const rows = guardRows(p, python, { paths: new Set(), members: new Set(['type.reference.lifetime']) });
 		expect(rows.filter((row) => row.side === 'claimed-not-composed')).toEqual([
 			{ feature: 'Lifetimes', path: 'type.reference', member: 'lifetime', side: 'claimed-not-composed' }
 		]);
@@ -29,6 +29,16 @@ describe('feature guard', () => {
 		expect(contentless.length).toBeGreaterThan(0);
 		expect(rows).toEqual([]);
 	});
+
+	it('exempts only owned members that no grammar holds', async () => {
+		const owned = new Set([...p.owned].flatMap(([path, members]) => [...members.keys()].map((member) => `${path}.${member}`)));
+		expect(UNHELD_MEMBERS.filter((key) => !owned.has(key))).toEqual([]);
+		for (const grammar of Object.keys(CEILINGS)) {
+			const held = await heldBy(grammar as 'python' | 'rust' | 'typescript');
+			const split = (key: string): [string, string] => [key.slice(0, key.lastIndexOf('.')), key.slice(key.lastIndexOf('.') + 1)];
+			expect(UNHELD_MEMBERS.filter((key) => holdsMember(held, ...split(key))), `${grammar} holds an exempted member: drop it from UNHELD_MEMBERS`).toEqual([]);
+		}
+	}, 600_000);
 
 	for (const [grammar, ceiling] of Object.entries(CEILINGS))
 		it(`${grammar}: ${ceiling} rows where its claims and its composition disagree`, async () => {

@@ -4,19 +4,35 @@ import type * as gate from './utils.ts';
 import type * as V from './index.ts';
 import type * as features from './features/index.ts';
 import type * as abstractClasses from './features/methods/classes/abstract-classes/index.ts';
+import type * as accessorAnnotations from './features/type-annotations/accessor-annotations/index.ts';
+import type * as accessorSignatures from './features/methods/accessors/accessor-signatures/index.ts';
 import type * as accessors from './features/methods/accessors/index.ts';
 import type * as algebraicDataTypes from './features/enumerations/algebraic-data-types/index.ts';
 import type * as ambientDeclarations from './features/type-annotations/ambient-declarations/index.ts';
+import type * as annotatedConstants from './features/type-annotations/annotated-constants/index.ts';
+import type * as annotatedLambdas from './features/annotated-lambdas/index.ts';
 import type * as arbitraryPrecisionIntegers from './features/arbitrary-precision-integers/index.ts';
 import type * as assertions from './features/assertions/index.ts';
 import type * as associatedTypes from './features/type-aliases/associated-types/index.ts';
 import type * as asyncAwait from './features/async-await/index.ts';
 import type * as asyncBlocks from './features/async-await/async-blocks/index.ts';
+import type * as asyncContexts from './features/async-await/async-contexts/index.ts';
+import type * as asyncFunctionExpressions from './features/async-await/async-function-expressions/index.ts';
+import type * as asyncFunctionSignatures from './features/async-await/async-function-signatures/index.ts';
+import type * as asyncIteration from './features/async-await/async-iteration/index.ts';
+import type * as asyncLambdas from './features/async-await/async-lambdas/index.ts';
 import type * as attributes from './features/attributes/index.ts';
+import type * as bareTuples from './features/tuples/bare-tuples/index.ts';
+import type * as bigIntegerRadixes from './features/arbitrary-precision-integers/big-integer-radixes/index.ts';
+import type * as blockComments from './features/block-comments/index.ts';
+import type * as boundClauses from './features/parametric-polymorphism/bounded-quantification/bound-clauses/index.ts';
 import type * as boundedQuantification from './features/parametric-polymorphism/bounded-quantification/index.ts';
 import type * as byteStrings from './features/byte-strings/index.ts';
+import type * as cFamilyExpressionStatements from './features/c-family-expression-statements/index.ts';
+import type * as cFamilyUnaryOperators from './features/c-family-unary-operators/index.ts';
 import type * as cStrings from './features/c-strings/index.ts';
 import type * as characters from './features/characters/index.ts';
+import type * as classVisibility from './features/visibility/class-visibility/index.ts';
 import type * as classes from './features/methods/classes/index.ts';
 import type * as coerciveEquality from './features/coercive-equality/index.ts';
 import type * as compileTimeEvaluation from './features/compile-time-evaluation/index.ts';
@@ -25,13 +41,19 @@ import type * as comprehensions from './features/comprehensions/index.ts';
 import type * as computedKeys from './features/computed-keys/index.ts';
 import type * as conditionalExpressions from './features/conditional-expressions/index.ts';
 import type * as constGenerics from './features/parametric-polymorphism/const-generics/index.ts';
+import type * as constants from './features/constants/index.ts';
+import type * as constrainedTypeParameters from './features/parametric-polymorphism/bounded-quantification/constrained-type-parameters/index.ts';
 import type * as coroutines from './features/coroutines/index.ts';
 import type * as countedLoops from './features/counted-loops/index.ts';
 import type * as debuggerStatements from './features/debugger-statements/index.ts';
 import type * as decorators from './features/decorators/index.ts';
 import type * as defaultArguments from './features/default-arguments/index.ts';
+import type * as defaultParameterForms from './features/default-arguments/default-parameter-forms/index.ts';
 import type * as destructuring from './features/destructuring/index.ts';
+import type * as disposableDeclarations from './features/resource-management/disposable-declarations/index.ts';
+import type * as docComments from './features/doc-comments/index.ts';
 import type * as dynamicScope from './features/dynamic-scope/index.ts';
+import type * as ellipsisLiteral from './features/ellipsis-literal/index.ts';
 import type * as encapsulation from './features/encapsulation/index.ts';
 import type * as enumerations from './features/enumerations/index.ts';
 import type * as errorPropagation from './features/error-propagation/index.ts';
@@ -39,54 +61,134 @@ import type * as exceptions from './features/exceptions/index.ts';
 import type * as execStatements from './features/exec-statements/index.ts';
 import type * as explicitOverrides from './features/methods/classes/explicit-overrides/index.ts';
 import type * as explicitReceivers from './features/explicit-receivers/index.ts';
+import type * as exponentiationAndMembership from './features/exponentiation-and-membership/index.ts';
+import type * as externalModules from './features/modules/module-declarations/external-modules/index.ts';
+import type * as fieldEncapsulation from './features/encapsulation/field-encapsulation/index.ts';
+import type * as fieldSignatures from './features/interfaces/field-signatures/index.ts';
+import type * as fieldsAndModifiers from './features/fields-and-modifiers/index.ts';
+import type * as forEachTargets from './features/for-each-targets/index.ts';
+import type * as forInHeaders from './features/for-in-headers/index.ts';
 import type * as foreignFunctionInterface from './features/foreign-function-interface/index.ts';
+import type * as formatStrings from './features/string-interpolation/format-strings/index.ts';
+import type * as fromImports from './features/modules/from-imports/index.ts';
+import type * as functionDecorators from './features/decorators/function-decorators/index.ts';
+import type * as functionSignatures from './features/function-signatures/index.ts';
+import type * as generatorBlocks from './features/coroutines/generator-blocks/index.ts';
+import type * as generatorFunctions from './features/coroutines/generators/generator-functions/index.ts';
 import type * as generators from './features/coroutines/generators/index.ts';
+import type * as genericClasses from './features/parametric-polymorphism/generic-classes/index.ts';
+import type * as genericConstructors from './features/parametric-polymorphism/generic-constructors/index.ts';
+import type * as genericExpressions from './features/parametric-polymorphism/generic-expressions/index.ts';
+import type * as genericItems from './features/parametric-polymorphism/generic-items/index.ts';
 import type * as genericLambdas from './features/parametric-polymorphism/generic-lambdas/index.ts';
+import type * as genericSignatures from './features/parametric-polymorphism/generic-signatures/index.ts';
 import type * as higherRankPolymorphism from './features/parametric-polymorphism/bounded-quantification/higher-rank-polymorphism/index.ts';
+import type * as htmlComments from './features/html-comments/index.ts';
+import type * as identityComparison from './features/identity-comparison/index.ts';
+import type * as ifAlternative from './features/if-alternative/index.ts';
+import type * as implicitConcatenation from './features/implicit-concatenation/index.ts';
+import type * as importAliases from './features/modules/import-aliases/index.ts';
+import type * as importTrees from './features/modules/import-trees/index.ts';
+import type * as innerDocComments from './features/inner-doc-comments/index.ts';
 import type * as interfaceConformance from './features/interface-conformance/index.ts';
+import type * as interfaceExtends from './features/interfaces/interface-extends/index.ts';
 import type * as interfaces from './features/interfaces/index.ts';
+import type * as javascriptBindings from './features/javascript-bindings/index.ts';
+import type * as javascriptClasses from './features/methods/classes/javascript-classes/index.ts';
+import type * as javascriptExpressions from './features/javascript-expressions/index.ts';
+import type * as javascriptModules from './features/modules/javascript-modules/index.ts';
+import type * as javascriptOperators from './features/javascript-operators/index.ts';
+import type * as keyValuePairs from './features/key-value-pairs/index.ts';
 import type * as labeledControlFlow from './features/labeled-control-flow/index.ts';
+import type * as labeledStatements from './features/labeled-control-flow/labeled-statements/index.ts';
+import type * as leadingPointFloats from './features/leading-point-floats/index.ts';
+import type * as letPatterns from './features/match-expressions/let-patterns/index.ts';
 import type * as lifetimes from './features/parametric-polymorphism/lifetimes/index.ts';
+import type * as lineDocComments from './features/line-doc-comments/index.ts';
+import type * as literalFacets from './features/literal-facets/index.ts';
+import type * as literalSuffixes from './features/literal-suffixes/index.ts';
+import type * as loopLabels from './features/labeled-control-flow/loop-labels/index.ts';
+import type * as mapLiterals from './features/map-literals/index.ts';
+import type * as mappingPatterns from './features/match-expressions/mapping-patterns/index.ts';
 import type * as matchExpressions from './features/match-expressions/index.ts';
+import type * as memberDecorators from './features/decorators/member-decorators/index.ts';
+import type * as memberOverrides from './features/methods/classes/explicit-overrides/member-overrides/index.ts';
+import type * as methodSignatures from './features/methods/method-signatures/index.ts';
 import type * as methods from './features/methods/index.ts';
 import type * as moduleDeclarations from './features/modules/module-declarations/index.ts';
+import type * as moduleVisibility from './features/visibility/module-visibility/index.ts';
 import type * as modules from './features/modules/index.ts';
+import type * as multilineByteStrings from './features/byte-strings/multiline-byte-strings/index.ts';
+import type * as multilineStrings from './features/multiline-strings/index.ts';
 import type * as multipleInheritance from './features/methods/classes/multiple-inheritance/index.ts';
 import type * as multiwayBranch from './features/multiway-branch/index.ts';
 import type * as namedArguments from './features/named-arguments/index.ts';
 import type * as nonNullAssertions from './features/type-annotations/nullable-types/non-null-assertions/index.ts';
 import type * as nullableTypes from './features/type-annotations/nullable-types/index.ts';
+import type * as objectPatterns from './features/destructuring/object-patterns/index.ts';
 import type * as openTypeExtension from './features/open-type-extension/index.ts';
 import type * as optionalChaining from './features/optional-chaining/index.ts';
 import type * as optionalMembers from './features/type-annotations/optional-members/index.ts';
+import type * as paramSpecs from './features/parametric-polymorphism/param-specs/index.ts';
 import type * as parametricPolymorphism from './features/parametric-polymorphism/index.ts';
 import type * as postTestLoops from './features/post-test-loops/index.ts';
 import type * as printStatements from './features/print-statements/index.ts';
+import type * as pythonDeclarations from './features/python-declarations/index.ts';
+import type * as pythonDestructuring from './features/destructuring/python-destructuring/index.ts';
+import type * as pythonOperators from './features/python-operators/index.ts';
+import type * as pythonStatements from './features/python-statements/index.ts';
+import type * as pythonTypeForms from './features/type-annotations/python-type-forms/index.ts';
 import type * as rangeExpressions from './features/range-expressions/index.ts';
+import type * as rawStringForms from './features/raw-strings/raw-string-forms/index.ts';
 import type * as rawStrings from './features/raw-strings/index.ts';
 import type * as readonlyMembers from './features/readonly-members/index.ts';
 import type * as references from './features/references/index.ts';
 import type * as regularExpressions from './features/regular-expressions/index.ts';
-import type * as resourceManagement from './features/resource-management/index.ts';
+import type * as resourceStatements from './features/resource-management/resource-statements/index.ts';
+import type * as restPatterns from './features/destructuring/rest-patterns/index.ts';
+import type * as rustDeclarations from './features/rust-declarations/index.ts';
+import type * as rustExpressions from './features/rust-expressions/index.ts';
 import type * as scopeDeclarations from './features/scope-declarations/index.ts';
 import type * as scopedVisibility from './features/visibility/scoped-visibility/index.ts';
+import type * as setLiterals from './features/set-literals/index.ts';
 import type * as singleInheritance from './features/methods/classes/single-inheritance/index.ts';
 import type * as sliceExpressions from './features/slice-expressions/index.ts';
+import type * as specialMethods from './features/methods/special-methods/index.ts';
+import type * as specialization from './features/methods/specialization/index.ts';
+import type * as spreads from './features/spreads/index.ts';
 import type * as staticStorage from './features/static-storage/index.ts';
+import type * as staticTypes from './features/type-annotations/static-types/index.ts';
 import type * as stringInterpolation from './features/string-interpolation/index.ts';
+import type * as structLiterals from './features/struct-patterns/structs/struct-literals/index.ts';
 import type * as structPatterns from './features/struct-patterns/index.ts';
 import type * as structs from './features/struct-patterns/structs/index.ts';
 import type * as structuralConformance from './features/type-annotations/structural-conformance/index.ts';
 import type * as syntacticMetaprogramming from './features/syntactic-metaprogramming/index.ts';
+import type * as systemsTypes from './features/type-annotations/systems-types/index.ts';
+import type * as taggedTemplates from './features/string-interpolation/tagged-templates/index.ts';
+import type * as traits from './features/interfaces/traits/index.ts';
+import type * as tuplePatterns from './features/destructuring/tuple-patterns/index.ts';
+import type * as tupleStructs from './features/struct-patterns/structs/tuple-structs/index.ts';
 import type * as tuples from './features/tuples/index.ts';
+import type * as typeAlgebra from './features/type-annotations/type-algebra/index.ts';
 import type * as typeAliases from './features/type-aliases/index.ts';
 import type * as typeAnnotations from './features/type-annotations/index.ts';
+import type * as typeExpressions from './features/type-expressions/index.ts';
 import type * as typeOnlyImports from './features/modules/type-only-imports/index.ts';
 import type * as typeclasses from './features/open-type-extension/typeclasses/index.ts';
+import type * as typedReceivers from './features/explicit-receivers/typed-receivers/index.ts';
+import type * as undefinedValue from './features/undefined-value/index.ts';
 import type * as unicodeStrings from './features/unicode-strings/index.ts';
+import type * as unionTypes from './features/type-annotations/union-types/index.ts';
+import type * as unitValues from './features/tuples/unit-values/index.ts';
 import type * as unsafeCode from './features/unsafe-code/index.ts';
 import type * as untaggedUnions from './features/untagged-unions/index.ts';
+import type * as valuedBlocks from './features/valued-blocks/index.ts';
+import type * as variadicTypeParameters from './features/parametric-polymorphism/variadic-type-parameters/index.ts';
 import type * as visibility from './features/visibility/index.ts';
+import type * as whereClauses from './features/parametric-polymorphism/bounded-quantification/where-clauses/index.ts';
+import type * as wildcardImports from './features/modules/wildcard-imports/index.ts';
+import type * as wildcardPatterns from './features/destructuring/wildcard-patterns/index.ts';
 
 declare module './argument.ts' {
 	interface Argument<G extends GrammarMap, K extends gate.Under<'argument'> = 'argument'> {
@@ -103,19 +205,26 @@ declare module './argument.ts' {
 
 declare module './attribute.ts' {
 	namespace Attribute {
+		interface Content<
+			G extends GrammarMap,
+			K extends gate.Under<'attribute.content'> = 'attribute.content'
+		> extends fieldsAndModifiers.Attribute.Content<G, K> {
+			readonly input?: gate.In<G, features.RustDeclarations, rustDeclarations.Attribute.Content<G, K>['input']>;
+			readonly path?: gate.In<G, features.RustDeclarations, rustDeclarations.Attribute.Content<G, K>['path']>;
+		}
 		namespace Content {
 			interface Call<
 				G extends GrammarMap,
 				K extends gate.Under<'attribute.content.call'> = 'attribute.content.call'
-			> extends decorators.Attribute.Content.Call<G, K> {}
+			> extends memberDecorators.Attribute.Content.Call<G, K> {}
 			interface Member<
 				G extends GrammarMap,
 				K extends gate.Under<'attribute.content.member'> = 'attribute.content.member'
-			> extends decorators.Attribute.Content.Member<G, K> {}
+			> extends memberDecorators.Attribute.Content.Member<G, K> {}
 			interface Parenthesized<
 				G extends GrammarMap,
 				K extends gate.Under<'attribute.content.parenthesized'> = 'attribute.content.parenthesized'
-			> extends decorators.Attribute.Content.Parenthesized<G, K> {}
+			> extends memberDecorators.Attribute.Content.Parenthesized<G, K> {}
 			type Any<G extends GrammarMap> =
 				| V.Attribute.Content<G>
 				| V.Attribute.Content.Call<G>
@@ -143,10 +252,8 @@ declare module './attribute.ts' {
 
 declare module './clause.ts' {
 	namespace Clause {
-		interface Bounds<
-			G extends GrammarMap,
-			K extends gate.Under<'clause.bounds'> = 'clause.bounds'
-		> extends boundedQuantification.Clause.Bounds<G, K> {}
+		interface Bounds<G extends GrammarMap, K extends gate.Under<'clause.bounds'> = 'clause.bounds'> extends boundClauses
+			.Clause.Bounds<G, K> {}
 		namespace Bounds {
 			interface HigherRanked<
 				G extends GrammarMap,
@@ -155,11 +262,11 @@ declare module './clause.ts' {
 			interface Removed<
 				G extends GrammarMap,
 				K extends gate.Under<'clause.bounds.removed'> = 'clause.bounds.removed'
-			> extends boundedQuantification.Clause.Bounds.Removed<G, K> {}
+			> extends whereClauses.Clause.Bounds.Removed<G, K> {}
 			interface Use<
 				G extends GrammarMap,
 				K extends gate.Under<'clause.bounds.use'> = 'clause.bounds.use'
-			> extends boundedQuantification.Clause.Bounds.Use<G, K> {}
+			> extends whereClauses.Clause.Bounds.Use<G, K> {}
 			type Any<G extends GrammarMap> =
 				| V.Clause.Bounds<G>
 				| V.Clause.Bounds.HigherRanked<G>
@@ -198,7 +305,7 @@ declare module './clause.ts' {
 				G extends GrammarMap,
 				K extends gate.Under<'clause.comprehension.for'> = 'clause.comprehension.for'
 			> extends comprehensions.Clause.Comprehension.For<G, K> {
-				readonly async?: gate.In<G, features.AsyncAwait, asyncAwait.Clause.Comprehension.For<G, K>['async']>;
+				readonly async?: gate.In<G, features.AsyncContexts, asyncContexts.Clause.Comprehension.For<G, K>['async']>;
 			}
 			interface If<
 				G extends GrammarMap,
@@ -212,18 +319,24 @@ declare module './clause.ts' {
 		interface Default<
 			G extends GrammarMap,
 			K extends gate.Under<'clause.default'> = 'clause.default'
-		> extends parametricPolymorphism.Clause.Default<G, K> {}
-		interface Export<G extends GrammarMap, K extends gate.Under<'clause.export'> = 'clause.export'> extends modules
-			.Clause.Export<G, K> {}
+		> extends genericExpressions.Clause.Default<G, K> {}
+		interface ElseIf<
+			G extends GrammarMap,
+			K extends gate.Under<'clause.else_if'> = 'clause.else_if'
+		> extends pythonStatements.Clause.ElseIf<G, K> {}
+		interface Export<
+			G extends GrammarMap,
+			K extends gate.Under<'clause.export'> = 'clause.export'
+		> extends javascriptModules.Clause.Export<G, K> {}
 		namespace Export {
 			interface Namespace<
 				G extends GrammarMap,
 				K extends gate.Under<'clause.export.namespace'> = 'clause.export.namespace'
-			> extends modules.Clause.Export.Namespace<G, K> {}
+			> extends javascriptModules.Clause.Export.Namespace<G, K> {}
 			interface Specifier<
 				G extends GrammarMap,
 				K extends gate.Under<'clause.export.specifier'> = 'clause.export.specifier'
-			> extends modules.Clause.Export.Specifier<G, K> {
+			> extends javascriptModules.Clause.Export.Specifier<G, K> {
 				readonly typeOnly?: gate.In<
 					G,
 					features.TypeOnlyImports,
@@ -234,7 +347,7 @@ declare module './clause.ts' {
 				interface Typeof<
 					G extends GrammarMap,
 					K extends gate.Under<'clause.export.specifier.typeof'> = 'clause.export.specifier.typeof'
-				> extends modules.Clause.Export.Specifier.Typeof<G, K> {}
+				> extends javascriptModules.Clause.Export.Specifier.Typeof<G, K> {}
 				type Any<G extends GrammarMap> = V.Clause.Export.Specifier<G> | V.Clause.Export.Specifier.Typeof<G>;
 			}
 			type Any<G extends GrammarMap> =
@@ -251,7 +364,7 @@ declare module './clause.ts' {
 			interface Type<
 				G extends GrammarMap,
 				K extends gate.Under<'clause.extends.type'> = 'clause.extends.type'
-			> extends interfaces.Clause.Extends.Type<G, K> {}
+			> extends interfaceExtends.Clause.Extends.Type<G, K> {}
 			type Any<G extends GrammarMap> = V.Clause.Extends<G> | V.Clause.Extends.Type<G>;
 		}
 		interface Finally<
@@ -268,49 +381,49 @@ declare module './clause.ts' {
 			interface Alias<
 				G extends GrammarMap,
 				K extends gate.Under<'clause.import.alias'> = 'clause.import.alias'
-			> extends modules.Clause.Import.Alias<G, K> {}
+			> extends importAliases.Clause.Import.Alias<G, K> {}
 			interface Attribute<
 				G extends GrammarMap,
 				K extends gate.Under<'clause.import.attribute'> = 'clause.import.attribute'
-			> extends modules.Clause.Import.Attribute<G, K> {}
+			> extends javascriptModules.Clause.Import.Attribute<G, K> {}
 			interface List<
 				G extends GrammarMap,
 				K extends gate.Under<'clause.import.list'> = 'clause.import.list'
-			> extends modules.Clause.Import.List<G, K> {}
+			> extends importTrees.Clause.Import.List<G, K> {}
 			namespace List {
 				interface Scoped<
 					G extends GrammarMap,
 					K extends gate.Under<'clause.import.list.scoped'> = 'clause.import.list.scoped'
-				> extends modules.Clause.Import.List.Scoped<G, K> {}
+				> extends importTrees.Clause.Import.List.Scoped<G, K> {}
 				type Any<G extends GrammarMap> = V.Clause.Import.List<G> | V.Clause.Import.List.Scoped<G>;
 			}
 			interface Names<
 				G extends GrammarMap,
 				K extends gate.Under<'clause.import.names'> = 'clause.import.names'
-			> extends modules.Clause.Import.Names<G, K> {}
+			> extends javascriptModules.Clause.Import.Names<G, K> {}
 			interface Namespace<
 				G extends GrammarMap,
 				K extends gate.Under<'clause.import.namespace'> = 'clause.import.namespace'
-			> extends modules.Clause.Import.Namespace<G, K> {}
+			> extends javascriptModules.Clause.Import.Namespace<G, K> {}
 			interface Relative<
 				G extends GrammarMap,
 				K extends gate.Under<'clause.import.relative'> = 'clause.import.relative'
-			> extends modules.Clause.Import.Relative<G, K> {}
+			> extends fromImports.Clause.Import.Relative<G, K> {}
 			namespace Relative {
 				interface Prefix<
 					G extends GrammarMap,
 					K extends gate.Under<'clause.import.relative.prefix'> = 'clause.import.relative.prefix'
-				> extends modules.Clause.Import.Relative.Prefix<G, K> {}
+				> extends fromImports.Clause.Import.Relative.Prefix<G, K> {}
 				type Any<G extends GrammarMap> = V.Clause.Import.Relative<G> | V.Clause.Import.Relative.Prefix<G>;
 			}
 			interface Require<
 				G extends GrammarMap,
 				K extends gate.Under<'clause.import.require'> = 'clause.import.require'
-			> extends modules.Clause.Import.Require<G, K> {}
+			> extends javascriptModules.Clause.Import.Require<G, K> {}
 			interface Specifier<
 				G extends GrammarMap,
 				K extends gate.Under<'clause.import.specifier'> = 'clause.import.specifier'
-			> extends modules.Clause.Import.Specifier<G, K> {
+			> extends javascriptModules.Clause.Import.Specifier<G, K> {
 				readonly typeOnly?: gate.In<
 					G,
 					features.TypeOnlyImports,
@@ -321,13 +434,13 @@ declare module './clause.ts' {
 				interface Typeof<
 					G extends GrammarMap,
 					K extends gate.Under<'clause.import.specifier.typeof'> = 'clause.import.specifier.typeof'
-				> extends modules.Clause.Import.Specifier.Typeof<G, K> {}
+				> extends javascriptModules.Clause.Import.Specifier.Typeof<G, K> {}
 				type Any<G extends GrammarMap> = V.Clause.Import.Specifier<G> | V.Clause.Import.Specifier.Typeof<G>;
 			}
 			interface Wildcard<
 				G extends GrammarMap,
 				K extends gate.Under<'clause.import.wildcard'> = 'clause.import.wildcard'
-			> extends modules.Clause.Import.Wildcard<G, K> {}
+			> extends wildcardImports.Clause.Import.Wildcard<G, K> {}
 			type Any<G extends GrammarMap> =
 				| V.Clause.Import<G>
 				| V.Clause.Import.Alias<G>
@@ -344,13 +457,13 @@ declare module './clause.ts' {
 				| V.Clause.Import.Wildcard<G>
 				| Text<G, 'clause.import.wildcard'>;
 		}
-		interface Let<G extends GrammarMap, K extends gate.Under<'clause.let'> = 'clause.let'> extends matchExpressions
-			.Clause.Let<G, K> {}
+		interface Let<G extends GrammarMap, K extends gate.Under<'clause.let'> = 'clause.let'> extends letPatterns.Clause
+			.Let<G, K> {}
 		namespace Let {
 			interface Chain<
 				G extends GrammarMap,
 				K extends gate.Under<'clause.let.chain'> = 'clause.let.chain'
-			> extends matchExpressions.Clause.Let.Chain<G, K> {}
+			> extends letPatterns.Clause.Let.Chain<G, K> {}
 			type Any<G extends GrammarMap> = V.Clause.Let<G> | V.Clause.Let.Chain<G>;
 		}
 		interface Lifetimes<
@@ -371,27 +484,25 @@ declare module './clause.ts' {
 		interface MappedType<
 			G extends GrammarMap,
 			K extends gate.Under<'clause.mapped_type'> = 'clause.mapped_type'
-		> extends typeAnnotations.Clause.MappedType<G, K> {}
+		> extends typeAlgebra.Clause.MappedType<G, K> {}
 		interface Resource<
 			G extends GrammarMap,
 			K extends gate.Under<'clause.resource'> = 'clause.resource'
-		> extends resourceManagement.Clause.Resource<G, K> {}
+		> extends resourceStatements.Clause.Resource<G, K> {}
 		namespace Resource {
 			interface Item<
 				G extends GrammarMap,
 				K extends gate.Under<'clause.resource.item'> = 'clause.resource.item'
-			> extends resourceManagement.Clause.Resource.Item<G, K> {}
+			> extends resourceStatements.Clause.Resource.Item<G, K> {}
 			type Any<G extends GrammarMap> = V.Clause.Resource<G> | V.Clause.Resource.Item<G>;
 		}
-		interface Where<
-			G extends GrammarMap,
-			K extends gate.Under<'clause.where'> = 'clause.where'
-		> extends boundedQuantification.Clause.Where<G, K> {}
+		interface Where<G extends GrammarMap, K extends gate.Under<'clause.where'> = 'clause.where'> extends whereClauses
+			.Clause.Where<G, K> {}
 		namespace Where {
 			interface Predicate<
 				G extends GrammarMap,
 				K extends gate.Under<'clause.where.predicate'> = 'clause.where.predicate'
-			> extends boundedQuantification.Clause.Where.Predicate<G, K> {}
+			> extends whereClauses.Clause.Where.Predicate<G, K> {}
 			type Any<G extends GrammarMap> = V.Clause.Where<G> | V.Clause.Where.Predicate<G>;
 		}
 		type Any<G extends GrammarMap> =
@@ -448,18 +559,40 @@ declare module './clause.ts' {
 
 declare module './comment.ts' {
 	namespace Comment {
+		interface Block<G extends GrammarMap, K extends gate.Under<'comment.block'> = 'comment.block'> extends blockComments
+			.Comment.Block<G, K> {}
 		namespace Block {
+			interface Doc<
+				G extends GrammarMap,
+				K extends gate.Under<'comment.block.doc'> = 'comment.block.doc'
+			> extends docComments.Comment.Block.Doc<G, K> {}
 			namespace Doc {
+				interface Inner<
+					G extends GrammarMap,
+					K extends gate.Under<'comment.block.doc.inner'> = 'comment.block.doc.inner'
+				> extends innerDocComments.Comment.Block.Doc.Inner<G, K> {}
 				type Any<G extends GrammarMap> = V.Comment.Block.Doc<G> | V.Comment.Block.Doc.Inner<G>;
 			}
 			type Any<G extends GrammarMap> = V.Comment.Block<G> | V.Comment.Block.Doc<G> | V.Comment.Block.Doc.Inner<G>;
 		}
+		interface Html<G extends GrammarMap, K extends gate.Under<'comment.html'> = 'comment.html'> extends htmlComments
+			.Comment.Html<G, K> {}
 		namespace Line {
+			interface Doc<
+				G extends GrammarMap,
+				K extends gate.Under<'comment.line.doc'> = 'comment.line.doc'
+			> extends lineDocComments.Comment.Line.Doc<G, K> {}
 			namespace Doc {
+				interface Inner<
+					G extends GrammarMap,
+					K extends gate.Under<'comment.line.doc.inner'> = 'comment.line.doc.inner'
+				> extends innerDocComments.Comment.Line.Doc.Inner<G, K> {}
 				type Any<G extends GrammarMap> = V.Comment.Line.Doc<G> | V.Comment.Line.Doc.Inner<G>;
 			}
 			type Any<G extends GrammarMap> = V.Comment.Line<G> | V.Comment.Line.Doc<G> | V.Comment.Line.Doc.Inner<G>;
 		}
+		interface Text<G extends GrammarMap, K extends gate.Under<'comment.text'> = 'comment.text'> extends innerDocComments
+			.Comment.Text<G, K> {}
 		type Any<G extends GrammarMap> =
 			| V.Comment<G>
 			| V.Comment.Block<G>
@@ -494,35 +627,38 @@ declare module './declaration.ts' {
 			>;
 			readonly typeParameters?: gate.In<
 				G,
-				features.ParametricPolymorphism,
-				parametricPolymorphism.Declaration.Class<G, K>['typeParameters']
+				features.GenericClasses,
+				genericClasses.Declaration.Class<G, K>['typeParameters']
 			>;
 		}
-		interface Constant<G extends GrammarMap, K extends gate.Under<'declaration.constant'> = 'declaration.constant'> {
-			readonly type?: gate.In<G, features.TypeAnnotations, typeAnnotations.Declaration.Constant<G, K>['type']>;
+		interface Constant<
+			G extends GrammarMap,
+			K extends gate.Under<'declaration.constant'> = 'declaration.constant'
+		> extends constants.Declaration.Constant<G, K> {
+			readonly type?: gate.In<G, features.AnnotatedConstants, annotatedConstants.Declaration.Constant<G, K>['type']>;
 		}
 		namespace Constant {
 			interface Private<
 				G extends GrammarMap,
 				K extends gate.Under<'declaration.constant.private'> = 'declaration.constant.private'
-			> extends visibility.Declaration.Constant.Private<G, K> {}
+			> extends moduleVisibility.Declaration.Constant.Private<G, K> {}
 			interface Public<
 				G extends GrammarMap,
 				K extends gate.Under<'declaration.constant.public'> = 'declaration.constant.public'
-			> extends visibility.Declaration.Constant.Public<G, K> {}
+			> extends moduleVisibility.Declaration.Constant.Public<G, K> {}
 			namespace Public {
 				interface Internal<
 					G extends GrammarMap,
 					K extends gate.Under<'declaration.constant.public.internal'> = 'declaration.constant.public.internal'
-				> extends visibility.Declaration.Constant.Public.Internal<G, K> {}
+				> extends moduleVisibility.Declaration.Constant.Public.Internal<G, K> {}
 				interface Parent<
 					G extends GrammarMap,
 					K extends gate.Under<'declaration.constant.public.parent'> = 'declaration.constant.public.parent'
-				> extends visibility.Declaration.Constant.Public.Parent<G, K> {}
+				> extends moduleVisibility.Declaration.Constant.Public.Parent<G, K> {}
 				interface Restricted<
 					G extends GrammarMap,
 					K extends gate.Under<'declaration.constant.public.restricted'> = 'declaration.constant.public.restricted'
-				> extends visibility.Declaration.Constant.Public.Restricted<G, K> {}
+				> extends moduleVisibility.Declaration.Constant.Public.Restricted<G, K> {}
 				type Any<G extends GrammarMap> =
 					| V.Declaration.Constant.Public<G>
 					| V.Declaration.Constant.Public.Internal<G>
@@ -541,32 +677,32 @@ declare module './declaration.ts' {
 			G extends GrammarMap,
 			K extends gate.Under<'declaration.constructor'> = 'declaration.constructor'
 		> extends classes.Declaration.Constructor<G, K> {
-			readonly async?: gate.In<G, features.AsyncAwait, asyncAwait.Declaration.Constructor<G, K>['async']>;
+			readonly async?: gate.In<G, features.AsyncContexts, asyncContexts.Declaration.Constructor<G, K>['async']>;
 			readonly decorators?: gate.In<G, features.Decorators, decorators.Declaration.Constructor<G, K>['decorators']>;
 			readonly returnType?: gate.In<
 				G,
-				features.TypeAnnotations,
-				typeAnnotations.Declaration.Constructor<G, K>['returnType']
+				features.PythonTypeForms,
+				pythonTypeForms.Declaration.Constructor<G, K>['returnType']
 			>;
 			readonly typeParameters?: gate.In<
 				G,
-				features.ParametricPolymorphism,
-				parametricPolymorphism.Declaration.Constructor<G, K>['typeParameters']
+				features.GenericConstructors,
+				genericConstructors.Declaration.Constructor<G, K>['typeParameters']
 			>;
 		}
 		namespace Constructor {
 			interface Private<
 				G extends GrammarMap,
 				K extends gate.Under<'declaration.constructor.private'> = 'declaration.constructor.private'
-			> extends visibility.Declaration.Constructor.Private<G, K> {}
+			> extends classVisibility.Declaration.Constructor.Private<G, K> {}
 			interface Protected<
 				G extends GrammarMap,
 				K extends gate.Under<'declaration.constructor.protected'> = 'declaration.constructor.protected'
-			> extends visibility.Declaration.Constructor.Protected<G, K> {}
+			> extends classVisibility.Declaration.Constructor.Protected<G, K> {}
 			interface Public<
 				G extends GrammarMap,
 				K extends gate.Under<'declaration.constructor.public'> = 'declaration.constructor.public'
-			> extends visibility.Declaration.Constructor.Public<G, K> {}
+			> extends classVisibility.Declaration.Constructor.Public<G, K> {}
 			type Any<G extends GrammarMap> =
 				| V.Declaration.Constructor<G>
 				| V.Declaration.Constructor.Private<G>
@@ -579,37 +715,33 @@ declare module './declaration.ts' {
 		> extends enumerations.Declaration.Enum<G, K> {
 			readonly typeParameters?: gate.In<
 				G,
-				features.ParametricPolymorphism,
-				parametricPolymorphism.Declaration.Enum<G, K>['typeParameters']
+				features.GenericItems,
+				genericItems.Declaration.Enum<G, K>['typeParameters']
 			>;
-			readonly whereClause?: gate.In<
-				G,
-				features.BoundedQuantification,
-				boundedQuantification.Declaration.Enum<G, K>['whereClause']
-			>;
+			readonly whereClause?: gate.In<G, features.WhereClauses, whereClauses.Declaration.Enum<G, K>['whereClause']>;
 		}
 		namespace Enum {
 			interface Private<
 				G extends GrammarMap,
 				K extends gate.Under<'declaration.enum.private'> = 'declaration.enum.private'
-			> extends visibility.Declaration.Enum.Private<G, K> {}
+			> extends moduleVisibility.Declaration.Enum.Private<G, K> {}
 			interface Public<
 				G extends GrammarMap,
 				K extends gate.Under<'declaration.enum.public'> = 'declaration.enum.public'
-			> extends visibility.Declaration.Enum.Public<G, K> {}
+			> extends moduleVisibility.Declaration.Enum.Public<G, K> {}
 			namespace Public {
 				interface Internal<
 					G extends GrammarMap,
 					K extends gate.Under<'declaration.enum.public.internal'> = 'declaration.enum.public.internal'
-				> extends visibility.Declaration.Enum.Public.Internal<G, K> {}
+				> extends moduleVisibility.Declaration.Enum.Public.Internal<G, K> {}
 				interface Parent<
 					G extends GrammarMap,
 					K extends gate.Under<'declaration.enum.public.parent'> = 'declaration.enum.public.parent'
-				> extends visibility.Declaration.Enum.Public.Parent<G, K> {}
+				> extends moduleVisibility.Declaration.Enum.Public.Parent<G, K> {}
 				interface Restricted<
 					G extends GrammarMap,
 					K extends gate.Under<'declaration.enum.public.restricted'> = 'declaration.enum.public.restricted'
-				> extends visibility.Declaration.Enum.Public.Restricted<G, K> {}
+				> extends moduleVisibility.Declaration.Enum.Public.Restricted<G, K> {}
 				type Any<G extends GrammarMap> =
 					| V.Declaration.Enum.Public<G>
 					| V.Declaration.Enum.Public.Internal<G>
@@ -634,25 +766,25 @@ declare module './declaration.ts' {
 			interface Private<
 				G extends GrammarMap,
 				K extends gate.Under<'declaration.enum_member.private'> = 'declaration.enum_member.private'
-			> extends visibility.Declaration.EnumMember.Private<G, K> {}
+			> extends moduleVisibility.Declaration.EnumMember.Private<G, K> {}
 			interface Public<
 				G extends GrammarMap,
 				K extends gate.Under<'declaration.enum_member.public'> = 'declaration.enum_member.public'
-			> extends visibility.Declaration.EnumMember.Public<G, K> {}
+			> extends moduleVisibility.Declaration.EnumMember.Public<G, K> {}
 			namespace Public {
 				interface Internal<
 					G extends GrammarMap,
 					K extends gate.Under<'declaration.enum_member.public.internal'> = 'declaration.enum_member.public.internal'
-				> extends visibility.Declaration.EnumMember.Public.Internal<G, K> {}
+				> extends moduleVisibility.Declaration.EnumMember.Public.Internal<G, K> {}
 				interface Parent<
 					G extends GrammarMap,
 					K extends gate.Under<'declaration.enum_member.public.parent'> = 'declaration.enum_member.public.parent'
-				> extends visibility.Declaration.EnumMember.Public.Parent<G, K> {}
+				> extends moduleVisibility.Declaration.EnumMember.Public.Parent<G, K> {}
 				interface Restricted<
 					G extends GrammarMap,
 					K extends gate.Under<'declaration.enum_member.public.restricted'> =
 						'declaration.enum_member.public.restricted'
-				> extends visibility.Declaration.EnumMember.Public.Restricted<G, K> {}
+				> extends moduleVisibility.Declaration.EnumMember.Public.Restricted<G, K> {}
 				type Any<G extends GrammarMap> =
 					| V.Declaration.EnumMember.Public<G>
 					| V.Declaration.EnumMember.Public.Internal<G>
@@ -667,27 +799,27 @@ declare module './declaration.ts' {
 				interface Private<
 					G extends GrammarMap,
 					K extends gate.Under<'declaration.enum_member.struct.private'> = 'declaration.enum_member.struct.private'
-				> extends visibility.Declaration.EnumMember.Struct.Private<G, K> {}
+				> extends moduleVisibility.Declaration.EnumMember.Struct.Private<G, K> {}
 				interface Public<
 					G extends GrammarMap,
 					K extends gate.Under<'declaration.enum_member.struct.public'> = 'declaration.enum_member.struct.public'
-				> extends visibility.Declaration.EnumMember.Struct.Public<G, K> {}
+				> extends moduleVisibility.Declaration.EnumMember.Struct.Public<G, K> {}
 				namespace Public {
 					interface Internal<
 						G extends GrammarMap,
 						K extends gate.Under<'declaration.enum_member.struct.public.internal'> =
 							'declaration.enum_member.struct.public.internal'
-					> extends visibility.Declaration.EnumMember.Struct.Public.Internal<G, K> {}
+					> extends moduleVisibility.Declaration.EnumMember.Struct.Public.Internal<G, K> {}
 					interface Parent<
 						G extends GrammarMap,
 						K extends gate.Under<'declaration.enum_member.struct.public.parent'> =
 							'declaration.enum_member.struct.public.parent'
-					> extends visibility.Declaration.EnumMember.Struct.Public.Parent<G, K> {}
+					> extends moduleVisibility.Declaration.EnumMember.Struct.Public.Parent<G, K> {}
 					interface Restricted<
 						G extends GrammarMap,
 						K extends gate.Under<'declaration.enum_member.struct.public.restricted'> =
 							'declaration.enum_member.struct.public.restricted'
-					> extends visibility.Declaration.EnumMember.Struct.Public.Restricted<G, K> {}
+					> extends moduleVisibility.Declaration.EnumMember.Struct.Public.Restricted<G, K> {}
 					type Any<G extends GrammarMap> =
 						| V.Declaration.EnumMember.Struct.Public<G>
 						| V.Declaration.EnumMember.Struct.Public.Internal<G>
@@ -710,27 +842,27 @@ declare module './declaration.ts' {
 				interface Private<
 					G extends GrammarMap,
 					K extends gate.Under<'declaration.enum_member.tuple.private'> = 'declaration.enum_member.tuple.private'
-				> extends visibility.Declaration.EnumMember.Tuple.Private<G, K> {}
+				> extends moduleVisibility.Declaration.EnumMember.Tuple.Private<G, K> {}
 				interface Public<
 					G extends GrammarMap,
 					K extends gate.Under<'declaration.enum_member.tuple.public'> = 'declaration.enum_member.tuple.public'
-				> extends visibility.Declaration.EnumMember.Tuple.Public<G, K> {}
+				> extends moduleVisibility.Declaration.EnumMember.Tuple.Public<G, K> {}
 				namespace Public {
 					interface Internal<
 						G extends GrammarMap,
 						K extends gate.Under<'declaration.enum_member.tuple.public.internal'> =
 							'declaration.enum_member.tuple.public.internal'
-					> extends visibility.Declaration.EnumMember.Tuple.Public.Internal<G, K> {}
+					> extends moduleVisibility.Declaration.EnumMember.Tuple.Public.Internal<G, K> {}
 					interface Parent<
 						G extends GrammarMap,
 						K extends gate.Under<'declaration.enum_member.tuple.public.parent'> =
 							'declaration.enum_member.tuple.public.parent'
-					> extends visibility.Declaration.EnumMember.Tuple.Public.Parent<G, K> {}
+					> extends moduleVisibility.Declaration.EnumMember.Tuple.Public.Parent<G, K> {}
 					interface Restricted<
 						G extends GrammarMap,
 						K extends gate.Under<'declaration.enum_member.tuple.public.restricted'> =
 							'declaration.enum_member.tuple.public.restricted'
-					> extends visibility.Declaration.EnumMember.Tuple.Public.Restricted<G, K> {}
+					> extends moduleVisibility.Declaration.EnumMember.Tuple.Public.Restricted<G, K> {}
 					type Any<G extends GrammarMap> =
 						| V.Declaration.EnumMember.Tuple.Public<G>
 						| V.Declaration.EnumMember.Tuple.Public.Internal<G>
@@ -771,15 +903,11 @@ declare module './declaration.ts' {
 		> extends openTypeExtension.Declaration.Extension<G, K> {
 			readonly typeParameters?: gate.In<
 				G,
-				features.ParametricPolymorphism,
-				parametricPolymorphism.Declaration.Extension<G, K>['typeParameters']
+				features.GenericItems,
+				genericItems.Declaration.Extension<G, K>['typeParameters']
 			>;
 			readonly unsafe?: gate.In<G, features.UnsafeCode, unsafeCode.Declaration.Extension<G, K>['unsafe']>;
-			readonly whereClause?: gate.In<
-				G,
-				features.BoundedQuantification,
-				boundedQuantification.Declaration.Extension<G, K>['whereClause']
-			>;
+			readonly whereClause?: gate.In<G, features.WhereClauses, whereClauses.Declaration.Extension<G, K>['whereClause']>;
 		}
 		namespace Extension {
 			interface Conformance<
@@ -788,19 +916,22 @@ declare module './declaration.ts' {
 			> extends typeclasses.Declaration.Extension.Conformance<G, K> {
 				readonly typeParameters?: gate.In<
 					G,
-					features.ParametricPolymorphism,
-					parametricPolymorphism.Declaration.Extension.Conformance<G, K>['typeParameters']
+					features.GenericItems,
+					genericItems.Declaration.Extension.Conformance<G, K>['typeParameters']
 				>;
 				readonly unsafe?: gate.In<G, features.UnsafeCode, unsafeCode.Declaration.Extension.Conformance<G, K>['unsafe']>;
 				readonly whereClause?: gate.In<
 					G,
-					features.BoundedQuantification,
-					boundedQuantification.Declaration.Extension.Conformance<G, K>['whereClause']
+					features.WhereClauses,
+					whereClauses.Declaration.Extension.Conformance<G, K>['whereClause']
 				>;
 			}
 			type Any<G extends GrammarMap> = V.Declaration.Extension<G> | V.Declaration.Extension.Conformance<G>;
 		}
-		interface Field<G extends GrammarMap, K extends gate.Under<'declaration.field'> = 'declaration.field'> {
+		interface Field<
+			G extends GrammarMap,
+			K extends gate.Under<'declaration.field'> = 'declaration.field'
+		> extends fieldsAndModifiers.Declaration.Field<G, K> {
 			readonly abstract?: gate.In<G, features.AbstractClasses, abstractClasses.Declaration.Field<G, K>['abstract']>;
 			readonly attributes?: gate.In<G, features.Attributes, attributes.Declaration.Field<G, K>['attributes']>;
 			readonly computed?: gate.In<G, features.ComputedKeys, computedKeys.Declaration.Field<G, K>['computed']>;
@@ -809,7 +940,11 @@ declare module './declaration.ts' {
 				features.AmbientDeclarations,
 				ambientDeclarations.Declaration.Field<G, K>['declare']
 			>;
-			readonly decorators?: gate.In<G, features.Decorators, decorators.Declaration.Field<G, K>['decorators']>;
+			readonly decorators?: gate.In<
+				G,
+				features.MemberDecorators,
+				memberDecorators.Declaration.Field<G, K>['decorators']
+			>;
 			readonly definite?: gate.In<G, features.NonNullAssertions, nonNullAssertions.Declaration.Field<G, K>['definite']>;
 			readonly optional?: gate.In<G, features.OptionalMembers, optionalMembers.Declaration.Field<G, K>['optional']>;
 			readonly optionality?: gate.In<
@@ -817,11 +952,16 @@ declare module './declaration.ts' {
 				features.OptionalMembers,
 				optionalMembers.Declaration.Field<G, K>['optionality']
 			>;
-			readonly override?: gate.In<G, features.ExplicitOverrides, explicitOverrides.Declaration.Field<G, K>['override']>;
-			readonly privateName?: gate.In<G, features.Encapsulation, encapsulation.Declaration.Field<G, K>['privateName']>;
+			readonly override?: gate.In<G, features.MemberOverrides, memberOverrides.Declaration.Field<G, K>['override']>;
+			readonly privateName?: gate.In<
+				G,
+				features.FieldEncapsulation,
+				fieldEncapsulation.Declaration.Field<G, K>['privateName']
+			>;
 			readonly readonly?: gate.In<G, features.ReadonlyMembers, readonlyMembers.Declaration.Field<G, K>['readonly']>;
-			readonly static?: gate.In<G, features.Classes, classes.Declaration.Field<G, K>['static']>;
-			readonly type?: gate.In<G, features.TypeAnnotations, typeAnnotations.Declaration.Field<G, K>['type']>;
+			readonly static?: gate.In<G, features.JavaScriptClasses, javascriptClasses.Declaration.Field<G, K>['static']>;
+			readonly type?: gate.In<G, features.StaticTypes, staticTypes.Declaration.Field<G, K>['type']>;
+			readonly value?: gate.In<G, features.JavaScriptBindings, javascriptBindings.Declaration.Field<G, K>['value']>;
 		}
 		namespace Field {
 			interface Private<
@@ -831,7 +971,7 @@ declare module './declaration.ts' {
 			interface Protected<
 				G extends GrammarMap,
 				K extends gate.Under<'declaration.field.protected'> = 'declaration.field.protected'
-			> extends visibility.Declaration.Field.Protected<G, K> {}
+			> extends classVisibility.Declaration.Field.Protected<G, K> {}
 			interface Public<
 				G extends GrammarMap,
 				K extends gate.Under<'declaration.field.public'> = 'declaration.field.public'
@@ -840,15 +980,15 @@ declare module './declaration.ts' {
 				interface Internal<
 					G extends GrammarMap,
 					K extends gate.Under<'declaration.field.public.internal'> = 'declaration.field.public.internal'
-				> extends visibility.Declaration.Field.Public.Internal<G, K> {}
+				> extends moduleVisibility.Declaration.Field.Public.Internal<G, K> {}
 				interface Parent<
 					G extends GrammarMap,
 					K extends gate.Under<'declaration.field.public.parent'> = 'declaration.field.public.parent'
-				> extends visibility.Declaration.Field.Public.Parent<G, K> {}
+				> extends moduleVisibility.Declaration.Field.Public.Parent<G, K> {}
 				interface Restricted<
 					G extends GrammarMap,
 					K extends gate.Under<'declaration.field.public.restricted'> = 'declaration.field.public.restricted'
-				> extends visibility.Declaration.Field.Public.Restricted<G, K> {}
+				> extends moduleVisibility.Declaration.Field.Public.Restricted<G, K> {}
 				type Any<G extends GrammarMap> =
 					| V.Declaration.Field.Public<G>
 					| V.Declaration.Field.Public.Internal<G>
@@ -858,7 +998,7 @@ declare module './declaration.ts' {
 			interface Signature<
 				G extends GrammarMap,
 				K extends gate.Under<'declaration.field.signature'> = 'declaration.field.signature'
-			> extends interfaces.Declaration.Field.Signature<G, K> {
+			> extends fieldSignatures.Declaration.Field.Signature<G, K> {
 				readonly optional?: gate.In<
 					G,
 					features.OptionalMembers,
@@ -866,30 +1006,34 @@ declare module './declaration.ts' {
 				>;
 				readonly override?: gate.In<
 					G,
-					features.ExplicitOverrides,
-					explicitOverrides.Declaration.Field.Signature<G, K>['override']
+					features.MemberOverrides,
+					memberOverrides.Declaration.Field.Signature<G, K>['override']
 				>;
 				readonly readonly?: gate.In<
 					G,
 					features.ReadonlyMembers,
 					readonlyMembers.Declaration.Field.Signature<G, K>['readonly']
 				>;
-				readonly static?: gate.In<G, features.Classes, classes.Declaration.Field.Signature<G, K>['static']>;
-				readonly type?: gate.In<G, features.TypeAnnotations, typeAnnotations.Declaration.Field.Signature<G, K>['type']>;
+				readonly static?: gate.In<
+					G,
+					features.JavaScriptClasses,
+					javascriptClasses.Declaration.Field.Signature<G, K>['static']
+				>;
+				readonly type?: gate.In<G, features.TypeAlgebra, typeAlgebra.Declaration.Field.Signature<G, K>['type']>;
 			}
 			namespace Signature {
 				interface Private<
 					G extends GrammarMap,
 					K extends gate.Under<'declaration.field.signature.private'> = 'declaration.field.signature.private'
-				> extends visibility.Declaration.Field.Signature.Private<G, K> {}
+				> extends classVisibility.Declaration.Field.Signature.Private<G, K> {}
 				interface Protected<
 					G extends GrammarMap,
 					K extends gate.Under<'declaration.field.signature.protected'> = 'declaration.field.signature.protected'
-				> extends visibility.Declaration.Field.Signature.Protected<G, K> {}
+				> extends classVisibility.Declaration.Field.Signature.Protected<G, K> {}
 				interface Public<
 					G extends GrammarMap,
 					K extends gate.Under<'declaration.field.signature.public'> = 'declaration.field.signature.public'
-				> extends visibility.Declaration.Field.Signature.Public<G, K> {}
+				> extends classVisibility.Declaration.Field.Signature.Public<G, K> {}
 				type Any<G extends GrammarMap> =
 					| V.Declaration.Field.Signature<G>
 					| V.Declaration.Field.Signature.Private<G>
@@ -916,14 +1060,23 @@ declare module './declaration.ts' {
 				features.CompileTimeEvaluation,
 				compileTimeEvaluation.Declaration.Function<G, K>['const']
 			>;
-			readonly decorators?: gate.In<G, features.Decorators, decorators.Declaration.Function<G, K>['decorators']>;
-			readonly default?: gate.In<G, features.Methods, methods.Declaration.Function<G, K>['default']>;
+			readonly decorators?: gate.In<
+				G,
+				features.FunctionDecorators,
+				functionDecorators.Declaration.Function<G, K>['decorators']
+			>;
+			readonly default?: gate.In<G, features.Specialization, specialization.Declaration.Function<G, K>['default']>;
+			readonly doc?: gate.In<G, features.PythonDeclarations, pythonDeclarations.Declaration.Function<G, K>['doc']>;
 			readonly extern?: gate.In<
 				G,
 				features.ForeignFunctionInterface,
 				foreignFunctionInterface.Declaration.Function<G, K>['extern']
 			>;
-			readonly generator?: gate.In<G, features.Generators, generators.Declaration.Function<G, K>['generator']>;
+			readonly generator?: gate.In<
+				G,
+				features.GeneratorFunctions,
+				generatorFunctions.Declaration.Function<G, K>['generator']
+			>;
 			readonly receiver?: gate.In<
 				G,
 				features.ExplicitReceivers,
@@ -940,34 +1093,30 @@ declare module './declaration.ts' {
 				parametricPolymorphism.Declaration.Function<G, K>['typeParameters']
 			>;
 			readonly unsafe?: gate.In<G, features.UnsafeCode, unsafeCode.Declaration.Function<G, K>['unsafe']>;
-			readonly whereClause?: gate.In<
-				G,
-				features.BoundedQuantification,
-				boundedQuantification.Declaration.Function<G, K>['whereClause']
-			>;
+			readonly whereClause?: gate.In<G, features.WhereClauses, whereClauses.Declaration.Function<G, K>['whereClause']>;
 		}
 		namespace Function {
 			interface Private<
 				G extends GrammarMap,
 				K extends gate.Under<'declaration.function.private'> = 'declaration.function.private'
-			> extends visibility.Declaration.Function.Private<G, K> {}
+			> extends moduleVisibility.Declaration.Function.Private<G, K> {}
 			interface Public<
 				G extends GrammarMap,
 				K extends gate.Under<'declaration.function.public'> = 'declaration.function.public'
-			> extends visibility.Declaration.Function.Public<G, K> {}
+			> extends moduleVisibility.Declaration.Function.Public<G, K> {}
 			namespace Public {
 				interface Internal<
 					G extends GrammarMap,
 					K extends gate.Under<'declaration.function.public.internal'> = 'declaration.function.public.internal'
-				> extends visibility.Declaration.Function.Public.Internal<G, K> {}
+				> extends moduleVisibility.Declaration.Function.Public.Internal<G, K> {}
 				interface Parent<
 					G extends GrammarMap,
 					K extends gate.Under<'declaration.function.public.parent'> = 'declaration.function.public.parent'
-				> extends visibility.Declaration.Function.Public.Parent<G, K> {}
+				> extends moduleVisibility.Declaration.Function.Public.Parent<G, K> {}
 				interface Restricted<
 					G extends GrammarMap,
 					K extends gate.Under<'declaration.function.public.restricted'> = 'declaration.function.public.restricted'
-				> extends visibility.Declaration.Function.Public.Restricted<G, K> {}
+				> extends moduleVisibility.Declaration.Function.Public.Restricted<G, K> {}
 				type Any<G extends GrammarMap> =
 					| V.Declaration.Function.Public<G>
 					| V.Declaration.Function.Public.Internal<G>
@@ -977,8 +1126,17 @@ declare module './declaration.ts' {
 			interface Signature<
 				G extends GrammarMap,
 				K extends gate.Under<'declaration.function.signature'> = 'declaration.function.signature'
-			> {
-				readonly async?: gate.In<G, features.AsyncAwait, asyncAwait.Declaration.Function.Signature<G, K>['async']>;
+			> extends functionSignatures.Declaration.Function.Signature<G, K> {
+				readonly async?: gate.In<
+					G,
+					features.AsyncFunctionSignatures,
+					asyncFunctionSignatures.Declaration.Function.Signature<G, K>['async']
+				>;
+				readonly functionModifiers?: gate.In<
+					G,
+					features.RustDeclarations,
+					rustDeclarations.Declaration.Function.Signature<G, K>['functionModifiers']
+				>;
 				readonly receiver?: gate.In<
 					G,
 					features.ExplicitReceivers,
@@ -986,45 +1144,45 @@ declare module './declaration.ts' {
 				>;
 				readonly returnType?: gate.In<
 					G,
-					features.TypeAnnotations,
-					typeAnnotations.Declaration.Function.Signature<G, K>['returnType']
+					features.StaticTypes,
+					staticTypes.Declaration.Function.Signature<G, K>['returnType']
 				>;
 				readonly typeParameters?: gate.In<
 					G,
-					features.ParametricPolymorphism,
-					parametricPolymorphism.Declaration.Function.Signature<G, K>['typeParameters']
+					features.GenericSignatures,
+					genericSignatures.Declaration.Function.Signature<G, K>['typeParameters']
 				>;
 				readonly whereClause?: gate.In<
 					G,
-					features.BoundedQuantification,
-					boundedQuantification.Declaration.Function.Signature<G, K>['whereClause']
+					features.WhereClauses,
+					whereClauses.Declaration.Function.Signature<G, K>['whereClause']
 				>;
 			}
 			namespace Signature {
 				interface Private<
 					G extends GrammarMap,
 					K extends gate.Under<'declaration.function.signature.private'> = 'declaration.function.signature.private'
-				> extends visibility.Declaration.Function.Signature.Private<G, K> {}
+				> extends moduleVisibility.Declaration.Function.Signature.Private<G, K> {}
 				interface Public<
 					G extends GrammarMap,
 					K extends gate.Under<'declaration.function.signature.public'> = 'declaration.function.signature.public'
-				> extends visibility.Declaration.Function.Signature.Public<G, K> {}
+				> extends moduleVisibility.Declaration.Function.Signature.Public<G, K> {}
 				namespace Public {
 					interface Internal<
 						G extends GrammarMap,
 						K extends gate.Under<'declaration.function.signature.public.internal'> =
 							'declaration.function.signature.public.internal'
-					> extends visibility.Declaration.Function.Signature.Public.Internal<G, K> {}
+					> extends moduleVisibility.Declaration.Function.Signature.Public.Internal<G, K> {}
 					interface Parent<
 						G extends GrammarMap,
 						K extends gate.Under<'declaration.function.signature.public.parent'> =
 							'declaration.function.signature.public.parent'
-					> extends visibility.Declaration.Function.Signature.Public.Parent<G, K> {}
+					> extends moduleVisibility.Declaration.Function.Signature.Public.Parent<G, K> {}
 					interface Restricted<
 						G extends GrammarMap,
 						K extends gate.Under<'declaration.function.signature.public.restricted'> =
 							'declaration.function.signature.public.restricted'
-					> extends visibility.Declaration.Function.Signature.Public.Restricted<G, K> {}
+					> extends moduleVisibility.Declaration.Function.Signature.Public.Restricted<G, K> {}
 					type Any<G extends GrammarMap> =
 						| V.Declaration.Function.Signature.Public<G>
 						| V.Declaration.Function.Signature.Public.Internal<G>
@@ -1059,52 +1217,52 @@ declare module './declaration.ts' {
 		> extends interfaces.Declaration.Interface<G, K> {
 			readonly typeParameters?: gate.In<
 				G,
-				features.ParametricPolymorphism,
-				parametricPolymorphism.Declaration.Interface<G, K>['typeParameters']
+				features.GenericSignatures,
+				genericSignatures.Declaration.Interface<G, K>['typeParameters']
 			>;
 		}
 		namespace Interface {
 			interface Trait<
 				G extends GrammarMap,
 				K extends gate.Under<'declaration.interface.trait'> = 'declaration.interface.trait'
-			> extends interfaces.Declaration.Interface.Trait<G, K> {
+			> extends traits.Declaration.Interface.Trait<G, K> {
 				readonly typeParameters?: gate.In<
 					G,
-					features.ParametricPolymorphism,
-					parametricPolymorphism.Declaration.Interface.Trait<G, K>['typeParameters']
+					features.GenericItems,
+					genericItems.Declaration.Interface.Trait<G, K>['typeParameters']
 				>;
 				readonly unsafe?: gate.In<G, features.UnsafeCode, unsafeCode.Declaration.Interface.Trait<G, K>['unsafe']>;
 				readonly whereClause?: gate.In<
 					G,
-					features.BoundedQuantification,
-					boundedQuantification.Declaration.Interface.Trait<G, K>['whereClause']
+					features.WhereClauses,
+					whereClauses.Declaration.Interface.Trait<G, K>['whereClause']
 				>;
 			}
 			namespace Trait {
 				interface Private<
 					G extends GrammarMap,
 					K extends gate.Under<'declaration.interface.trait.private'> = 'declaration.interface.trait.private'
-				> extends visibility.Declaration.Interface.Trait.Private<G, K> {}
+				> extends moduleVisibility.Declaration.Interface.Trait.Private<G, K> {}
 				interface Public<
 					G extends GrammarMap,
 					K extends gate.Under<'declaration.interface.trait.public'> = 'declaration.interface.trait.public'
-				> extends visibility.Declaration.Interface.Trait.Public<G, K> {}
+				> extends moduleVisibility.Declaration.Interface.Trait.Public<G, K> {}
 				namespace Public {
 					interface Internal<
 						G extends GrammarMap,
 						K extends gate.Under<'declaration.interface.trait.public.internal'> =
 							'declaration.interface.trait.public.internal'
-					> extends visibility.Declaration.Interface.Trait.Public.Internal<G, K> {}
+					> extends moduleVisibility.Declaration.Interface.Trait.Public.Internal<G, K> {}
 					interface Parent<
 						G extends GrammarMap,
 						K extends gate.Under<'declaration.interface.trait.public.parent'> =
 							'declaration.interface.trait.public.parent'
-					> extends visibility.Declaration.Interface.Trait.Public.Parent<G, K> {}
+					> extends moduleVisibility.Declaration.Interface.Trait.Public.Parent<G, K> {}
 					interface Restricted<
 						G extends GrammarMap,
 						K extends gate.Under<'declaration.interface.trait.public.restricted'> =
 							'declaration.interface.trait.public.restricted'
-					> extends visibility.Declaration.Interface.Trait.Public.Restricted<G, K> {}
+					> extends moduleVisibility.Declaration.Interface.Trait.Public.Restricted<G, K> {}
 					type Any<G extends GrammarMap> =
 						| V.Declaration.Interface.Trait.Public<G>
 						| V.Declaration.Interface.Trait.Public.Internal<G>
@@ -1168,7 +1326,11 @@ declare module './declaration.ts' {
 				features.ForeignFunctionInterface,
 				foreignFunctionInterface.Declaration.Method<G, K>['extern']
 			>;
-			readonly generator?: gate.In<G, features.Generators, generators.Declaration.Method<G, K>['generator']>;
+			readonly generator?: gate.In<
+				G,
+				features.GeneratorFunctions,
+				generatorFunctions.Declaration.Method<G, K>['generator']
+			>;
 			readonly optional?: gate.In<G, features.OptionalMembers, optionalMembers.Declaration.Method<G, K>['optional']>;
 			readonly override?: gate.In<
 				G,
@@ -1193,11 +1355,7 @@ declare module './declaration.ts' {
 				parametricPolymorphism.Declaration.Method<G, K>['typeParameters']
 			>;
 			readonly unsafe?: gate.In<G, features.UnsafeCode, unsafeCode.Declaration.Method<G, K>['unsafe']>;
-			readonly whereClause?: gate.In<
-				G,
-				features.BoundedQuantification,
-				boundedQuantification.Declaration.Method<G, K>['whereClause']
-			>;
+			readonly whereClause?: gate.In<G, features.WhereClauses, whereClauses.Declaration.Method<G, K>['whereClause']>;
 		}
 		namespace Method {
 			interface Private<
@@ -1207,7 +1365,7 @@ declare module './declaration.ts' {
 			interface Protected<
 				G extends GrammarMap,
 				K extends gate.Under<'declaration.method.protected'> = 'declaration.method.protected'
-			> extends visibility.Declaration.Method.Protected<G, K> {}
+			> extends classVisibility.Declaration.Method.Protected<G, K> {}
 			interface Public<
 				G extends GrammarMap,
 				K extends gate.Under<'declaration.method.public'> = 'declaration.method.public'
@@ -1216,15 +1374,15 @@ declare module './declaration.ts' {
 				interface Internal<
 					G extends GrammarMap,
 					K extends gate.Under<'declaration.method.public.internal'> = 'declaration.method.public.internal'
-				> extends visibility.Declaration.Method.Public.Internal<G, K> {}
+				> extends moduleVisibility.Declaration.Method.Public.Internal<G, K> {}
 				interface Parent<
 					G extends GrammarMap,
 					K extends gate.Under<'declaration.method.public.parent'> = 'declaration.method.public.parent'
-				> extends visibility.Declaration.Method.Public.Parent<G, K> {}
+				> extends moduleVisibility.Declaration.Method.Public.Parent<G, K> {}
 				interface Restricted<
 					G extends GrammarMap,
 					K extends gate.Under<'declaration.method.public.restricted'> = 'declaration.method.public.restricted'
-				> extends visibility.Declaration.Method.Public.Restricted<G, K> {}
+				> extends moduleVisibility.Declaration.Method.Public.Restricted<G, K> {}
 				type Any<G extends GrammarMap> =
 					| V.Declaration.Method.Public<G>
 					| V.Declaration.Method.Public.Internal<G>
@@ -1234,8 +1392,8 @@ declare module './declaration.ts' {
 			interface Signature<
 				G extends GrammarMap,
 				K extends gate.Under<'declaration.method.signature'> = 'declaration.method.signature'
-			> extends methods.Declaration.Method.Signature<G, K> {
-				readonly async?: gate.In<G, features.AsyncAwait, asyncAwait.Declaration.Method.Signature<G, K>['async']>;
+			> extends methodSignatures.Declaration.Method.Signature<G, K> {
+				readonly async?: gate.In<G, features.AsyncLambdas, asyncLambdas.Declaration.Method.Signature<G, K>['async']>;
 				readonly optional?: gate.In<
 					G,
 					features.OptionalMembers,
@@ -1243,8 +1401,8 @@ declare module './declaration.ts' {
 				>;
 				readonly override?: gate.In<
 					G,
-					features.ExplicitOverrides,
-					explicitOverrides.Declaration.Method.Signature<G, K>['override']
+					features.MemberOverrides,
+					memberOverrides.Declaration.Method.Signature<G, K>['override']
 				>;
 				readonly readonly?: gate.In<
 					G,
@@ -1258,18 +1416,18 @@ declare module './declaration.ts' {
 				>;
 				readonly returnType?: gate.In<
 					G,
-					features.TypeAnnotations,
-					typeAnnotations.Declaration.Method.Signature<G, K>['returnType']
+					features.StaticTypes,
+					staticTypes.Declaration.Method.Signature<G, K>['returnType']
 				>;
 				readonly typeParameters?: gate.In<
 					G,
-					features.ParametricPolymorphism,
-					parametricPolymorphism.Declaration.Method.Signature<G, K>['typeParameters']
+					features.GenericSignatures,
+					genericSignatures.Declaration.Method.Signature<G, K>['typeParameters']
 				>;
 				readonly whereClause?: gate.In<
 					G,
-					features.BoundedQuantification,
-					boundedQuantification.Declaration.Method.Signature<G, K>['whereClause']
+					features.WhereClauses,
+					whereClauses.Declaration.Method.Signature<G, K>['whereClause']
 				>;
 			}
 			namespace Signature {
@@ -1284,18 +1442,18 @@ declare module './declaration.ts' {
 					>;
 					readonly override?: gate.In<
 						G,
-						features.ExplicitOverrides,
-						explicitOverrides.Declaration.Method.Signature.Abstract<G, K>['override']
+						features.MemberOverrides,
+						memberOverrides.Declaration.Method.Signature.Abstract<G, K>['override']
 					>;
 					readonly returnType?: gate.In<
 						G,
-						features.TypeAnnotations,
-						typeAnnotations.Declaration.Method.Signature.Abstract<G, K>['returnType']
+						features.TypeAlgebra,
+						typeAlgebra.Declaration.Method.Signature.Abstract<G, K>['returnType']
 					>;
 					readonly typeParameters?: gate.In<
 						G,
-						features.ParametricPolymorphism,
-						parametricPolymorphism.Declaration.Method.Signature.Abstract<G, K>['typeParameters']
+						features.GenericExpressions,
+						genericExpressions.Declaration.Method.Signature.Abstract<G, K>['typeParameters']
 					>;
 				}
 				namespace Abstract {
@@ -1303,17 +1461,17 @@ declare module './declaration.ts' {
 						G extends GrammarMap,
 						K extends gate.Under<'declaration.method.signature.abstract.private'> =
 							'declaration.method.signature.abstract.private'
-					> extends visibility.Declaration.Method.Signature.Abstract.Private<G, K> {}
+					> extends classVisibility.Declaration.Method.Signature.Abstract.Private<G, K> {}
 					interface Protected<
 						G extends GrammarMap,
 						K extends gate.Under<'declaration.method.signature.abstract.protected'> =
 							'declaration.method.signature.abstract.protected'
-					> extends visibility.Declaration.Method.Signature.Abstract.Protected<G, K> {}
+					> extends classVisibility.Declaration.Method.Signature.Abstract.Protected<G, K> {}
 					interface Public<
 						G extends GrammarMap,
 						K extends gate.Under<'declaration.method.signature.abstract.public'> =
 							'declaration.method.signature.abstract.public'
-					> extends visibility.Declaration.Method.Signature.Abstract.Public<G, K> {}
+					> extends classVisibility.Declaration.Method.Signature.Abstract.Public<G, K> {}
 					type Any<G extends GrammarMap> =
 						| V.Declaration.Method.Signature.Abstract<G>
 						| V.Declaration.Method.Signature.Abstract.Private<G>
@@ -1327,7 +1485,7 @@ declare module './declaration.ts' {
 				interface Protected<
 					G extends GrammarMap,
 					K extends gate.Under<'declaration.method.signature.protected'> = 'declaration.method.signature.protected'
-				> extends visibility.Declaration.Method.Signature.Protected<G, K> {}
+				> extends classVisibility.Declaration.Method.Signature.Protected<G, K> {}
 				interface Public<
 					G extends GrammarMap,
 					K extends gate.Under<'declaration.method.signature.public'> = 'declaration.method.signature.public'
@@ -1337,17 +1495,17 @@ declare module './declaration.ts' {
 						G extends GrammarMap,
 						K extends gate.Under<'declaration.method.signature.public.internal'> =
 							'declaration.method.signature.public.internal'
-					> extends visibility.Declaration.Method.Signature.Public.Internal<G, K> {}
+					> extends moduleVisibility.Declaration.Method.Signature.Public.Internal<G, K> {}
 					interface Parent<
 						G extends GrammarMap,
 						K extends gate.Under<'declaration.method.signature.public.parent'> =
 							'declaration.method.signature.public.parent'
-					> extends visibility.Declaration.Method.Signature.Public.Parent<G, K> {}
+					> extends moduleVisibility.Declaration.Method.Signature.Public.Parent<G, K> {}
 					interface Restricted<
 						G extends GrammarMap,
 						K extends gate.Under<'declaration.method.signature.public.restricted'> =
 							'declaration.method.signature.public.restricted'
-					> extends visibility.Declaration.Method.Signature.Public.Restricted<G, K> {}
+					> extends moduleVisibility.Declaration.Method.Signature.Public.Restricted<G, K> {}
 					type Any<G extends GrammarMap> =
 						| V.Declaration.Method.Signature.Public<G>
 						| V.Declaration.Method.Signature.Public.Internal<G>
@@ -1370,7 +1528,7 @@ declare module './declaration.ts' {
 			interface Special<
 				G extends GrammarMap,
 				K extends gate.Under<'declaration.method.special'> = 'declaration.method.special'
-			> extends methods.Declaration.Method.Special<G, K> {}
+			> extends specialMethods.Declaration.Method.Special<G, K> {}
 			type Any<G extends GrammarMap> =
 				| V.Declaration.Method<G>
 				| V.Declaration.Method.Private<G>
@@ -1400,7 +1558,7 @@ declare module './declaration.ts' {
 			interface External<
 				G extends GrammarMap,
 				K extends gate.Under<'declaration.module.external'> = 'declaration.module.external'
-			> extends moduleDeclarations.Declaration.Module.External<G, K> {}
+			> extends externalModules.Declaration.Module.External<G, K> {}
 			interface Foreign<
 				G extends GrammarMap,
 				K extends gate.Under<'declaration.module.foreign'> = 'declaration.module.foreign'
@@ -1410,24 +1568,24 @@ declare module './declaration.ts' {
 			interface Private<
 				G extends GrammarMap,
 				K extends gate.Under<'declaration.module.private'> = 'declaration.module.private'
-			> extends visibility.Declaration.Module.Private<G, K> {}
+			> extends moduleVisibility.Declaration.Module.Private<G, K> {}
 			interface Public<
 				G extends GrammarMap,
 				K extends gate.Under<'declaration.module.public'> = 'declaration.module.public'
-			> extends visibility.Declaration.Module.Public<G, K> {}
+			> extends moduleVisibility.Declaration.Module.Public<G, K> {}
 			namespace Public {
 				interface Internal<
 					G extends GrammarMap,
 					K extends gate.Under<'declaration.module.public.internal'> = 'declaration.module.public.internal'
-				> extends visibility.Declaration.Module.Public.Internal<G, K> {}
+				> extends moduleVisibility.Declaration.Module.Public.Internal<G, K> {}
 				interface Parent<
 					G extends GrammarMap,
 					K extends gate.Under<'declaration.module.public.parent'> = 'declaration.module.public.parent'
-				> extends visibility.Declaration.Module.Public.Parent<G, K> {}
+				> extends moduleVisibility.Declaration.Module.Public.Parent<G, K> {}
 				interface Restricted<
 					G extends GrammarMap,
 					K extends gate.Under<'declaration.module.public.restricted'> = 'declaration.module.public.restricted'
-				> extends visibility.Declaration.Module.Public.Restricted<G, K> {}
+				> extends moduleVisibility.Declaration.Module.Public.Restricted<G, K> {}
 				type Any<G extends GrammarMap> =
 					| V.Declaration.Module.Public<G>
 					| V.Declaration.Module.Public.Internal<G>
@@ -1450,14 +1608,15 @@ declare module './declaration.ts' {
 		> extends ambientDeclarations.Declaration.ModuleProperty<G, K> {}
 		interface Parameter<G extends GrammarMap, K extends gate.Under<'declaration.parameter'> = 'declaration.parameter'> {
 			readonly attributes?: gate.In<G, features.Attributes, attributes.Declaration.Parameter<G, K>['attributes']>;
-			readonly decorators?: gate.In<G, features.Decorators, decorators.Declaration.Parameter<G, K>['decorators']>;
-			readonly default?: gate.In<G, features.DefaultArguments, defaultArguments.Declaration.Parameter<G, K>['default']>;
-			readonly optional?: gate.In<G, features.OptionalMembers, optionalMembers.Declaration.Parameter<G, K>['optional']>;
-			readonly override?: gate.In<
+			readonly decorators?: gate.In<
 				G,
-				features.ExplicitOverrides,
-				explicitOverrides.Declaration.Parameter<G, K>['override']
+				features.MemberDecorators,
+				memberDecorators.Declaration.Parameter<G, K>['decorators']
 			>;
+			readonly default?: gate.In<G, features.DefaultArguments, defaultArguments.Declaration.Parameter<G, K>['default']>;
+			readonly mutable?: gate.In<G, features.RustDeclarations, rustDeclarations.Declaration.Parameter<G, K>['mutable']>;
+			readonly optional?: gate.In<G, features.OptionalMembers, optionalMembers.Declaration.Parameter<G, K>['optional']>;
+			readonly override?: gate.In<G, features.MemberOverrides, memberOverrides.Declaration.Parameter<G, K>['override']>;
 			readonly readonly?: gate.In<G, features.ReadonlyMembers, readonlyMembers.Declaration.Parameter<G, K>['readonly']>;
 			readonly type?: gate.In<G, features.TypeAnnotations, typeAnnotations.Declaration.Parameter<G, K>['type']>;
 		}
@@ -1465,30 +1624,35 @@ declare module './declaration.ts' {
 			interface Default<
 				G extends GrammarMap,
 				K extends gate.Under<'declaration.parameter.default'> = 'declaration.parameter.default'
-			> {
+			> extends pythonDeclarations.Declaration.Parameter.Default<G, K> {
 				readonly default: gate.In<
 					G,
-					features.DefaultArguments,
-					defaultArguments.Declaration.Parameter.Default<G, K>['default']
+					features.DefaultParameterForms,
+					defaultParameterForms.Declaration.Parameter.Default<G, K>['default']
 				>;
 			}
 			interface Private<
 				G extends GrammarMap,
 				K extends gate.Under<'declaration.parameter.private'> = 'declaration.parameter.private'
-			> extends visibility.Declaration.Parameter.Private<G, K> {}
+			> extends classVisibility.Declaration.Parameter.Private<G, K> {}
 			interface Protected<
 				G extends GrammarMap,
 				K extends gate.Under<'declaration.parameter.protected'> = 'declaration.parameter.protected'
-			> extends visibility.Declaration.Parameter.Protected<G, K> {}
+			> extends classVisibility.Declaration.Parameter.Protected<G, K> {}
 			interface Public<
 				G extends GrammarMap,
 				K extends gate.Under<'declaration.parameter.public'> = 'declaration.parameter.public'
-			> extends visibility.Declaration.Parameter.Public<G, K> {}
+			> extends classVisibility.Declaration.Parameter.Public<G, K> {}
 			interface Receiver<
 				G extends GrammarMap,
 				K extends gate.Under<'declaration.parameter.receiver'> = 'declaration.parameter.receiver'
 			> extends explicitReceivers.Declaration.Parameter.Receiver<G, K> {
 				readonly lifetime?: gate.In<G, features.Lifetimes, lifetimes.Declaration.Parameter.Receiver<G, K>['lifetime']>;
+				readonly mutable?: gate.In<
+					G,
+					features.RustDeclarations,
+					rustDeclarations.Declaration.Parameter.Receiver<G, K>['mutable']
+				>;
 				readonly reference?: gate.In<
 					G,
 					features.References,
@@ -1498,28 +1662,34 @@ declare module './declaration.ts' {
 			interface Typed<
 				G extends GrammarMap,
 				K extends gate.Under<'declaration.parameter.typed'> = 'declaration.parameter.typed'
-			> {
-				readonly type: gate.In<G, features.TypeAnnotations, typeAnnotations.Declaration.Parameter.Typed<G, K>['type']>;
+			> extends pythonDeclarations.Declaration.Parameter.Typed<G, K> {
+				readonly type: gate.In<G, features.PythonTypeForms, pythonTypeForms.Declaration.Parameter.Typed<G, K>['type']>;
 			}
 			interface TypedDefault<
 				G extends GrammarMap,
 				K extends gate.Under<'declaration.parameter.typed_default'> = 'declaration.parameter.typed_default'
-			> {
+			> extends pythonDeclarations.Declaration.Parameter.TypedDefault<G, K> {
 				readonly default: gate.In<
 					G,
-					features.DefaultArguments,
-					defaultArguments.Declaration.Parameter.TypedDefault<G, K>['default']
+					features.DefaultParameterForms,
+					defaultParameterForms.Declaration.Parameter.TypedDefault<G, K>['default']
 				>;
 				readonly type: gate.In<
 					G,
-					features.TypeAnnotations,
-					typeAnnotations.Declaration.Parameter.TypedDefault<G, K>['type']
+					features.PythonTypeForms,
+					pythonTypeForms.Declaration.Parameter.TypedDefault<G, K>['type']
 				>;
 			}
 			interface Variadic<
 				G extends GrammarMap,
 				K extends gate.Under<'declaration.parameter.variadic'> = 'declaration.parameter.variadic'
-			> extends foreignFunctionInterface.Declaration.Parameter.Variadic<G, K> {}
+			> extends foreignFunctionInterface.Declaration.Parameter.Variadic<G, K> {
+				readonly mutable?: gate.In<
+					G,
+					features.RustDeclarations,
+					rustDeclarations.Declaration.Parameter.Variadic<G, K>['mutable']
+				>;
+			}
 			type Any<G extends GrammarMap> =
 				| V.Declaration.Parameter<G>
 				| V.Declaration.Parameter.Default<G>
@@ -1554,11 +1724,11 @@ declare module './declaration.ts' {
 			>;
 			readonly privateName?: gate.In<
 				G,
-				features.Encapsulation,
-				encapsulation.Declaration.Property<G, K>['privateName']
+				features.FieldEncapsulation,
+				fieldEncapsulation.Declaration.Property<G, K>['privateName']
 			>;
-			readonly static?: gate.In<G, features.Classes, classes.Declaration.Property<G, K>['static']>;
-			readonly type?: gate.In<G, features.TypeAnnotations, typeAnnotations.Declaration.Property<G, K>['type']>;
+			readonly static?: gate.In<G, features.JavaScriptClasses, javascriptClasses.Declaration.Property<G, K>['static']>;
+			readonly type?: gate.In<G, features.TypeAlgebra, typeAlgebra.Declaration.Property<G, K>['type']>;
 		}
 		namespace Property {
 			interface Getter<
@@ -1567,23 +1737,23 @@ declare module './declaration.ts' {
 			> extends accessors.Declaration.Property.Getter<G, K> {
 				readonly returnType?: gate.In<
 					G,
-					features.TypeAnnotations,
-					typeAnnotations.Declaration.Property.Getter<G, K>['returnType']
+					features.AccessorAnnotations,
+					accessorAnnotations.Declaration.Property.Getter<G, K>['returnType']
 				>;
 			}
 			namespace Getter {
 				interface Private<
 					G extends GrammarMap,
 					K extends gate.Under<'declaration.property.getter.private'> = 'declaration.property.getter.private'
-				> extends visibility.Declaration.Property.Getter.Private<G, K> {}
+				> extends classVisibility.Declaration.Property.Getter.Private<G, K> {}
 				interface Protected<
 					G extends GrammarMap,
 					K extends gate.Under<'declaration.property.getter.protected'> = 'declaration.property.getter.protected'
-				> extends visibility.Declaration.Property.Getter.Protected<G, K> {}
+				> extends classVisibility.Declaration.Property.Getter.Protected<G, K> {}
 				interface Public<
 					G extends GrammarMap,
 					K extends gate.Under<'declaration.property.getter.public'> = 'declaration.property.getter.public'
-				> extends visibility.Declaration.Property.Getter.Public<G, K> {}
+				> extends classVisibility.Declaration.Property.Getter.Public<G, K> {}
 				type Any<G extends GrammarMap> =
 					| V.Declaration.Property.Getter<G>
 					| V.Declaration.Property.Getter.Private<G>
@@ -1593,15 +1763,15 @@ declare module './declaration.ts' {
 			interface Private<
 				G extends GrammarMap,
 				K extends gate.Under<'declaration.property.private'> = 'declaration.property.private'
-			> extends visibility.Declaration.Property.Private<G, K> {}
+			> extends classVisibility.Declaration.Property.Private<G, K> {}
 			interface Protected<
 				G extends GrammarMap,
 				K extends gate.Under<'declaration.property.protected'> = 'declaration.property.protected'
-			> extends visibility.Declaration.Property.Protected<G, K> {}
+			> extends classVisibility.Declaration.Property.Protected<G, K> {}
 			interface Public<
 				G extends GrammarMap,
 				K extends gate.Under<'declaration.property.public'> = 'declaration.property.public'
-			> extends visibility.Declaration.Property.Public<G, K> {}
+			> extends classVisibility.Declaration.Property.Public<G, K> {}
 			interface Setter<
 				G extends GrammarMap,
 				K extends gate.Under<'declaration.property.setter'> = 'declaration.property.setter'
@@ -1610,15 +1780,15 @@ declare module './declaration.ts' {
 				interface Private<
 					G extends GrammarMap,
 					K extends gate.Under<'declaration.property.setter.private'> = 'declaration.property.setter.private'
-				> extends visibility.Declaration.Property.Setter.Private<G, K> {}
+				> extends classVisibility.Declaration.Property.Setter.Private<G, K> {}
 				interface Protected<
 					G extends GrammarMap,
 					K extends gate.Under<'declaration.property.setter.protected'> = 'declaration.property.setter.protected'
-				> extends visibility.Declaration.Property.Setter.Protected<G, K> {}
+				> extends classVisibility.Declaration.Property.Setter.Protected<G, K> {}
 				interface Public<
 					G extends GrammarMap,
 					K extends gate.Under<'declaration.property.setter.public'> = 'declaration.property.setter.public'
-				> extends visibility.Declaration.Property.Setter.Public<G, K> {}
+				> extends classVisibility.Declaration.Property.Setter.Public<G, K> {}
 				type Any<G extends GrammarMap> =
 					| V.Declaration.Property.Setter<G>
 					| V.Declaration.Property.Setter.Private<G>
@@ -1628,22 +1798,22 @@ declare module './declaration.ts' {
 			interface Signature<
 				G extends GrammarMap,
 				K extends gate.Under<'declaration.property.signature'> = 'declaration.property.signature'
-			> extends accessors.Declaration.Property.Signature<G, K> {}
+			> extends accessorSignatures.Declaration.Property.Signature<G, K> {}
 			namespace Signature {
 				interface Abstract<
 					G extends GrammarMap,
 					K extends gate.Under<'declaration.property.signature.abstract'> = 'declaration.property.signature.abstract'
-				> extends accessors.Declaration.Property.Signature.Abstract<G, K> {}
+				> extends accessorSignatures.Declaration.Property.Signature.Abstract<G, K> {}
 				namespace Abstract {
 					interface Getter<
 						G extends GrammarMap,
 						K extends gate.Under<'declaration.property.signature.abstract.getter'> =
 							'declaration.property.signature.abstract.getter'
-					> extends accessors.Declaration.Property.Signature.Abstract.Getter<G, K> {
+					> extends accessorSignatures.Declaration.Property.Signature.Abstract.Getter<G, K> {
 						readonly returnType?: gate.In<
 							G,
-							features.TypeAnnotations,
-							typeAnnotations.Declaration.Property.Signature.Abstract.Getter<G, K>['returnType']
+							features.TypeAlgebra,
+							typeAlgebra.Declaration.Property.Signature.Abstract.Getter<G, K>['returnType']
 						>;
 					}
 					namespace Getter {
@@ -1651,17 +1821,17 @@ declare module './declaration.ts' {
 							G extends GrammarMap,
 							K extends gate.Under<'declaration.property.signature.abstract.getter.private'> =
 								'declaration.property.signature.abstract.getter.private'
-						> extends visibility.Declaration.Property.Signature.Abstract.Getter.Private<G, K> {}
+						> extends classVisibility.Declaration.Property.Signature.Abstract.Getter.Private<G, K> {}
 						interface Protected<
 							G extends GrammarMap,
 							K extends gate.Under<'declaration.property.signature.abstract.getter.protected'> =
 								'declaration.property.signature.abstract.getter.protected'
-						> extends visibility.Declaration.Property.Signature.Abstract.Getter.Protected<G, K> {}
+						> extends classVisibility.Declaration.Property.Signature.Abstract.Getter.Protected<G, K> {}
 						interface Public<
 							G extends GrammarMap,
 							K extends gate.Under<'declaration.property.signature.abstract.getter.public'> =
 								'declaration.property.signature.abstract.getter.public'
-						> extends visibility.Declaration.Property.Signature.Abstract.Getter.Public<G, K> {}
+						> extends classVisibility.Declaration.Property.Signature.Abstract.Getter.Public<G, K> {}
 						type Any<G extends GrammarMap> =
 							| V.Declaration.Property.Signature.Abstract.Getter<G>
 							| V.Declaration.Property.Signature.Abstract.Getter.Private<G>
@@ -1672,23 +1842,23 @@ declare module './declaration.ts' {
 						G extends GrammarMap,
 						K extends gate.Under<'declaration.property.signature.abstract.setter'> =
 							'declaration.property.signature.abstract.setter'
-					> extends accessors.Declaration.Property.Signature.Abstract.Setter<G, K> {}
+					> extends accessorSignatures.Declaration.Property.Signature.Abstract.Setter<G, K> {}
 					namespace Setter {
 						interface Private<
 							G extends GrammarMap,
 							K extends gate.Under<'declaration.property.signature.abstract.setter.private'> =
 								'declaration.property.signature.abstract.setter.private'
-						> extends visibility.Declaration.Property.Signature.Abstract.Setter.Private<G, K> {}
+						> extends classVisibility.Declaration.Property.Signature.Abstract.Setter.Private<G, K> {}
 						interface Protected<
 							G extends GrammarMap,
 							K extends gate.Under<'declaration.property.signature.abstract.setter.protected'> =
 								'declaration.property.signature.abstract.setter.protected'
-						> extends visibility.Declaration.Property.Signature.Abstract.Setter.Protected<G, K> {}
+						> extends classVisibility.Declaration.Property.Signature.Abstract.Setter.Protected<G, K> {}
 						interface Public<
 							G extends GrammarMap,
 							K extends gate.Under<'declaration.property.signature.abstract.setter.public'> =
 								'declaration.property.signature.abstract.setter.public'
-						> extends visibility.Declaration.Property.Signature.Abstract.Setter.Public<G, K> {}
+						> extends classVisibility.Declaration.Property.Signature.Abstract.Setter.Public<G, K> {}
 						type Any<G extends GrammarMap> =
 							| V.Declaration.Property.Signature.Abstract.Setter<G>
 							| V.Declaration.Property.Signature.Abstract.Setter.Private<G>
@@ -1709,11 +1879,11 @@ declare module './declaration.ts' {
 				interface Getter<
 					G extends GrammarMap,
 					K extends gate.Under<'declaration.property.signature.getter'> = 'declaration.property.signature.getter'
-				> extends accessors.Declaration.Property.Signature.Getter<G, K> {
+				> extends accessorSignatures.Declaration.Property.Signature.Getter<G, K> {
 					readonly returnType?: gate.In<
 						G,
-						features.TypeAnnotations,
-						typeAnnotations.Declaration.Property.Signature.Getter<G, K>['returnType']
+						features.TypeAlgebra,
+						typeAlgebra.Declaration.Property.Signature.Getter<G, K>['returnType']
 					>;
 				}
 				namespace Getter {
@@ -1721,17 +1891,17 @@ declare module './declaration.ts' {
 						G extends GrammarMap,
 						K extends gate.Under<'declaration.property.signature.getter.private'> =
 							'declaration.property.signature.getter.private'
-					> extends visibility.Declaration.Property.Signature.Getter.Private<G, K> {}
+					> extends classVisibility.Declaration.Property.Signature.Getter.Private<G, K> {}
 					interface Protected<
 						G extends GrammarMap,
 						K extends gate.Under<'declaration.property.signature.getter.protected'> =
 							'declaration.property.signature.getter.protected'
-					> extends visibility.Declaration.Property.Signature.Getter.Protected<G, K> {}
+					> extends classVisibility.Declaration.Property.Signature.Getter.Protected<G, K> {}
 					interface Public<
 						G extends GrammarMap,
 						K extends gate.Under<'declaration.property.signature.getter.public'> =
 							'declaration.property.signature.getter.public'
-					> extends visibility.Declaration.Property.Signature.Getter.Public<G, K> {}
+					> extends classVisibility.Declaration.Property.Signature.Getter.Public<G, K> {}
 					type Any<G extends GrammarMap> =
 						| V.Declaration.Property.Signature.Getter<G>
 						| V.Declaration.Property.Signature.Getter.Private<G>
@@ -1741,23 +1911,23 @@ declare module './declaration.ts' {
 				interface Setter<
 					G extends GrammarMap,
 					K extends gate.Under<'declaration.property.signature.setter'> = 'declaration.property.signature.setter'
-				> extends accessors.Declaration.Property.Signature.Setter<G, K> {}
+				> extends accessorSignatures.Declaration.Property.Signature.Setter<G, K> {}
 				namespace Setter {
 					interface Private<
 						G extends GrammarMap,
 						K extends gate.Under<'declaration.property.signature.setter.private'> =
 							'declaration.property.signature.setter.private'
-					> extends visibility.Declaration.Property.Signature.Setter.Private<G, K> {}
+					> extends classVisibility.Declaration.Property.Signature.Setter.Private<G, K> {}
 					interface Protected<
 						G extends GrammarMap,
 						K extends gate.Under<'declaration.property.signature.setter.protected'> =
 							'declaration.property.signature.setter.protected'
-					> extends visibility.Declaration.Property.Signature.Setter.Protected<G, K> {}
+					> extends classVisibility.Declaration.Property.Signature.Setter.Protected<G, K> {}
 					interface Public<
 						G extends GrammarMap,
 						K extends gate.Under<'declaration.property.signature.setter.public'> =
 							'declaration.property.signature.setter.public'
-					> extends visibility.Declaration.Property.Signature.Setter.Public<G, K> {}
+					> extends classVisibility.Declaration.Property.Signature.Setter.Public<G, K> {}
 					type Any<G extends GrammarMap> =
 						| V.Declaration.Property.Signature.Setter<G>
 						| V.Declaration.Property.Signature.Setter.Private<G>
@@ -1827,13 +1997,13 @@ declare module './declaration.ts' {
 			> extends structuralConformance.Declaration.Signature.Call<G, K> {
 				readonly receiver?: gate.In<
 					G,
-					features.ExplicitReceivers,
-					explicitReceivers.Declaration.Signature.Call<G, K>['receiver']
+					features.TypedReceivers,
+					typedReceivers.Declaration.Signature.Call<G, K>['receiver']
 				>;
 				readonly typeParameters?: gate.In<
 					G,
-					features.ParametricPolymorphism,
-					parametricPolymorphism.Declaration.Signature.Call<G, K>['typeParameters']
+					features.GenericExpressions,
+					genericExpressions.Declaration.Signature.Call<G, K>['typeParameters']
 				>;
 			}
 			interface Construct<
@@ -1847,8 +2017,8 @@ declare module './declaration.ts' {
 				>;
 				readonly typeParameters?: gate.In<
 					G,
-					features.ParametricPolymorphism,
-					parametricPolymorphism.Declaration.Signature.Construct<G, K>['typeParameters']
+					features.GenericExpressions,
+					genericExpressions.Declaration.Signature.Construct<G, K>['typeParameters']
 				>;
 			}
 			interface Index<
@@ -1877,24 +2047,24 @@ declare module './declaration.ts' {
 			interface Private<
 				G extends GrammarMap,
 				K extends gate.Under<'declaration.struct.private'> = 'declaration.struct.private'
-			> extends visibility.Declaration.Struct.Private<G, K> {}
+			> extends moduleVisibility.Declaration.Struct.Private<G, K> {}
 			interface Public<
 				G extends GrammarMap,
 				K extends gate.Under<'declaration.struct.public'> = 'declaration.struct.public'
-			> extends visibility.Declaration.Struct.Public<G, K> {}
+			> extends moduleVisibility.Declaration.Struct.Public<G, K> {}
 			namespace Public {
 				interface Internal<
 					G extends GrammarMap,
 					K extends gate.Under<'declaration.struct.public.internal'> = 'declaration.struct.public.internal'
-				> extends visibility.Declaration.Struct.Public.Internal<G, K> {}
+				> extends moduleVisibility.Declaration.Struct.Public.Internal<G, K> {}
 				interface Parent<
 					G extends GrammarMap,
 					K extends gate.Under<'declaration.struct.public.parent'> = 'declaration.struct.public.parent'
-				> extends visibility.Declaration.Struct.Public.Parent<G, K> {}
+				> extends moduleVisibility.Declaration.Struct.Public.Parent<G, K> {}
 				interface Restricted<
 					G extends GrammarMap,
 					K extends gate.Under<'declaration.struct.public.restricted'> = 'declaration.struct.public.restricted'
-				> extends visibility.Declaration.Struct.Public.Restricted<G, K> {}
+				> extends moduleVisibility.Declaration.Struct.Public.Restricted<G, K> {}
 				type Any<G extends GrammarMap> =
 					| V.Declaration.Struct.Public<G>
 					| V.Declaration.Struct.Public.Internal<G>
@@ -1904,31 +2074,31 @@ declare module './declaration.ts' {
 			interface Tuple<
 				G extends GrammarMap,
 				K extends gate.Under<'declaration.struct.tuple'> = 'declaration.struct.tuple'
-			> extends structs.Declaration.Struct.Tuple<G, K> {}
+			> extends tupleStructs.Declaration.Struct.Tuple<G, K> {}
 			namespace Tuple {
 				interface Private<
 					G extends GrammarMap,
 					K extends gate.Under<'declaration.struct.tuple.private'> = 'declaration.struct.tuple.private'
-				> extends visibility.Declaration.Struct.Tuple.Private<G, K> {}
+				> extends moduleVisibility.Declaration.Struct.Tuple.Private<G, K> {}
 				interface Public<
 					G extends GrammarMap,
 					K extends gate.Under<'declaration.struct.tuple.public'> = 'declaration.struct.tuple.public'
-				> extends visibility.Declaration.Struct.Tuple.Public<G, K> {}
+				> extends moduleVisibility.Declaration.Struct.Tuple.Public<G, K> {}
 				namespace Public {
 					interface Internal<
 						G extends GrammarMap,
 						K extends gate.Under<'declaration.struct.tuple.public.internal'> =
 							'declaration.struct.tuple.public.internal'
-					> extends visibility.Declaration.Struct.Tuple.Public.Internal<G, K> {}
+					> extends moduleVisibility.Declaration.Struct.Tuple.Public.Internal<G, K> {}
 					interface Parent<
 						G extends GrammarMap,
 						K extends gate.Under<'declaration.struct.tuple.public.parent'> = 'declaration.struct.tuple.public.parent'
-					> extends visibility.Declaration.Struct.Tuple.Public.Parent<G, K> {}
+					> extends moduleVisibility.Declaration.Struct.Tuple.Public.Parent<G, K> {}
 					interface Restricted<
 						G extends GrammarMap,
 						K extends gate.Under<'declaration.struct.tuple.public.restricted'> =
 							'declaration.struct.tuple.public.restricted'
-					> extends visibility.Declaration.Struct.Tuple.Public.Restricted<G, K> {}
+					> extends moduleVisibility.Declaration.Struct.Tuple.Public.Restricted<G, K> {}
 					type Any<G extends GrammarMap> =
 						| V.Declaration.Struct.Tuple.Public<G>
 						| V.Declaration.Struct.Tuple.Public.Internal<G>
@@ -1946,30 +2116,30 @@ declare module './declaration.ts' {
 			interface Unit<
 				G extends GrammarMap,
 				K extends gate.Under<'declaration.struct.unit'> = 'declaration.struct.unit'
-			> extends structs.Declaration.Struct.Unit<G, K> {}
+			> extends tupleStructs.Declaration.Struct.Unit<G, K> {}
 			namespace Unit {
 				interface Private<
 					G extends GrammarMap,
 					K extends gate.Under<'declaration.struct.unit.private'> = 'declaration.struct.unit.private'
-				> extends visibility.Declaration.Struct.Unit.Private<G, K> {}
+				> extends moduleVisibility.Declaration.Struct.Unit.Private<G, K> {}
 				interface Public<
 					G extends GrammarMap,
 					K extends gate.Under<'declaration.struct.unit.public'> = 'declaration.struct.unit.public'
-				> extends visibility.Declaration.Struct.Unit.Public<G, K> {}
+				> extends moduleVisibility.Declaration.Struct.Unit.Public<G, K> {}
 				namespace Public {
 					interface Internal<
 						G extends GrammarMap,
 						K extends gate.Under<'declaration.struct.unit.public.internal'> = 'declaration.struct.unit.public.internal'
-					> extends visibility.Declaration.Struct.Unit.Public.Internal<G, K> {}
+					> extends moduleVisibility.Declaration.Struct.Unit.Public.Internal<G, K> {}
 					interface Parent<
 						G extends GrammarMap,
 						K extends gate.Under<'declaration.struct.unit.public.parent'> = 'declaration.struct.unit.public.parent'
-					> extends visibility.Declaration.Struct.Unit.Public.Parent<G, K> {}
+					> extends moduleVisibility.Declaration.Struct.Unit.Public.Parent<G, K> {}
 					interface Restricted<
 						G extends GrammarMap,
 						K extends gate.Under<'declaration.struct.unit.public.restricted'> =
 							'declaration.struct.unit.public.restricted'
-					> extends visibility.Declaration.Struct.Unit.Public.Restricted<G, K> {}
+					> extends moduleVisibility.Declaration.Struct.Unit.Public.Restricted<G, K> {}
 					type Any<G extends GrammarMap> =
 						| V.Declaration.Struct.Unit.Public<G>
 						| V.Declaration.Struct.Unit.Public.Internal<G>
@@ -2010,19 +2180,15 @@ declare module './declaration.ts' {
 		> extends typeAliases.Declaration.TypeAlias<G, K> {
 			readonly trailingWhereClause?: gate.In<
 				G,
-				features.BoundedQuantification,
-				boundedQuantification.Declaration.TypeAlias<G, K>['trailingWhereClause']
+				features.WhereClauses,
+				whereClauses.Declaration.TypeAlias<G, K>['trailingWhereClause']
 			>;
 			readonly typeParameters?: gate.In<
 				G,
 				features.ParametricPolymorphism,
 				parametricPolymorphism.Declaration.TypeAlias<G, K>['typeParameters']
 			>;
-			readonly whereClause?: gate.In<
-				G,
-				features.BoundedQuantification,
-				boundedQuantification.Declaration.TypeAlias<G, K>['whereClause']
-			>;
+			readonly whereClause?: gate.In<G, features.WhereClauses, whereClauses.Declaration.TypeAlias<G, K>['whereClause']>;
 		}
 		namespace TypeAlias {
 			interface Associated<
@@ -2031,36 +2197,36 @@ declare module './declaration.ts' {
 			> extends associatedTypes.Declaration.TypeAlias.Associated<G, K> {
 				readonly typeParameters?: gate.In<
 					G,
-					features.ParametricPolymorphism,
-					parametricPolymorphism.Declaration.TypeAlias.Associated<G, K>['typeParameters']
+					features.GenericItems,
+					genericItems.Declaration.TypeAlias.Associated<G, K>['typeParameters']
 				>;
 				readonly whereClause?: gate.In<
 					G,
-					features.BoundedQuantification,
-					boundedQuantification.Declaration.TypeAlias.Associated<G, K>['whereClause']
+					features.WhereClauses,
+					whereClauses.Declaration.TypeAlias.Associated<G, K>['whereClause']
 				>;
 			}
 			interface Private<
 				G extends GrammarMap,
 				K extends gate.Under<'declaration.type_alias.private'> = 'declaration.type_alias.private'
-			> extends visibility.Declaration.TypeAlias.Private<G, K> {}
+			> extends moduleVisibility.Declaration.TypeAlias.Private<G, K> {}
 			interface Public<
 				G extends GrammarMap,
 				K extends gate.Under<'declaration.type_alias.public'> = 'declaration.type_alias.public'
-			> extends visibility.Declaration.TypeAlias.Public<G, K> {}
+			> extends moduleVisibility.Declaration.TypeAlias.Public<G, K> {}
 			namespace Public {
 				interface Internal<
 					G extends GrammarMap,
 					K extends gate.Under<'declaration.type_alias.public.internal'> = 'declaration.type_alias.public.internal'
-				> extends visibility.Declaration.TypeAlias.Public.Internal<G, K> {}
+				> extends moduleVisibility.Declaration.TypeAlias.Public.Internal<G, K> {}
 				interface Parent<
 					G extends GrammarMap,
 					K extends gate.Under<'declaration.type_alias.public.parent'> = 'declaration.type_alias.public.parent'
-				> extends visibility.Declaration.TypeAlias.Public.Parent<G, K> {}
+				> extends moduleVisibility.Declaration.TypeAlias.Public.Parent<G, K> {}
 				interface Restricted<
 					G extends GrammarMap,
 					K extends gate.Under<'declaration.type_alias.public.restricted'> = 'declaration.type_alias.public.restricted'
-				> extends visibility.Declaration.TypeAlias.Public.Restricted<G, K> {}
+				> extends moduleVisibility.Declaration.TypeAlias.Public.Restricted<G, K> {}
 				type Any<G extends GrammarMap> =
 					| V.Declaration.TypeAlias.Public<G>
 					| V.Declaration.TypeAlias.Public.Internal<G>
@@ -2101,7 +2267,7 @@ declare module './declaration.ts' {
 			interface Parameters<
 				G extends GrammarMap,
 				K extends gate.Under<'declaration.type_parameter.parameters'> = 'declaration.type_parameter.parameters'
-			> extends parametricPolymorphism.Declaration.TypeParameter.Parameters<G, K> {
+			> extends paramSpecs.Declaration.TypeParameter.Parameters<G, K> {
 				readonly bounds?: gate.In<
 					G,
 					features.BoundedQuantification,
@@ -2126,7 +2292,7 @@ declare module './declaration.ts' {
 			interface Variadic<
 				G extends GrammarMap,
 				K extends gate.Under<'declaration.type_parameter.variadic'> = 'declaration.type_parameter.variadic'
-			> extends parametricPolymorphism.Declaration.TypeParameter.Variadic<G, K> {
+			> extends variadicTypeParameters.Declaration.TypeParameter.Variadic<G, K> {
 				readonly bounds?: gate.In<
 					G,
 					features.BoundedQuantification,
@@ -2146,37 +2312,33 @@ declare module './declaration.ts' {
 		> extends untaggedUnions.Declaration.Union<G, K> {
 			readonly typeParameters?: gate.In<
 				G,
-				features.ParametricPolymorphism,
-				parametricPolymorphism.Declaration.Union<G, K>['typeParameters']
+				features.GenericItems,
+				genericItems.Declaration.Union<G, K>['typeParameters']
 			>;
-			readonly whereClause?: gate.In<
-				G,
-				features.BoundedQuantification,
-				boundedQuantification.Declaration.Union<G, K>['whereClause']
-			>;
+			readonly whereClause?: gate.In<G, features.WhereClauses, whereClauses.Declaration.Union<G, K>['whereClause']>;
 		}
 		namespace Union {
 			interface Private<
 				G extends GrammarMap,
 				K extends gate.Under<'declaration.union.private'> = 'declaration.union.private'
-			> extends visibility.Declaration.Union.Private<G, K> {}
+			> extends moduleVisibility.Declaration.Union.Private<G, K> {}
 			interface Public<
 				G extends GrammarMap,
 				K extends gate.Under<'declaration.union.public'> = 'declaration.union.public'
-			> extends visibility.Declaration.Union.Public<G, K> {}
+			> extends moduleVisibility.Declaration.Union.Public<G, K> {}
 			namespace Public {
 				interface Internal<
 					G extends GrammarMap,
 					K extends gate.Under<'declaration.union.public.internal'> = 'declaration.union.public.internal'
-				> extends visibility.Declaration.Union.Public.Internal<G, K> {}
+				> extends moduleVisibility.Declaration.Union.Public.Internal<G, K> {}
 				interface Parent<
 					G extends GrammarMap,
 					K extends gate.Under<'declaration.union.public.parent'> = 'declaration.union.public.parent'
-				> extends visibility.Declaration.Union.Public.Parent<G, K> {}
+				> extends moduleVisibility.Declaration.Union.Public.Parent<G, K> {}
 				interface Restricted<
 					G extends GrammarMap,
 					K extends gate.Under<'declaration.union.public.restricted'> = 'declaration.union.public.restricted'
-				> extends visibility.Declaration.Union.Public.Restricted<G, K> {}
+				> extends moduleVisibility.Declaration.Union.Public.Restricted<G, K> {}
 				type Any<G extends GrammarMap> =
 					| V.Declaration.Union.Public<G>
 					| V.Declaration.Union.Public.Internal<G>
@@ -2192,54 +2354,74 @@ declare module './declaration.ts' {
 				| V.Declaration.Union.Public.Restricted<G>;
 		}
 		interface Variable<G extends GrammarMap, K extends gate.Under<'declaration.variable'> = 'declaration.variable'> {
+			readonly alternative?: gate.In<
+				G,
+				features.RustDeclarations,
+				rustDeclarations.Declaration.Variable<G, K>['alternative']
+			>;
 			readonly byReference?: gate.In<G, features.References, references.Declaration.Variable<G, K>['byReference']>;
+			readonly declarators?: gate.In<
+				G,
+				features.JavaScriptBindings,
+				javascriptBindings.Declaration.Variable<G, K>['declarators']
+			>;
 			readonly definite?: gate.In<
 				G,
 				features.NonNullAssertions,
 				nonNullAssertions.Declaration.Variable<G, K>['definite']
 			>;
+			readonly mutable?: gate.In<G, features.RustDeclarations, rustDeclarations.Declaration.Variable<G, K>['mutable']>;
 			readonly static?: gate.In<G, features.StaticStorage, staticStorage.Declaration.Variable<G, K>['static']>;
 			readonly type?: gate.In<G, features.TypeAnnotations, typeAnnotations.Declaration.Variable<G, K>['type']>;
 		}
 		namespace Variable {
+			interface Constant<
+				G extends GrammarMap,
+				K extends gate.Under<'declaration.variable.constant'> = 'declaration.variable.constant'
+			> extends javascriptBindings.Declaration.Variable.Constant<G, K> {}
 			interface Pattern<
 				G extends GrammarMap,
 				K extends gate.Under<'declaration.variable.pattern'> = 'declaration.variable.pattern'
-			> {
-				readonly type?: gate.In<
-					G,
-					features.TypeAnnotations,
-					typeAnnotations.Declaration.Variable.Pattern<G, K>['type']
-				>;
+			> extends javascriptBindings.Declaration.Variable.Pattern<G, K> {
+				readonly type?: gate.In<G, features.TypeAlgebra, typeAlgebra.Declaration.Variable.Pattern<G, K>['type']>;
 			}
 			interface Private<
 				G extends GrammarMap,
 				K extends gate.Under<'declaration.variable.private'> = 'declaration.variable.private'
-			> extends visibility.Declaration.Variable.Private<G, K> {}
+			> extends moduleVisibility.Declaration.Variable.Private<G, K> {}
 			interface Public<
 				G extends GrammarMap,
 				K extends gate.Under<'declaration.variable.public'> = 'declaration.variable.public'
-			> extends visibility.Declaration.Variable.Public<G, K> {}
+			> extends moduleVisibility.Declaration.Variable.Public<G, K> {}
 			namespace Public {
 				interface Internal<
 					G extends GrammarMap,
 					K extends gate.Under<'declaration.variable.public.internal'> = 'declaration.variable.public.internal'
-				> extends visibility.Declaration.Variable.Public.Internal<G, K> {}
+				> extends moduleVisibility.Declaration.Variable.Public.Internal<G, K> {}
 				interface Parent<
 					G extends GrammarMap,
 					K extends gate.Under<'declaration.variable.public.parent'> = 'declaration.variable.public.parent'
-				> extends visibility.Declaration.Variable.Public.Parent<G, K> {}
+				> extends moduleVisibility.Declaration.Variable.Public.Parent<G, K> {}
 				interface Restricted<
 					G extends GrammarMap,
 					K extends gate.Under<'declaration.variable.public.restricted'> = 'declaration.variable.public.restricted'
-				> extends visibility.Declaration.Variable.Public.Restricted<G, K> {}
+				> extends moduleVisibility.Declaration.Variable.Public.Restricted<G, K> {}
 				type Any<G extends GrammarMap> =
 					| V.Declaration.Variable.Public<G>
 					| V.Declaration.Variable.Public.Internal<G>
 					| V.Declaration.Variable.Public.Parent<G>
 					| V.Declaration.Variable.Public.Restricted<G>;
 			}
+			interface Reassignable<
+				G extends GrammarMap,
+				K extends gate.Under<'declaration.variable.reassignable'> = 'declaration.variable.reassignable'
+			> extends javascriptBindings.Declaration.Variable.Reassignable<G, K> {}
 			namespace Reassignable {
+				interface FunctionScoped<
+					G extends GrammarMap,
+					K extends gate.Under<'declaration.variable.reassignable.function_scoped'> =
+						'declaration.variable.reassignable.function_scoped'
+				> extends javascriptBindings.Declaration.Variable.Reassignable.FunctionScoped<G, K> {}
 				type Any<G extends GrammarMap> =
 					| V.Declaration.Variable.Reassignable<G>
 					| V.Declaration.Variable.Reassignable.FunctionScoped<G>;
@@ -2453,9 +2635,47 @@ declare module './declaration.ts' {
 
 declare module './element.ts' {
 	namespace Element {
+		interface Comparator<
+			G extends GrammarMap,
+			K extends gate.Under<'element.comparator'> = 'element.comparator'
+		> extends pythonOperators.Element.Comparator<G, K> {}
 		namespace Comparator {
+			interface Comparison<
+				G extends GrammarMap,
+				K extends gate.Under<'element.comparator.comparison'> = 'element.comparator.comparison'
+			> extends pythonOperators.Element.Comparator.Comparison<G, K> {}
 			namespace Comparison {
+				interface Equal<
+					G extends GrammarMap,
+					K extends gate.Under<'element.comparator.comparison.equal'> = 'element.comparator.comparison.equal'
+				> extends pythonOperators.Element.Comparator.Comparison.Equal<G, K> {}
+				interface Greater<
+					G extends GrammarMap,
+					K extends gate.Under<'element.comparator.comparison.greater'> = 'element.comparator.comparison.greater'
+				> extends pythonOperators.Element.Comparator.Comparison.Greater<G, K> {}
+				interface GreaterEqual<
+					G extends GrammarMap,
+					K extends gate.Under<'element.comparator.comparison.greater_equal'> =
+						'element.comparator.comparison.greater_equal'
+				> extends pythonOperators.Element.Comparator.Comparison.GreaterEqual<G, K> {}
+				interface Less<
+					G extends GrammarMap,
+					K extends gate.Under<'element.comparator.comparison.less'> = 'element.comparator.comparison.less'
+				> extends pythonOperators.Element.Comparator.Comparison.Less<G, K> {}
+				interface LessEqual<
+					G extends GrammarMap,
+					K extends gate.Under<'element.comparator.comparison.less_equal'> = 'element.comparator.comparison.less_equal'
+				> extends pythonOperators.Element.Comparator.Comparison.LessEqual<G, K> {}
+				interface NotEqual<
+					G extends GrammarMap,
+					K extends gate.Under<'element.comparator.comparison.not_equal'> = 'element.comparator.comparison.not_equal'
+				> extends pythonOperators.Element.Comparator.Comparison.NotEqual<G, K> {}
 				namespace NotEqual {
+					interface Legacy<
+						G extends GrammarMap,
+						K extends gate.Under<'element.comparator.comparison.not_equal.legacy'> =
+							'element.comparator.comparison.not_equal.legacy'
+					> extends pythonOperators.Element.Comparator.Comparison.NotEqual.Legacy<G, K> {}
 					type Any<G extends GrammarMap> =
 						| V.Element.Comparator.Comparison.NotEqual<G>
 						| V.Element.Comparator.Comparison.NotEqual.Legacy<G>;
@@ -2470,13 +2690,37 @@ declare module './element.ts' {
 					| V.Element.Comparator.Comparison.NotEqual<G>
 					| V.Element.Comparator.Comparison.NotEqual.Legacy<G>;
 			}
+			interface Identity<
+				G extends GrammarMap,
+				K extends gate.Under<'element.comparator.identity'> = 'element.comparator.identity'
+			> extends pythonOperators.Element.Comparator.Identity<G, K> {}
 			namespace Identity {
+				interface Is<
+					G extends GrammarMap,
+					K extends gate.Under<'element.comparator.identity.is'> = 'element.comparator.identity.is'
+				> extends pythonOperators.Element.Comparator.Identity.Is<G, K> {}
+				interface IsNot<
+					G extends GrammarMap,
+					K extends gate.Under<'element.comparator.identity.is_not'> = 'element.comparator.identity.is_not'
+				> extends pythonOperators.Element.Comparator.Identity.IsNot<G, K> {}
 				type Any<G extends GrammarMap> =
 					| V.Element.Comparator.Identity<G>
 					| V.Element.Comparator.Identity.Is<G>
 					| V.Element.Comparator.Identity.IsNot<G>;
 			}
+			interface Membership<
+				G extends GrammarMap,
+				K extends gate.Under<'element.comparator.membership'> = 'element.comparator.membership'
+			> extends pythonOperators.Element.Comparator.Membership<G, K> {}
 			namespace Membership {
+				interface In<
+					G extends GrammarMap,
+					K extends gate.Under<'element.comparator.membership.in'> = 'element.comparator.membership.in'
+				> extends pythonOperators.Element.Comparator.Membership.In<G, K> {}
+				interface NotIn<
+					G extends GrammarMap,
+					K extends gate.Under<'element.comparator.membership.not_in'> = 'element.comparator.membership.not_in'
+				> extends pythonOperators.Element.Comparator.Membership.NotIn<G, K> {}
 				type Any<G extends GrammarMap> =
 					| V.Element.Comparator.Membership<G>
 					| V.Element.Comparator.Membership.In<G>
@@ -2622,26 +2866,39 @@ declare module './element.ts' {
 				| V.Element.Macro.TokenTree.Pattern.Bracket<G>
 				| V.Element.Macro.TokenTree.Pattern.Paren<G>;
 		}
-		interface Pair<G extends GrammarMap, K extends gate.Under<'element.pair'> = 'element.pair'> {
+		interface Pair<G extends GrammarMap, K extends gate.Under<'element.pair'> = 'element.pair'> extends keyValuePairs
+			.Element.Pair<G, K> {
 			readonly computed?: gate.In<G, features.ComputedKeys, computedKeys.Element.Pair<G, K>['computed']>;
 		}
+		interface Spread<G extends GrammarMap, K extends gate.Under<'element.spread'> = 'element.spread'> extends spreads
+			.Element.Spread<G, K> {}
 		namespace Spread {
+			interface Map<
+				G extends GrammarMap,
+				K extends gate.Under<'element.spread.map'> = 'element.spread.map'
+			> extends setLiterals.Element.Spread.Map<G, K> {}
+			interface Parenthesized<
+				G extends GrammarMap,
+				K extends gate.Under<'element.spread.parenthesized'> = 'element.spread.parenthesized'
+			> extends setLiterals.Element.Spread.Parenthesized<G, K> {}
 			type Any<G extends GrammarMap> =
 				| V.Element.Spread<G>
 				| V.Element.Spread.Map<G>
 				| V.Element.Spread.Parenthesized<G>;
 		}
-		interface Struct<G extends GrammarMap, K extends gate.Under<'element.struct'> = 'element.struct'> extends structs
-			.Element.Struct<G, K> {}
+		interface Struct<
+			G extends GrammarMap,
+			K extends gate.Under<'element.struct'> = 'element.struct'
+		> extends structLiterals.Element.Struct<G, K> {}
 		namespace Struct {
 			interface Base<
 				G extends GrammarMap,
 				K extends gate.Under<'element.struct.base'> = 'element.struct.base'
-			> extends structs.Element.Struct.Base<G, K> {}
+			> extends tupleStructs.Element.Struct.Base<G, K> {}
 			interface Field<
 				G extends GrammarMap,
 				K extends gate.Under<'element.struct.field'> = 'element.struct.field'
-			> extends structs.Element.Struct.Field<G, K> {
+			> extends structLiterals.Element.Struct.Field<G, K> {
 				readonly attributes?: gate.In<G, features.Attributes, attributes.Element.Struct.Field<G, K>['attributes']>;
 			}
 			type Any<G extends GrammarMap> = V.Element.Struct<G> | V.Element.Struct.Base<G> | V.Element.Struct.Field<G>;
@@ -2649,28 +2906,26 @@ declare module './element.ts' {
 		interface Template<
 			G extends GrammarMap,
 			K extends gate.Under<'element.template'> = 'element.template'
-		> extends typeAnnotations.Element.Template<G, K> {}
+		> extends typeAlgebra.Element.Template<G, K> {}
 		namespace Template {
 			interface Substitution<
 				G extends GrammarMap,
 				K extends gate.Under<'element.template.substitution'> = 'element.template.substitution'
-			> extends typeAnnotations.Element.Template.Substitution<G, K> {}
+			> extends typeAlgebra.Element.Template.Substitution<G, K> {}
 			type Any<G extends GrammarMap> = V.Element.Template<G> | V.Element.Template.Substitution<G>;
 		}
-		interface Tuple<
-			G extends GrammarMap,
-			K extends gate.Under<'element.tuple'> = 'element.tuple'
-		> extends typeAnnotations.Element.Tuple<G, K> {}
+		interface Tuple<G extends GrammarMap, K extends gate.Under<'element.tuple'> = 'element.tuple'> extends typeAlgebra
+			.Element.Tuple<G, K> {}
 		namespace Tuple {
 			interface Member<
 				G extends GrammarMap,
 				K extends gate.Under<'element.tuple.member'> = 'element.tuple.member'
-			> extends typeAnnotations.Element.Tuple.Member<G, K> {}
+			> extends typeAlgebra.Element.Tuple.Member<G, K> {}
 			namespace Member {
 				interface Optional<
 					G extends GrammarMap,
 					K extends gate.Under<'element.tuple.member.optional'> = 'element.tuple.member.optional'
-				> extends typeAnnotations.Element.Tuple.Member.Optional<G, K> {}
+				> extends typeAlgebra.Element.Tuple.Member.Optional<G, K> {}
 				type Any<G extends GrammarMap> = V.Element.Tuple.Member<G> | V.Element.Tuple.Member.Optional<G>;
 			}
 			type Any<G extends GrammarMap> =
@@ -2681,12 +2936,8 @@ declare module './element.ts' {
 		interface TypeArgument<
 			G extends GrammarMap,
 			K extends gate.Under<'element.type_argument'> = 'element.type_argument'
-		> extends parametricPolymorphism.Element.TypeArgument<G, K> {
-			readonly bounds?: gate.In<
-				G,
-				features.BoundedQuantification,
-				boundedQuantification.Element.TypeArgument<G, K>['bounds']
-			>;
+		> extends genericItems.Element.TypeArgument<G, K> {
+			readonly bounds?: gate.In<G, features.WhereClauses, whereClauses.Element.TypeArgument<G, K>['bounds']>;
 		}
 		interface TypeBinding<
 			G extends GrammarMap,
@@ -2751,12 +3002,43 @@ declare module './expression.ts' {
 		> {
 			readonly disposable?: gate.In<
 				G,
-				features.ResourceManagement,
-				resourceManagement.Expression.Assignment<G, K>['disposable']
+				features.DisposableDeclarations,
+				disposableDeclarations.Expression.Assignment<G, K>['disposable']
 			>;
 		}
 		namespace Assignment {
 			namespace Compound {
+				interface And<
+					G extends GrammarMap,
+					K extends gate.Under<'expression.assignment.compound.and'> = 'expression.assignment.compound.and'
+				> extends javascriptOperators.Expression.Assignment.Compound.And<G, K> {}
+				interface Coalesce<
+					G extends GrammarMap,
+					K extends gate.Under<'expression.assignment.compound.coalesce'> = 'expression.assignment.compound.coalesce'
+				> extends javascriptOperators.Expression.Assignment.Compound.Coalesce<G, K> {}
+				interface Exponent<
+					G extends GrammarMap,
+					K extends gate.Under<'expression.assignment.compound.exponent'> = 'expression.assignment.compound.exponent'
+				> extends exponentiationAndMembership.Expression.Assignment.Compound.Exponent<G, K> {}
+				interface FloorDivide<
+					G extends GrammarMap,
+					K extends gate.Under<'expression.assignment.compound.floor_divide'> =
+						'expression.assignment.compound.floor_divide'
+				> extends pythonOperators.Expression.Assignment.Compound.FloorDivide<G, K> {}
+				interface MatrixMultiply<
+					G extends GrammarMap,
+					K extends gate.Under<'expression.assignment.compound.matrix_multiply'> =
+						'expression.assignment.compound.matrix_multiply'
+				> extends pythonOperators.Expression.Assignment.Compound.MatrixMultiply<G, K> {}
+				interface Or<
+					G extends GrammarMap,
+					K extends gate.Under<'expression.assignment.compound.or'> = 'expression.assignment.compound.or'
+				> extends javascriptOperators.Expression.Assignment.Compound.Or<G, K> {}
+				interface ShiftRightUnsigned<
+					G extends GrammarMap,
+					K extends gate.Under<'expression.assignment.compound.shift_right_unsigned'> =
+						'expression.assignment.compound.shift_right_unsigned'
+				> extends javascriptOperators.Expression.Assignment.Compound.ShiftRightUnsigned<G, K> {}
 				type Any<G extends GrammarMap> =
 					| V.Expression.Assignment.Compound<G>
 					| V.Expression.Assignment.Compound.Add<G>
@@ -2804,6 +3086,15 @@ declare module './expression.ts' {
 		> extends asyncAwait.Expression.Await<G, K> {}
 		namespace Binary {
 			namespace Arithmetic {
+				interface Exponent<
+					G extends GrammarMap,
+					K extends gate.Under<'expression.binary.arithmetic.exponent'> = 'expression.binary.arithmetic.exponent'
+				> extends exponentiationAndMembership.Expression.Binary.Arithmetic.Exponent<G, K> {}
+				interface FloorDivide<
+					G extends GrammarMap,
+					K extends gate.Under<'expression.binary.arithmetic.floor_divide'> =
+						'expression.binary.arithmetic.floor_divide'
+				> extends pythonOperators.Expression.Binary.Arithmetic.FloorDivide<G, K> {}
 				type Any<G extends GrammarMap> =
 					| V.Expression.Binary.Arithmetic<G>
 					| V.Expression.Binary.Arithmetic.Add<G>
@@ -2821,7 +3112,15 @@ declare module './expression.ts' {
 					| V.Expression.Binary.Bitwise.Or<G>
 					| V.Expression.Binary.Bitwise.Xor<G>;
 			}
+			interface Coalesce<
+				G extends GrammarMap,
+				K extends gate.Under<'expression.binary.coalesce'> = 'expression.binary.coalesce'
+			> extends javascriptOperators.Expression.Binary.Coalesce<G, K> {}
 			namespace Comparison {
+				interface Chain<
+					G extends GrammarMap,
+					K extends gate.Under<'expression.binary.comparison.chain'> = 'expression.binary.comparison.chain'
+				> extends pythonOperators.Expression.Binary.Comparison.Chain<G, K> {}
 				interface LooseEqual<
 					G extends GrammarMap,
 					K extends gate.Under<'expression.binary.comparison.loose_equal'> = 'expression.binary.comparison.loose_equal'
@@ -2832,6 +3131,11 @@ declare module './expression.ts' {
 						'expression.binary.comparison.loose_not_equal'
 				> extends coerciveEquality.Expression.Binary.Comparison.LooseNotEqual<G, K> {}
 				namespace NotEqual {
+					interface Legacy<
+						G extends GrammarMap,
+						K extends gate.Under<'expression.binary.comparison.not_equal.legacy'> =
+							'expression.binary.comparison.not_equal.legacy'
+					> extends pythonOperators.Expression.Binary.Comparison.NotEqual.Legacy<G, K> {}
 					type Any<G extends GrammarMap> =
 						| V.Expression.Binary.Comparison.NotEqual<G>
 						| V.Expression.Binary.Comparison.NotEqual.Legacy<G>;
@@ -2849,7 +3153,19 @@ declare module './expression.ts' {
 					| V.Expression.Binary.Comparison.NotEqual<G>
 					| V.Expression.Binary.Comparison.NotEqual.Legacy<G>;
 			}
+			interface Identity<
+				G extends GrammarMap,
+				K extends gate.Under<'expression.binary.identity'> = 'expression.binary.identity'
+			> extends identityComparison.Expression.Binary.Identity<G, K> {}
 			namespace Identity {
+				interface Is<
+					G extends GrammarMap,
+					K extends gate.Under<'expression.binary.identity.is'> = 'expression.binary.identity.is'
+				> extends identityComparison.Expression.Binary.Identity.Is<G, K> {}
+				interface IsNot<
+					G extends GrammarMap,
+					K extends gate.Under<'expression.binary.identity.is_not'> = 'expression.binary.identity.is_not'
+				> extends identityComparison.Expression.Binary.Identity.IsNot<G, K> {}
 				type Any<G extends GrammarMap> =
 					| V.Expression.Binary.Identity<G>
 					| V.Expression.Binary.Identity.Is<G>
@@ -2861,7 +3177,27 @@ declare module './expression.ts' {
 					| V.Expression.Binary.Logical.And<G>
 					| V.Expression.Binary.Logical.Or<G>;
 			}
+			interface MatrixMultiply<
+				G extends GrammarMap,
+				K extends gate.Under<'expression.binary.matrix_multiply'> = 'expression.binary.matrix_multiply'
+			> extends pythonOperators.Expression.Binary.MatrixMultiply<G, K> {}
+			interface Membership<
+				G extends GrammarMap,
+				K extends gate.Under<'expression.binary.membership'> = 'expression.binary.membership'
+			> extends exponentiationAndMembership.Expression.Binary.Membership<G, K> {}
 			namespace Membership {
+				interface In<
+					G extends GrammarMap,
+					K extends gate.Under<'expression.binary.membership.in'> = 'expression.binary.membership.in'
+				> extends exponentiationAndMembership.Expression.Binary.Membership.In<G, K> {}
+				interface Instanceof<
+					G extends GrammarMap,
+					K extends gate.Under<'expression.binary.membership.instanceof'> = 'expression.binary.membership.instanceof'
+				> extends javascriptOperators.Expression.Binary.Membership.Instanceof<G, K> {}
+				interface NotIn<
+					G extends GrammarMap,
+					K extends gate.Under<'expression.binary.membership.not_in'> = 'expression.binary.membership.not_in'
+				> extends pythonOperators.Expression.Binary.Membership.NotIn<G, K> {}
 				type Any<G extends GrammarMap> =
 					| V.Expression.Binary.Membership<G>
 					| V.Expression.Binary.Membership.In<G>
@@ -2869,6 +3205,10 @@ declare module './expression.ts' {
 					| V.Expression.Binary.Membership.NotIn<G>;
 			}
 			namespace Shift {
+				interface RightUnsigned<
+					G extends GrammarMap,
+					K extends gate.Under<'expression.binary.shift.right_unsigned'> = 'expression.binary.shift.right_unsigned'
+				> extends javascriptOperators.Expression.Binary.Shift.RightUnsigned<G, K> {}
 				type Any<G extends GrammarMap> =
 					| V.Expression.Binary.Shift<G>
 					| V.Expression.Binary.Shift.Left<G>
@@ -2917,6 +3257,10 @@ declare module './expression.ts' {
 				| V.Expression.Binary.Shift.Right<G>
 				| V.Expression.Binary.Shift.RightUnsigned<G>;
 		}
+		interface Block<
+			G extends GrammarMap,
+			K extends gate.Under<'expression.block'> = 'expression.block'
+		> extends rustExpressions.Expression.Block<G, K> {}
 		namespace Block {
 			interface Async<
 				G extends GrammarMap,
@@ -2929,7 +3273,7 @@ declare module './expression.ts' {
 			interface Generator<
 				G extends GrammarMap,
 				K extends gate.Under<'expression.block.generator'> = 'expression.block.generator'
-			> extends coroutines.Expression.Block.Generator<G, K> {}
+			> extends generatorBlocks.Expression.Block.Generator<G, K> {}
 			interface Try<
 				G extends GrammarMap,
 				K extends gate.Under<'expression.block.try'> = 'expression.block.try'
@@ -2954,29 +3298,29 @@ declare module './expression.ts' {
 			>;
 			readonly typeArguments?: gate.In<
 				G,
-				features.ParametricPolymorphism,
-				parametricPolymorphism.Expression.Call<G, K>['typeArguments']
+				features.GenericExpressions,
+				genericExpressions.Expression.Call<G, K>['typeArguments']
 			>;
 		}
 		namespace Call {
 			interface Construct<
 				G extends GrammarMap,
 				K extends gate.Under<'expression.call.construct'> = 'expression.call.construct'
-			> extends classes.Expression.Call.Construct<G, K> {
+			> extends javascriptClasses.Expression.Call.Construct<G, K> {
 				readonly typeArguments?: gate.In<
 					G,
-					features.ParametricPolymorphism,
-					parametricPolymorphism.Expression.Call.Construct<G, K>['typeArguments']
+					features.GenericExpressions,
+					genericExpressions.Expression.Call.Construct<G, K>['typeArguments']
 				>;
 			}
 			namespace Construct {
 				interface Bare<
 					G extends GrammarMap,
 					K extends gate.Under<'expression.call.construct.bare'> = 'expression.call.construct.bare'
-				> extends classes.Expression.Call.Construct.Bare<G, K> {}
+				> extends javascriptClasses.Expression.Call.Construct.Bare<G, K> {}
 				type Any<G extends GrammarMap> = V.Expression.Call.Construct<G> | V.Expression.Call.Construct.Bare<G>;
 			}
-			type Import<G extends GrammarMap> = modules.Expression.Call.Import<G>;
+			type Import<G extends GrammarMap> = javascriptModules.Expression.Call.Import<G>;
 			interface Macro<
 				G extends GrammarMap,
 				K extends gate.Under<'expression.call.macro'> = 'expression.call.macro'
@@ -2987,14 +3331,18 @@ declare module './expression.ts' {
 			> {
 				readonly typeArguments?: gate.In<
 					G,
-					features.ParametricPolymorphism,
-					parametricPolymorphism.Expression.Call.Member<G, K>['typeArguments']
+					features.GenericExpressions,
+					genericExpressions.Expression.Call.Member<G, K>['typeArguments']
 				>;
 			}
+			interface Qualified<
+				G extends GrammarMap,
+				K extends gate.Under<'expression.call.qualified'> = 'expression.call.qualified'
+			> extends rustExpressions.Expression.Call.Qualified<G, K> {}
 			interface Template<
 				G extends GrammarMap,
 				K extends gate.Under<'expression.call.template'> = 'expression.call.template'
-			> extends stringInterpolation.Expression.Call.Template<G, K> {}
+			> extends taggedTemplates.Expression.Call.Template<G, K> {}
 			type Any<G extends GrammarMap> =
 				| V.Expression.Call<G>
 				| V.Expression.Call.Construct<G>
@@ -3008,23 +3356,23 @@ declare module './expression.ts' {
 		interface Cast<
 			G extends GrammarMap,
 			K extends gate.Under<'expression.cast'> = 'expression.cast'
-		> extends typeAnnotations.Expression.Cast<G, K> {}
+		> extends staticTypes.Expression.Cast<G, K> {}
 		namespace Cast {
 			interface Assertion<
 				G extends GrammarMap,
 				K extends gate.Under<'expression.cast.assertion'> = 'expression.cast.assertion'
-			> extends typeAnnotations.Expression.Cast.Assertion<G, K> {}
+			> extends typeAlgebra.Expression.Cast.Assertion<G, K> {}
 			namespace Assertion {
 				interface AngleBracket<
 					G extends GrammarMap,
 					K extends gate.Under<'expression.cast.assertion.angle_bracket'> = 'expression.cast.assertion.angle_bracket'
-				> extends typeAnnotations.Expression.Cast.Assertion.AngleBracket<G, K> {}
+				> extends typeAlgebra.Expression.Cast.Assertion.AngleBracket<G, K> {}
 				type Any<G extends GrammarMap> = V.Expression.Cast.Assertion<G> | V.Expression.Cast.Assertion.AngleBracket<G>;
 			}
 			interface Conversion<
 				G extends GrammarMap,
 				K extends gate.Under<'expression.cast.conversion'> = 'expression.cast.conversion'
-			> extends typeAnnotations.Expression.Cast.Conversion<G, K> {}
+			> extends systemsTypes.Expression.Cast.Conversion<G, K> {}
 			interface NonNull<
 				G extends GrammarMap,
 				K extends gate.Under<'expression.cast.non_null'> = 'expression.cast.non_null'
@@ -3032,7 +3380,7 @@ declare module './expression.ts' {
 			interface Satisfies<
 				G extends GrammarMap,
 				K extends gate.Under<'expression.cast.satisfies'> = 'expression.cast.satisfies'
-			> extends typeAnnotations.Expression.Cast.Satisfies<G, K> {}
+			> extends typeAlgebra.Expression.Cast.Satisfies<G, K> {}
 			type Any<G extends GrammarMap> =
 				| V.Expression.Cast<G>
 				| V.Expression.Cast.Assertion<G>
@@ -3041,9 +3389,15 @@ declare module './expression.ts' {
 				| V.Expression.Cast.NonNull<G>
 				| V.Expression.Cast.Satisfies<G>;
 		}
-		interface Class<G extends GrammarMap, K extends gate.Under<'expression.class'> = 'expression.class'> extends classes
-			.Expression.Class<G, K> {
-			readonly decorators?: gate.In<G, features.Decorators, decorators.Expression.Class<G, K>['decorators']>;
+		interface Class<
+			G extends GrammarMap,
+			K extends gate.Under<'expression.class'> = 'expression.class'
+		> extends javascriptClasses.Expression.Class<G, K> {
+			readonly decorators?: gate.In<
+				G,
+				features.MemberDecorators,
+				memberDecorators.Expression.Class<G, K>['decorators']
+			>;
 			readonly extends?: gate.In<G, features.SingleInheritance, singleInheritance.Expression.Class<G, K>['extends']>;
 			readonly implements?: gate.In<
 				G,
@@ -3052,8 +3406,8 @@ declare module './expression.ts' {
 			>;
 			readonly typeParameters?: gate.In<
 				G,
-				features.ParametricPolymorphism,
-				parametricPolymorphism.Expression.Class<G, K>['typeParameters']
+				features.GenericExpressions,
+				genericExpressions.Expression.Class<G, K>['typeParameters']
 			>;
 		}
 		namespace Collection {
@@ -3068,12 +3422,28 @@ declare module './expression.ts' {
 				>;
 			}
 			namespace List {
+				interface Repeat<
+					G extends GrammarMap,
+					K extends gate.Under<'expression.collection.list.repeat'> = 'expression.collection.list.repeat'
+				> extends rustExpressions.Expression.Collection.List.Repeat<G, K> {}
 				type Any<G extends GrammarMap> = V.Expression.Collection.List<G> | V.Expression.Collection.List.Repeat<G>;
 			}
+			interface Map<
+				G extends GrammarMap,
+				K extends gate.Under<'expression.collection.map'> = 'expression.collection.map'
+			> extends mapLiterals.Expression.Collection.Map<G, K> {}
+			interface Object<
+				G extends GrammarMap,
+				K extends gate.Under<'expression.collection.object'> = 'expression.collection.object'
+			> extends javascriptExpressions.Expression.Collection.Object<G, K> {}
+			interface Set<
+				G extends GrammarMap,
+				K extends gate.Under<'expression.collection.set'> = 'expression.collection.set'
+			> extends setLiterals.Expression.Collection.Set<G, K> {}
 			interface Struct<
 				G extends GrammarMap,
 				K extends gate.Under<'expression.collection.struct'> = 'expression.collection.struct'
-			> extends structs.Expression.Collection.Struct<G, K> {}
+			> extends structLiterals.Expression.Collection.Struct<G, K> {}
 			interface Tuple<
 				G extends GrammarMap,
 				K extends gate.Under<'expression.collection.tuple'> = 'expression.collection.tuple'
@@ -3088,7 +3458,7 @@ declare module './expression.ts' {
 				interface Bare<
 					G extends GrammarMap,
 					K extends gate.Under<'expression.collection.tuple.bare'> = 'expression.collection.tuple.bare'
-				> extends tuples.Expression.Collection.Tuple.Bare<G, K> {}
+				> extends bareTuples.Expression.Collection.Tuple.Bare<G, K> {}
 				type Any<G extends GrammarMap> = V.Expression.Collection.Tuple<G> | V.Expression.Collection.Tuple.Bare<G>;
 			}
 			type Any<G extends GrammarMap> =
@@ -3134,29 +3504,32 @@ declare module './expression.ts' {
 			G extends GrammarMap,
 			K extends gate.Under<'expression.conditional'> = 'expression.conditional'
 		> extends conditionalExpressions.Expression.Conditional<G, K> {}
-		interface Function<G extends GrammarMap, K extends gate.Under<'expression.function'> = 'expression.function'> {
-			readonly async?: gate.In<G, features.AsyncAwait, asyncAwait.Expression.Function<G, K>['async']>;
-			readonly generator?: gate.In<G, features.Generators, generators.Expression.Function<G, K>['generator']>;
-			readonly receiver?: gate.In<
+		interface Function<
+			G extends GrammarMap,
+			K extends gate.Under<'expression.function'> = 'expression.function'
+		> extends javascriptExpressions.Expression.Function<G, K> {
+			readonly async?: gate.In<
 				G,
-				features.ExplicitReceivers,
-				explicitReceivers.Expression.Function<G, K>['receiver']
+				features.AsyncFunctionExpressions,
+				asyncFunctionExpressions.Expression.Function<G, K>['async']
 			>;
-			readonly returnType?: gate.In<
+			readonly generator?: gate.In<
 				G,
-				features.TypeAnnotations,
-				typeAnnotations.Expression.Function<G, K>['returnType']
+				features.GeneratorFunctions,
+				generatorFunctions.Expression.Function<G, K>['generator']
 			>;
+			readonly receiver?: gate.In<G, features.TypedReceivers, typedReceivers.Expression.Function<G, K>['receiver']>;
+			readonly returnType?: gate.In<G, features.TypeAlgebra, typeAlgebra.Expression.Function<G, K>['returnType']>;
 			readonly typeParameters?: gate.In<
 				G,
-				features.ParametricPolymorphism,
-				parametricPolymorphism.Expression.Function<G, K>['typeParameters']
+				features.GenericExpressions,
+				genericExpressions.Expression.Function<G, K>['typeParameters']
 			>;
 		}
 		interface Instantiation<
 			G extends GrammarMap,
 			K extends gate.Under<'expression.instantiation'> = 'expression.instantiation'
-		> extends parametricPolymorphism.Expression.Instantiation<G, K> {}
+		> extends genericSignatures.Expression.Instantiation<G, K> {}
 		interface Interpolation<
 			G extends GrammarMap,
 			K extends gate.Under<'expression.interpolation'> = 'expression.interpolation'
@@ -3165,20 +3538,25 @@ declare module './expression.ts' {
 			interface Conversion<
 				G extends GrammarMap,
 				K extends gate.Under<'expression.interpolation.conversion'> = 'expression.interpolation.conversion'
-			> extends stringInterpolation.Expression.Interpolation.Conversion<G, K> {}
+			> extends formatStrings.Expression.Interpolation.Conversion<G, K> {}
 			interface Format<
 				G extends GrammarMap,
 				K extends gate.Under<'expression.interpolation.format'> = 'expression.interpolation.format'
-			> extends stringInterpolation.Expression.Interpolation.Format<G, K> {}
+			> extends formatStrings.Expression.Interpolation.Format<G, K> {}
 			type Any<G extends GrammarMap> =
 				| V.Expression.Interpolation<G>
 				| V.Expression.Interpolation.Conversion<G>
 				| V.Expression.Interpolation.Format<G>;
 		}
 		interface Lambda<G extends GrammarMap, K extends gate.Under<'expression.lambda'> = 'expression.lambda'> {
-			readonly async?: gate.In<G, features.AsyncAwait, asyncAwait.Expression.Lambda<G, K>['async']>;
+			readonly async?: gate.In<G, features.AsyncLambdas, asyncLambdas.Expression.Lambda<G, K>['async']>;
 			readonly move?: gate.In<G, features.References, references.Expression.Lambda<G, K>['move']>;
-			readonly static?: gate.In<G, features.Coroutines, coroutines.Expression.Lambda<G, K>['static']>;
+			readonly returnType?: gate.In<
+				G,
+				features.AnnotatedLambdas,
+				annotatedLambdas.Expression.Lambda<G, K>['returnType']
+			>;
+			readonly static?: gate.In<G, features.GeneratorBlocks, generatorBlocks.Expression.Lambda<G, K>['static']>;
 			readonly typeParameters?: gate.In<
 				G,
 				features.GenericLambdas,
@@ -3192,6 +3570,20 @@ declare module './expression.ts' {
 				optionalChaining.Expression.Member<G, K>['optionalChain']
 			>;
 			readonly privateName?: gate.In<G, features.Encapsulation, encapsulation.Expression.Member<G, K>['privateName']>;
+		}
+		interface Meta<
+			G extends GrammarMap,
+			K extends gate.Under<'expression.meta'> = 'expression.meta'
+		> extends javascriptExpressions.Expression.Meta<G, K> {}
+		interface Parenthesized<
+			G extends GrammarMap,
+			K extends gate.Under<'expression.parenthesized'> = 'expression.parenthesized'
+		> {
+			readonly type?: gate.In<
+				G,
+				features.JavaScriptExpressions,
+				javascriptExpressions.Expression.Parenthesized<G, K>['type']
+			>;
 		}
 		interface Propagate<
 			G extends GrammarMap,
@@ -3227,6 +3619,10 @@ declare module './expression.ts' {
 			G extends GrammarMap,
 			K extends gate.Under<'expression.reference'> = 'expression.reference'
 		> extends references.Expression.Reference<G, K> {}
+		interface Sequence<
+			G extends GrammarMap,
+			K extends gate.Under<'expression.sequence'> = 'expression.sequence'
+		> extends javascriptExpressions.Expression.Sequence<G, K> {}
 		interface Slice<
 			G extends GrammarMap,
 			K extends gate.Under<'expression.slice'> = 'expression.slice'
@@ -3239,10 +3635,30 @@ declare module './expression.ts' {
 			>;
 		}
 		namespace Unary {
+			interface BitwiseNot<
+				G extends GrammarMap,
+				K extends gate.Under<'expression.unary.bitwise_not'> = 'expression.unary.bitwise_not'
+			> extends cFamilyUnaryOperators.Expression.Unary.BitwiseNot<G, K> {}
+			interface Delete<
+				G extends GrammarMap,
+				K extends gate.Under<'expression.unary.delete'> = 'expression.unary.delete'
+			> extends javascriptOperators.Expression.Unary.Delete<G, K> {}
 			interface Deref<
 				G extends GrammarMap,
 				K extends gate.Under<'expression.unary.deref'> = 'expression.unary.deref'
 			> extends references.Expression.Unary.Deref<G, K> {}
+			interface Plus<
+				G extends GrammarMap,
+				K extends gate.Under<'expression.unary.plus'> = 'expression.unary.plus'
+			> extends cFamilyUnaryOperators.Expression.Unary.Plus<G, K> {}
+			interface Typeof<
+				G extends GrammarMap,
+				K extends gate.Under<'expression.unary.typeof'> = 'expression.unary.typeof'
+			> extends javascriptOperators.Expression.Unary.Typeof<G, K> {}
+			interface Void<
+				G extends GrammarMap,
+				K extends gate.Under<'expression.unary.void'> = 'expression.unary.void'
+			> extends javascriptOperators.Expression.Unary.Void<G, K> {}
 			type Any<G extends GrammarMap> =
 				| V.Expression.Unary<G>
 				| V.Expression.Unary.BitwiseNot<G>
@@ -3254,8 +3670,20 @@ declare module './expression.ts' {
 				| V.Expression.Unary.Typeof<G>
 				| V.Expression.Unary.Void<G>;
 		}
-		type Unit<G extends GrammarMap> = tuples.Expression.Unit<G>;
+		type Unit<G extends GrammarMap> = unitValues.Expression.Unit<G>;
+		interface Update<
+			G extends GrammarMap,
+			K extends gate.Under<'expression.update'> = 'expression.update'
+		> extends javascriptOperators.Expression.Update<G, K> {}
 		namespace Update {
+			interface Decrement<
+				G extends GrammarMap,
+				K extends gate.Under<'expression.update.decrement'> = 'expression.update.decrement'
+			> extends javascriptOperators.Expression.Update.Decrement<G, K> {}
+			interface Increment<
+				G extends GrammarMap,
+				K extends gate.Under<'expression.update.increment'> = 'expression.update.increment'
+			> extends javascriptOperators.Expression.Update.Increment<G, K> {}
 			type Any<G extends GrammarMap> =
 				| V.Expression.Update<G>
 				| V.Expression.Update.Decrement<G>
@@ -3429,7 +3857,8 @@ declare module './identifier.ts' {
 		> extends syntacticMetaprogramming.Identifier.Metavariable<G, K> {
 			readonly attributes?: gate.In<G, features.Attributes, attributes.Identifier.Metavariable<G, K>['attributes']>;
 		}
-		type Receiver<G extends GrammarMap> = methods.Identifier.Receiver<G>;
+		type Receiver<G extends GrammarMap> = methodSignatures.Identifier.Receiver<G>;
+		type Super<G extends GrammarMap> = javascriptExpressions.Identifier.Super<G>;
 		type Any<G extends GrammarMap> =
 			| V.Identifier<G>
 			| V.Identifier.Label<G>
@@ -3451,32 +3880,56 @@ declare module './literal.ts' {
 			G extends GrammarMap,
 			K extends gate.Under<'literal.character'> = 'literal.character'
 		> extends characters.Literal.Character<G, K> {}
+		interface Ellipsis<
+			G extends GrammarMap,
+			K extends gate.Under<'literal.ellipsis'> = 'literal.ellipsis'
+		> extends ellipsisLiteral.Literal.Ellipsis<G, K> {}
+		interface Null<G extends GrammarMap, K extends gate.Under<'literal.null'> = 'literal.null'> extends literalFacets
+			.Literal.Null<G, K> {}
 		namespace Null {
+			interface Undefined<
+				G extends GrammarMap,
+				K extends gate.Under<'literal.null.undefined'> = 'literal.null.undefined'
+			> extends undefinedValue.Literal.Null.Undefined<G, K> {}
 			type Any<G extends GrammarMap> = V.Literal.Null<G> | V.Literal.Null.Undefined<G>;
 		}
 		namespace Number {
 			interface Float<G extends GrammarMap, K extends gate.Under<'literal.number.float'> = 'literal.number.float'> {
+				readonly exponent?: gate.In<G, features.LiteralFacets, literalFacets.Literal.Number.Float<G, K>['exponent']>;
+				readonly exponentSign?: gate.In<
+					G,
+					features.LiteralFacets,
+					literalFacets.Literal.Number.Float<G, K>['exponentSign']
+				>;
+				readonly fraction?: gate.In<G, features.LiteralFacets, literalFacets.Literal.Number.Float<G, K>['fraction']>;
 				readonly imaginary?: gate.In<
 					G,
 					features.ComplexNumbers,
 					complexNumbers.Literal.Number.Float<G, K>['imaginary']
 				>;
+				readonly integer?: gate.In<G, features.LiteralFacets, literalFacets.Literal.Number.Float<G, K>['integer']>;
+				readonly marker?: gate.In<G, features.LiteralFacets, literalFacets.Literal.Number.Float<G, K>['marker']>;
 			}
 			namespace Float {
 				interface LeadingPoint<
 					G extends GrammarMap,
 					K extends gate.Under<'literal.number.float.leading_point'> = 'literal.number.float.leading_point'
-				> {
+				> extends literalFacets.Literal.Number.Float.LeadingPoint<G, K> {
 					readonly imaginary?: gate.In<
 						G,
 						features.ComplexNumbers,
 						complexNumbers.Literal.Number.Float.LeadingPoint<G, K>['imaginary']
 					>;
+					readonly integer?: gate.In<
+						G,
+						features.LeadingPointFloats,
+						leadingPointFloats.Literal.Number.Float.LeadingPoint<G, K>['integer']
+					>;
 				}
 				interface Scientific<
 					G extends GrammarMap,
 					K extends gate.Under<'literal.number.float.scientific'> = 'literal.number.float.scientific'
-				> {
+				> extends literalFacets.Literal.Number.Float.Scientific<G, K> {
 					readonly imaginary?: gate.In<
 						G,
 						features.ComplexNumbers,
@@ -3488,6 +3941,12 @@ declare module './literal.ts' {
 					| V.Literal.Number.Float.LeadingPoint<G>
 					| V.Literal.Number.Float.Scientific<G>;
 			}
+			interface Integer<
+				G extends GrammarMap,
+				K extends gate.Under<'literal.number.integer'> = 'literal.number.integer'
+			> {
+				readonly suffix?: gate.In<G, features.LiteralSuffixes, literalSuffixes.Literal.Number.Integer<G, K>['suffix']>;
+			}
 			namespace Integer {
 				interface Big<
 					G extends GrammarMap,
@@ -3497,25 +3956,70 @@ declare module './literal.ts' {
 					interface Binary<
 						G extends GrammarMap,
 						K extends gate.Under<'literal.number.integer.big.binary'> = 'literal.number.integer.big.binary'
-					> extends arbitraryPrecisionIntegers.Literal.Number.Integer.Big.Binary<G, K> {}
+					> extends bigIntegerRadixes.Literal.Number.Integer.Big.Binary<G, K> {}
 					interface Hex<
 						G extends GrammarMap,
 						K extends gate.Under<'literal.number.integer.big.hex'> = 'literal.number.integer.big.hex'
-					> extends arbitraryPrecisionIntegers.Literal.Number.Integer.Big.Hex<G, K> {}
+					> extends bigIntegerRadixes.Literal.Number.Integer.Big.Hex<G, K> {}
 					interface Octal<
 						G extends GrammarMap,
 						K extends gate.Under<'literal.number.integer.big.octal'> = 'literal.number.integer.big.octal'
-					> extends arbitraryPrecisionIntegers.Literal.Number.Integer.Big.Octal<G, K> {}
+					> extends bigIntegerRadixes.Literal.Number.Integer.Big.Octal<G, K> {}
 					type Any<G extends GrammarMap> =
 						| V.Literal.Number.Integer.Big<G>
 						| V.Literal.Number.Integer.Big.Binary<G>
 						| V.Literal.Number.Integer.Big.Hex<G>
 						| V.Literal.Number.Integer.Big.Octal<G>;
 				}
+				interface Binary<
+					G extends GrammarMap,
+					K extends gate.Under<'literal.number.integer.binary'> = 'literal.number.integer.binary'
+				> {
+					readonly radixPrefix?: gate.In<
+						G,
+						features.LiteralFacets,
+						literalFacets.Literal.Number.Integer.Binary<G, K>['radixPrefix']
+					>;
+					readonly suffix?: gate.In<
+						G,
+						features.LiteralSuffixes,
+						literalSuffixes.Literal.Number.Integer.Binary<G, K>['suffix']
+					>;
+				}
+				interface Hex<
+					G extends GrammarMap,
+					K extends gate.Under<'literal.number.integer.hex'> = 'literal.number.integer.hex'
+				> {
+					readonly radixPrefix?: gate.In<
+						G,
+						features.LiteralFacets,
+						literalFacets.Literal.Number.Integer.Hex<G, K>['radixPrefix']
+					>;
+					readonly suffix?: gate.In<
+						G,
+						features.LiteralSuffixes,
+						literalSuffixes.Literal.Number.Integer.Hex<G, K>['suffix']
+					>;
+				}
 				interface Imaginary<
 					G extends GrammarMap,
 					K extends gate.Under<'literal.number.integer.imaginary'> = 'literal.number.integer.imaginary'
 				> extends complexNumbers.Literal.Number.Integer.Imaginary<G, K> {}
+				interface Octal<
+					G extends GrammarMap,
+					K extends gate.Under<'literal.number.integer.octal'> = 'literal.number.integer.octal'
+				> {
+					readonly radixPrefix?: gate.In<
+						G,
+						features.LiteralFacets,
+						literalFacets.Literal.Number.Integer.Octal<G, K>['radixPrefix']
+					>;
+					readonly suffix?: gate.In<
+						G,
+						features.LiteralSuffixes,
+						literalSuffixes.Literal.Number.Integer.Octal<G, K>['suffix']
+					>;
+				}
 				type Any<G extends GrammarMap> =
 					| V.Literal.Number.Integer<G>
 					| V.Literal.Number.Integer.Big<G>
@@ -3567,7 +4071,7 @@ declare module './literal.ts' {
 				interface Multiline<
 					G extends GrammarMap,
 					K extends gate.Under<'literal.string.bytes.multiline'> = 'literal.string.bytes.multiline'
-				> extends byteStrings.Literal.String.Bytes.Multiline<G, K> {}
+				> extends multilineByteStrings.Literal.String.Bytes.Multiline<G, K> {}
 				interface Raw<
 					G extends GrammarMap,
 					K extends gate.Under<'literal.string.bytes.raw'> = 'literal.string.bytes.raw'
@@ -3576,7 +4080,7 @@ declare module './literal.ts' {
 					interface Multiline<
 						G extends GrammarMap,
 						K extends gate.Under<'literal.string.bytes.raw.multiline'> = 'literal.string.bytes.raw.multiline'
-					> extends rawStrings.Literal.String.Bytes.Raw.Multiline<G, K> {}
+					> extends rawStringForms.Literal.String.Bytes.Raw.Multiline<G, K> {}
 					type Any<G extends GrammarMap> = V.Literal.String.Bytes.Raw<G> | V.Literal.String.Bytes.Raw.Multiline<G>;
 				}
 				type Any<G extends GrammarMap> =
@@ -3594,6 +4098,10 @@ declare module './literal.ts' {
 				> extends cStrings.Literal.String.C.Raw<G, K> {}
 				type Any<G extends GrammarMap> = V.Literal.String.C<G> | V.Literal.String.C.Raw<G>;
 			}
+			interface Concatenated<
+				G extends GrammarMap,
+				K extends gate.Under<'literal.string.concatenated'> = 'literal.string.concatenated'
+			> extends implicitConcatenation.Literal.String.Concatenated<G, K> {}
 			interface Interpolated<
 				G extends GrammarMap,
 				K extends gate.Under<'literal.string.interpolated'> = 'literal.string.interpolated'
@@ -3602,24 +4110,24 @@ declare module './literal.ts' {
 				interface Deferred<
 					G extends GrammarMap,
 					K extends gate.Under<'literal.string.interpolated.deferred'> = 'literal.string.interpolated.deferred'
-				> extends stringInterpolation.Literal.String.Interpolated.Deferred<G, K> {}
+				> extends formatStrings.Literal.String.Interpolated.Deferred<G, K> {}
 				namespace Deferred {
 					interface Multiline<
 						G extends GrammarMap,
 						K extends gate.Under<'literal.string.interpolated.deferred.multiline'> =
 							'literal.string.interpolated.deferred.multiline'
-					> extends stringInterpolation.Literal.String.Interpolated.Deferred.Multiline<G, K> {}
+					> extends formatStrings.Literal.String.Interpolated.Deferred.Multiline<G, K> {}
 					interface Raw<
 						G extends GrammarMap,
 						K extends gate.Under<'literal.string.interpolated.deferred.raw'> =
 							'literal.string.interpolated.deferred.raw'
-					> extends rawStrings.Literal.String.Interpolated.Deferred.Raw<G, K> {}
+					> extends rawStringForms.Literal.String.Interpolated.Deferred.Raw<G, K> {}
 					namespace Raw {
 						interface Multiline<
 							G extends GrammarMap,
 							K extends gate.Under<'literal.string.interpolated.deferred.raw.multiline'> =
 								'literal.string.interpolated.deferred.raw.multiline'
-						> extends rawStrings.Literal.String.Interpolated.Deferred.Raw.Multiline<G, K> {}
+						> extends rawStringForms.Literal.String.Interpolated.Deferred.Raw.Multiline<G, K> {}
 						type Any<G extends GrammarMap> =
 							| V.Literal.String.Interpolated.Deferred.Raw<G>
 							| V.Literal.String.Interpolated.Deferred.Raw.Multiline<G>;
@@ -3633,17 +4141,17 @@ declare module './literal.ts' {
 				interface Multiline<
 					G extends GrammarMap,
 					K extends gate.Under<'literal.string.interpolated.multiline'> = 'literal.string.interpolated.multiline'
-				> extends stringInterpolation.Literal.String.Interpolated.Multiline<G, K> {}
+				> extends formatStrings.Literal.String.Interpolated.Multiline<G, K> {}
 				interface Raw<
 					G extends GrammarMap,
 					K extends gate.Under<'literal.string.interpolated.raw'> = 'literal.string.interpolated.raw'
-				> extends rawStrings.Literal.String.Interpolated.Raw<G, K> {}
+				> extends rawStringForms.Literal.String.Interpolated.Raw<G, K> {}
 				namespace Raw {
 					interface Multiline<
 						G extends GrammarMap,
 						K extends gate.Under<'literal.string.interpolated.raw.multiline'> =
 							'literal.string.interpolated.raw.multiline'
-					> extends rawStrings.Literal.String.Interpolated.Raw.Multiline<G, K> {}
+					> extends rawStringForms.Literal.String.Interpolated.Raw.Multiline<G, K> {}
 					type Any<G extends GrammarMap> =
 						| V.Literal.String.Interpolated.Raw<G>
 						| V.Literal.String.Interpolated.Raw.Multiline<G>;
@@ -3658,6 +4166,10 @@ declare module './literal.ts' {
 					| V.Literal.String.Interpolated.Raw<G>
 					| V.Literal.String.Interpolated.Raw.Multiline<G>;
 			}
+			interface Multiline<
+				G extends GrammarMap,
+				K extends gate.Under<'literal.string.multiline'> = 'literal.string.multiline'
+			> extends multilineStrings.Literal.String.Multiline<G, K> {}
 			interface Raw<
 				G extends GrammarMap,
 				K extends gate.Under<'literal.string.raw'> = 'literal.string.raw'
@@ -3666,7 +4178,7 @@ declare module './literal.ts' {
 				interface Multiline<
 					G extends GrammarMap,
 					K extends gate.Under<'literal.string.raw.multiline'> = 'literal.string.raw.multiline'
-				> extends rawStrings.Literal.String.Raw.Multiline<G, K> {}
+				> extends rawStringForms.Literal.String.Raw.Multiline<G, K> {}
 				type Any<G extends GrammarMap> = V.Literal.String.Raw<G> | V.Literal.String.Raw.Multiline<G>;
 			}
 			interface Unicode<
@@ -3766,7 +4278,7 @@ declare module './modifier.ts' {
 			interface Protected<
 				G extends GrammarMap,
 				K extends gate.Under<'modifier.visibility.protected'> = 'modifier.visibility.protected'
-			> extends visibility.Modifier.Visibility.Protected<G, K> {}
+			> extends classVisibility.Modifier.Visibility.Protected<G, K> {}
 			interface Public<
 				G extends GrammarMap,
 				K extends gate.Under<'modifier.visibility.public'> = 'modifier.visibility.public'
@@ -3775,15 +4287,15 @@ declare module './modifier.ts' {
 				interface Internal<
 					G extends GrammarMap,
 					K extends gate.Under<'modifier.visibility.public.internal'> = 'modifier.visibility.public.internal'
-				> extends visibility.Modifier.Visibility.Public.Internal<G, K> {}
+				> extends moduleVisibility.Modifier.Visibility.Public.Internal<G, K> {}
 				interface Parent<
 					G extends GrammarMap,
 					K extends gate.Under<'modifier.visibility.public.parent'> = 'modifier.visibility.public.parent'
-				> extends visibility.Modifier.Visibility.Public.Parent<G, K> {}
+				> extends moduleVisibility.Modifier.Visibility.Public.Parent<G, K> {}
 				interface Restricted<
 					G extends GrammarMap,
 					K extends gate.Under<'modifier.visibility.public.restricted'> = 'modifier.visibility.public.restricted'
-				> extends visibility.Modifier.Visibility.Public.Restricted<G, K> {
+				> extends moduleVisibility.Modifier.Visibility.Public.Restricted<G, K> {
 					readonly scope: gate.In<
 						G,
 						features.ScopedVisibility,
@@ -3837,7 +4349,7 @@ declare module './pattern.ts' {
 		interface Assignment<
 			G extends GrammarMap,
 			K extends gate.Under<'pattern.assignment'> = 'pattern.assignment'
-		> extends destructuring.Pattern.Assignment<G, K> {}
+		> extends objectPatterns.Pattern.Assignment<G, K> {}
 		interface Complex<
 			G extends GrammarMap,
 			K extends gate.Under<'pattern.complex'> = 'pattern.complex'
@@ -3856,24 +4368,28 @@ declare module './pattern.ts' {
 		interface Generic<
 			G extends GrammarMap,
 			K extends gate.Under<'pattern.generic'> = 'pattern.generic'
-		> extends parametricPolymorphism.Pattern.Generic<G, K> {}
+		> extends genericItems.Pattern.Generic<G, K> {}
 		interface List<G extends GrammarMap, K extends gate.Under<'pattern.list'> = 'pattern.list'> extends destructuring
 			.Pattern.List<G, K> {}
-		interface Map<G extends GrammarMap, K extends gate.Under<'pattern.map'> = 'pattern.map'> extends matchExpressions
+		interface Map<G extends GrammarMap, K extends gate.Under<'pattern.map'> = 'pattern.map'> extends mappingPatterns
 			.Pattern.Map<G, K> {}
+		interface Mutable<
+			G extends GrammarMap,
+			K extends gate.Under<'pattern.mutable'> = 'pattern.mutable'
+		> extends rustDeclarations.Pattern.Mutable<G, K> {}
 		interface Object<
 			G extends GrammarMap,
 			K extends gate.Under<'pattern.object'> = 'pattern.object'
-		> extends destructuring.Pattern.Object<G, K> {}
+		> extends objectPatterns.Pattern.Object<G, K> {}
 		namespace Object {
 			interface Assignment<
 				G extends GrammarMap,
 				K extends gate.Under<'pattern.object.assignment'> = 'pattern.object.assignment'
-			> extends destructuring.Pattern.Object.Assignment<G, K> {}
+			> extends objectPatterns.Pattern.Object.Assignment<G, K> {}
 			interface Pair<
 				G extends GrammarMap,
 				K extends gate.Under<'pattern.object.pair'> = 'pattern.object.pair'
-			> extends destructuring.Pattern.Object.Pair<G, K> {
+			> extends objectPatterns.Pattern.Object.Pair<G, K> {
 				readonly computed?: gate.In<G, features.ComputedKeys, computedKeys.Pattern.Object.Pair<G, K>['computed']>;
 			}
 			type Any<G extends GrammarMap> = V.Pattern.Object<G> | V.Pattern.Object.Assignment<G> | V.Pattern.Object.Pair<G>;
@@ -3917,13 +4433,13 @@ declare module './pattern.ts' {
 			> extends references.Pattern.Reference.Value<G, K> {}
 			type Any<G extends GrammarMap> = V.Pattern.Reference<G> | V.Pattern.Reference.Value<G>;
 		}
-		interface Rest<G extends GrammarMap, K extends gate.Under<'pattern.rest'> = 'pattern.rest'> extends destructuring
+		interface Rest<G extends GrammarMap, K extends gate.Under<'pattern.rest'> = 'pattern.rest'> extends restPatterns
 			.Pattern.Rest<G, K> {}
 		namespace Rest {
 			interface Map<
 				G extends GrammarMap,
 				K extends gate.Under<'pattern.rest.map'> = 'pattern.rest.map'
-			> extends destructuring.Pattern.Rest.Map<G, K> {}
+			> extends pythonDestructuring.Pattern.Rest.Map<G, K> {}
 			type Any<G extends GrammarMap> = V.Pattern.Rest<G> | V.Pattern.Rest.Map<G>;
 		}
 		interface Struct<
@@ -3935,19 +4451,19 @@ declare module './pattern.ts' {
 				G extends GrammarMap,
 				K extends gate.Under<'pattern.struct.field'> = 'pattern.struct.field'
 			> extends structPatterns.Pattern.Struct.Field<G, K> {}
-			type Rest<G extends GrammarMap> = structs.Pattern.Struct.Rest<G>;
+			type Rest<G extends GrammarMap> = tupleStructs.Pattern.Struct.Rest<G>;
 			type Any<G extends GrammarMap> = V.Pattern.Struct<G> | V.Pattern.Struct.Field<G> | V.Pattern.Struct.Rest<G>;
 		}
-		interface Tuple<G extends GrammarMap, K extends gate.Under<'pattern.tuple'> = 'pattern.tuple'> extends destructuring
+		interface Tuple<G extends GrammarMap, K extends gate.Under<'pattern.tuple'> = 'pattern.tuple'> extends tuplePatterns
 			.Pattern.Tuple<G, K> {}
 		namespace Tuple {
 			interface Bare<
 				G extends GrammarMap,
 				K extends gate.Under<'pattern.tuple.bare'> = 'pattern.tuple.bare'
-			> extends destructuring.Pattern.Tuple.Bare<G, K> {}
+			> extends pythonDestructuring.Pattern.Tuple.Bare<G, K> {}
 			type Any<G extends GrammarMap> = V.Pattern.Tuple<G> | V.Pattern.Tuple.Bare<G>;
 		}
-		type Wildcard<G extends GrammarMap> = destructuring.Pattern.Wildcard<G>;
+		type Wildcard<G extends GrammarMap> = wildcardPatterns.Pattern.Wildcard<G>;
 		type Any<G extends GrammarMap> =
 			| V.Pattern<G>
 			| V.Pattern.As<G>
@@ -3987,16 +4503,22 @@ declare module './statement.ts' {
 			K extends gate.Under<'statement.assert'> = 'statement.assert'
 		> extends assertions.Statement.Assert<G, K> {}
 		interface Block<G extends GrammarMap, K extends gate.Under<'statement.block'> = 'statement.block'> {
-			readonly label?: gate.In<G, features.LabeledControlFlow, labeledControlFlow.Statement.Block<G, K>['label']>;
+			readonly label?: gate.In<G, features.LoopLabels, loopLabels.Statement.Block<G, K>['label']>;
+			readonly trailingExpression?: gate.In<
+				G,
+				features.ValuedBlocks,
+				valuedBlocks.Statement.Block<G, K>['trailingExpression']
+			>;
 		}
 		namespace Block {
 			interface Static<
 				G extends GrammarMap,
 				K extends gate.Under<'statement.block.static'> = 'statement.block.static'
-			> extends classes.Statement.Block.Static<G, K> {}
+			> extends javascriptClasses.Statement.Block.Static<G, K> {}
 			type Any<G extends GrammarMap> = V.Statement.Block<G> | V.Statement.Block.Static<G>;
 		}
 		interface Break<G extends GrammarMap, K extends gate.Under<'statement.break'> = 'statement.break'> {
+			readonly expression?: gate.In<G, features.ValuedBlocks, valuedBlocks.Statement.Break<G, K>['expression']>;
 			readonly label?: gate.In<G, features.LabeledControlFlow, labeledControlFlow.Statement.Break<G, K>['label']>;
 		}
 		interface Continue<G extends GrammarMap, K extends gate.Under<'statement.continue'> = 'statement.continue'> {
@@ -4006,6 +4528,10 @@ declare module './statement.ts' {
 			G extends GrammarMap,
 			K extends gate.Under<'statement.debugger'> = 'statement.debugger'
 		> extends debuggerStatements.Statement.Debugger<G, K> {}
+		interface Delete<
+			G extends GrammarMap,
+			K extends gate.Under<'statement.delete'> = 'statement.delete'
+		> extends pythonStatements.Statement.Delete<G, K> {}
 		interface Exec<
 			G extends GrammarMap,
 			K extends gate.Under<'statement.exec'> = 'statement.exec'
@@ -4013,27 +4539,43 @@ declare module './statement.ts' {
 		interface Export<
 			G extends GrammarMap,
 			K extends gate.Under<'statement.export'> = 'statement.export'
-		> extends modules.Statement.Export<G, K> {
+		> extends javascriptModules.Statement.Export<G, K> {
 			readonly typeOnly?: gate.In<G, features.TypeOnlyImports, typeOnlyImports.Statement.Export<G, K>['typeOnly']>;
 		}
 		namespace Export {
 			interface All<
 				G extends GrammarMap,
 				K extends gate.Under<'statement.export.all'> = 'statement.export.all'
-			> extends modules.Statement.Export.All<G, K> {}
+			> extends javascriptModules.Statement.Export.All<G, K> {}
 			interface Default<
 				G extends GrammarMap,
 				K extends gate.Under<'statement.export.default'> = 'statement.export.default'
-			> extends modules.Statement.Export.Default<G, K> {}
+			> extends javascriptModules.Statement.Export.Default<G, K> {}
 			type Any<G extends GrammarMap> =
 				| V.Statement.Export<G>
 				| V.Statement.Export.All<G>
 				| V.Statement.Export.Default<G>;
 		}
+		interface Expression<G extends GrammarMap, K extends gate.Under<'statement.expression'> = 'statement.expression'> {
+			readonly content?: gate.In<G, features.ForEachTargets, forEachTargets.Statement.Expression<G, K>['content']>;
+			readonly expression?: gate.In<
+				G,
+				features.CFamilyExpressionStatements,
+				cFamilyExpressionStatements.Statement.Expression<G, K>['expression']
+			>;
+		}
 		interface Global<
 			G extends GrammarMap,
 			K extends gate.Under<'statement.global'> = 'statement.global'
 		> extends scopeDeclarations.Statement.Global<G, K> {}
+		interface If<G extends GrammarMap, K extends gate.Under<'statement.if'> = 'statement.if'> {
+			readonly alternative?: gate.In<G, features.IfAlternative, ifAlternative.Statement.If<G, K>['alternative']>;
+			readonly alternatives?: gate.In<
+				G,
+				features.PythonStatements,
+				pythonStatements.Statement.If<G, K>['alternatives']
+			>;
+		}
 		interface Import<
 			G extends GrammarMap,
 			K extends gate.Under<'statement.import'> = 'statement.import'
@@ -4044,43 +4586,43 @@ declare module './statement.ts' {
 			interface Alias<
 				G extends GrammarMap,
 				K extends gate.Under<'statement.import.alias'> = 'statement.import.alias'
-			> extends modules.Statement.Import.Alias<G, K> {}
+			> extends javascriptModules.Statement.Import.Alias<G, K> {}
 			interface From<
 				G extends GrammarMap,
 				K extends gate.Under<'statement.import.from'> = 'statement.import.from'
-			> extends modules.Statement.Import.From<G, K> {}
+			> extends fromImports.Statement.Import.From<G, K> {}
 			interface Future<
 				G extends GrammarMap,
 				K extends gate.Under<'statement.import.future'> = 'statement.import.future'
-			> extends modules.Statement.Import.Future<G, K> {}
+			> extends fromImports.Statement.Import.Future<G, K> {}
 			interface Package<
 				G extends GrammarMap,
 				K extends gate.Under<'statement.import.package'> = 'statement.import.package'
-			> extends modules.Statement.Import.Package<G, K> {}
+			> extends importTrees.Statement.Import.Package<G, K> {}
 			namespace Package {
 				interface Private<
 					G extends GrammarMap,
 					K extends gate.Under<'statement.import.package.private'> = 'statement.import.package.private'
-				> extends visibility.Statement.Import.Package.Private<G, K> {}
+				> extends moduleVisibility.Statement.Import.Package.Private<G, K> {}
 				interface Public<
 					G extends GrammarMap,
 					K extends gate.Under<'statement.import.package.public'> = 'statement.import.package.public'
-				> extends visibility.Statement.Import.Package.Public<G, K> {}
+				> extends moduleVisibility.Statement.Import.Package.Public<G, K> {}
 				namespace Public {
 					interface Internal<
 						G extends GrammarMap,
 						K extends gate.Under<'statement.import.package.public.internal'> =
 							'statement.import.package.public.internal'
-					> extends visibility.Statement.Import.Package.Public.Internal<G, K> {}
+					> extends moduleVisibility.Statement.Import.Package.Public.Internal<G, K> {}
 					interface Parent<
 						G extends GrammarMap,
 						K extends gate.Under<'statement.import.package.public.parent'> = 'statement.import.package.public.parent'
-					> extends visibility.Statement.Import.Package.Public.Parent<G, K> {}
+					> extends moduleVisibility.Statement.Import.Package.Public.Parent<G, K> {}
 					interface Restricted<
 						G extends GrammarMap,
 						K extends gate.Under<'statement.import.package.public.restricted'> =
 							'statement.import.package.public.restricted'
-					> extends visibility.Statement.Import.Package.Public.Restricted<G, K> {}
+					> extends moduleVisibility.Statement.Import.Package.Public.Restricted<G, K> {}
 					type Any<G extends GrammarMap> =
 						| V.Statement.Import.Package.Public<G>
 						| V.Statement.Import.Package.Public.Internal<G>
@@ -4098,24 +4640,24 @@ declare module './statement.ts' {
 			interface Private<
 				G extends GrammarMap,
 				K extends gate.Under<'statement.import.private'> = 'statement.import.private'
-			> extends visibility.Statement.Import.Private<G, K> {}
+			> extends moduleVisibility.Statement.Import.Private<G, K> {}
 			interface Public<
 				G extends GrammarMap,
 				K extends gate.Under<'statement.import.public'> = 'statement.import.public'
-			> extends visibility.Statement.Import.Public<G, K> {}
+			> extends moduleVisibility.Statement.Import.Public<G, K> {}
 			namespace Public {
 				interface Internal<
 					G extends GrammarMap,
 					K extends gate.Under<'statement.import.public.internal'> = 'statement.import.public.internal'
-				> extends visibility.Statement.Import.Public.Internal<G, K> {}
+				> extends moduleVisibility.Statement.Import.Public.Internal<G, K> {}
 				interface Parent<
 					G extends GrammarMap,
 					K extends gate.Under<'statement.import.public.parent'> = 'statement.import.public.parent'
-				> extends visibility.Statement.Import.Public.Parent<G, K> {}
+				> extends moduleVisibility.Statement.Import.Public.Parent<G, K> {}
 				interface Restricted<
 					G extends GrammarMap,
 					K extends gate.Under<'statement.import.public.restricted'> = 'statement.import.public.restricted'
-				> extends visibility.Statement.Import.Public.Restricted<G, K> {}
+				> extends moduleVisibility.Statement.Import.Public.Restricted<G, K> {}
 				type Any<G extends GrammarMap> =
 					| V.Statement.Import.Public<G>
 					| V.Statement.Import.Public.Internal<G>
@@ -4125,7 +4667,7 @@ declare module './statement.ts' {
 			interface Typeof<
 				G extends GrammarMap,
 				K extends gate.Under<'statement.import.typeof'> = 'statement.import.typeof'
-			> extends modules.Statement.Import.Typeof<G, K> {}
+			> extends javascriptModules.Statement.Import.Typeof<G, K> {}
 			type Any<G extends GrammarMap> =
 				| V.Statement.Import<G>
 				| V.Statement.Import.Alias<G>
@@ -4147,9 +4689,9 @@ declare module './statement.ts' {
 		interface Labeled<
 			G extends GrammarMap,
 			K extends gate.Under<'statement.labeled'> = 'statement.labeled'
-		> extends labeledControlFlow.Statement.Labeled<G, K> {}
+		> extends labeledStatements.Statement.Labeled<G, K> {}
 		interface Loop<G extends GrammarMap, K extends gate.Under<'statement.loop'> = 'statement.loop'> {
-			readonly label?: gate.In<G, features.LabeledControlFlow, labeledControlFlow.Statement.Loop<G, K>['label']>;
+			readonly label?: gate.In<G, features.LoopLabels, loopLabels.Statement.Loop<G, K>['label']>;
 		}
 		namespace Loop {
 			interface Counted<
@@ -4164,19 +4706,24 @@ declare module './statement.ts' {
 				G extends GrammarMap,
 				K extends gate.Under<'statement.loop.for_each'> = 'statement.loop.for_each'
 			> {
-				readonly async?: gate.In<G, features.AsyncAwait, asyncAwait.Statement.Loop.ForEach<G, K>['async']>;
-				readonly label?: gate.In<
+				readonly alternative?: gate.In<
 					G,
-					features.LabeledControlFlow,
-					labeledControlFlow.Statement.Loop.ForEach<G, K>['label']
+					features.PythonStatements,
+					pythonStatements.Statement.Loop.ForEach<G, K>['alternative']
 				>;
+				readonly async?: gate.In<G, features.AsyncIteration, asyncIteration.Statement.Loop.ForEach<G, K>['async']>;
+				readonly header?: gate.In<G, features.ForInHeaders, forInHeaders.Statement.Loop.ForEach<G, K>['header']>;
+				readonly label?: gate.In<G, features.LoopLabels, loopLabels.Statement.Loop.ForEach<G, K>['label']>;
+				readonly left?: gate.In<G, features.ForEachTargets, forEachTargets.Statement.Loop.ForEach<G, K>['left']>;
+				readonly right?: gate.In<G, features.ForEachTargets, forEachTargets.Statement.Loop.ForEach<G, K>['right']>;
 			}
 			interface While<G extends GrammarMap, K extends gate.Under<'statement.loop.while'> = 'statement.loop.while'> {
-				readonly label?: gate.In<
+				readonly alternative?: gate.In<
 					G,
-					features.LabeledControlFlow,
-					labeledControlFlow.Statement.Loop.While<G, K>['label']
+					features.PythonStatements,
+					pythonStatements.Statement.Loop.While<G, K>['alternative']
 				>;
+				readonly label?: gate.In<G, features.LoopLabels, loopLabels.Statement.Loop.While<G, K>['label']>;
 			}
 			type Any<G extends GrammarMap> =
 				| V.Statement.Loop<G>
@@ -4200,8 +4747,8 @@ declare module './statement.ts' {
 		interface Resource<
 			G extends GrammarMap,
 			K extends gate.Under<'statement.resource'> = 'statement.resource'
-		> extends resourceManagement.Statement.Resource<G, K> {
-			readonly async?: gate.In<G, features.AsyncAwait, asyncAwait.Statement.Resource<G, K>['async']>;
+		> extends resourceStatements.Statement.Resource<G, K> {
+			readonly async?: gate.In<G, features.AsyncContexts, asyncContexts.Statement.Resource<G, K>['async']>;
 		}
 		interface Scope<
 			G extends GrammarMap,
@@ -4271,56 +4818,51 @@ declare module './statement.ts' {
 }
 
 declare module './type.ts' {
+	interface Type<G extends GrammarMap, K extends gate.Under<'type'> = 'type'> {
+		readonly content?: gate.In<G, features.TypeExpressions, typeExpressions.Type<G, K>['content']>;
+	}
 	namespace Type {
 		interface Abstract<
 			G extends GrammarMap,
 			K extends gate.Under<'type.abstract'> = 'type.abstract'
-		> extends typeAnnotations.Type.Abstract<G, K> {
-			readonly typeParameters?: gate.In<
-				G,
-				features.ParametricPolymorphism,
-				parametricPolymorphism.Type.Abstract<G, K>['typeParameters']
-			>;
+		> extends systemsTypes.Type.Abstract<G, K> {
+			readonly typeParameters?: gate.In<G, features.GenericItems, genericItems.Type.Abstract<G, K>['typeParameters']>;
 		}
-		interface Array<G extends GrammarMap, K extends gate.Under<'type.array'> = 'type.array'> extends typeAnnotations
-			.Type.Array<G, K> {}
-		interface Bounded<
-			G extends GrammarMap,
-			K extends gate.Under<'type.bounded'> = 'type.bounded'
-		> extends typeAnnotations.Type.Bounded<G, K> {}
+		interface Array<G extends GrammarMap, K extends gate.Under<'type.array'> = 'type.array'> extends staticTypes.Type
+			.Array<G, K> {}
+		interface Bounded<G extends GrammarMap, K extends gate.Under<'type.bounded'> = 'type.bounded'> extends systemsTypes
+			.Type.Bounded<G, K> {}
 		interface Bracketed<
 			G extends GrammarMap,
 			K extends gate.Under<'type.bracketed'> = 'type.bracketed'
-		> extends typeAnnotations.Type.Bracketed<G, K> {}
+		> extends systemsTypes.Type.Bracketed<G, K> {}
 		interface Conditional<
 			G extends GrammarMap,
 			K extends gate.Under<'type.conditional'> = 'type.conditional'
-		> extends typeAnnotations.Type.Conditional<G, K> {}
+		> extends typeAlgebra.Type.Conditional<G, K> {}
 		interface Constrained<
 			G extends GrammarMap,
 			K extends gate.Under<'type.constrained'> = 'type.constrained'
-		> extends typeAnnotations.Type.Constrained<G, K> {
+		> extends pythonTypeForms.Type.Constrained<G, K> {
 			readonly constraint: gate.In<
 				G,
-				features.BoundedQuantification,
-				boundedQuantification.Type.Constrained<G, K>['constraint']
+				features.ConstrainedTypeParameters,
+				constrainedTypeParameters.Type.Constrained<G, K>['constraint']
 			>;
 		}
-		interface Dynamic<
-			G extends GrammarMap,
-			K extends gate.Under<'type.dynamic'> = 'type.dynamic'
-		> extends typeAnnotations.Type.Dynamic<G, K> {}
-		type Existential<G extends GrammarMap> = typeAnnotations.Type.Existential<G>;
+		interface Dynamic<G extends GrammarMap, K extends gate.Under<'type.dynamic'> = 'type.dynamic'> extends systemsTypes
+			.Type.Dynamic<G, K> {}
+		type Existential<G extends GrammarMap> = typeAlgebra.Type.Existential<G>;
 		interface Function<
 			G extends GrammarMap,
 			K extends gate.Under<'type.function'> = 'type.function'
-		> extends typeAnnotations.Type.Function<G, K> {
+		> extends staticTypes.Type.Function<G, K> {
 			readonly forLifetimes?: gate.In<G, features.Lifetimes, lifetimes.Type.Function<G, K>['forLifetimes']>;
-			readonly receiver?: gate.In<G, features.ExplicitReceivers, explicitReceivers.Type.Function<G, K>['receiver']>;
+			readonly receiver?: gate.In<G, features.TypedReceivers, typedReceivers.Type.Function<G, K>['receiver']>;
 			readonly typeParameters?: gate.In<
 				G,
-				features.ParametricPolymorphism,
-				parametricPolymorphism.Type.Function<G, K>['typeParameters']
+				features.GenericExpressions,
+				genericExpressions.Type.Function<G, K>['typeParameters']
 			>;
 			readonly unsafe?: gate.In<G, features.UnsafeCode, unsafeCode.Type.Function<G, K>['unsafe']>;
 		}
@@ -4328,7 +4870,7 @@ declare module './type.ts' {
 			interface Constructor<
 				G extends GrammarMap,
 				K extends gate.Under<'type.function.constructor'> = 'type.function.constructor'
-			> extends typeAnnotations.Type.Function.Constructor<G, K> {
+			> extends typeAlgebra.Type.Function.Constructor<G, K> {
 				readonly abstract?: gate.In<
 					G,
 					features.AbstractClasses,
@@ -4336,8 +4878,8 @@ declare module './type.ts' {
 				>;
 				readonly typeParameters?: gate.In<
 					G,
-					features.ParametricPolymorphism,
-					parametricPolymorphism.Type.Function.Constructor<G, K>['typeParameters']
+					features.GenericExpressions,
+					genericExpressions.Type.Function.Constructor<G, K>['typeParameters']
 				>;
 			}
 			type Any<G extends GrammarMap> = V.Type.Function<G> | V.Type.Function.Constructor<G>;
@@ -4350,79 +4892,77 @@ declare module './type.ts' {
 			interface Turbofish<
 				G extends GrammarMap,
 				K extends gate.Under<'type.generic.turbofish'> = 'type.generic.turbofish'
-			> extends typeAnnotations.Type.Generic.Turbofish<G, K> {}
+			> extends systemsTypes.Type.Generic.Turbofish<G, K> {}
 			type Any<G extends GrammarMap> = V.Type.Generic<G> | V.Type.Generic.Turbofish<G>;
 		}
-		interface Import<G extends GrammarMap, K extends gate.Under<'type.import'> = 'type.import'> extends modules.Type
-			.Import<G, K> {}
+		interface Import<
+			G extends GrammarMap,
+			K extends gate.Under<'type.import'> = 'type.import'
+		> extends javascriptModules.Type.Import<G, K> {}
 		interface IndexQuery<
 			G extends GrammarMap,
 			K extends gate.Under<'type.index_query'> = 'type.index_query'
-		> extends typeAnnotations.Type.IndexQuery<G, K> {}
-		interface Infer<G extends GrammarMap, K extends gate.Under<'type.infer'> = 'type.infer'> extends typeAnnotations
-			.Type.Infer<G, K> {}
+		> extends typeAlgebra.Type.IndexQuery<G, K> {}
+		interface Infer<G extends GrammarMap, K extends gate.Under<'type.infer'> = 'type.infer'> extends typeAlgebra.Type
+			.Infer<G, K> {}
 		interface Intersection<
 			G extends GrammarMap,
 			K extends gate.Under<'type.intersection'> = 'type.intersection'
-		> extends typeAnnotations.Type.Intersection<G, K> {}
-		interface Literal<
-			G extends GrammarMap,
-			K extends gate.Under<'type.literal'> = 'type.literal'
-		> extends typeAnnotations.Type.Literal<G, K> {}
-		interface Lookup<G extends GrammarMap, K extends gate.Under<'type.lookup'> = 'type.lookup'> extends typeAnnotations
-			.Type.Lookup<G, K> {}
+		> extends typeAlgebra.Type.Intersection<G, K> {}
+		interface Literal<G extends GrammarMap, K extends gate.Under<'type.literal'> = 'type.literal'> extends typeAlgebra
+			.Type.Literal<G, K> {}
+		interface Lookup<G extends GrammarMap, K extends gate.Under<'type.lookup'> = 'type.lookup'> extends typeAlgebra.Type
+			.Lookup<G, K> {}
 		interface Nullable<
 			G extends GrammarMap,
 			K extends gate.Under<'type.nullable'> = 'type.nullable'
 		> extends nullableTypes.Type.Nullable<G, K> {}
-		interface Object<G extends GrammarMap, K extends gate.Under<'type.object'> = 'type.object'> extends typeAnnotations
-			.Type.Object<G, K> {}
+		interface Object<G extends GrammarMap, K extends gate.Under<'type.object'> = 'type.object'> extends typeAlgebra.Type
+			.Object<G, K> {}
 		interface Optional<
 			G extends GrammarMap,
 			K extends gate.Under<'type.optional'> = 'type.optional'
-		> extends typeAnnotations.Type.Optional<G, K> {}
+		> extends typeAlgebra.Type.Optional<G, K> {}
 		interface Parenthesized<
 			G extends GrammarMap,
 			K extends gate.Under<'type.parenthesized'> = 'type.parenthesized'
-		> extends typeAnnotations.Type.Parenthesized<G, K> {}
-		interface Pointer<
-			G extends GrammarMap,
-			K extends gate.Under<'type.pointer'> = 'type.pointer'
-		> extends typeAnnotations.Type.Pointer<G, K> {
+		> extends typeAlgebra.Type.Parenthesized<G, K> {}
+		interface Pointer<G extends GrammarMap, K extends gate.Under<'type.pointer'> = 'type.pointer'> extends systemsTypes
+			.Type.Pointer<G, K> {
 			readonly writable?: gate.In<G, features.References, references.Type.Pointer<G, K>['writable']>;
 		}
 		interface Predicate<
 			G extends GrammarMap,
 			K extends gate.Under<'type.predicate'> = 'type.predicate'
-		> extends typeAnnotations.Type.Predicate<G, K> {}
+		> extends typeAlgebra.Type.Predicate<G, K> {}
 		namespace Predicate {
 			interface Asserts<
 				G extends GrammarMap,
 				K extends gate.Under<'type.predicate.asserts'> = 'type.predicate.asserts'
-			> extends typeAnnotations.Type.Predicate.Asserts<G, K> {}
+			> extends typeAlgebra.Type.Predicate.Asserts<G, K> {}
 			type Any<G extends GrammarMap> = V.Type.Predicate<G> | V.Type.Predicate.Asserts<G>;
 		}
-		type Primitive<G extends GrammarMap> = typeAnnotations.Type.Primitive<G>;
+		type Primitive<G extends GrammarMap> = staticTypes.Type.Primitive<G>;
 		namespace Primitive {
-			type Boolean<G extends GrammarMap> = typeAnnotations.Type.Primitive.Boolean<G>;
+			type Boolean<G extends GrammarMap> = staticTypes.Type.Primitive.Boolean<G>;
 			type Character<G extends GrammarMap> = characters.Type.Primitive.Character<G>;
-			type Floating<G extends GrammarMap> = typeAnnotations.Type.Primitive.Floating<G>;
+			type Floating<G extends GrammarMap> = staticTypes.Type.Primitive.Floating<G>;
 			namespace Floating {
-				type Float32<G extends GrammarMap> = typeAnnotations.Type.Primitive.Floating.Float32<G>;
-				type Float64<G extends GrammarMap> = typeAnnotations.Type.Primitive.Floating.Float64<G>;
+				type Float32<G extends GrammarMap> = systemsTypes.Type.Primitive.Floating.Float32<G>;
+				type Float64<G extends GrammarMap> = staticTypes.Type.Primitive.Floating.Float64<G>;
 				type Any<G extends GrammarMap> =
 					| V.Type.Primitive.Floating<G>
 					| V.Type.Primitive.Floating.Float32<G>
 					| V.Type.Primitive.Floating.Float64<G>;
 			}
-			type Integral<G extends GrammarMap> = typeAnnotations.Type.Primitive.Integral<G>;
+			type Integral<G extends GrammarMap> = systemsTypes.Type.Primitive.Integral<G>;
 			namespace Integral {
-				type Int128<G extends GrammarMap> = typeAnnotations.Type.Primitive.Integral.Int128<G>;
-				type Int16<G extends GrammarMap> = typeAnnotations.Type.Primitive.Integral.Int16<G>;
-				type Int32<G extends GrammarMap> = typeAnnotations.Type.Primitive.Integral.Int32<G>;
-				type Int64<G extends GrammarMap> = typeAnnotations.Type.Primitive.Integral.Int64<G>;
-				type Int8<G extends GrammarMap> = typeAnnotations.Type.Primitive.Integral.Int8<G>;
-				type Size<G extends GrammarMap> = typeAnnotations.Type.Primitive.Integral.Size<G>;
+				type Int128<G extends GrammarMap> = systemsTypes.Type.Primitive.Integral.Int128<G>;
+				type Int16<G extends GrammarMap> = systemsTypes.Type.Primitive.Integral.Int16<G>;
+				type Int32<G extends GrammarMap> = systemsTypes.Type.Primitive.Integral.Int32<G>;
+				type Int64<G extends GrammarMap> = systemsTypes.Type.Primitive.Integral.Int64<G>;
+				type Int8<G extends GrammarMap> = systemsTypes.Type.Primitive.Integral.Int8<G>;
+				type Size<G extends GrammarMap> = systemsTypes.Type.Primitive.Integral.Size<G>;
 				type Any<G extends GrammarMap> =
 					| V.Type.Primitive.Integral<G>
 					| V.Type.Primitive.Integral.Int128<G>
@@ -4432,13 +4972,13 @@ declare module './type.ts' {
 					| V.Type.Primitive.Integral.Int8<G>
 					| V.Type.Primitive.Integral.Size<G>;
 			}
-			type Never<G extends GrammarMap> = typeAnnotations.Type.Primitive.Never<G>;
-			type Object<G extends GrammarMap> = typeAnnotations.Type.Primitive.Object<G>;
-			type String<G extends GrammarMap> = typeAnnotations.Type.Primitive.String<G>;
-			type Symbol<G extends GrammarMap> = typeAnnotations.Type.Primitive.Symbol<G>;
-			type Unchecked<G extends GrammarMap> = typeAnnotations.Type.Primitive.Unchecked<G>;
-			type Unknown<G extends GrammarMap> = typeAnnotations.Type.Primitive.Unknown<G>;
-			type Void<G extends GrammarMap> = typeAnnotations.Type.Primitive.Void<G>;
+			type Never<G extends GrammarMap> = staticTypes.Type.Primitive.Never<G>;
+			type Object<G extends GrammarMap> = typeAlgebra.Type.Primitive.Object<G>;
+			type String<G extends GrammarMap> = staticTypes.Type.Primitive.String<G>;
+			type Symbol<G extends GrammarMap> = typeAlgebra.Type.Primitive.Symbol<G>;
+			type Unchecked<G extends GrammarMap> = typeAlgebra.Type.Primitive.Unchecked<G>;
+			type Unknown<G extends GrammarMap> = typeAlgebra.Type.Primitive.Unknown<G>;
+			type Void<G extends GrammarMap> = typeAlgebra.Type.Primitive.Void<G>;
 			type Any<G extends GrammarMap> =
 				| V.Type.Primitive<G>
 				| V.Type.Primitive.Boolean<G>
@@ -4464,32 +5004,34 @@ declare module './type.ts' {
 		interface Qualified<
 			G extends GrammarMap,
 			K extends gate.Under<'type.qualified'> = 'type.qualified'
-		> extends typeAnnotations.Type.Qualified<G, K> {}
-		interface Query<G extends GrammarMap, K extends gate.Under<'type.query'> = 'type.query'> extends typeAnnotations
-			.Type.Query<G, K> {}
+		> extends systemsTypes.Type.Qualified<G, K> {}
+		interface Query<G extends GrammarMap, K extends gate.Under<'type.query'> = 'type.query'> extends typeAlgebra.Type
+			.Query<G, K> {}
 		interface Readonly<
 			G extends GrammarMap,
 			K extends gate.Under<'type.readonly'> = 'type.readonly'
-		> extends typeAnnotations.Type.Readonly<G, K> {}
-		type Receiver<G extends GrammarMap> = explicitReceivers.Type.Receiver<G>;
+		> extends typeAlgebra.Type.Readonly<G, K> {}
+		type Receiver<G extends GrammarMap> = typedReceivers.Type.Receiver<G>;
 		interface Reference<
 			G extends GrammarMap,
 			K extends gate.Under<'type.reference'> = 'type.reference'
-		> extends typeAnnotations.Type.Reference<G, K> {
+		> extends systemsTypes.Type.Reference<G, K> {
 			readonly exclusive?: gate.In<G, features.References, references.Type.Reference<G, K>['exclusive']>;
 			readonly lifetime?: gate.In<G, features.Lifetimes, lifetimes.Type.Reference<G, K>['lifetime']>;
 		}
-		interface Rest<G extends GrammarMap, K extends gate.Under<'type.rest'> = 'type.rest'> extends typeAnnotations.Type
-			.Rest<G, K> {}
+		interface Rest<G extends GrammarMap, K extends gate.Under<'type.rest'> = 'type.rest'> extends unionTypes.Type.Rest<
+			G,
+			K
+		> {}
 		interface Template<
 			G extends GrammarMap,
 			K extends gate.Under<'type.template'> = 'type.template'
-		> extends typeAnnotations.Type.Template<G, K> {}
-		interface Tuple<G extends GrammarMap, K extends gate.Under<'type.tuple'> = 'type.tuple'> extends typeAnnotations
-			.Type.Tuple<G, K> {}
-		interface Union<G extends GrammarMap, K extends gate.Under<'type.union'> = 'type.union'> extends typeAnnotations
-			.Type.Union<G, K> {}
-		type Unit<G extends GrammarMap> = typeAnnotations.Type.Unit<G>;
+		> extends typeAlgebra.Type.Template<G, K> {}
+		interface Tuple<G extends GrammarMap, K extends gate.Under<'type.tuple'> = 'type.tuple'> extends staticTypes.Type
+			.Tuple<G, K> {}
+		interface Union<G extends GrammarMap, K extends gate.Under<'type.union'> = 'type.union'> extends unionTypes.Type
+			.Union<G, K> {}
+		type Unit<G extends GrammarMap> = systemsTypes.Type.Unit<G>;
 		type Any<G extends GrammarMap> =
 			| V.Type<G>
 			| V.Type.Abstract<G>
@@ -4555,21 +5097,25 @@ declare module './map.ts' {
 		readonly argument: V.Argument<G>;
 		readonly 'argument.named': gate.In<G, features.NamedArguments, V.Argument.Named<G>>;
 		readonly attribute: V.Attribute<G>;
-		readonly 'attribute.content': V.Attribute.Content<G>;
-		readonly 'attribute.content.call': gate.In<G, features.Decorators, V.Attribute.Content.Call<G>>;
-		readonly 'attribute.content.member': gate.In<G, features.Decorators, V.Attribute.Content.Member<G>>;
-		readonly 'attribute.content.parenthesized': gate.In<G, features.Decorators, V.Attribute.Content.Parenthesized<G>>;
+		readonly 'attribute.content': gate.In<G, features.FieldsAndModifiers, V.Attribute.Content<G>>;
+		readonly 'attribute.content.call': gate.In<G, features.MemberDecorators, V.Attribute.Content.Call<G>>;
+		readonly 'attribute.content.member': gate.In<G, features.MemberDecorators, V.Attribute.Content.Member<G>>;
+		readonly 'attribute.content.parenthesized': gate.In<
+			G,
+			features.MemberDecorators,
+			V.Attribute.Content.Parenthesized<G>
+		>;
 		readonly 'attribute.decorator': gate.In<G, features.Decorators, V.Attribute.Decorator<G>>;
 		readonly 'attribute.inner': gate.In<G, features.Attributes, V.Attribute.Inner<G>>;
 		readonly clause: V.Clause<G>;
-		readonly 'clause.bounds': gate.In<G, features.BoundedQuantification, V.Clause.Bounds<G>>;
+		readonly 'clause.bounds': gate.In<G, features.BoundClauses, V.Clause.Bounds<G>>;
 		readonly 'clause.bounds.higher_ranked': gate.In<
 			G,
 			features.HigherRankPolymorphism,
 			V.Clause.Bounds.HigherRanked<G>
 		>;
-		readonly 'clause.bounds.removed': gate.In<G, features.BoundedQuantification, V.Clause.Bounds.Removed<G>>;
-		readonly 'clause.bounds.use': gate.In<G, features.BoundedQuantification, V.Clause.Bounds.Use<G>>;
+		readonly 'clause.bounds.removed': gate.In<G, features.WhereClauses, V.Clause.Bounds.Removed<G>>;
+		readonly 'clause.bounds.use': gate.In<G, features.WhereClauses, V.Clause.Bounds.Use<G>>;
 		readonly 'clause.case': V.Clause.Case<G>;
 		readonly 'clause.case.default': gate.In<G, features.MultiwayBranch, V.Clause.Case.Default<G>>;
 		readonly 'clause.case.match': gate.In<G, features.MatchExpressions, V.Clause.Case.Match<G>>;
@@ -4578,104 +5124,136 @@ declare module './map.ts' {
 		readonly 'clause.comprehension': gate.In<G, features.Comprehensions, V.Clause.Comprehension<G>>;
 		readonly 'clause.comprehension.for': gate.In<G, features.Comprehensions, V.Clause.Comprehension.For<G>>;
 		readonly 'clause.comprehension.if': gate.In<G, features.Comprehensions, V.Clause.Comprehension.If<G>>;
-		readonly 'clause.default': gate.In<G, features.ParametricPolymorphism, V.Clause.Default<G>>;
+		readonly 'clause.default': gate.In<G, features.GenericExpressions, V.Clause.Default<G>>;
 		readonly 'clause.else': V.Clause.Else<G>;
-		readonly 'clause.else_if': V.Clause.ElseIf<G>;
-		readonly 'clause.export': gate.In<G, features.Modules, V.Clause.Export<G>>;
-		readonly 'clause.export.namespace': gate.In<G, features.Modules, V.Clause.Export.Namespace<G>>;
-		readonly 'clause.export.specifier': gate.In<G, features.Modules, V.Clause.Export.Specifier<G>>;
-		readonly 'clause.export.specifier.typeof': gate.In<G, features.Modules, V.Clause.Export.Specifier.Typeof<G>>;
+		readonly 'clause.else_if': gate.In<G, features.PythonStatements, V.Clause.ElseIf<G>>;
+		readonly 'clause.export': gate.In<G, features.JavaScriptModules, V.Clause.Export<G>>;
+		readonly 'clause.export.namespace': gate.In<G, features.JavaScriptModules, V.Clause.Export.Namespace<G>>;
+		readonly 'clause.export.specifier': gate.In<G, features.JavaScriptModules, V.Clause.Export.Specifier<G>>;
+		readonly 'clause.export.specifier.typeof': gate.In<
+			G,
+			features.JavaScriptModules,
+			V.Clause.Export.Specifier.Typeof<G>
+		>;
 		readonly 'clause.extends': gate.In<G, features.SingleInheritance, V.Clause.Extends<G>>;
-		readonly 'clause.extends.type': gate.In<G, features.Interfaces, V.Clause.Extends.Type<G>>;
+		readonly 'clause.extends.type': gate.In<G, features.InterfaceExtends, V.Clause.Extends.Type<G>>;
 		readonly 'clause.finally': gate.In<G, features.Exceptions, V.Clause.Finally<G>>;
 		readonly 'clause.implements': gate.In<G, features.InterfaceConformance, V.Clause.Implements<G>>;
 		readonly 'clause.import': gate.In<G, features.Modules, V.Clause.Import<G>>;
-		readonly 'clause.import.alias': gate.In<G, features.Modules, V.Clause.Import.Alias<G>>;
-		readonly 'clause.import.attribute': gate.In<G, features.Modules, V.Clause.Import.Attribute<G>>;
-		readonly 'clause.import.list': gate.In<G, features.Modules, V.Clause.Import.List<G>>;
-		readonly 'clause.import.list.scoped': gate.In<G, features.Modules, V.Clause.Import.List.Scoped<G>>;
-		readonly 'clause.import.names': gate.In<G, features.Modules, V.Clause.Import.Names<G>>;
-		readonly 'clause.import.namespace': gate.In<G, features.Modules, V.Clause.Import.Namespace<G>>;
-		readonly 'clause.import.relative': gate.In<G, features.Modules, V.Clause.Import.Relative<G>>;
-		readonly 'clause.import.relative.prefix': gate.In<G, features.Modules, V.Clause.Import.Relative.Prefix<G>>;
-		readonly 'clause.import.require': gate.In<G, features.Modules, V.Clause.Import.Require<G>>;
-		readonly 'clause.import.specifier': gate.In<G, features.Modules, V.Clause.Import.Specifier<G>>;
-		readonly 'clause.import.specifier.typeof': gate.In<G, features.Modules, V.Clause.Import.Specifier.Typeof<G>>;
-		readonly 'clause.import.wildcard': gate.In<G, features.Modules, V.Clause.Import.Wildcard<G>>;
-		readonly 'clause.let': gate.In<G, features.MatchExpressions, V.Clause.Let<G>>;
-		readonly 'clause.let.chain': gate.In<G, features.MatchExpressions, V.Clause.Let.Chain<G>>;
+		readonly 'clause.import.alias': gate.In<G, features.ImportAliases, V.Clause.Import.Alias<G>>;
+		readonly 'clause.import.attribute': gate.In<G, features.JavaScriptModules, V.Clause.Import.Attribute<G>>;
+		readonly 'clause.import.list': gate.In<G, features.ImportTrees, V.Clause.Import.List<G>>;
+		readonly 'clause.import.list.scoped': gate.In<G, features.ImportTrees, V.Clause.Import.List.Scoped<G>>;
+		readonly 'clause.import.names': gate.In<G, features.JavaScriptModules, V.Clause.Import.Names<G>>;
+		readonly 'clause.import.namespace': gate.In<G, features.JavaScriptModules, V.Clause.Import.Namespace<G>>;
+		readonly 'clause.import.relative': gate.In<G, features.FromImports, V.Clause.Import.Relative<G>>;
+		readonly 'clause.import.relative.prefix': gate.In<G, features.FromImports, V.Clause.Import.Relative.Prefix<G>>;
+		readonly 'clause.import.require': gate.In<G, features.JavaScriptModules, V.Clause.Import.Require<G>>;
+		readonly 'clause.import.specifier': gate.In<G, features.JavaScriptModules, V.Clause.Import.Specifier<G>>;
+		readonly 'clause.import.specifier.typeof': gate.In<
+			G,
+			features.JavaScriptModules,
+			V.Clause.Import.Specifier.Typeof<G>
+		>;
+		readonly 'clause.import.wildcard': gate.In<G, features.WildcardImports, V.Clause.Import.Wildcard<G>>;
+		readonly 'clause.let': gate.In<G, features.LetPatterns, V.Clause.Let<G>>;
+		readonly 'clause.let.chain': gate.In<G, features.LetPatterns, V.Clause.Let.Chain<G>>;
 		readonly 'clause.lifetimes': gate.In<G, features.Lifetimes, V.Clause.Lifetimes<G>>;
 		readonly 'clause.macro': gate.In<G, features.SyntacticMetaprogramming, V.Clause.Macro<G>>;
 		readonly 'clause.macro.rule': gate.In<G, features.SyntacticMetaprogramming, V.Clause.Macro.Rule<G>>;
-		readonly 'clause.mapped_type': gate.In<G, features.TypeAnnotations, V.Clause.MappedType<G>>;
-		readonly 'clause.resource': gate.In<G, features.ResourceManagement, V.Clause.Resource<G>>;
-		readonly 'clause.resource.item': gate.In<G, features.ResourceManagement, V.Clause.Resource.Item<G>>;
-		readonly 'clause.where': gate.In<G, features.BoundedQuantification, V.Clause.Where<G>>;
-		readonly 'clause.where.predicate': gate.In<G, features.BoundedQuantification, V.Clause.Where.Predicate<G>>;
+		readonly 'clause.mapped_type': gate.In<G, features.TypeAlgebra, V.Clause.MappedType<G>>;
+		readonly 'clause.resource': gate.In<G, features.ResourceStatements, V.Clause.Resource<G>>;
+		readonly 'clause.resource.item': gate.In<G, features.ResourceStatements, V.Clause.Resource.Item<G>>;
+		readonly 'clause.where': gate.In<G, features.WhereClauses, V.Clause.Where<G>>;
+		readonly 'clause.where.predicate': gate.In<G, features.WhereClauses, V.Clause.Where.Predicate<G>>;
 		readonly comment: V.Comment<G>;
-		readonly 'comment.block': V.Comment.Block<G>;
-		readonly 'comment.block.doc': V.Comment.Block.Doc<G>;
-		readonly 'comment.block.doc.inner': V.Comment.Block.Doc.Inner<G>;
-		readonly 'comment.html': V.Comment.Html<G>;
+		readonly 'comment.block': gate.In<G, features.BlockComments, V.Comment.Block<G>>;
+		readonly 'comment.block.doc': gate.In<G, features.DocComments, V.Comment.Block.Doc<G>>;
+		readonly 'comment.block.doc.inner': gate.In<G, features.InnerDocComments, V.Comment.Block.Doc.Inner<G>>;
+		readonly 'comment.html': gate.In<G, features.HtmlComments, V.Comment.Html<G>>;
 		readonly 'comment.line': V.Comment.Line<G>;
-		readonly 'comment.line.doc': V.Comment.Line.Doc<G>;
-		readonly 'comment.line.doc.inner': V.Comment.Line.Doc.Inner<G>;
-		readonly 'comment.text': V.Comment.Text<G>;
+		readonly 'comment.line.doc': gate.In<G, features.LineDocComments, V.Comment.Line.Doc<G>>;
+		readonly 'comment.line.doc.inner': gate.In<G, features.InnerDocComments, V.Comment.Line.Doc.Inner<G>>;
+		readonly 'comment.text': gate.In<G, features.InnerDocComments, V.Comment.Text<G>>;
 		readonly declaration: V.Declaration<G>;
 		readonly 'declaration.ambient': gate.In<G, features.AmbientDeclarations, V.Declaration.Ambient<G>>;
 		readonly 'declaration.class': gate.In<G, features.Classes, V.Declaration.Class<G>>;
-		readonly 'declaration.constant': V.Declaration.Constant<G>;
-		readonly 'declaration.constant.private': gate.In<G, features.Visibility, V.Declaration.Constant.Private<G>>;
-		readonly 'declaration.constant.public': gate.In<G, features.Visibility, V.Declaration.Constant.Public<G>>;
+		readonly 'declaration.constant': gate.In<G, features.Constants, V.Declaration.Constant<G>>;
+		readonly 'declaration.constant.private': gate.In<G, features.ModuleVisibility, V.Declaration.Constant.Private<G>>;
+		readonly 'declaration.constant.public': gate.In<G, features.ModuleVisibility, V.Declaration.Constant.Public<G>>;
 		readonly 'declaration.constant.public.internal': gate.In<
 			G,
-			features.Visibility,
+			features.ModuleVisibility,
 			V.Declaration.Constant.Public.Internal<G>
 		>;
 		readonly 'declaration.constant.public.parent': gate.In<
 			G,
-			features.Visibility,
+			features.ModuleVisibility,
 			V.Declaration.Constant.Public.Parent<G>
 		>;
 		readonly 'declaration.constant.public.restricted': gate.In<
 			G,
-			features.Visibility,
+			features.ModuleVisibility,
 			V.Declaration.Constant.Public.Restricted<G>
 		>;
 		readonly 'declaration.constructor': gate.In<G, features.Classes, V.Declaration.Constructor<G>>;
-		readonly 'declaration.constructor.private': gate.In<G, features.Visibility, V.Declaration.Constructor.Private<G>>;
+		readonly 'declaration.constructor.private': gate.In<
+			G,
+			features.ClassVisibility,
+			V.Declaration.Constructor.Private<G>
+		>;
 		readonly 'declaration.constructor.protected': gate.In<
 			G,
-			features.Visibility,
+			features.ClassVisibility,
 			V.Declaration.Constructor.Protected<G>
 		>;
-		readonly 'declaration.constructor.public': gate.In<G, features.Visibility, V.Declaration.Constructor.Public<G>>;
+		readonly 'declaration.constructor.public': gate.In<
+			G,
+			features.ClassVisibility,
+			V.Declaration.Constructor.Public<G>
+		>;
 		readonly 'declaration.enum': gate.In<G, features.Enumerations, V.Declaration.Enum<G>>;
-		readonly 'declaration.enum.private': gate.In<G, features.Visibility, V.Declaration.Enum.Private<G>>;
-		readonly 'declaration.enum.public': gate.In<G, features.Visibility, V.Declaration.Enum.Public<G>>;
-		readonly 'declaration.enum.public.internal': gate.In<G, features.Visibility, V.Declaration.Enum.Public.Internal<G>>;
-		readonly 'declaration.enum.public.parent': gate.In<G, features.Visibility, V.Declaration.Enum.Public.Parent<G>>;
+		readonly 'declaration.enum.private': gate.In<G, features.ModuleVisibility, V.Declaration.Enum.Private<G>>;
+		readonly 'declaration.enum.public': gate.In<G, features.ModuleVisibility, V.Declaration.Enum.Public<G>>;
+		readonly 'declaration.enum.public.internal': gate.In<
+			G,
+			features.ModuleVisibility,
+			V.Declaration.Enum.Public.Internal<G>
+		>;
+		readonly 'declaration.enum.public.parent': gate.In<
+			G,
+			features.ModuleVisibility,
+			V.Declaration.Enum.Public.Parent<G>
+		>;
 		readonly 'declaration.enum.public.restricted': gate.In<
 			G,
-			features.Visibility,
+			features.ModuleVisibility,
 			V.Declaration.Enum.Public.Restricted<G>
 		>;
 		readonly 'declaration.enum_member': gate.In<G, features.Enumerations, V.Declaration.EnumMember<G>>;
-		readonly 'declaration.enum_member.private': gate.In<G, features.Visibility, V.Declaration.EnumMember.Private<G>>;
-		readonly 'declaration.enum_member.public': gate.In<G, features.Visibility, V.Declaration.EnumMember.Public<G>>;
+		readonly 'declaration.enum_member.private': gate.In<
+			G,
+			features.ModuleVisibility,
+			V.Declaration.EnumMember.Private<G>
+		>;
+		readonly 'declaration.enum_member.public': gate.In<
+			G,
+			features.ModuleVisibility,
+			V.Declaration.EnumMember.Public<G>
+		>;
 		readonly 'declaration.enum_member.public.internal': gate.In<
 			G,
-			features.Visibility,
+			features.ModuleVisibility,
 			V.Declaration.EnumMember.Public.Internal<G>
 		>;
 		readonly 'declaration.enum_member.public.parent': gate.In<
 			G,
-			features.Visibility,
+			features.ModuleVisibility,
 			V.Declaration.EnumMember.Public.Parent<G>
 		>;
 		readonly 'declaration.enum_member.public.restricted': gate.In<
 			G,
-			features.Visibility,
+			features.ModuleVisibility,
 			V.Declaration.EnumMember.Public.Restricted<G>
 		>;
 		readonly 'declaration.enum_member.struct': gate.In<
@@ -4685,27 +5263,27 @@ declare module './map.ts' {
 		>;
 		readonly 'declaration.enum_member.struct.private': gate.In<
 			G,
-			features.Visibility,
+			features.ModuleVisibility,
 			V.Declaration.EnumMember.Struct.Private<G>
 		>;
 		readonly 'declaration.enum_member.struct.public': gate.In<
 			G,
-			features.Visibility,
+			features.ModuleVisibility,
 			V.Declaration.EnumMember.Struct.Public<G>
 		>;
 		readonly 'declaration.enum_member.struct.public.internal': gate.In<
 			G,
-			features.Visibility,
+			features.ModuleVisibility,
 			V.Declaration.EnumMember.Struct.Public.Internal<G>
 		>;
 		readonly 'declaration.enum_member.struct.public.parent': gate.In<
 			G,
-			features.Visibility,
+			features.ModuleVisibility,
 			V.Declaration.EnumMember.Struct.Public.Parent<G>
 		>;
 		readonly 'declaration.enum_member.struct.public.restricted': gate.In<
 			G,
-			features.Visibility,
+			features.ModuleVisibility,
 			V.Declaration.EnumMember.Struct.Public.Restricted<G>
 		>;
 		readonly 'declaration.enum_member.tuple': gate.In<
@@ -4715,27 +5293,27 @@ declare module './map.ts' {
 		>;
 		readonly 'declaration.enum_member.tuple.private': gate.In<
 			G,
-			features.Visibility,
+			features.ModuleVisibility,
 			V.Declaration.EnumMember.Tuple.Private<G>
 		>;
 		readonly 'declaration.enum_member.tuple.public': gate.In<
 			G,
-			features.Visibility,
+			features.ModuleVisibility,
 			V.Declaration.EnumMember.Tuple.Public<G>
 		>;
 		readonly 'declaration.enum_member.tuple.public.internal': gate.In<
 			G,
-			features.Visibility,
+			features.ModuleVisibility,
 			V.Declaration.EnumMember.Tuple.Public.Internal<G>
 		>;
 		readonly 'declaration.enum_member.tuple.public.parent': gate.In<
 			G,
-			features.Visibility,
+			features.ModuleVisibility,
 			V.Declaration.EnumMember.Tuple.Public.Parent<G>
 		>;
 		readonly 'declaration.enum_member.tuple.public.restricted': gate.In<
 			G,
-			features.Visibility,
+			features.ModuleVisibility,
 			V.Declaration.EnumMember.Tuple.Public.Restricted<G>
 		>;
 		readonly 'declaration.extension': gate.In<G, features.OpenTypeExtension, V.Declaration.Extension<G>>;
@@ -4744,106 +5322,114 @@ declare module './map.ts' {
 			features.Typeclasses,
 			V.Declaration.Extension.Conformance<G>
 		>;
-		readonly 'declaration.field': V.Declaration.Field<G>;
+		readonly 'declaration.field': gate.In<G, features.FieldsAndModifiers, V.Declaration.Field<G>>;
 		readonly 'declaration.field.private': gate.In<G, features.Visibility, V.Declaration.Field.Private<G>>;
-		readonly 'declaration.field.protected': gate.In<G, features.Visibility, V.Declaration.Field.Protected<G>>;
+		readonly 'declaration.field.protected': gate.In<G, features.ClassVisibility, V.Declaration.Field.Protected<G>>;
 		readonly 'declaration.field.public': gate.In<G, features.Visibility, V.Declaration.Field.Public<G>>;
 		readonly 'declaration.field.public.internal': gate.In<
 			G,
-			features.Visibility,
+			features.ModuleVisibility,
 			V.Declaration.Field.Public.Internal<G>
 		>;
-		readonly 'declaration.field.public.parent': gate.In<G, features.Visibility, V.Declaration.Field.Public.Parent<G>>;
+		readonly 'declaration.field.public.parent': gate.In<
+			G,
+			features.ModuleVisibility,
+			V.Declaration.Field.Public.Parent<G>
+		>;
 		readonly 'declaration.field.public.restricted': gate.In<
 			G,
-			features.Visibility,
+			features.ModuleVisibility,
 			V.Declaration.Field.Public.Restricted<G>
 		>;
-		readonly 'declaration.field.signature': gate.In<G, features.Interfaces, V.Declaration.Field.Signature<G>>;
+		readonly 'declaration.field.signature': gate.In<G, features.FieldSignatures, V.Declaration.Field.Signature<G>>;
 		readonly 'declaration.field.signature.private': gate.In<
 			G,
-			features.Visibility,
+			features.ClassVisibility,
 			V.Declaration.Field.Signature.Private<G>
 		>;
 		readonly 'declaration.field.signature.protected': gate.In<
 			G,
-			features.Visibility,
+			features.ClassVisibility,
 			V.Declaration.Field.Signature.Protected<G>
 		>;
 		readonly 'declaration.field.signature.public': gate.In<
 			G,
-			features.Visibility,
+			features.ClassVisibility,
 			V.Declaration.Field.Signature.Public<G>
 		>;
 		readonly 'declaration.function': V.Declaration.Function<G>;
-		readonly 'declaration.function.private': gate.In<G, features.Visibility, V.Declaration.Function.Private<G>>;
-		readonly 'declaration.function.public': gate.In<G, features.Visibility, V.Declaration.Function.Public<G>>;
+		readonly 'declaration.function.private': gate.In<G, features.ModuleVisibility, V.Declaration.Function.Private<G>>;
+		readonly 'declaration.function.public': gate.In<G, features.ModuleVisibility, V.Declaration.Function.Public<G>>;
 		readonly 'declaration.function.public.internal': gate.In<
 			G,
-			features.Visibility,
+			features.ModuleVisibility,
 			V.Declaration.Function.Public.Internal<G>
 		>;
 		readonly 'declaration.function.public.parent': gate.In<
 			G,
-			features.Visibility,
+			features.ModuleVisibility,
 			V.Declaration.Function.Public.Parent<G>
 		>;
 		readonly 'declaration.function.public.restricted': gate.In<
 			G,
-			features.Visibility,
+			features.ModuleVisibility,
 			V.Declaration.Function.Public.Restricted<G>
 		>;
-		readonly 'declaration.function.signature': V.Declaration.Function.Signature<G>;
+		readonly 'declaration.function.signature': gate.In<
+			G,
+			features.FunctionSignatures,
+			V.Declaration.Function.Signature<G>
+		>;
 		readonly 'declaration.function.signature.private': gate.In<
 			G,
-			features.Visibility,
+			features.ModuleVisibility,
 			V.Declaration.Function.Signature.Private<G>
 		>;
 		readonly 'declaration.function.signature.public': gate.In<
 			G,
-			features.Visibility,
+			features.ModuleVisibility,
 			V.Declaration.Function.Signature.Public<G>
 		>;
 		readonly 'declaration.function.signature.public.internal': gate.In<
 			G,
-			features.Visibility,
+			features.ModuleVisibility,
 			V.Declaration.Function.Signature.Public.Internal<G>
 		>;
 		readonly 'declaration.function.signature.public.parent': gate.In<
 			G,
-			features.Visibility,
+			features.ModuleVisibility,
 			V.Declaration.Function.Signature.Public.Parent<G>
 		>;
 		readonly 'declaration.function.signature.public.restricted': gate.In<
 			G,
-			features.Visibility,
+			features.ModuleVisibility,
 			V.Declaration.Function.Signature.Public.Restricted<G>
 		>;
 		readonly 'declaration.interface': gate.In<G, features.Interfaces, V.Declaration.Interface<G>>;
-		readonly 'declaration.interface.trait': gate.In<G, features.Interfaces, V.Declaration.Interface.Trait<G>>;
+		readonly 'declaration.interface.trait': gate.In<G, features.Traits, V.Declaration.Interface.Trait<G>>;
 		readonly 'declaration.interface.trait.private': gate.In<
 			G,
-			features.Visibility,
+			features.ModuleVisibility,
 			V.Declaration.Interface.Trait.Private<G>
 		>;
 		readonly 'declaration.interface.trait.public': gate.In<
 			G,
-			features.Visibility,
+			features.ModuleVisibility,
 			V.Declaration.Interface.Trait.Public<G>
 		>;
 		readonly 'declaration.interface.trait.public.internal': gate.In<
 			G,
-			features.Visibility,
+			features.ModuleVisibility,
 			V.Declaration.Interface.Trait.Public.Internal<G>
 		>;
 		readonly 'declaration.interface.trait.public.parent': gate.In<
 			G,
-			features.Visibility,
+			features.ModuleVisibility,
 			V.Declaration.Interface.Trait.Public.Parent<G>
 		>;
 		readonly 'declaration.interface.trait.public.restricted': gate.In<
 			G,
-			features.Visibility,
+			features.ModuleVisibility,
 			V.Declaration.Interface.Trait.Public.Restricted<G>
 		>;
 		readonly 'declaration.macro': gate.In<G, features.SyntacticMetaprogramming, V.Declaration.Macro<G>>;
@@ -4852,20 +5438,24 @@ declare module './map.ts' {
 		readonly 'declaration.macro.paren': gate.In<G, features.SyntacticMetaprogramming, V.Declaration.Macro.Paren<G>>;
 		readonly 'declaration.method': gate.In<G, features.Methods, V.Declaration.Method<G>>;
 		readonly 'declaration.method.private': gate.In<G, features.Visibility, V.Declaration.Method.Private<G>>;
-		readonly 'declaration.method.protected': gate.In<G, features.Visibility, V.Declaration.Method.Protected<G>>;
+		readonly 'declaration.method.protected': gate.In<G, features.ClassVisibility, V.Declaration.Method.Protected<G>>;
 		readonly 'declaration.method.public': gate.In<G, features.Visibility, V.Declaration.Method.Public<G>>;
 		readonly 'declaration.method.public.internal': gate.In<
 			G,
-			features.Visibility,
+			features.ModuleVisibility,
 			V.Declaration.Method.Public.Internal<G>
 		>;
-		readonly 'declaration.method.public.parent': gate.In<G, features.Visibility, V.Declaration.Method.Public.Parent<G>>;
+		readonly 'declaration.method.public.parent': gate.In<
+			G,
+			features.ModuleVisibility,
+			V.Declaration.Method.Public.Parent<G>
+		>;
 		readonly 'declaration.method.public.restricted': gate.In<
 			G,
-			features.Visibility,
+			features.ModuleVisibility,
 			V.Declaration.Method.Public.Restricted<G>
 		>;
-		readonly 'declaration.method.signature': gate.In<G, features.Methods, V.Declaration.Method.Signature<G>>;
+		readonly 'declaration.method.signature': gate.In<G, features.MethodSignatures, V.Declaration.Method.Signature<G>>;
 		readonly 'declaration.method.signature.abstract': gate.In<
 			G,
 			features.AbstractClasses,
@@ -4873,17 +5463,17 @@ declare module './map.ts' {
 		>;
 		readonly 'declaration.method.signature.abstract.private': gate.In<
 			G,
-			features.Visibility,
+			features.ClassVisibility,
 			V.Declaration.Method.Signature.Abstract.Private<G>
 		>;
 		readonly 'declaration.method.signature.abstract.protected': gate.In<
 			G,
-			features.Visibility,
+			features.ClassVisibility,
 			V.Declaration.Method.Signature.Abstract.Protected<G>
 		>;
 		readonly 'declaration.method.signature.abstract.public': gate.In<
 			G,
-			features.Visibility,
+			features.ClassVisibility,
 			V.Declaration.Method.Signature.Abstract.Public<G>
 		>;
 		readonly 'declaration.method.signature.private': gate.In<
@@ -4893,7 +5483,7 @@ declare module './map.ts' {
 		>;
 		readonly 'declaration.method.signature.protected': gate.In<
 			G,
-			features.Visibility,
+			features.ClassVisibility,
 			V.Declaration.Method.Signature.Protected<G>
 		>;
 		readonly 'declaration.method.signature.public': gate.In<
@@ -4903,53 +5493,69 @@ declare module './map.ts' {
 		>;
 		readonly 'declaration.method.signature.public.internal': gate.In<
 			G,
-			features.Visibility,
+			features.ModuleVisibility,
 			V.Declaration.Method.Signature.Public.Internal<G>
 		>;
 		readonly 'declaration.method.signature.public.parent': gate.In<
 			G,
-			features.Visibility,
+			features.ModuleVisibility,
 			V.Declaration.Method.Signature.Public.Parent<G>
 		>;
 		readonly 'declaration.method.signature.public.restricted': gate.In<
 			G,
-			features.Visibility,
+			features.ModuleVisibility,
 			V.Declaration.Method.Signature.Public.Restricted<G>
 		>;
-		readonly 'declaration.method.special': gate.In<G, features.Methods, V.Declaration.Method.Special<G>>;
+		readonly 'declaration.method.special': gate.In<G, features.SpecialMethods, V.Declaration.Method.Special<G>>;
 		readonly 'declaration.module': gate.In<G, features.ModuleDeclarations, V.Declaration.Module<G>>;
-		readonly 'declaration.module.external': gate.In<G, features.ModuleDeclarations, V.Declaration.Module.External<G>>;
+		readonly 'declaration.module.external': gate.In<G, features.ExternalModules, V.Declaration.Module.External<G>>;
 		readonly 'declaration.module.foreign': gate.In<
 			G,
 			features.ForeignFunctionInterface,
 			V.Declaration.Module.Foreign<G>
 		>;
-		readonly 'declaration.module.private': gate.In<G, features.Visibility, V.Declaration.Module.Private<G>>;
-		readonly 'declaration.module.public': gate.In<G, features.Visibility, V.Declaration.Module.Public<G>>;
+		readonly 'declaration.module.private': gate.In<G, features.ModuleVisibility, V.Declaration.Module.Private<G>>;
+		readonly 'declaration.module.public': gate.In<G, features.ModuleVisibility, V.Declaration.Module.Public<G>>;
 		readonly 'declaration.module.public.internal': gate.In<
 			G,
-			features.Visibility,
+			features.ModuleVisibility,
 			V.Declaration.Module.Public.Internal<G>
 		>;
-		readonly 'declaration.module.public.parent': gate.In<G, features.Visibility, V.Declaration.Module.Public.Parent<G>>;
+		readonly 'declaration.module.public.parent': gate.In<
+			G,
+			features.ModuleVisibility,
+			V.Declaration.Module.Public.Parent<G>
+		>;
 		readonly 'declaration.module.public.restricted': gate.In<
 			G,
-			features.Visibility,
+			features.ModuleVisibility,
 			V.Declaration.Module.Public.Restricted<G>
 		>;
 		readonly 'declaration.module_property': gate.In<G, features.AmbientDeclarations, V.Declaration.ModuleProperty<G>>;
 		readonly 'declaration.parameter': V.Declaration.Parameter<G>;
-		readonly 'declaration.parameter.default': V.Declaration.Parameter.Default<G>;
-		readonly 'declaration.parameter.private': gate.In<G, features.Visibility, V.Declaration.Parameter.Private<G>>;
-		readonly 'declaration.parameter.protected': gate.In<G, features.Visibility, V.Declaration.Parameter.Protected<G>>;
-		readonly 'declaration.parameter.public': gate.In<G, features.Visibility, V.Declaration.Parameter.Public<G>>;
+		readonly 'declaration.parameter.default': gate.In<
+			G,
+			features.PythonDeclarations,
+			V.Declaration.Parameter.Default<G>
+		>;
+		readonly 'declaration.parameter.private': gate.In<G, features.ClassVisibility, V.Declaration.Parameter.Private<G>>;
+		readonly 'declaration.parameter.protected': gate.In<
+			G,
+			features.ClassVisibility,
+			V.Declaration.Parameter.Protected<G>
+		>;
+		readonly 'declaration.parameter.public': gate.In<G, features.ClassVisibility, V.Declaration.Parameter.Public<G>>;
 		readonly 'declaration.parameter.receiver': gate.In<
 			G,
 			features.ExplicitReceivers,
 			V.Declaration.Parameter.Receiver<G>
 		>;
-		readonly 'declaration.parameter.typed': V.Declaration.Parameter.Typed<G>;
-		readonly 'declaration.parameter.typed_default': V.Declaration.Parameter.TypedDefault<G>;
+		readonly 'declaration.parameter.typed': gate.In<G, features.PythonDeclarations, V.Declaration.Parameter.Typed<G>>;
+		readonly 'declaration.parameter.typed_default': gate.In<
+			G,
+			features.PythonDeclarations,
+			V.Declaration.Parameter.TypedDefault<G>
+		>;
 		readonly 'declaration.parameter.variadic': gate.In<
 			G,
 			features.ForeignFunctionInterface,
@@ -4959,122 +5565,130 @@ declare module './map.ts' {
 		readonly 'declaration.property.getter': gate.In<G, features.Accessors, V.Declaration.Property.Getter<G>>;
 		readonly 'declaration.property.getter.private': gate.In<
 			G,
-			features.Visibility,
+			features.ClassVisibility,
 			V.Declaration.Property.Getter.Private<G>
 		>;
 		readonly 'declaration.property.getter.protected': gate.In<
 			G,
-			features.Visibility,
+			features.ClassVisibility,
 			V.Declaration.Property.Getter.Protected<G>
 		>;
 		readonly 'declaration.property.getter.public': gate.In<
 			G,
-			features.Visibility,
+			features.ClassVisibility,
 			V.Declaration.Property.Getter.Public<G>
 		>;
-		readonly 'declaration.property.private': gate.In<G, features.Visibility, V.Declaration.Property.Private<G>>;
-		readonly 'declaration.property.protected': gate.In<G, features.Visibility, V.Declaration.Property.Protected<G>>;
-		readonly 'declaration.property.public': gate.In<G, features.Visibility, V.Declaration.Property.Public<G>>;
+		readonly 'declaration.property.private': gate.In<G, features.ClassVisibility, V.Declaration.Property.Private<G>>;
+		readonly 'declaration.property.protected': gate.In<
+			G,
+			features.ClassVisibility,
+			V.Declaration.Property.Protected<G>
+		>;
+		readonly 'declaration.property.public': gate.In<G, features.ClassVisibility, V.Declaration.Property.Public<G>>;
 		readonly 'declaration.property.setter': gate.In<G, features.Accessors, V.Declaration.Property.Setter<G>>;
 		readonly 'declaration.property.setter.private': gate.In<
 			G,
-			features.Visibility,
+			features.ClassVisibility,
 			V.Declaration.Property.Setter.Private<G>
 		>;
 		readonly 'declaration.property.setter.protected': gate.In<
 			G,
-			features.Visibility,
+			features.ClassVisibility,
 			V.Declaration.Property.Setter.Protected<G>
 		>;
 		readonly 'declaration.property.setter.public': gate.In<
 			G,
-			features.Visibility,
+			features.ClassVisibility,
 			V.Declaration.Property.Setter.Public<G>
 		>;
-		readonly 'declaration.property.signature': gate.In<G, features.Accessors, V.Declaration.Property.Signature<G>>;
+		readonly 'declaration.property.signature': gate.In<
+			G,
+			features.AccessorSignatures,
+			V.Declaration.Property.Signature<G>
+		>;
 		readonly 'declaration.property.signature.abstract': gate.In<
 			G,
-			features.Accessors,
+			features.AccessorSignatures,
 			V.Declaration.Property.Signature.Abstract<G>
 		>;
 		readonly 'declaration.property.signature.abstract.getter': gate.In<
 			G,
-			features.Accessors,
+			features.AccessorSignatures,
 			V.Declaration.Property.Signature.Abstract.Getter<G>
 		>;
 		readonly 'declaration.property.signature.abstract.getter.private': gate.In<
 			G,
-			features.Visibility,
+			features.ClassVisibility,
 			V.Declaration.Property.Signature.Abstract.Getter.Private<G>
 		>;
 		readonly 'declaration.property.signature.abstract.getter.protected': gate.In<
 			G,
-			features.Visibility,
+			features.ClassVisibility,
 			V.Declaration.Property.Signature.Abstract.Getter.Protected<G>
 		>;
 		readonly 'declaration.property.signature.abstract.getter.public': gate.In<
 			G,
-			features.Visibility,
+			features.ClassVisibility,
 			V.Declaration.Property.Signature.Abstract.Getter.Public<G>
 		>;
 		readonly 'declaration.property.signature.abstract.setter': gate.In<
 			G,
-			features.Accessors,
+			features.AccessorSignatures,
 			V.Declaration.Property.Signature.Abstract.Setter<G>
 		>;
 		readonly 'declaration.property.signature.abstract.setter.private': gate.In<
 			G,
-			features.Visibility,
+			features.ClassVisibility,
 			V.Declaration.Property.Signature.Abstract.Setter.Private<G>
 		>;
 		readonly 'declaration.property.signature.abstract.setter.protected': gate.In<
 			G,
-			features.Visibility,
+			features.ClassVisibility,
 			V.Declaration.Property.Signature.Abstract.Setter.Protected<G>
 		>;
 		readonly 'declaration.property.signature.abstract.setter.public': gate.In<
 			G,
-			features.Visibility,
+			features.ClassVisibility,
 			V.Declaration.Property.Signature.Abstract.Setter.Public<G>
 		>;
 		readonly 'declaration.property.signature.getter': gate.In<
 			G,
-			features.Accessors,
+			features.AccessorSignatures,
 			V.Declaration.Property.Signature.Getter<G>
 		>;
 		readonly 'declaration.property.signature.getter.private': gate.In<
 			G,
-			features.Visibility,
+			features.ClassVisibility,
 			V.Declaration.Property.Signature.Getter.Private<G>
 		>;
 		readonly 'declaration.property.signature.getter.protected': gate.In<
 			G,
-			features.Visibility,
+			features.ClassVisibility,
 			V.Declaration.Property.Signature.Getter.Protected<G>
 		>;
 		readonly 'declaration.property.signature.getter.public': gate.In<
 			G,
-			features.Visibility,
+			features.ClassVisibility,
 			V.Declaration.Property.Signature.Getter.Public<G>
 		>;
 		readonly 'declaration.property.signature.setter': gate.In<
 			G,
-			features.Accessors,
+			features.AccessorSignatures,
 			V.Declaration.Property.Signature.Setter<G>
 		>;
 		readonly 'declaration.property.signature.setter.private': gate.In<
 			G,
-			features.Visibility,
+			features.ClassVisibility,
 			V.Declaration.Property.Signature.Setter.Private<G>
 		>;
 		readonly 'declaration.property.signature.setter.protected': gate.In<
 			G,
-			features.Visibility,
+			features.ClassVisibility,
 			V.Declaration.Property.Signature.Setter.Protected<G>
 		>;
 		readonly 'declaration.property.signature.setter.public': gate.In<
 			G,
-			features.Visibility,
+			features.ClassVisibility,
 			V.Declaration.Property.Signature.Setter.Public<G>
 		>;
 		readonly 'declaration.signature': gate.In<G, features.StructuralConformance, V.Declaration.Signature<G>>;
@@ -5095,53 +5709,73 @@ declare module './map.ts' {
 			V.Declaration.Signature.Index.Mapped<G>
 		>;
 		readonly 'declaration.struct': gate.In<G, features.Structs, V.Declaration.Struct<G>>;
-		readonly 'declaration.struct.private': gate.In<G, features.Visibility, V.Declaration.Struct.Private<G>>;
-		readonly 'declaration.struct.public': gate.In<G, features.Visibility, V.Declaration.Struct.Public<G>>;
+		readonly 'declaration.struct.private': gate.In<G, features.ModuleVisibility, V.Declaration.Struct.Private<G>>;
+		readonly 'declaration.struct.public': gate.In<G, features.ModuleVisibility, V.Declaration.Struct.Public<G>>;
 		readonly 'declaration.struct.public.internal': gate.In<
 			G,
-			features.Visibility,
+			features.ModuleVisibility,
 			V.Declaration.Struct.Public.Internal<G>
 		>;
-		readonly 'declaration.struct.public.parent': gate.In<G, features.Visibility, V.Declaration.Struct.Public.Parent<G>>;
+		readonly 'declaration.struct.public.parent': gate.In<
+			G,
+			features.ModuleVisibility,
+			V.Declaration.Struct.Public.Parent<G>
+		>;
 		readonly 'declaration.struct.public.restricted': gate.In<
 			G,
-			features.Visibility,
+			features.ModuleVisibility,
 			V.Declaration.Struct.Public.Restricted<G>
 		>;
-		readonly 'declaration.struct.tuple': gate.In<G, features.Structs, V.Declaration.Struct.Tuple<G>>;
-		readonly 'declaration.struct.tuple.private': gate.In<G, features.Visibility, V.Declaration.Struct.Tuple.Private<G>>;
-		readonly 'declaration.struct.tuple.public': gate.In<G, features.Visibility, V.Declaration.Struct.Tuple.Public<G>>;
+		readonly 'declaration.struct.tuple': gate.In<G, features.TupleStructs, V.Declaration.Struct.Tuple<G>>;
+		readonly 'declaration.struct.tuple.private': gate.In<
+			G,
+			features.ModuleVisibility,
+			V.Declaration.Struct.Tuple.Private<G>
+		>;
+		readonly 'declaration.struct.tuple.public': gate.In<
+			G,
+			features.ModuleVisibility,
+			V.Declaration.Struct.Tuple.Public<G>
+		>;
 		readonly 'declaration.struct.tuple.public.internal': gate.In<
 			G,
-			features.Visibility,
+			features.ModuleVisibility,
 			V.Declaration.Struct.Tuple.Public.Internal<G>
 		>;
 		readonly 'declaration.struct.tuple.public.parent': gate.In<
 			G,
-			features.Visibility,
+			features.ModuleVisibility,
 			V.Declaration.Struct.Tuple.Public.Parent<G>
 		>;
 		readonly 'declaration.struct.tuple.public.restricted': gate.In<
 			G,
-			features.Visibility,
+			features.ModuleVisibility,
 			V.Declaration.Struct.Tuple.Public.Restricted<G>
 		>;
-		readonly 'declaration.struct.unit': gate.In<G, features.Structs, V.Declaration.Struct.Unit<G>>;
-		readonly 'declaration.struct.unit.private': gate.In<G, features.Visibility, V.Declaration.Struct.Unit.Private<G>>;
-		readonly 'declaration.struct.unit.public': gate.In<G, features.Visibility, V.Declaration.Struct.Unit.Public<G>>;
+		readonly 'declaration.struct.unit': gate.In<G, features.TupleStructs, V.Declaration.Struct.Unit<G>>;
+		readonly 'declaration.struct.unit.private': gate.In<
+			G,
+			features.ModuleVisibility,
+			V.Declaration.Struct.Unit.Private<G>
+		>;
+		readonly 'declaration.struct.unit.public': gate.In<
+			G,
+			features.ModuleVisibility,
+			V.Declaration.Struct.Unit.Public<G>
+		>;
 		readonly 'declaration.struct.unit.public.internal': gate.In<
 			G,
-			features.Visibility,
+			features.ModuleVisibility,
 			V.Declaration.Struct.Unit.Public.Internal<G>
 		>;
 		readonly 'declaration.struct.unit.public.parent': gate.In<
 			G,
-			features.Visibility,
+			features.ModuleVisibility,
 			V.Declaration.Struct.Unit.Public.Parent<G>
 		>;
 		readonly 'declaration.struct.unit.public.restricted': gate.In<
 			G,
-			features.Visibility,
+			features.ModuleVisibility,
 			V.Declaration.Struct.Unit.Public.Restricted<G>
 		>;
 		readonly 'declaration.type_alias': gate.In<G, features.TypeAliases, V.Declaration.TypeAlias<G>>;
@@ -5150,21 +5784,25 @@ declare module './map.ts' {
 			features.AssociatedTypes,
 			V.Declaration.TypeAlias.Associated<G>
 		>;
-		readonly 'declaration.type_alias.private': gate.In<G, features.Visibility, V.Declaration.TypeAlias.Private<G>>;
-		readonly 'declaration.type_alias.public': gate.In<G, features.Visibility, V.Declaration.TypeAlias.Public<G>>;
+		readonly 'declaration.type_alias.private': gate.In<
+			G,
+			features.ModuleVisibility,
+			V.Declaration.TypeAlias.Private<G>
+		>;
+		readonly 'declaration.type_alias.public': gate.In<G, features.ModuleVisibility, V.Declaration.TypeAlias.Public<G>>;
 		readonly 'declaration.type_alias.public.internal': gate.In<
 			G,
-			features.Visibility,
+			features.ModuleVisibility,
 			V.Declaration.TypeAlias.Public.Internal<G>
 		>;
 		readonly 'declaration.type_alias.public.parent': gate.In<
 			G,
-			features.Visibility,
+			features.ModuleVisibility,
 			V.Declaration.TypeAlias.Public.Parent<G>
 		>;
 		readonly 'declaration.type_alias.public.restricted': gate.In<
 			G,
-			features.Visibility,
+			features.ModuleVisibility,
 			V.Declaration.TypeAlias.Public.Restricted<G>
 		>;
 		readonly 'declaration.type_parameter': gate.In<G, features.ParametricPolymorphism, V.Declaration.TypeParameter<G>>;
@@ -5175,7 +5813,7 @@ declare module './map.ts' {
 		>;
 		readonly 'declaration.type_parameter.parameters': gate.In<
 			G,
-			features.ParametricPolymorphism,
+			features.ParamSpecs,
 			V.Declaration.TypeParameter.Parameters<G>
 		>;
 		readonly 'declaration.type_parameter.value': gate.In<
@@ -5185,61 +5823,121 @@ declare module './map.ts' {
 		>;
 		readonly 'declaration.type_parameter.variadic': gate.In<
 			G,
-			features.ParametricPolymorphism,
+			features.VariadicTypeParameters,
 			V.Declaration.TypeParameter.Variadic<G>
 		>;
 		readonly 'declaration.union': gate.In<G, features.UntaggedUnions, V.Declaration.Union<G>>;
-		readonly 'declaration.union.private': gate.In<G, features.Visibility, V.Declaration.Union.Private<G>>;
-		readonly 'declaration.union.public': gate.In<G, features.Visibility, V.Declaration.Union.Public<G>>;
+		readonly 'declaration.union.private': gate.In<G, features.ModuleVisibility, V.Declaration.Union.Private<G>>;
+		readonly 'declaration.union.public': gate.In<G, features.ModuleVisibility, V.Declaration.Union.Public<G>>;
 		readonly 'declaration.union.public.internal': gate.In<
 			G,
-			features.Visibility,
+			features.ModuleVisibility,
 			V.Declaration.Union.Public.Internal<G>
 		>;
-		readonly 'declaration.union.public.parent': gate.In<G, features.Visibility, V.Declaration.Union.Public.Parent<G>>;
+		readonly 'declaration.union.public.parent': gate.In<
+			G,
+			features.ModuleVisibility,
+			V.Declaration.Union.Public.Parent<G>
+		>;
 		readonly 'declaration.union.public.restricted': gate.In<
 			G,
-			features.Visibility,
+			features.ModuleVisibility,
 			V.Declaration.Union.Public.Restricted<G>
 		>;
 		readonly 'declaration.variable': V.Declaration.Variable<G>;
-		readonly 'declaration.variable.constant': V.Declaration.Variable.Constant<G>;
-		readonly 'declaration.variable.pattern': V.Declaration.Variable.Pattern<G>;
-		readonly 'declaration.variable.private': gate.In<G, features.Visibility, V.Declaration.Variable.Private<G>>;
-		readonly 'declaration.variable.public': gate.In<G, features.Visibility, V.Declaration.Variable.Public<G>>;
+		readonly 'declaration.variable.constant': gate.In<
+			G,
+			features.JavaScriptBindings,
+			V.Declaration.Variable.Constant<G>
+		>;
+		readonly 'declaration.variable.pattern': gate.In<G, features.JavaScriptBindings, V.Declaration.Variable.Pattern<G>>;
+		readonly 'declaration.variable.private': gate.In<G, features.ModuleVisibility, V.Declaration.Variable.Private<G>>;
+		readonly 'declaration.variable.public': gate.In<G, features.ModuleVisibility, V.Declaration.Variable.Public<G>>;
 		readonly 'declaration.variable.public.internal': gate.In<
 			G,
-			features.Visibility,
+			features.ModuleVisibility,
 			V.Declaration.Variable.Public.Internal<G>
 		>;
 		readonly 'declaration.variable.public.parent': gate.In<
 			G,
-			features.Visibility,
+			features.ModuleVisibility,
 			V.Declaration.Variable.Public.Parent<G>
 		>;
 		readonly 'declaration.variable.public.restricted': gate.In<
 			G,
-			features.Visibility,
+			features.ModuleVisibility,
 			V.Declaration.Variable.Public.Restricted<G>
 		>;
-		readonly 'declaration.variable.reassignable': V.Declaration.Variable.Reassignable<G>;
-		readonly 'declaration.variable.reassignable.function_scoped': V.Declaration.Variable.Reassignable.FunctionScoped<G>;
+		readonly 'declaration.variable.reassignable': gate.In<
+			G,
+			features.JavaScriptBindings,
+			V.Declaration.Variable.Reassignable<G>
+		>;
+		readonly 'declaration.variable.reassignable.function_scoped': gate.In<
+			G,
+			features.JavaScriptBindings,
+			V.Declaration.Variable.Reassignable.FunctionScoped<G>
+		>;
 		readonly element: V.Element<G>;
-		readonly 'element.comparator': V.Element.Comparator<G>;
-		readonly 'element.comparator.comparison': V.Element.Comparator.Comparison<G>;
-		readonly 'element.comparator.comparison.equal': V.Element.Comparator.Comparison.Equal<G>;
-		readonly 'element.comparator.comparison.greater': V.Element.Comparator.Comparison.Greater<G>;
-		readonly 'element.comparator.comparison.greater_equal': V.Element.Comparator.Comparison.GreaterEqual<G>;
-		readonly 'element.comparator.comparison.less': V.Element.Comparator.Comparison.Less<G>;
-		readonly 'element.comparator.comparison.less_equal': V.Element.Comparator.Comparison.LessEqual<G>;
-		readonly 'element.comparator.comparison.not_equal': V.Element.Comparator.Comparison.NotEqual<G>;
-		readonly 'element.comparator.comparison.not_equal.legacy': V.Element.Comparator.Comparison.NotEqual.Legacy<G>;
-		readonly 'element.comparator.identity': V.Element.Comparator.Identity<G>;
-		readonly 'element.comparator.identity.is': V.Element.Comparator.Identity.Is<G>;
-		readonly 'element.comparator.identity.is_not': V.Element.Comparator.Identity.IsNot<G>;
-		readonly 'element.comparator.membership': V.Element.Comparator.Membership<G>;
-		readonly 'element.comparator.membership.in': V.Element.Comparator.Membership.In<G>;
-		readonly 'element.comparator.membership.not_in': V.Element.Comparator.Membership.NotIn<G>;
+		readonly 'element.comparator': gate.In<G, features.PythonOperators, V.Element.Comparator<G>>;
+		readonly 'element.comparator.comparison': gate.In<G, features.PythonOperators, V.Element.Comparator.Comparison<G>>;
+		readonly 'element.comparator.comparison.equal': gate.In<
+			G,
+			features.PythonOperators,
+			V.Element.Comparator.Comparison.Equal<G>
+		>;
+		readonly 'element.comparator.comparison.greater': gate.In<
+			G,
+			features.PythonOperators,
+			V.Element.Comparator.Comparison.Greater<G>
+		>;
+		readonly 'element.comparator.comparison.greater_equal': gate.In<
+			G,
+			features.PythonOperators,
+			V.Element.Comparator.Comparison.GreaterEqual<G>
+		>;
+		readonly 'element.comparator.comparison.less': gate.In<
+			G,
+			features.PythonOperators,
+			V.Element.Comparator.Comparison.Less<G>
+		>;
+		readonly 'element.comparator.comparison.less_equal': gate.In<
+			G,
+			features.PythonOperators,
+			V.Element.Comparator.Comparison.LessEqual<G>
+		>;
+		readonly 'element.comparator.comparison.not_equal': gate.In<
+			G,
+			features.PythonOperators,
+			V.Element.Comparator.Comparison.NotEqual<G>
+		>;
+		readonly 'element.comparator.comparison.not_equal.legacy': gate.In<
+			G,
+			features.PythonOperators,
+			V.Element.Comparator.Comparison.NotEqual.Legacy<G>
+		>;
+		readonly 'element.comparator.identity': gate.In<G, features.PythonOperators, V.Element.Comparator.Identity<G>>;
+		readonly 'element.comparator.identity.is': gate.In<
+			G,
+			features.PythonOperators,
+			V.Element.Comparator.Identity.Is<G>
+		>;
+		readonly 'element.comparator.identity.is_not': gate.In<
+			G,
+			features.PythonOperators,
+			V.Element.Comparator.Identity.IsNot<G>
+		>;
+		readonly 'element.comparator.membership': gate.In<G, features.PythonOperators, V.Element.Comparator.Membership<G>>;
+		readonly 'element.comparator.membership.in': gate.In<
+			G,
+			features.PythonOperators,
+			V.Element.Comparator.Membership.In<G>
+		>;
+		readonly 'element.comparator.membership.not_in': gate.In<
+			G,
+			features.PythonOperators,
+			V.Element.Comparator.Membership.NotIn<G>
+		>;
 		readonly 'element.macro': gate.In<G, features.SyntacticMetaprogramming, V.Element.Macro<G>>;
 		readonly 'element.macro.fragment': gate.In<G, features.SyntacticMetaprogramming, V.Element.Macro.Fragment<G>>;
 		readonly 'element.macro.token_binding': gate.In<
@@ -5313,47 +6011,83 @@ declare module './map.ts' {
 			features.SyntacticMetaprogramming,
 			V.Element.Macro.TokenTree.Pattern.Paren<G>
 		>;
-		readonly 'element.pair': V.Element.Pair<G>;
-		readonly 'element.spread': V.Element.Spread<G>;
-		readonly 'element.spread.map': V.Element.Spread.Map<G>;
-		readonly 'element.spread.parenthesized': V.Element.Spread.Parenthesized<G>;
-		readonly 'element.struct': gate.In<G, features.Structs, V.Element.Struct<G>>;
-		readonly 'element.struct.base': gate.In<G, features.Structs, V.Element.Struct.Base<G>>;
-		readonly 'element.struct.field': gate.In<G, features.Structs, V.Element.Struct.Field<G>>;
-		readonly 'element.template': gate.In<G, features.TypeAnnotations, V.Element.Template<G>>;
-		readonly 'element.template.substitution': gate.In<G, features.TypeAnnotations, V.Element.Template.Substitution<G>>;
-		readonly 'element.tuple': gate.In<G, features.TypeAnnotations, V.Element.Tuple<G>>;
-		readonly 'element.tuple.member': gate.In<G, features.TypeAnnotations, V.Element.Tuple.Member<G>>;
-		readonly 'element.tuple.member.optional': gate.In<G, features.TypeAnnotations, V.Element.Tuple.Member.Optional<G>>;
-		readonly 'element.type_argument': gate.In<G, features.ParametricPolymorphism, V.Element.TypeArgument<G>>;
+		readonly 'element.pair': gate.In<G, features.KeyValuePairs, V.Element.Pair<G>>;
+		readonly 'element.spread': gate.In<G, features.Spreads, V.Element.Spread<G>>;
+		readonly 'element.spread.map': gate.In<G, features.SetLiterals, V.Element.Spread.Map<G>>;
+		readonly 'element.spread.parenthesized': gate.In<G, features.SetLiterals, V.Element.Spread.Parenthesized<G>>;
+		readonly 'element.struct': gate.In<G, features.StructLiterals, V.Element.Struct<G>>;
+		readonly 'element.struct.base': gate.In<G, features.TupleStructs, V.Element.Struct.Base<G>>;
+		readonly 'element.struct.field': gate.In<G, features.StructLiterals, V.Element.Struct.Field<G>>;
+		readonly 'element.template': gate.In<G, features.TypeAlgebra, V.Element.Template<G>>;
+		readonly 'element.template.substitution': gate.In<G, features.TypeAlgebra, V.Element.Template.Substitution<G>>;
+		readonly 'element.tuple': gate.In<G, features.TypeAlgebra, V.Element.Tuple<G>>;
+		readonly 'element.tuple.member': gate.In<G, features.TypeAlgebra, V.Element.Tuple.Member<G>>;
+		readonly 'element.tuple.member.optional': gate.In<G, features.TypeAlgebra, V.Element.Tuple.Member.Optional<G>>;
+		readonly 'element.type_argument': gate.In<G, features.GenericItems, V.Element.TypeArgument<G>>;
 		readonly 'element.type_binding': gate.In<G, features.AssociatedTypes, V.Element.TypeBinding<G>>;
 		readonly expression: V.Expression<G>;
 		readonly 'expression.assignment': V.Expression.Assignment<G>;
 		readonly 'expression.assignment.compound': V.Expression.Assignment.Compound<G>;
 		readonly 'expression.assignment.compound.add': V.Expression.Assignment.Compound.Add<G>;
-		readonly 'expression.assignment.compound.and': V.Expression.Assignment.Compound.And<G>;
+		readonly 'expression.assignment.compound.and': gate.In<
+			G,
+			features.JavaScriptOperators,
+			V.Expression.Assignment.Compound.And<G>
+		>;
 		readonly 'expression.assignment.compound.bitwise_and': V.Expression.Assignment.Compound.BitwiseAnd<G>;
 		readonly 'expression.assignment.compound.bitwise_or': V.Expression.Assignment.Compound.BitwiseOr<G>;
 		readonly 'expression.assignment.compound.bitwise_xor': V.Expression.Assignment.Compound.BitwiseXor<G>;
-		readonly 'expression.assignment.compound.coalesce': V.Expression.Assignment.Compound.Coalesce<G>;
+		readonly 'expression.assignment.compound.coalesce': gate.In<
+			G,
+			features.JavaScriptOperators,
+			V.Expression.Assignment.Compound.Coalesce<G>
+		>;
 		readonly 'expression.assignment.compound.divide': V.Expression.Assignment.Compound.Divide<G>;
-		readonly 'expression.assignment.compound.exponent': V.Expression.Assignment.Compound.Exponent<G>;
-		readonly 'expression.assignment.compound.floor_divide': V.Expression.Assignment.Compound.FloorDivide<G>;
-		readonly 'expression.assignment.compound.matrix_multiply': V.Expression.Assignment.Compound.MatrixMultiply<G>;
+		readonly 'expression.assignment.compound.exponent': gate.In<
+			G,
+			features.ExponentiationAndMembership,
+			V.Expression.Assignment.Compound.Exponent<G>
+		>;
+		readonly 'expression.assignment.compound.floor_divide': gate.In<
+			G,
+			features.PythonOperators,
+			V.Expression.Assignment.Compound.FloorDivide<G>
+		>;
+		readonly 'expression.assignment.compound.matrix_multiply': gate.In<
+			G,
+			features.PythonOperators,
+			V.Expression.Assignment.Compound.MatrixMultiply<G>
+		>;
 		readonly 'expression.assignment.compound.modulo': V.Expression.Assignment.Compound.Modulo<G>;
 		readonly 'expression.assignment.compound.multiply': V.Expression.Assignment.Compound.Multiply<G>;
-		readonly 'expression.assignment.compound.or': V.Expression.Assignment.Compound.Or<G>;
+		readonly 'expression.assignment.compound.or': gate.In<
+			G,
+			features.JavaScriptOperators,
+			V.Expression.Assignment.Compound.Or<G>
+		>;
 		readonly 'expression.assignment.compound.shift_left': V.Expression.Assignment.Compound.ShiftLeft<G>;
 		readonly 'expression.assignment.compound.shift_right': V.Expression.Assignment.Compound.ShiftRight<G>;
-		readonly 'expression.assignment.compound.shift_right_unsigned': V.Expression.Assignment.Compound.ShiftRightUnsigned<G>;
+		readonly 'expression.assignment.compound.shift_right_unsigned': gate.In<
+			G,
+			features.JavaScriptOperators,
+			V.Expression.Assignment.Compound.ShiftRightUnsigned<G>
+		>;
 		readonly 'expression.assignment.compound.subtract': V.Expression.Assignment.Compound.Subtract<G>;
 		readonly 'expression.await': gate.In<G, features.AsyncAwait, V.Expression.Await<G>>;
 		readonly 'expression.binary': V.Expression.Binary<G>;
 		readonly 'expression.binary.arithmetic': V.Expression.Binary.Arithmetic<G>;
 		readonly 'expression.binary.arithmetic.add': V.Expression.Binary.Arithmetic.Add<G>;
 		readonly 'expression.binary.arithmetic.divide': V.Expression.Binary.Arithmetic.Divide<G>;
-		readonly 'expression.binary.arithmetic.exponent': V.Expression.Binary.Arithmetic.Exponent<G>;
-		readonly 'expression.binary.arithmetic.floor_divide': V.Expression.Binary.Arithmetic.FloorDivide<G>;
+		readonly 'expression.binary.arithmetic.exponent': gate.In<
+			G,
+			features.ExponentiationAndMembership,
+			V.Expression.Binary.Arithmetic.Exponent<G>
+		>;
+		readonly 'expression.binary.arithmetic.floor_divide': gate.In<
+			G,
+			features.PythonOperators,
+			V.Expression.Binary.Arithmetic.FloorDivide<G>
+		>;
 		readonly 'expression.binary.arithmetic.modulo': V.Expression.Binary.Arithmetic.Modulo<G>;
 		readonly 'expression.binary.arithmetic.multiply': V.Expression.Binary.Arithmetic.Multiply<G>;
 		readonly 'expression.binary.arithmetic.subtract': V.Expression.Binary.Arithmetic.Subtract<G>;
@@ -5361,9 +6095,13 @@ declare module './map.ts' {
 		readonly 'expression.binary.bitwise.and': V.Expression.Binary.Bitwise.And<G>;
 		readonly 'expression.binary.bitwise.or': V.Expression.Binary.Bitwise.Or<G>;
 		readonly 'expression.binary.bitwise.xor': V.Expression.Binary.Bitwise.Xor<G>;
-		readonly 'expression.binary.coalesce': V.Expression.Binary.Coalesce<G>;
+		readonly 'expression.binary.coalesce': gate.In<G, features.JavaScriptOperators, V.Expression.Binary.Coalesce<G>>;
 		readonly 'expression.binary.comparison': V.Expression.Binary.Comparison<G>;
-		readonly 'expression.binary.comparison.chain': V.Expression.Binary.Comparison.Chain<G>;
+		readonly 'expression.binary.comparison.chain': gate.In<
+			G,
+			features.PythonOperators,
+			V.Expression.Binary.Comparison.Chain<G>
+		>;
 		readonly 'expression.binary.comparison.equal': V.Expression.Binary.Comparison.Equal<G>;
 		readonly 'expression.binary.comparison.greater': V.Expression.Binary.Comparison.Greater<G>;
 		readonly 'expression.binary.comparison.greater_equal': V.Expression.Binary.Comparison.GreaterEqual<G>;
@@ -5380,56 +6118,104 @@ declare module './map.ts' {
 			V.Expression.Binary.Comparison.LooseNotEqual<G>
 		>;
 		readonly 'expression.binary.comparison.not_equal': V.Expression.Binary.Comparison.NotEqual<G>;
-		readonly 'expression.binary.comparison.not_equal.legacy': V.Expression.Binary.Comparison.NotEqual.Legacy<G>;
-		readonly 'expression.binary.identity': V.Expression.Binary.Identity<G>;
-		readonly 'expression.binary.identity.is': V.Expression.Binary.Identity.Is<G>;
-		readonly 'expression.binary.identity.is_not': V.Expression.Binary.Identity.IsNot<G>;
+		readonly 'expression.binary.comparison.not_equal.legacy': gate.In<
+			G,
+			features.PythonOperators,
+			V.Expression.Binary.Comparison.NotEqual.Legacy<G>
+		>;
+		readonly 'expression.binary.identity': gate.In<G, features.IdentityComparison, V.Expression.Binary.Identity<G>>;
+		readonly 'expression.binary.identity.is': gate.In<
+			G,
+			features.IdentityComparison,
+			V.Expression.Binary.Identity.Is<G>
+		>;
+		readonly 'expression.binary.identity.is_not': gate.In<
+			G,
+			features.IdentityComparison,
+			V.Expression.Binary.Identity.IsNot<G>
+		>;
 		readonly 'expression.binary.logical': V.Expression.Binary.Logical<G>;
 		readonly 'expression.binary.logical.and': V.Expression.Binary.Logical.And<G>;
 		readonly 'expression.binary.logical.or': V.Expression.Binary.Logical.Or<G>;
-		readonly 'expression.binary.matrix_multiply': V.Expression.Binary.MatrixMultiply<G>;
-		readonly 'expression.binary.membership': V.Expression.Binary.Membership<G>;
-		readonly 'expression.binary.membership.in': V.Expression.Binary.Membership.In<G>;
-		readonly 'expression.binary.membership.instanceof': V.Expression.Binary.Membership.Instanceof<G>;
-		readonly 'expression.binary.membership.not_in': V.Expression.Binary.Membership.NotIn<G>;
+		readonly 'expression.binary.matrix_multiply': gate.In<
+			G,
+			features.PythonOperators,
+			V.Expression.Binary.MatrixMultiply<G>
+		>;
+		readonly 'expression.binary.membership': gate.In<
+			G,
+			features.ExponentiationAndMembership,
+			V.Expression.Binary.Membership<G>
+		>;
+		readonly 'expression.binary.membership.in': gate.In<
+			G,
+			features.ExponentiationAndMembership,
+			V.Expression.Binary.Membership.In<G>
+		>;
+		readonly 'expression.binary.membership.instanceof': gate.In<
+			G,
+			features.JavaScriptOperators,
+			V.Expression.Binary.Membership.Instanceof<G>
+		>;
+		readonly 'expression.binary.membership.not_in': gate.In<
+			G,
+			features.PythonOperators,
+			V.Expression.Binary.Membership.NotIn<G>
+		>;
 		readonly 'expression.binary.shift': V.Expression.Binary.Shift<G>;
 		readonly 'expression.binary.shift.left': V.Expression.Binary.Shift.Left<G>;
 		readonly 'expression.binary.shift.right': V.Expression.Binary.Shift.Right<G>;
-		readonly 'expression.binary.shift.right_unsigned': V.Expression.Binary.Shift.RightUnsigned<G>;
-		readonly 'expression.block': V.Expression.Block<G>;
+		readonly 'expression.binary.shift.right_unsigned': gate.In<
+			G,
+			features.JavaScriptOperators,
+			V.Expression.Binary.Shift.RightUnsigned<G>
+		>;
+		readonly 'expression.block': gate.In<G, features.RustExpressions, V.Expression.Block<G>>;
 		readonly 'expression.block.async': gate.In<G, features.AsyncBlocks, V.Expression.Block.Async<G>>;
 		readonly 'expression.block.const': gate.In<G, features.CompileTimeEvaluation, V.Expression.Block.Const<G>>;
-		readonly 'expression.block.generator': gate.In<G, features.Coroutines, V.Expression.Block.Generator<G>>;
+		readonly 'expression.block.generator': gate.In<G, features.GeneratorBlocks, V.Expression.Block.Generator<G>>;
 		readonly 'expression.block.try': gate.In<G, features.ErrorPropagation, V.Expression.Block.Try<G>>;
 		readonly 'expression.block.unsafe': gate.In<G, features.UnsafeCode, V.Expression.Block.Unsafe<G>>;
 		readonly 'expression.call': V.Expression.Call<G>;
-		readonly 'expression.call.construct': gate.In<G, features.Classes, V.Expression.Call.Construct<G>>;
-		readonly 'expression.call.construct.bare': gate.In<G, features.Classes, V.Expression.Call.Construct.Bare<G>>;
-		readonly 'expression.call.import': gate.In<G, features.Modules, V.Expression.Call.Import<G>>;
+		readonly 'expression.call.construct': gate.In<G, features.JavaScriptClasses, V.Expression.Call.Construct<G>>;
+		readonly 'expression.call.construct.bare': gate.In<
+			G,
+			features.JavaScriptClasses,
+			V.Expression.Call.Construct.Bare<G>
+		>;
+		readonly 'expression.call.import': gate.In<G, features.JavaScriptModules, V.Expression.Call.Import<G>>;
 		readonly 'expression.call.macro': gate.In<G, features.SyntacticMetaprogramming, V.Expression.Call.Macro<G>>;
 		readonly 'expression.call.member': V.Expression.Call.Member<G>;
-		readonly 'expression.call.qualified': V.Expression.Call.Qualified<G>;
-		readonly 'expression.call.template': gate.In<G, features.StringInterpolation, V.Expression.Call.Template<G>>;
-		readonly 'expression.cast': gate.In<G, features.TypeAnnotations, V.Expression.Cast<G>>;
-		readonly 'expression.cast.assertion': gate.In<G, features.TypeAnnotations, V.Expression.Cast.Assertion<G>>;
+		readonly 'expression.call.qualified': gate.In<G, features.RustExpressions, V.Expression.Call.Qualified<G>>;
+		readonly 'expression.call.template': gate.In<G, features.TaggedTemplates, V.Expression.Call.Template<G>>;
+		readonly 'expression.cast': gate.In<G, features.StaticTypes, V.Expression.Cast<G>>;
+		readonly 'expression.cast.assertion': gate.In<G, features.TypeAlgebra, V.Expression.Cast.Assertion<G>>;
 		readonly 'expression.cast.assertion.angle_bracket': gate.In<
 			G,
-			features.TypeAnnotations,
+			features.TypeAlgebra,
 			V.Expression.Cast.Assertion.AngleBracket<G>
 		>;
-		readonly 'expression.cast.conversion': gate.In<G, features.TypeAnnotations, V.Expression.Cast.Conversion<G>>;
+		readonly 'expression.cast.conversion': gate.In<G, features.SystemsTypes, V.Expression.Cast.Conversion<G>>;
 		readonly 'expression.cast.non_null': gate.In<G, features.NonNullAssertions, V.Expression.Cast.NonNull<G>>;
-		readonly 'expression.cast.satisfies': gate.In<G, features.TypeAnnotations, V.Expression.Cast.Satisfies<G>>;
-		readonly 'expression.class': gate.In<G, features.Classes, V.Expression.Class<G>>;
+		readonly 'expression.cast.satisfies': gate.In<G, features.TypeAlgebra, V.Expression.Cast.Satisfies<G>>;
+		readonly 'expression.class': gate.In<G, features.JavaScriptClasses, V.Expression.Class<G>>;
 		readonly 'expression.collection': V.Expression.Collection<G>;
 		readonly 'expression.collection.list': V.Expression.Collection.List<G>;
-		readonly 'expression.collection.list.repeat': V.Expression.Collection.List.Repeat<G>;
-		readonly 'expression.collection.map': V.Expression.Collection.Map<G>;
-		readonly 'expression.collection.object': V.Expression.Collection.Object<G>;
-		readonly 'expression.collection.set': V.Expression.Collection.Set<G>;
-		readonly 'expression.collection.struct': gate.In<G, features.Structs, V.Expression.Collection.Struct<G>>;
+		readonly 'expression.collection.list.repeat': gate.In<
+			G,
+			features.RustExpressions,
+			V.Expression.Collection.List.Repeat<G>
+		>;
+		readonly 'expression.collection.map': gate.In<G, features.MapLiterals, V.Expression.Collection.Map<G>>;
+		readonly 'expression.collection.object': gate.In<
+			G,
+			features.JavaScriptExpressions,
+			V.Expression.Collection.Object<G>
+		>;
+		readonly 'expression.collection.set': gate.In<G, features.SetLiterals, V.Expression.Collection.Set<G>>;
+		readonly 'expression.collection.struct': gate.In<G, features.StructLiterals, V.Expression.Collection.Struct<G>>;
 		readonly 'expression.collection.tuple': gate.In<G, features.Tuples, V.Expression.Collection.Tuple<G>>;
-		readonly 'expression.collection.tuple.bare': gate.In<G, features.Tuples, V.Expression.Collection.Tuple.Bare<G>>;
+		readonly 'expression.collection.tuple.bare': gate.In<G, features.BareTuples, V.Expression.Collection.Tuple.Bare<G>>;
 		readonly 'expression.comprehension': gate.In<G, features.Comprehensions, V.Expression.Comprehension<G>>;
 		readonly 'expression.comprehension.generator': gate.In<
 			G,
@@ -5440,22 +6226,22 @@ declare module './map.ts' {
 		readonly 'expression.comprehension.map': gate.In<G, features.Comprehensions, V.Expression.Comprehension.Map<G>>;
 		readonly 'expression.comprehension.set': gate.In<G, features.Comprehensions, V.Expression.Comprehension.Set<G>>;
 		readonly 'expression.conditional': gate.In<G, features.ConditionalExpressions, V.Expression.Conditional<G>>;
-		readonly 'expression.function': V.Expression.Function<G>;
-		readonly 'expression.instantiation': gate.In<G, features.ParametricPolymorphism, V.Expression.Instantiation<G>>;
+		readonly 'expression.function': gate.In<G, features.JavaScriptExpressions, V.Expression.Function<G>>;
+		readonly 'expression.instantiation': gate.In<G, features.GenericSignatures, V.Expression.Instantiation<G>>;
 		readonly 'expression.interpolation': gate.In<G, features.StringInterpolation, V.Expression.Interpolation<G>>;
 		readonly 'expression.interpolation.conversion': gate.In<
 			G,
-			features.StringInterpolation,
+			features.FormatStrings,
 			V.Expression.Interpolation.Conversion<G>
 		>;
 		readonly 'expression.interpolation.format': gate.In<
 			G,
-			features.StringInterpolation,
+			features.FormatStrings,
 			V.Expression.Interpolation.Format<G>
 		>;
 		readonly 'expression.lambda': V.Expression.Lambda<G>;
 		readonly 'expression.member': V.Expression.Member<G>;
-		readonly 'expression.meta': V.Expression.Meta<G>;
+		readonly 'expression.meta': gate.In<G, features.JavaScriptExpressions, V.Expression.Meta<G>>;
 		readonly 'expression.parenthesized': V.Expression.Parenthesized<G>;
 		readonly 'expression.propagate': gate.In<G, features.ErrorPropagation, V.Expression.Propagate<G>>;
 		readonly 'expression.range': gate.In<G, features.RangeExpressions, V.Expression.Range<G>>;
@@ -5467,22 +6253,26 @@ declare module './map.ts' {
 			V.Expression.Range.Inclusive.Legacy<G>
 		>;
 		readonly 'expression.reference': gate.In<G, features.References, V.Expression.Reference<G>>;
-		readonly 'expression.sequence': V.Expression.Sequence<G>;
+		readonly 'expression.sequence': gate.In<G, features.JavaScriptExpressions, V.Expression.Sequence<G>>;
 		readonly 'expression.slice': gate.In<G, features.SliceExpressions, V.Expression.Slice<G>>;
 		readonly 'expression.subscript': V.Expression.Subscript<G>;
 		readonly 'expression.unary': V.Expression.Unary<G>;
-		readonly 'expression.unary.bitwise_not': V.Expression.Unary.BitwiseNot<G>;
-		readonly 'expression.unary.delete': V.Expression.Unary.Delete<G>;
+		readonly 'expression.unary.bitwise_not': gate.In<
+			G,
+			features.CFamilyUnaryOperators,
+			V.Expression.Unary.BitwiseNot<G>
+		>;
+		readonly 'expression.unary.delete': gate.In<G, features.JavaScriptOperators, V.Expression.Unary.Delete<G>>;
 		readonly 'expression.unary.deref': gate.In<G, features.References, V.Expression.Unary.Deref<G>>;
 		readonly 'expression.unary.negation': V.Expression.Unary.Negation<G>;
 		readonly 'expression.unary.not': V.Expression.Unary.Not<G>;
-		readonly 'expression.unary.plus': V.Expression.Unary.Plus<G>;
-		readonly 'expression.unary.typeof': V.Expression.Unary.Typeof<G>;
-		readonly 'expression.unary.void': V.Expression.Unary.Void<G>;
-		readonly 'expression.unit': gate.In<G, features.Tuples, V.Expression.Unit<G>>;
-		readonly 'expression.update': V.Expression.Update<G>;
-		readonly 'expression.update.decrement': V.Expression.Update.Decrement<G>;
-		readonly 'expression.update.increment': V.Expression.Update.Increment<G>;
+		readonly 'expression.unary.plus': gate.In<G, features.CFamilyUnaryOperators, V.Expression.Unary.Plus<G>>;
+		readonly 'expression.unary.typeof': gate.In<G, features.JavaScriptOperators, V.Expression.Unary.Typeof<G>>;
+		readonly 'expression.unary.void': gate.In<G, features.JavaScriptOperators, V.Expression.Unary.Void<G>>;
+		readonly 'expression.unit': gate.In<G, features.UnitValues, V.Expression.Unit<G>>;
+		readonly 'expression.update': gate.In<G, features.JavaScriptOperators, V.Expression.Update<G>>;
+		readonly 'expression.update.decrement': gate.In<G, features.JavaScriptOperators, V.Expression.Update.Decrement<G>>;
+		readonly 'expression.update.increment': gate.In<G, features.JavaScriptOperators, V.Expression.Update.Increment<G>>;
 		readonly 'expression.yield': gate.In<G, features.Coroutines, V.Expression.Yield<G>>;
 		readonly 'expression.yield.delegate': gate.In<G, features.Generators, V.Expression.Yield.Delegate<G>>;
 		readonly file: V.File<G>;
@@ -5491,20 +6281,28 @@ declare module './map.ts' {
 		readonly 'identifier.lifetime': gate.In<G, features.Lifetimes, V.Identifier.Lifetime<G>>;
 		readonly 'identifier.metavariable': gate.In<G, features.SyntacticMetaprogramming, V.Identifier.Metavariable<G>>;
 		readonly 'identifier.qualified': V.Identifier.Qualified<G>;
-		readonly 'identifier.receiver': gate.In<G, features.Methods, V.Identifier.Receiver<G>>;
-		readonly 'identifier.super': V.Identifier.Super<G>;
+		readonly 'identifier.receiver': gate.In<G, features.MethodSignatures, V.Identifier.Receiver<G>>;
+		readonly 'identifier.super': gate.In<G, features.JavaScriptExpressions, V.Identifier.Super<G>>;
 		readonly literal: V.Literal<G>;
 		readonly 'literal.boolean': V.Literal.Boolean<G>;
 		readonly 'literal.boolean.false': V.Literal.Boolean.False<G>;
 		readonly 'literal.boolean.true': V.Literal.Boolean.True<G>;
 		readonly 'literal.character': gate.In<G, features.Characters, V.Literal.Character<G>>;
-		readonly 'literal.ellipsis': V.Literal.Ellipsis<G>;
-		readonly 'literal.null': V.Literal.Null<G>;
-		readonly 'literal.null.undefined': V.Literal.Null.Undefined<G>;
+		readonly 'literal.ellipsis': gate.In<G, features.EllipsisLiteral, V.Literal.Ellipsis<G>>;
+		readonly 'literal.null': gate.In<G, features.LiteralFacets, V.Literal.Null<G>>;
+		readonly 'literal.null.undefined': gate.In<G, features.UndefinedValue, V.Literal.Null.Undefined<G>>;
 		readonly 'literal.number': V.Literal.Number<G>;
 		readonly 'literal.number.float': V.Literal.Number.Float<G>;
-		readonly 'literal.number.float.leading_point': V.Literal.Number.Float.LeadingPoint<G>;
-		readonly 'literal.number.float.scientific': V.Literal.Number.Float.Scientific<G>;
+		readonly 'literal.number.float.leading_point': gate.In<
+			G,
+			features.LiteralFacets,
+			V.Literal.Number.Float.LeadingPoint<G>
+		>;
+		readonly 'literal.number.float.scientific': gate.In<
+			G,
+			features.LiteralFacets,
+			V.Literal.Number.Float.Scientific<G>
+		>;
 		readonly 'literal.number.integer': V.Literal.Number.Integer<G>;
 		readonly 'literal.number.integer.big': gate.In<
 			G,
@@ -5513,17 +6311,17 @@ declare module './map.ts' {
 		>;
 		readonly 'literal.number.integer.big.binary': gate.In<
 			G,
-			features.ArbitraryPrecisionIntegers,
+			features.BigIntegerRadixes,
 			V.Literal.Number.Integer.Big.Binary<G>
 		>;
 		readonly 'literal.number.integer.big.hex': gate.In<
 			G,
-			features.ArbitraryPrecisionIntegers,
+			features.BigIntegerRadixes,
 			V.Literal.Number.Integer.Big.Hex<G>
 		>;
 		readonly 'literal.number.integer.big.octal': gate.In<
 			G,
-			features.ArbitraryPrecisionIntegers,
+			features.BigIntegerRadixes,
 			V.Literal.Number.Integer.Big.Octal<G>
 		>;
 		readonly 'literal.number.integer.binary': V.Literal.Number.Integer.Binary<G>;
@@ -5540,88 +6338,100 @@ declare module './map.ts' {
 		readonly 'literal.regex.pattern': gate.In<G, features.RegularExpressions, V.Literal.Regex.Pattern<G>>;
 		readonly 'literal.string': V.Literal.String<G>;
 		readonly 'literal.string.bytes': gate.In<G, features.ByteStrings, V.Literal.String.Bytes<G>>;
-		readonly 'literal.string.bytes.multiline': gate.In<G, features.ByteStrings, V.Literal.String.Bytes.Multiline<G>>;
+		readonly 'literal.string.bytes.multiline': gate.In<
+			G,
+			features.MultilineByteStrings,
+			V.Literal.String.Bytes.Multiline<G>
+		>;
 		readonly 'literal.string.bytes.raw': gate.In<G, features.RawStrings, V.Literal.String.Bytes.Raw<G>>;
 		readonly 'literal.string.bytes.raw.multiline': gate.In<
 			G,
-			features.RawStrings,
+			features.RawStringForms,
 			V.Literal.String.Bytes.Raw.Multiline<G>
 		>;
 		readonly 'literal.string.c': gate.In<G, features.CStrings, V.Literal.String.C<G>>;
 		readonly 'literal.string.c.raw': gate.In<G, features.CStrings, V.Literal.String.C.Raw<G>>;
-		readonly 'literal.string.concatenated': V.Literal.String.Concatenated<G>;
+		readonly 'literal.string.concatenated': gate.In<
+			G,
+			features.ImplicitConcatenation,
+			V.Literal.String.Concatenated<G>
+		>;
 		readonly 'literal.string.escape': V.Literal.String.Escape<G>;
 		readonly 'literal.string.interpolated': gate.In<G, features.StringInterpolation, V.Literal.String.Interpolated<G>>;
 		readonly 'literal.string.interpolated.deferred': gate.In<
 			G,
-			features.StringInterpolation,
+			features.FormatStrings,
 			V.Literal.String.Interpolated.Deferred<G>
 		>;
 		readonly 'literal.string.interpolated.deferred.multiline': gate.In<
 			G,
-			features.StringInterpolation,
+			features.FormatStrings,
 			V.Literal.String.Interpolated.Deferred.Multiline<G>
 		>;
 		readonly 'literal.string.interpolated.deferred.raw': gate.In<
 			G,
-			features.RawStrings,
+			features.RawStringForms,
 			V.Literal.String.Interpolated.Deferred.Raw<G>
 		>;
 		readonly 'literal.string.interpolated.deferred.raw.multiline': gate.In<
 			G,
-			features.RawStrings,
+			features.RawStringForms,
 			V.Literal.String.Interpolated.Deferred.Raw.Multiline<G>
 		>;
 		readonly 'literal.string.interpolated.multiline': gate.In<
 			G,
-			features.StringInterpolation,
+			features.FormatStrings,
 			V.Literal.String.Interpolated.Multiline<G>
 		>;
-		readonly 'literal.string.interpolated.raw': gate.In<G, features.RawStrings, V.Literal.String.Interpolated.Raw<G>>;
+		readonly 'literal.string.interpolated.raw': gate.In<
+			G,
+			features.RawStringForms,
+			V.Literal.String.Interpolated.Raw<G>
+		>;
 		readonly 'literal.string.interpolated.raw.multiline': gate.In<
 			G,
-			features.RawStrings,
+			features.RawStringForms,
 			V.Literal.String.Interpolated.Raw.Multiline<G>
 		>;
-		readonly 'literal.string.multiline': V.Literal.String.Multiline<G>;
+		readonly 'literal.string.multiline': gate.In<G, features.MultilineStrings, V.Literal.String.Multiline<G>>;
 		readonly 'literal.string.raw': gate.In<G, features.RawStrings, V.Literal.String.Raw<G>>;
-		readonly 'literal.string.raw.multiline': gate.In<G, features.RawStrings, V.Literal.String.Raw.Multiline<G>>;
+		readonly 'literal.string.raw.multiline': gate.In<G, features.RawStringForms, V.Literal.String.Raw.Multiline<G>>;
 		readonly 'literal.string.text': V.Literal.String.Text<G>;
 		readonly 'literal.string.unicode': gate.In<G, features.UnicodeStrings, V.Literal.String.Unicode<G>>;
 		readonly modifier: V.Modifier<G>;
 		readonly 'modifier.extern': gate.In<G, features.ForeignFunctionInterface, V.Modifier.Extern<G>>;
 		readonly 'modifier.visibility': gate.In<G, features.Visibility, V.Modifier.Visibility<G>>;
 		readonly 'modifier.visibility.private': gate.In<G, features.Visibility, V.Modifier.Visibility.Private<G>>;
-		readonly 'modifier.visibility.protected': gate.In<G, features.Visibility, V.Modifier.Visibility.Protected<G>>;
+		readonly 'modifier.visibility.protected': gate.In<G, features.ClassVisibility, V.Modifier.Visibility.Protected<G>>;
 		readonly 'modifier.visibility.public': gate.In<G, features.Visibility, V.Modifier.Visibility.Public<G>>;
 		readonly 'modifier.visibility.public.internal': gate.In<
 			G,
-			features.Visibility,
+			features.ModuleVisibility,
 			V.Modifier.Visibility.Public.Internal<G>
 		>;
 		readonly 'modifier.visibility.public.parent': gate.In<
 			G,
-			features.Visibility,
+			features.ModuleVisibility,
 			V.Modifier.Visibility.Public.Parent<G>
 		>;
 		readonly 'modifier.visibility.public.restricted': gate.In<
 			G,
-			features.Visibility,
+			features.ModuleVisibility,
 			V.Modifier.Visibility.Public.Restricted<G>
 		>;
 		readonly pattern: V.Pattern<G>;
 		readonly 'pattern.as': gate.In<G, features.MatchExpressions, V.Pattern.As<G>>;
-		readonly 'pattern.assignment': gate.In<G, features.Destructuring, V.Pattern.Assignment<G>>;
+		readonly 'pattern.assignment': gate.In<G, features.ObjectPatterns, V.Pattern.Assignment<G>>;
 		readonly 'pattern.complex': gate.In<G, features.ComplexNumbers, V.Pattern.Complex<G>>;
 		readonly 'pattern.complex.add': gate.In<G, features.ComplexNumbers, V.Pattern.Complex.Add<G>>;
 		readonly 'pattern.complex.subtract': gate.In<G, features.ComplexNumbers, V.Pattern.Complex.Subtract<G>>;
-		readonly 'pattern.generic': gate.In<G, features.ParametricPolymorphism, V.Pattern.Generic<G>>;
+		readonly 'pattern.generic': gate.In<G, features.GenericItems, V.Pattern.Generic<G>>;
 		readonly 'pattern.list': gate.In<G, features.Destructuring, V.Pattern.List<G>>;
-		readonly 'pattern.map': gate.In<G, features.MatchExpressions, V.Pattern.Map<G>>;
-		readonly 'pattern.mutable': V.Pattern.Mutable<G>;
-		readonly 'pattern.object': gate.In<G, features.Destructuring, V.Pattern.Object<G>>;
-		readonly 'pattern.object.assignment': gate.In<G, features.Destructuring, V.Pattern.Object.Assignment<G>>;
-		readonly 'pattern.object.pair': gate.In<G, features.Destructuring, V.Pattern.Object.Pair<G>>;
+		readonly 'pattern.map': gate.In<G, features.MappingPatterns, V.Pattern.Map<G>>;
+		readonly 'pattern.mutable': gate.In<G, features.RustDeclarations, V.Pattern.Mutable<G>>;
+		readonly 'pattern.object': gate.In<G, features.ObjectPatterns, V.Pattern.Object<G>>;
+		readonly 'pattern.object.assignment': gate.In<G, features.ObjectPatterns, V.Pattern.Object.Assignment<G>>;
+		readonly 'pattern.object.pair': gate.In<G, features.ObjectPatterns, V.Pattern.Object.Pair<G>>;
 		readonly 'pattern.or': gate.In<G, features.MatchExpressions, V.Pattern.Or<G>>;
 		readonly 'pattern.range': gate.In<G, features.RangeExpressions, V.Pattern.Range<G>>;
 		readonly 'pattern.range.exclusive': gate.In<G, features.RangeExpressions, V.Pattern.Range.Exclusive<G>>;
@@ -5633,63 +6443,79 @@ declare module './map.ts' {
 		>;
 		readonly 'pattern.reference': gate.In<G, features.References, V.Pattern.Reference<G>>;
 		readonly 'pattern.reference.value': gate.In<G, features.References, V.Pattern.Reference.Value<G>>;
-		readonly 'pattern.rest': gate.In<G, features.Destructuring, V.Pattern.Rest<G>>;
-		readonly 'pattern.rest.map': gate.In<G, features.Destructuring, V.Pattern.Rest.Map<G>>;
+		readonly 'pattern.rest': gate.In<G, features.RestPatterns, V.Pattern.Rest<G>>;
+		readonly 'pattern.rest.map': gate.In<G, features.PythonDestructuring, V.Pattern.Rest.Map<G>>;
 		readonly 'pattern.struct': gate.In<G, features.StructPatterns, V.Pattern.Struct<G>>;
 		readonly 'pattern.struct.field': gate.In<G, features.StructPatterns, V.Pattern.Struct.Field<G>>;
-		readonly 'pattern.struct.rest': gate.In<G, features.Structs, V.Pattern.Struct.Rest<G>>;
-		readonly 'pattern.tuple': gate.In<G, features.Destructuring, V.Pattern.Tuple<G>>;
-		readonly 'pattern.tuple.bare': gate.In<G, features.Destructuring, V.Pattern.Tuple.Bare<G>>;
-		readonly 'pattern.wildcard': gate.In<G, features.Destructuring, V.Pattern.Wildcard<G>>;
+		readonly 'pattern.struct.rest': gate.In<G, features.TupleStructs, V.Pattern.Struct.Rest<G>>;
+		readonly 'pattern.tuple': gate.In<G, features.TuplePatterns, V.Pattern.Tuple<G>>;
+		readonly 'pattern.tuple.bare': gate.In<G, features.PythonDestructuring, V.Pattern.Tuple.Bare<G>>;
+		readonly 'pattern.wildcard': gate.In<G, features.WildcardPatterns, V.Pattern.Wildcard<G>>;
 		readonly statement: V.Statement<G>;
 		readonly 'statement.assert': gate.In<G, features.Assertions, V.Statement.Assert<G>>;
 		readonly 'statement.block': V.Statement.Block<G>;
-		readonly 'statement.block.static': gate.In<G, features.Classes, V.Statement.Block.Static<G>>;
+		readonly 'statement.block.static': gate.In<G, features.JavaScriptClasses, V.Statement.Block.Static<G>>;
 		readonly 'statement.break': V.Statement.Break<G>;
 		readonly 'statement.continue': V.Statement.Continue<G>;
 		readonly 'statement.debugger': gate.In<G, features.DebuggerStatements, V.Statement.Debugger<G>>;
-		readonly 'statement.delete': V.Statement.Delete<G>;
+		readonly 'statement.delete': gate.In<G, features.PythonStatements, V.Statement.Delete<G>>;
 		readonly 'statement.empty': V.Statement.Empty<G>;
 		readonly 'statement.exec': gate.In<G, features.ExecStatements, V.Statement.Exec<G>>;
-		readonly 'statement.export': gate.In<G, features.Modules, V.Statement.Export<G>>;
-		readonly 'statement.export.all': gate.In<G, features.Modules, V.Statement.Export.All<G>>;
-		readonly 'statement.export.default': gate.In<G, features.Modules, V.Statement.Export.Default<G>>;
+		readonly 'statement.export': gate.In<G, features.JavaScriptModules, V.Statement.Export<G>>;
+		readonly 'statement.export.all': gate.In<G, features.JavaScriptModules, V.Statement.Export.All<G>>;
+		readonly 'statement.export.default': gate.In<G, features.JavaScriptModules, V.Statement.Export.Default<G>>;
 		readonly 'statement.expression': V.Statement.Expression<G>;
 		readonly 'statement.global': gate.In<G, features.ScopeDeclarations, V.Statement.Global<G>>;
 		readonly 'statement.if': V.Statement.If<G>;
 		readonly 'statement.import': gate.In<G, features.Modules, V.Statement.Import<G>>;
-		readonly 'statement.import.alias': gate.In<G, features.Modules, V.Statement.Import.Alias<G>>;
-		readonly 'statement.import.from': gate.In<G, features.Modules, V.Statement.Import.From<G>>;
-		readonly 'statement.import.future': gate.In<G, features.Modules, V.Statement.Import.Future<G>>;
-		readonly 'statement.import.package': gate.In<G, features.Modules, V.Statement.Import.Package<G>>;
-		readonly 'statement.import.package.private': gate.In<G, features.Visibility, V.Statement.Import.Package.Private<G>>;
-		readonly 'statement.import.package.public': gate.In<G, features.Visibility, V.Statement.Import.Package.Public<G>>;
+		readonly 'statement.import.alias': gate.In<G, features.JavaScriptModules, V.Statement.Import.Alias<G>>;
+		readonly 'statement.import.from': gate.In<G, features.FromImports, V.Statement.Import.From<G>>;
+		readonly 'statement.import.future': gate.In<G, features.FromImports, V.Statement.Import.Future<G>>;
+		readonly 'statement.import.package': gate.In<G, features.ImportTrees, V.Statement.Import.Package<G>>;
+		readonly 'statement.import.package.private': gate.In<
+			G,
+			features.ModuleVisibility,
+			V.Statement.Import.Package.Private<G>
+		>;
+		readonly 'statement.import.package.public': gate.In<
+			G,
+			features.ModuleVisibility,
+			V.Statement.Import.Package.Public<G>
+		>;
 		readonly 'statement.import.package.public.internal': gate.In<
 			G,
-			features.Visibility,
+			features.ModuleVisibility,
 			V.Statement.Import.Package.Public.Internal<G>
 		>;
 		readonly 'statement.import.package.public.parent': gate.In<
 			G,
-			features.Visibility,
+			features.ModuleVisibility,
 			V.Statement.Import.Package.Public.Parent<G>
 		>;
 		readonly 'statement.import.package.public.restricted': gate.In<
 			G,
-			features.Visibility,
+			features.ModuleVisibility,
 			V.Statement.Import.Package.Public.Restricted<G>
 		>;
-		readonly 'statement.import.private': gate.In<G, features.Visibility, V.Statement.Import.Private<G>>;
-		readonly 'statement.import.public': gate.In<G, features.Visibility, V.Statement.Import.Public<G>>;
-		readonly 'statement.import.public.internal': gate.In<G, features.Visibility, V.Statement.Import.Public.Internal<G>>;
-		readonly 'statement.import.public.parent': gate.In<G, features.Visibility, V.Statement.Import.Public.Parent<G>>;
+		readonly 'statement.import.private': gate.In<G, features.ModuleVisibility, V.Statement.Import.Private<G>>;
+		readonly 'statement.import.public': gate.In<G, features.ModuleVisibility, V.Statement.Import.Public<G>>;
+		readonly 'statement.import.public.internal': gate.In<
+			G,
+			features.ModuleVisibility,
+			V.Statement.Import.Public.Internal<G>
+		>;
+		readonly 'statement.import.public.parent': gate.In<
+			G,
+			features.ModuleVisibility,
+			V.Statement.Import.Public.Parent<G>
+		>;
 		readonly 'statement.import.public.restricted': gate.In<
 			G,
-			features.Visibility,
+			features.ModuleVisibility,
 			V.Statement.Import.Public.Restricted<G>
 		>;
-		readonly 'statement.import.typeof': gate.In<G, features.Modules, V.Statement.Import.Typeof<G>>;
-		readonly 'statement.labeled': gate.In<G, features.LabeledControlFlow, V.Statement.Labeled<G>>;
+		readonly 'statement.import.typeof': gate.In<G, features.JavaScriptModules, V.Statement.Import.Typeof<G>>;
+		readonly 'statement.labeled': gate.In<G, features.LabeledStatements, V.Statement.Labeled<G>>;
 		readonly 'statement.loop': V.Statement.Loop<G>;
 		readonly 'statement.loop.counted': gate.In<G, features.CountedLoops, V.Statement.Loop.Counted<G>>;
 		readonly 'statement.loop.do_while': gate.In<G, features.PostTestLoops, V.Statement.Loop.DoWhile<G>>;
@@ -5698,79 +6524,67 @@ declare module './map.ts' {
 		readonly 'statement.match': gate.In<G, features.MatchExpressions, V.Statement.Match<G>>;
 		readonly 'statement.nonlocal': gate.In<G, features.ScopeDeclarations, V.Statement.Nonlocal<G>>;
 		readonly 'statement.print': gate.In<G, features.PrintStatements, V.Statement.Print<G>>;
-		readonly 'statement.resource': gate.In<G, features.ResourceManagement, V.Statement.Resource<G>>;
+		readonly 'statement.resource': gate.In<G, features.ResourceStatements, V.Statement.Resource<G>>;
 		readonly 'statement.return': V.Statement.Return<G>;
 		readonly 'statement.scope': gate.In<G, features.DynamicScope, V.Statement.Scope<G>>;
 		readonly 'statement.switch': gate.In<G, features.MultiwayBranch, V.Statement.Switch<G>>;
 		readonly 'statement.throw': gate.In<G, features.Exceptions, V.Statement.Throw<G>>;
 		readonly 'statement.try': gate.In<G, features.Exceptions, V.Statement.Try<G>>;
 		readonly type: V.Type<G>;
-		readonly 'type.abstract': gate.In<G, features.TypeAnnotations, V.Type.Abstract<G>>;
-		readonly 'type.array': gate.In<G, features.TypeAnnotations, V.Type.Array<G>>;
-		readonly 'type.bounded': gate.In<G, features.TypeAnnotations, V.Type.Bounded<G>>;
-		readonly 'type.bracketed': gate.In<G, features.TypeAnnotations, V.Type.Bracketed<G>>;
-		readonly 'type.conditional': gate.In<G, features.TypeAnnotations, V.Type.Conditional<G>>;
-		readonly 'type.constrained': gate.In<G, features.TypeAnnotations, V.Type.Constrained<G>>;
-		readonly 'type.dynamic': gate.In<G, features.TypeAnnotations, V.Type.Dynamic<G>>;
-		readonly 'type.existential': gate.In<G, features.TypeAnnotations, V.Type.Existential<G>>;
-		readonly 'type.function': gate.In<G, features.TypeAnnotations, V.Type.Function<G>>;
-		readonly 'type.function.constructor': gate.In<G, features.TypeAnnotations, V.Type.Function.Constructor<G>>;
+		readonly 'type.abstract': gate.In<G, features.SystemsTypes, V.Type.Abstract<G>>;
+		readonly 'type.array': gate.In<G, features.StaticTypes, V.Type.Array<G>>;
+		readonly 'type.bounded': gate.In<G, features.SystemsTypes, V.Type.Bounded<G>>;
+		readonly 'type.bracketed': gate.In<G, features.SystemsTypes, V.Type.Bracketed<G>>;
+		readonly 'type.conditional': gate.In<G, features.TypeAlgebra, V.Type.Conditional<G>>;
+		readonly 'type.constrained': gate.In<G, features.PythonTypeForms, V.Type.Constrained<G>>;
+		readonly 'type.dynamic': gate.In<G, features.SystemsTypes, V.Type.Dynamic<G>>;
+		readonly 'type.existential': gate.In<G, features.TypeAlgebra, V.Type.Existential<G>>;
+		readonly 'type.function': gate.In<G, features.StaticTypes, V.Type.Function<G>>;
+		readonly 'type.function.constructor': gate.In<G, features.TypeAlgebra, V.Type.Function.Constructor<G>>;
 		readonly 'type.generic': gate.In<G, features.TypeAnnotations, V.Type.Generic<G>>;
-		readonly 'type.generic.turbofish': gate.In<G, features.TypeAnnotations, V.Type.Generic.Turbofish<G>>;
-		readonly 'type.import': gate.In<G, features.Modules, V.Type.Import<G>>;
-		readonly 'type.index_query': gate.In<G, features.TypeAnnotations, V.Type.IndexQuery<G>>;
-		readonly 'type.infer': gate.In<G, features.TypeAnnotations, V.Type.Infer<G>>;
-		readonly 'type.intersection': gate.In<G, features.TypeAnnotations, V.Type.Intersection<G>>;
-		readonly 'type.literal': gate.In<G, features.TypeAnnotations, V.Type.Literal<G>>;
-		readonly 'type.lookup': gate.In<G, features.TypeAnnotations, V.Type.Lookup<G>>;
+		readonly 'type.generic.turbofish': gate.In<G, features.SystemsTypes, V.Type.Generic.Turbofish<G>>;
+		readonly 'type.import': gate.In<G, features.JavaScriptModules, V.Type.Import<G>>;
+		readonly 'type.index_query': gate.In<G, features.TypeAlgebra, V.Type.IndexQuery<G>>;
+		readonly 'type.infer': gate.In<G, features.TypeAlgebra, V.Type.Infer<G>>;
+		readonly 'type.intersection': gate.In<G, features.TypeAlgebra, V.Type.Intersection<G>>;
+		readonly 'type.literal': gate.In<G, features.TypeAlgebra, V.Type.Literal<G>>;
+		readonly 'type.lookup': gate.In<G, features.TypeAlgebra, V.Type.Lookup<G>>;
 		readonly 'type.nullable': gate.In<G, features.NullableTypes, V.Type.Nullable<G>>;
-		readonly 'type.object': gate.In<G, features.TypeAnnotations, V.Type.Object<G>>;
-		readonly 'type.optional': gate.In<G, features.TypeAnnotations, V.Type.Optional<G>>;
-		readonly 'type.parenthesized': gate.In<G, features.TypeAnnotations, V.Type.Parenthesized<G>>;
-		readonly 'type.pointer': gate.In<G, features.TypeAnnotations, V.Type.Pointer<G>>;
-		readonly 'type.predicate': gate.In<G, features.TypeAnnotations, V.Type.Predicate<G>>;
-		readonly 'type.predicate.asserts': gate.In<G, features.TypeAnnotations, V.Type.Predicate.Asserts<G>>;
-		readonly 'type.primitive': gate.In<G, features.TypeAnnotations, V.Type.Primitive<G>>;
-		readonly 'type.primitive.boolean': gate.In<G, features.TypeAnnotations, V.Type.Primitive.Boolean<G>>;
+		readonly 'type.object': gate.In<G, features.TypeAlgebra, V.Type.Object<G>>;
+		readonly 'type.optional': gate.In<G, features.TypeAlgebra, V.Type.Optional<G>>;
+		readonly 'type.parenthesized': gate.In<G, features.TypeAlgebra, V.Type.Parenthesized<G>>;
+		readonly 'type.pointer': gate.In<G, features.SystemsTypes, V.Type.Pointer<G>>;
+		readonly 'type.predicate': gate.In<G, features.TypeAlgebra, V.Type.Predicate<G>>;
+		readonly 'type.predicate.asserts': gate.In<G, features.TypeAlgebra, V.Type.Predicate.Asserts<G>>;
+		readonly 'type.primitive': gate.In<G, features.StaticTypes, V.Type.Primitive<G>>;
+		readonly 'type.primitive.boolean': gate.In<G, features.StaticTypes, V.Type.Primitive.Boolean<G>>;
 		readonly 'type.primitive.character': gate.In<G, features.Characters, V.Type.Primitive.Character<G>>;
-		readonly 'type.primitive.floating': gate.In<G, features.TypeAnnotations, V.Type.Primitive.Floating<G>>;
-		readonly 'type.primitive.floating.float32': gate.In<
-			G,
-			features.TypeAnnotations,
-			V.Type.Primitive.Floating.Float32<G>
-		>;
-		readonly 'type.primitive.floating.float64': gate.In<
-			G,
-			features.TypeAnnotations,
-			V.Type.Primitive.Floating.Float64<G>
-		>;
-		readonly 'type.primitive.integral': gate.In<G, features.TypeAnnotations, V.Type.Primitive.Integral<G>>;
-		readonly 'type.primitive.integral.int128': gate.In<
-			G,
-			features.TypeAnnotations,
-			V.Type.Primitive.Integral.Int128<G>
-		>;
-		readonly 'type.primitive.integral.int16': gate.In<G, features.TypeAnnotations, V.Type.Primitive.Integral.Int16<G>>;
-		readonly 'type.primitive.integral.int32': gate.In<G, features.TypeAnnotations, V.Type.Primitive.Integral.Int32<G>>;
-		readonly 'type.primitive.integral.int64': gate.In<G, features.TypeAnnotations, V.Type.Primitive.Integral.Int64<G>>;
-		readonly 'type.primitive.integral.int8': gate.In<G, features.TypeAnnotations, V.Type.Primitive.Integral.Int8<G>>;
-		readonly 'type.primitive.integral.size': gate.In<G, features.TypeAnnotations, V.Type.Primitive.Integral.Size<G>>;
-		readonly 'type.primitive.never': gate.In<G, features.TypeAnnotations, V.Type.Primitive.Never<G>>;
-		readonly 'type.primitive.object': gate.In<G, features.TypeAnnotations, V.Type.Primitive.Object<G>>;
-		readonly 'type.primitive.string': gate.In<G, features.TypeAnnotations, V.Type.Primitive.String<G>>;
-		readonly 'type.primitive.symbol': gate.In<G, features.TypeAnnotations, V.Type.Primitive.Symbol<G>>;
-		readonly 'type.primitive.unchecked': gate.In<G, features.TypeAnnotations, V.Type.Primitive.Unchecked<G>>;
-		readonly 'type.primitive.unknown': gate.In<G, features.TypeAnnotations, V.Type.Primitive.Unknown<G>>;
-		readonly 'type.primitive.void': gate.In<G, features.TypeAnnotations, V.Type.Primitive.Void<G>>;
-		readonly 'type.qualified': gate.In<G, features.TypeAnnotations, V.Type.Qualified<G>>;
-		readonly 'type.query': gate.In<G, features.TypeAnnotations, V.Type.Query<G>>;
-		readonly 'type.readonly': gate.In<G, features.TypeAnnotations, V.Type.Readonly<G>>;
-		readonly 'type.receiver': gate.In<G, features.ExplicitReceivers, V.Type.Receiver<G>>;
-		readonly 'type.reference': gate.In<G, features.TypeAnnotations, V.Type.Reference<G>>;
-		readonly 'type.rest': gate.In<G, features.TypeAnnotations, V.Type.Rest<G>>;
-		readonly 'type.template': gate.In<G, features.TypeAnnotations, V.Type.Template<G>>;
-		readonly 'type.tuple': gate.In<G, features.TypeAnnotations, V.Type.Tuple<G>>;
-		readonly 'type.union': gate.In<G, features.TypeAnnotations, V.Type.Union<G>>;
-		readonly 'type.unit': gate.In<G, features.TypeAnnotations, V.Type.Unit<G>>;
+		readonly 'type.primitive.floating': gate.In<G, features.StaticTypes, V.Type.Primitive.Floating<G>>;
+		readonly 'type.primitive.floating.float32': gate.In<G, features.SystemsTypes, V.Type.Primitive.Floating.Float32<G>>;
+		readonly 'type.primitive.floating.float64': gate.In<G, features.StaticTypes, V.Type.Primitive.Floating.Float64<G>>;
+		readonly 'type.primitive.integral': gate.In<G, features.SystemsTypes, V.Type.Primitive.Integral<G>>;
+		readonly 'type.primitive.integral.int128': gate.In<G, features.SystemsTypes, V.Type.Primitive.Integral.Int128<G>>;
+		readonly 'type.primitive.integral.int16': gate.In<G, features.SystemsTypes, V.Type.Primitive.Integral.Int16<G>>;
+		readonly 'type.primitive.integral.int32': gate.In<G, features.SystemsTypes, V.Type.Primitive.Integral.Int32<G>>;
+		readonly 'type.primitive.integral.int64': gate.In<G, features.SystemsTypes, V.Type.Primitive.Integral.Int64<G>>;
+		readonly 'type.primitive.integral.int8': gate.In<G, features.SystemsTypes, V.Type.Primitive.Integral.Int8<G>>;
+		readonly 'type.primitive.integral.size': gate.In<G, features.SystemsTypes, V.Type.Primitive.Integral.Size<G>>;
+		readonly 'type.primitive.never': gate.In<G, features.StaticTypes, V.Type.Primitive.Never<G>>;
+		readonly 'type.primitive.object': gate.In<G, features.TypeAlgebra, V.Type.Primitive.Object<G>>;
+		readonly 'type.primitive.string': gate.In<G, features.StaticTypes, V.Type.Primitive.String<G>>;
+		readonly 'type.primitive.symbol': gate.In<G, features.TypeAlgebra, V.Type.Primitive.Symbol<G>>;
+		readonly 'type.primitive.unchecked': gate.In<G, features.TypeAlgebra, V.Type.Primitive.Unchecked<G>>;
+		readonly 'type.primitive.unknown': gate.In<G, features.TypeAlgebra, V.Type.Primitive.Unknown<G>>;
+		readonly 'type.primitive.void': gate.In<G, features.TypeAlgebra, V.Type.Primitive.Void<G>>;
+		readonly 'type.qualified': gate.In<G, features.SystemsTypes, V.Type.Qualified<G>>;
+		readonly 'type.query': gate.In<G, features.TypeAlgebra, V.Type.Query<G>>;
+		readonly 'type.readonly': gate.In<G, features.TypeAlgebra, V.Type.Readonly<G>>;
+		readonly 'type.receiver': gate.In<G, features.TypedReceivers, V.Type.Receiver<G>>;
+		readonly 'type.reference': gate.In<G, features.SystemsTypes, V.Type.Reference<G>>;
+		readonly 'type.rest': gate.In<G, features.UnionTypes, V.Type.Rest<G>>;
+		readonly 'type.template': gate.In<G, features.TypeAlgebra, V.Type.Template<G>>;
+		readonly 'type.tuple': gate.In<G, features.StaticTypes, V.Type.Tuple<G>>;
+		readonly 'type.union': gate.In<G, features.UnionTypes, V.Type.Union<G>>;
+		readonly 'type.unit': gate.In<G, features.SystemsTypes, V.Type.Unit<G>>;
 	}
 }

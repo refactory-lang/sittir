@@ -191,8 +191,43 @@ describe('plan', () => {
 `
 		);
 		const p = plan(await readVocabularySource(vocabulary({ ...CLEAN, 'declaration.ts': arrow })));
-		expect(p.issues).toEqual(['AsyncAwait owns async at declaration.function, and the kind declares it at declaration.function.arrow, which inherits it']);
+		expect(p.issues).toEqual([
+			'AsyncAwait owns async at declaration.function, and the kind, which the base adds, declares it at declaration.function.arrow, which inherits it, without extending AsyncAwait'
+		]);
 		expect(p.notes).toEqual(['async is gated at some kinds and stays in the base at 1: declaration.function.arrow']);
+	});
+
+	it('lets a descendant restate a member under its own feature only when that feature extends the owner', async () => {
+		const arrow = DECLARATION.replace(
+			'\t}\n}\n',
+			`\t}
+	export namespace Function {
+		export interface Arrow<G extends GrammarMap, K extends Under<'declaration.function.arrow'> = 'declaration.function.arrow'> extends SubKindOf<V.Declaration.Function<G>, 'async'> {
+			readonly $path: K;
+		}
+	}
+}
+`
+		);
+		const arrows = (marker: string): Record<string, string> =>
+			feature('arrows', marker, {
+				'declaration.ts': `export namespace Declaration {
+	export namespace Function {
+		export interface Arrow<G extends GrammarMap> {
+			readonly async?: Flag;
+		}
+	}
+}
+`
+			});
+		const extending = plan(await readVocabularySource(vocabulary({ ...CLEAN, 'declaration.ts': arrow, ...arrows('export interface Arrows extends AsyncAwait {\n\treadonly arrows: true;\n}') })));
+		expect(extending.issues).toEqual([]);
+		expect(extending.owned.get('declaration.function.arrow')?.get('async')?.feature.name).toBe('Arrows');
+		const unrelated = plan(await readVocabularySource(vocabulary({ ...CLEAN, 'declaration.ts': arrow, ...arrows('export interface Arrows {\n\treadonly arrows: true;\n}') })));
+		expect(unrelated.issues).toEqual([
+			'AsyncAwait owns async at declaration.function, and Arrows declares it at declaration.function.arrow, which inherits it, without extending AsyncAwait',
+			'Arrows owns async at declaration.function.arrow, and AsyncAwait declares it at declaration.function, which it inherits from, and Arrows does not extend AsyncAwait'
+		]);
 	});
 
 	it('reports a feature whose folder sits in another feature’s folder without extending it', async () => {
