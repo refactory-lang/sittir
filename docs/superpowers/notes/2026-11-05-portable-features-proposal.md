@@ -1,16 +1,16 @@
 # Portable features: tree, packages and Python's convention claims
 
-Status: proposal, for review. Nothing in it is applied yet.
+Status: final proposal, for the user's review. Nothing in it is applied yet.
 
-Decided so far:
+Decided:
 - **V:** PythonFeatures drops Visibility and adds Encapsulation, and `__x` claims privateName.
 - **A:** PythonFeatures drops AbstractClasses.
 - **N:** the five members no grammar holds stay as they are. The guard exempts them and lists them.
-- **Granularity:** the tree in section 1 (about 148 new features) is too fine. Section 4 gives the options to choose from. Section 1 stays as the inventory those options merge.
+- **Granularity:** the targeted family cut (section 5), applied in section 1: 106 features.
 
 This note proposes the content moves the portable grammar map needs, so that each grammar's claims equal its composition:
 
-1. the feature tree: the sub-features split out of today's features, and the core content that moves into new features;
+1. the feature tree at the chosen cut: the sub-features split out of today's features, and the core content that moves into new features;
 2. the first standard packages;
 3. the claims Python writes for the features it spells by convention, and the ones Python doesn't state.
 
@@ -18,21 +18,384 @@ All counts come from `derive()` over each grammar's bindings and from the vocabu
 
 ## How the tree is cut
 
-- **A sub-feature is the content of one feature that one holder set holds.** The parent keeps what every grammar composing the feature holds, and each other holder set becomes a sub-feature. Where one holder set's content has unrelated meanings, it's split again by meaning. That second split is optional, because a split nobody needs doesn't change any grammar's held set.
+- **A sub-feature is the content of one feature that one holder set holds.** The parent keeps what every grammar composing the feature holds, and each other holder set becomes a sub-feature. A split by meaning within one holder set is possible too, and the appendix shows it, but the chosen cut doesn't make it: a split nobody needs doesn't change any grammar's held set.
 - **Features form a graph.** A feature extends any number of features, at any depth. A grammar holds a feature when it holds the feature's own content and every feature it extends.
   - A piece that crosses two axes extends both. Protected member visibility, for example, extends the protected level and member-level visibility.
   - A piece that refines a kind another feature adds extends that feature too: `declaration.property.private` needs Accessors.
   - A folder is only where a feature's files live: under the feature it most belongs to, which is one of its parents.
 - **Shape mismatches move,** per the ruling: where a language spells a construct on another node than the vocabulary member sits on, the member moves into a sub-feature the language lacks. Each one found is listed under "Shape mismatches" for #1086.
 - **Claims are written first** where the language has the construct and a claim is missing. Those are listed under "Claims to write", and the held sets below assume them.
+- **Family splits are targeted.** A cell held by one set of the three grammars is cut again along family lines (C-family OO, C-procedural, Swift) only where that saves a fourth grammar at least two splits per feature it adds (section 5).
 
-## 1. The feature tree
+## 1. The feature tree at the targeted family cut
+
+The user chose the targeted family cut (section 5). This section applies it to the decided state: rulings V, A and N, Python's claims in section 3, and the claims to write below. That gives **106 features**. The measured matrix gave 104 because it has none of the decisions yet:
+- **Ruling N removes three cells.** The `bounds` members on the type-parameter refinements, `definite` and `optionality` stay where they are, and the guard exempts them.
+- **The getter `returnType` claims empty a cell** no grammar held. Its members join AccessorAnnotations (python and typescript) and TypeAlgebra (typescript).
+- **Python's claims add three TypeScript remainders.** Accessors, Encapsulation and ExplicitOverrides were whole TypeScript features, so they had no split. Once Python holds part of each, the rest becomes AccessorSignatures, FieldEncapsulation and MemberOverrides.
+- **Three more cells come from the claims:**
+  - Rust's async signatures join async lambdas, and the family rule parts the async function signature from them (AsyncFunctionSignatures).
+  - Python's getter annotation parts from union types by family (AccessorAnnotations).
+  - Python's `X: int = 1` makes AnnotatedConstants (python and rust).
+
+**At this cut,** python holds 47 of the features, rust 40 and typescript 50. A fourth grammar splits these sub-feature cells: go 12, java 15, c# 20, c 9, swift 20, c++ 15 (91 in all).
+
+**How to read the tables:**
+- **Folders.** A sub-feature's folder is `<its parent's folder>/<kebab-case name>/`. A core feature's folder is `features/<kebab-case name>/`.
+- **Parents.** Each of today's features keeps the content every grammar composing it holds, and keeps its name. The one rename is the ruling's: the content python and rust share in Structs (`pattern.struct`, `pattern.struct.field`) becomes StructPatterns, and Structs, now the struct declaration, extends it.
+- **Cut for** names the families a family-split cell is held by. C-family OO is java, c# and c++, and C-procedural is go and c. It's empty where the cell follows the three grammars only.
+- **Content** lists kinds as `path` and members as `path:member`. A long cell is summarized with its row count. The row-by-row list is [`2026-11-05-portable-features-cut.tsv`](2026-11-05-portable-features-cut.tsv): feature, holders, extends, path, member.
+
+### Sub-features of today's features (67)
+
+| Feature | Holders | Cut for | Extends | Content |
+|---|---|---|---|---|
+| `AccessorSignatures` | t |  | Accessors, Interfaces, AbstractClasses | `declaration.property.signature`, `declaration.property.signature.abstract`, `declaration.property.signature.abstract.getter`, `declaration.property.signature.abstract.setter`, `declaration.property.signature.getter`, `declaration.property.signature.setter` |
+| `BigIntegerRadixes` | t |  | ArbitraryPrecisionIntegers | `literal.number.integer.big.binary`, `literal.number.integer.big.hex`, `literal.number.integer.big.octal` |
+| `AsyncContexts` | p |  | AsyncAwait, Comprehensions, ResourceStatements, Classes | `clause.comprehension.for:async`, `declaration.constructor:async`, `statement.resource:async` |
+| `AsyncFunctionExpressions` | t |  | AsyncAwait, JavaScriptExpressions | `expression.function:async` |
+| `AsyncFunctionSignatures` | r t | none of the six | AsyncAwait, FunctionSignatures | `declaration.function.signature:async` |
+| `AsyncIteration` | p t |  | AsyncAwait | `statement.loop.for_each:async` |
+| `AsyncLambdas` | r t | Swift | AsyncAwait, MethodSignatures | async lambdas and async method signatures (2 rows) |
+| `BoundClauses` | r t |  | BoundedQuantification | `clause.bounds` |
+| `ConstrainedTypeParameters` | p |  | BoundedQuantification, PythonTypeForms | `type.constrained:constraint` |
+| `WhereClauses` | r |  | BoundedQuantification | `where` clauses and their predicates, the 13 `whereClause` and `trailingWhereClause` members, `use` and `?` bounds, `element.type_argument.bounds` (17 rows) |
+| `MultilineByteStrings` | p |  | ByteStrings, MultilineStrings | `literal.string.bytes.multiline` |
+| `JavaScriptClasses` | t |  | Classes | `new` (with and without arguments), class expressions, static blocks, `static` on field, field signature and property (7 rows) |
+| `GeneratorBlocks` | r |  | Coroutines, RustExpressions | `expression.block.generator`, `expression.lambda:static` |
+| `FunctionDecorators` | p |  | Decorators | `declaration.function:decorators` |
+| `MemberDecorators` | t |  | Decorators, JavaScriptClasses | decorators on field, parameter and class expression; the content kinds `call`, `member`, `parenthesized` (6 rows) |
+| `DefaultParameterForms` | p |  | DefaultArguments, PythonDeclarations | `declaration.parameter.default:default`, `declaration.parameter.typed_default:default` |
+| `ObjectPatterns` | t |  | Destructuring | `pattern.assignment`, `pattern.object`, `pattern.object.assignment`, `pattern.object.pair` |
+| `PythonDestructuring` | p |  | Destructuring, MappingPatterns | `pattern.rest.map`, `pattern.tuple.bare` |
+| `RestPatterns` | p t |  | Destructuring | `pattern.rest` |
+| `TuplePatterns` | p r | Swift | Destructuring | `pattern.tuple` |
+| `WildcardPatterns` | p r | C-family OO, C-procedural, Swift | Destructuring | `pattern.wildcard` |
+| `FieldEncapsulation` | t |  | Encapsulation, FieldsAndModifiers, Accessors | `declaration.field:privateName`, `declaration.property:privateName` |
+| `MemberOverrides` | t |  | ExplicitOverrides, FieldsAndModifiers, Interfaces, AbstractClasses | `declaration.field:override`, `declaration.parameter:override`, `declaration.field.signature:override`, `declaration.method.signature:override`, `declaration.method.signature.abstract:override` |
+| `TypedReceivers` | t |  | ExplicitReceivers | `type.receiver`, `expression.function:receiver`, `type.function:receiver`, `declaration.signature.call:receiver` |
+| `GeneratorFunctions` | t |  | Generators, JavaScriptExpressions | `declaration.function:generator`, `expression.function:generator`, `declaration.method:generator` |
+| `FieldSignatures` | t | Swift | Interfaces | `declaration.field.signature` |
+| `InterfaceExtends` | t | none of the six | Interfaces | `clause.extends.type` |
+| `Traits` | r |  | Interfaces | `declaration.interface.trait` |
+| `LabeledStatements` | t |  | LabeledControlFlow | `statement.labeled` |
+| `LoopLabels` | r |  | LabeledControlFlow | `statement.block:label`, `statement.loop:label`, `statement.loop.for_each:label`, `statement.loop.while:label` |
+| `LetPatterns` | r |  | MatchExpressions | `clause.let`, `clause.let.chain` |
+| `MappingPatterns` | p |  | MatchExpressions | `pattern.map` |
+| `MethodSignatures` | r t |  | Methods | `declaration.method.signature`, `identifier.receiver` |
+| `SpecialMethods` | p |  | Methods | `declaration.method.special` |
+| `Specialization` | r |  | Methods | `declaration.function:default` |
+| `ExternalModules` | t |  | ModuleDeclarations, AmbientDeclarations | `declaration.module.external` |
+| `FromImports` | p |  | Modules | `from … import`, `__future__` imports, relative imports and their prefix (4 rows) |
+| `ImportAliases` | p r | C-procedural | Modules | `clause.import.alias` |
+| `ImportTrees` | r |  | Modules | `clause.import.list`, `clause.import.list.scoped`, `statement.import.package` |
+| `JavaScriptModules` | t |  | Modules | exports, named and namespace import specifiers, `import x = require()`, import attributes, `typeof` imports, dynamic `import()` and `import()` types (17 rows) |
+| `WildcardImports` | p r | C-family OO, C-procedural | Modules | `clause.import.wildcard` |
+| `GenericClasses` | p t |  | ParametricPolymorphism, Classes | `declaration.class:typeParameters` |
+| `GenericConstructors` | p | C-family OO, Swift | ParametricPolymorphism, Classes | `declaration.constructor:typeParameters` |
+| `GenericExpressions` | t |  | ParametricPolymorphism, JavaScriptExpressions, JavaScriptClasses | type arguments on calls and `new` (the turbofish move), type parameters on function and class expressions, function and constructor types, call and construct signatures and abstract method signatures; `clause.default` (11 rows) |
+| `GenericItems` | r |  | ParametricPolymorphism | `element.type_argument`, `pattern.generic`, `declaration.enum:typeParameters`, `declaration.interface.trait:typeParameters`, `declaration.extension:typeParameters`, `declaration.extension.conformance:typeParameters`, `declaration.type_alias.associated:typeParameters`, `type.abstract:typeParameters`, `declaration.union:typeParameters` |
+| `GenericSignatures` | r t |  | ParametricPolymorphism, FunctionSignatures, MethodSignatures | `expression.instantiation`, `declaration.function.signature:typeParameters`, `declaration.interface:typeParameters`, `declaration.method.signature:typeParameters` |
+| `ParamSpecs` | p | none of the six | ParametricPolymorphism | `declaration.type_parameter.parameters` |
+| `VariadicTypeParameters` | p | Swift | ParametricPolymorphism | `declaration.type_parameter.variadic` |
+| `RawStringForms` | p |  | RawStrings, MultilineStrings, FormatStrings | multiline raw strings and bytes, raw interpolated and deferred strings (6 rows) |
+| `DisposableDeclarations` | t |  | ResourceManagement | `expression.assignment:disposable` |
+| `ResourceStatements` | p |  | ResourceManagement | `clause.resource`, `clause.resource.item`, `statement.resource` |
+| `FormatStrings` | p |  | StringInterpolation, MultilineStrings | conversions and format specifiers, deferred (t-) strings, multiline interpolated strings (5 rows) |
+| `TaggedTemplates` | t |  | StringInterpolation | `expression.call.template` |
+| `StructLiterals` | r | C-procedural | StructPatterns, Structs | `element.struct`, `element.struct.field`, `expression.collection.struct` |
+| `Structs` | r | C-family OO, C-procedural, Swift | StructPatterns | `declaration.struct` |
+| `TupleStructs` | r | none of the six | StructPatterns, Structs | tuple and unit structs, the struct base `..base`, the rest pattern `..` (4 rows) |
+| `BareTuples` | p |  | Tuples | `expression.collection.tuple.bare` |
+| `UnitValues` | r |  | Tuples | `expression.unit` |
+| `AccessorAnnotations` | p t | Swift | TypeAnnotations, Accessors | `declaration.property.getter:returnType` |
+| `AnnotatedConstants` | p r |  | TypeAnnotations, Constants | `declaration.constant:type` |
+| `PythonTypeForms` | p |  | TypeAnnotations, PythonDeclarations | `type.constrained`, `declaration.parameter.typed:type`, `declaration.parameter.typed_default:type`, `declaration.constructor:returnType` |
+| `StaticTypes` | r t |  | TypeAnnotations, FunctionSignatures, MethodSignatures, FieldsAndModifiers | casts; array, function and tuple types; the shared primitives; `type` on field; `returnType` on function and method signatures (13 rows) |
+| `SystemsTypes` | r |  | TypeAnnotations | sized integers and `f32`, pointers and references, trait objects and bounded types, qualified and bracketed types, the turbofish type, `as` conversion, the unit type (18 rows) |
+| `TypeAlgebra` | t |  | TypeAnnotations | conditional, mapped, indexed, lookup, `infer`, template, object, literal, intersection, optional, readonly, parenthesized and existential types; predicates; tuple elements; assertions and `satisfies`; `type` on field signature and property; `top` and `bottom` primitives (37 rows) |
+| `UnionTypes` | p t | none of the six | TypeAnnotations | `type.rest`, `type.union` |
+| `ClassVisibility` | t |  | Visibility, Classes, Accessors, AbstractClasses | `protected`, and `private`/`public`/`protected` on the class-member kinds: constructor, parameter properties, field signature, abstract and plain method signatures, properties and their signatures (37 kinds) (37 rows) |
+| `ModuleVisibility` | r |  | Visibility, Structs, Enumerations, AlgebraicDataTypes, Traits, ModuleDeclarations, UntaggedUnions, ImportTrees | `pub(crate)`, `pub(super)`, `pub(in …)` levels, and `private`/`public` with those levels on the 17 item kinds (97 kinds) (97 rows) |
+
+### Core features (39)
+
+| Feature | Holders | Cut for | Extends | Content |
+|---|---|---|---|---|
+| `BlockComments` | r t | C-family OO, C-procedural, Swift | — | `comment.block` |
+| `DocComments` | r t | C-family OO, Swift | BlockComments | `comment.block.doc` |
+| `HtmlComments` | t |  | — | `comment.html` |
+| `InnerDocComments` | r | none of the six | LineDocComments | `comment.block.doc.inner`, `comment.line.doc.inner`, `comment.text` |
+| `LineDocComments` | r | C-family OO, Swift | DocComments | `comment.line.doc`, `comment.block.doc:content` |
+| `Arguments` | p r | C-family OO, Swift | — | `argument` |
+| `Constants` | p r | C-family OO, C-procedural | — | `declaration.constant` |
+| `FieldsAndModifiers` | r t | C-family OO, C-procedural, Swift | — | `attribute.content`, `declaration.field`, `modifier` |
+| `FunctionSignatures` | r t | C-procedural | — | `declaration.function.signature` |
+| `JavaScriptBindings` | t |  | — | `const`, `let` and `var`; pattern declarations; multiple declarators; field initializers (6 rows) |
+| `PythonDeclarations` | p |  | — | the parameter kinds `default`, `typed` and `typed_default`; docstrings (4 rows) |
+| `RustDeclarations` | r |  | — | `mut` on patterns, parameters and variables; `let … else`; function modifiers on signatures; attribute input and path; `const` name and value members (9 rows) |
+| `AnnotatedLambdas` | r t |  | — | `expression.lambda:returnType` |
+| `JavaScriptExpressions` | t |  | — | object literals, function expressions, `new.target` and `import.meta`, sequences, `super`, the parenthesized expression's `type` (6 rows) |
+| `KeyValuePairs` | p t | C-procedural, Swift | — | `element.pair` |
+| `MapLiterals` | p | C-procedural, Swift | — | `expression.collection.map` |
+| `RustExpressions` | r |  | — | block expressions, qualified-path calls, `[x; n]` (3 rows) |
+| `SetLiterals` | p | none of the six | — | set literals, `**` and parenthesized spreads (3 rows) |
+| `Spreads` | p t | C-procedural | — | `element.spread` |
+| `TypeExpressions` | p t | C-family OO, Swift | — | `type:content` |
+| `EllipsisLiteral` | p | none of the six | — | `literal.ellipsis` |
+| `ImplicitConcatenation` | p | C-procedural | — | `literal.string.concatenated` |
+| `LeadingPointFloats` | p | C-family OO | LiteralFacets | `literal.number.float.leading_point:integer` |
+| `LiteralFacets` | p t |  | — | `null`; the float facets (`integer`, `fraction`, `marker`, `exponent`, its sign), leading-point and scientific floats; the radix prefixes (11 rows) |
+| `LiteralSuffixes` | r |  | — | `literal.number.integer:suffix`, `literal.number.integer.binary:suffix`, `literal.number.integer.hex:suffix`, `literal.number.integer.octal:suffix` |
+| `MultilineStrings` | p | C-family OO, C-procedural, Swift | — | `literal.string.multiline` |
+| `Undefined` | t |  | LiteralFacets | `literal.null.undefined` |
+| `CFamilyUnaryOperators` | p t | C-family OO, C-procedural, Swift | — | `expression.unary.bitwise_not`, `expression.unary.plus` |
+| `ExponentiationAndMembership` | p t | none of the six | — | `**` and `**=`, `in` (4 rows) |
+| `IdentityComparison` | p | Swift | — | `expression.binary.identity`, `expression.binary.identity.is`, `expression.binary.identity.is_not` |
+| `JavaScriptOperators` | t |  | — | `??` and `??=`, `&&=` and `||=`, `>>>` and `>>>=`, `instanceof`, `typeof`, `void`, `delete`, `++` and `--` (13 rows) |
+| `LogicalOperands` | p | C-family OO, Swift | — | `expression.binary.logical:left`, `expression.binary.logical:right` |
+| `PythonOperators` | p | none of the six | — | comparison chains and the 17 comparators, `//`, `@`, `<>`, `not in` and their compound assignments (22 rows) |
+| `CFamilyExpressionStatements` | t | C-family OO, C-procedural, Swift | — | `statement.expression:expression` |
+| `ForEachTargets` | p r |  | — | `left` and `right` on `for … in`; `content` on expression statements (3 rows) |
+| `ForInHeaders` | t | none of the six | — | `statement.loop.for_each:header` |
+| `IfAlternative` | r t |  | — | `statement.if:alternative` |
+| `PythonStatements` | p |  | — | `elif`, `del`, `else` on `for` and `while` (5 rows) |
+| `ValuedBlocks` | r |  | RustExpressions | `statement.block:trailingExpression`, `statement.break:expression` |
+
+### Each grammar's held set
+
+The new features each grammar holds, besides the features it composes today.
+
+- **python** (47): AccessorAnnotations, AnnotatedConstants, Arguments, AsyncContexts, AsyncIteration, BareTuples, CFamilyUnaryOperators, Constants, ConstrainedTypeParameters, DefaultParameterForms, EllipsisLiteral, ExponentiationAndMembership, ForEachTargets, FormatStrings, FromImports, FunctionDecorators, GenericClasses, GenericConstructors, IdentityComparison, ImplicitConcatenation, ImportAliases, KeyValuePairs, LeadingPointFloats, LiteralFacets, LogicalOperands, MapLiterals, MappingPatterns, MultilineByteStrings, MultilineStrings, ParamSpecs, PythonDeclarations, PythonDestructuring, PythonOperators, PythonStatements, PythonTypeForms, RawStringForms, ResourceStatements, RestPatterns, SetLiterals, SpecialMethods, Spreads, TuplePatterns, TypeExpressions, UnionTypes, VariadicTypeParameters, WildcardImports, WildcardPatterns.
+- **rust** (40): AnnotatedConstants, AnnotatedLambdas, Arguments, AsyncFunctionSignatures, AsyncLambdas, BlockComments, BoundClauses, Constants, DocComments, FieldsAndModifiers, ForEachTargets, FunctionSignatures, GeneratorBlocks, GenericItems, GenericSignatures, IfAlternative, ImportAliases, ImportTrees, InnerDocComments, LetPatterns, LineDocComments, LiteralSuffixes, LoopLabels, MethodSignatures, ModuleVisibility, RustDeclarations, RustExpressions, Specialization, StaticTypes, StructLiterals, Structs, SystemsTypes, Traits, TuplePatterns, TupleStructs, UnitValues, ValuedBlocks, WhereClauses, WildcardImports, WildcardPatterns.
+- **typescript** (50): AccessorAnnotations, AccessorSignatures, AnnotatedLambdas, AsyncFunctionExpressions, AsyncFunctionSignatures, AsyncIteration, AsyncLambdas, BigIntegerRadixes, BlockComments, BoundClauses, CFamilyExpressionStatements, CFamilyUnaryOperators, ClassVisibility, DisposableDeclarations, DocComments, ExponentiationAndMembership, ExternalModules, FieldEncapsulation, FieldSignatures, FieldsAndModifiers, ForInHeaders, FunctionSignatures, GeneratorFunctions, GenericClasses, GenericExpressions, GenericSignatures, HtmlComments, IfAlternative, InterfaceExtends, JavaScriptBindings, JavaScriptClasses, JavaScriptExpressions, JavaScriptModules, JavaScriptOperators, KeyValuePairs, LabeledStatements, LiteralFacets, MemberDecorators, MemberOverrides, MethodSignatures, ObjectPatterns, RestPatterns, Spreads, StaticTypes, TaggedTemplates, TypeAlgebra, TypeExpressions, TypedReceivers, Undefined, UnionTypes.
+
+### Claims to write
+
+The language has each of these constructs and the claim is missing. The held sets above assume them.
+
+- **rust:** `declaration.function.signature.async`, `declaration.method.signature.async` (`async fn` in traits).
+- **typescript:** `returnType` on property.getter, property.signature.getter and property.signature.abstract.getter (`get x(): T`).
+- **python:**
+  - `declaration.constant.type` (`X: int = 1` under the existing constant claim);
+  - `file.shebang` (`#!`, read today as a comment);
+  - section 3's mapping.
+- **To check before settling:**
+  - rust `pattern.rest` (`..` in slice and tuple patterns);
+  - rust type-parameter defaults (`clause.default`);
+  - Python class-body annotations as `declaration.field`. That would move Python into FieldDeclarations and FieldAnnotations.
+
+### Shape mismatches (for #1086)
+
+Each of these moves into a sub-feature the other-shape languages lack, as the tables above place it, and is listed on #1086 to be unified later.
+- Call type arguments on the call (t), where rust reads the turbofish on the callee.
+- Loop labels on the loop (r), where TypeScript uses `statement.labeled`.
+- Decorator content kinds (t), where Python reads expressions.
+- Import aliases (p r), where TypeScript uses an alias on `clause.import.specifier`.
+- Relative imports (p), where rust reads `super::` and `self::` in a path.
+- Python's parameter kinds `declaration.parameter.typed`, `.default` and `.typed_default`, where the others put `type` and `default` members on `declaration.parameter`.
+- `statement.if.alternatives` (p) and `statement.if.alternative` (r t).
+- `declaration.constant` (p r) and `declaration.variable.constant` (t).
+- `statement.expression.content` (p r) and `statement.expression.expression` (t).
+- `statement.loop.for_each.left` and `.right` (p r) and `.header` (t).
+- Numeric literal facets (p t): `fraction`, `exponent` and the other float parts; `radixPrefix`. Rust lexes a numeric literal as one token.
+- Rust's bitwise not `!`, read as a logical not.
+
+## 2. Standard packages
+
+A package is a feature with no content of its own that extends the features it combines, so a grammar has it exactly when it holds each of them. Each one is a folder under `features/` with only its marker in `index.ts`. A grammar's composition then names a package the way it names any feature.
+
+| Package (marker extends) | Features | Members |
+|---|---|---|
+| `ObjectOriented` | Methods, Classes | python, typescript |
+| `Generic` | ParametricPolymorphism, BoundedQuantification | python, rust, typescript |
+| `Annotated` | Generic, TypeAnnotations, TypeAliases | python, rust, typescript |
+| `Asynchronous` | AsyncAwait, Coroutines | python, rust, typescript |
+| `PatternMatching` | MatchExpressions, TuplePatterns | python, rust |
+| `CLike` | CountedLoops, PostTestLoops, MultiwayBranch, ConditionalExpressions, BlockComments, CFamilyUnaryOperators | typescript |
+| `JavaScriptFeatures` | the existing composition | typescript |
+
+- **Packages extend packages:** `Annotated` extends `Generic`.
+- **`JavaScriptFeatures`** is already a feature with no content of its own (TypeScriptFeatures extends it), so it's a package as it stands.
+- **`CLike` is the contract a C, Java or JavaScript grammar joins.** It names only features the whole C family holds. `++`, `--` and sequence expressions are left out: at this cut they sit in JavaScriptOperators and JavaScriptExpressions with `??`, `typeof` and object literals, which C lacks. The first C-family grammar that holds `++` splits JavaScriptOperators, and CLike takes that piece then.
+
+## 3. Python's convention claims
+
+Decided by rulings V and A: Python writes the claims marked "states it", and none for the three it doesn't state.
+
+Each claim follows the existing content claims (`declaration.constant`'s `#match?`). The query sketches name the Python grammar's nodes as they read today. Exact node names are checked when the claims are written.
+
+| Construct | Claim | Vocabulary fact it states | Verdict |
+|---|---|---|---|
+| `@property def x(self)` in a class body | `(decorated_definition (decorator (identifier) @_d) definition: (function_definition) @declaration.property.getter (#eq? @_d "property"))` | Accessors: a property read through a getter | states it |
+| `@x.setter def x(self, v)` | `(decorated_definition (decorator (attribute attribute: (identifier) @_a)) definition: (function_definition) @declaration.property.setter (#eq? @_a "setter"))` | Accessors: written through a setter | states it. `@x.deleter` has no vocabulary kind and stays a method. |
+| `@override` (from `typing`, PEP 698) | the `override` flag on `declaration.method`, and on `declaration.property` when it's also a getter, matched on `override` or `typing.override` | ExplicitOverrides: a member marked as overriding the one it replaces | states it |
+| `Optional[X]` | `(generic_type (identifier) @_n (type_parameter (type) @type)) @type.nullable (#eq? @_n "Optional")` | NullableTypes: a type that admits null | states it. `X \| None` stays `type.union`, as TypeScript's `X \| null` does. |
+| `__x` (not a dunder) in a class body | the `privateName` flag on `declaration.method` and `declaration.field`, and on `expression.member` where it's read: `#match? "^__.*[^_]$"` (except `^__.*__$`) | **Encapsulation**: a member hidden from code outside its class, flagged where it's declared and where it's read. Name mangling is this fact, as TypeScript's `#x` is. | states Encapsulation, not Visibility |
+| `_x` | none | — | **doesn't state it:** a convention only. The one language fact is that `from m import *` skips `_x` at module level, which `__all__` overrides. |
+| `@abstractmethod` | none | AbstractClasses' `declaration.method.signature.abstract` is a method without a body. Python's abstract method has a body that `super()` can call. | **doesn't state it** |
+| `class C(ABC)` | none | `declaration.class.abstract` is a class nothing instantiates. A class deriving from `ABC` is only uninstantiable while it has an unimplemented abstract method, which is a fact about its body, not its declaration. | **doesn't state it** |
+
+## Questions for review
+
+- **V (decided). Visibility leaves Python's composition, and Encapsulation joins it.** Python states no access level: `_x` is a convention, and `__x` is Encapsulation's name-spelled privacy. Recommended: PythonFeatures drops Visibility and adds Encapsulation, and its doc comment loses "visibility by naming convention".
+- **A (decided). AbstractClasses leaves Python's composition.** Python's abstract methods have bodies, and its abstract classes are known by their bodies, so no claim states the vocabulary's fact. Recommended: PythonFeatures drops AbstractClasses. The alternative is a vocabulary member for an abstract method with a body, which the rule against new member names excludes.
+- **N (decided). Five members no grammar holds:** they stay as they are, and the guard exempts and lists them. The options were: `bounds` on the three type-parameter refinements, and `definite` and `optionality` on `declaration.property`. Recommended:
+  - the three `bounds` restate as `?: never` on their refinements, as `Lifetime.default` already does, since no language bounds these forms;
+  - the two property members, which accessors can't take, move to the field (where TypeScript holds them already) by dropping the Property declaration.
+  
+  Both options remove nothing a grammar reads.
+- **C. Core content is in scope.** The plan's first task named the feature clusters. The spec also moves the 88 core kinds and the 45 or so core members the appendix lists (section 1's 39 core features). Recommended: the same tasks move them, since the guard can't pass without it.
+- **M (settled by the cut). Item visibility extends the features that add its bases** (Structs, Enumerations, AlgebraicDataTypes, Traits, ModuleDeclarations, UntaggedUnions, ImportTrees). That keeps every held set sound, but only a grammar with all of them can hold ItemVisibility. The alternative splits it per base, for example struct visibility extending ItemVisibility and Structs. That's finer, and it only pays when a grammar has item visibility without one of those features. Recommended: one piece until such a grammar exists. At the chosen cut this is ModuleVisibility, one piece.
+- **S. Splitting by meaning within one holder set** (TypeAnnotations' typescript pieces, the Classes pieces) is optional. Recommended as proposed: names a reader can find, at no cost to any held set. *Superseded by section 4.*
+
+## 4. Granularity options
+
+Decided: the targeted family cut of section 5, applied in section 1. The options below are the record of what was weighed.
+
+The constraint is fixed: a grammar that has a feature holds all of its content. So pieces merge only within one holder set.
+- **Split features:** the floor is one sub-feature per (parent feature, holder set) cell. After rulings V and A and the claims to write, that's **58** cells, including the new StructPatterns. Python holds 23 of them, rust 20 and typescript 28. 45 of them have a single holder.
+- **Core content:** the floor is one feature per holder set, which is 6 (`p`, `r`, `t`, `pt`, `rt`, `pr`).
+
+The appendix's inventory has about 148 new features: about 95 sub-features and about 53 core features.
+
+### Option 1: the floor everywhere (64 features)
+
+- **Shape:** 58 sub-features plus 6 core features. Each one is named for what it adds.
+- **Examples:**
+  - AsyncAwait's four pieces become AsyncLambdas (`rt`), AsyncIteration (`pt`), AsyncFunctionExpressions (`t`) and AsyncContexts (`p`).
+  - TypeAnnotations' 35 typescript items become one `TypeAlgebra` (`t`), and its 19 rust items one `SystemsTypes` (`r`).
+  - Visibility becomes two pieces: `ModuleVisibility` (`r`: the item kinds and the scoped levels, rust's module-based visibility) and `ClassVisibility` (`t`: protected and the class-member kinds).
+- **The core features** are the residue of each holder set: one python feature holding chained comparisons, identity, floor division, matrix multiplication, `<>`, map and set literals, `...`, implicit concatenation, triple-quoted strings, `del`, `elif`, loop `else` and docstrings. One typescript feature holds `++`, `??`, `>>>`, `typeof`, `void`, `delete`, sequences, function expressions, `new.target`, object literals, `const`, `let` and `var`, and HTML comments. Rust's holds block expressions, `[x; n]`, `mut`, `let … else`, literal suffixes and inner doc comments. Plus three for the shared sets.
+- **Held sets:** python 23 + 3, rust 20 + 3, typescript 28 + 3.
+- **What agnostic code loses:**
+  - A core feature can only be named after the grammars that hold it. It's a language feature kept in the shared vocabulary, so a contract can't ask for "exponentiation" without also taking unary `+`, `in` and bitwise `~`.
+  - A fourth grammar that holds part of a cell splits it again, which changes what every contract naming that cell means.
+
+### Option 2: the floor for features, coarse meaning groups for core content (86 features) — recommended
+
+- **Shape:** 58 sub-features, as in option 1. The core content is grouped by area (operators, literals, expressions, declarations, statements, comments, attributes, patterns), and each area is split only by holder set. That gives **28** core features.
+- **Examples:**
+  - Operators: `p` (comparison chains and comparators, identity, `not in`, floor division, matrix multiplication, `<>`), `pt` (`**`, `in`, unary `+`, `~`) and `t` (`??`, the logical assignments, `>>>`, `instanceof`, `typeof`, `void`, `delete`, `++` and `--`).
+  - Literals: `p` (`...`, implicit concatenation, triple-quoted strings), `pt` (`null`, the float and radix facets), `r` (literal suffixes) and `t` (`undefined`).
+  - Comments: `rt` (block and doc comments), `r` (inner doc comments) and `t` (HTML comments).
+  - Small cells merge where the area has one item: rust's `pattern.mutable` goes with its declarations (`mut`), and the two attribute cells go with declarations. That leaves 25.
+- **Held sets** (before the merges): python 23 + 10, rust 20 + 14, typescript 28 + 14.
+- **What agnostic code loses:**
+  - Within an area, a contract takes the whole cell. Code that wants `**` also gets unary `+`.
+  - The lost precision stays inside one area, and every name says what the content is, so a diagnostic like "requires PythonOperators" points somewhere a reader can find.
+  - A fourth grammar re-splits only the cells of the areas it touches.
+- **Why it's recommended:** it's the coarsest level where every feature still names a part of a language instead of a set of grammars. The 58 feature cells are already at the floor, and their parents give them meaning (AsyncContexts, TypeAlgebra).
+
+### Option 3: single-grammar tiny constructs become language features (needs the user's word)
+
+- **Shape:** take option 2, and move each single-grammar core cell (18 of the 28) into that grammar's generated language features. That leaves 58 + 10 = **68** vocabulary features, plus about 6 language features per grammar.
+- **Candidates:** python's `...`, docstrings, `<>`, implicit concatenation and `del`; typescript's HTML comments, `undefined`, `new.target`/`import.meta` and `void`; rust's `[x; n]`, literal suffixes and `let … else`. UnaryPlus, the example given, is held by python and typescript both, so it stays in the vocabulary under any option.
+- **What agnostic code loses:**
+  - Language features aren't in the shared vocabulary, so agnostic code can't name them at all. Under a contract they read as their nearest ancestor, or as opaque.
+  - A fourth grammar with the same construct (C's `++`, Ruby's `**`) has to move it back into the vocabulary first.
+  - It also revises the ruling that content already in the vocabulary stays there, which is why it needs the user's word.
+
+### Recommendation
+
+**Option 2**, at 86 features (83 after the one-item merges), against about 148 today. If that's still too many, the next step is option 3 for the 18 single-grammar core cells only, with the user's word. Splitting the 58 feature cells further by meaning should wait for a grammar that holds part of one.
+
+## 5. The nine-language scrub
+
+The cuts above follow the differences between three grammars. This section tests them against six more languages, so the cuts follow language families instead. The rule for real grammars doesn't change. The six only decide where to cut and how to name.
+
+### Sources and method
+
+**The matrix** is [`2026-11-05-portable-features-matrix.tsv`](2026-11-05-portable-features-matrix.tsv). It has one row per vocabulary kind (628) and per feature-owned or core-gap member (233), with nine columns. Each cell is H (has), L (lacks) or D (different shape).
+
+- **Measured: python, rust and typescript,** from their bindings.
+- **Measured: go and c,** from probe bindings on `probe/feature-scrub`. Each language was bootstrapped with `tool bootstrap-grammar` and left unstable. Its `bindings.scm` claims the vocabulary content the language has, and `derive()` gives the held set. After the bootstrap fixes all four were bootstrapped again from the fixed template, with no hand-written files. Go's and C's held sets came out identical, kind for kind and member for member.
+  - A measured cell is H when the grammar claims the path, or routes the member. Otherwise the paper judgment decides between L and D.
+  - Go makes 140 claims (162 kinds held), and C makes 112 (130 kinds held).
+- **Paper: java and c#** (bootstrap blocked by core defects, see below), **swift and c++.** These are language knowledge, checked against each upstream grammar's `node-types.json` and `grammar.json` at the pinned tag. Spot-checked witness nodes all exist, except two. C++ has no `module` or `import` node, because it uses `#include`, a different shape. Java's text blocks lex as an ordinary `string_literal`. The judgments are rules, so each cell traces to one: `docs/superpowers/probes/2026-11-05-feature-scrub/paper_rules.py` on the probe branch.
+- **Pins** (each a tagged release of the maintained repo): go v0.25.0, java v0.23.5, c-sharp v0.23.5 and c v0.24.2 (npm had only 0.24.1, so the git tag); c++ v0.23.4 and swift 0.7.3 (alex-pinkus). Downloaded files went into their own directories, and nothing from them was run. Bootstrap's `pnpm install` left every new package's build script unapproved.
+- **Calibration of paper against measured.** The paper rules agree with the measured claims on 92% of rows for Go and 94% for C.
+  - Go's disagreements:
+    - visibility by capitalization is claimed (paper said "different shape"), and the compiler enforces it, so measured is right;
+    - `++` and `--` are claimed though they're statements;
+    - labels are on labeled statements (paper said loops).
+  - The rest are the probe bindings' gaps: number-literal facets, `left`/`right`, receivers and a few members. They're measurement gaps, not language facts, and they show up as splits charged to Go and C below.
+
+### Bootstrap blockers
+
+| Language | Blocker | Class |
+|---|---|---|
+| all four | Fixed. The template had no `base.ts` and no `options.indent`, and plain `gen` lacked the transpile chain. The template now writes all three, and the rerun's `base.ts`, `package.json`, README and tsconfigs are byte-identical to the hand workarounds. | core (tooling), fixed |
+| go | Allowed for the probe: `unclassifiable-shape` ×2, `union-slot-mixed-row`, `separator-default-undeclared` ×7, `dropped-token` ×4. Authored: `channel_type`'s three arms as variants. `chan<-` is now the `unresolved-enum-text` diagnostic, so authoring resolves it. | authoring |
+| go, c | `--all` stops in render-module on a named alias over an inline token (Go's string contents, C's `char_literal` → `character`). Measured without the render module. | core (#1098) |
+| java | The display-name error is fixed. Next, the template emitter's duplicate-slot violation on `formal_parameters` and `try_statement` was authored away with variants. Plain `gen` then throws `SyntaxError: Invalid regular expression … Invalid capture group name`, because the optional `.` in `hex_floating_point_literal` becomes a flag named `.`. Java is on paper. | core (#1100) |
+| c# | The fixpoint error is fixed. Authored: `_optional_semi`'s `visibleExternals` text, field names on `argument` and `preproc_nullable`, and what enrich then adds on the declaration-list bodies, type argument lists and record bases. Plain `gen` then throws a raw leaf-registry error: its 11 visible scanner tokens have no `renderAs` shape, and the emitter reports them one throw at a time. `--all` also stops at the WASM build (#1097). C# is on paper. | core (#1101) |
+| c | Allowed for the probe: `storagename-collision` (type_definition, type_descriptor), `unclassifiable-shape` ×4, `union-slot-mixed-row`, `display-union-mixed` (primitive_type), `content-collision` (alignas_qualifier), `dropped-token` | authoring |
+| go, c bindings | A kind with only refining claims whose paths share no parent (`type_spec`, `pointer_expression`) must claim the kind itself | authoring |
+
+### Re-cutting option 2 against nine languages
+
+A cell is a (feature or core area, holder set over python, rust and typescript) piece, as in option 2. A fourth grammar *splits* a cell when it holds part of it.
+- **Families:** C-procedural is go and c. C-family object-oriented is java, c# and c++. Swift stands alone.
+- **The ceiling:** splits in parent and core cells (8 to 17 per language) can't be avoided by any cut of sub-features, so the comparison counts sub-feature cells.
+
+| Cut | Features | Each real grammar holds | Sub-feature cells a fourth grammar splits (go, java, c#, c, swift, c++) |
+|---|---|---|---|
+| Option 2, cut by the three grammars | 83 | python 31, rust 30, typescript 38 | 20, 26, 32, 13, 33, 25 (149 in all) |
+| **Option 2 with targeted family splits (recommended)** | **104** | python 45, rust 38, typescript 45 | **12, 15, 21, 9, 21, 16 (94)** |
+| Option 2 with every sub-feature cell split by family | 162 | python 51, rust 63, typescript 81 | 3, 7, 18, 4, 0, 15 (47) |
+| Every cell by its full nine-language signature | 334 | — | 7 to 35 per language when that language is held out of the cut |
+
+The **targeted** cut splits a cell by family only where that saves at least two splits per feature it adds. That's 15 cells: +21 features, −55 splits. It's the knee. Past it, each added feature saves about one split, so cutting more pays now for languages that may never be bootstrapped. A split costs the same later as it does now. The family lines it draws:
+- **Core operators** (python and typescript): `~` and unary `+` (C-family, held by all six) part from `**` and `in` (held by none).
+- **Python-only operators:** identity (`is`, which Swift's `===` shares) parts from comparators and chains.
+- **Comments:** block comments (all of the C family) part from doc comments (c, swift and c++ conventions) and from rust's inner doc comments.
+- **Declarations:** fields, modifiers and attribute content (every C-family language) part from bodiless function signatures (go). `declaration.constant` (go and c#) parts from `argument`.
+- **Structs:** the struct declaration (C family and swift) parts from struct literals and fields (C-procedural: go and c) and from rust's tuple and unit structs.
+- **Destructuring:** the wildcard `_` (java, c# and swift) parts from tuple patterns (swift).
+- **Imports:** wildcard imports (go, java and c++) part from aliases (go and c#).
+- **ParametricPolymorphism, python's piece:** variadic type parameters (swift's and c++'s packs) part from ParamSpec and from generic constructors.
+- **Literals, python's piece:** triple-quoted strings (java text blocks, c# and swift) part from implicit concatenation (c and c++) and from `...`.
+- **Expressions:** map literals (go, c# and swift) part from set literals and `**` spreads.
+
+The name for each comes from its family, for example `CFamilyUnaryOperators`, `BlockComments`, `MultilineStrings` and `WildcardImports`.
+
+### Coverage: which language the current three cover worst
+
+- **Measured:** the claims name 74% of Go's upstream node kinds and 52% of C's.
+  - Go's misses are mostly list containers, plus constructs the vocabulary has no content for: channels, `go`, `select`, send and receive (ConcurrencySyntax is marker-only), `defer` (DeferredExecution is marker-only), `goto`, `fallthrough`, type sets (`~T`, unions in constraints) and `iota`.
+  - C's misses are mostly the preprocessor and the MS and GNU extensions, plus `sizeof`, `alignof`, `offsetof`, `goto`, bitfields and designators.
+- **Rows held:** C# holds the most vocabulary rows of the six (402), so the three cover its constructs broadly, but its cells cut differently: 21 splits.
+- **Swift is covered worst.** It has the most splits under every cut (33, then 21), and its defining constructs have no vocabulary home or a misaligned one: optionals and `if let`/`guard let`, `guard`, `defer`, protocol extensions and conformance, property wrappers, result builders, actors, key paths, `inout`, `some` and `any`. **Swift is the likely first language to bootstrap**, and C# is next.
+- **Go is the cheapest fourth grammar:** 12 splits under the recommended cut, almost all in the C-procedural family.
+
+### Recommendation
+
+Decided: the user chose this cut. Section 1 applies it to the decided state, which gives 106.
+
+The **targeted family cut: 104 features**, against 83 for option 2 cut by three grammars and about 148 for the appendix's inventory.
+- **Real grammars:** python holds 45 sub-features, rust 38 and typescript 45.
+- **A fourth grammar** splits 9 to 21 sub-feature cells, against 13 to 33 before.
+- **Every name is a family line,** not a set of grammars.
+
+Two findings go with it:
+- **ConcurrencySyntax and DeferredExecution** are marker-only today. They're the future home of Go's channels, `go`, `select`, send and receive, and `defer` (and later Swift's `defer` and actors). Their content waits until Go is bootstrapped. Until then they stay trivially held markers.
+- The core defects the bootstrap found are filed as issues:
+  - #1091 to #1094, fixed: the bootstrap template, Go's `chan<-` (now a diagnostic), Java's display name, and C#'s enrich fixpoint and template `PATTERN`;
+  - #1098, open: render-module and a named alias over an inline token (Go, C);
+  - #1100, open: Java's invalid regex group name;
+  - #1101, open: C#'s scanner tokens without `renderAs` throw instead of reporting a diagnostic;
+  - #1097, open: C#'s scanner symbols in the WASM build.
+
+## Appendix: the inventory, piece by meaning
+
+The finest cut: every sub-feature split by meaning within its holder set, about 148 features. Section 1 merges these pieces into the targeted family cut. The appendix stays as the record of what each piece holds and why.
 
 Folders are under `packages/types/src/vocabulary/features/`. A new folder is marked **new**, and a moved one **moved**.
 
 ### Visibility, on both axes
 
-Only rust and typescript hold Visibility once Python's mapping is settled (see section 3, question V). The 143 kinds fall into three holder sets: `rt` 9, `r` 97 and `t` 37.
+Only rust and typescript hold Visibility once Python's mapping is settled (ruling V). The 143 kinds fall into three holder sets: `rt` 9, `r` 97 and `t` 37.
 
 The shared piece is the root. The level axis (protected, scoped) and the kind axis (item, member) each extend it, and each crossing piece extends one piece from each axis:
 
@@ -272,38 +635,7 @@ Still to check before this table is final:
 - `type.content` (p t).
 - `literal.number.float.leading_point.integer` (p).
 
-### Claims to write
-
-The language has each of these constructs and the claim is missing. The held sets above assume them.
-
-- **rust:** `declaration.function.signature.async`, `declaration.method.signature.async` (`async fn` in traits).
-- **typescript:** `returnType` on property.getter, property.signature.getter and property.signature.abstract.getter (`get x(): T`).
-- **python:**
-  - `declaration.constant.type` (`X: int = 1` under the existing constant claim);
-  - `file.shebang` (`#!`, read today as a comment);
-  - section 3's mapping.
-- **To check before settling:**
-  - rust `pattern.rest` (`..` in slice and tuple patterns);
-  - rust type-parameter defaults (`clause.default`);
-  - Python class-body annotations as `declaration.field`. That would move Python into FieldDeclarations and FieldAnnotations.
-
-### Shape mismatches (for #1086)
-
-Each of these moves into a sub-feature the other-shape languages lack, as above, and is listed on #1086 to be unified later.
-- Call type arguments on the call (t), where rust reads the turbofish on the callee.
-- Loop labels on the loop (r), where TypeScript uses `statement.labeled`.
-- Decorator content kinds (t), where Python reads expressions.
-- Import aliases (p r), where TypeScript uses an alias on `clause.import.specifier`.
-- Relative imports (p), where rust reads `super::` and `self::` in a path.
-- Python's parameter kinds `declaration.parameter.typed`, `.default` and `.typed_default`, where the others put `type` and `default` members on `declaration.parameter`.
-- `statement.if.alternatives` (p) and `statement.if.alternative` (r t).
-- `declaration.constant` (p r) and `declaration.variable.constant` (t).
-- `statement.expression.content` (p r) and `statement.expression.expression` (t).
-- `statement.loop.for_each.left` and `.right` (p r) and `.header` (t).
-- Numeric literal facets (p t): `fraction`, `exponent` and the other float parts; `radixPrefix`. Rust lexes a numeric literal as one token.
-- Rust's bitwise not `!`, read as a logical not.
-
-### Each grammar's held set after the split
+### Each grammar's held set at this granularity
 
 The parents of every split feature a grammar composes, plus these sub-features.
 
@@ -320,181 +652,3 @@ The parents of every split feature a grammar composes, plus these sub-features.
   - Visibility: ProtectedVisibility, MemberVisibility, ProtectedMemberVisibility.
   - Feature sub-features: BigIntegerRadixes, AsyncLambdas, AsyncIteration, AsyncSignatures, AsyncFunctionExpressions, GeneratorFunctions, MemberDecorators, RestPatterns, ObjectPatterns, TypedReceivers, InterfaceSignatures, LabeledStatements, MethodSignatures, ReceiverKeywords, AccessorSignatures, NewExpressions, ClassExpressions, StaticMembers, MemberOverrides, Exports, ImportSpecifiers, DynamicImports, ExternalModules, GenericSignatures, InstantiationExpressions, GenericClasses, ExplicitTypeArguments, GenericTypeExpressions, BoundClauses, DisposableDeclarations, TaggedTemplates, PrimitiveTypes, TypeConstructors, TypeCasts, UnionTypes, VariadicTypes, TypeComputation, TypeAssertions, StructuralTypes, TypePredicates, TopAndBottomTypes, AccessorAnnotations, AnnotatedSignatures, FieldAnnotations.
   - Core features: MembershipTests, TypeTests, Exponentiation, NullishCoalescing, LogicalAssignment, UnsignedShift, IncrementDecrement, UnaryPlus, UnaryOperatorKeywords, SequenceExpressions, FunctionExpressions, MetaProperties, SuperReferences, ObjectLiterals, KeyValuePairs, Spreads, NullLiteral, Undefined, BindingKinds, PatternDeclarations, MultipleDeclarators, HtmlComments, BlockComments, DocComments, FieldDeclarations, FieldInitializers, FunctionSignatures, Modifiers, AttributeContent, AnnotatedLambdas.
-
-## 2. Standard packages
-
-A package is a feature with no content of its own that extends the features it combines, so a grammar has it exactly when it holds each of them. Each one is a folder under `features/` with only its marker in `index.ts`. A grammar's composition then names a package the way it names any feature. These are the packages the compositions and the tree suggest.
-
-| Package (marker extends) | Features | Members |
-|---|---|---|
-| `ObjectOriented` | Methods, Classes | python, typescript |
-| `Generic` | ParametricPolymorphism, BoundedQuantification | python, rust, typescript |
-| `Annotated` | TypeAnnotations, TypeAliases, ParametricPolymorphism | python, rust, typescript |
-| `Asynchronous` | AsyncAwait, Coroutines | python, rust, typescript |
-| `PatternMatching` | MatchExpressions, TuplePatterns | python, rust |
-| `CLike` | CountedLoops, PostTestLoops, MultiwayBranch, ConditionalExpressions, IncrementDecrement, SequenceExpressions, BlockComments | typescript |
-| `JavaScriptFeatures` | the existing composition | typescript |
-
-`CLike` has one member today. It's the contract a C, Java or JavaScript grammar joins. `JavaScriptFeatures` is already a feature with no content of its own (TypeScriptFeatures extends it), so it's a package as it stands. Packages may extend packages: `Annotated` could extend `Generic` instead of listing ParametricPolymorphism again.
-
-## 3. Python's convention claims
-
-Each claim follows the existing content claims (`declaration.constant`'s `#match?`). The query sketches name the Python grammar's nodes as they read today. Exact node names are checked when the claims are written.
-
-| Construct | Claim | Vocabulary fact it states | Verdict |
-|---|---|---|---|
-| `@property def x(self)` in a class body | `(decorated_definition (decorator (identifier) @_d) definition: (function_definition) @declaration.property.getter (#eq? @_d "property"))` | Accessors: a property read through a getter | states it |
-| `@x.setter def x(self, v)` | `(decorated_definition (decorator (attribute attribute: (identifier) @_a)) definition: (function_definition) @declaration.property.setter (#eq? @_a "setter"))` | Accessors: written through a setter | states it. `@x.deleter` has no vocabulary kind and stays a method. |
-| `@override` (from `typing`, PEP 698) | the `override` flag on `declaration.method`, and on `declaration.property` when it's also a getter, matched on `override` or `typing.override` | ExplicitOverrides: a member marked as overriding the one it replaces | states it |
-| `Optional[X]` | `(generic_type (identifier) @_n (type_parameter (type) @type)) @type.nullable (#eq? @_n "Optional")` | NullableTypes: a type that admits null | states it. `X \| None` stays `type.union`, as TypeScript's `X \| null` does. |
-| `__x` (not a dunder) in a class body | the `privateName` flag on `declaration.method` and `declaration.field`, and on `expression.member` where it's read: `#match? "^__.*[^_]$"` (except `^__.*__$`) | **Encapsulation**: a member hidden from code outside its class, flagged where it's declared and where it's read. Name mangling is this fact, as TypeScript's `#x` is. | states Encapsulation, not Visibility |
-| `_x` | none | — | **doesn't state it:** a convention only. The one language fact is that `from m import *` skips `_x` at module level, which `__all__` overrides. |
-| `@abstractmethod` | none | AbstractClasses' `declaration.method.signature.abstract` is a method without a body. Python's abstract method has a body that `super()` can call. | **doesn't state it** |
-| `class C(ABC)` | none | `declaration.class.abstract` is a class nothing instantiates. A class deriving from `ABC` is only uninstantiable while it has an unimplemented abstract method, which is a fact about its body, not its declaration. | **doesn't state it** |
-
-## Questions for review
-
-- **V. Visibility leaves Python's composition, and Encapsulation joins it.** Python states no access level: `_x` is a convention, and `__x` is Encapsulation's name-spelled privacy. Recommended: PythonFeatures drops Visibility and adds Encapsulation, and its doc comment loses "visibility by naming convention".
-- **A. AbstractClasses leaves Python's composition.** Python's abstract methods have bodies, and its abstract classes are known by their bodies, so no claim states the vocabulary's fact. Recommended: PythonFeatures drops AbstractClasses. The alternative is a vocabulary member for an abstract method with a body, which the rule against new member names excludes.
-- **N. Five members no grammar holds:** `bounds` on the three type-parameter refinements, and `definite` and `optionality` on `declaration.property`. Recommended:
-  - the three `bounds` restate as `?: never` on their refinements, as `Lifetime.default` already does, since no language bounds these forms;
-  - the two property members, which accessors can't take, move to the field (where TypeScript holds them already) by dropping the Property declaration.
-  
-  Both options remove nothing a grammar reads.
-- **C. Core content is in scope.** The plan's first task named the feature clusters. The spec also moves the 88 core kinds and the 45 or so core members above. Recommended: the same tasks move them, since the guard can't pass without it.
-- **M. Item visibility extends the features that add its bases** (Structs, Enumerations, AlgebraicDataTypes, Traits, ModuleDeclarations, UntaggedUnions, ImportTrees). That keeps every held set sound, but only a grammar with all of them can hold ItemVisibility. The alternative splits it per base, for example struct visibility extending ItemVisibility and Structs. That's finer, and it only pays when a grammar has item visibility without one of those features. Recommended: one piece until such a grammar exists.
-- **S. Splitting by meaning within one holder set** (TypeAnnotations' typescript pieces, the Classes pieces) is optional. Recommended as proposed: names a reader can find, at no cost to any held set. *Superseded by section 4.*
-
-## 4. Granularity options
-
-The constraint is fixed: a grammar that has a feature holds all of its content. So pieces merge only within one holder set.
-- **Split features:** the floor is one sub-feature per (parent feature, holder set) cell. After rulings V and A and the claims to write, that's **58** cells, including the new StructPatterns. Python holds 23 of them, rust 20 and typescript 28. 45 of them have a single holder.
-- **Core content:** the floor is one feature per holder set, which is 6 (`p`, `r`, `t`, `pt`, `rt`, `pr`).
-
-Section 1's tree has about 148 new features: about 95 sub-features and about 53 core features.
-
-### Option 1: the floor everywhere (64 features)
-
-- **Shape:** 58 sub-features plus 6 core features. Each one is named for what it adds.
-- **Examples:**
-  - AsyncAwait's four pieces become AsyncLambdas (`rt`), AsyncIteration (`pt`), AsyncFunctionExpressions (`t`) and AsyncContexts (`p`).
-  - TypeAnnotations' 35 typescript items become one `TypeAlgebra` (`t`), and its 19 rust items one `SystemsTypes` (`r`).
-  - Visibility becomes two pieces: `ModuleVisibility` (`r`: the item kinds and the scoped levels, rust's module-based visibility) and `ClassVisibility` (`t`: protected and the class-member kinds).
-- **The core features** are the residue of each holder set: one python feature holding chained comparisons, identity, floor division, matrix multiplication, `<>`, map and set literals, `...`, implicit concatenation, triple-quoted strings, `del`, `elif`, loop `else` and docstrings. One typescript feature holds `++`, `??`, `>>>`, `typeof`, `void`, `delete`, sequences, function expressions, `new.target`, object literals, `const`, `let` and `var`, and HTML comments. Rust's holds block expressions, `[x; n]`, `mut`, `let … else`, literal suffixes and inner doc comments. Plus three for the shared sets.
-- **Held sets:** python 23 + 3, rust 20 + 3, typescript 28 + 3.
-- **What agnostic code loses:**
-  - A core feature can only be named after the grammars that hold it. It's a language feature kept in the shared vocabulary, so a contract can't ask for "exponentiation" without also taking unary `+`, `in` and bitwise `~`.
-  - A fourth grammar that holds part of a cell splits it again, which changes what every contract naming that cell means.
-
-### Option 2: the floor for features, coarse meaning groups for core content (86 features) — recommended
-
-- **Shape:** 58 sub-features, as in option 1. The core content is grouped by area (operators, literals, expressions, declarations, statements, comments, attributes, patterns), and each area is split only by holder set. That gives **28** core features.
-- **Examples:**
-  - Operators: `p` (comparison chains and comparators, identity, `not in`, floor division, matrix multiplication, `<>`), `pt` (`**`, `in`, unary `+`, `~`) and `t` (`??`, the logical assignments, `>>>`, `instanceof`, `typeof`, `void`, `delete`, `++` and `--`).
-  - Literals: `p` (`...`, implicit concatenation, triple-quoted strings), `pt` (`null`, the float and radix facets), `r` (literal suffixes) and `t` (`undefined`).
-  - Comments: `rt` (block and doc comments), `r` (inner doc comments) and `t` (HTML comments).
-  - Small cells merge where the area has one item: rust's `pattern.mutable` goes with its declarations (`mut`), and the two attribute cells go with declarations. That leaves 25.
-- **Held sets** (before the merges): python 23 + 10, rust 20 + 14, typescript 28 + 14.
-- **What agnostic code loses:**
-  - Within an area, a contract takes the whole cell. Code that wants `**` also gets unary `+`.
-  - The lost precision stays inside one area, and every name says what the content is, so a diagnostic like "requires PythonOperators" points somewhere a reader can find.
-  - A fourth grammar re-splits only the cells of the areas it touches.
-- **Why it's recommended:** it's the coarsest level where every feature still names a part of a language instead of a set of grammars. The 58 feature cells are already at the floor, and their parents give them meaning (AsyncContexts, TypeAlgebra).
-
-### Option 3: single-grammar tiny constructs become language features (needs the user's word)
-
-- **Shape:** take option 2, and move each single-grammar core cell (18 of the 28) into that grammar's generated language features. That leaves 58 + 10 = **68** vocabulary features, plus about 6 language features per grammar.
-- **Candidates:** python's `...`, docstrings, `<>`, implicit concatenation and `del`; typescript's HTML comments, `undefined`, `new.target`/`import.meta` and `void`; rust's `[x; n]`, literal suffixes and `let … else`. UnaryPlus, the example given, is held by python and typescript both, so it stays in the vocabulary under any option.
-- **What agnostic code loses:**
-  - Language features aren't in the shared vocabulary, so agnostic code can't name them at all. Under a contract they read as their nearest ancestor, or as opaque.
-  - A fourth grammar with the same construct (C's `++`, Ruby's `**`) has to move it back into the vocabulary first.
-  - It also revises the ruling that content already in the vocabulary stays there, which is why it needs the user's word.
-
-### Recommendation
-
-**Option 2**, at 86 features (83 after the one-item merges), against about 148 today. If that's still too many, the next step is option 3 for the 18 single-grammar core cells only, with the user's word. Splitting the 58 feature cells further by meaning should wait for a grammar that holds part of one.
-
-## 5. The nine-language scrub
-
-The cuts above follow the differences between three grammars. This section tests them against six more languages, so the cuts follow language families instead. The rule for real grammars doesn't change. The six only decide where to cut and how to name.
-
-### Sources and method
-
-**The matrix** is [`2026-11-05-portable-features-matrix.tsv`](2026-11-05-portable-features-matrix.tsv). It has one row per vocabulary kind (628) and per feature-owned or core-gap member (233), with nine columns. Each cell is H (has), L (lacks) or D (different shape).
-
-- **Measured: python, rust and typescript,** from their bindings.
-- **Measured: go and c,** from probe bindings on `probe/feature-scrub`. Each language was bootstrapped with `tool bootstrap-grammar` and left unstable. Its `bindings.scm` claims the vocabulary content the language has, and `derive()` gives the held set. After the bootstrap fixes all four were bootstrapped again from the fixed template, with no hand-written files. Go's and C's held sets came out identical, kind for kind and member for member.
-  - A measured cell is H when the grammar claims the path, or routes the member. Otherwise the paper judgment decides between L and D.
-  - Go makes 140 claims (162 kinds held), and C makes 112 (130 kinds held).
-- **Paper: java and c#** (bootstrap blocked by core defects, see below), **swift and c++.** These are language knowledge, checked against each upstream grammar's `node-types.json` and `grammar.json` at the pinned tag. Spot-checked witness nodes all exist, except two. C++ has no `module` or `import` node, because it uses `#include`, a different shape. Java's text blocks lex as an ordinary `string_literal`. The judgments are rules, so each cell traces to one: `docs/superpowers/probes/2026-11-05-feature-scrub/paper_rules.py` on the probe branch.
-- **Pins** (each a tagged release of the maintained repo): go v0.25.0, java v0.23.5, c-sharp v0.23.5 and c v0.24.2 (npm had only 0.24.1, so the git tag); c++ v0.23.4 and swift 0.7.3 (alex-pinkus). Downloaded files went into their own directories, and nothing from them was run. Bootstrap's `pnpm install` left every new package's build script unapproved.
-- **Calibration of paper against measured.** The paper rules agree with the measured claims on 92% of rows for Go and 94% for C.
-  - Go's disagreements:
-    - visibility by capitalization is claimed (paper said "different shape"), and the compiler enforces it, so measured is right;
-    - `++` and `--` are claimed though they're statements;
-    - labels are on labeled statements (paper said loops).
-  - The rest are the probe bindings' gaps: number-literal facets, `left`/`right`, receivers and a few members. They're measurement gaps, not language facts, and they show up as splits charged to Go and C below.
-
-### Bootstrap blockers
-
-| Language | Blocker | Class |
-|---|---|---|
-| all four | Fixed. The template had no `base.ts` and no `options.indent`, and plain `gen` lacked the transpile chain. The template now writes all three, and the rerun's `base.ts`, `package.json`, README and tsconfigs are byte-identical to the hand workarounds. | core (tooling), fixed |
-| go | Allowed for the probe: `unclassifiable-shape` ×2, `union-slot-mixed-row`, `separator-default-undeclared` ×7, `dropped-token` ×4. Authored: `channel_type`'s three arms as variants. `chan<-` is now the `unresolved-enum-text` diagnostic, so authoring resolves it. | authoring |
-| go, c | `--all` stops in render-module on a named alias over an inline token (Go's string contents, C's `char_literal` → `character`). Measured without the render module. | core (#1098) |
-| java | The display-name error is fixed. Next, the template emitter's duplicate-slot violation on `formal_parameters` and `try_statement` was authored away with variants. Plain `gen` then throws `SyntaxError: Invalid regular expression … Invalid capture group name`, because the optional `.` in `hex_floating_point_literal` becomes a flag named `.`. Java is on paper. | core (#1100) |
-| c# | The fixpoint error is fixed. Authored: `_optional_semi`'s `visibleExternals` text, field names on `argument` and `preproc_nullable`, and what enrich then adds on the declaration-list bodies, type argument lists and record bases. Plain `gen` then throws a raw leaf-registry error: its 11 visible scanner tokens have no `renderAs` shape, and the emitter reports them one throw at a time. `--all` also stops at the WASM build (#1097). C# is on paper. | core (#1101) |
-| c | Allowed for the probe: `storagename-collision` (type_definition, type_descriptor), `unclassifiable-shape` ×4, `union-slot-mixed-row`, `display-union-mixed` (primitive_type), `content-collision` (alignas_qualifier), `dropped-token` | authoring |
-| go, c bindings | A kind with only refining claims whose paths share no parent (`type_spec`, `pointer_expression`) must claim the kind itself | authoring |
-
-### Re-cutting option 2 against nine languages
-
-A cell is a (feature or core area, holder set over python, rust and typescript) piece, as in option 2. A fourth grammar *splits* a cell when it holds part of it.
-- **Families:** C-procedural is go and c. C-family object-oriented is java, c# and c++. Swift stands alone.
-- **The ceiling:** splits in parent and core cells (8 to 17 per language) can't be avoided by any cut of sub-features, so the comparison counts sub-feature cells.
-
-| Cut | Features | Each real grammar holds | Sub-feature cells a fourth grammar splits (go, java, c#, c, swift, c++) |
-|---|---|---|---|
-| Option 2, cut by the three grammars | 83 | python 31, rust 30, typescript 38 | 20, 26, 32, 13, 33, 25 (149 in all) |
-| **Option 2 with targeted family splits (recommended)** | **104** | python 45, rust 38, typescript 45 | **12, 15, 21, 9, 21, 16 (94)** |
-| Option 2 with every sub-feature cell split by family | 162 | python 51, rust 63, typescript 81 | 3, 7, 18, 4, 0, 15 (47) |
-| Every cell by its full nine-language signature | 334 | — | 7 to 35 per language when that language is held out of the cut |
-
-The **targeted** cut splits a cell by family only where that saves at least two splits per feature it adds. That's 15 cells: +21 features, −55 splits. It's the knee. Past it, each added feature saves about one split, so cutting more pays now for languages that may never be bootstrapped. A split costs the same later as it does now. The family lines it draws:
-- **Core operators** (python and typescript): `~` and unary `+` (C-family, held by all six) part from `**` and `in` (held by none).
-- **Python-only operators:** identity (`is`, which Swift's `===` shares) parts from comparators and chains.
-- **Comments:** block comments (all of the C family) part from doc comments (c, swift and c++ conventions) and from rust's inner doc comments.
-- **Declarations:** fields, modifiers and attribute content (every C-family language) part from bodiless function signatures (go). `declaration.constant` (go and c#) parts from `argument`.
-- **Structs:** the struct declaration (C family and swift) parts from struct literals and fields (C-procedural: go and c) and from rust's tuple and unit structs.
-- **Destructuring:** the wildcard `_` (java, c# and swift) parts from tuple patterns (swift).
-- **Imports:** wildcard imports (go, java and c++) part from aliases (go and c#).
-- **ParametricPolymorphism, python's piece:** variadic type parameters (swift's and c++'s packs) part from ParamSpec and from generic constructors.
-- **Literals, python's piece:** triple-quoted strings (java text blocks, c# and swift) part from implicit concatenation (c and c++) and from `...`.
-- **Expressions:** map literals (go, c# and swift) part from set literals and `**` spreads.
-
-The name for each comes from its family, for example `CFamilyUnaryOperators`, `BlockComments`, `MultilineStrings` and `WildcardImports`.
-
-### Coverage: which language the current three cover worst
-
-- **Measured:** the claims name 74% of Go's upstream node kinds and 52% of C's.
-  - Go's misses are mostly list containers, plus constructs the vocabulary has no content for: channels, `go`, `select`, send and receive (ConcurrencySyntax is marker-only), `defer` (DeferredExecution is marker-only), `goto`, `fallthrough`, type sets (`~T`, unions in constraints) and `iota`.
-  - C's misses are mostly the preprocessor and the MS and GNU extensions, plus `sizeof`, `alignof`, `offsetof`, `goto`, bitfields and designators.
-- **Rows held:** C# holds the most vocabulary rows of the six (402), so the three cover its constructs broadly, but its cells cut differently: 21 splits.
-- **Swift is covered worst.** It has the most splits under every cut (33, then 21), and its defining constructs have no vocabulary home or a misaligned one: optionals and `if let`/`guard let`, `guard`, `defer`, protocol extensions and conformance, property wrappers, result builders, actors, key paths, `inout`, `some` and `any`. **Swift is the likely first language to bootstrap**, and C# is next.
-- **Go is the cheapest fourth grammar:** 12 splits under the recommended cut, almost all in the C-procedural family.
-
-### Recommendation
-
-The **targeted family cut: 104 features**, against 83 for option 2 cut by three grammars and about 148 for section 1.
-- **Real grammars:** python holds 45 sub-features, rust 38 and typescript 45.
-- **A fourth grammar** splits 9 to 21 sub-feature cells, against 13 to 33 before.
-- **Every name is a family line,** not a set of grammars.
-
-Two findings go with it:
-- **ConcurrencySyntax and DeferredExecution** are marker-only today. They're the future home of Go's channels, `go`, `select`, send and receive, and `defer` (and later Swift's `defer` and actors). Their content waits until Go is bootstrapped. Until then they stay trivially held markers.
-- The core defects the bootstrap found are filed as issues:
-  - #1091 to #1094, fixed: the bootstrap template, Go's `chan<-` (now a diagnostic), Java's display name, and C#'s enrich fixpoint and template `PATTERN`;
-  - #1098, open: render-module and a named alias over an inline token (Go, C);
-  - #1100, open: Java's invalid regex group name;
-  - #1101, open: C#'s scanner tokens without `renderAs` throw instead of reporting a diagnostic;
-  - #1097, open: C#'s scanner symbols in the WASM build.
