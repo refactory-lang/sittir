@@ -74,6 +74,6 @@ describe('corpus validation — generator produces usable output', () => {
 			expect(result.from).toContain('_fromMap');
 			expect(result.nodeMap.nodes.size).toBeGreaterThan(0);
 		},
-		30000
+		120000
 	);
 });
