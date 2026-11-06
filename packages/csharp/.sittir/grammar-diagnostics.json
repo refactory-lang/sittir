@@ -2299,5 +2299,18 @@
       "storageName": "string_literal",
       "slotCount": 3
     }
+  },
+  {
+    "code": "token-interior-unstructurable",
+    "ownerKind": "identifier_token",
+    "message": "token interior: 'identifier_token' has an optional literal \"@\" that is not word-shaped, so it has no name of its own and the token stays opaque. Resolve with a patch naming it: field('<name>', ...) on the literal inside the token makes it a slot",
+    "details": {
+      "shape": "unnamed-flag",
+      "text": "@"
+    },
+    "severity": "fail",
+    "canProceed": false,
+    "scope": "grammar",
+    "grammar": "csharp"
   }
 ]

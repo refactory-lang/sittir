@@ -7,8 +7,19 @@ export default grammar(enrich(base), wire({
 	resolutions,
 	name: 'csharp',
 	options: { indent: preference('    ') },
-	visibleExternals: (_$) => ({
-		_optional_semi: string(';')
+	renderAs: (_$) => ({
+		_optional_semi: string(';'),
+		interpolation_regular_start: /\$+/,
+		interpolation_verbatim_start: /@\$+|\$+@/,
+		interpolation_raw_start: /\$+/,
+		interpolation_start_quote: /"+/,
+		interpolation_end_quote: /"+/,
+		interpolation_open_brace: /\{+/,
+		interpolation_close_brace: /\s*\}+/,
+		interpolation_string_content: /[\s\S]+/,
+		raw_string_start: /"{3,}/,
+		raw_string_end: /"{3,}/,
+		raw_string_content: /[\s\S]+/
 	}),
 	edits: {
 		argument: { 1: field('modifier') },

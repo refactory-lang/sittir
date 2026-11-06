@@ -686,5 +686,18 @@
     "details": {
       "slotCount": 2
     }
+  },
+  {
+    "code": "token-interior-unstructurable",
+    "ownerKind": "hex_floating_point_literal_arm1",
+    "message": "token interior: 'hex_floating_point_literal_arm1' has an optional literal \".\" that is not word-shaped, so it has no name of its own and the token stays opaque. Resolve with a patch naming it: field('<name>', ...) on the literal inside the token makes it a slot",
+    "details": {
+      "shape": "unnamed-flag",
+      "text": "."
+    },
+    "severity": "fail",
+    "canProceed": false,
+    "scope": "grammar",
+    "grammar": "java"
   }
 ]
