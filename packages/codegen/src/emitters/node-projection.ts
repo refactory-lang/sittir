@@ -324,11 +324,7 @@ export function nodeArgs(
 	if (layout.length > 0) args.push(`layout = [${layout.map((id) => tokenGroup(id, ctx)).join(', ')}]`);
 	const item = listItemSlot(node);
 	const wrapper = ctx.wrappedLists.get(node.kind);
-	const flat = [
-		...(item === undefined ? [] : [[node, item] as const]),
-		...(wrapper?.slots.map((slot) => [wrapper, slot] as const) ?? [])
-	];
-	refuseFlatListCycle(node, flat, ctx);
+	refuseFlatListCycle(node, ctx);
 	if (item !== undefined) args.push(`item = ${rustFieldIdent(item.storageName)}`);
 	if (wrapper !== undefined) args.push('wrapped_items');
 	return args.join(', ');
@@ -338,33 +334,47 @@ function envelopeContentKinds(envelope: AssembledAlias): string[] {
 	return envelope.slots.flatMap((slot) => slotKindNames(slot));
 }
 
-function refuseFlatListCycle(
-	list: AssembledNode,
-	flat: readonly (readonly [AssembledNode, AssembledNonterminal])[],
-	ctx: ReadFactsCtx
-): void {
-	const seen = new Set<string>();
-	const reach = (name: string, from: string, envelopes: readonly string[]): void => {
-		for (const kind of concreteKindsOf(name, ctx.nodeMap)) {
-			if (seen.has(kind)) continue;
-			seen.add(kind);
-			const held = ctx.nodeMap.nodes.get(kind);
-			if (held instanceof AssembledAlias) {
-				for (const content of envelopeContentKinds(held)) reach(content, from, [...envelopes, kind]);
-			} else if (held !== undefined && listItemSlot(held) !== undefined) {
-				const path = [from, ...envelopes, kind].join(' -> ');
-				throw emitShapeFailure({
-					code: 'flat-list-cycle',
-					ownerKind: list.kind,
-					message: `the list ${list.kind} reads its items at its own depth, and ${from} can be the list ${kind}${envelopes.length === 0 ? '' : ` through the envelope ${envelopes.join(', then ')}`}, which would read its own items there too, without end (${path})`,
-					proposal: `break the cycle in the grammar layer: give ${from} a variant or field that keeps ${kind} from standing for ${list.kind}'s item, or make the envelope hold a different node`,
-					details: { list: list.kind, path: [from, ...envelopes, kind], envelopes }
-				});
+function flatEntriesOf(list: AssembledNode, ctx: ReadFactsCtx): readonly (readonly [AssembledNode, AssembledNonterminal])[] {
+	const item = listItemSlot(list);
+	const wrapper = ctx.wrappedLists.get(list.kind);
+	return [...(item === undefined ? [] : [[list, item] as const]), ...(wrapper?.slots.map((slot) => [wrapper, slot] as const) ?? [])];
+}
+
+function refuseFlatListCycle(list: AssembledNode, ctx: ReadFactsCtx): void {
+	const visited = new Set<string>([list.kind]);
+	const search = (current: AssembledNode, trail: readonly string[]): void => {
+		const seen = new Set<string>();
+		const reach = (name: string, from: string, envelopes: readonly string[]): void => {
+			for (const kind of concreteKindsOf(name, ctx.nodeMap)) {
+				if (seen.has(kind)) continue;
+				seen.add(kind);
+				const held = ctx.nodeMap.nodes.get(kind);
+				if (held instanceof AssembledAlias) {
+					for (const content of envelopeContentKinds(held)) reach(content, from, [...envelopes, kind]);
+				} else if (held !== undefined && listItemSlot(held) !== undefined) {
+					const path = [...trail, from, ...envelopes, kind];
+					if (held.kind === list.kind) {
+						const through = envelopes.length === 0 ? '' : ` through the envelope ${envelopes.join(', then ')}`;
+						const route = trail.length === 0 ? '' : ` by way of ${trail.join(' -> ')}`;
+						throw emitShapeFailure({
+							code: 'flat-list-cycle',
+							ownerKind: list.kind,
+							message: `the list ${list.kind} reads its items at its own depth, and ${from} can be the list ${kind}${through}${route}, which would read its own items there too, without end (${path.join(' -> ')})`,
+							proposal: `break the cycle in the grammar layer: give ${from} a variant or field that keeps ${kind} from standing for ${list.kind}'s item, or make the envelope hold a different node`,
+							details: { list: list.kind, path, envelopes }
+						});
+					}
+					if (!visited.has(held.kind)) {
+						visited.add(held.kind);
+						search(held, path);
+					}
+				}
 			}
-		}
+		};
+		for (const [owner, slot] of flatEntriesOf(current, ctx))
+			for (const name of slotKindNames(slot)) reach(name, `${owner.kind}.${slot.propertyName}`, []);
 	};
-	for (const [owner, slot] of flat)
-		for (const name of slotKindNames(slot)) reach(name, `${owner.kind}.${slot.propertyName}`, []);
+	search(list, []);
 }
 
 export function takesUntagged(slot: AssembledNonterminal, ctx: ReadFactsCtx): boolean {
