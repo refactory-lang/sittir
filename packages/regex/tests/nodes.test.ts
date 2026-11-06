@@ -1390,6 +1390,12 @@ describe('decimal_digits', () => {
 	});
 });
 
+describe('lazy', () => {
+	it('is the kind id', () => {
+		expect(ir.lazy).toBe(TSKindId.Lazy);
+	});
+});
+
 describe('character_class_escape_text1', () => {
 	it('factory produces correct type', () => {
 		const node = ir.characterClassEscapeText1('\\d');
@@ -1464,12 +1470,6 @@ describe('inline_flags_group_disable', () => {
 		});
 		const rendered = node.$render!();
 		expect(rendered.length).toBeGreaterThan(0);
-	});
-});
-
-describe('lazy', () => {
-	it('is the kind id', () => {
-		expect(ir.lazy).toBe(TSKindId.Lazy);
 	});
 });
 

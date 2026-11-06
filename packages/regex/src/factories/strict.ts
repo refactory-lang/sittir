@@ -42,6 +42,7 @@ export {
 	buildIdentityEscape,
 	buildGroupName,
 	buildDecimalDigits,
+	buildLazy,
 	buildTermGroup,
 	buildCountQuantifierGroup,
 	buildCountQuantifierArm,
@@ -57,7 +58,6 @@ export {
 	buildNewline,
 	buildBlankline,
 	buildDoubleBlankline,
-	buildLazy,
 	buildUnicodePropertyName
 } from './raw.js';
 

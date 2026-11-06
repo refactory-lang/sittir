@@ -234,8 +234,8 @@ function literalAliasStoragePlan<R extends AnyRule>(rules: Record<string, R>, ct
 			const literals = JSON.stringify(arms.map((arm) => (arm as unknown as { value: string }).value));
 			return { display: alias.value, body, literals, inlineToken: false, early };
 		}
-		if (!isInlineTokenBody(content)) return undefined;
-		return { display: alias.value, body: content, literals: JSON.stringify(content), inlineToken: true, early };
+		if (!isTerminalRootRule(content)) return undefined;
+		return { display: alias.value, body: content, literals: JSON.stringify(content), inlineToken: isInlineTokenBody(content), early };
 	};
 	const byDisplay = new Map<string, { literals: string[]; body: R; inlineToken: boolean }>();
 	for (const rule of Object.values(rules)) {

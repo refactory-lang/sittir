@@ -400,6 +400,11 @@
     }
   },
   {
+    "type": "lazy",
+    "named": true,
+    "fields": {}
+  },
+  {
     "type": "lookahead_assertion",
     "named": true,
     "fields": {},
@@ -926,10 +931,6 @@
   },
   {
     "type": "identity_escape",
-    "named": true
-  },
-  {
-    "type": "lazy",
     "named": true
   },
   {

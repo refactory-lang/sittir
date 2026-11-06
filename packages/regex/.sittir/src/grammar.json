@@ -623,12 +623,12 @@
           "members": [
             {
               "type": "ALIAS",
-              "content": {
-                "type": "STRING",
-                "value": "?"
-              },
               "named": true,
-              "value": "lazy"
+              "value": "lazy",
+              "content": {
+                "type": "SYMBOL",
+                "name": "_lazy"
+              }
             },
             {
               "type": "BLANK"
@@ -649,12 +649,12 @@
           "members": [
             {
               "type": "ALIAS",
-              "content": {
-                "type": "STRING",
-                "value": "?"
-              },
               "named": true,
-              "value": "lazy"
+              "value": "lazy",
+              "content": {
+                "type": "SYMBOL",
+                "name": "_lazy"
+              }
             },
             {
               "type": "BLANK"
@@ -675,12 +675,12 @@
           "members": [
             {
               "type": "ALIAS",
-              "content": {
-                "type": "STRING",
-                "value": "?"
-              },
               "named": true,
-              "value": "lazy"
+              "value": "lazy",
+              "content": {
+                "type": "SYMBOL",
+                "name": "_lazy"
+              }
             },
             {
               "type": "BLANK"
@@ -742,12 +742,12 @@
           "members": [
             {
               "type": "ALIAS",
-              "content": {
-                "type": "STRING",
-                "value": "?"
-              },
               "named": true,
-              "value": "lazy"
+              "value": "lazy",
+              "content": {
+                "type": "SYMBOL",
+                "name": "_lazy"
+              }
             },
             {
               "type": "BLANK"
@@ -970,6 +970,10 @@
     "decimal_digits": {
       "type": "PATTERN",
       "value": "\\d+"
+    },
+    "_lazy": {
+      "type": "STRING",
+      "value": "?"
     },
     "_inline_flags_group_optional1": {
       "type": "SEQ",
