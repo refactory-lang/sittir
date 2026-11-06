@@ -69,7 +69,7 @@ export function emitPortable(input: GrammarInput, nodeMap: NodeMap, kindEntries:
 	const build = emitPortableBuild({ routes, model: input.model, nodeMap, kindEntries, flagPlans: plansByKind });
 	return {
 		build: build.source,
-		typed: emitPortableTyped({ routes, input, nodeMap, kindEntries, readTest, picks: build.table.paths }),
+		typed: emitPortableTyped({ routes, input, nodeMap, kindEntries, readTest, table: build.table, flags: new Map([...plansByKind].map(([kind, plans]) => [kind, [...plans.keys()]])) }),
 		pickDiagnostics: [
 			...build.diagnostics,
 			...routes.unplaced.map(

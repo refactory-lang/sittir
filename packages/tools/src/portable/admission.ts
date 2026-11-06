@@ -3,6 +3,7 @@ import { join, relative } from 'node:path';
 import ts from 'typescript6';
 import { REPO_ROOT } from '@sittir/codegen/grammars';
 import { bindingGrammars } from '@sittir/codegen/bindings';
+import { rawGroupOf, type ExactSet } from '@sittir/codegen';
 import { portableTypedPath, writeTypedModule } from './conformance.ts';
 
 export interface AdmissionSite {
@@ -18,12 +19,48 @@ export interface AdmissionOwnSlot {
 	readonly excess: readonly string[];
 }
 
+export interface AdmissionMember {
+	readonly grammar: string;
+	readonly path: string;
+	readonly member: string;
+	readonly excess: readonly string[];
+}
+
+export interface AdmissionRaw {
+	readonly grammar: string;
+	readonly kind: number;
+	readonly value: number;
+}
+
 export interface AdmissionReport {
 	readonly sites: number;
 	readonly roleArmed: number;
 	readonly untyped: readonly string[];
 	readonly overAdmitting: readonly AdmissionSite[];
 	readonly ownSlots: readonly AdmissionOwnSlot[];
+	readonly members: readonly AdmissionMember[];
+	readonly raw: readonly AdmissionRaw[];
+}
+
+export const excessOf = (admitted: ReadonlySet<string>, exact: Pick<ExactSet, 'kinds'>): readonly string[] => {
+	const held = new Set(exact.kinds);
+	return [...admitted].filter((kind) => !held.has(kind)).sort();
+};
+
+function typeAliases(file: string, name: string, aliases: readonly string[]): ReadonlyMap<number, Set<string>> {
+	const census = join(file, '..', name);
+	const text = `import type * as V from '../../types/src/vocabulary/index.ts';\nimport type { Ctx } from './portable.typed.ts';\n${aliases.map((alias, i) => `export type A${i} = ${alias};`).join('\n')}\n`;
+	const host = ts.createCompilerHost(COMPILER_OPTIONS);
+	const getSourceFile = host.getSourceFile.bind(host);
+	const fileExists = host.fileExists.bind(host);
+	host.getSourceFile = (at, version) => (at === census ? ts.createSourceFile(at, text, version) : getSourceFile(at, version));
+	host.fileExists = (at) => at === census || fileExists(at);
+	const program = ts.createProgram([census], COMPILER_OPTIONS, host);
+	const checker = program.getTypeChecker();
+	const out = new Map<number, Set<string>>();
+	for (const alias of program.getSourceFile(census)!.statements.filter(ts.isTypeAliasDeclaration))
+		out.set(Number(alias.name.text.slice(1)), kindsOf(checker, checker.getTypeAtLocation(alias.name), new Set()));
+	return out;
 }
 
 interface Declared {
@@ -189,10 +226,16 @@ export async function portableAdmission(grammars: readonly string[] = bindingGra
 	};
 	const rows = new Map<string, Row>();
 	const ownSlots: AdmissionOwnSlot[] = [];
+	const overMembers: AdmissionMember[] = [];
+	const raw: AdmissionRaw[] = [];
 	const arms = new Set<string>();
 	const typedFiles = new Map<string, string>();
+	const declaredNodes = [...[...members.values()].flatMap((entry) => [...entry.members.values()]), ...slots.values()].map((declared) => declared.node);
+	const roles = [...new Set(declaredNodes.flatMap((node) => armsOf(node, slots)).filter((arm) => arm.kind === 'role').map((arm) => arm.text))].sort();
+	const roleAdmitted = new Map<string, Set<string>>();
 	for (const grammar of grammars) {
-		if ((await writeTypedModule(grammar)) === undefined) continue;
+		const typed = await writeTypedModule(grammar);
+		if (typed === undefined) continue;
 		const file = portableTypedPath(grammar);
 		typedFiles.set(grammar, file);
 		const program = ts.createProgram([file], COMPILER_OPTIONS);
@@ -249,29 +292,31 @@ export async function portableAdmission(grammars: readonly string[] = bindingGra
 				if (excess.length > 0) ownSlots.push({ grammar, member: `${nameOf(path.name)}.${nameOf(slot.name)}`, excess });
 			}
 		}
+		const pairs = [...typed.exact].flatMap(([path, at]) => (qnames.has(path) ? [...at].map(([member, set]) => ({ path, member, set })) : []));
+		const admittedBy = typeAliases(file, '__members.ts', [
+			...pairs.map(({ path, member }) => `V.${qnames.get(path)!}<Ctx>['${member}']`),
+			...roles.map((role) => `Ctx['${role}']`)
+		]);
+		pairs.forEach(({ path, member, set }, i) => {
+			const excess = excessOf(admittedBy.get(i) ?? new Set(), set);
+			if (excess.length > 0) overMembers.push({ grammar, path, member, excess });
+		});
+		roles.forEach((role, i) => {
+			const at = roleAdmitted.get(role) ?? roleAdmitted.set(role, new Set()).get(role)!;
+			for (const kind of admittedBy.get(pairs.length + i) ?? []) at.add(kind);
+		});
+		const groups = { kind: 0, value: 0 };
+		for (const [, at] of typed.exact) for (const [, set] of at) for (const arm of set.raw) groups[rawGroupOf(arm.reasons)]++;
+		raw.push({ grammar, ...groups });
 	}
 	for (const row of rows.values())
 		for (const arm of row.declared === undefined ? [] : armsOf(row.declared.node, slots))
 			if (arm.kind === 'vocab') arms.add(arm.text);
 	const admitted = new Map<string, Set<string>>();
-	const [grammar, file] = [...typedFiles][0] ?? [];
-	if (grammar !== undefined && file !== undefined) {
-		const census = join(file, '..', '__admission.ts');
+	const [, file] = [...typedFiles][0] ?? [];
+	if (file !== undefined) {
 		const list = [...arms];
-		const text = `import type * as V from '../../types/src/vocabulary/index.ts';\nimport type { Ctx } from './portable.typed.ts';\n${list.map((arm, i) => `export type A${i} = ${arm}<Ctx>;`).join('\n')}\n`;
-		const host = ts.createCompilerHost(COMPILER_OPTIONS);
-		const getSourceFile = host.getSourceFile.bind(host);
-		const fileExists = host.fileExists.bind(host);
-		host.getSourceFile = (name, version) =>
-			name === census ? ts.createSourceFile(name, text, version) : getSourceFile(name, version);
-		host.fileExists = (name) => name === census || fileExists(name);
-		const program = ts.createProgram([census], COMPILER_OPTIONS, host);
-		const checker = program.getTypeChecker();
-		for (const alias of program.getSourceFile(census)!.statements.filter(ts.isTypeAliasDeclaration))
-			admitted.set(
-				list[Number(alias.name.text.slice(1))]!,
-				kindsOf(checker, checker.getTypeAtLocation(alias.name), new Set())
-			);
+		for (const [i, kinds] of typeAliases(file, '__admission.ts', list.map((arm) => `${arm}<Ctx>`))) admitted.set(list[i]!, kinds);
 	}
 	const sites = new Map<string, { declared: Declared; rows: Row[] }>();
 	for (const row of rows.values()) {
@@ -285,7 +330,8 @@ export async function portableAdmission(grammars: readonly string[] = bindingGra
 	let roleArmed = 0;
 	for (const [site, { declared, rows: at }] of [...sites].sort(([a], [b]) => a.localeCompare(b))) {
 		const siteArms = armsOf(declared.node, slots);
-		if (siteArms.some((arm) => arm.kind === 'role')) roleArmed++;
+		const siteRoles = siteArms.filter((arm) => arm.kind === 'role');
+		if (siteRoles.length > 0) roleArmed++;
 		if (siteArms.some((arm) => arm.kind === 'other' && arm.text === 'unknown')) untyped.push(site);
 		const read = new Set(at.flatMap((row) => [...row.yields.values()].flatMap((set) => [...set])));
 		for (const own of at)
@@ -298,7 +344,10 @@ export async function portableAdmission(grammars: readonly string[] = bindingGra
 				)
 					for (const set of row.yields.values()) for (const kind of set) read.add(kind);
 		const excess = [
-			...new Set(siteArms.filter((arm) => arm.kind === 'vocab').flatMap((arm) => [...(admitted.get(arm.text) ?? [])]))
+			...new Set([
+				...siteArms.filter((arm) => arm.kind === 'vocab').flatMap((arm) => [...(admitted.get(arm.text) ?? [])]),
+				...siteRoles.flatMap((arm) => [...(roleAdmitted.get(arm.text) ?? [])])
+			])
 		]
 			.filter((kind) => !read.has(kind))
 			.sort();
@@ -310,7 +359,7 @@ export async function portableAdmission(grammars: readonly string[] = bindingGra
 				excess
 			});
 	}
-	return { sites: sites.size, roleArmed, untyped, overAdmitting, ownSlots };
+	return { sites: sites.size, roleArmed, untyped, overAdmitting, ownSlots, members: overMembers, raw };
 }
 
 export function formatAdmission(report: AdmissionReport): string {
@@ -325,6 +374,12 @@ export function formatAdmission(report: AdmissionReport): string {
 	for (const site of report.untyped) lines.push(`  ${site}`);
 	lines.push(`${report.ownSlots.length} own slots hold a kind their reads never give`);
 	for (const slot of report.ownSlots) lines.push(`  ${slot.grammar} ${slot.member}: ${slot.excess.join(' ')}`);
+	for (const grammar of [...new Set(report.raw.map((r) => r.grammar))]) {
+		const over = report.members.filter((m) => m.grammar === grammar);
+		const raw = report.raw.find((r) => r.grammar === grammar)!;
+		lines.push(`${grammar}: ${over.length} members admit a kind outside their exact set; raw-node arms ${raw.kind} per kind, ${raw.value} per value`);
+		for (const m of over) lines.push(`  ${m.path}.${m.member}: ${m.excess.join(' ')}`);
+	}
 	return lines.join('\n');
 }
 

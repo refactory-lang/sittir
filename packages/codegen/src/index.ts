@@ -13,3 +13,4 @@ export {
 
 export { parseTypeCheckDiagnostics, typeCheckOutput, type TypeCheckDiagnostic } from './typecheck.ts';
 export { PORTABLE_TYPED_FILE, PORTABLE_TYPED_TSCONFIG, type PortableTypedOutput, type PortableTypedUnemitted } from './emitters/overlays/portable/typed.ts';
+export { exactSlotsOf, rawGroupOf, type ExactSet, type ExactSlots, type RawArm, type RawReason } from './emitters/overlays/portable/exact.ts';
