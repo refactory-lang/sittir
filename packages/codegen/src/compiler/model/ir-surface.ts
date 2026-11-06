@@ -304,7 +304,10 @@ export function seatedFormKinds(nodeMap: NodeMap): ReadonlySet<string> {
 		const variant = flattenedByKind.get(host.kind)?.variants.find((route) => route.name === name);
 		if (variant !== undefined) return { child: variant.nestedParentKey === undefined ? variant.child : flattenedByKey.get(variant.nestedParentKey)!.node, seated: false };
 		const route = surface.formRoutes.get(host.kind)?.find((candidate) => candidate.name === name);
-		return route === undefined ? undefined : { child: route.child, seated: buildsHost(route) };
+		if (route !== undefined) return { child: route.child, seated: buildsHost(route) };
+		const set = [...surface.armRoutes.byKind.values()].find((candidate) => candidate.node.kind === host.kind);
+		const arm = set === undefined ? undefined : hostRoutesOf(set, surface.armRoutes.kindEntries, nodeMap).find((candidate) => candidate.via !== 'value' && candidate.name === name);
+		return arm === undefined ? undefined : { child: arm.child, seated: false };
 	};
 	const seated = new Set<string>();
 	for (const node of nodeMap.nodes.values()) {

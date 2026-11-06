@@ -88,6 +88,7 @@ import {
 	type InlineAtReferenceCtx,
 	type SymbolSource,
 	ruleListParts,
+	unwrapPrec,
 	type RuleListEntry,
 } from '../dsl/rule-patterns.ts';
 import { assertPredictedKindEntries, catalogRenames, catalogSymbolSource, collectGeneratedKindEntries, predictedEntriesOf, stampVisibleExternals } from '../dsl/symbol-table.ts';
@@ -257,7 +258,7 @@ export function link(evaluated: RawGrammar, ctx: LinkOptions): LinkedGrammar {
 	const aliasSites = literalAliasSites([rules, raw.rules as unknown as Record<string, Rule<'link'>>], stampCtx);
 	const terminalAliasWireIds = collectTerminalAliasWireIds(aliasSites);
 	const leafTextPatterns = collectLeafTextPatterns(rules);
-	const displayLexemes = displayLexemesOf(leafTextPatterns, aliasSites);
+	const displayLexemes = displayLexemesOf(rules, leafTextPatterns, aliasSites);
 	const rootName = linkCtx.root;
 	const reachableFromRoot = rootName ? computeReachableFromRoot({ rules, rootName }) : new Set<string>();
 	reportKindIdStampMisses(stampMisses, ctx.diagnostics, new Set(raw.inline), reachableFromRoot);
@@ -1383,12 +1384,29 @@ function collectTerminalAliasWireIds(sites: readonly LiteralAliasSite[]): Map<st
 	return out;
 }
 
-function displayLexemesOf(patterns: ReadonlyMap<string, string>, sites: readonly LiteralAliasSite[]): Map<string, readonly string[]> {
+function literalArmsOf(rule: Rule<'link'> | undefined): ReadonlySet<string> | undefined {
+	const root = unwrapPrec(rule as AnyRule | undefined) as Rule<'link'> | undefined;
+	if (root === undefined || root.type !== CHOICE) return undefined;
+	const texts: string[] = [];
+	for (const arm of root.members) {
+		const text = arm.type === STRING ? arm.value : arm.type === SYMBOL ? arm.literal : undefined;
+		if (text === undefined) return undefined;
+		texts.push(text);
+	}
+	return new Set(texts);
+}
+
+function displayLexemesOf(
+	rules: Readonly<Record<string, Rule<'link'>>>,
+	patterns: ReadonlyMap<string, string>,
+	sites: readonly LiteralAliasSite[]
+): Map<string, readonly string[]> {
 	const out = new Map<string, string[]>();
 	for (const { display, text } of sites) {
 		const pattern = patterns.get(display);
 		const dfa = pattern === undefined ? undefined : patternDfa(pattern);
-		if (dfa === undefined || !dfaAccepts(dfa, text)) continue;
+		const lexeme = (dfa !== undefined && dfaAccepts(dfa, text)) || literalArmsOf(rules[display])?.has(text) === true;
+		if (!lexeme) continue;
 		const texts = out.get(display) ?? [];
 		if (!texts.includes(text)) texts.push(text);
 		out.set(display, texts);
