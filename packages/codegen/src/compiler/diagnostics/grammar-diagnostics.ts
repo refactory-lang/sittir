@@ -12,7 +12,7 @@ import { isTerminalNode, optionalFlankSlots, type AssembleWarning, type NamingEv
 import { undeclaredSeparatorSites, type SitePreferencesConfig } from '../model/site-preferences.ts';
 import { makeSlotGroupingCollector } from '../simplify.ts';
 import { diagnoseRepeatedSeqGrouping, type SlotGroupingDiagnostic } from './slot-grouping.ts';
-import { isLiteralOnlyRule, isTerminalRootRule } from '../../dsl/rule-transforms.ts';
+import { isLiteralOnlyRule } from '../../dsl/rule-transforms.ts';
 import { boundNameOf } from '../../dsl/bind.ts';
 import type { RawGrammar, LinkedGrammar, NormalizedGrammar, DesugarDivergenceEvent, ReservedWordsets, RuleCatalog } from '../types.ts';
 import {
@@ -26,7 +26,7 @@ import {
 } from '../../dsl/symbol-table.ts';
 import type { CompilerDiagnostic, GrammarDiagnostic } from '../../types/diagnostics.ts';
 import { diagnoseDistributedAliases, diagnoseInlineTokenAliases, diagnoseMixedDisplayUnions } from './alias-distributed.ts';
-import { isParserHiddenName, ruleListParts, symbolFactsOf } from '../../dsl/rule-patterns.ts';
+import { isParserHiddenName, isTerminalRootRule, ruleListParts, symbolFactsOf } from '../../dsl/rule-patterns.ts';
 import { ALIAS, SYMBOL } from '../../types/rule-types.ts';
 import { eofPlacements } from '../../dsl/eof-placement.ts';
 import { rootRuleName } from '../../util/reachable-rules.ts';
@@ -39,7 +39,7 @@ import { readOptionsBlock } from '../../dsl/wire/options-block.ts';
 import type { NodeMap } from '../types.ts';
 import { ENRICH_SHAPES } from '../../dsl/enrich-shapes.ts';
 import { SITE_EDITS_KEY } from '../../dsl/wire/wire.ts';
-import { externalsReadAs, upstreamAliasSitesOf } from '../../dsl/wire/render-as-visibility.ts';
+import { externalsReadAs } from '../../dsl/wire/render-as-visibility.ts';
 
 export type { GrammarDiagnostic };
 
@@ -416,7 +416,7 @@ export function collectGrammarDiagnostics(input: {
 
 function externalsReadAsOf(raw: RawGrammar): (kind: string) => readonly string[] {
 	const externals = new Set(ruleListParts(raw.externals ?? []).names);
-	const sites = upstreamAliasSitesOf(raw.rules as Readonly<Record<string, unknown>>, externals);
+	const sites = raw.upstreamAliasSites ?? [];
 	const visibleAs = raw.visibleAs ?? {};
 	return (kind) => externalsReadAs(kind, { externals, sites, visibleAs });
 }

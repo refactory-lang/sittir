@@ -7,8 +7,8 @@ import { linkPredicted } from '../../__tests__/helpers/linked.ts';
 import { normalizeGrammar } from '../normalize.ts';
 import { assemble, AssembleCtx } from '../assemble.ts';
 import { runTreeSitterCliCapturing } from '../../transpile/tree-sitter-cli.ts';
-import { isNonterminalRuleType } from '../../dsl/rule-patterns.ts';
-import { isLiteralOnlyRule, isTerminalRootRule } from '../../dsl/rule-transforms.ts';
+import { isNonterminalRuleType, isTerminalRootRule } from '../../dsl/rule-patterns.ts';
+import { isLiteralOnlyRule } from '../../dsl/rule-transforms.ts';
 import type { NodeMap } from '../types.ts';
 
 const evaluated = (rules: string) => evaluateTempGrammar({ extras: '', rules }, '');

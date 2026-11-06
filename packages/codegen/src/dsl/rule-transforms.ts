@@ -86,8 +86,6 @@ export function peelPrec<R extends AnyRule>(r: R): R {
 	return isPrecWrapper(r) ? peelPrec((r as unknown as { content: R }).content) : r;
 }
 
-export { isInlineTokenBody, isTerminalRootRule };
-
 export function isLiteralOnlyRule(rule: AnyRule): boolean {
 	const root = peelPrec(rule);
 	if (root.type === STRING) return true;

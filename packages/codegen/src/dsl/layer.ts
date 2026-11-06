@@ -603,6 +603,7 @@ export function ownRecordsOf(wire: WireContext, facts: OwnRecordFacts): LayerRec
 		visibleAs: nonEmpty(wire.visibleAs),
 		renderAsProblems: wire.renderAsProblems?.length ? wire.renderAsProblems : undefined,
 		externalAliases: wire.externalAliases.size === 0 ? undefined : [...wire.externalAliases.values()],
+		upstreamAliasSites: wire.upstreamAliasSites.length === 0 ? undefined : wire.upstreamAliasSites,
 		reparseHosts: wire.reparseHosts,
 		refineForms: wire.refineForms.size === 0 ? undefined : new Map(wire.refineForms),
 		ruleCauses: wire.ruleCauses.size === 0 ? undefined : Object.fromEntries(wire.ruleCauses),

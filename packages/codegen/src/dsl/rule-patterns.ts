@@ -961,10 +961,11 @@ export function isTerminalRootRule(rule: AnyRule): boolean {
 }
 
 export function terminalContentOf(content: AnyRule, isTerminalSymbol: (name: string) => boolean): boolean {
-	if (content.type === SYMBOL) return isTerminalSymbol(content.name);
-	if (isTerminalRootRule(content)) return true;
-	if (content.type === ALIAS) return terminalContentOf(content.content, isTerminalSymbol);
-	const arms = choiceArmsOf(content);
+	const root = unwrapPrec(content) as AnyRule;
+	if (root.type === SYMBOL) return isTerminalSymbol(root.name);
+	if (isTerminalRootRule(root)) return true;
+	if (root.type === ALIAS) return terminalContentOf(root.content, isTerminalSymbol);
+	const arms = choiceArmsOf(root);
 	return arms !== undefined && arms.every((arm) => terminalContentOf(arm, isTerminalSymbol));
 }
 

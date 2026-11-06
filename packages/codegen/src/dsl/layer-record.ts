@@ -28,6 +28,7 @@ export type LayerRecords = Pick<
 	| 'whitespaceCollisions'
 	| 'renderAsProblems'
 	| 'externalAliases'
+	| 'upstreamAliasSites'
 	| 'bodyPatternZeroMatches'
 >;
 
@@ -116,6 +117,7 @@ const RECORD_MERGES: { readonly [K in keyof LayerRecords]-?: RecordMerge<K> } = 
 	whitespaceCollisions: (inherited, own) => own ?? inherited,
 	renderAsProblems: (inherited, own) => (inherited === undefined && own === undefined ? undefined : [...(inherited ?? []), ...(own ?? [])]),
 	externalAliases: (inherited, own) => (inherited === undefined && own === undefined ? undefined : [...(inherited ?? []), ...(own ?? [])]),
+	upstreamAliasSites: (inherited, own) => (inherited === undefined && own === undefined ? undefined : [...(inherited ?? []), ...(own ?? [])]),
 	bodyPatternZeroMatches: (inherited, own) => {
 		const names = [...(inherited ?? []), ...(own ?? [])];
 		return names.length === 0 ? undefined : names;

@@ -377,6 +377,17 @@ describe('terminalContentOf and isTerminalRootRule are one predicate for a lexic
 		expect(isTerminalRootRule(rule as never)).toBe(true);
 	});
 
+	it.each([
+		['a terminal symbol', { type: 'SYMBOL', name: 'word' }],
+		['an alias of a terminal symbol', { type: 'ALIAS', named: true, value: 'w', content: { type: 'SYMBOL', name: 'word' } }],
+		['a choice of terminal arms', { type: 'CHOICE', members: [str, { type: 'SYMBOL', name: 'word' }] }]
+	])('prec over %s is terminal content', (_name, inner) => {
+		const terminal = (name: string): boolean => name === 'word';
+		expect(terminalContentOf(prec(inner) as never, terminal)).toBe(true);
+		expect(terminalContentOf(prec(prec(inner)) as never, terminal)).toBe(true);
+		expect(terminalContentOf(prec({ type: 'SYMBOL', name: 'other' }) as never, terminal)).toBe(false);
+	});
+
 	it('a sequence is neither', () => {
 		const seq = { type: 'SEQ', members: [str, pattern] };
 		expect(terminalContentOf(seq as never, never)).toBe(false);
