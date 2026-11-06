@@ -1,10 +1,10 @@
 import type { GrammarMap, Slot } from '../../map.ts';
-import type { SubKindOf } from '../../utils.ts';
+import type { SubKindOf, Under } from '../../utils.ts';
 import type * as V from '../../index.ts';
 export namespace Expression {
-	export interface Range<G extends GrammarMap> extends SubKindOf<V.Expression<G>> {
+	export interface Range<G extends GrammarMap, K extends Under<'expression.range'> = 'expression.range'> extends SubKindOf<V.Expression<G, K>> {
 		// claimed by r
-		readonly $kind: 'expression.range';
+		readonly $kind: K;
 		readonly end?: Slot<
 			G,
 			'expression.range',
@@ -27,18 +27,18 @@ export namespace Expression {
 		>;
 	}
 	export namespace Range {
-		export interface Exclusive<G extends GrammarMap> extends SubKindOf<V.Expression.Range<G>> {
+		export interface Exclusive<G extends GrammarMap, K extends Under<'expression.range.exclusive'> = 'expression.range.exclusive'> extends SubKindOf<V.Expression.Range<G, K>> {
 			// claimed by r
-			readonly $kind: 'expression.range.exclusive';
+			readonly $kind: K;
 		}
-		export interface Inclusive<G extends GrammarMap> extends SubKindOf<V.Expression.Range<G>> {
+		export interface Inclusive<G extends GrammarMap, K extends Under<'expression.range.inclusive'> = 'expression.range.inclusive'> extends SubKindOf<V.Expression.Range<G, K>> {
 			// claimed by r
-			readonly $kind: 'expression.range.inclusive';
+			readonly $kind: K;
 		}
 		export namespace Inclusive {
-			export interface Legacy<G extends GrammarMap> extends SubKindOf<V.Expression.Range.Inclusive<G>> {
+			export interface Legacy<G extends GrammarMap, K extends Under<'expression.range.inclusive.legacy'> = 'expression.range.inclusive.legacy'> extends SubKindOf<V.Expression.Range.Inclusive<G, K>> {
 				// claimed by r
-				readonly $kind: 'expression.range.inclusive.legacy';
+				readonly $kind: K;
 			}
 		}
 	}

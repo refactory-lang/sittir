@@ -1,11 +1,11 @@
 import type { GrammarMap, Slot } from '../../../map.ts';
-import type { SubKindOf } from '../../../utils.ts';
+import type { SubKindOf, Under } from '../../../utils.ts';
 import type * as V from '../../../index.ts';
 export namespace Declaration {
 	export namespace TypeAlias {
-		export interface Associated<G extends GrammarMap> extends SubKindOf<V.Declaration.TypeAlias<G>, 'typeParameters'> {
+		export interface Associated<G extends GrammarMap, K extends Under<'declaration.type_alias.associated'> = 'declaration.type_alias.associated'> extends SubKindOf<V.Declaration.TypeAlias<G, K>, 'typeParameters'> {
 			// claimed by r
-			readonly $kind: 'declaration.type_alias.associated';
+			readonly $kind: K;
 			readonly bounds?: Slot<
 				G,
 				'declaration.type_alias.associated',

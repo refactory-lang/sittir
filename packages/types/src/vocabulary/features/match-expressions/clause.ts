@@ -1,11 +1,11 @@
 import type { GrammarMap, Slot } from '../../map.ts';
-import type { SubKindOf } from '../../utils.ts';
+import type { SubKindOf, Under } from '../../utils.ts';
 import type * as V from '../../index.ts';
 export namespace Clause {
 	export namespace Case {
-		export interface Match<G extends GrammarMap> extends SubKindOf<V.Clause.Case<G>> {
+		export interface Match<G extends GrammarMap, K extends Under<'clause.case.match'> = 'clause.case.match'> extends SubKindOf<V.Clause.Case<G, K>> {
 			// claimed by pr
-			readonly $kind: 'clause.case.match';
+			readonly $kind: K;
 			readonly body: Slot<
 				G,
 				'clause.case.match',
@@ -40,9 +40,9 @@ export namespace Clause {
 			>;
 		}
 	}
-	export interface Let<G extends GrammarMap> extends SubKindOf<V.Clause<G>> {
+	export interface Let<G extends GrammarMap, K extends Under<'clause.let'> = 'clause.let'> extends SubKindOf<V.Clause<G, K>> {
 		// claimed by r
-		readonly $kind: 'clause.let';
+		readonly $kind: K;
 		readonly pattern?: Slot<G, 'clause.let', 'pattern', unknown>;
 		readonly value?: Slot<
 			G,
@@ -55,9 +55,9 @@ export namespace Clause {
 		>;
 	}
 	export namespace Let {
-		export interface Chain<G extends GrammarMap> extends SubKindOf<V.Clause.Let<G>> {
+		export interface Chain<G extends GrammarMap, K extends Under<'clause.let.chain'> = 'clause.let.chain'> extends SubKindOf<V.Clause.Let<G, K>> {
 			// claimed by r
-			readonly $kind: 'clause.let.chain';
+			readonly $kind: K;
 			readonly left: Slot<
 				G,
 				'clause.let.chain',

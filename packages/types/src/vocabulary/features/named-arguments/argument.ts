@@ -1,10 +1,10 @@
 import type { GrammarMap, Slot } from '../../map.ts';
-import type { SubKindOf } from '../../utils.ts';
+import type { SubKindOf, Under } from '../../utils.ts';
 import type * as V from '../../index.ts';
 export namespace Argument {
-	export interface Named<G extends GrammarMap> extends SubKindOf<V.Argument<G>, 'value'> {
+	export interface Named<G extends GrammarMap, K extends Under<'argument.named'> = 'argument.named'> extends SubKindOf<V.Argument<G, K>, 'value'> {
 		// claimed by p
-		readonly $kind: 'argument.named';
+		readonly $kind: K;
 		readonly name: Slot<G, 'argument.named', 'name', V.Identifier.Any<G>>;
 		readonly value: Slot<
 			G,

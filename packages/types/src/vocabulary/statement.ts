@@ -1,8 +1,8 @@
 import type { GrammarMap, Slot, Text } from './map.ts';
-import type { SubKindOf } from './utils.ts';
+import type { SubKindOf, Under } from './utils.ts';
 import type * as V from './index.ts';
-export interface Statement<G extends GrammarMap> {
-	readonly $kind: 'statement';
+export interface Statement<G extends GrammarMap, K extends Under<'statement'> = 'statement'> {
+	readonly $kind: K;
 }
 
 export interface StatementSynonyms {
@@ -14,9 +14,9 @@ export interface StatementSynonyms {
 }
 
 export namespace Statement {
-	export interface Block<G extends GrammarMap> extends SubKindOf<V.Statement<G>> {
+	export interface Block<G extends GrammarMap, K extends Under<'statement.block'> = 'statement.block'> extends SubKindOf<V.Statement<G, K>> {
 		// claimed by prt
-		readonly $kind: 'statement.block';
+		readonly $kind: K;
 		readonly statements?: Slot<
 			G,
 			'statement.block',
@@ -37,9 +37,9 @@ export namespace Statement {
 		>;
 		// r only
 	}
-	export interface Break<G extends GrammarMap> extends SubKindOf<V.Statement<G>> {
+	export interface Break<G extends GrammarMap, K extends Under<'statement.break'> = 'statement.break'> extends SubKindOf<V.Statement<G, K>> {
 		// claimed by prt
-		readonly $kind: 'statement.break';
+		readonly $kind: K;
 		readonly expression?: Slot<
 			G,
 			'statement.break',
@@ -51,13 +51,13 @@ export namespace Statement {
 		>;
 		// r only
 	}
-	export interface Continue<G extends GrammarMap> extends SubKindOf<V.Statement<G>> {
+	export interface Continue<G extends GrammarMap, K extends Under<'statement.continue'> = 'statement.continue'> extends SubKindOf<V.Statement<G, K>> {
 		// claimed by prt
-		readonly $kind: 'statement.continue';
+		readonly $kind: K;
 	}
-	export interface Delete<G extends GrammarMap> extends SubKindOf<V.Statement<G>> {
+	export interface Delete<G extends GrammarMap, K extends Under<'statement.delete'> = 'statement.delete'> extends SubKindOf<V.Statement<G, K>> {
 		// claimed by p
-		readonly $kind: 'statement.delete';
+		readonly $kind: K;
 		readonly expressions: Slot<
 			G,
 			'statement.delete',
@@ -70,9 +70,9 @@ export namespace Statement {
 	}
 	// claimed by prt
 	export type Empty<G extends GrammarMap> = Text<G, 'statement.empty'>;
-	export interface Expression<G extends GrammarMap> extends SubKindOf<V.Statement<G>> {
+	export interface Expression<G extends GrammarMap, K extends Under<'statement.expression'> = 'statement.expression'> extends SubKindOf<V.Statement<G, K>> {
 		// claimed by prt
-		readonly $kind: 'statement.expression';
+		readonly $kind: K;
 		readonly content?: Slot<
 			G,
 			'statement.expression',
@@ -108,9 +108,9 @@ export namespace Statement {
 		>;
 		// t only
 	}
-	export interface If<G extends GrammarMap> extends SubKindOf<V.Statement<G>> {
+	export interface If<G extends GrammarMap, K extends Under<'statement.if'> = 'statement.if'> extends SubKindOf<V.Statement<G, K>> {
 		// claimed by prt
-		readonly $kind: 'statement.if';
+		readonly $kind: K;
 		readonly alternative?: V.Clause.Else<G>;
 		// rt only
 		readonly alternatives?: Slot<G, 'statement.if', 'alternatives', V.Clause.Any<G>>[];
@@ -128,16 +128,16 @@ export namespace Statement {
 		>;
 		readonly consequence: Slot<G, 'statement.if', 'consequence', V.Declaration.Any<G> | V.Statement.Any<G>>;
 	}
-	export interface Loop<G extends GrammarMap> extends SubKindOf<V.Statement<G>> {
+	export interface Loop<G extends GrammarMap, K extends Under<'statement.loop'> = 'statement.loop'> extends SubKindOf<V.Statement<G, K>> {
 		// claimed by r
-		readonly $kind: 'statement.loop';
+		readonly $kind: K;
 		readonly body: Slot<G, 'statement.loop', 'body', V.Declaration.Any<G> | V.Statement.Any<G>>;
 		// prt only
 	}
 	export namespace Loop {
-		export interface ForEach<G extends GrammarMap> extends SubKindOf<V.Statement.Loop<G>, 'body'> {
+		export interface ForEach<G extends GrammarMap, K extends Under<'statement.loop.for_each'> = 'statement.loop.for_each'> extends SubKindOf<V.Statement.Loop<G, K>, 'body'> {
 			// claimed by prt
-			readonly $kind: 'statement.loop.for_each';
+			readonly $kind: K;
 			readonly alternative?: V.Clause.Else<G>;
 			// p only
 			readonly body: Slot<G, 'statement.loop.for_each', 'body', V.Declaration.Any<G> | V.Statement.Any<G>>;
@@ -157,9 +157,9 @@ export namespace Statement {
 			>;
 			// pr only
 		}
-		export interface While<G extends GrammarMap> extends SubKindOf<V.Statement.Loop<G>, 'body'> {
+		export interface While<G extends GrammarMap, K extends Under<'statement.loop.while'> = 'statement.loop.while'> extends SubKindOf<V.Statement.Loop<G, K>, 'body'> {
 			// claimed by prt
-			readonly $kind: 'statement.loop.while';
+			readonly $kind: K;
 			readonly alternative?: V.Clause.Else<G>;
 			// p only
 			readonly body: Slot<G, 'statement.loop.while', 'body', V.Declaration.Any<G> | V.Statement.Any<G>>;
@@ -176,9 +176,9 @@ export namespace Statement {
 			>;
 		}
 	}
-	export interface Return<G extends GrammarMap> extends SubKindOf<V.Statement<G>> {
+	export interface Return<G extends GrammarMap, K extends Under<'statement.return'> = 'statement.return'> extends SubKindOf<V.Statement<G, K>> {
 		// claimed by prt
-		readonly $kind: 'statement.return';
+		readonly $kind: K;
 		readonly expression?: Slot<
 			G,
 			'statement.return',

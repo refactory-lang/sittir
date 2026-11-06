@@ -1,10 +1,10 @@
 import type { GrammarMap, Slot } from '../../map.ts';
-import type { Flag, SubKindOf } from '../../utils.ts';
+import type { Flag, SubKindOf, Under } from '../../utils.ts';
 import type * as V from '../../index.ts';
 export namespace Literal {
-	export interface Character<G extends GrammarMap> extends SubKindOf<V.Literal<G>> {
+	export interface Character<G extends GrammarMap, K extends Under<'literal.character'> = 'literal.character'> extends SubKindOf<V.Literal<G, K>> {
 		// claimed by r
-		readonly $kind: 'literal.character';
+		readonly $kind: K;
 		readonly byte?: Flag;
 		readonly content?: Slot<G, 'literal.character', 'content', string>;
 	}

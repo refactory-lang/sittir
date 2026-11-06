@@ -61,6 +61,7 @@ export function augmentation(source: VocabularySource, p: Plan): string {
 		return stubAlias(feature);
 	};
 	let gated = false;
+	let headed = false;
 	for (const kind of p.kinds.values()) {
 		if (kind.text) {
 			if (kind.feature !== undefined) add(kind.qname, [`type ${lastSegment(kind.qname)}<G extends GrammarMap> = ${alias(kind.feature)}.${kind.qname}<G>;`]);
@@ -69,10 +70,11 @@ export function augmentation(source: VocabularySource, p: Plan): string {
 		const members = [...(p.owned.get(kind.path) ?? new Map<string, Owned>())].sort(([a], [b]) => byCodepoint(a, b));
 		if (kind.feature === undefined && members.length === 0) continue;
 		gated ||= members.length > 0;
-		const head = `interface ${lastSegment(kind.qname)}<G extends GrammarMap>${kind.feature === undefined ? '' : ` extends ${alias(kind.feature)}.${kind.qname}<G>`}`;
+		headed = true;
+		const head = `interface ${lastSegment(kind.qname)}<G extends GrammarMap, K extends gate.Under<'${kind.path}'> = '${kind.path}'>${kind.feature === undefined ? '' : ` extends ${alias(kind.feature)}.${kind.qname}<G, K>`}`;
 		const lines = members.map(
 			([name, o]) =>
-				`readonly ${name}${o.member.optional ? '?' : ''}: gate.In<G, features.${o.feature.name}, ${alias(o.feature)}.${kind.qname}<G>['${name}']>;`
+				`readonly ${name}${o.member.optional ? '?' : ''}: gate.In<G, features.${o.feature.name}, ${alias(o.feature)}.${kind.qname}<G, K>['${name}']>;`
 		);
 		add(kind.qname, lines.length === 0 ? [`${head} {}`] : [`${head} {`, ...lines, '}']);
 	}
@@ -86,7 +88,7 @@ export function augmentation(source: VocabularySource, p: Plan): string {
 	return [
 		HEADER,
 		`import type { GrammarMap${mixed.length > 0 ? ', Text' : ''} } from './${MAP}';`,
-		...(gated ? ["import type * as gate from './utils.ts';"] : []),
+		...(headed ? ["import type * as gate from './utils.ts';"] : []),
 		"import type * as V from './index.ts';",
 		...(gated ? [`import type * as features from './${FEATURES_INDEX}';`] : []),
 		...[...used]

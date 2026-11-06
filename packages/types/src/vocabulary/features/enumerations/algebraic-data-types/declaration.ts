@@ -1,11 +1,11 @@
 import type { GrammarMap, Slot } from '../../../map.ts';
-import type { SubKindOf } from '../../../utils.ts';
+import type { SubKindOf, Under } from '../../../utils.ts';
 import type * as V from '../../../index.ts';
 export namespace Declaration {
 	export namespace EnumMember {
-		export interface Struct<G extends GrammarMap> extends SubKindOf<V.Declaration.EnumMember<G>, 'body' | 'name' | 'value'> {
+		export interface Struct<G extends GrammarMap, K extends Under<'declaration.enum_member.struct'> = 'declaration.enum_member.struct'> extends SubKindOf<V.Declaration.EnumMember<G, K>, 'body' | 'name' | 'value'> {
 			// claimed by r
-			readonly $kind: 'declaration.enum_member.struct';
+			readonly $kind: K;
 			readonly body?: Slot<
 				G,
 				'declaration.enum_member.struct',
@@ -25,9 +25,9 @@ export namespace Declaration {
 				| V.Statement.Any<G>
 			>;
 		}
-		export interface Tuple<G extends GrammarMap> extends SubKindOf<V.Declaration.EnumMember<G>, 'body' | 'name' | 'value'> {
+		export interface Tuple<G extends GrammarMap, K extends Under<'declaration.enum_member.tuple'> = 'declaration.enum_member.tuple'> extends SubKindOf<V.Declaration.EnumMember<G, K>, 'body' | 'name' | 'value'> {
 			// claimed by r
-			readonly $kind: 'declaration.enum_member.tuple';
+			readonly $kind: K;
 			readonly body?: Slot<
 				G,
 				'declaration.enum_member.tuple',

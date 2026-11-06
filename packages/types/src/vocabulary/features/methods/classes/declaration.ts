@@ -1,18 +1,18 @@
 import type { GrammarMap, Slot } from '../../../map.ts';
-import type { Flag, SubKindOf } from '../../../utils.ts';
+import type { Flag, SubKindOf, Under } from '../../../utils.ts';
 import type * as V from '../../../index.ts';
 export namespace Declaration {
-	export interface Class<G extends GrammarMap> extends SubKindOf<V.Declaration<G>> {
+	export interface Class<G extends GrammarMap, K extends Under<'declaration.class'> = 'declaration.class'> extends SubKindOf<V.Declaration<G, K>> {
 		// claimed by pt
-		readonly $kind: 'declaration.class';
+		readonly $kind: K;
 		readonly body: Slot<G, 'declaration.class', 'body', V.Declaration.Any<G> | V.Statement.Any<G>> | Slot<G, 'declaration.class', 'body', V.Declaration.Any<G> | V.Statement.Any<G>>[];
 		readonly doc?: V.Literal.String<G>;
 		// p only
 		readonly name: Slot<G, 'declaration.class', 'name', V.Identifier.Any<G>>;
 	}
-	export interface Constructor<G extends GrammarMap> extends SubKindOf<V.Declaration<G>> {
+	export interface Constructor<G extends GrammarMap, K extends Under<'declaration.constructor'> = 'declaration.constructor'> extends SubKindOf<V.Declaration<G, K>> {
 		// claimed by pt
-		readonly $kind: 'declaration.constructor';
+		readonly $kind: K;
 		readonly body: V.Statement.Block<G>;
 		readonly parameters: Slot<
 			G,
@@ -33,16 +33,16 @@ export namespace Declaration {
 			| string
 		>[];
 	}
-	export interface Field<G extends GrammarMap> {
+	export interface Field<G extends GrammarMap, K extends Under<'declaration.field'> = 'declaration.field'> {
 		readonly static?: Flag;
 		// t only
 	}
 	export namespace Field {
-		export interface Signature<G extends GrammarMap> {
+		export interface Signature<G extends GrammarMap, K extends Under<'declaration.field.signature'> = 'declaration.field.signature'> {
 			readonly static?: Flag;
 		}
 	}
-	export interface Property<G extends GrammarMap> {
+	export interface Property<G extends GrammarMap, K extends Under<'declaration.property'> = 'declaration.property'> {
 		readonly static?: Flag;
 	}
 }

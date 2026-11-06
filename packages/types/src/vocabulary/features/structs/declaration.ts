@@ -1,10 +1,10 @@
 import type { GrammarMap, Slot } from '../../map.ts';
-import type { SubKindOf } from '../../utils.ts';
+import type { SubKindOf, Under } from '../../utils.ts';
 import type * as V from '../../index.ts';
 export namespace Declaration {
-	export interface Struct<G extends GrammarMap> extends SubKindOf<V.Declaration<G>> {
+	export interface Struct<G extends GrammarMap, K extends Under<'declaration.struct'> = 'declaration.struct'> extends SubKindOf<V.Declaration<G, K>> {
 		// claimed by r
-		readonly $kind: 'declaration.struct';
+		readonly $kind: K;
 		readonly body?: Slot<
 			G,
 			'declaration.struct',
@@ -23,9 +23,9 @@ export namespace Declaration {
 		readonly whereClause?: V.Clause.Where<G>;
 	}
 	export namespace Struct {
-		export interface Tuple<G extends GrammarMap> extends SubKindOf<V.Declaration.Struct<G>, 'body'> {
+		export interface Tuple<G extends GrammarMap, K extends Under<'declaration.struct.tuple'> = 'declaration.struct.tuple'> extends SubKindOf<V.Declaration.Struct<G, K>, 'body'> {
 			// claimed by r
-			readonly $kind: 'declaration.struct.tuple';
+			readonly $kind: K;
 			readonly body: Slot<
 				G,
 				'declaration.struct.tuple',
@@ -35,9 +35,9 @@ export namespace Declaration {
 				| V.Declaration.Field.Public.Any<G>
 			>[];
 		}
-		export interface Unit<G extends GrammarMap> extends SubKindOf<V.Declaration.Struct<G>> {
+		export interface Unit<G extends GrammarMap, K extends Under<'declaration.struct.unit'> = 'declaration.struct.unit'> extends SubKindOf<V.Declaration.Struct<G, K>> {
 			// claimed by r
-			readonly $kind: 'declaration.struct.unit';
+			readonly $kind: K;
 		}
 	}
 }

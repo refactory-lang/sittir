@@ -1,11 +1,11 @@
 import type { GrammarMap, Slot } from '../../map.ts';
-import type { Flag, SubKindOf } from '../../utils.ts';
+import type { Flag, SubKindOf, Under } from '../../utils.ts';
 import type * as V from '../../index.ts';
 export namespace Expression {
 	export namespace Call {
-		export interface Template<G extends GrammarMap> extends SubKindOf<V.Expression.Call<G>, 'arguments' | 'function'> {
+		export interface Template<G extends GrammarMap, K extends Under<'expression.call.template'> = 'expression.call.template'> extends SubKindOf<V.Expression.Call<G, K>, 'arguments' | 'function'> {
 			// claimed by t
-			readonly $kind: 'expression.call.template';
+			readonly $kind: K;
 			readonly arguments: V.Literal.String.Interpolated<G>;
 			readonly function: Slot<
 				G,
@@ -17,9 +17,9 @@ export namespace Expression {
 			>;
 		}
 	}
-	export interface Interpolation<G extends GrammarMap> extends SubKindOf<V.Expression<G>> {
+	export interface Interpolation<G extends GrammarMap, K extends Under<'expression.interpolation'> = 'expression.interpolation'> extends SubKindOf<V.Expression<G, K>> {
 		// claimed by pt
-		readonly $kind: 'expression.interpolation';
+		readonly $kind: K;
 		readonly debug?: Flag;
 		// p only
 		readonly expression?: Slot<
@@ -38,13 +38,13 @@ export namespace Expression {
 		// p only
 	}
 	export namespace Interpolation {
-		export interface Conversion<G extends GrammarMap> extends SubKindOf<V.Expression.Interpolation<G>> {
+		export interface Conversion<G extends GrammarMap, K extends Under<'expression.interpolation.conversion'> = 'expression.interpolation.conversion'> extends SubKindOf<V.Expression.Interpolation<G, K>> {
 			// claimed by p
-			readonly $kind: 'expression.interpolation.conversion';
+			readonly $kind: K;
 		}
-		export interface Format<G extends GrammarMap> extends SubKindOf<V.Expression.Interpolation<G>> {
+		export interface Format<G extends GrammarMap, K extends Under<'expression.interpolation.format'> = 'expression.interpolation.format'> extends SubKindOf<V.Expression.Interpolation<G, K>> {
 			// claimed by p
-			readonly $kind: 'expression.interpolation.format';
+			readonly $kind: K;
 			readonly elements?: Slot<G, 'expression.interpolation.format', 'elements', V.Expression.Interpolation<G> | string>[];
 		}
 	}

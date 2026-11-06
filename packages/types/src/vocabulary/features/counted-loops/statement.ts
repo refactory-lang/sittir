@@ -1,11 +1,11 @@
 import type { GrammarMap, Slot } from '../../map.ts';
-import type { SubKindOf } from '../../utils.ts';
+import type { SubKindOf, Under } from '../../utils.ts';
 import type * as V from '../../index.ts';
 export namespace Statement {
 	export namespace Loop {
-		export interface Counted<G extends GrammarMap> extends SubKindOf<V.Statement.Loop<G>, 'body'> {
+		export interface Counted<G extends GrammarMap, K extends Under<'statement.loop.counted'> = 'statement.loop.counted'> extends SubKindOf<V.Statement.Loop<G, K>, 'body'> {
 			// claimed by t
-			readonly $kind: 'statement.loop.counted';
+			readonly $kind: K;
 			readonly body: Slot<G, 'statement.loop.counted', 'body', V.Declaration.Any<G> | V.Statement.Any<G>>;
 			readonly condition: Slot<
 				G,

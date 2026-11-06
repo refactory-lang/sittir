@@ -1,8 +1,8 @@
 import type { GrammarMap, Slot } from './map.ts';
-import type { SubKindOf } from './utils.ts';
+import type { SubKindOf, Under } from './utils.ts';
 import type * as V from './index.ts';
-export interface Element<G extends GrammarMap> {
-	readonly $kind: 'element';
+export interface Element<G extends GrammarMap, K extends Under<'element'> = 'element'> {
+	readonly $kind: K;
 }
 
 export interface ElementSynonyms {
@@ -11,9 +11,9 @@ export interface ElementSynonyms {
 }
 
 export namespace Element {
-	export interface Comparator<G extends GrammarMap> extends SubKindOf<V.Element<G>> {
+	export interface Comparator<G extends GrammarMap, K extends Under<'element.comparator'> = 'element.comparator'> extends SubKindOf<V.Element<G, K>> {
 		// claimed by p
-		readonly $kind: 'element.comparator';
+		readonly $kind: K;
 		readonly right: Slot<
 			G,
 			'element.comparator',
@@ -25,71 +25,71 @@ export namespace Element {
 		>;
 	}
 	export namespace Comparator {
-		export interface Comparison<G extends GrammarMap> extends SubKindOf<V.Element.Comparator<G>> {
-			readonly $kind: 'element.comparator.comparison';
+		export interface Comparison<G extends GrammarMap, K extends Under<'element.comparator.comparison'> = 'element.comparator.comparison'> extends SubKindOf<V.Element.Comparator<G, K>> {
+			readonly $kind: K;
 		}
 		export namespace Comparison {
-			export interface Equal<G extends GrammarMap> extends SubKindOf<V.Element.Comparator.Comparison<G>> {
+			export interface Equal<G extends GrammarMap, K extends Under<'element.comparator.comparison.equal'> = 'element.comparator.comparison.equal'> extends SubKindOf<V.Element.Comparator.Comparison<G, K>> {
 				// claimed by p
-				readonly $kind: 'element.comparator.comparison.equal';
+				readonly $kind: K;
 			}
-			export interface Greater<G extends GrammarMap> extends SubKindOf<V.Element.Comparator.Comparison<G>> {
+			export interface Greater<G extends GrammarMap, K extends Under<'element.comparator.comparison.greater'> = 'element.comparator.comparison.greater'> extends SubKindOf<V.Element.Comparator.Comparison<G, K>> {
 				// claimed by p
-				readonly $kind: 'element.comparator.comparison.greater';
+				readonly $kind: K;
 			}
-			export interface GreaterEqual<G extends GrammarMap> extends SubKindOf<V.Element.Comparator.Comparison<G>> {
+			export interface GreaterEqual<G extends GrammarMap, K extends Under<'element.comparator.comparison.greater_equal'> = 'element.comparator.comparison.greater_equal'> extends SubKindOf<V.Element.Comparator.Comparison<G, K>> {
 				// claimed by p
-				readonly $kind: 'element.comparator.comparison.greater_equal';
+				readonly $kind: K;
 			}
-			export interface Less<G extends GrammarMap> extends SubKindOf<V.Element.Comparator.Comparison<G>> {
+			export interface Less<G extends GrammarMap, K extends Under<'element.comparator.comparison.less'> = 'element.comparator.comparison.less'> extends SubKindOf<V.Element.Comparator.Comparison<G, K>> {
 				// claimed by p
-				readonly $kind: 'element.comparator.comparison.less';
+				readonly $kind: K;
 			}
-			export interface LessEqual<G extends GrammarMap> extends SubKindOf<V.Element.Comparator.Comparison<G>> {
+			export interface LessEqual<G extends GrammarMap, K extends Under<'element.comparator.comparison.less_equal'> = 'element.comparator.comparison.less_equal'> extends SubKindOf<V.Element.Comparator.Comparison<G, K>> {
 				// claimed by p
-				readonly $kind: 'element.comparator.comparison.less_equal';
+				readonly $kind: K;
 			}
-			export interface NotEqual<G extends GrammarMap> extends SubKindOf<V.Element.Comparator.Comparison<G>> {
+			export interface NotEqual<G extends GrammarMap, K extends Under<'element.comparator.comparison.not_equal'> = 'element.comparator.comparison.not_equal'> extends SubKindOf<V.Element.Comparator.Comparison<G, K>> {
 				// claimed by p
-				readonly $kind: 'element.comparator.comparison.not_equal';
+				readonly $kind: K;
 			}
 			export namespace NotEqual {
-				export interface Legacy<G extends GrammarMap> extends SubKindOf<V.Element.Comparator.Comparison.NotEqual<G>> {
+				export interface Legacy<G extends GrammarMap, K extends Under<'element.comparator.comparison.not_equal.legacy'> = 'element.comparator.comparison.not_equal.legacy'> extends SubKindOf<V.Element.Comparator.Comparison.NotEqual<G, K>> {
 					// claimed by p
-					readonly $kind: 'element.comparator.comparison.not_equal.legacy';
+					readonly $kind: K;
 				}
 			}
 		}
-		export interface Identity<G extends GrammarMap> extends SubKindOf<V.Element.Comparator<G>> {
-			readonly $kind: 'element.comparator.identity';
+		export interface Identity<G extends GrammarMap, K extends Under<'element.comparator.identity'> = 'element.comparator.identity'> extends SubKindOf<V.Element.Comparator<G, K>> {
+			readonly $kind: K;
 		}
 		export namespace Identity {
-			export interface Is<G extends GrammarMap> extends SubKindOf<V.Element.Comparator.Identity<G>> {
+			export interface Is<G extends GrammarMap, K extends Under<'element.comparator.identity.is'> = 'element.comparator.identity.is'> extends SubKindOf<V.Element.Comparator.Identity<G, K>> {
 				// claimed by p
-				readonly $kind: 'element.comparator.identity.is';
+				readonly $kind: K;
 			}
-			export interface IsNot<G extends GrammarMap> extends SubKindOf<V.Element.Comparator.Identity<G>> {
+			export interface IsNot<G extends GrammarMap, K extends Under<'element.comparator.identity.is_not'> = 'element.comparator.identity.is_not'> extends SubKindOf<V.Element.Comparator.Identity<G, K>> {
 				// claimed by p
-				readonly $kind: 'element.comparator.identity.is_not';
+				readonly $kind: K;
 			}
 		}
-		export interface Membership<G extends GrammarMap> extends SubKindOf<V.Element.Comparator<G>> {
-			readonly $kind: 'element.comparator.membership';
+		export interface Membership<G extends GrammarMap, K extends Under<'element.comparator.membership'> = 'element.comparator.membership'> extends SubKindOf<V.Element.Comparator<G, K>> {
+			readonly $kind: K;
 		}
 		export namespace Membership {
-			export interface In<G extends GrammarMap> extends SubKindOf<V.Element.Comparator.Membership<G>> {
+			export interface In<G extends GrammarMap, K extends Under<'element.comparator.membership.in'> = 'element.comparator.membership.in'> extends SubKindOf<V.Element.Comparator.Membership<G, K>> {
 				// claimed by p
-				readonly $kind: 'element.comparator.membership.in';
+				readonly $kind: K;
 			}
-			export interface NotIn<G extends GrammarMap> extends SubKindOf<V.Element.Comparator.Membership<G>> {
+			export interface NotIn<G extends GrammarMap, K extends Under<'element.comparator.membership.not_in'> = 'element.comparator.membership.not_in'> extends SubKindOf<V.Element.Comparator.Membership<G, K>> {
 				// claimed by p
-				readonly $kind: 'element.comparator.membership.not_in';
+				readonly $kind: K;
 			}
 		}
 	}
-	export interface Pair<G extends GrammarMap> extends SubKindOf<V.Element<G>> {
+	export interface Pair<G extends GrammarMap, K extends Under<'element.pair'> = 'element.pair'> extends SubKindOf<V.Element<G, K>> {
 		// claimed by pt
-		readonly $kind: 'element.pair';
+		readonly $kind: K;
 		readonly key: Slot<
 			G,
 			'element.pair',
@@ -112,9 +112,9 @@ export namespace Element {
 			| V.Pattern.Any<G>
 		>;
 	}
-	export interface Spread<G extends GrammarMap> extends SubKindOf<V.Element<G>> {
+	export interface Spread<G extends GrammarMap, K extends Under<'element.spread'> = 'element.spread'> extends SubKindOf<V.Element<G, K>> {
 		// claimed by pt
-		readonly $kind: 'element.spread';
+		readonly $kind: K;
 		readonly expression?: Slot<
 			G,
 			'element.spread',
@@ -127,9 +127,9 @@ export namespace Element {
 		>;
 	}
 	export namespace Spread {
-		export interface Map<G extends GrammarMap> extends SubKindOf<V.Element.Spread<G>, 'expression'> {
+		export interface Map<G extends GrammarMap, K extends Under<'element.spread.map'> = 'element.spread.map'> extends SubKindOf<V.Element.Spread<G, K>, 'expression'> {
 			// claimed by p
-			readonly $kind: 'element.spread.map';
+			readonly $kind: K;
 			readonly expression: Slot<
 				G,
 				'element.spread.map',
@@ -140,9 +140,9 @@ export namespace Element {
 				| V.Pattern.Any<G>
 			>;
 		}
-		export interface Parenthesized<G extends GrammarMap> extends SubKindOf<V.Element.Spread<G>> {
+		export interface Parenthesized<G extends GrammarMap, K extends Under<'element.spread.parenthesized'> = 'element.spread.parenthesized'> extends SubKindOf<V.Element.Spread<G, K>> {
 			// claimed by p
-			readonly $kind: 'element.spread.parenthesized';
+			readonly $kind: K;
 			readonly content: V.Element.Spread<G> | V.Element.Spread.Parenthesized<G>;
 		}
 	}

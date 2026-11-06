@@ -1,11 +1,11 @@
 import type { GrammarMap } from '../../../map.ts';
-import type { Flag, SubKindOf } from '../../../utils.ts';
+import type { Flag, SubKindOf, Under } from '../../../utils.ts';
 import type * as V from '../../../index.ts';
 export namespace Expression {
 	export namespace Block {
-		export interface Async<G extends GrammarMap> extends SubKindOf<V.Expression.Block<G>> {
+		export interface Async<G extends GrammarMap, K extends Under<'expression.block.async'> = 'expression.block.async'> extends SubKindOf<V.Expression.Block<G, K>> {
 			// claimed by r
-			readonly $kind: 'expression.block.async';
+			readonly $kind: K;
 			readonly body: V.Statement.Block<G>;
 			readonly move?: Flag;
 		}

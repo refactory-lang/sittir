@@ -1,26 +1,26 @@
 import type { GrammarMap, Slot } from '../../map.ts';
-import type { Flag, SubKindOf } from '../../utils.ts';
+import type { Flag, SubKindOf, Under } from '../../utils.ts';
 import type * as V from '../../index.ts';
 export namespace Declaration {
-	export interface Function<G extends GrammarMap> {
+	export interface Function<G extends GrammarMap, K extends Under<'declaration.function'> = 'declaration.function'> {
 		readonly extern?: V.Modifier.Extern<G>;
 		// r only
 	}
-	export interface Method<G extends GrammarMap> {
+	export interface Method<G extends GrammarMap, K extends Under<'declaration.method'> = 'declaration.method'> {
 		readonly extern?: V.Modifier.Extern<G>;
 		// rt only
 	}
 	export namespace Module {
-		export interface Foreign<G extends GrammarMap> extends SubKindOf<V.Declaration.Module<G>> {
+		export interface Foreign<G extends GrammarMap, K extends Under<'declaration.module.foreign'> = 'declaration.module.foreign'> extends SubKindOf<V.Declaration.Module<G, K>> {
 			// claimed by r
-			readonly $kind: 'declaration.module.foreign';
+			readonly $kind: K;
 			readonly extern: V.Modifier.Extern<G>;
 		}
 	}
 	export namespace Parameter {
-		export interface Variadic<G extends GrammarMap> extends SubKindOf<V.Declaration.Parameter<G>> {
+		export interface Variadic<G extends GrammarMap, K extends Under<'declaration.parameter.variadic'> = 'declaration.parameter.variadic'> extends SubKindOf<V.Declaration.Parameter<G, K>> {
 			// claimed by r
-			readonly $kind: 'declaration.parameter.variadic';
+			readonly $kind: K;
 			readonly mutable?: Flag;
 			readonly pattern?: Slot<G, 'declaration.parameter.variadic', 'pattern', unknown>;
 		}

@@ -10,6 +10,7 @@ import type {
 	LookupType,
 	PropertySignature,
 	TypeAliasDeclaration,
+	TypeParameter,
 	UnionType
 } from '@sittir/typescript';
 import { isNode, parsedTypescript, type Kinds, type Span, type Statement, type TypescriptSource } from './pinned-typescript.ts';
@@ -108,7 +109,9 @@ type AliasType =
 	| ReturnType<LookupType.Parsed['indexType']>
 	| ReturnType<TypeAliasDeclaration.Parsed['value']>
 	| ReturnType<NonNullable<ReturnType<GenericType.Parsed['typeArguments']>>['types']>[number]
-	| ReturnType<UnionType.Parsed['right']>;
+	| ReturnType<UnionType.Parsed['right']>
+	| ReturnType<NonNullable<ReturnType<TypeParameter.Parsed['default']>>['type']>
+	| Annotation;
 
 function stringIndex(index: AliasType | undefined, source: Source): string | undefined {
 	const { K, text } = source;
@@ -160,8 +163,7 @@ function declare(declaration: InterfaceDeclaration.Parsed, scope: readonly strin
 		const typed = member.type();
 		const annotation = typed?.type();
 		if (name === '$kind') {
-			const literal = isNode(annotation) && annotation.$type === K.LiteralType ? annotation.content() : undefined;
-			if (isNode(literal) && (literal.$type === K.StringSingle || literal.$type === K.StringDouble)) path = text(literal).slice(1, -1);
+			path = kindPath(declaration, annotation, source);
 			continue;
 		}
 		members.push({
@@ -187,6 +189,19 @@ function declare(declaration: InterfaceDeclaration.Parsed, scope: readonly strin
 		heritage: heritageNames(heritage, source),
 		members
 	});
+}
+
+function kindPath(declaration: InterfaceDeclaration.Parsed, annotation: Annotation | undefined, source: Source): string | undefined {
+	const { K, text } = source;
+	if (!isNode(annotation)) return undefined;
+	const name = text(declaration.name());
+	if (annotation.$type === K.LiteralType && stringIndex(annotation, source) !== undefined) throw new Error(`vocabulary: ${name} spells its $kind; declare it as a type parameter whose default is its path`);
+	if (annotation.$type !== K.TypeIdentifier) return undefined;
+	const parameter = text(annotation);
+	const declared = (declaration.typeParameters()?.elements().items() ?? []).find((at) => text(at.name()) === parameter);
+	const path = stringIndex(declared?.default()?.type(), source);
+	if (path === undefined) throw new Error(`vocabulary: ${name} declares $kind as ${parameter}, which is no type parameter whose default is its path`);
+	return path;
 }
 
 function propertyName(member: PropertySignature.Parsed, source: Source): string {

@@ -1,28 +1,28 @@
 import type { GrammarMap, Slot } from '../../map.ts';
-import type { SubKindOf } from '../../utils.ts';
+import type { SubKindOf, Under } from '../../utils.ts';
 import type * as V from '../../index.ts';
 export namespace Literal {
 	export namespace Number {
 		export namespace Integer {
-			export interface Big<G extends GrammarMap> extends SubKindOf<V.Literal.Number.Integer<G>> {
+			export interface Big<G extends GrammarMap, K extends Under<'literal.number.integer.big'> = 'literal.number.integer.big'> extends SubKindOf<V.Literal.Number.Integer<G, K>> {
 				// claimed by pt
-				readonly $kind: 'literal.number.integer.big';
+				readonly $kind: K;
 				readonly $value: bigint;
 			}
 			export namespace Big {
-				export interface Binary<G extends GrammarMap> extends SubKindOf<V.Literal.Number.Integer.Big<G>, 'content'> {
+				export interface Binary<G extends GrammarMap, K extends Under<'literal.number.integer.big.binary'> = 'literal.number.integer.big.binary'> extends SubKindOf<V.Literal.Number.Integer.Big<G, K>, 'content'> {
 					// claimed by t
-					readonly $kind: 'literal.number.integer.big.binary';
+					readonly $kind: K;
 					readonly content: Slot<G, 'literal.number.integer.big.binary', 'content', unknown>;
 				}
-				export interface Hex<G extends GrammarMap> extends SubKindOf<V.Literal.Number.Integer.Big<G>, 'content'> {
+				export interface Hex<G extends GrammarMap, K extends Under<'literal.number.integer.big.hex'> = 'literal.number.integer.big.hex'> extends SubKindOf<V.Literal.Number.Integer.Big<G, K>, 'content'> {
 					// claimed by t
-					readonly $kind: 'literal.number.integer.big.hex';
+					readonly $kind: K;
 					readonly content: Slot<G, 'literal.number.integer.big.hex', 'content', unknown>;
 				}
-				export interface Octal<G extends GrammarMap> extends SubKindOf<V.Literal.Number.Integer.Big<G>, 'content'> {
+				export interface Octal<G extends GrammarMap, K extends Under<'literal.number.integer.big.octal'> = 'literal.number.integer.big.octal'> extends SubKindOf<V.Literal.Number.Integer.Big<G, K>, 'content'> {
 					// claimed by t
-					readonly $kind: 'literal.number.integer.big.octal';
+					readonly $kind: K;
 					readonly content: Slot<G, 'literal.number.integer.big.octal', 'content', unknown>;
 				}
 			}

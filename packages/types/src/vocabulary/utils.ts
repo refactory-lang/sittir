@@ -1,7 +1,9 @@
 import type { GrammarMap } from './map.ts';
 
+export type Under<P extends string> = P | `${P}.${string}`;
+
 export type SubKindOf<T extends { readonly $kind: string }, Restated extends keyof T = never> = {
-	readonly [K in keyof T as K extends Restated ? never : K]: K extends '$kind' ? `${T['$kind']}.${string}` : T[K];
+	readonly [K in keyof T as K extends Restated ? never : K]: T[K];
 };
 
 /**

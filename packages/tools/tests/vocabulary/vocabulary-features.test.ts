@@ -33,13 +33,13 @@ function feature(dir: string, marker: string, stubs: Readonly<Record<string, str
 	};
 }
 
-const DECLARATION = `export interface Declaration<G extends GrammarContext<G>> {
-	readonly $kind: 'declaration';
+const DECLARATION = `export interface Declaration<G extends GrammarMap, K extends Under<'declaration'> = 'declaration'> {
+	readonly $kind: K;
 	readonly name: G['identifier'];
 }
 export namespace Declaration {
-	export interface Function<G extends GrammarContext<G>> extends SubKindOf<V.Declaration<G>> {
-		readonly $kind: 'declaration.function';
+	export interface Function<G extends GrammarMap, K extends Under<'declaration.function'> = 'declaration.function'> extends SubKindOf<V.Declaration<G>> {
+		readonly $kind: K;
 		readonly parameters: readonly unknown[];
 	}
 }
@@ -47,7 +47,7 @@ export namespace Declaration {
 
 const ASYNC_AWAIT = feature('async-await', 'export interface AsyncAwait {\n\treadonly asyncAwait: true;\n}', {
 	'declaration.ts': `export namespace Declaration {
-	export interface Function<G extends GrammarContext<G>> {
+	export interface Function<G extends GrammarMap> {
 		readonly async?: Flag;
 	}
 }
@@ -56,13 +56,13 @@ const ASYNC_AWAIT = feature('async-await', 'export interface AsyncAwait {\n\trea
 
 const METHODS = feature('methods', 'export interface Methods {\n\treadonly methods: true;\n}', {
 	'declaration.ts': `export namespace Declaration {
-	export interface Method<G extends GrammarContext<G>> extends SubKindOf<V.Declaration<G>> {
-		readonly $kind: 'declaration.method';
+	export interface Method<G extends GrammarMap, K extends Under<'declaration.method'> = 'declaration.method'> extends SubKindOf<V.Declaration<G>> {
+		readonly $kind: K;
 		readonly static?: Flag;
 	}
 	export namespace Method {
-		export interface Getter<G extends GrammarContext<G>> extends SubKindOf<V.Declaration.Method<G>> {
-			readonly $kind: 'declaration.method.getter';
+		export interface Getter<G extends GrammarMap, K extends Under<'declaration.method.getter'> = 'declaration.method.getter'> extends SubKindOf<V.Declaration.Method<G>> {
+			readonly $kind: K;
 		}
 	}
 }
@@ -71,11 +71,11 @@ const METHODS = feature('methods', 'export interface Methods {\n\treadonly metho
 
 const ACCESSORS = feature('methods/accessors', 'export interface Accessors extends Methods {\n\treadonly accessors: true;\n}', {
 	'declaration.ts': `export namespace Declaration {
-	export interface Method<G extends GrammarContext<G>> {
+	export interface Method<G extends GrammarMap> {
 		readonly accessor?: 'get' | 'set';
 	}
 	export namespace Method {
-		export interface Getter<G extends GrammarContext<G>> {
+		export interface Getter<G extends GrammarMap> {
 			readonly accessor: 'get';
 		}
 	}
@@ -87,8 +87,8 @@ const CLEAN = { 'declaration.ts': DECLARATION, ...ASYNC_AWAIT, ...METHODS, ...AC
 
 const MACROS = feature('macros', 'export interface Macros {\n\treadonly macros: true;\n}', {
 	'macro.ts': `export namespace Macro {
-	export interface Rule<G extends GrammarContext<G>> {
-		readonly $kind: 'macro.rule';
+	export interface Rule<G extends GrammarMap, K extends Under<'macro.rule'> = 'macro.rule'> {
+		readonly $kind: K;
 	}
 }
 `
@@ -140,7 +140,7 @@ describe('plan', () => {
 	it('reports a member two features own', async () => {
 		const properties = feature('properties', 'export interface Properties {\n\treadonly properties: true;\n}', {
 			'declaration.ts': `export namespace Declaration {
-	export interface Method<G extends GrammarContext<G>> {
+	export interface Method<G extends GrammarMap> {
 		readonly accessor?: boolean;
 	}
 }
@@ -152,7 +152,7 @@ describe('plan', () => {
 	it('reports members added to a kind the vocabulary does not declare', async () => {
 		const lambda = feature('async-await', 'export interface AsyncAwait {\n\treadonly asyncAwait: true;\n}', {
 			'declaration.ts': `export namespace Declaration {
-	export interface Lambda<G extends GrammarContext<G>> {
+	export interface Lambda<G extends GrammarMap> {
 		readonly async?: Flag;
 	}
 }
@@ -165,7 +165,7 @@ describe('plan', () => {
 		const generators = (marker: string): Record<string, string> =>
 			feature('generators', marker, {
 				'declaration.ts': `export namespace Declaration {
-	export interface Function<G extends GrammarContext<G>> {
+	export interface Function<G extends GrammarMap> {
 		readonly async: Flag;
 	}
 }
@@ -177,44 +177,13 @@ describe('plan', () => {
 		expect(await issues({ ...CLEAN, ...generators('export interface Generators extends AsyncAwait {\n\treadonly generators: true;\n}') })).toEqual([]);
 	});
 
-	it('reports a member typed by a direct reference to a kind a feature restates, or to a level holding one', async () => {
-		const field = DECLARATION.replace(
-			'\t}\n}\n',
-			`\t}
-	export interface Field<G extends GrammarContext<G>> extends SubKindOf<V.Declaration<G>> {
-		readonly $kind: 'declaration.field';
-		readonly type?: G['slots']['declaration.field']['type'];
-	}
-	export interface Union<G extends GrammarContext<G>> extends SubKindOf<V.Declaration<G>> {
-		readonly $kind: 'declaration.union';
-		readonly body: V.Declaration.Field<G>[];
-		readonly fields: G['slots']['declaration.union']['fields'][];
-		readonly members: V.Declaration.Any<G>[];
-	}
-}
-`
-		);
-		const typing = feature('manifest-typing', 'export interface ManifestTyping {\n\treadonly manifestTyping: true;\n}', {
-			'declaration.ts': `export namespace Declaration {
-	export interface Field<G extends GrammarContext<G>> {
-		readonly type: G['slots']['declaration.field']['type'];
-	}
-}
-`
-		});
-		expect(await issues({ ...CLEAN, 'declaration.ts': field, ...typing })).toEqual([
-			'declaration.union.body references V.Declaration.Field, and ManifestTyping restates declaration.field: type it through the slot table',
-			'declaration.union.members references V.Declaration.Any, and ManifestTyping restates declaration.field: type it through the slot table'
-		]);
-	});
-
 	it('reports a base declaration of a member a feature gates on the same line', async () => {
 		const arrow = DECLARATION.replace(
 			'\t}\n}\n',
 			`\t}
 	export namespace Function {
-		export interface Arrow<G extends GrammarContext<G>> extends SubKindOf<V.Declaration.Function<G>> {
-			readonly $kind: 'declaration.function.arrow';
+		export interface Arrow<G extends GrammarMap, K extends Under<'declaration.function.arrow'> = 'declaration.function.arrow'> extends SubKindOf<V.Declaration.Function<G>> {
+			readonly $kind: K;
 			readonly async?: Flag;
 		}
 	}
@@ -234,8 +203,8 @@ describe('plan', () => {
 	it('reports a qualified name two declarations give different paths', async () => {
 		const lambdas = feature('lambdas', 'export interface Lambdas {\n\treadonly lambdas: true;\n}', {
 			'declaration.ts': `export namespace Declaration {
-	export interface Function<G extends GrammarContext<G>> extends SubKindOf<V.Declaration<G>> {
-		readonly $kind: 'declaration.lambda';
+	export interface Function<G extends GrammarMap, K extends Under<'declaration.lambda'> = 'declaration.lambda'> extends SubKindOf<V.Declaration<G>> {
+		readonly $kind: K;
 	}
 }
 `
@@ -249,8 +218,8 @@ describe('plan', () => {
 		const refined = DECLARATION.replace(
 			'\t}\n}\n',
 			`\t}
-	export interface Public<G extends GrammarContext<G>> extends RefinedBy<V.Declaration<G>, V.Declaration.Function.Any<G>> {
-		readonly $kind: 'declaration.public';
+	export interface Public<G extends GrammarMap, K extends Under<'declaration.public'> = 'declaration.public'> extends RefinedBy<V.Declaration<G>, V.Declaration.Function.Any<G>> {
+		readonly $kind: K;
 	}
 }
 `
@@ -262,8 +231,8 @@ describe('plan', () => {
 		const statics = feature('methods/statics', 'export interface Statics extends Methods {\n\treadonly statics: true;\n}', {
 			'declaration.ts': `export namespace Declaration {
 	export namespace Method {
-		export interface Static<G extends GrammarContext<G>> extends SubKindOf<V.Declaration.Method<G>> {
-			readonly $kind: 'declaration.method.static';
+		export interface Static<G extends GrammarMap, K extends Under<'declaration.method.static'> = 'declaration.method.static'> extends SubKindOf<V.Declaration.Method<G>> {
+			readonly $kind: K;
 		}
 	}
 }
@@ -328,13 +297,13 @@ describe('the synonym collision rule', () => {
 			'\t}\n}\n',
 			`\t}
 	export namespace Slot {
-		export interface Receiver<G extends GrammarContext<G>> extends SubKindOf<V.Declaration<G>> {
-			readonly $kind: 'declaration.slot.receiver';
+		export interface Receiver<G extends GrammarMap, K extends Under<'declaration.slot.receiver'> = 'declaration.slot.receiver'> extends SubKindOf<V.Declaration<G>> {
+			readonly $kind: K;
 		}
 	}
 	export namespace Port {
-		export interface Receiver<G extends GrammarContext<G>> extends SubKindOf<V.Declaration<G>> {
-			readonly $kind: 'declaration.port.receiver';
+		export interface Receiver<G extends GrammarMap, K extends Under<'declaration.port.receiver'> = 'declaration.port.receiver'> extends SubKindOf<V.Declaration<G>> {
+			readonly $kind: K;
 		}
 	}
 }
@@ -350,17 +319,17 @@ export interface DeclarationSynonyms {
 		const refined = DECLARATION.replace(
 			'\t}\n}\n',
 			`\t}
-	export interface Marker<G extends GrammarContext<G>> extends SubKindOf<V.Declaration<G>> {
-		readonly $kind: 'declaration.marker';
+	export interface Marker<G extends GrammarMap, K extends Under<'declaration.marker'> = 'declaration.marker'> extends SubKindOf<V.Declaration<G>> {
+		readonly $kind: K;
 		readonly sealed?: Flag;
 	}
 	export namespace Function {
-		export interface Marked<G extends GrammarContext<G>> extends RefinedBy<V.Declaration.Function<G>, V.Declaration.Marker<G>> {
-			readonly $kind: 'declaration.function.marked';
+		export interface Marked<G extends GrammarMap, K extends Under<'declaration.function.marked'> = 'declaration.function.marked'> extends RefinedBy<V.Declaration.Function<G>, V.Declaration.Marker<G>> {
+			readonly $kind: K;
 		}
 		export namespace Marked {
-			export interface Inner<G extends GrammarContext<G>> extends SubKindOf<V.Declaration.Function.Marked<G>> {
-				readonly $kind: 'declaration.function.marked.inner';
+			export interface Inner<G extends GrammarMap, K extends Under<'declaration.function.marked.inner'> = 'declaration.function.marked.inner'> extends SubKindOf<V.Declaration.Function.Marked<G>> {
+				readonly $kind: K;
 			}
 		}
 	}
@@ -382,8 +351,8 @@ export interface DeclarationSynonyms {
 			`\t}
 	export namespace Function {
 		export namespace Port {
-			export interface Inner<G extends GrammarContext<G>> extends SubKindOf<V.Declaration.Function<G>> {
-				readonly $kind: 'declaration.function.port.inner';
+			export interface Inner<G extends GrammarMap, K extends Under<'declaration.function.port.inner'> = 'declaration.function.port.inner'> extends SubKindOf<V.Declaration.Function<G>> {
+				readonly $kind: K;
 			}
 		}
 	}
@@ -425,7 +394,7 @@ describe('the generated files', () => {
 		expect(augmentation(source, p)).toBe(
 			[
 				HEADER,
-				"import type { GrammarContext } from './context.ts';",
+				"import type { GrammarMap } from './map.ts';",
 				"import type * as gate from './utils.ts';",
 				"import type * as V from './index.ts';",
 				"import type * as features from './features/index.ts';",
@@ -435,19 +404,28 @@ describe('the generated files', () => {
 				'',
 				"declare module './declaration.ts' {",
 				'\tnamespace Declaration {',
-				'\t\tinterface Function<G extends GrammarContext<G>> {',
-				"\t\t\treadonly async?: gate.In<G, features.AsyncAwait, asyncAwait.Declaration.Function<G>['async']>;",
+				"\t\tinterface Function<G extends GrammarMap, K extends gate.Under<'declaration.function'> = 'declaration.function'> {",
+				"\t\t\treadonly async?: gate.In<G, features.AsyncAwait, asyncAwait.Declaration.Function<G, K>['async']>;",
 				'\t\t}',
-				'\t\tinterface Method<G extends GrammarContext<G>> extends methods.Declaration.Method<G> {',
-				"\t\t\treadonly accessor?: gate.In<G, features.Accessors, accessors.Declaration.Method<G>['accessor']>;",
+				"\t\tinterface Method<G extends GrammarMap, K extends gate.Under<'declaration.method'> = 'declaration.method'> extends methods.Declaration.Method<G, K> {",
+				"\t\t\treadonly accessor?: gate.In<G, features.Accessors, accessors.Declaration.Method<G, K>['accessor']>;",
 				'\t\t}',
 				'\t\tnamespace Method {',
-				'\t\t\tinterface Getter<G extends GrammarContext<G>> extends methods.Declaration.Method.Getter<G> {',
-				"\t\t\t\treadonly accessor: gate.In<G, features.Accessors, accessors.Declaration.Method.Getter<G>['accessor']>;",
+				"\t\t\tinterface Getter<G extends GrammarMap, K extends gate.Under<'declaration.method.getter'> = 'declaration.method.getter'> extends methods.Declaration.Method.Getter<G, K> {",
+				"\t\t\t\treadonly accessor: gate.In<G, features.Accessors, accessors.Declaration.Method.Getter<G, K>['accessor']>;",
 				'\t\t\t}',
-				'\t\t\ttype Any<G extends GrammarContext<G>> = V.Declaration.Method<G> | V.Declaration.Method.Getter<G>;',
+				'\t\t\ttype Any<G extends GrammarMap> = V.Declaration.Method<G> | V.Declaration.Method.Getter<G>;',
 				'\t\t}',
-				'\t\ttype Any<G extends GrammarContext<G>> = V.Declaration<G> | V.Declaration.Function<G> | V.Declaration.Method<G> | V.Declaration.Method.Getter<G>;',
+				'\t\ttype Any<G extends GrammarMap> = V.Declaration<G> | V.Declaration.Function<G> | V.Declaration.Method<G> | V.Declaration.Method.Getter<G>;',
+				'\t}',
+				'}',
+				'',
+				"declare module './map.ts' {",
+				'\tinterface Paths<G extends GrammarMap> {',
+				"\t\treadonly 'declaration': V.Declaration<G>;",
+				"\t\treadonly 'declaration.function': V.Declaration.Function<G>;",
+				"\t\treadonly 'declaration.method': V.Declaration.Method<G>;",
+				"\t\treadonly 'declaration.method.getter': V.Declaration.Method.Getter<G>;",
 				'\t}',
 				'}',
 				''

@@ -1,10 +1,10 @@
 import type { GrammarMap, Slot, Text } from '../../map.ts';
-import type { Flag, SubKindOf } from '../../utils.ts';
+import type { Flag, SubKindOf, Under } from '../../utils.ts';
 import type * as V from '../../index.ts';
 export namespace Pattern {
-	export interface Struct<G extends GrammarMap> extends SubKindOf<V.Pattern<G>> {
+	export interface Struct<G extends GrammarMap, K extends Under<'pattern.struct'> = 'pattern.struct'> extends SubKindOf<V.Pattern<G, K>> {
 		// claimed by pr
-		readonly $kind: 'pattern.struct';
+		readonly $kind: K;
 		readonly fields?: Slot<
 			G,
 			'pattern.struct',
@@ -26,9 +26,9 @@ export namespace Pattern {
 		>;
 	}
 	export namespace Struct {
-		export interface Field<G extends GrammarMap> extends SubKindOf<V.Pattern.Struct<G>> {
+		export interface Field<G extends GrammarMap, K extends Under<'pattern.struct.field'> = 'pattern.struct.field'> extends SubKindOf<V.Pattern.Struct<G, K>> {
 			// claimed by pr
-			readonly $kind: 'pattern.struct.field';
+			readonly $kind: K;
 			readonly byReference?: Flag;
 			readonly mutable?: Flag;
 			readonly name: Slot<G, 'pattern.struct.field', 'name', V.Identifier.Any<G>>;

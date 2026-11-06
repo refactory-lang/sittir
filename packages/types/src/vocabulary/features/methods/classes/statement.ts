@@ -1,11 +1,11 @@
 import type { GrammarMap } from '../../../map.ts';
-import type { SubKindOf } from '../../../utils.ts';
+import type { SubKindOf, Under } from '../../../utils.ts';
 import type * as V from '../../../index.ts';
 export namespace Statement {
 	export namespace Block {
-		export interface Static<G extends GrammarMap> extends SubKindOf<V.Statement.Block<G>> {
+		export interface Static<G extends GrammarMap, K extends Under<'statement.block.static'> = 'statement.block.static'> extends SubKindOf<V.Statement.Block<G, K>> {
 			// claimed by t
-			readonly $kind: 'statement.block.static';
+			readonly $kind: K;
 			readonly body: V.Statement.Block<G>;
 		}
 	}

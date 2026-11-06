@@ -1,20 +1,20 @@
 import type { GrammarMap, Slot } from '../../../../map.ts';
-import type { Flag, SubKindOf } from '../../../../utils.ts';
+import type { Flag, SubKindOf, Under } from '../../../../utils.ts';
 import type * as V from '../../../../index.ts';
 export namespace Declaration {
-	export interface Class<G extends GrammarMap> {
+	export interface Class<G extends GrammarMap, K extends Under<'declaration.class'> = 'declaration.class'> {
 		readonly abstract?: Flag;
 		// t only
 	}
-	export interface Field<G extends GrammarMap> {
+	export interface Field<G extends GrammarMap, K extends Under<'declaration.field'> = 'declaration.field'> {
 		readonly abstract?: Flag;
 		// t only
 	}
 	export namespace Method {
 		export namespace Signature {
-			export interface Abstract<G extends GrammarMap> extends SubKindOf<V.Declaration.Method.Signature<G>, 'name' | 'parameters' | 'returnType' | 'typeParameters'> {
+			export interface Abstract<G extends GrammarMap, K extends Under<'declaration.method.signature.abstract'> = 'declaration.method.signature.abstract'> extends SubKindOf<V.Declaration.Method.Signature<G, K>, 'name' | 'parameters' | 'returnType' | 'typeParameters'> {
 				// claimed by t
-				readonly $kind: 'declaration.method.signature.abstract';
+				readonly $kind: K;
 				readonly name: Slot<
 					G,
 					'declaration.method.signature.abstract',
@@ -37,7 +37,7 @@ export namespace Declaration {
 		}
 	}
 	export namespace Signature {
-		export interface Construct<G extends GrammarMap> {
+		export interface Construct<G extends GrammarMap, K extends Under<'declaration.signature.construct'> = 'declaration.signature.construct'> {
 			readonly abstract?: Flag;
 		}
 	}

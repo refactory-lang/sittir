@@ -1,10 +1,10 @@
 import type { GrammarMap, Slot } from '../../map.ts';
-import type { SubKindOf } from '../../utils.ts';
+import type { SubKindOf, Under } from '../../utils.ts';
 import type * as V from '../../index.ts';
 export namespace Clause {
-	export interface Default<G extends GrammarMap> extends SubKindOf<V.Clause<G>> {
+	export interface Default<G extends GrammarMap, K extends Under<'clause.default'> = 'clause.default'> extends SubKindOf<V.Clause<G, K>> {
 		// claimed by t
-		readonly $kind: 'clause.default';
+		readonly $kind: K;
 		readonly type: Slot<G, 'clause.default', 'type', V.Identifier.Any<G> | V.Type.Any<G>>;
 	}
 }

@@ -1,16 +1,16 @@
 import type { GrammarMap, Slot } from '../../map.ts';
-import type { Flag, SubKindOf } from '../../utils.ts';
+import type { Flag, SubKindOf, Under } from '../../utils.ts';
 import type * as V from '../../index.ts';
 export namespace Clause {
-	export interface Comprehension<G extends GrammarMap> extends SubKindOf<V.Clause<G>> {
+	export interface Comprehension<G extends GrammarMap, K extends Under<'clause.comprehension'> = 'clause.comprehension'> extends SubKindOf<V.Clause<G, K>> {
 		// claimed by p
-		readonly $kind: 'clause.comprehension';
+		readonly $kind: K;
 		readonly contents?: (V.Clause.Comprehension.For<G> | V.Clause.Comprehension.If<G>)[];
 	}
 	export namespace Comprehension {
-		export interface For<G extends GrammarMap> extends SubKindOf<V.Clause.Comprehension<G>> {
+		export interface For<G extends GrammarMap, K extends Under<'clause.comprehension.for'> = 'clause.comprehension.for'> extends SubKindOf<V.Clause.Comprehension<G, K>> {
 			// claimed by p
-			readonly $kind: 'clause.comprehension.for';
+			readonly $kind: K;
 			readonly trailingComma?: Flag;
 			readonly left: Slot<
 				G,
@@ -30,9 +30,9 @@ export namespace Clause {
 				| V.Pattern.Any<G>
 			>[];
 		}
-		export interface If<G extends GrammarMap> extends SubKindOf<V.Clause.Comprehension<G>> {
+		export interface If<G extends GrammarMap, K extends Under<'clause.comprehension.if'> = 'clause.comprehension.if'> extends SubKindOf<V.Clause.Comprehension<G, K>> {
 			// claimed by p
-			readonly $kind: 'clause.comprehension.if';
+			readonly $kind: K;
 			readonly condition: Slot<
 				G,
 				'clause.comprehension.if',

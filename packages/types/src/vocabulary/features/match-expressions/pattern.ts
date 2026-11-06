@@ -1,21 +1,21 @@
 import type { GrammarMap, Slot } from '../../map.ts';
-import type { SubKindOf } from '../../utils.ts';
+import type { SubKindOf, Under } from '../../utils.ts';
 import type * as V from '../../index.ts';
 export namespace Pattern {
-	export interface As<G extends GrammarMap> extends SubKindOf<V.Pattern<G>> {
+	export interface As<G extends GrammarMap, K extends Under<'pattern.as'> = 'pattern.as'> extends SubKindOf<V.Pattern<G, K>> {
 		// claimed by pr
-		readonly $kind: 'pattern.as';
+		readonly $kind: K;
 		readonly name: Slot<G, 'pattern.as', 'name', V.Identifier.Any<G>>;
 		readonly pattern: Slot<G, 'pattern.as', 'pattern', unknown>;
 	}
-	export interface Map<G extends GrammarMap> extends SubKindOf<V.Pattern<G>> {
+	export interface Map<G extends GrammarMap, K extends Under<'pattern.map'> = 'pattern.map'> extends SubKindOf<V.Pattern<G, K>> {
 		// claimed by p
-		readonly $kind: 'pattern.map';
+		readonly $kind: K;
 		readonly elements?: Slot<G, 'pattern.map', 'elements', unknown>[];
 	}
-	export interface Or<G extends GrammarMap> extends SubKindOf<V.Pattern<G>> {
+	export interface Or<G extends GrammarMap, K extends Under<'pattern.or'> = 'pattern.or'> extends SubKindOf<V.Pattern<G, K>> {
 		// claimed by pr
-		readonly $kind: 'pattern.or';
+		readonly $kind: K;
 		readonly left?: Slot<
 			G,
 			'pattern.or',

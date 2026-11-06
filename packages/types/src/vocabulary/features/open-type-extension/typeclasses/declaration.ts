@@ -1,11 +1,11 @@
 import type { GrammarMap, Slot } from '../../../map.ts';
-import type { SubKindOf } from '../../../utils.ts';
+import type { SubKindOf, Under } from '../../../utils.ts';
 import type * as V from '../../../index.ts';
 export namespace Declaration {
 	export namespace Extension {
-		export interface Conformance<G extends GrammarMap> extends SubKindOf<V.Declaration.Extension<G>, 'body' | 'implements' | 'traitClause' | 'type'> {
+		export interface Conformance<G extends GrammarMap, K extends Under<'declaration.extension.conformance'> = 'declaration.extension.conformance'> extends SubKindOf<V.Declaration.Extension<G, K>, 'body' | 'implements' | 'traitClause' | 'type'> {
 			// claimed by r
-			readonly $kind: 'declaration.extension.conformance';
+			readonly $kind: K;
 			readonly body: Slot<
 				G,
 				'declaration.extension.conformance',

@@ -1,10 +1,10 @@
 import type { GrammarMap, Slot } from '../../../map.ts';
-import type { SubKindOf } from '../../../utils.ts';
+import type { SubKindOf, Under } from '../../../utils.ts';
 import type * as V from '../../../index.ts';
 export namespace Clause {
-	export interface Bounds<G extends GrammarMap> extends SubKindOf<V.Clause<G>> {
+	export interface Bounds<G extends GrammarMap, K extends Under<'clause.bounds'> = 'clause.bounds'> extends SubKindOf<V.Clause<G, K>> {
 		// claimed by rt
-		readonly $kind: 'clause.bounds';
+		readonly $kind: K;
 		readonly bounds?: Slot<
 			G,
 			'clause.bounds',
@@ -17,9 +17,9 @@ export namespace Clause {
 		>[];
 	}
 	export namespace Bounds {
-		export interface Removed<G extends GrammarMap> extends SubKindOf<V.Clause.Bounds<G>> {
+		export interface Removed<G extends GrammarMap, K extends Under<'clause.bounds.removed'> = 'clause.bounds.removed'> extends SubKindOf<V.Clause.Bounds<G, K>> {
 			// claimed by r
-			readonly $kind: 'clause.bounds.removed';
+			readonly $kind: K;
 			readonly type: Slot<
 				G,
 				'clause.bounds.removed',
@@ -30,21 +30,21 @@ export namespace Clause {
 				| V.Type.Any<G>
 			>;
 		}
-		export interface Use<G extends GrammarMap> extends SubKindOf<V.Clause.Bounds<G>, 'bounds'> {
+		export interface Use<G extends GrammarMap, K extends Under<'clause.bounds.use'> = 'clause.bounds.use'> extends SubKindOf<V.Clause.Bounds<G, K>, 'bounds'> {
 			// claimed by r
-			readonly $kind: 'clause.bounds.use';
+			readonly $kind: K;
 			readonly bounds?: Slot<G, 'clause.bounds.use', 'bounds', V.Identifier.Any<G>>[];
 		}
 	}
-	export interface Where<G extends GrammarMap> extends SubKindOf<V.Clause<G>> {
+	export interface Where<G extends GrammarMap, K extends Under<'clause.where'> = 'clause.where'> extends SubKindOf<V.Clause<G, K>> {
 		// claimed by r
-		readonly $kind: 'clause.where';
+		readonly $kind: K;
 		readonly wherePredicates?: V.Clause.Where.Predicate<G>[];
 	}
 	export namespace Where {
-		export interface Predicate<G extends GrammarMap> extends SubKindOf<V.Clause.Where<G>> {
+		export interface Predicate<G extends GrammarMap, K extends Under<'clause.where.predicate'> = 'clause.where.predicate'> extends SubKindOf<V.Clause.Where<G, K>> {
 			// claimed by r
-			readonly $kind: 'clause.where.predicate';
+			readonly $kind: K;
 			readonly bounds: Slot<
 				G,
 				'clause.where.predicate',

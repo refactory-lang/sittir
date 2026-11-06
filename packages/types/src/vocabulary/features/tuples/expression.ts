@@ -1,11 +1,11 @@
 import type { GrammarMap, Slot, Text } from '../../map.ts';
-import type { Flag, SubKindOf } from '../../utils.ts';
+import type { Flag, SubKindOf, Under } from '../../utils.ts';
 import type * as V from '../../index.ts';
 export namespace Expression {
 	export namespace Collection {
-		export interface Tuple<G extends GrammarMap> extends SubKindOf<V.Expression.Collection<G>> {
+		export interface Tuple<G extends GrammarMap, K extends Under<'expression.collection.tuple'> = 'expression.collection.tuple'> extends SubKindOf<V.Expression.Collection<G, K>> {
 			// claimed by pr
-			readonly $kind: 'expression.collection.tuple';
+			readonly $kind: K;
 			readonly elements?: Slot<
 				G,
 				'expression.collection.tuple',
@@ -21,9 +21,9 @@ export namespace Expression {
 			>[];
 		}
 		export namespace Tuple {
-			export interface Bare<G extends GrammarMap> extends SubKindOf<V.Expression.Collection.Tuple<G>> {
+			export interface Bare<G extends GrammarMap, K extends Under<'expression.collection.tuple.bare'> = 'expression.collection.tuple.bare'> extends SubKindOf<V.Expression.Collection.Tuple<G, K>> {
 				// claimed by p
-				readonly $kind: 'expression.collection.tuple.bare';
+				readonly $kind: K;
 				readonly trailingComma?: Flag;
 			}
 		}

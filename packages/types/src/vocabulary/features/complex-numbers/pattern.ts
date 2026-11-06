@@ -1,10 +1,10 @@
 import type { GrammarMap } from '../../map.ts';
-import type { SubKindOf } from '../../utils.ts';
+import type { SubKindOf, Under } from '../../utils.ts';
 import type * as V from '../../index.ts';
 export namespace Pattern {
-	export interface Complex<G extends GrammarMap> extends SubKindOf<V.Pattern<G>> {
+	export interface Complex<G extends GrammarMap, K extends Under<'pattern.complex'> = 'pattern.complex'> extends SubKindOf<V.Pattern<G, K>> {
 		// claimed by p
-		readonly $kind: 'pattern.complex';
+		readonly $kind: K;
 		readonly imaginary:
 			| V.Literal.Number.Float.Any<G>
 			| V.Literal.Number.Integer<G>
@@ -24,13 +24,13 @@ export namespace Pattern {
 		readonly sign?: boolean;
 	}
 	export namespace Complex {
-		export interface Add<G extends GrammarMap> extends SubKindOf<V.Pattern.Complex<G>> {
+		export interface Add<G extends GrammarMap, K extends Under<'pattern.complex.add'> = 'pattern.complex.add'> extends SubKindOf<V.Pattern.Complex<G, K>> {
 			// claimed by p
-			readonly $kind: 'pattern.complex.add';
+			readonly $kind: K;
 		}
-		export interface Subtract<G extends GrammarMap> extends SubKindOf<V.Pattern.Complex<G>> {
+		export interface Subtract<G extends GrammarMap, K extends Under<'pattern.complex.subtract'> = 'pattern.complex.subtract'> extends SubKindOf<V.Pattern.Complex<G, K>> {
 			// claimed by p
-			readonly $kind: 'pattern.complex.subtract';
+			readonly $kind: K;
 		}
 	}
 }

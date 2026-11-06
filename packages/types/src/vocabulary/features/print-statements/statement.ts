@@ -1,10 +1,10 @@
 import type { GrammarMap, Slot } from '../../map.ts';
-import type { Flag, SubKindOf } from '../../utils.ts';
+import type { Flag, SubKindOf, Under } from '../../utils.ts';
 import type * as V from '../../index.ts';
 export namespace Statement {
-	export interface Print<G extends GrammarMap> extends SubKindOf<V.Statement<G>> {
+	export interface Print<G extends GrammarMap, K extends Under<'statement.print'> = 'statement.print'> extends SubKindOf<V.Statement<G, K>> {
 		// claimed by p
-		readonly $kind: 'statement.print';
+		readonly $kind: K;
 		readonly arguments?: Slot<
 			G,
 			'statement.print',

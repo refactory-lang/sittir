@@ -1,10 +1,10 @@
 import type { GrammarMap, Slot } from '../../map.ts';
-import type { SubKindOf } from '../../utils.ts';
+import type { SubKindOf, Under } from '../../utils.ts';
 import type * as V from '../../index.ts';
 export namespace Expression {
-	export interface Conditional<G extends GrammarMap> extends SubKindOf<V.Expression<G>> {
+	export interface Conditional<G extends GrammarMap, K extends Under<'expression.conditional'> = 'expression.conditional'> extends SubKindOf<V.Expression<G, K>> {
 		// claimed by pt
-		readonly $kind: 'expression.conditional';
+		readonly $kind: K;
 		readonly alternative: Slot<
 			G,
 			'expression.conditional',

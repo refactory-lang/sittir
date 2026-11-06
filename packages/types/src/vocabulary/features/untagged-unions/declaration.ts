@@ -1,10 +1,10 @@
 import type { GrammarMap, Slot } from '../../map.ts';
-import type { SubKindOf } from '../../utils.ts';
+import type { SubKindOf, Under } from '../../utils.ts';
 import type * as V from '../../index.ts';
 export namespace Declaration {
-	export interface Union<G extends GrammarMap> extends SubKindOf<V.Declaration<G>> {
+	export interface Union<G extends GrammarMap, K extends Under<'declaration.union'> = 'declaration.union'> extends SubKindOf<V.Declaration<G, K>> {
 		// claimed by r
-		readonly $kind: 'declaration.union';
+		readonly $kind: K;
 		readonly body: Slot<
 			G,
 			'declaration.union',

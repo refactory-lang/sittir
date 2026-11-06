@@ -1,14 +1,14 @@
 import type { GrammarMap, Slot } from '../../map.ts';
-import type { Flag, SubKindOf } from '../../utils.ts';
+import type { Flag, SubKindOf, Under } from '../../utils.ts';
 import type * as V from '../../index.ts';
 export namespace Declaration {
-	export interface Function<G extends GrammarMap> {
+	export interface Function<G extends GrammarMap, K extends Under<'declaration.function'> = 'declaration.function'> {
 		readonly default?: Flag;
 		// r only
 	}
-	export interface Method<G extends GrammarMap> extends SubKindOf<V.Declaration<G>> {
+	export interface Method<G extends GrammarMap, K extends Under<'declaration.method'> = 'declaration.method'> extends SubKindOf<V.Declaration<G, K>> {
 		// claimed by prt
-		readonly $kind: 'declaration.method';
+		readonly $kind: K;
 		readonly body?: Slot<G, 'declaration.method', 'body', V.Declaration.TypeAlias<G> | V.Statement.Any<G>>;
 		readonly default?: Flag;
 		// rt only
@@ -40,9 +40,9 @@ export namespace Declaration {
 		// t only
 	}
 	export namespace Method {
-		export interface Signature<G extends GrammarMap> extends SubKindOf<V.Declaration.Method<G>, 'name' | 'parameters' | 'returnType' | 'typeParameters'> {
+		export interface Signature<G extends GrammarMap, K extends Under<'declaration.method.signature'> = 'declaration.method.signature'> extends SubKindOf<V.Declaration.Method<G, K>, 'name' | 'parameters' | 'returnType' | 'typeParameters'> {
 			// claimed by rt
-			readonly $kind: 'declaration.method.signature';
+			readonly $kind: K;
 			readonly functionModifiers?: Slot<G, 'declaration.method.signature', 'functionModifiers', V.Modifier.Extern<G> | string>[];
 			// r only
 			readonly name: Slot<
@@ -74,8 +74,8 @@ export namespace Declaration {
 			readonly static?: Flag;
 			// t only
 		}
-		export interface Special<G extends GrammarMap> extends SubKindOf<V.Declaration.Method<G>, 'name'> {
-			readonly $kind: 'declaration.method.special';
+		export interface Special<G extends GrammarMap, K extends Under<'declaration.method.special'> = 'declaration.method.special'> extends SubKindOf<V.Declaration.Method<G, K>, 'name'> {
+			readonly $kind: K;
 			readonly name: `__${string}__`;
 			readonly stem: string;
 		}

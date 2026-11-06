@@ -1,7 +1,8 @@
 import type { GrammarMap, Slot } from '../../map.ts';
+import type { Under } from '../../utils.ts';
 import type * as V from '../../index.ts';
 export namespace Declaration {
-	export interface Parameter<G extends GrammarMap> {
+	export interface Parameter<G extends GrammarMap, K extends Under<'declaration.parameter'> = 'declaration.parameter'> {
 		readonly default?: Slot<
 			G,
 			'declaration.parameter',
@@ -15,7 +16,7 @@ export namespace Declaration {
 		// pt only
 	}
 	export namespace Parameter {
-		export interface Default<G extends GrammarMap> {
+		export interface Default<G extends GrammarMap, K extends Under<'declaration.parameter.default'> = 'declaration.parameter.default'> {
 			readonly default: Slot<
 				G,
 				'declaration.parameter.default',
@@ -26,7 +27,7 @@ export namespace Declaration {
 				| V.Pattern.Any<G>
 			>;
 		}
-		export interface TypedDefault<G extends GrammarMap> {
+		export interface TypedDefault<G extends GrammarMap, K extends Under<'declaration.parameter.typed_default'> = 'declaration.parameter.typed_default'> {
 			readonly default: Slot<
 				G,
 				'declaration.parameter.typed_default',

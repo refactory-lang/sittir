@@ -17,18 +17,18 @@ const vocabularyIn = async (...lines: readonly string[]) => {
 describe('readVocabulary', () => {
 	it('reads the parent a heritage clause names through V. however the reference is written', async () => {
 		const vocabulary = await vocabularyIn(
-			'export interface Declaration<G> {',
-			"\treadonly $kind: 'declaration';",
+			'export interface Declaration<G, K = "declaration"> {',
+			"\treadonly $kind: K;",
 			'\treadonly name: string;',
 			'}',
-			'export interface Generic<G> extends SubKindOf<V.Declaration<G>> {',
-			"\treadonly $kind: 'declaration.generic';",
+			'export interface Generic<G, K = "declaration.generic"> extends SubKindOf<V.Declaration<G>> {',
+			"\treadonly $kind: K;",
 			'}',
-			'export interface Parenthesized<G> extends SubKindOf<(V.Declaration<G>)> {',
-			"\treadonly $kind: 'declaration.parenthesized';",
+			'export interface Parenthesized<G, K = "declaration.parenthesized"> extends SubKindOf<(V.Declaration<G>)> {',
+			"\treadonly $kind: K;",
 			'}',
-			'export interface Bare<G> extends V.Declaration {',
-			"\treadonly $kind: 'declaration.bare';",
+			'export interface Bare<G, K = "declaration.bare"> extends V.Declaration {',
+			"\treadonly $kind: K;",
 			'}'
 		);
 		for (const path of ['declaration.generic', 'declaration.parenthesized', 'declaration.bare']) {
@@ -39,13 +39,13 @@ describe('readVocabulary', () => {
 
 	it('drops a member a refinement narrows to never from its members, and keeps it on the parent', async () => {
 		const vocabulary = await vocabularyIn(
-			'export interface Declaration<G> {',
-			"\treadonly $kind: 'declaration';",
+			'export interface Declaration<G, K = "declaration"> {',
+			"\treadonly $kind: K;",
 			'\treadonly name: string;',
 			'\treadonly parameters?: string[];',
 			'}',
-			'export interface Bare<G> extends SubKindOf<V.Declaration<G>> {',
-			"\treadonly $kind: 'declaration.bare';",
+			'export interface Bare<G, K = "declaration.bare"> extends SubKindOf<V.Declaration<G>> {',
+			"\treadonly $kind: K;",
 			'\treadonly parameters?: never;',
 			'}'
 		);
@@ -60,17 +60,17 @@ describe('readVocabulary', () => {
 			writeFileSync(join(dir, file), [...lines, ''].join('\n'));
 		};
 		write('declaration.ts', [
-			'export interface Declaration<G> {',
-			"\treadonly $kind: 'declaration';",
+			'export interface Declaration<G, K = "declaration"> {',
+			"\treadonly $kind: K;",
 			'\treadonly name: string;',
 			'}',
 			'export namespace Declaration {',
-			'\texport interface Parameter<G> extends SubKindOf<V.Declaration<G>> {',
-			"\t\treadonly $kind: 'declaration.parameter';",
+			'\texport interface Parameter<G, K = "declaration.parameter"> extends SubKindOf<V.Declaration<G>> {',
+			"\t\treadonly $kind: K;",
 			'\t}',
 			'\texport namespace Parameter {',
-			'\t\texport interface Rest<G> extends SubKindOf<V.Declaration.Parameter<G>> {',
-			"\t\t\treadonly $kind: 'declaration.parameter.rest';",
+			'\t\texport interface Rest<G, K = "declaration.parameter.rest"> extends SubKindOf<V.Declaration.Parameter<G>> {',
+			"\t\t\treadonly $kind: K;",
 			'\t\t}',
 			'\t}',
 			'}'
@@ -103,12 +103,12 @@ describe('readVocabulary', () => {
 
 	it('reads an interface or namespace however it is exported or declared', async () => {
 		const vocabulary = await vocabularyIn(
-			"export declare interface Declared<G> { readonly $kind: 'declared'; }",
-			"export default interface Defaulted<G> { readonly $kind: 'defaulted'; }",
-			"declare interface Ambient<G> { readonly $kind: 'ambient'; }",
-			"export declare namespace Exported { export interface Inner<G> { readonly $kind: 'exported.inner'; } }",
-			"declare namespace Ambient { interface Inner<G> { readonly $kind: 'ambient.inner'; } }",
-			"namespace Bare { interface Inner<G> { readonly $kind: 'bare.inner'; } }"
+			"export declare interface Declared<G, K = 'declared'> { readonly $kind: K; }",
+			"export default interface Defaulted<G, K = 'defaulted'> { readonly $kind: K; }",
+			"declare interface Ambient<G, K = 'ambient'> { readonly $kind: K; }",
+			"export declare namespace Exported { export interface Inner<G, K = 'exported.inner'> { readonly $kind: K; } }",
+			"declare namespace Ambient { interface Inner<G, K = 'ambient.inner'> { readonly $kind: K; } }",
+			"namespace Bare { interface Inner<G, K = 'bare.inner'> { readonly $kind: K; } }"
 		);
 		expect([...vocabulary.kinds].map(([path, kind]) => [path, kind.name])).toEqual([
 			['declared', 'Declared'],
@@ -120,15 +120,15 @@ describe('readVocabulary', () => {
 		]);
 	});
 
-	it('reads a token alias as a kind: its path from the text table key, its parent from its namespace, its flags from Flagged', async () => {
+	it('reads a token alias as a kind: its path from its Text path, its parent from its namespace, its flags from Flagged', async () => {
 		const vocabulary = await vocabularyIn(
-			"export interface Type<G> { readonly $kind: 'type'; }",
+			"export interface Type<G, K = 'type'> { readonly $kind: K; }",
 			'export namespace Type {',
-			"\texport type Primitive<G extends GrammarContext<G>> = Flagged<G['texts']['type.primitive'], 'unsigned' | 'wide'>;",
+			"\texport type Primitive<G extends GrammarMap> = Flagged<Text<G, 'type.primitive'>, 'unsigned' | 'wide'>;",
 			'\texport namespace Primitive {',
-			"\t\texport type Unchecked<G extends GrammarContext<G>> = G['texts']['type.primitive.unchecked'];",
+			"\t\texport type Unchecked<G extends GrammarMap> = Text<G, 'type.primitive.unchecked'>;",
 			'\t}',
-			"\texport type Other<G extends GrammarContext<G>> = G['slots']['type']['other'];",
+			"\texport type Other<G extends GrammarMap> = Slot<G, 'type', 'other', unknown>;",
 			'}'
 		);
 		expect([...vocabulary.kinds].map(([path, kind]) => [path, kind.name, kind.parent])).toEqual([
@@ -144,17 +144,17 @@ describe('readVocabulary', () => {
 	});
 
 	it('refuses a name spelled with an escape, which a syntactic reader would read as a different name', async () => {
-		await expect(vocabularyIn('export interface Declaration<G> {', "\treadonly $kind: 'declaration';", '\treadonly accessor?: Fla\\u0067;', '}')).rejects.toThrow(
+		await expect(vocabularyIn('export interface Declaration<G, K = "declaration"> {', "\treadonly $kind: K;", '\treadonly accessor?: Fla\\u0067;', '}')).rejects.toThrow(
 			/Fla\\u0067.*escape/
 		);
-		await expect(vocabularyIn('export interface Declaration<G> {', "\treadonly $kind: 'decl\\u0061ration';", '}')).rejects.toThrow(/escape/);
+		await expect(vocabularyIn('export interface Declaration<G, K = "decl\\u0061ration"> {', "\treadonly $kind: K;", '}')).rejects.toThrow(/escape/);
 	});
 
 	it('reads a module-keyword namespace as a namespace', async () => {
 		const vocabulary = await vocabularyIn(
-			"module Plain { interface Inner<G> { readonly $kind: 'plain.inner'; } }",
-			"export module Exported { export interface Inner<G> { readonly $kind: 'exported.inner'; } }",
-			"declare module Declared { interface Inner<G> { readonly $kind: 'declared.inner'; } }"
+			"module Plain { interface Inner<G, K = 'plain.inner'> { readonly $kind: K; } }",
+			"export module Exported { export interface Inner<G, K = 'exported.inner'> { readonly $kind: K; } }",
+			"declare module Declared { interface Inner<G, K = 'declared.inner'> { readonly $kind: K; } }"
 		);
 		expect([...vocabulary.kinds].map(([path, kind]) => [path, kind.name])).toEqual([
 			['plain.inner', 'Plain.Inner'],
@@ -169,8 +169,8 @@ describe('readVocabulary', () => {
 
 	it('stamps the arity of a member from its type: a list where it is an array, either where a union holds an array arm, and one value otherwise', async () => {
 		const vocabulary = await vocabularyIn(
-			'export interface Declaration<G> {',
-			"\treadonly $kind: 'declaration';",
+			'export interface Declaration<G, K = "declaration"> {',
+			"\treadonly $kind: K;",
 			'\treadonly extern?: V.Modifier.Extern<G>;',
 			"\treadonly name: G['slots']['declaration']['name'];",
 			'\treadonly bounds?: V.Type.Any<G>[];',
@@ -183,7 +183,7 @@ describe('readVocabulary', () => {
 	});
 
 	it('reads a member named by a keyword like any other', async () => {
-		const vocabulary = await vocabularyIn('export interface Declaration<G> {', "\treadonly $kind: 'declaration';", '\treadonly static?: Flag;', '\treadonly type: string;', '}');
+		const vocabulary = await vocabularyIn('export interface Declaration<G, K = "declaration"> {', "\treadonly $kind: K;", '\treadonly static?: Flag;', '\treadonly type: string;', '}');
 		expect([...vocabulary.members('declaration')]).toEqual([
 			['static', { optional: true, flag: true }],
 			['type', { optional: false, flag: false }]
@@ -191,14 +191,14 @@ describe('readVocabulary', () => {
 	});
 
 	it('refuses a member not named by a plain identifier', async () => {
-		const declaration = (member: string) => ['export interface Declaration<G> {', "\treadonly $kind: 'declaration';", `\t${member}`, '}'];
+		const declaration = (member: string) => ['export interface Declaration<G, K = "declaration"> {', "\treadonly $kind: K;", `\t${member}`, '}'];
 		await expect(vocabularyIn(...declaration("readonly 'async'?: Flag;"))).rejects.toThrow(/'async'.*identifier/);
 		await expect(vocabularyIn(...declaration('readonly [key]?: Flag;'))).rejects.toThrow(/\[key\].*identifier/);
 	});
 
 	it('reads past a module augmentation named by a string: it augments another file and names no namespace', async () => {
 		const vocabulary = await vocabularyIn(
-			"export interface Declaration<G> { readonly $kind: 'declaration'; }",
+			"export interface Declaration<G, K = 'declaration'> { readonly $kind: K; }",
 			"declare module './other.ts' { interface Inner<G> extends Declaration<G> {} }"
 		);
 		expect([...vocabulary.kinds.keys()]).toEqual(['declaration']);
@@ -206,18 +206,23 @@ describe('readVocabulary', () => {
 
 	it('refuses a vocabulary kind declared inside a module augmentation named by a string, rather than dropping it', async () => {
 		await expect(
-			vocabularyIn("export interface Declaration<G> { readonly $kind: 'declaration'; }", "declare module './other.ts' { interface Inner<G> { readonly $kind: 'inner'; } }")
+			vocabularyIn("export interface Declaration<G, K = 'declaration'> { readonly $kind: K; }", "declare module './other.ts' { interface Inner<G, K = 'inner'> { readonly $kind: K; } }")
 		).rejects.toThrow(/inner.*'\.\/other\.ts'/);
 	});
 
-	it('reads an interface as a kind only when its $kind is a string literal', async () => {
+	it('reads an interface as a kind only when its $kind is a type parameter, its path that parameter\'s default', async () => {
 		const vocabulary = await vocabularyIn(
-			"export interface Declaration<G> { readonly $kind: 'declaration'; readonly static?: Flag; }",
+			"export interface Declaration<G, K = 'declaration'> { readonly $kind: K; readonly static?: Flag; }",
 			'export interface Options { readonly $kind: true; readonly aaa?: Flag; }',
 			'export interface Numbered { readonly $kind: -1; readonly bbb?: Flag; }'
 		);
 		expect([...vocabulary.kinds.keys()]).toEqual(['declaration']);
 		expect([...vocabulary.flags]).toEqual(['static']);
+	});
+
+	it('refuses a $kind spelled as its path, or naming a type parameter with no path default', async () => {
+		await expect(vocabularyIn("export interface Declaration<G> { readonly $kind: 'declaration'; }")).rejects.toThrow(/spells its \$kind/);
+		await expect(vocabularyIn('export interface Declaration<G, K> { readonly $kind: K; }')).rejects.toThrow(/no type parameter whose default is its path/);
 	});
 });
 
@@ -226,12 +231,12 @@ const vocabularyOf = async (...extra: readonly string[]): Promise<Vocabulary> =>
 	writeFileSync(
 		join(dir, 'declaration.ts'),
 		[
-			'export interface Declaration<G> {',
-			"\treadonly $kind: 'declaration';",
+			'export interface Declaration<G, K = "declaration"> {',
+			"\treadonly $kind: K;",
 			'}',
 			'export namespace Declaration {',
-			'\texport interface Method<G> extends SubKindOf<V.Declaration<G>> {',
-			"\t\treadonly $kind: 'declaration.method';",
+			'\texport interface Method<G, K = "declaration.method"> extends SubKindOf<V.Declaration<G>> {',
+			"\t\treadonly $kind: K;",
 			'\t\treadonly name: string;',
 			'\t\treadonly static?: Flag;',
 			'\t\treadonly privateName?: Flag;',
@@ -280,8 +285,8 @@ describe('flagSegment', () => {
 	it('refuses a path that is both a vocabulary kind and a Flag of its parent: one name names one thing', async () => {
 		const vocabulary = await vocabularyOf(
 			'\texport namespace Method {',
-			'\t\texport interface Static<G> extends SubKindOf<V.Declaration.Method<G>> {',
-			"\t\t\treadonly $kind: 'declaration.method.static';",
+			'\t\texport interface Static<G, K = "declaration.method.static"> extends SubKindOf<V.Declaration.Method<G>> {',
+			"\t\t\treadonly $kind: K;",
 			'\t\t}',
 			'\t}'
 		);
@@ -311,25 +316,25 @@ const vocabularyFiles = async (files: Readonly<Record<string, readonly string[]>
 };
 
 const SYNONYM_KINDS = [
-	'export interface Declaration<G> {',
-	"\treadonly $kind: 'declaration';",
+	'export interface Declaration<G, K = "declaration"> {',
+	"\treadonly $kind: K;",
 	'}',
 	'export namespace Declaration {',
-	'\texport interface Parameter<G> extends SubKindOf<V.Declaration<G>> {',
-	"\t\treadonly $kind: 'declaration.parameter';",
+	'\texport interface Parameter<G, K = "declaration.parameter"> extends SubKindOf<V.Declaration<G>> {',
+	"\t\treadonly $kind: K;",
 	'\t\treadonly name?: string;',
 	'\t\treadonly mutable?: Flag;',
 	'\t}',
 	'\texport namespace Parameter {',
-	'\t\texport interface Receiver<G> extends SubKindOf<V.Declaration.Parameter<G>> {',
-	"\t\t\treadonly $kind: 'declaration.parameter.receiver';",
+	'\t\texport interface Receiver<G, K = "declaration.parameter.receiver"> extends SubKindOf<V.Declaration.Parameter<G>> {',
+	"\t\t\treadonly $kind: K;",
 	'\t\t}',
 	'\t}',
-	'\texport interface Self<G> extends SubKindOf<V.Declaration<G>> {',
-	"\t\treadonly $kind: 'declaration.self';",
+	'\texport interface Self<G, K = "declaration.self"> extends SubKindOf<V.Declaration<G>> {',
+	"\t\treadonly $kind: K;",
 	'\t}',
-	'\texport interface Method<G> extends SubKindOf<V.Declaration<G>> {',
-	"\t\treadonly $kind: 'declaration.method';",
+	'\texport interface Method<G, K = "declaration.method"> extends SubKindOf<V.Declaration<G>> {',
+	"\t\treadonly $kind: K;",
 	'\t}',
 	'}'
 ];
@@ -413,9 +418,9 @@ describe('canonicalPaths', () => {
 		const canonical = canonicalPaths(
 			await vocabularyFiles({
 				'declaration.ts': [
-					"export interface Declaration<G> { readonly $kind: 'declaration'; }",
-					"export namespace Declaration { export namespace Slot { export interface Receiver<G> extends SubKindOf<V.Declaration<G>> { readonly $kind: 'declaration.slot.receiver'; } } }",
-					"export namespace Declaration { export namespace Port { export interface Receiver<G> extends SubKindOf<V.Declaration<G>> { readonly $kind: 'declaration.port.receiver'; } } }",
+					"export interface Declaration<G, K = 'declaration'> { readonly $kind: K; }",
+					"export namespace Declaration { export namespace Slot { export interface Receiver<G, K = 'declaration.slot.receiver'> extends SubKindOf<V.Declaration<G>> { readonly $kind: K; } } }",
+					"export namespace Declaration { export namespace Port { export interface Receiver<G, K = 'declaration.port.receiver'> extends SubKindOf<V.Declaration<G>> { readonly $kind: K; } } }",
 					"export interface DeclarationSynonyms { readonly port: 'slot' | 'socket'; }"
 				]
 			})
@@ -435,9 +440,9 @@ const member = (name: string): MemberFact => ({ route: 'rename', owner: 'paramet
 describe('canonicalFacts', () => {
 	it("drops a capture its pattern's predicates name where no path its claim reads declares it, and keeps one a path declares", async () => {
 		const vocabulary = await vocabularyIn(
-			"export interface Declaration<G> { readonly $kind: 'declaration'; }",
-			"export interface Constant<G> extends SubKindOf<V.Declaration<G>> { readonly $kind: 'declaration.constant'; readonly name: string; }",
-			"export interface Constructor<G> extends SubKindOf<V.Declaration<G>> { readonly $kind: 'declaration.constructor'; readonly body: string; }"
+			"export interface Declaration<G, K = 'declaration'> { readonly $kind: K; }",
+			"export interface Constant<G, K = 'declaration.constant'> extends SubKindOf<V.Declaration<G>> { readonly $kind: K; readonly name: string; }",
+			"export interface Constructor<G, K = 'declaration.constructor'> extends SubKindOf<V.Declaration<G>> { readonly $kind: K; readonly body: string; }"
 		);
 		const slot = (name: string) => ({ name, propertyName: name, required: true, multiple: false, storage: 'verbatim', kinds: ['identifier'], terminals: [] });
 		const assignment: ModelNode = { kind: 'assignment', modelType: 'branch', unit: false, layout: false, seated: false, slots: [slot('name'), slot('body')], subtypes: [], defaultSubtype: null, elementKinds: [], enumMembers: [], text: null, pattern: null, variantOf: null, splitFrom: null, aliasStorage: null, interiorPart: null, shownAs: [] };

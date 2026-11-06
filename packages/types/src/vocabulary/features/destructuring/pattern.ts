@@ -1,10 +1,10 @@
 import type { GrammarMap, Slot, Text } from '../../map.ts';
-import type { Flag, SubKindOf } from '../../utils.ts';
+import type { Flag, SubKindOf, Under } from '../../utils.ts';
 import type * as V from '../../index.ts';
 export namespace Pattern {
-	export interface Assignment<G extends GrammarMap> extends SubKindOf<V.Pattern<G>> {
+	export interface Assignment<G extends GrammarMap, K extends Under<'pattern.assignment'> = 'pattern.assignment'> extends SubKindOf<V.Pattern<G, K>> {
 		// claimed by t
-		readonly $kind: 'pattern.assignment';
+		readonly $kind: K;
 		readonly left: Slot<
 			G,
 			'pattern.assignment',
@@ -24,20 +24,20 @@ export namespace Pattern {
 			| V.Literal.Any<G>
 		>;
 	}
-	export interface List<G extends GrammarMap> extends SubKindOf<V.Pattern<G>> {
+	export interface List<G extends GrammarMap, K extends Under<'pattern.list'> = 'pattern.list'> extends SubKindOf<V.Pattern<G, K>> {
 		// claimed by prt
-		readonly $kind: 'pattern.list';
+		readonly $kind: K;
 		readonly elements?: Slot<G, 'pattern.list', 'elements', unknown>[];
 	}
-	export interface Object<G extends GrammarMap> extends SubKindOf<V.Pattern<G>> {
+	export interface Object<G extends GrammarMap, K extends Under<'pattern.object'> = 'pattern.object'> extends SubKindOf<V.Pattern<G, K>> {
 		// claimed by t
-		readonly $kind: 'pattern.object';
+		readonly $kind: K;
 		readonly properties?: Slot<G, 'pattern.object', 'properties', V.Identifier.Any<G> | V.Pattern.Any<G> | string>[];
 	}
 	export namespace Object {
-		export interface Assignment<G extends GrammarMap> extends SubKindOf<V.Pattern.Object<G>> {
+		export interface Assignment<G extends GrammarMap, K extends Under<'pattern.object.assignment'> = 'pattern.object.assignment'> extends SubKindOf<V.Pattern.Object<G, K>> {
 			// claimed by t
-			readonly $kind: 'pattern.object.assignment';
+			readonly $kind: K;
 			readonly left: Slot<G, 'pattern.object.assignment', 'left', V.Identifier.Any<G> | V.Pattern.Any<G> | string>;
 			readonly right: Slot<
 				G,
@@ -49,9 +49,9 @@ export namespace Pattern {
 				| V.Literal.Any<G>
 			>;
 		}
-		export interface Pair<G extends GrammarMap> extends SubKindOf<V.Pattern.Object<G>> {
+		export interface Pair<G extends GrammarMap, K extends Under<'pattern.object.pair'> = 'pattern.object.pair'> extends SubKindOf<V.Pattern.Object<G, K>> {
 			// claimed by t
-			readonly $kind: 'pattern.object.pair';
+			readonly $kind: K;
 			readonly key: Slot<
 				G,
 				'pattern.object.pair',
@@ -74,9 +74,9 @@ export namespace Pattern {
 			>;
 		}
 	}
-	export interface Rest<G extends GrammarMap> extends SubKindOf<V.Pattern<G>> {
+	export interface Rest<G extends GrammarMap, K extends Under<'pattern.rest'> = 'pattern.rest'> extends SubKindOf<V.Pattern<G, K>> {
 		// claimed by pt
-		readonly $kind: 'pattern.rest';
+		readonly $kind: K;
 		readonly pattern: Slot<
 			G,
 			'pattern.rest',
@@ -89,14 +89,14 @@ export namespace Pattern {
 		>;
 	}
 	export namespace Rest {
-		export interface Map<G extends GrammarMap> extends SubKindOf<V.Pattern.Rest<G>> {
+		export interface Map<G extends GrammarMap, K extends Under<'pattern.rest.map'> = 'pattern.rest.map'> extends SubKindOf<V.Pattern.Rest<G, K>> {
 			// claimed by p
-			readonly $kind: 'pattern.rest.map';
+			readonly $kind: K;
 		}
 	}
-	export interface Tuple<G extends GrammarMap> extends SubKindOf<V.Pattern<G>> {
+	export interface Tuple<G extends GrammarMap, K extends Under<'pattern.tuple'> = 'pattern.tuple'> extends SubKindOf<V.Pattern<G, K>> {
 		// claimed by pr
-		readonly $kind: 'pattern.tuple';
+		readonly $kind: K;
 		readonly elements?: Slot<
 			G,
 			'pattern.tuple',
@@ -109,9 +109,9 @@ export namespace Pattern {
 		>[];
 	}
 	export namespace Tuple {
-		export interface Bare<G extends GrammarMap> extends SubKindOf<V.Pattern.Tuple<G>> {
+		export interface Bare<G extends GrammarMap, K extends Under<'pattern.tuple.bare'> = 'pattern.tuple.bare'> extends SubKindOf<V.Pattern.Tuple<G, K>> {
 			// claimed by p
-			readonly $kind: 'pattern.tuple.bare';
+			readonly $kind: K;
 			readonly trailingComma?: Flag;
 		}
 	}

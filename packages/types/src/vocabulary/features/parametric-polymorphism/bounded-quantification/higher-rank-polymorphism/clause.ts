@@ -1,11 +1,11 @@
 import type { GrammarMap, Slot } from '../../../../map.ts';
-import type { SubKindOf } from '../../../../utils.ts';
+import type { SubKindOf, Under } from '../../../../utils.ts';
 import type * as V from '../../../../index.ts';
 export namespace Clause {
 	export namespace Bounds {
-		export interface HigherRanked<G extends GrammarMap> extends SubKindOf<V.Clause.Bounds<G>> {
+		export interface HigherRanked<G extends GrammarMap, K extends Under<'clause.bounds.higher_ranked'> = 'clause.bounds.higher_ranked'> extends SubKindOf<V.Clause.Bounds<G, K>> {
 			// claimed by r
-			readonly $kind: 'clause.bounds.higher_ranked';
+			readonly $kind: K;
 			readonly type: Slot<
 				G,
 				'clause.bounds.higher_ranked',

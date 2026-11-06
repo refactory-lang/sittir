@@ -1,8 +1,8 @@
 import type { GrammarMap, Slot } from './map.ts';
-import type { SubKindOf } from './utils.ts';
+import type { SubKindOf, Under } from './utils.ts';
 import type * as V from './index.ts';
-export interface Literal<G extends GrammarMap> {
-	readonly $kind: 'literal';
+export interface Literal<G extends GrammarMap, K extends Under<'literal'> = 'literal'> {
+	readonly $kind: K;
 }
 
 export interface LiteralSynonyms {
@@ -13,46 +13,46 @@ export interface LiteralSynonyms {
 }
 
 export namespace Literal {
-	export interface Boolean<G extends GrammarMap> extends SubKindOf<V.Literal<G>> {
+	export interface Boolean<G extends GrammarMap, K extends Under<'literal.boolean'> = 'literal.boolean'> extends SubKindOf<V.Literal<G, K>> {
 		// claimed by r
-		readonly $kind: 'literal.boolean';
+		readonly $kind: K;
 		readonly $value: boolean;
 	}
 	export namespace Boolean {
-		export interface False<G extends GrammarMap> extends SubKindOf<V.Literal.Boolean<G>> {
+		export interface False<G extends GrammarMap, K extends Under<'literal.boolean.false'> = 'literal.boolean.false'> extends SubKindOf<V.Literal.Boolean<G, K>> {
 			// claimed by prt
-			readonly $kind: 'literal.boolean.false';
+			readonly $kind: K;
 			readonly $value: false;
 		}
-		export interface True<G extends GrammarMap> extends SubKindOf<V.Literal.Boolean<G>> {
+		export interface True<G extends GrammarMap, K extends Under<'literal.boolean.true'> = 'literal.boolean.true'> extends SubKindOf<V.Literal.Boolean<G, K>> {
 			// claimed by prt
-			readonly $kind: 'literal.boolean.true';
+			readonly $kind: K;
 			readonly $value: true;
 		}
 	}
-	export interface Ellipsis<G extends GrammarMap> extends SubKindOf<V.Literal<G>> {
+	export interface Ellipsis<G extends GrammarMap, K extends Under<'literal.ellipsis'> = 'literal.ellipsis'> extends SubKindOf<V.Literal<G, K>> {
 		// claimed by p
-		readonly $kind: 'literal.ellipsis';
+		readonly $kind: K;
 	}
-	export interface Null<G extends GrammarMap> extends SubKindOf<V.Literal<G>> {
+	export interface Null<G extends GrammarMap, K extends Under<'literal.null'> = 'literal.null'> extends SubKindOf<V.Literal<G, K>> {
 		// claimed by pt
-		readonly $kind: 'literal.null';
+		readonly $kind: K;
 	}
 	export namespace Null {
-		export interface Undefined<G extends GrammarMap> extends SubKindOf<V.Literal.Null<G>> {
+		export interface Undefined<G extends GrammarMap, K extends Under<'literal.null.undefined'> = 'literal.null.undefined'> extends SubKindOf<V.Literal.Null<G, K>> {
 			// claimed by t
-			readonly $kind: 'literal.null.undefined';
+			readonly $kind: K;
 		}
 	}
-	export interface Number<G extends GrammarMap> extends SubKindOf<V.Literal<G>> {
+	export interface Number<G extends GrammarMap, K extends Under<'literal.number'> = 'literal.number'> extends SubKindOf<V.Literal<G, K>> {
 		// claimed by t
-		readonly $kind: 'literal.number';
+		readonly $kind: K;
 		readonly $value: number | bigint;
 	}
 	export namespace Number {
-		export interface Float<G extends GrammarMap> extends SubKindOf<V.Literal.Number<G>> {
+		export interface Float<G extends GrammarMap, K extends Under<'literal.number.float'> = 'literal.number.float'> extends SubKindOf<V.Literal.Number<G, K>> {
 			// claimed by prt
-			readonly $kind: 'literal.number.float';
+			readonly $kind: K;
 			readonly $value: number;
 			readonly exponent?: Slot<G, 'literal.number.float', 'exponent', unknown>;
 			// pt only
@@ -66,9 +66,9 @@ export namespace Literal {
 			// t only
 		}
 		export namespace Float {
-			export interface LeadingPoint<G extends GrammarMap> extends SubKindOf<V.Literal.Number.Float<G>, 'exponent' | 'fraction' | 'integer' | 'marker' | 'exponentSign' | 'imaginary'> {
+			export interface LeadingPoint<G extends GrammarMap, K extends Under<'literal.number.float.leading_point'> = 'literal.number.float.leading_point'> extends SubKindOf<V.Literal.Number.Float<G, K>, 'exponent' | 'fraction' | 'integer' | 'marker' | 'exponentSign' | 'imaginary'> {
 				// claimed by pt
-				readonly $kind: 'literal.number.float.leading_point';
+				readonly $kind: K;
 				readonly exponent: Slot<G, 'literal.number.float.leading_point', 'exponent', unknown>;
 				readonly fraction: Slot<G, 'literal.number.float.leading_point', 'fraction', unknown>;
 				readonly integer?: Slot<G, 'literal.number.float.leading_point', 'integer', unknown>;
@@ -77,9 +77,9 @@ export namespace Literal {
 				readonly exponentSign?: Slot<G, 'literal.number.float.leading_point', 'exponentSign', string>;
 				// t only
 			}
-			export interface Scientific<G extends GrammarMap> extends SubKindOf<V.Literal.Number.Float<G>, 'exponent' | 'integer' | 'marker' | 'exponentSign' | 'imaginary'> {
+			export interface Scientific<G extends GrammarMap, K extends Under<'literal.number.float.scientific'> = 'literal.number.float.scientific'> extends SubKindOf<V.Literal.Number.Float<G, K>, 'exponent' | 'integer' | 'marker' | 'exponentSign' | 'imaginary'> {
 				// claimed by pt
-				readonly $kind: 'literal.number.float.scientific';
+				readonly $kind: K;
 				readonly exponent: Slot<G, 'literal.number.float.scientific', 'exponent', unknown>;
 				readonly integer: Slot<G, 'literal.number.float.scientific', 'integer', unknown>;
 				readonly marker: Slot<G, 'literal.number.float.scientific', 'marker', string>;
@@ -87,36 +87,36 @@ export namespace Literal {
 				// t only
 			}
 		}
-		export interface Integer<G extends GrammarMap> extends SubKindOf<V.Literal.Number<G>> {
+		export interface Integer<G extends GrammarMap, K extends Under<'literal.number.integer'> = 'literal.number.integer'> extends SubKindOf<V.Literal.Number<G, K>> {
 			// claimed by prt
-			readonly $kind: 'literal.number.integer';
+			readonly $kind: K;
 			readonly content?: Slot<G, 'literal.number.integer', 'content', unknown>;
 			// r only
 			readonly suffix?: Slot<G, 'literal.number.integer', 'suffix', string>;
 			// r only
 		}
 		export namespace Integer {
-			export interface Binary<G extends GrammarMap> extends SubKindOf<V.Literal.Number.Integer<G>, 'content' | 'suffix'> {
+			export interface Binary<G extends GrammarMap, K extends Under<'literal.number.integer.binary'> = 'literal.number.integer.binary'> extends SubKindOf<V.Literal.Number.Integer<G, K>, 'content' | 'suffix'> {
 				// claimed by prt
-				readonly $kind: 'literal.number.integer.binary';
+				readonly $kind: K;
 				readonly content: Slot<G, 'literal.number.integer.binary', 'content', unknown>;
 				readonly radixPrefix?: Slot<G, 'literal.number.integer.binary', 'radixPrefix', string>;
 				// pt only
 				readonly suffix?: Slot<G, 'literal.number.integer.binary', 'suffix', string>;
 				// r only
 			}
-			export interface Hex<G extends GrammarMap> extends SubKindOf<V.Literal.Number.Integer<G>, 'content' | 'suffix'> {
+			export interface Hex<G extends GrammarMap, K extends Under<'literal.number.integer.hex'> = 'literal.number.integer.hex'> extends SubKindOf<V.Literal.Number.Integer<G, K>, 'content' | 'suffix'> {
 				// claimed by prt
-				readonly $kind: 'literal.number.integer.hex';
+				readonly $kind: K;
 				readonly content: Slot<G, 'literal.number.integer.hex', 'content', unknown>;
 				readonly radixPrefix?: Slot<G, 'literal.number.integer.hex', 'radixPrefix', string>;
 				// pt only
 				readonly suffix?: Slot<G, 'literal.number.integer.hex', 'suffix', string>;
 				// r only
 			}
-			export interface Octal<G extends GrammarMap> extends SubKindOf<V.Literal.Number.Integer<G>, 'content' | 'suffix'> {
+			export interface Octal<G extends GrammarMap, K extends Under<'literal.number.integer.octal'> = 'literal.number.integer.octal'> extends SubKindOf<V.Literal.Number.Integer<G, K>, 'content' | 'suffix'> {
 				// claimed by prt
-				readonly $kind: 'literal.number.integer.octal';
+				readonly $kind: K;
 				readonly content: Slot<G, 'literal.number.integer.octal', 'content', unknown>;
 				readonly radixPrefix?: Slot<G, 'literal.number.integer.octal', 'radixPrefix', string>;
 				// pt only
@@ -124,9 +124,9 @@ export namespace Literal {
 				// r only
 			}
 		}
-		export interface Negative<G extends GrammarMap> extends SubKindOf<V.Literal.Number<G>> {
+		export interface Negative<G extends GrammarMap, K extends Under<'literal.number.negative'> = 'literal.number.negative'> extends SubKindOf<V.Literal.Number<G, K>> {
 			// claimed by prt
-			readonly $kind: 'literal.number.negative';
+			readonly $kind: K;
 			readonly value: Slot<
 				G,
 				'literal.number.negative',
@@ -136,15 +136,15 @@ export namespace Literal {
 			>;
 		}
 	}
-	export interface String<G extends GrammarMap> extends SubKindOf<V.Literal<G>> {
+	export interface String<G extends GrammarMap, K extends Under<'literal.string'> = 'literal.string'> extends SubKindOf<V.Literal<G, K>> {
 		// claimed by prt
-		readonly $kind: 'literal.string';
+		readonly $kind: K;
 		readonly elements?: Slot<G, 'literal.string', 'elements', unknown>[];
 	}
 	export namespace String {
-		export interface Concatenated<G extends GrammarMap> extends SubKindOf<V.Literal.String<G>> {
+		export interface Concatenated<G extends GrammarMap, K extends Under<'literal.string.concatenated'> = 'literal.string.concatenated'> extends SubKindOf<V.Literal.String<G, K>> {
 			// claimed by p
-			readonly $kind: 'literal.string.concatenated';
+			readonly $kind: K;
 			readonly strings: (
 				| V.Literal.String<G>
 				| V.Literal.String.Multiline<G>
@@ -154,19 +154,19 @@ export namespace Literal {
 				| V.Literal.String.Unicode<G>
 			)[];
 		}
-		export interface Escape<G extends GrammarMap> extends SubKindOf<V.Literal.String<G>> {
+		export interface Escape<G extends GrammarMap, K extends Under<'literal.string.escape'> = 'literal.string.escape'> extends SubKindOf<V.Literal.String<G, K>> {
 			// claimed by prt
-			readonly $kind: 'literal.string.escape';
+			readonly $kind: K;
 			readonly content?: Slot<G, 'literal.string.escape', 'content', unknown>;
 			// t only
 		}
-		export interface Multiline<G extends GrammarMap> extends SubKindOf<V.Literal.String<G>> {
+		export interface Multiline<G extends GrammarMap, K extends Under<'literal.string.multiline'> = 'literal.string.multiline'> extends SubKindOf<V.Literal.String<G, K>> {
 			// claimed by p
-			readonly $kind: 'literal.string.multiline';
+			readonly $kind: K;
 		}
-		export interface Text<G extends GrammarMap> extends SubKindOf<V.Literal.String<G>> {
+		export interface Text<G extends GrammarMap, K extends Under<'literal.string.text'> = 'literal.string.text'> extends SubKindOf<V.Literal.String<G, K>> {
 			// claimed by prt
-			readonly $kind: 'literal.string.text';
+			readonly $kind: K;
 		}
 	}
 }

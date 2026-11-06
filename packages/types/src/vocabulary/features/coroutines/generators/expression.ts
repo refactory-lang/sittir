@@ -1,14 +1,14 @@
 import type { GrammarMap, Slot } from '../../../map.ts';
-import type { Flag, SubKindOf } from '../../../utils.ts';
+import type { Flag, SubKindOf, Under } from '../../../utils.ts';
 import type * as V from '../../../index.ts';
 export namespace Expression {
-	export interface Function<G extends GrammarMap> {
+	export interface Function<G extends GrammarMap, K extends Under<'expression.function'> = 'expression.function'> {
 		readonly generator?: Flag;
 	}
 	export namespace Yield {
-		export interface Delegate<G extends GrammarMap> extends SubKindOf<V.Expression.Yield<G>, 'expression'> {
+		export interface Delegate<G extends GrammarMap, K extends Under<'expression.yield.delegate'> = 'expression.yield.delegate'> extends SubKindOf<V.Expression.Yield<G, K>, 'expression'> {
 			// claimed by pt
-			readonly $kind: 'expression.yield.delegate';
+			readonly $kind: K;
 			readonly expression: Slot<
 				G,
 				'expression.yield.delegate',

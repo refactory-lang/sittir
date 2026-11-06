@@ -1,9 +1,9 @@
 import type { GrammarMap } from '../../map.ts';
-import type { SubKindOf } from '../../utils.ts';
+import type { SubKindOf, Under } from '../../utils.ts';
 import type * as V from '../../index.ts';
 export namespace Clause {
-	export interface Macro<G extends GrammarMap> extends SubKindOf<V.Clause<G>> {
-		readonly $kind: 'clause.macro';
+	export interface Macro<G extends GrammarMap, K extends Under<'clause.macro'> = 'clause.macro'> extends SubKindOf<V.Clause<G, K>> {
+		readonly $kind: K;
 		readonly left:
 			| V.Element.Macro.TokenTree.Pattern.Brace<G>
 			| V.Element.Macro.TokenTree.Pattern.Bracket<G>
@@ -16,9 +16,9 @@ export namespace Clause {
 		// r only
 	}
 	export namespace Macro {
-		export interface Rule<G extends GrammarMap> extends SubKindOf<V.Clause.Macro<G>> {
+		export interface Rule<G extends GrammarMap, K extends Under<'clause.macro.rule'> = 'clause.macro.rule'> extends SubKindOf<V.Clause.Macro<G, K>> {
 			// claimed by r
-			readonly $kind: 'clause.macro.rule';
+			readonly $kind: K;
 			readonly left:
 				| V.Element.Macro.TokenTree.Pattern.Brace<G>
 				| V.Element.Macro.TokenTree.Pattern.Bracket<G>

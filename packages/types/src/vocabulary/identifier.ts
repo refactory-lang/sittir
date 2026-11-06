@@ -1,9 +1,9 @@
 import type { GrammarMap, Slot, Text } from './map.ts';
-import type { SubKindOf } from './utils.ts';
+import type { SubKindOf, Under } from './utils.ts';
 import type * as V from './index.ts';
-export interface Identifier<G extends GrammarMap> {
+export interface Identifier<G extends GrammarMap, K extends Under<'identifier'> = 'identifier'> {
 	// claimed by prt
-	readonly $kind: 'identifier';
+	readonly $kind: K;
 }
 
 export interface IdentifierSynonyms {
@@ -13,9 +13,9 @@ export interface IdentifierSynonyms {
 }
 
 export namespace Identifier {
-	export interface Qualified<G extends GrammarMap> extends SubKindOf<V.Identifier<G>> {
+	export interface Qualified<G extends GrammarMap, K extends Under<'identifier.qualified'> = 'identifier.qualified'> extends SubKindOf<V.Identifier<G, K>> {
 		// claimed by prt
-		readonly $kind: 'identifier.qualified';
+		readonly $kind: K;
 		readonly name: Slot<G, 'identifier.qualified', 'name', V.Identifier.Any<G>>;
 		readonly qualifier?: Slot<G, 'identifier.qualified', 'qualifier', V.Identifier.Any<G> | string | V.Type.Any<G>>;
 	}

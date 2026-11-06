@@ -1,14 +1,14 @@
 import type { GrammarMap, Slot } from '../../map.ts';
-import type { SubKindOf } from '../../utils.ts';
+import type { SubKindOf, Under } from '../../utils.ts';
 import type * as V from '../../index.ts';
 export namespace Element {
-	export interface Struct<G extends GrammarMap> extends SubKindOf<V.Element<G>> {
-		readonly $kind: 'element.struct';
+	export interface Struct<G extends GrammarMap, K extends Under<'element.struct'> = 'element.struct'> extends SubKindOf<V.Element<G, K>> {
+		readonly $kind: K;
 	}
 	export namespace Struct {
-		export interface Base<G extends GrammarMap> extends SubKindOf<V.Element.Struct<G>> {
+		export interface Base<G extends GrammarMap, K extends Under<'element.struct.base'> = 'element.struct.base'> extends SubKindOf<V.Element.Struct<G, K>> {
 			// claimed by r
-			readonly $kind: 'element.struct.base';
+			readonly $kind: K;
 			readonly value: Slot<
 				G,
 				'element.struct.base',
@@ -19,9 +19,9 @@ export namespace Element {
 				| V.Statement.Any<G>
 			>;
 		}
-		export interface Field<G extends GrammarMap> extends SubKindOf<V.Element.Struct<G>> {
+		export interface Field<G extends GrammarMap, K extends Under<'element.struct.field'> = 'element.struct.field'> extends SubKindOf<V.Element.Struct<G, K>> {
 			// claimed by r
-			readonly $kind: 'element.struct.field';
+			readonly $kind: K;
 			readonly field:
 				Slot<
 				G,

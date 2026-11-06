@@ -1,11 +1,11 @@
 import type { GrammarMap, Slot } from '../../../map.ts';
-import type { SubKindOf } from '../../../utils.ts';
+import type { SubKindOf, Under } from '../../../utils.ts';
 import type * as V from '../../../index.ts';
 export namespace Expression {
 	export namespace Call {
-		export interface Construct<G extends GrammarMap> extends SubKindOf<V.Expression.Call<G>, 'arguments' | 'function' | 'typeArguments'> {
+		export interface Construct<G extends GrammarMap, K extends Under<'expression.call.construct'> = 'expression.call.construct'> extends SubKindOf<V.Expression.Call<G, K>, 'arguments' | 'function' | 'typeArguments'> {
 			// claimed by t
-			readonly $kind: 'expression.call.construct';
+			readonly $kind: K;
 			readonly arguments?: Slot<
 				G,
 				'expression.call.construct',
@@ -26,16 +26,16 @@ export namespace Expression {
 			>;
 		}
 		export namespace Construct {
-			export interface Bare<G extends GrammarMap> extends SubKindOf<V.Expression.Call.Construct<G>> {
+			export interface Bare<G extends GrammarMap, K extends Under<'expression.call.construct.bare'> = 'expression.call.construct.bare'> extends SubKindOf<V.Expression.Call.Construct<G, K>> {
 				// claimed by t
-				readonly $kind: 'expression.call.construct.bare';
+				readonly $kind: K;
 				readonly arguments?: never;
 			}
 		}
 	}
-	export interface Class<G extends GrammarMap> extends SubKindOf<V.Expression<G>> {
+	export interface Class<G extends GrammarMap, K extends Under<'expression.class'> = 'expression.class'> extends SubKindOf<V.Expression<G, K>> {
 		// claimed by t
-		readonly $kind: 'expression.class';
+		readonly $kind: K;
 		readonly body: Slot<G, 'expression.class', 'body', V.Declaration.Any<G> | V.Statement.Block.Static<G> | string>[];
 		readonly name?: V.Identifier<G>;
 	}

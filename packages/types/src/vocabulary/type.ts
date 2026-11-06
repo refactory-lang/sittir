@@ -1,7 +1,8 @@
 import type { GrammarMap, Slot } from './map.ts';
-export interface Type<G extends GrammarMap> {
+import type { Under } from './utils.ts';
+export interface Type<G extends GrammarMap, K extends Under<'type'> = 'type'> {
 	// claimed by p
-	readonly $kind: 'type';
+	readonly $kind: K;
 	readonly content?: Slot<G, 'type', 'content', unknown>;
 	// prt only
 }

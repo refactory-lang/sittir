@@ -1,10 +1,10 @@
 import type { GrammarMap, Slot } from '../../map.ts';
-import type { SubKindOf } from '../../utils.ts';
+import type { SubKindOf, Under } from '../../utils.ts';
 import type * as V from '../../index.ts';
 export namespace Element {
-	export interface TypeArgument<G extends GrammarMap> extends SubKindOf<V.Element<G>> {
+	export interface TypeArgument<G extends GrammarMap, K extends Under<'element.type_argument'> = 'element.type_argument'> extends SubKindOf<V.Element<G, K>> {
 		// claimed by r
-		readonly $kind: 'element.type_argument';
+		readonly $kind: K;
 		readonly content: Slot<
 			G,
 			'element.type_argument',

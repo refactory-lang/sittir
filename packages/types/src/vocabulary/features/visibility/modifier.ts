@@ -1,36 +1,36 @@
 import type { GrammarMap } from '../../map.ts';
-import type { SubKindOf } from '../../utils.ts';
+import type { SubKindOf, Under } from '../../utils.ts';
 import type * as V from '../../index.ts';
 export namespace Modifier {
-	export interface Visibility<G extends GrammarMap> extends SubKindOf<V.Modifier<G>> {
+	export interface Visibility<G extends GrammarMap, K extends Under<'modifier.visibility'> = 'modifier.visibility'> extends SubKindOf<V.Modifier<G, K>> {
 		// claimed by t
-		readonly $kind: 'modifier.visibility';
+		readonly $kind: K;
 	}
 	export namespace Visibility {
-		export interface Private<G extends GrammarMap> extends SubKindOf<V.Modifier.Visibility<G>> {
+		export interface Private<G extends GrammarMap, K extends Under<'modifier.visibility.private'> = 'modifier.visibility.private'> extends SubKindOf<V.Modifier.Visibility<G, K>> {
 			// claimed by rt
-			readonly $kind: 'modifier.visibility.private';
+			readonly $kind: K;
 		}
-		export interface Protected<G extends GrammarMap> extends SubKindOf<V.Modifier.Visibility<G>> {
+		export interface Protected<G extends GrammarMap, K extends Under<'modifier.visibility.protected'> = 'modifier.visibility.protected'> extends SubKindOf<V.Modifier.Visibility<G, K>> {
 			// claimed by t
-			readonly $kind: 'modifier.visibility.protected';
+			readonly $kind: K;
 		}
-		export interface Public<G extends GrammarMap> extends SubKindOf<V.Modifier.Visibility<G>> {
+		export interface Public<G extends GrammarMap, K extends Under<'modifier.visibility.public'> = 'modifier.visibility.public'> extends SubKindOf<V.Modifier.Visibility<G, K>> {
 			// claimed by rt
-			readonly $kind: 'modifier.visibility.public';
+			readonly $kind: K;
 		}
 		export namespace Public {
-			export interface Internal<G extends GrammarMap> extends SubKindOf<V.Modifier.Visibility.Public<G>> {
+			export interface Internal<G extends GrammarMap, K extends Under<'modifier.visibility.public.internal'> = 'modifier.visibility.public.internal'> extends SubKindOf<V.Modifier.Visibility.Public<G, K>> {
 				// claimed by r
-				readonly $kind: 'modifier.visibility.public.internal';
+				readonly $kind: K;
 			}
-			export interface Parent<G extends GrammarMap> extends SubKindOf<V.Modifier.Visibility.Public<G>> {
+			export interface Parent<G extends GrammarMap, K extends Under<'modifier.visibility.public.parent'> = 'modifier.visibility.public.parent'> extends SubKindOf<V.Modifier.Visibility.Public<G, K>> {
 				// claimed by r
-				readonly $kind: 'modifier.visibility.public.parent';
+				readonly $kind: K;
 			}
-			export interface Restricted<G extends GrammarMap> extends SubKindOf<V.Modifier.Visibility.Public<G>> {
+			export interface Restricted<G extends GrammarMap, K extends Under<'modifier.visibility.public.restricted'> = 'modifier.visibility.public.restricted'> extends SubKindOf<V.Modifier.Visibility.Public<G, K>> {
 				// claimed by r
-				readonly $kind: 'modifier.visibility.public.restricted';
+				readonly $kind: K;
 			}
 		}
 	}

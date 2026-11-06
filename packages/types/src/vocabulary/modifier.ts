@@ -1,6 +1,7 @@
 import type { GrammarMap } from './map.ts';
-export interface Modifier<G extends GrammarMap> {
-	readonly $kind: 'modifier';
+import type { Under } from './utils.ts';
+export interface Modifier<G extends GrammarMap, K extends Under<'modifier'> = 'modifier'> {
+	readonly $kind: K;
 }
 
 export interface ModifierSynonyms {
