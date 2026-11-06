@@ -1,8 +1,8 @@
-import type { GrammarContext } from '../../context.ts';
+import type { GrammarMap } from '../../map.ts';
 import type { SubKindOf } from '../../utils.ts';
 import type * as V from '../../index.ts';
 export namespace Pattern {
-	export interface Complex<G extends GrammarContext<G>> extends SubKindOf<V.Pattern<G>> {
+	export interface Complex<G extends GrammarMap> extends SubKindOf<V.Pattern<G>> {
 		// claimed by p
 		readonly $kind: 'pattern.complex';
 		readonly imaginary:
@@ -24,11 +24,11 @@ export namespace Pattern {
 		readonly sign?: boolean;
 	}
 	export namespace Complex {
-		export interface Add<G extends GrammarContext<G>> extends SubKindOf<V.Pattern.Complex<G>> {
+		export interface Add<G extends GrammarMap> extends SubKindOf<V.Pattern.Complex<G>> {
 			// claimed by p
 			readonly $kind: 'pattern.complex.add';
 		}
-		export interface Subtract<G extends GrammarContext<G>> extends SubKindOf<V.Pattern.Complex<G>> {
+		export interface Subtract<G extends GrammarMap> extends SubKindOf<V.Pattern.Complex<G>> {
 			// claimed by p
 			readonly $kind: 'pattern.complex.subtract';
 		}

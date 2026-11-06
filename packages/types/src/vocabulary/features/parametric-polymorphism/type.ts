@@ -1,7 +1,7 @@
-import type { GrammarContext } from '../../context.ts';
+import type { GrammarMap } from '../../map.ts';
 import type * as V from '../../index.ts';
 export namespace Type {
-	export interface Abstract<G extends GrammarContext<G>> {
+	export interface Abstract<G extends GrammarMap> {
 		readonly typeParameters?: (
 			| V.Identifier.Metavariable<G>
 			| V.Declaration.TypeParameter<G>
@@ -9,12 +9,12 @@ export namespace Type {
 			| V.Declaration.TypeParameter.Value<G>
 		)[];
 	}
-	export interface Function<G extends GrammarContext<G>> {
+	export interface Function<G extends GrammarMap> {
 		readonly typeParameters?: V.Declaration.TypeParameter<G>[];
 		// t only
 	}
 	export namespace Function {
-		export interface Constructor<G extends GrammarContext<G>> {
+		export interface Constructor<G extends GrammarMap> {
 			readonly typeParameters?: V.Declaration.TypeParameter<G>[];
 		}
 	}

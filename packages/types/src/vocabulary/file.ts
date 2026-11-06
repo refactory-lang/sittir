@@ -1,9 +1,18 @@
-import type { GrammarContext } from './context.ts';
-export interface File<G extends GrammarContext<G>> {
+import type { GrammarMap, Slot } from './map.ts';
+import type * as V from './index.ts';
+export interface File<G extends GrammarMap> {
 	// claimed by prt
 	readonly $kind: 'file';
 	readonly shebang?: string;
 	// rt only
-	readonly statements?: G['slots']['file']['statements'][];
+	readonly statements?: Slot<
+		G,
+		'file',
+		'statements',
+		| V.Attribute.Any<G>
+		| V.Declaration.Any<G>
+		| V.Expression.Call.Macro<G>
+		| V.Statement.Any<G>
+	>[];
 }
 

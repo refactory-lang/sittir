@@ -1,10 +1,10 @@
-import type { GrammarContext } from '../../../../context.ts';
+import type { GrammarMap, Slot } from '../../../../map.ts';
 import type { SubKindOf } from '../../../../utils.ts';
 import type * as V from '../../../../index.ts';
 export namespace Clause {
-	export interface Extends<G extends GrammarContext<G>> extends SubKindOf<V.Clause<G>> {
+	export interface Extends<G extends GrammarMap> extends SubKindOf<V.Clause<G>> {
 		// claimed by t
 		readonly $kind: 'clause.extends';
-		readonly types?: G['slots']['clause.extends']['types'][];
+		readonly types?: Slot<G, 'clause.extends', 'types', unknown>[];
 	}
 }

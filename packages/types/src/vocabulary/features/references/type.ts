@@ -1,10 +1,10 @@
-import type { GrammarContext } from '../../context.ts';
+import type { GrammarMap } from '../../map.ts';
 import type { Flag } from '../../utils.ts';
 export namespace Type {
-	export interface Pointer<G extends GrammarContext<G>> {
+	export interface Pointer<G extends GrammarMap> {
 		readonly writable?: Flag;
 	}
-	export interface Reference<G extends GrammarContext<G>> {
+	export interface Reference<G extends GrammarMap> {
 		readonly exclusive?: Flag;
 	}
 }

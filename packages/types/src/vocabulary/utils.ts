@@ -1,7 +1,7 @@
-import type { GrammarContext } from './context.ts';
+import type { GrammarMap } from './map.ts';
 
-export type SubKindOf<T extends { readonly $kind: string }> = {
-	readonly [K in keyof T]: K extends '$kind' ? `${T['$kind']}.${string}` : T[K];
+export type SubKindOf<T extends { readonly $kind: string }, Restated extends keyof T = never> = {
+	readonly [K in keyof T as K extends Restated ? never : K]: K extends '$kind' ? `${T['$kind']}.${string}` : T[K];
 };
 
 /**
@@ -18,12 +18,12 @@ export type RefinedBy<Owner extends { readonly $kind: string }, Value extends { 
 	Omit<Value, '$kind'>;
 
 /**
- * `T` where the context `G` has the feature `F`, else `never`: a member the context's features lack is absent, so a
+ * `T` where the grammar map `G` has the feature `F`, else `never`: a member the map's features lack is absent, so a
  * language without the feature refuses it, and a node from such a language conforms wherever the member is present.
- * Over a union of contexts it is the union of each context's, so a union of contexts is a supertype of each of them,
- * member by member.
+ * Over a union of maps it is the union of each map's, so a union of maps is a supertype of each of them, member by
+ * member.
  */
-export type In<G extends GrammarContext<G>, F, T> = G extends F ? T : never;
+export type In<G extends GrammarMap, F, T> = G extends GrammarMap ? (G['features'] extends F ? T : never) : never;
 
 /**
  * `T` as one form a build accepts: the members `R` given, and the members `A` left out. A path whose forms differ by

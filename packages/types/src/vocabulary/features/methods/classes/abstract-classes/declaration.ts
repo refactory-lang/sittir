@@ -1,21 +1,31 @@
-import type { GrammarContext } from '../../../../context.ts';
+import type { GrammarMap, Slot } from '../../../../map.ts';
 import type { Flag, SubKindOf } from '../../../../utils.ts';
 import type * as V from '../../../../index.ts';
 export namespace Declaration {
-	export interface Class<G extends GrammarContext<G>> {
+	export interface Class<G extends GrammarMap> {
 		readonly abstract?: Flag;
 		// t only
 	}
-	export interface Field<G extends GrammarContext<G>> {
+	export interface Field<G extends GrammarMap> {
 		readonly abstract?: Flag;
 		// t only
 	}
 	export namespace Method {
 		export namespace Signature {
-			export interface Abstract<G extends GrammarContext<G>> extends SubKindOf<V.Declaration.Method.Signature<G>> {
+			export interface Abstract<G extends GrammarMap> extends SubKindOf<V.Declaration.Method.Signature<G>, 'name' | 'parameters' | 'returnType' | 'typeParameters'> {
 				// claimed by t
 				readonly $kind: 'declaration.method.signature.abstract';
-				readonly name: G['slots']['declaration.method.signature.abstract']['name'];
+				readonly name: Slot<
+					G,
+					'declaration.method.signature.abstract',
+					'name',
+					| V.Expression.Any<G>
+					| V.Literal.Any<G>
+					| V.Identifier<G>
+					| string
+					| V.Declaration.Module<G>
+					| V.Identifier.Any<G>
+				>;
 				readonly parameters: (
 					| V.Declaration.Parameter<G>
 					| V.Declaration.Parameter.Private<G>
@@ -27,7 +37,7 @@ export namespace Declaration {
 		}
 	}
 	export namespace Signature {
-		export interface Construct<G extends GrammarContext<G>> {
+		export interface Construct<G extends GrammarMap> {
 			readonly abstract?: Flag;
 		}
 	}

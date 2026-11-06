@@ -1,8 +1,8 @@
-import type { GrammarContext } from '../../context.ts';
+import type { GrammarMap } from '../../map.ts';
 import type { SubKindOf } from '../../utils.ts';
 import type * as V from '../../index.ts';
 export namespace Clause {
-	export interface Macro<G extends GrammarContext<G>> extends SubKindOf<V.Clause<G>> {
+	export interface Macro<G extends GrammarMap> extends SubKindOf<V.Clause<G>> {
 		readonly $kind: 'clause.macro';
 		readonly left:
 			| V.Element.Macro.TokenTree.Pattern.Brace<G>
@@ -16,7 +16,7 @@ export namespace Clause {
 		// r only
 	}
 	export namespace Macro {
-		export interface Rule<G extends GrammarContext<G>> extends SubKindOf<V.Clause.Macro<G>> {
+		export interface Rule<G extends GrammarMap> extends SubKindOf<V.Clause.Macro<G>> {
 			// claimed by r
 			readonly $kind: 'clause.macro.rule';
 			readonly left:

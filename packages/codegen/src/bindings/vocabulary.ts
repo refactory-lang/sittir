@@ -13,8 +13,10 @@ export const compositionOf = (grammar: string): string => `${grammarDisplayName(
 export const FEATURES = 'features';
 export const FLAG = 'Flag';
 export const FLAGGED = 'Flagged';
+export const TEXT = 'Text';
 export const TEXTS = 'texts';
-export const CONTEXT = 'GrammarContext';
+export const TEXT_PATHS = 'TextPaths';
+export const SLOT = 'Slot';
 export const REFINED_BY = 'RefinedBy';
 export const SYNONYMS = 'Synonyms';
 const NEVER = 'never';
@@ -28,6 +30,7 @@ export interface Member {
 	readonly references: readonly string[];
 	readonly literals: readonly string[];
 	readonly keys?: readonly string[];
+	readonly slotted?: true;
 }
 
 export interface Declared {
@@ -84,6 +87,7 @@ export interface VocabularyMember {
 	readonly optional: boolean;
 	readonly arity?: MemberArity;
 	readonly flag: boolean;
+	readonly slot?: true;
 	readonly features?: readonly string[];
 	readonly excluded?: true;
 }
@@ -156,7 +160,7 @@ export async function readVocabularySource(dir: string): Promise<VocabularySourc
 			if (level !== undefined && levels.has(level)) throw new Error(`vocabulary: ${d.qname} is declared more than once; a level has one table`);
 			if (level !== undefined) levels.set(level, synonymTable(d));
 			if (d.qname === `${FLAG}${SYNONYMS}`) flags.push(d);
-			if (d.qname === CONTEXT) texts.push(...(d.members.find((member) => member.name === TEXTS)?.keys ?? []));
+			if (d.qname === TEXT_PATHS) texts.push(...(d.members.find((member) => member.name === TEXTS)?.keys ?? []));
 		}
 	}
 	if (flags.length > 1) throw new Error(`vocabulary: ${FLAG}${SYNONYMS} is declared ${flags.length} times; the flags have one table`);
@@ -238,7 +242,8 @@ export async function readVocabulary(dir: string): Promise<Vocabulary> {
 	const stubs = source.features.flatMap((feature) => feature.stubs);
 	const declared = [...source.kinds, ...stubs.filter(isKind)];
 	const pathByName = new Map(declared.map((d) => [d.qname, d.path]));
-	const own = new Map<string, Map<string, VocabularyMember>>(declared.map((d) => [d.qname, new Map(d.members.map((m) => [m.name, { optional: m.optional, ...(m.arity === undefined ? {} : { arity: m.arity }), flag: m.flag, ...(m.type === NEVER ? { excluded: true as const } : {}) }]))]));
+	const slotted = (m: Member): { readonly slot?: true } => (m.slotted === true ? { slot: true } : {});
+	const own = new Map<string, Map<string, VocabularyMember>>(declared.map((d) => [d.qname, new Map(d.members.map((m) => [m.name, { optional: m.optional, ...(m.arity === undefined ? {} : { arity: m.arity }), flag: m.flag, ...slotted(m), ...(m.type === NEVER ? { excluded: true as const } : {}) }]))]));
 	for (const feature of source.features)
 		for (const stub of feature.stubs) {
 			const members = own.get(stub.qname);
@@ -246,7 +251,7 @@ export async function readVocabulary(dir: string): Promise<Vocabulary> {
 			for (const m of stub.members) {
 				const held = members.get(m.name);
 				const features = held === undefined ? [feature.name] : held.features === undefined ? undefined : [...held.features, feature.name];
-				members.set(m.name, { optional: m.optional || held?.optional === true, ...((m.arity ?? held?.arity) === undefined ? {} : { arity: m.arity ?? held?.arity }), flag: m.flag, ...(features === undefined ? {} : { features }), ...(m.type === NEVER ? { excluded: true as const } : {}) });
+				members.set(m.name, { optional: m.optional || held?.optional === true, ...((m.arity ?? held?.arity) === undefined ? {} : { arity: m.arity ?? held?.arity }), flag: m.flag, ...slotted(m), ...(features === undefined ? {} : { features }), ...(m.type === NEVER ? { excluded: true as const } : {}) });
 			}
 		}
 	const kinds = new Map<string, VocabularyKind>();

@@ -148,7 +148,7 @@ export function classify(
 
 export async function writeTypedModule(grammar: string): Promise<PortableTypedOutput | undefined> {
 	const generated = await generate({ grammar, outputDir: join(grammarPackageDir(grammar as GrammarName), 'src') });
-	await writePortableTyped(typedDir(grammar), generated.portableTyped?.source);
+	await writePortableTyped(typedDir(grammar), generated.portableTyped);
 	return generated.portableTyped;
 }
 

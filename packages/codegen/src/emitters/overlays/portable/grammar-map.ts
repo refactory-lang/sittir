@@ -1,0 +1,174 @@
+import { compositionOf, lineageOf } from '../../../bindings/vocabulary.ts';
+import { grammarDisplayName, type GrammarName } from '../../../grammars.ts';
+import { stringLiteral as q } from '../../../util/string-literal.ts';
+import type { PortableBuildPath } from '@sittir/types';
+import type { NodeMap } from '../../../compiler/types.ts';
+import { exactReadsOf, type ExactReads, type ExactSet, type ExactSlots, type RawArm } from './exact.ts';
+import type { PortableTypedInput } from './typed.ts';
+
+export const PORTABLE_MAP_FILE = 'portable-map.ts';
+
+export const VOCABULARY_MODULE = '@sittir/types/vocabulary';
+
+export const grammarMapName = (grammar: string): string => `${grammarDisplayName(grammar as GrammarName)}Map`;
+
+export const unmappedName = (grammar: string, kind: string): string => `${grammar}:${kind}`;
+
+export function unmappedKindsBlock(
+	module: string,
+	grammar: string,
+	nodeMap: NodeMap,
+	kinds: Iterable<string>
+): string[] {
+	const entries = [...new Set(kinds)].sort().flatMap((kind) => {
+		const typeName = nodeMap.nodes.get(kind)?.typeName;
+		return typeName === undefined ? [] : [`\t\treadonly ${q(unmappedName(grammar, kind))}: T.${typeName}.Parsed;`];
+	});
+	return entries.length === 0
+		? []
+		: [`declare module ${q(module)} {`, '\tinterface UnmappedKinds {', ...entries, '\t}', '}'];
+}
+
+function formsOf(built: PortableBuildPath | undefined, base: string, required: ReadonlySet<string>): readonly string[] {
+	const arms = (built?.arms ?? []).map((arm) => {
+		const tests = arm.when.filter((test) => 'absent' in test);
+		return { tests, required: tests.flatMap((test) => test.required), absent: tests.flatMap((test) => test.absent) };
+	});
+	if (arms.length === 0 || arms.some(({ tests }) => tests.length === 0)) return [base];
+	const keys = (names: readonly string[]): string =>
+		names.length === 0 ? 'never' : [...new Set(names)].sort().map(q).join(' | ');
+	const kept = arms.filter(({ absent }) => !absent.some((member) => required.has(member)));
+	return [...new Set(kept.map((form) => `V.RequiredBy<${base}, ${keys(form.required)}, ${keys(form.absent)}>`))];
+}
+
+const unionOf = (sets: readonly ExactSet[]): ExactSet => {
+	const raw = new Map<string, Set<RawArm['reasons'][number]>>();
+	for (const set of sets)
+		for (const arm of set.raw)
+			for (const reason of arm.reasons) (raw.get(arm.kind) ?? raw.set(arm.kind, new Set()).get(arm.kind)!).add(reason);
+	const all = <T extends string>(pick: (set: ExactSet) => readonly T[]): T[] => [...new Set(sets.flatMap(pick))].sort();
+	return {
+		arms: all((set) => set.arms),
+		kinds: all((set) => set.kinds),
+		unmapped: all((set) => set.unmapped),
+		texts: all((set) => set.texts),
+		scalars: all((set) => set.scalars),
+		raw: [...raw]
+			.sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0))
+			.map(([kind, reasons]) => ({ kind, reasons: [...reasons].sort() }))
+	};
+};
+
+export function declaredSlots(
+	typedInput: PortableTypedInput,
+	exact: ExactSlots
+): ReadonlyMap<string, ReadonlyMap<string, ExactSet>> {
+	const { vocabulary } = typedInput.input;
+	const declarerOf = (path: string, member: string): string | undefined =>
+		lineageOf(path, (at) => vocabulary.kinds.get(at)).find((at) => vocabulary.kinds.get(at)?.own.has(member));
+	const gathered = new Map<string, Map<string, ExactSet[]>>();
+	for (const [path, members] of exact)
+		for (const [member, set] of members) {
+			const at = declarerOf(path, member);
+			if (at === undefined || vocabulary.kinds.get(at)?.own.get(member)?.slot !== true) continue;
+			const byMember = gathered.get(at) ?? gathered.set(at, new Map()).get(at)!;
+			(byMember.get(member) ?? byMember.set(member, []).get(member)!).push(set);
+		}
+	return new Map(
+		[...gathered]
+			.sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0))
+			.map(([path, members]) => [
+				path,
+				new Map(
+					[...members].sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0)).map(([member, sets]) => [member, unionOf(sets)])
+				)
+			])
+	);
+}
+
+export interface MapArms {
+	readonly armsOf: (set: ExactSet) => readonly string[];
+	readonly pathArms: (path: string) => readonly string[];
+}
+
+export function mapArmsOf(typedInput: PortableTypedInput, reads: ExactReads, map: string): MapArms {
+	const { input, nodeMap, table } = typedInput;
+	const { vocabulary } = input;
+	const qnameOf = (path: string): string => vocabulary.kinds.get(path)?.name ?? path;
+	const forms = new Map<string, readonly string[]>();
+	const formsAt = (path: string): readonly string[] => {
+		const found = forms.get(path);
+		if (found !== undefined) return found;
+		const required = new Set(
+			[...vocabulary.members(path)].flatMap(([member, facts]) => (facts.optional || facts.flag ? [] : [member]))
+		);
+		const made = formsOf(table.paths[path], `V.${qnameOf(path)}<${map}>`, required);
+		forms.set(path, made);
+		return made;
+	};
+	const viewed = new Set(reads.viewed);
+	const texts = new Set(reads.textPaths);
+	const pathArms = (path: string): readonly string[] => [
+		...(viewed.has(path) ? formsAt(path) : []),
+		...(texts.has(path) ? [`V.Text<${map}, ${q(path)}>`] : [])
+	];
+	const lowOf = (kind: string): string => {
+		const typeName = nodeMap.nodes.get(kind)?.typeName;
+		if (typeName === undefined) throw new Error(`portable: ${kind} reads raw but has no typed surface`);
+		return `T.${typeName}.Parsed`;
+	};
+	const armsOf = (set: ExactSet): readonly string[] => [
+		...new Set([
+			...set.kinds.flatMap(pathArms),
+			...set.texts.map(q),
+			...set.scalars,
+			...set.unmapped.map((name) => `V.Unmapped<${q(name)}>`),
+			...set.raw.map((arm) => lowOf(arm.kind))
+		])
+	];
+	return { armsOf, pathArms };
+}
+
+export function emitGrammarMap(typedInput: PortableTypedInput, exact: ExactSlots): string {
+	const { input, nodeMap } = typedInput;
+	const map = grammarMapName(input.grammar);
+	const reads = exactReadsOf(typedInput);
+	const { armsOf } = mapArmsOf(typedInput, reads, map);
+	const slots = declaredSlots(typedInput, exact);
+	const lines = [
+		'// Auto-generated by @sittir/codegen — do not edit',
+		'',
+		`import type * as V from ${q(VOCABULARY_MODULE)};`,
+		"import type * as T from './types.js';",
+		"import type { PortableTexts } from './portable.js';",
+		'',
+		`export interface ${map} extends V.GrammarMap {`,
+		`\treadonly features: V.${compositionOf(input.grammar)};`,
+		'\treadonly overrides: {'
+	];
+	const entries = new Map<string, string[]>();
+	for (const [path, members] of slots)
+		for (const [member, set] of members) {
+			const arms = armsOf(set);
+			if (arms.length > 0)
+				(entries.get(path) ?? entries.set(path, []).get(path)!).push(`\t\t\treadonly ${member}: ${arms.join(' | ')};`);
+		}
+	for (const path of reads.textPaths)
+		(entries.get(path) ?? entries.set(path, []).get(path)!).push(`\t\t\treadonly $text: PortableTexts[${q(path)}];`);
+	for (const [path, members] of [...entries].sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0)))
+		lines.push(`\t\treadonly ${q(path)}: {`, ...members, '\t\t};');
+	const unmapped = [...slots.values()].flatMap((members) =>
+		[...members.values()].flatMap((set) => set.unmapped.map((name) => name.slice(name.indexOf(':') + 1)))
+	);
+	lines.push(
+		'\t};',
+		'\treadonly inputs: {};',
+		'}',
+		'',
+		...unmappedKindsBlock(VOCABULARY_MODULE, input.grammar, nodeMap, unmapped),
+		'',
+		`export type ${map}Fits = V.Assert<V.Fits<${map}>>;`,
+		''
+	);
+	return lines.join('\n');
+}

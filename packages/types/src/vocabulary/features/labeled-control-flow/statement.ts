@@ -1,34 +1,34 @@
-import type { GrammarContext } from '../../context.ts';
+import type { GrammarMap, Slot } from '../../map.ts';
 import type { SubKindOf } from '../../utils.ts';
 import type * as V from '../../index.ts';
 export namespace Statement {
-	export interface Block<G extends GrammarContext<G>> {
+	export interface Block<G extends GrammarMap> {
 		readonly label?: V.Identifier.Label<G>;
 		// r only
 	}
-	export interface Break<G extends GrammarContext<G>> {
+	export interface Break<G extends GrammarMap> {
 		readonly label?: V.Identifier.Label<G>;
 		// rt only
 	}
-	export interface Continue<G extends GrammarContext<G>> {
+	export interface Continue<G extends GrammarMap> {
 		readonly label?: V.Identifier.Label<G>;
 		// rt only
 	}
-	export interface Labeled<G extends GrammarContext<G>> extends SubKindOf<V.Statement<G>> {
+	export interface Labeled<G extends GrammarMap> extends SubKindOf<V.Statement<G>> {
 		// claimed by t
 		readonly $kind: 'statement.labeled';
-		readonly body: G['slots']['statement.labeled']['body'];
-		readonly label: G['slots']['statement.labeled']['label'];
+		readonly body: Slot<G, 'statement.labeled', 'body', V.Declaration.Any<G> | V.Statement.Any<G>>;
+		readonly label: Slot<G, 'statement.labeled', 'label', V.Identifier.Label<G> | string>;
 	}
-	export interface Loop<G extends GrammarContext<G>> {
+	export interface Loop<G extends GrammarMap> {
 		readonly label?: V.Identifier.Label<G>;
 	}
 	export namespace Loop {
-		export interface ForEach<G extends GrammarContext<G>> {
+		export interface ForEach<G extends GrammarMap> {
 			readonly label?: V.Identifier.Label<G>;
 			// r only
 		}
-		export interface While<G extends GrammarContext<G>> {
+		export interface While<G extends GrammarMap> {
 			readonly label?: V.Identifier.Label<G>;
 			// r only
 		}

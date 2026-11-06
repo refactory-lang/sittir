@@ -13,7 +13,7 @@ import type {
 	UnionType
 } from '@sittir/typescript';
 import { isNode, parsedTypescript, type Kinds, type Span, type Statement, type TypescriptSource } from './pinned-typescript.ts';
-import { type Declared, type FeatureIndex, FLAG, FLAGGED, type Member, type MemberArity, REFINED_BY, TEXTS } from './vocabulary.ts';
+import { type Declared, type FeatureIndex, FLAG, FLAGGED, type Member, type MemberArity, REFINED_BY, SLOT, TEXT } from './vocabulary.ts';
 
 interface Source extends Omit<TypescriptSource, 'spelled'> {
 	readonly text: (item: object | number) => string;
@@ -118,11 +118,9 @@ function stringIndex(index: AliasType | undefined, source: Source): string | und
 }
 
 function textsPath(type: AliasType | undefined, source: Source): string | undefined {
-	const { K } = source;
-	if (!isNode(type) || type.$type !== K.LookupType) return undefined;
-	const table = type.type();
-	if (!isNode(table) || table.$type !== K.LookupType || stringIndex(table.indexType(), source) !== TEXTS) return undefined;
-	return stringIndex(type.indexType(), source);
+	const { K, text } = source;
+	if (!isNode(type) || type.$type !== K.GenericType || text(type.name()) !== TEXT) return undefined;
+	return stringIndex(type.typeArguments()?.types()[1], source);
 }
 
 function flagNames(type: AliasType | undefined, source: Source): string[] {
@@ -173,6 +171,7 @@ function declare(declaration: InterfaceDeclaration.Parsed, scope: readonly strin
 			...arityOf(annotation, source),
 			flag: isNode(annotation) && annotation.$type === K.TypeIdentifier && text(annotation) === FLAG,
 			references: typed === undefined ? [] : references(typed, source),
+			...(typed !== undefined && slotted(typed, source) ? { slotted: true as const } : {}),
 			literals: annotation === undefined ? [] : (stringLiterals(annotation, source) ?? []),
 			...(isNode(annotation) && annotation.$type === K.ObjectType ? { keys: (annotation.members() ?? []).flatMap((key) => (key.$type === K.PropertySignature ? [propertyName(key, source)] : [])) } : {})
 		});
@@ -276,6 +275,11 @@ function exportedFrom(statement: ExportStatementDefaultFrom.Parsed, source: Sour
 	const { K, text } = source;
 	const star = statement.content();
 	return isNode(star) && star.$type === K.ExportStatementDefaultFromStarFrom ? text(star.source()).slice(1, -1) : undefined;
+}
+
+function slotted(typed: PropertySignatureType, source: Source): boolean {
+	const { K, engine, text } = source;
+	return [...engine.query(typed).$descendants.ofType(K.GenericType)].some((generic) => text(generic.name()) === SLOT);
 }
 
 function references(typed: PropertySignatureType, source: Source): string[] {

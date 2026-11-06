@@ -1,5 +1,5 @@
-import type { GrammarContext } from './context.ts';
-export interface Modifier<G extends GrammarContext<G>> {
+import type { GrammarMap } from './map.ts';
+export interface Modifier<G extends GrammarMap> {
 	readonly $kind: 'modifier';
 }
 

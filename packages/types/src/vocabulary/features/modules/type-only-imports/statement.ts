@@ -1,11 +1,11 @@
-import type { GrammarContext } from '../../../context.ts';
+import type { GrammarMap } from '../../../map.ts';
 import type { Flag } from '../../../utils.ts';
 export namespace Statement {
-	export interface Export<G extends GrammarContext<G>> {
+	export interface Export<G extends GrammarMap> {
 		readonly typeOnly?: Flag;
 		// t only
 	}
-	export interface Import<G extends GrammarContext<G>> {
+	export interface Import<G extends GrammarMap> {
 		readonly typeOnly?: Flag;
 		// t only
 	}

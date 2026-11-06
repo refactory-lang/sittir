@@ -1,29 +1,29 @@
-import type { GrammarContext } from '../../context.ts';
+import type { GrammarMap } from '../../map.ts';
 import type * as V from '../../index.ts';
 export namespace Declaration {
-	export interface Class<G extends GrammarContext<G>> {
+	export interface Class<G extends GrammarMap> {
 		readonly decorators?: V.Attribute.Decorator<G>[];
 	}
-	export interface Constructor<G extends GrammarContext<G>> {
+	export interface Constructor<G extends GrammarMap> {
 		readonly decorators?: V.Attribute.Decorator<G>[];
 	}
-	export interface Field<G extends GrammarContext<G>> {
+	export interface Field<G extends GrammarMap> {
 		readonly decorators?: V.Attribute.Decorator<G>[];
 		// t only
 	}
-	export interface Function<G extends GrammarContext<G>> {
+	export interface Function<G extends GrammarMap> {
 		readonly decorators?: V.Attribute.Decorator<G>[];
 		// p only
 	}
-	export interface Method<G extends GrammarContext<G>> {
+	export interface Method<G extends GrammarMap> {
 		readonly decorators?: V.Attribute.Decorator<G>[];
 		// t only
 	}
-	export interface Parameter<G extends GrammarContext<G>> {
+	export interface Parameter<G extends GrammarMap> {
 		readonly decorators?: V.Attribute.Decorator<G>[];
 		// t only
 	}
-	export interface Property<G extends GrammarContext<G>> {
+	export interface Property<G extends GrammarMap> {
 		readonly decorators?: V.Attribute.Decorator<G>[];
 	}
 }

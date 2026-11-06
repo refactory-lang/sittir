@@ -1,8 +1,8 @@
-import type { GrammarContext } from './context.ts';
-export interface Type<G extends GrammarContext<G>> {
+import type { GrammarMap, Slot } from './map.ts';
+export interface Type<G extends GrammarMap> {
 	// claimed by p
 	readonly $kind: 'type';
-	readonly content?: G['slots']['type']['content'];
+	readonly content?: Slot<G, 'type', 'content', unknown>;
 	// prt only
 }
 

@@ -1,7 +1,7 @@
-import type { GrammarContext } from './context.ts';
+import type { GrammarMap, Slot, Text } from './map.ts';
 import type { SubKindOf } from './utils.ts';
 import type * as V from './index.ts';
-export interface Statement<G extends GrammarContext<G>> {
+export interface Statement<G extends GrammarMap> {
 	readonly $kind: 'statement';
 }
 
@@ -14,80 +14,181 @@ export interface StatementSynonyms {
 }
 
 export namespace Statement {
-	export interface Block<G extends GrammarContext<G>> extends SubKindOf<V.Statement<G>> {
+	export interface Block<G extends GrammarMap> extends SubKindOf<V.Statement<G>> {
 		// claimed by prt
 		readonly $kind: 'statement.block';
-		readonly statements?: G['slots']['statement.block']['statements'][];
-		readonly trailingExpression?: G['slots']['statement.block']['trailingExpression'];
+		readonly statements?: Slot<
+			G,
+			'statement.block',
+			'statements',
+			| V.Attribute.Any<G>
+			| V.Declaration.Any<G>
+			| V.Expression.Call.Macro<G>
+			| V.Statement.Any<G>
+		>[];
+		readonly trailingExpression?: Slot<
+			G,
+			'statement.block',
+			'trailingExpression',
+			| V.Expression.Any<G>
+			| V.Identifier.Any<G>
+			| V.Literal.Any<G>
+			| V.Statement.Any<G>
+		>;
 		// r only
 	}
-	export interface Break<G extends GrammarContext<G>> extends SubKindOf<V.Statement<G>> {
+	export interface Break<G extends GrammarMap> extends SubKindOf<V.Statement<G>> {
 		// claimed by prt
 		readonly $kind: 'statement.break';
-		readonly expression?: G['slots']['statement.break']['expression'];
+		readonly expression?: Slot<
+			G,
+			'statement.break',
+			'expression',
+			| V.Expression.Any<G>
+			| V.Identifier.Any<G>
+			| V.Literal.Any<G>
+			| V.Statement.Any<G>
+		>;
 		// r only
 	}
-	export interface Continue<G extends GrammarContext<G>> extends SubKindOf<V.Statement<G>> {
+	export interface Continue<G extends GrammarMap> extends SubKindOf<V.Statement<G>> {
 		// claimed by prt
 		readonly $kind: 'statement.continue';
 	}
-	export interface Delete<G extends GrammarContext<G>> extends SubKindOf<V.Statement<G>> {
+	export interface Delete<G extends GrammarMap> extends SubKindOf<V.Statement<G>> {
 		// claimed by p
 		readonly $kind: 'statement.delete';
-		readonly expressions: G['slots']['statement.delete']['expressions'];
+		readonly expressions: Slot<
+			G,
+			'statement.delete',
+			'expressions',
+			| V.Expression.Any<G>
+			| V.Identifier.Any<G>
+			| V.Literal.Any<G>
+			| V.Pattern.Any<G>
+		>;
 	}
 	// claimed by prt
-	export type Empty<G extends GrammarContext<G>> = G['texts']['statement.empty'];
-	export interface Expression<G extends GrammarContext<G>> extends SubKindOf<V.Statement<G>> {
+	export type Empty<G extends GrammarMap> = Text<G, 'statement.empty'>;
+	export interface Expression<G extends GrammarMap> extends SubKindOf<V.Statement<G>> {
 		// claimed by prt
 		readonly $kind: 'statement.expression';
-		readonly content?: G['slots']['statement.expression']['content'] | G['slots']['statement.expression']['content'][];
+		readonly content?: Slot<
+			G,
+			'statement.expression',
+			'content',
+			| V.Declaration.Variable<G>
+			| V.Expression.Any<G>
+			| V.Identifier.Any<G>
+			| V.Literal.Any<G>
+			| V.Pattern.Any<G>
+			| V.Statement.Any<G>
+			| V.Declaration.Constant<G>
+		> | Slot<
+			G,
+			'statement.expression',
+			'content',
+			| V.Declaration.Variable<G>
+			| V.Expression.Any<G>
+			| V.Identifier.Any<G>
+			| V.Literal.Any<G>
+			| V.Pattern.Any<G>
+			| V.Statement.Any<G>
+			| V.Declaration.Constant<G>
+		>[];
 		// pr only
-		readonly expression?: G['slots']['statement.expression']['expression'];
+		readonly expression?: Slot<
+			G,
+			'statement.expression',
+			'expression',
+			| V.Declaration.Module<G>
+			| V.Expression.Any<G>
+			| V.Identifier.Any<G>
+			| V.Literal.Any<G>
+		>;
 		// t only
 	}
-	export interface If<G extends GrammarContext<G>> extends SubKindOf<V.Statement<G>> {
+	export interface If<G extends GrammarMap> extends SubKindOf<V.Statement<G>> {
 		// claimed by prt
 		readonly $kind: 'statement.if';
 		readonly alternative?: V.Clause.Else<G>;
 		// rt only
-		readonly alternatives?: G['clause'][];
+		readonly alternatives?: Slot<G, 'statement.if', 'alternatives', V.Clause.Any<G>>[];
 		// p only
-		readonly condition: G['slots']['statement.if']['condition'];
-		readonly consequence: G['slots']['statement.if']['consequence'];
+		readonly condition: Slot<
+			G,
+			'statement.if',
+			'condition',
+			| V.Expression.Any<G>
+			| V.Identifier.Any<G>
+			| V.Literal.Any<G>
+			| V.Pattern.Any<G>
+			| V.Clause.Let.Any<G>
+			| V.Statement.Any<G>
+		>;
+		readonly consequence: Slot<G, 'statement.if', 'consequence', V.Declaration.Any<G> | V.Statement.Any<G>>;
 	}
-	export interface Loop<G extends GrammarContext<G>> extends SubKindOf<V.Statement<G>> {
+	export interface Loop<G extends GrammarMap> extends SubKindOf<V.Statement<G>> {
 		// claimed by r
 		readonly $kind: 'statement.loop';
-		readonly body: G['slots']['statement.loop']['body'];
+		readonly body: Slot<G, 'statement.loop', 'body', V.Declaration.Any<G> | V.Statement.Any<G>>;
 		// prt only
 	}
 	export namespace Loop {
-		export interface ForEach<G extends GrammarContext<G>> extends SubKindOf<V.Statement.Loop<G>> {
+		export interface ForEach<G extends GrammarMap> extends SubKindOf<V.Statement.Loop<G>, 'body'> {
 			// claimed by prt
 			readonly $kind: 'statement.loop.for_each';
 			readonly alternative?: V.Clause.Else<G>;
 			// p only
-			readonly body: G['slots']['statement.loop.for_each']['body'];
-			readonly header?: G['slots']['statement.loop.for_each']['header'];
+			readonly body: Slot<G, 'statement.loop.for_each', 'body', V.Declaration.Any<G> | V.Statement.Any<G>>;
+			readonly header?: Slot<G, 'statement.loop.for_each', 'header', unknown>;
 			// t only
-			readonly left?: G['slots']['statement.loop.for_each']['left'];
+			readonly left?: Slot<G, 'statement.loop.for_each', 'left', unknown>;
 			// pr only
-			readonly right?: G['slots']['statement.loop.for_each']['right'];
+			readonly right?: Slot<
+				G,
+				'statement.loop.for_each',
+				'right',
+				| V.Expression.Any<G>
+				| V.Identifier.Any<G>
+				| V.Literal.Any<G>
+				| V.Pattern.Any<G>
+				| V.Statement.Any<G>
+			>;
 			// pr only
 		}
-		export interface While<G extends GrammarContext<G>> extends SubKindOf<V.Statement.Loop<G>> {
+		export interface While<G extends GrammarMap> extends SubKindOf<V.Statement.Loop<G>, 'body'> {
 			// claimed by prt
 			readonly $kind: 'statement.loop.while';
 			readonly alternative?: V.Clause.Else<G>;
 			// p only
-			readonly body: G['slots']['statement.loop.while']['body'];
-			readonly condition: G['slots']['statement.loop.while']['condition'];
+			readonly body: Slot<G, 'statement.loop.while', 'body', V.Declaration.Any<G> | V.Statement.Any<G>>;
+			readonly condition: Slot<
+				G,
+				'statement.loop.while',
+				'condition',
+				| V.Expression.Any<G>
+				| V.Identifier.Any<G>
+				| V.Literal.Any<G>
+				| V.Pattern.Any<G>
+				| V.Clause.Let.Any<G>
+				| V.Statement.Any<G>
+			>;
 		}
 	}
-	export interface Return<G extends GrammarContext<G>> extends SubKindOf<V.Statement<G>> {
+	export interface Return<G extends GrammarMap> extends SubKindOf<V.Statement<G>> {
 		// claimed by prt
 		readonly $kind: 'statement.return';
-		readonly expression?: G['slots']['statement.return']['expression'];
+		readonly expression?: Slot<
+			G,
+			'statement.return',
+			'expression',
+			| V.Declaration.Module<G>
+			| V.Expression.Any<G>
+			| V.Identifier.Any<G>
+			| V.Literal.Any<G>
+			| V.Pattern.Any<G>
+			| V.Statement.Any<G>
+		>;
 	}
 }

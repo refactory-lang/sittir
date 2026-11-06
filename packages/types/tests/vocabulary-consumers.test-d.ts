@@ -3,12 +3,11 @@
  * ordinary structure satisfies its base interface with only the members every
  * claiming grammar carries, and a refinement pins what it says it pins. A
  * member only a refinement carries must never be required on the ancestor.
- * Each check is generic over the context, as portable code is: the roles it
- * fills arrive typed by the namespace map. A concrete context, as a grammar
- * declares one, narrows the map and instantiates them. A member a feature owns
- * is gated on the context: a structure that sets one is built over a context
- * composing the feature, and generic code reads one as its type or undefined,
- * since a context without the feature lacks the member.
+ * Agnostic checks are written against a contract, the vocabulary over a
+ * feature set with no overrides, where each member takes its default. A
+ * grammar's map narrows members by overriding them. A member a feature owns
+ * is gated on the map's features: a structure that sets one is built over a
+ * contract composing the feature, and a contract without it lacks the member.
  */
 
 import type {
@@ -20,38 +19,45 @@ import type {
 	Elisions,
 	Expression,
 	File,
-	GrammarContext,
+	Assert,
+	Contract,
+	Fits,
+	GrammarMap,
 	Identifier,
 	OptionalMembers,
 	Pattern,
 	ScopedVisibility,
 	Statement,
 	Type,
+	Text,
 	Unmapped
 } from '../src/vocabulary/index.ts';
 import type { Flag } from '../src/vocabulary/utils.ts';
 
+// The core contract: no features and no overrides, so each member takes its default.
+type Core = Contract<{}>;
+
 // An ordinary function needs a name and parameters, nothing accessor-shaped.
-export function fn<G extends GrammarContext<G>>(name: G['identifier']): Declaration.Function<G> {
+export function fn(name: Identifier.Any<Core>): Declaration.Function<Core> {
 	return { $kind: 'declaration.function', name, parameters: [] };
 }
 
 // A method without an accessor is a plain method, and every method has a name and parameters.
-export function method<G extends GrammarContext<G>>(name: G['identifier']): Declaration.Method<G> {
+export function method(name: Identifier.Any<Core>): Declaration.Method<Core> {
 	return { $kind: 'declaration.method', name, parameters: [] };
 }
-export function nameless<G extends GrammarContext<G>>(): Declaration.Method<G> {
+export function nameless(): Declaration.Method<Core> {
 	// @ts-expect-error a method supplies its name
 	return { $kind: 'declaration.method', parameters: [] };
 }
-export function parameterless<G extends GrammarContext<G>>(name: G['identifier']): Declaration.Method<G> {
+export function parameterless(name: Identifier.Any<Core>): Declaration.Method<Core> {
 	// @ts-expect-error a method supplies its parameters
 	return { $kind: 'declaration.method', name };
 }
 
-// A context composing the features whose members the checks below set, and one composing none.
-interface Composed extends GrammarContext<Composed>, Accessors, BoundedQuantification, ScopedVisibility {}
-interface Bare extends GrammarContext<Bare> {}
+// A contract composing the features whose members the checks below set, and one composing none.
+type Composed = Contract<Accessors & BoundedQuantification & ScopedVisibility>;
+type Bare = Contract<{}>;
 
 // A getter is a property's accessor kind, which `accessors` owns: no member holds `get`.
 export function getter(name: Declaration.Property.Getter<Composed>['name']): Declaration.Property.Getter<Composed> {
@@ -66,12 +72,12 @@ export function getterWithAccessor(name: Declaration.Property.Getter<Composed>['
 }
 
 // An auto-accessor holds a field's optionality marker (`accessor x!: T`), under the feature that owns it on a field.
-export function accessorOptionality<G extends GrammarContext<G>>(
-	p: Declaration.Property<G>
-): Declaration.Field<G>['optionality'] | undefined {
+export function accessorOptionality(
+	p: Declaration.Property<Core>
+): Declaration.Field<Core>['optionality'] | undefined {
 	return p.optionality;
 }
-interface Optional extends GrammarContext<Optional>, Accessors, OptionalMembers {}
+type Optional = Contract<Accessors & OptionalMembers>;
 export function markedAccessor(name: Declaration.Property<Optional>['name']): Declaration.Property<Optional> {
 	return { $kind: 'declaration.property', name, optionality: '!' };
 }
@@ -85,11 +91,11 @@ export function bareMarked(name: Declaration.Property<Bare>['name']): Declaratio
 }
 
 // An owner's access level is its refinement kind, and no member holds the level. A deeper level refines it further.
-export function crateFn(name: Composed['identifier']): Declaration.Function.Public.Internal<Composed> {
+export function crateFn(name: Identifier.Any<Composed>): Declaration.Function.Public.Internal<Composed> {
 	return { $kind: 'declaration.function.public.internal', name, parameters: [] };
 }
 export const anyPublic: Declaration.Function.Public.Any<Composed> = crateFn({ $kind: 'identifier' });
-export function privateFn(name: Composed['identifier']): Declaration.Function.Private<Composed> {
+export function privateFn(name: Identifier.Any<Composed>): Declaration.Function.Private<Composed> {
 	return {
 		$kind: 'declaration.function.private',
 		name,
@@ -99,61 +105,63 @@ export function privateFn(name: Composed['identifier']): Declaration.Function.Pr
 	};
 }
 // The restricted level adds the module it names, and every owner's restricted refinement has it.
-export function superFn(name: Composed['identifier'], scope: Composed['identifier']): Declaration.Function.Public.Restricted<Composed> {
+export function superFn(name: Identifier.Any<Composed>, scope: Identifier.Any<Composed>): Declaration.Function.Public.Restricted<Composed> {
 	return { $kind: 'declaration.function.public.restricted', name, parameters: [], scope };
 }
 // @ts-expect-error a context without scoped visibility has no scope
 export const noScope: Declaration.Function.Public.Restricted<Bare>['scope'] = { $kind: 'identifier' };
 
-// A member the context's features lack is absent: unbounded code reads it as its type or undefined, and a context
-// without the feature refuses a value for it.
-export function asyncOf<G extends GrammarContext<G>>(f: Declaration.Function<G>): Flag | undefined {
+// A member the contract's features lack is absent: code over the core reads it as its type or undefined, and a
+// contract without the feature refuses a value for it.
+export function asyncOf(f: Declaration.Function<Core>): Flag | undefined {
 	return f.async;
 }
 declare const asyncFlag: Flag;
 export const bareAsync: Declaration.Function<Bare> = {
-	...fn<Bare>({ $kind: 'identifier' }),
-	// @ts-expect-error a context without async-await has no async
+	$kind: 'declaration.function',
+	name: { $kind: 'identifier' },
+	parameters: [],
+	// @ts-expect-error a contract without async-await has no async
 	async: asyncFlag
 };
 
 // A call carries no operator; a binary expression carries no arguments.
-export function call<G extends GrammarContext<G>>(callee: G['identifier']): Expression.Call<G> {
+export function call(callee: Identifier.Any<Core>): Expression.Call<Core> {
 	return { $kind: 'expression.call', function: callee, arguments: [] };
 }
-export function binary<G extends GrammarContext<G>>(left: G['identifier'], right: G['identifier']): Expression.Binary<G> {
+export function binary(left: Identifier.Any<Core>, right: Identifier.Any<Core>): Expression.Binary<Core> {
 	return { $kind: 'expression.binary', left, right };
 }
 
 // A refinement pins its operator.
-export function add<G extends GrammarContext<G>>(): Expression.Binary.Arithmetic.Add<G> {
+export function add(): Expression.Binary.Arithmetic.Add<Core> {
 	return { $kind: 'expression.binary.arithmetic.add', operator: '+' };
 }
-export function notAdd<G extends GrammarContext<G>>(): Expression.Binary.Arithmetic.Add<G> {
+export function notAdd(): Expression.Binary.Arithmetic.Add<Core> {
 	return {
-		...add<G>(),
+		...add(),
 		// @ts-expect-error the addition refinement pins '+'
 		operator: '-'
 	};
 }
 
 // Every comparison pins the one converged operator member.
-export function equal<G extends GrammarContext<G>>(left: G['identifier'], right: G['identifier']): Expression.Binary.Comparison.Equal<G> {
+export function equal(left: Identifier.Any<Core>, right: Identifier.Any<Core>): Expression.Binary.Comparison.Equal<Core> {
 	return { $kind: 'expression.binary.comparison.equal', left, right, operator: '==' };
 }
-export function notEqual<G extends GrammarContext<G>>(left: G['identifier'], right: G['identifier']): Expression.Binary.Comparison.Equal<G> {
+export function notEqual(left: Identifier.Any<Core>, right: Identifier.Any<Core>): Expression.Binary.Comparison.Equal<Core> {
 	return {
-		...equal<G>(left, right),
+		...equal(left, right),
 		// @ts-expect-error the equality refinement pins '=='
 		operator: '!='
 	};
 }
 
 // Equality is strict in every language, typescript's `===` included; its coercing `==` is a comparison of its own.
-export function strictEqual<G extends GrammarContext<G>>(left: G['identifier'], right: G['identifier']): Expression.Binary.Comparison.Equal<G> {
-	return { ...equal<G>(left, right), operator: '===' };
+export function strictEqual(left: Identifier.Any<Core>, right: Identifier.Any<Core>): Expression.Binary.Comparison.Equal<Core> {
+	return { ...equal(left, right), operator: '===' };
 }
-export function looseEqual<G extends GrammarContext<G>>(left: G['identifier'], right: G['identifier']): Expression.Binary.Comparison.LooseEqual<G> {
+export function looseEqual(left: Identifier.Any<Core>, right: Identifier.Any<Core>): Expression.Binary.Comparison.LooseEqual<Core> {
 	return {
 		$kind: 'expression.binary.comparison.loose_equal',
 		left,
@@ -177,96 +185,102 @@ export function unsafeTrait(name: Declaration.Interface.Trait<Composed>['name'],
 }
 
 // The kind-set is the type for "any declaration": shared members read directly, the rest after narrowing on `$kind`.
-export function nameOf<G extends GrammarContext<G>>(d: Declaration.Any<G>): unknown {
+export function nameOf(d: Declaration.Any<Core>): unknown {
 	if (d.$kind === 'declaration.function') return d.parameters;
 	return d.$kind;
 }
 
 // The root of a file is `file`, and `module` names only a module declared in a file.
-export function file<G extends GrammarContext<G>>(statements: G['slots']['file']['statements'][]): File<G> {
+export function file(statements: File<Core>['statements']): File<Core> {
 	return { $kind: 'file', statements };
 }
-export function declaredModuleAsFile<G extends GrammarContext<G>>(m: Declaration.Module<G>): File<G> {
+export function declaredModuleAsFile(m: Declaration.Module<Core>): File<Core> {
 	// @ts-expect-error a module declared in a file is no file
 	return m;
 }
 
 // A loop family: the shared for-each is a refinement of loop, and needs its subject and body.
-export function forEach<G extends GrammarContext<G>>(right: G['identifier'], body: Statement.Block<G>): Statement.Loop.ForEach<G> {
+export function forEach(right: Identifier.Any<Core>, body: Statement.Block<Core>): Statement.Loop.ForEach<Core> {
 	return { $kind: 'statement.loop.for_each', right, body };
 }
 
 // A switch holds its cases, each naming its value, and its default, which names none; a match case is no clause of a switch.
-export function switchBody<G extends GrammarContext<G>>(value: Clause.Case.Switch<G>['value']): Statement.Switch<G>['body'] {
+export function switchBody(value: Clause.Case.Switch<Core>['value']): Statement.Switch<Core>['body'] {
 	return [{ $kind: 'clause.case.switch', value }, { $kind: 'clause.case.default' }];
 }
-export function matchInSwitch<G extends GrammarContext<G>>(c: Clause.Case.Match<G>): Statement.Switch<G>['body'] {
+export function matchInSwitch(c: Clause.Case.Match<Core>): Statement.Switch<Core>['body'] {
 	// @ts-expect-error a match case is no clause of a switch
 	return [c];
 }
 
 // A handler is one kind in every language: it names what it binds and the type it catches, and holds its body.
-export function handler<G extends GrammarContext<G>>(name: G['identifier'], type: G['type'], body: Clause.Catch<G>['body']): Clause.Catch<G> {
+export function handler(name: Identifier.Any<Core>, type: Type.Any<Core>, body: Clause.Catch<Core>['body']): Clause.Catch<Core> {
 	return { $kind: 'clause.catch', name, type, body };
 }
-export function handlerException<G extends GrammarContext<G>>(c: Clause.Catch<G>): unknown {
+export function handlerException(c: Clause.Catch<Core>): unknown {
 	// @ts-expect-error what a handler catches is its `type`, in every language
 	return c.exception;
 }
 
-// Roles read through the namespace map, which types each by its permissive fill: a kind, or the text of a token the role
-// admits, told apart by `typeof`.
-export function nameKind<G extends GrammarContext<G>>(f: Declaration.Function<G>): string {
-	const name: GrammarContext<G>['identifier'] = f.name;
-	return typeof name === 'string' ? name : name.$kind;
+// A member reads as its default under a contract: a kind of its namespace, the text of a token it admits, or an unclaimed
+// kind's low-level node, told apart by `typeof` and `$kind`.
+export function nameKind(f: Declaration.Function<Core>): string {
+	const name: Identifier.Any<Core> | Unmapped = f.name;
+	return typeof name === 'string' ? name : '$kind' in name ? name.$kind : 'unmapped';
 }
 
 // A level is whole: it holds the kinds a feature adds, for every context.
-export function yields<G extends GrammarContext<G>>(y: Expression.Yield<G>): Expression.Any<G> {
+export function yields(y: Expression.Yield<Core>): Expression.Any<Core> {
 	return y;
 }
 
-// A grammar's context extends the map over itself and narrows it to what the grammar realizes: here the identifier
-// role to the plain identifier, and a function's parameters to identifiers.
-interface Narrowed extends GrammarContext<Narrowed> {
-	readonly identifier: Identifier<Narrowed>;
-	readonly slots: GrammarContext<Narrowed>['slots'] & {
-		readonly 'declaration.function': { readonly parameters: Identifier<Narrowed> };
+// A grammar's map narrows a member by overriding it: here a function's name and parameters to the plain identifier. The
+// override fits its default, and the member refuses what the override leaves out.
+interface Narrowed extends GrammarMap {
+	readonly features: {};
+	readonly overrides: {
+		readonly 'declaration.function': { readonly name: Identifier<Narrowed>; readonly parameters: Identifier<Narrowed> };
 	};
+	readonly inputs: {};
 }
-const self: Narrowed['identifier'] = { $kind: 'identifier' };
-export const narrowed: Declaration.Function<Narrowed> = { ...fn<Narrowed>(self), parameters: [self] };
-export const narrowedName: string = nameKind<Narrowed>(narrowed);
-// @ts-expect-error the narrowed identifier role refuses a kind the grammar leaves out
-export const base = fn<Narrowed>({ $kind: 'identifier.super' });
-// @ts-expect-error the narrowed parameters slot refuses an arm the grammar leaves out
+export type NarrowedFits = Assert<Fits<Narrowed>>;
+const self: Identifier<Narrowed> = { $kind: 'identifier' };
+export const narrowed: Declaration.Function<Narrowed> = { $kind: 'declaration.function', name: self, parameters: [self] };
+// @ts-expect-error the narrowed name refuses an arm the grammar leaves out
+export const textName: Declaration.Function<Narrowed> = { ...narrowed, name: 'self' };
+// @ts-expect-error the narrowed parameters refuse an arm the grammar leaves out
 export const textParameter: Declaration.Function<Narrowed> = { ...narrowed, parameters: ['self'] };
 
 // Typescript's `any` is the unchecked primitive, a token typed as the text the grammar's text table gives it; `Any` names each
 // namespace's union of its kinds, and the union holds it.
-export function unchecked<G extends GrammarContext<G>>(any: G['texts']['type.primitive.unchecked']): Type.Primitive.Any<G> {
+export function unchecked(any: Text<Core, 'type.primitive.unchecked'>): Type.Primitive.Any<Core> {
 	return any;
 }
 
 // A hole in a list literal or list pattern is null, and only a context composing elisions admits one.
-interface Elided extends GrammarContext<Elided>, Elisions {}
-export function elided(x: Elided['expression'], p: Elided['pattern']): readonly [Expression.Collection.List<Elided>, Pattern.List<Elided>] {
+type Elided = Contract<Elisions>;
+export function elided(x: Expression.Any<Elided>, p: Pattern.Any<Elided>): readonly [Expression.Collection.List<Elided>, Pattern.List<Elided>] {
 	return [
 		{ $kind: 'expression.collection.list', elements: [x, null, x] },
 		{ $kind: 'pattern.list', elements: [p, null, p] }
 	];
 }
-export function unelided(x: Bare['expression']): Expression.Collection.List<Bare> {
+export function unelided(x: Expression.Any<Bare>): Expression.Collection.List<Bare> {
 	// @ts-expect-error a context without elisions has no holes
 	return { $kind: 'expression.collection.list', elements: [x, null, x] };
 }
 
-// A context's unmapped table adds the unclaimed kinds its grammar reads in a member to that member, and a refinement
-// narrowing the member reads its parent's entry; a context without the table admits none.
-interface Unclaimed extends GrammarContext<Unclaimed> {
-	readonly unmapped: { readonly comment: { readonly content: Unmapped<'g:doc_text'> } };
+// Every default admits an unclaimed kind, typed as its low-level node, and a grammar registers each of its unclaimed kinds
+// under its name; an override that leaves the kind out refuses it.
+declare module '../src/vocabulary/index.ts' {
+	interface UnmappedKinds {
+		readonly 'g:doc_text': { readonly $type: 7; readonly text: string };
+	}
 }
-export const unclaimedContent: Comment.Line<Unclaimed>['content'] = { $unmapped: 'g:doc_text' };
-export const unclaimedDocContent: Comment.Line.Doc.Inner<Unclaimed>['content'] = { $unmapped: 'g:doc_text' };
-// @ts-expect-error the bare context admits no unclaimed kind
-export const bareContent: Comment.Line<Bare>['content'] = { $unmapped: 'g:doc_text' };
+declare const docText: Unmapped<'g:doc_text'>;
+export const docTextRead: string = docText.text;
+export const unclaimedName: Declaration.Function<Core>['name'] = docText;
+export const unclaimedContent: Comment.Line<Core>['content'] = docText;
+export const unclaimedDocContent: Comment.Line.Doc.Inner<Core>['content'] = docText;
+// @ts-expect-error the narrowed name admits no unclaimed kind
+export const narrowedUnclaimed: Declaration.Function<Narrowed>['name'] = docText;

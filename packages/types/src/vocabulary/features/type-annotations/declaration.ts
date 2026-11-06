@@ -1,76 +1,147 @@
-import type { GrammarContext } from '../../context.ts';
+import type { GrammarMap, Slot } from '../../map.ts';
+import type * as V from '../../index.ts';
 export namespace Declaration {
-	export interface Constant<G extends GrammarContext<G>> {
-		readonly type?: G['slots']['declaration.constant']['type'];
+	export interface Constant<G extends GrammarMap> {
+		readonly type?: Slot<
+			G,
+			'declaration.constant',
+			'type',
+			| V.Clause.Bounds.Removed<G>
+			| V.Expression.Call.Macro<G>
+			| V.Identifier.Any<G>
+			| V.Type.Any<G>
+		>;
 	}
-	export interface Constructor<G extends GrammarContext<G>> {
-		readonly returnType?: G['slots']['declaration.constructor']['returnType'];
+	export interface Constructor<G extends GrammarMap> {
+		readonly returnType?: Slot<G, 'declaration.constructor', 'returnType', V.Identifier.Any<G> | V.Type.Any<G>>;
 		// p only
 	}
-	export interface Field<G extends GrammarContext<G>> {
-		readonly type?: G['slots']['declaration.field']['type'];
+	export interface Field<G extends GrammarMap> {
+		readonly type?: Slot<
+			G,
+			'declaration.field',
+			'type',
+			| V.Clause.Bounds.Removed<G>
+			| V.Expression.Call.Macro<G>
+			| V.Identifier.Any<G>
+			| V.Type.Any<G>
+		>;
 	}
 	export namespace Field {
-		export interface Signature<G extends GrammarContext<G>> {
-			readonly type?: G['slots']['declaration.field.signature']['type'];
+		export interface Signature<G extends GrammarMap> {
+			readonly type?: Slot<G, 'declaration.field.signature', 'type', V.Identifier.Any<G> | V.Type.Any<G>>;
 		}
 	}
-	export interface Function<G extends GrammarContext<G>> {
-		readonly returnType?: G['slots']['declaration.function']['returnType'];
+	export interface Function<G extends GrammarMap> {
+		readonly returnType?: Slot<
+			G,
+			'declaration.function',
+			'returnType',
+			| V.Clause.Bounds.Removed<G>
+			| V.Expression.Call.Macro<G>
+			| V.Identifier.Any<G>
+			| V.Type.Any<G>
+		>;
 	}
 	export namespace Function {
-		export interface Signature<G extends GrammarContext<G>> {
-			readonly returnType?: G['slots']['declaration.function.signature']['returnType'];
+		export interface Signature<G extends GrammarMap> {
+			readonly returnType?: Slot<
+				G,
+				'declaration.function.signature',
+				'returnType',
+				| V.Clause.Bounds.Removed<G>
+				| V.Expression.Call.Macro<G>
+				| V.Identifier.Any<G>
+				| V.Type.Any<G>
+			>;
 		}
 	}
-	export interface Method<G extends GrammarContext<G>> {
-		readonly returnType?: G['slots']['declaration.method']['returnType'];
+	export interface Method<G extends GrammarMap> {
+		readonly returnType?: Slot<
+			G,
+			'declaration.method',
+			'returnType',
+			| V.Clause.Bounds.Removed<G>
+			| V.Expression.Call.Macro<G>
+			| V.Identifier.Any<G>
+			| V.Type.Any<G>
+		>;
 	}
 	export namespace Method {
-		export interface Signature<G extends GrammarContext<G>> {
-			readonly returnType?: G['slots']['declaration.method.signature']['returnType'];
+		export interface Signature<G extends GrammarMap> {
+			readonly returnType?: Slot<
+				G,
+				'declaration.method.signature',
+				'returnType',
+				| V.Clause.Bounds.Removed<G>
+				| V.Expression.Call.Macro<G>
+				| V.Identifier.Any<G>
+				| V.Type.Any<G>
+			>;
 		}
 		export namespace Signature {
-			export interface Abstract<G extends GrammarContext<G>> {
-				readonly returnType?: G['slots']['declaration.method.signature.abstract']['returnType'];
+			export interface Abstract<G extends GrammarMap> {
+				readonly returnType?: Slot<G, 'declaration.method.signature.abstract', 'returnType', V.Identifier.Any<G> | V.Type.Any<G>>;
 			}
 		}
 	}
-	export interface Parameter<G extends GrammarContext<G>> {
-		readonly type?: G['slots']['declaration.parameter']['type'];
+	export interface Parameter<G extends GrammarMap> {
+		readonly type?: Slot<
+			G,
+			'declaration.parameter',
+			'type',
+			| V.Clause.Bounds.Removed<G>
+			| V.Expression.Call.Macro<G>
+			| V.Identifier.Any<G>
+			| V.Type.Any<G>
+		>;
 	}
 	export namespace Parameter {
-		export interface Typed<G extends GrammarContext<G>> {
-			readonly type: G['type'];
+		export interface Typed<G extends GrammarMap> {
+			readonly type: Slot<G, 'declaration.parameter.typed', 'type', V.Type.Any<G>>;
 		}
-		export interface TypedDefault<G extends GrammarContext<G>> {
-			readonly type: G['type'];
+		export interface TypedDefault<G extends GrammarMap> {
+			readonly type: Slot<G, 'declaration.parameter.typed_default', 'type', V.Type.Any<G>>;
 		}
 	}
-	export interface Property<G extends GrammarContext<G>> {
-		readonly type?: G['slots']['declaration.property']['type'];
+	export interface Property<G extends GrammarMap> {
+		readonly type?: Slot<G, 'declaration.property', 'type', V.Identifier.Any<G> | V.Type.Any<G>>;
 	}
 	export namespace Property {
-		export interface Getter<G extends GrammarContext<G>> {
-			readonly returnType?: G['slots']['declaration.property.getter']['returnType'];
+		export interface Getter<G extends GrammarMap> {
+			readonly returnType?: Slot<G, 'declaration.property.getter', 'returnType', V.Identifier.Any<G> | V.Type.Any<G>>;
 		}
 		export namespace Signature {
 			export namespace Abstract {
-				export interface Getter<G extends GrammarContext<G>> {
-					readonly returnType?: G['slots']['declaration.property.signature.abstract.getter']['returnType'];
+				export interface Getter<G extends GrammarMap> {
+					readonly returnType?: Slot<
+						G,
+						'declaration.property.signature.abstract.getter',
+						'returnType',
+						| V.Identifier.Any<G>
+						| V.Type.Any<G>
+					>;
 				}
 			}
-			export interface Getter<G extends GrammarContext<G>> {
-				readonly returnType?: G['slots']['declaration.property.signature.getter']['returnType'];
+			export interface Getter<G extends GrammarMap> {
+				readonly returnType?: Slot<G, 'declaration.property.signature.getter', 'returnType', V.Identifier.Any<G> | V.Type.Any<G>>;
 			}
 		}
 	}
-	export interface Variable<G extends GrammarContext<G>> {
-		readonly type?: G['slots']['declaration.variable']['type'];
+	export interface Variable<G extends GrammarMap> {
+		readonly type?: Slot<
+			G,
+			'declaration.variable',
+			'type',
+			| V.Clause.Bounds.Removed<G>
+			| V.Expression.Call.Macro<G>
+			| V.Identifier.Any<G>
+			| V.Type.Any<G>
+		>;
 	}
 	export namespace Variable {
-		export interface Pattern<G extends GrammarContext<G>> {
-			readonly type?: G['slots']['declaration.variable.pattern']['type'];
+		export interface Pattern<G extends GrammarMap> {
+			readonly type?: Slot<G, 'declaration.variable.pattern', 'type', V.Identifier.Any<G> | V.Type.Any<G>>;
 		}
 	}
 }

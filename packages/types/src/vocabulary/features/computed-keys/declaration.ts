@@ -1,15 +1,15 @@
-import type { GrammarContext } from '../../context.ts';
+import type { GrammarMap } from '../../map.ts';
 import type { Flag } from '../../utils.ts';
 export namespace Declaration {
-	export interface Field<G extends GrammarContext<G>> {
+	export interface Field<G extends GrammarMap> {
 		readonly computed?: Flag;
 		// t only
 	}
-	export interface Method<G extends GrammarContext<G>> {
+	export interface Method<G extends GrammarMap> {
 		readonly computed?: Flag;
 		// t only
 	}
-	export interface Property<G extends GrammarContext<G>> {
+	export interface Property<G extends GrammarMap> {
 		readonly computed?: Flag;
 	}
 }

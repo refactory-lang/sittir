@@ -1,36 +1,36 @@
-import type { GrammarContext } from '../../../context.ts';
+import type { GrammarMap, Slot } from '../../../map.ts';
 import type { Flag } from '../../../utils.ts';
 export namespace Declaration {
-	export interface Field<G extends GrammarContext<G>> {
+	export interface Field<G extends GrammarMap> {
 		readonly optional?: Flag;
 		// t only
-		readonly optionality?: G['slots']['declaration.field']['optionality'];
+		readonly optionality?: Slot<G, 'declaration.field', 'optionality', string>;
 		// t only
 	}
 	export namespace Field {
-		export interface Signature<G extends GrammarContext<G>> {
+		export interface Signature<G extends GrammarMap> {
 			readonly optional?: Flag;
 		}
 	}
-	export interface Method<G extends GrammarContext<G>> {
+	export interface Method<G extends GrammarMap> {
 		readonly optional?: Flag;
 		// t only
 	}
 	export namespace Method {
-		export interface Signature<G extends GrammarContext<G>> {
+		export interface Signature<G extends GrammarMap> {
 			readonly optional?: Flag;
 			// t only
 		}
 		export namespace Signature {
-			export interface Abstract<G extends GrammarContext<G>> {
+			export interface Abstract<G extends GrammarMap> {
 				readonly optional?: Flag;
 			}
 		}
 	}
-	export interface Property<G extends GrammarContext<G>> {
-		readonly optionality?: G['slots']['declaration.property']['optionality'];
+	export interface Property<G extends GrammarMap> {
+		readonly optionality?: Slot<G, 'declaration.property', 'optionality', string>;
 	}
-	export interface Parameter<G extends GrammarContext<G>> {
+	export interface Parameter<G extends GrammarMap> {
 		readonly optional?: Flag;
 		// t only
 	}

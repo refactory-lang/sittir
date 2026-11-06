@@ -19,7 +19,8 @@
 		"tests/widen-slots.test-d.ts",
 		"tests/literal-values.test-d.ts",
 		"tests/query-plan.test-d.ts",
-		"tests/kind-id-only.test-d.ts"
+		"tests/kind-id-only.test-d.ts",
+		"tests/grammar-map.test-d.ts"
 	],
 	"exclude": ["node_modules", "dist"]
 }

@@ -1,19 +1,26 @@
-import type { GrammarContext } from '../../context.ts';
+import type { GrammarMap, Slot } from '../../map.ts';
 import type { Flag, SubKindOf } from '../../utils.ts';
 import type * as V from '../../index.ts';
 export namespace Declaration {
-	export interface Class<G extends GrammarContext<G>> {
+	export interface Class<G extends GrammarMap> {
 		readonly typeParameters?:
+			Slot<
+			G,
+			'declaration.class',
+			'typeParameters',
 			| V.Declaration.TypeParameter<G>
 			| V.Declaration.TypeParameter.Parameters<G>
 			| V.Declaration.TypeParameter.Variadic<G>
-			| (
-					| V.Declaration.TypeParameter<G>
-					| V.Declaration.TypeParameter.Parameters<G>
-					| V.Declaration.TypeParameter.Variadic<G>
-			  )[];
+		> | Slot<
+			G,
+			'declaration.class',
+			'typeParameters',
+			| V.Declaration.TypeParameter<G>
+			| V.Declaration.TypeParameter.Parameters<G>
+			| V.Declaration.TypeParameter.Variadic<G>
+		>[];
 	}
-	export interface Constructor<G extends GrammarContext<G>> {
+	export interface Constructor<G extends GrammarMap> {
 		readonly typeParameters?:
 			| V.Declaration.TypeParameter<G>
 			| V.Declaration.TypeParameter.Parameters<G>
@@ -25,7 +32,7 @@ export namespace Declaration {
 			  )[];
 		// p only
 	}
-	export interface Enum<G extends GrammarContext<G>> {
+	export interface Enum<G extends GrammarMap> {
 		readonly typeParameters?: (
 			| V.Identifier.Metavariable<G>
 			| V.Declaration.TypeParameter<G>
@@ -34,7 +41,7 @@ export namespace Declaration {
 		)[];
 		// r only
 	}
-	export interface Extension<G extends GrammarContext<G>> {
+	export interface Extension<G extends GrammarMap> {
 		readonly typeParameters?: (
 			| V.Identifier.Metavariable<G>
 			| V.Declaration.TypeParameter<G>
@@ -43,7 +50,7 @@ export namespace Declaration {
 		)[];
 	}
 	export namespace Extension {
-		export interface Conformance<G extends GrammarContext<G>> {
+		export interface Conformance<G extends GrammarMap> {
 			readonly typeParameters?: (
 				| V.Identifier.Metavariable<G>
 				| V.Declaration.TypeParameter<G>
@@ -52,33 +59,49 @@ export namespace Declaration {
 			)[];
 		}
 	}
-	export interface Function<G extends GrammarContext<G>> {
+	export interface Function<G extends GrammarMap> {
 		readonly typeParameters?:
+			Slot<
+			G,
+			'declaration.function',
+			'typeParameters',
 			| V.Identifier.Metavariable<G>
 			| V.Declaration.TypeParameter.Any<G>
-			| (V.Identifier.Metavariable<G> | V.Declaration.TypeParameter.Any<G>)[];
+		> | Slot<
+			G,
+			'declaration.function',
+			'typeParameters',
+			| V.Identifier.Metavariable<G>
+			| V.Declaration.TypeParameter.Any<G>
+		>[];
 	}
 	export namespace Function {
-		export interface Signature<G extends GrammarContext<G>> {
-			readonly typeParameters?: (
+		export interface Signature<G extends GrammarMap> {
+			readonly typeParameters?: Slot<
+				G,
+				'declaration.function.signature',
+				'typeParameters',
 				| V.Identifier.Metavariable<G>
 				| V.Declaration.TypeParameter<G>
 				| V.Declaration.TypeParameter.Lifetime<G>
 				| V.Declaration.TypeParameter.Value<G>
-			)[];
+			>[];
 		}
 	}
-	export interface Interface<G extends GrammarContext<G>> {
-		readonly typeParameters?: (
+	export interface Interface<G extends GrammarMap> {
+		readonly typeParameters?: Slot<
+			G,
+			'declaration.interface',
+			'typeParameters',
 			| V.Identifier.Metavariable<G>
 			| V.Declaration.TypeParameter<G>
 			| V.Declaration.TypeParameter.Lifetime<G>
 			| V.Declaration.TypeParameter.Value<G>
-		)[];
+		>[];
 		// rt only
 	}
 	export namespace Interface {
-		export interface Trait<G extends GrammarContext<G>> {
+		export interface Trait<G extends GrammarMap> {
 			readonly typeParameters?: (
 				| V.Identifier.Metavariable<G>
 				| V.Declaration.TypeParameter<G>
@@ -87,40 +110,59 @@ export namespace Declaration {
 			)[];
 		}
 	}
-	export interface Method<G extends GrammarContext<G>> {
+	export interface Method<G extends GrammarMap> {
 		readonly typeParameters?:
+			Slot<
+			G,
+			'declaration.method',
+			'typeParameters',
 			| V.Identifier.Metavariable<G>
 			| V.Declaration.TypeParameter.Any<G>
-			| (V.Identifier.Metavariable<G> | V.Declaration.TypeParameter.Any<G>)[];
+		> | Slot<
+			G,
+			'declaration.method',
+			'typeParameters',
+			| V.Identifier.Metavariable<G>
+			| V.Declaration.TypeParameter.Any<G>
+		>[];
 	}
 	export namespace Method {
-		export interface Signature<G extends GrammarContext<G>> {
-			readonly typeParameters?: (
+		export interface Signature<G extends GrammarMap> {
+			readonly typeParameters?: Slot<
+				G,
+				'declaration.method.signature',
+				'typeParameters',
 				| V.Identifier.Metavariable<G>
 				| V.Declaration.TypeParameter<G>
 				| V.Declaration.TypeParameter.Lifetime<G>
 				| V.Declaration.TypeParameter.Value<G>
-			)[];
+			>[];
 		}
 		export namespace Signature {
-			export interface Abstract<G extends GrammarContext<G>> {
+			export interface Abstract<G extends GrammarMap> {
 				readonly typeParameters?: V.Declaration.TypeParameter<G>[];
 			}
 		}
 	}
 	export namespace Signature {
-		export interface Call<G extends GrammarContext<G>> {
+		export interface Call<G extends GrammarMap> {
 			readonly typeParameters?: V.Declaration.TypeParameter<G>[];
 		}
-		export interface Construct<G extends GrammarContext<G>> {
+		export interface Construct<G extends GrammarMap> {
 			readonly typeParameters?: V.Declaration.TypeParameter<G>[];
 		}
 	}
-	export interface TypeAlias<G extends GrammarContext<G>> {
-		readonly typeParameters?: (V.Identifier.Metavariable<G> | V.Declaration.TypeParameter.Any<G>)[];
+	export interface TypeAlias<G extends GrammarMap> {
+		readonly typeParameters?: Slot<
+			G,
+			'declaration.type_alias',
+			'typeParameters',
+			| V.Identifier.Metavariable<G>
+			| V.Declaration.TypeParameter.Any<G>
+		>[];
 	}
 	export namespace TypeAlias {
-		export interface Associated<G extends GrammarContext<G>> {
+		export interface Associated<G extends GrammarMap> {
 			readonly typeParameters?: (
 				| V.Identifier.Metavariable<G>
 				| V.Declaration.TypeParameter<G>
@@ -129,30 +171,40 @@ export namespace Declaration {
 			)[];
 		}
 	}
-	export interface TypeParameter<G extends GrammarContext<G>> extends SubKindOf<V.Declaration<G>> {
+	export interface TypeParameter<G extends GrammarMap> extends SubKindOf<V.Declaration<G>> {
 		// claimed by prt
 		readonly $kind: 'declaration.type_parameter';
 		readonly const?: Flag;
 		// t only
-		readonly default?: G['slots']['declaration.type_parameter']['default'];
+		readonly default?: Slot<
+			G,
+			'declaration.type_parameter',
+			'default',
+			| V.Clause.Any<G>
+			| V.Expression.Call.Macro<G>
+			| V.Identifier.Any<G>
+			| V.Literal.Any<G>
+			| V.Statement.Block<G>
+			| V.Type.Any<G>
+		>;
 		// rt only
-		readonly name?: G['identifier'];
+		readonly name?: Slot<G, 'declaration.type_parameter', 'name', V.Identifier.Any<G>>;
 	}
 	export namespace TypeParameter {
-		export interface Parameters<G extends GrammarContext<G>> extends SubKindOf<V.Declaration.TypeParameter<G>> {
+		export interface Parameters<G extends GrammarMap> extends SubKindOf<V.Declaration.TypeParameter<G>, 'name'> {
 			// claimed by p
 			readonly $kind: 'declaration.type_parameter.parameters';
 			readonly const?: never;
-			readonly name: G['identifier'];
+			readonly name: Slot<G, 'declaration.type_parameter.parameters', 'name', V.Identifier.Any<G>>;
 		}
-		export interface Variadic<G extends GrammarContext<G>> extends SubKindOf<V.Declaration.TypeParameter<G>> {
+		export interface Variadic<G extends GrammarMap> extends SubKindOf<V.Declaration.TypeParameter<G>, 'name'> {
 			// claimed by p
 			readonly $kind: 'declaration.type_parameter.variadic';
 			readonly const?: never;
-			readonly name: G['identifier'];
+			readonly name: Slot<G, 'declaration.type_parameter.variadic', 'name', V.Identifier.Any<G>>;
 		}
 	}
-	export interface Union<G extends GrammarContext<G>> {
+	export interface Union<G extends GrammarMap> {
 		readonly typeParameters?: (
 			| V.Identifier.Metavariable<G>
 			| V.Declaration.TypeParameter<G>

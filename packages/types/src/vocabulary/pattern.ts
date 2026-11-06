@@ -1,7 +1,7 @@
-import type { GrammarContext } from './context.ts';
+import type { GrammarMap, Slot } from './map.ts';
 import type { SubKindOf } from './utils.ts';
 import type * as V from './index.ts';
-export interface Pattern<G extends GrammarContext<G>> {
+export interface Pattern<G extends GrammarMap> {
 	readonly $kind: 'pattern';
 }
 
@@ -13,9 +13,9 @@ export interface PatternSynonyms {
 }
 
 export namespace Pattern {
-	export interface Mutable<G extends GrammarContext<G>> extends SubKindOf<V.Pattern<G>> {
+	export interface Mutable<G extends GrammarMap> extends SubKindOf<V.Pattern<G>> {
 		// claimed by r
 		readonly $kind: 'pattern.mutable';
-		readonly pattern: G['slots']['pattern.mutable']['pattern'];
+		readonly pattern: Slot<G, 'pattern.mutable', 'pattern', unknown>;
 	}
 }

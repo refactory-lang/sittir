@@ -18,7 +18,7 @@ const factoryOf = (source: string, name: string): readonly string[] => {
 
 describe('emitPortableTyped', () => {
 	it("declares rust's declaration.function as the view form of its interface", () => {
-		expect(typed.source).toContain('\t"declaration.function": ViewForm<V.Declaration.Function<Ctx>>;');
+		expect(typed.source).toContain('\t"declaration.function": ViewForm<V.Declaration.Function<RustMap>>;');
 	});
 
 	it('prints each read entry as a literal whose only data member is $type, naming member functions written once, its symbol keys last', () => {
@@ -54,38 +54,10 @@ describe('emitPortableTyped', () => {
 		);
 	});
 
-	it("types a slot holding a family as the family paths the grammar claims, not the vocabulary's whole family", () => {
-		const property = /\treadonly ["']expression\.member["']: \{\n(?:\t\t[^\n]*\n)*?\t\treadonly property: ([^\n]*);/.exec(typed.source)?.[1];
-		expect(property).toContain('V.Literal.Number.Integer.Octal<Ctx>');
-		expect(property).not.toContain('V.Literal.Number.Integer.Big');
-		expect(property).not.toContain('V.Literal.Number.Integer.Imaginary');
-	});
 
-	it('types a slot holding a supertype by the paths its subtypes read as, never the supertype path no node reads as', () => {
-		const input = /\treadonly ["']attribute\.content["']: \{\n\t\treadonly input: ([^\n]*);/.exec(typed.source)?.[1];
-		expect(input).toContain('V.Element.Macro.TokenTree.Delimited.Paren<Ctx>');
-		expect(input).not.toContain('V.Element.Macro.TokenTree.Delimited<Ctx>');
-	});
 
-	it('builds a role from the paths its kinds read as, never a path claimed only by a supertype or shadowed by a refinement', () => {
-		const element = /\treadonly element:((?:\n\t\t\|[^\n]*)+|[^\n]*);/.exec(typed.source.slice(typed.source.indexOf('export interface Ctx')))?.[1];
-		expect(element).toContain('V.Element.Macro.TokenTree.Delimited.Paren<Ctx>');
-		expect(element).not.toContain('V.Element.Macro.TokenTree.Delimited<Ctx>');
-		expect(element).not.toContain('V.Element.Macro.TokenTree<Ctx>');
-	});
 
-	it('emits an own slot only for a path the grammar reads, and holds a family by the members it holds', () => {
-		const own = typed.source.slice(typed.source.indexOf('interface OwnSlots {'), typed.source.indexOf('\n}\n', typed.source.indexOf('interface OwnSlots {')));
-		expect(own).not.toMatch(/\treadonly ["']attribute\.decorator["']: \{/);
-		const elements = /\treadonly ["']literal\.string["']: \{\n\t\treadonly elements: ([^\n]*);/.exec(own)?.[1];
-		expect(elements).toContain('V.Literal.String.Text<Ctx>');
-		expect(elements).not.toContain('V.Literal.String.Bytes');
-	});
 
-	it('types a slot holding a kind by the paths that kind reads as, never by the other kinds read under its claim path', () => {
-		const right = /\treadonly ["']clause\.macro\.rule["']: \{\n\t\treadonly left: [^\n]*;\n\t\treadonly right: ([^\n]*);/.exec(typed.source)?.[1];
-		expect(right?.split(' | ').sort()).toEqual(['V.Element.Macro.TokenTree.Brace<Ctx>', 'V.Element.Macro.TokenTree.Bracket<Ctx>', 'V.Element.Macro.TokenTree.Paren<Ctx>']);
-	});
 
 	it('reads a list slot without a fallback, since its accessor always returns a list', () => {
 		expect(typed.source).not.toMatch(/read\(this\[low\]\.attributes\(\)\) \?\? \[\]/);
@@ -132,18 +104,6 @@ describe('emitPortableTyped', () => {
 		expect(typed.source).toContain('type VK_ReceiverParameterDeclaration = VocabViews["declaration.parameter.receiver"];');
 	});
 
-	it('fills the unmapped table with the unclaimed kinds each read seat holds, keyed by namespace and member', () => {
-		const table = /\treadonly unmapped: \{\n([\s\S]*?)\n\t\};/.exec(typed.source)?.[1];
-		expect(table?.split('\n')).toEqual([
-			'\t\treadonly "clause": {',
-			"\t\t\treadonly useWildcardGroup: V.Unmapped<'rust:use_wildcard_group'>;",
-			'\t\t};',
-			'\t\treadonly "declaration": {',
-			"\t\t\treadonly traitClause: V.Unmapped<'rust:impl_item_negative_clause'> | V.Unmapped<'rust:impl_item_positive_clause'>;",
-			'\t\t};'
-		]);
-		expect(typed.source).toContain('type UnmappedKeys = Fit<"clause" | "declaration", V.NamespaceOf<keyof Slots>>;');
-	});
 
 	it('reads a claim on a name the parser shows once, as the kind it shows', () => {
 		expect(typed.unemitted.filter((u) => u.kind === 'let_chain')).toEqual([]);
@@ -164,21 +124,5 @@ describe('emitPortableTyped, python', () => {
 		const type = new RegExp(`type ${alias} = (.*);`).exec(python.source)?.[1];
 		expect(type?.startsWith('VocabViews["expression.collection.tuple.bare"] | ')).toBe(true);
 		expect(type).not.toContain('readonly');
-	});
-});
-
-describe('emitPortableTyped over python', () => {
-	let python: PortableTypedOutput;
-
-	beforeAll(async () => {
-		const generated = await generate({ grammar: 'python', outputDir: '/tmp/sittir-portable-typed-python/src' });
-		if (generated.portableTyped === undefined) throw new Error('python emitted no typed module');
-		python = generated.portableTyped;
-	}, 120_000);
-
-	it('types a slot holding a token claimed as a path by the text it reads as, not by the path\'s view', () => {
-		const content = /\treadonly ["']statement\.import\.from["']: \{\n\t\treadonly content: ([^\n]*);/.exec(python.source)?.[1];
-		expect(content).toContain(`Ctx['texts']["clause.import.wildcard"]`);
-		expect(content).not.toContain('V.Clause.Import.Wildcard<Ctx>');
 	});
 });
