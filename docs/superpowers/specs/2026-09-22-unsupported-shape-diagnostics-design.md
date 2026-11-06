@@ -114,17 +114,37 @@ external listed in `renderAs:` is visible:
   `_string_content`, which the entry names `string_fragment` because
   `string_content` is another rule.
 - **Enrich's whitespace members** join the same record under their minted
-  names and are aliased the same way. They are exempt from
+  names and are aliased the same way, even when upstream aliases the same
+  external elsewhere (python's `_newline` is `block` in `_suite` upstream and a
+  bare `_layout` member): upstream's sites stand, and every other use is
+  aliased. They are exempt from
   `render-only-not-external`; an authored key that redeclares one is
   `whitespace-mint-collision` (§4.2).
 
 `renderAs:` is the only way an external becomes visible. There is no
 `visibleExternals:` block, and an authored `alias(...)` of an external in
-`patches:` or in a `rules:` body is blocking. Every consumer of "sittir made
+`patches:` or in a `rules:` body is blocking (`external-alias-outside-render-as`),
+unless it reproduces an upstream site: the same external under the same name.
+An entry's own alias must be named, and must name something: a string alias,
+and an alias on an external upstream already aliases, are
+`render-as-alias-invalid`. Wire derives the record once (`visibleAs`: hidden
+external → node name, from the authored entries and enrich's whitespace members;
+never authored), and every consumer reads it. Every consumer of "sittir made
 this external visible" (the catalog's visible-external stamp, the whitespace
 text the render options read, the diagnostics) reads it from this record.
 `hidden-terminal-nonliteral`'s proposal, when its target is an external,
 names a `renderAs:` entry.
+
+A made-visible external keeps its own kind, and a declared token written as a
+seam is accepted for it, only when its body is a whitespace body: a layout
+builder (`indent()`, `dedent()`), or a fixed text that `dsl/whitespace.ts`
+classifies as whitespace (the texts of its canonical members), which includes
+the minted members and typescript's automatic semicolons (`\n`). The reason is
+that such an external's render text is whitespace the writer places, so its
+kind is the token itself. Every other visible external collapses to its tree
+name, like any hidden rule the parser always shows under one name (python's
+`_string_content` as `string_fragment`, rust's raw-string start and end). One
+predicate (`isWhitespaceBody`) serves both consumers.
 
 Decided by the maintainer: one block, and a hidden external with a body is
 a node wherever sittir renders it, named by its name without the
@@ -203,7 +223,7 @@ The collect-slots codes that report a fallback are
 | `union-slot-mixed-row` | a mixed row: structured named arm beside union arms | `variant(...)` splitting the row, until the structured-arm enrich mint gives each structured arm its own kind in the union slot |
 | `multi-slot-nested-seq` | a multi-slot seq in a repeat position | a visible `groups:` entry making each repetition one node |
 | `union-slot-unaddressable` | a fieldless structural choice that qualifies for union routing but carries no rule id, so its union slot cannot be addressed | fires only in upstream stages today (rust `function_type`, typescript `for_in_statement`); both wired grammars resolve it |
-| `token-interior-unstructurable` | a token whose interior the grammar addresses but the token-interior pass cannot structure: a named part inside an optional group beside an unnamed pattern, or a named-group pattern beside non-literal top-level regex; the token stays opaque | a patch naming the group (`field(...)` on the group's unnamed pattern, or a named group around the non-literal regex) |
+| `token-interior-unstructurable` | a token whose interior the grammar addresses but the token-interior pass cannot structure: a named part inside an optional group beside an unnamed pattern, or a named-group pattern beside non-literal top-level regex, or an optional literal that is not word-shaped (the grammar's `wordMatcher`) and carries no field name, so it has no name of its own (java's `hex_floating_point_literal` `.`); the token stays opaque | a patch naming the group (`field(...)` on the group's unnamed pattern, or a named group around the non-literal regex), or `field('<name>', ...)` on the optional literal, which makes it a slot |
 | `separator-pattern` | a list whose separator has an arm that is not a token or a choice of tokens (Go's `choice(/\n/, ';', '\0')`); floored, the pattern arms leave the separator's arm set, since a pattern has no kind and the parse tree gives no node for it, and the list keeps a per-instance separator only if a remaining token arm is nonterminal | a `rule(...)` patch giving each pattern a kind of its own |
 | `separator-default-undeclared` | a list slot whose separator is chosen per instance and has no declared default; floored, the separator is a required construction input of the list's factory and no option site is registered for it | an `options:` entry declaring the default separator kind (`<slot>_separator`) |
 | `field-optional-delimiter` | a field of a non-list kind that carries an optional leading or trailing delimiter, which a field factory cannot control; floored, the flank is off the factory surface and render keeps the flank as authored | a `groups:` entry or a `rule(...)` patch making the delimited list its own kind |
@@ -258,7 +278,7 @@ gate, per code and per owner, and only shrink.
 | family | codes | fact the check reads |
 | --- | --- | --- |
 | evaluate events | `body-pattern-zero-match`, `desugar-divergence-*` | evaluate's own events |
-| causes and claims | `rule-cause-missing`, `rule-cause-mismatch`, `render-only-not-external`, `vocabulary-replaces-upstream`, `rule-reauthored-without-cause`, `patch-without-cause` | wire declarations, patch sites, the upstream stage's records |
+| causes and claims | `rule-cause-missing`, `rule-cause-mismatch`, `render-only-not-external`, `external-alias-outside-render-as` (new; unexpectable), `render-as-alias-invalid` (new; unexpectable), `render-as-entry-missing` (new; one record per external scanner token that has a factory and no `renderAs:` entry), `vocabulary-replaces-upstream`, `rule-reauthored-without-cause`, `patch-without-cause` | wire declarations, patch sites, the upstream stage's records; the alias sites of externals in the evaluated rules against the upstream base's |
 | whitespace vocabulary | `whitespace-mint-collision` (new; unexpectable) | the collisions enrich and wire stamp: an authored `renderAs:` key or an upstream rule defining a name enrich mints for `_whitespace` differently |
 | alias sites | `display-union-mixed`, `display-union-unknown-member`, `content-alias-noninjective`, `alias-distributed`, `parsekind-noninjective` | ALIAS sites in the rules (display target versus source symbol) |
 | slot shapes | `unclassifiable-shape`, `union-slot-mixed-row`, `union-slot-unaddressable`, `union-slot-routed`, `union-slot-nondegenerate-arm`, `multi-slot-nested-seq`, `content-collision`, `storagename-collision`, `union-slot-content-collision`, `unresolved-enum-text` | the splice view (§4.3): fields, repeat multiplicity and separators, choice-arm partitions, rule classification |

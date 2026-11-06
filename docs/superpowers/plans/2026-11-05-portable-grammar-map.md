@@ -79,27 +79,66 @@
 - [ ] **Step 3: The Python mapping.** For Visibility (`_x`, `__x`), Accessors (`@property`), AbstractClasses (`ABC`, `@abstractmethod`), ExplicitOverrides (`@override`) and NullableTypes (`X | None`, `Optional[X]`), give each claim and the vocabulary fact it states. Flag any construct Python doesn't state.
 - [ ] **Step 4: Commit the note to master** (docs only), and send it to brainstorm. Brainstorm takes it to the maintainer. Wait for approval.
 
-### Task 2: Measure first: census and raw-arm counts in the conformance lane
+### Task 2: Measure first: exact slot sets and the admission census
+
+The admission census (`tool portable-admission`) owns both counts. It already reads each grammar's typed module with the type checker. The conformance lane doesn't change.
 
 **Files:**
-- Modify: `packages/tools/src/portable/conformance.ts` (`ConformanceReport`)
 - Create: `packages/codegen/src/emitters/overlays/portable/exact.ts`
-- Test: `packages/tools/src/portable/__tests__/conformance-census.test.ts`
+- Modify:
+  - `packages/codegen/src/emitters/overlays/portable/typed.ts`: `contextOf` and `slotArmOf` consume `exactSlotsOf`, and `PortableTypedInput` takes `table: PortableBuildTable` in place of `picks`;
+  - `packages/codegen/src/emitters/overlays/portable/index.ts`: passes `build.table`;
+  - `packages/tools/src/portable/admission.ts` (`AdmissionReport`).
+- Test:
+  - `packages/codegen/src/emitters/overlays/portable/__tests__/exact.test.ts`;
+  - `packages/tools/tests/portable-admission.test.ts`;
+  - `packages/tools/tests/portable-admission-ratchet.test.ts`.
 
 **Interfaces:**
 - Produces:
-  - `exactSlotsOf(input: PortableTypedInput): ExactSlots`, where `ExactSlots = ReadonlyMap<string, ReadonlyMap<string, ExactSet>>` (path → member → set) and `ExactSet = { kinds: readonly string[]; unmapped: readonly string[]; raw: readonly string[]; texts: readonly string[] }`.
-  - It's the one derivation of a slot's exact set. It's moved out of `contextOf`/`slotArmOf` in `typed.ts`, which then consume it.
-  - `ConformanceReport` gains `overAdmitting: number` (members whose emitted type admits a kind outside `exactSlotsOf`) and `rawArms: number`.
+  - `exactSlotsOf(input: PortableTypedInput): ExactSlots`, where:
+    - `ExactSlots = ReadonlyMap<string, ReadonlyMap<string, ExactSet>>` (path → member → set);
+    - `ExactSet = { kinds: readonly string[]; unmapped: readonly string[]; raw: readonly RawArm[]; texts: readonly string[] }`;
+    - `RawArm = { kind: string; reasons: readonly RawReason[] }`;
+    - `RawReason = Exclude<PortableCarry['reason'], 'unclaimed'>`.
+  - **One derivation of a slot's exact set.** `exactSlotsOf` is moved out of `contextOf`/`slotArmOf`, not copied, and `typed.ts` consumes it.
+    - Unclaimed kinds go in `unmapped`, never `raw`.
+    - `raw` lists each claimed kind in the slot that the reader can keep raw, with every reason it can. Each reason's "can" comes from the facts the reader tests:
+      - `flags`: the kind has a flag no arm builds;
+      - `readOnly`: the kind has a read-only spelling;
+      - `unread`: the kind has a slot no arm member reads or tests that can hold meaningful text;
+      - `text`: an arm reads the kind through content or text;
+      - `preset`: an arm carries presets;
+      - `scalar`: an arm carries a scalar;
+      - `opaque`: the kind, or an accessor in `table.tokens`, can hold a verbatim item.
+  - `rawGroupOf(reasons: readonly RawReason[]): 'kind' | 'value'`. A raw arm is in the `kind` group when any of its reasons is a gap in the kind's table facts (`flags`, `readOnly`, `unread`, `text`), and in the `value` group otherwise (`preset`, `scalar`, `opaque`).
+  - **`AdmissionReport` gains:**
+    - `members: readonly AdmissionMember[]`, where `AdmissionMember = { grammar: string; path: string; member: string; excess: readonly string[] }`: each (path, member) pair whose emitted type admits a kind outside its `exactSlotsOf` set, as read with the type checker. Role-armed members count.
+    - `raw: readonly { grammar: string; kind: number; value: number }[]`: raw arms per grammar, by group.
+  - **Site-level over-admission includes role-armed sites.** The rule that excluded role arms is removed. `roleArmed` stays as the site count that ties to 352.
+  - `excessOf(admitted: ReadonlySet<string>, exact: ExactSet): readonly string[]`: the pure comparison that the report and the fixture test share.
 
-- [ ] **Step 1: The failing test.** `conformance-census.test.ts`:
-  - `expect(report('python').overAdmitting).toBeGreaterThan(0)` (today's over-admission is real);
-  - `expect(report(g).rawArms).toBe(<measured>)` for each grammar;
-  - a fixture member typed by a role whose exact set is one kind counts as over-admitting.
-- [ ] **Step 2: Run it:** `pnpm exec vitest run packages/tools/src/portable/__tests__/conformance-census.test.ts`. It fails: `overAdmitting` is undefined.
-- [ ] **Step 3: Implement.** Implement `exactSlotsOf`, moving the set logic out of `typed.ts` and not copying it. Count over-admission by comparing each emitted member's admitted kinds with its exact set.
-- [ ] **Step 4: Run it, and check the conformance diagnostics haven't moved** (87/82/133). Record the census per grammar; the 352 total is the expected order. The ceiling is set at the measured value.
-- [ ] **Step 5: Commit** (`feat(tools): census over-admitting members and raw-node arms in the conformance lane`), with the counts in the message.
+- [ ] **Step 1: The failing tests.**
+  - `exact.test.ts`:
+    - `exactSlotsOf` puts an unclaimed kind in `unmapped` and not in `raw`;
+    - a kind with a flag no arm builds is a raw arm with reason `flags`, and `rawGroupOf(['flags'])` is `'kind'`;
+    - `rawGroupOf(['preset', 'scalar'])` is `'value'`.
+  - `portable-admission.test.ts`: `excessOf(new Set(['expression.call', 'expression.binary']), set(['expression.call']))` is `['expression.binary']`. That's a role-armed member whose exact set is one kind, counted as over-admitting.
+  - `portable-admission-ratchet.test.ts`:
+    - `members` per grammar at its measured ceiling, with python above 0, since today's over-admission is real;
+    - `raw` per grammar and group at its measured ceiling;
+    - the existing ceilings, with `overAdmitting` re-measured once role-armed sites count.
+- [ ] **Step 2: Run them:** `pnpm exec vitest run packages/codegen/src/emitters/overlays/portable/__tests__/exact.test.ts packages/tools/tests/portable-admission.test.ts`. They fail because `exactSlotsOf` and `excessOf` don't exist.
+- [ ] **Step 3: Implement.**
+  - Move the set logic into `exact.ts`.
+  - Point `contextOf` and `slotArmOf` at it, and switch `PortableTypedInput` to `table`.
+  - Extend `portableAdmission` with `members` and `raw`, and drop the role-arm exclusion.
+- [ ] **Step 4: Verify.**
+  - The refactor leaves every `portable.typed.ts` byte-identical (python, rust, typescript), since raw arms are counted here and typed in a later task.
+  - The conformance diagnostics haven't moved (87/82/133).
+  - Run `pnpm exec tsx packages/cli/src/cli.ts tool portable-admission` and record `members` and `raw` per grammar, and the site counts.
+  - Set the ratchet ceilings at the measured values. They only shrink.
+- [ ] **Step 5: Commit** (`feat(tools): the admission census counts over-admitting members and raw-node arms against exact slot sets`), with the counts in the message.
 
 ### Task 3: Defaults on members, `Slot`, the grammar map and the fit constraint
 

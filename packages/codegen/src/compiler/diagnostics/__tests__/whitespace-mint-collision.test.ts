@@ -13,8 +13,8 @@ async function collisionsOf(upstreamRules: string, config: string): Promise<{ ow
 }
 
 describe('whitespace-mint-collision', () => {
-	it('blocks a visibleExternals entry that redeclares a minted member', async () => {
-		expect(await collisionsOf('', "visibleExternals: () => ({ _tight: { type: 'STRING', value: '' } })")).toEqual([
+	it('blocks a renderAs entry that redeclares a minted member', async () => {
+		expect(await collisionsOf('', "renderAs: () => ({ _tight: { type: 'STRING', value: '' } })")).toEqual([
 			{ owner: '_tight', canProceed: false }
 		]);
 	}, 60_000);

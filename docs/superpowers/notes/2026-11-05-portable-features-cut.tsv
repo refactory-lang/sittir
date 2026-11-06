@@ -1,0 +1,514 @@
+feature	holders	extends	path	member
+AccessorAnnotations	pt	TypeAnnotations,Accessors	declaration.property.getter	returnType
+AccessorSignatures	t	Accessors,Interfaces,AbstractClasses	declaration.property.signature	
+AccessorSignatures	t	Accessors,Interfaces,AbstractClasses	declaration.property.signature.abstract	
+AccessorSignatures	t	Accessors,Interfaces,AbstractClasses	declaration.property.signature.abstract.getter	
+AccessorSignatures	t	Accessors,Interfaces,AbstractClasses	declaration.property.signature.abstract.setter	
+AccessorSignatures	t	Accessors,Interfaces,AbstractClasses	declaration.property.signature.getter	
+AccessorSignatures	t	Accessors,Interfaces,AbstractClasses	declaration.property.signature.setter	
+AnnotatedConstants	pr	TypeAnnotations,Constants	declaration.constant	type
+AnnotatedLambdas	rt		expression.lambda	returnType
+Arguments	pr		argument	
+AsyncContexts	p	AsyncAwait,Comprehensions,ResourceStatements,Classes	clause.comprehension.for	async
+AsyncContexts	p	AsyncAwait,Comprehensions,ResourceStatements,Classes	declaration.constructor	async
+AsyncContexts	p	AsyncAwait,Comprehensions,ResourceStatements,Classes	statement.resource	async
+AsyncFunctionExpressions	t	AsyncAwait,JavaScriptExpressions	expression.function	async
+AsyncFunctionSignatures	rt	AsyncAwait,FunctionSignatures	declaration.function.signature	async
+AsyncIteration	pt	AsyncAwait	statement.loop.for_each	async
+AsyncLambdas	rt	AsyncAwait,MethodSignatures	expression.lambda	async
+AsyncLambdas	rt	AsyncAwait,MethodSignatures	declaration.method.signature	async
+BareTuples	p	Tuples	expression.collection.tuple.bare	
+BigIntegerRadixes	t	ArbitraryPrecisionIntegers	literal.number.integer.big.binary	
+BigIntegerRadixes	t	ArbitraryPrecisionIntegers	literal.number.integer.big.hex	
+BigIntegerRadixes	t	ArbitraryPrecisionIntegers	literal.number.integer.big.octal	
+BlockComments	rt		comment.block	
+BoundClauses	rt	BoundedQuantification	clause.bounds	
+CFamilyExpressionStatements	t		statement.expression	expression
+CFamilyUnaryOperators	pt		expression.unary.bitwise_not	
+CFamilyUnaryOperators	pt		expression.unary.plus	
+ClassVisibility	t	Visibility,Classes,Accessors,AbstractClasses	declaration.constructor.private	
+ClassVisibility	t	Visibility,Classes,Accessors,AbstractClasses	declaration.constructor.protected	
+ClassVisibility	t	Visibility,Classes,Accessors,AbstractClasses	declaration.constructor.public	
+ClassVisibility	t	Visibility,Classes,Accessors,AbstractClasses	declaration.field.protected	
+ClassVisibility	t	Visibility,Classes,Accessors,AbstractClasses	declaration.field.signature.private	
+ClassVisibility	t	Visibility,Classes,Accessors,AbstractClasses	declaration.field.signature.protected	
+ClassVisibility	t	Visibility,Classes,Accessors,AbstractClasses	declaration.field.signature.public	
+ClassVisibility	t	Visibility,Classes,Accessors,AbstractClasses	declaration.method.protected	
+ClassVisibility	t	Visibility,Classes,Accessors,AbstractClasses	declaration.method.signature.abstract.private	
+ClassVisibility	t	Visibility,Classes,Accessors,AbstractClasses	declaration.method.signature.abstract.protected	
+ClassVisibility	t	Visibility,Classes,Accessors,AbstractClasses	declaration.method.signature.abstract.public	
+ClassVisibility	t	Visibility,Classes,Accessors,AbstractClasses	declaration.method.signature.protected	
+ClassVisibility	t	Visibility,Classes,Accessors,AbstractClasses	declaration.parameter.private	
+ClassVisibility	t	Visibility,Classes,Accessors,AbstractClasses	declaration.parameter.protected	
+ClassVisibility	t	Visibility,Classes,Accessors,AbstractClasses	declaration.parameter.public	
+ClassVisibility	t	Visibility,Classes,Accessors,AbstractClasses	declaration.property.getter.private	
+ClassVisibility	t	Visibility,Classes,Accessors,AbstractClasses	declaration.property.getter.protected	
+ClassVisibility	t	Visibility,Classes,Accessors,AbstractClasses	declaration.property.getter.public	
+ClassVisibility	t	Visibility,Classes,Accessors,AbstractClasses	declaration.property.private	
+ClassVisibility	t	Visibility,Classes,Accessors,AbstractClasses	declaration.property.protected	
+ClassVisibility	t	Visibility,Classes,Accessors,AbstractClasses	declaration.property.public	
+ClassVisibility	t	Visibility,Classes,Accessors,AbstractClasses	declaration.property.setter.private	
+ClassVisibility	t	Visibility,Classes,Accessors,AbstractClasses	declaration.property.setter.protected	
+ClassVisibility	t	Visibility,Classes,Accessors,AbstractClasses	declaration.property.setter.public	
+ClassVisibility	t	Visibility,Classes,Accessors,AbstractClasses	declaration.property.signature.abstract.getter.private	
+ClassVisibility	t	Visibility,Classes,Accessors,AbstractClasses	declaration.property.signature.abstract.getter.protected	
+ClassVisibility	t	Visibility,Classes,Accessors,AbstractClasses	declaration.property.signature.abstract.getter.public	
+ClassVisibility	t	Visibility,Classes,Accessors,AbstractClasses	declaration.property.signature.abstract.setter.private	
+ClassVisibility	t	Visibility,Classes,Accessors,AbstractClasses	declaration.property.signature.abstract.setter.protected	
+ClassVisibility	t	Visibility,Classes,Accessors,AbstractClasses	declaration.property.signature.abstract.setter.public	
+ClassVisibility	t	Visibility,Classes,Accessors,AbstractClasses	declaration.property.signature.getter.private	
+ClassVisibility	t	Visibility,Classes,Accessors,AbstractClasses	declaration.property.signature.getter.protected	
+ClassVisibility	t	Visibility,Classes,Accessors,AbstractClasses	declaration.property.signature.getter.public	
+ClassVisibility	t	Visibility,Classes,Accessors,AbstractClasses	declaration.property.signature.setter.private	
+ClassVisibility	t	Visibility,Classes,Accessors,AbstractClasses	declaration.property.signature.setter.protected	
+ClassVisibility	t	Visibility,Classes,Accessors,AbstractClasses	declaration.property.signature.setter.public	
+ClassVisibility	t	Visibility,Classes,Accessors,AbstractClasses	modifier.visibility.protected	
+Constants	pr		declaration.constant	
+ConstrainedTypeParameters	p	BoundedQuantification,PythonTypeForms	type.constrained	constraint
+DefaultParameterForms	p	DefaultArguments,PythonDeclarations	declaration.parameter.default	default
+DefaultParameterForms	p	DefaultArguments,PythonDeclarations	declaration.parameter.typed_default	default
+DisposableDeclarations	t	ResourceManagement	expression.assignment	disposable
+DocComments	rt	BlockComments	comment.block.doc	
+EllipsisLiteral	p		literal.ellipsis	
+ExponentiationAndMembership	pt		expression.assignment.compound.exponent	
+ExponentiationAndMembership	pt		expression.binary.arithmetic.exponent	
+ExponentiationAndMembership	pt		expression.binary.membership	
+ExponentiationAndMembership	pt		expression.binary.membership.in	
+ExternalModules	t	ModuleDeclarations,AmbientDeclarations	declaration.module.external	
+FieldEncapsulation	t	Encapsulation,FieldsAndModifiers,Accessors	declaration.field	privateName
+FieldEncapsulation	t	Encapsulation,FieldsAndModifiers,Accessors	declaration.property	privateName
+FieldSignatures	t	Interfaces	declaration.field.signature	
+FieldsAndModifiers	rt		attribute.content	
+FieldsAndModifiers	rt		declaration.field	
+FieldsAndModifiers	rt		modifier	
+ForEachTargets	pr		statement.expression	content
+ForEachTargets	pr		statement.loop.for_each	left
+ForEachTargets	pr		statement.loop.for_each	right
+ForInHeaders	t		statement.loop.for_each	header
+FormatStrings	p	StringInterpolation,MultilineStrings	expression.interpolation.conversion	
+FormatStrings	p	StringInterpolation,MultilineStrings	expression.interpolation.format	
+FormatStrings	p	StringInterpolation,MultilineStrings	literal.string.interpolated.deferred	
+FormatStrings	p	StringInterpolation,MultilineStrings	literal.string.interpolated.deferred.multiline	
+FormatStrings	p	StringInterpolation,MultilineStrings	literal.string.interpolated.multiline	
+FromImports	p	Modules	clause.import.relative	
+FromImports	p	Modules	clause.import.relative.prefix	
+FromImports	p	Modules	statement.import.from	
+FromImports	p	Modules	statement.import.future	
+FunctionDecorators	p	Decorators	declaration.function	decorators
+FunctionSignatures	rt		declaration.function.signature	
+GeneratorBlocks	r	Coroutines,RustExpressions	expression.block.generator	
+GeneratorBlocks	r	Coroutines,RustExpressions	expression.lambda	static
+GeneratorFunctions	t	Generators,JavaScriptExpressions	declaration.function	generator
+GeneratorFunctions	t	Generators,JavaScriptExpressions	expression.function	generator
+GeneratorFunctions	t	Generators,JavaScriptExpressions	declaration.method	generator
+GenericClasses	pt	ParametricPolymorphism,Classes	declaration.class	typeParameters
+GenericConstructors	p	ParametricPolymorphism,Classes	declaration.constructor	typeParameters
+GenericExpressions	t	ParametricPolymorphism,JavaScriptExpressions,JavaScriptClasses	clause.default	
+GenericExpressions	t	ParametricPolymorphism,JavaScriptExpressions,JavaScriptClasses	expression.call	typeArguments
+GenericExpressions	t	ParametricPolymorphism,JavaScriptExpressions,JavaScriptClasses	expression.call.member	typeArguments
+GenericExpressions	t	ParametricPolymorphism,JavaScriptExpressions,JavaScriptClasses	expression.function	typeParameters
+GenericExpressions	t	ParametricPolymorphism,JavaScriptExpressions,JavaScriptClasses	expression.call.construct	typeArguments
+GenericExpressions	t	ParametricPolymorphism,JavaScriptExpressions,JavaScriptClasses	expression.class	typeParameters
+GenericExpressions	t	ParametricPolymorphism,JavaScriptExpressions,JavaScriptClasses	declaration.method.signature.abstract	typeParameters
+GenericExpressions	t	ParametricPolymorphism,JavaScriptExpressions,JavaScriptClasses	type.function	typeParameters
+GenericExpressions	t	ParametricPolymorphism,JavaScriptExpressions,JavaScriptClasses	type.function.constructor	typeParameters
+GenericExpressions	t	ParametricPolymorphism,JavaScriptExpressions,JavaScriptClasses	declaration.signature.call	typeParameters
+GenericExpressions	t	ParametricPolymorphism,JavaScriptExpressions,JavaScriptClasses	declaration.signature.construct	typeParameters
+GenericItems	r	ParametricPolymorphism	element.type_argument	
+GenericItems	r	ParametricPolymorphism	pattern.generic	
+GenericItems	r	ParametricPolymorphism	declaration.enum	typeParameters
+GenericItems	r	ParametricPolymorphism	declaration.interface.trait	typeParameters
+GenericItems	r	ParametricPolymorphism	declaration.extension	typeParameters
+GenericItems	r	ParametricPolymorphism	declaration.extension.conformance	typeParameters
+GenericItems	r	ParametricPolymorphism	declaration.type_alias.associated	typeParameters
+GenericItems	r	ParametricPolymorphism	type.abstract	typeParameters
+GenericItems	r	ParametricPolymorphism	declaration.union	typeParameters
+GenericSignatures	rt	ParametricPolymorphism,FunctionSignatures,MethodSignatures	expression.instantiation	
+GenericSignatures	rt	ParametricPolymorphism,FunctionSignatures,MethodSignatures	declaration.function.signature	typeParameters
+GenericSignatures	rt	ParametricPolymorphism,FunctionSignatures,MethodSignatures	declaration.interface	typeParameters
+GenericSignatures	rt	ParametricPolymorphism,FunctionSignatures,MethodSignatures	declaration.method.signature	typeParameters
+HtmlComments	t		comment.html	
+IdentityComparison	p		expression.binary.identity	
+IdentityComparison	p		expression.binary.identity.is	
+IdentityComparison	p		expression.binary.identity.is_not	
+IfAlternative	rt		statement.if	alternative
+ImplicitConcatenation	p		literal.string.concatenated	
+ImportAliases	pr	Modules	clause.import.alias	
+ImportTrees	r	Modules	clause.import.list	
+ImportTrees	r	Modules	clause.import.list.scoped	
+ImportTrees	r	Modules	statement.import.package	
+InnerDocComments	r	LineDocComments	comment.block.doc.inner	
+InnerDocComments	r	LineDocComments	comment.line.doc.inner	
+InnerDocComments	r	LineDocComments	comment.text	
+InterfaceExtends	t	Interfaces	clause.extends.type	
+JavaScriptBindings	t		declaration.variable.constant	
+JavaScriptBindings	t		declaration.variable.pattern	
+JavaScriptBindings	t		declaration.variable.reassignable	
+JavaScriptBindings	t		declaration.variable.reassignable.function_scoped	
+JavaScriptBindings	t		declaration.field	value
+JavaScriptBindings	t		declaration.variable	declarators
+JavaScriptClasses	t	Classes	expression.call.construct	
+JavaScriptClasses	t	Classes	expression.call.construct.bare	
+JavaScriptClasses	t	Classes	expression.class	
+JavaScriptClasses	t	Classes	statement.block.static	
+JavaScriptClasses	t	Classes	declaration.field	static
+JavaScriptClasses	t	Classes	declaration.field.signature	static
+JavaScriptClasses	t	Classes	declaration.property	static
+JavaScriptExpressions	t		expression.collection.object	
+JavaScriptExpressions	t		expression.function	
+JavaScriptExpressions	t		expression.meta	
+JavaScriptExpressions	t		expression.sequence	
+JavaScriptExpressions	t		identifier.super	
+JavaScriptExpressions	t		expression.parenthesized	type
+JavaScriptModules	t	Modules	clause.export	
+JavaScriptModules	t	Modules	clause.export.namespace	
+JavaScriptModules	t	Modules	clause.export.specifier	
+JavaScriptModules	t	Modules	clause.export.specifier.typeof	
+JavaScriptModules	t	Modules	clause.import.attribute	
+JavaScriptModules	t	Modules	clause.import.names	
+JavaScriptModules	t	Modules	clause.import.namespace	
+JavaScriptModules	t	Modules	clause.import.require	
+JavaScriptModules	t	Modules	clause.import.specifier	
+JavaScriptModules	t	Modules	clause.import.specifier.typeof	
+JavaScriptModules	t	Modules	expression.call.import	
+JavaScriptModules	t	Modules	statement.export	
+JavaScriptModules	t	Modules	statement.export.all	
+JavaScriptModules	t	Modules	statement.export.default	
+JavaScriptModules	t	Modules	statement.import.alias	
+JavaScriptModules	t	Modules	statement.import.typeof	
+JavaScriptModules	t	Modules	type.import	
+JavaScriptOperators	t		expression.assignment.compound.and	
+JavaScriptOperators	t		expression.assignment.compound.coalesce	
+JavaScriptOperators	t		expression.assignment.compound.or	
+JavaScriptOperators	t		expression.assignment.compound.shift_right_unsigned	
+JavaScriptOperators	t		expression.binary.coalesce	
+JavaScriptOperators	t		expression.binary.membership.instanceof	
+JavaScriptOperators	t		expression.binary.shift.right_unsigned	
+JavaScriptOperators	t		expression.unary.delete	
+JavaScriptOperators	t		expression.unary.typeof	
+JavaScriptOperators	t		expression.unary.void	
+JavaScriptOperators	t		expression.update	
+JavaScriptOperators	t		expression.update.decrement	
+JavaScriptOperators	t		expression.update.increment	
+KeyValuePairs	pt		element.pair	
+LabeledStatements	t	LabeledControlFlow	statement.labeled	
+LeadingPointFloats	p	LiteralFacets	literal.number.float.leading_point	integer
+LetPatterns	r	MatchExpressions	clause.let	
+LetPatterns	r	MatchExpressions	clause.let.chain	
+LineDocComments	r	DocComments	comment.line.doc	
+LineDocComments	r	DocComments	comment.block.doc	content
+LiteralFacets	pt		literal.null	
+LiteralFacets	pt		literal.number.float.leading_point	
+LiteralFacets	pt		literal.number.float.scientific	
+LiteralFacets	pt		literal.number.float	exponent
+LiteralFacets	pt		literal.number.float	fraction
+LiteralFacets	pt		literal.number.float	integer
+LiteralFacets	pt		literal.number.float	marker
+LiteralFacets	pt		literal.number.float	exponentSign
+LiteralFacets	pt		literal.number.integer.binary	radixPrefix
+LiteralFacets	pt		literal.number.integer.hex	radixPrefix
+LiteralFacets	pt		literal.number.integer.octal	radixPrefix
+LiteralSuffixes	r		literal.number.integer	suffix
+LiteralSuffixes	r		literal.number.integer.binary	suffix
+LiteralSuffixes	r		literal.number.integer.hex	suffix
+LiteralSuffixes	r		literal.number.integer.octal	suffix
+LogicalOperands	p		expression.binary.logical	left
+LogicalOperands	p		expression.binary.logical	right
+LoopLabels	r	LabeledControlFlow	statement.block	label
+LoopLabels	r	LabeledControlFlow	statement.loop	label
+LoopLabels	r	LabeledControlFlow	statement.loop.for_each	label
+LoopLabels	r	LabeledControlFlow	statement.loop.while	label
+MapLiterals	p		expression.collection.map	
+MappingPatterns	p	MatchExpressions	pattern.map	
+MemberDecorators	t	Decorators,JavaScriptClasses	attribute.content.call	
+MemberDecorators	t	Decorators,JavaScriptClasses	attribute.content.member	
+MemberDecorators	t	Decorators,JavaScriptClasses	attribute.content.parenthesized	
+MemberDecorators	t	Decorators,JavaScriptClasses	declaration.field	decorators
+MemberDecorators	t	Decorators,JavaScriptClasses	declaration.parameter	decorators
+MemberDecorators	t	Decorators,JavaScriptClasses	expression.class	decorators
+MemberOverrides	t	ExplicitOverrides,FieldsAndModifiers,Interfaces,AbstractClasses	declaration.field	override
+MemberOverrides	t	ExplicitOverrides,FieldsAndModifiers,Interfaces,AbstractClasses	declaration.parameter	override
+MemberOverrides	t	ExplicitOverrides,FieldsAndModifiers,Interfaces,AbstractClasses	declaration.field.signature	override
+MemberOverrides	t	ExplicitOverrides,FieldsAndModifiers,Interfaces,AbstractClasses	declaration.method.signature	override
+MemberOverrides	t	ExplicitOverrides,FieldsAndModifiers,Interfaces,AbstractClasses	declaration.method.signature.abstract	override
+MethodSignatures	rt	Methods	declaration.method.signature	
+MethodSignatures	rt	Methods	identifier.receiver	
+ModuleVisibility	r	Visibility,Structs,Enumerations,AlgebraicDataTypes,Traits,ModuleDeclarations,UntaggedUnions,ImportTrees	declaration.constant.private	
+ModuleVisibility	r	Visibility,Structs,Enumerations,AlgebraicDataTypes,Traits,ModuleDeclarations,UntaggedUnions,ImportTrees	declaration.constant.public	
+ModuleVisibility	r	Visibility,Structs,Enumerations,AlgebraicDataTypes,Traits,ModuleDeclarations,UntaggedUnions,ImportTrees	declaration.constant.public.internal	
+ModuleVisibility	r	Visibility,Structs,Enumerations,AlgebraicDataTypes,Traits,ModuleDeclarations,UntaggedUnions,ImportTrees	declaration.constant.public.parent	
+ModuleVisibility	r	Visibility,Structs,Enumerations,AlgebraicDataTypes,Traits,ModuleDeclarations,UntaggedUnions,ImportTrees	declaration.constant.public.restricted	
+ModuleVisibility	r	Visibility,Structs,Enumerations,AlgebraicDataTypes,Traits,ModuleDeclarations,UntaggedUnions,ImportTrees	declaration.enum.private	
+ModuleVisibility	r	Visibility,Structs,Enumerations,AlgebraicDataTypes,Traits,ModuleDeclarations,UntaggedUnions,ImportTrees	declaration.enum.public	
+ModuleVisibility	r	Visibility,Structs,Enumerations,AlgebraicDataTypes,Traits,ModuleDeclarations,UntaggedUnions,ImportTrees	declaration.enum.public.internal	
+ModuleVisibility	r	Visibility,Structs,Enumerations,AlgebraicDataTypes,Traits,ModuleDeclarations,UntaggedUnions,ImportTrees	declaration.enum.public.parent	
+ModuleVisibility	r	Visibility,Structs,Enumerations,AlgebraicDataTypes,Traits,ModuleDeclarations,UntaggedUnions,ImportTrees	declaration.enum.public.restricted	
+ModuleVisibility	r	Visibility,Structs,Enumerations,AlgebraicDataTypes,Traits,ModuleDeclarations,UntaggedUnions,ImportTrees	declaration.enum_member.private	
+ModuleVisibility	r	Visibility,Structs,Enumerations,AlgebraicDataTypes,Traits,ModuleDeclarations,UntaggedUnions,ImportTrees	declaration.enum_member.public	
+ModuleVisibility	r	Visibility,Structs,Enumerations,AlgebraicDataTypes,Traits,ModuleDeclarations,UntaggedUnions,ImportTrees	declaration.enum_member.public.internal	
+ModuleVisibility	r	Visibility,Structs,Enumerations,AlgebraicDataTypes,Traits,ModuleDeclarations,UntaggedUnions,ImportTrees	declaration.enum_member.public.parent	
+ModuleVisibility	r	Visibility,Structs,Enumerations,AlgebraicDataTypes,Traits,ModuleDeclarations,UntaggedUnions,ImportTrees	declaration.enum_member.public.restricted	
+ModuleVisibility	r	Visibility,Structs,Enumerations,AlgebraicDataTypes,Traits,ModuleDeclarations,UntaggedUnions,ImportTrees	declaration.enum_member.struct.private	
+ModuleVisibility	r	Visibility,Structs,Enumerations,AlgebraicDataTypes,Traits,ModuleDeclarations,UntaggedUnions,ImportTrees	declaration.enum_member.struct.public	
+ModuleVisibility	r	Visibility,Structs,Enumerations,AlgebraicDataTypes,Traits,ModuleDeclarations,UntaggedUnions,ImportTrees	declaration.enum_member.struct.public.internal	
+ModuleVisibility	r	Visibility,Structs,Enumerations,AlgebraicDataTypes,Traits,ModuleDeclarations,UntaggedUnions,ImportTrees	declaration.enum_member.struct.public.parent	
+ModuleVisibility	r	Visibility,Structs,Enumerations,AlgebraicDataTypes,Traits,ModuleDeclarations,UntaggedUnions,ImportTrees	declaration.enum_member.struct.public.restricted	
+ModuleVisibility	r	Visibility,Structs,Enumerations,AlgebraicDataTypes,Traits,ModuleDeclarations,UntaggedUnions,ImportTrees	declaration.enum_member.tuple.private	
+ModuleVisibility	r	Visibility,Structs,Enumerations,AlgebraicDataTypes,Traits,ModuleDeclarations,UntaggedUnions,ImportTrees	declaration.enum_member.tuple.public	
+ModuleVisibility	r	Visibility,Structs,Enumerations,AlgebraicDataTypes,Traits,ModuleDeclarations,UntaggedUnions,ImportTrees	declaration.enum_member.tuple.public.internal	
+ModuleVisibility	r	Visibility,Structs,Enumerations,AlgebraicDataTypes,Traits,ModuleDeclarations,UntaggedUnions,ImportTrees	declaration.enum_member.tuple.public.parent	
+ModuleVisibility	r	Visibility,Structs,Enumerations,AlgebraicDataTypes,Traits,ModuleDeclarations,UntaggedUnions,ImportTrees	declaration.enum_member.tuple.public.restricted	
+ModuleVisibility	r	Visibility,Structs,Enumerations,AlgebraicDataTypes,Traits,ModuleDeclarations,UntaggedUnions,ImportTrees	declaration.field.public.internal	
+ModuleVisibility	r	Visibility,Structs,Enumerations,AlgebraicDataTypes,Traits,ModuleDeclarations,UntaggedUnions,ImportTrees	declaration.field.public.parent	
+ModuleVisibility	r	Visibility,Structs,Enumerations,AlgebraicDataTypes,Traits,ModuleDeclarations,UntaggedUnions,ImportTrees	declaration.field.public.restricted	
+ModuleVisibility	r	Visibility,Structs,Enumerations,AlgebraicDataTypes,Traits,ModuleDeclarations,UntaggedUnions,ImportTrees	declaration.function.private	
+ModuleVisibility	r	Visibility,Structs,Enumerations,AlgebraicDataTypes,Traits,ModuleDeclarations,UntaggedUnions,ImportTrees	declaration.function.public	
+ModuleVisibility	r	Visibility,Structs,Enumerations,AlgebraicDataTypes,Traits,ModuleDeclarations,UntaggedUnions,ImportTrees	declaration.function.public.internal	
+ModuleVisibility	r	Visibility,Structs,Enumerations,AlgebraicDataTypes,Traits,ModuleDeclarations,UntaggedUnions,ImportTrees	declaration.function.public.parent	
+ModuleVisibility	r	Visibility,Structs,Enumerations,AlgebraicDataTypes,Traits,ModuleDeclarations,UntaggedUnions,ImportTrees	declaration.function.public.restricted	
+ModuleVisibility	r	Visibility,Structs,Enumerations,AlgebraicDataTypes,Traits,ModuleDeclarations,UntaggedUnions,ImportTrees	declaration.function.signature.private	
+ModuleVisibility	r	Visibility,Structs,Enumerations,AlgebraicDataTypes,Traits,ModuleDeclarations,UntaggedUnions,ImportTrees	declaration.function.signature.public	
+ModuleVisibility	r	Visibility,Structs,Enumerations,AlgebraicDataTypes,Traits,ModuleDeclarations,UntaggedUnions,ImportTrees	declaration.function.signature.public.internal	
+ModuleVisibility	r	Visibility,Structs,Enumerations,AlgebraicDataTypes,Traits,ModuleDeclarations,UntaggedUnions,ImportTrees	declaration.function.signature.public.parent	
+ModuleVisibility	r	Visibility,Structs,Enumerations,AlgebraicDataTypes,Traits,ModuleDeclarations,UntaggedUnions,ImportTrees	declaration.function.signature.public.restricted	
+ModuleVisibility	r	Visibility,Structs,Enumerations,AlgebraicDataTypes,Traits,ModuleDeclarations,UntaggedUnions,ImportTrees	declaration.interface.trait.private	
+ModuleVisibility	r	Visibility,Structs,Enumerations,AlgebraicDataTypes,Traits,ModuleDeclarations,UntaggedUnions,ImportTrees	declaration.interface.trait.public	
+ModuleVisibility	r	Visibility,Structs,Enumerations,AlgebraicDataTypes,Traits,ModuleDeclarations,UntaggedUnions,ImportTrees	declaration.interface.trait.public.internal	
+ModuleVisibility	r	Visibility,Structs,Enumerations,AlgebraicDataTypes,Traits,ModuleDeclarations,UntaggedUnions,ImportTrees	declaration.interface.trait.public.parent	
+ModuleVisibility	r	Visibility,Structs,Enumerations,AlgebraicDataTypes,Traits,ModuleDeclarations,UntaggedUnions,ImportTrees	declaration.interface.trait.public.restricted	
+ModuleVisibility	r	Visibility,Structs,Enumerations,AlgebraicDataTypes,Traits,ModuleDeclarations,UntaggedUnions,ImportTrees	declaration.method.public.internal	
+ModuleVisibility	r	Visibility,Structs,Enumerations,AlgebraicDataTypes,Traits,ModuleDeclarations,UntaggedUnions,ImportTrees	declaration.method.public.parent	
+ModuleVisibility	r	Visibility,Structs,Enumerations,AlgebraicDataTypes,Traits,ModuleDeclarations,UntaggedUnions,ImportTrees	declaration.method.public.restricted	
+ModuleVisibility	r	Visibility,Structs,Enumerations,AlgebraicDataTypes,Traits,ModuleDeclarations,UntaggedUnions,ImportTrees	declaration.method.signature.public.internal	
+ModuleVisibility	r	Visibility,Structs,Enumerations,AlgebraicDataTypes,Traits,ModuleDeclarations,UntaggedUnions,ImportTrees	declaration.method.signature.public.parent	
+ModuleVisibility	r	Visibility,Structs,Enumerations,AlgebraicDataTypes,Traits,ModuleDeclarations,UntaggedUnions,ImportTrees	declaration.method.signature.public.restricted	
+ModuleVisibility	r	Visibility,Structs,Enumerations,AlgebraicDataTypes,Traits,ModuleDeclarations,UntaggedUnions,ImportTrees	declaration.module.private	
+ModuleVisibility	r	Visibility,Structs,Enumerations,AlgebraicDataTypes,Traits,ModuleDeclarations,UntaggedUnions,ImportTrees	declaration.module.public	
+ModuleVisibility	r	Visibility,Structs,Enumerations,AlgebraicDataTypes,Traits,ModuleDeclarations,UntaggedUnions,ImportTrees	declaration.module.public.internal	
+ModuleVisibility	r	Visibility,Structs,Enumerations,AlgebraicDataTypes,Traits,ModuleDeclarations,UntaggedUnions,ImportTrees	declaration.module.public.parent	
+ModuleVisibility	r	Visibility,Structs,Enumerations,AlgebraicDataTypes,Traits,ModuleDeclarations,UntaggedUnions,ImportTrees	declaration.module.public.restricted	
+ModuleVisibility	r	Visibility,Structs,Enumerations,AlgebraicDataTypes,Traits,ModuleDeclarations,UntaggedUnions,ImportTrees	declaration.struct.private	
+ModuleVisibility	r	Visibility,Structs,Enumerations,AlgebraicDataTypes,Traits,ModuleDeclarations,UntaggedUnions,ImportTrees	declaration.struct.public	
+ModuleVisibility	r	Visibility,Structs,Enumerations,AlgebraicDataTypes,Traits,ModuleDeclarations,UntaggedUnions,ImportTrees	declaration.struct.public.internal	
+ModuleVisibility	r	Visibility,Structs,Enumerations,AlgebraicDataTypes,Traits,ModuleDeclarations,UntaggedUnions,ImportTrees	declaration.struct.public.parent	
+ModuleVisibility	r	Visibility,Structs,Enumerations,AlgebraicDataTypes,Traits,ModuleDeclarations,UntaggedUnions,ImportTrees	declaration.struct.public.restricted	
+ModuleVisibility	r	Visibility,Structs,Enumerations,AlgebraicDataTypes,Traits,ModuleDeclarations,UntaggedUnions,ImportTrees	declaration.struct.tuple.private	
+ModuleVisibility	r	Visibility,Structs,Enumerations,AlgebraicDataTypes,Traits,ModuleDeclarations,UntaggedUnions,ImportTrees	declaration.struct.tuple.public	
+ModuleVisibility	r	Visibility,Structs,Enumerations,AlgebraicDataTypes,Traits,ModuleDeclarations,UntaggedUnions,ImportTrees	declaration.struct.tuple.public.internal	
+ModuleVisibility	r	Visibility,Structs,Enumerations,AlgebraicDataTypes,Traits,ModuleDeclarations,UntaggedUnions,ImportTrees	declaration.struct.tuple.public.parent	
+ModuleVisibility	r	Visibility,Structs,Enumerations,AlgebraicDataTypes,Traits,ModuleDeclarations,UntaggedUnions,ImportTrees	declaration.struct.tuple.public.restricted	
+ModuleVisibility	r	Visibility,Structs,Enumerations,AlgebraicDataTypes,Traits,ModuleDeclarations,UntaggedUnions,ImportTrees	declaration.struct.unit.private	
+ModuleVisibility	r	Visibility,Structs,Enumerations,AlgebraicDataTypes,Traits,ModuleDeclarations,UntaggedUnions,ImportTrees	declaration.struct.unit.public	
+ModuleVisibility	r	Visibility,Structs,Enumerations,AlgebraicDataTypes,Traits,ModuleDeclarations,UntaggedUnions,ImportTrees	declaration.struct.unit.public.internal	
+ModuleVisibility	r	Visibility,Structs,Enumerations,AlgebraicDataTypes,Traits,ModuleDeclarations,UntaggedUnions,ImportTrees	declaration.struct.unit.public.parent	
+ModuleVisibility	r	Visibility,Structs,Enumerations,AlgebraicDataTypes,Traits,ModuleDeclarations,UntaggedUnions,ImportTrees	declaration.struct.unit.public.restricted	
+ModuleVisibility	r	Visibility,Structs,Enumerations,AlgebraicDataTypes,Traits,ModuleDeclarations,UntaggedUnions,ImportTrees	declaration.type_alias.private	
+ModuleVisibility	r	Visibility,Structs,Enumerations,AlgebraicDataTypes,Traits,ModuleDeclarations,UntaggedUnions,ImportTrees	declaration.type_alias.public	
+ModuleVisibility	r	Visibility,Structs,Enumerations,AlgebraicDataTypes,Traits,ModuleDeclarations,UntaggedUnions,ImportTrees	declaration.type_alias.public.internal	
+ModuleVisibility	r	Visibility,Structs,Enumerations,AlgebraicDataTypes,Traits,ModuleDeclarations,UntaggedUnions,ImportTrees	declaration.type_alias.public.parent	
+ModuleVisibility	r	Visibility,Structs,Enumerations,AlgebraicDataTypes,Traits,ModuleDeclarations,UntaggedUnions,ImportTrees	declaration.type_alias.public.restricted	
+ModuleVisibility	r	Visibility,Structs,Enumerations,AlgebraicDataTypes,Traits,ModuleDeclarations,UntaggedUnions,ImportTrees	declaration.union.private	
+ModuleVisibility	r	Visibility,Structs,Enumerations,AlgebraicDataTypes,Traits,ModuleDeclarations,UntaggedUnions,ImportTrees	declaration.union.public	
+ModuleVisibility	r	Visibility,Structs,Enumerations,AlgebraicDataTypes,Traits,ModuleDeclarations,UntaggedUnions,ImportTrees	declaration.union.public.internal	
+ModuleVisibility	r	Visibility,Structs,Enumerations,AlgebraicDataTypes,Traits,ModuleDeclarations,UntaggedUnions,ImportTrees	declaration.union.public.parent	
+ModuleVisibility	r	Visibility,Structs,Enumerations,AlgebraicDataTypes,Traits,ModuleDeclarations,UntaggedUnions,ImportTrees	declaration.union.public.restricted	
+ModuleVisibility	r	Visibility,Structs,Enumerations,AlgebraicDataTypes,Traits,ModuleDeclarations,UntaggedUnions,ImportTrees	declaration.variable.private	
+ModuleVisibility	r	Visibility,Structs,Enumerations,AlgebraicDataTypes,Traits,ModuleDeclarations,UntaggedUnions,ImportTrees	declaration.variable.public	
+ModuleVisibility	r	Visibility,Structs,Enumerations,AlgebraicDataTypes,Traits,ModuleDeclarations,UntaggedUnions,ImportTrees	declaration.variable.public.internal	
+ModuleVisibility	r	Visibility,Structs,Enumerations,AlgebraicDataTypes,Traits,ModuleDeclarations,UntaggedUnions,ImportTrees	declaration.variable.public.parent	
+ModuleVisibility	r	Visibility,Structs,Enumerations,AlgebraicDataTypes,Traits,ModuleDeclarations,UntaggedUnions,ImportTrees	declaration.variable.public.restricted	
+ModuleVisibility	r	Visibility,Structs,Enumerations,AlgebraicDataTypes,Traits,ModuleDeclarations,UntaggedUnions,ImportTrees	modifier.visibility.public.internal	
+ModuleVisibility	r	Visibility,Structs,Enumerations,AlgebraicDataTypes,Traits,ModuleDeclarations,UntaggedUnions,ImportTrees	modifier.visibility.public.parent	
+ModuleVisibility	r	Visibility,Structs,Enumerations,AlgebraicDataTypes,Traits,ModuleDeclarations,UntaggedUnions,ImportTrees	modifier.visibility.public.restricted	
+ModuleVisibility	r	Visibility,Structs,Enumerations,AlgebraicDataTypes,Traits,ModuleDeclarations,UntaggedUnions,ImportTrees	statement.import.package.private	
+ModuleVisibility	r	Visibility,Structs,Enumerations,AlgebraicDataTypes,Traits,ModuleDeclarations,UntaggedUnions,ImportTrees	statement.import.package.public	
+ModuleVisibility	r	Visibility,Structs,Enumerations,AlgebraicDataTypes,Traits,ModuleDeclarations,UntaggedUnions,ImportTrees	statement.import.package.public.internal	
+ModuleVisibility	r	Visibility,Structs,Enumerations,AlgebraicDataTypes,Traits,ModuleDeclarations,UntaggedUnions,ImportTrees	statement.import.package.public.parent	
+ModuleVisibility	r	Visibility,Structs,Enumerations,AlgebraicDataTypes,Traits,ModuleDeclarations,UntaggedUnions,ImportTrees	statement.import.package.public.restricted	
+ModuleVisibility	r	Visibility,Structs,Enumerations,AlgebraicDataTypes,Traits,ModuleDeclarations,UntaggedUnions,ImportTrees	statement.import.private	
+ModuleVisibility	r	Visibility,Structs,Enumerations,AlgebraicDataTypes,Traits,ModuleDeclarations,UntaggedUnions,ImportTrees	statement.import.public	
+ModuleVisibility	r	Visibility,Structs,Enumerations,AlgebraicDataTypes,Traits,ModuleDeclarations,UntaggedUnions,ImportTrees	statement.import.public.internal	
+ModuleVisibility	r	Visibility,Structs,Enumerations,AlgebraicDataTypes,Traits,ModuleDeclarations,UntaggedUnions,ImportTrees	statement.import.public.parent	
+ModuleVisibility	r	Visibility,Structs,Enumerations,AlgebraicDataTypes,Traits,ModuleDeclarations,UntaggedUnions,ImportTrees	statement.import.public.restricted	
+MultilineByteStrings	p	ByteStrings,MultilineStrings	literal.string.bytes.multiline	
+MultilineStrings	p		literal.string.multiline	
+ObjectPatterns	t	Destructuring	pattern.assignment	
+ObjectPatterns	t	Destructuring	pattern.object	
+ObjectPatterns	t	Destructuring	pattern.object.assignment	
+ObjectPatterns	t	Destructuring	pattern.object.pair	
+ParamSpecs	p	ParametricPolymorphism	declaration.type_parameter.parameters	
+PythonDeclarations	p		declaration.parameter.default	
+PythonDeclarations	p		declaration.parameter.typed	
+PythonDeclarations	p		declaration.parameter.typed_default	
+PythonDeclarations	p		declaration.function	doc
+PythonDestructuring	p	Destructuring,MappingPatterns	pattern.rest.map	
+PythonDestructuring	p	Destructuring,MappingPatterns	pattern.tuple.bare	
+PythonOperators	p		element.comparator	
+PythonOperators	p		element.comparator.comparison	
+PythonOperators	p		element.comparator.comparison.equal	
+PythonOperators	p		element.comparator.comparison.greater	
+PythonOperators	p		element.comparator.comparison.greater_equal	
+PythonOperators	p		element.comparator.comparison.less	
+PythonOperators	p		element.comparator.comparison.less_equal	
+PythonOperators	p		element.comparator.comparison.not_equal	
+PythonOperators	p		element.comparator.comparison.not_equal.legacy	
+PythonOperators	p		element.comparator.identity	
+PythonOperators	p		element.comparator.identity.is	
+PythonOperators	p		element.comparator.identity.is_not	
+PythonOperators	p		element.comparator.membership	
+PythonOperators	p		element.comparator.membership.in	
+PythonOperators	p		element.comparator.membership.not_in	
+PythonOperators	p		expression.assignment.compound.floor_divide	
+PythonOperators	p		expression.assignment.compound.matrix_multiply	
+PythonOperators	p		expression.binary.arithmetic.floor_divide	
+PythonOperators	p		expression.binary.comparison.chain	
+PythonOperators	p		expression.binary.comparison.not_equal.legacy	
+PythonOperators	p		expression.binary.matrix_multiply	
+PythonOperators	p		expression.binary.membership.not_in	
+PythonStatements	p		clause.else_if	
+PythonStatements	p		statement.delete	
+PythonStatements	p		statement.if	alternatives
+PythonStatements	p		statement.loop.for_each	alternative
+PythonStatements	p		statement.loop.while	alternative
+PythonTypeForms	p	TypeAnnotations,PythonDeclarations	type.constrained	
+PythonTypeForms	p	TypeAnnotations,PythonDeclarations	declaration.parameter.typed	type
+PythonTypeForms	p	TypeAnnotations,PythonDeclarations	declaration.parameter.typed_default	type
+PythonTypeForms	p	TypeAnnotations,PythonDeclarations	declaration.constructor	returnType
+RawStringForms	p	RawStrings,MultilineStrings,FormatStrings	literal.string.bytes.raw.multiline	
+RawStringForms	p	RawStrings,MultilineStrings,FormatStrings	literal.string.interpolated.deferred.raw	
+RawStringForms	p	RawStrings,MultilineStrings,FormatStrings	literal.string.interpolated.deferred.raw.multiline	
+RawStringForms	p	RawStrings,MultilineStrings,FormatStrings	literal.string.interpolated.raw	
+RawStringForms	p	RawStrings,MultilineStrings,FormatStrings	literal.string.interpolated.raw.multiline	
+RawStringForms	p	RawStrings,MultilineStrings,FormatStrings	literal.string.raw.multiline	
+ResourceStatements	p	ResourceManagement	clause.resource	
+ResourceStatements	p	ResourceManagement	clause.resource.item	
+ResourceStatements	p	ResourceManagement	statement.resource	
+RestPatterns	pt	Destructuring	pattern.rest	
+RustDeclarations	r		pattern.mutable	
+RustDeclarations	r		attribute.content	input
+RustDeclarations	r		attribute.content	path
+RustDeclarations	r		declaration.constant	name
+RustDeclarations	r		declaration.constant	value
+RustDeclarations	r		declaration.function.signature	functionModifiers
+RustDeclarations	r		declaration.parameter	mutable
+RustDeclarations	r		declaration.variable	alternative
+RustDeclarations	r		declaration.variable	mutable
+RustExpressions	r		expression.block	
+RustExpressions	r		expression.call.qualified	
+RustExpressions	r		expression.collection.list.repeat	
+SetLiterals	p		element.spread.map	
+SetLiterals	p		element.spread.parenthesized	
+SetLiterals	p		expression.collection.set	
+SpecialMethods	p	Methods	declaration.method.special	
+Specialization	r	Methods	declaration.function	default
+Spreads	pt		element.spread	
+StaticTypes	rt	TypeAnnotations,FunctionSignatures,MethodSignatures,FieldsAndModifiers	expression.cast	
+StaticTypes	rt	TypeAnnotations,FunctionSignatures,MethodSignatures,FieldsAndModifiers	type.array	
+StaticTypes	rt	TypeAnnotations,FunctionSignatures,MethodSignatures,FieldsAndModifiers	type.function	
+StaticTypes	rt	TypeAnnotations,FunctionSignatures,MethodSignatures,FieldsAndModifiers	type.primitive	
+StaticTypes	rt	TypeAnnotations,FunctionSignatures,MethodSignatures,FieldsAndModifiers	type.primitive.boolean	
+StaticTypes	rt	TypeAnnotations,FunctionSignatures,MethodSignatures,FieldsAndModifiers	type.primitive.floating	
+StaticTypes	rt	TypeAnnotations,FunctionSignatures,MethodSignatures,FieldsAndModifiers	type.primitive.floating.float64	
+StaticTypes	rt	TypeAnnotations,FunctionSignatures,MethodSignatures,FieldsAndModifiers	type.primitive.never	
+StaticTypes	rt	TypeAnnotations,FunctionSignatures,MethodSignatures,FieldsAndModifiers	type.primitive.string	
+StaticTypes	rt	TypeAnnotations,FunctionSignatures,MethodSignatures,FieldsAndModifiers	type.tuple	
+StaticTypes	rt	TypeAnnotations,FunctionSignatures,MethodSignatures,FieldsAndModifiers	declaration.field	type
+StaticTypes	rt	TypeAnnotations,FunctionSignatures,MethodSignatures,FieldsAndModifiers	declaration.function.signature	returnType
+StaticTypes	rt	TypeAnnotations,FunctionSignatures,MethodSignatures,FieldsAndModifiers	declaration.method.signature	returnType
+StructLiterals	r	StructPatterns,Structs	element.struct	
+StructLiterals	r	StructPatterns,Structs	element.struct.field	
+StructLiterals	r	StructPatterns,Structs	expression.collection.struct	
+Structs	r	StructPatterns	declaration.struct	
+SystemsTypes	r	TypeAnnotations	expression.cast.conversion	
+SystemsTypes	r	TypeAnnotations	type.abstract	
+SystemsTypes	r	TypeAnnotations	type.bounded	
+SystemsTypes	r	TypeAnnotations	type.bracketed	
+SystemsTypes	r	TypeAnnotations	type.dynamic	
+SystemsTypes	r	TypeAnnotations	type.generic.turbofish	
+SystemsTypes	r	TypeAnnotations	type.pointer	
+SystemsTypes	r	TypeAnnotations	type.primitive.floating.float32	
+SystemsTypes	r	TypeAnnotations	type.primitive.integral	
+SystemsTypes	r	TypeAnnotations	type.primitive.integral.int8	
+SystemsTypes	r	TypeAnnotations	type.primitive.integral.int16	
+SystemsTypes	r	TypeAnnotations	type.primitive.integral.int32	
+SystemsTypes	r	TypeAnnotations	type.primitive.integral.int64	
+SystemsTypes	r	TypeAnnotations	type.primitive.integral.int128	
+SystemsTypes	r	TypeAnnotations	type.primitive.integral.size	
+SystemsTypes	r	TypeAnnotations	type.qualified	
+SystemsTypes	r	TypeAnnotations	type.reference	
+SystemsTypes	r	TypeAnnotations	type.unit	
+TaggedTemplates	t	StringInterpolation	expression.call.template	
+Traits	r	Interfaces	declaration.interface.trait	
+TuplePatterns	pr	Destructuring	pattern.tuple	
+TupleStructs	r	StructPatterns,Structs	declaration.struct.tuple	
+TupleStructs	r	StructPatterns,Structs	declaration.struct.unit	
+TupleStructs	r	StructPatterns,Structs	element.struct.base	
+TupleStructs	r	StructPatterns,Structs	pattern.struct.rest	
+TypeAlgebra	t	TypeAnnotations	clause.mapped_type	
+TypeAlgebra	t	TypeAnnotations	element.template	
+TypeAlgebra	t	TypeAnnotations	element.template.substitution	
+TypeAlgebra	t	TypeAnnotations	element.tuple	
+TypeAlgebra	t	TypeAnnotations	element.tuple.member	
+TypeAlgebra	t	TypeAnnotations	element.tuple.member.optional	
+TypeAlgebra	t	TypeAnnotations	expression.cast.assertion	
+TypeAlgebra	t	TypeAnnotations	expression.cast.assertion.angle_bracket	
+TypeAlgebra	t	TypeAnnotations	expression.cast.satisfies	
+TypeAlgebra	t	TypeAnnotations	type.conditional	
+TypeAlgebra	t	TypeAnnotations	type.existential	
+TypeAlgebra	t	TypeAnnotations	type.function.constructor	
+TypeAlgebra	t	TypeAnnotations	type.index_query	
+TypeAlgebra	t	TypeAnnotations	type.infer	
+TypeAlgebra	t	TypeAnnotations	type.intersection	
+TypeAlgebra	t	TypeAnnotations	type.literal	
+TypeAlgebra	t	TypeAnnotations	type.lookup	
+TypeAlgebra	t	TypeAnnotations	type.object	
+TypeAlgebra	t	TypeAnnotations	type.optional	
+TypeAlgebra	t	TypeAnnotations	type.parenthesized	
+TypeAlgebra	t	TypeAnnotations	type.predicate	
+TypeAlgebra	t	TypeAnnotations	type.predicate.asserts	
+TypeAlgebra	t	TypeAnnotations	type.primitive.object	
+TypeAlgebra	t	TypeAnnotations	type.primitive.symbol	
+TypeAlgebra	t	TypeAnnotations	type.primitive.unchecked	
+TypeAlgebra	t	TypeAnnotations	type.primitive.unknown	
+TypeAlgebra	t	TypeAnnotations	type.primitive.void	
+TypeAlgebra	t	TypeAnnotations	type.query	
+TypeAlgebra	t	TypeAnnotations	type.readonly	
+TypeAlgebra	t	TypeAnnotations	type.template	
+TypeAlgebra	t	TypeAnnotations	declaration.variable.pattern	type
+TypeAlgebra	t	TypeAnnotations	expression.function	returnType
+TypeAlgebra	t	TypeAnnotations	declaration.field.signature	type
+TypeAlgebra	t	TypeAnnotations	declaration.property	type
+TypeAlgebra	t	TypeAnnotations	declaration.method.signature.abstract	returnType
+TypeAlgebra	t	TypeAnnotations	declaration.property.signature.abstract.getter	returnType
+TypeAlgebra	t	TypeAnnotations	declaration.property.signature.getter	returnType
+TypeExpressions	pt		type	content
+TypedReceivers	t	ExplicitReceivers	type.receiver	
+TypedReceivers	t	ExplicitReceivers	expression.function	receiver
+TypedReceivers	t	ExplicitReceivers	type.function	receiver
+TypedReceivers	t	ExplicitReceivers	declaration.signature.call	receiver
+Undefined	t	LiteralFacets	literal.null.undefined	
+UnionTypes	pt	TypeAnnotations	type.rest	
+UnionTypes	pt	TypeAnnotations	type.union	
+UnitValues	r	Tuples	expression.unit	
+ValuedBlocks	r	RustExpressions	statement.block	trailingExpression
+ValuedBlocks	r	RustExpressions	statement.break	expression
+VariadicTypeParameters	p	ParametricPolymorphism	declaration.type_parameter.variadic	
+WhereClauses	r	BoundedQuantification	clause.bounds.removed	
+WhereClauses	r	BoundedQuantification	clause.bounds.use	
+WhereClauses	r	BoundedQuantification	clause.where	
+WhereClauses	r	BoundedQuantification	clause.where.predicate	
+WhereClauses	r	BoundedQuantification	declaration.function	whereClause
+WhereClauses	r	BoundedQuantification	declaration.function.signature	whereClause
+WhereClauses	r	BoundedQuantification	declaration.enum	whereClause
+WhereClauses	r	BoundedQuantification	declaration.interface.trait	whereClause
+WhereClauses	r	BoundedQuantification	declaration.method	whereClause
+WhereClauses	r	BoundedQuantification	declaration.method.signature	whereClause
+WhereClauses	r	BoundedQuantification	declaration.extension	whereClause
+WhereClauses	r	BoundedQuantification	declaration.extension.conformance	whereClause
+WhereClauses	r	BoundedQuantification	element.type_argument	bounds
+WhereClauses	r	BoundedQuantification	declaration.type_alias	trailingWhereClause
+WhereClauses	r	BoundedQuantification	declaration.type_alias	whereClause
+WhereClauses	r	BoundedQuantification	declaration.type_alias.associated	whereClause
+WhereClauses	r	BoundedQuantification	declaration.union	whereClause
+WildcardImports	pr	Modules	clause.import.wildcard	
+WildcardPatterns	pr	Destructuring	pattern.wildcard	
