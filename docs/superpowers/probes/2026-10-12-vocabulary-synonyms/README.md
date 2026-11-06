@@ -84,7 +84,7 @@ A segment takes the term no language owns when such a term exists. Each language
 | --- | --- |
 | `argument` | `named`: keyword |
 | `clause` | `catch`: except, rescue · `else_if`: elif, elsif, elseif · `finally`: ensure · `resource`: using · `wildcard`: glob · `bounds`: constraint · `case`: arm |
-| `declaration` | `receiver`: self, this · `module`: mod · `struct`: record · `type_alias`: typedef, typealias · `enum_member`: variant, enumerator · `constructor`: initializer, init · `extension`: impl · `special`: dunder, magic · `foreign`: extern · `internal`: crate · `index`: indexer |
+| `declaration` | `receiver`: self, this · `module`: mod · `struct`: record · `type_alias`: typedef, typealias · `enum_member`: variant, enumerator · `constructor`: initializer, init · `extension`: impl · `special`: dunder, magic · `foreign`: extern · `internal`: crate · `index`: indexer · `parameters`: param_spec (python's ParamSpec, `**P`) |
 | `element` | `spread`: splat, unpack · `map`: dictionary, dict |
 | `expression` | `coalesce`: nullish · `generator`: gen · `construct`: new · `propagate`: try · `lambda`: closure, arrow · `member`: attribute, field, property · `subscript`: index · `conditional`: ternary · `reference`: borrow · `list`: array · `compound`: augmented · `map`: dictionary, dict · `matrix_multiply`: matmul · `qualified`: path, scoped |
 | `identifier` | `qualified`: dotted, nested, scoped, path · `receiver`: self, this · `super`: base |

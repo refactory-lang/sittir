@@ -1,5 +1,5 @@
 import type { NodeMap } from '../compiler/types.ts';
-import { AssembledAlias, AssembledPattern, isBuilderTextLeaf, type AssembledKeyword, type AssembledNode, type AssembledPunctuation } from '../compiler/model/node-map.ts';
+import { AssembledAlias, AssembledPattern, isBuilderTextLeaf, isDelimiterToken, type AssembledKeyword, type AssembledNode, type AssembledPunctuation } from '../compiler/model/node-map.ts';
 import { anchoredLeafRegex } from '../compiler/model/leaf-pattern.ts';
 import { aliasPatternLeaf, classifyFactoryEmission, isAffixedLeaf, referencedKinds } from './shared.ts';
 import { interiorOf, type NodeInterior } from './interior.ts';
@@ -20,7 +20,7 @@ export function builtFromText(nodeMap: NodeMap, kindEntries: readonly KindEnumEn
 	const kinds: BuiltFromText[] = [];
 	const referenced = referencedKinds(nodeMap);
 	for (const [kind, node] of nodeMap.nodes) {
-		if (classifyFactoryEmission(kind, node, { nodeMap, kindEntries }) !== 'emit') continue;
+		if (classifyFactoryEmission(kind, node, { nodeMap, kindEntries }) !== 'emit' || isDelimiterToken(node)) continue;
 		if (isBuilderTextLeaf(node)) {
 			kinds.push({ form: 'fixed', kind, node });
 		} else if (isAffixedLeaf(node)) {

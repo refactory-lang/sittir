@@ -19,8 +19,11 @@ const node = (kind: string, slots: readonly ModelSlot[] = [], extra: Partial<Mod
 	kind,
 	modelType: 'branch',
 	unit: false,
+	layout: false,
+	seated: false,
 	slots,
 	subtypes: [],
+	defaultSubtype: null,
 	elementKinds: [],
 	enumMembers: [],
 	text: null,
@@ -48,8 +51,9 @@ const MODEL: SlotModel = new Map(
 		node('entries', [slot('parameter', ['parameter'], { multiple: true })], { modelType: 'list' }),
 		node('entries_receiver', [slot('receiver', ['receiver_parameter']), slot('entries_receiver_group', ['entries_receiver_group'])]),
 		node('entries_receiver_group', [slot('elements', ['entries'])]),
-		node('parameter', [slot('name', ['identifier', 'self']), slot('type', ['type_identifier', 'identifier'])]),
-		node('receiver_parameter', [slot('name', ['self']), slot('type', ['type_identifier', 'identifier'])]),
+		node('parameter', [slot('attribute', ['attribute'], { required: false }), slot('name', ['identifier', 'self']), slot('type', ['type_identifier', 'identifier']), slot('default', ['identifier'])]),
+		node('receiver_parameter', [slot('attribute', ['attribute'], { required: false }), slot('name', ['self']), slot('type', ['type_identifier', 'identifier'])]),
+		node('attribute'),
 		node('identifier'),
 		node('self'),
 		node('type_identifier')
@@ -103,6 +107,10 @@ describe('lead fact projection', () => {
 			{ ...facts.containers[0], kind: 'receiver_parameter' }
 		]);
 	});
+	it('copies a declared container onto the receiver form only where the form holds its selectors', async () => {
+		const facts = await readBindings('(parameter (attribute)? @attributes default: (_) @element)');
+		expect(projectLeadFacts(facts, [effect]).containers).toEqual([facts.containers[0]]);
+	});
 	it('keeps all captures sharing the receiver-qualified claim attached to its projected index', async () => {
 		const facts = await readBindings('(function name: (identifier) @name (entries . (parameter name: (self)) @receiver parameter: (_)* @parameters)) @declaration.method');
 		const projected = projectLeadFacts(facts, [effect]);
@@ -119,6 +127,16 @@ describe('lead fact projection', () => {
 		expect(projected.members).toEqual([
 			expect.objectContaining({ owner: 'parameter', claims: [0], name: 'type' }),
 			expect.objectContaining({ owner: 'receiver_parameter', claims: [1], name: 'type' })
+		]);
+	});
+
+	it("copies a cloned claim's member onto the receiver form only where the form holds its slot", async () => {
+		const facts = await readBindings('(parameter default: (_) @default type: (_) @type) @declaration.parameter');
+		const projected = projectLeadFacts(facts, [effect]);
+		expect(projected.members.map((member) => [member.owner, 'name' in member ? member.name : null])).toEqual([
+			['parameter', 'default'],
+			['parameter', 'type'],
+			['receiver_parameter', 'type']
 		]);
 	});
 

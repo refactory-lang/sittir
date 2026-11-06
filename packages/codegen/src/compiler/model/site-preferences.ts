@@ -21,6 +21,7 @@ import { spacingSitesOf, type EdgeArm, type RenderRules, type SeatedChild } from
 import { readOptionsBlock, type OptionsConfig } from '../../dsl/wire/options-block.ts';
 import { addressSegments, addressSites, matchAddress, resolveLabels } from './site-addresses.ts';
 import { supertypeMembersByDisplayName } from './supertype-members.ts';
+import { stampDelimiterFacets } from './delimiter-facets.ts';
 import type { PreferenceSegment } from '../../dsl/primitives/preference-path.ts';
 import type { SpacingAddress } from '../../types/spacing.ts';
 import { displayNameOf, displayNameOfEntry, displayOfParserName, displayedKinds } from './display-name.ts';
@@ -80,6 +81,7 @@ export interface SitePreferencesConfig {
 export function collectSitePreferences(config: SitePreferencesConfig): SitePreference[] {
 	const sites = resolveSitePreferences(config, true).filter((site) => !isUndeclaredSeparator(site));
 	stampResolvedDefaults(sites, config.nodeMap);
+	stampDelimiterFacets(config.nodeMap);
 	return sites;
 }
 

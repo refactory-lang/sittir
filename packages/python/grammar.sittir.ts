@@ -20,12 +20,33 @@ import {
 	rule,
 	prec,
 	token,
+	spellings,
 	reauthored,
 	vocabulary,
 	enrich,
 	wire,
 	edit
 } from '../codegen/src/dsl/dsl-authoring.ts';
+
+const ANY_CASE_EITHER_ORDER = { case: true, order: true } as const;
+
+const INTERPOLATING = { ...ANY_CASE_EITHER_ORDER, interpolating: true } as const;
+
+const STRING_PREFIXES = {
+	r: ANY_CASE_EITHER_ORDER,
+	b: ANY_CASE_EITHER_ORDER,
+	f: INTERPOLATING,
+	t: INTERPOLATING,
+	u: ANY_CASE_EITHER_ORDER,
+	rb: ANY_CASE_EITHER_ORDER,
+	rf: INTERPOLATING,
+	rt: INTERPOLATING,
+	ur: { case: true, readOnly: true }
+} as const;
+
+const STRING_QUOTES = { '"': { singleLine: true }, "'": { singleLine: true }, '"""': {}, "'''": {}, '`': { readOnly: true } } as const;
+
+const STRING_ESCAPE = { escape: '\\' } as const;
 
 const comprehensionClauses = rule('comprehension_clauses', ($) =>
 	field('content', repeat1(choice($.for_in_clause, $.if_clause)))
@@ -34,6 +55,71 @@ const comprehensionClauses = rule('comprehension_clauses', ($) =>
 function tupleElements(element: AuthoringRule) {
 	return seq(seq(element, ','), repeat(seq(element, ',')), optional(element));
 }
+
+const MATCH_BLOCK_WITNESSES = [
+	{
+		text: 'match x:\n',
+		form: ['match', { symbol: 'expression' }, ':', { symbol: '_newline' }],
+		kind: 'match_statement',
+		production: 'CPython match_stmt: "match" subject_expr \':\' NEWLINE INDENT case_block+ DEDENT'
+	}
+] as const;
+
+const ASSIGNMENT_PRODUCTION =
+	'CPython assignment: (star_targets "=")+ (yield_expr | star_expressions) | single_target augassign ~ (yield_expr | star_expressions) | single_target ":" expression ["=" annotated_rhs]; annotated_rhs: yield_expr | star_expressions';
+
+const RIGHT_HAND_SIDE_WITNESSES = [
+	{ text: 'x += y = 1\n', form: [{ symbol: '_left_hand_side' }, '+=', { symbol: 'assignment' }], kind: 'augmented_assignment', production: ASSIGNMENT_PRODUCTION },
+	{ text: 'x += y += 1\n', form: [{ symbol: '_left_hand_side' }, '+=', { symbol: 'augmented_assignment' }], kind: 'augmented_assignment', production: ASSIGNMENT_PRODUCTION },
+	{ text: 'x: int = y = 1\n', form: [{ symbol: '_left_hand_side' }, ':', { symbol: 'type' }, '=', { symbol: 'assignment' }], kind: 'assignment', production: ASSIGNMENT_PRODUCTION }
+] as const;
+
+const ASSIGNMENT_WITNESSES = [
+	{ text: 'x = y += 1\n', form: [{ symbol: '_left_hand_side' }, '=', { symbol: 'augmented_assignment' }], kind: 'assignment', production: ASSIGNMENT_PRODUCTION }
+] as const;
+
+const TYPE_PARAM_PRODUCTION = 'CPython type_params: "[" ",".type_param+ [","] "]"; type_param: NAME [type_param_bound] | "*" NAME | "**" NAME';
+
+const FUNCTION_TYPE_PARAMS_WITNESSES = [
+	{
+		text: 'def f[1](): pass\n',
+		form: ['def', { symbol: 'identifier' }, { symbol: 'type_parameter' }, { symbol: 'parameters' }, ':', { symbol: '_suite' }],
+		kind: 'function_definition',
+		production: TYPE_PARAM_PRODUCTION
+	},
+	{
+		text: 'def f[int[str]](): pass\n',
+		form: ['def', { symbol: 'identifier' }, { symbol: 'type_parameter' }, { symbol: 'parameters' }, ':', { symbol: '_suite' }],
+		kind: 'function_definition',
+		production: TYPE_PARAM_PRODUCTION
+	}
+] as const;
+
+const CLASS_TYPE_PARAMS_WITNESSES = [
+	{
+		text: 'class C[a.b]: pass\n',
+		form: ['class', { symbol: 'identifier' }, { symbol: 'type_parameter' }, ':', { symbol: '_suite' }],
+		kind: 'class_definition',
+		production: TYPE_PARAM_PRODUCTION
+	}
+] as const;
+
+const SPLAT_TYPE_PRODUCTION = 'CPython starred_expression: "*" expression; star_annotation: ":" star_expression; no type takes "**"';
+
+const SPLAT_TYPE_WITNESSES = [
+	{ text: 'x: tuple[int, **P]\n', form: ['**', { symbol: 'identifier' }], kind: 'splat_type', production: SPLAT_TYPE_PRODUCTION },
+	{ text: 'def f(**kw: **P): pass\n', form: ['**', { symbol: 'identifier' }], kind: 'splat_type', production: SPLAT_TYPE_PRODUCTION },
+	{ text: 'x: Callable[**P, int]\n', form: ['**', { symbol: 'identifier' }], kind: 'splat_type', production: SPLAT_TYPE_PRODUCTION }
+] as const;
+
+const TYPE_ALIAS_WITNESSES = [
+	{
+		text: 'type a.b = int\n',
+		form: ['type', { symbol: 'type' }, '=', { symbol: 'type' }],
+		kind: 'type_alias_statement',
+		production: 'CPython type_alias: "type" NAME [type_params] "=" expression'
+	}
+] as const;
 
 export default grammar(enrich(base), wire({
 	resolutions,
@@ -53,10 +139,10 @@ export default grammar(enrich(base), wire({
 
 	// See docs/python-grammar-sittir-glossary.md::renderAs
 	renderAs: (_$) => ({
-		string_start: /[a-zA-Z]*["'`]+/,
+		string_start: token(seq(field('prefix', optional(spellings(STRING_PREFIXES))), field('quote', spellings(STRING_QUOTES, STRING_ESCAPE)))),
 		_string_content: token.immediate(/[\s\S]+/),
 		escape_interpolation: token.immediate(/\{\{|\}\}/),
-		string_end: token.immediate(/\\*["'`]+/)
+		string_end: token.immediate(seq(field('content', /(?:\\[\s\S])*/), field('quote', spellings(STRING_QUOTES, STRING_ESCAPE))))
 	}),
 	reparseHosts: {
 		hosts: {
@@ -106,6 +192,7 @@ export default grammar(enrich(base), wire({
 		decorator: { '"@"/after': preference('tight') },
 		indent: preference('    '),
 		gap: { separator: preference('tight') },
+		string_start: { 'quote:': preference('"') },
 		integer_hex: { 'radix_prefix:': preference('0x') },
 		integer_octal: { 'radix_prefix:': preference('0o') },
 		integer_binary: { 'radix_prefix:': preference('0b') },
@@ -157,7 +244,9 @@ export default grammar(enrich(base), wire({
 		list_splat_pattern: { '"*"/after': preference('tight') },
 		dictionary_splat: { '"**"/after': preference('tight') },
 		dictionary_splat_pattern: { '"**"/after': preference('tight') },
-		splat_type: { 'operator:/after': preference('tight') },
+		splat_type: { '"*"/after': preference('tight') },
+		type_param_type_var_tuple: { '"*"/after': preference('tight') },
+		type_param_param_spec: { '"**"/after': preference('tight') },
 		unary_operator: { 'operator:/after': preference('tight') },
 		interpolation: {
 			before: preference('tight'),
@@ -178,7 +267,7 @@ export default grammar(enrich(base), wire({
 			'block/statements:/separator': 'gap/separator',
 			'decorated_definition/decorator:/separator': 'gap/separator',
 			'if_statement/alternative:/separator': 'gap/separator',
-			'match_block_block/alternative:/separator': 'gap/separator',
+			'match_block/alternative:/separator': 'gap/separator',
 			'try_statement/except_clauses:/separator': 'gap/separator'
 		}
 	},
@@ -352,12 +441,6 @@ export default grammar(enrich(base), wire({
 			1: field('name')
 		},
 
-		splat_type: {
-			// See docs/python-grammar-sittir-glossary.md::splat_type
-			0: field('operator'),
-			1: field('name')
-		},
-
 		string: {
 			1: field('content')
 		},
@@ -372,7 +455,7 @@ export default grammar(enrich(base), wire({
 			2: field('right')
 		},
 
-		relative_import: { 0: field('prefix'), '1/0': field('name') },
+		relative_import: { 0: field('dots'), '1/0': field('name') },
 		global_statement: { 1: field('names') },
 		nonlocal_statement: { 1: field('names') },
 		dotted_name: {
@@ -394,10 +477,8 @@ export default grammar(enrich(base), wire({
 			1: variant('paren')
 		},
 
-		_match_block: { 0: variant('block', { default: true }), 1: variant('empty') },
-
 		// See docs/python-grammar-sittir-glossary.md::_suite
-		_suite: { 0: variant('inline'), 1: variant('block'), 2: variant('empty') }
+		_suite: { 0: variant('inline'), 1: variant('block', { default: true }), 2: variant('empty') }
 	},
 	expectDiagnostics: {
 		'patch-without-cause': [
@@ -414,6 +495,33 @@ export default grammar(enrich(base), wire({
 		]
 	},
 	rules: {
+		_match_block: reauthored('accepts-invalid-syntax', MATCH_BLOCK_WITNESSES, ($, original) => original.members[0]),
+		_right_hand_side: reauthored('accepts-invalid-syntax', RIGHT_HAND_SIDE_WITNESSES, ($) => choice($.expression, $.expression_list, $.pattern_list, $.yield)),
+		assignment: reauthored('accepts-invalid-syntax', ASSIGNMENT_WITNESSES, ($, original) =>
+			edit(original, { '1/0/1': field('right', choice($._right_hand_side, $.assignment)) })
+		),
+		function_definition: reauthored('accepts-invalid-syntax', FUNCTION_TYPE_PARAMS_WITNESSES, ($, original) =>
+			edit(original, { 3: field('type_parameters', optional($.type_params)) })
+		),
+		class_definition: reauthored('accepts-invalid-syntax', CLASS_TYPE_PARAMS_WITNESSES, ($, original) =>
+			edit(original, { 2: field('type_parameters', optional($.type_params)) })
+		),
+		type_param: vocabulary(($) =>
+			choice(
+				variant('type_var', seq(field('name', $.identifier), optional($._type_param_optional1))),
+				variant('type_var_tuple', seq('*', field('name', $.identifier))),
+				variant('param_spec', seq('**', field('name', $.identifier)))
+			)
+		),
+		_type_param_optional1: vocabulary(($) => seq(':', $.type)),
+		type_params: vocabulary(($) => seq('[', field('items', $.type_params_items), ']')),
+		type_params_items: vocabulary(($) =>
+			seq(field('item', $.type_param), repeat(seq(',', field('item', $.type_param))), optional(','))
+		),
+		splat_type: reauthored('accepts-invalid-syntax', SPLAT_TYPE_WITNESSES, ($) => prec(1, seq('*', field('name', $.identifier)))),
+		type_alias_statement: reauthored('accepts-invalid-syntax', TYPE_ALIAS_WITNESSES, ($) =>
+			prec.dynamic(1, seq('type', field('name', $.identifier), optional(field('type_parameters', $.type_params)), '=', field('value', $.type)))
+		),
 		_tuple_pattern_elements: vocabulary(($) => tupleElements(field('item', $.pattern))),
 		tuple_pattern: reauthored(
 			'semantic-gap',
@@ -487,7 +595,7 @@ export default grammar(enrich(base), wire({
 			seq(repeat1(seq(',', field('item', $.expression))), optional(','))
 		),
 		print_statement_chevron: vocabulary(($) =>
-			seq('print', field('chevron', $.chevron), optional(choice(alias($._print_chevron_arguments, $.print_chevron_arguments), ',')))
+			seq('print', field('chevron', $.chevron), optional(alias($._print_chevron_arguments, $.print_chevron_arguments)))
 		),
 		print_statement_plain: vocabulary(($) => seq('print', alias($._print_arguments, $.print_arguments))),
 		print_statement: reauthored('alias-shape', ($) =>

@@ -1,6 +1,6 @@
 import { type ContainerCapture, type ModelSlot, KNOWN_PREDICATE_OPERATORS, WILDCARD, isFixedText } from './facts.ts';
 import { camel, snake } from './names.ts';
-import { type GrammarInput, type GrammarRoutes, concreteKinds, containerCaptureSlot, containerMembers, declaredContainerKinds, formsOf, guaranteedBy, isLayout, modelNode, readsList, resolveRoutes, slotFor, unenteredForms } from './routes.ts';
+import { type GrammarInput, type GrammarRoutes, concreteKinds, containerCaptureSlot, containerMembers, declaredContainerKinds, formsOf, guaranteedBy, holdsContainer, isLayout, modelNode, readsList, resolveRoutes, slotFor, unenteredForms } from './routes.ts';
 
 interface Resolution {
 	readonly tokens: readonly string[];
@@ -383,9 +383,9 @@ export function derive(inputs: readonly GrammarInput[]): Derivation {
 						continue;
 					}
 					const bySelector = route.route === 'nested' && route.selector.kind === null;
-					const kinds = route.route === 'presence' ? [] : route.selector.kind !== null ? [route.selector.kind] : [...(route.slot?.kinds ?? [])];
+					const kinds = route.route === 'presence' || route.route === 'delimiter' ? [] : route.selector.kind !== null ? [route.selector.kind] : [...(route.slot?.kinds ?? [])];
 					const multiple = route.route === 'nested' && ((bySelector && (route.slot?.multiple ?? false)) || route.multiple);
-					if (route.route === 'presence' || (bySelector && route.slot?.storage === 'boolean')) f.kinds.add('boolean');
+					if (route.route === 'presence' || route.route === 'delimiter' || (bySelector && route.slot?.storage === 'boolean')) f.kinds.add('boolean');
 					let list = multiple;
 					let scalar = false;
 					for (const k of kinds) {
@@ -412,19 +412,13 @@ export function derive(inputs: readonly GrammarInput[]): Derivation {
 	const untargeted: string[] = [];
 	const uncaptured: string[] = [];
 	for (const input of inputs) {
-		for (const container of input.bindings.containers) {
+		for (const container of input.bindings.containers.filter((c) => holdsContainer(input.model, c))) {
 			const slots = modelNode(input.model, container.kind)?.slots ?? [];
 			const slotOf = (capture: ContainerCapture): ModelSlot | undefined => containerCaptureSlot(input.model, slots, capture);
 			const at = `${input.grammar}:${container.pattern.line} ${container.pattern.source.replace(/\s+/g, ' ')}`;
 			const dropped = container.dropped.map((selector) => slotFor(input.model, slots, selector));
 			const unexplained = (container.reason ?? '').trim() === '';
-			for (const [i, slot] of dropped.entries()) {
-				if (slot === undefined)
-					uncaptured.push(
-						`${at} marks a @dropped node that names no slot (${container.dropped[i]?.kind ?? 'a wildcard'})`
-					);
-				else if (unexplained) uncaptured.push(`${at} drops ${slot.name} without a #set! reason`);
-			}
+			for (const slot of dropped) if (slot !== undefined && unexplained) uncaptured.push(`${at} drops ${slot.name} without a #set! reason`);
 			const kept = new Set(
 				input.bindings.containers
 					.filter((other) => formsOf(input.model, other.kind).includes(container.kind))

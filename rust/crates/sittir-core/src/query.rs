@@ -109,6 +109,12 @@ pub enum PlanSpec {
         #[serde(flatten)]
         slots: Slots,
     },
+    Count {
+        #[serde(flatten)]
+        slots: Slots,
+        min: u32,
+    },
+    Delimiter { delimiter: u8 },
     Is {
         #[serde(rename = "self", default)]
         own: Option<bool>,
@@ -143,6 +149,8 @@ pub enum Plan {
     Eq { slots: Slots, text: String },
     Match { slots: Slots, pattern: regex::Regex },
     Present { slots: Slots },
+    Count { slots: Slots, min: u32 },
+    Delimiter(crate::types::Delimiter),
     Is { subject: Subject, types: Vec<crate::types::KindId> },
     Child { slots: Slots, anchor: Option<Anchor>, of: Box<Plan> },
     Not(Box<Plan>),
@@ -158,12 +166,14 @@ pub enum Subject {
 }
 
 /// What a plan reads a node with: the source, the kind a coordinate of a
-/// node carries (`ReadCtx::node_kind`), and how a node's kind finds its
-/// slots (`ReadNode::router`).
+/// node carries (`ReadCtx::node_kind`), how a node's kind finds its
+/// slots (`ReadNode::router`), and the delimiter flags the read stamps on
+/// the list the cursor is on (`ReadNode::delimiter`).
 pub struct QueryCtx<'a> {
     pub source: &'a str,
     pub stamp: &'a dyn Fn(&Node<'_>) -> crate::types::KindId,
     pub router: &'a dyn Fn(&Node<'_>) -> Option<Router>,
+    pub delimiter: &'a dyn Fn(&mut TreeCursor<'_>) -> Option<crate::types::Delimiter>,
 }
 
 /// One value a slot holds: its text, and the node that spells it, by its
@@ -186,6 +196,8 @@ impl Plan {
                 pattern: regex::Regex::new(&pattern).map_err(|e| e.to_string())?,
             },
             PlanSpec::Present { slots } => Plan::Present { slots },
+            PlanSpec::Count { slots, min } => Plan::Count { slots, min },
+            PlanSpec::Delimiter { delimiter } => Plan::Delimiter(crate::types::Delimiter(delimiter)),
             PlanSpec::Is { own, slots, types } => Plan::Is {
                 subject: match (own, slots) {
                     (None, Some(slots)) => Subject::Slots(slots),
@@ -203,7 +215,9 @@ impl Plan {
 
     /// Whether the node the cursor is on satisfies the condition: a
     /// comparison holds when some value its slot holds has the text or
-    /// matches, a presence leaf when the slot holds a value, an `is` leaf
+    /// matches, a presence leaf when the slot holds a value, a count leaf
+    /// when it holds at least `min` values, a delimiter leaf when the read
+    /// stamps one of its delimiters on the node, an `is` leaf
     /// when a node the slot holds (or the node itself) has one of the
     /// types, and a child step
     /// when its condition holds on one of the slot's nodes its anchor keeps.
@@ -213,6 +227,11 @@ impl Plan {
             Plan::Eq { slots, text } => any_hit(cursor, ctx, slots, |hit| hit.text == text),
             Plan::Match { slots, pattern } => any_hit(cursor, ctx, slots, |hit| pattern.is_match(hit.text)),
             Plan::Present { slots } => any_hit(cursor, ctx, slots, |_| true),
+            Plan::Count { slots, min } => {
+                let mut held = 0u32;
+                slot_hits(cursor, ctx, slots, &mut |_| held += 1) && held >= *min
+            }
+            Plan::Delimiter(delimiter) => (ctx.delimiter)(cursor).is_some_and(|stamped| stamped.has(*delimiter)),
             Plan::Is { subject: Subject::Slots(slots), types } => any_hit(cursor, ctx, slots, |hit| hit.node.is_some_and(|(_, kind)| types.contains(&kind))),
             Plan::Is { subject: Subject::Own, types } => types.contains(&(ctx.stamp)(&cursor.node())),
             Plan::Child { slots, anchor, of } => {
@@ -413,7 +432,7 @@ mod tests {
         parser.set_language(language()).unwrap();
         let tree = parser.parse(source, None).unwrap();
         let stamp = |node: &Node<'_>| crate::read::display_id(node);
-        let ctx = QueryCtx { source, stamp: &stamp, router: &router };
+        let ctx = QueryCtx { source, stamp: &stamp, router: &router, delimiter: &|_| None };
         let mut cursor = tree.walk();
         let mut out = Vec::new();
         for index in (0..crate::read::descendant_count(&tree.root_node())).map(crate::types::NodeIndex::new) {

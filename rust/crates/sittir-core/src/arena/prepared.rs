@@ -147,11 +147,15 @@ pub struct Prepared<T> {
     /// A unit child's own kind's edges, by its site: a unit has no place of
     /// its own to key them by.
     units: SmallMap<Site<PrepPlace>, Edges>,
+    /// The derived delimiter facet a delimiter token takes, by its site in
+    /// its composite (`delimiters::fill`): the token renders it in place of
+    /// the facet it holds.
+    facets: SmallMap<Site<PrepPlace>, String>,
 }
 
 impl<T> Default for Prepared<T> {
     fn default() -> Self {
-        Self { nodes: SmallMap::new(), sites: SmallMap::new(), coordinates: SmallMap::new(), units: SmallMap::new() }
+        Self { nodes: SmallMap::new(), sites: SmallMap::new(), coordinates: SmallMap::new(), units: SmallMap::new(), facets: SmallMap::new() }
     }
 }
 
@@ -192,6 +196,17 @@ impl<T> Prepared<T> {
         let held = self.sites.get(&site).copied().unwrap_or_default();
         let own = self.units.get(&site).copied().unwrap_or_default();
         Edges { before: held.before.or(own.before), after: held.after.or(own.after) }
+    }
+
+    /// The derived facet prepare gave the delimiter token at `site`.
+    #[must_use]
+    pub fn facet(&self, site: Site<PrepPlace>) -> Option<&str> {
+        self.facets.get(&site).map(String::as_str)
+    }
+
+    /// The delimiter token at `site` takes the derived facet `facet`.
+    pub fn set_facet(&mut self, site: Site<PrepPlace>, facet: String) {
+        *self.facets.entry(site).or_default() = facet;
     }
 
     /// The seams prepare resolved for the untouched parsed child at `site`.

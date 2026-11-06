@@ -7,7 +7,12 @@ export const RECORD_HEADER_WORDS = 2;
 
 export const records = {
 	ProgramNode: { words: 3, builtWords: 3, definitions: { word: 2, width: 1, run: 3, forms: 1, built: 2 } },
-	EscapeSequenceNode: { words: 4, builtWords: 3, content: { word: 2, width: 2, forms: 4, built: 2 } },
+	EscapeSequenceNode: {
+		words: 6,
+		builtWords: 4,
+		content: { word: 2, width: 2, forms: 4, built: 2 },
+		verbatim: { word: 4, width: 2, forms: 4, built: 3 }
+	},
 	IdentifierNode: { words: 2, builtWords: 2 },
 	ImmediateIdentifierNode: { words: 2, builtWords: 2 },
 	CaptureNode: { words: 5, builtWords: 3, name: { word: 2, width: 3, forms: 1, built: 2 } },
@@ -19,7 +24,12 @@ export const records = {
 	},
 	StringContentNode: { words: 3, builtWords: 3, content: { word: 2, width: 1, run: 3, forms: 1, built: 2 } },
 	ParametersNode: { words: 3, builtWords: 3, elements: { word: 2, width: 1, run: 3, forms: 1, built: 2 } },
-	CommentNode: { words: 4, builtWords: 3, content: { word: 2, width: 2, forms: 4, built: 2 } },
+	CommentNode: {
+		words: 6,
+		builtWords: 4,
+		content: { word: 2, width: 2, forms: 4, built: 2 },
+		verbatim: { word: 4, width: 2, forms: 4, built: 3 }
+	},
 	ListNode: {
 		words: 4,
 		builtWords: 4,

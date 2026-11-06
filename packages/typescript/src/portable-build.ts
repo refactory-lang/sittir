@@ -404,6 +404,7 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
+					empty: ['arguments'],
 					presets: [],
 					flags: {},
 					when: [
@@ -615,6 +616,7 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
+					empty: ['bounds'],
 					presets: [],
 					flags: {},
 					when: [
@@ -1257,6 +1259,7 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
+					empty: ['types'],
 					presets: [],
 					flags: {},
 					when: [
@@ -1300,6 +1303,7 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
+					empty: ['types'],
 					presets: [],
 					flags: {},
 					when: [
@@ -1395,6 +1399,7 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
+					empty: ['types'],
 					presets: [],
 					flags: {},
 					when: [
@@ -2120,6 +2125,7 @@ export const build: PortableBuildTable = {
 								{
 									at: [154, 'content'],
 									kinds: [],
+									text: true,
 									pattern: {
 										source: '^(?:(?:([^*]|\\*+[^*/])*\\**))$',
 										flags: 'u'
@@ -2159,6 +2165,7 @@ export const build: PortableBuildTable = {
 								{
 									at: [154, 'content'],
 									kinds: [],
+									text: true,
 									pattern: {
 										source: '^(?:(?:([^*]|\\*+[^*/])*\\**))$',
 										flags: 'u'
@@ -2211,6 +2218,7 @@ export const build: PortableBuildTable = {
 								{
 									at: [153, 'content'],
 									kinds: [],
+									text: true,
 									pattern: {
 										source: '^(?:(?:[^\\r\\n\\u2028\\u2029]*))$',
 										flags: 'u'
@@ -2404,6 +2412,7 @@ export const build: PortableBuildTable = {
 														}
 													],
 													multiple: true,
+													list: true,
 													seats: [
 														{
 															at: [408, 'decorators'],
@@ -2731,6 +2740,7 @@ export const build: PortableBuildTable = {
 														}
 													],
 													multiple: true,
+													list: true,
 													seats: [
 														{
 															at: [408, 'decorators'],
@@ -3271,6 +3281,7 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
+					empty: ['body'],
 					presets: [],
 					flags: {
 						const: {
@@ -3322,6 +3333,9 @@ export const build: PortableBuildTable = {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\s\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\s\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
 										flags: 'u'
+									},
+									contents: {
+										'128': 'content'
 									}
 								},
 								{
@@ -3387,6 +3401,9 @@ export const build: PortableBuildTable = {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\s\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\s\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
 										flags: 'u'
+									},
+									contents: {
+										'128': 'content'
 									}
 								},
 								{
@@ -3509,6 +3526,9 @@ export const build: PortableBuildTable = {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\s\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\s\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
 										flags: 'u'
+									},
+									contents: {
+										'128': 'content'
 									}
 								},
 								{
@@ -3820,6 +3840,9 @@ export const build: PortableBuildTable = {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\s\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\s\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
 										flags: 'u'
+									},
+									contents: {
+										'128': 'content'
 									}
 								},
 								{
@@ -4141,6 +4164,9 @@ export const build: PortableBuildTable = {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\s\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\s\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
 										flags: 'u'
+									},
+									contents: {
+										'128': 'content'
 									}
 								},
 								{
@@ -4462,6 +4488,9 @@ export const build: PortableBuildTable = {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\s\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\s\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
 										flags: 'u'
+									},
+									contents: {
+										'128': 'content'
 									}
 								},
 								{
@@ -4765,6 +4794,9 @@ export const build: PortableBuildTable = {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\s\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\s\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
 										flags: 'u'
+									},
+									contents: {
+										'128': 'content'
 									}
 								},
 								{
@@ -4963,6 +4995,9 @@ export const build: PortableBuildTable = {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\s\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\s\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
 										flags: 'u'
+									},
+									contents: {
+										'128': 'content'
 									}
 								},
 								{
@@ -5171,6 +5206,9 @@ export const build: PortableBuildTable = {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\s\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\s\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
 										flags: 'u'
+									},
+									contents: {
+										'128': 'content'
 									}
 								},
 								{
@@ -5379,6 +5417,9 @@ export const build: PortableBuildTable = {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\s\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\s\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
 										flags: 'u'
+									},
+									contents: {
+										'128': 'content'
 									}
 								},
 								{
@@ -6527,6 +6568,9 @@ export const build: PortableBuildTable = {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\s\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\s\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
 										flags: 'u'
+									},
+									contents: {
+										'128': 'content'
 									}
 								},
 								{
@@ -6919,6 +6963,9 @@ export const build: PortableBuildTable = {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\s\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\s\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
 										flags: 'u'
+									},
+									contents: {
+										'128': 'content'
 									}
 								},
 								{
@@ -7321,6 +7368,9 @@ export const build: PortableBuildTable = {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\s\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\s\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
 										flags: 'u'
+									},
+									contents: {
+										'128': 'content'
 									}
 								},
 								{
@@ -7723,6 +7773,9 @@ export const build: PortableBuildTable = {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\s\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\s\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
 										flags: 'u'
+									},
+									contents: {
+										'128': 'content'
 									}
 								},
 								{
@@ -8125,6 +8178,9 @@ export const build: PortableBuildTable = {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\s\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\s\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
 										flags: 'u'
+									},
+									contents: {
+										'128': 'content'
 									}
 								},
 								{
@@ -8493,6 +8549,9 @@ export const build: PortableBuildTable = {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\s\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\s\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
 										flags: 'u'
+									},
+									contents: {
+										'128': 'content'
 									}
 								},
 								{
@@ -8822,6 +8881,9 @@ export const build: PortableBuildTable = {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\s\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\s\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
 										flags: 'u'
+									},
+									contents: {
+										'128': 'content'
 									}
 								},
 								{
@@ -9161,6 +9223,9 @@ export const build: PortableBuildTable = {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\s\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\s\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
 										flags: 'u'
+									},
+									contents: {
+										'128': 'content'
 									}
 								},
 								{
@@ -9500,6 +9565,9 @@ export const build: PortableBuildTable = {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\s\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\s\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
 										flags: 'u'
+									},
+									contents: {
+										'128': 'content'
 									}
 								},
 								{
@@ -9839,6 +9907,9 @@ export const build: PortableBuildTable = {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\s\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\s\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
 										flags: 'u'
+									},
+									contents: {
+										'128': 'content'
 									}
 								},
 								{
@@ -10217,6 +10288,9 @@ export const build: PortableBuildTable = {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\s\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\s\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
 										flags: 'u'
+									},
+									contents: {
+										'128': 'content'
 									}
 								},
 								{
@@ -10595,6 +10669,9 @@ export const build: PortableBuildTable = {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\s\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\s\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
 										flags: 'u'
+									},
+									contents: {
+										'128': 'content'
 									}
 								},
 								{
@@ -14306,6 +14383,9 @@ export const build: PortableBuildTable = {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\s\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\s\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
 										flags: 'u'
+									},
+									contents: {
+										'128': 'content'
 									}
 								},
 								{
@@ -14513,6 +14593,9 @@ export const build: PortableBuildTable = {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\s\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\s\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
 										flags: 'u'
+									},
+									contents: {
+										'128': 'content'
 									}
 								},
 								{
@@ -14721,6 +14804,9 @@ export const build: PortableBuildTable = {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\s\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\s\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
 										flags: 'u'
+									},
+									contents: {
+										'128': 'content'
 									}
 								},
 								{
@@ -14939,6 +15025,9 @@ export const build: PortableBuildTable = {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\s\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\s\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
 										flags: 'u'
+									},
+									contents: {
+										'128': 'content'
 									}
 								},
 								{
@@ -15157,6 +15246,9 @@ export const build: PortableBuildTable = {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\s\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\s\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
 										flags: 'u'
+									},
+									contents: {
+										'128': 'content'
 									}
 								},
 								{
@@ -15393,6 +15485,9 @@ export const build: PortableBuildTable = {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\s\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\s\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
 										flags: 'u'
+									},
+									contents: {
+										'128': 'content'
 									}
 								},
 								{
@@ -15628,6 +15723,9 @@ export const build: PortableBuildTable = {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\s\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\s\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
 										flags: 'u'
+									},
+									contents: {
+										'128': 'content'
 									}
 								},
 								{
@@ -15863,6 +15961,9 @@ export const build: PortableBuildTable = {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\s\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\s\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
 										flags: 'u'
+									},
+									contents: {
+										'128': 'content'
 									}
 								},
 								{
@@ -16080,6 +16181,9 @@ export const build: PortableBuildTable = {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\s\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\s\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
 										flags: 'u'
+									},
+									contents: {
+										'128': 'content'
 									}
 								},
 								{
@@ -16157,6 +16261,7 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
+					empty: ['parameters'],
 					presets: [],
 					flags: {
 						static: {
@@ -16245,6 +16350,9 @@ export const build: PortableBuildTable = {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\s\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\s\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
 										flags: 'u'
+									},
+									contents: {
+										'128': 'content'
 									}
 								},
 								{
@@ -16322,6 +16430,7 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
+					empty: ['parameters'],
 					presets: [
 						{
 							steps: [
@@ -16420,6 +16529,9 @@ export const build: PortableBuildTable = {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\s\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\s\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
 										flags: 'u'
+									},
+									contents: {
+										'128': 'content'
 									}
 								},
 								{
@@ -16497,6 +16609,7 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
+					empty: ['parameters'],
 					presets: [
 						{
 							steps: [
@@ -16595,6 +16708,9 @@ export const build: PortableBuildTable = {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\s\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\s\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
 										flags: 'u'
+									},
+									contents: {
+										'128': 'content'
 									}
 								},
 								{
@@ -16672,6 +16788,7 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
+					empty: ['parameters'],
 					presets: [
 						{
 							steps: [
@@ -16788,6 +16905,9 @@ export const build: PortableBuildTable = {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\s\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\s\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
 										flags: 'u'
+									},
+									contents: {
+										'128': 'content'
 									}
 								},
 								{
@@ -17005,6 +17125,9 @@ export const build: PortableBuildTable = {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\s\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\s\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
 										flags: 'u'
+									},
+									contents: {
+										'128': 'content'
 									}
 								},
 								{
@@ -17184,6 +17307,9 @@ export const build: PortableBuildTable = {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\s\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\s\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
 										flags: 'u'
+									},
+									contents: {
+										'128': 'content'
 									}
 								},
 								{
@@ -17373,6 +17499,9 @@ export const build: PortableBuildTable = {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\s\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\s\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
 										flags: 'u'
+									},
+									contents: {
+										'128': 'content'
 									}
 								},
 								{
@@ -17562,6 +17691,9 @@ export const build: PortableBuildTable = {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\s\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\s\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
 										flags: 'u'
+									},
+									contents: {
+										'128': 'content'
 									}
 								},
 								{
@@ -17751,6 +17883,9 @@ export const build: PortableBuildTable = {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\s\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\s\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
 										flags: 'u'
+									},
+									contents: {
+										'128': 'content'
 									}
 								},
 								{
@@ -17812,6 +17947,7 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
+					empty: ['parameters'],
 					presets: [],
 					flags: {
 						override: {
@@ -17887,6 +18023,9 @@ export const build: PortableBuildTable = {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\s\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\s\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
 										flags: 'u'
+									},
+									contents: {
+										'128': 'content'
 									}
 								},
 								{
@@ -17948,6 +18087,7 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
+					empty: ['parameters'],
 					presets: [
 						{
 							steps: [
@@ -18033,6 +18173,9 @@ export const build: PortableBuildTable = {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\s\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\s\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
 										flags: 'u'
+									},
+									contents: {
+										'128': 'content'
 									}
 								},
 								{
@@ -18094,6 +18237,7 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
+					empty: ['parameters'],
 					presets: [
 						{
 							steps: [
@@ -18179,6 +18323,9 @@ export const build: PortableBuildTable = {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\s\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\s\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
 										flags: 'u'
+									},
+									contents: {
+										'128': 'content'
 									}
 								},
 								{
@@ -18240,6 +18387,7 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
+					empty: ['parameters'],
 					presets: [
 						{
 							steps: [
@@ -18325,6 +18473,9 @@ export const build: PortableBuildTable = {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\s\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\s\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
 										flags: 'u'
+									},
+									contents: {
+										'128': 'content'
 									}
 								},
 								{
@@ -18517,6 +18668,9 @@ export const build: PortableBuildTable = {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\s\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\s\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
 										flags: 'u'
+									},
+									contents: {
+										'128': 'content'
 									}
 								},
 								{
@@ -18719,6 +18873,9 @@ export const build: PortableBuildTable = {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\s\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\s\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
 										flags: 'u'
+									},
+									contents: {
+										'128': 'content'
 									}
 								},
 								{
@@ -18921,6 +19078,9 @@ export const build: PortableBuildTable = {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\s\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\s\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
 										flags: 'u'
+									},
+									contents: {
+										'128': 'content'
 									}
 								},
 								{
@@ -19123,6 +19283,9 @@ export const build: PortableBuildTable = {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\s\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\s\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
 										flags: 'u'
+									},
+									contents: {
+										'128': 'content'
 									}
 								},
 								{
@@ -19184,6 +19347,7 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
+					empty: ['parameters'],
 					presets: [],
 					flags: {
 						static: {
@@ -19272,6 +19436,9 @@ export const build: PortableBuildTable = {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\s\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\s\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
 										flags: 'u'
+									},
+									contents: {
+										'128': 'content'
 									}
 								},
 								{
@@ -19333,6 +19500,7 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
+					empty: ['parameters'],
 					presets: [
 						{
 							steps: [
@@ -19431,6 +19599,9 @@ export const build: PortableBuildTable = {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\s\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\s\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
 										flags: 'u'
+									},
+									contents: {
+										'128': 'content'
 									}
 								},
 								{
@@ -19492,6 +19663,7 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
+					empty: ['parameters'],
 					presets: [
 						{
 							steps: [
@@ -19590,6 +19762,9 @@ export const build: PortableBuildTable = {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\s\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\s\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
 										flags: 'u'
+									},
+									contents: {
+										'128': 'content'
 									}
 								},
 								{
@@ -19651,6 +19826,7 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
+					empty: ['parameters'],
 					presets: [
 						{
 							steps: [
@@ -21256,6 +21432,7 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
+					empty: ['declarators'],
 					presets: [
 						{
 							steps: [
@@ -21422,6 +21599,7 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
+					empty: ['declarators'],
 					presets: [
 						{
 							steps: [
@@ -21467,6 +21645,7 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
+					empty: ['declarators'],
 					presets: [],
 					flags: {},
 					when: [
@@ -21504,6 +21683,9 @@ export const build: PortableBuildTable = {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\s\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\s\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
 										flags: 'u'
+									},
+									contents: {
+										'128': 'content'
 									}
 								},
 								{
@@ -25370,7 +25552,6 @@ export const build: PortableBuildTable = {
 								{
 									key: 'binaryExpressionIn',
 									builder: 'binaryExpression.in',
-									optional: true,
 									mounted: {
 										call: 'keyed',
 										key: 'binaryExpressionIn',
@@ -25404,6 +25585,9 @@ export const build: PortableBuildTable = {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\s\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\s\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
 										flags: 'u'
+									},
+									contents: {
+										'128': 'content'
 									}
 								}
 							]
@@ -25414,7 +25598,6 @@ export const build: PortableBuildTable = {
 								{
 									key: 'binaryExpressionIn',
 									builder: 'binaryExpression.in',
-									optional: true,
 									mounted: {
 										call: 'keyed',
 										key: 'binaryExpressionIn',
@@ -25470,7 +25653,12 @@ export const build: PortableBuildTable = {
 						}
 					],
 					flags: {},
-					when: []
+					when: [
+						{
+							absent: [],
+							required: ['left', 'right']
+						}
+					]
 				}
 			]
 		},
@@ -26260,8 +26448,7 @@ export const build: PortableBuildTable = {
 							name: 'arguments',
 							steps: [
 								{
-									key: 'arguments',
-									optional: true
+									key: 'arguments'
 								}
 							],
 							multiple: false,
@@ -26297,6 +26484,115 @@ export const build: PortableBuildTable = {
 											builder: 'arguments',
 											key: 'elements',
 											optional: true
+										}
+									],
+									many: true
+								}
+							]
+						}
+					],
+					empty: ['arguments'],
+					presets: [],
+					flags: {},
+					when: [
+						{
+							absent: [],
+							required: ['arguments', 'function']
+						}
+					]
+				}
+			]
+		},
+		'expression.call.construct.bare': {
+			root: true,
+			arms: [
+				{
+					kind: 256,
+					builder: 'newExpression',
+					members: [
+						{
+							name: 'function',
+							steps: [
+								{
+									key: 'function'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [256, 'function'],
+									kinds: [
+										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 233, 235, 237, 241, 244, 247, 249,
+										251, 255, 258, 259, 272, 273, 275, 276, 277, 278, 279, 280, 281, 282, 299, 405, 418, 419, 420, 421,
+										422, 423, 424, 439, 440
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										'import.meta': 440,
+										'new.target': 439,
+										super: 279,
+										this: 278
+									},
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\s\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\s\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									}
+								}
+							]
+						},
+						{
+							name: 'typeArguments',
+							steps: [
+								{
+									key: 'typeArguments',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [256, 'typeArguments'],
+									kinds: []
+								},
+								{
+									at: [390, 'items'],
+									kinds: [
+										40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 318, 334, 335, 338, 344, 345, 347, 348, 349, 350, 357,
+										358, 359, 361, 363, 364, 365, 366, 368, 377, 378, 379, 380, 381, 382, 503, 504
+									],
+									leaf: 'identifier',
+									texts: [1, 504],
+									tokens: {
+										'*': 363,
+										any: 40,
+										boolean: 42,
+										never: 146,
+										number: 41,
+										object: 46,
+										string: 43,
+										symbol: 44,
+										this: 503,
+										'unique symbol': 144,
+										unknown: 145,
+										void: 78
+									},
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\s\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\s\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'typeArguments',
+											key: 'types'
+										},
+										{
+											builder: 'types',
+											key: 'items'
 										}
 									],
 									many: true
@@ -27020,6 +27316,7 @@ export const build: PortableBuildTable = {
 														}
 													],
 													multiple: true,
+													list: true,
 													seats: [
 														{
 															at: [408, 'decorators'],
@@ -27204,6 +27501,7 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
+					empty: ['body'],
 					owners: [
 						[0, 1, 2, 3, 4, 5],
 						[0, 1, 2, 3, 6]
@@ -28065,6 +28363,7 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
+					empty: ['typeArguments'],
 					presets: [],
 					flags: {},
 					when: [
@@ -28216,6 +28515,7 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
+					empty: ['typeArguments'],
 					presets: [],
 					flags: {},
 					when: [
@@ -28586,6 +28886,9 @@ export const build: PortableBuildTable = {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\s\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\s\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
 										flags: 'u'
+									},
+									contents: {
+										'128': 'content'
 									}
 								}
 							]
@@ -28853,6 +29156,7 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
+					empty: ['expressions'],
 					presets: [],
 					flags: {},
 					when: [
@@ -28913,6 +29217,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [259, 'index'],
@@ -29683,8 +29988,8 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 233, 234, 235, 236, 237, 241, 244,
 										247, 249, 251, 255, 256, 257, 258, 259, 261, 263, 267, 268, 269, 270, 272, 273, 275, 276, 277, 278,
-										279, 280, 281, 282, 299, 304, 305, 306, 307, 315, 405, 414, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 439, 440
+										279, 280, 281, 282, 299, 304, 305, 306, 307, 315, 405, 418, 419, 420, 421, 422, 423, 424, 425, 426,
+										439, 440
 									],
 									leaf: 'identifier',
 									texts: [1],
@@ -29714,15 +30019,19 @@ export const build: PortableBuildTable = {
 			arms: [
 				{
 					kind: 236,
-					builder: 'yieldExpression.delegate',
-					mounted: {
-						call: 'child',
-						key: 'expression'
-					},
+					builder: 'yieldExpression',
 					members: [
 						{
 							name: 'expression',
 							steps: [
+								{
+									key: 'expression',
+									builder: 'yieldExpression.delegate',
+									mounted: {
+										call: 'child',
+										key: 'expression'
+									}
+								},
 								{
 									key: 'expression'
 								}
@@ -29755,7 +30064,21 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
-					presets: [],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'expression',
+									optional: true,
+									builder: 'yieldExpression.delegate',
+									mounted: {
+										call: 'child',
+										key: 'expression'
+									}
+								}
+							]
+						}
+					],
 					flags: {},
 					when: [
 						{
@@ -29791,6 +30114,7 @@ export const build: PortableBuildTable = {
 								{
 									at: [2, 'content'],
 									kinds: [],
+									text: true,
 									pattern: {
 										source: '^(?:.*)$',
 										flags: 'u'
@@ -30150,6 +30474,9 @@ export const build: PortableBuildTable = {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\s\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\s\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
 										flags: 'u'
+									},
+									contents: {
+										'128': 'content'
 									}
 								}
 							]
@@ -30222,6 +30549,9 @@ export const build: PortableBuildTable = {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\s\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\s\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
 										flags: 'u'
+									},
+									contents: {
+										'128': 'content'
 									}
 								}
 							]
@@ -30826,6 +31156,7 @@ export const build: PortableBuildTable = {
 								{
 									at: [160, 'radixPrefix'],
 									kinds: [],
+									text: true,
 									pattern: {
 										source: '^(?:0b|0B)$',
 										flags: 'u'
@@ -30845,6 +31176,7 @@ export const build: PortableBuildTable = {
 								{
 									at: [160, 'content'],
 									kinds: [],
+									text: true,
 									pattern: {
 										source: '^(?:(?:[0-1](_?[0-1])*))$',
 										flags: 'u'
@@ -30882,6 +31214,7 @@ export const build: PortableBuildTable = {
 								{
 									at: [155, 'radixPrefix'],
 									kinds: [],
+									text: true,
 									pattern: {
 										source: '^(?:0x|0X)$',
 										flags: 'u'
@@ -30901,6 +31234,7 @@ export const build: PortableBuildTable = {
 								{
 									at: [155, 'content'],
 									kinds: [],
+									text: true,
 									pattern: {
 										source: '^(?:(?:[\\da-fA-F](_?[\\da-fA-F])*))$',
 										flags: 'u'
@@ -30938,6 +31272,7 @@ export const build: PortableBuildTable = {
 								{
 									at: [161, 'radixPrefix'],
 									kinds: [],
+									text: true,
 									pattern: {
 										source: '^(?:0o|0O)$',
 										flags: 'u'
@@ -30957,6 +31292,7 @@ export const build: PortableBuildTable = {
 								{
 									at: [161, 'content'],
 									kinds: [],
+									text: true,
 									pattern: {
 										source: '^(?:(?:[0-7](_?[0-7])*))$',
 										flags: 'u'
@@ -31000,6 +31336,7 @@ export const build: PortableBuildTable = {
 								{
 									at: [157, 'fraction'],
 									kinds: [],
+									text: true,
 									pattern: {
 										source: '^(?:(?:\\d(_?\\d)*))$',
 										flags: 'u'
@@ -31020,6 +31357,7 @@ export const build: PortableBuildTable = {
 								{
 									at: [157, 'marker'],
 									kinds: [],
+									text: true,
 									pattern: {
 										source: '^(?:e|E)$',
 										flags: 'u'
@@ -31040,6 +31378,7 @@ export const build: PortableBuildTable = {
 								{
 									at: [157, 'exponentSign'],
 									kinds: [],
+									text: true,
 									pattern: {
 										source: '^(?:-|\\+)$',
 										flags: 'u'
@@ -31060,6 +31399,7 @@ export const build: PortableBuildTable = {
 								{
 									at: [157, 'exponent'],
 									kinds: [],
+									text: true,
 									pattern: {
 										source: '^(?:(?:\\d(_?\\d)*))$',
 										flags: 'u'
@@ -31100,6 +31440,7 @@ export const build: PortableBuildTable = {
 								{
 									at: [156, 'integer'],
 									kinds: [],
+									text: true,
 									pattern: {
 										source: '^(?:(?:0|(?:0)?(?:[1-9])(?:(?:_)?(?:\\d(_?\\d)*))?))$',
 										flags: 'u'
@@ -31120,6 +31461,7 @@ export const build: PortableBuildTable = {
 								{
 									at: [156, 'fraction'],
 									kinds: [],
+									text: true,
 									pattern: {
 										source: '^(?:(?:\\d(_?\\d)*))$',
 										flags: 'u'
@@ -31140,6 +31482,7 @@ export const build: PortableBuildTable = {
 								{
 									at: [156, 'marker'],
 									kinds: [],
+									text: true,
 									pattern: {
 										source: '^(?:e|E)$',
 										flags: 'u'
@@ -31160,6 +31503,7 @@ export const build: PortableBuildTable = {
 								{
 									at: [156, 'exponentSign'],
 									kinds: [],
+									text: true,
 									pattern: {
 										source: '^(?:-|\\+)$',
 										flags: 'u'
@@ -31180,6 +31524,7 @@ export const build: PortableBuildTable = {
 								{
 									at: [156, 'exponent'],
 									kinds: [],
+									text: true,
 									pattern: {
 										source: '^(?:(?:\\d(_?\\d)*))$',
 										flags: 'u'
@@ -31220,6 +31565,7 @@ export const build: PortableBuildTable = {
 								{
 									at: [158, 'integer'],
 									kinds: [],
+									text: true,
 									pattern: {
 										source: '^(?:(?:0|(?:0)?(?:[1-9])(?:(?:_)?(?:\\d(_?\\d)*))?))$',
 										flags: 'u'
@@ -31239,6 +31585,7 @@ export const build: PortableBuildTable = {
 								{
 									at: [158, 'marker'],
 									kinds: [],
+									text: true,
 									pattern: {
 										source: '^(?:e|E)$',
 										flags: 'u'
@@ -31259,6 +31606,7 @@ export const build: PortableBuildTable = {
 								{
 									at: [158, 'exponentSign'],
 									kinds: [],
+									text: true,
 									pattern: {
 										source: '^(?:-|\\+)$',
 										flags: 'u'
@@ -31278,6 +31626,7 @@ export const build: PortableBuildTable = {
 								{
 									at: [158, 'exponent'],
 									kinds: [],
+									text: true,
 									pattern: {
 										source: '^(?:(?:\\d(_?\\d)*))$',
 										flags: 'u'
@@ -31311,6 +31660,7 @@ export const build: PortableBuildTable = {
 								{
 									at: [165, 'content'],
 									kinds: [],
+									text: true,
 									pattern: {
 										source: '^(?:(?:\\d(_?\\d)*))$',
 										flags: 'u'
@@ -31349,6 +31699,7 @@ export const build: PortableBuildTable = {
 								{
 									at: [163, 'content'],
 									kinds: [],
+									text: true,
 									pattern: {
 										source: '^(?:(?:0b|0B)(?:[0-1](_?[0-1])*))$',
 										flags: 'u'
@@ -31386,6 +31737,7 @@ export const build: PortableBuildTable = {
 								{
 									at: [162, 'content'],
 									kinds: [],
+									text: true,
 									pattern: {
 										source: '^(?:(?:0x|0X)(?:[\\da-fA-F](_?[\\da-fA-F])*))$',
 										flags: 'u'
@@ -31423,6 +31775,7 @@ export const build: PortableBuildTable = {
 								{
 									at: [164, 'content'],
 									kinds: [],
+									text: true,
 									pattern: {
 										source: '^(?:(?:0o|0O)(?:[0-7](_?[0-7])*))$',
 										flags: 'u'
@@ -31473,6 +31826,7 @@ export const build: PortableBuildTable = {
 								{
 									at: [156, 'integer'],
 									kinds: [],
+									text: true,
 									pattern: {
 										source: '^(?:(?:0|(?:0)?(?:[1-9])(?:(?:_)?(?:\\d(_?\\d)*))?))$',
 										flags: 'u'
@@ -31494,6 +31848,7 @@ export const build: PortableBuildTable = {
 								{
 									at: [156, 'fraction'],
 									kinds: [],
+									text: true,
 									pattern: {
 										source: '^(?:(?:\\d(_?\\d)*))$',
 										flags: 'u'
@@ -31515,6 +31870,7 @@ export const build: PortableBuildTable = {
 								{
 									at: [156, 'marker'],
 									kinds: [],
+									text: true,
 									pattern: {
 										source: '^(?:e|E)$',
 										flags: 'u'
@@ -31536,6 +31892,7 @@ export const build: PortableBuildTable = {
 								{
 									at: [156, 'exponentSign'],
 									kinds: [],
+									text: true,
 									pattern: {
 										source: '^(?:-|\\+)$',
 										flags: 'u'
@@ -31557,6 +31914,7 @@ export const build: PortableBuildTable = {
 								{
 									at: [156, 'exponent'],
 									kinds: [],
+									text: true,
 									pattern: {
 										source: '^(?:(?:\\d(_?\\d)*))$',
 										flags: 'u'
@@ -31603,6 +31961,7 @@ export const build: PortableBuildTable = {
 								{
 									at: [157, 'fraction'],
 									kinds: [],
+									text: true,
 									pattern: {
 										source: '^(?:(?:\\d(_?\\d)*))$',
 										flags: 'u'
@@ -31624,6 +31983,7 @@ export const build: PortableBuildTable = {
 								{
 									at: [157, 'marker'],
 									kinds: [],
+									text: true,
 									pattern: {
 										source: '^(?:e|E)$',
 										flags: 'u'
@@ -31645,6 +32005,7 @@ export const build: PortableBuildTable = {
 								{
 									at: [157, 'exponentSign'],
 									kinds: [],
+									text: true,
 									pattern: {
 										source: '^(?:-|\\+)$',
 										flags: 'u'
@@ -31666,6 +32027,7 @@ export const build: PortableBuildTable = {
 								{
 									at: [157, 'exponent'],
 									kinds: [],
+									text: true,
 									pattern: {
 										source: '^(?:(?:\\d(_?\\d)*))$',
 										flags: 'u'
@@ -31712,6 +32074,7 @@ export const build: PortableBuildTable = {
 								{
 									at: [158, 'integer'],
 									kinds: [],
+									text: true,
 									pattern: {
 										source: '^(?:(?:0|(?:0)?(?:[1-9])(?:(?:_)?(?:\\d(_?\\d)*))?))$',
 										flags: 'u'
@@ -31732,6 +32095,7 @@ export const build: PortableBuildTable = {
 								{
 									at: [158, 'marker'],
 									kinds: [],
+									text: true,
 									pattern: {
 										source: '^(?:e|E)$',
 										flags: 'u'
@@ -31753,6 +32117,7 @@ export const build: PortableBuildTable = {
 								{
 									at: [158, 'exponentSign'],
 									kinds: [],
+									text: true,
 									pattern: {
 										source: '^(?:-|\\+)$',
 										flags: 'u'
@@ -31773,6 +32138,7 @@ export const build: PortableBuildTable = {
 								{
 									at: [158, 'exponent'],
 									kinds: [],
+									text: true,
 									pattern: {
 										source: '^(?:(?:\\d(_?\\d)*))$',
 										flags: 'u'
@@ -31827,6 +32193,7 @@ export const build: PortableBuildTable = {
 								{
 									at: [165, 'content'],
 									kinds: [],
+									text: true,
 									pattern: {
 										source: '^(?:(?:\\d(_?\\d)*))$',
 										flags: 'u'
@@ -31866,6 +32233,7 @@ export const build: PortableBuildTable = {
 								{
 									at: [163, 'content'],
 									kinds: [],
+									text: true,
 									pattern: {
 										source: '^(?:(?:0b|0B)(?:[0-1](_?[0-1])*))$',
 										flags: 'u'
@@ -31905,6 +32273,7 @@ export const build: PortableBuildTable = {
 								{
 									at: [162, 'content'],
 									kinds: [],
+									text: true,
 									pattern: {
 										source: '^(?:(?:0x|0X)(?:[\\da-fA-F](_?[\\da-fA-F])*))$',
 										flags: 'u'
@@ -31944,6 +32313,7 @@ export const build: PortableBuildTable = {
 								{
 									at: [164, 'content'],
 									kinds: [],
+									text: true,
 									pattern: {
 										source: '^(?:(?:0o|0O)(?:[0-7](_?[0-7])*))$',
 										flags: 'u'
@@ -31983,6 +32353,7 @@ export const build: PortableBuildTable = {
 								{
 									at: [160, 'radixPrefix'],
 									kinds: [],
+									text: true,
 									pattern: {
 										source: '^(?:0b|0B)$',
 										flags: 'u'
@@ -32003,6 +32374,7 @@ export const build: PortableBuildTable = {
 								{
 									at: [160, 'content'],
 									kinds: [],
+									text: true,
 									pattern: {
 										source: '^(?:(?:[0-1](_?[0-1])*))$',
 										flags: 'u'
@@ -32043,6 +32415,7 @@ export const build: PortableBuildTable = {
 								{
 									at: [155, 'radixPrefix'],
 									kinds: [],
+									text: true,
 									pattern: {
 										source: '^(?:0x|0X)$',
 										flags: 'u'
@@ -32063,6 +32436,7 @@ export const build: PortableBuildTable = {
 								{
 									at: [155, 'content'],
 									kinds: [],
+									text: true,
 									pattern: {
 										source: '^(?:(?:[\\da-fA-F](_?[\\da-fA-F])*))$',
 										flags: 'u'
@@ -32103,6 +32477,7 @@ export const build: PortableBuildTable = {
 								{
 									at: [161, 'radixPrefix'],
 									kinds: [],
+									text: true,
 									pattern: {
 										source: '^(?:0o|0O)$',
 										flags: 'u'
@@ -32123,6 +32498,7 @@ export const build: PortableBuildTable = {
 								{
 									at: [161, 'content'],
 									kinds: [],
+									text: true,
 									pattern: {
 										source: '^(?:(?:[0-7](_?[0-7])*))$',
 										flags: 'u'
@@ -32147,11 +32523,12 @@ export const build: PortableBuildTable = {
 			root: true,
 			arms: [
 				{
-					kind: 361,
+					kind: 404,
 					builder: 'literalType.negativeNumber',
 					mounted: {
 						call: 'child',
-						key: 'content'
+						key: 'content',
+						holder: 361
 					},
 					members: [
 						{
@@ -32374,6 +32751,7 @@ export const build: PortableBuildTable = {
 								{
 									at: [121, 'content'],
 									kinds: [],
+									text: true,
 									pattern: {
 										source:
 											'^(?:(?:(?:[^xu0-7])|(?:[0-7]{1,3})|(?:x[0-9a-fA-F]{2})|(?:u[0-9a-fA-F]{4})|(?:u\\{[0-9a-fA-F]+\\})|(?:[\\r?][\\n\\u2028\\u2029])))$',
@@ -32817,6 +33195,9 @@ export const build: PortableBuildTable = {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\s\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\s\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
 										flags: 'u'
+									},
+									contents: {
+										'128': 'content'
 									}
 								},
 								{
@@ -34593,6 +34974,7 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
+					empty: ['body'],
 					presets: [],
 					flags: {},
 					when: [
@@ -35451,6 +35833,7 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
+					empty: ['typeArguments'],
 					presets: [],
 					flags: {},
 					when: [
@@ -35477,8 +35860,7 @@ export const build: PortableBuildTable = {
 									builder: 'arguments'
 								},
 								{
-									key: 'elements',
-									optional: true
+									key: 'elements'
 								}
 							],
 							multiple: false,
@@ -35520,7 +35902,12 @@ export const build: PortableBuildTable = {
 						}
 					],
 					flags: {},
-					when: [],
+					when: [
+						{
+							absent: [],
+							required: ['source']
+						}
+					],
 					holders: [
 						[305, 'type'],
 						[306, 'type'],
@@ -35570,8 +35957,7 @@ export const build: PortableBuildTable = {
 									builder: 'arguments'
 								},
 								{
-									key: 'elements',
-									optional: true
+									key: 'elements'
 								}
 							],
 							multiple: false,
@@ -35613,7 +35999,12 @@ export const build: PortableBuildTable = {
 						}
 					],
 					flags: {},
-					when: [],
+					when: [
+						{
+							absent: [],
+							required: ['source']
+						}
+					],
 					holders: [
 						[353, 'object'],
 						[354, 'object'],
@@ -37034,5 +37425,80 @@ export const build: PortableBuildTable = {
 			true: 'literal.boolean.true',
 			false: 'literal.boolean.false'
 		}
+	},
+	tokens: {
+		'189': ['shebang'],
+		'205': ['expression'],
+		'214': ['initializer', 'condition', 'increment'],
+		'224': ['expression'],
+		'225': ['expression'],
+		'229': ['value'],
+		'236': ['expression'],
+		'239': ['right'],
+		'240': ['right'],
+		'241': ['elements'],
+		'251': ['body'],
+		'256': ['function'],
+		'257': ['expression'],
+		'258': ['object', 'property'],
+		'259': ['object', 'index'],
+		'261': ['right'],
+		'263': ['right'],
+		'266': ['expression'],
+		'267': ['condition', 'consequence', 'alternative'],
+		'268': ['left', 'right'],
+		'269': ['argument'],
+		'271': ['expressions'],
+		'273': ['elements'],
+		'274': ['expression'],
+		'283': ['elements'],
+		'293': ['key', 'value'],
+		'294': ['key'],
+		'296': ['expression'],
+		'299': ['expression'],
+		'304': ['expression'],
+		'305': ['expression'],
+		'306': ['expression'],
+		'307': ['function'],
+		'310': ['value'],
+		'323': ['name', 'value'],
+		'327': ['value'],
+		'328': ['value'],
+		'334': ['property'],
+		'353': ['property'],
+		'354': ['index'],
+		'361': ['content'],
+		'370': ['name'],
+		'387': ['name'],
+		'403': ['value'],
+		'404': ['value'],
+		'406': ['left', 'right'],
+		'414': ['expression'],
+		'418': ['expression'],
+		'420': ['function'],
+		'421': ['function'],
+		'422': ['function'],
+		'423': ['elements'],
+		'424': ['elements'],
+		'425': ['argument'],
+		'426': ['argument'],
+		'436': ['value'],
+		'437': ['value'],
+		'441': ['right'],
+		'442': ['value', 'right'],
+		'443': ['right'],
+		'444': ['right'],
+		'452': ['name'],
+		'453': ['name'],
+		'454': ['name'],
+		'455': ['name'],
+		'456': ['name'],
+		'457': ['name'],
+		'458': ['name'],
+		'459': ['name'],
+		'460': ['name'],
+		'461': ['name', 'value'],
+		'462': ['name', 'value'],
+		'467': ['value']
 	}
 };

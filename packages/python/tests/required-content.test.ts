@@ -37,7 +37,7 @@ describe('required repeated content', () => {
 	});
 
 	it('keeps empty strings valid', () => {
-		expect(py.build.string({ stringStart: '"', stringEnd: '"' }).$render().toString()).toBe('""');
+		expect(py.build.string({ contents: [] }).$render().toString()).toBe('""');
 	});
 
 	it('keeps an empty module valid', () => {

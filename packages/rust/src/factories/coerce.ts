@@ -126,8 +126,6 @@ const _leafRegistry: { readonly [kind: string]: _LeafEntry } = {
 	},
 	outer_doc_comment_marker: { values: ['*'], factory: () => F.buildOuterDocCommentMarker },
 	inner_doc_comment_marker: { values: ['!'], factory: () => F.buildInnerDocCommentMarker },
-	raw_string_literal_start: { pattern: F._leafRe_buildRawStringLiteralStart, factory: F.buildRawStringLiteralStart },
-	raw_string_literal_end: { pattern: F._leafRe_buildRawStringLiteralEnd, factory: F.buildRawStringLiteralEnd },
 	doc_comment: { pattern: F._leafRe_buildDocComment, factory: F.buildDocComment },
 	_block_comment_content: { pattern: F._leafRe_buildBlockCommentContent, factory: F.buildBlockCommentContent },
 	_tight: { values: [''], factory: () => F.buildTight },
@@ -192,8 +190,6 @@ const _SLOTLESS_TEXT_KINDS: ReadonlySet<string> = new Set([
 	'raw_string_literal_content',
 	'outer_doc_comment_marker',
 	'inner_doc_comment_marker',
-	'raw_string_literal_start',
-	'raw_string_literal_end',
 	'doc_comment',
 	'_block_comment_content',
 	'_tight',
@@ -217,10 +213,8 @@ function _buildGuardedText(v: string, kind: string): AnyUntypedNode | number {
 }
 
 const _TEXT_KINDS_BY_RANK: readonly string[] = [
-	'raw_string_literal_start',
 	'raw_string_literal_content',
 	'string_content',
-	'raw_string_literal_end',
 	'float_literal',
 	'outer_doc_comment_marker',
 	'inner_doc_comment_marker',
@@ -1020,6 +1014,7 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
 	delim_token_tree_paren: TSKindId.DelimTokenTreeParen,
 	delim_token_tree_bracket: TSKindId.DelimTokenTreeBracket,
 	delim_token_tree_brace: TSKindId.DelimTokenTreeBrace,
+	match_block_arms: TSKindId.MatchBlockArms,
 	trait_interface_declaration_body: TSKindId.TraitInterfaceDeclarationBody,
 	extension_declaration_body: TSKindId.ExtensionDeclarationBody,
 	array_expression_list_elements: TSKindId.ArrayExpressionListElements,
@@ -1281,7 +1276,7 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 		case 'else_clause':
 			return F.buildElseClause(children[0] as Parameters<typeof F.buildElseClause>[0]);
 		case 'match_block':
-			return F.buildMatchBlock(children[0] as Parameters<typeof F.buildMatchBlock>[0]);
+			return (F.buildMatchBlock as (child: unknown) => unknown)(children[0]);
 		case 'const_block':
 			return F.buildConstBlock(children[0] as Parameters<typeof F.buildConstBlock>[0]);
 		case 'closure_parameters':
@@ -1414,6 +1409,8 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			return (coerceToDelimTokenTreeBracket as (...args: unknown[]) => unknown)(...children);
 		case 'delim_token_tree_brace':
 			return (coerceToDelimTokenTreeBrace as (...args: unknown[]) => unknown)(...children);
+		case 'match_block_arms':
+			return (coerceToMatchBlockArms as (...args: unknown[]) => unknown)(...children);
 		case 'trait_interface_declaration_body':
 			return (coerceToTraitInterfaceDeclarationBody as (...args: unknown[]) => unknown)(...children);
 		case 'extension_declaration_body':
@@ -1551,7 +1548,6 @@ const _super_escape_sequence: readonly string[] = [
 	'escape_sequence_hex'
 ];
 const _super_field_pattern: readonly string[] = ['field_pattern_shorthand', 'field_pattern_named'];
-const _super_match_arm: readonly string[] = ['match_arm_with_comma', 'match_arm_block_ending'];
 const _K0: readonly string[] = ['empty_statement'];
 const _K1: readonly string[] = [
 	'expression_statement',
@@ -2319,7 +2315,8 @@ const _K75: readonly string[] = [
 	'bounded_type',
 	'removed_trait_bound'
 ];
-const _K76: readonly string[] = [
+const _K76: readonly string[] = ['match_arm_with_comma', 'match_arm_block_ending', 'last_match_arm'];
+const _K77: readonly string[] = [
 	'const_item',
 	'macro_invocation',
 	'macro_definition_paren',
@@ -2348,7 +2345,7 @@ const _K76: readonly string[] = [
 	'extern_crate_declaration',
 	'static_item'
 ];
-const _K77: readonly string[] = [
+const _K78: readonly string[] = [
 	'const_item',
 	'macro_invocation',
 	'macro_definition_paren',
@@ -2377,7 +2374,7 @@ const _K77: readonly string[] = [
 	'extern_crate_declaration',
 	'static_item'
 ];
-const _K78: readonly string[] = ['receiver_parameter_declaration', 'self_parameter'];
+const _K79: readonly string[] = ['receiver_parameter_declaration', 'self_parameter'];
 
 export function resolveSourceFile_shebang(value: T.SourceFile.LooseConfig['shebang']): Admit<T.SourceFile['_shebang']> {
 	return _resolveOneBranch<T.Shebang>(value, 'shebang', undefined, true);
@@ -6214,8 +6211,12 @@ export function resolveMatchBlock_matchBlockArms(
 
 export const coerceToMatchBlock: EmptyForm<
 	T.EmptyMatchBlock,
-	OptionalConfigSeat<T.MatchBlock.Loose, ReturnType<typeof F.buildMatchBlock>>
-> = withEmptyForm((input?: T.MatchBlock.Loose): ReturnType<typeof F.buildMatchBlock> => {
+	Seat<T.MatchBlockArms.LooseArgs, ReturnType<typeof F.buildMatchBlock>> &
+		OptionalConfigSeat<T.MatchBlock.Loose, ReturnType<typeof F.buildMatchBlock>>
+> = withEmptyForm((...args: unknown[]): ReturnType<typeof F.buildMatchBlock> => {
+	if (args.length > 1)
+		return F.buildMatchBlock(coerceToMatchBlockArms(...(args as Parameters<typeof coerceToMatchBlockArms>)));
+	const input = args[0] as T.MatchBlock.Loose | undefined;
 	if (input !== undefined && isNodeOfKind(input, TSKindId.MatchBlock))
 		return input as unknown as ReturnType<typeof F.buildMatchBlock>;
 	return F.buildMatchBlock(
@@ -6987,7 +6988,7 @@ export const coerceToStringLiteral: ConfigSeat<T.StringLiteral.Loose, ReturnType
 export function resolveRawStringLiteral_rawStringLiteralStart(
 	value: T.RawStringLiteral.LooseConfig['rawStringLiteralStart']
 ): Admit<T.RawStringLiteral['_raw_string_literal_start']> {
-	return _resolveOneLeaf<T.RawStringLiteralStart>(value, 'raw_string_literal_start');
+	return _resolveOneBranch<T.RawStringLiteralStart>(value, 'raw_string_literal_start');
 }
 
 export function resolveRawStringLiteral_stringContent(
@@ -6999,7 +7000,7 @@ export function resolveRawStringLiteral_stringContent(
 export function resolveRawStringLiteral_rawStringLiteralEnd(
 	value: T.RawStringLiteral.LooseConfig['rawStringLiteralEnd']
 ): Admit<T.RawStringLiteral['_raw_string_literal_end']> {
-	return _resolveOneLeaf<T.RawStringLiteralEnd>(value, 'raw_string_literal_end');
+	return _resolveOneBranch<T.RawStringLiteralEnd>(value, 'raw_string_literal_end');
 }
 
 export const coerceToRawStringLiteral: ConfigSeat<
@@ -7012,7 +7013,8 @@ export const coerceToRawStringLiteral: ConfigSeat<
 	return F.buildRawStringLiteral({
 		rawStringLiteralStart: resolveRawStringLiteral_rawStringLiteralStart(input.rawStringLiteralStart),
 		stringContent: resolveRawStringLiteral_stringContent(input.stringContent),
-		rawStringLiteralEnd: resolveRawStringLiteral_rawStringLiteralEnd(input.rawStringLiteralEnd)
+		rawStringLiteralEnd:
+			resolveRawStringLiteral_rawStringLiteralEnd(input.rawStringLiteralEnd) ?? F.buildRawStringLiteralEnd()
 	});
 };
 
@@ -10673,28 +10675,25 @@ export const coerceToTypeArgument: ConfigSeat<T.TypeArgument.Loose, ReturnType<t
 	});
 };
 
-export function resolveMatchBlockArms_arms(
-	value: T.MatchBlockArms.LooseConfig['arms']
-): Admit<T.MatchBlockArms['_arms']> {
-	return _resolveMany<T.MatchArm>(value, _K2, _super_match_arm);
-}
-
-export function resolveMatchBlockArms_lastArm(
-	value: T.MatchBlockArms.LooseConfig['lastArm']
-): Admit<T.MatchBlockArms['_last_arm']> {
-	return _resolveOneBranch<T.LastMatchArm>(value, 'last_match_arm');
-}
-
-export const coerceToMatchBlockArms: ConfigSeat<T.MatchBlockArms.Loose, ReturnType<typeof F.buildMatchBlockArms>> = (
-	input: T.MatchBlockArms.Loose
+export const coerceToMatchBlockArms: Seat<T.MatchBlockArms.LooseArgs, ReturnType<typeof F.buildMatchBlockArms>> = (
+	...input: T.MatchBlockArms.LooseArgs
 ): ReturnType<typeof F.buildMatchBlockArms> => {
-	if (!_isLooseConfig<T.MatchBlockArms.LooseConfig>(input))
-		return input as unknown as ReturnType<typeof F.buildMatchBlockArms>;
-	currentHandle()?.admit(TSKindId.MatchBlockArms, [input]);
-	return F.buildMatchBlockArms({
-		arms: resolveMatchBlockArms_arms(input.arms),
-		lastArm: resolveMatchBlockArms_lastArm(input.lastArm)
-	});
+	currentHandle()?.admit(TSKindId.MatchBlockArms, input);
+	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.MatchBlockArms))
+		return input[0] as unknown as ReturnType<typeof F.buildMatchBlockArms>;
+	const _elems: readonly unknown[] = (() => {
+		if (input.length !== 1) return input;
+		const head: unknown = input[0];
+		if (Array.isArray(head)) return head;
+		if (typeof head !== 'object' || head === null || isNodeValue(head) || !('arms' in head)) return input;
+		const v = (head as Record<string, unknown>)['arms'];
+		return Array.isArray(v) ? v : [v];
+	})();
+	return F.buildMatchBlockArms(
+		...(_resolveMany<T.MatchArm | T.LastMatchArm>(_elems, _K2, _K76) as unknown as Parameters<
+			typeof F.buildMatchBlockArms
+		>)
+	);
 };
 
 export const coerceToFloatLiteral: ConfigSeat<T.FloatLiteral.Loose, ReturnType<typeof F.buildFloatLiteral>> = (
@@ -10731,22 +10730,6 @@ export function coerceToInnerDocCommentMarker(
 ): typeof F.buildInnerDocCommentMarker {
 	return F.buildInnerDocCommentMarker;
 }
-
-export const coerceToRawStringLiteralStart: ConfigSeat<
-	T.RawStringLiteralStart.Loose,
-	ReturnType<typeof F.buildRawStringLiteralStart>
-> = (input: T.RawStringLiteralStart.Loose): ReturnType<typeof F.buildRawStringLiteralStart> => {
-	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildRawStringLiteralStart>;
-	return F.buildRawStringLiteralStart(input as Parameters<typeof F.buildRawStringLiteralStart>[0]);
-};
-
-export const coerceToRawStringLiteralEnd: ConfigSeat<
-	T.RawStringLiteralEnd.Loose,
-	ReturnType<typeof F.buildRawStringLiteralEnd>
-> = (input: T.RawStringLiteralEnd.Loose): ReturnType<typeof F.buildRawStringLiteralEnd> => {
-	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildRawStringLiteralEnd>;
-	return F.buildRawStringLiteralEnd(input as Parameters<typeof F.buildRawStringLiteralEnd>[0]);
-};
 
 export const coerceToDocComment: ConfigSeat<T.DocComment.Loose, ReturnType<typeof F.buildDocComment>> = (
 	input: T.DocComment.Loose
@@ -10813,7 +10796,7 @@ export const coerceToTraitInterfaceDeclarationBody: EmptyForm<
 		})();
 		return F.buildTraitInterfaceDeclarationBody(
 			...(listStorage(
-				_resolveKindEnumItems(_elems, [], (_v) => _resolveMany<T.DeclarationStatementTraitItem>(_v, _K0, _K76)),
+				_resolveKindEnumItems(_elems, [], (_v) => _resolveMany<T.DeclarationStatementTraitItem>(_v, _K0, _K77)),
 				(item) => coerceMixedEnumStorage(item, [])
 			) as unknown as Parameters<typeof F.buildTraitInterfaceDeclarationBody>)
 		);
@@ -10838,7 +10821,7 @@ export const coerceToExtensionDeclarationBody: EmptyForm<
 		})();
 		return F.buildExtensionDeclarationBody(
 			...(listStorage(
-				_resolveKindEnumItems(_elems, [], (_v) => _resolveMany<T.DeclarationStatementImplItemBody>(_v, _K0, _K77)),
+				_resolveKindEnumItems(_elems, [], (_v) => _resolveMany<T.DeclarationStatementImplItemBody>(_v, _K0, _K78)),
 				(item) => coerceMixedEnumStorage(item, [])
 			) as unknown as Parameters<typeof F.buildExtensionDeclarationBody>)
 		);
@@ -11061,7 +11044,7 @@ export function resolveAttributedParameterReceiver_attributeItem(
 export function resolveAttributedParameterReceiver_content(
 	value: T.AttributedParameterReceiver.LooseConfig['content']
 ): Admit<T.AttributedParameterReceiver['_content']> {
-	return _resolveOne<T.ReceiverParameterDeclaration | T.SelfParameter>(value, _K2, _K78);
+	return _resolveOne<T.ReceiverParameterDeclaration | T.SelfParameter>(value, _K2, _K79);
 }
 
 export const coerceToAttributedParameterReceiver: ConfigSeat<
@@ -11621,8 +11604,6 @@ export interface _FromMap {
 	readonly raw_string_literal_content: typeof coerceToRawStringLiteralContent;
 	readonly outer_doc_comment_marker: typeof coerceToOuterDocCommentMarker;
 	readonly inner_doc_comment_marker: typeof coerceToInnerDocCommentMarker;
-	readonly raw_string_literal_start: typeof coerceToRawStringLiteralStart;
-	readonly raw_string_literal_end: typeof coerceToRawStringLiteralEnd;
 	readonly doc_comment: typeof coerceToDocComment;
 	readonly _block_comment_content: typeof coerceToBlockCommentContent;
 	readonly _tight: typeof coerceToTight;
@@ -11899,8 +11880,6 @@ export const _fromMap: _FromMap = {
 	raw_string_literal_content: coerceToRawStringLiteralContent,
 	outer_doc_comment_marker: coerceToOuterDocCommentMarker,
 	inner_doc_comment_marker: coerceToInnerDocCommentMarker,
-	raw_string_literal_start: coerceToRawStringLiteralStart,
-	raw_string_literal_end: coerceToRawStringLiteralEnd,
 	doc_comment: coerceToDocComment,
 	_block_comment_content: coerceToBlockCommentContent,
 	_tight: coerceToTight,

@@ -74,8 +74,6 @@ import {
 	_leafRe_buildFloatLiteral,
 	_leafRe_buildStringContent,
 	_leafRe_buildRawStringLiteralContent,
-	_leafRe_buildRawStringLiteralStart,
-	_leafRe_buildRawStringLiteralEnd,
 	_leafRe_buildDocComment,
 	_leafRe_buildBlockCommentContent,
 	_slotRe_buildShebang_content,
@@ -97,7 +95,9 @@ import {
 	_slotRe_buildEscapeSequenceUnicodeFixed_content,
 	_slotRe_buildEscapeSequenceUnicodeBraced_content,
 	_slotRe_buildEscapeSequenceHex_content,
-	_delimited_buildRawStringLiteral,
+	_slotRe_buildRawStringLiteralStart_prefix,
+	_slotRe_buildRawStringLiteralStart_hashes,
+	_slotRe_buildRawStringLiteralEnd_hashes,
 	_delimited_buildBlockComment
 } from './objects.js';
 
@@ -119,7 +119,7 @@ export function buildSourceFile(config: Partial<T.SourceFile.Config> = {}): T.So
 	return arena.scope(() => {
 		const record = arena.record(TSKindId.SourceFile as const);
 		storeCell(arena, record, 2, 2, _shebang);
-		storeList(arena, record, 3, 6, _statements);
+		storeList(arena, record, 3, 8, _statements);
 		const node = arena.view(record);
 		return node as unknown as T.SourceFile.Bound;
 	});
@@ -136,7 +136,7 @@ function buildSourceFile$patch(source: object, config: Partial<T.SourceFile.Conf
 	return arena.scope(() => {
 		const record = arena.copy(source, TSKindId.SourceFile as const);
 		patchCell(arena, record, 2, 2, carriedSlot(source, 'shebang', _shebang));
-		patchList(arena, record, 3, 6, _statements);
+		patchList(arena, record, 3, 8, _statements);
 		const node = arena.view(record);
 		return node as unknown as T.SourceFile.Bound;
 	});
@@ -333,7 +333,7 @@ export function buildTokenBindingPattern(config: T.TokenBindingPattern.Config): 
 	return arena.scope(() => {
 		const record = arena.record(TSKindId.TokenBindingPattern as const);
 		storeCell(arena, record, 2, 2, _name);
-		storeCell(arena, record, 3, 6, _fragment);
+		storeCell(arena, record, 3, 8, _fragment);
 		const node = arena.view(record);
 		return node as unknown as T.TokenBindingPattern.Bound;
 	});
@@ -353,7 +353,7 @@ function buildTokenBindingPattern$patch(
 	return arena.scope(() => {
 		const record = arena.copy(source, TSKindId.TokenBindingPattern as const);
 		patchCell(arena, record, 2, 2, carriedSlot(source, 'name', _name));
-		patchCell(arena, record, 3, 6, carriedSlot(source, 'fragment', _fragment));
+		patchCell(arena, record, 3, 8, carriedSlot(source, 'fragment', _fragment));
 		const node = arena.view(record);
 		return node as unknown as T.TokenBindingPattern.Bound;
 	});
@@ -2592,11 +2592,11 @@ export function buildFunctionItem(config: T.FunctionItem.Config): T.FunctionItem
 		storeCell(arena, record, 2, 2, _visibility_modifier);
 		storeCell(arena, record, 3, 16, _function_modifiers);
 		storeCell(arena, record, 4, 19, _name);
-		storeCell(arena, record, 5, 24, _type_parameters);
-		storeCell(arena, record, 6, 29, _parameters);
-		storeCell(arena, record, 7, 32, _return_type);
-		storeCell(arena, record, 8, 36, _where_clause);
-		storeCell(arena, record, 9, 41, _body);
+		storeCell(arena, record, 5, 26, _type_parameters);
+		storeCell(arena, record, 6, 31, _parameters);
+		storeCell(arena, record, 7, 34, _return_type);
+		storeCell(arena, record, 8, 38, _where_clause);
+		storeCell(arena, record, 9, 43, _body);
 		const node = arena.view(record);
 		return node as unknown as T.FunctionItem.Bound;
 	});
@@ -2643,11 +2643,11 @@ function buildFunctionItem$patch(source: object, config: T.FunctionItem.Config):
 		patchCell(arena, record, 2, 2, carriedSlot(source, 'visibilityModifier', _visibility_modifier));
 		patchCell(arena, record, 3, 16, carriedSlot(source, 'functionModifiers', _function_modifiers));
 		patchCell(arena, record, 4, 19, carriedSlot(source, 'name', _name));
-		patchCell(arena, record, 5, 24, carriedSlot(source, 'typeParameters', _type_parameters));
-		patchCell(arena, record, 6, 29, carriedSlot(source, 'parameters', _parameters));
-		patchCell(arena, record, 7, 32, carriedSlot(source, 'returnType', _return_type));
-		patchCell(arena, record, 8, 36, carriedSlot(source, 'whereClause', _where_clause));
-		patchCell(arena, record, 9, 41, carriedSlot(source, 'body', _body));
+		patchCell(arena, record, 5, 26, carriedSlot(source, 'typeParameters', _type_parameters));
+		patchCell(arena, record, 6, 31, carriedSlot(source, 'parameters', _parameters));
+		patchCell(arena, record, 7, 34, carriedSlot(source, 'returnType', _return_type));
+		patchCell(arena, record, 8, 38, carriedSlot(source, 'whereClause', _where_clause));
+		patchCell(arena, record, 9, 43, carriedSlot(source, 'body', _body));
 		const node = arena.view(record);
 		return node as unknown as T.FunctionItem.Bound;
 	});
@@ -2770,10 +2770,10 @@ export function buildFunctionSignatureItem(config: T.FunctionSignatureItem.Confi
 		storeCell(arena, record, 2, 2, _visibility_modifier);
 		storeCell(arena, record, 3, 16, _function_modifiers);
 		storeCell(arena, record, 4, 19, _name);
-		storeCell(arena, record, 5, 24, _type_parameters);
-		storeCell(arena, record, 6, 29, _parameters);
-		storeCell(arena, record, 7, 32, _return_type);
-		storeCell(arena, record, 8, 36, _where_clause);
+		storeCell(arena, record, 5, 26, _type_parameters);
+		storeCell(arena, record, 6, 31, _parameters);
+		storeCell(arena, record, 7, 34, _return_type);
+		storeCell(arena, record, 8, 38, _where_clause);
 		const node = arena.view(record);
 		return node as unknown as T.FunctionSignatureItem.Bound;
 	});
@@ -2820,10 +2820,10 @@ function buildFunctionSignatureItem$patch(
 		patchCell(arena, record, 2, 2, carriedSlot(source, 'visibilityModifier', _visibility_modifier));
 		patchCell(arena, record, 3, 16, carriedSlot(source, 'functionModifiers', _function_modifiers));
 		patchCell(arena, record, 4, 19, carriedSlot(source, 'name', _name));
-		patchCell(arena, record, 5, 24, carriedSlot(source, 'typeParameters', _type_parameters));
-		patchCell(arena, record, 6, 29, carriedSlot(source, 'parameters', _parameters));
-		patchCell(arena, record, 7, 32, carriedSlot(source, 'returnType', _return_type));
-		patchCell(arena, record, 8, 36, carriedSlot(source, 'whereClause', _where_clause));
+		patchCell(arena, record, 5, 26, carriedSlot(source, 'typeParameters', _type_parameters));
+		patchCell(arena, record, 6, 31, carriedSlot(source, 'parameters', _parameters));
+		patchCell(arena, record, 7, 34, carriedSlot(source, 'returnType', _return_type));
+		patchCell(arena, record, 8, 38, carriedSlot(source, 'whereClause', _where_clause));
 		const node = arena.view(record);
 		return node as unknown as T.FunctionSignatureItem.Bound;
 	});
@@ -7161,7 +7161,7 @@ export function buildFieldInitializer(config: T.FieldInitializer.Config): T.Fiel
 		const record = arena.record(TSKindId.FieldInitializer as const);
 		storeList(arena, record, 2, 2, _attributes);
 		storeCell(arena, record, 3, 3, _field);
-		storeCell(arena, record, 4, 9, _value);
+		storeCell(arena, record, 4, 11, _value);
 		const node = arena.view(record);
 		return node as unknown as T.FieldInitializer.Bound;
 	});
@@ -7183,7 +7183,7 @@ function buildFieldInitializer$patch(source: object, config: T.FieldInitializer.
 		const record = arena.copy(source, TSKindId.FieldInitializer as const);
 		patchList(arena, record, 2, 2, _attributes);
 		patchCell(arena, record, 3, 3, carriedSlot(source, 'field', _field));
-		patchCell(arena, record, 4, 9, carriedSlot(source, 'value', _value));
+		patchCell(arena, record, 4, 11, carriedSlot(source, 'value', _value));
 		const node = arena.view(record);
 		return node as unknown as T.FieldInitializer.Bound;
 	});
@@ -7536,8 +7536,26 @@ function withMatchExpression(node: object, setter: string, args: readonly unknow
 export function buildMatchBlock(): T.EmptyMatchBlock;
 export function buildMatchBlock<V extends Admit<T.MatchBlockArms>>(
 	...value: [value?: V] & RefuseUndeclared<V>
-): T.MatchBlock.Bound;
-export function buildMatchBlock(value?: Admit<T.MatchBlockArms>): T.MatchBlock.Bound {
+): ReturnType<typeof _buildMatchBlock>;
+export function buildMatchBlock<A extends Admit<[...T.MatchArm[], T.LastMatchArm]>>(
+	...children: A & RefuseUndeclared<A>
+): ReturnType<typeof _buildMatchBlock>;
+export function buildMatchBlock(...args: unknown[]) {
+	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
+		return _buildMatchBlock(args[0] as Parameters<typeof _buildMatchBlock>[0]);
+	}
+	const prebuilt =
+		args.length === 1 &&
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		(args[0] as { $type?: unknown }).$type === (TSKindId.MatchBlockArms as const);
+	return prebuilt
+		? _buildMatchBlock(args[0] as Parameters<typeof _buildMatchBlock>[0])
+		: _buildMatchBlock(
+				(buildMatchBlockArms as (...a: unknown[]) => unknown)(...args) as Parameters<typeof _buildMatchBlock>[0]
+			);
+}
+function _buildMatchBlock(value?: Admit<T.MatchBlockArms>): T.MatchBlock.Bound {
 	const _match_block_arms = value;
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'match_block', { matchBlockArms: _match_block_arms });
@@ -7551,7 +7569,7 @@ export function buildMatchBlock(value?: Admit<T.MatchBlockArms>): T.MatchBlock.B
 	});
 }
 
-function buildMatchBlock$patch(source: object, value?: Admit<T.MatchBlockArms>): T.MatchBlock.Bound {
+function _buildMatchBlock$patch(source: object, value?: Admit<T.MatchBlockArms>): T.MatchBlock.Bound {
 	const _match_block_arms = value;
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'match_block', { matchBlockArms: _match_block_arms });
@@ -7566,52 +7584,10 @@ function buildMatchBlock$patch(source: object, value?: Admit<T.MatchBlockArms>):
 }
 function withMatchBlock(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const readGroup_matchBlockArms = () => inputs.config['matchBlockArms'] as object | undefined;
 	switch (setter) {
 		case 'matchBlockArms':
 			return applySetter(args, (value?: Admit<T.MatchBlockArms>) =>
-				rebuilt(node, handle, () => buildMatchBlock$patch(node, value))
-			);
-		case 'arms':
-			return applySetter(args, (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					seatWith(
-						{
-							slot: 'matchBlockArms',
-							stored: '_match_block_arms',
-							make: buildMatchBlockArms,
-							keys: [
-								{ name: 'arms', rest: true },
-								{ name: 'lastArm', rest: false, required: true }
-							]
-						},
-						'arms',
-						args,
-						(value?: Admit<T.MatchBlockArms>) => buildMatchBlock$patch(node, value),
-						() => readGroup_matchBlockArms.call(node)
-					)
-				)
-			);
-		case 'lastArm':
-			return applySetter(args, (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					seatWith(
-						{
-							slot: 'matchBlockArms',
-							stored: '_match_block_arms',
-							make: buildMatchBlockArms,
-							keys: [
-								{ name: 'arms', rest: true },
-								{ name: 'lastArm', rest: false, required: true }
-							]
-						},
-						'lastArm',
-						args,
-						(value?: Admit<T.MatchBlockArms>) => buildMatchBlock$patch(node, value),
-						() => readGroup_matchBlockArms.call(node)
-					)
-				)
+				rebuilt(node, handle, () => _buildMatchBlock$patch(node, value))
 			);
 	}
 	throw new Error(`match_block has no $with.${setter}`);
@@ -7651,8 +7627,8 @@ export function buildLastMatchArm(
 		const record = arena.record(TSKindId.LastMatchArm as const);
 		storeList(arena, record, 2, 2, _attributes);
 		storeCell(arena, record, 3, 3, _match);
-		storeCell(arena, record, 4, 6, _body);
-		storeCell(arena, record, 5, 10, _trailing_comma);
+		storeCell(arena, record, 4, 13, _body);
+		storeCell(arena, record, 5, 17, _trailing_comma);
 		const node = arena.view(record);
 		return node as unknown as T.LastMatchArm.Bound;
 	});
@@ -7685,8 +7661,8 @@ function buildLastMatchArm$patch(
 		const record = arena.copy(source, TSKindId.LastMatchArm as const);
 		patchList(arena, record, 2, 2, _attributes);
 		patchCell(arena, record, 3, 3, carriedSlot(source, 'match', _match));
-		patchCell(arena, record, 4, 6, carriedSlot(source, 'body', _body));
-		patchCell(arena, record, 5, 10, carriedSlot(source, 'trailingComma', _trailing_comma));
+		patchCell(arena, record, 4, 13, carriedSlot(source, 'body', _body));
+		patchCell(arena, record, 5, 17, carriedSlot(source, 'trailingComma', _trailing_comma));
 		const node = arena.view(record);
 		return node as unknown as T.LastMatchArm.Bound;
 	});
@@ -9416,7 +9392,7 @@ export function buildRawStringLiteral(config: T.RawStringLiteral.Config): T.RawS
 	currentHandle()?.admit(TSKindId.RawStringLiteral, [config]);
 	const _raw_string_literal_start = config.rawStringLiteralStart;
 	const _string_content = config.stringContent;
-	const _raw_string_literal_end = config.rawStringLiteralEnd;
+	const _raw_string_literal_end = orDefault(config.rawStringLiteralEnd, () => buildRawStringLiteralEnd());
 	const handle = currentHandle();
 	if (handle !== undefined)
 		admitChildren(handle, 'raw_string_literal', {
@@ -9433,17 +9409,9 @@ export function buildRawStringLiteral(config: T.RawStringLiteral.Config): T.RawS
 	return arena.scope(() => {
 		const record = arena.record(TSKindId.RawStringLiteral as const);
 		storeCell(arena, record, 2, 2, _raw_string_literal_start);
-		storeCell(arena, record, 3, 5, _string_content);
-		storeCell(arena, record, 4, 8, _raw_string_literal_end);
+		storeCell(arena, record, 3, 10, _string_content);
+		storeCell(arena, record, 4, 13, _raw_string_literal_end);
 		const node = arena.view(record);
-		checkDelimited(
-			handle,
-			node,
-			_delimited_buildRawStringLiteral,
-			[_string_content],
-			_raw_string_literal_start,
-			_raw_string_literal_end
-		);
 		return node as unknown as T.RawStringLiteral.Bound;
 	});
 }
@@ -9452,7 +9420,7 @@ function buildRawStringLiteral$patch(source: object, config: T.RawStringLiteral.
 	currentHandle()?.admit(TSKindId.RawStringLiteral, [config]);
 	const _raw_string_literal_start = config.rawStringLiteralStart;
 	const _string_content = config.stringContent;
-	const _raw_string_literal_end = config.rawStringLiteralEnd;
+	const _raw_string_literal_end = orDefault(config.rawStringLiteralEnd, () => buildRawStringLiteralEnd());
 	const handle = currentHandle();
 	if (handle !== undefined)
 		admitChildren(handle, 'raw_string_literal', {
@@ -9469,17 +9437,9 @@ function buildRawStringLiteral$patch(source: object, config: T.RawStringLiteral.
 	return arena.scope(() => {
 		const record = arena.copy(source, TSKindId.RawStringLiteral as const);
 		patchCell(arena, record, 2, 2, carriedSlot(source, 'rawStringLiteralStart', _raw_string_literal_start));
-		patchCell(arena, record, 3, 5, carriedSlot(source, 'stringContent', _string_content));
-		patchCell(arena, record, 4, 8, carriedSlot(source, 'rawStringLiteralEnd', _raw_string_literal_end));
+		patchCell(arena, record, 3, 10, carriedSlot(source, 'stringContent', _string_content));
+		patchCell(arena, record, 4, 13, carriedSlot(source, 'rawStringLiteralEnd', _raw_string_literal_end));
 		const node = arena.view(record);
-		checkDelimited(
-			handle,
-			node,
-			_delimited_buildRawStringLiteral,
-			[_string_content],
-			_raw_string_literal_start,
-			_raw_string_literal_end
-		);
 		return node as unknown as T.RawStringLiteral.Bound;
 	});
 }
@@ -9487,6 +9447,7 @@ function withRawStringLiteral(node: object, setter: string, args: readonly unkno
 	const handle = handleOf(node as RecordHandle);
 	const inputs = builtInputs(node);
 	const config = inputs.config as T.RawStringLiteral.Config;
+	const readGroup_rawStringLiteralStart = () => inputs.config['rawStringLiteralStart'] as object | undefined;
 	switch (setter) {
 		case 'rawStringLiteralStart':
 			return applySetter(args, (value: Admit<T.RawStringLiteralStart>) =>
@@ -9499,6 +9460,24 @@ function withRawStringLiteral(node: object, setter: string, args: readonly unkno
 		case 'rawStringLiteralEnd':
 			return applySetter(args, (value: Admit<T.RawStringLiteralEnd>) =>
 				rebuilt(node, handle, () => buildRawStringLiteral$patch(node, { ...config, rawStringLiteralEnd: value }))
+			);
+		case 'prefix':
+			return applySetter(args, (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					seatWith(
+						{
+							slot: 'rawStringLiteralStart',
+							stored: '_raw_string_literal_start',
+							make: buildRawStringLiteralStart,
+							keys: [{ name: 'prefix', rest: false, required: true }]
+						},
+						'prefix',
+						args,
+						(value: Admit<T.RawStringLiteralStart>) =>
+							buildRawStringLiteral$patch(node, { ...config, rawStringLiteralStart: value }),
+						() => readGroup_rawStringLiteralStart.call(node)
+					)
+				)
 			);
 	}
 	throw new Error(`raw_string_literal has no $with.${setter}`);
@@ -11184,6 +11163,8 @@ function _buildExpressions(
 	currentHandle()?.admit(TSKindId.Expressions, elements);
 	const _item = elements;
 	const _delimiter = options.delimiter;
+	if (elements.length === 1 && _delimiter === Delimiter.None)
+		throw new Error('expressions: one element always spells its trailing separator, so its delimiter is never None');
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'expressions', { items: _item });
 	const arena = builtArenaOf(handle);
@@ -11205,6 +11186,8 @@ function _buildExpressions$patch(
 	currentHandle()?.admit(TSKindId.Expressions, elements);
 	const _item = elements;
 	const _delimiter = options.delimiter;
+	if (elements.length === 1 && _delimiter === Delimiter.None)
+		throw new Error('expressions: one element always spells its trailing separator, so its delimiter is never None');
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'expressions', { items: _item });
 	const arena = builtArenaOf(handle);
@@ -11225,7 +11208,13 @@ function withExpressions(node: object, setter: string, args: readonly unknown[])
 	switch (setter) {
 		case 'items':
 			return applySetter(args, (...vs: NonEmptyArray<Admit<T.Expression>>) =>
-				rebuilt(node, handle, () => _buildExpressions$patch(node, vs, options))
+				rebuilt(node, handle, () =>
+					_buildExpressions$patch(
+						node,
+						vs,
+						vs.length === 1 && options.delimiter === Delimiter.None ? { ...options, delimiter: undefined } : options
+					)
+				)
 			);
 		case 'delimiter':
 			return applySetter(args, (v?: Delimiter.None | Delimiter.Trailing) =>
@@ -14730,7 +14719,7 @@ export function buildMatchArmWithComma(config: T.MatchArmWithComma.Config): T.Ma
 		const record = arena.record(TSKindId.MatchArmWithComma as const);
 		storeList(arena, record, 2, 2, _attributes);
 		storeCell(arena, record, 3, 3, _match);
-		storeCell(arena, record, 4, 6, _body);
+		storeCell(arena, record, 4, 13, _body);
 		const node = arena.view(record);
 		return node as unknown as T.MatchArmWithComma.Bound;
 	});
@@ -14750,7 +14739,7 @@ function buildMatchArmWithComma$patch(source: object, config: T.MatchArmWithComm
 		const record = arena.copy(source, TSKindId.MatchArmWithComma as const);
 		patchList(arena, record, 2, 2, _attributes);
 		patchCell(arena, record, 3, 3, carriedSlot(source, 'match', _match));
-		patchCell(arena, record, 4, 6, carriedSlot(source, 'body', _body));
+		patchCell(arena, record, 4, 13, carriedSlot(source, 'body', _body));
 		const node = arena.view(record);
 		return node as unknown as T.MatchArmWithComma.Bound;
 	});
@@ -14840,7 +14829,7 @@ export function buildMatchArmBlockEnding(config: T.MatchArmBlockEnding.Config): 
 		const record = arena.record(TSKindId.MatchArmBlockEnding as const);
 		storeList(arena, record, 2, 2, _attributes);
 		storeCell(arena, record, 3, 3, _match);
-		storeCell(arena, record, 4, 6, _body);
+		storeCell(arena, record, 4, 13, _body);
 		const node = arena.view(record);
 		return node as unknown as T.MatchArmBlockEnding.Bound;
 	});
@@ -14863,7 +14852,7 @@ function buildMatchArmBlockEnding$patch(
 		const record = arena.copy(source, TSKindId.MatchArmBlockEnding as const);
 		patchList(arena, record, 2, 2, _attributes);
 		patchCell(arena, record, 3, 3, carriedSlot(source, 'match', _match));
-		patchCell(arena, record, 4, 6, carriedSlot(source, 'body', _body));
+		patchCell(arena, record, 4, 13, carriedSlot(source, 'body', _body));
 		const node = arena.view(record);
 		return node as unknown as T.MatchArmBlockEnding.Bound;
 	});
@@ -17143,55 +17132,47 @@ function withTypeArgument(node: object, setter: string, args: readonly unknown[]
 	throw new Error(`type_argument has no $with.${setter}`);
 }
 
-export function buildMatchBlockArms<
-	ArmsSlot extends T.MatchBlockArms.Config['arms'],
-	LastArmSlot extends T.MatchBlockArms.Config['lastArm']
->(config: RefusingConfig<T.MatchBlockArms.Config, { arms: ArmsSlot; lastArm: LastArmSlot }>): T.MatchBlockArms.Bound;
-export function buildMatchBlockArms(config: T.MatchBlockArms.Config): T.MatchBlockArms.Bound {
-	currentHandle()?.admit(TSKindId.MatchBlockArms, [config]);
-	const _arms = listStorage<NonNullable<T.MatchBlockArms['_arms']>>(config.arms ?? []);
-	const _last_arm = config.lastArm;
+export function buildMatchBlockArms<A extends Admit<[...T.MatchArm[], T.LastMatchArm]>>(
+	...children: A & RefuseUndeclared<A>
+): T.MatchBlockArms.Bound;
+export function buildMatchBlockArms(...children: Admit<[...T.MatchArm[], T.LastMatchArm]>): T.MatchBlockArms.Bound {
+	currentHandle()?.admit(TSKindId.MatchBlockArms, children);
+	const _arms = children;
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'match_block_arms', { arms: _arms, lastArm: _last_arm });
+	if (handle !== undefined) admitChildren(handle, 'match_block_arms', { arms: _arms });
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.MatchBlockArms as const, { _arms, _last_arm });
+	handle?.verifyStored?.(TSKindId.MatchBlockArms as const, { _arms });
 	return arena.scope(() => {
 		const record = arena.record(TSKindId.MatchBlockArms as const);
 		storeList(arena, record, 2, 2, _arms);
-		storeCell(arena, record, 3, 3, _last_arm);
 		const node = arena.view(record);
 		return node as unknown as T.MatchBlockArms.Bound;
 	});
 }
 
-function buildMatchBlockArms$patch(source: object, config: T.MatchBlockArms.Config): T.MatchBlockArms.Bound {
-	currentHandle()?.admit(TSKindId.MatchBlockArms, [config]);
-	const _arms = listStorage<NonNullable<T.MatchBlockArms['_arms']>>(config.arms ?? []);
-	const _last_arm = config.lastArm;
+function buildMatchBlockArms$patch(
+	source: object,
+	...children: Admit<[...T.MatchArm[], T.LastMatchArm]>
+): T.MatchBlockArms.Bound {
+	currentHandle()?.admit(TSKindId.MatchBlockArms, children);
+	const _arms = children;
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'match_block_arms', { arms: _arms, lastArm: _last_arm });
+	if (handle !== undefined) admitChildren(handle, 'match_block_arms', { arms: _arms });
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.MatchBlockArms as const, { _arms, _last_arm });
+	handle?.verifyStored?.(TSKindId.MatchBlockArms as const, { _arms });
 	return arena.scope(() => {
 		const record = arena.copy(source, TSKindId.MatchBlockArms as const);
 		patchList(arena, record, 2, 2, _arms);
-		patchCell(arena, record, 3, 3, carriedSlot(source, 'lastArm', _last_arm));
 		const node = arena.view(record);
 		return node as unknown as T.MatchBlockArms.Bound;
 	});
 }
 function withMatchBlockArms(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.MatchBlockArms.Config;
 	switch (setter) {
 		case 'arms':
-			return applySetter(args, (...values: Admit<T.MatchArm[]>) =>
-				rebuilt(node, handle, () => buildMatchBlockArms$patch(node, { ...config, arms: restItems('arms', values) }))
-			);
-		case 'lastArm':
-			return applySetter(args, (value: Admit<T.LastMatchArm>) =>
-				rebuilt(node, handle, () => buildMatchBlockArms$patch(node, { ...config, lastArm: value }))
+			return applySetter(args, (...vs: [...Admit<T.MatchArm>[], Admit<T.LastMatchArm>]) =>
+				rebuilt(node, handle, () => buildMatchBlockArms$patch(node, ...restItems('arms', vs)))
 			);
 	}
 	throw new Error(`match_block_arms has no $with.${setter}`);
@@ -17292,64 +17273,138 @@ export const buildOuterDocCommentMarker: TSKindId.OuterDocCommentMarker = TSKind
 
 export const buildInnerDocCommentMarker: TSKindId.InnerDocCommentMarker = TSKindId.InnerDocCommentMarker;
 
-export function buildRawStringLiteralStart(text: string): T.RawStringLiteralStart.Bound {
-	if (typeof text !== 'string')
-		throw new Error(`raw_string_literal_start: text must be a string: ${describeValue(text)}`);
-	if (text.length === 0) throw new Error(`raw_string_literal_start: text must be non-empty`);
-	if (!_leafRe_buildRawStringLiteralStart.test(text))
-		throw new Error(`raw_string_literal_start: text does not match pattern: ${describeValue(text)}`);
+export function buildRawStringLiteralStart<V extends Admit<'r' | 'br' | 'cr'>>(
+	value: V & RefuseUndeclared<V>,
+	options?: T.RawStringLiteralStart.Options
+): T.RawStringLiteralStart.Bound;
+export function buildRawStringLiteralStart(
+	value: Admit<'r' | 'br' | 'cr'>,
+	options?: T.RawStringLiteralStart.Options
+): T.RawStringLiteralStart.Bound {
+	const _prefix = value;
+	if (typeof _prefix !== 'string')
+		throw new Error(`raw_string_literal_start.prefix: text must be a string: ${describeValue(_prefix)}`);
+	if (!_slotRe_buildRawStringLiteralStart_prefix.test(_prefix))
+		throw new Error(`raw_string_literal_start.prefix: text does not match pattern: ${describeValue(_prefix)}`);
+	const _hashes = options?.hashes;
+	if (_hashes !== undefined && typeof _hashes !== 'string')
+		throw new Error(`raw_string_literal_start.hashes: text must be a string: ${describeValue(_hashes)}`);
+	if (_hashes !== undefined && !_slotRe_buildRawStringLiteralStart_hashes.test(_hashes))
+		throw new Error(`raw_string_literal_start.hashes: text does not match pattern: ${describeValue(_hashes)}`);
 	const handle = currentHandle();
-	return builtArenaOf(handle).leaf(leafRawStringLiteralStart, text) as unknown as T.RawStringLiteralStart.Bound;
+	if (handle !== undefined) admitChildren(handle, 'raw_string_literal_start', { prefix: _prefix, hashes: _hashes });
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.RawStringLiteralStart as const, { _prefix, _hashes });
+	return arena.scope(() => {
+		const record = arena.record(TSKindId.RawStringLiteralStart as const);
+		storeCell(arena, record, 2, 2, _prefix);
+		storeCell(arena, record, 3, 4, _hashes);
+		const node = arena.view(record);
+		return node as unknown as T.RawStringLiteralStart.Bound;
+	});
 }
 
-function leafRawStringLiteralStart(tree: TreeHandle, entry: BuiltText, site: LeafSite | undefined): object {
-	const node = {
-		$type: TSKindId.RawStringLiteralStart as const,
-		$tree: tree,
-		$entry: entry,
-		$site: site,
-		$_layout: undefined,
-		$text: leafText,
-		$render: handleRender,
-		toString: handleToString,
-		toJSON: refuseJSON,
-		$trivia: undefined as unknown as object,
-		$engine: handleEngine,
-		[LEAF_SITES]: null,
-		[Symbol.dispose]: handleDispose
-	};
-	node.$trivia = { leading: leafLeading, trailing: leafTrailing, [RECEIVER]: node };
-	return node;
-}
-
-export function buildRawStringLiteralEnd(text: string): T.RawStringLiteralEnd.Bound {
-	if (typeof text !== 'string')
-		throw new Error(`raw_string_literal_end: text must be a string: ${describeValue(text)}`);
-	if (text.length === 0) throw new Error(`raw_string_literal_end: text must be non-empty`);
-	if (!_leafRe_buildRawStringLiteralEnd.test(text))
-		throw new Error(`raw_string_literal_end: text does not match pattern: ${describeValue(text)}`);
+function buildRawStringLiteralStart$patch(
+	source: object,
+	value: Admit<'r' | 'br' | 'cr'>,
+	options?: T.RawStringLiteralStart.Options
+): T.RawStringLiteralStart.Bound {
+	const _prefix = value;
+	if (typeof _prefix !== 'string')
+		throw new Error(`raw_string_literal_start.prefix: text must be a string: ${describeValue(_prefix)}`);
+	if (!_slotRe_buildRawStringLiteralStart_prefix.test(_prefix))
+		throw new Error(`raw_string_literal_start.prefix: text does not match pattern: ${describeValue(_prefix)}`);
+	const _hashes = options?.hashes;
+	if (_hashes !== undefined && typeof _hashes !== 'string')
+		throw new Error(`raw_string_literal_start.hashes: text must be a string: ${describeValue(_hashes)}`);
+	if (_hashes !== undefined && !_slotRe_buildRawStringLiteralStart_hashes.test(_hashes))
+		throw new Error(`raw_string_literal_start.hashes: text does not match pattern: ${describeValue(_hashes)}`);
 	const handle = currentHandle();
-	return builtArenaOf(handle).leaf(leafRawStringLiteralEnd, text) as unknown as T.RawStringLiteralEnd.Bound;
+	if (handle !== undefined) admitChildren(handle, 'raw_string_literal_start', { prefix: _prefix, hashes: _hashes });
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.RawStringLiteralStart as const, { _prefix, _hashes });
+	return arena.scope(() => {
+		const record = arena.copy(source, TSKindId.RawStringLiteralStart as const);
+		patchCell(arena, record, 2, 2, carriedSlot(source, 'prefix', _prefix));
+		patchCell(arena, record, 3, 4, carriedSlot(source, 'hashes', _hashes));
+		const node = arena.view(record);
+		return node as unknown as T.RawStringLiteralStart.Bound;
+	});
+}
+function withRawStringLiteralStart(node: object, setter: string, args: readonly unknown[]): unknown {
+	const handle = handleOf(node as RecordHandle);
+	const inputs = builtInputs(node);
+	const value = inputs.config['prefix'] as Admit<'r' | 'br' | 'cr'>;
+	const options = inputs.options as T.RawStringLiteralStart.Options;
+	switch (setter) {
+		case 'prefix':
+			return applySetter(args, (value: Admit<'r' | 'br' | 'cr'>) =>
+				rebuilt(node, handle, () => buildRawStringLiteralStart$patch(node, value, options))
+			);
+		case 'hashes':
+			return applySetter(args, (spelling: string) =>
+				rebuilt(node, handle, () => buildRawStringLiteralStart$patch(node, value, { ...options, hashes: spelling }))
+			);
+	}
+	throw new Error(`raw_string_literal_start has no $with.${setter}`);
 }
 
-function leafRawStringLiteralEnd(tree: TreeHandle, entry: BuiltText, site: LeafSite | undefined): object {
-	const node = {
-		$type: TSKindId.RawStringLiteralEnd as const,
-		$tree: tree,
-		$entry: entry,
-		$site: site,
-		$_layout: undefined,
-		$text: leafText,
-		$render: handleRender,
-		toString: handleToString,
-		toJSON: refuseJSON,
-		$trivia: undefined as unknown as object,
-		$engine: handleEngine,
-		[LEAF_SITES]: null,
-		[Symbol.dispose]: handleDispose
-	};
-	node.$trivia = { leading: leafLeading, trailing: leafTrailing, [RECEIVER]: node };
-	return node;
+export function buildRawStringLiteralEnd(
+	config: Partial<T.RawStringLiteralEnd.Config> = {},
+	options?: T.RawStringLiteralEnd.Options
+): T.RawStringLiteralEnd.Bound {
+	currentHandle()?.admit(TSKindId.RawStringLiteralEnd, [config]);
+	const _hashes = options?.hashes;
+	if (_hashes !== undefined && typeof _hashes !== 'string')
+		throw new Error(`raw_string_literal_end.hashes: text must be a string: ${describeValue(_hashes)}`);
+	if (_hashes !== undefined && !_slotRe_buildRawStringLiteralEnd_hashes.test(_hashes))
+		throw new Error(`raw_string_literal_end.hashes: text does not match pattern: ${describeValue(_hashes)}`);
+	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'raw_string_literal_end', { hashes: _hashes });
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.RawStringLiteralEnd as const, { _hashes });
+	return arena.scope(() => {
+		const record = arena.record(TSKindId.RawStringLiteralEnd as const);
+		storeCell(arena, record, 2, 2, _hashes);
+		const node = arena.view(record);
+		return node as unknown as T.RawStringLiteralEnd.Bound;
+	});
+}
+
+function buildRawStringLiteralEnd$patch(
+	source: object,
+	config: Partial<T.RawStringLiteralEnd.Config> = {},
+	options?: T.RawStringLiteralEnd.Options
+): T.RawStringLiteralEnd.Bound {
+	currentHandle()?.admit(TSKindId.RawStringLiteralEnd, [config]);
+	const _hashes = options?.hashes;
+	if (_hashes !== undefined && typeof _hashes !== 'string')
+		throw new Error(`raw_string_literal_end.hashes: text must be a string: ${describeValue(_hashes)}`);
+	if (_hashes !== undefined && !_slotRe_buildRawStringLiteralEnd_hashes.test(_hashes))
+		throw new Error(`raw_string_literal_end.hashes: text does not match pattern: ${describeValue(_hashes)}`);
+	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'raw_string_literal_end', { hashes: _hashes });
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.RawStringLiteralEnd as const, { _hashes });
+	return arena.scope(() => {
+		const record = arena.copy(source, TSKindId.RawStringLiteralEnd as const);
+		patchCell(arena, record, 2, 2, carriedSlot(source, 'hashes', _hashes));
+		const node = arena.view(record);
+		return node as unknown as T.RawStringLiteralEnd.Bound;
+	});
+}
+function withRawStringLiteralEnd(node: object, setter: string, args: readonly unknown[]): unknown {
+	const handle = handleOf(node as RecordHandle);
+	const inputs = builtInputs(node);
+	const config = inputs.config as T.RawStringLiteralEnd.Config;
+	const options = inputs.options as T.RawStringLiteralEnd.Options;
+	switch (setter) {
+		case 'hashes':
+			return applySetter(args, (spelling: string) =>
+				rebuilt(node, handle, () => buildRawStringLiteralEnd$patch(node, config, { ...options, hashes: spelling }))
+			);
+	}
+	throw new Error(`raw_string_literal_end has no $with.${setter}`);
 }
 
 export function buildDocComment(text: string): T.DocComment.Bound {
@@ -18313,11 +18368,11 @@ export function buildMethodDeclaration(config: T.MethodDeclaration.Config): T.Me
 		storeCell(arena, record, 2, 2, _visibility_modifier);
 		storeCell(arena, record, 3, 16, _function_modifiers);
 		storeCell(arena, record, 4, 19, _name);
-		storeCell(arena, record, 5, 24, _type_parameters);
-		storeCell(arena, record, 6, 29, _parameters);
-		storeCell(arena, record, 7, 32, _return_type);
-		storeCell(arena, record, 8, 36, _where_clause);
-		storeCell(arena, record, 9, 41, _body);
+		storeCell(arena, record, 5, 26, _type_parameters);
+		storeCell(arena, record, 6, 31, _parameters);
+		storeCell(arena, record, 7, 34, _return_type);
+		storeCell(arena, record, 8, 38, _where_clause);
+		storeCell(arena, record, 9, 43, _body);
 		const node = arena.view(record);
 		return node as unknown as T.MethodDeclaration.Bound;
 	});
@@ -18364,11 +18419,11 @@ function buildMethodDeclaration$patch(source: object, config: T.MethodDeclaratio
 		patchCell(arena, record, 2, 2, carriedSlot(source, 'visibilityModifier', _visibility_modifier));
 		patchCell(arena, record, 3, 16, carriedSlot(source, 'functionModifiers', _function_modifiers));
 		patchCell(arena, record, 4, 19, carriedSlot(source, 'name', _name));
-		patchCell(arena, record, 5, 24, carriedSlot(source, 'typeParameters', _type_parameters));
-		patchCell(arena, record, 6, 29, carriedSlot(source, 'parameters', _parameters));
-		patchCell(arena, record, 7, 32, carriedSlot(source, 'returnType', _return_type));
-		patchCell(arena, record, 8, 36, carriedSlot(source, 'whereClause', _where_clause));
-		patchCell(arena, record, 9, 41, carriedSlot(source, 'body', _body));
+		patchCell(arena, record, 5, 26, carriedSlot(source, 'typeParameters', _type_parameters));
+		patchCell(arena, record, 6, 31, carriedSlot(source, 'parameters', _parameters));
+		patchCell(arena, record, 7, 34, carriedSlot(source, 'returnType', _return_type));
+		patchCell(arena, record, 8, 38, carriedSlot(source, 'whereClause', _where_clause));
+		patchCell(arena, record, 9, 43, carriedSlot(source, 'body', _body));
 		const node = arena.view(record);
 		return node as unknown as T.MethodDeclaration.Bound;
 	});
@@ -18494,10 +18549,10 @@ export function buildSignatureMethodDeclaration(
 		storeCell(arena, record, 2, 2, _visibility_modifier);
 		storeCell(arena, record, 3, 16, _function_modifiers);
 		storeCell(arena, record, 4, 19, _name);
-		storeCell(arena, record, 5, 24, _type_parameters);
-		storeCell(arena, record, 6, 29, _parameters);
-		storeCell(arena, record, 7, 32, _return_type);
-		storeCell(arena, record, 8, 36, _where_clause);
+		storeCell(arena, record, 5, 26, _type_parameters);
+		storeCell(arena, record, 6, 31, _parameters);
+		storeCell(arena, record, 7, 34, _return_type);
+		storeCell(arena, record, 8, 38, _where_clause);
 		const node = arena.view(record);
 		return node as unknown as T.SignatureMethodDeclaration.Bound;
 	});
@@ -18544,10 +18599,10 @@ function buildSignatureMethodDeclaration$patch(
 		patchCell(arena, record, 2, 2, carriedSlot(source, 'visibilityModifier', _visibility_modifier));
 		patchCell(arena, record, 3, 16, carriedSlot(source, 'functionModifiers', _function_modifiers));
 		patchCell(arena, record, 4, 19, carriedSlot(source, 'name', _name));
-		patchCell(arena, record, 5, 24, carriedSlot(source, 'typeParameters', _type_parameters));
-		patchCell(arena, record, 6, 29, carriedSlot(source, 'parameters', _parameters));
-		patchCell(arena, record, 7, 32, carriedSlot(source, 'returnType', _return_type));
-		patchCell(arena, record, 8, 36, carriedSlot(source, 'whereClause', _where_clause));
+		patchCell(arena, record, 5, 26, carriedSlot(source, 'typeParameters', _type_parameters));
+		patchCell(arena, record, 6, 31, carriedSlot(source, 'parameters', _parameters));
+		patchCell(arena, record, 7, 34, carriedSlot(source, 'returnType', _return_type));
+		patchCell(arena, record, 8, 38, carriedSlot(source, 'whereClause', _where_clause));
 		const node = arena.view(record);
 		return node as unknown as T.SignatureMethodDeclaration.Bound;
 	});
@@ -18861,8 +18916,8 @@ export type FluentKindMap = {
 	raw_string_literal_content: T.RawStringLiteralContent;
 	outer_doc_comment_marker: T.OuterDocCommentMarker;
 	inner_doc_comment_marker: T.InnerDocCommentMarker;
-	raw_string_literal_start: T.RawStringLiteralStart;
-	raw_string_literal_end: T.RawStringLiteralEnd;
+	raw_string_literal_start: T.RawStringLiteralStart.Bound;
+	raw_string_literal_end: T.RawStringLiteralEnd.Bound;
 	doc_comment: T.DocComment;
 	_block_comment_content: T.BlockCommentContent;
 	_tight: T.Tight;
@@ -19190,6 +19245,8 @@ export const builtViews: BuiltViews = Object.freeze({
 		152: withEscapeSequenceUnicodeFixed,
 		153: withEscapeSequenceUnicodeBraced,
 		154: withEscapeSequenceHex,
+		159: withRawStringLiteralStart,
+		161: withRawStringLiteralEnd,
 		176: withSourceFile,
 		179: withExpressionStatement,
 		181: withMacroRule,
@@ -19414,21 +19471,23 @@ export const builtViews: BuiltViews = Object.freeze({
 		484: withTypeIdentifier
 	}),
 	words: Object.freeze({
-		123: 3,
-		127: 3,
-		141: 4,
-		142: 4,
-		143: 4,
-		144: 4,
-		145: 4,
-		147: 4,
-		148: 4,
-		149: 4,
-		150: 4,
-		151: 3,
-		152: 3,
-		153: 3,
-		154: 3,
+		123: 4,
+		127: 4,
+		141: 5,
+		142: 5,
+		143: 5,
+		144: 5,
+		145: 5,
+		147: 5,
+		148: 5,
+		149: 5,
+		150: 5,
+		151: 4,
+		152: 4,
+		153: 4,
+		154: 4,
+		159: 5,
+		161: 4,
 		176: 4,
 		179: 3,
 		181: 4,
@@ -19636,7 +19695,7 @@ export const builtViews: BuiltViews = Object.freeze({
 		431: 4,
 		432: 5,
 		433: 4,
-		434: 4,
+		434: 3,
 		435: 3,
 		436: 3,
 		437: 4,
@@ -19668,6 +19727,8 @@ export const builtViews: BuiltViews = Object.freeze({
 		152: 2,
 		153: 2,
 		154: 2,
+		159: 2,
+		161: 2,
 		176: 2,
 		179: 2,
 		181: 2,
@@ -19898,9 +19959,7 @@ export const builtViews: BuiltViews = Object.freeze({
 		146: leafCharLiteralEmpty,
 		155: leafLineCommentRegular,
 		157: leafStringContent,
-		159: leafRawStringLiteralStart,
 		160: leafRawStringLiteralContent,
-		161: leafRawStringLiteralEnd,
 		162: leafFloatLiteral,
 		165: leafBlockCommentContent,
 		166: leafDocComment,

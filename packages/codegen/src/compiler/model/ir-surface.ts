@@ -10,6 +10,7 @@ import {
 	AssembledSupertype,
 	FACTORY_NAME_RESERVED,
 	isBuilderTextLeaf,
+	isDelimiterToken,
 	isDepthLeaf,
 	isBuilderlessPunctuationLeaf,
 	isKindIdStored,
@@ -99,6 +100,7 @@ export function isFlatLeafOrKeyword(
 	kindEntries: ReturnType<typeof collectKindEntries>
 ): boolean {
 	if (!node.userFacing || node.factoryInline) return false;
+	if (isDelimiterToken(node)) return false;
 	if (!hasOneSurface(node) || (isBuilderTextLeaf(node) && node.surfaceHidden)) return false;
 	if (isDepthLeaf(node)) return false;
 	if (!node.irKey || !node.rawFactoryName || !isValidIdent(node.irKey)) return false;

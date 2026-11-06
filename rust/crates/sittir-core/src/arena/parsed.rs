@@ -3,14 +3,14 @@
 //! A record is named by its tree and its address together: the address
 //! reads nothing once its tree is gone.
 
-use super::{Address, Arena, ArenaRead, Cell, CellAt, HeldArenas, HydrateError, HydrateNode, RecordCells, RecordTrees, Row, SideRecord, TreeArena};
+use super::{Address, Arena, ArenaRead, Cell, CellAt, HeldArenas, HydrateError, HydrateNode, RecordCells, RecordTrees, SideRecord, TreeArena};
 use crate::engine::{EngineGrammar, ParsedTree};
 use crate::options::ResolvedOptions;
 use crate::prepare::RenderContext;
 use crate::read::Depth;
 use crate::record::HEADER_WORDS;
 use crate::render::{RenderError, SourceTable};
-use crate::slot::{ChangedEdges, NodeCoordinate};
+use crate::slot::ChangedEdges;
 use crate::trivia_store::TriviaStore;
 use crate::types::{KindId, NodeIndex};
 
@@ -159,116 +159,7 @@ impl<G: EngineGrammar> ParsedTree<G> {
     }
 }
 
-/// A candidate whose coordinate needs its node: a parsed leaf, or a record
-/// written no further than its header. `at` places it among the candidates.
-struct CandidateRow {
-    index: NodeIndex,
-    kind: KindId,
-    span: crate::types::Span,
-    at: usize,
-    unhydrated: bool,
-}
-
 impl<G: RecordGrammar> ParsedTree<G> {
-    /// The hydrated typed nodes below `index`, in stored field order, as
-    /// the coordinates of their rows. Excludes unit cells and captured
-    /// strings.
-    ///
-    /// # Errors
-    ///
-    /// An unhydrated record, an invalid row or a malformed stored cell.
-    pub fn record_candidates<N: HydrateNode + RecordCells>(
-        &self,
-        index: NodeIndex,
-    ) -> Result<Vec<NodeCoordinate>, RenderError> {
-        let refused = |what, word| RenderError::Record(super::ArenaError::Malformed { what, word });
-        let coord = self
-            .row_coordinate(index)
-            .ok_or_else(|| refused("candidate row", index.0))?;
-        let address = self.written_record::<N>(index);
-        let root = match address {
-            Some(at) => self.record_root(at, ChangedEdges::default())?.cell,
-            None => Cell::Coordinate {
-                kind: coord
-                    .kind
-                    .ok_or_else(|| refused("candidate kind", index.0))?,
-                index,
-                span: coord.span,
-            },
-        };
-        let mut pending = vec![root];
-        let mut seen = std::collections::HashSet::new();
-        let mut candidates = Vec::new();
-        let mut rows = Vec::new();
-        while let Some(cell) = pending.pop() {
-            match cell {
-                Cell::Child {
-                    kind,
-                    at,
-                    link: None,
-                    ..
-                } => {
-                    if !seen.insert(at) {
-                        continue;
-                    }
-                    let (root, row) = self.candidate_record(at)?;
-                    if root.cell.kind() != Some(kind) {
-                        return Err(refused("candidate record kind", at.0));
-                    }
-                    candidates.push(Some(NodeCoordinate {
-                        kind: Some(kind),
-                        ..NodeCoordinate::new(self.tree_id(), row.index, row.end, row.span)
-                    }));
-                    let record = N::shape(kind)
-                        .ok_or_else(|| refused("candidate record shape", u32::from(kind.0)))?;
-                    let first = pending.len();
-                    super::admit::for_each_parsed_cell(self.tree_arena().arena(), at, record, G::KIND_BITS, |child, _| {
-                        pending.push(child);
-                        Ok(())
-                    })
-                    .map_err(RenderError::Record)?;
-                    pending[first..].reverse();
-                }
-                Cell::Coordinate { kind, index, span } => {
-                    rows.push(CandidateRow { index, kind, span, at: candidates.len(), unhydrated: true });
-                    candidates.push(None);
-                }
-                Cell::ParsedLeaf { kind, span, row } => {
-                    rows.push(CandidateRow { index: row, kind, span, at: candidates.len(), unhydrated: false });
-                    candidates.push(None);
-                }
-                Cell::Absent | Cell::Unit { .. } | Cell::ParsedText { .. } => {}
-                _ => return Err(refused("built cell in parsed candidates", index.0)),
-            }
-        }
-        rows.sort_unstable_by_key(|row| row.index);
-        let read = self.read_ctx();
-        let mut cursor = self.tree().walk();
-        for row in rows {
-            if !crate::engine::names_node(self.tree(), row.index) {
-                return Err(refused("candidate row", row.index.0));
-            }
-            crate::read::goto_forward(&mut cursor, row.index);
-            let node = cursor.node();
-            if row.unhydrated {
-                if self.grammar().unit_id(&mut node.walk()).is_some() {
-                    continue;
-                }
-                let shape = N::shape(row.kind)
-                    .ok_or_else(|| refused("candidate record shape", u32::from(row.kind.0)))?;
-                if shape.words > HEADER_WORDS || !shape.cells.is_empty() {
-                    return Err(refused("unhydrated candidate record", row.index.0));
-                }
-            }
-            candidates[row.at] = Some(NodeCoordinate {
-                kind: Some(row.kind),
-                span: row.span,
-                ..read.coordinate(&node, row.index)
-            });
-        }
-        Ok(candidates.into_iter().flatten().collect())
-    }
-
     /// The record at `at` of the tree's arena, rendered as a render root
     /// whose `changed` edges have no neighbour (the edges a node crossing as
     /// its coordinate marks), under `options`, its line endings unspelled,
@@ -282,58 +173,6 @@ impl<G: RecordGrammar> ParsedTree<G> {
     /// grammar writes a record of; else what the record's render refuses.
     pub fn render_record(&self, at: Address, changed: ChangedEdges, options: &ResolvedOptions, sources: &dyn SourceTable) -> Result<String, RenderError> {
         self.render_cell(self.record_root(at, changed)?, options, sources)
-    }
-
-    /// Renders the parsed candidate at row `index` without its outer trivia:
-    /// the row's record, which stays native, or, for a recordless leaf, the
-    /// same coordinate cell as a slot holds. Every other lookup is
-    /// `sources`', the call's table, as `render_record` reads it.
-    /// Only the candidate's own outer sides are omitted; the frames its
-    /// edge items hold remain part of its content.
-    ///
-    /// # Errors
-    ///
-    /// An invalid row, or a refused prepare or render.
-    pub fn render_candidate<N: HydrateNode + RecordCells>(
-        &self,
-        index: NodeIndex,
-        options: &ResolvedOptions,
-        sources: &dyn SourceTable,
-    ) -> Result<String, RenderError> {
-        let refused = || RenderError::Record(super::ArenaError::Malformed { what: "candidate row", word: index.0 });
-        let coord = self.row_coordinate(index).ok_or_else(refused)?;
-        let record = self.written_record::<N>(index);
-        let root = if let Some(at) = record {
-            self.record_root(at, ChangedEdges::default())?
-        } else {
-            CellAt {
-                cell: Cell::Coordinate {
-                    kind: coord.kind.ok_or_else(refused)?,
-                    index,
-                    span: coord.span,
-                },
-                tree: Some(self.tree_id()),
-                site: None,
-            }
-        };
-        self.render_cell(root, options, &CandidateSources { sources, tree: self, index })
-    }
-
-    fn candidate_record(&self, at: Address) -> Result<(CellAt, Row), RenderError> {
-        let root = self.record_root(at, ChangedEdges::default())?;
-        let arena = self.tree_arena();
-        let header = arena
-            .arena()
-            .words(at, HEADER_WORDS)
-            .map_err(RenderError::Record)?;
-        let row = SideRecord::read(arena.arena(), Address(header[1]))
-            .map_err(RenderError::Record)?
-            .at
-            .ok_or(RenderError::Record(super::ArenaError::Malformed {
-                what: "candidate record row",
-                word: at.0,
-            }))?;
-        Ok((root, row))
     }
 
     fn record_root(&self, at: Address, changed: ChangedEdges) -> Result<CellAt, RenderError> {
@@ -366,116 +205,5 @@ impl<G: RecordGrammar> ParsedTree<G> {
         let ctx = RenderContext { options, sources };
         let mut arenas = HeldArenas::of([(self.tree_id(), self.tree_arena())]);
         self.grammar().render_record(root, &mut arenas, &Arena::new(), self.written(), &ctx)
-    }
-}
-
-/// The table a candidate renders through: `sources`', except that the
-/// candidate, the node at `index` of `tree`, has no outer sides.
-struct CandidateSources<'a, G: EngineGrammar> {
-    sources: &'a dyn SourceTable,
-    tree: &'a ParsedTree<G>,
-    index: NodeIndex,
-}
-
-impl<G: EngineGrammar> CandidateSources<'_, G> {
-    fn is_root(&self, coord: &NodeCoordinate) -> bool {
-        coord.tree == self.tree.tree_id() && coord.index == self.index
-    }
-}
-
-impl<G: EngineGrammar> SourceTable for CandidateSources<'_, G> {
-    fn source_of(&self, tree: crate::types::TreeId) -> Option<&std::sync::Arc<str>> {
-        self.sources.source_of(tree)
-    }
-
-    fn kind_of(&self, coord: &NodeCoordinate) -> Option<KindId> {
-        self.sources.kind_of(coord)
-    }
-
-    fn line_starts_inside_tokens(&self, coord: &NodeCoordinate) -> Vec<u32> {
-        self.sources.line_starts_inside_tokens(coord)
-    }
-
-    fn last_list_child_kind(
-        &self,
-        tree: crate::types::TreeId,
-        span: crate::types::Span,
-        kind: KindId,
-    ) -> Option<KindId> {
-        self.sources.last_list_child_kind(tree, span, kind)
-    }
-
-    fn for_each_edge_level(&self, coord: &NodeCoordinate, side: crate::options::Side, f: &mut dyn FnMut(crate::render::EdgeLevel)) {
-        self.sources.for_each_edge_level(coord, side, f);
-    }
-
-    fn depth_move(&self, coord: &NodeCoordinate) -> i32 {
-        self.sources.depth_move(coord)
-    }
-
-    fn sides(&self, coord: &NodeCoordinate) -> Option<Box<dyn crate::trivia::FramedTrivia>> {
-        let sides = self.sources.sides(coord)?;
-        if !self.is_root(coord) {
-            return Some(sides);
-        }
-        let mut sides = sides
-            .into_any()
-            .downcast::<crate::trivia::NodeTrivia<G::Trivia>>()
-            .ok()?;
-        sides.leading = Some(Vec::new());
-        sides.trailing = Some(Vec::new());
-        Some(sides)
-    }
-
-    fn frames(&self, coord: &NodeCoordinate) -> crate::trivia::Frames {
-        let mut frames = self.sources.frames(coord);
-        if self.is_root(coord) {
-            frames.own = self.sides(coord);
-        }
-        frames
-    }
-
-    fn slot_layouts(&self, coord: &NodeCoordinate) -> Vec<crate::layout::SlotLayout> {
-        self.sources.slot_layouts(coord)
-    }
-
-    fn separator_before(&self, coord: &NodeCoordinate) -> Option<KindId> {
-        self.sources.separator_before(coord)
-    }
-
-    fn framed_span(&self, coord: &NodeCoordinate) -> crate::types::Span {
-        if self.is_root(coord) {
-            coord.span
-        } else {
-            self.sources.framed_span(coord)
-        }
-    }
-
-    fn edited_within(&self, coord: &NodeCoordinate) -> bool {
-        self.sources.edited_within(coord)
-    }
-
-    fn renders_as_source(&self, coord: &NodeCoordinate) -> bool {
-        self.sources.renders_as_source(coord)
-    }
-
-    fn seat_through(
-        &self,
-        coord: &NodeCoordinate,
-        wrappers: &[Option<crate::options::SeatPath>],
-        seat: &dyn Fn(KindId) -> Option<crate::types::SiteId>,
-    ) -> Option<crate::types::SiteId> {
-        self.sources.seat_through(coord, wrappers, seat)
-    }
-
-    fn read_ctx(
-        &self,
-        tree: crate::types::TreeId,
-    ) -> Option<(&tree_sitter::Tree, crate::read::ReadCtx<'_>)> {
-        self.sources.read_ctx(tree)
-    }
-
-    fn render_record_entry(&self, record: crate::trivia::BuiltEntry, held: &dyn std::any::Any, options: &ResolvedOptions, w: &mut dyn crate::render::RenderSink) -> crate::render::RenderResult {
-        self.sources.render_record_entry(record, held, options, w)
     }
 }

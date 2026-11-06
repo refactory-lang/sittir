@@ -19,8 +19,11 @@ const node = (kind: string, slots: readonly ModelSlot[] = [], extra: Partial<Mod
 	kind,
 	modelType: 'branch',
 	unit: false,
+	layout: false,
+	seated: false,
 	slots,
 	subtypes: [],
+	defaultSubtype: null,
 	elementKinds: [],
 	enumMembers: [],
 	text: null,
@@ -110,6 +113,9 @@ const MODEL = [
 	node('_params_copy', [slot('elements', ['params_items'])], { modelType: 'envelope', shownAs: ['params_shown'] }),
 	node('params_shown', [slot('elements', ['params_items'])]),
 	node('params_items', [slot('item', ['identifier'], { multiple: true })], { modelType: 'list', elementKinds: ['identifier'] }),
+	node('tuple_items', [slot('item', ['identifier'], { multiple: true })], { modelType: 'list', elementKinds: ['identifier'], list: { trailing: 'optional', separator: ',', singleElementNeedsTrailing: true } }),
+	node('call_items', [slot('item', ['identifier'], { multiple: true })], { modelType: 'list', elementKinds: ['identifier'], list: { trailing: 'optional', separator: ',' } }),
+	node('fixed_items', [slot('item', ['identifier'], { multiple: true })], { modelType: 'list', elementKinds: ['identifier'], list: { trailing: 'mandatory', separator: ';' } }),
 	node('twin_mid', [slot('detail', ['identifier'], { required: false })]),
 	node('_plain_text', [], { modelType: 'pattern' }),
 	node('plain_text', [], { modelType: 'pattern' }),
@@ -296,7 +302,7 @@ describe('resolveRoutes', () => {
 					'((function_definition name: (identifier) @name) @declaration.constructor (#eq? @name "__init__"))',
 					'((function_definition name: (identifier) @name) @declaration.method.special (#match? @name "^__(?<stem>.*)__$"))',
 					'(decorated (function_definition name: (identifier) @name) @declaration.method.static (#eq? @name "staticmethod"))',
-					'(binary operator: "+" @operator) @expression.binary.add',
+					'(binary operator: "+") @expression.binary.add',
 					'(binary) @expression.binary'
 				].join('\n')
 			)
@@ -490,6 +496,51 @@ describe('guaranteedBy', () => {
 		expect(sure.present([{ owner: 'twin', slot: 'a' }, { owner: 'twin_mid', slot: 'detail' }])).toEqual(['identifier']);
 		expect(sure.present([{ owner: 'twin', slot: 'b' }, { owner: 'twin_mid', slot: 'detail' }])).toBeUndefined();
 	});
+
+	it('guarantees a slot absent on a refinement that negates its field, and present, with every kind it holds, on the entry it refines when that is all it tests', async () => {
+		const input = await grammar('(function_definition) @declaration.function\n(function_definition !modifiers) @declaration.function.plain');
+		const entries = resolveRoutes(input).readEntries.get('function_definition') ?? [];
+		const plain = entries.find((entry) => entry.vocab === 'declaration.function.plain')!;
+		const base = entries.find((entry) => entry.vocab === 'declaration.function')!;
+		const modifiers = [{ owner: 'function_definition', slot: 'modifiers' }];
+		expect(plain.absent).toEqual(['modifiers']);
+		expect(guaranteedBy(input.model, plain).absent(modifiers)).toBe(true);
+		expect(plain.members.map((member) => member.name)).not.toContain('modifiers');
+		expect(base.present).toEqual(['modifiers']);
+		expect(guaranteedBy(input.model, base).present(modifiers)).toEqual(['modifiers']);
+		expect(base.members.map((member) => member.name)).toContain('modifiers');
+	});
+
+	it('implies nothing present on the refined entry when the negating refinement tests more than the absence', async () => {
+		const input = await grammar('(function_definition) @declaration.function\n((function_definition !modifiers name: (_) @n) @declaration.function.plain (#eq? @n "f"))');
+		const base = (resolveRoutes(input).readEntries.get('function_definition') ?? []).find((entry) => entry.vocab === 'declaration.function')!;
+		expect(base.present).toEqual([]);
+	});
+
+	it('implies neither slot present on the refined entry when the negating refinement negates two slots, since the base holds whenever one is present', async () => {
+		const model = new Map(MODEL.map((n) => [n.kind, n]));
+		model.set('pair_opt', node('pair_opt', [slot('a', ['identifier'], { required: false }), slot('b', ['identifier'], { required: false })]));
+		const input = { ...(await grammar('(pair_opt) @expression.pair\n(pair_opt !a !b) @expression.pair.bare')), model };
+		const entries = resolveRoutes(input).readEntries.get('pair_opt') ?? [];
+		const base = entries.find((entry) => entry.vocab === 'expression.pair')!;
+		expect(base.present).toEqual([]);
+		expect(guaranteedBy(input.model, base).present([{ owner: 'pair_opt', slot: 'a' }])).toBeUndefined();
+	});
+
+	it("keys a negated slot of an alias envelope by its path through the envelope's content, on the refinement and on the entry it refines", async () => {
+		const model = new Map(MODEL.map((n) => [n.kind, n]));
+		model.set('call_storage', node('call_storage', [slot('callee', ['identifier']), slot('args', ['identifier'], { required: false })]));
+		model.set('call_alias', node('call_alias', [slot('content', ['call_storage'])], { modelType: 'alias' }));
+		const input = { ...(await grammar('(call_alias) @expression.call\n(call_alias !args) @expression.call.bare')), model };
+		const entries = resolveRoutes(input).readEntries.get('call_alias') ?? [];
+		const bare = entries.find((entry) => entry.vocab === 'expression.call.bare')!;
+		const base = entries.find((entry) => entry.vocab === 'expression.call')!;
+		const args = [{ owner: 'call_alias', slot: 'content' }, { owner: 'call_storage', slot: 'args' }];
+		expect(guaranteedBy(input.model, bare).absent(args)).toBe(true);
+		expect(bare.members.map((member) => member.name)).not.toContain('args');
+		expect(guaranteedBy(input.model, base).present(args)).toEqual(['identifier']);
+		expect(base.members.map((member) => member.name)).toContain('args');
+	});
 });
 
 describe("keptKinds over a flag capture", () => {
@@ -581,6 +632,29 @@ describe("keptKinds over a supertype the slot holds", () => {
 		const [named, wildcard] = (await readBindings('(holder_x "@" @static definition: (fn_x) @element)\n(holder_x "@" @static definition: (_) @element)')).containers;
 		expect(envelopeTargets(model, named!, vocabOf)).toEqual(['declaration.method']);
 		expect(envelopeTargets(model, wildcard!, vocabOf)).toEqual(['declaration.method', 'declaration.class']);
+	});
+
+	it("stamps a container's data member with the arity its element paths declare, and refuses paths that disagree", async () => {
+		const model = new Map(MODEL.map((n) => [n.kind, n]));
+		for (const kind of ['tag_x', 'fn_x', 'cls_x']) model.set(kind, node(kind));
+		model.set('holder_x', node('holder_x', [slot('tag', ['tag_x'], { required: false }), slot('definition', ['fn_x', 'cls_x'])]));
+		const declaring = (arities: Readonly<Record<string, VocabularyMember>>): Vocabulary => ({
+			...EMPTY_VOCABULARY,
+			members: (path) => new Map(arities[path] === undefined ? [] : [['tags', arities[path]!]])
+		});
+		const input = async (arities: Readonly<Record<string, VocabularyMember>>): Promise<GrammarInput> => ({
+			...(await grammar('(fn_x) @declaration.method\n(cls_x) @declaration.class\n(holder_x (tag_x)? @tags (_) @element)')),
+			model,
+			vocabulary: declaring(arities)
+		});
+		const list: VocabularyMember = { optional: true, flag: false, arity: 'list' };
+		const one: VocabularyMember = { optional: true, flag: false };
+		expect(resolveRoutes(await input({ 'declaration.method': list, 'declaration.class': list })).containers.get('holder_x')?.members).toEqual([
+			{ name: 'tags', slot: expect.objectContaining({ name: 'tag', multiple: false }), list: true }
+		]);
+		await expect(input({ 'declaration.method': list, 'declaration.class': one }).then(resolveRoutes)).rejects.toThrow(
+			"bindings: holder_x's @tags is a list at declaration.method and one value at declaration.class; one member has one arity"
+		);
 	});
 
 	it("gives an alias envelope of a structured kind the stored kind's members, each routed through its content", async () => {
@@ -705,9 +779,15 @@ describe("keptKinds over a supertype the slot holds", () => {
 		]);
 	});
 
-	it("routes no member through a list's item slot: a claimed list's items are its container content", async () => {
-		const routes = resolveRoutes(await grammar('(values) @expression.tuple'));
-		expect(routes.members.get('values')).toEqual([]);
+	it("routes a claimed list's items through its item slot", async () => {
+		const routes = resolveRoutes(await grammar('(params_items) @expression.tuple'));
+		expect(routes.members.get('params_items')).toEqual([
+			{ route: 'slot', name: 'item', slot: expect.objectContaining({ name: 'item', multiple: true }), path: [{ owner: 'params_items', slot: 'item' }] }
+		]);
+	});
+
+	it('refuses a claimed list whose items sit in more than one slot', async () => {
+		await expect(grammar('(values) @expression.tuple').then(resolveRoutes)).rejects.toThrow(/values is a list whose items sit in 2 slots \(first, rest\)/);
 	});
 
 	it("builds a deep member back through the anchored first node of a slot that holds many, a list's included", async () => {
@@ -965,11 +1045,18 @@ describe("keptKinds over a supertype the slot holds", () => {
 		expect(routes.members.get('char_text')?.map((r) => r.name)).toEqual(['content']);
 	});
 
-	it("routes no member through a slot the entry's test narrows to a fixed-text kind, though the slot holds other kinds, and keeps one a capture names", async () => {
+	it("routes no member through a slot the entry's test narrows to a fixed-text kind, though the slot holds other kinds or a base claim captures it, and refuses the entry's own capture there", async () => {
 		const names = async (bindings: string) => (resolveRoutes(await grammar(bindings)).members.get('param_x') ?? []).map((r) => r.name);
 		expect(await names('(param_x name: (self_kw)) @identifier.receiver')).toEqual([]);
-		expect(await names('(param_x name: (self_kw) @name) @identifier.receiver')).toEqual(['name']);
 		expect(await names('(param_x) @declaration.parameter')).toEqual(['name']);
+		await expect(names('(param_x name: (self_kw) @name) @identifier.receiver')).rejects.toThrow(/param_x's capture @name reaches no member: its name slot is pinned to one fixed text by the same claim.*@dropped/);
+		const routes = resolveRoutes(
+			await grammar(['(param_x name: (_) @name) @declaration.parameter', '(param_x name: (self_kw)) @declaration.parameter.receiver', '(param_x name: (identifier)) @declaration.parameter.named'].join('\n'))
+		);
+		const membersOf = (vocab: string) => routes.readEntries.get('param_x')?.find((entry) => entry.vocab === vocab)?.members.map((r) => r.name);
+		expect(membersOf('declaration.parameter')).toEqual(['name']);
+		expect(membersOf('declaration.parameter.receiver')).toEqual([]);
+		expect(membersOf('declaration.parameter.named')).toEqual(['name']);
 	});
 
 	it("routes a slot that holds only an unclaimed token on into the token's one interior part, and stops at a claimed one", async () => {
@@ -1720,6 +1807,194 @@ describe('a claim on an anonymous token', () => {
 		expect(routes.unplaced.map((claim) => [claim.kind, claim.token, claim.vocab])).toEqual([
 			[null, 'nothing', 'identifier'],
 			['missing_kind', undefined, 'declaration']
+		]);
+	});
+});
+
+describe('a list\'s trailing separator', () => {
+	const FLAGGED: Vocabulary = {
+		kinds: new Map(),
+		flags: new Set(['trailingComma']),
+		synonyms: { levels: new Map(), flags: new Map() },
+		members: () => new Map([['trailingComma', { optional: true, flag: true }]]),
+		featuresOf: () => new Set(),
+		composedAs: () => FLAGGED
+	};
+	const membersOf = async (bindings: string, kind: string) => {
+		const input = await grammar(bindings);
+		return resolveRoutes({ ...input, bindings: resolveFlags(input.bindings, FLAGGED, input.model) }).members.get(kind) ?? [];
+	};
+
+	it('reads as the list\'s Trailing bit, and by two items or more where one item always spells it', async () => {
+		expect((await membersOf('(call_items "," @trailingComma .) @expression.call.arguments', 'call_items')).find((m) => m.name === 'trailingComma')).toEqual({
+			route: 'delimiter',
+			name: 'trailingComma',
+			delimiter: 2,
+			path: undefined,
+			flag: true
+		});
+		expect((await membersOf('(tuple_items "," @trailingComma .) @expression.tuple', 'tuple_items')).find((m) => m.name === 'trailingComma')).toEqual({
+			route: 'delimiter',
+			name: 'trailingComma',
+			delimiter: 2,
+			items: { owner: 'tuple_items', slot: 'item' },
+			path: undefined,
+			flag: true
+		});
+	});
+
+	it('refuses an anchored token that is not the list\'s own optional separator, or that sits on no list', async () => {
+		await expect(membersOf('(call_items ";" @trailingComma .) @expression.call.arguments', 'call_items')).rejects.toThrow(/an anchored token names a list's own optional separator/);
+		await expect(membersOf('(fixed_items ";" @trailingComma .) @expression.block', 'fixed_items')).rejects.toThrow(/an anchored token names a list's own optional separator/);
+		await expect(membersOf('(function_definition "," @trailingComma .) @declaration.function', 'function_definition')).rejects.toThrow(/an anchored token names a list's own optional separator/);
+		await expect(grammar('(call_items "," @trailingComma .) @expression.call.arguments').then(resolveRoutes)).rejects.toThrow("bindings: call_items's trailingComma reads a list's trailing separator, which is a flag");
+	});
+
+	it("reads through a child list as that list's Trailing bit at the path to it, by two items where one item always spells it, and refuses as on the list itself", async () => {
+		const held = async (bindings: string) => {
+			const input = await grammar(bindings);
+			const model = new Map([...input.model, ['call_stmt', node('call_stmt', [slot('args', ['call_items', 'tuple_items', 'fixed_items'], { required: false })])]]);
+			return (resolveRoutes({ ...input, model, bindings: resolveFlags(input.bindings, FLAGGED, model) }).members.get('call_stmt') ?? []).find((m) => m.name === 'trailingComma');
+		};
+		const args = [{ owner: 'call_stmt', slot: 'args' }];
+		expect(await held('(call_stmt) @statement.call\n(call_stmt (call_items "," @trailingComma .))')).toEqual({ route: 'delimiter', name: 'trailingComma', delimiter: 2, path: args, flag: true });
+		expect(await held('(call_stmt) @statement.call\n(call_stmt (tuple_items "," @trailingComma .))')).toEqual({
+			route: 'delimiter',
+			name: 'trailingComma',
+			delimiter: 2,
+			path: args,
+			items: { owner: 'tuple_items', slot: 'item' },
+			flag: true
+		});
+		await expect(held('(call_stmt) @statement.call\n(call_stmt (call_items ";" @trailingComma .))')).rejects.toThrow(/an anchored token names a list's own optional separator/);
+		await expect(held('(call_stmt) @statement.call\n(call_stmt (fixed_items ";" @trailingComma .))')).rejects.toThrow(/an anchored token names a list's own optional separator/);
+	});
+
+	it('refuses an anchored token the pattern does not capture', async () => {
+		await expect(membersOf('(call_items "," .) @expression.call.arguments', 'call_items')).rejects.toThrow(/anchor/);
+	});
+
+	it('stamps a claim on the list\'s own separator as separated, and leaves the list\'s other claims unstamped', async () => {
+		const entries = resolveRoutes(await grammar('(call_items ",") @expression.tuple\n(call_items) @expression.call.arguments')).readEntries.get('call_items') ?? [];
+		expect(entries.map((entry) => [entry.vocab, entry.separated])).toEqual(expect.arrayContaining([['expression.tuple', true], ['expression.call.arguments', undefined]]));
+	});
+
+	it('reads the flag by two items or more on a list claimed by its own separator, though one item does not spell it', async () => {
+		expect((await membersOf('(call_items ",") @expression.tuple\n(call_items "," @trailingComma .)', 'call_items')).find((m) => m.name === 'trailingComma')).toMatchObject({
+			route: 'delimiter',
+			items: { owner: 'call_items', slot: 'item' }
+		});
+	});
+});
+
+describe('a claim on a kind its holder mounts', () => {
+	const mounted = (slots: readonly string[]): Promise<GrammarInput> =>
+		grammar(['(yielder) @expression.yield', '(delegate) @expression.yield.delegate', '(delegate operand: (_) @operand)'].join('\n')).then((input) => ({
+			...input,
+			model: new Map([
+				...input.model,
+				['yielder', node('yielder', slots.map((name) => slot(name, ['delegate', 'identifier'], { required: false, mounts: { delegate: { mount: 'delegate', call: 'child' } } })))],
+				['delegate', node('delegate', [slot('operand', ['identifier'])])]
+			])
+		}));
+
+	it("reads at its holder, by the holder's test of the slot that holds it, its members routed through that slot", async () => {
+		const routes = resolveRoutes(await mounted(['content']));
+		expect(routes.readEntries.has('delegate')).toBe(false);
+		const [delegate] = routes.readEntries.get('yielder') ?? [];
+		expect(delegate).toMatchObject({ vocab: 'expression.yield.delegate', kind: 'yielder', children: [{ kinds: ['delegate'] }] });
+		expect(delegate?.members.map((route) => [route.name, route.path])).toEqual([['operand', [{ owner: 'yielder', slot: 'content' }, { owner: 'delegate', slot: 'operand' }]]]);
+		expect(routes.claims.map((claim) => [claim.vocab, claim.refines, claim.mountedIn])).toEqual([
+			['expression.yield', null, null],
+			['expression.yield.delegate', 'expression.yield', 'yielder']
+		]);
+	});
+
+	it('refuses where the holder mounts it in two slots, naming both', async () => {
+		await expect(mounted(['first', 'second']).then(resolveRoutes)).rejects.toThrow('bindings: expression.yield.delegate reads delegate at its holder yielder, which mounts it in both first and second');
+	});
+});
+
+describe('a selector no form of its owner holds', () => {
+	it('stops codegen at a member capture, naming the owner, the capture and the field', async () => {
+		await expect(grammar('(binary missing: (_) @value) @expression.binary').then(resolveRoutes)).rejects.toThrow(/binary's @value captures the field missing, which no form of binary holds/);
+	});
+
+	it('stops codegen at a container selector', async () => {
+		await expect(grammar('((wrapper missing: (_) @element) (#set! reason "reads as its element"))').then(resolveRoutes)).rejects.toThrow(/wrapper's container selects the field missing, which no form of wrapper holds/);
+	});
+
+	it('judges a container line by every kind it applies to: a line a copy holds is not refused at a base that does not', async () => {
+		const input = await grammar('((wrapper missing: (_) @element) (#set! reason "reads as its element"))');
+		const model = new Map(input.model);
+		model.set('wrapper_copy', node('wrapper_copy', [slot('missing', ['identifier'])], { modelType: 'envelope' }));
+		const [base] = input.bindings.containers;
+		const copied = { ...input, model, bindings: { ...input.bindings, containers: [base!, { ...base!, kind: 'wrapper_copy' }] } };
+		expect(resolveRoutes(copied).containers.get('wrapper_copy')).toMatchObject({ slot: 'missing' });
+		expect(resolveRoutes(copied).containers.get('wrapper')).toMatchObject({ slot: 'inner' });
+	});
+});
+
+describe('a claimed list that unwraps to its element', () => {
+	const CONTAINER = '((call_items (_) @element) (#set! reason "one item without a separator reads as itself"))';
+
+	it('unwraps to one value where the claim is its own separator, the one item it holds when the claim fails', async () => {
+		const routes = resolveRoutes(await grammar(['(call_items ",") @expression.tuple', CONTAINER].join('\n')));
+		expect(routes.containers.get('call_items')).toEqual({ slot: 'item', kinds: ['identifier'], terminals: [], list: false, refined: true });
+	});
+
+	it('refuses a claim that is not its own separator, since the list it unwraps to can hold more than one element', async () => {
+		await expect(grammar(['((call_items (identifier) @first) @expression.tuple (#eq? @first "a"))', CONTAINER].join('\n')).then(resolveRoutes)).rejects.toThrow(
+			/call_items is claimed and also unwraps to its elements, a list; only a list claimed by its own separator holds one element when the claim fails/
+		);
+	});
+});
+
+describe('a claim token', () => {
+	const entriesOf = async (bindings: string, kind: string) => resolveRoutes(await grammar(bindings)).readEntries.get(kind) ?? [];
+
+	it('pins the slot that holds it, or is the kind\'s own text', async () => {
+		expect((await entriesOf('(binary "+") @expression.binary.add', 'binary')).map((entry) => entry.pins)).toEqual([[{ member: 'operator', slot: 'operator', text: '+' }]]);
+		expect((await entriesOf('(true_keyword "true") @literal.boolean.true', 'true_keyword')).map((entry) => entry.pins)).toEqual([[]]);
+	});
+
+	it('stops codegen when no slot holds it and the kind\'s own text does not spell it', async () => {
+		await expect(entriesOf('(binary "*") @expression.binary.multiply', 'binary')).rejects.toThrow('bindings: binary\'s claim as expression.binary.multiply tests "*", which no slot of binary holds and its own text does not spell');
+	});
+});
+
+describe("a kind a deep member's path enters stays in the holder's other slots", () => {
+	const ENTERED_MODEL = new Map(
+		[
+			node("pair", [slot("left", ["wrap"]), slot("right", ["wrap"])]),
+			node("wrap", [slot("inner", ["identifier"])]),
+			node("identifier")
+		].map((n) => [n.kind, n])
+	);
+	const entered = async (bindings: string): Promise<GrammarInput> => ({
+		grammar: "g",
+		bindings: await readBindings(bindings),
+		model: ENTERED_MODEL,
+		textTokens: new Set(),
+		layoutSlots: [],
+		vocabulary: EMPTY_VOCABULARY
+	});
+
+	it("excludes the entered kind only from the slot the path enters it through, by field", async () => {
+		const members = resolveRoutes(await entered("(pair left: (wrap (identifier) @name) right: (_) @value) @declaration.function")).members.get("pair") ?? [];
+		expect(members.find((m) => m.name === "value")).toEqual({ route: "slot", name: "value", slot: slot("right", ["wrap"]), path: [{ owner: "pair", slot: "right" }] });
+		expect(members.find((m) => m.name === "name")?.path).toEqual([
+			{ owner: "pair", slot: "left" },
+			{ owner: "wrap", slot: "inner" }
+		]);
+	});
+
+	it("excludes the entered kind only from the slot the path enters it through, unfielded", async () => {
+		const members = resolveRoutes(await entered("(pair (wrap (identifier) @name) right: (_) @value) @declaration.function")).members.get("pair") ?? [];
+		expect(members.find((m) => m.name === "value")).toEqual({ route: "slot", name: "value", slot: slot("right", ["wrap"]), path: [{ owner: "pair", slot: "right" }] });
+		expect(members.find((m) => m.name === "name")?.path).toEqual([
+			{ owner: "pair", slot: "left" },
+			{ owner: "wrap", slot: "inner" }
 		]);
 	});
 });

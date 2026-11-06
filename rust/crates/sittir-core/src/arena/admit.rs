@@ -61,36 +61,6 @@ fn malformed(what: &'static str, word: u32) -> ArenaError {
     ArenaError::Malformed { what, word }
 }
 
-/// Visits each cell of the parsed record at `at`, of shape `record`: a list
-/// slot's each item, and with an embedded record its capacity.
-pub(super) fn for_each_parsed_cell(
-    arena: &dyn ArenaRead,
-    at: Address,
-    record: RecordShape,
-    bits: u32,
-    mut visit: impl FnMut(Cell, u32) -> Result<(), ArenaError>,
-) -> Result<(), ArenaError> {
-    let words = arena.words(at, record.words.max(HEADER_WORDS))?;
-    for cell in record.cells {
-        let start = cell.word as usize;
-        match cell.run {
-            None => {
-                let words = words.get(start..start + cell.width as usize).ok_or(malformed("cell word", cell.word))?;
-                let slot = at.offset(cell.word).ok_or(malformed("cell word", cell.word))?;
-                let decoded = Cell::decode_parsed(words, slot, *cell, bits)?;
-                visit(decoded, if matches!(decoded, Cell::Child { .. }) { cell.inline } else { 0 })?;
-            }
-            Some(run) => {
-                let word = *words.get(start).ok_or(malformed("cell word", cell.word))?;
-                for item in ListCell::of_word(CellWord(word), arena)?.items(arena, run)? {
-                    visit(Cell::decode_parsed(item, Address::NONE, *cell, bits)?, 0)?;
-                }
-            }
-        }
-    }
-    Ok(())
-}
-
 /// Visits each cell of the built record at `at`, of shape `record`: a list
 /// slot's each item.
 pub(super) fn for_each_built_cell(arena: &dyn ArenaRead, at: Address, record: RecordShape, bits: u32, mut visit: impl FnMut(Cell) -> Result<(), ArenaError>) -> Result<(), ArenaError> {

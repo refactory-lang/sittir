@@ -905,22 +905,6 @@ macro_rules! napi_engine {
                 })
             }
 
-            /// The hydrated typed nodes below `index` in stored field
-            /// order, as a JSON list of their rows' coordinates. Units and
-            /// captured strings are omitted. Exports no node fields or
-            /// words.
-            #[::napi_derive::napi]
-            pub fn record_candidates(env: ::napi::Env, tree_id: $crate::types::TreeId, index: $crate::types::NodeIndex) -> ::napi::Result<String> {
-                with_live_tree(&env, tree_id, |parsed| {
-                    $crate::napi_engine::check_node(parsed, index)?;
-                    let candidates = ::std::panic::catch_unwind(::std::panic::AssertUnwindSafe(|| parsed.record_candidates::<$any>(index)))
-                        .map_err(|payload| ::napi::Error::from_reason($crate::panic_msg(&*payload, "record_candidates panicked")))?
-                        .map_err(|e| ::napi::Error::from_reason(format!("record_candidates failed: {e}")))?;
-                    let wire = candidates.into_iter().map($crate::query::QueryCoordinate::from).collect::<Vec<_>>();
-                    ::serde_json::to_string(&wire).map_err(|e| ::napi::Error::from_reason(e.to_string()))
-                })
-            }
-
             /// The nodes at `indexes` of the live tree `treeId`, in order:
             /// each read as `read` reads it when `wire` is `object`, and,
             /// when it is `record`, each record's address as `readRecord`
@@ -1207,22 +1191,6 @@ macro_rules! napi_engine {
                 let side = $crate::napi_engine::trivia_side_from_wire(&side)?;
                 engine.write_built_trivia_side(address, side, entries).map_err(|e| ::napi::Error::from_reason(e.to_string()))?;
                 $crate::napi_engine::settle(&env, engine.written())
-            }
-
-            /// Renders the parsed candidate at row `index` without exporting
-            /// its data or its outer trivia: the row's record, or, for a
-            /// recordless node, its native coordinate.
-            #[::napi_derive::napi(ts_args_type = "engine: object, treeId: number, index: number, options?: object | undefined | null")]
-            pub fn render_candidate(engine: &::napi::bindgen_prelude::External<EngineCell>, env: ::napi::Env, tree_id: $crate::types::TreeId, index: $crate::types::NodeIndex, options: Option<$options>) -> ::napi::Result<String> {
-                let engine = engine_of(engine)?;
-                with_live_trees(&env, |trees| {
-                    let parsed = trees.get(tree_id).ok_or_else(|| $crate::napi_engine::tree_not_live(tree_id))?;
-                    let table = render_options(&engine, Some(parsed), options)?;
-                    let canonical = $crate::napi_engine::entry_sources(engine.grammar(), trees, |sources| ::std::panic::catch_unwind(::std::panic::AssertUnwindSafe(|| parsed.render_candidate::<$any>(index, &table, sources))))
-                        .map_err(|payload| ::napi::Error::from_reason($crate::panic_msg(&*payload, "render_candidate panicked")))?
-                        .map_err(|e| ::napi::Error::from_reason(format!("render_candidate failed: {e}")))?;
-                    Ok($crate::line_endings::spell(canonical, &table.newline))
-                })
             }
 
             /// The coordinate a read of the live tree `treeId` names the node
@@ -1918,6 +1886,10 @@ where
 
     fn kind_of(&self, coord: &crate::slot::NodeCoordinate) -> Option<crate::types::KindId> {
         self.trees.kind_of(coord)
+    }
+
+    fn for_each_descendant(&self, coord: &crate::slot::NodeCoordinate, visit: &mut dyn FnMut(crate::types::KindId, &str) -> bool) {
+        self.trees.for_each_descendant(coord, visit);
     }
 
     fn line_starts_inside_tokens(&self, coord: &crate::slot::NodeCoordinate) -> Vec<u32> {

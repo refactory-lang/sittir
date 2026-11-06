@@ -611,6 +611,46 @@ describe('disassemble on x86-64', () => {
 		expect(unread.unresolved.map((site) => site.offset)).toEqual([0x20, 0x28]);
 	});
 
+	it('ends a jump table where the next table the function reads begins', async () => {
+		const listing = [
+			...ELF,
+			...x86(0x4000, 'sittir_x::t', [
+				'leaq 0x1000(%rip), %rcx # 0x5000 <a>',
+				'movq (%rdi), %rax',
+				'movslq (%rcx,%rax,4), %rax',
+				'addq %rcx, %rax',
+				'jmpq *%rax',
+				'jmp @7',
+				'jmp @7',
+				'leaq 0x1000(%rip), %rbx # 0x5008 <b>',
+				'movq 0x10(%rip), %r12 # 0x3000 <x>',
+				'movq (%rsi), %rax',
+				'jmp @13',
+				'callq *%r12',
+				'jmp @9',
+				'cmpq $0x1, %rax',
+				'ja @20',
+				'movslq (%rbx,%rax,4), %rax',
+				'addq %rbx, %rax',
+				'jmpq *%rax',
+				'callq *%r12',
+				'jmp @9',
+				'retq'
+			]),
+			...x86(0x2100, G, ['retq'])
+		];
+		const tables = new Map([
+			[0x5000, 0x4014 - 0x5000],
+			[0x5004, 0x4018 - 0x5000],
+			[0x5008, 0x402c - 0x5008],
+			[0x500c, 0x4048 - 0x5008]
+		]);
+		const dis = await disassemble(listing, image(tables));
+		const read = named(dis, 'sittir_x::t');
+		expect(names(dis, read.calls)).toEqual([G]);
+		expect(read.unresolved).toEqual([]);
+	});
+
 	it('follows a slot through a register copy, in a Mach-O listing too', async () => {
 		const dis = await disassemble(
 			[

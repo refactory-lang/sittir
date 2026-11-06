@@ -7,7 +7,12 @@ export namespace Declaration {
 		readonly $kind: 'declaration.struct';
 		readonly body?: G['slots']['declaration.struct']['body'][];
 		readonly name: V.Identifier<G>;
-		readonly typeParameters?: (V.Identifier.Metavariable<G> | V.Declaration.TypeParameter.Any<G>)[];
+		readonly typeParameters?: (
+			| V.Identifier.Metavariable<G>
+			| V.Declaration.TypeParameter<G>
+			| V.Declaration.TypeParameter.Lifetime<G>
+			| V.Declaration.TypeParameter.Value<G>
+		)[];
 		readonly whereClause?: V.Clause.Where<G>;
 	}
 	export namespace Struct {

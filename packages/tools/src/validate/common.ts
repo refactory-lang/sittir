@@ -18,6 +18,7 @@ import {
 	listSeparatorOf,
 	slotValuesOf as readSlotValues,
 	storedSlotValues as readStoredSlotValues,
+	spelledMember,
 	writeTrivia,
 	writtenSides,
 	type RefusedSlot
@@ -72,7 +73,8 @@ import type {
 	PolymorphVariantMap,
 	FactoryShape,
 	FactorySlotMeta,
-	OpaqueFacts
+	OpaqueFacts,
+	DelimiterFacetRole
 } from '../codegen-surface.ts';
 
 const loadWebTreeSitter: CodegenSurface['engineLoader']['loadWebTreeSitter'] = (await load('engineLoader'))
@@ -464,6 +466,7 @@ export interface Seat {
 	readonly shape: 'arm' | 'flatten' | 'elements' | 'tuple' | 'forwarded';
 	readonly mount?: string;
 	readonly seated?: true;
+	readonly always?: true;
 }
 
 export type SeatTable = Record<string, Record<string, Record<string, Seat>>>;
@@ -485,6 +488,7 @@ export interface LoadedNodeModel {
 	readonly slotStorage: Record<string, Record<string, string>>;
 	/** Each kind's slots by storage key, to the accessor that reads it; a kind with no slots maps to `{}`. */
 	readonly slotAccessors: Record<string, Record<string, string>>;
+	readonly derivedSlots: Record<string, ReadonlySet<string>>;
 	readonly factoryShapes: Record<string, FactoryShape>;
 	readonly factoryFields: Record<string, readonly string[]>;
 	readonly factorySlots: Record<string, Record<string, FactorySlotMeta>>;
@@ -505,6 +509,8 @@ export interface LoadedNodeModel {
 	/** Each list kind whose separator is chosen per instance, with the separators it may hold. */
 	readonly listSeparators: Record<string, readonly string[]>;
 	readonly fullForms: Record<string, ModelFullForm>;
+	readonly delimiterTokens: ReadonlySet<string>;
+	readonly delimiterFacets: Record<string, Readonly<Record<string, DelimiterFacet>>>;
 	/** Whether a node with these grammar and display ids is a relaxed keyword: the model's table read as the generated reader reads it. */
 	readonly relaxes: (grammar: number, display: number) => boolean;
 }
@@ -556,6 +562,7 @@ interface ParsedNodeModel {
 			registered?: boolean;
 			optionDefault?: number | string;
 			separator?: { readonly default?: number };
+			delimiterRole?: DelimiterFacetRole;
 			values?: ReadonlyArray<ParsedSlotValue>;
 		}>;
 		elementSeats?: readonly Seat[];
@@ -571,6 +578,8 @@ interface ParsedNodeModel {
 		separatorCandidates?: readonly string[];
 		leafPattern?: string;
 		fullForm?: ModelFullForm;
+		delimiterOf?: string;
+		preference?: { readonly name: string; readonly slot: string; readonly open: string; readonly default: string };
 	}>;
 	fieldAliasMap?: Record<string, Record<string, string>>;
 	polymorphVariants?: PolymorphVariantMap;
@@ -579,6 +588,8 @@ interface ParsedNodeModel {
 interface ParsedSlotValue {
 	kind?: string;
 	multiplicity?: string;
+	value?: string;
+	canonical?: string;
 	seat?: Seat;
 	name?: string;
 	parseKind?: string;
@@ -601,6 +612,7 @@ const EMPTY_NODE_MODEL: LoadedNodeModel = {
 	slotNames: {},
 	slotStorage: {},
 	slotAccessors: {},
+	derivedSlots: {},
 	factoryShapes: {},
 	factoryFields: {},
 	factorySlots: {},
@@ -620,6 +632,8 @@ const EMPTY_NODE_MODEL: LoadedNodeModel = {
 	listElementKinds: {},
 	listSeparators: {},
 	fullForms: {},
+	delimiterTokens: new Set(),
+	delimiterFacets: {},
 	relaxes: () => false
 };
 
@@ -636,6 +650,46 @@ export function readNodeModelFile(grammar: string): string | undefined {
 function regexOfLiteral(literal: string): RegExp {
 	const end = literal.lastIndexOf('/');
 	return new RegExp(literal.slice(1, end), literal.slice(end + 1));
+}
+
+export interface DelimiterFacet {
+	readonly role: DelimiterFacetRole;
+	readonly accessor: string;
+	readonly spellings?: Readonly<Record<string, string>>;
+}
+
+export interface DelimiterSpelling {
+	readonly interior: TokenInterior;
+	readonly facets: Readonly<Record<string, DelimiterFacet>>;
+}
+
+export async function loadDelimiterSpellings(grammar: string): Promise<Readonly<Record<string, DelimiterSpelling>>> {
+	const { delimiterFacets } = await loadNodeModel(grammar);
+	const interiors = (await requireGrammarModule(grammar, 'consts.ts')).TOKEN_INTERIORS as Readonly<Record<string, TokenInterior>>;
+	const table = (await importGrammarModule(grammar, 'portable-build.ts'))?.build;
+	const kindIdFromName = await loadKindIdFromName(grammar);
+	const spelled = (kind: string, facets: Readonly<Record<string, DelimiterFacet>>): Readonly<Record<string, DelimiterFacet>> => {
+		const token = table?.delimiters?.[kindIdFromName(kind)];
+		return Object.fromEntries(
+			Object.entries(facets).map(([name, facet]) => {
+				const spellings = token?.spellings?.[facet.accessor];
+				return [name, spellings === undefined ? facet : { ...facet, spellings }] as const;
+			})
+		);
+	};
+	return Object.fromEntries(
+		Object.entries(delimiterFacets).flatMap(([kind, facets]) => (interiors[kind] === undefined ? [] : [[kind, { interior: interiors[kind]!, facets: spelled(kind, facets) }] as const]))
+	);
+}
+
+export function sameSpelledMeaning(left: string, right: string, kind: string, spelling: DelimiterSpelling): boolean {
+	const a = projectInterior(left, spelling.interior, kind);
+	const b = projectInterior(right, spelling.interior, kind);
+	return Object.entries(spelling.facets).every(([name, { role, spellings }]) => {
+		if (role === 'content') return a[name] === b[name];
+		if (role !== 'input') return true;
+		return spelledMember(a[name], spellings) === spelledMember(b[name], spellings);
+	});
 }
 
 export async function loadNodeModel(grammar: string): Promise<LoadedNodeModel> {
@@ -667,6 +721,7 @@ export function parseNodeModel(text: string): LoadedNodeModel {
 	const slotNames: Record<string, readonly string[]> = {};
 	const slotStorage: Record<string, Record<string, string>> = {};
 	const slotAccessors: Record<string, Record<string, string>> = {};
+	const derivedSlots: Record<string, ReadonlySet<string>> = {};
 	const factoryShapes: Record<string, FactoryShape> = {};
 	const factoryFields: Record<string, readonly string[]> = {};
 	const subtypes: Record<string, readonly string[]> = {};
@@ -681,6 +736,8 @@ export function parseNodeModel(text: string): LoadedNodeModel {
 	const listElementKinds: Record<string, readonly string[]> = {};
 	const listSeparators: Record<string, readonly string[]> = {};
 	const fullForms: Record<string, ModelFullForm> = {};
+	const delimiterTokens = new Set<string>();
+	const delimiterFacets: Record<string, Readonly<Record<string, DelimiterFacet>>> = {};
 	const factorySlots: Record<string, Record<string, FactorySlotMeta>> = {};
 	for (const node of model.nodes ?? []) {
 		if (node.irKey !== undefined) irKeys[node.kind] = node.irKey;
@@ -695,6 +752,8 @@ export function parseNodeModel(text: string): LoadedNodeModel {
 		if (node.unit === true) unitKinds.add(node.kind);
 		for (const seat of node.elementSeats ?? []) seatAt(node.kind, '*', seat);
 		slotAccessors[node.kind] = Object.fromEntries((node.slots ?? []).map((slot) => [storageKeyOf(slot.name), slot.accessor]));
+		const derived = (node.slots ?? []).filter((slot) => isDerivedRole(slot.delimiterRole)).map((slot) => storageKeyOf(slot.name));
+		if (derived.length > 0) derivedSlots[node.kind] = new Set(derived);
 		if (node.slots !== undefined) {
 			for (const slot of node.slots) {
 				for (const value of slot.values ?? []) {
@@ -709,6 +768,10 @@ export function parseNodeModel(text: string): LoadedNodeModel {
 			slotNames[node.kind] = node.slots.map((slot) => slot.name);
 			if (node.factoryShape !== undefined) {
 				factorySlots[node.kind] = Object.fromEntries(node.slots.map((slot) => [slot.name, factorySlotMetaOf(slot)]));
+				if (node.preference !== undefined) {
+					const { name, slot, open } = node.preference;
+					factorySlots[node.kind]![name] = { propertyName: name, required: false, multiple: false, nonEmpty: false, registered: true, optionDefault: node.preference.default, preferenceOf: { open, facet: slot } };
+				}
 			}
 			slotRequired[node.kind] = Object.fromEntries(
 				node.slots.map((slot) => [slot.accessor, slot.required === true])
@@ -731,6 +794,14 @@ export function parseNodeModel(text: string): LoadedNodeModel {
 		if (node.elementKinds !== undefined) listElementKinds[node.kind] = node.elementKinds;
 		if (node.separatorCandidates !== undefined) listSeparators[node.kind] = node.separatorCandidates;
 		if (node.fullForm !== undefined) fullForms[node.kind] = node.fullForm;
+		if (node.delimiterOf !== undefined) {
+			delimiterTokens.add(node.kind);
+			delimiterFacets[node.kind] = Object.fromEntries(
+				(node.slots ?? []).flatMap((slot) =>
+					slot.delimiterRole === undefined ? [] : [[slot.name, { role: slot.delimiterRole, accessor: factorySlotMetaOf(slot).propertyName }] as const]
+				)
+			);
+		}
 	}
 	return {
 		root: model.root ?? undefined,
@@ -748,6 +819,7 @@ export function parseNodeModel(text: string): LoadedNodeModel {
 		slotNames,
 		slotStorage,
 		slotAccessors,
+		derivedSlots,
 		factoryShapes,
 		factoryFields,
 		factorySlots,
@@ -767,6 +839,8 @@ export function parseNodeModel(text: string): LoadedNodeModel {
 		listElementKinds,
 		listSeparators,
 		fullForms,
+		delimiterTokens,
+		delimiterFacets,
 		relaxes: relaxesOf(model.relaxes)
 	};
 }
@@ -1377,6 +1451,10 @@ function projectSeatedSlot(
 			const groupNode = hydrateForConfig(value as ReadNodeLike, opts);
 			const inner = childOpts(opts);
 			const group = nodeToConfig(groupNode, inner);
+			if (seat.always === true) {
+				Object.assign(out, group);
+				return;
+			}
 			if (Object.keys(group).length === 0) {
 				out[key] = resolveChild(groupNode, memberValueOpts(opts, parentKind, slot.name));
 				return;
@@ -1437,7 +1515,7 @@ function splitRegisteredSlots(
 	return { base, registered: Object.keys(registered).length > 0 ? registered : undefined };
 }
 
-function factoryArgs(
+export function factoryArgs(
 	kind: string,
 	shape: FactoryShape,
 	config: Record<string, unknown>,
@@ -1655,7 +1733,8 @@ function normalizeConfigSlotValue(
 	slotMeta: FactorySlotMeta | undefined
 ): unknown {
 	const narrowed = narrowSingularUnnamedChildrenValue(slot, value, childOpts, slotMeta);
-	const resolved = resolveMemberValue(narrowed, childOpts);
+	const read = resolveMemberValue(narrowed, childOpts);
+	const resolved = spelledMember(read, slotMeta?.spellings);
 	if (shouldNormalizeConfigSlotAsMany(slot, slotMeta)) {
 		const items: readonly unknown[] = Array.isArray(resolved) ? resolved : resolved == null ? [] : [resolved];
 		if (slotMeta?.nonEmpty && items.length === 0) {
@@ -1705,10 +1784,16 @@ function assignSlotToConfig(
 	childOpts: NodeToConfigOpts,
 	out: Record<string, unknown>
 ): void {
-	const normalized = normalizeConfigSlotValue(slot, value, childOpts, lookupFactorySlotMeta(childOpts, slot));
+	const meta = lookupFactorySlotMeta(childOpts, slot);
+	if (isDerivedRole(meta?.delimiterRole) && meta?.delimiterRole !== 'preferred') return;
+	const normalized = normalizeConfigSlotValue(slot, value, childOpts, meta);
 	if (normalized !== undefined) {
 		out[slot.key] = normalized;
 	}
+}
+
+function isDerivedRole(role: DelimiterFacetRole | undefined): boolean {
+	return role !== undefined && role !== 'input';
 }
 
 export function nodeToConfig(data: ReadNodeLike, opts: NodeToConfigOpts): Record<string, unknown> {

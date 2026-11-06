@@ -186,7 +186,9 @@
 (self_parameter (mutable_specifier) @mutable)
 (variadic_parameter) @declaration.parameter.variadic
 (closure_parameter (_) @name) @declaration.parameter
-((attributed_parameter (attribute_item)? @dropped (_) @element) (#set! reason "the element admits the _type supertype, so an attributes capture would reach only some of the kinds it holds"))
+(attributed_parameter (attribute_item)* @attributes (parameter) @element)
+(attributed_parameter (attribute_item)* @attributes (variadic_parameter) @element)
+(attributed_parameter (attribute_item)* @attributes (self_parameter) @element)
 (type_parameter default_type: (_)? @default) @declaration.type_parameter
 (type_parameter bounds: (trait_bounds bounds: (_) @bounds))
 (const_parameter value: (_)? @default) @declaration.type_parameter.value
@@ -212,7 +214,7 @@
 (while_expression) @statement.loop.while
 (for_expression pattern: (_) @left value: (_) @right) @statement.loop.for_each
 (return_expression (_)? @expression) @statement.return
-(match_expression value: (_) @subject) @statement.match
+(match_expression value: (_) @subject body: (match_block (match_block_arms arms: (_) @body)?)) @statement.match
 (use_declaration) @statement.use
 (use_declaration (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (self_module))))) @statement.use.private
 (use_declaration (visibility_modifier (visibility_modifier_pub))) @statement.use.public
@@ -232,10 +234,10 @@
 (else_clause) @clause.else
 (let_condition) @clause.let
 (let_chain) @clause.let.chain
-(match_arm value: _ @body) @clause.arm.match
+(match_arm value: _ @body) @clause.case.match
 (match_arm_with_comma match: (match_pattern pattern: _ @pattern condition: _? @guard))
 (match_arm_block_ending match: (match_pattern pattern: _ @pattern condition: _? @guard))
-(last_match_arm match: (match_pattern pattern: _ @pattern condition: _? @guard) value: _ @body) @clause.arm.match
+(last_match_arm match: (match_pattern pattern: _ @pattern condition: _? @guard) value: _ @body) @clause.case.match
 ((match_arm match: _ @dropped) (#set! reason "the arm's pattern and guard are read through its match pattern"))
 ((last_match_arm match: _ @dropped) (#set! reason "the arm's pattern and guard are read through its match pattern"))
 ((last_match_arm trailing_comma: _ @dropped) (#set! reason "the last arm's optional comma is a position, not a fact"))
@@ -430,6 +432,8 @@
 ((string_literal string_open: (_) @_open) @literal.string.bytes (#eq? @_open "b\""))
 ((string_literal string_open: (_) @_open) @literal.string.c (#eq? @_open "c\""))
 (raw_string_literal string_content: (string_content) @content) @literal.string.raw
+((raw_string_literal (raw_string_literal_start) @_p string_content: (string_content) @content) @literal.string.bytes.raw (#match? @_p "^br"))
+((raw_string_literal (raw_string_literal_start) @_p string_content: (string_content) @content) @literal.string.c.raw (#match? @_p "^cr"))
 (char_literal) @literal.char
 (escape_sequence) @literal.string.escape
 (string_content) @literal.string.text

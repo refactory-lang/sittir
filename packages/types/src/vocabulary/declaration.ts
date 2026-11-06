@@ -13,6 +13,7 @@ export interface DeclarationSynonyms {
 	readonly index: 'indexer';
 	readonly internal: 'crate';
 	readonly module: 'mod';
+	readonly parameters: 'param_spec';
 	readonly receiver: 'self' | 'this';
 	readonly special: 'dunder' | 'magic';
 	readonly struct: 'record';
@@ -83,7 +84,7 @@ export namespace Declaration {
 		readonly $kind: 'declaration.variable';
 		readonly alternative?: V.Statement.Block<G>;
 		// r only
-		readonly declarators?: V.Declaration.Variable<G>[];
+		readonly declarators?: (V.Declaration.Variable<G> | V.Declaration.Variable.Pattern<G>)[];
 		// t only
 		readonly mutable?: Flag;
 		// r only
@@ -94,7 +95,7 @@ export namespace Declaration {
 		export interface Constant<G extends GrammarContext<G>> extends SubKindOf<V.Declaration.Variable<G>> {
 			// claimed by t
 			readonly $kind: 'declaration.variable.constant';
-			readonly declarators: V.Declaration.Variable<G>[];
+			readonly declarators: (V.Declaration.Variable<G> | V.Declaration.Variable.Pattern<G>)[];
 		}
 		export interface Pattern<G extends GrammarContext<G>> extends SubKindOf<V.Declaration.Variable<G>> {
 			// claimed by t
@@ -105,7 +106,7 @@ export namespace Declaration {
 		export interface Reassignable<G extends GrammarContext<G>> extends SubKindOf<V.Declaration.Variable<G>> {
 			// claimed by t
 			readonly $kind: 'declaration.variable.reassignable';
-			readonly declarators: V.Declaration.Variable<G>[];
+			readonly declarators: (V.Declaration.Variable<G> | V.Declaration.Variable.Pattern<G>)[];
 		}
 		export namespace Reassignable {
 			export interface FunctionScoped<G extends GrammarContext<G>> extends SubKindOf<V.Declaration.Variable.Reassignable<G>> {

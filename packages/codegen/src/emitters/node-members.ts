@@ -1,6 +1,8 @@
 import { LIST_VIEW_MEMBERS } from '@sittir/common/utils';
 import { emptyForms } from '../compiler/model/trivia.ts';
 import type { NodeMap } from '../compiler/types.ts';
+import type { AssembledNonterminal } from '../compiler/model/node-map.ts';
+import { spelledReadExpr } from './shared.ts';
 import type { GroupSeatHint, ListViewPlan, SeatPlan } from './factories.ts';
 
 export interface SetterEntry {
@@ -17,6 +19,7 @@ export interface StoredAccessor {
 	readonly name: string;
 	readonly read: string;
 	readonly hydrates?: 'one' | 'many';
+	readonly slot?: AssembledNonterminal;
 }
 
 export type HeldKey = 'INPUT' | 'OPTIONS' | 'READ_TREE';
@@ -59,7 +62,8 @@ export function triviaInnerImports(nodeMap: NodeMap): readonly string[] {
 
 function accessorRead(accessor: StoredAccessor): string {
 	if (accessor.hydrates === undefined) return accessor.read;
-	return `${accessor.hydrates === 'many' ? 'hydrateStoredSlots' : 'hydrateStoredSlot'}(node, ${JSON.stringify(accessor.read)})`;
+	const read = `${accessor.hydrates === 'many' ? 'hydrateStoredSlots' : 'hydrateStoredSlot'}(node, ${JSON.stringify(accessor.read)})`;
+	return accessor.slot === undefined ? read : spelledReadExpr(accessor.slot, read);
 }
 
 export type TriviaSide = 'leading' | 'trailing' | 'inner';
@@ -189,7 +193,7 @@ export function seatedSetters(setters: readonly SetterEntry[], plan: SeatPlan): 
 }
 
 export function groupSeatReaders(plan: SeatPlan, readOf: (hint: GroupSeatHint) => string): string[] {
-	return plan.groups.map(({ hint }) => `  const ${readGroupName(hint.slot)} = () => ${readOf(hint)};`);
+	return plan.groups.filter(({ hint }) => hint.keys.length > 0).map(({ hint }) => `  const ${readGroupName(hint.slot)} = () => ${readOf(hint)};`);
 }
 
 export function groupSeatMembers(plan: SeatPlan, readOf: (hint: GroupSeatHint) => string, absentOf: (stored: string) => string = (stored) => `${stored} === undefined`): string[] {

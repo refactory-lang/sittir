@@ -68,33 +68,28 @@ export function rebuildKeywordOpenersPythonGenerated() {
 			name: py.build.identifier("v"),
 			value: py.build.subscript({
 				object: py.build.identifier("a"),
-				subscripts: [py.build.parenthesizedExpression(py.build.integerDecimal.plain("1"))],
+				index: [py.build.parenthesizedExpression(py.build.integerDecimal.plain("1"))],
 			}),
 		}))), py.build.simpleStatements(py.build.expressionStatement(py.build.assignmentEq({
 			name: py.build.identifier("u"),
 			value: py.build.dictionary(py.build.pair({
 				key: py.build.string({
-					stringStart: py.build.stringStart("\""),
 					contents: [py.build.stringContent(py.build.stringFragment("k"))],
-					stringEnd: py.build.stringEnd("\""),
 				}),
 				value: py.build.parenthesizedExpression(py.build.integerDecimal.plain("1")),
 			}), py.build.pair({
 				key: py.build.string({
-					stringStart: py.build.stringStart("\""),
 					contents: [py.build.stringContent(py.build.stringFragment("j"))],
-					stringEnd: py.build.stringEnd("\""),
 				}),
 				value: py.build.list(py.build.integerDecimal.plain("2")),
 			})),
 		}))), py.build.simpleStatements(py.build.expressionStatement(py.build.assignmentEq({
 			name: py.build.identifier("s"),
 			value: py.build.string({
-				stringStart: py.build.stringStart("f\""),
+				prefix: "f",
 				contents: [py.build.stringContent(py.build.stringFragment("a")), py.build.interpolation({
 					expression: py.build.parenthesizedExpression(py.build.identifier("x")),
 				})],
-				stringEnd: py.build.stringEnd("\""),
 			}),
 		}))), py.build.simpleStatements(py.build.returnStatement(py.build.tuple(py.build.identifier("a"), py.build.identifier("b"))))),
 	}));

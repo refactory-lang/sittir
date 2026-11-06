@@ -22,7 +22,7 @@ fn gated(items: &TokenStream) -> TokenStream {
 }
 
 fn refused(what: &str) -> TokenStream {
-    quote!(::sittir_core::render::CoordinateError::Record(::sittir_core::arena::ArenaError::Malformed { what: #what, word: 0 }))
+    quote!(::sittir_core::render::RenderError::Record(::sittir_core::arena::ArenaError::Malformed { what: #what, word: 0 }))
 }
 
 /// Each method's body of a `PrepareRecord` impl.
@@ -51,7 +51,7 @@ fn implementation(ty: &Ident, trivia: &TokenStream, generics: &TokenStream, boun
                 #claims
             }
             #[allow(unused_variables, reason = "a choice of units prepares nothing")]
-            fn prepare_record(prep: &mut #prep, at: #at, ctx: #ctx) -> ::core::result::Result<(), ::sittir_core::render::CoordinateError> {
+            fn prepare_record(prep: &mut #prep, at: #at, ctx: #ctx) -> ::core::result::Result<(), ::sittir_core::render::RenderError> {
                 #prepare
             }
             #[allow(unused_variables, reason = "a struct takes a gap whatever its cell")]
@@ -309,8 +309,8 @@ mod tests {
         assert!(has(&out, &format!("::sittir_core::arena::own_seat(prep, at, kind::EXPRESSION_STATEMENT, table).or_else(|| ::sittir_core::arena::seat_through::<{trivia}, ExpressionNode>(prep, at, {claims}, ::sittir_core::arena::CellShape {{ word: 2u32, width: 3u32, run: ::core::option::Option::None, inline: 0u32, forms: 1u8, built: 2u32, key: \"_content\" }}, table, ctx))")));
         assert!(has(&out, "::sittir_core::arena::view_kind_in::<<Option<Box<NodeLayout>> as ::sittir_core::arena::LayoutField>::Trivia, StatementNodeRecord<'_>>(prep, at, kinds)"));
         assert!(has(&out, "impl<'r> StatementPrepare for ::sittir_core::arena::RecordAt<'r, <Option<Box<NodeLayout>> as ::sittir_core::arena::LayoutField>::Trivia>"));
-        assert!(has(&out, "type Content<'a> = ::sittir_core::arena::SlotAt<'r, <Option<Box<NodeLayout>> as ::sittir_core::arena::LayoutField>::Trivia, ExpressionNode> where Self: 'a;"));
-        assert!(has(&out, "StatementPrepareParts { layout: self.layout(), content: self.slot::<ExpressionNode>(::sittir_core::arena::CellShape { word: 2u32, width: 3u32, run: ::core::option::Option::None, inline: 0u32, forms: 1u8, built: 2u32, key: \"_content\" }), }"));
+        assert!(has(&out, "type Content<'a> = ::sittir_core::arena::SlotAt<'r, <Option<Box<NodeLayout>> as ::sittir_core::arena::LayoutField>::Trivia, ExpressionNode, false> where Self: 'a;"));
+        assert!(has(&out, "StatementPrepareParts { layout: self.layout(), content: self.slot::<ExpressionNode, false>(::sittir_core::arena::CellShape { word: 2u32, width: 3u32, run: ::core::option::Option::None, inline: 0u32, forms: 1u8, built: 2u32, key: \"_content\" }), }"));
     }
 
     #[test]
@@ -337,7 +337,7 @@ mod tests {
         let missing = expand(&struct_with(quote::quote!(prepare_fn = prepare_list, seat_through = body))).expect_err("refused").to_string();
         assert!(missing.contains("`ListNode` seats through `body`, which is none of its fields"), "{missing}");
         let out = expand(&struct_with(quote::quote!(prepare_fn = prepare_list))).expect("expands");
-        assert!(has(&out, r#"self.slot::<ItemNode>(::sittir_core::arena::CellShape { word: 2u32, width: 1u32, run: ::core::option::Option::Some(3u32), inline: 0u32, forms: 1u8, built: 2u32, key: "_items" })"#));
+        assert!(has(&out, r#"self.slot::<ItemNode, false>(::sittir_core::arena::CellShape { word: 2u32, width: 1u32, run: ::core::option::Option::Some(3u32), inline: 0u32, forms: 1u8, built: 2u32, key: "_items" })"#));
         assert!(has(&out, "::sittir_core::arena::own_seat(prep, at, kind::LIST, table) }"), "no content to seat through");
     }
 

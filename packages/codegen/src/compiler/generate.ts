@@ -167,6 +167,8 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 									? `${holder}'s slot ${slot}: ${kinds.join(', ')} share the text "${(members ?? [])[0]}", so the text alone does not pick one`
 								: code === 'portable-claim-unplaced'
 									? `${path}: the claim on ${kinds[0]} names no kind the grammar's model has, so nothing reads as ${path} through it`
+								: code === 'portable-kind-armless'
+									? `${path}: ${kinds[0]} reads as a vocabulary path, but no arm builds it${(members ?? []).length === 0 ? '' : ` (nothing fills ${(members ?? []).join(', ')})`}, so every read carries it`
 								: `${path}: nothing picks among ${kinds.join(', ')}${holder === undefined ? ', and no holder slot admits them' : ` in ${holder}'s slot ${slot}`}`
 			})
 		);

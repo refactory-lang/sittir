@@ -5,7 +5,7 @@ export namespace Clause {
 	export interface Comprehension<G extends GrammarContext<G>> extends SubKindOf<V.Clause<G>> {
 		// claimed by p
 		readonly $kind: 'clause.comprehension';
-		readonly contents?: V.Clause.Comprehension.Any<G>[];
+		readonly contents?: (V.Clause.Comprehension.For<G> | V.Clause.Comprehension.If<G>)[];
 	}
 	export namespace Comprehension {
 		export interface For<G extends GrammarContext<G>> extends SubKindOf<V.Clause.Comprehension<G>> {

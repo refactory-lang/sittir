@@ -28,9 +28,10 @@ describe('a tuple expression with one element', () => {
 		expect(is.tupleExpression(parsedValue(text))).toBe(true);
 	});
 
-	it('renders it whatever the delimiter option says', () => {
-		const elements = build.expressions({ delimiter: Delimiter.None }, build.identifier('x'));
-		expect(tupleOf(elements).$render()).toBe('(x,)');
+	it('refuses a delimiter that drops the separator one element always spells', () => {
+		expect(() => build.expressions({ delimiter: Delimiter.None }, build.identifier('x'))).toThrow(
+			'expressions: one element always spells its trailing separator, so its delimiter is never None'
+		);
 	});
 
 	it('renders it when a parsed tuple of two is cut down to one', () => {

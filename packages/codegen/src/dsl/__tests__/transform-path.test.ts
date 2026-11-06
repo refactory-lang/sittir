@@ -296,6 +296,14 @@ describe('applyPath()', () => {
 });
 
 describe('transform() — object form with path keys', () => {
+	it('applies a path inside another entry before that entry, so both keep their pre-edit positions, and keeps key order otherwise', () => {
+		const rule = seq(sym('a'), seq(sym('b'), sym('c')));
+		const r = transform(rule, { '0': field('first'), '1': field('outer'), '1/0': field('inner') }) as any;
+		expect(r.members[0]).toMatchObject({ type: 'FIELD', name: 'first', content: sym('a') });
+		expect(r.members[1]).toMatchObject({ type: 'FIELD', name: 'outer', content: { type: 'SEQ' } });
+		expect(r.members[1].content.members[0]).toMatchObject({ type: 'FIELD', name: 'inner', content: sym('b') });
+	});
+
 	it('applies a single path-addressed patch using _ wildcard', () => {
 		const rule = seq(sym('a'), sym('b'));
 		// The path key '_' marks this as path mode (not flat positional).

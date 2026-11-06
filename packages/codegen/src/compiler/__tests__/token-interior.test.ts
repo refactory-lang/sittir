@@ -3,6 +3,7 @@ import { CHOICE, FIELD, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, STRING, TOKEN }
 import type { Rule } from '../../types/rule.ts';
 import { structureTokenInterior } from '../token-interior.ts';
 import { DiagnosticSink } from '../../types/diagnostics.ts';
+import { createRuleId } from '../rule-catalog.ts';
 
 type LinkRule = Rule<'link'>;
 
@@ -85,6 +86,20 @@ describe('structureTokenInterior — bare patterns', () => {
 	it('reads control escapes outside a group as their characters', () => {
 		const members = (structured(pat('#!(?<content>[^\\n]*)\\n')) as { members: LinkRule[] }).members;
 		expect(members[2]).toMatchObject({ type: STRING, value: '\n' });
+	});
+
+	it('keeps both of two adjacent groups, each member under its own rule id', () => {
+		const rule = structured({ ...pat('(?<prefix>[a-z]*)(?<quote>"|\')'), id: createRuleId('kind', { path: [] }) } as LinkRule);
+		const members = (rule as { members: LinkRule[] }).members;
+		expect(members.map((m) => (m as { name?: string }).name)).toEqual(['prefix', 'quote']);
+		const ids = members.map((m) => (m as { id?: string }).id);
+		expect(new Set(ids).size).toBe(2);
+		expect(ids).not.toContain((rule as { id?: string }).id);
+	});
+
+	it('structures a token whose whole content is a named-group pattern', () => {
+		const members = membersOf(structured(token(pat('(?<content>[a-z]*)(?<quote>"|\')'))));
+		expect(members.map((m) => (m as { name?: string }).name)).toEqual(['content', 'quote']);
 	});
 
 	it('keeps a pattern without a named group whole', () => {

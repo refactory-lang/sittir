@@ -99,7 +99,7 @@ export namespace Element {
 		export interface Parenthesized<G extends GrammarContext<G>> extends SubKindOf<V.Element.Spread<G>> {
 			// claimed by p
 			readonly $kind: 'element.spread.parenthesized';
-			readonly content: V.Element.Spread.Any<G>;
+			readonly content: V.Element.Spread<G> | V.Element.Spread.Parenthesized<G>;
 		}
 	}
 }

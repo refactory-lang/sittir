@@ -390,10 +390,6 @@ Binds a parsed tree's native record operations and retains chunk copies only whe
 
 Delegates a requested depth to native record hydration and returns only the optional address. It refuses an addon lacking that capability instead of substituting cached lookup or exporting data.
 
-### `packages/common/src/engine.ts::renderCandidate`
-
-Delegates a parsed row and its optional record address to native candidate rendering. Recordless leaves remain native coordinate renders. No node objects or chunk words are fetched.
-
 ### `packages/common/src/engine.ts::createNativeEngine`
 
 Creates a grammar's native engine with object or arena reads. Its diagnostic parse retains a tree immediately and reads the root on demand; any first root read stamps parse errors and is cached by depth. Public parsing still requests and wraps that root. Tree tokens retain native storage independently of engine disposal, and render handles retain their node's trees.

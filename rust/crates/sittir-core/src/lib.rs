@@ -13,6 +13,7 @@ pub mod baseline;
 pub mod boundary;
 pub mod classify;
 pub mod codec;
+pub mod delimiters;
 pub mod engine;
 pub mod error_read;
 pub mod heap;

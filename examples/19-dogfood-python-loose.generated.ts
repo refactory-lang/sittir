@@ -5,9 +5,9 @@ const py = await python.createEngine();
 
 export function rebuildPython4spaceLoose() {
 	return py.build.module(py.build.simpleStatements(py.build.expressionStatement(py.build.string({
-		stringStart: "\"\"\"",
 		contents: [py.build.stringContent("Simple user management module.")],
-		stringEnd: "\"\"\"",
+	}, {
+		quote: "\"\"\"",
 	}))), py.build.simpleStatements(py.build.importFromStatement({
 		moduleName: py.build.dottedName({
 			name: "typing",
@@ -44,14 +44,13 @@ export function rebuildPython4spaceLoose() {
 			parameters: "self",
 			returnType: "str",
 			body: py.build.suiteBlock(py.build.simpleStatements(py.build.returnStatement(py.build.string({
-				stringStart: "f\"",
+				prefix: "f",
 				contents: [py.build.stringContent("Hello, "), py.build.interpolation({
 					expression: py.build.attribute({
 						object: "self",
 						property: "name",
 					}),
 				}), py.build.stringContent("!")],
-				stringEnd: "\"",
 			})))),
 		})),
 	}), py.build.functionDefinition({

@@ -88,6 +88,21 @@ export const TOKEN_INTERIORS = {
 			{ name: 'radix_prefix', propertyName: 'radixPrefix' },
 			{ name: 'content', propertyName: 'content' }
 		]
+	},
+	string_end: {
+		regex: '^(?<content>(?:(?:\\\\[\\s\\S])*))(?<quote>"""|\'\'\'|"|\'|`)$',
+		slots: [
+			{ name: 'content', propertyName: 'content' },
+			{ name: 'quote', propertyName: 'quote' }
+		]
+	},
+	string_start: {
+		regex:
+			'^(?<prefix>rb|rB|Rb|RB|br|bR|Br|BR|rf|rF|Rf|RF|fr|fR|Fr|FR|rt|rT|Rt|RT|tr|tR|Tr|TR|ur|uR|Ur|UR|r|R|b|B|f|F|t|T|u|U)?(?<quote>"""|\'\'\'|"|\'|`)$',
+		slots: [
+			{ name: 'prefix', propertyName: 'prefix' },
+			{ name: 'quote', propertyName: 'quote' }
+		]
 	}
 } as const satisfies { readonly [kind: string]: TokenInterior };
 
@@ -100,7 +115,7 @@ export const INNER_SITES: ReadonlySet<string> = new Set<string>([
 	'dictionary',
 	'list',
 	'list_pattern',
-	'match_block_block',
+	'match_block',
 	'module',
 	'parameters',
 	'tuple',

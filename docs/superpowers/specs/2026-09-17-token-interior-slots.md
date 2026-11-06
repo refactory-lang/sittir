@@ -220,27 +220,32 @@ about them changes.
 
 ### The model type follows the interior
 
-A token wrapper is not a class. Today `classifyNode` reaches a
-content-bearing token through `classifyTerminalFallback`, where any all-text
-shape becomes `pattern`; that is how typescript `comment` and `identifier`
-and rust `char_literal` are `pattern` leaves with no pattern on the node,
-and why their factories carry no regex. Under this design the classifier
-reads the interior as if the wrapper were absent, and the wrapper stamps
-one attribute on whatever class results: the kind is lexed and read as one
-text, and every seam inside it is immediate.
+The classifier reads a token's interior as if the wrapper were absent. A
+single pattern, string or choice of strings keeps the leaf class it would
+have unwrapped. A sequence of strings and patterns is a lexed pattern:
+`AssembledLexedPattern`, model type `lexedPattern`, a compound class of its
+own whose string members are immediate faces and whose pattern members are
+its slots. Every seam inside it is immediate, and it is read as one text.
 
 | interior | model type | as it would be unwrapped |
 | --- | --- | --- |
 | one pattern | `pattern` | `identifier`, `number` |
 | one string | `keyword` or `punctuation` by word shape | `_automatic_semicolon` |
 | a choice of strings | `enum` | rust `mutable_specifier` |
-| strings and patterns in a sequence | the compound class the sequence yields, its string members immediate faces, its pattern members slots | `char_literal`, `private_property_identifier`, python `comment` |
-| a choice of such sequences | the compound with forms, one per arm | typescript `comment` |
+| strings and patterns in a sequence | `lexedPattern` | `char_literal`, `private_property_identifier`, python `comment` |
+| a choice of such sequences | one `lexedPattern` per arm, hoisted into forms | typescript `comment` |
 
-Consumers follow the class, not the wrapper: the factory, types, guard,
-render body and lazy projection of a token-wrapped compound are those of a
-compound whose leaves are immediate. A bare pattern with named groups is the
-fourth row with the groups as its pattern members.
+Consumers follow the class: what is particular to a lexed token is decided by
+`instanceof AssembledLexedPattern`, and its factory, types, guard, render body
+and lazy projection are those of a compound whose leaves are immediate. A bare
+pattern with named groups is the fourth row, with the groups as its pattern
+members.
+
+A lexed pattern is one token, so its slots are text facets of that token. The
+leaf rule already covers them, since a slot that holds text alone routes
+nothing, so a lexed pattern needs no exception to it. A lexed identifier's
+portable text is its content (`x`, not `$x`): its affix comes from its
+vocabulary path or from the flag that reads it.
 
 ### The read side does not drill
 
@@ -333,3 +338,116 @@ for the reader.
 
 - An interior enum is text-stored and typed as the union of its spellings; an interior flag is a boolean. Neither carries a kind id, because tree-sitter issues no symbol for a literal inside a token. Rust's `integer_literal.suffix` previously borrowed the ids of `primitive_type`'s tokens; it no longer does.
 - A token whose body holds an alternation of forms is not one lexed compound: the DSL layer hoists the outermost alternation into one token kind per arm (see the token-form hoist design), and each arm is then a lexed compound of its own.
+
+### String delimiters are derived, not read
+
+A string's delimiters are mostly spelling. The one part that carries meaning is a Python string's prefix. Python's
+`string_start` and `string_end` and Rust's `raw_string_literal_start` and `_end` are scanner tokens, so their
+`renderAs` bodies are sittir-only. Each body is a structured token whose fields name the facets:
+
+| token | facets |
+| --- | --- |
+| python `string_start` | `prefix` (optional enum), `quote` (enum) |
+| python `string_end` | `content` (the pattern `(?:\\[\s\S])*`), `quote` (enum) |
+| rust `raw_string_literal_start` | `prefix` (enum `r`, `br`, `cr`), `hashes` (the pattern `#*`), the literal `"` |
+| rust `raw_string_literal_end` | the literal `"`, `hashes` (the pattern `#*`) |
+
+**An enum facet groups its spellings under canonical members.** The grammar authors the canonical members and the
+language's closure rule as data, never the spellings. `spellings()` expands them to a `CHOICE` of `STRING` over every
+spelling, which is what tree-sitter would see. The grouping travels as authored metadata through the wire context,
+as `refine()`'s forms do, and link stamps member → spellings on the enum. The guard, the read projection, the
+builder type and the preference arms all derive from that stamp.
+
+- Python's prefix:
+  - canonical members `r`, `b`, `f`, `t`, `u`, `rb`, `rf`, `rt`, any case and either order of a pair (`rb` also
+    reads `br`, `Rb`, `BR`);
+  - `ur`, case variants only, read-only.
+- Python's quote: `"""`, `'''`, `"`, `'`, and a read-only backtick.
+- Rust's raw prefix: `r`, `br`, `cr`, whose members are their spellings.
+
+A read-only member reads, because the parser accepts it, but the reference (CPython 3) rejects it. It is in neither
+the builder type nor the preference arms.
+
+`spellings()` also authors the two line facts the validator needs: `singleLine` on each quote member that cannot
+enclose a line break (`"` and `'`), and `escape` on the choice whose content pairs a character with the one after it
+(python's `\`). Link stamps both on the enum beside member → spellings.
+
+**The end token can hold content.** In a raw string, the scanner steps over a backslash and the character after it
+without counting either as content (tree-sitter-python 0.25.0 `src/scanner.c`, the `is_raw(delimiter)` branch of the
+`STRING_CONTENT` loop). A raw string whose content is only such pairs reaches its quote with nothing consumed, so
+`STRING_END` takes the pairs: `r"\\"`, `r"\""`, `r'\''`, `rb"\\"`, `r"""\\"""` and `r"\\\\"` all parse with an
+empty `string_content` and the pairs in `string_end`. Those characters are content, as CPython's `Constant` value
+says. The read appends the end's `content` facet to the string's content, and the closing quote's length is the
+start's `quote` member. A string has one content fact on the portable surface, wherever the scanner put it.
+
+**Meaning is read from the claims and the prefix enum; delimiters are not read.**
+
+- The `literal.string.*` claims stay `#match?` tests on `string_start`'s text, which tree-sitter's own `Query`
+  compiles. The bindings inventory compiles every claim that way, so a facet cannot appear as query structure.
+- A guard test keeps the claims and the enum from drifting:
+  - every spelling in a member's closure, read-only ones included, selects the same claims as the member's
+    canonical spelling;
+  - every spelling a claim can match is in the enum.
+- A spelling the parser accepts outside the enum (`bf`, `rr`, `ub`) reads opaque: the start token's text fails its
+  interior, so the token reads whole and verbatim, its facets read as absent, and its holder is carried whole with a
+  stated (kind, reason) pair. The low-level read type is the union of the faceted and the opaque shape; the builder
+  type is the faceted one only. An opaque token renders its source bytes unchanged, also when its holder is edited.
+  The claims still test its text, so the first claim that matches it holds: `bf` reads as
+  `literal.string.interpolated`, `rr` as `literal.string.raw`, `ub` as `literal.string.bytes`.
+- A t-string is `literal.string.interpolated.deferred`, with crossings `.raw`, `.multiline` and `.raw.multiline`.
+  Its value is a `Template`, not a `str`; CPython's AST has `TemplateStr` beside `JoinedStr`.
+- A u-string is `literal.string.unicode`, the `unicode-strings` feature, with no crossings.
+
+**The low-level builder takes meaning, never a delimiter.**
+
+- `py.build.string({ prefix: 'rb', content })` and `rs.build.rawStringLiteral({ prefix: 'br', content })`.
+- `prefix` is typed as the enum's canonical members. A non-canonical spelling (`'Rb'`, `'br'` for python) does not
+  type-check.
+- The delimiter tokens have no builders on the public surface. Each one seats on its composite as an always-built
+  flatten seat keyed by its input facets: the composite's config takes `prefix` directly and builds the token from it.
+  The key is optional where the facet is.
+- The quote is the composite's registered preference: the builder's trailing options take it (`{ quote: "'" }`), and
+  Prepare keeps it while the content fits it. Rust's hash run has no preference, so its builder takes no options.
+- The factory-source emitter writes the canonical member from a read, so `BR"x"` rebuilds as `prefix: 'rb'`, and it
+  writes the quote preference only where the read's quote differs from the default. The built lanes judge ruled
+  spelling (prefix case and order, quote) by the reference AST, as a named normalized class rather than a mismatch.
+
+**A delimiter facet is derived, a compile-time fact stamped on the model**, when:
+- it has a registered preference (the quote, through `options:`, as `radix_prefix` does);
+- it is a repeat run its closer mirrors (rust `hashes`, the shortest valid run);
+- or it is the closer's mirror of either.
+
+A delimiter facet that is neither input nor derivable is a compile-time diagnostic.
+
+**Native Prepare fills every derived facet, and JS computes none.** One generic validator in `sittir-core`, driven
+by the stamped facts, checks every delimiter against the content, whether the delimiter was filled or carried from a
+read.
+
+- The content is the content children rendered.
+- A candidate closer is invalid when it occurs in the content outside an escape pair. The escape is python's `\`;
+  rust raw strings have none.
+- A single quote is also invalid when the content holds a line break.
+- Python raw content ending in an odd run of backslashes fails by the same pair rule: the last backslash would pair
+  with the closer.
+- A quote inside an f-string interpolation counts as occurring.
+- Candidates are the preferred arm first, then the other arms (never a read-only member), or the shortest run.
+- A carried delimiter that the content invalidates falls back to the derivation:
+  - a carried `'` whose content gains `'` becomes `"`;
+  - a carried `r#"` whose content gains `"#` becomes `r##"`.
+- When no candidate fits, the build refuses, naming the kind and why no delimiter fits. Prepare returns the refusal
+  as `RenderError::Delimiter`, so a render fails with `<kind>: no delimiter fits its content: <why>`; it never falls
+  back to a delimiter the content invalidates.
+
+The composites with fixed delimiters (rust `block_comment`, typescript `comment_block`, the regex kinds) are the
+one-candidate case and join this validator later; until then the parse-back check covers them.
+
+**Gates.**
+- Round trips, in both directions, for each raw string whose content is only escape pairs (the six above, plus
+  `r"a\\"`): the read gives content X; building from X renders the pairs in content and reparses to the same tree.
+- Each fallback case above, and each refusal.
+- The claims-and-enum guard.
+- A type test rejecting a non-canonical prefix.
+- `grammar.json` and `parser.c` byte-identical, apart from python `relative_import`'s field, named `dots` so that
+  `prefix` names one class of value.
+- `vocabulary-features --check`.
+- After these fixes, a corpus guard in the portable round trip.

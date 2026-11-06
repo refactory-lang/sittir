@@ -641,6 +641,20 @@ Enumerate codegen kinds with no parser symbol across grammars
 pnpm exec tsx packages/cli/src/cli.ts tool phantom-kinds [grammars] [options]
 ```
 
+### `tool portable-admission`
+
+List the vocabulary members and own slots whose type admits a kind no read in the grammar's typed portable module gives
+
+**Options**
+
+- `--grammar <grammar...>` — The grammars to read (default: every grammar with bindings)
+
+**Example**
+
+```sh
+pnpm exec tsx packages/cli/src/cli.ts tool portable-admission [options]
+```
+
 ### `tool portable-conformance`
 
 Write each grammar's vocabulary-typed portable module, type-check it and count its errors by cause

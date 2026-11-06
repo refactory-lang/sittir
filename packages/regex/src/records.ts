@@ -81,7 +81,12 @@ export const records = {
 	UnicodePropertyValueNode: { words: 2, builtWords: 2 },
 	ControlEscapeNode: { words: 2, builtWords: 2 },
 	ControlLetterEscapeNode: { words: 2, builtWords: 2 },
-	IdentityEscapeNode: { words: 4, builtWords: 3, content: { word: 2, width: 2, forms: 4, built: 2 } },
+	IdentityEscapeNode: {
+		words: 6,
+		builtWords: 4,
+		content: { word: 2, width: 2, forms: 4, built: 2 },
+		verbatim: { word: 4, width: 2, forms: 4, built: 3 }
+	},
 	GroupNameNode: { words: 2, builtWords: 2 },
 	DecimalDigitsNode: { words: 2, builtWords: 2 },
 	TermGroupNode: {

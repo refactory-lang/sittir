@@ -1,6 +1,7 @@
 import type { PortableCondition, PortableStep, QueryPlan, QuerySubject, SlotSubject } from '@sittir/types';
 import { WILDCARD, type CaptureSite, type PredicateFact, type SlotModel } from '../../../bindings/facts.ts';
-import { aliasContentSlot, comparesOwnText, heldSteps, slotAnchor, type ChildTest, type HeldStep, type ReadEntry } from '../../../bindings/routes.ts';
+import { Delimiter } from '@sittir/common/delimiter';
+import { aliasContentSlot, comparesOwnText, heldSteps, listItems, slotAnchor, type ChildTest, type HeldStep, type ReadEntry } from '../../../bindings/routes.ts';
 import type { NodeMap } from '../../../compiler/types.ts';
 import { nodeSlotNumbers } from '../../render-module.ts';
 import { keywordPresenceValue } from '../../shared.ts';
@@ -117,17 +118,33 @@ export function keywordTestOf(owner: string, slot: string, text: string, subject
 	return { op: 'present', ...subject };
 }
 
+function slotConditionOf(entry: ReadEntry, model: SlotModel, subjectOf: SlotSubjectOf, slot: string, planOf: (holder: string, slot: string) => QueryPlan | string): PortableCondition | string {
+	const held = heldSteps(model, entry.kind, { field: slot, kind: null, after: null, anchor: null });
+	const last = held?.at(-1);
+	const via = held === undefined ? undefined : heldSubjects(held.slice(0, -1), subjectOf);
+	if (last === undefined || via === undefined) return `no slot of ${entry.kind} holds the tested ${slot}`;
+	const plan = planOf(last.holder, last.slot.name);
+	return typeof plan === 'string' ? plan : { up: 0, via, plan };
+}
+
+function absenceTestOf(owner: string, slot: string, subjectOf: SlotSubjectOf): QueryPlan | string {
+	const subject = subjectOf(owner, slot);
+	return subject === undefined ? `no number for ${owner}'s slot ${slot}` : { op: 'not', of: { op: 'present', ...subject } };
+}
+
+function separatedTestOf(entry: ReadEntry, model: SlotModel, subjectOf: SlotSubjectOf): PortableCondition | string {
+	const items = listItems(model.get(entry.kind));
+	const subject = items === undefined ? undefined : subjectOf(entry.kind, items.name);
+	if (subject === undefined) return `${entry.kind}'s claim tests its separator, and no numbered slot holds its items`;
+	return { up: 0, via: [], plan: { op: 'or', of: [{ op: 'count', min: 2, ...subject }, { op: 'delimiter', delimiter: Delimiter.Trailing }] } };
+}
+
 export function readTestOf(entry: ReadEntry, model: SlotModel, subjectOf: SlotSubjectOf, presenceOf: PresenceKeywordOf, typeOf: TypeOf): PortableCondition[] {
-	const pins = entry.pins.map((pin): PortableCondition | string => {
-		const held = heldSteps(model, entry.kind, { field: pin.slot, kind: null, after: null, anchor: null });
-		const last = held?.at(-1);
-		const via = held === undefined ? undefined : heldSubjects(held.slice(0, -1), subjectOf);
-		if (last === undefined || via === undefined) return `no slot of ${entry.kind} holds the pinned ${pin.slot}`;
-		const plan = keywordTestOf(last.holder, last.slot.name, pin.text, subjectOf, presenceOf);
-		return typeof plan === 'string' ? plan : { up: 0, via, plan };
-	});
+	const pins = entry.pins.map((pin) => slotConditionOf(entry, model, subjectOf, pin.slot, (holder, slot) => keywordTestOf(holder, slot, pin.text, subjectOf, presenceOf)));
+	const absent = entry.absent.map((field) => slotConditionOf(entry, model, subjectOf, field, (holder, slot) => absenceTestOf(holder, slot, subjectOf)));
 	const predicates = entry.decided === true ? [] : [...entry.claim.predicates.filter((p) => entry.spelled !== true || !comparesOwnText(p)), ...entry.children.map(childPredicate)];
-	const conditions = [...pins, ...predicates.map((p) => (typeof p === 'string' ? p : conditionOf(entry, p, model, subjectOf, typeOf)))];
+	const separated = entry.separated === true ? [separatedTestOf(entry, model, subjectOf)] : [];
+	const conditions = [...pins, ...absent, ...separated, ...predicates.map((p) => (typeof p === 'string' ? p : conditionOf(entry, p, model, subjectOf, typeOf)))];
 	const refused = conditions.filter((c) => typeof c === 'string');
 	if (refused.length > 0) throw new Error(`portable: cannot test ${entry.kind} as ${entry.vocab}: ${refused.join('; ')}`);
 	const unique = new Map((conditions as PortableCondition[]).map((condition) => [JSON.stringify(condition), condition]));

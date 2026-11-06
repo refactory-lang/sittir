@@ -11,16 +11,16 @@ function importPrefixOf(source: string): Spelled {
 		statements(): readonly { elements(): { items(): readonly unknown[] } }[];
 	};
 	const statement = root.statements()[0]!.elements().items()[0] as {
-		moduleName(): { prefix(): Spelled };
+		moduleName(): { dots(): Spelled };
 	};
-	return statement.moduleName().prefix();
+	return statement.moduleName().dots();
 }
 
 describe('a named node spelled only by tokens', () => {
 	it('takes its text from the tokens that tile it', () => {
-		const prefix = importPrefixOf('from .. import x\n');
-		expect(prefix.$text()).toBe('..');
-		expect(prefix.$other).toBeUndefined();
+		const dots = importPrefixOf('from .. import x\n');
+		expect(dots.$text()).toBe('..');
+		expect(dots.$other).toBeUndefined();
 	});
 
 	it('renders back to its source', () => {

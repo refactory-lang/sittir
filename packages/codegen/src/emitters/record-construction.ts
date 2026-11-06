@@ -3,7 +3,7 @@ import type { NodeMap } from '../compiler/types.ts';
 import { builtWithLines, receivedMembers, triviaSides, type SetterEntry, type TriviaPositions, type TriviaSide } from './node-members.ts';
 import { rustFieldIdent } from './node-common.ts';
 import { firstBuiltCell, type RecordLayout, type RecordPlace } from './record-layout.ts';
-import { nodeRecordLayout } from './render-module.ts';
+import { VERBATIM_FIELD, nodeRecordLayout } from './render-module.ts';
 
 export const RECORD_CONSTRUCTION_IMPORTS = [
 	'builtArenaOf',
@@ -45,6 +45,10 @@ export function recordPlacesOf(
 		places.set(slot.storageKey, place);
 	}
 	return places;
+}
+
+export function recordVerbatimPlaceOf(node: AuthoredCompound | AssembledList, nodeMap: NodeMap): RecordPlace | undefined {
+	return nodeRecordLayout(node, nodeMap)?.places.find((place) => place.field === VERBATIM_FIELD);
 }
 
 export interface RecordConstruction {

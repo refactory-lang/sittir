@@ -1,5 +1,5 @@
 import type { GrammarContext } from '../../context.ts';
-import type { SubKindOf } from '../../utils.ts';
+import type { Flag, SubKindOf } from '../../utils.ts';
 import type * as V from '../../index.ts';
 export namespace Pattern {
 	export interface Assignment<G extends GrammarContext<G>> extends SubKindOf<V.Pattern<G>> {
@@ -52,6 +52,7 @@ export namespace Pattern {
 		export interface Bare<G extends GrammarContext<G>> extends SubKindOf<V.Pattern.Tuple<G>> {
 			// claimed by p
 			readonly $kind: 'pattern.tuple.bare';
+			readonly trailingComma?: Flag;
 		}
 	}
 	// claimed by r

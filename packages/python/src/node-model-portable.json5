@@ -166,7 +166,7 @@
                 "op": "match",
                 "pattern": "^[A-Z][A-Z_0-9]*$",
                 "slots": {
-                  "289": 0
+                  "293": 0
                 }
               }
             },
@@ -179,7 +179,7 @@
                   1
                 ],
                 "slots": {
-                  "289": 0
+                  "293": 0
                 }
               }
             }
@@ -234,7 +234,7 @@
                 "op": "match",
                 "pattern": "^[A-Z][A-Z_0-9]*$",
                 "slots": {
-                  "290": 0
+                  "294": 0
                 }
               }
             },
@@ -247,7 +247,7 @@
                   1
                 ],
                 "slots": {
-                  "290": 0
+                  "294": 0
                 }
               }
             }
@@ -302,7 +302,7 @@
                 "op": "match",
                 "pattern": "^[A-Z][A-Z_0-9]*$",
                 "slots": {
-                  "291": 0
+                  "295": 0
                 }
               }
             },
@@ -315,7 +315,7 @@
                   1
                 ],
                 "slots": {
-                  "291": 0
+                  "295": 0
                 }
               }
             }
@@ -1538,9 +1538,32 @@
           "test": []
         }
       ],
-      "members": [],
+      "members": [
+        {
+          "name": "elements",
+          "route": "slot",
+          "slot": "elements",
+          "path": [
+            {
+              "owner": "case_pattern_list",
+              "slot": "elements"
+            }
+          ]
+        },
+        {
+          "name": "trailingComma",
+          "route": "delimiter",
+          "delimiter": 2,
+          "items": {
+            "owner": "case_pattern_list",
+            "slot": "elements"
+          },
+          "path": null,
+          "flag": true
+        }
+      ],
       "container": {
-        "slot": "item",
+        "slot": "elements",
         "kinds": [
           "case_pattern"
         ],
@@ -1582,29 +1605,6 @@
       }
     },
     "chevron": {
-      "vocab": "clause.print.chevron",
-      "read": [
-        {
-          "vocab": "clause.print.chevron",
-          "toplevel": true,
-          "within": [],
-          "pins": [],
-          "test": []
-        }
-      ],
-      "members": [
-        {
-          "name": "expression",
-          "route": "slot",
-          "slot": "expression",
-          "path": [
-            {
-              "owner": "chevron",
-              "slot": "expression"
-            }
-          ]
-        }
-      ],
       "container": {
         "slot": "expression",
         "kinds": [
@@ -1638,17 +1638,6 @@
           ]
         },
         {
-          "name": "typeParameters",
-          "route": "slot",
-          "slot": "type_parameters",
-          "path": [
-            {
-              "owner": "class_definition",
-              "slot": "type_parameters"
-            }
-          ]
-        },
-        {
           "name": "bases",
           "route": "slot",
           "slot": "bases",
@@ -1667,6 +1656,31 @@
             {
               "owner": "class_definition",
               "slot": "body"
+            }
+          ]
+        },
+        {
+          "name": "typeParameters",
+          "route": "nested",
+          "via": [
+            {
+              "field": "type_parameters",
+              "kind": "type_params",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "type_params",
+          "slot": "items",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "class_definition",
+              "slot": "type_parameters"
+            },
+            {
+              "owner": "type_params",
+              "slot": "items"
             }
           ]
         },
@@ -1836,7 +1850,7 @@
                 "op": "eq",
                 "text": "==",
                 "slots": {
-                  "300": 0
+                  "302": 0
                 }
               }
             }
@@ -1862,7 +1876,7 @@
                 "op": "eq",
                 "text": "!=",
                 "slots": {
-                  "300": 0
+                  "302": 0
                 }
               }
             }
@@ -1888,7 +1902,7 @@
                 "op": "eq",
                 "text": "<>",
                 "slots": {
-                  "300": 0
+                  "302": 0
                 }
               }
             }
@@ -1914,7 +1928,7 @@
                 "op": "eq",
                 "text": "<",
                 "slots": {
-                  "300": 0
+                  "302": 0
                 }
               }
             }
@@ -1940,7 +1954,7 @@
                 "op": "eq",
                 "text": ">",
                 "slots": {
-                  "300": 0
+                  "302": 0
                 }
               }
             }
@@ -1966,7 +1980,7 @@
                 "op": "eq",
                 "text": "<=",
                 "slots": {
-                  "300": 0
+                  "302": 0
                 }
               }
             }
@@ -1992,7 +2006,7 @@
                 "op": "eq",
                 "text": ">=",
                 "slots": {
-                  "300": 0
+                  "302": 0
                 }
               }
             }
@@ -2018,7 +2032,7 @@
                 "op": "eq",
                 "text": "in",
                 "slots": {
-                  "300": 0
+                  "302": 0
                 }
               }
             }
@@ -2044,7 +2058,7 @@
                 "op": "eq",
                 "text": "not in",
                 "slots": {
-                  "300": 0
+                  "302": 0
                 }
               }
             }
@@ -2070,7 +2084,7 @@
                 "op": "eq",
                 "text": "is",
                 "slots": {
-                  "300": 0
+                  "302": 0
                 }
               }
             }
@@ -2096,7 +2110,7 @@
                 "op": "eq",
                 "text": "is not",
                 "slots": {
-                  "300": 0
+                  "302": 0
                 }
               }
             }
@@ -2123,7 +2137,7 @@
                 "of": {
                   "op": "is",
                   "types": [
-                    300
+                    302
                   ],
                   "self": true
                 }
@@ -2220,7 +2234,7 @@
                 "op": "eq",
                 "text": "==",
                 "slots": {
-                  "300": 0
+                  "302": 0
                 }
               }
             }
@@ -2245,7 +2259,7 @@
                 "op": "eq",
                 "text": "!=",
                 "slots": {
-                  "300": 0
+                  "302": 0
                 }
               }
             }
@@ -2270,7 +2284,7 @@
                 "op": "eq",
                 "text": "<>",
                 "slots": {
-                  "300": 0
+                  "302": 0
                 }
               }
             }
@@ -2295,7 +2309,7 @@
                 "op": "eq",
                 "text": "<",
                 "slots": {
-                  "300": 0
+                  "302": 0
                 }
               }
             }
@@ -2320,7 +2334,7 @@
                 "op": "eq",
                 "text": ">",
                 "slots": {
-                  "300": 0
+                  "302": 0
                 }
               }
             }
@@ -2345,7 +2359,7 @@
                 "op": "eq",
                 "text": "<=",
                 "slots": {
-                  "300": 0
+                  "302": 0
                 }
               }
             }
@@ -2370,7 +2384,7 @@
                 "op": "eq",
                 "text": ">=",
                 "slots": {
-                  "300": 0
+                  "302": 0
                 }
               }
             }
@@ -2395,7 +2409,7 @@
                 "op": "eq",
                 "text": "in",
                 "slots": {
-                  "300": 0
+                  "302": 0
                 }
               }
             }
@@ -2420,7 +2434,7 @@
                 "op": "eq",
                 "text": "not in",
                 "slots": {
-                  "300": 0
+                  "302": 0
                 }
               }
             }
@@ -2445,7 +2459,7 @@
                 "op": "eq",
                 "text": "is",
                 "slots": {
-                  "300": 0
+                  "302": 0
                 }
               }
             }
@@ -2470,7 +2484,7 @@
                 "op": "eq",
                 "text": "is not",
                 "slots": {
-                  "300": 0
+                  "302": 0
                 }
               }
             }
@@ -2850,7 +2864,8 @@
                 "decorator"
               ],
               "terminals": []
-            }
+            },
+            "list": true
           }
         ]
       }
@@ -2878,7 +2893,8 @@
                 "decorator"
               ],
               "terminals": []
-            }
+            },
+            "list": true
           }
         ]
       }
@@ -3694,9 +3710,32 @@
           "test": []
         }
       ],
-      "members": [],
+      "members": [
+        {
+          "name": "elements",
+          "route": "slot",
+          "slot": "elements",
+          "path": [
+            {
+              "owner": "expression_list",
+              "slot": "elements"
+            }
+          ]
+        },
+        {
+          "name": "trailingComma",
+          "route": "delimiter",
+          "delimiter": 2,
+          "items": {
+            "owner": "expression_list",
+            "slot": "elements"
+          },
+          "path": null,
+          "flag": true
+        }
+      ],
       "container": {
-        "slot": "item",
+        "slot": "elements",
         "kinds": [
           "expression"
         ],
@@ -3742,8 +3781,63 @@
       }
     },
     "expression_statement_tuple": {
+      "vocab": "expression.collection.tuple",
+      "read": [
+        {
+          "vocab": "expression.collection.tuple.bare",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "or",
+                "of": [
+                  {
+                    "op": "count",
+                    "min": 2,
+                    "slots": {
+                      "296": 0
+                    }
+                  },
+                  {
+                    "op": "delimiter",
+                    "delimiter": 2
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ],
+      "members": [
+        {
+          "name": "elements",
+          "route": "slot",
+          "slot": "elements",
+          "path": [
+            {
+              "owner": "expression_statement_tuple",
+              "slot": "elements"
+            }
+          ]
+        },
+        {
+          "name": "trailingComma",
+          "route": "delimiter",
+          "delimiter": 2,
+          "items": {
+            "owner": "expression_statement_tuple",
+            "slot": "elements"
+          },
+          "path": null,
+          "flag": true
+        }
+      ],
       "container": {
-        "slot": "item",
+        "slot": "elements",
         "kinds": [
           "expression"
         ],
@@ -4156,6 +4250,65 @@
         }
       ]
     },
+    "format_expression": {
+      "vocab": "expression.interpolation",
+      "read": [
+        {
+          "vocab": "expression.interpolation",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": [
+        {
+          "name": "expression",
+          "route": "slot",
+          "slot": "expression",
+          "path": [
+            {
+              "owner": "format_expression",
+              "slot": "expression"
+            }
+          ]
+        },
+        {
+          "name": "debug",
+          "route": "slot",
+          "slot": "debug",
+          "path": [
+            {
+              "owner": "format_expression",
+              "slot": "debug"
+            }
+          ],
+          "flag": true
+        },
+        {
+          "name": "typeConversion",
+          "route": "slot",
+          "slot": "type_conversion",
+          "path": [
+            {
+              "owner": "format_expression",
+              "slot": "type_conversion"
+            }
+          ]
+        },
+        {
+          "name": "formatSpecifier",
+          "route": "slot",
+          "slot": "format_specifier",
+          "path": [
+            {
+              "owner": "format_expression",
+              "slot": "format_specifier"
+            }
+          ]
+        }
+      ]
+    },
     "format_specifier": {
       "vocab": "expression.interpolation.format",
       "read": [
@@ -4226,17 +4379,6 @@
           ]
         },
         {
-          "name": "typeParameters",
-          "route": "slot",
-          "slot": "type_parameters",
-          "path": [
-            {
-              "owner": "function_definition",
-              "slot": "type_parameters"
-            }
-          ]
-        },
-        {
           "name": "parameters",
           "route": "slot",
           "slot": "parameters",
@@ -4266,6 +4408,31 @@
             {
               "owner": "function_definition",
               "slot": "body"
+            }
+          ]
+        },
+        {
+          "name": "typeParameters",
+          "route": "nested",
+          "via": [
+            {
+              "field": "type_parameters",
+              "kind": "type_params",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "type_params",
+          "slot": "items",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "function_definition",
+              "slot": "type_parameters"
+            },
+            {
+              "owner": "type_params",
+              "slot": "items"
             }
           ]
         },
@@ -4432,13 +4599,27 @@
           ]
         },
         {
-          "name": "typeParameter",
-          "route": "slot",
-          "slot": "type_parameter",
+          "name": "typeArguments",
+          "route": "nested",
+          "via": [
+            {
+              "field": null,
+              "kind": "type_parameter",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "type_parameter",
+          "slot": "types",
+          "multiple": false,
           "path": [
             {
               "owner": "generic_type",
               "slot": "type_parameter"
+            },
+            {
+              "owner": "type_parameter",
+              "slot": "types"
             }
           ]
         }
@@ -4610,7 +4791,7 @@
       "container": {
         "slot": "name",
         "kinds": [
-          "qualified_identifier",
+          "dotted_name",
           "aliased_import"
         ],
         "terminals": [],
@@ -5214,7 +5395,7 @@
         }
       ]
     },
-    "match_block_block": {
+    "match_block": {
       "container": {
         "slot": "alternative",
         "kinds": [
@@ -5222,16 +5403,6 @@
         ],
         "terminals": [],
         "list": true
-      }
-    },
-    "match_block_empty": {
-      "container": {
-        "slot": "newline",
-        "kinds": [
-          "_newline"
-        ],
-        "terminals": [],
-        "list": false
       }
     },
     "match_statement": {
@@ -5247,6 +5418,17 @@
       ],
       "members": [
         {
+          "name": "subject",
+          "route": "slot",
+          "slot": "subject",
+          "path": [
+            {
+              "owner": "match_statement",
+              "slot": "subject"
+            }
+          ]
+        },
+        {
           "name": "body",
           "route": "slot",
           "slot": "body",
@@ -5254,31 +5436,6 @@
             {
               "owner": "match_statement",
               "slot": "body"
-            }
-          ]
-        },
-        {
-          "name": "subject",
-          "route": "nested",
-          "via": [
-            {
-              "field": null,
-              "kind": "subjects",
-              "after": null,
-              "anchor": null
-            }
-          ],
-          "parent": "subjects",
-          "slot": "subject",
-          "multiple": true,
-          "path": [
-            {
-              "owner": "match_statement",
-              "slot": "subjects"
-            },
-            {
-              "owner": "subjects",
-              "slot": "subject"
             }
           ]
         }
@@ -5357,7 +5514,7 @@
                 "op": "eq",
                 "text": "__init__",
                 "slots": {
-                  "345": 1
+                  "352": 1
                 }
               }
             }
@@ -5376,7 +5533,7 @@
                 "op": "match",
                 "pattern": "^__(?<stem>.*)__$",
                 "slots": {
-                  "345": 1
+                  "352": 1
                 }
               }
             }
@@ -5426,17 +5583,6 @@
           ]
         },
         {
-          "name": "typeParameters",
-          "route": "slot",
-          "slot": "type_parameters",
-          "path": [
-            {
-              "owner": "method_declaration",
-              "slot": "type_parameters"
-            }
-          ]
-        },
-        {
           "name": "parameters",
           "route": "slot",
           "slot": "parameters",
@@ -5466,6 +5612,31 @@
             {
               "owner": "method_declaration",
               "slot": "body"
+            }
+          ]
+        },
+        {
+          "name": "typeParameters",
+          "route": "nested",
+          "via": [
+            {
+              "field": "type_parameters",
+              "kind": "type_params",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "type_params",
+          "slot": "items",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "method_declaration",
+              "slot": "type_parameters"
+            },
+            {
+              "owner": "type_params",
+              "slot": "items"
             }
           ]
         },
@@ -5678,7 +5849,7 @@
       "container": {
         "slot": "name",
         "kinds": [
-          "qualified_identifier",
+          "dotted_name",
           "aliased_import"
         ],
         "terminals": [],
@@ -5904,9 +6075,32 @@
           "test": []
         }
       ],
-      "members": [],
+      "members": [
+        {
+          "name": "elements",
+          "route": "slot",
+          "slot": "elements",
+          "path": [
+            {
+              "owner": "pattern_list",
+              "slot": "elements"
+            }
+          ]
+        },
+        {
+          "name": "trailingComma",
+          "route": "delimiter",
+          "delimiter": 2,
+          "items": {
+            "owner": "pattern_list",
+            "slot": "elements"
+          },
+          "path": null,
+          "flag": true
+        }
+      ],
       "container": {
-        "slot": "item",
+        "slot": "elements",
         "kinds": [
           "pattern"
         ],
@@ -5945,6 +6139,17 @@
       }
     },
     "print_statement": {
+      "container": {
+        "slot": "content",
+        "kinds": [
+          "print_statement_chevron",
+          "print_statement_plain"
+        ],
+        "terminals": [],
+        "list": false
+      }
+    },
+    "print_statement_chevron": {
       "vocab": "statement.print",
       "read": [
         {
@@ -5957,60 +6162,52 @@
       ],
       "members": [
         {
-          "name": "content",
+          "name": "arguments",
           "route": "slot",
-          "slot": "content",
-          "path": [
-            {
-              "owner": "print_statement",
-              "slot": "content"
-            }
-          ]
-        }
-      ],
-      "container": {
-        "slot": "content",
-        "kinds": [
-          "print_statement_chevron",
-          "print_statement_plain"
-        ],
-        "terminals": [],
-        "list": false
-      }
-    },
-    "print_statement_chevron": {
-      "vocab": "statement.print.chevron",
-      "read": [
-        {
-          "vocab": "statement.print.chevron",
-          "toplevel": true,
-          "within": [],
-          "pins": [],
-          "test": []
-        }
-      ],
-      "members": [
-        {
-          "name": "chevron",
-          "route": "slot",
-          "slot": "chevron",
+          "slot": "arguments",
           "path": [
             {
               "owner": "print_statement_chevron",
-              "slot": "chevron"
+              "slot": "arguments"
             }
           ]
         },
         {
-          "name": "printChevronArguments",
-          "route": "slot",
-          "slot": "print_chevron_arguments",
+          "name": "destination",
+          "route": "nested",
+          "via": [
+            {
+              "field": "chevron",
+              "kind": "chevron",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "chevron",
+          "slot": "expression",
+          "multiple": false,
           "path": [
             {
               "owner": "print_statement_chevron",
-              "slot": "print_chevron_arguments"
+              "slot": "chevron"
+            },
+            {
+              "owner": "chevron",
+              "slot": "expression"
             }
           ]
+        },
+        {
+          "name": "trailingComma",
+          "route": "delimiter",
+          "delimiter": 2,
+          "path": [
+            {
+              "owner": "print_statement_chevron",
+              "slot": "arguments"
+            }
+          ],
+          "flag": true
         }
       ]
     },
@@ -6027,19 +6224,31 @@
       ],
       "members": [
         {
-          "name": "printArguments",
+          "name": "arguments",
           "route": "slot",
-          "slot": "print_arguments",
+          "slot": "arguments",
           "path": [
             {
               "owner": "print_statement_plain",
-              "slot": "print_arguments"
+              "slot": "arguments"
             }
           ]
+        },
+        {
+          "name": "trailingComma",
+          "route": "delimiter",
+          "delimiter": 2,
+          "path": [
+            {
+              "owner": "print_statement_plain",
+              "slot": "arguments"
+            }
+          ],
+          "flag": true
         }
       ],
       "container": {
-        "slot": "print_arguments",
+        "slot": "arguments",
         "kinds": [
           "print_arguments"
         ],
@@ -6096,13 +6305,13 @@
       ],
       "members": [
         {
-          "name": "prefix",
+          "name": "dots",
           "route": "slot",
-          "slot": "prefix",
+          "slot": "dots",
           "path": [
             {
               "owner": "relative_import",
-              "slot": "prefix"
+              "slot": "dots"
             }
           ]
         },
@@ -6382,31 +6591,6 @@
       "vocab": "type.rest",
       "read": [
         {
-          "vocab": "type.rest.map",
-          "toplevel": true,
-          "within": [],
-          "pins": [
-            {
-              "member": "operator",
-              "slot": "operator",
-              "text": "**"
-            }
-          ],
-          "test": [
-            {
-              "up": 0,
-              "via": [],
-              "plan": {
-                "op": "eq",
-                "text": "**",
-                "slots": {
-                  "227": 0
-                }
-              }
-            }
-          ]
-        },
-        {
           "vocab": "type.rest",
           "toplevel": true,
           "within": [],
@@ -6426,11 +6610,60 @@
             }
           ]
         }
-      ]
+      ],
+      "container": {
+        "slot": "type",
+        "kinds": [
+          "identifier"
+        ],
+        "terminals": [],
+        "list": false
+      }
     },
     "string": {
       "vocab": "literal.string",
       "read": [
+        {
+          "vocab": "literal.string.interpolated.deferred.raw.multiline",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "match",
+                "pattern": "^[a-zA-Z]*[tT]",
+                "slots": {
+                  "248": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "match",
+                "pattern": "^[a-zA-Z]*[rR]",
+                "slots": {
+                  "248": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "match",
+                "pattern": "\"\"\"|'''",
+                "slots": {
+                  "248": 0
+                }
+              }
+            }
+          ]
+        },
         {
           "vocab": "literal.string.interpolated.raw.multiline",
           "toplevel": true,
@@ -6442,7 +6675,7 @@
               "via": [],
               "plan": {
                 "op": "match",
-                "pattern": "^[a-zA-Z]*[fFtT]",
+                "pattern": "^[a-zA-Z]*[fF]",
                 "slots": {
                   "248": 0
                 }
@@ -6514,6 +6747,66 @@
           ]
         },
         {
+          "vocab": "literal.string.interpolated.deferred.raw",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "match",
+                "pattern": "^[a-zA-Z]*[tT]",
+                "slots": {
+                  "248": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "match",
+                "pattern": "^[a-zA-Z]*[rR]",
+                "slots": {
+                  "248": 0
+                }
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "literal.string.interpolated.deferred.multiline",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "match",
+                "pattern": "^[a-zA-Z]*[tT]",
+                "slots": {
+                  "248": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "match",
+                "pattern": "\"\"\"|'''",
+                "slots": {
+                  "248": 0
+                }
+              }
+            }
+          ]
+        },
+        {
           "vocab": "literal.string.interpolated.raw",
           "toplevel": true,
           "within": [],
@@ -6524,7 +6817,7 @@
               "via": [],
               "plan": {
                 "op": "match",
-                "pattern": "^[a-zA-Z]*[fFtT]",
+                "pattern": "^[a-zA-Z]*[fF]",
                 "slots": {
                   "248": 0
                 }
@@ -6554,7 +6847,7 @@
               "via": [],
               "plan": {
                 "op": "match",
-                "pattern": "^[a-zA-Z]*[fFtT]",
+                "pattern": "^[a-zA-Z]*[fF]",
                 "slots": {
                   "248": 0
                 }
@@ -6664,6 +6957,25 @@
           ]
         },
         {
+          "vocab": "literal.string.interpolated.deferred",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "match",
+                "pattern": "^[a-zA-Z]*[tT]",
+                "slots": {
+                  "248": 0
+                }
+              }
+            }
+          ]
+        },
+        {
           "vocab": "literal.string.interpolated",
           "toplevel": true,
           "within": [],
@@ -6674,7 +6986,7 @@
               "via": [],
               "plan": {
                 "op": "match",
-                "pattern": "^[a-zA-Z]*[fFtT]",
+                "pattern": "^[a-zA-Z]*[fF]",
                 "slots": {
                   "248": 0
                 }
@@ -6713,6 +7025,25 @@
               "plan": {
                 "op": "match",
                 "pattern": "^[a-zA-Z]*[rR]",
+                "slots": {
+                  "248": 0
+                }
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "literal.string.unicode",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "match",
+                "pattern": "^[a-zA-Z]*[uU]",
                 "slots": {
                   "248": 0
                 }
@@ -6788,13 +7119,68 @@
       "members": []
     },
     "subjects": {
+      "read": [
+        {
+          "vocab": "expression.collection.tuple.bare",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "or",
+                "of": [
+                  {
+                    "op": "count",
+                    "min": 2,
+                    "slots": {
+                      "261": 0
+                    }
+                  },
+                  {
+                    "op": "delimiter",
+                    "delimiter": 2
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ],
+      "members": [
+        {
+          "name": "elements",
+          "route": "slot",
+          "slot": "elements",
+          "path": [
+            {
+              "owner": "subjects",
+              "slot": "elements"
+            }
+          ]
+        },
+        {
+          "name": "trailingComma",
+          "route": "delimiter",
+          "delimiter": 2,
+          "items": {
+            "owner": "subjects",
+            "slot": "elements"
+          },
+          "path": null,
+          "flag": true
+        }
+      ],
       "container": {
-        "slot": "subject",
+        "slot": "elements",
         "kinds": [
           "expression"
         ],
         "terminals": [],
-        "list": true
+        "list": false,
+        "refined": true
       }
     },
     "subscript": {
@@ -6822,40 +7208,81 @@
         },
         {
           "name": "index",
-          "route": "nested",
-          "via": [
-            {
-              "field": null,
-              "kind": "subscripts",
-              "after": null,
-              "anchor": null
-            }
-          ],
-          "parent": "subscripts",
-          "slot": "subscript",
-          "multiple": true,
+          "route": "slot",
+          "slot": "index",
           "path": [
             {
               "owner": "subscript",
-              "slot": "subscripts"
-            },
-            {
-              "owner": "subscripts",
-              "slot": "subscript"
+              "slot": "index"
             }
           ]
         }
       ]
     },
     "subscripts": {
+      "read": [
+        {
+          "vocab": "expression.collection.tuple.bare",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "or",
+                "of": [
+                  {
+                    "op": "count",
+                    "min": 2,
+                    "slots": {
+                      "267": 0
+                    }
+                  },
+                  {
+                    "op": "delimiter",
+                    "delimiter": 2
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ],
+      "members": [
+        {
+          "name": "elements",
+          "route": "slot",
+          "slot": "elements",
+          "path": [
+            {
+              "owner": "subscripts",
+              "slot": "elements"
+            }
+          ]
+        },
+        {
+          "name": "trailingComma",
+          "route": "delimiter",
+          "delimiter": 2,
+          "items": {
+            "owner": "subscripts",
+            "slot": "elements"
+          },
+          "path": null,
+          "flag": true
+        }
+      ],
       "container": {
-        "slot": "subscript",
+        "slot": "elements",
         "kinds": [
           "expression",
           "slice"
         ],
         "terminals": [],
-        "list": true
+        "list": false,
+        "refined": true
       }
     },
     "suite_block": {
@@ -6879,14 +7306,16 @@
       }
     },
     "suite_empty": {
-      "container": {
-        "slot": "newline",
-        "kinds": [
-          "_newline"
-        ],
-        "terminals": [],
-        "list": false
-      }
+      "read": [
+        {
+          "vocab": "statement.block",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": []
     },
     "suite_inline": {
       "container": {
@@ -7109,24 +7538,49 @@
       ],
       "members": [
         {
-          "name": "left",
+          "name": "name",
           "route": "slot",
-          "slot": "left",
+          "slot": "name",
           "path": [
             {
               "owner": "type_alias_statement",
-              "slot": "left"
+              "slot": "name"
             }
           ]
         },
         {
-          "name": "right",
+          "name": "value",
           "route": "slot",
-          "slot": "right",
+          "slot": "value",
           "path": [
             {
               "owner": "type_alias_statement",
-              "slot": "right"
+              "slot": "value"
+            }
+          ]
+        },
+        {
+          "name": "typeParameters",
+          "route": "nested",
+          "via": [
+            {
+              "field": "type_parameters",
+              "kind": "type_params",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "type_params",
+          "slot": "items",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "type_alias_statement",
+              "slot": "type_parameters"
+            },
+            {
+              "owner": "type_params",
+              "slot": "items"
             }
           ]
         }
@@ -7145,7 +7599,40 @@
       ],
       "members": []
     },
-    "type_parameter": {
+    "type_param_param_spec": {
+      "vocab": "declaration.type_parameter.parameters",
+      "read": [
+        {
+          "vocab": "declaration.type_parameter.parameters",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": [
+        {
+          "name": "name",
+          "route": "slot",
+          "slot": "name",
+          "path": [
+            {
+              "owner": "type_param_param_spec",
+              "slot": "name"
+            }
+          ]
+        }
+      ],
+      "container": {
+        "slot": "name",
+        "kinds": [
+          "identifier"
+        ],
+        "terminals": [],
+        "list": false
+      }
+    },
+    "type_param_type_var": {
       "vocab": "declaration.type_parameter",
       "read": [
         {
@@ -7158,17 +7645,63 @@
       ],
       "members": [
         {
-          "name": "types",
+          "name": "name",
           "route": "slot",
-          "slot": "types",
+          "slot": "name",
           "path": [
             {
-              "owner": "type_parameter",
-              "slot": "types"
+              "owner": "type_param_type_var",
+              "slot": "name"
+            }
+          ]
+        },
+        {
+          "name": "bounds",
+          "route": "slot",
+          "slot": "bounds",
+          "path": [
+            {
+              "owner": "type_param_type_var",
+              "slot": "bounds"
+            }
+          ]
+        }
+      ]
+    },
+    "type_param_type_var_tuple": {
+      "vocab": "declaration.type_parameter.variadic",
+      "read": [
+        {
+          "vocab": "declaration.type_parameter.variadic",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": [
+        {
+          "name": "name",
+          "route": "slot",
+          "slot": "name",
+          "path": [
+            {
+              "owner": "type_param_type_var_tuple",
+              "slot": "name"
             }
           ]
         }
       ],
+      "container": {
+        "slot": "name",
+        "kinds": [
+          "identifier"
+        ],
+        "terminals": [],
+        "list": false
+      }
+    },
+    "type_parameter": {
       "container": {
         "slot": "types",
         "kinds": [
@@ -7176,6 +7709,26 @@
         ],
         "terminals": [],
         "list": false
+      }
+    },
+    "type_params": {
+      "container": {
+        "slot": "items",
+        "kinds": [
+          "type_params_items"
+        ],
+        "terminals": [],
+        "list": false
+      }
+    },
+    "type_params_items": {
+      "container": {
+        "slot": "item",
+        "kinds": [
+          "type_param"
+        ],
+        "terminals": [],
+        "list": true
       }
     },
     "typed_default_parameter": {
@@ -7740,6 +8293,27 @@
       "vocab": "expression.yield",
       "read": [
         {
+          "vocab": "expression.yield.delegate",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  303
+                ],
+                "slots": {
+                  "220": 0
+                }
+              }
+            }
+          ]
+        },
+        {
           "vocab": "expression.yield",
           "toplevel": true,
           "within": [],
@@ -7758,6 +8332,21 @@
               "slot": "content"
             }
           ]
+        },
+        {
+          "name": "expression",
+          "route": "slot",
+          "slot": "expression",
+          "path": [
+            {
+              "owner": "yield",
+              "slot": "content"
+            },
+            {
+              "owner": "yield_from_clause",
+              "slot": "expression"
+            }
+          ]
         }
       ],
       "container": {
@@ -7773,28 +8362,6 @@
     },
     "yield_from_clause": {
       "vocab": "expression.yield.delegate",
-      "read": [
-        {
-          "vocab": "expression.yield.delegate",
-          "toplevel": true,
-          "within": [],
-          "pins": [],
-          "test": []
-        }
-      ],
-      "members": [
-        {
-          "name": "expression",
-          "route": "slot",
-          "slot": "expression",
-          "path": [
-            {
-              "owner": "yield_from_clause",
-              "slot": "expression"
-            }
-          ]
-        }
-      ],
       "container": {
         "slot": "expression",
         "kinds": [
@@ -7815,27 +8382,33 @@
       },
       {
         "depth": 2,
-        "paths": 77,
-        "kinds": 79,
+        "paths": 76,
+        "kinds": 81,
         "refinements": 5
       },
       {
         "depth": 3,
         "paths": 65,
-        "kinds": 60,
-        "refinements": 42
+        "kinds": 59,
+        "refinements": 43
       },
       {
         "depth": 4,
-        "paths": 62,
-        "kinds": 15,
-        "refinements": 29
+        "paths": 63,
+        "kinds": 18,
+        "refinements": 30
       },
       {
         "depth": 5,
-        "paths": 4,
+        "paths": 6,
         "kinds": 3,
-        "refinements": 4
+        "refinements": 6
+      },
+      {
+        "depth": 6,
+        "paths": 1,
+        "kinds": 1,
+        "refinements": 1
       }
     ]
   }

@@ -614,8 +614,10 @@ export interface PortableIds {
 		| TSKindId.RawStringLiteralContent
 		| TSKindId.StringContent
 		| TSKindId.StringLiteral;
-	'literal.string.bytes': TSKindId.StringLiteral;
-	'literal.string.c': TSKindId.StringLiteral;
+	'literal.string.bytes': TSKindId.RawStringLiteral | TSKindId.StringLiteral;
+	'literal.string.bytes.raw': TSKindId.RawStringLiteral;
+	'literal.string.c': TSKindId.RawStringLiteral | TSKindId.StringLiteral;
+	'literal.string.c.raw': TSKindId.RawStringLiteral;
 	'literal.string.escape':
 		| TSKindId.EscapeSequence
 		| TSKindId.EscapeSequenceHex
@@ -1124,7 +1126,9 @@ export interface PortableTexts {
 	'literal.number.negative': never;
 	'literal.string': never;
 	'literal.string.bytes': never;
+	'literal.string.bytes.raw': never;
 	'literal.string.c': never;
+	'literal.string.c.raw': never;
 	'literal.string.escape': never;
 	'literal.string.raw': never;
 	'literal.string.text': never;
@@ -1958,8 +1962,13 @@ export interface PortableKindsAt {
 		readonly raw: PortableKindsAt['literal.string.raw'];
 		readonly text: PortableKindsAt['literal.string.text'];
 	};
-	'literal.string.bytes': { readonly $path: 'literal.string.bytes' };
-	'literal.string.c': { readonly $path: 'literal.string.c' };
+	'literal.string.bytes': {
+		readonly $path: 'literal.string.bytes';
+		readonly raw: PortableKindsAt['literal.string.bytes.raw'];
+	};
+	'literal.string.bytes.raw': { readonly $path: 'literal.string.bytes.raw' };
+	'literal.string.c': { readonly $path: 'literal.string.c'; readonly raw: PortableKindsAt['literal.string.c.raw'] };
+	'literal.string.c.raw': { readonly $path: 'literal.string.c.raw' };
 	'literal.string.escape': { readonly $path: 'literal.string.escape' };
 	'literal.string.raw': { readonly $path: 'literal.string.raw' };
 	'literal.string.text': { readonly $path: 'literal.string.text' };
@@ -4005,12 +4014,24 @@ export interface PortableIsAt {
 		RustNode,
 		TSKindId,
 		PortableTexts['literal.string.bytes']
+	> & { readonly raw: PortableIsAt['literal.string.bytes.raw'] };
+	'literal.string.bytes.raw': PortableGuard<
+		PortableIds['literal.string.bytes.raw'],
+		RustNode,
+		TSKindId,
+		PortableTexts['literal.string.bytes.raw']
 	> & {};
 	'literal.string.c': PortableGuard<
 		PortableIds['literal.string.c'],
 		RustNode,
 		TSKindId,
 		PortableTexts['literal.string.c']
+	> & { readonly raw: PortableIsAt['literal.string.c.raw'] };
+	'literal.string.c.raw': PortableGuard<
+		PortableIds['literal.string.c.raw'],
+		RustNode,
+		TSKindId,
+		PortableTexts['literal.string.c.raw']
 	> & {};
 	'literal.string.escape': PortableGuard<
 		PortableIds['literal.string.escape'],
@@ -5302,8 +5323,10 @@ const table: PortableTable = {
 			],
 			exact: true
 		},
-		'literal.string.bytes': { ids: [TSKindId.StringLiteral], exact: false },
-		'literal.string.c': { ids: [TSKindId.StringLiteral], exact: false },
+		'literal.string.bytes': { ids: [TSKindId.RawStringLiteral, TSKindId.StringLiteral], exact: false },
+		'literal.string.bytes.raw': { ids: [TSKindId.RawStringLiteral], exact: false },
+		'literal.string.c': { ids: [TSKindId.RawStringLiteral, TSKindId.StringLiteral], exact: false },
+		'literal.string.c.raw': { ids: [TSKindId.RawStringLiteral], exact: false },
 		'literal.string.escape': {
 			ids: [
 				TSKindId.EscapeSequence,
@@ -7238,7 +7261,19 @@ const table: PortableTable = {
 			},
 			{ path: 'pattern.range', within: [], test: [] }
 		],
-		[TSKindId.RawStringLiteral]: [{ path: 'literal.string.raw', within: [], test: [] }],
+		[TSKindId.RawStringLiteral]: [
+			{ path: 'literal.string.raw', within: [], test: [] },
+			{
+				path: 'literal.string.bytes.raw',
+				within: [],
+				test: [{ up: 0, via: [], plan: { op: 'match', pattern: '^br', slots: { '333': 0 } } }]
+			},
+			{
+				path: 'literal.string.c.raw',
+				within: [],
+				test: [{ up: 0, via: [], plan: { op: 'match', pattern: '^cr', slots: { '333': 0 } } }]
+			}
+		],
 		[TSKindId.RawStringLiteralContent]: [{ path: 'literal.string.text', within: [], test: [] }],
 		[TSKindId.ReceiverParameterDeclaration]: [
 			{ path: 'declaration.parameter.receiver', within: [], test: [] },

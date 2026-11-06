@@ -69,6 +69,7 @@ export function checkRow(node: Readonly<Record<string, unknown>>, row: Structure
 		const items = node[storage];
 		if (!Array.isArray(items) || items.length === 0) throw new Error(`${label}: requires at least one element`);
 	}
+	for (const [storage, label, rest, last] of row.final ?? []) checkFinal(node[storage], label, rest, last, membership);
 	for (const [storage, label, expected, kinds] of row.nodeOnly ?? []) {
 		const value = rejectNonNode(rejectBareText(node[storage], label, expected), label, expected);
 		if (kinds !== undefined) rejectForeignKind(value, label, expected, kinds, membership);
@@ -82,6 +83,22 @@ export function checkRow(node: Readonly<Record<string, unknown>>, row: Structure
 	for (const [storage, label, texts] of row.texts ?? []) {
 		requireScalar(node[storage], label, `one of ${texts.map((text) => `'${text}'`).join(' / ')}`, (value) => typeof value === 'string' && texts.includes(value));
 	}
+}
+
+function checkFinal(items: unknown, label: string, rest: readonly number[], last: readonly number[], membership: KindMembership): void {
+	if (!Array.isArray(items) || items.length === 0) throw new Error(`${label}: ends with a node of kind ${last.join(' / ')}, and holds none`);
+	items.forEach((item, i) => {
+		const type = (item as { $type?: unknown } | null)?.$type;
+		if (typeof type !== 'number') return;
+		const final = i === items.length - 1;
+		const kinds = final ? last : rest;
+		if (!kinds.some((kind) => membership.isMember(kind, type)))
+			throw new Error(
+				final
+					? `${label}: ends with a node of kind ${last.join(' / ')}, not ${type}`
+					: `${label}: holds a node of kind ${type} at ${i}, before its last element; only ${rest.join(' / ')} come before it`
+			);
+	});
 }
 
 function rejectNonNode(value: unknown, label: string, expected: string): unknown {

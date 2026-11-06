@@ -12,6 +12,8 @@ export namespace Declaration {
 		export interface Lifetime<G extends GrammarContext<G>> extends SubKindOf<V.Declaration.TypeParameter<G>> {
 			// claimed by r
 			readonly $kind: 'declaration.type_parameter.lifetime';
+			readonly const?: never;
+			readonly default?: never;
 			readonly name: V.Identifier.Lifetime<G>;
 		}
 	}

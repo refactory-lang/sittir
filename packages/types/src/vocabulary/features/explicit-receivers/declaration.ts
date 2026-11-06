@@ -24,6 +24,7 @@ export namespace Declaration {
 		export interface Receiver<G extends GrammarContext<G>> extends SubKindOf<V.Declaration.Parameter<G>> {
 			// claimed by rt
 			readonly $kind: 'declaration.parameter.receiver';
+			readonly name?: never;
 			readonly mutable?: Flag;
 			// r only
 		}

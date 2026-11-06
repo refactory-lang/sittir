@@ -207,7 +207,7 @@ pub fn on_changed_edge<E>(
 impl<T: crate::prepare::Prepare> crate::prepare::Prepare for NodeTrivia<T> {
     /// Every entry is prepared like a slot value: a coordinate entry takes its
     /// kind's edges, as a coordinate in a slot does.
-    fn prepare(&mut self, ctx: &crate::prepare::RenderContext<'_>) -> Result<(), crate::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &crate::prepare::RenderContext<'_>) -> Result<(), crate::render::RenderError> {
         let sides = self.leading.iter_mut().chain(self.trailing.iter_mut());
         for value in sides.chain(self.inner.iter_mut()).flatten().filter_map(TriviaEntry::value_mut) {
             value.prepare(ctx)?;
@@ -290,7 +290,7 @@ impl Render for TriviaText {
 }
 
 impl crate::prepare::Prepare for TriviaText {
-    fn prepare(&mut self, _ctx: &crate::prepare::RenderContext<'_>) -> Result<(), crate::render::CoordinateError> {
+    fn prepare(&mut self, _ctx: &crate::prepare::RenderContext<'_>) -> Result<(), crate::render::RenderError> {
         Ok(())
     }
 
@@ -472,7 +472,7 @@ impl<T: Render + TriviaSeam> Framing for NodeTrivia<T> {
 /// grammar's trivia type erased, so a coordinate carries it whatever its
 /// slot's node type.
 pub trait FramedTrivia: Framing + std::fmt::Debug {
-    fn prepare(&mut self, ctx: &crate::prepare::RenderContext<'_>) -> Result<(), crate::render::CoordinateError>;
+    fn prepare(&mut self, ctx: &crate::prepare::RenderContext<'_>) -> Result<(), crate::render::RenderError>;
     fn boxed_clone(&self) -> Box<dyn FramedTrivia>;
     fn as_any(&self) -> &dyn std::any::Any;
     fn into_any(self: Box<Self>) -> Box<dyn std::any::Any>;
@@ -501,7 +501,7 @@ impl Frames {
 }
 
 impl<T: TriviaItem> FramedTrivia for NodeTrivia<T> {
-    fn prepare(&mut self, ctx: &crate::prepare::RenderContext<'_>) -> Result<(), crate::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &crate::prepare::RenderContext<'_>) -> Result<(), crate::render::RenderError> {
         crate::prepare::Prepare::prepare(self, ctx)
     }
 

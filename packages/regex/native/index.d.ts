@@ -456,14 +456,6 @@ export declare const RECORD_FLAG_LINK: number
 export declare const RECORD_HEADER_WORDS: number
 
 /**
- * r" The hydrated typed nodes below `index` in stored field
- * r" order, as a JSON list of their rows' coordinates. Units and
- * r" captured strings are omitted. Exports no node fields or
- * r" words.
- */
-export declare function recordCandidates(treeId: TreeId, index: NodeIndex): string
-
-/**
  * r" Releases a count of the built entry at `address`, a record
  * r" (`held` 0), a run (1) or a side record (2): with `owned`,
  * r" the count its builder's handle holds, a no-op when it holds
@@ -515,13 +507,6 @@ export declare function renderBuilt(engine: object, owner: object, address: numb
  * r" arena's strings, and a leaf whose render refuses.
  */
 export declare function renderBuiltLeaf(engine: object, owner: object, kind: number, entry: number, sides: object | undefined | null, leading: boolean, trailing: boolean, options?: object | undefined | null): string
-
-/**
- * r" Renders the parsed candidate at row `index` without exporting
- * r" its data or its outer trivia: the row's record, or, for a
- * r" recordless node, its native coordinate.
- */
-export declare function renderCandidate(engine: object, treeId: number, index: number, options?: object | undefined | null): string
 
 /**
  * r" The record at `address` of the live tree `treeId` rendered, as
