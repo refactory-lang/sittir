@@ -31,6 +31,9 @@ export default grammar(enrich(base), wire({
 		record_declaration: { 1: field('declaration_list_body') },
 		struct_declaration: { 1: field('declaration_list_body') },
 		type_argument_list: { '1/0': variant('unbound'), '1/1': variant('bound') },
-		record_base: { 0: variant('names'), 1: variant('primary_constructor') }
+		record_base: { 0: variant('names'), 1: variant('primary_constructor') },
+		_join_header: { 1: field('name'), 3: field('source') },
+		_join_body: { 1: field('left'), 3: field('right') },
+		_anonymous_object_member_declarator: { '0/0': field('name'), '0/2': field('value') }
 	}
 }));
