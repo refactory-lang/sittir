@@ -127,21 +127,46 @@ describe('display-union-mixed', () => {
 
 describe('alias-inline-token', () => {
 	const body = { type: 'IMMEDIATE_TOKEN', content: { type: 'PATTERN', value: 'x+' } };
-	const inlineToken = (rules: Record<string, unknown>) => diagnoseInlineTokenAliases({ grammar: 'demo', symbols: symbolsOf(rules) });
-	it('fires on an alias over an inline token, naming the site, the display and the rule to author', () => {
-		const out = inlineToken({ p: { type: 'SEQ', members: [alias(body, 'content')] } });
+	const other = { type: 'TOKEN', content: { type: 'PATTERN', value: 'y+' } };
+	const inlineToken = (rules: Record<string, unknown>, word?: string) =>
+		diagnoseInlineTokenAliases({ grammar: 'demo', symbols: symbolsOf(rules), word });
+
+	it('names a display that is also a terminal rule', () => {
+		const out = inlineToken({ p: alias(body, 'content'), content: P('z') });
 		expect(out).toHaveLength(1);
-		expect(out[0]).toMatchObject({ code: 'alias-inline-token', ownerKind: 'p', canProceed: false, details: { display: 'content', storage: '_content' } });
-		expect(out[0]!.proposal).toMatch(/rule\('_content'/);
+		expect(out[0]).toMatchObject({ code: 'alias-inline-token', ownerKind: 'p', canProceed: false, details: { display: 'content', reason: 'display-is-rule' } });
+		expect(out[0]!.message).toMatch(/'content' is also a rule of this grammar/);
 	});
-	it('names the colliding rule and proposes another name', () => {
+	it('leaves a display that names a nonterminal rule to display-union-mixed', () => {
+		expect(inlineToken({ p: alias(body, 'content'), content: { type: 'SEQ', members: [S('a'), sym('p')] } })).toEqual([]);
+	});
+	it('names a display of the word rule', () => {
+		const out = inlineToken({ p: alias(body, 'content'), q: alias(sym('ident'), 'content'), ident: P('[a-z]+') }, 'ident');
+		expect(out).toHaveLength(1);
+		expect(out[0]!.details).toMatchObject({ reason: 'word-display' });
+		expect(out[0]!.message).toMatch(/'content' is a display of the word rule/);
+	});
+	it('names a hidden name taken with a different body and proposes another name', () => {
 		const out = inlineToken({ p: alias(body, 'content'), _content: P('y') });
-		expect(out[0]!.details).toMatchObject({ collidesWith: '_content' });
+		expect(out).toHaveLength(1);
+		expect(out[0]!.details).toMatchObject({ reason: 'storage-name-taken' });
+		expect(out[0]!.message).toMatch(/the rule '_content' already exists with a different body/);
 		expect(out[0]!.proposal).toMatch(/_content_token/);
 	});
+	it('proposes one hidden rule per distinct body when the bodies disagree, each site aliasing its own', () => {
+		const out = inlineToken({ p: alias(body, 'content'), q: alias(other, 'content') });
+		expect(out.map((d) => d.details)).toMatchObject([{ reason: 'bodies-disagree', bodyCount: 2 }, { reason: 'bodies-disagree', bodyCount: 2 }]);
+		expect(out[0]!.proposal).toMatch(/alias\(\$\._content_1, \$\.content\)/);
+		expect(out[1]!.proposal).toMatch(/alias\(\$\._content_2, \$\.content\)/);
+		expect(out[0]!.proposal).toMatch(/no site changes what it accepts/);
+	});
+	it('does not fire when the mint covers the site: free name, or an identical body already there', () => {
+		expect(inlineToken({ p: alias(body, 'content') })).toEqual([]);
+		expect(inlineToken({ p: alias(body, 'content'), _content: body })).toEqual([]);
+	});
 	it('fires on a bare pattern and through precedence', () => {
-		expect(inlineToken({ p: alias(P('x'), 'c') })).toHaveLength(1);
-		expect(inlineToken({ p: alias({ type: 'PREC', value: 1, content: body }, 'c') })).toHaveLength(1);
+		expect(inlineToken({ p: alias(P('x'), 'c'), c: P('z') })).toHaveLength(1);
+		expect(inlineToken({ p: alias({ type: 'PREC', value: 1, content: body }, 'c'), c: P('z') })).toHaveLength(1);
 	});
 	it('does not fire on an alias of a symbol or of a literal', () => {
 		expect(inlineToken({ p: alias(sym('_c'), 'c'), _c: body })).toEqual([]);

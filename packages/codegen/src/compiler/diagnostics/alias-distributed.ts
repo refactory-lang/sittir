@@ -5,7 +5,8 @@ import type { DisplayUnions } from '../types.ts';
 import { isPrecWrapper } from '../../types/runtime-shapes.ts';
 import { RuleWalker } from '../../dsl/rule-walker.ts';
 import type { SymbolSource } from '../../dsl/rule-patterns.ts';
-import { innermostNamedAliasContent, isInlineTokenBody } from '../../dsl/rule-transforms.ts';
+import { inlineTokenAliasSkipsOf, isTerminalRootRule, type InlineTokenAliasSkip, type InlineTokenAliasSkipSite } from '../../dsl/rule-transforms.ts';
+import { assertNever } from '../../polymorph-variant.ts';
 
 type R = Rule<'evaluate'>;
 
@@ -90,39 +91,41 @@ export function diagnoseMixedDisplayUnions(input: {
 	return out;
 }
 
-export function diagnoseInlineTokenAliases(input: { grammar: string; symbols: SymbolSource }): GrammarDiagnostic[] {
-	const walker = new RuleWalker<R>();
-	const out: GrammarDiagnostic[] = [];
-	const seen = new Set<string>();
-	for (const [owner, rule] of Object.entries(input.symbols.rules as Readonly<Record<string, R>>)) {
-		walker.fold(rule, out, (acc, r) => {
-			if (r.type !== ALIAS || !r.named) return acc;
-			const content = innermostNamedAliasContent(r.content as R);
-			if (!isInlineTokenBody(content)) return acc;
-			const display = String(r.value);
-			const storage = `_${display}`;
-			const key = `${owner}\0${display}\0${JSON.stringify(content)}`;
-			if (seen.has(key)) return acc;
-			seen.add(key);
-			const collides = Object.hasOwn(input.symbols.rules, storage);
-			const reason = collides
-				? `the rule '${storage}' already exists with a different body`
-				: `other sites of '${display}' alias a different body`;
-			acc.push({
-				scope: 'grammar',
-				code: 'alias-inline-token',
-				severity: 'error',
-				grammar: input.grammar,
-				ownerKind: owner,
-				message: `alias('${display}') over an inline token has no storage rule: ${reason}, so enrich did not mint one and the alias would read as the token's own text`,
-				canProceed: false,
-				details: { owner, display, storage, collidesWith: collides ? storage : undefined },
-				proposal: collides
-					? `rule('${storage}_token', <the token body>) in rules:, and alias($.${storage}_token, $.${display}) at this site`
-					: `rule('${storage}', <the token body>) in rules:, and alias($.${storage}, $.${display}) at every site of '${display}'`
-			});
-			return acc;
-		});
+const INLINE_TOKEN_ALIAS_CAUSES: Readonly<Record<InlineTokenAliasSkip, (display: string) => string>> = {
+	'display-is-rule': (display) => `'${display}' is also a rule of this grammar`,
+	'word-display': (display) => `'${display}' is a display of the word rule`,
+	'storage-name-taken': (display) => `the rule '_${display}' already exists with a different body`,
+	'bodies-disagree': (display) => `the sites of '${display}' alias different token bodies`
+};
+
+function inlineTokenAliasProposal(site: InlineTokenAliasSkipSite): string {
+	const { display, reason, bodyIndex } = site;
+	switch (reason) {
+		case 'display-is-rule':
+		case 'word-display':
+			return `alias the token under a display that no rule and no word alias uses`;
+		case 'storage-name-taken':
+			return `rule('_${display}_token', <the token body>) in rules:, and alias($._${display}_token, $.${display}) at this site`;
+		case 'bodies-disagree':
+			return `one hidden rule per distinct body, rule('_${display}_<n>', <body n>) for each, and at each site alias($._${display}_${bodyIndex + 1}, $.${display}) for that site's own body, so no site changes what it accepts`;
+		default:
+			return assertNever(reason);
 	}
-	return out;
+}
+
+export function diagnoseInlineTokenAliases(input: { grammar: string; symbols: SymbolSource; word: string | undefined }): GrammarDiagnostic[] {
+	const rules = input.symbols.rules as Readonly<Record<string, R>>;
+	return inlineTokenAliasSkipsOf({ ...rules }, { word: input.word })
+		.filter((site) => !(site.reason === 'display-is-rule' && !isTerminalRootRule(rules[site.display] as R)))
+		.map((site) => ({
+			scope: 'grammar',
+			code: 'alias-inline-token',
+			severity: 'error',
+			grammar: input.grammar,
+			ownerKind: site.owner,
+			message: `alias('${site.display}') over an inline token has no storage rule: ${INLINE_TOKEN_ALIAS_CAUSES[site.reason](site.display)}, so enrich did not mint one and the alias would read as the token's own text`,
+			canProceed: false,
+			details: { owner: site.owner, display: site.display, reason: site.reason, bodyCount: site.bodyCount },
+			proposal: inlineTokenAliasProposal(site)
+		}));
 }

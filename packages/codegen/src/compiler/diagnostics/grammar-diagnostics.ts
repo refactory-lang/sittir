@@ -532,7 +532,7 @@ export function collectGrammarDiagnosticsForGrammar(input: {
 			}).diagnostics,
 			...contentAliasDiagnostics,
 			...diagnoseDistributedAliases({ grammar: rawGrammar.name, symbols }),
-			...diagnoseInlineTokenAliases({ grammar: rawGrammar.name, symbols }),
+			...diagnoseInlineTokenAliases({ grammar: rawGrammar.name, symbols, word: rawGrammar.word ?? undefined }),
 			...diagnoseMixedDisplayUnions({ grammar: rawGrammar.name, displayUnions: linked.displayUnions, symbols }),
 			...reservedMemberDiagnostics(rawGrammar.name, nodeMap.reserved, kindEntries),
 			...triviaLineEndDiagnostics(rawGrammar.name, nodeMap),
