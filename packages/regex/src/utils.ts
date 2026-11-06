@@ -10,11 +10,11 @@ export const triviaFacts = Object.freeze({
 	kindName: (type: AnyUntypedNode['$type']) => (typeof type === 'number' ? KIND_NAMES.get(type) : type),
 	kinds: new Set<string>(['_blankline', '_double_blankline', '_layout', '_newline', '_tight']),
 	innerKinds: INNER_SITES,
-	rebuildWrappers: new Set<number>([77, 78, 79, 80, 81, 83, 84, 85]),
+	rebuildWrappers: new Set<number>([78, 79, 80, 81, 82, 84, 85, 86]),
 	listKinds: new Set<number>([]),
 	layout: new Set<number>([47, 48, 49, 50]),
 	innerRegions: new Map<number, readonly string[]>([[58, ['_negation', '_leading', '_class_atoms', '_trailing']]]),
-	namedUnits: new Set<number>([2, 4, 5, 6, 19, 54, 82, 89]),
+	namedUnits: new Set<number>([2, 4, 5, 6, 19, 54, 77, 83]),
 	whitespace: Object.freeze({
 		run: /^(?:(?:(?:\r?\n))+)$/u,
 		kindIdByText: Object.freeze({ '': 47, '\n': 48, '\n\n': 49, '\n\n\n': 50 })
@@ -36,7 +36,7 @@ export const querySlots: QuerySlots = Object.freeze({
 		['pattern', 1, undefined, '_pattern']
 	],
 	58: [
-		['negation', 0, '^', '_negation', 82],
+		['negation', 0, '^', '_negation', 83],
 		['leading', 1, '-', '_leading', 14],
 		['classAtoms', 2, undefined, '_class_atoms'],
 		['trailing', 3, '-', '_trailing', 14]
@@ -53,12 +53,12 @@ export const querySlots: QuerySlots = Object.freeze({
 		['pattern', 2, undefined, '_pattern']
 	],
 	64: [['pattern', 0, undefined, '_pattern']],
-	67: [['lazy', 0, '?', '_lazy', 89]],
-	68: [['lazy', 0, '?', '_lazy', 89]],
-	69: [['lazy', 0, '?', '_lazy', 89]],
+	67: [['lazy', 0, '?', '_lazy', 77]],
+	68: [['lazy', 0, '?', '_lazy', 77]],
+	69: [['lazy', 0, '?', '_lazy', 77]],
 	70: [
 		['content', 0, undefined, '_content'],
-		['lazy', 1, '?', '_lazy', 89]
+		['lazy', 1, '?', '_lazy', 77]
 	],
 	71: [['groupName', 0, undefined, '_group_name']],
 	72: [['groupName', 0, undefined, '_group_name']],
@@ -67,30 +67,30 @@ export const querySlots: QuerySlots = Object.freeze({
 		['unicodePropertyValueExpressionGroup', 0, undefined, '_unicode_property_value_expression_group'],
 		['unicodePropertyValue', 1, undefined, '_unicode_property_value']
 	],
-	77: [
+	78: [
 		['content', 0, undefined, '_content'],
 		['quantifier', 1, undefined, '_quantifier']
 	],
-	78: [['decimalDigits', 0, undefined, '_decimal_digits']],
-	79: [
+	79: [['decimalDigits', 0, undefined, '_decimal_digits']],
+	80: [
 		['decimalDigits', 0, undefined, '_decimal_digits'],
 		['countQuantifierGroup', 1, undefined, '_count_quantifier_group']
 	],
-	80: [
+	81: [
 		['characterClassEscapeText2', 0, undefined, '_character_class_escape_text2'],
 		['unicodePropertyValueExpression', 1, undefined, '_unicode_property_value_expression']
 	],
-	81: [['unicodePropertyName', 0, undefined, '_unicode_property_name']],
-	83: [
+	82: [['unicodePropertyName', 0, undefined, '_unicode_property_name']],
+	84: [
 		['enabled', 0, undefined, '_enabled'],
 		['pattern', 1, undefined, '_pattern']
 	],
-	84: [
+	85: [
 		['enabled', 0, undefined, '_enabled'],
 		['disabled', 1, undefined, '_disabled'],
 		['pattern', 2, undefined, '_pattern']
 	],
-	85: [
+	86: [
 		['disabled', 0, undefined, '_disabled'],
 		['pattern', 1, undefined, '_pattern']
 	]
@@ -106,7 +106,7 @@ export const jsonFacts: NodeJSONFacts = Object.freeze({
 	textEnvelopes: new Map<number, number>([]),
 	units: new Set<number>([
 		2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 14, 15, 16, 17, 19, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 40, 47,
-		48, 49, 50, 54, 82, 89
+		48, 49, 50, 54, 77, 83
 	]),
 	options: Object.freeze<NodeJSONFacts['options']>({})
 });
@@ -132,7 +132,7 @@ export const structure: StructureTable = Object.freeze({
 	53: {
 		kind: 'term',
 		nonEmpty: [['_term_group', 'term.children']],
-		nodeOnly: [['_term_group', 'Term.termGroups', 'a built TermGroup', [77]]],
+		nodeOnly: [['_term_group', 'Term.termGroups', 'a built TermGroup', [78]]],
 		lists: [['termGroups', false, 0]]
 	},
 	55: {
@@ -241,7 +241,7 @@ export const structure: StructureTable = Object.freeze({
 		kind: 'count_quantifier',
 		required: [['_content', 'content']],
 		single: [['_content', 'CountQuantifier.content']],
-		nodeOnly: [['_content', 'CountQuantifier.content', 'buildDecimalDigits(…)', [39, 79]]],
+		nodeOnly: [['_content', 'CountQuantifier.content', 'buildDecimalDigits(…)', [39, 80]]],
 		booleans: [['_lazy', 'CountQuantifier.lazy']],
 		config: ['content', 'lazy']
 	},
@@ -266,7 +266,7 @@ export const structure: StructureTable = Object.freeze({
 				'_content',
 				'CharacterClassEscape.content',
 				'buildCharacterClassEscapeText1(…) / buildUnicodeCharacterEscape(…)',
-				[41, 74, 80]
+				[41, 74, 81]
 			]
 		]
 	},
@@ -285,7 +285,7 @@ export const structure: StructureTable = Object.freeze({
 				'_unicode_property_value_expression_group',
 				'UnicodePropertyValueExpression.unicodePropertyValueExpressionGroup',
 				'a built UnicodePropertyValueExpressionGroup',
-				[81]
+				[82]
 			],
 			[
 				'_unicode_property_value',
@@ -296,7 +296,7 @@ export const structure: StructureTable = Object.freeze({
 		],
 		config: ['unicodePropertyValueExpressionGroup', 'unicodePropertyValue']
 	},
-	77: {
+	78: {
 		kind: 'term_group',
 		required: [['_content', 'content']],
 		single: [
@@ -318,12 +318,12 @@ export const structure: StructureTable = Object.freeze({
 		],
 		config: ['content', 'quantifier']
 	},
-	78: {
+	79: {
 		kind: 'count_quantifier_group',
 		single: [['_decimal_digits', 'CountQuantifierGroup.decimalDigits']],
 		nodeOnly: [['_decimal_digits', 'CountQuantifierGroup.decimalDigits', 'buildDecimalDigits(…)', [39]]]
 	},
-	79: {
+	80: {
 		kind: 'count_quantifier_arm',
 		required: [['_decimal_digits', 'decimalDigits']],
 		single: [
@@ -332,11 +332,11 @@ export const structure: StructureTable = Object.freeze({
 		],
 		nodeOnly: [
 			['_decimal_digits', 'CountQuantifierArm.decimalDigits', 'buildDecimalDigits(…)', [39]],
-			['_count_quantifier_group', 'CountQuantifierArm.countQuantifierGroup', 'a built CountQuantifierGroup', [78]]
+			['_count_quantifier_group', 'CountQuantifierArm.countQuantifierGroup', 'a built CountQuantifierGroup', [79]]
 		],
 		config: ['decimalDigits', 'countQuantifierGroup']
 	},
-	80: {
+	81: {
 		kind: 'character_class_escape_arm',
 		required: [
 			['_character_class_escape_text2', 'characterClassEscapeText2'],
@@ -362,7 +362,7 @@ export const structure: StructureTable = Object.freeze({
 		],
 		config: ['characterClassEscapeText2', 'unicodePropertyValueExpression']
 	},
-	81: {
+	82: {
 		kind: 'unicode_property_value_expression_group',
 		required: [['_unicode_property_name', 'unicodePropertyName']],
 		single: [['_unicode_property_name', 'UnicodePropertyValueExpressionGroup.unicodePropertyName']],
@@ -375,7 +375,7 @@ export const structure: StructureTable = Object.freeze({
 			]
 		]
 	},
-	83: {
+	84: {
 		kind: 'inline_flags_group_enable',
 		required: [['_enabled', 'enabled']],
 		single: [
@@ -388,7 +388,7 @@ export const structure: StructureTable = Object.freeze({
 		],
 		config: ['enabled', 'pattern']
 	},
-	84: {
+	85: {
 		kind: 'inline_flags_group_toggle',
 		required: [
 			['_enabled', 'enabled'],
@@ -406,7 +406,7 @@ export const structure: StructureTable = Object.freeze({
 		],
 		config: ['enabled', 'disabled', 'pattern']
 	},
-	85: {
+	86: {
 		kind: 'inline_flags_group_disable',
 		required: [['_disabled', 'disabled']],
 		single: [

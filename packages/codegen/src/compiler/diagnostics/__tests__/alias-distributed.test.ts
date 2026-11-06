@@ -174,4 +174,8 @@ describe('alias-inline-token', () => {
 		expect(inlineToken({ p: alias(sym('_c'), 'c'), _c: body })).toEqual([]);
 		expect(inlineToken({ p: alias(S('x'), 'c') })).toEqual([]);
 	});
+	it('is silent on a literal alias whose display is a terminal rule or the word rule, which reads as the display kind', () => {
+		expect(inlineToken({ p: alias(S('a'), 'content'), content: P('z') })).toEqual([]);
+		expect(inlineToken({ p: alias(S('a'), 'content'), q: alias(sym('ident'), 'content'), ident: P('[a-z]+') }, 'ident')).toEqual([]);
+	});
 });

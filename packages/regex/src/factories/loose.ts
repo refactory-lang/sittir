@@ -42,6 +42,7 @@ export {
 	coerceToIdentityEscape as buildIdentityEscape,
 	coerceToGroupName as buildGroupName,
 	coerceToDecimalDigits as buildDecimalDigits,
+	coerceToLazy as buildLazy,
 	coerceToTermGroup as buildTermGroup,
 	coerceToCountQuantifierGroup as buildCountQuantifierGroup,
 	coerceToCountQuantifierArm as buildCountQuantifierArm,
@@ -57,7 +58,6 @@ export {
 	coerceToNewline as buildNewline,
 	coerceToBlankline as buildBlankline,
 	coerceToDoubleBlankline as buildDoubleBlankline,
-	coerceToLazy as buildLazy,
 	coerceToUnicodePropertyName as buildUnicodePropertyName
 } from './coerce.js';
 
