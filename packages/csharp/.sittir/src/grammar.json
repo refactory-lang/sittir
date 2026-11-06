@@ -2992,28 +2992,58 @@
                 "type": "CHOICE",
                 "members": [
                   {
-                    "type": "SYMBOL",
-                    "name": "_kw_this"
+                    "type": "ALIAS",
+                    "content": {
+                      "type": "STRING",
+                      "value": "this"
+                    },
+                    "named": true,
+                    "value": "modifier"
                   },
                   {
-                    "type": "SYMBOL",
-                    "name": "_kw_scoped"
+                    "type": "ALIAS",
+                    "content": {
+                      "type": "STRING",
+                      "value": "scoped"
+                    },
+                    "named": true,
+                    "value": "modifier"
                   },
                   {
-                    "type": "SYMBOL",
-                    "name": "_kw_ref"
+                    "type": "ALIAS",
+                    "content": {
+                      "type": "STRING",
+                      "value": "ref"
+                    },
+                    "named": true,
+                    "value": "modifier"
                   },
                   {
-                    "type": "SYMBOL",
-                    "name": "_kw_out"
+                    "type": "ALIAS",
+                    "content": {
+                      "type": "STRING",
+                      "value": "out"
+                    },
+                    "named": true,
+                    "value": "modifier"
                   },
                   {
-                    "type": "SYMBOL",
-                    "name": "_kw_in"
+                    "type": "ALIAS",
+                    "content": {
+                      "type": "STRING",
+                      "value": "in"
+                    },
+                    "named": true,
+                    "value": "modifier"
                   },
                   {
-                    "type": "SYMBOL",
-                    "name": "_kw_readonly"
+                    "type": "ALIAS",
+                    "content": {
+                      "type": "STRING",
+                      "value": "readonly"
+                    },
+                    "named": true,
+                    "value": "modifier"
                   }
                 ]
               }
@@ -10015,12 +10045,22 @@
                   "type": "CHOICE",
                   "members": [
                     {
-                      "type": "SYMBOL",
-                      "name": "_kw_static"
+                      "type": "ALIAS",
+                      "content": {
+                        "type": "STRING",
+                        "value": "static"
+                      },
+                      "named": true,
+                      "value": "modifier"
                     },
                     {
-                      "type": "SYMBOL",
-                      "name": "_kw_async"
+                      "type": "ALIAS",
+                      "content": {
+                        "type": "STRING",
+                        "value": "async"
+                      },
+                      "named": true,
+                      "value": "modifier"
                     }
                   ]
                 }
@@ -10142,12 +10182,22 @@
                 "type": "CHOICE",
                 "members": [
                   {
-                    "type": "SYMBOL",
-                    "name": "_kw_static"
+                    "type": "ALIAS",
+                    "content": {
+                      "type": "STRING",
+                      "value": "static"
+                    },
+                    "named": true,
+                    "value": "modifier"
                   },
                   {
-                    "type": "SYMBOL",
-                    "name": "_kw_async"
+                    "type": "ALIAS",
+                    "content": {
+                      "type": "STRING",
+                      "value": "async"
+                    },
+                    "named": true,
+                    "value": "modifier"
                   }
                 ]
               }
@@ -15636,26 +15686,6 @@
       "type": "STRING",
       "value": "operator"
     },
-    "_kw_this": {
-      "type": "STRING",
-      "value": "this"
-    },
-    "_kw_scoped": {
-      "type": "STRING",
-      "value": "scoped"
-    },
-    "_kw_out": {
-      "type": "STRING",
-      "value": "out"
-    },
-    "_kw_in": {
-      "type": "STRING",
-      "value": "in"
-    },
-    "_kw_async": {
-      "type": "STRING",
-      "value": "async"
-    },
     "_operator_declaration_operator": {
       "type": "CHOICE",
       "members": [
@@ -16719,11 +16749,6 @@
     "_kw_using",
     "_kw_static",
     "_kw_operator",
-    "_kw_this",
-    "_kw_scoped",
-    "_kw_out",
-    "_kw_in",
-    "_kw_async",
     "_operator_declaration_operator",
     "_assignment_expression_operator"
   ],

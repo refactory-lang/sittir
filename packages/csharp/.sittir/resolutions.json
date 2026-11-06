@@ -1,5 +1,5 @@
 {
-	"grammarHash": "ec387539171962e783a429221070eb164b8c9fe1fdf817081d541600798f18cd",
+	"grammarHash": "c2e28dd5ccda0da4f22215de019b672dc603619a7ed67712b5a166122d65c451",
 	"resolutions": [
 		{"resolution":{"kind":"AddConflict","symbols":["_array_base_type","stackalloc_expression"]},"step":"upstream-declared","sourceChains":[["_array_base_type"],["stackalloc_expression"]],"conflict":{"symbolSequence":["'stackalloc'","array_type"],"lookahead":"'['","interpretations":["_array_base_type","stackalloc_expression"]}},
 		{"resolution":{"kind":"AddConflict","symbols":["_constructor_declaration_initializer","_simple_name"]},"step":"upstream-declared","sourceChains":[["_constructor_declaration_initializer"],["_simple_name"]],"conflict":{"symbolSequence":["_class_declaration_initializer","'{'","identifier"],"lookahead":"'('","interpretations":["_constructor_declaration_initializer","_constructor_declaration_initializer","_simple_name"]}},
@@ -54,7 +54,7 @@
 		{"resolution":{"kind":"AddConflict","symbols":["using_variable_declarator","tuple_element"]},"step":"upstream-declared","sourceChains":[["using_variable_declarator"],["tuple_element"]],"conflict":{"symbolSequence":["'using'","'('","type","identifier"],"lookahead":"','","interpretations":["using_variable_declarator","tuple_element"]}}
 	],
 	"bound": {
-		"grammarHash": "ec387539171962e783a429221070eb164b8c9fe1fdf817081d541600798f18cd",
+		"grammarHash": "c2e28dd5ccda0da4f22215de019b672dc603619a7ed67712b5a166122d65c451",
 		"resolutions": []
 	}
 }

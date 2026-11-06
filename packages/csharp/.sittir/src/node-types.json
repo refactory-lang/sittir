@@ -921,12 +921,8 @@
         "required": false,
         "types": [
           {
-            "type": "async",
-            "named": false
-          },
-          {
-            "type": "static",
-            "named": false
+            "type": "modifier",
+            "named": true
           }
         ]
       },
@@ -4344,12 +4340,8 @@
         "required": false,
         "types": [
           {
-            "type": "async",
-            "named": false
-          },
-          {
-            "type": "static",
-            "named": false
+            "type": "modifier",
+            "named": true
           }
         ]
       },
@@ -5243,28 +5235,8 @@
         "required": false,
         "types": [
           {
-            "type": "in",
-            "named": false
-          },
-          {
-            "type": "out",
-            "named": false
-          },
-          {
-            "type": "readonly",
-            "named": false
-          },
-          {
-            "type": "ref",
-            "named": false
-          },
-          {
-            "type": "scoped",
-            "named": false
-          },
-          {
-            "type": "this",
-            "named": false
+            "type": "modifier",
+            "named": true
           }
         ]
       },
