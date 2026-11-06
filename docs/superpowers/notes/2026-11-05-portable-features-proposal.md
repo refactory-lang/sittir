@@ -423,7 +423,7 @@ The cuts above follow the differences between three grammars. This section tests
 **The matrix** is [`2026-11-05-portable-features-matrix.tsv`](2026-11-05-portable-features-matrix.tsv). It has one row per vocabulary kind (628) and per feature-owned or core-gap member (233), with nine columns. Each cell is H (has), L (lacks) or D (different shape).
 
 - **Measured: python, rust and typescript,** from their bindings.
-- **Measured: go and c,** from probe bindings on `probe/feature-scrub`. Each language was bootstrapped with `tool bootstrap-grammar` and left unstable. Its `bindings.scm` claims the vocabulary content the language has, and `derive()` gives the held set.
+- **Measured: go and c,** from probe bindings on `probe/feature-scrub`. Each language was bootstrapped with `tool bootstrap-grammar` and left unstable. Its `bindings.scm` claims the vocabulary content the language has, and `derive()` gives the held set. After the bootstrap fixes all four were bootstrapped again from the fixed template, with no hand-written files. Go's and C's held sets came out identical, kind for kind and member for member.
   - A measured cell is H when the grammar claims the path, or routes the member. Otherwise the paper judgment decides between L and D.
   - Go makes 140 claims (162 kinds held), and C makes 112 (130 kinds held).
 - **Paper: java and c#** (bootstrap blocked by core defects, see below), **swift and c++.** These are language knowledge, checked against each upstream grammar's `node-types.json` and `grammar.json` at the pinned tag. Spot-checked witness nodes all exist, except two. C++ has no `module` or `import` node, because it uses `#include`, a different shape. Java's text blocks lex as an ordinary `string_literal`. The judgments are rules, so each cell traces to one: `docs/superpowers/probes/2026-11-05-feature-scrub/paper_rules.py` on the probe branch.
@@ -439,13 +439,12 @@ The cuts above follow the differences between three grammars. This section tests
 
 | Language | Blocker | Class |
 |---|---|---|
-| all four | `bootstrap-grammar` writes `grammar.sittir.ts` importing the upstream grammar directly. Every other grammar imports it through `base.ts`, and `tree-sitter generate` fails with `ERR_MODULE_NOT_FOUND …/base.ts`. Worked around by writing `base.ts` by hand. | core (tooling: the bootstrap template is behind the package layout) |
-| all four | Emit throws until the grammar declares `options.indent`, and the template declares none. A plain `gen` (without `--all`) fails on a missing `.sittir/resolutions.json`, because the transpile and generate chain runs only under `--all`. | core (tooling) |
-| go | Allowed for the probe: `unclassifiable-shape` ×2, `union-slot-mixed-row`, `separator-default-undeclared` ×7, `dropped-token` ×4 | authoring |
-| go | `--all` stops in the render-module emitter with a raw `Error: 'chan<-' is stored as a kind id, but no fixed-literal kind was collected for it`. Measured without the render module. | core |
-| java | A raw `Error: display name: 'decimal_integer_literal_arm1' is not a kind of this grammar` while collecting grammar diagnostics, so there's no model. Java is on paper. | core |
-| c# | `layer-not-enrich-fixpoint`: enrich changes `subpattern_arm` on a second pass. With that allowed, the template emitter throws `emitRule: PATTERN with no field name and no lookupSlot hit for kind 'namespace_declaration'`. C# is on paper. | core (two defects) |
-| c | Allowed for the probe: `storagename-collision` (type_definition, type_descriptor), `display-union-mixed` (primitive_type), `dropped-token` (case_statement) | authoring |
+| all four | Fixed. The template had no `base.ts` and no `options.indent`, and plain `gen` lacked the transpile chain. The template now writes all three, and the rerun's `base.ts`, `package.json`, README and tsconfigs are byte-identical to the hand workarounds. | core (tooling), fixed |
+| go | Allowed for the probe: `unclassifiable-shape` ×2, `union-slot-mixed-row`, `separator-default-undeclared` ×7, `dropped-token` ×4. Authored: `channel_type`'s three arms as variants. `chan<-` is now the `unresolved-enum-text` diagnostic, so authoring resolves it. | authoring |
+| go, c | `--all` stops in render-module on a named alias over an inline token (Go's string contents, C's `char_literal` → `character`). Measured without the render module. | core (#1098) |
+| java | The display-name error is fixed. Next, the template emitter's duplicate-slot violation on `formal_parameters` and `try_statement` was authored away with variants. Plain `gen` then throws `SyntaxError: Invalid regular expression … Invalid capture group name`, because the optional `.` in `hex_floating_point_literal` becomes a flag named `.`. Java is on paper. | core (#1100) |
+| c# | The fixpoint error is fixed. Authored: `_optional_semi`'s `visibleExternals` text, field names on `argument` and `preproc_nullable`, and what enrich then adds on the declaration-list bodies, type argument lists and record bases. Plain `gen` then throws a raw leaf-registry error: its 11 visible scanner tokens have no `renderAs` shape, and the emitter reports them one throw at a time. `--all` also stops at the WASM build (#1097). C# is on paper. | core (#1101) |
+| c | Allowed for the probe: `storagename-collision` (type_definition, type_descriptor), `unclassifiable-shape` ×4, `union-slot-mixed-row`, `display-union-mixed` (primitive_type), `content-collision` (alignas_qualifier), `dropped-token` | authoring |
 | go, c bindings | A kind with only refining claims whose paths share no parent (`type_spec`, `pointer_expression`) must claim the kind itself | authoring |
 
 ### Re-cutting option 2 against nine languages
@@ -494,7 +493,8 @@ The **targeted family cut: 104 features**, against 83 for option 2 cut by three 
 Two findings go with it:
 - **ConcurrencySyntax and DeferredExecution** are marker-only today. They're the future home of Go's channels, `go`, `select`, send and receive, and `defer` (and later Swift's `defer` and actors). Their content waits until Go is bootstrapped. Until then they stay trivially held markers.
 - The core defects the bootstrap found are filed as issues:
-  - #1091: the bootstrap template (`base.ts`, an `indent` option, the chain outside `--all`);
-  - #1092: Go's render-module `chan<-`;
-  - #1093: Java's display name;
-  - #1094: C#'s enrich fixpoint and template `PATTERN`.
+  - #1091 to #1094, fixed: the bootstrap template, Go's `chan<-` (now a diagnostic), Java's display name, and C#'s enrich fixpoint and template `PATTERN`;
+  - #1098, open: render-module and a named alias over an inline token (Go, C);
+  - #1100, open: Java's invalid regex group name;
+  - #1101, open: C#'s scanner tokens without `renderAs` throw instead of reporting a diagnostic;
+  - #1097, open: C#'s scanner symbols in the WASM build.
