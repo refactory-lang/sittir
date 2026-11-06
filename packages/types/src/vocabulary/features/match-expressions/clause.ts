@@ -8,7 +8,7 @@ export namespace Clause {
 			readonly $kind: K;
 			readonly body: Slot<
 				G,
-				'clause.case.match',
+				K,
 				'body',
 				| V.Expression.Any<G>
 				| V.Identifier.Any<G>
@@ -19,7 +19,7 @@ export namespace Clause {
 			>;
 			readonly guard?: Slot<
 				G,
-				'clause.case.match',
+				K,
 				'guard',
 				| V.Expression.Any<G>
 				| V.Identifier.Any<G>
@@ -30,7 +30,7 @@ export namespace Clause {
 			>;
 			readonly pattern: Slot<
 				G,
-				'clause.case.match',
+				K,
 				'pattern',
 				| V.Pattern.Any<G>
 				| V.Expression.Block.Const<G>
@@ -43,10 +43,10 @@ export namespace Clause {
 	export interface Let<G extends GrammarMap, K extends Under<'clause.let'> = 'clause.let'> extends SubKindOf<V.Clause<G, K>> {
 		// claimed by r
 		readonly $kind: K;
-		readonly pattern?: Slot<G, 'clause.let', 'pattern', unknown>;
+		readonly pattern?: Slot<G, K, 'pattern', unknown>;
 		readonly value?: Slot<
 			G,
-			'clause.let',
+			K,
 			'value',
 			| V.Expression.Any<G>
 			| V.Identifier.Any<G>
@@ -60,7 +60,7 @@ export namespace Clause {
 			readonly $kind: K;
 			readonly left: Slot<
 				G,
-				'clause.let.chain',
+				K,
 				'left',
 				| V.Expression.Any<G>
 				| V.Identifier.Any<G>
@@ -70,7 +70,7 @@ export namespace Clause {
 			>;
 			readonly rights?: Slot<
 				G,
-				'clause.let.chain',
+				K,
 				'rights',
 				| V.Clause.Let<G>
 				| V.Expression.Any<G>

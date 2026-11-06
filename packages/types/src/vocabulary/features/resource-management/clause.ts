@@ -5,7 +5,7 @@ export namespace Clause {
 	export interface Resource<G extends GrammarMap, K extends Under<'clause.resource'> = 'clause.resource'> extends SubKindOf<V.Clause<G, K>> {
 		// claimed by p
 		readonly $kind: K;
-		readonly items: V.Clause.Resource.Item<G>[];
+		readonly items: Slot<G, K, 'items', V.Clause.Resource.Item<G>>[];
 	}
 	export namespace Resource {
 		export interface Item<G extends GrammarMap, K extends Under<'clause.resource.item'> = 'clause.resource.item'> extends SubKindOf<V.Clause.Resource<G, K>> {
@@ -13,7 +13,7 @@ export namespace Clause {
 			readonly $kind: K;
 			readonly name?: Slot<
 				G,
-				'clause.resource.item',
+				K,
 				'name',
 				| V.Expression.Any<G>
 				| V.Identifier.Any<G>
@@ -22,7 +22,7 @@ export namespace Clause {
 			>;
 			readonly value: Slot<
 				G,
-				'clause.resource.item',
+				K,
 				'value',
 				| V.Expression.Any<G>
 				| V.Identifier.Any<G>

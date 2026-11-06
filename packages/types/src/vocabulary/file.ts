@@ -8,7 +8,7 @@ export interface File<G extends GrammarMap, K extends Under<'file'> = 'file'> {
 	// rt only
 	readonly statements?: Slot<
 		G,
-		'file',
+		K,
 		'statements',
 		| V.Attribute.Any<G>
 		| V.Declaration.Any<G>

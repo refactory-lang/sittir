@@ -6,6 +6,6 @@ export namespace Literal {
 		// claimed by r
 		readonly $kind: K;
 		readonly byte?: Flag;
-		readonly content?: Slot<G, 'literal.character', 'content', string>;
+		readonly content?: Slot<G, K, 'content', string>;
 	}
 }

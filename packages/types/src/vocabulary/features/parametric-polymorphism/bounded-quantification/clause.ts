@@ -7,7 +7,7 @@ export namespace Clause {
 		readonly $kind: K;
 		readonly bounds?: Slot<
 			G,
-			'clause.bounds',
+			K,
 			'bounds',
 			| V.Expression.Call.Macro<G>
 			| V.Identifier.Any<G>
@@ -22,7 +22,7 @@ export namespace Clause {
 			readonly $kind: K;
 			readonly type: Slot<
 				G,
-				'clause.bounds.removed',
+				K,
 				'type',
 				| V.Clause.Bounds.Removed<G>
 				| V.Expression.Call.Macro<G>
@@ -30,16 +30,16 @@ export namespace Clause {
 				| V.Type.Any<G>
 			>;
 		}
-		export interface Use<G extends GrammarMap, K extends Under<'clause.bounds.use'> = 'clause.bounds.use'> extends SubKindOf<V.Clause.Bounds<G, K>, 'bounds'> {
+		export interface Use<G extends GrammarMap, K extends Under<'clause.bounds.use'> = 'clause.bounds.use'> extends SubKindOf<V.Clause.Bounds<G, K>> {
 			// claimed by r
 			readonly $kind: K;
-			readonly bounds?: Slot<G, 'clause.bounds.use', 'bounds', V.Identifier.Any<G>>[];
+			readonly bounds?: Slot<G, K, 'bounds', V.Identifier.Any<G>>[];
 		}
 	}
 	export interface Where<G extends GrammarMap, K extends Under<'clause.where'> = 'clause.where'> extends SubKindOf<V.Clause<G, K>> {
 		// claimed by r
 		readonly $kind: K;
-		readonly wherePredicates?: V.Clause.Where.Predicate<G>[];
+		readonly wherePredicates?: Slot<G, K, 'wherePredicates', V.Clause.Where.Predicate<G>>[];
 	}
 	export namespace Where {
 		export interface Predicate<G extends GrammarMap, K extends Under<'clause.where.predicate'> = 'clause.where.predicate'> extends SubKindOf<V.Clause.Where<G, K>> {
@@ -47,7 +47,7 @@ export namespace Clause {
 			readonly $kind: K;
 			readonly bounds: Slot<
 				G,
-				'clause.where.predicate',
+				K,
 				'bounds',
 				| V.Expression.Call.Macro<G>
 				| V.Identifier.Any<G>
@@ -57,7 +57,7 @@ export namespace Clause {
 			>[];
 			readonly left: Slot<
 				G,
-				'clause.where.predicate',
+				K,
 				'left',
 				| V.Clause.Bounds.HigherRanked<G>
 				| V.Identifier.Any<G>

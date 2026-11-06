@@ -8,7 +8,7 @@ export namespace Expression {
 			readonly $kind: K;
 			readonly elements?: Slot<
 				G,
-				'expression.collection.tuple',
+				K,
 				'elements',
 				| V.Element.Spread<G>
 				| V.Element.Spread.Parenthesized<G>

@@ -7,7 +7,7 @@ export namespace Element {
 		readonly $kind: K;
 		readonly content: Slot<
 			G,
-			'element.type_argument',
+			K,
 			'content',
 			| V.Clause.Bounds.Removed<G>
 			| V.Element.TypeBinding<G>

@@ -7,7 +7,7 @@ export namespace Expression {
 		readonly $kind: K;
 		readonly alternative: Slot<
 			G,
-			'expression.conditional',
+			K,
 			'alternative',
 			| V.Declaration.Module<G>
 			| V.Expression.Any<G>
@@ -17,7 +17,7 @@ export namespace Expression {
 		>;
 		readonly condition: Slot<
 			G,
-			'expression.conditional',
+			K,
 			'condition',
 			| V.Declaration.Module<G>
 			| V.Expression.Any<G>
@@ -27,7 +27,7 @@ export namespace Expression {
 		>;
 		readonly consequence: Slot<
 			G,
-			'expression.conditional',
+			K,
 			'consequence',
 			| V.Declaration.Module<G>
 			| V.Expression.Any<G>

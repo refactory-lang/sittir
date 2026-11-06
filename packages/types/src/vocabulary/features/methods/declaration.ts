@@ -9,14 +9,14 @@ export namespace Declaration {
 	export interface Method<G extends GrammarMap, K extends Under<'declaration.method'> = 'declaration.method'> extends SubKindOf<V.Declaration<G, K>> {
 		// claimed by prt
 		readonly $kind: K;
-		readonly body?: Slot<G, 'declaration.method', 'body', V.Declaration.TypeAlias<G> | V.Statement.Any<G>>;
+		readonly body?: Slot<G, K, 'body', V.Declaration.TypeAlias<G> | V.Statement.Any<G>>;
 		readonly default?: Flag;
 		// rt only
-		readonly doc?: V.Literal.String<G>;
+		readonly doc?: Slot<G, K, 'doc', V.Literal.String.Any<G>>;
 		// pt only
 		readonly name: Slot<
 			G,
-			'declaration.method',
+			K,
 			'name',
 			| V.Expression.Any<G>
 			| V.Identifier.Any<G>
@@ -26,7 +26,7 @@ export namespace Declaration {
 		>;
 		readonly parameters: Slot<
 			G,
-			'declaration.method',
+			K,
 			'parameters',
 			| V.Clause.Bounds.Removed<G>
 			| V.Expression.Call.Macro<G>
@@ -40,14 +40,14 @@ export namespace Declaration {
 		// t only
 	}
 	export namespace Method {
-		export interface Signature<G extends GrammarMap, K extends Under<'declaration.method.signature'> = 'declaration.method.signature'> extends SubKindOf<V.Declaration.Method<G, K>, 'name' | 'parameters' | 'returnType' | 'typeParameters'> {
+		export interface Signature<G extends GrammarMap, K extends Under<'declaration.method.signature'> = 'declaration.method.signature'> extends SubKindOf<V.Declaration.Method<G, K>> {
 			// claimed by rt
 			readonly $kind: K;
-			readonly functionModifiers?: Slot<G, 'declaration.method.signature', 'functionModifiers', V.Modifier.Extern<G> | string>[];
+			readonly functionModifiers?: Slot<G, K, 'functionModifiers', V.Modifier.Extern<G> | string>[];
 			// r only
 			readonly name: Slot<
 				G,
-				'declaration.method.signature',
+				K,
 				'name',
 				| V.Expression.Any<G>
 				| V.Identifier.Any<G>
@@ -57,7 +57,7 @@ export namespace Declaration {
 			>;
 			readonly parameters: Slot<
 				G,
-				'declaration.method.signature',
+				K,
 				'parameters',
 				| V.Clause.Bounds.Removed<G>
 				| V.Expression.Call.Macro<G>

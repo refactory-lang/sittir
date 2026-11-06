@@ -209,19 +209,25 @@ export function exactSlotsOf(input: PortableTypedInput, reads: ExactReads = exac
 		reasonsCache.set(kind, out);
 		return out;
 	};
-	const routeKinds = (path: string, member: string): readonly string[] => {
+	const routeKinds = (path: string, member: string): { readonly kinds: readonly string[]; readonly interior: boolean } => {
 		const kinds = new Set<string>();
+		let interior = false;
 		for (const [, list] of routes.readEntries)
 			for (const entry of list) {
-				if (entry.vocab !== path && !entry.vocab.startsWith(`${path}.`)) continue;
+				if (entry.vocab !== path) continue;
 				for (const route of entry.members) {
 					if (route.name !== member || route.flag === true) continue;
 					const except = new Set(route.route === 'slot' ? (route.except ?? []) : []);
 					const slotKinds = route.route === 'kind' ? [route.kind] : route.route === 'slot' || route.route === 'nested' ? (route.slot?.kinds ?? []).filter((k) => !except.has(k)) : [];
-					for (const k of slotKinds) kinds.add(k);
+					const last = route.path?.at(-1);
+					const owner = last === undefined ? undefined : modelNode(model, last.owner);
+					if (owner?.modelType === 'lexedPattern' && owner.slots.find((at) => at.name === last?.slot)?.storage !== 'boolean') interior = true;
+					const pinned = route.route === 'nested' ? route.selector.kind : null;
+					const held = new Set(concreteKinds(model, slotKinds));
+					for (const k of pinned === null ? slotKinds : concreteKinds(model, [pinned]).filter((at) => held.has(at))) kinds.add(k);
 				}
 			}
-		return [...kinds].sort();
+		return { kinds: [...kinds].sort(), interior };
 	};
 	const rawAt = (held: readonly string[]): readonly RawArm[] =>
 		[...new Set(concreteKinds(model, held).filter((k) => entriesFor(k) !== undefined))].sort().flatMap((kind) => {
@@ -236,11 +242,11 @@ export function exactSlotsOf(input: PortableTypedInput, reads: ExactReads = exac
 			if (held === undefined) continue;
 			const arms = [...held];
 			const kinds = new Set<string>();
-			const routed = routeKinds(path, member);
+			const { kinds: routed, interior } = routeKinds(path, member);
 			const read = readsIn(routed);
 			const unmapped = read.unmapped.map((kind) => `${grammarInput.grammar}:${kind}`);
 			const texts = new Set<string>(read.texts);
-			const scalars = new Set<Scalar>();
+			const scalars = new Set<Scalar>(interior ? ['string'] : []);
 			for (const k of arms)
 				switch (armClass(k)) {
 					case 'scalar':

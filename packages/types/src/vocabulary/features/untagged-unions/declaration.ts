@@ -7,12 +7,12 @@ export namespace Declaration {
 		readonly $kind: K;
 		readonly body: Slot<
 			G,
-			'declaration.union',
+			K,
 			'body',
 			| V.Declaration.Field<G>
 			| V.Declaration.Field.Private<G>
 			| V.Declaration.Field.Public.Any<G>
 		>[];
-		readonly name: V.Identifier<G>;
+		readonly name: Slot<G, K, 'name', V.Identifier.Any<G>>;
 	}
 }

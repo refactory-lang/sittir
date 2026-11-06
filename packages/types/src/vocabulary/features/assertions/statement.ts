@@ -7,7 +7,7 @@ export namespace Statement {
 		readonly $kind: K;
 		readonly expressions: Slot<
 			G,
-			'statement.assert',
+			K,
 			'expressions',
 			| V.Expression.Any<G>
 			| V.Identifier.Any<G>

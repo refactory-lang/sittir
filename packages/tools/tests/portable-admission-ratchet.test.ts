@@ -1,14 +1,14 @@
 import { describe, expect, it } from 'vitest';
 import { computePortableAdmission, formatAdmission } from '../src/index.ts';
 
-const UNTYPED = 52;
+const UNTYPED = 51;
 
-const MEMBERS: Readonly<Record<string, number>> = { python: 22, rust: 27, typescript: 1 };
+const MEMBERS: Readonly<Record<string, number>> = { python: 0, rust: 0, typescript: 0 };
 
 const RAW: Readonly<Record<string, { readonly kind: number; readonly value: number }>> = {
-	python: { kind: 145, value: 3056 },
-	rust: { kind: 1689, value: 5886 },
-	typescript: { kind: 138, value: 5315 }
+	python: { kind: 144, value: 2892 },
+	rust: { kind: 1682, value: 5878 },
+	typescript: { kind: 137, value: 5310 }
 };
 
 const pinned = (name: string, count: number, ceiling: number, shown: string): void => {

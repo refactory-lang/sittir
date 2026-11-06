@@ -11,7 +11,7 @@ export namespace Element {
 			readonly $kind: K;
 			readonly value: Slot<
 				G,
-				'element.struct.base',
+				K,
 				'value',
 				| V.Expression.Any<G>
 				| V.Identifier.Any<G>
@@ -25,7 +25,7 @@ export namespace Element {
 			readonly field:
 				Slot<
 				G,
-				'element.struct.field',
+				K,
 				'field',
 				| V.Identifier.Any<G>
 				| V.Literal.Number.Integer<G>
@@ -35,7 +35,7 @@ export namespace Element {
 			>;
 			readonly value?: Slot<
 				G,
-				'element.struct.field',
+				K,
 				'value',
 				| V.Expression.Any<G>
 				| V.Identifier.Any<G>

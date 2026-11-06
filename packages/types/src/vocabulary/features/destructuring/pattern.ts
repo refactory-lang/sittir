@@ -7,7 +7,7 @@ export namespace Pattern {
 		readonly $kind: K;
 		readonly left: Slot<
 			G,
-			'pattern.assignment',
+			K,
 			'left',
 			| V.Expression.Any<G>
 			| V.Identifier.Any<G>
@@ -16,7 +16,7 @@ export namespace Pattern {
 		>;
 		readonly right: Slot<
 			G,
-			'pattern.assignment',
+			K,
 			'right',
 			| V.Declaration.Module<G>
 			| V.Expression.Any<G>
@@ -27,21 +27,21 @@ export namespace Pattern {
 	export interface List<G extends GrammarMap, K extends Under<'pattern.list'> = 'pattern.list'> extends SubKindOf<V.Pattern<G, K>> {
 		// claimed by prt
 		readonly $kind: K;
-		readonly elements?: Slot<G, 'pattern.list', 'elements', unknown>[];
+		readonly elements?: Slot<G, K, 'elements', unknown>[];
 	}
 	export interface Object<G extends GrammarMap, K extends Under<'pattern.object'> = 'pattern.object'> extends SubKindOf<V.Pattern<G, K>> {
 		// claimed by t
 		readonly $kind: K;
-		readonly properties?: Slot<G, 'pattern.object', 'properties', V.Identifier.Any<G> | V.Pattern.Any<G> | string>[];
+		readonly properties?: Slot<G, K, 'properties', V.Identifier.Any<G> | V.Pattern.Any<G> | string>[];
 	}
 	export namespace Object {
 		export interface Assignment<G extends GrammarMap, K extends Under<'pattern.object.assignment'> = 'pattern.object.assignment'> extends SubKindOf<V.Pattern.Object<G, K>> {
 			// claimed by t
 			readonly $kind: K;
-			readonly left: Slot<G, 'pattern.object.assignment', 'left', V.Identifier.Any<G> | V.Pattern.Any<G> | string>;
+			readonly left: Slot<G, K, 'left', V.Identifier.Any<G> | V.Pattern.Any<G> | string>;
 			readonly right: Slot<
 				G,
-				'pattern.object.assignment',
+				K,
 				'right',
 				| V.Declaration.Module<G>
 				| V.Expression.Any<G>
@@ -54,7 +54,7 @@ export namespace Pattern {
 			readonly $kind: K;
 			readonly key: Slot<
 				G,
-				'pattern.object.pair',
+				K,
 				'key',
 				| V.Expression.Any<G>
 				| V.Literal.Any<G>
@@ -65,7 +65,7 @@ export namespace Pattern {
 			>;
 			readonly value?: Slot<
 				G,
-				'pattern.object.pair',
+				K,
 				'value',
 				| V.Expression.Any<G>
 				| V.Identifier.Any<G>
@@ -79,7 +79,7 @@ export namespace Pattern {
 		readonly $kind: K;
 		readonly pattern: Slot<
 			G,
-			'pattern.rest',
+			K,
 			'pattern',
 			| V.Expression.Any<G>
 			| V.Identifier.Any<G>
@@ -99,7 +99,7 @@ export namespace Pattern {
 		readonly $kind: K;
 		readonly elements?: Slot<
 			G,
-			'pattern.tuple',
+			K,
 			'elements',
 			| V.Expression.Any<G>
 			| V.Identifier.Any<G>

@@ -6,10 +6,10 @@ export namespace Expression {
 		export interface Struct<G extends GrammarMap, K extends Under<'expression.collection.struct'> = 'expression.collection.struct'> extends SubKindOf<V.Expression.Collection<G, K>> {
 			// claimed by r
 			readonly $kind: K;
-			readonly body: (V.Element.Struct.Base<G> | V.Element.Struct.Field<G>)[];
+			readonly body: Slot<G, K, 'body', V.Element.Struct.Base<G> | V.Element.Struct.Field<G>>[];
 			readonly name: Slot<
 				G,
-				'expression.collection.struct',
+				K,
 				'name',
 				| V.Identifier<G>
 				| V.Type.Any<G>

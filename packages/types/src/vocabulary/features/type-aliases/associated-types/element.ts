@@ -5,16 +5,16 @@ export namespace Element {
 	export interface TypeBinding<G extends GrammarMap, K extends Under<'element.type_binding'> = 'element.type_binding'> extends SubKindOf<V.Element<G, K>> {
 		// claimed by r
 		readonly $kind: K;
-		readonly name: V.Identifier<G>;
+		readonly name: Slot<G, K, 'name', V.Identifier.Any<G>>;
 		readonly type: Slot<
 			G,
-			'element.type_binding',
+			K,
 			'type',
 			| V.Clause.Bounds.Removed<G>
 			| V.Expression.Call.Macro<G>
 			| V.Identifier.Any<G>
 			| V.Type.Any<G>
 		>;
-		readonly typeArguments?: V.Element.TypeArgument<G>[];
+		readonly typeArguments?: Slot<G, K, 'typeArguments', V.Element.TypeArgument<G>>[];
 	}
 }

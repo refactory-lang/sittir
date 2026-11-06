@@ -3,6 +3,6 @@ import type { Under } from '../../utils.ts';
 import type * as V from '../../index.ts';
 export namespace Identifier {
 	export interface Metavariable<G extends GrammarMap, K extends Under<'identifier.metavariable'> = 'identifier.metavariable'> {
-		readonly attributes?: Slot<G, 'identifier.metavariable', 'attributes', V.Attribute.Any<G>>[];
+		readonly attributes?: Slot<G, K, 'attributes', V.Attribute.Any<G>>[];
 	}
 }

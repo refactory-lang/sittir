@@ -8,19 +8,22 @@ export namespace Clause {
 			readonly $kind: K;
 			readonly type: Slot<
 				G,
-				'clause.bounds.higher_ranked',
+				K,
 				'type',
 				| V.Clause.Bounds.Removed<G>
 				| V.Expression.Call.Macro<G>
 				| V.Identifier.Any<G>
 				| V.Type.Any<G>
 			>;
-			readonly typeParameters: (
+			readonly typeParameters: Slot<
+				G,
+				K,
+				'typeParameters',
 				| V.Identifier.Metavariable<G>
 				| V.Declaration.TypeParameter<G>
 				| V.Declaration.TypeParameter.Lifetime<G>
 				| V.Declaration.TypeParameter.Value<G>
-			)[];
+			>[];
 		}
 	}
 }

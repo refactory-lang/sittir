@@ -7,7 +7,7 @@ export namespace Statement {
 		readonly $kind: K;
 		readonly code: Slot<
 			G,
-			'statement.exec',
+			K,
 			'code',
 			| V.Identifier.Any<G>
 			| V.Literal.String<G>
@@ -19,7 +19,7 @@ export namespace Statement {
 		>;
 		readonly inClauses?: Slot<
 			G,
-			'statement.exec',
+			K,
 			'inClauses',
 			| V.Expression.Any<G>
 			| V.Identifier.Any<G>

@@ -5,6 +5,6 @@ export namespace Type {
 	export interface Nullable<G extends GrammarMap, K extends Under<'type.nullable'> = 'type.nullable'> extends SubKindOf<V.Type<G, K>> {
 		// claimed by t
 		readonly $kind: K;
-		readonly type: Slot<G, 'type.nullable', 'type', V.Identifier.Any<G> | V.Type.Any<G>>;
+		readonly type: Slot<G, K, 'type', V.Identifier.Any<G> | V.Type.Any<G>>;
 	}
 }

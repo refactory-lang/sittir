@@ -19,7 +19,7 @@ export namespace Statement {
 		readonly $kind: K;
 		readonly statements?: Slot<
 			G,
-			'statement.block',
+			K,
 			'statements',
 			| V.Attribute.Any<G>
 			| V.Declaration.Any<G>
@@ -28,7 +28,7 @@ export namespace Statement {
 		>[];
 		readonly trailingExpression?: Slot<
 			G,
-			'statement.block',
+			K,
 			'trailingExpression',
 			| V.Expression.Any<G>
 			| V.Identifier.Any<G>
@@ -42,7 +42,7 @@ export namespace Statement {
 		readonly $kind: K;
 		readonly expression?: Slot<
 			G,
-			'statement.break',
+			K,
 			'expression',
 			| V.Expression.Any<G>
 			| V.Identifier.Any<G>
@@ -60,7 +60,7 @@ export namespace Statement {
 		readonly $kind: K;
 		readonly expressions: Slot<
 			G,
-			'statement.delete',
+			K,
 			'expressions',
 			| V.Expression.Any<G>
 			| V.Identifier.Any<G>
@@ -75,7 +75,7 @@ export namespace Statement {
 		readonly $kind: K;
 		readonly content?: Slot<
 			G,
-			'statement.expression',
+			K,
 			'content',
 			| V.Declaration.Variable<G>
 			| V.Expression.Any<G>
@@ -86,7 +86,7 @@ export namespace Statement {
 			| V.Declaration.Constant<G>
 		> | Slot<
 			G,
-			'statement.expression',
+			K,
 			'content',
 			| V.Declaration.Variable<G>
 			| V.Expression.Any<G>
@@ -99,7 +99,7 @@ export namespace Statement {
 		// pr only
 		readonly expression?: Slot<
 			G,
-			'statement.expression',
+			K,
 			'expression',
 			| V.Declaration.Module<G>
 			| V.Expression.Any<G>
@@ -111,13 +111,13 @@ export namespace Statement {
 	export interface If<G extends GrammarMap, K extends Under<'statement.if'> = 'statement.if'> extends SubKindOf<V.Statement<G, K>> {
 		// claimed by prt
 		readonly $kind: K;
-		readonly alternative?: V.Clause.Else<G>;
+		readonly alternative?: Slot<G, K, 'alternative', V.Clause.Else<G>>;
 		// rt only
-		readonly alternatives?: Slot<G, 'statement.if', 'alternatives', V.Clause.Any<G>>[];
+		readonly alternatives?: Slot<G, K, 'alternatives', V.Clause.Any<G>>[];
 		// p only
 		readonly condition: Slot<
 			G,
-			'statement.if',
+			K,
 			'condition',
 			| V.Expression.Any<G>
 			| V.Identifier.Any<G>
@@ -126,28 +126,28 @@ export namespace Statement {
 			| V.Clause.Let.Any<G>
 			| V.Statement.Any<G>
 		>;
-		readonly consequence: Slot<G, 'statement.if', 'consequence', V.Declaration.Any<G> | V.Statement.Any<G>>;
+		readonly consequence: Slot<G, K, 'consequence', V.Declaration.Any<G> | V.Statement.Any<G>>;
 	}
 	export interface Loop<G extends GrammarMap, K extends Under<'statement.loop'> = 'statement.loop'> extends SubKindOf<V.Statement<G, K>> {
 		// claimed by r
 		readonly $kind: K;
-		readonly body: Slot<G, 'statement.loop', 'body', V.Declaration.Any<G> | V.Statement.Any<G>>;
+		readonly body: Slot<G, K, 'body', V.Declaration.Any<G> | V.Statement.Any<G>>;
 		// prt only
 	}
 	export namespace Loop {
-		export interface ForEach<G extends GrammarMap, K extends Under<'statement.loop.for_each'> = 'statement.loop.for_each'> extends SubKindOf<V.Statement.Loop<G, K>, 'body'> {
+		export interface ForEach<G extends GrammarMap, K extends Under<'statement.loop.for_each'> = 'statement.loop.for_each'> extends SubKindOf<V.Statement.Loop<G, K>> {
 			// claimed by prt
 			readonly $kind: K;
-			readonly alternative?: V.Clause.Else<G>;
+			readonly alternative?: Slot<G, K, 'alternative', V.Clause.Else<G>>;
 			// p only
-			readonly body: Slot<G, 'statement.loop.for_each', 'body', V.Declaration.Any<G> | V.Statement.Any<G>>;
-			readonly header?: Slot<G, 'statement.loop.for_each', 'header', unknown>;
+			readonly body: Slot<G, K, 'body', V.Declaration.Any<G> | V.Statement.Any<G>>;
+			readonly header?: Slot<G, K, 'header', unknown>;
 			// t only
-			readonly left?: Slot<G, 'statement.loop.for_each', 'left', unknown>;
+			readonly left?: Slot<G, K, 'left', unknown>;
 			// pr only
 			readonly right?: Slot<
 				G,
-				'statement.loop.for_each',
+				K,
 				'right',
 				| V.Expression.Any<G>
 				| V.Identifier.Any<G>
@@ -157,15 +157,15 @@ export namespace Statement {
 			>;
 			// pr only
 		}
-		export interface While<G extends GrammarMap, K extends Under<'statement.loop.while'> = 'statement.loop.while'> extends SubKindOf<V.Statement.Loop<G, K>, 'body'> {
+		export interface While<G extends GrammarMap, K extends Under<'statement.loop.while'> = 'statement.loop.while'> extends SubKindOf<V.Statement.Loop<G, K>> {
 			// claimed by prt
 			readonly $kind: K;
-			readonly alternative?: V.Clause.Else<G>;
+			readonly alternative?: Slot<G, K, 'alternative', V.Clause.Else<G>>;
 			// p only
-			readonly body: Slot<G, 'statement.loop.while', 'body', V.Declaration.Any<G> | V.Statement.Any<G>>;
+			readonly body: Slot<G, K, 'body', V.Declaration.Any<G> | V.Statement.Any<G>>;
 			readonly condition: Slot<
 				G,
-				'statement.loop.while',
+				K,
 				'condition',
 				| V.Expression.Any<G>
 				| V.Identifier.Any<G>
@@ -181,7 +181,7 @@ export namespace Statement {
 		readonly $kind: K;
 		readonly expression?: Slot<
 			G,
-			'statement.return',
+			K,
 			'expression',
 			| V.Declaration.Module<G>
 			| V.Expression.Any<G>

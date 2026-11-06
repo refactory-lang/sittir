@@ -5,17 +5,17 @@ export namespace Declaration {
 	export interface Enum<G extends GrammarMap, K extends Under<'declaration.enum'> = 'declaration.enum'> extends SubKindOf<V.Declaration<G, K>> {
 		// claimed by rt
 		readonly $kind: K;
-		readonly body: Slot<G, 'declaration.enum', 'body', V.Declaration.EnumMember.Any<G>>[];
+		readonly body: Slot<G, K, 'body', V.Declaration.EnumMember.Any<G>>[];
 		readonly const?: Flag;
 		// t only
-		readonly name: Slot<G, 'declaration.enum', 'name', V.Identifier.Any<G>>;
+		readonly name: Slot<G, K, 'name', V.Identifier.Any<G>>;
 	}
 	export interface EnumMember<G extends GrammarMap, K extends Under<'declaration.enum_member'> = 'declaration.enum_member'> extends SubKindOf<V.Declaration<G, K>> {
 		// claimed by rt
 		readonly $kind: K;
 		readonly body?: Slot<
 			G,
-			'declaration.enum_member',
+			K,
 			'body',
 			| V.Declaration.Field<G>
 			| V.Declaration.Field.Private<G>
@@ -24,7 +24,7 @@ export namespace Declaration {
 		// r only
 		readonly name: Slot<
 			G,
-			'declaration.enum_member',
+			K,
 			'name',
 			| V.Identifier.Any<G>
 			| V.Literal.Any<G>
@@ -34,7 +34,7 @@ export namespace Declaration {
 		>;
 		readonly value?: Slot<
 			G,
-			'declaration.enum_member',
+			K,
 			'value',
 			| V.Declaration.Module<G>
 			| V.Expression.Any<G>

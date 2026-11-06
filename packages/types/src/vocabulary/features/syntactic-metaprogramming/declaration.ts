@@ -5,8 +5,8 @@ export namespace Declaration {
 	export interface Macro<G extends GrammarMap, K extends Under<'declaration.macro'> = 'declaration.macro'> extends SubKindOf<V.Declaration<G, K>> {
 		// claimed by r
 		readonly $kind: K;
-		readonly name: Slot<G, 'declaration.macro', 'name', V.Identifier.Any<G> | string>;
-		readonly rules?: V.Clause.Macro.Rule<G>[];
+		readonly name: Slot<G, K, 'name', V.Identifier.Any<G> | string>;
+		readonly rules?: Slot<G, K, 'rules', V.Clause.Macro.Rule<G>>[];
 	}
 	export namespace Macro {
 		export interface Paren<G extends GrammarMap, K extends Under<'declaration.macro.paren'> = 'declaration.macro.paren'> extends SubKindOf<V.Declaration.Macro<G, K>> {

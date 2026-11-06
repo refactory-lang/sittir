@@ -16,7 +16,7 @@ export namespace Element {
 		readonly $kind: K;
 		readonly right: Slot<
 			G,
-			'element.comparator',
+			K,
 			'right',
 			| V.Expression.Any<G>
 			| V.Identifier.Any<G>
@@ -92,7 +92,7 @@ export namespace Element {
 		readonly $kind: K;
 		readonly key: Slot<
 			G,
-			'element.pair',
+			K,
 			'key',
 			| V.Expression.Any<G>
 			| V.Identifier.Any<G>
@@ -103,7 +103,7 @@ export namespace Element {
 		>;
 		readonly value?: Slot<
 			G,
-			'element.pair',
+			K,
 			'value',
 			| V.Declaration.Module<G>
 			| V.Expression.Any<G>
@@ -117,7 +117,7 @@ export namespace Element {
 		readonly $kind: K;
 		readonly expression?: Slot<
 			G,
-			'element.spread',
+			K,
 			'expression',
 			| V.Declaration.Module<G>
 			| V.Expression.Any<G>
@@ -127,12 +127,12 @@ export namespace Element {
 		>;
 	}
 	export namespace Spread {
-		export interface Map<G extends GrammarMap, K extends Under<'element.spread.map'> = 'element.spread.map'> extends SubKindOf<V.Element.Spread<G, K>, 'expression'> {
+		export interface Map<G extends GrammarMap, K extends Under<'element.spread.map'> = 'element.spread.map'> extends SubKindOf<V.Element.Spread<G, K>> {
 			// claimed by p
 			readonly $kind: K;
 			readonly expression: Slot<
 				G,
-				'element.spread.map',
+				K,
 				'expression',
 				| V.Expression.Any<G>
 				| V.Identifier.Any<G>
@@ -143,7 +143,7 @@ export namespace Element {
 		export interface Parenthesized<G extends GrammarMap, K extends Under<'element.spread.parenthesized'> = 'element.spread.parenthesized'> extends SubKindOf<V.Element.Spread<G, K>> {
 			// claimed by p
 			readonly $kind: K;
-			readonly content: V.Element.Spread<G> | V.Element.Spread.Parenthesized<G>;
+			readonly content: Slot<G, K, 'content', V.Element.Spread<G> | V.Element.Spread.Parenthesized<G>>;
 		}
 	}
 }

@@ -97,6 +97,7 @@ export interface VocabularyKind {
 	readonly own: ReadonlyMap<string, VocabularyMember>;
 	readonly parent: string | undefined;
 	readonly refines: string | undefined;
+	readonly text?: true;
 }
 
 export interface Vocabulary {
@@ -257,7 +258,7 @@ export async function readVocabulary(dir: string): Promise<Vocabulary> {
 	const kinds = new Map<string, VocabularyKind>();
 	const pathOf = (qname: string | undefined): string | undefined => (qname === undefined ? undefined : pathByName.get(qname));
 	for (const d of declared) {
-		kinds.set(d.path, { name: d.qname, own: own.get(d.qname) ?? new Map(), parent: pathOf(d.parent), refines: pathOf(d.refines) });
+		kinds.set(d.path, { name: d.qname, own: own.get(d.qname) ?? new Map(), parent: pathOf(d.parent), refines: pathOf(d.refines), ...(d.text === true ? { text: true as const } : {}) });
 	}
 	const membersWithin = (composed: ReadonlySet<string> | undefined) => (path: string): ReadonlyMap<string, VocabularyMember> => {
 		const all = new Map<string, VocabularyMember>();

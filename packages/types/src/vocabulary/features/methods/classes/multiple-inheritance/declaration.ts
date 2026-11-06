@@ -5,7 +5,7 @@ export namespace Declaration {
 	export interface Class<G extends GrammarMap, K extends Under<'declaration.class'> = 'declaration.class'> {
 		readonly bases?: Slot<
 			G,
-			'declaration.class',
+			K,
 			'bases',
 			| V.Argument.Any<G>
 			| V.Expression.Any<G>

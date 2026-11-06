@@ -4,7 +4,7 @@ import type * as V from '../../index.ts';
 export namespace Element {
 	export namespace Struct {
 		export interface Field<G extends GrammarMap, K extends Under<'element.struct.field'> = 'element.struct.field'> {
-			readonly attributes?: Slot<G, 'element.struct.field', 'attributes', V.Attribute.Any<G>>[];
+			readonly attributes?: Slot<G, K, 'attributes', V.Attribute.Any<G>>[];
 		}
 	}
 }

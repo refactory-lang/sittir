@@ -647,7 +647,6 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Literal.String.Unicode<PythonMap>
 				| V.RequiredBy<V.Pattern.Rest<PythonMap>, 'pattern', never>
 				| V.Unmapped<'python:as_pattern'>
-				| V.Unmapped<'python:except_clause_exception_as'>
 				| T.Attribute.Parsed
 				| T.Await.Parsed
 				| T.BinaryOperator.Parsed
@@ -673,7 +672,17 @@ export interface PythonMap extends V.GrammarMap {
 				| T.Subscript.Parsed
 				| T.UnaryOperator.Parsed;
 		};
+		readonly 'clause.comprehension': {
+			readonly contents:
+				| V.RequiredBy<V.Clause.Comprehension.For<PythonMap>, 'left' | 'rights', never>
+				| V.RequiredBy<V.Clause.Comprehension.If<PythonMap>, 'condition', never>
+				| T.ForInClause.Parsed
+				| T.IfClause.Parsed;
+		};
 		readonly 'clause.comprehension.for': {
+			readonly contents:
+				| V.RequiredBy<V.Clause.Comprehension.For<PythonMap>, 'left' | 'rights', never>
+				| V.RequiredBy<V.Clause.Comprehension.If<PythonMap>, 'condition', never>;
 			readonly left:
 				| V.RequiredBy<V.Expression.Member<PythonMap>, 'object' | 'property', never>
 				| V.RequiredBy<V.Expression.Subscript<PythonMap>, 'index' | 'object', never>
@@ -913,6 +922,9 @@ export interface PythonMap extends V.GrammarMap {
 				| T.String.Parsed
 				| T.Subscript.Parsed
 				| T.UnaryOperator.Parsed;
+			readonly contents:
+				| V.RequiredBy<V.Clause.Comprehension.For<PythonMap>, 'left' | 'rights', never>
+				| V.RequiredBy<V.Clause.Comprehension.If<PythonMap>, 'condition', never>;
 		};
 		readonly 'clause.else': {
 			readonly body:
@@ -1107,10 +1119,26 @@ export interface PythonMap extends V.GrammarMap {
 				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name' | 'qualifier', never>
 				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name', never>;
 		};
+		readonly 'clause.import.relative': {
+			readonly dots: V.Clause.Import.Relative.Prefix<PythonMap>;
+			readonly name:
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name' | 'qualifier', never>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name', never>;
+		};
+		readonly 'clause.import.relative.prefix': {
+			readonly dots: V.Clause.Import.Relative.Prefix<PythonMap>;
+			readonly name:
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name' | 'qualifier', never>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name', never>;
+		};
 		readonly 'clause.import.wildcard': {
 			readonly $text: PortableTexts['clause.import.wildcard'];
 		};
+		readonly 'clause.resource': {
+			readonly items: V.RequiredBy<V.Clause.Resource.Item<PythonMap>, 'value', never> | T.WithItem.Parsed;
+		};
 		readonly 'clause.resource.item': {
+			readonly items: V.RequiredBy<V.Clause.Resource.Item<PythonMap>, 'value', never>;
 			readonly name:
 				| V.RequiredBy<V.Expression.Assignment<PythonMap>, 'left' | 'right', never>
 				| V.RequiredBy<V.Expression.Await<PythonMap>, 'expression', never>
@@ -1312,6 +1340,9 @@ export interface PythonMap extends V.GrammarMap {
 				| T.Subscript.Parsed
 				| T.UnaryOperator.Parsed;
 		};
+		readonly 'comment.line': {
+			readonly content: string;
+		};
 		readonly 'declaration.class': {
 			readonly bases:
 				| V.RequiredBy<V.Argument.Named<PythonMap>, 'name' | 'value', never>
@@ -1427,6 +1458,26 @@ export interface PythonMap extends V.GrammarMap {
 				| 'break'
 				| 'continue'
 				| 'pass';
+			readonly decorators: V.RequiredBy<V.Attribute.Decorator<PythonMap>, 'content', never>;
+			readonly doc:
+				| V.Literal.String<PythonMap>
+				| V.Literal.String.Bytes<PythonMap>
+				| V.Literal.String.Bytes.Multiline<PythonMap>
+				| V.Literal.String.Bytes.Raw<PythonMap>
+				| V.Literal.String.Bytes.Raw.Multiline<PythonMap>
+				| V.Literal.String.Interpolated<PythonMap>
+				| V.Literal.String.Interpolated.Deferred<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Raw.Multiline<PythonMap>
+				| V.Literal.String.Multiline<PythonMap>
+				| V.Literal.String.Raw<PythonMap>
+				| V.Literal.String.Raw.Multiline<PythonMap>
+				| V.Literal.String.Unicode<PythonMap>
+				| T.String.Parsed;
 			readonly name:
 				| V.Identifier<PythonMap>
 				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name' | 'qualifier', never>
@@ -1437,6 +1488,29 @@ export interface PythonMap extends V.GrammarMap {
 				| V.RequiredBy<V.Declaration.TypeParameter.Variadic<PythonMap>, 'name', never>;
 		};
 		readonly 'declaration.constructor': {
+			readonly body:
+				| V.RequiredBy<V.Declaration.TypeAlias<PythonMap>, 'name' | 'value', never>
+				| V.RequiredBy<V.Statement.Assert<PythonMap>, 'expressions', never>
+				| V.Statement.Block<PythonMap>
+				| V.Text<PythonMap, 'statement.break'>
+				| V.Text<PythonMap, 'statement.continue'>
+				| V.RequiredBy<V.Statement.Delete<PythonMap>, 'expressions', never>
+				| V.Text<PythonMap, 'statement.empty'>
+				| V.RequiredBy<V.Statement.Exec<PythonMap>, 'code', never>
+				| V.RequiredBy<V.Statement.Expression<PythonMap>, 'content', never>
+				| V.RequiredBy<V.Statement.Global<PythonMap>, 'names', never>
+				| V.RequiredBy<V.Statement.Import<PythonMap>, 'names', never>
+				| V.RequiredBy<V.Statement.Import.From<PythonMap>, 'content' | 'moduleName', never>
+				| V.RequiredBy<V.Statement.Import.Future<PythonMap>, 'content', never>
+				| V.RequiredBy<V.Statement.Nonlocal<PythonMap>, 'names', never>
+				| V.RequiredBy<V.Statement.Print<PythonMap>, 'arguments', 'destination'>
+				| V.RequiredBy<V.Statement.Print<PythonMap>, 'destination', never>
+				| V.Statement.Return<PythonMap>
+				| V.Statement.Throw<PythonMap>
+				| 'break'
+				| 'continue'
+				| 'pass';
+			readonly decorators: V.RequiredBy<V.Attribute.Decorator<PythonMap>, 'content', never>;
 			readonly parameters:
 				| V.RequiredBy<V.Declaration.Parameter.Default<PythonMap>, 'default' | 'name', never>
 				| V.RequiredBy<V.Declaration.Parameter.Typed<PythonMap>, 'name' | 'type', never>
@@ -1456,6 +1530,10 @@ export interface PythonMap extends V.GrammarMap {
 				| V.RequiredBy<V.Type.Rest<PythonMap>, 'type', never>
 				| V.RequiredBy<V.Type.Union<PythonMap>, 'left' | 'right', never>
 				| T.Type.Parsed;
+			readonly typeParameters:
+				| V.RequiredBy<V.Declaration.TypeParameter<PythonMap>, 'name', never>
+				| V.RequiredBy<V.Declaration.TypeParameter.Parameters<PythonMap>, 'name', never>
+				| V.RequiredBy<V.Declaration.TypeParameter.Variadic<PythonMap>, 'name', never>;
 		};
 		readonly 'declaration.function': {
 			readonly body:
@@ -1480,6 +1558,26 @@ export interface PythonMap extends V.GrammarMap {
 				| 'break'
 				| 'continue'
 				| 'pass';
+			readonly decorators: V.RequiredBy<V.Attribute.Decorator<PythonMap>, 'content', never>;
+			readonly doc:
+				| V.Literal.String<PythonMap>
+				| V.Literal.String.Bytes<PythonMap>
+				| V.Literal.String.Bytes.Multiline<PythonMap>
+				| V.Literal.String.Bytes.Raw<PythonMap>
+				| V.Literal.String.Bytes.Raw.Multiline<PythonMap>
+				| V.Literal.String.Interpolated<PythonMap>
+				| V.Literal.String.Interpolated.Deferred<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Raw.Multiline<PythonMap>
+				| V.Literal.String.Multiline<PythonMap>
+				| V.Literal.String.Raw<PythonMap>
+				| V.Literal.String.Raw.Multiline<PythonMap>
+				| V.Literal.String.Unicode<PythonMap>
+				| T.String.Parsed;
 			readonly name:
 				| V.Identifier<PythonMap>
 				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name' | 'qualifier', never>
@@ -1531,10 +1629,97 @@ export interface PythonMap extends V.GrammarMap {
 				| 'break'
 				| 'continue'
 				| 'pass';
+			readonly decorators: V.RequiredBy<V.Attribute.Decorator<PythonMap>, 'content', never>;
+			readonly doc:
+				| V.Literal.String<PythonMap>
+				| V.Literal.String.Bytes<PythonMap>
+				| V.Literal.String.Bytes.Multiline<PythonMap>
+				| V.Literal.String.Bytes.Raw<PythonMap>
+				| V.Literal.String.Bytes.Raw.Multiline<PythonMap>
+				| V.Literal.String.Interpolated<PythonMap>
+				| V.Literal.String.Interpolated.Deferred<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Raw.Multiline<PythonMap>
+				| V.Literal.String.Multiline<PythonMap>
+				| V.Literal.String.Raw<PythonMap>
+				| V.Literal.String.Raw.Multiline<PythonMap>
+				| V.Literal.String.Unicode<PythonMap>
+				| T.String.Parsed;
 			readonly name:
 				| V.Identifier<PythonMap>
 				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name' | 'qualifier', never>
 				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name', never>;
+			readonly parameters:
+				| V.RequiredBy<V.Declaration.Parameter.Default<PythonMap>, 'default' | 'name', never>
+				| V.RequiredBy<V.Declaration.Parameter.Typed<PythonMap>, 'name' | 'type', never>
+				| V.RequiredBy<V.Declaration.Parameter.TypedDefault<PythonMap>, 'default' | 'name' | 'type', never>
+				| V.Identifier<PythonMap>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name' | 'qualifier', never>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name', never>
+				| V.RequiredBy<V.Pattern.Rest<PythonMap>, 'pattern', never>
+				| V.RequiredBy<V.Pattern.Rest.Map<PythonMap>, 'pattern', never>
+				| V.Pattern.Tuple<PythonMap>
+				| '*'
+				| '/';
+			readonly returnType:
+				| V.RequiredBy<V.Type<PythonMap>, 'content', never>
+				| V.RequiredBy<V.Type.Constrained<PythonMap>, 'baseType' | 'constraint', never>
+				| V.RequiredBy<V.Type.Generic<PythonMap>, 'name' | 'typeArguments', never>
+				| V.RequiredBy<V.Type.Rest<PythonMap>, 'type', never>
+				| V.RequiredBy<V.Type.Union<PythonMap>, 'left' | 'right', never>
+				| T.Type.Parsed;
+			readonly typeParameters:
+				| V.RequiredBy<V.Declaration.TypeParameter<PythonMap>, 'name', never>
+				| V.RequiredBy<V.Declaration.TypeParameter.Parameters<PythonMap>, 'name', never>
+				| V.RequiredBy<V.Declaration.TypeParameter.Variadic<PythonMap>, 'name', never>;
+		};
+		readonly 'declaration.method.special': {
+			readonly body:
+				| V.RequiredBy<V.Declaration.TypeAlias<PythonMap>, 'name' | 'value', never>
+				| V.RequiredBy<V.Statement.Assert<PythonMap>, 'expressions', never>
+				| V.Statement.Block<PythonMap>
+				| V.Text<PythonMap, 'statement.break'>
+				| V.Text<PythonMap, 'statement.continue'>
+				| V.RequiredBy<V.Statement.Delete<PythonMap>, 'expressions', never>
+				| V.Text<PythonMap, 'statement.empty'>
+				| V.RequiredBy<V.Statement.Exec<PythonMap>, 'code', never>
+				| V.RequiredBy<V.Statement.Expression<PythonMap>, 'content', never>
+				| V.RequiredBy<V.Statement.Global<PythonMap>, 'names', never>
+				| V.RequiredBy<V.Statement.Import<PythonMap>, 'names', never>
+				| V.RequiredBy<V.Statement.Import.From<PythonMap>, 'content' | 'moduleName', never>
+				| V.RequiredBy<V.Statement.Import.Future<PythonMap>, 'content', never>
+				| V.RequiredBy<V.Statement.Nonlocal<PythonMap>, 'names', never>
+				| V.RequiredBy<V.Statement.Print<PythonMap>, 'arguments', 'destination'>
+				| V.RequiredBy<V.Statement.Print<PythonMap>, 'destination', never>
+				| V.Statement.Return<PythonMap>
+				| V.Statement.Throw<PythonMap>
+				| 'break'
+				| 'continue'
+				| 'pass';
+			readonly decorators: V.RequiredBy<V.Attribute.Decorator<PythonMap>, 'content', never>;
+			readonly doc:
+				| V.Literal.String<PythonMap>
+				| V.Literal.String.Bytes<PythonMap>
+				| V.Literal.String.Bytes.Multiline<PythonMap>
+				| V.Literal.String.Bytes.Raw<PythonMap>
+				| V.Literal.String.Bytes.Raw.Multiline<PythonMap>
+				| V.Literal.String.Interpolated<PythonMap>
+				| V.Literal.String.Interpolated.Deferred<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Raw.Multiline<PythonMap>
+				| V.Literal.String.Multiline<PythonMap>
+				| V.Literal.String.Raw<PythonMap>
+				| V.Literal.String.Raw.Multiline<PythonMap>
+				| V.Literal.String.Unicode<PythonMap>
+				| T.String.Parsed;
 			readonly parameters:
 				| V.RequiredBy<V.Declaration.Parameter.Default<PythonMap>, 'default' | 'name', never>
 				| V.RequiredBy<V.Declaration.Parameter.Typed<PythonMap>, 'name' | 'type', never>
@@ -1819,6 +2004,10 @@ export interface PythonMap extends V.GrammarMap {
 				| T.Type.Parsed;
 		};
 		readonly 'declaration.type_alias': {
+			readonly name:
+				| V.Identifier<PythonMap>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name' | 'qualifier', never>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name', never>;
 			readonly typeParameters:
 				| V.RequiredBy<V.Declaration.TypeParameter<PythonMap>, 'name', never>
 				| V.RequiredBy<V.Declaration.TypeParameter.Parameters<PythonMap>, 'name', never>
@@ -2005,6 +2194,1106 @@ export interface PythonMap extends V.GrammarMap {
 				| T.Yield.Parsed;
 		};
 		readonly 'element.comparator': {
+			readonly right:
+				| V.RequiredBy<V.Expression.Await<PythonMap>, 'expression', never>
+				| V.Expression.Binary<PythonMap>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Add<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Divide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Exponent<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.FloorDivide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Modulo<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Multiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Subtract<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.And<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Or<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Xor<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Chain<PythonMap>, 'comparators' | 'left', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Equal<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Greater<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.GreaterEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Less<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.LessEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual.Legacy<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.Is<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.IsNot<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.MatrixMultiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.In<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.NotIn<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Left<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Right<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Call<PythonMap>, 'arguments' | 'function', never>
+				| V.RequiredBy<V.Expression.Call.Member<PythonMap>, 'arguments' | 'function', never>
+				| V.Expression.Collection.List<PythonMap>
+				| V.Expression.Collection.Map<PythonMap>
+				| V.RequiredBy<V.Expression.Collection.Set<PythonMap>, 'elements', never>
+				| V.Expression.Collection.Tuple<PythonMap>
+				| V.RequiredBy<V.Expression.Comprehension.Generator<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.List<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Map<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Set<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Member<PythonMap>, 'object' | 'property', never>
+				| V.RequiredBy<V.Expression.Parenthesized<PythonMap>, 'expression', never>
+				| V.RequiredBy<V.Expression.Subscript<PythonMap>, 'index' | 'object', never>
+				| V.Expression.Unary<PythonMap>
+				| V.RequiredBy<V.Expression.Unary.BitwiseNot<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Negation<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Plus<PythonMap>, 'argument', never>
+				| V.Identifier<PythonMap>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name' | 'qualifier', never>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name', never>
+				| V.Literal.Boolean.False<PythonMap>
+				| V.Literal.Boolean.True<PythonMap>
+				| V.Literal.Ellipsis<PythonMap>
+				| V.Literal.Null<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Float<PythonMap>, 'integer', never>
+				| V.RequiredBy<V.Literal.Number.Float.LeadingPoint<PythonMap>, 'fraction', never>
+				| V.RequiredBy<V.Literal.Number.Float.Scientific<PythonMap>, 'exponent' | 'integer' | 'marker', never>
+				| V.Literal.Number.Integer<PythonMap>
+				| V.Literal.Number.Integer.Big<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Binary<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.RequiredBy<V.Literal.Number.Integer.Hex<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.Number.Integer.Imaginary<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Octal<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.String<PythonMap>
+				| V.Literal.String.Bytes<PythonMap>
+				| V.Literal.String.Bytes.Multiline<PythonMap>
+				| V.Literal.String.Bytes.Raw<PythonMap>
+				| V.Literal.String.Bytes.Raw.Multiline<PythonMap>
+				| V.RequiredBy<V.Literal.String.Concatenated<PythonMap>, 'strings', never>
+				| V.Literal.String.Interpolated<PythonMap>
+				| V.Literal.String.Interpolated.Deferred<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Raw.Multiline<PythonMap>
+				| V.Literal.String.Multiline<PythonMap>
+				| V.Literal.String.Raw<PythonMap>
+				| V.Literal.String.Raw.Multiline<PythonMap>
+				| V.Literal.String.Unicode<PythonMap>
+				| V.RequiredBy<V.Pattern.Rest<PythonMap>, 'pattern', never>
+				| T.Attribute.Parsed
+				| T.Await.Parsed
+				| T.BinaryOperator.Parsed
+				| T.Call.Parsed
+				| T.FloatLeadingPoint.Parsed
+				| T.FloatPoint.Parsed
+				| T.FloatScientific.Parsed
+				| T.GeneratorExpression.Parsed
+				| T.IntegerBinary.Parsed
+				| T.IntegerDecimalPlain.Parsed
+				| T.IntegerHex.Parsed
+				| T.IntegerOctal.Parsed
+				| T.ListComprehension.Parsed
+				| T.ParenthesizedExpression.Parsed
+				| T.SetComprehension.Parsed
+				| T.String.Parsed
+				| T.Subscript.Parsed
+				| T.UnaryOperator.Parsed;
+		};
+		readonly 'element.comparator.comparison.equal': {
+			readonly right:
+				| V.RequiredBy<V.Expression.Await<PythonMap>, 'expression', never>
+				| V.Expression.Binary<PythonMap>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Add<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Divide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Exponent<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.FloorDivide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Modulo<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Multiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Subtract<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.And<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Or<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Xor<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Chain<PythonMap>, 'comparators' | 'left', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Equal<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Greater<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.GreaterEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Less<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.LessEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual.Legacy<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.Is<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.IsNot<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.MatrixMultiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.In<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.NotIn<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Left<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Right<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Call<PythonMap>, 'arguments' | 'function', never>
+				| V.RequiredBy<V.Expression.Call.Member<PythonMap>, 'arguments' | 'function', never>
+				| V.Expression.Collection.List<PythonMap>
+				| V.Expression.Collection.Map<PythonMap>
+				| V.RequiredBy<V.Expression.Collection.Set<PythonMap>, 'elements', never>
+				| V.Expression.Collection.Tuple<PythonMap>
+				| V.RequiredBy<V.Expression.Comprehension.Generator<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.List<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Map<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Set<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Member<PythonMap>, 'object' | 'property', never>
+				| V.RequiredBy<V.Expression.Parenthesized<PythonMap>, 'expression', never>
+				| V.RequiredBy<V.Expression.Subscript<PythonMap>, 'index' | 'object', never>
+				| V.Expression.Unary<PythonMap>
+				| V.RequiredBy<V.Expression.Unary.BitwiseNot<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Negation<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Plus<PythonMap>, 'argument', never>
+				| V.Identifier<PythonMap>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name' | 'qualifier', never>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name', never>
+				| V.Literal.Boolean.False<PythonMap>
+				| V.Literal.Boolean.True<PythonMap>
+				| V.Literal.Ellipsis<PythonMap>
+				| V.Literal.Null<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Float<PythonMap>, 'integer', never>
+				| V.RequiredBy<V.Literal.Number.Float.LeadingPoint<PythonMap>, 'fraction', never>
+				| V.RequiredBy<V.Literal.Number.Float.Scientific<PythonMap>, 'exponent' | 'integer' | 'marker', never>
+				| V.Literal.Number.Integer<PythonMap>
+				| V.Literal.Number.Integer.Big<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Binary<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.RequiredBy<V.Literal.Number.Integer.Hex<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.Number.Integer.Imaginary<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Octal<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.String<PythonMap>
+				| V.Literal.String.Bytes<PythonMap>
+				| V.Literal.String.Bytes.Multiline<PythonMap>
+				| V.Literal.String.Bytes.Raw<PythonMap>
+				| V.Literal.String.Bytes.Raw.Multiline<PythonMap>
+				| V.RequiredBy<V.Literal.String.Concatenated<PythonMap>, 'strings', never>
+				| V.Literal.String.Interpolated<PythonMap>
+				| V.Literal.String.Interpolated.Deferred<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Raw.Multiline<PythonMap>
+				| V.Literal.String.Multiline<PythonMap>
+				| V.Literal.String.Raw<PythonMap>
+				| V.Literal.String.Raw.Multiline<PythonMap>
+				| V.Literal.String.Unicode<PythonMap>
+				| V.RequiredBy<V.Pattern.Rest<PythonMap>, 'pattern', never>
+				| T.Attribute.Parsed
+				| T.Await.Parsed
+				| T.BinaryOperator.Parsed
+				| T.Call.Parsed
+				| T.FloatLeadingPoint.Parsed
+				| T.FloatPoint.Parsed
+				| T.FloatScientific.Parsed
+				| T.GeneratorExpression.Parsed
+				| T.IntegerBinary.Parsed
+				| T.IntegerDecimalPlain.Parsed
+				| T.IntegerHex.Parsed
+				| T.IntegerOctal.Parsed
+				| T.ListComprehension.Parsed
+				| T.ParenthesizedExpression.Parsed
+				| T.SetComprehension.Parsed
+				| T.String.Parsed
+				| T.Subscript.Parsed
+				| T.UnaryOperator.Parsed;
+		};
+		readonly 'element.comparator.comparison.greater': {
+			readonly right:
+				| V.RequiredBy<V.Expression.Await<PythonMap>, 'expression', never>
+				| V.Expression.Binary<PythonMap>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Add<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Divide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Exponent<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.FloorDivide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Modulo<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Multiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Subtract<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.And<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Or<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Xor<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Chain<PythonMap>, 'comparators' | 'left', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Equal<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Greater<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.GreaterEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Less<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.LessEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual.Legacy<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.Is<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.IsNot<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.MatrixMultiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.In<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.NotIn<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Left<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Right<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Call<PythonMap>, 'arguments' | 'function', never>
+				| V.RequiredBy<V.Expression.Call.Member<PythonMap>, 'arguments' | 'function', never>
+				| V.Expression.Collection.List<PythonMap>
+				| V.Expression.Collection.Map<PythonMap>
+				| V.RequiredBy<V.Expression.Collection.Set<PythonMap>, 'elements', never>
+				| V.Expression.Collection.Tuple<PythonMap>
+				| V.RequiredBy<V.Expression.Comprehension.Generator<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.List<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Map<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Set<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Member<PythonMap>, 'object' | 'property', never>
+				| V.RequiredBy<V.Expression.Parenthesized<PythonMap>, 'expression', never>
+				| V.RequiredBy<V.Expression.Subscript<PythonMap>, 'index' | 'object', never>
+				| V.Expression.Unary<PythonMap>
+				| V.RequiredBy<V.Expression.Unary.BitwiseNot<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Negation<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Plus<PythonMap>, 'argument', never>
+				| V.Identifier<PythonMap>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name' | 'qualifier', never>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name', never>
+				| V.Literal.Boolean.False<PythonMap>
+				| V.Literal.Boolean.True<PythonMap>
+				| V.Literal.Ellipsis<PythonMap>
+				| V.Literal.Null<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Float<PythonMap>, 'integer', never>
+				| V.RequiredBy<V.Literal.Number.Float.LeadingPoint<PythonMap>, 'fraction', never>
+				| V.RequiredBy<V.Literal.Number.Float.Scientific<PythonMap>, 'exponent' | 'integer' | 'marker', never>
+				| V.Literal.Number.Integer<PythonMap>
+				| V.Literal.Number.Integer.Big<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Binary<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.RequiredBy<V.Literal.Number.Integer.Hex<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.Number.Integer.Imaginary<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Octal<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.String<PythonMap>
+				| V.Literal.String.Bytes<PythonMap>
+				| V.Literal.String.Bytes.Multiline<PythonMap>
+				| V.Literal.String.Bytes.Raw<PythonMap>
+				| V.Literal.String.Bytes.Raw.Multiline<PythonMap>
+				| V.RequiredBy<V.Literal.String.Concatenated<PythonMap>, 'strings', never>
+				| V.Literal.String.Interpolated<PythonMap>
+				| V.Literal.String.Interpolated.Deferred<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Raw.Multiline<PythonMap>
+				| V.Literal.String.Multiline<PythonMap>
+				| V.Literal.String.Raw<PythonMap>
+				| V.Literal.String.Raw.Multiline<PythonMap>
+				| V.Literal.String.Unicode<PythonMap>
+				| V.RequiredBy<V.Pattern.Rest<PythonMap>, 'pattern', never>
+				| T.Attribute.Parsed
+				| T.Await.Parsed
+				| T.BinaryOperator.Parsed
+				| T.Call.Parsed
+				| T.FloatLeadingPoint.Parsed
+				| T.FloatPoint.Parsed
+				| T.FloatScientific.Parsed
+				| T.GeneratorExpression.Parsed
+				| T.IntegerBinary.Parsed
+				| T.IntegerDecimalPlain.Parsed
+				| T.IntegerHex.Parsed
+				| T.IntegerOctal.Parsed
+				| T.ListComprehension.Parsed
+				| T.ParenthesizedExpression.Parsed
+				| T.SetComprehension.Parsed
+				| T.String.Parsed
+				| T.Subscript.Parsed
+				| T.UnaryOperator.Parsed;
+		};
+		readonly 'element.comparator.comparison.greater_equal': {
+			readonly right:
+				| V.RequiredBy<V.Expression.Await<PythonMap>, 'expression', never>
+				| V.Expression.Binary<PythonMap>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Add<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Divide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Exponent<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.FloorDivide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Modulo<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Multiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Subtract<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.And<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Or<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Xor<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Chain<PythonMap>, 'comparators' | 'left', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Equal<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Greater<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.GreaterEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Less<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.LessEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual.Legacy<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.Is<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.IsNot<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.MatrixMultiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.In<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.NotIn<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Left<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Right<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Call<PythonMap>, 'arguments' | 'function', never>
+				| V.RequiredBy<V.Expression.Call.Member<PythonMap>, 'arguments' | 'function', never>
+				| V.Expression.Collection.List<PythonMap>
+				| V.Expression.Collection.Map<PythonMap>
+				| V.RequiredBy<V.Expression.Collection.Set<PythonMap>, 'elements', never>
+				| V.Expression.Collection.Tuple<PythonMap>
+				| V.RequiredBy<V.Expression.Comprehension.Generator<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.List<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Map<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Set<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Member<PythonMap>, 'object' | 'property', never>
+				| V.RequiredBy<V.Expression.Parenthesized<PythonMap>, 'expression', never>
+				| V.RequiredBy<V.Expression.Subscript<PythonMap>, 'index' | 'object', never>
+				| V.Expression.Unary<PythonMap>
+				| V.RequiredBy<V.Expression.Unary.BitwiseNot<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Negation<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Plus<PythonMap>, 'argument', never>
+				| V.Identifier<PythonMap>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name' | 'qualifier', never>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name', never>
+				| V.Literal.Boolean.False<PythonMap>
+				| V.Literal.Boolean.True<PythonMap>
+				| V.Literal.Ellipsis<PythonMap>
+				| V.Literal.Null<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Float<PythonMap>, 'integer', never>
+				| V.RequiredBy<V.Literal.Number.Float.LeadingPoint<PythonMap>, 'fraction', never>
+				| V.RequiredBy<V.Literal.Number.Float.Scientific<PythonMap>, 'exponent' | 'integer' | 'marker', never>
+				| V.Literal.Number.Integer<PythonMap>
+				| V.Literal.Number.Integer.Big<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Binary<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.RequiredBy<V.Literal.Number.Integer.Hex<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.Number.Integer.Imaginary<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Octal<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.String<PythonMap>
+				| V.Literal.String.Bytes<PythonMap>
+				| V.Literal.String.Bytes.Multiline<PythonMap>
+				| V.Literal.String.Bytes.Raw<PythonMap>
+				| V.Literal.String.Bytes.Raw.Multiline<PythonMap>
+				| V.RequiredBy<V.Literal.String.Concatenated<PythonMap>, 'strings', never>
+				| V.Literal.String.Interpolated<PythonMap>
+				| V.Literal.String.Interpolated.Deferred<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Raw.Multiline<PythonMap>
+				| V.Literal.String.Multiline<PythonMap>
+				| V.Literal.String.Raw<PythonMap>
+				| V.Literal.String.Raw.Multiline<PythonMap>
+				| V.Literal.String.Unicode<PythonMap>
+				| V.RequiredBy<V.Pattern.Rest<PythonMap>, 'pattern', never>
+				| T.Attribute.Parsed
+				| T.Await.Parsed
+				| T.BinaryOperator.Parsed
+				| T.Call.Parsed
+				| T.FloatLeadingPoint.Parsed
+				| T.FloatPoint.Parsed
+				| T.FloatScientific.Parsed
+				| T.GeneratorExpression.Parsed
+				| T.IntegerBinary.Parsed
+				| T.IntegerDecimalPlain.Parsed
+				| T.IntegerHex.Parsed
+				| T.IntegerOctal.Parsed
+				| T.ListComprehension.Parsed
+				| T.ParenthesizedExpression.Parsed
+				| T.SetComprehension.Parsed
+				| T.String.Parsed
+				| T.Subscript.Parsed
+				| T.UnaryOperator.Parsed;
+		};
+		readonly 'element.comparator.comparison.less': {
+			readonly right:
+				| V.RequiredBy<V.Expression.Await<PythonMap>, 'expression', never>
+				| V.Expression.Binary<PythonMap>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Add<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Divide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Exponent<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.FloorDivide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Modulo<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Multiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Subtract<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.And<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Or<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Xor<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Chain<PythonMap>, 'comparators' | 'left', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Equal<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Greater<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.GreaterEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Less<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.LessEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual.Legacy<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.Is<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.IsNot<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.MatrixMultiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.In<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.NotIn<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Left<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Right<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Call<PythonMap>, 'arguments' | 'function', never>
+				| V.RequiredBy<V.Expression.Call.Member<PythonMap>, 'arguments' | 'function', never>
+				| V.Expression.Collection.List<PythonMap>
+				| V.Expression.Collection.Map<PythonMap>
+				| V.RequiredBy<V.Expression.Collection.Set<PythonMap>, 'elements', never>
+				| V.Expression.Collection.Tuple<PythonMap>
+				| V.RequiredBy<V.Expression.Comprehension.Generator<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.List<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Map<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Set<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Member<PythonMap>, 'object' | 'property', never>
+				| V.RequiredBy<V.Expression.Parenthesized<PythonMap>, 'expression', never>
+				| V.RequiredBy<V.Expression.Subscript<PythonMap>, 'index' | 'object', never>
+				| V.Expression.Unary<PythonMap>
+				| V.RequiredBy<V.Expression.Unary.BitwiseNot<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Negation<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Plus<PythonMap>, 'argument', never>
+				| V.Identifier<PythonMap>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name' | 'qualifier', never>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name', never>
+				| V.Literal.Boolean.False<PythonMap>
+				| V.Literal.Boolean.True<PythonMap>
+				| V.Literal.Ellipsis<PythonMap>
+				| V.Literal.Null<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Float<PythonMap>, 'integer', never>
+				| V.RequiredBy<V.Literal.Number.Float.LeadingPoint<PythonMap>, 'fraction', never>
+				| V.RequiredBy<V.Literal.Number.Float.Scientific<PythonMap>, 'exponent' | 'integer' | 'marker', never>
+				| V.Literal.Number.Integer<PythonMap>
+				| V.Literal.Number.Integer.Big<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Binary<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.RequiredBy<V.Literal.Number.Integer.Hex<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.Number.Integer.Imaginary<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Octal<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.String<PythonMap>
+				| V.Literal.String.Bytes<PythonMap>
+				| V.Literal.String.Bytes.Multiline<PythonMap>
+				| V.Literal.String.Bytes.Raw<PythonMap>
+				| V.Literal.String.Bytes.Raw.Multiline<PythonMap>
+				| V.RequiredBy<V.Literal.String.Concatenated<PythonMap>, 'strings', never>
+				| V.Literal.String.Interpolated<PythonMap>
+				| V.Literal.String.Interpolated.Deferred<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Raw.Multiline<PythonMap>
+				| V.Literal.String.Multiline<PythonMap>
+				| V.Literal.String.Raw<PythonMap>
+				| V.Literal.String.Raw.Multiline<PythonMap>
+				| V.Literal.String.Unicode<PythonMap>
+				| V.RequiredBy<V.Pattern.Rest<PythonMap>, 'pattern', never>
+				| T.Attribute.Parsed
+				| T.Await.Parsed
+				| T.BinaryOperator.Parsed
+				| T.Call.Parsed
+				| T.FloatLeadingPoint.Parsed
+				| T.FloatPoint.Parsed
+				| T.FloatScientific.Parsed
+				| T.GeneratorExpression.Parsed
+				| T.IntegerBinary.Parsed
+				| T.IntegerDecimalPlain.Parsed
+				| T.IntegerHex.Parsed
+				| T.IntegerOctal.Parsed
+				| T.ListComprehension.Parsed
+				| T.ParenthesizedExpression.Parsed
+				| T.SetComprehension.Parsed
+				| T.String.Parsed
+				| T.Subscript.Parsed
+				| T.UnaryOperator.Parsed;
+		};
+		readonly 'element.comparator.comparison.less_equal': {
+			readonly right:
+				| V.RequiredBy<V.Expression.Await<PythonMap>, 'expression', never>
+				| V.Expression.Binary<PythonMap>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Add<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Divide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Exponent<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.FloorDivide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Modulo<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Multiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Subtract<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.And<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Or<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Xor<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Chain<PythonMap>, 'comparators' | 'left', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Equal<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Greater<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.GreaterEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Less<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.LessEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual.Legacy<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.Is<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.IsNot<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.MatrixMultiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.In<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.NotIn<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Left<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Right<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Call<PythonMap>, 'arguments' | 'function', never>
+				| V.RequiredBy<V.Expression.Call.Member<PythonMap>, 'arguments' | 'function', never>
+				| V.Expression.Collection.List<PythonMap>
+				| V.Expression.Collection.Map<PythonMap>
+				| V.RequiredBy<V.Expression.Collection.Set<PythonMap>, 'elements', never>
+				| V.Expression.Collection.Tuple<PythonMap>
+				| V.RequiredBy<V.Expression.Comprehension.Generator<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.List<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Map<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Set<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Member<PythonMap>, 'object' | 'property', never>
+				| V.RequiredBy<V.Expression.Parenthesized<PythonMap>, 'expression', never>
+				| V.RequiredBy<V.Expression.Subscript<PythonMap>, 'index' | 'object', never>
+				| V.Expression.Unary<PythonMap>
+				| V.RequiredBy<V.Expression.Unary.BitwiseNot<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Negation<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Plus<PythonMap>, 'argument', never>
+				| V.Identifier<PythonMap>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name' | 'qualifier', never>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name', never>
+				| V.Literal.Boolean.False<PythonMap>
+				| V.Literal.Boolean.True<PythonMap>
+				| V.Literal.Ellipsis<PythonMap>
+				| V.Literal.Null<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Float<PythonMap>, 'integer', never>
+				| V.RequiredBy<V.Literal.Number.Float.LeadingPoint<PythonMap>, 'fraction', never>
+				| V.RequiredBy<V.Literal.Number.Float.Scientific<PythonMap>, 'exponent' | 'integer' | 'marker', never>
+				| V.Literal.Number.Integer<PythonMap>
+				| V.Literal.Number.Integer.Big<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Binary<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.RequiredBy<V.Literal.Number.Integer.Hex<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.Number.Integer.Imaginary<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Octal<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.String<PythonMap>
+				| V.Literal.String.Bytes<PythonMap>
+				| V.Literal.String.Bytes.Multiline<PythonMap>
+				| V.Literal.String.Bytes.Raw<PythonMap>
+				| V.Literal.String.Bytes.Raw.Multiline<PythonMap>
+				| V.RequiredBy<V.Literal.String.Concatenated<PythonMap>, 'strings', never>
+				| V.Literal.String.Interpolated<PythonMap>
+				| V.Literal.String.Interpolated.Deferred<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Raw.Multiline<PythonMap>
+				| V.Literal.String.Multiline<PythonMap>
+				| V.Literal.String.Raw<PythonMap>
+				| V.Literal.String.Raw.Multiline<PythonMap>
+				| V.Literal.String.Unicode<PythonMap>
+				| V.RequiredBy<V.Pattern.Rest<PythonMap>, 'pattern', never>
+				| T.Attribute.Parsed
+				| T.Await.Parsed
+				| T.BinaryOperator.Parsed
+				| T.Call.Parsed
+				| T.FloatLeadingPoint.Parsed
+				| T.FloatPoint.Parsed
+				| T.FloatScientific.Parsed
+				| T.GeneratorExpression.Parsed
+				| T.IntegerBinary.Parsed
+				| T.IntegerDecimalPlain.Parsed
+				| T.IntegerHex.Parsed
+				| T.IntegerOctal.Parsed
+				| T.ListComprehension.Parsed
+				| T.ParenthesizedExpression.Parsed
+				| T.SetComprehension.Parsed
+				| T.String.Parsed
+				| T.Subscript.Parsed
+				| T.UnaryOperator.Parsed;
+		};
+		readonly 'element.comparator.comparison.not_equal': {
+			readonly right:
+				| V.RequiredBy<V.Expression.Await<PythonMap>, 'expression', never>
+				| V.Expression.Binary<PythonMap>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Add<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Divide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Exponent<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.FloorDivide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Modulo<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Multiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Subtract<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.And<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Or<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Xor<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Chain<PythonMap>, 'comparators' | 'left', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Equal<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Greater<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.GreaterEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Less<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.LessEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual.Legacy<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.Is<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.IsNot<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.MatrixMultiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.In<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.NotIn<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Left<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Right<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Call<PythonMap>, 'arguments' | 'function', never>
+				| V.RequiredBy<V.Expression.Call.Member<PythonMap>, 'arguments' | 'function', never>
+				| V.Expression.Collection.List<PythonMap>
+				| V.Expression.Collection.Map<PythonMap>
+				| V.RequiredBy<V.Expression.Collection.Set<PythonMap>, 'elements', never>
+				| V.Expression.Collection.Tuple<PythonMap>
+				| V.RequiredBy<V.Expression.Comprehension.Generator<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.List<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Map<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Set<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Member<PythonMap>, 'object' | 'property', never>
+				| V.RequiredBy<V.Expression.Parenthesized<PythonMap>, 'expression', never>
+				| V.RequiredBy<V.Expression.Subscript<PythonMap>, 'index' | 'object', never>
+				| V.Expression.Unary<PythonMap>
+				| V.RequiredBy<V.Expression.Unary.BitwiseNot<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Negation<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Plus<PythonMap>, 'argument', never>
+				| V.Identifier<PythonMap>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name' | 'qualifier', never>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name', never>
+				| V.Literal.Boolean.False<PythonMap>
+				| V.Literal.Boolean.True<PythonMap>
+				| V.Literal.Ellipsis<PythonMap>
+				| V.Literal.Null<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Float<PythonMap>, 'integer', never>
+				| V.RequiredBy<V.Literal.Number.Float.LeadingPoint<PythonMap>, 'fraction', never>
+				| V.RequiredBy<V.Literal.Number.Float.Scientific<PythonMap>, 'exponent' | 'integer' | 'marker', never>
+				| V.Literal.Number.Integer<PythonMap>
+				| V.Literal.Number.Integer.Big<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Binary<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.RequiredBy<V.Literal.Number.Integer.Hex<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.Number.Integer.Imaginary<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Octal<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.String<PythonMap>
+				| V.Literal.String.Bytes<PythonMap>
+				| V.Literal.String.Bytes.Multiline<PythonMap>
+				| V.Literal.String.Bytes.Raw<PythonMap>
+				| V.Literal.String.Bytes.Raw.Multiline<PythonMap>
+				| V.RequiredBy<V.Literal.String.Concatenated<PythonMap>, 'strings', never>
+				| V.Literal.String.Interpolated<PythonMap>
+				| V.Literal.String.Interpolated.Deferred<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Raw.Multiline<PythonMap>
+				| V.Literal.String.Multiline<PythonMap>
+				| V.Literal.String.Raw<PythonMap>
+				| V.Literal.String.Raw.Multiline<PythonMap>
+				| V.Literal.String.Unicode<PythonMap>
+				| V.RequiredBy<V.Pattern.Rest<PythonMap>, 'pattern', never>
+				| T.Attribute.Parsed
+				| T.Await.Parsed
+				| T.BinaryOperator.Parsed
+				| T.Call.Parsed
+				| T.FloatLeadingPoint.Parsed
+				| T.FloatPoint.Parsed
+				| T.FloatScientific.Parsed
+				| T.GeneratorExpression.Parsed
+				| T.IntegerBinary.Parsed
+				| T.IntegerDecimalPlain.Parsed
+				| T.IntegerHex.Parsed
+				| T.IntegerOctal.Parsed
+				| T.ListComprehension.Parsed
+				| T.ParenthesizedExpression.Parsed
+				| T.SetComprehension.Parsed
+				| T.String.Parsed
+				| T.Subscript.Parsed
+				| T.UnaryOperator.Parsed;
+		};
+		readonly 'element.comparator.comparison.not_equal.legacy': {
+			readonly right:
+				| V.RequiredBy<V.Expression.Await<PythonMap>, 'expression', never>
+				| V.Expression.Binary<PythonMap>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Add<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Divide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Exponent<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.FloorDivide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Modulo<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Multiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Subtract<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.And<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Or<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Xor<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Chain<PythonMap>, 'comparators' | 'left', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Equal<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Greater<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.GreaterEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Less<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.LessEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual.Legacy<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.Is<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.IsNot<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.MatrixMultiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.In<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.NotIn<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Left<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Right<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Call<PythonMap>, 'arguments' | 'function', never>
+				| V.RequiredBy<V.Expression.Call.Member<PythonMap>, 'arguments' | 'function', never>
+				| V.Expression.Collection.List<PythonMap>
+				| V.Expression.Collection.Map<PythonMap>
+				| V.RequiredBy<V.Expression.Collection.Set<PythonMap>, 'elements', never>
+				| V.Expression.Collection.Tuple<PythonMap>
+				| V.RequiredBy<V.Expression.Comprehension.Generator<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.List<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Map<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Set<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Member<PythonMap>, 'object' | 'property', never>
+				| V.RequiredBy<V.Expression.Parenthesized<PythonMap>, 'expression', never>
+				| V.RequiredBy<V.Expression.Subscript<PythonMap>, 'index' | 'object', never>
+				| V.Expression.Unary<PythonMap>
+				| V.RequiredBy<V.Expression.Unary.BitwiseNot<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Negation<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Plus<PythonMap>, 'argument', never>
+				| V.Identifier<PythonMap>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name' | 'qualifier', never>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name', never>
+				| V.Literal.Boolean.False<PythonMap>
+				| V.Literal.Boolean.True<PythonMap>
+				| V.Literal.Ellipsis<PythonMap>
+				| V.Literal.Null<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Float<PythonMap>, 'integer', never>
+				| V.RequiredBy<V.Literal.Number.Float.LeadingPoint<PythonMap>, 'fraction', never>
+				| V.RequiredBy<V.Literal.Number.Float.Scientific<PythonMap>, 'exponent' | 'integer' | 'marker', never>
+				| V.Literal.Number.Integer<PythonMap>
+				| V.Literal.Number.Integer.Big<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Binary<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.RequiredBy<V.Literal.Number.Integer.Hex<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.Number.Integer.Imaginary<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Octal<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.String<PythonMap>
+				| V.Literal.String.Bytes<PythonMap>
+				| V.Literal.String.Bytes.Multiline<PythonMap>
+				| V.Literal.String.Bytes.Raw<PythonMap>
+				| V.Literal.String.Bytes.Raw.Multiline<PythonMap>
+				| V.RequiredBy<V.Literal.String.Concatenated<PythonMap>, 'strings', never>
+				| V.Literal.String.Interpolated<PythonMap>
+				| V.Literal.String.Interpolated.Deferred<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Raw.Multiline<PythonMap>
+				| V.Literal.String.Multiline<PythonMap>
+				| V.Literal.String.Raw<PythonMap>
+				| V.Literal.String.Raw.Multiline<PythonMap>
+				| V.Literal.String.Unicode<PythonMap>
+				| V.RequiredBy<V.Pattern.Rest<PythonMap>, 'pattern', never>
+				| T.Attribute.Parsed
+				| T.Await.Parsed
+				| T.BinaryOperator.Parsed
+				| T.Call.Parsed
+				| T.FloatLeadingPoint.Parsed
+				| T.FloatPoint.Parsed
+				| T.FloatScientific.Parsed
+				| T.GeneratorExpression.Parsed
+				| T.IntegerBinary.Parsed
+				| T.IntegerDecimalPlain.Parsed
+				| T.IntegerHex.Parsed
+				| T.IntegerOctal.Parsed
+				| T.ListComprehension.Parsed
+				| T.ParenthesizedExpression.Parsed
+				| T.SetComprehension.Parsed
+				| T.String.Parsed
+				| T.Subscript.Parsed
+				| T.UnaryOperator.Parsed;
+		};
+		readonly 'element.comparator.identity.is': {
+			readonly right:
+				| V.RequiredBy<V.Expression.Await<PythonMap>, 'expression', never>
+				| V.Expression.Binary<PythonMap>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Add<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Divide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Exponent<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.FloorDivide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Modulo<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Multiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Subtract<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.And<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Or<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Xor<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Chain<PythonMap>, 'comparators' | 'left', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Equal<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Greater<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.GreaterEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Less<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.LessEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual.Legacy<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.Is<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.IsNot<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.MatrixMultiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.In<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.NotIn<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Left<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Right<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Call<PythonMap>, 'arguments' | 'function', never>
+				| V.RequiredBy<V.Expression.Call.Member<PythonMap>, 'arguments' | 'function', never>
+				| V.Expression.Collection.List<PythonMap>
+				| V.Expression.Collection.Map<PythonMap>
+				| V.RequiredBy<V.Expression.Collection.Set<PythonMap>, 'elements', never>
+				| V.Expression.Collection.Tuple<PythonMap>
+				| V.RequiredBy<V.Expression.Comprehension.Generator<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.List<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Map<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Set<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Member<PythonMap>, 'object' | 'property', never>
+				| V.RequiredBy<V.Expression.Parenthesized<PythonMap>, 'expression', never>
+				| V.RequiredBy<V.Expression.Subscript<PythonMap>, 'index' | 'object', never>
+				| V.Expression.Unary<PythonMap>
+				| V.RequiredBy<V.Expression.Unary.BitwiseNot<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Negation<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Plus<PythonMap>, 'argument', never>
+				| V.Identifier<PythonMap>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name' | 'qualifier', never>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name', never>
+				| V.Literal.Boolean.False<PythonMap>
+				| V.Literal.Boolean.True<PythonMap>
+				| V.Literal.Ellipsis<PythonMap>
+				| V.Literal.Null<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Float<PythonMap>, 'integer', never>
+				| V.RequiredBy<V.Literal.Number.Float.LeadingPoint<PythonMap>, 'fraction', never>
+				| V.RequiredBy<V.Literal.Number.Float.Scientific<PythonMap>, 'exponent' | 'integer' | 'marker', never>
+				| V.Literal.Number.Integer<PythonMap>
+				| V.Literal.Number.Integer.Big<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Binary<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.RequiredBy<V.Literal.Number.Integer.Hex<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.Number.Integer.Imaginary<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Octal<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.String<PythonMap>
+				| V.Literal.String.Bytes<PythonMap>
+				| V.Literal.String.Bytes.Multiline<PythonMap>
+				| V.Literal.String.Bytes.Raw<PythonMap>
+				| V.Literal.String.Bytes.Raw.Multiline<PythonMap>
+				| V.RequiredBy<V.Literal.String.Concatenated<PythonMap>, 'strings', never>
+				| V.Literal.String.Interpolated<PythonMap>
+				| V.Literal.String.Interpolated.Deferred<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Raw.Multiline<PythonMap>
+				| V.Literal.String.Multiline<PythonMap>
+				| V.Literal.String.Raw<PythonMap>
+				| V.Literal.String.Raw.Multiline<PythonMap>
+				| V.Literal.String.Unicode<PythonMap>
+				| V.RequiredBy<V.Pattern.Rest<PythonMap>, 'pattern', never>
+				| T.Attribute.Parsed
+				| T.Await.Parsed
+				| T.BinaryOperator.Parsed
+				| T.Call.Parsed
+				| T.FloatLeadingPoint.Parsed
+				| T.FloatPoint.Parsed
+				| T.FloatScientific.Parsed
+				| T.GeneratorExpression.Parsed
+				| T.IntegerBinary.Parsed
+				| T.IntegerDecimalPlain.Parsed
+				| T.IntegerHex.Parsed
+				| T.IntegerOctal.Parsed
+				| T.ListComprehension.Parsed
+				| T.ParenthesizedExpression.Parsed
+				| T.SetComprehension.Parsed
+				| T.String.Parsed
+				| T.Subscript.Parsed
+				| T.UnaryOperator.Parsed;
+		};
+		readonly 'element.comparator.identity.is_not': {
+			readonly right:
+				| V.RequiredBy<V.Expression.Await<PythonMap>, 'expression', never>
+				| V.Expression.Binary<PythonMap>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Add<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Divide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Exponent<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.FloorDivide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Modulo<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Multiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Subtract<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.And<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Or<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Xor<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Chain<PythonMap>, 'comparators' | 'left', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Equal<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Greater<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.GreaterEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Less<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.LessEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual.Legacy<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.Is<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.IsNot<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.MatrixMultiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.In<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.NotIn<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Left<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Right<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Call<PythonMap>, 'arguments' | 'function', never>
+				| V.RequiredBy<V.Expression.Call.Member<PythonMap>, 'arguments' | 'function', never>
+				| V.Expression.Collection.List<PythonMap>
+				| V.Expression.Collection.Map<PythonMap>
+				| V.RequiredBy<V.Expression.Collection.Set<PythonMap>, 'elements', never>
+				| V.Expression.Collection.Tuple<PythonMap>
+				| V.RequiredBy<V.Expression.Comprehension.Generator<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.List<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Map<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Set<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Member<PythonMap>, 'object' | 'property', never>
+				| V.RequiredBy<V.Expression.Parenthesized<PythonMap>, 'expression', never>
+				| V.RequiredBy<V.Expression.Subscript<PythonMap>, 'index' | 'object', never>
+				| V.Expression.Unary<PythonMap>
+				| V.RequiredBy<V.Expression.Unary.BitwiseNot<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Negation<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Plus<PythonMap>, 'argument', never>
+				| V.Identifier<PythonMap>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name' | 'qualifier', never>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name', never>
+				| V.Literal.Boolean.False<PythonMap>
+				| V.Literal.Boolean.True<PythonMap>
+				| V.Literal.Ellipsis<PythonMap>
+				| V.Literal.Null<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Float<PythonMap>, 'integer', never>
+				| V.RequiredBy<V.Literal.Number.Float.LeadingPoint<PythonMap>, 'fraction', never>
+				| V.RequiredBy<V.Literal.Number.Float.Scientific<PythonMap>, 'exponent' | 'integer' | 'marker', never>
+				| V.Literal.Number.Integer<PythonMap>
+				| V.Literal.Number.Integer.Big<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Binary<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.RequiredBy<V.Literal.Number.Integer.Hex<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.Number.Integer.Imaginary<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Octal<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.String<PythonMap>
+				| V.Literal.String.Bytes<PythonMap>
+				| V.Literal.String.Bytes.Multiline<PythonMap>
+				| V.Literal.String.Bytes.Raw<PythonMap>
+				| V.Literal.String.Bytes.Raw.Multiline<PythonMap>
+				| V.RequiredBy<V.Literal.String.Concatenated<PythonMap>, 'strings', never>
+				| V.Literal.String.Interpolated<PythonMap>
+				| V.Literal.String.Interpolated.Deferred<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Raw.Multiline<PythonMap>
+				| V.Literal.String.Multiline<PythonMap>
+				| V.Literal.String.Raw<PythonMap>
+				| V.Literal.String.Raw.Multiline<PythonMap>
+				| V.Literal.String.Unicode<PythonMap>
+				| V.RequiredBy<V.Pattern.Rest<PythonMap>, 'pattern', never>
+				| T.Attribute.Parsed
+				| T.Await.Parsed
+				| T.BinaryOperator.Parsed
+				| T.Call.Parsed
+				| T.FloatLeadingPoint.Parsed
+				| T.FloatPoint.Parsed
+				| T.FloatScientific.Parsed
+				| T.GeneratorExpression.Parsed
+				| T.IntegerBinary.Parsed
+				| T.IntegerDecimalPlain.Parsed
+				| T.IntegerHex.Parsed
+				| T.IntegerOctal.Parsed
+				| T.ListComprehension.Parsed
+				| T.ParenthesizedExpression.Parsed
+				| T.SetComprehension.Parsed
+				| T.String.Parsed
+				| T.Subscript.Parsed
+				| T.UnaryOperator.Parsed;
+		};
+		readonly 'element.comparator.membership.in': {
+			readonly right:
+				| V.RequiredBy<V.Expression.Await<PythonMap>, 'expression', never>
+				| V.Expression.Binary<PythonMap>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Add<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Divide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Exponent<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.FloorDivide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Modulo<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Multiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Subtract<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.And<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Or<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Xor<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Chain<PythonMap>, 'comparators' | 'left', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Equal<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Greater<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.GreaterEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Less<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.LessEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual.Legacy<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.Is<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.IsNot<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.MatrixMultiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.In<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.NotIn<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Left<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Right<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Call<PythonMap>, 'arguments' | 'function', never>
+				| V.RequiredBy<V.Expression.Call.Member<PythonMap>, 'arguments' | 'function', never>
+				| V.Expression.Collection.List<PythonMap>
+				| V.Expression.Collection.Map<PythonMap>
+				| V.RequiredBy<V.Expression.Collection.Set<PythonMap>, 'elements', never>
+				| V.Expression.Collection.Tuple<PythonMap>
+				| V.RequiredBy<V.Expression.Comprehension.Generator<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.List<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Map<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Set<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Member<PythonMap>, 'object' | 'property', never>
+				| V.RequiredBy<V.Expression.Parenthesized<PythonMap>, 'expression', never>
+				| V.RequiredBy<V.Expression.Subscript<PythonMap>, 'index' | 'object', never>
+				| V.Expression.Unary<PythonMap>
+				| V.RequiredBy<V.Expression.Unary.BitwiseNot<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Negation<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Plus<PythonMap>, 'argument', never>
+				| V.Identifier<PythonMap>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name' | 'qualifier', never>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name', never>
+				| V.Literal.Boolean.False<PythonMap>
+				| V.Literal.Boolean.True<PythonMap>
+				| V.Literal.Ellipsis<PythonMap>
+				| V.Literal.Null<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Float<PythonMap>, 'integer', never>
+				| V.RequiredBy<V.Literal.Number.Float.LeadingPoint<PythonMap>, 'fraction', never>
+				| V.RequiredBy<V.Literal.Number.Float.Scientific<PythonMap>, 'exponent' | 'integer' | 'marker', never>
+				| V.Literal.Number.Integer<PythonMap>
+				| V.Literal.Number.Integer.Big<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Binary<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.RequiredBy<V.Literal.Number.Integer.Hex<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.Number.Integer.Imaginary<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Octal<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.String<PythonMap>
+				| V.Literal.String.Bytes<PythonMap>
+				| V.Literal.String.Bytes.Multiline<PythonMap>
+				| V.Literal.String.Bytes.Raw<PythonMap>
+				| V.Literal.String.Bytes.Raw.Multiline<PythonMap>
+				| V.RequiredBy<V.Literal.String.Concatenated<PythonMap>, 'strings', never>
+				| V.Literal.String.Interpolated<PythonMap>
+				| V.Literal.String.Interpolated.Deferred<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Raw.Multiline<PythonMap>
+				| V.Literal.String.Multiline<PythonMap>
+				| V.Literal.String.Raw<PythonMap>
+				| V.Literal.String.Raw.Multiline<PythonMap>
+				| V.Literal.String.Unicode<PythonMap>
+				| V.RequiredBy<V.Pattern.Rest<PythonMap>, 'pattern', never>
+				| T.Attribute.Parsed
+				| T.Await.Parsed
+				| T.BinaryOperator.Parsed
+				| T.Call.Parsed
+				| T.FloatLeadingPoint.Parsed
+				| T.FloatPoint.Parsed
+				| T.FloatScientific.Parsed
+				| T.GeneratorExpression.Parsed
+				| T.IntegerBinary.Parsed
+				| T.IntegerDecimalPlain.Parsed
+				| T.IntegerHex.Parsed
+				| T.IntegerOctal.Parsed
+				| T.ListComprehension.Parsed
+				| T.ParenthesizedExpression.Parsed
+				| T.SetComprehension.Parsed
+				| T.String.Parsed
+				| T.Subscript.Parsed
+				| T.UnaryOperator.Parsed;
+		};
+		readonly 'element.comparator.membership.not_in': {
 			readonly right:
 				| V.RequiredBy<V.Expression.Await<PythonMap>, 'expression', never>
 				| V.Expression.Binary<PythonMap>
@@ -2558,7 +3847,228 @@ export interface PythonMap extends V.GrammarMap {
 				| T.Subscript.Parsed
 				| T.UnaryOperator.Parsed;
 		};
+		readonly 'element.spread.parenthesized': {
+			readonly content:
+				| V.RequiredBy<V.Element.Spread<PythonMap>, 'expression', never>
+				| V.RequiredBy<V.Element.Spread.Parenthesized<PythonMap>, 'content', never>
+				| T.ListSplat.Parsed;
+			readonly expression:
+				| V.RequiredBy<V.Expression.Assignment<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Await<PythonMap>, 'expression', never>
+				| V.Expression.Binary<PythonMap>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Add<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Divide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Exponent<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.FloorDivide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Modulo<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Multiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Subtract<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.And<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Or<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Xor<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Chain<PythonMap>, 'comparators' | 'left', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Equal<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Greater<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.GreaterEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Less<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.LessEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual.Legacy<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.Is<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.IsNot<PythonMap>, 'left' | 'right', never>
+				| V.Expression.Binary.Logical<PythonMap>
+				| V.RequiredBy<V.Expression.Binary.Logical.And<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Logical.Or<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.MatrixMultiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.In<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.NotIn<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Left<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Right<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Call<PythonMap>, 'arguments' | 'function', never>
+				| V.RequiredBy<V.Expression.Call.Member<PythonMap>, 'arguments' | 'function', never>
+				| V.Expression.Collection.List<PythonMap>
+				| V.Expression.Collection.Map<PythonMap>
+				| V.RequiredBy<V.Expression.Collection.Set<PythonMap>, 'elements', never>
+				| V.Expression.Collection.Tuple<PythonMap>
+				| V.RequiredBy<V.Expression.Comprehension.Generator<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.List<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Map<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Set<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Conditional<PythonMap>, 'alternative' | 'condition' | 'consequence', never>
+				| V.RequiredBy<V.Expression.Lambda<PythonMap>, 'body', never>
+				| V.RequiredBy<V.Expression.Member<PythonMap>, 'object' | 'property', never>
+				| V.RequiredBy<V.Expression.Parenthesized<PythonMap>, 'expression', never>
+				| V.RequiredBy<V.Expression.Subscript<PythonMap>, 'index' | 'object', never>
+				| V.Expression.Unary<PythonMap>
+				| V.RequiredBy<V.Expression.Unary.BitwiseNot<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Negation<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Not<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Plus<PythonMap>, 'argument', never>
+				| V.Identifier<PythonMap>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name' | 'qualifier', never>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name', never>
+				| V.Literal.Boolean.False<PythonMap>
+				| V.Literal.Boolean.True<PythonMap>
+				| V.Literal.Ellipsis<PythonMap>
+				| V.Literal.Null<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Float<PythonMap>, 'integer', never>
+				| V.RequiredBy<V.Literal.Number.Float.LeadingPoint<PythonMap>, 'fraction', never>
+				| V.RequiredBy<V.Literal.Number.Float.Scientific<PythonMap>, 'exponent' | 'integer' | 'marker', never>
+				| V.Literal.Number.Integer<PythonMap>
+				| V.Literal.Number.Integer.Big<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Binary<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.RequiredBy<V.Literal.Number.Integer.Hex<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.Number.Integer.Imaginary<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Octal<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.String<PythonMap>
+				| V.Literal.String.Bytes<PythonMap>
+				| V.Literal.String.Bytes.Multiline<PythonMap>
+				| V.Literal.String.Bytes.Raw<PythonMap>
+				| V.Literal.String.Bytes.Raw.Multiline<PythonMap>
+				| V.RequiredBy<V.Literal.String.Concatenated<PythonMap>, 'strings', never>
+				| V.Literal.String.Interpolated<PythonMap>
+				| V.Literal.String.Interpolated.Deferred<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Raw.Multiline<PythonMap>
+				| V.Literal.String.Multiline<PythonMap>
+				| V.Literal.String.Raw<PythonMap>
+				| V.Literal.String.Raw.Multiline<PythonMap>
+				| V.Literal.String.Unicode<PythonMap>
+				| V.RequiredBy<V.Pattern.Rest<PythonMap>, 'pattern', never>;
+		};
 		readonly 'expression.assignment': {
+			readonly left:
+				| V.RequiredBy<V.Expression.Member<PythonMap>, 'object' | 'property', never>
+				| V.RequiredBy<V.Expression.Subscript<PythonMap>, 'index' | 'object', never>
+				| V.Identifier<PythonMap>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name' | 'qualifier', never>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name', never>
+				| V.Pattern.List<PythonMap>
+				| V.RequiredBy<V.Pattern.Rest<PythonMap>, 'pattern', never>
+				| V.Pattern.Tuple<PythonMap>
+				| V.RequiredBy<V.Pattern.Tuple.Bare<PythonMap>, 'elements', never>;
+			readonly right:
+				| V.RequiredBy<V.Expression.Assignment<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Await<PythonMap>, 'expression', never>
+				| V.Expression.Binary<PythonMap>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Add<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Divide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Exponent<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.FloorDivide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Modulo<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Multiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Subtract<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.And<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Or<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Xor<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Chain<PythonMap>, 'comparators' | 'left', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Equal<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Greater<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.GreaterEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Less<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.LessEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual.Legacy<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.Is<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.IsNot<PythonMap>, 'left' | 'right', never>
+				| V.Expression.Binary.Logical<PythonMap>
+				| V.RequiredBy<V.Expression.Binary.Logical.And<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Logical.Or<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.MatrixMultiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.In<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.NotIn<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Left<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Right<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Call<PythonMap>, 'arguments' | 'function', never>
+				| V.RequiredBy<V.Expression.Call.Member<PythonMap>, 'arguments' | 'function', never>
+				| V.Expression.Collection.List<PythonMap>
+				| V.Expression.Collection.Map<PythonMap>
+				| V.RequiredBy<V.Expression.Collection.Set<PythonMap>, 'elements', never>
+				| V.Expression.Collection.Tuple<PythonMap>
+				| V.RequiredBy<V.Expression.Collection.Tuple.Bare<PythonMap>, 'elements', never>
+				| V.RequiredBy<V.Expression.Comprehension.Generator<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.List<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Map<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Set<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Conditional<PythonMap>, 'alternative' | 'condition' | 'consequence', never>
+				| V.RequiredBy<V.Expression.Lambda<PythonMap>, 'body', never>
+				| V.RequiredBy<V.Expression.Member<PythonMap>, 'object' | 'property', never>
+				| V.RequiredBy<V.Expression.Parenthesized<PythonMap>, 'expression', never>
+				| V.RequiredBy<V.Expression.Subscript<PythonMap>, 'index' | 'object', never>
+				| V.Expression.Unary<PythonMap>
+				| V.RequiredBy<V.Expression.Unary.BitwiseNot<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Negation<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Not<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Plus<PythonMap>, 'argument', never>
+				| V.Expression.Yield<PythonMap>
+				| V.RequiredBy<V.Expression.Yield.Delegate<PythonMap>, 'expression', never>
+				| V.Identifier<PythonMap>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name' | 'qualifier', never>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name', never>
+				| V.Literal.Boolean.False<PythonMap>
+				| V.Literal.Boolean.True<PythonMap>
+				| V.Literal.Ellipsis<PythonMap>
+				| V.Literal.Null<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Float<PythonMap>, 'integer', never>
+				| V.RequiredBy<V.Literal.Number.Float.LeadingPoint<PythonMap>, 'fraction', never>
+				| V.RequiredBy<V.Literal.Number.Float.Scientific<PythonMap>, 'exponent' | 'integer' | 'marker', never>
+				| V.Literal.Number.Integer<PythonMap>
+				| V.Literal.Number.Integer.Big<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Binary<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.RequiredBy<V.Literal.Number.Integer.Hex<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.Number.Integer.Imaginary<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Octal<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.String<PythonMap>
+				| V.Literal.String.Bytes<PythonMap>
+				| V.Literal.String.Bytes.Multiline<PythonMap>
+				| V.Literal.String.Bytes.Raw<PythonMap>
+				| V.Literal.String.Bytes.Raw.Multiline<PythonMap>
+				| V.RequiredBy<V.Literal.String.Concatenated<PythonMap>, 'strings', never>
+				| V.Literal.String.Interpolated<PythonMap>
+				| V.Literal.String.Interpolated.Deferred<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Raw.Multiline<PythonMap>
+				| V.Literal.String.Multiline<PythonMap>
+				| V.Literal.String.Raw<PythonMap>
+				| V.Literal.String.Raw.Multiline<PythonMap>
+				| V.Literal.String.Unicode<PythonMap>
+				| V.RequiredBy<V.Pattern.Rest<PythonMap>, 'pattern', never>
+				| V.RequiredBy<V.Pattern.Tuple.Bare<PythonMap>, 'elements', never>
+				| V.Unmapped<'python:as_pattern'>
+				| T.Attribute.Parsed
+				| T.Await.Parsed
+				| T.BinaryOperator.Parsed
+				| T.BooleanOperator.Parsed
+				| T.Call.Parsed
+				| T.ComparisonOperator.Parsed
+				| T.ConditionalExpression.Parsed
+				| T.FloatLeadingPoint.Parsed
+				| T.FloatPoint.Parsed
+				| T.FloatScientific.Parsed
+				| T.GeneratorExpression.Parsed
+				| T.IntegerBinary.Parsed
+				| T.IntegerDecimalPlain.Parsed
+				| T.IntegerHex.Parsed
+				| T.IntegerOctal.Parsed
+				| T.Lambda.Parsed
+				| T.ListComprehension.Parsed
+				| T.NamedExpression.Parsed
+				| T.NotOperator.Parsed
+				| T.ParenthesizedExpression.Parsed
+				| T.SetComprehension.Parsed
+				| T.String.Parsed
+				| T.Subscript.Parsed
+				| T.UnaryOperator.Parsed;
+		};
+		readonly 'expression.assignment.compound': {
 			readonly left:
 				| V.RequiredBy<V.Expression.Member<PythonMap>, 'object' | 'property', never>
 				| V.RequiredBy<V.Expression.Subscript<PythonMap>, 'index' | 'object', never>
@@ -2690,7 +4200,1591 @@ export interface PythonMap extends V.GrammarMap {
 				| T.UnaryOperator.Parsed
 				| T.Yield.Parsed;
 		};
-		readonly 'expression.assignment.compound': {
+		readonly 'expression.assignment.compound.add': {
+			readonly left:
+				| V.RequiredBy<V.Expression.Member<PythonMap>, 'object' | 'property', never>
+				| V.RequiredBy<V.Expression.Subscript<PythonMap>, 'index' | 'object', never>
+				| V.Identifier<PythonMap>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name' | 'qualifier', never>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name', never>
+				| V.Pattern.List<PythonMap>
+				| V.RequiredBy<V.Pattern.Rest<PythonMap>, 'pattern', never>
+				| V.Pattern.Tuple<PythonMap>
+				| V.RequiredBy<V.Pattern.Tuple.Bare<PythonMap>, 'elements', never>
+				| T.Attribute.Parsed
+				| T.Subscript.Parsed;
+			readonly right:
+				| V.RequiredBy<V.Expression.Assignment<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Await<PythonMap>, 'expression', never>
+				| V.Expression.Binary<PythonMap>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Add<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Divide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Exponent<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.FloorDivide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Modulo<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Multiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Subtract<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.And<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Or<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Xor<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Chain<PythonMap>, 'comparators' | 'left', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Equal<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Greater<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.GreaterEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Less<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.LessEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual.Legacy<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.Is<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.IsNot<PythonMap>, 'left' | 'right', never>
+				| V.Expression.Binary.Logical<PythonMap>
+				| V.RequiredBy<V.Expression.Binary.Logical.And<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Logical.Or<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.MatrixMultiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.In<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.NotIn<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Left<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Right<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Call<PythonMap>, 'arguments' | 'function', never>
+				| V.RequiredBy<V.Expression.Call.Member<PythonMap>, 'arguments' | 'function', never>
+				| V.Expression.Collection.List<PythonMap>
+				| V.Expression.Collection.Map<PythonMap>
+				| V.RequiredBy<V.Expression.Collection.Set<PythonMap>, 'elements', never>
+				| V.Expression.Collection.Tuple<PythonMap>
+				| V.RequiredBy<V.Expression.Collection.Tuple.Bare<PythonMap>, 'elements', never>
+				| V.RequiredBy<V.Expression.Comprehension.Generator<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.List<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Map<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Set<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Conditional<PythonMap>, 'alternative' | 'condition' | 'consequence', never>
+				| V.RequiredBy<V.Expression.Lambda<PythonMap>, 'body', never>
+				| V.RequiredBy<V.Expression.Member<PythonMap>, 'object' | 'property', never>
+				| V.RequiredBy<V.Expression.Parenthesized<PythonMap>, 'expression', never>
+				| V.RequiredBy<V.Expression.Subscript<PythonMap>, 'index' | 'object', never>
+				| V.Expression.Unary<PythonMap>
+				| V.RequiredBy<V.Expression.Unary.BitwiseNot<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Negation<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Not<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Plus<PythonMap>, 'argument', never>
+				| V.Expression.Yield<PythonMap>
+				| V.RequiredBy<V.Expression.Yield.Delegate<PythonMap>, 'expression', never>
+				| V.Identifier<PythonMap>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name' | 'qualifier', never>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name', never>
+				| V.Literal.Boolean.False<PythonMap>
+				| V.Literal.Boolean.True<PythonMap>
+				| V.Literal.Ellipsis<PythonMap>
+				| V.Literal.Null<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Float<PythonMap>, 'integer', never>
+				| V.RequiredBy<V.Literal.Number.Float.LeadingPoint<PythonMap>, 'fraction', never>
+				| V.RequiredBy<V.Literal.Number.Float.Scientific<PythonMap>, 'exponent' | 'integer' | 'marker', never>
+				| V.Literal.Number.Integer<PythonMap>
+				| V.Literal.Number.Integer.Big<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Binary<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.RequiredBy<V.Literal.Number.Integer.Hex<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.Number.Integer.Imaginary<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Octal<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.String<PythonMap>
+				| V.Literal.String.Bytes<PythonMap>
+				| V.Literal.String.Bytes.Multiline<PythonMap>
+				| V.Literal.String.Bytes.Raw<PythonMap>
+				| V.Literal.String.Bytes.Raw.Multiline<PythonMap>
+				| V.RequiredBy<V.Literal.String.Concatenated<PythonMap>, 'strings', never>
+				| V.Literal.String.Interpolated<PythonMap>
+				| V.Literal.String.Interpolated.Deferred<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Raw.Multiline<PythonMap>
+				| V.Literal.String.Multiline<PythonMap>
+				| V.Literal.String.Raw<PythonMap>
+				| V.Literal.String.Raw.Multiline<PythonMap>
+				| V.Literal.String.Unicode<PythonMap>
+				| V.RequiredBy<V.Pattern.Rest<PythonMap>, 'pattern', never>
+				| V.RequiredBy<V.Pattern.Tuple.Bare<PythonMap>, 'elements', never>
+				| V.Unmapped<'python:as_pattern'>
+				| T.Attribute.Parsed
+				| T.Await.Parsed
+				| T.BinaryOperator.Parsed
+				| T.BooleanOperator.Parsed
+				| T.Call.Parsed
+				| T.ComparisonOperator.Parsed
+				| T.ConditionalExpression.Parsed
+				| T.ExpressionList.Parsed
+				| T.FloatLeadingPoint.Parsed
+				| T.FloatPoint.Parsed
+				| T.FloatScientific.Parsed
+				| T.GeneratorExpression.Parsed
+				| T.IntegerBinary.Parsed
+				| T.IntegerDecimalPlain.Parsed
+				| T.IntegerHex.Parsed
+				| T.IntegerOctal.Parsed
+				| T.Lambda.Parsed
+				| T.ListComprehension.Parsed
+				| T.NamedExpression.Parsed
+				| T.NotOperator.Parsed
+				| T.ParenthesizedExpression.Parsed
+				| T.SetComprehension.Parsed
+				| T.String.Parsed
+				| T.Subscript.Parsed
+				| T.UnaryOperator.Parsed
+				| T.Yield.Parsed;
+		};
+		readonly 'expression.assignment.compound.bitwise_and': {
+			readonly left:
+				| V.RequiredBy<V.Expression.Member<PythonMap>, 'object' | 'property', never>
+				| V.RequiredBy<V.Expression.Subscript<PythonMap>, 'index' | 'object', never>
+				| V.Identifier<PythonMap>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name' | 'qualifier', never>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name', never>
+				| V.Pattern.List<PythonMap>
+				| V.RequiredBy<V.Pattern.Rest<PythonMap>, 'pattern', never>
+				| V.Pattern.Tuple<PythonMap>
+				| V.RequiredBy<V.Pattern.Tuple.Bare<PythonMap>, 'elements', never>
+				| T.Attribute.Parsed
+				| T.Subscript.Parsed;
+			readonly right:
+				| V.RequiredBy<V.Expression.Assignment<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Await<PythonMap>, 'expression', never>
+				| V.Expression.Binary<PythonMap>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Add<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Divide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Exponent<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.FloorDivide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Modulo<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Multiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Subtract<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.And<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Or<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Xor<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Chain<PythonMap>, 'comparators' | 'left', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Equal<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Greater<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.GreaterEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Less<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.LessEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual.Legacy<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.Is<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.IsNot<PythonMap>, 'left' | 'right', never>
+				| V.Expression.Binary.Logical<PythonMap>
+				| V.RequiredBy<V.Expression.Binary.Logical.And<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Logical.Or<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.MatrixMultiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.In<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.NotIn<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Left<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Right<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Call<PythonMap>, 'arguments' | 'function', never>
+				| V.RequiredBy<V.Expression.Call.Member<PythonMap>, 'arguments' | 'function', never>
+				| V.Expression.Collection.List<PythonMap>
+				| V.Expression.Collection.Map<PythonMap>
+				| V.RequiredBy<V.Expression.Collection.Set<PythonMap>, 'elements', never>
+				| V.Expression.Collection.Tuple<PythonMap>
+				| V.RequiredBy<V.Expression.Collection.Tuple.Bare<PythonMap>, 'elements', never>
+				| V.RequiredBy<V.Expression.Comprehension.Generator<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.List<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Map<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Set<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Conditional<PythonMap>, 'alternative' | 'condition' | 'consequence', never>
+				| V.RequiredBy<V.Expression.Lambda<PythonMap>, 'body', never>
+				| V.RequiredBy<V.Expression.Member<PythonMap>, 'object' | 'property', never>
+				| V.RequiredBy<V.Expression.Parenthesized<PythonMap>, 'expression', never>
+				| V.RequiredBy<V.Expression.Subscript<PythonMap>, 'index' | 'object', never>
+				| V.Expression.Unary<PythonMap>
+				| V.RequiredBy<V.Expression.Unary.BitwiseNot<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Negation<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Not<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Plus<PythonMap>, 'argument', never>
+				| V.Expression.Yield<PythonMap>
+				| V.RequiredBy<V.Expression.Yield.Delegate<PythonMap>, 'expression', never>
+				| V.Identifier<PythonMap>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name' | 'qualifier', never>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name', never>
+				| V.Literal.Boolean.False<PythonMap>
+				| V.Literal.Boolean.True<PythonMap>
+				| V.Literal.Ellipsis<PythonMap>
+				| V.Literal.Null<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Float<PythonMap>, 'integer', never>
+				| V.RequiredBy<V.Literal.Number.Float.LeadingPoint<PythonMap>, 'fraction', never>
+				| V.RequiredBy<V.Literal.Number.Float.Scientific<PythonMap>, 'exponent' | 'integer' | 'marker', never>
+				| V.Literal.Number.Integer<PythonMap>
+				| V.Literal.Number.Integer.Big<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Binary<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.RequiredBy<V.Literal.Number.Integer.Hex<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.Number.Integer.Imaginary<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Octal<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.String<PythonMap>
+				| V.Literal.String.Bytes<PythonMap>
+				| V.Literal.String.Bytes.Multiline<PythonMap>
+				| V.Literal.String.Bytes.Raw<PythonMap>
+				| V.Literal.String.Bytes.Raw.Multiline<PythonMap>
+				| V.RequiredBy<V.Literal.String.Concatenated<PythonMap>, 'strings', never>
+				| V.Literal.String.Interpolated<PythonMap>
+				| V.Literal.String.Interpolated.Deferred<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Raw.Multiline<PythonMap>
+				| V.Literal.String.Multiline<PythonMap>
+				| V.Literal.String.Raw<PythonMap>
+				| V.Literal.String.Raw.Multiline<PythonMap>
+				| V.Literal.String.Unicode<PythonMap>
+				| V.RequiredBy<V.Pattern.Rest<PythonMap>, 'pattern', never>
+				| V.RequiredBy<V.Pattern.Tuple.Bare<PythonMap>, 'elements', never>
+				| V.Unmapped<'python:as_pattern'>
+				| T.Attribute.Parsed
+				| T.Await.Parsed
+				| T.BinaryOperator.Parsed
+				| T.BooleanOperator.Parsed
+				| T.Call.Parsed
+				| T.ComparisonOperator.Parsed
+				| T.ConditionalExpression.Parsed
+				| T.ExpressionList.Parsed
+				| T.FloatLeadingPoint.Parsed
+				| T.FloatPoint.Parsed
+				| T.FloatScientific.Parsed
+				| T.GeneratorExpression.Parsed
+				| T.IntegerBinary.Parsed
+				| T.IntegerDecimalPlain.Parsed
+				| T.IntegerHex.Parsed
+				| T.IntegerOctal.Parsed
+				| T.Lambda.Parsed
+				| T.ListComprehension.Parsed
+				| T.NamedExpression.Parsed
+				| T.NotOperator.Parsed
+				| T.ParenthesizedExpression.Parsed
+				| T.SetComprehension.Parsed
+				| T.String.Parsed
+				| T.Subscript.Parsed
+				| T.UnaryOperator.Parsed
+				| T.Yield.Parsed;
+		};
+		readonly 'expression.assignment.compound.bitwise_or': {
+			readonly left:
+				| V.RequiredBy<V.Expression.Member<PythonMap>, 'object' | 'property', never>
+				| V.RequiredBy<V.Expression.Subscript<PythonMap>, 'index' | 'object', never>
+				| V.Identifier<PythonMap>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name' | 'qualifier', never>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name', never>
+				| V.Pattern.List<PythonMap>
+				| V.RequiredBy<V.Pattern.Rest<PythonMap>, 'pattern', never>
+				| V.Pattern.Tuple<PythonMap>
+				| V.RequiredBy<V.Pattern.Tuple.Bare<PythonMap>, 'elements', never>
+				| T.Attribute.Parsed
+				| T.Subscript.Parsed;
+			readonly right:
+				| V.RequiredBy<V.Expression.Assignment<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Await<PythonMap>, 'expression', never>
+				| V.Expression.Binary<PythonMap>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Add<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Divide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Exponent<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.FloorDivide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Modulo<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Multiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Subtract<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.And<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Or<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Xor<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Chain<PythonMap>, 'comparators' | 'left', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Equal<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Greater<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.GreaterEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Less<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.LessEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual.Legacy<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.Is<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.IsNot<PythonMap>, 'left' | 'right', never>
+				| V.Expression.Binary.Logical<PythonMap>
+				| V.RequiredBy<V.Expression.Binary.Logical.And<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Logical.Or<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.MatrixMultiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.In<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.NotIn<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Left<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Right<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Call<PythonMap>, 'arguments' | 'function', never>
+				| V.RequiredBy<V.Expression.Call.Member<PythonMap>, 'arguments' | 'function', never>
+				| V.Expression.Collection.List<PythonMap>
+				| V.Expression.Collection.Map<PythonMap>
+				| V.RequiredBy<V.Expression.Collection.Set<PythonMap>, 'elements', never>
+				| V.Expression.Collection.Tuple<PythonMap>
+				| V.RequiredBy<V.Expression.Collection.Tuple.Bare<PythonMap>, 'elements', never>
+				| V.RequiredBy<V.Expression.Comprehension.Generator<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.List<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Map<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Set<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Conditional<PythonMap>, 'alternative' | 'condition' | 'consequence', never>
+				| V.RequiredBy<V.Expression.Lambda<PythonMap>, 'body', never>
+				| V.RequiredBy<V.Expression.Member<PythonMap>, 'object' | 'property', never>
+				| V.RequiredBy<V.Expression.Parenthesized<PythonMap>, 'expression', never>
+				| V.RequiredBy<V.Expression.Subscript<PythonMap>, 'index' | 'object', never>
+				| V.Expression.Unary<PythonMap>
+				| V.RequiredBy<V.Expression.Unary.BitwiseNot<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Negation<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Not<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Plus<PythonMap>, 'argument', never>
+				| V.Expression.Yield<PythonMap>
+				| V.RequiredBy<V.Expression.Yield.Delegate<PythonMap>, 'expression', never>
+				| V.Identifier<PythonMap>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name' | 'qualifier', never>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name', never>
+				| V.Literal.Boolean.False<PythonMap>
+				| V.Literal.Boolean.True<PythonMap>
+				| V.Literal.Ellipsis<PythonMap>
+				| V.Literal.Null<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Float<PythonMap>, 'integer', never>
+				| V.RequiredBy<V.Literal.Number.Float.LeadingPoint<PythonMap>, 'fraction', never>
+				| V.RequiredBy<V.Literal.Number.Float.Scientific<PythonMap>, 'exponent' | 'integer' | 'marker', never>
+				| V.Literal.Number.Integer<PythonMap>
+				| V.Literal.Number.Integer.Big<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Binary<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.RequiredBy<V.Literal.Number.Integer.Hex<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.Number.Integer.Imaginary<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Octal<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.String<PythonMap>
+				| V.Literal.String.Bytes<PythonMap>
+				| V.Literal.String.Bytes.Multiline<PythonMap>
+				| V.Literal.String.Bytes.Raw<PythonMap>
+				| V.Literal.String.Bytes.Raw.Multiline<PythonMap>
+				| V.RequiredBy<V.Literal.String.Concatenated<PythonMap>, 'strings', never>
+				| V.Literal.String.Interpolated<PythonMap>
+				| V.Literal.String.Interpolated.Deferred<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Raw.Multiline<PythonMap>
+				| V.Literal.String.Multiline<PythonMap>
+				| V.Literal.String.Raw<PythonMap>
+				| V.Literal.String.Raw.Multiline<PythonMap>
+				| V.Literal.String.Unicode<PythonMap>
+				| V.RequiredBy<V.Pattern.Rest<PythonMap>, 'pattern', never>
+				| V.RequiredBy<V.Pattern.Tuple.Bare<PythonMap>, 'elements', never>
+				| V.Unmapped<'python:as_pattern'>
+				| T.Attribute.Parsed
+				| T.Await.Parsed
+				| T.BinaryOperator.Parsed
+				| T.BooleanOperator.Parsed
+				| T.Call.Parsed
+				| T.ComparisonOperator.Parsed
+				| T.ConditionalExpression.Parsed
+				| T.ExpressionList.Parsed
+				| T.FloatLeadingPoint.Parsed
+				| T.FloatPoint.Parsed
+				| T.FloatScientific.Parsed
+				| T.GeneratorExpression.Parsed
+				| T.IntegerBinary.Parsed
+				| T.IntegerDecimalPlain.Parsed
+				| T.IntegerHex.Parsed
+				| T.IntegerOctal.Parsed
+				| T.Lambda.Parsed
+				| T.ListComprehension.Parsed
+				| T.NamedExpression.Parsed
+				| T.NotOperator.Parsed
+				| T.ParenthesizedExpression.Parsed
+				| T.SetComprehension.Parsed
+				| T.String.Parsed
+				| T.Subscript.Parsed
+				| T.UnaryOperator.Parsed
+				| T.Yield.Parsed;
+		};
+		readonly 'expression.assignment.compound.bitwise_xor': {
+			readonly left:
+				| V.RequiredBy<V.Expression.Member<PythonMap>, 'object' | 'property', never>
+				| V.RequiredBy<V.Expression.Subscript<PythonMap>, 'index' | 'object', never>
+				| V.Identifier<PythonMap>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name' | 'qualifier', never>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name', never>
+				| V.Pattern.List<PythonMap>
+				| V.RequiredBy<V.Pattern.Rest<PythonMap>, 'pattern', never>
+				| V.Pattern.Tuple<PythonMap>
+				| V.RequiredBy<V.Pattern.Tuple.Bare<PythonMap>, 'elements', never>
+				| T.Attribute.Parsed
+				| T.Subscript.Parsed;
+			readonly right:
+				| V.RequiredBy<V.Expression.Assignment<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Await<PythonMap>, 'expression', never>
+				| V.Expression.Binary<PythonMap>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Add<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Divide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Exponent<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.FloorDivide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Modulo<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Multiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Subtract<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.And<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Or<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Xor<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Chain<PythonMap>, 'comparators' | 'left', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Equal<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Greater<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.GreaterEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Less<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.LessEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual.Legacy<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.Is<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.IsNot<PythonMap>, 'left' | 'right', never>
+				| V.Expression.Binary.Logical<PythonMap>
+				| V.RequiredBy<V.Expression.Binary.Logical.And<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Logical.Or<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.MatrixMultiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.In<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.NotIn<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Left<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Right<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Call<PythonMap>, 'arguments' | 'function', never>
+				| V.RequiredBy<V.Expression.Call.Member<PythonMap>, 'arguments' | 'function', never>
+				| V.Expression.Collection.List<PythonMap>
+				| V.Expression.Collection.Map<PythonMap>
+				| V.RequiredBy<V.Expression.Collection.Set<PythonMap>, 'elements', never>
+				| V.Expression.Collection.Tuple<PythonMap>
+				| V.RequiredBy<V.Expression.Collection.Tuple.Bare<PythonMap>, 'elements', never>
+				| V.RequiredBy<V.Expression.Comprehension.Generator<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.List<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Map<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Set<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Conditional<PythonMap>, 'alternative' | 'condition' | 'consequence', never>
+				| V.RequiredBy<V.Expression.Lambda<PythonMap>, 'body', never>
+				| V.RequiredBy<V.Expression.Member<PythonMap>, 'object' | 'property', never>
+				| V.RequiredBy<V.Expression.Parenthesized<PythonMap>, 'expression', never>
+				| V.RequiredBy<V.Expression.Subscript<PythonMap>, 'index' | 'object', never>
+				| V.Expression.Unary<PythonMap>
+				| V.RequiredBy<V.Expression.Unary.BitwiseNot<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Negation<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Not<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Plus<PythonMap>, 'argument', never>
+				| V.Expression.Yield<PythonMap>
+				| V.RequiredBy<V.Expression.Yield.Delegate<PythonMap>, 'expression', never>
+				| V.Identifier<PythonMap>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name' | 'qualifier', never>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name', never>
+				| V.Literal.Boolean.False<PythonMap>
+				| V.Literal.Boolean.True<PythonMap>
+				| V.Literal.Ellipsis<PythonMap>
+				| V.Literal.Null<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Float<PythonMap>, 'integer', never>
+				| V.RequiredBy<V.Literal.Number.Float.LeadingPoint<PythonMap>, 'fraction', never>
+				| V.RequiredBy<V.Literal.Number.Float.Scientific<PythonMap>, 'exponent' | 'integer' | 'marker', never>
+				| V.Literal.Number.Integer<PythonMap>
+				| V.Literal.Number.Integer.Big<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Binary<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.RequiredBy<V.Literal.Number.Integer.Hex<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.Number.Integer.Imaginary<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Octal<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.String<PythonMap>
+				| V.Literal.String.Bytes<PythonMap>
+				| V.Literal.String.Bytes.Multiline<PythonMap>
+				| V.Literal.String.Bytes.Raw<PythonMap>
+				| V.Literal.String.Bytes.Raw.Multiline<PythonMap>
+				| V.RequiredBy<V.Literal.String.Concatenated<PythonMap>, 'strings', never>
+				| V.Literal.String.Interpolated<PythonMap>
+				| V.Literal.String.Interpolated.Deferred<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Raw.Multiline<PythonMap>
+				| V.Literal.String.Multiline<PythonMap>
+				| V.Literal.String.Raw<PythonMap>
+				| V.Literal.String.Raw.Multiline<PythonMap>
+				| V.Literal.String.Unicode<PythonMap>
+				| V.RequiredBy<V.Pattern.Rest<PythonMap>, 'pattern', never>
+				| V.RequiredBy<V.Pattern.Tuple.Bare<PythonMap>, 'elements', never>
+				| V.Unmapped<'python:as_pattern'>
+				| T.Attribute.Parsed
+				| T.Await.Parsed
+				| T.BinaryOperator.Parsed
+				| T.BooleanOperator.Parsed
+				| T.Call.Parsed
+				| T.ComparisonOperator.Parsed
+				| T.ConditionalExpression.Parsed
+				| T.ExpressionList.Parsed
+				| T.FloatLeadingPoint.Parsed
+				| T.FloatPoint.Parsed
+				| T.FloatScientific.Parsed
+				| T.GeneratorExpression.Parsed
+				| T.IntegerBinary.Parsed
+				| T.IntegerDecimalPlain.Parsed
+				| T.IntegerHex.Parsed
+				| T.IntegerOctal.Parsed
+				| T.Lambda.Parsed
+				| T.ListComprehension.Parsed
+				| T.NamedExpression.Parsed
+				| T.NotOperator.Parsed
+				| T.ParenthesizedExpression.Parsed
+				| T.SetComprehension.Parsed
+				| T.String.Parsed
+				| T.Subscript.Parsed
+				| T.UnaryOperator.Parsed
+				| T.Yield.Parsed;
+		};
+		readonly 'expression.assignment.compound.divide': {
+			readonly left:
+				| V.RequiredBy<V.Expression.Member<PythonMap>, 'object' | 'property', never>
+				| V.RequiredBy<V.Expression.Subscript<PythonMap>, 'index' | 'object', never>
+				| V.Identifier<PythonMap>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name' | 'qualifier', never>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name', never>
+				| V.Pattern.List<PythonMap>
+				| V.RequiredBy<V.Pattern.Rest<PythonMap>, 'pattern', never>
+				| V.Pattern.Tuple<PythonMap>
+				| V.RequiredBy<V.Pattern.Tuple.Bare<PythonMap>, 'elements', never>
+				| T.Attribute.Parsed
+				| T.Subscript.Parsed;
+			readonly right:
+				| V.RequiredBy<V.Expression.Assignment<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Await<PythonMap>, 'expression', never>
+				| V.Expression.Binary<PythonMap>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Add<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Divide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Exponent<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.FloorDivide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Modulo<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Multiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Subtract<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.And<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Or<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Xor<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Chain<PythonMap>, 'comparators' | 'left', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Equal<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Greater<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.GreaterEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Less<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.LessEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual.Legacy<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.Is<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.IsNot<PythonMap>, 'left' | 'right', never>
+				| V.Expression.Binary.Logical<PythonMap>
+				| V.RequiredBy<V.Expression.Binary.Logical.And<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Logical.Or<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.MatrixMultiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.In<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.NotIn<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Left<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Right<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Call<PythonMap>, 'arguments' | 'function', never>
+				| V.RequiredBy<V.Expression.Call.Member<PythonMap>, 'arguments' | 'function', never>
+				| V.Expression.Collection.List<PythonMap>
+				| V.Expression.Collection.Map<PythonMap>
+				| V.RequiredBy<V.Expression.Collection.Set<PythonMap>, 'elements', never>
+				| V.Expression.Collection.Tuple<PythonMap>
+				| V.RequiredBy<V.Expression.Collection.Tuple.Bare<PythonMap>, 'elements', never>
+				| V.RequiredBy<V.Expression.Comprehension.Generator<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.List<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Map<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Set<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Conditional<PythonMap>, 'alternative' | 'condition' | 'consequence', never>
+				| V.RequiredBy<V.Expression.Lambda<PythonMap>, 'body', never>
+				| V.RequiredBy<V.Expression.Member<PythonMap>, 'object' | 'property', never>
+				| V.RequiredBy<V.Expression.Parenthesized<PythonMap>, 'expression', never>
+				| V.RequiredBy<V.Expression.Subscript<PythonMap>, 'index' | 'object', never>
+				| V.Expression.Unary<PythonMap>
+				| V.RequiredBy<V.Expression.Unary.BitwiseNot<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Negation<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Not<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Plus<PythonMap>, 'argument', never>
+				| V.Expression.Yield<PythonMap>
+				| V.RequiredBy<V.Expression.Yield.Delegate<PythonMap>, 'expression', never>
+				| V.Identifier<PythonMap>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name' | 'qualifier', never>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name', never>
+				| V.Literal.Boolean.False<PythonMap>
+				| V.Literal.Boolean.True<PythonMap>
+				| V.Literal.Ellipsis<PythonMap>
+				| V.Literal.Null<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Float<PythonMap>, 'integer', never>
+				| V.RequiredBy<V.Literal.Number.Float.LeadingPoint<PythonMap>, 'fraction', never>
+				| V.RequiredBy<V.Literal.Number.Float.Scientific<PythonMap>, 'exponent' | 'integer' | 'marker', never>
+				| V.Literal.Number.Integer<PythonMap>
+				| V.Literal.Number.Integer.Big<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Binary<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.RequiredBy<V.Literal.Number.Integer.Hex<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.Number.Integer.Imaginary<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Octal<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.String<PythonMap>
+				| V.Literal.String.Bytes<PythonMap>
+				| V.Literal.String.Bytes.Multiline<PythonMap>
+				| V.Literal.String.Bytes.Raw<PythonMap>
+				| V.Literal.String.Bytes.Raw.Multiline<PythonMap>
+				| V.RequiredBy<V.Literal.String.Concatenated<PythonMap>, 'strings', never>
+				| V.Literal.String.Interpolated<PythonMap>
+				| V.Literal.String.Interpolated.Deferred<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Raw.Multiline<PythonMap>
+				| V.Literal.String.Multiline<PythonMap>
+				| V.Literal.String.Raw<PythonMap>
+				| V.Literal.String.Raw.Multiline<PythonMap>
+				| V.Literal.String.Unicode<PythonMap>
+				| V.RequiredBy<V.Pattern.Rest<PythonMap>, 'pattern', never>
+				| V.RequiredBy<V.Pattern.Tuple.Bare<PythonMap>, 'elements', never>
+				| V.Unmapped<'python:as_pattern'>
+				| T.Attribute.Parsed
+				| T.Await.Parsed
+				| T.BinaryOperator.Parsed
+				| T.BooleanOperator.Parsed
+				| T.Call.Parsed
+				| T.ComparisonOperator.Parsed
+				| T.ConditionalExpression.Parsed
+				| T.ExpressionList.Parsed
+				| T.FloatLeadingPoint.Parsed
+				| T.FloatPoint.Parsed
+				| T.FloatScientific.Parsed
+				| T.GeneratorExpression.Parsed
+				| T.IntegerBinary.Parsed
+				| T.IntegerDecimalPlain.Parsed
+				| T.IntegerHex.Parsed
+				| T.IntegerOctal.Parsed
+				| T.Lambda.Parsed
+				| T.ListComprehension.Parsed
+				| T.NamedExpression.Parsed
+				| T.NotOperator.Parsed
+				| T.ParenthesizedExpression.Parsed
+				| T.SetComprehension.Parsed
+				| T.String.Parsed
+				| T.Subscript.Parsed
+				| T.UnaryOperator.Parsed
+				| T.Yield.Parsed;
+		};
+		readonly 'expression.assignment.compound.exponent': {
+			readonly left:
+				| V.RequiredBy<V.Expression.Member<PythonMap>, 'object' | 'property', never>
+				| V.RequiredBy<V.Expression.Subscript<PythonMap>, 'index' | 'object', never>
+				| V.Identifier<PythonMap>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name' | 'qualifier', never>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name', never>
+				| V.Pattern.List<PythonMap>
+				| V.RequiredBy<V.Pattern.Rest<PythonMap>, 'pattern', never>
+				| V.Pattern.Tuple<PythonMap>
+				| V.RequiredBy<V.Pattern.Tuple.Bare<PythonMap>, 'elements', never>
+				| T.Attribute.Parsed
+				| T.Subscript.Parsed;
+			readonly right:
+				| V.RequiredBy<V.Expression.Assignment<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Await<PythonMap>, 'expression', never>
+				| V.Expression.Binary<PythonMap>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Add<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Divide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Exponent<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.FloorDivide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Modulo<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Multiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Subtract<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.And<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Or<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Xor<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Chain<PythonMap>, 'comparators' | 'left', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Equal<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Greater<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.GreaterEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Less<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.LessEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual.Legacy<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.Is<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.IsNot<PythonMap>, 'left' | 'right', never>
+				| V.Expression.Binary.Logical<PythonMap>
+				| V.RequiredBy<V.Expression.Binary.Logical.And<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Logical.Or<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.MatrixMultiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.In<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.NotIn<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Left<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Right<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Call<PythonMap>, 'arguments' | 'function', never>
+				| V.RequiredBy<V.Expression.Call.Member<PythonMap>, 'arguments' | 'function', never>
+				| V.Expression.Collection.List<PythonMap>
+				| V.Expression.Collection.Map<PythonMap>
+				| V.RequiredBy<V.Expression.Collection.Set<PythonMap>, 'elements', never>
+				| V.Expression.Collection.Tuple<PythonMap>
+				| V.RequiredBy<V.Expression.Collection.Tuple.Bare<PythonMap>, 'elements', never>
+				| V.RequiredBy<V.Expression.Comprehension.Generator<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.List<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Map<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Set<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Conditional<PythonMap>, 'alternative' | 'condition' | 'consequence', never>
+				| V.RequiredBy<V.Expression.Lambda<PythonMap>, 'body', never>
+				| V.RequiredBy<V.Expression.Member<PythonMap>, 'object' | 'property', never>
+				| V.RequiredBy<V.Expression.Parenthesized<PythonMap>, 'expression', never>
+				| V.RequiredBy<V.Expression.Subscript<PythonMap>, 'index' | 'object', never>
+				| V.Expression.Unary<PythonMap>
+				| V.RequiredBy<V.Expression.Unary.BitwiseNot<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Negation<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Not<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Plus<PythonMap>, 'argument', never>
+				| V.Expression.Yield<PythonMap>
+				| V.RequiredBy<V.Expression.Yield.Delegate<PythonMap>, 'expression', never>
+				| V.Identifier<PythonMap>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name' | 'qualifier', never>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name', never>
+				| V.Literal.Boolean.False<PythonMap>
+				| V.Literal.Boolean.True<PythonMap>
+				| V.Literal.Ellipsis<PythonMap>
+				| V.Literal.Null<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Float<PythonMap>, 'integer', never>
+				| V.RequiredBy<V.Literal.Number.Float.LeadingPoint<PythonMap>, 'fraction', never>
+				| V.RequiredBy<V.Literal.Number.Float.Scientific<PythonMap>, 'exponent' | 'integer' | 'marker', never>
+				| V.Literal.Number.Integer<PythonMap>
+				| V.Literal.Number.Integer.Big<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Binary<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.RequiredBy<V.Literal.Number.Integer.Hex<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.Number.Integer.Imaginary<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Octal<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.String<PythonMap>
+				| V.Literal.String.Bytes<PythonMap>
+				| V.Literal.String.Bytes.Multiline<PythonMap>
+				| V.Literal.String.Bytes.Raw<PythonMap>
+				| V.Literal.String.Bytes.Raw.Multiline<PythonMap>
+				| V.RequiredBy<V.Literal.String.Concatenated<PythonMap>, 'strings', never>
+				| V.Literal.String.Interpolated<PythonMap>
+				| V.Literal.String.Interpolated.Deferred<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Raw.Multiline<PythonMap>
+				| V.Literal.String.Multiline<PythonMap>
+				| V.Literal.String.Raw<PythonMap>
+				| V.Literal.String.Raw.Multiline<PythonMap>
+				| V.Literal.String.Unicode<PythonMap>
+				| V.RequiredBy<V.Pattern.Rest<PythonMap>, 'pattern', never>
+				| V.RequiredBy<V.Pattern.Tuple.Bare<PythonMap>, 'elements', never>
+				| V.Unmapped<'python:as_pattern'>
+				| T.Attribute.Parsed
+				| T.Await.Parsed
+				| T.BinaryOperator.Parsed
+				| T.BooleanOperator.Parsed
+				| T.Call.Parsed
+				| T.ComparisonOperator.Parsed
+				| T.ConditionalExpression.Parsed
+				| T.ExpressionList.Parsed
+				| T.FloatLeadingPoint.Parsed
+				| T.FloatPoint.Parsed
+				| T.FloatScientific.Parsed
+				| T.GeneratorExpression.Parsed
+				| T.IntegerBinary.Parsed
+				| T.IntegerDecimalPlain.Parsed
+				| T.IntegerHex.Parsed
+				| T.IntegerOctal.Parsed
+				| T.Lambda.Parsed
+				| T.ListComprehension.Parsed
+				| T.NamedExpression.Parsed
+				| T.NotOperator.Parsed
+				| T.ParenthesizedExpression.Parsed
+				| T.SetComprehension.Parsed
+				| T.String.Parsed
+				| T.Subscript.Parsed
+				| T.UnaryOperator.Parsed
+				| T.Yield.Parsed;
+		};
+		readonly 'expression.assignment.compound.floor_divide': {
+			readonly left:
+				| V.RequiredBy<V.Expression.Member<PythonMap>, 'object' | 'property', never>
+				| V.RequiredBy<V.Expression.Subscript<PythonMap>, 'index' | 'object', never>
+				| V.Identifier<PythonMap>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name' | 'qualifier', never>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name', never>
+				| V.Pattern.List<PythonMap>
+				| V.RequiredBy<V.Pattern.Rest<PythonMap>, 'pattern', never>
+				| V.Pattern.Tuple<PythonMap>
+				| V.RequiredBy<V.Pattern.Tuple.Bare<PythonMap>, 'elements', never>
+				| T.Attribute.Parsed
+				| T.Subscript.Parsed;
+			readonly right:
+				| V.RequiredBy<V.Expression.Assignment<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Await<PythonMap>, 'expression', never>
+				| V.Expression.Binary<PythonMap>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Add<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Divide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Exponent<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.FloorDivide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Modulo<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Multiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Subtract<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.And<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Or<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Xor<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Chain<PythonMap>, 'comparators' | 'left', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Equal<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Greater<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.GreaterEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Less<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.LessEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual.Legacy<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.Is<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.IsNot<PythonMap>, 'left' | 'right', never>
+				| V.Expression.Binary.Logical<PythonMap>
+				| V.RequiredBy<V.Expression.Binary.Logical.And<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Logical.Or<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.MatrixMultiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.In<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.NotIn<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Left<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Right<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Call<PythonMap>, 'arguments' | 'function', never>
+				| V.RequiredBy<V.Expression.Call.Member<PythonMap>, 'arguments' | 'function', never>
+				| V.Expression.Collection.List<PythonMap>
+				| V.Expression.Collection.Map<PythonMap>
+				| V.RequiredBy<V.Expression.Collection.Set<PythonMap>, 'elements', never>
+				| V.Expression.Collection.Tuple<PythonMap>
+				| V.RequiredBy<V.Expression.Collection.Tuple.Bare<PythonMap>, 'elements', never>
+				| V.RequiredBy<V.Expression.Comprehension.Generator<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.List<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Map<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Set<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Conditional<PythonMap>, 'alternative' | 'condition' | 'consequence', never>
+				| V.RequiredBy<V.Expression.Lambda<PythonMap>, 'body', never>
+				| V.RequiredBy<V.Expression.Member<PythonMap>, 'object' | 'property', never>
+				| V.RequiredBy<V.Expression.Parenthesized<PythonMap>, 'expression', never>
+				| V.RequiredBy<V.Expression.Subscript<PythonMap>, 'index' | 'object', never>
+				| V.Expression.Unary<PythonMap>
+				| V.RequiredBy<V.Expression.Unary.BitwiseNot<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Negation<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Not<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Plus<PythonMap>, 'argument', never>
+				| V.Expression.Yield<PythonMap>
+				| V.RequiredBy<V.Expression.Yield.Delegate<PythonMap>, 'expression', never>
+				| V.Identifier<PythonMap>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name' | 'qualifier', never>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name', never>
+				| V.Literal.Boolean.False<PythonMap>
+				| V.Literal.Boolean.True<PythonMap>
+				| V.Literal.Ellipsis<PythonMap>
+				| V.Literal.Null<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Float<PythonMap>, 'integer', never>
+				| V.RequiredBy<V.Literal.Number.Float.LeadingPoint<PythonMap>, 'fraction', never>
+				| V.RequiredBy<V.Literal.Number.Float.Scientific<PythonMap>, 'exponent' | 'integer' | 'marker', never>
+				| V.Literal.Number.Integer<PythonMap>
+				| V.Literal.Number.Integer.Big<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Binary<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.RequiredBy<V.Literal.Number.Integer.Hex<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.Number.Integer.Imaginary<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Octal<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.String<PythonMap>
+				| V.Literal.String.Bytes<PythonMap>
+				| V.Literal.String.Bytes.Multiline<PythonMap>
+				| V.Literal.String.Bytes.Raw<PythonMap>
+				| V.Literal.String.Bytes.Raw.Multiline<PythonMap>
+				| V.RequiredBy<V.Literal.String.Concatenated<PythonMap>, 'strings', never>
+				| V.Literal.String.Interpolated<PythonMap>
+				| V.Literal.String.Interpolated.Deferred<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Raw.Multiline<PythonMap>
+				| V.Literal.String.Multiline<PythonMap>
+				| V.Literal.String.Raw<PythonMap>
+				| V.Literal.String.Raw.Multiline<PythonMap>
+				| V.Literal.String.Unicode<PythonMap>
+				| V.RequiredBy<V.Pattern.Rest<PythonMap>, 'pattern', never>
+				| V.RequiredBy<V.Pattern.Tuple.Bare<PythonMap>, 'elements', never>
+				| V.Unmapped<'python:as_pattern'>
+				| T.Attribute.Parsed
+				| T.Await.Parsed
+				| T.BinaryOperator.Parsed
+				| T.BooleanOperator.Parsed
+				| T.Call.Parsed
+				| T.ComparisonOperator.Parsed
+				| T.ConditionalExpression.Parsed
+				| T.ExpressionList.Parsed
+				| T.FloatLeadingPoint.Parsed
+				| T.FloatPoint.Parsed
+				| T.FloatScientific.Parsed
+				| T.GeneratorExpression.Parsed
+				| T.IntegerBinary.Parsed
+				| T.IntegerDecimalPlain.Parsed
+				| T.IntegerHex.Parsed
+				| T.IntegerOctal.Parsed
+				| T.Lambda.Parsed
+				| T.ListComprehension.Parsed
+				| T.NamedExpression.Parsed
+				| T.NotOperator.Parsed
+				| T.ParenthesizedExpression.Parsed
+				| T.SetComprehension.Parsed
+				| T.String.Parsed
+				| T.Subscript.Parsed
+				| T.UnaryOperator.Parsed
+				| T.Yield.Parsed;
+		};
+		readonly 'expression.assignment.compound.matrix_multiply': {
+			readonly left:
+				| V.RequiredBy<V.Expression.Member<PythonMap>, 'object' | 'property', never>
+				| V.RequiredBy<V.Expression.Subscript<PythonMap>, 'index' | 'object', never>
+				| V.Identifier<PythonMap>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name' | 'qualifier', never>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name', never>
+				| V.Pattern.List<PythonMap>
+				| V.RequiredBy<V.Pattern.Rest<PythonMap>, 'pattern', never>
+				| V.Pattern.Tuple<PythonMap>
+				| V.RequiredBy<V.Pattern.Tuple.Bare<PythonMap>, 'elements', never>
+				| T.Attribute.Parsed
+				| T.Subscript.Parsed;
+			readonly right:
+				| V.RequiredBy<V.Expression.Assignment<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Await<PythonMap>, 'expression', never>
+				| V.Expression.Binary<PythonMap>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Add<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Divide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Exponent<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.FloorDivide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Modulo<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Multiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Subtract<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.And<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Or<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Xor<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Chain<PythonMap>, 'comparators' | 'left', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Equal<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Greater<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.GreaterEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Less<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.LessEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual.Legacy<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.Is<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.IsNot<PythonMap>, 'left' | 'right', never>
+				| V.Expression.Binary.Logical<PythonMap>
+				| V.RequiredBy<V.Expression.Binary.Logical.And<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Logical.Or<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.MatrixMultiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.In<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.NotIn<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Left<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Right<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Call<PythonMap>, 'arguments' | 'function', never>
+				| V.RequiredBy<V.Expression.Call.Member<PythonMap>, 'arguments' | 'function', never>
+				| V.Expression.Collection.List<PythonMap>
+				| V.Expression.Collection.Map<PythonMap>
+				| V.RequiredBy<V.Expression.Collection.Set<PythonMap>, 'elements', never>
+				| V.Expression.Collection.Tuple<PythonMap>
+				| V.RequiredBy<V.Expression.Collection.Tuple.Bare<PythonMap>, 'elements', never>
+				| V.RequiredBy<V.Expression.Comprehension.Generator<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.List<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Map<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Set<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Conditional<PythonMap>, 'alternative' | 'condition' | 'consequence', never>
+				| V.RequiredBy<V.Expression.Lambda<PythonMap>, 'body', never>
+				| V.RequiredBy<V.Expression.Member<PythonMap>, 'object' | 'property', never>
+				| V.RequiredBy<V.Expression.Parenthesized<PythonMap>, 'expression', never>
+				| V.RequiredBy<V.Expression.Subscript<PythonMap>, 'index' | 'object', never>
+				| V.Expression.Unary<PythonMap>
+				| V.RequiredBy<V.Expression.Unary.BitwiseNot<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Negation<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Not<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Plus<PythonMap>, 'argument', never>
+				| V.Expression.Yield<PythonMap>
+				| V.RequiredBy<V.Expression.Yield.Delegate<PythonMap>, 'expression', never>
+				| V.Identifier<PythonMap>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name' | 'qualifier', never>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name', never>
+				| V.Literal.Boolean.False<PythonMap>
+				| V.Literal.Boolean.True<PythonMap>
+				| V.Literal.Ellipsis<PythonMap>
+				| V.Literal.Null<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Float<PythonMap>, 'integer', never>
+				| V.RequiredBy<V.Literal.Number.Float.LeadingPoint<PythonMap>, 'fraction', never>
+				| V.RequiredBy<V.Literal.Number.Float.Scientific<PythonMap>, 'exponent' | 'integer' | 'marker', never>
+				| V.Literal.Number.Integer<PythonMap>
+				| V.Literal.Number.Integer.Big<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Binary<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.RequiredBy<V.Literal.Number.Integer.Hex<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.Number.Integer.Imaginary<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Octal<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.String<PythonMap>
+				| V.Literal.String.Bytes<PythonMap>
+				| V.Literal.String.Bytes.Multiline<PythonMap>
+				| V.Literal.String.Bytes.Raw<PythonMap>
+				| V.Literal.String.Bytes.Raw.Multiline<PythonMap>
+				| V.RequiredBy<V.Literal.String.Concatenated<PythonMap>, 'strings', never>
+				| V.Literal.String.Interpolated<PythonMap>
+				| V.Literal.String.Interpolated.Deferred<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Raw.Multiline<PythonMap>
+				| V.Literal.String.Multiline<PythonMap>
+				| V.Literal.String.Raw<PythonMap>
+				| V.Literal.String.Raw.Multiline<PythonMap>
+				| V.Literal.String.Unicode<PythonMap>
+				| V.RequiredBy<V.Pattern.Rest<PythonMap>, 'pattern', never>
+				| V.RequiredBy<V.Pattern.Tuple.Bare<PythonMap>, 'elements', never>
+				| V.Unmapped<'python:as_pattern'>
+				| T.Attribute.Parsed
+				| T.Await.Parsed
+				| T.BinaryOperator.Parsed
+				| T.BooleanOperator.Parsed
+				| T.Call.Parsed
+				| T.ComparisonOperator.Parsed
+				| T.ConditionalExpression.Parsed
+				| T.ExpressionList.Parsed
+				| T.FloatLeadingPoint.Parsed
+				| T.FloatPoint.Parsed
+				| T.FloatScientific.Parsed
+				| T.GeneratorExpression.Parsed
+				| T.IntegerBinary.Parsed
+				| T.IntegerDecimalPlain.Parsed
+				| T.IntegerHex.Parsed
+				| T.IntegerOctal.Parsed
+				| T.Lambda.Parsed
+				| T.ListComprehension.Parsed
+				| T.NamedExpression.Parsed
+				| T.NotOperator.Parsed
+				| T.ParenthesizedExpression.Parsed
+				| T.SetComprehension.Parsed
+				| T.String.Parsed
+				| T.Subscript.Parsed
+				| T.UnaryOperator.Parsed
+				| T.Yield.Parsed;
+		};
+		readonly 'expression.assignment.compound.modulo': {
+			readonly left:
+				| V.RequiredBy<V.Expression.Member<PythonMap>, 'object' | 'property', never>
+				| V.RequiredBy<V.Expression.Subscript<PythonMap>, 'index' | 'object', never>
+				| V.Identifier<PythonMap>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name' | 'qualifier', never>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name', never>
+				| V.Pattern.List<PythonMap>
+				| V.RequiredBy<V.Pattern.Rest<PythonMap>, 'pattern', never>
+				| V.Pattern.Tuple<PythonMap>
+				| V.RequiredBy<V.Pattern.Tuple.Bare<PythonMap>, 'elements', never>
+				| T.Attribute.Parsed
+				| T.Subscript.Parsed;
+			readonly right:
+				| V.RequiredBy<V.Expression.Assignment<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Await<PythonMap>, 'expression', never>
+				| V.Expression.Binary<PythonMap>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Add<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Divide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Exponent<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.FloorDivide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Modulo<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Multiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Subtract<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.And<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Or<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Xor<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Chain<PythonMap>, 'comparators' | 'left', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Equal<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Greater<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.GreaterEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Less<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.LessEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual.Legacy<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.Is<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.IsNot<PythonMap>, 'left' | 'right', never>
+				| V.Expression.Binary.Logical<PythonMap>
+				| V.RequiredBy<V.Expression.Binary.Logical.And<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Logical.Or<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.MatrixMultiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.In<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.NotIn<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Left<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Right<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Call<PythonMap>, 'arguments' | 'function', never>
+				| V.RequiredBy<V.Expression.Call.Member<PythonMap>, 'arguments' | 'function', never>
+				| V.Expression.Collection.List<PythonMap>
+				| V.Expression.Collection.Map<PythonMap>
+				| V.RequiredBy<V.Expression.Collection.Set<PythonMap>, 'elements', never>
+				| V.Expression.Collection.Tuple<PythonMap>
+				| V.RequiredBy<V.Expression.Collection.Tuple.Bare<PythonMap>, 'elements', never>
+				| V.RequiredBy<V.Expression.Comprehension.Generator<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.List<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Map<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Set<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Conditional<PythonMap>, 'alternative' | 'condition' | 'consequence', never>
+				| V.RequiredBy<V.Expression.Lambda<PythonMap>, 'body', never>
+				| V.RequiredBy<V.Expression.Member<PythonMap>, 'object' | 'property', never>
+				| V.RequiredBy<V.Expression.Parenthesized<PythonMap>, 'expression', never>
+				| V.RequiredBy<V.Expression.Subscript<PythonMap>, 'index' | 'object', never>
+				| V.Expression.Unary<PythonMap>
+				| V.RequiredBy<V.Expression.Unary.BitwiseNot<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Negation<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Not<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Plus<PythonMap>, 'argument', never>
+				| V.Expression.Yield<PythonMap>
+				| V.RequiredBy<V.Expression.Yield.Delegate<PythonMap>, 'expression', never>
+				| V.Identifier<PythonMap>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name' | 'qualifier', never>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name', never>
+				| V.Literal.Boolean.False<PythonMap>
+				| V.Literal.Boolean.True<PythonMap>
+				| V.Literal.Ellipsis<PythonMap>
+				| V.Literal.Null<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Float<PythonMap>, 'integer', never>
+				| V.RequiredBy<V.Literal.Number.Float.LeadingPoint<PythonMap>, 'fraction', never>
+				| V.RequiredBy<V.Literal.Number.Float.Scientific<PythonMap>, 'exponent' | 'integer' | 'marker', never>
+				| V.Literal.Number.Integer<PythonMap>
+				| V.Literal.Number.Integer.Big<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Binary<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.RequiredBy<V.Literal.Number.Integer.Hex<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.Number.Integer.Imaginary<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Octal<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.String<PythonMap>
+				| V.Literal.String.Bytes<PythonMap>
+				| V.Literal.String.Bytes.Multiline<PythonMap>
+				| V.Literal.String.Bytes.Raw<PythonMap>
+				| V.Literal.String.Bytes.Raw.Multiline<PythonMap>
+				| V.RequiredBy<V.Literal.String.Concatenated<PythonMap>, 'strings', never>
+				| V.Literal.String.Interpolated<PythonMap>
+				| V.Literal.String.Interpolated.Deferred<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Raw.Multiline<PythonMap>
+				| V.Literal.String.Multiline<PythonMap>
+				| V.Literal.String.Raw<PythonMap>
+				| V.Literal.String.Raw.Multiline<PythonMap>
+				| V.Literal.String.Unicode<PythonMap>
+				| V.RequiredBy<V.Pattern.Rest<PythonMap>, 'pattern', never>
+				| V.RequiredBy<V.Pattern.Tuple.Bare<PythonMap>, 'elements', never>
+				| V.Unmapped<'python:as_pattern'>
+				| T.Attribute.Parsed
+				| T.Await.Parsed
+				| T.BinaryOperator.Parsed
+				| T.BooleanOperator.Parsed
+				| T.Call.Parsed
+				| T.ComparisonOperator.Parsed
+				| T.ConditionalExpression.Parsed
+				| T.ExpressionList.Parsed
+				| T.FloatLeadingPoint.Parsed
+				| T.FloatPoint.Parsed
+				| T.FloatScientific.Parsed
+				| T.GeneratorExpression.Parsed
+				| T.IntegerBinary.Parsed
+				| T.IntegerDecimalPlain.Parsed
+				| T.IntegerHex.Parsed
+				| T.IntegerOctal.Parsed
+				| T.Lambda.Parsed
+				| T.ListComprehension.Parsed
+				| T.NamedExpression.Parsed
+				| T.NotOperator.Parsed
+				| T.ParenthesizedExpression.Parsed
+				| T.SetComprehension.Parsed
+				| T.String.Parsed
+				| T.Subscript.Parsed
+				| T.UnaryOperator.Parsed
+				| T.Yield.Parsed;
+		};
+		readonly 'expression.assignment.compound.multiply': {
+			readonly left:
+				| V.RequiredBy<V.Expression.Member<PythonMap>, 'object' | 'property', never>
+				| V.RequiredBy<V.Expression.Subscript<PythonMap>, 'index' | 'object', never>
+				| V.Identifier<PythonMap>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name' | 'qualifier', never>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name', never>
+				| V.Pattern.List<PythonMap>
+				| V.RequiredBy<V.Pattern.Rest<PythonMap>, 'pattern', never>
+				| V.Pattern.Tuple<PythonMap>
+				| V.RequiredBy<V.Pattern.Tuple.Bare<PythonMap>, 'elements', never>
+				| T.Attribute.Parsed
+				| T.Subscript.Parsed;
+			readonly right:
+				| V.RequiredBy<V.Expression.Assignment<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Await<PythonMap>, 'expression', never>
+				| V.Expression.Binary<PythonMap>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Add<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Divide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Exponent<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.FloorDivide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Modulo<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Multiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Subtract<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.And<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Or<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Xor<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Chain<PythonMap>, 'comparators' | 'left', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Equal<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Greater<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.GreaterEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Less<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.LessEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual.Legacy<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.Is<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.IsNot<PythonMap>, 'left' | 'right', never>
+				| V.Expression.Binary.Logical<PythonMap>
+				| V.RequiredBy<V.Expression.Binary.Logical.And<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Logical.Or<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.MatrixMultiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.In<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.NotIn<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Left<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Right<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Call<PythonMap>, 'arguments' | 'function', never>
+				| V.RequiredBy<V.Expression.Call.Member<PythonMap>, 'arguments' | 'function', never>
+				| V.Expression.Collection.List<PythonMap>
+				| V.Expression.Collection.Map<PythonMap>
+				| V.RequiredBy<V.Expression.Collection.Set<PythonMap>, 'elements', never>
+				| V.Expression.Collection.Tuple<PythonMap>
+				| V.RequiredBy<V.Expression.Collection.Tuple.Bare<PythonMap>, 'elements', never>
+				| V.RequiredBy<V.Expression.Comprehension.Generator<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.List<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Map<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Set<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Conditional<PythonMap>, 'alternative' | 'condition' | 'consequence', never>
+				| V.RequiredBy<V.Expression.Lambda<PythonMap>, 'body', never>
+				| V.RequiredBy<V.Expression.Member<PythonMap>, 'object' | 'property', never>
+				| V.RequiredBy<V.Expression.Parenthesized<PythonMap>, 'expression', never>
+				| V.RequiredBy<V.Expression.Subscript<PythonMap>, 'index' | 'object', never>
+				| V.Expression.Unary<PythonMap>
+				| V.RequiredBy<V.Expression.Unary.BitwiseNot<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Negation<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Not<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Plus<PythonMap>, 'argument', never>
+				| V.Expression.Yield<PythonMap>
+				| V.RequiredBy<V.Expression.Yield.Delegate<PythonMap>, 'expression', never>
+				| V.Identifier<PythonMap>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name' | 'qualifier', never>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name', never>
+				| V.Literal.Boolean.False<PythonMap>
+				| V.Literal.Boolean.True<PythonMap>
+				| V.Literal.Ellipsis<PythonMap>
+				| V.Literal.Null<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Float<PythonMap>, 'integer', never>
+				| V.RequiredBy<V.Literal.Number.Float.LeadingPoint<PythonMap>, 'fraction', never>
+				| V.RequiredBy<V.Literal.Number.Float.Scientific<PythonMap>, 'exponent' | 'integer' | 'marker', never>
+				| V.Literal.Number.Integer<PythonMap>
+				| V.Literal.Number.Integer.Big<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Binary<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.RequiredBy<V.Literal.Number.Integer.Hex<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.Number.Integer.Imaginary<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Octal<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.String<PythonMap>
+				| V.Literal.String.Bytes<PythonMap>
+				| V.Literal.String.Bytes.Multiline<PythonMap>
+				| V.Literal.String.Bytes.Raw<PythonMap>
+				| V.Literal.String.Bytes.Raw.Multiline<PythonMap>
+				| V.RequiredBy<V.Literal.String.Concatenated<PythonMap>, 'strings', never>
+				| V.Literal.String.Interpolated<PythonMap>
+				| V.Literal.String.Interpolated.Deferred<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Raw.Multiline<PythonMap>
+				| V.Literal.String.Multiline<PythonMap>
+				| V.Literal.String.Raw<PythonMap>
+				| V.Literal.String.Raw.Multiline<PythonMap>
+				| V.Literal.String.Unicode<PythonMap>
+				| V.RequiredBy<V.Pattern.Rest<PythonMap>, 'pattern', never>
+				| V.RequiredBy<V.Pattern.Tuple.Bare<PythonMap>, 'elements', never>
+				| V.Unmapped<'python:as_pattern'>
+				| T.Attribute.Parsed
+				| T.Await.Parsed
+				| T.BinaryOperator.Parsed
+				| T.BooleanOperator.Parsed
+				| T.Call.Parsed
+				| T.ComparisonOperator.Parsed
+				| T.ConditionalExpression.Parsed
+				| T.ExpressionList.Parsed
+				| T.FloatLeadingPoint.Parsed
+				| T.FloatPoint.Parsed
+				| T.FloatScientific.Parsed
+				| T.GeneratorExpression.Parsed
+				| T.IntegerBinary.Parsed
+				| T.IntegerDecimalPlain.Parsed
+				| T.IntegerHex.Parsed
+				| T.IntegerOctal.Parsed
+				| T.Lambda.Parsed
+				| T.ListComprehension.Parsed
+				| T.NamedExpression.Parsed
+				| T.NotOperator.Parsed
+				| T.ParenthesizedExpression.Parsed
+				| T.SetComprehension.Parsed
+				| T.String.Parsed
+				| T.Subscript.Parsed
+				| T.UnaryOperator.Parsed
+				| T.Yield.Parsed;
+		};
+		readonly 'expression.assignment.compound.shift_left': {
+			readonly left:
+				| V.RequiredBy<V.Expression.Member<PythonMap>, 'object' | 'property', never>
+				| V.RequiredBy<V.Expression.Subscript<PythonMap>, 'index' | 'object', never>
+				| V.Identifier<PythonMap>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name' | 'qualifier', never>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name', never>
+				| V.Pattern.List<PythonMap>
+				| V.RequiredBy<V.Pattern.Rest<PythonMap>, 'pattern', never>
+				| V.Pattern.Tuple<PythonMap>
+				| V.RequiredBy<V.Pattern.Tuple.Bare<PythonMap>, 'elements', never>
+				| T.Attribute.Parsed
+				| T.Subscript.Parsed;
+			readonly right:
+				| V.RequiredBy<V.Expression.Assignment<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Await<PythonMap>, 'expression', never>
+				| V.Expression.Binary<PythonMap>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Add<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Divide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Exponent<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.FloorDivide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Modulo<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Multiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Subtract<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.And<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Or<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Xor<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Chain<PythonMap>, 'comparators' | 'left', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Equal<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Greater<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.GreaterEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Less<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.LessEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual.Legacy<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.Is<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.IsNot<PythonMap>, 'left' | 'right', never>
+				| V.Expression.Binary.Logical<PythonMap>
+				| V.RequiredBy<V.Expression.Binary.Logical.And<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Logical.Or<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.MatrixMultiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.In<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.NotIn<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Left<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Right<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Call<PythonMap>, 'arguments' | 'function', never>
+				| V.RequiredBy<V.Expression.Call.Member<PythonMap>, 'arguments' | 'function', never>
+				| V.Expression.Collection.List<PythonMap>
+				| V.Expression.Collection.Map<PythonMap>
+				| V.RequiredBy<V.Expression.Collection.Set<PythonMap>, 'elements', never>
+				| V.Expression.Collection.Tuple<PythonMap>
+				| V.RequiredBy<V.Expression.Collection.Tuple.Bare<PythonMap>, 'elements', never>
+				| V.RequiredBy<V.Expression.Comprehension.Generator<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.List<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Map<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Set<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Conditional<PythonMap>, 'alternative' | 'condition' | 'consequence', never>
+				| V.RequiredBy<V.Expression.Lambda<PythonMap>, 'body', never>
+				| V.RequiredBy<V.Expression.Member<PythonMap>, 'object' | 'property', never>
+				| V.RequiredBy<V.Expression.Parenthesized<PythonMap>, 'expression', never>
+				| V.RequiredBy<V.Expression.Subscript<PythonMap>, 'index' | 'object', never>
+				| V.Expression.Unary<PythonMap>
+				| V.RequiredBy<V.Expression.Unary.BitwiseNot<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Negation<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Not<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Plus<PythonMap>, 'argument', never>
+				| V.Expression.Yield<PythonMap>
+				| V.RequiredBy<V.Expression.Yield.Delegate<PythonMap>, 'expression', never>
+				| V.Identifier<PythonMap>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name' | 'qualifier', never>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name', never>
+				| V.Literal.Boolean.False<PythonMap>
+				| V.Literal.Boolean.True<PythonMap>
+				| V.Literal.Ellipsis<PythonMap>
+				| V.Literal.Null<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Float<PythonMap>, 'integer', never>
+				| V.RequiredBy<V.Literal.Number.Float.LeadingPoint<PythonMap>, 'fraction', never>
+				| V.RequiredBy<V.Literal.Number.Float.Scientific<PythonMap>, 'exponent' | 'integer' | 'marker', never>
+				| V.Literal.Number.Integer<PythonMap>
+				| V.Literal.Number.Integer.Big<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Binary<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.RequiredBy<V.Literal.Number.Integer.Hex<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.Number.Integer.Imaginary<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Octal<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.String<PythonMap>
+				| V.Literal.String.Bytes<PythonMap>
+				| V.Literal.String.Bytes.Multiline<PythonMap>
+				| V.Literal.String.Bytes.Raw<PythonMap>
+				| V.Literal.String.Bytes.Raw.Multiline<PythonMap>
+				| V.RequiredBy<V.Literal.String.Concatenated<PythonMap>, 'strings', never>
+				| V.Literal.String.Interpolated<PythonMap>
+				| V.Literal.String.Interpolated.Deferred<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Raw.Multiline<PythonMap>
+				| V.Literal.String.Multiline<PythonMap>
+				| V.Literal.String.Raw<PythonMap>
+				| V.Literal.String.Raw.Multiline<PythonMap>
+				| V.Literal.String.Unicode<PythonMap>
+				| V.RequiredBy<V.Pattern.Rest<PythonMap>, 'pattern', never>
+				| V.RequiredBy<V.Pattern.Tuple.Bare<PythonMap>, 'elements', never>
+				| V.Unmapped<'python:as_pattern'>
+				| T.Attribute.Parsed
+				| T.Await.Parsed
+				| T.BinaryOperator.Parsed
+				| T.BooleanOperator.Parsed
+				| T.Call.Parsed
+				| T.ComparisonOperator.Parsed
+				| T.ConditionalExpression.Parsed
+				| T.ExpressionList.Parsed
+				| T.FloatLeadingPoint.Parsed
+				| T.FloatPoint.Parsed
+				| T.FloatScientific.Parsed
+				| T.GeneratorExpression.Parsed
+				| T.IntegerBinary.Parsed
+				| T.IntegerDecimalPlain.Parsed
+				| T.IntegerHex.Parsed
+				| T.IntegerOctal.Parsed
+				| T.Lambda.Parsed
+				| T.ListComprehension.Parsed
+				| T.NamedExpression.Parsed
+				| T.NotOperator.Parsed
+				| T.ParenthesizedExpression.Parsed
+				| T.SetComprehension.Parsed
+				| T.String.Parsed
+				| T.Subscript.Parsed
+				| T.UnaryOperator.Parsed
+				| T.Yield.Parsed;
+		};
+		readonly 'expression.assignment.compound.shift_right': {
+			readonly left:
+				| V.RequiredBy<V.Expression.Member<PythonMap>, 'object' | 'property', never>
+				| V.RequiredBy<V.Expression.Subscript<PythonMap>, 'index' | 'object', never>
+				| V.Identifier<PythonMap>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name' | 'qualifier', never>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name', never>
+				| V.Pattern.List<PythonMap>
+				| V.RequiredBy<V.Pattern.Rest<PythonMap>, 'pattern', never>
+				| V.Pattern.Tuple<PythonMap>
+				| V.RequiredBy<V.Pattern.Tuple.Bare<PythonMap>, 'elements', never>
+				| T.Attribute.Parsed
+				| T.Subscript.Parsed;
+			readonly right:
+				| V.RequiredBy<V.Expression.Assignment<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Await<PythonMap>, 'expression', never>
+				| V.Expression.Binary<PythonMap>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Add<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Divide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Exponent<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.FloorDivide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Modulo<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Multiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Subtract<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.And<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Or<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Xor<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Chain<PythonMap>, 'comparators' | 'left', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Equal<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Greater<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.GreaterEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Less<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.LessEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual.Legacy<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.Is<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.IsNot<PythonMap>, 'left' | 'right', never>
+				| V.Expression.Binary.Logical<PythonMap>
+				| V.RequiredBy<V.Expression.Binary.Logical.And<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Logical.Or<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.MatrixMultiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.In<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.NotIn<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Left<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Right<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Call<PythonMap>, 'arguments' | 'function', never>
+				| V.RequiredBy<V.Expression.Call.Member<PythonMap>, 'arguments' | 'function', never>
+				| V.Expression.Collection.List<PythonMap>
+				| V.Expression.Collection.Map<PythonMap>
+				| V.RequiredBy<V.Expression.Collection.Set<PythonMap>, 'elements', never>
+				| V.Expression.Collection.Tuple<PythonMap>
+				| V.RequiredBy<V.Expression.Collection.Tuple.Bare<PythonMap>, 'elements', never>
+				| V.RequiredBy<V.Expression.Comprehension.Generator<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.List<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Map<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Set<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Conditional<PythonMap>, 'alternative' | 'condition' | 'consequence', never>
+				| V.RequiredBy<V.Expression.Lambda<PythonMap>, 'body', never>
+				| V.RequiredBy<V.Expression.Member<PythonMap>, 'object' | 'property', never>
+				| V.RequiredBy<V.Expression.Parenthesized<PythonMap>, 'expression', never>
+				| V.RequiredBy<V.Expression.Subscript<PythonMap>, 'index' | 'object', never>
+				| V.Expression.Unary<PythonMap>
+				| V.RequiredBy<V.Expression.Unary.BitwiseNot<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Negation<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Not<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Plus<PythonMap>, 'argument', never>
+				| V.Expression.Yield<PythonMap>
+				| V.RequiredBy<V.Expression.Yield.Delegate<PythonMap>, 'expression', never>
+				| V.Identifier<PythonMap>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name' | 'qualifier', never>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name', never>
+				| V.Literal.Boolean.False<PythonMap>
+				| V.Literal.Boolean.True<PythonMap>
+				| V.Literal.Ellipsis<PythonMap>
+				| V.Literal.Null<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Float<PythonMap>, 'integer', never>
+				| V.RequiredBy<V.Literal.Number.Float.LeadingPoint<PythonMap>, 'fraction', never>
+				| V.RequiredBy<V.Literal.Number.Float.Scientific<PythonMap>, 'exponent' | 'integer' | 'marker', never>
+				| V.Literal.Number.Integer<PythonMap>
+				| V.Literal.Number.Integer.Big<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Binary<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.RequiredBy<V.Literal.Number.Integer.Hex<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.Number.Integer.Imaginary<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Octal<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.String<PythonMap>
+				| V.Literal.String.Bytes<PythonMap>
+				| V.Literal.String.Bytes.Multiline<PythonMap>
+				| V.Literal.String.Bytes.Raw<PythonMap>
+				| V.Literal.String.Bytes.Raw.Multiline<PythonMap>
+				| V.RequiredBy<V.Literal.String.Concatenated<PythonMap>, 'strings', never>
+				| V.Literal.String.Interpolated<PythonMap>
+				| V.Literal.String.Interpolated.Deferred<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Raw.Multiline<PythonMap>
+				| V.Literal.String.Multiline<PythonMap>
+				| V.Literal.String.Raw<PythonMap>
+				| V.Literal.String.Raw.Multiline<PythonMap>
+				| V.Literal.String.Unicode<PythonMap>
+				| V.RequiredBy<V.Pattern.Rest<PythonMap>, 'pattern', never>
+				| V.RequiredBy<V.Pattern.Tuple.Bare<PythonMap>, 'elements', never>
+				| V.Unmapped<'python:as_pattern'>
+				| T.Attribute.Parsed
+				| T.Await.Parsed
+				| T.BinaryOperator.Parsed
+				| T.BooleanOperator.Parsed
+				| T.Call.Parsed
+				| T.ComparisonOperator.Parsed
+				| T.ConditionalExpression.Parsed
+				| T.ExpressionList.Parsed
+				| T.FloatLeadingPoint.Parsed
+				| T.FloatPoint.Parsed
+				| T.FloatScientific.Parsed
+				| T.GeneratorExpression.Parsed
+				| T.IntegerBinary.Parsed
+				| T.IntegerDecimalPlain.Parsed
+				| T.IntegerHex.Parsed
+				| T.IntegerOctal.Parsed
+				| T.Lambda.Parsed
+				| T.ListComprehension.Parsed
+				| T.NamedExpression.Parsed
+				| T.NotOperator.Parsed
+				| T.ParenthesizedExpression.Parsed
+				| T.SetComprehension.Parsed
+				| T.String.Parsed
+				| T.Subscript.Parsed
+				| T.UnaryOperator.Parsed
+				| T.Yield.Parsed;
+		};
+		readonly 'expression.assignment.compound.subtract': {
 			readonly left:
 				| V.RequiredBy<V.Expression.Member<PythonMap>, 'object' | 'property', never>
 				| V.RequiredBy<V.Expression.Subscript<PythonMap>, 'index' | 'object', never>
@@ -3010,14 +6104,10 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Literal.String.Raw.Multiline<PythonMap>
 				| V.Literal.String.Unicode<PythonMap>
 				| V.RequiredBy<V.Pattern.Rest<PythonMap>, 'pattern', never>
-				| V.Unmapped<'python:as_pattern'>
 				| T.Attribute.Parsed
 				| T.Await.Parsed
 				| T.BinaryOperator.Parsed
-				| T.BooleanOperator.Parsed
 				| T.Call.Parsed
-				| T.ComparisonOperator.Parsed
-				| T.ConditionalExpression.Parsed
 				| T.FloatLeadingPoint.Parsed
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
@@ -3026,10 +6116,7 @@ export interface PythonMap extends V.GrammarMap {
 				| T.IntegerDecimalPlain.Parsed
 				| T.IntegerHex.Parsed
 				| T.IntegerOctal.Parsed
-				| T.Lambda.Parsed
 				| T.ListComprehension.Parsed
-				| T.NamedExpression.Parsed
-				| T.NotOperator.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.SetComprehension.Parsed
 				| T.String.Parsed
@@ -3122,14 +6209,10 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Literal.String.Raw.Multiline<PythonMap>
 				| V.Literal.String.Unicode<PythonMap>
 				| V.RequiredBy<V.Pattern.Rest<PythonMap>, 'pattern', never>
-				| V.Unmapped<'python:as_pattern'>
 				| T.Attribute.Parsed
 				| T.Await.Parsed
 				| T.BinaryOperator.Parsed
-				| T.BooleanOperator.Parsed
 				| T.Call.Parsed
-				| T.ComparisonOperator.Parsed
-				| T.ConditionalExpression.Parsed
 				| T.FloatLeadingPoint.Parsed
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
@@ -3138,10 +6221,3714 @@ export interface PythonMap extends V.GrammarMap {
 				| T.IntegerDecimalPlain.Parsed
 				| T.IntegerHex.Parsed
 				| T.IntegerOctal.Parsed
-				| T.Lambda.Parsed
 				| T.ListComprehension.Parsed
-				| T.NamedExpression.Parsed
-				| T.NotOperator.Parsed
+				| T.ParenthesizedExpression.Parsed
+				| T.SetComprehension.Parsed
+				| T.String.Parsed
+				| T.Subscript.Parsed
+				| T.UnaryOperator.Parsed;
+		};
+		readonly 'expression.binary.arithmetic.add': {
+			readonly left:
+				| V.RequiredBy<V.Expression.Assignment<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Await<PythonMap>, 'expression', never>
+				| V.Expression.Binary<PythonMap>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Add<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Divide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Exponent<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.FloorDivide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Modulo<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Multiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Subtract<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.And<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Or<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Xor<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Chain<PythonMap>, 'comparators' | 'left', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Equal<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Greater<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.GreaterEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Less<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.LessEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual.Legacy<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.Is<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.IsNot<PythonMap>, 'left' | 'right', never>
+				| V.Expression.Binary.Logical<PythonMap>
+				| V.RequiredBy<V.Expression.Binary.Logical.And<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Logical.Or<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.MatrixMultiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.In<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.NotIn<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Left<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Right<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Call<PythonMap>, 'arguments' | 'function', never>
+				| V.RequiredBy<V.Expression.Call.Member<PythonMap>, 'arguments' | 'function', never>
+				| V.Expression.Collection.List<PythonMap>
+				| V.Expression.Collection.Map<PythonMap>
+				| V.RequiredBy<V.Expression.Collection.Set<PythonMap>, 'elements', never>
+				| V.Expression.Collection.Tuple<PythonMap>
+				| V.RequiredBy<V.Expression.Comprehension.Generator<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.List<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Map<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Set<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Conditional<PythonMap>, 'alternative' | 'condition' | 'consequence', never>
+				| V.RequiredBy<V.Expression.Lambda<PythonMap>, 'body', never>
+				| V.RequiredBy<V.Expression.Member<PythonMap>, 'object' | 'property', never>
+				| V.RequiredBy<V.Expression.Parenthesized<PythonMap>, 'expression', never>
+				| V.RequiredBy<V.Expression.Subscript<PythonMap>, 'index' | 'object', never>
+				| V.Expression.Unary<PythonMap>
+				| V.RequiredBy<V.Expression.Unary.BitwiseNot<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Negation<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Not<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Plus<PythonMap>, 'argument', never>
+				| V.Identifier<PythonMap>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name' | 'qualifier', never>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name', never>
+				| V.Literal.Boolean.False<PythonMap>
+				| V.Literal.Boolean.True<PythonMap>
+				| V.Literal.Ellipsis<PythonMap>
+				| V.Literal.Null<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Float<PythonMap>, 'integer', never>
+				| V.RequiredBy<V.Literal.Number.Float.LeadingPoint<PythonMap>, 'fraction', never>
+				| V.RequiredBy<V.Literal.Number.Float.Scientific<PythonMap>, 'exponent' | 'integer' | 'marker', never>
+				| V.Literal.Number.Integer<PythonMap>
+				| V.Literal.Number.Integer.Big<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Binary<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.RequiredBy<V.Literal.Number.Integer.Hex<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.Number.Integer.Imaginary<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Octal<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.String<PythonMap>
+				| V.Literal.String.Bytes<PythonMap>
+				| V.Literal.String.Bytes.Multiline<PythonMap>
+				| V.Literal.String.Bytes.Raw<PythonMap>
+				| V.Literal.String.Bytes.Raw.Multiline<PythonMap>
+				| V.RequiredBy<V.Literal.String.Concatenated<PythonMap>, 'strings', never>
+				| V.Literal.String.Interpolated<PythonMap>
+				| V.Literal.String.Interpolated.Deferred<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Raw.Multiline<PythonMap>
+				| V.Literal.String.Multiline<PythonMap>
+				| V.Literal.String.Raw<PythonMap>
+				| V.Literal.String.Raw.Multiline<PythonMap>
+				| V.Literal.String.Unicode<PythonMap>
+				| V.RequiredBy<V.Pattern.Rest<PythonMap>, 'pattern', never>
+				| T.Attribute.Parsed
+				| T.Await.Parsed
+				| T.BinaryOperator.Parsed
+				| T.Call.Parsed
+				| T.FloatLeadingPoint.Parsed
+				| T.FloatPoint.Parsed
+				| T.FloatScientific.Parsed
+				| T.GeneratorExpression.Parsed
+				| T.IntegerBinary.Parsed
+				| T.IntegerDecimalPlain.Parsed
+				| T.IntegerHex.Parsed
+				| T.IntegerOctal.Parsed
+				| T.ListComprehension.Parsed
+				| T.ParenthesizedExpression.Parsed
+				| T.SetComprehension.Parsed
+				| T.String.Parsed
+				| T.Subscript.Parsed
+				| T.UnaryOperator.Parsed;
+			readonly right:
+				| V.RequiredBy<V.Expression.Assignment<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Await<PythonMap>, 'expression', never>
+				| V.Expression.Binary<PythonMap>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Add<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Divide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Exponent<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.FloorDivide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Modulo<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Multiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Subtract<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.And<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Or<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Xor<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Chain<PythonMap>, 'comparators' | 'left', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Equal<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Greater<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.GreaterEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Less<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.LessEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual.Legacy<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.Is<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.IsNot<PythonMap>, 'left' | 'right', never>
+				| V.Expression.Binary.Logical<PythonMap>
+				| V.RequiredBy<V.Expression.Binary.Logical.And<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Logical.Or<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.MatrixMultiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.In<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.NotIn<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Left<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Right<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Call<PythonMap>, 'arguments' | 'function', never>
+				| V.RequiredBy<V.Expression.Call.Member<PythonMap>, 'arguments' | 'function', never>
+				| V.Expression.Collection.List<PythonMap>
+				| V.Expression.Collection.Map<PythonMap>
+				| V.RequiredBy<V.Expression.Collection.Set<PythonMap>, 'elements', never>
+				| V.Expression.Collection.Tuple<PythonMap>
+				| V.RequiredBy<V.Expression.Comprehension.Generator<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.List<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Map<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Set<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Conditional<PythonMap>, 'alternative' | 'condition' | 'consequence', never>
+				| V.RequiredBy<V.Expression.Lambda<PythonMap>, 'body', never>
+				| V.RequiredBy<V.Expression.Member<PythonMap>, 'object' | 'property', never>
+				| V.RequiredBy<V.Expression.Parenthesized<PythonMap>, 'expression', never>
+				| V.RequiredBy<V.Expression.Subscript<PythonMap>, 'index' | 'object', never>
+				| V.Expression.Unary<PythonMap>
+				| V.RequiredBy<V.Expression.Unary.BitwiseNot<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Negation<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Not<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Plus<PythonMap>, 'argument', never>
+				| V.Identifier<PythonMap>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name' | 'qualifier', never>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name', never>
+				| V.Literal.Boolean.False<PythonMap>
+				| V.Literal.Boolean.True<PythonMap>
+				| V.Literal.Ellipsis<PythonMap>
+				| V.Literal.Null<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Float<PythonMap>, 'integer', never>
+				| V.RequiredBy<V.Literal.Number.Float.LeadingPoint<PythonMap>, 'fraction', never>
+				| V.RequiredBy<V.Literal.Number.Float.Scientific<PythonMap>, 'exponent' | 'integer' | 'marker', never>
+				| V.Literal.Number.Integer<PythonMap>
+				| V.Literal.Number.Integer.Big<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Binary<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.RequiredBy<V.Literal.Number.Integer.Hex<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.Number.Integer.Imaginary<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Octal<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.String<PythonMap>
+				| V.Literal.String.Bytes<PythonMap>
+				| V.Literal.String.Bytes.Multiline<PythonMap>
+				| V.Literal.String.Bytes.Raw<PythonMap>
+				| V.Literal.String.Bytes.Raw.Multiline<PythonMap>
+				| V.RequiredBy<V.Literal.String.Concatenated<PythonMap>, 'strings', never>
+				| V.Literal.String.Interpolated<PythonMap>
+				| V.Literal.String.Interpolated.Deferred<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Raw.Multiline<PythonMap>
+				| V.Literal.String.Multiline<PythonMap>
+				| V.Literal.String.Raw<PythonMap>
+				| V.Literal.String.Raw.Multiline<PythonMap>
+				| V.Literal.String.Unicode<PythonMap>
+				| V.RequiredBy<V.Pattern.Rest<PythonMap>, 'pattern', never>
+				| T.Attribute.Parsed
+				| T.Await.Parsed
+				| T.BinaryOperator.Parsed
+				| T.Call.Parsed
+				| T.FloatLeadingPoint.Parsed
+				| T.FloatPoint.Parsed
+				| T.FloatScientific.Parsed
+				| T.GeneratorExpression.Parsed
+				| T.IntegerBinary.Parsed
+				| T.IntegerDecimalPlain.Parsed
+				| T.IntegerHex.Parsed
+				| T.IntegerOctal.Parsed
+				| T.ListComprehension.Parsed
+				| T.ParenthesizedExpression.Parsed
+				| T.SetComprehension.Parsed
+				| T.String.Parsed
+				| T.Subscript.Parsed
+				| T.UnaryOperator.Parsed;
+		};
+		readonly 'expression.binary.arithmetic.divide': {
+			readonly left:
+				| V.RequiredBy<V.Expression.Assignment<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Await<PythonMap>, 'expression', never>
+				| V.Expression.Binary<PythonMap>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Add<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Divide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Exponent<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.FloorDivide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Modulo<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Multiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Subtract<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.And<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Or<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Xor<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Chain<PythonMap>, 'comparators' | 'left', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Equal<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Greater<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.GreaterEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Less<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.LessEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual.Legacy<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.Is<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.IsNot<PythonMap>, 'left' | 'right', never>
+				| V.Expression.Binary.Logical<PythonMap>
+				| V.RequiredBy<V.Expression.Binary.Logical.And<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Logical.Or<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.MatrixMultiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.In<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.NotIn<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Left<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Right<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Call<PythonMap>, 'arguments' | 'function', never>
+				| V.RequiredBy<V.Expression.Call.Member<PythonMap>, 'arguments' | 'function', never>
+				| V.Expression.Collection.List<PythonMap>
+				| V.Expression.Collection.Map<PythonMap>
+				| V.RequiredBy<V.Expression.Collection.Set<PythonMap>, 'elements', never>
+				| V.Expression.Collection.Tuple<PythonMap>
+				| V.RequiredBy<V.Expression.Comprehension.Generator<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.List<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Map<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Set<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Conditional<PythonMap>, 'alternative' | 'condition' | 'consequence', never>
+				| V.RequiredBy<V.Expression.Lambda<PythonMap>, 'body', never>
+				| V.RequiredBy<V.Expression.Member<PythonMap>, 'object' | 'property', never>
+				| V.RequiredBy<V.Expression.Parenthesized<PythonMap>, 'expression', never>
+				| V.RequiredBy<V.Expression.Subscript<PythonMap>, 'index' | 'object', never>
+				| V.Expression.Unary<PythonMap>
+				| V.RequiredBy<V.Expression.Unary.BitwiseNot<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Negation<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Not<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Plus<PythonMap>, 'argument', never>
+				| V.Identifier<PythonMap>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name' | 'qualifier', never>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name', never>
+				| V.Literal.Boolean.False<PythonMap>
+				| V.Literal.Boolean.True<PythonMap>
+				| V.Literal.Ellipsis<PythonMap>
+				| V.Literal.Null<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Float<PythonMap>, 'integer', never>
+				| V.RequiredBy<V.Literal.Number.Float.LeadingPoint<PythonMap>, 'fraction', never>
+				| V.RequiredBy<V.Literal.Number.Float.Scientific<PythonMap>, 'exponent' | 'integer' | 'marker', never>
+				| V.Literal.Number.Integer<PythonMap>
+				| V.Literal.Number.Integer.Big<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Binary<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.RequiredBy<V.Literal.Number.Integer.Hex<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.Number.Integer.Imaginary<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Octal<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.String<PythonMap>
+				| V.Literal.String.Bytes<PythonMap>
+				| V.Literal.String.Bytes.Multiline<PythonMap>
+				| V.Literal.String.Bytes.Raw<PythonMap>
+				| V.Literal.String.Bytes.Raw.Multiline<PythonMap>
+				| V.RequiredBy<V.Literal.String.Concatenated<PythonMap>, 'strings', never>
+				| V.Literal.String.Interpolated<PythonMap>
+				| V.Literal.String.Interpolated.Deferred<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Raw.Multiline<PythonMap>
+				| V.Literal.String.Multiline<PythonMap>
+				| V.Literal.String.Raw<PythonMap>
+				| V.Literal.String.Raw.Multiline<PythonMap>
+				| V.Literal.String.Unicode<PythonMap>
+				| V.RequiredBy<V.Pattern.Rest<PythonMap>, 'pattern', never>
+				| T.Attribute.Parsed
+				| T.Await.Parsed
+				| T.BinaryOperator.Parsed
+				| T.Call.Parsed
+				| T.FloatLeadingPoint.Parsed
+				| T.FloatPoint.Parsed
+				| T.FloatScientific.Parsed
+				| T.GeneratorExpression.Parsed
+				| T.IntegerBinary.Parsed
+				| T.IntegerDecimalPlain.Parsed
+				| T.IntegerHex.Parsed
+				| T.IntegerOctal.Parsed
+				| T.ListComprehension.Parsed
+				| T.ParenthesizedExpression.Parsed
+				| T.SetComprehension.Parsed
+				| T.String.Parsed
+				| T.Subscript.Parsed
+				| T.UnaryOperator.Parsed;
+			readonly right:
+				| V.RequiredBy<V.Expression.Assignment<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Await<PythonMap>, 'expression', never>
+				| V.Expression.Binary<PythonMap>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Add<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Divide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Exponent<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.FloorDivide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Modulo<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Multiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Subtract<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.And<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Or<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Xor<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Chain<PythonMap>, 'comparators' | 'left', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Equal<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Greater<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.GreaterEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Less<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.LessEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual.Legacy<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.Is<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.IsNot<PythonMap>, 'left' | 'right', never>
+				| V.Expression.Binary.Logical<PythonMap>
+				| V.RequiredBy<V.Expression.Binary.Logical.And<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Logical.Or<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.MatrixMultiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.In<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.NotIn<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Left<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Right<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Call<PythonMap>, 'arguments' | 'function', never>
+				| V.RequiredBy<V.Expression.Call.Member<PythonMap>, 'arguments' | 'function', never>
+				| V.Expression.Collection.List<PythonMap>
+				| V.Expression.Collection.Map<PythonMap>
+				| V.RequiredBy<V.Expression.Collection.Set<PythonMap>, 'elements', never>
+				| V.Expression.Collection.Tuple<PythonMap>
+				| V.RequiredBy<V.Expression.Comprehension.Generator<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.List<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Map<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Set<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Conditional<PythonMap>, 'alternative' | 'condition' | 'consequence', never>
+				| V.RequiredBy<V.Expression.Lambda<PythonMap>, 'body', never>
+				| V.RequiredBy<V.Expression.Member<PythonMap>, 'object' | 'property', never>
+				| V.RequiredBy<V.Expression.Parenthesized<PythonMap>, 'expression', never>
+				| V.RequiredBy<V.Expression.Subscript<PythonMap>, 'index' | 'object', never>
+				| V.Expression.Unary<PythonMap>
+				| V.RequiredBy<V.Expression.Unary.BitwiseNot<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Negation<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Not<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Plus<PythonMap>, 'argument', never>
+				| V.Identifier<PythonMap>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name' | 'qualifier', never>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name', never>
+				| V.Literal.Boolean.False<PythonMap>
+				| V.Literal.Boolean.True<PythonMap>
+				| V.Literal.Ellipsis<PythonMap>
+				| V.Literal.Null<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Float<PythonMap>, 'integer', never>
+				| V.RequiredBy<V.Literal.Number.Float.LeadingPoint<PythonMap>, 'fraction', never>
+				| V.RequiredBy<V.Literal.Number.Float.Scientific<PythonMap>, 'exponent' | 'integer' | 'marker', never>
+				| V.Literal.Number.Integer<PythonMap>
+				| V.Literal.Number.Integer.Big<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Binary<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.RequiredBy<V.Literal.Number.Integer.Hex<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.Number.Integer.Imaginary<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Octal<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.String<PythonMap>
+				| V.Literal.String.Bytes<PythonMap>
+				| V.Literal.String.Bytes.Multiline<PythonMap>
+				| V.Literal.String.Bytes.Raw<PythonMap>
+				| V.Literal.String.Bytes.Raw.Multiline<PythonMap>
+				| V.RequiredBy<V.Literal.String.Concatenated<PythonMap>, 'strings', never>
+				| V.Literal.String.Interpolated<PythonMap>
+				| V.Literal.String.Interpolated.Deferred<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Raw.Multiline<PythonMap>
+				| V.Literal.String.Multiline<PythonMap>
+				| V.Literal.String.Raw<PythonMap>
+				| V.Literal.String.Raw.Multiline<PythonMap>
+				| V.Literal.String.Unicode<PythonMap>
+				| V.RequiredBy<V.Pattern.Rest<PythonMap>, 'pattern', never>
+				| T.Attribute.Parsed
+				| T.Await.Parsed
+				| T.BinaryOperator.Parsed
+				| T.Call.Parsed
+				| T.FloatLeadingPoint.Parsed
+				| T.FloatPoint.Parsed
+				| T.FloatScientific.Parsed
+				| T.GeneratorExpression.Parsed
+				| T.IntegerBinary.Parsed
+				| T.IntegerDecimalPlain.Parsed
+				| T.IntegerHex.Parsed
+				| T.IntegerOctal.Parsed
+				| T.ListComprehension.Parsed
+				| T.ParenthesizedExpression.Parsed
+				| T.SetComprehension.Parsed
+				| T.String.Parsed
+				| T.Subscript.Parsed
+				| T.UnaryOperator.Parsed;
+		};
+		readonly 'expression.binary.arithmetic.exponent': {
+			readonly left:
+				| V.RequiredBy<V.Expression.Assignment<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Await<PythonMap>, 'expression', never>
+				| V.Expression.Binary<PythonMap>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Add<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Divide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Exponent<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.FloorDivide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Modulo<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Multiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Subtract<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.And<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Or<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Xor<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Chain<PythonMap>, 'comparators' | 'left', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Equal<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Greater<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.GreaterEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Less<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.LessEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual.Legacy<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.Is<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.IsNot<PythonMap>, 'left' | 'right', never>
+				| V.Expression.Binary.Logical<PythonMap>
+				| V.RequiredBy<V.Expression.Binary.Logical.And<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Logical.Or<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.MatrixMultiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.In<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.NotIn<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Left<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Right<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Call<PythonMap>, 'arguments' | 'function', never>
+				| V.RequiredBy<V.Expression.Call.Member<PythonMap>, 'arguments' | 'function', never>
+				| V.Expression.Collection.List<PythonMap>
+				| V.Expression.Collection.Map<PythonMap>
+				| V.RequiredBy<V.Expression.Collection.Set<PythonMap>, 'elements', never>
+				| V.Expression.Collection.Tuple<PythonMap>
+				| V.RequiredBy<V.Expression.Comprehension.Generator<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.List<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Map<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Set<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Conditional<PythonMap>, 'alternative' | 'condition' | 'consequence', never>
+				| V.RequiredBy<V.Expression.Lambda<PythonMap>, 'body', never>
+				| V.RequiredBy<V.Expression.Member<PythonMap>, 'object' | 'property', never>
+				| V.RequiredBy<V.Expression.Parenthesized<PythonMap>, 'expression', never>
+				| V.RequiredBy<V.Expression.Subscript<PythonMap>, 'index' | 'object', never>
+				| V.Expression.Unary<PythonMap>
+				| V.RequiredBy<V.Expression.Unary.BitwiseNot<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Negation<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Not<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Plus<PythonMap>, 'argument', never>
+				| V.Identifier<PythonMap>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name' | 'qualifier', never>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name', never>
+				| V.Literal.Boolean.False<PythonMap>
+				| V.Literal.Boolean.True<PythonMap>
+				| V.Literal.Ellipsis<PythonMap>
+				| V.Literal.Null<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Float<PythonMap>, 'integer', never>
+				| V.RequiredBy<V.Literal.Number.Float.LeadingPoint<PythonMap>, 'fraction', never>
+				| V.RequiredBy<V.Literal.Number.Float.Scientific<PythonMap>, 'exponent' | 'integer' | 'marker', never>
+				| V.Literal.Number.Integer<PythonMap>
+				| V.Literal.Number.Integer.Big<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Binary<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.RequiredBy<V.Literal.Number.Integer.Hex<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.Number.Integer.Imaginary<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Octal<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.String<PythonMap>
+				| V.Literal.String.Bytes<PythonMap>
+				| V.Literal.String.Bytes.Multiline<PythonMap>
+				| V.Literal.String.Bytes.Raw<PythonMap>
+				| V.Literal.String.Bytes.Raw.Multiline<PythonMap>
+				| V.RequiredBy<V.Literal.String.Concatenated<PythonMap>, 'strings', never>
+				| V.Literal.String.Interpolated<PythonMap>
+				| V.Literal.String.Interpolated.Deferred<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Raw.Multiline<PythonMap>
+				| V.Literal.String.Multiline<PythonMap>
+				| V.Literal.String.Raw<PythonMap>
+				| V.Literal.String.Raw.Multiline<PythonMap>
+				| V.Literal.String.Unicode<PythonMap>
+				| V.RequiredBy<V.Pattern.Rest<PythonMap>, 'pattern', never>
+				| T.Attribute.Parsed
+				| T.Await.Parsed
+				| T.BinaryOperator.Parsed
+				| T.Call.Parsed
+				| T.FloatLeadingPoint.Parsed
+				| T.FloatPoint.Parsed
+				| T.FloatScientific.Parsed
+				| T.GeneratorExpression.Parsed
+				| T.IntegerBinary.Parsed
+				| T.IntegerDecimalPlain.Parsed
+				| T.IntegerHex.Parsed
+				| T.IntegerOctal.Parsed
+				| T.ListComprehension.Parsed
+				| T.ParenthesizedExpression.Parsed
+				| T.SetComprehension.Parsed
+				| T.String.Parsed
+				| T.Subscript.Parsed
+				| T.UnaryOperator.Parsed;
+			readonly right:
+				| V.RequiredBy<V.Expression.Assignment<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Await<PythonMap>, 'expression', never>
+				| V.Expression.Binary<PythonMap>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Add<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Divide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Exponent<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.FloorDivide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Modulo<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Multiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Subtract<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.And<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Or<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Xor<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Chain<PythonMap>, 'comparators' | 'left', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Equal<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Greater<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.GreaterEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Less<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.LessEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual.Legacy<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.Is<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.IsNot<PythonMap>, 'left' | 'right', never>
+				| V.Expression.Binary.Logical<PythonMap>
+				| V.RequiredBy<V.Expression.Binary.Logical.And<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Logical.Or<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.MatrixMultiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.In<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.NotIn<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Left<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Right<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Call<PythonMap>, 'arguments' | 'function', never>
+				| V.RequiredBy<V.Expression.Call.Member<PythonMap>, 'arguments' | 'function', never>
+				| V.Expression.Collection.List<PythonMap>
+				| V.Expression.Collection.Map<PythonMap>
+				| V.RequiredBy<V.Expression.Collection.Set<PythonMap>, 'elements', never>
+				| V.Expression.Collection.Tuple<PythonMap>
+				| V.RequiredBy<V.Expression.Comprehension.Generator<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.List<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Map<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Set<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Conditional<PythonMap>, 'alternative' | 'condition' | 'consequence', never>
+				| V.RequiredBy<V.Expression.Lambda<PythonMap>, 'body', never>
+				| V.RequiredBy<V.Expression.Member<PythonMap>, 'object' | 'property', never>
+				| V.RequiredBy<V.Expression.Parenthesized<PythonMap>, 'expression', never>
+				| V.RequiredBy<V.Expression.Subscript<PythonMap>, 'index' | 'object', never>
+				| V.Expression.Unary<PythonMap>
+				| V.RequiredBy<V.Expression.Unary.BitwiseNot<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Negation<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Not<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Plus<PythonMap>, 'argument', never>
+				| V.Identifier<PythonMap>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name' | 'qualifier', never>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name', never>
+				| V.Literal.Boolean.False<PythonMap>
+				| V.Literal.Boolean.True<PythonMap>
+				| V.Literal.Ellipsis<PythonMap>
+				| V.Literal.Null<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Float<PythonMap>, 'integer', never>
+				| V.RequiredBy<V.Literal.Number.Float.LeadingPoint<PythonMap>, 'fraction', never>
+				| V.RequiredBy<V.Literal.Number.Float.Scientific<PythonMap>, 'exponent' | 'integer' | 'marker', never>
+				| V.Literal.Number.Integer<PythonMap>
+				| V.Literal.Number.Integer.Big<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Binary<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.RequiredBy<V.Literal.Number.Integer.Hex<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.Number.Integer.Imaginary<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Octal<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.String<PythonMap>
+				| V.Literal.String.Bytes<PythonMap>
+				| V.Literal.String.Bytes.Multiline<PythonMap>
+				| V.Literal.String.Bytes.Raw<PythonMap>
+				| V.Literal.String.Bytes.Raw.Multiline<PythonMap>
+				| V.RequiredBy<V.Literal.String.Concatenated<PythonMap>, 'strings', never>
+				| V.Literal.String.Interpolated<PythonMap>
+				| V.Literal.String.Interpolated.Deferred<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Raw.Multiline<PythonMap>
+				| V.Literal.String.Multiline<PythonMap>
+				| V.Literal.String.Raw<PythonMap>
+				| V.Literal.String.Raw.Multiline<PythonMap>
+				| V.Literal.String.Unicode<PythonMap>
+				| V.RequiredBy<V.Pattern.Rest<PythonMap>, 'pattern', never>
+				| T.Attribute.Parsed
+				| T.Await.Parsed
+				| T.BinaryOperator.Parsed
+				| T.Call.Parsed
+				| T.FloatLeadingPoint.Parsed
+				| T.FloatPoint.Parsed
+				| T.FloatScientific.Parsed
+				| T.GeneratorExpression.Parsed
+				| T.IntegerBinary.Parsed
+				| T.IntegerDecimalPlain.Parsed
+				| T.IntegerHex.Parsed
+				| T.IntegerOctal.Parsed
+				| T.ListComprehension.Parsed
+				| T.ParenthesizedExpression.Parsed
+				| T.SetComprehension.Parsed
+				| T.String.Parsed
+				| T.Subscript.Parsed
+				| T.UnaryOperator.Parsed;
+		};
+		readonly 'expression.binary.arithmetic.floor_divide': {
+			readonly left:
+				| V.RequiredBy<V.Expression.Assignment<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Await<PythonMap>, 'expression', never>
+				| V.Expression.Binary<PythonMap>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Add<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Divide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Exponent<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.FloorDivide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Modulo<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Multiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Subtract<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.And<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Or<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Xor<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Chain<PythonMap>, 'comparators' | 'left', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Equal<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Greater<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.GreaterEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Less<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.LessEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual.Legacy<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.Is<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.IsNot<PythonMap>, 'left' | 'right', never>
+				| V.Expression.Binary.Logical<PythonMap>
+				| V.RequiredBy<V.Expression.Binary.Logical.And<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Logical.Or<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.MatrixMultiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.In<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.NotIn<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Left<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Right<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Call<PythonMap>, 'arguments' | 'function', never>
+				| V.RequiredBy<V.Expression.Call.Member<PythonMap>, 'arguments' | 'function', never>
+				| V.Expression.Collection.List<PythonMap>
+				| V.Expression.Collection.Map<PythonMap>
+				| V.RequiredBy<V.Expression.Collection.Set<PythonMap>, 'elements', never>
+				| V.Expression.Collection.Tuple<PythonMap>
+				| V.RequiredBy<V.Expression.Comprehension.Generator<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.List<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Map<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Set<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Conditional<PythonMap>, 'alternative' | 'condition' | 'consequence', never>
+				| V.RequiredBy<V.Expression.Lambda<PythonMap>, 'body', never>
+				| V.RequiredBy<V.Expression.Member<PythonMap>, 'object' | 'property', never>
+				| V.RequiredBy<V.Expression.Parenthesized<PythonMap>, 'expression', never>
+				| V.RequiredBy<V.Expression.Subscript<PythonMap>, 'index' | 'object', never>
+				| V.Expression.Unary<PythonMap>
+				| V.RequiredBy<V.Expression.Unary.BitwiseNot<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Negation<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Not<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Plus<PythonMap>, 'argument', never>
+				| V.Identifier<PythonMap>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name' | 'qualifier', never>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name', never>
+				| V.Literal.Boolean.False<PythonMap>
+				| V.Literal.Boolean.True<PythonMap>
+				| V.Literal.Ellipsis<PythonMap>
+				| V.Literal.Null<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Float<PythonMap>, 'integer', never>
+				| V.RequiredBy<V.Literal.Number.Float.LeadingPoint<PythonMap>, 'fraction', never>
+				| V.RequiredBy<V.Literal.Number.Float.Scientific<PythonMap>, 'exponent' | 'integer' | 'marker', never>
+				| V.Literal.Number.Integer<PythonMap>
+				| V.Literal.Number.Integer.Big<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Binary<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.RequiredBy<V.Literal.Number.Integer.Hex<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.Number.Integer.Imaginary<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Octal<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.String<PythonMap>
+				| V.Literal.String.Bytes<PythonMap>
+				| V.Literal.String.Bytes.Multiline<PythonMap>
+				| V.Literal.String.Bytes.Raw<PythonMap>
+				| V.Literal.String.Bytes.Raw.Multiline<PythonMap>
+				| V.RequiredBy<V.Literal.String.Concatenated<PythonMap>, 'strings', never>
+				| V.Literal.String.Interpolated<PythonMap>
+				| V.Literal.String.Interpolated.Deferred<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Raw.Multiline<PythonMap>
+				| V.Literal.String.Multiline<PythonMap>
+				| V.Literal.String.Raw<PythonMap>
+				| V.Literal.String.Raw.Multiline<PythonMap>
+				| V.Literal.String.Unicode<PythonMap>
+				| V.RequiredBy<V.Pattern.Rest<PythonMap>, 'pattern', never>
+				| T.Attribute.Parsed
+				| T.Await.Parsed
+				| T.BinaryOperator.Parsed
+				| T.Call.Parsed
+				| T.FloatLeadingPoint.Parsed
+				| T.FloatPoint.Parsed
+				| T.FloatScientific.Parsed
+				| T.GeneratorExpression.Parsed
+				| T.IntegerBinary.Parsed
+				| T.IntegerDecimalPlain.Parsed
+				| T.IntegerHex.Parsed
+				| T.IntegerOctal.Parsed
+				| T.ListComprehension.Parsed
+				| T.ParenthesizedExpression.Parsed
+				| T.SetComprehension.Parsed
+				| T.String.Parsed
+				| T.Subscript.Parsed
+				| T.UnaryOperator.Parsed;
+			readonly right:
+				| V.RequiredBy<V.Expression.Assignment<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Await<PythonMap>, 'expression', never>
+				| V.Expression.Binary<PythonMap>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Add<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Divide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Exponent<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.FloorDivide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Modulo<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Multiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Subtract<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.And<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Or<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Xor<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Chain<PythonMap>, 'comparators' | 'left', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Equal<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Greater<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.GreaterEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Less<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.LessEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual.Legacy<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.Is<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.IsNot<PythonMap>, 'left' | 'right', never>
+				| V.Expression.Binary.Logical<PythonMap>
+				| V.RequiredBy<V.Expression.Binary.Logical.And<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Logical.Or<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.MatrixMultiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.In<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.NotIn<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Left<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Right<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Call<PythonMap>, 'arguments' | 'function', never>
+				| V.RequiredBy<V.Expression.Call.Member<PythonMap>, 'arguments' | 'function', never>
+				| V.Expression.Collection.List<PythonMap>
+				| V.Expression.Collection.Map<PythonMap>
+				| V.RequiredBy<V.Expression.Collection.Set<PythonMap>, 'elements', never>
+				| V.Expression.Collection.Tuple<PythonMap>
+				| V.RequiredBy<V.Expression.Comprehension.Generator<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.List<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Map<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Set<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Conditional<PythonMap>, 'alternative' | 'condition' | 'consequence', never>
+				| V.RequiredBy<V.Expression.Lambda<PythonMap>, 'body', never>
+				| V.RequiredBy<V.Expression.Member<PythonMap>, 'object' | 'property', never>
+				| V.RequiredBy<V.Expression.Parenthesized<PythonMap>, 'expression', never>
+				| V.RequiredBy<V.Expression.Subscript<PythonMap>, 'index' | 'object', never>
+				| V.Expression.Unary<PythonMap>
+				| V.RequiredBy<V.Expression.Unary.BitwiseNot<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Negation<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Not<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Plus<PythonMap>, 'argument', never>
+				| V.Identifier<PythonMap>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name' | 'qualifier', never>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name', never>
+				| V.Literal.Boolean.False<PythonMap>
+				| V.Literal.Boolean.True<PythonMap>
+				| V.Literal.Ellipsis<PythonMap>
+				| V.Literal.Null<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Float<PythonMap>, 'integer', never>
+				| V.RequiredBy<V.Literal.Number.Float.LeadingPoint<PythonMap>, 'fraction', never>
+				| V.RequiredBy<V.Literal.Number.Float.Scientific<PythonMap>, 'exponent' | 'integer' | 'marker', never>
+				| V.Literal.Number.Integer<PythonMap>
+				| V.Literal.Number.Integer.Big<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Binary<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.RequiredBy<V.Literal.Number.Integer.Hex<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.Number.Integer.Imaginary<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Octal<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.String<PythonMap>
+				| V.Literal.String.Bytes<PythonMap>
+				| V.Literal.String.Bytes.Multiline<PythonMap>
+				| V.Literal.String.Bytes.Raw<PythonMap>
+				| V.Literal.String.Bytes.Raw.Multiline<PythonMap>
+				| V.RequiredBy<V.Literal.String.Concatenated<PythonMap>, 'strings', never>
+				| V.Literal.String.Interpolated<PythonMap>
+				| V.Literal.String.Interpolated.Deferred<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Raw.Multiline<PythonMap>
+				| V.Literal.String.Multiline<PythonMap>
+				| V.Literal.String.Raw<PythonMap>
+				| V.Literal.String.Raw.Multiline<PythonMap>
+				| V.Literal.String.Unicode<PythonMap>
+				| V.RequiredBy<V.Pattern.Rest<PythonMap>, 'pattern', never>
+				| T.Attribute.Parsed
+				| T.Await.Parsed
+				| T.BinaryOperator.Parsed
+				| T.Call.Parsed
+				| T.FloatLeadingPoint.Parsed
+				| T.FloatPoint.Parsed
+				| T.FloatScientific.Parsed
+				| T.GeneratorExpression.Parsed
+				| T.IntegerBinary.Parsed
+				| T.IntegerDecimalPlain.Parsed
+				| T.IntegerHex.Parsed
+				| T.IntegerOctal.Parsed
+				| T.ListComprehension.Parsed
+				| T.ParenthesizedExpression.Parsed
+				| T.SetComprehension.Parsed
+				| T.String.Parsed
+				| T.Subscript.Parsed
+				| T.UnaryOperator.Parsed;
+		};
+		readonly 'expression.binary.arithmetic.modulo': {
+			readonly left:
+				| V.RequiredBy<V.Expression.Assignment<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Await<PythonMap>, 'expression', never>
+				| V.Expression.Binary<PythonMap>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Add<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Divide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Exponent<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.FloorDivide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Modulo<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Multiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Subtract<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.And<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Or<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Xor<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Chain<PythonMap>, 'comparators' | 'left', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Equal<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Greater<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.GreaterEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Less<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.LessEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual.Legacy<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.Is<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.IsNot<PythonMap>, 'left' | 'right', never>
+				| V.Expression.Binary.Logical<PythonMap>
+				| V.RequiredBy<V.Expression.Binary.Logical.And<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Logical.Or<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.MatrixMultiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.In<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.NotIn<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Left<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Right<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Call<PythonMap>, 'arguments' | 'function', never>
+				| V.RequiredBy<V.Expression.Call.Member<PythonMap>, 'arguments' | 'function', never>
+				| V.Expression.Collection.List<PythonMap>
+				| V.Expression.Collection.Map<PythonMap>
+				| V.RequiredBy<V.Expression.Collection.Set<PythonMap>, 'elements', never>
+				| V.Expression.Collection.Tuple<PythonMap>
+				| V.RequiredBy<V.Expression.Comprehension.Generator<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.List<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Map<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Set<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Conditional<PythonMap>, 'alternative' | 'condition' | 'consequence', never>
+				| V.RequiredBy<V.Expression.Lambda<PythonMap>, 'body', never>
+				| V.RequiredBy<V.Expression.Member<PythonMap>, 'object' | 'property', never>
+				| V.RequiredBy<V.Expression.Parenthesized<PythonMap>, 'expression', never>
+				| V.RequiredBy<V.Expression.Subscript<PythonMap>, 'index' | 'object', never>
+				| V.Expression.Unary<PythonMap>
+				| V.RequiredBy<V.Expression.Unary.BitwiseNot<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Negation<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Not<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Plus<PythonMap>, 'argument', never>
+				| V.Identifier<PythonMap>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name' | 'qualifier', never>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name', never>
+				| V.Literal.Boolean.False<PythonMap>
+				| V.Literal.Boolean.True<PythonMap>
+				| V.Literal.Ellipsis<PythonMap>
+				| V.Literal.Null<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Float<PythonMap>, 'integer', never>
+				| V.RequiredBy<V.Literal.Number.Float.LeadingPoint<PythonMap>, 'fraction', never>
+				| V.RequiredBy<V.Literal.Number.Float.Scientific<PythonMap>, 'exponent' | 'integer' | 'marker', never>
+				| V.Literal.Number.Integer<PythonMap>
+				| V.Literal.Number.Integer.Big<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Binary<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.RequiredBy<V.Literal.Number.Integer.Hex<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.Number.Integer.Imaginary<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Octal<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.String<PythonMap>
+				| V.Literal.String.Bytes<PythonMap>
+				| V.Literal.String.Bytes.Multiline<PythonMap>
+				| V.Literal.String.Bytes.Raw<PythonMap>
+				| V.Literal.String.Bytes.Raw.Multiline<PythonMap>
+				| V.RequiredBy<V.Literal.String.Concatenated<PythonMap>, 'strings', never>
+				| V.Literal.String.Interpolated<PythonMap>
+				| V.Literal.String.Interpolated.Deferred<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Raw.Multiline<PythonMap>
+				| V.Literal.String.Multiline<PythonMap>
+				| V.Literal.String.Raw<PythonMap>
+				| V.Literal.String.Raw.Multiline<PythonMap>
+				| V.Literal.String.Unicode<PythonMap>
+				| V.RequiredBy<V.Pattern.Rest<PythonMap>, 'pattern', never>
+				| T.Attribute.Parsed
+				| T.Await.Parsed
+				| T.BinaryOperator.Parsed
+				| T.Call.Parsed
+				| T.FloatLeadingPoint.Parsed
+				| T.FloatPoint.Parsed
+				| T.FloatScientific.Parsed
+				| T.GeneratorExpression.Parsed
+				| T.IntegerBinary.Parsed
+				| T.IntegerDecimalPlain.Parsed
+				| T.IntegerHex.Parsed
+				| T.IntegerOctal.Parsed
+				| T.ListComprehension.Parsed
+				| T.ParenthesizedExpression.Parsed
+				| T.SetComprehension.Parsed
+				| T.String.Parsed
+				| T.Subscript.Parsed
+				| T.UnaryOperator.Parsed;
+			readonly right:
+				| V.RequiredBy<V.Expression.Assignment<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Await<PythonMap>, 'expression', never>
+				| V.Expression.Binary<PythonMap>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Add<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Divide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Exponent<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.FloorDivide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Modulo<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Multiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Subtract<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.And<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Or<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Xor<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Chain<PythonMap>, 'comparators' | 'left', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Equal<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Greater<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.GreaterEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Less<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.LessEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual.Legacy<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.Is<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.IsNot<PythonMap>, 'left' | 'right', never>
+				| V.Expression.Binary.Logical<PythonMap>
+				| V.RequiredBy<V.Expression.Binary.Logical.And<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Logical.Or<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.MatrixMultiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.In<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.NotIn<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Left<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Right<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Call<PythonMap>, 'arguments' | 'function', never>
+				| V.RequiredBy<V.Expression.Call.Member<PythonMap>, 'arguments' | 'function', never>
+				| V.Expression.Collection.List<PythonMap>
+				| V.Expression.Collection.Map<PythonMap>
+				| V.RequiredBy<V.Expression.Collection.Set<PythonMap>, 'elements', never>
+				| V.Expression.Collection.Tuple<PythonMap>
+				| V.RequiredBy<V.Expression.Comprehension.Generator<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.List<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Map<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Set<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Conditional<PythonMap>, 'alternative' | 'condition' | 'consequence', never>
+				| V.RequiredBy<V.Expression.Lambda<PythonMap>, 'body', never>
+				| V.RequiredBy<V.Expression.Member<PythonMap>, 'object' | 'property', never>
+				| V.RequiredBy<V.Expression.Parenthesized<PythonMap>, 'expression', never>
+				| V.RequiredBy<V.Expression.Subscript<PythonMap>, 'index' | 'object', never>
+				| V.Expression.Unary<PythonMap>
+				| V.RequiredBy<V.Expression.Unary.BitwiseNot<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Negation<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Not<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Plus<PythonMap>, 'argument', never>
+				| V.Identifier<PythonMap>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name' | 'qualifier', never>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name', never>
+				| V.Literal.Boolean.False<PythonMap>
+				| V.Literal.Boolean.True<PythonMap>
+				| V.Literal.Ellipsis<PythonMap>
+				| V.Literal.Null<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Float<PythonMap>, 'integer', never>
+				| V.RequiredBy<V.Literal.Number.Float.LeadingPoint<PythonMap>, 'fraction', never>
+				| V.RequiredBy<V.Literal.Number.Float.Scientific<PythonMap>, 'exponent' | 'integer' | 'marker', never>
+				| V.Literal.Number.Integer<PythonMap>
+				| V.Literal.Number.Integer.Big<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Binary<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.RequiredBy<V.Literal.Number.Integer.Hex<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.Number.Integer.Imaginary<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Octal<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.String<PythonMap>
+				| V.Literal.String.Bytes<PythonMap>
+				| V.Literal.String.Bytes.Multiline<PythonMap>
+				| V.Literal.String.Bytes.Raw<PythonMap>
+				| V.Literal.String.Bytes.Raw.Multiline<PythonMap>
+				| V.RequiredBy<V.Literal.String.Concatenated<PythonMap>, 'strings', never>
+				| V.Literal.String.Interpolated<PythonMap>
+				| V.Literal.String.Interpolated.Deferred<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Raw.Multiline<PythonMap>
+				| V.Literal.String.Multiline<PythonMap>
+				| V.Literal.String.Raw<PythonMap>
+				| V.Literal.String.Raw.Multiline<PythonMap>
+				| V.Literal.String.Unicode<PythonMap>
+				| V.RequiredBy<V.Pattern.Rest<PythonMap>, 'pattern', never>
+				| T.Attribute.Parsed
+				| T.Await.Parsed
+				| T.BinaryOperator.Parsed
+				| T.Call.Parsed
+				| T.FloatLeadingPoint.Parsed
+				| T.FloatPoint.Parsed
+				| T.FloatScientific.Parsed
+				| T.GeneratorExpression.Parsed
+				| T.IntegerBinary.Parsed
+				| T.IntegerDecimalPlain.Parsed
+				| T.IntegerHex.Parsed
+				| T.IntegerOctal.Parsed
+				| T.ListComprehension.Parsed
+				| T.ParenthesizedExpression.Parsed
+				| T.SetComprehension.Parsed
+				| T.String.Parsed
+				| T.Subscript.Parsed
+				| T.UnaryOperator.Parsed;
+		};
+		readonly 'expression.binary.arithmetic.multiply': {
+			readonly left:
+				| V.RequiredBy<V.Expression.Assignment<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Await<PythonMap>, 'expression', never>
+				| V.Expression.Binary<PythonMap>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Add<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Divide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Exponent<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.FloorDivide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Modulo<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Multiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Subtract<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.And<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Or<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Xor<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Chain<PythonMap>, 'comparators' | 'left', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Equal<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Greater<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.GreaterEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Less<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.LessEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual.Legacy<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.Is<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.IsNot<PythonMap>, 'left' | 'right', never>
+				| V.Expression.Binary.Logical<PythonMap>
+				| V.RequiredBy<V.Expression.Binary.Logical.And<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Logical.Or<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.MatrixMultiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.In<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.NotIn<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Left<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Right<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Call<PythonMap>, 'arguments' | 'function', never>
+				| V.RequiredBy<V.Expression.Call.Member<PythonMap>, 'arguments' | 'function', never>
+				| V.Expression.Collection.List<PythonMap>
+				| V.Expression.Collection.Map<PythonMap>
+				| V.RequiredBy<V.Expression.Collection.Set<PythonMap>, 'elements', never>
+				| V.Expression.Collection.Tuple<PythonMap>
+				| V.RequiredBy<V.Expression.Comprehension.Generator<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.List<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Map<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Set<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Conditional<PythonMap>, 'alternative' | 'condition' | 'consequence', never>
+				| V.RequiredBy<V.Expression.Lambda<PythonMap>, 'body', never>
+				| V.RequiredBy<V.Expression.Member<PythonMap>, 'object' | 'property', never>
+				| V.RequiredBy<V.Expression.Parenthesized<PythonMap>, 'expression', never>
+				| V.RequiredBy<V.Expression.Subscript<PythonMap>, 'index' | 'object', never>
+				| V.Expression.Unary<PythonMap>
+				| V.RequiredBy<V.Expression.Unary.BitwiseNot<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Negation<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Not<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Plus<PythonMap>, 'argument', never>
+				| V.Identifier<PythonMap>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name' | 'qualifier', never>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name', never>
+				| V.Literal.Boolean.False<PythonMap>
+				| V.Literal.Boolean.True<PythonMap>
+				| V.Literal.Ellipsis<PythonMap>
+				| V.Literal.Null<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Float<PythonMap>, 'integer', never>
+				| V.RequiredBy<V.Literal.Number.Float.LeadingPoint<PythonMap>, 'fraction', never>
+				| V.RequiredBy<V.Literal.Number.Float.Scientific<PythonMap>, 'exponent' | 'integer' | 'marker', never>
+				| V.Literal.Number.Integer<PythonMap>
+				| V.Literal.Number.Integer.Big<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Binary<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.RequiredBy<V.Literal.Number.Integer.Hex<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.Number.Integer.Imaginary<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Octal<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.String<PythonMap>
+				| V.Literal.String.Bytes<PythonMap>
+				| V.Literal.String.Bytes.Multiline<PythonMap>
+				| V.Literal.String.Bytes.Raw<PythonMap>
+				| V.Literal.String.Bytes.Raw.Multiline<PythonMap>
+				| V.RequiredBy<V.Literal.String.Concatenated<PythonMap>, 'strings', never>
+				| V.Literal.String.Interpolated<PythonMap>
+				| V.Literal.String.Interpolated.Deferred<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Raw.Multiline<PythonMap>
+				| V.Literal.String.Multiline<PythonMap>
+				| V.Literal.String.Raw<PythonMap>
+				| V.Literal.String.Raw.Multiline<PythonMap>
+				| V.Literal.String.Unicode<PythonMap>
+				| V.RequiredBy<V.Pattern.Rest<PythonMap>, 'pattern', never>
+				| T.Attribute.Parsed
+				| T.Await.Parsed
+				| T.BinaryOperator.Parsed
+				| T.Call.Parsed
+				| T.FloatLeadingPoint.Parsed
+				| T.FloatPoint.Parsed
+				| T.FloatScientific.Parsed
+				| T.GeneratorExpression.Parsed
+				| T.IntegerBinary.Parsed
+				| T.IntegerDecimalPlain.Parsed
+				| T.IntegerHex.Parsed
+				| T.IntegerOctal.Parsed
+				| T.ListComprehension.Parsed
+				| T.ParenthesizedExpression.Parsed
+				| T.SetComprehension.Parsed
+				| T.String.Parsed
+				| T.Subscript.Parsed
+				| T.UnaryOperator.Parsed;
+			readonly right:
+				| V.RequiredBy<V.Expression.Assignment<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Await<PythonMap>, 'expression', never>
+				| V.Expression.Binary<PythonMap>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Add<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Divide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Exponent<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.FloorDivide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Modulo<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Multiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Subtract<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.And<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Or<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Xor<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Chain<PythonMap>, 'comparators' | 'left', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Equal<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Greater<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.GreaterEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Less<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.LessEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual.Legacy<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.Is<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.IsNot<PythonMap>, 'left' | 'right', never>
+				| V.Expression.Binary.Logical<PythonMap>
+				| V.RequiredBy<V.Expression.Binary.Logical.And<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Logical.Or<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.MatrixMultiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.In<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.NotIn<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Left<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Right<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Call<PythonMap>, 'arguments' | 'function', never>
+				| V.RequiredBy<V.Expression.Call.Member<PythonMap>, 'arguments' | 'function', never>
+				| V.Expression.Collection.List<PythonMap>
+				| V.Expression.Collection.Map<PythonMap>
+				| V.RequiredBy<V.Expression.Collection.Set<PythonMap>, 'elements', never>
+				| V.Expression.Collection.Tuple<PythonMap>
+				| V.RequiredBy<V.Expression.Comprehension.Generator<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.List<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Map<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Set<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Conditional<PythonMap>, 'alternative' | 'condition' | 'consequence', never>
+				| V.RequiredBy<V.Expression.Lambda<PythonMap>, 'body', never>
+				| V.RequiredBy<V.Expression.Member<PythonMap>, 'object' | 'property', never>
+				| V.RequiredBy<V.Expression.Parenthesized<PythonMap>, 'expression', never>
+				| V.RequiredBy<V.Expression.Subscript<PythonMap>, 'index' | 'object', never>
+				| V.Expression.Unary<PythonMap>
+				| V.RequiredBy<V.Expression.Unary.BitwiseNot<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Negation<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Not<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Plus<PythonMap>, 'argument', never>
+				| V.Identifier<PythonMap>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name' | 'qualifier', never>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name', never>
+				| V.Literal.Boolean.False<PythonMap>
+				| V.Literal.Boolean.True<PythonMap>
+				| V.Literal.Ellipsis<PythonMap>
+				| V.Literal.Null<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Float<PythonMap>, 'integer', never>
+				| V.RequiredBy<V.Literal.Number.Float.LeadingPoint<PythonMap>, 'fraction', never>
+				| V.RequiredBy<V.Literal.Number.Float.Scientific<PythonMap>, 'exponent' | 'integer' | 'marker', never>
+				| V.Literal.Number.Integer<PythonMap>
+				| V.Literal.Number.Integer.Big<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Binary<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.RequiredBy<V.Literal.Number.Integer.Hex<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.Number.Integer.Imaginary<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Octal<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.String<PythonMap>
+				| V.Literal.String.Bytes<PythonMap>
+				| V.Literal.String.Bytes.Multiline<PythonMap>
+				| V.Literal.String.Bytes.Raw<PythonMap>
+				| V.Literal.String.Bytes.Raw.Multiline<PythonMap>
+				| V.RequiredBy<V.Literal.String.Concatenated<PythonMap>, 'strings', never>
+				| V.Literal.String.Interpolated<PythonMap>
+				| V.Literal.String.Interpolated.Deferred<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Raw.Multiline<PythonMap>
+				| V.Literal.String.Multiline<PythonMap>
+				| V.Literal.String.Raw<PythonMap>
+				| V.Literal.String.Raw.Multiline<PythonMap>
+				| V.Literal.String.Unicode<PythonMap>
+				| V.RequiredBy<V.Pattern.Rest<PythonMap>, 'pattern', never>
+				| T.Attribute.Parsed
+				| T.Await.Parsed
+				| T.BinaryOperator.Parsed
+				| T.Call.Parsed
+				| T.FloatLeadingPoint.Parsed
+				| T.FloatPoint.Parsed
+				| T.FloatScientific.Parsed
+				| T.GeneratorExpression.Parsed
+				| T.IntegerBinary.Parsed
+				| T.IntegerDecimalPlain.Parsed
+				| T.IntegerHex.Parsed
+				| T.IntegerOctal.Parsed
+				| T.ListComprehension.Parsed
+				| T.ParenthesizedExpression.Parsed
+				| T.SetComprehension.Parsed
+				| T.String.Parsed
+				| T.Subscript.Parsed
+				| T.UnaryOperator.Parsed;
+		};
+		readonly 'expression.binary.arithmetic.subtract': {
+			readonly left:
+				| V.RequiredBy<V.Expression.Assignment<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Await<PythonMap>, 'expression', never>
+				| V.Expression.Binary<PythonMap>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Add<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Divide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Exponent<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.FloorDivide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Modulo<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Multiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Subtract<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.And<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Or<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Xor<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Chain<PythonMap>, 'comparators' | 'left', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Equal<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Greater<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.GreaterEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Less<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.LessEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual.Legacy<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.Is<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.IsNot<PythonMap>, 'left' | 'right', never>
+				| V.Expression.Binary.Logical<PythonMap>
+				| V.RequiredBy<V.Expression.Binary.Logical.And<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Logical.Or<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.MatrixMultiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.In<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.NotIn<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Left<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Right<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Call<PythonMap>, 'arguments' | 'function', never>
+				| V.RequiredBy<V.Expression.Call.Member<PythonMap>, 'arguments' | 'function', never>
+				| V.Expression.Collection.List<PythonMap>
+				| V.Expression.Collection.Map<PythonMap>
+				| V.RequiredBy<V.Expression.Collection.Set<PythonMap>, 'elements', never>
+				| V.Expression.Collection.Tuple<PythonMap>
+				| V.RequiredBy<V.Expression.Comprehension.Generator<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.List<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Map<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Set<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Conditional<PythonMap>, 'alternative' | 'condition' | 'consequence', never>
+				| V.RequiredBy<V.Expression.Lambda<PythonMap>, 'body', never>
+				| V.RequiredBy<V.Expression.Member<PythonMap>, 'object' | 'property', never>
+				| V.RequiredBy<V.Expression.Parenthesized<PythonMap>, 'expression', never>
+				| V.RequiredBy<V.Expression.Subscript<PythonMap>, 'index' | 'object', never>
+				| V.Expression.Unary<PythonMap>
+				| V.RequiredBy<V.Expression.Unary.BitwiseNot<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Negation<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Not<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Plus<PythonMap>, 'argument', never>
+				| V.Identifier<PythonMap>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name' | 'qualifier', never>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name', never>
+				| V.Literal.Boolean.False<PythonMap>
+				| V.Literal.Boolean.True<PythonMap>
+				| V.Literal.Ellipsis<PythonMap>
+				| V.Literal.Null<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Float<PythonMap>, 'integer', never>
+				| V.RequiredBy<V.Literal.Number.Float.LeadingPoint<PythonMap>, 'fraction', never>
+				| V.RequiredBy<V.Literal.Number.Float.Scientific<PythonMap>, 'exponent' | 'integer' | 'marker', never>
+				| V.Literal.Number.Integer<PythonMap>
+				| V.Literal.Number.Integer.Big<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Binary<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.RequiredBy<V.Literal.Number.Integer.Hex<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.Number.Integer.Imaginary<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Octal<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.String<PythonMap>
+				| V.Literal.String.Bytes<PythonMap>
+				| V.Literal.String.Bytes.Multiline<PythonMap>
+				| V.Literal.String.Bytes.Raw<PythonMap>
+				| V.Literal.String.Bytes.Raw.Multiline<PythonMap>
+				| V.RequiredBy<V.Literal.String.Concatenated<PythonMap>, 'strings', never>
+				| V.Literal.String.Interpolated<PythonMap>
+				| V.Literal.String.Interpolated.Deferred<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Raw.Multiline<PythonMap>
+				| V.Literal.String.Multiline<PythonMap>
+				| V.Literal.String.Raw<PythonMap>
+				| V.Literal.String.Raw.Multiline<PythonMap>
+				| V.Literal.String.Unicode<PythonMap>
+				| V.RequiredBy<V.Pattern.Rest<PythonMap>, 'pattern', never>
+				| T.Attribute.Parsed
+				| T.Await.Parsed
+				| T.BinaryOperator.Parsed
+				| T.Call.Parsed
+				| T.FloatLeadingPoint.Parsed
+				| T.FloatPoint.Parsed
+				| T.FloatScientific.Parsed
+				| T.GeneratorExpression.Parsed
+				| T.IntegerBinary.Parsed
+				| T.IntegerDecimalPlain.Parsed
+				| T.IntegerHex.Parsed
+				| T.IntegerOctal.Parsed
+				| T.ListComprehension.Parsed
+				| T.ParenthesizedExpression.Parsed
+				| T.SetComprehension.Parsed
+				| T.String.Parsed
+				| T.Subscript.Parsed
+				| T.UnaryOperator.Parsed;
+			readonly right:
+				| V.RequiredBy<V.Expression.Assignment<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Await<PythonMap>, 'expression', never>
+				| V.Expression.Binary<PythonMap>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Add<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Divide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Exponent<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.FloorDivide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Modulo<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Multiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Subtract<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.And<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Or<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Xor<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Chain<PythonMap>, 'comparators' | 'left', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Equal<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Greater<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.GreaterEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Less<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.LessEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual.Legacy<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.Is<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.IsNot<PythonMap>, 'left' | 'right', never>
+				| V.Expression.Binary.Logical<PythonMap>
+				| V.RequiredBy<V.Expression.Binary.Logical.And<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Logical.Or<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.MatrixMultiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.In<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.NotIn<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Left<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Right<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Call<PythonMap>, 'arguments' | 'function', never>
+				| V.RequiredBy<V.Expression.Call.Member<PythonMap>, 'arguments' | 'function', never>
+				| V.Expression.Collection.List<PythonMap>
+				| V.Expression.Collection.Map<PythonMap>
+				| V.RequiredBy<V.Expression.Collection.Set<PythonMap>, 'elements', never>
+				| V.Expression.Collection.Tuple<PythonMap>
+				| V.RequiredBy<V.Expression.Comprehension.Generator<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.List<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Map<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Set<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Conditional<PythonMap>, 'alternative' | 'condition' | 'consequence', never>
+				| V.RequiredBy<V.Expression.Lambda<PythonMap>, 'body', never>
+				| V.RequiredBy<V.Expression.Member<PythonMap>, 'object' | 'property', never>
+				| V.RequiredBy<V.Expression.Parenthesized<PythonMap>, 'expression', never>
+				| V.RequiredBy<V.Expression.Subscript<PythonMap>, 'index' | 'object', never>
+				| V.Expression.Unary<PythonMap>
+				| V.RequiredBy<V.Expression.Unary.BitwiseNot<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Negation<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Not<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Plus<PythonMap>, 'argument', never>
+				| V.Identifier<PythonMap>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name' | 'qualifier', never>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name', never>
+				| V.Literal.Boolean.False<PythonMap>
+				| V.Literal.Boolean.True<PythonMap>
+				| V.Literal.Ellipsis<PythonMap>
+				| V.Literal.Null<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Float<PythonMap>, 'integer', never>
+				| V.RequiredBy<V.Literal.Number.Float.LeadingPoint<PythonMap>, 'fraction', never>
+				| V.RequiredBy<V.Literal.Number.Float.Scientific<PythonMap>, 'exponent' | 'integer' | 'marker', never>
+				| V.Literal.Number.Integer<PythonMap>
+				| V.Literal.Number.Integer.Big<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Binary<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.RequiredBy<V.Literal.Number.Integer.Hex<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.Number.Integer.Imaginary<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Octal<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.String<PythonMap>
+				| V.Literal.String.Bytes<PythonMap>
+				| V.Literal.String.Bytes.Multiline<PythonMap>
+				| V.Literal.String.Bytes.Raw<PythonMap>
+				| V.Literal.String.Bytes.Raw.Multiline<PythonMap>
+				| V.RequiredBy<V.Literal.String.Concatenated<PythonMap>, 'strings', never>
+				| V.Literal.String.Interpolated<PythonMap>
+				| V.Literal.String.Interpolated.Deferred<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Raw.Multiline<PythonMap>
+				| V.Literal.String.Multiline<PythonMap>
+				| V.Literal.String.Raw<PythonMap>
+				| V.Literal.String.Raw.Multiline<PythonMap>
+				| V.Literal.String.Unicode<PythonMap>
+				| V.RequiredBy<V.Pattern.Rest<PythonMap>, 'pattern', never>
+				| T.Attribute.Parsed
+				| T.Await.Parsed
+				| T.BinaryOperator.Parsed
+				| T.Call.Parsed
+				| T.FloatLeadingPoint.Parsed
+				| T.FloatPoint.Parsed
+				| T.FloatScientific.Parsed
+				| T.GeneratorExpression.Parsed
+				| T.IntegerBinary.Parsed
+				| T.IntegerDecimalPlain.Parsed
+				| T.IntegerHex.Parsed
+				| T.IntegerOctal.Parsed
+				| T.ListComprehension.Parsed
+				| T.ParenthesizedExpression.Parsed
+				| T.SetComprehension.Parsed
+				| T.String.Parsed
+				| T.Subscript.Parsed
+				| T.UnaryOperator.Parsed;
+		};
+		readonly 'expression.binary.bitwise.and': {
+			readonly left:
+				| V.RequiredBy<V.Expression.Assignment<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Await<PythonMap>, 'expression', never>
+				| V.Expression.Binary<PythonMap>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Add<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Divide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Exponent<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.FloorDivide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Modulo<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Multiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Subtract<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.And<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Or<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Xor<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Chain<PythonMap>, 'comparators' | 'left', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Equal<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Greater<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.GreaterEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Less<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.LessEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual.Legacy<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.Is<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.IsNot<PythonMap>, 'left' | 'right', never>
+				| V.Expression.Binary.Logical<PythonMap>
+				| V.RequiredBy<V.Expression.Binary.Logical.And<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Logical.Or<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.MatrixMultiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.In<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.NotIn<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Left<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Right<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Call<PythonMap>, 'arguments' | 'function', never>
+				| V.RequiredBy<V.Expression.Call.Member<PythonMap>, 'arguments' | 'function', never>
+				| V.Expression.Collection.List<PythonMap>
+				| V.Expression.Collection.Map<PythonMap>
+				| V.RequiredBy<V.Expression.Collection.Set<PythonMap>, 'elements', never>
+				| V.Expression.Collection.Tuple<PythonMap>
+				| V.RequiredBy<V.Expression.Comprehension.Generator<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.List<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Map<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Set<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Conditional<PythonMap>, 'alternative' | 'condition' | 'consequence', never>
+				| V.RequiredBy<V.Expression.Lambda<PythonMap>, 'body', never>
+				| V.RequiredBy<V.Expression.Member<PythonMap>, 'object' | 'property', never>
+				| V.RequiredBy<V.Expression.Parenthesized<PythonMap>, 'expression', never>
+				| V.RequiredBy<V.Expression.Subscript<PythonMap>, 'index' | 'object', never>
+				| V.Expression.Unary<PythonMap>
+				| V.RequiredBy<V.Expression.Unary.BitwiseNot<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Negation<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Not<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Plus<PythonMap>, 'argument', never>
+				| V.Identifier<PythonMap>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name' | 'qualifier', never>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name', never>
+				| V.Literal.Boolean.False<PythonMap>
+				| V.Literal.Boolean.True<PythonMap>
+				| V.Literal.Ellipsis<PythonMap>
+				| V.Literal.Null<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Float<PythonMap>, 'integer', never>
+				| V.RequiredBy<V.Literal.Number.Float.LeadingPoint<PythonMap>, 'fraction', never>
+				| V.RequiredBy<V.Literal.Number.Float.Scientific<PythonMap>, 'exponent' | 'integer' | 'marker', never>
+				| V.Literal.Number.Integer<PythonMap>
+				| V.Literal.Number.Integer.Big<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Binary<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.RequiredBy<V.Literal.Number.Integer.Hex<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.Number.Integer.Imaginary<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Octal<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.String<PythonMap>
+				| V.Literal.String.Bytes<PythonMap>
+				| V.Literal.String.Bytes.Multiline<PythonMap>
+				| V.Literal.String.Bytes.Raw<PythonMap>
+				| V.Literal.String.Bytes.Raw.Multiline<PythonMap>
+				| V.RequiredBy<V.Literal.String.Concatenated<PythonMap>, 'strings', never>
+				| V.Literal.String.Interpolated<PythonMap>
+				| V.Literal.String.Interpolated.Deferred<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Raw.Multiline<PythonMap>
+				| V.Literal.String.Multiline<PythonMap>
+				| V.Literal.String.Raw<PythonMap>
+				| V.Literal.String.Raw.Multiline<PythonMap>
+				| V.Literal.String.Unicode<PythonMap>
+				| V.RequiredBy<V.Pattern.Rest<PythonMap>, 'pattern', never>
+				| T.Attribute.Parsed
+				| T.Await.Parsed
+				| T.BinaryOperator.Parsed
+				| T.Call.Parsed
+				| T.FloatLeadingPoint.Parsed
+				| T.FloatPoint.Parsed
+				| T.FloatScientific.Parsed
+				| T.GeneratorExpression.Parsed
+				| T.IntegerBinary.Parsed
+				| T.IntegerDecimalPlain.Parsed
+				| T.IntegerHex.Parsed
+				| T.IntegerOctal.Parsed
+				| T.ListComprehension.Parsed
+				| T.ParenthesizedExpression.Parsed
+				| T.SetComprehension.Parsed
+				| T.String.Parsed
+				| T.Subscript.Parsed
+				| T.UnaryOperator.Parsed;
+			readonly right:
+				| V.RequiredBy<V.Expression.Assignment<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Await<PythonMap>, 'expression', never>
+				| V.Expression.Binary<PythonMap>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Add<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Divide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Exponent<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.FloorDivide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Modulo<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Multiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Subtract<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.And<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Or<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Xor<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Chain<PythonMap>, 'comparators' | 'left', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Equal<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Greater<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.GreaterEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Less<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.LessEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual.Legacy<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.Is<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.IsNot<PythonMap>, 'left' | 'right', never>
+				| V.Expression.Binary.Logical<PythonMap>
+				| V.RequiredBy<V.Expression.Binary.Logical.And<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Logical.Or<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.MatrixMultiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.In<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.NotIn<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Left<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Right<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Call<PythonMap>, 'arguments' | 'function', never>
+				| V.RequiredBy<V.Expression.Call.Member<PythonMap>, 'arguments' | 'function', never>
+				| V.Expression.Collection.List<PythonMap>
+				| V.Expression.Collection.Map<PythonMap>
+				| V.RequiredBy<V.Expression.Collection.Set<PythonMap>, 'elements', never>
+				| V.Expression.Collection.Tuple<PythonMap>
+				| V.RequiredBy<V.Expression.Comprehension.Generator<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.List<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Map<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Set<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Conditional<PythonMap>, 'alternative' | 'condition' | 'consequence', never>
+				| V.RequiredBy<V.Expression.Lambda<PythonMap>, 'body', never>
+				| V.RequiredBy<V.Expression.Member<PythonMap>, 'object' | 'property', never>
+				| V.RequiredBy<V.Expression.Parenthesized<PythonMap>, 'expression', never>
+				| V.RequiredBy<V.Expression.Subscript<PythonMap>, 'index' | 'object', never>
+				| V.Expression.Unary<PythonMap>
+				| V.RequiredBy<V.Expression.Unary.BitwiseNot<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Negation<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Not<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Plus<PythonMap>, 'argument', never>
+				| V.Identifier<PythonMap>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name' | 'qualifier', never>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name', never>
+				| V.Literal.Boolean.False<PythonMap>
+				| V.Literal.Boolean.True<PythonMap>
+				| V.Literal.Ellipsis<PythonMap>
+				| V.Literal.Null<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Float<PythonMap>, 'integer', never>
+				| V.RequiredBy<V.Literal.Number.Float.LeadingPoint<PythonMap>, 'fraction', never>
+				| V.RequiredBy<V.Literal.Number.Float.Scientific<PythonMap>, 'exponent' | 'integer' | 'marker', never>
+				| V.Literal.Number.Integer<PythonMap>
+				| V.Literal.Number.Integer.Big<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Binary<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.RequiredBy<V.Literal.Number.Integer.Hex<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.Number.Integer.Imaginary<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Octal<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.String<PythonMap>
+				| V.Literal.String.Bytes<PythonMap>
+				| V.Literal.String.Bytes.Multiline<PythonMap>
+				| V.Literal.String.Bytes.Raw<PythonMap>
+				| V.Literal.String.Bytes.Raw.Multiline<PythonMap>
+				| V.RequiredBy<V.Literal.String.Concatenated<PythonMap>, 'strings', never>
+				| V.Literal.String.Interpolated<PythonMap>
+				| V.Literal.String.Interpolated.Deferred<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Raw.Multiline<PythonMap>
+				| V.Literal.String.Multiline<PythonMap>
+				| V.Literal.String.Raw<PythonMap>
+				| V.Literal.String.Raw.Multiline<PythonMap>
+				| V.Literal.String.Unicode<PythonMap>
+				| V.RequiredBy<V.Pattern.Rest<PythonMap>, 'pattern', never>
+				| T.Attribute.Parsed
+				| T.Await.Parsed
+				| T.BinaryOperator.Parsed
+				| T.Call.Parsed
+				| T.FloatLeadingPoint.Parsed
+				| T.FloatPoint.Parsed
+				| T.FloatScientific.Parsed
+				| T.GeneratorExpression.Parsed
+				| T.IntegerBinary.Parsed
+				| T.IntegerDecimalPlain.Parsed
+				| T.IntegerHex.Parsed
+				| T.IntegerOctal.Parsed
+				| T.ListComprehension.Parsed
+				| T.ParenthesizedExpression.Parsed
+				| T.SetComprehension.Parsed
+				| T.String.Parsed
+				| T.Subscript.Parsed
+				| T.UnaryOperator.Parsed;
+		};
+		readonly 'expression.binary.bitwise.or': {
+			readonly left:
+				| V.RequiredBy<V.Expression.Assignment<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Await<PythonMap>, 'expression', never>
+				| V.Expression.Binary<PythonMap>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Add<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Divide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Exponent<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.FloorDivide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Modulo<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Multiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Subtract<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.And<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Or<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Xor<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Chain<PythonMap>, 'comparators' | 'left', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Equal<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Greater<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.GreaterEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Less<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.LessEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual.Legacy<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.Is<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.IsNot<PythonMap>, 'left' | 'right', never>
+				| V.Expression.Binary.Logical<PythonMap>
+				| V.RequiredBy<V.Expression.Binary.Logical.And<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Logical.Or<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.MatrixMultiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.In<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.NotIn<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Left<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Right<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Call<PythonMap>, 'arguments' | 'function', never>
+				| V.RequiredBy<V.Expression.Call.Member<PythonMap>, 'arguments' | 'function', never>
+				| V.Expression.Collection.List<PythonMap>
+				| V.Expression.Collection.Map<PythonMap>
+				| V.RequiredBy<V.Expression.Collection.Set<PythonMap>, 'elements', never>
+				| V.Expression.Collection.Tuple<PythonMap>
+				| V.RequiredBy<V.Expression.Comprehension.Generator<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.List<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Map<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Set<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Conditional<PythonMap>, 'alternative' | 'condition' | 'consequence', never>
+				| V.RequiredBy<V.Expression.Lambda<PythonMap>, 'body', never>
+				| V.RequiredBy<V.Expression.Member<PythonMap>, 'object' | 'property', never>
+				| V.RequiredBy<V.Expression.Parenthesized<PythonMap>, 'expression', never>
+				| V.RequiredBy<V.Expression.Subscript<PythonMap>, 'index' | 'object', never>
+				| V.Expression.Unary<PythonMap>
+				| V.RequiredBy<V.Expression.Unary.BitwiseNot<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Negation<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Not<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Plus<PythonMap>, 'argument', never>
+				| V.Identifier<PythonMap>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name' | 'qualifier', never>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name', never>
+				| V.Literal.Boolean.False<PythonMap>
+				| V.Literal.Boolean.True<PythonMap>
+				| V.Literal.Ellipsis<PythonMap>
+				| V.Literal.Null<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Float<PythonMap>, 'integer', never>
+				| V.RequiredBy<V.Literal.Number.Float.LeadingPoint<PythonMap>, 'fraction', never>
+				| V.RequiredBy<V.Literal.Number.Float.Scientific<PythonMap>, 'exponent' | 'integer' | 'marker', never>
+				| V.Literal.Number.Integer<PythonMap>
+				| V.Literal.Number.Integer.Big<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Binary<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.RequiredBy<V.Literal.Number.Integer.Hex<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.Number.Integer.Imaginary<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Octal<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.String<PythonMap>
+				| V.Literal.String.Bytes<PythonMap>
+				| V.Literal.String.Bytes.Multiline<PythonMap>
+				| V.Literal.String.Bytes.Raw<PythonMap>
+				| V.Literal.String.Bytes.Raw.Multiline<PythonMap>
+				| V.RequiredBy<V.Literal.String.Concatenated<PythonMap>, 'strings', never>
+				| V.Literal.String.Interpolated<PythonMap>
+				| V.Literal.String.Interpolated.Deferred<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Raw.Multiline<PythonMap>
+				| V.Literal.String.Multiline<PythonMap>
+				| V.Literal.String.Raw<PythonMap>
+				| V.Literal.String.Raw.Multiline<PythonMap>
+				| V.Literal.String.Unicode<PythonMap>
+				| V.RequiredBy<V.Pattern.Rest<PythonMap>, 'pattern', never>
+				| T.Attribute.Parsed
+				| T.Await.Parsed
+				| T.BinaryOperator.Parsed
+				| T.Call.Parsed
+				| T.FloatLeadingPoint.Parsed
+				| T.FloatPoint.Parsed
+				| T.FloatScientific.Parsed
+				| T.GeneratorExpression.Parsed
+				| T.IntegerBinary.Parsed
+				| T.IntegerDecimalPlain.Parsed
+				| T.IntegerHex.Parsed
+				| T.IntegerOctal.Parsed
+				| T.ListComprehension.Parsed
+				| T.ParenthesizedExpression.Parsed
+				| T.SetComprehension.Parsed
+				| T.String.Parsed
+				| T.Subscript.Parsed
+				| T.UnaryOperator.Parsed;
+			readonly right:
+				| V.RequiredBy<V.Expression.Assignment<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Await<PythonMap>, 'expression', never>
+				| V.Expression.Binary<PythonMap>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Add<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Divide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Exponent<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.FloorDivide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Modulo<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Multiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Subtract<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.And<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Or<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Xor<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Chain<PythonMap>, 'comparators' | 'left', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Equal<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Greater<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.GreaterEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Less<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.LessEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual.Legacy<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.Is<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.IsNot<PythonMap>, 'left' | 'right', never>
+				| V.Expression.Binary.Logical<PythonMap>
+				| V.RequiredBy<V.Expression.Binary.Logical.And<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Logical.Or<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.MatrixMultiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.In<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.NotIn<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Left<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Right<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Call<PythonMap>, 'arguments' | 'function', never>
+				| V.RequiredBy<V.Expression.Call.Member<PythonMap>, 'arguments' | 'function', never>
+				| V.Expression.Collection.List<PythonMap>
+				| V.Expression.Collection.Map<PythonMap>
+				| V.RequiredBy<V.Expression.Collection.Set<PythonMap>, 'elements', never>
+				| V.Expression.Collection.Tuple<PythonMap>
+				| V.RequiredBy<V.Expression.Comprehension.Generator<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.List<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Map<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Set<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Conditional<PythonMap>, 'alternative' | 'condition' | 'consequence', never>
+				| V.RequiredBy<V.Expression.Lambda<PythonMap>, 'body', never>
+				| V.RequiredBy<V.Expression.Member<PythonMap>, 'object' | 'property', never>
+				| V.RequiredBy<V.Expression.Parenthesized<PythonMap>, 'expression', never>
+				| V.RequiredBy<V.Expression.Subscript<PythonMap>, 'index' | 'object', never>
+				| V.Expression.Unary<PythonMap>
+				| V.RequiredBy<V.Expression.Unary.BitwiseNot<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Negation<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Not<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Plus<PythonMap>, 'argument', never>
+				| V.Identifier<PythonMap>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name' | 'qualifier', never>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name', never>
+				| V.Literal.Boolean.False<PythonMap>
+				| V.Literal.Boolean.True<PythonMap>
+				| V.Literal.Ellipsis<PythonMap>
+				| V.Literal.Null<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Float<PythonMap>, 'integer', never>
+				| V.RequiredBy<V.Literal.Number.Float.LeadingPoint<PythonMap>, 'fraction', never>
+				| V.RequiredBy<V.Literal.Number.Float.Scientific<PythonMap>, 'exponent' | 'integer' | 'marker', never>
+				| V.Literal.Number.Integer<PythonMap>
+				| V.Literal.Number.Integer.Big<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Binary<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.RequiredBy<V.Literal.Number.Integer.Hex<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.Number.Integer.Imaginary<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Octal<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.String<PythonMap>
+				| V.Literal.String.Bytes<PythonMap>
+				| V.Literal.String.Bytes.Multiline<PythonMap>
+				| V.Literal.String.Bytes.Raw<PythonMap>
+				| V.Literal.String.Bytes.Raw.Multiline<PythonMap>
+				| V.RequiredBy<V.Literal.String.Concatenated<PythonMap>, 'strings', never>
+				| V.Literal.String.Interpolated<PythonMap>
+				| V.Literal.String.Interpolated.Deferred<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Raw.Multiline<PythonMap>
+				| V.Literal.String.Multiline<PythonMap>
+				| V.Literal.String.Raw<PythonMap>
+				| V.Literal.String.Raw.Multiline<PythonMap>
+				| V.Literal.String.Unicode<PythonMap>
+				| V.RequiredBy<V.Pattern.Rest<PythonMap>, 'pattern', never>
+				| T.Attribute.Parsed
+				| T.Await.Parsed
+				| T.BinaryOperator.Parsed
+				| T.Call.Parsed
+				| T.FloatLeadingPoint.Parsed
+				| T.FloatPoint.Parsed
+				| T.FloatScientific.Parsed
+				| T.GeneratorExpression.Parsed
+				| T.IntegerBinary.Parsed
+				| T.IntegerDecimalPlain.Parsed
+				| T.IntegerHex.Parsed
+				| T.IntegerOctal.Parsed
+				| T.ListComprehension.Parsed
+				| T.ParenthesizedExpression.Parsed
+				| T.SetComprehension.Parsed
+				| T.String.Parsed
+				| T.Subscript.Parsed
+				| T.UnaryOperator.Parsed;
+		};
+		readonly 'expression.binary.bitwise.xor': {
+			readonly left:
+				| V.RequiredBy<V.Expression.Assignment<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Await<PythonMap>, 'expression', never>
+				| V.Expression.Binary<PythonMap>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Add<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Divide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Exponent<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.FloorDivide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Modulo<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Multiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Subtract<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.And<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Or<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Xor<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Chain<PythonMap>, 'comparators' | 'left', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Equal<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Greater<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.GreaterEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Less<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.LessEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual.Legacy<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.Is<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.IsNot<PythonMap>, 'left' | 'right', never>
+				| V.Expression.Binary.Logical<PythonMap>
+				| V.RequiredBy<V.Expression.Binary.Logical.And<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Logical.Or<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.MatrixMultiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.In<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.NotIn<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Left<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Right<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Call<PythonMap>, 'arguments' | 'function', never>
+				| V.RequiredBy<V.Expression.Call.Member<PythonMap>, 'arguments' | 'function', never>
+				| V.Expression.Collection.List<PythonMap>
+				| V.Expression.Collection.Map<PythonMap>
+				| V.RequiredBy<V.Expression.Collection.Set<PythonMap>, 'elements', never>
+				| V.Expression.Collection.Tuple<PythonMap>
+				| V.RequiredBy<V.Expression.Comprehension.Generator<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.List<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Map<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Set<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Conditional<PythonMap>, 'alternative' | 'condition' | 'consequence', never>
+				| V.RequiredBy<V.Expression.Lambda<PythonMap>, 'body', never>
+				| V.RequiredBy<V.Expression.Member<PythonMap>, 'object' | 'property', never>
+				| V.RequiredBy<V.Expression.Parenthesized<PythonMap>, 'expression', never>
+				| V.RequiredBy<V.Expression.Subscript<PythonMap>, 'index' | 'object', never>
+				| V.Expression.Unary<PythonMap>
+				| V.RequiredBy<V.Expression.Unary.BitwiseNot<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Negation<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Not<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Plus<PythonMap>, 'argument', never>
+				| V.Identifier<PythonMap>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name' | 'qualifier', never>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name', never>
+				| V.Literal.Boolean.False<PythonMap>
+				| V.Literal.Boolean.True<PythonMap>
+				| V.Literal.Ellipsis<PythonMap>
+				| V.Literal.Null<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Float<PythonMap>, 'integer', never>
+				| V.RequiredBy<V.Literal.Number.Float.LeadingPoint<PythonMap>, 'fraction', never>
+				| V.RequiredBy<V.Literal.Number.Float.Scientific<PythonMap>, 'exponent' | 'integer' | 'marker', never>
+				| V.Literal.Number.Integer<PythonMap>
+				| V.Literal.Number.Integer.Big<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Binary<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.RequiredBy<V.Literal.Number.Integer.Hex<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.Number.Integer.Imaginary<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Octal<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.String<PythonMap>
+				| V.Literal.String.Bytes<PythonMap>
+				| V.Literal.String.Bytes.Multiline<PythonMap>
+				| V.Literal.String.Bytes.Raw<PythonMap>
+				| V.Literal.String.Bytes.Raw.Multiline<PythonMap>
+				| V.RequiredBy<V.Literal.String.Concatenated<PythonMap>, 'strings', never>
+				| V.Literal.String.Interpolated<PythonMap>
+				| V.Literal.String.Interpolated.Deferred<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Raw.Multiline<PythonMap>
+				| V.Literal.String.Multiline<PythonMap>
+				| V.Literal.String.Raw<PythonMap>
+				| V.Literal.String.Raw.Multiline<PythonMap>
+				| V.Literal.String.Unicode<PythonMap>
+				| V.RequiredBy<V.Pattern.Rest<PythonMap>, 'pattern', never>
+				| T.Attribute.Parsed
+				| T.Await.Parsed
+				| T.BinaryOperator.Parsed
+				| T.Call.Parsed
+				| T.FloatLeadingPoint.Parsed
+				| T.FloatPoint.Parsed
+				| T.FloatScientific.Parsed
+				| T.GeneratorExpression.Parsed
+				| T.IntegerBinary.Parsed
+				| T.IntegerDecimalPlain.Parsed
+				| T.IntegerHex.Parsed
+				| T.IntegerOctal.Parsed
+				| T.ListComprehension.Parsed
+				| T.ParenthesizedExpression.Parsed
+				| T.SetComprehension.Parsed
+				| T.String.Parsed
+				| T.Subscript.Parsed
+				| T.UnaryOperator.Parsed;
+			readonly right:
+				| V.RequiredBy<V.Expression.Assignment<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Await<PythonMap>, 'expression', never>
+				| V.Expression.Binary<PythonMap>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Add<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Divide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Exponent<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.FloorDivide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Modulo<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Multiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Subtract<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.And<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Or<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Xor<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Chain<PythonMap>, 'comparators' | 'left', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Equal<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Greater<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.GreaterEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Less<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.LessEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual.Legacy<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.Is<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.IsNot<PythonMap>, 'left' | 'right', never>
+				| V.Expression.Binary.Logical<PythonMap>
+				| V.RequiredBy<V.Expression.Binary.Logical.And<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Logical.Or<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.MatrixMultiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.In<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.NotIn<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Left<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Right<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Call<PythonMap>, 'arguments' | 'function', never>
+				| V.RequiredBy<V.Expression.Call.Member<PythonMap>, 'arguments' | 'function', never>
+				| V.Expression.Collection.List<PythonMap>
+				| V.Expression.Collection.Map<PythonMap>
+				| V.RequiredBy<V.Expression.Collection.Set<PythonMap>, 'elements', never>
+				| V.Expression.Collection.Tuple<PythonMap>
+				| V.RequiredBy<V.Expression.Comprehension.Generator<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.List<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Map<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Set<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Conditional<PythonMap>, 'alternative' | 'condition' | 'consequence', never>
+				| V.RequiredBy<V.Expression.Lambda<PythonMap>, 'body', never>
+				| V.RequiredBy<V.Expression.Member<PythonMap>, 'object' | 'property', never>
+				| V.RequiredBy<V.Expression.Parenthesized<PythonMap>, 'expression', never>
+				| V.RequiredBy<V.Expression.Subscript<PythonMap>, 'index' | 'object', never>
+				| V.Expression.Unary<PythonMap>
+				| V.RequiredBy<V.Expression.Unary.BitwiseNot<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Negation<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Not<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Plus<PythonMap>, 'argument', never>
+				| V.Identifier<PythonMap>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name' | 'qualifier', never>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name', never>
+				| V.Literal.Boolean.False<PythonMap>
+				| V.Literal.Boolean.True<PythonMap>
+				| V.Literal.Ellipsis<PythonMap>
+				| V.Literal.Null<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Float<PythonMap>, 'integer', never>
+				| V.RequiredBy<V.Literal.Number.Float.LeadingPoint<PythonMap>, 'fraction', never>
+				| V.RequiredBy<V.Literal.Number.Float.Scientific<PythonMap>, 'exponent' | 'integer' | 'marker', never>
+				| V.Literal.Number.Integer<PythonMap>
+				| V.Literal.Number.Integer.Big<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Binary<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.RequiredBy<V.Literal.Number.Integer.Hex<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.Number.Integer.Imaginary<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Octal<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.String<PythonMap>
+				| V.Literal.String.Bytes<PythonMap>
+				| V.Literal.String.Bytes.Multiline<PythonMap>
+				| V.Literal.String.Bytes.Raw<PythonMap>
+				| V.Literal.String.Bytes.Raw.Multiline<PythonMap>
+				| V.RequiredBy<V.Literal.String.Concatenated<PythonMap>, 'strings', never>
+				| V.Literal.String.Interpolated<PythonMap>
+				| V.Literal.String.Interpolated.Deferred<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Raw.Multiline<PythonMap>
+				| V.Literal.String.Multiline<PythonMap>
+				| V.Literal.String.Raw<PythonMap>
+				| V.Literal.String.Raw.Multiline<PythonMap>
+				| V.Literal.String.Unicode<PythonMap>
+				| V.RequiredBy<V.Pattern.Rest<PythonMap>, 'pattern', never>
+				| T.Attribute.Parsed
+				| T.Await.Parsed
+				| T.BinaryOperator.Parsed
+				| T.Call.Parsed
+				| T.FloatLeadingPoint.Parsed
+				| T.FloatPoint.Parsed
+				| T.FloatScientific.Parsed
+				| T.GeneratorExpression.Parsed
+				| T.IntegerBinary.Parsed
+				| T.IntegerDecimalPlain.Parsed
+				| T.IntegerHex.Parsed
+				| T.IntegerOctal.Parsed
+				| T.ListComprehension.Parsed
+				| T.ParenthesizedExpression.Parsed
+				| T.SetComprehension.Parsed
+				| T.String.Parsed
+				| T.Subscript.Parsed
+				| T.UnaryOperator.Parsed;
+		};
+		readonly 'expression.binary.comparison.chain': {
+			readonly comparators:
+				| V.Element.Comparator<PythonMap>
+				| V.RequiredBy<V.Element.Comparator.Comparison.Equal<PythonMap>, 'right', never>
+				| V.RequiredBy<V.Element.Comparator.Comparison.Greater<PythonMap>, 'right', never>
+				| V.RequiredBy<V.Element.Comparator.Comparison.GreaterEqual<PythonMap>, 'right', never>
+				| V.RequiredBy<V.Element.Comparator.Comparison.Less<PythonMap>, 'right', never>
+				| V.RequiredBy<V.Element.Comparator.Comparison.LessEqual<PythonMap>, 'right', never>
+				| V.RequiredBy<V.Element.Comparator.Comparison.NotEqual<PythonMap>, 'right', never>
+				| V.RequiredBy<V.Element.Comparator.Comparison.NotEqual.Legacy<PythonMap>, 'right', never>
+				| V.RequiredBy<V.Element.Comparator.Identity.Is<PythonMap>, 'right', never>
+				| V.RequiredBy<V.Element.Comparator.Identity.IsNot<PythonMap>, 'right', never>
+				| V.RequiredBy<V.Element.Comparator.Membership.In<PythonMap>, 'right', never>
+				| V.RequiredBy<V.Element.Comparator.Membership.NotIn<PythonMap>, 'right', never>
+				| T.ComparisonOperatorComparator.Parsed;
+			readonly left:
+				| V.RequiredBy<V.Expression.Await<PythonMap>, 'expression', never>
+				| V.Expression.Binary<PythonMap>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Add<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Divide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Exponent<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.FloorDivide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Modulo<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Multiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Subtract<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.And<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Or<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Xor<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Chain<PythonMap>, 'comparators' | 'left', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Equal<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Greater<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.GreaterEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Less<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.LessEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual.Legacy<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.Is<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.IsNot<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.MatrixMultiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.In<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.NotIn<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Left<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Right<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Call<PythonMap>, 'arguments' | 'function', never>
+				| V.RequiredBy<V.Expression.Call.Member<PythonMap>, 'arguments' | 'function', never>
+				| V.Expression.Collection.List<PythonMap>
+				| V.Expression.Collection.Map<PythonMap>
+				| V.RequiredBy<V.Expression.Collection.Set<PythonMap>, 'elements', never>
+				| V.Expression.Collection.Tuple<PythonMap>
+				| V.RequiredBy<V.Expression.Comprehension.Generator<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.List<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Map<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Set<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Member<PythonMap>, 'object' | 'property', never>
+				| V.RequiredBy<V.Expression.Parenthesized<PythonMap>, 'expression', never>
+				| V.RequiredBy<V.Expression.Subscript<PythonMap>, 'index' | 'object', never>
+				| V.Expression.Unary<PythonMap>
+				| V.RequiredBy<V.Expression.Unary.BitwiseNot<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Negation<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Plus<PythonMap>, 'argument', never>
+				| V.Identifier<PythonMap>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name' | 'qualifier', never>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name', never>
+				| V.Literal.Boolean.False<PythonMap>
+				| V.Literal.Boolean.True<PythonMap>
+				| V.Literal.Ellipsis<PythonMap>
+				| V.Literal.Null<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Float<PythonMap>, 'integer', never>
+				| V.RequiredBy<V.Literal.Number.Float.LeadingPoint<PythonMap>, 'fraction', never>
+				| V.RequiredBy<V.Literal.Number.Float.Scientific<PythonMap>, 'exponent' | 'integer' | 'marker', never>
+				| V.Literal.Number.Integer<PythonMap>
+				| V.Literal.Number.Integer.Big<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Binary<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.RequiredBy<V.Literal.Number.Integer.Hex<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.Number.Integer.Imaginary<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Octal<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.String<PythonMap>
+				| V.Literal.String.Bytes<PythonMap>
+				| V.Literal.String.Bytes.Multiline<PythonMap>
+				| V.Literal.String.Bytes.Raw<PythonMap>
+				| V.Literal.String.Bytes.Raw.Multiline<PythonMap>
+				| V.RequiredBy<V.Literal.String.Concatenated<PythonMap>, 'strings', never>
+				| V.Literal.String.Interpolated<PythonMap>
+				| V.Literal.String.Interpolated.Deferred<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Raw.Multiline<PythonMap>
+				| V.Literal.String.Multiline<PythonMap>
+				| V.Literal.String.Raw<PythonMap>
+				| V.Literal.String.Raw.Multiline<PythonMap>
+				| V.Literal.String.Unicode<PythonMap>
+				| V.RequiredBy<V.Pattern.Rest<PythonMap>, 'pattern', never>
+				| T.Attribute.Parsed
+				| T.Await.Parsed
+				| T.BinaryOperator.Parsed
+				| T.Call.Parsed
+				| T.FloatLeadingPoint.Parsed
+				| T.FloatPoint.Parsed
+				| T.FloatScientific.Parsed
+				| T.GeneratorExpression.Parsed
+				| T.IntegerBinary.Parsed
+				| T.IntegerDecimalPlain.Parsed
+				| T.IntegerHex.Parsed
+				| T.IntegerOctal.Parsed
+				| T.ListComprehension.Parsed
+				| T.ParenthesizedExpression.Parsed
+				| T.SetComprehension.Parsed
+				| T.String.Parsed
+				| T.Subscript.Parsed
+				| T.UnaryOperator.Parsed;
+			readonly right:
+				| V.RequiredBy<V.Expression.Assignment<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Await<PythonMap>, 'expression', never>
+				| V.Expression.Binary<PythonMap>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Add<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Divide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Exponent<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.FloorDivide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Modulo<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Multiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Subtract<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.And<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Or<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Xor<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Chain<PythonMap>, 'comparators' | 'left', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Equal<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Greater<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.GreaterEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Less<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.LessEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual.Legacy<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.Is<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.IsNot<PythonMap>, 'left' | 'right', never>
+				| V.Expression.Binary.Logical<PythonMap>
+				| V.RequiredBy<V.Expression.Binary.Logical.And<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Logical.Or<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.MatrixMultiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.In<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.NotIn<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Left<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Right<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Call<PythonMap>, 'arguments' | 'function', never>
+				| V.RequiredBy<V.Expression.Call.Member<PythonMap>, 'arguments' | 'function', never>
+				| V.Expression.Collection.List<PythonMap>
+				| V.Expression.Collection.Map<PythonMap>
+				| V.RequiredBy<V.Expression.Collection.Set<PythonMap>, 'elements', never>
+				| V.Expression.Collection.Tuple<PythonMap>
+				| V.RequiredBy<V.Expression.Comprehension.Generator<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.List<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Map<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Set<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Conditional<PythonMap>, 'alternative' | 'condition' | 'consequence', never>
+				| V.RequiredBy<V.Expression.Lambda<PythonMap>, 'body', never>
+				| V.RequiredBy<V.Expression.Member<PythonMap>, 'object' | 'property', never>
+				| V.RequiredBy<V.Expression.Parenthesized<PythonMap>, 'expression', never>
+				| V.RequiredBy<V.Expression.Subscript<PythonMap>, 'index' | 'object', never>
+				| V.Expression.Unary<PythonMap>
+				| V.RequiredBy<V.Expression.Unary.BitwiseNot<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Negation<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Not<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Plus<PythonMap>, 'argument', never>
+				| V.Identifier<PythonMap>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name' | 'qualifier', never>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name', never>
+				| V.Literal.Boolean.False<PythonMap>
+				| V.Literal.Boolean.True<PythonMap>
+				| V.Literal.Ellipsis<PythonMap>
+				| V.Literal.Null<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Float<PythonMap>, 'integer', never>
+				| V.RequiredBy<V.Literal.Number.Float.LeadingPoint<PythonMap>, 'fraction', never>
+				| V.RequiredBy<V.Literal.Number.Float.Scientific<PythonMap>, 'exponent' | 'integer' | 'marker', never>
+				| V.Literal.Number.Integer<PythonMap>
+				| V.Literal.Number.Integer.Big<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Binary<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.RequiredBy<V.Literal.Number.Integer.Hex<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.Number.Integer.Imaginary<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Octal<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.String<PythonMap>
+				| V.Literal.String.Bytes<PythonMap>
+				| V.Literal.String.Bytes.Multiline<PythonMap>
+				| V.Literal.String.Bytes.Raw<PythonMap>
+				| V.Literal.String.Bytes.Raw.Multiline<PythonMap>
+				| V.RequiredBy<V.Literal.String.Concatenated<PythonMap>, 'strings', never>
+				| V.Literal.String.Interpolated<PythonMap>
+				| V.Literal.String.Interpolated.Deferred<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Raw.Multiline<PythonMap>
+				| V.Literal.String.Multiline<PythonMap>
+				| V.Literal.String.Raw<PythonMap>
+				| V.Literal.String.Raw.Multiline<PythonMap>
+				| V.Literal.String.Unicode<PythonMap>
+				| V.RequiredBy<V.Pattern.Rest<PythonMap>, 'pattern', never>;
+		};
+		readonly 'expression.binary.comparison.equal': {
+			readonly left:
+				| V.RequiredBy<V.Expression.Await<PythonMap>, 'expression', never>
+				| V.Expression.Binary<PythonMap>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Add<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Divide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Exponent<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.FloorDivide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Modulo<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Multiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Subtract<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.And<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Or<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Xor<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Chain<PythonMap>, 'comparators' | 'left', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Equal<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Greater<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.GreaterEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Less<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.LessEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual.Legacy<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.Is<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.IsNot<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.MatrixMultiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.In<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.NotIn<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Left<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Right<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Call<PythonMap>, 'arguments' | 'function', never>
+				| V.RequiredBy<V.Expression.Call.Member<PythonMap>, 'arguments' | 'function', never>
+				| V.Expression.Collection.List<PythonMap>
+				| V.Expression.Collection.Map<PythonMap>
+				| V.RequiredBy<V.Expression.Collection.Set<PythonMap>, 'elements', never>
+				| V.Expression.Collection.Tuple<PythonMap>
+				| V.RequiredBy<V.Expression.Comprehension.Generator<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.List<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Map<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Set<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Member<PythonMap>, 'object' | 'property', never>
+				| V.RequiredBy<V.Expression.Parenthesized<PythonMap>, 'expression', never>
+				| V.RequiredBy<V.Expression.Subscript<PythonMap>, 'index' | 'object', never>
+				| V.Expression.Unary<PythonMap>
+				| V.RequiredBy<V.Expression.Unary.BitwiseNot<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Negation<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Plus<PythonMap>, 'argument', never>
+				| V.Identifier<PythonMap>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name' | 'qualifier', never>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name', never>
+				| V.Literal.Boolean.False<PythonMap>
+				| V.Literal.Boolean.True<PythonMap>
+				| V.Literal.Ellipsis<PythonMap>
+				| V.Literal.Null<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Float<PythonMap>, 'integer', never>
+				| V.RequiredBy<V.Literal.Number.Float.LeadingPoint<PythonMap>, 'fraction', never>
+				| V.RequiredBy<V.Literal.Number.Float.Scientific<PythonMap>, 'exponent' | 'integer' | 'marker', never>
+				| V.Literal.Number.Integer<PythonMap>
+				| V.Literal.Number.Integer.Big<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Binary<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.RequiredBy<V.Literal.Number.Integer.Hex<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.Number.Integer.Imaginary<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Octal<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.String<PythonMap>
+				| V.Literal.String.Bytes<PythonMap>
+				| V.Literal.String.Bytes.Multiline<PythonMap>
+				| V.Literal.String.Bytes.Raw<PythonMap>
+				| V.Literal.String.Bytes.Raw.Multiline<PythonMap>
+				| V.RequiredBy<V.Literal.String.Concatenated<PythonMap>, 'strings', never>
+				| V.Literal.String.Interpolated<PythonMap>
+				| V.Literal.String.Interpolated.Deferred<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Raw.Multiline<PythonMap>
+				| V.Literal.String.Multiline<PythonMap>
+				| V.Literal.String.Raw<PythonMap>
+				| V.Literal.String.Raw.Multiline<PythonMap>
+				| V.Literal.String.Unicode<PythonMap>
+				| V.RequiredBy<V.Pattern.Rest<PythonMap>, 'pattern', never>
+				| T.Attribute.Parsed
+				| T.Await.Parsed
+				| T.BinaryOperator.Parsed
+				| T.Call.Parsed
+				| T.FloatLeadingPoint.Parsed
+				| T.FloatPoint.Parsed
+				| T.FloatScientific.Parsed
+				| T.GeneratorExpression.Parsed
+				| T.IntegerBinary.Parsed
+				| T.IntegerDecimalPlain.Parsed
+				| T.IntegerHex.Parsed
+				| T.IntegerOctal.Parsed
+				| T.ListComprehension.Parsed
+				| T.ParenthesizedExpression.Parsed
+				| T.SetComprehension.Parsed
+				| T.String.Parsed
+				| T.Subscript.Parsed
+				| T.UnaryOperator.Parsed;
+			readonly right:
+				| V.RequiredBy<V.Expression.Await<PythonMap>, 'expression', never>
+				| V.Expression.Binary<PythonMap>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Add<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Divide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Exponent<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.FloorDivide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Modulo<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Multiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Subtract<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.And<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Or<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Xor<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Chain<PythonMap>, 'comparators' | 'left', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Equal<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Greater<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.GreaterEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Less<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.LessEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual.Legacy<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.Is<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.IsNot<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.MatrixMultiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.In<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.NotIn<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Left<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Right<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Call<PythonMap>, 'arguments' | 'function', never>
+				| V.RequiredBy<V.Expression.Call.Member<PythonMap>, 'arguments' | 'function', never>
+				| V.Expression.Collection.List<PythonMap>
+				| V.Expression.Collection.Map<PythonMap>
+				| V.RequiredBy<V.Expression.Collection.Set<PythonMap>, 'elements', never>
+				| V.Expression.Collection.Tuple<PythonMap>
+				| V.RequiredBy<V.Expression.Comprehension.Generator<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.List<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Map<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Set<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Member<PythonMap>, 'object' | 'property', never>
+				| V.RequiredBy<V.Expression.Parenthesized<PythonMap>, 'expression', never>
+				| V.RequiredBy<V.Expression.Subscript<PythonMap>, 'index' | 'object', never>
+				| V.Expression.Unary<PythonMap>
+				| V.RequiredBy<V.Expression.Unary.BitwiseNot<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Negation<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Plus<PythonMap>, 'argument', never>
+				| V.Identifier<PythonMap>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name' | 'qualifier', never>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name', never>
+				| V.Literal.Boolean.False<PythonMap>
+				| V.Literal.Boolean.True<PythonMap>
+				| V.Literal.Ellipsis<PythonMap>
+				| V.Literal.Null<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Float<PythonMap>, 'integer', never>
+				| V.RequiredBy<V.Literal.Number.Float.LeadingPoint<PythonMap>, 'fraction', never>
+				| V.RequiredBy<V.Literal.Number.Float.Scientific<PythonMap>, 'exponent' | 'integer' | 'marker', never>
+				| V.Literal.Number.Integer<PythonMap>
+				| V.Literal.Number.Integer.Big<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Binary<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.RequiredBy<V.Literal.Number.Integer.Hex<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.Number.Integer.Imaginary<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Octal<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.String<PythonMap>
+				| V.Literal.String.Bytes<PythonMap>
+				| V.Literal.String.Bytes.Multiline<PythonMap>
+				| V.Literal.String.Bytes.Raw<PythonMap>
+				| V.Literal.String.Bytes.Raw.Multiline<PythonMap>
+				| V.RequiredBy<V.Literal.String.Concatenated<PythonMap>, 'strings', never>
+				| V.Literal.String.Interpolated<PythonMap>
+				| V.Literal.String.Interpolated.Deferred<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Raw.Multiline<PythonMap>
+				| V.Literal.String.Multiline<PythonMap>
+				| V.Literal.String.Raw<PythonMap>
+				| V.Literal.String.Raw.Multiline<PythonMap>
+				| V.Literal.String.Unicode<PythonMap>
+				| V.RequiredBy<V.Pattern.Rest<PythonMap>, 'pattern', never>
+				| T.Attribute.Parsed
+				| T.Await.Parsed
+				| T.BinaryOperator.Parsed
+				| T.Call.Parsed
+				| T.FloatLeadingPoint.Parsed
+				| T.FloatPoint.Parsed
+				| T.FloatScientific.Parsed
+				| T.GeneratorExpression.Parsed
+				| T.IntegerBinary.Parsed
+				| T.IntegerDecimalPlain.Parsed
+				| T.IntegerHex.Parsed
+				| T.IntegerOctal.Parsed
+				| T.ListComprehension.Parsed
+				| T.ParenthesizedExpression.Parsed
+				| T.SetComprehension.Parsed
+				| T.String.Parsed
+				| T.Subscript.Parsed
+				| T.UnaryOperator.Parsed;
+		};
+		readonly 'expression.binary.comparison.greater': {
+			readonly left:
+				| V.RequiredBy<V.Expression.Await<PythonMap>, 'expression', never>
+				| V.Expression.Binary<PythonMap>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Add<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Divide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Exponent<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.FloorDivide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Modulo<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Multiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Subtract<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.And<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Or<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Xor<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Chain<PythonMap>, 'comparators' | 'left', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Equal<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Greater<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.GreaterEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Less<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.LessEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual.Legacy<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.Is<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.IsNot<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.MatrixMultiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.In<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.NotIn<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Left<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Right<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Call<PythonMap>, 'arguments' | 'function', never>
+				| V.RequiredBy<V.Expression.Call.Member<PythonMap>, 'arguments' | 'function', never>
+				| V.Expression.Collection.List<PythonMap>
+				| V.Expression.Collection.Map<PythonMap>
+				| V.RequiredBy<V.Expression.Collection.Set<PythonMap>, 'elements', never>
+				| V.Expression.Collection.Tuple<PythonMap>
+				| V.RequiredBy<V.Expression.Comprehension.Generator<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.List<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Map<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Set<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Member<PythonMap>, 'object' | 'property', never>
+				| V.RequiredBy<V.Expression.Parenthesized<PythonMap>, 'expression', never>
+				| V.RequiredBy<V.Expression.Subscript<PythonMap>, 'index' | 'object', never>
+				| V.Expression.Unary<PythonMap>
+				| V.RequiredBy<V.Expression.Unary.BitwiseNot<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Negation<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Plus<PythonMap>, 'argument', never>
+				| V.Identifier<PythonMap>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name' | 'qualifier', never>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name', never>
+				| V.Literal.Boolean.False<PythonMap>
+				| V.Literal.Boolean.True<PythonMap>
+				| V.Literal.Ellipsis<PythonMap>
+				| V.Literal.Null<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Float<PythonMap>, 'integer', never>
+				| V.RequiredBy<V.Literal.Number.Float.LeadingPoint<PythonMap>, 'fraction', never>
+				| V.RequiredBy<V.Literal.Number.Float.Scientific<PythonMap>, 'exponent' | 'integer' | 'marker', never>
+				| V.Literal.Number.Integer<PythonMap>
+				| V.Literal.Number.Integer.Big<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Binary<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.RequiredBy<V.Literal.Number.Integer.Hex<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.Number.Integer.Imaginary<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Octal<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.String<PythonMap>
+				| V.Literal.String.Bytes<PythonMap>
+				| V.Literal.String.Bytes.Multiline<PythonMap>
+				| V.Literal.String.Bytes.Raw<PythonMap>
+				| V.Literal.String.Bytes.Raw.Multiline<PythonMap>
+				| V.RequiredBy<V.Literal.String.Concatenated<PythonMap>, 'strings', never>
+				| V.Literal.String.Interpolated<PythonMap>
+				| V.Literal.String.Interpolated.Deferred<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Raw.Multiline<PythonMap>
+				| V.Literal.String.Multiline<PythonMap>
+				| V.Literal.String.Raw<PythonMap>
+				| V.Literal.String.Raw.Multiline<PythonMap>
+				| V.Literal.String.Unicode<PythonMap>
+				| V.RequiredBy<V.Pattern.Rest<PythonMap>, 'pattern', never>
+				| T.Attribute.Parsed
+				| T.Await.Parsed
+				| T.BinaryOperator.Parsed
+				| T.Call.Parsed
+				| T.FloatLeadingPoint.Parsed
+				| T.FloatPoint.Parsed
+				| T.FloatScientific.Parsed
+				| T.GeneratorExpression.Parsed
+				| T.IntegerBinary.Parsed
+				| T.IntegerDecimalPlain.Parsed
+				| T.IntegerHex.Parsed
+				| T.IntegerOctal.Parsed
+				| T.ListComprehension.Parsed
+				| T.ParenthesizedExpression.Parsed
+				| T.SetComprehension.Parsed
+				| T.String.Parsed
+				| T.Subscript.Parsed
+				| T.UnaryOperator.Parsed;
+			readonly right:
+				| V.RequiredBy<V.Expression.Await<PythonMap>, 'expression', never>
+				| V.Expression.Binary<PythonMap>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Add<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Divide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Exponent<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.FloorDivide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Modulo<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Multiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Subtract<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.And<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Or<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Xor<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Chain<PythonMap>, 'comparators' | 'left', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Equal<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Greater<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.GreaterEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Less<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.LessEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual.Legacy<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.Is<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.IsNot<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.MatrixMultiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.In<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.NotIn<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Left<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Right<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Call<PythonMap>, 'arguments' | 'function', never>
+				| V.RequiredBy<V.Expression.Call.Member<PythonMap>, 'arguments' | 'function', never>
+				| V.Expression.Collection.List<PythonMap>
+				| V.Expression.Collection.Map<PythonMap>
+				| V.RequiredBy<V.Expression.Collection.Set<PythonMap>, 'elements', never>
+				| V.Expression.Collection.Tuple<PythonMap>
+				| V.RequiredBy<V.Expression.Comprehension.Generator<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.List<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Map<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Set<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Member<PythonMap>, 'object' | 'property', never>
+				| V.RequiredBy<V.Expression.Parenthesized<PythonMap>, 'expression', never>
+				| V.RequiredBy<V.Expression.Subscript<PythonMap>, 'index' | 'object', never>
+				| V.Expression.Unary<PythonMap>
+				| V.RequiredBy<V.Expression.Unary.BitwiseNot<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Negation<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Plus<PythonMap>, 'argument', never>
+				| V.Identifier<PythonMap>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name' | 'qualifier', never>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name', never>
+				| V.Literal.Boolean.False<PythonMap>
+				| V.Literal.Boolean.True<PythonMap>
+				| V.Literal.Ellipsis<PythonMap>
+				| V.Literal.Null<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Float<PythonMap>, 'integer', never>
+				| V.RequiredBy<V.Literal.Number.Float.LeadingPoint<PythonMap>, 'fraction', never>
+				| V.RequiredBy<V.Literal.Number.Float.Scientific<PythonMap>, 'exponent' | 'integer' | 'marker', never>
+				| V.Literal.Number.Integer<PythonMap>
+				| V.Literal.Number.Integer.Big<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Binary<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.RequiredBy<V.Literal.Number.Integer.Hex<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.Number.Integer.Imaginary<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Octal<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.String<PythonMap>
+				| V.Literal.String.Bytes<PythonMap>
+				| V.Literal.String.Bytes.Multiline<PythonMap>
+				| V.Literal.String.Bytes.Raw<PythonMap>
+				| V.Literal.String.Bytes.Raw.Multiline<PythonMap>
+				| V.RequiredBy<V.Literal.String.Concatenated<PythonMap>, 'strings', never>
+				| V.Literal.String.Interpolated<PythonMap>
+				| V.Literal.String.Interpolated.Deferred<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Raw.Multiline<PythonMap>
+				| V.Literal.String.Multiline<PythonMap>
+				| V.Literal.String.Raw<PythonMap>
+				| V.Literal.String.Raw.Multiline<PythonMap>
+				| V.Literal.String.Unicode<PythonMap>
+				| V.RequiredBy<V.Pattern.Rest<PythonMap>, 'pattern', never>
+				| T.Attribute.Parsed
+				| T.Await.Parsed
+				| T.BinaryOperator.Parsed
+				| T.Call.Parsed
+				| T.FloatLeadingPoint.Parsed
+				| T.FloatPoint.Parsed
+				| T.FloatScientific.Parsed
+				| T.GeneratorExpression.Parsed
+				| T.IntegerBinary.Parsed
+				| T.IntegerDecimalPlain.Parsed
+				| T.IntegerHex.Parsed
+				| T.IntegerOctal.Parsed
+				| T.ListComprehension.Parsed
+				| T.ParenthesizedExpression.Parsed
+				| T.SetComprehension.Parsed
+				| T.String.Parsed
+				| T.Subscript.Parsed
+				| T.UnaryOperator.Parsed;
+		};
+		readonly 'expression.binary.comparison.greater_equal': {
+			readonly left:
+				| V.RequiredBy<V.Expression.Await<PythonMap>, 'expression', never>
+				| V.Expression.Binary<PythonMap>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Add<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Divide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Exponent<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.FloorDivide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Modulo<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Multiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Subtract<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.And<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Or<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Xor<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Chain<PythonMap>, 'comparators' | 'left', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Equal<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Greater<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.GreaterEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Less<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.LessEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual.Legacy<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.Is<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.IsNot<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.MatrixMultiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.In<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.NotIn<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Left<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Right<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Call<PythonMap>, 'arguments' | 'function', never>
+				| V.RequiredBy<V.Expression.Call.Member<PythonMap>, 'arguments' | 'function', never>
+				| V.Expression.Collection.List<PythonMap>
+				| V.Expression.Collection.Map<PythonMap>
+				| V.RequiredBy<V.Expression.Collection.Set<PythonMap>, 'elements', never>
+				| V.Expression.Collection.Tuple<PythonMap>
+				| V.RequiredBy<V.Expression.Comprehension.Generator<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.List<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Map<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Set<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Member<PythonMap>, 'object' | 'property', never>
+				| V.RequiredBy<V.Expression.Parenthesized<PythonMap>, 'expression', never>
+				| V.RequiredBy<V.Expression.Subscript<PythonMap>, 'index' | 'object', never>
+				| V.Expression.Unary<PythonMap>
+				| V.RequiredBy<V.Expression.Unary.BitwiseNot<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Negation<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Plus<PythonMap>, 'argument', never>
+				| V.Identifier<PythonMap>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name' | 'qualifier', never>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name', never>
+				| V.Literal.Boolean.False<PythonMap>
+				| V.Literal.Boolean.True<PythonMap>
+				| V.Literal.Ellipsis<PythonMap>
+				| V.Literal.Null<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Float<PythonMap>, 'integer', never>
+				| V.RequiredBy<V.Literal.Number.Float.LeadingPoint<PythonMap>, 'fraction', never>
+				| V.RequiredBy<V.Literal.Number.Float.Scientific<PythonMap>, 'exponent' | 'integer' | 'marker', never>
+				| V.Literal.Number.Integer<PythonMap>
+				| V.Literal.Number.Integer.Big<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Binary<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.RequiredBy<V.Literal.Number.Integer.Hex<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.Number.Integer.Imaginary<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Octal<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.String<PythonMap>
+				| V.Literal.String.Bytes<PythonMap>
+				| V.Literal.String.Bytes.Multiline<PythonMap>
+				| V.Literal.String.Bytes.Raw<PythonMap>
+				| V.Literal.String.Bytes.Raw.Multiline<PythonMap>
+				| V.RequiredBy<V.Literal.String.Concatenated<PythonMap>, 'strings', never>
+				| V.Literal.String.Interpolated<PythonMap>
+				| V.Literal.String.Interpolated.Deferred<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Raw.Multiline<PythonMap>
+				| V.Literal.String.Multiline<PythonMap>
+				| V.Literal.String.Raw<PythonMap>
+				| V.Literal.String.Raw.Multiline<PythonMap>
+				| V.Literal.String.Unicode<PythonMap>
+				| V.RequiredBy<V.Pattern.Rest<PythonMap>, 'pattern', never>
+				| T.Attribute.Parsed
+				| T.Await.Parsed
+				| T.BinaryOperator.Parsed
+				| T.Call.Parsed
+				| T.FloatLeadingPoint.Parsed
+				| T.FloatPoint.Parsed
+				| T.FloatScientific.Parsed
+				| T.GeneratorExpression.Parsed
+				| T.IntegerBinary.Parsed
+				| T.IntegerDecimalPlain.Parsed
+				| T.IntegerHex.Parsed
+				| T.IntegerOctal.Parsed
+				| T.ListComprehension.Parsed
+				| T.ParenthesizedExpression.Parsed
+				| T.SetComprehension.Parsed
+				| T.String.Parsed
+				| T.Subscript.Parsed
+				| T.UnaryOperator.Parsed;
+			readonly right:
+				| V.RequiredBy<V.Expression.Await<PythonMap>, 'expression', never>
+				| V.Expression.Binary<PythonMap>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Add<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Divide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Exponent<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.FloorDivide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Modulo<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Multiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Subtract<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.And<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Or<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Xor<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Chain<PythonMap>, 'comparators' | 'left', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Equal<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Greater<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.GreaterEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Less<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.LessEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual.Legacy<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.Is<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.IsNot<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.MatrixMultiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.In<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.NotIn<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Left<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Right<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Call<PythonMap>, 'arguments' | 'function', never>
+				| V.RequiredBy<V.Expression.Call.Member<PythonMap>, 'arguments' | 'function', never>
+				| V.Expression.Collection.List<PythonMap>
+				| V.Expression.Collection.Map<PythonMap>
+				| V.RequiredBy<V.Expression.Collection.Set<PythonMap>, 'elements', never>
+				| V.Expression.Collection.Tuple<PythonMap>
+				| V.RequiredBy<V.Expression.Comprehension.Generator<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.List<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Map<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Set<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Member<PythonMap>, 'object' | 'property', never>
+				| V.RequiredBy<V.Expression.Parenthesized<PythonMap>, 'expression', never>
+				| V.RequiredBy<V.Expression.Subscript<PythonMap>, 'index' | 'object', never>
+				| V.Expression.Unary<PythonMap>
+				| V.RequiredBy<V.Expression.Unary.BitwiseNot<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Negation<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Plus<PythonMap>, 'argument', never>
+				| V.Identifier<PythonMap>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name' | 'qualifier', never>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name', never>
+				| V.Literal.Boolean.False<PythonMap>
+				| V.Literal.Boolean.True<PythonMap>
+				| V.Literal.Ellipsis<PythonMap>
+				| V.Literal.Null<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Float<PythonMap>, 'integer', never>
+				| V.RequiredBy<V.Literal.Number.Float.LeadingPoint<PythonMap>, 'fraction', never>
+				| V.RequiredBy<V.Literal.Number.Float.Scientific<PythonMap>, 'exponent' | 'integer' | 'marker', never>
+				| V.Literal.Number.Integer<PythonMap>
+				| V.Literal.Number.Integer.Big<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Binary<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.RequiredBy<V.Literal.Number.Integer.Hex<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.Number.Integer.Imaginary<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Octal<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.String<PythonMap>
+				| V.Literal.String.Bytes<PythonMap>
+				| V.Literal.String.Bytes.Multiline<PythonMap>
+				| V.Literal.String.Bytes.Raw<PythonMap>
+				| V.Literal.String.Bytes.Raw.Multiline<PythonMap>
+				| V.RequiredBy<V.Literal.String.Concatenated<PythonMap>, 'strings', never>
+				| V.Literal.String.Interpolated<PythonMap>
+				| V.Literal.String.Interpolated.Deferred<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Raw.Multiline<PythonMap>
+				| V.Literal.String.Multiline<PythonMap>
+				| V.Literal.String.Raw<PythonMap>
+				| V.Literal.String.Raw.Multiline<PythonMap>
+				| V.Literal.String.Unicode<PythonMap>
+				| V.RequiredBy<V.Pattern.Rest<PythonMap>, 'pattern', never>
+				| T.Attribute.Parsed
+				| T.Await.Parsed
+				| T.BinaryOperator.Parsed
+				| T.Call.Parsed
+				| T.FloatLeadingPoint.Parsed
+				| T.FloatPoint.Parsed
+				| T.FloatScientific.Parsed
+				| T.GeneratorExpression.Parsed
+				| T.IntegerBinary.Parsed
+				| T.IntegerDecimalPlain.Parsed
+				| T.IntegerHex.Parsed
+				| T.IntegerOctal.Parsed
+				| T.ListComprehension.Parsed
+				| T.ParenthesizedExpression.Parsed
+				| T.SetComprehension.Parsed
+				| T.String.Parsed
+				| T.Subscript.Parsed
+				| T.UnaryOperator.Parsed;
+		};
+		readonly 'expression.binary.comparison.less': {
+			readonly left:
+				| V.RequiredBy<V.Expression.Await<PythonMap>, 'expression', never>
+				| V.Expression.Binary<PythonMap>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Add<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Divide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Exponent<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.FloorDivide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Modulo<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Multiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Subtract<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.And<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Or<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Xor<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Chain<PythonMap>, 'comparators' | 'left', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Equal<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Greater<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.GreaterEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Less<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.LessEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual.Legacy<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.Is<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.IsNot<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.MatrixMultiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.In<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.NotIn<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Left<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Right<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Call<PythonMap>, 'arguments' | 'function', never>
+				| V.RequiredBy<V.Expression.Call.Member<PythonMap>, 'arguments' | 'function', never>
+				| V.Expression.Collection.List<PythonMap>
+				| V.Expression.Collection.Map<PythonMap>
+				| V.RequiredBy<V.Expression.Collection.Set<PythonMap>, 'elements', never>
+				| V.Expression.Collection.Tuple<PythonMap>
+				| V.RequiredBy<V.Expression.Comprehension.Generator<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.List<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Map<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Set<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Member<PythonMap>, 'object' | 'property', never>
+				| V.RequiredBy<V.Expression.Parenthesized<PythonMap>, 'expression', never>
+				| V.RequiredBy<V.Expression.Subscript<PythonMap>, 'index' | 'object', never>
+				| V.Expression.Unary<PythonMap>
+				| V.RequiredBy<V.Expression.Unary.BitwiseNot<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Negation<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Plus<PythonMap>, 'argument', never>
+				| V.Identifier<PythonMap>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name' | 'qualifier', never>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name', never>
+				| V.Literal.Boolean.False<PythonMap>
+				| V.Literal.Boolean.True<PythonMap>
+				| V.Literal.Ellipsis<PythonMap>
+				| V.Literal.Null<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Float<PythonMap>, 'integer', never>
+				| V.RequiredBy<V.Literal.Number.Float.LeadingPoint<PythonMap>, 'fraction', never>
+				| V.RequiredBy<V.Literal.Number.Float.Scientific<PythonMap>, 'exponent' | 'integer' | 'marker', never>
+				| V.Literal.Number.Integer<PythonMap>
+				| V.Literal.Number.Integer.Big<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Binary<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.RequiredBy<V.Literal.Number.Integer.Hex<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.Number.Integer.Imaginary<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Octal<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.String<PythonMap>
+				| V.Literal.String.Bytes<PythonMap>
+				| V.Literal.String.Bytes.Multiline<PythonMap>
+				| V.Literal.String.Bytes.Raw<PythonMap>
+				| V.Literal.String.Bytes.Raw.Multiline<PythonMap>
+				| V.RequiredBy<V.Literal.String.Concatenated<PythonMap>, 'strings', never>
+				| V.Literal.String.Interpolated<PythonMap>
+				| V.Literal.String.Interpolated.Deferred<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Raw.Multiline<PythonMap>
+				| V.Literal.String.Multiline<PythonMap>
+				| V.Literal.String.Raw<PythonMap>
+				| V.Literal.String.Raw.Multiline<PythonMap>
+				| V.Literal.String.Unicode<PythonMap>
+				| V.RequiredBy<V.Pattern.Rest<PythonMap>, 'pattern', never>
+				| T.Attribute.Parsed
+				| T.Await.Parsed
+				| T.BinaryOperator.Parsed
+				| T.Call.Parsed
+				| T.FloatLeadingPoint.Parsed
+				| T.FloatPoint.Parsed
+				| T.FloatScientific.Parsed
+				| T.GeneratorExpression.Parsed
+				| T.IntegerBinary.Parsed
+				| T.IntegerDecimalPlain.Parsed
+				| T.IntegerHex.Parsed
+				| T.IntegerOctal.Parsed
+				| T.ListComprehension.Parsed
+				| T.ParenthesizedExpression.Parsed
+				| T.SetComprehension.Parsed
+				| T.String.Parsed
+				| T.Subscript.Parsed
+				| T.UnaryOperator.Parsed;
+			readonly right:
+				| V.RequiredBy<V.Expression.Await<PythonMap>, 'expression', never>
+				| V.Expression.Binary<PythonMap>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Add<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Divide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Exponent<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.FloorDivide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Modulo<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Multiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Subtract<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.And<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Or<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Xor<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Chain<PythonMap>, 'comparators' | 'left', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Equal<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Greater<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.GreaterEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Less<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.LessEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual.Legacy<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.Is<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.IsNot<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.MatrixMultiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.In<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.NotIn<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Left<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Right<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Call<PythonMap>, 'arguments' | 'function', never>
+				| V.RequiredBy<V.Expression.Call.Member<PythonMap>, 'arguments' | 'function', never>
+				| V.Expression.Collection.List<PythonMap>
+				| V.Expression.Collection.Map<PythonMap>
+				| V.RequiredBy<V.Expression.Collection.Set<PythonMap>, 'elements', never>
+				| V.Expression.Collection.Tuple<PythonMap>
+				| V.RequiredBy<V.Expression.Comprehension.Generator<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.List<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Map<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Set<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Member<PythonMap>, 'object' | 'property', never>
+				| V.RequiredBy<V.Expression.Parenthesized<PythonMap>, 'expression', never>
+				| V.RequiredBy<V.Expression.Subscript<PythonMap>, 'index' | 'object', never>
+				| V.Expression.Unary<PythonMap>
+				| V.RequiredBy<V.Expression.Unary.BitwiseNot<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Negation<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Plus<PythonMap>, 'argument', never>
+				| V.Identifier<PythonMap>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name' | 'qualifier', never>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name', never>
+				| V.Literal.Boolean.False<PythonMap>
+				| V.Literal.Boolean.True<PythonMap>
+				| V.Literal.Ellipsis<PythonMap>
+				| V.Literal.Null<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Float<PythonMap>, 'integer', never>
+				| V.RequiredBy<V.Literal.Number.Float.LeadingPoint<PythonMap>, 'fraction', never>
+				| V.RequiredBy<V.Literal.Number.Float.Scientific<PythonMap>, 'exponent' | 'integer' | 'marker', never>
+				| V.Literal.Number.Integer<PythonMap>
+				| V.Literal.Number.Integer.Big<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Binary<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.RequiredBy<V.Literal.Number.Integer.Hex<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.Number.Integer.Imaginary<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Octal<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.String<PythonMap>
+				| V.Literal.String.Bytes<PythonMap>
+				| V.Literal.String.Bytes.Multiline<PythonMap>
+				| V.Literal.String.Bytes.Raw<PythonMap>
+				| V.Literal.String.Bytes.Raw.Multiline<PythonMap>
+				| V.RequiredBy<V.Literal.String.Concatenated<PythonMap>, 'strings', never>
+				| V.Literal.String.Interpolated<PythonMap>
+				| V.Literal.String.Interpolated.Deferred<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Raw.Multiline<PythonMap>
+				| V.Literal.String.Multiline<PythonMap>
+				| V.Literal.String.Raw<PythonMap>
+				| V.Literal.String.Raw.Multiline<PythonMap>
+				| V.Literal.String.Unicode<PythonMap>
+				| V.RequiredBy<V.Pattern.Rest<PythonMap>, 'pattern', never>
+				| T.Attribute.Parsed
+				| T.Await.Parsed
+				| T.BinaryOperator.Parsed
+				| T.Call.Parsed
+				| T.FloatLeadingPoint.Parsed
+				| T.FloatPoint.Parsed
+				| T.FloatScientific.Parsed
+				| T.GeneratorExpression.Parsed
+				| T.IntegerBinary.Parsed
+				| T.IntegerDecimalPlain.Parsed
+				| T.IntegerHex.Parsed
+				| T.IntegerOctal.Parsed
+				| T.ListComprehension.Parsed
+				| T.ParenthesizedExpression.Parsed
+				| T.SetComprehension.Parsed
+				| T.String.Parsed
+				| T.Subscript.Parsed
+				| T.UnaryOperator.Parsed;
+		};
+		readonly 'expression.binary.comparison.less_equal': {
+			readonly left:
+				| V.RequiredBy<V.Expression.Await<PythonMap>, 'expression', never>
+				| V.Expression.Binary<PythonMap>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Add<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Divide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Exponent<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.FloorDivide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Modulo<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Multiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Subtract<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.And<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Or<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Xor<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Chain<PythonMap>, 'comparators' | 'left', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Equal<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Greater<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.GreaterEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Less<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.LessEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual.Legacy<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.Is<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.IsNot<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.MatrixMultiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.In<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.NotIn<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Left<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Right<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Call<PythonMap>, 'arguments' | 'function', never>
+				| V.RequiredBy<V.Expression.Call.Member<PythonMap>, 'arguments' | 'function', never>
+				| V.Expression.Collection.List<PythonMap>
+				| V.Expression.Collection.Map<PythonMap>
+				| V.RequiredBy<V.Expression.Collection.Set<PythonMap>, 'elements', never>
+				| V.Expression.Collection.Tuple<PythonMap>
+				| V.RequiredBy<V.Expression.Comprehension.Generator<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.List<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Map<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Set<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Member<PythonMap>, 'object' | 'property', never>
+				| V.RequiredBy<V.Expression.Parenthesized<PythonMap>, 'expression', never>
+				| V.RequiredBy<V.Expression.Subscript<PythonMap>, 'index' | 'object', never>
+				| V.Expression.Unary<PythonMap>
+				| V.RequiredBy<V.Expression.Unary.BitwiseNot<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Negation<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Plus<PythonMap>, 'argument', never>
+				| V.Identifier<PythonMap>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name' | 'qualifier', never>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name', never>
+				| V.Literal.Boolean.False<PythonMap>
+				| V.Literal.Boolean.True<PythonMap>
+				| V.Literal.Ellipsis<PythonMap>
+				| V.Literal.Null<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Float<PythonMap>, 'integer', never>
+				| V.RequiredBy<V.Literal.Number.Float.LeadingPoint<PythonMap>, 'fraction', never>
+				| V.RequiredBy<V.Literal.Number.Float.Scientific<PythonMap>, 'exponent' | 'integer' | 'marker', never>
+				| V.Literal.Number.Integer<PythonMap>
+				| V.Literal.Number.Integer.Big<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Binary<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.RequiredBy<V.Literal.Number.Integer.Hex<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.Number.Integer.Imaginary<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Octal<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.String<PythonMap>
+				| V.Literal.String.Bytes<PythonMap>
+				| V.Literal.String.Bytes.Multiline<PythonMap>
+				| V.Literal.String.Bytes.Raw<PythonMap>
+				| V.Literal.String.Bytes.Raw.Multiline<PythonMap>
+				| V.RequiredBy<V.Literal.String.Concatenated<PythonMap>, 'strings', never>
+				| V.Literal.String.Interpolated<PythonMap>
+				| V.Literal.String.Interpolated.Deferred<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Raw.Multiline<PythonMap>
+				| V.Literal.String.Multiline<PythonMap>
+				| V.Literal.String.Raw<PythonMap>
+				| V.Literal.String.Raw.Multiline<PythonMap>
+				| V.Literal.String.Unicode<PythonMap>
+				| V.RequiredBy<V.Pattern.Rest<PythonMap>, 'pattern', never>
+				| T.Attribute.Parsed
+				| T.Await.Parsed
+				| T.BinaryOperator.Parsed
+				| T.Call.Parsed
+				| T.FloatLeadingPoint.Parsed
+				| T.FloatPoint.Parsed
+				| T.FloatScientific.Parsed
+				| T.GeneratorExpression.Parsed
+				| T.IntegerBinary.Parsed
+				| T.IntegerDecimalPlain.Parsed
+				| T.IntegerHex.Parsed
+				| T.IntegerOctal.Parsed
+				| T.ListComprehension.Parsed
+				| T.ParenthesizedExpression.Parsed
+				| T.SetComprehension.Parsed
+				| T.String.Parsed
+				| T.Subscript.Parsed
+				| T.UnaryOperator.Parsed;
+			readonly right:
+				| V.RequiredBy<V.Expression.Await<PythonMap>, 'expression', never>
+				| V.Expression.Binary<PythonMap>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Add<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Divide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Exponent<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.FloorDivide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Modulo<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Multiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Subtract<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.And<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Or<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Xor<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Chain<PythonMap>, 'comparators' | 'left', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Equal<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Greater<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.GreaterEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Less<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.LessEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual.Legacy<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.Is<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.IsNot<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.MatrixMultiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.In<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.NotIn<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Left<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Right<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Call<PythonMap>, 'arguments' | 'function', never>
+				| V.RequiredBy<V.Expression.Call.Member<PythonMap>, 'arguments' | 'function', never>
+				| V.Expression.Collection.List<PythonMap>
+				| V.Expression.Collection.Map<PythonMap>
+				| V.RequiredBy<V.Expression.Collection.Set<PythonMap>, 'elements', never>
+				| V.Expression.Collection.Tuple<PythonMap>
+				| V.RequiredBy<V.Expression.Comprehension.Generator<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.List<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Map<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Set<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Member<PythonMap>, 'object' | 'property', never>
+				| V.RequiredBy<V.Expression.Parenthesized<PythonMap>, 'expression', never>
+				| V.RequiredBy<V.Expression.Subscript<PythonMap>, 'index' | 'object', never>
+				| V.Expression.Unary<PythonMap>
+				| V.RequiredBy<V.Expression.Unary.BitwiseNot<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Negation<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Plus<PythonMap>, 'argument', never>
+				| V.Identifier<PythonMap>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name' | 'qualifier', never>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name', never>
+				| V.Literal.Boolean.False<PythonMap>
+				| V.Literal.Boolean.True<PythonMap>
+				| V.Literal.Ellipsis<PythonMap>
+				| V.Literal.Null<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Float<PythonMap>, 'integer', never>
+				| V.RequiredBy<V.Literal.Number.Float.LeadingPoint<PythonMap>, 'fraction', never>
+				| V.RequiredBy<V.Literal.Number.Float.Scientific<PythonMap>, 'exponent' | 'integer' | 'marker', never>
+				| V.Literal.Number.Integer<PythonMap>
+				| V.Literal.Number.Integer.Big<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Binary<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.RequiredBy<V.Literal.Number.Integer.Hex<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.Number.Integer.Imaginary<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Octal<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.String<PythonMap>
+				| V.Literal.String.Bytes<PythonMap>
+				| V.Literal.String.Bytes.Multiline<PythonMap>
+				| V.Literal.String.Bytes.Raw<PythonMap>
+				| V.Literal.String.Bytes.Raw.Multiline<PythonMap>
+				| V.RequiredBy<V.Literal.String.Concatenated<PythonMap>, 'strings', never>
+				| V.Literal.String.Interpolated<PythonMap>
+				| V.Literal.String.Interpolated.Deferred<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Raw.Multiline<PythonMap>
+				| V.Literal.String.Multiline<PythonMap>
+				| V.Literal.String.Raw<PythonMap>
+				| V.Literal.String.Raw.Multiline<PythonMap>
+				| V.Literal.String.Unicode<PythonMap>
+				| V.RequiredBy<V.Pattern.Rest<PythonMap>, 'pattern', never>
+				| T.Attribute.Parsed
+				| T.Await.Parsed
+				| T.BinaryOperator.Parsed
+				| T.Call.Parsed
+				| T.FloatLeadingPoint.Parsed
+				| T.FloatPoint.Parsed
+				| T.FloatScientific.Parsed
+				| T.GeneratorExpression.Parsed
+				| T.IntegerBinary.Parsed
+				| T.IntegerDecimalPlain.Parsed
+				| T.IntegerHex.Parsed
+				| T.IntegerOctal.Parsed
+				| T.ListComprehension.Parsed
+				| T.ParenthesizedExpression.Parsed
+				| T.SetComprehension.Parsed
+				| T.String.Parsed
+				| T.Subscript.Parsed
+				| T.UnaryOperator.Parsed;
+		};
+		readonly 'expression.binary.comparison.not_equal': {
+			readonly left:
+				| V.RequiredBy<V.Expression.Await<PythonMap>, 'expression', never>
+				| V.Expression.Binary<PythonMap>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Add<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Divide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Exponent<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.FloorDivide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Modulo<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Multiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Subtract<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.And<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Or<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Xor<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Chain<PythonMap>, 'comparators' | 'left', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Equal<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Greater<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.GreaterEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Less<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.LessEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual.Legacy<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.Is<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.IsNot<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.MatrixMultiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.In<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.NotIn<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Left<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Right<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Call<PythonMap>, 'arguments' | 'function', never>
+				| V.RequiredBy<V.Expression.Call.Member<PythonMap>, 'arguments' | 'function', never>
+				| V.Expression.Collection.List<PythonMap>
+				| V.Expression.Collection.Map<PythonMap>
+				| V.RequiredBy<V.Expression.Collection.Set<PythonMap>, 'elements', never>
+				| V.Expression.Collection.Tuple<PythonMap>
+				| V.RequiredBy<V.Expression.Comprehension.Generator<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.List<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Map<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Set<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Member<PythonMap>, 'object' | 'property', never>
+				| V.RequiredBy<V.Expression.Parenthesized<PythonMap>, 'expression', never>
+				| V.RequiredBy<V.Expression.Subscript<PythonMap>, 'index' | 'object', never>
+				| V.Expression.Unary<PythonMap>
+				| V.RequiredBy<V.Expression.Unary.BitwiseNot<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Negation<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Plus<PythonMap>, 'argument', never>
+				| V.Identifier<PythonMap>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name' | 'qualifier', never>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name', never>
+				| V.Literal.Boolean.False<PythonMap>
+				| V.Literal.Boolean.True<PythonMap>
+				| V.Literal.Ellipsis<PythonMap>
+				| V.Literal.Null<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Float<PythonMap>, 'integer', never>
+				| V.RequiredBy<V.Literal.Number.Float.LeadingPoint<PythonMap>, 'fraction', never>
+				| V.RequiredBy<V.Literal.Number.Float.Scientific<PythonMap>, 'exponent' | 'integer' | 'marker', never>
+				| V.Literal.Number.Integer<PythonMap>
+				| V.Literal.Number.Integer.Big<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Binary<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.RequiredBy<V.Literal.Number.Integer.Hex<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.Number.Integer.Imaginary<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Octal<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.String<PythonMap>
+				| V.Literal.String.Bytes<PythonMap>
+				| V.Literal.String.Bytes.Multiline<PythonMap>
+				| V.Literal.String.Bytes.Raw<PythonMap>
+				| V.Literal.String.Bytes.Raw.Multiline<PythonMap>
+				| V.RequiredBy<V.Literal.String.Concatenated<PythonMap>, 'strings', never>
+				| V.Literal.String.Interpolated<PythonMap>
+				| V.Literal.String.Interpolated.Deferred<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Raw.Multiline<PythonMap>
+				| V.Literal.String.Multiline<PythonMap>
+				| V.Literal.String.Raw<PythonMap>
+				| V.Literal.String.Raw.Multiline<PythonMap>
+				| V.Literal.String.Unicode<PythonMap>
+				| V.RequiredBy<V.Pattern.Rest<PythonMap>, 'pattern', never>
+				| T.Attribute.Parsed
+				| T.Await.Parsed
+				| T.BinaryOperator.Parsed
+				| T.Call.Parsed
+				| T.FloatLeadingPoint.Parsed
+				| T.FloatPoint.Parsed
+				| T.FloatScientific.Parsed
+				| T.GeneratorExpression.Parsed
+				| T.IntegerBinary.Parsed
+				| T.IntegerDecimalPlain.Parsed
+				| T.IntegerHex.Parsed
+				| T.IntegerOctal.Parsed
+				| T.ListComprehension.Parsed
+				| T.ParenthesizedExpression.Parsed
+				| T.SetComprehension.Parsed
+				| T.String.Parsed
+				| T.Subscript.Parsed
+				| T.UnaryOperator.Parsed;
+			readonly right:
+				| V.RequiredBy<V.Expression.Await<PythonMap>, 'expression', never>
+				| V.Expression.Binary<PythonMap>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Add<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Divide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Exponent<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.FloorDivide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Modulo<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Multiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Subtract<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.And<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Or<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Xor<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Chain<PythonMap>, 'comparators' | 'left', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Equal<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Greater<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.GreaterEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Less<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.LessEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual.Legacy<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.Is<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.IsNot<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.MatrixMultiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.In<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.NotIn<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Left<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Right<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Call<PythonMap>, 'arguments' | 'function', never>
+				| V.RequiredBy<V.Expression.Call.Member<PythonMap>, 'arguments' | 'function', never>
+				| V.Expression.Collection.List<PythonMap>
+				| V.Expression.Collection.Map<PythonMap>
+				| V.RequiredBy<V.Expression.Collection.Set<PythonMap>, 'elements', never>
+				| V.Expression.Collection.Tuple<PythonMap>
+				| V.RequiredBy<V.Expression.Comprehension.Generator<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.List<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Map<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Set<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Member<PythonMap>, 'object' | 'property', never>
+				| V.RequiredBy<V.Expression.Parenthesized<PythonMap>, 'expression', never>
+				| V.RequiredBy<V.Expression.Subscript<PythonMap>, 'index' | 'object', never>
+				| V.Expression.Unary<PythonMap>
+				| V.RequiredBy<V.Expression.Unary.BitwiseNot<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Negation<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Plus<PythonMap>, 'argument', never>
+				| V.Identifier<PythonMap>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name' | 'qualifier', never>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name', never>
+				| V.Literal.Boolean.False<PythonMap>
+				| V.Literal.Boolean.True<PythonMap>
+				| V.Literal.Ellipsis<PythonMap>
+				| V.Literal.Null<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Float<PythonMap>, 'integer', never>
+				| V.RequiredBy<V.Literal.Number.Float.LeadingPoint<PythonMap>, 'fraction', never>
+				| V.RequiredBy<V.Literal.Number.Float.Scientific<PythonMap>, 'exponent' | 'integer' | 'marker', never>
+				| V.Literal.Number.Integer<PythonMap>
+				| V.Literal.Number.Integer.Big<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Binary<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.RequiredBy<V.Literal.Number.Integer.Hex<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.Number.Integer.Imaginary<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Octal<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.String<PythonMap>
+				| V.Literal.String.Bytes<PythonMap>
+				| V.Literal.String.Bytes.Multiline<PythonMap>
+				| V.Literal.String.Bytes.Raw<PythonMap>
+				| V.Literal.String.Bytes.Raw.Multiline<PythonMap>
+				| V.RequiredBy<V.Literal.String.Concatenated<PythonMap>, 'strings', never>
+				| V.Literal.String.Interpolated<PythonMap>
+				| V.Literal.String.Interpolated.Deferred<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Raw.Multiline<PythonMap>
+				| V.Literal.String.Multiline<PythonMap>
+				| V.Literal.String.Raw<PythonMap>
+				| V.Literal.String.Raw.Multiline<PythonMap>
+				| V.Literal.String.Unicode<PythonMap>
+				| V.RequiredBy<V.Pattern.Rest<PythonMap>, 'pattern', never>
+				| T.Attribute.Parsed
+				| T.Await.Parsed
+				| T.BinaryOperator.Parsed
+				| T.Call.Parsed
+				| T.FloatLeadingPoint.Parsed
+				| T.FloatPoint.Parsed
+				| T.FloatScientific.Parsed
+				| T.GeneratorExpression.Parsed
+				| T.IntegerBinary.Parsed
+				| T.IntegerDecimalPlain.Parsed
+				| T.IntegerHex.Parsed
+				| T.IntegerOctal.Parsed
+				| T.ListComprehension.Parsed
+				| T.ParenthesizedExpression.Parsed
+				| T.SetComprehension.Parsed
+				| T.String.Parsed
+				| T.Subscript.Parsed
+				| T.UnaryOperator.Parsed;
+		};
+		readonly 'expression.binary.comparison.not_equal.legacy': {
+			readonly left:
+				| V.RequiredBy<V.Expression.Await<PythonMap>, 'expression', never>
+				| V.Expression.Binary<PythonMap>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Add<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Divide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Exponent<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.FloorDivide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Modulo<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Multiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Subtract<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.And<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Or<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Xor<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Chain<PythonMap>, 'comparators' | 'left', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Equal<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Greater<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.GreaterEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Less<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.LessEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual.Legacy<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.Is<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.IsNot<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.MatrixMultiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.In<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.NotIn<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Left<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Right<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Call<PythonMap>, 'arguments' | 'function', never>
+				| V.RequiredBy<V.Expression.Call.Member<PythonMap>, 'arguments' | 'function', never>
+				| V.Expression.Collection.List<PythonMap>
+				| V.Expression.Collection.Map<PythonMap>
+				| V.RequiredBy<V.Expression.Collection.Set<PythonMap>, 'elements', never>
+				| V.Expression.Collection.Tuple<PythonMap>
+				| V.RequiredBy<V.Expression.Comprehension.Generator<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.List<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Map<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Set<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Member<PythonMap>, 'object' | 'property', never>
+				| V.RequiredBy<V.Expression.Parenthesized<PythonMap>, 'expression', never>
+				| V.RequiredBy<V.Expression.Subscript<PythonMap>, 'index' | 'object', never>
+				| V.Expression.Unary<PythonMap>
+				| V.RequiredBy<V.Expression.Unary.BitwiseNot<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Negation<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Plus<PythonMap>, 'argument', never>
+				| V.Identifier<PythonMap>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name' | 'qualifier', never>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name', never>
+				| V.Literal.Boolean.False<PythonMap>
+				| V.Literal.Boolean.True<PythonMap>
+				| V.Literal.Ellipsis<PythonMap>
+				| V.Literal.Null<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Float<PythonMap>, 'integer', never>
+				| V.RequiredBy<V.Literal.Number.Float.LeadingPoint<PythonMap>, 'fraction', never>
+				| V.RequiredBy<V.Literal.Number.Float.Scientific<PythonMap>, 'exponent' | 'integer' | 'marker', never>
+				| V.Literal.Number.Integer<PythonMap>
+				| V.Literal.Number.Integer.Big<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Binary<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.RequiredBy<V.Literal.Number.Integer.Hex<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.Number.Integer.Imaginary<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Octal<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.String<PythonMap>
+				| V.Literal.String.Bytes<PythonMap>
+				| V.Literal.String.Bytes.Multiline<PythonMap>
+				| V.Literal.String.Bytes.Raw<PythonMap>
+				| V.Literal.String.Bytes.Raw.Multiline<PythonMap>
+				| V.RequiredBy<V.Literal.String.Concatenated<PythonMap>, 'strings', never>
+				| V.Literal.String.Interpolated<PythonMap>
+				| V.Literal.String.Interpolated.Deferred<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Raw.Multiline<PythonMap>
+				| V.Literal.String.Multiline<PythonMap>
+				| V.Literal.String.Raw<PythonMap>
+				| V.Literal.String.Raw.Multiline<PythonMap>
+				| V.Literal.String.Unicode<PythonMap>
+				| V.RequiredBy<V.Pattern.Rest<PythonMap>, 'pattern', never>
+				| T.Attribute.Parsed
+				| T.Await.Parsed
+				| T.BinaryOperator.Parsed
+				| T.Call.Parsed
+				| T.FloatLeadingPoint.Parsed
+				| T.FloatPoint.Parsed
+				| T.FloatScientific.Parsed
+				| T.GeneratorExpression.Parsed
+				| T.IntegerBinary.Parsed
+				| T.IntegerDecimalPlain.Parsed
+				| T.IntegerHex.Parsed
+				| T.IntegerOctal.Parsed
+				| T.ListComprehension.Parsed
+				| T.ParenthesizedExpression.Parsed
+				| T.SetComprehension.Parsed
+				| T.String.Parsed
+				| T.Subscript.Parsed
+				| T.UnaryOperator.Parsed;
+			readonly right:
+				| V.RequiredBy<V.Expression.Await<PythonMap>, 'expression', never>
+				| V.Expression.Binary<PythonMap>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Add<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Divide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Exponent<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.FloorDivide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Modulo<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Multiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Subtract<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.And<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Or<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Xor<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Chain<PythonMap>, 'comparators' | 'left', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Equal<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Greater<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.GreaterEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Less<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.LessEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual.Legacy<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.Is<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.IsNot<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.MatrixMultiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.In<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.NotIn<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Left<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Right<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Call<PythonMap>, 'arguments' | 'function', never>
+				| V.RequiredBy<V.Expression.Call.Member<PythonMap>, 'arguments' | 'function', never>
+				| V.Expression.Collection.List<PythonMap>
+				| V.Expression.Collection.Map<PythonMap>
+				| V.RequiredBy<V.Expression.Collection.Set<PythonMap>, 'elements', never>
+				| V.Expression.Collection.Tuple<PythonMap>
+				| V.RequiredBy<V.Expression.Comprehension.Generator<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.List<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Map<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Set<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Member<PythonMap>, 'object' | 'property', never>
+				| V.RequiredBy<V.Expression.Parenthesized<PythonMap>, 'expression', never>
+				| V.RequiredBy<V.Expression.Subscript<PythonMap>, 'index' | 'object', never>
+				| V.Expression.Unary<PythonMap>
+				| V.RequiredBy<V.Expression.Unary.BitwiseNot<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Negation<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Plus<PythonMap>, 'argument', never>
+				| V.Identifier<PythonMap>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name' | 'qualifier', never>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name', never>
+				| V.Literal.Boolean.False<PythonMap>
+				| V.Literal.Boolean.True<PythonMap>
+				| V.Literal.Ellipsis<PythonMap>
+				| V.Literal.Null<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Float<PythonMap>, 'integer', never>
+				| V.RequiredBy<V.Literal.Number.Float.LeadingPoint<PythonMap>, 'fraction', never>
+				| V.RequiredBy<V.Literal.Number.Float.Scientific<PythonMap>, 'exponent' | 'integer' | 'marker', never>
+				| V.Literal.Number.Integer<PythonMap>
+				| V.Literal.Number.Integer.Big<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Binary<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.RequiredBy<V.Literal.Number.Integer.Hex<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.Number.Integer.Imaginary<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Octal<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.String<PythonMap>
+				| V.Literal.String.Bytes<PythonMap>
+				| V.Literal.String.Bytes.Multiline<PythonMap>
+				| V.Literal.String.Bytes.Raw<PythonMap>
+				| V.Literal.String.Bytes.Raw.Multiline<PythonMap>
+				| V.RequiredBy<V.Literal.String.Concatenated<PythonMap>, 'strings', never>
+				| V.Literal.String.Interpolated<PythonMap>
+				| V.Literal.String.Interpolated.Deferred<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Raw.Multiline<PythonMap>
+				| V.Literal.String.Multiline<PythonMap>
+				| V.Literal.String.Raw<PythonMap>
+				| V.Literal.String.Raw.Multiline<PythonMap>
+				| V.Literal.String.Unicode<PythonMap>
+				| V.RequiredBy<V.Pattern.Rest<PythonMap>, 'pattern', never>
+				| T.Attribute.Parsed
+				| T.Await.Parsed
+				| T.BinaryOperator.Parsed
+				| T.Call.Parsed
+				| T.FloatLeadingPoint.Parsed
+				| T.FloatPoint.Parsed
+				| T.FloatScientific.Parsed
+				| T.GeneratorExpression.Parsed
+				| T.IntegerBinary.Parsed
+				| T.IntegerDecimalPlain.Parsed
+				| T.IntegerHex.Parsed
+				| T.IntegerOctal.Parsed
+				| T.ListComprehension.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.SetComprehension.Parsed
 				| T.String.Parsed
@@ -3247,9 +10034,205 @@ export interface PythonMap extends V.GrammarMap {
 				| T.String.Parsed
 				| T.Subscript.Parsed
 				| T.UnaryOperator.Parsed;
+			readonly right:
+				| V.RequiredBy<V.Expression.Await<PythonMap>, 'expression', never>
+				| V.Expression.Binary<PythonMap>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Add<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Divide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Exponent<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.FloorDivide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Modulo<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Multiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Subtract<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.And<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Or<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Xor<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Chain<PythonMap>, 'comparators' | 'left', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Equal<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Greater<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.GreaterEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Less<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.LessEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual.Legacy<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.Is<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.IsNot<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.MatrixMultiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.In<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.NotIn<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Left<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Right<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Call<PythonMap>, 'arguments' | 'function', never>
+				| V.RequiredBy<V.Expression.Call.Member<PythonMap>, 'arguments' | 'function', never>
+				| V.Expression.Collection.List<PythonMap>
+				| V.Expression.Collection.Map<PythonMap>
+				| V.RequiredBy<V.Expression.Collection.Set<PythonMap>, 'elements', never>
+				| V.Expression.Collection.Tuple<PythonMap>
+				| V.RequiredBy<V.Expression.Comprehension.Generator<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.List<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Map<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Set<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Member<PythonMap>, 'object' | 'property', never>
+				| V.RequiredBy<V.Expression.Parenthesized<PythonMap>, 'expression', never>
+				| V.RequiredBy<V.Expression.Subscript<PythonMap>, 'index' | 'object', never>
+				| V.Expression.Unary<PythonMap>
+				| V.RequiredBy<V.Expression.Unary.BitwiseNot<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Negation<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Plus<PythonMap>, 'argument', never>
+				| V.Identifier<PythonMap>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name' | 'qualifier', never>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name', never>
+				| V.Literal.Boolean.False<PythonMap>
+				| V.Literal.Boolean.True<PythonMap>
+				| V.Literal.Ellipsis<PythonMap>
+				| V.Literal.Null<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Float<PythonMap>, 'integer', never>
+				| V.RequiredBy<V.Literal.Number.Float.LeadingPoint<PythonMap>, 'fraction', never>
+				| V.RequiredBy<V.Literal.Number.Float.Scientific<PythonMap>, 'exponent' | 'integer' | 'marker', never>
+				| V.Literal.Number.Integer<PythonMap>
+				| V.Literal.Number.Integer.Big<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Binary<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.RequiredBy<V.Literal.Number.Integer.Hex<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.Number.Integer.Imaginary<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Octal<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.String<PythonMap>
+				| V.Literal.String.Bytes<PythonMap>
+				| V.Literal.String.Bytes.Multiline<PythonMap>
+				| V.Literal.String.Bytes.Raw<PythonMap>
+				| V.Literal.String.Bytes.Raw.Multiline<PythonMap>
+				| V.RequiredBy<V.Literal.String.Concatenated<PythonMap>, 'strings', never>
+				| V.Literal.String.Interpolated<PythonMap>
+				| V.Literal.String.Interpolated.Deferred<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Raw.Multiline<PythonMap>
+				| V.Literal.String.Multiline<PythonMap>
+				| V.Literal.String.Raw<PythonMap>
+				| V.Literal.String.Raw.Multiline<PythonMap>
+				| V.Literal.String.Unicode<PythonMap>
+				| V.RequiredBy<V.Pattern.Rest<PythonMap>, 'pattern', never>
+				| T.Attribute.Parsed
+				| T.Await.Parsed
+				| T.BinaryOperator.Parsed
+				| T.Call.Parsed
+				| T.FloatLeadingPoint.Parsed
+				| T.FloatPoint.Parsed
+				| T.FloatScientific.Parsed
+				| T.GeneratorExpression.Parsed
+				| T.IntegerBinary.Parsed
+				| T.IntegerDecimalPlain.Parsed
+				| T.IntegerHex.Parsed
+				| T.IntegerOctal.Parsed
+				| T.ListComprehension.Parsed
+				| T.ParenthesizedExpression.Parsed
+				| T.SetComprehension.Parsed
+				| T.String.Parsed
+				| T.Subscript.Parsed
+				| T.UnaryOperator.Parsed;
 		};
 		readonly 'expression.binary.identity.is_not': {
 			readonly left:
+				| V.RequiredBy<V.Expression.Await<PythonMap>, 'expression', never>
+				| V.Expression.Binary<PythonMap>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Add<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Divide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Exponent<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.FloorDivide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Modulo<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Multiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Subtract<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.And<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Or<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Xor<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Chain<PythonMap>, 'comparators' | 'left', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Equal<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Greater<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.GreaterEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Less<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.LessEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual.Legacy<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.Is<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.IsNot<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.MatrixMultiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.In<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.NotIn<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Left<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Right<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Call<PythonMap>, 'arguments' | 'function', never>
+				| V.RequiredBy<V.Expression.Call.Member<PythonMap>, 'arguments' | 'function', never>
+				| V.Expression.Collection.List<PythonMap>
+				| V.Expression.Collection.Map<PythonMap>
+				| V.RequiredBy<V.Expression.Collection.Set<PythonMap>, 'elements', never>
+				| V.Expression.Collection.Tuple<PythonMap>
+				| V.RequiredBy<V.Expression.Comprehension.Generator<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.List<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Map<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Set<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Member<PythonMap>, 'object' | 'property', never>
+				| V.RequiredBy<V.Expression.Parenthesized<PythonMap>, 'expression', never>
+				| V.RequiredBy<V.Expression.Subscript<PythonMap>, 'index' | 'object', never>
+				| V.Expression.Unary<PythonMap>
+				| V.RequiredBy<V.Expression.Unary.BitwiseNot<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Negation<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Plus<PythonMap>, 'argument', never>
+				| V.Identifier<PythonMap>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name' | 'qualifier', never>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name', never>
+				| V.Literal.Boolean.False<PythonMap>
+				| V.Literal.Boolean.True<PythonMap>
+				| V.Literal.Ellipsis<PythonMap>
+				| V.Literal.Null<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Float<PythonMap>, 'integer', never>
+				| V.RequiredBy<V.Literal.Number.Float.LeadingPoint<PythonMap>, 'fraction', never>
+				| V.RequiredBy<V.Literal.Number.Float.Scientific<PythonMap>, 'exponent' | 'integer' | 'marker', never>
+				| V.Literal.Number.Integer<PythonMap>
+				| V.Literal.Number.Integer.Big<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Binary<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.RequiredBy<V.Literal.Number.Integer.Hex<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.Number.Integer.Imaginary<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Octal<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.String<PythonMap>
+				| V.Literal.String.Bytes<PythonMap>
+				| V.Literal.String.Bytes.Multiline<PythonMap>
+				| V.Literal.String.Bytes.Raw<PythonMap>
+				| V.Literal.String.Bytes.Raw.Multiline<PythonMap>
+				| V.RequiredBy<V.Literal.String.Concatenated<PythonMap>, 'strings', never>
+				| V.Literal.String.Interpolated<PythonMap>
+				| V.Literal.String.Interpolated.Deferred<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Raw.Multiline<PythonMap>
+				| V.Literal.String.Multiline<PythonMap>
+				| V.Literal.String.Raw<PythonMap>
+				| V.Literal.String.Raw.Multiline<PythonMap>
+				| V.Literal.String.Unicode<PythonMap>
+				| V.RequiredBy<V.Pattern.Rest<PythonMap>, 'pattern', never>
+				| T.Attribute.Parsed
+				| T.Await.Parsed
+				| T.BinaryOperator.Parsed
+				| T.Call.Parsed
+				| T.FloatLeadingPoint.Parsed
+				| T.FloatPoint.Parsed
+				| T.FloatScientific.Parsed
+				| T.GeneratorExpression.Parsed
+				| T.IntegerBinary.Parsed
+				| T.IntegerDecimalPlain.Parsed
+				| T.IntegerHex.Parsed
+				| T.IntegerOctal.Parsed
+				| T.ListComprehension.Parsed
+				| T.ParenthesizedExpression.Parsed
+				| T.SetComprehension.Parsed
+				| T.String.Parsed
+				| T.Subscript.Parsed
+				| T.UnaryOperator.Parsed;
+			readonly right:
 				| V.RequiredBy<V.Expression.Await<PythonMap>, 'expression', never>
 				| V.Expression.Binary<PythonMap>
 				| V.RequiredBy<V.Expression.Binary.Arithmetic.Add<PythonMap>, 'left' | 'right', never>
@@ -3574,6 +10557,868 @@ export interface PythonMap extends V.GrammarMap {
 				| T.Subscript.Parsed
 				| T.UnaryOperator.Parsed;
 		};
+		readonly 'expression.binary.logical.and': {
+			readonly left:
+				| V.RequiredBy<V.Expression.Assignment<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Await<PythonMap>, 'expression', never>
+				| V.Expression.Binary<PythonMap>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Add<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Divide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Exponent<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.FloorDivide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Modulo<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Multiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Subtract<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.And<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Or<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Xor<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Chain<PythonMap>, 'comparators' | 'left', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Equal<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Greater<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.GreaterEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Less<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.LessEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual.Legacy<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.Is<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.IsNot<PythonMap>, 'left' | 'right', never>
+				| V.Expression.Binary.Logical<PythonMap>
+				| V.RequiredBy<V.Expression.Binary.Logical.And<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Logical.Or<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.MatrixMultiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.In<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.NotIn<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Left<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Right<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Call<PythonMap>, 'arguments' | 'function', never>
+				| V.RequiredBy<V.Expression.Call.Member<PythonMap>, 'arguments' | 'function', never>
+				| V.Expression.Collection.List<PythonMap>
+				| V.Expression.Collection.Map<PythonMap>
+				| V.RequiredBy<V.Expression.Collection.Set<PythonMap>, 'elements', never>
+				| V.Expression.Collection.Tuple<PythonMap>
+				| V.RequiredBy<V.Expression.Comprehension.Generator<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.List<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Map<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Set<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Conditional<PythonMap>, 'alternative' | 'condition' | 'consequence', never>
+				| V.RequiredBy<V.Expression.Lambda<PythonMap>, 'body', never>
+				| V.RequiredBy<V.Expression.Member<PythonMap>, 'object' | 'property', never>
+				| V.RequiredBy<V.Expression.Parenthesized<PythonMap>, 'expression', never>
+				| V.RequiredBy<V.Expression.Subscript<PythonMap>, 'index' | 'object', never>
+				| V.Expression.Unary<PythonMap>
+				| V.RequiredBy<V.Expression.Unary.BitwiseNot<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Negation<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Not<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Plus<PythonMap>, 'argument', never>
+				| V.Identifier<PythonMap>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name' | 'qualifier', never>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name', never>
+				| V.Literal.Boolean.False<PythonMap>
+				| V.Literal.Boolean.True<PythonMap>
+				| V.Literal.Ellipsis<PythonMap>
+				| V.Literal.Null<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Float<PythonMap>, 'integer', never>
+				| V.RequiredBy<V.Literal.Number.Float.LeadingPoint<PythonMap>, 'fraction', never>
+				| V.RequiredBy<V.Literal.Number.Float.Scientific<PythonMap>, 'exponent' | 'integer' | 'marker', never>
+				| V.Literal.Number.Integer<PythonMap>
+				| V.Literal.Number.Integer.Big<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Binary<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.RequiredBy<V.Literal.Number.Integer.Hex<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.Number.Integer.Imaginary<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Octal<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.String<PythonMap>
+				| V.Literal.String.Bytes<PythonMap>
+				| V.Literal.String.Bytes.Multiline<PythonMap>
+				| V.Literal.String.Bytes.Raw<PythonMap>
+				| V.Literal.String.Bytes.Raw.Multiline<PythonMap>
+				| V.RequiredBy<V.Literal.String.Concatenated<PythonMap>, 'strings', never>
+				| V.Literal.String.Interpolated<PythonMap>
+				| V.Literal.String.Interpolated.Deferred<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Raw.Multiline<PythonMap>
+				| V.Literal.String.Multiline<PythonMap>
+				| V.Literal.String.Raw<PythonMap>
+				| V.Literal.String.Raw.Multiline<PythonMap>
+				| V.Literal.String.Unicode<PythonMap>
+				| V.RequiredBy<V.Pattern.Rest<PythonMap>, 'pattern', never>
+				| V.Unmapped<'python:as_pattern'>
+				| T.Attribute.Parsed
+				| T.Await.Parsed
+				| T.BinaryOperator.Parsed
+				| T.BooleanOperator.Parsed
+				| T.Call.Parsed
+				| T.ComparisonOperator.Parsed
+				| T.ConditionalExpression.Parsed
+				| T.FloatLeadingPoint.Parsed
+				| T.FloatPoint.Parsed
+				| T.FloatScientific.Parsed
+				| T.GeneratorExpression.Parsed
+				| T.IntegerBinary.Parsed
+				| T.IntegerDecimalPlain.Parsed
+				| T.IntegerHex.Parsed
+				| T.IntegerOctal.Parsed
+				| T.Lambda.Parsed
+				| T.ListComprehension.Parsed
+				| T.NamedExpression.Parsed
+				| T.NotOperator.Parsed
+				| T.ParenthesizedExpression.Parsed
+				| T.SetComprehension.Parsed
+				| T.String.Parsed
+				| T.Subscript.Parsed
+				| T.UnaryOperator.Parsed;
+			readonly right:
+				| V.RequiredBy<V.Expression.Assignment<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Await<PythonMap>, 'expression', never>
+				| V.Expression.Binary<PythonMap>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Add<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Divide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Exponent<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.FloorDivide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Modulo<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Multiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Subtract<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.And<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Or<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Xor<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Chain<PythonMap>, 'comparators' | 'left', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Equal<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Greater<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.GreaterEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Less<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.LessEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual.Legacy<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.Is<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.IsNot<PythonMap>, 'left' | 'right', never>
+				| V.Expression.Binary.Logical<PythonMap>
+				| V.RequiredBy<V.Expression.Binary.Logical.And<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Logical.Or<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.MatrixMultiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.In<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.NotIn<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Left<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Right<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Call<PythonMap>, 'arguments' | 'function', never>
+				| V.RequiredBy<V.Expression.Call.Member<PythonMap>, 'arguments' | 'function', never>
+				| V.Expression.Collection.List<PythonMap>
+				| V.Expression.Collection.Map<PythonMap>
+				| V.RequiredBy<V.Expression.Collection.Set<PythonMap>, 'elements', never>
+				| V.Expression.Collection.Tuple<PythonMap>
+				| V.RequiredBy<V.Expression.Comprehension.Generator<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.List<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Map<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Set<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Conditional<PythonMap>, 'alternative' | 'condition' | 'consequence', never>
+				| V.RequiredBy<V.Expression.Lambda<PythonMap>, 'body', never>
+				| V.RequiredBy<V.Expression.Member<PythonMap>, 'object' | 'property', never>
+				| V.RequiredBy<V.Expression.Parenthesized<PythonMap>, 'expression', never>
+				| V.RequiredBy<V.Expression.Subscript<PythonMap>, 'index' | 'object', never>
+				| V.Expression.Unary<PythonMap>
+				| V.RequiredBy<V.Expression.Unary.BitwiseNot<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Negation<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Not<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Plus<PythonMap>, 'argument', never>
+				| V.Identifier<PythonMap>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name' | 'qualifier', never>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name', never>
+				| V.Literal.Boolean.False<PythonMap>
+				| V.Literal.Boolean.True<PythonMap>
+				| V.Literal.Ellipsis<PythonMap>
+				| V.Literal.Null<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Float<PythonMap>, 'integer', never>
+				| V.RequiredBy<V.Literal.Number.Float.LeadingPoint<PythonMap>, 'fraction', never>
+				| V.RequiredBy<V.Literal.Number.Float.Scientific<PythonMap>, 'exponent' | 'integer' | 'marker', never>
+				| V.Literal.Number.Integer<PythonMap>
+				| V.Literal.Number.Integer.Big<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Binary<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.RequiredBy<V.Literal.Number.Integer.Hex<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.Number.Integer.Imaginary<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Octal<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.String<PythonMap>
+				| V.Literal.String.Bytes<PythonMap>
+				| V.Literal.String.Bytes.Multiline<PythonMap>
+				| V.Literal.String.Bytes.Raw<PythonMap>
+				| V.Literal.String.Bytes.Raw.Multiline<PythonMap>
+				| V.RequiredBy<V.Literal.String.Concatenated<PythonMap>, 'strings', never>
+				| V.Literal.String.Interpolated<PythonMap>
+				| V.Literal.String.Interpolated.Deferred<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Raw.Multiline<PythonMap>
+				| V.Literal.String.Multiline<PythonMap>
+				| V.Literal.String.Raw<PythonMap>
+				| V.Literal.String.Raw.Multiline<PythonMap>
+				| V.Literal.String.Unicode<PythonMap>
+				| V.RequiredBy<V.Pattern.Rest<PythonMap>, 'pattern', never>
+				| V.Unmapped<'python:as_pattern'>
+				| T.Attribute.Parsed
+				| T.Await.Parsed
+				| T.BinaryOperator.Parsed
+				| T.BooleanOperator.Parsed
+				| T.Call.Parsed
+				| T.ComparisonOperator.Parsed
+				| T.ConditionalExpression.Parsed
+				| T.FloatLeadingPoint.Parsed
+				| T.FloatPoint.Parsed
+				| T.FloatScientific.Parsed
+				| T.GeneratorExpression.Parsed
+				| T.IntegerBinary.Parsed
+				| T.IntegerDecimalPlain.Parsed
+				| T.IntegerHex.Parsed
+				| T.IntegerOctal.Parsed
+				| T.Lambda.Parsed
+				| T.ListComprehension.Parsed
+				| T.NamedExpression.Parsed
+				| T.NotOperator.Parsed
+				| T.ParenthesizedExpression.Parsed
+				| T.SetComprehension.Parsed
+				| T.String.Parsed
+				| T.Subscript.Parsed
+				| T.UnaryOperator.Parsed;
+		};
+		readonly 'expression.binary.logical.or': {
+			readonly left:
+				| V.RequiredBy<V.Expression.Assignment<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Await<PythonMap>, 'expression', never>
+				| V.Expression.Binary<PythonMap>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Add<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Divide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Exponent<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.FloorDivide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Modulo<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Multiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Subtract<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.And<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Or<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Xor<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Chain<PythonMap>, 'comparators' | 'left', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Equal<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Greater<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.GreaterEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Less<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.LessEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual.Legacy<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.Is<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.IsNot<PythonMap>, 'left' | 'right', never>
+				| V.Expression.Binary.Logical<PythonMap>
+				| V.RequiredBy<V.Expression.Binary.Logical.And<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Logical.Or<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.MatrixMultiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.In<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.NotIn<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Left<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Right<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Call<PythonMap>, 'arguments' | 'function', never>
+				| V.RequiredBy<V.Expression.Call.Member<PythonMap>, 'arguments' | 'function', never>
+				| V.Expression.Collection.List<PythonMap>
+				| V.Expression.Collection.Map<PythonMap>
+				| V.RequiredBy<V.Expression.Collection.Set<PythonMap>, 'elements', never>
+				| V.Expression.Collection.Tuple<PythonMap>
+				| V.RequiredBy<V.Expression.Comprehension.Generator<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.List<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Map<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Set<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Conditional<PythonMap>, 'alternative' | 'condition' | 'consequence', never>
+				| V.RequiredBy<V.Expression.Lambda<PythonMap>, 'body', never>
+				| V.RequiredBy<V.Expression.Member<PythonMap>, 'object' | 'property', never>
+				| V.RequiredBy<V.Expression.Parenthesized<PythonMap>, 'expression', never>
+				| V.RequiredBy<V.Expression.Subscript<PythonMap>, 'index' | 'object', never>
+				| V.Expression.Unary<PythonMap>
+				| V.RequiredBy<V.Expression.Unary.BitwiseNot<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Negation<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Not<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Plus<PythonMap>, 'argument', never>
+				| V.Identifier<PythonMap>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name' | 'qualifier', never>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name', never>
+				| V.Literal.Boolean.False<PythonMap>
+				| V.Literal.Boolean.True<PythonMap>
+				| V.Literal.Ellipsis<PythonMap>
+				| V.Literal.Null<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Float<PythonMap>, 'integer', never>
+				| V.RequiredBy<V.Literal.Number.Float.LeadingPoint<PythonMap>, 'fraction', never>
+				| V.RequiredBy<V.Literal.Number.Float.Scientific<PythonMap>, 'exponent' | 'integer' | 'marker', never>
+				| V.Literal.Number.Integer<PythonMap>
+				| V.Literal.Number.Integer.Big<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Binary<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.RequiredBy<V.Literal.Number.Integer.Hex<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.Number.Integer.Imaginary<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Octal<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.String<PythonMap>
+				| V.Literal.String.Bytes<PythonMap>
+				| V.Literal.String.Bytes.Multiline<PythonMap>
+				| V.Literal.String.Bytes.Raw<PythonMap>
+				| V.Literal.String.Bytes.Raw.Multiline<PythonMap>
+				| V.RequiredBy<V.Literal.String.Concatenated<PythonMap>, 'strings', never>
+				| V.Literal.String.Interpolated<PythonMap>
+				| V.Literal.String.Interpolated.Deferred<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Raw.Multiline<PythonMap>
+				| V.Literal.String.Multiline<PythonMap>
+				| V.Literal.String.Raw<PythonMap>
+				| V.Literal.String.Raw.Multiline<PythonMap>
+				| V.Literal.String.Unicode<PythonMap>
+				| V.RequiredBy<V.Pattern.Rest<PythonMap>, 'pattern', never>
+				| V.Unmapped<'python:as_pattern'>
+				| T.Attribute.Parsed
+				| T.Await.Parsed
+				| T.BinaryOperator.Parsed
+				| T.BooleanOperator.Parsed
+				| T.Call.Parsed
+				| T.ComparisonOperator.Parsed
+				| T.ConditionalExpression.Parsed
+				| T.FloatLeadingPoint.Parsed
+				| T.FloatPoint.Parsed
+				| T.FloatScientific.Parsed
+				| T.GeneratorExpression.Parsed
+				| T.IntegerBinary.Parsed
+				| T.IntegerDecimalPlain.Parsed
+				| T.IntegerHex.Parsed
+				| T.IntegerOctal.Parsed
+				| T.Lambda.Parsed
+				| T.ListComprehension.Parsed
+				| T.NamedExpression.Parsed
+				| T.NotOperator.Parsed
+				| T.ParenthesizedExpression.Parsed
+				| T.SetComprehension.Parsed
+				| T.String.Parsed
+				| T.Subscript.Parsed
+				| T.UnaryOperator.Parsed;
+			readonly right:
+				| V.RequiredBy<V.Expression.Assignment<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Await<PythonMap>, 'expression', never>
+				| V.Expression.Binary<PythonMap>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Add<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Divide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Exponent<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.FloorDivide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Modulo<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Multiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Subtract<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.And<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Or<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Xor<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Chain<PythonMap>, 'comparators' | 'left', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Equal<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Greater<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.GreaterEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Less<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.LessEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual.Legacy<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.Is<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.IsNot<PythonMap>, 'left' | 'right', never>
+				| V.Expression.Binary.Logical<PythonMap>
+				| V.RequiredBy<V.Expression.Binary.Logical.And<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Logical.Or<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.MatrixMultiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.In<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.NotIn<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Left<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Right<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Call<PythonMap>, 'arguments' | 'function', never>
+				| V.RequiredBy<V.Expression.Call.Member<PythonMap>, 'arguments' | 'function', never>
+				| V.Expression.Collection.List<PythonMap>
+				| V.Expression.Collection.Map<PythonMap>
+				| V.RequiredBy<V.Expression.Collection.Set<PythonMap>, 'elements', never>
+				| V.Expression.Collection.Tuple<PythonMap>
+				| V.RequiredBy<V.Expression.Comprehension.Generator<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.List<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Map<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Set<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Conditional<PythonMap>, 'alternative' | 'condition' | 'consequence', never>
+				| V.RequiredBy<V.Expression.Lambda<PythonMap>, 'body', never>
+				| V.RequiredBy<V.Expression.Member<PythonMap>, 'object' | 'property', never>
+				| V.RequiredBy<V.Expression.Parenthesized<PythonMap>, 'expression', never>
+				| V.RequiredBy<V.Expression.Subscript<PythonMap>, 'index' | 'object', never>
+				| V.Expression.Unary<PythonMap>
+				| V.RequiredBy<V.Expression.Unary.BitwiseNot<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Negation<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Not<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Plus<PythonMap>, 'argument', never>
+				| V.Identifier<PythonMap>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name' | 'qualifier', never>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name', never>
+				| V.Literal.Boolean.False<PythonMap>
+				| V.Literal.Boolean.True<PythonMap>
+				| V.Literal.Ellipsis<PythonMap>
+				| V.Literal.Null<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Float<PythonMap>, 'integer', never>
+				| V.RequiredBy<V.Literal.Number.Float.LeadingPoint<PythonMap>, 'fraction', never>
+				| V.RequiredBy<V.Literal.Number.Float.Scientific<PythonMap>, 'exponent' | 'integer' | 'marker', never>
+				| V.Literal.Number.Integer<PythonMap>
+				| V.Literal.Number.Integer.Big<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Binary<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.RequiredBy<V.Literal.Number.Integer.Hex<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.Number.Integer.Imaginary<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Octal<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.String<PythonMap>
+				| V.Literal.String.Bytes<PythonMap>
+				| V.Literal.String.Bytes.Multiline<PythonMap>
+				| V.Literal.String.Bytes.Raw<PythonMap>
+				| V.Literal.String.Bytes.Raw.Multiline<PythonMap>
+				| V.RequiredBy<V.Literal.String.Concatenated<PythonMap>, 'strings', never>
+				| V.Literal.String.Interpolated<PythonMap>
+				| V.Literal.String.Interpolated.Deferred<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Raw.Multiline<PythonMap>
+				| V.Literal.String.Multiline<PythonMap>
+				| V.Literal.String.Raw<PythonMap>
+				| V.Literal.String.Raw.Multiline<PythonMap>
+				| V.Literal.String.Unicode<PythonMap>
+				| V.RequiredBy<V.Pattern.Rest<PythonMap>, 'pattern', never>
+				| V.Unmapped<'python:as_pattern'>
+				| T.Attribute.Parsed
+				| T.Await.Parsed
+				| T.BinaryOperator.Parsed
+				| T.BooleanOperator.Parsed
+				| T.Call.Parsed
+				| T.ComparisonOperator.Parsed
+				| T.ConditionalExpression.Parsed
+				| T.FloatLeadingPoint.Parsed
+				| T.FloatPoint.Parsed
+				| T.FloatScientific.Parsed
+				| T.GeneratorExpression.Parsed
+				| T.IntegerBinary.Parsed
+				| T.IntegerDecimalPlain.Parsed
+				| T.IntegerHex.Parsed
+				| T.IntegerOctal.Parsed
+				| T.Lambda.Parsed
+				| T.ListComprehension.Parsed
+				| T.NamedExpression.Parsed
+				| T.NotOperator.Parsed
+				| T.ParenthesizedExpression.Parsed
+				| T.SetComprehension.Parsed
+				| T.String.Parsed
+				| T.Subscript.Parsed
+				| T.UnaryOperator.Parsed;
+		};
+		readonly 'expression.binary.matrix_multiply': {
+			readonly left:
+				| V.RequiredBy<V.Expression.Assignment<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Await<PythonMap>, 'expression', never>
+				| V.Expression.Binary<PythonMap>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Add<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Divide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Exponent<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.FloorDivide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Modulo<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Multiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Subtract<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.And<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Or<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Xor<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Chain<PythonMap>, 'comparators' | 'left', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Equal<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Greater<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.GreaterEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Less<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.LessEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual.Legacy<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.Is<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.IsNot<PythonMap>, 'left' | 'right', never>
+				| V.Expression.Binary.Logical<PythonMap>
+				| V.RequiredBy<V.Expression.Binary.Logical.And<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Logical.Or<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.MatrixMultiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.In<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.NotIn<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Left<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Right<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Call<PythonMap>, 'arguments' | 'function', never>
+				| V.RequiredBy<V.Expression.Call.Member<PythonMap>, 'arguments' | 'function', never>
+				| V.Expression.Collection.List<PythonMap>
+				| V.Expression.Collection.Map<PythonMap>
+				| V.RequiredBy<V.Expression.Collection.Set<PythonMap>, 'elements', never>
+				| V.Expression.Collection.Tuple<PythonMap>
+				| V.RequiredBy<V.Expression.Comprehension.Generator<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.List<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Map<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Set<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Conditional<PythonMap>, 'alternative' | 'condition' | 'consequence', never>
+				| V.RequiredBy<V.Expression.Lambda<PythonMap>, 'body', never>
+				| V.RequiredBy<V.Expression.Member<PythonMap>, 'object' | 'property', never>
+				| V.RequiredBy<V.Expression.Parenthesized<PythonMap>, 'expression', never>
+				| V.RequiredBy<V.Expression.Subscript<PythonMap>, 'index' | 'object', never>
+				| V.Expression.Unary<PythonMap>
+				| V.RequiredBy<V.Expression.Unary.BitwiseNot<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Negation<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Not<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Plus<PythonMap>, 'argument', never>
+				| V.Identifier<PythonMap>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name' | 'qualifier', never>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name', never>
+				| V.Literal.Boolean.False<PythonMap>
+				| V.Literal.Boolean.True<PythonMap>
+				| V.Literal.Ellipsis<PythonMap>
+				| V.Literal.Null<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Float<PythonMap>, 'integer', never>
+				| V.RequiredBy<V.Literal.Number.Float.LeadingPoint<PythonMap>, 'fraction', never>
+				| V.RequiredBy<V.Literal.Number.Float.Scientific<PythonMap>, 'exponent' | 'integer' | 'marker', never>
+				| V.Literal.Number.Integer<PythonMap>
+				| V.Literal.Number.Integer.Big<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Binary<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.RequiredBy<V.Literal.Number.Integer.Hex<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.Number.Integer.Imaginary<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Octal<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.String<PythonMap>
+				| V.Literal.String.Bytes<PythonMap>
+				| V.Literal.String.Bytes.Multiline<PythonMap>
+				| V.Literal.String.Bytes.Raw<PythonMap>
+				| V.Literal.String.Bytes.Raw.Multiline<PythonMap>
+				| V.RequiredBy<V.Literal.String.Concatenated<PythonMap>, 'strings', never>
+				| V.Literal.String.Interpolated<PythonMap>
+				| V.Literal.String.Interpolated.Deferred<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Raw.Multiline<PythonMap>
+				| V.Literal.String.Multiline<PythonMap>
+				| V.Literal.String.Raw<PythonMap>
+				| V.Literal.String.Raw.Multiline<PythonMap>
+				| V.Literal.String.Unicode<PythonMap>
+				| V.RequiredBy<V.Pattern.Rest<PythonMap>, 'pattern', never>
+				| T.Attribute.Parsed
+				| T.Await.Parsed
+				| T.BinaryOperator.Parsed
+				| T.Call.Parsed
+				| T.FloatLeadingPoint.Parsed
+				| T.FloatPoint.Parsed
+				| T.FloatScientific.Parsed
+				| T.GeneratorExpression.Parsed
+				| T.IntegerBinary.Parsed
+				| T.IntegerDecimalPlain.Parsed
+				| T.IntegerHex.Parsed
+				| T.IntegerOctal.Parsed
+				| T.ListComprehension.Parsed
+				| T.ParenthesizedExpression.Parsed
+				| T.SetComprehension.Parsed
+				| T.String.Parsed
+				| T.Subscript.Parsed
+				| T.UnaryOperator.Parsed;
+			readonly right:
+				| V.RequiredBy<V.Expression.Assignment<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Await<PythonMap>, 'expression', never>
+				| V.Expression.Binary<PythonMap>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Add<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Divide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Exponent<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.FloorDivide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Modulo<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Multiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Subtract<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.And<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Or<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Xor<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Chain<PythonMap>, 'comparators' | 'left', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Equal<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Greater<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.GreaterEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Less<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.LessEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual.Legacy<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.Is<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.IsNot<PythonMap>, 'left' | 'right', never>
+				| V.Expression.Binary.Logical<PythonMap>
+				| V.RequiredBy<V.Expression.Binary.Logical.And<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Logical.Or<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.MatrixMultiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.In<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.NotIn<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Left<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Right<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Call<PythonMap>, 'arguments' | 'function', never>
+				| V.RequiredBy<V.Expression.Call.Member<PythonMap>, 'arguments' | 'function', never>
+				| V.Expression.Collection.List<PythonMap>
+				| V.Expression.Collection.Map<PythonMap>
+				| V.RequiredBy<V.Expression.Collection.Set<PythonMap>, 'elements', never>
+				| V.Expression.Collection.Tuple<PythonMap>
+				| V.RequiredBy<V.Expression.Comprehension.Generator<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.List<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Map<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Set<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Conditional<PythonMap>, 'alternative' | 'condition' | 'consequence', never>
+				| V.RequiredBy<V.Expression.Lambda<PythonMap>, 'body', never>
+				| V.RequiredBy<V.Expression.Member<PythonMap>, 'object' | 'property', never>
+				| V.RequiredBy<V.Expression.Parenthesized<PythonMap>, 'expression', never>
+				| V.RequiredBy<V.Expression.Subscript<PythonMap>, 'index' | 'object', never>
+				| V.Expression.Unary<PythonMap>
+				| V.RequiredBy<V.Expression.Unary.BitwiseNot<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Negation<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Not<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Plus<PythonMap>, 'argument', never>
+				| V.Identifier<PythonMap>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name' | 'qualifier', never>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name', never>
+				| V.Literal.Boolean.False<PythonMap>
+				| V.Literal.Boolean.True<PythonMap>
+				| V.Literal.Ellipsis<PythonMap>
+				| V.Literal.Null<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Float<PythonMap>, 'integer', never>
+				| V.RequiredBy<V.Literal.Number.Float.LeadingPoint<PythonMap>, 'fraction', never>
+				| V.RequiredBy<V.Literal.Number.Float.Scientific<PythonMap>, 'exponent' | 'integer' | 'marker', never>
+				| V.Literal.Number.Integer<PythonMap>
+				| V.Literal.Number.Integer.Big<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Binary<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.RequiredBy<V.Literal.Number.Integer.Hex<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.Number.Integer.Imaginary<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Octal<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.String<PythonMap>
+				| V.Literal.String.Bytes<PythonMap>
+				| V.Literal.String.Bytes.Multiline<PythonMap>
+				| V.Literal.String.Bytes.Raw<PythonMap>
+				| V.Literal.String.Bytes.Raw.Multiline<PythonMap>
+				| V.RequiredBy<V.Literal.String.Concatenated<PythonMap>, 'strings', never>
+				| V.Literal.String.Interpolated<PythonMap>
+				| V.Literal.String.Interpolated.Deferred<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Raw.Multiline<PythonMap>
+				| V.Literal.String.Multiline<PythonMap>
+				| V.Literal.String.Raw<PythonMap>
+				| V.Literal.String.Raw.Multiline<PythonMap>
+				| V.Literal.String.Unicode<PythonMap>
+				| V.RequiredBy<V.Pattern.Rest<PythonMap>, 'pattern', never>
+				| T.Attribute.Parsed
+				| T.Await.Parsed
+				| T.BinaryOperator.Parsed
+				| T.Call.Parsed
+				| T.FloatLeadingPoint.Parsed
+				| T.FloatPoint.Parsed
+				| T.FloatScientific.Parsed
+				| T.GeneratorExpression.Parsed
+				| T.IntegerBinary.Parsed
+				| T.IntegerDecimalPlain.Parsed
+				| T.IntegerHex.Parsed
+				| T.IntegerOctal.Parsed
+				| T.ListComprehension.Parsed
+				| T.ParenthesizedExpression.Parsed
+				| T.SetComprehension.Parsed
+				| T.String.Parsed
+				| T.Subscript.Parsed
+				| T.UnaryOperator.Parsed;
+		};
+		readonly 'expression.binary.membership.in': {
+			readonly left:
+				| V.RequiredBy<V.Expression.Await<PythonMap>, 'expression', never>
+				| V.Expression.Binary<PythonMap>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Add<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Divide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Exponent<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.FloorDivide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Modulo<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Multiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Subtract<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.And<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Or<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Xor<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Chain<PythonMap>, 'comparators' | 'left', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Equal<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Greater<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.GreaterEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Less<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.LessEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual.Legacy<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.Is<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.IsNot<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.MatrixMultiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.In<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.NotIn<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Left<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Right<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Call<PythonMap>, 'arguments' | 'function', never>
+				| V.RequiredBy<V.Expression.Call.Member<PythonMap>, 'arguments' | 'function', never>
+				| V.Expression.Collection.List<PythonMap>
+				| V.Expression.Collection.Map<PythonMap>
+				| V.RequiredBy<V.Expression.Collection.Set<PythonMap>, 'elements', never>
+				| V.Expression.Collection.Tuple<PythonMap>
+				| V.RequiredBy<V.Expression.Comprehension.Generator<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.List<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Map<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Set<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Member<PythonMap>, 'object' | 'property', never>
+				| V.RequiredBy<V.Expression.Parenthesized<PythonMap>, 'expression', never>
+				| V.RequiredBy<V.Expression.Subscript<PythonMap>, 'index' | 'object', never>
+				| V.Expression.Unary<PythonMap>
+				| V.RequiredBy<V.Expression.Unary.BitwiseNot<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Negation<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Plus<PythonMap>, 'argument', never>
+				| V.Identifier<PythonMap>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name' | 'qualifier', never>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name', never>
+				| V.Literal.Boolean.False<PythonMap>
+				| V.Literal.Boolean.True<PythonMap>
+				| V.Literal.Ellipsis<PythonMap>
+				| V.Literal.Null<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Float<PythonMap>, 'integer', never>
+				| V.RequiredBy<V.Literal.Number.Float.LeadingPoint<PythonMap>, 'fraction', never>
+				| V.RequiredBy<V.Literal.Number.Float.Scientific<PythonMap>, 'exponent' | 'integer' | 'marker', never>
+				| V.Literal.Number.Integer<PythonMap>
+				| V.Literal.Number.Integer.Big<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Binary<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.RequiredBy<V.Literal.Number.Integer.Hex<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.Number.Integer.Imaginary<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Octal<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.String<PythonMap>
+				| V.Literal.String.Bytes<PythonMap>
+				| V.Literal.String.Bytes.Multiline<PythonMap>
+				| V.Literal.String.Bytes.Raw<PythonMap>
+				| V.Literal.String.Bytes.Raw.Multiline<PythonMap>
+				| V.RequiredBy<V.Literal.String.Concatenated<PythonMap>, 'strings', never>
+				| V.Literal.String.Interpolated<PythonMap>
+				| V.Literal.String.Interpolated.Deferred<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Raw.Multiline<PythonMap>
+				| V.Literal.String.Multiline<PythonMap>
+				| V.Literal.String.Raw<PythonMap>
+				| V.Literal.String.Raw.Multiline<PythonMap>
+				| V.Literal.String.Unicode<PythonMap>
+				| V.RequiredBy<V.Pattern.Rest<PythonMap>, 'pattern', never>
+				| T.Attribute.Parsed
+				| T.Await.Parsed
+				| T.BinaryOperator.Parsed
+				| T.Call.Parsed
+				| T.FloatLeadingPoint.Parsed
+				| T.FloatPoint.Parsed
+				| T.FloatScientific.Parsed
+				| T.GeneratorExpression.Parsed
+				| T.IntegerBinary.Parsed
+				| T.IntegerDecimalPlain.Parsed
+				| T.IntegerHex.Parsed
+				| T.IntegerOctal.Parsed
+				| T.ListComprehension.Parsed
+				| T.ParenthesizedExpression.Parsed
+				| T.SetComprehension.Parsed
+				| T.String.Parsed
+				| T.Subscript.Parsed
+				| T.UnaryOperator.Parsed;
+			readonly right:
+				| V.RequiredBy<V.Expression.Await<PythonMap>, 'expression', never>
+				| V.Expression.Binary<PythonMap>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Add<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Divide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Exponent<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.FloorDivide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Modulo<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Multiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Subtract<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.And<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Or<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Xor<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Chain<PythonMap>, 'comparators' | 'left', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Equal<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Greater<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.GreaterEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Less<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.LessEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual.Legacy<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.Is<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.IsNot<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.MatrixMultiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.In<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.NotIn<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Left<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Right<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Call<PythonMap>, 'arguments' | 'function', never>
+				| V.RequiredBy<V.Expression.Call.Member<PythonMap>, 'arguments' | 'function', never>
+				| V.Expression.Collection.List<PythonMap>
+				| V.Expression.Collection.Map<PythonMap>
+				| V.RequiredBy<V.Expression.Collection.Set<PythonMap>, 'elements', never>
+				| V.Expression.Collection.Tuple<PythonMap>
+				| V.RequiredBy<V.Expression.Comprehension.Generator<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.List<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Map<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Set<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Member<PythonMap>, 'object' | 'property', never>
+				| V.RequiredBy<V.Expression.Parenthesized<PythonMap>, 'expression', never>
+				| V.RequiredBy<V.Expression.Subscript<PythonMap>, 'index' | 'object', never>
+				| V.Expression.Unary<PythonMap>
+				| V.RequiredBy<V.Expression.Unary.BitwiseNot<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Negation<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Plus<PythonMap>, 'argument', never>
+				| V.Identifier<PythonMap>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name' | 'qualifier', never>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name', never>
+				| V.Literal.Boolean.False<PythonMap>
+				| V.Literal.Boolean.True<PythonMap>
+				| V.Literal.Ellipsis<PythonMap>
+				| V.Literal.Null<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Float<PythonMap>, 'integer', never>
+				| V.RequiredBy<V.Literal.Number.Float.LeadingPoint<PythonMap>, 'fraction', never>
+				| V.RequiredBy<V.Literal.Number.Float.Scientific<PythonMap>, 'exponent' | 'integer' | 'marker', never>
+				| V.Literal.Number.Integer<PythonMap>
+				| V.Literal.Number.Integer.Big<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Binary<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.RequiredBy<V.Literal.Number.Integer.Hex<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.Number.Integer.Imaginary<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Octal<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.String<PythonMap>
+				| V.Literal.String.Bytes<PythonMap>
+				| V.Literal.String.Bytes.Multiline<PythonMap>
+				| V.Literal.String.Bytes.Raw<PythonMap>
+				| V.Literal.String.Bytes.Raw.Multiline<PythonMap>
+				| V.RequiredBy<V.Literal.String.Concatenated<PythonMap>, 'strings', never>
+				| V.Literal.String.Interpolated<PythonMap>
+				| V.Literal.String.Interpolated.Deferred<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Raw.Multiline<PythonMap>
+				| V.Literal.String.Multiline<PythonMap>
+				| V.Literal.String.Raw<PythonMap>
+				| V.Literal.String.Raw.Multiline<PythonMap>
+				| V.Literal.String.Unicode<PythonMap>
+				| V.RequiredBy<V.Pattern.Rest<PythonMap>, 'pattern', never>
+				| T.Attribute.Parsed
+				| T.Await.Parsed
+				| T.BinaryOperator.Parsed
+				| T.Call.Parsed
+				| T.FloatLeadingPoint.Parsed
+				| T.FloatPoint.Parsed
+				| T.FloatScientific.Parsed
+				| T.GeneratorExpression.Parsed
+				| T.IntegerBinary.Parsed
+				| T.IntegerDecimalPlain.Parsed
+				| T.IntegerHex.Parsed
+				| T.IntegerOctal.Parsed
+				| T.ListComprehension.Parsed
+				| T.ParenthesizedExpression.Parsed
+				| T.SetComprehension.Parsed
+				| T.String.Parsed
+				| T.Subscript.Parsed
+				| T.UnaryOperator.Parsed;
+		};
 		readonly 'expression.binary.membership.not_in': {
 			readonly left:
 				| V.RequiredBy<V.Expression.Await<PythonMap>, 'expression', never>
@@ -3619,6 +11464,528 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Expression.Unary<PythonMap>
 				| V.RequiredBy<V.Expression.Unary.BitwiseNot<PythonMap>, 'argument', never>
 				| V.RequiredBy<V.Expression.Unary.Negation<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Plus<PythonMap>, 'argument', never>
+				| V.Identifier<PythonMap>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name' | 'qualifier', never>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name', never>
+				| V.Literal.Boolean.False<PythonMap>
+				| V.Literal.Boolean.True<PythonMap>
+				| V.Literal.Ellipsis<PythonMap>
+				| V.Literal.Null<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Float<PythonMap>, 'integer', never>
+				| V.RequiredBy<V.Literal.Number.Float.LeadingPoint<PythonMap>, 'fraction', never>
+				| V.RequiredBy<V.Literal.Number.Float.Scientific<PythonMap>, 'exponent' | 'integer' | 'marker', never>
+				| V.Literal.Number.Integer<PythonMap>
+				| V.Literal.Number.Integer.Big<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Binary<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.RequiredBy<V.Literal.Number.Integer.Hex<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.Number.Integer.Imaginary<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Octal<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.String<PythonMap>
+				| V.Literal.String.Bytes<PythonMap>
+				| V.Literal.String.Bytes.Multiline<PythonMap>
+				| V.Literal.String.Bytes.Raw<PythonMap>
+				| V.Literal.String.Bytes.Raw.Multiline<PythonMap>
+				| V.RequiredBy<V.Literal.String.Concatenated<PythonMap>, 'strings', never>
+				| V.Literal.String.Interpolated<PythonMap>
+				| V.Literal.String.Interpolated.Deferred<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Raw.Multiline<PythonMap>
+				| V.Literal.String.Multiline<PythonMap>
+				| V.Literal.String.Raw<PythonMap>
+				| V.Literal.String.Raw.Multiline<PythonMap>
+				| V.Literal.String.Unicode<PythonMap>
+				| V.RequiredBy<V.Pattern.Rest<PythonMap>, 'pattern', never>
+				| T.Attribute.Parsed
+				| T.Await.Parsed
+				| T.BinaryOperator.Parsed
+				| T.Call.Parsed
+				| T.FloatLeadingPoint.Parsed
+				| T.FloatPoint.Parsed
+				| T.FloatScientific.Parsed
+				| T.GeneratorExpression.Parsed
+				| T.IntegerBinary.Parsed
+				| T.IntegerDecimalPlain.Parsed
+				| T.IntegerHex.Parsed
+				| T.IntegerOctal.Parsed
+				| T.ListComprehension.Parsed
+				| T.ParenthesizedExpression.Parsed
+				| T.SetComprehension.Parsed
+				| T.String.Parsed
+				| T.Subscript.Parsed
+				| T.UnaryOperator.Parsed;
+			readonly right:
+				| V.RequiredBy<V.Expression.Await<PythonMap>, 'expression', never>
+				| V.Expression.Binary<PythonMap>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Add<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Divide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Exponent<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.FloorDivide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Modulo<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Multiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Subtract<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.And<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Or<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Xor<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Chain<PythonMap>, 'comparators' | 'left', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Equal<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Greater<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.GreaterEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Less<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.LessEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual.Legacy<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.Is<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.IsNot<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.MatrixMultiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.In<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.NotIn<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Left<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Right<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Call<PythonMap>, 'arguments' | 'function', never>
+				| V.RequiredBy<V.Expression.Call.Member<PythonMap>, 'arguments' | 'function', never>
+				| V.Expression.Collection.List<PythonMap>
+				| V.Expression.Collection.Map<PythonMap>
+				| V.RequiredBy<V.Expression.Collection.Set<PythonMap>, 'elements', never>
+				| V.Expression.Collection.Tuple<PythonMap>
+				| V.RequiredBy<V.Expression.Comprehension.Generator<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.List<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Map<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Set<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Member<PythonMap>, 'object' | 'property', never>
+				| V.RequiredBy<V.Expression.Parenthesized<PythonMap>, 'expression', never>
+				| V.RequiredBy<V.Expression.Subscript<PythonMap>, 'index' | 'object', never>
+				| V.Expression.Unary<PythonMap>
+				| V.RequiredBy<V.Expression.Unary.BitwiseNot<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Negation<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Plus<PythonMap>, 'argument', never>
+				| V.Identifier<PythonMap>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name' | 'qualifier', never>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name', never>
+				| V.Literal.Boolean.False<PythonMap>
+				| V.Literal.Boolean.True<PythonMap>
+				| V.Literal.Ellipsis<PythonMap>
+				| V.Literal.Null<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Float<PythonMap>, 'integer', never>
+				| V.RequiredBy<V.Literal.Number.Float.LeadingPoint<PythonMap>, 'fraction', never>
+				| V.RequiredBy<V.Literal.Number.Float.Scientific<PythonMap>, 'exponent' | 'integer' | 'marker', never>
+				| V.Literal.Number.Integer<PythonMap>
+				| V.Literal.Number.Integer.Big<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Binary<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.RequiredBy<V.Literal.Number.Integer.Hex<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.Number.Integer.Imaginary<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Octal<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.String<PythonMap>
+				| V.Literal.String.Bytes<PythonMap>
+				| V.Literal.String.Bytes.Multiline<PythonMap>
+				| V.Literal.String.Bytes.Raw<PythonMap>
+				| V.Literal.String.Bytes.Raw.Multiline<PythonMap>
+				| V.RequiredBy<V.Literal.String.Concatenated<PythonMap>, 'strings', never>
+				| V.Literal.String.Interpolated<PythonMap>
+				| V.Literal.String.Interpolated.Deferred<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Raw.Multiline<PythonMap>
+				| V.Literal.String.Multiline<PythonMap>
+				| V.Literal.String.Raw<PythonMap>
+				| V.Literal.String.Raw.Multiline<PythonMap>
+				| V.Literal.String.Unicode<PythonMap>
+				| V.RequiredBy<V.Pattern.Rest<PythonMap>, 'pattern', never>
+				| T.Attribute.Parsed
+				| T.Await.Parsed
+				| T.BinaryOperator.Parsed
+				| T.Call.Parsed
+				| T.FloatLeadingPoint.Parsed
+				| T.FloatPoint.Parsed
+				| T.FloatScientific.Parsed
+				| T.GeneratorExpression.Parsed
+				| T.IntegerBinary.Parsed
+				| T.IntegerDecimalPlain.Parsed
+				| T.IntegerHex.Parsed
+				| T.IntegerOctal.Parsed
+				| T.ListComprehension.Parsed
+				| T.ParenthesizedExpression.Parsed
+				| T.SetComprehension.Parsed
+				| T.String.Parsed
+				| T.Subscript.Parsed
+				| T.UnaryOperator.Parsed;
+		};
+		readonly 'expression.binary.shift.left': {
+			readonly left:
+				| V.RequiredBy<V.Expression.Assignment<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Await<PythonMap>, 'expression', never>
+				| V.Expression.Binary<PythonMap>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Add<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Divide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Exponent<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.FloorDivide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Modulo<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Multiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Subtract<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.And<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Or<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Xor<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Chain<PythonMap>, 'comparators' | 'left', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Equal<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Greater<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.GreaterEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Less<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.LessEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual.Legacy<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.Is<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.IsNot<PythonMap>, 'left' | 'right', never>
+				| V.Expression.Binary.Logical<PythonMap>
+				| V.RequiredBy<V.Expression.Binary.Logical.And<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Logical.Or<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.MatrixMultiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.In<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.NotIn<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Left<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Right<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Call<PythonMap>, 'arguments' | 'function', never>
+				| V.RequiredBy<V.Expression.Call.Member<PythonMap>, 'arguments' | 'function', never>
+				| V.Expression.Collection.List<PythonMap>
+				| V.Expression.Collection.Map<PythonMap>
+				| V.RequiredBy<V.Expression.Collection.Set<PythonMap>, 'elements', never>
+				| V.Expression.Collection.Tuple<PythonMap>
+				| V.RequiredBy<V.Expression.Comprehension.Generator<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.List<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Map<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Set<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Conditional<PythonMap>, 'alternative' | 'condition' | 'consequence', never>
+				| V.RequiredBy<V.Expression.Lambda<PythonMap>, 'body', never>
+				| V.RequiredBy<V.Expression.Member<PythonMap>, 'object' | 'property', never>
+				| V.RequiredBy<V.Expression.Parenthesized<PythonMap>, 'expression', never>
+				| V.RequiredBy<V.Expression.Subscript<PythonMap>, 'index' | 'object', never>
+				| V.Expression.Unary<PythonMap>
+				| V.RequiredBy<V.Expression.Unary.BitwiseNot<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Negation<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Not<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Plus<PythonMap>, 'argument', never>
+				| V.Identifier<PythonMap>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name' | 'qualifier', never>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name', never>
+				| V.Literal.Boolean.False<PythonMap>
+				| V.Literal.Boolean.True<PythonMap>
+				| V.Literal.Ellipsis<PythonMap>
+				| V.Literal.Null<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Float<PythonMap>, 'integer', never>
+				| V.RequiredBy<V.Literal.Number.Float.LeadingPoint<PythonMap>, 'fraction', never>
+				| V.RequiredBy<V.Literal.Number.Float.Scientific<PythonMap>, 'exponent' | 'integer' | 'marker', never>
+				| V.Literal.Number.Integer<PythonMap>
+				| V.Literal.Number.Integer.Big<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Binary<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.RequiredBy<V.Literal.Number.Integer.Hex<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.Number.Integer.Imaginary<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Octal<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.String<PythonMap>
+				| V.Literal.String.Bytes<PythonMap>
+				| V.Literal.String.Bytes.Multiline<PythonMap>
+				| V.Literal.String.Bytes.Raw<PythonMap>
+				| V.Literal.String.Bytes.Raw.Multiline<PythonMap>
+				| V.RequiredBy<V.Literal.String.Concatenated<PythonMap>, 'strings', never>
+				| V.Literal.String.Interpolated<PythonMap>
+				| V.Literal.String.Interpolated.Deferred<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Raw.Multiline<PythonMap>
+				| V.Literal.String.Multiline<PythonMap>
+				| V.Literal.String.Raw<PythonMap>
+				| V.Literal.String.Raw.Multiline<PythonMap>
+				| V.Literal.String.Unicode<PythonMap>
+				| V.RequiredBy<V.Pattern.Rest<PythonMap>, 'pattern', never>
+				| T.Attribute.Parsed
+				| T.Await.Parsed
+				| T.BinaryOperator.Parsed
+				| T.Call.Parsed
+				| T.FloatLeadingPoint.Parsed
+				| T.FloatPoint.Parsed
+				| T.FloatScientific.Parsed
+				| T.GeneratorExpression.Parsed
+				| T.IntegerBinary.Parsed
+				| T.IntegerDecimalPlain.Parsed
+				| T.IntegerHex.Parsed
+				| T.IntegerOctal.Parsed
+				| T.ListComprehension.Parsed
+				| T.ParenthesizedExpression.Parsed
+				| T.SetComprehension.Parsed
+				| T.String.Parsed
+				| T.Subscript.Parsed
+				| T.UnaryOperator.Parsed;
+			readonly right:
+				| V.RequiredBy<V.Expression.Assignment<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Await<PythonMap>, 'expression', never>
+				| V.Expression.Binary<PythonMap>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Add<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Divide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Exponent<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.FloorDivide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Modulo<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Multiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Subtract<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.And<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Or<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Xor<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Chain<PythonMap>, 'comparators' | 'left', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Equal<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Greater<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.GreaterEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Less<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.LessEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual.Legacy<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.Is<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.IsNot<PythonMap>, 'left' | 'right', never>
+				| V.Expression.Binary.Logical<PythonMap>
+				| V.RequiredBy<V.Expression.Binary.Logical.And<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Logical.Or<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.MatrixMultiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.In<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.NotIn<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Left<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Right<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Call<PythonMap>, 'arguments' | 'function', never>
+				| V.RequiredBy<V.Expression.Call.Member<PythonMap>, 'arguments' | 'function', never>
+				| V.Expression.Collection.List<PythonMap>
+				| V.Expression.Collection.Map<PythonMap>
+				| V.RequiredBy<V.Expression.Collection.Set<PythonMap>, 'elements', never>
+				| V.Expression.Collection.Tuple<PythonMap>
+				| V.RequiredBy<V.Expression.Comprehension.Generator<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.List<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Map<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Set<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Conditional<PythonMap>, 'alternative' | 'condition' | 'consequence', never>
+				| V.RequiredBy<V.Expression.Lambda<PythonMap>, 'body', never>
+				| V.RequiredBy<V.Expression.Member<PythonMap>, 'object' | 'property', never>
+				| V.RequiredBy<V.Expression.Parenthesized<PythonMap>, 'expression', never>
+				| V.RequiredBy<V.Expression.Subscript<PythonMap>, 'index' | 'object', never>
+				| V.Expression.Unary<PythonMap>
+				| V.RequiredBy<V.Expression.Unary.BitwiseNot<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Negation<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Not<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Plus<PythonMap>, 'argument', never>
+				| V.Identifier<PythonMap>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name' | 'qualifier', never>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name', never>
+				| V.Literal.Boolean.False<PythonMap>
+				| V.Literal.Boolean.True<PythonMap>
+				| V.Literal.Ellipsis<PythonMap>
+				| V.Literal.Null<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Float<PythonMap>, 'integer', never>
+				| V.RequiredBy<V.Literal.Number.Float.LeadingPoint<PythonMap>, 'fraction', never>
+				| V.RequiredBy<V.Literal.Number.Float.Scientific<PythonMap>, 'exponent' | 'integer' | 'marker', never>
+				| V.Literal.Number.Integer<PythonMap>
+				| V.Literal.Number.Integer.Big<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Binary<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.RequiredBy<V.Literal.Number.Integer.Hex<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.Number.Integer.Imaginary<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Octal<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.String<PythonMap>
+				| V.Literal.String.Bytes<PythonMap>
+				| V.Literal.String.Bytes.Multiline<PythonMap>
+				| V.Literal.String.Bytes.Raw<PythonMap>
+				| V.Literal.String.Bytes.Raw.Multiline<PythonMap>
+				| V.RequiredBy<V.Literal.String.Concatenated<PythonMap>, 'strings', never>
+				| V.Literal.String.Interpolated<PythonMap>
+				| V.Literal.String.Interpolated.Deferred<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Raw.Multiline<PythonMap>
+				| V.Literal.String.Multiline<PythonMap>
+				| V.Literal.String.Raw<PythonMap>
+				| V.Literal.String.Raw.Multiline<PythonMap>
+				| V.Literal.String.Unicode<PythonMap>
+				| V.RequiredBy<V.Pattern.Rest<PythonMap>, 'pattern', never>
+				| T.Attribute.Parsed
+				| T.Await.Parsed
+				| T.BinaryOperator.Parsed
+				| T.Call.Parsed
+				| T.FloatLeadingPoint.Parsed
+				| T.FloatPoint.Parsed
+				| T.FloatScientific.Parsed
+				| T.GeneratorExpression.Parsed
+				| T.IntegerBinary.Parsed
+				| T.IntegerDecimalPlain.Parsed
+				| T.IntegerHex.Parsed
+				| T.IntegerOctal.Parsed
+				| T.ListComprehension.Parsed
+				| T.ParenthesizedExpression.Parsed
+				| T.SetComprehension.Parsed
+				| T.String.Parsed
+				| T.Subscript.Parsed
+				| T.UnaryOperator.Parsed;
+		};
+		readonly 'expression.binary.shift.right': {
+			readonly left:
+				| V.RequiredBy<V.Expression.Assignment<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Await<PythonMap>, 'expression', never>
+				| V.Expression.Binary<PythonMap>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Add<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Divide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Exponent<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.FloorDivide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Modulo<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Multiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Subtract<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.And<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Or<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Xor<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Chain<PythonMap>, 'comparators' | 'left', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Equal<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Greater<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.GreaterEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Less<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.LessEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual.Legacy<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.Is<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.IsNot<PythonMap>, 'left' | 'right', never>
+				| V.Expression.Binary.Logical<PythonMap>
+				| V.RequiredBy<V.Expression.Binary.Logical.And<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Logical.Or<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.MatrixMultiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.In<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.NotIn<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Left<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Right<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Call<PythonMap>, 'arguments' | 'function', never>
+				| V.RequiredBy<V.Expression.Call.Member<PythonMap>, 'arguments' | 'function', never>
+				| V.Expression.Collection.List<PythonMap>
+				| V.Expression.Collection.Map<PythonMap>
+				| V.RequiredBy<V.Expression.Collection.Set<PythonMap>, 'elements', never>
+				| V.Expression.Collection.Tuple<PythonMap>
+				| V.RequiredBy<V.Expression.Comprehension.Generator<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.List<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Map<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Set<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Conditional<PythonMap>, 'alternative' | 'condition' | 'consequence', never>
+				| V.RequiredBy<V.Expression.Lambda<PythonMap>, 'body', never>
+				| V.RequiredBy<V.Expression.Member<PythonMap>, 'object' | 'property', never>
+				| V.RequiredBy<V.Expression.Parenthesized<PythonMap>, 'expression', never>
+				| V.RequiredBy<V.Expression.Subscript<PythonMap>, 'index' | 'object', never>
+				| V.Expression.Unary<PythonMap>
+				| V.RequiredBy<V.Expression.Unary.BitwiseNot<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Negation<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Not<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Plus<PythonMap>, 'argument', never>
+				| V.Identifier<PythonMap>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name' | 'qualifier', never>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name', never>
+				| V.Literal.Boolean.False<PythonMap>
+				| V.Literal.Boolean.True<PythonMap>
+				| V.Literal.Ellipsis<PythonMap>
+				| V.Literal.Null<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Float<PythonMap>, 'integer', never>
+				| V.RequiredBy<V.Literal.Number.Float.LeadingPoint<PythonMap>, 'fraction', never>
+				| V.RequiredBy<V.Literal.Number.Float.Scientific<PythonMap>, 'exponent' | 'integer' | 'marker', never>
+				| V.Literal.Number.Integer<PythonMap>
+				| V.Literal.Number.Integer.Big<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Binary<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.RequiredBy<V.Literal.Number.Integer.Hex<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.Number.Integer.Imaginary<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Octal<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.String<PythonMap>
+				| V.Literal.String.Bytes<PythonMap>
+				| V.Literal.String.Bytes.Multiline<PythonMap>
+				| V.Literal.String.Bytes.Raw<PythonMap>
+				| V.Literal.String.Bytes.Raw.Multiline<PythonMap>
+				| V.RequiredBy<V.Literal.String.Concatenated<PythonMap>, 'strings', never>
+				| V.Literal.String.Interpolated<PythonMap>
+				| V.Literal.String.Interpolated.Deferred<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Raw.Multiline<PythonMap>
+				| V.Literal.String.Multiline<PythonMap>
+				| V.Literal.String.Raw<PythonMap>
+				| V.Literal.String.Raw.Multiline<PythonMap>
+				| V.Literal.String.Unicode<PythonMap>
+				| V.RequiredBy<V.Pattern.Rest<PythonMap>, 'pattern', never>
+				| T.Attribute.Parsed
+				| T.Await.Parsed
+				| T.BinaryOperator.Parsed
+				| T.Call.Parsed
+				| T.FloatLeadingPoint.Parsed
+				| T.FloatPoint.Parsed
+				| T.FloatScientific.Parsed
+				| T.GeneratorExpression.Parsed
+				| T.IntegerBinary.Parsed
+				| T.IntegerDecimalPlain.Parsed
+				| T.IntegerHex.Parsed
+				| T.IntegerOctal.Parsed
+				| T.ListComprehension.Parsed
+				| T.ParenthesizedExpression.Parsed
+				| T.SetComprehension.Parsed
+				| T.String.Parsed
+				| T.Subscript.Parsed
+				| T.UnaryOperator.Parsed;
+			readonly right:
+				| V.RequiredBy<V.Expression.Assignment<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Await<PythonMap>, 'expression', never>
+				| V.Expression.Binary<PythonMap>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Add<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Divide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Exponent<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.FloorDivide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Modulo<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Multiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Subtract<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.And<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Or<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Xor<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Chain<PythonMap>, 'comparators' | 'left', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Equal<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Greater<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.GreaterEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Less<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.LessEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual.Legacy<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.Is<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.IsNot<PythonMap>, 'left' | 'right', never>
+				| V.Expression.Binary.Logical<PythonMap>
+				| V.RequiredBy<V.Expression.Binary.Logical.And<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Logical.Or<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.MatrixMultiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.In<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.NotIn<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Left<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Right<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Call<PythonMap>, 'arguments' | 'function', never>
+				| V.RequiredBy<V.Expression.Call.Member<PythonMap>, 'arguments' | 'function', never>
+				| V.Expression.Collection.List<PythonMap>
+				| V.Expression.Collection.Map<PythonMap>
+				| V.RequiredBy<V.Expression.Collection.Set<PythonMap>, 'elements', never>
+				| V.Expression.Collection.Tuple<PythonMap>
+				| V.RequiredBy<V.Expression.Comprehension.Generator<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.List<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Map<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Set<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Conditional<PythonMap>, 'alternative' | 'condition' | 'consequence', never>
+				| V.RequiredBy<V.Expression.Lambda<PythonMap>, 'body', never>
+				| V.RequiredBy<V.Expression.Member<PythonMap>, 'object' | 'property', never>
+				| V.RequiredBy<V.Expression.Parenthesized<PythonMap>, 'expression', never>
+				| V.RequiredBy<V.Expression.Subscript<PythonMap>, 'index' | 'object', never>
+				| V.Expression.Unary<PythonMap>
+				| V.RequiredBy<V.Expression.Unary.BitwiseNot<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Negation<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Not<PythonMap>, 'argument', never>
 				| V.RequiredBy<V.Expression.Unary.Plus<PythonMap>, 'argument', never>
 				| V.Identifier<PythonMap>
 				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name' | 'qualifier', never>
@@ -4332,6 +12699,97 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Literal.String.Raw.Multiline<PythonMap>
 				| V.Literal.String.Unicode<PythonMap>
 				| V.RequiredBy<V.Pattern.Rest<PythonMap>, 'pattern', never>
+				| V.Unmapped<'python:as_pattern'>;
+		};
+		readonly 'expression.collection.tuple.bare': {
+			readonly elements:
+				| V.RequiredBy<V.Expression.Assignment<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Await<PythonMap>, 'expression', never>
+				| V.Expression.Binary<PythonMap>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Add<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Divide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Exponent<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.FloorDivide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Modulo<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Multiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Subtract<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.And<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Or<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Xor<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Chain<PythonMap>, 'comparators' | 'left', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Equal<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Greater<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.GreaterEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Less<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.LessEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual.Legacy<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.Is<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.IsNot<PythonMap>, 'left' | 'right', never>
+				| V.Expression.Binary.Logical<PythonMap>
+				| V.RequiredBy<V.Expression.Binary.Logical.And<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Logical.Or<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.MatrixMultiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.In<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.NotIn<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Left<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Right<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Call<PythonMap>, 'arguments' | 'function', never>
+				| V.RequiredBy<V.Expression.Call.Member<PythonMap>, 'arguments' | 'function', never>
+				| V.Expression.Collection.List<PythonMap>
+				| V.Expression.Collection.Map<PythonMap>
+				| V.RequiredBy<V.Expression.Collection.Set<PythonMap>, 'elements', never>
+				| V.Expression.Collection.Tuple<PythonMap>
+				| V.RequiredBy<V.Expression.Comprehension.Generator<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.List<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Map<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Set<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Conditional<PythonMap>, 'alternative' | 'condition' | 'consequence', never>
+				| V.RequiredBy<V.Expression.Lambda<PythonMap>, 'body', never>
+				| V.RequiredBy<V.Expression.Member<PythonMap>, 'object' | 'property', never>
+				| V.RequiredBy<V.Expression.Parenthesized<PythonMap>, 'expression', never>
+				| V.Expression.Slice<PythonMap>
+				| V.RequiredBy<V.Expression.Subscript<PythonMap>, 'index' | 'object', never>
+				| V.Expression.Unary<PythonMap>
+				| V.RequiredBy<V.Expression.Unary.BitwiseNot<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Negation<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Not<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Plus<PythonMap>, 'argument', never>
+				| V.Identifier<PythonMap>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name' | 'qualifier', never>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name', never>
+				| V.Literal.Boolean.False<PythonMap>
+				| V.Literal.Boolean.True<PythonMap>
+				| V.Literal.Ellipsis<PythonMap>
+				| V.Literal.Null<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Float<PythonMap>, 'integer', never>
+				| V.RequiredBy<V.Literal.Number.Float.LeadingPoint<PythonMap>, 'fraction', never>
+				| V.RequiredBy<V.Literal.Number.Float.Scientific<PythonMap>, 'exponent' | 'integer' | 'marker', never>
+				| V.Literal.Number.Integer<PythonMap>
+				| V.Literal.Number.Integer.Big<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Binary<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.RequiredBy<V.Literal.Number.Integer.Hex<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.Number.Integer.Imaginary<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Octal<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.String<PythonMap>
+				| V.Literal.String.Bytes<PythonMap>
+				| V.Literal.String.Bytes.Multiline<PythonMap>
+				| V.Literal.String.Bytes.Raw<PythonMap>
+				| V.Literal.String.Bytes.Raw.Multiline<PythonMap>
+				| V.RequiredBy<V.Literal.String.Concatenated<PythonMap>, 'strings', never>
+				| V.Literal.String.Interpolated<PythonMap>
+				| V.Literal.String.Interpolated.Deferred<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Raw.Multiline<PythonMap>
+				| V.Literal.String.Multiline<PythonMap>
+				| V.Literal.String.Raw<PythonMap>
+				| V.Literal.String.Raw.Multiline<PythonMap>
+				| V.Literal.String.Unicode<PythonMap>
+				| V.RequiredBy<V.Pattern.Rest<PythonMap>, 'pattern', never>
 				| V.Unmapped<'python:as_pattern'>
 				| T.Attribute.Parsed
 				| T.Await.Parsed
@@ -4472,6 +12930,7 @@ export interface PythonMap extends V.GrammarMap {
 				| T.String.Parsed
 				| T.Subscript.Parsed
 				| T.UnaryOperator.Parsed;
+			readonly clauses: V.RequiredBy<V.Clause.Comprehension<PythonMap>, 'contents', never>;
 		};
 		readonly 'expression.comprehension.list': {
 			readonly body:
@@ -4586,6 +13045,11 @@ export interface PythonMap extends V.GrammarMap {
 				| T.String.Parsed
 				| T.Subscript.Parsed
 				| T.UnaryOperator.Parsed;
+			readonly clauses: V.RequiredBy<V.Clause.Comprehension<PythonMap>, 'contents', never>;
+		};
+		readonly 'expression.comprehension.map': {
+			readonly body: V.RequiredBy<V.Element.Pair<PythonMap>, 'key' | 'value', never> | T.Pair.Parsed;
+			readonly clauses: V.RequiredBy<V.Clause.Comprehension<PythonMap>, 'contents', never>;
 		};
 		readonly 'expression.comprehension.set': {
 			readonly body:
@@ -4700,6 +13164,7 @@ export interface PythonMap extends V.GrammarMap {
 				| T.String.Parsed
 				| T.Subscript.Parsed
 				| T.UnaryOperator.Parsed;
+			readonly clauses: V.RequiredBy<V.Clause.Comprehension<PythonMap>, 'contents', never>;
 		};
 		readonly 'expression.conditional': {
 			readonly alternative:
@@ -5158,12 +13623,202 @@ export interface PythonMap extends V.GrammarMap {
 				| T.Subscript.Parsed
 				| T.UnaryOperator.Parsed
 				| T.Yield.Parsed;
+			readonly formatSpecifier: V.Expression.Interpolation.Format<PythonMap>;
+			readonly typeConversion: V.Expression.Interpolation.Conversion<PythonMap>;
+		};
+		readonly 'expression.interpolation.conversion': {
+			readonly expression:
+				| V.RequiredBy<V.Expression.Assignment<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Await<PythonMap>, 'expression', never>
+				| V.Expression.Binary<PythonMap>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Add<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Divide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Exponent<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.FloorDivide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Modulo<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Multiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Subtract<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.And<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Or<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Xor<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Chain<PythonMap>, 'comparators' | 'left', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Equal<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Greater<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.GreaterEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Less<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.LessEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual.Legacy<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.Is<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.IsNot<PythonMap>, 'left' | 'right', never>
+				| V.Expression.Binary.Logical<PythonMap>
+				| V.RequiredBy<V.Expression.Binary.Logical.And<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Logical.Or<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.MatrixMultiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.In<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.NotIn<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Left<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Right<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Call<PythonMap>, 'arguments' | 'function', never>
+				| V.RequiredBy<V.Expression.Call.Member<PythonMap>, 'arguments' | 'function', never>
+				| V.Expression.Collection.List<PythonMap>
+				| V.Expression.Collection.Map<PythonMap>
+				| V.RequiredBy<V.Expression.Collection.Set<PythonMap>, 'elements', never>
+				| V.Expression.Collection.Tuple<PythonMap>
+				| V.RequiredBy<V.Expression.Collection.Tuple.Bare<PythonMap>, 'elements', never>
+				| V.RequiredBy<V.Expression.Comprehension.Generator<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.List<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Map<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Set<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Conditional<PythonMap>, 'alternative' | 'condition' | 'consequence', never>
+				| V.RequiredBy<V.Expression.Lambda<PythonMap>, 'body', never>
+				| V.RequiredBy<V.Expression.Member<PythonMap>, 'object' | 'property', never>
+				| V.RequiredBy<V.Expression.Parenthesized<PythonMap>, 'expression', never>
+				| V.RequiredBy<V.Expression.Subscript<PythonMap>, 'index' | 'object', never>
+				| V.Expression.Unary<PythonMap>
+				| V.RequiredBy<V.Expression.Unary.BitwiseNot<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Negation<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Not<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Plus<PythonMap>, 'argument', never>
+				| V.Expression.Yield<PythonMap>
+				| V.RequiredBy<V.Expression.Yield.Delegate<PythonMap>, 'expression', never>
+				| V.Identifier<PythonMap>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name' | 'qualifier', never>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name', never>
+				| V.Literal.Boolean.False<PythonMap>
+				| V.Literal.Boolean.True<PythonMap>
+				| V.Literal.Ellipsis<PythonMap>
+				| V.Literal.Null<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Float<PythonMap>, 'integer', never>
+				| V.RequiredBy<V.Literal.Number.Float.LeadingPoint<PythonMap>, 'fraction', never>
+				| V.RequiredBy<V.Literal.Number.Float.Scientific<PythonMap>, 'exponent' | 'integer' | 'marker', never>
+				| V.Literal.Number.Integer<PythonMap>
+				| V.Literal.Number.Integer.Big<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Binary<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.RequiredBy<V.Literal.Number.Integer.Hex<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.Number.Integer.Imaginary<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Octal<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.String<PythonMap>
+				| V.Literal.String.Bytes<PythonMap>
+				| V.Literal.String.Bytes.Multiline<PythonMap>
+				| V.Literal.String.Bytes.Raw<PythonMap>
+				| V.Literal.String.Bytes.Raw.Multiline<PythonMap>
+				| V.RequiredBy<V.Literal.String.Concatenated<PythonMap>, 'strings', never>
+				| V.Literal.String.Interpolated<PythonMap>
+				| V.Literal.String.Interpolated.Deferred<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Raw.Multiline<PythonMap>
+				| V.Literal.String.Multiline<PythonMap>
+				| V.Literal.String.Raw<PythonMap>
+				| V.Literal.String.Raw.Multiline<PythonMap>
+				| V.Literal.String.Unicode<PythonMap>
+				| V.RequiredBy<V.Pattern.Rest<PythonMap>, 'pattern', never>
+				| V.RequiredBy<V.Pattern.Tuple.Bare<PythonMap>, 'elements', never>;
+			readonly formatSpecifier: V.Expression.Interpolation.Format<PythonMap>;
+			readonly typeConversion: V.Expression.Interpolation.Conversion<PythonMap>;
 		};
 		readonly 'expression.interpolation.format': {
 			readonly elements:
 				| V.RequiredBy<V.Expression.Interpolation<PythonMap>, 'expression', never>
 				| '[^{}\\n]+'
 				| T.FormatExpression.Parsed;
+			readonly expression:
+				| V.RequiredBy<V.Expression.Assignment<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Await<PythonMap>, 'expression', never>
+				| V.Expression.Binary<PythonMap>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Add<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Divide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Exponent<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.FloorDivide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Modulo<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Multiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Subtract<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.And<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Or<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Xor<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Chain<PythonMap>, 'comparators' | 'left', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Equal<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Greater<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.GreaterEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Less<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.LessEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual.Legacy<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.Is<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.IsNot<PythonMap>, 'left' | 'right', never>
+				| V.Expression.Binary.Logical<PythonMap>
+				| V.RequiredBy<V.Expression.Binary.Logical.And<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Logical.Or<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.MatrixMultiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.In<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.NotIn<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Left<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Right<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Call<PythonMap>, 'arguments' | 'function', never>
+				| V.RequiredBy<V.Expression.Call.Member<PythonMap>, 'arguments' | 'function', never>
+				| V.Expression.Collection.List<PythonMap>
+				| V.Expression.Collection.Map<PythonMap>
+				| V.RequiredBy<V.Expression.Collection.Set<PythonMap>, 'elements', never>
+				| V.Expression.Collection.Tuple<PythonMap>
+				| V.RequiredBy<V.Expression.Collection.Tuple.Bare<PythonMap>, 'elements', never>
+				| V.RequiredBy<V.Expression.Comprehension.Generator<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.List<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Map<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Set<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Conditional<PythonMap>, 'alternative' | 'condition' | 'consequence', never>
+				| V.RequiredBy<V.Expression.Lambda<PythonMap>, 'body', never>
+				| V.RequiredBy<V.Expression.Member<PythonMap>, 'object' | 'property', never>
+				| V.RequiredBy<V.Expression.Parenthesized<PythonMap>, 'expression', never>
+				| V.RequiredBy<V.Expression.Subscript<PythonMap>, 'index' | 'object', never>
+				| V.Expression.Unary<PythonMap>
+				| V.RequiredBy<V.Expression.Unary.BitwiseNot<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Negation<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Not<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Plus<PythonMap>, 'argument', never>
+				| V.Expression.Yield<PythonMap>
+				| V.RequiredBy<V.Expression.Yield.Delegate<PythonMap>, 'expression', never>
+				| V.Identifier<PythonMap>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name' | 'qualifier', never>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name', never>
+				| V.Literal.Boolean.False<PythonMap>
+				| V.Literal.Boolean.True<PythonMap>
+				| V.Literal.Ellipsis<PythonMap>
+				| V.Literal.Null<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Float<PythonMap>, 'integer', never>
+				| V.RequiredBy<V.Literal.Number.Float.LeadingPoint<PythonMap>, 'fraction', never>
+				| V.RequiredBy<V.Literal.Number.Float.Scientific<PythonMap>, 'exponent' | 'integer' | 'marker', never>
+				| V.Literal.Number.Integer<PythonMap>
+				| V.Literal.Number.Integer.Big<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Binary<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.RequiredBy<V.Literal.Number.Integer.Hex<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.Number.Integer.Imaginary<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Octal<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.String<PythonMap>
+				| V.Literal.String.Bytes<PythonMap>
+				| V.Literal.String.Bytes.Multiline<PythonMap>
+				| V.Literal.String.Bytes.Raw<PythonMap>
+				| V.Literal.String.Bytes.Raw.Multiline<PythonMap>
+				| V.RequiredBy<V.Literal.String.Concatenated<PythonMap>, 'strings', never>
+				| V.Literal.String.Interpolated<PythonMap>
+				| V.Literal.String.Interpolated.Deferred<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Raw.Multiline<PythonMap>
+				| V.Literal.String.Multiline<PythonMap>
+				| V.Literal.String.Raw<PythonMap>
+				| V.Literal.String.Raw.Multiline<PythonMap>
+				| V.Literal.String.Unicode<PythonMap>
+				| V.RequiredBy<V.Pattern.Rest<PythonMap>, 'pattern', never>
+				| V.RequiredBy<V.Pattern.Tuple.Bare<PythonMap>, 'elements', never>;
+			readonly formatSpecifier: V.Expression.Interpolation.Format<PythonMap>;
+			readonly typeConversion: V.Expression.Interpolation.Conversion<PythonMap>;
 		};
 		readonly 'expression.lambda': {
 			readonly body:
@@ -6106,6 +14761,327 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Literal.String.Raw.Multiline<PythonMap>
 				| V.Literal.String.Unicode<PythonMap>
 				| V.RequiredBy<V.Pattern.Rest<PythonMap>, 'pattern', never>
+				| T.Attribute.Parsed
+				| T.Await.Parsed
+				| T.BinaryOperator.Parsed
+				| T.Call.Parsed
+				| T.FloatLeadingPoint.Parsed
+				| T.FloatPoint.Parsed
+				| T.FloatScientific.Parsed
+				| T.GeneratorExpression.Parsed
+				| T.IntegerBinary.Parsed
+				| T.IntegerDecimalPlain.Parsed
+				| T.IntegerHex.Parsed
+				| T.IntegerOctal.Parsed
+				| T.ListComprehension.Parsed
+				| T.ParenthesizedExpression.Parsed
+				| T.SetComprehension.Parsed
+				| T.String.Parsed
+				| T.Subscript.Parsed
+				| T.UnaryOperator.Parsed;
+		};
+		readonly 'expression.unary.bitwise_not': {
+			readonly argument:
+				| V.RequiredBy<V.Expression.Assignment<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Await<PythonMap>, 'expression', never>
+				| V.Expression.Binary<PythonMap>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Add<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Divide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Exponent<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.FloorDivide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Modulo<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Multiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Subtract<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.And<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Or<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Xor<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Chain<PythonMap>, 'comparators' | 'left', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Equal<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Greater<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.GreaterEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Less<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.LessEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual.Legacy<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.Is<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.IsNot<PythonMap>, 'left' | 'right', never>
+				| V.Expression.Binary.Logical<PythonMap>
+				| V.RequiredBy<V.Expression.Binary.Logical.And<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Logical.Or<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.MatrixMultiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.In<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.NotIn<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Left<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Right<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Call<PythonMap>, 'arguments' | 'function', never>
+				| V.RequiredBy<V.Expression.Call.Member<PythonMap>, 'arguments' | 'function', never>
+				| V.Expression.Collection.List<PythonMap>
+				| V.Expression.Collection.Map<PythonMap>
+				| V.RequiredBy<V.Expression.Collection.Set<PythonMap>, 'elements', never>
+				| V.Expression.Collection.Tuple<PythonMap>
+				| V.RequiredBy<V.Expression.Comprehension.Generator<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.List<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Map<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Set<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Conditional<PythonMap>, 'alternative' | 'condition' | 'consequence', never>
+				| V.RequiredBy<V.Expression.Lambda<PythonMap>, 'body', never>
+				| V.RequiredBy<V.Expression.Member<PythonMap>, 'object' | 'property', never>
+				| V.RequiredBy<V.Expression.Parenthesized<PythonMap>, 'expression', never>
+				| V.RequiredBy<V.Expression.Subscript<PythonMap>, 'index' | 'object', never>
+				| V.Expression.Unary<PythonMap>
+				| V.RequiredBy<V.Expression.Unary.BitwiseNot<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Negation<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Not<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Plus<PythonMap>, 'argument', never>
+				| V.Identifier<PythonMap>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name' | 'qualifier', never>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name', never>
+				| V.Literal.Boolean.False<PythonMap>
+				| V.Literal.Boolean.True<PythonMap>
+				| V.Literal.Ellipsis<PythonMap>
+				| V.Literal.Null<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Float<PythonMap>, 'integer', never>
+				| V.RequiredBy<V.Literal.Number.Float.LeadingPoint<PythonMap>, 'fraction', never>
+				| V.RequiredBy<V.Literal.Number.Float.Scientific<PythonMap>, 'exponent' | 'integer' | 'marker', never>
+				| V.Literal.Number.Integer<PythonMap>
+				| V.Literal.Number.Integer.Big<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Binary<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.RequiredBy<V.Literal.Number.Integer.Hex<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.Number.Integer.Imaginary<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Octal<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.String<PythonMap>
+				| V.Literal.String.Bytes<PythonMap>
+				| V.Literal.String.Bytes.Multiline<PythonMap>
+				| V.Literal.String.Bytes.Raw<PythonMap>
+				| V.Literal.String.Bytes.Raw.Multiline<PythonMap>
+				| V.RequiredBy<V.Literal.String.Concatenated<PythonMap>, 'strings', never>
+				| V.Literal.String.Interpolated<PythonMap>
+				| V.Literal.String.Interpolated.Deferred<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Raw.Multiline<PythonMap>
+				| V.Literal.String.Multiline<PythonMap>
+				| V.Literal.String.Raw<PythonMap>
+				| V.Literal.String.Raw.Multiline<PythonMap>
+				| V.Literal.String.Unicode<PythonMap>
+				| V.RequiredBy<V.Pattern.Rest<PythonMap>, 'pattern', never>
+				| T.Attribute.Parsed
+				| T.Await.Parsed
+				| T.BinaryOperator.Parsed
+				| T.Call.Parsed
+				| T.FloatLeadingPoint.Parsed
+				| T.FloatPoint.Parsed
+				| T.FloatScientific.Parsed
+				| T.GeneratorExpression.Parsed
+				| T.IntegerBinary.Parsed
+				| T.IntegerDecimalPlain.Parsed
+				| T.IntegerHex.Parsed
+				| T.IntegerOctal.Parsed
+				| T.ListComprehension.Parsed
+				| T.ParenthesizedExpression.Parsed
+				| T.SetComprehension.Parsed
+				| T.String.Parsed
+				| T.Subscript.Parsed
+				| T.UnaryOperator.Parsed;
+		};
+		readonly 'expression.unary.negation': {
+			readonly argument:
+				| V.RequiredBy<V.Expression.Assignment<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Await<PythonMap>, 'expression', never>
+				| V.Expression.Binary<PythonMap>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Add<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Divide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Exponent<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.FloorDivide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Modulo<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Multiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Subtract<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.And<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Or<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Xor<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Chain<PythonMap>, 'comparators' | 'left', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Equal<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Greater<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.GreaterEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Less<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.LessEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual.Legacy<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.Is<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.IsNot<PythonMap>, 'left' | 'right', never>
+				| V.Expression.Binary.Logical<PythonMap>
+				| V.RequiredBy<V.Expression.Binary.Logical.And<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Logical.Or<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.MatrixMultiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.In<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.NotIn<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Left<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Right<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Call<PythonMap>, 'arguments' | 'function', never>
+				| V.RequiredBy<V.Expression.Call.Member<PythonMap>, 'arguments' | 'function', never>
+				| V.Expression.Collection.List<PythonMap>
+				| V.Expression.Collection.Map<PythonMap>
+				| V.RequiredBy<V.Expression.Collection.Set<PythonMap>, 'elements', never>
+				| V.Expression.Collection.Tuple<PythonMap>
+				| V.RequiredBy<V.Expression.Comprehension.Generator<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.List<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Map<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Set<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Conditional<PythonMap>, 'alternative' | 'condition' | 'consequence', never>
+				| V.RequiredBy<V.Expression.Lambda<PythonMap>, 'body', never>
+				| V.RequiredBy<V.Expression.Member<PythonMap>, 'object' | 'property', never>
+				| V.RequiredBy<V.Expression.Parenthesized<PythonMap>, 'expression', never>
+				| V.RequiredBy<V.Expression.Subscript<PythonMap>, 'index' | 'object', never>
+				| V.Expression.Unary<PythonMap>
+				| V.RequiredBy<V.Expression.Unary.BitwiseNot<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Negation<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Not<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Plus<PythonMap>, 'argument', never>
+				| V.Identifier<PythonMap>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name' | 'qualifier', never>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name', never>
+				| V.Literal.Boolean.False<PythonMap>
+				| V.Literal.Boolean.True<PythonMap>
+				| V.Literal.Ellipsis<PythonMap>
+				| V.Literal.Null<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Float<PythonMap>, 'integer', never>
+				| V.RequiredBy<V.Literal.Number.Float.LeadingPoint<PythonMap>, 'fraction', never>
+				| V.RequiredBy<V.Literal.Number.Float.Scientific<PythonMap>, 'exponent' | 'integer' | 'marker', never>
+				| V.Literal.Number.Integer<PythonMap>
+				| V.Literal.Number.Integer.Big<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Binary<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.RequiredBy<V.Literal.Number.Integer.Hex<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.Number.Integer.Imaginary<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Octal<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.String<PythonMap>
+				| V.Literal.String.Bytes<PythonMap>
+				| V.Literal.String.Bytes.Multiline<PythonMap>
+				| V.Literal.String.Bytes.Raw<PythonMap>
+				| V.Literal.String.Bytes.Raw.Multiline<PythonMap>
+				| V.RequiredBy<V.Literal.String.Concatenated<PythonMap>, 'strings', never>
+				| V.Literal.String.Interpolated<PythonMap>
+				| V.Literal.String.Interpolated.Deferred<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Raw.Multiline<PythonMap>
+				| V.Literal.String.Multiline<PythonMap>
+				| V.Literal.String.Raw<PythonMap>
+				| V.Literal.String.Raw.Multiline<PythonMap>
+				| V.Literal.String.Unicode<PythonMap>
+				| V.RequiredBy<V.Pattern.Rest<PythonMap>, 'pattern', never>
+				| T.Attribute.Parsed
+				| T.Await.Parsed
+				| T.BinaryOperator.Parsed
+				| T.Call.Parsed
+				| T.FloatLeadingPoint.Parsed
+				| T.FloatPoint.Parsed
+				| T.FloatScientific.Parsed
+				| T.GeneratorExpression.Parsed
+				| T.IntegerBinary.Parsed
+				| T.IntegerDecimalPlain.Parsed
+				| T.IntegerHex.Parsed
+				| T.IntegerOctal.Parsed
+				| T.ListComprehension.Parsed
+				| T.ParenthesizedExpression.Parsed
+				| T.SetComprehension.Parsed
+				| T.String.Parsed
+				| T.Subscript.Parsed
+				| T.UnaryOperator.Parsed;
+		};
+		readonly 'expression.unary.not': {
+			readonly argument:
+				| V.RequiredBy<V.Expression.Assignment<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Await<PythonMap>, 'expression', never>
+				| V.Expression.Binary<PythonMap>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Add<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Divide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Exponent<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.FloorDivide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Modulo<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Multiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Subtract<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.And<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Or<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Xor<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Chain<PythonMap>, 'comparators' | 'left', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Equal<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Greater<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.GreaterEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Less<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.LessEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual.Legacy<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.Is<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.IsNot<PythonMap>, 'left' | 'right', never>
+				| V.Expression.Binary.Logical<PythonMap>
+				| V.RequiredBy<V.Expression.Binary.Logical.And<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Logical.Or<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.MatrixMultiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.In<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.NotIn<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Left<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Right<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Call<PythonMap>, 'arguments' | 'function', never>
+				| V.RequiredBy<V.Expression.Call.Member<PythonMap>, 'arguments' | 'function', never>
+				| V.Expression.Collection.List<PythonMap>
+				| V.Expression.Collection.Map<PythonMap>
+				| V.RequiredBy<V.Expression.Collection.Set<PythonMap>, 'elements', never>
+				| V.Expression.Collection.Tuple<PythonMap>
+				| V.RequiredBy<V.Expression.Comprehension.Generator<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.List<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Map<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Set<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Conditional<PythonMap>, 'alternative' | 'condition' | 'consequence', never>
+				| V.RequiredBy<V.Expression.Lambda<PythonMap>, 'body', never>
+				| V.RequiredBy<V.Expression.Member<PythonMap>, 'object' | 'property', never>
+				| V.RequiredBy<V.Expression.Parenthesized<PythonMap>, 'expression', never>
+				| V.RequiredBy<V.Expression.Subscript<PythonMap>, 'index' | 'object', never>
+				| V.Expression.Unary<PythonMap>
+				| V.RequiredBy<V.Expression.Unary.BitwiseNot<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Negation<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Not<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Plus<PythonMap>, 'argument', never>
+				| V.Identifier<PythonMap>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name' | 'qualifier', never>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name', never>
+				| V.Literal.Boolean.False<PythonMap>
+				| V.Literal.Boolean.True<PythonMap>
+				| V.Literal.Ellipsis<PythonMap>
+				| V.Literal.Null<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Float<PythonMap>, 'integer', never>
+				| V.RequiredBy<V.Literal.Number.Float.LeadingPoint<PythonMap>, 'fraction', never>
+				| V.RequiredBy<V.Literal.Number.Float.Scientific<PythonMap>, 'exponent' | 'integer' | 'marker', never>
+				| V.Literal.Number.Integer<PythonMap>
+				| V.Literal.Number.Integer.Big<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Binary<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.RequiredBy<V.Literal.Number.Integer.Hex<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.Number.Integer.Imaginary<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Octal<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.String<PythonMap>
+				| V.Literal.String.Bytes<PythonMap>
+				| V.Literal.String.Bytes.Multiline<PythonMap>
+				| V.Literal.String.Bytes.Raw<PythonMap>
+				| V.Literal.String.Bytes.Raw.Multiline<PythonMap>
+				| V.RequiredBy<V.Literal.String.Concatenated<PythonMap>, 'strings', never>
+				| V.Literal.String.Interpolated<PythonMap>
+				| V.Literal.String.Interpolated.Deferred<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Raw.Multiline<PythonMap>
+				| V.Literal.String.Multiline<PythonMap>
+				| V.Literal.String.Raw<PythonMap>
+				| V.Literal.String.Raw.Multiline<PythonMap>
+				| V.Literal.String.Unicode<PythonMap>
+				| V.RequiredBy<V.Pattern.Rest<PythonMap>, 'pattern', never>
 				| V.Unmapped<'python:as_pattern'>
 				| T.Attribute.Parsed
 				| T.Await.Parsed
@@ -6126,6 +15102,113 @@ export interface PythonMap extends V.GrammarMap {
 				| T.ListComprehension.Parsed
 				| T.NamedExpression.Parsed
 				| T.NotOperator.Parsed
+				| T.ParenthesizedExpression.Parsed
+				| T.SetComprehension.Parsed
+				| T.String.Parsed
+				| T.Subscript.Parsed
+				| T.UnaryOperator.Parsed;
+		};
+		readonly 'expression.unary.plus': {
+			readonly argument:
+				| V.RequiredBy<V.Expression.Assignment<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Await<PythonMap>, 'expression', never>
+				| V.Expression.Binary<PythonMap>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Add<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Divide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Exponent<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.FloorDivide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Modulo<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Multiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Subtract<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.And<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Or<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Xor<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Chain<PythonMap>, 'comparators' | 'left', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Equal<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Greater<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.GreaterEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Less<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.LessEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual.Legacy<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.Is<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.IsNot<PythonMap>, 'left' | 'right', never>
+				| V.Expression.Binary.Logical<PythonMap>
+				| V.RequiredBy<V.Expression.Binary.Logical.And<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Logical.Or<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.MatrixMultiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.In<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.NotIn<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Left<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Right<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Call<PythonMap>, 'arguments' | 'function', never>
+				| V.RequiredBy<V.Expression.Call.Member<PythonMap>, 'arguments' | 'function', never>
+				| V.Expression.Collection.List<PythonMap>
+				| V.Expression.Collection.Map<PythonMap>
+				| V.RequiredBy<V.Expression.Collection.Set<PythonMap>, 'elements', never>
+				| V.Expression.Collection.Tuple<PythonMap>
+				| V.RequiredBy<V.Expression.Comprehension.Generator<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.List<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Map<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Set<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Conditional<PythonMap>, 'alternative' | 'condition' | 'consequence', never>
+				| V.RequiredBy<V.Expression.Lambda<PythonMap>, 'body', never>
+				| V.RequiredBy<V.Expression.Member<PythonMap>, 'object' | 'property', never>
+				| V.RequiredBy<V.Expression.Parenthesized<PythonMap>, 'expression', never>
+				| V.RequiredBy<V.Expression.Subscript<PythonMap>, 'index' | 'object', never>
+				| V.Expression.Unary<PythonMap>
+				| V.RequiredBy<V.Expression.Unary.BitwiseNot<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Negation<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Not<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Plus<PythonMap>, 'argument', never>
+				| V.Identifier<PythonMap>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name' | 'qualifier', never>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name', never>
+				| V.Literal.Boolean.False<PythonMap>
+				| V.Literal.Boolean.True<PythonMap>
+				| V.Literal.Ellipsis<PythonMap>
+				| V.Literal.Null<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Float<PythonMap>, 'integer', never>
+				| V.RequiredBy<V.Literal.Number.Float.LeadingPoint<PythonMap>, 'fraction', never>
+				| V.RequiredBy<V.Literal.Number.Float.Scientific<PythonMap>, 'exponent' | 'integer' | 'marker', never>
+				| V.Literal.Number.Integer<PythonMap>
+				| V.Literal.Number.Integer.Big<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Binary<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.RequiredBy<V.Literal.Number.Integer.Hex<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.Number.Integer.Imaginary<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Octal<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.String<PythonMap>
+				| V.Literal.String.Bytes<PythonMap>
+				| V.Literal.String.Bytes.Multiline<PythonMap>
+				| V.Literal.String.Bytes.Raw<PythonMap>
+				| V.Literal.String.Bytes.Raw.Multiline<PythonMap>
+				| V.RequiredBy<V.Literal.String.Concatenated<PythonMap>, 'strings', never>
+				| V.Literal.String.Interpolated<PythonMap>
+				| V.Literal.String.Interpolated.Deferred<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Raw.Multiline<PythonMap>
+				| V.Literal.String.Multiline<PythonMap>
+				| V.Literal.String.Raw<PythonMap>
+				| V.Literal.String.Raw.Multiline<PythonMap>
+				| V.Literal.String.Unicode<PythonMap>
+				| V.RequiredBy<V.Pattern.Rest<PythonMap>, 'pattern', never>
+				| T.Attribute.Parsed
+				| T.Await.Parsed
+				| T.BinaryOperator.Parsed
+				| T.Call.Parsed
+				| T.FloatLeadingPoint.Parsed
+				| T.FloatPoint.Parsed
+				| T.FloatScientific.Parsed
+				| T.GeneratorExpression.Parsed
+				| T.IntegerBinary.Parsed
+				| T.IntegerDecimalPlain.Parsed
+				| T.IntegerHex.Parsed
+				| T.IntegerOctal.Parsed
+				| T.ListComprehension.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.SetComprehension.Parsed
 				| T.String.Parsed
@@ -6249,6 +15332,97 @@ export interface PythonMap extends V.GrammarMap {
 				| T.Subscript.Parsed
 				| T.UnaryOperator.Parsed;
 		};
+		readonly 'expression.yield.delegate': {
+			readonly content:
+				| V.RequiredBy<V.Expression.Assignment<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Await<PythonMap>, 'expression', never>
+				| V.Expression.Binary<PythonMap>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Add<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Divide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Exponent<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.FloorDivide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Modulo<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Multiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Subtract<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.And<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Or<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Xor<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Chain<PythonMap>, 'comparators' | 'left', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Equal<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Greater<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.GreaterEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Less<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.LessEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual.Legacy<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.Is<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.IsNot<PythonMap>, 'left' | 'right', never>
+				| V.Expression.Binary.Logical<PythonMap>
+				| V.RequiredBy<V.Expression.Binary.Logical.And<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Logical.Or<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.MatrixMultiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.In<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.NotIn<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Left<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Right<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Call<PythonMap>, 'arguments' | 'function', never>
+				| V.RequiredBy<V.Expression.Call.Member<PythonMap>, 'arguments' | 'function', never>
+				| V.Expression.Collection.List<PythonMap>
+				| V.Expression.Collection.Map<PythonMap>
+				| V.RequiredBy<V.Expression.Collection.Set<PythonMap>, 'elements', never>
+				| V.Expression.Collection.Tuple<PythonMap>
+				| V.RequiredBy<V.Expression.Collection.Tuple.Bare<PythonMap>, 'elements', never>
+				| V.RequiredBy<V.Expression.Comprehension.Generator<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.List<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Map<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Set<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Conditional<PythonMap>, 'alternative' | 'condition' | 'consequence', never>
+				| V.RequiredBy<V.Expression.Lambda<PythonMap>, 'body', never>
+				| V.RequiredBy<V.Expression.Member<PythonMap>, 'object' | 'property', never>
+				| V.RequiredBy<V.Expression.Parenthesized<PythonMap>, 'expression', never>
+				| V.RequiredBy<V.Expression.Subscript<PythonMap>, 'index' | 'object', never>
+				| V.Expression.Unary<PythonMap>
+				| V.RequiredBy<V.Expression.Unary.BitwiseNot<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Negation<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Not<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Plus<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Yield.Delegate<PythonMap>, 'expression', never>
+				| V.Identifier<PythonMap>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name' | 'qualifier', never>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name', never>
+				| V.Literal.Boolean.False<PythonMap>
+				| V.Literal.Boolean.True<PythonMap>
+				| V.Literal.Ellipsis<PythonMap>
+				| V.Literal.Null<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Float<PythonMap>, 'integer', never>
+				| V.RequiredBy<V.Literal.Number.Float.LeadingPoint<PythonMap>, 'fraction', never>
+				| V.RequiredBy<V.Literal.Number.Float.Scientific<PythonMap>, 'exponent' | 'integer' | 'marker', never>
+				| V.Literal.Number.Integer<PythonMap>
+				| V.Literal.Number.Integer.Big<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Binary<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.RequiredBy<V.Literal.Number.Integer.Hex<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.Number.Integer.Imaginary<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Octal<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.String<PythonMap>
+				| V.Literal.String.Bytes<PythonMap>
+				| V.Literal.String.Bytes.Multiline<PythonMap>
+				| V.Literal.String.Bytes.Raw<PythonMap>
+				| V.Literal.String.Bytes.Raw.Multiline<PythonMap>
+				| V.RequiredBy<V.Literal.String.Concatenated<PythonMap>, 'strings', never>
+				| V.Literal.String.Interpolated<PythonMap>
+				| V.Literal.String.Interpolated.Deferred<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Raw.Multiline<PythonMap>
+				| V.Literal.String.Multiline<PythonMap>
+				| V.Literal.String.Raw<PythonMap>
+				| V.Literal.String.Raw.Multiline<PythonMap>
+				| V.Literal.String.Unicode<PythonMap>
+				| V.RequiredBy<V.Pattern.Rest<PythonMap>, 'pattern', never>;
+		};
 		readonly file: {
 			readonly statements:
 				| V.RequiredBy<V.Declaration.Class<PythonMap>, 'name', never>
@@ -6299,25 +15473,40 @@ export interface PythonMap extends V.GrammarMap {
 				| T.Type.Parsed;
 		};
 		readonly 'literal.number.float': {
-			readonly exponentSign: '+' | '-';
-			readonly marker: 'E' | 'e';
+			readonly exponent: string;
+			readonly exponentSign: '+' | '-' | string;
+			readonly fraction: string;
+			readonly imaginary: string;
+			readonly integer: string;
+			readonly marker: 'E' | 'e' | string;
 		};
 		readonly 'literal.number.float.leading_point': {
-			readonly exponentSign: '+' | '-';
-			readonly marker: 'E' | 'e';
+			readonly exponent: string;
+			readonly exponentSign: '+' | '-' | string;
+			readonly fraction: string;
+			readonly imaginary: string;
+			readonly integer: string;
+			readonly marker: 'E' | 'e' | string;
 		};
 		readonly 'literal.number.float.scientific': {
-			readonly exponentSign: '+' | '-';
-			readonly marker: 'E' | 'e';
+			readonly exponent: string;
+			readonly exponentSign: '+' | '-' | string;
+			readonly fraction: never;
+			readonly imaginary: string;
+			readonly integer: string;
+			readonly marker: 'E' | 'e' | string;
 		};
 		readonly 'literal.number.integer.binary': {
-			readonly radixPrefix: '0B' | '0b';
+			readonly content: string;
+			readonly radixPrefix: '0B' | '0b' | string;
 		};
 		readonly 'literal.number.integer.hex': {
-			readonly radixPrefix: '0X' | '0x';
+			readonly content: string;
+			readonly radixPrefix: '0X' | '0x' | string;
 		};
 		readonly 'literal.number.integer.octal': {
-			readonly radixPrefix: '0O' | '0o';
+			readonly content: string;
+			readonly radixPrefix: '0O' | '0o' | string;
 		};
 		readonly 'literal.number.negative': {
 			readonly value:
@@ -6339,6 +15528,194 @@ export interface PythonMap extends V.GrammarMap {
 				| T.IntegerOctal.Parsed;
 		};
 		readonly 'literal.string': {
+			readonly elements:
+				| V.RequiredBy<V.Expression.Interpolation<PythonMap>, 'expression', never>
+				| V.RequiredBy<V.Literal.String.Escape<PythonMap>, never, 'content'>
+				| V.RequiredBy<V.Literal.String.Escape<PythonMap>, 'content', never>
+				| V.Literal.String.Text<PythonMap>
+				| '\\'
+				| T.Interpolation.Parsed;
+		};
+		readonly 'literal.string.bytes': {
+			readonly elements:
+				| V.RequiredBy<V.Expression.Interpolation<PythonMap>, 'expression', never>
+				| V.RequiredBy<V.Literal.String.Escape<PythonMap>, never, 'content'>
+				| V.RequiredBy<V.Literal.String.Escape<PythonMap>, 'content', never>
+				| V.Literal.String.Text<PythonMap>
+				| '\\'
+				| T.Interpolation.Parsed;
+		};
+		readonly 'literal.string.bytes.multiline': {
+			readonly elements:
+				| V.RequiredBy<V.Expression.Interpolation<PythonMap>, 'expression', never>
+				| V.RequiredBy<V.Literal.String.Escape<PythonMap>, never, 'content'>
+				| V.RequiredBy<V.Literal.String.Escape<PythonMap>, 'content', never>
+				| V.Literal.String.Text<PythonMap>
+				| '\\'
+				| T.Interpolation.Parsed;
+		};
+		readonly 'literal.string.bytes.raw': {
+			readonly elements:
+				| V.RequiredBy<V.Expression.Interpolation<PythonMap>, 'expression', never>
+				| V.RequiredBy<V.Literal.String.Escape<PythonMap>, never, 'content'>
+				| V.RequiredBy<V.Literal.String.Escape<PythonMap>, 'content', never>
+				| V.Literal.String.Text<PythonMap>
+				| '\\'
+				| T.Interpolation.Parsed;
+		};
+		readonly 'literal.string.bytes.raw.multiline': {
+			readonly elements:
+				| V.RequiredBy<V.Expression.Interpolation<PythonMap>, 'expression', never>
+				| V.RequiredBy<V.Literal.String.Escape<PythonMap>, never, 'content'>
+				| V.RequiredBy<V.Literal.String.Escape<PythonMap>, 'content', never>
+				| V.Literal.String.Text<PythonMap>
+				| '\\'
+				| T.Interpolation.Parsed;
+		};
+		readonly 'literal.string.concatenated': {
+			readonly elements:
+				| V.RequiredBy<V.Expression.Interpolation<PythonMap>, 'expression', never>
+				| V.RequiredBy<V.Literal.String.Escape<PythonMap>, never, 'content'>
+				| V.RequiredBy<V.Literal.String.Escape<PythonMap>, 'content', never>
+				| V.Literal.String.Text<PythonMap>
+				| '\\';
+			readonly strings:
+				| V.Literal.String<PythonMap>
+				| V.Literal.String.Bytes<PythonMap>
+				| V.Literal.String.Bytes.Multiline<PythonMap>
+				| V.Literal.String.Bytes.Raw<PythonMap>
+				| V.Literal.String.Bytes.Raw.Multiline<PythonMap>
+				| V.Literal.String.Interpolated<PythonMap>
+				| V.Literal.String.Interpolated.Deferred<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Raw.Multiline<PythonMap>
+				| V.Literal.String.Multiline<PythonMap>
+				| V.Literal.String.Raw<PythonMap>
+				| V.Literal.String.Raw.Multiline<PythonMap>
+				| V.Literal.String.Unicode<PythonMap>
+				| T.String.Parsed;
+		};
+		readonly 'literal.string.escape': {
+			readonly content: string;
+			readonly elements:
+				| V.RequiredBy<V.Expression.Interpolation<PythonMap>, 'expression', never>
+				| V.RequiredBy<V.Literal.String.Escape<PythonMap>, never, 'content'>
+				| V.RequiredBy<V.Literal.String.Escape<PythonMap>, 'content', never>
+				| V.Literal.String.Text<PythonMap>
+				| '\\';
+		};
+		readonly 'literal.string.interpolated': {
+			readonly elements:
+				| V.RequiredBy<V.Expression.Interpolation<PythonMap>, 'expression', never>
+				| V.RequiredBy<V.Literal.String.Escape<PythonMap>, never, 'content'>
+				| V.RequiredBy<V.Literal.String.Escape<PythonMap>, 'content', never>
+				| V.Literal.String.Text<PythonMap>
+				| '\\'
+				| T.Interpolation.Parsed;
+		};
+		readonly 'literal.string.interpolated.deferred': {
+			readonly elements:
+				| V.RequiredBy<V.Expression.Interpolation<PythonMap>, 'expression', never>
+				| V.RequiredBy<V.Literal.String.Escape<PythonMap>, never, 'content'>
+				| V.RequiredBy<V.Literal.String.Escape<PythonMap>, 'content', never>
+				| V.Literal.String.Text<PythonMap>
+				| '\\'
+				| T.Interpolation.Parsed;
+		};
+		readonly 'literal.string.interpolated.deferred.multiline': {
+			readonly elements:
+				| V.RequiredBy<V.Expression.Interpolation<PythonMap>, 'expression', never>
+				| V.RequiredBy<V.Literal.String.Escape<PythonMap>, never, 'content'>
+				| V.RequiredBy<V.Literal.String.Escape<PythonMap>, 'content', never>
+				| V.Literal.String.Text<PythonMap>
+				| '\\'
+				| T.Interpolation.Parsed;
+		};
+		readonly 'literal.string.interpolated.deferred.raw': {
+			readonly elements:
+				| V.RequiredBy<V.Expression.Interpolation<PythonMap>, 'expression', never>
+				| V.RequiredBy<V.Literal.String.Escape<PythonMap>, never, 'content'>
+				| V.RequiredBy<V.Literal.String.Escape<PythonMap>, 'content', never>
+				| V.Literal.String.Text<PythonMap>
+				| '\\'
+				| T.Interpolation.Parsed;
+		};
+		readonly 'literal.string.interpolated.deferred.raw.multiline': {
+			readonly elements:
+				| V.RequiredBy<V.Expression.Interpolation<PythonMap>, 'expression', never>
+				| V.RequiredBy<V.Literal.String.Escape<PythonMap>, never, 'content'>
+				| V.RequiredBy<V.Literal.String.Escape<PythonMap>, 'content', never>
+				| V.Literal.String.Text<PythonMap>
+				| '\\'
+				| T.Interpolation.Parsed;
+		};
+		readonly 'literal.string.interpolated.multiline': {
+			readonly elements:
+				| V.RequiredBy<V.Expression.Interpolation<PythonMap>, 'expression', never>
+				| V.RequiredBy<V.Literal.String.Escape<PythonMap>, never, 'content'>
+				| V.RequiredBy<V.Literal.String.Escape<PythonMap>, 'content', never>
+				| V.Literal.String.Text<PythonMap>
+				| '\\'
+				| T.Interpolation.Parsed;
+		};
+		readonly 'literal.string.interpolated.raw': {
+			readonly elements:
+				| V.RequiredBy<V.Expression.Interpolation<PythonMap>, 'expression', never>
+				| V.RequiredBy<V.Literal.String.Escape<PythonMap>, never, 'content'>
+				| V.RequiredBy<V.Literal.String.Escape<PythonMap>, 'content', never>
+				| V.Literal.String.Text<PythonMap>
+				| '\\'
+				| T.Interpolation.Parsed;
+		};
+		readonly 'literal.string.interpolated.raw.multiline': {
+			readonly elements:
+				| V.RequiredBy<V.Expression.Interpolation<PythonMap>, 'expression', never>
+				| V.RequiredBy<V.Literal.String.Escape<PythonMap>, never, 'content'>
+				| V.RequiredBy<V.Literal.String.Escape<PythonMap>, 'content', never>
+				| V.Literal.String.Text<PythonMap>
+				| '\\'
+				| T.Interpolation.Parsed;
+		};
+		readonly 'literal.string.multiline': {
+			readonly elements:
+				| V.RequiredBy<V.Expression.Interpolation<PythonMap>, 'expression', never>
+				| V.RequiredBy<V.Literal.String.Escape<PythonMap>, never, 'content'>
+				| V.RequiredBy<V.Literal.String.Escape<PythonMap>, 'content', never>
+				| V.Literal.String.Text<PythonMap>
+				| '\\'
+				| T.Interpolation.Parsed;
+		};
+		readonly 'literal.string.raw': {
+			readonly elements:
+				| V.RequiredBy<V.Expression.Interpolation<PythonMap>, 'expression', never>
+				| V.RequiredBy<V.Literal.String.Escape<PythonMap>, never, 'content'>
+				| V.RequiredBy<V.Literal.String.Escape<PythonMap>, 'content', never>
+				| V.Literal.String.Text<PythonMap>
+				| '\\'
+				| T.Interpolation.Parsed;
+		};
+		readonly 'literal.string.raw.multiline': {
+			readonly elements:
+				| V.RequiredBy<V.Expression.Interpolation<PythonMap>, 'expression', never>
+				| V.RequiredBy<V.Literal.String.Escape<PythonMap>, never, 'content'>
+				| V.RequiredBy<V.Literal.String.Escape<PythonMap>, 'content', never>
+				| V.Literal.String.Text<PythonMap>
+				| '\\'
+				| T.Interpolation.Parsed;
+		};
+		readonly 'literal.string.text': {
+			readonly elements:
+				| V.RequiredBy<V.Expression.Interpolation<PythonMap>, 'expression', never>
+				| V.RequiredBy<V.Literal.String.Escape<PythonMap>, never, 'content'>
+				| V.RequiredBy<V.Literal.String.Escape<PythonMap>, 'content', never>
+				| V.Literal.String.Text<PythonMap>
+				| '\\';
+		};
+		readonly 'literal.string.unicode': {
 			readonly elements:
 				| V.RequiredBy<V.Expression.Interpolation<PythonMap>, 'expression', never>
 				| V.RequiredBy<V.Literal.String.Escape<PythonMap>, never, 'content'>
@@ -6400,6 +15777,114 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Pattern.Tuple<PythonMap>
 				| V.Text<PythonMap, 'pattern.wildcard'>
 				| '_';
+		};
+		readonly 'pattern.complex': {
+			readonly imaginary:
+				| V.RequiredBy<V.Literal.Number.Float<PythonMap>, 'integer', never>
+				| V.RequiredBy<V.Literal.Number.Float.LeadingPoint<PythonMap>, 'fraction', never>
+				| V.RequiredBy<V.Literal.Number.Float.Scientific<PythonMap>, 'exponent' | 'integer' | 'marker', never>
+				| V.Literal.Number.Integer<PythonMap>
+				| V.Literal.Number.Integer.Big<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Binary<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.RequiredBy<V.Literal.Number.Integer.Hex<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.Number.Integer.Imaginary<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Octal<PythonMap>, 'content' | 'radixPrefix', never>
+				| T.FloatLeadingPoint.Parsed
+				| T.FloatPoint.Parsed
+				| T.FloatScientific.Parsed
+				| T.IntegerBinary.Parsed
+				| T.IntegerDecimalPlain.Parsed
+				| T.IntegerHex.Parsed
+				| T.IntegerOctal.Parsed;
+			readonly real:
+				| V.RequiredBy<V.Literal.Number.Float<PythonMap>, 'integer', never>
+				| V.RequiredBy<V.Literal.Number.Float.LeadingPoint<PythonMap>, 'fraction', never>
+				| V.RequiredBy<V.Literal.Number.Float.Scientific<PythonMap>, 'exponent' | 'integer' | 'marker', never>
+				| V.Literal.Number.Integer<PythonMap>
+				| V.Literal.Number.Integer.Big<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Binary<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.RequiredBy<V.Literal.Number.Integer.Hex<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.Number.Integer.Imaginary<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Octal<PythonMap>, 'content' | 'radixPrefix', never>
+				| T.FloatLeadingPoint.Parsed
+				| T.FloatPoint.Parsed
+				| T.FloatScientific.Parsed
+				| T.IntegerBinary.Parsed
+				| T.IntegerDecimalPlain.Parsed
+				| T.IntegerHex.Parsed
+				| T.IntegerOctal.Parsed;
+		};
+		readonly 'pattern.complex.add': {
+			readonly imaginary:
+				| V.RequiredBy<V.Literal.Number.Float<PythonMap>, 'integer', never>
+				| V.RequiredBy<V.Literal.Number.Float.LeadingPoint<PythonMap>, 'fraction', never>
+				| V.RequiredBy<V.Literal.Number.Float.Scientific<PythonMap>, 'exponent' | 'integer' | 'marker', never>
+				| V.Literal.Number.Integer<PythonMap>
+				| V.Literal.Number.Integer.Big<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Binary<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.RequiredBy<V.Literal.Number.Integer.Hex<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.Number.Integer.Imaginary<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Octal<PythonMap>, 'content' | 'radixPrefix', never>
+				| T.FloatLeadingPoint.Parsed
+				| T.FloatPoint.Parsed
+				| T.FloatScientific.Parsed
+				| T.IntegerBinary.Parsed
+				| T.IntegerDecimalPlain.Parsed
+				| T.IntegerHex.Parsed
+				| T.IntegerOctal.Parsed;
+			readonly real:
+				| V.RequiredBy<V.Literal.Number.Float<PythonMap>, 'integer', never>
+				| V.RequiredBy<V.Literal.Number.Float.LeadingPoint<PythonMap>, 'fraction', never>
+				| V.RequiredBy<V.Literal.Number.Float.Scientific<PythonMap>, 'exponent' | 'integer' | 'marker', never>
+				| V.Literal.Number.Integer<PythonMap>
+				| V.Literal.Number.Integer.Big<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Binary<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.RequiredBy<V.Literal.Number.Integer.Hex<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.Number.Integer.Imaginary<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Octal<PythonMap>, 'content' | 'radixPrefix', never>
+				| T.FloatLeadingPoint.Parsed
+				| T.FloatPoint.Parsed
+				| T.FloatScientific.Parsed
+				| T.IntegerBinary.Parsed
+				| T.IntegerDecimalPlain.Parsed
+				| T.IntegerHex.Parsed
+				| T.IntegerOctal.Parsed;
+		};
+		readonly 'pattern.complex.subtract': {
+			readonly imaginary:
+				| V.RequiredBy<V.Literal.Number.Float<PythonMap>, 'integer', never>
+				| V.RequiredBy<V.Literal.Number.Float.LeadingPoint<PythonMap>, 'fraction', never>
+				| V.RequiredBy<V.Literal.Number.Float.Scientific<PythonMap>, 'exponent' | 'integer' | 'marker', never>
+				| V.Literal.Number.Integer<PythonMap>
+				| V.Literal.Number.Integer.Big<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Binary<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.RequiredBy<V.Literal.Number.Integer.Hex<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.Number.Integer.Imaginary<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Octal<PythonMap>, 'content' | 'radixPrefix', never>
+				| T.FloatLeadingPoint.Parsed
+				| T.FloatPoint.Parsed
+				| T.FloatScientific.Parsed
+				| T.IntegerBinary.Parsed
+				| T.IntegerDecimalPlain.Parsed
+				| T.IntegerHex.Parsed
+				| T.IntegerOctal.Parsed;
+			readonly real:
+				| V.RequiredBy<V.Literal.Number.Float<PythonMap>, 'integer', never>
+				| V.RequiredBy<V.Literal.Number.Float.LeadingPoint<PythonMap>, 'fraction', never>
+				| V.RequiredBy<V.Literal.Number.Float.Scientific<PythonMap>, 'exponent' | 'integer' | 'marker', never>
+				| V.Literal.Number.Integer<PythonMap>
+				| V.Literal.Number.Integer.Big<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Binary<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.RequiredBy<V.Literal.Number.Integer.Hex<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.Number.Integer.Imaginary<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Octal<PythonMap>, 'content' | 'radixPrefix', never>
+				| T.FloatLeadingPoint.Parsed
+				| T.FloatPoint.Parsed
+				| T.FloatScientific.Parsed
+				| T.IntegerBinary.Parsed
+				| T.IntegerDecimalPlain.Parsed
+				| T.IntegerHex.Parsed
+				| T.IntegerOctal.Parsed;
 		};
 		readonly 'pattern.list': {
 			readonly elements:
@@ -6587,6 +16072,17 @@ export interface PythonMap extends V.GrammarMap {
 				| T.Attribute.Parsed
 				| T.Subscript.Parsed;
 		};
+		readonly 'pattern.rest.map': {
+			readonly pattern:
+				| V.RequiredBy<V.Expression.Member<PythonMap>, 'object' | 'property', never>
+				| V.RequiredBy<V.Expression.Subscript<PythonMap>, 'index' | 'object', never>
+				| V.Identifier<PythonMap>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name' | 'qualifier', never>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name', never>
+				| '_'
+				| T.Attribute.Parsed
+				| T.Subscript.Parsed;
+		};
 		readonly 'pattern.struct': {
 			readonly fields:
 				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name' | 'qualifier', never>
@@ -6641,6 +16137,53 @@ export interface PythonMap extends V.GrammarMap {
 				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name', never>;
 		};
 		readonly 'pattern.struct.field': {
+			readonly fields:
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name' | 'qualifier', never>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name', never>
+				| V.Literal.Boolean.False<PythonMap>
+				| V.Literal.Boolean.True<PythonMap>
+				| V.Literal.Null<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Float<PythonMap>, 'integer', never>
+				| V.RequiredBy<V.Literal.Number.Float.LeadingPoint<PythonMap>, 'fraction', never>
+				| V.RequiredBy<V.Literal.Number.Float.Scientific<PythonMap>, 'exponent' | 'integer' | 'marker', never>
+				| V.Literal.Number.Integer<PythonMap>
+				| V.Literal.Number.Integer.Big<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Binary<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.RequiredBy<V.Literal.Number.Integer.Hex<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.Number.Integer.Imaginary<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Octal<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.RequiredBy<V.Literal.Number.Negative<PythonMap>, 'value', never>
+				| V.Literal.String<PythonMap>
+				| V.Literal.String.Bytes<PythonMap>
+				| V.Literal.String.Bytes.Multiline<PythonMap>
+				| V.Literal.String.Bytes.Raw<PythonMap>
+				| V.Literal.String.Bytes.Raw.Multiline<PythonMap>
+				| V.RequiredBy<V.Literal.String.Concatenated<PythonMap>, 'strings', never>
+				| V.Literal.String.Interpolated<PythonMap>
+				| V.Literal.String.Interpolated.Deferred<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Raw.Multiline<PythonMap>
+				| V.Literal.String.Multiline<PythonMap>
+				| V.Literal.String.Raw<PythonMap>
+				| V.Literal.String.Raw.Multiline<PythonMap>
+				| V.Literal.String.Unicode<PythonMap>
+				| V.RequiredBy<V.Pattern.As<PythonMap>, 'name' | 'pattern', never>
+				| V.Pattern.Complex<PythonMap>
+				| V.RequiredBy<V.Pattern.Complex.Add<PythonMap>, 'imaginary' | 'real', never>
+				| V.RequiredBy<V.Pattern.Complex.Subtract<PythonMap>, 'imaginary' | 'real', never>
+				| V.Pattern.List<PythonMap>
+				| V.Pattern.Map<PythonMap>
+				| V.RequiredBy<V.Pattern.Or<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Pattern.Rest<PythonMap>, 'pattern', never>
+				| V.RequiredBy<V.Pattern.Rest.Map<PythonMap>, 'pattern', never>
+				| V.RequiredBy<V.Pattern.Struct<PythonMap>, 'type', never>
+				| V.RequiredBy<V.Pattern.Struct.Field<PythonMap>, 'name' | 'pattern', never>
+				| V.Pattern.Tuple<PythonMap>
+				| V.Text<PythonMap, 'pattern.wildcard'>;
 			readonly name:
 				| V.Identifier<PythonMap>
 				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name' | 'qualifier', never>
@@ -6702,8 +16245,64 @@ export interface PythonMap extends V.GrammarMap {
 				| T.SimplePatternNegative.Parsed
 				| T.String.Parsed
 				| T.UnionPattern.Parsed;
+			readonly type:
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name' | 'qualifier', never>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name', never>;
 		};
 		readonly 'pattern.tuple': {
+			readonly elements:
+				| V.RequiredBy<V.Expression.Member<PythonMap>, 'object' | 'property', never>
+				| V.RequiredBy<V.Expression.Subscript<PythonMap>, 'index' | 'object', never>
+				| V.Identifier<PythonMap>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name' | 'qualifier', never>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name', never>
+				| V.Literal.Boolean.False<PythonMap>
+				| V.Literal.Boolean.True<PythonMap>
+				| V.Literal.Null<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Float<PythonMap>, 'integer', never>
+				| V.RequiredBy<V.Literal.Number.Float.LeadingPoint<PythonMap>, 'fraction', never>
+				| V.RequiredBy<V.Literal.Number.Float.Scientific<PythonMap>, 'exponent' | 'integer' | 'marker', never>
+				| V.Literal.Number.Integer<PythonMap>
+				| V.Literal.Number.Integer.Big<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Binary<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.RequiredBy<V.Literal.Number.Integer.Hex<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.Number.Integer.Imaginary<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Octal<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.RequiredBy<V.Literal.Number.Negative<PythonMap>, 'value', never>
+				| V.Literal.String<PythonMap>
+				| V.Literal.String.Bytes<PythonMap>
+				| V.Literal.String.Bytes.Multiline<PythonMap>
+				| V.Literal.String.Bytes.Raw<PythonMap>
+				| V.Literal.String.Bytes.Raw.Multiline<PythonMap>
+				| V.RequiredBy<V.Literal.String.Concatenated<PythonMap>, 'strings', never>
+				| V.Literal.String.Interpolated<PythonMap>
+				| V.Literal.String.Interpolated.Deferred<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Raw.Multiline<PythonMap>
+				| V.Literal.String.Multiline<PythonMap>
+				| V.Literal.String.Raw<PythonMap>
+				| V.Literal.String.Raw.Multiline<PythonMap>
+				| V.Literal.String.Unicode<PythonMap>
+				| V.RequiredBy<V.Pattern.As<PythonMap>, 'name' | 'pattern', never>
+				| V.Pattern.Complex<PythonMap>
+				| V.RequiredBy<V.Pattern.Complex.Add<PythonMap>, 'imaginary' | 'real', never>
+				| V.RequiredBy<V.Pattern.Complex.Subtract<PythonMap>, 'imaginary' | 'real', never>
+				| V.Pattern.List<PythonMap>
+				| V.Pattern.Map<PythonMap>
+				| V.RequiredBy<V.Pattern.Or<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Pattern.Rest<PythonMap>, 'pattern', never>
+				| V.RequiredBy<V.Pattern.Rest.Map<PythonMap>, 'pattern', never>
+				| V.RequiredBy<V.Pattern.Struct<PythonMap>, 'type', never>
+				| V.RequiredBy<V.Pattern.Struct.Field<PythonMap>, 'name' | 'pattern', never>
+				| V.Pattern.Tuple<PythonMap>
+				| V.Text<PythonMap, 'pattern.wildcard'>
+				| '_';
+		};
+		readonly 'pattern.tuple.bare': {
 			readonly elements:
 				| V.RequiredBy<V.Expression.Member<PythonMap>, 'object' | 'property', never>
 				| V.RequiredBy<V.Expression.Subscript<PythonMap>, 'index' | 'object', never>
@@ -7464,6 +17063,12 @@ export interface PythonMap extends V.GrammarMap {
 				| 'continue'
 				| 'pass';
 		};
+		readonly 'statement.import': {
+			readonly names:
+				| V.RequiredBy<V.Clause.Import.Alias<PythonMap>, 'alias' | 'name', never>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name' | 'qualifier', never>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name', never>;
+		};
 		readonly 'statement.import.from': {
 			readonly content:
 				| V.RequiredBy<V.Clause.Import.Alias<PythonMap>, 'alias' | 'name', never>
@@ -7471,8 +17076,27 @@ export interface PythonMap extends V.GrammarMap {
 				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name' | 'qualifier', never>
 				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name', never>
 				| '*';
+			readonly moduleName:
+				| V.RequiredBy<V.Clause.Import.Relative<PythonMap>, 'dots', never>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name' | 'qualifier', never>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name', never>;
+			readonly names:
+				| V.RequiredBy<V.Clause.Import.Alias<PythonMap>, 'alias' | 'name', never>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name' | 'qualifier', never>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name', never>;
+		};
+		readonly 'statement.import.future': {
+			readonly content:
+				| V.RequiredBy<V.Clause.Import.Alias<PythonMap>, 'alias' | 'name', never>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name' | 'qualifier', never>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name', never>;
+			readonly names:
+				| V.RequiredBy<V.Clause.Import.Alias<PythonMap>, 'alias' | 'name', never>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name' | 'qualifier', never>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name', never>;
 		};
 		readonly 'statement.loop.for_each': {
+			readonly alternative: V.RequiredBy<V.Clause.Else<PythonMap>, 'body', never>;
 			readonly body:
 				| V.RequiredBy<V.Declaration.TypeAlias<PythonMap>, 'name' | 'value', never>
 				| V.RequiredBy<V.Statement.Assert<PythonMap>, 'expressions', never>
@@ -7623,6 +17247,7 @@ export interface PythonMap extends V.GrammarMap {
 				| T.UnaryOperator.Parsed;
 		};
 		readonly 'statement.loop.while': {
+			readonly alternative: V.RequiredBy<V.Clause.Else<PythonMap>, 'body', never>;
 			readonly body:
 				| V.RequiredBy<V.Declaration.TypeAlias<PythonMap>, 'name' | 'value', never>
 				| V.RequiredBy<V.Statement.Assert<PythonMap>, 'expressions', never>
@@ -8082,6 +17707,7 @@ export interface PythonMap extends V.GrammarMap {
 				| 'break'
 				| 'continue'
 				| 'pass';
+			readonly withClause: V.RequiredBy<V.Clause.Resource<PythonMap>, 'items', never>;
 		};
 		readonly 'statement.return': {
 			readonly expression:
@@ -8428,6 +18054,7 @@ export interface PythonMap extends V.GrammarMap {
 				| T.UnaryOperator.Parsed;
 		};
 		readonly 'statement.try': {
+			readonly alternative: V.RequiredBy<V.Clause.Else<PythonMap>, 'body', never>;
 			readonly body:
 				| V.RequiredBy<V.Declaration.TypeAlias<PythonMap>, 'name' | 'value', never>
 				| V.RequiredBy<V.Statement.Assert<PythonMap>, 'expressions', never>
@@ -8450,6 +18077,7 @@ export interface PythonMap extends V.GrammarMap {
 				| 'break'
 				| 'continue'
 				| 'pass';
+			readonly finalizer: V.RequiredBy<V.Clause.Finally<PythonMap>, 'body', never>;
 			readonly handlers: V.RequiredBy<V.Clause.Catch<PythonMap>, 'body', never>;
 		};
 		readonly type: {
@@ -8585,8 +18213,190 @@ export interface PythonMap extends V.GrammarMap {
 				| V.RequiredBy<V.Type.Rest<PythonMap>, 'type', never>
 				| V.RequiredBy<V.Type.Union<PythonMap>, 'left' | 'right', never>
 				| T.Type.Parsed;
+			readonly content:
+				| V.RequiredBy<V.Expression.Assignment<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Await<PythonMap>, 'expression', never>
+				| V.Expression.Binary<PythonMap>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Add<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Divide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Exponent<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.FloorDivide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Modulo<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Multiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Subtract<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.And<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Or<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Xor<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Chain<PythonMap>, 'comparators' | 'left', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Equal<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Greater<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.GreaterEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Less<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.LessEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual.Legacy<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.Is<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.IsNot<PythonMap>, 'left' | 'right', never>
+				| V.Expression.Binary.Logical<PythonMap>
+				| V.RequiredBy<V.Expression.Binary.Logical.And<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Logical.Or<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.MatrixMultiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.In<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.NotIn<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Left<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Right<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Call<PythonMap>, 'arguments' | 'function', never>
+				| V.RequiredBy<V.Expression.Call.Member<PythonMap>, 'arguments' | 'function', never>
+				| V.Expression.Collection.List<PythonMap>
+				| V.Expression.Collection.Map<PythonMap>
+				| V.RequiredBy<V.Expression.Collection.Set<PythonMap>, 'elements', never>
+				| V.Expression.Collection.Tuple<PythonMap>
+				| V.RequiredBy<V.Expression.Comprehension.Generator<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.List<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Map<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Set<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Conditional<PythonMap>, 'alternative' | 'condition' | 'consequence', never>
+				| V.RequiredBy<V.Expression.Lambda<PythonMap>, 'body', never>
+				| V.RequiredBy<V.Expression.Member<PythonMap>, 'object' | 'property', never>
+				| V.RequiredBy<V.Expression.Parenthesized<PythonMap>, 'expression', never>
+				| V.RequiredBy<V.Expression.Subscript<PythonMap>, 'index' | 'object', never>
+				| V.Expression.Unary<PythonMap>
+				| V.RequiredBy<V.Expression.Unary.BitwiseNot<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Negation<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Not<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Plus<PythonMap>, 'argument', never>
+				| V.Identifier<PythonMap>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name' | 'qualifier', never>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name', never>
+				| V.Literal.Boolean.False<PythonMap>
+				| V.Literal.Boolean.True<PythonMap>
+				| V.Literal.Ellipsis<PythonMap>
+				| V.Literal.Null<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Float<PythonMap>, 'integer', never>
+				| V.RequiredBy<V.Literal.Number.Float.LeadingPoint<PythonMap>, 'fraction', never>
+				| V.RequiredBy<V.Literal.Number.Float.Scientific<PythonMap>, 'exponent' | 'integer' | 'marker', never>
+				| V.Literal.Number.Integer<PythonMap>
+				| V.Literal.Number.Integer.Big<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Binary<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.RequiredBy<V.Literal.Number.Integer.Hex<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.Number.Integer.Imaginary<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Octal<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.String<PythonMap>
+				| V.Literal.String.Bytes<PythonMap>
+				| V.Literal.String.Bytes.Multiline<PythonMap>
+				| V.Literal.String.Bytes.Raw<PythonMap>
+				| V.Literal.String.Bytes.Raw.Multiline<PythonMap>
+				| V.RequiredBy<V.Literal.String.Concatenated<PythonMap>, 'strings', never>
+				| V.Literal.String.Interpolated<PythonMap>
+				| V.Literal.String.Interpolated.Deferred<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Raw.Multiline<PythonMap>
+				| V.Literal.String.Multiline<PythonMap>
+				| V.Literal.String.Raw<PythonMap>
+				| V.Literal.String.Raw.Multiline<PythonMap>
+				| V.Literal.String.Unicode<PythonMap>
+				| V.RequiredBy<V.Pattern.Rest<PythonMap>, 'pattern', never>
+				| V.RequiredBy<V.Type.Constrained<PythonMap>, 'baseType' | 'constraint', never>
+				| V.RequiredBy<V.Type.Generic<PythonMap>, 'name' | 'typeArguments', never>
+				| V.RequiredBy<V.Type.Rest<PythonMap>, 'type', never>
+				| V.RequiredBy<V.Type.Union<PythonMap>, 'left' | 'right', never>;
 		};
 		readonly 'type.generic': {
+			readonly content:
+				| V.RequiredBy<V.Expression.Assignment<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Await<PythonMap>, 'expression', never>
+				| V.Expression.Binary<PythonMap>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Add<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Divide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Exponent<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.FloorDivide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Modulo<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Multiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Subtract<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.And<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Or<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Xor<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Chain<PythonMap>, 'comparators' | 'left', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Equal<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Greater<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.GreaterEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Less<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.LessEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual.Legacy<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.Is<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.IsNot<PythonMap>, 'left' | 'right', never>
+				| V.Expression.Binary.Logical<PythonMap>
+				| V.RequiredBy<V.Expression.Binary.Logical.And<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Logical.Or<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.MatrixMultiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.In<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.NotIn<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Left<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Right<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Call<PythonMap>, 'arguments' | 'function', never>
+				| V.RequiredBy<V.Expression.Call.Member<PythonMap>, 'arguments' | 'function', never>
+				| V.Expression.Collection.List<PythonMap>
+				| V.Expression.Collection.Map<PythonMap>
+				| V.RequiredBy<V.Expression.Collection.Set<PythonMap>, 'elements', never>
+				| V.Expression.Collection.Tuple<PythonMap>
+				| V.RequiredBy<V.Expression.Comprehension.Generator<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.List<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Map<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Set<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Conditional<PythonMap>, 'alternative' | 'condition' | 'consequence', never>
+				| V.RequiredBy<V.Expression.Lambda<PythonMap>, 'body', never>
+				| V.RequiredBy<V.Expression.Member<PythonMap>, 'object' | 'property', never>
+				| V.RequiredBy<V.Expression.Parenthesized<PythonMap>, 'expression', never>
+				| V.RequiredBy<V.Expression.Subscript<PythonMap>, 'index' | 'object', never>
+				| V.Expression.Unary<PythonMap>
+				| V.RequiredBy<V.Expression.Unary.BitwiseNot<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Negation<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Not<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Plus<PythonMap>, 'argument', never>
+				| V.Identifier<PythonMap>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name' | 'qualifier', never>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name', never>
+				| V.Literal.Boolean.False<PythonMap>
+				| V.Literal.Boolean.True<PythonMap>
+				| V.Literal.Ellipsis<PythonMap>
+				| V.Literal.Null<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Float<PythonMap>, 'integer', never>
+				| V.RequiredBy<V.Literal.Number.Float.LeadingPoint<PythonMap>, 'fraction', never>
+				| V.RequiredBy<V.Literal.Number.Float.Scientific<PythonMap>, 'exponent' | 'integer' | 'marker', never>
+				| V.Literal.Number.Integer<PythonMap>
+				| V.Literal.Number.Integer.Big<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Binary<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.RequiredBy<V.Literal.Number.Integer.Hex<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.Number.Integer.Imaginary<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Octal<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.String<PythonMap>
+				| V.Literal.String.Bytes<PythonMap>
+				| V.Literal.String.Bytes.Multiline<PythonMap>
+				| V.Literal.String.Bytes.Raw<PythonMap>
+				| V.Literal.String.Bytes.Raw.Multiline<PythonMap>
+				| V.RequiredBy<V.Literal.String.Concatenated<PythonMap>, 'strings', never>
+				| V.Literal.String.Interpolated<PythonMap>
+				| V.Literal.String.Interpolated.Deferred<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Raw.Multiline<PythonMap>
+				| V.Literal.String.Multiline<PythonMap>
+				| V.Literal.String.Raw<PythonMap>
+				| V.Literal.String.Raw.Multiline<PythonMap>
+				| V.Literal.String.Unicode<PythonMap>
+				| V.RequiredBy<V.Pattern.Rest<PythonMap>, 'pattern', never>
+				| V.RequiredBy<V.Type.Constrained<PythonMap>, 'baseType' | 'constraint', never>
+				| V.RequiredBy<V.Type.Generic<PythonMap>, 'name' | 'typeArguments', never>
+				| V.RequiredBy<V.Type.Rest<PythonMap>, 'type', never>
+				| V.RequiredBy<V.Type.Union<PythonMap>, 'left' | 'right', never>;
 			readonly name:
 				| V.Identifier<PythonMap>
 				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name' | 'qualifier', never>
@@ -8599,12 +18409,194 @@ export interface PythonMap extends V.GrammarMap {
 				| V.RequiredBy<V.Type.Union<PythonMap>, 'left' | 'right', never>;
 		};
 		readonly 'type.rest': {
+			readonly content:
+				| V.RequiredBy<V.Expression.Assignment<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Await<PythonMap>, 'expression', never>
+				| V.Expression.Binary<PythonMap>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Add<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Divide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Exponent<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.FloorDivide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Modulo<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Multiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Subtract<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.And<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Or<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Xor<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Chain<PythonMap>, 'comparators' | 'left', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Equal<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Greater<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.GreaterEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Less<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.LessEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual.Legacy<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.Is<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.IsNot<PythonMap>, 'left' | 'right', never>
+				| V.Expression.Binary.Logical<PythonMap>
+				| V.RequiredBy<V.Expression.Binary.Logical.And<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Logical.Or<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.MatrixMultiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.In<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.NotIn<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Left<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Right<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Call<PythonMap>, 'arguments' | 'function', never>
+				| V.RequiredBy<V.Expression.Call.Member<PythonMap>, 'arguments' | 'function', never>
+				| V.Expression.Collection.List<PythonMap>
+				| V.Expression.Collection.Map<PythonMap>
+				| V.RequiredBy<V.Expression.Collection.Set<PythonMap>, 'elements', never>
+				| V.Expression.Collection.Tuple<PythonMap>
+				| V.RequiredBy<V.Expression.Comprehension.Generator<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.List<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Map<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Set<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Conditional<PythonMap>, 'alternative' | 'condition' | 'consequence', never>
+				| V.RequiredBy<V.Expression.Lambda<PythonMap>, 'body', never>
+				| V.RequiredBy<V.Expression.Member<PythonMap>, 'object' | 'property', never>
+				| V.RequiredBy<V.Expression.Parenthesized<PythonMap>, 'expression', never>
+				| V.RequiredBy<V.Expression.Subscript<PythonMap>, 'index' | 'object', never>
+				| V.Expression.Unary<PythonMap>
+				| V.RequiredBy<V.Expression.Unary.BitwiseNot<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Negation<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Not<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Plus<PythonMap>, 'argument', never>
+				| V.Identifier<PythonMap>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name' | 'qualifier', never>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name', never>
+				| V.Literal.Boolean.False<PythonMap>
+				| V.Literal.Boolean.True<PythonMap>
+				| V.Literal.Ellipsis<PythonMap>
+				| V.Literal.Null<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Float<PythonMap>, 'integer', never>
+				| V.RequiredBy<V.Literal.Number.Float.LeadingPoint<PythonMap>, 'fraction', never>
+				| V.RequiredBy<V.Literal.Number.Float.Scientific<PythonMap>, 'exponent' | 'integer' | 'marker', never>
+				| V.Literal.Number.Integer<PythonMap>
+				| V.Literal.Number.Integer.Big<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Binary<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.RequiredBy<V.Literal.Number.Integer.Hex<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.Number.Integer.Imaginary<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Octal<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.String<PythonMap>
+				| V.Literal.String.Bytes<PythonMap>
+				| V.Literal.String.Bytes.Multiline<PythonMap>
+				| V.Literal.String.Bytes.Raw<PythonMap>
+				| V.Literal.String.Bytes.Raw.Multiline<PythonMap>
+				| V.RequiredBy<V.Literal.String.Concatenated<PythonMap>, 'strings', never>
+				| V.Literal.String.Interpolated<PythonMap>
+				| V.Literal.String.Interpolated.Deferred<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Raw.Multiline<PythonMap>
+				| V.Literal.String.Multiline<PythonMap>
+				| V.Literal.String.Raw<PythonMap>
+				| V.Literal.String.Raw.Multiline<PythonMap>
+				| V.Literal.String.Unicode<PythonMap>
+				| V.RequiredBy<V.Pattern.Rest<PythonMap>, 'pattern', never>
+				| V.RequiredBy<V.Type.Constrained<PythonMap>, 'baseType' | 'constraint', never>
+				| V.RequiredBy<V.Type.Generic<PythonMap>, 'name' | 'typeArguments', never>
+				| V.RequiredBy<V.Type.Rest<PythonMap>, 'type', never>
+				| V.RequiredBy<V.Type.Union<PythonMap>, 'left' | 'right', never>;
 			readonly type:
 				| V.Identifier<PythonMap>
 				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name' | 'qualifier', never>
 				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name', never>;
 		};
 		readonly 'type.union': {
+			readonly content:
+				| V.RequiredBy<V.Expression.Assignment<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Await<PythonMap>, 'expression', never>
+				| V.Expression.Binary<PythonMap>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Add<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Divide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Exponent<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.FloorDivide<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Modulo<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Multiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Arithmetic.Subtract<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.And<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Or<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Bitwise.Xor<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Chain<PythonMap>, 'comparators' | 'left', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Equal<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Greater<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.GreaterEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.Less<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.LessEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Comparison.NotEqual.Legacy<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.Is<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Identity.IsNot<PythonMap>, 'left' | 'right', never>
+				| V.Expression.Binary.Logical<PythonMap>
+				| V.RequiredBy<V.Expression.Binary.Logical.And<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Logical.Or<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.MatrixMultiply<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.In<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Membership.NotIn<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Left<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Binary.Shift.Right<PythonMap>, 'left' | 'right', never>
+				| V.RequiredBy<V.Expression.Call<PythonMap>, 'arguments' | 'function', never>
+				| V.RequiredBy<V.Expression.Call.Member<PythonMap>, 'arguments' | 'function', never>
+				| V.Expression.Collection.List<PythonMap>
+				| V.Expression.Collection.Map<PythonMap>
+				| V.RequiredBy<V.Expression.Collection.Set<PythonMap>, 'elements', never>
+				| V.Expression.Collection.Tuple<PythonMap>
+				| V.RequiredBy<V.Expression.Comprehension.Generator<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.List<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Map<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Comprehension.Set<PythonMap>, 'body' | 'clauses', never>
+				| V.RequiredBy<V.Expression.Conditional<PythonMap>, 'alternative' | 'condition' | 'consequence', never>
+				| V.RequiredBy<V.Expression.Lambda<PythonMap>, 'body', never>
+				| V.RequiredBy<V.Expression.Member<PythonMap>, 'object' | 'property', never>
+				| V.RequiredBy<V.Expression.Parenthesized<PythonMap>, 'expression', never>
+				| V.RequiredBy<V.Expression.Subscript<PythonMap>, 'index' | 'object', never>
+				| V.Expression.Unary<PythonMap>
+				| V.RequiredBy<V.Expression.Unary.BitwiseNot<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Negation<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Not<PythonMap>, 'argument', never>
+				| V.RequiredBy<V.Expression.Unary.Plus<PythonMap>, 'argument', never>
+				| V.Identifier<PythonMap>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name' | 'qualifier', never>
+				| V.RequiredBy<V.Identifier.Qualified<PythonMap>, 'name', never>
+				| V.Literal.Boolean.False<PythonMap>
+				| V.Literal.Boolean.True<PythonMap>
+				| V.Literal.Ellipsis<PythonMap>
+				| V.Literal.Null<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Float<PythonMap>, 'integer', never>
+				| V.RequiredBy<V.Literal.Number.Float.LeadingPoint<PythonMap>, 'fraction', never>
+				| V.RequiredBy<V.Literal.Number.Float.Scientific<PythonMap>, 'exponent' | 'integer' | 'marker', never>
+				| V.Literal.Number.Integer<PythonMap>
+				| V.Literal.Number.Integer.Big<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Binary<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.RequiredBy<V.Literal.Number.Integer.Hex<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.Number.Integer.Imaginary<PythonMap>
+				| V.RequiredBy<V.Literal.Number.Integer.Octal<PythonMap>, 'content' | 'radixPrefix', never>
+				| V.Literal.String<PythonMap>
+				| V.Literal.String.Bytes<PythonMap>
+				| V.Literal.String.Bytes.Multiline<PythonMap>
+				| V.Literal.String.Bytes.Raw<PythonMap>
+				| V.Literal.String.Bytes.Raw.Multiline<PythonMap>
+				| V.RequiredBy<V.Literal.String.Concatenated<PythonMap>, 'strings', never>
+				| V.Literal.String.Interpolated<PythonMap>
+				| V.Literal.String.Interpolated.Deferred<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Deferred.Raw.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Multiline<PythonMap>
+				| V.Literal.String.Interpolated.Raw<PythonMap>
+				| V.Literal.String.Interpolated.Raw.Multiline<PythonMap>
+				| V.Literal.String.Multiline<PythonMap>
+				| V.Literal.String.Raw<PythonMap>
+				| V.Literal.String.Raw.Multiline<PythonMap>
+				| V.Literal.String.Unicode<PythonMap>
+				| V.RequiredBy<V.Pattern.Rest<PythonMap>, 'pattern', never>
+				| V.RequiredBy<V.Type.Constrained<PythonMap>, 'baseType' | 'constraint', never>
+				| V.RequiredBy<V.Type.Generic<PythonMap>, 'name' | 'typeArguments', never>
+				| V.RequiredBy<V.Type.Rest<PythonMap>, 'type', never>
+				| V.RequiredBy<V.Type.Union<PythonMap>, 'left' | 'right', never>;
 			readonly left:
 				| V.RequiredBy<V.Type<PythonMap>, 'content', never>
 				| V.RequiredBy<V.Type.Constrained<PythonMap>, 'baseType' | 'constraint', never>
@@ -8627,7 +18619,6 @@ export interface PythonMap extends V.GrammarMap {
 declare module '@sittir/types/vocabulary' {
 	interface UnmappedKinds {
 		readonly 'python:as_pattern': T.AsPattern.Parsed;
-		readonly 'python:except_clause_exception_as': T.ExceptClauseExceptionAs.Parsed;
 		readonly 'python:key_value_pattern': T.KeyValuePattern.Parsed;
 	}
 }

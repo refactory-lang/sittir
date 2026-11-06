@@ -79,7 +79,9 @@ export function augmentation(source: VocabularySource, p: Plan): string {
 		add(kind.qname, lines.length === 0 ? [`${head} {}`] : [`${head} {`, ...lines, '}']);
 	}
 	const pathOf = new Map([...p.kinds.values()].map((kind) => [kind.qname, kind.path]));
-	const mixed = source.texts.filter((key) => p.kinds.get(key)?.text !== true);
+	const mixed = source.texts;
+	const stated = mixed.filter((key) => p.kinds.get(key)?.text === true);
+	if (stated.length > 0) throw new Error(`vocabulary: TextPaths lists ${stated.join(', ')}, which the vocabulary declares as Text; list only kinds a token may also read as`);
 	for (const [ns, arms] of p.levels) {
 		const path = pathOf.get(ns);
 		const texts = path === undefined ? [] : mixed.filter((key) => under(key, path)).map((key) => `Text<G, '${key}'>`);

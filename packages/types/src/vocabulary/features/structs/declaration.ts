@@ -7,28 +7,31 @@ export namespace Declaration {
 		readonly $kind: K;
 		readonly body?: Slot<
 			G,
-			'declaration.struct',
+			K,
 			'body',
 			| V.Declaration.Field<G>
 			| V.Declaration.Field.Private<G>
 			| V.Declaration.Field.Public.Any<G>
 		>[];
-		readonly name: V.Identifier<G>;
-		readonly typeParameters?: (
+		readonly name: Slot<G, K, 'name', V.Identifier.Any<G>>;
+		readonly typeParameters?: Slot<
+			G,
+			K,
+			'typeParameters',
 			| V.Identifier.Metavariable<G>
 			| V.Declaration.TypeParameter<G>
 			| V.Declaration.TypeParameter.Lifetime<G>
 			| V.Declaration.TypeParameter.Value<G>
-		)[];
-		readonly whereClause?: V.Clause.Where<G>;
+		>[];
+		readonly whereClause?: Slot<G, K, 'whereClause', V.Clause.Where<G>>;
 	}
 	export namespace Struct {
-		export interface Tuple<G extends GrammarMap, K extends Under<'declaration.struct.tuple'> = 'declaration.struct.tuple'> extends SubKindOf<V.Declaration.Struct<G, K>, 'body'> {
+		export interface Tuple<G extends GrammarMap, K extends Under<'declaration.struct.tuple'> = 'declaration.struct.tuple'> extends SubKindOf<V.Declaration.Struct<G, K>> {
 			// claimed by r
 			readonly $kind: K;
 			readonly body: Slot<
 				G,
-				'declaration.struct.tuple',
+				K,
 				'body',
 				| V.Declaration.Field<G>
 				| V.Declaration.Field.Private<G>

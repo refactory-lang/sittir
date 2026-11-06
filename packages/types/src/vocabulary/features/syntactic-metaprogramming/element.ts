@@ -11,17 +11,17 @@ export namespace Element {
 		export interface TokenBinding<G extends GrammarMap, K extends Under<'element.macro.token_binding'> = 'element.macro.token_binding'> extends SubKindOf<V.Element.Macro<G, K>> {
 			// claimed by r
 			readonly $kind: K;
-			readonly name: V.Identifier.Metavariable<G>;
-			readonly fragment: V.Element.Macro.Fragment<G>;
+			readonly name: Slot<G, K, 'name', V.Identifier.Metavariable<G>>;
+			readonly fragment: Slot<G, K, 'fragment', V.Element.Macro.Fragment<G>>;
 		}
 		export interface TokenRepetition<G extends GrammarMap, K extends Under<'element.macro.token_repetition'> = 'element.macro.token_repetition'> extends SubKindOf<V.Element.Macro<G, K>> {
 			// claimed by r
 			readonly $kind: K;
-			readonly operator: Slot<G, 'element.macro.token_repetition', 'operator', string>;
-			readonly separator?: Slot<G, 'element.macro.token_repetition', 'separator', string>;
+			readonly operator: Slot<G, K, 'operator', string>;
+			readonly separator?: Slot<G, K, 'separator', string>;
 			readonly tokens?: Slot<
 				G,
-				'element.macro.token_repetition',
+				K,
 				'tokens',
 				| V.Identifier.Any<G>
 				| V.Literal.Any<G>
@@ -31,14 +31,14 @@ export namespace Element {
 			>[];
 		}
 		export namespace TokenRepetition {
-			export interface Pattern<G extends GrammarMap, K extends Under<'element.macro.token_repetition.pattern'> = 'element.macro.token_repetition.pattern'> extends SubKindOf<V.Element.Macro.TokenRepetition<G, K>, 'operator' | 'separator'> {
+			export interface Pattern<G extends GrammarMap, K extends Under<'element.macro.token_repetition.pattern'> = 'element.macro.token_repetition.pattern'> extends SubKindOf<V.Element.Macro.TokenRepetition<G, K>> {
 				// claimed by r
 				readonly $kind: K;
-				readonly operator: Slot<G, 'element.macro.token_repetition.pattern', 'operator', string>;
-				readonly separator?: Slot<G, 'element.macro.token_repetition.pattern', 'separator', string>;
+				readonly operator: Slot<G, K, 'operator', string>;
+				readonly separator?: Slot<G, K, 'separator', string>;
 				readonly tokenPatterns?: Slot<
 					G,
-					'element.macro.token_repetition.pattern',
+					K,
 					'tokenPatterns',
 					| V.Identifier.Any<G>
 					| V.Literal.Any<G>
@@ -57,7 +57,7 @@ export namespace Element {
 			readonly $kind: K;
 			readonly tokens?: Slot<
 				G,
-				'element.macro.token_tree',
+				K,
 				'tokens',
 				| V.Element.Macro.TokenBinding<G>
 				| V.Element.Macro.TokenRepetition.Any<G>

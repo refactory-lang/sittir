@@ -5,18 +5,18 @@ export namespace Declaration {
 	export interface Class<G extends GrammarMap, K extends Under<'declaration.class'> = 'declaration.class'> extends SubKindOf<V.Declaration<G, K>> {
 		// claimed by pt
 		readonly $kind: K;
-		readonly body: Slot<G, 'declaration.class', 'body', V.Declaration.Any<G> | V.Statement.Any<G>> | Slot<G, 'declaration.class', 'body', V.Declaration.Any<G> | V.Statement.Any<G>>[];
-		readonly doc?: V.Literal.String<G>;
+		readonly body: Slot<G, K, 'body', V.Declaration.Any<G> | V.Statement.Any<G>> | Slot<G, K, 'body', V.Declaration.Any<G> | V.Statement.Any<G>>[];
+		readonly doc?: Slot<G, K, 'doc', V.Literal.String.Any<G>>;
 		// p only
-		readonly name: Slot<G, 'declaration.class', 'name', V.Identifier.Any<G>>;
+		readonly name: Slot<G, K, 'name', V.Identifier.Any<G>>;
 	}
 	export interface Constructor<G extends GrammarMap, K extends Under<'declaration.constructor'> = 'declaration.constructor'> extends SubKindOf<V.Declaration<G, K>> {
 		// claimed by pt
 		readonly $kind: K;
-		readonly body: V.Statement.Block<G>;
+		readonly body: Slot<G, K, 'body', V.Statement.Block<G> | V.Declaration.TypeAlias<G> | V.Statement.Any<G>>;
 		readonly parameters: Slot<
 			G,
-			'declaration.constructor',
+			K,
 			'parameters',
 			| V.Declaration.Parameter<G>
 			| V.Declaration.Parameter.Default<G>

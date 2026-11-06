@@ -7,7 +7,7 @@ export namespace Expression {
 		readonly $kind: K;
 		readonly expression: Slot<
 			G,
-			'expression.await',
+			K,
 			'expression',
 			| V.Declaration.Module<G>
 			| V.Expression.Any<G>

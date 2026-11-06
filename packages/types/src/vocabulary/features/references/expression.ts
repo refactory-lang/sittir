@@ -11,7 +11,7 @@ export namespace Expression {
 		readonly $kind: K;
 		readonly argument: Slot<
 			G,
-			'expression.reference',
+			K,
 			'argument',
 			| V.Expression.Any<G>
 			| V.Identifier.Any<G>

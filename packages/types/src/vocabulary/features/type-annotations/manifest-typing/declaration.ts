@@ -5,7 +5,7 @@ export namespace Declaration {
 	export interface Constant<G extends GrammarMap, K extends Under<'declaration.constant'> = 'declaration.constant'> {
 		readonly type: Slot<
 			G,
-			'declaration.constant',
+			K,
 			'type',
 			| V.Clause.Bounds.Removed<G>
 			| V.Expression.Call.Macro<G>
@@ -16,7 +16,7 @@ export namespace Declaration {
 	export interface Field<G extends GrammarMap, K extends Under<'declaration.field'> = 'declaration.field'> {
 		readonly type: Slot<
 			G,
-			'declaration.field',
+			K,
 			'type',
 			| V.Clause.Bounds.Removed<G>
 			| V.Expression.Call.Macro<G>

@@ -93,4 +93,35 @@ describe('emitGrammarMap, python', () => {
 			'\t\t\treadonly $text: PortableTexts["clause.import.wildcard"];'
 		);
 	});
+
+	it('overrides an inherited member at each path that instantiates it, by what that path reads', () => {
+		expect(armsAt(map, 'expression.binary.arithmetic.add', 'left').length).toBeGreaterThan(0);
+		expect(armsAt(map, 'expression.binary.comparison.less', 'left').length).toBeGreaterThan(0);
+	});
+
+	it('overrides a member the grammar never reads at a path as never', () => {
+		expect(armsAt(map, 'literal.number.float.scientific', 'fraction')).toEqual(['never']);
+	});
+
+	it('reads a capture by the kind its pattern pins, not by the whole slot it sits in', () => {
+		const doc = armsAt(map, 'declaration.class', 'doc');
+		expect(doc.some((arm) => arm.includes('V.Literal.String'))).toBe(true);
+		expect(doc.filter((arm) => /V\.(Declaration|Expression|Statement)\./.test(arm))).toEqual([]);
+	});
+
+	it("reads a lexed pattern's text group as text", () => {
+		expect(armsAt(map, 'literal.string.escape', 'content')).toContain('string');
+	});
+});
+
+describe('emitGrammarMap, typescript', () => {
+	let map: string;
+
+	beforeAll(async () => {
+		map = await mapOf('typescript');
+	}, 120_000);
+
+	it('overrides no member of a path the vocabulary declares as text', () => {
+		expect(entryOf(map, 'expression.call.import')?.split('\n').slice(1)).toEqual(['\t\t\treadonly $text: PortableTexts["expression.call.import"];']);
+	});
 });

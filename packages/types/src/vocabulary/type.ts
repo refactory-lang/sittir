@@ -3,7 +3,7 @@ import type { Under } from './utils.ts';
 export interface Type<G extends GrammarMap, K extends Under<'type'> = 'type'> {
 	// claimed by p
 	readonly $kind: K;
-	readonly content?: Slot<G, 'type', 'content', unknown>;
+	readonly content?: Slot<G, K, 'content', unknown>;
 	// prt only
 }
 

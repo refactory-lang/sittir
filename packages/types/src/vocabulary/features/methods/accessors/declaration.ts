@@ -7,7 +7,7 @@ export namespace Declaration {
 		readonly $kind: K;
 		readonly name: Slot<
 			G,
-			'declaration.property',
+			K,
 			'name',
 			| V.Expression.Any<G>
 			| V.Literal.Any<G>
@@ -18,7 +18,7 @@ export namespace Declaration {
 		>;
 		readonly value?: Slot<
 			G,
-			'declaration.property',
+			K,
 			'value',
 			| V.Declaration.Module<G>
 			| V.Expression.Any<G>
@@ -30,28 +30,36 @@ export namespace Declaration {
 		export interface Getter<G extends GrammarMap, K extends Under<'declaration.property.getter'> = 'declaration.property.getter'> extends SubKindOf<V.Declaration.Property<G, K>> {
 			// claimed by t
 			readonly $kind: K;
-			readonly body: V.Statement.Block<G>;
-			readonly parameters: V.Declaration.Parameter.Any<G>[];
+			readonly body: Slot<G, K, 'body', V.Statement.Block<G>>;
+			readonly parameters: Slot<G, K, 'parameters', V.Declaration.Parameter.Any<G>>[];
 		}
 		export interface Setter<G extends GrammarMap, K extends Under<'declaration.property.setter'> = 'declaration.property.setter'> extends SubKindOf<V.Declaration.Property<G, K>> {
 			// claimed by t
 			readonly $kind: K;
-			readonly body: V.Statement.Block<G>;
-			readonly parameters: (
+			readonly body: Slot<G, K, 'body', V.Statement.Block<G>>;
+			readonly parameters: Slot<
+				G,
+				K,
+				'parameters',
 				| V.Declaration.Parameter<G>
 				| V.Declaration.Parameter.Private<G>
 				| V.Declaration.Parameter.Protected<G>
 				| V.Declaration.Parameter.Public<G>
-			)[];
+				| V.Declaration.Parameter.Receiver<G>
+			>[];
 		}
 		export interface Signature<G extends GrammarMap, K extends Under<'declaration.property.signature'> = 'declaration.property.signature'> extends SubKindOf<V.Declaration.Property<G, K>> {
 			readonly $kind: K;
-			readonly parameters: (
+			readonly parameters: Slot<
+				G,
+				K,
+				'parameters',
 				| V.Declaration.Parameter<G>
 				| V.Declaration.Parameter.Private<G>
 				| V.Declaration.Parameter.Protected<G>
 				| V.Declaration.Parameter.Public<G>
-			)[];
+				| V.Declaration.Parameter.Receiver<G>
+			>[];
 		}
 		export namespace Signature {
 			export interface Abstract<G extends GrammarMap, K extends Under<'declaration.property.signature.abstract'> = 'declaration.property.signature.abstract'> extends SubKindOf<V.Declaration.Property.Signature<G, K>> {

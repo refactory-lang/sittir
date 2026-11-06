@@ -5,6 +5,6 @@ export namespace Clause {
 	export interface Default<G extends GrammarMap, K extends Under<'clause.default'> = 'clause.default'> extends SubKindOf<V.Clause<G, K>> {
 		// claimed by t
 		readonly $kind: K;
-		readonly type: Slot<G, 'clause.default', 'type', V.Identifier.Any<G> | V.Type.Any<G>>;
+		readonly type: Slot<G, K, 'type', V.Identifier.Any<G> | V.Type.Any<G>>;
 	}
 }

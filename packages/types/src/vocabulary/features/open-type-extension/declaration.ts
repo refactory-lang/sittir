@@ -7,18 +7,18 @@ export namespace Declaration {
 		readonly $kind: K;
 		readonly body: Slot<
 			G,
-			'declaration.extension',
+			K,
 			'body',
 			| V.Attribute.Any<G>
 			| V.Declaration.Any<G>
 			| V.Expression.Call.Macro<G>
 			| V.Statement.Any<G>
 		>[];
-		readonly implements?: Slot<G, 'declaration.extension', 'implements', unknown>;
-		readonly traitClause?: Slot<G, 'declaration.extension', 'traitClause', unknown>;
+		readonly implements?: Slot<G, K, 'implements', unknown>;
+		readonly traitClause?: Slot<G, K, 'traitClause', unknown>;
 		readonly type: Slot<
 			G,
-			'declaration.extension',
+			K,
 			'type',
 			| V.Clause.Bounds.Removed<G>
 			| V.Expression.Call.Macro<G>

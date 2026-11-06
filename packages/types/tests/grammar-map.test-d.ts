@@ -78,3 +78,34 @@ export type TextsFit = V.Assert<V.Fits<Texts>>;
 export type TextOverrideIsTheText = Expect<Equal<V.Type.Primitive.Unchecked<Texts>, 'any'>>;
 
 export type UnoverriddenTextIsString = Expect<Equal<V.Type.Primitive.Unknown<Texts>, string>>;
+
+interface Inherited extends V.GrammarMap {
+	readonly features: V.PythonFeatures;
+	readonly overrides: {
+		readonly 'expression.binary.arithmetic.add': { readonly left: V.Literal.Number.Integer<Inherited> };
+	};
+	readonly inputs: {};
+}
+
+export type InheritedFits = V.Assert<V.Fits<Inherited>>;
+
+export type InheritedMemberIsKeyedByItsPath = Expect<
+	Equal<V.Expression.Binary.Arithmetic.Add<Inherited>['left'], V.Literal.Number.Integer<Inherited> | undefined>
+>;
+
+export type DeclarerKeepsItsDefault = Expect<V.Identifier<Inherited> extends V.Expression.Binary<Inherited>['left'] ? true : false>;
+
+export type RefinementRefusesOutsideItsOverride = Expect<
+	V.Identifier<Inherited> extends V.Expression.Binary.Arithmetic.Add<Inherited>['left'] ? false : true
+>;
+
+interface MisplacedText extends V.GrammarMap {
+	readonly features: V.PythonFeatures;
+	readonly overrides: {
+		readonly 'expression.call': { readonly $text: 'f' };
+	};
+	readonly inputs: {};
+}
+
+// @ts-expect-error a $text override fits only a path the vocabulary reads as text
+export type MisplacedTextFits = V.Assert<V.Fits<MisplacedText>>;

@@ -10,20 +10,20 @@ export namespace Literal {
 				readonly $value: bigint;
 			}
 			export namespace Big {
-				export interface Binary<G extends GrammarMap, K extends Under<'literal.number.integer.big.binary'> = 'literal.number.integer.big.binary'> extends SubKindOf<V.Literal.Number.Integer.Big<G, K>, 'content'> {
+				export interface Binary<G extends GrammarMap, K extends Under<'literal.number.integer.big.binary'> = 'literal.number.integer.big.binary'> extends SubKindOf<V.Literal.Number.Integer.Big<G, K>> {
 					// claimed by t
 					readonly $kind: K;
-					readonly content: Slot<G, 'literal.number.integer.big.binary', 'content', unknown>;
+					readonly content: Slot<G, K, 'content', unknown>;
 				}
-				export interface Hex<G extends GrammarMap, K extends Under<'literal.number.integer.big.hex'> = 'literal.number.integer.big.hex'> extends SubKindOf<V.Literal.Number.Integer.Big<G, K>, 'content'> {
+				export interface Hex<G extends GrammarMap, K extends Under<'literal.number.integer.big.hex'> = 'literal.number.integer.big.hex'> extends SubKindOf<V.Literal.Number.Integer.Big<G, K>> {
 					// claimed by t
 					readonly $kind: K;
-					readonly content: Slot<G, 'literal.number.integer.big.hex', 'content', unknown>;
+					readonly content: Slot<G, K, 'content', unknown>;
 				}
-				export interface Octal<G extends GrammarMap, K extends Under<'literal.number.integer.big.octal'> = 'literal.number.integer.big.octal'> extends SubKindOf<V.Literal.Number.Integer.Big<G, K>, 'content'> {
+				export interface Octal<G extends GrammarMap, K extends Under<'literal.number.integer.big.octal'> = 'literal.number.integer.big.octal'> extends SubKindOf<V.Literal.Number.Integer.Big<G, K>> {
 					// claimed by t
 					readonly $kind: K;
-					readonly content: Slot<G, 'literal.number.integer.big.octal', 'content', unknown>;
+					readonly content: Slot<G, K, 'content', unknown>;
 				}
 			}
 		}

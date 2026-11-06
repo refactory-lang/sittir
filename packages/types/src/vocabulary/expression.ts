@@ -30,7 +30,7 @@ export namespace Expression {
 		readonly $kind: K;
 		readonly left: Slot<
 			G,
-			'expression.assignment',
+			K,
 			'left',
 			| V.Expression.Any<G>
 			| V.Identifier.Any<G>
@@ -41,7 +41,7 @@ export namespace Expression {
 		>;
 		readonly right: Slot<
 			G,
-			'expression.assignment',
+			K,
 			'right',
 			| V.Declaration.Any<G>
 			| V.Expression.Any<G>
@@ -52,12 +52,12 @@ export namespace Expression {
 		>;
 	}
 	export namespace Assignment {
-		export interface Compound<G extends GrammarMap, K extends Under<'expression.assignment.compound'> = 'expression.assignment.compound'> extends SubKindOf<V.Expression.Assignment<G, K>, 'left' | 'right'> {
+		export interface Compound<G extends GrammarMap, K extends Under<'expression.assignment.compound'> = 'expression.assignment.compound'> extends SubKindOf<V.Expression.Assignment<G, K>> {
 			// claimed by prt
 			readonly $kind: K;
 			readonly left: Slot<
 				G,
-				'expression.assignment.compound',
+				K,
 				'left',
 				| V.Expression.Any<G>
 				| V.Identifier.Any<G>
@@ -68,7 +68,7 @@ export namespace Expression {
 			>;
 			readonly right: Slot<
 				G,
-				'expression.assignment.compound',
+				K,
 				'right',
 				| V.Declaration.Any<G>
 				| V.Expression.Any<G>
@@ -139,7 +139,7 @@ export namespace Expression {
 		readonly $kind: K;
 		readonly left?: Slot<
 			G,
-			'expression.binary',
+			K,
 			'left',
 			| V.Declaration.Module<G>
 			| V.Expression.Any<G>
@@ -148,10 +148,10 @@ export namespace Expression {
 			| V.Pattern.Any<G>
 			| V.Statement.Any<G>
 		>;
-		readonly operator?: Slot<G, 'expression.binary', 'operator', string>;
+		readonly operator?: Slot<G, K, 'operator', string>;
 		readonly right?: Slot<
 			G,
-			'expression.binary',
+			K,
 			'right',
 			| V.Declaration.Module<G>
 			| V.Expression.Any<G>
@@ -223,7 +223,10 @@ export namespace Expression {
 			export interface Chain<G extends GrammarMap, K extends Under<'expression.binary.comparison.chain'> = 'expression.binary.comparison.chain'> extends SubKindOf<V.Expression.Binary.Comparison<G, K>> {
 				// claimed by p
 				readonly $kind: K;
-				readonly comparators: (
+				readonly comparators: Slot<
+					G,
+					K,
+					'comparators',
 					| V.Element.Comparator<G>
 					| V.Element.Comparator.Comparison.Equal<G>
 					| V.Element.Comparator.Comparison.Greater<G>
@@ -235,7 +238,7 @@ export namespace Expression {
 					| V.Element.Comparator.Identity.IsNot<G>
 					| V.Element.Comparator.Membership.In<G>
 					| V.Element.Comparator.Membership.NotIn<G>
-				)[];
+				>[];
 			}
 			export interface Equal<G extends GrammarMap, K extends Under<'expression.binary.comparison.equal'> = 'expression.binary.comparison.equal'> extends SubKindOf<V.Expression.Binary<G, K>, 'operator'> {
 				readonly $kind: K;
@@ -274,7 +277,7 @@ export namespace Expression {
 			readonly $kind: K;
 			readonly left: Slot<
 				G,
-				'expression.binary.identity',
+				K,
 				'left',
 				| V.Expression.Any<G>
 				| V.Identifier.Any<G>
@@ -282,45 +285,45 @@ export namespace Expression {
 				| V.Pattern.Rest<G>
 			>;
 			// p only
-			readonly operator?: Slot<G, 'expression.binary.identity', 'operator', unknown>;
+			readonly operator?: Slot<G, K, 'operator', unknown>;
 			// p only
 		}
 		export namespace Identity {
-			export interface Is<G extends GrammarMap, K extends Under<'expression.binary.identity.is'> = 'expression.binary.identity.is'> extends SubKindOf<V.Expression.Binary.Identity<G, K>, 'left' | 'operator'> {
+			export interface Is<G extends GrammarMap, K extends Under<'expression.binary.identity.is'> = 'expression.binary.identity.is'> extends SubKindOf<V.Expression.Binary.Identity<G, K>> {
 				// claimed by p
 				readonly $kind: K;
 				readonly left: Slot<
 					G,
-					'expression.binary.identity.is',
+					K,
 					'left',
 					| V.Expression.Any<G>
 					| V.Identifier.Any<G>
 					| V.Literal.Any<G>
 					| V.Pattern.Rest<G>
 				>;
-				readonly operator?: Slot<G, 'expression.binary.identity.is', 'operator', unknown>;
+				readonly operator?: Slot<G, K, 'operator', unknown>;
 			}
-			export interface IsNot<G extends GrammarMap, K extends Under<'expression.binary.identity.is_not'> = 'expression.binary.identity.is_not'> extends SubKindOf<V.Expression.Binary.Identity<G, K>, 'left' | 'operator'> {
+			export interface IsNot<G extends GrammarMap, K extends Under<'expression.binary.identity.is_not'> = 'expression.binary.identity.is_not'> extends SubKindOf<V.Expression.Binary.Identity<G, K>> {
 				// claimed by p
 				readonly $kind: K;
 				readonly left: Slot<
 					G,
-					'expression.binary.identity.is_not',
+					K,
 					'left',
 					| V.Expression.Any<G>
 					| V.Identifier.Any<G>
 					| V.Literal.Any<G>
 					| V.Pattern.Rest<G>
 				>;
-				readonly operator?: Slot<G, 'expression.binary.identity.is_not', 'operator', unknown>;
+				readonly operator?: Slot<G, K, 'operator', unknown>;
 			}
 		}
-		export interface Logical<G extends GrammarMap, K extends Under<'expression.binary.logical'> = 'expression.binary.logical'> extends SubKindOf<V.Expression.Binary<G, K>, 'left' | 'operator' | 'right'> {
+		export interface Logical<G extends GrammarMap, K extends Under<'expression.binary.logical'> = 'expression.binary.logical'> extends SubKindOf<V.Expression.Binary<G, K>> {
 			// claimed by p
 			readonly $kind: K;
 			readonly left: Slot<
 				G,
-				'expression.binary.logical',
+				K,
 				'left',
 				| V.Expression.Any<G>
 				| V.Identifier.Any<G>
@@ -330,11 +333,11 @@ export namespace Expression {
 				| V.Statement.Any<G>
 			>;
 			// prt only
-			readonly operator: Slot<G, 'expression.binary.logical', 'operator', string>;
+			readonly operator: Slot<G, K, 'operator', string>;
 			// prt only
 			readonly right: Slot<
 				G,
-				'expression.binary.logical',
+				K,
 				'right',
 				| V.Expression.Any<G>
 				| V.Identifier.Any<G>
@@ -364,7 +367,7 @@ export namespace Expression {
 			readonly $kind: K;
 			readonly left: Slot<
 				G,
-				'expression.binary.membership',
+				K,
 				'left',
 				| V.Expression.Any<G>
 				| V.Identifier.Any<G>
@@ -372,7 +375,7 @@ export namespace Expression {
 				| V.Pattern.Rest<G>
 			>;
 			// p only
-			readonly operator?: Slot<G, 'expression.binary.membership', 'operator', unknown>;
+			readonly operator?: Slot<G, K, 'operator', unknown>;
 			// p only
 		}
 		export namespace Membership {
@@ -384,19 +387,19 @@ export namespace Expression {
 				readonly $kind: K;
 				readonly operator: 'instanceof';
 			}
-			export interface NotIn<G extends GrammarMap, K extends Under<'expression.binary.membership.not_in'> = 'expression.binary.membership.not_in'> extends SubKindOf<V.Expression.Binary.Membership<G, K>, 'left' | 'operator'> {
+			export interface NotIn<G extends GrammarMap, K extends Under<'expression.binary.membership.not_in'> = 'expression.binary.membership.not_in'> extends SubKindOf<V.Expression.Binary.Membership<G, K>> {
 				// claimed by p
 				readonly $kind: K;
 				readonly left: Slot<
 					G,
-					'expression.binary.membership.not_in',
+					K,
 					'left',
 					| V.Expression.Any<G>
 					| V.Identifier.Any<G>
 					| V.Literal.Any<G>
 					| V.Pattern.Rest<G>
 				>;
-				readonly operator?: Slot<G, 'expression.binary.membership.not_in', 'operator', unknown>;
+				readonly operator?: Slot<G, K, 'operator', unknown>;
 			}
 		}
 		export interface Shift<G extends GrammarMap, K extends Under<'expression.binary.shift'> = 'expression.binary.shift'> extends SubKindOf<V.Expression.Binary<G, K>> {
@@ -419,7 +422,7 @@ export namespace Expression {
 	}
 	export interface Block<G extends GrammarMap, K extends Under<'expression.block'> = 'expression.block'> extends SubKindOf<V.Expression<G, K>> {
 		readonly $kind: K;
-		readonly body: V.Statement.Block<G>;
+		readonly body: Slot<G, K, 'body', V.Statement.Block<G>>;
 		// r only
 	}
 	export interface Call<G extends GrammarMap, K extends Under<'expression.call'> = 'expression.call'> extends SubKindOf<V.Expression<G, K>> {
@@ -427,7 +430,7 @@ export namespace Expression {
 		readonly $kind: K;
 		readonly arguments?: Slot<
 			G,
-			'expression.call',
+			K,
 			'arguments',
 			| V.Argument.Any<G>
 			| V.Declaration.Module<G>
@@ -439,7 +442,7 @@ export namespace Expression {
 			| V.Statement.Any<G>
 		> | Slot<
 			G,
-			'expression.call',
+			K,
 			'arguments',
 			| V.Argument.Any<G>
 			| V.Declaration.Module<G>
@@ -452,7 +455,7 @@ export namespace Expression {
 		>[];
 		readonly function?: Slot<
 			G,
-			'expression.call',
+			K,
 			'function',
 			| V.Declaration.Module<G>
 			| V.Expression.Any<G>
@@ -464,13 +467,13 @@ export namespace Expression {
 		>;
 	}
 	export namespace Call {
-		export interface Member<G extends GrammarMap, K extends Under<'expression.call.member'> = 'expression.call.member'> extends SubKindOf<V.Expression.Call<G, K>, 'arguments' | 'function' | 'typeArguments'> {
+		export interface Member<G extends GrammarMap, K extends Under<'expression.call.member'> = 'expression.call.member'> extends SubKindOf<V.Expression.Call<G, K>> {
 			// claimed by prt
 			readonly $kind: K;
 			readonly arguments:
 				Slot<
 				G,
-				'expression.call.member',
+				K,
 				'arguments',
 				| V.Argument.Any<G>
 				| V.Declaration.Module<G>
@@ -482,7 +485,7 @@ export namespace Expression {
 				| V.Statement.Any<G>
 			> | Slot<
 				G,
-				'expression.call.member',
+				K,
 				'arguments',
 				| V.Argument.Any<G>
 				| V.Declaration.Module<G>
@@ -495,7 +498,7 @@ export namespace Expression {
 			>[];
 			readonly function: Slot<
 				G,
-				'expression.call.member',
+				K,
 				'function',
 				| V.Expression.Any<G>
 				| V.Identifier.Any<G>
@@ -506,12 +509,12 @@ export namespace Expression {
 				| V.Pattern.Rest<G>
 			>;
 		}
-		export interface Qualified<G extends GrammarMap, K extends Under<'expression.call.qualified'> = 'expression.call.qualified'> extends SubKindOf<V.Expression.Call<G, K>, 'arguments' | 'function'> {
+		export interface Qualified<G extends GrammarMap, K extends Under<'expression.call.qualified'> = 'expression.call.qualified'> extends SubKindOf<V.Expression.Call<G, K>> {
 			// claimed by r
 			readonly $kind: K;
 			readonly arguments: Slot<
 				G,
-				'expression.call.qualified',
+				K,
 				'arguments',
 				| V.Argument.Any<G>
 				| V.Expression.Any<G>
@@ -521,7 +524,7 @@ export namespace Expression {
 			>[];
 			readonly function: Slot<
 				G,
-				'expression.call.qualified',
+				K,
 				'function',
 				| V.Expression.Any<G>
 				| V.Identifier.Any<G>
@@ -540,7 +543,7 @@ export namespace Expression {
 			readonly $kind: K;
 			readonly elements?: Slot<
 				G,
-				'expression.collection.list',
+				K,
 				'elements',
 				| V.Declaration.Module<G>
 				| V.Element.Spread<G>
@@ -561,7 +564,7 @@ export namespace Expression {
 				readonly $kind: K;
 				readonly element: Slot<
 					G,
-					'expression.collection.list.repeat',
+					K,
 					'element',
 					| V.Expression.Any<G>
 					| V.Identifier.Any<G>
@@ -571,7 +574,7 @@ export namespace Expression {
 				>;
 				readonly length: Slot<
 					G,
-					'expression.collection.list.repeat',
+					K,
 					'length',
 					| V.Expression.Any<G>
 					| V.Identifier.Any<G>
@@ -584,14 +587,14 @@ export namespace Expression {
 		export interface Map<G extends GrammarMap, K extends Under<'expression.collection.map'> = 'expression.collection.map'> extends SubKindOf<V.Expression.Collection<G, K>> {
 			// claimed by p
 			readonly $kind: K;
-			readonly elements?: Slot<G, 'expression.collection.map', 'elements', V.Element.Any<G>>[];
+			readonly elements?: Slot<G, K, 'elements', V.Element.Any<G>>[];
 		}
 		export interface Object<G extends GrammarMap, K extends Under<'expression.collection.object'> = 'expression.collection.object'> extends SubKindOf<V.Expression.Collection<G, K>> {
 			// claimed by t
 			readonly $kind: K;
 			readonly properties?: Slot<
 				G,
-				'expression.collection.object',
+				K,
 				'properties',
 				| V.Declaration.Method<G>
 				| V.Element.Any<G>
@@ -615,7 +618,7 @@ export namespace Expression {
 			readonly $kind: K;
 			readonly elements: Slot<
 				G,
-				'expression.collection.set',
+				K,
 				'elements',
 				| V.Expression.Any<G>
 				| V.Identifier.Any<G>
@@ -629,22 +632,25 @@ export namespace Expression {
 	export interface Function<G extends GrammarMap, K extends Under<'expression.function'> = 'expression.function'> extends SubKindOf<V.Expression<G, K>> {
 		// claimed by t
 		readonly $kind: K;
-		readonly body: V.Statement.Block<G>;
-		readonly name?: Slot<G, 'expression.function', 'name', V.Identifier.Any<G>>;
-		readonly parameters: (
+		readonly body: Slot<G, K, 'body', V.Statement.Block<G>>;
+		readonly name?: Slot<G, K, 'name', V.Identifier.Any<G>>;
+		readonly parameters: Slot<
+			G,
+			K,
+			'parameters',
 			| V.Declaration.Parameter<G>
 			| V.Declaration.Parameter.Private<G>
 			| V.Declaration.Parameter.Protected<G>
 			| V.Declaration.Parameter.Public<G>
 			| V.Declaration.Parameter.Receiver<G>
-		)[];
+		>[];
 	}
 	export interface Lambda<G extends GrammarMap, K extends Under<'expression.lambda'> = 'expression.lambda'> extends SubKindOf<V.Expression<G, K>> {
 		// claimed by prt
 		readonly $kind: K;
 		readonly body: Slot<
 			G,
-			'expression.lambda',
+			K,
 			'body',
 			| V.Declaration.Module<G>
 			| V.Expression.Any<G>
@@ -659,7 +665,7 @@ export namespace Expression {
 		readonly parameters?:
 			Slot<
 			G,
-			'expression.lambda',
+			K,
 			'parameters',
 			| V.Identifier.Any<G>
 			| V.Pattern.Any<G>
@@ -673,7 +679,7 @@ export namespace Expression {
 			| V.Declaration.Parameter.TypedDefault<G>
 		> | Slot<
 			G,
-			'expression.lambda',
+			K,
 			'parameters',
 			| V.Identifier.Any<G>
 			| V.Pattern.Any<G>
@@ -688,7 +694,7 @@ export namespace Expression {
 		>[];
 		readonly returnType?: Slot<
 			G,
-			'expression.lambda',
+			K,
 			'returnType',
 			| V.Clause.Bounds.Removed<G>
 			| V.Expression.Call.Macro<G>
@@ -702,7 +708,7 @@ export namespace Expression {
 		readonly $kind: K;
 		readonly object: Slot<
 			G,
-			'expression.member',
+			K,
 			'object',
 			| V.Declaration.Module<G>
 			| V.Expression.Any<G>
@@ -713,7 +719,7 @@ export namespace Expression {
 		>;
 		readonly property: Slot<
 			G,
-			'expression.member',
+			K,
 			'property',
 			| V.Identifier.Any<G>
 			| V.Literal.Number.Integer<G>
@@ -731,7 +737,7 @@ export namespace Expression {
 		readonly $kind: K;
 		readonly expression: Slot<
 			G,
-			'expression.parenthesized',
+			K,
 			'expression',
 			| V.Declaration.Module<G>
 			| V.Expression.Any<G>
@@ -742,7 +748,7 @@ export namespace Expression {
 			| V.Statement.Any<G>
 			| V.Type.Primitive<G>
 		>;
-		readonly type?: Slot<G, 'expression.parenthesized', 'type', V.Identifier.Any<G> | V.Type.Any<G>>;
+		readonly type?: Slot<G, K, 'type', V.Identifier.Any<G> | V.Type.Any<G>>;
 		// t only
 	}
 	export interface Sequence<G extends GrammarMap, K extends Under<'expression.sequence'> = 'expression.sequence'> extends SubKindOf<V.Expression<G, K>> {
@@ -750,7 +756,7 @@ export namespace Expression {
 		readonly $kind: K;
 		readonly expressions: Slot<
 			G,
-			'expression.sequence',
+			K,
 			'expressions',
 			| V.Declaration.Module<G>
 			| V.Expression.Any<G>
@@ -763,7 +769,7 @@ export namespace Expression {
 		readonly $kind: K;
 		readonly index?: Slot<
 			G,
-			'expression.subscript',
+			K,
 			'index',
 			| V.Declaration.Module<G>
 			| V.Expression.Any<G>
@@ -774,7 +780,7 @@ export namespace Expression {
 		>;
 		readonly object: Slot<
 			G,
-			'expression.subscript',
+			K,
 			'object',
 			| V.Declaration.Module<G>
 			| V.Expression.Any<G>
@@ -789,7 +795,7 @@ export namespace Expression {
 		readonly $kind: K;
 		readonly argument: Slot<
 			G,
-			'expression.unary',
+			K,
 			'argument',
 			| V.Declaration.Module<G>
 			| V.Expression.Any<G>
@@ -827,7 +833,7 @@ export namespace Expression {
 		readonly $kind: K;
 		readonly argument: Slot<
 			G,
-			'expression.update',
+			K,
 			'argument',
 			| V.Declaration.Module<G>
 			| V.Expression.Any<G>

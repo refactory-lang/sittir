@@ -5,10 +5,10 @@ export namespace Declaration {
 	export interface TypeAlias<G extends GrammarMap, K extends Under<'declaration.type_alias'> = 'declaration.type_alias'> extends SubKindOf<V.Declaration<G, K>> {
 		// claimed by prt
 		readonly $kind: K;
-		readonly name?: V.Identifier<G>;
+		readonly name?: Slot<G, K, 'name', V.Identifier.Any<G>>;
 		readonly value?: Slot<
 			G,
-			'declaration.type_alias',
+			K,
 			'value',
 			| V.Clause.Bounds.Removed<G>
 			| V.Expression.Call.Macro<G>

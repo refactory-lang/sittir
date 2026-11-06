@@ -3,13 +3,13 @@ import type { Flag, SubKindOf, Under } from '../../utils.ts';
 import type * as V from '../../index.ts';
 export namespace Expression {
 	export namespace Call {
-		export interface Template<G extends GrammarMap, K extends Under<'expression.call.template'> = 'expression.call.template'> extends SubKindOf<V.Expression.Call<G, K>, 'arguments' | 'function'> {
+		export interface Template<G extends GrammarMap, K extends Under<'expression.call.template'> = 'expression.call.template'> extends SubKindOf<V.Expression.Call<G, K>> {
 			// claimed by t
 			readonly $kind: K;
-			readonly arguments: V.Literal.String.Interpolated<G>;
+			readonly arguments: Slot<G, K, 'arguments', V.Literal.String.Interpolated<G>>;
 			readonly function: Slot<
 				G,
-				'expression.call.template',
+				K,
 				'function',
 				| V.Expression.Any<G>
 				| V.Identifier.Any<G>
@@ -24,7 +24,7 @@ export namespace Expression {
 		// p only
 		readonly expression?: Slot<
 			G,
-			'expression.interpolation',
+			K,
 			'expression',
 			| V.Declaration.Module<G>
 			| V.Expression.Any<G>
@@ -32,9 +32,9 @@ export namespace Expression {
 			| V.Literal.Any<G>
 			| V.Pattern.Any<G>
 		>;
-		readonly formatSpecifier?: V.Expression.Interpolation.Format<G>;
+		readonly formatSpecifier?: Slot<G, K, 'formatSpecifier', V.Expression.Interpolation.Format<G>>;
 		// p only
-		readonly typeConversion?: V.Expression.Interpolation.Conversion<G>;
+		readonly typeConversion?: Slot<G, K, 'typeConversion', V.Expression.Interpolation.Conversion<G>>;
 		// p only
 	}
 	export namespace Interpolation {
@@ -45,7 +45,7 @@ export namespace Expression {
 		export interface Format<G extends GrammarMap, K extends Under<'expression.interpolation.format'> = 'expression.interpolation.format'> extends SubKindOf<V.Expression.Interpolation<G, K>> {
 			// claimed by p
 			readonly $kind: K;
-			readonly elements?: Slot<G, 'expression.interpolation.format', 'elements', V.Expression.Interpolation<G> | string>[];
+			readonly elements?: Slot<G, K, 'elements', V.Expression.Interpolation<G> | string>[];
 		}
 	}
 }

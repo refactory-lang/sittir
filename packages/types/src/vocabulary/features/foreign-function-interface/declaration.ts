@@ -3,18 +3,18 @@ import type { Flag, SubKindOf, Under } from '../../utils.ts';
 import type * as V from '../../index.ts';
 export namespace Declaration {
 	export interface Function<G extends GrammarMap, K extends Under<'declaration.function'> = 'declaration.function'> {
-		readonly extern?: V.Modifier.Extern<G>;
+		readonly extern?: Slot<G, K, 'extern', V.Modifier.Extern<G>>;
 		// r only
 	}
 	export interface Method<G extends GrammarMap, K extends Under<'declaration.method'> = 'declaration.method'> {
-		readonly extern?: V.Modifier.Extern<G>;
+		readonly extern?: Slot<G, K, 'extern', V.Modifier.Extern<G>>;
 		// rt only
 	}
 	export namespace Module {
 		export interface Foreign<G extends GrammarMap, K extends Under<'declaration.module.foreign'> = 'declaration.module.foreign'> extends SubKindOf<V.Declaration.Module<G, K>> {
 			// claimed by r
 			readonly $kind: K;
-			readonly extern: V.Modifier.Extern<G>;
+			readonly extern: Slot<G, K, 'extern', V.Modifier.Extern<G>>;
 		}
 	}
 	export namespace Parameter {
@@ -22,7 +22,7 @@ export namespace Declaration {
 			// claimed by r
 			readonly $kind: K;
 			readonly mutable?: Flag;
-			readonly pattern?: Slot<G, 'declaration.parameter.variadic', 'pattern', unknown>;
+			readonly pattern?: Slot<G, K, 'pattern', unknown>;
 		}
 	}
 }

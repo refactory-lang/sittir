@@ -7,7 +7,7 @@ export namespace Statement {
 		readonly $kind: K;
 		readonly arguments?: Slot<
 			G,
-			'statement.print',
+			K,
 			'arguments',
 			| V.Expression.Any<G>
 			| V.Identifier.Any<G>
@@ -16,7 +16,7 @@ export namespace Statement {
 		>[];
 		readonly destination?: Slot<
 			G,
-			'statement.print',
+			K,
 			'destination',
 			| V.Expression.Any<G>
 			| V.Identifier.Any<G>

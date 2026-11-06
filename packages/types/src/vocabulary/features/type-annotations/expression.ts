@@ -6,7 +6,7 @@ export namespace Expression {
 		readonly $kind: K;
 		readonly expression?: Slot<
 			G,
-			'expression.cast',
+			K,
 			'expression',
 			| V.Declaration.Module<G>
 			| V.Expression.Any<G>
@@ -16,19 +16,19 @@ export namespace Expression {
 		// t only
 	}
 	export namespace Cast {
-		export interface Assertion<G extends GrammarMap, K extends Under<'expression.cast.assertion'> = 'expression.cast.assertion'> extends SubKindOf<V.Expression.Cast<G, K>, 'expression'> {
+		export interface Assertion<G extends GrammarMap, K extends Under<'expression.cast.assertion'> = 'expression.cast.assertion'> extends SubKindOf<V.Expression.Cast<G, K>> {
 			// claimed by t
 			readonly $kind: K;
 			readonly expression: Slot<
 				G,
-				'expression.cast.assertion',
+				K,
 				'expression',
 				| V.Declaration.Module<G>
 				| V.Expression.Any<G>
 				| V.Identifier.Any<G>
 				| V.Literal.Any<G>
 			>;
-			readonly type: Slot<G, 'expression.cast.assertion', 'type', V.Identifier.Any<G> | string | V.Type.Any<G>>;
+			readonly type: Slot<G, K, 'type', V.Identifier.Any<G> | string | V.Type.Any<G>>;
 		}
 		export namespace Assertion {
 			export interface AngleBracket<G extends GrammarMap, K extends Under<'expression.cast.assertion.angle_bracket'> = 'expression.cast.assertion.angle_bracket'> extends SubKindOf<V.Expression.Cast.Assertion<G, K>> {
@@ -41,7 +41,7 @@ export namespace Expression {
 			readonly $kind: K;
 			readonly expression: Slot<
 				G,
-				'expression.cast.conversion',
+				K,
 				'expression',
 				| V.Expression.Any<G>
 				| V.Identifier.Any<G>
@@ -50,7 +50,7 @@ export namespace Expression {
 			>;
 			readonly type: Slot<
 				G,
-				'expression.cast.conversion',
+				K,
 				'type',
 				| V.Clause.Bounds.Removed<G>
 				| V.Expression.Call.Macro<G>
@@ -58,22 +58,22 @@ export namespace Expression {
 				| V.Type.Any<G>
 			>;
 		}
-		export interface Satisfies<G extends GrammarMap, K extends Under<'expression.cast.satisfies'> = 'expression.cast.satisfies'> extends SubKindOf<V.Expression.Cast<G, K>, 'expression'> {
+		export interface Satisfies<G extends GrammarMap, K extends Under<'expression.cast.satisfies'> = 'expression.cast.satisfies'> extends SubKindOf<V.Expression.Cast<G, K>> {
 			// claimed by t
 			readonly $kind: K;
 			readonly expression: Slot<
 				G,
-				'expression.cast.satisfies',
+				K,
 				'expression',
 				| V.Declaration.Module<G>
 				| V.Expression.Any<G>
 				| V.Identifier.Any<G>
 				| V.Literal.Any<G>
 			>;
-			readonly type: Slot<G, 'expression.cast.satisfies', 'type', V.Identifier.Any<G> | V.Type.Any<G>>;
+			readonly type: Slot<G, K, 'type', V.Identifier.Any<G> | V.Type.Any<G>>;
 		}
 	}
 	export interface Function<G extends GrammarMap, K extends Under<'expression.function'> = 'expression.function'> {
-		readonly returnType?: Slot<G, 'expression.function', 'returnType', V.Identifier.Any<G> | V.Type.Any<G>>;
+		readonly returnType?: Slot<G, K, 'returnType', V.Identifier.Any<G> | V.Type.Any<G>>;
 	}
 }

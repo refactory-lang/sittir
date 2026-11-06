@@ -5,6 +5,6 @@ export namespace Clause {
 	export interface Extends<G extends GrammarMap, K extends Under<'clause.extends'> = 'clause.extends'> extends SubKindOf<V.Clause<G, K>> {
 		// claimed by t
 		readonly $kind: K;
-		readonly types?: Slot<G, 'clause.extends', 'types', unknown>[];
+		readonly types?: Slot<G, K, 'types', unknown>[];
 	}
 }

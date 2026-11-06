@@ -5,6 +5,6 @@ export namespace Identifier {
 	export interface Lifetime<G extends GrammarMap, K extends Under<'identifier.lifetime'> = 'identifier.lifetime'> extends SubKindOf<V.Identifier<G, K>> {
 		// claimed by r
 		readonly $kind: K;
-		readonly name: Slot<G, 'identifier.lifetime', 'name', V.Identifier.Any<G>>;
+		readonly name: Slot<G, K, 'name', V.Identifier.Any<G>>;
 	}
 }

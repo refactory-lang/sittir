@@ -5,6 +5,7 @@
 		"moduleResolution": "nodenext",
 		"paths": {
 			"@sittir/types": ["./packages/types/src/index.ts"],
+			"@sittir/types/vocabulary": ["./packages/types/src/vocabulary/index.ts"],
 			"@sittir/common": ["./packages/common/src/index.ts"],
 			"@sittir/common/engine": ["./packages/common/src/engine-boundary.ts"],
 			"@sittir/common/blank-arm": ["./packages/common/src/blank-arm.ts"],

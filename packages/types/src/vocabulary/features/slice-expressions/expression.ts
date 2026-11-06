@@ -7,7 +7,7 @@ export namespace Expression {
 		readonly $kind: K;
 		readonly start?: Slot<
 			G,
-			'expression.slice',
+			K,
 			'start',
 			| V.Expression.Any<G>
 			| V.Identifier.Any<G>
@@ -16,7 +16,7 @@ export namespace Expression {
 		>;
 		readonly step?: Slot<
 			G,
-			'expression.slice',
+			K,
 			'step',
 			| V.Expression.Any<G>
 			| V.Identifier.Any<G>
@@ -25,7 +25,7 @@ export namespace Expression {
 		>;
 		readonly stop?: Slot<
 			G,
-			'expression.slice',
+			K,
 			'stop',
 			| V.Expression.Any<G>
 			| V.Identifier.Any<G>

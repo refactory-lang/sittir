@@ -7,7 +7,7 @@ export namespace Declaration {
 		readonly $kind: K;
 		readonly content: Slot<
 			G,
-			'declaration.ambient',
+			K,
 			'content',
 			| V.Declaration.Any<G>
 			| V.Statement.Block<G>
@@ -21,7 +21,7 @@ export namespace Declaration {
 	export interface ModuleProperty<G extends GrammarMap, K extends Under<'declaration.module_property'> = 'declaration.module_property'> extends SubKindOf<V.Declaration<G, K>> {
 		// claimed by t
 		readonly $kind: K;
-		readonly name: V.Identifier<G>;
-		readonly type: Slot<G, 'declaration.module_property', 'type', V.Identifier.Any<G> | V.Type.Any<G>>;
+		readonly name: Slot<G, K, 'name', V.Identifier.Any<G>>;
+		readonly type: Slot<G, K, 'type', V.Identifier.Any<G> | V.Type.Any<G>>;
 	}
 }

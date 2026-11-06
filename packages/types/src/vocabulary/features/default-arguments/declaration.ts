@@ -5,7 +5,7 @@ export namespace Declaration {
 	export interface Parameter<G extends GrammarMap, K extends Under<'declaration.parameter'> = 'declaration.parameter'> {
 		readonly default?: Slot<
 			G,
-			'declaration.parameter',
+			K,
 			'default',
 			| V.Declaration.Module<G>
 			| V.Expression.Any<G>
@@ -19,7 +19,7 @@ export namespace Declaration {
 		export interface Default<G extends GrammarMap, K extends Under<'declaration.parameter.default'> = 'declaration.parameter.default'> {
 			readonly default: Slot<
 				G,
-				'declaration.parameter.default',
+				K,
 				'default',
 				| V.Expression.Any<G>
 				| V.Identifier.Any<G>
@@ -30,7 +30,7 @@ export namespace Declaration {
 		export interface TypedDefault<G extends GrammarMap, K extends Under<'declaration.parameter.typed_default'> = 'declaration.parameter.typed_default'> {
 			readonly default: Slot<
 				G,
-				'declaration.parameter.typed_default',
+				K,
 				'default',
 				| V.Expression.Any<G>
 				| V.Identifier.Any<G>

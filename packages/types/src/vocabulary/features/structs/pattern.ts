@@ -7,7 +7,7 @@ export namespace Pattern {
 		readonly $kind: K;
 		readonly fields?: Slot<
 			G,
-			'pattern.struct',
+			K,
 			'fields',
 			| V.Pattern.Any<G>
 			| V.Expression.Any<G>
@@ -16,7 +16,7 @@ export namespace Pattern {
 		>[];
 		readonly type?: Slot<
 			G,
-			'pattern.struct',
+			K,
 			'type',
 			| V.Identifier<G>
 			| V.Identifier.Qualified<G>
@@ -31,10 +31,10 @@ export namespace Pattern {
 			readonly $kind: K;
 			readonly byReference?: Flag;
 			readonly mutable?: Flag;
-			readonly name: Slot<G, 'pattern.struct.field', 'name', V.Identifier.Any<G>>;
+			readonly name: Slot<G, K, 'name', V.Identifier.Any<G>>;
 			readonly pattern?: Slot<
 				G,
-				'pattern.struct.field',
+				K,
 				'pattern',
 				| V.Expression.Any<G>
 				| V.Identifier.Any<G>

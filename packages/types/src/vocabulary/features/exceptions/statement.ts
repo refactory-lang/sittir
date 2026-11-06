@@ -7,7 +7,7 @@ export namespace Statement {
 		readonly $kind: K;
 		readonly cause?: Slot<
 			G,
-			'statement.throw',
+			K,
 			'cause',
 			| V.Expression.Any<G>
 			| V.Identifier.Any<G>
@@ -17,7 +17,7 @@ export namespace Statement {
 		// p only
 		readonly expression?: Slot<
 			G,
-			'statement.throw',
+			K,
 			'expression',
 			| V.Declaration.Module<G>
 			| V.Expression.Any<G>
@@ -29,10 +29,10 @@ export namespace Statement {
 	export interface Try<G extends GrammarMap, K extends Under<'statement.try'> = 'statement.try'> extends SubKindOf<V.Statement<G, K>> {
 		// claimed by pt
 		readonly $kind: K;
-		readonly alternative?: V.Clause.Else<G>;
+		readonly alternative?: Slot<G, K, 'alternative', V.Clause.Else<G>>;
 		// p only
-		readonly body: Slot<G, 'statement.try', 'body', V.Declaration.TypeAlias<G> | V.Statement.Any<G>>;
-		readonly finalizer?: V.Clause.Finally<G>;
-		readonly handlers?: Slot<G, 'statement.try', 'handlers', V.Clause.Any<G>>[];
+		readonly body: Slot<G, K, 'body', V.Declaration.TypeAlias<G> | V.Statement.Any<G>>;
+		readonly finalizer?: Slot<G, K, 'finalizer', V.Clause.Finally<G>>;
+		readonly handlers?: Slot<G, K, 'handlers', V.Clause.Any<G>>[];
 	}
 }

@@ -3,12 +3,12 @@ import type { SubKindOf, Under } from '../../../../utils.ts';
 import type * as V from '../../../../index.ts';
 export namespace Expression {
 	export namespace Cast {
-		export interface NonNull<G extends GrammarMap, K extends Under<'expression.cast.non_null'> = 'expression.cast.non_null'> extends SubKindOf<V.Expression.Cast<G, K>, 'expression'> {
+		export interface NonNull<G extends GrammarMap, K extends Under<'expression.cast.non_null'> = 'expression.cast.non_null'> extends SubKindOf<V.Expression.Cast<G, K>> {
 			// claimed by t
 			readonly $kind: K;
 			readonly expression: Slot<
 				G,
-				'expression.cast.non_null',
+				K,
 				'expression',
 				| V.Declaration.Module<G>
 				| V.Expression.Any<G>

@@ -12,12 +12,12 @@ export namespace Declaration {
 	}
 	export namespace Method {
 		export namespace Signature {
-			export interface Abstract<G extends GrammarMap, K extends Under<'declaration.method.signature.abstract'> = 'declaration.method.signature.abstract'> extends SubKindOf<V.Declaration.Method.Signature<G, K>, 'name' | 'parameters' | 'returnType' | 'typeParameters'> {
+			export interface Abstract<G extends GrammarMap, K extends Under<'declaration.method.signature.abstract'> = 'declaration.method.signature.abstract'> extends SubKindOf<V.Declaration.Method.Signature<G, K>> {
 				// claimed by t
 				readonly $kind: K;
 				readonly name: Slot<
 					G,
-					'declaration.method.signature.abstract',
+					K,
 					'name',
 					| V.Expression.Any<G>
 					| V.Literal.Any<G>
@@ -26,13 +26,16 @@ export namespace Declaration {
 					| V.Declaration.Module<G>
 					| V.Identifier.Any<G>
 				>;
-				readonly parameters: (
+				readonly parameters: Slot<
+					G,
+					K,
+					'parameters',
 					| V.Declaration.Parameter<G>
 					| V.Declaration.Parameter.Private<G>
 					| V.Declaration.Parameter.Protected<G>
 					| V.Declaration.Parameter.Public<G>
 					| V.Declaration.Parameter.Receiver<G>
-				)[];
+				>[];
 			}
 		}
 	}

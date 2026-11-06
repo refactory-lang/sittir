@@ -54,73 +54,71 @@ export namespace Literal {
 			// claimed by prt
 			readonly $kind: K;
 			readonly $value: number;
-			readonly exponent?: Slot<G, 'literal.number.float', 'exponent', unknown>;
+			readonly exponent?: Slot<G, K, 'exponent', unknown>;
 			// pt only
-			readonly fraction?: Slot<G, 'literal.number.float', 'fraction', unknown>;
+			readonly fraction?: Slot<G, K, 'fraction', unknown>;
 			// pt only
-			readonly integer?: Slot<G, 'literal.number.float', 'integer', unknown>;
+			readonly integer?: Slot<G, K, 'integer', unknown>;
 			// pt only
-			readonly marker?: Slot<G, 'literal.number.float', 'marker', string>;
+			readonly marker?: Slot<G, K, 'marker', string>;
 			// pt only
-			readonly exponentSign?: Slot<G, 'literal.number.float', 'exponentSign', string>;
+			readonly exponentSign?: Slot<G, K, 'exponentSign', string>;
 			// t only
 		}
 		export namespace Float {
-			export interface LeadingPoint<G extends GrammarMap, K extends Under<'literal.number.float.leading_point'> = 'literal.number.float.leading_point'> extends SubKindOf<V.Literal.Number.Float<G, K>, 'exponent' | 'fraction' | 'integer' | 'marker' | 'exponentSign' | 'imaginary'> {
+			export interface LeadingPoint<G extends GrammarMap, K extends Under<'literal.number.float.leading_point'> = 'literal.number.float.leading_point'> extends SubKindOf<V.Literal.Number.Float<G, K>> {
 				// claimed by pt
 				readonly $kind: K;
-				readonly exponent: Slot<G, 'literal.number.float.leading_point', 'exponent', unknown>;
-				readonly fraction: Slot<G, 'literal.number.float.leading_point', 'fraction', unknown>;
-				readonly integer?: Slot<G, 'literal.number.float.leading_point', 'integer', unknown>;
+				readonly fraction: Slot<G, K, 'fraction', unknown>;
+				readonly integer?: Slot<G, K, 'integer', unknown>;
 				// p only
-				readonly marker: Slot<G, 'literal.number.float.leading_point', 'marker', string>;
-				readonly exponentSign?: Slot<G, 'literal.number.float.leading_point', 'exponentSign', string>;
+				readonly exponentSign?: Slot<G, K, 'exponentSign', string>;
 				// t only
 			}
-			export interface Scientific<G extends GrammarMap, K extends Under<'literal.number.float.scientific'> = 'literal.number.float.scientific'> extends SubKindOf<V.Literal.Number.Float<G, K>, 'exponent' | 'integer' | 'marker' | 'exponentSign' | 'imaginary'> {
+			export interface Scientific<G extends GrammarMap, K extends Under<'literal.number.float.scientific'> = 'literal.number.float.scientific'> extends SubKindOf<V.Literal.Number.Float<G, K>> {
 				// claimed by pt
 				readonly $kind: K;
-				readonly exponent: Slot<G, 'literal.number.float.scientific', 'exponent', unknown>;
-				readonly integer: Slot<G, 'literal.number.float.scientific', 'integer', unknown>;
-				readonly marker: Slot<G, 'literal.number.float.scientific', 'marker', string>;
-				readonly exponentSign?: Slot<G, 'literal.number.float.scientific', 'exponentSign', string>;
+				readonly exponent: Slot<G, K, 'exponent', unknown>;
+				readonly integer: Slot<G, K, 'integer', unknown>;
+				readonly marker: Slot<G, K, 'marker', string>;
+				readonly exponentSign?: Slot<G, K, 'exponentSign', string>;
 				// t only
 			}
 		}
 		export interface Integer<G extends GrammarMap, K extends Under<'literal.number.integer'> = 'literal.number.integer'> extends SubKindOf<V.Literal.Number<G, K>> {
 			// claimed by prt
 			readonly $kind: K;
-			readonly content?: Slot<G, 'literal.number.integer', 'content', unknown>;
+			readonly content?: Slot<G, K, 'content', unknown>;
 			// r only
-			readonly suffix?: Slot<G, 'literal.number.integer', 'suffix', string>;
+			readonly suffix?: Slot<G, K, 'suffix', string>;
 			// r only
 		}
 		export namespace Integer {
-			export interface Binary<G extends GrammarMap, K extends Under<'literal.number.integer.binary'> = 'literal.number.integer.binary'> extends SubKindOf<V.Literal.Number.Integer<G, K>, 'content' | 'suffix'> {
+			export interface Binary<G extends GrammarMap, K extends Under<'literal.number.integer.binary'> = 'literal.number.integer.binary'> extends SubKindOf<V.Literal.Number.Integer<G, K>> {
 				// claimed by prt
 				readonly $kind: K;
-				readonly content: Slot<G, 'literal.number.integer.binary', 'content', unknown>;
-				readonly radixPrefix?: Slot<G, 'literal.number.integer.binary', 'radixPrefix', string>;
+				readonly content: Slot<G, K, 'content', unknown>;
+				readonly radixPrefix?: Slot<G, K, 'radixPrefix', string>;
 				// pt only
-				readonly suffix?: Slot<G, 'literal.number.integer.binary', 'suffix', string>;
+				readonly suffix?: Slot<G, K, 'suffix', string>;
 				// r only
 			}
-			export interface Hex<G extends GrammarMap, K extends Under<'literal.number.integer.hex'> = 'literal.number.integer.hex'> extends SubKindOf<V.Literal.Number.Integer<G, K>, 'content' | 'suffix'> {
+			export interface Hex<G extends GrammarMap, K extends Under<'literal.number.integer.hex'> = 'literal.number.integer.hex'> extends SubKindOf<V.Literal.Number.Integer<G, K>> {
 				// claimed by prt
 				readonly $kind: K;
-				readonly content: Slot<G, 'literal.number.integer.hex', 'content', unknown>;
-				readonly radixPrefix?: Slot<G, 'literal.number.integer.hex', 'radixPrefix', string>;
+				readonly content: Slot<G, K, 'content', unknown>;
+				readonly radixPrefix?: Slot<G, K, 'radixPrefix', string>;
 				// pt only
-				readonly suffix?: Slot<G, 'literal.number.integer.hex', 'suffix', string>;
+				readonly suffix?: Slot<G, K, 'suffix', string>;
 				// r only
 			}
-			export interface Octal<G extends GrammarMap, K extends Under<'literal.number.integer.octal'> = 'literal.number.integer.octal'> extends SubKindOf<V.Literal.Number.Integer<G, K>, 'content' | 'suffix'> {
+			export interface Octal<G extends GrammarMap, K extends Under<'literal.number.integer.octal'> = 'literal.number.integer.octal'> extends SubKindOf<V.Literal.Number.Integer<G, K>> {
 				// claimed by prt
 				readonly $kind: K;
-				readonly content: Slot<G, 'literal.number.integer.octal', 'content', unknown>;
-				readonly radixPrefix?: Slot<G, 'literal.number.integer.octal', 'radixPrefix', string>;
+				readonly content: Slot<G, K, 'content', unknown>;
+				readonly radixPrefix?: Slot<G, K, 'radixPrefix', string>;
 				// pt only
-				readonly suffix?: Slot<G, 'literal.number.integer.octal', 'suffix', string>;
+				readonly suffix?: Slot<G, K, 'suffix', string>;
 				// r only
 			}
 		}
@@ -129,7 +127,7 @@ export namespace Literal {
 			readonly $kind: K;
 			readonly value: Slot<
 				G,
-				'literal.number.negative',
+				K,
 				'value',
 				| V.Literal.Number.Integer.Any<G>
 				| V.Literal.Number.Float.Any<G>
@@ -139,25 +137,28 @@ export namespace Literal {
 	export interface String<G extends GrammarMap, K extends Under<'literal.string'> = 'literal.string'> extends SubKindOf<V.Literal<G, K>> {
 		// claimed by prt
 		readonly $kind: K;
-		readonly elements?: Slot<G, 'literal.string', 'elements', unknown>[];
+		readonly elements?: Slot<G, K, 'elements', unknown>[];
 	}
 	export namespace String {
 		export interface Concatenated<G extends GrammarMap, K extends Under<'literal.string.concatenated'> = 'literal.string.concatenated'> extends SubKindOf<V.Literal.String<G, K>> {
 			// claimed by p
 			readonly $kind: K;
-			readonly strings: (
+			readonly strings: Slot<
+				G,
+				K,
+				'strings',
 				| V.Literal.String<G>
 				| V.Literal.String.Multiline<G>
 				| V.Literal.String.Raw.Any<G>
 				| V.Literal.String.Bytes.Any<G>
 				| V.Literal.String.Interpolated.Any<G>
 				| V.Literal.String.Unicode<G>
-			)[];
+			>[];
 		}
 		export interface Escape<G extends GrammarMap, K extends Under<'literal.string.escape'> = 'literal.string.escape'> extends SubKindOf<V.Literal.String<G, K>> {
 			// claimed by prt
 			readonly $kind: K;
-			readonly content?: Slot<G, 'literal.string.escape', 'content', unknown>;
+			readonly content?: Slot<G, K, 'content', unknown>;
 			// t only
 		}
 		export interface Multiline<G extends GrammarMap, K extends Under<'literal.string.multiline'> = 'literal.string.multiline'> extends SubKindOf<V.Literal.String<G, K>> {

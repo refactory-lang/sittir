@@ -6,12 +6,12 @@ export namespace Expression {
 		readonly generator?: Flag;
 	}
 	export namespace Yield {
-		export interface Delegate<G extends GrammarMap, K extends Under<'expression.yield.delegate'> = 'expression.yield.delegate'> extends SubKindOf<V.Expression.Yield<G, K>, 'expression'> {
+		export interface Delegate<G extends GrammarMap, K extends Under<'expression.yield.delegate'> = 'expression.yield.delegate'> extends SubKindOf<V.Expression.Yield<G, K>> {
 			// claimed by pt
 			readonly $kind: K;
 			readonly expression: Slot<
 				G,
-				'expression.yield.delegate',
+				K,
 				'expression',
 				| V.Declaration.Module<G>
 				| V.Expression.Any<G>

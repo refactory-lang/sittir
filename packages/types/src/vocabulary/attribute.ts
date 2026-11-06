@@ -6,7 +6,7 @@ export interface Attribute<G extends GrammarMap, K extends Under<'attribute'> = 
 	readonly $kind: K;
 	readonly content?: Slot<
 		G,
-		'attribute',
+		K,
 		'content',
 		| V.Expression.Any<G>
 		| V.Identifier.Any<G>
@@ -23,7 +23,7 @@ export namespace Attribute {
 		readonly $kind: K;
 		readonly input?: Slot<
 			G,
-			'attribute.content',
+			K,
 			'input',
 			| V.Element.Macro.TokenTree.Delimited.Brace<G>
 			| V.Element.Macro.TokenTree.Delimited.Bracket<G>
@@ -34,6 +34,6 @@ export namespace Attribute {
 			| V.Statement.Any<G>
 			| V.Type.Primitive<G>
 		>;
-		readonly path?: Slot<G, 'attribute.content', 'path', V.Identifier.Any<G>>;
+		readonly path?: Slot<G, K, 'path', V.Identifier.Any<G>>;
 	}
 }

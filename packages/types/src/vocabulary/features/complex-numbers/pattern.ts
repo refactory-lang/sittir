@@ -1,4 +1,4 @@
-import type { GrammarMap } from '../../map.ts';
+import type { GrammarMap, Slot } from '../../map.ts';
 import type { SubKindOf, Under } from '../../utils.ts';
 import type * as V from '../../index.ts';
 export namespace Pattern {
@@ -6,21 +6,31 @@ export namespace Pattern {
 		// claimed by p
 		readonly $kind: K;
 		readonly imaginary:
+			Slot<
+			G,
+			K,
+			'imaginary',
 			| V.Literal.Number.Float.Any<G>
 			| V.Literal.Number.Integer<G>
 			| V.Literal.Number.Integer.Big<G>
 			| V.Literal.Number.Integer.Binary<G>
 			| V.Literal.Number.Integer.Hex<G>
 			| V.Literal.Number.Integer.Imaginary<G>
-			| V.Literal.Number.Integer.Octal<G>;
+			| V.Literal.Number.Integer.Octal<G>
+		>;
 		readonly real:
+			Slot<
+			G,
+			K,
+			'real',
 			| V.Literal.Number.Float.Any<G>
 			| V.Literal.Number.Integer<G>
 			| V.Literal.Number.Integer.Big<G>
 			| V.Literal.Number.Integer.Binary<G>
 			| V.Literal.Number.Integer.Hex<G>
 			| V.Literal.Number.Integer.Imaginary<G>
-			| V.Literal.Number.Integer.Octal<G>;
+			| V.Literal.Number.Integer.Octal<G>
+		>;
 		readonly sign?: boolean;
 	}
 	export namespace Complex {

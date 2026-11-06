@@ -8,7 +8,7 @@ export namespace Attribute {
 			readonly $kind: K;
 			readonly arguments: Slot<
 				G,
-				'attribute.content.call',
+				K,
 				'arguments',
 				| V.Declaration.Module<G>
 				| V.Element.Spread<G>
@@ -16,21 +16,21 @@ export namespace Attribute {
 				| V.Identifier.Any<G>
 				| V.Literal.Any<G>
 			>[];
-			readonly function: Slot<G, 'attribute.content.call', 'function', V.Attribute.Content.Member<G> | V.Identifier.Any<G>>;
-			readonly typeArguments?: Slot<G, 'attribute.content.call', 'typeArguments', V.Identifier.Any<G> | V.Type.Any<G>>[];
+			readonly function: Slot<G, K, 'function', V.Attribute.Content.Member<G> | V.Identifier.Any<G>>;
+			readonly typeArguments?: Slot<G, K, 'typeArguments', V.Identifier.Any<G> | V.Type.Any<G>>[];
 		}
 		export interface Member<G extends GrammarMap, K extends Under<'attribute.content.member'> = 'attribute.content.member'> extends SubKindOf<V.Attribute.Content<G, K>> {
 			// claimed by t
 			readonly $kind: K;
-			readonly object: Slot<G, 'attribute.content.member', 'object', V.Attribute.Content.Member<G> | V.Identifier.Any<G>>;
-			readonly property: V.Identifier<G>;
+			readonly object: Slot<G, K, 'object', V.Attribute.Content.Member<G> | V.Identifier.Any<G>>;
+			readonly property: Slot<G, K, 'property', V.Identifier.Any<G>>;
 		}
 		export interface Parenthesized<G extends GrammarMap, K extends Under<'attribute.content.parenthesized'> = 'attribute.content.parenthesized'> extends SubKindOf<V.Attribute.Content<G, K>> {
 			// claimed by t
 			readonly $kind: K;
 			readonly expression: Slot<
 				G,
-				'attribute.content.parenthesized',
+				K,
 				'expression',
 				| V.Identifier.Any<G>
 				| V.Attribute.Content.Call<G>
@@ -38,12 +38,12 @@ export namespace Attribute {
 			>;
 		}
 	}
-	export interface Decorator<G extends GrammarMap, K extends Under<'attribute.decorator'> = 'attribute.decorator'> extends SubKindOf<V.Attribute<G, K>, 'content'> {
+	export interface Decorator<G extends GrammarMap, K extends Under<'attribute.decorator'> = 'attribute.decorator'> extends SubKindOf<V.Attribute<G, K>> {
 		// claimed by pt
 		readonly $kind: K;
 		readonly content: Slot<
 			G,
-			'attribute.decorator',
+			K,
 			'content',
 			| V.Expression.Any<G>
 			| V.Identifier.Any<G>

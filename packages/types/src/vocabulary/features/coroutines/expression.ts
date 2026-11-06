@@ -6,7 +6,7 @@ export namespace Expression {
 		export interface Generator<G extends GrammarMap, K extends Under<'expression.block.generator'> = 'expression.block.generator'> extends SubKindOf<V.Expression.Block<G, K>> {
 			// claimed by r
 			readonly $kind: K;
-			readonly body: V.Statement.Block<G>;
+			readonly body: Slot<G, K, 'body', V.Statement.Block<G>>;
 			readonly move?: Flag;
 		}
 	}
@@ -19,7 +19,7 @@ export namespace Expression {
 		readonly $kind: K;
 		readonly content?: Slot<
 			G,
-			'expression.yield',
+			K,
 			'content',
 			| V.Expression.Any<G>
 			| V.Identifier.Any<G>
@@ -29,7 +29,7 @@ export namespace Expression {
 		// p only
 		readonly expression?: Slot<
 			G,
-			'expression.yield',
+			K,
 			'expression',
 			| V.Declaration.Module<G>
 			| V.Expression.Any<G>

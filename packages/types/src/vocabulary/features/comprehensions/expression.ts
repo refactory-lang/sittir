@@ -6,7 +6,7 @@ export namespace Expression {
 		readonly $kind: K;
 		readonly body: Slot<
 			G,
-			'expression.comprehension',
+			K,
 			'body',
 			| V.Element.Pair<G>
 			| V.Expression.Any<G>
@@ -15,57 +15,57 @@ export namespace Expression {
 			| V.Pattern.Any<G>
 		>;
 		// p only
-		readonly clauses: V.Clause.Comprehension<G>;
+		readonly clauses: Slot<G, K, 'clauses', V.Clause.Comprehension<G>>;
 		// p only
 	}
 	export namespace Comprehension {
-		export interface Generator<G extends GrammarMap, K extends Under<'expression.comprehension.generator'> = 'expression.comprehension.generator'> extends SubKindOf<V.Expression.Comprehension<G, K>, 'body'> {
+		export interface Generator<G extends GrammarMap, K extends Under<'expression.comprehension.generator'> = 'expression.comprehension.generator'> extends SubKindOf<V.Expression.Comprehension<G, K>> {
 			// claimed by p
 			readonly $kind: K;
 			readonly body: Slot<
 				G,
-				'expression.comprehension.generator',
+				K,
 				'body',
 				| V.Expression.Any<G>
 				| V.Identifier.Any<G>
 				| V.Literal.Any<G>
 				| V.Pattern.Any<G>
 			>;
-			readonly clauses: V.Clause.Comprehension<G>;
+			readonly clauses: Slot<G, K, 'clauses', V.Clause.Comprehension<G>>;
 		}
-		export interface List<G extends GrammarMap, K extends Under<'expression.comprehension.list'> = 'expression.comprehension.list'> extends SubKindOf<V.Expression.Comprehension<G, K>, 'body'> {
+		export interface List<G extends GrammarMap, K extends Under<'expression.comprehension.list'> = 'expression.comprehension.list'> extends SubKindOf<V.Expression.Comprehension<G, K>> {
 			// claimed by p
 			readonly $kind: K;
 			readonly body: Slot<
 				G,
-				'expression.comprehension.list',
+				K,
 				'body',
 				| V.Expression.Any<G>
 				| V.Identifier.Any<G>
 				| V.Literal.Any<G>
 				| V.Pattern.Any<G>
 			>;
-			readonly clauses: V.Clause.Comprehension<G>;
+			readonly clauses: Slot<G, K, 'clauses', V.Clause.Comprehension<G>>;
 		}
-		export interface Map<G extends GrammarMap, K extends Under<'expression.comprehension.map'> = 'expression.comprehension.map'> extends SubKindOf<V.Expression.Comprehension<G, K>, 'body'> {
+		export interface Map<G extends GrammarMap, K extends Under<'expression.comprehension.map'> = 'expression.comprehension.map'> extends SubKindOf<V.Expression.Comprehension<G, K>> {
 			// claimed by p
 			readonly $kind: K;
-			readonly body: V.Element.Pair<G>;
-			readonly clauses: V.Clause.Comprehension<G>;
+			readonly body: Slot<G, K, 'body', V.Element.Pair<G>>;
+			readonly clauses: Slot<G, K, 'clauses', V.Clause.Comprehension<G>>;
 		}
-		export interface Set<G extends GrammarMap, K extends Under<'expression.comprehension.set'> = 'expression.comprehension.set'> extends SubKindOf<V.Expression.Comprehension<G, K>, 'body'> {
+		export interface Set<G extends GrammarMap, K extends Under<'expression.comprehension.set'> = 'expression.comprehension.set'> extends SubKindOf<V.Expression.Comprehension<G, K>> {
 			// claimed by p
 			readonly $kind: K;
 			readonly body: Slot<
 				G,
-				'expression.comprehension.set',
+				K,
 				'body',
 				| V.Expression.Any<G>
 				| V.Identifier.Any<G>
 				| V.Literal.Any<G>
 				| V.Pattern.Any<G>
 			>;
-			readonly clauses: V.Clause.Comprehension<G>;
+			readonly clauses: Slot<G, K, 'clauses', V.Clause.Comprehension<G>>;
 		}
 	}
 }

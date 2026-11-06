@@ -16,8 +16,8 @@ export namespace Identifier {
 	export interface Qualified<G extends GrammarMap, K extends Under<'identifier.qualified'> = 'identifier.qualified'> extends SubKindOf<V.Identifier<G, K>> {
 		// claimed by prt
 		readonly $kind: K;
-		readonly name: Slot<G, 'identifier.qualified', 'name', V.Identifier.Any<G>>;
-		readonly qualifier?: Slot<G, 'identifier.qualified', 'qualifier', V.Identifier.Any<G> | string | V.Type.Any<G>>;
+		readonly name: Slot<G, K, 'name', V.Identifier.Any<G>>;
+		readonly qualifier?: Slot<G, K, 'qualifier', V.Identifier.Any<G> | string | V.Type.Any<G>>;
 	}
 	// claimed by t
 	export type Super<G extends GrammarMap> = Text<G, 'identifier.super'>;

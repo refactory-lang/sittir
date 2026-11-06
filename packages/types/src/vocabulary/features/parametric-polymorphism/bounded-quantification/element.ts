@@ -5,7 +5,7 @@ export namespace Element {
 	export interface TypeArgument<G extends GrammarMap, K extends Under<'element.type_argument'> = 'element.type_argument'> {
 		readonly bounds?: Slot<
 			G,
-			'element.type_argument',
+			K,
 			'bounds',
 			| V.Expression.Call.Macro<G>
 			| V.Identifier.Any<G>

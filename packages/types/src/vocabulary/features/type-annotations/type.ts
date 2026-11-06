@@ -7,7 +7,7 @@ export namespace Type {
 		readonly $kind: K;
 		readonly trait: Slot<
 			G,
-			'type.abstract',
+			K,
 			'trait',
 			| V.Clause.Bounds.Removed<G>
 			| V.Identifier<G>
@@ -20,7 +20,7 @@ export namespace Type {
 		readonly $kind: K;
 		readonly element?: Slot<
 			G,
-			'type.array',
+			K,
 			'element',
 			| V.Clause.Bounds.Removed<G>
 			| V.Expression.Call.Macro<G>
@@ -30,7 +30,7 @@ export namespace Type {
 		// r only
 		readonly length?: Slot<
 			G,
-			'type.array',
+			K,
 			'length',
 			| V.Expression.Any<G>
 			| V.Identifier.Any<G>
@@ -38,7 +38,7 @@ export namespace Type {
 			| V.Statement.Any<G>
 		>;
 		// r only
-		readonly type?: Slot<G, 'type.array', 'type', V.Identifier.Any<G> | V.Type.Any<G>>;
+		readonly type?: Slot<G, K, 'type', V.Identifier.Any<G> | V.Type.Any<G>>;
 		// t only
 	}
 	export interface Bounded<G extends GrammarMap, K extends Under<'type.bounded'> = 'type.bounded'> extends SubKindOf<V.Type<G, K>> {
@@ -46,7 +46,7 @@ export namespace Type {
 		readonly $kind: K;
 		readonly left: Slot<
 			G,
-			'type.bounded',
+			K,
 			'left',
 			| V.Expression.Call.Macro<G>
 			| V.Identifier.Any<G>
@@ -56,7 +56,7 @@ export namespace Type {
 		>;
 		readonly right: Slot<
 			G,
-			'type.bounded',
+			K,
 			'right',
 			| V.Expression.Call.Macro<G>
 			| V.Identifier.Any<G>
@@ -70,7 +70,7 @@ export namespace Type {
 		readonly $kind: K;
 		readonly type: Slot<
 			G,
-			'type.bracketed',
+			K,
 			'type',
 			| V.Clause.Bounds.Removed<G>
 			| V.Expression.Call.Macro<G>
@@ -81,22 +81,22 @@ export namespace Type {
 	export interface Conditional<G extends GrammarMap, K extends Under<'type.conditional'> = 'type.conditional'> extends SubKindOf<V.Type<G, K>> {
 		// claimed by t
 		readonly $kind: K;
-		readonly alternative: Slot<G, 'type.conditional', 'alternative', V.Identifier.Any<G> | V.Type.Any<G>>;
-		readonly consequence: Slot<G, 'type.conditional', 'consequence', V.Identifier.Any<G> | V.Type.Any<G>>;
-		readonly left: Slot<G, 'type.conditional', 'left', V.Identifier.Any<G> | V.Type.Any<G>>;
-		readonly right: Slot<G, 'type.conditional', 'right', V.Identifier.Any<G> | V.Type.Any<G>>;
+		readonly alternative: Slot<G, K, 'alternative', V.Identifier.Any<G> | V.Type.Any<G>>;
+		readonly consequence: Slot<G, K, 'consequence', V.Identifier.Any<G> | V.Type.Any<G>>;
+		readonly left: Slot<G, K, 'left', V.Identifier.Any<G> | V.Type.Any<G>>;
+		readonly right: Slot<G, K, 'right', V.Identifier.Any<G> | V.Type.Any<G>>;
 	}
 	export interface Constrained<G extends GrammarMap, K extends Under<'type.constrained'> = 'type.constrained'> extends SubKindOf<V.Type<G, K>> {
 		// claimed by p
 		readonly $kind: K;
-		readonly baseType: Slot<G, 'type.constrained', 'baseType', V.Type.Any<G>>;
+		readonly baseType: Slot<G, K, 'baseType', V.Type.Any<G>>;
 	}
 	export interface Dynamic<G extends GrammarMap, K extends Under<'type.dynamic'> = 'type.dynamic'> extends SubKindOf<V.Type<G, K>> {
 		// claimed by r
 		readonly $kind: K;
 		readonly trait: Slot<
 			G,
-			'type.dynamic',
+			K,
 			'trait',
 			| V.Clause.Bounds.HigherRanked<G>
 			| V.Identifier<G>
@@ -109,11 +109,11 @@ export namespace Type {
 	export interface Function<G extends GrammarMap, K extends Under<'type.function'> = 'type.function'> extends SubKindOf<V.Type<G, K>> {
 		// claimed by rt
 		readonly $kind: K;
-		readonly extern?: V.Modifier.Extern<G>;
+		readonly extern?: Slot<G, K, 'extern', V.Modifier.Extern<G>>;
 		// r only
 		readonly parameters: Slot<
 			G,
-			'type.function',
+			K,
 			'parameters',
 			| V.Clause.Bounds.Removed<G>
 			| V.Expression.Call.Macro<G>
@@ -129,40 +129,43 @@ export namespace Type {
 		>[];
 		readonly returnType?: Slot<
 			G,
-			'type.function',
+			K,
 			'returnType',
 			| V.Clause.Bounds.Removed<G>
 			| V.Expression.Call.Macro<G>
 			| V.Identifier.Any<G>
 			| V.Type.Any<G>
 		>;
-		readonly trait?: Slot<G, 'type.function', 'trait', V.Identifier<G> | V.Identifier.Qualified<G> | V.Identifier.Any<G>>;
+		readonly trait?: Slot<G, K, 'trait', V.Identifier<G> | V.Identifier.Qualified<G> | V.Identifier.Any<G>>;
 		// r only
 	}
 	export namespace Function {
-		export interface Constructor<G extends GrammarMap, K extends Under<'type.function.constructor'> = 'type.function.constructor'> extends SubKindOf<V.Type.Function<G, K>, 'parameters'> {
+		export interface Constructor<G extends GrammarMap, K extends Under<'type.function.constructor'> = 'type.function.constructor'> extends SubKindOf<V.Type.Function<G, K>> {
 			// claimed by t
 			readonly $kind: K;
-			readonly parameters: (
+			readonly parameters: Slot<
+				G,
+				K,
+				'parameters',
 				| V.Declaration.Parameter<G>
 				| V.Declaration.Parameter.Private<G>
 				| V.Declaration.Parameter.Protected<G>
 				| V.Declaration.Parameter.Public<G>
 				| V.Declaration.Parameter.Receiver<G>
-			)[];
-			readonly type: Slot<G, 'type.function.constructor', 'type', V.Identifier.Any<G> | V.Type.Any<G>>;
+			>[];
+			readonly type: Slot<G, K, 'type', V.Identifier.Any<G> | V.Type.Any<G>>;
 		}
 	}
 	export interface Generic<G extends GrammarMap, K extends Under<'type.generic'> = 'type.generic'> extends SubKindOf<V.Type<G, K>> {
 		// claimed by prt
 		readonly $kind: K;
-		readonly name?: Slot<G, 'type.generic', 'name', V.Identifier.Any<G> | string | V.Identifier.Qualified<G>>;
+		readonly name?: Slot<G, K, 'name', V.Identifier.Any<G> | string | V.Identifier.Qualified<G>>;
 		// pt only
-		readonly type?: Slot<G, 'type.generic', 'type', V.Identifier.Any<G> | string | V.Identifier.Qualified<G>>;
+		readonly type?: Slot<G, K, 'type', V.Identifier.Any<G> | string | V.Identifier.Qualified<G>>;
 		// r only
 		readonly typeArguments?: Slot<
 			G,
-			'type.generic',
+			K,
 			'typeArguments',
 			| V.Element.TypeArgument<G>
 			| V.Identifier.Any<G>
@@ -170,64 +173,64 @@ export namespace Type {
 		>[];
 	}
 	export namespace Generic {
-		export interface Turbofish<G extends GrammarMap, K extends Under<'type.generic.turbofish'> = 'type.generic.turbofish'> extends SubKindOf<V.Type.Generic<G, K>, 'type' | 'typeArguments'> {
+		export interface Turbofish<G extends GrammarMap, K extends Under<'type.generic.turbofish'> = 'type.generic.turbofish'> extends SubKindOf<V.Type.Generic<G, K>> {
 			// claimed by r
 			readonly $kind: K;
-			readonly type: Slot<G, 'type.generic.turbofish', 'type', V.Identifier.Any<G>>;
-			readonly typeArguments: V.Element.TypeArgument<G>[];
+			readonly type: Slot<G, K, 'type', V.Identifier.Any<G>>;
+			readonly typeArguments: Slot<G, K, 'typeArguments', V.Element.TypeArgument<G>>[];
 		}
 	}
 	export interface IndexQuery<G extends GrammarMap, K extends Under<'type.index_query'> = 'type.index_query'> extends SubKindOf<V.Type<G, K>> {
 		// claimed by t
 		readonly $kind: K;
-		readonly type: Slot<G, 'type.index_query', 'type', V.Identifier.Any<G> | V.Type.Any<G>>;
+		readonly type: Slot<G, K, 'type', V.Identifier.Any<G> | V.Type.Any<G>>;
 	}
 	export interface Infer<G extends GrammarMap, K extends Under<'type.infer'> = 'type.infer'> extends SubKindOf<V.Type<G, K>> {
 		// claimed by t
 		readonly $kind: K;
-		readonly name: V.Identifier<G>;
-		readonly type?: Slot<G, 'type.infer', 'type', V.Identifier.Any<G> | V.Type.Any<G>>;
+		readonly name: Slot<G, K, 'name', V.Identifier.Any<G>>;
+		readonly type?: Slot<G, K, 'type', V.Identifier.Any<G> | V.Type.Any<G>>;
 	}
 	export interface Intersection<G extends GrammarMap, K extends Under<'type.intersection'> = 'type.intersection'> extends SubKindOf<V.Type<G, K>> {
 		// claimed by t
 		readonly $kind: K;
-		readonly left?: Slot<G, 'type.intersection', 'left', V.Identifier.Any<G> | V.Type.Any<G>>;
-		readonly right: Slot<G, 'type.intersection', 'right', V.Identifier.Any<G> | V.Type.Any<G>>;
+		readonly left?: Slot<G, K, 'left', V.Identifier.Any<G> | V.Type.Any<G>>;
+		readonly right: Slot<G, K, 'right', V.Identifier.Any<G> | V.Type.Any<G>>;
 	}
-	export interface Literal<G extends GrammarMap, K extends Under<'type.literal'> = 'type.literal'> extends SubKindOf<V.Type<G, K>, 'content'> {
+	export interface Literal<G extends GrammarMap, K extends Under<'type.literal'> = 'type.literal'> extends SubKindOf<V.Type<G, K>> {
 		// claimed by t
 		readonly $kind: K;
-		readonly content: Slot<G, 'type.literal', 'content', unknown>;
+		readonly content: Slot<G, K, 'content', unknown>;
 	}
 	export interface Lookup<G extends GrammarMap, K extends Under<'type.lookup'> = 'type.lookup'> extends SubKindOf<V.Type<G, K>> {
 		// claimed by t
 		readonly $kind: K;
-		readonly indexType: Slot<G, 'type.lookup', 'indexType', V.Identifier.Any<G> | V.Type.Any<G>>;
-		readonly type: Slot<G, 'type.lookup', 'type', V.Identifier.Any<G> | V.Type.Any<G>>;
+		readonly indexType: Slot<G, K, 'indexType', V.Identifier.Any<G> | V.Type.Any<G>>;
+		readonly type: Slot<G, K, 'type', V.Identifier.Any<G> | V.Type.Any<G>>;
 	}
 	export interface Object<G extends GrammarMap, K extends Under<'type.object'> = 'type.object'> extends SubKindOf<V.Type<G, K>> {
 		// claimed by t
 		readonly $kind: K;
-		readonly closing: Slot<G, 'type.object', 'closing', string>;
-		readonly members?: Slot<G, 'type.object', 'members', V.Declaration.Any<G> | V.Statement.Export.Any<G>>[];
-		readonly opening: Slot<G, 'type.object', 'opening', string>;
+		readonly closing: Slot<G, K, 'closing', string>;
+		readonly members?: Slot<G, K, 'members', V.Declaration.Any<G> | V.Statement.Export.Any<G>>[];
+		readonly opening: Slot<G, K, 'opening', string>;
 	}
 	export interface Optional<G extends GrammarMap, K extends Under<'type.optional'> = 'type.optional'> extends SubKindOf<V.Type<G, K>> {
 		// claimed by t
 		readonly $kind: K;
-		readonly type: Slot<G, 'type.optional', 'type', V.Identifier.Any<G> | V.Type.Any<G>>;
+		readonly type: Slot<G, K, 'type', V.Identifier.Any<G> | V.Type.Any<G>>;
 	}
 	export interface Parenthesized<G extends GrammarMap, K extends Under<'type.parenthesized'> = 'type.parenthesized'> extends SubKindOf<V.Type<G, K>> {
 		// claimed by t
 		readonly $kind: K;
-		readonly type: Slot<G, 'type.parenthesized', 'type', V.Identifier.Any<G> | V.Type.Any<G>>;
+		readonly type: Slot<G, K, 'type', V.Identifier.Any<G> | V.Type.Any<G>>;
 	}
 	export interface Pointer<G extends GrammarMap, K extends Under<'type.pointer'> = 'type.pointer'> extends SubKindOf<V.Type<G, K>> {
 		// claimed by r
 		readonly $kind: K;
 		readonly type: Slot<
 			G,
-			'type.pointer',
+			K,
 			'type',
 			| V.Clause.Bounds.Removed<G>
 			| V.Expression.Call.Macro<G>
@@ -238,14 +241,14 @@ export namespace Type {
 	export interface Predicate<G extends GrammarMap, K extends Under<'type.predicate'> = 'type.predicate'> extends SubKindOf<V.Type<G, K>> {
 		// claimed by t
 		readonly $kind: K;
-		readonly name?: Slot<G, 'type.predicate', 'name', V.Identifier.Any<G> | V.Type.Primitive<G>>;
-		readonly type?: Slot<G, 'type.predicate', 'type', V.Identifier.Any<G> | V.Type.Any<G>>;
+		readonly name?: Slot<G, K, 'name', V.Identifier.Any<G> | V.Type.Primitive<G>>;
+		readonly type?: Slot<G, K, 'type', V.Identifier.Any<G> | V.Type.Any<G>>;
 	}
 	export namespace Predicate {
 		export interface Asserts<G extends GrammarMap, K extends Under<'type.predicate.asserts'> = 'type.predicate.asserts'> extends SubKindOf<V.Type.Predicate<G, K>> {
 			// claimed by t
 			readonly $kind: K;
-			readonly value: Slot<G, 'type.predicate.asserts', 'value', V.Identifier.Any<G> | V.Type.Predicate<G>>;
+			readonly value: Slot<G, K, 'value', V.Identifier.Any<G> | V.Type.Predicate<G>>;
 		}
 	}
 	// claimed by rt
@@ -295,7 +298,7 @@ export namespace Type {
 		readonly $kind: K;
 		readonly alias: Slot<
 			G,
-			'type.qualified',
+			K,
 			'alias',
 			| V.Clause.Bounds.Removed<G>
 			| V.Expression.Call.Macro<G>
@@ -304,7 +307,7 @@ export namespace Type {
 		>;
 		readonly type: Slot<
 			G,
-			'type.qualified',
+			K,
 			'type',
 			| V.Clause.Bounds.Removed<G>
 			| V.Expression.Call.Macro<G>
@@ -315,19 +318,19 @@ export namespace Type {
 	export interface Query<G extends GrammarMap, K extends Under<'type.query'> = 'type.query'> extends SubKindOf<V.Type<G, K>> {
 		// claimed by t
 		readonly $kind: K;
-		readonly expression: Slot<G, 'type.query', 'expression', unknown>;
+		readonly expression: Slot<G, K, 'expression', unknown>;
 	}
 	export interface Readonly<G extends GrammarMap, K extends Under<'type.readonly'> = 'type.readonly'> extends SubKindOf<V.Type<G, K>> {
 		// claimed by t
 		readonly $kind: K;
-		readonly type: Slot<G, 'type.readonly', 'type', V.Identifier.Any<G> | V.Type.Any<G>>;
+		readonly type: Slot<G, K, 'type', V.Identifier.Any<G> | V.Type.Any<G>>;
 	}
 	export interface Reference<G extends GrammarMap, K extends Under<'type.reference'> = 'type.reference'> extends SubKindOf<V.Type<G, K>> {
 		// claimed by r
 		readonly $kind: K;
 		readonly type: Slot<
 			G,
-			'type.reference',
+			K,
 			'type',
 			| V.Clause.Bounds.Removed<G>
 			| V.Expression.Call.Macro<G>
@@ -338,19 +341,19 @@ export namespace Type {
 	export interface Rest<G extends GrammarMap, K extends Under<'type.rest'> = 'type.rest'> extends SubKindOf<V.Type<G, K>> {
 		// claimed by pt
 		readonly $kind: K;
-		readonly type: Slot<G, 'type.rest', 'type', V.Identifier.Any<G> | V.Type.Any<G>>;
+		readonly type: Slot<G, K, 'type', V.Identifier.Any<G> | V.Type.Any<G>>;
 	}
 	export interface Template<G extends GrammarMap, K extends Under<'type.template'> = 'type.template'> extends SubKindOf<V.Type<G, K>> {
 		// claimed by t
 		readonly $kind: K;
-		readonly elements?: Slot<G, 'type.template', 'elements', unknown>[];
+		readonly elements?: Slot<G, K, 'elements', unknown>[];
 	}
 	export interface Tuple<G extends GrammarMap, K extends Under<'type.tuple'> = 'type.tuple'> extends SubKindOf<V.Type<G, K>> {
 		// claimed by rt
 		readonly $kind: K;
 		readonly tupleTypeMembers?: Slot<
 			G,
-			'type.tuple',
+			K,
 			'tupleTypeMembers',
 			| V.Identifier.Any<G>
 			| V.Element.Tuple.Member.Any<G>
@@ -359,7 +362,7 @@ export namespace Type {
 		// t only
 		readonly types?: Slot<
 			G,
-			'type.tuple',
+			K,
 			'types',
 			| V.Clause.Bounds.Removed<G>
 			| V.Expression.Call.Macro<G>
@@ -371,8 +374,8 @@ export namespace Type {
 	export interface Union<G extends GrammarMap, K extends Under<'type.union'> = 'type.union'> extends SubKindOf<V.Type<G, K>> {
 		// claimed by pt
 		readonly $kind: K;
-		readonly left?: Slot<G, 'type.union', 'left', V.Identifier.Any<G> | V.Type.Any<G>>;
-		readonly right: Slot<G, 'type.union', 'right', V.Identifier.Any<G> | V.Type.Any<G>>;
+		readonly left?: Slot<G, K, 'left', V.Identifier.Any<G> | V.Type.Any<G>>;
+		readonly right: Slot<G, K, 'right', V.Identifier.Any<G> | V.Type.Any<G>>;
 	}
 	// claimed by r
 	export type Unit<G extends GrammarMap> = Text<G, 'type.unit'>;

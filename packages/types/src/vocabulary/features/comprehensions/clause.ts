@@ -5,7 +5,7 @@ export namespace Clause {
 	export interface Comprehension<G extends GrammarMap, K extends Under<'clause.comprehension'> = 'clause.comprehension'> extends SubKindOf<V.Clause<G, K>> {
 		// claimed by p
 		readonly $kind: K;
-		readonly contents?: (V.Clause.Comprehension.For<G> | V.Clause.Comprehension.If<G>)[];
+		readonly contents?: Slot<G, K, 'contents', V.Clause.Comprehension.For<G> | V.Clause.Comprehension.If<G>>[];
 	}
 	export namespace Comprehension {
 		export interface For<G extends GrammarMap, K extends Under<'clause.comprehension.for'> = 'clause.comprehension.for'> extends SubKindOf<V.Clause.Comprehension<G, K>> {
@@ -14,7 +14,7 @@ export namespace Clause {
 			readonly trailingComma?: Flag;
 			readonly left: Slot<
 				G,
-				'clause.comprehension.for',
+				K,
 				'left',
 				| V.Expression.Any<G>
 				| V.Identifier.Any<G>
@@ -22,7 +22,7 @@ export namespace Clause {
 			>;
 			readonly rights: Slot<
 				G,
-				'clause.comprehension.for',
+				K,
 				'rights',
 				| V.Expression.Any<G>
 				| V.Identifier.Any<G>
@@ -35,7 +35,7 @@ export namespace Clause {
 			readonly $kind: K;
 			readonly condition: Slot<
 				G,
-				'clause.comprehension.if',
+				K,
 				'condition',
 				| V.Expression.Any<G>
 				| V.Identifier.Any<G>

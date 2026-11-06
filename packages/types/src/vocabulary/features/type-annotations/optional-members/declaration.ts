@@ -4,7 +4,7 @@ export namespace Declaration {
 	export interface Field<G extends GrammarMap, K extends Under<'declaration.field'> = 'declaration.field'> {
 		readonly optional?: Flag;
 		// t only
-		readonly optionality?: Slot<G, 'declaration.field', 'optionality', string>;
+		readonly optionality?: Slot<G, K, 'optionality', string>;
 		// t only
 	}
 	export namespace Field {
@@ -28,7 +28,7 @@ export namespace Declaration {
 		}
 	}
 	export interface Property<G extends GrammarMap, K extends Under<'declaration.property'> = 'declaration.property'> {
-		readonly optionality?: Slot<G, 'declaration.property', 'optionality', string>;
+		readonly optionality?: Slot<G, K, 'optionality', string>;
 	}
 	export interface Parameter<G extends GrammarMap, K extends Under<'declaration.parameter'> = 'declaration.parameter'> {
 		readonly optional?: Flag;

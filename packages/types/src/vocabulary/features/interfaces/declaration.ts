@@ -3,12 +3,12 @@ import type { SubKindOf, Under } from '../../utils.ts';
 import type * as V from '../../index.ts';
 export namespace Declaration {
 	export namespace Field {
-		export interface Signature<G extends GrammarMap, K extends Under<'declaration.field.signature'> = 'declaration.field.signature'> extends SubKindOf<V.Declaration.Field<G, K>, 'name' | 'type'> {
+		export interface Signature<G extends GrammarMap, K extends Under<'declaration.field.signature'> = 'declaration.field.signature'> extends SubKindOf<V.Declaration.Field<G, K>> {
 			// claimed by t
 			readonly $kind: K;
 			readonly name: Slot<
 				G,
-				'declaration.field.signature',
+				K,
 				'name',
 				| V.Expression.Any<G>
 				| V.Literal.Any<G>
@@ -24,7 +24,7 @@ export namespace Declaration {
 		readonly $kind: K;
 		readonly body: Slot<
 			G,
-			'declaration.interface',
+			K,
 			'body',
 			| V.Attribute.Any<G>
 			| V.Declaration.Any<G>
@@ -34,7 +34,7 @@ export namespace Declaration {
 		// rt only
 		readonly extends?: Slot<
 			G,
-			'declaration.interface',
+			K,
 			'extends',
 			| V.Identifier<G>
 			| V.Type.Any<G>
@@ -44,16 +44,16 @@ export namespace Declaration {
 			| V.Clause.Bounds.Removed<G>
 		>[];
 		// rt only
-		readonly name: V.Identifier<G>;
+		readonly name: Slot<G, K, 'name', V.Identifier.Any<G>>;
 		// rt only
 	}
 	export namespace Interface {
-		export interface Trait<G extends GrammarMap, K extends Under<'declaration.interface.trait'> = 'declaration.interface.trait'> extends SubKindOf<V.Declaration.Interface<G, K>, 'body' | 'extends' | 'typeParameters'> {
+		export interface Trait<G extends GrammarMap, K extends Under<'declaration.interface.trait'> = 'declaration.interface.trait'> extends SubKindOf<V.Declaration.Interface<G, K>> {
 			// claimed by r
 			readonly $kind: K;
 			readonly body: Slot<
 				G,
-				'declaration.interface.trait',
+				K,
 				'body',
 				| V.Attribute.Any<G>
 				| V.Declaration.Any<G>
@@ -62,7 +62,7 @@ export namespace Declaration {
 			>[];
 			readonly extends?: Slot<
 				G,
-				'declaration.interface.trait',
+				K,
 				'extends',
 				| V.Expression.Call.Macro<G>
 				| V.Identifier.Any<G>
@@ -70,7 +70,7 @@ export namespace Declaration {
 				| V.Clause.Bounds.Removed<G>
 				| V.Type.Any<G>
 			>[];
-			readonly name: V.Identifier<G>;
+			readonly name: Slot<G, K, 'name', V.Identifier.Any<G>>;
 		}
 	}
 }

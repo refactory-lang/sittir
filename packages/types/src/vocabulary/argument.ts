@@ -5,7 +5,7 @@ export interface Argument<G extends GrammarMap, K extends Under<'argument'> = 'a
 	readonly $kind: K;
 	readonly value: Slot<
 		G,
-		'argument',
+		K,
 		'value',
 		| V.Expression.Any<G>
 		| V.Identifier.Any<G>
