@@ -189,18 +189,18 @@ The admission census (`tool portable-admission`) owns both counts. It already re
   - bare `string` where the default is a leaf path built from text;
   - scalars where the default is a scalar.
 - Also produces `type ReadOf<G extends GrammarMap>`: the union of every path's read interface under `G`, discriminated by its `$path` literal. Task 6 types `read` with it.
-- Requiredness and the grammar's input-only forms come from `G['inputs'][P]`. Where a path's build forms don't decompose per member, `G['inputs'][P]` is the whole path's input, a union of forms.
+- A path's build forms are stated once, at `G['overrides'][P]['$forms']`, and read and input both take them by lookup (`V.Read<G, P>`, `InputOf`). `G['inputs'][P]` holds only input-only forms: bare text for a text-built path.
 - Consumes: Task 3's `Slot` and `GrammarMap`.
 
-- [ ] **Step 1: The failing tests:**
+- [x] **Step 1: The failing tests:**
   - for python `declaration.constant`, `{ name }` alone is a type error, and each of the value, type and both forms type-checks (today's three `RequiredBy` forms);
   - a text-built leaf member accepts `'x'`;
   - a token member accepts its text, and a kind id is a type error;
   - every read value of a path is assignable to its input.
-- [ ] **Step 2: Run** `pnpm run type-check:tests`. It fails.
-- [ ] **Step 3: Implement.** Implement `InputOf`, emit `inputs` from the build table's arm tests and `builder: 'text'` arms, and delete `gate.RequiredBy`.
-- [ ] **Step 4: Run** the type tests, the build-forms test-d files and the conformance lane.
-- [ ] **Step 5: Commit** (`feat(types): input interfaces derive from read; requiredness moves into input overrides`).
+- [x] **Step 2: Run** `pnpm run type-check:tests`. It fails.
+- [x] **Step 3: Implement.** Implement `InputOf`, emit `$forms` from the build table's arm tests and `inputs` from `builder: 'text'` arms, and delete `gate.RequiredBy`.
+- [x] **Step 4: Run** the type tests, the build-forms test-d files and the conformance lane.
+- [x] **Step 5: Commit** (`feat(types): input interfaces derive from read; requiredness moves into input overrides`).
 
 ### Task 5: Path gating by feature, sub-feature moves and the claims guard
 

@@ -12,13 +12,15 @@ const entryOf = (map: string, path: string): string | undefined => {
 	return start < 0 ? undefined : map.slice(start, map.indexOf('\n\t\t};', start));
 };
 
-const armsAt = (map: string, path: string, member: string): readonly string[] => {
+const typeAt = (map: string, path: string, member: string): string => {
 	const line = entryOf(map, path)
 		?.split('\n')
 		.find((candidate) => candidate.startsWith(`\t\t\treadonly ${member}: `));
 	if (line === undefined) throw new Error(`no override at ${path}.${member}`);
-	return line.slice(`\t\t\treadonly ${member}: `.length, -1).split(' | ');
+	return line.slice(`\t\t\treadonly ${member}: `.length, -1);
 };
+
+const armsAt = (map: string, path: string, member: string): readonly string[] => typeAt(map, path, member).split(' | ');
 
 describe('emitGrammarMap, rust', () => {
 	let map: string;
@@ -36,22 +38,22 @@ describe('emitGrammarMap, rust', () => {
 
 	it("overrides a slot holding a family with the family paths the grammar claims, not the vocabulary's whole family", () => {
 		const property = armsAt(map, 'expression.member', 'property');
-		expect(property).toContain('V.RequiredBy<V.Literal.Number.Integer.Octal<RustMap>, "content", never>');
-		expect(property.some((arm) => arm.includes('V.Literal.Number.Integer.Big'))).toBe(false);
-		expect(property.some((arm) => arm.includes('V.Literal.Number.Integer.Imaginary'))).toBe(false);
+		expect(property).toContain('V.Read<RustMap, "literal.number.integer.octal">');
+		expect(property.some((arm) => arm.includes('"literal.number.integer.big"'))).toBe(false);
+		expect(property.some((arm) => arm.includes('"literal.number.integer.imaginary"'))).toBe(false);
 	});
 
 	it('overrides a slot holding a supertype with the paths its subtypes read as, never the supertype path no node reads as', () => {
 		const input = armsAt(map, 'attribute.content', 'input');
-		expect(input).toContain('V.Element.Macro.TokenTree.Delimited.Paren<RustMap>');
-		expect(input).not.toContain('V.Element.Macro.TokenTree.Delimited<RustMap>');
+		expect(input).toContain('V.Read<RustMap, "element.macro.token_tree.delimited.paren">');
+		expect(input).not.toContain('V.Read<RustMap, "element.macro.token_tree.delimited">');
 	});
 
 	it('overrides only a path the grammar reads, and holds a family by the members it holds', () => {
 		expect(entryOf(map, 'attribute.decorator')).toBeUndefined();
 		const elements = armsAt(map, 'literal.string', 'elements');
-		expect(elements).toContain('V.Literal.String.Text<RustMap>');
-		expect(elements.some((arm) => arm.includes('V.Literal.String.Bytes'))).toBe(false);
+		expect(elements).toContain('V.Read<RustMap, "literal.string.text">');
+		expect(elements.some((arm) => arm.includes('"literal.string.bytes'))).toBe(false);
 	});
 
 	it('registers the unclaimed kinds a read seat holds as their low-level nodes, and admits them by name', () => {
@@ -85,7 +87,7 @@ describe('emitGrammarMap, python', () => {
 	it("overrides a slot holding a token claimed as a path with the text it reads as, not the path's view", () => {
 		const content = armsAt(map, 'statement.import.from', 'content');
 		expect(content).toContain('V.Text<PythonMap, "clause.import.wildcard">');
-		expect(content).not.toContain('V.Clause.Import.Wildcard<PythonMap>');
+		expect(content).not.toContain('V.Read<PythonMap, "clause.import.wildcard">');
 	});
 
 	it('overrides a text path with the texts the grammar reads at it', () => {
@@ -105,12 +107,34 @@ describe('emitGrammarMap, python', () => {
 
 	it('reads a capture by the kind its pattern pins, not by the whole slot it sits in', () => {
 		const doc = armsAt(map, 'declaration.class', 'doc');
-		expect(doc.some((arm) => arm.includes('V.Literal.String'))).toBe(true);
-		expect(doc.filter((arm) => /V\.(Declaration|Expression|Statement)\./.test(arm))).toEqual([]);
+		expect(doc.some((arm) => arm.includes('"literal.string'))).toBe(true);
+		expect(doc.filter((arm) => /"(declaration|expression|statement)\./.test(arm))).toEqual([]);
 	});
 
 	it("reads a lexed pattern's text group as text", () => {
 		expect(armsAt(map, 'literal.string.escape', 'content')).toContain('string');
+	});
+
+	it('states the forms a path builds once, at the path, by the members each form states and leaves out', () => {
+		expect(typeAt(map, 'declaration.constant', '$forms')).toBe(
+			'V.Form<"name" | "value", "type"> | V.Form<"name" | "type", "value"> | V.Form<"name" | "type" | "value">'
+		);
+	});
+
+	it('narrows a member a form tests by kind to the reads of those kinds', () => {
+		expect(typeAt(map, 'identifier.qualified', '$forms')).toBe(
+			'V.Form<"name", never, { readonly qualifier: V.Read<PythonMap, "type"> | T.Type.Parsed }> | V.Form<"name", never, { readonly qualifier?: V.Read<PythonMap, "identifier.qualified"> }>'
+		);
+	});
+
+	it('states no forms where one of the path\'s builds tests nothing a type states', () => {
+		expect(entryOf(map, 'statement.block') ?? '').not.toContain('$forms');
+	});
+
+	it('takes bare text as the input of a path the grammar builds from text', () => {
+		const inputs = map.slice(map.indexOf('\treadonly inputs: {\n'), map.indexOf('\n\t};\n}', map.indexOf('\treadonly inputs: {\n')));
+		expect(inputs).toContain('\t\treadonly "identifier": string;');
+		expect(inputs).not.toContain('"declaration.constant"');
 	});
 });
 
