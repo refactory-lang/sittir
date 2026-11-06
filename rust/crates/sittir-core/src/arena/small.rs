@@ -5,7 +5,7 @@ use std::hash::Hash;
 #[derive(Debug, Clone)]
 pub(super) struct SmallMap<K, V> {
     inline: [Option<(K, V)>; 4],
-    overflow: Option<HashMap<K, V>>,
+    overflow: Option<HashMap<K, V, crate::heap::IndexState>>,
 }
 
 impl<K: Eq + Hash, V> SmallMap<K, V> {
@@ -41,7 +41,7 @@ impl<K: Eq + Hash, V> SmallMap<K, V> {
             if let Some(index) = index {
                 return &mut self.inline[index].get_or_insert_with(|| (key, value())).1;
             }
-            let mut overflow = HashMap::with_capacity(self.inline.len() + 1);
+            let mut overflow = HashMap::with_capacity_and_hasher(self.inline.len() + 1, crate::heap::IndexState::default());
             for entry in &mut self.inline {
                 let (key, value) = entry.take().expect("full inline map");
                 overflow.insert(key, value);

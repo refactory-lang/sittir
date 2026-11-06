@@ -11,7 +11,7 @@
 
 use std::borrow::Borrow;
 use std::collections::{BTreeMap, HashMap};
-use std::hash::Hash;
+use std::hash::{BuildHasher, BuildHasherDefault, Hash, Hasher};
 use std::mem::{align_of, size_of};
 use std::sync::Arc;
 
@@ -144,21 +144,72 @@ impl<T: HeapBytes> HeapBytes for Vec<T> {
     }
 }
 
+/// The hasher of maps keyed by internal indices: rows, tree ids,
+/// addresses, kind ids and small tuples of them. Each word is mixed in with
+/// a rotate, an xor and one multiply (`FxHash`), so dense indices hash in a
+/// few cycles and spread over the table. Keys built to collide are easy to
+/// find, so a map keyed by text, or by anything else a caller chooses,
+/// keeps `RandomState`.
+#[derive(Default, Clone, Copy)]
+pub struct IndexHasher(u64);
+
+/// Builds an `IndexHasher` per hash.
+pub type IndexState = BuildHasherDefault<IndexHasher>;
+
+impl IndexHasher {
+    fn add(&mut self, word: u64) {
+        self.0 = (self.0.rotate_left(5) ^ word).wrapping_mul(0x517c_c1b7_2722_0a95);
+    }
+}
+
+impl Hasher for IndexHasher {
+    fn finish(&self) -> u64 {
+        self.0
+    }
+
+    fn write(&mut self, bytes: &[u8]) {
+        for &byte in bytes {
+            self.add(u64::from(byte));
+        }
+    }
+
+    fn write_u8(&mut self, word: u8) {
+        self.add(u64::from(word));
+    }
+
+    fn write_u16(&mut self, word: u16) {
+        self.add(u64::from(word));
+    }
+
+    fn write_u32(&mut self, word: u32) {
+        self.add(u64::from(word));
+    }
+
+    fn write_u64(&mut self, word: u64) {
+        self.add(word);
+    }
+
+    fn write_usize(&mut self, word: usize) {
+        self.add(word as u64);
+    }
+}
+
 /// A hash map counted by its capacity (`table_bytes`): the one hash map a
 /// count reads. It offers no removal, since removing an entry can leave a
 /// tombstone that lowers the capacity and not the allocation. A map that
 /// drops entries is rebuilt from the ones it keeps (`kept`), and the
-/// rebuilt map's capacity is its allocation's again.
+/// rebuilt map's capacity is its allocation's again. Its keys hash with
+/// `IndexHasher` unless `S` names another hasher.
 #[derive(Debug, Clone)]
-pub struct CountedMap<K, V = ()>(HashMap<K, V>);
+pub struct CountedMap<K, V = (), S = IndexState>(HashMap<K, V, S>);
 
-impl<K, V> Default for CountedMap<K, V> {
+impl<K, V, S: Default> Default for CountedMap<K, V, S> {
     fn default() -> Self {
-        Self(HashMap::new())
+        Self(HashMap::default())
     }
 }
 
-impl<K: Eq + Hash, V> CountedMap<K, V> {
+impl<K: Eq + Hash, V, S: BuildHasher + Default> CountedMap<K, V, S> {
     /// The value the map holds for `key`, or `None` when it holds none.
     #[must_use]
     pub fn get<Q: Eq + Hash + ?Sized>(&self, key: &Q) -> Option<&V>
@@ -226,15 +277,15 @@ impl<K: Eq + Hash, V> CountedMap<K, V> {
     }
 }
 
-impl<K: Eq + Hash, V: PartialEq> PartialEq for CountedMap<K, V> {
+impl<K: Eq + Hash, V: PartialEq, S: BuildHasher> PartialEq for CountedMap<K, V, S> {
     fn eq(&self, other: &Self) -> bool {
         self.0 == other.0
     }
 }
 
-impl<K: Eq + Hash, V: Eq> Eq for CountedMap<K, V> {}
+impl<K: Eq + Hash, V: Eq, S: BuildHasher> Eq for CountedMap<K, V, S> {}
 
-impl<'m, K, V> IntoIterator for &'m CountedMap<K, V> {
+impl<'m, K, V, S> IntoIterator for &'m CountedMap<K, V, S> {
     type Item = (&'m K, &'m V);
     type IntoIter = std::collections::hash_map::Iter<'m, K, V>;
 
@@ -243,19 +294,19 @@ impl<'m, K, V> IntoIterator for &'m CountedMap<K, V> {
     }
 }
 
-impl<K: Eq + Hash, V> Extend<(K, V)> for CountedMap<K, V> {
+impl<K: Eq + Hash, V, S: BuildHasher> Extend<(K, V)> for CountedMap<K, V, S> {
     fn extend<I: IntoIterator<Item = (K, V)>>(&mut self, entries: I) {
         self.0.extend(entries);
     }
 }
 
-impl<K: Eq + Hash, V> FromIterator<(K, V)> for CountedMap<K, V> {
+impl<K: Eq + Hash, V, S: BuildHasher + Default> FromIterator<(K, V)> for CountedMap<K, V, S> {
     fn from_iter<I: IntoIterator<Item = (K, V)>>(entries: I) -> Self {
         Self(entries.into_iter().collect())
     }
 }
 
-impl<K: Eq + Hash + HeapBytes, V: HeapBytes> HeapBytes for CountedMap<K, V> {
+impl<K: Eq + Hash + HeapBytes, V: HeapBytes, S: BuildHasher + Default> HeapBytes for CountedMap<K, V, S> {
     fn heap_bytes(&self) -> usize {
         self.allocation() + self.iter().map(|(key, value)| key.heap_bytes() + value.heap_bytes()).sum::<usize>()
     }

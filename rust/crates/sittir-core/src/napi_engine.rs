@@ -67,13 +67,13 @@ macro_rules! napi_engine {
             /// JavaScript thread, keyed by the id its handles carry. Entries
             /// leave only via `dispose_tree`.
             static LIVE_TREES: ::std::cell::RefCell<
-                ::std::collections::HashMap<$crate::types::TreeId, $crate::ParsedTree<$grammar>>,
-            > = ::std::cell::RefCell::new(::std::collections::HashMap::new());
+                ::std::collections::HashMap<$crate::types::TreeId, $crate::ParsedTree<$grammar>, $crate::heap::IndexState>,
+            > = ::std::cell::RefCell::new(::std::collections::HashMap::default());
             /// The buffers JavaScript reads each live tree's arena chunks
             /// through, detached when the tree is dropped.
             static TREE_BUFFERS: ::std::cell::RefCell<
-                ::std::collections::HashMap<$crate::types::TreeId, $crate::napi_engine::Buffers>,
-            > = ::std::cell::RefCell::new(::std::collections::HashMap::new());
+                ::std::collections::HashMap<$crate::types::TreeId, $crate::napi_engine::Buffers, $crate::heap::IndexState>,
+            > = ::std::cell::RefCell::new(::std::collections::HashMap::default());
             /// What every tree's report has added to V8's external memory,
             /// less what its dispose gave back (`tree_memory`).
             static TREES_REPORTED: ::std::cell::Cell<i64> = const { ::std::cell::Cell::new(0) };
@@ -1512,8 +1512,8 @@ pub fn check_external_buffers(env: &napi::Env) -> napi::Result<()> {
 #[cfg(feature = "arena")]
 #[derive(Default)]
 pub struct Buffers {
-    held: std::collections::HashMap<(bool, u32), WeakValue>,
-    meta: std::collections::HashMap<u32, WeakValue>,
+    held: std::collections::HashMap<(bool, u32), WeakValue, crate::heap::IndexState>,
+    meta: std::collections::HashMap<u32, WeakValue, crate::heap::IndexState>,
     reported: Reported,
     unreported: Vec<u32>,
 }

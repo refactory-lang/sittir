@@ -44,7 +44,7 @@ pub trait RecordTrees: RecordArenas {
 }
 
 /// The arenas of a render's parsed trees, each held for the render.
-pub struct HeldArenas<'t>(std::collections::HashMap<TreeId, std::sync::MutexGuard<'t, TreeArena>>);
+pub struct HeldArenas<'t>(std::collections::HashMap<TreeId, std::sync::MutexGuard<'t, TreeArena>, crate::heap::IndexState>);
 
 impl<'t> HeldArenas<'t> {
     /// The arenas `trees` holds, each by its tree.

@@ -1162,7 +1162,7 @@ impl<G: EngineGrammar> ParsedTree<G> {
     /// One call's lookups in this tree, from a cursor at its root
     /// (`Lookups`).
     fn lookups(&self) -> Lookups<'_, G> {
-        Lookups { tree: self, cursor: self.tree.walk(), record: None, aligned: HashMap::new() }
+        Lookups { tree: self, cursor: self.tree.walk(), record: None, aligned: HashMap::default() }
     }
 
     /// The source of the run at `at` among the table's runs, measured as
@@ -1498,7 +1498,7 @@ struct Lookups<'t, G: EngineGrammar> {
     record: Option<NodeIndex>,
     /// Each frame a gap no anchor measures was read from, by its record and
     /// its node, with the record it is a frame of (`aligned`).
-    aligned: HashMap<(usize, NodeIndex), (Record, std::rc::Rc<Aligned>)>,
+    aligned: HashMap<(usize, NodeIndex), (Record, std::rc::Rc<Aligned>), crate::heap::IndexState>,
 }
 
 impl<'t, G: EngineGrammar> Nodes<'t> for Lookups<'t, G> {
@@ -2204,7 +2204,7 @@ struct Aligned {
 /// whitespace, which a render writes as layout, and the
 /// children of any other child in its place. Extras and `ERROR`s are
 /// trivia, no item. The cursor ends where it started.
-fn source_items(cursor: &mut tree_sitter::TreeCursor<'_>, source: &str, baseline: &crate::baseline::Baseline, framed: &std::collections::HashSet<NodeIndex>, out: &mut Vec<SourceItem>, steps: &mut u64) {
+fn source_items(cursor: &mut tree_sitter::TreeCursor<'_>, source: &str, baseline: &crate::baseline::Baseline, framed: &std::collections::HashSet<NodeIndex, crate::heap::IndexState>, out: &mut Vec<SourceItem>, steps: &mut u64) {
     use crate::baseline::Written;
     if !cursor.goto_first_child() {
         return;
@@ -2239,8 +2239,8 @@ fn source_items(cursor: &mut tree_sitter::TreeCursor<'_>, source: &str, baseline
 /// node no source item names (a sliced comment) is passed over.
 fn align(items: &[SourceItem], written: &[crate::baseline::Item], steps: &mut u64) -> Vec<Option<usize>> {
     use crate::baseline::Written;
-    let named: std::collections::HashSet<NodeIndex> = items.iter().filter_map(|item| item.what.node()).collect();
-    let mut positions: HashMap<NodeIndex, Vec<usize>> = HashMap::new();
+    let named: std::collections::HashSet<NodeIndex, crate::heap::IndexState> = items.iter().filter_map(|item| item.what.node()).collect();
+    let mut positions: HashMap<NodeIndex, Vec<usize>, crate::heap::IndexState> = HashMap::default();
     for (at, item) in written.iter().enumerate() {
         if let Some(index) = item.what.node() {
             positions.entry(index).or_default().push(at);
@@ -2484,7 +2484,7 @@ fn seat_from<'t>(nodes: &mut impl Nodes<'t>, coord: &NodeCoordinate, wrappers: &
 /// The live trees one call renders through, each tree a lookup hands out
 /// noted, so the call can report the trees it read (`ReadTrees::read`): a
 /// tree grows during a render only through a lookup of it.
-pub struct ReadTrees<'t, G: EngineGrammar, H = std::collections::hash_map::RandomState> {
+pub struct ReadTrees<'t, G: EngineGrammar, H = crate::heap::IndexState> {
     trees: &'t HashMap<crate::types::TreeId, ParsedTree<G>, H>,
     read: std::cell::RefCell<Vec<crate::types::TreeId>>,
 }

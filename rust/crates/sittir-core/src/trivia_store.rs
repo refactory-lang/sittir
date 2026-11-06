@@ -91,7 +91,7 @@ pub struct TriviaStore<T> {
     /// The bytes each tree's rows take, written and assigned, their entries'
     /// heap included, kept at every write (`insert`) and fill and dropped
     /// with the tree.
-    tree_bytes: Arc<std::sync::Mutex<HashMap<TreeId, usize>>>,
+    tree_bytes: Arc<std::sync::Mutex<HashMap<TreeId, usize, crate::heap::IndexState>>>,
     /// The rows the edit checks have walked (`edit_walks`).
     edit_walks: Arc<AtomicU64>,
     /// The chunks of the arena the engine's builders write, which a record

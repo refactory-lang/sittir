@@ -343,7 +343,7 @@ pub struct Arena {
     strings: Vec<Chunk<u8>>,
     /// The shared string chunk strings are appended to, once one is.
     open_strings: Option<u32>,
-    interned: crate::heap::CountedMap<Box<str>, StringRef>,
+    interned: crate::heap::CountedMap<Box<str>, StringRef, std::collections::hash_map::RandomState>,
     /// The bytes of every text `interned` keys: a key is never removed.
     interned_text: usize,
     kind_bits: u32,
@@ -568,7 +568,7 @@ pub struct BuiltChunks {
     free: std::collections::VecDeque<u32>,
     freed: Vec<u32>,
     trees: Vec<TreeId>,
-    overflow: HashMap<u32, u32>,
+    overflow: HashMap<u32, u32, crate::heap::IndexState>,
 }
 
 impl BuiltChunks {
@@ -576,7 +576,7 @@ impl BuiltChunks {
     /// shapes are `shape`'s: the grammar's stamps.
     #[must_use]
     pub fn new(kind_bits: u32, shape: ShapeOf) -> Self {
-        Self { chunks: vec![None], kind_bits, shape, released: false, open: [None; 2], free: std::collections::VecDeque::new(), freed: Vec::new(), trees: Vec::new(), overflow: HashMap::new() }
+        Self { chunks: vec![None], kind_bits, shape, released: false, open: [None; 2], free: std::collections::VecDeque::new(), freed: Vec::new(), trees: Vec::new(), overflow: HashMap::default() }
     }
 
     /// A new words chunk of `len` words, zeroed: its number, its memory and

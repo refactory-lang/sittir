@@ -24,7 +24,7 @@
 //! nodes around it, not the path from the root.
 
 use super::{holds_sides, is_entry, Adjacency, Assigned, DepthAnchor, LayoutRun, Place, SurfaceKinds, TriviaSide};
-use crate::heap::{btree_allocation, vec_allocation, CountedMap, HeapBytes, ARC_COUNTS};
+use crate::heap::{btree_allocation, vec_allocation, CountedMap, HeapBytes, IndexState, ARC_COUNTS};
 use crate::points::LineTable;
 use crate::types::{narrow, KindId, NodeIndex, RunId, Span};
 use std::collections::{BTreeMap, HashMap};
@@ -334,7 +334,7 @@ impl Placement {
 
     fn with<'t, R>(&self, source: Source<'t>, nodes: Option<Lookup<'_, 't>>, f: impl FnOnce(&mut Placer<'t, '_, '_>) -> R) -> R {
         let mut state = self.state.lock().unwrap_or_else(PoisonError::into_inner);
-        let mut placer = Placer { source, kinds: self.kinds, unit: self.unit.max(1), state: &mut state, lookup: nodes, nodes: HashMap::new(), kids: HashMap::new(), plans: HashMap::new(), placed: PlacedSides::new() };
+        let mut placer = Placer { source, kinds: self.kinds, unit: self.unit.max(1), state: &mut state, lookup: nodes, nodes: HashMap::default(), kids: HashMap::default(), plans: HashMap::default(), placed: PlacedSides::new() };
         f(&mut placer)
     }
 
@@ -468,9 +468,9 @@ struct Placer<'t, 's, 'l> {
     unit: u32,
     state: &'s mut State,
     lookup: Option<Lookup<'l, 't>>,
-    nodes: HashMap<NodeIndex, tree_sitter::Node<'t>>,
-    kids: HashMap<NodeIndex, Arc<[Kid]>>,
-    plans: HashMap<Gap, Arc<Plan>>,
+    nodes: HashMap<NodeIndex, tree_sitter::Node<'t>, IndexState>,
+    kids: HashMap<NodeIndex, Arc<[Kid]>, IndexState>,
+    plans: HashMap<Gap, Arc<Plan>, IndexState>,
     placed: PlacedSides,
 }
 
