@@ -21,7 +21,6 @@ import {
 	currentHandle,
 	isNodeOfKind,
 	isNodeValue,
-	listStorage,
 	withEmptyForm
 } from '@sittir/common/utils';
 
@@ -591,7 +590,7 @@ const _K0: readonly string[] = [];
 const _K1: readonly string[] = ['alternation', 'term'];
 const _K2: readonly string[] = ['lookahead_assertion', 'lookbehind_assertion'];
 const _K3: readonly string[] = ['class_character', 'control_escape', 'control_letter_escape'];
-const _K4: readonly string[] = ['character_class_escape', 'identity_escape', 'posix_character_class', 'class_range'];
+const _K4: readonly string[] = ['identity_escape', 'character_class_escape', 'posix_character_class', 'class_range'];
 const _K5: readonly string[] = ['class_character', 'control_escape'];
 const _K6: readonly string[] = ['character_class_escape'];
 const _K7: readonly string[] = ['decimal_digits'];
@@ -815,21 +814,15 @@ export function resolveCharacterClass_leading(
 export function resolveCharacterClass_classAtoms(
 	value: T.CharacterClass.LooseConfig['classAtoms']
 ): Admit<T.CharacterClass['_class_atoms']> {
-	return listStorage(
-		_resolveKindEnumItems(value, [TSKindId.BslashDash], (_v) =>
-			_resolveMany<
-				| T.ClassCharacter
-				| TSKindId.BslashDash
-				| T.CharacterClassEscape
-				| T.ControlEscape
-				| T.ControlLetterEscape
-				| T.IdentityEscape
-				| T.PosixCharacterClass
-				| T.ClassRange
-			>(_v, _K3, _K4)
-		),
-		(item) => coerceMixedEnumStorage(item, [['\\-', TSKindId.BslashDash] as const])
-	);
+	return _resolveMany<
+		| T.ClassCharacter
+		| T.IdentityEscape
+		| T.CharacterClassEscape
+		| T.ControlEscape
+		| T.ControlLetterEscape
+		| T.PosixCharacterClass
+		| T.ClassRange
+	>(value, _K3, _K4);
 }
 
 export function resolveCharacterClass_trailing(

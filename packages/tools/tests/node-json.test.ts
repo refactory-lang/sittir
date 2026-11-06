@@ -201,9 +201,9 @@ describe('engine.reviver builds JSON back into nodes', () => {
 	});
 
 	it('revives a token kind id among a list slot’s items as that token', () => {
-		const root = rx.parse('[\\-a]');
-		expect(find(json(root), 'character_class')?.classAtoms).toEqual([{ $type: 'bslash_dash' }, { $type: 'class_character', $text: 'a' }]);
-		expect(String(roundTrip(rx, root))).toBe('[\\-a]');
+		const root = rs.parse('m!($a);\n');
+		expect(find(json(root), 'delim_token_tree_paren')?.delimTokens).toEqual([{ $type: 'dollar' }, expect.objectContaining({ $type: 'non_special_token' })]);
+		expect(String(roundTrip(rs, root))).toBe('m!($ a);\n');
 	});
 
 	it('refuses envelope content that is not the envelope’s content kind, naming its path', () => {

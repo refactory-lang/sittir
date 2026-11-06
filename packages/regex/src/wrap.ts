@@ -232,11 +232,10 @@ export function wrapCharacterClass(data: T.CharacterClass, tree: TreeHandle): T.
 		classAtoms() {
 			return hydrateSlots<
 				| T.ClassCharacter
-				| TSKindId.BslashDash
+				| T.IdentityEscape
 				| T.CharacterClassEscape
 				| T.ControlEscape
 				| T.ControlLetterEscape
-				| T.IdentityEscape
 				| T.PosixCharacterClass
 				| T.ClassRange
 			>(this, '_class_atoms', tree);

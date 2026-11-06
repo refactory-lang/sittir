@@ -262,10 +262,7 @@ export function buildCharacterClass(config: Partial<T.CharacterClass.Config> = {
 	currentHandle()?.admit(TSKindId.CharacterClass, [config]);
 	const _negation = strictBooleanStorage(config.negation);
 	const _leading = strictBooleanStorage(config.leading);
-	const _class_atoms = listStorage<NonNullable<T.CharacterClass['_class_atoms']>>(
-		config.classAtoms ?? [],
-		kindIdStorage
-	);
+	const _class_atoms = listStorage<NonNullable<T.CharacterClass['_class_atoms']>>(config.classAtoms ?? []);
 	const _trailing = strictBooleanStorage(config.trailing);
 	const handle = currentHandle();
 	const node = {
@@ -280,8 +277,19 @@ export function buildCharacterClass(config: Partial<T.CharacterClass.Config> = {
 				rebuilt(node, handle, () => buildCharacterClass({ ...config, negation: value })),
 			leading: (value?: Admit<NonNullable<T.CharacterClass.Config>['leading']>) =>
 				rebuilt(node, handle, () => buildCharacterClass({ ...config, leading: value })),
-			classAtoms: (...values: Admit<NonNullable<NonNullable<T.CharacterClass.Config>['classAtoms']>[number][]>) =>
-				rebuilt(node, handle, () => buildCharacterClass({ ...config, classAtoms: restItems('classAtoms', values) })),
+			classAtoms: (
+				...values: Admit<
+					(
+						| T.ClassCharacter
+						| T.IdentityEscape
+						| T.CharacterClassEscape
+						| T.ControlEscape
+						| T.ControlLetterEscape
+						| T.PosixCharacterClass
+						| T.ClassRange
+					)[]
+				>
+			) => rebuilt(node, handle, () => buildCharacterClass({ ...config, classAtoms: restItems('classAtoms', values) })),
 			trailing: (value?: Admit<NonNullable<T.CharacterClass.Config>['trailing']>) =>
 				rebuilt(node, handle, () => buildCharacterClass({ ...config, trailing: value }))
 		},

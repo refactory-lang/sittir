@@ -83,6 +83,15 @@ describe('display-union-mixed', () => {
 		expect(out).toHaveLength(1);
 		expect(out[0]).toMatchObject({ code: 'display-union-mixed', ownerKind: 'shown', canProceed: false, details: { terminals: ['tok'], nonterminals: ['node'] } });
 	});
+	it('accepts a display that is its own rule over a choice of keywords, which holds the literal members as arms', () => {
+		const enumRules = { modifier: { type: 'PREC', value: 0, content: { type: 'CHOICE', members: [S('abstract'), S('async')] } } };
+		const out = diagnoseMixedDisplayUnions({
+			grammar: 'demo',
+			displayUnions: new Map([['modifier', [{ storage: 'modifier', literal: false }, { storage: 'this', literal: true }]]]),
+			symbols: symbolsOf(enumRules, { kindEntries: [{ kind: 'modifier' }] })
+		});
+		expect(out).toEqual([]);
+	});
 	it('classifies a literal member by its stamp, even when a rule has the same spelling', () => {
 		const out = diagnoseMixedDisplayUnions({
 			grammar: 'demo',

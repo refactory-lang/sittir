@@ -968,20 +968,18 @@ impl ::sittir_core::render::Render for LookbehindAssertionOperatorNodeSlot {
 pub enum CharacterClassClassAtomsNodeSlot {
     #[kind(kind::CLASS_CHARACTER, kind::DASH)]
     ClassCharacter(ClassCharacterNode),
+    #[kind(kind::BSLASH_DASH, kind::IDENTITY_ESCAPE, folded(kind::BSLASH_DASH))]
+    IdentityEscape(IdentityEscapeNode),
     #[kind(kind::CHARACTER_CLASS_ESCAPE)]
     CharacterClassEscape(CharacterClassEscapeNode),
     #[kind(kind::CONTROL_ESCAPE)]
     ControlEscape(ControlEscapeNode),
     #[kind(kind::CONTROL_LETTER_ESCAPE)]
     ControlLetterEscape(ControlLetterEscapeNode),
-    #[kind(kind::IDENTITY_ESCAPE, folded(kind::BSLASH_DASH))]
-    IdentityEscape(IdentityEscapeNode),
     #[kind(kind::POSIX_CHARACTER_CLASS)]
     PosixCharacterClass(PosixCharacterClassNode),
     #[kind(kind::CLASS_RANGE)]
     ClassRange(Box<ClassRangeNode>),
-    #[kind(kind::BSLASH_DASH)]
-    BslashDash,
     #[node(verbatim)]
     Verbatim(VerbatimNode),
 }
@@ -990,65 +988,60 @@ impl ::sittir_core::prepare::Prepare for CharacterClassClassAtomsNodeSlot {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         match self {
             CharacterClassClassAtomsNodeSlot::ClassCharacter(t) => t.prepare(ctx),
+            CharacterClassClassAtomsNodeSlot::IdentityEscape(t) => t.prepare(ctx),
             CharacterClassClassAtomsNodeSlot::CharacterClassEscape(t) => t.prepare(ctx),
             CharacterClassClassAtomsNodeSlot::ControlEscape(t) => t.prepare(ctx),
             CharacterClassClassAtomsNodeSlot::ControlLetterEscape(t) => t.prepare(ctx),
-            CharacterClassClassAtomsNodeSlot::IdentityEscape(t) => t.prepare(ctx),
             CharacterClassClassAtomsNodeSlot::PosixCharacterClass(t) => t.prepare(ctx),
             CharacterClassClassAtomsNodeSlot::ClassRange(t) => t.prepare(ctx),
-            CharacterClassClassAtomsNodeSlot::BslashDash => Ok(()),
             CharacterClassClassAtomsNodeSlot::Verbatim(t) => t.prepare(ctx),
         }
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         match self {
             CharacterClassClassAtomsNodeSlot::ClassCharacter(t) => t.gap_edges(),
+            CharacterClassClassAtomsNodeSlot::IdentityEscape(t) => t.gap_edges(),
             CharacterClassClassAtomsNodeSlot::CharacterClassEscape(t) => t.gap_edges(),
             CharacterClassClassAtomsNodeSlot::ControlEscape(t) => t.gap_edges(),
             CharacterClassClassAtomsNodeSlot::ControlLetterEscape(t) => t.gap_edges(),
-            CharacterClassClassAtomsNodeSlot::IdentityEscape(t) => t.gap_edges(),
             CharacterClassClassAtomsNodeSlot::PosixCharacterClass(t) => t.gap_edges(),
             CharacterClassClassAtomsNodeSlot::ClassRange(t) => t.gap_edges(),
-            CharacterClassClassAtomsNodeSlot::BslashDash => None,
             CharacterClassClassAtomsNodeSlot::Verbatim(t) => t.gap_edges(),
         }
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         match self {
             CharacterClassClassAtomsNodeSlot::ClassCharacter(t) => t.snapshot_edge(),
+            CharacterClassClassAtomsNodeSlot::IdentityEscape(t) => t.snapshot_edge(),
             CharacterClassClassAtomsNodeSlot::CharacterClassEscape(t) => t.snapshot_edge(),
             CharacterClassClassAtomsNodeSlot::ControlEscape(t) => t.snapshot_edge(),
             CharacterClassClassAtomsNodeSlot::ControlLetterEscape(t) => t.snapshot_edge(),
-            CharacterClassClassAtomsNodeSlot::IdentityEscape(t) => t.snapshot_edge(),
             CharacterClassClassAtomsNodeSlot::PosixCharacterClass(t) => t.snapshot_edge(),
             CharacterClassClassAtomsNodeSlot::ClassRange(t) => t.snapshot_edge(),
-            CharacterClassClassAtomsNodeSlot::BslashDash => None,
             CharacterClassClassAtomsNodeSlot::Verbatim(t) => t.snapshot_edge(),
         }
     }
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         match self {
             CharacterClassClassAtomsNodeSlot::ClassCharacter(t) => t.source_coordinate(),
+            CharacterClassClassAtomsNodeSlot::IdentityEscape(t) => t.source_coordinate(),
             CharacterClassClassAtomsNodeSlot::CharacterClassEscape(t) => t.source_coordinate(),
             CharacterClassClassAtomsNodeSlot::ControlEscape(t) => t.source_coordinate(),
             CharacterClassClassAtomsNodeSlot::ControlLetterEscape(t) => t.source_coordinate(),
-            CharacterClassClassAtomsNodeSlot::IdentityEscape(t) => t.source_coordinate(),
             CharacterClassClassAtomsNodeSlot::PosixCharacterClass(t) => t.source_coordinate(),
             CharacterClassClassAtomsNodeSlot::ClassRange(t) => t.source_coordinate(),
-            CharacterClassClassAtomsNodeSlot::BslashDash => None,
             CharacterClassClassAtomsNodeSlot::Verbatim(t) => t.source_coordinate(),
         }
     }
     fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             CharacterClassClassAtomsNodeSlot::ClassCharacter(t) => t.source_separator(ctx),
+            CharacterClassClassAtomsNodeSlot::IdentityEscape(t) => t.source_separator(ctx),
             CharacterClassClassAtomsNodeSlot::CharacterClassEscape(t) => t.source_separator(ctx),
             CharacterClassClassAtomsNodeSlot::ControlEscape(t) => t.source_separator(ctx),
             CharacterClassClassAtomsNodeSlot::ControlLetterEscape(t) => t.source_separator(ctx),
-            CharacterClassClassAtomsNodeSlot::IdentityEscape(t) => t.source_separator(ctx),
             CharacterClassClassAtomsNodeSlot::PosixCharacterClass(t) => t.source_separator(ctx),
             CharacterClassClassAtomsNodeSlot::ClassRange(t) => t.source_separator(ctx),
-            CharacterClassClassAtomsNodeSlot::BslashDash => None,
             CharacterClassClassAtomsNodeSlot::Verbatim(t) => t.source_separator(ctx),
         }
     }
@@ -1061,13 +1054,12 @@ impl ::sittir_core::view::KindOf for CharacterClassClassAtomsNodeSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
             Self::ClassCharacter(inner) => inner.kind_in(kinds),
+            Self::IdentityEscape(inner) => inner.kind_in(kinds),
             Self::CharacterClassEscape(inner) => inner.kind_in(kinds),
             Self::ControlEscape(inner) => inner.kind_in(kinds),
             Self::ControlLetterEscape(inner) => inner.kind_in(kinds),
-            Self::IdentityEscape(inner) => inner.kind_in(kinds),
             Self::PosixCharacterClass(inner) => inner.kind_in(kinds),
             Self::ClassRange(inner) => inner.kind_in(kinds),
-            Self::BslashDash => [::sittir_core::types::KindId(19)].iter().any(|k| kinds.contains(k)),
             Self::Verbatim(_) => [::sittir_core::types::KindId(20), ::sittir_core::types::KindId(36), ::sittir_core::types::KindId(76)].iter().any(|k| kinds.contains(k)),
         }
     }
@@ -1077,13 +1069,12 @@ impl ::sittir_core::render::Render for CharacterClassClassAtomsNodeSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
             CharacterClassClassAtomsNodeSlot::ClassCharacter(inner) => inner.render(w),
+            CharacterClassClassAtomsNodeSlot::IdentityEscape(inner) => inner.render(w),
             CharacterClassClassAtomsNodeSlot::CharacterClassEscape(inner) => inner.render(w),
             CharacterClassClassAtomsNodeSlot::ControlEscape(inner) => inner.render(w),
             CharacterClassClassAtomsNodeSlot::ControlLetterEscape(inner) => inner.render(w),
-            CharacterClassClassAtomsNodeSlot::IdentityEscape(inner) => inner.render(w),
             CharacterClassClassAtomsNodeSlot::PosixCharacterClass(inner) => inner.render(w),
             CharacterClassClassAtomsNodeSlot::ClassRange(inner) => inner.as_ref().render(w),
-            CharacterClassClassAtomsNodeSlot::BslashDash => render_bslash_dash(w),
             CharacterClassClassAtomsNodeSlot::Verbatim(inner) => inner.render(w),
         }
     }

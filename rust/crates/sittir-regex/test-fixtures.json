@@ -7580,7 +7580,10 @@
               "_negation": false,
               "_leading": false,
               "_class_atoms": [
-                19,
+                {
+                  "$type": 37,
+                  "_content": "-"
+                },
                 {
                   "$type": 37,
                   "_content": "."
@@ -7620,7 +7623,10 @@
             "_negation": false,
             "_leading": false,
             "_class_atoms": [
-              19,
+              {
+                "$type": 37,
+                "_content": "-"
+              },
               {
                 "$type": 37,
                 "_content": "."
@@ -7655,7 +7661,10 @@
         "_negation": false,
         "_leading": false,
         "_class_atoms": [
-          19,
+          {
+            "$type": 37,
+            "_content": "-"
+          },
           {
             "$type": 37,
             "_content": "."
@@ -7686,7 +7695,10 @@
       "_negation": false,
       "_leading": false,
       "_class_atoms": [
-        19,
+        {
+          "$type": 37,
+          "_content": "-"
+        },
         {
           "$type": 37,
           "_content": "."
@@ -7706,6 +7718,27 @@
     "expectedReparseTree": "(character_class class_atoms: (identity_escape) class_atoms: (identity_escape))",
     "wrappedText": "[\\-\\.]",
     "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "regex",
+    "pattern": "identity_escape",
+    "input": {
+      "$type": 37,
+      "_content": "-"
+    },
+    "expectedOutput": "\\-"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "regex",
+    "sourceIn": "\\-",
+    "pattern": "identity_escape",
+    "edits": [],
+    "expectedSourceOut": "\\-",
+    "expectedReparseTree": "(identity_escape)",
+    "wrappedText": "[\\-\\.]",
+    "wrappedOffset": 1
   },
   {
     "kind": "render",
