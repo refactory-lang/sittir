@@ -1,33 +1,36 @@
-//! A parsed tree's trivia placed a region at a time, on the first read of a
-//! side the region holds: each gap read from the nodes around it, never
-//! from a walk of the whole tree.
+//! A parsed tree's trivia placed one layout owner's gaps at a time, on the
+//! first read of a side the layout owner holds: each gap read from the
+//! nodes around it, never from a walk of the whole tree.
 //!
 //! Every node but the root begins and ends on a token of the walk, its edge
 //! tokens included, so a gap's owner, the smallest node holding both its
 //! tokens, finds the gap between two of its segments: a child's tokens, a
-//! leaf, its hidden text or an edge token (`Shape`). A region is a node that
-//! is no list, or the root, with every list below it through lists: its
-//! owners' gaps write only the leading and trailing sides of its owners'
-//! children and its owners' own `inner` sides, and every write of those
-//! sides comes from them (`Placer::top_of`).
+//! leaf, its hidden text or an edge token (`Shape`). A layout owner is a
+//! node that is no list, or the root. Its gaps are its own and those of
+//! every list below it through lists: they write only the leading and
+//! trailing sides of those nodes' children and those nodes' own `inner`
+//! sides, the sides the layout owner holds, and every write of those sides
+//! comes from them (`Placer::layout_owner_of`).
 //!
 //! An owner's runs measure their excess from where the gap before its first
 //! token left it, and nothing below the owner moves it between two of the
 //! owner's gaps: each owner below ends, restoring its excess, before the
-//! next one. A region's writes go in the order a walk of the whole tree
-//! would make them: by the byte their gap starts at, the restores of the owners
-//! ending there first, innermost first, then each gap by its left token.
+//! next one. A layout owner's writes go in the order a walk of the whole
+//! tree would make them: by the byte their gap starts at, the restores of
+//! the owners ending there first, innermost first, then each gap by its
+//! left token.
 //!
 //! A placement finds the nodes it reads through the reader that asks it,
 //! from the nodes it has read before: each node of a shape it builds knows
 //! its parent, so a read of a side next to one already placed costs the
 //! nodes around it, not the path from the root.
 //!
-//! A region is placed once, under the placement's lock, and published as a
-//! table that never changes (`Table`), its slots stored after it
-//! (`Published`): a read of a side whose region is placed loads its node's
-//! slot and reads the table, taking no lock. What the placement keeps to
-//! place further regions stays under the lock.
+//! A layout owner is placed once: its gaps are placed under the placement's
+//! lock, and the sides they write published as a table that never changes
+//! (`Table`), its slots stored after it (`Published`). A read of a side
+//! whose layout owner is placed loads its node's slot and reads the table,
+//! taking no lock. What the placement keeps to place further layout owners
+//! stays under the lock.
 
 use super::{holds_sides, is_entry, Adjacency, Assigned, DepthAnchor, LayoutRun, Place, SurfaceKinds, TriviaSide};
 use crate::heap::{btree_allocation, CountedMap, HeapBytes, IndexState, ARC_COUNTS};
@@ -317,10 +320,10 @@ impl<T> Chunks<T> {
     }
 }
 
-/// The sides one region placed, published once and read without a lock:
-/// each side's entries in source order, the adjacency of each `ERROR` and
-/// line continuation among them, and the item each list of the region
-/// passes the extras and `ERROR`s of an edge to.
+/// The sides placing one layout owner wrote, published once and read
+/// without a lock: each side's entries in source order, the adjacency of
+/// each `ERROR` and line continuation among them, and the item each list
+/// below the layout owner passes the extras and `ERROR`s of an edge to.
 #[derive(Debug, Default)]
 pub struct Table {
     sides: Box<[(NodeIndex, TriviaSide, u32)]>,
@@ -330,8 +333,8 @@ pub struct Table {
 }
 
 impl Table {
-    /// The entries the region gives `side` of the node at `index`, in
-    /// source order.
+    /// The entries placing the layout owner gave `side` of the node at
+    /// `index`, in source order.
     #[must_use]
     pub fn side(&self, index: NodeIndex, side: TriviaSide) -> &[Assigned] {
         let Ok(at) = self.sides.binary_search_by_key(&(index, side), |&(node, side, _)| (node, side)) else { return &[] };
@@ -342,13 +345,14 @@ impl Table {
         at.checked_sub(1).map_or(0, |before| self.sides[before].2 as usize)
     }
 
-    /// Every side the region placed, by node and side, with its entries.
+    /// Every side placing the layout owner wrote, by node and side, with its
+    /// entries.
     pub fn sides(&self) -> impl Iterator<Item = ((NodeIndex, TriviaSide), &[Assigned])> + '_ {
         self.sides.iter().enumerate().map(|(at, &(node, side, end))| ((node, side), &self.entries[self.start(at)..end as usize]))
     }
 
     /// The adjacency of the entry at `index`, an `ERROR` or a layout member
-    /// a side of the region holds, where the source fixes it in place
+    /// a side of the table holds, where the source fixes it in place
     /// (`Adjacency`): an `ERROR`'s always, a line continuation's when
     /// whitespace lies beside it.
     #[must_use]
@@ -368,18 +372,18 @@ impl HeapBytes for Table {
     }
 }
 
-/// A node's slot before its side's region is placed.
+/// A node's slot before its side's layout owner is placed.
 const UNPLACED: u32 = 0;
-/// A node's slot once its side's region is placed and published no table:
-/// the region placed nothing, or no region holds the side.
+/// A node's slot once its side's layout owner is placed and published no
+/// table: placing it wrote nothing, or no layout owner holds the side.
 const EMPTY: u32 = u32::MAX;
 
-/// What a placement publishes as it places its regions, read without a
-/// lock. Each node has two slots, its leading and trailing sides' and its
-/// inner's, naming the table of the region that holds them by its id plus
-/// one, `UNPLACED` or `EMPTY`. A region's runs and table are set before
-/// its slots are stored, with release ordering, so a read that loads a
-/// slot with acquire ordering finds them.
+/// What a placement publishes as it places its layout owners, read without
+/// a lock. Each node has two slots, its leading and trailing sides' and its
+/// inner's, naming the table of the layout owner that holds them by its id
+/// plus one, `UNPLACED` or `EMPTY`. A layout owner's runs and table are set
+/// before its slots are stored, with release ordering, so a read that loads
+/// a slot with acquire ordering finds them.
 #[derive(Debug)]
 struct Published {
     slots: Box<[AtomicU32]>,
@@ -459,9 +463,10 @@ fn hold<K: Eq + std::hash::Hash, V: HeapBytes>(held: &mut usize, map: &mut Count
     }
 }
 
-/// A parsed tree's trivia, placed a region at a time on first read. A
-/// region is placed under the placement's lock, once, and published
-/// (`Published`); a read of a side whose region is placed takes no lock.
+/// A parsed tree's trivia, placed one layout owner at a time on first read.
+/// A layout owner is placed under the placement's lock, once, and published
+/// (`Published`); a read of a side whose layout owner is placed takes no
+/// lock.
 #[derive(Debug, Default)]
 pub struct Placement {
     kinds: SurfaceKinds,
@@ -483,8 +488,8 @@ pub struct Source<'t> {
 /// reader's own lookup, which moves from where it last read.
 pub type Lookup<'n, 't> = &'n mut dyn FnMut(NodeIndex) -> Option<tree_sitter::Node<'t>>;
 
-/// The sides one region placed, by node and side, each side's entries in
-/// source order.
+/// The sides placing one layout owner wrote, by node and side, each side's
+/// entries in source order.
 type PlacedSides = BTreeMap<(NodeIndex, TriviaSide), Vec<Assigned>>;
 
 impl Placement {
@@ -513,11 +518,11 @@ impl Placement {
         self.published.get().map_or(UNPLACED, |published| published.load(index, side))
     }
 
-    /// The region that holds `side` of the node at `index`, placed on the
-    /// first read of a side it holds, each node it reads found through
-    /// `nodes`: the table it published, `None` where it placed nothing or no
-    /// region holds the side. Once the region is placed, a read takes no
-    /// lock.
+    /// The layout owner that holds `side` of the node at `index`, placed on
+    /// the first read of a side it holds, each node it reads found through
+    /// `nodes`: the table it published, `None` where placing it wrote
+    /// nothing or no layout owner holds the side. Once the layout owner is
+    /// placed, a read takes no lock.
     pub fn cover<'t>(&self, source: Source<'t>, nodes: Lookup<'_, 't>, index: NodeIndex, side: TriviaSide) -> Option<&Table> {
         let slot = match self.slot(index, side) {
             UNPLACED => self.with(source, Some(nodes), |placer| {
@@ -531,8 +536,8 @@ impl Placement {
 
     /// The item the list node at `index` passes the extras and `ERROR`s of
     /// its `side` to, so a coordinate of the list frames with that item's
-    /// side too, read from the table of the region the list is a member of
-    /// (`cover`); `None` for a node that is no list or passes none.
+    /// side too, read from the table of the list's layout owner (`cover`);
+    /// `None` for a node that is no list or passes none.
     pub fn edge_item<'t>(&self, source: Source<'t>, nodes: Lookup<'_, 't>, index: NodeIndex, side: TriviaSide) -> Option<NodeIndex> {
         self.cover(source, nodes, index, TriviaSide::Inner)?.edge_item(index, side)
     }
@@ -563,13 +568,14 @@ impl Placement {
         self.published.get().expect("a placed side holds the run").placed(id)
     }
 
-    /// Place every region of the tree.
+    /// Place every layout owner of the tree.
     #[allow(clippy::redundant_closure_for_method_calls, reason = "the method's path fixes the placer's lifetimes, which `with` takes for any")]
     pub fn place_all(&self, source: Source<'_>) {
         self.with(source, None, |placer| placer.place_all());
     }
 
-    /// Every table published so far, in the order the regions were placed.
+    /// Every table published so far, in the order the layout owners were
+    /// placed.
     pub fn tables(&self) -> impl Iterator<Item = &Table> + '_ {
         self.published.get().into_iter().flat_map(|published| published.tables.values())
     }
@@ -583,7 +589,7 @@ impl Placement {
     /// Every depth stretch the templates of the tree's nodes open, sorted
     /// by where it opens, the outer of two that open together first: the
     /// stretches structural indentation is measured from. It places no
-    /// region.
+    /// layout owner.
     #[must_use]
     pub fn depth_stretches(&self, source: Source<'_>) -> Vec<(u32, u32)> {
         self.with(source, None, |placer| {
@@ -606,7 +612,7 @@ impl Placement {
         state.order.range((start, end, Order { from: 0, gap: false, left: None, step: 0 })..).next().filter(|((at, until, _), _)| *at == start && *until == end).map(|(_, &id)| id)
     }
 
-    /// The entries no side takes, among the regions placed so far, in
+    /// The entries no side takes, among the layout owners placed so far, in
     /// source order.
     #[must_use]
     pub fn unowned(&self) -> Vec<NodeIndex> {
@@ -973,9 +979,9 @@ impl<'t> Placer<'t, '_, '_> {
         Some((parent, *self.state.positions.get(&index)?))
     }
 
-    /// The node whose region holds the node at `index`: the nearest at or
-    /// above it that is no list, or the root.
-    fn top_of(&mut self, index: NodeIndex) -> NodeIndex {
+    /// The layout owner of the node at `index`: the nearest node at or above
+    /// it that is no list, or the root.
+    fn layout_owner_of(&mut self, index: NodeIndex) -> NodeIndex {
         let mut at = index;
         while at != NodeIndex::ROOT && self.kinds.lists.contains(&self.kid(at).kind) {
             match self.parent(at) {
@@ -986,10 +992,10 @@ impl<'t> Placer<'t, '_, '_> {
         at
     }
 
-    /// Place the region that holds `side` of the node at `index`: the
-    /// region its holder, its parent or, for its `inner`, itself, is a
-    /// member of. A node below an entry, and the root's leading and
-    /// trailing, have none.
+    /// Place the layout owner that holds `side` of the node at `index`: the
+    /// layout owner of the side's holder, the node's parent or, for its
+    /// `inner`, the node itself. A node below an entry, and the root's
+    /// leading and trailing, have none.
     fn cover(&mut self, index: NodeIndex, side: TriviaSide) {
         if self.published.load(index, side) != UNPLACED || !self.walked(index) {
             return;
@@ -999,12 +1005,12 @@ impl<'t> Placer<'t, '_, '_> {
             TriviaSide::Leading | TriviaSide::Trailing => self.parent(index),
         };
         let Some(holder) = holder else { return };
-        let top = self.top_of(holder);
-        self.place_region(top);
+        let owner = self.layout_owner_of(holder);
+        self.place_gaps_of(owner);
     }
 
     /// The slot of `side` of the node at `index` once `cover` placed its
-    /// region: `EMPTY` where no region placed it.
+    /// layout owner: `EMPTY` where no layout owner placed it.
     fn settle(&self, index: NodeIndex, side: TriviaSide) -> u32 {
         let Some(slot) = self.published.slot(index, side) else { return EMPTY };
         match slot.load(Ordering::Relaxed) {
@@ -1016,18 +1022,18 @@ impl<'t> Placer<'t, '_, '_> {
         }
     }
 
-    /// Place every region of the tree, from one walk of it, each after the
-    /// regions above it.
+    /// Place every layout owner of the tree, from one walk of it, each after
+    /// the layout owners above it.
     fn place_all(&mut self) {
         let mut cursor = self.source.tree.walk();
-        let mut tops = Vec::new();
+        let mut owners = Vec::new();
         loop {
             let node = cursor.node();
             let index = crate::read::index_of(&cursor);
             self.nodes.insert(index, node);
             let kid = Kid::of(&node, index);
             if index == NodeIndex::ROOT || (!kid.entry && !kid.leaf && !self.kinds.lists.contains(&kid.kind)) {
-                tops.push(index);
+                owners.push(index);
             }
             if !kid.entry && cursor.goto_first_child() {
                 continue;
@@ -1037,8 +1043,8 @@ impl<'t> Placer<'t, '_, '_> {
                     break;
                 }
                 if !cursor.goto_parent() {
-                    for top in tops {
-                        self.place_region(top);
+                    for owner in owners {
+                        self.place_gaps_of(owner);
                     }
                     return;
                 }
@@ -1080,14 +1086,14 @@ impl<'t> Placer<'t, '_, '_> {
         stretches
     }
 
-    /// The region of the node at `top`, which is no list or the root and
-    /// whose parent the placement knows, placed.
-    fn place_region(&mut self, top: NodeIndex) {
-        if self.published.load(top, TriviaSide::Inner) != UNPLACED {
+    /// Place the gaps of the layout owner at `owner`, whose parent the
+    /// placement knows: its own and those of the lists below it.
+    fn place_gaps_of(&mut self, owner: NodeIndex) {
+        if self.published.load(owner, TriviaSide::Inner) != UNPLACED {
             return;
         }
         let mut members = Vec::new();
-        let mut stack = vec![top];
+        let mut stack = vec![owner];
         while let Some(at) = stack.pop() {
             members.push(at);
             let kids = Arc::clone(&self.shape(at).kids);
@@ -1120,11 +1126,11 @@ impl<'t> Placer<'t, '_, '_> {
         self.publish(&members);
     }
 
-    /// Publishes the sides the region of `members` placed: its table, set
-    /// before the slots of its members' `inner` sides and of their
-    /// children's leading and trailing sides name it. A region that placed
-    /// no side and has no list passing an edge publishes none: its slots
-    /// are `EMPTY`.
+    /// Publishes the sides placing a layout owner wrote, `members` being the
+    /// owner and the lists below it: its table, set before the slots of its
+    /// members' `inner` sides and of their children's leading and trailing
+    /// sides name it. A layout owner whose gaps wrote no side and with no
+    /// list passing an edge publishes none: its slots are `EMPTY`.
     fn publish(&mut self, members: &[NodeIndex]) {
         let placed = std::mem::take(&mut self.placed);
         let (mut sides, mut entries) = (Vec::with_capacity(placed.len()), Vec::new());
@@ -1168,7 +1174,7 @@ impl<'t> Placer<'t, '_, '_> {
         let store = |index: NodeIndex, side: TriviaSide| {
             if let Some(at) = published.slot(index, side) {
                 let replaced = at.swap(slot, Ordering::Release);
-                debug_assert_eq!(replaced, UNPLACED, "one region holds a side: {index} {side:?}");
+                debug_assert_eq!(replaced, UNPLACED, "one layout owner holds a side: {index} {side:?}");
             }
         };
         for &member in members {
@@ -1940,7 +1946,7 @@ impl<'t> Placer<'t, '_, '_> {
     }
 }
 
-/// One write of a region's placement: a step of one of its gaps, or the
+/// One write of placing a layout owner: a step of one of its gaps, or the
 /// restore of an owner's excess where it ends.
 #[derive(Debug)]
 enum Event {
@@ -2083,7 +2089,7 @@ impl State {
     }
 }
 
-/// What the placement holds of the regions placed so far, and what it
+/// What the placement holds of the layout owners placed so far, and what it
 /// published of them.
 impl HeapBytes for Placement {
     fn heap_bytes(&self) -> usize {

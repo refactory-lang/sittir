@@ -1,5 +1,5 @@
-//! A parsed tree's trivia, assigned to the sides of its nodes a region at a
-//! time (`Placement`).
+//! A parsed tree's trivia, assigned to the sides of its nodes one layout
+//! owner at a time (`Placement`).
 //!
 //! The token walk yields a tree's tokens in order: its leaves, the text a
 //! hidden token leaves between two children, zero-width leaves, and a

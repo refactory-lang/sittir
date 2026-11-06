@@ -189,7 +189,7 @@ pub fn parsed<G: sittir_core::engine::EngineGrammar>(grammar: G, options: sittir
     engine.parse(source, sittir_core::engine::claim_tree_id().expect("a tree id")).expect("a parse")
 }
 
-/// A tree's trivia with every region placed (`Placement::place_all`), and
+/// A tree's trivia with every layout owner placed (`Placement::place_all`), and
 /// the sides its tables hold.
 pub struct PlacedTrivia {
     pub placement: sittir_core::trivia_table::Placement,
@@ -208,7 +208,7 @@ impl PlacedTrivia {
         Self { placement, sides }
     }
 
-    /// The entries placing every region gives `side` of the node at
+    /// The entries placing every layout owner gives `side` of the node at
     /// `index`, in source order.
     #[must_use]
     pub fn side(&self, index: sittir_core::types::NodeIndex, side: sittir_core::trivia_table::TriviaSide) -> &[sittir_core::trivia_table::Assigned] {

@@ -432,9 +432,9 @@ pub struct ParsedTree<G: EngineGrammar> {
     /// The source's row starts, built on the first snapshot and shared by
     /// every later one.
     lines: std::sync::OnceLock<crate::points::LineTable>,
-    /// The tree's trivia, placed a region at a time on the first read of a
-    /// side the region holds, each region's sides published as a table a
-    /// read of them reaches without a lock (`cover_side`).
+    /// The tree's trivia, placed one layout owner at a time on the first read
+    /// of a side the layout owner holds, each layout owner's sides published
+    /// as a table a read of them reaches without a lock (`cover_side`).
     trivia: Placement,
     /// The tree's depth members, found on its first depth move
     /// (`depth_move_from`).
@@ -1318,14 +1318,14 @@ impl<G: EngineGrammar> ParsedTree<G> {
         crate::trivia_table::Source { tree: &self.tree, source: &self.source, lines: self.lines() }
     }
 
-    /// The tree's trivia with every region placed.
+    /// The tree's trivia with every layout owner placed.
     pub fn placed_trivia(&self) -> &Placement {
         self.trivia.place_all(self.trivia_source());
         &self.trivia
     }
 
-    /// The table of the region that holds `side` of the node at `index`,
-    /// placed on its first read, each node it reads found through `nodes`
+    /// The table of the layout owner that holds `side` of the node at
+    /// `index`, placed on its first read, each node it reads found through `nodes`
     /// (`Placement::cover`).
     fn cover_side<'t>(&'t self, nodes: crate::trivia_table::Lookup<'_, 't>, index: crate::types::NodeIndex, side: TriviaSide) -> Option<&'t crate::trivia_table::Table> {
         self.trivia.cover(self.trivia_source(), nodes, index, side)
@@ -3205,15 +3205,15 @@ mod tests {
     }
 
     #[test]
-    fn a_tree_s_trivia_placement_counts_what_a_walk_of_it_finds_as_its_regions_are_placed() {
+    fn a_tree_s_trivia_placement_counts_what_a_walk_of_it_finds_as_its_layout_owners_are_placed() {
         let (tree, _) = parsed("// a\nfn f() {\n    let v = [\n        1,\n            2,\n    ];\n    g()\n        .h();\n}\nmod m { fn b() -> u8 { 0 } }\n");
         assert_eq!(tree.trivia.heap_bytes(), tree.trivia.walked_bytes(), "nothing placed");
         let _ = tree.trivia_side(index_of_kind(&tree, "function_item", 0), TriviaSide::Leading);
         let _ = tree.trivia_side(index_of_kind(&tree, "block", 0), TriviaSide::Inner);
-        assert!(tree.trivia.walked_bytes() > 0, "the reads placed their regions");
-        assert_eq!(tree.trivia.heap_bytes(), tree.trivia.walked_bytes(), "some regions placed");
+        assert!(tree.trivia.walked_bytes() > 0, "the reads placed their layout owners");
+        assert_eq!(tree.trivia.heap_bytes(), tree.trivia.walked_bytes(), "some layout owners placed");
         tree.placed_trivia();
-        assert_eq!(tree.trivia.heap_bytes(), tree.trivia.walked_bytes(), "every region placed");
+        assert_eq!(tree.trivia.heap_bytes(), tree.trivia.walked_bytes(), "every layout owner placed");
     }
 
     #[test]

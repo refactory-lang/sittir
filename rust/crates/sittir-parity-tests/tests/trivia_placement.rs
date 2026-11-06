@@ -1,8 +1,8 @@
 //! A side read alone, in either order, holds on its first read what placing
-//! every region gives it, and so do the edge items and the adjacencies of
-//! its entries; one table holds each side. Runs are compared by their bytes
-//! and sides rather than by id, over each grammar's fixtures. The depth
-//! changes where regions meet are pinned.
+//! every layout owner gives it, and so do the edge items and the adjacencies
+//! of its entries; one table holds each side. Runs are compared by their
+//! bytes and sides rather than by id, over each grammar's fixtures. The
+//! depth changes where layout owners meet are pinned.
 
 use sittir_core::engine::EngineGrammar;
 use sittir_core::points::LineTable;
@@ -63,7 +63,7 @@ fn differences<G: EngineGrammar>(grammar: G, options: sittir_core::options::Reso
     let (placed, twice) = published(&whole);
     let mut found = Vec::new();
     if !twice.is_empty() {
-        found.push(format!("sides two tables hold placing every region: {twice:?}"));
+        found.push(format!("sides two tables hold placing every layout owner: {twice:?}"));
     }
     for (order, indices) in [("in reverse preorder", (0..count).rev().map(NodeIndex::new).collect::<Vec<_>>()), ("in preorder", (0..count).map(NodeIndex::new).collect())] {
         let alone = Placement::new(kinds, unit);
@@ -72,19 +72,19 @@ fn differences<G: EngineGrammar>(grammar: G, options: sittir_core::options::Reso
                 let got = entries(&alone, alone.cover(at, &mut from_root, index, side), index, side);
                 let want = entries(&whole, whole.cover(at, &mut from_root, index, side), index, side);
                 if got != want {
-                    found.push(format!("side {index} {side:?} read alone {order}: {got:?}, placed with every region: {want:?}"));
+                    found.push(format!("side {index} {side:?} read alone {order}: {got:?}, placed with every layout owner: {want:?}"));
                 }
                 if side != TriviaSide::Inner {
                     let (got, want) = (alone.edge_item(at, &mut from_root, index, side), whole.edge_item(at, &mut from_root, index, side));
                     if got != want {
-                        found.push(format!("edge item {index} {side:?} read alone {order}: {got:?}, placed with every region: {want:?}"));
+                        found.push(format!("edge item {index} {side:?} read alone {order}: {got:?}, placed with every layout owner: {want:?}"));
                     }
                 }
             }
         }
         let (read, twice) = published(&alone);
         if read != placed {
-            found.push(format!("the sides read alone {order} are not those placed with every region"));
+            found.push(format!("the sides read alone {order} are not those placed with every layout owner"));
         }
         if !twice.is_empty() {
             found.push(format!("sides two tables hold reading alone {order}: {twice:?}"));
@@ -108,7 +108,7 @@ fn check<G: EngineGrammar>(name: &str, grammar: G, options: fn() -> sittir_core:
 }
 
 #[test]
-fn a_side_read_alone_in_either_order_holds_what_placing_every_region_gives_it() {
+fn a_side_read_alone_in_either_order_holds_what_placing_every_layout_owner_gives_it() {
     let mut found = Vec::new();
     for (name, (sources, differences)) in each_grammar!(check) {
         eprintln!("{name}: {sources} sources, {} differences", differences.len());
@@ -159,8 +159,8 @@ fn listed(depths: &Depths) -> String {
 }
 
 /// The differences between the depth changes `want` pins in `source` and
-/// those the placements give: placing every region, and each pinned side
-/// read alone on a placement that has read nothing else.
+/// those the placements give: placing every layout owner, and each pinned
+/// side read alone on a placement that has read nothing else.
 fn pinned<G: EngineGrammar>(grammar: G, options: sittir_core::options::ResolvedOptions, source: &str, unit: u32, want: &[(&str, usize, TriviaSide, &[i32])]) -> Vec<String> {
     let parsed = parsed(grammar, options, source);
     let tree = parsed.tree();
@@ -174,7 +174,7 @@ fn pinned<G: EngineGrammar>(grammar: G, options: sittir_core::options::ResolvedO
     whole.place_all(at);
     let got = depths(tree, |index, side| whole.cover(at, &mut from_root, index, side).map_or_else(Vec::new, |table| table.side(index, side).to_vec()));
     if got != want {
-        found.push(format!("placed with every region:\n{}", listed(&got)));
+        found.push(format!("placed with every layout owner:\n{}", listed(&got)));
     }
     let numbered = numbered(tree);
     for (kind, nth, side, changes) in &want {
@@ -198,7 +198,7 @@ const TYPESCRIPT: &str = "function f() {\n  if (a) {\n    let x = 1\n    x++\n  
 const RUST: &str = "fn f() {\n    let v = vec![\n        1,\n            2,\n    ];\n    {\n        // inside\n        g()\n            .h();\n          // deeper than the block\n    }\n      // between depths\n    // after\n    let w = a +\n        g(b,\n            c);\n}\n";
 
 #[test]
-fn a_region_placed_alone_holds_the_depth_changes_pinned_at_region_boundaries() {
+fn a_layout_owner_placed_alone_holds_the_depth_changes_pinned_where_layout_owners_meet() {
     let python: &[(&str, usize, TriviaSide, &[i32])] = &[
         ("collection_elements", 0, Leading, &[1]),
         ("collection_elements", 0, Trailing, &[-1]),
@@ -257,7 +257,7 @@ fn a_region_placed_alone_holds_the_depth_changes_pinned_at_region_boundaries() {
 /// line, placed every way.
 #[test]
 #[ignore = "reads a corpus outside the repository"]
-fn a_side_read_alone_holds_what_placing_every_region_gives_it_over_a_corpus() {
+fn a_side_read_alone_holds_what_placing_every_layout_owner_gives_it_over_a_corpus() {
     let list = std::env::var("SITTIR_PLACEMENT_FILES").expect("SITTIR_PLACEMENT_FILES names a file list");
     let paths: Vec<String> = std::fs::read_to_string(list).expect("the list").lines().filter(|line| !line.is_empty()).map(str::to_owned).collect();
     let mut found = Vec::new();
