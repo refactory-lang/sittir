@@ -1,0 +1,132 @@
+# Usage: python3 summarize.py <out.md> <run-dir>...
+# Reads each run directory run.py wrote (one per copy of the job, each on its
+# own runner), groups every process by its CPU model and reports, per CPU and
+# corpus:
+# - sittir's parse, render, edit and whole-tree read in object and arena
+#   storage, oxfmt's format() and oxlint net of its startup, each in MB/s:
+#   the admitted source bytes (10^6 bytes) over the median of the process
+#   medians;
+# - sittir's time over each tool's on the same bytes (xN: sittir takes N
+#   times as long), the median of the per-round ratios of process medians,
+#   each round within one copy, with a seeded bootstrap 95% range;
+# - oxlint's startup and its own reported time, and each tool's peak RSS.
+# Writes <out.md> and summary.json beside it, appends the Markdown to
+# $GITHUB_STEP_SUMMARY when it is set, and exits 1 when a corpus renders or
+# edits differently in object and arena storage or between copies, or a
+# tool's output changes between processes.
+import json, os, random, statistics, sys
+from pathlib import Path
+
+target = Path(sys.argv[1]).resolve()
+dirs = [Path(d).resolve() for d in sys.argv[2:]]
+median = statistics.median
+PHASES = [('parseMs', 'parse'), ('renderMs', 'render'), ('editMs', 'edit'), ('wholeReadMs', 'whole read')]
+STORAGES = ['object', 'arena']
+TOOLS = ['oxfmt', 'oxlint']
+
+
+def interval(values, seed=20261106):
+    rng = random.Random(seed)
+    draws = sorted(median(rng.choices(values, k=len(values))) for _ in range(5000))
+    return [draws[int(.025 * len(draws))], draws[int(.975 * len(draws))]]
+
+
+def processMs(result, phase=None):
+    if result['tool'] == 'oxlint':
+        return median(s['lintMs'] for s in result['samples']) - median(s['startupMs'] for s in result['samples'])
+    return median(s['formatMs' if result['tool'] == 'oxfmt' else phase] for s in result['samples'])
+
+
+toolOf = lambda result: result.get('nodeStorage') or result['tool']
+rows = {}
+mismatches = []
+signatures = {}
+versions = {}
+for copy, d in enumerate(dirs):
+    runs = d / 'runs'
+    for receipt in json.loads((runs / 'receipts.json').read_text()):
+        result = json.loads((runs / receipt['result']).read_text())
+        tool = toolOf(result)
+        key = (result['cpu'], result['corpus'])
+        row = rows.setdefault(key, {'commit': result['commit'], 'files': result['files'], 'bytes': result['bytes'], 'processes': {}, 'copies': set()})
+        assert (row['files'], row['bytes'], row['commit']) == (result['files'], result['bytes'], result['commit']), f'{key}: corpus differs between copies'
+        row['copies'].add(copy)
+        row['processes'].setdefault(tool, {})[(copy, receipt['round'])] = result
+        sig = {k: v for k, v in result['signature'].items()}
+        family = 'sittir' if tool in STORAGES else tool
+        signatures.setdefault((result['corpus'], family), []).append((copy, receipt['round'], tool, sig))
+        versions[tool] = result.get('version') or result.get('buildProfile')
+        versions['node'] = result['node']
+        if tool in STORAGES and result.get('rendersDifferingFromSource'):
+            mismatches.append(f"{result['corpus']} {tool}: {result['rendersDifferingFromSource']} unedited renders differ from their source")
+for (corpus, family), sigs in signatures.items():
+    first = sigs[0][3]
+    mismatches += [f'{corpus} {tool} copy {c} round {r}: output differs from copy {sigs[0][0]} round {sigs[0][1]}' for c, r, tool, sig in sigs if sig != first]
+
+
+def column(row, tool, phase=None):
+    return median(processMs(x, phase) for x in row['processes'][tool].values())
+
+
+def ratio(row, storage, phase, tool):
+    paired = [processMs(x, phase) / processMs(row['processes'][tool][k]) for k, x in row['processes'][storage].items() if k in row['processes'][tool]]
+    return {'ratio': median(paired), 'range95': interval(paired), 'rounds': len(paired)}
+
+
+mbps = lambda row, ms: row['bytes'] / 1e6 / (ms / 1000)
+summary = []
+for (cpu, corpus), row in sorted(rows.items()):
+    entry = {'cpu': cpu, 'corpus': corpus, 'commit': row['commit'], 'files': row['files'], 'bytes': row['bytes'], 'copies': len(row['copies']),
+             'ms': {}, 'mbps': {}, 'ratios': {}, 'peakRssMB': {}}
+    for storage in STORAGES:
+        for phase, _ in PHASES:
+            ms = column(row, storage, phase)
+            entry['ms'][f'{storage} {phase}'] = ms
+            entry['mbps'][f'{storage} {phase}'] = mbps(row, ms)
+            for tool in TOOLS:
+                entry['ratios'][f'{storage} {phase} / {tool}'] = ratio(row, storage, phase, tool)
+    for tool in TOOLS:
+        ms = column(row, tool)
+        entry['ms'][tool] = ms
+        entry['mbps'][tool] = mbps(row, ms)
+    for storage in STORAGES:
+        entry['ms'][f'{storage} treeReleaseMs'] = column(row, storage, 'treeReleaseMs')
+    lint = list(row['processes']['oxlint'].values())
+    entry['oxlintStartupMs'] = median(median(s['startupMs'] for s in x['samples']) for x in lint)
+    entry['oxlintReportedMs'] = median(median(s['reportedMs'] for s in x['samples']) for x in lint)
+    for tool in STORAGES + TOOLS:
+        xs = row['processes'][tool].values()
+        entry['peakRssMB'][tool] = median(median(s['peakRssMB'] for s in x['samples']) if tool == 'oxlint' else x['peakRssMB'] for x in xs)
+    summary.append(entry)
+
+commits = sorted({json.loads((d / 'refs.json').read_text())['feature'] for d in dirs if (d / 'refs.json').exists()})
+cell = lambda r: f"{r['ratio']:.2f} [{r['range95'][0]:.2f}, {r['range95'][1]:.2f}]"
+lines = ['## Speed reference: sittir against oxfmt and oxlint', '',
+         f"sittir {', '.join(f'`{c[:12]}`' for c in commits) or '(commit not recorded)'}, {', '.join(sorted({str(versions.get(s)) for s in STORAGES}))} build; oxfmt {versions.get('oxfmt')}, oxlint {versions.get('oxlint')}, node {versions.get('node')}; {len(dirs)} cop{'y' if len(dirs) == 1 else 'ies'}.",
+         'MB/s is admitted source bytes (10^6) over the median process time. A ratio is sittir\'s time over the tool\'s on the same bytes (×N: sittir takes N times as long), the median over rounds with a bootstrap 95% range. oxfmt is format() in process, one awaited call per file; oxlint is its command at --threads=1, net of the median startup of the same command over an empty file. sittir\'s edit is a same-value edit of each root\'s settable members; whole read is a parse with depth: Infinity.',
+         f"Output differences: {'; '.join(mismatches) if mismatches else 'none'}.", '']
+for cpu in sorted({e['cpu'] for e in summary}):
+    entries = [e for e in summary if e['cpu'] == cpu]
+    lines += [f'### {cpu}', '',
+              '| corpus | phase | object MB/s | arena MB/s | object ÷ oxfmt | arena ÷ oxfmt | object ÷ oxlint | arena ÷ oxlint |',
+              '|---|---|---|---|---|---|---|---|']
+    for e in entries:
+        for phase, name in PHASES:
+            lines.append(f"| {e['corpus']} | {name} | {e['mbps'][f'object {phase}']:.1f} | {e['mbps'][f'arena {phase}']:.1f} | "
+                         + ' | '.join(cell(e['ratios'][f'{s} {phase} / {t}']) for t in TOOLS for s in STORAGES) + ' |')
+    lines += ['', '| corpus | commit | files | MB | copies | oxfmt MB/s | oxlint MB/s | oxlint startup ms | oxlint own ms | tree release ms: object / arena | peak RSS MB: object / arena / oxfmt / oxlint |',
+              '|---|---|---|---|---|---|---|---|---|---|---|']
+    for e in entries:
+        lines.append(f"| {e['corpus']} | `{e['commit'][:12]}` | {e['files']} | {e['bytes'] / 1e6:.2f} | {e['copies']} | {e['mbps']['oxfmt']:.1f} | {e['mbps']['oxlint']:.1f} | {e['oxlintStartupMs']:.0f} | {e['oxlintReportedMs']:.0f} | "
+                     + ' / '.join(f"{e['ms'][f'{s} treeReleaseMs']:.1f}" for s in STORAGES) + ' | '
+                     + ' / '.join(f"{e['peakRssMB'][t]:.0f}" for t in STORAGES + TOOLS) + ' |')
+    lines.append('')
+markdown = '\n'.join(lines) + '\n'
+target.write_text(markdown)
+(target.parent / 'summary.json').write_text(json.dumps({'sittir': commits, 'versions': versions, 'mismatches': mismatches, 'rows': summary}, indent=2) + '\n')
+if os.environ.get('GITHUB_STEP_SUMMARY'):
+    with open(os.environ['GITHUB_STEP_SUMMARY'], 'a') as f:
+        f.write(markdown)
+sys.stdout.write(markdown)
+if mismatches:
+    raise SystemExit(1)

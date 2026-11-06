@@ -1,5 +1,5 @@
 name: Arena benchmarks
-run-name: Arena benchmarks (${{ (inputs.benchmark == 'paired-refs' || inputs.benchmark == 'probe' || inputs.benchmark == 'profile' || inputs.benchmark == 'waiting' || inputs.benchmark == 'parse-profile') && format('{0} {1} vs {2}{3}', inputs.benchmark, inputs.feature-ref, inputs.master-ref, inputs.candidates && format(' + {0}', inputs.candidates) || '') || format('{0}, paired node backends', inputs.benchmark) }})
+run-name: Arena benchmarks (${{ inputs.benchmark == 'oxc-reference' && format('oxc-reference {0}', inputs.feature-ref) || (inputs.benchmark == 'paired-refs' || inputs.benchmark == 'probe' || inputs.benchmark == 'profile' || inputs.benchmark == 'waiting' || inputs.benchmark == 'parse-profile') && format('{0} {1} vs {2}{3}', inputs.benchmark, inputs.feature-ref, inputs.master-ref, inputs.candidates && format(' + {0}', inputs.candidates) || '') || format('{0}, paired node backends', inputs.benchmark) }})
 
 on:
   workflow_dispatch:
@@ -8,9 +8,9 @@ on:
         description: Benchmark to run
         type: choice
         default: all
-        options: [all, corpus, paired-refs, probe, profile, waiting, parse-profile]
+        options: [all, corpus, paired-refs, probe, profile, waiting, parse-profile, oxc-reference]
       feature-ref:
-        description: paired-refs and probe. The feature branch or commit.
+        description: paired-refs and probe, the feature branch or commit; oxc-reference, the one tree measured against oxfmt and oxlint.
         type: string
         default: feat/records
       master-ref:
@@ -18,7 +18,7 @@ on:
         type: string
         default: master
       profile:
-        description: paired-refs and probe. The cargo profile every addon is built with.
+        description: paired-refs, probe and oxc-reference. The cargo profile every addon is built with.
         type: choice
         default: release
         options: [release, gate]
@@ -73,6 +73,12 @@ jobs:
       arena: ${{ inputs.arena }}
       candidates: ${{ inputs.candidates }}
       build-path: ${{ inputs.build-path }}
+  oxc-reference:
+    if: inputs.benchmark == 'oxc-reference'
+    uses: ./.github/workflows/benchmark-oxc-reference.yml
+    with:
+      sittir-ref: ${{ inputs.feature-ref }}
+      profile: ${{ inputs.profile }}
   probe:
     if: inputs.benchmark == 'probe' || inputs.benchmark == 'profile' || inputs.benchmark == 'waiting' || inputs.benchmark == 'parse-profile'
     uses: ./.github/workflows/benchmark-probe.yml
