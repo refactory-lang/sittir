@@ -208,7 +208,7 @@ export function link(evaluated: RawGrammar, ctx: LinkOptions): LinkedGrammar {
 	}
 	Object.assign(rules, stamped);
 
-	structureTokenInterior(rules, linkCtx.diagnostics);
+	structureTokenInterior(rules, linkCtx);
 	stampSpellings(rules, raw.spellings);
 
 	const groupsConfig = raw.groups ?? {};
