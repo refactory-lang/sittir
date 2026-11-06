@@ -10,7 +10,6 @@ const rs = await createEngine(await languageByName('rust'));
 const py = await createEngine(await languageByName('python'));
 const scm = await createEngine(await languageByName('scm'));
 const ts = await createEngine(await languageByName('typescript'));
-const rx = await createEngine(await languageByName('regex'));
 
 type Json = { readonly [key: string]: unknown };
 const json = (node: unknown): Json => JSON.parse(JSON.stringify(node)) as Json;
