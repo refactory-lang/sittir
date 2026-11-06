@@ -341,6 +341,19 @@ pub fn choice(ident: &Ident, variants: &[WireVariant<'_>], codec_only: bool) -> 
                         ::core::option::Option::None => ::core::result::Result::Err(__rt::ReadError::Unadmitted { kind: grammar, index: __rt::index_of(cursor) }.into()),
                     }
                 }
+                fn hydrate_stamped(
+                    stamped: ::sittir_core::types::KindId,
+                    cursor: &mut ::tree_sitter::TreeCursor<'_>,
+                    ctx: &mut __rt::ReadCtx<'_>,
+                    depth: ::core::option::Option<__rt::Depth>,
+                    records: &mut ::sittir_core::arena::Hydration<'_>,
+                    inline: ::core::option::Option<::sittir_core::arena::Embed>,
+                ) -> ::core::result::Result<::sittir_core::arena::Hydrated, ::sittir_core::arena::HydrateError> {
+                    match __variant_of_kind(stamped).and_then(|i| __HYDRATES.get(i as usize)) {
+                        ::core::option::Option::Some(hydrate) => hydrate(cursor, ctx, depth, records, inline),
+                        ::core::option::Option::None => ::core::result::Result::Err(__rt::ReadError::Unadmitted { kind: stamped, index: __rt::index_of(cursor) }.into()),
+                    }
+                }
             }
         };
     });

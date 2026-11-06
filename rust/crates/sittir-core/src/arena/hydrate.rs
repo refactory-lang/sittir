@@ -291,11 +291,29 @@ pub trait HydrateNode: ReadNode + Stored {
     /// What the node's read refuses, by the same router, and what the arena
     /// refuses.
     fn hydrate(cursor: &mut TreeCursor<'_>, ctx: &mut ReadCtx<'_>, depth: Option<Depth>, records: &mut Hydration<'_>, inline: Option<Embed>) -> Result<Hydrated, HydrateError>;
+
+    /// The walk of the node the cursor is on, as the kind its parent's cell
+    /// stamped: an enum picks the member that claims `stamped`, and the
+    /// node's grammar id only chooses among that member's own claims; a
+    /// struct has the one kind.
+    ///
+    /// # Errors
+    ///
+    /// What `hydrate` refuses, and `ReadError::Unadmitted` for a stamped kind
+    /// no member claims.
+    fn hydrate_stamped(stamped: KindId, cursor: &mut TreeCursor<'_>, ctx: &mut ReadCtx<'_>, depth: Option<Depth>, records: &mut Hydration<'_>, inline: Option<Embed>) -> Result<Hydrated, HydrateError> {
+        let _ = stamped;
+        Self::hydrate(cursor, ctx, depth, records, inline)
+    }
 }
 
 impl<T: HydrateNode> HydrateNode for Box<T> {
     fn hydrate(cursor: &mut TreeCursor<'_>, ctx: &mut ReadCtx<'_>, depth: Option<Depth>, records: &mut Hydration<'_>, inline: Option<Embed>) -> Result<Hydrated, HydrateError> {
         T::hydrate(cursor, ctx, depth, records, inline)
+    }
+
+    fn hydrate_stamped(stamped: KindId, cursor: &mut TreeCursor<'_>, ctx: &mut ReadCtx<'_>, depth: Option<Depth>, records: &mut Hydration<'_>, inline: Option<Embed>) -> Result<Hydrated, HydrateError> {
+        T::hydrate_stamped(stamped, cursor, ctx, depth, records, inline)
     }
 }
 
@@ -451,11 +469,15 @@ impl<T: HydrateNode, const A: bool> HydrateSlot for NonEmptyVec<Option<SlotValue
 /// # Errors
 ///
 /// What the hydration refuses.
-pub fn hydrate_at<N: HydrateNode>(cursor: &mut TreeCursor<'_>, ctx: &mut ReadCtx<'_>, index: NodeIndex, depth: Depth, records: &mut Hydration<'_>) -> Result<Option<Address>, HydrateError> {
+pub fn hydrate_at<N: HydrateNode>(cursor: &mut TreeCursor<'_>, ctx: &mut ReadCtx<'_>, index: NodeIndex, stamped: Option<KindId>, depth: Depth, records: &mut Hydration<'_>) -> Result<Option<Address>, HydrateError> {
     crate::read::goto(cursor, index);
     ctx.begin_read();
     let mark = records.tree.mark();
-    match N::hydrate(cursor, ctx, Some(depth), records, None) {
+    let walked = match stamped {
+        Some(kind) => N::hydrate_stamped(kind, cursor, ctx, Some(depth), records, None),
+        None => N::hydrate(cursor, ctx, Some(depth), records, None),
+    };
+    match walked {
         Ok(Hydrated::Record { at, .. }) => Ok(Some(at)),
         Ok(_) => Ok(None),
         Err(refusal) => {
@@ -579,19 +601,19 @@ mod tests {
         let item = index_of(&cursor);
 
         let mut whole = TreeArena::new(PARSED_KIND_BITS, rows);
-        let file = hydrate_at::<File<false>>(&mut tree.walk(), &mut ctx, NodeIndex::ROOT, Depth::All, &mut Hydration::new(&mut whole)).expect("a walk").expect("a record");
+        let file = hydrate_at::<File<false>>(&mut tree.walk(), &mut ctx, NodeIndex::ROOT, None, Depth::All, &mut Hydration::new(&mut whole)).expect("a walk").expect("a record");
         let starts = whole.snapshot().records;
         assert_eq!(starts.len(), 5, "the file's record, each item's, and each name's in its item's cell");
         assert!(starts.contains(&file));
 
         let mut arena = TreeArena::new(PARSED_KIND_BITS, rows);
-        let kept = hydrate_at::<Item>(&mut tree.walk(), &mut ctx, item, Depth::ONE, &mut Hydration::new(&mut arena)).expect("a walk").expect("a record");
+        let kept = hydrate_at::<Item>(&mut tree.walk(), &mut ctx, item, None, Depth::ONE, &mut Hydration::new(&mut arena)).expect("a walk").expect("a record");
         arena.hold(item, kept).expect("the row had none");
         let before = arena.snapshot();
-        let refused = hydrate_at::<File<true>>(&mut tree.walk(), &mut ctx, NodeIndex::ROOT, Depth::All, &mut Hydration::new(&mut arena));
+        let refused = hydrate_at::<File<true>>(&mut tree.walk(), &mut ctx, NodeIndex::ROOT, None, Depth::All, &mut Hydration::new(&mut arena));
         assert!(matches!(refused, Err(HydrateError::Read(ReadError::Overfull { .. }))), "{refused:?}");
         assert_eq!(arena.snapshot(), before, "no word, chunk, record start or held row past where the walk started");
         assert_eq!(arena.held(item), Some(kept), "the walk that stood keeps its record");
-        assert!(hydrate_at::<File<false>>(&mut tree.walk(), &mut ctx, NodeIndex::ROOT, Depth::All, &mut Hydration::new(&mut arena)).expect("a walk").is_some());
+        assert!(hydrate_at::<File<false>>(&mut tree.walk(), &mut ctx, NodeIndex::ROOT, None, Depth::All, &mut Hydration::new(&mut arena)).expect("a walk").is_some());
     }
 }
