@@ -2234,19 +2234,6 @@
   },
   {
     "scope": "grammar",
-    "code": "storagename-collision",
-    "severity": "error",
-    "grammar": "csharp",
-    "ownerKind": "join_clause",
-    "message": "[assemble] storageName collision: kind 'join_clause' has 3 slots with storageName 'expression':\n    expression (positional, multiplicity: single, values: [expression])\n    expression (positional, multiplicity: single, values: [expression])\n    expression (positional, multiplicity: single, values: [expression])",
-    "canProceed": false,
-    "details": {
-      "storageName": "expression",
-      "slotCount": 3
-    }
-  },
-  {
-    "scope": "grammar",
     "code": "unclassifiable-shape",
     "severity": "error",
     "grammar": "csharp",
@@ -2299,43 +2286,5 @@
       "storageName": "string_literal",
       "slotCount": 3
     }
-  },
-  {
-    "scope": "grammar",
-    "code": "display-union-mixed",
-    "severity": "error",
-    "grammar": "csharp",
-    "ownerKind": "modifier",
-    "message": "display 'modifier' sits over terminals (this, scoped, ref, out, in, readonly, static, async) and nonterminals (modifier); enrich resolves every such display, so this is a broken invariant",
-    "canProceed": false,
-    "details": {
-      "display": "modifier",
-      "terminals": [
-        "this",
-        "scoped",
-        "ref",
-        "out",
-        "in",
-        "readonly",
-        "static",
-        "async"
-      ],
-      "nonterminals": [
-        "modifier"
-      ]
-    }
-  },
-  {
-    "code": "token-interior-unstructurable",
-    "ownerKind": "identifier_token",
-    "message": "token interior: 'identifier_token' has an optional literal \"@\" that is not word-shaped, so it has no name of its own and the token stays opaque. Resolve with a patch naming it: field('<name>', ...) on the literal inside the token makes it a slot",
-    "details": {
-      "shape": "unnamed-flag",
-      "text": "@"
-    },
-    "severity": "fail",
-    "canProceed": false,
-    "scope": "grammar",
-    "grammar": "csharp"
   }
 ]
