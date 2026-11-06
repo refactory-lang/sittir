@@ -1,7 +1,7 @@
 import { type ModelNode, type ModelSlot } from '../../../bindings/facts.ts';
 import { tsname } from '../../../bindings/names.ts';
 import { stringLiteral as q } from '../../../util/string-literal.ts';
-import { PORTABLE_TYPE_TESTS } from '../../../grammars.ts';
+import { PORTABLE_TS6_TYPE_TESTS, PORTABLE_TYPE_TESTS } from '../../../grammars.ts';
 import { concreteKinds, guaranteedBy, modelNode, readsList, type ContainerUnwrap, type GrammarInput, type GrammarRoutes, type Guaranteed, type MemberRoute, type ReadEntry, type SlotStep } from '../../../bindings/routes.ts';
 import type { PortableBuildTable, PortableCondition } from '@sittir/types';
 import type { NodeMap } from '../../../compiler/types.ts';
@@ -36,8 +36,15 @@ export interface PortableTypedOutput {
 
 export const PORTABLE_TYPED_FILE = 'portable.typed.ts';
 export const PORTABLE_TYPED_TSCONFIG = 'tsconfig.portable.json';
+export const PORTABLE_TS6_TSCONFIG = 'tsconfig.portable.ts6.json';
 
-export const PORTABLE_TYPED_TSCONFIG_TEXT = `${JSON.stringify({ extends: '../../../tsconfig.json', compilerOptions: { noEmit: true, types: ['node'] }, include: [PORTABLE_TYPED_FILE, `../${PORTABLE_TYPE_TESTS}`] }, null, '\t')}\n`;
+export const PORTABLE_TYPE_TEST_LANES: Readonly<Record<string, readonly string[]>> = {
+	[PORTABLE_TYPED_TSCONFIG]: [PORTABLE_TYPE_TESTS],
+	[PORTABLE_TS6_TSCONFIG]: [PORTABLE_TYPE_TESTS, PORTABLE_TS6_TYPE_TESTS]
+};
+
+export const portableTsconfigText = (tests: readonly string[]): string =>
+	`${JSON.stringify({ extends: '../../../tsconfig.json', compilerOptions: { noEmit: true, types: ['node'] }, include: [PORTABLE_TYPED_FILE, ...tests.map((glob) => `../${glob}`)] }, null, '\t')}\n`;
 
 const VOCABULARY_INDEX = '../../types/src/vocabulary/index.ts';
 

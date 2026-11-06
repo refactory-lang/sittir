@@ -5,7 +5,7 @@ const CEILING = { rust: 58, python: 82, typescript: 76 } as const;
 
 describe('portable conformance ratchet', () => {
 	for (const [grammar, ceiling] of Object.entries(CEILING)) {
-		it(`${grammar}: ${ceiling} conformance errors, none unclassified, none outside the module and none in its type tests`, async () => {
+		it(`${grammar}: ${ceiling} conformance errors, none unclassified, none outside the module and none in its type tests, under tsrs and under TypeScript 6, whose checker rejects at the map's depth forms TypeScript 7's accepts`, async () => {
 			const report = await portableConformance(grammar);
 			if (report === undefined) throw new Error(`${grammar} emitted no typed module`);
 			const shown = formatConformance(report);

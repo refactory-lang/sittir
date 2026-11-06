@@ -1,7 +1,8 @@
 import { readdirSync } from 'node:fs';
+import { createRequire } from 'node:module';
 import { basename, dirname, join, relative } from 'node:path';
-import { PORTABLE_TYPED_FILE, PORTABLE_TYPED_TSCONFIG, generate, parseTypeCheckDiagnostics, typeCheckOutput, writePortableTyped, type PortableTypedOutput, type PortableTypedUnemitted, type TypeCheckDiagnostic } from '@sittir/codegen';
-import { PORTABLE_TYPE_TESTS, REPO_ROOT, grammarPackageDir, sittirDirOf, type GrammarName } from '@sittir/codegen/grammars';
+import { PORTABLE_TS6_TSCONFIG, PORTABLE_TYPED_FILE, PORTABLE_TYPED_TSCONFIG, PORTABLE_TYPE_TEST_LANES, generate, parseTypeCheckDiagnostics, typeCheckOutput, writePortableTyped, type PortableTypedOutput, type PortableTypedUnemitted, type TypeCheckDiagnostic } from '@sittir/codegen';
+import { REPO_ROOT, grammarPackageDir, sittirDirOf, type GrammarName } from '@sittir/codegen/grammars';
 import { bindingGrammars } from '@sittir/codegen/bindings';
 import { vocabularyPaths } from '@sittir/common/portable';
 
@@ -13,6 +14,7 @@ export interface ConformanceCause {
 }
 
 export interface ConformanceTypeTest {
+	readonly checker: string;
 	readonly file: string;
 	readonly errors: number;
 	readonly example: string | undefined;
@@ -102,22 +104,34 @@ const typedDir = (grammar: string): string => sittirDirOf({ dir: grammarPackageD
 
 export const portableTypedPath = (grammar: string): string => join(typedDir(grammar), PORTABLE_TYPED_FILE);
 
-export function portableTypeTests(grammar: string): readonly string[] {
-	const dir = join(grammarPackageDir(grammar as GrammarName), dirname(PORTABLE_TYPE_TESTS));
-	const suffix = basename(PORTABLE_TYPE_TESTS).replace('*', '');
-	return readdirSync(dir)
-		.filter((name) => name.endsWith(suffix))
-		.sort()
-		.map((name) => join(dir, name));
+export function portableTypeTests(grammar: string, tsconfig: string = PORTABLE_TYPED_TSCONFIG): readonly string[] {
+	return PORTABLE_TYPE_TEST_LANES[tsconfig]!.flatMap((glob) => {
+		const dir = join(grammarPackageDir(grammar as GrammarName), dirname(glob));
+		const suffix = basename(glob).replace('*', '');
+		return readdirSync(dir)
+			.filter((name) => name.endsWith(suffix))
+			.sort()
+			.map((name) => join(dir, name));
+	});
 }
 
-export function typeTestErrors(diagnostics: readonly TypeCheckDiagnostic[], files: readonly string[]): readonly ConformanceTypeTest[] {
+export function typeTestErrors(checker: string, diagnostics: readonly TypeCheckDiagnostic[], files: readonly string[]): readonly ConformanceTypeTest[] {
 	return files.map((file) => {
 		const found = diagnostics.filter((d) => d.file !== undefined && join(REPO_ROOT, d.file) === file);
 		const first = found[0];
-		return { file: relative(REPO_ROOT, file), errors: found.length, example: first === undefined ? undefined : `${first.line ?? ''} ${first.code} ${first.message.slice(0, 160)}` };
+		return { checker, file: relative(REPO_ROOT, file), errors: found.length, example: first === undefined ? undefined : `${first.line ?? ''} ${first.code} ${first.message.slice(0, 160)}` };
 	});
 }
+
+const TSC6 = join(dirname(createRequire(import.meta.url).resolve('typescript6/package.json')), 'bin', 'tsc6');
+
+const TYPE_TEST_CHECKERS: readonly { readonly checker: string; readonly tsconfig: string; readonly command: readonly [string, ...string[]] }[] = [
+	{ checker: 'tsrs', tsconfig: PORTABLE_TYPED_TSCONFIG, command: ['pnpm', 'exec', 'tsrs'] },
+	{ checker: 'TypeScript 6', tsconfig: PORTABLE_TS6_TSCONFIG, command: [process.execPath, TSC6] }
+];
+
+const diagnosticsOf = (grammar: string, tsconfig: string, [command, ...args]: readonly [string, ...string[]]): readonly TypeCheckDiagnostic[] =>
+	parseTypeCheckDiagnostics(typeCheckOutput(command, [...args, '-p', join(typedDir(grammar), tsconfig), '--noEmit'], REPO_ROOT));
 
 export function classify(
 	diagnostics: readonly TypeCheckDiagnostic[],
@@ -155,9 +169,14 @@ export async function writeTypedModule(grammar: string): Promise<PortableTypedOu
 export async function portableConformance(grammar: string): Promise<ConformanceReport | undefined> {
 	const typed = await writeTypedModule(grammar);
 	if (typed === undefined) return undefined;
-	const diagnostics = parseTypeCheckDiagnostics(typeCheckOutput('pnpm', ['exec', 'tsrs', '-p', join(typedDir(grammar), PORTABLE_TYPED_TSCONFIG), '--noEmit'], REPO_ROOT));
-	const typeTests = portableTypeTests(grammar);
-	return { grammar, ...classify(diagnostics, portableTypedPath(grammar), typed.unemitted, typeTests), unemitted: typed.unemitted, typeTests: typeTestErrors(diagnostics, typeTests) };
+	const lanes = TYPE_TEST_CHECKERS.map(({ checker, tsconfig, command }) => ({ checker, diagnostics: diagnosticsOf(grammar, tsconfig, command), tests: portableTypeTests(grammar, tsconfig) }));
+	const [module] = lanes;
+	return {
+		grammar,
+		...classify(module!.diagnostics, portableTypedPath(grammar), typed.unemitted, module!.tests),
+		unemitted: typed.unemitted,
+		typeTests: lanes.flatMap(({ checker, diagnostics, tests }) => typeTestErrors(checker, diagnostics, tests))
+	};
 }
 
 export function formatConformance(report: ConformanceReport): string {
@@ -168,7 +187,7 @@ export function formatConformance(report: ConformanceReport): string {
 		if (cause.name === UNEMITTED_CAUSE.name) for (const u of report.unemitted) lines.push(`        ${u.kind} as ${u.vocab}${u.member === undefined ? '' : `.${u.member}`}: ${u.reason}`);
 		else if (cause.example !== undefined) lines.push(`        e.g. ${cause.example}`);
 	}
-	for (const test of report.typeTests) lines.push(`  type test ${test.file}: ${test.errors} errors${test.example === undefined ? '' : `\n        e.g. ${test.example}`}`);
+	for (const test of report.typeTests) lines.push(`  type test ${test.file} under ${test.checker}: ${test.errors} errors${test.example === undefined ? '' : `\n        e.g. ${test.example}`}`);
 	return lines.join('\n');
 }
 
