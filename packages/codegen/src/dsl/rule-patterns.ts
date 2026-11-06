@@ -868,7 +868,7 @@ export function symbolFactsOf(grammar: {
 	readonly inline: Iterable<string>;
 	readonly supertypes: Iterable<string>;
 	readonly extras: readonly RuleListEntry[];
-	readonly visibleExternals?: Readonly<Record<string, unknown>>;
+	readonly visibleAs?: Readonly<Record<string, string>>;
 }): SymbolFacts {
 	return {
 		rules: grammar.rules,
@@ -876,7 +876,7 @@ export function symbolFactsOf(grammar: {
 		inline: new Set(grammar.inline),
 		supertypes: new Set(grammar.supertypes),
 		extras: new Set(ruleListParts(grammar.extras).names),
-		visibleExternals: new Set(Object.keys(grammar.visibleExternals ?? {}))
+		visibleExternals: new Set(Object.keys(grammar.visibleAs ?? {}))
 	};
 }
 

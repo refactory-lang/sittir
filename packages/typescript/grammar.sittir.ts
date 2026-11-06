@@ -617,11 +617,6 @@ export default grammar(enrich(base), wire({
 		}
 	},
 	extras: ($, previous) => [...(previous ?? [])],
-	visibleExternals: (_$) => ({
-		_automatic_semicolon: string('\n'),
-		_function_signature_automatic_semicolon: string('\n'),
-	}),
-
 	expectDiagnostics: {
 		'unclassifiable-shape': ['binary_expression', 'public_field_definition_plain'],
 		'union-slot-mixed-row': ['binary_expression'],
@@ -845,7 +840,9 @@ export default grammar(enrich(base), wire({
 	renderAs: (_$) => ({
 		html_comment: /<!--[\s\S]*?-->/,
 		jsx_text: /[^{}<>]+/,
-		_template_chars: token.immediate(/[^`\\$]+/)
+		_template_chars: token.immediate(/[^`\\$]+/),
+		_automatic_semicolon: string('\n'),
+		_function_signature_automatic_semicolon: string('\n')
 	}),
 	reparseHosts: {
 		hosts: {

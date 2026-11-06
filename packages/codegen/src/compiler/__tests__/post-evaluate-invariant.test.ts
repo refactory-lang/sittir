@@ -157,9 +157,10 @@ describe('post-evaluate invariant', () => {
 				'spellings',
 				// The wire context's automatic-variant record; link reads definedBy from it.
 				'automaticVariants',
-				// visibleExternals: — externals auto-aliased visible with a
-				// fixed render body (drainVisibleExternalsMetadata).
-				'visibleExternals',
+				// The hidden externals renderAs makes visible, by the name each is aliased to.
+				'visibleAs',
+				'renderAsProblems',
+				'externalAliases',
 				// The `options:` block, carried unread — resolved against the
 				// site universe in seamRenderRules, which is the first place
 				// the sites an address names exist.

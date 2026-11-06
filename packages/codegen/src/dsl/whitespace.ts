@@ -49,6 +49,11 @@ export function whitespaceMemberRule(name: string): MemberRule {
 	return member.rule;
 }
 
+export function isWhitespaceBody(body: { readonly type: string; readonly value?: unknown } | undefined): boolean {
+	if (body === undefined) return true;
+	return body.type === STRING && typeof body.value === 'string' && WHITESPACE_MEMBERS.some((member) => canonicalText(member.name) === body.value);
+}
+
 export function canonicalText(name: string): string {
 	const rule = whitespaceMemberRule(name);
 	switch (rule.type) {
@@ -76,7 +81,7 @@ export function admitsWhitespaceMember(run: RegExp | undefined, name: string, te
 
 export interface WhitespaceCollision {
 	readonly name: string;
-	readonly site: 'upstream' | 'visibleExternals';
+	readonly site: 'upstream' | 'renderAs';
 }
 
 export interface EnrichedWhitespace {

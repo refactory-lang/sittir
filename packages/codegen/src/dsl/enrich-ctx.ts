@@ -27,7 +27,7 @@ export function enrichSymbolSource(init: EnrichCtxInit, rules: Readonly<Record<s
 		supertypes: [...init.supertypeNames],
 		inline: [...init.inline],
 		word: init.word,
-		visibleExternals: Object.fromEntries(bodilessVisibleExternals.map((name) => [name, true]))
+		visibleAs: Object.fromEntries(bodilessVisibleExternals.map((name) => [name, name]))
 	});
 }
 

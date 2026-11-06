@@ -171,7 +171,7 @@ export interface RenderModuleBundle {
 export interface RenderOptionsInputs {
 	readonly renderRules?: RenderRules;
 	readonly options?: OptionsConfig;
-	readonly visibleExternals?: Readonly<Record<string, Rule<'evaluate'>>>;
+	readonly renderAs?: Readonly<Record<string, Rule<'evaluate'>>>;
 	readonly sites?: readonly SitePreference[];
 	readonly addresses?: AddressTables;
 	readonly envelopePins?: Readonly<Record<string, EnvelopePin>>;
@@ -201,7 +201,7 @@ function synthesizeRenderModuleBundle(config: SynthesizeRenderModuleBundleConfig
 		generatedIdTables,
 		templates,
 		renderRules,
-		visibleExternals,
+		renderAs,
 		options,
 		sites,
 		addresses
@@ -209,7 +209,7 @@ function synthesizeRenderModuleBundle(config: SynthesizeRenderModuleBundleConfig
 	return {
 		emit: emitRenderModule(grammar, templates, nodeMap, generatedIdTables, {
 			renderRules,
-			visibleExternals,
+			renderAs,
 			options,
 			sites,
 			addresses
@@ -229,7 +229,7 @@ export class RenderModuleEmitter implements CodegenEmitter<RenderModuleBundle, E
 		this.#generatedIdTables = config.generatedIdTables;
 		this.#options = {
 			renderRules: config.renderRules,
-			visibleExternals: config.visibleExternals,
+			renderAs: config.renderAs,
 			options: config.options,
 			sites: config.sites,
 			addresses: config.addresses
@@ -1126,7 +1126,7 @@ function planRenderOptionsFor(
 		sites,
 		kindEntries,
 		nodeMap,
-		whitespaceTextOf(inputs.visibleExternals, nodeMap),
+		whitespaceTextOf(inputs.renderAs, nodeMap),
 		declaredIndent,
 		lang,
 		depthRegionsOf(inputs.renderRules, nodeMap),
