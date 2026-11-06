@@ -82,8 +82,13 @@ export interface InlineTextTokens<R> {
 	readonly owners: Readonly<Record<string, readonly string[]>>;
 }
 
-function peelPrec<R extends AnyRule>(r: R): R {
+export function peelPrec<R extends AnyRule>(r: R): R {
 	return isPrecWrapper(r) ? peelPrec((r as unknown as { content: R }).content) : r;
+}
+
+export function isInlineTokenBody(rule: AnyRule): boolean {
+	const root = peelPrec(rule);
+	return root.type === PATTERN || isTokenWrapperType(root.type);
 }
 
 export function isTerminalRootRule(rule: AnyRule): boolean {
@@ -206,11 +211,15 @@ export function mintInlineLiteralAliasStorage<R extends AnyRule>(rules: Record<s
 	const literalAliasOf = (r: R): { display: string; body: R; literals: string } | undefined => {
 		const alias = r as unknown as NamedAliasShape<R>;
 		if (alias.type !== ALIAS || alias.named !== true || !alias.value || Object.hasOwn(rules, alias.value) || wordDisplays.has(alias.value)) return undefined;
-		const arms = choiceArmsOf(innermostNamedAliasContent(alias.content));
-		if (arms === undefined || !arms.every((arm) => arm.type === STRING)) return undefined;
-		const body = { type: CHOICE, members: arms } as unknown as R;
-		const literals = JSON.stringify(arms.map((arm) => (arm as unknown as { value: string }).value));
-		return { display: alias.value, body, literals };
+		const content = innermostNamedAliasContent(alias.content);
+		const arms = choiceArmsOf(content);
+		if (arms !== undefined && arms.every((arm) => arm.type === STRING)) {
+			const body = { type: CHOICE, members: arms } as unknown as R;
+			const literals = JSON.stringify(arms.map((arm) => (arm as unknown as { value: string }).value));
+			return { display: alias.value, body, literals };
+		}
+		if (!isInlineTokenBody(content)) return undefined;
+		return { display: alias.value, body: content, literals: JSON.stringify(content) };
 	};
 	const byDisplay = new Map<string, { literals: Set<string>; body: R }>();
 	for (const rule of Object.values(rules)) {
@@ -224,10 +233,11 @@ export function mintInlineLiteralAliasStorage<R extends AnyRule>(rules: Record<s
 			return acc;
 		});
 	}
-	const storage = new Map<string, { name: string; body: R }>();
+	const storage = new Map<string, { name: string; body: R; reused: boolean }>();
 	for (const [display, { literals, body }] of byDisplay) {
 		const name = `_${display}`;
-		if (literals.size === 1 && !Object.hasOwn(rules, name)) storage.set(display, { name, body });
+		const reused = Object.hasOwn(rules, name);
+		if (literals.size === 1 && (!reused || JSON.stringify(rules[name]) === JSON.stringify(body))) storage.set(display, { name, body, reused });
 	}
 	if (storage.size === 0) return { rules, storageNames: [] };
 	const visit = (r: R): R => {
@@ -238,8 +248,9 @@ export function mintInlineLiteralAliasStorage<R extends AnyRule>(rules: Record<s
 	};
 	const out: Record<string, R> = {};
 	for (const [name, rule] of Object.entries(rules)) out[name] = visit(walker.map(rule, visit));
-	for (const { name, body } of storage.values()) out[name] = body;
-	return { rules: out, storageNames: [...storage.values()].map(({ name }) => name) };
+	const minted = [...storage.values()].filter(({ reused }) => !reused);
+	for (const { name, body } of minted) out[name] = body;
+	return { rules: out, storageNames: minted.map(({ name }) => name) };
 }
 
 export function liftAliasedHiddenRuleBodies<R extends AnyRule>(rules: Record<string, R>): Record<string, R> {

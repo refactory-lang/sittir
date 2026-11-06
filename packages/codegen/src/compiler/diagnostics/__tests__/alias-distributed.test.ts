@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { diagnoseDistributedAliases, diagnoseMixedDisplayUnions } from '../alias-distributed.ts';
+import { diagnoseDistributedAliases, diagnoseInlineTokenAliases, diagnoseMixedDisplayUnions } from '../alias-distributed.ts';
 import { symbolFactsOf, type SymbolSource } from '../../../dsl/rule-patterns.ts';
 import { catalogSymbolSource, predictedSymbolSourceOf, type KindEntryLike } from '../../../dsl/symbol-table.ts';
 import type { AnyRule } from '../../../types/rule.ts';
@@ -122,5 +122,29 @@ describe('display-union-mixed', () => {
 			symbols: symbolsOf(rules, { kindEntries })
 		});
 		expect(out.map((d) => [d.code, d.details])).toEqual([['display-union-unknown-member', { display: 'shown', member: 'ghost' }]]);
+	});
+});
+
+describe('alias-inline-token', () => {
+	const body = { type: 'IMMEDIATE_TOKEN', content: { type: 'PATTERN', value: 'x+' } };
+	const inlineToken = (rules: Record<string, unknown>) => diagnoseInlineTokenAliases({ grammar: 'demo', symbols: symbolsOf(rules) });
+	it('fires on an alias over an inline token, naming the site, the display and the rule to author', () => {
+		const out = inlineToken({ p: { type: 'SEQ', members: [alias(body, 'content')] } });
+		expect(out).toHaveLength(1);
+		expect(out[0]).toMatchObject({ code: 'alias-inline-token', ownerKind: 'p', canProceed: false, details: { display: 'content', storage: '_content' } });
+		expect(out[0]!.proposal).toMatch(/rule\('_content'/);
+	});
+	it('names the colliding rule and proposes another name', () => {
+		const out = inlineToken({ p: alias(body, 'content'), _content: P('y') });
+		expect(out[0]!.details).toMatchObject({ collidesWith: '_content' });
+		expect(out[0]!.proposal).toMatch(/_content_token/);
+	});
+	it('fires on a bare pattern and through precedence', () => {
+		expect(inlineToken({ p: alias(P('x'), 'c') })).toHaveLength(1);
+		expect(inlineToken({ p: alias({ type: 'PREC', value: 1, content: body }, 'c') })).toHaveLength(1);
+	});
+	it('does not fire on an alias of a symbol or of a literal', () => {
+		expect(inlineToken({ p: alias(sym('_c'), 'c'), _c: body })).toEqual([]);
+		expect(inlineToken({ p: alias(S('x'), 'c') })).toEqual([]);
 	});
 });

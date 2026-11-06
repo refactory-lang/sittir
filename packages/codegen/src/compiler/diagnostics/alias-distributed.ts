@@ -5,6 +5,7 @@ import type { DisplayUnions } from '../types.ts';
 import { isPrecWrapper } from '../../types/runtime-shapes.ts';
 import { RuleWalker } from '../../dsl/rule-walker.ts';
 import type { SymbolSource } from '../../dsl/rule-patterns.ts';
+import { innermostNamedAliasContent, isInlineTokenBody } from '../../dsl/rule-transforms.ts';
 
 type R = Rule<'evaluate'>;
 
@@ -84,6 +85,43 @@ export function diagnoseMixedDisplayUnions(input: {
 			message: `display '${display}' sits over terminals (${terminals.join(', ')}) and nonterminals (${nonterminals.join(', ')}); enrich resolves every such display, so this is a broken invariant`,
 			canProceed: false,
 			details: { display, terminals, nonterminals }
+		});
+	}
+	return out;
+}
+
+export function diagnoseInlineTokenAliases(input: { grammar: string; symbols: SymbolSource }): GrammarDiagnostic[] {
+	const walker = new RuleWalker<R>();
+	const out: GrammarDiagnostic[] = [];
+	const seen = new Set<string>();
+	for (const [owner, rule] of Object.entries(input.symbols.rules as Readonly<Record<string, R>>)) {
+		walker.fold(rule, out, (acc, r) => {
+			if (r.type !== ALIAS || !r.named) return acc;
+			const content = innermostNamedAliasContent(r.content as R);
+			if (!isInlineTokenBody(content)) return acc;
+			const display = String(r.value);
+			const storage = `_${display}`;
+			const key = `${owner}\0${display}\0${JSON.stringify(content)}`;
+			if (seen.has(key)) return acc;
+			seen.add(key);
+			const collides = Object.hasOwn(input.symbols.rules, storage);
+			const reason = collides
+				? `the rule '${storage}' already exists with a different body`
+				: `other sites of '${display}' alias a different body`;
+			acc.push({
+				scope: 'grammar',
+				code: 'alias-inline-token',
+				severity: 'error',
+				grammar: input.grammar,
+				ownerKind: owner,
+				message: `alias('${display}') over an inline token has no storage rule: ${reason}, so enrich did not mint one and the alias would read as the token's own text`,
+				canProceed: false,
+				details: { owner, display, storage, collidesWith: collides ? storage : undefined },
+				proposal: collides
+					? `rule('${storage}_token', <the token body>) in rules:, and alias($.${storage}_token, $.${display}) at this site`
+					: `rule('${storage}', <the token body>) in rules:, and alias($.${storage}, $.${display}) at every site of '${display}'`
+			});
+			return acc;
 		});
 	}
 	return out;
