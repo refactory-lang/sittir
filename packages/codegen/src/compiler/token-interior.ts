@@ -7,6 +7,7 @@ import { createRuleId } from './rule-catalog.ts';
 import type { RulePathSegment } from './types.ts';
 import type { SpellingFields, SpellingGroup } from '../dsl/primitives/spellings.ts';
 import { matchesWordShape } from '../util/word-matcher.ts';
+import { isValidIdent } from '../emitters/shared.ts';
 
 type LinkRule = Rule<'link'>;
 
@@ -134,10 +135,8 @@ export interface TokenInteriorCtx {
 
 const TOKEN_INTERIOR_UNSTRUCTURABLE = 'token-interior-unstructurable';
 
-const FLAG_NAME = /^[A-Za-z_]\w*$/;
-
 function namesItsOwnFlag(text: string, ctx: TokenInteriorCtx): boolean {
-	return FLAG_NAME.test(text) && matchesWordShape(text, ctx.wordMatcher);
+	return isValidIdent(text) && matchesWordShape(text, ctx.wordMatcher);
 }
 
 function recordUnnamedFlag(kind: string, text: string, diagnostics: DiagnosticSink): undefined {
