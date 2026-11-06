@@ -1,7 +1,6 @@
 import type { NodeMap } from '../compiler/types.ts';
 import { assertNever } from '../polymorph-variant.ts';
-import { EmitHaltedError, type GrammarDiagnostic } from '../types/diagnostics.ts';
-import { emitShapeFailure } from '../compiler/diagnostics/emit-diagnostics.ts';
+import { emitShapeFailure, emitShapeFailures, type EmitShapeFailure } from '../compiler/diagnostics/emit-diagnostics.ts';
 import { isParserHiddenKind } from '../dsl/symbol-table.ts';
 import type { AssembledNonterminal, AssembledNode } from '../compiler/model/node-map.ts';
 import {
@@ -485,7 +484,7 @@ export function assertOneUntaggedSlot(
 	slots: readonly { readonly name: string; readonly ids: readonly number[] }[],
 	kindEntries: readonly KindEnumEntry[]
 ): void {
-	const failures: GrammarDiagnostic[] = [];
+	const failures: EmitShapeFailure[] = [];
 	for (let i = 0; i < slots.length; i++) {
 		for (let j = i + 1; j < slots.length; j++) {
 			const shared = slots[i]!.ids.find((id) => slots[j]!.ids.includes(id));
@@ -493,10 +492,6 @@ export function assertOneUntaggedSlot(
 			const name = kindEntries.find((entry) => entry.id === shared)?.kind ?? '?';
 			const [a, b] = [slots[i]!.name, slots[j]!.name];
 			failures.push({
-				scope: 'grammar',
-				severity: 'error',
-				canProceed: false,
-				grammar: '',
 				code: 'untagged-slot-ambiguous',
 				ownerKind: kind,
 				slotName: a,
@@ -506,5 +501,5 @@ export function assertOneUntaggedSlot(
 			});
 		}
 	}
-	if (failures.length > 0) throw new EmitHaltedError(failures);
+	if (failures.length > 0) throw emitShapeFailures(failures);
 }

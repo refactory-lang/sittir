@@ -239,7 +239,7 @@ function emitStages(config: EmitAllConfig, collector: EmitCollector): EmitAllRes
 	};
 }
 
-interface NodeDispatchEmitters {
+export interface NodeDispatchEmitters {
 	readonly factoryEmitter: FactoryEmitter;
 	readonly fromEmitter: FromEmitter;
 	readonly wrapEmitter: WrapEmitter;
@@ -247,19 +247,22 @@ interface NodeDispatchEmitters {
 	readonly renderModuleEmitterInst: RenderModuleEmitter | undefined;
 }
 
-interface NodeDispatchContext {
+export interface NodeDispatchContext {
 	readonly nodeMap: NodeMap;
 	readonly kindEntries: ReturnType<typeof collectKindEntries>;
 	readonly inlineKinds: readonly string[] | undefined;
 	readonly synthesizedKinds: ReadonlySet<string> | undefined;
 }
 
-function dispatchNodeMapByTaxonomy(emitters: NodeDispatchEmitters, ctx: NodeDispatchContext, collector: EmitCollector): void {
+export function dispatchNodeMapByTaxonomy(emitters: NodeDispatchEmitters, ctx: NodeDispatchContext, collector: EmitCollector): void {
 	const { factoryEmitter, fromEmitter, wrapEmitter, templateEmitter, renderModuleEmitterInst } = emitters;
 	const { nodeMap, kindEntries, inlineKinds, synthesizedKinds } = ctx;
 
 	for (const [kind, node] of nodeMap.nodes) {
 		collector.guard(() => {
+			const each = (emits: boolean, call: () => void): void => {
+				if (emits) collector.guard(call);
+			};
 			const factoryEmission = classifyFactoryEmission(kind, node, {
 				nodeMap,
 				kindEntries,
@@ -295,41 +298,39 @@ function dispatchNodeMapByTaxonomy(emitters: NodeDispatchEmitters, ctx: NodeDisp
 			switch (node.modelType) {
 				case 'pattern':
 				case 'enum':
-					if (factoryEmission === 'emit') factoryEmitter.emitLeaf(node);
-					if (fromEmission === 'emit') fromEmitter.emitLeaf(node);
-					if (templateEmission === 'emit') templateEmitter.emitLeaf(node);
-					renderModuleEmitterInst?.emitLeaf?.(node);
+					each(factoryEmission === 'emit', () => factoryEmitter.emitLeaf(node));
+					each(fromEmission === 'emit', () => fromEmitter.emitLeaf(node));
+					each(templateEmission === 'emit', () => templateEmitter.emitLeaf(node));
+					each(true, () => renderModuleEmitterInst?.emitLeaf?.(node));
 					break;
 				case 'keyword':
 				case 'punctuation':
 					if (isBuilderlessPunctuationLeaf(node)) break;
-					if (factoryEmission === 'emit') factoryEmitter.emitLeaf(node);
-					if (fromEmission === 'emit') fromEmitter.emitLeaf(node);
-					if (templateEmission === 'emit') templateEmitter.emitLeaf(node);
-					renderModuleEmitterInst?.emitLeaf?.(node);
+					each(factoryEmission === 'emit', () => factoryEmitter.emitLeaf(node));
+					each(fromEmission === 'emit', () => fromEmitter.emitLeaf(node));
+					each(templateEmission === 'emit', () => templateEmitter.emitLeaf(node));
+					each(true, () => renderModuleEmitterInst?.emitLeaf?.(node));
 					break;
 				case 'envelope':
 				case 'branch':
 				case 'lexedPattern':
 				case 'polymorph':
 				case 'alias':
-					if (fromEmission === 'emit') fromEmitter.emitBranch(node);
-					if (factoryEmission === 'emit') factoryEmitter.emitBranch(node);
-					if (wrapEmission === 'emit') wrapEmitter.emitBranch(node);
-					if (templateEmission === 'emit') templateEmitter.emitBranch(node);
-					renderModuleEmitterInst?.emitBranch?.(node);
+					each(fromEmission === 'emit', () => fromEmitter.emitBranch(node));
+					each(factoryEmission === 'emit', () => factoryEmitter.emitBranch(node));
+					each(wrapEmission === 'emit', () => wrapEmitter.emitBranch(node));
+					each(templateEmission === 'emit', () => templateEmitter.emitBranch(node));
+					each(true, () => renderModuleEmitterInst?.emitBranch?.(node));
 					break;
 				case 'list':
-					if (factoryEmission === 'emit') factoryEmitter.emitSeparatedList(node);
-					if (fromEmission === 'emit') fromEmitter.emitSeparatedList(node);
-					if (wrapEmission === 'emit') wrapEmitter.emitSeparatedList(node);
-					if (templateEmission === 'emit') templateEmitter.emitBranch(node);
-					renderModuleEmitterInst?.emitBranch?.(node);
+					each(factoryEmission === 'emit', () => factoryEmitter.emitSeparatedList(node));
+					each(fromEmission === 'emit', () => fromEmitter.emitSeparatedList(node));
+					each(wrapEmission === 'emit', () => wrapEmitter.emitSeparatedList(node));
+					each(templateEmission === 'emit', () => templateEmitter.emitBranch(node));
+					each(true, () => renderModuleEmitterInst?.emitBranch?.(node));
 					break;
 			}
-			if (factoryEmission === 'emit') {
-				factoryEmitter.emitRefineForms(kind, node);
-			}
+			each(factoryEmission === 'emit', () => factoryEmitter.emitRefineForms(kind, node));
 		});
 	}
 }

@@ -9,9 +9,16 @@ export interface EmitShapeFailure {
 	readonly details?: Record<string, unknown>;
 }
 
+function diagnosticOf(failure: EmitShapeFailure, grammar: string): GrammarDiagnostic {
+	return { scope: 'grammar', severity: 'error', canProceed: false, grammar, ...failure };
+}
+
+export function emitShapeFailures(failures: readonly EmitShapeFailure[]): EmitHaltedError {
+	return new EmitHaltedError(failures.map((failure) => diagnosticOf(failure, '')));
+}
+
 export function emitShapeFailure(failure: EmitShapeFailure): EmitHaltedError {
-	const diagnostic: GrammarDiagnostic = { scope: 'grammar', severity: 'error', canProceed: false, grammar: '', ...failure };
-	return new EmitHaltedError([diagnostic]);
+	return emitShapeFailures([failure]);
 }
 
 export class EmitCollector {
@@ -43,15 +50,14 @@ export class EmitCollector {
 	}
 
 	cascade(error: Error): EmitHaltedError {
-		const after: GrammarDiagnostic = {
-			scope: 'grammar',
-			severity: 'error',
-			canProceed: false,
-			grammar: this.grammar,
-			code: 'emit-aborted-after-failure',
-			message: `emission stopped on an internal error after ${this.#collected.length} diagnostic(s), likely a consequence of them: ${error.message}`,
-			details: { cascade: true }
-		};
+		const after = diagnosticOf(
+			{
+				code: 'emit-aborted-after-failure',
+				message: `emission stopped on an internal error after ${this.#collected.length} diagnostic(s), likely a consequence of them: ${error.message}`,
+				details: { cascade: true }
+			},
+			this.grammar
+		);
 		return new EmitHaltedError(distinct([...this.#collected, after]));
 	}
 
