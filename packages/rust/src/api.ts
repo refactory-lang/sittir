@@ -9,8 +9,8 @@ import { rows, queryFlags, querySlotFlags, type PortableIs, type PortableKinds }
 import type { TSKindId } from './kinds.js';
 import type { FixedTextKindId, TypeKeyOf, NamespaceMap, RustNode, RustTypeMap } from './types.js';
 import type { IndentChar, Options } from './options.js';
-import { jsonFacts, querySlots, structure, triviaFacts } from './utils.js';
-import { buildByKind, coerceToLineComment, coerceToBlockComment } from './factories/coerce.js';
+import { querySlots, structure, triviaFacts } from './utils.js';
+import { coerceToLineComment, coerceToBlockComment } from './factories/coerce.js';
 import { RENDER_MODULE_HASH } from './hash.js';
 import { createRenderEngine, type SourceFileRoot } from './render-engine.js';
 import { wrapNode, hydrate, type SourceFileTree } from './wrap.js';
@@ -38,6 +38,7 @@ export const hooks: LanguageHooks<RustAPI> = Object.freeze<LanguageHooks<RustAPI
 		default: () => import('./ir.js').then((m) => m.ir),
 		strict: () => import('./ir-strict.js').then((m) => m.ir)
 	}),
+	records: () => import('./factories/records.js'),
 	trivia: Object.freeze({
 		...triviaFacts,
 		comment: coerceToLineComment,
@@ -47,8 +48,6 @@ export const hooks: LanguageHooks<RustAPI> = Object.freeze<LanguageHooks<RustAPI
 		])
 	}),
 	querySlots,
-	json: jsonFacts,
-	buildByKind,
 	structure,
 	membership: Object.freeze({ isMember, membersOf }),
 	createNative: (options) => nativeLanguageEngine<RustAPI, IndentChar>(createRenderEngine(options)),

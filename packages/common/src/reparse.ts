@@ -94,7 +94,7 @@ export function applyHost(template: string, rendered: string, parse?: (text: str
 	}
 	const hostOffset = offset >= 0 ? offset : 0;
 	const at = (renderedOffset: number): number => hostOffset + renderedOffset + shifts.filter((shift) => shift.at <= renderedOffset).reduce((sum, shift) => sum + shift.length, 0);
-	return Object.defineProperty({ text, offset: hostOffset }, 'at', { value: at, enumerable: false }) as HostedText;
+	return { text, offset: hostOffset, at };
 }
 
 function hostBySupertype(

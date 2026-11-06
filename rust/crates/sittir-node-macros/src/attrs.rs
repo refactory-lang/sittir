@@ -27,6 +27,9 @@ pub struct KindAttrs {
     pub interior: Option<LitStr>,
     pub content: Option<Ident>,
     pub item: Option<Ident>,
+    /// On a list kind: its items are wrappers a client reads through, to
+    /// their decorations and content, as soon as it holds the list.
+    pub wrapped_items: bool,
     /// On a variant: the arm bare text and an `ERROR` object decode as.
     pub verbatim: bool,
     /// On a variant: the arm an `ERROR` object decodes as, in a choice that
@@ -39,10 +42,31 @@ pub struct KindAttrs {
     pub edged: bool,
     /// On a struct: the words of its record, which codegen stamps.
     pub words: Option<u32>,
+    /// On a struct: the words of its built record, one per cell.
+    pub built_words: Option<u32>,
+    /// On a struct: the name of its fields trait, which codegen stamps and
+    /// its render body is generic over.
+    pub fields: Option<Ident>,
+    /// On a struct: the name of its prepare trait, which codegen stamps and
+    /// its prepare body is generic over.
+    pub prepare: Option<Ident>,
+    /// On a struct or a choice: the name of its record view, which codegen
+    /// stamps on each type it writes the view's render for.
+    pub view: Option<Ident>,
+    /// On a struct: its prepare body (`prepare_<kind>`), which codegen
+    /// stamps beside its view, so its record prepares through the same body.
+    pub prepare_fn: Option<Ident>,
+    /// On a wrapper struct: the slot whose content seats it
+    /// (`SeatTarget`), which codegen stamps where the wrapper's seat follows
+    /// its content.
+    pub seat_through: Option<Ident>,
     /// On a choice: the function that stamps a node's kind from its grammar
     /// and display ids, which picks the variant; absent, the choice stamps
     /// with its own displays and no relaxed keywords.
     pub stamp: Option<Path>,
+    /// On a delimiter token: its derived facet's field, which its record's
+    /// view reads from the overlay where prepare filled it.
+    pub facet: Option<Ident>,
 }
 
 /// A slot's record cell, as codegen stamps it on `#[slot(…)]`: `word` and
@@ -54,6 +78,11 @@ pub struct CellStamp {
     pub width: Option<u32>,
     pub run: Option<u32>,
     pub bit: Option<u32>,
+    pub inline: Option<u32>,
+    /// The forms the cell holds in a parsed record (`record::form`).
+    pub forms: Option<u8>,
+    /// The cell's one word in a built record.
+    pub built: Option<u32>,
 }
 
 /// `#[slot]` or `#[slot(…)]` on a field.
@@ -66,6 +95,28 @@ pub struct SlotAttrs {
     pub capture: Option<LitStr>,
     pub scalar: bool,
     pub cell: CellStamp,
+    /// The slot's gaps take its seat table's arms at prepare (`SeatSlot`).
+    pub seated: bool,
+    /// The optional slot takes, unset, the unit its option site chooses
+    /// (`UnitSlot`).
+    pub defaulted: bool,
+    /// The slot holds a delimiter token whose derived facet its holder's
+    /// prepare fills (`DelimiterSlot`).
+    pub delimiter: bool,
+    /// The slot is content a derived delimiter bounds, which its holder's
+    /// prepare renders to choose the facet (`RenderSlot`).
+    pub bounded: bool,
+}
+
+/// `#[space(slot = N, side = before|after, site = PATH)]` on a field: a list
+/// slot's separator spacing setting, by the slot's record word, the side of
+/// the separator its render writes it on (`before` or `after`, checked as it
+/// is read), and the site prepare fills it from.
+pub struct SpaceAttrs {
+    pub slot: u32,
+    /// Whether the setting is the separator's `before` side, else its `after`.
+    pub before: bool,
+    pub site: Path,
 }
 
 /// `#[kind(…)]` on a variant: the ids it claims, display ids when marked.
@@ -168,12 +219,20 @@ pub fn kind_attrs(attrs: &[Attribute]) -> syn::Result<KindAttrs> {
                 "interior" => out.interior = Some(meta.value()?.parse()?),
                 "content" => out.content = Some(meta.value()?.parse()?),
                 "item" => out.item = Some(meta.value()?.parse()?),
+                "wrapped_items" => out.wrapped_items = true,
                 "verbatim" => out.verbatim = true,
                 "error" => out.error = true,
                 "codec_only" => out.codec_only = true,
                 "edged" => out.edged = true,
                 "words" => out.words = Some(meta.value()?.parse::<LitInt>()?.base10_parse()?),
+                "built_words" => out.built_words = Some(meta.value()?.parse::<LitInt>()?.base10_parse()?),
+                "fields" => out.fields = Some(meta.value()?.parse()?),
+                "prepare" => out.prepare = Some(meta.value()?.parse()?),
+                "view" => out.view = Some(meta.value()?.parse()?),
+                "prepare_fn" => out.prepare_fn = Some(meta.value()?.parse()?),
+                "seat_through" => out.seat_through = Some(meta.value()?.parse()?),
                 "stamp" => out.stamp = Some(meta.value()?.parse()?),
+                "facet" => out.facet = Some(meta.value()?.parse()?),
                 _ => return Err(meta.error("unknown `node` attribute")),
             }
             Ok(())
@@ -200,6 +259,13 @@ pub fn slot_attrs(attrs: &[Attribute]) -> syn::Result<Option<SlotAttrs>> {
             "width" => out.cell.width = Some(meta.value()?.parse::<LitInt>()?.base10_parse()?),
             "run" => out.cell.run = Some(meta.value()?.parse::<LitInt>()?.base10_parse()?),
             "bit" => out.cell.bit = Some(meta.value()?.parse::<LitInt>()?.base10_parse()?),
+            "inline" => out.cell.inline = Some(meta.value()?.parse::<LitInt>()?.base10_parse()?),
+            "forms" => out.cell.forms = Some(meta.value()?.parse::<LitInt>()?.base10_parse()?),
+            "built" => out.cell.built = Some(meta.value()?.parse::<LitInt>()?.base10_parse()?),
+            "seated" => out.seated = true,
+            "defaulted" => out.defaulted = true,
+            "delimiter" => out.delimiter = true,
+            "bounded" => out.bounded = true,
             _ => return Err(meta.error("unknown `slot` attribute")),
         }
         Ok(())
@@ -259,6 +325,39 @@ pub fn separator_kind_attrs(attrs: &[Attribute]) -> syn::Result<Option<Separator
         Ok(())
     })?;
     Ok(Some(out))
+}
+
+pub fn space_attrs(attrs: &[Attribute]) -> syn::Result<Option<SpaceAttrs>> {
+    let Some(attr) = attrs.iter().find(|a| a.path().is_ident("space")) else { return Ok(None) };
+    let (mut slot, mut side, mut site) = (None, None, None);
+    attr.parse_nested_meta(|meta| {
+        match key(&meta.path).as_str() {
+            "slot" => slot = Some(meta.value()?.parse::<LitInt>()?.base10_parse()?),
+            "side" => {
+                let value: Ident = meta.value()?.parse()?;
+                if value != "before" && value != "after" {
+                    return Err(syn::Error::new_spanned(value, "`side` is `before` or `after`"));
+                }
+                side = Some(value);
+            }
+            "site" => site = Some(meta.value()?.parse()?),
+            _ => return Err(meta.error("unknown `space` attribute")),
+        }
+        Ok(())
+    })?;
+    match (slot, side, site) {
+        (Some(slot), Some(side), Some(site)) => Ok(Some(SpaceAttrs { slot, before: side == "before", site })),
+        _ => Err(syn::Error::new_spanned(attr, "`space` names its `slot`, `side` and `site`")),
+    }
+}
+
+/// A bare marker attribute, `#[name]`, on a field.
+pub fn marker(attrs: &[Attribute], name: &str) -> syn::Result<bool> {
+    let Some(attr) = attrs.iter().find(|a| a.path().is_ident(name)) else { return Ok(false) };
+    match attr.meta {
+        Meta::Path(_) => Ok(true),
+        _ => Err(syn::Error::new_spanned(attr, format!("`{name}` takes no arguments"))),
+    }
 }
 
 /// `#[wire(key = "…")]` on a field: the key it crosses the wire under.

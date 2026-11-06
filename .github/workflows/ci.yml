@@ -91,6 +91,11 @@ jobs:
         # test:coverage`), each running all ~208 test files.
         run: pnpm run test -- --coverage
 
+      - name: Benchmark reporting tests
+        # The benchmark workflows run these with `node --test` before any
+        # build, so they stay outside vitest.
+        run: node --test scripts/ci/arena-benchmark-*.test.mjs
+
       - name: Security Audit
         run: pnpm audit --audit-level moderate
         continue-on-error: true
@@ -189,6 +194,50 @@ jobs:
             --head /tmp/016-head/native.json \
             --declared packages/tools/baselines/native.json
 
+  # Parsed arena views with record builders and parsed/built objects must
+  # validate the same rows in every grammar. `validate history --diff` exits
+  # non-zero when any row moves between the paired backend reports.
+  node-storage-parity:
+    name: validation rows under both node storages and constructions
+    runs-on: ubuntu-22.04
+    needs: napi-build
+    steps:
+      - uses: actions/checkout@v6
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+      - name: Use Node.js 24.x
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24.x
+          cache: "pnpm"
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Download napi `.node` artifacts (linux x86_64-gnu)
+        uses: actions/download-artifact@v4
+        with:
+          name: bindings-x86_64-unknown-linux-gnu
+          path: /tmp/node-storage-bindings
+      - name: Stage `.node` artifacts into the grammar packages
+        run: |
+          cp -R /tmp/node-storage-bindings/. ./
+          find packages -path "*/native/*.node" -print
+      # Validation compiles every grammar, which reads its generated layer's
+      # hash through the pinned build.
+      - name: Install Rust toolchain (pinned)
+        uses: ./.github/actions/rust-toolchain
+      - name: Bootstrap the pinned build
+        uses: ./.github/actions/bootstrap
+      - name: Validation rows, object storage
+        run: |
+          npx tsx packages/cli/src/cli.ts validate counts
+          cp packages/tools/validation-report.json /tmp/rows-object.json
+      - name: Validation rows, arena storage and record construction
+        run: |
+          npx tsx packages/cli/src/cli.ts validate counts --node-storage arena
+          cp packages/tools/validation-report.json /tmp/rows-arena.json
+      - name: Arena rows equal object rows
+        run: npx tsx packages/cli/src/cli.ts validate history --diff /tmp/rows-object.json /tmp/rows-arena.json
+
   # Spec 054 — perf regression-checker (native only). Compares the FFI
   # roundtrip + call-count from a fresh native-backend metrics run against
   # the committed `packages/tools/baselines/perf-native.json`.
@@ -267,12 +316,14 @@ jobs:
         run: |
           cp -R /tmp/054-bindings/. ./
           find packages -path "*/native/*.node" -print
+      - name: Build the packages the metrics run measures
+        run: pnpm -r --filter './packages/*' --workspace-concurrency=4 run build
       - name: Collect fresh metrics (native backend)
         run: |
           SITTIR_BACKEND=native SITTIR_METRICS=1 \
-            npx tsx packages/tools/src/scripts/collect-baseline.ts > /dev/null
+            node packages/tools/dist/scripts/collect-baseline.js > /dev/null
       - name: Check perf baseline (warn-only window)
-        run: pnpm exec tsx packages/cli/src/cli.ts tool check-perf
+        run: node packages/cli/dist/cli.js tool check-perf
       - name: Upload metrics artifact for inspection
         if: always()
         uses: actions/upload-artifact@v4
@@ -300,6 +351,12 @@ jobs:
         run: cargo clippy --workspace --all-targets --no-default-features -- -D warnings
       - name: Clippy with napi bindings (warnings denied)
         run: cargo clippy --workspace --all-targets -- -D warnings
+      - name: Clippy with the record arena (warnings denied)
+        run: cargo clippy --workspace --all-targets --no-default-features --features sittir-parity-tests/arena -- -D warnings
+      - name: Clippy with the record arena and napi bindings (warnings denied)
+        run: cargo clippy --workspace --all-targets --features sittir-parity-tests/arena -- -D warnings
+      - name: Record arena tests
+        run: cargo test --workspace --no-default-features --features sittir-parity-tests/arena
       - name: Typed reader debug diagnostics
         run: cargo test -p sittir-parity-tests --no-default-features --test typed_read --features sittir-core/read-debug-checks
 
@@ -445,6 +502,14 @@ jobs:
           for crate in $grammars; do
             npx tsx scripts/build-native.mts "${crate}" --release --target "${{ matrix.target }}" ${{ matrix.buildFlag }}
           done
+      # Each release addon just built, read from the unstripped copy its
+      # build keeps: the limit's count of its grammar's costliest whole-encode
+      # level, with the one-time frames, must fit ENCODE_STACK_BUDGET. Over
+      # it, the step fails with the costliest paths and the largest limit
+      # that fits. It only disassembles, so cross-compiled legs run it too.
+      - name: encode stack budget
+        shell: bash
+        run: npx tsx packages/cli/src/cli.ts tool encode-stack
       # `--no-default-features` is required for a bare `cargo test
       # --workspace`: sittir-{rust,typescript,python} default to
       # `napi-bindings` ON (needed for `napi build` above), and workspace

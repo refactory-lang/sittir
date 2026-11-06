@@ -1,9 +1,10 @@
 # The shared engine library: migration
 
-**Status**: Approved shape (A). The migration starts once `feat/records` is stable and on master. It's planned in two parts. The shared library (`docs/superpowers/plans/2026-11-06-engine-dylib-library.md`) comes first, then trees as objects and coordinates that carry their tree. Those two sections were amended on 2026-11-06 against what `feat/records` shipped:
+**Status**: Approved shape (A). The migration starts once `feat/records` is stable and on master. It's planned in two parts. The shared library (`docs/superpowers/plans/2026-11-06-engine-dylib-library.md`) comes first, then tree holders and coordinates that carry their tree. Those two sections were amended on 2026-11-06 against what `feat/records` shipped:
 - napi was already at `napi10`;
 - lazy trivia's tree-owned sides took their writes through the live-tree table;
-- an arena link record carries its tree in one word, so the maintainer chose an arena-held slot over a pointer per link.
+- an arena link record carries its tree in one word, so the maintainer chose an arena-held slot over a pointer per link;
+- the maintainer then ruled that each storage holds its trees the way it holds its nodes. Object storage uses a `Tree` object the garbage collector tracks. Arena storage uses counted native slots, released with the parse root, and makes no `Tree` object.
 **Scope**: the native crates (`sittir-engine`, `sittir-core`, the grammar crates), the native crate emitter, the grammar packages' build and packaging, and the JavaScript loader.
 **Evidence**: the probe report on `probe/engine-dylib` at 3923f9de6, `docs/superpowers/probes/2026-10-23-engine-dylib/README.md`. That branch does not merge; it is the record.
 
@@ -61,38 +62,50 @@ Under shape A, anything in sittir-core is one per addon, so a fact the process m
   - `TreeClaim`, from `feat/records`, stays as it is: ids are minted only natively, and `Engine::parse` consumes the claim.
 - **The allocator slots** are the runtime's own, defined once in the engine.
 
-## Trees as objects
+## Tree holders
 
-A parsed tree is a JavaScript object, and it's freed when its last holder drops it. This replaces the live-tree table.
+A parsed tree is freed when its last holder drops it. Each storage holds its trees the way it holds its nodes: object storage through a JavaScript object the garbage collector tracks, and arena storage through counted native slots. This replaces the live-tree table.
 
-- **The class.** `napi_engine!` expands a `Tree` class in each grammar crate, so each grammar's class carries its own napi type tag (the workspace is already on `napi10`). A tree of another grammar is refused, never cast.
-- **Ownership.** A `Tree` object wraps a shared handle (an `Arc`) to the tree's cell, which holds the `ParsedTree` and its borrow.
-  - The holders are the `Tree` objects that wrap the handle and the arenas whose records link the tree (below).
-  - The tree is freed when the last holder drops it. Nothing else keeps a tree alive.
-  - There's no explicit tree dispose, as today.
+- **The cell.** Each tree lives in a cell behind a shared handle (an `Arc`). The cell holds the `ParsedTree` and its borrow. Every holder holds that handle, and nothing else keeps a tree alive.
+- **Object storage: the `Tree` object.**
+  - `napi_engine!` expands a `Tree` class in each grammar crate, so each grammar's class carries its own napi type tag (the workspace is already on `napi10`). A tree of another grammar is refused, never cast.
+  - The holders are the `Tree` objects that wrap the handle.
+  - Object nodes are plain values that can be spread, copied and shared without any code running. So only the garbage collector sees every holder, and native code learns that the last one is gone only through the object's finalizer. One `Tree` object per tree means one finalizer per tree instead of one per node.
+  - **The `Tree` object is internal.** It's reached only through a node's `[TREE]` property, and it isn't part of the public API.
+  - There's no tree dispose. A node's `[Symbol.dispose]` stays a no-op, as it is for every object node.
+- **Arena storage: counted slots.**
+  - No `Tree` object is made. The engine's arena holds each of its trees in a slot of its held-tree table, and the slot's entry holds the tree's handle.
+  - An entry is counted once by the parse root and once by each link record that names it (below). The entry is dropped when its count reaches 0, and the engine's dispose drops every entry.
+  - Releasing the parse root drops the root's count. The release is the `[Symbol.dispose]` and `engine.release(node)` that every node already has, the same release that frees a built root today. Releasing any other read handle still does nothing.
+  - A read handle is an uncounted borrow, like every arena read handle. It names its tree by slot and by the tree's id. A call through a handle whose slot no longer holds that id is refused, with a message naming the tree's id. That happens when its tree was freed or its slot reused, and such a call never reads another tree.
+  - So in arena storage nothing on the JavaScript heap holds a tree, and no finalizer runs for one. A root that's never released keeps its tree until the engine's dispose, as an unreleased built root keeps its records.
 - **Exclusive writes, per tree.** Today a write borrows the whole live-tree table mutably, and a render holds a shared borrow of the whole table for the call, so any write during any render is refused. After the migration each tree carries its own borrow, taken without blocking:
   - a render takes a read borrow of each tree its node reaches, for the length of the call;
   - a write takes its tree's write borrow, and is refused by name while that tree is being read;
   - a write to one tree during the render of another is allowed;
   - placed sides stay lock-free inside the tree, as lazy trivia built them, and built records' sides stay engine-owned.
 - **Ready for threading.** `ParsedTree` is asserted `Send + Sync` at compile time, and the borrow is one a pool thread could take. So threading can parse on a pool thread and wrap the result on the JavaScript thread without changing this shape. No napi or V8 call runs off the JavaScript thread.
-- **Parse, read and render.** The engine parses into a `Tree`, reads through it, and renders with it as the source table (`ParsedTree` is already a `SourceTable`).
-- **What goes.** The JavaScript engine reads and renders through tree objects. The `FinalizationRegistry`, `disposeTree` and the live-tree table go. The two tools that call `disposeTree` directly (`validate/layout-runs.ts` and `profile/native-hydration.ts`) drop their holds instead.
+- **Parse, read and render.** The engine parses into a tree cell, held by a `Tree` object in object storage and by an arena slot in arena storage. It reads through that holder, and renders with the tree as the source table (`ParsedTree` is already a `SourceTable`).
+- **What goes.** The `FinalizationRegistry`, `disposeTree` and the live-tree table go. Two tools call `disposeTree` directly, `validate/layout-runs.ts` and `profile/native-hydration.ts`. Instead, they drop their holds in object storage and release their roots in arena storage.
 
 ### A coordinate carries its tree
 
-A parsed node's coordinate reaches its tree through a holder, not through the tree's id. The render reads each coordinate's tree from it, and holding a node keeps its tree alive. A long-lived built node keeps its source trees in memory.
+A parsed node's coordinate reaches its tree through the tree's holder, never by looking up the tree's id. The render reads each coordinate's tree from it.
+- In object storage, holding a node keeps its tree alive.
+- In arena storage, a link keeps it alive, and so does the root's count until the root is released.
+- In both storages, a long-lived built node keeps its source trees in memory.
 
 - **Object storage.** A coordinate holds its `Tree` object, its descendant index and its span, and it crosses the boundary that way. `$treeHandle` packs no tree id. The generated wrappers' per-kind `[TREE]` stamp holds the `Tree` object instead of a token.
-- **Arena storage.** A link record stays 8 words. Its tree word holds a 32-bit slot into the arena's own table of the trees its records link.
-  - Each entry holds its tree, and is counted by the links to it. The last link's release drops the entry.
-  - The table is a holder, not a registry: it holds only trees the arena's own records reach, and nothing outside the arena looks a tree up in it.
+- **Arena storage.** A link record stays 8 words. Its tree word holds a 32-bit slot into the arena's held-tree table, and each link counts once on its entry.
+  - The table is a holder, not a registry. It holds only trees that the arena's own parses and records reach, and nothing outside the arena looks a tree up in it.
   - It replaces the JavaScript-side `BuiltArena` map of tree tokens.
-- **The hold is the coordinate.**
+- **The hold.**
   - *Today:* a read object holds its tree through a token (`holdTree`), while its coordinate names the tree by id. Dropping the token (`detachCoordinates`) leaves a bare handle, which the render refuses until the tree is held again.
-  - *After the migration:* a copy of a node copies its coordinates, and so holds their trees.
-  - What goes: the tokens, `holdTree`, `holdReadTree`, `carryReadTree`, `detachCoordinates`, and the validators' detach-then-hold pairs. A bare handle with no tree object doesn't exist.
-- **Identity.** The tree's id stays its identity (`TreeClaim`), never the way to reach it.
+  - *After the migration, object storage:* a copy of a node copies its coordinates, and so holds their trees.
+  - *After the migration, arena storage:* a copy of a read handle is another uncounted borrow. A built node that takes a parsed node links it, and the link counts.
+  - *An edit:* an edit that rebuilds a node drops that node's own hold, since its content is now built and renders from its options. Its untouched parsed descendants keep theirs. Materializing a coordinate keeps the hold, because the node still renders from its tree's source. In arena storage, its content is the tree's own records.
+  - What goes: the tokens, `holdTree`, `holdReadTree`, `carryReadTree`, `detachCoordinates`, and the validators' detach-then-hold pairs. No handle exists without its holder.
+- **Identity.** The tree's id stays its identity (`TreeClaim`), never the way to reach it. In arena storage, a read handle's slot is also checked against it.
 - **Built slots.** A built node's slot that takes a parsed node holds that node's coordinate, tree included.
   - A built node made from the nodes of two trees holds both, and each coordinate slices its own tree's source. It renders with no tree layer of options (render options spec, Precedence).
   - One made from one tree's nodes renders over that tree's layer, found from its coordinates.
@@ -116,9 +129,11 @@ A parsed node's coordinate reaches its tree through a holder, not through the tr
 
 engine-api reviews the sittir-core parts:
 - the counter's move and `TreeClaim`;
-- the `Tree` class in `napi_engine!`, its per-tree borrow, and the `Send + Sync` assertion;
+- the tree cell, its per-tree borrow, and the `Send + Sync` assertion;
+- object storage's `Tree` class in `napi_engine!`;
+- arena storage's held-tree table: the root's count, the links' counts, and the check of a read handle's slot against the tree's id;
 - the end of the live-tree table;
-- the coordinate's tree: the wire, the hold, the arena's held-tree table, built slots, and the render without a tree argument.
+- the coordinate's tree: the wire, the hold, built slots, and the render without a tree argument.
 
 ## Verification
 
@@ -127,13 +142,18 @@ On every platform of the release matrix, with real grammar packages laid out as 
 - one engine image and one std image mapped after loading two grammars, from the first package's directory;
 - the runtime defined only in the engine; no addon defines a `ts_*` symbol, and each imports only what its scanner reads;
 - one tree-id counter, with `globalThis` untouched;
-- tree objects:
+- tree holders:
   - a full read renders back the source;
-  - trees made and dropped are freed once their last holder goes;
+  - in object storage, trees made and dropped are freed once their last `Tree` object is collected;
+  - in arena storage, a tree is freed once its root is released and its last link goes, and every tree at the engine's dispose. No `Tree` object is made;
   - a tree of another grammar is refused;
   - a write to a tree during its own render is refused by name, and a write to another tree is allowed;
-- the arena: a link record stays 8 words, and a tree is freed after its last link's release and its last `Tree` object's collection;
-- coordinates: a built node holding nodes of two trees renders both sources with no tree layer, and one holding one tree's nodes renders over that tree's layer; a built node alone keeps its source trees alive, and dropping it frees them; no coordinate crosses the boundary without its tree object;
+- the arena: a link record stays 8 words. A read handle used after its tree is freed is refused by name, and it never reads the tree a reused slot now holds;
+- coordinates:
+  - a built node holding nodes of two trees renders both sources with no tree layer;
+  - one holding one tree's nodes renders over that tree's layer;
+  - a built node alone keeps its source trees alive, and dropping it frees them;
+  - no coordinate crosses the boundary without its holder: its `Tree` object in object storage, its slot and tree id in arena storage;
 - version skew refused both ways: the same version with another stamp at load, and a new version through the mapped loader error;
 - the standing gates: `validate:native` rows identical, the full suite, `cargo test --workspace --no-default-features`, workspace type-check and lint;
 - throughput, RSS and package sizes re-measured on CI runners against the last static release.

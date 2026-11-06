@@ -10,9 +10,9 @@ const verifyingStrict = await createEngine(rust, { verifyStructure: 'runtime', a
 type Engine = typeof trustingStrict;
 type Spread = (...arms: unknown[]) => { $render(): string };
 const arm = (engine: Engine, name: string) =>
-	engine.build.matchArm.blockEnding({ match: engine.build.matchPattern({ pattern: rs.build.identifier(name) }), body: engine.build.block({}) });
+	engine.build.matchArm.blockEnding({ match: engine.build.matchPattern({ pattern: engine.build.identifier(name) }), body: engine.build.block({}) });
 const last = (engine: Engine, name: string) =>
-	engine.build.lastMatchArm({ match: engine.build.matchPattern({ pattern: rs.build.identifier(name) }), body: rs.build.identifier('z') });
+	engine.build.lastMatchArm({ match: engine.build.matchPattern({ pattern: engine.build.identifier(name) }), body: engine.build.identifier('z') });
 const erased = (engine: Engine): Spread => engine.build.matchBlock as unknown as Spread;
 
 describe("a match block's arms: every arm before the last of the arm kinds, the last its own", () => {

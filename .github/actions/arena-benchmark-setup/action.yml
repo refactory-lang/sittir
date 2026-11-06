@@ -1,0 +1,20 @@
+name: Prepare arena benchmarks
+description: Install the pinned benchmark tools without compiling the measured runtime.
+runs:
+  using: composite
+  steps:
+    - name: Prepare artifact directory
+      shell: bash
+      run: mkdir -p "$RUNNER_TEMP/arena-benchmarks"
+    - uses: pnpm/action-setup@v4
+    - uses: actions/setup-node@v6
+      with:
+        node-version: '26.12.0'
+        cache: pnpm
+    - uses: ./.github/actions/rust-toolchain
+    - name: Install locked dependencies
+      shell: bash
+      run: pnpm install --frozen-lockfile | tee "$RUNNER_TEMP/arena-benchmarks/install.log"
+    - name: Verify benchmark reporting
+      shell: bash
+      run: node --test scripts/ci/arena-benchmark-*.test.mjs

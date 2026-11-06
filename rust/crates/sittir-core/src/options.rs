@@ -1,6 +1,7 @@
 //! Resolved render options: one whitespace kind id per spacing site, one
 //! bitflag per flank site, and the indentation unit.
 
+use crate::heap::HeapBytes;
 use crate::types::{EdgeRow, FieldId, FlankId, KindId, SiteId};
 
 /// The seams a kind wraps around itself: the spacing site on each side, or
@@ -81,11 +82,27 @@ pub struct ResolvedOptions {
     /// Per kind id, the kind's flags (`KIND_ANON`, `KIND_LINE_TERMINATED`, `KIND_LINE_BREAK_TERMINATED`, `KIND_ROOT`).
     pub kind_flags: &'static [KindFlags],
     /// Per kind id of a wrapper, the way its seat passes through to the node
-    /// it holds; none for any other kind (`prepare::fill_seated_gaps`).
+    /// it holds; none for any other kind (`prepare::SeatSlot`).
     pub seat_wrappers: &'static [Option<SeatPath>],
     /// Per kind id of a list, the site its items' separator reads; none for
     /// any other kind.
     pub separator_sites: &'static [Option<SiteId>],
+}
+
+impl HeapBytes for ResolvedOptions {
+    fn heap_bytes(&self) -> usize {
+        let Self { spacing, delimiter, indent, newline, edges, edge_rows, sites, kind_flags, seat_wrappers, separator_sites } = self;
+        spacing.heap_bytes()
+            + delimiter.heap_bytes()
+            + indent.heap_bytes()
+            + newline.heap_bytes()
+            + edges.heap_bytes()
+            + edge_rows.heap_bytes()
+            + sites.heap_bytes()
+            + kind_flags.heap_bytes()
+            + seat_wrappers.heap_bytes()
+            + separator_sites.heap_bytes()
+    }
 }
 
 /// How a wrapper's seat reaches the node it holds.
@@ -152,6 +169,13 @@ pub struct EdgeArm {
     pub strength: Option<crate::spacing::SeamStrength>,
 }
 
+impl HeapBytes for EdgeArm {
+    fn heap_bytes(&self) -> usize {
+        let Self { arm: _, strength: _ } = self;
+        0
+    }
+}
+
 impl From<crate::slot::SeamArm> for EdgeArm {
     fn from(seam: crate::slot::SeamArm) -> Self {
         EdgeArm { arm: seam.arm, strength: Some(seam.strength) }
@@ -166,6 +190,13 @@ pub struct Edges {
     pub after: Option<EdgeArm>,
 }
 
+impl HeapBytes for Edges {
+    fn heap_bytes(&self) -> usize {
+        let Self { before, after } = self;
+        before.heap_bytes() + after.heap_bytes()
+    }
+}
+
 impl Edges {
     /// No edge set on either side: what a node whose base carries no edges answers.
     pub const NONE: Edges = Edges { before: None, after: None };
@@ -176,15 +207,6 @@ pub trait Edged {
     fn kind_id(&self) -> KindId;
     fn edges(&self) -> &Edges;
     fn edges_mut(&mut self) -> &mut Edges;
-
-    /// The arm token each side's edge holds, for a kind whose edge is a
-    /// choice of tokens; `None` on a side without one.
-    fn edge_arm_kinds(
-        &self,
-        _ctx: &crate::prepare::RenderContext<'_>,
-    ) -> (Option<KindId>, Option<KindId>) {
-        (None, None)
-    }
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -666,6 +688,13 @@ pub fn indent_unit(source: &str) -> Option<String> {
 pub struct InferredOptions {
     pub indent: Option<String>,
     pub edges: Vec<(SiteId, KindId)>,
+}
+
+impl HeapBytes for InferredOptions {
+    fn heap_bytes(&self) -> usize {
+        let Self { indent, edges } = self;
+        indent.heap_bytes() + edges.heap_bytes()
+    }
 }
 
 impl InferredOptions {

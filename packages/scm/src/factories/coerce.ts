@@ -19,6 +19,7 @@ import {
 	coerceMixedEnumStorage,
 	configFieldOr,
 	currentHandle,
+	describeValue,
 	isNodeOfKind,
 	isNodeValue,
 	withEmptyForm
@@ -106,8 +107,6 @@ function _resolveBareText(v: string, kinds: readonly string[]): AnyUntypedNode |
 	return undefined;
 }
 
-const _DELIMITER_TOKENS: { readonly [kind: string]: (bag: Readonly<Record<string, unknown>>) => unknown } = {};
-
 function _isFromKind(k: string): k is keyof _FromMap {
 	return k in _fromMap;
 }
@@ -138,14 +137,6 @@ function _resolveByKind<K extends keyof _FromMap>(kind: K, rest: _LooseFieldInpu
 	if (_SLOTLESS_TEXT_KINDS.has(kind) || 'text' in rest)
 		throw new Error(`the ${kind} tag takes its text: { $type: <kind id>, text: "…" }`);
 	return fn(rest);
-}
-
-export function buildByKind(kind: string, ...input: unknown[]): unknown {
-	if (Object.hasOwn(_DELIMITER_TOKENS, kind))
-		return _DELIMITER_TOKENS[kind]!(Object.assign({}, ...input) as Readonly<Record<string, unknown>>);
-	if (!Object.hasOwn(_fromMap, kind)) throw new Error(`no builder for kind ${JSON.stringify(kind)}`);
-	if (input.length === 1) return _resolveByKind(kind as keyof _FromMap, input[0] as _LooseFieldInput);
-	return (_fromMap[kind as keyof _FromMap] as (...args: unknown[]) => unknown)(...input);
 }
 
 function _keywordOf(v: _LooseFieldInput, keywords: readonly (readonly [string, number])[]): number | undefined {
@@ -280,7 +271,7 @@ function _resolveOne<T>(
 	}
 	if (typeof v === 'object') {
 		throw new Error(
-			`_resolveOne: cannot resolve value to any of [${[...leafKinds, ...branchKinds].join(', ')}]: ${JSON.stringify(v)}`
+			`_resolveOne: cannot resolve value to any of [${[...leafKinds, ...branchKinds].join(', ')}]: ${describeValue(v)}`
 		);
 	}
 	if (typeof v === 'string') {
@@ -303,28 +294,19 @@ function _resolveMany<T>(
 
 function _listElements(
 	input: readonly unknown[],
-	optionKeys: readonly string[],
 	wrapperKind: string | undefined,
 	resolve: (elements: readonly unknown[]) => readonly unknown[],
 	tagKinds: readonly string[],
 	bagKinds?: readonly string[]
 ): readonly unknown[] {
-	const head = input[0];
-	const optionsFirst =
-		optionKeys.length > 0 &&
-		typeof head === 'object' &&
-		head !== null &&
-		!Array.isArray(head) &&
-		!isNodeValue(head) &&
-		Object.keys(head).every((k) => optionKeys.includes(k));
-	const elements = (optionsFirst ? input.slice(1) : input).map((e) => {
+	const elements = input.map((e) => {
 		if (typeof e !== 'object' || e === null || Array.isArray(e) || isNodeValue(e)) return e;
 		const tagged = _splitTag(e);
 		if (tagged !== undefined) return _resolveByKind(_fromOfTag(tagged.tag, tagKinds), tagged.rest);
 		if (bagKinds === undefined || bagKinds.length === 0) return e;
 		if (bagKinds.length > 1)
 			throw new Error(
-				`a bag in this list needs a $type tag naming one of [${bagKinds.join(', ')}]: ${JSON.stringify(e)}`
+				`a bag in this list needs a $type tag naming one of [${bagKinds.join(', ')}]: ${describeValue(e)}`
 			);
 		return _isFromKind(bagKinds[0]!) ? _resolveByKind(bagKinds[0]!, e) : e;
 	});
@@ -336,7 +318,7 @@ function _listElements(
 			? e
 			: resolve([e])[0]
 	);
-	return optionsFirst ? [head, ...resolved] : resolved;
+	return resolved;
 }
 
 function _resolveOneLeaf<T>(v: _LooseFieldInput, kind: string): Admit<T> {
@@ -346,7 +328,7 @@ function _resolveOneLeaf<T>(v: _LooseFieldInput, kind: string): Admit<T> {
 	const tagged = _splitTag(v);
 	if (tagged !== undefined) return _resolveByKind(_fromOfTag(tagged.tag, [kind]), tagged.rest) as Admit<T>;
 	if (typeof v === 'object') {
-		throw new Error(`_resolveOneLeaf: cannot resolve value to leaf kind '${kind}': ${JSON.stringify(v)}`);
+		throw new Error(`_resolveOneLeaf: cannot resolve value to leaf kind '${kind}': ${describeValue(v)}`);
 	}
 	return v as Admit<T>;
 }
@@ -437,7 +419,7 @@ function _resolveOneBranch<T>(
 		if (_isFromKind(kind)) return _resolveByKind(kind, v) as Admit<T>;
 	}
 	if (typeof v === 'object') {
-		throw new Error(`_resolveOneBranch: cannot resolve value to branch kind '${kind}': ${JSON.stringify(v)}`);
+		throw new Error(`_resolveOneBranch: cannot resolve value to branch kind '${kind}': ${describeValue(v)}`);
 	}
 	return v as Admit<T>;
 }
@@ -533,14 +515,8 @@ export const coerceToProgram: EmptyForm<
 	Seat<T.Program.LooseArgs, ReturnType<typeof F.buildProgram>>
 > = withEmptyForm((...input: T.Program.LooseArgs): ReturnType<typeof F.buildProgram> => {
 	currentHandle()?.admit(TSKindId.Program, input);
-	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.Program)) {
-		const data = input[0];
-		const stored = (data as unknown as { _definitions?: unknown })._definitions;
-		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.buildProgram(
-			...(_resolveMany<T.Definition>(children, _K0, _K1) as unknown as Parameters<typeof F.buildProgram>)
-		);
-	}
+	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.Program))
+		return input[0] as unknown as ReturnType<typeof F.buildProgram>;
 	const _elems: readonly unknown[] = (() => {
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
@@ -566,8 +542,12 @@ export const coerceToEscapeSequence: ConfigSeat<T.EscapeSequence.Loose, ReturnTy
 	if (isNodeValue(input)) return input as unknown as ReturnType<typeof F.buildEscapeSequence>;
 	return F.buildEscapeSequence(
 		_resolveOne<string>(
-			configFieldOr(input, 'content', () =>
-				typeof input === 'string' ? spelledInterior(input, '\\', '', F._slotRe_buildEscapeSequence_content) : input
+			configFieldOr(
+				input,
+				'content',
+				() =>
+					typeof input === 'string' ? spelledInterior(input, '\\', '', F._slotRe_buildEscapeSequence_content) : input,
+				TSKindId.EscapeSequence
 			),
 			_K0,
 			_K0
@@ -600,7 +580,12 @@ export const coerceToCapture: ConfigSeat<T.Capture.Loose, ReturnType<typeof F.bu
 	if (isNodeOfKind(input, TSKindId.Capture)) return input as unknown as ReturnType<typeof F.buildCapture>;
 	return F.buildCapture(
 		_resolveOneLeaf<T.ImmediateIdentifier>(
-			configFieldOr(input, 'name', () => (typeof input === 'string' ? spelledInterior(input, '@', '') : input)),
+			configFieldOr(
+				input,
+				'name',
+				() => (typeof input === 'string' ? spelledInterior(input, '@', '') : input),
+				TSKindId.Capture
+			),
 			'_immediate_identifier'
 		)
 	);
@@ -623,7 +608,7 @@ export const coerceToString: Seat<T.StringContent.LooseArgs, ReturnType<typeof F
 		return input as unknown as ReturnType<typeof F.buildString>;
 	return F.buildString(
 		_resolveOneBranch<T.StringContent>(
-			configFieldOr(input, 'stringContent', () => input),
+			configFieldOr(input, 'stringContent', () => input, TSKindId.String),
 			'string_content',
 			undefined,
 			true
@@ -648,7 +633,7 @@ export const coerceToImmediateString: Seat<T.StringContent.LooseArgs, ReturnType
 		return input as unknown as ReturnType<typeof F.buildImmediateString>;
 	return F.buildImmediateString(
 		_resolveOneBranch<T.StringContent>(
-			configFieldOr(input, 'stringContent', () => input),
+			configFieldOr(input, 'stringContent', () => input, TSKindId.ImmediateString),
 			'string_content',
 			undefined,
 			true
@@ -660,16 +645,8 @@ export const coerceToStringContent: Seat<T.StringContent.LooseArgs, ReturnType<t
 	...input: T.StringContent.LooseArgs
 ): ReturnType<typeof F.buildStringContent> => {
 	currentHandle()?.admit(TSKindId.StringContent, input);
-	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.StringContent)) {
-		const data = input[0];
-		const stored = (data as unknown as { _content?: unknown })._content;
-		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.buildStringContent(
-			...(_resolveMany<T.StringContentText | T.EscapeSequence>(children, _K2, _K3) as unknown as Parameters<
-				typeof F.buildStringContent
-			>)
-		);
-	}
+	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.StringContent))
+		return input[0] as unknown as ReturnType<typeof F.buildStringContent>;
 	const _elems: readonly unknown[] = (() => {
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
@@ -689,18 +666,8 @@ export const coerceToParameters: Seat<T.Parameters.LooseArgs, ReturnType<typeof 
 	...input: T.Parameters.LooseArgs
 ): ReturnType<typeof F.buildParameters> => {
 	currentHandle()?.admit(TSKindId.Parameters, input);
-	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.Parameters)) {
-		const data = input[0];
-		const stored = (data as unknown as { _elements?: unknown })._elements;
-		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.buildParameters(
-			...(_resolveMany<T.Capture | T.String | T.Identifier>(
-				children,
-				_super_node_identifier,
-				_K4
-			) as unknown as Parameters<typeof F.buildParameters>)
-		);
-	}
+	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.Parameters))
+		return input[0] as unknown as ReturnType<typeof F.buildParameters>;
 	const _elems: readonly unknown[] = (() => {
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
@@ -726,8 +693,11 @@ export const coerceToComment: ConfigSeat<T.Comment.Loose, ReturnType<typeof F.bu
 	if (isNodeValue(input)) return input as unknown as ReturnType<typeof F.buildComment>;
 	return F.buildComment(
 		_resolveOne<string>(
-			configFieldOr(input, 'content', () =>
-				typeof input === 'string' ? spelledInterior(input, ';', '', F._slotRe_buildComment_content) : input
+			configFieldOr(
+				input,
+				'content',
+				() => (typeof input === 'string' ? spelledInterior(input, ';', '', F._slotRe_buildComment_content) : input),
+				TSKindId.Comment
 			),
 			_K0,
 			_K0
@@ -863,7 +833,12 @@ export const coerceToNegatedField: ConfigSeat<T.NegatedField.Loose, ReturnType<t
 	if (isNodeOfKind(input, TSKindId.NegatedField)) return input as unknown as ReturnType<typeof F.buildNegatedField>;
 	return F.buildNegatedField(
 		_resolveOneLeaf<T.Identifier>(
-			configFieldOr(input, 'identifier', () => (typeof input === 'string' ? spelledInterior(input, '!', '') : input)),
+			configFieldOr(
+				input,
+				'identifier',
+				() => (typeof input === 'string' ? spelledInterior(input, '!', '') : input),
+				TSKindId.NegatedField
+			),
 			'identifier'
 		)
 	);
@@ -926,10 +901,10 @@ export const coerceToListElementQuantifier: ConfigSeat<
 	return F.buildListElementQuantifier(
 		coerceKindEnumStorage(
 			_resolveKindEnumScalar(
-				configFieldOr(input, 'quantifier', () => input),
+				configFieldOr(input, 'quantifier', () => input, TSKindId.ListElementQuantifier),
 				() =>
 					_resolveOneLeaf<TSKindId.Star | TSKindId.Plus | TSKindId.Qmark>(
-						configFieldOr(input, 'quantifier', () => input),
+						configFieldOr(input, 'quantifier', () => input, TSKindId.ListElementQuantifier),
 						'quantifier'
 					)
 			),

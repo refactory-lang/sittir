@@ -6,11 +6,11 @@
 // disagree is named with its reason, and must still disagree, so a fix
 // retires it.
 import { describe, expect, it } from 'vitest';
-import type { AnyUntypedNode, NodeJSONFacts, TriviaFacts } from '@sittir/types';
+import type { AnyUntypedNode, TriviaFacts } from '@sittir/types';
 import { createEngine } from '@sittir/common';
 import { isCoordinate, isEmptyNode, storesNothingIn } from '@sittir/common/utils';
 import { languageByName } from '../src/languages.ts';
-import { loadCorpusEntries, loadLanguageForGrammar, loadSlotAccessorOf, walkWrappedTree } from '../src/validate/common.ts';
+import { loadCorpusEntries, loadKindIdFromName, loadLanguageForGrammar, loadNodeModel, loadSlotAccessorOf, walkWrappedTree } from '../src/validate/common.ts';
 
 const NATIVE_COUNTS_ANYWHERE =
 	'the tree counts a named child anywhere in the node, here a capture after the closing paren, where the inner gap holds nothing';
@@ -22,7 +22,7 @@ const KNOWN: Readonly<Record<string, Readonly<Record<string, string>>>> = {
 describe.each(['python', 'regex', 'rust', 'scm', 'typescript'])('%s: inner-gap emptiness agrees with the parsed rule', (grammar) => {
 	it('gives every parsed node of an inner kind in the corpus the answer its tree gives', async () => {
 		const language = await languageByName(grammar);
-		const engine = await createEngine(language);
+		const engine = await createEngine(language, { nodeStorage: 'object' });
 		const { hooks } = (await import(`@sittir/${grammar}/api`)) as { hooks: { trivia: TriviaFacts } };
 		const regions = hooks.trivia.innerRegions;
 		const accessorOf = await loadSlotAccessorOf(grammar);
@@ -50,8 +50,10 @@ describe.each(['python', 'regex', 'rust', 'scm', 'typescript'])('%s: inner-gap e
 describe.each(['python', 'regex', 'rust', 'scm', 'typescript'])('%s: the named units are the units the parser names', (grammar) => {
 	it('holds exactly the unit kind ids the parser marks named and visible', async () => {
 		const { lang } = await loadLanguageForGrammar(grammar);
-		const { hooks } = (await import(`@sittir/${grammar}/api`)) as { hooks: { trivia: TriviaFacts; json: NodeJSONFacts } };
-		const parserNamed = [...hooks.json.units].filter((id) => lang.nodeTypeIsNamed(id) && lang.nodeTypeIsVisible(id)).sort((a, b) => a - b);
+		const { hooks } = (await import(`@sittir/${grammar}/api`)) as { hooks: { trivia: TriviaFacts } };
+		const kindId = await loadKindIdFromName(grammar);
+		const units = [...(await loadNodeModel(grammar)).unitKinds].map(kindId);
+		const parserNamed = units.filter((id) => lang.nodeTypeIsNamed(id) && lang.nodeTypeIsVisible(id)).sort((a, b) => a - b);
 		expect([...hooks.trivia.namedUnits].sort((a, b) => a - b)).toEqual(parserNamed);
 	});
 });

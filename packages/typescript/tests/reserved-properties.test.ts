@@ -8,7 +8,7 @@ const tsStrict = await createEngine(typescript, { api: 'strict' });
 function memberNames(node: object): string[] {
 	const names = new Set<string>();
 	for (let o: object | null = node; o !== null && o !== Object.prototype && o !== Array.prototype; o = Object.getPrototypeOf(o)) {
-		for (const name of Object.getOwnPropertyNames(o)) if (/^[a-z]/.test(name) && !(name in Array.prototype)) names.add(name);
+		for (const name of Object.getOwnPropertyNames(o)) if (/^[a-z]/.test(name) && name !== 'toJSON' && !(name in Array.prototype)) names.add(name);
 	}
 	return [...names];
 }
@@ -40,7 +40,7 @@ describe('the reserved set in effect at a position', () => {
 	it.each(['a?.for;', 'a?.class();', 'a?.await;', 'a?.static;'])('parses %s after an optional chain', (src) => {
 		const tree = ts.parse(src);
 		expect(tree.$render!().toString()).toBe(src);
-		expect(JSON.stringify(tree)).not.toContain('ERROR');
+		expect(tree.$errors).toEqual([]);
 	});
 
 	it('builds an optional-chain member over a keyword property', () => {

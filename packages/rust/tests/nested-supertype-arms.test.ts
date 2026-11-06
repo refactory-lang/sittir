@@ -6,7 +6,7 @@ import rust from '../src/index.ts';
 import { createEngine } from '@sittir/common';
 
 const rs = await createEngine(rust);
-const rsNative = (await rust.load()).createNative();
+const rsNative = (await rust.load()).createNative({ nodeStorage: 'object' });
 
 function kindsOf(kind: number, source: string, value: unknown, out: string[] = []): string[] {
 	if (Array.isArray(value)) for (const item of value) kindsOf(kind, source, item, out);

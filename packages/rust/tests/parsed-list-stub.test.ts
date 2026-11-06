@@ -4,8 +4,8 @@ import type { NodeCoordinate } from '@sittir/types';
 import { isCoordinate } from '../../common/src/read.ts';
 import rust from '../src/index.ts';
 
-const rs = await createEngine(rust);
-const rsStrict = await createEngine(rust, { api: 'strict' });
+const rs = await createEngine(rust, { nodeStorage: 'object' });
+const rsStrict = await createEngine(rust, { api: 'strict', nodeStorage: 'object' });
 
 const shallowList = (engine = rs) => {
 	const item = engine.parse('fn f(a: u8, b: u16) {}').statements()[0];
@@ -13,7 +13,7 @@ const shallowList = (engine = rs) => {
 	const list = item.parameters().elements();
 	if (list === undefined) throw new Error('expected parameter list');
 	const stored = (list as unknown as { readonly _item: readonly unknown[] })._item;
-	if (!stored.every(isCoordinate)) throw new Error('expected item coordinates');
+	if (stored.length !== 2 || stored.some(isCoordinate)) throw new Error('expected the items the list read');
 	return list;
 };
 
@@ -35,7 +35,7 @@ const elementsOf = (owner: object): object => {
 
 const rendered = (node: object) => String(Reflect.apply(Reflect.get(node, '$render'), node, []));
 
-describe('builders consuming parsed list coordinates', () => {
+describe('builders consuming a parsed list and its items', () => {
 	it('strict construction retains both items and renders them', () => {
 		const built = buildParameters(shallowList());
 		expect(Reflect.get(elementsOf(built), 'length')).toBe(2);
@@ -58,7 +58,7 @@ describe('builders consuming parsed list coordinates', () => {
 	});
 
 	it('reads the source tree when another engine of the same language builds it', async () => {
-		const reader = await createEngine(rust);
+		const reader = await createEngine(rust, { nodeStorage: 'object' });
 		try {
 			const built = buildParameters(shallowList(reader));
 			expect(Reflect.get(elementsOf(built), 'length')).toBe(2);
@@ -69,7 +69,7 @@ describe('builders consuming parsed list coordinates', () => {
 	});
 
 	it('builds from a list whose reading engine is disposed, its items rendering from the tree they hold', async () => {
-		const reader = await createEngine(rust);
+		const reader = await createEngine(rust, { nodeStorage: 'object' });
 		const list = shallowList(reader);
 		reader.dispose();
 		const built = buildParameters(list);

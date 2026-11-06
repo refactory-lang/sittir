@@ -8,8 +8,8 @@ import { isMember, membersOf, type is } from './is.js';
 import type { TSKindId } from './kinds.js';
 import type { FixedTextKindId, TypeKeyOf, NamespaceMap, ScmNode, ScmTypeMap } from './types.js';
 import type { IndentChar, Options } from './options.js';
-import { jsonFacts, querySlots, structure, triviaFacts } from './utils.js';
-import { buildByKind, coerceToComment } from './factories/coerce.js';
+import { querySlots, structure, triviaFacts } from './utils.js';
+import { coerceToComment } from './factories/coerce.js';
 import { RENDER_MODULE_HASH } from './hash.js';
 import { createRenderEngine, type ProgramRoot } from './render-engine.js';
 import { wrapNode, hydrate, type ProgramTree } from './wrap.js';
@@ -36,10 +36,9 @@ export const hooks: LanguageHooks<ScmAPI> = Object.freeze<LanguageHooks<ScmAPI>>
 		default: () => import('./ir.js').then((m) => m.ir),
 		strict: () => import('./ir-strict.js').then((m) => m.ir)
 	}),
+	records: () => import('./factories/records.js'),
 	trivia: Object.freeze({ ...triviaFacts, comment: coerceToComment }),
 	querySlots,
-	json: jsonFacts,
-	buildByKind,
 	structure,
 	membership: Object.freeze({ isMember, membersOf }),
 	createNative: (options) => nativeLanguageEngine<ScmAPI, IndentChar>(createRenderEngine(options)),

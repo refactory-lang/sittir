@@ -1,0 +1,2352 @@
+{
+  "schemaVersion": 2,
+  "startedAt": "2026-10-22T18:31:05.779Z",
+  "finishedAt": "2026-10-22T18:31:36.968Z",
+  "machine": {
+    "cpu": "Apple M4 Pro",
+    "platform": "darwin",
+    "release": "27.2.0",
+    "arch": "arm64",
+    "node": "v26.12.0"
+  },
+  "count": 10000,
+  "rounds": 5,
+  "warmup": 2,
+  "iterations": 3,
+  "idleGated": true,
+  "workers": [
+    {
+      "round": 0,
+      "idle": "idle 80%",
+      "mode": "object",
+      "pid": 33202,
+      "samples": [
+        {
+          "phases": {
+            "build": 8.879542000000015,
+            "render": 24.95233300000001,
+            "parse": 93.12687499999993,
+            "pipeline": 126.95874999999995,
+            "edit": 2.7264999999999873
+          },
+          "count": 10000,
+          "casesSha256": "529d9f1bef79fdc56d8d9f635b8fabffee847401bae0a3146c98cc17c83cc2d9",
+          "renderSha256": "92ff4287ec4a878ed1a496df23ad903e49fa3b4291c676b1b8ba661dc4edfdbd",
+          "renderBytes": 128890,
+          "nativeRenderNs": 18764915,
+          "renderAllocations": {
+            "calls": 100000,
+            "bytes": 17818890,
+            "frees": 100000,
+            "freedBytes": 17818890
+          },
+          "bodyAllocationCalls": 90000,
+          "bodyAllocatedBytes": 17178890,
+          "allocations": {
+            "calls": 100000,
+            "bytes": 17818890,
+            "frees": 100000,
+            "freedBytes": 17818890
+          },
+          "editAllocations": {
+            "calls": 0,
+            "bytes": 0,
+            "frees": 0,
+            "freedBytes": 0
+          },
+          "legacyEncode": {
+            "ms": 5.611834000000044,
+            "words": 370001,
+            "bytes": 48890,
+            "capacityBytes": 2162688
+          },
+          "storage": {
+            "records": 50001,
+            "wrappers": 50009
+          }
+        },
+        {
+          "phases": {
+            "build": 9.135958999999957,
+            "render": 24.90979100000004,
+            "parse": 93.89854200000002,
+            "pipeline": 127.94429200000002,
+            "edit": 3.2455420000000004
+          },
+          "count": 10000,
+          "casesSha256": "529d9f1bef79fdc56d8d9f635b8fabffee847401bae0a3146c98cc17c83cc2d9",
+          "renderSha256": "92ff4287ec4a878ed1a496df23ad903e49fa3b4291c676b1b8ba661dc4edfdbd",
+          "renderBytes": 128890,
+          "nativeRenderNs": 18449013,
+          "renderAllocations": {
+            "calls": 100000,
+            "bytes": 17818890,
+            "frees": 100000,
+            "freedBytes": 17818890
+          },
+          "bodyAllocationCalls": 90000,
+          "bodyAllocatedBytes": 17178890,
+          "allocations": {
+            "calls": 100000,
+            "bytes": 17818890,
+            "frees": 100000,
+            "freedBytes": 17818890
+          },
+          "editAllocations": {
+            "calls": 0,
+            "bytes": 0,
+            "frees": 0,
+            "freedBytes": 0
+          },
+          "legacyEncode": {
+            "ms": 5.149583000000007,
+            "words": 370001,
+            "bytes": 48890,
+            "capacityBytes": 2162688
+          },
+          "storage": {
+            "records": 50001,
+            "wrappers": 50009
+          }
+        },
+        {
+          "phases": {
+            "build": 10.168207999999936,
+            "render": 24.83020900000008,
+            "parse": 91.56512499999997,
+            "pipeline": 126.56354199999998,
+            "edit": 11.660583000000088
+          },
+          "count": 10000,
+          "casesSha256": "529d9f1bef79fdc56d8d9f635b8fabffee847401bae0a3146c98cc17c83cc2d9",
+          "renderSha256": "92ff4287ec4a878ed1a496df23ad903e49fa3b4291c676b1b8ba661dc4edfdbd",
+          "renderBytes": 128890,
+          "nativeRenderNs": 19152339,
+          "renderAllocations": {
+            "calls": 100000,
+            "bytes": 17818890,
+            "frees": 100000,
+            "freedBytes": 17818890
+          },
+          "bodyAllocationCalls": 90000,
+          "bodyAllocatedBytes": 17178890,
+          "allocations": {
+            "calls": 100000,
+            "bytes": 17818890,
+            "frees": 100000,
+            "freedBytes": 17818890
+          },
+          "editAllocations": {
+            "calls": 0,
+            "bytes": 0,
+            "frees": 0,
+            "freedBytes": 0
+          },
+          "legacyEncode": {
+            "ms": 7.355916999999977,
+            "words": 370001,
+            "bytes": 48890,
+            "capacityBytes": 2162688
+          },
+          "storage": {
+            "records": 50001,
+            "wrappers": 50009
+          }
+        }
+      ],
+      "memory": {
+        "baseline": {
+          "rss": 231328704,
+          "heapTotal": 89702400,
+          "heapUsed": 21729672,
+          "external": 7107389,
+          "arrayBuffers": 4338627
+        },
+        "empty": {
+          "records": 0,
+          "wrappers": 0
+        },
+        "built": {
+          "rss": 231427008,
+          "heapTotal": 105168896,
+          "heapUsed": 37120928,
+          "external": 7107429,
+          "arrayBuffers": 4338627
+        },
+        "builtStorage": {
+          "records": 40000,
+          "wrappers": 40000
+        },
+        "rendered": {
+          "rss": 231427008,
+          "heapTotal": 105168896,
+          "heapUsed": 37135992,
+          "external": 7107429,
+          "arrayBuffers": 4338627
+        },
+        "renderedAllocations": {
+          "calls": 100000,
+          "bytes": 17818890,
+          "frees": 100000,
+          "freedBytes": 17818890
+        },
+        "renderedRustRetainedBytes": 0,
+        "retainedSnapshots": {
+          "rss": 234392896,
+          "heapTotal": 116965376,
+          "heapUsed": 50092072,
+          "external": 7107429,
+          "arrayBuffers": 4338627
+        },
+        "editedStorage": {
+          "records": 50001,
+          "wrappers": 50001
+        },
+        "editedAllocations": {
+          "calls": 200000,
+          "bytes": 35658890,
+          "frees": 200000,
+          "freedBytes": 35658890
+        },
+        "snapshotsRustRetainedBytes": 0,
+        "builtDelta": {
+          "rss": 98304,
+          "heapTotal": 15466496,
+          "heapUsed": 15391256,
+          "external": 40,
+          "arrayBuffers": 0
+        },
+        "renderedDelta": {
+          "rss": 98304,
+          "heapTotal": 15466496,
+          "heapUsed": 15406320,
+          "external": 40,
+          "arrayBuffers": 0
+        },
+        "snapshotsDelta": {
+          "rss": 3064192,
+          "heapTotal": 27262976,
+          "heapUsed": 28362400,
+          "external": 40,
+          "arrayBuffers": 0
+        }
+      }
+    },
+    {
+      "round": 0,
+      "idle": "idle 80%",
+      "mode": "arena",
+      "pid": 33239,
+      "samples": [
+        {
+          "phases": {
+            "build": 21.904207999999983,
+            "render": 24.604750000000024,
+            "parse": 90.05045900000005,
+            "pipeline": 136.55941700000005,
+            "edit": 6.366624999999999
+          },
+          "count": 10000,
+          "casesSha256": "529d9f1bef79fdc56d8d9f635b8fabffee847401bae0a3146c98cc17c83cc2d9",
+          "renderSha256": "92ff4287ec4a878ed1a496df23ad903e49fa3b4291c676b1b8ba661dc4edfdbd",
+          "renderBytes": 128890,
+          "nativeRenderNs": 16697563,
+          "renderAllocations": {
+            "calls": 80018,
+            "bytes": 3681860,
+            "frees": 80014,
+            "freedBytes": 3681644
+          },
+          "bodyAllocationCalls": 60007,
+          "bodyAllocatedBytes": 2400756,
+          "allocations": {
+            "calls": 80018,
+            "bytes": 3681860,
+            "frees": 80014,
+            "freedBytes": 3681644
+          },
+          "editAllocations": {
+            "calls": 0,
+            "bytes": 0,
+            "frees": 0,
+            "freedBytes": 0
+          },
+          "storage": {
+            "records": 50001,
+            "wrappers": 50009,
+            "recordBytes": 7280012,
+            "recordCapacity": 8372224,
+            "stringBytes": 48897,
+            "stringCapacity": 61440,
+            "chunks": 9,
+            "stringChunks": 4
+          }
+        },
+        {
+          "phases": {
+            "build": 14.792708999999945,
+            "render": 27.74583300000006,
+            "parse": 90.23737499999993,
+            "pipeline": 132.77591699999994,
+            "edit": 4.0079580000000306
+          },
+          "count": 10000,
+          "casesSha256": "529d9f1bef79fdc56d8d9f635b8fabffee847401bae0a3146c98cc17c83cc2d9",
+          "renderSha256": "92ff4287ec4a878ed1a496df23ad903e49fa3b4291c676b1b8ba661dc4edfdbd",
+          "renderBytes": 128890,
+          "nativeRenderNs": 16728678,
+          "renderAllocations": {
+            "calls": 80018,
+            "bytes": 3681860,
+            "frees": 80014,
+            "freedBytes": 3681644
+          },
+          "bodyAllocationCalls": 60007,
+          "bodyAllocatedBytes": 2400756,
+          "allocations": {
+            "calls": 80018,
+            "bytes": 3681860,
+            "frees": 80014,
+            "freedBytes": 3681644
+          },
+          "editAllocations": {
+            "calls": 0,
+            "bytes": 0,
+            "frees": 0,
+            "freedBytes": 0
+          },
+          "storage": {
+            "records": 50001,
+            "wrappers": 50009,
+            "recordBytes": 7280012,
+            "recordCapacity": 8372224,
+            "stringBytes": 48897,
+            "stringCapacity": 61440,
+            "chunks": 9,
+            "stringChunks": 4
+          }
+        },
+        {
+          "phases": {
+            "build": 23.19658400000003,
+            "render": 24.188625000000002,
+            "parse": 94.65370799999994,
+            "pipeline": 142.03891699999997,
+            "edit": 5.093999999999937
+          },
+          "count": 10000,
+          "casesSha256": "529d9f1bef79fdc56d8d9f635b8fabffee847401bae0a3146c98cc17c83cc2d9",
+          "renderSha256": "92ff4287ec4a878ed1a496df23ad903e49fa3b4291c676b1b8ba661dc4edfdbd",
+          "renderBytes": 128890,
+          "nativeRenderNs": 16478726,
+          "renderAllocations": {
+            "calls": 80018,
+            "bytes": 3681860,
+            "frees": 80014,
+            "freedBytes": 3681644
+          },
+          "bodyAllocationCalls": 60007,
+          "bodyAllocatedBytes": 2400756,
+          "allocations": {
+            "calls": 80018,
+            "bytes": 3681860,
+            "frees": 80014,
+            "freedBytes": 3681644
+          },
+          "editAllocations": {
+            "calls": 0,
+            "bytes": 0,
+            "frees": 0,
+            "freedBytes": 0
+          },
+          "storage": {
+            "records": 50001,
+            "wrappers": 50009,
+            "recordBytes": 7280012,
+            "recordCapacity": 8372224,
+            "stringBytes": 48897,
+            "stringCapacity": 61440,
+            "chunks": 9,
+            "stringChunks": 4
+          }
+        }
+      ],
+      "memory": {
+        "baseline": {
+          "rss": 203522248,
+          "heapTotal": 87080960,
+          "heapUsed": 19699848,
+          "external": 7123773,
+          "arrayBuffers": 4355011
+        },
+        "empty": {
+          "records": 0,
+          "wrappers": 0,
+          "recordBytes": 4,
+          "recordCapacity": 16384,
+          "stringBytes": 0,
+          "stringCapacity": 0,
+          "chunks": 1,
+          "stringChunks": 0
+        },
+        "built": {
+          "rss": 215910160,
+          "heapTotal": 100089856,
+          "heapUsed": 32855832,
+          "external": 15541093,
+          "arrayBuffers": 12772291
+        },
+        "builtStorage": {
+          "records": 40000,
+          "wrappers": 40000,
+          "recordBytes": 4200004,
+          "recordCapacity": 8372224,
+          "stringBytes": 48890,
+          "stringCapacity": 61440,
+          "chunks": 9,
+          "stringChunks": 4
+        },
+        "rendered": {
+          "rss": 216106768,
+          "heapTotal": 100089856,
+          "heapUsed": 32833072,
+          "external": 15541093,
+          "arrayBuffers": 12772291
+        },
+        "renderedAllocations": {
+          "calls": 80018,
+          "bytes": 3681860,
+          "frees": 80014,
+          "freedBytes": 3681644
+        },
+        "renderedRustRetainedBytes": 216,
+        "retainedSnapshots": {
+          "rss": 216123152,
+          "heapTotal": 100089856,
+          "heapUsed": 44602072,
+          "external": 15541093,
+          "arrayBuffers": 12772291
+        },
+        "editedStorage": {
+          "records": 50001,
+          "wrappers": 50001,
+          "recordBytes": 7280012,
+          "recordCapacity": 8372224,
+          "stringBytes": 48897,
+          "stringCapacity": 61440,
+          "chunks": 9,
+          "stringChunks": 4
+        },
+        "editedAllocations": {
+          "calls": 169965,
+          "bytes": 8436136,
+          "frees": 169961,
+          "freedBytes": 8435920
+        },
+        "snapshotsRustRetainedBytes": 216,
+        "builtDelta": {
+          "rss": 12387912,
+          "heapTotal": 13008896,
+          "heapUsed": 13155984,
+          "external": 8417320,
+          "arrayBuffers": 8417280
+        },
+        "renderedDelta": {
+          "rss": 12584520,
+          "heapTotal": 13008896,
+          "heapUsed": 13133224,
+          "external": 8417320,
+          "arrayBuffers": 8417280
+        },
+        "snapshotsDelta": {
+          "rss": 12600904,
+          "heapTotal": 13008896,
+          "heapUsed": 24902224,
+          "external": 8417320,
+          "arrayBuffers": 8417280
+        }
+      }
+    },
+    {
+      "round": 1,
+      "idle": "idle 76%",
+      "mode": "arena",
+      "pid": 33255,
+      "samples": [
+        {
+          "phases": {
+            "build": 22.92629199999999,
+            "render": 24.547000000000025,
+            "parse": 91.36120800000003,
+            "pipeline": 138.83450000000005,
+            "edit": 6.24354100000005
+          },
+          "count": 10000,
+          "casesSha256": "529d9f1bef79fdc56d8d9f635b8fabffee847401bae0a3146c98cc17c83cc2d9",
+          "renderSha256": "92ff4287ec4a878ed1a496df23ad903e49fa3b4291c676b1b8ba661dc4edfdbd",
+          "renderBytes": 128890,
+          "nativeRenderNs": 16583582,
+          "renderAllocations": {
+            "calls": 80018,
+            "bytes": 3681860,
+            "frees": 80014,
+            "freedBytes": 3681644
+          },
+          "bodyAllocationCalls": 60007,
+          "bodyAllocatedBytes": 2400756,
+          "allocations": {
+            "calls": 80018,
+            "bytes": 3681860,
+            "frees": 80014,
+            "freedBytes": 3681644
+          },
+          "editAllocations": {
+            "calls": 0,
+            "bytes": 0,
+            "frees": 0,
+            "freedBytes": 0
+          },
+          "storage": {
+            "records": 50001,
+            "wrappers": 50009,
+            "recordBytes": 7280012,
+            "recordCapacity": 8372224,
+            "stringBytes": 48897,
+            "stringCapacity": 61440,
+            "chunks": 9,
+            "stringChunks": 4
+          }
+        },
+        {
+          "phases": {
+            "build": 13.665209000000004,
+            "render": 27.554458000000068,
+            "parse": 91.04612499999996,
+            "pipeline": 132.26579200000003,
+            "edit": 3.5777499999999236
+          },
+          "count": 10000,
+          "casesSha256": "529d9f1bef79fdc56d8d9f635b8fabffee847401bae0a3146c98cc17c83cc2d9",
+          "renderSha256": "92ff4287ec4a878ed1a496df23ad903e49fa3b4291c676b1b8ba661dc4edfdbd",
+          "renderBytes": 128890,
+          "nativeRenderNs": 16242363,
+          "renderAllocations": {
+            "calls": 80018,
+            "bytes": 3681860,
+            "frees": 80014,
+            "freedBytes": 3681644
+          },
+          "bodyAllocationCalls": 60007,
+          "bodyAllocatedBytes": 2400756,
+          "allocations": {
+            "calls": 80018,
+            "bytes": 3681860,
+            "frees": 80014,
+            "freedBytes": 3681644
+          },
+          "editAllocations": {
+            "calls": 0,
+            "bytes": 0,
+            "frees": 0,
+            "freedBytes": 0
+          },
+          "storage": {
+            "records": 50001,
+            "wrappers": 50009,
+            "recordBytes": 7280012,
+            "recordCapacity": 8372224,
+            "stringBytes": 48897,
+            "stringCapacity": 61440,
+            "chunks": 9,
+            "stringChunks": 4
+          }
+        },
+        {
+          "phases": {
+            "build": 14.731083000000012,
+            "render": 27.19795799999997,
+            "parse": 93.85108400000001,
+            "pipeline": 135.780125,
+            "edit": 4.3474579999999605
+          },
+          "count": 10000,
+          "casesSha256": "529d9f1bef79fdc56d8d9f635b8fabffee847401bae0a3146c98cc17c83cc2d9",
+          "renderSha256": "92ff4287ec4a878ed1a496df23ad903e49fa3b4291c676b1b8ba661dc4edfdbd",
+          "renderBytes": 128890,
+          "nativeRenderNs": 16239549,
+          "renderAllocations": {
+            "calls": 80018,
+            "bytes": 3681860,
+            "frees": 80014,
+            "freedBytes": 3681644
+          },
+          "bodyAllocationCalls": 60007,
+          "bodyAllocatedBytes": 2400756,
+          "allocations": {
+            "calls": 80018,
+            "bytes": 3681860,
+            "frees": 80014,
+            "freedBytes": 3681644
+          },
+          "editAllocations": {
+            "calls": 0,
+            "bytes": 0,
+            "frees": 0,
+            "freedBytes": 0
+          },
+          "storage": {
+            "records": 50001,
+            "wrappers": 50009,
+            "recordBytes": 7280012,
+            "recordCapacity": 8372224,
+            "stringBytes": 48897,
+            "stringCapacity": 61440,
+            "chunks": 9,
+            "stringChunks": 4
+          }
+        }
+      ],
+      "memory": {
+        "baseline": {
+          "rss": 204324824,
+          "heapTotal": 86818816,
+          "heapUsed": 19714000,
+          "external": 7123773,
+          "arrayBuffers": 4355011
+        },
+        "empty": {
+          "records": 0,
+          "wrappers": 0,
+          "recordBytes": 4,
+          "recordCapacity": 16384,
+          "stringBytes": 0,
+          "stringCapacity": 0,
+          "chunks": 1,
+          "stringChunks": 0
+        },
+        "built": {
+          "rss": 215860912,
+          "heapTotal": 99827712,
+          "heapUsed": 32848560,
+          "external": 15541093,
+          "arrayBuffers": 12772291
+        },
+        "builtStorage": {
+          "records": 40000,
+          "wrappers": 40000,
+          "recordBytes": 4200004,
+          "recordCapacity": 8372224,
+          "stringBytes": 48890,
+          "stringCapacity": 61440,
+          "chunks": 9,
+          "stringChunks": 4
+        },
+        "rendered": {
+          "rss": 216024752,
+          "heapTotal": 99827712,
+          "heapUsed": 32834088,
+          "external": 15541093,
+          "arrayBuffers": 12772291
+        },
+        "renderedAllocations": {
+          "calls": 80018,
+          "bytes": 3681860,
+          "frees": 80014,
+          "freedBytes": 3681644
+        },
+        "renderedRustRetainedBytes": 216,
+        "retainedSnapshots": {
+          "rss": 216106672,
+          "heapTotal": 99827712,
+          "heapUsed": 44603088,
+          "external": 15541093,
+          "arrayBuffers": 12772291
+        },
+        "editedStorage": {
+          "records": 50001,
+          "wrappers": 50001,
+          "recordBytes": 7280012,
+          "recordCapacity": 8372224,
+          "stringBytes": 48897,
+          "stringCapacity": 61440,
+          "chunks": 9,
+          "stringChunks": 4
+        },
+        "editedAllocations": {
+          "calls": 169965,
+          "bytes": 8436136,
+          "frees": 169961,
+          "freedBytes": 8435920
+        },
+        "snapshotsRustRetainedBytes": 216,
+        "builtDelta": {
+          "rss": 11536088,
+          "heapTotal": 13008896,
+          "heapUsed": 13134560,
+          "external": 8417320,
+          "arrayBuffers": 8417280
+        },
+        "renderedDelta": {
+          "rss": 11699928,
+          "heapTotal": 13008896,
+          "heapUsed": 13120088,
+          "external": 8417320,
+          "arrayBuffers": 8417280
+        },
+        "snapshotsDelta": {
+          "rss": 11781848,
+          "heapTotal": 13008896,
+          "heapUsed": 24889088,
+          "external": 8417320,
+          "arrayBuffers": 8417280
+        }
+      }
+    },
+    {
+      "round": 1,
+      "idle": "idle 81%",
+      "mode": "object",
+      "pid": 33294,
+      "samples": [
+        {
+          "phases": {
+            "build": 9.507416999999975,
+            "render": 25.106250000000045,
+            "parse": 91.96083299999992,
+            "pipeline": 126.57449999999994,
+            "edit": 2.69170900000006
+          },
+          "count": 10000,
+          "casesSha256": "529d9f1bef79fdc56d8d9f635b8fabffee847401bae0a3146c98cc17c83cc2d9",
+          "renderSha256": "92ff4287ec4a878ed1a496df23ad903e49fa3b4291c676b1b8ba661dc4edfdbd",
+          "renderBytes": 128890,
+          "nativeRenderNs": 18973578,
+          "renderAllocations": {
+            "calls": 100000,
+            "bytes": 17818890,
+            "frees": 100000,
+            "freedBytes": 17818890
+          },
+          "bodyAllocationCalls": 90000,
+          "bodyAllocatedBytes": 17178890,
+          "allocations": {
+            "calls": 100000,
+            "bytes": 17818890,
+            "frees": 100000,
+            "freedBytes": 17818890
+          },
+          "editAllocations": {
+            "calls": 0,
+            "bytes": 0,
+            "frees": 0,
+            "freedBytes": 0
+          },
+          "legacyEncode": {
+            "ms": 6.090249999999969,
+            "words": 370001,
+            "bytes": 48890,
+            "capacityBytes": 2162688
+          },
+          "storage": {
+            "records": 50001,
+            "wrappers": 50009
+          }
+        },
+        {
+          "phases": {
+            "build": 10.860500000000002,
+            "render": 29.16958299999999,
+            "parse": 88.76983400000006,
+            "pipeline": 128.79991700000005,
+            "edit": 3.1865000000000236
+          },
+          "count": 10000,
+          "casesSha256": "529d9f1bef79fdc56d8d9f635b8fabffee847401bae0a3146c98cc17c83cc2d9",
+          "renderSha256": "92ff4287ec4a878ed1a496df23ad903e49fa3b4291c676b1b8ba661dc4edfdbd",
+          "renderBytes": 128890,
+          "nativeRenderNs": 18757333,
+          "renderAllocations": {
+            "calls": 100000,
+            "bytes": 17818890,
+            "frees": 100000,
+            "freedBytes": 17818890
+          },
+          "bodyAllocationCalls": 90000,
+          "bodyAllocatedBytes": 17178890,
+          "allocations": {
+            "calls": 100000,
+            "bytes": 17818890,
+            "frees": 100000,
+            "freedBytes": 17818890
+          },
+          "editAllocations": {
+            "calls": 0,
+            "bytes": 0,
+            "frees": 0,
+            "freedBytes": 0
+          },
+          "legacyEncode": {
+            "ms": 9.00583400000005,
+            "words": 370001,
+            "bytes": 48890,
+            "capacityBytes": 2162688
+          },
+          "storage": {
+            "records": 50001,
+            "wrappers": 50009
+          }
+        },
+        {
+          "phases": {
+            "build": 8.943458000000078,
+            "render": 25.23404199999993,
+            "parse": 91.73558300000002,
+            "pipeline": 125.91308300000003,
+            "edit": 11.28754200000003
+          },
+          "count": 10000,
+          "casesSha256": "529d9f1bef79fdc56d8d9f635b8fabffee847401bae0a3146c98cc17c83cc2d9",
+          "renderSha256": "92ff4287ec4a878ed1a496df23ad903e49fa3b4291c676b1b8ba661dc4edfdbd",
+          "renderBytes": 128890,
+          "nativeRenderNs": 19462345,
+          "renderAllocations": {
+            "calls": 100000,
+            "bytes": 17818890,
+            "frees": 100000,
+            "freedBytes": 17818890
+          },
+          "bodyAllocationCalls": 90000,
+          "bodyAllocatedBytes": 17178890,
+          "allocations": {
+            "calls": 100000,
+            "bytes": 17818890,
+            "frees": 100000,
+            "freedBytes": 17818890
+          },
+          "editAllocations": {
+            "calls": 0,
+            "bytes": 0,
+            "frees": 0,
+            "freedBytes": 0
+          },
+          "legacyEncode": {
+            "ms": 7.384708000000046,
+            "words": 370001,
+            "bytes": 48890,
+            "capacityBytes": 2162688
+          },
+          "storage": {
+            "records": 50001,
+            "wrappers": 50009
+          }
+        }
+      ],
+      "memory": {
+        "baseline": {
+          "rss": 231148336,
+          "heapTotal": 89964544,
+          "heapUsed": 21726952,
+          "external": 7107389,
+          "arrayBuffers": 4338627
+        },
+        "empty": {
+          "records": 0,
+          "wrappers": 0
+        },
+        "built": {
+          "rss": 231344968,
+          "heapTotal": 105168896,
+          "heapUsed": 37162136,
+          "external": 7107429,
+          "arrayBuffers": 4338627
+        },
+        "builtStorage": {
+          "records": 40000,
+          "wrappers": 40000
+        },
+        "rendered": {
+          "rss": 231344968,
+          "heapTotal": 105168896,
+          "heapUsed": 37177128,
+          "external": 7107429,
+          "arrayBuffers": 4338627
+        },
+        "renderedAllocations": {
+          "calls": 100000,
+          "bytes": 17818890,
+          "frees": 100000,
+          "freedBytes": 17818890
+        },
+        "renderedRustRetainedBytes": 0,
+        "retainedSnapshots": {
+          "rss": 235785632,
+          "heapTotal": 116965376,
+          "heapUsed": 50133208,
+          "external": 7107429,
+          "arrayBuffers": 4338627
+        },
+        "editedStorage": {
+          "records": 50001,
+          "wrappers": 50001
+        },
+        "editedAllocations": {
+          "calls": 200000,
+          "bytes": 35658890,
+          "frees": 200000,
+          "freedBytes": 35658890
+        },
+        "snapshotsRustRetainedBytes": 0,
+        "builtDelta": {
+          "rss": 196632,
+          "heapTotal": 15204352,
+          "heapUsed": 15435184,
+          "external": 40,
+          "arrayBuffers": 0
+        },
+        "renderedDelta": {
+          "rss": 196632,
+          "heapTotal": 15204352,
+          "heapUsed": 15450176,
+          "external": 40,
+          "arrayBuffers": 0
+        },
+        "snapshotsDelta": {
+          "rss": 4637296,
+          "heapTotal": 27000832,
+          "heapUsed": 28406256,
+          "external": 40,
+          "arrayBuffers": 0
+        }
+      }
+    },
+    {
+      "round": 2,
+      "idle": "idle 79%",
+      "mode": "object",
+      "pid": 33335,
+      "samples": [
+        {
+          "phases": {
+            "build": 9.481874999999945,
+            "render": 25.068583000000046,
+            "parse": 92.76408400000003,
+            "pipeline": 127.31454200000002,
+            "edit": 2.9402089999999816
+          },
+          "count": 10000,
+          "casesSha256": "529d9f1bef79fdc56d8d9f635b8fabffee847401bae0a3146c98cc17c83cc2d9",
+          "renderSha256": "92ff4287ec4a878ed1a496df23ad903e49fa3b4291c676b1b8ba661dc4edfdbd",
+          "renderBytes": 128890,
+          "nativeRenderNs": 19047026,
+          "renderAllocations": {
+            "calls": 100000,
+            "bytes": 17818890,
+            "frees": 100000,
+            "freedBytes": 17818890
+          },
+          "bodyAllocationCalls": 90000,
+          "bodyAllocatedBytes": 17178890,
+          "allocations": {
+            "calls": 100000,
+            "bytes": 17818890,
+            "frees": 100000,
+            "freedBytes": 17818890
+          },
+          "editAllocations": {
+            "calls": 0,
+            "bytes": 0,
+            "frees": 0,
+            "freedBytes": 0
+          },
+          "legacyEncode": {
+            "ms": 5.669583000000102,
+            "words": 370001,
+            "bytes": 48890,
+            "capacityBytes": 2162688
+          },
+          "storage": {
+            "records": 50001,
+            "wrappers": 50009
+          }
+        },
+        {
+          "phases": {
+            "build": 10.631040999999982,
+            "render": 28.70120899999995,
+            "parse": 89.87841600000002,
+            "pipeline": 129.21066599999995,
+            "edit": 3.225167000000056
+          },
+          "count": 10000,
+          "casesSha256": "529d9f1bef79fdc56d8d9f635b8fabffee847401bae0a3146c98cc17c83cc2d9",
+          "renderSha256": "92ff4287ec4a878ed1a496df23ad903e49fa3b4291c676b1b8ba661dc4edfdbd",
+          "renderBytes": 128890,
+          "nativeRenderNs": 18235565,
+          "renderAllocations": {
+            "calls": 100000,
+            "bytes": 17818890,
+            "frees": 100000,
+            "freedBytes": 17818890
+          },
+          "bodyAllocationCalls": 90000,
+          "bodyAllocatedBytes": 17178890,
+          "allocations": {
+            "calls": 100000,
+            "bytes": 17818890,
+            "frees": 100000,
+            "freedBytes": 17818890
+          },
+          "editAllocations": {
+            "calls": 0,
+            "bytes": 0,
+            "frees": 0,
+            "freedBytes": 0
+          },
+          "legacyEncode": {
+            "ms": 8.862457999999947,
+            "words": 370001,
+            "bytes": 48890,
+            "capacityBytes": 2162688
+          },
+          "storage": {
+            "records": 50001,
+            "wrappers": 50009
+          }
+        },
+        {
+          "phases": {
+            "build": 8.729665999999952,
+            "render": 24.757334000000014,
+            "parse": 92.36029100000007,
+            "pipeline": 125.84729100000004,
+            "edit": 11.02387500000009
+          },
+          "count": 10000,
+          "casesSha256": "529d9f1bef79fdc56d8d9f635b8fabffee847401bae0a3146c98cc17c83cc2d9",
+          "renderSha256": "92ff4287ec4a878ed1a496df23ad903e49fa3b4291c676b1b8ba661dc4edfdbd",
+          "renderBytes": 128890,
+          "nativeRenderNs": 18933748,
+          "renderAllocations": {
+            "calls": 100000,
+            "bytes": 17818890,
+            "frees": 100000,
+            "freedBytes": 17818890
+          },
+          "bodyAllocationCalls": 90000,
+          "bodyAllocatedBytes": 17178890,
+          "allocations": {
+            "calls": 100000,
+            "bytes": 17818890,
+            "frees": 100000,
+            "freedBytes": 17818890
+          },
+          "editAllocations": {
+            "calls": 0,
+            "bytes": 0,
+            "frees": 0,
+            "freedBytes": 0
+          },
+          "legacyEncode": {
+            "ms": 7.249124999999935,
+            "words": 370001,
+            "bytes": 48890,
+            "capacityBytes": 2162688
+          },
+          "storage": {
+            "records": 50001,
+            "wrappers": 50009
+          }
+        }
+      ],
+      "memory": {
+        "baseline": {
+          "rss": 229625008,
+          "heapTotal": 89702400,
+          "heapUsed": 21726288,
+          "external": 7107389,
+          "arrayBuffers": 4338627
+        },
+        "empty": {
+          "records": 0,
+          "wrappers": 0
+        },
+        "built": {
+          "rss": 229788848,
+          "heapTotal": 105168896,
+          "heapUsed": 37161712,
+          "external": 7107429,
+          "arrayBuffers": 4338627
+        },
+        "builtStorage": {
+          "records": 40000,
+          "wrappers": 40000
+        },
+        "rendered": {
+          "rss": 229788848,
+          "heapTotal": 105168896,
+          "heapUsed": 37176704,
+          "external": 7107429,
+          "arrayBuffers": 4338627
+        },
+        "renderedAllocations": {
+          "calls": 100000,
+          "bytes": 17818890,
+          "frees": 100000,
+          "freedBytes": 17818890
+        },
+        "renderedRustRetainedBytes": 0,
+        "retainedSnapshots": {
+          "rss": 234377112,
+          "heapTotal": 116965376,
+          "heapUsed": 50132784,
+          "external": 7107429,
+          "arrayBuffers": 4338627
+        },
+        "editedStorage": {
+          "records": 50001,
+          "wrappers": 50001
+        },
+        "editedAllocations": {
+          "calls": 200000,
+          "bytes": 35658890,
+          "frees": 200000,
+          "freedBytes": 35658890
+        },
+        "snapshotsRustRetainedBytes": 0,
+        "builtDelta": {
+          "rss": 163840,
+          "heapTotal": 15466496,
+          "heapUsed": 15435424,
+          "external": 40,
+          "arrayBuffers": 0
+        },
+        "renderedDelta": {
+          "rss": 163840,
+          "heapTotal": 15466496,
+          "heapUsed": 15450416,
+          "external": 40,
+          "arrayBuffers": 0
+        },
+        "snapshotsDelta": {
+          "rss": 4752104,
+          "heapTotal": 27262976,
+          "heapUsed": 28406496,
+          "external": 40,
+          "arrayBuffers": 0
+        }
+      }
+    },
+    {
+      "round": 2,
+      "idle": "idle 79%",
+      "mode": "arena",
+      "pid": 33348,
+      "samples": [
+        {
+          "phases": {
+            "build": 21.543499999999995,
+            "render": 23.161500000000046,
+            "parse": 89.21295799999996,
+            "pipeline": 133.917958,
+            "edit": 6.059875000000034
+          },
+          "count": 10000,
+          "casesSha256": "529d9f1bef79fdc56d8d9f635b8fabffee847401bae0a3146c98cc17c83cc2d9",
+          "renderSha256": "92ff4287ec4a878ed1a496df23ad903e49fa3b4291c676b1b8ba661dc4edfdbd",
+          "renderBytes": 128890,
+          "nativeRenderNs": 15624290,
+          "renderAllocations": {
+            "calls": 80018,
+            "bytes": 3681860,
+            "frees": 80014,
+            "freedBytes": 3681644
+          },
+          "bodyAllocationCalls": 60007,
+          "bodyAllocatedBytes": 2400756,
+          "allocations": {
+            "calls": 80018,
+            "bytes": 3681860,
+            "frees": 80014,
+            "freedBytes": 3681644
+          },
+          "editAllocations": {
+            "calls": 0,
+            "bytes": 0,
+            "frees": 0,
+            "freedBytes": 0
+          },
+          "storage": {
+            "records": 50001,
+            "wrappers": 50009,
+            "recordBytes": 7280012,
+            "recordCapacity": 8372224,
+            "stringBytes": 48897,
+            "stringCapacity": 61440,
+            "chunks": 9,
+            "stringChunks": 4
+          }
+        },
+        {
+          "phases": {
+            "build": 13.073999999999955,
+            "render": 26.233584000000064,
+            "parse": 89.89241599999991,
+            "pipeline": 129.19999999999993,
+            "edit": 3.87987499999997
+          },
+          "count": 10000,
+          "casesSha256": "529d9f1bef79fdc56d8d9f635b8fabffee847401bae0a3146c98cc17c83cc2d9",
+          "renderSha256": "92ff4287ec4a878ed1a496df23ad903e49fa3b4291c676b1b8ba661dc4edfdbd",
+          "renderBytes": 128890,
+          "nativeRenderNs": 15674049,
+          "renderAllocations": {
+            "calls": 80018,
+            "bytes": 3681860,
+            "frees": 80014,
+            "freedBytes": 3681644
+          },
+          "bodyAllocationCalls": 60007,
+          "bodyAllocatedBytes": 2400756,
+          "allocations": {
+            "calls": 80018,
+            "bytes": 3681860,
+            "frees": 80014,
+            "freedBytes": 3681644
+          },
+          "editAllocations": {
+            "calls": 0,
+            "bytes": 0,
+            "frees": 0,
+            "freedBytes": 0
+          },
+          "storage": {
+            "records": 50001,
+            "wrappers": 50009,
+            "recordBytes": 7280012,
+            "recordCapacity": 8372224,
+            "stringBytes": 48897,
+            "stringCapacity": 61440,
+            "chunks": 9,
+            "stringChunks": 4
+          }
+        },
+        {
+          "phases": {
+            "build": 14.874625000000037,
+            "render": 26.77245800000003,
+            "parse": 92.07270799999992,
+            "pipeline": 133.719791,
+            "edit": 4.498542000000043
+          },
+          "count": 10000,
+          "casesSha256": "529d9f1bef79fdc56d8d9f635b8fabffee847401bae0a3146c98cc17c83cc2d9",
+          "renderSha256": "92ff4287ec4a878ed1a496df23ad903e49fa3b4291c676b1b8ba661dc4edfdbd",
+          "renderBytes": 128890,
+          "nativeRenderNs": 16084097,
+          "renderAllocations": {
+            "calls": 80018,
+            "bytes": 3681860,
+            "frees": 80014,
+            "freedBytes": 3681644
+          },
+          "bodyAllocationCalls": 60007,
+          "bodyAllocatedBytes": 2400756,
+          "allocations": {
+            "calls": 80018,
+            "bytes": 3681860,
+            "frees": 80014,
+            "freedBytes": 3681644
+          },
+          "editAllocations": {
+            "calls": 0,
+            "bytes": 0,
+            "frees": 0,
+            "freedBytes": 0
+          },
+          "storage": {
+            "records": 50001,
+            "wrappers": 50009,
+            "recordBytes": 7280012,
+            "recordCapacity": 8372224,
+            "stringBytes": 48897,
+            "stringCapacity": 61440,
+            "chunks": 9,
+            "stringChunks": 4
+          }
+        }
+      ],
+      "memory": {
+        "baseline": {
+          "rss": 203111928,
+          "heapTotal": 86556672,
+          "heapUsed": 19713952,
+          "external": 7123773,
+          "arrayBuffers": 4355011
+        },
+        "empty": {
+          "records": 0,
+          "wrappers": 0,
+          "recordBytes": 4,
+          "recordCapacity": 16384,
+          "stringBytes": 0,
+          "stringCapacity": 0,
+          "chunks": 1,
+          "stringChunks": 0
+        },
+        "built": {
+          "rss": 214500464,
+          "heapTotal": 99827712,
+          "heapUsed": 32848528,
+          "external": 15541093,
+          "arrayBuffers": 12772291
+        },
+        "builtStorage": {
+          "records": 40000,
+          "wrappers": 40000,
+          "recordBytes": 4200004,
+          "recordCapacity": 8372224,
+          "stringBytes": 48890,
+          "stringCapacity": 61440,
+          "chunks": 9,
+          "stringChunks": 4
+        },
+        "rendered": {
+          "rss": 214500464,
+          "heapTotal": 99827712,
+          "heapUsed": 32834056,
+          "external": 15541093,
+          "arrayBuffers": 12772291
+        },
+        "renderedAllocations": {
+          "calls": 80018,
+          "bytes": 3681860,
+          "frees": 80014,
+          "freedBytes": 3681644
+        },
+        "renderedRustRetainedBytes": 216,
+        "retainedSnapshots": {
+          "rss": 214877296,
+          "heapTotal": 99827712,
+          "heapUsed": 44603056,
+          "external": 15541093,
+          "arrayBuffers": 12772291
+        },
+        "editedStorage": {
+          "records": 50001,
+          "wrappers": 50001,
+          "recordBytes": 7280012,
+          "recordCapacity": 8372224,
+          "stringBytes": 48897,
+          "stringCapacity": 61440,
+          "chunks": 9,
+          "stringChunks": 4
+        },
+        "editedAllocations": {
+          "calls": 169965,
+          "bytes": 8436136,
+          "frees": 169961,
+          "freedBytes": 8435920
+        },
+        "snapshotsRustRetainedBytes": 216,
+        "builtDelta": {
+          "rss": 11388536,
+          "heapTotal": 13271040,
+          "heapUsed": 13134576,
+          "external": 8417320,
+          "arrayBuffers": 8417280
+        },
+        "renderedDelta": {
+          "rss": 11388536,
+          "heapTotal": 13271040,
+          "heapUsed": 13120104,
+          "external": 8417320,
+          "arrayBuffers": 8417280
+        },
+        "snapshotsDelta": {
+          "rss": 11765368,
+          "heapTotal": 13271040,
+          "heapUsed": 24889104,
+          "external": 8417320,
+          "arrayBuffers": 8417280
+        }
+      }
+    },
+    {
+      "round": 3,
+      "idle": "idle 77%",
+      "mode": "arena",
+      "pid": 33398,
+      "samples": [
+        {
+          "phases": {
+            "build": 24.687041999999963,
+            "render": 24.659875,
+            "parse": 91.81770800000004,
+            "pipeline": 141.164625,
+            "edit": 5.642999999999915
+          },
+          "count": 10000,
+          "casesSha256": "529d9f1bef79fdc56d8d9f635b8fabffee847401bae0a3146c98cc17c83cc2d9",
+          "renderSha256": "92ff4287ec4a878ed1a496df23ad903e49fa3b4291c676b1b8ba661dc4edfdbd",
+          "renderBytes": 128890,
+          "nativeRenderNs": 16725667,
+          "renderAllocations": {
+            "calls": 80018,
+            "bytes": 3681860,
+            "frees": 80014,
+            "freedBytes": 3681644
+          },
+          "bodyAllocationCalls": 60007,
+          "bodyAllocatedBytes": 2400756,
+          "allocations": {
+            "calls": 80018,
+            "bytes": 3681860,
+            "frees": 80014,
+            "freedBytes": 3681644
+          },
+          "editAllocations": {
+            "calls": 0,
+            "bytes": 0,
+            "frees": 0,
+            "freedBytes": 0
+          },
+          "storage": {
+            "records": 50001,
+            "wrappers": 50009,
+            "recordBytes": 7280012,
+            "recordCapacity": 8372224,
+            "stringBytes": 48897,
+            "stringCapacity": 61440,
+            "chunks": 9,
+            "stringChunks": 4
+          }
+        },
+        {
+          "phases": {
+            "build": 13.13008400000001,
+            "render": 27.30666599999995,
+            "parse": 89.82291699999996,
+            "pipeline": 130.25966699999992,
+            "edit": 3.7639999999998963
+          },
+          "count": 10000,
+          "casesSha256": "529d9f1bef79fdc56d8d9f635b8fabffee847401bae0a3146c98cc17c83cc2d9",
+          "renderSha256": "92ff4287ec4a878ed1a496df23ad903e49fa3b4291c676b1b8ba661dc4edfdbd",
+          "renderBytes": 128890,
+          "nativeRenderNs": 16384312,
+          "renderAllocations": {
+            "calls": 80018,
+            "bytes": 3681860,
+            "frees": 80014,
+            "freedBytes": 3681644
+          },
+          "bodyAllocationCalls": 60007,
+          "bodyAllocatedBytes": 2400756,
+          "allocations": {
+            "calls": 80018,
+            "bytes": 3681860,
+            "frees": 80014,
+            "freedBytes": 3681644
+          },
+          "editAllocations": {
+            "calls": 0,
+            "bytes": 0,
+            "frees": 0,
+            "freedBytes": 0
+          },
+          "storage": {
+            "records": 50001,
+            "wrappers": 50009,
+            "recordBytes": 7280012,
+            "recordCapacity": 8372224,
+            "stringBytes": 48897,
+            "stringCapacity": 61440,
+            "chunks": 9,
+            "stringChunks": 4
+          }
+        },
+        {
+          "phases": {
+            "build": 14.963666999999987,
+            "render": 27.057915999999977,
+            "parse": 91.342625,
+            "pipeline": 133.36420799999996,
+            "edit": 4.499416999999994
+          },
+          "count": 10000,
+          "casesSha256": "529d9f1bef79fdc56d8d9f635b8fabffee847401bae0a3146c98cc17c83cc2d9",
+          "renderSha256": "92ff4287ec4a878ed1a496df23ad903e49fa3b4291c676b1b8ba661dc4edfdbd",
+          "renderBytes": 128890,
+          "nativeRenderNs": 16026361,
+          "renderAllocations": {
+            "calls": 80018,
+            "bytes": 3681860,
+            "frees": 80014,
+            "freedBytes": 3681644
+          },
+          "bodyAllocationCalls": 60007,
+          "bodyAllocatedBytes": 2400756,
+          "allocations": {
+            "calls": 80018,
+            "bytes": 3681860,
+            "frees": 80014,
+            "freedBytes": 3681644
+          },
+          "editAllocations": {
+            "calls": 0,
+            "bytes": 0,
+            "frees": 0,
+            "freedBytes": 0
+          },
+          "storage": {
+            "records": 50001,
+            "wrappers": 50009,
+            "recordBytes": 7280012,
+            "recordCapacity": 8372224,
+            "stringBytes": 48897,
+            "stringCapacity": 61440,
+            "chunks": 9,
+            "stringChunks": 4
+          }
+        }
+      ],
+      "memory": {
+        "baseline": {
+          "rss": 199098352,
+          "heapTotal": 86818816,
+          "heapUsed": 19714088,
+          "external": 7123773,
+          "arrayBuffers": 4355011
+        },
+        "empty": {
+          "records": 0,
+          "wrappers": 0,
+          "recordBytes": 4,
+          "recordCapacity": 16384,
+          "stringBytes": 0,
+          "stringCapacity": 0,
+          "chunks": 1,
+          "stringChunks": 0
+        },
+        "built": {
+          "rss": 210454096,
+          "heapTotal": 100089856,
+          "heapUsed": 32848456,
+          "external": 15541093,
+          "arrayBuffers": 12772291
+        },
+        "builtStorage": {
+          "records": 40000,
+          "wrappers": 40000,
+          "recordBytes": 4200004,
+          "recordCapacity": 8372224,
+          "stringBytes": 48890,
+          "stringCapacity": 61440,
+          "chunks": 9,
+          "stringChunks": 4
+        },
+        "rendered": {
+          "rss": 210486864,
+          "heapTotal": 100089856,
+          "heapUsed": 32833984,
+          "external": 15541093,
+          "arrayBuffers": 12772291
+        },
+        "renderedAllocations": {
+          "calls": 80018,
+          "bytes": 3681860,
+          "frees": 80014,
+          "freedBytes": 3681644
+        },
+        "renderedRustRetainedBytes": 216,
+        "retainedSnapshots": {
+          "rss": 210634320,
+          "heapTotal": 99565568,
+          "heapUsed": 44602984,
+          "external": 15541093,
+          "arrayBuffers": 12772291
+        },
+        "editedStorage": {
+          "records": 50001,
+          "wrappers": 50001,
+          "recordBytes": 7280012,
+          "recordCapacity": 8372224,
+          "stringBytes": 48897,
+          "stringCapacity": 61440,
+          "chunks": 9,
+          "stringChunks": 4
+        },
+        "editedAllocations": {
+          "calls": 169965,
+          "bytes": 8436136,
+          "frees": 169961,
+          "freedBytes": 8435920
+        },
+        "snapshotsRustRetainedBytes": 216,
+        "builtDelta": {
+          "rss": 11355744,
+          "heapTotal": 13271040,
+          "heapUsed": 13134368,
+          "external": 8417320,
+          "arrayBuffers": 8417280
+        },
+        "renderedDelta": {
+          "rss": 11388512,
+          "heapTotal": 13271040,
+          "heapUsed": 13119896,
+          "external": 8417320,
+          "arrayBuffers": 8417280
+        },
+        "snapshotsDelta": {
+          "rss": 11535968,
+          "heapTotal": 12746752,
+          "heapUsed": 24888896,
+          "external": 8417320,
+          "arrayBuffers": 8417280
+        }
+      }
+    },
+    {
+      "round": 3,
+      "idle": "idle 77%",
+      "mode": "object",
+      "pid": 33430,
+      "samples": [
+        {
+          "phases": {
+            "build": 8.851042000000007,
+            "render": 25.37904100000003,
+            "parse": 93.98424999999997,
+            "pipeline": 128.214333,
+            "edit": 2.6521249999999554
+          },
+          "count": 10000,
+          "casesSha256": "529d9f1bef79fdc56d8d9f635b8fabffee847401bae0a3146c98cc17c83cc2d9",
+          "renderSha256": "92ff4287ec4a878ed1a496df23ad903e49fa3b4291c676b1b8ba661dc4edfdbd",
+          "renderBytes": 128890,
+          "nativeRenderNs": 19170135,
+          "renderAllocations": {
+            "calls": 100000,
+            "bytes": 17818890,
+            "frees": 100000,
+            "freedBytes": 17818890
+          },
+          "bodyAllocationCalls": 90000,
+          "bodyAllocatedBytes": 17178890,
+          "allocations": {
+            "calls": 100000,
+            "bytes": 17818890,
+            "frees": 100000,
+            "freedBytes": 17818890
+          },
+          "editAllocations": {
+            "calls": 0,
+            "bytes": 0,
+            "frees": 0,
+            "freedBytes": 0
+          },
+          "legacyEncode": {
+            "ms": 5.992250000000013,
+            "words": 370001,
+            "bytes": 48890,
+            "capacityBytes": 2162688
+          },
+          "storage": {
+            "records": 50001,
+            "wrappers": 50009
+          }
+        },
+        {
+          "phases": {
+            "build": 9.460583000000042,
+            "render": 25.25887499999999,
+            "parse": 92.69683299999997,
+            "pipeline": 127.416291,
+            "edit": 3.4753749999999854
+          },
+          "count": 10000,
+          "casesSha256": "529d9f1bef79fdc56d8d9f635b8fabffee847401bae0a3146c98cc17c83cc2d9",
+          "renderSha256": "92ff4287ec4a878ed1a496df23ad903e49fa3b4291c676b1b8ba661dc4edfdbd",
+          "renderBytes": 128890,
+          "nativeRenderNs": 18642444,
+          "renderAllocations": {
+            "calls": 100000,
+            "bytes": 17818890,
+            "frees": 100000,
+            "freedBytes": 17818890
+          },
+          "bodyAllocationCalls": 90000,
+          "bodyAllocatedBytes": 17178890,
+          "allocations": {
+            "calls": 100000,
+            "bytes": 17818890,
+            "frees": 100000,
+            "freedBytes": 17818890
+          },
+          "editAllocations": {
+            "calls": 0,
+            "bytes": 0,
+            "frees": 0,
+            "freedBytes": 0
+          },
+          "legacyEncode": {
+            "ms": 5.36729200000002,
+            "words": 370001,
+            "bytes": 48890,
+            "capacityBytes": 2162688
+          },
+          "storage": {
+            "records": 50001,
+            "wrappers": 50009
+          }
+        },
+        {
+          "phases": {
+            "build": 9.865042000000017,
+            "render": 25.462832999999932,
+            "parse": 92.51687500000003,
+            "pipeline": 127.84474999999998,
+            "edit": 11.146250000000009
+          },
+          "count": 10000,
+          "casesSha256": "529d9f1bef79fdc56d8d9f635b8fabffee847401bae0a3146c98cc17c83cc2d9",
+          "renderSha256": "92ff4287ec4a878ed1a496df23ad903e49fa3b4291c676b1b8ba661dc4edfdbd",
+          "renderBytes": 128890,
+          "nativeRenderNs": 19570450,
+          "renderAllocations": {
+            "calls": 100000,
+            "bytes": 17818890,
+            "frees": 100000,
+            "freedBytes": 17818890
+          },
+          "bodyAllocationCalls": 90000,
+          "bodyAllocatedBytes": 17178890,
+          "allocations": {
+            "calls": 100000,
+            "bytes": 17818890,
+            "frees": 100000,
+            "freedBytes": 17818890
+          },
+          "editAllocations": {
+            "calls": 0,
+            "bytes": 0,
+            "frees": 0,
+            "freedBytes": 0
+          },
+          "legacyEncode": {
+            "ms": 7.1922499999999445,
+            "words": 370001,
+            "bytes": 48890,
+            "capacityBytes": 2162688
+          },
+          "storage": {
+            "records": 50001,
+            "wrappers": 50009
+          }
+        }
+      ],
+      "memory": {
+        "baseline": {
+          "rss": 235441184,
+          "heapTotal": 89702400,
+          "heapUsed": 21730344,
+          "external": 7107389,
+          "arrayBuffers": 4338627
+        },
+        "empty": {
+          "records": 0,
+          "wrappers": 0
+        },
+        "built": {
+          "rss": 235506720,
+          "heapTotal": 105168896,
+          "heapUsed": 37121576,
+          "external": 7107429,
+          "arrayBuffers": 4338627
+        },
+        "builtStorage": {
+          "records": 40000,
+          "wrappers": 40000
+        },
+        "rendered": {
+          "rss": 235506720,
+          "heapTotal": 105168896,
+          "heapUsed": 37136640,
+          "external": 7107429,
+          "arrayBuffers": 4338627
+        },
+        "renderedAllocations": {
+          "calls": 100000,
+          "bytes": 17818890,
+          "frees": 100000,
+          "freedBytes": 17818890
+        },
+        "renderedRustRetainedBytes": 0,
+        "retainedSnapshots": {
+          "rss": 238407096,
+          "heapTotal": 116965376,
+          "heapUsed": 50092720,
+          "external": 7107429,
+          "arrayBuffers": 4338627
+        },
+        "editedStorage": {
+          "records": 50001,
+          "wrappers": 50001
+        },
+        "editedAllocations": {
+          "calls": 200000,
+          "bytes": 35658890,
+          "frees": 200000,
+          "freedBytes": 35658890
+        },
+        "snapshotsRustRetainedBytes": 0,
+        "builtDelta": {
+          "rss": 65536,
+          "heapTotal": 15466496,
+          "heapUsed": 15391232,
+          "external": 40,
+          "arrayBuffers": 0
+        },
+        "renderedDelta": {
+          "rss": 65536,
+          "heapTotal": 15466496,
+          "heapUsed": 15406296,
+          "external": 40,
+          "arrayBuffers": 0
+        },
+        "snapshotsDelta": {
+          "rss": 2965912,
+          "heapTotal": 27262976,
+          "heapUsed": 28362376,
+          "external": 40,
+          "arrayBuffers": 0
+        }
+      }
+    },
+    {
+      "round": 4,
+      "idle": "idle 81%",
+      "mode": "object",
+      "pid": 33464,
+      "samples": [
+        {
+          "phases": {
+            "build": 9.459374999999966,
+            "render": 25.499625000000037,
+            "parse": 91.74254099999996,
+            "pipeline": 126.70154099999996,
+            "edit": 2.854583000000048
+          },
+          "count": 10000,
+          "casesSha256": "529d9f1bef79fdc56d8d9f635b8fabffee847401bae0a3146c98cc17c83cc2d9",
+          "renderSha256": "92ff4287ec4a878ed1a496df23ad903e49fa3b4291c676b1b8ba661dc4edfdbd",
+          "renderBytes": 128890,
+          "nativeRenderNs": 19326243,
+          "renderAllocations": {
+            "calls": 100000,
+            "bytes": 17818890,
+            "frees": 100000,
+            "freedBytes": 17818890
+          },
+          "bodyAllocationCalls": 90000,
+          "bodyAllocatedBytes": 17178890,
+          "allocations": {
+            "calls": 100000,
+            "bytes": 17818890,
+            "frees": 100000,
+            "freedBytes": 17818890
+          },
+          "editAllocations": {
+            "calls": 0,
+            "bytes": 0,
+            "frees": 0,
+            "freedBytes": 0
+          },
+          "legacyEncode": {
+            "ms": 5.831457999999998,
+            "words": 370001,
+            "bytes": 48890,
+            "capacityBytes": 2162688
+          },
+          "storage": {
+            "records": 50001,
+            "wrappers": 50009
+          }
+        },
+        {
+          "phases": {
+            "build": 9.33770800000002,
+            "render": 25.355625000000032,
+            "parse": 94.36962499999993,
+            "pipeline": 129.06295799999998,
+            "edit": 3.174874999999929
+          },
+          "count": 10000,
+          "casesSha256": "529d9f1bef79fdc56d8d9f635b8fabffee847401bae0a3146c98cc17c83cc2d9",
+          "renderSha256": "92ff4287ec4a878ed1a496df23ad903e49fa3b4291c676b1b8ba661dc4edfdbd",
+          "renderBytes": 128890,
+          "nativeRenderNs": 18829003,
+          "renderAllocations": {
+            "calls": 100000,
+            "bytes": 17818890,
+            "frees": 100000,
+            "freedBytes": 17818890
+          },
+          "bodyAllocationCalls": 90000,
+          "bodyAllocatedBytes": 17178890,
+          "allocations": {
+            "calls": 100000,
+            "bytes": 17818890,
+            "frees": 100000,
+            "freedBytes": 17818890
+          },
+          "editAllocations": {
+            "calls": 0,
+            "bytes": 0,
+            "frees": 0,
+            "freedBytes": 0
+          },
+          "legacyEncode": {
+            "ms": 5.173375000000078,
+            "words": 370001,
+            "bytes": 48890,
+            "capacityBytes": 2162688
+          },
+          "storage": {
+            "records": 50001,
+            "wrappers": 50009
+          }
+        },
+        {
+          "phases": {
+            "build": 9.781417000000033,
+            "render": 25.463958000000048,
+            "parse": 92.30899999999997,
+            "pipeline": 127.55437500000005,
+            "edit": 11.88412500000004
+          },
+          "count": 10000,
+          "casesSha256": "529d9f1bef79fdc56d8d9f635b8fabffee847401bae0a3146c98cc17c83cc2d9",
+          "renderSha256": "92ff4287ec4a878ed1a496df23ad903e49fa3b4291c676b1b8ba661dc4edfdbd",
+          "renderBytes": 128890,
+          "nativeRenderNs": 19761406,
+          "renderAllocations": {
+            "calls": 100000,
+            "bytes": 17818890,
+            "frees": 100000,
+            "freedBytes": 17818890
+          },
+          "bodyAllocationCalls": 90000,
+          "bodyAllocatedBytes": 17178890,
+          "allocations": {
+            "calls": 100000,
+            "bytes": 17818890,
+            "frees": 100000,
+            "freedBytes": 17818890
+          },
+          "editAllocations": {
+            "calls": 0,
+            "bytes": 0,
+            "frees": 0,
+            "freedBytes": 0
+          },
+          "legacyEncode": {
+            "ms": 7.374042000000031,
+            "words": 370001,
+            "bytes": 48890,
+            "capacityBytes": 2162688
+          },
+          "storage": {
+            "records": 50001,
+            "wrappers": 50009
+          }
+        }
+      ],
+      "memory": {
+        "baseline": {
+          "rss": 230395080,
+          "heapTotal": 89702400,
+          "heapUsed": 21729808,
+          "external": 7107389,
+          "arrayBuffers": 4338627
+        },
+        "empty": {
+          "records": 0,
+          "wrappers": 0
+        },
+        "built": {
+          "rss": 230640840,
+          "heapTotal": 105168896,
+          "heapUsed": 37121064,
+          "external": 7107429,
+          "arrayBuffers": 4338627
+        },
+        "builtStorage": {
+          "records": 40000,
+          "wrappers": 40000
+        },
+        "rendered": {
+          "rss": 230640840,
+          "heapTotal": 105168896,
+          "heapUsed": 37136128,
+          "external": 7107429,
+          "arrayBuffers": 4338627
+        },
+        "renderedAllocations": {
+          "calls": 100000,
+          "bytes": 17818890,
+          "frees": 100000,
+          "freedBytes": 17818890
+        },
+        "renderedRustRetainedBytes": 0,
+        "retainedSnapshots": {
+          "rss": 233311816,
+          "heapTotal": 116965376,
+          "heapUsed": 50092208,
+          "external": 7107429,
+          "arrayBuffers": 4338627
+        },
+        "editedStorage": {
+          "records": 50001,
+          "wrappers": 50001
+        },
+        "editedAllocations": {
+          "calls": 200000,
+          "bytes": 35658890,
+          "frees": 200000,
+          "freedBytes": 35658890
+        },
+        "snapshotsRustRetainedBytes": 0,
+        "builtDelta": {
+          "rss": 245760,
+          "heapTotal": 15466496,
+          "heapUsed": 15391256,
+          "external": 40,
+          "arrayBuffers": 0
+        },
+        "renderedDelta": {
+          "rss": 245760,
+          "heapTotal": 15466496,
+          "heapUsed": 15406320,
+          "external": 40,
+          "arrayBuffers": 0
+        },
+        "snapshotsDelta": {
+          "rss": 2916736,
+          "heapTotal": 27262976,
+          "heapUsed": 28362400,
+          "external": 40,
+          "arrayBuffers": 0
+        }
+      }
+    },
+    {
+      "round": 4,
+      "idle": "idle 78%",
+      "mode": "arena",
+      "pid": 33500,
+      "samples": [
+        {
+          "phases": {
+            "build": 22.69804099999999,
+            "render": 23.39224999999999,
+            "parse": 88.99812499999996,
+            "pipeline": 135.08841599999994,
+            "edit": 6.1388749999999845
+          },
+          "count": 10000,
+          "casesSha256": "529d9f1bef79fdc56d8d9f635b8fabffee847401bae0a3146c98cc17c83cc2d9",
+          "renderSha256": "92ff4287ec4a878ed1a496df23ad903e49fa3b4291c676b1b8ba661dc4edfdbd",
+          "renderBytes": 128890,
+          "nativeRenderNs": 16064011,
+          "renderAllocations": {
+            "calls": 80018,
+            "bytes": 3681860,
+            "frees": 80014,
+            "freedBytes": 3681644
+          },
+          "bodyAllocationCalls": 60007,
+          "bodyAllocatedBytes": 2400756,
+          "allocations": {
+            "calls": 80018,
+            "bytes": 3681860,
+            "frees": 80014,
+            "freedBytes": 3681644
+          },
+          "editAllocations": {
+            "calls": 0,
+            "bytes": 0,
+            "frees": 0,
+            "freedBytes": 0
+          },
+          "storage": {
+            "records": 50001,
+            "wrappers": 50009,
+            "recordBytes": 7280012,
+            "recordCapacity": 8372224,
+            "stringBytes": 48897,
+            "stringCapacity": 61440,
+            "chunks": 9,
+            "stringChunks": 4
+          }
+        },
+        {
+          "phases": {
+            "build": 14.30808300000001,
+            "render": 26.436874999999986,
+            "parse": 89.09191699999997,
+            "pipeline": 129.83687499999996,
+            "edit": 3.4975829999999632
+          },
+          "count": 10000,
+          "casesSha256": "529d9f1bef79fdc56d8d9f635b8fabffee847401bae0a3146c98cc17c83cc2d9",
+          "renderSha256": "92ff4287ec4a878ed1a496df23ad903e49fa3b4291c676b1b8ba661dc4edfdbd",
+          "renderBytes": 128890,
+          "nativeRenderNs": 16076155,
+          "renderAllocations": {
+            "calls": 80018,
+            "bytes": 3681860,
+            "frees": 80014,
+            "freedBytes": 3681644
+          },
+          "bodyAllocationCalls": 60007,
+          "bodyAllocatedBytes": 2400756,
+          "allocations": {
+            "calls": 80018,
+            "bytes": 3681860,
+            "frees": 80014,
+            "freedBytes": 3681644
+          },
+          "editAllocations": {
+            "calls": 0,
+            "bytes": 0,
+            "frees": 0,
+            "freedBytes": 0
+          },
+          "storage": {
+            "records": 50001,
+            "wrappers": 50009,
+            "recordBytes": 7280012,
+            "recordCapacity": 8372224,
+            "stringBytes": 48897,
+            "stringCapacity": 61440,
+            "chunks": 9,
+            "stringChunks": 4
+          }
+        },
+        {
+          "phases": {
+            "build": 22.54733299999998,
+            "render": 23.706292000000076,
+            "parse": 91.65804100000003,
+            "pipeline": 137.91166600000008,
+            "edit": 4.707166000000029
+          },
+          "count": 10000,
+          "casesSha256": "529d9f1bef79fdc56d8d9f635b8fabffee847401bae0a3146c98cc17c83cc2d9",
+          "renderSha256": "92ff4287ec4a878ed1a496df23ad903e49fa3b4291c676b1b8ba661dc4edfdbd",
+          "renderBytes": 128890,
+          "nativeRenderNs": 16171869,
+          "renderAllocations": {
+            "calls": 80018,
+            "bytes": 3681860,
+            "frees": 80014,
+            "freedBytes": 3681644
+          },
+          "bodyAllocationCalls": 60007,
+          "bodyAllocatedBytes": 2400756,
+          "allocations": {
+            "calls": 80018,
+            "bytes": 3681860,
+            "frees": 80014,
+            "freedBytes": 3681644
+          },
+          "editAllocations": {
+            "calls": 0,
+            "bytes": 0,
+            "frees": 0,
+            "freedBytes": 0
+          },
+          "storage": {
+            "records": 50001,
+            "wrappers": 50009,
+            "recordBytes": 7280012,
+            "recordCapacity": 8372224,
+            "stringBytes": 48897,
+            "stringCapacity": 61440,
+            "chunks": 9,
+            "stringChunks": 4
+          }
+        }
+      ],
+      "memory": {
+        "baseline": {
+          "rss": 203899152,
+          "heapTotal": 87080960,
+          "heapUsed": 19699144,
+          "external": 7123773,
+          "arrayBuffers": 4355011
+        },
+        "empty": {
+          "records": 0,
+          "wrappers": 0,
+          "recordBytes": 4,
+          "recordCapacity": 16384,
+          "stringBytes": 0,
+          "stringCapacity": 0,
+          "chunks": 1,
+          "stringChunks": 0
+        },
+        "built": {
+          "rss": 215402448,
+          "heapTotal": 100089856,
+          "heapUsed": 32855128,
+          "external": 15541093,
+          "arrayBuffers": 12772291
+        },
+        "builtStorage": {
+          "records": 40000,
+          "wrappers": 40000,
+          "recordBytes": 4200004,
+          "recordCapacity": 8372224,
+          "stringBytes": 48890,
+          "stringCapacity": 61440,
+          "chunks": 9,
+          "stringChunks": 4
+        },
+        "rendered": {
+          "rss": 215402448,
+          "heapTotal": 100089856,
+          "heapUsed": 32832368,
+          "external": 15541093,
+          "arrayBuffers": 12772291
+        },
+        "renderedAllocations": {
+          "calls": 80018,
+          "bytes": 3681860,
+          "frees": 80014,
+          "freedBytes": 3681644
+        },
+        "renderedRustRetainedBytes": 216,
+        "retainedSnapshots": {
+          "rss": 215451600,
+          "heapTotal": 100089856,
+          "heapUsed": 44601368,
+          "external": 15541093,
+          "arrayBuffers": 12772291
+        },
+        "editedStorage": {
+          "records": 50001,
+          "wrappers": 50001,
+          "recordBytes": 7280012,
+          "recordCapacity": 8372224,
+          "stringBytes": 48897,
+          "stringCapacity": 61440,
+          "chunks": 9,
+          "stringChunks": 4
+        },
+        "editedAllocations": {
+          "calls": 169965,
+          "bytes": 8436136,
+          "frees": 169961,
+          "freedBytes": 8435920
+        },
+        "snapshotsRustRetainedBytes": 216,
+        "builtDelta": {
+          "rss": 11503296,
+          "heapTotal": 13008896,
+          "heapUsed": 13155984,
+          "external": 8417320,
+          "arrayBuffers": 8417280
+        },
+        "renderedDelta": {
+          "rss": 11503296,
+          "heapTotal": 13008896,
+          "heapUsed": 13133224,
+          "external": 8417320,
+          "arrayBuffers": 8417280
+        },
+        "snapshotsDelta": {
+          "rss": 11552448,
+          "heapTotal": 13008896,
+          "heapUsed": 24902224,
+          "external": 8417320,
+          "arrayBuffers": 8417280
+        }
+      }
+    }
+  ],
+  "summary": {
+    "object": {
+      "build": {
+        "medianMs": 9.460583000000042,
+        "minMs": 9.135958999999957,
+        "maxMs": 9.507416999999975,
+        "nsPerRoot": 946.0583000000042
+      },
+      "render": {
+        "medianMs": 25.23404199999993,
+        "minMs": 24.90979100000004,
+        "maxMs": 25.463958000000048,
+        "nsPerRoot": 2523.404199999993
+      },
+      "parse": {
+        "medianMs": 92.36029100000007,
+        "minMs": 91.73558300000002,
+        "maxMs": 93.12687499999993,
+        "nsPerRoot": 9236.029100000007
+      },
+      "pipeline": {
+        "medianMs": 127.31454200000002,
+        "minMs": 126.57449999999994,
+        "maxMs": 127.84474999999998,
+        "nsPerRoot": 12731.454200000002
+      },
+      "edit": {
+        "medianMs": 3.225167000000056,
+        "minMs": 3.174874999999929,
+        "maxMs": 3.4753749999999854,
+        "nsPerRoot": 322.5167000000056
+      }
+    },
+    "arena": {
+      "build": {
+        "medianMs": 14.963666999999987,
+        "minMs": 14.731083000000012,
+        "maxMs": 22.54733299999998,
+        "nsPerRoot": 1496.3666999999987
+      },
+      "render": {
+        "medianMs": 26.233584000000064,
+        "minMs": 23.706292000000076,
+        "maxMs": 27.19795799999997,
+        "nsPerRoot": 2623.3584000000064
+      },
+      "parse": {
+        "medianMs": 90.23737499999993,
+        "minMs": 89.09191699999997,
+        "maxMs": 91.36120800000003,
+        "nsPerRoot": 9023.737499999992
+      },
+      "pipeline": {
+        "medianMs": 135.08841599999994,
+        "minMs": 133.36420799999996,
+        "maxMs": 136.55941700000005,
+        "nsPerRoot": 13508.841599999994
+      },
+      "edit": {
+        "medianMs": 4.499416999999994,
+        "minMs": 4.3474579999999605,
+        "maxMs": 5.093999999999937,
+        "nsPerRoot": 449.94169999999946
+      }
+    }
+  },
+  "ratios": {
+    "build": 1.5816855050053384,
+    "render": 1.0396108558430763,
+    "parse": 0.9770148407176398,
+    "pipeline": 1.0610603775333058,
+    "edit": 1.3950958198443417
+  }
+}

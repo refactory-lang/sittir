@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import { nodeToConfig } from '../validate/common.ts';
+import { nodeToConfig, type SlotAccessorOf } from '../validate/common.ts';
+
+const accessorOf: SlotAccessorOf = (typeId) => ({ kind: String(typeId), slots: [], accessors: {}, separator: false });
 import { validateFactoryStorage } from '../validate/factory-storage.ts';
 
 function makeFactorySlots(
@@ -25,17 +27,17 @@ const kindNameFromId = (kindId: number): string | undefined => KINDS[kindId - 1]
 
 describe('nodeToConfig field promotion', () => {
 	it('uses named slot metadata instead of payload shape for singular and repeated config slots', () => {
-		const leaf = { $type: id('identifier'), $named: true, $text: 'x' };
+		const leaf = { $type: id('identifier'), $text: 'x' };
 
 		const singularConfig = nodeToConfig(
 			{
 				$type: id('single_field_parent'),
 				
-				$named: true,
 				_value: [leaf]
 			} as never,
 			{
 				kindNameFromId,
+				accessorOf,
 				factorySlots: makeFactorySlots('single_field_parent', {
 					value: {
 						propertyName: 'value',
@@ -53,11 +55,11 @@ describe('nodeToConfig field promotion', () => {
 			{
 				$type: id('repeat_field_parent'),
 				
-				$named: true,
 				_items: leaf
 			} as never,
 			{
 				kindNameFromId,
+				accessorOf,
 				factorySlots: makeFactorySlots('repeat_field_parent', {
 					items: {
 						propertyName: 'items',

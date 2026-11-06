@@ -54,6 +54,8 @@ export interface EmitAllConfig {
 
 export interface EmitAllResult {
 	factories: string;
+	factoriesRecords: string;
+	factoriesDispatch: string;
 	tableFiles: Readonly<Record<string, string>>;
 	from: string;
 	wrap: string;
@@ -158,6 +160,8 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 	);
 
 	const factories = factoryEmitter.finalize();
+	const factoriesRecords = factoryEmitter.finalizeRecords();
+	const factoriesDispatch = factoryEmitter.finalizeDispatch(factories);
 	const from = fromEmitter.finalize();
 	const wrap = wrapEmitter.finalize();
 	const templates = templateEmitter.finalize();
@@ -179,10 +183,12 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 	const options = emitOptions({ nodeMap, kindEntries, renderRules, options: optionsBlock, sites: sitePreferences, addresses: addressTables });
 	const is = emitIs({ grammar, nodeMap, generatedIdTables });
 	const tests = emitTests({ grammar, nodeMap, generatedIdTables, expectTestFailures, renderBodies: templates.bodies });
-	const utils = emitClientUtils({ grammar, nodeMap, triviaKinds, structure: factoryEmitter.structure, kindEntries });
+	const utils = emitClientUtils({ grammar, nodeMap, triviaKinds, structure: factoryEmitter.structure });
 
 	return {
 		factories,
+		factoriesRecords,
+		factoriesDispatch,
 		tableFiles: tables.files,
 		from,
 		wrap,

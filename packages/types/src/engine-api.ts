@@ -64,6 +64,9 @@ export interface ParseOptions {
 	/**
 	 * How many levels the parse reads: one by default, `Infinity` for the whole
 	 * tree. A node past the depth is read when an accessor first reaches it.
+	 * A list's items count as children of the node that holds the list: they
+	 * are read with that node, to the same depth as its other children, so
+	 * filling a list never reads its items one by one.
 	 *
 	 * The choice changes when the work is done, never the result: an untouched
 	 * node renders its source bytes whatever depth it was read at.
@@ -104,15 +107,11 @@ export interface NodeMethods {
 	 */
 	toString(): string;
 	/**
-	 * The node's structure as JSON, which `JSON.stringify` writes: its kind name as `$type`, a leaf's text as
-	 * `$text`, each slot under its accessor's name, and its comments as `leadingComments`, `trailingComments`
-	 * and `innerComments`. An absent slot, an absent keyword and an empty comment side are left out; an empty
-	 * list is `[]`. Layout, provenance and the tree a parsed node reads are not written, so the engine's
-	 * `reviver` builds the JSON back into a node that renders with the engine's formatting.
+	 * A node has no JSON form: `JSON.stringify` of a node, or of a value holding one, refuses.
 	 *
-	 * @returns The node's JSON.
+	 * @throws Always, naming `toJSON`.
 	 */
-	toJSON(): NodeJSON;
+	toJSON(): never;
 }
 
 /**
@@ -121,48 +120,6 @@ export interface NodeMethods {
  */
 export interface HoldsTrivia<Trivia = any> {
 	$trivia: TriviaSetter<this, Trivia>;
-}
-
-/**
- * A node as JSON (`NodeMethods.toJSON`): its kind name, a leaf's text, its slots by accessor name, and the
- * comments on each side of it.
- */
-export interface NodeJSON {
-	readonly $type: string;
-	readonly $text?: string;
-	readonly leadingComments?: readonly NodeJSON[];
-	readonly trailingComments?: readonly NodeJSON[];
-	readonly innerComments?: readonly NodeJSON[];
-	readonly [slot: string]: NodeJSONValue | undefined;
-}
-
-/**
- * What a slot holds in a node's JSON: a node (a kind id is written as a node of that kind), a list, whose
- * empty element is `null`, a keyword's presence as `true`, a string, or `null` for an optional slot that
- * chose none, as a builder takes it.
- */
-export type NodeJSONValue = NodeJSON | readonly (NodeJSON | null)[] | true | string | null;
-
-/** Engine plumbing, not for callers: what a language's nodes are written to JSON and revived by. */
-export interface NodeJSONFacts {
-	/** Each kind's name, by kind id. */
-	readonly names: ReadonlyMap<number, string>;
-	/** The kind id of the model kind a name names; an alias's display id never answers. Throws for a name no kind has. */
-	kindId(name: string): number;
-	/** Each kind's slots, by kind id. */
-	readonly slots: QuerySlots;
-	/** The trivia kinds that spell layout; every other trivia entry is a comment. */
-	readonly layout: ReadonlySet<number>;
-	/** The kinds whose nodes hold their text. */
-	readonly leaves: ReadonlySet<number>;
-	/** The alias envelopes built from their content's text, which their builder checks by the envelope's own rule rather than the content kind's: each envelope's kind id to the kind id of the content it holds. */
-	readonly textEnvelopes: ReadonlyMap<number, number>;
-	/** The kinds a slot holds as a kind id. */
-	readonly units: ReadonlySet<number>;
-	/** The kinds whose builder takes their one repeated slot's items as its rest arguments, after its options: lists, and compounds with a sole repeated slot. */
-	readonly spread: ReadonlySet<number>;
-	/** Each kind's registered slots, by kind id: the slot names its builder takes in its options argument. */
-	readonly options: Readonly<Record<number, readonly string[]>>;
 }
 
 export interface GrammarInnerTrivia<N, Trivia> {
@@ -236,9 +193,22 @@ export interface Language<API extends LanguageAPI> {
 	): Promise<Engine<API, M>>;
 }
 
-export interface NativeEngineOptions<O extends object = Readonly<Record<string, unknown>>> {
-	readonly options?: O;
+/** An engine's node backend: record views of parsed nodes and records for built ones, or objects for both (`EngineOptions.nodeStorage`). */
+export type NodeStorage = 'arena' | 'object';
+
+/** How an engine stores the nodes it reads and builds. */
+export interface NodeStorageOptions {
+	/**
+	 * The parsed and built node backend. `'arena'` (the default) reads parsed nodes as record views and builds immutable
+	 * records in the engine's arena. `'object'` reads and builds object nodes. Accessors, kinds and text use the language's
+	 * same public surface in either mode.
+	 *
+	 * @throws When `'arena'` is asked of an addon built without the `arena` feature.
+	 */
+	readonly nodeStorage?: NodeStorage;
 }
+
+export type NativeEngineOptions<O extends object = Readonly<Record<string, unknown>>> = { readonly options?: O } & NodeStorageOptions;
 
 /** The structure facts the generated types prove for one kind's built nodes, by slot storage key. An engine constructed with `verifyStructure: 'runtime'` checks them when a node is built or rebuilt. */
 export interface StructureRow {
@@ -263,6 +233,8 @@ export interface StructureRow {
 	readonly config?: readonly string[];
 	/** `[propertyName, holes, arrival]`: a list the builder takes as input. `holes` lists admit absent items; `arrival` is `'key'` for a config key, or the index the items start at in the builder's arguments (1 after a leading options argument). */
 	readonly lists?: readonly (readonly [propertyName: string, holes: boolean, arrival: 'key' | number])[];
+	/** The slots the builder takes in its options argument, not its config or its items. */
+	readonly options?: readonly string[];
 }
 
 /** Each kind's {@link StructureRow} by kind id; a kind with nothing to check has no row. */
@@ -273,15 +245,10 @@ export interface LanguageHooks<API extends LanguageAPI> {
 	readonly renderModuleHash: string;
 	/** Loads each builder table, by the engine mode that builds with it, so an engine loads only its own. */
 	readonly tables: { readonly [M in BuilderMode]: () => Promise<API['build'][M]> };
+	/** Loads the record builders, which an engine with record construction builds through. */
+	readonly records: () => Promise<object>;
 	readonly trivia: TriviaFacts<API['kindId']>;
 	readonly querySlots: QuerySlots;
-	/** What the language's nodes are written to JSON by and revived by. */
-	readonly json: NodeJSONFacts;
-	/**
-	 * Builds a node of the kind named `kind`: from one input as a kind tag does (its text as `{ text }`, or its
-	 * config), or from the builder's own arguments (a config and its options, or a list's options and items).
-	 */
-	buildByKind(kind: string, ...input: unknown[]): unknown;
 	readonly queryFlags?: QueryFlags;
 	readonly querySlotFlags?: QuerySlotFlags;
 	readonly structure: StructureTable;
@@ -296,8 +263,11 @@ export interface LanguageHooks<API extends LanguageAPI> {
 
 export interface NativeLanguageEngine<API extends LanguageAPI> {
 	render(node: AnyUntypedNode | number, options?: API['options']): Rendered;
+	parseTree: EngineDiagnostics<AnyUntypedNode>['parseTree'];
 	parseAndRead: EngineDiagnostics<AnyUntypedNode>['parseAndRead'];
 	readonly buildProfile?: EngineDiagnostics['buildProfile'];
+	readonly builtMemory?: EngineDiagnostics['builtMemory'];
+	release(node: object): void;
 	dispose(): void;
 }
 
@@ -314,6 +284,15 @@ export interface ParsedRoot {
 
 export interface EngineDiagnostics<TRoot = unknown, TTree extends object = object> {
 	readonly buildProfile: string | undefined;
+	/**
+	 * The engine's built arena now: `chunks`, the bytes every chunk takes with its counts,
+	 * `counts`, the part of them the counts take, and `live`, the records, runs and side records
+	 * it holds that are not yet released. `undefined` when the engine does not build into an arena.
+	 */
+	readonly builtMemory?: () => { readonly chunks: number; readonly counts: number; readonly live: number } | undefined;
+	/** Parses and retains a tree without reading any of it. */
+	parseTree(source: string): TTree;
+	/** Parses and retains a tree, and reads its root to `options.depth`. */
 	parseAndRead(source: string, options?: ParseOptions): ParsedRead<TRoot & ParsedRoot, TTree>;
 }
 
@@ -384,18 +363,12 @@ export interface Engine<API extends LanguageAPI, in out M extends ApiSurface = '
 	/** Whether `value` is a parsed ERROR node of this engine's language, read in a slot or as a trivia item. */
 	readonly isErrorNode: (value: unknown) => value is ErrorNode;
 	/**
-	 * A `JSON.parse` reviver that builds a node's JSON (`NodeMethods.toJSON`) back into this engine's nodes:
-	 * `JSON.parse(text, engine.reviver)`. It is bound to the engine, so it can be passed on its own. Every
-	 * object with a `$type` is built as a node of that kind, children first, its comments put back on their
-	 * sides; other values, and a document's fields around a node, are left as they are. A revived node is
-	 * a built node: it renders with the engine's formatting, not the source's.
+	 * A `JSON.parse` reviver. A node has no JSON form (`NodeMethods.toJSON`), so there is nothing to revive:
+	 * `JSON.parse(text, engine.reviver)` refuses.
 	 *
-	 * @throws When the JSON names a kind this language lacks, a slot its kind lacks, an ERROR node, a leaf
-	 * without its text or comments on a trivia kind (`HoldsTrivia`), naming where in the JSON
-	 * (`$.body.statements[2]: unknown kind 'foo'`); and, when the
-	 * engine verifies structure, when a node misses a slot its kind requires.
+	 * @throws Always, naming `reviver`.
 	 */
-	readonly reviver: (key: string, value: unknown) => unknown;
+	readonly reviver: (key: string, value: unknown) => never;
 	/**
 	 * Whether `node` is this engine's node of a kind with an inner gap and nothing in it holds
 	 * sides, so it takes `$trivia.inner`. A parsed node answers from its tree: no child is named,
@@ -424,11 +397,62 @@ export interface Engine<API extends LanguageAPI, in out M extends ApiSurface = '
 	 */
 	readonly query: <N extends API['node']>(node: N) => FacetOf<N>;
 	readonly read: (path: string, options?: ParseOptions) => Promise<API['root']>;
+	/**
+	 * Renders `node`, a node this engine built, parsed or edited, as source text.
+	 *
+	 * @throws When `node` was built by another engine, and when it is a built record that was released, as a commit
+	 * scope's close releases the records it did not keep.
+	 */
 	readonly render: RenderCall<API, Draft<API>> & RenderCall<API, StoredInput<API> | RenderBuilder<API, M> | SnapshotInput<API>>;
 	readonly create: (path: string, fn: (build: BuildSurface<API, M>) => API['root']) => Pending;
 	readonly write: (path: string, node: API['root']) => Pending;
+	/**
+	 * Releases what a builder result holds, a `$with` result included, as its `[Symbol.dispose]` does. Under record
+	 * construction a result holds its record until it is placed into a parent or a side, and a built
+	 * leaf holds the records written to its sides until it is placed; a node already placed, read,
+	 * parsed or released, and any node of object construction, holds nothing, so its release does
+	 * nothing. A record nothing holds any more is freed with every child only it held, and a read
+	 * through a node whose memory was freed throws. A result dropped without a release keeps its
+	 * record until the engine is disposed.
+	 *
+	 * @throws When `node` was built by another engine.
+	 */
+	readonly release: (node: { readonly $type: API['kindId'] }) => void;
+	/**
+	 * Opens a commit scope, which `using` closes at the end of its block. Under record construction, each record this
+	 * engine builds or edits while the scope is the innermost one open, and each built leaf whose sides hold records,
+	 * is released when the scope closes, except the nodes its `keep` keeps. Scopes nest, and a close releases only its
+	 * own scope's nodes. Parsed trees are left alone. Under object construction a scope holds nothing, so its close
+	 * does nothing and its `keep` returns what it is given.
+	 *
+	 * @throws When the engine is disposed, and under record construction while a build is running, as inside a build
+	 * interceptor.
+	 */
+	readonly scope: () => CommitScope;
 	/** Releases the native engine; `using` invokes the same cleanup at scope exit. */
 	readonly dispose: () => void;
+}
+
+/** What `engine.scope()` opens: its close releases what was built or edited while it was the innermost open scope. */
+export interface CommitScope extends Disposable {
+	/**
+	 * Keeps `node` past this scope's close and returns it. It moves to the enclosing scope, which releases it unless
+	 * that scope keeps it too; with no scope open around this one, the caller releases it (`[Symbol.dispose]`,
+	 * `engine.release`), or the engine's dispose does. A kept node holds a count of its own (a leaf, of the records its
+	 * sides hold) whether it is placed in a parent before or after the keep, so it outlives every parent it sits in. A
+	 * parsed node, a node of object construction and a leaf whose sides hold no records are returned as they are.
+	 *
+	 * @throws When the scope is closed or its engine disposed, when `node` was released, and when another engine built it.
+	 */
+	keep<N extends object>(node: N): N;
+	/**
+	 * Closes the scope, releasing what it holds. A close of a scope already closed, or after the engine is disposed,
+	 * does nothing.
+	 *
+	 * @throws When a scope opened inside this one is still open, which it leaves open with everything it holds, or
+	 * when a build is running.
+	 */
+	[Symbol.dispose](): void;
 }
 
 export type RenderCall<API extends LanguageAPI, Input> = <const R extends API['options'] = API['options']>(
@@ -496,7 +520,7 @@ export interface PortableEngine<API extends PortableLanguageAPI> extends EngineI
 export type ApiSelection<M extends ApiSurface> = { readonly api?: M | undefined } & (M extends 'default' ? unknown : { readonly api: NoInfer<M> });
 
 /** An engine's options. `api` picks the engine's mode, and options of a mode other than the default carry it. */
-export type EngineOptions<API extends LanguageAPI, M extends ApiSurface = 'default'> = ApiSelection<M> & EngineSettings<API>;
+export type EngineOptions<API extends LanguageAPI, M extends ApiSurface = 'default'> = ApiSelection<M> & EngineSettings<API> & NodeStorageOptions;
 
 /** The options every engine mode takes alike. */
 export interface EngineSettings<API extends LanguageAPI> {

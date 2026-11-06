@@ -128,8 +128,8 @@ describe('dogfoodContract helper', () => {
 				rs.build.functionItem({
 					visibilityModifier: 'pub',
 					name: 'main',
-					parameters: rsStrict.build.parameters(),
-					body: rsStrict.build.block()
+					parameters: rs.build.parameters(),
+					body: rs.build.block()
 				})
 			]
 		});
@@ -145,8 +145,8 @@ describe('dogfoodContract helper', () => {
 		const rebuilt = rs.build.functionItem({
 			visibilityModifier: 'pub',
 			name: 'main',
-			parameters: rsStrict.build.parameters(),
-			body: rsStrict.build.block()
+			parameters: rs.build.parameters(),
+			body: rs.build.block()
 		});
 		const result = dogfoodContract(rs, rebuilt, target);
 		expect(result.sameModuloWhitespace).toBe(false);
@@ -184,7 +184,7 @@ describe('namespaced constructors reach the arm kinds', () => {
 	// A variant minted inside another variant's rule is spelled inside it: the
 	// caller types each authored form name, under the arm that reaches it.
 	it('reaches an in-path visibility modifier under the arm it nests in', () => {
-		const path = rs.build.scopedIdentifier({ qualifier: rs.build.crate, name: rs.build.identifier('x') });
+		const path = rsStrict.build.scopedIdentifier({ qualifier: rsStrict.build.crate, name: rsStrict.build.identifier('x') });
 		expect(rsStrict.build.visibilityModifier.pub.scope.inPath(path).$render()).toBe('pub(in crate::x)');
 		expect(rsStrict.build.visibilityModifier.pub.scope.self().$render()).toBe('pub(self)');
 	});

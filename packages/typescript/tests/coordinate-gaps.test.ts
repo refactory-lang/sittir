@@ -11,13 +11,13 @@ const tsStrict = await createEngine(typescript, { api: 'strict' });
 describe('gaps between coordinates', () => {
 	it('keeps the blank lines a parsed block spelled and seats a statement appended after them', () => {
 		const source = 'function f() {\n  a();\n\n  b();\n\n  c();\n}\n';
-		const fn = ts.parse(source).statements()[0]!;
+		const fn = tsStrict.parse(source).statements()[0]!;
 		if (!ts.is.functionDeclaration(fn)) throw new Error('expected a function declaration');
 		const body = fn.body();
 		const rebuilt = body.$with.statements(
 			...body.statements(),
 			tsStrict.build.expressionStatement(
-				tsStrict.build.callExpression.call({ function: ts.build.identifier('d'), arguments: tsStrict.build.arguments() }),
+				tsStrict.build.callExpression.call({ function: tsStrict.build.identifier('d'), arguments: tsStrict.build.arguments() }),
 				{ terminator: ts.kinds.Semi }
 			)
 		);
@@ -50,7 +50,7 @@ describe('gaps between coordinates', () => {
 		if (!ts.is.arguments(args)) throw new Error('expected arguments');
 		const [a, b, c] = args.elements();
 		if (b == null || typeof b === 'number' || !ts.is.memberExpression(b)) throw new Error('expected a member expression');
-		const edited = b.$with.object(ts.build.identifier('y')) as typeof b;
+		const edited = b.$with.object(ts.build.identifier('y'));
 		expect(args.$with.elements(a!, edited, c!).$render()).toBe('(a.x,y.x,c.x)');
 	});
 });

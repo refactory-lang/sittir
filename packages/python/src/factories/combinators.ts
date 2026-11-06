@@ -69,7 +69,14 @@ export const string$flatten$stringStart =
 			if (Object.hasOwn(keys, key)) inner[keys[key]!] = value;
 			else rest[key] = value;
 		}
-		return _fwd<ReturnType<PF>>(parent, { ...rest, stringStart: _c(child)(inner['prefix']) }, options);
+		return _fwd<ReturnType<PF>>(
+			parent,
+			{
+				...rest,
+				stringStart: _c(child)(inner['prefix'], { quote: (options as { readonly quote?: unknown } | undefined)?.quote })
+			},
+			options
+		);
 	};
 export const string$flatten$stringEnd =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>

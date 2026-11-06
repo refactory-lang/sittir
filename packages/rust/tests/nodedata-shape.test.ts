@@ -2,7 +2,7 @@
  * UntypedNode surface shape verification.
  *
  * Verifies the de-hoisted storage contract, non-enumerable accessor functions,
- * Object.freeze, $with immutability, JSON.stringify, and unified factory/wrap
+ * Object.freeze, $with immutability, the JSON refusal, and unified factory/wrap
  * surface (SC-001 through SC-008, FR-001 through FR-004).
  *
  * Uses the rust grammar as a concrete example.
@@ -21,9 +21,10 @@
 import { describe, it, expect } from 'vitest';
 import rust from '../src/index.ts';
 import { createEngine, Source, sourceOf } from '@sittir/common';
+import { HANDLE } from '@sittir/common/utils';
 
-const rs = await createEngine(rust);
-const verifying = await createEngine(rust, { verifyStructure: 'runtime' });
+const rs = await createEngine(rust, { nodeStorage: 'object' });
+const verifying = await createEngine(rust, { verifyStructure: 'runtime', nodeStorage: 'object' });
 
 // ---------- helpers ----------
 
@@ -94,10 +95,12 @@ describe('Factory shape — branch node', () => {
 		expect(keys).not.toContain('$fields');
 	});
 
-	it('SC-004: sourceOf gives a read node, its $with rebuild and a spread copy Ts, and none has a $source member', () => {
+	it('SC-004: sourceOf gives a read node, the read child its $with rebuild keeps and a spread copy Ts, the rebuild Factory, and none has a $source member', () => {
 		const file = rs.parse('fn f() {}\n');
 		const rebuilt = file.$with.statements(...file.statements());
-		for (const read of [file, file.statements()[0], rebuilt, rebuilt.statements()[0], { ...file }]) {
+		expect(sourceOf(rebuilt)).toBe(Source.Factory);
+		expect('$source' in rebuilt).toBe(false);
+		for (const read of [file, file.statements()[0], rebuilt.statements()[0], { ...file }]) {
 			if (typeof read !== 'object') throw new Error('`fn f() {}` reads a function item');
 			expect(sourceOf(read)).toBe(Source.Ts);
 			expect('$source' in read).toBe(false);
@@ -113,10 +116,9 @@ describe('Factory shape — branch node', () => {
 		}
 	});
 
-	it('SC-004: sourceOf gives no provenance for a config, a JSON copy or a string-key copy', () => {
+	it('SC-004: sourceOf gives no provenance for a config or a string-key copy', () => {
 		const built = rs.build.block({ statements: [] });
 		expect(sourceOf({ $type: rs.kinds.Block, statements: [] })).toBeUndefined();
-		expect(sourceOf(JSON.parse(JSON.stringify(built)) as object)).toBeUndefined();
 		expect(sourceOf(Object.fromEntries(Object.entries(built)))).toBeUndefined();
 	});
 
@@ -167,7 +169,7 @@ describe('Factory shape — leaf node', () => {
 // `$with` EXISTS on factory output — the factories emitter builds it inline
 // per kind (the passing plain-`it` case below pins that). Still unshipped,
 // pinned by the `it.fails` cases: $with non-enumerability, the frozen-result
-// contract, and Object.keys exclusion. A node's JSON never holds `$with`.
+// contract, and Object.keys exclusion.
 describe('$with namespace', () => {
 	const original = rs.build.functionItem({ name: 'original', parameters: [], body: minimalBlock } as any);
 
@@ -179,10 +181,10 @@ describe('$with namespace', () => {
 		const original = verifying.build.functionItem({ name: 'original', parameters: [], body: minimalBlock } as any);
 		const withNs = (original as unknown as Record<string, unknown>)['$with'] as Record<string, unknown>;
 		expect(withNs).toBeDefined();
-		const nameFn = withNs['name'] as (v: unknown) => unknown;
-		expect(typeof nameFn).toBe('function');
-		expect(() => nameFn('updated')).toThrow(/a strict factory takes a built node, not a string/);
-		const updated = nameFn(rs.build.identifier('updated')) as unknown as { $render(): string };
+		const setters = withNs as { name(v: unknown): unknown };
+		expect(typeof setters.name).toBe('function');
+		expect(() => setters.name('updated')).toThrow(/a strict factory takes a built node, not a string/);
+		const updated = setters.name(rs.build.identifier('updated')) as unknown as { $render(): string };
 		expect(updated.$render()).toContain('updated');
 	});
 
@@ -199,35 +201,18 @@ describe('$with namespace', () => {
 	it.fails('$with is not included in Object.keys()', () => {
 		expect(Object.keys(original)).not.toContain('$with');
 	});
-
-	it('$with is not included in JSON.stringify() output', () => {
-		const json = JSON.stringify(original);
-		expect(json).not.toContain('$with');
-	});
 });
 
 // ---------- JSON serialization ----------
 
 describe('JSON serialization', () => {
-	const node = rs.build.functionItem({ name: 'serialize_me', parameters: [], body: minimalBlock } as any);
-
-	it('SC-007: JSON.stringify writes the kind name and the slots by accessor name, with no storage or $source', () => {
-		const parsed = JSON.parse(JSON.stringify(node)) as Record<string, unknown>;
-		expect(parsed['$type']).toBe('function_item');
-		expect(parsed['name']).toEqual({ $type: 'identifier', $text: 'serialize_me' });
-		expect(parsed['_name']).toBeUndefined();
-		expect(parsed['$source']).toBeUndefined();
-	});
-
-	it('SC-007: JSON.stringify does NOT include $fields', () => {
-		const json = JSON.stringify(node);
-		expect(json).not.toContain('"$fields"');
-	});
-
-	it('SC-007: JSON.stringify does NOT include render function artifacts', () => {
-		const json = JSON.stringify(node);
-		expect(json).not.toContain('"render"');
-		expect(json).not.toContain('"$render"');
+	it('refuses a node by name, and with one function every node shares', () => {
+		const node = rs.build.functionItem({ name: 'serialize_me', parameters: [], body: minimalBlock } as any);
+		const parsed = rs.parse('fn f() {}').statements()[0]!;
+		expect(() => JSON.stringify(node)).toThrow('toJSON: a node has no JSON form');
+		expect(() => JSON.stringify({ wrapped: [parsed] })).toThrow('toJSON: a node has no JSON form');
+		expect((node as unknown as { toJSON: unknown }).toJSON).toBe((parsed as unknown as { toJSON: unknown }).toJSON);
+		expect(() => JSON.parse('{}', rs.reviver)).toThrow('reviver: a node has no JSON form to revive');
 	});
 });
 
@@ -273,5 +258,43 @@ describe('$fields absent from factory output', () => {
 	it.each(nodes.map((n, i) => [`node[${i}]`, n] as const))('SC-001: %s has no $fields key', (_label, n) => {
 		expect((n as unknown as Record<string, unknown>)['$fields']).toBeUndefined();
 		expect(Object.keys(n)).not.toContain('$fields');
+	});
+});
+
+// ---------- object storage: shared members ----------
+
+type Members = Record<string, unknown>;
+const membersOf = (node: object, member: '$with' | '$trivia'): Members => (node as unknown as Record<string, Members>)[member]!;
+
+describe('object storage: a kind shares its member functions, and a spread copy is a node', () => {
+	const statement = (name: string) => rs.build.expressionStatement(rs.build.identifier(name));
+	const built = () => [rs.build.block({ statements: [] }), rs.build.block({ statements: [statement('a')] })] as const;
+	const read = () => [rs.parse('fn f() {}\n'), rs.parse('fn g() { h(); }\n')] as const;
+
+	it.each([
+		['built', built],
+		['read', read]
+	] as const)('two %s nodes of one kind call the same $with and $trivia functions', (_label, pair) => {
+		const [a, b] = pair();
+		for (const member of ['$with', '$trivia'] as const) {
+			const names = Object.keys(membersOf(a, member));
+			expect(names.length).toBeGreaterThan(0);
+			for (const name of names) expect(membersOf(a, member)[name]).toBe(membersOf(b, member)[name]);
+		}
+	});
+
+	it('a spread copy of a built or read node carries its handle, renders, edits and is a child as the node is', () => {
+		const block = rs.build.block({ statements: [statement('a')] });
+		const file = rs.parse('fn f() { a; }\n');
+		for (const node of [block, file] as const) {
+			const copy = { ...node };
+			expect((copy as unknown as Record<symbol, unknown>)[HANDLE]).toBe((node as unknown as Record<symbol, unknown>)[HANDLE]);
+			expect(copy.$render()).toBe(node.$render());
+			expect(copy.$trivia.leading()).toEqual(node.$trivia.leading());
+		}
+		expect({ ...block }.$with.statements(statement('b')).$render()).toBe(block.$with.statements(statement('b')).$render());
+		expect({ ...file }.$with.statements(...file.statements()).$render()).toBe(file.$with.statements(...file.statements()).$render());
+		const fn = (body: object) => rs.build.functionItem({ name: 'f', parameters: rs.build.parameters(), body } as never).$render();
+		expect(fn({ ...block })).toBe(fn(block));
 	});
 });

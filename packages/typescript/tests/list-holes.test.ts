@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import typescript from '../src/index.ts';
 import { createEngine } from '@sittir/common';
+import type { NodeStorageOptions } from '@sittir/types';
 
 type Holed = { elements(): readonly unknown[] };
 type Built = Holed & { readonly $type: number };
@@ -15,10 +16,12 @@ const HOLE = null as never;
 const slotsOf = (node: Holed): readonly (number | null)[] => node.elements().map((item) => (item === null ? null : (item as Built).$type));
 const firstOf = (tree: unknown, kind: number): Built => [...(tree as { $query(): { $descendants: { ofType(kind: number): Iterable<Built> } } }).$query().$descendants.ofType(kind)][0]!;
 
-describe.each([
+const STORAGES: readonly (readonly [string, NodeStorageOptions])[] = [
 	['arena storage', {}],
-	['object storage', { nodeStorage: 'object', nodeConstruction: 'object' }]
-] as const)('a list whose element admits a hole keeps it as null, in %s', (_storage, storage) => {
+	['object storage', { nodeStorage: 'object' }]
+];
+
+describe.each(STORAGES)('a list whose element admits a hole keeps it as null, in %s', (_storage, storage) => {
 	describe.each(['strict', 'default'] as const)('through the %s builder', (api) => {
 		const engineOf = async () => createEngine(typescript, { api, ...storage });
 
@@ -40,20 +43,6 @@ describe.each([
 			const x = b.identifier('x');
 			expect(() => b.array(x, undefined, x)).toThrow('Array.elements: a hole is null, never undefined');
 			expect(() => b.arrayPattern(x, undefined, x)).toThrow('ArrayPattern.elements: a hole is null, never undefined');
-		});
-
-		it('reads a parsed hole as null, writes it as null in JSON, and revives it as null', async () => {
-			const engine = await engineOf();
-			const b = engine.build as unknown as Builders;
-			const x = b.identifier('x');
-			for (const node of [firstOf(engine.parse('[x,,x];'), typescript.kinds.Array), b.array(x, HOLE, x)]) {
-				expect(slotsOf(node)[1]).toBeNull();
-				const json = JSON.stringify(node);
-				expect((JSON.parse(json) as { elements: unknown[] }).elements[1]).toBeNull();
-				const revived = JSON.parse(json, engine.reviver) as Built;
-				expect(slotsOf(revived)[1]).toBeNull();
-				expect(String(engine.render(revived as never))).toBe('[x,, x]');
-			}
 		});
 	});
 });

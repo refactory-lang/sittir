@@ -1,0 +1,142 @@
+{
+  "recordedAt": "2026-10-29T12:41:09.667Z",
+  "head": "34f51c91f4a28b3c303811b86359fe010c298793",
+  "branch": "chore/remove-eager-lane",
+  "changesUncommitted": true,
+  "fullUnitSuite": {
+    "command": "CI=1 pnpm exec vitest run --maxWorkers=4 --reporter=default --reporter=json",
+    "exitCode": 0,
+    "passed": 11150,
+    "expectedFailures": 6,
+    "failed": 0,
+    "skipped": 19,
+    "todo": 4,
+    "filesPassed": 929,
+    "filesFailed": 0,
+    "total": 11179,
+    "failures": []
+  },
+  "typeCheck": {
+    "command": "pnpm run type-check",
+    "exitCode": 0
+  },
+  "packageBuild": {
+    "command": "pnpm -r run build",
+    "exitCode": 0
+  },
+  "nativeCore": {
+    "command": "cargo test -p sittir-core --features arena",
+    "exitCode": 0,
+    "unitAndIntegrationPassed": 370,
+    "docTestsPassed": 3
+  },
+  "nativeRecordRender": {
+    "command": "cargo test -p sittir-parity-tests --features arena --test record_render",
+    "exitCode": 0,
+    "passed": 24
+  },
+  "clippy": {
+    "command": "cargo clippy -p sittir-core -p sittir-parity-tests --features arena --all-targets -- -D warnings",
+    "exitCode": 0
+  },
+  "lint": {
+    "command": "pnpm exec oxlint -c oxlint.config.ts packages/common/src/built-arena.ts packages/common/src/built-ref.ts packages/common/tests/leaf-sites.test.ts packages/python/tests/built-arena-release.test.ts",
+    "exitCode": 0
+  },
+  "validation": {
+    "grammars": [
+      "python",
+      "rust",
+      "typescript"
+    ],
+    "objectAndArenaRecordCountsEqual": true,
+    "weightedDiagnosticEntries": 184,
+    "movedRowsAgainstSavedBaseline": 0,
+    "noCeilingChanges": true
+  },
+  "compiledAdversarialTests": {
+    "passed": 6
+  },
+  "siteModel": {
+    "seeds": 3,
+    "operationsPerSeed": 5000,
+    "passed": true
+  },
+  "sourceScope": {
+    "changedPythonCandidateOutputs": 8,
+    "otherArenaGrammarFingerprintsUnchanged": 4,
+    "allObjectGrammarFingerprintsUnchanged": 5
+  },
+  "addonBuilds": [
+    {
+      "grammar": "python",
+      "profile": "gate",
+      "currentInputs": true,
+      "binarySha256": "c1fc1ca211faa1323215271657f5a6475d76577085b57e281065d230861a9bdb"
+    },
+    {
+      "grammar": "rust",
+      "profile": "gate",
+      "currentInputs": true,
+      "binarySha256": "5bb110fa1f82ab272d447a603f3e9807088051a32b2ae9f5211464c250c13aa1"
+    },
+    {
+      "grammar": "typescript",
+      "profile": "gate",
+      "currentInputs": true,
+      "binarySha256": "eb462a3e5879977d1a67aa8961f793315590d961e0e7961b8f161155daf8e77a"
+    },
+    {
+      "grammar": "regex",
+      "profile": "gate",
+      "currentInputs": true,
+      "binarySha256": "f7514c049625c0cce3cf46640ce452ad3659e7caa69ff348b2bc6e8880cb187d"
+    },
+    {
+      "grammar": "scm",
+      "profile": "gate",
+      "currentInputs": true,
+      "binarySha256": "b4fb510585a250a497f1f2a2afe5db432fda4d167beeb78a1facb1b729987855"
+    }
+  ],
+  "fullPerformanceMatrixRerun": false,
+  "broaderByteParityGateClosed": false,
+  "previousFullUnitSuite": {
+    "command": "CI=1 pnpm exec vitest run --maxWorkers=4 --reporter=default --reporter=json",
+    "exitCode": 1,
+    "passed": 11151,
+    "expectedFailures": 6,
+    "failed": 3,
+    "skipped": 19,
+    "todo": 4,
+    "filesPassed": 928,
+    "filesFailed": 1,
+    "failures": [
+      {
+        "path": "packages/tools/src/__tests__/regen-all.test.ts",
+        "name": "regen:all and the eager probe regenerates the probe once every grammar is generated and built natively"
+      },
+      {
+        "path": "packages/tools/src/__tests__/regen-all.test.ts",
+        "name": "regen:all and the eager probe regenerates the probe after the workspace check when every grammar is fresh"
+      },
+      {
+        "path": "packages/tools/src/__tests__/regen-all.test.ts",
+        "name": "regen:all and the eager probe exits with the status of a failed probe"
+      }
+    ],
+    "sameFailuresAsPriorRun": true
+  },
+  "regenerationTestCleanup": {
+    "evidence": "regeneration-cleanup.json",
+    "testsRetired": 4,
+    "previouslyFailingRetiredTests": 3,
+    "focusedPassed": 24,
+    "preRemovalRunnerControlPassed": 28,
+    "runtimeChanged": false
+  },
+  "testSourceTypeCheck": {
+    "command": "pnpm run type-check:tests",
+    "exitCode": 0
+  }
+}

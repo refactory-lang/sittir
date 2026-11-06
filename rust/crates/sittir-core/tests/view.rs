@@ -1,5 +1,5 @@
 //! Views: one `View` over any slot shape with the template's literal text
-//! around it, one `ListView` over a slice with the separator parts, head and
+//! around it, one `ListView` over any item sequence with the separator parts, head and
 //! tail spacing, and the list's own template.
 
 use sittir_core::spacing::SeamStrength;
@@ -139,7 +139,7 @@ fn list<'a>(
     after: KindId,
     leading: bool,
     trailing: bool,
-) -> ListView<'a, SlotValue<Word>> {
+) -> ListView<'a, &'a [SlotValue<Word>]> {
     ListView {
         items,
         template: "{}",
@@ -283,4 +283,49 @@ fn optional_elements_still_take_separators() {
         units: None,
     };
     assert_eq!(rt(&view), ",,a");
+}
+
+/// Items made on demand, as a record's run hands out a view per item cell:
+/// no slice of items exists for the list to borrow.
+#[derive(Debug, Clone, Copy)]
+struct Spelled(&'static [&'static str]);
+
+impl sittir_core::view::SlotItems for Spelled {
+    type Item = SlotValue<Word>;
+    fn count(&self) -> usize {
+        self.0.len()
+    }
+    fn item(&self, index: usize) -> Option<SlotValue<Word>> {
+        self.0.get(index).map(|&text| node(text))
+    }
+}
+
+impl std::fmt::Debug for Word {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str(self.0)
+    }
+}
+
+fn spelled_list<L: sittir_core::view::SlotItems>(items: L) -> ListView<'static, L> {
+    ListView {
+        items,
+        template: "[{}]",
+        before: TIGHT,
+        token: ",",
+        separators: None,
+        after: SPACE,
+        leading: false,
+        trailing: true,
+        head: None,
+        tail: None,
+        units: None,
+    }
+}
+
+#[test]
+fn a_list_over_items_made_on_demand_renders_as_over_a_slice() {
+    let slice = [node("a"), node("b"), node("c")];
+    assert_eq!(rt(&spelled_list(Spelled(&["a", "b", "c"]))), rt(&spelled_list(&slice)));
+    assert_eq!(rt(&spelled_list(Spelled(&["a", "b", "c"]))), "[a, b, c,]");
+    assert_eq!(rt(&spelled_list(Spelled(&[]))), "");
 }
