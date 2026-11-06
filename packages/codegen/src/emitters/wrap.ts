@@ -1,4 +1,5 @@
 import { hasBlankArm } from '../compiler/model/site-preferences.ts';
+import { emitShapeFailure } from '../compiler/diagnostics/emit-diagnostics.ts';
 import { continuationTriviaKinds, emptyForms, layoutTriviaKinds } from '../compiler/model/trivia.ts';
 import type { AuthoredCompound } from '../compiler/model/node-map.ts';
 import type { NodeMap } from '../compiler/types.ts';
@@ -535,7 +536,7 @@ function inlineSetters(node: AuthoredCompound | AssembledList, nodeMap: NodeMap,
 		if (isMultiple(f) && restSlots.has(method)) {
 			const storageList = `NonNullable<T.${node.typeName}['${f.storageKey}']>`;
 			if (finalSeatOf(f) !== undefined && admitted !== '')
-				throw new Error(`wrap: ${node.kind}.${f.name} has a final seat and admits the envelope ${envelopeType}; a rest setter cannot type both`);
+				throw emitShapeFailure({ code: 'final-seat-with-envelope', message: `wrap: ${node.kind}.${f.name} has a final seat and admits the envelope ${envelopeType}; a rest setter cannot type both` });
 			const restType = finalSeatOf(f) === undefined ? slotListTypeOf(f, () => `${storageList}[number]${admitted}`, 'mutable') : storageList;
 			return {
 				name: method,

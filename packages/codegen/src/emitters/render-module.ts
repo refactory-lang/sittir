@@ -1,5 +1,5 @@
 import { relaxedDisplayIds, relaxedKeywordIds } from './kind-id-rust.ts';
-import { emitShapeFailure, guardOwner } from '../compiler/diagnostics/emit-diagnostics.ts';
+import { emitFailuresSoFar, emitShapeFailure, guardOwner } from '../compiler/diagnostics/emit-diagnostics.ts';
 import { BLANK_KIND_ID } from '@sittir/common/blank-arm';
 import { ERROR_KIND_ID } from '@sittir/common/error-kind';
 import { depthMembersOf } from '../compiler/model/layout-kinds.ts';
@@ -1118,7 +1118,7 @@ export function emitRenderModule(
 	}
 	const meta = collectMetaData(nodeMap);
 	const unboxed = renderNodeSupport(lang, nodeMap, structs, meta, generatedIdTables, plan, [], inputs.envelopePins);
-	const support = renderNodeSupport(lang, nodeMap, structs, meta, generatedIdTables, plan, boxedPayloadsOf(unboxed.text, unboxed.choicePayloads), inputs.envelopePins);
+	const support = renderNodeSupport(lang, nodeMap, structs, meta, generatedIdTables, plan, emitFailuresSoFar() ? [] : boxedPayloadsOf(unboxed.text, unboxed.choicePayloads), inputs.envelopePins);
 
 	const nodeRs =
 		[

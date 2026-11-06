@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { collectingEmitDiagnostics, emitShapeFailure, guardOwner } from '../emit-diagnostics.ts';
+import { collectingEmitDiagnostics, emitFailuresSoFar, emitShapeFailure, guardOwner } from '../emit-diagnostics.ts';
 import { assertOneUntaggedSlot } from '../../../emitters/node-projection.ts';
 import { EmitHaltedError } from '../../../types/diagnostics.ts';
 
@@ -66,6 +66,21 @@ describe('collecting the diagnostics of an emission', () => {
 			})
 		);
 		expect(halted.blocking).toHaveLength(1);
+	});
+
+	it('says whether an earlier owner already failed, so a dependent step can stand down', () => {
+		const seen: boolean[] = [];
+		expect(emitFailuresSoFar()).toBe(false);
+		haltedBy(() =>
+			collectingEmitDiagnostics('demo', () => {
+				seen.push(emitFailuresSoFar());
+				guardOwner(undefined, () => {
+					throw fail('x', 'a');
+				});
+				seen.push(emitFailuresSoFar());
+			})
+		);
+		expect(seen).toEqual([false, true]);
 	});
 
 	it('does not catch outside a collection', () => {

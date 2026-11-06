@@ -24,6 +24,10 @@ export function emitShapeFailure(failure: EmitShapeFailure): EmitHaltedError {
 	return new EmitHaltedError([diagnosticOf(failure)]);
 }
 
+export function emitFailuresSoFar(): boolean {
+	return (scopes.at(-1)?.collected.length ?? 0) > 0;
+}
+
 export function guardOwner<T>(fallback: T, run: () => T): T {
 	const scope = scopes.at(-1);
 	if (scope === undefined) return run();

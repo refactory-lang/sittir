@@ -1,4 +1,5 @@
 import type { SlotBearingCompound } from '../compiler/model/node-map.ts';
+import { emitShapeFailure } from '../compiler/diagnostics/emit-diagnostics.ts';
 import { CHOICE, DEDENT, EOF, INDENT, NEWLINE, PATTERN, SEQ, STRING, SUPERTYPE, SYMBOL } from '../types/rule-types.ts'; // @rule-type-consts
 import { isBuilderTextLeaf, seamNeedsSpace, wordCharPredicate } from '../compiler/model/node-map.ts';
 import { isNonterminalRuleType, collectFixedLiteral, ruleListParts } from '../dsl/rule-patterns.ts';
@@ -882,7 +883,7 @@ function emitSymbol(rule: Extract<RenderRule, { type: 'SYMBOL' }>, ctx: EmitCtx)
 	if (rule.nonterminal === false) {
 		const fixed = fixedTextOfKind(ctx.nodeMap.nodes.get(rule.name)) ?? collectFixedLiteral(ctx.rules[rule.name]!);
 		if (fixed === undefined)
-			throw new Error(`emitSymbol: '${rule.name}' is nonterminal: false but renders no fixed text`);
+			throw emitShapeFailure({ code: 'nonterminal-without-fixed-text', message: `emitSymbol: '${rule.name}' is nonterminal: false but renders no fixed text` });
 		return literalBody(fixed);
 	}
 
