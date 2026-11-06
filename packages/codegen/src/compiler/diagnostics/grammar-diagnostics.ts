@@ -1,3 +1,5 @@
+import { textlessLeafKinds } from '../../emitters/built-from-text.ts';
+import { collectKindEntries } from '../../emitters/kind-discriminant.ts';
 import { writeFileSync } from 'node:fs';
 
 import { assemble, AssembleCtx, type AssembledNodeMap } from '../assemble.ts';
@@ -454,6 +456,20 @@ export function unexpectableExpectEntries(
 		}));
 }
 
+export function renderAsEntryMissingDiagnostics(grammar: string, kinds: readonly string[]): GrammarDiagnostic[] {
+	return kinds.map((kind) => ({
+		scope: 'grammar' as const,
+		code: 'render-as-entry-missing',
+		severity: 'error' as const,
+		grammar,
+		ownerKind: kind,
+		message: `'${kind}' is an external scanner token with a factory and no text shape`,
+		proposal: `Give '${kind}' a renderAs: entry in grammar.sittir.ts: renderAs: ($) => ({ ${kind}: <the text it renders and reads as> }).`,
+		canProceed: false,
+		details: { kind }
+	}));
+}
+
 export function collectGrammarDiagnosticsForGrammar(input: {
 	rawGrammar: RawGrammar;
 	generatedIdTables: GeneratedIdTables;
@@ -524,6 +540,7 @@ export function collectGrammarDiagnosticsForGrammar(input: {
 			...undeclaredSeparatorDiagnostics(rawGrammar.name, { nodeMap, kindEntries, options: rawGrammar.options }),
 			...indentDiagnostics(rawGrammar.name, { nodeMap, options: rawGrammar.options }),
 			...unresolvedEnumTextDiagnostics(rawGrammar.name, nodeMap),
+			...renderAsEntryMissingDiagnostics(rawGrammar.name, textlessLeafKinds(nodeMap, collectKindEntries(nodeMap, linked.generatedIdTables))),
 			...surfacedCompilerDiagnostics
 		])
 	};
