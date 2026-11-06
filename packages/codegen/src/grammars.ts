@@ -76,6 +76,12 @@ export function sittirDirOf(pkg: Pick<GrammarPackage, 'dir'>): string {
 	return join(pkg.dir, '.sittir');
 }
 
+export function parserNameOf(pkg: Pick<GrammarPackage, 'dir' | 'name'>): string {
+	const path = join(sittirDirOf(pkg), 'src', 'grammar.json');
+	if (!existsSync(path)) return pkg.name;
+	return (JSON.parse(readFileSync(path, 'utf8')) as { name: string }).name;
+}
+
 export function topLayerPath(pkg: Pick<GrammarPackage, 'dir'>): string {
 	const generated = join(pkg.dir, BINDINGS_MODULE);
 	return existsSync(generated) ? generated : join(pkg.dir, GRAMMAR_ENTRY);

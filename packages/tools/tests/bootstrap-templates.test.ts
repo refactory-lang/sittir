@@ -52,6 +52,10 @@ describe('the bootstrap template writes what the pipeline reads', () => {
 		expect(file('base.ts')).toContain('export default raw;');
 	});
 
+	it('leaves the tree-sitter grammar name to the upstream grammar, since the package name is a different fact', () => {
+		expect(file('grammar.sittir.ts')).not.toMatch(/\bname:/);
+	});
+
 	it('imports base.ts from the grammar entry, not the upstream package', () => {
 		expect(file('grammar.sittir.ts')).toContain("import base from './base.ts';");
 		expect(file('grammar.sittir.ts')).not.toContain('tree-sitter-python/grammar.js');

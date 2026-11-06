@@ -30,7 +30,7 @@ function entrySource(name: string, floors: Readonly<Record<string, readonly stri
 	const template = grammarPackageFiles(templateVars(name)).find((file) => file.path === 'grammar.sittir.ts')!.contents;
 	return template
 		.replace("'../codegen/src/dsl/index.ts'", JSON.stringify(resolve(__dirname, '../../codegen/src/dsl/index.ts')))
-		.replace(`name: '${name}'`, `name: '${name}',\n\texpectDiagnostics: ${JSON.stringify(floors)}`);
+		.replace('\tresolutions,\n', `\tresolutions,\n\texpectDiagnostics: ${JSON.stringify(floors)},\n`);
 }
 
 function writePackage(dir: string, name: string): GrammarPackage {

@@ -113,7 +113,6 @@ import { enrich, preference, wire } from '../codegen/src/dsl/index.ts';
 
 export default grammar(enrich(base), wire({
 \tresolutions,
-\tname: '${v.name}',
 \toptions: { indent: preference('${BOOTSTRAP_INDENT_UNIT}') }
 }));
 `
