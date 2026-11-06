@@ -2332,6 +2332,15 @@ export function enumValuesOf(rule: ChoiceRule): string[] {
 	return [...new Set(enumLiteralMembersOf(rule).map((m) => literalTextOf(m) ?? '').filter(Boolean))];
 }
 
+export interface EnumChoiceCtx {
+	readonly renderRule?: RenderRule | undefined;
+}
+
+export function enumChoiceOf(simplified: RenderRule, ctx: EnumChoiceCtx): ChoiceRule | undefined {
+	const spelled = ctx.renderRule ?? simplified;
+	return isEnumChoiceRule(simplified) && spelled.type === CHOICE ? (spelled as ChoiceRule) : undefined;
+}
+
 export class AssembledEnum extends AssembledLeaf<ChoiceRule> {
 	readonly modelType = 'enum' as const;
 	readonly resolvedKinds: readonly string[];
