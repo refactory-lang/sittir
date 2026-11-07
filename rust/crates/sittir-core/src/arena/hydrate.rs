@@ -270,14 +270,12 @@ pub fn parsed_side(row: Row, delimiter: Option<crate::types::Delimiter>) -> Side
     SideRecord { at: Some(row), delimiter, ..SideRecord::default() }
 }
 
-/// The row the node the cursor is on was read at, with its subtree's end and
-/// its span: the whole source for the root, as a read's coordinate names it.
+/// The row the child `at` was read at, with its subtree's end and its span:
+/// the whole source for the root, as a read's coordinate names it.
 #[must_use]
-pub fn row_of(cursor: &TreeCursor<'_>, ctx: &ReadCtx<'_>) -> Row {
-    let index = crate::read::index_of(cursor);
-    let node = cursor.node();
-    let span = if index == NodeIndex::ROOT { Span::whole(ctx.source) } else { Span::of(&node) };
-    Row { index, end: index + crate::read::descendant_count(&node), span }
+pub fn row_of(at: &crate::read::Child, ctx: &ReadCtx<'_>) -> Row {
+    let span = if at.index == NodeIndex::ROOT { Span::whole(ctx.source) } else { Span { start: at.start, end: at.end } };
+    Row { index: at.index, end: at.index + at.descendants, span }
 }
 
 /// A node type's direct hydration: what the node the cursor is on is held as
@@ -472,6 +470,7 @@ impl<T: HydrateNode, const A: bool> HydrateSlot for NonEmptyVec<Option<SlotValue
 pub fn hydrate_at<N: HydrateNode>(cursor: &mut TreeCursor<'_>, ctx: &mut ReadCtx<'_>, index: NodeIndex, stamped: Option<KindId>, depth: Depth, records: &mut Hydration<'_>) -> Result<Option<Address>, HydrateError> {
     crate::read::goto(cursor, index);
     ctx.begin_read();
+    ctx.at = None;
     let mark = records.tree.mark();
     let walked = match stamped {
         Some(kind) => N::hydrate_stamped(kind, cursor, ctx, Some(depth), records, None),
@@ -534,7 +533,7 @@ mod tests {
 
     impl HydrateNode for Name {
         fn hydrate(cursor: &mut TreeCursor<'_>, ctx: &mut ReadCtx<'_>, _: Option<Depth>, records: &mut Hydration<'_>, inline: Option<Embed>) -> Result<Hydrated, HydrateError> {
-            let (row, kind) = (row_of(cursor, ctx), grammar_id(&cursor.node()));
+            let (row, kind) = (row_of(&ctx.current(cursor), ctx), grammar_id(&cursor.node()));
             let draft = records.draft(kind, 2, inline)?;
             records.finish(draft, &parsed_side(row, None), kind, inline)
         }
@@ -542,7 +541,7 @@ mod tests {
 
     impl HydrateNode for Item {
         fn hydrate(cursor: &mut TreeCursor<'_>, ctx: &mut ReadCtx<'_>, _: Option<Depth>, records: &mut Hydration<'_>, inline: Option<Embed>) -> Result<Hydrated, HydrateError> {
-            let (row, kind) = (row_of(cursor, ctx), grammar_id(&cursor.node()));
+            let (row, kind) = (row_of(&ctx.current(cursor), ctx), grammar_id(&cursor.node()));
             let draft = records.draft(kind, 5, inline)?;
             let (mut name, mut parts) = (None, Vec::new());
             cursor.goto_first_child();
@@ -569,7 +568,7 @@ mod tests {
 
     impl<const REFUSE: bool> HydrateNode for File<REFUSE> {
         fn hydrate(cursor: &mut TreeCursor<'_>, ctx: &mut ReadCtx<'_>, depth: Option<Depth>, records: &mut Hydration<'_>, inline: Option<Embed>) -> Result<Hydrated, HydrateError> {
-            let (row, kind) = (row_of(cursor, ctx), grammar_id(&cursor.node()));
+            let (row, kind) = (row_of(&ctx.current(cursor), ctx), grammar_id(&cursor.node()));
             let draft = records.draft(kind, 3, inline)?;
             let mut items = Vec::new();
             cursor.goto_first_child();
