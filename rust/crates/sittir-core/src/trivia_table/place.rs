@@ -32,8 +32,8 @@
 //! taking no lock. What the placement keeps to place further layout owners
 //! stays under the lock.
 
-use crate::tree_sitter;
-use super::{holds_sides, is_entry, Adjacency, Assigned, DepthAnchor, LayoutRun, Place, SurfaceKinds, TriviaSide};
+use super::{Adjacency, Assigned, DepthAnchor, LayoutRun, Place, SurfaceKinds, TriviaSide};
+use crate::nodes::{Kid, Nodes};
 use crate::heap::{btree_allocation, CountedMap, HeapBytes, IndexState, ARC_COUNTS};
 use crate::points::LineTable;
 use crate::types::{narrow, KindId, NodeIndex, RunId, Span};
@@ -93,42 +93,6 @@ impl Tok {
 
     fn end_edge(kid: &Kid) -> Self {
         Self { start: kid.end, end: kid.end, key: Key::leave(kid.end, kid.end, kid, 2) }
-    }
-}
-
-/// What the placement reads of a node.
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-struct Kid {
-    index: NodeIndex,
-    start: u32,
-    end: u32,
-    count: u32,
-    kind: KindId,
-    named: bool,
-    entry: bool,
-    leaf: bool,
-    holder: bool,
-}
-
-impl Kid {
-    fn of(node: &tree_sitter::Node<'_>, index: NodeIndex) -> Self {
-        let Span { start, end } = Span::of(node);
-        let entry = is_entry(node);
-        Self {
-            index,
-            start,
-            end,
-            count: crate::read::descendant_count(node),
-            kind: crate::read::grammar_id(node),
-            named: node.is_named(),
-            entry,
-            leaf: !entry && node.child_count() == 0,
-            holder: holds_sides(node),
-        }
-    }
-
-    fn holds(&self, byte: u32) -> bool {
-        self.start <= byte && byte < self.end
     }
 }
 
@@ -477,17 +441,12 @@ pub struct Placement {
     grown: AtomicBool,
 }
 
-/// The tree a placement reads: its tree, source and row starts.
-#[derive(Clone, Copy)]
-pub struct Source<'t> {
-    pub tree: &'t tree_sitter::Tree,
-    pub source: &'t str,
+/// The tree a placement reads: its nodes, through the navigation
+/// interface, and the row starts of their text.
+pub struct Source<'t, 'n> {
+    pub nodes: &'n mut dyn Nodes<'t>,
     pub lines: &'t LineTable,
 }
-
-/// How a placement finds a node of its tree by its descendant index: the
-/// reader's own lookup, which moves from where it last read.
-pub type Lookup<'n, 't> = &'n mut dyn FnMut(NodeIndex) -> Option<tree_sitter::Node<'t>>;
 
 /// The sides placing one layout owner wrote, by node and side, each side's
 /// entries in source order.
@@ -501,15 +460,16 @@ impl Placement {
         Self { kinds, unit, ..Self::default() }
     }
 
-    fn with<'t, R>(&self, source: Source<'t>, nodes: Option<Lookup<'_, 't>>, f: impl FnOnce(&mut Placer<'t, '_, '_>) -> R) -> R {
+    fn with<'t, R>(&self, source: Source<'t, '_>, f: impl FnOnce(&mut Placer<'t, '_, '_>) -> R) -> R {
+        let Source { nodes, lines } = source;
         let mut state = self.state.lock().unwrap_or_else(PoisonError::into_inner);
         self.grown.store(true, Ordering::Relaxed);
         let published = self.published.get_or_init(|| {
-            let published = Published::new(crate::read::descendant_count(&source.tree.root_node()));
+            let published = Published::new(nodes.kid(NodeIndex::ROOT).count);
             state.published += published.allocation();
             published
         });
-        let mut placer = Placer { source, kinds: self.kinds, unit: self.unit.max(1), state: &mut state, published, lookup: nodes, nodes: HashMap::default(), kids: HashMap::default(), plans: HashMap::default(), placed: PlacedSides::new() };
+        let mut placer = Placer { nodes, lines, kinds: self.kinds, unit: self.unit.max(1), state: &mut state, published, kids: HashMap::default(), plans: HashMap::default(), placed: PlacedSides::new() };
         f(&mut placer)
     }
 
@@ -524,9 +484,9 @@ impl Placement {
     /// `nodes`: the table it published, `None` where placing it wrote
     /// nothing or no layout owner holds the side. Once the layout owner is
     /// placed, a read takes no lock.
-    pub fn cover<'t>(&self, source: Source<'t>, nodes: Lookup<'_, 't>, index: NodeIndex, side: TriviaSide) -> Option<&Table> {
+    pub fn cover(&self, source: Source<'_, '_>, index: NodeIndex, side: TriviaSide) -> Option<&Table> {
         let slot = match self.slot(index, side) {
-            UNPLACED => self.with(source, Some(nodes), |placer| {
+            UNPLACED => self.with(source, |placer| {
                 placer.cover(index, side);
                 placer.settle(index, side)
             }),
@@ -539,8 +499,8 @@ impl Placement {
     /// its `side` to, so a coordinate of the list frames with that item's
     /// side too, read from the table of the list's layout owner (`cover`);
     /// `None` for a node that is no list or passes none.
-    pub fn edge_item<'t>(&self, source: Source<'t>, nodes: Lookup<'_, 't>, index: NodeIndex, side: TriviaSide) -> Option<NodeIndex> {
-        self.cover(source, nodes, index, TriviaSide::Inner)?.edge_item(index, side)
+    pub fn edge_item(&self, source: Source<'_, '_>, index: NodeIndex, side: TriviaSide) -> Option<NodeIndex> {
+        self.cover(source, index, TriviaSide::Inner)?.edge_item(index, side)
     }
 
     /// The run `id` names, which a placed side holds, read without a lock.
@@ -571,8 +531,8 @@ impl Placement {
 
     /// Place every layout owner of the tree.
     #[allow(clippy::redundant_closure_for_method_calls, reason = "the method's path fixes the placer's lifetimes, which `with` takes for any")]
-    pub fn place_all(&self, source: Source<'_>) {
-        self.with(source, None, |placer| placer.place_all());
+    pub fn place_all(&self, source: Source<'_, '_>) {
+        self.with(source, |placer| placer.place_all());
     }
 
     /// Every table published so far, in the order the layout owners were
@@ -592,8 +552,8 @@ impl Placement {
     /// stretches structural indentation is measured from. It places no
     /// layout owner.
     #[must_use]
-    pub fn depth_stretches(&self, source: Source<'_>) -> Vec<(u32, u32)> {
-        self.with(source, None, |placer| {
+    pub fn depth_stretches(&self, source: Source<'_, '_>) -> Vec<(u32, u32)> {
+        self.with(source, |placer| {
             placer.measure_stretches();
             placer.stretches()
         })
@@ -643,14 +603,13 @@ impl Placement {
     }
 }
 
-struct Placer<'t, 's, 'l> {
-    source: Source<'t>,
+struct Placer<'t, 's, 'n> {
+    nodes: &'n mut dyn Nodes<'t>,
+    lines: &'t LineTable,
     kinds: SurfaceKinds,
     unit: u32,
     state: &'s mut State,
     published: &'s Published,
-    lookup: Option<Lookup<'l, 't>>,
-    nodes: HashMap<NodeIndex, tree_sitter::Node<'t>, IndexState>,
     kids: HashMap<NodeIndex, Arc<[Kid]>, IndexState>,
     plans: HashMap<Gap, Arc<Plan>, IndexState>,
     placed: PlacedSides,
@@ -658,24 +617,11 @@ struct Placer<'t, 's, 'l> {
 
 impl<'t> Placer<'t, '_, '_> {
     fn text(&self) -> &'t str {
-        self.source.source
+        self.nodes.text()
     }
 
     fn len(&self) -> u32 {
-        narrow(self.source.source.len())
-    }
-
-    fn node(&mut self, index: NodeIndex) -> tree_sitter::Node<'t> {
-        if let Some(&node) = self.nodes.get(&index) {
-            return node;
-        }
-        let node = self.lookup.as_mut().and_then(|lookup| lookup(index)).unwrap_or_else(|| {
-            let mut cursor = self.source.tree.walk();
-            crate::read::goto(&mut cursor, index);
-            cursor.node()
-        });
-        self.nodes.insert(index, node);
-        node
+        narrow(self.text().len())
     }
 
     /// What the placement reads of the node at `index`: from the shape of
@@ -689,7 +635,7 @@ impl<'t> Placer<'t, '_, '_> {
                 return shape.kids[at];
             }
         }
-        Kid::of(&self.node(index), index)
+        self.nodes.kid(index)
     }
 
     fn kids(&mut self, index: NodeIndex) -> Arc<[Kid]> {
@@ -699,22 +645,8 @@ impl<'t> Placer<'t, '_, '_> {
         if let Some(kids) = self.kids.get(&index) {
             return Arc::clone(kids);
         }
-        let node = self.node(index);
-        let mut cursor = node.walk();
-        let mut kids = Vec::new();
-        if cursor.goto_first_child() {
-            loop {
-                let child = cursor.node();
-                let at = index + crate::read::offset_of(&cursor);
-                self.nodes.insert(at, child);
-                kids.push(Kid::of(&child, at));
-                if !cursor.goto_next_sibling() {
-                    break;
-                }
-            }
-        }
+        let kids = self.nodes.kids(index);
         self.state.steps += kids.len() as u64;
-        let kids: Arc<[Kid]> = kids.into();
         self.kids.insert(index, Arc::clone(&kids));
         kids
     }
@@ -933,26 +865,19 @@ impl<'t> Placer<'t, '_, '_> {
             return true;
         }
         let path = self.path(index);
-        !path[..path.len() - 1].iter().any(|&at| is_entry(&self.node(at)))
+        !path[..path.len() - 1].iter().any(|&at| self.kid(at).entry)
     }
 
     /// The nodes from the root down to the node at `index`, each one's shape
     /// above it built, so each knows its parent.
     fn path(&mut self, index: NodeIndex) -> Vec<NodeIndex> {
-        let mut cursor = self.source.tree.walk();
-        crate::read::goto(&mut cursor, index);
-        let mut path = Vec::new();
-        loop {
-            let at = crate::read::index_of(&cursor);
-            self.nodes.entry(at).or_insert_with(|| cursor.node());
-            path.push(at);
-            if !cursor.goto_parent() {
-                break;
-            }
+        let mut path = vec![index];
+        while let Some(parent) = self.nodes.parent(path[path.len() - 1]) {
+            path.push(parent);
         }
         path.reverse();
         for &at in &path[..path.len() - 1] {
-            if is_entry(&self.node(at)) {
+            if self.kid(at).entry {
                 break;
             }
             self.shape(at);
@@ -1026,56 +951,30 @@ impl<'t> Placer<'t, '_, '_> {
     /// Place every layout owner of the tree, from one walk of it, each after
     /// the layout owners above it.
     fn place_all(&mut self) {
-        let mut cursor = self.source.tree.walk();
         let mut owners = Vec::new();
-        loop {
-            let node = cursor.node();
-            let index = crate::read::index_of(&cursor);
-            self.nodes.insert(index, node);
-            let kid = Kid::of(&node, index);
-            if index == NodeIndex::ROOT || (!kid.entry && !kid.leaf && !self.kinds.lists.contains(&kid.kind)) {
-                owners.push(index);
+        let mut pending = vec![self.kid(NodeIndex::ROOT)];
+        while let Some(kid) = pending.pop() {
+            if kid.index == NodeIndex::ROOT || (!kid.entry && !kid.leaf && !self.kinds.lists.contains(&kid.kind)) {
+                owners.push(kid.index);
             }
-            if !kid.entry && cursor.goto_first_child() {
-                continue;
+            if !kid.entry && !kid.leaf {
+                pending.extend(self.kids(kid.index).iter().rev());
             }
-            loop {
-                if cursor.goto_next_sibling() {
-                    break;
-                }
-                if !cursor.goto_parent() {
-                    for owner in owners {
-                        self.place_gaps_of(owner);
-                    }
-                    return;
-                }
-            }
+        }
+        for owner in owners {
+            self.place_gaps_of(owner);
         }
     }
 
     /// The depth stretches of every node of the tree measured, from one
     /// walk of it, a parent's shape before its children's.
     fn measure_stretches(&mut self) {
-        let mut cursor = self.source.tree.walk();
-        loop {
-            let node = cursor.node();
-            let index = crate::read::index_of(&cursor);
-            self.nodes.insert(index, node);
-            let kid = Kid::of(&node, index);
-            if !kid.entry && !kid.leaf {
-                self.shape(index);
-            }
-            self.level(index);
-            if !kid.entry && cursor.goto_first_child() {
-                continue;
-            }
-            loop {
-                if cursor.goto_next_sibling() {
-                    break;
-                }
-                if !cursor.goto_parent() {
-                    return;
-                }
+        let mut pending = vec![self.kid(NodeIndex::ROOT)];
+        while let Some(kid) = pending.pop() {
+            let shape = (!kid.entry && !kid.leaf).then(|| self.shape(kid.index));
+            self.level(kid.index);
+            if let Some(shape) = shape {
+                pending.extend(shape.kids.iter().rev());
             }
         }
     }
@@ -1685,7 +1584,7 @@ impl<'t> Placer<'t, '_, '_> {
     /// The width of the blanks from the start of the line holding byte `at`
     /// to `at`, or none when a byte that is not blank lies between.
     fn line_blanks(&mut self, at: u32) -> Option<i64> {
-        let start = self.source.lines.point(at).map_or(0, |point| at - point.column);
+        let start = self.lines.point(at).map_or(0, |point| at - point.column);
         let bytes = self.text().as_bytes();
         let blank_end = if let Some(&end) = self.state.blanks.get(&start) {
             end

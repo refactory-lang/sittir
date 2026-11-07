@@ -47,6 +47,13 @@ export interface LayoutWork {
    */
   cursorClimbs: number
   /**
+   * The moves trivia placement made down from the node its cursor was
+   * created at, the tree's root or the node of a reader's cursor it moves,
+   * to a node below that node's children (`nodes::TreeNodes::root_descents`):
+   * the lookups whose descent `cursor_climbs` does not bound.
+   */
+  rootDescents: number
+  /**
    * The nodes the depth moves of the tree's slices walked, its depth
    * members found once for every move (`DepthMembers::of`).
    */

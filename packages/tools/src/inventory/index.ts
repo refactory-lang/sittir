@@ -25,13 +25,13 @@ import {
 	VOCABULARY_DIR
 } from '@sittir/codegen/bindings';
 import { printFlagsModule } from './flags.ts';
-import { REPO_ROOT, grammarPackageDir, type GrammarName } from '@sittir/codegen/grammars';
+import { REPO_ROOT, assertGrammar, grammarPackageDir, type GrammarName } from '@sittir/codegen/grammars';
 import { compileGrammarOf, evaluateGrammar, invoke, load, type GrammarDiagnostic } from '../codegen-surface.ts';
 import { readNodeModelFile } from '../validate/common.ts';
 
 export { VOCABULARY_DIR };
 export interface BindingsInventoryOptions {
-	readonly grammars?: readonly GrammarName[];
+	readonly grammars?: readonly string[];
 	readonly check?: boolean;
 	readonly members?: boolean;
 	readonly write?: boolean;
@@ -230,7 +230,7 @@ export function membersTable(d: Derivation): string {
 }
 
 export async function run(opts: BindingsInventoryOptions): Promise<number> {
-	const grammars = opts.grammars ?? bindingGrammars();
+	const grammars = opts.grammars?.map(assertGrammar) ?? bindingGrammars();
 	let code = 0;
 	if (opts.write) {
 		const { flags } = await readVocabulary(VOCABULARY_DIR);

@@ -6,6 +6,7 @@
 
 use sittir_core::tree_sitter;
 use sittir_core::engine::EngineGrammar;
+use sittir_core::nodes::TreeNodes;
 use sittir_core::points::LineTable;
 use sittir_core::trivia_table::{Adjacency, Assigned, Placement, Source, Table, TriviaSide};
 use sittir_core::types::NodeIndex;
@@ -56,11 +57,10 @@ fn differences<G: EngineGrammar>(grammar: G, options: sittir_core::options::Reso
     let tree = parsed.tree();
     let kinds = grammar.surface_kinds();
     let lines = LineTable::new(source);
-    let at = Source { tree, source, lines: &lines };
-    let mut from_root = |index: NodeIndex| sittir_core::engine::node_at_index(tree, index);
+    let mut nodes = TreeNodes::new(tree, source);
     let count = sittir_core::read::descendant_count(&tree.root_node());
     let whole = Placement::new(kinds, unit);
-    whole.place_all(at);
+    whole.place_all(Source { nodes: &mut nodes, lines: &lines });
     let (placed, twice) = published(&whole);
     let mut found = Vec::new();
     if !twice.is_empty() {
@@ -70,13 +70,13 @@ fn differences<G: EngineGrammar>(grammar: G, options: sittir_core::options::Reso
         let alone = Placement::new(kinds, unit);
         for &index in &indices {
             for side in SIDES {
-                let got = entries(&alone, alone.cover(at, &mut from_root, index, side), index, side);
-                let want = entries(&whole, whole.cover(at, &mut from_root, index, side), index, side);
+                let got = entries(&alone, alone.cover(Source { nodes: &mut nodes, lines: &lines }, index, side), index, side);
+                let want = entries(&whole, whole.cover(Source { nodes: &mut nodes, lines: &lines }, index, side), index, side);
                 if got != want {
                     found.push(format!("side {index} {side:?} read alone {order}: {got:?}, placed with every layout owner: {want:?}"));
                 }
                 if side != TriviaSide::Inner {
-                    let (got, want) = (alone.edge_item(at, &mut from_root, index, side), whole.edge_item(at, &mut from_root, index, side));
+                    let (got, want) = (alone.edge_item(Source { nodes: &mut nodes, lines: &lines }, index, side), whole.edge_item(Source { nodes: &mut nodes, lines: &lines }, index, side));
                     if got != want {
                         found.push(format!("edge item {index} {side:?} read alone {order}: {got:?}, placed with every layout owner: {want:?}"));
                     }
@@ -167,13 +167,12 @@ fn pinned<G: EngineGrammar>(grammar: G, options: sittir_core::options::ResolvedO
     let tree = parsed.tree();
     let kinds = grammar.surface_kinds();
     let lines = LineTable::new(source);
-    let at = Source { tree, source, lines: &lines };
-    let mut from_root = |index: NodeIndex| sittir_core::engine::node_at_index(tree, index);
+    let mut nodes = TreeNodes::new(tree, source);
     let want: Depths = want.iter().map(|&(kind, nth, side, changes)| (kind.to_owned(), nth, side, changes.to_vec())).collect();
     let mut found = Vec::new();
     let whole = Placement::new(kinds, unit);
-    whole.place_all(at);
-    let got = depths(tree, |index, side| whole.cover(at, &mut from_root, index, side).map_or_else(Vec::new, |table| table.side(index, side).to_vec()));
+    whole.place_all(Source { nodes: &mut nodes, lines: &lines });
+    let got = depths(tree, |index, side| whole.cover(Source { nodes: &mut nodes, lines: &lines }, index, side).map_or_else(Vec::new, |table| table.side(index, side).to_vec()));
     if got != want {
         found.push(format!("placed with every layout owner:\n{}", listed(&got)));
     }
@@ -184,7 +183,7 @@ fn pinned<G: EngineGrammar>(grammar: G, options: sittir_core::options::ResolvedO
             continue;
         };
         let alone = Placement::new(kinds, unit);
-        let got = self::changes(alone.cover(at, &mut from_root, index, *side).map_or(&[][..], |table| table.side(index, *side)));
+        let got = self::changes(alone.cover(Source { nodes: &mut nodes, lines: &lines }, index, *side).map_or(&[][..], |table| table.side(index, *side)));
         if got != *changes {
             found.push(format!("{kind} {nth} {side:?} read alone: {got:?}, pinned {changes:?}"));
         }

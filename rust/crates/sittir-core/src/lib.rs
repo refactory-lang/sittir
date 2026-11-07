@@ -28,6 +28,7 @@ pub mod points;
 pub mod trivia_table;
 pub mod prepare;
 pub mod query;
+pub mod nodes;
 pub mod non_empty;
 pub use non_empty::NonEmptyVec;
 pub mod read;

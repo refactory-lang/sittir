@@ -315,7 +315,7 @@ interface SiteLevel {
 	readonly kindId: number | undefined;
 	readonly union: readonly DisplayUnionMember[];
 }
-type IndexedSite = SitePath & { readonly admission?: string; readonly levels?: readonly [SiteLevel, SiteLevel | undefined] };
+type IndexedSite = SitePath & { readonly admission?: string; readonly arms?: string; readonly levels?: readonly [SiteLevel, SiteLevel | undefined] };
 type SiteIndex = ReadonlyMap<string, readonly IndexedSite[]>;
 
 function siteIndexOf(plan: RenderOptionsPlan): SiteIndex {
@@ -334,6 +334,7 @@ function siteIndexOf(plan: RenderOptionsPlan): SiteIndex {
 				? {
 						...p,
 						admission: JSON.stringify([p.site, spacing.slot, spacing.label, spacing.defaultId, spacing.allowedIds]),
+						arms: JSON.stringify([p.site, spacing.defaultId, spacing.allowedIds]),
 						levels: [
 							levelOf(spacing.source, spacing.display, spacing.kindId),
 							spacing.seat === undefined ? undefined : levelOf(spacing.seat.kind, spacing.seat.display, spacing.seat.kindId)
@@ -343,6 +344,7 @@ function siteIndexOf(plan: RenderOptionsPlan): SiteIndex {
 					? {
 							...p,
 							admission: JSON.stringify([p.site, delimiter.slot, delimiter.allowed, delimiter.defaultBits]),
+							arms: JSON.stringify([p.site, delimiter.allowed, delimiter.defaultBits]),
 							levels: [levelOf(delimiter.source, delimiter.display, delimiter.kindId), undefined]
 						}
 					: p;
@@ -377,10 +379,16 @@ function isAliasSiteFamily(sites: readonly IndexedSite[]): boolean {
 	);
 }
 
+function isSameLevelSiteFamily(sites: readonly IndexedSite[]): boolean {
+	const levelKey = (site: IndexedSite) => JSON.stringify(site.levels?.map((level) => level && [level.storage, level.display, level.kindId]));
+	const [head] = sites;
+	return head?.arms !== undefined && sites.every((site) => site.arms === head.arms && levelKey(site) === levelKey(head));
+}
+
 function siteRefsOf(leaf: AddressLeafEntry, siteIndex: SiteIndex): SitePath[] {
 	const refs = leaf.canonical.flatMap((segments) => {
 		const bucket = siteIndex.get(formatPreferencePath(segments)) ?? [];
-		if (bucket.length !== 1 && (bucket.length === 0 || !isAliasSiteFamily(bucket))) {
+		if (bucket.length !== 1 && (bucket.length === 0 || !(isSameLevelSiteFamily(bucket) || isAliasSiteFamily(bucket)))) {
 			throw emitShapeFailure({ code: 'option-address-sites', message: 
 				`options.rs: address '${leaf.path}' names '${formatPreferencePath(segments)}', which is ${bucket.length === 0 ? 'no site' : `${bucket.length} sites`}: ${JSON.stringify(bucket.map(({ site, levels }) => ({ site, levels: levels?.map((level) => level && { storage: level.storage, display: level.display, kindId: level.kindId }) })))}`
 			 });

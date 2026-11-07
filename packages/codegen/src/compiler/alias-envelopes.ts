@@ -1,3 +1,4 @@
+import { emitShapeFailure } from './diagnostics/emit-diagnostics.ts';
 import { STRING, SUPERTYPE } from '../types/rule-types.ts'; // @rule-type-consts
 import type { AnyRule, SimplifiedRule } from '../types/rule.ts';
 import type { GeneratedKindEntry } from '../dsl/symbol-table.ts';
@@ -23,7 +24,12 @@ export function aliasEnvelopeStorages(
 		const refs = aliasContentRefs(rules[display]) as readonly AliasStorage[];
 		if (refs.some((ref) => ref.name === word)) continue;
 		if (refs.length !== 1)
-			throw new Error(`alias envelope '${display}' has ${refs.length} storages (${refs.map((ref) => ref.name).join(', ')}); an alias envelope has one storage`);
+			throw emitShapeFailure({
+				code: 'alias-envelope-storage-count',
+				ownerKind: display,
+				message: `alias envelope '${display}' has ${refs.length} storages (${refs.map((ref) => ref.name).join(', ')}); an alias envelope has one storage`,
+				details: { display, storages: refs.map((ref) => ref.name) }
+			});
 		const storage = refs[0]!;
 		if (rules[storage.name]?.type === SUPERTYPE) continue;
 		storages.set(display, storage);
@@ -40,7 +46,14 @@ export function copyAliasEnvelopeBodies<R extends AnyRule>(rules: Record<string,
 }
 
 function literalBody(display: string, storage: AliasStorage): AnyRule {
-	if (storage.literal === undefined) throw new Error(`alias envelope '${display}': its storage '${storage.name}' has no rule and no literal text`);
+	if (storage.literal === undefined) {
+		throw emitShapeFailure({
+			code: 'alias-envelope-storage-empty',
+			ownerKind: display,
+			message: `alias envelope '${display}': its storage '${storage.name}' has no rule and no literal text`,
+			details: { display, storage: storage.name }
+		});
+	}
 	return { type: STRING, value: storage.literal, hidden: false, ...(storage.kindId === undefined ? {} : { resolvedKindId: storage.kindId }) } as AnyRule;
 }
 
@@ -61,11 +74,21 @@ export function linkAliasStorages(
 		const own = slotsShape(node.slots);
 		const held = storage === undefined ? undefined : slotsShape(storage.slots);
 		if (storage === undefined || own !== held)
-			throw new Error(`alias envelope '${node.kind}': its slots ${own} are not its storage '${storageKind}' slots ${held ?? '(no such node)'}`);
+			throw emitShapeFailure({
+				code: 'alias-envelope-slots-differ',
+				ownerKind: node.kind,
+				message: `alias envelope '${node.kind}': its slots ${own} are not its storage '${storageKind}' slots ${held ?? '(no such node)'}`,
+				details: { envelope: node.kind, storage: storageKind }
+			});
 		const ownForms = formsShape(refineForms?.get(node.kind));
 		const heldForms = formsShape(refineForms?.get(storageKind));
 		if (ownForms !== heldForms)
-			throw new Error(`alias envelope '${node.kind}': its forms ${ownForms} are not its storage '${storageKind}' forms ${heldForms}`);
+			throw emitShapeFailure({
+				code: 'alias-envelope-forms-differ',
+				ownerKind: node.kind,
+				message: `alias envelope '${node.kind}': its forms ${ownForms} are not its storage '${storageKind}' forms ${heldForms}`,
+				details: { envelope: node.kind, storage: storageKind }
+			});
 		node.aliasStorageNode = storage;
 		storage.aliasDisplays = [...storage.aliasDisplays, node];
 	}

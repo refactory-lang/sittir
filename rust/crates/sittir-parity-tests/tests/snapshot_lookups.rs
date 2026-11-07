@@ -3,14 +3,16 @@
 //! each side alone: a side whose baseline renders a region that holds sides
 //! of its own seats both, the inner while the outer is being measured. Each
 //! lookup moves the cursor from where the last one left it, so a deeper tree
-//! costs its lookups no more climbing a level.
+//! costs its lookups no more climbing a level, and the trivia placement a
+//! lookup starts moves that cursor too, so it descends from the root no
+//! more often in a deeper tree.
 
 use sittir_core::engine::ParsedTree;
 use sittir_core::layout::LayoutWork;
 use sittir_core::read::{Depth, ReadNode, SnapshotCtx};
 use sittir_core::types::NodeIndex;
 use sittir_rust::render::AnyNode;
-use sittir_parity_tests::{block_chain, indented_block_line, on_deep_stack, parsed_rust, probe_input, tuple_chain, wide_unit_blocks};
+use sittir_parity_tests::{block_chain, indented_block_line, on_deep_stack, parsed_rust, probe_input, tuple_chain, unary_chain, wide_unit_blocks};
 use sittir_rust::RustGrammar;
 
 /// Lists inside lists, each with runs and comments beside its items.
@@ -41,10 +43,10 @@ fn a_region_s_render_finds_every_node_it_looks_up_inside_the_region() {
     }
 }
 
-/// The work a snapshot of a chain of `levels` does.
-fn chain_work(levels: usize) -> LayoutWork {
+/// The work a snapshot of `chain`'s chain of `levels` does.
+fn chain_work(chain: fn(usize) -> String, levels: usize) -> LayoutWork {
     on_deep_stack(move || {
-        let tree = parsed_rust(&tuple_chain(levels));
+        let tree = parsed_rust(&chain(levels));
         tree.snapshot::<AnyNode>(NodeIndex::ROOT, None).expect("a snapshot");
         tree.layout_work()
     })
@@ -52,9 +54,17 @@ fn chain_work(levels: usize) -> LayoutWork {
 
 #[test]
 fn a_snapshot_s_lookups_climb_the_same_levels_at_each_level_of_a_chain() {
-    let [one, two, four] = [100, 200, 400].map(chain_work);
+    let [one, two, four] = [100, 200, 400].map(|levels| chain_work(tuple_chain, levels));
     assert_eq!(four.cursor_climbs - two.cursor_climbs, 2 * (two.cursor_climbs - one.cursor_climbs), "climbs at 100, 200 and 400 levels: {}, {}, {}", one.cursor_climbs, two.cursor_climbs, four.cursor_climbs);
     assert_eq!(four.region_fallbacks, 0);
+}
+
+#[test]
+fn a_snapshot_s_trivia_placement_descends_from_the_root_as_often_at_any_depth() {
+    for (name, chain) in [("tuple types", tuple_chain as fn(usize) -> String), ("blocks", block_chain), ("`!` operators", unary_chain)] {
+        let descents = [100, 200, 400].map(|levels| chain_work(chain, levels).root_descents);
+        assert!(descents.iter().all(|&count| count == descents[0]), "{name}: root descents at 100, 200 and 400 levels: {descents:?}");
+    }
 }
 
 #[test]

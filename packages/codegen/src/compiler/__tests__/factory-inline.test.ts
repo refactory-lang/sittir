@@ -6,7 +6,8 @@ import { evaluate } from '../../dsl/evaluate.ts';
 import { linkPredicted } from '../../__tests__/helpers/linked.ts';
 import { normalizeGrammar } from '../normalize.ts';
 import { assemble, AssembleCtx, FactoryInlineUnnestableError } from '../assemble.ts';
-import { assertCompilation } from '../compile.ts';
+import { assertCompilation, diagnoseGrammar } from '../compile.ts';
+import { rawIdTablesOf } from '../../__tests__/helpers/linked.ts';
 import { DiagnosticSink } from '../../types/diagnostics.ts';
 import { wire } from '../../dsl/wire/wire.ts';
 import type { AssembledNodeMap } from '../assemble.ts';
@@ -40,6 +41,18 @@ async function compileGrammarSource(source: string): Promise<AssembledNodeMap> {
 			diagnosticRecords: []
 		});
 		return nodeMap;
+	} finally {
+		rmSync(dir, { recursive: true, force: true });
+	}
+}
+
+async function diagnoseGrammarSource(source: string) {
+	const dir = mkdtempSync(resolve(tmpdir(), 'sittir-factory-inline-'));
+	const entry = resolve(dir, 'grammar.js');
+	writeFileSync(entry, source, 'utf8');
+	try {
+		const raw = await evaluate(entry, NO_FILE_TYPES);
+		return diagnoseGrammar({ grammar: 'fi', evaluated: raw, generatedIdTables: rawIdTablesOf(raw) });
 	} finally {
 		rmSync(dir, { recursive: true, force: true });
 	}
@@ -90,6 +103,12 @@ describe('factoryInline', () => {
 
 	it('rejects an inline kind that is the grammar root', async () => {
 		await expect(compileGrammarSource(nestableGrammar(',\n  factoryInline: ($) => [$.root]'))).rejects.toThrow(FactoryInlineUnnestableError);
+	});
+
+	it('reports an unnestable inline kind as a named record at the gate', async () => {
+		const diagnosis = await diagnoseGrammarSource(nestableGrammar(',\n  factoryInline: ($) => [$.root]'));
+		expect(diagnosis.passed).toBe(false);
+		expect(diagnosis.blocked).toMatchObject([{ code: 'factory-inline-unnestable', ownerKind: 'root', canProceed: false }]);
 	});
 
 	it('rejects an inline kind referenced by no slot', async () => {
