@@ -8,6 +8,7 @@ import type {
 	PortableDelimiterToken,
 	PortableMount,
 	PortableFlagStep,
+	PortableSpelledFact,
 	PortableKeyedMount,
 	PortableMemberStep,
 	PortableMountCall,
@@ -22,6 +23,8 @@ import type {
 import { Delimiter } from '@sittir/common/delimiter';
 import type { ChildTest, GrammarRoutes, MemberRoute, ReadEntry, SlotStep } from '../../../bindings/routes.ts';
 import { concreteKinds, guaranteedBy, heldSteps, modelNode, mountHoldersOf, reachedBy, shownSlots, valueTokensOf, type Guaranteed, type MountHolder } from '../../../bindings/routes.ts';
+import type { PortableFactRecord } from './read-tests.ts';
+import { portableSpelledFactOf } from './spelled-facts.ts';
 import type { ModelMount, ModelSlot, SlotModel, TemplateFact } from '../../../bindings/facts.ts';
 import type { NodeMap } from '../../../compiler/types.ts';
 import { forwardedTargetKind } from '../../shared.ts';
@@ -84,6 +87,8 @@ export interface PortableBuildInput {
 	readonly kindEntries: readonly KindEnumEntry[];
 	readonly flagPlans: ReadonlyMap<string, ReadonlyMap<string, QueryPlan | null>>;
 	readonly features: readonly string[];
+	readonly factOf: (entry: ReadEntry) => PortableFactRecord | undefined;
+	readonly declaresFlag: (path: string, flag: string) => boolean;
 }
 
 export interface PortableBuildOutput {
@@ -190,7 +195,7 @@ const sortedIds = (ids: Iterable<number>): readonly number[] => [...new Set(ids)
 const disjoint = (sets: readonly ReadonlySet<number>[]): boolean =>
 	sets.every((a, i) => sets.every((b, j) => i === j || [...a].every((id) => !b.has(id))));
 
-export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPlans, features }: PortableBuildInput): PortableBuildOutput {
+export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPlans, features, factOf, declaresFlag }: PortableBuildInput): PortableBuildOutput {
 	const typeOf = (kind: string): number | undefined => findKindEntry(kindEntries, kind)?.id;
 	const shapes = buildFactoryMap(nodeMap, kindEntries).factoryShapes;
 	const fixedText = new Map(fixedTextKinds(nodeMap, kindEntries));
@@ -804,6 +809,19 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 		const shape = numeric.get(kind);
 		const combos = product(bareFormSlotsOf(kind, claimed).map(({ slot, forms, bare }) => [...bare, null].map((choice) => ({ slot, forms, bare, choice }))));
 		if (combos.length > FORM_PRODUCT_LIMIT) formDiagnostics.push({ code: 'portable-form-product', path: entry.vocab, kinds: [kind], arms: combos.length });
+		const spelledHere = [...(routes.readEntries.get(kind) ?? [])]
+			.sort((a, b) => a.index - b.index)
+			.flatMap((other) => {
+				const fact = factOf(other);
+				return fact === undefined ? [] : [{ fact, entry: other }];
+			});
+		const spelledFact = (name: string): PortableSpelledFact => {
+			const group = spelledHere.filter(({ fact }) => fact.name === name);
+			return portableSpelledFactOf(group[0]!.fact, group.map(({ entry }) => entry), model, routes);
+		};
+		const spelledFacts = [
+			...new Set(spelledHere.flatMap(({ fact }) => (fact.path === entry.vocab || (fact.flag !== undefined && declaresFlag(entry.vocab, fact.flag)) ? [fact.name] : [])))
+		].map(spelledFact);
 		const arms = combos.flatMap((combo): Arm[] => {
 			const keeps = (site: Site): boolean =>
 				combo.every(({ slot, forms, bare, choice }) => {
@@ -952,6 +970,7 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 						presets: deepest,
 						flags: flagSteps,
 						...(entry.template === undefined || entry.claim.flag !== undefined ? {} : { template: portableTemplate(entry.template) }),
+						...(spelledFacts.length === 0 ? {} : { facts: spelledFacts }),
 						...soleOf(entry, armMembers),
 						...(content === undefined ? {} : { content })
 					}

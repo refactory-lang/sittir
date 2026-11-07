@@ -1,4 +1,4 @@
-import { byCodepoint, camel, compositionOf, derive, envelopeTargets, lineageOf, readVocabulary, readVocabularySource, resolveRoutes, VOCABULARY_DIR } from '@sittir/codegen/bindings';
+import { type Vocabulary, byCodepoint, camel, compositionOf, derive, envelopeTargets, lineageOf, readVocabulary, readVocabularySource, resolveRoutes, VOCABULARY_DIR } from '@sittir/codegen/bindings';
 import type { GrammarName } from '@sittir/codegen/grammars';
 import { loadInputs } from '../inventory/index.ts';
 import { plan, under, type Plan } from '../vocabulary/plan.ts';
@@ -60,6 +60,8 @@ export function guardRows(p: Plan, composed: ReadonlySet<string>, held: Held): G
 	return rows;
 }
 
+const declaresFlag = (vocabulary: Vocabulary, path: string, flag: string): boolean => vocabulary.kinds.has(path) && vocabulary.members(path).get(flag)?.flag === true;
+
 export async function heldBy(grammar: GrammarName): Promise<Held> {
 	const [input] = await loadInputs([grammar]);
 	const d = derive([input!]);
@@ -69,7 +71,12 @@ export async function heldBy(grammar: GrammarName): Promise<Held> {
 	const paths = new Set<string>([...d.allvocab, ...d.contentDerived.keys(), ...d.refinements.keys()]);
 	const members = new Set<string>([
 		...[...d.members].flatMap(([path, at]) => [...at.keys()].map((member) => memberKey(path, member))),
-		...entries.flatMap((entry) => [...entry.members.map((route) => route.name), ...(entry.claim.flag === undefined ? [] : [entry.claim.flag])].map((member) => memberKey(entry.vocab, member))),
+		...entries.flatMap((entry) => entry.members.map((route) => memberKey(entry.vocab, route.name))),
+		...[...readEntries.values()].flatMap((onKind) =>
+			onKind.flatMap(({ claim: { flag } }) =>
+				flag === undefined ? [] : onKind.filter((other) => other.claim.flag === flag || declaresFlag(input!.vocabulary, other.vocab, flag)).map((other) => memberKey(other.vocab, flag))
+			)
+		),
 		...input!.bindings.containers.flatMap((container) =>
 			envelopeTargets(input!.model, container, forms).flatMap((kind) =>
 				(readEntries.get(kind) ?? []).flatMap((entry) => container.captures.map((capture) => memberKey(entry.vocab, camel(capture.name))))

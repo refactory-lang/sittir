@@ -902,7 +902,8 @@ function membersOf(
 	const named = input.bindings.members.flatMap((m) =>
 		m.route === 'rename' && m.flag !== true && names(m, entry, inherited, declares) && (captureReaches(input.model, m, kind) || (claims !== kind && captureReaches(input.model, m, claims))) ? [m] : []
 	);
-	const slotNames: SlotNames = new Map([...kindNames, ...named.flatMap((m) => {
+	const byPrecedence = [...named.filter((m) => !attaches(m, inherited)), ...named.filter((m) => attaches(m, inherited))];
+	const slotNames: SlotNames = new Map([...kindNames, ...byPrecedence.flatMap((m) => {
 		const slot = slotFor(input.model, slots, m);
 		return slot === undefined ? [] : [[slot.name, m.name] as const];
 	})]);
@@ -1351,7 +1352,7 @@ export function resolveRoutes(input: GrammarInput): GrammarRoutes {
 			const slot = capturedSlot(input.model, member, form);
 			if (slot !== undefined && (member.route === 'dropped' || namesEvery(member, reads.get(form) ?? [], declaredBy(input.vocabulary)))) (slotNames.get(form) ?? slotNames.set(form, new Map<string, string | null>()).get(form))?.set(slot.name, member.route === 'rename' ? member.name : null);
 		}
-		if (!holdsCapture(input.model, member)) {
+		if (heldForms(input.model, member.owner).some((form) => modelNode(input.model, form) !== undefined) && !holdsCapture(input.model, member)) {
 			const token = droppedToken(member);
 			const capture = member.route === 'rename' ? `@${member.name}` : '@dropped';
 			throw new Error(`bindings: ${member.owner}'s ${capture} captures ${token === undefined ? selectorText(member) : `the token "${token}"`}, which no form of ${member.owner} holds`);

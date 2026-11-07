@@ -5605,6 +5605,173 @@
       "read": [
         {
           "vocab": "declaration.method",
+          "toplevel": false,
+          "within": [
+            "decorated_definition_class_declaration"
+          ],
+          "pins": [],
+          "test": [
+            {
+              "up": 1,
+              "via": [
+                {
+                  "slots": {
+                    "311": 0
+                  }
+                },
+                {
+                  "slots": {
+                    "179": 0
+                  }
+                }
+              ],
+              "plan": {
+                "op": "eq",
+                "text": "typing",
+                "slots": {
+                  "221": 0
+                }
+              }
+            },
+            {
+              "up": 1,
+              "via": [
+                {
+                  "slots": {
+                    "311": 0
+                  }
+                },
+                {
+                  "slots": {
+                    "179": 0
+                  }
+                }
+              ],
+              "plan": {
+                "op": "eq",
+                "text": "override",
+                "slots": {
+                  "221": 1
+                }
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "declaration.method",
+          "toplevel": false,
+          "within": [
+            "decorated_definition_class_declaration"
+          ],
+          "pins": [],
+          "test": [
+            {
+              "up": 1,
+              "via": [
+                {
+                  "slots": {
+                    "311": 0
+                  }
+                }
+              ],
+              "plan": {
+                "op": "eq",
+                "text": "staticmethod",
+                "slots": {
+                  "179": 0
+                }
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "declaration.method",
+          "toplevel": false,
+          "within": [
+            "decorated_definition_class_declaration"
+          ],
+          "pins": [],
+          "test": [
+            {
+              "up": 1,
+              "via": [
+                {
+                  "slots": {
+                    "311": 0
+                  }
+                }
+              ],
+              "plan": {
+                "op": "eq",
+                "text": "override",
+                "slots": {
+                  "179": 0
+                }
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "declaration.property.setter",
+          "toplevel": false,
+          "within": [
+            "decorated_definition_class_declaration"
+          ],
+          "pins": [],
+          "test": [
+            {
+              "up": 1,
+              "via": [
+                {
+                  "slots": {
+                    "311": 0
+                  }
+                },
+                {
+                  "slots": {
+                    "179": 0
+                  }
+                }
+              ],
+              "plan": {
+                "op": "eq",
+                "text": "setter",
+                "slots": {
+                  "221": 1
+                }
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "declaration.property.getter",
+          "toplevel": false,
+          "within": [
+            "decorated_definition_class_declaration"
+          ],
+          "pins": [],
+          "test": [
+            {
+              "up": 1,
+              "via": [
+                {
+                  "slots": {
+                    "311": 0
+                  }
+                }
+              ],
+              "plan": {
+                "op": "eq",
+                "text": "property",
+                "slots": {
+                  "179": 0
+                }
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "declaration.method",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -5703,6 +5870,18 @@
           "flag": true
         },
         {
+          "name": "async",
+          "route": "slot",
+          "slot": "async",
+          "path": [
+            {
+              "owner": "method_declaration",
+              "slot": "async"
+            }
+          ],
+          "flag": true
+        },
+        {
           "name": "name",
           "route": "slot",
           "slot": "name",
@@ -5736,6 +5915,17 @@
           ]
         },
         {
+          "name": "type",
+          "route": "slot",
+          "slot": "return_type",
+          "path": [
+            {
+              "owner": "method_declaration",
+              "slot": "return_type"
+            }
+          ]
+        },
+        {
           "name": "returnType",
           "route": "slot",
           "slot": "return_type",
@@ -5754,6 +5944,31 @@
             {
               "owner": "method_declaration",
               "slot": "body"
+            }
+          ]
+        },
+        {
+          "name": "typeParameters",
+          "route": "nested",
+          "via": [
+            {
+              "field": "type_parameters",
+              "kind": "type_params",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "type_params",
+          "slot": "items",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "method_declaration",
+              "slot": "type_parameters"
+            },
+            {
+              "owner": "type_params",
+              "slot": "items"
             }
           ]
         },
@@ -8554,13 +8769,13 @@
       },
       {
         "depth": 2,
-        "paths": 77,
+        "paths": 78,
         "kinds": 82,
         "refinements": 6
       },
       {
         "depth": 3,
-        "paths": 65,
+        "paths": 67,
         "kinds": 59,
         "refinements": 43
       },

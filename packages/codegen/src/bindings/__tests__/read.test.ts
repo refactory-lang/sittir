@@ -47,14 +47,14 @@ describe('readBindings', () => {
 		const facts = await readBindings('((identifier) @identifier.local (#is-not? local))');
 		expect(facts.claims[0]?.predicates).toEqual([{ operator: 'is-not', capture: null, arguments: [{ text: 'local' }], subject: null }]);
 	});
-	it('keeps every predicate with its operator, capture and arguments, and leaves directives out', async () => {
+	it('keeps every predicate with its operator, capture and arguments, a captured argument with where it sits, and leaves directives out', async () => {
 		const facts = await readBindings(
 			'((identifier) @identifier.receiver (#match? @identifier.receiver "^self$") (#lua-match? @identifier.receiver "%a") (#eq? @identifier.receiver @identifier.receiver) (#set! reason "x"))'
 		);
 		expect(facts.claims[0]?.predicates).toEqual([
 			{ operator: 'match', capture: 'identifier.receiver', arguments: [{ text: '^self$' }], subject: { up: 0, down: [] } },
 			{ operator: 'lua-match', capture: 'identifier.receiver', arguments: [{ text: '%a' }], subject: { up: 0, down: [] } },
-			{ operator: 'eq', capture: 'identifier.receiver', arguments: [{ capture: 'identifier.receiver' }], subject: { up: 0, down: [] } }
+			{ operator: 'eq', capture: 'identifier.receiver', arguments: [{ capture: 'identifier.receiver', site: { up: 0, down: [] } }], subject: { up: 0, down: [] } }
 		]);
 	});
 

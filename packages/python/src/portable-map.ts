@@ -1779,6 +1779,12 @@ export interface PythonMap extends V.GrammarMap {
 				| T.Type.Parsed;
 			readonly $forms: V.Form<'default' | 'name' | 'type'>;
 		};
+		readonly 'declaration.property.getter': {
+			readonly $forms: V.Form<'name' | 'parameters'>;
+		};
+		readonly 'declaration.property.setter': {
+			readonly $forms: V.Form<'name' | 'parameters'>;
+		};
 		readonly 'declaration.type_alias': {
 			readonly name: V.Read<PythonMap, 'identifier'> | V.Read<PythonMap, 'identifier.qualified'>;
 			readonly typeParameters:

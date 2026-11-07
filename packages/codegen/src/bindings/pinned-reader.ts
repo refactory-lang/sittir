@@ -509,6 +509,7 @@ function claimFact(
 ): ClaimFact {
 	const predicates = patternPredicates.map((p) => ({
 		...p,
+		arguments: p.arguments.map((a) => ('capture' in a ? { ...a, site: captureSite(v, a.capture, nodes) } : a)),
 		subject: p.capture === null ? null : captureSite(v, p.capture, nodes)
 	}));
 	const first = v.children[0];

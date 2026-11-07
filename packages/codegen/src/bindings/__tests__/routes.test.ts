@@ -702,6 +702,25 @@ describe("keptKinds over a supertype the slot holds", () => {
 		expect(['declaration.variable', 'declaration.method', 'declaration.constant'].map(named)).toEqual(['value', 'right', 'value']);
 	});
 
+	it("names a slot by its own claim's capture over a name its path only declares, in whichever order the bindings list them", async () => {
+		const declaring: Vocabulary = {
+			...EMPTY_VOCABULARY,
+			kinds: new Map([['declaration.constant', {} as never]]),
+			members: (path) =>
+				new Map(path === 'declaration.constant' ? [['value', { optional: false, flag: false }], ['result', { optional: false, flag: false }]] : [])
+		};
+		const lines = ['(binary right: (_) @value) @declaration.variable', '((binary left: (_) @_left right: (_) @result) @declaration.constant (#eq? @_left "K"))'];
+		for (const bindings of [lines, [...lines].reverse()]) {
+			const routes = resolveRoutes({ ...(await grammar(bindings.join('\n'))), vocabulary: declaring });
+			const named = (vocab: string): string | undefined =>
+				routes.readEntries
+					.get('binary')
+					?.find((entry) => entry.vocab === vocab)
+					?.members.find((member) => member.route === 'slot' && member.slot.name === 'right')?.name;
+			expect(['declaration.variable', 'declaration.constant'].map(named)).toEqual(['value', 'result']);
+		}
+	});
+
 	it("gives an alias envelope of a structured kind the stored kind's members, each routed through its content", async () => {
 		const model = new Map(MODEL.map((n) => [n.kind, n]));
 		model.set('wrapped', node('wrapped', [slot('content', ['binary'])], { modelType: 'alias' }));

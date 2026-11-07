@@ -35,6 +35,6 @@ export namespace Declaration {
 			| V.Type.Any<G>
 		>[];
 		readonly static?: Flag;
-		// t only
+		// pt only
 	}
 }

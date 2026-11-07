@@ -14,6 +14,11 @@
 (class_definition body: (suite_block (block . (simple_statements (simple_statements_elements . item: (expression_statement (string) @doc))))))
 (class_definition body: (suite_block (block (function_definition) @declaration.method)))
 (class_definition body: (suite_block (block (decorated_definition definition: (function_definition) @declaration.method))))
+((decorated_definition_class_declaration (decorator (identifier) @_fact) definition: (method_declaration return_type: (_) @type) @declaration.property.getter) (#eq? @_fact "property"))
+((decorated_definition_class_declaration (decorator (attribute object: (identifier) @_object attribute: (identifier) @_fact)) definition: (method_declaration name: (identifier) @name return_type: (_) @returnType) @declaration.property.setter) (#eq? @_object @name) (#eq? @_fact "setter"))
+((decorated_definition_class_declaration (decorator (identifier) @_fact) definition: (method_declaration) @declaration.method.static) (#eq? @_fact "staticmethod"))
+((decorated_definition_class_declaration (decorator (identifier) @_fact) definition: (method_declaration) @declaration.method.override) (#eq? @_fact "override"))
+((decorated_definition_class_declaration (decorator (attribute object: (identifier) @_module attribute: (identifier) @_fact)) definition: (method_declaration) @declaration.method.override) (#eq? @_module "typing") (#eq? @_fact "override"))
 ((method_declaration name: (identifier) @name) @declaration.constructor (#eq? @name "__init__"))
 (constructor_declaration) @declaration.constructor
 ((method_declaration name: (identifier) @name) @declaration.method.special (#match? @name "^__(?<stem>.*)__$"))

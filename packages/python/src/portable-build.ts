@@ -2604,6 +2604,44 @@ export const build: PortableBuildTable = {
 							}
 						}
 					},
+					facts: [
+						{
+							name: 'static',
+							flag: 'static',
+							member: 'decorators',
+							spellings: [
+								{
+									item: {
+										$path: 'attribute.decorator',
+										content: 'staticmethod'
+									}
+								}
+							]
+						},
+						{
+							name: 'override',
+							flag: 'override',
+							member: 'decorators',
+							spellings: [
+								{
+									item: {
+										$path: 'attribute.decorator',
+										content: 'override'
+									}
+								},
+								{
+									item: {
+										$path: 'attribute.decorator',
+										content: {
+											$path: 'expression.member',
+											object: 'typing',
+											property: 'override'
+										}
+									}
+								}
+							]
+						}
+					],
 					when: [
 						{
 							absent: [],
@@ -2836,6 +2874,44 @@ export const build: PortableBuildTable = {
 						holes: ['stem'],
 						match: '^__(?<stem>.*)__$'
 					},
+					facts: [
+						{
+							name: 'static',
+							flag: 'static',
+							member: 'decorators',
+							spellings: [
+								{
+									item: {
+										$path: 'attribute.decorator',
+										content: 'staticmethod'
+									}
+								}
+							]
+						},
+						{
+							name: 'override',
+							flag: 'override',
+							member: 'decorators',
+							spellings: [
+								{
+									item: {
+										$path: 'attribute.decorator',
+										content: 'override'
+									}
+								},
+								{
+									item: {
+										$path: 'attribute.decorator',
+										content: {
+											$path: 'expression.member',
+											object: 'typing',
+											property: 'override'
+										}
+									}
+								}
+							]
+						}
+					],
 					when: [
 						{
 							absent: [],
@@ -3047,6 +3123,540 @@ export const build: PortableBuildTable = {
 						{
 							absent: [],
 							required: ['default', 'name', 'type']
+						}
+					]
+				}
+			]
+		},
+		'declaration.property.getter': {
+			root: true,
+			arms: [
+				{
+					kind: 352,
+					builder: 'methodDeclaration',
+					members: [
+						{
+							name: 'name',
+							steps: [
+								{
+									key: 'name'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [352, 'name'],
+									kinds: [1],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							]
+						},
+						{
+							name: 'parameters',
+							steps: [
+								{
+									key: 'parameters'
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [352, 'parameters'],
+									kinds: []
+								},
+								{
+									at: [193, 'items'],
+									kinds: [1, 195, 197, 199, 200, 201, 202, 225, 258, 259],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										'*': 259,
+										'/': 258
+									},
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'parameters',
+											key: 'elements',
+											optional: true
+										},
+										{
+											builder: 'parametersElements',
+											key: 'items'
+										}
+									],
+									many: true
+								}
+							]
+						},
+						{
+							name: 'type',
+							steps: [
+								{
+									key: 'returnType',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [352, 'returnType'],
+									kinds: [226]
+								}
+							]
+						},
+						{
+							name: 'body',
+							steps: [
+								{
+									key: 'body'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [352, 'body'],
+									kinds: [299, 301]
+								},
+								{
+									at: [300, 'block'],
+									kinds: [180],
+									within: [
+										{
+											builder: 'suiteBlock',
+											key: 'block'
+										}
+									]
+								}
+							]
+						},
+						{
+							name: 'typeParameters',
+							steps: [
+								{
+									key: 'typeParameters',
+									builder: 'typeParams',
+									optional: true
+								},
+								{
+									key: 'items'
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [272, 'items'],
+									kinds: []
+								},
+								{
+									at: [273, 'items'],
+									kinds: [270, 304, 305, 306],
+									within: [
+										{
+											builder: 'typeParamsItems',
+											key: 'items'
+										}
+									],
+									many: true
+								}
+							]
+						},
+						{
+							name: 'doc',
+							steps: [
+								{
+									key: 'body',
+									builder: 'suiteBlock'
+								},
+								{
+									key: 'block',
+									builder: 'block'
+								},
+								{
+									key: 'statements',
+									builder: 'simpleStatements',
+									optional: true,
+									many: true
+								},
+								{
+									key: 'statements',
+									builder: 'simpleStatementsElements'
+								},
+								{
+									key: 'items',
+									builder: 'expressionStatement',
+									many: true
+								},
+								{
+									key: 'content'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [142, 'content'],
+									kinds: [
+										1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 143, 201, 203, 205, 206, 207, 208, 209, 210,
+										213, 214, 216, 217, 220, 221, 222, 224, 233, 234, 235, 236, 238, 239, 240, 241, 242, 246, 247, 248,
+										255, 256, 257, 287, 293, 294, 295, 296
+									],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							],
+							reads: [248]
+						}
+					],
+					empty: ['parameters'],
+					owners: [
+						[0, 1, 2, 3, 4],
+						[0, 1, 2, 4, 5]
+					],
+					presets: [],
+					flags: {
+						async: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'async',
+											optional: true
+										}
+									],
+									kind: 67
+								}
+							]
+						}
+					},
+					facts: [
+						{
+							name: 'getter',
+							member: 'decorators',
+							spellings: [
+								{
+									item: {
+										$path: 'attribute.decorator',
+										content: 'property'
+									}
+								}
+							]
+						},
+						{
+							name: 'override',
+							flag: 'override',
+							member: 'decorators',
+							spellings: [
+								{
+									item: {
+										$path: 'attribute.decorator',
+										content: 'override'
+									}
+								},
+								{
+									item: {
+										$path: 'attribute.decorator',
+										content: {
+											$path: 'expression.member',
+											object: 'typing',
+											property: 'override'
+										}
+									}
+								}
+							]
+						}
+					],
+					when: [
+						{
+							absent: [],
+							required: ['name', 'parameters']
+						}
+					]
+				}
+			]
+		},
+		'declaration.property.setter': {
+			root: true,
+			arms: [
+				{
+					kind: 352,
+					builder: 'methodDeclaration',
+					members: [
+						{
+							name: 'name',
+							steps: [
+								{
+									key: 'name'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [352, 'name'],
+									kinds: [1],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							]
+						},
+						{
+							name: 'parameters',
+							steps: [
+								{
+									key: 'parameters'
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [352, 'parameters'],
+									kinds: []
+								},
+								{
+									at: [193, 'items'],
+									kinds: [1, 195, 197, 199, 200, 201, 202, 225, 258, 259],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										'*': 259,
+										'/': 258
+									},
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'parameters',
+											key: 'elements',
+											optional: true
+										},
+										{
+											builder: 'parametersElements',
+											key: 'items'
+										}
+									],
+									many: true
+								}
+							]
+						},
+						{
+							name: 'returnType',
+							steps: [
+								{
+									key: 'returnType',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [352, 'returnType'],
+									kinds: [226]
+								}
+							]
+						},
+						{
+							name: 'body',
+							steps: [
+								{
+									key: 'body'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [352, 'body'],
+									kinds: [299, 301]
+								},
+								{
+									at: [300, 'block'],
+									kinds: [180],
+									within: [
+										{
+											builder: 'suiteBlock',
+											key: 'block'
+										}
+									]
+								}
+							]
+						},
+						{
+							name: 'typeParameters',
+							steps: [
+								{
+									key: 'typeParameters',
+									builder: 'typeParams',
+									optional: true
+								},
+								{
+									key: 'items'
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [272, 'items'],
+									kinds: []
+								},
+								{
+									at: [273, 'items'],
+									kinds: [270, 304, 305, 306],
+									within: [
+										{
+											builder: 'typeParamsItems',
+											key: 'items'
+										}
+									],
+									many: true
+								}
+							]
+						},
+						{
+							name: 'doc',
+							steps: [
+								{
+									key: 'body',
+									builder: 'suiteBlock'
+								},
+								{
+									key: 'block',
+									builder: 'block'
+								},
+								{
+									key: 'statements',
+									builder: 'simpleStatements',
+									optional: true,
+									many: true
+								},
+								{
+									key: 'statements',
+									builder: 'simpleStatementsElements'
+								},
+								{
+									key: 'items',
+									builder: 'expressionStatement',
+									many: true
+								},
+								{
+									key: 'content'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [142, 'content'],
+									kinds: [
+										1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 143, 201, 203, 205, 206, 207, 208, 209, 210,
+										213, 214, 216, 217, 220, 221, 222, 224, 233, 234, 235, 236, 238, 239, 240, 241, 242, 246, 247, 248,
+										255, 256, 257, 287, 293, 294, 295, 296
+									],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							],
+							reads: [248]
+						}
+					],
+					empty: ['parameters'],
+					owners: [
+						[0, 1, 2, 3, 4],
+						[0, 1, 2, 4, 5]
+					],
+					presets: [],
+					flags: {
+						async: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'async',
+											optional: true
+										}
+									],
+									kind: 67
+								}
+							]
+						}
+					},
+					facts: [
+						{
+							name: 'setter',
+							member: 'decorators',
+							spellings: [
+								{
+									item: {
+										$path: 'attribute.decorator',
+										content: {
+											$path: 'expression.member',
+											property: 'setter'
+										}
+									},
+									holes: {
+										name: ['content', 'object']
+									}
+								}
+							]
+						},
+						{
+							name: 'override',
+							flag: 'override',
+							member: 'decorators',
+							spellings: [
+								{
+									item: {
+										$path: 'attribute.decorator',
+										content: 'override'
+									}
+								},
+								{
+									item: {
+										$path: 'attribute.decorator',
+										content: {
+											$path: 'expression.member',
+											object: 'typing',
+											property: 'override'
+										}
+									}
+								}
+							]
+						}
+					],
+					when: [
+						{
+							absent: [],
+							required: ['name', 'parameters']
 						}
 					]
 				}

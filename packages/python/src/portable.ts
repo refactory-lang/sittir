@@ -70,6 +70,9 @@ export interface PortableIds {
 	'declaration.parameter.default': TSKindId.DefaultParameter;
 	'declaration.parameter.typed': TSKindId.TypedParameter;
 	'declaration.parameter.typed_default': TSKindId.TypedDefaultParameter;
+	'declaration.property': TSKindId.MethodDeclaration;
+	'declaration.property.getter': TSKindId.MethodDeclaration;
+	'declaration.property.setter': TSKindId.MethodDeclaration;
 	'declaration.type_alias': TSKindId.TypeAliasStatement;
 	'declaration.type_parameter':
 		| TSKindId.TypeParamParamSpec
@@ -474,6 +477,9 @@ export interface PortableTexts {
 	'declaration.parameter.default': never;
 	'declaration.parameter.typed': never;
 	'declaration.parameter.typed_default': never;
+	'declaration.property': never;
+	'declaration.property.getter': never;
+	'declaration.property.setter': never;
 	'declaration.type_alias': never;
 	'declaration.type_parameter': never;
 	'declaration.type_parameter.parameters': never;
@@ -721,6 +727,7 @@ export interface PortableKindsAt {
 		readonly function: PortableKindsAt['declaration.function'];
 		readonly method: PortableKindsAt['declaration.method'];
 		readonly parameter: PortableKindsAt['declaration.parameter'];
+		readonly property: PortableKindsAt['declaration.property'];
 		readonly type_alias: PortableKindsAt['declaration.type_alias'];
 		readonly type_parameter: PortableKindsAt['declaration.type_parameter'];
 		readonly variable: PortableKindsAt['declaration.variable'];
@@ -743,6 +750,13 @@ export interface PortableKindsAt {
 	'declaration.parameter.default': { readonly $path: 'declaration.parameter.default' };
 	'declaration.parameter.typed': { readonly $path: 'declaration.parameter.typed' };
 	'declaration.parameter.typed_default': { readonly $path: 'declaration.parameter.typed_default' };
+	'declaration.property': {
+		readonly $path: 'declaration.property';
+		readonly getter: PortableKindsAt['declaration.property.getter'];
+		readonly setter: PortableKindsAt['declaration.property.setter'];
+	};
+	'declaration.property.getter': { readonly $path: 'declaration.property.getter' };
+	'declaration.property.setter': { readonly $path: 'declaration.property.setter' };
 	'declaration.type_alias': { readonly $path: 'declaration.type_alias' };
 	'declaration.type_parameter': {
 		readonly $path: 'declaration.type_parameter';
@@ -1331,6 +1345,7 @@ export interface PortableIsAt {
 		readonly function: PortableIsAt['declaration.function'];
 		readonly method: PortableIsAt['declaration.method'];
 		readonly parameter: PortableIsAt['declaration.parameter'];
+		readonly property: PortableIsAt['declaration.property'];
 		readonly type_alias: PortableIsAt['declaration.type_alias'];
 		readonly type_parameter: PortableIsAt['declaration.type_parameter'];
 		readonly variable: PortableIsAt['declaration.variable'];
@@ -1398,6 +1413,27 @@ export interface PortableIsAt {
 		PythonNode,
 		TSKindId,
 		PortableTexts['declaration.parameter.typed_default']
+	> & {};
+	'declaration.property': PortableGuard<
+		PortableIds['declaration.property'],
+		PythonNode,
+		TSKindId,
+		PortableTexts['declaration.property']
+	> & {
+		readonly getter: PortableIsAt['declaration.property.getter'];
+		readonly setter: PortableIsAt['declaration.property.setter'];
+	};
+	'declaration.property.getter': PortableGuard<
+		PortableIds['declaration.property.getter'],
+		PythonNode,
+		TSKindId,
+		PortableTexts['declaration.property.getter']
+	> & {};
+	'declaration.property.setter': PortableGuard<
+		PortableIds['declaration.property.setter'],
+		PythonNode,
+		TSKindId,
+		PortableTexts['declaration.property.setter']
 	> & {};
 	'declaration.type_alias': PortableGuard<
 		PortableIds['declaration.type_alias'],
@@ -2773,6 +2809,9 @@ const table: PortableTable = {
 		'declaration.parameter.default': { ids: [TSKindId.DefaultParameter], exact: true },
 		'declaration.parameter.typed': { ids: [TSKindId.TypedParameter], exact: true },
 		'declaration.parameter.typed_default': { ids: [TSKindId.TypedDefaultParameter], exact: true },
+		'declaration.property': { ids: [TSKindId.MethodDeclaration], exact: false },
+		'declaration.property.getter': { ids: [TSKindId.MethodDeclaration], exact: false },
+		'declaration.property.setter': { ids: [TSKindId.MethodDeclaration], exact: false },
 		'declaration.type_alias': { ids: [TSKindId.TypeAliasStatement], exact: true },
 		'declaration.type_parameter': {
 			ids: [TSKindId.TypeParamParamSpec, TSKindId.TypeParamTypeVar, TSKindId.TypeParamTypeVarTuple],
@@ -3947,6 +3986,62 @@ const table: PortableTable = {
 			{ path: 'expression.yield', within: [], test: [] }
 		]
 	},
+	facts: {
+		[TSKindId.MethodDeclaration]: [
+			{
+				container: TSKindId.DecoratedDefinitionClassDeclaration,
+				name: 'getter',
+				path: 'declaration.property.getter',
+				member: 'decorators',
+				items: { slots: { '311': 0 } },
+				test: { op: 'eq', text: 'property', slots: { '179': 0 } },
+				spelled: { slots: { '179': 0 } }
+			},
+			{
+				container: TSKindId.DecoratedDefinitionClassDeclaration,
+				name: 'setter',
+				path: 'declaration.property.setter',
+				member: 'decorators',
+				items: { slots: { '311': 0 } },
+				test: { op: 'child', slots: { '179': 0 }, of: { op: 'eq', text: 'setter', slots: { '221': 1 } } },
+				spelled: { slots: { '179': 0 } },
+				same: { item: [{ slots: { '179': 0 } }, { slots: { '221': 0 } }], node: [{ slots: { '352': 1 } }] }
+			},
+			{
+				container: TSKindId.DecoratedDefinitionClassDeclaration,
+				name: 'static',
+				flag: 'static',
+				member: 'decorators',
+				items: { slots: { '311': 0 } },
+				test: { op: 'eq', text: 'staticmethod', slots: { '179': 0 } },
+				spelled: { slots: { '179': 0 } }
+			},
+			{
+				container: TSKindId.DecoratedDefinitionClassDeclaration,
+				name: 'override',
+				flag: 'override',
+				member: 'decorators',
+				items: { slots: { '311': 0 } },
+				test: { op: 'eq', text: 'override', slots: { '179': 0 } },
+				spelled: { slots: { '179': 0 } }
+			},
+			{
+				container: TSKindId.DecoratedDefinitionClassDeclaration,
+				name: 'override',
+				flag: 'override',
+				member: 'decorators',
+				items: { slots: { '311': 0 } },
+				test: {
+					op: 'and',
+					of: [
+						{ op: 'child', slots: { '179': 0 }, of: { op: 'eq', text: 'typing', slots: { '221': 0 } } },
+						{ op: 'child', slots: { '179': 0 }, of: { op: 'eq', text: 'override', slots: { '221': 1 } } }
+					]
+				},
+				spelled: { slots: { '179': 0 } }
+			}
+		]
+	},
 	fixedText: {
 		[TSKindId.WildcardImport]: '*',
 		[TSKindId.PassStatement]: 'pass',
@@ -4100,7 +4195,9 @@ export const queryFlags: QueryFlags = Object.freeze({
 	[TSKindId.Interpolation]: { debug: { op: 'present', slots: { '250': 1 } } },
 	[TSKindId.MethodDeclaration]: {
 		async: { op: 'present', slots: { '352': 0 } },
-		privateName: { op: 'match', pattern: '^__(?<name>.*[^_]_?)$', slots: { '352': 1 } }
+		privateName: { op: 'match', pattern: '^__(?<name>.*[^_]_?)$', slots: { '352': 1 } },
+		override: null,
+		static: null
 	},
 	[TSKindId.PatternList]: {
 		trailingComma: {
@@ -4235,8 +4332,22 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 	296: { elements: { privateName: { types: [], kinds: [221] } } },
 	302: { primaryExpression: { privateName: { types: [], kinds: [221] } } },
 	303: { expression: { privateName: { types: [], kinds: [221] } } },
-	309: { statements: { async: { types: [], kinds: [157, 162, 307, 352] }, privateName: { types: [], kinds: [352] } } },
-	311: { definition: { async: { types: [], kinds: [307, 352] }, privateName: { types: [], kinds: [352] } } },
+	309: {
+		statements: {
+			async: { types: [], kinds: [157, 162, 307, 352] },
+			override: { kind: 352 },
+			privateName: { types: [], kinds: [352] },
+			static: { kind: 352 }
+		}
+	},
+	311: {
+		definition: {
+			async: { types: [], kinds: [307, 352] },
+			override: { kind: 352 },
+			privateName: { types: [], kinds: [352] },
+			static: { kind: 352 }
+		}
+	},
 	350: { content: { privateName: { types: [], kinds: [221] } } },
 	351: { expression: { privateName: { types: [], kinds: [221] }, trailingComma: { types: [], kinds: [181] } } }
 } satisfies QuerySlotFlags);

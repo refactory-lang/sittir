@@ -3,7 +3,7 @@ import { readVocabulary, readVocabularySource, VOCABULARY_DIR } from '@sittir/co
 import { featureGuard, guardRows, heldBy, holdsMember, UNHELD_MEMBERS } from '../src/portable/feature-guard.ts';
 import { plan, type Plan } from '../src/vocabulary/plan.ts';
 
-const CEILINGS: Readonly<Record<string, number>> = { python: 7, rust: 0, typescript: 0 };
+const CEILINGS: Readonly<Record<string, number>> = { python: 0, rust: 0, typescript: 0 };
 
 describe('feature guard', () => {
 	let p: Plan;

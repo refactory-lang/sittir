@@ -18,6 +18,6 @@ export type {
 	SittirEngine,
 	ParsedRoot
 } from './engine.ts';
-export { portablePathHasFacts, readableEntries, textBuilt } from './portable/facts.ts';
+export { builtFlags, portablePathHasFacts, readableEntries, textBuilt } from './portable/facts.ts';
 export { portableRuntime, portableRuntimeTree, type PortableRuntime } from './portable/runtime.ts';
 export type { PortableCarry, PortableCarried } from './portable/read.ts';

@@ -10,7 +10,7 @@ import { membershipKindsOf } from '../../membership.ts';
 import { emitPortableBuild, type PickDiagnostic } from './build.ts';
 import { flagPlansOf, slotFlagsOf } from './flags.ts';
 import { emitPortableNodeModel } from './node-model.ts';
-import { presenceKeywordOf, readTestOf, slotSubjectOf } from './read-tests.ts';
+import { portableFactOf, presenceKeywordOf, readTestOf, slotSubjectOf } from './read-tests.ts';
 import { emitPortableSurface } from './surface.ts';
 import { emitPortableTyped, type PortableTypedOutput } from './typed.ts';
 
@@ -27,6 +27,8 @@ export function emitPortable(input: GrammarInput, nodeMap: NodeMap, kindEntries:
 	const typeOf = (kind: string) => findKindEntry(kindEntries, kind)?.id;
 	const readTest = (entry: ReadEntry) => readTestOf(entry, input.model, slotSubjectOf(nodeMap), presenceKeywordOf(nodeMap), typeOf);
 	const kindIdOf = (kind: string) => kindDiscriminantExpr(kind, nodeMap, kindEntries);
+	const factOf = (entry: ReadEntry) =>
+		portableFactOf(entry, readTest(entry), input.model, slotSubjectOf(nodeMap), (container, slot) => routes.containers.get(container)?.members?.find((member) => member.slot.name === slot)?.name);
 	const typesOf = (kind: string): readonly number[] => [...new Set(membershipKindsOf([kind], nodeMap).flatMap((member) => typeOf(member) ?? []))];
 	const flags = new Map<string, ReadonlyMap<string, QueryPlan | null>>();
 	const plansByKind = new Map<string, ReadonlyMap<string, QueryPlan | null>>();
@@ -67,7 +69,7 @@ export function emitPortable(input: GrammarInput, nodeMap: NodeMap, kindEntries:
 		});
 		return isSlotBearingCompound(node) && readable.length > 0 ? [[node.typeName, readable] as const] : [];
 	});
-	const build = emitPortableBuild({ routes, model: input.model, nodeMap, kindEntries, flagPlans: plansByKind, features: [...input.vocabulary.featuresOf(compositionOf(input.grammar))].sort(byCodepoint) });
+	const build = emitPortableBuild({ routes, model: input.model, nodeMap, kindEntries, flagPlans: plansByKind, features: [...input.vocabulary.featuresOf(compositionOf(input.grammar))].sort(byCodepoint), factOf, declaresFlag: (path, flag) => input.vocabulary.kinds.has(path) && input.vocabulary.members(path).get(flag)?.flag === true });
 	return {
 		build: build.source,
 		typed: emitPortableTyped({ routes, input, nodeMap, kindEntries, readTest, table: build.table, presetCarried: build.presetCarried, flags: new Map([...plansByKind].map(([kind, plans]) => [kind, [...plans.keys()]])) }),
@@ -82,6 +84,7 @@ export function emitPortable(input: GrammarInput, nodeMap: NodeMap, kindEntries:
 			nodeType: grammarNodeTypeName(nodeMap.name),
 			routes,
 			readTest,
+			factOf,
 			kindIdOf,
 			fixedText: fixedTextKinds(nodeMap, kindEntries).map(([kind, text]) => [kindIdOf(kind), text] as const),
 			literals: [...valueTokensOf(routes, new Map(fixedTextKinds(nodeMap, kindEntries)))].sort().map(kindIdOf),

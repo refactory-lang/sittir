@@ -31,6 +31,12 @@ export function readableEntries<E extends Placement>(entries: readonly E[]): rea
 export const textBuilt = (table: PortableBuildTable, arm: PortableBuildArm): boolean =>
 	arm.members.length === 0 && arm.builder !== undefined && table.builders[arm.builder] === 'text';
 
+export const builtFlags = (arm: PortableBuildArm): readonly string[] => [
+	...Object.keys(arm.flags),
+	...arm.when.flatMap((test) => ('flag' in test ? [test.flag] : [])),
+	...(arm.facts ?? []).flatMap((fact) => fact.flag ?? [])
+];
+
 const tokenTexts = new WeakMap<PortableSeat, ReadonlyMap<number, string>>();
 
 export function tokenText(kind: number, seats: readonly PortableSeat[] | undefined): string | undefined {

@@ -323,7 +323,8 @@ describe('the portable build table', () => {
 				table: { ...tables.python.table, paths: Object.fromEntries(Object.entries(tables.python.table.paths).map(([path, at]) => [path, { ...at, arms: at.arms.map(withSign(sign)) }])) },
 				builders: engine.build,
 				kindName: () => undefined,
-				readsAs: () => true
+				readsAs: () => true,
+				spellingOf: () => undefined
 			});
 		expect(String(engine.render(builderWith('signOfExponent')({ $path: 'literal.number.float', $value: 1e-7 }) as never))).toBe('1.0e-7');
 		expect(() => builderWith(undefined)({ $path: 'literal.number.float', $value: 1e-7 })).toThrow(/literal\.number\.float builds a kind \d+ in python, which cannot spell 1e-7/);
@@ -375,7 +376,8 @@ describe('the portable build of a registered option', () => {
 			table: table(options),
 			builders: { holder: (...args: unknown[]) => (calls.push(args), { $type: 1 }) },
 			kindName: () => undefined,
-			readsAs: () => true
+			readsAs: () => true,
+			spellingOf: () => undefined
 		});
 		builder({ $path: 'statement.held', ...structure });
 		return calls;
@@ -422,7 +424,8 @@ describe("the portable build of a flag that is a member's list's trailing separa
 				items: (...args: unknown[]) => (calls.push(['items', args]), { $type: 2 })
 			},
 			kindName: () => undefined,
-			readsAs: () => true
+			readsAs: () => true,
+			spellingOf: () => undefined
 		});
 		builder({ $path: 'statement.held', ...structure } as never);
 		return calls;
@@ -481,7 +484,8 @@ describe('the portable build of an arm whose routes run through two forms of one
 				formB: (input: unknown) => (calls.push(['formB', input]), { $type: 3 })
 			},
 			kindName: () => undefined,
-			readsAs: () => true
+			readsAs: () => true,
+			spellingOf: () => undefined
 		});
 		builder({ $path: 'statement.held', ...structure } as never);
 		return calls;
@@ -542,7 +546,8 @@ describe('the portable build of a list whose last element takes a form of its ow
 				last: (input: unknown) => (calls.push(['last', input]), { $type: 3 })
 			},
 			kindName: (kind: number) => ({ 2: 'arm', 3: 'last_arm' })[kind],
-			readsAs: () => true
+			readsAs: () => true,
+			spellingOf: () => undefined
 		});
 		builder({ $path: 'statement.held', body } as never);
 		return calls;

@@ -30,7 +30,7 @@ export interface Sibling {
 	readonly bare: boolean;
 }
 
-export type PredicateArgument = { readonly capture: string } | { readonly text: string };
+export type PredicateArgument = { readonly capture: string; readonly site?: CaptureSite | null } | { readonly text: string };
 
 export interface CaptureSite {
 	readonly up: number;
