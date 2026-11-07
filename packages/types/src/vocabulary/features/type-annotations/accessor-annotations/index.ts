@@ -1,3 +1,5 @@
+export type * from './declaration.ts';
+
 import type { TypeAnnotations } from '../index.ts';
 import type { Accessors } from '../../methods/accessors/index.ts';
 

@@ -4,6 +4,7 @@ import type * as gate from './utils.ts';
 import type * as V from './index.ts';
 import type * as features from './features/index.ts';
 import type * as abstractClasses from './features/methods/classes/abstract-classes/index.ts';
+import type * as accessorAnnotations from './features/type-annotations/accessor-annotations/index.ts';
 import type * as accessorSignatures from './features/methods/accessors/accessor-signatures/index.ts';
 import type * as accessors from './features/methods/accessors/index.ts';
 import type * as algebraicDataTypes from './features/enumerations/algebraic-data-types/index.ts';
@@ -1722,7 +1723,7 @@ declare module './declaration.ts' {
 				fieldEncapsulation.Declaration.Property<G, K>['privateName']
 			>;
 			readonly static?: gate.In<G, features.JavaScriptClasses, javascriptClasses.Declaration.Property<G, K>['static']>;
-			readonly type?: gate.In<G, features.TypeAlgebra, typeAlgebra.Declaration.Property<G, K>['type']>;
+			readonly type?: gate.In<G, features.AccessorAnnotations, accessorAnnotations.Declaration.Property<G, K>['type']>;
 		}
 		namespace Property {
 			interface Getter<

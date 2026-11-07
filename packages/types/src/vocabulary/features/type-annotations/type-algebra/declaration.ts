@@ -14,9 +14,6 @@ export namespace Declaration {
 			}
 		}
 	}
-	export interface Property<G extends GrammarMap, K extends Under<'declaration.property'> = 'declaration.property'> {
-		readonly type?: Slot<G, K, 'type', V.Identifier.Any<G> | V.Type.Any<G>>;
-	}
 	export namespace Variable {
 		export interface Pattern<G extends GrammarMap, K extends Under<'declaration.variable.pattern'> = 'declaration.variable.pattern'> {
 			readonly type?: Slot<G, K, 'type', V.Identifier.Any<G> | V.Type.Any<G>>;
