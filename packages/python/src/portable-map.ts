@@ -2120,7 +2120,6 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'pattern.tuple.bare'>
 				| V.Unmapped<'python:as_pattern'>
 				| T.AssignmentEq.Parsed
-				| T.AssignmentType.Parsed
 				| T.AssignmentTyped.Parsed
 				| T.Attribute.Parsed
 				| T.Await.Parsed
@@ -17032,7 +17031,6 @@ export interface PythonMap extends V.GrammarMap {
 				| 'pass'
 				| T.ForStatement.Parsed
 				| T.IfStatement.Parsed
-				| T.MethodDeclaration.Parsed
 				| T.WhileStatement.Parsed;
 		};
 		readonly 'statement.break': {
@@ -17403,7 +17401,6 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'pattern.rest'>
 				| V.Unmapped<'python:as_pattern'>
 				| T.AssignmentEq.Parsed
-				| T.AssignmentType.Parsed
 				| T.AssignmentTyped.Parsed
 				| T.Attribute.Parsed
 				| T.AugmentedAssignment.Parsed

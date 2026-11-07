@@ -5,15 +5,27 @@ import { rawGroupOf, type ExactSlots } from '../exact.ts';
 let exact: ExactSlots;
 
 beforeAll(async () => {
-	const generated = await generate({ grammar: 'rust', outputDir: '/tmp/sittir-portable-exact-rust/src' });
-	if (generated.portableTyped === undefined) throw new Error('rust emitted no typed module');
-	exact = generated.portableTyped.exact;
+	exact = await exactOf('rust');
 }, 120_000);
 
-const setAt = (path: string, member: string) => {
-	const set = exact.get(path)?.get(member);
+const setIn = (slots: ExactSlots, path: string, member: string) => {
+	const set = slots.get(path)?.get(member);
 	if (set === undefined) throw new Error(`no exact set at ${path}.${member}`);
 	return set;
+};
+
+const setAt = (path: string, member: string) => setIn(exact, path, member);
+
+const reasonsAt = (slots: ExactSlots, path: string, member: string, kind: string): readonly string[] => {
+	const arm = setIn(slots, path, member).raw.find((candidate) => candidate.kind === kind);
+	if (arm === undefined) throw new Error(`no raw ${kind} at ${path}.${member}`);
+	return arm.reasons;
+};
+
+const exactOf = async (grammar: string): Promise<ExactSlots> => {
+	const generated = await generate({ grammar, outputDir: `/tmp/sittir-portable-exact-${grammar}/src` });
+	if (generated.portableTyped === undefined) throw new Error(`${grammar} emitted no typed module`);
+	return generated.portableTyped.exact;
 };
 
 describe('exactSlotsOf', () => {
@@ -33,8 +45,51 @@ describe('exactSlotsOf', () => {
 		expect(rawGroupOf(['flags'])).toBe('kind');
 	});
 
+	it('gives no preset reason to a preset its read entry pins: a visibility, an operator', () => {
+		expect(setAt('file', 'statements').raw.map((arm) => arm.kind)).not.toContain('enum_item');
+		expect(reasonsAt(exact, 'argument', 'value', 'binary_expression')).not.toContain('preset');
+	});
+
+	it("gives no preset reason to a string's delimiters, which its claim spells", () => {
+		expect(reasonsAt(exact, 'argument', 'value', 'string_literal')).not.toContain('preset');
+	});
+
+	it("keeps the preset reason where the build picks a form the read doesn't record", () => {
+		expect(reasonsAt(exact, 'clause.bounds', 'bounds', 'function_type')).toContain('preset');
+	});
+
 	it('puts a raw arm whose reasons are all decided per value in the per-value group', () => {
 		expect(rawGroupOf(['preset', 'scalar'])).toBe('value');
 		expect(rawGroupOf(['opaque', 'unread'])).toBe('kind');
+	});
+});
+
+describe('exactSlotsOf, python', () => {
+	let python: ExactSlots;
+
+	beforeAll(async () => {
+		python = await exactOf('python');
+	}, 120_000);
+
+	it("gives no preset reason to a name its read entry tests with eq: __init__ reads as a constructor", () => {
+		expect(setIn(python, 'statement.block', 'statements').raw.map((arm) => arm.kind)).not.toContain('method_declaration');
+	});
+
+	it("gives no preset reason to a string's delimiters, which its claim spells", () => {
+		expect(reasonsAt(python, 'argument.named', 'value', 'string')).not.toContain('preset');
+	});
+});
+
+describe('exactSlotsOf, typescript', () => {
+	let typescript: ExactSlots;
+
+	beforeAll(async () => {
+		typescript = await exactOf('typescript');
+	}, 120_000);
+
+	it('gives no preset reason to a keyword its read entry pins: let or const, export default', () => {
+		const kinds = setIn(typescript, 'clause.case.switch', 'bodies').raw.map((arm) => arm.kind);
+		expect(kinds).not.toContain('lexical_declaration');
+		expect(kinds).not.toContain('export_statement_default_declaration');
 	});
 });

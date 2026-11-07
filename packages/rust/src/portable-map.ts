@@ -30722,22 +30722,13 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'statement.import.public.restricted'>
 				| ';'
 				| T.ConstItem.Parsed
-				| T.EnumItem.Parsed
-				| T.ExternCrateDeclaration.Parsed
 				| T.FunctionItem.Parsed
 				| T.FunctionSignatureItem.Parsed
 				| T.ImplItemBody.Parsed
 				| T.ImplItemSemi.Parsed
 				| T.LetDeclaration.Parsed
-				| T.ModItemExternal.Parsed
-				| T.ModItemInline.Parsed
 				| T.StaticItem.Parsed
-				| T.StructItemBrace.Parsed
-				| T.StructItemTuple.Parsed
-				| T.StructItemUnit.Parsed
-				| T.TraitItem.Parsed
 				| T.TypeItem.Parsed
-				| T.UnionItem.Parsed
 				| T.UseDeclaration.Parsed;
 		};
 		readonly identifier: {
@@ -32212,22 +32203,13 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'statement.import.public.restricted'>
 				| ';'
 				| T.ConstItem.Parsed
-				| T.EnumItem.Parsed
-				| T.ExternCrateDeclaration.Parsed
 				| T.FunctionItem.Parsed
 				| T.FunctionSignatureItem.Parsed
 				| T.ImplItemBody.Parsed
 				| T.ImplItemSemi.Parsed
 				| T.LetDeclaration.Parsed
-				| T.ModItemExternal.Parsed
-				| T.ModItemInline.Parsed
 				| T.StaticItem.Parsed
-				| T.StructItemBrace.Parsed
-				| T.StructItemTuple.Parsed
-				| T.StructItemUnit.Parsed
-				| T.TraitItem.Parsed
 				| T.TypeItem.Parsed
-				| T.UnionItem.Parsed
 				| T.UseDeclaration.Parsed;
 			readonly trailingExpression:
 				| V.Read<RustMap, 'expression.assignment'>

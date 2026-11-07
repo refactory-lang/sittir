@@ -70,7 +70,7 @@ export function emitPortable(input: GrammarInput, nodeMap: NodeMap, kindEntries:
 	const build = emitPortableBuild({ routes, model: input.model, nodeMap, kindEntries, flagPlans: plansByKind, features: [...input.vocabulary.featuresOf(compositionOf(input.grammar))].sort(byCodepoint) });
 	return {
 		build: build.source,
-		typed: emitPortableTyped({ routes, input, nodeMap, kindEntries, readTest, table: build.table, flags: new Map([...plansByKind].map(([kind, plans]) => [kind, [...plans.keys()]])) }),
+		typed: emitPortableTyped({ routes, input, nodeMap, kindEntries, readTest, table: build.table, presetCarried: build.presetCarried, flags: new Map([...plansByKind].map(([kind, plans]) => [kind, [...plans.keys()]])) }),
 		pickDiagnostics: [
 			...build.diagnostics,
 			...routes.unplaced.map(

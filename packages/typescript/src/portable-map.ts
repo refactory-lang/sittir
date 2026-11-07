@@ -391,14 +391,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'statement.try'>
 				| ';'
 				| V.Unmapped<'typescript:using_declaration'>
-				| T.ExportStatementDefaultDeclaration.Parsed
-				| T.ExportStatementDefaultFrom.Parsed
 				| T.ExportStatementEqualsExport.Parsed
 				| T.ExpressionStatement.Parsed
 				| T.ForStatement.Parsed
-				| T.ImportStatement.Parsed
-				| T.InterfaceDeclaration.Parsed
-				| T.LexicalDeclaration.Parsed
 				| T.ReturnStatement.Parsed
 				| T.ThrowStatement.Parsed;
 		};
@@ -508,14 +503,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'statement.try'>
 				| ';'
 				| V.Unmapped<'typescript:using_declaration'>
-				| T.ExportStatementDefaultDeclaration.Parsed
-				| T.ExportStatementDefaultFrom.Parsed
 				| T.ExportStatementEqualsExport.Parsed
 				| T.ExpressionStatement.Parsed
 				| T.ForStatement.Parsed
-				| T.ImportStatement.Parsed
-				| T.InterfaceDeclaration.Parsed
-				| T.LexicalDeclaration.Parsed
 				| T.ReturnStatement.Parsed
 				| T.ThrowStatement.Parsed;
 			readonly value:
@@ -895,14 +885,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'statement.try'>
 				| ';'
 				| V.Unmapped<'typescript:using_declaration'>
-				| T.ExportStatementDefaultDeclaration.Parsed
-				| T.ExportStatementDefaultFrom.Parsed
 				| T.ExportStatementEqualsExport.Parsed
 				| T.ExpressionStatement.Parsed
 				| T.ForStatement.Parsed
-				| T.ImportStatement.Parsed
-				| T.InterfaceDeclaration.Parsed
-				| T.LexicalDeclaration.Parsed
 				| T.ReturnStatement.Parsed
 				| T.ThrowStatement.Parsed;
 			readonly $forms: V.Form<'body'>;
@@ -1374,9 +1359,7 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'declaration.variable.reassignable.function_scoped'>
 				| V.Read<TypeScriptMap, 'statement.block'>
 				| V.Read<TypeScriptMap, 'statement.import.alias'>
-				| V.Unmapped<'typescript:using_declaration'>
-				| T.InterfaceDeclaration.Parsed
-				| T.LexicalDeclaration.Parsed;
+				| V.Unmapped<'typescript:using_declaration'>;
 			readonly $forms: V.Form<'content'>;
 		};
 		readonly 'declaration.class': {
@@ -4402,8 +4385,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'statement.export'>
 				| V.Read<TypeScriptMap, 'statement.export.all'>
 				| V.Read<TypeScriptMap, 'statement.export.default'>
-				| T.ExportStatementDefaultDeclaration.Parsed
-				| T.ExportStatementDefaultFrom.Parsed
 				| T.ExportStatementEqualsExport.Parsed
 				| T.MethodSignatureGetter.Parsed
 				| T.MethodSignaturePlain.Parsed
@@ -10388,8 +10369,7 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'declaration.parameter.private'>
 				| V.Read<TypeScriptMap, 'declaration.parameter.protected'>
 				| V.Read<TypeScriptMap, 'declaration.parameter.public'>
-				| V.Read<TypeScriptMap, 'declaration.parameter.receiver'>
-				| T.SetterParameter.Parsed;
+				| V.Read<TypeScriptMap, 'declaration.parameter.receiver'>;
 			readonly type:
 				| V.Read<TypeScriptMap, 'identifier'>
 				| V.Text<TypeScriptMap, 'identifier'>
@@ -10663,8 +10643,7 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'declaration.parameter.private'>
 				| V.Read<TypeScriptMap, 'declaration.parameter.protected'>
 				| V.Read<TypeScriptMap, 'declaration.parameter.public'>
-				| V.Read<TypeScriptMap, 'declaration.parameter.receiver'>
-				| T.SetterParameter.Parsed;
+				| V.Read<TypeScriptMap, 'declaration.parameter.receiver'>;
 			readonly type:
 				| V.Read<TypeScriptMap, 'identifier'>
 				| V.Text<TypeScriptMap, 'identifier'>
@@ -10938,8 +10917,7 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'declaration.parameter.private'>
 				| V.Read<TypeScriptMap, 'declaration.parameter.protected'>
 				| V.Read<TypeScriptMap, 'declaration.parameter.public'>
-				| V.Read<TypeScriptMap, 'declaration.parameter.receiver'>
-				| T.SetterParameter.Parsed;
+				| V.Read<TypeScriptMap, 'declaration.parameter.receiver'>;
 			readonly type:
 				| V.Read<TypeScriptMap, 'identifier'>
 				| V.Text<TypeScriptMap, 'identifier'>
@@ -11213,8 +11191,7 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'declaration.parameter.private'>
 				| V.Read<TypeScriptMap, 'declaration.parameter.protected'>
 				| V.Read<TypeScriptMap, 'declaration.parameter.public'>
-				| V.Read<TypeScriptMap, 'declaration.parameter.receiver'>
-				| T.SetterParameter.Parsed;
+				| V.Read<TypeScriptMap, 'declaration.parameter.receiver'>;
 			readonly type:
 				| V.Read<TypeScriptMap, 'identifier'>
 				| V.Text<TypeScriptMap, 'identifier'>
@@ -12919,8 +12896,7 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'declaration.parameter.private'>
 				| V.Read<TypeScriptMap, 'declaration.parameter.protected'>
 				| V.Read<TypeScriptMap, 'declaration.parameter.public'>
-				| V.Read<TypeScriptMap, 'declaration.parameter.receiver'>
-				| T.SetterParameter.Parsed;
+				| V.Read<TypeScriptMap, 'declaration.parameter.receiver'>;
 			readonly type:
 				| V.Read<TypeScriptMap, 'identifier'>
 				| V.Text<TypeScriptMap, 'identifier'>
@@ -13193,8 +13169,7 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'declaration.parameter.private'>
 				| V.Read<TypeScriptMap, 'declaration.parameter.protected'>
 				| V.Read<TypeScriptMap, 'declaration.parameter.public'>
-				| V.Read<TypeScriptMap, 'declaration.parameter.receiver'>
-				| T.SetterParameter.Parsed;
+				| V.Read<TypeScriptMap, 'declaration.parameter.receiver'>;
 			readonly type:
 				| V.Read<TypeScriptMap, 'identifier'>
 				| V.Text<TypeScriptMap, 'identifier'>
@@ -13467,8 +13442,7 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'declaration.parameter.private'>
 				| V.Read<TypeScriptMap, 'declaration.parameter.protected'>
 				| V.Read<TypeScriptMap, 'declaration.parameter.public'>
-				| V.Read<TypeScriptMap, 'declaration.parameter.receiver'>
-				| T.SetterParameter.Parsed;
+				| V.Read<TypeScriptMap, 'declaration.parameter.receiver'>;
 			readonly type:
 				| V.Read<TypeScriptMap, 'identifier'>
 				| V.Text<TypeScriptMap, 'identifier'>
@@ -13741,8 +13715,7 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'declaration.parameter.private'>
 				| V.Read<TypeScriptMap, 'declaration.parameter.protected'>
 				| V.Read<TypeScriptMap, 'declaration.parameter.public'>
-				| V.Read<TypeScriptMap, 'declaration.parameter.receiver'>
-				| T.SetterParameter.Parsed;
+				| V.Read<TypeScriptMap, 'declaration.parameter.receiver'>;
 			readonly type:
 				| V.Read<TypeScriptMap, 'identifier'>
 				| V.Text<TypeScriptMap, 'identifier'>
@@ -15131,8 +15104,7 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'declaration.parameter.private'>
 				| V.Read<TypeScriptMap, 'declaration.parameter.protected'>
 				| V.Read<TypeScriptMap, 'declaration.parameter.public'>
-				| V.Read<TypeScriptMap, 'declaration.parameter.receiver'>
-				| T.SetterParameter.Parsed;
+				| V.Read<TypeScriptMap, 'declaration.parameter.receiver'>;
 			readonly type:
 				| V.Read<TypeScriptMap, 'identifier'>
 				| V.Text<TypeScriptMap, 'identifier'>
@@ -15405,8 +15377,7 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'declaration.parameter.private'>
 				| V.Read<TypeScriptMap, 'declaration.parameter.protected'>
 				| V.Read<TypeScriptMap, 'declaration.parameter.public'>
-				| V.Read<TypeScriptMap, 'declaration.parameter.receiver'>
-				| T.SetterParameter.Parsed;
+				| V.Read<TypeScriptMap, 'declaration.parameter.receiver'>;
 			readonly type:
 				| V.Read<TypeScriptMap, 'identifier'>
 				| V.Text<TypeScriptMap, 'identifier'>
@@ -15679,8 +15650,7 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'declaration.parameter.private'>
 				| V.Read<TypeScriptMap, 'declaration.parameter.protected'>
 				| V.Read<TypeScriptMap, 'declaration.parameter.public'>
-				| V.Read<TypeScriptMap, 'declaration.parameter.receiver'>
-				| T.SetterParameter.Parsed;
+				| V.Read<TypeScriptMap, 'declaration.parameter.receiver'>;
 			readonly type:
 				| V.Read<TypeScriptMap, 'identifier'>
 				| V.Text<TypeScriptMap, 'identifier'>
@@ -15953,8 +15923,7 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'declaration.parameter.private'>
 				| V.Read<TypeScriptMap, 'declaration.parameter.protected'>
 				| V.Read<TypeScriptMap, 'declaration.parameter.public'>
-				| V.Read<TypeScriptMap, 'declaration.parameter.receiver'>
-				| T.SetterParameter.Parsed;
+				| V.Read<TypeScriptMap, 'declaration.parameter.receiver'>;
 			readonly type:
 				| V.Read<TypeScriptMap, 'identifier'>
 				| V.Text<TypeScriptMap, 'identifier'>
@@ -34401,14 +34370,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'statement.try'>
 				| ';'
 				| V.Unmapped<'typescript:using_declaration'>
-				| T.ExportStatementDefaultDeclaration.Parsed
-				| T.ExportStatementDefaultFrom.Parsed
 				| T.ExportStatementEqualsExport.Parsed
 				| T.ExpressionStatement.Parsed
 				| T.ForStatement.Parsed
-				| T.ImportStatement.Parsed
-				| T.InterfaceDeclaration.Parsed
-				| T.LexicalDeclaration.Parsed
 				| T.ReturnStatement.Parsed
 				| T.ThrowStatement.Parsed;
 		};
@@ -35269,14 +35233,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'statement.try'>
 				| ';'
 				| V.Unmapped<'typescript:using_declaration'>
-				| T.ExportStatementDefaultDeclaration.Parsed
-				| T.ExportStatementDefaultFrom.Parsed
 				| T.ExportStatementEqualsExport.Parsed
 				| T.ExpressionStatement.Parsed
 				| T.ForStatement.Parsed
-				| T.ImportStatement.Parsed
-				| T.InterfaceDeclaration.Parsed
-				| T.LexicalDeclaration.Parsed
 				| T.ReturnStatement.Parsed
 				| T.ThrowStatement.Parsed;
 		};
@@ -35478,9 +35437,7 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'declaration.variable.reassignable'>
 				| V.Read<TypeScriptMap, 'declaration.variable.reassignable.function_scoped'>
 				| V.Read<TypeScriptMap, 'statement.import.alias'>
-				| V.Unmapped<'typescript:using_declaration'>
-				| T.InterfaceDeclaration.Parsed
-				| T.LexicalDeclaration.Parsed;
+				| V.Unmapped<'typescript:using_declaration'>;
 			readonly decorators: V.Read<TypeScriptMap, 'attribute.decorator'>;
 			readonly exportClause: V.Read<TypeScriptMap, 'clause.export'> | V.Read<TypeScriptMap, 'clause.export.namespace'>;
 			readonly name:
@@ -35918,9 +35875,7 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'declaration.variable.reassignable'>
 				| V.Read<TypeScriptMap, 'declaration.variable.reassignable.function_scoped'>
 				| V.Read<TypeScriptMap, 'statement.import.alias'>
-				| V.Unmapped<'typescript:using_declaration'>
-				| T.InterfaceDeclaration.Parsed
-				| T.LexicalDeclaration.Parsed;
+				| V.Unmapped<'typescript:using_declaration'>;
 			readonly decorators: V.Read<TypeScriptMap, 'attribute.decorator'>;
 			readonly exportClause: V.Read<TypeScriptMap, 'clause.export'> | V.Read<TypeScriptMap, 'clause.export.namespace'>;
 			readonly name:
@@ -36327,14 +36282,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'statement.try'>
 				| ';'
 				| V.Unmapped<'typescript:using_declaration'>
-				| T.ExportStatementDefaultDeclaration.Parsed
-				| T.ExportStatementDefaultFrom.Parsed
 				| T.ExportStatementEqualsExport.Parsed
 				| T.ExpressionStatement.Parsed
 				| T.ForStatement.Parsed
-				| T.ImportStatement.Parsed
-				| T.InterfaceDeclaration.Parsed
-				| T.LexicalDeclaration.Parsed
 				| T.ReturnStatement.Parsed
 				| T.ThrowStatement.Parsed;
 			readonly $forms: V.Form<'condition' | 'consequence'>;
@@ -36486,14 +36436,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'statement.try'>
 				| ';'
 				| V.Unmapped<'typescript:using_declaration'>
-				| T.ExportStatementDefaultDeclaration.Parsed
-				| T.ExportStatementDefaultFrom.Parsed
 				| T.ExportStatementEqualsExport.Parsed
 				| T.ExpressionStatement.Parsed
 				| T.ForStatement.Parsed
-				| T.ImportStatement.Parsed
-				| T.InterfaceDeclaration.Parsed
-				| T.LexicalDeclaration.Parsed
 				| T.ReturnStatement.Parsed
 				| T.ThrowStatement.Parsed;
 			readonly label: V.Read<TypeScriptMap, 'identifier.label'> | T.StatementIdentifier.Parsed;
@@ -36605,14 +36550,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'statement.try'>
 				| ';'
 				| V.Unmapped<'typescript:using_declaration'>
-				| T.ExportStatementDefaultDeclaration.Parsed
-				| T.ExportStatementDefaultFrom.Parsed
 				| T.ExportStatementEqualsExport.Parsed
 				| T.ExpressionStatement.Parsed
 				| T.ForStatement.Parsed
-				| T.ImportStatement.Parsed
-				| T.InterfaceDeclaration.Parsed
-				| T.LexicalDeclaration.Parsed
 				| T.ReturnStatement.Parsed
 				| T.ThrowStatement.Parsed;
 			readonly condition:
@@ -37030,7 +36970,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
 				| T.InstantiationExpression.Parsed
-				| T.LexicalDeclaration.Parsed
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
@@ -37162,14 +37101,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'statement.try'>
 				| ';'
 				| V.Unmapped<'typescript:using_declaration'>
-				| T.ExportStatementDefaultDeclaration.Parsed
-				| T.ExportStatementDefaultFrom.Parsed
 				| T.ExportStatementEqualsExport.Parsed
 				| T.ExpressionStatement.Parsed
 				| T.ForStatement.Parsed
-				| T.ImportStatement.Parsed
-				| T.InterfaceDeclaration.Parsed
-				| T.LexicalDeclaration.Parsed
 				| T.ReturnStatement.Parsed
 				| T.ThrowStatement.Parsed;
 			readonly condition: V.Read<TypeScriptMap, 'expression.parenthesized'> | T.ParenthesizedExpressionTyped.Parsed;
@@ -37281,14 +37215,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'statement.try'>
 				| ';'
 				| V.Unmapped<'typescript:using_declaration'>
-				| T.ExportStatementDefaultDeclaration.Parsed
-				| T.ExportStatementDefaultFrom.Parsed
 				| T.ExportStatementEqualsExport.Parsed
 				| T.ExpressionStatement.Parsed
 				| T.ForStatement.Parsed
-				| T.ImportStatement.Parsed
-				| T.InterfaceDeclaration.Parsed
-				| T.LexicalDeclaration.Parsed
 				| T.ReturnStatement.Parsed
 				| T.ThrowStatement.Parsed;
 			readonly header:
@@ -37404,14 +37333,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'statement.try'>
 				| ';'
 				| V.Unmapped<'typescript:using_declaration'>
-				| T.ExportStatementDefaultDeclaration.Parsed
-				| T.ExportStatementDefaultFrom.Parsed
 				| T.ExportStatementEqualsExport.Parsed
 				| T.ExpressionStatement.Parsed
 				| T.ForStatement.Parsed
-				| T.ImportStatement.Parsed
-				| T.InterfaceDeclaration.Parsed
-				| T.LexicalDeclaration.Parsed
 				| T.ReturnStatement.Parsed
 				| T.ThrowStatement.Parsed;
 			readonly condition: V.Read<TypeScriptMap, 'expression.parenthesized'> | T.ParenthesizedExpressionTyped.Parsed;
@@ -37668,14 +37592,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'statement.try'>
 				| ';'
 				| V.Unmapped<'typescript:using_declaration'>
-				| T.ExportStatementDefaultDeclaration.Parsed
-				| T.ExportStatementDefaultFrom.Parsed
 				| T.ExportStatementEqualsExport.Parsed
 				| T.ExpressionStatement.Parsed
 				| T.ForStatement.Parsed
-				| T.ImportStatement.Parsed
-				| T.InterfaceDeclaration.Parsed
-				| T.LexicalDeclaration.Parsed
 				| T.ReturnStatement.Parsed
 				| T.ThrowStatement.Parsed;
 			readonly object: V.Read<TypeScriptMap, 'expression.parenthesized'> | T.ParenthesizedExpressionTyped.Parsed;

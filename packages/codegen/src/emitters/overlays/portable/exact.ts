@@ -155,7 +155,7 @@ export function exactReadsOf({ routes, input, nodeMap, kindEntries, readTest }: 
 }
 
 export function exactSlotsOf(input: PortableTypedInput, reads: ExactReads = exactReadsOf(input)): ExactSlots {
-	const { routes, input: grammarInput, kindEntries, table, flags } = input;
+	const { routes, input: grammarInput, kindEntries, table, presetCarried, flags } = input;
 	const { model, vocabulary } = grammarInput;
 	const { readPaths, readsByClaim, entriesFor, readPathsOf, literalTextsOf, memberKindsOf, familyOf, readsIn } = reads;
 	const nodeOf = (kind: string): ModelNode | undefined => modelNode(model, kind);
@@ -198,7 +198,7 @@ export function exactSlotsOf(input: PortableTypedInput, reads: ExactReads = exac
 		if ((table.tokens?.[id]?.length ?? 0) > 0) out.push('opaque');
 		if (held.some((k) => { const held = idOf(k); return held !== undefined && table.delimiters?.[held]?.readOnly !== undefined; })) out.push('readOnly');
 		const structural = arms.filter((arm) => arm.literal === undefined);
-		if (arms.some((arm) => arm.presets.length > 0)) out.push('preset');
+		if ((entriesFor(kind) ?? []).some((entry) => presetCarried.has(entry.index))) out.push('preset');
 		if (structural.some((arm) => arm.scalar !== undefined)) out.push('scalar');
 		const readsText = node.slots.length === 0 || (structural.length > 0 && structural.every((arm) => (arm.members.length === 0 && arm.seated !== undefined) || textBuilt(table, arm)));
 		if (structural.some((arm) => arm.content !== undefined) || (readsText && !structural.every((arm) => textBuilt(table, arm)))) out.push('text');
