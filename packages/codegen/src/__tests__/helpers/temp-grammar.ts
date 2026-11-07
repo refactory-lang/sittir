@@ -5,15 +5,15 @@ import { evaluateSittirGrammar, type FixtureLayers } from './sittir-grammar.ts';
 import type { RawGrammar } from '../../compiler/types.ts';
 import type { ProjectedGrammar } from '../../dsl/verbs/effects.ts';
 
-export async function evaluateTempGrammar(upstream: { extras: string; rules: string; externals?: string; word?: string }, config: string, layers: FixtureLayers = {}): Promise<ProjectedGrammar<RawGrammar>> {
+export async function evaluateTempGrammar(upstream: { extras: string; rules: string; externals?: string; word?: string; name?: string }, config: string, layers: FixtureLayers = {}): Promise<ProjectedGrammar<RawGrammar>> {
 	const dir = mkdtempSync(join(tmpdir(), 'sittir-temp-grammar-'));
 	try {
 		const base = join(dir, 'base.js');
 		writeFileSync(
 			base,
-			`module.exports = grammar({ name: 'demo', extras: ($) => [${upstream.extras}], externals: ($) => [${upstream.externals ?? ''}], ${upstream.word === undefined ? '' : `word: ($) => $.${upstream.word}, `}rules: { source: ($) => repeat($.word), word: () => /[a-z]+/, ${upstream.rules} } });\n`
+			`module.exports = grammar({ name: '${upstream.name ?? 'demo'}', extras: ($) => [${upstream.extras}], externals: ($) => [${upstream.externals ?? ''}], ${upstream.word === undefined ? '' : `word: ($) => $.${upstream.word}, `}rules: { source: ($) => repeat($.word), word: () => /[a-z]+/, ${upstream.rules} } });\n`
 		);
-		return await evaluateSittirGrammar(base, 'demo', config, undefined, layers);
+		return await evaluateSittirGrammar(base, upstream.name === undefined ? 'demo' : '', config, undefined, layers);
 	} finally {
 		rmSync(dir, { recursive: true, force: true });
 	}

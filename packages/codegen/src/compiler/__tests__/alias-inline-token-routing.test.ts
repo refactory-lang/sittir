@@ -13,10 +13,8 @@ const codesOf = async (content: string, token?: string) => {
 };
 
 describe('an inline-token alias whose display is an existing rule', () => {
-	it('over a nonterminal rule is resolved by enrich, which drops the alias: no record reaches the emitter', async () => {
-		const codes = await codesOf("seq('a', $.word)");
-		expect(codes).not.toContain('alias-inline-token');
-		expect(codes).not.toContain('display-union-mixed');
+	it('over a nonterminal rule keeps the alias and is reported as alias-inline-token too, never dropped', async () => {
+		expect(await codesOf("seq('a', $.word)")).toContain('alias-inline-token');
 	}, 60_000);
 
 	it('over a terminal rule is reported as alias-inline-token', async () => {
@@ -24,9 +22,9 @@ describe('an inline-token alias whose display is an existing rule', () => {
 		expect(codes).toContain('alias-inline-token');
 	}, 60_000);
 
-	it('over an immediate token or a token under prec resolves the same way, with no enrich throw', async () => {
+	it('over an immediate token or a token under prec routes the same way, with no enrich throw', async () => {
 		for (const token of ['token.immediate(/x+/)', 'prec(1, token.immediate(/x+/))', 'token(prec(1, /x+/))']) {
-			expect(await codesOf("seq('a', $.word)", token)).not.toContain('alias-inline-token');
+			expect(await codesOf("seq('a', $.word)", token)).toContain('alias-inline-token');
 			expect(await codesOf('/z+/', token)).toContain('alias-inline-token');
 		}
 	}, 120_000);

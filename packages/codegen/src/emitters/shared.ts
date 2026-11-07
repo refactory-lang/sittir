@@ -1,4 +1,5 @@
 import { hasBlankArm } from '../compiler/model/site-preferences.ts';
+import { emitShapeFailure } from '../compiler/diagnostics/emit-diagnostics.ts';
 import type { SlotBearingCompound } from '../compiler/model/node-map.ts';
 import { kindTypeName } from '../compiler/model/casing.ts';
 import { CHOICE, SEQ, STRING } from '../types/rule-types.ts'; // @rule-type-consts
@@ -909,7 +910,7 @@ export function ownTextLeaf(node: AssembledNode | undefined): OwnTextLeaf | unde
 	const fixed = (affix: FullFormAffix): string => {
 		const [text] = affix.texts;
 		if (text === undefined || affix.texts.length !== 1 || affix.slot !== undefined) {
-			throw new Error(`'${node.kind}' is a leaf whose affix is not one fixed text, so its spelled form has no type`);
+			throw emitShapeFailure({ code: 'leaf-affix-not-one-text', message: `'${node.kind}' is a leaf whose affix is not one fixed text, so its spelled form has no type` });
 		}
 		return text;
 	};
@@ -1040,7 +1041,8 @@ export function emptyDefaultOf(
 	field: AssembledNonterminal,
 	nodeMap: NodeMap,
 	kindEntries: readonly KindEnumEntry[],
-	factoryNs = ''
+	factoryNs = '',
+	args = ''
 ): string | null {
 	if (!isRequired(field) || !slotFilledWhenOmitted(field, nodeMap)) return null;
 	const sole = field.values[0]!;
@@ -1048,7 +1050,7 @@ export function emptyDefaultOf(
 	if (fixed !== undefined) return `${fixed.discriminant} as const`;
 	if (!isNodeRef(sole) || sole.storageKindId === undefined) return null;
 	const target = nodeMap.nodeByKindId.get(sole.storageKindId);
-	return target?.rawFactoryName === undefined || isFixedTextLeaf(target) ? null : `${factoryNs}${target.rawFactoryName}()`;
+	return target?.rawFactoryName === undefined || isFixedTextLeaf(target) ? null : `${factoryNs}${target.rawFactoryName}(${args})`;
 }
 
 export function assertOmittedSlotsFilled(
@@ -1058,7 +1060,7 @@ export function assertOmittedSlotsFilled(
 ): void {
 	for (const slot of node.configSlots) {
 		if (isRequired(slot) && slotFilledWhenOmitted(slot, nodeMap) && emptyDefaultOf(slot, nodeMap, kindEntries) === null) {
-			throw new Error(`${node.kind}: its builder may omit the required slot ${slot.name}, which has no empty default`);
+			throw emitShapeFailure({ code: 'required-slot-without-empty-default', message: `${node.kind}: its builder may omit the required slot ${slot.name}, which has no empty default` });
 		}
 	}
 }
@@ -1102,7 +1104,6 @@ export function spelledReadType(slot: AssembledNonterminal): string | undefined 
 export interface LeadingOptions {
 	readonly type: string;
 	readonly keys: readonly string[];
-	readonly storageKeys: readonly string[];
 }
 
 export function leadingOptionsOf(node: AssembledNode, nodeMap: NodeMap): LeadingOptions | undefined {
@@ -1110,7 +1111,7 @@ export function leadingOptionsOf(node: AssembledNode, nodeMap: NodeMap): Leading
 	const registered = registeredSlots(node);
 	return registered.length === 0
 		? undefined
-		: { type: `T.${node.typeName}.Options`, keys: registered.map((slot) => slot.propertyName), storageKeys: registered.map((slot) => slot.storageKey) };
+		: { type: `T.${node.typeName}.Options`, keys: registered.map((slot) => slot.propertyName) };
 }
 
 export function classifyFactoryShape(

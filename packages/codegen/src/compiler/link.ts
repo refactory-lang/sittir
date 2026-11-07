@@ -64,6 +64,7 @@ import { stampSpellings, structureTokenInterior } from './token-interior.ts';
 
 import { isAsciiIdentifier } from '../util/identifier-shape.ts';
 import { compileWordMatcher, matchesWordShape } from '../util/word-matcher.ts';
+import { dfaAccepts, patternDfa } from './model/pattern-automaton.ts';
 import { rootRuleName } from '../util/reachable-rules.ts';
 import { polymorphVisibleName } from '../dsl/arm-names.ts';
 import { mappedName } from '../dsl/bind.ts';
@@ -87,6 +88,7 @@ import {
 	type InlineAtReferenceCtx,
 	type SymbolSource,
 	ruleListParts,
+	unwrapPrec,
 	type RuleListEntry,
 } from '../dsl/rule-patterns.ts';
 import { assertPredictedKindEntries, catalogRenames, catalogSymbolSource, collectGeneratedKindEntries, predictedEntriesOf, stampVisibleExternals } from '../dsl/symbol-table.ts';
@@ -253,10 +255,10 @@ export function link(evaluated: RawGrammar, ctx: LinkOptions): LinkedGrammar {
 	mintDisplayUnionRules(rules, { ...stampCtx, displayUnions });
 	canonicalizeCatalogLiteralRefsInMap(topLevelAliasBodies, stampCtx);
 	pruneInlinedAliasBodies(rules, { ...stampCtx, topLevelAliasBodies });
-	const terminalAliasWireIds = collectTerminalAliasWireIds(
-		[rules, raw.rules as unknown as Record<string, Rule<'link'>>],
-		stampCtx
-	);
+	const aliasSites = literalAliasSites([rules, raw.rules as unknown as Record<string, Rule<'link'>>], stampCtx);
+	const terminalAliasWireIds = collectTerminalAliasWireIds(aliasSites);
+	const leafTextPatterns = collectLeafTextPatterns(rules);
+	const displayLexemes = displayLexemesOf(leafTextPatterns, aliasSites);
 	const rootName = linkCtx.root;
 	const reachableFromRoot = rootName ? computeReachableFromRoot({ rules, rootName }) : new Set<string>();
 	reportKindIdStampMisses(stampMisses, ctx.diagnostics, new Set(raw.inline), reachableFromRoot);
@@ -312,7 +314,8 @@ export function link(evaluated: RawGrammar, ctx: LinkOptions): LinkedGrammar {
 		references,
 		displayUnions,
 		topLevelAliasBodies,
-		leafTextPatterns: collectLeafTextPatterns(rules),
+		leafTextPatterns,
+		displayLexemes: displayLexemes.size > 0 ? displayLexemes : undefined,
 		terminalAliasWireIds: terminalAliasWireIds.size > 0 ? terminalAliasWireIds : undefined,
 		refineForms: refineForms.size > 0 ? refineForms : undefined,
 		parentAliasedKinds,
@@ -1315,21 +1318,15 @@ function collectTopLevelAliasBodies(
 	return out;
 }
 
-function collectTerminalAliasWireIds(
-	ruleBags: readonly Record<string, Rule<'link'>>[],
-	ctx: StampKindIdsCtx
-): Map<string, readonly number[]> {
+interface LiteralAliasSite {
+	readonly display: string;
+	readonly text: string;
+	readonly id: number;
+}
+
+function literalAliasSites(ruleBags: readonly Record<string, Rule<'link'>>[], ctx: StampKindIdsCtx): LiteralAliasSite[] {
 	const { kindEntries } = ctx;
-	const out = new Map<string, number[]>();
-	const add = (kind: string, id: number): void => {
-		const ids = out.get(kind);
-		if (ids === undefined) out.set(kind, [id]);
-		else if (!ids.includes(id)) ids.push(id);
-	};
-	const addBothSpellings = (kind: string, id: number): void => {
-		add(kind, id);
-		add(kind.startsWith('_') ? kind.replace(/^_+/, '') : `_${kind}`, id);
-	};
+	const out: LiteralAliasSite[] = [];
 	const terminalTexts = (rule: Rule<'link'>): string[] | undefined => {
 		if (rule.type === STRING) return [rule.value];
 		if (rule.type === CHOICE) {
@@ -1349,7 +1346,7 @@ function collectTerminalAliasWireIds(
 		if (fixed.has(rule)) return;
 		if (rule.type === SYMBOL) {
 			if (rule.literal !== undefined && rule.kindId !== undefined && rule.aliasedTo !== undefined) {
-				addBothSpellings(rule.aliasedTo, rule.kindId);
+				out.push({ display: rule.aliasedTo, text: rule.literal, id: rule.kindId });
 			}
 			return;
 		}
@@ -1358,7 +1355,7 @@ function collectTerminalAliasWireIds(
 			if (texts !== undefined) {
 				for (const text of texts) {
 					const entry = findEntryForLiteralText(kindEntries, text);
-					if (entry !== undefined) addBothSpellings(rule.value, entry.parseId ?? entry.id);
+					if (entry !== undefined) out.push({ display: rule.value, text, id: entry.parseId ?? entry.id });
 				}
 				return;
 			}
@@ -1370,6 +1367,33 @@ function collectTerminalAliasWireIds(
 	};
 	const fixed = new Set(ruleBags.flatMap((bag) => [...fixedNamesOf(bag)]));
 	for (const bag of ruleBags) for (const rule of Object.values(bag)) visit(rule);
+	return out;
+}
+
+function collectTerminalAliasWireIds(sites: readonly LiteralAliasSite[]): Map<string, readonly number[]> {
+	const out = new Map<string, number[]>();
+	const add = (kind: string, id: number): void => {
+		const ids = out.get(kind);
+		if (ids === undefined) out.set(kind, [id]);
+		else if (!ids.includes(id)) ids.push(id);
+	};
+	for (const { display, id } of sites) {
+		add(display, id);
+		add(display.startsWith('_') ? display.replace(/^_+/, '') : `_${display}`, id);
+	}
+	return out;
+}
+
+function displayLexemesOf(patterns: ReadonlyMap<string, string>, sites: readonly LiteralAliasSite[]): Map<string, readonly string[]> {
+	const out = new Map<string, string[]>();
+	for (const { display, text } of sites) {
+		const pattern = patterns.get(display);
+		const dfa = pattern === undefined ? undefined : patternDfa(pattern);
+		if (dfa === undefined || !dfaAccepts(dfa, text)) continue;
+		const texts = out.get(display) ?? [];
+		if (!texts.includes(text)) texts.push(text);
+		out.set(display, texts);
+	}
 	return out;
 }
 
@@ -1385,8 +1409,7 @@ function fixedNamesOf<R extends AnyRule>(rules: Readonly<Record<string, R>>): Re
 	for (const rule of Object.values(rules)) {
 		fixedNameWalker.find(rule, (node) => {
 			if (node.type !== FIELD) return false;
-			let content = node.content;
-			while (isPrecWrapper(content) && 'content' in content) content = content.content;
+			const content = unwrapPrec(node.content);
 			if (isLiteralAlias(content)) out.add(content as R);
 			return false;
 		});

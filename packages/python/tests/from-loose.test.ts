@@ -94,13 +94,14 @@ describe('loose from() — supertype subtype (T052d-iii)', () => {
 });
 
 describe('loose from() — UntypedNode passthrough still works', () => {
-	it('pre-built UntypedNode is passed through unchanged', () => {
+	it('pre-built UntypedNode is placed as given: its kind and its text', () => {
 		const untypedNode = py.build.integer('42');
 		const result = py.build.assignment.eq({
 			name: 'x',
 			value: untypedNode
 		});
 		expect(result.$type).toBe(py.kinds.AssignmentEq);
-		expect(result.value()).toBe(untypedNode);
+		const value = result.value() as unknown as { readonly $type: number; $text(): string };
+		expect([value.$type, value.$text()]).toEqual([untypedNode.$type, untypedNode.$text()]);
 	});
 });

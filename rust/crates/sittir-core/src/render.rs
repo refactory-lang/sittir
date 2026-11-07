@@ -17,6 +17,9 @@ pub enum RenderError {
     /// A built list's item at this position, past the last index an
     /// `ItemIndex` holds.
     ItemIndex(usize),
+    /// A record's cell or word that no record writer writes, met by a view.
+    #[cfg(feature = "arena")]
+    Record(crate::arena::ArenaError),
     /// No delimiter a composite derives fits its content.
     Delimiter(crate::delimiters::DelimiterRefusal),
 }
@@ -27,6 +30,8 @@ impl fmt::Display for RenderError {
             Self::Fmt(e) => fmt::Display::fmt(e, f),
             Self::Coordinate(e) => fmt::Display::fmt(e, f),
             Self::ItemIndex(at) => write!(f, "list item {at} is past the last item index a u32 holds"),
+            #[cfg(feature = "arena")]
+            Self::Record(e) => fmt::Display::fmt(e, f),
             Self::Delimiter(refusal) => fmt::Display::fmt(refusal, f),
         }
     }
@@ -42,7 +47,18 @@ impl From<fmt::Error> for RenderError {
 
 impl From<CoordinateError> for RenderError {
     fn from(e: CoordinateError) -> Self {
+        #[cfg(feature = "arena")]
+        if let CoordinateError::Record(e) = e {
+            return Self::Record(e);
+        }
         Self::Coordinate(e)
+    }
+}
+
+#[cfg(feature = "arena")]
+impl From<crate::arena::ArenaError> for RenderError {
+    fn from(e: crate::arena::ArenaError) -> Self {
+        Self::Record(e)
     }
 }
 
@@ -50,6 +66,7 @@ pub type RenderResult = Result<(), RenderError>;
 
 /// The grammar's whitespace vocabulary as the writer needs it: the text of
 /// each arm by kind id, and which two ids are the depth arms.
+#[derive(Debug)]
 pub struct WhitespaceTable {
     pub text_of: fn(KindId) -> &'static str,
     pub indent: KindId,
@@ -105,6 +122,14 @@ pub struct EdgeLevel {
 pub trait SourceTable {
     fn source_of(&self, tree_id: crate::types::TreeId) -> Option<&Arc<str>>;
 
+    /// Whether the source of `tree_id` spells every line break `\n`, holding
+    /// no `\r`, as its parse found: a slice of it enters the writer as it is.
+    /// A table that does not know says no, and the writer respells the slice.
+    fn breaks_spelled_lf(&self, tree_id: crate::types::TreeId) -> bool {
+        let _ = tree_id;
+        false
+    }
+
     /// The kind of the node a coordinate names, when the table still holds
     /// its tree. A table of bare sources cannot answer and says so.
     fn kind_of(&self, coord: &crate::slot::NodeCoordinate) -> Option<KindId> {
@@ -151,6 +176,16 @@ pub trait SourceTable {
         if let Some(grammar) = self.kind_of(coord) {
             f(EdgeLevel { stamp: coord.kind.unwrap_or(grammar), grammar, display: grammar, field: None });
         }
+    }
+
+    /// The levels the node a coordinate names opens net of those it closes:
+    /// its tree's depth members (`SurfaceKinds::indent`, `dedent`) counted
+    /// over its subtree. A slice moves the writer's depth by it, as the
+    /// node's template would. A coordinate whose handle names a node other
+    /// than its own span, and a table of bare sources, answer none.
+    fn depth_move(&self, coord: &crate::slot::NodeCoordinate) -> i32 {
+        let _ = coord;
+        0
     }
 
     /// The sides of the node a coordinate names, as its tree's trivia table
@@ -225,7 +260,26 @@ pub trait SourceTable {
         let _ = tree;
         None
     }
+
+    /// Renders the built record `record`, which the store `held` answered,
+    /// into `w` as a trivia entry in the side that holds it, from the arena
+    /// that wrote it, under `options`. A table that reaches no arena
+    /// refuses.
+    ///
+    /// # Errors
+    ///
+    /// What the record's render refuses, and `RenderError::Record` when no
+    /// arena is reachable from here.
+    #[cfg(feature = "arena")]
+    fn render_record_entry(&self, record: crate::trivia::BuiltEntry, held: &dyn std::any::Any, options: &crate::options::ResolvedOptions, w: &mut dyn RenderSink) -> RenderResult {
+        let _ = (record, held, options, w);
+        Err(RenderError::Record(NO_ARENA))
+    }
 }
+
+/// The refusal of a record entry rendered where no arena is reachable.
+#[cfg(feature = "arena")]
+pub(crate) const NO_ARENA: crate::arena::ArenaError = crate::arena::ArenaError::Unwritable("a record entry renders only where the arena that wrote it is reachable");
 
 /// Why a coordinate cannot be turned into bytes. Both arms carry the handle:
 /// a coordinate is only meaningful beside the tree that minted it, and the
@@ -248,6 +302,17 @@ pub enum CoordinateError {
         handle: crate::types::TreeHandle,
         detail: String,
     },
+    /// A record's cell or word that no record writer writes, met by a
+    /// record's prepare.
+    #[cfg(feature = "arena")]
+    Record(crate::arena::ArenaError),
+}
+
+#[cfg(feature = "arena")]
+impl From<crate::arena::ArenaError> for CoordinateError {
+    fn from(e: crate::arena::ArenaError) -> Self {
+        Self::Record(e)
+    }
 }
 
 impl fmt::Display for CoordinateError {
@@ -259,6 +324,8 @@ impl fmt::Display for CoordinateError {
             ),
             Self::BadSpan { handle, detail } => write!(f, "handle {handle}: {detail}"),
             Self::Unread { handle, detail } => write!(f, "handle {handle}: the node holds a write, and its read failed: {detail}"),
+            #[cfg(feature = "arena")]
+            Self::Record(e) => fmt::Display::fmt(e, f),
         }
     }
 }
@@ -280,12 +347,20 @@ pub enum LineHold {
 pub trait RenderSink {
     fn text(&mut self, s: &str) -> RenderResult;
     /// Text that keeps its source adjacency on both sides, an `ERROR`
-    /// region's: `text` with the source's in-line runs `before` and `after`
-    /// it. No seam that stays on the line is written on either side, so the
-    /// runs are the gaps beside it. A pending line break still writes, and
-    /// a line break beats the run on its side.
-    fn verbatim(&mut self, before: &str, text: &str, after: &str) -> RenderResult {
-        self.text(&[before, text, after].concat())
+    /// region's: `text` with the source's runs `before` and `after` it, each
+    /// `Some` where the source spells that side in-line (empty where the
+    /// text touches what is beside it) and `None` where a line break or the
+    /// file's edge lies between. The runs are the gaps beside it. On a side
+    /// spelled in-line, no seam below trivia strength is written, a line
+    /// break included, and a whitespace entry at trivia strength (one stored
+    /// or written on the side) replaces the run. On a side that breaks, a
+    /// line break writes and a seam that stays on the line does not, unless
+    /// a whitespace entry spells it. `at`, the bytes of its tree's source the
+    /// text spans when read from a live tree, anchors it in a recording
+    /// render as a slice is anchored.
+    fn verbatim(&mut self, before: Option<&str>, text: &str, after: Option<&str>, at: Option<crate::types::Span>) -> RenderResult {
+        let _ = at;
+        self.text(&[before.unwrap_or_default(), text, after.unwrap_or_default()].concat())
     }
     /// The next text is a leaf whose pattern takes layout text only of the
     /// `LayoutKinds` bits in `leading` before it and `trailing` after it.
@@ -368,8 +443,16 @@ pub trait RenderSink {
         let _ = text;
         self.seam(gap);
     }
+    /// A join between trivia entries, or between an entry and its owner: a
+    /// seam at trivia strength, as `trivia_seam`'s, but no whitespace entry,
+    /// so beside verbatim text it yields to the source's adjacency as a
+    /// template's seam does (`verbatim`).
+    fn trivia_join(&mut self, gap: crate::layout_kinds::LayoutKinds) {
+        self.trivia_seam(gap, None);
+    }
     /// Write the bytes a coordinate names, from the tree table this writer
-    /// holds. The default refuses: a sink with no source table cannot answer
+    /// holds, and move the depth as the node's template would
+    /// (`SourceTable::depth_move`). The default refuses: a sink with no source table cannot answer
     /// a coordinate, and answering it as empty would silently delete source.
     fn slice(&mut self, coord: &crate::slot::NodeCoordinate) -> RenderResult {
         Err(CoordinateError::UnknownTree {
@@ -390,6 +473,20 @@ pub trait RenderSink {
     fn frames(&self, coord: &crate::slot::NodeCoordinate) -> Result<crate::trivia::Frames, RenderError> {
         let _ = coord;
         Ok(crate::trivia::Frames::default())
+    }
+    /// Writes the built record `record`, which the store `held` answered, as
+    /// a trivia entry here, through this sink's tree table
+    /// (`SourceTable::render_record_entry`). Refuses a sink that holds no
+    /// table or no options.
+    ///
+    /// # Errors
+    ///
+    /// `RenderError::Record` for a sink that cannot reach the record's
+    /// arena, and what the table refuses.
+    #[cfg(feature = "arena")]
+    fn render_record_entry(&mut self, record: crate::trivia::BuiltEntry, held: &dyn std::any::Any) -> RenderResult {
+        let _ = (record, held);
+        Err(RenderError::Record(NO_ARENA))
     }
     /// A coordinate's text has just been written: hold the line end of each
     /// kind the text ends in, its own kind first.

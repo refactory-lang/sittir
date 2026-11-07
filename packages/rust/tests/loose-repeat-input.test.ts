@@ -4,19 +4,18 @@ import rust from '../src/index.ts';
 import type { FunctionModifiers } from '../src/types.ts';
 
 const rs = await createEngine(rust);
+const objects = await createEngine(rust, { nodeStorage: 'object' });
 const verifying = await createEngine(rust, { verifyStructure: 'runtime' });
 
 describe('loose repeated-envelope inputs', () => {
 	it('coerces a single text array per element', () => {
-		const node = rs.build.functionModifiers(['async', 'unsafe']);
-		expect(node.$render().toString()).toBe('async unsafe');
-		expect(node._modifier).toEqual([rs.kinds.AsyncKeyword, rs.kinds.UnsafeKeyword]);
+		expect(rs.build.functionModifiers(['async', 'unsafe']).$render().toString()).toBe('async unsafe');
+		expect(objects.build.functionModifiers(['async', 'unsafe'])._modifier).toEqual([rs.kinds.AsyncKeyword, rs.kinds.UnsafeKeyword]);
 	});
 
 	it('coerces a single enum array per element', () => {
-		const node = rs.build.functionModifiers([rs.kinds.AsyncKeyword, rs.kinds.UnsafeKeyword]);
-		expect(node.$render().toString()).toBe('async unsafe');
-		expect(node._modifier).toEqual([rs.kinds.AsyncKeyword, rs.kinds.UnsafeKeyword]);
+		expect(rs.build.functionModifiers([rs.kinds.AsyncKeyword, rs.kinds.UnsafeKeyword]).$render().toString()).toBe('async unsafe');
+		expect(objects.build.functionModifiers([rs.kinds.AsyncKeyword, rs.kinds.UnsafeKeyword])._modifier).toEqual([rs.kinds.AsyncKeyword, rs.kinds.UnsafeKeyword]);
 	});
 
 	it('accepts a readonly array', () => {

@@ -1,4 +1,5 @@
 import { CHOICE, PATTERN, SEQ, STRING } from '../types/rule-types.ts'; // @rule-type-consts
+import { emitShapeFailure } from '../compiler/diagnostics/emit-diagnostics.ts';
 import type { RenderRule } from '../types/rule.ts';
 import { escapeRegexLiteral } from '../util/word-matcher.ts';
 import {
@@ -103,9 +104,12 @@ export function assertUnambiguous(kind: string, entries: readonly InteriorEntry[
 		for (const present of literalTexts(entry)) {
 			for (const following of literalTexts(next)) {
 				if (following.startsWith(present) || present.startsWith(following)) {
-					throw new Error(
-						`token interior: '${kind}' is ambiguous — ${memberName(entry)} (${JSON.stringify(present)}) and ${memberName(next)} (${JSON.stringify(following)}) are not distinguishable at their first differing character`
-					);
+					throw emitShapeFailure({
+						code: 'token-interior-ambiguous',
+						ownerKind: kind,
+						message: `token interior: '${kind}' is ambiguous — ${memberName(entry)} (${JSON.stringify(present)}) and ${memberName(next)} (${JSON.stringify(following)}) are not distinguishable at their first differing character`,
+						details: { first: memberName(entry), second: memberName(next) }
+					});
 				}
 			}
 		}
@@ -113,7 +117,12 @@ export function assertUnambiguous(kind: string, entries: readonly InteriorEntry[
 }
 
 function unsupported(kind: string, why: string): never {
-	throw new Error(`token interior: '${kind}' is a lexed kind but ${why}`);
+	throw emitShapeFailure({
+		code: 'token-interior-unsupported',
+		ownerKind: kind,
+		message: `token interior: '${kind}' is a lexed kind but ${why}`,
+		details: { why }
+	});
 }
 
 type RenderMember = RenderRule & { readonly content?: RenderRule; readonly members?: readonly RenderRule[] };

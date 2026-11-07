@@ -1,4 +1,5 @@
 import { beforeAll, describe, expect, it } from 'vitest';
+import { FULL_PIPELINE_TIMEOUT } from '../../__tests__/helpers/timeouts.ts';
 import { buildRuleCatalog, createRuleId, ruleIdPath } from '../rule-catalog.ts';
 import { collapseRenamedRules } from '../link.ts';
 import { collectGeneratedKindEntries, stampVisibleExternals } from '../../dsl/symbol-table.ts';
@@ -13,7 +14,7 @@ describe('rule ids', () => {
 
 	beforeAll(async () => {
 		rust = await evaluatePackage(grammarPackage('rust'));
-	});
+	}, FULL_PIPELINE_TIMEOUT);
 
 	it('ruleIdPath reads back the path createRuleId wrote, whatever the owner name holds', () => {
 		expect(ruleIdPath(createRuleId('host', { path: [] }))).toBe('root');

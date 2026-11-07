@@ -20,10 +20,10 @@ export interface KindMembership {
 
 /**
  * One slot of a kind: the accessor a node reads it through, its number (`SlotSubject`), the keyword
- * when the slot holds that keyword's presence (`undefined` otherwise), the key the node stores it under, and the keyword's kind id
- * when its storage stamps one.
+ * when the slot holds that keyword's presence (`undefined` otherwise), the key the node stores it under, the keyword's kind id
+ * when its storage stamps one, and `true` when the slot is an optional preference whose blank arm its accessor reads as `null`.
  */
-export type QuerySlotEntry = readonly [accessor: string, slot: number, keyword: string | undefined, storageKey: string, keywordKind?: number];
+export type QuerySlotEntry = readonly [accessor: string, slot: number, keyword: string | undefined, storageKey: string, keywordKind?: number, blank?: true];
 
 /** Each kind's slots, by kind id. */
 export type QuerySlots = Readonly<Record<number, readonly QuerySlotEntry[]>>;

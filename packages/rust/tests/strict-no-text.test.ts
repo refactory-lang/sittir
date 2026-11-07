@@ -11,7 +11,7 @@ describe('a strict builder takes kind ids and booleans, never the text of a keyw
 	it('builds from a boolean and from a kind id', () => {
 		expect(strict.selfParameter({ reference: true, mutable: true }).$render()).toBe('&mut self');
 		expect(strict.selfParameter({ reference: false, mutable: true }).$render()).toBe('mut self');
-		const sum = strict.binaryExpression({ left: b.identifier('a'), operator: rs.kinds.Plus, right: b.identifier('b') });
+		const sum = strict.binaryExpression({ left: strict.identifier('a'), operator: rs.kinds.Plus, right: strict.identifier('b') });
 		expect(sum.$render()).toBe('a + b');
 	});
 
@@ -21,7 +21,7 @@ describe('a strict builder takes kind ids and booleans, never the text of a keyw
 	});
 
 	it('refuses the text of a kind-enum slot', () => {
-		const config = { left: b.identifier('a'), operator: '+', right: b.identifier('b') } as never;
+		const config = { left: verifyingStrict.build.identifier('a'), operator: '+', right: verifyingStrict.build.identifier('b') } as never;
 		expect(() => verifyingStrict.build.binaryExpression(config)).toThrow(/a strict factory takes a built node, not a string; expected a kind id/);
 	});
 });

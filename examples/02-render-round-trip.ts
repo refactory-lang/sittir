@@ -1,14 +1,14 @@
 import rust from '@sittir/rust';
+import { sameStructure } from './helpers.ts';
 
 const rs = await rust.createEngine();
-const rsStrict = await rust.createEngine({ api: 'strict' });
 
 export function renderMainFunction() {
 	const fn = rs.build.statement.function({
 		visibilityModifier: 'pub',
 		name: 'main',
-		parameters: rsStrict.build.parameters(),
-		body: rsStrict.build.block(),
+		parameters: rs.build.parameters(),
+		body: rs.build.block(),
 	});
 	return fn.$render();
 }
@@ -29,7 +29,7 @@ export function renderUntouched(source: string) {
 
 /**
  * Read → render → re-read. What must hold is that the rendered text
- * re-parses to the same tree, whichever levels came back verbatim and
+ * re-parses to the same tree (`sameStructure`), whichever levels came back verbatim and
  * whichever were rebuilt from templates.
  */
 export function roundTrip(source: string) {
@@ -38,6 +38,6 @@ export function roundTrip(source: string) {
 	const second = rs.parse(rendered);
 	return {
 		rendered,
-		reparsesEqual: JSON.stringify(first) === JSON.stringify(second),
+		reparsesEqual: sameStructure(first, second),
 	};
 }

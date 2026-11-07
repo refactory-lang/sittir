@@ -93,7 +93,7 @@ import {
 } from '../../types/runtime-shapes.ts';
 import type { RuntimeRule, FieldLike } from '../../types/runtime-shapes.ts';
 import { makeRuleMetadata } from '../rule-metadata.ts';
-import { flattenedListBody, isArmChoice, isBlank, isHiddenKind, lexesAsOneToken, matchesEmpty, optionalContentOf, withOptionalContent } from '../rule-patterns.ts';
+import { flattenedListBody, isArmChoice, isBlank, isHiddenKind, lexesAsOneToken, matchesEmpty, optionalContentOf, peelPrecs, unwrapPrec, withOptionalContent } from '../rule-patterns.ts';
 import { nativeRuleFn } from '../enrich.ts';
 import { carriedLabel, relabelledArm, withAuthoredLabel, withoutAutomaticVariants } from '../automatic-variants.ts';
 
@@ -398,8 +398,7 @@ function applyVariantPatches(
 function registerIfPureVariantChoice(rule: RuntimeRule): void {
 	const parentKind = wireGetCurrentRuleKind();
 	if (!parentKind || wireIsExtraRule(parentKind)) return;
-	let core = rule;
-	while (isPrecWrapper(core as { type: string })) core = contentOf(core);
+	const core = unwrapPrec(rule);
 	if (!isChoiceType(core.type)) return;
 	const arms = membersOf(core);
 	if (arms.length < 2 || !arms.every((arm) => isMintedVariantArm(arm, parentKind))) return;
@@ -407,8 +406,7 @@ function registerIfPureVariantChoice(rule: RuntimeRule): void {
 }
 
 function isMintedVariantArm(arm: RuntimeRule, parentKind: string): boolean {
-	let node = arm;
-	while (isPrecWrapper(node as { type: string })) node = contentOf(node);
+	const node = unwrapPrec(arm);
 	const symbol = node as { type?: string; name?: string; annotations?: { variantOf?: string } };
 	if (symbol.type !== 'SYMBOL' || typeof symbol.name !== 'string' || symbol.annotations?.variantOf !== parentKind) return false;
 	return wireHasDeposit(symbol.name) || wireHasAuthoredRule(symbol.name);
@@ -541,12 +539,7 @@ function peelPrecWrappersFromRule(rule: RuntimeRule): {
 		if (dbg) console.error(`[sittir] hoist skipped on '${kindFor}': ${reason}`);
 		return null;
 	};
-	const precStack: RuntimeRule[] = [];
-	let core = rule;
-	while (core && isPrecWrapper(core)) {
-		precStack.push(core);
-		core = contentOf(core);
-	}
+	const { precs: precStack, core } = peelPrecs(rule);
 	return { bail, precStack, core };
 }
 

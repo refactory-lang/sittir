@@ -1,10 +1,10 @@
 import { ALIAS, FIELD, OPTIONAL, REPEAT, REPEAT1, SEQ, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
-import type { Rule } from '../../types/rule.ts';
+import type { AnyRule, Rule } from '../../types/rule.ts';
 import type { GrammarDiagnostic } from '../../types/diagnostics.ts';
 import type { DisplayUnions } from '../types.ts';
 import { isPrecWrapper } from '../../types/runtime-shapes.ts';
 import { RuleWalker } from '../../dsl/rule-walker.ts';
-import type { SymbolSource } from '../../dsl/rule-patterns.ts';
+import { terminalContentOf, type SymbolSource } from '../../dsl/rule-patterns.ts';
 import { inlineTokenAliasSkipsOf, type InlineTokenAliasSkip, type InlineTokenAliasSkipSite } from '../../dsl/rule-transforms.ts';
 import { assertNever } from '../../polymorph-variant.ts';
 
@@ -74,6 +74,8 @@ export function diagnoseMixedDisplayUnions(input: {
 				});
 				continue;
 			}
+			const ownBody = member.storage === display ? (input.symbols.rules[member.storage] as AnyRule | undefined) : undefined;
+			if (ownBody !== undefined && terminalContentOf(ownBody, input.symbols.isTerminal)) continue;
 			(input.symbols.isTerminal(member.storage) ? terminals : nonterminals).push(member.storage);
 		}
 		if (terminals.length === 0 || nonterminals.length === 0) continue;
@@ -83,7 +85,7 @@ export function diagnoseMixedDisplayUnions(input: {
 			severity: 'error',
 			grammar: input.grammar,
 			ownerKind: display,
-			message: `display '${display}' sits over terminals (${terminals.join(', ')}) and nonterminals (${nonterminals.join(', ')}); enrich resolves every such display, so this is a broken invariant`,
+			message: `display '${display}' sits over terminals (${terminals.join(', ')}) and nonterminals (${nonterminals.join(', ')}); a node that holds children cannot hold those leaf occurrences, and its body is not a token to extend`,
 			canProceed: false,
 			details: { display, terminals, nonterminals }
 		});

@@ -105,6 +105,10 @@ function prefixed(grammar: string, input: Readable, output: (line: string) => vo
 
 const toStdout = (line: string): void => void process.stdout.write(line);
 
+function printKept(label: string, output: Buffer): void {
+	for (const line of output.toString().split('\n')) if (line !== '') toStdout(`[${label}] ${line}\n`);
+}
+
 async function runPrefixed(grammar: string, cwd: string, flags: readonly string[], verbose: boolean): Promise<number> {
 	const child = spawn('pnpm', [...genArgs(grammar), ...flags], { cwd, stdio: ['ignore', 'pipe', 'pipe'] });
 	const exit = new Promise<number>((resolve) => {
@@ -125,7 +129,7 @@ function buildNative(grammar: string, cwd: string, args: readonly string[], verb
 	if (verbose) return spawnSync('pnpm', args, { cwd, stdio: 'inherit' }).status ?? 1;
 	const child = spawnSync('pnpm', args, { cwd, stdio: ['ignore', 'pipe', 'inherit'], env: { ...process.env, CARGO_TERM_QUIET: 'true' } });
 	const status = child.status ?? 1;
-	if (status !== 0) for (const line of child.stdout.toString().split('\n')) if (line !== '') toStdout(`[${grammar}] ${line}\n`);
+	if (status !== 0) printKept(grammar, child.stdout);
 	return status;
 }
 
@@ -153,7 +157,10 @@ export async function regenerateGrammars(grammars: readonly string[], cwd: strin
 	const before = new Map<string, RunInputs>();
 	for (const grammar of [...stale, ...reextract]) before.set(grammar, await runInputs(grammar, cwd));
 	for (const grammar of stale) clearRegenRecord(cwd, grammar);
-	const generated = await inPool(stale, availableParallelism(), (grammar) => runPrefixed(grammar, cwd, ['--no-build-native', '--no-workspace-check'], verbose));
+	const nodeApiLevel = (await load('grammars')).workspaceNodeApiLevel();
+	const generated = await inPool(stale, availableParallelism(), (grammar) =>
+		runPrefixed(grammar, cwd, ['--no-build-native', '--no-workspace-check', '--node-api-level', String(nodeApiLevel)], verbose)
+	);
 	const failed = generated.find((status) => status !== 0);
 	if (failed !== undefined) return failed;
 	for (const [i, grammar] of stale.entries()) {

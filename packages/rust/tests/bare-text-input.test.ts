@@ -8,7 +8,7 @@ const verifyingStrict = await createEngine(rust, { verifyStructure: 'runtime', a
 
 describe('a text leaf slot takes a built node strictly and its text loosely', () => {
 	it('takes the built leaf strictly and renders it', () => {
-		const built = rsStrict.build.stringLiteral({ stringOpen: rs.build.stringOpen('"'), elements: [rs.build.stringContent('hi')] });
+		const built = rsStrict.build.stringLiteral({ stringOpen: rsStrict.build.stringOpen('"'), elements: [rsStrict.build.stringContent('hi')] });
 		expect(built.$render()).toBe('"hi"');
 	});
 

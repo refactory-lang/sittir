@@ -49,7 +49,7 @@ describe('a contextual keyword at a slot the grammar relaxes it in', () => {
 		const built = ts.build.assignmentExpression({ left: 'async', right: ts.build.identifier('b') });
 		const text = built.$render().toString();
 		expect(text).toBe('async = b');
-		const content = (built._left as unknown as { _content: { $type: number; $text(): string } })._content;
+		const content = (built.left() as unknown as { content(): { $type: number; $text(): string } }).content();
 		expect({ $type: content.$type, $text: content.$text() }).toEqual({ $type: ts.kinds.Identifier, $text: 'async' });
 		expect(readLeftContent(text)).toMatchObject({ $type: ts.kinds.Identifier, $text: 'async' });
 	});

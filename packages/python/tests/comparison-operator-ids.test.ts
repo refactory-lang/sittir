@@ -4,7 +4,7 @@ import { describe, expect, it } from 'vitest';
 import python from '../src/index.ts';
 import { createEngine } from '@sittir/common';
 
-const py = await createEngine(python);
+const py = await createEngine(python, { nodeStorage: 'object' });
 
 function operatorsOf(source: string): unknown {
 	const found: unknown[] = [];

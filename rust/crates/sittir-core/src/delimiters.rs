@@ -42,6 +42,9 @@ pub struct DelimiterSpec {
     /// opened arms admitted; `None` checks it under every opener. An opaque
     /// opener is always checked and admits the arms.
     pub gate: Option<&'static [&'static str]>,
+    /// The grammar's whitespace table, which the content is rendered with to
+    /// read it as the render writes it.
+    pub whitespace: &'static crate::render::WhitespaceTable,
 }
 
 /// A kind of a composite's content the delimiter check names.
@@ -51,11 +54,11 @@ pub struct ContentKind {
     pub name: &'static str,
 }
 
-/// A token that carries a derived delimiter facet.
-pub trait DelimiterToken: Prepare {
+/// A token that carries a derived delimiter facet, as its node and its
+/// record's view read it.
+pub trait DelimiterToken {
     /// The facet's text, when the token holds one.
     fn facet(&self) -> Option<&str>;
-    fn set_facet(&mut self, text: String);
     /// Content the token holds ahead of its facet (a closer's escape pairs).
     fn content(&self) -> Option<&str> {
         None
@@ -67,6 +70,41 @@ pub trait DelimiterToken: Prepare {
     fn gate(&self) -> Option<&str> {
         None
     }
+}
+
+/// A native token, whose facet prepare writes in place.
+pub trait SetFacet: DelimiterToken + Prepare {
+    fn set_facet(&mut self, text: String);
+}
+
+/// What the delimiter check reads of a token, held apart from the token.
+#[derive(Debug, Clone, Default, PartialEq, Eq)]
+pub struct TokenFacts {
+    pub facet: Option<String>,
+    pub content: Option<String>,
+    pub opaque: bool,
+    pub gate: Option<String>,
+}
+
+impl TokenFacts {
+    #[must_use]
+    pub fn of<T: DelimiterToken + ?Sized>(token: &T) -> Self {
+        Self { facet: token.facet().map(str::to_owned), content: token.content().map(str::to_owned), opaque: token.opaque(), gate: token.gate().map(str::to_owned) }
+    }
+}
+
+/// A delimiter token's slot as its composite's prepare reads and fills it:
+/// on a native node, its value, written in place; on a record, its cell,
+/// the facet written to the overlay `O`.
+pub trait DelimiterSlot<O> {
+    /// The token the slot holds; none when it holds none the render can read.
+    fn token(&self, overlay: &O, ctx: &RenderContext<'_>) -> Option<TokenFacts>;
+    /// Give the token `facet` in place of the one it holds.
+    ///
+    /// # Errors
+    ///
+    /// What preparing a read token taken as a node refuses.
+    fn set_facet(&mut self, overlay: &mut O, facet: &str, ctx: &RenderContext<'_>) -> Result<(), RenderError>;
 }
 
 /// Why no delimiter fits a composite's content.
@@ -160,51 +198,44 @@ fn refusal_reason(spec: &DelimiterSpec, content: &str) -> String {
 
 fn read_token<T: Prepare, const ADJACENT: bool>(slot: &SlotValue<T, ADJACENT>, ctx: &RenderContext<'_>) -> Option<T> {
     let coord = slot.coord()?;
-    let (tree, read) = ctx.sources.read_ctx(coord.tree)?;
-    T::read_coordinate(tree, &read, coord.index)?.ok()
+    let (tree, mut read) = ctx.sources.read_ctx(coord.tree)?;
+    T::read_coordinate(tree, &mut read, coord.index)?.ok()
 }
 
-enum Held<T> {
-    Built,
-    Read(T),
-    Unreadable,
-}
-
-fn held<T: DelimiterToken, const ADJACENT: bool>(slot: &SlotValue<T, ADJACENT>, ctx: &RenderContext<'_>) -> Held<T> {
-    match slot {
-        SlotValue::Node(_) => Held::Built,
-        SlotValue::Coord(_) => read_token(slot, ctx).map_or(Held::Unreadable, Held::Read),
+impl<T: SetFacet, const ADJACENT: bool> DelimiterSlot<()> for SlotValue<T, ADJACENT> {
+    fn token(&self, (): &(), ctx: &RenderContext<'_>) -> Option<TokenFacts> {
+        match self {
+            SlotValue::Node(node) => Some(TokenFacts::of(node)),
+            SlotValue::Coord(_) => read_token(self, ctx).map(|node| TokenFacts::of(&node)),
+        }
     }
-}
 
-fn token<'a, T: DelimiterToken, const ADJACENT: bool>(slot: &'a SlotValue<T, ADJACENT>, held: &'a Held<T>) -> Option<&'a T> {
-    match held {
-        Held::Built => slot.node(),
-        Held::Read(node) => Some(node),
-        Held::Unreadable => None,
-    }
-}
-
-fn set<T: DelimiterToken, const ADJACENT: bool>(
-    slot: &mut SlotValue<T, ADJACENT>,
-    held: Held<T>,
-    facet: &str,
-    ctx: &RenderContext<'_>,
-) -> Result<(), RenderError> {
-    match (slot, held) {
-        (SlotValue::Node(node), _) => {
-            if node.facet() != Some(facet) {
-                node.set_facet(facet.to_owned());
+    fn set_facet(&mut self, (): &mut (), facet: &str, ctx: &RenderContext<'_>) -> Result<(), RenderError> {
+        match self {
+            SlotValue::Node(node) => {
+                if node.facet() != Some(facet) {
+                    node.set_facet(facet.to_owned());
+                }
             }
-            Ok(())
+            SlotValue::Coord(_) => {
+                if let Some(mut node) = read_token(self, ctx).filter(|node| node.facet() != Some(facet)) {
+                    node.set_facet(facet.to_owned());
+                    node.prepare(ctx)?;
+                    *self = SlotValue::Node(node);
+                }
+            }
         }
-        (slot, Held::Read(mut node)) if node.facet() != Some(facet) => {
-            node.set_facet(facet.to_owned());
-            node.prepare(ctx)?;
-            *slot = SlotValue::Node(node);
-            Ok(())
-        }
-        _ => Ok(()),
+        Ok(())
+    }
+}
+
+impl<O, S: DelimiterSlot<O> + ?Sized> DelimiterSlot<O> for &mut S {
+    fn token(&self, overlay: &O, ctx: &RenderContext<'_>) -> Option<TokenFacts> {
+        (**self).token(overlay, ctx)
+    }
+
+    fn set_facet(&mut self, overlay: &mut O, facet: &str, ctx: &RenderContext<'_>) -> Result<(), RenderError> {
+        (**self).set_facet(overlay, facet, ctx)
     }
 }
 
@@ -216,15 +247,15 @@ impl<F: Fn(&mut dyn RenderSink) -> RenderResult> Render for Content<F> {
     }
 }
 
-fn interpolates<T: DelimiterToken>(spec: &DelimiterSpec, opener: &T) -> bool {
-    spec.gate.is_none_or(|spellings| opener.opaque() || opener.gate().is_some_and(|gate| spellings.contains(&gate)))
+fn interpolates(spec: &DelimiterSpec, opener: &TokenFacts) -> bool {
+    spec.gate.is_none_or(|spellings| opener.opaque || opener.gate.as_deref().is_some_and(|gate| spellings.contains(&gate)))
 }
 
-fn rendered<T: DelimiterToken>(content: &dyn Render, spec: &DelimiterSpec, opener: &T, ctx: &RenderContext<'_>) -> Result<String, RenderError> {
+fn rendered(content: &dyn Render, spec: &DelimiterSpec, opener: &TokenFacts, ctx: &RenderContext<'_>) -> Result<String, RenderError> {
     let mut out = String::new();
     let admitted = interpolates(spec, opener);
     let probe = LeafProbe { leaves: if admitted { spec.free_text } else { &[] }, excluded: spec.excluded, nested: spec.id, arms: spec.opened, refuses_arms: !admitted };
-    let mut w = SpacingWriter::new(&mut out, WordMatcher::default_ident()).with_options(ctx.options).with_sources(ctx.sources).with_leaf_probe(probe);
+    let mut w = SpacingWriter::new(&mut out, WordMatcher::default_ident()).with_table(spec.whitespace).with_options(ctx.options).with_sources(ctx.sources).with_leaf_probe(probe);
     content.render(&mut w)?;
     w.finish()?;
     let refusal = |reason: String| RenderError::Delimiter(DelimiterRefusal { kind: spec.kind, reason });
@@ -233,7 +264,7 @@ fn rendered<T: DelimiterToken>(content: &dyn Render, spec: &DelimiterSpec, opene
         Some(ProbeHit::Arm(arm)) => Err(refusal(format!(
             "its {} is no part of it under {}",
             arm.name,
-            opener.gate().map_or_else(|| "no prefix".to_owned(), |gate| format!("the `{gate}` prefix"))
+            opener.gate.as_deref().map_or_else(|| "no prefix".to_owned(), |gate| format!("the `{gate}` prefix"))
         ))),
         None => {
             drop(w);
@@ -243,31 +274,40 @@ fn rendered<T: DelimiterToken>(content: &dyn Render, spec: &DelimiterSpec, opene
 }
 
 /// Fill or check a composite's derived delimiters against its content:
-/// `content` renders what the delimiters bound, the closer's own content
-/// following it.
-pub fn fill<O: DelimiterToken, C: DelimiterToken, const OA: bool, const CA: bool>(
-    open: &mut SlotValue<O, OA>,
-    close: &mut SlotValue<C, CA>,
+/// `content` renders what the delimiters bound, over the overlay as prepare
+/// has filled it, the closer's own content following it.
+///
+/// # Errors
+///
+/// `RenderError::Delimiter` when no delimiter fits the content or its free
+/// text holds what the opener refuses, else what rendering the content or
+/// preparing a read token refuses.
+pub fn fill<O, Open: DelimiterSlot<O>, Close: DelimiterSlot<O>>(
+    open: &mut Open,
+    close: &mut Close,
+    overlay: &mut O,
     spec: &DelimiterSpec,
     ctx: &RenderContext<'_>,
-    content: impl Fn(&mut dyn RenderSink) -> RenderResult,
+    content: impl Fn(&O, &mut dyn RenderSink) -> RenderResult,
 ) -> Result<(), RenderError> {
-    let open_held = held(open, ctx);
-    let close_held = held(close, ctx);
-    let (Some(opener), Some(closer)) = (token(open, &open_held), token(close, &close_held)) else { return Ok(()) };
-    let rendered = rendered(&Content(content), spec, opener, ctx)?;
-    if opener.opaque() || closer.opaque() {
+    let (Some(opener), Some(closer)) = (open.token(overlay, ctx), close.token(overlay, ctx)) else { return Ok(()) };
+    let held = &*overlay;
+    let rendered = rendered(&Content(|w: &mut dyn RenderSink| content(held, w)), spec, &opener, ctx)?;
+    if opener.opaque || closer.opaque {
         return Ok(());
     }
-    let text = format!("{rendered}{}", closer.content().unwrap_or(""));
-    let facet = choose(spec, &text, opener.facet()).map_err(RenderError::Delimiter)?;
-    set(open, open_held, &facet, ctx)?;
-    set(close, close_held, &facet, ctx)
+    let text = format!("{rendered}{}", closer.content.as_deref().unwrap_or(""));
+    let facet = choose(spec, &text, opener.facet.as_deref()).map_err(RenderError::Delimiter)?;
+    open.set_facet(overlay, &facet, ctx)?;
+    close.set_facet(overlay, &facet, ctx)
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    const WHITESPACE: crate::render::WhitespaceTable =
+        crate::render::WhitespaceTable { text_of: |_| "", indent: KindId(0), dedent: KindId(0), leaf_edges: &[], gaps: &[] };
 
     const PYTHON: DelimiterSpec = DelimiterSpec {
         kind: "string",
@@ -285,10 +325,11 @@ mod tests {
         excluded: &[],
         opened: &[],
         gate: None,
+        whitespace: &WHITESPACE,
     };
 
     const RAW: DelimiterSpec =
-        DelimiterSpec { kind: "raw_string_literal", arms: &[], run: Some('#'), close_lead: "\"", escape: None, id: KindId(0), free_text: &[], excluded: &[], opened: &[], gate: None };
+        DelimiterSpec { kind: "raw_string_literal", arms: &[], run: Some('#'), close_lead: "\"", escape: None, id: KindId(0), free_text: &[], excluded: &[], opened: &[], gate: None, whitespace: &WHITESPACE };
 
     #[test]
     fn the_preferred_arm_takes_content_it_fits() {

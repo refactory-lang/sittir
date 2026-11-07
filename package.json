@@ -17,7 +17,7 @@
 		"build": "pnpm -r run build",
 		"clean": "pnpm -r run clean && rm -rf node_modules/.cache",
 		"clean:all": "pnpm -r exec rm -rf dist node_modules && rm -rf node_modules",
-		"dev": "pnpm -r --parallel run dev",
+		"dev": "tsrs --build tsconfig.json --watch",
 		"format": "oxfmt .",
 		"format:check": "oxfmt --check .",
 		"fresh": "pnpm clean:all && pnpm install",
@@ -55,7 +55,7 @@
 	"devDependencies": {
 		"@changesets/changelog-github": "^0.6.0",
 		"@changesets/cli": "^2.30.0",
-		"@napi-rs/cli": "^3.0.0",
+		"@napi-rs/cli": "catalog:",
 		"@sittir/common": "workspace:*",
 		"@sittir/python": "workspace:*",
 		"@sittir/rust": "workspace:*",
@@ -78,7 +78,7 @@
 		"web-tree-sitter": "^0.27.1"
 	},
 	"engines": {
-		"node": ">=22.18.0",
+		"node": "^22.20.0 || ^24.12.0 || >=26.0.0",
 		"pnpm": ">=10.0.0"
 	},
 	"packageManager": "pnpm@10.32.1"

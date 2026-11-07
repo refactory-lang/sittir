@@ -3,7 +3,7 @@
 use ::sittir_core::options::{KindFlags, ResolvedOptions, SeatPath};
 use ::sittir_core::types::{Delimiter, EdgeRow, FlankId, KindId, SiteId};
 
-pub const SPACING_SITE_COUNT: usize = 121;
+pub const SPACING_SITE_COUNT: usize = 125;
 pub const DELIMITER_SITE_COUNT: usize = 0;
 
 pub const SITE_ALTERNATION_TERMS_SEPARATOR_SPACE_BEFORE: SiteId = SiteId(0);
@@ -33,100 +33,104 @@ pub const SITE_CLASS_RANGE_DASH_BEFORE: SiteId = SiteId(23);
 pub const SITE_CLASS_RANGE_DASH_AFTER: SiteId = SiteId(24);
 pub const SITE_CLASS_RANGE_CLASS_RANGE_BEFORE: SiteId = SiteId(25);
 pub const SITE_CLASS_RANGE_CLASS_RANGE_AFTER: SiteId = SiteId(26);
-pub const SITE_COUNT_QUANTIFIER_LBRACE_AFTER: SiteId = SiteId(27);
-pub const SITE_COUNT_QUANTIFIER_RBRACE_BEFORE: SiteId = SiteId(28);
-pub const SITE_COUNT_QUANTIFIER_RBRACE_AFTER: SiteId = SiteId(29);
-pub const SITE_COUNT_QUANTIFIER_COUNT_QUANTIFIER_BEFORE: SiteId = SiteId(30);
-pub const SITE_COUNT_QUANTIFIER_COUNT_QUANTIFIER_AFTER: SiteId = SiteId(31);
-pub const SITE_COUNT_QUANTIFIER_ARM_COUNT_QUANTIFIER_ARM_BEFORE: SiteId = SiteId(32);
-pub const SITE_COUNT_QUANTIFIER_ARM_COUNT_QUANTIFIER_ARM_AFTER: SiteId = SiteId(33);
-pub const SITE_COUNT_QUANTIFIER_GROUP_COMMA_AFTER: SiteId = SiteId(34);
-pub const SITE_COUNT_QUANTIFIER_GROUP_COUNT_QUANTIFIER_GROUP_BEFORE: SiteId = SiteId(35);
-pub const SITE_COUNT_QUANTIFIER_GROUP_COUNT_QUANTIFIER_GROUP_AFTER: SiteId = SiteId(36);
-pub const SITE_INLINE_FLAGS_GROUP_DISABLE_LPAREN_QMARK_AFTER: SiteId = SiteId(37);
-pub const SITE_INLINE_FLAGS_GROUP_DISABLE_RPAREN_BEFORE: SiteId = SiteId(38);
-pub const SITE_INLINE_FLAGS_GROUP_DISABLE_DASH_BEFORE: SiteId = SiteId(39);
-pub const SITE_INLINE_FLAGS_GROUP_DISABLE_DASH_AFTER: SiteId = SiteId(40);
-pub const SITE_INLINE_FLAGS_GROUP_DISABLE_COLON_BEFORE: SiteId = SiteId(41);
-pub const SITE_INLINE_FLAGS_GROUP_DISABLE_COLON_AFTER: SiteId = SiteId(42);
-pub const SITE_INLINE_FLAGS_GROUP_DISABLE_INLINE_FLAGS_GROUP_DISABLE_BEFORE: SiteId = SiteId(43);
-pub const SITE_INLINE_FLAGS_GROUP_DISABLE_INLINE_FLAGS_GROUP_DISABLE_AFTER: SiteId = SiteId(44);
-pub const SITE_INLINE_FLAGS_GROUP_ENABLE_LPAREN_QMARK_AFTER: SiteId = SiteId(45);
-pub const SITE_INLINE_FLAGS_GROUP_ENABLE_RPAREN_BEFORE: SiteId = SiteId(46);
-pub const SITE_INLINE_FLAGS_GROUP_ENABLE_COLON_BEFORE: SiteId = SiteId(47);
-pub const SITE_INLINE_FLAGS_GROUP_ENABLE_COLON_AFTER: SiteId = SiteId(48);
-pub const SITE_INLINE_FLAGS_GROUP_ENABLE_INLINE_FLAGS_GROUP_ENABLE_BEFORE: SiteId = SiteId(49);
-pub const SITE_INLINE_FLAGS_GROUP_ENABLE_INLINE_FLAGS_GROUP_ENABLE_AFTER: SiteId = SiteId(50);
-pub const SITE_INLINE_FLAGS_GROUP_TOGGLE_LPAREN_QMARK_AFTER: SiteId = SiteId(51);
-pub const SITE_INLINE_FLAGS_GROUP_TOGGLE_RPAREN_BEFORE: SiteId = SiteId(52);
-pub const SITE_INLINE_FLAGS_GROUP_TOGGLE_DASH_BEFORE: SiteId = SiteId(53);
-pub const SITE_INLINE_FLAGS_GROUP_TOGGLE_DASH_AFTER: SiteId = SiteId(54);
-pub const SITE_INLINE_FLAGS_GROUP_TOGGLE_COLON_BEFORE: SiteId = SiteId(55);
-pub const SITE_INLINE_FLAGS_GROUP_TOGGLE_COLON_AFTER: SiteId = SiteId(56);
-pub const SITE_INLINE_FLAGS_GROUP_TOGGLE_INLINE_FLAGS_GROUP_TOGGLE_BEFORE: SiteId = SiteId(57);
-pub const SITE_INLINE_FLAGS_GROUP_TOGGLE_INLINE_FLAGS_GROUP_TOGGLE_AFTER: SiteId = SiteId(58);
-pub const SITE_LOOKAHEAD_ASSERTION_BANG_BEFORE: SiteId = SiteId(59);
-pub const SITE_LOOKAHEAD_ASSERTION_BANG_AFTER: SiteId = SiteId(60);
-pub const SITE_LOOKAHEAD_ASSERTION_LPAREN_QMARK_AFTER: SiteId = SiteId(61);
-pub const SITE_LOOKAHEAD_ASSERTION_RPAREN_BEFORE: SiteId = SiteId(62);
-pub const SITE_LOOKAHEAD_ASSERTION_EQ_BEFORE: SiteId = SiteId(63);
-pub const SITE_LOOKAHEAD_ASSERTION_EQ_AFTER: SiteId = SiteId(64);
-pub const SITE_LOOKAHEAD_ASSERTION_LOOKAHEAD_ASSERTION_BEFORE: SiteId = SiteId(65);
-pub const SITE_LOOKAHEAD_ASSERTION_LOOKAHEAD_ASSERTION_AFTER: SiteId = SiteId(66);
-pub const SITE_LOOKBEHIND_ASSERTION_BANG_BEFORE: SiteId = SiteId(67);
-pub const SITE_LOOKBEHIND_ASSERTION_BANG_AFTER: SiteId = SiteId(68);
-pub const SITE_LOOKBEHIND_ASSERTION_LPAREN_QMARK_LT_AFTER: SiteId = SiteId(69);
-pub const SITE_LOOKBEHIND_ASSERTION_RPAREN_BEFORE: SiteId = SiteId(70);
-pub const SITE_LOOKBEHIND_ASSERTION_EQ_BEFORE: SiteId = SiteId(71);
-pub const SITE_LOOKBEHIND_ASSERTION_EQ_AFTER: SiteId = SiteId(72);
-pub const SITE_LOOKBEHIND_ASSERTION_LOOKBEHIND_ASSERTION_BEFORE: SiteId = SiteId(73);
-pub const SITE_LOOKBEHIND_ASSERTION_LOOKBEHIND_ASSERTION_AFTER: SiteId = SiteId(74);
-pub const SITE_NAMED_CAPTURING_GROUP_LPAREN_QMARK_LT_BEFORE: SiteId = SiteId(75);
-pub const SITE_NAMED_CAPTURING_GROUP_LPAREN_QMARK_LT_AFTER: SiteId = SiteId(76);
-pub const SITE_NAMED_CAPTURING_GROUP_LPAREN_QMARK_P_LT_BEFORE: SiteId = SiteId(77);
-pub const SITE_NAMED_CAPTURING_GROUP_LPAREN_QMARK_P_LT_AFTER: SiteId = SiteId(78);
-pub const SITE_NAMED_CAPTURING_GROUP_RPAREN_BEFORE: SiteId = SiteId(79);
-pub const SITE_NAMED_CAPTURING_GROUP_GT_BEFORE: SiteId = SiteId(80);
-pub const SITE_NAMED_CAPTURING_GROUP_GT_AFTER: SiteId = SiteId(81);
-pub const SITE_NAMED_CAPTURING_GROUP_NAMED_CAPTURING_GROUP_BEFORE: SiteId = SiteId(82);
-pub const SITE_NAMED_CAPTURING_GROUP_NAMED_CAPTURING_GROUP_AFTER: SiteId = SiteId(83);
-pub const SITE_NAMED_GROUP_BACKREFERENCE_LPAREN_QMARK_P_EQ_AFTER: SiteId = SiteId(84);
-pub const SITE_NAMED_GROUP_BACKREFERENCE_RPAREN_BEFORE: SiteId = SiteId(85);
-pub const SITE_NAMED_GROUP_BACKREFERENCE_NAMED_GROUP_BACKREFERENCE_BEFORE: SiteId = SiteId(86);
-pub const SITE_NAMED_GROUP_BACKREFERENCE_NAMED_GROUP_BACKREFERENCE_AFTER: SiteId = SiteId(87);
-pub const SITE_NON_CAPTURING_GROUP_LPAREN_QMARK_COLON_AFTER: SiteId = SiteId(88);
-pub const SITE_NON_CAPTURING_GROUP_RPAREN_BEFORE: SiteId = SiteId(89);
-pub const SITE_NON_CAPTURING_GROUP_NON_CAPTURING_GROUP_BEFORE: SiteId = SiteId(90);
-pub const SITE_NON_CAPTURING_GROUP_NON_CAPTURING_GROUP_AFTER: SiteId = SiteId(91);
-pub const SITE_ONE_OR_MORE_PLUS_AFTER: SiteId = SiteId(92);
-pub const SITE_ONE_OR_MORE_ONE_OR_MORE_BEFORE: SiteId = SiteId(93);
-pub const SITE_ONE_OR_MORE_ONE_OR_MORE_AFTER: SiteId = SiteId(94);
-pub const SITE_OPTIONAL_QMARK_AFTER: SiteId = SiteId(95);
-pub const SITE_OPTIONAL_OPTIONAL_BEFORE: SiteId = SiteId(96);
-pub const SITE_OPTIONAL_OPTIONAL_AFTER: SiteId = SiteId(97);
-pub const SITE_PATTERN_PATTERN_BEFORE: SiteId = SiteId(98);
-pub const SITE_PATTERN_PATTERN_AFTER: SiteId = SiteId(99);
-pub const SITE_POSIX_CHARACTER_CLASS_COLON_RBRACK_BEFORE: SiteId = SiteId(100);
-pub const SITE_POSIX_CHARACTER_CLASS_LBRACK_COLON_AFTER: SiteId = SiteId(101);
-pub const SITE_POSIX_CHARACTER_CLASS_POSIX_CHARACTER_CLASS_BEFORE: SiteId = SiteId(102);
-pub const SITE_POSIX_CHARACTER_CLASS_POSIX_CHARACTER_CLASS_AFTER: SiteId = SiteId(103);
-pub const SITE_TERM_TERM_GROUP_TERM_GROUP_AFTER: SiteId = SiteId(104);
-pub const SITE_TERM_TERM_GROUP_SEPARATOR_SPACE: SiteId = SiteId(105);
-pub const SITE_TERM_GROUP_ANY_CHARACTER_AFTER: SiteId = SiteId(106);
-pub const SITE_TERM_GROUP_BOUNDARY_ASSERTION_AFTER: SiteId = SiteId(107);
-pub const SITE_TERM_GROUP_END_ASSERTION_AFTER: SiteId = SiteId(108);
-pub const SITE_TERM_GROUP_NON_BOUNDARY_ASSERTION_AFTER: SiteId = SiteId(109);
-pub const SITE_TERM_GROUP_CARET_AFTER: SiteId = SiteId(110);
-pub const SITE_TERM_GROUP_TERM_GROUP_BEFORE: SiteId = SiteId(111);
-pub const SITE_TERM_GROUP_TERM_GROUP_AFTER: SiteId = SiteId(112);
-pub const SITE_UNICODE_PROPERTY_VALUE_EXPRESSION_UNICODE_PROPERTY_VALUE_EXPRESSION_BEFORE: SiteId = SiteId(113);
-pub const SITE_UNICODE_PROPERTY_VALUE_EXPRESSION_UNICODE_PROPERTY_VALUE_EXPRESSION_AFTER: SiteId = SiteId(114);
-pub const SITE_UNICODE_PROPERTY_VALUE_EXPRESSION_GROUP_EQ_BEFORE: SiteId = SiteId(115);
-pub const SITE_UNICODE_PROPERTY_VALUE_EXPRESSION_GROUP_UNICODE_PROPERTY_VALUE_EXPRESSION_GROUP_BEFORE: SiteId = SiteId(116);
-pub const SITE_UNICODE_PROPERTY_VALUE_EXPRESSION_GROUP_UNICODE_PROPERTY_VALUE_EXPRESSION_GROUP_AFTER: SiteId = SiteId(117);
-pub const SITE_ZERO_OR_MORE_STAR_AFTER: SiteId = SiteId(118);
-pub const SITE_ZERO_OR_MORE_ZERO_OR_MORE_BEFORE: SiteId = SiteId(119);
-pub const SITE_ZERO_OR_MORE_ZERO_OR_MORE_AFTER: SiteId = SiteId(120);
+pub const SITE_COUNT_QUANTIFIER_QMARK_BEFORE: SiteId = SiteId(27);
+pub const SITE_COUNT_QUANTIFIER_LBRACE_AFTER: SiteId = SiteId(28);
+pub const SITE_COUNT_QUANTIFIER_RBRACE_BEFORE: SiteId = SiteId(29);
+pub const SITE_COUNT_QUANTIFIER_RBRACE_AFTER: SiteId = SiteId(30);
+pub const SITE_COUNT_QUANTIFIER_COUNT_QUANTIFIER_BEFORE: SiteId = SiteId(31);
+pub const SITE_COUNT_QUANTIFIER_COUNT_QUANTIFIER_AFTER: SiteId = SiteId(32);
+pub const SITE_COUNT_QUANTIFIER_ARM_COUNT_QUANTIFIER_ARM_BEFORE: SiteId = SiteId(33);
+pub const SITE_COUNT_QUANTIFIER_ARM_COUNT_QUANTIFIER_ARM_AFTER: SiteId = SiteId(34);
+pub const SITE_COUNT_QUANTIFIER_GROUP_COMMA_AFTER: SiteId = SiteId(35);
+pub const SITE_COUNT_QUANTIFIER_GROUP_COUNT_QUANTIFIER_GROUP_BEFORE: SiteId = SiteId(36);
+pub const SITE_COUNT_QUANTIFIER_GROUP_COUNT_QUANTIFIER_GROUP_AFTER: SiteId = SiteId(37);
+pub const SITE_INLINE_FLAGS_GROUP_DISABLE_LPAREN_QMARK_AFTER: SiteId = SiteId(38);
+pub const SITE_INLINE_FLAGS_GROUP_DISABLE_RPAREN_BEFORE: SiteId = SiteId(39);
+pub const SITE_INLINE_FLAGS_GROUP_DISABLE_DASH_BEFORE: SiteId = SiteId(40);
+pub const SITE_INLINE_FLAGS_GROUP_DISABLE_DASH_AFTER: SiteId = SiteId(41);
+pub const SITE_INLINE_FLAGS_GROUP_DISABLE_COLON_BEFORE: SiteId = SiteId(42);
+pub const SITE_INLINE_FLAGS_GROUP_DISABLE_COLON_AFTER: SiteId = SiteId(43);
+pub const SITE_INLINE_FLAGS_GROUP_DISABLE_INLINE_FLAGS_GROUP_DISABLE_BEFORE: SiteId = SiteId(44);
+pub const SITE_INLINE_FLAGS_GROUP_DISABLE_INLINE_FLAGS_GROUP_DISABLE_AFTER: SiteId = SiteId(45);
+pub const SITE_INLINE_FLAGS_GROUP_ENABLE_LPAREN_QMARK_AFTER: SiteId = SiteId(46);
+pub const SITE_INLINE_FLAGS_GROUP_ENABLE_RPAREN_BEFORE: SiteId = SiteId(47);
+pub const SITE_INLINE_FLAGS_GROUP_ENABLE_COLON_BEFORE: SiteId = SiteId(48);
+pub const SITE_INLINE_FLAGS_GROUP_ENABLE_COLON_AFTER: SiteId = SiteId(49);
+pub const SITE_INLINE_FLAGS_GROUP_ENABLE_INLINE_FLAGS_GROUP_ENABLE_BEFORE: SiteId = SiteId(50);
+pub const SITE_INLINE_FLAGS_GROUP_ENABLE_INLINE_FLAGS_GROUP_ENABLE_AFTER: SiteId = SiteId(51);
+pub const SITE_INLINE_FLAGS_GROUP_TOGGLE_LPAREN_QMARK_AFTER: SiteId = SiteId(52);
+pub const SITE_INLINE_FLAGS_GROUP_TOGGLE_RPAREN_BEFORE: SiteId = SiteId(53);
+pub const SITE_INLINE_FLAGS_GROUP_TOGGLE_DASH_BEFORE: SiteId = SiteId(54);
+pub const SITE_INLINE_FLAGS_GROUP_TOGGLE_DASH_AFTER: SiteId = SiteId(55);
+pub const SITE_INLINE_FLAGS_GROUP_TOGGLE_COLON_BEFORE: SiteId = SiteId(56);
+pub const SITE_INLINE_FLAGS_GROUP_TOGGLE_COLON_AFTER: SiteId = SiteId(57);
+pub const SITE_INLINE_FLAGS_GROUP_TOGGLE_INLINE_FLAGS_GROUP_TOGGLE_BEFORE: SiteId = SiteId(58);
+pub const SITE_INLINE_FLAGS_GROUP_TOGGLE_INLINE_FLAGS_GROUP_TOGGLE_AFTER: SiteId = SiteId(59);
+pub const SITE_LOOKAHEAD_ASSERTION_BANG_BEFORE: SiteId = SiteId(60);
+pub const SITE_LOOKAHEAD_ASSERTION_BANG_AFTER: SiteId = SiteId(61);
+pub const SITE_LOOKAHEAD_ASSERTION_LPAREN_QMARK_AFTER: SiteId = SiteId(62);
+pub const SITE_LOOKAHEAD_ASSERTION_RPAREN_BEFORE: SiteId = SiteId(63);
+pub const SITE_LOOKAHEAD_ASSERTION_EQ_BEFORE: SiteId = SiteId(64);
+pub const SITE_LOOKAHEAD_ASSERTION_EQ_AFTER: SiteId = SiteId(65);
+pub const SITE_LOOKAHEAD_ASSERTION_LOOKAHEAD_ASSERTION_BEFORE: SiteId = SiteId(66);
+pub const SITE_LOOKAHEAD_ASSERTION_LOOKAHEAD_ASSERTION_AFTER: SiteId = SiteId(67);
+pub const SITE_LOOKBEHIND_ASSERTION_BANG_BEFORE: SiteId = SiteId(68);
+pub const SITE_LOOKBEHIND_ASSERTION_BANG_AFTER: SiteId = SiteId(69);
+pub const SITE_LOOKBEHIND_ASSERTION_LPAREN_QMARK_LT_AFTER: SiteId = SiteId(70);
+pub const SITE_LOOKBEHIND_ASSERTION_RPAREN_BEFORE: SiteId = SiteId(71);
+pub const SITE_LOOKBEHIND_ASSERTION_EQ_BEFORE: SiteId = SiteId(72);
+pub const SITE_LOOKBEHIND_ASSERTION_EQ_AFTER: SiteId = SiteId(73);
+pub const SITE_LOOKBEHIND_ASSERTION_LOOKBEHIND_ASSERTION_BEFORE: SiteId = SiteId(74);
+pub const SITE_LOOKBEHIND_ASSERTION_LOOKBEHIND_ASSERTION_AFTER: SiteId = SiteId(75);
+pub const SITE_NAMED_CAPTURING_GROUP_LPAREN_QMARK_LT_BEFORE: SiteId = SiteId(76);
+pub const SITE_NAMED_CAPTURING_GROUP_LPAREN_QMARK_LT_AFTER: SiteId = SiteId(77);
+pub const SITE_NAMED_CAPTURING_GROUP_LPAREN_QMARK_P_LT_BEFORE: SiteId = SiteId(78);
+pub const SITE_NAMED_CAPTURING_GROUP_LPAREN_QMARK_P_LT_AFTER: SiteId = SiteId(79);
+pub const SITE_NAMED_CAPTURING_GROUP_RPAREN_BEFORE: SiteId = SiteId(80);
+pub const SITE_NAMED_CAPTURING_GROUP_GT_BEFORE: SiteId = SiteId(81);
+pub const SITE_NAMED_CAPTURING_GROUP_GT_AFTER: SiteId = SiteId(82);
+pub const SITE_NAMED_CAPTURING_GROUP_NAMED_CAPTURING_GROUP_BEFORE: SiteId = SiteId(83);
+pub const SITE_NAMED_CAPTURING_GROUP_NAMED_CAPTURING_GROUP_AFTER: SiteId = SiteId(84);
+pub const SITE_NAMED_GROUP_BACKREFERENCE_LPAREN_QMARK_P_EQ_AFTER: SiteId = SiteId(85);
+pub const SITE_NAMED_GROUP_BACKREFERENCE_RPAREN_BEFORE: SiteId = SiteId(86);
+pub const SITE_NAMED_GROUP_BACKREFERENCE_NAMED_GROUP_BACKREFERENCE_BEFORE: SiteId = SiteId(87);
+pub const SITE_NAMED_GROUP_BACKREFERENCE_NAMED_GROUP_BACKREFERENCE_AFTER: SiteId = SiteId(88);
+pub const SITE_NON_CAPTURING_GROUP_LPAREN_QMARK_COLON_AFTER: SiteId = SiteId(89);
+pub const SITE_NON_CAPTURING_GROUP_RPAREN_BEFORE: SiteId = SiteId(90);
+pub const SITE_NON_CAPTURING_GROUP_NON_CAPTURING_GROUP_BEFORE: SiteId = SiteId(91);
+pub const SITE_NON_CAPTURING_GROUP_NON_CAPTURING_GROUP_AFTER: SiteId = SiteId(92);
+pub const SITE_ONE_OR_MORE_PLUS_AFTER: SiteId = SiteId(93);
+pub const SITE_ONE_OR_MORE_QMARK_BEFORE: SiteId = SiteId(94);
+pub const SITE_ONE_OR_MORE_ONE_OR_MORE_BEFORE: SiteId = SiteId(95);
+pub const SITE_ONE_OR_MORE_ONE_OR_MORE_AFTER: SiteId = SiteId(96);
+pub const SITE_OPTIONAL_QMARK_BEFORE: SiteId = SiteId(97);
+pub const SITE_OPTIONAL_QMARK_AFTER: SiteId = SiteId(98);
+pub const SITE_OPTIONAL_OPTIONAL_BEFORE: SiteId = SiteId(99);
+pub const SITE_OPTIONAL_OPTIONAL_AFTER: SiteId = SiteId(100);
+pub const SITE_PATTERN_PATTERN_BEFORE: SiteId = SiteId(101);
+pub const SITE_PATTERN_PATTERN_AFTER: SiteId = SiteId(102);
+pub const SITE_POSIX_CHARACTER_CLASS_COLON_RBRACK_BEFORE: SiteId = SiteId(103);
+pub const SITE_POSIX_CHARACTER_CLASS_LBRACK_COLON_AFTER: SiteId = SiteId(104);
+pub const SITE_POSIX_CHARACTER_CLASS_POSIX_CHARACTER_CLASS_BEFORE: SiteId = SiteId(105);
+pub const SITE_POSIX_CHARACTER_CLASS_POSIX_CHARACTER_CLASS_AFTER: SiteId = SiteId(106);
+pub const SITE_TERM_TERM_GROUP_TERM_GROUP_AFTER: SiteId = SiteId(107);
+pub const SITE_TERM_TERM_GROUP_SEPARATOR_SPACE: SiteId = SiteId(108);
+pub const SITE_TERM_GROUP_ANY_CHARACTER_AFTER: SiteId = SiteId(109);
+pub const SITE_TERM_GROUP_BOUNDARY_ASSERTION_AFTER: SiteId = SiteId(110);
+pub const SITE_TERM_GROUP_END_ASSERTION_AFTER: SiteId = SiteId(111);
+pub const SITE_TERM_GROUP_NON_BOUNDARY_ASSERTION_AFTER: SiteId = SiteId(112);
+pub const SITE_TERM_GROUP_CARET_AFTER: SiteId = SiteId(113);
+pub const SITE_TERM_GROUP_TERM_GROUP_BEFORE: SiteId = SiteId(114);
+pub const SITE_TERM_GROUP_TERM_GROUP_AFTER: SiteId = SiteId(115);
+pub const SITE_UNICODE_PROPERTY_VALUE_EXPRESSION_UNICODE_PROPERTY_VALUE_EXPRESSION_BEFORE: SiteId = SiteId(116);
+pub const SITE_UNICODE_PROPERTY_VALUE_EXPRESSION_UNICODE_PROPERTY_VALUE_EXPRESSION_AFTER: SiteId = SiteId(117);
+pub const SITE_UNICODE_PROPERTY_VALUE_EXPRESSION_GROUP_EQ_BEFORE: SiteId = SiteId(118);
+pub const SITE_UNICODE_PROPERTY_VALUE_EXPRESSION_GROUP_UNICODE_PROPERTY_VALUE_EXPRESSION_GROUP_BEFORE: SiteId = SiteId(119);
+pub const SITE_UNICODE_PROPERTY_VALUE_EXPRESSION_GROUP_UNICODE_PROPERTY_VALUE_EXPRESSION_GROUP_AFTER: SiteId = SiteId(120);
+pub const SITE_ZERO_OR_MORE_STAR_AFTER: SiteId = SiteId(121);
+pub const SITE_ZERO_OR_MORE_QMARK_BEFORE: SiteId = SiteId(122);
+pub const SITE_ZERO_OR_MORE_ZERO_OR_MORE_BEFORE: SiteId = SiteId(123);
+pub const SITE_ZERO_OR_MORE_ZERO_OR_MORE_AFTER: SiteId = SiteId(124);
 
 /// (kind, address, label, allowed kind ids), in canonical path order.
 pub static SPACING_SITES: &[(&str, &str, &str, &[KindId])] = &[
@@ -157,6 +161,7 @@ pub static SPACING_SITES: &[(&str, &str, &str, &[KindId])] = &[
     ("class_range", "dash_after", "dash_after", &[KindId(47), KindId(48), KindId(49), KindId(50)]),
     ("class_range", "class_range_before", "class_range_before", &[KindId(47), KindId(48), KindId(49), KindId(50)]),
     ("class_range", "class_range_after", "class_range_after", &[KindId(47), KindId(48), KindId(49), KindId(50)]),
+    ("count_quantifier", "qmark_before", "qmark_before", &[KindId(47), KindId(48), KindId(49), KindId(50)]),
     ("count_quantifier", "lbrace_after", "lbrace_after", &[KindId(47), KindId(48), KindId(49), KindId(50)]),
     ("count_quantifier", "rbrace_before", "rbrace_before", &[KindId(47), KindId(48), KindId(49), KindId(50)]),
     ("count_quantifier", "rbrace_after", "rbrace_after", &[KindId(47), KindId(48), KindId(49), KindId(50)]),
@@ -223,8 +228,10 @@ pub static SPACING_SITES: &[(&str, &str, &str, &[KindId])] = &[
     ("non_capturing_group", "non_capturing_group_before", "non_capturing_group_before", &[KindId(47), KindId(48), KindId(49), KindId(50)]),
     ("non_capturing_group", "non_capturing_group_after", "non_capturing_group_after", &[KindId(47), KindId(48), KindId(49), KindId(50)]),
     ("one_or_more", "plus_after", "plus_after", &[KindId(47), KindId(48), KindId(49), KindId(50)]),
+    ("one_or_more", "qmark_before", "qmark_before", &[KindId(47), KindId(48), KindId(49), KindId(50)]),
     ("one_or_more", "one_or_more_before", "one_or_more_before", &[KindId(47), KindId(48), KindId(49), KindId(50)]),
     ("one_or_more", "one_or_more_after", "one_or_more_after", &[KindId(47), KindId(48), KindId(49), KindId(50)]),
+    ("optional", "qmark_before", "qmark_before", &[KindId(47), KindId(48), KindId(49), KindId(50)]),
     ("optional", "qmark_after", "qmark_after", &[KindId(47), KindId(48), KindId(49), KindId(50)]),
     ("optional", "optional_before", "optional_before", &[KindId(47), KindId(48), KindId(49), KindId(50)]),
     ("optional", "optional_after", "optional_after", &[KindId(47), KindId(48), KindId(49), KindId(50)]),
@@ -249,36 +256,37 @@ pub static SPACING_SITES: &[(&str, &str, &str, &[KindId])] = &[
     ("unicode_property_value_expression_group", "unicode_property_value_expression_group_before", "unicode_property_value_expression_group_before", &[KindId(47), KindId(48), KindId(49), KindId(50)]),
     ("unicode_property_value_expression_group", "unicode_property_value_expression_group_after", "unicode_property_value_expression_group_after", &[KindId(47), KindId(48), KindId(49), KindId(50)]),
     ("zero_or_more", "star_after", "star_after", &[KindId(47), KindId(48), KindId(49), KindId(50)]),
+    ("zero_or_more", "qmark_before", "qmark_before", &[KindId(47), KindId(48), KindId(49), KindId(50)]),
     ("zero_or_more", "zero_or_more_before", "zero_or_more_before", &[KindId(47), KindId(48), KindId(49), KindId(50)]),
     ("zero_or_more", "zero_or_more_after", "zero_or_more_after", &[KindId(47), KindId(48), KindId(49), KindId(50)]),
 ];
 
 /// The edge seams and boundary arms of every kind that owns either, in kind id order.
 pub static EDGE_SITES: &[::sittir_core::options::EdgeSite] = &[
-    ::sittir_core::options::EdgeSite { before: Some(SiteId(98)), after: Some(SiteId(99)), before_arms: &[], after_arms: &[], before_bounds: &[], after_bounds: &[] },
-    ::sittir_core::options::EdgeSite { before: Some(SiteId(65)), after: Some(SiteId(66)), before_arms: &[], after_arms: &[], before_bounds: &[], after_bounds: &[] },
-    ::sittir_core::options::EdgeSite { before: Some(SiteId(73)), after: Some(SiteId(74)), before_arms: &[], after_arms: &[], before_bounds: &[], after_bounds: &[] },
+    ::sittir_core::options::EdgeSite { before: Some(SiteId(101)), after: Some(SiteId(102)), before_arms: &[], after_arms: &[], before_bounds: &[], after_bounds: &[] },
+    ::sittir_core::options::EdgeSite { before: Some(SiteId(66)), after: Some(SiteId(67)), before_arms: &[], after_arms: &[], before_bounds: &[], after_bounds: &[] },
+    ::sittir_core::options::EdgeSite { before: Some(SiteId(74)), after: Some(SiteId(75)), before_arms: &[], after_arms: &[], before_bounds: &[], after_bounds: &[] },
     ::sittir_core::options::EdgeSite { before: Some(SiteId(16)), after: Some(SiteId(17)), before_arms: &[], after_arms: &[], before_bounds: &[], after_bounds: &[] },
-    ::sittir_core::options::EdgeSite { before: Some(SiteId(102)), after: Some(SiteId(103)), before_arms: &[], after_arms: &[], before_bounds: &[], after_bounds: &[] },
+    ::sittir_core::options::EdgeSite { before: Some(SiteId(105)), after: Some(SiteId(106)), before_arms: &[], after_arms: &[], before_bounds: &[], after_bounds: &[] },
     ::sittir_core::options::EdgeSite { before: Some(SiteId(25)), after: Some(SiteId(26)), before_arms: &[], after_arms: &[], before_bounds: &[], after_bounds: &[] },
     ::sittir_core::options::EdgeSite { before: Some(SiteId(4)), after: Some(SiteId(5)), before_arms: &[], after_arms: &[], before_bounds: &[], after_bounds: &[] },
-    ::sittir_core::options::EdgeSite { before: Some(SiteId(82)), after: Some(SiteId(83)), before_arms: &[::sittir_core::options::ArmSite { arm: KindId(11), site: SiteId(75) }, ::sittir_core::options::ArmSite { arm: KindId(22), site: SiteId(77) }], after_arms: &[], before_bounds: &[], after_bounds: &[] },
-    ::sittir_core::options::EdgeSite { before: Some(SiteId(90)), after: Some(SiteId(91)), before_arms: &[], after_arms: &[], before_bounds: &[], after_bounds: &[] },
-    ::sittir_core::options::EdgeSite { before: Some(SiteId(119)), after: Some(SiteId(120)), before_arms: &[], after_arms: &[], before_bounds: &[], after_bounds: &[::sittir_core::options::BoundaryArm { next: KindId(25), field: None, marks: &[::sittir_core::options::BoundaryMark::Site(SiteId(118))] }] },
-    ::sittir_core::options::EdgeSite { before: Some(SiteId(93)), after: Some(SiteId(94)), before_arms: &[], after_arms: &[], before_bounds: &[], after_bounds: &[::sittir_core::options::BoundaryArm { next: KindId(27), field: None, marks: &[::sittir_core::options::BoundaryMark::Site(SiteId(92))] }] },
-    ::sittir_core::options::EdgeSite { before: Some(SiteId(96)), after: Some(SiteId(97)), before_arms: &[], after_arms: &[], before_bounds: &[], after_bounds: &[::sittir_core::options::BoundaryArm { next: KindId(26), field: None, marks: &[::sittir_core::options::BoundaryMark::Site(SiteId(95))] }] },
-    ::sittir_core::options::EdgeSite { before: Some(SiteId(30)), after: Some(SiteId(31)), before_arms: &[], after_arms: &[], before_bounds: &[], after_bounds: &[::sittir_core::options::BoundaryArm { next: KindId(30), field: None, marks: &[::sittir_core::options::BoundaryMark::Site(SiteId(29))] }] },
+    ::sittir_core::options::EdgeSite { before: Some(SiteId(83)), after: Some(SiteId(84)), before_arms: &[::sittir_core::options::ArmSite { arm: KindId(11), site: SiteId(76) }, ::sittir_core::options::ArmSite { arm: KindId(22), site: SiteId(78) }], after_arms: &[], before_bounds: &[], after_bounds: &[] },
+    ::sittir_core::options::EdgeSite { before: Some(SiteId(91)), after: Some(SiteId(92)), before_arms: &[], after_arms: &[], before_bounds: &[], after_bounds: &[] },
+    ::sittir_core::options::EdgeSite { before: Some(SiteId(123)), after: Some(SiteId(124)), before_arms: &[], after_arms: &[], before_bounds: &[], after_bounds: &[::sittir_core::options::BoundaryArm { next: KindId(25), field: None, marks: &[::sittir_core::options::BoundaryMark::Site(SiteId(121))] }] },
+    ::sittir_core::options::EdgeSite { before: Some(SiteId(95)), after: Some(SiteId(96)), before_arms: &[], after_arms: &[], before_bounds: &[], after_bounds: &[::sittir_core::options::BoundaryArm { next: KindId(26), field: None, marks: &[::sittir_core::options::BoundaryMark::Site(SiteId(93))] }] },
+    ::sittir_core::options::EdgeSite { before: Some(SiteId(99)), after: Some(SiteId(100)), before_arms: &[], after_arms: &[], before_bounds: &[], after_bounds: &[::sittir_core::options::BoundaryArm { next: KindId(27), field: None, marks: &[::sittir_core::options::BoundaryMark::Site(SiteId(98))] }] },
+    ::sittir_core::options::EdgeSite { before: Some(SiteId(31)), after: Some(SiteId(32)), before_arms: &[], after_arms: &[], before_bounds: &[], after_bounds: &[::sittir_core::options::BoundaryArm { next: KindId(30), field: None, marks: &[::sittir_core::options::BoundaryMark::Site(SiteId(30))] }] },
     ::sittir_core::options::EdgeSite { before: Some(SiteId(10)), after: Some(SiteId(11)), before_arms: &[], after_arms: &[], before_bounds: &[], after_bounds: &[] },
-    ::sittir_core::options::EdgeSite { before: Some(SiteId(86)), after: Some(SiteId(87)), before_arms: &[], after_arms: &[], before_bounds: &[], after_bounds: &[] },
-    ::sittir_core::options::EdgeSite { before: Some(SiteId(113)), after: Some(SiteId(114)), before_arms: &[], after_arms: &[], before_bounds: &[], after_bounds: &[] },
-    ::sittir_core::options::EdgeSite { before: Some(SiteId(111)), after: Some(SiteId(112)), before_arms: &[], after_arms: &[], before_bounds: &[], after_bounds: &[] },
-    ::sittir_core::options::EdgeSite { before: Some(SiteId(35)), after: Some(SiteId(36)), before_arms: &[], after_arms: &[], before_bounds: &[], after_bounds: &[::sittir_core::options::BoundaryArm { next: KindId(29), field: None, marks: &[::sittir_core::options::BoundaryMark::Site(SiteId(34))] }] },
-    ::sittir_core::options::EdgeSite { before: Some(SiteId(32)), after: Some(SiteId(33)), before_arms: &[], after_arms: &[], before_bounds: &[], after_bounds: &[] },
-    ::sittir_core::options::EdgeSite { before: Some(SiteId(21)), after: Some(SiteId(22)), before_arms: &[], after_arms: &[], before_bounds: &[], after_bounds: &[] },
+    ::sittir_core::options::EdgeSite { before: Some(SiteId(87)), after: Some(SiteId(88)), before_arms: &[], after_arms: &[], before_bounds: &[], after_bounds: &[] },
     ::sittir_core::options::EdgeSite { before: Some(SiteId(116)), after: Some(SiteId(117)), before_arms: &[], after_arms: &[], before_bounds: &[], after_bounds: &[] },
-    ::sittir_core::options::EdgeSite { before: Some(SiteId(49)), after: Some(SiteId(50)), before_arms: &[], after_arms: &[], before_bounds: &[], after_bounds: &[] },
-    ::sittir_core::options::EdgeSite { before: Some(SiteId(57)), after: Some(SiteId(58)), before_arms: &[], after_arms: &[], before_bounds: &[], after_bounds: &[] },
-    ::sittir_core::options::EdgeSite { before: Some(SiteId(43)), after: Some(SiteId(44)), before_arms: &[], after_arms: &[], before_bounds: &[], after_bounds: &[] },
+    ::sittir_core::options::EdgeSite { before: Some(SiteId(114)), after: Some(SiteId(115)), before_arms: &[], after_arms: &[], before_bounds: &[], after_bounds: &[] },
+    ::sittir_core::options::EdgeSite { before: Some(SiteId(36)), after: Some(SiteId(37)), before_arms: &[], after_arms: &[], before_bounds: &[], after_bounds: &[::sittir_core::options::BoundaryArm { next: KindId(29), field: None, marks: &[::sittir_core::options::BoundaryMark::Site(SiteId(35))] }] },
+    ::sittir_core::options::EdgeSite { before: Some(SiteId(33)), after: Some(SiteId(34)), before_arms: &[], after_arms: &[], before_bounds: &[], after_bounds: &[] },
+    ::sittir_core::options::EdgeSite { before: Some(SiteId(21)), after: Some(SiteId(22)), before_arms: &[], after_arms: &[], before_bounds: &[], after_bounds: &[] },
+    ::sittir_core::options::EdgeSite { before: Some(SiteId(119)), after: Some(SiteId(120)), before_arms: &[], after_arms: &[], before_bounds: &[], after_bounds: &[] },
+    ::sittir_core::options::EdgeSite { before: Some(SiteId(50)), after: Some(SiteId(51)), before_arms: &[], after_arms: &[], before_bounds: &[], after_bounds: &[] },
+    ::sittir_core::options::EdgeSite { before: Some(SiteId(58)), after: Some(SiteId(59)), before_arms: &[], after_arms: &[], before_bounds: &[], after_bounds: &[] },
+    ::sittir_core::options::EdgeSite { before: Some(SiteId(44)), after: Some(SiteId(45)), before_arms: &[], after_arms: &[], before_bounds: &[], after_bounds: &[] },
 ];
 
 /// Per kind id, its row in `EDGE_SITES`.
@@ -287,15 +295,15 @@ pub static EDGE_ROWS: &[Option<EdgeRow>] = &[
     None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None,
     None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None,
     None, None, None, Some(EdgeRow(0)), None, None, None, None, Some(EdgeRow(1)), Some(EdgeRow(2)), Some(EdgeRow(3)), Some(EdgeRow(4)), None, Some(EdgeRow(5)), Some(EdgeRow(6)), Some(EdgeRow(7)),
-    Some(EdgeRow(8)), None, None, Some(EdgeRow(9)), Some(EdgeRow(10)), Some(EdgeRow(11)), Some(EdgeRow(12)), Some(EdgeRow(13)), Some(EdgeRow(14)), None, None, Some(EdgeRow(15)), None, Some(EdgeRow(16)), Some(EdgeRow(17)), Some(EdgeRow(18)),
-    Some(EdgeRow(19)), Some(EdgeRow(20)), None, Some(EdgeRow(21)), Some(EdgeRow(22)), Some(EdgeRow(23)),
+    Some(EdgeRow(8)), None, None, Some(EdgeRow(9)), Some(EdgeRow(10)), Some(EdgeRow(11)), Some(EdgeRow(12)), Some(EdgeRow(13)), Some(EdgeRow(14)), None, None, Some(EdgeRow(15)), None, None, Some(EdgeRow(16)), Some(EdgeRow(17)),
+    Some(EdgeRow(18)), Some(EdgeRow(19)), Some(EdgeRow(20)), None, Some(EdgeRow(21)), Some(EdgeRow(22)), Some(EdgeRow(23)),
 ];
 
 /// Per kind id, its `KindFlags`: `ANON` (the parser's anonymous token), `LINE_TERMINATED`, `LINE_BREAK_TERMINATED`, `ROOT`.
 pub static KIND_FLAGS: &[KindFlags] = &[
     KindFlags(0), KindFlags(1), KindFlags(0), KindFlags(1), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(0), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(0), KindFlags(0), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1),
     KindFlags(1), KindFlags(1), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(1), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(8), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0),
-    KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(1), KindFlags(1), KindFlags(1),
+    KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(1), KindFlags(1), KindFlags(1),
 ];
 
 /// Per kind id, the layout kinds its leaf pattern takes before it (low byte) and after it (high byte); 0 where the kind has no stamp.
@@ -465,6 +473,10 @@ pub static SITE_SPECS: &[::sittir_core::options::SiteSpec] = &[
     ::sittir_core::options::SiteSpec { default_arm: KindId(47), strength: ::sittir_core::spacing::SeamStrength::Fallback },
     ::sittir_core::options::SiteSpec { default_arm: KindId(47), strength: ::sittir_core::spacing::SeamStrength::Fallback },
     ::sittir_core::options::SiteSpec { default_arm: KindId(47), strength: ::sittir_core::spacing::SeamStrength::Fallback },
+    ::sittir_core::options::SiteSpec { default_arm: KindId(47), strength: ::sittir_core::spacing::SeamStrength::Fallback },
+    ::sittir_core::options::SiteSpec { default_arm: KindId(47), strength: ::sittir_core::spacing::SeamStrength::Fallback },
+    ::sittir_core::options::SiteSpec { default_arm: KindId(47), strength: ::sittir_core::spacing::SeamStrength::Fallback },
+    ::sittir_core::options::SiteSpec { default_arm: KindId(47), strength: ::sittir_core::spacing::SeamStrength::Fallback },
 ];
 
 /// Per kind id, the site a seated element's after gap reads.
@@ -473,7 +485,7 @@ pub static SEATS_TERM_TERM_GROUP: &[Option<SiteId>] = &[
     None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None,
     None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None,
     None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None,
-    None, None, None, None, None, None, None, None, None, None, None, None, None, Some(SiteId(104)),
+    None, None, None, None, None, None, None, None, None, None, None, None, None, None, Some(SiteId(107)),
 ];
 
 /// Per kind id of a wrapper, the way its seat passes through to the node it holds.
@@ -583,6 +595,9 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_COUNT_QUANTIFIER_COUNT_QUANTIFIER_BEFORE, path: "(count_quantifier)/before" }] },
         ::sittir_core::options::AddressNode::Branch { key: "lbrace", path: "(count_quantifier)/\"{\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_COUNT_QUANTIFIER_LBRACE_AFTER, path: "(count_quantifier)/\"{\"/after" }] },
+        ] },
+        ::sittir_core::options::AddressNode::Branch { key: "qmark", path: "(count_quantifier)/\"?\"", children: &[
+            ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_COUNT_QUANTIFIER_QMARK_BEFORE, path: "(count_quantifier)/\"?\"/before" }] },
         ] },
         ::sittir_core::options::AddressNode::Branch { key: "rbrace", path: "(count_quantifier)/\"}\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_COUNT_QUANTIFIER_RBRACE_AFTER, path: "(count_quantifier)/\"}\"/after" }] },
@@ -731,12 +746,16 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
         ::sittir_core::options::AddressNode::Branch { key: "plus", path: "(one_or_more)/\"+\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_ONE_OR_MORE_PLUS_AFTER, path: "(one_or_more)/\"+\"/after" }] },
         ] },
+        ::sittir_core::options::AddressNode::Branch { key: "qmark", path: "(one_or_more)/\"?\"", children: &[
+            ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_ONE_OR_MORE_QMARK_BEFORE, path: "(one_or_more)/\"?\"/before" }] },
+        ] },
     ] },
     ::sittir_core::options::AddressNode::Branch { key: "optional", path: "(optional)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_OPTIONAL_OPTIONAL_AFTER, path: "(optional)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_OPTIONAL_OPTIONAL_BEFORE, path: "(optional)/before" }] },
         ::sittir_core::options::AddressNode::Branch { key: "qmark", path: "(optional)/\"?\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_OPTIONAL_QMARK_AFTER, path: "(optional)/\"?\"/after" }] },
+            ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_OPTIONAL_QMARK_BEFORE, path: "(optional)/\"?\"/before" }] },
         ] },
     ] },
     ::sittir_core::options::AddressNode::Branch { key: "pattern", path: "(pattern)", children: &[
@@ -794,6 +813,9 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
     ::sittir_core::options::AddressNode::Branch { key: "zeroOrMore", path: "(zero_or_more)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_ZERO_OR_MORE_ZERO_OR_MORE_AFTER, path: "(zero_or_more)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_ZERO_OR_MORE_ZERO_OR_MORE_BEFORE, path: "(zero_or_more)/before" }] },
+        ::sittir_core::options::AddressNode::Branch { key: "qmark", path: "(zero_or_more)/\"?\"", children: &[
+            ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_ZERO_OR_MORE_QMARK_BEFORE, path: "(zero_or_more)/\"?\"/before" }] },
+        ] },
         ::sittir_core::options::AddressNode::Branch { key: "star", path: "(zero_or_more)/\"*\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_ZERO_OR_MORE_STAR_AFTER, path: "(zero_or_more)/\"*\"/after" }] },
         ] },

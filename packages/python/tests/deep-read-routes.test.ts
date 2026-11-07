@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import python from '../src/index.ts';
 import { createEngine } from '@sittir/common';
 
-const py = await createEngine(python);
+const py = await createEngine(python, { nodeStorage: 'object' });
 
 type Stored = Record<string, unknown>;
 

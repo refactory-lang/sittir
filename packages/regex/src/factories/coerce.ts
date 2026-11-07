@@ -19,9 +19,9 @@ import {
 	coerceMixedEnumStorage,
 	configFieldOr,
 	currentHandle,
+	describeValue,
 	isNodeOfKind,
 	isNodeValue,
-	listStorage,
 	withEmptyForm
 } from '@sittir/common/utils';
 
@@ -54,6 +54,7 @@ const _leafRegistry: { readonly [kind: string]: _LeafEntry } = {
 	identity_escape: { factory: (content: string) => _resolveByKind('identity_escape', content) },
 	group_name: { pattern: F._leafRe_buildGroupName, factory: F.buildGroupName },
 	decimal_digits: { pattern: F._leafRe_buildDecimalDigits, factory: F.buildDecimalDigits },
+	lazy: { values: ['?'], factory: () => F.buildLazy },
 	character_class_escape_text1: {
 		pattern: F._leafRe_buildCharacterClassEscapeText1,
 		factory: F.buildCharacterClassEscapeText1
@@ -67,7 +68,6 @@ const _leafRegistry: { readonly [kind: string]: _LeafEntry } = {
 	_newline: { values: ['\n'], factory: () => F.buildNewline },
 	_blankline: { values: ['\n\n'], factory: () => F.buildBlankline },
 	_double_blankline: { values: ['\n\n\n'], factory: () => F.buildDoubleBlankline },
-	lazy: { values: ['?'], factory: () => F.buildLazy },
 	unicode_property_name: { pattern: F._leafRe_buildUnicodePropertyName, factory: F.buildUnicodePropertyName }
 };
 const _AFFIXED_KINDS: ReadonlySet<string> = new Set(['identity_escape']);
@@ -88,6 +88,7 @@ const _SLOTLESS_TEXT_KINDS: ReadonlySet<string> = new Set([
 	'control_letter_escape',
 	'group_name',
 	'decimal_digits',
+	'lazy',
 	'character_class_escape_text1',
 	'character_class_escape_text2',
 	'negation',
@@ -95,7 +96,6 @@ const _SLOTLESS_TEXT_KINDS: ReadonlySet<string> = new Set([
 	'_newline',
 	'_blankline',
 	'_double_blankline',
-	'lazy',
 	'unicode_property_name'
 ]);
 
@@ -151,8 +151,6 @@ function _resolveBareText(v: string, kinds: readonly string[]): AnyUntypedNode |
 	return undefined;
 }
 
-const _DELIMITER_TOKENS: { readonly [kind: string]: (bag: Readonly<Record<string, unknown>>) => unknown } = {};
-
 function _isFromKind(k: string): k is keyof _FromMap {
 	return k in _fromMap;
 }
@@ -183,14 +181,6 @@ function _resolveByKind<K extends keyof _FromMap>(kind: K, rest: _LooseFieldInpu
 	if (_SLOTLESS_TEXT_KINDS.has(kind) || 'text' in rest)
 		throw new Error(`the ${kind} tag takes its text: { $type: <kind id>, text: "…" }`);
 	return fn(rest);
-}
-
-export function buildByKind(kind: string, ...input: unknown[]): unknown {
-	if (Object.hasOwn(_DELIMITER_TOKENS, kind))
-		return _DELIMITER_TOKENS[kind]!(Object.assign({}, ...input) as Readonly<Record<string, unknown>>);
-	if (!Object.hasOwn(_fromMap, kind)) throw new Error(`no builder for kind ${JSON.stringify(kind)}`);
-	if (input.length === 1) return _resolveByKind(kind as keyof _FromMap, input[0] as _LooseFieldInput);
-	return (_fromMap[kind as keyof _FromMap] as (...args: unknown[]) => unknown)(...input);
 }
 
 function _keywordOf(v: _LooseFieldInput, keywords: readonly (readonly [string, number])[]): number | undefined {
@@ -250,7 +240,7 @@ const _STRING_CAPABLE_BRANCHES: ReadonlySet<string> = new Set([
 ]);
 const _KIND_ID_STORED: ReadonlySet<number> = new Set([
 	2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 14, 15, 16, 17, 19, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 40, 47,
-	48, 49, 50, 54, 82, 89
+	48, 49, 50, 54, 77, 83
 ]);
 const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 	pattern: new Set([52, 53]),
@@ -260,7 +250,7 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 	non_capturing_group: new Set([51, 52, 53]),
 	backreference_escape: new Set([38]),
 	named_group_backreference: new Set([38]),
-	character_class_escape: new Set([41, 74, 80]),
+	character_class_escape: new Set([41, 74, 81]),
 	count_quantifier_group: new Set([39]),
 	unicode_property_value_expression_group: new Set([90])
 };
@@ -347,7 +337,7 @@ function _resolveOne<T>(
 	}
 	if (typeof v === 'object') {
 		throw new Error(
-			`_resolveOne: cannot resolve value to any of [${[...leafKinds, ...branchKinds].join(', ')}]: ${JSON.stringify(v)}`
+			`_resolveOne: cannot resolve value to any of [${[...leafKinds, ...branchKinds].join(', ')}]: ${describeValue(v)}`
 		);
 	}
 	if (typeof v === 'string') {
@@ -370,28 +360,19 @@ function _resolveMany<T>(
 
 function _listElements(
 	input: readonly unknown[],
-	optionKeys: readonly string[],
 	wrapperKind: string | undefined,
 	resolve: (elements: readonly unknown[]) => readonly unknown[],
 	tagKinds: readonly string[],
 	bagKinds?: readonly string[]
 ): readonly unknown[] {
-	const head = input[0];
-	const optionsFirst =
-		optionKeys.length > 0 &&
-		typeof head === 'object' &&
-		head !== null &&
-		!Array.isArray(head) &&
-		!isNodeValue(head) &&
-		Object.keys(head).every((k) => optionKeys.includes(k));
-	const elements = (optionsFirst ? input.slice(1) : input).map((e) => {
+	const elements = input.map((e) => {
 		if (typeof e !== 'object' || e === null || Array.isArray(e) || isNodeValue(e)) return e;
 		const tagged = _splitTag(e);
 		if (tagged !== undefined) return _resolveByKind(_fromOfTag(tagged.tag, tagKinds), tagged.rest);
 		if (bagKinds === undefined || bagKinds.length === 0) return e;
 		if (bagKinds.length > 1)
 			throw new Error(
-				`a bag in this list needs a $type tag naming one of [${bagKinds.join(', ')}]: ${JSON.stringify(e)}`
+				`a bag in this list needs a $type tag naming one of [${bagKinds.join(', ')}]: ${describeValue(e)}`
 			);
 		return _isFromKind(bagKinds[0]!) ? _resolveByKind(bagKinds[0]!, e) : e;
 	});
@@ -403,7 +384,7 @@ function _listElements(
 			? e
 			: resolve([e])[0]
 	);
-	return optionsFirst ? [head, ...resolved] : resolved;
+	return resolved;
 }
 
 function _resolveOneLeaf<T>(v: _LooseFieldInput, kind: string): Admit<T> {
@@ -417,7 +398,7 @@ function _resolveOneLeaf<T>(v: _LooseFieldInput, kind: string): Admit<T> {
 	const tagged = _splitTag(v);
 	if (tagged !== undefined) return _resolveByKind(_fromOfTag(tagged.tag, [kind]), tagged.rest) as Admit<T>;
 	if (typeof v === 'object') {
-		throw new Error(`_resolveOneLeaf: cannot resolve value to leaf kind '${kind}': ${JSON.stringify(v)}`);
+		throw new Error(`_resolveOneLeaf: cannot resolve value to leaf kind '${kind}': ${describeValue(v)}`);
 	}
 	return v as Admit<T>;
 }
@@ -540,7 +521,7 @@ function _resolveOneBranch<T>(
 		if (_isFromKind(kind)) return _resolveByKind(kind, v) as Admit<T>;
 	}
 	if (typeof v === 'object') {
-		throw new Error(`_resolveOneBranch: cannot resolve value to branch kind '${kind}': ${JSON.stringify(v)}`);
+		throw new Error(`_resolveOneBranch: cannot resolve value to branch kind '${kind}': ${describeValue(v)}`);
 	}
 	return v as Admit<T>;
 }
@@ -591,7 +572,7 @@ const _K0: readonly string[] = [];
 const _K1: readonly string[] = ['alternation', 'term'];
 const _K2: readonly string[] = ['lookahead_assertion', 'lookbehind_assertion'];
 const _K3: readonly string[] = ['class_character', 'control_escape', 'control_letter_escape'];
-const _K4: readonly string[] = ['character_class_escape', 'identity_escape', 'posix_character_class', 'class_range'];
+const _K4: readonly string[] = ['identity_escape', 'character_class_escape', 'posix_character_class', 'class_range'];
 const _K5: readonly string[] = ['class_character', 'control_escape'];
 const _K6: readonly string[] = ['character_class_escape'];
 const _K7: readonly string[] = ['decimal_digits'];
@@ -636,7 +617,7 @@ export const coerceToPattern: ConfigSeat<T.Pattern.Loose, ReturnType<typeof F.bu
 	if (isNodeOfKind(input, TSKindId.Pattern)) return input as unknown as ReturnType<typeof F.buildPattern>;
 	return F.buildPattern(
 		_resolveOne<T.Alternation | T.Term>(
-			configFieldOr(input, 'content', () => input),
+			configFieldOr(input, 'content', () => input, TSKindId.Pattern),
 			_K0,
 			_K1
 		)
@@ -647,14 +628,8 @@ export const coerceToAlternation: Seat<T.Alternation.LooseArgs, ReturnType<typeo
 	...input: T.Alternation.LooseArgs
 ): ReturnType<typeof F.buildAlternation> => {
 	currentHandle()?.admit(TSKindId.Alternation, input);
-	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.Alternation)) {
-		const data = input[0];
-		const stored = (data as unknown as { _terms?: unknown })._terms;
-		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.buildAlternation(
-			...(_resolveManyBranch<T.Term>(children, 'term') as unknown as Parameters<typeof F.buildAlternation>)
-		);
-	}
+	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.Alternation))
+		return input[0] as unknown as ReturnType<typeof F.buildAlternation>;
 	const _elems: readonly unknown[] = (() => {
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
@@ -672,14 +647,8 @@ export const coerceToTerm: Seat<T.Term.LooseArgs, ReturnType<typeof F.buildTerm>
 	...input: T.Term.LooseArgs
 ): ReturnType<typeof F.buildTerm> => {
 	currentHandle()?.admit(TSKindId.Term, input);
-	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.Term)) {
-		const data = input[0];
-		const stored = (data as unknown as { _term_group?: unknown })._term_group;
-		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.buildTerm(
-			...(_resolveManyBranch<T.TermGroup>(children, 'term_group') as unknown as Parameters<typeof F.buildTerm>)
-		);
-	}
+	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.Term))
+		return input[0] as unknown as ReturnType<typeof F.buildTerm>;
 	const _elems: readonly unknown[] = (() => {
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
@@ -729,7 +698,7 @@ export const coerceToLookaroundAssertion: ConfigSeat<
 		return input as unknown as ReturnType<typeof F.buildLookaroundAssertion>;
 	return F.buildLookaroundAssertion(
 		_resolveOne<T.LookaheadAssertion | T.LookbehindAssertion>(
-			configFieldOr(input, 'content', () => input),
+			configFieldOr(input, 'content', () => input, TSKindId.LookaroundAssertion),
 			_K0,
 			_K2
 		)
@@ -815,21 +784,15 @@ export function resolveCharacterClass_leading(
 export function resolveCharacterClass_classAtoms(
 	value: T.CharacterClass.LooseConfig['classAtoms']
 ): Admit<T.CharacterClass['_class_atoms']> {
-	return listStorage(
-		_resolveKindEnumItems(value, [TSKindId.BslashDash], (_v) =>
-			_resolveMany<
-				| T.ClassCharacter
-				| TSKindId.BslashDash
-				| T.CharacterClassEscape
-				| T.ControlEscape
-				| T.ControlLetterEscape
-				| T.IdentityEscape
-				| T.PosixCharacterClass
-				| T.ClassRange
-			>(_v, _K3, _K4)
-		),
-		(item) => coerceMixedEnumStorage(item, [['\\-', TSKindId.BslashDash] as const])
-	);
+	return _resolveMany<
+		| T.ClassCharacter
+		| T.IdentityEscape
+		| T.CharacterClassEscape
+		| T.ControlEscape
+		| T.ControlLetterEscape
+		| T.PosixCharacterClass
+		| T.ClassRange
+	>(value, _K3, _K4);
 }
 
 export function resolveCharacterClass_trailing(
@@ -867,8 +830,11 @@ export const coerceToPosixCharacterClass: ConfigSeat<
 		return input as unknown as ReturnType<typeof F.buildPosixCharacterClass>;
 	return F.buildPosixCharacterClass(
 		_resolveOneLeaf<T.PosixClassName>(
-			configFieldOr(input, 'posixClassName', () =>
-				typeof input === 'string' ? spelledInterior(input, '[:', ':]') : input
+			configFieldOr(
+				input,
+				'posixClassName',
+				() => (typeof input === 'string' ? spelledInterior(input, '[:', ':]') : input),
+				TSKindId.PosixCharacterClass
 			),
 			'posix_class_name'
 		)
@@ -932,7 +898,7 @@ export const coerceToAnonymousCapturingGroup: ConfigSeat<
 		return input as unknown as ReturnType<typeof F.buildAnonymousCapturingGroup>;
 	return F.buildAnonymousCapturingGroup(
 		_resolveOneBranch<T.Pattern>(
-			configFieldOr(input, 'pattern', () => input),
+			configFieldOr(input, 'pattern', () => input, TSKindId.AnonymousCapturingGroup),
 			'pattern'
 		)
 	);
@@ -987,7 +953,7 @@ export const coerceToNonCapturingGroup: ConfigSeat<
 		return input as unknown as ReturnType<typeof F.buildNonCapturingGroup>;
 	return F.buildNonCapturingGroup(
 		_resolveOneBranch<T.Pattern>(
-			configFieldOr(input, 'pattern', () => input),
+			configFieldOr(input, 'pattern', () => input, TSKindId.NonCapturingGroup),
 			'pattern'
 		)
 	);
@@ -1083,8 +1049,11 @@ export const coerceToBackreferenceEscape: ConfigSeat<
 		return input as unknown as ReturnType<typeof F.buildBackreferenceEscape>;
 	return F.buildBackreferenceEscape(
 		_resolveOneLeaf<T.GroupName>(
-			configFieldOr(input, 'groupName', () =>
-				typeof input === 'string' ? spelledInterior(input, '\\k<', '>') : input
+			configFieldOr(
+				input,
+				'groupName',
+				() => (typeof input === 'string' ? spelledInterior(input, '\\k<', '>') : input),
+				TSKindId.BackreferenceEscape
 			),
 			'group_name'
 		)
@@ -1105,8 +1074,11 @@ export const coerceToNamedGroupBackreference: ConfigSeat<
 		return input as unknown as ReturnType<typeof F.buildNamedGroupBackreference>;
 	return F.buildNamedGroupBackreference(
 		_resolveOneLeaf<T.GroupName>(
-			configFieldOr(input, 'groupName', () =>
-				typeof input === 'string' ? spelledInterior(input, '(?P=', ')') : input
+			configFieldOr(
+				input,
+				'groupName',
+				() => (typeof input === 'string' ? spelledInterior(input, '(?P=', ')') : input),
+				TSKindId.NamedGroupBackreference
 			),
 			'group_name'
 		)
@@ -1138,7 +1110,7 @@ export const coerceToCharacterClassEscape: ConfigSeat<
 		return input as unknown as ReturnType<typeof F.buildCharacterClassEscape>;
 	return F.buildCharacterClassEscape(
 		_resolveOne<T.CharacterClassEscapeText1 | T.CharacterClassEscapeArm | T.UnicodeCharacterEscape>(
-			configFieldOr(input, 'content', () => input),
+			configFieldOr(input, 'content', () => input, TSKindId.CharacterClassEscape),
 			_K9,
 			_K10
 		)
@@ -1220,8 +1192,12 @@ export const coerceToIdentityEscape: ConfigSeat<T.IdentityEscape.Loose, ReturnTy
 	if (isNodeValue(input)) return input as unknown as ReturnType<typeof F.buildIdentityEscape>;
 	return F.buildIdentityEscape(
 		_resolveOne<string>(
-			configFieldOr(input, 'content', () =>
-				typeof input === 'string' ? spelledInterior(input, '\\', '', F._slotRe_buildIdentityEscape_content) : input
+			configFieldOr(
+				input,
+				'content',
+				() =>
+					typeof input === 'string' ? spelledInterior(input, '\\', '', F._slotRe_buildIdentityEscape_content) : input,
+				TSKindId.IdentityEscape
 			),
 			_K0,
 			_K0
@@ -1243,6 +1219,10 @@ export const coerceToDecimalDigits: ConfigSeat<T.DecimalDigits.Loose, ReturnType
 		return input as unknown as ReturnType<typeof F.buildDecimalDigits>;
 	return F.buildDecimalDigits(input as Parameters<typeof F.buildDecimalDigits>[0]);
 };
+
+export function coerceToLazy(_input?: T.Lazy.Loose): typeof F.buildLazy {
+	return F.buildLazy;
+}
 
 export function resolveTermGroup_content(value: T.TermGroup.LooseConfig['content']): Admit<T.TermGroup['_content']> {
 	return coerceMixedEnumStorage(
@@ -1320,8 +1300,11 @@ export const coerceToCountQuantifierGroup: OptionalConfigSeat<
 		return input as unknown as ReturnType<typeof F.buildCountQuantifierGroup>;
 	return F.buildCountQuantifierGroup(
 		_resolveOneLeaf<T.DecimalDigits>(
-			configFieldOr(input, 'decimalDigits', () =>
-				typeof input === 'string' ? spelledInterior(input, ',', '') : input
+			configFieldOr(
+				input,
+				'decimalDigits',
+				() => (typeof input === 'string' ? spelledInterior(input, ',', '') : input),
+				TSKindId.CountQuantifierGroup
 			),
 			'decimal_digits'
 		)
@@ -1398,8 +1381,11 @@ export const coerceToUnicodePropertyValueExpressionGroup: ConfigSeat<
 		return input as unknown as ReturnType<typeof F.buildUnicodePropertyValueExpressionGroup>;
 	return F.buildUnicodePropertyValueExpressionGroup(
 		_resolveOneLeaf<T.UnicodePropertyName>(
-			configFieldOr(input, 'unicodePropertyName', () =>
-				typeof input === 'string' ? spelledInterior(input, '', '=') : input
+			configFieldOr(
+				input,
+				'unicodePropertyName',
+				() => (typeof input === 'string' ? spelledInterior(input, '', '=') : input),
+				TSKindId.UnicodePropertyValueExpressionGroup
 			),
 			'unicode_property_name'
 		)
@@ -1524,10 +1510,6 @@ export function coerceToDoubleBlankline(_input?: T.DoubleBlankline.Loose): typeo
 	return F.buildDoubleBlankline;
 }
 
-export function coerceToLazy(_input?: T.Lazy.Loose): typeof F.buildLazy {
-	return F.buildLazy;
-}
-
 export const coerceToUnicodePropertyName: ConfigSeat<
 	T.UnicodePropertyName.Loose,
 	ReturnType<typeof F.buildUnicodePropertyName>
@@ -1574,6 +1556,7 @@ export interface _FromMap {
 	readonly identity_escape: typeof coerceToIdentityEscape;
 	readonly group_name: typeof coerceToGroupName;
 	readonly decimal_digits: typeof coerceToDecimalDigits;
+	readonly lazy: typeof coerceToLazy;
 	readonly term_group: typeof coerceToTermGroup;
 	readonly count_quantifier_group: typeof coerceToCountQuantifierGroup;
 	readonly count_quantifier_arm: typeof coerceToCountQuantifierArm;
@@ -1589,7 +1572,6 @@ export interface _FromMap {
 	readonly _newline: typeof coerceToNewline;
 	readonly _blankline: typeof coerceToBlankline;
 	readonly _double_blankline: typeof coerceToDoubleBlankline;
-	readonly lazy: typeof coerceToLazy;
 	readonly unicode_property_name: typeof coerceToUnicodePropertyName;
 }
 export const _fromMap: _FromMap = {
@@ -1630,6 +1612,7 @@ export const _fromMap: _FromMap = {
 	identity_escape: coerceToIdentityEscape,
 	group_name: coerceToGroupName,
 	decimal_digits: coerceToDecimalDigits,
+	lazy: coerceToLazy,
 	term_group: coerceToTermGroup,
 	count_quantifier_group: coerceToCountQuantifierGroup,
 	count_quantifier_arm: coerceToCountQuantifierArm,
@@ -1645,6 +1628,5 @@ export const _fromMap: _FromMap = {
 	_newline: coerceToNewline,
 	_blankline: coerceToBlankline,
 	_double_blankline: coerceToDoubleBlankline,
-	lazy: coerceToLazy,
 	unicode_property_name: coerceToUnicodePropertyName
 };

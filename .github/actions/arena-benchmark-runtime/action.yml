@@ -1,0 +1,23 @@
+name: Restore benchmark runtime
+description: Restore the same verified compiled outputs on each measurement runner.
+inputs:
+  prefix:
+    description: Runtime artifact prefix from the build workflow
+    required: true
+runs:
+  using: composite
+  steps:
+    - uses: actions/download-artifact@v4
+      with:
+        pattern: ${{ inputs.prefix }}-*
+        path: ${{ runner.temp }}/arena-runtime
+        merge-multiple: true
+    - name: Verify and restore compiled outputs
+      shell: bash
+      run: |
+        labels=(typescript)
+        for grammar in $(pnpm exec tsx packages/tools/src/scripts/list-grammars.ts stable); do
+          labels+=("native-$grammar")
+        done
+        node scripts/ci/arena-benchmark-runtime.mjs restore "$RUNNER_TEMP/arena-runtime" "${labels[@]}"
+        cp "$RUNNER_TEMP/arena-runtime/"*.manifest.json "$RUNNER_TEMP/arena-benchmarks/"

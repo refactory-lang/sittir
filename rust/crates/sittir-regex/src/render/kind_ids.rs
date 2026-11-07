@@ -33,8 +33,8 @@ pub const LPAREN_QMARK_P_LT: KindId = KindId(22);
 pub const GT: KindId = KindId(23);
 pub const LPAREN_QMARK_COLON: KindId = KindId(24);
 pub const STAR: KindId = KindId(25);
-pub const QMARK: KindId = KindId(26);
-pub const PLUS: KindId = KindId(27);
+pub const PLUS: KindId = KindId(26);
+pub const QMARK: KindId = KindId(27);
 pub const LBRACE: KindId = KindId(28);
 pub const COMMA: KindId = KindId(29);
 pub const RBRACE: KindId = KindId(30);
@@ -84,27 +84,30 @@ pub const CHARACTER_CLASS_ESCAPE: KindId = KindId(73);
 pub const UNICODE_CHARACTER_ESCAPE: KindId = KindId(74);
 pub const UNICODE_PROPERTY_VALUE_EXPRESSION: KindId = KindId(75);
 pub const CONTROL_ESCAPE: KindId = KindId(76);
-pub const TERM_GROUP: KindId = KindId(77);
-pub const COUNT_QUANTIFIER_GROUP: KindId = KindId(78);
-pub const COUNT_QUANTIFIER_ARM: KindId = KindId(79);
-pub const CHARACTER_CLASS_ESCAPE_ARM: KindId = KindId(80);
-pub const UNICODE_PROPERTY_VALUE_EXPRESSION_GROUP: KindId = KindId(81);
-pub const _NEGATION: KindId = KindId(82);
-pub const INLINE_FLAGS_GROUP_ENABLE: KindId = KindId(83);
-pub const INLINE_FLAGS_GROUP_TOGGLE: KindId = KindId(84);
-pub const INLINE_FLAGS_GROUP_DISABLE: KindId = KindId(85);
-pub const ALTERNATION_REPEAT1: KindId = KindId(86);
-pub const TERM_REPEAT1: KindId = KindId(87);
-pub const CHARACTER_CLASS_REPEAT1: KindId = KindId(88);
-pub const _LAZY: KindId = KindId(89);
+pub const _LAZY: KindId = KindId(77);
+pub const TERM_GROUP: KindId = KindId(78);
+pub const COUNT_QUANTIFIER_GROUP: KindId = KindId(79);
+pub const COUNT_QUANTIFIER_ARM: KindId = KindId(80);
+pub const CHARACTER_CLASS_ESCAPE_ARM: KindId = KindId(81);
+pub const UNICODE_PROPERTY_VALUE_EXPRESSION_GROUP: KindId = KindId(82);
+pub const _NEGATION: KindId = KindId(83);
+pub const INLINE_FLAGS_GROUP_ENABLE: KindId = KindId(84);
+pub const INLINE_FLAGS_GROUP_TOGGLE: KindId = KindId(85);
+pub const INLINE_FLAGS_GROUP_DISABLE: KindId = KindId(86);
+pub const ALTERNATION_REPEAT1: KindId = KindId(87);
+pub const TERM_REPEAT1: KindId = KindId(88);
+pub const CHARACTER_CLASS_REPEAT1: KindId = KindId(89);
 pub const _UNICODE_PROPERTY_NAME: KindId = KindId(90);
 pub const ERROR: KindId = KindId(65535);
+
+/// The bits a packed kind field takes: the least that holds every kind id below all-ones, which is `ERROR`.
+pub const KIND_BITS: u32 = 7;
 const _: () = assert!(ERROR.get() == KindId::ERROR.get());
 
 /// The surface kinds: list kinds, whose items the surface exposes in their place, unit kinds, which it exposes as a kind id, the extras that are layout members, which it assigns as layout, and the depth members a layout run's excess indentation reads as.
 pub const SURFACE_KINDS: ::sittir_core::trivia_table::SurfaceKinds = ::sittir_core::trivia_table::SurfaceKinds {
     lists: &[],
-    units: &[KindId(2), KindId(3), KindId(4), KindId(5), KindId(6), KindId(7), KindId(8), KindId(9), KindId(10), KindId(11), KindId(13), KindId(14), KindId(15), KindId(16), KindId(17), KindId(19), KindId(21), KindId(22), KindId(23), KindId(24), KindId(25), KindId(26), KindId(27), KindId(28), KindId(29), KindId(30), KindId(31), KindId(32), KindId(33), KindId(40), KindId(47), KindId(48), KindId(49), KindId(50), KindId(54), KindId(82), KindId(89)],
+    units: &[KindId(2), KindId(3), KindId(4), KindId(5), KindId(6), KindId(7), KindId(8), KindId(9), KindId(10), KindId(11), KindId(13), KindId(14), KindId(15), KindId(16), KindId(17), KindId(19), KindId(21), KindId(22), KindId(23), KindId(24), KindId(25), KindId(26), KindId(27), KindId(28), KindId(29), KindId(30), KindId(31), KindId(32), KindId(33), KindId(40), KindId(47), KindId(48), KindId(49), KindId(50), KindId(54), KindId(77), KindId(83)],
     layout: &[],
     indent: KindId(0),
     dedent: KindId(0),
@@ -157,8 +160,8 @@ pub fn kind_name_from_id(id: KindId) -> &'static str {
         23 => ">", // "gt"
         24 => "(?:", // "lparen_qmark_colon"
         25 => "*", // "star"
-        26 => "?", // "qmark"
-        27 => "+", // "plus"
+        26 => "+", // "plus"
+        27 => "?", // "qmark"
         28 => "{", // "lbrace"
         29 => ",", // "comma"
         30 => "}", // "rbrace"
@@ -208,19 +211,19 @@ pub fn kind_name_from_id(id: KindId) -> &'static str {
         74 => "unicode_character_escape", // "unicode_character_escape"
         75 => "unicode_property_value_expression", // "unicode_property_value_expression"
         76 => "control_escape", // "control_escape"
-        77 => "term_group", // "term_group"
-        78 => "count_quantifier_group", // "count_quantifier_group"
-        79 => "count_quantifier_arm", // "count_quantifier_arm"
-        80 => "character_class_escape_arm", // "character_class_escape_arm"
-        81 => "unicode_property_value_expression_group", // "unicode_property_value_expression_group"
-        82 => "negation", // "_negation"
-        83 => "inline_flags_group_enable", // "inline_flags_group_enable"
-        84 => "inline_flags_group_toggle", // "inline_flags_group_toggle"
-        85 => "inline_flags_group_disable", // "inline_flags_group_disable"
-        86 => "alternation_repeat1", // "alternation_repeat1"
-        87 => "term_repeat1", // "term_repeat1"
-        88 => "character_class_repeat1", // "character_class_repeat1"
-        89 => "lazy", // "_lazy"
+        77 => "lazy", // "_lazy"
+        78 => "term_group", // "term_group"
+        79 => "count_quantifier_group", // "count_quantifier_group"
+        80 => "count_quantifier_arm", // "count_quantifier_arm"
+        81 => "character_class_escape_arm", // "character_class_escape_arm"
+        82 => "unicode_property_value_expression_group", // "unicode_property_value_expression_group"
+        83 => "negation", // "_negation"
+        84 => "inline_flags_group_enable", // "inline_flags_group_enable"
+        85 => "inline_flags_group_toggle", // "inline_flags_group_toggle"
+        86 => "inline_flags_group_disable", // "inline_flags_group_disable"
+        87 => "alternation_repeat1", // "alternation_repeat1"
+        88 => "term_repeat1", // "term_repeat1"
+        89 => "character_class_repeat1", // "character_class_repeat1"
         90 => "unicode_property_name", // "_unicode_property_name"
         65535 => "ERROR", // "ERROR"
         _ => "<unknown>",

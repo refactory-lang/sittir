@@ -4,8 +4,11 @@ import {
 	nodeToConfig,
 	type FactoryDispatchArtifacts,
 	type IrSurface,
-	type SeatTable
+	type SeatTable,
+	type SlotAccessorOf
 } from '../validate/common.ts';
+
+const accessorOf: SlotAccessorOf = (typeId) => ({ kind: String(typeId), slots: [], accessors: {}, separator: false });
 
 const KINDS = [
 	'clause',
@@ -74,7 +77,7 @@ function surfaceWith(entries: IrSurface['entries']): IrSurface {
 	return { entries, seats, modelTypes: { tok: 'keyword' }, unitKinds: new Set(['tok']) };
 }
 
-const opts = { factorySlots, factoryShapes, factoryFields, surface: surfaceWith({}), kindNameFromId };
+const opts = { factorySlots, factoryShapes, factoryFields, surface: surfaceWith({}), kindNameFromId, accessorOf };
 
 const routed = (call: (...args: never[]) => unknown, members: Record<string, unknown> = {}): IrSurface['entries'][string] =>
 	Object.assign(call, members);
@@ -115,7 +118,7 @@ describe('nodeToConfig projects a hoisted child by its seat on the ir surface', 
 
 	it('does nothing without a surface', () => {
 		const data = { $type: id('clause'), _clause_group: { $type: id('_clause_group'), _parameter: 'e' }, _body: 'x' };
-		expect(nodeToConfig(data as never, { factorySlots, factoryShapes, kindNameFromId })).toMatchObject({
+		expect(nodeToConfig(data as never, { factorySlots, factoryShapes, kindNameFromId, accessorOf })).toMatchObject({
 			clauseGroup: { $type: id('_clause_group') },
 			body: 'x'
 		});
@@ -142,7 +145,7 @@ describe('buildFactoryNodeFromReference on the ir surface', () => {
 			data as never,
 			'header',
 			artifacts({ header: routed(raw, { kind }) }, { header: raw }),
-			{ kindNameFromId }
+			{ kindNameFromId, accessorOf }
 		);
 		expect(built).toBe('built');
 		expect(kind).toHaveBeenCalledWith({ kind: 3, left: 'i', name: 'n' });
@@ -172,7 +175,7 @@ describe('buildFactoryNodeFromReference on the ir surface', () => {
 				modelTypes: {},
 				unitKinds: new Set()
 			}
-		}, { kindNameFromId });
+		}, { kindNameFromId, accessorOf });
 		expect(inner).toHaveBeenCalledWith({ kind: 3, x: 'v', name: 'n' });
 	});
 
@@ -183,7 +186,7 @@ describe('buildFactoryNodeFromReference on the ir surface', () => {
 			data as never,
 			'header',
 			artifacts({ header: routed(vi.fn(), { tok }) }, { header: vi.fn() }),
-			{ kindNameFromId }
+			{ kindNameFromId, accessorOf }
 		);
 		expect(tok).toHaveBeenCalledWith({ name: 'n' });
 	});
@@ -195,7 +198,7 @@ describe('buildFactoryNodeFromReference on the ir surface', () => {
 			data as never,
 			'tree',
 			artifacts({ tree: routed(vi.fn(), { paren }) }, { tree: vi.fn() }),
-			{ kindNameFromId }
+			{ kindNameFromId, accessorOf }
 		);
 		expect(paren).toHaveBeenCalledWith('a', 'b');
 	});
@@ -207,7 +210,7 @@ describe('buildFactoryNodeFromReference on the ir surface', () => {
 			data as never,
 			'header',
 			artifacts({ header: routed(vi.fn(), { tok }) }, { header: vi.fn() }),
-			{ kindNameFromId }
+			{ kindNameFromId, accessorOf }
 		);
 		expect(tok).toHaveBeenCalledWith({ name: 'n' });
 	});
@@ -215,21 +218,21 @@ describe('buildFactoryNodeFromReference on the ir surface', () => {
 	it('calls the entry with the flattened config', () => {
 		const entry = vi.fn(() => 'built');
 		const data = { $type: id('clause'), _clause_group: { $type: id('_clause_group'), _parameter: 'e' }, _body: 'x' };
-		buildFactoryNodeFromReference(data as never, 'clause', artifacts({ clause: routed(entry) }, { clause: vi.fn() }), { kindNameFromId });
+		buildFactoryNodeFromReference(data as never, 'clause', artifacts({ clause: routed(entry) }, { clause: vi.fn() }), { kindNameFromId, accessorOf });
 		expect(entry).toHaveBeenCalledWith({ parameter: 'e', body: 'x' });
 	});
 
 	it('hands a forwarded parent the flattened group config as its one value', () => {
 		const entry = vi.fn(() => 'built');
 		const data = { $type: id('block'), _arms: { $type: id('_block_arms'), _arm: [{ $type: id('arm') }], _last: 'z' } };
-		buildFactoryNodeFromReference(data as never, 'block', artifacts({ block: routed(entry) }, { block: vi.fn() }), { kindNameFromId });
+		buildFactoryNodeFromReference(data as never, 'block', artifacts({ block: routed(entry) }, { block: vi.fn() }), { kindNameFromId, accessorOf });
 		expect(entry).toHaveBeenCalledWith({ arm: [{ $type: id('arm') }], last: 'z' });
 	});
 
 	it('builds a kind without an ir entry through its raw factory', () => {
 		const raw = vi.fn(() => 'raw-built');
 		const data = { $type: id('clause'), _body: 'x' };
-		expect(buildFactoryNodeFromReference(data as never, 'clause', artifacts({}, { clause: raw }), { kindNameFromId })).toBe('raw-built');
+		expect(buildFactoryNodeFromReference(data as never, 'clause', artifacts({}, { clause: raw }), { kindNameFromId, accessorOf })).toBe('raw-built');
 		expect(raw).toHaveBeenCalledWith({ body: 'x' });
 	});
 
@@ -240,7 +243,7 @@ describe('buildFactoryNodeFromReference on the ir surface', () => {
 				data as never,
 				'header',
 				artifacts({ header: routed(vi.fn()) }, { header: vi.fn() }),
-				{ kindNameFromId }
+				{ kindNameFromId, accessorOf }
 			)
 		).toThrow('ir surface: header.kind is not a function');
 	});

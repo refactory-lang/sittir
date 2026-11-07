@@ -138,6 +138,21 @@ pub enum SeamStrength {
     Trivia = 4,
 }
 
+impl SeamStrength {
+    /// The strength whose discriminant is `code`.
+    #[must_use]
+    pub const fn from_code(code: u8) -> Option<Self> {
+        match code {
+            0 => Some(Self::Fallback),
+            1 => Some(Self::Cascade),
+            2 => Some(Self::Declared),
+            3 => Some(Self::Slot),
+            4 => Some(Self::Trivia),
+            _ => None,
+        }
+    }
+}
+
 /// The rank of a seam's text: empty 2, no break 1, otherwise 2 plus the number
 /// of logical breaks (`\r\n` counts once).
 #[must_use]
@@ -188,6 +203,11 @@ pub struct SpacingWriter<'a, W: std::fmt::Write + ?Sized> {
     seam_is_flank: bool,
     seam_is_root: bool,
     seam_template: bool,
+    /// Whether the held seam is a join between trivia entries, or between
+    /// an entry and its owner (`RenderSink::trivia_join`): it holds its gap
+    /// at trivia strength, but verbatim text refuses it as it refuses a
+    /// template's seam (`Glued::refuses`).
+    seam_is_join: bool,
     leaf_leading: Option<LayoutKinds>,
     flushed_template: Option<LayoutKinds>,
     sources: Option<&'a dyn crate::render::SourceTable>,
@@ -208,9 +228,10 @@ pub struct SpacingWriter<'a, W: std::fmt::Write + ?Sized> {
     /// The levels the trivia's depth members add to the template's depth
     /// (`layout_depth`); negative where a line sits below it.
     excess: i32,
-    /// Whether the last text was verbatim (`RenderSink::verbatim`): until the
-    /// next text, a seam that does not break the line writes nothing.
-    glued: bool,
+    /// Whether the last text was verbatim (`RenderSink::verbatim`), and how
+    /// the source spells its after side: until the next text, the seams that
+    /// side refuses write nothing (`Glued::refuses`).
+    glued: Option<Glued>,
     /// While a trailing run defers (`defer_trailing`), whether its first text
     /// was verbatim; `None` until it writes any.
     glued_open: Option<bool>,
@@ -219,7 +240,8 @@ pub struct SpacingWriter<'a, W: std::fmt::Write + ?Sized> {
     /// verbatim; the next non-empty `write_text` takes it.
     tight: bool,
     /// The in-line run after the last verbatim text, written ahead of the
-    /// next text unless that text breaks the line.
+    /// next text unless that text breaks the line. Its breaks are spelled
+    /// `\n` as it enters, as every text the writer writes is.
     tail: Option<String>,
     /// While a trailing run defers, the length of the in-line run its
     /// opening verbatim text carries before it.
@@ -291,6 +313,32 @@ impl<'a> LeafProbe<'a> {
 /// A trailing run rendered ahead of where it is written: its text, and the
 /// seam its last entry left (its after edge) with the strength that seam
 /// holds and whether it is a line-terminated entry's break.
+/// How the source spells a side of verbatim text (`RenderSink::verbatim`):
+/// in-line, its run touching what is beside it or holding no line break,
+/// or with a line break or the file's edge between.
+#[derive(Clone, Copy, PartialEq, Eq, Debug)]
+enum Glued {
+    InLine,
+    Breaking,
+}
+
+impl Glued {
+    fn of(run: Option<&str>) -> Self {
+        if run.is_some() {
+            Self::InLine
+        } else {
+            Self::Breaking
+        }
+    }
+
+    /// Whether a seam, breaking the line when `breaks`, is refused on this
+    /// side: any but a whitespace entry's (`entry`), on a side spelled
+    /// in-line, and one that keeps the line on a side that breaks.
+    fn refuses(self, entry: bool, breaks: bool) -> bool {
+        !entry && (self == Self::InLine || !breaks)
+    }
+}
+
 /// What a held seam writes: the kinds valid at its gap, the one kind it
 /// resolved to, and, for a line continuation, the source text it carries.
 #[derive(Clone, Default)]
@@ -304,9 +352,9 @@ struct DeferredRun {
     text: String,
     end: Option<(SeamStrength, Payload)>,
     line_end: Option<crate::render::LineHold>,
-    /// Whether the run opens and ends with verbatim text
-    /// (`RenderSink::verbatim`), which writes no seam on that side.
-    glued: (bool, bool),
+    /// Whether the run opens with verbatim text, and how the verbatim text
+    /// it ends with spells its after side (`RenderSink::verbatim`).
+    glued: (bool, Option<Glued>),
     /// The length of the in-line run the run's opening verbatim text
     /// carries before it, dropped where the run lands at a line start.
     open_before: usize,
@@ -329,6 +377,7 @@ struct HeldContext {
     seam_is_flank: bool,
     seam_is_root: bool,
     seam_template: bool,
+    seam_is_join: bool,
     line_end_held: Option<crate::render::LineHold>,
     tail: Option<String>,
 }
@@ -355,6 +404,7 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
             seam_is_flank: false,
             seam_is_root: false,
             seam_template: false,
+            seam_is_join: false,
             leaf_leading: None,
             flushed_template: None,
             sources: None,
@@ -370,7 +420,7 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
             document: false,
             frames: Vec::new(),
             excess: 0,
-            glued: false,
+            glued: None,
             glued_open: None,
             tight: false,
             tail: None,
@@ -437,9 +487,11 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
     }
 
     /// Records the line breaks the render writes at each gap into
-    /// `baseline`, when one is given (`baseline::Recorder`).
+    /// `baseline`, when one is given (`baseline::Recorder`). A recording
+    /// render measures what it writes: its recorder counts the text, and no
+    /// text reaches the output (`emit`, `pay_indent`).
     #[must_use]
-    pub fn with_recording(mut self, baseline: Option<&'a std::cell::RefCell<crate::baseline::Baseline>>) -> Self {
+    pub fn with_recording(mut self, baseline: Option<&'a mut crate::baseline::Baseline>) -> Self {
         self.recorder = baseline.map(crate::baseline::Recorder::new);
         self
     }
@@ -462,9 +514,12 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
         self
     }
 
-    /// The text written once per depth level after every newline.
+    /// The text written once per depth level after every newline. It holds
+    /// no line break, so a line's indentation is that many copies of it and
+    /// tallies as that many of its tally (`pay_indent`).
     #[must_use]
     pub fn with_indent(mut self, indent: &'a str) -> Self {
+        debug_assert!(!indent.contains(['\n', '\r']), "an indentation unit holds no line break: {indent:?}");
         self.indent = indent;
         self
     }
@@ -490,6 +545,12 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
     /// not itself a newline pays it at the depth current at that moment, so a
     /// dedent between the newline and a closing delimiter puts the delimiter
     /// at the outer depth and blank lines carry no trailing spaces.
+    ///
+    /// A recording render pays it by count: its recorder tallies the unit
+    /// once for each level, and the line's last character is the unit's
+    /// (`baseline::Recorder::indented`). While a trailing run defers, the
+    /// indentation is written into the run as text, which the writer writes
+    /// later (`write_deferred`).
     fn pay_indent(&mut self, first: char) -> std::fmt::Result {
         if first == '\n' {
             return Ok(());
@@ -499,12 +560,35 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
         }
         self.indent_pending = false;
         self.line_depth = self.levels();
-        let indent = self.indent.repeat(self.line_depth);
-        self.emit(&indent)?;
-        if let Some(last) = indent.chars().next_back() {
+        let deferring = self.deferring.is_some();
+        let paid = self.recorder.as_mut().filter(|_| !deferring).map(|recorder| recorder.indented(self.indent, self.line_depth));
+        if let Some(paid) = paid {
+            if cfg!(debug_assertions) {
+                self.check_paid(paid);
+            }
+        } else {
+            let indent = self.indent.repeat(self.line_depth);
+            self.emit(&indent)?;
+        }
+        if let Some(last) = self.indent_last() {
             self.last = Some(last);
         }
         Ok(())
+    }
+
+    /// The last character of the current line's indentation: its unit's,
+    /// when the line indents.
+    fn indent_last(&self) -> Option<char> {
+        self.indent.chars().next_back().filter(|_| self.line_depth > 0)
+    }
+
+    /// The indentation a recording render paid by count, checked against
+    /// the text the writer writes for it: the same tally, and the same last
+    /// character. Run in unoptimized builds alone, since writing the text is
+    /// the cost the count saves.
+    fn check_paid(&self, paid: crate::baseline::Tally) {
+        let text = self.indent.repeat(self.line_depth);
+        assert_eq!((paid, self.indent_last()), (crate::baseline::Tally::of(&text), text.chars().next_back()), "{} levels of {:?} paid by count", self.line_depth, self.indent);
     }
 
     /// The levels the next line indents: the template's depth and the
@@ -559,6 +643,7 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
     }
 
     /// Where written text goes: the output, or the buffer of a deferred run.
+    /// A recording render's text reaches its recorder alone.
     fn emit(&mut self, s: &str) -> std::fmt::Result {
         if let Some(recorder) = self.recorder.as_mut() {
             recorder.emitted(s);
@@ -568,6 +653,7 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
                 buffer.push_str(s);
                 Ok(())
             }
+            None if self.recorder.is_some() => Ok(()),
             None => self.inner.write_str(s),
         }
     }
@@ -592,6 +678,7 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
             seam_is_flank: std::mem::replace(&mut self.seam_is_flank, false),
             seam_is_root: std::mem::replace(&mut self.seam_is_root, false),
             seam_template: std::mem::replace(&mut self.seam_template, false),
+            seam_is_join: std::mem::replace(&mut self.seam_is_join, false),
             line_end_held: self.line_end_held.take(),
             tail: self.tail.take(),
         }
@@ -610,6 +697,7 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
         self.seam_is_flank = held.seam_is_flank;
         self.seam_is_root = held.seam_is_root;
         self.seam_template = held.seam_template;
+        self.seam_is_join = held.seam_is_join;
         self.line_end_held = held.line_end_held;
         self.tail = held.tail;
     }
@@ -644,11 +732,11 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
             self.tail.clone_from(&run.tail);
             last = Some(run);
         }
-        if last.as_ref().is_some_and(|run| run.glued.1) {
-            if !self.held_breaks() {
+        if let Some(glued) = last.as_ref().and_then(|run| run.glued.1) {
+            if glued.refuses(self.holds_entry(), self.held_breaks()) {
                 self.clear_payload();
             }
-            self.glued = true;
+            self.glued = Some(glued);
         }
         let Some(next) = next else {
             if let Some(hold) = last.and_then(|run| run.line_end) {
@@ -742,6 +830,7 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
         let root = std::mem::replace(&mut self.seam_is_root, false);
         let template = std::mem::replace(&mut self.seam_template, false);
         self.seam_is_flank = false;
+        self.seam_is_join = false;
         // A synthesized (non-token) space is redundant at the very start of
         // output and right after a literal newline the prior text already
         // wrote: either way the line already starts bare, so a plain space
@@ -824,10 +913,23 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
         self.seam_cont = payload.cont;
     }
 
+    /// Drops the held seam and all it carries: its payload, its strength
+    /// and its marks (token, flank, the root's edge, template, join).
     fn clear_payload(&mut self) {
         self.seam = None;
         self.take_payload();
+        self.seam_strength = SeamStrength::Fallback;
+        self.seam_is_token = false;
+        self.seam_is_flank = false;
+        self.seam_is_root = false;
         self.seam_template = false;
+        self.seam_is_join = false;
+    }
+
+    /// Whether the held seam is a whitespace entry's: trivia strength, and
+    /// no join (`seam_is_join`).
+    fn holds_entry(&self) -> bool {
+        self.seam.is_some() && self.seam_strength == SeamStrength::Trivia && !self.seam_is_join
     }
 
     fn payload_rank(payload: &Payload) -> SeamRank {
@@ -947,6 +1049,7 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
             self.seam_is_flank = false;
             self.seam_is_token = false;
             self.seam_template = false;
+            self.seam_is_join = false;
         }
         self.seam_is_root = true;
     }
@@ -957,7 +1060,7 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
         }
         let rank = Self::payload_rank(&payload);
         let breaks = if payload.pick == LayoutKinds::LINE_CONTINUATION { payload.cont.contains('\n') } else { payload.pick.breaks() };
-        if self.glued && !breaks {
+        if self.glued.is_some_and(|glued| glued.refuses(strength == SeamStrength::Trivia, breaks)) {
             return false;
         }
         if let Some(current) = self.seam {
@@ -974,10 +1077,14 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
             }
         }
         let strength = if self.line_end_held.is_some() { strength.max(self.seam_strength) } else { strength };
+        if self.glued.is_some() {
+            self.tail = None;
+        }
         self.set_payload(payload);
         self.seam_strength = strength;
         self.seam_is_flank = flank;
         self.seam_template = false;
+        self.seam_is_join = false;
         true
     }
 
@@ -987,7 +1094,7 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
         if s.is_empty() {
             return Ok(());
         }
-        self.tight |= std::mem::take(&mut self.glued);
+        self.tight |= self.glued.take().is_some();
         if self.deferring.is_some() {
             self.glued_open.get_or_insert(false);
         }
@@ -1038,7 +1145,6 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
         }
         self.clear_payload();
         self.tail = None;
-        self.seam_is_root = false;
         debug_assert_eq!(self.depth, 0, "a render must dedent every indent it opens");
         Ok(())
     }
@@ -1060,14 +1166,14 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
         std::mem::replace(&mut self.swallow_cr, on)
     }
 
-    fn verbatim(&mut self, before: &str, text: &str, after: &str) -> crate::render::RenderResult {
+    fn verbatim(&mut self, before: Option<&str>, text: &str, after: Option<&str>, at: Option<crate::types::Span>) -> crate::render::RenderResult {
         self.probe_kind = None;
-        let breaks = self.held_breaks();
-        if !breaks {
+        let lands = self.seam.is_some() && (self.line_end_held.is_some() || !Glued::of(before).refuses(self.holds_entry(), self.held_breaks()));
+        if !lands {
             self.clear_payload();
         }
         let opens_run = self.deferring.is_some() && self.glued_open.is_none();
-        let before = if !opens_run && (breaks || self.at_line_start()) { "" } else { before };
+        let before = if !opens_run && (lands || self.at_line_start()) { "" } else { before.unwrap_or_default() };
         let s = [before, text].concat();
         if !s.is_empty() {
             self.tight = true;
@@ -1076,13 +1182,21 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
                 self.open_before = before.len();
             }
         }
-        let counting = self.recorder.as_mut().map(|recorder| recorder.count_texts(false));
+        let counting = self.recorder.as_mut().map(|recorder| {
+            if let Some(at) = at {
+                recorder.open(at.start);
+            }
+            recorder.count_texts(false)
+        });
         crate::render::RenderSink::text(self, &s)?;
         if let (Some(recorder), Some(counting)) = (self.recorder.as_mut(), counting) {
             recorder.count_texts(counting);
+            if let Some(at) = at {
+                recorder.close(at.end);
+            }
         }
-        self.glued = !s.is_empty();
-        self.tail = Some(after).filter(|run| !run.is_empty()).map(str::to_owned);
+        self.glued = (!s.is_empty()).then_some(Glued::of(after));
+        self.tail = after.filter(|run| !run.is_empty()).map(|run| crate::line_endings::to_internal(run).into_owned());
         Ok(())
     }
 
@@ -1199,9 +1313,21 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
             let held = self.payload_text(&self.held_payload()).into_owned();
             let payload = Payload { set: gap, pick: gap, cont: held + text.unwrap_or_default() };
             self.set_payload(payload);
+            self.seam_is_join = false;
         } else {
             let payload = Payload { set: gap, pick: gap, cont: text.unwrap_or_default().to_string() };
             self.merge_payload(payload, SeamStrength::Trivia, false);
+        }
+        self.seam_is_token = self.seam.is_some();
+    }
+
+    fn trivia_join(&mut self, gap: LayoutKinds) {
+        if self.glued.is_some_and(|glued| glued.refuses(false, gap.breaks())) {
+            return;
+        }
+        let payload = Payload { set: gap, pick: gap, cont: String::new() };
+        if self.merge_payload(payload, SeamStrength::Trivia, false) {
+            self.seam_is_join = true;
         }
         self.seam_is_token = self.seam.is_some();
     }
@@ -1215,10 +1341,17 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
         let mut frames = sources.frames(coord);
         if let Some(options) = self.options {
             for frame in frames.iter_mut() {
-                frame.prepare(&crate::prepare::RenderContext { options, sources, recording: None })?;
+                frame.prepare(&crate::prepare::RenderContext { options, sources })?;
             }
         }
         Ok(frames)
+    }
+
+    #[cfg(feature = "arena")]
+    fn render_record_entry(&mut self, record: crate::trivia::BuiltEntry, held: &dyn std::any::Any) -> crate::render::RenderResult {
+        let unreachable = || crate::render::RenderError::Record(crate::render::NO_ARENA);
+        let (sources, options) = (self.sources.ok_or_else(unreachable)?, self.options.ok_or_else(unreachable)?);
+        sources.render_record_entry(record, held, options, self)
     }
 
     fn end_lines_after(&mut self, coord: &crate::slot::NodeCoordinate) {
@@ -1276,8 +1409,13 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
             .is_some_and(|source| source.as_bytes().get(coord.span.end as usize) == Some(&b'\n'));
         let raw = if swallowed { crate::line_endings::without_swallowed_cr(raw) } else { raw };
         let reindented = self.reindented(coord, raw, sources);
-        let text = crate::line_endings::to_internal(&reindented);
-        let text = text.as_ref();
+        let respelled;
+        let text: &str = if sources.breaks_spelled_lf(coord.tree) {
+            &reindented
+        } else {
+            respelled = crate::line_endings::to_internal(&reindented);
+            &respelled
+        };
         let token = crate::render::RenderSink::kind_of(self, coord)
             .is_some_and(|kind| crate::render::RenderSink::kind_has(self, kind, crate::options::KindFlags::ANON));
         if !token {
@@ -1299,6 +1437,14 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
         }
         self.probe_kind = None;
         self.end_leaf();
+        let moved = sources.depth_move(coord);
+        for _ in 0..moved.unsigned_abs() {
+            if moved > 0 {
+                crate::render::RenderSink::indent(self);
+            } else {
+                crate::render::RenderSink::dedent(self, LayoutKinds::NONE);
+            }
+        }
         Ok(())
     }
 
@@ -1351,7 +1497,6 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
         let holds_trivia = self.seam.is_some() && self.seam_strength == SeamStrength::Trivia;
         if std::mem::replace(&mut self.indent_armed, false) && !holds_trivia {
             self.clear_payload();
-            self.seam_is_token = false;
             return;
         }
         if !seam.is_empty() {
@@ -2090,6 +2235,15 @@ mod sink_tests {
         w.seam(crate::layout_kinds::LayoutKinds::NEWLINE);
         w.text("y").unwrap();
         assert_eq!(s, "x\n  y");
+    }
+
+    #[test]
+    fn the_run_after_a_verbatim_text_enters_with_its_breaks_spelled_lf() {
+        let out = run(|w| {
+            w.verbatim(None, "// c", Some("\r\n  "), None).unwrap();
+            w.text("x").unwrap();
+        });
+        assert_eq!(out, "// c\n  x");
     }
 }
 

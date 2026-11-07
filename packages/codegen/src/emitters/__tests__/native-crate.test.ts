@@ -1,12 +1,19 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
+import { subset } from 'semver';
 import { describe, expect, it } from 'vitest';
-import { allGrammars, nativeCrateDir } from '../../grammars.ts';
+import { NODE_API_NODE_RANGES, allGrammars, grammarPackageDir, nativeCrateDir, nodeRangeOfNodeApi, workspaceNodeApiLevel } from '../../grammars.ts';
 import { nativeCrateFiles } from '../native-crate.ts';
+
+const nodeApiLevel = workspaceNodeApiLevel();
+const nativeFloor = nodeRangeOfNodeApi(nodeApiLevel);
+const recordedLevels = Object.keys(NODE_API_NODE_RANGES).map(Number);
+const crateManifest = (grammar: string, level: number): string => nativeCrateFiles(grammar, level).find((file) => file.path === 'package.json')!.contents;
+const admitsOnlyLoadable = (range: string): boolean => subset(range, nativeFloor);
 
 describe('a grammar crate builds its binding', () => {
 	it('under the release profile for CI and publishing, and the gate profile for local regeneration', () => {
-		const pkg = JSON.parse(nativeCrateFiles('rust').find((file) => file.path === 'package.json')!.contents) as { scripts: Record<string, string> };
+		const pkg = JSON.parse(crateManifest('rust', nodeApiLevel)) as { scripts: Record<string, string> };
 		expect(pkg.scripts).toEqual({
 			build: 'tsx ../../../scripts/build-native.mts rust --release',
 			'build:debug': 'tsx ../../../scripts/build-native.mts rust',
@@ -17,10 +24,41 @@ describe('a grammar crate builds its binding', () => {
 
 describe('every grammar crate holds the generated crate files', () => {
 	for (const grammar of allGrammars()) {
-		for (const file of nativeCrateFiles(grammar)) {
+		for (const file of nativeCrateFiles(grammar, nodeApiLevel)) {
 			it(`${grammar} ${file.path}`, () => {
 				expect(readFileSync(join(nativeCrateDir(grammar), file.path), 'utf8')).toBe(file.contents);
 			});
 		}
 	}
+});
+
+describe('a native addon publishes the Node floor of the Node-API level it builds with', () => {
+	it('writes the range of the workspace napi feature into the crate manifest', () => {
+		const pkg = JSON.parse(crateManifest('rust', nodeApiLevel)) as { engines: { node: string } };
+		expect(pkg.engines.node).toBe(nativeFloor);
+	});
+
+	it('leaves the committed crate manifest stale when the napi feature moves to another level', () => {
+		const otherLevel = recordedLevels.find((level) => level !== nodeApiLevel)!;
+		expect(crateManifest('rust', otherLevel)).not.toBe(readFileSync(join(nativeCrateDir('rust'), 'package.json'), 'utf8'));
+	});
+
+	it('refuses a Node-API level the table records no range for', () => {
+		const unrecorded = Math.max(...recordedLevels) + 1;
+		expect(() => crateManifest('rust', unrecorded)).toThrow(`Node-API ${unrecorded} has no Node range in NODE_API_NODE_RANGES`);
+	});
+});
+
+describe('a grammar package admits no Node its native addon cannot load', () => {
+	for (const grammar of allGrammars()) {
+		it(grammar, () => {
+			const { engines } = JSON.parse(readFileSync(join(grammarPackageDir(grammar), 'package.json'), 'utf8')) as { engines?: { node?: string } };
+			expect(engines?.node).toBeDefined();
+			expect(admitsOnlyLoadable(engines!.node!)).toBe(true);
+		});
+	}
+
+	it('fails a range that admits a Node below the native floor', () => {
+		expect(admitsOnlyLoadable('>=20.0.0')).toBe(false);
+	});
 });

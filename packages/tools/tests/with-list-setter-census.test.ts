@@ -21,7 +21,7 @@ function listSetters(grammar: string): ListSetter[] {
 		if (withAt < 0) continue;
 		const setters = body
 			.slice(withAt)
-			.matchAll(/\((\.\.\.)?\w+: [^=]*?\) =>\s*(?:rebuilt\(node, handle, \(\) =>\s*)?wrap\w+\(\s*\{\s*\.\.\.\$edited\(data\),\s*(_\w+):/gs);
+			.matchAll(/\((\.\.\.)?\w+: [^=]*?\) =>\s*(?:rebuilt\(node, handle, \(\) =>\s*(?:\{\s*const edited =\s*)?)?wrap\w+\(\s*\{\s*\.\.\.\$edited\(data\),\s*(_\w+):/gs);
 		for (const [, rest, key] of setters) {
 			const setter = key;
 			const stored = new RegExp(`\\b${key}: storeExpanded\\(\\s*([^.]{0,200})data\\.`, 's').exec(body)?.[1] ?? '';
@@ -36,7 +36,7 @@ function listSetters(grammar: string): ListSetter[] {
 // How many list setters the census must find in each grammar. A count that
 // moves means the grammar's surface changed, or the matcher stopped seeing
 // some setters; either way the census is no longer what it claims to cover.
-const LIST_SETTER_COUNTS: Readonly<Record<string, number>> = { python: 20, regex: 3, rust: 36, scm: 13, typescript: 33 };
+const LIST_SETTER_COUNTS: Readonly<Record<string, number>> = { python: 44, regex: 3, rust: 55, scm: 13, typescript: 41 };
 
 describe('list-valued $with setters', () => {
 	it.each(stableGrammars().map((grammar) => [grammar]))('%s: every one takes rest arguments', (grammar) => {

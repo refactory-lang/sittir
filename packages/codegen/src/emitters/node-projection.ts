@@ -1,5 +1,6 @@
 import type { NodeMap } from '../compiler/types.ts';
 import { assertNever } from '../polymorph-variant.ts';
+import { emitShapeFailure, emitShapeFailures, type EmitShapeFailure } from '../compiler/diagnostics/emit-diagnostics.ts';
 import { isParserHiddenKind } from '../dsl/symbol-table.ts';
 import type { AssembledNonterminal, AssembledNode } from '../compiler/model/node-map.ts';
 import {
@@ -7,6 +8,7 @@ import {
 	AssembledAlias,
 	AssembledList,
 	AssembledSupertype,
+	concreteKindsOf,
 	isFixedTextLeaf,
 	isNodeRef,
 	kindIdText,
@@ -199,6 +201,7 @@ export interface ReadFactsCtx {
 	readonly kindEntries: readonly KindEnumEntry[];
 	readonly names: ReadNames;
 	readonly listOwners: ReadonlySet<string>;
+	readonly wrappedLists: ReadonlyMap<string, AssembledNode>;
 	readonly displayIds: ReadonlySet<number>;
 	readonly folds: ReadonlyMap<number, readonly number[]>;
 	readonly grammar: string;
@@ -264,6 +267,24 @@ export function listItemSlot(node: AssembledNode): AssembledNonterminal | undefi
 	return flagged ? canonicalSeparatedListField(node) : undefined;
 }
 
+function refuseSharedRowContent(envelope: string, name: string, content: AssembledNode | undefined): void {
+	if (content instanceof AssembledSupertype) return;
+	if (content?.unit === true)
+		throw emitShapeFailure({
+			code: 'envelope-holds-unit',
+			ownerKind: envelope,
+			message: `the envelope ${envelope} holds the unit ${name}, which has no text of its own for the envelope to share its row with`,
+			details: { envelope, content: name }
+		});
+	if (content === undefined || !isTextLeaf(content))
+		throw emitShapeFailure({
+			code: 'envelope-shares-row-with-nonleaf',
+			ownerKind: envelope,
+			message: `the envelope ${envelope} shares its row with ${name}, which is not a text leaf, so the reader cannot tell the two apart`,
+			details: { envelope, content: name }
+		});
+}
+
 export function nodeArgs(
 	node: AssembledNode,
 	ownId: number | undefined,
@@ -271,10 +292,18 @@ export function nodeArgs(
 	slots: readonly AssembledNonterminal[]
 ): string {
 	if (node instanceof AssembledAlias) {
-		const wraps = node.slots.some((slot) => slotKindNames(slot).some((name) => ctx.nodeMap.nodes.get(name) instanceof AssembledSupertype));
+		const contents = envelopeContentKinds(node).map((name) => [name, ctx.nodeMap.nodes.get(name)] as const);
+		for (const [name, content] of contents) refuseSharedRowContent(node.kind, name, content);
+		const wraps = contents.some(([, content]) => content instanceof AssembledSupertype);
 		return `kind = ${ctx.names.kind(node.aliasTypeId)}, display, content = content${wraps ? ', wraps_hidden' : ''}`;
 	}
-	if (ownId === undefined) throw new Error(`node read facts: ${node.kind} has no parser symbol, so no reader can claim it`);
+	if (ownId === undefined)
+		throw emitShapeFailure({
+			code: 'kind-without-parser-symbol',
+			ownerKind: node.kind,
+			message: `${node.kind} has no parser symbol, so no reader can claim it: a kind minted only after the parser was generated cannot be read`,
+			proposal: `declare ${node.kind} in the grammar so the parser issues it, or stop referring to it from a slot`
+		});
 	const folded = foldedTokens(ownId, ctx);
 	const displays = layoutDisplaysOf(node).flatMap((display) => findKindEntry(ctx.kindEntries, display.kind)?.id ?? []);
 	const kind = [
@@ -293,8 +322,58 @@ export function nodeArgs(
 	const layout = node instanceof AbstractAssembledCompound ? layoutTokenIds(node, ctx, slots) : [];
 	if (layout.length > 0) args.push(`layout = [${layout.map((id) => tokenGroup(id, ctx)).join(', ')}]`);
 	const item = listItemSlot(node);
+	const wrapper = ctx.wrappedLists.get(node.kind);
+	refuseFlatListCycle(node, ctx);
 	if (item !== undefined) args.push(`item = ${rustFieldIdent(item.storageName)}`);
+	if (wrapper !== undefined) args.push('wrapped_items');
 	return args.join(', ');
+}
+
+function envelopeContentKinds(envelope: AssembledAlias): string[] {
+	return envelope.slots.flatMap((slot) => slotKindNames(slot));
+}
+
+function flatEntriesOf(list: AssembledNode, ctx: ReadFactsCtx): readonly (readonly [AssembledNode, AssembledNonterminal])[] {
+	const item = listItemSlot(list);
+	const wrapper = ctx.wrappedLists.get(list.kind);
+	return [...(item === undefined ? [] : [[list, item] as const]), ...(wrapper?.slots.map((slot) => [wrapper, slot] as const) ?? [])];
+}
+
+function refuseFlatListCycle(list: AssembledNode, ctx: ReadFactsCtx): void {
+	const visited = new Set<string>([list.kind]);
+	const search = (current: AssembledNode, trail: readonly string[]): void => {
+		const seen = new Set<string>();
+		const reach = (name: string, from: string, envelopes: readonly string[]): void => {
+			for (const kind of concreteKindsOf(name, ctx.nodeMap)) {
+				if (seen.has(kind)) continue;
+				seen.add(kind);
+				const held = ctx.nodeMap.nodes.get(kind);
+				if (held instanceof AssembledAlias) {
+					for (const content of envelopeContentKinds(held)) reach(content, from, [...envelopes, kind]);
+				} else if (held !== undefined && listItemSlot(held) !== undefined) {
+					const path = [...trail, from, ...envelopes, kind];
+					if (held.kind === list.kind) {
+						const through = envelopes.length === 0 ? '' : ` through the envelope ${envelopes.join(', then ')}`;
+						const route = trail.length === 0 ? '' : ` by way of ${trail.join(' -> ')}`;
+						throw emitShapeFailure({
+							code: 'flat-list-cycle',
+							ownerKind: list.kind,
+							message: `the list ${list.kind} reads its items at its own depth, and ${from} can be the list ${kind}${through}${route}, which would read its own items there too, without end (${path.join(' -> ')})`,
+							proposal: `break the cycle in the grammar layer: give ${from} a variant or field that keeps ${kind} from standing for ${list.kind}'s item, or make the envelope hold a different node`,
+							details: { list: list.kind, path, envelopes }
+						});
+					}
+					if (!visited.has(held.kind)) {
+						visited.add(held.kind);
+						search(held, path);
+					}
+				}
+			}
+		};
+		for (const [owner, slot] of flatEntriesOf(current, ctx))
+			for (const name of slotKindNames(slot)) reach(name, `${owner.kind}.${slot.propertyName}`, []);
+	};
+	search(list, []);
 }
 
 export function takesUntagged(slot: AssembledNonterminal, ctx: ReadFactsCtx): boolean {
@@ -321,7 +400,13 @@ export function presenceKeyword(
 		return { id: marker.resolvedKindId, envelope: false };
 	}
 	const keyword = shape.kind === undefined ? undefined : findKindEntry(ctx.kindEntries, shape.kind.kind);
-	if (keyword === undefined) throw new Error(`node read facts: ${owner.kind}.${slot.name}'s keyword has no stamped parser symbol`);
+	if (keyword === undefined)
+		throw emitShapeFailure({
+			code: 'presence-keyword-without-parser-symbol',
+			ownerKind: owner.kind,
+			slotName: slot.name,
+			message: `${owner.kind}.${slot.name}'s presence keyword has no parser symbol, so the reader cannot tell whether the slot is present`
+		});
 	return { id: keyword.id, envelope: false };
 }
 
@@ -399,14 +484,22 @@ export function assertOneUntaggedSlot(
 	slots: readonly { readonly name: string; readonly ids: readonly number[] }[],
 	kindEntries: readonly KindEnumEntry[]
 ): void {
+	const failures: EmitShapeFailure[] = [];
 	for (let i = 0; i < slots.length; i++) {
 		for (let j = i + 1; j < slots.length; j++) {
 			const shared = slots[i]!.ids.find((id) => slots[j]!.ids.includes(id));
 			if (shared === undefined) continue;
 			const name = kindEntries.find((entry) => entry.id === shared)?.kind ?? '?';
-			throw new Error(
-				`node read facts: ${kind} has two slots, '${slots[i]!.name}' and '${slots[j]!.name}', that take an untagged ${name} (kind ${shared}); the reader could not choose between them`
-			);
+			const [a, b] = [slots[i]!.name, slots[j]!.name];
+			failures.push({
+				code: 'untagged-slot-ambiguous',
+				ownerKind: kind,
+				slotName: a,
+				message: `${kind} has two slots, '${a}' and '${b}', that take an untagged ${name} (kind ${shared}); the reader could not choose between them`,
+				proposal: `tag one of them with a field in the grammar layer: edits: { ${kind}: { <position>: field('<name>') } } on the arm that fills '${a}' or '${b}'`,
+				details: { slots: [a, b], sharedKind: name, sharedKindId: shared }
+			});
 		}
 	}
+	if (failures.length > 0) throw emitShapeFailures(failures);
 }

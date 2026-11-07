@@ -19,7 +19,7 @@
 		}
 	},
 	"scripts": {
-		"build": "pnpm run clean && tsrs -p tsconfig.build.json",
+		"build": "pnpm run clean && tsrs --build tsconfig.build.json",
 		"clean": "rm -rf dist tsconfig.build.tsbuildinfo tsconfig.tsbuildinfo",
 		"test": "vitest run --config vitest.config.ts",
 		"type-check": "tsrs --noEmit"

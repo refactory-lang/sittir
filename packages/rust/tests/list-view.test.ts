@@ -4,10 +4,11 @@ import { createEngine } from '@sittir/common';
 import { Delimiter } from '@sittir/common/utils';
 
 const rs = await createEngine(rust);
+const objects = await createEngine(rust, { nodeStorage: 'object' });
 const { kinds } = rs;
 
-const functionOf = (source: string) => {
-	const item = rs.parse(source).statements()[0]!;
+const functionOf = (source: string, engine: typeof rs = rs) => {
+	const item = engine.parse(source).statements()[0]!;
 	if (!rs.is.functionItem(item)) throw new Error('not a function');
 	return item;
 };
@@ -58,8 +59,7 @@ describe('a parameter branch keeps its ordinary list as a ReadonlyArray of the i
 	});
 
 	it('arrives with its list node already read, so sizing the view reads nothing more', () => {
-		const params = functionOf('fn f(a: i32, b: i32) {}\n').parameters();
-		const list = listOf(params);
+		const list = listOf(functionOf('fn f(a: i32, b: i32) {}\n', objects).parameters()) as unknown as Record<string, unknown>;
 		expect(list).not.toHaveProperty('$parentHandle');
 		expect(list._item).toHaveLength(2);
 	});
@@ -70,12 +70,12 @@ describe('a parameter branch keeps its ordinary list as a ReadonlyArray of the i
 		expect(params.$render()).toBe('()');
 	});
 
-	it('writes the view as enumerable members, with the index getters of a parsed owner off the keys', () => {
+	it('writes the view as enumerable members and its items as its own elements', () => {
 		const params = functionOf('fn f(a: i32) {}\n').parameters();
 		const list = listOf(params);
 		const keys = Object.keys(list);
-		for (const member of ['length', 'map', 'delimiter']) expect(keys).toContain(member);
-		expect(keys).not.toContain('0');
+		for (const member of ['length', 'map', 'delimiter', '0']) expect(keys).toContain(member);
+		expect(keys).not.toContain('1');
 		expect(Object.keys(params)).not.toContain('0');
 	});
 });

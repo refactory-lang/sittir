@@ -10,6 +10,6 @@ describe('a regex renders no space between tokens, since its extras admit none',
 	});
 
 	it('keeps an escaped backslash and an escaped dash adjacent', () => {
-		expect(re.build.characterClass({ classAtoms: [re.build.identityEscape('\\'), regex.kinds.BslashDash] }).$render()).toBe('[\\\\\\-]');
+		expect(re.build.characterClass({ classAtoms: [re.build.identityEscape('\\'), re.build.identityEscape('-')] }).$render()).toBe('[\\\\\\-]');
 	});
 });

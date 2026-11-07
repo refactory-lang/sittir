@@ -5,7 +5,8 @@ source for dev commands; other docs link here instead of restating them.
 
 ## Setup
 
-Prerequisites: Node 20+, [pnpm](https://pnpm.io), and a Rust toolchain
+Prerequisites: a Node release inside the root `package.json`'s
+`engines.node` range, [pnpm](https://pnpm.io), and a Rust toolchain
 (the native render engines are N-API crates built with `napi`).
 
 ```bash

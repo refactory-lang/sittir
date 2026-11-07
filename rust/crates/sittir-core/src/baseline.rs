@@ -29,8 +29,7 @@
 //! framed or sliced inside it by its index, with the breaks written around
 //! each (`Baseline::frame`).
 
-use std::cell::RefCell;
-use std::collections::HashMap;
+use crate::heap::{CountedMap, HeapBytes};
 
 use crate::types::NodeIndex;
 
@@ -66,15 +65,28 @@ impl Tally {
         Self { breaks: self.breaks + other.breaks, spaces: self.spaces + other.spaces, tabs: self.tabs + other.tabs }
     }
 
+    /// The tally of `n` copies of the text this tallies.
+    fn times(self, n: u32) -> Self {
+        Self { breaks: self.breaks * n, spaces: self.spaces * n, tabs: self.tabs * n }
+    }
+
     /// The whitespace a gap of this tally writes, as a layout class reads it:
     /// its line breaks alone when it breaks the line, its spaces and tabs
     /// otherwise.
     #[must_use]
-    pub fn spelling(self) -> String {
-        if self.breaks > 0 {
-            "\n".repeat(self.breaks as usize)
-        } else {
-            format!("{}{}", " ".repeat(self.spaces as usize), "\t".repeat(self.tabs as usize))
+    pub fn spelling(self) -> std::borrow::Cow<'static, str> {
+        const BREAKS: &str = "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n";
+        const SPACES: &str = "                                                                ";
+        const TABS: &str = "\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t";
+        let run = |run: &'static str, n: u32| match run.get(..n as usize) {
+            Some(spelled) => std::borrow::Cow::Borrowed(spelled),
+            None => std::borrow::Cow::Owned(run[..1].repeat(n as usize)),
+        };
+        match (self.breaks, self.spaces, self.tabs) {
+            (0, spaces, 0) => run(SPACES, spaces),
+            (0, 0, tabs) => run(TABS, tabs),
+            (0, spaces, tabs) => std::borrow::Cow::Owned(run(SPACES, spaces).into_owned() + &run(TABS, tabs)),
+            (breaks, ..) => run(BREAKS, breaks),
         }
     }
 }
@@ -104,6 +116,15 @@ impl Written {
     pub fn text(text: &str) -> Self {
         Written::Text(text.chars().filter(|c| !c.is_whitespace()).collect())
     }
+
+    /// The node a node's item names; none for a text's.
+    #[must_use]
+    pub fn node(&self) -> Option<NodeIndex> {
+        match self {
+            Written::Node(index) => Some(*index),
+            Written::Text(_) => None,
+        }
+    }
 }
 
 /// What a node's frame wrote: the tally written before its first text and
@@ -119,9 +140,48 @@ pub struct FrameItems {
 /// wrote around it, and each node's frame by its index.
 #[derive(Debug, Default, Clone, PartialEq, Eq)]
 pub struct Baseline {
-    opens: HashMap<u32, (Option<Tally>, Tally)>,
-    closes: HashMap<u32, (Tally, Tally)>,
-    frames: HashMap<NodeIndex, FrameItems>,
+    opens: CountedMap<u32, (Option<Tally>, Tally)>,
+    closes: CountedMap<u32, (Tally, Tally)>,
+    frames: CountedMap<NodeIndex, FrameItems>,
+    entered: u32,
+    scanned: u64,
+}
+
+impl HeapBytes for Tally {
+    fn heap_bytes(&self) -> usize {
+        let Self { breaks: _, spaces: _, tabs: _ } = self;
+        0
+    }
+}
+
+impl HeapBytes for Written {
+    fn heap_bytes(&self) -> usize {
+        match self {
+            Self::Text(text) => text.heap_bytes(),
+            Self::Node(index) => index.heap_bytes(),
+        }
+    }
+}
+
+impl HeapBytes for Item {
+    fn heap_bytes(&self) -> usize {
+        let Self { what, before, after } = self;
+        what.heap_bytes() + before.heap_bytes() + after.heap_bytes()
+    }
+}
+
+impl HeapBytes for FrameItems {
+    fn heap_bytes(&self) -> usize {
+        let Self { open, close, items } = self;
+        open.heap_bytes() + close.heap_bytes() + items.heap_bytes()
+    }
+}
+
+impl HeapBytes for Baseline {
+    fn heap_bytes(&self) -> usize {
+        let Self { opens, closes, frames, entered: _, scanned: _ } = self;
+        opens.heap_bytes() + closes.heap_bytes() + frames.heap_bytes()
+    }
 }
 
 impl Baseline {
@@ -141,6 +201,21 @@ impl Baseline {
     #[must_use]
     pub fn frame(&self, index: NodeIndex) -> Option<&FrameItems> {
         self.frames.get(&index)
+    }
+
+    /// The nodes the recording render entered: each node read from the tree
+    /// it rendered in a frame, and each source slice it wrote.
+    #[must_use]
+    pub fn entered(&self) -> u32 {
+        self.entered
+    }
+
+    /// The bytes of text the recording render tallied a character at a
+    /// time: all it wrote but the indentation it paid by count, and its
+    /// indentation unit once (`Recorder::indented`).
+    #[must_use]
+    pub fn scanned(&self) -> u64 {
+        self.scanned
     }
 }
 
@@ -172,7 +247,7 @@ struct Run {
 /// anchors waiting for the next text, and the open frames.
 #[derive(Debug)]
 pub struct Recorder<'a> {
-    baseline: &'a RefCell<Baseline>,
+    baseline: &'a mut Baseline,
     written: Tally,
     ended: Tally,
     last_end: Option<Tally>,
@@ -186,10 +261,13 @@ pub struct Recorder<'a> {
     /// The first byte the run written last opens and the tally ended before
     /// it, until the next text (`wrote_run`).
     before_run: Option<(u32, Tally)>,
+    /// The indentation unit the render pays lines in, and its tally, from
+    /// the first payment (`indented`).
+    unit: Option<(&'a str, Tally)>,
 }
 
 impl<'a> Recorder<'a> {
-    pub fn new(baseline: &'a RefCell<Baseline>) -> Self {
+    pub fn new(baseline: &'a mut Baseline) -> Self {
         Self {
             baseline,
             written: Tally::default(),
@@ -203,12 +281,41 @@ impl<'a> Recorder<'a> {
             counting: true,
             text_before: Tally::default(),
             before_run: None,
+            unit: None,
         }
     }
 
     /// Text reached the output, or the run being deferred.
     pub fn emitted(&mut self, s: &str) {
-        let tally = Tally::of(s);
+        let tally = self.scan(s);
+        self.tallied(tally);
+    }
+
+    /// A line's indentation reached the output, `levels` copies of `unit`,
+    /// counted rather than written: what it tallies. The unit is tallied
+    /// once, at the first payment, and every payment brings the same one:
+    /// the writer's, which holds no line break (`SpacingWriter::with_indent`).
+    pub fn indented(&mut self, unit: &'a str, levels: usize) -> Tally {
+        let tally = if let Some((tallied, tally)) = self.unit {
+            debug_assert!(std::ptr::eq(tallied, unit), "a recording render pays every line in one unit: {tallied:?}, then {unit:?}");
+            tally
+        } else {
+            let tally = self.scan(unit);
+            self.unit = Some((unit, tally));
+            tally
+        };
+        let paid = tally.times(crate::types::narrow(levels));
+        self.tallied(paid);
+        paid
+    }
+
+    /// The tally of `s`, read a character at a time (`Baseline::scanned`).
+    fn scan(&mut self, s: &str) -> Tally {
+        self.baseline.scanned += s.len() as u64;
+        Tally::of(s)
+    }
+
+    fn tallied(&mut self, tally: Tally) {
         match self.deferring.as_mut() {
             Some(run) => run.written = run.written.plus(tally),
             None => self.written = self.written.plus(tally),
@@ -225,6 +332,7 @@ impl<'a> Recorder<'a> {
     pub fn open_frame(&mut self, origin: Option<(NodeIndex, u32, u32)>) {
         self.frames.push(OpenFrame { index: origin.map(|(index, ..)| index), end: origin.map(|(.., end)| end), open: None, items: Vec::new() });
         if let Some((_, start, _)) = origin {
+            self.baseline.entered += 1;
             self.open(start);
         }
     }
@@ -245,7 +353,7 @@ impl<'a> Recorder<'a> {
             }
             parent.items.push(item);
         }
-        self.baseline.borrow_mut().frames.insert(index, FrameItems { open, close: self.ended, items: frame.items });
+        self.baseline.frames.insert(index, FrameItems { open, close: self.ended, items: frame.items });
         self.close(end);
     }
 
@@ -285,14 +393,13 @@ impl<'a> Recorder<'a> {
             return;
         }
         let (prev, now) = (self.last_end, self.written);
-        let mut baseline = self.baseline.borrow_mut();
+        let baseline = &mut *self.baseline;
         for start in self.opens.drain(..) {
-            baseline.opens.entry(start).or_insert((prev, now));
+            baseline.opens.get_or_insert(start, (prev, now));
         }
         for (end, at) in self.closes.drain(..) {
             baseline.closes.insert(end, (at, now));
         }
-        drop(baseline);
         self.before_run = None;
         self.text_before = now;
         for frame in self.frames.iter_mut().rev().take_while(|frame| frame.open.is_none()) {
@@ -329,6 +436,7 @@ impl<'a> Recorder<'a> {
     /// The text just written was a slice of the source of the node at
     /// descendant `index`: an item of the frame around it.
     pub fn wrote_slice(&mut self, index: NodeIndex) {
+        self.baseline.entered += 1;
         if self.deferring.is_some() {
             return;
         }
@@ -367,17 +475,16 @@ impl<'a> Recorder<'a> {
         let before = self.last_end;
         let first = run.resolved_opens.iter().map(|&(start, _)| start).chain(run.opens.iter().copied()).min();
         self.before_run = first.map(|first| (first, self.ended));
-        let mut baseline = self.baseline.borrow_mut();
+        let baseline = &mut *self.baseline;
         for (end, at) in self.closes.drain(..) {
             baseline.closes.insert(end, (at, base));
         }
         for (start, (prev, now)) in run.resolved_opens {
-            baseline.opens.entry(start).or_insert((prev.map(|prev| base.plus(prev)).or(before), base.plus(now)));
+            baseline.opens.get_or_insert(start, (prev.map(|prev| base.plus(prev)).or(before), base.plus(now)));
         }
         for (end, (at, now)) in run.resolved_closes {
             baseline.closes.insert(end, (base.plus(at), base.plus(now)));
         }
-        drop(baseline);
         self.opens.extend(run.opens);
         self.closes.extend(run.closes.into_iter().map(|(end, at)| (end, base.plus(at))));
         self.last_end = run.last_end.map(|end| base.plus(end)).or(self.last_end);
@@ -398,9 +505,28 @@ mod tests {
     }
 
     #[test]
+    fn a_gap_is_spelled_by_its_breaks_or_else_its_spaces_then_tabs() {
+        let tally = |breaks, spaces, tabs| Tally { breaks, spaces, tabs };
+        for (gap, spelled) in [
+            (tally(0, 0, 0), String::new()),
+            (tally(2, 3, 1), "\n\n".to_owned()),
+            (tally(0, 4, 0), " ".repeat(4)),
+            (tally(0, 0, 2), "\t\t".to_owned()),
+            (tally(0, 2, 1), "  \t".to_owned()),
+            (tally(17, 0, 0), "\n".repeat(17)),
+            (tally(0, 65, 0), " ".repeat(65)),
+            (tally(0, 0, 17), "\t".repeat(17)),
+        ] {
+            assert_eq!(gap.spelling(), spelled, "{gap:?}");
+            assert_eq!(Tally::of(&gap.spelling()), if gap.breaks > 0 { tally(gap.breaks, 0, 0) } else { gap }, "{gap:?}");
+        }
+        assert!(matches!(tally(0, 8, 0).spelling(), std::borrow::Cow::Borrowed(_)), "a common gap borrows its spelling");
+    }
+
+    #[test]
     fn a_frame_closing_after_its_node_trailing_run_was_written_closes_before_the_run() {
-        let baseline = RefCell::new(Baseline::default());
-        let mut recorder = Recorder::new(&baseline);
+        let mut baseline = Baseline::default();
+        let mut recorder = Recorder::new(&mut baseline);
         recorder.open(14);
         text(&mut recorder, "b");
         recorder.close(15);
@@ -415,13 +541,13 @@ mod tests {
         recorder.close(15);
         recorder.open(20);
         text(&mut recorder, "x");
-        assert_eq!(baseline.borrow().between(15, 16), Some(Tally { spaces: 1, ..Tally::default() }));
+        assert_eq!(baseline.between(15, 16), Some(Tally { spaces: 1, ..Tally::default() }));
     }
 
     #[test]
     fn a_trailing_run_after_text_with_no_anchor_measures_from_that_text() {
-        let baseline = RefCell::new(Baseline::default());
-        let mut recorder = Recorder::new(&baseline);
+        let mut baseline = Baseline::default();
+        let mut recorder = Recorder::new(&mut baseline);
         text(&mut recorder, "this");
         recorder.start_run();
         recorder.open(10);
@@ -431,6 +557,6 @@ mod tests {
         recorder.emitted(" ");
         recorder.emitted("/* c */");
         recorder.wrote_run();
-        assert_eq!(baseline.borrow().between(9, 10), Some(Tally { spaces: 1, ..Tally::default() }));
+        assert_eq!(baseline.between(9, 10), Some(Tally { spaces: 1, ..Tally::default() }));
     }
 }

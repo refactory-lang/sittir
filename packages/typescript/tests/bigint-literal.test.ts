@@ -7,7 +7,7 @@ import typescript from '../src/index.ts';
 import { createEngine } from '@sittir/common';
 
 const ts = await createEngine(typescript);
-const tsNative = (await typescript.load()).createNative();
+const tsNative = (await typescript.load()).createNative({ nodeStorage: 'object' });
 
 function textsOf(kind: number, source: string, value: unknown, out: string[] = []): string[] {
 	if (Array.isArray(value)) for (const item of value) textsOf(kind, source, item, out);

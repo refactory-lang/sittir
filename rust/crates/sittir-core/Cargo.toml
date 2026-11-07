@@ -17,8 +17,13 @@ read-debug-checks = []
 # default so `cargo test -p sittir-core` builds without Node.js symbols.
 napi-bindings = ["dep:napi", "dep:napi-derive"]
 
+# The record codec and its entry points, beside the object codec: additive,
+# never switching or removing the object wire.
+arena = []
+
 [dependencies]
 regex = "1"
+stacker = { workspace = true }
 sittir-node-macros = { path = "../sittir-node-macros" }
 serde = { workspace = true }
 serde_json = { workspace = true }
@@ -28,8 +33,8 @@ tree-sitter = { workspace = true }
 # Node.js is required at compile time, so sittir-core builds without
 # Node.js/npm. The actual .node artifact is linked by the sittir-*
 # grammar binding crates; these deps only buy us the boundary attribute.
-napi = { version = "3", default-features = false, features = ["napi4"], optional = true }
-napi-derive = { version = "3", optional = true }
+napi = { workspace = true, optional = true }
+napi-derive = { workspace = true, optional = true }
 # ast-grep-core is named in spec 012 T003 but deferred from Phase 1;
 # the version conflict that previously blocked it (grammar crates
 # requiring tree-sitter ^0.24/^0.25 while ast-grep-core >=0.40 requires

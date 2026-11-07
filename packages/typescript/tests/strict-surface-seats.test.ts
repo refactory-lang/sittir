@@ -8,10 +8,10 @@ const tsStrict = await createEngine(typescript, { api: 'strict' });
 describe('statement terminator', () => {
 	it('takes either layout keyword as a kind id', () => {
 		expect(
-			tsStrict.build.expressionStatement(ts.build.identifier('x'), { terminator: ts.kinds.AutomaticSemicolon })
+			tsStrict.build.expressionStatement(tsStrict.build.identifier('x'), { terminator: ts.kinds.AutomaticSemicolon })
 				.$render()
 		).toBe('x\n');
-		expect(tsStrict.build.expressionStatement(ts.build.identifier('x'), { terminator: ts.kinds.Semi }).$render()).toBe(
+		expect(tsStrict.build.expressionStatement(tsStrict.build.identifier('x'), { terminator: ts.kinds.Semi }).$render()).toBe(
 			'x;'
 		);
 	});
@@ -22,9 +22,9 @@ describe('an authored field over a registered group', () => {
 		const built = tsStrict.build.forInStatement({
 			header: tsStrict.build.forHeader.letConstKind({
 				kind: ts.kinds.ConstKeyword,
-				left: ts.build.identifier('item'),
+				left: tsStrict.build.identifier('item'),
 				operator: ts.kinds.OfKeyword,
-				right: ts.build.identifier('items')
+				right: tsStrict.build.identifier('items')
 			}),
 			body: tsStrict.build.statementBlock({ terminator: ts.kinds.AutomaticSemicolon })
 		});
@@ -34,7 +34,7 @@ describe('an authored field over a registered group', () => {
 		const refused = () =>
 			tsStrict.build.forInStatement({
 				// @ts-expect-error a strict field takes a built header
-				header: { kind: ts.kinds.ConstKeyword, left: ts.build.identifier('item') },
+				header: { kind: ts.kinds.ConstKeyword, left: tsStrict.build.identifier('item') },
 				body: tsStrict.build.statementBlock({ terminator: ts.kinds.AutomaticSemicolon })
 			});
 		expect(refused).toBeDefined();
@@ -42,7 +42,7 @@ describe('an authored field over a registered group', () => {
 });
 
 describe('a reserved word is checked at the slot it is placed in', () => {
-	const word = (text: string) => ts.build.identifier(text);
+	const word = (text: string) => tsStrict.build.identifier(text);
 
 	it('builds the leaf, which checks the loosest wordset its kind appears under', () => {
 		expect(word('for').$render()).toBe('for');

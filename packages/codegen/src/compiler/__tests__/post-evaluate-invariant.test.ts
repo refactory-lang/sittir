@@ -22,6 +22,7 @@
  */
 
 import { beforeAll, describe, it, expect } from 'vitest';
+import { FULL_PIPELINE_TIMEOUT } from '../../__tests__/helpers/timeouts.ts';
 import { stableGrammars } from '../../grammars.ts';
 import { expectCompleteCatalog, serializeCatalog } from '../../__tests__/helpers/rule-catalog.ts';
 import { evaluatePackage } from '../../dsl/evaluate-package.ts';
@@ -61,7 +62,7 @@ describe('post-evaluate invariant', () => {
 	for (const grammar of GRAMMARS) {
 		beforeAll(async () => {
 			evaluated[grammar] = await evaluatePackage(grammarPackage(grammar));
-		});
+		}, FULL_PIPELINE_TIMEOUT);
 
 		it(`${grammar}: rule tree contains only known rule types`, () => {
 			const raw = evaluated[grammar]!;

@@ -145,3 +145,32 @@ export default grammar({
 		}
 	}, 60_000);
 });
+
+describe('a grammar whose upstream tree-sitter name differs from its package name', () => {
+	it('names the grammar upstream’s in tree-sitter.json, package.json, the stub scanner and parser.c, and the package stays its own', () => {
+		const dir = mkdtempSync(join(tmpdir(), 'sittir-parser-name-'));
+		try {
+			const upstream = join(dir, 'node_modules', 'tree-sitter-csharp');
+			mkdirSync(upstream, { recursive: true });
+			writeFileSync(join(upstream, 'package.json'), '{"name":"tree-sitter-c-sharp","version":"0.0.0"}');
+			writeFileSync(join(upstream, 'tree-sitter.json'), '{"grammars":[{"name":"c_sharp","file-types":["cs"]}]}');
+			const pkg = grammarPackage('csharp', dir);
+			writeFileSync(layerPath(pkg, 'sittir'), "const source = (_$: unknown): string => 'x';\nexport default grammar({ name: 'c_sharp', rules: { source_file: source } });\n");
+			transpileOverrides({ package: pkg });
+			const out = sittirDirOf(pkg);
+			expect(pkg.name).toBe('csharp');
+			expect(JSON.parse(readFileSync(join(out, 'tree-sitter.json'), 'utf8')).grammars[0]).toMatchObject({ name: 'c_sharp', scope: 'source.c_sharp' });
+			expect(JSON.parse(readFileSync(join(out, 'package.json'), 'utf8'))).toMatchObject({ name: 'tree-sitter-c_sharp', 'tree-sitter': [{ scope: 'source.c_sharp' }] });
+			const scanner = readFileSync(join(out, 'src', 'scanner.c'), 'utf8');
+			expect(scanner).toContain('tree_sitter_c_sharp_external_scanner_create');
+			expect(scanner).not.toContain('tree_sitter_csharp');
+			const run = runTreeSitterCliCapturing(['generate'], out);
+			expect(run.status, run.stderr).toBe(0);
+			const parser = readFileSync(join(out, 'src', 'parser.c'), 'utf8');
+			expect(parser).toContain('tree_sitter_c_sharp');
+			expect(parser).not.toContain('tree_sitter_csharp');
+		} finally {
+			rmSync(dir, { recursive: true, force: true });
+		}
+	}, 120_000);
+});

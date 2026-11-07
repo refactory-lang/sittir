@@ -14,24 +14,28 @@ afterAll(() => {
 	typescript.dispose();
 });
 
-const total = (work: LayoutWork): number => work.regionNodes + work.siblingItems;
-const shown = (count: number, work: LayoutWork): string => `${count}: ${work.regionNodes} region nodes, ${work.siblingItems} sibling items`;
+const total = (work: LayoutWork): number => Object.values(work).reduce((sum: number, count: number) => sum + count, 0);
+const shown = (count: number, work: LayoutWork): string => `${count}: ${JSON.stringify(work)}`;
 
 /** Four times the items must do less than eight times the layout work: linear growth, with room for a constant. */
-function expectLinear(measure: (count: number) => LayoutWork): void {
+function expectLinear(measure: (count: number) => LayoutWork): readonly LayoutWork[] {
 	const small = measure(500);
 	const large = measure(2000);
 	expect(total(small), shown(500, small)).toBeGreaterThan(0);
 	expect(total(large) / total(small), `${shown(500, small)}; ${shown(2000, large)}`).toBeLessThan(8);
+	return [small, large];
 }
 
 describe("a long list's layout work grows linearly with its length", () => {
-	it('a snapshot of an array literal', () => {
-		expectLinear((count) => {
+	it('a snapshot of an array literal measures in one record', () => {
+		const works = expectLinear((count) => {
 			const root = rust.parse(`fn f() { let a = [${Array.from({ length: count }, (_, i) => String(i)).join(', ')}]; }\n`) as unknown as { $snapshot(): unknown };
 			root.$snapshot();
 			return rustWork(root);
 		});
+		for (const { regionNodes, siblingItems, recordsRendered } of works) {
+			expect({ regionNodes, siblingItems, recordsRendered }).toEqual({ regionNodes: 0, siblingItems: 0, recordsRendered: 1 });
+		}
 	});
 
 	it('the render of a list of statements reversed', () => {

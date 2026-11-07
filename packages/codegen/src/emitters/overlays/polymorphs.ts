@@ -1,6 +1,7 @@
 import type { PortableMountCall } from '@sittir/types';
+import { emitShapeFailure } from '../../compiler/diagnostics/emit-diagnostics.ts';
 import type { NodeMap } from '../../compiler/types.ts';
-import { AbstractAssembledCompound, AssembledEnum, AssembledList, AssembledSupertype, isKindIdStored, isRequired, separatorRequired, type AssembledNode } from '../../compiler/model/node-map.ts';
+import { AbstractAssembledCompound, AssembledEnum, AssembledList, AssembledSupertype, delimiterPreferenceOf, isKindIdStored, isRequired, separatorRequired, type AssembledNode } from '../../compiler/model/node-map.ts';
 import {
 	classifyFactoryShape,
 	classifyFromEmission,
@@ -398,9 +399,11 @@ function composeSeats(
 			coerceExpr !== undefined && seat.child.coerce !== undefined ? seat.apply(coerceExpr, seat.child.coerce) : undefined;
 	}
 	if (coerceExpr === undefined || p.coerce === undefined) {
-		throw new Error(
-			`[codegen] ${wireSet.node.kind}: its seated builder has no loose form (a seat's group has no coercer), so the default engine's table has no builder for it`
-		);
+		throw emitShapeFailure({
+			code: 'seated-builder-without-loose-form',
+			ownerKind: wireSet.node.kind,
+			message: `${wireSet.node.kind}: its seated builder has no loose form (a seat's group has no coercer), so the default engine's table has no builder for it`
+		});
 	}
 	const name = seatedKeyOf(wireSet.parentKey);
 	const seated = (argsType: string, returnType: string, expr: string): string =>
@@ -674,9 +677,9 @@ function flattenShape(
 	m: string,
 	positional: boolean,
 	directKey: string | undefined,
-	always: { readonly optional: boolean } | undefined
+	always: { readonly optional: boolean; readonly preferred: string | undefined } | undefined
 ): SeatShape {
-	if (always !== undefined) return alwaysFlattenShape(k, keys, m, directKey, always.optional);
+	if (always !== undefined) return alwaysFlattenShape(k, keys, m, directKey, always.optional, always.preferred);
 	if (positional) {
 		const typeFor = (p: string, c: string): string => `${p} | ${c}[0]`;
 		return {
@@ -727,10 +730,11 @@ function flattenShape(
 	};
 }
 
-function alwaysFlattenShape(k: string, keys: readonly FlattenKey[], m: string, directKey: string | undefined, optional: boolean): SeatShape {
+function alwaysFlattenShape(k: string, keys: readonly FlattenKey[], m: string, directKey: string | undefined, optional: boolean, preferred: string | undefined): SeatShape {
 	const keyOf = Object.fromEntries(keys.map(({ key, field }) => [key, field]));
 	const groupOf = (config: string): string => (directKey === undefined ? config : `{ ${keys.find(({ field }) => field === directKey)?.key ?? directKey}${optional ? '?' : ''}: ${config} }`);
-	const buildGroup = directKey === undefined ? `${CALL_C}(inner)` : `${CALL_C}(inner[${JSON.stringify(directKey)}])`;
+	const childOptions = preferred === undefined ? '' : `, { ${preferred}: (options as { readonly ${preferred}?: unknown } | undefined)?.${preferred} }`;
+	const buildGroup = directKey === undefined ? `${CALL_C}(inner${childOptions})` : `${CALL_C}(inner[${JSON.stringify(directKey)}]${childOptions})`;
 	return {
 		method: [
 			`export const ${m} = <${PF}, ${CF}>(parent: PF, child: CF) =>`,
@@ -820,6 +824,11 @@ interface SeatEmission {
 	readonly spread: boolean;
 }
 
+function preferredFacetOf(parent: AssembledNode, seat: FlattenSeat | FlattenedSeat): string | undefined {
+	const preference = delimiterPreferenceOf(parent);
+	return preference !== undefined && preference.open.storageKey === seat.slot.storageKey ? preference.facet.propertyName : undefined;
+}
+
 function flattenedKeysOf(seat: FlattenSeat | FlattenedSeat): readonly FlattenKey[] {
 	if (!('keys' in seat)) throw new Error(`flattenedKeysOf: '${seat.group.kind}' in '${seat.slot.propertyName}' is not a flatten seat`);
 	return seat.keys;
@@ -852,7 +861,19 @@ function seatEmission(
 		kind === 'tuple'
 			? tupleShape(seat.slot.propertyName, m)
 			: kind === 'flatten'
-			? flattenShape(seat.slot.propertyName, flattenedKeysOf(seat), m, direct, seat.directKey, 'always' in seat && seat.always ? { optional: seat.directKey !== undefined && !isRequired(seat.group.slots.find((slot) => slot.propertyName === seat.directKey)!) } : undefined)
+			? flattenShape(
+					seat.slot.propertyName,
+					flattenedKeysOf(seat),
+					m,
+					direct,
+					seat.directKey,
+					'always' in seat && seat.always
+						? {
+								optional: seat.directKey !== undefined && !isRequired(seat.group.slots.find((slot) => slot.propertyName === seat.directKey)!),
+								preferred: preferredFacetOf(parent, seat)
+							}
+						: undefined
+				)
 			: elementsShape(
 					seat.slot.propertyName,
 					configKeysOf(seat.group),
@@ -1116,7 +1137,13 @@ export function emitPolymorphsOverlay(config: {
 			const target = nestedParentKey === undefined ? variantRouteOf(child, `${parent.key}.${name}`) : defaultRoutes.get(nestedParentKey);
 			if (target?.set !== undefined) uses.add(target.set);
 			if (route.default && target !== undefined) {
-				if (isKindIdStored(child)) throw new Error(`arm.default: '${child.kind}' has no content to build, so it cannot be the default of '${parent.node.kind}'`);
+				if (isKindIdStored(child))
+					throw emitShapeFailure({
+						code: 'arm-default-without-content',
+						ownerKind: parent.node.kind,
+						message: `'${child.kind}' has no content to build, so it cannot be the default of '${parent.node.kind}'`,
+						details: { arm: child.kind }
+					});
 				defaultRoutes.set(parent.key, target);
 				rowKindByPath.set(parent.key, target.kind);
 				fallback = target;
