@@ -1,3 +1,4 @@
+import { emitShapeFailure } from './diagnostics/emit-diagnostics.ts';
 import {
 	ALIAS,
 	CHOICE,
@@ -783,8 +784,14 @@ function renameRules(raw: RawGrammar, renames: ReadonlyMap<string, string>): Raw
 		const taken =
 			targets.get(to) ??
 			((to in raw.rules || ruleListParts(raw.externals).names.includes(to)) && !renames.has(to) ? to : undefined);
-		if (taken !== undefined)
-			throw new Error(`link: '${from}' collapses into its tree name '${to}', which '${taken}' already names`);
+		if (taken !== undefined) {
+			throw emitShapeFailure({
+				code: 'rule-rename-collision',
+				ownerKind: from,
+				message: `link: '${from}' collapses into its tree name '${to}', which '${taken}' already names`,
+				details: { from, to, taken }
+			});
+		}
 		targets.set(to, from);
 	}
 	const rename = (name: string): string => renames.get(name) ?? name;
