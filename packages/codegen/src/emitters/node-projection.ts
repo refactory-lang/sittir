@@ -294,6 +294,7 @@ export function nodeArgs(
 	if (node instanceof AssembledAlias) {
 		const contents = envelopeContentKinds(node).map((name) => [name, ctx.nodeMap.nodes.get(name)] as const);
 		for (const [name, content] of contents) refuseSharedRowContent(node.kind, name, content);
+		refuseMixedListContent(node, ctx.nodeMap);
 		const wraps = contents.some(([, content]) => content instanceof AssembledSupertype);
 		const listed = envelopeContentIsList(node, ctx.nodeMap);
 		return `kind = ${ctx.names.kind(node.aliasTypeId)}, display, content = content${wraps ? ', wraps_hidden' : ''}${listed ? ', content_list' : ''}`;
@@ -334,9 +335,25 @@ function envelopeContentKinds(envelope: AssembledAlias): string[] {
 	return envelope.slots.flatMap((slot) => slotKindNames(slot));
 }
 
+function envelopeConcreteContents(envelope: AssembledAlias, nodeMap: NodeMap): AssembledNode[] {
+	return envelopeContentKinds(envelope).flatMap((name) => concreteKindsOf(name, nodeMap)).flatMap((kind) => nodeMap.nodes.get(kind) ?? []);
+}
+
 export function envelopeContentIsList(envelope: AssembledAlias, nodeMap: NodeMap): boolean {
-	const kinds = envelopeContentKinds(envelope).flatMap((name) => concreteKindsOf(name, nodeMap));
-	return kinds.length > 0 && kinds.every((kind) => nodeMap.nodes.get(kind) instanceof AssembledList);
+	const contents = envelopeConcreteContents(envelope, nodeMap);
+	return contents.length > 0 && contents.every((content) => content instanceof AssembledList);
+}
+
+function refuseMixedListContent(envelope: AssembledAlias, nodeMap: NodeMap): void {
+	const contents = envelopeConcreteContents(envelope, nodeMap);
+	const lists = contents.filter((content) => content instanceof AssembledList);
+	if (lists.length === 0 || lists.length === contents.length) return;
+	throw emitShapeFailure({
+		code: 'envelope-mixes-list-content',
+		ownerKind: envelope.kind,
+		message: `the envelope ${envelope.kind} holds the list ${lists[0]!.kind} beside ${contents.find((content) => !(content instanceof AssembledList))!.kind}, so a list's charge would apply to one content and not the other`,
+		details: { envelope: envelope.kind, lists: lists.map((list) => list.kind) }
+	});
 }
 
 function flatEntriesOf(list: AssembledNode, ctx: ReadFactsCtx): readonly (readonly [AssembledNode, AssembledNonterminal])[] {

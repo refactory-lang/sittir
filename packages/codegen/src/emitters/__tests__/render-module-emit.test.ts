@@ -726,6 +726,19 @@ describe('node read facts', () => {
 		expect(() => nodeArgs(list, ownId(list), over, list.slots)).not.toThrow();
 	});
 
+	it('refuses an envelope whose contents are a list and a kind that is not one', () => {
+		const list = node('FieldInitializerListElementsNode');
+		const envelope = node('TypeIdentifierNode');
+		const [content] = envelope.slots.flatMap((s) => slotKindNames(s));
+		const supertype = [...model.nodeMap.nodes.values()].find((n): n is AssembledSupertype => n instanceof AssembledSupertype && n.subtypeNames.length > 1)!;
+		const [listMember] = supertype.subtypeNames;
+		const nodes = new Map([...model.nodeMap.nodes, [content!, supertype], [listMember!, list]]);
+		const mixed = { ...ctx, nodeMap: { ...ctx.nodeMap, nodes } };
+		expect(() => nodeArgs(envelope, ownId(envelope), mixed, envelope.slots)).toThrow(
+			`envelope-mixes-list-content: the envelope ${envelope.kind} holds the list ${list.kind} beside`
+		);
+	});
+
 	it('reads a token interior by its pattern and selects envelope reading from its content slot', () => {
 		expect(args('IntegerLiteralDecimalNode')).toBe(
 			'kind = kind::INTEGER_LITERAL_DECIMAL, interior = "^(?<content>(?:[0-9][0-9_]*))(?<suffix>isize|usize|u128|i128|u16|i16|u32|i32|u64|i64|f32|f64|u8|i8)?$"'

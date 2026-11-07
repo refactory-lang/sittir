@@ -1324,8 +1324,21 @@ mod tests {
         let charged = expand(&envelope(true));
         assert!(has(&charged, "<ArgumentsNode as ::sittir_core::arena::HydrateNode>::hydrate(cursor, ctx, depth.and_then(__rt::Depth::below), records, inline)?"));
         assert!(has(&charged, "::sittir_core::arena::Hydrated::Record { kind: __stored_kind(&__node), at }"));
+        assert!(has(&charged, "_ => ::core::result::Result::Err(::sittir_core::arena::ArenaError::Unwritable("));
+        assert!(!has(&charged, "other => "));
         assert!(!has(&charged, "an envelope's content read from its own row is no node with a record"));
         assert!(has(&expand(&envelope(false)), "an envelope's content read from its own row is no node with a record"));
+    }
+
+    #[test]
+    fn an_envelope_over_a_list_still_needs_its_content_to_be_a_slot() {
+        let mut input = envelope(true);
+        let syn::Data::Struct(data) = &mut input.data else { panic!("a struct") };
+        let syn::Fields::Named(fields) = &mut data.fields else { panic!("named fields") };
+        let content = fields.named.iter_mut().find(|field| field.ident.as_ref().is_some_and(|name| name == "content")).expect("content");
+        content.attrs.retain(|attr| !attr.path().is_ident("slot"));
+        let error = super::derive(&input).expect_err("a content that is no slot");
+        assert!(error.to_string().contains("content"), "{error}");
     }
 
     #[test]
