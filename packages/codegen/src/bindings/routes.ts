@@ -559,6 +559,8 @@ const specificity = (entry: ReadEntry): number => {
 	return placed && predicated ? 0 : predicated ? 1 : placed ? 2 : literal ? 3 : 4;
 };
 
+const PREDICATED = 2;
+
 export function heldInto(model: SlotModel, at: string, step: SlotSelector): { readonly held: readonly HeldStep[]; readonly next: readonly ModelNode[] } | undefined {
 	const held = heldSteps(model, at, step);
 	const last = held?.at(-1);
@@ -1358,7 +1360,8 @@ export function resolveRoutes(input: GrammarInput): GrammarRoutes {
 	const rank = (e: ReadEntry): number => (inherited.has(e) ? 1 : 0);
 	const order = (kind: string, entries: ReadEntry[]): void => {
 		const named = (e: ReadEntry): number => (boundKindName(e.vocab, isParserHiddenName(kind)) === kind ? 0 : 1);
-		entries.sort((a, b) => named(a) - named(b) || specificity(a) - specificity(b) || rank(a) - rank(b) || testCount(b) - testCount(a) || a.index - b.index);
+		const tested = (e: ReadEntry): number => Math.min(specificity(e), PREDICATED);
+		entries.sort((a, b) => tested(a) - tested(b) || named(a) - named(b) || specificity(a) - specificity(b) || rank(a) - rank(b) || testCount(b) - testCount(a) || a.index - b.index);
 	};
 	for (const [kind, entries] of readEntries) order(kind, entries);
 	const stopped: StoppedRead[] = [];

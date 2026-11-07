@@ -9344,17 +9344,6 @@
       ],
       "members": [
         {
-          "name": "functionModifiers",
-          "route": "slot",
-          "slot": "function_modifiers",
-          "path": [
-            {
-              "owner": "function_signature_item",
-              "slot": "function_modifiers"
-            }
-          ]
-        },
-        {
           "name": "name",
           "route": "slot",
           "slot": "name",
@@ -9395,6 +9384,127 @@
             {
               "owner": "function_signature_item",
               "slot": "where_clause"
+            }
+          ]
+        },
+        {
+          "name": "async",
+          "route": "presence",
+          "via": [
+            {
+              "field": null,
+              "kind": "function_modifiers",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "token": "async",
+          "path": [
+            {
+              "owner": "function_signature_item",
+              "slot": "function_modifiers"
+            },
+            {
+              "owner": "function_modifiers",
+              "slot": "modifier"
+            }
+          ],
+          "flag": true
+        },
+        {
+          "name": "const",
+          "route": "presence",
+          "via": [
+            {
+              "field": null,
+              "kind": "function_modifiers",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "token": "const",
+          "path": [
+            {
+              "owner": "function_signature_item",
+              "slot": "function_modifiers"
+            },
+            {
+              "owner": "function_modifiers",
+              "slot": "modifier"
+            }
+          ],
+          "flag": true
+        },
+        {
+          "name": "unsafe",
+          "route": "presence",
+          "via": [
+            {
+              "field": null,
+              "kind": "function_modifiers",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "token": "unsafe",
+          "path": [
+            {
+              "owner": "function_signature_item",
+              "slot": "function_modifiers"
+            },
+            {
+              "owner": "function_modifiers",
+              "slot": "modifier"
+            }
+          ],
+          "flag": true
+        },
+        {
+          "name": "default",
+          "route": "presence",
+          "via": [
+            {
+              "field": null,
+              "kind": "function_modifiers",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "token": "default",
+          "path": [
+            {
+              "owner": "function_signature_item",
+              "slot": "function_modifiers"
+            },
+            {
+              "owner": "function_modifiers",
+              "slot": "modifier"
+            }
+          ],
+          "flag": true
+        },
+        {
+          "name": "extern",
+          "route": "nested",
+          "via": [
+            {
+              "field": null,
+              "kind": "function_modifiers",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "function_modifiers",
+          "slot": "modifier",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "function_signature_item",
+              "slot": "function_modifiers"
+            },
+            {
+              "owner": "function_modifiers",
+              "slot": "modifier"
             }
           ]
         },
@@ -14637,13 +14747,6 @@
       "vocab": "literal.string.raw",
       "read": [
         {
-          "vocab": "literal.string.raw",
-          "toplevel": true,
-          "within": [],
-          "pins": [],
-          "test": []
-        },
-        {
           "vocab": "literal.string.bytes.raw",
           "toplevel": true,
           "within": [],
@@ -14680,6 +14783,13 @@
               }
             }
           ]
+        },
+        {
+          "vocab": "literal.string.raw",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
         }
       ],
       "members": [
@@ -15927,17 +16037,6 @@
       ],
       "members": [
         {
-          "name": "functionModifiers",
-          "route": "slot",
-          "slot": "function_modifiers",
-          "path": [
-            {
-              "owner": "signature_method_declaration",
-              "slot": "function_modifiers"
-            }
-          ]
-        },
-        {
           "name": "name",
           "route": "slot",
           "slot": "name",
@@ -15978,6 +16077,127 @@
             {
               "owner": "signature_method_declaration",
               "slot": "where_clause"
+            }
+          ]
+        },
+        {
+          "name": "async",
+          "route": "presence",
+          "via": [
+            {
+              "field": null,
+              "kind": "function_modifiers",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "token": "async",
+          "path": [
+            {
+              "owner": "signature_method_declaration",
+              "slot": "function_modifiers"
+            },
+            {
+              "owner": "function_modifiers",
+              "slot": "modifier"
+            }
+          ],
+          "flag": true
+        },
+        {
+          "name": "const",
+          "route": "presence",
+          "via": [
+            {
+              "field": null,
+              "kind": "function_modifiers",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "token": "const",
+          "path": [
+            {
+              "owner": "signature_method_declaration",
+              "slot": "function_modifiers"
+            },
+            {
+              "owner": "function_modifiers",
+              "slot": "modifier"
+            }
+          ],
+          "flag": true
+        },
+        {
+          "name": "unsafe",
+          "route": "presence",
+          "via": [
+            {
+              "field": null,
+              "kind": "function_modifiers",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "token": "unsafe",
+          "path": [
+            {
+              "owner": "signature_method_declaration",
+              "slot": "function_modifiers"
+            },
+            {
+              "owner": "function_modifiers",
+              "slot": "modifier"
+            }
+          ],
+          "flag": true
+        },
+        {
+          "name": "default",
+          "route": "presence",
+          "via": [
+            {
+              "field": null,
+              "kind": "function_modifiers",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "token": "default",
+          "path": [
+            {
+              "owner": "signature_method_declaration",
+              "slot": "function_modifiers"
+            },
+            {
+              "owner": "function_modifiers",
+              "slot": "modifier"
+            }
+          ],
+          "flag": true
+        },
+        {
+          "name": "extern",
+          "route": "nested",
+          "via": [
+            {
+              "field": null,
+              "kind": "function_modifiers",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "function_modifiers",
+          "slot": "modifier",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "signature_method_declaration",
+              "slot": "function_modifiers"
+            },
+            {
+              "owner": "function_modifiers",
+              "slot": "modifier"
             }
           ]
         },
@@ -16893,13 +17113,6 @@
           ]
         },
         {
-          "vocab": "literal.string",
-          "toplevel": true,
-          "within": [],
-          "pins": [],
-          "test": []
-        },
-        {
           "vocab": "literal.string.bytes",
           "toplevel": true,
           "within": [],
@@ -16936,6 +17149,13 @@
               }
             }
           ]
+        },
+        {
+          "vocab": "literal.string",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
         }
       ],
       "members": [

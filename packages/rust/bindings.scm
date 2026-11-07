@@ -20,6 +20,11 @@
 (function_item (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (super))))) @declaration.function.public.parent
 (function_item (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (visibility_modifier_pub_scope_in_path (_) @scope))))) @declaration.function.public.restricted
 (function_signature_item) @declaration.function.signature
+(function_signature_item (function_modifiers "async" @async))
+(function_signature_item (function_modifiers "const" @const))
+(function_signature_item (function_modifiers "unsafe" @unsafe))
+(function_signature_item (function_modifiers "default" @default))
+(function_signature_item (function_modifiers (extern_modifier) @extern))
 (function_signature_item (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (self_module))))) @declaration.function.signature.private
 (function_signature_item (visibility_modifier (visibility_modifier_pub))) @declaration.function.signature.public
 (function_signature_item (visibility_modifier (crate_visibility_modifier))) @declaration.function.signature.public.crate

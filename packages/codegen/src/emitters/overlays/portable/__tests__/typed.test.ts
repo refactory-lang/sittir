@@ -59,6 +59,13 @@ describe('emitPortableTyped', () => {
 
 
 
+	it('reads a capture that names one kind in a list slot holding others as that kind', () => {
+		const name = /function (FunctionItemAsDeclarationFunction\d*)\(n: T\.FunctionItem\.Parsed/.exec(typed.source)?.[1];
+		expect(typed.source).toContain(
+			`function ${name}$extern(this: Held<T.FunctionItem.Parsed>) {\n\treturn read(of(this[low].functionModifiers()?.modifiers()?.[0], TSKindId.ExternModifier));\n}`
+		);
+	});
+
 	it('reads a list slot without a fallback, since its accessor always returns a list', () => {
 		expect(typed.source).not.toMatch(/read\(this\[low\]\.attributes\(\)\) \?\? \[\]/);
 		expect(typed.source).toMatch(/return read\(this\[low\]\.attributes\(\)\);/);

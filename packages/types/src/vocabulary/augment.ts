@@ -4,7 +4,6 @@ import type * as gate from './utils.ts';
 import type * as V from './index.ts';
 import type * as features from './features/index.ts';
 import type * as abstractClasses from './features/methods/classes/abstract-classes/index.ts';
-import type * as accessorAnnotations from './features/type-annotations/accessor-annotations/index.ts';
 import type * as accessorSignatures from './features/methods/accessors/accessor-signatures/index.ts';
 import type * as accessors from './features/methods/accessors/index.ts';
 import type * as algebraicDataTypes from './features/enumerations/algebraic-data-types/index.ts';
@@ -1132,11 +1131,6 @@ declare module './declaration.ts' {
 					features.AsyncFunctionSignatures,
 					asyncFunctionSignatures.Declaration.Function.Signature<G, K>['async']
 				>;
-				readonly functionModifiers?: gate.In<
-					G,
-					features.RustDeclarations,
-					rustDeclarations.Declaration.Function.Signature<G, K>['functionModifiers']
-				>;
 				readonly receiver?: gate.In<
 					G,
 					features.ExplicitReceivers,
@@ -1734,13 +1728,7 @@ declare module './declaration.ts' {
 			interface Getter<
 				G extends GrammarMap,
 				K extends gate.Under<'declaration.property.getter'> = 'declaration.property.getter'
-			> extends accessors.Declaration.Property.Getter<G, K> {
-				readonly returnType?: gate.In<
-					G,
-					features.AccessorAnnotations,
-					accessorAnnotations.Declaration.Property.Getter<G, K>['returnType']
-				>;
-			}
+			> extends accessors.Declaration.Property.Getter<G, K> {}
 			namespace Getter {
 				interface Private<
 					G extends GrammarMap,
@@ -1809,13 +1797,7 @@ declare module './declaration.ts' {
 						G extends GrammarMap,
 						K extends gate.Under<'declaration.property.signature.abstract.getter'> =
 							'declaration.property.signature.abstract.getter'
-					> extends accessorSignatures.Declaration.Property.Signature.Abstract.Getter<G, K> {
-						readonly returnType?: gate.In<
-							G,
-							features.TypeAlgebra,
-							typeAlgebra.Declaration.Property.Signature.Abstract.Getter<G, K>['returnType']
-						>;
-					}
+					> extends accessorSignatures.Declaration.Property.Signature.Abstract.Getter<G, K> {}
 					namespace Getter {
 						interface Private<
 							G extends GrammarMap,
@@ -1879,13 +1861,7 @@ declare module './declaration.ts' {
 				interface Getter<
 					G extends GrammarMap,
 					K extends gate.Under<'declaration.property.signature.getter'> = 'declaration.property.signature.getter'
-				> extends accessorSignatures.Declaration.Property.Signature.Getter<G, K> {
-					readonly returnType?: gate.In<
-						G,
-						features.TypeAlgebra,
-						typeAlgebra.Declaration.Property.Signature.Getter<G, K>['returnType']
-					>;
-				}
+				> extends accessorSignatures.Declaration.Property.Signature.Getter<G, K> {}
 				namespace Getter {
 					interface Private<
 						G extends GrammarMap,

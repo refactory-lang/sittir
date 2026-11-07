@@ -317,6 +317,13 @@ describe('resolveRoutes', () => {
 		expect(routes.readEntries.get('binary')?.map((e) => e.vocab)).toEqual(['expression.binary.add', 'expression.binary']);
 	});
 
+	it("tries a predicate claim ahead of the claim whose path names the kind, and every other claim after it", async () => {
+		const routes = resolveRoutes(
+			await grammar(['(binary operator: "+") @expression.add', '(binary) @binary', '((binary left: (expr) @_l) @expression.sum (#eq? @_l "x"))'].join('\n'))
+		);
+		expect(routes.readEntries.get('binary')?.map((e) => e.vocab)).toEqual(['expression.sum', 'binary', 'expression.add']);
+	});
+
 	it('enters a placed wildcard claim on every concrete kind its holder admits there, in the ruled order', async () => {
 		const routes = resolveRoutes(await grammar(['(identifier) @expression.identifier', '(params (_) @declaration.parameter)'].join('\n')));
 		expect(routes.readEntries.has('_')).toBe(false);

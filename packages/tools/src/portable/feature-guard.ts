@@ -1,4 +1,4 @@
-import { compositionOf, derive, lineageOf, readVocabulary, readVocabularySource, resolveRoutes, VOCABULARY_DIR, byCodepoint } from '@sittir/codegen/bindings';
+import { byCodepoint, camel, compositionOf, derive, envelopeTargets, lineageOf, readVocabulary, readVocabularySource, resolveRoutes, VOCABULARY_DIR } from '@sittir/codegen/bindings';
 import type { GrammarName } from '@sittir/codegen/grammars';
 import { loadInputs } from '../inventory/index.ts';
 import { plan, under, type Plan } from '../vocabulary/plan.ts';
@@ -63,10 +63,18 @@ export function guardRows(p: Plan, composed: ReadonlySet<string>, held: Held): G
 export async function heldBy(grammar: GrammarName): Promise<Held> {
 	const [input] = await loadInputs([grammar]);
 	const d = derive([input!]);
+	const { readEntries } = resolveRoutes(input!);
+	const entries = [...readEntries.values()].flat();
+	const forms = new Map([...readEntries.keys()].map((kind) => [kind, kind]));
 	const paths = new Set<string>([...d.allvocab, ...d.contentDerived.keys(), ...d.refinements.keys()]);
 	const members = new Set<string>([
 		...[...d.members].flatMap(([path, at]) => [...at.keys()].map((member) => memberKey(path, member))),
-		...[...resolveRoutes(input!).readEntries.values()].flatMap((entries) => entries.flatMap((entry) => entry.members.map((route) => memberKey(entry.vocab, route.name)))),
+		...entries.flatMap((entry) => [...entry.members.map((route) => route.name), ...(entry.claim.flag === undefined ? [] : [entry.claim.flag])].map((member) => memberKey(entry.vocab, member))),
+		...input!.bindings.containers.flatMap((container) =>
+			envelopeTargets(input!.model, container, forms).flatMap((kind) =>
+				(readEntries.get(kind) ?? []).flatMap((entry) => container.captures.map((capture) => memberKey(entry.vocab, camel(capture.name))))
+			)
+		),
 		...[...d.holes].flatMap(([path, at]) => [...at.keys()].map((member) => memberKey(path, member)))
 	]);
 	return { paths, members };

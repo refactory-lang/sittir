@@ -248,6 +248,8 @@ export function emitPortableTyped(typedInput: PortableTypedInput): PortableTyped
 
 	const enumKinds = new Set(claimedEnums.flatMap((kind) => concreteKinds(model, [kind])));
 	const admitsEnum = (slot: ModelSlot): boolean => slot.kinds.some((k) => concreteKinds(model, [k]).some((c) => enumKinds.has(c)));
+	const admitsBeside = (slot: ModelSlot, kind: string): boolean =>
+		slot.terminals.length > 0 || concreteKinds(model, slot.kinds).some((k) => !concreteKinds(model, [kind]).includes(k));
 	interface PresentStep {
 		readonly accessor: string;
 		readonly ids: string;
@@ -314,10 +316,11 @@ export function emitPortableTyped(typedInput: PortableTypedInput): PortableTyped
 		if (typeof chain === 'string') return { reason: chain };
 		const { present } = chain;
 		const reader = admitsEnum(chain.last) ? 'readEnum' : 'read';
-		if (route.route === 'kind') {
-			const id = idOf(route.kind);
-			const optional = chain.optional || chain.pinned === undefined || chain.pinned.some((k) => k !== route.kind);
-			return id === undefined ? { reason: `${route.kind} has no kind id` } : { body: `${reader}(of(${chain.expr}, ${id}))`, list: listsOnly({ ...chain.last, kinds: [route.kind] }), optional, present };
+		const selected = route.route === 'kind' ? route.kind : route.route === 'nested' && route.selector.kind !== null && !chain.last.multiple && admitsBeside(chain.last, route.selector.kind) ? route.selector.kind : undefined;
+		if (selected !== undefined) {
+			const id = idOf(selected);
+			const optional = chain.optional || chain.pinned === undefined || chain.pinned.some((k) => k !== selected);
+			return id === undefined ? { reason: `${selected} has no kind id` } : { body: `${reader}(of(${chain.expr}, ${id}))`, list: listsOnly({ ...chain.last, kinds: [selected] }), optional, present };
 		}
 		if (chain.last.storage === 'boolean') return { body: chain.expr, list: false, optional: false, present };
 		const except = route.route === 'slot' ? (route.except ?? []).flatMap((k) => concreteKinds(model, [k]).flatMap((c) => idOf(c) ?? [])) : [];

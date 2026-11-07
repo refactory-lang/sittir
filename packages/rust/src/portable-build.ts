@@ -13507,40 +13507,6 @@ export const build: PortableBuildTable = {
 					builder: 'functionSignatureItem',
 					members: [
 						{
-							name: 'functionModifiers',
-							steps: [
-								{
-									key: 'functionModifiers',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [209, 'functionModifiers'],
-									kinds: []
-								},
-								{
-									at: [210, 'modifiers'],
-									kinds: [35, 50, 111, 112, 234],
-									tokens: {
-										async: 112,
-										const: 35,
-										default: 50,
-										unsafe: 111
-									},
-									within: [
-										{
-											builder: 'functionModifiers',
-											key: 'modifiers'
-										}
-									],
-									many: true
-								}
-							]
-						},
-						{
 							name: 'name',
 							steps: [
 								{
@@ -13694,6 +13660,35 @@ export const build: PortableBuildTable = {
 									kinds: [211]
 								}
 							]
+						},
+						{
+							name: 'extern',
+							steps: [
+								{
+									key: 'functionModifiers',
+									builder: 'functionModifiers',
+									optional: true
+								},
+								{
+									key: 'modifiers'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [210, 'modifiers'],
+									kinds: [35, 50, 111, 112, 234],
+									tokens: {
+										async: 112,
+										const: 35,
+										default: 50,
+										unsafe: 111
+									},
+									many: true
+								}
+							],
+							reads: [234]
 						},
 						{
 							name: 'parameters',
@@ -13936,7 +13931,76 @@ export const build: PortableBuildTable = {
 						[0, 1, 2, 3, 4, 6, 7]
 					],
 					presets: [],
-					flags: {},
+					flags: {
+						async: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'functionModifiers',
+											builder: 'functionModifiers',
+											optional: true
+										},
+										{
+											key: 'modifiers'
+										}
+									],
+									kind: 112
+								}
+							]
+						},
+						const: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'functionModifiers',
+											builder: 'functionModifiers',
+											optional: true
+										},
+										{
+											key: 'modifiers'
+										}
+									],
+									kind: 35
+								}
+							]
+						},
+						unsafe: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'functionModifiers',
+											builder: 'functionModifiers',
+											optional: true
+										},
+										{
+											key: 'modifiers'
+										}
+									],
+									kind: 111
+								}
+							]
+						},
+						default: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'functionModifiers',
+											builder: 'functionModifiers',
+											optional: true
+										},
+										{
+											key: 'modifiers'
+										}
+									],
+									kind: 50
+								}
+							]
+						}
+					},
 					when: [
 						{
 							absent: [],
@@ -13953,40 +14017,6 @@ export const build: PortableBuildTable = {
 					kind: 209,
 					builder: 'functionSignatureItem',
 					members: [
-						{
-							name: 'functionModifiers',
-							steps: [
-								{
-									key: 'functionModifiers',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [209, 'functionModifiers'],
-									kinds: []
-								},
-								{
-									at: [210, 'modifiers'],
-									kinds: [35, 50, 111, 112, 234],
-									tokens: {
-										async: 112,
-										const: 35,
-										default: 50,
-										unsafe: 111
-									},
-									within: [
-										{
-											builder: 'functionModifiers',
-											key: 'modifiers'
-										}
-									],
-									many: true
-								}
-							]
-						},
 						{
 							name: 'name',
 							steps: [
@@ -14141,6 +14171,35 @@ export const build: PortableBuildTable = {
 									kinds: [211]
 								}
 							]
+						},
+						{
+							name: 'extern',
+							steps: [
+								{
+									key: 'functionModifiers',
+									builder: 'functionModifiers',
+									optional: true
+								},
+								{
+									key: 'modifiers'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [210, 'modifiers'],
+									kinds: [35, 50, 111, 112, 234],
+									tokens: {
+										async: 112,
+										const: 35,
+										default: 50,
+										unsafe: 111
+									},
+									many: true
+								}
+							],
+							reads: [234]
 						},
 						{
 							name: 'parameters',
@@ -14414,7 +14473,76 @@ export const build: PortableBuildTable = {
 							kind: 481
 						}
 					],
-					flags: {},
+					flags: {
+						async: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'functionModifiers',
+											builder: 'functionModifiers',
+											optional: true
+										},
+										{
+											key: 'modifiers'
+										}
+									],
+									kind: 112
+								}
+							]
+						},
+						const: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'functionModifiers',
+											builder: 'functionModifiers',
+											optional: true
+										},
+										{
+											key: 'modifiers'
+										}
+									],
+									kind: 35
+								}
+							]
+						},
+						unsafe: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'functionModifiers',
+											builder: 'functionModifiers',
+											optional: true
+										},
+										{
+											key: 'modifiers'
+										}
+									],
+									kind: 111
+								}
+							]
+						},
+						default: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'functionModifiers',
+											builder: 'functionModifiers',
+											optional: true
+										},
+										{
+											key: 'modifiers'
+										}
+									],
+									kind: 50
+								}
+							]
+						}
+					},
 					when: [
 						{
 							absent: [],
@@ -14431,40 +14559,6 @@ export const build: PortableBuildTable = {
 					kind: 209,
 					builder: 'functionSignatureItem',
 					members: [
-						{
-							name: 'functionModifiers',
-							steps: [
-								{
-									key: 'functionModifiers',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [209, 'functionModifiers'],
-									kinds: []
-								},
-								{
-									at: [210, 'modifiers'],
-									kinds: [35, 50, 111, 112, 234],
-									tokens: {
-										async: 112,
-										const: 35,
-										default: 50,
-										unsafe: 111
-									},
-									within: [
-										{
-											builder: 'functionModifiers',
-											key: 'modifiers'
-										}
-									],
-									many: true
-								}
-							]
-						},
 						{
 							name: 'name',
 							steps: [
@@ -14619,6 +14713,35 @@ export const build: PortableBuildTable = {
 									kinds: [211]
 								}
 							]
+						},
+						{
+							name: 'extern',
+							steps: [
+								{
+									key: 'functionModifiers',
+									builder: 'functionModifiers',
+									optional: true
+								},
+								{
+									key: 'modifiers'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [210, 'modifiers'],
+									kinds: [35, 50, 111, 112, 234],
+									tokens: {
+										async: 112,
+										const: 35,
+										default: 50,
+										unsafe: 111
+									},
+									many: true
+								}
+							],
+							reads: [234]
 						},
 						{
 							name: 'parameters',
@@ -14879,7 +15002,76 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
-					flags: {},
+					flags: {
+						async: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'functionModifiers',
+											builder: 'functionModifiers',
+											optional: true
+										},
+										{
+											key: 'modifiers'
+										}
+									],
+									kind: 112
+								}
+							]
+						},
+						const: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'functionModifiers',
+											builder: 'functionModifiers',
+											optional: true
+										},
+										{
+											key: 'modifiers'
+										}
+									],
+									kind: 35
+								}
+							]
+						},
+						unsafe: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'functionModifiers',
+											builder: 'functionModifiers',
+											optional: true
+										},
+										{
+											key: 'modifiers'
+										}
+									],
+									kind: 111
+								}
+							]
+						},
+						default: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'functionModifiers',
+											builder: 'functionModifiers',
+											optional: true
+										},
+										{
+											key: 'modifiers'
+										}
+									],
+									kind: 50
+								}
+							]
+						}
+					},
 					when: [
 						{
 							absent: [],
@@ -14896,40 +15088,6 @@ export const build: PortableBuildTable = {
 					kind: 209,
 					builder: 'functionSignatureItem',
 					members: [
-						{
-							name: 'functionModifiers',
-							steps: [
-								{
-									key: 'functionModifiers',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [209, 'functionModifiers'],
-									kinds: []
-								},
-								{
-									at: [210, 'modifiers'],
-									kinds: [35, 50, 111, 112, 234],
-									tokens: {
-										async: 112,
-										const: 35,
-										default: 50,
-										unsafe: 111
-									},
-									within: [
-										{
-											builder: 'functionModifiers',
-											key: 'modifiers'
-										}
-									],
-									many: true
-								}
-							]
-						},
 						{
 							name: 'name',
 							steps: [
@@ -15084,6 +15242,35 @@ export const build: PortableBuildTable = {
 									kinds: [211]
 								}
 							]
+						},
+						{
+							name: 'extern',
+							steps: [
+								{
+									key: 'functionModifiers',
+									builder: 'functionModifiers',
+									optional: true
+								},
+								{
+									key: 'modifiers'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [210, 'modifiers'],
+									kinds: [35, 50, 111, 112, 234],
+									tokens: {
+										async: 112,
+										const: 35,
+										default: 50,
+										unsafe: 111
+									},
+									many: true
+								}
+							],
+							reads: [234]
 						},
 						{
 							name: 'parameters',
@@ -15357,7 +15544,76 @@ export const build: PortableBuildTable = {
 							kind: 126
 						}
 					],
-					flags: {},
+					flags: {
+						async: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'functionModifiers',
+											builder: 'functionModifiers',
+											optional: true
+										},
+										{
+											key: 'modifiers'
+										}
+									],
+									kind: 112
+								}
+							]
+						},
+						const: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'functionModifiers',
+											builder: 'functionModifiers',
+											optional: true
+										},
+										{
+											key: 'modifiers'
+										}
+									],
+									kind: 35
+								}
+							]
+						},
+						unsafe: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'functionModifiers',
+											builder: 'functionModifiers',
+											optional: true
+										},
+										{
+											key: 'modifiers'
+										}
+									],
+									kind: 111
+								}
+							]
+						},
+						default: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'functionModifiers',
+											builder: 'functionModifiers',
+											optional: true
+										},
+										{
+											key: 'modifiers'
+										}
+									],
+									kind: 50
+								}
+							]
+						}
+					},
 					when: [
 						{
 							absent: [],
@@ -15374,40 +15630,6 @@ export const build: PortableBuildTable = {
 					kind: 209,
 					builder: 'functionSignatureItem',
 					members: [
-						{
-							name: 'functionModifiers',
-							steps: [
-								{
-									key: 'functionModifiers',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [209, 'functionModifiers'],
-									kinds: []
-								},
-								{
-									at: [210, 'modifiers'],
-									kinds: [35, 50, 111, 112, 234],
-									tokens: {
-										async: 112,
-										const: 35,
-										default: 50,
-										unsafe: 111
-									},
-									within: [
-										{
-											builder: 'functionModifiers',
-											key: 'modifiers'
-										}
-									],
-									many: true
-								}
-							]
-						},
 						{
 							name: 'name',
 							steps: [
@@ -15562,6 +15784,35 @@ export const build: PortableBuildTable = {
 									kinds: [211]
 								}
 							]
+						},
+						{
+							name: 'extern',
+							steps: [
+								{
+									key: 'functionModifiers',
+									builder: 'functionModifiers',
+									optional: true
+								},
+								{
+									key: 'modifiers'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [210, 'modifiers'],
+									kinds: [35, 50, 111, 112, 234],
+									tokens: {
+										async: 112,
+										const: 35,
+										default: 50,
+										unsafe: 111
+									},
+									many: true
+								}
+							],
+							reads: [234]
 						},
 						{
 							name: 'parameters',
@@ -15835,7 +16086,76 @@ export const build: PortableBuildTable = {
 							kind: 125
 						}
 					],
-					flags: {},
+					flags: {
+						async: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'functionModifiers',
+											builder: 'functionModifiers',
+											optional: true
+										},
+										{
+											key: 'modifiers'
+										}
+									],
+									kind: 112
+								}
+							]
+						},
+						const: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'functionModifiers',
+											builder: 'functionModifiers',
+											optional: true
+										},
+										{
+											key: 'modifiers'
+										}
+									],
+									kind: 35
+								}
+							]
+						},
+						unsafe: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'functionModifiers',
+											builder: 'functionModifiers',
+											optional: true
+										},
+										{
+											key: 'modifiers'
+										}
+									],
+									kind: 111
+								}
+							]
+						},
+						default: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'functionModifiers',
+											builder: 'functionModifiers',
+											optional: true
+										},
+										{
+											key: 'modifiers'
+										}
+									],
+									kind: 50
+								}
+							]
+						}
+					},
 					when: [
 						{
 							absent: [],
@@ -15852,40 +16172,6 @@ export const build: PortableBuildTable = {
 					kind: 209,
 					builder: 'functionSignatureItem',
 					members: [
-						{
-							name: 'functionModifiers',
-							steps: [
-								{
-									key: 'functionModifiers',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [209, 'functionModifiers'],
-									kinds: []
-								},
-								{
-									at: [210, 'modifiers'],
-									kinds: [35, 50, 111, 112, 234],
-									tokens: {
-										async: 112,
-										const: 35,
-										default: 50,
-										unsafe: 111
-									},
-									within: [
-										{
-											builder: 'functionModifiers',
-											key: 'modifiers'
-										}
-									],
-									many: true
-								}
-							]
-						},
 						{
 							name: 'name',
 							steps: [
@@ -16040,6 +16326,35 @@ export const build: PortableBuildTable = {
 									kinds: [211]
 								}
 							]
+						},
+						{
+							name: 'extern',
+							steps: [
+								{
+									key: 'functionModifiers',
+									builder: 'functionModifiers',
+									optional: true
+								},
+								{
+									key: 'modifiers'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [210, 'modifiers'],
+									kinds: [35, 50, 111, 112, 234],
+									tokens: {
+										async: 112,
+										const: 35,
+										default: 50,
+										unsafe: 111
+									},
+									many: true
+								}
+							],
+							reads: [234]
 						},
 						{
 							name: 'scope',
@@ -16372,7 +16687,76 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
-					flags: {},
+					flags: {
+						async: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'functionModifiers',
+											builder: 'functionModifiers',
+											optional: true
+										},
+										{
+											key: 'modifiers'
+										}
+									],
+									kind: 112
+								}
+							]
+						},
+						const: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'functionModifiers',
+											builder: 'functionModifiers',
+											optional: true
+										},
+										{
+											key: 'modifiers'
+										}
+									],
+									kind: 35
+								}
+							]
+						},
+						unsafe: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'functionModifiers',
+											builder: 'functionModifiers',
+											optional: true
+										},
+										{
+											key: 'modifiers'
+										}
+									],
+									kind: 111
+								}
+							]
+						},
+						default: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'functionModifiers',
+											builder: 'functionModifiers',
+											optional: true
+										},
+										{
+											key: 'modifiers'
+										}
+									],
+									kind: 50
+								}
+							]
+						}
+					},
 					when: [
 						{
 							absent: [],
@@ -21733,40 +22117,6 @@ export const build: PortableBuildTable = {
 					builder: 'signatureMethodDeclaration',
 					members: [
 						{
-							name: 'functionModifiers',
-							steps: [
-								{
-									key: 'functionModifiers',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [483, 'functionModifiers'],
-									kinds: []
-								},
-								{
-									at: [210, 'modifiers'],
-									kinds: [35, 50, 111, 112, 234],
-									tokens: {
-										async: 112,
-										const: 35,
-										default: 50,
-										unsafe: 111
-									},
-									within: [
-										{
-											builder: 'functionModifiers',
-											key: 'modifiers'
-										}
-									],
-									many: true
-								}
-							]
-						},
-						{
 							name: 'name',
 							steps: [
 								{
@@ -21920,6 +22270,35 @@ export const build: PortableBuildTable = {
 									kinds: [211]
 								}
 							]
+						},
+						{
+							name: 'extern',
+							steps: [
+								{
+									key: 'functionModifiers',
+									builder: 'functionModifiers',
+									optional: true
+								},
+								{
+									key: 'modifiers'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [210, 'modifiers'],
+									kinds: [35, 50, 111, 112, 234],
+									tokens: {
+										async: 112,
+										const: 35,
+										default: 50,
+										unsafe: 111
+									},
+									many: true
+								}
+							],
+							reads: [234]
 						},
 						{
 							name: 'parameters',
@@ -22162,7 +22541,76 @@ export const build: PortableBuildTable = {
 						[0, 1, 2, 3, 4, 6, 7]
 					],
 					presets: [],
-					flags: {},
+					flags: {
+						async: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'functionModifiers',
+											builder: 'functionModifiers',
+											optional: true
+										},
+										{
+											key: 'modifiers'
+										}
+									],
+									kind: 112
+								}
+							]
+						},
+						const: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'functionModifiers',
+											builder: 'functionModifiers',
+											optional: true
+										},
+										{
+											key: 'modifiers'
+										}
+									],
+									kind: 35
+								}
+							]
+						},
+						unsafe: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'functionModifiers',
+											builder: 'functionModifiers',
+											optional: true
+										},
+										{
+											key: 'modifiers'
+										}
+									],
+									kind: 111
+								}
+							]
+						},
+						default: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'functionModifiers',
+											builder: 'functionModifiers',
+											optional: true
+										},
+										{
+											key: 'modifiers'
+										}
+									],
+									kind: 50
+								}
+							]
+						}
+					},
 					when: [
 						{
 							absent: [],
@@ -22179,40 +22627,6 @@ export const build: PortableBuildTable = {
 					kind: 483,
 					builder: 'signatureMethodDeclaration',
 					members: [
-						{
-							name: 'functionModifiers',
-							steps: [
-								{
-									key: 'functionModifiers',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [483, 'functionModifiers'],
-									kinds: []
-								},
-								{
-									at: [210, 'modifiers'],
-									kinds: [35, 50, 111, 112, 234],
-									tokens: {
-										async: 112,
-										const: 35,
-										default: 50,
-										unsafe: 111
-									},
-									within: [
-										{
-											builder: 'functionModifiers',
-											key: 'modifiers'
-										}
-									],
-									many: true
-								}
-							]
-						},
 						{
 							name: 'name',
 							steps: [
@@ -22367,6 +22781,35 @@ export const build: PortableBuildTable = {
 									kinds: [211]
 								}
 							]
+						},
+						{
+							name: 'extern',
+							steps: [
+								{
+									key: 'functionModifiers',
+									builder: 'functionModifiers',
+									optional: true
+								},
+								{
+									key: 'modifiers'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [210, 'modifiers'],
+									kinds: [35, 50, 111, 112, 234],
+									tokens: {
+										async: 112,
+										const: 35,
+										default: 50,
+										unsafe: 111
+									},
+									many: true
+								}
+							],
+							reads: [234]
 						},
 						{
 							name: 'parameters',
@@ -22640,7 +23083,76 @@ export const build: PortableBuildTable = {
 							kind: 481
 						}
 					],
-					flags: {},
+					flags: {
+						async: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'functionModifiers',
+											builder: 'functionModifiers',
+											optional: true
+										},
+										{
+											key: 'modifiers'
+										}
+									],
+									kind: 112
+								}
+							]
+						},
+						const: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'functionModifiers',
+											builder: 'functionModifiers',
+											optional: true
+										},
+										{
+											key: 'modifiers'
+										}
+									],
+									kind: 35
+								}
+							]
+						},
+						unsafe: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'functionModifiers',
+											builder: 'functionModifiers',
+											optional: true
+										},
+										{
+											key: 'modifiers'
+										}
+									],
+									kind: 111
+								}
+							]
+						},
+						default: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'functionModifiers',
+											builder: 'functionModifiers',
+											optional: true
+										},
+										{
+											key: 'modifiers'
+										}
+									],
+									kind: 50
+								}
+							]
+						}
+					},
 					when: [
 						{
 							absent: [],
@@ -22657,40 +23169,6 @@ export const build: PortableBuildTable = {
 					kind: 483,
 					builder: 'signatureMethodDeclaration',
 					members: [
-						{
-							name: 'functionModifiers',
-							steps: [
-								{
-									key: 'functionModifiers',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [483, 'functionModifiers'],
-									kinds: []
-								},
-								{
-									at: [210, 'modifiers'],
-									kinds: [35, 50, 111, 112, 234],
-									tokens: {
-										async: 112,
-										const: 35,
-										default: 50,
-										unsafe: 111
-									},
-									within: [
-										{
-											builder: 'functionModifiers',
-											key: 'modifiers'
-										}
-									],
-									many: true
-								}
-							]
-						},
 						{
 							name: 'name',
 							steps: [
@@ -22845,6 +23323,35 @@ export const build: PortableBuildTable = {
 									kinds: [211]
 								}
 							]
+						},
+						{
+							name: 'extern',
+							steps: [
+								{
+									key: 'functionModifiers',
+									builder: 'functionModifiers',
+									optional: true
+								},
+								{
+									key: 'modifiers'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [210, 'modifiers'],
+									kinds: [35, 50, 111, 112, 234],
+									tokens: {
+										async: 112,
+										const: 35,
+										default: 50,
+										unsafe: 111
+									},
+									many: true
+								}
+							],
+							reads: [234]
 						},
 						{
 							name: 'parameters',
@@ -23105,7 +23612,76 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
-					flags: {},
+					flags: {
+						async: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'functionModifiers',
+											builder: 'functionModifiers',
+											optional: true
+										},
+										{
+											key: 'modifiers'
+										}
+									],
+									kind: 112
+								}
+							]
+						},
+						const: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'functionModifiers',
+											builder: 'functionModifiers',
+											optional: true
+										},
+										{
+											key: 'modifiers'
+										}
+									],
+									kind: 35
+								}
+							]
+						},
+						unsafe: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'functionModifiers',
+											builder: 'functionModifiers',
+											optional: true
+										},
+										{
+											key: 'modifiers'
+										}
+									],
+									kind: 111
+								}
+							]
+						},
+						default: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'functionModifiers',
+											builder: 'functionModifiers',
+											optional: true
+										},
+										{
+											key: 'modifiers'
+										}
+									],
+									kind: 50
+								}
+							]
+						}
+					},
 					when: [
 						{
 							absent: [],
@@ -23122,40 +23698,6 @@ export const build: PortableBuildTable = {
 					kind: 483,
 					builder: 'signatureMethodDeclaration',
 					members: [
-						{
-							name: 'functionModifiers',
-							steps: [
-								{
-									key: 'functionModifiers',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [483, 'functionModifiers'],
-									kinds: []
-								},
-								{
-									at: [210, 'modifiers'],
-									kinds: [35, 50, 111, 112, 234],
-									tokens: {
-										async: 112,
-										const: 35,
-										default: 50,
-										unsafe: 111
-									},
-									within: [
-										{
-											builder: 'functionModifiers',
-											key: 'modifiers'
-										}
-									],
-									many: true
-								}
-							]
-						},
 						{
 							name: 'name',
 							steps: [
@@ -23310,6 +23852,35 @@ export const build: PortableBuildTable = {
 									kinds: [211]
 								}
 							]
+						},
+						{
+							name: 'extern',
+							steps: [
+								{
+									key: 'functionModifiers',
+									builder: 'functionModifiers',
+									optional: true
+								},
+								{
+									key: 'modifiers'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [210, 'modifiers'],
+									kinds: [35, 50, 111, 112, 234],
+									tokens: {
+										async: 112,
+										const: 35,
+										default: 50,
+										unsafe: 111
+									},
+									many: true
+								}
+							],
+							reads: [234]
 						},
 						{
 							name: 'parameters',
@@ -23583,7 +24154,76 @@ export const build: PortableBuildTable = {
 							kind: 126
 						}
 					],
-					flags: {},
+					flags: {
+						async: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'functionModifiers',
+											builder: 'functionModifiers',
+											optional: true
+										},
+										{
+											key: 'modifiers'
+										}
+									],
+									kind: 112
+								}
+							]
+						},
+						const: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'functionModifiers',
+											builder: 'functionModifiers',
+											optional: true
+										},
+										{
+											key: 'modifiers'
+										}
+									],
+									kind: 35
+								}
+							]
+						},
+						unsafe: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'functionModifiers',
+											builder: 'functionModifiers',
+											optional: true
+										},
+										{
+											key: 'modifiers'
+										}
+									],
+									kind: 111
+								}
+							]
+						},
+						default: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'functionModifiers',
+											builder: 'functionModifiers',
+											optional: true
+										},
+										{
+											key: 'modifiers'
+										}
+									],
+									kind: 50
+								}
+							]
+						}
+					},
 					when: [
 						{
 							absent: [],
@@ -23600,40 +24240,6 @@ export const build: PortableBuildTable = {
 					kind: 483,
 					builder: 'signatureMethodDeclaration',
 					members: [
-						{
-							name: 'functionModifiers',
-							steps: [
-								{
-									key: 'functionModifiers',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [483, 'functionModifiers'],
-									kinds: []
-								},
-								{
-									at: [210, 'modifiers'],
-									kinds: [35, 50, 111, 112, 234],
-									tokens: {
-										async: 112,
-										const: 35,
-										default: 50,
-										unsafe: 111
-									},
-									within: [
-										{
-											builder: 'functionModifiers',
-											key: 'modifiers'
-										}
-									],
-									many: true
-								}
-							]
-						},
 						{
 							name: 'name',
 							steps: [
@@ -23788,6 +24394,35 @@ export const build: PortableBuildTable = {
 									kinds: [211]
 								}
 							]
+						},
+						{
+							name: 'extern',
+							steps: [
+								{
+									key: 'functionModifiers',
+									builder: 'functionModifiers',
+									optional: true
+								},
+								{
+									key: 'modifiers'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [210, 'modifiers'],
+									kinds: [35, 50, 111, 112, 234],
+									tokens: {
+										async: 112,
+										const: 35,
+										default: 50,
+										unsafe: 111
+									},
+									many: true
+								}
+							],
+							reads: [234]
 						},
 						{
 							name: 'parameters',
@@ -24061,7 +24696,76 @@ export const build: PortableBuildTable = {
 							kind: 125
 						}
 					],
-					flags: {},
+					flags: {
+						async: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'functionModifiers',
+											builder: 'functionModifiers',
+											optional: true
+										},
+										{
+											key: 'modifiers'
+										}
+									],
+									kind: 112
+								}
+							]
+						},
+						const: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'functionModifiers',
+											builder: 'functionModifiers',
+											optional: true
+										},
+										{
+											key: 'modifiers'
+										}
+									],
+									kind: 35
+								}
+							]
+						},
+						unsafe: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'functionModifiers',
+											builder: 'functionModifiers',
+											optional: true
+										},
+										{
+											key: 'modifiers'
+										}
+									],
+									kind: 111
+								}
+							]
+						},
+						default: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'functionModifiers',
+											builder: 'functionModifiers',
+											optional: true
+										},
+										{
+											key: 'modifiers'
+										}
+									],
+									kind: 50
+								}
+							]
+						}
+					},
 					when: [
 						{
 							absent: [],
@@ -24078,40 +24782,6 @@ export const build: PortableBuildTable = {
 					kind: 483,
 					builder: 'signatureMethodDeclaration',
 					members: [
-						{
-							name: 'functionModifiers',
-							steps: [
-								{
-									key: 'functionModifiers',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [483, 'functionModifiers'],
-									kinds: []
-								},
-								{
-									at: [210, 'modifiers'],
-									kinds: [35, 50, 111, 112, 234],
-									tokens: {
-										async: 112,
-										const: 35,
-										default: 50,
-										unsafe: 111
-									},
-									within: [
-										{
-											builder: 'functionModifiers',
-											key: 'modifiers'
-										}
-									],
-									many: true
-								}
-							]
-						},
 						{
 							name: 'name',
 							steps: [
@@ -24266,6 +24936,35 @@ export const build: PortableBuildTable = {
 									kinds: [211]
 								}
 							]
+						},
+						{
+							name: 'extern',
+							steps: [
+								{
+									key: 'functionModifiers',
+									builder: 'functionModifiers',
+									optional: true
+								},
+								{
+									key: 'modifiers'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [210, 'modifiers'],
+									kinds: [35, 50, 111, 112, 234],
+									tokens: {
+										async: 112,
+										const: 35,
+										default: 50,
+										unsafe: 111
+									},
+									many: true
+								}
+							],
+							reads: [234]
 						},
 						{
 							name: 'scope',
@@ -24598,7 +25297,76 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
-					flags: {},
+					flags: {
+						async: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'functionModifiers',
+											builder: 'functionModifiers',
+											optional: true
+										},
+										{
+											key: 'modifiers'
+										}
+									],
+									kind: 112
+								}
+							]
+						},
+						const: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'functionModifiers',
+											builder: 'functionModifiers',
+											optional: true
+										},
+										{
+											key: 'modifiers'
+										}
+									],
+									kind: 35
+								}
+							]
+						},
+						unsafe: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'functionModifiers',
+											builder: 'functionModifiers',
+											optional: true
+										},
+										{
+											key: 'modifiers'
+										}
+									],
+									kind: 111
+								}
+							]
+						},
+						default: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'functionModifiers',
+											builder: 'functionModifiers',
+											optional: true
+										},
+										{
+											key: 'modifiers'
+										}
+									],
+									kind: 50
+								}
+							]
+						}
+					},
 					when: [
 						{
 							absent: [],

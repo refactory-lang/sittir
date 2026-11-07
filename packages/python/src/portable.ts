@@ -2752,7 +2752,7 @@ const table: PortableTable = {
 		},
 		'declaration.constructor': { ids: [TSKindId.ConstructorDeclaration, TSKindId.MethodDeclaration], exact: false },
 		'declaration.function': { ids: [TSKindId.FunctionDefinition], exact: true },
-		'declaration.method': { ids: [TSKindId.MethodDeclaration], exact: true },
+		'declaration.method': { ids: [TSKindId.MethodDeclaration], exact: false },
 		'declaration.method.special': { ids: [TSKindId.MethodDeclaration], exact: false },
 		'declaration.parameter': {
 			ids: [TSKindId.DefaultParameter, TSKindId.TypedDefaultParameter, TSKindId.TypedParameter],
@@ -3663,7 +3663,6 @@ const table: PortableTable = {
 		[TSKindId.MatchStatement]: [{ path: 'statement.match', within: [], test: [] }],
 		[TSKindId.MemberType]: [{ path: 'identifier.qualified', within: [], test: [] }],
 		[TSKindId.MethodDeclaration]: [
-			{ path: 'declaration.method', within: [], test: [] },
 			{
 				path: 'declaration.constructor',
 				within: [],
@@ -3673,7 +3672,8 @@ const table: PortableTable = {
 				path: 'declaration.method.special',
 				within: [],
 				test: [{ up: 0, via: [], plan: { op: 'match', pattern: '^__(?<stem>.*)__$', slots: { '352': 1 } } }]
-			}
+			},
+			{ path: 'declaration.method', within: [], test: [] }
 		],
 		[TSKindId.Module]: [{ path: 'file', within: [], test: [] }],
 		[TSKindId.NamedExpression]: [{ path: 'expression.assignment', within: [], test: [] }],

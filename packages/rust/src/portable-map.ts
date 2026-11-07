@@ -7824,7 +7824,6 @@ export interface RustMap extends V.GrammarMap {
 		readonly 'declaration.function.signature': {
 			readonly body: V.Read<RustMap, 'statement.block'>;
 			readonly extern: V.Read<RustMap, 'modifier.extern'>;
-			readonly functionModifiers: V.Read<RustMap, 'modifier.extern'> | 'async' | 'const' | 'default' | 'unsafe';
 			readonly name:
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
@@ -7940,7 +7939,6 @@ export interface RustMap extends V.GrammarMap {
 		readonly 'declaration.function.signature.private': {
 			readonly body: V.Read<RustMap, 'statement.block'>;
 			readonly extern: V.Read<RustMap, 'modifier.extern'>;
-			readonly functionModifiers: V.Read<RustMap, 'modifier.extern'> | 'async' | 'const' | 'default' | 'unsafe';
 			readonly name:
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
@@ -8056,7 +8054,6 @@ export interface RustMap extends V.GrammarMap {
 		readonly 'declaration.function.signature.public': {
 			readonly body: V.Read<RustMap, 'statement.block'>;
 			readonly extern: V.Read<RustMap, 'modifier.extern'>;
-			readonly functionModifiers: V.Read<RustMap, 'modifier.extern'> | 'async' | 'const' | 'default' | 'unsafe';
 			readonly name:
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
@@ -8172,7 +8169,6 @@ export interface RustMap extends V.GrammarMap {
 		readonly 'declaration.function.signature.public.internal': {
 			readonly body: V.Read<RustMap, 'statement.block'>;
 			readonly extern: V.Read<RustMap, 'modifier.extern'>;
-			readonly functionModifiers: V.Read<RustMap, 'modifier.extern'> | 'async' | 'const' | 'default' | 'unsafe';
 			readonly name:
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
@@ -8288,7 +8284,6 @@ export interface RustMap extends V.GrammarMap {
 		readonly 'declaration.function.signature.public.parent': {
 			readonly body: V.Read<RustMap, 'statement.block'>;
 			readonly extern: V.Read<RustMap, 'modifier.extern'>;
-			readonly functionModifiers: V.Read<RustMap, 'modifier.extern'> | 'async' | 'const' | 'default' | 'unsafe';
 			readonly name:
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
@@ -8404,7 +8399,6 @@ export interface RustMap extends V.GrammarMap {
 		readonly 'declaration.function.signature.public.restricted': {
 			readonly body: V.Read<RustMap, 'statement.block'>;
 			readonly extern: V.Read<RustMap, 'modifier.extern'>;
-			readonly functionModifiers: V.Read<RustMap, 'modifier.extern'> | 'async' | 'const' | 'default' | 'unsafe';
 			readonly name:
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
@@ -10296,7 +10290,6 @@ export interface RustMap extends V.GrammarMap {
 		readonly 'declaration.method.signature': {
 			readonly body: V.Read<RustMap, 'statement.block'>;
 			readonly extern: V.Read<RustMap, 'modifier.extern'>;
-			readonly functionModifiers: V.Read<RustMap, 'modifier.extern'> | 'async' | 'const' | 'default' | 'unsafe';
 			readonly name:
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
@@ -10412,7 +10405,6 @@ export interface RustMap extends V.GrammarMap {
 		readonly 'declaration.method.signature.private': {
 			readonly body: V.Read<RustMap, 'statement.block'>;
 			readonly extern: V.Read<RustMap, 'modifier.extern'>;
-			readonly functionModifiers: V.Read<RustMap, 'modifier.extern'> | 'async' | 'const' | 'default' | 'unsafe';
 			readonly name:
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
@@ -10528,7 +10520,6 @@ export interface RustMap extends V.GrammarMap {
 		readonly 'declaration.method.signature.public': {
 			readonly body: V.Read<RustMap, 'statement.block'>;
 			readonly extern: V.Read<RustMap, 'modifier.extern'>;
-			readonly functionModifiers: V.Read<RustMap, 'modifier.extern'> | 'async' | 'const' | 'default' | 'unsafe';
 			readonly name:
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
@@ -10644,7 +10635,6 @@ export interface RustMap extends V.GrammarMap {
 		readonly 'declaration.method.signature.public.internal': {
 			readonly body: V.Read<RustMap, 'statement.block'>;
 			readonly extern: V.Read<RustMap, 'modifier.extern'>;
-			readonly functionModifiers: V.Read<RustMap, 'modifier.extern'> | 'async' | 'const' | 'default' | 'unsafe';
 			readonly name:
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
@@ -10760,7 +10750,6 @@ export interface RustMap extends V.GrammarMap {
 		readonly 'declaration.method.signature.public.parent': {
 			readonly body: V.Read<RustMap, 'statement.block'>;
 			readonly extern: V.Read<RustMap, 'modifier.extern'>;
-			readonly functionModifiers: V.Read<RustMap, 'modifier.extern'> | 'async' | 'const' | 'default' | 'unsafe';
 			readonly name:
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
@@ -10876,7 +10865,6 @@ export interface RustMap extends V.GrammarMap {
 		readonly 'declaration.method.signature.public.restricted': {
 			readonly body: V.Read<RustMap, 'statement.block'>;
 			readonly extern: V.Read<RustMap, 'modifier.extern'>;
-			readonly functionModifiers: V.Read<RustMap, 'modifier.extern'> | 'async' | 'const' | 'default' | 'unsafe';
 			readonly name:
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>

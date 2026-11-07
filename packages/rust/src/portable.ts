@@ -7262,7 +7262,6 @@ const table: PortableTable = {
 			{ path: 'pattern.range', within: [], test: [] }
 		],
 		[TSKindId.RawStringLiteral]: [
-			{ path: 'literal.string.raw', within: [], test: [] },
 			{
 				path: 'literal.string.bytes.raw',
 				within: [],
@@ -7272,7 +7271,8 @@ const table: PortableTable = {
 				path: 'literal.string.c.raw',
 				within: [],
 				test: [{ up: 0, via: [], plan: { op: 'match', pattern: '^cr', slots: { '333': 0 } } }]
-			}
+			},
+			{ path: 'literal.string.raw', within: [], test: [] }
 		],
 		[TSKindId.RawStringLiteralContent]: [{ path: 'literal.string.text', within: [], test: [] }],
 		[TSKindId.ReceiverParameterDeclaration]: [
@@ -7506,7 +7506,6 @@ const table: PortableTable = {
 				within: [],
 				test: [{ up: 0, via: [], plan: { op: 'eq', text: '"', slots: { '332': 0 } } }]
 			},
-			{ path: 'literal.string', within: [], test: [] },
 			{
 				path: 'literal.string.bytes',
 				within: [],
@@ -7516,7 +7515,8 @@ const table: PortableTable = {
 				path: 'literal.string.c',
 				within: [],
 				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'c"', slots: { '332': 0 } } }]
-			}
+			},
+			{ path: 'literal.string', within: [], test: [] }
 		],
 		[TSKindId.StructExpression]: [{ path: 'expression.collection.struct', within: [], test: [] }],
 		[TSKindId.StructItem]: [{ path: 'declaration.struct', within: [], test: [] }],
@@ -8490,6 +8490,12 @@ export const queryFlags: QueryFlags = Object.freeze({
 		unsafe: { op: 'child', slots: { '208': 1 }, of: { op: 'eq', text: 'unsafe', slots: { '210': 0 } } },
 		default: { op: 'child', slots: { '208': 1 }, of: { op: 'eq', text: 'default', slots: { '210': 0 } } }
 	},
+	[TSKindId.FunctionSignatureItem]: {
+		async: { op: 'child', slots: { '209': 1 }, of: { op: 'eq', text: 'async', slots: { '210': 0 } } },
+		const: { op: 'child', slots: { '209': 1 }, of: { op: 'eq', text: 'const', slots: { '210': 0 } } },
+		unsafe: { op: 'child', slots: { '209': 1 }, of: { op: 'eq', text: 'unsafe', slots: { '210': 0 } } },
+		default: { op: 'child', slots: { '209': 1 }, of: { op: 'eq', text: 'default', slots: { '210': 0 } } }
+	},
 	[TSKindId.FunctionType]: {
 		unsafe: {
 			op: 'child',
@@ -8518,6 +8524,10 @@ export const queryFlags: QueryFlags = Object.freeze({
 	[TSKindId.ReferenceType]: { exclusive: { op: 'is', types: [57], slots: { '252': 1 } } },
 	[TSKindId.SelfParameter]: { mutable: { op: 'is', types: [57], slots: { '231': 2 } } },
 	[TSKindId.SignatureMethodDeclaration]: {
+		async: { op: 'child', slots: { '483': 1 }, of: { op: 'eq', text: 'async', slots: { '210': 0 } } },
+		const: { op: 'child', slots: { '483': 1 }, of: { op: 'eq', text: 'const', slots: { '210': 0 } } },
+		unsafe: { op: 'child', slots: { '483': 1 }, of: { op: 'eq', text: 'unsafe', slots: { '210': 0 } } },
+		default: { op: 'child', slots: { '483': 1 }, of: { op: 'eq', text: 'default', slots: { '210': 0 } } },
 		static: { op: 'child', slots: { '483': 4 }, of: { op: 'not', of: { op: 'is', types: [441], slots: { '230': 0 } } } }
 	},
 	[TSKindId.StaticItem]: {
@@ -8540,13 +8550,13 @@ export const rows: PortableRows = Object.freeze({ table, querySlots, flags: quer
 export const querySlotFlags: QuerySlotFlags = Object.freeze({
 	176: {
 		statements: {
-			async: { types: [], kinds: [208] },
+			async: { types: [], kinds: [208, 209] },
 			byReference: { types: [], kinds: [206] },
-			const: { types: [], kinds: [208] },
-			default: { types: [], kinds: [208] },
+			const: { types: [], kinds: [208, 209] },
+			default: { types: [], kinds: [208, 209] },
 			mutable: { types: [], kinds: [206, 223] },
 			static: { types: [206], kinds: [] },
-			unsafe: { types: [], kinds: [208, 214, 377, 378, 395, 396] }
+			unsafe: { types: [], kinds: [208, 209, 214, 377, 378, 395, 396] }
 		}
 	},
 	179: { content: { move: { types: [], kinds: [310, 311] } } },
@@ -8558,13 +8568,13 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 	},
 	195: {
 		declarations: {
-			async: { types: [], kinds: [208] },
+			async: { types: [], kinds: [208, 209] },
 			byReference: { types: [], kinds: [206] },
-			const: { types: [], kinds: [208] },
-			default: { types: [], kinds: [208] },
+			const: { types: [], kinds: [208, 209] },
+			default: { types: [], kinds: [208, 209] },
 			mutable: { types: [], kinds: [206, 223] },
 			static: { types: [206], kinds: [] },
-			unsafe: { types: [], kinds: [208, 214, 377, 378, 395, 396] }
+			unsafe: { types: [], kinds: [208, 209, 214, 377, 378, 395, 396] }
 		}
 	},
 	200: {
@@ -9120,13 +9130,13 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 	},
 	313: {
 		statements: {
-			async: { types: [], kinds: [208] },
+			async: { types: [], kinds: [208, 209] },
 			byReference: { types: [], kinds: [206] },
-			const: { types: [], kinds: [208] },
-			default: { types: [], kinds: [208] },
+			const: { types: [], kinds: [208, 209] },
+			default: { types: [], kinds: [208, 209] },
 			mutable: { types: [], kinds: [206, 223] },
 			static: { types: [206], kinds: [] },
-			unsafe: { types: [], kinds: [208, 214, 377, 378, 395, 396] }
+			unsafe: { types: [], kinds: [208, 209, 214, 377, 378, 395, 396] }
 		},
 		trailingExpression: {
 			async: { types: [], kinds: [369, 370] },
@@ -9411,24 +9421,24 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 	},
 	435: {
 		declarations: {
-			async: { types: [], kinds: [480] },
+			async: { types: [], kinds: [480, 483] },
 			byReference: { types: [], kinds: [206] },
-			const: { types: [], kinds: [480] },
-			default: { types: [], kinds: [480] },
+			const: { types: [], kinds: [480, 483] },
+			default: { types: [], kinds: [480, 483] },
 			mutable: { types: [], kinds: [206, 223] },
 			static: { types: [206], kinds: [480, 483] },
-			unsafe: { types: [], kinds: [214, 377, 378, 395, 396, 480] }
+			unsafe: { types: [], kinds: [214, 377, 378, 395, 396, 480, 483] }
 		}
 	},
 	436: {
 		declarations: {
-			async: { types: [], kinds: [480] },
+			async: { types: [], kinds: [209, 480] },
 			byReference: { types: [], kinds: [206] },
-			const: { types: [], kinds: [480] },
-			default: { types: [], kinds: [480] },
+			const: { types: [], kinds: [209, 480] },
+			default: { types: [], kinds: [209, 480] },
 			mutable: { types: [], kinds: [206, 223] },
 			static: { types: [206], kinds: [480] },
-			unsafe: { types: [], kinds: [214, 377, 378, 395, 396, 480] }
+			unsafe: { types: [], kinds: [209, 214, 377, 378, 395, 396, 480] }
 		}
 	},
 	437: {
@@ -9511,6 +9521,9 @@ declare module './types.js' {
 	interface FunctionItem {
 		readonly __flags__?: 'async' | 'const' | 'unsafe' | 'default';
 	}
+	interface FunctionSignatureItem {
+		readonly __flags__?: 'async' | 'const' | 'unsafe' | 'default';
+	}
 	interface FunctionType {
 		readonly __flags__?: 'unsafe';
 	}
@@ -9557,7 +9570,7 @@ declare module './types.js' {
 		readonly __flags__?: 'mutable';
 	}
 	interface SignatureMethodDeclaration {
-		readonly __flags__?: 'static';
+		readonly __flags__?: 'async' | 'const' | 'unsafe' | 'default' | 'static';
 	}
 	interface StaticItem {
 		readonly __flags__?: 'mutable' | 'byReference' | 'static';

@@ -17,24 +17,6 @@ export namespace Declaration {
 	export interface Property<G extends GrammarMap, K extends Under<'declaration.property'> = 'declaration.property'> {
 		readonly type?: Slot<G, K, 'type', V.Identifier.Any<G> | V.Type.Any<G>>;
 	}
-	export namespace Property {
-		export namespace Signature {
-			export namespace Abstract {
-				export interface Getter<G extends GrammarMap, K extends Under<'declaration.property.signature.abstract.getter'> = 'declaration.property.signature.abstract.getter'> {
-					readonly returnType?: Slot<
-						G,
-						K,
-						'returnType',
-						| V.Identifier.Any<G>
-						| V.Type.Any<G>
-					>;
-				}
-			}
-			export interface Getter<G extends GrammarMap, K extends Under<'declaration.property.signature.getter'> = 'declaration.property.signature.getter'> {
-				readonly returnType?: Slot<G, K, 'returnType', V.Identifier.Any<G> | V.Type.Any<G>>;
-			}
-		}
-	}
 	export namespace Variable {
 		export interface Pattern<G extends GrammarMap, K extends Under<'declaration.variable.pattern'> = 'declaration.variable.pattern'> {
 			readonly type?: Slot<G, K, 'type', V.Identifier.Any<G> | V.Type.Any<G>>;

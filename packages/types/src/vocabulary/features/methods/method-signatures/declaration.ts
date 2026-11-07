@@ -6,8 +6,6 @@ export namespace Declaration {
 		export interface Signature<G extends GrammarMap, K extends Under<'declaration.method.signature'> = 'declaration.method.signature'> extends SubKindOf<V.Declaration.Method<G, K>, 'async' | 'override' | 'returnType' | 'typeParameters'> {
 			// claimed by rt
 			readonly $path: K;
-			readonly functionModifiers?: Slot<G, K, 'functionModifiers', V.Modifier.Extern<G> | string>[];
-			// r only
 			readonly name: Slot<
 				G,
 				K,

@@ -5488,20 +5488,6 @@
       "vocab": "declaration.method",
       "read": [
         {
-          "vocab": "declaration.method",
-          "toplevel": true,
-          "within": [],
-          "pins": [],
-          "test": []
-        },
-        {
-          "vocab": "declaration.method",
-          "toplevel": true,
-          "within": [],
-          "pins": [],
-          "test": []
-        },
-        {
           "vocab": "declaration.constructor",
           "toplevel": true,
           "within": [],
@@ -5545,6 +5531,20 @@
               "stem"
             ]
           }
+        },
+        {
+          "vocab": "declaration.method",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        },
+        {
+          "vocab": "declaration.method",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
         }
       ],
       "members": [

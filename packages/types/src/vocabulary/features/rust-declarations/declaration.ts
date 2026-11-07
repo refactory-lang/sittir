@@ -2,12 +2,6 @@ import type { GrammarMap, Slot } from '../../map.ts';
 import type { Flag, Under } from '../../utils.ts';
 import type * as V from '../../index.ts';
 export namespace Declaration {
-	export namespace Function {
-		export interface Signature<G extends GrammarMap, K extends Under<'declaration.function.signature'> = 'declaration.function.signature'> {
-			readonly functionModifiers?: Slot<G, K, 'functionModifiers', V.Modifier.Extern<G> | string>[];
-			// r only
-		}
-	}
 	export interface Parameter<G extends GrammarMap, K extends Under<'declaration.parameter'> = 'declaration.parameter'> {
 		readonly mutable?: Flag;
 		// r only
