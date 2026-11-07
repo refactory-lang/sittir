@@ -77,16 +77,16 @@ describe('bindingsStaleness', () => {
 		expect(bindingsStaleness('g', undefined, missingScm, paths.vocabulary)).toBeUndefined();
 	});
 
-	it('names the regeneration command when bindings.scm exists and no hash is committed', () => {
+	it('names the regeneration command for the grammar when bindings.scm exists and no hash is committed', () => {
 		const message = bindingsStaleness('g', undefined, paths.scm, paths.vocabulary);
 		expect(message).toContain('no grammar.bindings.ts carries its grammar bindings');
-		expect(message).toContain(REGENERATE_BINDINGS_COMMAND);
+		expect(message).toContain(`${REGENERATE_BINDINGS_COMMAND} --grammar g`);
 	});
 
-	it('names the regeneration command when the committed hash is wrong', () => {
+	it('names the regeneration command for the grammar when the committed hash is wrong, so an unstable grammar regenerates too', () => {
 		const message = bindingsStaleness('g', 'stale', paths.scm, paths.vocabulary);
 		expect(message).toContain('is stale against bindings.scm and the vocabulary');
-		expect(message).toContain(REGENERATE_BINDINGS_COMMAND);
+		expect(message).toContain(`${REGENERATE_BINDINGS_COMMAND} --grammar g`);
 	});
 
 	it('reports nothing when the committed hash matches the current sources', () => {
