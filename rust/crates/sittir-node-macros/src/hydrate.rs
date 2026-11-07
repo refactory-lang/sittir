@@ -3,7 +3,12 @@
 //! routes each child by the type's own router (`__route`), the one its typed
 //! read routes by, and writes each slot's cell from its stamps: a struct's
 //! record its slots fill, a text leaf held whole, a choice its variant's
-//! value, an enum kind's member a unit. Every `HydrateNode` sits inside
+//! value, an enum kind's member a unit. A struct's walk meets each child once:
+//! it reads the child (`Child::at`), routes it, and walks into it there and
+//! then, handing it over in `ReadCtx::at`, so the child's own walk asks the
+//! tree for none of its ids, row or span again. A refusal anywhere below
+//! breaks the walk out of its children's loop, and the walk steps back to its
+//! own node before passing the refusal up. Every `HydrateNode` sits inside
 //! `::sittir_core::records_codec!`, beside the read it mirrors.
 
 use crate::attrs::{KindAttrs, SlotAttrs};
@@ -39,12 +44,13 @@ fn struct_impl(ident: &Ident, leaf: bool, body: &TokenStream) -> TokenStream {
                 records: &mut ::sittir_core::arena::Hydration<'_>,
                 inline: ::core::option::Option<::sittir_core::arena::Embed>,
             ) -> ::core::result::Result<::sittir_core::arena::Hydrated, ::sittir_core::arena::HydrateError> {
+                let __at = ctx.current(cursor);
                 let __node = cursor.node();
-                if !<Self as __rt::ReadNode>::admits(::sittir_core::read::grammar_id(&__node), __rt::display_id(&__node)) {
-                    return ::core::result::Result::Err(__rt::ReadError::Unadmitted { kind: ::sittir_core::read::grammar_id(&__node), index: __rt::index_of(cursor) }.into());
+                if !<Self as __rt::ReadNode>::admits(__at.grammar, __at.display) {
+                    return ::core::result::Result::Err(__rt::ReadError::Unadmitted { kind: __at.grammar, index: __at.index }.into());
                 }
-                let index = __rt::index_of(cursor);
-                let __held = ::sittir_core::arena::Hydrated::Node { kind: __stored_kind(&__node), row: index, span: ::sittir_core::types::Span::of(&__node), leaf: #leaf };
+                let index = __at.index;
+                let __held = ::sittir_core::arena::Hydrated::Node { kind: __stored_kind(&__node), row: index, span: ::sittir_core::types::Span { start: __at.start, end: __at.end }, leaf: #leaf };
                 #body
             }
         }
@@ -58,7 +64,7 @@ fn record_start(words: u32) -> TokenStream {
         if records.walk(depth, inline) == ::sittir_core::arena::Walk::Skip {
             return ::core::result::Result::Ok(__held);
         }
-        let __row = ::sittir_core::arena::hydrated_row(cursor, ctx);
+        let __row = ::sittir_core::arena::hydrated_row(&__at, ctx);
         let __draft = records.draft(__stored_kind(&__node), #words, inline)?;
     }
 }
@@ -117,7 +123,11 @@ fn routed(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn::Result
         let word = slot.cell.word.ok_or_else(|| syn::Error::new_spanned(field.ident, format!("`{}` is a record slot without its record cell (`word = …`)", field.ident)))?;
         if let Some(bit) = slot.cell.bit {
             starts.push(quote!(let mut #acc = false;));
-            takes.push(quote!(__rt::Route::Slot { slot: #id, .. } => <bool as __rt::ReadSlot>::take(&mut #acc, cursor, ctx, __rt::Depth::ONE, #site)?,));
+            takes.push(quote! {
+                __rt::Route::Slot { slot: #id, .. } => if let ::core::result::Result::Err(refusal) = <bool as __rt::ReadSlot>::take(&mut #acc, cursor, ctx, __rt::Depth::ONE, #site) {
+                    break 'walk ::core::result::Result::Err(::sittir_core::arena::HydrateError::from(refusal));
+                },
+            });
             finishes.push(quote!(records.flag(__draft, #word, #bit, #acc)?;));
             continue;
         }
@@ -127,7 +137,11 @@ fn routed(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn::Result
             starts.push(quote!(const _: () = assert!(#shape.forms & ::sittir_core::record::form::INLINE == 0, #message);));
         }
         starts.push(quote!(let mut #acc = <#ty as ::sittir_core::arena::HydrateSlot>::held();));
-        takes.push(quote!(__rt::Route::Slot { slot: #id, .. } => <#ty as ::sittir_core::arena::HydrateSlot>::take_held(&mut #acc, cursor, ctx, depth, #site, records, #shape, __draft)?,));
+        takes.push(quote! {
+            __rt::Route::Slot { slot: #id, .. } => if let ::core::result::Result::Err(refusal) = <#ty as ::sittir_core::arena::HydrateSlot>::take_held(&mut #acc, cursor, ctx, depth, #site, records, #shape, __draft) {
+                break 'walk ::core::result::Result::Err(refusal);
+            },
+        });
         separators.push(quote!(__rt::Route::Separator { slot: #id, tagged } => <#ty as ::sittir_core::arena::HydrateSlot>::separator_held(&mut #acc, tagged),));
         finishes.push(quote!(<#ty as ::sittir_core::arena::HydrateSlot>::finish_held(#acc, #site, #shape, __draft, records)?;));
     }
@@ -144,32 +158,45 @@ fn routed(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn::Result
     } else {
         quote!(::core::option::Option::None)
     };
+    let (collect, keep) = if flank.is_some() {
+        (
+            quote!(let (mut children, mut routes) = (::std::vec::Vec::new(), ::std::vec::Vec::new());),
+            quote! {
+                children.push(__child);
+                routes.push(__route);
+            },
+        )
+    } else {
+        (quote!(), quote!())
+    };
     let start = record_start(words);
     let end = record_end(&delimiter);
     Ok(quote! {
         #start
         let __starts = ctx.starts();
         let depth = depth.map(|depth| if __starts { depth.at_least(#min_depth) } else { depth });
-        let children = __rt::survey(cursor);
-        let routes = children
-            .iter()
-            .map(__route)
-            .collect::<::core::result::Result<::std::vec::Vec<__rt::Route>, __rt::ReadError>>()?;
         #(#starts)*
+        #collect
         if cursor.goto_first_child() {
-            let mut i = 0usize;
-            loop {
-                match routes[i] {
+            let __walked: ::core::result::Result<(), ::sittir_core::arena::HydrateError> = 'walk: loop {
+                let __child = __rt::Child::at(cursor);
+                let __route = match __route(&__child) {
+                    ::core::result::Result::Ok(route) => route,
+                    ::core::result::Result::Err(refusal) => break 'walk ::core::result::Result::Err(::sittir_core::arena::HydrateError::from(refusal)),
+                };
+                ctx.at = ::core::option::Option::Some(__child);
+                match __route {
                     #(#takes)*
                     #(#separators)*
                     _ => {}
                 }
-                i += 1;
+                #keep
                 if !cursor.goto_next_sibling() {
-                    break;
+                    break 'walk ::core::result::Result::Ok(());
                 }
-            }
+            };
             cursor.goto_parent();
+            __walked?;
         }
         #(#finishes)*
         #end
@@ -241,13 +268,23 @@ fn envelope(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn::Resu
     let (hidden, restore) = if wraps_hidden {
         (
             quote! {
-                let own = __rt::index_of(cursor);
-                let wrapped = __rt::survey(cursor).into_iter().find(|child| !child.trivia).ok_or(
-                    __rt::ReadError::Unadmitted { kind: ::sittir_core::read::grammar_id(&__node), index: own },
-                )?;
-                __rt::goto(cursor, wrapped.index);
+                let __unwrapped = __rt::ReadError::Unadmitted { kind: __at.grammar, index: __at.index };
+                if !cursor.goto_first_child() {
+                    return ::core::result::Result::Err(__unwrapped.into());
+                }
+                loop {
+                    let __child = __rt::Child::at(cursor);
+                    if !__child.trivia {
+                        ctx.at = ::core::option::Option::Some(__child);
+                        break;
+                    }
+                    if !cursor.goto_next_sibling() {
+                        cursor.goto_parent();
+                        return ::core::result::Result::Err(__unwrapped.into());
+                    }
+                }
             },
-            quote!(__rt::goto(cursor, own);),
+            quote!(cursor.goto_parent();),
         )
     } else {
         (quote!(), quote!())
@@ -334,8 +371,8 @@ pub fn choice(ident: &Ident, variants: &[WireVariant<'_>], codec_only: bool) -> 
                     records: &mut ::sittir_core::arena::Hydration<'_>,
                     inline: ::core::option::Option<::sittir_core::arena::Embed>,
                 ) -> ::core::result::Result<::sittir_core::arena::Hydrated, ::sittir_core::arena::HydrateError> {
-                    let node = cursor.node();
-                    let (grammar, display) = (::sittir_core::read::grammar_id(&node), __rt::display_id(&node));
+                    let __at = ctx.current(cursor);
+                    let (grammar, display) = (__at.grammar, __at.display);
                     match __variant(grammar, display).and_then(|i| __HYDRATES.get(i as usize)) {
                         ::core::option::Option::Some(hydrate) => hydrate(cursor, ctx, depth, records, inline),
                         ::core::option::Option::None => ::core::result::Result::Err(__rt::ReadError::Unadmitted { kind: grammar, index: __rt::index_of(cursor) }.into()),

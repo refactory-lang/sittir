@@ -178,6 +178,10 @@ pub struct ReadCtx<'s> {
     pub units_only: bool,
     /// Whether the next node read is where a read starts (`ReadCtx::starts`).
     pub(crate) start: bool,
+    /// The child a hydration walk last met among its holder's children: the
+    /// walk of that child takes its ids, row and span from here rather than
+    /// asking the tree again (`ReadCtx::current`).
+    pub at: Option<Child>,
 }
 
 impl std::fmt::Debug for ReadCtx<'_> {
@@ -326,7 +330,7 @@ pub enum Origin {
 
 impl<'s> ReadCtx<'s> {
     pub fn new(source: &'s str, tree_id: crate::types::TreeId, shows: fn(KindId) -> bool) -> Self {
-        Self { source, tree_id, shows, relaxes: relaxes_nothing, snapshot: None, sides: None, changed: None, inline_units: false, inline_items: false, units_only: false, start: true }
+        Self { source, tree_id, shows, relaxes: relaxes_nothing, snapshot: None, sides: None, changed: None, inline_units: false, inline_items: false, units_only: false, start: true, at: None }
     }
 
     /// This context, reading a relaxed keyword as the word rule it displays.
@@ -382,6 +386,16 @@ impl<'s> ReadCtx<'s> {
     /// Marks the next node read as where a read starts (`starts`).
     pub fn begin_read(&mut self) {
         self.start = true;
+    }
+
+    /// The child the cursor is on: the one its holder's walk met (`at`) when
+    /// that is the cursor's node, else read from the cursor (`Child::at`).
+    #[must_use]
+    pub fn current(&self, cursor: &TreeCursor<'_>) -> Child {
+        match self.at {
+            Some(at) if at.index == index_of(cursor) => at,
+            _ => Child::at(cursor),
+        }
     }
 
     /// The depth a list kind read at `depth` hands its item slot. On a read
