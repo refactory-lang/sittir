@@ -19,6 +19,10 @@ pub struct KindAttrs {
     /// On a struct: the display ids its kind is also shown as, which its
     /// `$type` field holds when the node shows one of them.
     pub displays: Vec<Path>,
+    /// On a list: the envelope kinds whose records are its own, which its
+    /// header is stamped with when its node shows one of them. Its view
+    /// accepts such a record, but a choice does not dispatch it there.
+    pub shown_as: Vec<Path>,
     pub wraps_hidden: bool,
     /// On an envelope: its content is a list kind, so reading the content pays
     /// the level a slot hop pays and an exhausted hop stores a coordinate.
@@ -217,6 +221,7 @@ pub fn kind_attrs(attrs: &[Attribute]) -> syn::Result<KindAttrs> {
                 "layout" => out.layout = token_groups(meta.value()?)?,
                 "folded" => out.folded = paths(meta.value()?)?,
                 "displays" => out.displays = paths(meta.value()?)?,
+                "shown_as" => out.shown_as = paths(meta.value()?)?,
                 "wraps_hidden" => out.wraps_hidden = true,
                 "content_list" => out.content_list = true,
                 "text" => out.text = Some(if meta.input.peek(Token![=]) { Some(meta.value()?.parse()?) } else { None }),

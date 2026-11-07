@@ -118,22 +118,59 @@ pub fn structure(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn:
     let sink = bind(!writes.is_empty(), quote!(__sink));
     let cells = bind(!writes.is_empty(), quote!(__words));
     let side = bind(!settings.is_empty(), quote!(__side));
-    Ok(writer(quote! {
-            ::sittir_core::arena::write_record(
-                __sink,
-                #kind,
-                #words,
-                #layout_of,
-                |key: &str| match key {
-                    #(#slot_words)*
-                    _ => ::core::option::Option::None,
-                },
-                |#sink, #cells, #side| {
-                    #(#writes)*
-                    #(#settings)*
-                    ::core::result::Result::Ok(())
-                },
-            )
+    let shown = &attrs.shown_as;
+    let shown_fn = if shown.is_empty() {
+        TokenStream::new()
+    } else {
+        quote! {
+            /// Writes this record under the envelope kind `shown`, with `layout`
+            /// in place of its own when given: the record an envelope over this
+            /// list is, since the envelope has none of its own.
+            pub fn write_cell_shown(
+                &self,
+                __sink: &mut ::sittir_core::arena::RecordSink<'_, #trivia>,
+                shown: ::sittir_core::types::KindId,
+                layout: ::core::option::Option<&::sittir_core::layout::NodeLayout<#trivia>>,
+            ) -> ::core::result::Result<::sittir_core::arena::CellWord, ::sittir_core::arena::ArenaError> {
+                if ![#(#shown),*].contains(&shown) {
+                    return ::core::result::Result::Err(::sittir_core::arena::ArenaError::Unwritable("a list written under a kind it is not shown as"));
+                }
+                self.__write_as(__sink, shown, layout.or(#layout_of))
+            }
+        }
+    };
+    Ok(gated(&quote! {
+        impl #ident {
+            #[allow(unused_variables, reason = "a record with no cells to write reads neither its sink nor its words")]
+            fn __write_as(
+                &self,
+                __sink: &mut ::sittir_core::arena::RecordSink<'_, #trivia>,
+                __kind: ::sittir_core::types::KindId,
+                __layout: ::core::option::Option<&::sittir_core::layout::NodeLayout<#trivia>>,
+            ) -> ::core::result::Result<::sittir_core::arena::CellWord, ::sittir_core::arena::ArenaError> {
+                ::sittir_core::arena::write_record(
+                    __sink,
+                    __kind,
+                    #words,
+                    __layout,
+                    |key: &str| match key {
+                        #(#slot_words)*
+                        _ => ::core::option::Option::None,
+                    },
+                    |#sink, #cells, #side| {
+                        #(#writes)*
+                        #(#settings)*
+                        ::core::result::Result::Ok(())
+                    },
+                )
+            }
+            #shown_fn
+        }
+        impl ::sittir_core::arena::WriteCell<#trivia> for #ident {
+            fn write_cell(&self, __sink: &mut ::sittir_core::arena::RecordSink<'_, #trivia>) -> ::core::result::Result<::sittir_core::arena::CellWord, ::sittir_core::arena::ArenaError> {
+                self.__write_as(__sink, #kind, #layout_of)
+            }
+        }
     }))
 }
 
@@ -233,14 +270,16 @@ mod tests {
             }
         })
         .expect("expands");
-        assert!(has(&out, "::sittir_core::records_codec! { impl ::sittir_core::arena::WriteCell<<Option<Box<NodeLayout>> as ::sittir_core::arena::LayoutField>::Trivia> for BlockNode"));
+        assert!(has(&out, "impl ::sittir_core::arena::WriteCell<<Option<Box<NodeLayout>> as ::sittir_core::arena::LayoutField>::Trivia> for BlockNode"));
         assert!(has(&out, "__words[2usize] |= u32::from(self.r#async) << 3u32;"));
         assert!(has(&out, r#"__words[3usize] = ::sittir_core::arena::write_slot(__sink, &self.label, "_label")?.0;"#));
         assert!(has(&out, r#"__words[4usize] = ::sittir_core::arena::write_list(__sink, self.statements.iter(), "_statements")?.0;"#));
         assert!(has(&out, "__side.delimiter = self.delimiter;"));
         assert!(has(&out, "__side.slot_mut(6u32).space_after = ::core::option::Option::Some(space);"));
         assert!(has(&out, r#""_label" => ::core::option::Option::Some(3u32), "_statements" => ::core::option::Option::Some(6u32),"#));
-        assert!(has(&out, "::sittir_core::arena::write_record(__sink, __KIND, 5u32,"));
+        assert!(has(&out, "::sittir_core::arena::write_record(__sink, __kind, 5u32, __layout,"));
+        assert!(has(&out, "self.__write_as(__sink, __KIND,"));
+        assert!(!has(&out, "write_cell_shown"));
     }
 
     #[test]

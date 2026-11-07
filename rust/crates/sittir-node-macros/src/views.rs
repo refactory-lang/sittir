@@ -230,7 +230,9 @@ pub fn structure(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn:
     };
     let trivia = record_trivia(ident, fields)?;
     let displays = &attrs.displays;
+    let shown_as = &attrs.shown_as;
     let claims = quote!((kind == #kind #(|| kind == #displays)*));
+    let accepts = quote!((kind == #kind #(|| kind == #displays)* #(|| kind == #shown_as)*));
     let text_leaf = attrs.text.is_some();
     let mut parts = Vec::new();
     for field in fields {
@@ -256,7 +258,7 @@ pub fn structure(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn:
             quote!(#common #(#members)*),
             quote! {
                 match cell {
-                    ::sittir_core::arena::Cell::ParsedLeaf { kind, span, row } if #claims => {
+                    ::sittir_core::arena::Cell::ParsedLeaf { kind, span, row } if #accepts => {
                         let place = ::sittir_core::arena::leaf_place(ctx, row, site)?;
                         ::core::result::Result::Ok(Self {
                             __layout: ::sittir_core::arena::RecordLayout::new(ctx, place, site, ::sittir_core::options::Edges::default(), ::sittir_core::slot::ChangedEdges::default(), ::core::option::Option::None),
@@ -264,7 +266,7 @@ pub fn structure(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn:
                             #(#inits)*
                         })
                     }
-                    ::sittir_core::arena::Cell::BuiltLeaf { kind, text, changed } if #claims => {
+                    ::sittir_core::arena::Cell::BuiltLeaf { kind, text, changed } if #accepts => {
                         let place = ::sittir_core::arena::built_leaf_place(site)?;
                         ::core::result::Result::Ok(Self {
                             __layout: ::sittir_core::arena::RecordLayout::new(ctx, place, site, ::sittir_core::options::Edges::default(), changed, ::core::option::Option::None),
@@ -272,7 +274,7 @@ pub fn structure(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn:
                             #(#inits)*
                         })
                     }
-                    ::sittir_core::arena::Cell::LinkedLeaf { kind, at: record, tree, row, end, span, changed } if #claims => {
+                    ::sittir_core::arena::Cell::LinkedLeaf { kind, at: record, tree, row, end, span, changed } if #accepts => {
                         let leaf = ::sittir_core::arena::Sides { tree, index: row, end, span };
                         let place = ::sittir_core::arena::linked_leaf_place(ctx, record, leaf, site)?;
                         ::core::result::Result::Ok(Self {
@@ -292,7 +294,7 @@ pub fn structure(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn:
             quote!(#common #words_member #(#members)*),
             quote! {
                 let (ctx, at, held, kind) = match cell {
-                    ::sittir_core::arena::Cell::Child { kind, at, link, changed } if #claims => (
+                    ::sittir_core::arena::Cell::Child { kind, at, link, changed } if #accepts => (
                         match link {
                             ::core::option::Option::Some(tree) => ctx.linked(tree)?,
                             ::core::option::Option::None => ctx,
@@ -332,7 +334,7 @@ pub fn structure(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn:
         }
         impl ::sittir_core::arena::RecordCells for #ident {
             fn shape(kind: ::sittir_core::types::KindId) -> ::core::option::Option<::sittir_core::arena::RecordShape> {
-                #claims.then_some(::sittir_core::arena::RecordShape { words: #words, built_words: #built_words, cells: &[#(#cells),*] })
+                #accepts.then_some(::sittir_core::arena::RecordShape { words: #words, built_words: #built_words, cells: &[#(#cells),*] })
             }
         }
         impl<'a> ::sittir_core::arena::RecordView<'a, #trivia> for #view<'a> {
@@ -596,7 +598,7 @@ mod tests {
         assert!(has(&out, &format!("::sittir_core::arena::Cell::Child {{ kind, at, link, changed }} if {claims} =>")));
         assert!(has(&out, "__layout: layout, __words: words, __at: at, kind: kind,"));
         assert!(has(&out, "fn kind(&self) -> KindId { self.kind }"));
-        assert!(has(&out, "::sittir_core::arena::write_record(__sink, self.kind, 3u32,"));
+        assert!(has(&out, "self.__write_as(__sink, self.kind,"));
     }
 
     #[test]
