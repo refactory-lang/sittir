@@ -230,9 +230,10 @@ impl<'t> TreeNodes<'t> {
         }
         let tree = self.tree;
         let cursor = self.cursor.get_or_insert_with(|| tree.walk());
-        let (climbed, from_root) = crate::read::goto_from_noting_top(cursor, NodeIndex::ROOT, index);
-        self.work.cursor_climbs(climbed);
-        if from_root && index != NodeIndex::ROOT {
+        let moved = crate::read::goto_from_noting_top(cursor, NodeIndex::ROOT, index);
+        self.work.cursor_climbs(moved.climbed);
+        self.work.sibling_steps(moved.stepped);
+        if moved.top && index != NodeIndex::ROOT {
             cursor.goto_parent();
             if crate::read::offset_of(cursor) != 0 {
                 self.work.root_descents(1);

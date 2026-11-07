@@ -709,42 +709,72 @@ pub fn goto(cursor: &mut TreeCursor<'_>, index: NodeIndex) -> u32 {
 
 /// Moves a cursor created at the node at descendant `from` to the node at
 /// `index`, which lies in that node's subtree: each is numbered from the
-/// node the cursor was created at. From where the cursor is, the move steps
-/// to the next sibling while the node lies after the one it stands on,
-/// climbs a level when no sibling follows or the node lies before it, and
-/// descends from the first node holding `index`, so it costs the path
-/// between the two nodes, not the path from the root. Answers the levels it
-/// climbed: over a run of moves, a cursor descends as many levels as it
-/// climbs, plus the depth it ends at.
+/// node the cursor was created at. From where the cursor is, the move climbs
+/// a level when the node lies before the one it stands on or no sibling
+/// follows; otherwise it steps to the next sibling, and when that doesn't
+/// hold the node either, it finds the lowest node holding it on a copy of
+/// the cursor and steps along that node's children from the one on its
+/// path, so it never steps across the children of a node that doesn't hold
+/// the target. It descends from the first node holding `index`, so it costs
+/// the path between the two nodes, not the path from the root. Answers the
+/// levels it climbed: over a run of moves, a cursor descends as many levels
+/// as it climbs, plus the depth it ends at.
 pub fn goto_from(cursor: &mut TreeCursor<'_>, from: NodeIndex, index: NodeIndex) -> u32 {
-    goto_from_noting_top(cursor, from, index).0
+    goto_from_noting_top(cursor, from, index).climbed
 }
 
-/// `goto_from`, answering too whether the move descends from the node the
-/// cursor was created at. The one call of
+/// What a cursor's move did before it descended (`goto_from_noting_top`).
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct Moved {
+    /// The levels it climbed.
+    pub climbed: u32,
+    /// The siblings it stepped across.
+    pub stepped: u32,
+    /// Whether it descends from the node the cursor was created at.
+    pub top: bool,
+}
+
+/// `goto_from`, answering too the siblings it stepped across and whether it
+/// descends from the node the cursor was created at. The one call of
 /// `TreeCursor::goto_descendant`; it never asks the cursor its depth, which
 /// counts the levels above it.
 #[allow(clippy::disallowed_methods, reason = "wraps `TreeCursor::goto_descendant`, which clippy.toml disallows outside this module")]
-pub fn goto_from_noting_top(cursor: &mut TreeCursor<'_>, from: NodeIndex, index: NodeIndex) -> (u32, bool) {
+pub fn goto_from_noting_top(cursor: &mut TreeCursor<'_>, from: NodeIndex, index: NodeIndex) -> Moved {
     let goal = index.index() - from.index();
-    let mut climbed = 0;
-    loop {
+    let holds = |cursor: &TreeCursor<'_>| {
         let at = offset_of(cursor) as usize;
-        let end = at + descendant_count(&cursor.node()) as usize;
-        if (at..end).contains(&goal) {
-            break;
-        }
-        if goal >= end && cursor.goto_next_sibling() {
+        (at..at + descendant_count(&cursor.node()) as usize).contains(&goal)
+    };
+    let mut moved = Moved { climbed: 0, stepped: 0, top: false };
+    while !holds(cursor) {
+        if goal < offset_of(cursor) as usize || !cursor.goto_next_sibling() {
+            if !cursor.goto_parent() {
+                break;
+            }
+            moved.climbed += 1;
             continue;
         }
-        if !cursor.goto_parent() {
+        moved.stepped += 1;
+        if holds(cursor) {
             break;
         }
-        climbed += 1;
+        let mut probe = cursor.clone();
+        let mut levels = 0_u32;
+        while !holds(&probe) && probe.goto_parent() {
+            levels += 1;
+        }
+        for _ in 1..levels {
+            cursor.goto_parent();
+        }
+        moved.climbed += levels.saturating_sub(1);
+        while !holds(cursor) && cursor.goto_next_sibling() {
+            moved.stepped += 1;
+        }
+        break;
     }
-    let top = offset_of(cursor) == 0;
+    moved.top = offset_of(cursor) == 0;
     cursor.goto_descendant(goal);
-    (climbed, top)
+    moved
 }
 
 /// Whether a node's children tile its span `start..end`: none at all, or

@@ -47,6 +47,12 @@ export interface LayoutWork {
    */
   cursorClimbs: number
   /**
+   * The siblings the lookup cursors of the tree's calls stepped across to
+   * reach the nodes they looked up (`read::goto_from`): with
+   * `cursor_climbs`, the cost of their moves before they descend.
+   */
+  siblingSteps: number
+  /**
    * The moves trivia placement made down from the node its cursor was
    * created at, the tree's root or the node of a reader's cursor it moves,
    * to a node below that node's children (`nodes::TreeNodes::root_descents`):

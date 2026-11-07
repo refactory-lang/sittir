@@ -94,6 +94,7 @@ export interface LayoutWork {
 	readonly siblingItems: number;
 	readonly regionFallbacks: number;
 	readonly cursorClimbs: number;
+	readonly siblingSteps: number;
 	readonly rootDescents: number;
 	readonly depthNodes: number;
 	readonly recordNodes: number;

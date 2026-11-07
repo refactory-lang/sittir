@@ -182,9 +182,11 @@ fn sweep(nodes: &mut dyn Nodes<'_>, from: NodeIndex) -> u32 {
 
 /// The root descents a preorder sweep over `name`'s longest fixture makes,
 /// those of a sweep of the region of the root's largest child, and those of
-/// two reads deep in different subtrees of the root, which each descend
-/// from it.
-fn root_descents<G: EngineGrammar + Copy>(name: &str, grammar: G, options: fn() -> ResolvedOptions) -> (u32, u32, u32) {
+/// two reads deep in different subtrees of the root, the second's subtree
+/// before the first's and then after it: the first read descends from the
+/// root, the second too when its subtree comes before, while one after it
+/// steps along the root's children.
+fn root_descents<G: EngineGrammar + Copy>(name: &str, grammar: G, options: fn() -> ResolvedOptions) -> (u32, u32, u32, u32) {
     let source = longest_fixture(name);
     let parsed = parsed(grammar, options(), &source);
     let tree = parsed.tree();
@@ -196,13 +198,19 @@ fn root_descents<G: EngineGrammar + Copy>(name: &str, grammar: G, options: fn() 
     let mut region = TreeNodes::new(tree, &source, &regional).region(top.index..top.index + top.count);
     assert_eq!(sweep(&mut region, top.index), top.count, "{name}: the region's sweep visits every node of it");
     let grandchildren: Vec<NodeIndex> = walked(tree, NodeIndex::ROOT).1.iter().filter_map(|top| walked(tree, top.index).1.first().map(|kid| kid.index)).collect();
-    let apart = LayoutWorkCounter::default();
-    let mut nodes = TreeNodes::new(tree, &source, &apart);
-    if let (Some(&first), Some(&last)) = (grandchildren.first(), grandchildren.last()) {
-        nodes.kid(first);
-        nodes.kid(last);
-    }
-    (descents(&swept), descents(&regional), if grandchildren.len() > 1 { descents(&apart) } else { 2 })
+    let apart = |reads: [NodeIndex; 2]| {
+        let work = LayoutWorkCounter::default();
+        let mut nodes = TreeNodes::new(tree, &source, &work);
+        for at in reads {
+            nodes.kid(at);
+        }
+        descents(&work)
+    };
+    let (back, ahead) = match (grandchildren.first(), grandchildren.last()) {
+        (Some(&first), Some(&last)) if grandchildren.len() > 1 => (apart([last, first]), apart([first, last])),
+        _ => (2, 1),
+    };
+    (descents(&swept), descents(&regional), back, ahead)
 }
 
 /// The lines under the root of `source` that begin inside a token, as its
@@ -221,10 +229,53 @@ fn line_starts_inside_a_multiline_token_hold() {
     assert_eq!(line_starts(sittir_python::PythonGrammar, sittir_python::render::options::defaults(), "é = 1\ns = '''a\nb\n'''\n"), [16, 18]);
 }
 
+/// The deepest node of `tree` spanning the bytes `start..end`.
+fn spanning(tree: &tree_sitter::Tree, start: u32, end: u32) -> NodeIndex {
+    (0..descendant_count(&tree.root_node()))
+        .rev()
+        .map(NodeIndex::new)
+        .find(|&at| {
+            let (node, _) = walked(tree, at);
+            node.start == start && node.end == end
+        })
+        .expect("a node spanning the bytes")
+}
+
+/// The siblings stepped across and the levels climbed by a `TreeNodes` move
+/// from the first call in a function of `calls` calls to the call in the
+/// function after it.
+fn out_of_a_wide_body(calls: usize) -> (u32, u32) {
+    let source = format!("function f() {{\n{}}}\nfunction g() {{\n  b();\n}}\n", "  a();\n".repeat(calls));
+    let parsed = parsed(sittir_typescript::TypeScriptGrammar, sittir_typescript::render::options::defaults(), &source);
+    let tree = parsed.tree();
+    let at = |text: &str| byte_of(&source, text);
+    let (from, to) = (spanning(tree, at("a();"), at("a();") + 1), spanning(tree, at("b();"), at("b();") + 1));
+    let work = LayoutWorkCounter::default();
+    let mut nodes = TreeNodes::new(tree, &source, &work);
+    nodes.kid(from);
+    let before = work.counts(0);
+    nodes.kid(to);
+    let after = work.counts(0);
+    (after.sibling_steps - before.sibling_steps, after.cursor_climbs - before.cursor_climbs)
+}
+
+/// The byte where `text` first occurs in `source`.
+fn byte_of(source: &str, text: &str) -> u32 {
+    u32::try_from(source.find(text).expect("the text in the source")).expect("a source under 4 GiB")
+}
+
+#[test]
+fn a_move_out_of_a_wide_body_steps_across_none_of_its_children() {
+    let moves = [out_of_a_wide_body(100), out_of_a_wide_body(1000)];
+    eprintln!("siblings stepped and levels climbed out of 100 and 1000 calls: {moves:?}");
+    assert_eq!(moves[0], moves[1]);
+}
+
 #[test]
 fn tree_nodes_never_descend_from_the_root_in_a_sweep() {
     let descents = each_grammar!(root_descents);
-    eprintln!("root descents (sweep, region sweep, apart): {descents:?}");
-    assert!(descents.iter().all(|(_, (swept, region, _))| *swept == 0 && *region == 0), "{descents:?}");
-    assert!(descents.iter().all(|(_, (_, _, apart))| *apart == 2), "two reads deep in different subtrees each descend from the root: {descents:?}");
+    eprintln!("root descents (sweep, region sweep, apart back, apart ahead): {descents:?}");
+    assert!(descents.iter().all(|(_, (swept, region, _, _))| *swept == 0 && *region == 0), "{descents:?}");
+    assert!(descents.iter().all(|(_, (_, _, back, _))| *back == 2), "a read deep in an earlier subtree of the root descends from it: {descents:?}");
+    assert!(descents.iter().all(|(_, (_, _, _, ahead))| *ahead == 1), "a read deep in a later subtree steps along the root's children: {descents:?}");
 }
