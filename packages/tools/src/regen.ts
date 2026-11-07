@@ -157,7 +157,10 @@ export async function regenerateGrammars(grammars: readonly string[], cwd: strin
 	const before = new Map<string, RunInputs>();
 	for (const grammar of [...stale, ...reextract]) before.set(grammar, await runInputs(grammar, cwd));
 	for (const grammar of stale) clearRegenRecord(cwd, grammar);
-	const generated = await inPool(stale, availableParallelism(), (grammar) => runPrefixed(grammar, cwd, ['--no-build-native', '--no-workspace-check'], verbose));
+	const nodeApiLevel = (await load('grammars')).workspaceNodeApiLevel();
+	const generated = await inPool(stale, availableParallelism(), (grammar) =>
+		runPrefixed(grammar, cwd, ['--no-build-native', '--no-workspace-check', '--node-api-level', String(nodeApiLevel)], verbose)
+	);
 	const failed = generated.find((status) => status !== 0);
 	if (failed !== undefined) return failed;
 	for (const [i, grammar] of stale.entries()) {

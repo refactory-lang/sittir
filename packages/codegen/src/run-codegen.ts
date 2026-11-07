@@ -50,6 +50,7 @@ export interface CodegenOptions {
 	workspaceCheck?: boolean;
 	noEmitDiff?: boolean;
 	allowDiagnostics?: string[];
+	nodeApiLevel?: number;
 }
 
 export async function formatSource(path: string, content: string): Promise<string> {
@@ -233,8 +234,13 @@ async function withInternalCodegenRun<T>(fn: () => Promise<T>): Promise<T> {
 	}
 }
 
+function runNodeApiLevel({ all, nodeApiLevel }: CodegenOptions): number | undefined {
+	return all === true ? (nodeApiLevel ?? workspaceNodeApiLevel()) : undefined;
+}
+
 export async function runCodegen(opts: CodegenOptions): Promise<NodeMap> {
-	return withInternalCodegenRun(() => runCodegenInternal(opts));
+	const nodeApiLevel = runNodeApiLevel(opts);
+	return withInternalCodegenRun(() => runCodegenInternal(opts, nodeApiLevel));
 }
 
 function refuseUnlessAllowed(diagnostics: readonly GrammarDiagnostic[], allowDiagnostics: ReadonlySet<string>): void {
@@ -244,7 +250,7 @@ function refuseUnlessAllowed(diagnostics: readonly GrammarDiagnostic[], allowDia
 	if (blocked.length > 0) throw new GrammarDiagnosticError(blocked, diagnostics);
 }
 
-async function runCodegenInternal(opts: CodegenOptions, read: SourceFingerprint = sourceFingerprint(opts.grammar)): Promise<NodeMap> {
+async function runCodegenInternal(opts: CodegenOptions, nodeApiLevel: number | undefined, read: SourceFingerprint = sourceFingerprint(opts.grammar)): Promise<NodeMap> {
 	const { grammar, outputDir, all, testsDir, noEmitDiff, buildNative, nativeDebug, workspaceCheck } = opts;
 
 	if (!outputDir) {
@@ -372,12 +378,12 @@ async function runCodegenInternal(opts: CodegenOptions, read: SourceFingerprint 
 
 	await writeFile(join(dirname(outDir), 'vitest.config.ts'), result.config);
 
-	const shouldEmitRustRender = all && isGrammar(grammar);
+	const shouldEmitRustRender = nodeApiLevel !== undefined && isGrammar(grammar);
 
 	if (shouldEmitRustRender) {
 		const crateDir = nativeCrateDir(grammar);
 		const scaffoldCrate = !existsSync(join(crateDir, 'Cargo.toml'));
-		for (const file of nativeCrateFiles(grammar, workspaceNodeApiLevel(), parserNameOf(grammarPackage(grammar)))) await writeFile(join(crateDir, file.path), file.contents);
+		for (const file of nativeCrateFiles(grammar, nodeApiLevel, parserNameOf(grammarPackage(grammar)))) await writeFile(join(crateDir, file.path), file.contents);
 		if (scaffoldCrate) {
 			console.log(`  → scaffolded native crate ${nativeCrateRelDir(grammar)}`);
 			execSync('pnpm install --prefer-offline', { stdio: 'inherit', cwd: process.cwd() });
@@ -486,10 +492,11 @@ export async function runNativeOnly(opts: CodegenOptions): Promise<void> {
 }
 
 export async function runFullRegen(opts: CodegenOptions): Promise<NodeMap> {
-	return withInternalCodegenRun(() => runFullRegenInternal(opts));
+	const nodeApiLevel = runNodeApiLevel(opts);
+	return withInternalCodegenRun(() => runFullRegenInternal(opts, nodeApiLevel));
 }
 
-async function runFullRegenInternal(opts: CodegenOptions): Promise<NodeMap> {
+async function runFullRegenInternal(opts: CodegenOptions, nodeApiLevel: number | undefined): Promise<NodeMap> {
 	const { grammar, skipTsChain, transpile, tsGenerate } = opts;
 	const read = sourceFingerprint(grammar);
 
@@ -502,5 +509,5 @@ async function runFullRegenInternal(opts: CodegenOptions): Promise<NodeMap> {
 		await compileParsers(grammar, pkg);
 	}
 
-	return runCodegenInternal(opts, read);
+	return runCodegenInternal(opts, nodeApiLevel, read);
 }
