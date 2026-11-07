@@ -25,6 +25,7 @@ import { listViewOwners, wrappedItemLists } from '../factories.ts';
 import { isTextLeaf, slotKindNames } from '../shared.ts';
 import {
 	AbstractAssembledCompound,
+	AssembledAlias,
 	AssembledLexedPattern,
 	AssembledList,
 	AssembledSupertype,
@@ -727,6 +728,7 @@ describe('node read facts', () => {
 		expect(() => nodeArgs(list, ownId(list), over, list.slots)).not.toThrow();
 		expect(nodeArgs(list, ownId(list), over, list.slots)).toMatch(/, shown_as = \[kind::_TYPE_IDENTIFIER, kind::_FIELD_IDENTIFIER, kind::_SHORTHAND_FIELD_IDENTIFIER\]/);
 		expect(nodeArgs(list, ownId(list), ctx, list.slots)).not.toMatch(/shown_as/);
+		if (!(envelope instanceof AssembledAlias)) throw new Error('the envelope is an alias');
 		expect(envelopeListOf(envelope, over.nodeMap)).toBe(list);
 		expect(envelopeListOf(envelope, ctx.nodeMap)).toBeUndefined();
 	});
