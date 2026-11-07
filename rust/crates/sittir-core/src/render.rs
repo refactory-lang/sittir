@@ -122,6 +122,14 @@ pub struct EdgeLevel {
 pub trait SourceTable {
     fn source_of(&self, tree_id: crate::types::TreeId) -> Option<&Arc<str>>;
 
+    /// Whether the source of `tree_id` spells every line break `\n`, holding
+    /// no `\r`, as its parse found: a slice of it enters the writer as it is.
+    /// A table that does not know says no, and the writer respells the slice.
+    fn breaks_spelled_lf(&self, tree_id: crate::types::TreeId) -> bool {
+        let _ = tree_id;
+        false
+    }
+
     /// The kind of the node a coordinate names, when the table still holds
     /// its tree. A table of bare sources cannot answer and says so.
     fn kind_of(&self, coord: &crate::slot::NodeCoordinate) -> Option<KindId> {
