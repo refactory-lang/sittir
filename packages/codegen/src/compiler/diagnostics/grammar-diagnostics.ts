@@ -6,6 +6,7 @@ import { assemble, AssembleCtx, type AssembledNodeMap } from '../assemble.ts';
 import { collapseRenamedRules, link } from '../link.ts';
 import { normalizeGrammar, NormalizeCtx } from '../normalize.ts';
 import { DiagnosticSink, EmitHaltedError } from '../../types/diagnostics.ts';
+import { emitShapeFailure, type EmitShapeFailure } from './emit-diagnostics.ts';
 import { buildInlinableKinds } from '../inline-sets.ts';
 import type { ParseKindCollisionDiagnostic } from '../../types/parsekind-collisions.ts';
 import { isTerminalNode, optionalFlankSlots, type AssembleWarning, type NamingEvent } from '../model/node-map.ts';
@@ -526,9 +527,10 @@ function guardPhase<T>(phase: CompilePhase, grammar: string, run: () => T): T {
 		return run();
 	} catch (error) {
 		if (error instanceof CompilePhaseFailed || !(error instanceof Error)) throw error;
-		if (error instanceof EmitHaltedError) {
+		const named = 'failure' in error ? emitShapeFailure(error.failure as EmitShapeFailure) : error;
+		if (named instanceof EmitHaltedError) {
 			throw new CompilePhaseFailed(
-				(error.blocking as readonly GrammarDiagnostic[]).map((record) => (record.grammar === '' ? { ...record, grammar } : record))
+				(named.blocking as readonly GrammarDiagnostic[]).map((record) => (record.grammar === '' ? { ...record, grammar } : record))
 			);
 		}
 		const at = thrownAt(error);
