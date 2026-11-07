@@ -36,6 +36,22 @@ describe('unaliasOverloadedDisplays', () => {
 		expect(run(rules)).toBe(rules);
 	});
 
+	it('keeps a literal aliased onto a display rule whose body is a choice of keywords, which holds it as one more arm', () => {
+		const rules = {
+			program: choice(alias(S('this'), 'modifier'), sym('modifier')),
+			modifier: { type: 'PREC', value: 0, content: choice(S('abstract'), S('async')) } as R
+		};
+		expect(run(rules)).toBe(rules);
+	});
+
+	it('keeps a literal aliased onto a display rule that holds children, for the diagnostics to report', () => {
+		const rules = {
+			program: choice(alias(S('x'), 'tree'), sym('tree')),
+			tree: seq(S('('), S(')'))
+		};
+		expect(run(rules)).toBe(rules);
+	});
+
 	it('renames a hidden nonterminal aliased onto a nonterminal display rule', () => {
 		const rules = {
 			program: seq(sym('tree'), alias(sym('_delim'), 'tree')),

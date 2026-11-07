@@ -10,46 +10,22 @@ use sittir_core::{SlotValue, Node};
 use sittir_rust::render::{field_ids as field, kind_ids as kind};
 use sittir_typescript::render::kind_ids as ts;
 
-/// The trivia type of every node these tests declare: a layout run, the one
-/// trivia the reads here build as a node, carries nothing and renders nothing.
-#[derive(Debug, Clone, PartialEq)]
-struct NoTrivia;
+mod no_trivia;
 
-impl sittir_core::render::Render for NoTrivia {
-    fn render(&self, _: &mut dyn sittir_core::render::RenderSink) -> sittir_core::render::RenderResult {
-        Ok(())
-    }
-}
+use no_trivia::NoTrivia;
 
-impl sittir_core::trivia::TriviaSeam for NoTrivia {}
-
-impl sittir_core::prepare::Prepare for NoTrivia {
-    fn prepare(&mut self, _: &sittir_core::prepare::RenderContext<'_>) -> Result<(), sittir_core::render::RenderError> {
-        Ok(())
-    }
-}
-
-impl sittir_core::trivia::FromTriviaText for NoTrivia {
-    fn from_text(_: sittir_core::trivia::TriviaText) -> Self {
-        NoTrivia
-    }
-
-    fn from_layout(_: sittir_core::trivia::TriviaText) -> Option<Self> {
-        Some(NoTrivia)
-    }
-}
-
-sittir_core::refuse_napi_codec!(NoTrivia);
-sittir_core::grammar_trivia!(NoTrivia; NoTrivia, Ident, Params, Block, Function, FunctionWithoutBody, ParamsWithoutTokenList, OneFunction, File, Inserted, Primitive, Type, Typed, Predefined, IsOrNot, TsIdent, TsNumber, Declarator, DeclarationKind, Terminator, Declaration, BlockTerminator, StatementBlock, Decimal, TypeIdent, NamedType, Named, Param, List, Owner, Name, TypeIdentOfChoice, NamedTypeOfChoice, NamedOfChoice);
+sittir_core::grammar_nodes!(NoTrivia; NoTrivia, Ident, Params, Block, Function, FunctionWithoutBody, ParamsWithoutTokenList, OneFunction, File, Inserted, Primitive, Type, Typed, Predefined, IsOrNot, TsIdent, TsNumber, Declarator, DeclarationKind, Terminator, Declaration, BlockTerminator, StatementBlock, Decimal, TypeIdent, NamedType, Named, Param, List, Owner, Name, TypeIdentOfChoice, NamedTypeOfChoice, NamedOfChoice);
 
 type Layout = Option<Box<sittir_core::layout::NodeLayout<NoTrivia>>>;
 
 #[derive(Debug, Clone, PartialEq, Node)]
-#[node(kind = kind::IDENTIFIER, text)]
+#[node(kind = kind::IDENTIFIER, text, words = 2, built_words = 2)]
 struct Ident {
     #[wire(key = "$_layout")]
+    #[layout]
     layout: Option<Box<sittir_core::layout::NodeLayout<NoTrivia>>>,
     #[wire(key = "$text")]
+    #[text]
     text: String,
 }
 
@@ -57,6 +33,7 @@ struct Ident {
 #[node(kind = kind::PARAMETERS, layout = [kind::LPAREN, kind::RPAREN])]
 struct Params {
     #[wire(key = "$_layout")]
+    #[layout]
     layout: Option<Box<sittir_core::layout::NodeLayout<NoTrivia>>>,
 }
 
@@ -64,7 +41,10 @@ struct Params {
 #[node(kind = kind::BLOCK, layout = [kind::LBRACE, kind::RBRACE])]
 struct Block {
     #[wire(key = "$_layout")]
+    #[layout]
     layout: Option<Box<sittir_core::layout::NodeLayout<NoTrivia>>>,
+    #[height]
+    height: u16,
     #[wire(key = "_statements")]
     #[slot(field = field::STATEMENTS)]
     statements: Vec<SlotValue<Function>>,
@@ -74,7 +54,10 @@ struct Block {
 #[node(kind = kind::FUNCTION_ITEM, layout = [kind::FN_KEYWORD])]
 struct Function {
     #[wire(key = "$_layout")]
+    #[layout]
     layout: Option<Box<sittir_core::layout::NodeLayout<NoTrivia>>>,
+    #[height]
+    height: u16,
     #[wire(key = "_name")]
     #[slot(field = field::NAME)]
     name: SlotValue<Ident>,
@@ -91,7 +74,10 @@ struct Function {
 #[node(kind = kind::FUNCTION_ITEM, layout = [kind::FN_KEYWORD])]
 struct FunctionWithoutBody {
     #[wire(key = "$_layout")]
+    #[layout]
     layout: Option<Box<sittir_core::layout::NodeLayout<NoTrivia>>>,
+    #[height]
+    height: u16,
     #[wire(key = "_name")]
     #[slot(field = field::NAME)]
     name: SlotValue<Ident>,
@@ -104,6 +90,7 @@ struct FunctionWithoutBody {
 #[node(kind = kind::PARAMETERS)]
 struct ParamsWithoutTokenList {
     #[wire(key = "$_layout")]
+    #[layout]
     layout: Option<Box<sittir_core::layout::NodeLayout<NoTrivia>>>,
 }
 
@@ -111,7 +98,10 @@ struct ParamsWithoutTokenList {
 #[node(kind = kind::SOURCE_FILE)]
 struct OneFunction {
     #[wire(key = "$_layout")]
+    #[layout]
     layout: Option<Box<sittir_core::layout::NodeLayout<NoTrivia>>>,
+    #[height]
+    height: u16,
     #[wire(key = "_statement")]
     #[slot(field = field::STATEMENTS)]
     statement: SlotValue<Function>,
@@ -121,7 +111,10 @@ struct OneFunction {
 #[node(kind = kind::SOURCE_FILE)]
 struct File {
     #[wire(key = "$_layout")]
+    #[layout]
     layout: Option<Box<sittir_core::layout::NodeLayout<NoTrivia>>>,
+    #[height]
+    height: u16,
     #[wire(key = "_statements")]
     #[slot(field = field::STATEMENTS)]
     statements: Vec<SlotValue<Function>>,
@@ -132,8 +125,10 @@ struct File {
 #[node(kind = ts::_AUTOMATIC_SEMICOLON, text = ";")]
 struct Inserted {
     #[wire(key = "$_layout")]
+    #[layout]
     layout: Option<Box<sittir_core::layout::NodeLayout<NoTrivia>>>,
     #[wire(key = "$text")]
+    #[text]
     text: String,
 }
 
@@ -143,22 +138,22 @@ fn parse_rust(source: &str) -> tree_sitter::Tree {
 
 /// Read the tree's root into `T`, as tree 7, seating no sides.
 fn read<T: ReadNode>(tree: &tree_sitter::Tree, source: &str, depth: Depth) -> Result<T, ReadError> {
-    T::read(&mut tree.walk(), &ReadCtx::new(source, sittir_core::types::TreeId(7), T::shows), depth)
+    T::read(&mut tree.walk(), &mut ReadCtx::new(source, sittir_core::types::TreeId(7), T::shows), depth)
 }
 
-/// A tree's trivia table as a read's side lookup, each entry as a parsed
-/// tree gives it: an extra or an `ERROR` as its coordinate, a layout run as
-/// `NoTrivia`.
+/// A tree's trivia, every layout owner placed, as a read's side lookup, each
+/// entry as a parsed tree gives it: an extra or an `ERROR` as its
+/// coordinate, a layout run as `NoTrivia`.
 struct Table<'t> {
     tree: &'t tree_sitter::Tree,
     source: &'t str,
-    trivia: sittir_core::trivia_table::TriviaTable,
+    trivia: sittir_parity_tests::PlacedTrivia,
 }
 
 impl<'t> Table<'t> {
     /// The table of a rust `tree`.
     fn of(tree: &'t tree_sitter::Tree, source: &'t str) -> Self {
-        Table { tree, source, trivia: sittir_core::trivia_table::TriviaTable::assign(tree, source, kind::SURFACE_KINDS, 4) }
+        Table { tree, source, trivia: sittir_parity_tests::PlacedTrivia::of(tree, source, kind::SURFACE_KINDS, 4) }
     }
 }
 
@@ -192,7 +187,7 @@ impl SideLookup for Table<'_> {
 fn read_seated<T: ReadNode>(source: &str, kind: KindId, nth: usize, depth: Depth) -> Result<T, ReadError> {
     let tree = parse(&sittir_rust::language(), source);
     let table = Table::of(&tree, source);
-    let read = T::read(&mut find(&tree, kind, nth), &ReadCtx::new(source, sittir_core::types::TreeId(7), T::shows).with_sides(&table), depth);
+    let read = T::read(&mut find(&tree, kind, nth), &mut ReadCtx::new(source, sittir_core::types::TreeId(7), T::shows).with_sides(&table), depth);
     read
 }
 
@@ -220,7 +215,7 @@ fn read_nth<T: ReadNode>(
     nth: usize,
     depth: Depth,
 ) -> Result<T, ReadError> {
-    T::read(&mut find(tree, kind, nth), &ReadCtx::new(source, sittir_core::types::TreeId(7), T::shows), depth)
+    T::read(&mut find(tree, kind, nth), &mut ReadCtx::new(source, sittir_core::types::TreeId(7), T::shows), depth)
 }
 
 /// What the read placed on a node beside its own coordinate, which every read
@@ -247,7 +242,7 @@ fn trivia_spans(layout: &Layout, side: &str) -> Vec<(u32, u32)> {
     entries
         .unwrap_or_default()
         .iter()
-        .filter_map(|e| e.value.coord().map(|c| (c.span.start, c.span.end)))
+        .filter_map(|e| e.value().and_then(SlotValue::coord).map(|c| (c.span.start, c.span.end)))
         .collect()
 }
 
@@ -382,7 +377,7 @@ fn an_error_inside_a_node_is_trivia() {
     let file: File = read_seated(source, kind::SOURCE_FILE, 0, Depth::All).unwrap();
     let block = function(&file, 0).body.node().unwrap();
     let inner = block.layout.as_ref().unwrap().trivia.as_ref().unwrap().inner.as_ref().unwrap();
-    assert_eq!(inner[0].value.coord().unwrap().kind, Some(kind::ERROR));
+    assert_eq!(inner[0].value().and_then(SlotValue::coord).unwrap().kind, Some(kind::ERROR));
 }
 
 #[test]
@@ -415,6 +410,15 @@ enum Primitive {
     Bool,
 }
 
+impl sittir_core::view::KindOf for Primitive {
+    fn kind_in(&self, kinds: &[KindId]) -> bool {
+        match self {
+            Primitive::U8 => kinds.contains(&kind::U8_KEYWORD),
+            Primitive::Bool => kinds.contains(&kind::BOOL_KEYWORD),
+        }
+    }
+}
+
 #[derive(Debug, Clone, PartialEq, Node)]
 #[node(choice)]
 enum Type {
@@ -428,7 +432,10 @@ enum Type {
 #[node(kind = kind::FUNCTION_ITEM, layout = [kind::FN_KEYWORD, kind::DASH_GT])]
 struct Typed {
     #[wire(key = "$_layout")]
+    #[layout]
     layout: Option<Box<sittir_core::layout::NodeLayout<NoTrivia>>>,
+    #[height]
+    height: u16,
     #[wire(key = "_name")]
     #[slot(field = field::NAME)]
     name: SlotValue<Ident>,
@@ -469,6 +476,15 @@ enum Predefined {
     UniqueSymbol,
 }
 
+impl sittir_core::view::KindOf for Predefined {
+    fn kind_in(&self, kinds: &[KindId]) -> bool {
+        match self {
+            Predefined::Symbol => kinds.contains(&ts::SYMBOL_KEYWORD),
+            Predefined::UniqueSymbol => kinds.contains(&ts::UNIQUE),
+        }
+    }
+}
+
 #[test]
 fn a_member_spelled_by_two_tokens_reads_as_the_id_both_display() {
     for (source, member) in [("declare const x: unique symbol;", Predefined::UniqueSymbol), ("declare const x: symbol;", Predefined::Symbol)] {
@@ -496,6 +512,15 @@ enum IsOrNot {
     Is,
     #[kind(py::NOT_KEYWORD)]
     Not,
+}
+
+impl sittir_core::view::KindOf for IsOrNot {
+    fn kind_in(&self, kinds: &[KindId]) -> bool {
+        match self {
+            IsOrNot::Is => kinds.contains(&py::IS_KEYWORD),
+            IsOrNot::Not => kinds.contains(&py::NOT_KEYWORD),
+        }
+    }
 }
 
 #[test]
@@ -527,8 +552,10 @@ fn a_seated_read_keeps_a_unit_stored_child_past_its_depth_a_coordinate_whose_hol
 #[node(kind = ts::IDENTIFIER, text)]
 struct TsIdent {
     #[wire(key = "$_layout")]
+    #[layout]
     layout: Option<Box<sittir_core::layout::NodeLayout<NoTrivia>>>,
     #[wire(key = "$text")]
+    #[text]
     text: String,
 }
 
@@ -536,8 +563,10 @@ struct TsIdent {
 #[node(kind = ts::NUMBER_DECIMAL, text)]
 struct TsNumber {
     #[wire(key = "$_layout")]
+    #[layout]
     layout: Option<Box<sittir_core::layout::NodeLayout<NoTrivia>>>,
     #[wire(key = "$text")]
+    #[text]
     text: String,
 }
 
@@ -545,7 +574,10 @@ struct TsNumber {
 #[node(kind = ts::VARIABLE_DECLARATOR_PLAIN, layout = [ts::EQ])]
 struct Declarator {
     #[wire(key = "$_layout")]
+    #[layout]
     layout: Option<Box<sittir_core::layout::NodeLayout<NoTrivia>>>,
+    #[height]
+    height: u16,
     #[wire(key = "_name")]
     #[slot(field = ts_field::NAME)]
     name: SlotValue<TsIdent>,
@@ -576,7 +608,10 @@ enum Terminator {
 #[node(kind = ts::LEXICAL_DECLARATION)]
 struct Declaration {
     #[wire(key = "$_layout")]
+    #[layout]
     layout: Option<Box<sittir_core::layout::NodeLayout<NoTrivia>>>,
+    #[height]
+    height: u16,
     #[wire(key = "_kind")]
     #[slot(field = ts_field::KIND)]
     kind: SlotValue<DeclarationKind>,
@@ -614,7 +649,10 @@ enum BlockTerminator {
 #[node(kind = ts::STATEMENT_BLOCK, layout = [ts::LBRACE, ts::RBRACE])]
 struct StatementBlock {
     #[wire(key = "$_layout")]
+    #[layout]
     layout: Option<Box<sittir_core::layout::NodeLayout<NoTrivia>>>,
+    #[height]
+    height: u16,
     #[wire(key = "_terminator")]
     #[slot(field = ts_field::TERMINATOR)]
     terminator: Option<SlotValue<BlockTerminator>>,
@@ -638,8 +676,10 @@ fn an_absent_slot_with_a_blank_arm_reads_as_its_blank() {
 )]
 struct Decimal {
     #[wire(key = "$_layout")]
+    #[layout]
     layout: Option<Box<sittir_core::layout::NodeLayout<NoTrivia>>>,
     #[wire(key = "$verbatim")]
+    #[slot]
     verbatim: Option<String>,
     #[wire(key = "_content")]
     #[slot(capture = "content")]
@@ -650,11 +690,15 @@ struct Decimal {
 }
 
 #[derive(Debug, Clone, PartialEq, Node)]
-#[node(kind = kind::_TYPE_IDENTIFIER, display, content = content)]
+#[node(kind = kind::_TYPE_IDENTIFIER, display, content = content, words = 5, built_words = 3)]
 struct TypeIdent {
     #[wire(key = "$_layout")]
+    #[layout]
     layout: Option<Box<sittir_core::layout::NodeLayout<NoTrivia>>>,
+    #[height]
+    height: u16,
     #[wire(key = "_content")]
+    #[slot(word = 2, width = 3, forms = 1, built = 2)]
     content: SlotValue<Ident>,
 }
 
@@ -671,7 +715,10 @@ enum NamedType {
 #[node(kind = kind::FUNCTION_ITEM, layout = [kind::FN_KEYWORD, kind::DASH_GT])]
 struct Named {
     #[wire(key = "$_layout")]
+    #[layout]
     layout: Option<Box<sittir_core::layout::NodeLayout<NoTrivia>>>,
+    #[height]
+    height: u16,
     #[wire(key = "_name")]
     #[slot(field = field::NAME)]
     name: SlotValue<Ident>,
@@ -692,6 +739,9 @@ fn a_token_interior_reads_its_slots_from_its_text() {
     let tree = parse_rust(source);
     let decimal: Decimal = read_nth(&tree, source, kind::INTEGER_LITERAL_DECIMAL, 0, Depth::ONE).unwrap();
     assert_eq!((decimal.content.as_str(), decimal.suffix.as_deref(), decimal.verbatim.as_deref()), ("1_000", Some("u8"), None));
+    let span = |start, end| Some(sittir_core::types::Span { start, end });
+    let captures = decimal.layout.as_deref().map(|layout| layout.captures.clone());
+    assert_eq!(captures, Some(vec![span(14, 19), span(19, 21)]), "each capture's span in the source, at its field's stamped index");
 }
 
 /// The layout an envelope's content keeps: the coordinate the envelope holds, which names the content's node, and nothing else.
@@ -717,6 +767,7 @@ fn an_envelope_holds_its_content_and_the_trivia_its_content_was_given() {
 #[node(kind = kind::_ATTRIBUTED_PARAMETER)]
 struct Param {
     #[wire(key = "$_layout")]
+    #[layout]
     layout: Option<Box<sittir_core::layout::NodeLayout<NoTrivia>>>,
 }
 
@@ -724,7 +775,10 @@ struct Param {
 #[node(kind = kind::PARAMETERS_ELEMENTS, item = item)]
 struct List {
     #[wire(key = "$_layout")]
+    #[layout]
     layout: Option<Box<sittir_core::layout::NodeLayout<NoTrivia>>>,
+    #[height]
+    height: u16,
     #[wire(key = "_item")]
     #[slot(field = field::ITEM, separator = kind::COMMA)]
     item: Vec<SlotValue<Param>>,
@@ -737,7 +791,10 @@ struct List {
 #[node(kind = kind::PARAMETERS, layout = [kind::LPAREN, kind::RPAREN], min_depth = 2)]
 struct Owner {
     #[wire(key = "$_layout")]
+    #[layout]
     layout: Option<Box<sittir_core::layout::NodeLayout<NoTrivia>>>,
+    #[height]
+    height: u16,
     #[wire(key = "_elements")]
     #[slot(field = field::ELEMENTS)]
     elements: Option<SlotValue<List>>,
@@ -763,16 +820,16 @@ fn a_row_read_equals_the_same_node_in_a_whole_read_trivia_included() {
     let source = "// lead\nfn f() { fn g() {} } // trail\n";
     let tree = parse_rust(source);
     let table = Table::of(&tree, source);
-    let ctx = ReadCtx::new(source, sittir_core::types::TreeId(7), <File as ReadNode>::shows).with_sides(&table);
-    let whole: File = File::read(&mut tree.walk(), &ctx, Depth::All).unwrap();
-    let shallow: File = File::read(&mut tree.walk(), &ctx, Depth::ONE).unwrap();
+    let mut ctx = ReadCtx::new(source, sittir_core::types::TreeId(7), <File as ReadNode>::shows).with_sides(&table);
+    let whole: File = File::read(&mut tree.walk(), &mut ctx, Depth::All).unwrap();
+    let shallow: File = File::read(&mut tree.walk(), &mut ctx, Depth::ONE).unwrap();
     let index = shallow.statements[0].coord().unwrap().index;
-    let outer: Function = sittir_core::read::read_at::<Function>(&mut tree.walk(), &ctx, index, Depth::All).unwrap();
+    let outer: Function = sittir_core::read::read_at::<Function>(&mut tree.walk(), &mut ctx, index, Depth::All).unwrap();
     assert_eq!(&outer, function(&whole, 0));
     assert_eq!(trivia_spans(&outer.layout, "leading"), vec![(0, 7)]);
 
     let inner_row = sittir_core::read::index_of(&find(&tree, kind::FUNCTION_ITEM, 1));
-    let inner: Function = sittir_core::read::read_at::<Function>(&mut tree.walk(), &ctx, inner_row, Depth::All).unwrap();
+    let inner: Function = sittir_core::read::read_at::<Function>(&mut tree.walk(), &mut ctx, inner_row, Depth::All).unwrap();
     let body = function(&whole, 0).body.node().unwrap();
     assert_eq!(&inner, body.statements[0].node().unwrap());
 }
@@ -785,11 +842,15 @@ enum Name {
 }
 
 #[derive(Debug, Clone, PartialEq, Node)]
-#[node(kind = kind::_TYPE_IDENTIFIER, display, content = content)]
+#[node(kind = kind::_TYPE_IDENTIFIER, display, content = content, words = 5, built_words = 3)]
 struct TypeIdentOfChoice {
     #[wire(key = "$_layout")]
+    #[layout]
     layout: Option<Box<sittir_core::layout::NodeLayout<NoTrivia>>>,
+    #[height]
+    height: u16,
     #[wire(key = "_content")]
+    #[slot(word = 2, width = 3, forms = 1, built = 2)]
     content: SlotValue<Name>,
 }
 
@@ -804,7 +865,10 @@ enum NamedTypeOfChoice {
 #[node(kind = kind::FUNCTION_ITEM, layout = [kind::FN_KEYWORD, kind::DASH_GT])]
 struct NamedOfChoice {
     #[wire(key = "$_layout")]
+    #[layout]
     layout: Option<Box<sittir_core::layout::NodeLayout<NoTrivia>>>,
+    #[height]
+    height: u16,
     #[wire(key = "_name")]
     #[slot(field = field::NAME)]
     name: SlotValue<Ident>,
@@ -839,8 +903,8 @@ fn a_coordinate_reads_one_level_into_its_generated_node() {
     let source = "fn f() { g(); }\n";
     let tree = parse_rust(source);
     let index = sittir_core::read::index_of(&find(&tree, kind::FUNCTION_ITEM, 0));
-    let ctx = ReadCtx::new(source, sittir_core::types::TreeId(7), <FunctionItemNode as ReadNode>::shows);
-    let read = FunctionItemNode::read_coordinate(&tree, &ctx, index).expect("a generated node reads a coordinate").unwrap();
+    let mut ctx = ReadCtx::new(source, sittir_core::types::TreeId(7), <FunctionItemNode as ReadNode>::shows);
+    let read = FunctionItemNode::read_coordinate(&tree, &mut ctx, index).expect("a generated node reads a coordinate").unwrap();
     let direct = read_nth::<FunctionItemNode>(&tree, source, kind::FUNCTION_ITEM, 0, Depth::ONE).unwrap();
     assert_eq!(read, direct);
 }

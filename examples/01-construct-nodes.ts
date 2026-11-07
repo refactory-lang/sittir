@@ -27,7 +27,7 @@ export function nestedGreetFunction() {
 		),
 		name: strict.build.identifier('greet'),
 		parameters: strict.build.parameters(
-			strict.build.parametersElements(rs.build.parameter({ name: 'name', type: 'String' })),
+			strict.build.parametersElements(strict.build.parameter({ name: strict.build.identifier('name'), type: strict.build.identifier('String') })),
 		),
 		body: strict.build.block(),
 	});

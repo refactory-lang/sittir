@@ -212,6 +212,7 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 						variantChildKinds,
 						parseKindCollisionContext,
 						visibleAliasTargets: normalized.visibleAliasTargets,
+						displayLexemes: normalized.displayLexemes,
 						simplifiedRules: normalized.rules,
 						assembleDiagnostics,
 						aliasTypeId

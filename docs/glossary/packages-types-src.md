@@ -74,7 +74,7 @@ What a parse produces before wrapping: the raw root data and the tree it was rea
 
 ### `packages/types/src/engine-api.ts::EngineDiagnostics`
 
-What an engine exposes for tooling rather than for consumers: the native build's compile profile (`buildProfile`, undefined for a binary that predates it) and `parseAndRead`, the read a parse makes before wrapping. The tree it returns is bound to the engine, so a node wrapped over it stamps that engine, exactly as `parse` does; `parse` is `parseAndRead` plus the wrapper. The single declaration of these members: the native engine's diagnostics extend it with the reads only it has, and the native language engine's members are picked from it.
+Diagnostic access to native build profile and a parsed tree with a lazy read root. Retaining only the tree exports no root data; accessing the root performs its requested-depth read and retains the existing parse-error and identity contract. Public parse still requests and wraps the root. Native tools may explicitly hydrate records through the retained handle instead.
 
 ### `packages/types/src/engine-api.ts::GrammarTypeMap`
 
@@ -86,7 +86,7 @@ A trivia entry as input: one of the grammar's trivia kinds or a string. A string
 
 ### `packages/types/src/core-types.ts::TriviaFlanks`
 
-The in-line adjacency of a trivia item the source fixes in place, as a read finds it: `$before` and `$after`, the source's whitespace on the item's line between it and the tokens beside it, absent where it touches a token or where a line break lies between. An item with either renders verbatim with them and no seam on either side (`TriviaText::verbatim`). Two items carry it: an `ErrorNode`, and a line continuation, whose own line ends inside it so the next line's alignment is its `$after`. A built continuation has neither and takes the spacing the options give its gap. Comments carry neither field.
+The in-line adjacency of a trivia item the source fixes in place, as a read finds it: `$before` and `$after`, the source's whitespace on the item's line between it and the tokens beside it, `''` where it touches a token, and absent where a line break or the file's edge lies between or the item before it carries the run as its `$after` (`trivia_table::Adjacency`, stamped once by the trivia table's assignment). An item with either renders verbatim with them (`TriviaText::verbatim`): on a side it carries, no seam below a whitespace entry's strength is written, a line break included, so only a whitespace entry the side holds, stored or written, replaces the run. Two items carry it: an `ErrorNode`, and a line continuation with whitespace beside it, whose own line ends inside it so the next line's alignment is its `$after`. A built continuation has neither and takes the spacing the options give its gap. Comments carry neither field.
 
 ### `packages/types/src/core-types.ts::ErrorNode`
 
@@ -116,7 +116,7 @@ It carries `fileTypes`, the file types the grammar declares upstream (an empty l
 
 ### `packages/types/src/engine-api.ts::NativeEngineOptions`
 
-The options a language's native engine is created with: the render options under `options`. It is the native boundary's shape only; `createEngine` maps its own `render` option onto `options`.
+The options a language's native engine is created with: the render options under `options`, and the engine's `nodeStorage`. It is the native boundary's shape only; `createEngine` maps its own `render` option onto `options`.
 
 ### `packages/types/src/engine-api.ts::LanguageHooks`
 

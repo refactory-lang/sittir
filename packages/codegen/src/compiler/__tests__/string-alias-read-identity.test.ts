@@ -16,6 +16,17 @@ describe('a named alias over a bare string literal whose display is a terminal r
 		expect(diagnosePredicted(raw).diagnostics.map((d) => d.code)).not.toContain('alias-inline-token');
 	}, 60_000);
 
+	it('over a display that is a node with children is reported, not dropped', async () => {
+		const raw = await evaluateTempGrammar(
+			{
+				extras: '/\\s/',
+				rules: "source: ($) => repeat(choice($.content, $.item)), item: ($) => seq('<', alias('a', $.content), '>'), content: ($) => seq('(', $.word, ')'), word: (_$) => /[a-z]+/"
+			},
+			''
+		);
+		expect(diagnosePredicted(raw).diagnostics.map((d) => d.code)).toContain('display-union-mixed');
+	}, 60_000);
+
 	it("reads as identifier in rust's generic_type, where `union` is aliased to the identifier rule", async () => {
 		const { nodeMap } = await compileGrammar({ package: grammarPackage('rust') });
 		const kinds = nodeMap.nodes.get('generic_type')!.slots.find((slot) => slot.name === 'type')!.values.map((value) => value.node?.kind);

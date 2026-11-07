@@ -408,9 +408,10 @@ export function unaliasOverloadedDisplays<R extends AnyRule>(rules: Record<strin
 	for (const display of [...storagesByDisplay.keys()].sort()) {
 		const members = [...storagesByDisplay.get(display)!.values()];
 		if (Object.hasOwn(rules, display)) {
-			const terminalDisplay = ctx.symbols.isTerminal(display) || terminalContent(rules[display]!);
+			const terminalDisplay = terminalContent(rules[display]!);
 			for (const storage of members) {
 				if (storage.symbol === display || (terminalDisplay && storage.terminal)) continue;
+				if (storage.symbol === undefined && storage.terminal) continue;
 				split({ display, storage });
 			}
 			continue;

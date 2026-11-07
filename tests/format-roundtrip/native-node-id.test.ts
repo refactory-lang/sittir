@@ -95,7 +95,7 @@ for (const grammar of ['rust', 'typescript', 'python'] as const) {
 				// — the argument itself has to be what is refused.
 				engine.parse('');
 
-				expect(() => engine.siblings(testCase.treeId, 0)).toThrow(testCase.expected);
+				expect(() => engine.siblings(testCase.treeId, [0])).toThrow(testCase.expected);
 			});
 		}
 
@@ -117,7 +117,7 @@ for (const grammar of ['rust', 'typescript', 'python'] as const) {
 			// table is the language's, not this engine's, so a low id may name
 			// a tree another engine parsed. Distinct from a malformed argument.
 			const unmintedTreeId = 2 ** 20;
-			expect(() => engine.siblings(unmintedTreeId, 0)).toThrow(/tree 1048576 is not live/);
+			expect(() => engine.siblings(unmintedTreeId, [0])).toThrow(/tree 1048576 is not live/);
 		});
 	});
 }

@@ -1,8 +1,9 @@
 import { findOwnKindEntry } from '../dsl/symbol-table.ts';
+import { emitShapeFailure } from '../compiler/diagnostics/emit-diagnostics.ts';
 import type { AuthoredCompound, FullForm } from '../compiler/model/node-map.ts';
 import type { NodeMap } from '../compiler/types.ts';
 import { builtFromText } from './built-from-text.ts';
-import { hasOptionalElements, isBuilderTextLeaf, isDelimiterToken } from '../compiler/model/node-map.ts';
+import { hasOptionalElements, isBuilderTextLeaf } from '../compiler/model/node-map.ts';
 import { bareInteriorText, interiorSlotGuards, numberInputTest, numberInputType, numberTextArgs, numericInputRefusal, numericLeafKinds, numericLeafShape, numericSlotShape, type NumberShape } from './interior.ts';
 import type { GeneratedIdTables } from '../dsl/symbol-table.ts';
 import {
@@ -28,7 +29,6 @@ import {
 	classifyFactoryShape,
 	expandAndDedupeContentTypes,
 	withEmptyOverload,
-	isIdentifierKey,
 	declaredOverload,
 	refuseUndeclared,
 	refusingParam,
@@ -77,8 +77,6 @@ import {
 	childElementType,
 	kindEnumMemberDiscriminants,
 	keywordArmTextMapExpr,
-	delimiterMembersFor,
-	listHasOptions,
 	separatedListSurface,
 	spellingTypeOf,
 	listOptionKeys,
@@ -160,7 +158,7 @@ function emitNamespaceImports(lines: string[]): void {
 	lines.push(`import { KIND_NAMES } from '../types.js';`);
 	lines.push(DELIMITER_IMPORT);
 	lines.push(`import type { ${[TYPES_IMPORT_ALWAYS, ...TYPES_IMPORT_OPTIONAL].join(', ')} } from '@sittir/types';`);
-	lines.push("import { coerceKindEnumStorage, coerceMixedEnumStorage, configFieldOr, currentHandle, isNodeOfKind, isNodeValue, listStorage, withEmptyForm } from '@sittir/common/utils';");
+	lines.push("import { coerceKindEnumStorage, coerceMixedEnumStorage, configFieldOr, currentHandle, describeValue, isNodeOfKind, isNodeValue, listStorage, withEmptyForm, withOptions } from '@sittir/common/utils';");
 	lines.push('');
 	lines.push('const F = RawBuilders as PlainBuilders<typeof RawBuilders>;');
 	lines.push('');
@@ -300,7 +298,12 @@ function spelledOptionSlots(
 		if (field === undefined) return [];
 		const slot = node.slots.find((candidate) => candidate.fieldName === field);
 		if (slot?.registeredOption === undefined) {
-			throw new Error(`from: '${node.kind}' spells its full form in '${field}', which is not a registered option`);
+			throw emitShapeFailure({
+				code: 'full-form-slot-not-option',
+				ownerKind: node.kind,
+				slotName: field,
+				message: `'${node.kind}' spells its full form in '${field}', which is not a registered option`
+			});
 		}
 		return [[side, slot] as const];
 	});
@@ -316,7 +319,12 @@ function spelledReturnType(
 	spelled: readonly (readonly ['open' | 'close', AssembledNonterminal])[]
 ): string {
 	return spelled.reduce((type, [side, slot]) => {
-		if (side === 'close') throw new Error(`from: a spelled closing delimiter ('${slot.propertyName}') has no typed form`);
+		if (side === 'close')
+			throw emitShapeFailure({
+				code: 'spelled-closing-delimiter',
+				slotName: slot.propertyName,
+				message: `a spelled closing delimiter ('${slot.propertyName}') has no typed form`
+			});
 		const typed = `SpelledAffix<I, ${literalUnion(fullForm.open.texts)}, ${JSON.stringify(slot.optionDefaultArm)}>`;
 		const key = slot.propertyName;
 		return `WithSpelling<${type}, ${JSON.stringify(key)}, O extends { ${key}: infer P } ? P : ${typed}>`;
@@ -405,7 +413,11 @@ function emitBranchFrom(
 	const siblings = fullForm === undefined ? [] : siblingLeads(nodeMap, node);
 	const refusal = fullForm === undefined ? undefined : siblingLeadRefusalType(fullForm, siblings);
 	if (spelled.length > 0 && refusal !== undefined) {
-		throw new Error(`from: '${node.kind}' has both a spelled delimiter and sibling leads; no typed form covers both`);
+		throw emitShapeFailure({
+			code: 'spelled-delimiter-with-sibling-leads',
+			ownerKind: node.kind,
+			message: `'${node.kind}' has both a spelled delimiter and sibling leads; no typed form covers both`
+		});
 	}
 	const spelledType = fullForm === undefined || spelled.length === 0 ? undefined : spelledReturnType(returnType, fullForm, spelled);
 	const bareShape = bareInteriorText(node.kind, node)?.number ?? (soleField === undefined ? undefined : numericSlotShape(soleField));
@@ -432,7 +444,11 @@ function emitBranchFrom(
 			: [seatDeclaration(nodeMap, node.kind, fn, functionTypeOf(config, returnType), { params: `input${opt}: ${inputType}`, returnType, body })];
 	if (spreadTarget !== null) {
 		if (spelledType !== undefined || refusal !== undefined) {
-			throw new Error(`from: '${node.kind}' forwards a list spread but its loose input is spelled or refuses sibling leads; no typed form covers both`);
+			throw emitShapeFailure({
+				code: 'list-spread-with-spelled-input',
+				ownerKind: node.kind,
+				message: `'${node.kind}' forwards a list spread but its loose input is spelled or refuses sibling leads; no typed form covers both`
+			});
 		}
 		const spreadNode = nodeMap.nodes.get(spreadTarget)!;
 		const row = refusingParam('input', `T.${spreadNode.typeName}.LooseArgs`, { rest: true, loose: true });
@@ -515,7 +531,7 @@ function emitBranchFrom(
 				spelled.length === 0
 					? optionsArg
 					: `, _spelled === undefined ? options : { ${spelled.map(([side, slot]) => `${slot.propertyName}: _spelled.${side}`).join(', ')}, ...options }`;
-			const inputExpr = `configFieldOr(input, ${JSON.stringify(soleField.propertyName)}, () => ${bare})`;
+			const inputExpr = `configFieldOr(input, ${JSON.stringify(soleField.propertyName)}, () => ${bare}, ${kindDiscriminantCheck(node.kind, kindEntries, nodeMap)})`;
 			const soleShape = numericSlotShape(soleField);
 			const numeric = soleShape !== undefined;
 			if (numeric) body.push(`  const _value = ${inputExpr};`);
@@ -581,10 +597,8 @@ function emitRestParamFromResolver(
 	kind: string,
 	kindEntries: readonly KindEnumEntry[],
 	nodeMap: NodeMap,
-	storageKey: string,
 	unwrapConfigKey: string | undefined,
-	buildCallExpr: (varExpr: string, isSelfUnwrap: boolean) => string,
-	childrenTypeAnnotation = '',
+	buildCallExpr: (varExpr: string) => string,
 	leadingOptions?: LeadingOptions
 ): string {
 	const typeCheck = kindDiscriminantCheck(kind, kindEntries, nodeMap);
@@ -612,23 +626,15 @@ function emitRestParamFromResolver(
 	const seat = (body: readonly string[]): string =>
 		seatDeclaration(nodeMap, kind, fn, functionTypeOf(refusing, returnType), { params: `...input: ${inputType}`, returnType, body });
 	if (!hasNumericDiscriminant || holdsOwnKind(nodeMap.nodes.get(kind), nodeMap)) {
-		return seat([...admit, ...split, ...unwrap, `  return ${buildCallExpr(freshVar, false)};`]);
+		return seat([...admit, ...split, ...unwrap, `  return ${buildCallExpr(freshVar)};`]);
 	}
-	const storageAccess = isIdentifierKey(storageKey)
-		? `(data as unknown as { ${storageKey}?: unknown }).${storageKey}`
-		: `(data as unknown as Record<string, unknown>)[${JSON.stringify(storageKey)}]`;
+	const sameKind = leadingOptions === undefined ? `${source}[0]` : `withOptions(${source}[0], options)`;
 	return seat([
 		...admit,
 		...split,
-		`  if (${source}.length === 1 && isNodeOfKind(${source}[0], ${typeCheck})) {`,
-		`    const data = ${source}[0];`,
-		`    const stored = ${storageAccess};`,
-		`    const children${childrenTypeAnnotation} = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];`,
-		...(leadingOptions === undefined ? [] : [`    const held = data as unknown as Record<string, unknown>;`, `    const kept = { ${leadingOptions.keys.map((key, i) => `${JSON.stringify(key)}: held[${JSON.stringify(leadingOptions.storageKeys[i])}]`).join(', ')}, ...options };`]),
-		`    return ${buildCallExpr('children', true)};`,
-		`  }`,
+		`  if (${source}.length === 1 && isNodeOfKind(${source}[0], ${typeCheck})) return ${sameKind} as unknown as ${returnType};`,
 		...unwrap,
-		`  return ${buildCallExpr(freshVar, false)};`
+		`  return ${buildCallExpr(freshVar)};`
 	]);
 }
 
@@ -642,14 +648,13 @@ function emitRepeatedChildrenFrom(
 	kindEntries: readonly KindEnumEntry[],
 	nodeMap: NodeMap,
 	intern: KindInterner,
-	storageKey: string,
 	leadingOptions?: LeadingOptions
 ): string {
 	const resolvable = resolvesLooseInput(slot, nodeMap);
-	const call = (spread: string, held: boolean): string =>
+	const call = (spread: string): string =>
 		leadingOptions === undefined
 			? `${factory}(...(${spread} as unknown as Parameters<typeof ${factory}>))`
-			: `(${factory} as (...args: unknown[]) => ${factoryReturnTypeExpr(factory)})(${held ? 'kept' : 'options'}, ...(${spread} as readonly unknown[]))`;
+			: `(${factory} as (...args: unknown[]) => ${factoryReturnTypeExpr(factory)})(options, ...(${spread} as readonly unknown[]))`;
 	return emitRestParamFromResolver(
 		fn,
 		factory,
@@ -658,11 +663,8 @@ function emitRepeatedChildrenFrom(
 		kind,
 		kindEntries,
 		nodeMap,
-		storageKey,
 		slot.propertyName,
-		(varExpr, isSelfUnwrap) =>
-			call(resolvable ? resolveFieldCall(varExpr, slot, true, nodeMap, intern, false, elementType, kindEntries) : varExpr, isSelfUnwrap),
-		'',
+		(varExpr) => call(resolvable ? resolveFieldCall(varExpr, slot, true, nodeMap, intern, false, elementType, kindEntries) : varExpr),
 		leadingOptions
 	);
 }
@@ -677,7 +679,6 @@ function emitSingularChildrenFrom(
 	kind: string,
 	kindEntries: readonly KindEnumEntry[],
 	nodeMap: NodeMap,
-	storageKey: string,
 	inputWiden?: string
 ): string {
 	const typeCheck = kindDiscriminantCheck(kind, kindEntries, nodeMap);
@@ -687,19 +688,12 @@ function emitSingularChildrenFrom(
 			`  return ${factory}(input as Parameters<typeof ${factory}>[0]);`
 		]);
 	}
-	const storageAccess = isIdentifierKey(storageKey)
-		? `(data as unknown as { ${storageKey}?: unknown }).${storageKey}`
-		: `(data as unknown as Record<string, unknown>)[${JSON.stringify(storageKey)}]`;
 	const inputType = `${resolvesLooseInput(slot, nodeMap) ? looseElementType(elementType, slot, nodeMap) : elementType}${inputWiden !== undefined ? ` | ${inputWiden}` : ''} | ${tName}`;
 	return optionalConfigCoercer(nodeMap, kind, fn, inputType, factoryReturnTypeExpr(factory), [
 		...(holdsOwnKind(nodeMap.nodes.get(kind), nodeMap)
 			? []
 			: [
-					`  if (isNodeOfKind(input, ${typeCheck})) {`,
-					`    const data = input;`,
-					`    const child = ${storageAccess};`,
-					`    return ${factory}(child as Parameters<typeof ${factory}>[0]);`,
-					`  }`
+					`  if (isNodeOfKind(input, ${typeCheck})) return input as unknown as ${factoryReturnTypeExpr(factory)};`
 				]),
 		`  return ${factory}(${
 			resolvesLooseInput(slot, nodeMap)
@@ -738,7 +732,6 @@ function emitChildrenFrom(
 			inputWiden = separatedListSurface(inner, nodeMap, kindEntries).elemType;
 		}
 	}
-	const storageKey = facts ? facts.slot.storageKey : '$other';
 	if (facts === null) {
 		return optionalConfigCoercer(nodeMap, node.kind, fn, `${elementType} | ${tName}`, factoryReturnTypeExpr(factory), [
 			`  return ${factory}(input as Parameters<typeof ${factory}>[0]);`
@@ -755,7 +748,6 @@ function emitChildrenFrom(
 			kindEntries,
 			nodeMap,
 			intern,
-			storageKey,
 			node.leadingOptions
 		);
 	}
@@ -769,7 +761,6 @@ function emitChildrenFrom(
 		node.kind,
 		kindEntries,
 		nodeMap,
-		storageKey,
 		inputWiden
 	);
 }
@@ -797,31 +788,14 @@ function emitSeparatedListFrom(
 	const resolvable = slotLiteralValues(elementSlot).length === 0;
 	const resolvedElements = (varExpr: string): string =>
 		resolvable ? resolveFieldCall(varExpr, elementSlot, true, nodeMap, intern, false, elemType, kindEntries) : varExpr;
-	const optionKeys = JSON.stringify(listOptionKeys(surface));
-	const contentStorageKey = node.slots.length > 1 ? '_content' : canonicalSeparatedListField(node).storageKey;
-
-	const hasSeparatorKindOption = node.separatorRule !== undefined;
-	const hasLeadingOption = node.leadingDelimiter === 'optional';
-	const hasTrailingOption = node.trailingDelimiter === 'optional';
-	const hasOptions = listHasOptions(node);
 
 	const elementsType = node.nonEmpty ? `NonEmptyArray<Admit<${elemType}>>` : `Admit<${elemType}>[]`;
 	const spreadElements = (varExpr: string): string => `...(${varExpr} as unknown as ${elementsType})`;
 
-	const buildOptionsPreservingCall = (varExpr: string): string => {
-		const sourceFields = '(data as unknown as { _separator?: number; _delimiter?: Delimiter })';
-		const optionParts: string[] = [];
-		if (hasSeparatorKindOption) optionParts.push(`separator: ${sourceFields}._separator`);
-		if (hasLeadingOption || hasTrailingOption) {
-			const guard = delimiterMembersFor(node)
-				.map((m) => `d === ${m}`)
-				.join(' || ');
-			optionParts.push(
-				`delimiter: (() => { const d = ${sourceFields}._delimiter; return ${guard} ? d : undefined; })()`
-			);
-		}
-		return `${factory}({ ${optionParts.join(', ')} }, ${spreadElements(varExpr)})`;
-	};
+	const listElements = (varExpr: string): string =>
+		`_listElements(${varExpr}, ${wrapperKindExpr}, (els) => ${resolvedElements('els')}, ${JSON.stringify(tagKinds)}${bagKinds === undefined ? '' : `, ${JSON.stringify(bagKinds)}`})`;
+	const leadingOptions: LeadingOptions | undefined =
+		surface.optionsType === undefined ? undefined : { type: surface.optionsType, keys: listOptionKeys(surface) };
 
 	return emitRestParamFromResolver(
 		fn,
@@ -831,13 +805,12 @@ function emitSeparatedListFrom(
 		node.kind,
 		kindEntries,
 		nodeMap,
-		contentStorageKey,
 		undefined,
-		(varExpr, isSelfUnwrap) =>
-			isSelfUnwrap && hasOptions
-				? buildOptionsPreservingCall(varExpr)
-				: `${factory}(${spreadElements(`_listElements(${varExpr}, ${optionKeys}, ${wrapperKindExpr}, (els) => ${resolvedElements('els')}, ${JSON.stringify(tagKinds)}${bagKinds === undefined ? '' : `, ${JSON.stringify(bagKinds)}`})`)})`,
-		': readonly unknown[]'
+		(varExpr) =>
+			leadingOptions === undefined
+				? `${factory}(${spreadElements(listElements(varExpr))})`
+				: `(${factory} as (...args: unknown[]) => ${factoryReturnTypeExpr(factory)})(options, ${spreadElements(listElements(varExpr))})`,
+		leadingOptions
 	);
 }
 
@@ -966,7 +939,11 @@ function defaultArmKindOf(
 	const flagged = field.values.filter((v) => v.default === true && isNodeRef(v));
 	if (flagged.length > 1) {
 		const names = flagged.filter(isNodeRef).map((v) => storageKindOfRef(v.node));
-		throw new Error(`arm.default: ${flagged.length} arms are declared the default (${names.join(', ')}); pick one`);
+		throw emitShapeFailure({
+			code: 'arm-default-conflict',
+			message: `${flagged.length} arms are declared the default (${names.join(', ')}); pick one`,
+			details: { arms: names }
+		});
 	}
 	const first = flagged[0];
 	return first === undefined || !isNodeRef(first) ? undefined : storageKindOfRef(first.node);
@@ -1156,21 +1133,7 @@ function rankTextKinds(checks: readonly TextKindCheck[], kindEntries: readonly K
 	return ranked.sort((a, b) => a.rank - b.rank).map(({ check }) => check);
 }
 
-function delimiterTokenBuilds(nodeMap: NodeMap): string[] {
-	return [...nodeMap.nodes.values()].filter(isDelimiterToken).map((token) => {
-		const facet = (slot: AssembledNonterminal): string => `${JSON.stringify(slot.propertyName)}: bag[${JSON.stringify(slot.propertyName)}]`;
-		const inputs = token.configSlots;
-		const derived = token.slots.filter((slot) => slot.delimiterRole !== 'input');
-		const value = resolveSingleFieldFactorySlot(token, nodeMap) === undefined ? `{ ${inputs.map(facet).join(', ')} }` : `bag[${JSON.stringify(inputs[0]!.propertyName)}]`;
-		return `  ${JSON.stringify(token.kind)}: (bag) => (F.${token.rawFactoryName!} as (...args: unknown[]) => unknown)(${value}, { ${derived.map(facet).join(', ')} }),`;
-	});
-}
-
-function emitResolveByKindHelper(lines: string[], nodeMap: NodeMap): void {
-	lines.push('const _DELIMITER_TOKENS: { readonly [kind: string]: (bag: Readonly<Record<string, unknown>>) => unknown } = {');
-	lines.push(...delimiterTokenBuilds(nodeMap));
-	lines.push('};');
-	lines.push('');
+function emitResolveByKindHelper(lines: string[]): void {
 	lines.push('function _isFromKind(k: string): k is keyof _FromMap {');
 	lines.push('  return k in _fromMap;');
 	lines.push('}');
@@ -1197,13 +1160,6 @@ function emitResolveByKindHelper(lines: string[], nodeMap: NodeMap): void {
 	lines.push('  if (typeof text === "string") return _buildGuardedText(text, kind) as ReturnType<_FromMap[K]>;');
 	lines.push('  if (_SLOTLESS_TEXT_KINDS.has(kind) || "text" in rest) throw new Error(`the ${kind} tag takes its text: { $type: <kind id>, text: "…" }`);');
 	lines.push('  return fn(rest);');
-	lines.push('}');
-	lines.push('');
-	lines.push('export function buildByKind(kind: string, ...input: unknown[]): unknown {');
-	lines.push('  if (Object.hasOwn(_DELIMITER_TOKENS, kind)) return _DELIMITER_TOKENS[kind]!(Object.assign({}, ...input) as Readonly<Record<string, unknown>>);');
-	lines.push('  if (!Object.hasOwn(_fromMap, kind)) throw new Error(`no builder for kind ${JSON.stringify(kind)}`);');
-	lines.push('  if (input.length === 1) return _resolveByKind(kind as keyof _FromMap, input[0] as _LooseFieldInput);');
-	lines.push('  return (_fromMap[kind as keyof _FromMap] as (...args: unknown[]) => unknown)(...input);');
 	lines.push('}');
 	lines.push('');
 }
@@ -1418,7 +1374,7 @@ function emitResolveOneHelper(lines: string[], resolvesScalars: boolean): void {
 	lines.push('  }');
 	lines.push('  if (typeof v === "object") {');
 	lines.push(
-		'    throw new Error(`_resolveOne: cannot resolve value to any of [${[...leafKinds, ...branchKinds].join(", ")}]: ${JSON.stringify(v)}`);'
+		'    throw new Error(`_resolveOne: cannot resolve value to any of [${[...leafKinds, ...branchKinds].join(", ")}]: ${describeValue(v)}`);'
 	);
 	lines.push('  }');
 	lines.push('  if (typeof v === "string") {');
@@ -1638,7 +1594,7 @@ function emitResolverHelpers(
 	lines.push('}');
 	lines.push('');
 
-	emitResolveByKindHelper(lines, nodeMap);
+	emitResolveByKindHelper(lines);
 
 	lines.push(
 		'function _keywordOf(v: _LooseFieldInput, keywords: readonly (readonly [string, number])[]): number | undefined {'
@@ -1716,7 +1672,13 @@ function emitResolverHelpers(
 	const branchByText = new Map<string, string>();
 	for (const [text, k] of byText) {
 		const prior = branchByText.get(text);
-		if (prior !== undefined) throw new Error(`from: keyword text ${JSON.stringify(text)} builds both '${prior}' and '${k}'; a bare keyword must name one branch`);
+		if (prior !== undefined)
+			throw emitShapeFailure({
+				code: 'keyword-text-ambiguous',
+				ownerKind: k,
+				message: `keyword text ${JSON.stringify(text)} builds both '${prior}' and '${k}'; a bare keyword must name one branch`,
+				details: { text, kinds: [prior, k] }
+			});
 		branchByText.set(text, k);
 	}
 	lines.push('const _KEYWORD_BRANCH_BY_TEXT: Record<string, string | undefined> = {');
@@ -1748,28 +1710,23 @@ function emitResolverHelpers(
 
 	lines.push('function _listElements(');
 	lines.push('  input: readonly unknown[],');
-	lines.push('  optionKeys: readonly string[],');
 	lines.push('  wrapperKind: string | undefined,');
 	lines.push('  resolve: (elements: readonly unknown[]) => readonly unknown[],');
 	lines.push('  tagKinds: readonly string[],');
 	lines.push('  bagKinds?: readonly string[],');
 	lines.push('): readonly unknown[] {');
-	lines.push('  const head = input[0];');
-	lines.push(
-		'  const optionsFirst = optionKeys.length > 0 && typeof head === "object" && head !== null && !Array.isArray(head) && !isNodeValue(head) && Object.keys(head).every((k) => optionKeys.includes(k));'
-	);
-	lines.push('  const elements = (optionsFirst ? input.slice(1) : input).map((e) => {');
+	lines.push('  const elements = input.map((e) => {');
 	lines.push('    if (typeof e !== "object" || e === null || Array.isArray(e) || isNodeValue(e)) return e;');
 	lines.push('    const tagged = _splitTag(e);');
 	lines.push('    if (tagged !== undefined) return _resolveByKind(_fromOfTag(tagged.tag, tagKinds), tagged.rest);');
 	lines.push('    if (bagKinds === undefined || bagKinds.length === 0) return e;');
-	lines.push('    if (bagKinds.length > 1) throw new Error(`a bag in this list needs a $type tag naming one of [${bagKinds.join(", ")}]: ${JSON.stringify(e)}`);');
+	lines.push('    if (bagKinds.length > 1) throw new Error(`a bag in this list needs a $type tag naming one of [${bagKinds.join(", ")}]: ${describeValue(e)}`);');
 	lines.push('    return _isFromKind(bagKinds[0]!) ? _resolveByKind(bagKinds[0]!, e) : e;');
 	lines.push('  });');
 	lines.push(
 		'  const resolved = elements.map((e) => (wrapperKind !== undefined && isNodeValue(e) && typeof e.$type === "number" && KIND_NAMES.get(e.$type) === wrapperKind ? e : resolve([e])[0]));'
 	);
-	lines.push('  return optionsFirst ? [head, ...resolved] : resolved;');
+	lines.push('  return resolved;');
 	lines.push('}');
 	lines.push('');
 
@@ -1782,7 +1739,7 @@ function emitResolverHelpers(
 	lines.push('  if (tagged !== undefined) return _resolveByKind(_fromOfTag(tagged.tag, [kind]), tagged.rest) as Admit<T>;');
 	lines.push('  if (typeof v === "object") {');
 	lines.push(
-		"    throw new Error(`_resolveOneLeaf: cannot resolve value to leaf kind '${kind}': ${JSON.stringify(v)}`);"
+		"    throw new Error(`_resolveOneLeaf: cannot resolve value to leaf kind '${kind}': ${describeValue(v)}`);"
 	);
 	lines.push('  }');
 	lines.push('  return v as Admit<T>;');
@@ -1830,7 +1787,7 @@ function emitResolverHelpers(
 	lines.push('  }');
 	lines.push('  if (typeof v === "object") {');
 	lines.push(
-		"    throw new Error(`_resolveOneBranch: cannot resolve value to branch kind '${kind}': ${JSON.stringify(v)}`);"
+		"    throw new Error(`_resolveOneBranch: cannot resolve value to branch kind '${kind}': ${describeValue(v)}`);"
 	);
 	lines.push('  }');
 	lines.push('  return v as Admit<T>;');
@@ -1980,6 +1937,6 @@ export class FromEmitter implements CodegenEmitter<string> {
 			}
 			return [l];
 		});
-		return pruneUnusedImports(pruned, ['Delimiter', 'listStorage', 'withEmptyForm', ...TYPES_IMPORT_OPTIONAL]).join('\n');
+		return pruneUnusedImports(pruned, ['Delimiter', 'describeValue', 'listStorage', 'withEmptyForm', 'withOptions', ...TYPES_IMPORT_OPTIONAL]).join('\n');
 	}
 }

@@ -1,14 +1,17 @@
 import { describe, expect, it } from 'vitest';
 import { createEngine } from '@sittir/common';
 import { portableRuntime } from '@sittir/common/engine';
+import type { NodeStorageOptions } from '@sittir/types';
 import python from '../src/index.ts';
 
 type Guard = (node: unknown) => boolean;
 
-describe.each([
+const STORAGES: readonly (readonly [string, NodeStorageOptions])[] = [
 	['arena storage', {}],
-	['object storage', { nodeStorage: 'object', nodeConstruction: 'object' }]
-] as const)("a for clause's trailing comma is a flag, in %s", (_storage, storage) => {
+	['object storage', { nodeStorage: 'object' }]
+];
+
+describe.each(STORAGES)("a for clause's trailing comma is a flag, in %s", (_storage, storage) => {
 	const runtimeOf = async () => portableRuntime(await createEngine(python, { api: 'strict', ...storage }));
 	const trailingComma = (is: unknown): Guard => (is as { clause: { comprehension: { for: { trailing_comma: Guard } } } }).clause.comprehension.for.trailing_comma;
 

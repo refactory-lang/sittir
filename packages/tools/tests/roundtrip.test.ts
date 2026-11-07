@@ -9,6 +9,7 @@ const kindNameFromId = (kindId: number): string => {
 	if (kind === undefined) throw new Error(`fixture: kind id ${kindId} has no name`);
 	return kind;
 };
+const noSlots: common.SlotAccessorOf = (typeId) => ({ kind: String(typeId), slots: [], accessors: {}, separator: false });
 
 describe('exercise roundtrip helpers', () => {
 	afterEach(() => {
@@ -29,7 +30,7 @@ describe('exercise roundtrip helpers', () => {
 	});
 
 	it('uses real metadata-driven child args for direct child-backed factories', () => {
-		const leaf = { $type: id('identifier'), $named: true, $text: 'x' };
+		const leaf = { $type: id('identifier'), $text: 'x' };
 		const artifacts = {
 			factoryMap: {
 				direct_child: (value: unknown) => ({ $type: id('rebuilt_direct'), value })
@@ -55,6 +56,7 @@ describe('exercise roundtrip helpers', () => {
 			{ $type: id('direct_child'), _children: leaf } as never,
 			artifacts,
 			common,
+			noSlots,
 			kindNameFromId
 		);
 
@@ -62,8 +64,8 @@ describe('exercise roundtrip helpers', () => {
 	});
 
 	it('uses real metadata-driven child args for spread child-backed factories', () => {
-		const left = { $type: id('identifier'), $named: true, $text: 'x' };
-		const right = { $type: id('number_literal'), $named: true, $text: '1' };
+		const left = { $type: id('identifier'), $text: 'x' };
+		const right = { $type: id('number_literal'), $text: '1' };
 		const artifacts = {
 			factoryMap: {
 				spread_child: (...args: unknown[]) => ({ $type: id('rebuilt_spread'), args })
@@ -89,6 +91,7 @@ describe('exercise roundtrip helpers', () => {
 			{ $type: id('spread_child'), _children: [left, right] } as never,
 			artifacts,
 			common,
+			noSlots,
 			kindNameFromId
 		);
 

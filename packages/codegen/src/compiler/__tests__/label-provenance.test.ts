@@ -1,4 +1,5 @@
 import { beforeAll, describe, expect, it } from 'vitest';
+import { FULL_PIPELINE_TIMEOUT } from '../../__tests__/helpers/timeouts.ts';
 import { grammarPackage } from '../../grammars.ts';
 import { compileGrammar } from '../compile.ts';
 import { AbstractAssembledCompound, AssembledSupertype } from '../model/node-map.ts';
@@ -21,7 +22,7 @@ describe('label provenance', () => {
 
 	beforeAll(async () => {
 		nodeMap = (await compileGrammar({ package: grammarPackage('python') })).nodeMap;
-	});
+	}, FULL_PIPELINE_TIMEOUT);
 
 	it('carries an authored variant label to the assembled refs as authored', () => {
 		const refs = labelledRefsOf(nodeMap, 'with_clause');

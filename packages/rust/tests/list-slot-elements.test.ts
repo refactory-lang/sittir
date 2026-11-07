@@ -11,12 +11,13 @@ const rsStrict = await createEngine(rust, { api: 'strict' });
 type TypeArgumentsSlot = NonNullable<GenericType.LooseConfig>['typeArguments'];
 
 const field = () => rs.build.fieldDeclaration({ name: 'a', type: 'i32' });
+const strictField = () => rsStrict.build.fieldDeclaration({ name: rsStrict.build.identifier('a'), type: rs.kinds.I32Keyword });
 
 describe('a list slot takes its elements bare, one or many', () => {
 	it('builds the same envelope from one bare element, an array, and the built envelope', () => {
 		const bare = rs.build.genericType({ type: 'Vec', typeArguments: 'Edit' });
 		const array = rs.build.genericType({ type: 'Vec', typeArguments: ['Edit'] });
-		const built = rs.build.genericType({ type: 'Vec', typeArguments: rsStrict.build.typeArguments(rs.build.identifier('Edit')) });
+		const built = rs.build.genericType({ type: 'Vec', typeArguments: rs.build.typeArguments(rs.build.identifier('Edit')) });
 		expect(bare.$render()).toBe('Vec<Edit>');
 		expect(array.$render()).toBe('Vec<Edit>');
 		expect(built.$render()).toBe('Vec<Edit>');
@@ -50,7 +51,7 @@ describe('a list slot takes its elements bare, one or many', () => {
 	it('types the slot as the element, the elements, or the envelope', () => {
 		const one = 'Edit' satisfies TypeArgumentsSlot;
 		const many = ['Edit'] satisfies TypeArgumentsSlot;
-		const built = rsStrict.build.typeArguments(rs.build.identifier('Edit')) satisfies TypeArgumentsSlot;
+		const built = rsStrict.build.typeArguments(rsStrict.build.identifier('Edit')) satisfies TypeArgumentsSlot;
 		expect([one, many, built]).toHaveLength(3);
 	});
 
@@ -86,6 +87,6 @@ describe('a list slot takes its elements bare, one or many', () => {
 		expect([empty, optionsOnly, strictEmpty]).toHaveLength(3);
 		expect(rs.build.fieldDeclarationListElements(field()).$render()).toBe('a: i32,');
 		expect(rs.build.fieldDeclarationListElements({ delimiter: Delimiter.None }, field()).$render()).toBe('a: i32');
-		expect(rsStrict.build.fieldDeclarationListElements({ delimiter: Delimiter.None }, field()).$render()).toBe('a: i32');
+		expect(rsStrict.build.fieldDeclarationListElements({ delimiter: Delimiter.None }, strictField()).$render()).toBe('a: i32');
 	});
 });

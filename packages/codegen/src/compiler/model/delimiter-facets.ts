@@ -1,4 +1,5 @@
 import { SEQ, STRING, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
+import { emitShapeFailure } from '../diagnostics/emit-diagnostics.ts';
 import type { RenderRule } from '../../types/rule.ts';
 import { contentLeavesOf, freeTextOf } from './delimited.ts';
 import {
@@ -47,7 +48,7 @@ function closeRole(slot: AssembledNonterminal, open: AssembledLexedPattern): Del
 
 function claim(owner: string, token: AssembledLexedPattern): void {
 	if (token.delimiterOf !== undefined && token.delimiterOf !== owner) {
-		throw new Error(`delimiters: '${token.kind}' delimits both '${token.delimiterOf}' and '${owner}'`);
+		throw emitShapeFailure({ code: 'delimiter-token-shared', message: `delimiters: '${token.kind}' delimits both '${token.delimiterOf}' and '${owner}'` });
 	}
 	token.delimiterOf = owner;
 }
@@ -56,7 +57,7 @@ function stampRoles(owner: string, token: AssembledLexedPattern, roleOf: (slot: 
 	for (const slot of token.slots) {
 		const role = roleOf(slot);
 		if (role === undefined) {
-			throw new Error(`delimiters: '${owner}' is delimited by '${token.kind}', whose facet '${slot.name}' is neither an input nor derivable`);
+			throw emitShapeFailure({ code: 'delimiter-facet-underivable', message: `delimiters: '${owner}' is delimited by '${token.kind}', whose facet '${slot.name}' is neither an input nor derivable` });
 		}
 		slot.delimiterRole = role;
 	}
@@ -64,7 +65,7 @@ function stampRoles(owner: string, token: AssembledLexedPattern, roleOf: (slot: 
 
 function derivedFacetOf(owner: string, token: AssembledLexedPattern): AssembledNonterminal {
 	const derived = token.slots.filter((slot) => slot.delimiterRole === 'preferred' || slot.delimiterRole === 'run' || slot.delimiterRole === 'mirror');
-	if (derived.length !== 1) throw new Error(`delimiters: '${owner}' derives ${derived.length} facets of '${token.kind}', where one is derivable`);
+	if (derived.length !== 1) throw emitShapeFailure({ code: 'delimiter-facet-count', message: `delimiters: '${owner}' derives ${derived.length} facets of '${token.kind}', where one is derivable` });
 	return derived[0]!;
 }
 
@@ -74,7 +75,7 @@ function armsOf(owner: string, facet: AssembledNonterminal): readonly DelimiterA
 		.filter((value) => isTerminalValue(value) && memberOf(value) === value.value && value.readOnly !== true)
 		.map((value) => ({ text: value.value!, singleLine: value.singleLine === true }));
 	const preferred = arms.filter((arm) => arm.text === facet.optionDefaultArm);
-	if (preferred.length !== 1) throw new Error(`delimiters: '${owner}' prefers '${facet.optionDefaultArm}' for '${facet.name}', which is not one of its buildable arms`);
+	if (preferred.length !== 1) throw emitShapeFailure({ code: 'delimiter-preference-unbuildable', message: `delimiters: '${owner}' prefers '${facet.optionDefaultArm}' for '${facet.name}', which is not one of its buildable arms` });
 	return [...preferred, ...arms.filter((arm) => arm.text !== facet.optionDefaultArm)];
 }
 
@@ -83,7 +84,7 @@ function runOf(owner: string, facet: AssembledNonterminal): string | undefined {
 	const pattern = facet.values.find(isPatternValue)?.pattern;
 	const match = pattern === undefined ? undefined : /^(?:\(\?:(\\?[^\\])\*\)|(\\?[^\\])\*)$/u.exec(pattern);
 	const run = match?.[1] ?? match?.[2];
-	if (run === undefined) throw new Error(`delimiters: '${owner}''s run '${facet.name}' is not one character repeated (${pattern})`);
+	if (run === undefined) throw emitShapeFailure({ code: 'delimiter-run-not-repeated', message: `delimiters: '${owner}''s run '${facet.name}' is not one character repeated (${pattern})` });
 	return run.length === 2 ? run[1] : run;
 }
 
@@ -109,7 +110,7 @@ function slotsOf(node: AbstractAssembledCompound, open: AssembledLexedPattern, c
 	const slotOf = (token: AssembledLexedPattern) => node.slots.find((slot) => slot.values.some((value) => isNodeRef(value) && storageKindOfRef(value.node) === token.kind));
 	const openSlot = slotOf(open);
 	const closeSlot = slotOf(close);
-	if (openSlot === undefined || closeSlot === undefined) throw new Error(`delimiters: '${node.kind}' holds its delimiter tokens in no slot`);
+	if (openSlot === undefined || closeSlot === undefined) throw emitShapeFailure({ code: 'delimiter-tokens-unseated', message: `delimiters: '${node.kind}' holds its delimiter tokens in no slot` });
 	return [openSlot, closeSlot];
 }
 
@@ -120,7 +121,7 @@ function preferenceOf(openSlot: AssembledNonterminal, open: AssembledLexedPatter
 
 function gateOf(open: AssembledLexedPattern): FreeTextGate | undefined {
 	const gates = open.slots.filter((slot) => slot.delimiterRole === 'input' && slot.values.some((value) => value.interpolating === true));
-	if (gates.length > 1) throw new Error(`delimiters: '${open.kind}' gates its free text on ${gates.length} facets, where one may`);
+	if (gates.length > 1) throw emitShapeFailure({ code: 'delimiter-gate-ambiguous', message: `delimiters: '${open.kind}' gates its free text on ${gates.length} facets, where one may` });
 	const facet = gates[0];
 	return facet === undefined
 		? undefined
@@ -132,7 +133,7 @@ function stampContentLeaves(node: AbstractAssembledCompound, close: AssembledLex
 		const pattern = facet.values.find(isPatternValue)?.pattern;
 		const leaves = pattern === undefined ? [] : contentLeavesOf(node, nodes, pattern);
 		if (leaves.length !== 1)
-			throw new Error(`delimiters: '${node.kind}''s closer '${close.kind}' holds content in '${facet.name}', which ${leaves.length === 0 ? 'no content leaf' : `${leaves.length} content leaves (${leaves.join(', ')})`} reads, where one reads it`);
+			throw emitShapeFailure({ code: 'delimiter-content-unreadable', message: `delimiters: '${node.kind}''s closer '${close.kind}' holds content in '${facet.name}', which ${leaves.length === 0 ? 'no content leaf' : `${leaves.length} content leaves (${leaves.join(', ')})`} reads, where one reads it` });
 		facet.contentLeaf = leaves[0]!;
 	}
 }

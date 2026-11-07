@@ -1,6 +1,6 @@
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
-import { join } from 'node:path';
+import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 export type GrammarName = string;
@@ -74,6 +74,44 @@ export function grammarPackage(name: GrammarName, dir: string = grammarPackageDi
 
 export function sittirDirOf(pkg: Pick<GrammarPackage, 'dir'>): string {
 	return join(pkg.dir, '.sittir');
+}
+
+export interface UpstreamGrammarEntry {
+	readonly name?: unknown;
+	readonly 'file-types'?: unknown;
+}
+
+export function upstreamConfigPath(pkg: Pick<GrammarPackage, 'dir' | 'name'>): string | undefined {
+	let packageDir: string;
+	try {
+		packageDir = dirname(packageRequire(pkg).resolve(`${upstreamPackage(pkg.name)}/package.json`));
+	} catch (e) {
+		if ((e as NodeJS.ErrnoException).code === 'MODULE_NOT_FOUND') return undefined;
+		throw e;
+	}
+	const configPath = join(packageDir, 'tree-sitter.json');
+	return existsSync(configPath) ? configPath : undefined;
+}
+
+export function upstreamGrammarEntry(pkg: Pick<GrammarPackage, 'dir' | 'name'>): { readonly entry: UpstreamGrammarEntry; readonly configPath: string } {
+	const configPath = upstreamConfigPath(pkg);
+	if (configPath === undefined) throw new Error(`upstreamGrammarEntry: ${upstreamPackage(pkg.name)} has no tree-sitter.json`);
+	const config = JSON.parse(readFileSync(configPath, 'utf8')) as { grammars?: readonly UpstreamGrammarEntry[] };
+	const entries = config.grammars ?? [];
+	const entry = entries.length === 1 ? entries[0] : entries.find((candidate) => candidate.name === pkg.name);
+	if (entry === undefined) {
+		throw new Error(`upstreamGrammarEntry: ${configPath} declares ${entries.length} grammars and none is named "${pkg.name}"`);
+	}
+	return { entry, configPath };
+}
+
+export function parserNameOf(pkg: Pick<GrammarPackage, 'dir' | 'name'>): string {
+	const generated = join(sittirDirOf(pkg), 'src', 'grammar.json');
+	if (existsSync(generated)) return (JSON.parse(readFileSync(generated, 'utf8')) as { name: string }).name;
+	if (upstreamConfigPath(pkg) === undefined) return pkg.name;
+	const { entry, configPath } = upstreamGrammarEntry(pkg);
+	if (typeof entry.name !== 'string') throw new Error(`parserNameOf: the grammar entry of "${pkg.name}" in ${configPath} has no name`);
+	return entry.name;
 }
 
 export function topLayerPath(pkg: Pick<GrammarPackage, 'dir'>): string {

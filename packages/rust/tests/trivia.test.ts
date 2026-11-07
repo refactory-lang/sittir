@@ -8,8 +8,8 @@ import rust from '../src/index.ts';
 import { createEngine } from '@sittir/common';
 import { isCoordinate, sideOf } from '@sittir/common/utils';
 
-const rs = await createEngine(rust);
-const rsNative = (await rust.load()).createNative();
+const rs = await createEngine(rust, { nodeStorage: 'object' });
+const rsNative = (await rust.load()).createNative({ nodeStorage: 'object' });
 
 function makeFn(name: string) {
 	return rs.build.functionItem({

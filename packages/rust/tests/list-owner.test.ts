@@ -42,7 +42,7 @@ describe('a list owner', () => {
 		expect(ps.$render()).toBe('()');
 	});
 	it('a built owner iterates what it was built from', () => {
-		const p = rs.build.parameter({ name: 'a', type: 'u8' });
+		const p = rsStrict.build.parameter({ name: rsStrict.build.identifier('a'), type: rs.kinds.U8Keyword });
 		const ps = rsStrict.build.parametersElements({ delimiter: Delimiter.Trailing }, p);
 		expect([...ps]).toHaveLength(1);
 		expect(ps.delimiter).toBe(Delimiter.Trailing);
@@ -61,9 +61,9 @@ describe('a list owner', () => {
 		expect(ps.$with.elements(rs.build.parametersElements(q)).$render()).toBe('(q: u8)');
 	});
 	it('the list slot setter on a built owner takes the list factory arguments', () => {
-		const q = rs.build.parameter({ name: 'q', type: 'u8' });
+		const q = rsStrict.build.parameter({ name: rsStrict.build.identifier('q'), type: rs.kinds.U8Keyword });
 		const ps = rsStrict.build.parameters(rsStrict.build.parametersElements(q));
-		expect(ps.$with.elements(rs.build.parametersElements({ delimiter: Delimiter.Trailing }, q)).$render()).toBe(
+		expect(ps.$with.elements(rsStrict.build.parametersElements({ delimiter: Delimiter.Trailing }, q)).$render()).toBe(
 			'(q: u8,)'
 		);
 	});

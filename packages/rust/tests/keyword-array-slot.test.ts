@@ -2,8 +2,8 @@ import { describe, expect, it } from 'vitest';
 import rust from '../src/index.ts';
 import { createEngine } from '@sittir/common';
 
-const rs = await createEngine(rust);
-const rsNative = (await rust.load()).createNative();
+const rs = await createEngine(rust, { nodeStorage: 'object' });
+const rsNative = (await rust.load()).createNative({ nodeStorage: 'object' });
 
 function readModifiers(text: string): number[] {
 	const { root } = rsNative.parseAndRead(`${text} fn f() {}`, { depth: Infinity });

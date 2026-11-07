@@ -1,9 +1,11 @@
 import type { AnyUntypedNode, ByteSpan, NodeLayout, NodeTrivia, NodeCoordinate, TriviaEntry } from '@sittir/types';
-import { decodeIndex, isCoordinate, type Siblings, type TreeHandle, type TriviaSideName } from './read.ts';
-import { assertHoldsTree, holdTreeOn, releaseTreeOn, treeOf, treeOfToken, treeTokenOf, type TreeToken } from './tree-token.ts';
-import { forEachTriviaList, mapTriviaEntries, type TriviaSides } from './trivia.ts';
-import { stampSource } from './source-stamp.ts';
-import { Source } from './source.ts';
+import { decodeIndex, isCoordinate, type TreeHandle, type TriviaSideName } from './read.ts';
+import { assertHoldsTree, carryTree, holdTreeOn, releaseTreeOn, treeOf, treeOfToken, treeTokenOf, type TreeToken } from './tree-token.ts';
+import { forEachTriviaList, mapTriviaEntries, TRIVIA_SIDES, type TriviaSides } from './trivia.ts';
+import { builtRefOf, siteOf } from './built-ref.ts';
+import { HANDLE_FIELDS, isLeafHandle, isParsedPosition, type LeafHandle } from './handle.ts';
+import { hydrateOn } from './engine-scope.ts';
+import { storedSlotValues } from './record-view.ts';
 
 function isRecord(value: unknown): value is Record<string, unknown> {
 	return value !== null && typeof value === 'object' && !Array.isArray(value);
@@ -25,12 +27,13 @@ export function spanOf(node: object): ByteSpan | undefined {
 }
 
 /**
- * A read value given a node's text member: native data whose `$text` is a string, with that text as the method `$text()`. Any other value is returned as it is.
+ * A node's source text: its `$text` when it holds one, else the text its coordinate spans in `tree` (its own tree by default), read by the tree's native text call. `undefined` for a node with neither, a built or edited compound: rendered text is not source text.
  */
-export function asTextNode<T>(value: T): T {
-	if (value === null || typeof value !== 'object') return value;
-	const text: unknown = (value as { readonly $text?: unknown }).$text;
-	return typeof text === 'string' ? Object.assign(value, { $text: () => text }) : value;
+export function sourceTextOf(node: object, tree: TreeHandle | undefined = treeOf(node)): string | undefined {
+	const own = nodeText(node);
+	if (own !== undefined) return own;
+	const span = spanOf(node);
+	return span === undefined ? undefined : tree?.text?.(span);
 }
 
 export function mapSideEntries<S extends TriviaSides<unknown>>(sides: S, each: (entry: unknown) => unknown): S {
@@ -47,6 +50,17 @@ function entryData(value: unknown): unknown {
 	const out: Record<string, unknown> = {};
 	for (const key of Object.keys(value)) out[key] = key === '$text' ? nodeText(value) : isStorageKey(key) ? entryData(value[key]) : value[key];
 	return out;
+}
+
+/**
+ * A leaf's text, from either form `nodeText` reads, for a value that must have one.
+ *
+ * @throws When the value holds no text.
+ */
+export function textOf(value: object): string {
+	const text = nodeText(value);
+	if (text === undefined) throw new Error('a leaf holds no text');
+	return text;
 }
 
 /**
@@ -72,6 +86,11 @@ export function triviaOf(node: object): NodeLayout['trivia'] {
 	return (node as { readonly $_layout?: NodeLayout }).$_layout?.trivia;
 }
 
+export function setTriviaOf(node: object, trivia: NodeTrivia | undefined): void {
+	const record = node as { $_layout?: NodeLayout };
+	record.$_layout = { ...record.$_layout, trivia };
+}
+
 /**
  * Give every parsed object under `value` the tree's token, through slots and
  * trivia. A coordinate is a number, which keeps nothing alive: a leaf is
@@ -83,52 +102,103 @@ export function holdTree(value: unknown, token: TreeToken): void {
 	forEachParsedObject(value, (node) => holdTreeOn(node, token));
 }
 
+declare const readOutput: unique symbol;
+
+export type ReadOutput = object & { readonly [readOutput]: true };
+
+export function asReadOutput<T extends object>(value: T): T & ReadOutput {
+	return value as T & ReadOutput;
+}
+
 /** `holdTree` for what a read returned: each object also records that a read produced it (`isRead`). */
-export function holdReadTree(value: unknown, token: TreeToken): void {
-	forEachParsedObject(value, (node) => {
-		holdTreeOn(node, token);
-		stampSource(node, Source.Ts);
-		readObjects.add(node);
-	});
+export function holdReadTree(value: ReadOutput, token: TreeToken): void {
+	forEachReadObject(value, (node) => holdRead(node, token));
+}
+
+export function holdReadCoordinate(coordinate: NodeCoordinate, token: TreeToken): void {
+	if (typeof coordinate.$type === 'number') holdRead(coordinate, token);
+}
+
+function holdRead(node: object, token: TreeToken): void {
+	holdTreeOn(node, token);
+	readObjects.add(node);
 }
 
 const readObjects = new WeakSet<object>();
 
 /** Whether a read produced `node`, or rebuilt it from one that did (`carryRead`). A copy made any other way is not. */
 export function isRead(node: object): boolean {
+	return readObjects.has(node) || isParsedPosition(node);
+}
+
+export function isHeldRead(node: object): boolean {
 	return readObjects.has(node);
 }
 
 /** Make `to` count as read when `from` does, and return `to`: for a read node a wrap or a materialization rebuilds. */
 export function carryRead<T>(from: object, to: T): T {
-	if (readObjects.has(from) && to !== null && typeof to === 'object') readObjects.add(to);
+	if (isRead(from) && to !== null && typeof to === 'object') readObjects.add(to);
 	return to;
 }
 
-const rebuiltObjects = new WeakSet<object>();
-
-/** Record that a `$with` rebuild returned `node`: a builder wrote its slots, whether or not it counts as read. */
-export function markRebuilt(node: object): void {
-	rebuiltObjects.add(node);
+/** `holdReadTree` for one object a read of `from` produced: `to` holds `from`'s tree and read, and is returned. */
+export function carryReadTree<T extends object>(from: object, to: T): T {
+	carryTree(from, to);
+	return carryRead(from, to);
 }
 
-/** Whether a `$with` rebuild returned `node` (`markRebuilt`). */
-export function isRebuilt(node: object): boolean {
-	return rebuiltObjects.has(node);
+export function enterPath(path: Set<object>, value: object): void {
+	if (path.has(value)) throw new TypeError('a node tree holds itself: a value is its own descendant');
+	path.add(value);
+}
+
+export class Leave {
+	constructor(readonly value: object) {}
 }
 
 function forEachParsedObject(value: unknown, visit: (node: Record<string, unknown>) => void): void {
-	if (Array.isArray(value)) {
-		for (const entry of value) forEachParsedObject(entry, visit);
-		return;
+	const work: unknown[] = [value];
+	const path = new Set<object>();
+	while (work.length > 0) {
+		const next = work.pop();
+		if (next instanceof Leave) {
+			path.delete(next.value);
+			continue;
+		}
+		if (Array.isArray(next)) {
+			enterPath(path, next);
+			work.push(new Leave(next));
+			for (const entry of next) work.push(entry);
+			continue;
+		}
+		if (!isRecord(next)) continue;
+		enterPath(path, next);
+		work.push(new Leave(next));
+		if (typeof next.$type === 'number') visit(next);
+		pushHeld(work, next);
 	}
-	if (!isRecord(value)) return;
-	if (typeof value.$type === 'number') visit(value);
-	for (const key in value) {
-		if (isStorageKey(key)) forEachParsedObject(value[key], visit);
+}
+
+function forEachReadObject(value: ReadOutput, visit: (node: Record<string, unknown>) => void): void {
+	const work: unknown[] = [value];
+	while (work.length > 0) {
+		const next = work.pop();
+		if (Array.isArray(next)) {
+			for (const entry of next) work.push(entry);
+			continue;
+		}
+		if (!isRecord(next)) continue;
+		if (typeof next.$type === 'number') visit(next);
+		pushHeld(work, next);
 	}
-	const trivia = triviaOf(value);
-	if (trivia != null) forEachTriviaList(trivia as TriviaSides<unknown>, (entries) => forEachParsedObject(entries, visit));
+}
+
+function pushHeld(work: unknown[], node: Record<string, unknown>): void {
+	for (const key in node) {
+		if (isStorageKey(key)) work.push(node[key]);
+	}
+	const trivia = triviaOf(node);
+	if (trivia != null) forEachTriviaList(trivia as TriviaSides<unknown>, (entries) => work.push(entries));
 }
 
 /** The handle a read node or a coordinate names itself by: its tree and its descendant index. */
@@ -161,11 +231,11 @@ const MEMBER_KEYS: ReadonlySet<string> = new Set(['$with', '$trivia', '$engine',
 
 /**
  * Whether `key` carries node data across the boundary: a storage key, or a `$` metadata key that
- * is not one of the node's members. A reader, a list index, `length` and a list option are
- * members, so none of them is data.
+ * is neither one of the node's members nor a field of a handle's position. A reader, a list index,
+ * `length` and a list option are members, so none of them is data.
  */
 export function isDataKey(key: string): boolean {
-	return isStorageKey(key) || (key.charCodeAt(0) === 36 && !MEMBER_KEYS.has(key));
+	return isStorageKey(key) || (key.charCodeAt(0) === 36 && !MEMBER_KEYS.has(key) && !HANDLE_FIELDS.has(key));
 }
 
 /** Whether `node` holds storage: a slot. A text leaf and a token hold none. */
@@ -216,7 +286,7 @@ export interface SourceIdentity {
 	readonly kind: number;
 }
 
-const PLACE = Symbol('sittir.place');
+const places = new WeakMap<object, SourceIdentity>();
 
 /**
  * The source identity of a node: a read node's own coordinate and tree, or
@@ -224,7 +294,7 @@ const PLACE = Symbol('sittir.place');
  * (`carryPlace`). Evidence of layout only; nothing slices it.
  */
 export function placeOf(node: object): SourceIdentity | undefined {
-	const carried = (node as { [PLACE]?: SourceIdentity })[PLACE];
+	const carried = places.get(node);
 	if (carried !== undefined) return carried;
 	const token = treeTokenOf(node);
 	const at = coordinateOf(node);
@@ -245,7 +315,7 @@ export function envelopeKindOf(node: object): number | undefined {
 /** Make `to` keep the source identity `from` has: the node an edit rebuilt from it. */
 export function carryPlace(from: object, to: object): void {
 	const source = placeOf(from);
-	if (source !== undefined) Object.defineProperty(to, PLACE, { value: source, enumerable: false, configurable: true });
+	if (source !== undefined) places.set(to, source);
 }
 
 /** A tree whose trivia table answers for a node: the tree and the node's index in it. */
@@ -262,9 +332,10 @@ function tableOf(tree: TreeHandle | undefined, index: number | undefined): Table
 	return writesSides(tree) && index !== undefined ? { tree, index } : undefined;
 }
 
-/** The table that holds a parsed node's sides: its live tree's, at its own index; `undefined` for a built node. */
 export function tableAt(node: object): TableAt | undefined {
-	return tableOf(treeOf(node), indexOf(node));
+	const built = builtRefOf(node);
+	if (built === undefined) return tableOf(treeOf(node), indexOf(node));
+	return built.at === undefined ? undefined : { tree: built.arena.tree, index: built.at };
 }
 
 /** The tree of the node a source identity names, while it lives. */
@@ -273,19 +344,21 @@ function sourceTree(source: SourceIdentity): TreeHandle | undefined {
 }
 
 /**
- * The sides of a node's unit children, by slot and item (`NodeLayout.units`): the ones it
- * holds, else its tree's for a parsed node, else those of the node it was rebuilt from
- * (`placeOf`); `undefined` when none answers.
+ * The sides of a node's unit children, by slot and item (`NodeLayout.units`): a built record's
+ * store's, else the ones it holds, else its tree's for a parsed node, else those of the node it
+ * was rebuilt from (`placeOf`); `undefined` when none answers.
  */
 export function unitSidesOf(node: object): readonly unknown[] | undefined {
-	const held = (node as { readonly $_layout?: NodeDataLayout }).$_layout?.units;
+	const built = builtRefOf(node);
+	if (built !== undefined) return built.at === undefined ? undefined : built.arena.tree.unitSides(built.at);
+	const held = heldUnitSides(node);
 	if (held !== undefined) return held;
 	const tree = treeOf(node);
 	const index = indexOf(node);
 	if (tree?.unitSides !== undefined && index !== undefined) return tree.unitSides(index);
 	const source = placeOf(node);
 	const from = source === undefined ? undefined : sourceTree(source);
-	return source === undefined || from === undefined ? undefined : carriedUnitSides(node as Record<string, unknown>, decodeIndex(source.treeHandle), from);
+	return source === undefined || from === undefined ? undefined : carriedUnitSides(node, decodeIndex(source.treeHandle), from);
 }
 
 /**
@@ -340,40 +413,48 @@ export interface UnitSidesData extends TriviaSides<unknown> {
 	readonly item: number;
 }
 
+export function heldUnitSides(node: object): readonly UnitSidesData[] | undefined {
+	return (node as { readonly $_layout?: NodeDataLayout }).$_layout?.units as readonly UnitSidesData[] | undefined;
+}
+
 export function setUnitSides(node: object, units: readonly UnitSidesData[]): void {
 	const record = node as { $_layout?: NodeDataLayout };
 	record.$_layout = { ...record.$_layout, units };
 }
 
-export function carryUnitSides(from: object, to: object): void {
-	const held = (from as { readonly $_layout?: NodeDataLayout }).$_layout?.units as readonly UnitSidesData[] | undefined;
-	if (held !== undefined && held.length > 0) setUnitSides(to, realignedUnits(held, from as Record<string, unknown>, to as Record<string, unknown>));
-}
-
-function carriedUnitSides(node: Record<string, unknown>, index: number, tree: TreeHandle): readonly unknown[] | undefined {
+function carriedUnitSides(node: object, index: number, tree: TreeHandle): readonly unknown[] | undefined {
 	const units = tree.unitSides?.(index) as readonly UnitSidesData[] | undefined;
 	if (units === undefined || units.length === 0) return units;
 	const read = tree.read?.(index, 1);
-	return isRecord(read) ? realignedUnits(units, read, node) : undefined;
+	return isRecord(read) ? realignedUnits(units, hydrateOn(tree, read) as object, node) : undefined;
 }
 
-function realignedUnits(units: readonly UnitSidesData[], before: Record<string, unknown>, after: Record<string, unknown>): UnitSidesData[] {
+export function realignedUnits(units: readonly UnitSidesData[], before: object, after: object): UnitSidesData[] {
 	const moved = new Map<string, ReadonlyMap<number, number>>();
-	const itemsAt = (holder: Record<string, unknown>, slot: string): readonly unknown[] => {
-		const value = holder[slot];
-		return value === undefined ? [] : Array.isArray(value) ? value : [value];
-	};
+	const [itemsBefore, itemsAfter] = [slotItemsOf(before), slotItemsOf(after)];
 	const carried: UnitSidesData[] = [];
 	for (const unit of units) {
 		let aligned = moved.get(unit.slot);
 		if (aligned === undefined) {
-			aligned = alignedItems(itemsAt(before, unit.slot), itemsAt(after, unit.slot));
+			aligned = alignedItems(itemsBefore(unit.slot), itemsAfter(unit.slot));
 			moved.set(unit.slot, aligned);
 		}
 		const item = aligned.get(unit.item);
-		if (item !== undefined && typeof itemsAt(after, unit.slot)[item] === 'number') carried.push({ ...unit, item });
+		if (item !== undefined && typeof itemsAfter(unit.slot)[item] === 'number') carried.push({ ...unit, item });
 	}
 	return carried;
+}
+
+function slotItemsOf(holder: object): (slot: string) => readonly unknown[] {
+	const items = new Map(storedSlotValues(holder).map(([slot, value]) => [slot, itemsOf(value)]));
+	return (slot) => items.get(slot) ?? [];
+}
+
+function itemsOf(value: unknown): readonly unknown[] {
+	if (value === undefined) return [];
+	if (Array.isArray(value)) return value;
+	const list = isRecord(value) && typeof value.$type !== 'number' && Symbol.iterator in value;
+	return list ? [...(value as Iterable<unknown>)] : [value];
 }
 
 function itemIdentity(item: unknown): unknown {
@@ -467,30 +548,54 @@ export interface SideRead {
 
 const NO_SIDE: SideRead = { entries: [], tree: undefined };
 
-/**
- * One side of `node` and the tree that holds it: a parsed node's live table, else the side it holds as its own
- * data, else the table of the node it was rebuilt from (`placeOf`) while that tree lives. An alias envelope's
- * content (`envelopeKindOf`) reads nothing from a table, whose entries for that parser node are the envelope's.
- */
 export function sideRead(node: object, side: TriviaSideName): SideRead {
+	const site = sitedLeaf(node);
+	if (site !== undefined) return { entries: (siteSide(site, side) ?? []) as TriviaEntry[], tree: undefined };
 	const at = tableAt(node);
-	if (at !== undefined) return envelopeKindOf(node) !== undefined ? NO_SIDE : { entries: at.tree.triviaSide(at.index, side) as TriviaEntry[], tree: treeOf(node) };
+	if (at !== undefined && envelopeKindOf(node) !== undefined) return NO_SIDE;
+	const written = at?.tree.triviaSide(at.index, side);
+	if (written !== undefined) return { entries: written as TriviaEntry[], tree: treeOf(node) };
 	const stored = triviaOf(node)?.[side];
 	if (stored !== undefined) return { entries: stored, tree: undefined };
 	const source = envelopeKindOf(node) === undefined ? placeOf(node) : undefined;
 	const tree = source === undefined ? undefined : sourceTree(source);
 	const table = source === undefined ? undefined : tableOf(tree, decodeIndex(source.treeHandle));
-	return table === undefined ? NO_SIDE : { entries: table.tree.triviaSide(table.index, side) as TriviaEntry[], tree };
+	return table === undefined ? NO_SIDE : { entries: (table.tree.triviaSide(table.index, side) ?? []) as TriviaEntry[], tree };
 }
 
-/** Every non-empty side of `node` (`sideOf`); `undefined` when it has none. */
+export function sitedLeaf(node: object): (LeafHandle & { readonly $site: NonNullable<LeafHandle['$site']> }) | undefined {
+	return isLeafHandle(node) && node.$site !== undefined ? (node as LeafHandle & { readonly $site: NonNullable<LeafHandle['$site']> }) : undefined;
+}
+
+function siteSide(leaf: LeafHandle & { readonly $site: NonNullable<LeafHandle['$site']> }, side: TriviaSideName): readonly unknown[] | undefined {
+	const [holder, word, item] = siteOf(leaf.$site);
+	return leaf.$tree.built?.leafSide(holder!, word!, item!, side);
+}
+
+function sidesWhere(read: (side: TriviaSideName) => readonly unknown[] | undefined): NodeTrivia | undefined {
+	const sides: { -readonly [S in TriviaSideName]?: readonly TriviaEntry[] } = {};
+	for (const side of TRIVIA_SIDES) {
+		const entries = read(side);
+		if (entries !== undefined) sides[side] = entries as TriviaEntry[];
+	}
+	return Object.keys(sides).length === 0 ? undefined : sides;
+}
+
 export function sidesOf(node: object): NodeTrivia | undefined {
 	const sides: { -readonly [S in TriviaSideName]?: readonly TriviaEntry[] } = {};
-	for (const side of ['leading', 'trailing', 'inner'] as const) {
+	for (const side of TRIVIA_SIDES) {
 		const entries = sideOf(node, side);
 		if (entries.length > 0) sides[side] = entries;
 	}
 	return Object.keys(sides).length === 0 ? undefined : sides;
+}
+
+export function writtenSides(node: object): NodeTrivia | undefined {
+	const site = sitedLeaf(node);
+	if (site !== undefined) return sidesWhere((side) => siteSide(site, side));
+	const built = builtRefOf(node);
+	if (built?.at === undefined) return triviaOf(node);
+	return sidesWhere((side) => built.arena.tree.triviaSide(built.at, side));
 }
 
 /**
@@ -537,14 +642,14 @@ export interface ChangedEdges {
 	readonly trailing: boolean;
 }
 
-const NO_EDGES: ChangedEdges = { leading: false, trailing: false };
+export const NO_EDGES: ChangedEdges = { leading: false, trailing: false };
 const BOTH_EDGES: ChangedEdges = { leading: true, trailing: true };
 
 /**
  * The edges of a render root: it renders with no neighbour, so both changed,
  * unless it is its tree's root, whose edges are the document's.
  */
-function rootEdges(node: object): ChangedEdges {
+export function rootEdges(node: object): ChangedEdges {
 	const source = placeOf(node);
 	return source !== undefined && decodeIndex(source.treeHandle) === 0 ? NO_EDGES : BOTH_EDGES;
 }
@@ -563,33 +668,53 @@ function rootBearer(node: AnyUntypedNode, view: KindView): Record<string, unknow
 }
 
 /** Whether `child` is the content of the alias envelope `holder`, the same parser node: its coordinate carries the envelope's display id. */
-function isAliasContent(holder: Record<string, unknown>, child: unknown): boolean {
+function isAliasContent(holder: Record<string, unknown>, child: unknown): child is Record<string, unknown> {
 	return isRecord(child) && envelopeKindOf(child) === holder.$type;
 }
 
-/** The siblings beside the node a source identity names, while its tree lives. */
-function siblingsOf(source: SourceIdentity): Siblings | undefined {
-	return sourceTree(source)?.siblings?.(decodeIndex(source.treeHandle));
+/** The stored content that shares an envelope's parser row, regardless of its slot's name. */
+export function aliasContentOf(holder: object): Record<string, unknown> | undefined {
+	const data = holder as Record<string, unknown>;
+	for (const key of Object.keys(data)) {
+		const child = data[key];
+		if (isStorageKey(key) && isAliasContent(data, child)) return child;
+	}
+	return undefined;
 }
 
-/** Whether `neighbour`, beside a node in its holder, is the sibling its source had there (`span`, `null` for none). */
-function keepsNeighbour(span: Siblings['previous'], neighbour: unknown, token: TreeToken, view: KindView): boolean {
-	if (span === null) return neighbour === undefined;
-	if (typeof neighbour === 'number') return neighbour === span.kind;
+function keepsNeighbour(siblings: readonly number[], at: number, neighbour: unknown, token: TreeToken, view: KindView): boolean {
+	if (siblings[at] === 0) return neighbour === undefined;
+	if (typeof neighbour === 'number') return neighbour === siblings[at + 1];
 	if (!isRecord(neighbour)) return false;
 	const other = placeOf(evidenceOf(neighbour, view));
-	return other !== undefined && other.token === token && other.span.start === span.start && other.span.end === span.end;
+	return other !== undefined && other.token === token && other.span.start === siblings[at + 2] && other.span.end === siblings[at + 3];
 }
 
-function changedEdges(list: readonly unknown[], index: number, view: KindView): ChangedEdges {
-	const entry = list[index];
-	const source = isRecord(entry) ? placeOf(evidenceOf(entry, view)) : undefined;
-	const siblings = source === undefined ? undefined : siblingsOf(source);
-	if (source === undefined || siblings === undefined) return NO_EDGES;
-	return {
-		leading: !keepsNeighbour(siblings.previous, list[index - 1], source.token, view),
-		trailing: !keepsNeighbour(siblings.next, list[index + 1], source.token, view)
-	};
+export function listEdges(list: readonly unknown[], view: KindView): readonly ChangedEdges[] | undefined {
+	let sources: (SourceIdentity | undefined)[] | undefined;
+	for (let n = 0; n < list.length; n++) {
+		const entry = list[n];
+		const source = isRecord(entry) ? placeOf(evidenceOf(entry, view)) : undefined;
+		if (source !== undefined) (sources ??= [])[n] = source;
+	}
+	if (sources === undefined) return undefined;
+	const byTree = new Map<TreeHandle, number[]>();
+	sources.forEach((source, n) => {
+		const tree = source === undefined ? undefined : sourceTree(source);
+		if (tree?.siblings === undefined) return;
+		const items = byTree.get(tree);
+		if (items === undefined) byTree.set(tree, [n]);
+		else items.push(n);
+	});
+	const edges: ChangedEdges[] = list.map(() => NO_EDGES);
+	for (const [tree, items] of byTree) {
+		const siblings = tree.siblings!(items.map((n) => decodeIndex(sources[n]!.treeHandle)));
+		items.forEach((n, k) => {
+			const { token } = sources[n]!;
+			edges[n] = { leading: !keepsNeighbour(siblings, 8 * k, list[n - 1], token, view), trailing: !keepsNeighbour(siblings, 8 * k + 4, list[n + 1], token, view) };
+		});
+	}
+	return edges;
 }
 
 function isPresent(value: unknown): boolean {
@@ -602,10 +727,17 @@ function isPresent(value: unknown): boolean {
  * (`KindView.isWrapper`) that holds exactly one present node, that node.
  */
 function evidenceOf(entry: Record<string, unknown>, view: KindView): Record<string, unknown> {
-	if (placeOf(entry) !== undefined || typeof entry.$type !== 'number' || !view.isWrapper(entry.$type)) return entry;
-	const held = Object.keys(entry).flatMap((key) => (isSlotKey(key) && isPresent(entry[key]) ? [entry[key]] : []));
-	const [only] = held;
-	return held.length === 1 && isRecord(only) ? evidenceOf(only, view) : entry;
+	let at = entry;
+	let path: Set<object> | undefined;
+	for (;;) {
+		if (placeOf(at) !== undefined || typeof at.$type !== 'number' || !view.isWrapper(at.$type)) return at;
+		const node = at;
+		const held = Object.keys(node).flatMap((key) => (isSlotKey(key) && isPresent(node[key]) ? [node[key]] : []));
+		const [only] = held;
+		if (held.length !== 1 || !isRecord(only)) return at;
+		enterPath((path ??= new Set([entry])), only);
+		at = only;
+	}
 }
 
 /** A row and a byte column, as tree-sitter counts them. */
@@ -624,7 +756,8 @@ export interface PointSpanData {
  * A node's layout as the native node sends it (`$_layout`): the trivia that
  * crosses with it, its list slots' stored layout (`slots`, as a read gives
  * it), the separator its source spells before it as a list item where it is
- * not its slot's (`separator`), a snapshot node's span, the node a built node takes its missing sides
+ * not its slot's (`separator`), a snapshot node's span, a snapshot root's
+ * flanks as its read stamped them (`flanks`, opaque here), the node a built node takes its missing sides
  * and slots from (`sides`, a coordinate), and the edges whose neighbour
  * changed (`changed`), where its sides drop their layout runs. Absent when
  * the node has none of these.
@@ -635,9 +768,12 @@ export interface NodeDataLayout {
 	slots?: readonly unknown[];
 	separator?: number;
 	span?: PointSpanData;
+	flanks?: number;
 	sides?: Record<string, unknown>;
 	changed?: ChangedEdges;
 }
+
+const DECIDED_LAYOUT_KEYS: ReadonlySet<string> = new Set(['at', 'trivia', 'units', 'slots', 'separator', 'sides', 'changed']);
 
 function setLayout<K extends keyof NodeDataLayout>(out: Record<string, unknown>, key: K, value: NodeDataLayout[K]): void {
 	const layout = (out.$_layout ??= {}) as NodeDataLayout;
@@ -655,12 +791,50 @@ function assertTriviaHoldsTree(entries: readonly unknown[]): void {
 	for (const entry of entries) if (isRecord(entry) && treeHandleOf(entry) !== undefined) assertHoldsTree(entry);
 }
 
+interface NodeValueTask {
+	readonly value: unknown;
+	readonly changed: ChangedEdges;
+	readonly bearer: Record<string, unknown> | undefined;
+	readonly sided: boolean;
+	readonly holder: Record<string, unknown> | unknown[];
+	readonly key: string | number;
+}
+
+interface NodeValueWalk {
+	readonly view: KindView;
+	readonly fold: boolean;
+	readonly work: (NodeValueTask | (() => void))[];
+	readonly path: Set<object>;
+}
+
 function toNodeValue(value: unknown, view: KindView, changed: ChangedEdges, fold: boolean, bearer?: Record<string, unknown>, sided = true): unknown {
+	const root: Record<string, unknown> = {};
+	const walk: NodeValueWalk = { view, fold, work: [{ value, changed, bearer, sided, holder: root, key: 'value' }], path: new Set() };
+	while (walk.work.length > 0) {
+		const task = walk.work.pop()!;
+		if (typeof task === 'function') task();
+		else (task.holder as Record<string | number, unknown>)[task.key] = nodeValueStep(task, walk);
+	}
+	return root.value;
+}
+
+function nodeValueStep(task: NodeValueTask, { view, fold, work, path }: NodeValueWalk): unknown {
+	const { value, changed, bearer, sided } = task;
 	if (Array.isArray(value)) {
-		return value.map((entry, index) => {
-			if (!isRecord(entry)) return toNodeValue(entry, view, NO_EDGES, fold);
-			return toNodeValue(entry, view, changedEdges(value, index, view), fold, evidenceOf(entry, view));
+		enterPath(path, value);
+		work.push(() => path.delete(value));
+		const edges = listEdges(value, view);
+		const out = value.map(() => undefined) as unknown[];
+		const items: NodeValueTask[] = [];
+		value.forEach((entry, index) => {
+			items.push(
+				isRecord(entry)
+					? { value: entry, changed: edges?.[index] ?? NO_EDGES, bearer: evidenceOf(entry, view), sided: true, holder: out, key: index }
+					: { value: entry, changed: NO_EDGES, bearer: undefined, sided: true, holder: out, key: index }
+			);
 		});
+		for (let at = items.length - 1; at >= 0; at -= 1) work.push(items[at]!);
+		return out;
 	}
 	if (!isRecord(value)) return value;
 	const bears = bearer === undefined || bearer === value;
@@ -671,7 +845,9 @@ function toNodeValue(value: unknown, view: KindView, changed: ChangedEdges, fold
 		const out = fold ? coordinateCrossing(at, edges) : plainCoordinate(at);
 		return out;
 	}
+	enterPath(path, value);
 	const out: Record<string, unknown> = {};
+	const children: NodeValueTask[] = [];
 	for (const key of Object.keys(value)) {
 		if (!isDataKey(key) || key === '$_layout') continue;
 		if (key === '$text') {
@@ -680,14 +856,30 @@ function toNodeValue(value: unknown, view: KindView, changed: ChangedEdges, fold
 		}
 		const raw = value[key];
 		if (typeof raw === 'function') continue;
-		out[key] = isStorageKey(key) ? toNodeValue(raw, view, bears ? NO_EDGES : changed, fold, bears ? undefined : bearer, fold || !isAliasContent(value, raw)) : raw;
+		if (!isStorageKey(key)) {
+			out[key] = raw;
+			continue;
+		}
+		out[key] = undefined;
+		children.push({ value: raw, changed: bears ? NO_EDGES : changed, bearer: bears ? undefined : bearer, sided: fold || !isAliasContent(value, raw), holder: out, key });
 	}
+	work.push(() => {
+		finishNodeValue(value, out, edges, fold, sided);
+		path.delete(value);
+	});
+	for (let index = children.length - 1; index >= 0; index -= 1) work.push(children[index]!);
+	return out;
+}
+
+function finishNodeValue(value: Record<string, unknown>, out: Record<string, unknown>, edges: ChangedEdges, fold: boolean, sided: boolean): void {
 	const given = (value as { readonly $_layout?: NodeDataLayout }).$_layout;
+	for (const [key, held] of Object.entries(given ?? {})) {
+		if (!DECIDED_LAYOUT_KEYS.has(key)) ((out.$_layout ??= {}) as Record<string, unknown>)[key] = held;
+	}
 	const slots = fold ? given?.slots : slotsOf(value);
 	if (slots !== undefined && slots.length > 0) setLayout(out, 'slots', slots);
 	const separator = edges.leading ? undefined : fold ? given?.separator : separatorOf(value);
 	if (separator !== undefined) setLayout(out, 'separator', separator);
-	if (given?.span !== undefined) setLayout(out, 'span', given.span);
 	const trivia = fold ? triviaOf(value) : sided ? sidesOf(value) : undefined;
 	if (trivia != null) {
 		if (fold) forEachTriviaList(trivia as TriviaSides<unknown>, assertTriviaHoldsTree);
@@ -701,9 +893,7 @@ function toNodeValue(value: unknown, view: KindView, changed: ChangedEdges, fold
 	}
 	const layout = out.$_layout as NodeDataLayout | undefined;
 	if ((edges.leading || edges.trailing) && (layout?.trivia !== undefined || layout?.sides !== undefined)) setLayout(out, 'changed', edges);
-	// A storage-bearing node rebuilds from its slots.
 	if (holdsSlots(out)) delete out.$text;
-	return out;
 }
 
 /**

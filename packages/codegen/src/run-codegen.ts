@@ -15,6 +15,7 @@ import {
 	writeDiagnostics,
 	writeGrammarDiagnosticsJson,
 	fromDroppedTokens,
+	fromHelperSlotRead,
 	fromSlotGrouping,
 	type GrammarDiagnostic
 } from './compiler/diagnostics/grammar-diagnostics.ts';
@@ -25,7 +26,7 @@ import { generateWithDerivedConflicts } from './transpile/conflict-driver.ts';
 import { assertGrammarRuntimeFloor } from './transpile/tree-sitter-cli.ts';
 import { renderModuleSrcDir } from './emitters/render-module-paths.ts';
 import { manifestPath, recordNativeBuild, recordedGeneration, sourceFingerprint, writeManifestForGrammar, type SourceFingerprint } from './scripts/generated-manifest.ts';
-import { GRAMMAR_ENTRY, grammarPackage, isGrammar, nativeCrateDir, nativeCrateRelDir, sittirDirOf, type GrammarPackage } from './grammars.ts';
+import { GRAMMAR_ENTRY, grammarPackage, isGrammar, nativeCrateDir, nativeCrateRelDir, parserNameOf, sittirDirOf, type GrammarPackage } from './grammars.ts';
 import { conflictResolutionsPath } from './transpile/conflict-resolutions-file.ts';
 import { nativeCrateFiles } from './emitters/native-crate.ts';
 import type { NodeMap } from './compiler/types.ts';
@@ -236,6 +237,13 @@ export async function runCodegen(opts: CodegenOptions): Promise<NodeMap> {
 	return withInternalCodegenRun(() => runCodegenInternal(opts));
 }
 
+function refuseUnlessAllowed(diagnostics: readonly GrammarDiagnostic[], allowDiagnostics: ReadonlySet<string>): void {
+	if (diagnostics.length === 0) return;
+	writeDiagnostics(diagnostics, formatGrammarDiagnostics);
+	const blocked = diagnostics.filter((d) => !allowDiagnostics.has(d.code));
+	if (blocked.length > 0) throw new GrammarDiagnosticError(blocked, diagnostics);
+}
+
 async function runCodegenInternal(opts: CodegenOptions, read: SourceFingerprint = sourceFingerprint(opts.grammar)): Promise<NodeMap> {
 	const { grammar, outputDir, all, testsDir, noEmitDiff, buildNative, nativeDebug, workspaceCheck } = opts;
 
@@ -263,11 +271,14 @@ async function runCodegenInternal(opts: CodegenOptions, read: SourceFingerprint 
 		writeDiagnostics(mapped, formatGrammarDiagnostics);
 	}
 
-	if (result.droppedTokens.length > 0) {
-		const dropped = result.droppedTokens.map((d) => fromDroppedTokens(grammar, d));
-		writeDiagnostics(dropped, formatGrammarDiagnostics);
-		if (!allowDiagnostics.has('dropped-token')) throw new GrammarDiagnosticError(dropped, dropped);
-	}
+	refuseUnlessAllowed(
+		result.droppedTokens.map((d) => fromDroppedTokens(grammar, d)),
+		allowDiagnostics
+	);
+	refuseUnlessAllowed(
+		(result.renderModule?.emit.helperSlotReads ?? []).map((r) => fromHelperSlotRead(grammar, r)),
+		allowDiagnostics
+	);
 
 	if (result.emitDiagnostics.length > 0) {
 		writeDiagnostics(result.emitDiagnostics, formatGrammarDiagnostics);
@@ -289,7 +300,9 @@ async function runCodegenInternal(opts: CodegenOptions, read: SourceFingerprint 
 	rmSync(join(factoriesDir, 'overlays'), { recursive: true, force: true });
 	rmSync(join(factoriesDir, 'bundle.ts'), { force: true });
 	rmSync(join(factoriesDir, 'index.ts'), { force: true });
-	await writeFile(join(factoriesDir, 'raw.ts'), result.factories);
+	await writeFile(join(factoriesDir, 'raw.ts'), result.factoriesDispatch);
+	await writeFile(join(factoriesDir, 'objects.ts'), result.factories);
+	await writeFile(join(factoriesDir, 'records.ts'), result.factoriesRecords);
 	await writeFile(join(factoriesDir, 'coerce.ts'), result.from);
 	for (const [path, text] of Object.entries(result.tableFiles)) await writeFile(join(outDir, path), text);
 	await writeFile(join(outDir, 'wrap.ts'), result.wrap);
@@ -364,7 +377,7 @@ async function runCodegenInternal(opts: CodegenOptions, read: SourceFingerprint 
 	if (shouldEmitRustRender) {
 		const crateDir = nativeCrateDir(grammar);
 		const scaffoldCrate = !existsSync(join(crateDir, 'Cargo.toml'));
-		for (const file of nativeCrateFiles(grammar)) await writeFile(join(crateDir, file.path), file.contents);
+		for (const file of nativeCrateFiles(grammar, parserNameOf(grammarPackage(grammar)))) await writeFile(join(crateDir, file.path), file.contents);
 		if (scaffoldCrate) {
 			console.log(`  → scaffolded native crate ${nativeCrateRelDir(grammar)}`);
 			execSync('pnpm install --prefer-offline', { stdio: 'inherit', cwd: process.cwd() });

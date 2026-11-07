@@ -1,11 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import {
 	Delimiter,
-	LIST_ITEMS,
 	LIST_METHODS,
-	LIST_READ,
 	LIST_VIEW_MEMBERS,
-	defineListIndices,
+	holdListItems,
 	listIterator,
 	listItems,
 	listOption,
@@ -14,7 +12,7 @@ import {
 	refuseReadStub
 } from '../src/utils.ts';
 
-const wrapperSpec = { kind: 5, content: 'content', decorations: ['_attribute'] };
+const wrapperSpec = { kind: 5, content: 'content', decorations: ['attributes'] };
 
 const listNode = (elements: readonly unknown[], stored: Record<string, unknown> = {}) => ({
 	_element: elements,
@@ -26,9 +24,8 @@ const sharedMembers = (view: ReturnType<typeof ownerView>) => ({
 	...LIST_METHODS,
 	[Symbol.iterator]: listIterator,
 	[Symbol.isConcatSpreadable]: true,
-	[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
 	delimiter: listOption(view.list, 'delimiter', Delimiter.None),
-	separator: listOption(view.list, 'separator', undefined)
+	separator: () => listOption(view.list, 'separator', undefined)
 });
 
 const wrappedOwner = (list: object | undefined, wrapper?: typeof wrapperSpec, tree?: never) => {
@@ -38,11 +35,9 @@ const wrappedOwner = (list: object | undefined, wrapper?: typeof wrapperSpec, tr
 		_items: list,
 		items: () => list,
 		length: view.stored?.length,
-		[LIST_ITEMS]: undefined,
-		[LIST_READ]: () => listItems(ownerElements((node.items as () => unknown)(), 'elements'), wrapper),
 		...sharedMembers(view)
 	};
-	defineListIndices(node, view.stored?.length ?? 0);
+	holdListItems(node, listItems(ownerElements((node.items as () => unknown)(), 'elements'), wrapper));
 	return node as any;
 };
 
@@ -50,8 +45,8 @@ const builtOwner = (list: object | undefined, storage = '_items') => {
 	const view = ownerView(list, '_element');
 	if (view.stored === undefined) refuseReadStub(storage);
 	const items = listItems(ownerElements(view.list, 'elements'), undefined);
-	const node: Record<PropertyKey, unknown> = { $type: 1, _items: list, length: items.length, [LIST_ITEMS]: items, ...sharedMembers(view) };
-	for (let index = 0; index < items.length; index++) node[index] = items[index];
+	const node: Record<PropertyKey, unknown> = { $type: 1, _items: list, length: items.length, ...sharedMembers(view) };
+	holdListItems(node, items);
 	return node as any;
 };
 
@@ -72,7 +67,7 @@ describe('a list owner', () => {
 		]);
 		expect(node.at(-1)).toBe('c');
 		expect(node.delimiter).toBe(Delimiter.Trailing);
-		expect(node.separator).toBe(7);
+		expect(node.separator()).toBe(7);
 		expect(node.items().elements()).toEqual(['a', 'b', 'c']);
 	});
 
@@ -85,14 +80,15 @@ describe('a list owner', () => {
 	});
 
 	it('reads an undecorated wrapper element as its content and keeps a decorated one', () => {
-		const plain = { $type: 5, _attribute: undefined, content: () => 'arm' };
-		const decorated = { $type: 5, _attribute: 'attr', content: () => 'arm' };
-		const node = wrappedOwner(listNode([plain, decorated]), wrapperSpec);
-		expect([...node]).toEqual(['arm', decorated]);
+		const plain = { $type: 5, attributes: () => undefined, content: () => 'arm' };
+		const empty = { $type: 5, attributes: () => [], content: () => 'bare' };
+		const decorated = { $type: 5, attributes: () => ['attr'], content: () => 'arm' };
+		const node = wrappedOwner(listNode([plain, empty, decorated]), wrapperSpec);
+		expect([...node]).toEqual(['arm', 'bare', decorated]);
 		expect(node[0]).toBe('arm');
 	});
 
-	it('sizes an owner over a list past the read\'s depth from its list node hydrated once, without reading the items', () => {
+	it('sizes an owner over a list past the read\'s depth from its list node hydrated once, and holds its items from one read', () => {
 		const reads: (number | undefined)[] = [];
 		const hydrate = (list: { $treeHandle?: number }) => (reads.push(list.$treeHandle), { $type: 9, _element: [{ $type: 2 }, { $type: 2 }] });
 		let itemReads = 0;
@@ -101,14 +97,12 @@ describe('a list owner', () => {
 			$type: 1,
 			items: () => (itemReads++, listNode(['a', 'b'])),
 			length: view.stored?.length,
-			[LIST_ITEMS]: undefined,
-			[LIST_READ]: () => listItems(ownerElements((node.items as () => unknown)(), 'elements'), undefined),
 			...sharedMembers(view)
 		};
-		defineListIndices(node, view.stored?.length ?? 0);
+		holdListItems(node, listItems(ownerElements((node.items as () => unknown)(), 'elements'), undefined));
 		expect((node as any).length).toBe(2);
 		expect(reads).toEqual([4]);
-		expect(itemReads).toBe(0);
+		expect(itemReads).toBe(1);
 		expect((node as any)[1]).toBe('b');
 	});
 
@@ -127,17 +121,18 @@ describe('a list owner', () => {
 		expect(node[0]).toBe('a');
 	});
 
-	it('prints and concatenates as its items', () => {
+	it('concatenates and prints locale strings as its items, leaving toString to the node', () => {
 		const node = wrappedOwner(listNode(['a', 'b']));
-		expect(String(node)).toBe('a,b');
+		expect(Object.hasOwn(node, 'toString')).toBe(false);
 		expect(node.toLocaleString()).toBe('a,b');
 		expect(node.concat(wrappedOwner(listNode(['c'])))).toEqual(['a', 'b', 'c']);
 		expect(['z'].concat(node)).toEqual(['z', 'a', 'b']);
 	});
 
-	it('keeps its index getters off the enumerable keys', () => {
-		const node = wrappedOwner(listNode(['a']));
-		expect(Object.keys(node)).not.toContain('0');
+	it('holds its items as its own elements, 0 to length - 1', () => {
+		const node = wrappedOwner(listNode(['a', 'b']));
+		expect(Object.getOwnPropertyDescriptor(node, '1')).toEqual({ value: 'b', writable: true, enumerable: true, configurable: true });
+		expect(Object.hasOwn(node, '2')).toBe(false);
 	});
 
 	it('names the members a list accessor must not collide with', () => {

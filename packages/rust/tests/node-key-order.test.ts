@@ -2,17 +2,16 @@
 // whichever of them are optional, and with no key for an absent one.
 import { createRequire } from 'node:module';
 import { describe, expect, it } from 'vitest';
+import { nativeEngineOf, type NativeModuleLike } from '@sittir/common/engine';
 
-const native = createRequire(import.meta.url)('../native/index.cjs') as {
-	SittirEngine: new () => { parse(source: string): string; read(treeId: number, index: number, depth?: number): object };
-	disposeTree(treeId: number): void;
-};
-const engine = new native.SittirEngine();
+const native = createRequire(import.meta.url)('../native/index.cjs') as NativeModuleLike;
+const engine = nativeEngineOf(native);
 
 function firstStatement(source: string): object {
 	const { treeId } = JSON.parse(engine.parse(source)) as { treeId: number };
 	try {
-		return (engine.read(treeId, 0, Infinity) as { _statements: object[] })._statements[0]!;
+		const root: object = engine.read(treeId, 0, Infinity);
+		return (root as { _statements: object[] })._statements[0]!;
 	} finally {
 		native.disposeTree(treeId);
 	}

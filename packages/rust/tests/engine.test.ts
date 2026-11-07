@@ -31,28 +31,25 @@ describe('engine', () => {
 				hashMatch: true,
 				native: {
 					SittirEngine: class {
-						render(_node: Record<string, unknown>): string {
-							return 'ok';
-						}
+						readonly handle = {};
 						parse(_source: string): string {
 							return JSON.stringify({ treeId: 1, errors: [] });
 						}
-						read(_treeId: number, _index: number, _depth: number): object {
-							return { $type: TSKindId.Identifier, $text: 'x' };
-						}
 						dispose(): void {}
-					}
+					},
+					render: (_engine: object, _node: Record<string, unknown>): string => 'ok',
+					read: (_treeId: number, _index: number, _depth: number): object => ({ $type: TSKindId.Identifier, $text: 'x' })
 				}
 			})
 		}));
 
-		const engine = await createEngine(await descriptor());
+		const engine = await createEngine(await descriptor(), { nodeStorage: 'object' });
 
 		// The engine exposes parse, render, edit and dispose; the native engine exposes the read path
 		expect(typeof engine.parse).toBe('function');
 		expect(typeof engine.render).toBe('function');
 		expect(typeof engine.dispose).toBe('function');
-		const native = (await (await descriptor()).load()).createNative();
+		const native = (await (await descriptor()).load()).createNative({ nodeStorage: 'object' });
 		expect(typeof native.parseAndRead).toBe('function');
 	});
 
@@ -65,41 +62,41 @@ describe('engine', () => {
 				hashMatch: true,
 				native: {
 					SittirEngine: class {
-						render(_node: Record<string, unknown>): string {
-							return 'ok';
-						}
+						readonly handle = {};
 						parse(_source: string): string {
 							return JSON.stringify({ treeId: 3, errors: [] });
 						}
-						read(treeId: number, index: number, depth: number): object {
-							reads.push([treeId, index, depth]);
-							return index === 0
-								? {
-										$type: TSKindId.FunctionItem,
-										$_layout: { at: coordinate(0, 0, 11, TSKindId.FunctionItem) },
-										_name: coordinate(1, 7, 11, TSKindId.Identifier)
-									}
-								: { $type: TSKindId.Identifier, $_layout: { at: coordinate(index, 7, 11, TSKindId.Identifier) }, $text: 'main' };
-						}
-						disposeTree(_treeId: number): void {}
 						dispose(): void {}
-					}
+					},
+					render: (_engine: object, _node: Record<string, unknown>): string => 'ok',
+					read: (treeId: number, index: number, depth: number): object => {
+						reads.push([treeId, index, depth]);
+						return index === 0
+							? {
+									$type: TSKindId.FunctionItem,
+									$_layout: { at: coordinate(0, 0, 11, TSKindId.FunctionItem) },
+									_name: coordinate(1, 7, 11, TSKindId.Identifier)
+								}
+							: { $type: TSKindId.Identifier, $_layout: { at: coordinate(index, 7, 11, TSKindId.Identifier) }, $text: 'main' };
+					},
+					disposeTree: (_treeId: number): void => {}
 				}
 			})
 		}));
 
-		const native = (await (await descriptor()).load()).createNative();
-		const parsed = native.parseAndRead('pub fn main');
+		const native = (await (await descriptor()).load()).createNative({ nodeStorage: 'object' });
+		const tree = native.parseTree('pub fn main') as TreeHandle;
+		expect(reads).toEqual([]);
+		const root = tree.read?.(0);
+		expect(root).toMatchObject({ _name: coordinate(1, 7, 11, TSKindId.Identifier), $errors: [] });
 		expect(reads).toEqual([[3, 0, 1]]);
-		expect(parsed.root).toMatchObject({ _name: coordinate(1, 7, 11, TSKindId.Identifier), $errors: [] });
 
-		const tree = parsed.tree as TreeHandle;
 		expect(tree.read?.(1)).toMatchObject({ $type: TSKindId.Identifier, $text: 'main' });
 		expect(reads).toEqual([
 			[3, 0, 1],
 			[3, 1, 1]
 		]);
-		expect(tree.read?.(0)).toBe(parsed.root);
+		expect(tree.read?.(0)).toBe(root);
 		expect(reads).toHaveLength(2);
 	});
 
@@ -112,19 +109,16 @@ describe('engine', () => {
 				hashMatch: true,
 				native: {
 					SittirEngine: class {
-						render(node: Record<string, unknown>): string {
-							return render(node);
-						}
-						renderToFile(untypedNode: Record<string, unknown>, path: string): void {
-							renderToFile(untypedNode, path);
-						}
+						readonly handle = {};
 						dispose(): void {}
-					}
+					},
+					render: (_engine: object, node: Record<string, unknown>): string => render(node),
+					renderToFile: (_engine: object, untypedNode: Record<string, unknown>, path: string): void => renderToFile(untypedNode, path)
 				}
 			})
 		}));
 
-		const engine = await createEngine(await descriptor());
+		const engine = await createEngine(await descriptor(), { nodeStorage: 'object' });
 		const rendered = engine.render(engine.build.identifier('x'));
 
 		rendered.save('/tmp/sittir-rust-render.txt');

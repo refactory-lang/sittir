@@ -28,7 +28,7 @@ export function writeSittirGrammarPackage(
 	writeFileSync(join(dir, '.sittir', 'resolutions.json'), JSON.stringify(resolutions));
 	writeFileSync(
 		join(dir, GRAMMAR_ENTRY),
-		`import base from ${JSON.stringify(baseModule)};\nimport resolutions from './.sittir/resolutions.json' with { type: 'json' };\nimport { enrich, wire, edit, replace, copy, field, alias, variant, refine, preference } from ${DSL};\nexport default grammar(enrich(base), wire({ resolutions, name: '${name}', ${config} }));\n`
+		`import base from ${JSON.stringify(baseModule)};\nimport resolutions from './.sittir/resolutions.json' with { type: 'json' };\nimport { enrich, wire, edit, replace, copy, field, alias, variant, refine, preference } from ${DSL};\nexport default grammar(enrich(base), wire({ resolutions, ${name === '' ? '' : `name: '${name}', `}${config} }));\n`
 	);
 	if (bindings !== undefined)
 		writeFileSync(
