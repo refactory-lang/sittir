@@ -368,6 +368,24 @@ mod tests {
     }
 
     #[test]
+    fn a_choice_holding_a_plain_list_beside_an_envelope_over_a_list_dispatches_each_by_its_own_claims() {
+        let out = expand(&parse_quote! {
+            #[node(choice, view = BodyNodeRecord)]
+            pub enum BodyNode {
+                #[kind(kind::ARGUMENTS)]
+                Arguments(ArgumentsNode),
+                #[kind(kind::ELEMENT_BINDING)]
+                Binding(BindingNode),
+            }
+        })
+        .expect("expands");
+        let prepare = "::sittir_core::arena::PrepareRecord<__T>";
+        assert!(has(&out, &format!("if <ArgumentsNode as {prepare}>::claims(kind) {{ return <ArgumentsNode as {prepare}>::prepare_record(prep, at, ctx); }}")));
+        assert!(has(&out, &format!("if <BindingNode as {prepare}>::claims(kind) {{ return <BindingNode as {prepare}>::prepare_record(prep, at, ctx); }}")));
+        assert!(!has(&out, "::accepts("));
+    }
+
+    #[test]
     fn a_struct_with_a_view_names_its_prepare_body_and_its_seat_slot_is_a_single_slot_of_it() {
         let struct_with = |stamps: proc_macro2::TokenStream| -> syn::DeriveInput {
             parse_quote! {

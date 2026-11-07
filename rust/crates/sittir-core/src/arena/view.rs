@@ -866,6 +866,33 @@ mod tests {
 
     type WordSlot<'a> = RecordSlot<'a, TriviaText, Word<'a>>;
 
+    const SHOWN: KindId = KindId(8);
+
+    struct Shown;
+
+    impl<'a, T> RecordView<'a, T> for Shown {
+        fn claims(kind: KindId) -> bool {
+            kind == WORD
+        }
+
+        fn accepts(kind: KindId) -> bool {
+            kind == WORD || kind == SHOWN
+        }
+
+        fn from_cell(_: RecordCtx<'a, T>, _: Cell, _: Option<Site<PrepPlace>>) -> Result<Self, ArenaError> {
+            Ok(Self)
+        }
+    }
+
+    #[test]
+    fn a_view_accepts_what_it_claims_unless_it_widens_the_envelopes_it_is_shown_as() {
+        assert!(<Word<'_> as RecordView<'_, TriviaText>>::accepts(WORD));
+        assert!(!<Word<'_> as RecordView<'_, TriviaText>>::accepts(SHOWN));
+        assert!(<Shown as RecordView<'_, TriviaText>>::accepts(SHOWN));
+        assert!(!<Shown as RecordView<'_, TriviaText>>::claims(SHOWN));
+        assert!(<Shown as RecordView<'_, TriviaText>>::claims(WORD));
+    }
+
     #[test]
     fn a_layout_keeps_prepared_defaults_below_stored_settings() {
         let mut fixture = Fixture::new();

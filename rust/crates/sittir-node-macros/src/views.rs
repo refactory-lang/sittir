@@ -664,6 +664,28 @@ mod tests {
     }
 
     #[test]
+    fn a_plain_list_keeps_the_default_accepts_and_writes_through_the_shared_body() {
+        let out = expand(&parse_quote! {
+            #[node(kind = kind::ARGUMENTS, words = 5, built_words = 3, fields = ArgumentsFields, view = ArgumentsNodeRecord, prepare_fn = prepare_arguments)]
+            pub struct ArgumentsNode {
+                #[wire(key = "$_layout")]
+                #[layout]
+                pub layout: Option<Box<NodeLayout>>,
+                #[height]
+                height: u16,
+                #[wire(key = "_item")]
+                #[slot(word = 2, width = 3, forms = 1, built = 2, run = 2)]
+                pub item: Vec<SlotValue<ItemNode>>,
+            }
+        })
+        .expect("expands");
+        assert!(!has(&out, "fn accepts("));
+        assert!(!has(&out, "fn write_cell_shown("));
+        assert!(has(&out, "fn claims(kind: ::sittir_core::types::KindId) -> bool { (kind == kind::ARGUMENTS) }"));
+        assert!(has(&out, "{ self.__write_as(__sink, __KIND, ::sittir_core::arena::LayoutField::layout(&self.layout)) }"));
+    }
+
+    #[test]
     fn a_struct_shown_as_a_display_claims_it_and_keeps_the_kind_its_cell_names() {
         let out = expand(&parse_quote! {
             #[node(kind = kind::FUNCTION_ITEM, displays = [kind::METHOD], words = 5, built_words = 3, fields = FunctionItemFields, view = FunctionItemNodeRecord, prepare_fn = prepare_function_item)]
