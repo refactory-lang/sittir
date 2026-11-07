@@ -24,6 +24,7 @@ import { TemplateEmitter, stampStaticSpacing } from './templates.ts';
 import { emitClientUtils } from './client-utils.ts';
 import { collectKindEntries, type KindEnumEntry } from './kind-discriminant.ts';
 import { grammarRenderInputs, RenderModuleEmitter } from './render-module.ts';
+import { collectingEmitDiagnostics, type EmitCollector } from '../compiler/diagnostics/emit-diagnostics.ts';
 import { isGrammar } from '../grammars.ts';
 import {
 	classifyFactoryEmission,
@@ -82,6 +83,10 @@ function classifyRenderModuleEmission(grammar: string, emitRenderModule: boolean
 }
 
 export function emitAll(config: EmitAllConfig): EmitAllResult {
+	return collectingEmitDiagnostics(config.grammar, (collector) => emitStages(config, collector));
+}
+
+function emitStages(config: EmitAllConfig, collector: EmitCollector): EmitAllResult {
 	const {
 		grammar,
 		nodeMap,
@@ -156,34 +161,60 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 
 	dispatchNodeMapByTaxonomy(
 		{ factoryEmitter, fromEmitter, wrapEmitter, templateEmitter, renderModuleEmitterInst },
-		{ nodeMap, kindEntries, inlineKinds, synthesizedKinds }
+		{ nodeMap, kindEntries, inlineKinds, synthesizedKinds },
+		collector
 	);
 
-	const factories = factoryEmitter.finalize();
-	const factoriesRecords = factoryEmitter.finalizeRecords();
-	const factoriesDispatch = factoryEmitter.finalizeDispatch(factories);
-	const from = fromEmitter.finalize();
-	const wrap = wrapEmitter.finalize();
-	const templates = templateEmitter.finalize();
-	const renderModule = renderModuleEmitterInst?.finalize(templates);
+	const factories = collector.guard(() => factoryEmitter.finalize());
+	const factoriesRecords = collector.guard(() => factoryEmitter.finalizeRecords());
+	const factoriesDispatch = factories === undefined ? undefined : collector.guard(() => factoryEmitter.finalizeDispatch(factories));
+	const from = collector.guard(() => fromEmitter.finalize());
+	const wrap = collector.guard(() => wrapEmitter.finalize());
+	const templates = collector.guard(() => templateEmitter.finalize());
+	const renderModule = templates === undefined ? undefined : collector.guard(() => renderModuleEmitterInst?.finalize(templates));
 
-	const wires = collectPolymorphWires(nodeMap);
-	const tables = builderTables(nodeMap, wires);
-	const { types, internal: typesInternal, kinds } = emitTypesModules({
-		grammar,
-		nodeMap,
-		generatedIdTables,
-		sites: sitePreferences,
-		addresses: addressTables,
-		triviaKinds,
-		wires,
-		entryRows: tables.entryRows
-	});
-	const consts = emitConsts({ grammar, nodeMap });
-	const options = emitOptions({ nodeMap, kindEntries, renderRules, options: optionsBlock, sites: sitePreferences, addresses: addressTables });
-	const is = emitIs({ grammar, nodeMap, generatedIdTables });
-	const tests = emitTests({ grammar, nodeMap, generatedIdTables, expectTestFailures, renderBodies: templates.bodies });
-	const utils = emitClientUtils({ grammar, nodeMap, triviaKinds, structure: factoryEmitter.structure });
+	const wires = collector.guard(() => collectPolymorphWires(nodeMap));
+	const tables = wires === undefined ? undefined : collector.guard(() => builderTables(nodeMap, wires));
+	const typeModules =
+		wires === undefined || tables === undefined
+			? undefined
+			: collector.guard(() =>
+					emitTypesModules({
+						grammar,
+						nodeMap,
+						generatedIdTables,
+						sites: sitePreferences,
+						addresses: addressTables,
+						triviaKinds,
+						wires,
+						entryRows: tables.entryRows
+					})
+				);
+	const consts = collector.guard(() => emitConsts({ grammar, nodeMap }));
+	const options = collector.guard(() => emitOptions({ nodeMap, kindEntries, renderRules, options: optionsBlock, sites: sitePreferences, addresses: addressTables }));
+	const is = collector.guard(() => emitIs({ grammar, nodeMap, generatedIdTables }));
+	const tests = templates === undefined ? undefined : collector.guard(() => emitTests({ grammar, nodeMap, generatedIdTables, expectTestFailures, renderBodies: templates.bodies }));
+	const utils = collector.guard(() => emitClientUtils({ grammar, nodeMap, triviaKinds, structure: factoryEmitter.structure }));
+
+	collector.assertClear();
+	if (
+		factories === undefined ||
+		factoriesRecords === undefined ||
+		factoriesDispatch === undefined ||
+		from === undefined ||
+		wrap === undefined ||
+		templates === undefined ||
+		tables === undefined ||
+		typeModules === undefined ||
+		consts === undefined ||
+		options === undefined ||
+		is === undefined ||
+		tests === undefined ||
+		utils === undefined
+	) {
+		throw new Error('an emission stage produced nothing though no diagnostic was collected');
+	}
+	const { types, internal: typesInternal, kinds } = typeModules;
 
 	return {
 		factories,
@@ -208,7 +239,7 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 	};
 }
 
-interface NodeDispatchEmitters {
+export interface NodeDispatchEmitters {
 	readonly factoryEmitter: FactoryEmitter;
 	readonly fromEmitter: FromEmitter;
 	readonly wrapEmitter: WrapEmitter;
@@ -216,87 +247,90 @@ interface NodeDispatchEmitters {
 	readonly renderModuleEmitterInst: RenderModuleEmitter | undefined;
 }
 
-interface NodeDispatchContext {
+export interface NodeDispatchContext {
 	readonly nodeMap: NodeMap;
 	readonly kindEntries: ReturnType<typeof collectKindEntries>;
 	readonly inlineKinds: readonly string[] | undefined;
 	readonly synthesizedKinds: ReadonlySet<string> | undefined;
 }
 
-function dispatchNodeMapByTaxonomy(emitters: NodeDispatchEmitters, ctx: NodeDispatchContext): void {
+export function dispatchNodeMapByTaxonomy(emitters: NodeDispatchEmitters, ctx: NodeDispatchContext, collector: EmitCollector): void {
 	const { factoryEmitter, fromEmitter, wrapEmitter, templateEmitter, renderModuleEmitterInst } = emitters;
 	const { nodeMap, kindEntries, inlineKinds, synthesizedKinds } = ctx;
 
 	for (const [kind, node] of nodeMap.nodes) {
-		const factoryEmission = classifyFactoryEmission(kind, node, {
-			nodeMap,
-			kindEntries,
-			inlineKinds,
-			synthesizedKinds
-		});
-		if (
-			factoryEmission === 'skip-inline-kind' ||
-			factoryEmission === 'skip-synthesized-kind' ||
-			factoryEmission === 'skip-missing-parser-symbol'
-		) {
-			reportSkippedParserSymbol(kind, 'factory', factoryEmission);
-		}
+		collector.guard(() => {
+			const each = (emits: boolean, call: () => void): void => {
+				if (emits) collector.guard(call);
+			};
+			const factoryEmission = classifyFactoryEmission(kind, node, {
+				nodeMap,
+				kindEntries,
+				inlineKinds,
+				synthesizedKinds
+			});
+			if (
+				factoryEmission === 'skip-inline-kind' ||
+				factoryEmission === 'skip-synthesized-kind' ||
+				factoryEmission === 'skip-missing-parser-symbol'
+			) {
+				reportSkippedParserSymbol(kind, 'factory', factoryEmission);
+			}
 
-		const fromEmission = classifyFromEmission(kind, node, {
-			nodeMap,
-			kindEntries
-		});
-		const wrapEmission = classifyWrapEmission(kind, node, {
-			kindEntries,
-			inlineKinds,
-			synthesizedKinds
-		});
-		if (
-			wrapEmission === 'skip-inline-kind' ||
-			wrapEmission === 'skip-synthesized-kind' ||
-			wrapEmission === 'skip-missing-parser-symbol'
-		) {
-			reportSkippedParserSymbol(kind, 'wrap', wrapEmission);
-		}
-		const templateEmission = classifyTemplateEmission(node);
+			const fromEmission = classifyFromEmission(kind, node, {
+				nodeMap,
+				kindEntries
+			});
+			const wrapEmission = classifyWrapEmission(kind, node, {
+				kindEntries,
+				inlineKinds,
+				synthesizedKinds
+			});
+			if (
+				wrapEmission === 'skip-inline-kind' ||
+				wrapEmission === 'skip-synthesized-kind' ||
+				wrapEmission === 'skip-missing-parser-symbol'
+			) {
+				reportSkippedParserSymbol(kind, 'wrap', wrapEmission);
+			}
+			const templateEmission = classifyTemplateEmission(node);
 
-		switch (node.modelType) {
-			case 'pattern':
-			case 'enum':
-				if (factoryEmission === 'emit') factoryEmitter.emitLeaf(node);
-				if (fromEmission === 'emit') fromEmitter.emitLeaf(node);
-				if (templateEmission === 'emit') templateEmitter.emitLeaf(node);
-				renderModuleEmitterInst?.emitLeaf?.(node);
-				break;
-			case 'keyword':
-			case 'punctuation':
-				if (isBuilderlessPunctuationLeaf(node)) break;
-				if (factoryEmission === 'emit') factoryEmitter.emitLeaf(node);
-				if (fromEmission === 'emit') fromEmitter.emitLeaf(node);
-				if (templateEmission === 'emit') templateEmitter.emitLeaf(node);
-				renderModuleEmitterInst?.emitLeaf?.(node);
-				break;
-			case 'envelope':
-			case 'branch':
-			case 'lexedPattern':
-			case 'polymorph':
-			case 'alias':
-				if (fromEmission === 'emit') fromEmitter.emitBranch(node);
-				if (factoryEmission === 'emit') factoryEmitter.emitBranch(node);
-				if (wrapEmission === 'emit') wrapEmitter.emitBranch(node);
-				if (templateEmission === 'emit') templateEmitter.emitBranch(node);
-				renderModuleEmitterInst?.emitBranch?.(node);
-				break;
-			case 'list':
-				if (factoryEmission === 'emit') factoryEmitter.emitSeparatedList(node);
-				if (fromEmission === 'emit') fromEmitter.emitSeparatedList(node);
-				if (wrapEmission === 'emit') wrapEmitter.emitSeparatedList(node);
-				if (templateEmission === 'emit') templateEmitter.emitBranch(node);
-				renderModuleEmitterInst?.emitBranch?.(node);
-				break;
-		}
-		if (factoryEmission === 'emit') {
-			factoryEmitter.emitRefineForms(kind, node);
-		}
+			switch (node.modelType) {
+				case 'pattern':
+				case 'enum':
+					each(factoryEmission === 'emit', () => factoryEmitter.emitLeaf(node));
+					each(fromEmission === 'emit', () => fromEmitter.emitLeaf(node));
+					each(templateEmission === 'emit', () => templateEmitter.emitLeaf(node));
+					each(true, () => renderModuleEmitterInst?.emitLeaf?.(node));
+					break;
+				case 'keyword':
+				case 'punctuation':
+					if (isBuilderlessPunctuationLeaf(node)) break;
+					each(factoryEmission === 'emit', () => factoryEmitter.emitLeaf(node));
+					each(fromEmission === 'emit', () => fromEmitter.emitLeaf(node));
+					each(templateEmission === 'emit', () => templateEmitter.emitLeaf(node));
+					each(true, () => renderModuleEmitterInst?.emitLeaf?.(node));
+					break;
+				case 'envelope':
+				case 'branch':
+				case 'lexedPattern':
+				case 'polymorph':
+				case 'alias':
+					each(fromEmission === 'emit', () => fromEmitter.emitBranch(node));
+					each(factoryEmission === 'emit', () => factoryEmitter.emitBranch(node));
+					each(wrapEmission === 'emit', () => wrapEmitter.emitBranch(node));
+					each(templateEmission === 'emit', () => templateEmitter.emitBranch(node));
+					each(true, () => renderModuleEmitterInst?.emitBranch?.(node));
+					break;
+				case 'list':
+					each(factoryEmission === 'emit', () => factoryEmitter.emitSeparatedList(node));
+					each(fromEmission === 'emit', () => fromEmitter.emitSeparatedList(node));
+					each(wrapEmission === 'emit', () => wrapEmitter.emitSeparatedList(node));
+					each(templateEmission === 'emit', () => templateEmitter.emitBranch(node));
+					each(true, () => renderModuleEmitterInst?.emitBranch?.(node));
+					break;
+			}
+			each(factoryEmission === 'emit', () => factoryEmitter.emitRefineForms(kind, node));
+		});
 	}
 }

@@ -1,4 +1,5 @@
 import type { PortableMountCall } from '@sittir/types';
+import { emitShapeFailure } from '../../compiler/diagnostics/emit-diagnostics.ts';
 import type { NodeMap } from '../../compiler/types.ts';
 import { AbstractAssembledCompound, AssembledEnum, AssembledList, AssembledSupertype, delimiterPreferenceOf, isKindIdStored, isRequired, separatorRequired, type AssembledNode } from '../../compiler/model/node-map.ts';
 import {
@@ -398,9 +399,11 @@ function composeSeats(
 			coerceExpr !== undefined && seat.child.coerce !== undefined ? seat.apply(coerceExpr, seat.child.coerce) : undefined;
 	}
 	if (coerceExpr === undefined || p.coerce === undefined) {
-		throw new Error(
-			`[codegen] ${wireSet.node.kind}: its seated builder has no loose form (a seat's group has no coercer), so the default engine's table has no builder for it`
-		);
+		throw emitShapeFailure({
+			code: 'seated-builder-without-loose-form',
+			ownerKind: wireSet.node.kind,
+			message: `${wireSet.node.kind}: its seated builder has no loose form (a seat's group has no coercer), so the default engine's table has no builder for it`
+		});
 	}
 	const name = seatedKeyOf(wireSet.parentKey);
 	const seated = (argsType: string, returnType: string, expr: string): string =>
@@ -1134,7 +1137,13 @@ export function emitPolymorphsOverlay(config: {
 			const target = nestedParentKey === undefined ? variantRouteOf(child, `${parent.key}.${name}`) : defaultRoutes.get(nestedParentKey);
 			if (target?.set !== undefined) uses.add(target.set);
 			if (route.default && target !== undefined) {
-				if (isKindIdStored(child)) throw new Error(`arm.default: '${child.kind}' has no content to build, so it cannot be the default of '${parent.node.kind}'`);
+				if (isKindIdStored(child))
+					throw emitShapeFailure({
+						code: 'arm-default-without-content',
+						ownerKind: parent.node.kind,
+						message: `'${child.kind}' has no content to build, so it cannot be the default of '${parent.node.kind}'`,
+						details: { arm: child.kind }
+					});
 				defaultRoutes.set(parent.key, target);
 				rowKindByPath.set(parent.key, target.kind);
 				fallback = target;

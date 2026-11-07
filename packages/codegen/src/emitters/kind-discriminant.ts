@@ -1,4 +1,5 @@
 import type { KindParserMetadata, NodeMap } from '../compiler/types.ts';
+import { emitShapeFailure } from '../compiler/diagnostics/emit-diagnostics.ts';
 import type { GeneratedIdTables, GeneratedKindEntry } from '../dsl/symbol-table.ts';
 import { collectGeneratedKindEntries, findEntryForKindName, findEntryForLiteralText, findOwnKindEntry, modelKindOfEntry } from '../dsl/symbol-table.ts';
 import { kindIdText } from '../compiler/model/node-map.ts';
@@ -74,11 +75,14 @@ export function fixedTextKinds(nodeMap: NodeMap, kindEntries: readonly KindEnumE
 export function kindDiscriminantExpr(kind: string, nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[]): string {
 	const entry = findKindEntry(kindEntries, kind);
 	if (!entry) {
-		throw new Error(
-			`kindDiscriminantExpr: kind '${kind}' has no parser symbol (TSGrammar-only). ` +
+		throw emitShapeFailure({
+			code: 'kind-without-parser-symbol',
+			ownerKind: kind,
+			message:
+				`kind '${kind}' has no parser symbol (TSGrammar-only). ` +
 				`Tree-sitter inlined this rule during parser compilation; it can never carry a runtime $type. ` +
 				`Either remove the codegen surface that references it, or add a synthetic parser-symbol entry to the catalog.`
-		);
+		});
 	}
 	return `TSKindId.${entry.member}`;
 }
@@ -91,10 +95,11 @@ export function kindDiscriminantExprForId(id: number, kindEntries: readonly Kind
 export function kindDiscriminantExprForLiteral(literalText: string, kindEntries: readonly KindEnumEntry[]): string {
 	const entry = findKindEntryForLiteral(kindEntries, literalText);
 	if (!entry) {
-		throw new Error(
-			`kindDiscriminantExprForLiteral: literal '${literalText}' has no parser symbol (TSGrammar-only). ` +
-				`See kindDiscriminantExpr for the loud-error rationale.`
-		);
+		throw emitShapeFailure({
+			code: 'literal-without-parser-symbol',
+			message: `literal '${literalText}' has no parser symbol (TSGrammar-only): tree-sitter inlined the rule that spells it, so it can never carry a runtime $type`,
+			details: { text: literalText }
+		});
 	}
 	return `TSKindId.${entry.member}`;
 }

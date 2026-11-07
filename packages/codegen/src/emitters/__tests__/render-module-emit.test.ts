@@ -679,6 +679,41 @@ describe('node read facts', () => {
 		);
 	});
 
+	it('does not report a list that only reaches a cyclic list', () => {
+		const cyclicList = node('ArgumentsElementsNode');
+		const other = node('FieldInitializerListElementsNode');
+		const [item] = slotKindNames(listItemSlot(other)!);
+		const envelope = node('TypeIdentifierNode');
+		const [content] = envelope.slots.flatMap((s) => slotKindNames(s));
+		const supertype = [...model.nodeMap.nodes.values()].find((n): n is AssembledSupertype => n instanceof AssembledSupertype)!;
+		const [member] = supertype.subtypeNames;
+		const nodes = new Map([...model.nodeMap.nodes, [item!, envelope], [content!, supertype], [member!, cyclicList]]);
+		const reaching = { ...ctx, nodeMap: { ...ctx.nodeMap, nodes }, wrappedLists: new Map([[cyclicList.kind, node('ArgumentsNode')]]) };
+		expect(() => nodeArgs(other, ownId(other), reaching, other.slots)).not.toThrow();
+		expect(() => nodeArgs(cyclicList, ownId(cyclicList), reaching, cyclicList.slots)).toThrow(/the list arguments_elements reads its items at its own depth/);
+	});
+
+	it('reports a cycle that runs through another list, naming the way back', () => {
+		const first = node('ArgumentsElementsNode');
+		const second = node('FieldInitializerListElementsNode');
+		const [secondItem] = slotKindNames(listItemSlot(second)!);
+		const envelope = node('TypeIdentifierNode');
+		const [content] = envelope.slots.flatMap((s) => slotKindNames(s));
+		const supertype = [...model.nodeMap.nodes.values()].find((n): n is AssembledSupertype => n instanceof AssembledSupertype)!;
+		const [member] = supertype.subtypeNames;
+		const wrapper = node('ArgumentsNode');
+		const [wrapperSlotKind] = slotKindNames(wrapper.slots[0]!);
+		const nodes = new Map([...model.nodeMap.nodes, [secondItem!, envelope], [content!, supertype], [member!, first], [wrapperSlotKind!, second]]);
+		const ring = { ...ctx, nodeMap: { ...ctx.nodeMap, nodes }, wrappedLists: new Map([[first.kind, wrapper]]) };
+		let message = '';
+		try {
+			nodeArgs(first, ownId(first), ring, first.slots);
+		} catch (error) {
+			message = String((error as Error).message);
+		}
+		expect(message).toMatch(/flat-list-cycle:.*the list arguments_elements reads its items at its own depth/);
+	});
+
 	it('reads a token interior by its pattern and selects envelope reading from its content slot', () => {
 		expect(args('IntegerLiteralDecimalNode')).toBe(
 			'kind = kind::INTEGER_LITERAL_DECIMAL, interior = "^(?<content>(?:[0-9][0-9_]*))(?<suffix>isize|usize|u128|i128|u16|i16|u32|i32|u64|i64|f32|f64|u8|i8)?$"'
@@ -691,10 +726,10 @@ describe('node read facts', () => {
 		const [content] = envelope.slots.flatMap((s) => slotKindNames(s));
 		const holding = (held: AssembledNode): ReadFactsCtx => ({ ...ctx, nodeMap: { ...ctx.nodeMap, nodes: new Map([...ctx.nodeMap.nodes, [content!, held]]) } });
 		expect(() => nodeArgs(envelope, ownId(envelope), holding(model.nodeMap.nodes.get('mutable_specifier')!), envelope.slots)).toThrow(
-			`node read facts: the envelope ${envelope.kind} holds the unit ${content}`
+			`envelope-holds-unit: the envelope ${envelope.kind} holds the unit ${content}`
 		);
 		expect(() => nodeArgs(envelope, ownId(envelope), holding(node('ParametersNode')), envelope.slots)).toThrow(
-			`node read facts: the envelope ${envelope.kind} shares its row with ${content}, which is not a text leaf`
+			`envelope-shares-row-with-nonleaf: the envelope ${envelope.kind} shares its row with ${content}, which is not a text leaf`
 		);
 	});
 

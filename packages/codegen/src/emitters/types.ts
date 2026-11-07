@@ -1,4 +1,5 @@
 import { collectPolymorphWires, seatedRowsOf, type PolymorphWires } from './overlays/polymorphs.ts';
+import { emitShapeFailure } from '../compiler/diagnostics/emit-diagnostics.ts';
 import { findOwnKindEntry, modelKindOfEntry, treeNameOf } from '../dsl/symbol-table.ts';
 import type { SlotBearingCompound } from '../compiler/model/node-map.ts';
 import type { NodeMap } from '../compiler/types.ts';
@@ -763,13 +764,13 @@ function emitOptionsHints(
 			continue;
 		}
 		if (prior !== undefined && ownsItsDisplay(prior.kind, nodeMap) === ownsItsDisplay(kind, nodeMap)) {
-			throw new Error(`types emitter: options root '${root.name}' names both '${prior.kind}' and '${kind}'`);
+			throw emitShapeFailure({ code: 'options-root-ambiguous', message: `types emitter: options root '${root.name}' names both '${prior.kind}' and '${kind}'` });
 		}
 		if (prior === undefined || ownsItsDisplay(kind, nodeMap))
 			homes.set(root.name, [{ kind, typeName, root, internal: internal === true }]);
 	}
 	const homeless = [...kindRoots.keys()].filter((name) => !homes.has(name));
-	if (homeless.length > 0) throw new Error(`types emitter: options roots with no declared type to carry their hint: ${homeless.join(', ')}`);
+	if (homeless.length > 0) throw emitShapeFailure({ code: 'options-root-homeless', message: `types emitter: options roots with no declared type to carry their hint: ${homeless.join(', ')}` });
 	lines.push('export interface OptionsHintMap {');
 	for (const entries of homes.values())
 		lines.push(`  ${entries[0]!.root.key}: ${entries.map(({ typeName }) => `${typeName}.Hints`).join(' | ')};`);
@@ -883,10 +884,10 @@ function assertNoCamelCaseCollisions(nodeKinds: string[]): void {
 		const camel = snakeToCamel(kind);
 		const prev = camelNames.get(camel);
 		if (prev !== undefined && prev !== kind) {
-			throw new Error(
+			throw emitShapeFailure({ code: 'camelcase-collision', message: 
 				`types emitter: camelCase collision — kinds '${prev}' and '${kind}' both camelCase to '${camel}'. ` +
 					`Rename one before proceeding.`
-			);
+			 });
 		}
 		camelNames.set(camel, kind);
 	}

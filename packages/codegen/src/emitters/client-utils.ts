@@ -6,6 +6,7 @@ import { AssembledSupertype, storageKeyOf, type AssembledNonterminal } from '../
 import { hasBlankArm } from '../compiler/model/site-preferences.ts';
 import { grammarTypeMapName } from './engine.ts';
 import { nodeSlotNumbers } from './render-module.ts';
+import { EmitCollector, emitShapeFailure } from '../compiler/diagnostics/emit-diagnostics.ts';
 import { layoutTriviaKindIds, listKindIds, namedUnitKindIds, rebuildWrapperKindIds } from './wrap.ts';
 
 export interface EmitClientUtilsConfig {
@@ -80,28 +81,39 @@ export function queryRoutesOf(slot: AssembledNonterminal, nodeMap: NodeMap): Wir
 
 export function querySlotRows(nodeMap: NodeMap): ReadonlyMap<number, readonly QuerySlotEntry[]> {
 	const rows = new Map<number, readonly QuerySlotEntry[]>();
+	const collector = new EmitCollector('');
 	for (const node of nodeMap.nodes.values()) {
 		if (node.kindId === undefined || node.slots.length === 0) continue;
-		const numbers = nodeSlotNumbers(node, nodeMap);
-		const row = node.slots.map((slot): QuerySlotEntry => {
-			if (slot.propertyName === RECORDER_FLAG_KEY)
-				throw new Error(`client-utils: ${node.kind}'s slot ${slot.name} is read as \`${RECORDER_FLAG_KEY}\`, which a where condition reserves for flags`);
-			const number = numbers.get(slot.storageName);
-			if (number === undefined) throw new Error(`client-utils: ${node.kind}'s slot ${slot.name} has no field in its node, so a query cannot number it`);
-			const keyword = keywordPresenceStorage(slot, nodeMap);
-			const keywordKind = keyword?.via === 'kindId' ? keyword.kindId : undefined;
-			const storageKey = storageKeyOf(slot.storageName);
-			if (hasBlankArm(slot)) return [slot.propertyName, number, keyword?.text, storageKey, keywordKind, true];
-			return keywordKind === undefined
-				? [slot.propertyName, number, keyword?.text, storageKey]
-				: [slot.propertyName, number, keyword?.text, storageKey, keywordKind];
+		const kindId = node.kindId;
+		collector.guard(() => {
+			const numbers = nodeSlotNumbers(node, nodeMap);
+			const row = node.slots.map((slot): QuerySlotEntry => {
+				if (slot.propertyName === RECORDER_FLAG_KEY)
+					throw emitShapeFailure({
+						code: 'reserved-slot-name',
+						ownerKind: node.kind,
+						slotName: slot.name,
+						message: `${node.kind}'s slot ${slot.name} is read as \`${RECORDER_FLAG_KEY}\`, which a where condition reserves for flags`,
+						proposal: `name the field something else in the grammar layer: field('<name>', ...)`
+					});
+				const number = numbers.get(slot.storageName);
+				if (number === undefined) throw new Error(`client-utils: ${node.kind}'s slot ${slot.name} has no field in its node, so a query cannot number it`);
+				const keyword = keywordPresenceStorage(slot, nodeMap);
+				const keywordKind = keyword?.via === 'kindId' ? keyword.kindId : undefined;
+				const storageKey = storageKeyOf(slot.storageName);
+				if (hasBlankArm(slot)) return [slot.propertyName, number, keyword?.text, storageKey, keywordKind, true];
+				return keywordKind === undefined
+					? [slot.propertyName, number, keyword?.text, storageKey]
+					: [slot.propertyName, number, keyword?.text, storageKey, keywordKind];
+			});
+			const claimed = rows.get(kindId);
+			if (claimed !== undefined && JSON.stringify(claimed) !== JSON.stringify(row)) {
+				throw new Error(`client-utils: kind id ${kindId} ('${node.kind}') has two slot tables`);
+			}
+			rows.set(kindId, row);
 		});
-		const claimed = rows.get(node.kindId);
-		if (claimed !== undefined && JSON.stringify(claimed) !== JSON.stringify(row)) {
-			throw new Error(`client-utils: kind id ${node.kindId} ('${node.kind}') has two slot tables`);
-		}
-		rows.set(node.kindId, row);
 	}
+	collector.assertClear();
 	return new Map([...rows].sort(([a], [b]) => a - b));
 }
 

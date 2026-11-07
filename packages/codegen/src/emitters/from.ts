@@ -1,4 +1,5 @@
 import { findOwnKindEntry } from '../dsl/symbol-table.ts';
+import { emitShapeFailure } from '../compiler/diagnostics/emit-diagnostics.ts';
 import type { AuthoredCompound, FullForm } from '../compiler/model/node-map.ts';
 import type { NodeMap } from '../compiler/types.ts';
 import { builtFromText } from './built-from-text.ts';
@@ -297,7 +298,12 @@ function spelledOptionSlots(
 		if (field === undefined) return [];
 		const slot = node.slots.find((candidate) => candidate.fieldName === field);
 		if (slot?.registeredOption === undefined) {
-			throw new Error(`from: '${node.kind}' spells its full form in '${field}', which is not a registered option`);
+			throw emitShapeFailure({
+				code: 'full-form-slot-not-option',
+				ownerKind: node.kind,
+				slotName: field,
+				message: `'${node.kind}' spells its full form in '${field}', which is not a registered option`
+			});
 		}
 		return [[side, slot] as const];
 	});
@@ -313,7 +319,12 @@ function spelledReturnType(
 	spelled: readonly (readonly ['open' | 'close', AssembledNonterminal])[]
 ): string {
 	return spelled.reduce((type, [side, slot]) => {
-		if (side === 'close') throw new Error(`from: a spelled closing delimiter ('${slot.propertyName}') has no typed form`);
+		if (side === 'close')
+			throw emitShapeFailure({
+				code: 'spelled-closing-delimiter',
+				slotName: slot.propertyName,
+				message: `a spelled closing delimiter ('${slot.propertyName}') has no typed form`
+			});
 		const typed = `SpelledAffix<I, ${literalUnion(fullForm.open.texts)}, ${JSON.stringify(slot.optionDefaultArm)}>`;
 		const key = slot.propertyName;
 		return `WithSpelling<${type}, ${JSON.stringify(key)}, O extends { ${key}: infer P } ? P : ${typed}>`;
@@ -402,7 +413,11 @@ function emitBranchFrom(
 	const siblings = fullForm === undefined ? [] : siblingLeads(nodeMap, node);
 	const refusal = fullForm === undefined ? undefined : siblingLeadRefusalType(fullForm, siblings);
 	if (spelled.length > 0 && refusal !== undefined) {
-		throw new Error(`from: '${node.kind}' has both a spelled delimiter and sibling leads; no typed form covers both`);
+		throw emitShapeFailure({
+			code: 'spelled-delimiter-with-sibling-leads',
+			ownerKind: node.kind,
+			message: `'${node.kind}' has both a spelled delimiter and sibling leads; no typed form covers both`
+		});
 	}
 	const spelledType = fullForm === undefined || spelled.length === 0 ? undefined : spelledReturnType(returnType, fullForm, spelled);
 	const bareShape = bareInteriorText(node.kind, node)?.number ?? (soleField === undefined ? undefined : numericSlotShape(soleField));
@@ -429,7 +444,11 @@ function emitBranchFrom(
 			: [seatDeclaration(nodeMap, node.kind, fn, functionTypeOf(config, returnType), { params: `input${opt}: ${inputType}`, returnType, body })];
 	if (spreadTarget !== null) {
 		if (spelledType !== undefined || refusal !== undefined) {
-			throw new Error(`from: '${node.kind}' forwards a list spread but its loose input is spelled or refuses sibling leads; no typed form covers both`);
+			throw emitShapeFailure({
+				code: 'list-spread-with-spelled-input',
+				ownerKind: node.kind,
+				message: `'${node.kind}' forwards a list spread but its loose input is spelled or refuses sibling leads; no typed form covers both`
+			});
 		}
 		const spreadNode = nodeMap.nodes.get(spreadTarget)!;
 		const row = refusingParam('input', `T.${spreadNode.typeName}.LooseArgs`, { rest: true, loose: true });
@@ -920,7 +939,11 @@ function defaultArmKindOf(
 	const flagged = field.values.filter((v) => v.default === true && isNodeRef(v));
 	if (flagged.length > 1) {
 		const names = flagged.filter(isNodeRef).map((v) => storageKindOfRef(v.node));
-		throw new Error(`arm.default: ${flagged.length} arms are declared the default (${names.join(', ')}); pick one`);
+		throw emitShapeFailure({
+			code: 'arm-default-conflict',
+			message: `${flagged.length} arms are declared the default (${names.join(', ')}); pick one`,
+			details: { arms: names }
+		});
 	}
 	const first = flagged[0];
 	return first === undefined || !isNodeRef(first) ? undefined : storageKindOfRef(first.node);
@@ -1649,7 +1672,13 @@ function emitResolverHelpers(
 	const branchByText = new Map<string, string>();
 	for (const [text, k] of byText) {
 		const prior = branchByText.get(text);
-		if (prior !== undefined) throw new Error(`from: keyword text ${JSON.stringify(text)} builds both '${prior}' and '${k}'; a bare keyword must name one branch`);
+		if (prior !== undefined)
+			throw emitShapeFailure({
+				code: 'keyword-text-ambiguous',
+				ownerKind: k,
+				message: `keyword text ${JSON.stringify(text)} builds both '${prior}' and '${k}'; a bare keyword must name one branch`,
+				details: { text, kinds: [prior, k] }
+			});
 		branchByText.set(text, k);
 	}
 	lines.push('const _KEYWORD_BRANCH_BY_TEXT: Record<string, string | undefined> = {');

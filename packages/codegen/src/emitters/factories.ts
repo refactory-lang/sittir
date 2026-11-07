@@ -1,4 +1,5 @@
 import type { StructureRow } from '@sittir/types';
+import { emitShapeFailure } from '../compiler/diagnostics/emit-diagnostics.ts';
 import { LIST_VIEW_MEMBERS } from '@sittir/common/utils';
 import { hostTemplateFor } from '@sittir/common';
 import type { ReparseHostsConfig } from '../dsl/wire/reparse-hosts.ts';
@@ -242,7 +243,12 @@ function delimitedHost(
 	const host = hostTemplateFor(kind, table, kindToSupertypes(nodeMap), { root: nodeMap.root });
 	if (host !== undefined) return host;
 	if (triviaKinds.has(kind)) return '$r';
-	throw new Error(`${kind}: its delimiters need a parse-back host, and the grammar's reparseHosts block names none for it`);
+	throw emitShapeFailure({
+		code: 'reparse-host-missing',
+		ownerKind: kind,
+		message: `${kind}: its delimiters need a parse-back host, and the grammar's reparseHosts block names none for it`,
+		proposal: `name a host for ${kind} in the wire layer's reparseHosts block`
+	});
 }
 
 function buildDelimitedConsts(
@@ -983,7 +989,13 @@ function narrowedStorageExpr(
 	if (kind === 'boolean') return 'true as const';
 	if (kind === 'kindEnum' || kind === 'mixedEnum') {
 		const entry = kindEnumTextEntries(f, nodeMap, kindEntries).find((candidate) => candidate.text === literal);
-		if (entry === undefined) throw new Error(`refine form: '${typeName}.${f.name}' is narrowed to ${JSON.stringify(literal)}, which names no kind of the slot`);
+		if (entry === undefined)
+			throw emitShapeFailure({
+				code: 'refine-literal-unknown',
+				ownerKind: typeName,
+				slotName: f.name,
+				message: `refine form: '${typeName}.${f.name}' is narrowed to ${JSON.stringify(literal)}, which names no kind of the slot`
+			});
 		return admittedSlotInput(f, `${entry.discriminant} as const`, nodeMap, kindEntries, typeName);
 	}
 	return slotStorageFromValueExpr(f, `${JSON.stringify(literal)} as const`, nodeMap, kindEntries, typeName);
@@ -2576,9 +2588,13 @@ export function listViewHint(
 	];
 	const clash = accessors.find((name) => LIST_VIEW_MEMBERS.includes(name));
 	if (clash !== undefined) {
-		throw new Error(
-			`listViewHint: '${node.kind}' reads as a list, and its '${clash}' collides with the ReadonlyArray member of that name; rename the slot in the grammar`
-		);
+		throw emitShapeFailure({
+			code: 'list-view-slot-collision',
+			ownerKind: node.kind,
+			slotName: clash,
+			message: `'${node.kind}' reads as a list, and its '${clash}' collides with the ReadonlyArray member of that name`,
+			proposal: `rename the slot in the grammar layer: field('<name>', ...)`
+		});
 	}
 	return {
 		element: surface.elemType,
