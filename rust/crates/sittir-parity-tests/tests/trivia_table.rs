@@ -195,7 +195,7 @@ fn a_comment_between_two_of_a_for_statements_own_tokens_leads_its_next_child() {
 fn a_comment_after_a_blocks_last_statement_trails_it() {
     let case = Case::new(python(), "if a:\n    b\n    # c\nd\n");
     case.holds("simple_statements", "b", Trailing, "comment", "# c");
-    assert_eq!(case.table.side(case.at("block", "b\n    # c"), Inner), []);
+    assert_eq!(case.table.side(case.at("block_statement", "b\n    # c"), Inner), []);
 }
 
 #[test]
@@ -343,7 +343,7 @@ fn a_block_body_is_structural_and_carries_no_depth_members() {
         assert_eq!(case.depths(case.at("expression_statement", statement), Leading), [0], "{statement}");
     }
     let case = Case::new(python(), "def f():\n    a\n    b\nc\n");
-    assert_eq!(case.depths(case.at("block", "a\n    b"), Leading), [0], "the run before the body");
+    assert_eq!(case.depths(case.at("block_statement", "a\n    b"), Leading), [0], "the run before the body");
     for statement in ["b", "c"] {
         assert_eq!(case.depths(case.at("simple_statements", statement), Leading), [0], "{statement}");
     }

@@ -24771,9 +24771,9 @@
     "pattern": "_lhs_expression",
     "edits": [],
     "expectedSourceOut": "plugin",
-    "expectedReparseTree": "(formal_parameters_elements item: (required_parameter name: (lhs_expression (identifier))))",
-    "wrappedText": "function _f(plugin) {}",
-    "wrappedOffset": 12
+    "expectedReparseTree": "(lhs_expression (identifier))",
+    "wrappedText": "(plugin = null);",
+    "wrappedOffset": 1
   },
   {
     "kind": "render",
@@ -37264,9 +37264,9 @@
     "pattern": "_lhs_expression",
     "edits": [],
     "expectedSourceOut": "a",
-    "expectedReparseTree": "(formal_parameters_elements item: (required_parameter name: (lhs_expression (identifier))))",
-    "wrappedText": "function _f(a) {}",
-    "wrappedOffset": 12
+    "expectedReparseTree": "(lhs_expression (identifier))",
+    "wrappedText": "(a = null);",
+    "wrappedOffset": 1
   },
   {
     "kind": "render",
@@ -37293,9 +37293,9 @@
     "pattern": "_lhs_expression",
     "edits": [],
     "expectedSourceOut": "b",
-    "expectedReparseTree": "(formal_parameters_elements item: (required_parameter name: (lhs_expression (identifier))))",
-    "wrappedText": "function _f(b) {}",
-    "wrappedOffset": 12
+    "expectedReparseTree": "(lhs_expression (identifier))",
+    "wrappedText": "(b = null);",
+    "wrappedOffset": 1
   },
   {
     "kind": "render",
@@ -37322,9 +37322,9 @@
     "pattern": "_lhs_expression",
     "edits": [],
     "expectedSourceOut": "c",
-    "expectedReparseTree": "(formal_parameters_elements item: (required_parameter name: (lhs_expression (identifier))))",
-    "wrappedText": "function _f(c) {}",
-    "wrappedOffset": 12
+    "expectedReparseTree": "(lhs_expression (identifier))",
+    "wrappedText": "(c = null);",
+    "wrappedOffset": 1
   },
   {
     "kind": "render",
@@ -69613,9 +69613,9 @@
     "pattern": "_lhs_expression",
     "edits": [],
     "expectedSourceOut": "amount",
-    "expectedReparseTree": "(required_parameter name: (lhs_expression (identifier)))",
-    "wrappedText": "function _f(amount) {}",
-    "wrappedOffset": 12
+    "expectedReparseTree": "(lhs_expression (identifier))",
+    "wrappedText": "(amount = null);",
+    "wrappedOffset": 1
   },
   {
     "kind": "render",
@@ -69645,9 +69645,9 @@
     "pattern": "_lhs_expression",
     "edits": [],
     "expectedSourceOut": "interestRate",
-    "expectedReparseTree": "(required_parameter name: (lhs_expression (identifier)))",
-    "wrappedText": "function _f(interestRate) {}",
-    "wrappedOffset": 12
+    "expectedReparseTree": "(lhs_expression (identifier))",
+    "wrappedText": "(interestRate = null);",
+    "wrappedOffset": 1
   },
   {
     "kind": "render",
@@ -69677,9 +69677,9 @@
     "pattern": "_lhs_expression",
     "edits": [],
     "expectedSourceOut": "duration",
-    "expectedReparseTree": "(required_parameter name: (lhs_expression (identifier)))",
-    "wrappedText": "function _f(duration) {}",
-    "wrappedOffset": 12
+    "expectedReparseTree": "(lhs_expression (identifier))",
+    "wrappedText": "(duration = null);",
+    "wrappedOffset": 1
   },
   {
     "kind": "render",
@@ -69709,9 +69709,9 @@
     "pattern": "_lhs_expression",
     "edits": [],
     "expectedSourceOut": "amount",
-    "expectedReparseTree": "(required_parameter name: (lhs_expression (identifier)))",
-    "wrappedText": "function _f(amount) {}",
-    "wrappedOffset": 12
+    "expectedReparseTree": "(lhs_expression (identifier))",
+    "wrappedText": "(amount = null);",
+    "wrappedOffset": 1
   },
   {
     "kind": "render",
@@ -69741,9 +69741,9 @@
     "pattern": "_lhs_expression",
     "edits": [],
     "expectedSourceOut": "interestRate",
-    "expectedReparseTree": "(required_parameter name: (lhs_expression (identifier)))",
-    "wrappedText": "function _f(interestRate) {}",
-    "wrappedOffset": 12
+    "expectedReparseTree": "(lhs_expression (identifier))",
+    "wrappedText": "(interestRate = null);",
+    "wrappedOffset": 1
   },
   {
     "kind": "render",
@@ -69773,9 +69773,9 @@
     "pattern": "_lhs_expression",
     "edits": [],
     "expectedSourceOut": "duration",
-    "expectedReparseTree": "(required_parameter name: (lhs_expression (identifier)))",
-    "wrappedText": "function _f(duration) {}",
-    "wrappedOffset": 12
+    "expectedReparseTree": "(lhs_expression (identifier))",
+    "wrappedText": "(duration = null);",
+    "wrappedOffset": 1
   },
   {
     "kind": "render",
@@ -74406,9 +74406,9 @@
     "pattern": "_lhs_expression",
     "edits": [],
     "expectedSourceOut": "bar",
-    "expectedReparseTree": "(formal_parameters_elements item: (required_parameter name: (lhs_expression (identifier))))",
-    "wrappedText": "function _f(bar) {}",
-    "wrappedOffset": 12
+    "expectedReparseTree": "(lhs_expression (identifier))",
+    "wrappedText": "(bar = null);",
+    "wrappedOffset": 1
   },
   {
     "kind": "render",
@@ -74435,9 +74435,9 @@
     "pattern": "_lhs_expression",
     "edits": [],
     "expectedSourceOut": "bar",
-    "expectedReparseTree": "(formal_parameters_elements item: (required_parameter name: (lhs_expression (identifier))))",
-    "wrappedText": "function _f(bar) {}",
-    "wrappedOffset": 12
+    "expectedReparseTree": "(lhs_expression (identifier))",
+    "wrappedText": "(bar = null);",
+    "wrappedOffset": 1
   },
   {
     "kind": "render",
@@ -74464,9 +74464,9 @@
     "pattern": "_lhs_expression",
     "edits": [],
     "expectedSourceOut": "bar",
-    "expectedReparseTree": "(formal_parameters_elements item: (required_parameter name: (lhs_expression (identifier))))",
-    "wrappedText": "function _f(bar) {}",
-    "wrappedOffset": 12
+    "expectedReparseTree": "(lhs_expression (identifier))",
+    "wrappedText": "(bar = null);",
+    "wrappedOffset": 1
   },
   {
     "kind": "render",
@@ -80379,9 +80379,9 @@
     "pattern": "_lhs_expression",
     "edits": [],
     "expectedSourceOut": "string",
-    "expectedReparseTree": "(formal_parameters_elements item: (required_parameter name: (lhs_expression (identifier))))",
-    "wrappedText": "function _f(string) {}",
-    "wrappedOffset": 12
+    "expectedReparseTree": "(lhs_expression (identifier))",
+    "wrappedText": "(string = null);",
+    "wrappedOffset": 1
   },
   {
     "kind": "render",
@@ -81689,9 +81689,9 @@
     "pattern": "_lhs_expression",
     "edits": [],
     "expectedSourceOut": "string",
-    "expectedReparseTree": "(formal_parameters_elements item: (required_parameter name: (lhs_expression (identifier))))",
-    "wrappedText": "function _f(string) {}",
-    "wrappedOffset": 12
+    "expectedReparseTree": "(lhs_expression (identifier))",
+    "wrappedText": "(string = null);",
+    "wrappedOffset": 1
   },
   {
     "kind": "render",
@@ -86191,9 +86191,9 @@
     "pattern": "_lhs_expression",
     "edits": [],
     "expectedSourceOut": "p1",
-    "expectedReparseTree": "(required_parameter name: (lhs_expression (identifier)))",
-    "wrappedText": "function _f(p1) {}",
-    "wrappedOffset": 12
+    "expectedReparseTree": "(lhs_expression (identifier))",
+    "wrappedText": "(p1 = null);",
+    "wrappedOffset": 1
   },
   {
     "kind": "render",
@@ -86220,9 +86220,9 @@
     "pattern": "_lhs_expression",
     "edits": [],
     "expectedSourceOut": "p2",
-    "expectedReparseTree": "(required_parameter name: (lhs_expression (identifier)))",
-    "wrappedText": "function _f(p2) {}",
-    "wrappedOffset": 12
+    "expectedReparseTree": "(lhs_expression (identifier))",
+    "wrappedText": "(p2 = null);",
+    "wrappedOffset": 1
   },
   {
     "kind": "render",
