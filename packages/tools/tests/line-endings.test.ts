@@ -136,6 +136,45 @@ describe('a leaf whose text ends in a bare carriage return', () => {
 	});
 });
 
+describe.each(['object', 'arena'] as const)('text a caller supplies, in %s storage', (nodeStorage) => {
+	interface Built {
+		readonly $trivia: { leading(text: string): Built; trailing(text: string): Built };
+	}
+	interface CallerEngine {
+		parse(source: string): { statements(): readonly Built[] };
+		render(node: unknown): { toString(): string };
+		build: {
+			comment: { block(text: string): Built };
+			expressionStatement(expression: Built): Built;
+			identifier(text: string): Built;
+		};
+	}
+
+	it.each([
+		['a CRLF', '\r\n'],
+		['a lone CR', '\r']
+	] as const)('spells %s in a built leaf and a written side as the render ending', async (_, br) => {
+		const language = await languageByName('typescript');
+		for (const newline of ['\n', '\r\n'] as const) {
+			const ts = (await createEngine(language, {
+				nodeStorage,
+				render: { layout: { newline } }
+			})) as never as CallerEngine;
+			const spelled = (lf: string): string => lf.replace(/\n/g, newline);
+			const comment = `/* a${br}b */`;
+			const statement = (): Built => ts.build.expressionStatement(ts.build.identifier('x'));
+			const parsed = ts.parse('x;\ny;\n');
+			const [first, second] = parsed.statements();
+			first!.$trivia.trailing(comment);
+			second!.$trivia.leading(comment);
+			expect(ts.render(ts.build.comment.block(` a${br}b `)).toString()).toBe(spelled('/* a\nb */'));
+			expect(ts.render(statement().$trivia.leading(comment)).toString()).toBe(spelled('/* a\nb */ x;'));
+			expect(ts.render(statement().$trivia.trailing(comment)).toString()).toBe(spelled('x; /* a\nb */'));
+			expect(ts.render(parsed).toString()).toBe(spelled('x; /* a\nb */\n/* a\nb */ y;\n'));
+		}
+	});
+});
+
 describe('a comment that swallows the carriage return of its CRLF break', () => {
 	it('renders unchanged under \\r\\n and as LF by default', async () => {
 		const plain = await createEngine(await languageByName('python'));

@@ -18,6 +18,29 @@ pub fn unknown_kind(id: crate::types::KindId, owner: &str) -> String {
     format!("unknown kind id {id} in {owner}")
 }
 
+/// A render's text as it crosses to JavaScript: a one-byte string when every
+/// byte is ASCII, which V8 copies without decoding it, and otherwise a UTF-8
+/// string, as a `String` crosses.
+#[cfg(feature = "napi-bindings")]
+pub struct RenderedText(pub String);
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for RenderedText {
+    unsafe fn to_napi_value(env: ::napi::sys::napi_env, val: Self) -> ::napi::Result<::napi::sys::napi_value> {
+        let Self(text) = val;
+        if !text.is_ascii() {
+            // SAFETY: this fn requires `env` to be live.
+            return unsafe { String::to_napi_value(env, text) };
+        }
+        let len = isize::try_from(text.len()).map_err(|_| ::napi::Error::from_reason("a rendered text longer than a JavaScript string holds"))?;
+        let mut out = ::std::ptr::null_mut();
+        // SAFETY: this fn requires `env` to be live, and the call copies the
+        // `len` bytes of `text`, which outlives it.
+        ::napi::check_status!(unsafe { ::napi::sys::napi_create_string_latin1(env, text.as_ptr().cast(), len, &raw mut out) })?;
+        Ok(out)
+    }
+}
+
 /// Reads the property `key` of the wire object `obj`: `None` when it is
 /// undefined, otherwise its value decoded as `V`. The key is a static C
 /// string, which napi resolves to V8's interned string the way a derived

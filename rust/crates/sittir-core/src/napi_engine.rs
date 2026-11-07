@@ -611,7 +611,8 @@ macro_rules! napi_engine {
         /// engine's. `treeId` is the tree the node was read from; a built
         /// node belongs to no tree and renders by the engine's options.
         #[::napi_derive::napi(
-            ts_args_type = "engine: object, node: object, treeId?: number | undefined | null, options?: object | undefined | null"
+            ts_args_type = "engine: object, node: object, treeId?: number | undefined | null, options?: object | undefined | null",
+            ts_return_type = "string"
         )]
         pub fn render(
             engine: &::napi::bindgen_prelude::External<EngineCell>,
@@ -619,7 +620,7 @@ macro_rules! napi_engine {
             node: $render_root,
             tree_id: Option<$crate::types::TreeId>,
             options: Option<$options>,
-        ) -> ::napi::Result<String> {
+        ) -> ::napi::Result<$crate::boundary::RenderedText> {
             let engine = engine_of(engine)?;
             // No JavaScript runs while the table is borrowed, so the
             // borrow cannot be re-entered.
@@ -631,7 +632,7 @@ macro_rules! napi_engine {
                     $render_parts(node, &ctx, None).map(|(_, canonical)| canonical)
                 })
                 .map_err(|e| ::napi::Error::from_reason(format!("render_node failed: {e}")))?;
-                Ok($crate::line_endings::spell(canonical, &table.newline))
+                Ok($crate::boundary::RenderedText($crate::line_endings::spell(canonical, &table.newline)))
             })
         }
 
@@ -647,7 +648,7 @@ macro_rules! napi_engine {
             options: Option<$options>,
         ) -> ::napi::Result<()> {
             let rendered = render(engine, env, node, tree_id, options)?;
-            ::std::fs::write(&path, rendered).map_err(|e| {
+            ::std::fs::write(&path, rendered.0).map_err(|e| {
                 ::napi::Error::from_reason(format!("render_to_file failed for {path}: {e}"))
             })
         }
@@ -826,7 +827,7 @@ macro_rules! napi_engine {
                     &$crate::engine::ReadTrees<'_, $grammar>,
                     &$crate::prepare::RenderContext<'_>,
                 ) -> Result<String, $crate::render::RenderError>,
-            ) -> ::napi::Result<String> {
+            ) -> ::napi::Result<$crate::boundary::RenderedText> {
                 let chunks = owner.written().built();
                 let arena = chunks.readable().map_err(|e| ::napi::Error::from_reason(e.to_string()))?;
                 with_live_trees(env, |trees| {
@@ -837,7 +838,7 @@ macro_rules! napi_engine {
                     })
                         .map_err(|payload| ::napi::Error::from_reason($crate::panic_msg(&*payload, "render_built panicked")))?
                         .map_err(|e| ::napi::Error::from_reason(format!("render_built failed: {e}")))?;
-                    Ok($crate::line_endings::spell(canonical, &table.newline))
+                    Ok($crate::boundary::RenderedText($crate::line_endings::spell(canonical, &table.newline)))
                 })
             }
 
@@ -941,8 +942,8 @@ macro_rules! napi_engine {
             /// trivia entry's built record from its store's arena. Refuses
             /// a tree that is not live, an address naming no record of its
             /// arena, and a record whose render refuses.
-            #[::napi_derive::napi(ts_args_type = "engine: object, treeId: number, address: number, leading: boolean, trailing: boolean, options?: object | undefined | null")]
-            pub fn render_record(engine: &::napi::bindgen_prelude::External<EngineCell>, env: ::napi::Env, tree_id: $crate::types::TreeId, address: f64, leading: bool, trailing: bool, options: Option<$options>) -> ::napi::Result<String> {
+            #[::napi_derive::napi(ts_args_type = "engine: object, treeId: number, address: number, leading: boolean, trailing: boolean, options?: object | undefined | null", ts_return_type = "string")]
+            pub fn render_record(engine: &::napi::bindgen_prelude::External<EngineCell>, env: ::napi::Env, tree_id: $crate::types::TreeId, address: f64, leading: bool, trailing: bool, options: Option<$options>) -> ::napi::Result<$crate::boundary::RenderedText> {
                 let engine = engine_of(engine)?;
                 let address = $crate::arena::Address($crate::napi_engine::checked_whole(address, "address")?);
                 with_live_trees(&env, |trees| {
@@ -951,7 +952,7 @@ macro_rules! napi_engine {
                     let canonical = $crate::napi_engine::entry_sources(engine.grammar(), trees, |sources| ::std::panic::catch_unwind(::std::panic::AssertUnwindSafe(|| parsed.render_record(address, $crate::slot::ChangedEdges { leading, trailing }, &table, sources))))
                         .map_err(|payload| ::napi::Error::from_reason($crate::panic_msg(&*payload, "render_record panicked")))?
                         .map_err(|e| ::napi::Error::from_reason(format!("render_record failed: {e}")))?;
-                    Ok($crate::line_endings::spell(canonical, &table.newline))
+                    Ok($crate::boundary::RenderedText($crate::line_endings::spell(canonical, &table.newline)))
                 })
             }
 
@@ -969,9 +970,9 @@ macro_rules! napi_engine {
             /// longer holds, an address naming no record its words admit,
             /// a linked tree that is not live, and a record whose render
             /// refuses.
-            #[::napi_derive::napi(ts_args_type = "engine: object, owner: object, address: number, leading: boolean, trailing: boolean, treeId?: number | undefined | null, options?: object | undefined | null")]
+            #[::napi_derive::napi(ts_args_type = "engine: object, owner: object, address: number, leading: boolean, trailing: boolean, treeId?: number | undefined | null, options?: object | undefined | null", ts_return_type = "string")]
             #[allow(clippy::too_many_arguments, reason = "each parameter is one of the JavaScript call's arguments")]
-            pub fn render_built(engine: &::napi::bindgen_prelude::External<EngineCell>, env: ::napi::Env, owner: &::napi::bindgen_prelude::External<EngineCell>, address: f64, leading: bool, trailing: bool, tree_id: Option<$crate::types::TreeId>, options: Option<$options>) -> ::napi::Result<String> {
+            pub fn render_built(engine: &::napi::bindgen_prelude::External<EngineCell>, env: ::napi::Env, owner: &::napi::bindgen_prelude::External<EngineCell>, address: f64, leading: bool, trailing: bool, tree_id: Option<$crate::types::TreeId>, options: Option<$options>) -> ::napi::Result<$crate::boundary::RenderedText> {
                 let engine = engine_of(engine)?;
                 let owner = engine_of(owner)?;
                 let at = $crate::arena::Address($crate::napi_engine::checked_whole(address, "address")?);
@@ -987,7 +988,7 @@ macro_rules! napi_engine {
             /// is written as, an entry of another kind or outside the
             /// arena's strings, and a leaf whose render refuses.
             #[allow(clippy::too_many_arguments, reason = "each parameter is one of the JavaScript call's arguments")]
-            #[::napi_derive::napi(ts_args_type = "engine: object, owner: object, kind: number, entry: number, sides: object | undefined | null, leading: boolean, trailing: boolean, options?: object | undefined | null")]
+            #[::napi_derive::napi(ts_args_type = "engine: object, owner: object, kind: number, entry: number, sides: object | undefined | null, leading: boolean, trailing: boolean, options?: object | undefined | null", ts_return_type = "string")]
             pub fn render_built_leaf(
                 engine: &::napi::bindgen_prelude::External<EngineCell>,
                 env: ::napi::Env,
@@ -998,7 +999,7 @@ macro_rules! napi_engine {
                 leading: bool,
                 trailing: bool,
                 options: Option<$options>,
-            ) -> ::napi::Result<String> {
+            ) -> ::napi::Result<$crate::boundary::RenderedText> {
                 let engine = engine_of(engine)?;
                 let owner = engine_of(owner)?;
                 let kind = $crate::types::KindId(u16::try_from(kind).map_err(|_| ::napi::Error::from_reason(format!("kind {kind} is wider than a kind")))?);
@@ -1882,6 +1883,10 @@ where
 {
     fn source_of(&self, tree_id: crate::types::TreeId) -> Option<&std::sync::Arc<str>> {
         self.trees.source_of(tree_id)
+    }
+
+    fn breaks_spelled_lf(&self, tree_id: crate::types::TreeId) -> bool {
+        self.trees.breaks_spelled_lf(tree_id)
     }
 
     fn kind_of(&self, coord: &crate::slot::NodeCoordinate) -> Option<crate::types::KindId> {
