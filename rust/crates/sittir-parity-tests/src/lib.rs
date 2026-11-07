@@ -203,7 +203,7 @@ impl PlacedTrivia {
     pub fn of(tree: &tree_sitter::Tree, source: &str, kinds: sittir_core::trivia_table::SurfaceKinds, unit: u32) -> Self {
         let lines = sittir_core::points::LineTable::new(source);
         let placement = sittir_core::trivia_table::Placement::new(kinds, unit);
-        placement.place_all(sittir_core::trivia_table::Source { tree, source, lines: &lines });
+        placement.place_all(sittir_core::trivia_table::Source { nodes: &mut sittir_core::nodes::TreeNodes::new(tree, source), lines: &lines });
         let sides = placement.tables().flat_map(|table| table.sides().map(|(key, entries)| (key, entries.to_vec())).collect::<Vec<_>>()).collect();
         Self { placement, sides }
     }

@@ -706,11 +706,17 @@ pub fn goto(cursor: &mut TreeCursor<'_>, index: NodeIndex) -> u32 {
 /// to the nearest node holding `index` and descends from there, so it costs
 /// the path between the two nodes, not the path from the root. Answers the
 /// levels it climbed: over a run of moves, a cursor descends as many levels
-/// as it climbs, plus the depth it ends at. The one call of
+/// as it climbs, plus the depth it ends at.
+pub fn goto_from(cursor: &mut TreeCursor<'_>, from: NodeIndex, index: NodeIndex) -> u32 {
+    goto_from_noting_top(cursor, from, index).0
+}
+
+/// `goto_from`, answering too whether the climb reached the node the
+/// cursor was created at, so the move descends from it. The one call of
 /// `TreeCursor::goto_descendant`; it never asks the cursor its depth, which
 /// counts the levels above it.
 #[allow(clippy::disallowed_methods, reason = "wraps `TreeCursor::goto_descendant`, which clippy.toml disallows outside this module")]
-pub fn goto_from(cursor: &mut TreeCursor<'_>, from: NodeIndex, index: NodeIndex) -> u32 {
+pub fn goto_from_noting_top(cursor: &mut TreeCursor<'_>, from: NodeIndex, index: NodeIndex) -> (u32, bool) {
     let goal = index.index() - from.index();
     let holds = |cursor: &TreeCursor<'_>| {
         let at = offset_of(cursor) as usize;
@@ -720,8 +726,9 @@ pub fn goto_from(cursor: &mut TreeCursor<'_>, from: NodeIndex, index: NodeIndex)
     while !holds(cursor) && cursor.goto_parent() {
         climbed += 1;
     }
+    let top = offset_of(cursor) == 0;
     cursor.goto_descendant(goal);
-    climbed
+    (climbed, top)
 }
 
 /// What the first pass learns about one child.

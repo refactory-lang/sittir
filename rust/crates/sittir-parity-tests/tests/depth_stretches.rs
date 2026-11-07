@@ -6,6 +6,7 @@
 //! Checked over every round-trip fixture source of the five grammars.
 
 use sittir_core::engine::EngineGrammar;
+use sittir_core::nodes::TreeNodes;
 use sittir_core::options::ResolvedOptions;
 use sittir_core::points::LineTable;
 use sittir_core::trivia_table::{Placement, Source};
@@ -19,7 +20,7 @@ fn stretches_nest<G: EngineGrammar + Copy>(name: &str, grammar: G, options: fn()
         let tree = parsed(grammar, options(), source);
         let lines = LineTable::new(source);
         let mut open: Vec<(u32, u32)> = Vec::new();
-        for (start, end) in Placement::new(grammar.surface_kinds(), 4).depth_stretches(Source { tree: tree.tree(), source, lines: &lines }) {
+        for (start, end) in Placement::new(grammar.surface_kinds(), 4).depth_stretches(Source { nodes: &mut TreeNodes::new(tree.tree(), source), lines: &lines }) {
             while open.last().is_some_and(|&(_, close)| close <= start) {
                 open.pop();
             }

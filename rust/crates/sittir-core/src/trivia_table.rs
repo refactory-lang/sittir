@@ -35,7 +35,7 @@ use crate::heap::HeapBytes;
 use crate::types::{KindId, NodeIndex, RunId, Span};
 
 mod place;
-pub use place::{Lookup, Placement, Source, Table};
+pub use place::{Placement, Source, Table};
 
 /// A side of a node that holds trivia: before its first token, after its
 /// last, or, for a node with no named child, between its own tokens.
@@ -246,7 +246,7 @@ impl Walk {
     }
 }
 
-fn is_entry(node: &tree_sitter::Node<'_>) -> bool {
+pub(crate) fn is_entry(node: &tree_sitter::Node<'_>) -> bool {
     node.is_extra() || node.is_error()
 }
 

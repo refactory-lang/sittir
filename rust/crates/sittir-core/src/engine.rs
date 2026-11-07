@@ -1316,23 +1316,22 @@ impl<G: EngineGrammar> ParsedTree<G> {
         })
     }
 
-    /// What the tree's trivia placement reads: its tree, source and row
-    /// starts.
-    fn trivia_source(&self) -> crate::trivia_table::Source<'_> {
-        crate::trivia_table::Source { tree: &self.tree, source: &self.source, lines: self.lines() }
+    /// The tree's nodes as trivia placement reads them, through the
+    /// navigation interface, with their text's row starts.
+    fn with_trivia_source<R>(&self, f: impl FnOnce(crate::trivia_table::Source<'_, '_>) -> R) -> R {
+        f(crate::trivia_table::Source { nodes: &mut crate::nodes::TreeNodes::new(&self.tree, &self.source), lines: self.lines() })
     }
 
     /// The tree's trivia with every layout owner placed.
     pub fn placed_trivia(&self) -> &Placement {
-        self.trivia.place_all(self.trivia_source());
+        self.with_trivia_source(|source| self.trivia.place_all(source));
         &self.trivia
     }
 
     /// The table of the layout owner that holds `side` of the node at
-    /// `index`, placed on its first read, each node it reads found through `nodes`
-    /// (`Placement::cover`).
-    fn cover_side<'t>(&'t self, nodes: crate::trivia_table::Lookup<'_, 't>, index: crate::types::NodeIndex, side: TriviaSide) -> Option<&'t crate::trivia_table::Table> {
-        self.trivia.cover(self.trivia_source(), nodes, index, side)
+    /// `index`, placed on its first read (`Placement::cover`).
+    fn cover_side(&self, index: crate::types::NodeIndex, side: TriviaSide) -> Option<&crate::trivia_table::Table> {
+        self.with_trivia_source(|source| self.trivia.cover(source, index, side))
     }
 
     /// The entries of `side` of the node at `index`: the ones a write gave it,
@@ -1362,7 +1361,7 @@ impl<G: EngineGrammar> ParsedTree<G> {
     /// `Table::adjacency`) is no layout: it is an entry of the source, as an
     /// `ERROR` is.
     fn assigned_side<'t, N: Nodes<'t>>(&'t self, nodes: &mut N, index: crate::types::NodeIndex, side: TriviaSide, deviation: Option<Deviation<N, G::Trivia>>) -> Vec<SideEntry<G::Trivia>> {
-        let Some(table) = self.cover_side(&mut |at| nodes.node(at), index, side) else { return Vec::new() };
+        let Some(table) = self.cover_side(index, side) else { return Vec::new() };
         let assigned = table.side(index, side);
         if assigned.is_empty() {
             return Vec::new();
@@ -1621,7 +1620,7 @@ impl<'t, G: EngineGrammar> Lookups<'t, G> {
         if let Some(slots) = tree.slots.lock().unwrap_or_else(std::sync::PoisonError::into_inner).get(&index) {
             return Arc::clone(slots);
         }
-        tree.cover_side(&mut |at| self.node(at), index, TriviaSide::Inner);
+        tree.cover_side(index, TriviaSide::Inner);
         let table = &tree.trivia;
         let run_at = |start: u32, end: u32| table.run_at(start, end);
         self.goto(index);
@@ -1965,11 +1964,11 @@ impl<G: EngineGrammar> ParsedTree<G> {
     fn frame_levels<E>(&self, index: crate::types::NodeIndex, mut entries: impl FnMut(crate::types::NodeIndex, TriviaSide) -> Vec<E>) -> Vec<[Vec<E>; 3]> {
         let mut levels = vec![[entries(index, TriviaSide::Leading), entries(index, TriviaSide::Trailing), entries(index, TriviaSide::Inner)]];
         for side in [TriviaSide::Leading, TriviaSide::Trailing] {
-            let mut item = self.trivia.edge_item(self.trivia_source(), &mut |at| node_at_index(&self.tree, at), index, side);
+            let mut item = self.with_trivia_source(|source| self.trivia.edge_item(source, index, side));
             while let Some(at) = item {
                 let held = entries(at, side);
                 levels.push(if side == TriviaSide::Leading { [held, Vec::new(), Vec::new()] } else { [Vec::new(), held, Vec::new()] });
-                item = self.trivia.edge_item(self.trivia_source(), &mut |index| node_at_index(&self.tree, index), at, side);
+                item = self.with_trivia_source(|source| self.trivia.edge_item(source, at, side));
             }
         }
         levels
