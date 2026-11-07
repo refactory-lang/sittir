@@ -160,21 +160,21 @@ The admission census (`tool portable-admission`) owns both counts. It already re
 - Produces (emitter): `emitGrammarMap(input: PortableTypedInput, exact: ExactSlots): string`. It writes `export interface <Grammar>Map extends GrammarMap`, with an override entry only where the exact set differs from the member's default, and ends with `type _fits = Assert<Fits<<Grammar>Map>>`.
 - Each member's default is the broad type written on it today through `G['slots']` or a role. For example, `function: Slot<G, 'expression.call', 'function', V.Expression<G>>`.
 
-- [ ] **Step 1: The failing type tests** in `grammar-map.test-d.ts`:
+- [x] **Step 1: The failing type tests** in `grammar-map.test-d.ts`:
   - a fixture map overriding `expression.call.function` with one expression path makes `V.Call<Fixture>['function']` exactly that path;
   - with no override, the member equals its default;
   - `// @ts-expect-error` on `Assert<Fits<Wider>>`, where `Wider` overrides with a kind outside the expression namespace;
   - `// @ts-expect-error` on an override keyed by a member the path doesn't declare.
-- [ ] **Step 2: Run** `pnpm run type-check:tests`. It fails: `Slot` and `Fits` don't exist.
-- [ ] **Step 3: Implement `map.ts`.** Rewrite each member's `G['slots'][…]` and sole-role type as `Slot<…, default>`, with the default taken from today's slot-table entry or role. Then delete `GrammarContext.slots` from `context.ts`.
-- [ ] **Step 4: Implement `emitGrammarMap` and regenerate** all three grammars. Unclaimed kinds go in as `V.Unmapped<'<grammar>:<kind>'>`, raw reads as raw-node arms, and texts as literal unions.
-- [ ] **Step 5: Run everything:**
+- [x] **Step 2: Run** `pnpm run type-check:tests`. It fails: `Slot` and `Fits` don't exist.
+- [x] **Step 3: Implement `map.ts`.** Rewrite each member's `G['slots'][…]` and sole-role type as `Slot<…, default>`, with the default taken from today's slot-table entry or role. Then delete `GrammarContext.slots` from `context.ts`.
+- [x] **Step 4: Implement `emitGrammarMap` and regenerate** all three grammars. Unclaimed kinds go in as `V.Unmapped<'<grammar>:<kind>'>`, raw reads as raw-node arms, and texts as literal unions.
+- [x] **Step 5: Run everything:**
   - `pnpm run type-check:tests`;
   - the typed modules, with the conformance diagnostics compared to base;
   - the census, which must now read 0 over-admitting members in all three grammars;
   - the workspace type-check.
-- [ ] **Step 6: Re-point the typed module** (`typed.ts`) at `<Grammar>Map`. Remove `OwnSlots`, `Fit`, `Seated`, the unmapped table and roles as `Ctx` entries. The per-claim reader mirrors stay, now checked against the map's instantiation.
-- [ ] **Step 7: Three-way verification, then commit** (`feat(types): members carry defaults; grammars override through a generated map`). Report the type-check times.
+- [x] **Step 6: Re-point the typed module** (`typed.ts`) at `<Grammar>Map`. Remove `OwnSlots`, `Fit`, `Seated`, the unmapped table and roles as `Ctx` entries. The per-claim reader mirrors stay, now checked against the map's instantiation.
+- [x] **Step 7: Three-way verification, then commit** (`feat(types): members carry defaults; grammars override through a generated map`). Report the type-check times.
 
 ### Task 4: Input interfaces derived from read; requiredness in input overrides
 
@@ -215,15 +215,15 @@ The admission census (`tool portable-admission`) owns both counts. It already re
 - Produces: `type Missing<F extends string>`, a branded type whose display names the absent feature. A path or member from a feature not in `G['features']` resolves to it.
 - Produces: `featureGuard(grammar): GuardRow[]`, where `GuardRow = { feature: string; path: string; member?: string; side: 'claimed-not-composed' | 'composed-not-claimed' }`. Its ceiling is 0, and features with no paths or members count as held.
 
-- [ ] **Step 1: The failing tests:**
+- [x] **Step 1: The failing tests:**
   - naming a Structs path under python's map is an error displaying `Missing<'Structs'>`, and the same structure built at runtime refuses naming Structs;
   - `featureGuard('python')` is empty after the moves;
   - a fixture grammar that claims a member of a feature it doesn't compose gets one row.
-- [ ] **Step 2: Run it.** It fails.
-- [ ] **Step 3: Gate paths in the merge generator** through `G['features']`.
-- [ ] **Step 4: Move content** into the approved sub-features. Reorder Structs over struct patterns, and update `compositions.ts`.
-- [ ] **Step 5: Write Python's convention claims** per the approved mapping, as `#match?` claims. A probe for each: read, then build, then render.
-- [ ] **Step 6: Three-way verification** across all grammars, plus the guard at 0, then commit.
+- [x] **Step 2: Run it.** It fails.
+- [x] **Step 3: Gate paths in the merge generator** through `G['features']`.
+- [x] **Step 4: Move content** into the approved sub-features. Reorder Structs over struct patterns, and update `compositions.ts`.
+- [x] **Step 5: Write Python's convention claims** per the approved mapping, as `#match?` claims. A probe for each: read, then build, then render.
+- [x] **Step 6: Three-way verification** across all grammars, plus the guard at 0, then commit.
 
 ### Task 6: The typed engine surface, honest raw reads and tokens as text
 
