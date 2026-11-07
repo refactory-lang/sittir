@@ -519,7 +519,7 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
     /// tallies as that many of its tally (`pay_indent`).
     #[must_use]
     pub fn with_indent(mut self, indent: &'a str) -> Self {
-        debug_assert!(!indent.contains('\n'), "an indentation unit holds no line break: {indent:?}");
+        debug_assert!(!indent.contains(['\n', '\r']), "an indentation unit holds no line break: {indent:?}");
         self.indent = indent;
         self
     }
