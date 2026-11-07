@@ -87,35 +87,78 @@ fn write(path: &Path, contents: &str) {
 }
 
 /// The C API functions the runtime defines in this build: every function
-/// `api.h` declares, less those only the crate's wasm support reaches. The
-/// wasm store is compiled out without that feature, so its entry points are
-/// declared but never defined.
+/// `api.h` declares that a runtime source defines outside the code the wasm
+/// feature compiles in. Without that feature some wasm entry points are stubs
+/// and the rest are declared but never defined.
 fn runtime_functions() -> Vec<String> {
     let include = PathBuf::from(var("DEP_TREE_SITTER_INCLUDE"));
     let api = include.join("tree_sitter/api.h");
-    let wasm = include.join("../binding_rust/wasm_language.rs");
+    let sources = include.join("../src");
     println!("cargo:rerun-if-changed={}", api.display());
-    println!("cargo:rerun-if-changed={}", wasm.display());
-    let wasm_only = calls(&read(&wasm), "ffi::");
-    let mut functions: Vec<String> = calls(&strip_comments(&read(&api)), "").into_iter().filter(|name| !wasm_only.contains(name)).collect();
+    println!("cargo:rerun-if-changed={}", sources.display());
+    let mut defined = std::collections::HashSet::new();
+    let entries = std::fs::read_dir(&sources).unwrap_or_else(|error| panic!("read {}: {error}", sources.display()));
+    for path in entries.map(|entry| entry.expect("a runtime source").path()) {
+        if path.extension().is_some_and(|ext| ext == "c") {
+            defined.extend(definitions(&without_wasm(&strip_comments(&read(&path)))));
+        }
+    }
+    let mut functions: Vec<String> = calls(&strip_comments(&read(&api))).into_iter().filter(|name| defined.contains(name)).collect();
     functions.sort();
     functions.dedup();
     functions
+}
+
+/// The `ts_*` functions a C source defines: a definition starts at the first
+/// column, and a declaration ends its line with `;`.
+fn definitions(c: &str) -> Vec<String> {
+    c.lines()
+        .filter(|line| line.starts_with(|first: char| first.is_ascii_alphabetic()) && !line.trim_end().ends_with(';'))
+        .flat_map(calls)
+        .collect()
+}
+
+/// The lines a build without the wasm feature compiles. Every branch of every
+/// other conditional is kept, which can only add a definition the list then
+/// also names in `api.h`.
+fn without_wasm(c: &str) -> String {
+    let mut kept = String::with_capacity(c.len());
+    let mut open: Vec<Option<bool>> = Vec::new();
+    for line in c.lines() {
+        let directive: Vec<&str> = line.trim_start().strip_prefix('#').map(|rest| rest.split_whitespace().collect()).unwrap_or_default();
+        match directive.as_slice() {
+            ["ifdef", "TREE_SITTER_FEATURE_WASM", ..] => open.push(Some(false)),
+            ["ifndef", "TREE_SITTER_FEATURE_WASM", ..] => open.push(Some(true)),
+            [keyword, ..] if keyword.starts_with("if") => open.push(None),
+            ["else", ..] => {
+                if let Some(Some(compiled)) = open.last_mut() {
+                    *compiled = !*compiled;
+                }
+            }
+            ["endif", ..] => {
+                open.pop();
+            }
+            _ if open.iter().all(|branch| branch.unwrap_or(true)) => {
+                kept.push_str(line);
+                kept.push('\n');
+            }
+            _ => {}
+        }
+    }
+    kept
 }
 
 fn read(path: &Path) -> String {
     std::fs::read_to_string(path).unwrap_or_else(|error| panic!("read {}: {error}", path.display()))
 }
 
-/// Each `ts_*` identifier that `prefix` introduces and an opening
-/// parenthesis follows: a declaration in a C header, a call in Rust.
-fn calls(text: &str, prefix: &str) -> Vec<String> {
-    let needle = format!("{prefix}ts_");
+/// Each `ts_*` identifier an opening parenthesis follows: a function's name
+/// where C declares or defines it.
+fn calls(text: &str) -> Vec<String> {
     let mut found = Vec::new();
     let mut rest = text;
-    while let Some(at) = rest.find(&needle) {
-        let preceded_by_ident = rest[..at].chars().next_back().is_some_and(|c| c.is_ascii_alphanumeric() || c == '_');
-        let start = at + prefix.len();
+    while let Some(start) = rest.find("ts_") {
+        let preceded_by_ident = rest[..start].chars().next_back().is_some_and(|c| c.is_ascii_alphanumeric() || c == '_');
         let end = rest[start..].find(|c: char| !(c.is_ascii_alphanumeric() || c == '_')).map_or(rest.len(), |len| start + len);
         if !preceded_by_ident && rest[end..].trim_start().starts_with('(') {
             found.push(rest[start..end].to_owned());
