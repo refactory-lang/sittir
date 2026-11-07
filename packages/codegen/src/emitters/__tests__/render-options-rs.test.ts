@@ -300,6 +300,16 @@ describe('an address two positions of one kind share', () => {
 		expect(render).not.toThrow();
 	});
 
+	it('is one option when the slots and labels differ but the levels and admitted arms do not', () => {
+		const render = printed([twin(), twin({ slot: 'other', label: 'other_space' })]);
+		expect(render).not.toThrow();
+	});
+
+	it('is refused when the admitted arms differ', () => {
+		const render = printed([twin(), twin({ slot: 'other', label: 'other_space', defaultArm: 'space' })]);
+		expect(render).toThrow(/option-address-sites|which is 2 sites/);
+	});
+
 	it('is refused when the levels differ', () => {
 		const render = printed([twin(), twin({ kind: '_block' })]);
 		expect(render).toThrow(/option-address-sites|which is 2 sites/);
