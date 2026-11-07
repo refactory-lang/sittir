@@ -14,6 +14,7 @@ import type {
 	PortableSeat,
 	PortableSlotStep,
 	PortableStructure,
+	PortableTemplate,
 	PortableValueBuild
 } from '@sittir/types';
 import { hasKind } from './classify.ts';
@@ -649,16 +650,16 @@ export function portableBuilder({ language, table, builders, kindName, readsAs }
 				const texts = listOf(structure[name]).filter((item) => typeof item === 'string');
 				return texts.length === 0 || routesOf(arm, name).some((route) => texts.every((text) => seats(route, text)));
 			});
-		const templated = (arm: PortableBuildArm, structure: PortableStructure): string | undefined => {
-			const template = arm.template;
-			if (template === undefined || structure[template.member] !== undefined) return undefined;
+		const spell = (template: PortableTemplate, structure: PortableStructure): string => {
 			let at = 0;
-			return template.pattern.replaceAll('${string}', () => {
+			const text = template.pattern.replaceAll('${string}', () => {
 				const hole = template.holes[at++]!;
 				const filled = structure[hole];
 				if (typeof filled !== 'string') throw new Error(`portable build: ${structure.$path} spells ${template.member} from ${hole}, which is missing`);
 				return filled;
 			});
+			if (!new RegExp(template.match, 'u').test(text)) throw new Error(`portable build: ${structure.$path} spells ${template.member} ${JSON.stringify(text)}, which ${template.match} does not match`);
+			return text;
 		};
 
 		const build = (structure: PortableStructure, seats: readonly PortableSeat[] | undefined, host?: Frame): Built => {
@@ -681,17 +682,23 @@ export function portableBuilder({ language, table, builders, kindName, readsAs }
 			}
 			const sole = arm.sole === undefined ? undefined : structure[arm.sole.member];
 			if (arm.sole !== undefined && Array.isArray(sole) && sole.length === 1) frame.delimiter = (frame.delimiter ?? 0) | arm.sole.delimiter;
-			for (const [flag, steps] of Object.entries(arm.flags))
-				if (!(structure.$flags ?? []).includes(flag)) for (const step of steps.unset ?? []) preset(frame, step, structure.$path);
-			const holes = new Set(arm.template?.holes ?? []);
+			for (const [flag, steps] of Object.entries(arm.flags)) {
+				if ((structure.$flags ?? []).includes(flag)) continue;
+				for (const step of steps.unset ?? []) preset(frame, step, structure.$path);
+				const text = steps.template === undefined ? undefined : structure[steps.template.member];
+				if (typeof text === 'string' && new RegExp(steps.template!.match, 'u').test(text))
+					throw new Error(`portable build: ${structure.$path}: ${steps.template!.member} ${JSON.stringify(text)} reads as ${flag}; set ${flag} and state ${steps.template!.holes.join(', ')}`);
+			}
+			const spelledFlags = (structure.$flags ?? []).flatMap((flag) => arm.flags[flag]?.template ?? []);
+			const holes = new Set([...(arm.template?.holes ?? []), ...spelledFlags.flatMap((template) => template.holes)]);
 			const owned = seat === undefined ? new Set<string>() : ownedBy(seat);
 			const emptied = new Set(arm.when.flatMap((test) => ('empty' in test ? test.empty : [])));
 			const values = new Map<string, unknown>(
 				memberKeys(structure).flatMap((name) => (holes.has(name) || owned.has(name) || emptied.has(name) || structure[name] === undefined ? [] : [[name, structure[name]] as const]))
 			);
 			for (const name of arm.empty ?? []) if (!values.has(name) && !holes.has(name) && !owned.has(name)) values.set(name, []);
-			const spelled = templated(arm, structure);
-			if (spelled !== undefined) values.set(arm.template!.member, spelled);
+			if (arm.template !== undefined && structure[arm.template.member] === undefined) values.set(arm.template.member, spell(arm.template, structure));
+			for (const template of spelledFlags) values.set(template.member, spell(template, structure));
 			const scalar = scalarOf(structure);
 			if (arm.scalar !== undefined && scalar !== undefined) {
 				if (typeof scalar === 'number' && !Number.isFinite(scalar)) throw new Error(`portable build: ${structure.$path}: no ${language} literal spells ${spelledValue(scalar)}`);

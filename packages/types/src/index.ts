@@ -54,7 +54,8 @@ export type {
 	PortableStructure,
 	PortableStep,
 	PortableSurface,
-	PortableTable
+	PortableTable,
+	PortableTemplate
 } from './portable.ts';
 import type { Admit, HoldsSource } from './node-surface.ts';
 import type { BooleanKeywordText, IsBooleanKeyword } from './keyword-presence.ts';

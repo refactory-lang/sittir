@@ -66,6 +66,7 @@ export interface ClaimFact {
 	readonly tokens: readonly string[];
 	readonly children: readonly ChildFact[];
 	readonly flag?: string;
+	readonly template?: TemplateFact;
 	readonly match?: LeadMatch;
 	readonly value?: boolean;
 	readonly token?: string;
@@ -135,6 +136,7 @@ export interface TemplateFact {
 	readonly target: string;
 	readonly template: string;
 	readonly holes: readonly string[];
+	readonly match: string;
 }
 
 export type PatternReference = { readonly kind: 'node'; readonly name: string; readonly at: number } | { readonly kind: 'field' | 'token'; readonly name: string };

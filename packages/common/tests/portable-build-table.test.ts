@@ -275,7 +275,7 @@ describe('the portable build table', () => {
 
 	it("writes the text a claim's predicate fixes, and spells a templated member from its holes", () => {
 		expect(armOf('python', 'declaration.constructor', python.kinds.MethodDeclaration).presets).toContainEqual({ steps: [{ key: 'name' }], text: '__init__', builder: 'identifier' });
-		expect(armOf('python', 'declaration.method.special', python.kinds.MethodDeclaration).template).toEqual({ member: 'name', pattern: '__${string}__', holes: ['stem'] });
+		expect(armOf('python', 'declaration.method.special', python.kinds.MethodDeclaration).template).toEqual({ member: 'name', pattern: '__${string}__', holes: ['stem'], match: '^__(?<stem>.*)__$' });
 	});
 
 	it("writes the other token where a flag's slot must hold one of two, when the flag is unset", () => {

@@ -161,15 +161,29 @@ export interface PortablePreset {
 }
 
 /**
+ * A member spelled from named holes: `pattern` is the member's text with each hole written `${string}`, filled in order from the members
+ * `holes` names. A spelled text must match `match`, the claim's anchored regex, whose named groups read the holes back out of the text.
+ */
+export interface PortableTemplate {
+	readonly member: string;
+	readonly pattern: string;
+	readonly holes: readonly string[];
+	readonly match: string;
+}
+
+/**
  * What setting a flag adds to a build, and what leaving it unset writes: where the flag's slot must hold one of two tokens, the other one.
  * A flag that reads a list's delimiter sets those delimiter flags (`delimiter`) on the arm's list builder, or, where the list sits at the
- * steps `list` from the arm's kind, on that list's builder; a build whose list there holds nothing refuses the flag.
+ * steps `list` from the arm's kind, on that list's builder; a build whose list there holds nothing refuses the flag. A flag spelled inside a
+ * member's text (`template`) spells that member from its holes when set, and reads them from it where it holds; a build that leaves the flag
+ * unset refuses a member text the flag's regex matches.
  */
 export interface PortableFlagStep {
 	readonly presets: readonly PortablePreset[];
 	readonly unset?: readonly PortablePreset[];
 	readonly delimiter?: number;
 	readonly list?: readonly PortableSlotStep[];
+	readonly template?: PortableTemplate;
 }
 
 /** A test a build arm passes for its input: a structure that states every `required` member and none of the `absent` ones, the members the path's other arms have and this one lacks (arms with fewer members come first); a structure whose `empty` list members are each left out or empty, for an arm whose kind holds only layout and reads with those lists empty; a flag stated or not; a member's value of one of `kinds`; a fixed literal's text; the boolean a binding declares its kind's value; or the form chosen at a supertype's variant site: the render options' choice at `<variant>/variant`, the `default` form when they make none. */
@@ -223,7 +237,7 @@ export interface PortableBuildArm {
 	readonly owners?: readonly (readonly number[])[];
 	readonly presets: readonly PortablePreset[];
 	readonly flags: Readonly<Record<string, PortableFlagStep>>;
-	readonly template?: { readonly member: string; readonly pattern: string; readonly holes: readonly string[] };
+	readonly template?: PortableTemplate;
 	readonly sole?: { readonly member: string; readonly delimiter: number };
 	readonly content?: string;
 }

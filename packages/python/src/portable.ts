@@ -3246,7 +3246,14 @@ const table: PortableTable = {
 			},
 			{ path: 'declaration.variable', within: [], test: [] }
 		],
-		[TSKindId.Attribute]: [{ path: 'expression.member', within: [], test: [] }],
+		[TSKindId.Attribute]: [
+			{
+				path: 'expression.member',
+				within: [],
+				test: [{ up: 0, via: [], plan: { op: 'match', pattern: '^__(?<property>.*[^_]_?)$', slots: { '221': 1 } } }]
+			},
+			{ path: 'expression.member', within: [], test: [] }
+		],
 		[TSKindId.AugmentedAssignment]: [
 			{
 				path: 'expression.assignment.compound.add',
@@ -3690,6 +3697,11 @@ const table: PortableTable = {
 		[TSKindId.MemberType]: [{ path: 'identifier.qualified', within: [], test: [] }],
 		[TSKindId.MethodDeclaration]: [
 			{
+				path: 'declaration.method',
+				within: [],
+				test: [{ up: 0, via: [], plan: { op: 'match', pattern: '^__(?<name>.*[^_]_?)$', slots: { '352': 1 } } }]
+			},
+			{
 				path: 'declaration.constructor',
 				within: [],
 				test: [{ up: 0, via: [], plan: { op: 'eq', text: '__init__', slots: { '352': 1 } } }]
@@ -4042,6 +4054,7 @@ const table: PortableTable = {
 };
 
 export const queryFlags: QueryFlags = Object.freeze({
+	[TSKindId.Attribute]: { privateName: { op: 'match', pattern: '^__(?<property>.*[^_]_?)$', slots: { '221': 1 } } },
 	[TSKindId.CasePatternList]: {
 		trailingComma: {
 			op: 'and',
@@ -4079,7 +4092,10 @@ export const queryFlags: QueryFlags = Object.freeze({
 	[TSKindId.FormatExpression]: { debug: { op: 'present', slots: { '351': 1 } } },
 	[TSKindId.FunctionDefinition]: { async: { op: 'present', slots: { '165': 0 } } },
 	[TSKindId.Interpolation]: { debug: { op: 'present', slots: { '250': 1 } } },
-	[TSKindId.MethodDeclaration]: { async: { op: 'present', slots: { '352': 0 } } },
+	[TSKindId.MethodDeclaration]: {
+		async: { op: 'present', slots: { '352': 0 } },
+		privateName: { op: 'match', pattern: '^__(?<name>.*[^_]_?)$', slots: { '352': 1 } }
+	},
 	[TSKindId.PatternList]: {
 		trailingComma: {
 			op: 'and',
@@ -4121,31 +4137,109 @@ export const rows: PortableRows = Object.freeze({ table, querySlots, flags: quer
 export const querySlotFlags: QuerySlotFlags = Object.freeze({
 	128: { statements: { async: { types: [], kinds: [157, 162, 165] } } },
 	139: { content: { trailingComma: { types: [], kinds: [282, 283] } } },
-	142: { content: { trailingComma: { types: [], kinds: [296] } } },
-	145: { expressions: { trailingComma: { types: [], kinds: [181] } } },
-	146: { expressions: { trailingComma: { types: [], kinds: [181] } } },
-	147: { expressions: { trailingComma: { types: [], kinds: [181] } } },
+	140: { expression: { privateName: { types: [], kinds: [221] } } },
+	141: { expressions: { privateName: { types: [], kinds: [221] } } },
+	142: { content: { privateName: { types: [], kinds: [221] }, trailingComma: { types: [], kinds: [296] } } },
+	143: { right: { privateName: { types: [], kinds: [221] } } },
+	145: { expressions: { privateName: { types: [], kinds: [221] }, trailingComma: { types: [], kinds: [181] } } },
+	146: { expressions: { privateName: { types: [], kinds: [221] }, trailingComma: { types: [], kinds: [181] } } },
+	147: {
+		expressions: { privateName: { types: [], kinds: [221] }, trailingComma: { types: [], kinds: [181] } },
+		cause: { privateName: { types: [], kinds: [221] } }
+	},
+	151: { condition: { privateName: { types: [], kinds: [221] } } },
+	152: { condition: { privateName: { types: [], kinds: [221] } } },
 	154: { subject: { trailingComma: { types: [], kinds: [261] } } },
-	157: { right: { trailingComma: { types: [], kinds: [181] } } },
+	157: {
+		left: { privateName: { types: [], kinds: [221] } },
+		right: { privateName: { types: [], kinds: [221] }, trailingComma: { types: [], kinds: [181] } }
+	},
+	158: { condition: { privateName: { types: [], kinds: [221] } } },
 	159: { handlers: { group: { types: [], kinds: [160] } } },
+	164: { value: { privateName: { types: [], kinds: [221] } } },
+	168: { expression: { privateName: { types: [], kinds: [221] } } },
+	169: { expression: { privateName: { types: [], kinds: [221] } } },
+	172: { inClauses: { privateName: { types: [], kinds: [221] } } },
 	178: { definition: { async: { types: [], kinds: [165] } } },
+	179: { expression: { privateName: { types: [], kinds: [221] } } },
 	180: { statements: { async: { types: [], kinds: [157, 162, 165] } } },
-	217: { right: { trailingComma: { types: [], kinds: [181] } } },
-	220: { content: { trailingComma: { types: [], kinds: [181] } } },
-	222: { index: { trailingComma: { types: [], kinds: [267] } } },
+	181: { elements: { privateName: { types: [], kinds: [221] } } },
+	194: { items: { privateName: { types: [], kinds: [221] } } },
+	199: { default: { privateName: { types: [], kinds: [221] } } },
+	200: { default: { privateName: { types: [], kinds: [221] } } },
+	201: { pattern: { privateName: { types: [], kinds: [221] } } },
+	202: { pattern: { privateName: { types: [], kinds: [221] } } },
+	203: { expression: { privateName: { types: [], kinds: [221] } } },
+	207: { argument: { privateName: { types: [], kinds: [221] } } },
+	208: { left: { privateName: { types: [], kinds: [221] } }, right: { privateName: { types: [], kinds: [221] } } },
+	209: { left: { privateName: { types: [], kinds: [221] } }, right: { privateName: { types: [], kinds: [221] } } },
+	210: { argument: { privateName: { types: [], kinds: [221] } } },
+	213: { left: { privateName: { types: [], kinds: [221] } } },
+	214: { body: { privateName: { types: [], kinds: [221] } } },
+	215: { body: { privateName: { types: [], kinds: [221] } } },
+	217: {
+		left: { privateName: { types: [], kinds: [221] } },
+		right: { privateName: { types: [], kinds: [221] }, trailingComma: { types: [], kinds: [181] } }
+	},
+	218: { elements: { privateName: { types: [], kinds: [221] } } },
+	220: { content: { privateName: { types: [], kinds: [221] }, trailingComma: { types: [], kinds: [181] } } },
+	221: { object: { privateName: { types: [], kinds: [221] } } },
+	222: { object: { privateName: { types: [], kinds: [221] } }, index: { trailingComma: { types: [], kinds: [267] } } },
+	223: { start: { privateName: { types: [], kinds: [221] } }, stop: { privateName: { types: [], kinds: [221] } } },
+	224: { function: { privateName: { types: [], kinds: [221] } } },
+	226: { content: { privateName: { types: [], kinds: [221] } } },
+	232: { value: { privateName: { types: [], kinds: [221] } } },
+	237: { key: { privateName: { types: [], kinds: [221] } }, value: { privateName: { types: [], kinds: [221] } } },
+	238: { body: { privateName: { types: [], kinds: [221] } } },
+	240: { body: { privateName: { types: [], kinds: [221] } } },
+	241: { body: { privateName: { types: [], kinds: [221] } } },
+	242: { expression: { privateName: { types: [], kinds: [221] } } },
+	243: { items: { privateName: { types: [], kinds: [221] } } },
+	244: { left: { privateName: { types: [], kinds: [221] } }, rights: { privateName: { types: [], kinds: [221] } } },
+	245: { condition: { privateName: { types: [], kinds: [221] } } },
+	246: {
+		consequence: { privateName: { types: [], kinds: [221] } },
+		condition: { privateName: { types: [], kinds: [221] } },
+		alternative: { privateName: { types: [], kinds: [221] } }
+	},
 	248: { contents: { debug: { types: [], kinds: [250] } } },
-	250: { expression: { trailingComma: { types: [], kinds: [181] } } },
+	250: { expression: { privateName: { types: [], kinds: [221] }, trailingComma: { types: [], kinds: [181] } } },
 	254: { elements: { debug: { types: [], kinds: [351] } } },
+	257: { expression: { privateName: { types: [], kinds: [221] } } },
+	261: { elements: { privateName: { types: [], kinds: [221] } } },
+	264: { items: { privateName: { types: [], kinds: [221] } } },
+	267: { elements: { privateName: { types: [], kinds: [221] } } },
+	269: { expression: { privateName: { types: [], kinds: [221] } } },
+	274: { items: { privateName: { types: [], kinds: [221] } } },
+	276: { items: { privateName: { types: [], kinds: [221] } } },
+	277: { value: { privateName: { types: [], kinds: [221] } }, alias: { privateName: { types: [], kinds: [221] } } },
+	280: { items: { privateName: { types: [], kinds: [221] } } },
+	281: { items: { privateName: { types: [], kinds: [221] } } },
 	286: { contents: { async: { types: [], kinds: [244] }, trailingComma: { types: [], kinds: [244] } } },
-	293: { value: { trailingComma: { types: [], kinds: [181] } } },
-	295: { value: { trailingComma: { types: [], kinds: [181] } } },
-	309: { statements: { async: { types: [], kinds: [157, 162, 307, 352] } } },
-	311: { definition: { async: { types: [], kinds: [307, 352] } } },
-	351: { expression: { trailingComma: { types: [], kinds: [181] } } }
+	289: { values: { privateName: { types: [], kinds: [221] } } },
+	293: {
+		name: { privateName: { types: [], kinds: [221] } },
+		value: { privateName: { types: [], kinds: [221] }, trailingComma: { types: [], kinds: [181] } }
+	},
+	294: { name: { privateName: { types: [], kinds: [221] } } },
+	295: {
+		name: { privateName: { types: [], kinds: [221] } },
+		value: { privateName: { types: [], kinds: [221] }, trailingComma: { types: [], kinds: [181] } }
+	},
+	296: { elements: { privateName: { types: [], kinds: [221] } } },
+	302: { primaryExpression: { privateName: { types: [], kinds: [221] } } },
+	303: { expression: { privateName: { types: [], kinds: [221] } } },
+	309: { statements: { async: { types: [], kinds: [157, 162, 307, 352] }, privateName: { types: [], kinds: [352] } } },
+	311: { definition: { async: { types: [], kinds: [307, 352] }, privateName: { types: [], kinds: [352] } } },
+	350: { content: { privateName: { types: [], kinds: [221] } } },
+	351: { expression: { privateName: { types: [], kinds: [221] }, trailingComma: { types: [], kinds: [181] } } }
 } satisfies QuerySlotFlags);
 
 declare module './types.js' {
 	interface PortableReads extends PortableIds {}
+	interface Attribute {
+		readonly __flags__?: 'privateName';
+	}
 	interface CasePatternList {
 		readonly __flags__?: 'trailingComma';
 	}
@@ -4177,7 +4271,7 @@ declare module './types.js' {
 		readonly __flags__?: 'debug';
 	}
 	interface MethodDeclaration {
-		readonly __flags__?: 'async';
+		readonly __flags__?: 'async' | 'privateName';
 	}
 	interface PatternList {
 		readonly __flags__?: 'trailingComma';
@@ -4203,67 +4297,239 @@ declare module './types.js' {
 	interface PrintStatement {
 		readonly __slotFlags__?: { readonly content: 'trailingComma' };
 	}
+	interface Chevron {
+		readonly __slotFlags__?: { readonly expression: 'privateName' };
+	}
+	interface AssertStatement {
+		readonly __slotFlags__?: { readonly expressions: 'privateName' };
+	}
 	interface ExpressionStatement {
-		readonly __slotFlags__?: { readonly content: 'trailingComma' };
+		readonly __slotFlags__?: { readonly content: 'privateName' | 'trailingComma' };
+	}
+	interface NamedExpression {
+		readonly __slotFlags__?: { readonly right: 'privateName' };
 	}
 	interface ReturnStatement {
-		readonly __slotFlags__?: { readonly expressions: 'trailingComma' };
+		readonly __slotFlags__?: { readonly expressions: 'privateName' | 'trailingComma' };
 	}
 	interface DeleteStatement {
-		readonly __slotFlags__?: { readonly expressions: 'trailingComma' };
+		readonly __slotFlags__?: { readonly expressions: 'privateName' | 'trailingComma' };
 	}
 	interface RaiseStatement {
-		readonly __slotFlags__?: { readonly expressions: 'trailingComma' };
+		readonly __slotFlags__?: { readonly expressions: 'privateName' | 'trailingComma'; readonly cause: 'privateName' };
+	}
+	interface IfStatement {
+		readonly __slotFlags__?: { readonly condition: 'privateName' };
+	}
+	interface ElifClause {
+		readonly __slotFlags__?: { readonly condition: 'privateName' };
 	}
 	interface MatchStatement {
 		readonly __slotFlags__?: { readonly subject: 'trailingComma' };
 	}
 	interface ForStatement {
-		readonly __slotFlags__?: { readonly right: 'trailingComma' };
+		readonly __slotFlags__?: { readonly left: 'privateName'; readonly right: 'privateName' | 'trailingComma' };
+	}
+	interface WhileStatement {
+		readonly __slotFlags__?: { readonly condition: 'privateName' };
 	}
 	interface TryStatement {
 		readonly __slotFlags__?: { readonly handlers: 'group' };
 	}
+	interface WithItem {
+		readonly __slotFlags__?: { readonly value: 'privateName' };
+	}
+	interface ListSplat {
+		readonly __slotFlags__?: { readonly expression: 'privateName' };
+	}
+	interface DictionarySplat {
+		readonly __slotFlags__?: { readonly expression: 'privateName' };
+	}
+	interface ExecStatement {
+		readonly __slotFlags__?: { readonly inClauses: 'privateName' };
+	}
 	interface DecoratedDefinition {
 		readonly __slotFlags__?: { readonly definition: 'async' };
+	}
+	interface Decorator {
+		readonly __slotFlags__?: { readonly expression: 'privateName' };
 	}
 	interface Block {
 		readonly __slotFlags__?: { readonly statements: 'async' };
 	}
+	interface ExpressionList {
+		readonly __slotFlags__?: { readonly elements: 'privateName' };
+	}
+	interface Patterns {
+		readonly __slotFlags__?: { readonly items: 'privateName' };
+	}
+	interface DefaultParameter {
+		readonly __slotFlags__?: { readonly default: 'privateName' };
+	}
+	interface TypedDefaultParameter {
+		readonly __slotFlags__?: { readonly default: 'privateName' };
+	}
+	interface ListSplatPattern {
+		readonly __slotFlags__?: { readonly pattern: 'privateName' };
+	}
+	interface DictionarySplatPattern {
+		readonly __slotFlags__?: { readonly pattern: 'privateName' };
+	}
+	interface AsPattern {
+		readonly __slotFlags__?: { readonly expression: 'privateName' };
+	}
+	interface NotOperator {
+		readonly __slotFlags__?: { readonly argument: 'privateName' };
+	}
+	interface BooleanOperator {
+		readonly __slotFlags__?: { readonly left: 'privateName'; readonly right: 'privateName' };
+	}
+	interface BinaryOperator {
+		readonly __slotFlags__?: { readonly left: 'privateName'; readonly right: 'privateName' };
+	}
+	interface UnaryOperator {
+		readonly __slotFlags__?: { readonly argument: 'privateName' };
+	}
+	interface ComparisonOperator {
+		readonly __slotFlags__?: { readonly left: 'privateName' };
+	}
+	interface Lambda {
+		readonly __slotFlags__?: { readonly body: 'privateName' };
+	}
+	interface LambdaWithinForInClause {
+		readonly __slotFlags__?: { readonly body: 'privateName' };
+	}
 	interface AugmentedAssignment {
-		readonly __slotFlags__?: { readonly right: 'trailingComma' };
+		readonly __slotFlags__?: { readonly left: 'privateName'; readonly right: 'privateName' | 'trailingComma' };
+	}
+	interface PatternList {
+		readonly __slotFlags__?: { readonly elements: 'privateName' };
 	}
 	interface Yield {
-		readonly __slotFlags__?: { readonly content: 'trailingComma' };
+		readonly __slotFlags__?: { readonly content: 'privateName' | 'trailingComma' };
+	}
+	interface Attribute {
+		readonly __slotFlags__?: { readonly object: 'privateName' };
 	}
 	interface Subscript {
-		readonly __slotFlags__?: { readonly index: 'trailingComma' };
+		readonly __slotFlags__?: { readonly object: 'privateName'; readonly index: 'trailingComma' };
+	}
+	interface Slice {
+		readonly __slotFlags__?: { readonly start: 'privateName'; readonly stop: 'privateName' };
+	}
+	interface Call {
+		readonly __slotFlags__?: { readonly function: 'privateName' };
+	}
+	interface Type {
+		readonly __slotFlags__?: { readonly content: 'privateName' };
+	}
+	interface KeywordArgument {
+		readonly __slotFlags__?: { readonly value: 'privateName' };
+	}
+	interface Pair {
+		readonly __slotFlags__?: { readonly key: 'privateName'; readonly value: 'privateName' };
+	}
+	interface ListComprehension {
+		readonly __slotFlags__?: { readonly body: 'privateName' };
+	}
+	interface SetComprehension {
+		readonly __slotFlags__?: { readonly body: 'privateName' };
+	}
+	interface GeneratorExpression {
+		readonly __slotFlags__?: { readonly body: 'privateName' };
+	}
+	interface ParenthesizedExpression {
+		readonly __slotFlags__?: { readonly expression: 'privateName' };
+	}
+	interface CollectionElements {
+		readonly __slotFlags__?: { readonly items: 'privateName' };
+	}
+	interface ForInClause {
+		readonly __slotFlags__?: { readonly left: 'privateName'; readonly rights: 'privateName' };
+	}
+	interface IfClause {
+		readonly __slotFlags__?: { readonly condition: 'privateName' };
+	}
+	interface ConditionalExpression {
+		readonly __slotFlags__?: {
+			readonly consequence: 'privateName';
+			readonly condition: 'privateName';
+			readonly alternative: 'privateName';
+		};
 	}
 	interface String {
 		readonly __slotFlags__?: { readonly contents: 'debug' };
 	}
 	interface Interpolation {
-		readonly __slotFlags__?: { readonly expression: 'trailingComma' };
+		readonly __slotFlags__?: { readonly expression: 'privateName' | 'trailingComma' };
 	}
 	interface FormatSpecifier {
 		readonly __slotFlags__?: { readonly elements: 'debug' };
 	}
+	interface Await {
+		readonly __slotFlags__?: { readonly expression: 'privateName' };
+	}
+	interface Subjects {
+		readonly __slotFlags__?: { readonly elements: 'privateName' };
+	}
+	interface ArgumentListElements {
+		readonly __slotFlags__?: { readonly items: 'privateName' };
+	}
+	interface Subscripts {
+		readonly __slotFlags__?: { readonly elements: 'privateName' };
+	}
+	interface SliceGroup {
+		readonly __slotFlags__?: { readonly expression: 'privateName' };
+	}
+	interface TuplePatternElements {
+		readonly __slotFlags__?: { readonly items: 'privateName' };
+	}
+	interface TupleElements {
+		readonly __slotFlags__?: { readonly items: 'privateName' };
+	}
+	interface ExceptClauseExceptionAs {
+		readonly __slotFlags__?: { readonly value: 'privateName'; readonly alias: 'privateName' };
+	}
+	interface PrintArguments {
+		readonly __slotFlags__?: { readonly items: 'privateName' };
+	}
+	interface PrintChevronArguments {
+		readonly __slotFlags__?: { readonly items: 'privateName' };
+	}
 	interface ComprehensionClauses {
 		readonly __slotFlags__?: { readonly contents: 'async' | 'trailingComma' };
 	}
+	interface ExceptClauseExceptionList {
+		readonly __slotFlags__?: { readonly values: 'privateName' };
+	}
 	interface AssignmentEq {
-		readonly __slotFlags__?: { readonly value: 'trailingComma' };
+		readonly __slotFlags__?: { readonly name: 'privateName'; readonly value: 'privateName' | 'trailingComma' };
+	}
+	interface AssignmentType {
+		readonly __slotFlags__?: { readonly name: 'privateName' };
 	}
 	interface AssignmentTyped {
-		readonly __slotFlags__?: { readonly value: 'trailingComma' };
+		readonly __slotFlags__?: { readonly name: 'privateName'; readonly value: 'privateName' | 'trailingComma' };
+	}
+	interface ExpressionStatementTuple {
+		readonly __slotFlags__?: { readonly elements: 'privateName' };
+	}
+	interface ComparisonOperatorComparator {
+		readonly __slotFlags__?: { readonly primaryExpression: 'privateName' };
+	}
+	interface YieldFromClause {
+		readonly __slotFlags__?: { readonly expression: 'privateName' };
 	}
 	interface BlockClassDeclaration {
-		readonly __slotFlags__?: { readonly statements: 'async' };
+		readonly __slotFlags__?: { readonly statements: 'async' | 'privateName' };
 	}
 	interface DecoratedDefinitionClassDeclaration {
-		readonly __slotFlags__?: { readonly definition: 'async' };
+		readonly __slotFlags__?: { readonly definition: 'async' | 'privateName' };
+	}
+	interface AsPatternTarget {
+		readonly __slotFlags__?: { readonly content: 'privateName' };
 	}
 	interface FormatExpression {
-		readonly __slotFlags__?: { readonly expression: 'trailingComma' };
+		readonly __slotFlags__?: { readonly expression: 'privateName' | 'trailingComma' };
 	}
 }

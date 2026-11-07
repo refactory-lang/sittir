@@ -2973,6 +2973,15 @@ export const build: PortableBuildTable = {
 									kind: 67
 								}
 							]
+						},
+						privateName: {
+							presets: [],
+							template: {
+								member: 'name',
+								pattern: '__${string}',
+								holes: ['name'],
+								match: '^__(?<name>.*[^_]_?)$'
+							}
 						}
 					},
 					when: [
@@ -3242,7 +3251,8 @@ export const build: PortableBuildTable = {
 					template: {
 						member: 'name',
 						pattern: '__${string}__',
-						holes: ['stem']
+						holes: ['stem'],
+						match: '^__(?<stem>.*)__$'
 					},
 					when: [
 						{
@@ -9406,7 +9416,17 @@ export const build: PortableBuildTable = {
 						}
 					],
 					presets: [],
-					flags: {},
+					flags: {
+						privateName: {
+							presets: [],
+							template: {
+								member: 'property',
+								pattern: '__${string}',
+								holes: ['property'],
+								match: '^__(?<property>.*[^_]_?)$'
+							}
+						}
+					},
 					when: [
 						{
 							absent: [],

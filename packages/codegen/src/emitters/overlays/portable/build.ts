@@ -15,13 +15,14 @@ import type {
 	PortablePreset,
 	PortableSeat,
 	PortableSlotStep,
+	PortableTemplate,
 	PortableValueBuild,
 	QueryPlan
 } from '@sittir/types';
 import { Delimiter } from '@sittir/common/delimiter';
 import type { ChildTest, GrammarRoutes, MemberRoute, ReadEntry, SlotStep } from '../../../bindings/routes.ts';
 import { concreteKinds, guaranteedBy, heldSteps, modelNode, mountHoldersOf, reachedBy, shownSlots, valueTokensOf, type Guaranteed, type MountHolder } from '../../../bindings/routes.ts';
-import type { ModelMount, ModelSlot, SlotModel } from '../../../bindings/facts.ts';
+import type { ModelMount, ModelSlot, SlotModel, TemplateFact } from '../../../bindings/facts.ts';
 import type { NodeMap } from '../../../compiler/types.ts';
 import { SEQ, STRING } from '../../../types/rule-types.ts'; // @rule-type-consts
 import type { RenderRule } from '../../../types/rule.ts';
@@ -111,6 +112,8 @@ interface Arm {
 	readonly chosen: boolean;
 	readonly site?: readonly [holder: number, key: string];
 }
+
+const portableTemplate = (template: TemplateFact): PortableTemplate => ({ member: template.target, pattern: template.template, holes: template.holes, match: template.match });
 
 const routeSteps = (member: PortableMemberStep): readonly PortableSlotStep[] => member.steps.filter((step) => step.flatten !== true);
 
@@ -848,6 +851,8 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 				const unset = [...(flagSteps[flag.name]?.unset ?? []), ...(other === undefined ? [] : [other])];
 				flagSteps[flag.name] = { presets: [...(flagSteps[flag.name]?.presets ?? []), flag.preset], ...(unset.length === 0 ? {} : { unset }) };
 			}
+			for (const spelled of (routes.readEntries.get(kind) ?? []).filter((other) => other.vocab === entry.vocab && other.claim.flag !== undefined && other.template !== undefined))
+				flagSteps[spelled.claim.flag!] = { ...(flagSteps[spelled.claim.flag!] ?? { presets: [] }), template: portableTemplate(spelled.template!) };
 			for (const route of entry.members) {
 				if (route.route !== 'delimiter') continue;
 				const list = route.path === undefined ? undefined : (stepsOf(route.path) ?? refuseList(route.name, entry.vocab));
@@ -945,7 +950,7 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 						...(owners.length > 1 ? { owners } : {}),
 						presets: deepest,
 						flags: flagSteps,
-						...(entry.template === undefined ? {} : { template: { member: entry.template.target, pattern: entry.template.template, holes: entry.template.holes } }),
+						...(entry.template === undefined || entry.claim.flag !== undefined ? {} : { template: portableTemplate(entry.template) }),
 						...soleOf(entry, armMembers),
 						...(content === undefined ? {} : { content })
 					}

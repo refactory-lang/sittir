@@ -1356,7 +1356,7 @@ export function resolveRoutes(input: GrammarInput): GrammarRoutes {
 						absent: absentSlotsOf(input.model, kind, claim),
 						present: [],
 						children: claimChildTests(input.model, kind, claim),
-						template: input.bindings.templates.find((t) => t.vocabs.includes(vocab)),
+						template: claim.template,
 						members: [],
 						...(separatedBy(input.model, kind, claim) ? { separated: true as const } : {}),
 						...(spelled ? { spelled: true as const } : {}),

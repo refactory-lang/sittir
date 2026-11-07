@@ -195,6 +195,29 @@ describe('the portable read', () => {
 		expect(typeOf('x: List[int] = 1')).toEqual({ $path: 'type', content: { $path: 'type.generic', name: 'List', typeArguments: [{ $path: 'type', content: 'int' }] } });
 	});
 
+	it.each([
+		['__x', 'x'],
+		['__x_', 'x_'],
+		['___x', '_x']
+	])('reads the mangled name %s as privateName with its stem as the name, and spells __ back', (name, stem) => {
+		const method = `class C:\n    def ${name}(self):\n        pass\n`;
+		const member = `self.${name}\n`;
+		expect((((firstOf(method) as Read).body as Read).statements as readonly Read[])[0]).toMatchObject({ $path: 'declaration.method', $flags: ['privateName'], name: stem });
+		expect((firstOf(member) as Read).content).toEqual({ $path: 'expression.member', $flags: ['privateName'], object: 'self', property: stem });
+		for (const source of [method, member]) expect(roundTrip(source)).toBe(source);
+		expect(String(runtime.engine.render(runtime.build({ $path: 'expression.member', $flags: ['privateName'], object: 'self', property: stem }) as never))).toBe(`self.${name}`);
+	});
+
+	it.each(['__eq__', '__'])('reads %s as no private name', (name) => {
+		const statement = (read(`self.${name}\n`).statements as readonly Read[])[0]!;
+		expect(statement.content).toEqual({ $path: 'expression.member', object: 'self', property: name });
+	});
+
+	it('refuses a private name whose stem spells no mangled name, and a plain name that reads as private', () => {
+		expect(() => runtime.build({ $path: 'expression.member', $flags: ['privateName'], object: 'self', property: 'x__' })).toThrow(/does not match/);
+		expect(() => runtime.build({ $path: 'expression.member', object: 'self', property: '__x' })).toThrow(/reads as privateName/);
+	});
+
 	it('reads a print statement\'s destination and arguments, and its trailing comma as a flag', () => {
 		expect(firstOf('print a, b,')).toEqual({ $path: 'statement.print', arguments: ['a', 'b'], $flags: ['trailingComma'] });
 		expect(firstOf('print >> f')).toEqual({ $path: 'statement.print', destination: 'f', arguments: [] });

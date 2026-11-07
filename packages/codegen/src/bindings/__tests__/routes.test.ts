@@ -1394,7 +1394,7 @@ describe('flag captures', () => {
 		return built;
 	};
 	const VOCABULARY = vocabulary({
-		'declaration.method': { generator: true },
+		'declaration.method': { generator: true, privateName: true },
 		'declaration.method.getter': {},
 		'declaration.parameter': { mutable: true },
 		'statement.loop.for_each': { async: true },
@@ -1411,6 +1411,15 @@ describe('flag captures', () => {
 		layoutSlots: [], vocabulary: EMPTY_VOCABULARY
 	});
 	const membersOf = async (bindings: string, kind: string) => resolveRoutes(await flagged(bindings)).members.get(kind);
+
+	it("keeps a flag claim's template on the flag claim's own entry, never on the plain claim of its path", async () => {
+		const routes = resolveRoutes(
+			await flagged(['(method) @declaration.method', '((method name: (identifier) @name) @declaration.method.privateName (#match? @name "^__(?<name>.*[^_]_?)$"))'].join('\n'))
+		);
+		const entries = routes.readEntries.get('method') ?? [];
+		expect(entries.find((entry) => entry.claim.flag === 'privateName')?.template).toMatchObject({ target: 'name', template: '__${string}', holes: ['name'], match: '^__(?<name>.*[^_]_?)$' });
+		expect(entries.find((entry) => entry.claim.flag === undefined)?.template).toBeUndefined();
+	});
 
 	it('routes a flag captured on a token in a slot to that token\'s presence, not to the slot', async () => {
 		expect(await membersOf(['(method) @declaration.method', '(method accessor_kind: "*" @generator)'].join('\n'), 'method')).toEqual([

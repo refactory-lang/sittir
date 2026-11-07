@@ -353,7 +353,7 @@ function templateOf(predicate: Predicate.Parsed): Omit<TemplateFact, 'vocabs'> |
 	const rx = stringValue(regex);
 	const holes = [...rx.matchAll(/\(\?<(\w+)>/g)].map((m) => m[1] ?? '');
 	if (holes.length === 0 || !rx.startsWith('^') || !rx.endsWith('$')) return null;
-	return { target: leafText(target.name()), template: rx.slice(1, -1).replace(/\(\?<\w+>[^)]*\)/g, '${string}'), holes };
+	return { target: leafText(target.name()), template: rx.slice(1, -1).replace(/\(\?<\w+>[^)]*\)/g, '${string}'), holes, match: rx };
 }
 
 function predicateFact(predicate: Predicate.Parsed): Omit<PredicateFact, 'subject'> | null {
@@ -662,10 +662,11 @@ function patternFacts({ top, nodes, predicates }: Pattern, facts: Facts, origin:
 		return;
 	}
 	const vocabs = nodes.flatMap((v) => captures(v).filter((name) => vocabCapture(v, name) && !isTokenClass(name)));
-	for (const predicate of predicates) {
+	const templates = predicates.flatMap((predicate): TemplateFact[] => {
 		const template = templateOf(predicate);
-		if (template !== null) facts.templates.push({ vocabs, ...template });
-	}
+		return template === null ? [] : [{ vocabs, ...template }];
+	});
+	facts.templates.push(...templates);
 	const claimed = new Map<Visit, number[]>();
 	for (const v of nodes) {
 		for (const name of captures(v)) {
@@ -674,7 +675,7 @@ function patternFacts({ top, nodes, predicates }: Pattern, facts: Facts, origin:
 			(claimed.get(v) ?? claimed.set(v, []).get(v))?.push(facts.claims.length);
 			const claim = claimFact(v, name, top, nodes, claimPredicates, origin);
 			const value = atTop(v, top) ? valueOf(directivesOf(predicates).get('value'), origin) : undefined;
-			facts.claims.push({ ...claim, ...(value === undefined ? {} : { value }) });
+			facts.claims.push({ ...claim, ...(value === undefined ? {} : { value }), ...(templates[0] === undefined ? {} : { template: templates[0] }) });
 		}
 	}
 	for (const v of nodes) {

@@ -17,6 +17,7 @@
 ((method_declaration name: (identifier) @name) @declaration.constructor (#eq? @name "__init__"))
 (constructor_declaration) @declaration.constructor
 ((method_declaration name: (identifier) @name) @declaration.method.special (#match? @name "^__(?<stem>.*)__$"))
+((method_declaration name: (identifier) @name) @declaration.method.privateName (#match? @name "^__(?<name>.*[^_]_?)$"))
 (decorated_definition (decorator)* @decorators definition: (_) @element)
 (typed_parameter) @declaration.parameter.typed
 (default_parameter value: (_)? @default) @declaration.parameter.default
@@ -175,6 +176,7 @@
 (named_expression name: (_) @left value: (_) @right) @expression.assignment
 (conditional_expression body: (_)? @consequence) @expression.conditional
 (attribute attribute: (_) @property) @expression.attribute
+((attribute attribute: (identifier) @property) @expression.attribute.privateName (#match? @property "^__(?<property>.*[^_]_?)$"))
 (subscript value: (_) @object (subscripts) @index) @expression.subscript
 (subscripts ",") @expression.collection.tuple.bare
 (subscripts subscript: (_) @elements)

@@ -322,6 +322,14 @@ export function portableReader({ table, classify, flagHolds, flagsOf, textOf, sl
 		for (const member of arms.flatMap((arm) => arm.members)) if ((member.list ?? member.multiple) && !(member.name in structure)) structure[member.name] = [];
 		for (const test of arms.flatMap((arm) => arm.when)) if ('empty' in test) for (const name of test.empty) if (!(name in structure)) structure[name] = [];
 		closerContent(node, arms, structure);
+		for (const flag of flags) {
+			const template = arms.map((arm) => arm.flags[flag]?.template).find((found) => found !== undefined);
+			const text = template === undefined ? undefined : structure[template.member];
+			if (template === undefined || typeof text !== 'string') continue;
+			const groups = new RegExp(template.match, 'u').exec(text)?.groups;
+			if (groups === undefined) throw new Error(`portable read: ${path}'s ${template.member} ${JSON.stringify(text)} spells no ${flag}`);
+			for (const hole of template.holes) structure[hole] = groups[hole];
+		}
 		return structure;
 	};
 	const meaningfulText = (item: Node): string => {

@@ -467,7 +467,7 @@ describe('canonicalFacts', () => {
 			claims: [{ ...claim('declaration.parameter.self'), kind: 'parameter' }, { ...claim('declaration.parameter.mut'), kind: 'parameter' }],
 			members: [member('mut'), member('name'), member('other')],
 			containers: [],
-			templates: [{ vocabs: ['declaration.parameter.this'], target: 'parameter', template: '', holes: [] }],
+			templates: [{ vocabs: ['declaration.parameter.this'], target: 'parameter', template: '', holes: [], match: '^$' }],
 			unclaimed: []
 		};
 		const parameter: ModelNode = { kind: 'parameter', modelType: 'branch', unit: false, layout: false, seated: false, slots: [], subtypes: [], defaultSubtype: null, elementKinds: [], enumMembers: [], text: null, pattern: null, variantOf: null, splitFrom: null, aliasStorage: null, interiorPart: null, shownAs: [] };

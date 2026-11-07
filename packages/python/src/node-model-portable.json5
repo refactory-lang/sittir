@@ -373,6 +373,32 @@
           "toplevel": true,
           "within": [],
           "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "match",
+                "pattern": "^__(?<property>.*[^_]_?)$",
+                "slots": {
+                  "221": 1
+                }
+              }
+            }
+          ],
+          "template": {
+            "target": "property",
+            "template": "__${string}",
+            "holes": [
+              "property"
+            ]
+          }
+        },
+        {
+          "vocab": "expression.member",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
           "test": []
         }
       ],
@@ -5570,6 +5596,32 @@
     "method_declaration": {
       "vocab": "declaration.method",
       "read": [
+        {
+          "vocab": "declaration.method",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "match",
+                "pattern": "^__(?<name>.*[^_]_?)$",
+                "slots": {
+                  "352": 1
+                }
+              }
+            }
+          ],
+          "template": {
+            "target": "name",
+            "template": "__${string}",
+            "holes": [
+              "name"
+            ]
+          }
+        },
         {
           "vocab": "declaration.constructor",
           "toplevel": true,
