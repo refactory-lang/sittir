@@ -24,9 +24,9 @@ export function bindingsStaleness(
 	vocabularyDir: string = VOCABULARY_DIR
 ): string | undefined {
 	if (!existsSync(scmPath)) return undefined;
-	if (hash === undefined) return `${grammar}: bindings.scm exists but no grammar.bindings.ts carries its grammar bindings; write it with \`${REGENERATE_BINDINGS_COMMAND}\``;
+	if (hash === undefined) return `${grammar}: bindings.scm exists but no grammar.bindings.ts carries its grammar bindings; write it with \`${REGENERATE_BINDINGS_COMMAND} --grammar ${grammar}\``;
 	if (hash !== bindingsSourceHash(scmPath, vocabularyDir)) {
-		return `${grammar}: grammar.bindings.ts is stale against bindings.scm and the vocabulary; regenerate it with \`${REGENERATE_BINDINGS_COMMAND}\``;
+		return `${grammar}: grammar.bindings.ts is stale against bindings.scm and the vocabulary; regenerate it with \`${REGENERATE_BINDINGS_COMMAND} --grammar ${grammar}\``;
 	}
 	return undefined;
 }

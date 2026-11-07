@@ -6,11 +6,13 @@ export const bindingsInventory: CommandModule = {
 	register: (program) => {
 		defineCommand(program, bindingsInventory)
 			.option('--check', 'Compile every bindings.scm against its parser, report totality diagnostics, report where the bindings and the vocabulary disagree, check the vocabulary flags module against its Flag declarations, and check that each grammar.bindings.ts is enrich\'s fixpoint over grammar.sittir.ts')
+			.option('--grammar <grammar...>', 'The grammars to compile (default: every stable grammar with bindings)')
 			.option('--members', 'Print member names and kinds per shared kind')
 			.option('--write', 'Write the vocabulary flags module from its Flag declarations, then each grammar.bindings.ts: the generated layer above grammar.sittir.ts, with the hash of the sources it was derived from, failing when the written layer is not enrich\'s fixpoint')
-			.action(async (opts: { check?: boolean; members?: boolean; write?: boolean }) => {
+			.action(async (opts: { check?: boolean; grammar?: string[]; members?: boolean; write?: boolean }) => {
 				const { bindingsInventory: runBindingsInventory } = await import('@sittir/tools');
 				const code = await runBindingsInventory({
+					...(opts.grammar === undefined ? {} : { grammars: opts.grammar }),
 					check: opts.check ?? false,
 					members: opts.members ?? false,
 					write: opts.write ?? false
