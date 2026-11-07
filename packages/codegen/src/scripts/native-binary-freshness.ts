@@ -59,7 +59,7 @@ function rustToolchain(repoRoot: string): string {
 	return toolchain;
 }
 
-export type LlvmTool = 'llvm-strip' | 'llvm-objdump';
+export type LlvmTool = 'llvm-strip' | 'llvm-objdump' | 'llvm-nm' | 'llvm-readobj';
 
 export function llvmTool(name: LlvmTool, repoRoot: string = REPO_ROOT): string {
 	const variable = name.toUpperCase().replace('-', '_');

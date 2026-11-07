@@ -26,6 +26,7 @@ Generate typed factories, templates, and native bindings from a grammar
 - `--roundtrip` — Run validator probes after generation
 - `--post-generate-only` — Run only the post-generate fixtures and probes
 - `--native-only` — Rebuild only the N-API binding from the generated sources, then run post-generate
+- `--node-api-level <level>` — The Node-API level the workspace builds with, read once by a multi-grammar driver
 - `--no-build-native` — Skip the post-regen N-API rebuild
 - `--native-debug` — Build the post-regen N-API binding in debug (incremental, unoptimized — dev iteration only, never for CI/validation)
 - `--no-workspace-check` — Skip the post-build cargo check --workspace (multi-grammar drivers run it once, on the last grammar)
@@ -591,6 +592,25 @@ List groups, unaliased, and phantom kinds
 
 ```sh
 pnpm exec tsx packages/cli/src/cli.ts tool list-kinds [options]
+```
+
+### `tool native-images`
+
+List the symbols each built native image (ELF, Mach-O or PE) defines and imports, as JSON
+
+**Arguments**
+
+- `images…` (required) — Image files to read: an addon, the engine library or any shared library
+
+**Options**
+
+- `--defined <prefix>` — List the defined (exported) symbols that start with <prefix>
+- `--imported <prefix>` — List the imported symbols that start with <prefix>
+
+**Example**
+
+```sh
+pnpm exec tsx packages/cli/src/cli.ts tool native-images <images> [options]
 ```
 
 ### `tool output-gate`
