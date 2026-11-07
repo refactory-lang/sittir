@@ -17,8 +17,8 @@
  *   - break_expression : Shape 2 of supertype `_expression` LEFT UNWRAPPED (the `_`-prefix gate)
  *   - closure_expression: optional('static'/'async'/'move') wrapped as '<kw>' (pass 3, CHOICE-shaped optional)
  */
-import { unwrapPrec } from '../../dsl/rule-patterns.ts';
 import { describe, it, expect, expectTypeOf, afterAll } from 'vitest';
+import { unwrapPrec } from '../../dsl/rule-patterns.ts';
 import { createRequire } from 'node:module';
 import { enrich } from '../../dsl/enrich.ts';
 import { rustGrammarShape } from '../grammar-shape.rust.ts';

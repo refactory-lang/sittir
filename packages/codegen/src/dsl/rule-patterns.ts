@@ -1,6 +1,7 @@
 import {
 	isChoiceType,
 	isFieldType,
+	isPrecLike,
 	isPrecWrapper,
 	patternAcceptsEmpty,
 	realizesEmpty,
@@ -11,6 +12,8 @@ import {
 	isTokenWrapperType,
 	typeEq,
 	type EmptinessCtx,
+	type Peeled,
+	type PrecWrapperLike,
 	type RuntimeRule
 } from '../types/runtime-shapes.ts';
 import { escapeRegexLiteral, matchesWordShape, ruleToRegexSource, wordCharClass } from '../util/word-matcher.ts';
@@ -303,26 +306,28 @@ export function isMultiSlotRepeatElement(content: unknown, symbols: SymbolSource
 	return collectSlots(core.members, symbols.rules).length >= 2;
 }
 
-export function peelPrecs<R>(rule: R): { precs: R[]; core: R } {
-	const precs: R[] = [];
+export function peelPrecs<R>(rule: R): { precs: Extract<R, PrecWrapperLike>[]; core: Peeled<R> };
+export function peelPrecs(rule: unknown): { precs: PrecWrapperLike[]; core: unknown } {
+	const precs: PrecWrapperLike[] = [];
 	let core = rule;
-	while (core && typeof core === 'object' && isPrecWrapper(core as unknown as { type: string })) {
+	while (isPrecLike(core)) {
 		precs.push(core);
-		core = (core as unknown as { content: R }).content;
+		core = core.content;
 	}
 	return { precs, core };
 }
 
-export function unwrapPrec<R>(rule: R): R {
+export function unwrapPrec<R>(rule: R): Peeled<R>;
+export function unwrapPrec(rule: unknown): unknown {
 	return peelPrecs(rule).core;
 }
 
-export function unwrapPrecAndOptional<R extends AnyRule>(rule: R): R {
+export function unwrapPrecAndOptional(rule: AnyRule): AnyRule {
 	let node = unwrapPrec(rule);
 	for (;;) {
 		const optional = optionalContentOf(node);
 		if (optional === undefined) return node;
-		node = unwrapPrec(optional as R);
+		node = unwrapPrec(optional);
 	}
 }
 

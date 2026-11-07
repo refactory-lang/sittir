@@ -1732,7 +1732,6 @@ function applyOptionalKeyword(ruleName: string, rule: Rule, ctx: EnrichCtx): Rul
 	return walkOptionalKeyword(ruleName, rule, claimed, ctx) ?? rule;
 }
 
-
 function tryPromoteOptionalNode(
 	ruleName: string,
 	rule: Rule,

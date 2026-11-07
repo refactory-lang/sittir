@@ -70,6 +70,17 @@ export function isPrecWrapper(rule: { type: string }): boolean {
 	return t === 'PREC' || t === 'PREC_LEFT' || t === 'PREC_RIGHT' || t === 'PREC_DYNAMIC' || t === 'RESERVED';
 }
 
+export interface PrecWrapperLike {
+	readonly type: 'PREC' | 'PREC_LEFT' | 'PREC_RIGHT' | 'PREC_DYNAMIC' | 'RESERVED';
+	readonly content: unknown;
+}
+
+export type Peeled<R> = Exclude<R, PrecWrapperLike> | (R extends PrecWrapperLike ? R['content'] : never);
+
+export function isPrecLike(rule: unknown): rule is PrecWrapperLike {
+	return typeof rule === 'object' && rule !== null && 'type' in rule && typeof rule.type === 'string' && 'content' in rule && isPrecWrapper({ type: rule.type });
+}
+
 export function typeEq(t: unknown, upper: string): boolean {
 	return t === upper;
 }

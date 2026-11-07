@@ -1,6 +1,6 @@
 import { createRequire } from 'node:module';
-import { unwrapPrec } from '../../dsl/rule-patterns.ts';
 import { describe, expect, it } from 'vitest';
+import { unwrapPrec } from '../../dsl/rule-patterns.ts';
 import { FIELD, REPEAT, SEQ, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
 import { grammarPackage } from '../../grammars.ts';
 import { evaluateSittirGrammar } from '../../__tests__/helpers/sittir-grammar.ts';
