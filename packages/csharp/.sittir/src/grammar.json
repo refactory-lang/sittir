@@ -1,6 +1,6 @@
 {
   "$schema": "https://tree-sitter.github.io/tree-sitter/assets/schemas/grammar.schema.json",
-  "name": "csharp",
+  "name": "c_sharp",
   "inherits": "c_sharp",
   "word": "_identifier_token",
   "rules": {
