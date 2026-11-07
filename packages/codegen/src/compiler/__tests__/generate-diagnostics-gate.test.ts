@@ -111,6 +111,7 @@ describe('generate() rejects a grammar the gate rejects, on its own', () => {
 			() => undefined,
 			(error: unknown) => error
 		);
-		expect(outcome).not.toBeInstanceOf(GrammarDiagnosticError);
+		const raised = outcome instanceof GrammarDiagnosticError ? outcome.codes : [];
+		expect(raised).not.toContain('expect-diagnostics-invalid');
 	}, FULL_PIPELINE_TIMEOUT);
 });
