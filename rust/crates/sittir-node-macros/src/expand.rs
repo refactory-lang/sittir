@@ -1320,14 +1320,13 @@ mod tests {
     }
 
     #[test]
-    fn an_envelope_over_a_list_hydrates_the_list_at_its_row_and_stamps_its_own_kind() {
+    fn an_envelope_over_a_list_refuses_arena_storage_by_name() {
         let charged = expand(&envelope(true));
-        assert!(has(&charged, "<ArgumentsNode as ::sittir_core::arena::HydrateNode>::hydrate(cursor, ctx, depth.and_then(__rt::Depth::below), records, inline)?"));
-        assert!(has(&charged, "::sittir_core::arena::Hydrated::Record { kind: __stored_kind(&__node), at }"));
-        assert!(has(&charged, "_ => ::core::result::Result::Err(::sittir_core::arena::ArenaError::Unwritable("));
-        assert!(!has(&charged, "other => "));
+        assert!(has(&charged, "compile_error!(\"ElementBindingExpressionNode: an envelope over a list has no arena record view"));
         assert!(!has(&charged, "an envelope's content read from its own row is no node with a record"));
-        assert!(has(&expand(&envelope(false)), "an envelope's content read from its own row is no node with a record"));
+        let plain = expand(&envelope(false));
+        assert!(!has(&plain, "compile_error!"));
+        assert!(has(&plain, "an envelope's content read from its own row is no node with a record"));
     }
 
     #[test]
