@@ -307,7 +307,9 @@ macro_rules! napi_engine {
             /// and its error regions.
             #[::napi_derive::napi]
             pub fn parse(&mut self, env: ::napi::Env, source: String) -> ::napi::Result<String> {
-                let claim = self.claim_tree_id(&env)?;
+                let claim = $crate::engine::claim_tree_id().ok_or_else(|| {
+                    ::napi::Error::from_reason(format!("this process exhausted its {} tree ids", $crate::engine::MAX_TREE_ID))
+                })?;
                 let tree_id = claim.id();
                 let parsed = self
                     .engine
@@ -668,32 +670,6 @@ macro_rules! napi_engine {
             match options {
                 Some(opts) => opts.resolve(&base).map_err(::napi::Error::from_reason),
                 None => Ok(base),
-            }
-        }
-
-        impl SittirEngine {
-
-            /// Take the next tree id from the JavaScript process, refusing to wrap.
-            ///
-            /// Every grammar's addon is its own linked image, so a counter in
-            /// Rust static memory would be one counter per addon and a rust
-            /// engine and a typescript engine could both mint tree 0. The
-            /// process's one `globalThis` is the owner every addon shares: the
-            /// next id lives there, so a coordinate minted by any engine names
-            /// no tree in any other, whatever grammar it speaks. Ids are never
-            /// reused, so exhausting them is the honest end state.
-            fn claim_tree_id(&mut self, env: &::napi::Env) -> ::napi::Result<$crate::engine::TreeClaim> {
-                const KEY: &str = "__sittirNextTreeId";
-                let mut global = env.get_global()?;
-                let next: Option<f64> = ::napi::bindgen_prelude::JsObjectValue::get_named_property(&global, KEY)?;
-                let (id, record) = $crate::engine::claim_tree_id_from(next).ok_or_else(|| {
-                    ::napi::Error::from_reason(format!(
-                        "this process exhausted its {} tree ids",
-                        $crate::engine::MAX_TREE_ID
-                    ))
-                })?;
-                ::napi::bindgen_prelude::JsObjectValue::set_named_property(&mut global, KEY, record)?;
-                Ok(id)
             }
         }
 

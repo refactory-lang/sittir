@@ -154,14 +154,16 @@ describe('the tree table across threads and processes', () => {
 			worker.once('error', reject);
 		});
 
-	it('gives each worker thread its own table and its own tree ids', async () => {
+	it('gives each worker thread its own table, and ids unique across threads', async () => {
 		const native = addon();
 		const mine = treeIdOf(new native.SittirEngine().parse('fn main_thread() {}'));
 		const held = native.liveTreeCount();
 		const worker = new Worker(fixture('tree-worker.mjs'), {
 			workerData: { addon: fileURLToPath(new URL('../native/index.cjs', import.meta.url)) }
 		});
-		expect(await reply(worker)).toEqual({ before: 0, after: 1, treeId: 0 });
+		const { treeId, ...table } = await reply<{ before: number; after: number; treeId: number }>(worker);
+		expect(table).toEqual({ before: 0, after: 1 });
+		expect(treeId).toBeGreaterThan(mine);
 		// Trees of earlier cases may be collected while the worker runs, so
 		// this thread's count can fall; the worker's tree must not raise it.
 		expect(native.liveTreeCount()).toBeLessThanOrEqual(held);

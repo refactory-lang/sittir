@@ -155,13 +155,13 @@ Port from it, don't copy it: master has moved since (records, arena, lazy trivia
 
 **Files:**
 - Modify: `rust/crates/sittir-core/src/engine.rs`:
-  - `NEXT_TREE_ID` goes;
-  - `claim_tree_id` calls `sittir_engine::claim_tree_id` and wraps the id in `TreeClaim`;
+  - `NEXT_TREE_ID`, `claim_tree_id_from_counter` and its two counter tests go, since the engine's counter carries them;
+  - `claim_tree_id` calls `sittir_engine::claim_tree_id` and wraps the id in `TreeClaim`, refusing an id past `MAX_TREE_ID`, the largest a handle carries. A unit test pins that bound;
   - `TreeClaim` itself stays as it is.
 - Modify: `rust/crates/sittir-core/src/napi_engine.rs`. The `globalThis` claim goes.
 - Modify: `rust/crates/sittir-core/tests/tree_ids.rs`. `claim_tree_id_from` and its tests go.
-- Modify: every JavaScript reader of `__sittirNextTreeId`. Find them with Infigraph `search`.
-- Test: `packages/tools/tests/native-tree-ids.test.ts`.
+- No JavaScript reads `__sittirNextTreeId`: only the napi claim did.
+- Test: `packages/tools/tests/cross-grammar-coordinate-identity.test.ts`. Its distinct-ids case becomes the alternating-parse case.
 
 **Interfaces:**
 - Consumes: `sittir_engine::claim_tree_id`.
