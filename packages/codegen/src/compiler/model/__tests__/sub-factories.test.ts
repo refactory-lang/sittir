@@ -1,9 +1,8 @@
-import { assemblePredicted } from '../../../__tests__/helpers/linked.ts';
+import { buildNodeMap } from '../../../__tests__/helpers/synth-node-map.ts';
 import type { NodeMapWithIdTables } from '../../../__tests__/helpers/node-map-fixtures.ts';
 import { CHOICE, FIELD, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, STRING, SYMBOL } from '../../../types/rule-types.ts'; // @rule-type-consts
 import { describe, it, expect } from 'vitest';
 import type { Rule } from '../../../types/rule.ts';
-import type { RawGrammar } from '../../types.ts';
 import { EmitHaltedError } from '../../../types/diagnostics.ts';
 import {
 	armConfigKeys,
@@ -176,30 +175,6 @@ function inlineNodeMap(): NodeMapWithIdTables {
 		semi: { type: PATTERN, value: ';+' },
 		newline: { type: PATTERN, value: '\\n+' }
 	});
-}
-
-function buildNodeMap(
-	rules: Record<string, Rule<'evaluate'>>,
-	lists: { readonly supertypes?: readonly string[]; readonly inline?: readonly string[]; readonly splitFrom?: Readonly<Record<string, string>> } = {}
-): NodeMapWithIdTables {
-	const raw: RawGrammar = {
-		name: 'synth',
-		fileTypes: [],
-		rules,
-		ruleCatalog: { byId: new Map(), rootsByKind: new Map(), classificationById: new Map() },
-		evaluateSynthesized: new Set<string>(),
-		extras: [],
-		externals: [],
-		supertypes: [...(lists.supertypes ?? [])],
-		factoryInline: [],
-		inline: [...(lists.inline ?? [])],
-		conflicts: [],
-		precedences: [],
-		word: null,
-		references: [],
-		...(lists.splitFrom === undefined ? {} : { splitFrom: lists.splitFrom })
-	};
-	return assemblePredicted(raw);
 }
 
 describe('sub-factories — subFactoriesOf', () => {
