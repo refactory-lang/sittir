@@ -268,7 +268,7 @@ export function listItemSlot(node: AssembledNode): AssembledNonterminal | undefi
 }
 
 function refuseSharedRowContent(envelope: string, name: string, content: AssembledNode | undefined): void {
-	if (content instanceof AssembledSupertype) return;
+	if (content instanceof AssembledSupertype || content instanceof AssembledList) return;
 	if (content?.unit === true)
 		throw emitShapeFailure({
 			code: 'envelope-holds-unit',
@@ -295,7 +295,8 @@ export function nodeArgs(
 		const contents = envelopeContentKinds(node).map((name) => [name, ctx.nodeMap.nodes.get(name)] as const);
 		for (const [name, content] of contents) refuseSharedRowContent(node.kind, name, content);
 		const wraps = contents.some(([, content]) => content instanceof AssembledSupertype);
-		return `kind = ${ctx.names.kind(node.aliasTypeId)}, display, content = content${wraps ? ', wraps_hidden' : ''}`;
+		const listed = envelopeContentIsList(node, ctx.nodeMap);
+		return `kind = ${ctx.names.kind(node.aliasTypeId)}, display, content = content${wraps ? ', wraps_hidden' : ''}${listed ? ', content_list' : ''}`;
 	}
 	if (ownId === undefined)
 		throw emitShapeFailure({
@@ -333,6 +334,11 @@ function envelopeContentKinds(envelope: AssembledAlias): string[] {
 	return envelope.slots.flatMap((slot) => slotKindNames(slot));
 }
 
+export function envelopeContentIsList(envelope: AssembledAlias, nodeMap: NodeMap): boolean {
+	const kinds = envelopeContentKinds(envelope).flatMap((name) => concreteKindsOf(name, nodeMap));
+	return kinds.length > 0 && kinds.every((kind) => nodeMap.nodes.get(kind) instanceof AssembledList);
+}
+
 function flatEntriesOf(list: AssembledNode, ctx: ReadFactsCtx): readonly (readonly [AssembledNode, AssembledNonterminal])[] {
 	const item = listItemSlot(list);
 	const wrapper = ctx.wrappedLists.get(list.kind);
@@ -349,6 +355,7 @@ function refuseFlatListCycle(list: AssembledNode, ctx: ReadFactsCtx): void {
 				seen.add(kind);
 				const held = ctx.nodeMap.nodes.get(kind);
 				if (held instanceof AssembledAlias) {
+					if (envelopeContentIsList(held, ctx.nodeMap)) continue;
 					for (const content of envelopeContentKinds(held)) reach(content, from, [...envelopes, kind]);
 				} else if (held !== undefined && listItemSlot(held) !== undefined) {
 					const path = [...trail, from, ...envelopes, kind];
