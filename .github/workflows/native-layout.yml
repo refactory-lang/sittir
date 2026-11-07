@@ -1,0 +1,117 @@
+# The shared engine library on every release target.
+#
+# Each leg builds sittir-engine in release with the release matrix's cross
+# setup and the rustflags `build-native` passes for that target (the target's
+# row of NATIVE_RUSTFLAGS, printed by native-rustflags.ts). It then holds the
+# image to the build's own export list: the engine defines exactly the
+# runtime functions and the four allocator slots it lists, and no other ts_
+# symbol. Legs that run on their own host also run the engine's tests.
+#
+# It runs when a pull request touches the engine, what builds a grammar's
+# native binding, or this workflow, and on master after such a merge.
+name: Native layout
+
+on:
+  pull_request:
+    paths: &native-paths
+      - rust/crates/sittir-engine/**
+      - packages/codegen/src/grammars.ts
+      - packages/codegen/src/emitters/native-crate.ts
+      - packages/tools/src/native-images.ts
+      - packages/tools/src/scripts/native-rustflags.ts
+      - scripts/build-native.mts
+      - Cargo.toml
+      - Cargo.lock
+      - rust-toolchain.toml
+      - .github/workflows/native-layout.yml
+  push:
+    branches: [master]
+    paths: *native-paths
+  workflow_dispatch:
+
+env:
+  CARGO_NET_RETRY: "10"
+  CARGO_HTTP_MULTIPLEXING: "false"
+
+jobs:
+  engine:
+    name: engine (${{ matrix.target }})
+    runs-on: ${{ matrix.host }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { target: aarch64-apple-darwin, host: macos-14, cross: false, cargo: build }
+          - { target: x86_64-unknown-linux-gnu, host: ubuntu-22.04, cross: false, cargo: build }
+          - { target: x86_64-unknown-linux-musl, host: ubuntu-22.04, cross: true, cargo: zigbuild }
+          - { target: aarch64-unknown-linux-gnu, host: ubuntu-22.04, cross: true, cargo: build }
+          - { target: aarch64-unknown-linux-musl, host: ubuntu-22.04, cross: true, cargo: zigbuild }
+          - { target: x86_64-pc-windows-msvc, host: windows-2022, cross: false, cargo: build }
+    steps:
+      - uses: actions/checkout@v6
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+      - name: Install Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22.x
+          cache: pnpm
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Install Rust toolchain (pinned, ${{ matrix.target }})
+        uses: ./.github/actions/rust-toolchain
+        with:
+          targets: ${{ matrix.target }}
+      - name: Setup zig (musl cross-compile)
+        if: contains(matrix.target, 'musl')
+        uses: mlugg/setup-zig@v2
+        with:
+          version: 0.14.1
+      - name: Install cargo-zigbuild (musl cross-compile)
+        if: contains(matrix.target, 'musl')
+        uses: taiki-e/install-action@v2
+        with:
+          tool: cargo-zigbuild
+      # The engine is not a napi package, so napi's cross toolchain does not
+      # build it: the glibc arm64 leg links with the distribution's cross gcc,
+      # and lld, which the engine's Linux link uses.
+      - name: Cross linker (aarch64 glibc)
+        if: matrix.target == 'aarch64-unknown-linux-gnu'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gcc-aarch64-linux-gnu lld
+          echo "CARGO_TARGET_AARCH64_UNKNOWN_LINUX_GNU_LINKER=aarch64-linux-gnu-gcc" >> "$GITHUB_ENV"
+      - name: Cache cargo registry + target
+        uses: Swatinem/rust-cache@v2
+        with:
+          key: engine-${{ matrix.target }}
+      - name: Build the engine (release)
+        shell: bash
+        run: |
+          RUSTFLAGS="$(npx tsx packages/tools/src/scripts/native-rustflags.ts '${{ matrix.target }}')"
+          export RUSTFLAGS
+          echo "RUSTFLAGS=${RUSTFLAGS}"
+          cargo ${{ matrix.cargo }} -p sittir-engine --release --target '${{ matrix.target }}'
+      - name: The image exports exactly the runtime list
+        shell: bash
+        run: |
+          case '${{ matrix.target }}' in
+            *-apple-darwin) image=libsittir_engine.dylib ;;
+            *-windows-msvc) image=sittir_engine.dll ;;
+            *) image=libsittir_engine.so ;;
+          esac
+          dir='target/${{ matrix.target }}/release'
+          list=$(ls -t "$dir"/build/sittir-engine-*/out/runtime-exports.txt | head -1)
+          tr -d '\r' < "$list" | LC_ALL=C sort > listed.txt
+          npx tsx packages/cli/src/cli.ts tool native-images "$dir/$image" --defined ts_ \
+            | node -e 'let s = ""; process.stdin.on("data", (d) => (s += d)).on("end", () => { for (const name of JSON.parse(s)[0].defined) console.log(name); });' \
+            | tr -d '\r' | LC_ALL=C sort > defined.txt
+          diff listed.txt defined.txt
+          echo "$image defines the $(wc -l < defined.txt | tr -d ' ') listed runtime symbols and no other ts_ symbol"
+      - name: Engine tests
+        if: matrix.cross == false
+        shell: bash
+        run: |
+          RUSTFLAGS="$(npx tsx packages/tools/src/scripts/native-rustflags.ts '${{ matrix.target }}')"
+          export RUSTFLAGS
+          cargo test -p sittir-engine --target '${{ matrix.target }}'

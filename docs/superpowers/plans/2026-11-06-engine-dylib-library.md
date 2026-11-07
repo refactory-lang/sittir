@@ -36,12 +36,15 @@ Port from it, don't copy it: master has moved since (records, arena, lazy trivia
 
 - **Worktree and branch:** engine-api's one worktree, `scratchpad/wt-engine-api`, on a new branch `feat/engine-dylib` from `origin/master`. No other worktrees. Pathspec commits (`git commit -- <paths>`). No force, stash, amend, rebase, revert or abort. Push by literal sha. Merge master in whenever it moves.
 - **napi is never in the engine.** The engine holds the tree-sitter runtime and the statics a process must hold once: the tree-id counter, the build stamp and the allocator slots. Nothing else goes in it. sittir-core, napi and the generated code stay in each addon.
-- **`-C prefer-dynamic`** applies to the engine and every addon. It comes from a tracked `[target.*] rustflags` entry in `.cargo/config.toml`, never from a build script.
+- **`-C prefer-dynamic`** applies to the engine and every addon. It comes from the target's row of `NATIVE_RUSTFLAGS`, the per-target rustflags table beside `NATIVE_TARGETS` in `packages/codegen/src/grammars.ts`:
+  - `build-native.mts` passes the row through `RUSTFLAGS`, then any `RUSTFLAGS` already in its environment, then its own `/MAP`;
+  - never from a build script, and never from cargo config. The napi CLI sets `RUSTFLAGS` on every musl build, and cargo then reads no config rustflags;
+  - a developer keeps a local linker choice by setting it in `RUSTFLAGS`.
 - **No fat LTO.** `[profile.release]` moves from `lto = "fat"` to thin-local (`lto = false`), and `codegen-units` stays as it is.
 - **Linux links the engine with lld:**
-  - rust-lld is the default on x86_64-linux-gnu;
-  - every other Linux target passes `-C link-arg=-fuse-ld=lld`;
-  - musl also passes `-C target-feature=-crt-static`.
+  - the engine's build script passes `-fuse-ld=lld` for its own link on every Linux target, since only its link carries a second version script. The addons keep their linker;
+  - lld must be installed where rust-lld isn't the default (it is on x86_64-linux-gnu);
+  - the musl rows of the table carry `-C target-feature=-crt-static`, as any musl `.node` does.
 - **Windows scanners** reach the four allocator slots through `__imp_` defines from the grammar crate's build script. No Rust code reads a slot directly.
 - **One toolchain and one engine version per release.** The stamp is the engine's version plus the commit, never a hash of source bytes.
 - **Generated files are never hand-edited.** Each grammar's `build.rs` and `Cargo.toml` come from `native-crate.ts`, and `native/index.cjs` from the native loader emitter. Regenerate every grammar, and commit the manifests through the pre-commit check, without `--no-verify`.
@@ -64,7 +67,7 @@ Port from it, don't copy it: master has moved since (records, arena, lazy trivia
 2. **A grammar package from another release,** loaded beside one from this release. Expected: the mismatch message names both stamps and the loaded engine's path. That holds for the same version with another commit, and for a newer version through the mapped loader error. Owned by Task 4.
 3. **A missing engine or std copy** beside the `.node`. Expected: a load error naming the missing file, never a silent fall into the loader's WASI fallback. Owned by Task 5.
 4. **`aarch64-unknown-linux-musl`,** cross-built with zig and lld. Expected: it builds and passes every image check, like the other targets. Owned by Tasks 1 and 6.
-5. **Dev builds:** `cargo test`, vitest and the benchmarks all load what `build-native.mts` builds locally. Expected: every dev build's `packages/<lang>/native/` holds the engine and std copies its `.node` needs. Owned by Task 5.
+5. **Dev builds:** `cargo test`, vitest and the benchmarks all load what `build-native.mts` builds locally. Expected: every dev build's `packages/<lang>/native/` holds the engine and std copies its `.node` needs. Owned by Task 2.
 
 ---
 
@@ -72,9 +75,9 @@ Port from it, don't copy it: master has moved since (records, arena, lazy trivia
 
 **Files:**
 - Create: `rust/crates/sittir-engine/{Cargo.toml,build.rs,src/lib.rs,src/stamp.rs,src/tree_ids.rs}`, ported from ae24f1011.
-- Create: `.cargo/config.toml` (rustflags per target).
-- Modify: `Cargo.toml` (`[profile.release]`, and the engine in `[workspace.dependencies]`).
-- Modify: `.github/workflows/ci.yml` (the native matrix builds the engine on every release target).
+- Modify: `packages/codegen/src/grammars.ts` (`NATIVE_RUSTFLAGS` and `nativeBuildEnv`) and `scripts/build-native.mts`, which passes them. Create `packages/tools/src/scripts/native-rustflags.ts`, which prints a target's flags for CI.
+- Modify: `Cargo.toml` (the engine in `[workspace.dependencies]`).
+- Create: `.github/workflows/native-layout.yml`, with the engine job on every release target. The napi matrix in `ci.yml` builds all six targets only on tag pushes, so the check gets its own path-filtered workflow, which Task 6 extends.
 - Create: `packages/tools/src/native-images.ts`, ported from the probe's `symbols.mjs` and `images.mjs`, and registered as `sittir tool native-images` (check `sittir tool --help` for an existing tool first).
 
 **Interfaces:**
@@ -95,10 +98,14 @@ Port from it, don't copy it: master has moved since (records, arena, lazy trivia
   - The build script's export list is every function tree-sitter's `api.h` declares, less the ones only its wasm module calls, plus the four `ts_current_*` slots.
   - It's emitted per linker: `exported_symbols_list` on macOS, a version script on Linux, and `/EXPORT` lines on MSVC, with `DATA` for the slots.
   - The macOS install name is `@rpath/libsittir_engine.dylib`. On Linux the engine's soname is `libsittir_engine.so`, and it gets its own `RUNPATH $ORIGIN`, since an addon's isn't inherited.
-  - Set the rustflags and the LTO change.
+  - Add the table, with the musl rows' `-C target-feature=-crt-static`. `-C prefer-dynamic` and the LTO change land in Task 2, with the copies that let a `.node` built with them load.
 - [ ] **Step 4:** Run `cargo test -p sittir-engine`. It passes.
   - `sittir tool native-images <engine image> --defined ts_` lists every exported runtime function and the four slots.
-- [ ] **Step 5: The ci.yml native matrix** builds `sittir-engine` in release on all six targets, with the matrix's cross setup (zig for musl, napi cross for aarch64-gnu). Every target goes green. This is the spec's "first build check": the release matrix's cross-compilation with lld is unproven.
+- [ ] **Step 5: `native-layout.yml`** builds `sittir-engine` in release on all six targets, with the table's flags and the matrix's cross setup:
+  - zig for musl;
+  - for aarch64-gnu, the distribution's cross gcc with lld, since napi's cross toolchain builds only napi packages.
+
+  Each leg checks that the image defines exactly the build's export list, and the legs that run on their own host run the engine's tests. Every target goes green. This is the spec's "first build check": the release matrix's cross-compilation with lld is unproven.
 - [ ] **Step 6: Commit:** `feat(engine): the shared engine library, with the runtime exported from one list`.
 
 ### Task 2: Grammar addons on the engine
@@ -106,12 +113,20 @@ Port from it, don't copy it: master has moved since (records, arena, lazy trivia
 **Files:**
 - Modify: `rust/crates/sittir-core/Cargo.toml`. It depends on `sittir-engine` and reaches tree-sitter through it.
 - Modify: `packages/codegen/src/emitters/native-crate.ts` (each grammar's `build.rs` and `Cargo.toml`).
-- Test: `packages/codegen/src/emitters/__tests__/native-crate.test.ts`.
+- Modify: `packages/codegen/src/grammars.ts`. Every row of `NATIVE_RUSTFLAGS` gains `-C prefer-dynamic`.
+- Modify: `Cargo.toml`. `[profile.release]` moves from `lto = "fat"` to thin-local (`lto = false`), and `codegen-units` stays: rustc refuses fat LTO with `-C prefer-dynamic`.
+- Modify: `scripts/build-native.mts`. After the build, it copies the engine (`libsittir_engine.dylib`, `.so` or `sittir_engine.dll`) and std (`libstd-<hash>`, or `std-<hash>.dll` on Windows) beside the `.node` in `packages/<lang>/native/`:
+  - on macOS it rewrites every std reference, and the std copy's own id, to `@rpath/libstd-<hash>.dylib`, then re-signs the images ad hoc;
+  - it keeps unstripped copies beside the build stamp, as it does for the `.node`;
+  - on Linux, the engine copy keeps `RUNPATH $ORIGIN`.
+
+  These copies land here, not with the packaging, because a `.node` built with `-C prefer-dynamic` loads only with them beside it.
+- Test: `packages/codegen/src/emitters/__tests__/native-crate.test.ts`, and `packages/tools/tests/native-layout.test.ts` for the copies.
 - Regenerated: `rust/crates/sittir-{python,regex,rust,scm,typescript}/{build.rs,Cargo.toml}` and the generation manifests.
 
 **Interfaces:**
-- Consumes: Task 1's crate.
-- Produces: each addon links the engine dynamically and defines no `ts_*` symbol.
+- Consumes: Task 1's crate and table.
+- Produces: each addon links the engine dynamically and defines no `ts_*` symbol. A platform layout of `<binary>.<platform>.node`, the engine and `libstd-<hash>`, in one folder.
 
 - [ ] **Step 1: Failing emitter tests.** The emitted `build.rs` has:
   - on macOS, `cargo:rustc-link-arg=-Wl,-rpath,@loader_path`;
@@ -120,14 +135,17 @@ Port from it, don't copy it: master has moved since (records, arena, lazy trivia
   - on MSVC, the four defines of the form `ts_current_malloc=(*__imp_ts_current_malloc)`.
 
   The emitted `Cargo.toml` depends on `sittir-engine`. Use the probe's `spikes/build-scripts/addon.rs` as the reference text.
-- [ ] **Step 2:** Run `pnpm vitest run packages/codegen/src/emitters/__tests__/native-crate.test.ts`. It fails.
-- [ ] **Step 3: Implement the emitter,** then regenerate every grammar.
+
+  The copies: after `build-native.mts python`, `packages/python/native/` holds the `.node`, the engine and the std copy. On macOS, `otool -L` names `@rpath/` for both libraries, and `codesign -v` passes.
+- [ ] **Step 2:** Run `pnpm vitest run packages/codegen/src/emitters/__tests__/native-crate.test.ts packages/tools/tests/native-layout.test.ts`. They fail.
+- [ ] **Step 3: Implement the emitter, the flag, the LTO change and the copies,** then regenerate every grammar.
 - [ ] **Step 4: Prove it on the host:**
   - `sittir tool native-images <each addon> --defined ts_` is empty;
   - `--imported ts_current_` lists only the slots that grammar's scanner reads;
   - `cargo test --workspace --no-default-features` passes;
   - `validate:history` shows the same rows on every grammar;
-  - the full suite passes.
+  - the full suite passes;
+  - the paired-refs benchmark, against the last commit before this task, run before the PR. Any cell over ×1.10 is reported with its cause, not deferred to Task 6. Leaving fat LTO can cost speed.
 - [ ] **Step 5: Commit:** `feat(native): grammar addons link the shared engine`.
 
 ### Task 3: The tree-id counter lives in the engine
@@ -180,21 +198,18 @@ Port from it, don't copy it: master has moved since (records, arena, lazy trivia
 ### Task 5: The engine and std copies beside every `.node`
 
 **Files:**
-- Modify: `scripts/build-native.mts`. After the build, it copies the engine (`libsittir_engine.dylib`, `.so` or `sittir_engine.dll`) and std (`libstd-<hash>`, or `std-<hash>.dll` on Windows) beside the `.node` in `packages/<lang>/native/`.
-  - On macOS it rewrites every std reference, and the std copy's own id, to `@rpath/libstd-<hash>.dylib`, then re-signs the images ad hoc.
-  - It keeps unstripped copies beside the build stamp, as it does for the `.node`.
-  - On Linux, the engine copy keeps `RUNPATH $ORIGIN`.
+- The copies beside each dev build's `.node` land in Task 2. This task makes a missing copy fail by name and ships the copies in every platform package.
 - Modify: the native loader emitter. A missing engine or std file raises an error naming that file before any WASI fallback is tried.
 - Modify: `release.yml` (`napi-artifacts-publish`). Each per-target subpackage receives its engine and std copies, and its `files` lists them.
 - Test: `packages/tools/tests/native-layout.test.ts`.
 
 **Interfaces:**
-- Consumes: Tasks 1–4.
-- Produces: a platform package layout of `<binary>.<platform>.node`, the engine and `libstd-<hash>`, in one folder.
+- Consumes: Tasks 1–4, and Task 2's layout.
+- Produces: every platform package ships Task 2's layout, and a missing copy fails by name.
 
 - [ ] **Step 1: Failing tests.**
-  - After `build-native.mts python`, `packages/python/native/` holds the `.node`, the engine and the std copy. On macOS, `otool -L` names `@rpath/` for both libraries, and `codesign -v` passes.
-  - With the engine copy renamed away, `require` of the loader throws an error naming `libsittir_engine`, and the WASI path is not tried.
+  - With the engine copy renamed away, `require` of the loader throws an error naming `libsittir_engine`, and the WASI path is not tried. The same holds for the std copy.
+  - Each per-target subpackage that `napi artifacts` assembles lists the engine and std copies in its `files`.
 - [ ] **Step 2:** Run them. They fail.
 - [ ] **Step 3: Implement.**
 - [ ] **Step 4: Run with dev builds:**
@@ -207,7 +222,7 @@ Port from it, don't copy it: master has moved since (records, arena, lazy trivia
 ### Task 6: The release-matrix check and the measurements
 
 **Files:**
-- Create: `.github/workflows/native-layout.yml`. It runs on all six targets, and on pull requests that touch `rust/crates/sittir-engine`, `native-crate.ts`, `build-native.mts` or the loader emitter.
+- Modify: `.github/workflows/native-layout.yml`, which Task 1 created with the engine job. It runs on all six targets, on pull requests that touch the engine, the rustflags table, `native-crate.ts`, `build-native.mts` or the workflow. This task adds the layout jobs.
 - Modify: `sittir tool native-images`, adding `--mapped <script>`, which loads the grammar packages and lists the engine and std images the process mapped.
 - Modify: `benchmark-native.yml`, adding a column against the last static release.
 

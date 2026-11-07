@@ -11,7 +11,15 @@
 //! - Exports: rustc exports a Rust dylib's Rust symbols only. The tree-sitter
 //!   C runtime it links is exported from one list, because addon code calls
 //!   it directly (tree-sitter's generic code is instantiated in the addon) and
-//!   a grammar's external scanner reads the runtime's allocator slots.
+//!   a grammar's external scanner reads the runtime's allocator slots. The
+//!   list is also written as plain names, `runtime-exports.txt` in `OUT_DIR`,
+//!   for the image checks to hold a build to.
+//! - Linker: lld on Linux. rustc already gives a dylib an anonymous version
+//!   script and GNU ld refuses a second one; lld merges them. A version
+//!   script fetches nothing from an archive and lld refuses one that names an
+//!   undefined symbol, so each listed name is also marked undefined: every
+//!   image this crate links, its test executables included, holds the
+//!   runtime. Apple's ld and link.exe fetch what their export lists name.
 //! - Stamp: the commit comes from `SITTIR_ENGINE_COMMIT`, `local` when unset.
 use std::path::{Path, PathBuf};
 
@@ -24,21 +32,26 @@ fn main() {
     let name = var("CARGO_PKG_NAME").replace('-', "_");
     let functions = runtime_functions();
     let exported = || functions.iter().map(String::as_str).chain(ALLOCATOR_SLOTS);
+    write(&out.join("runtime-exports.txt"), &lines(exported(), "", "\n"));
     match (var("CARGO_CFG_TARGET_OS").as_str(), var("CARGO_CFG_TARGET_ENV").as_str()) {
         ("macos", _) => {
             println!("cargo:rustc-link-arg=-Wl,-install_name,@rpath/lib{name}.dylib");
             println!("cargo:rustc-link-arg=-Wl,-rpath,@loader_path");
-            let list = out.join("runtime-exports.txt");
+            let list = out.join("exported-symbols.txt");
             write(&list, &lines(exported(), "_", "\n"));
             println!("cargo:rustc-link-arg=-Wl,-exported_symbols_list,{}", list.display());
         }
         ("linux", _) => {
+            println!("cargo:rustc-link-arg=-fuse-ld=lld");
             println!("cargo:rustc-link-arg=-Wl,-soname,lib{name}.so");
             println!("cargo:rustc-link-arg=-Wl,-rpath,$ORIGIN");
             println!("cargo:rustc-link-arg=-Wl,--enable-new-dtags");
-            let script = out.join("runtime-exports.map");
+            let script = out.join("version-script.map");
             write(&script, &format!("{{\n global:\n{}}};\n", lines(exported(), "  ", ";\n")));
             println!("cargo:rustc-link-arg=-Wl,--version-script={}", script.display());
+            for symbol in exported() {
+                println!("cargo:rustc-link-arg=-Wl,--undefined={symbol}");
+            }
         }
         ("windows", "msvc") => {
             for function in &functions {

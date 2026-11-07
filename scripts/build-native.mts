@@ -9,6 +9,10 @@
 // which validation and `regen:all` hold the binary to. Every build carries
 // the record codec (the crate's `arena` feature) beside the object codec, so
 // one binary serves both node storages; the engine's `nodeStorage` picks.
+// Its RUSTFLAGS are the target's row of `NATIVE_RUSTFLAGS`, then any
+// RUSTFLAGS the environment already sets, then the build's own (`/MAP`):
+// cargo reads no config rustflags once RUSTFLAGS is set, and the napi CLI
+// sets it on every musl build.
 //
 // A release binding links with its symbols and is stripped after the build,
 // on every target. Its unstripped copy is kept beside the build's stamp,
@@ -28,8 +32,8 @@
 import { spawnSync } from 'node:child_process';
 import { copyFileSync, existsSync, mkdirSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
-import { NATIVE_LOADER, NATIVE_TYPINGS, REPO_ROOT, assertGrammar, nativeBinaryName, nativeBindingDir, nativeCrateDir } from '../packages/codegen/src/grammars.ts';
-import { type NativeProfile, linkerMapOf, llvmTool, nativeBuildFingerprint, unstrippedBinaryPath, writeNativeBuildStamp } from '../packages/codegen/src/scripts/native-binary-freshness.ts';
+import { NATIVE_LOADER, NATIVE_TYPINGS, REPO_ROOT, assertGrammar, nativeBinaryName, nativeBindingDir, nativeBuildEnv, nativeCrateDir } from '../packages/codegen/src/grammars.ts';
+import { type NativeProfile, linkerMapOf, llvmTool, nativeBuildFingerprint, rustHost, unstrippedBinaryPath, writeNativeBuildStamp } from '../packages/codegen/src/scripts/native-binary-freshness.ts';
 import { hostPlatform, platformSuffix, targetSuffix } from '../packages/common/src/native-binding.ts';
 
 const [name, ...flags] = process.argv.slice(2);
@@ -74,7 +78,7 @@ run(
 	['exec', 'napi', 'build', '--platform', '--features', 'arena', ...flags, '--output-dir', outDir, '--js', NATIVE_LOADER, '--dts', NATIVE_TYPINGS],
 	nativeCrateDir(grammar),
 	process.platform === 'win32',
-	linkerMap === undefined ? process.env : { ...process.env, RUSTFLAGS: [process.env.RUSTFLAGS, '-C link-arg=/MAP'].filter(Boolean).join(' ') }
+	nativeBuildEnv(flags.includes('--target') && target !== undefined ? target : rustHost(), process.env, linkerMap === undefined ? [] : ['-C link-arg=/MAP'])
 );
 if (linkerMap !== undefined) {
 	const written = writtenLinkerMap(nativeCrateDir(grammar), flags.includes('--target') ? target : undefined);
