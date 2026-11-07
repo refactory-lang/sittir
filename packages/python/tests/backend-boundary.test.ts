@@ -5,7 +5,6 @@ import { RENDER_MODULE_HASH } from '../src/hash.ts';
 const identifier = {
 	$type: 1, // TSKindId.Identifier
 	
-	$named: true,
 	$text: 'x'
 } as const;
 
@@ -18,36 +17,37 @@ describe('engine render boundary', () => {
 		delete process.env.SITTIR_BACKEND;
 	});
 
-	function mockNativeBackend(
-		SittirEngine: new (options?: { options?: object }) => {
-			render(node: Record<string, unknown>): string;
-		}
-	): void {
+	function mockNativeBackend(render: (node: Record<string, unknown>) => string, functions: object = {}): void {
 		vi.resetModules();
 		vi.doMock('../src/backend.js', () => ({
 			getActiveBackend: () => ({
 				name: 'native',
 				hashMatch: true,
-				native: { SittirEngine }
+				native: {
+					SittirEngine: class {
+						readonly handle = {};
+						parse(_source: string): string {
+							return JSON.stringify({ treeId: 1, errors: [] });
+						}
+						dispose(): void {}
+					},
+					render: (_engine: object, node: Record<string, unknown>) => render(node),
+					...functions
+				}
 			})
 		}));
 	}
 
 	function mockNativeFailureBackend(): void {
-		mockNativeBackend(
-			class {
-				render(_node: Record<string, unknown>): never {
-					throw new Error('native render boom');
-				}
-
-			}
-		);
+		mockNativeBackend(() => {
+			throw new Error('native render boom');
+		});
 	}
 
 	async function mockedEngine() {
 		const { createEngine } = await import('@sittir/common');
 		const descriptor = (await import('../src/index.ts')).default;
-		return createEngine(descriptor);
+		return createEngine(descriptor, { nodeStorage: 'object' });
 	}
 
 	it('surfaces native render failures instead of silently retrying on TS', async () => {
@@ -59,13 +59,7 @@ describe('engine render boundary', () => {
 
 	it('passes a plain node object to native render', async () => {
 		const renderSpy = vi.fn((node: Record<string, unknown>) => `ok:${String(node.$type)}`);
-		mockNativeBackend(
-			class {
-				render(node: Record<string, unknown>): string {
-					return renderSpy(node);
-				}
-			}
-		);
+		mockNativeBackend(renderSpy);
 
 		const engine = await mockedEngine();
 		const render = (node: unknown): string => engine.render(node as never).toString();
@@ -74,7 +68,6 @@ describe('engine render boundary', () => {
 			expect.objectContaining({
 				$type: 1, // TSKindId.Identifier
 				
-				$named: true,
 				$text: 'x'
 			})
 		);
@@ -82,20 +75,12 @@ describe('engine render boundary', () => {
 
 	it('does not pre-validate payloads against a JS node contract', async () => {
 		const renderSpy = vi.fn((node: Record<string, unknown>) => `ok:${Object.keys(node).length}`);
-		mockNativeBackend(
-			class {
-				render(node: Record<string, unknown>): string {
-					return renderSpy(node);
-				}
-
-			}
-		);
+		mockNativeBackend(renderSpy);
 		const engine = await mockedEngine();
 		const render = (node: unknown): string => engine.render(node as never).toString();
 		const invalidNode = {
 			$type: 157, // TSKindId.ArgumentList
 			
-			$named: true,
 			$children: [identifier, 'oops']
 		} as const;
 		expect(render(invalidNode)).toMatch(/^ok:/);

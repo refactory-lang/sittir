@@ -1,4 +1,5 @@
 import type { NodeMap } from '../types.ts';
+import { emitShapeFailure } from '../diagnostics/emit-diagnostics.ts';
 import {
 	AbstractAssembledCompound,
 	AssembledPattern,
@@ -50,17 +51,17 @@ export function defaultTriviaForm(nodeMap: NodeMap): TriviaForm | undefined {
 			: undefined;
 	const arm = defaultRef === undefined ? comment : nodeMap.nodes.get(storageKindOfRef(defaultRef.node));
 	if (!(arm instanceof AbstractAssembledCompound) || arm.fullForm === undefined) {
-		throw new Error(`trivia: ir.${COMMENT_IR_KEY} has no default arm with a full form to take delimiters from`);
+		throw emitShapeFailure({ code: 'trivia-comment-default-invalid', message: `trivia: ir.${COMMENT_IR_KEY} has no default arm with a full form to take delimiters from` });
 	}
 	const fullForm = arm.fullForm;
 	const fixedText = (affix: FullFormAffix): string => {
 		const [text] = affix.texts;
 		if (text === undefined || affix.texts.length !== 1)
-			throw new Error(`trivia: the default comment kind '${arm.kind}' has a spelled delimiter`);
+			throw emitShapeFailure({ code: 'trivia-comment-default-invalid', message: `trivia: the default comment kind '${arm.kind}' has a spelled delimiter` });
 		return text;
 	};
 	if (arm.fromFunctionName === undefined)
-		throw new Error(`trivia: the default comment kind '${arm.kind}' has no coercer`);
+		throw emitShapeFailure({ code: 'trivia-comment-default-invalid', message: `trivia: the default comment kind '${arm.kind}' has no coercer` });
 	return {
 		kind: arm.kind,
 		open: fixedText(fullForm.open),
@@ -114,7 +115,7 @@ export function siblingLeads(nodeMap: NodeMap, node: AssembledNode): TriviaSibli
 	return node.arms.flatMap((ref) => {
 		if (ref.type !== SYMBOL || ref.annotations?.default === true) return [];
 		const arm = nodeMap.nodes.get(ref.name);
-		if (arm?.builderPath === undefined) throw new Error(`trivia: '${node.kind}' arm '${ref.name}' has no builder`);
+		if (arm?.builderPath === undefined) throw emitShapeFailure({ code: 'trivia-arm-without-builder', message: `trivia: '${node.kind}' arm '${ref.name}' has no builder` });
 		const leads = leadSources(nodeMap, ref.name, new Set());
 		const sources = leads.map((lead) => ('literal' in lead ? escapeRegexLiteral(lead.literal) : `(?:${lead.pattern})`));
 		const texts = leads.flatMap((lead) => ('literal' in lead ? [lead.literal] : []));
@@ -130,10 +131,10 @@ export function siblingLeads(nodeMap: NodeMap, node: AssembledNode): TriviaSibli
 
 function leadSources(nodeMap: NodeMap, kind: string, seen: ReadonlySet<string>): LeadAlternative[] {
 	const node = nodeMap.nodes.get(kind);
-	if (node === undefined || seen.has(kind)) throw new Error(`trivia: cannot read how '${kind}' starts`);
+	if (node === undefined || seen.has(kind)) throw emitShapeFailure({ code: 'trivia-start-unreadable', message: `trivia: cannot read how '${kind}' starts` });
 	const within = new Set([...seen, kind]);
 	return node.leadingTerminals.flatMap((terminal) => {
-		if (terminal === 'empty') throw new Error(`trivia: '${kind}' can start empty, so any text could read as it`);
+		if (terminal === 'empty') throw emitShapeFailure({ code: 'trivia-can-start-empty', message: `trivia: '${kind}' can start empty, so any text could read as it` });
 		if ('symbol' in terminal) return leadSources(nodeMap, terminal.symbol, within);
 		return ['literal' in terminal ? { literal: terminal.literal } : { pattern: terminal.pattern }];
 	});
@@ -303,7 +304,7 @@ export function emptyForms(nodeMap: NodeMap): ReadonlyMap<string, EmptyForm> {
 	for (const [kind, node] of nodeMap.nodes) {
 		if (!(node instanceof AbstractAssembledCompound) || node.factoryName === undefined || !innerKinds(nodeMap).has(kind)) continue;
 		const typeName = `Empty${node.typeName}`;
-		if (typeNames.has(typeName)) throw new Error(`trivia: '${kind}' would name its empty form ${typeName}, which a kind already names`);
+		if (typeNames.has(typeName)) throw emitShapeFailure({ code: 'trivia-empty-form-name-taken', message: `trivia: '${kind}' would name its empty form ${typeName}, which a kind already names` });
 		forms.set(kind, { typeName });
 	}
 	emptyFormsByNodeMap.set(nodeMap, forms);

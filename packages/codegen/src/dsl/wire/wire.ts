@@ -1,7 +1,7 @@
 import type { AliasSite, CopyEffect, Lead, RecordedAlias, RecordedBindingEffect } from '../verbs/effects.ts';
 import { copyNameOf, VerbRefusal } from '../verbs/copy.ts';
 import { withHoistedAnnotation } from '../annotations.ts';
-import type { RuntimeRule } from '../../types/runtime-shapes.ts';
+import { isPrecWrapperType, type RuntimeRule } from '../../types/runtime-shapes.ts';
 import type { AnyRule } from '../../types/rule.ts';
 import type { GrammarDiagnostic } from '../../types/diagnostics.ts';
 import { RuleWalker } from '../rule-walker.ts';
@@ -1909,11 +1909,7 @@ function replaceInBodyRt(rule: unknown, candidates: readonly WirePatternCandidat
 		t === 'REPEAT' ||
 		t === 'REPEAT1' ||
 		t === 'FIELD' ||
-		t === 'PREC' ||
-		t === 'PREC_LEFT' ||
-		t === 'PREC_RIGHT' ||
-		t === 'PREC_DYNAMIC' ||
-		t === 'RESERVED' ||
+		isPrecWrapperType(t) ||
 		t === 'TOKEN'
 	) {
 		const newContent = replaceInBodyRt(r.content, candidates, automatic);
@@ -1974,11 +1970,7 @@ function rewriteVisibleExternalRefsRt(rule: unknown, hiddenToVisible: ReadonlyMa
 		t === 'REPEAT' ||
 		t === 'REPEAT1' ||
 		t === 'FIELD' ||
-		t === 'PREC' ||
-		t === 'PREC_LEFT' ||
-		t === 'PREC_RIGHT' ||
-		t === 'PREC_DYNAMIC' ||
-		t === 'RESERVED' ||
+		isPrecWrapperType(t) ||
 		t === 'TOKEN' ||
 		t === 'ALIAS'
 	) {

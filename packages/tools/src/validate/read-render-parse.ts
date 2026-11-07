@@ -20,11 +20,13 @@ import {
 	isStorageKey,
 	mapTriviaEntries,
 	markEdited,
-	readNode as readUntyped,
+	hydrateStored,
 	sidesOf,
 	spanOf,
+	recordOf,
+	isBuiltNode,
+	writeTrivia,
 	toDetachedNodeData,
-	treeOf,
 	type KindView,
 	type NodeDataLayout
 } from '@sittir/common/utils';
@@ -46,6 +48,8 @@ import {
 	readNodeOf,
 	walkWrappedTree,
 	materializeDetached,
+	materializeShallow,
+	type SlotAccessorOf,
 	loadSlotAccessorOf,
 	emitValidatorMetrics,
 	loadNodeModel,
@@ -66,6 +70,7 @@ import {
 } from './common.ts';
 import { deriveReparseHosts } from './reparse-derive.ts';
 import { requireGrammarModule } from '../grammar-internals.ts';
+import { measureRoundtrip, type RoundtripProfile } from './roundtrip-profile.ts';
 
 /**
  * The kinds that participate in variant() adoption (each override-defined
@@ -187,24 +192,46 @@ function collectVisibleChildren(n: TSNode): TSNode[] {
 	return out;
 }
 
-function extrasOf(n: TSNode, out: [string, string][] = []): [string, string][] {
+type Extra = readonly [kind: string, text: string];
+
+function extrasOf(n: TSNode, from = 0, out: Extra[] = []): Extra[] {
+	if (n.endIndex <= from) return out;
 	if (n.isNamed && n.isExtra) {
-		out.push([n.type, n.text]);
+		if (n.startIndex >= from) out.push([n.type, n.text]);
 		return out;
 	}
 	for (let i = 0; i < n.childCount; i++) {
 		const c = n.child(i);
-		if (c) extrasOf(c, out);
+		if (c) extrasOf(c, from, out);
 	}
 	return out;
 }
 
-function extrasDiff(a: TSNode, b: TSNode): string | null {
+const countOf = (extras: readonly Extra[], [kind, text]: Extra): number => extras.filter(([k, t]) => k === kind && t === text).length;
+
+function withoutOwnSideExtras(aExtras: readonly Extra[], bExtras: readonly Extra[], tolerance?: AstTolerance): readonly Extra[] {
+	let kept = bExtras;
+	for (const extra of tolerance?.ownSideExtras ?? []) {
+		if (countOf(kept, extra) <= countOf(aExtras, extra)) continue;
+		const at = kept.findIndex(([kind, text]) => kind === extra[0] && text === extra[1]);
+		kept = kept.filter((_, i) => i !== at);
+		tolerance!.tolerated.push(`own side ${extra[0]} ${JSON.stringify(extra[1])}`);
+	}
+	return kept;
+}
+
+function ownSideMiscount(root: TSNode, from: number, ownSideExtras: readonly Extra[]): string | undefined {
+	const found = extrasOf(root, from);
+	const extra = ownSideExtras.find((extra) => countOf(found, extra) !== countOf(ownSideExtras, extra));
+	return extra === undefined ? undefined : `own side ${extra[0]} ${JSON.stringify(extra[1])} appears ${countOf(found, extra)} times in the reparse, not ${countOf(ownSideExtras, extra)}`;
+}
+
+function extrasDiff(a: TSNode, b: TSNode, tolerance?: AstTolerance): string | null {
 	const aExtras = extrasOf(a);
-	const bExtras = extrasOf(b);
+	const bExtras = withoutOwnSideExtras(aExtras, extrasOf(b), tolerance);
 	const at = aExtras.findIndex(([kind, text], i) => bExtras[i]?.[0] !== kind || bExtras[i]?.[1] !== text);
 	if (at < 0 && aExtras.length === bExtras.length) return null;
-	const show = (e: [string, string] | undefined): string => (e === undefined ? 'none' : `${e[0]} ${JSON.stringify(e[1])}`);
+	const show = (e: Extra | undefined): string => (e === undefined ? 'none' : `${e[0]} ${JSON.stringify(e[1])}`);
 	const index = at < 0 ? Math.min(aExtras.length, bExtras.length) : at;
 	return `extras[${index}]: ${show(aExtras[index])} ≠ ${show(bExtras[index])}`;
 }
@@ -220,6 +247,7 @@ export interface AstTolerance {
 	readonly tolerated: string[];
 	readonly delimiters?: Readonly<Record<string, DelimiterSpelling>>;
 	readonly normalized?: string[];
+	readonly ownSideExtras?: readonly Extra[];
 }
 
 export function astStructuralDiff(
@@ -231,7 +259,7 @@ export function astStructuralDiff(
 	identity: ReadIdentity = grammarIdentity
 ): string | null {
 	const structural = structuralDiff(a, b, path, variantChildKinds, tolerance, identity);
-	return structural ?? (path === '' ? extrasDiff(a, b) : null);
+	return structural ?? (path === '' ? extrasDiff(a, b, tolerance) : null);
 }
 
 function structuralDiff(
@@ -377,46 +405,16 @@ export interface SpellingNormalizedCandidate {
 	readonly spellings: readonly string[];
 }
 
-/**
- * Width, in rendered bytes, of the leading trivia the render prints before a
- * candidate's first token: the candidate's own, and that of each node down its
- * first-descendant chain (a block's first statement prints its comments ahead
- * of the block's content). A child belongs to the chain when stripping its
- * leading entries changes the render from its first byte; one whose entries
- * sit further in is interior trivia and is left alone. The width is the offset
- * of the first token in the render, so a stripped render that differs from the
- * original further on does not change it. The text is what
- * `render_with_trivia!` (Rust) / its JS-engine counterpart writes BEFORE the
- * candidate's content. The candidate's real node starts this many bytes
- * after where its `rendered` string (trivia included) was spliced into the
- * reparse wrapper, so the offset-based lookup below must skip past it.
- * Returns 0 when there's no leading trivia (the common case).
- *
- * Derived by differencing two engine renders (with vs. without the leading
- * trivia) rather than rendering each trivia entry standalone: trivia entries
- * are embedded raw at read time (never wrapped into model shape), and only
- * the in-context `TriviaNode` decode carries the verbatim `$text`
- * fallback for that raw shape — a standalone root render of the same entry
- * hard-fails decoding (`Missing field _content`).
- *
- * `triviaOf` is the sides view the render itself uses (`sidesOf`), so the
- * width counts what the render printed: a leading comment and the whitespace
- * between it and the node, never the root's outer-edge whitespace. Each copy
- * is an edit of its node (`markEdited`) holding every side it renders, the
- * stripped one an empty `leading`, so both renders print the node from its
- * storage and differ only by the leading trivia; a coordinate, which holds
- * no storage, is read into its node first (`storageOf`). A copy keeps
- * the node's source identity. Both are measured without trailing whitespace,
- * which only the outer edge contributes.
- */
 export function leadingTriviaRenderedWidth(
 	data: AnyUntypedNode,
 	render: (node: AnyUntypedNode) => string,
-	triviaOf: (node: object) => NodeTrivia | undefined
+	triviaOf: (node: object) => NodeTrivia | undefined,
+	accessorOf: SlotAccessorOf
 ): number {
+	if (recordOf(data) !== undefined) return 0;
 	const rendered = (node: AnyUntypedNode): string => render(node).trimEnd();
 	const withLeading = (node: AnyUntypedNode, leading: readonly unknown[], data: AnyUntypedNode = node): AnyUntypedNode => {
-		const copy = markEdited({ ...storageOf(data), $_layout: { ...node.$_layout, trivia: { ...triviaOf(node), leading } } } as AnyUntypedNode);
+		const copy = markEdited({ ...storageOf(data, accessorOf), $_layout: { ...node.$_layout, trivia: { ...triviaOf(node), leading } } } as AnyUntypedNode);
 		carryPlace(node, copy);
 		return copy;
 	};
@@ -467,11 +465,8 @@ export function leadingTriviaRenderedWidth(
 	return measured.length - current.length;
 }
 
-/** A node with its storage: a coordinate read one level into its native node through the tree it holds, anything else as it is. */
-function storageOf(node: AnyUntypedNode): AnyUntypedNode {
-	if (!isCoordinate(node)) return node;
-	const tree = treeOf(node);
-	return tree === undefined ? node : (readUntyped(tree, node) as AnyUntypedNode);
+function storageOf(node: AnyUntypedNode, accessorOf: SlotAccessorOf): AnyUntypedNode {
+	return isCoordinate(node) ? materializeShallow(hydrateStored(node), accessorOf) : node;
 }
 
 function commonPrefixLength(a: string, b: string): number {
@@ -657,6 +652,7 @@ export interface RoundTripFixture {
 export type ParityFixture = RenderFixture | RoundTripFixture;
 
 export interface ValidateReadRenderParseOptions {
+	profile?: RoundtripProfile;
 	/** Called once per successfully validated kind — emits a
 	 *  `RenderFixture` then a `RoundTripFixture`. When omitted,
 	 *  validator runs its normal pass/fail accounting without
@@ -694,6 +690,7 @@ export interface ReadRenderParseFailure {
 
 /** What rendering a node and reparsing it needs from its grammar: the parser, the native render, and the reparse wrappers. */
 export interface RenderReparseContext {
+	readonly profile?: RoundtripProfile;
 	readonly grammar: string;
 	readonly parser: { parse(text: string): unknown };
 	readonly render: (node: AnyUntypedNode) => string;
@@ -705,6 +702,7 @@ export interface RenderReparseContext {
 	readonly visibleKinds: ReadonlySet<string>;
 	readonly readIdentity: ReadIdentity;
 	readonly placements: ReadonlyMap<string, Placement>;
+	readonly accessorOf: SlotAccessorOf;
 }
 
 /** Where a split kind sits: the nearest ancestor that is no split rule, and the source around the kind inside it. */
@@ -753,15 +751,15 @@ export function wrapRendered(
 	return placed === null ? null : { text: placed.text, offset: placed.offset + placement.prefix.length };
 }
 
-/**
- * The candidate as its own source span has it: its leading and trailing sides
- * lie outside the span, where its parent renders them, so a candidate
- * rendered alone leaves both out and keeps its inner side. The one place
- * every validator lane prepares a candidate.
- */
 export function candidateData(data: AnyUntypedNode, triviaOf: (node: object) => NodeTrivia | undefined): AnyUntypedNode {
+	const record = recordOf(data) !== undefined;
+	if (record && !isBuiltNode(data)) return data;
 	const trivia = triviaOf(data);
 	if (trivia?.leading === undefined && trivia?.trailing === undefined) return data;
+	if (record) {
+		writeTrivia(data, { leading: [], trailing: [] });
+		return data;
+	}
 	const candidate = markEdited({ ...data, $_layout: { ...data.$_layout, trivia: { ...trivia, leading: [], trailing: [] } } } as AnyUntypedNode);
 	carryPlace(data, candidate);
 	return candidate;
@@ -774,8 +772,23 @@ export function candidateData(data: AnyUntypedNode, triviaOf: (node: object) => 
  * `source`. A render that throws propagates. `dumpLabel` turns on the render
  * and reparse dumps for one entry.
  */
+export type OwnRender = () => string;
+
+function pastLeadingExtras(root: TSNode, offset: number): number {
+	let at = offset;
+	let node = root.firstChildForIndex(at);
+	while (node !== null) {
+		if (node.isExtra) {
+			at = node.endIndex;
+			node = root.firstChildForIndex(at);
+		} else if (node.startIndex < at) node = node.firstChildForIndex(at);
+		else return node.startIndex;
+	}
+	return at;
+}
+
 export function renderReparse(
-	data: AnyUntypedNode,
+	data: AnyUntypedNode | OwnRender,
 	renderedKind: string,
 	targetKind: string,
 	source: TSNode | null,
@@ -784,8 +797,12 @@ export function renderReparse(
 	tolerance?: AstTolerance,
 	dumpLabel?: string
 ): RenderReparseOutcome {
-	data = candidateData(data, ctx.triviaOf);
-	const rendered = ctx.render(data);
+	const rendered = measureRoundtrip(ctx.profile, 'render', () => {
+		if (typeof data === 'function') return data();
+		data = candidateData(data, ctx.triviaOf);
+		return ctx.render(data);
+	});
+	ctx.profile?.output(renderedKind, targetKind, rendered);
 	if (dumpLabel !== undefined) {
 		writeSync(2, `[dump-render] ${dumpLabel} data=${JSON.stringify(data)}\n`);
 		writeSync(2, `[dump-render] ${dumpLabel} rendered=${JSON.stringify(rendered)}\n`);
@@ -793,7 +810,7 @@ export function renderReparse(
 	const wrapped = wrapRendered(rendered, renderedKind, targetKind, ctx);
 	if (wrapped === null) return { status: 'excluded', reason: hostlessReason(renderedKind, targetKind, ctx), rendered };
 	if (rendered.trim() === '') return { status: 'excluded', reason: 'empty-render', rendered };
-	const tree2 = ctx.parser.parse(wrapped.text) as TSTree;
+	const tree2 = measureRoundtrip(ctx.profile, 'parse', () => ctx.parser.parse(wrapped.text)) as TSTree;
 	if (dumpLabel !== undefined) {
 		writeSync(
 			2,
@@ -803,13 +820,18 @@ export function renderReparse(
 	if (tree2.rootNode.hasError) {
 		return { status: 'failed', message: `re-parse error [${firstParseDefect(tree2.rootNode) ?? 'unlocated'}]`, rendered };
 	}
-	const triviaOffsetAdjust = leadingTriviaRenderedWidth(data, ctx.render, ctx.triviaOf);
-	const reparsed = treeRoot
-		? tree2.rootNode
-		: source !== null
-			? findReparsedNodeAtOffset(tree2, ctx.readIdentity(source), wrapped, triviaOffsetAdjust, ctx.readIdentity)
-			: (findReparsedNodeAtOffset(tree2, targetKind, wrapped, triviaOffsetAdjust) ??
-				(renderedKind !== targetKind ? findReparsedNodeAtOffset(tree2, renderedKind, wrapped, triviaOffsetAdjust) : null));
+	const triviaOffsetAdjust = typeof data === 'function' ? 0 : leadingTriviaRenderedWidth(data, ctx.render, ctx.triviaOf, ctx.accessorOf);
+	const locate = (at: { text: string; offset: number; at?: (renderedOffset: number) => number }) =>
+		treeRoot
+			? tree2.rootNode
+			: source !== null
+				? findReparsedNodeAtOffset(tree2, ctx.readIdentity(source), at, triviaOffsetAdjust, ctx.readIdentity)
+				: (findReparsedNodeAtOffset(tree2, targetKind, at, triviaOffsetAdjust) ??
+					(renderedKind !== targetKind ? findReparsedNodeAtOffset(tree2, renderedKind, at, triviaOffsetAdjust) : null));
+	const reparsed =
+		locate(wrapped) ?? (typeof data === 'function' ? locate({ text: wrapped.text, offset: pastLeadingExtras(tree2.rootNode, wrapped.offset) }) : null);
+	const miscounted = tolerance?.ownSideExtras === undefined ? undefined : ownSideMiscount(tree2.rootNode, wrapped.offset, tolerance.ownSideExtras);
+	if (miscounted !== undefined) return { status: 'failed', message: miscounted, rendered };
 	if (!reparsed) {
 		return {
 			status: 'failed',
@@ -900,11 +922,17 @@ function deriveHostsFor(grammar: string, parser: RenderReparseContext['parser'])
 
 /** Load what `renderReparse` needs for `grammar`, rendering through `render`. */
 
-export async function loadRenderReparseContext(grammar: string, parser: RenderReparseContext['parser'], render: RenderReparseContext['render']): Promise<RenderReparseContext> {
+export async function loadRenderReparseContext(
+	grammar: string,
+	parser: RenderReparseContext['parser'],
+	render: RenderReparseContext['render'],
+	profile?: RoundtripProfile
+): Promise<RenderReparseContext> {
 	await loadReparseHosts(grammar);
 	await deriveHostsFor(grammar, parser);
 	const model = await loadNodeModel(grammar);
 	return {
+		profile,
 		grammar,
 		visibleKinds: new Set(loadRawEntries(grammar).filter((entry: { named: boolean }) => entry.named).map((entry: { type: string }) => entry.type)),
 		parser,
@@ -915,6 +943,7 @@ export async function loadRenderReparseContext(grammar: string, parser: RenderRe
 		root: model.root,
 		variantChildKinds: await loadVariantChildKindsByOwner(grammar),
 		readIdentity: readIdentityOf(model.relaxes),
+		accessorOf: await loadSlotAccessorOf(grammar),
 		placements: placementsOf(grammar, parser, model.splitFrom)
 	};
 }
@@ -931,7 +960,17 @@ export async function validateReadRenderParse(
 	const accessorOf = await loadSlotAccessorOf(grammar);
 	const { backend } = options;
 	const nativeEngine = await loadNativeEngine(grammar);
-	const renderReparseContext = await loadRenderReparseContext(grammar, parser, await loadNativeRender(grammar));
+	const renderReparseContext = await loadRenderReparseContext(grammar, parser, await loadNativeRender(grammar), options.profile);
+	const ownRender = (node: TypedNode): OwnRender => () => renderReparseContext.render(node as AnyUntypedNode);
+	const { layout } = (await requireGrammarModule(grammar, 'utils.ts')).triviaFacts;
+	const ownSideExtrasOf = (node: TypedNode, sourceOf: (span: { readonly start: number; readonly end: number }) => string): Extra[] => {
+		const sides = renderReparseContext.triviaOf(node);
+		return [...(sides?.leading ?? []), ...(sides?.trailing ?? [])].flatMap((entry): Extra[] => {
+			if (typeof entry === 'number' || layout.has(entry.$type)) return [];
+			const span = spanOf(entry);
+			return [[kindNameFromId(entry.$type), span == null ? (nodeText(entry) ?? '') : sourceOf(span)]];
+		});
+	};
 	const view = kindViewOf(nativeEngine);
 	// The kinds the renderer can handle are those with an emitted body.
 	const ruleKinds = deriveRuleKinds(grammar);
@@ -1006,37 +1045,33 @@ export async function validateReadRenderParse(
 			// the WASM `.type` seams. Build the native read handle and walk the
 			// WRAPPED tree ONCE.
 			const handle = await buildReadHandle(grammar, entry.source);
+			const deepRoot =
+				recursive === true && handle.read ? measureRoundtrip(options.profile, 'read', () => readNode(handle, undefined, Infinity) as TypedNode) : undefined;
 			const candidatesByKind = new Map<
 				string,
-				{ start: number; end: number; node: TypedNode; displayKind: string }[]
+				{
+					start: number;
+					end: number;
+					node: TypedNode;
+					displayKind: string;
+				}[]
 			>();
-			if (handle.read) {
-				const wrappedRoot = readNode(handle) as TypedNode;
-				const seen = new Set<string>();
-				walkWrappedTree(
-					wrappedRoot,
-					accessorOf,
-					(w: TypedNode) => {
-						if (w.$named === false) return;
-						const displayKind = kindNameFromId(w.$type);
-						const sourceKind = canonicalKindNameFromId(w.$type);
-						// Testable-surface filter is CANONICAL-keyed, like the bucketing:
-						// template filenames carry canonical spellings, so hidden minted
-						// kinds (whose display name differs) are admitted and probed
-						// against their own templates rather than silently skipped.
-						if (sourceKind === undefined || !ruleKinds.has(sourceKind) || delimiterTokens.has(sourceKind)) return;
-						const span = spanOf(w);
-						if (span == null) return;
-						const dedup = `${sourceKind}@${span.start}:${span.end}`;
-						if (seen.has(dedup)) return;
-						seen.add(dedup);
-						const list = candidatesByKind.get(sourceKind) ?? [];
-						list.push({ start: span.start, end: span.end, node: w, displayKind });
-						candidatesByKind.set(sourceKind, list);
-					},
-					onAccessorThrow
-				);
-			}
+			const seen = new Set<string>();
+			const visitCandidate = (node: TypedNode): void => {
+				const displayKind = kindNameFromId(node.$type);
+				const kind = canonicalKindNameFromId(node.$type);
+				if (kind === undefined || !ruleKinds.has(kind) || delimiterTokens.has(kind)) return;
+				const span = spanOf(node);
+				if (span == null) return;
+				const { start, end } = span;
+				const key = `${kind}@${start}:${end}`;
+				if (seen.has(key)) return;
+				seen.add(key);
+				const list = candidatesByKind.get(kind) ?? [];
+				list.push({ start, end, node, displayKind });
+				candidatesByKind.set(kind, list);
+			};
+			if (handle.read) walkWrappedTree(deepRoot ?? (readNode(handle) as TypedNode), accessorOf, visitCandidate, onAccessorThrow);
 			const refusals = refusalsOf(entry);
 			errors.push(...refusals);
 			const testableKinds = [...candidatesByKind.keys()];
@@ -1090,21 +1125,23 @@ export async function validateReadRenderParse(
 					// kind. renderedKind (source) drives the render template; targetKind
 					// (display) drives the post-reparse node lookup.
 					//
-					// Shallow mode (`recursive !== true`): read the node one level down
-					// through its coordinate instead — its children stay coordinates.
+					// Shallow mode (`recursive !== true`): the node with each child as
+					// its coordinate (`materializeShallow`), holding its tree.
 					// This preserves the read-render-parse-shallow metric's meaning
 					// (render() fed coordinate-bearing data, the shape lazy callers
 					// send) as distinct from the deep run's full materialization.
 					// Falls back to deep materialization when the wrapped node carries
 					// no coordinate.
 					const treeRoot = cand.displayKind === tree1.rootNode.type;
+					options.profile?.candidate(entry.name, entry.source, kind, cand.start, cand.end);
 					let data: AnyUntypedNode;
 					try {
 						const at = (cand.node as AnyUntypedNode).$_layout?.at;
-						data =
-							recursive !== true && at !== undefined && handle.read
-								? (readUntyped(handle, at) as AnyUntypedNode)
-								: (materializeDetached(cand.node, accessorOf, onAccessorThrow) as AnyUntypedNode);
+						data = measureRoundtrip(options.profile, 'read', () =>
+							recursive !== true && at !== undefined
+								? materializeShallow(cand.node, accessorOf, onAccessorThrow)
+								: (materializeDetached(cand.node, accessorOf, onAccessorThrow) as AnyUntypedNode)
+						);
 					} catch (e) {
 						reportThrown({
 							name: `${entry.name} [${kind}]`,
@@ -1127,32 +1164,14 @@ export async function validateReadRenderParse(
 						writeSync(2, `[isolate-progress] ${grammar} ${String(kind)}\n`);
 					}
 					try {
-						const tolerance: AstTolerance = { listSeparators: {}, tolerated: [], delimiters, normalized: [] };
-						const outcome = renderReparse(
-							data,
-							renderedKind,
-							targetKind,
-							node1ForAst,
-							treeRoot,
-							renderReparseContext,
-							tolerance,
+						const dumpLabel =
 							process.env['SITTIR_VALIDATOR_DUMP_RENDER'] && entry.name === process.env['SITTIR_VALIDATOR_DUMP_RENDER']
 								? `mode=${recursive ? 'deep' : 'shallow'} entry=${entry.name} kind=${String(kind)}`
-								: undefined
-						);
-						if (outcome.status === 'excluded') {
-							excluded.push({ entry: entry.name, kind, reason: outcome.reason, input: inputSource });
-							continue;
-						}
-						const { rendered } = outcome;
-						if (outcome.status === 'failed') {
-							const failure = {
-								name: `${entry.name} [${renderedKind}]`,
-								message: outcome.message,
-								input: inputSource,
-								rendered
-							};
-							kindErrors.push(failure);
+								: undefined;
+						const reparse = (step: AnyUntypedNode | OwnRender, tolerance: AstTolerance) =>
+							renderReparse(step, renderedKind, targetKind, node1ForAst, treeRoot, renderReparseContext, tolerance, dumpLabel);
+						const failed = (message: string, rendered: string): void => {
+							kindErrors.push({ name: `${entry.name} [${renderedKind}]`, message, input: inputSource, rendered });
 							reportFailure(options, {
 								grammar,
 								backend: backend ?? 'native',
@@ -1165,12 +1184,27 @@ export async function validateReadRenderParse(
 								range: { start: cand.start, end: cand.end },
 								input: inputSource,
 								rendered,
-								message: failure.message
+								message
 							});
 							shouldStop = options.stopOnFirstFailure === true;
+						};
+						const tolerance: AstTolerance = { listSeparators: {}, tolerated: [], delimiters, normalized: [] };
+						const outcome = reparse(data, tolerance);
+						if (outcome.status === 'excluded') {
+							excluded.push({ entry: entry.name, kind, reason: outcome.reason, input: inputSource });
 							continue;
 						}
-						const { wrapped, reparsed: node2 } = outcome;
+						if (outcome.status === 'failed') {
+							failed(outcome.message, outcome.rendered);
+							continue;
+						}
+						const ownTolerance: AstTolerance = { listSeparators: {}, tolerated: [], delimiters, normalized: [], ownSideExtras: ownSideExtrasOf(cand.node, (span) => spans.slice(span)) };
+						const own = reparse(ownRender(cand.node), ownTolerance);
+						if (own.status !== 'round-trip') {
+							failed(`own render: ${own.status === 'failed' ? own.message : own.reason}`, own.rendered);
+							continue;
+						}
+						const { rendered, wrapped, reparsed: node2 } = outcome;
 
 						// Only mark the kind as having had a real candidate attempt
 						// when at least one candidate fully round-trips (reparse OK +
@@ -1185,21 +1219,30 @@ export async function validateReadRenderParse(
 						kindOk = true;
 						// AST comparison: only when we have a WASM source node to
 						// compare against (native path without $span skips this).
-						const diff = outcome.astDiff;
-						if (diff) {
+						const mismatch =
+							outcome.astDiff !== null
+								? { message: outcome.astDiff, rendered }
+								: own.astDiff !== null
+									? { message: `own render: ${own.astDiff}`, rendered: own.rendered }
+									: undefined;
+						if (mismatch !== undefined) {
 							kindAstMismatches.push({
 								kind: renderedKind,
 								entry: entry.name,
-								message: diff,
+								message: mismatch.message,
 								input: inputSource,
-								rendered,
+								rendered: mismatch.rendered,
 								start: cand.start,
 								end: cand.end
 							});
 						} else {
 							kindAstMatch = true;
-							if (tolerance.normalized!.length > 0)
-								spellingNormalized.push({ entry: entry.name, kind: renderedKind, input: inputSource, rendered, spellings: tolerance.normalized! });
+							for (const [stepTolerance, stepRendered] of [
+								[tolerance, rendered],
+								[ownTolerance, own.rendered]
+							] as const)
+								if (stepTolerance.normalized!.length > 0)
+									spellingNormalized.push({ entry: entry.name, kind: renderedKind, input: inputSource, rendered: stepRendered, spellings: stepTolerance.normalized! });
 							if (options.onFixture) {
 								// Success path (both re-parse OK + AST match OK) —
 								// emit a render fixture (UntypedNode → rendered) and a

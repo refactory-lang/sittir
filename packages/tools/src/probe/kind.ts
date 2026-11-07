@@ -80,19 +80,20 @@ import {
 	loadStorageKindNameFromId,
 	loadWebTreeSitter,
 	loadNativeEngine,
-	readNativeTree,
+	parseNativeTree,
 	detachedHoldingTree,
 	holdingTreeOf,
 	materializeDetached,
 	loadSlotAccessorOf,
-	readNodeOf,
-	walkNativeForKind,
 	type SlotAccessorOf,
+	readNodeOf,
+	findWrappedNode,
+	walkWrappedTree,
+	type TypedNode,
 	buildKindToSupertypes,
 	loadReparseHosts,
 	wrapForReparse,
 	upstreamWasmPath,
-	nativeNodeIsKind,
 	type TSNode,
 	type TSTree,
 	type AccessorThrowRecord,
@@ -109,7 +110,7 @@ import { load } from '../codegen-surface.ts';
 import type * as TS from 'web-tree-sitter';
 import type { AnyUntypedNode, NodeCoordinate } from '@sittir/types';
 import { sourceSpans, type ByteSpan, type SourceSpans } from '@sittir/common';
-import { spanOf, readNode as readUntyped, PLAIN_KINDS, toNodeData, type TreeHandle } from '@sittir/common/utils';
+import { coordinateOf, spanOf, readNode as readUntyped, PLAIN_KINDS, toNodeData, type TreeHandle } from '@sittir/common/utils';
 // ---------------------------------------------------------------------------
 // CLI
 // ---------------------------------------------------------------------------
@@ -559,7 +560,7 @@ export async function probe(
 	// tree owns the id space — the per-handle dispatch keeps reads
 	// inside that engine. Wasm parser above is kept only so the
 	// (informational) `cst` dump is comparable across paths.
-	const handle = readNativeTree(await loadNativeEngine(grammar), source).tree;
+	const handle = parseNativeTree(await loadNativeEngine(grammar), source);
 	const readNode = opts.noWrap
 		? null
 		: opts.baselineDir
@@ -567,8 +568,11 @@ export async function probe(
 			: await readNodeOf(grammar);
 	const root = readNode ? readNode(handle, undefined, Infinity) : handle.read?.(0, Infinity);
 	let untypedNode: unknown = root;
-	if (opts.range) untypedNode = findInUntypedNodeByRange(root, opts.range.start, opts.range.end);
-	else if (opts.kind) untypedNode = findInUntypedNode(root, opts.kind, await loadKindNameFromId(grammar));
+	if ((opts.range || opts.kind) && !readNode) {
+		throw new Error('probe-kind: --no-wrap reads the raw root only; finding a node by kind or range walks the wrapped tree through its slot readers');
+	}
+	if (opts.range) untypedNode = smallestNodeCovering(root, await loadSlotAccessorOf(grammar), opts.range) ?? null;
+	else if (opts.kind) untypedNode = findWrappedNode(root, await loadSlotAccessorOf(grammar), opts.kind, await loadKindNameFromId(grammar)) ?? null;
 	if (!isRoot && !untypedNode) throw new Error(`probe-kind: no node match in the read tree`);
 
 	let rendered: string | undefined;
@@ -615,7 +619,7 @@ export async function probe(
 		probeRange,
 		cst,
 		sexp,
-		untypedNode: stripBigInts(untypedNode),
+		untypedNode: plainCopy(untypedNode),
 		rendered,
 		reparsedCst,
 		astDiff,
@@ -805,22 +809,21 @@ async function readProbeLanes(
 	targetKind?: string,
 	onAccessorThrow?: (rec: AccessorThrowRecord) => void
 ): Promise<{ shallow: unknown; deep: unknown; deepTyped?: unknown; deepUntypedNode?: unknown }> {
-	const handle = readNativeTree(await loadNativeEngine(grammar), source).tree;
+	const handle = parseNativeTree(await loadNativeEngine(grammar), source);
 	const readNode = await readNodeOf(grammar);
+	const accessorOf = await loadSlotAccessorOf(grammar);
 	let coordinate: NodeCoordinate | undefined;
 	if (!isRoot) {
 		const kindNameFromId = await loadKindNameFromId(grammar);
-		const targetSpan = spanOfNode(sourceSpans(source), targetNode);
-		coordinate = walkNativeForKind(handle, targetKind ?? targetNode.type, kindNameFromId).find(
-			(candidate) => candidate.span?.start === targetSpan.start && candidate.span?.end === targetSpan.end
-		)?.coords.coordinate;
-		if (coordinate === undefined) throw new Error('probe-kind: no native node at the target span');
+		const found = findWrappedNode(readNode(handle), accessorOf, targetKind ?? targetNode.type, kindNameFromId, spanOfNode(sourceSpans(source), targetNode));
+		coordinate = found === undefined ? undefined : coordinateOf(found);
+		if (coordinate === undefined) throw new Error('probe-kind: no read node at the target span');
 	}
 	const read = (depth?: number): unknown => (coordinate === undefined ? handle.read!(0, depth) : readUntyped(handle, coordinate, depth));
-	const shallow = stripBigInts(read());
+	const shallow = plainCopy(read());
 	const deepUntypedNode = detachedHoldingTree(read(Infinity));
 	const deepTyped = readNode(handle, coordinate);
-	const deep = resolveNativeTraceUntypedNode(deepTyped, deepUntypedNode, await loadSlotAccessorOf(grammar), onAccessorThrow);
+	const deep = resolveNativeTraceUntypedNode(deepTyped, deepUntypedNode, accessorOf, onAccessorThrow);
 	return { shallow, deep, deepTyped, deepUntypedNode };
 }
 
@@ -833,10 +836,10 @@ async function buildTraceLane(
 	readMode: 'shallow' | 'deep',
 	deepUntypedNode?: unknown
 ): Promise<ProbeTraceLane> {
-	const cleanedRawUntypedNode = stripBigInts(rawUntypedNode);
-	const cleanedTyped = typed === undefined ? undefined : stripBigInts(typed);
-	const cleanedUntypedNode = stripBigInts(untypedNode);
-	const cleanedDeepUntypedNode = deepUntypedNode === undefined ? undefined : stripBigInts(deepUntypedNode);
+	const cleanedRawUntypedNode = plainCopy(rawUntypedNode);
+	const cleanedTyped = typed === undefined ? undefined : plainCopy(typed);
+	const cleanedUntypedNode = plainCopy(untypedNode);
+	const cleanedDeepUntypedNode = deepUntypedNode === undefined ? undefined : plainCopy(deepUntypedNode);
 	if (engine === 'js') {
 		try {
 			const rendered = await renderUntypedNode(grammar, cleanedUntypedNode);
@@ -956,7 +959,7 @@ async function renderUntypedNode(grammar: string, untypedNode: unknown): Promise
 /** @internal — the node data the engine renders for `untypedNode`: the
  *  same projection `SittirEngine.render` applies, exposed for the trace. */
 function nativeRenderPayload(untypedNode: unknown): Record<string, unknown> {
-	return toNodeData(stripBigInts(untypedNode) as AnyUntypedNode, PLAIN_KINDS) as unknown as Record<string, unknown>;
+	return toNodeData(plainCopy(untypedNode) as AnyUntypedNode, PLAIN_KINDS) as unknown as Record<string, unknown>;
 }
 
 /** @internal — render via the native napi engine.
@@ -966,7 +969,7 @@ function nativeRenderPayload(untypedNode: unknown): Record<string, unknown> {
  *  on this path. */
 async function renderUntypedNodeNative(grammar: string, untypedNode: unknown): Promise<string> {
 	const engine = await loadNativeEngine(grammar);
-	return engine.render(stripBigInts(untypedNode) as AnyUntypedNode).toString();
+	return engine.render(plainCopy(untypedNode) as AnyUntypedNode).toString();
 }
 
 /** @internal — load `readNode` from an explicit `src/wrap.ts`
@@ -1046,60 +1049,17 @@ function shapeOf(node: CstNode): string {
 	return `${node.named ? node.type : `"${node.type}"`}(${node.children.map(shapeOf).join(',')})`;
 }
 
-/** @internal — depth-first walk an UntypedNode tree, returning the first
- *  subtree whose `$type` matches `kind`. Used by the native-engine
- *  path to find a kind-specific subtree once `parse_and_read` has
- *  returned the whole-tree UntypedNode. */
-export function findInUntypedNode(
-	node: unknown,
-	kind: string,
-	kindNameFromId: ((id: number) => string | undefined) | undefined
-): unknown | null {
-	if (!node || typeof node !== 'object') return null;
-	if (nativeNodeIsKind(node as AnyUntypedNode, kind, kindNameFromId)) return node;
-	const n = node as Record<string, unknown>;
-	for (const key of Object.keys(n)) {
-		if (!key.startsWith('_')) continue;
-		const v = n[key];
-		if (Array.isArray(v)) {
-			for (const item of v) {
-				const found = findInUntypedNode(item, kind, kindNameFromId);
-				if (found) return found;
-			}
-		} else {
-			const found = findInUntypedNode(v, kind, kindNameFromId);
-			if (found) return found;
-		}
-	}
-	return null;
-}
-
-/** @internal — locate the smallest UntypedNode subtree whose `$span`
- *  exactly covers `[start, end)`. Pre-order with narrowing — descend
- *  whenever a child's span contains the target, fall back to the
- *  smallest containing node when no child does. Used by the native
- *  engine `--range` path where the wasm `targetNode.id` doesn't apply. */
-function findInUntypedNodeByRange(node: unknown, start: number, end: number): unknown | null {
-	if (!node || typeof node !== 'object') return null;
-	const n = node as Record<string, unknown>;
-	const span = spanOf(n);
-	if (!span) return null;
-	if (span.start > start || span.end < end) return null;
-	const recurseInto = (child: unknown): unknown | null => findInUntypedNodeByRange(child, start, end);
-	for (const key of Object.keys(n)) {
-		if (!key.startsWith('_')) continue;
-		const v = n[key];
-		if (Array.isArray(v)) {
-			for (const item of v) {
-				const f = recurseInto(item);
-				if (f) return f;
-			}
-		} else {
-			const f = recurseInto(v);
-			if (f) return f;
-		}
-	}
-	return node;
+/** The smallest node of the wrapped tree, read through its slot readers, whose span covers `range`; of two the same width, the inner one. */
+function smallestNodeCovering(root: unknown, accessorOf: SlotAccessorOf, range: { readonly start: number; readonly end: number }): TypedNode | undefined {
+	let best: TypedNode | undefined;
+	let width = Infinity;
+	walkWrappedTree(root, accessorOf, (node) => {
+		const span = spanOf(node);
+		if (span === undefined || span.start > range.start || span.end < range.end || span.end - span.start > width) return;
+		best = node;
+		width = span.end - span.start;
+	});
+	return best;
 }
 
 /** @internal — engine-vs-engine compare summary for `--engine both`.
@@ -1129,11 +1089,21 @@ function computeEngineCompare(ts: ProbeReport, native: ProbeReport): ProbeEngine
 	return { renderedEqual, renderedLenDelta, astShapeEqual, summary };
 }
 
-function stripBigInts(v: unknown): unknown {
-	// UntypedNode carries `$nodeId` as number (or bigint on some platforms);
-	// JSON.stringify chokes on bigint. Cast to Number for dump purposes.
-	// The JSON copy holds no tree, and it is still rendered: pass the tree on.
-	return holdingTreeOf(v, JSON.parse(JSON.stringify(v, (_k, val) => (typeof val === 'bigint' ? Number(val) : val))));
+function plainCopy(value: unknown): unknown {
+	return holdingTreeOf(value, plainData(value));
+}
+
+function plainData(value: unknown): unknown {
+	if (typeof value === 'bigint') return Number(value);
+	if (typeof value === 'function' || typeof value === 'symbol') return undefined;
+	if (Array.isArray(value)) return value.map((entry) => plainData(entry) ?? null);
+	if (value === null || typeof value !== 'object') return value;
+	const out: Record<string, unknown> = {};
+	for (const [key, member] of Object.entries(value)) {
+		const plain = plainData(member);
+		if (plain !== undefined) out[key] = plain;
+	}
+	return out;
 }
 
 async function readStdin(): Promise<string> {

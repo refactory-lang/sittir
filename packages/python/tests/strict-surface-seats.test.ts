@@ -10,8 +10,8 @@ const pyStrict = await createEngine(python, { api: 'strict' });
 describe('an element group seated in a list slot', () => {
 	it('takes each element as the group config', () => {
 		const built = pyStrict.build.comparisonOperator({
-			left: py.build.identifier('a'),
-			comparators: [{ operators: py.kinds.EqEq, primaryExpression: py.build.identifier('b') }]
+			left: pyStrict.build.identifier('a'),
+			comparators: [{ operators: py.kinds.EqEq, primaryExpression: pyStrict.build.identifier('b') }]
 		});
 		expect(built.$render()).toBe('a == b');
 	});

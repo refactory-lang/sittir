@@ -1,7 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { verifyManifestForGrammar } from '../../../codegen/src/scripts/generated-manifest.ts';
-import { isNode, Source, sourceOf } from '@sittir/common/utils';
-import { stampSource } from '../../../common/src/source-stamp.ts';
+import { isNode, SOURCE, Source, sourceOf } from '@sittir/common/utils';
 import {
 	buildReadHandle,
 	loadSlotAccessorOf,
@@ -9,14 +8,14 @@ import {
 	readNodeOf,
 	slotAccessorOf,
 	walkWrappedTree,
-	type LoadedNodeModel,
+	type AccessorThrowRecord,
 	type TypedNode
 } from '../validate/common.ts';
 
-const accessorOf = slotAccessorOf({ slotAccessors: { node: { _value: 'value', _items: 'items', _statements: 'statements' }, leaf: {} }, slotBlankArms: {} } as unknown as LoadedNodeModel, (id) => (id === 1 ? 'node' : 'leaf'));
+const accessorOf = slotAccessorOf({ 1: [['value', 0, undefined, '_value'], ['items', 1, undefined, '_items'], ['statements', 2, undefined, '_statements']] }, { listSeparators: {} }, (id) => (id === 1 ? 'node' : 'leaf'));
 
 function leaf(type: number, text: string): TypedNode {
-	return { $type: type, $named: true, $text: text };
+	return { $type: type, $text: text };
 }
 
 const typescriptGeneratedClean = verifyManifestForGrammar('typescript').ok;
@@ -30,8 +29,15 @@ function asRecord(value: unknown): Record<string, unknown> {
 
 describe('wrapped tree materialization', () => {
 	it('keeps each node it copies a node with its provenance, the copy being made by string keys', () => {
-		const child = stampSource(leaf(21, 'child'), Source.Ts);
-		const root = stampSource({ $type: 1, $named: true, _items: child, items: () => child } satisfies TypedNode, Source.Ts);
+		const child = { ...leaf(21, 'child'), [SOURCE]: Source.Ts };
+		const root = {
+			$type: 1,
+			_items: child,
+			items() {
+				return child;
+			},
+			[SOURCE]: Source.Ts
+		} satisfies TypedNode;
 		const materialized = materialize(root, accessorOf);
 		expect(sourceOf(materialized)).toBe(Source.Ts);
 		expect(sourceOf(asRecord(materialized)._items as object)).toBe(Source.Ts);
@@ -44,7 +50,6 @@ describe('wrapped tree materialization', () => {
 		const root = {
 			$type: 1,
 			
-			$named: true,
 			_value: leaf(10, 'raw-field'),
 			_items: leaf(20, 'raw-child'),
 			value() {
@@ -68,13 +73,12 @@ describe('wrapped tree materialization', () => {
 		expect(visited).toEqual([1, 11, 21]);
 	});
 
-	it('falls back to raw storage when an accessor throws during traversal', () => {
+	it('reports a throwing accessor and never falls back to raw storage', () => {
 		const rawFieldChild = leaf(10, 'raw-field');
 		const rawChildrenChild = leaf(20, 'raw-child');
 		const root = {
 			$type: 1,
 			
-			$named: true,
 			_value: rawFieldChild,
 			_items: [rawChildrenChild],
 			value() {
@@ -86,11 +90,21 @@ describe('wrapped tree materialization', () => {
 		} satisfies TypedNode;
 
 		const visited: number[] = [];
-		walkWrappedTree(root, accessorOf, (node) => {
-			visited.push(node.$type);
-		});
+		const thrown: AccessorThrowRecord[] = [];
+		walkWrappedTree(
+			root,
+			accessorOf,
+			(node) => {
+				visited.push(node.$type);
+			},
+			(rec) => thrown.push(rec)
+		);
 
-		expect(visited).toEqual([1, 10, 20]);
+		expect(visited).toEqual([1]);
+		expect(thrown.map(({ key, accessor }) => [key, accessor])).toEqual([
+			['_value', 'value'],
+			['_items', 'items']
+		]);
 	});
 
 	it('projects wrapped nodes into plain native-render data', () => {
@@ -109,7 +123,6 @@ describe('wrapped tree materialization', () => {
 		const root = {
 			$type: 1,
 			
-			$named: true,
 			_value: leaf(10, 'raw-field'),
 			_items: leaf(20, 'raw-child'),
 			value() {
@@ -132,7 +145,7 @@ describe('wrapped tree materialization', () => {
 
 		expect(materialized.$type).toBe(1);
 		expect(materialized._value).toMatchObject({ $type: 11, $text: 'field' });
-		expect(materialized._items).toEqual({ $type: 21, $named: true, $text: 'child' });
+		expect(materialized._items).toEqual({ $type: 21, $text: 'child' });
 		expect(materialized).not.toHaveProperty('value');
 		expect(materialized).not.toHaveProperty('items');
 		expect(materialized).not.toHaveProperty('$render');

@@ -8,6 +8,7 @@
 //! holding an extra, an `ERROR`, another slot's child or more than one
 //! separator, is no gap the slot spells.
 
+use crate::heap::HeapBytes;
 use crate::read::{Route, Routed};
 use std::collections::BTreeMap;
 
@@ -16,6 +17,14 @@ use std::collections::BTreeMap;
 pub enum SlotSide {
     Before,
     After,
+}
+
+impl HeapBytes for SlotSide {
+    fn heap_bytes(&self) -> usize {
+        match self {
+            Self::Before | Self::After => 0,
+        }
+    }
 }
 
 /// A gap's separator: its grammar id and bytes.
@@ -28,8 +37,8 @@ pub struct Separator {
 
 /// One separator gap between two items of a list slot: the items'
 /// descendant indexes, its runs before and after its separator by their
-/// places among the trivia table's runs (`TriviaTable::runs`), where the
-/// table has one there, and its separator.
+/// ids among the runs the tree's trivia placement placed
+/// (`Placement::run_at`), where it placed one there, and its separator.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct SlotGap {
     pub items: (crate::types::NodeIndex, crate::types::NodeIndex),

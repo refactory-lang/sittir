@@ -1,4 +1,5 @@
 import type { NodeMap } from '../types.ts';
+import { emitShapeFailure } from '../diagnostics/emit-diagnostics.ts';
 import { stampSplicedEnvelopes } from './spliced-envelopes.ts';
 import { findOwnKindEntry, type GeneratedIdTables } from '../../dsl/symbol-table.ts';
 import {
@@ -161,7 +162,7 @@ function deriveFlattenedVariantParents(
 		}
 		const defaults = routes.filter((route) => route.default);
 		if (defaults.length > 1) {
-			throw new Error(`arm.default: ${defaults.length} variants of '${kind}' are declared the default (${defaults.map((d) => d.name).join(', ')}); pick one`);
+			throw emitShapeFailure({ code: 'arm-default-conflict', message: `arm.default: ${defaults.length} variants of '${kind}' are declared the default (${defaults.map((d) => d.name).join(', ')}); pick one` });
 		}
 		return waiting ? 'wait' : routes;
 	};
@@ -178,7 +179,7 @@ function deriveFlattenedVariantParents(
 			if (key === undefined) throw new Error(`ir: the supertype '${kind}' has no ir key`);
 			if (!isValidIdent(key) || taken.has(key)) continue;
 			const leafKind = leafKinds.get(key);
-			if (leafKind !== undefined) throw new Error(`ir: '${kind}' and the leaf '${leafKind}' both take the key '${key}'`);
+			if (leafKind !== undefined) throw emitShapeFailure({ code: 'ir-key-collision', message: `ir: '${kind}' and the leaf '${leafKind}' both take the key '${key}'` });
 			taken.add(key);
 			keyByParent.set(kind, key);
 			out.push({ key, node, variants: routes });
@@ -303,7 +304,8 @@ export function seatedFormKinds(nodeMap: NodeMap): ReadonlySet<string> {
 	const hopOf = (host: AssembledNode, name: string): { readonly child: AssembledNode; readonly seated: boolean } | undefined => {
 		const variant = flattenedByKind.get(host.kind)?.variants.find((route) => route.name === name);
 		if (variant !== undefined) return { child: variant.nestedParentKey === undefined ? variant.child : flattenedByKey.get(variant.nestedParentKey)!.node, seated: false };
-		const route = surface.formRoutes.get(host.kind)?.find((candidate) => candidate.name === name);
+		const set = surface.armRoutes.byKind.get(host.kind);
+		const route = set === undefined ? undefined : hostRoutesOf(set, surface.armRoutes.kindEntries, nodeMap).find((candidate) => candidate.name === name);
 		return route === undefined ? undefined : { child: route.child, seated: buildsHost(route) };
 	};
 	const seated = new Set<string>();
@@ -314,11 +316,11 @@ export function seatedFormKinds(nodeMap: NodeMap): ReadonlySet<string> {
 		let throughSeat = false;
 		for (const name of path.slice(1)) {
 			const hop = host === undefined ? undefined : hopOf(host, name);
-			if (hop === undefined) throw new Error(`ir surface: '${node.kind}' has the builder path '${path.join('.')}', which no route reaches`);
+			if (hop === undefined) throw emitShapeFailure({ code: 'builder-path-unreachable', message: `ir surface: '${node.kind}' has the builder path '${path.join('.')}', which no route reaches` });
 			throughSeat ||= hop.seated;
 			host = hop.child;
 		}
-		if (host !== node) throw new Error(`ir surface: the builder path '${path.join('.')}' of '${node.kind}' builds '${host?.kind}'`);
+		if (host !== node) throw emitShapeFailure({ code: 'builder-path-mismatch', message: `ir surface: the builder path '${path.join('.')}' of '${node.kind}' builds '${host?.kind}'` });
 		if (throughSeat) seated.add(node.kind);
 	}
 	return seated;
@@ -509,7 +511,7 @@ function deriveIrPlan(
 		if (members.length === 0) continue;
 		usedGroupNames.add(groupName);
 		if (flatKeys.has(groupName)) {
-			throw new Error(`ir: the supertype group '${groupName}' shares its key with a flat factory`);
+			throw emitShapeFailure({ code: 'supertype-group-key-clash', message: `ir: the supertype group '${groupName}' shares its key with a flat factory` });
 		}
 		groups.push({ key: groupName, node, members });
 	}
@@ -637,7 +639,7 @@ export function resolveBuilderPaths(grammar: string, nodes: Iterable<AssembledNo
 		const known = resolved.get(node.kind);
 		if (known !== undefined) return known;
 		if (visiting.includes(node.kind)) {
-			throw new Error(`ir surface: '${grammar}' has a cycle of owner routes (${[...visiting.slice(visiting.indexOf(node.kind)), node.kind].join(' → ')})`);
+			throw emitShapeFailure({ code: 'owner-route-cycle', message: `ir surface: '${grammar}' has a cycle of owner routes (${[...visiting.slice(visiting.indexOf(node.kind)), node.kind].join(' → ')})` });
 		}
 		const own = node.irKey === undefined ? [] : [[node.irKey]];
 		const routed = (owners.all.get(node.kind) ?? []).flatMap((route) => pathsOf(route.parent, [...visiting, node.kind]).map((path) => [...path, route.name]));

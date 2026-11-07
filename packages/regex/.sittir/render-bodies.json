@@ -277,6 +277,10 @@
 					"test": "lazy",
 					"body": [
 						{
+							"kind": "seam",
+							"field": "qmark_before"
+						},
+						{
 							"kind": "slot",
 							"name": "lazy"
 						}
@@ -784,6 +788,10 @@
 					"test": "lazy",
 					"body": [
 						{
+							"kind": "seam",
+							"field": "qmark_before"
+						},
+						{
 							"kind": "slot",
 							"name": "lazy"
 						}
@@ -815,6 +823,10 @@
 				{
 					"test": "lazy",
 					"body": [
+						{
+							"kind": "seam",
+							"field": "qmark_before"
+						},
 						{
 							"kind": "slot",
 							"name": "lazy"
@@ -975,6 +987,10 @@
 				{
 					"test": "lazy",
 					"body": [
+						{
+							"kind": "seam",
+							"field": "qmark_before"
+						},
 						{
 							"kind": "slot",
 							"name": "lazy"

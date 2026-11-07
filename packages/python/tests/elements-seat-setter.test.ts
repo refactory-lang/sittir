@@ -22,7 +22,7 @@ describe('an elements setter takes its elements as rest arguments', () => {
 
 	it('rejects an array with a message naming the rest form', () => {
 		const cmp = comparison();
-		const untyped = cmp.$with.comparators as unknown as (items: unknown) => unknown;
-		expect(() => untyped(cmp.comparators())).toThrow(/\$with\.comparators takes its elements as rest arguments/);
+		const untyped = cmp.$with as unknown as { comparators(items: unknown): unknown };
+		expect(() => untyped.comparators(cmp.comparators())).toThrow(/\$with\.comparators takes its elements as rest arguments/);
 	});
 });

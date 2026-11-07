@@ -83,6 +83,15 @@ describe('display-union-mixed', () => {
 		expect(out).toHaveLength(1);
 		expect(out[0]).toMatchObject({ code: 'display-union-mixed', ownerKind: 'shown', canProceed: false, details: { terminals: ['tok'], nonterminals: ['node'] } });
 	});
+	it('accepts a display that is its own rule over a choice of keywords, which holds the literal members as arms', () => {
+		const enumRules = { modifier: { type: 'PREC', value: 0, content: { type: 'CHOICE', members: [S('abstract'), S('async')] } } };
+		const out = diagnoseMixedDisplayUnions({
+			grammar: 'demo',
+			displayUnions: new Map([['modifier', [{ storage: 'modifier', literal: false }, { storage: 'this', literal: true }]]]),
+			symbols: symbolsOf(enumRules, { kindEntries: [{ kind: 'modifier' }] })
+		});
+		expect(out).toEqual([]);
+	});
 	it('classifies a literal member by its stamp, even when a rule has the same spelling', () => {
 		const out = diagnoseMixedDisplayUnions({
 			grammar: 'demo',
@@ -173,5 +182,9 @@ describe('alias-inline-token', () => {
 	it('does not fire on an alias of a symbol or of a literal', () => {
 		expect(inlineToken({ p: alias(sym('_c'), 'c'), _c: body })).toEqual([]);
 		expect(inlineToken({ p: alias(S('x'), 'c') })).toEqual([]);
+	});
+	it('is silent on a literal alias whose display is a terminal rule or the word rule, which reads as the display kind', () => {
+		expect(inlineToken({ p: alias(S('a'), 'content'), content: P('z') })).toEqual([]);
+		expect(inlineToken({ p: alias(S('a'), 'content'), q: alias(sym('ident'), 'content'), ident: P('[a-z]+') }, 'ident')).toEqual([]);
 	});
 });

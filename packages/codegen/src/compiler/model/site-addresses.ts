@@ -1,4 +1,5 @@
 import { EMPTY_SEPARATOR_TOKEN, SEPARATOR_LABEL } from '../../dsl/primitives/spacing.ts';
+import { emitShapeFailure } from '../diagnostics/emit-diagnostics.ts';
 import type { SpacingAddress } from '../../types/spacing.ts';
 import {
 	comparePreferencePaths,
@@ -210,11 +211,11 @@ export function resolveLabels(
 
 	for (const label of labels) {
 		const arm = armOfLabel.get(label.label);
-		if (arm === undefined) throw new Error(`options: '${label.address}' resolves to no arm`);
+		if (arm === undefined) throw emitShapeFailure({ code: 'option-address-invalid', message: `options: '${label.address}' resolves to no arm` });
 		const { hits, cascaded } = hitsOf(label.address);
 		if (hits.size === 0) {
 			if (!requireHit) continue;
-			throw new Error(`options: '${label.address}' names no site`);
+			throw emitShapeFailure({ code: 'option-address-invalid', message: `options: '${label.address}' names no site` });
 		}
 		entries.push({ address: label.address, arm, declared: false, hits, cascaded });
 	}
@@ -223,7 +224,7 @@ export function resolveLabels(
 		const { hits, cascaded } = hitsOf(declaration.path);
 		if (hits.size === 0) {
 			if (labelled.has(declaration.path) || !requireHit) continue;
-			throw new Error(`options: '${declaration.path}' names no site`);
+			throw emitShapeFailure({ code: 'option-address-invalid', message: `options: '${declaration.path}' names no site` });
 		}
 		entries.push({ address: declaration.path, arm: declaration.arm, declared: true, hits, cascaded });
 	}
@@ -241,9 +242,9 @@ export function resolveLabels(
 			if (![...a].some((site) => b.has(site))) continue;
 			const nests = [...a].every((site) => b.has(site)) || [...b].every((site) => a.has(site));
 			if (!nests) {
-				throw new Error(
+				throw emitShapeFailure({ code: 'option-address-invalid', message: 
 					`options: '${entries[i]!.address}' and '${entries[j]!.address}' overlap without one containing the other`
-				);
+				 });
 			}
 		}
 	}

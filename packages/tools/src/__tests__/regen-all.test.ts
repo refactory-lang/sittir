@@ -17,11 +17,12 @@ interface Record_ {
 	fixtures: Record<string, string>;
 }
 
-const { fresh, records, inputs, sources, writeRegenRecord, clearRegenRecord, runWorkspaceCheck, surfaceCalls } = vi.hoisted(() => {
+const { fresh, records, inputs, sources, writeRegenRecord, clearRegenRecord, runWorkspaceCheck, workspaceNodeApiLevel, surfaceCalls } = vi.hoisted(() => {
 	const records = new Map<string, Record_>();
 	return {
 		surfaceCalls: [] as string[],
 		runWorkspaceCheck: vi.fn((_cwd: string) => 0),
+		workspaceNodeApiLevel: vi.fn(() => 10),
 		fresh: new Set<string>(),
 		records,
 		inputs: new Map<string, Record<string, string>>(),
@@ -33,6 +34,7 @@ const { fresh, records, inputs, sources, writeRegenRecord, clearRegenRecord, run
 vi.mock('../codegen-surface.ts', () => {
 	const surface: Record<string, unknown> = {
 		workspaceCheck: { runWorkspaceCheck },
+		grammars: { workspaceNodeApiLevel },
 		treeSitterCli: { ensureWasmToolchain: () => surfaceCalls.push('ensureWasmToolchain') },
 		vocabularyPaths: { writeVocabularyPaths: async () => void surfaceCalls.push('writeVocabularyPaths') },
 		generatedManifest: {
@@ -101,6 +103,7 @@ beforeEach(() => {
 	writeRegenRecord.mockClear();
 	clearRegenRecord.mockClear();
 	runWorkspaceCheck.mockReset().mockReturnValue(0);
+	workspaceNodeApiLevel.mockClear();
 	surfaceCalls.length = 0;
 	delete process.env.SITTIR_REGEN_FORCE;
 	delete process.env.SITTIR_REGEN_VERBOSE;
@@ -133,6 +136,20 @@ describe('regen:all sequencing', () => {
 			expect((args as string[]).includes('--no-workspace-check')).toBe(index < 2);
 			expect(options).toEqual({ cwd: '/repo', stdio: 'inherit' });
 		}
+	});
+
+	it('reads the Node-API level once, before any generation starts, and hands it to every generation', async () => {
+		process.env.SITTIR_REGEN_VERBOSE = '1';
+		const run = import('../scripts/regen-all.ts');
+		await generationsStarted(3);
+		expect(workspaceNodeApiLevel).toHaveBeenCalledTimes(1);
+		expect(workspaceNodeApiLevel.mock.invocationCallOrder[0]!).toBeLessThan(spawn.mock.invocationCallOrder[0]!);
+		for (const call of spawn.mock.calls) {
+			const generation = call[1] as string[];
+			expect(generation[generation.indexOf('--node-api-level') + 1]).toBe('10');
+		}
+		for (const child of children) child.finish(0);
+		await run;
 	});
 
 	it("prefixes each generation's output with its grammar under --verbose", async () => {

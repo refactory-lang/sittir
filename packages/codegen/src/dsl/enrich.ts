@@ -36,7 +36,7 @@ import {
 	isPrecWrapper,
 	typeEq
 } from '../types/runtime-shapes.ts';
-import type { RuntimeRule } from '../types/runtime-shapes.ts';
+import type { PrecWrapperLike, RuntimeRule } from '../types/runtime-shapes.ts';
 import {
 	ALIAS,
 	CHOICE,
@@ -92,7 +92,9 @@ import {
 	withOptionalContent,
 	ruleListEntryOf,
 	ruleListParts,
-	type RuleListEntry
+	type RuleListEntry,
+	peelPrecs,
+	unwrapPrec
 } from './rule-patterns.ts';
 import { baseRulesOf } from './shared.ts';
 import { enrichWhitespace, type EnrichedWhitespace } from './whitespace.ts';
@@ -452,12 +454,7 @@ function hoistTokenForms(
 	const distributed = distributeTokenForms(rule as unknown as RuntimeRule, parentKind, fielded) as unknown as Rule;
 	if (distributed === rule) return rule;
 	parents.push(parentKind);
-	const precStack: Rule[] = [];
-	let core = distributed;
-	while (isPrecWrapper(core as { type: string })) {
-		precStack.push(core);
-		core = (core as unknown as { content: Rule }).content;
-	}
+	const { precs: precStack, core } = peelPrecs(distributed);
 	const arms = (core as unknown as { members: Rule[] }).members;
 	const members = arms.map((arm, i) => {
 		const minted = visibleGroupSynthName(
@@ -515,8 +512,7 @@ function tokenFormFieldSites(
 function tokenFormArms(rules: Record<string, Rule>, parents: readonly string[]): ReadonlyMap<string, readonly string[]> {
 	const arms = new Map<string, readonly string[]>();
 	for (const parent of parents) {
-		let core = rules[parent];
-		while (core !== undefined && isPrecWrapper(core as { type: string })) core = (core as unknown as { content: Rule }).content;
+		const core = unwrapPrec(rules[parent]);
 		const members = (core as unknown as { members?: readonly { name?: string }[] } | undefined)?.members ?? [];
 		arms.set(parent, members.flatMap((m) => (m.name === undefined ? [] : [m.name])));
 	}
@@ -684,22 +680,12 @@ function isAnonymousLiteralShapedContent(rule: Rule, rulesBag: Record<string, Ru
 function applyChoiceArmFieldWrap(ruleName: string, rule: Rule, ctx: EnrichCtx): Rule {
 	const { supertypeNames, rulesBag } = ctx;
 	if (ruleName.startsWith('_')) return rule;
-	let cursor: Rule = rule;
-	const precStack: Rule[] = [];
-	while (isPrecWrapper(cursor as { type: string })) {
-		precStack.push(cursor);
-		cursor = (cursor as unknown as { content: Rule }).content;
-	}
+	const { precs: precStack, core: cursor } = peelPrecs(rule);
 	if (!isChoiceType(cursor.type)) return rule;
 	const armMembers = (cursor as unknown as { members: Rule[] }).members;
 	let anyArmChanged = false;
 	const newArms = armMembers.map((arm) => {
-		let armCursor: Rule = arm;
-		const armPrecStack: Rule[] = [];
-		while (isPrecWrapper(armCursor as { type: string })) {
-			armPrecStack.push(armCursor);
-			armCursor = (armCursor as unknown as { content: Rule }).content;
-		}
+		const { precs: armPrecStack, core: armCursor } = peelPrecs(arm);
 		if (!isSeqType(armCursor.type)) return arm;
 		const seqMembers = (armCursor as unknown as { members: Rule[] }).members;
 		const existing = collectFieldNamesRuntime(armCursor);
@@ -753,10 +739,7 @@ function collectAllFieldNamesDeep(rule: Rule, into: Set<string>): void {
 function isAllArmsNodeShaped(choiceRule: Rule, isTextToken: TextTokenTest): boolean {
 	const members = (choiceRule as unknown as { members: readonly Rule[] }).members;
 	return members.every((arm) => {
-		let cursor = arm;
-		while (isPrecWrapper(cursor as { type: string })) {
-			cursor = (cursor as unknown as { content: Rule }).content;
-		}
+		const cursor = unwrapPrec(arm);
 		const t = (cursor as { type: string }).type;
 		if (t === 'SYMBOL') return !isTextToken((cursor as unknown as { name: string }).name);
 		return t === 'ALIAS';
@@ -766,10 +749,7 @@ function isAllArmsNodeShaped(choiceRule: Rule, isTextToken: TextTokenTest): bool
 function isAllArmsNodeOrLiteralShaped(choiceRule: Rule): boolean {
 	const members = (choiceRule as unknown as { members: readonly Rule[] }).members;
 	return members.every((arm) => {
-		let cursor = arm;
-		while (isPrecWrapper(cursor as { type: string })) {
-			cursor = (cursor as unknown as { content: Rule }).content;
-		}
+		const cursor = unwrapPrec(arm);
 		const t = (cursor as { type: string }).type;
 		return t === 'SYMBOL' || t === 'ALIAS' || isStringType(t) || t === 'PATTERN';
 	});
@@ -793,12 +773,7 @@ function promoteLiteralChoiceArms(
 	let changed = false;
 	let declined = false;
 	const newMembers = members.map((arm) => {
-		let cursor = arm;
-		const precStack: Rule[] = [];
-		while (isPrecWrapper(cursor as { type: string })) {
-			precStack.push(cursor);
-			cursor = (cursor as unknown as { content: Rule }).content;
-		}
+		const { precs: precStack, core: cursor } = peelPrecs(arm);
 		const t = (cursor as { type: string }).type;
 		if (t === 'SYMBOL' && isTextToken((cursor as unknown as { name: string }).name)) {
 			declined = true;
@@ -827,10 +802,7 @@ function isHiddenPureUnionRule(name: string, mergedRules: Record<string, Rule>, 
 	if (!name.startsWith('_')) return false;
 	const target = mergedRules[name];
 	if (!target) return false;
-	let core = target;
-	while (isPrecWrapper(core as { type: string })) {
-		core = (core as unknown as { content: Rule }).content;
-	}
+	const core = unwrapPrec(target);
 	return isChoiceType((core as { type: string }).type) && isAllArmsNodeShaped(core, isTextToken);
 }
 
@@ -872,26 +844,16 @@ interface SeparatedListTail {
 	readonly repeatCursor: Rule;
 	readonly inner: RuntimeRule;
 	readonly innerElement: Rule;
-	readonly outerPrecStack: readonly Rule[];
-	readonly innerPrecStack: readonly Rule[];
+	readonly outerPrecStack: readonly PrecWrapperLike[];
+	readonly innerPrecStack: readonly PrecWrapperLike[];
 }
 
 function separatedListTail(members: readonly Rule[], i: number, symbols: SymbolSource): SeparatedListTail | null {
 	const leading = members[i];
-	let repeatCursor = members[i + 1];
+	const { precs: outerPrecStack, core: repeatCursor } = peelPrecs(members[i + 1]);
 	if (leading === undefined || repeatCursor === undefined) return null;
-	const outerPrecStack: Rule[] = [];
-	while (isPrecWrapper(repeatCursor as { type: string })) {
-		outerPrecStack.push(repeatCursor);
-		repeatCursor = (repeatCursor as unknown as { content: Rule }).content;
-	}
 	if (!isRepeatType((repeatCursor as { type: string }).type)) return null;
-	let inner = (repeatCursor as unknown as { content: RuntimeRule }).content;
-	const innerPrecStack: Rule[] = [];
-	while (isPrecWrapper(inner as unknown as { type: string })) {
-		innerPrecStack.push(inner as unknown as Rule);
-		inner = (inner as unknown as { content: RuntimeRule }).content;
-	}
+	const { precs: innerPrecStack, core: inner } = peelPrecs((repeatCursor as unknown as { content: RuntimeRule }).content);
 	const detected = separatorOf(inner, symbols);
 	if (!detected || detected.trailing) return null;
 	const innerElement = detected.content as unknown as Rule;
@@ -1014,12 +976,7 @@ function applyNodeChoiceFieldWrap(ruleName: string, rule: Rule, mergedRules: Rec
 
 		if (!suppressed && isRepeatType((r as { type: string }).type)) {
 			const content = (r as unknown as { content: Rule }).content;
-			const precStack: Rule[] = [];
-			let inner = content;
-			while (isPrecWrapper(inner as { type: string })) {
-				precStack.push(inner);
-				inner = (inner as unknown as { content: Rule }).content;
-			}
+			const { precs: precStack, core: inner } = peelPrecs(content);
 			const rebuildRepeat = (newInner: Rule): Rule => {
 				let rebuiltInner = newInner;
 				for (let i = precStack.length - 1; i >= 0; i--) {
@@ -1211,8 +1168,7 @@ function applyRepeatUnionFieldPromotion(ruleName: string, rule: Rule, ctx: Enric
 		const n = node as unknown as { type: string; content?: Rule; members?: Rule[] };
 		if (isFieldType(n.type) || isLexedBoundary(n)) return node;
 		if (isRepeatType(n.type) && n.content) {
-			let inner: Rule = n.content;
-			while (isPrecWrapper(inner as { type: string })) inner = (inner as unknown as { content: Rule }).content;
+			const inner = unwrapPrec(n.content);
 			const sym = inner as unknown as { type: string; name?: unknown };
 			if (sym.type === 'SYMBOL' && typeof sym.name === 'string' && sym.name.startsWith('_') && !ctx.isPriorMint(sym.name)) {
 				const target = rulesBag[sym.name];
@@ -1477,12 +1433,7 @@ function countSymbolsInRepeat(
 function applySymbolToField(ruleName: string, rule: Rule, ctx: EnrichCtx): Rule {
 	const { supertypeNames, sourceSymbols: symbols, isTextToken } = ctx;
 	if (ruleName.startsWith('_')) return rule;
-	const precStack: Rule[] = [];
-	let cursor: Rule = rule;
-	while (isPrecWrapper(cursor as { type: string })) {
-		precStack.push(cursor);
-		cursor = (cursor as unknown as { content: Rule }).content;
-	}
+	const { precs: precStack, core: cursor } = peelPrecs(rule);
 	if (isHoistedBody(rule) || isHoistedBody(cursor)) return rule;
 	if (!isSeqType(cursor.type)) {
 		return tryPromoteInRepeatSeq(ruleName, rule, cursor, precStack, supertypeNames, symbols, isTextToken);
@@ -1573,20 +1524,10 @@ function tryPromoteInRepeatMember(
 	existing: Set<string>,
 	outerKindCounts: Map<string, number>
 ): Rule | null {
-	let cursor: Rule = member;
-	const memberPrecStack: Rule[] = [];
-	while (isPrecWrapper(cursor as { type: string })) {
-		memberPrecStack.push(cursor);
-		cursor = (cursor as unknown as { content: Rule }).content;
-	}
+	const { precs: memberPrecStack, core: cursor } = peelPrecs(member);
 	if (!isRepeatType(cursor.type)) return null;
 
-	let inner = (cursor as unknown as { content: Rule }).content;
-	const innerPrecStack: Rule[] = [];
-	while (isPrecWrapper(inner as { type: string })) {
-		innerPrecStack.push(inner);
-		inner = (inner as unknown as { content: Rule }).content;
-	}
+	const { precs: innerPrecStack, core: inner } = peelPrecs((cursor as unknown as { content: Rule }).content);
 	if (!isSeqType(inner.type)) return null;
 
 	const innerMembers = (inner as unknown as { members: Rule[] }).members;
@@ -1656,18 +1597,13 @@ function tryPromoteInRepeatSeq(
 	ruleName: string,
 	rule: Rule,
 	cursor: Rule,
-	outerPrecStack: Rule[],
+	outerPrecStack: readonly PrecWrapperLike[],
 	supertypeNames: ReadonlySet<string>,
 	symbols: SymbolSource,
 	isTextToken: TextTokenTest
 ): Rule {
 	if (!isRepeatType(cursor.type)) return rule;
-	let inner = (cursor as unknown as { content: Rule }).content;
-	const innerPrecStack: Rule[] = [];
-	while (isPrecWrapper(inner as { type: string })) {
-		innerPrecStack.push(inner);
-		inner = (inner as unknown as { content: Rule }).content;
-	}
+	const { precs: innerPrecStack, core: inner } = peelPrecs((cursor as unknown as { content: Rule }).content);
 	if (!isSeqType(inner.type)) return rule;
 	const members = (inner as unknown as { members: Rule[] }).members;
 	const directKindCounts = new Map<string, number>();
@@ -1726,17 +1662,9 @@ function tryPromoteInRepeatSeq(
 }
 
 function applyOptionalKeyword(ruleName: string, rule: Rule, ctx: EnrichCtx): Rule {
-	const inner = peelPrec(rule);
+	const inner = unwrapPrec(rule);
 	const claimed = isSeqType(inner.type) ? collectFieldNamesRuntime(inner) : new Set<string>();
 	return walkOptionalKeyword(ruleName, rule, claimed, ctx) ?? rule;
-}
-
-function peelPrec(rule: Rule): Rule {
-	let cursor: Rule = rule;
-	while (isPrecWrapper(cursor as { type: string })) {
-		cursor = (cursor as unknown as { content: Rule }).content;
-	}
-	return cursor;
 }
 
 function tryPromoteOptionalNode(
@@ -1982,14 +1910,14 @@ function absorbTrailingListSeparators(members: Rule[], symbols: SymbolSource): R
 }
 
 function isLoneOptionalToken(optionalSeqBody: Rule): boolean {
-	const body = peelPrec(optionalSeqBody);
+	const body = unwrapPrec(optionalSeqBody);
 	if (!isSeqType(body.type)) return false;
 	const members = (body as unknown as { members: Rule[] }).members;
 	if (members.length !== 2) return false;
 	const [token, tail] = members as [Rule, Rule];
 	if (!isStringType(token.type)) return false;
 	const inner = optionalContentOf(tail);
-	return inner !== undefined && isFieldType(peelPrec(inner).type);
+	return inner !== undefined && isFieldType(unwrapPrec(inner).type);
 }
 
 function applyClauseHoist(

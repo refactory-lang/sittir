@@ -638,8 +638,8 @@ export interface Ir<Table extends AnyTable> {
 	readonly endAssertion: typeof F.buildEndAssertion;
 	readonly boundaryAssertion: typeof F.buildBoundaryAssertion;
 	readonly nonBoundaryAssertion: typeof F.buildNonBoundaryAssertion;
-	readonly negation: typeof F.buildNegation;
 	readonly lazy: typeof F.buildLazy;
+	readonly negation: typeof F.buildNegation;
 	readonly identityEscape: typeof F.buildIdentityEscape;
 	readonly patternCharacter: typeof F.buildPatternCharacter;
 	readonly posixClassName: typeof F.buildPosixClassName;
@@ -983,8 +983,8 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 		endAssertion: F.buildEndAssertion,
 		boundaryAssertion: F.buildBoundaryAssertion,
 		nonBoundaryAssertion: F.buildNonBoundaryAssertion,
-		negation: F.buildNegation,
 		lazy: F.buildLazy,
+		negation: F.buildNegation,
 		identityEscape: F.buildIdentityEscape,
 		patternCharacter: F.buildPatternCharacter,
 		posixClassName: F.buildPosixClassName,

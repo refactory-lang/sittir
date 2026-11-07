@@ -14,13 +14,22 @@ export const counts: CommandModule = {
 				).default(false)
 			)
 			.addOption(
+				new Option('--node-storage <storage>', 'Node backend: parsed/built objects (object), or arena views with record builders (arena)').default(
+					'object'
+				)
+			)
+			.addOption(
 				new Option('--_isolate-worker', 'Internal: run as an isolation worker for a single grammar')
 					.hideHelp()
 					.default(false)
 			)
-			.action(async (grammars: string[], opts: { isolate: boolean; _isolateWorker: boolean }) => {
-				const { runCountsCli } = await import('@sittir/tools');
-				await runCountsCli(grammars, 'native', { isolate: opts.isolate, isolateWorker: opts._isolateWorker });
+			.action(async (grammars: string[], opts: { isolate: boolean; _isolateWorker: boolean; nodeStorage: string }) => {
+				const { runCountsCli, parseNodeStorage } = await import('@sittir/tools');
+				await runCountsCli(grammars, 'native', {
+					isolate: opts.isolate,
+					isolateWorker: opts._isolateWorker,
+					nodeStorage: parseNodeStorage(opts.nodeStorage)
+				});
 			});
 	}
 };

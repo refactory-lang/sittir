@@ -1,6 +1,7 @@
+import { execFileSync } from 'node:child_process';
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
-import { join } from 'node:path';
+import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 export type GrammarName = string;
@@ -77,6 +78,44 @@ export function sittirDirOf(pkg: Pick<GrammarPackage, 'dir'>): string {
 	return join(pkg.dir, '.sittir');
 }
 
+export interface UpstreamGrammarEntry {
+	readonly name?: unknown;
+	readonly 'file-types'?: unknown;
+}
+
+export function upstreamConfigPath(pkg: Pick<GrammarPackage, 'dir' | 'name'>): string | undefined {
+	let packageDir: string;
+	try {
+		packageDir = dirname(packageRequire(pkg).resolve(`${upstreamPackage(pkg.name)}/package.json`));
+	} catch (e) {
+		if ((e as NodeJS.ErrnoException).code === 'MODULE_NOT_FOUND') return undefined;
+		throw e;
+	}
+	const configPath = join(packageDir, 'tree-sitter.json');
+	return existsSync(configPath) ? configPath : undefined;
+}
+
+export function upstreamGrammarEntry(pkg: Pick<GrammarPackage, 'dir' | 'name'>): { readonly entry: UpstreamGrammarEntry; readonly configPath: string } {
+	const configPath = upstreamConfigPath(pkg);
+	if (configPath === undefined) throw new Error(`upstreamGrammarEntry: ${upstreamPackage(pkg.name)} has no tree-sitter.json`);
+	const config = JSON.parse(readFileSync(configPath, 'utf8')) as { grammars?: readonly UpstreamGrammarEntry[] };
+	const entries = config.grammars ?? [];
+	const entry = entries.length === 1 ? entries[0] : entries.find((candidate) => candidate.name === pkg.name);
+	if (entry === undefined) {
+		throw new Error(`upstreamGrammarEntry: ${configPath} declares ${entries.length} grammars and none is named "${pkg.name}"`);
+	}
+	return { entry, configPath };
+}
+
+export function parserNameOf(pkg: Pick<GrammarPackage, 'dir' | 'name'>): string {
+	const generated = join(sittirDirOf(pkg), 'src', 'grammar.json');
+	if (existsSync(generated)) return (JSON.parse(readFileSync(generated, 'utf8')) as { name: string }).name;
+	if (upstreamConfigPath(pkg) === undefined) return pkg.name;
+	const { entry, configPath } = upstreamGrammarEntry(pkg);
+	if (typeof entry.name !== 'string') throw new Error(`parserNameOf: the grammar entry of "${pkg.name}" in ${configPath} has no name`);
+	return entry.name;
+}
+
 export function topLayerPath(pkg: Pick<GrammarPackage, 'dir'>): string {
 	const generated = join(pkg.dir, BINDINGS_MODULE);
 	return existsSync(generated) ? generated : join(pkg.dir, GRAMMAR_ENTRY);
@@ -147,6 +186,33 @@ export const NATIVE_TARGETS = [
 	'aarch64-unknown-linux-musl',
 	'x86_64-pc-windows-msvc'
 ] as const;
+
+export const NODE_API_NODE_RANGES: Readonly<Partial<Record<number, string>>> = {
+	9: '^18.17.0 || ^20.3.0 || >=21.1.0',
+	10: '^22.14.0 || >=23.6.0'
+};
+
+export function nodeRangeOfNodeApi(level: number): string {
+	const range = NODE_API_NODE_RANGES[level];
+	if (range === undefined) throw new Error(`Node-API ${level} has no Node range in NODE_API_NODE_RANGES`);
+	return range;
+}
+
+interface CargoMetadata {
+	readonly packages: readonly { readonly dependencies: readonly { readonly name: string; readonly features: readonly string[] }[] }[];
+}
+
+export function workspaceNodeApiLevel(): number {
+	const metadata = JSON.parse(execFileSync('cargo', ['metadata', '--no-deps', '--format-version', '1'], { cwd: REPO_ROOT, encoding: 'utf8' })) as CargoMetadata;
+	const levels = metadata.packages
+		.flatMap((pkg) => pkg.dependencies)
+		.filter((dependency) => dependency.name === 'napi')
+		.flatMap((dependency) => dependency.features)
+		.flatMap((feature) => /^napi(\d+)$/.exec(feature)?.slice(1) ?? [])
+		.map(Number);
+	if (levels.length === 0) throw new Error('no workspace crate enables a napiN feature on napi');
+	return Math.max(...levels);
+}
 
 export function nativeBinaryName(name: GrammarName): string {
 	return `sittir-${name}`;

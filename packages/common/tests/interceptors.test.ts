@@ -3,7 +3,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import rust, { type RustAPI } from '@sittir/rust';
-import type { Engine, EngineOptions, Interceptor, Language } from '@sittir/types';
+import type { BuilderMode, CreateEngineOptions, Engine, EngineOptions, Interceptor, Language } from '@sittir/types';
 import { createEngine } from '../src/create-engine.ts';
 
 const engines: { dispose(): void }[] = [];
@@ -199,7 +199,7 @@ describe('engine middleware', () => {
 			fileTypes: rust.fileTypes,
 			is: rust.is,
 			kinds: rust.kinds,
-			createEngine: (options) => createEngine(language, options),
+			createEngine: <const R extends AliasedAPI['options'], const M extends BuilderMode>(options?: CreateEngineOptions<AliasedAPI, R, M>) => createEngine<AliasedAPI, R, M>(language, options),
 			load: async () => ({ ...hooks, tables: { ...hooks.tables, default: async () => ({ ...loose, alias: loose.identifier }) } })
 		};
 		const recorded: string[] = [];
@@ -241,7 +241,7 @@ describe('engine middleware', () => {
 		let released = 0;
 		const language: Language<RustAPI> = {
 			...rust,
-			createEngine: (options) => createEngine(language, options),
+			createEngine: <const R extends RustAPI['options'], const M extends BuilderMode>(options?: CreateEngineOptions<RustAPI, R, M>) => createEngine<RustAPI, R, M>(language, options),
 			load: async () => ({
 				...hooks,
 				createNative(options) {
@@ -262,7 +262,7 @@ describe('engine middleware', () => {
 				}
 			})
 		};
-		const engine = await createEngine(language, { intercept: [{ render: (_call, next) => next() }] });
+		const engine = await createEngine(language, { nodeStorage: 'object', intercept: [{ render: (_call, next) => next() }] });
 		try {
 			const node = engine.build.identifier('before');
 			const rendered = engine.render(node);

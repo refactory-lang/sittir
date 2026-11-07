@@ -4,6 +4,7 @@ import { treeOf } from '../../common/src/tree-token.ts';
 import rust from '../src/index.ts';
 
 const engine = await createEngine(rust);
+const objects = await createEngine(rust, { nodeStorage: 'object' });
 const typeOf = (node: unknown): number => (node as { readonly $type: number }).$type;
 
 describe('ofType and is.* share one membership test', () => {
@@ -71,13 +72,13 @@ describe('a coordinate stamps the grammar id, or the display id at an alias enve
 
 	it('on a read node and on a query coordinate alike', () => {
 		const source = 'fn f() { a.b; }\n';
-		const { root } = engine.diagnostics.parseAndRead(source, { depth: Infinity }) as unknown as { root: unknown };
+		const { root } = objects.diagnostics.parseAndRead(source, { depth: Infinity }) as unknown as { root: unknown };
 		const read = records(root);
 		const envelope = read.find((node) => node.$type === engine.kinds.FieldIdentifier);
 		const plain = read.find((node) => node.$type === engine.kinds.FieldExpression);
 		expect(envelope?.$_layout?.at?.$type).toBe(engine.kinds.FieldIdentifier);
 		expect(plain?.$_layout?.at?.$type).toBe(engine.kinds.FieldExpression);
-		const parsed = engine.parse(source, { depth: 1 });
+		const parsed = objects.parse(source, { depth: 1 });
 		const tree = treeOf(parsed);
 		const handle = (parsed as unknown as Read).$_layout?.at?.$treeHandle;
 		if (tree?.query === undefined || handle === undefined) throw new Error('expected a live tree');

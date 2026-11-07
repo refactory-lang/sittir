@@ -1,4 +1,5 @@
 import type { NodeMap } from '../compiler/types.ts';
+import { EmitCollector, emitShapeFailure } from '../compiler/diagnostics/emit-diagnostics.ts';
 import { AssembledAlias, AssembledPattern, isBuilderTextLeaf, isDelimiterToken, type AssembledKeyword, type AssembledNode, type AssembledPunctuation } from '../compiler/model/node-map.ts';
 import { anchoredLeafRegex } from '../compiler/model/leaf-pattern.ts';
 import { aliasPatternLeaf, classifyFactoryEmission, isAffixedLeaf, referencedKinds } from './shared.ts';
@@ -61,12 +62,23 @@ export function textlessLeafKinds(nodeMap: NodeMap, kindEntries: readonly KindEn
 }
 
 export function builtFromText(nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[]): BuiltFromText[] {
-	return classifiedLeaves(nodeMap, kindEntries).map((entry) => {
-		if (entry.form === 'textless') {
-			throw new Error(`leaf registry: '${entry.kind}' has a factory but no text pattern; an external scanner token authors its shape in renderAs`);
-		}
-		return entry;
-	});
+	const collector = new EmitCollector('');
+	const leaves = classifiedLeaves(nodeMap, kindEntries).flatMap(
+		(entry) =>
+			collector.guard(() => {
+				if (entry.form === 'textless') {
+					throw emitShapeFailure({
+						code: 'leaf-without-text-pattern',
+						ownerKind: entry.kind,
+						message: `leaf registry: '${entry.kind}' has a factory but no text pattern`,
+						proposal: `an external scanner token authors its shape in renderAs: renderAs: (_$) => ({ ${entry.kind}: <pattern or string> })`
+					});
+				}
+				return [entry];
+			}) ?? []
+	);
+	collector.assertClear();
+	return leaves;
 }
 
 export function storedTextKinds(nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[]): Extract<BuiltFromText, { form: 'stored' }>[] {

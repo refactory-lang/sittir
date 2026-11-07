@@ -1,4 +1,5 @@
 import type { PortableCondition, PortableFact, PortableStep, QueryPlan, QuerySubject, SlotSubject } from '@sittir/types';
+import { emitShapeFailure } from '../../../compiler/diagnostics/emit-diagnostics.ts';
 import { WILDCARD, type CaptureSite, type PredicateFact, type SlotModel } from '../../../bindings/facts.ts';
 import { Delimiter } from '@sittir/common/delimiter';
 import { aliasContentSlot, comparesOwnText, heldSteps, listItems, slotAnchor, type ChildTest, type HeldStep, type ReadEntry } from '../../../bindings/routes.ts';
@@ -155,7 +156,7 @@ export function readTestOf(entry: ReadEntry, model: SlotModel, subjectOf: SlotSu
 	const separated = entry.separated === true ? [separatedTestOf(entry, model, subjectOf)] : [];
 	const conditions = [...pins, ...absent, ...separated, ...predicates.map((p) => (typeof p === 'string' ? p : conditionOf(entry, p, model, subjectOf, typeOf)))];
 	const refused = conditions.filter((c) => typeof c === 'string');
-	if (refused.length > 0) throw new Error(`portable: cannot test ${entry.kind} as ${entry.vocab}: ${refused.join('; ')}`);
+	if (refused.length > 0) throw emitShapeFailure({ code: 'portable-read-untestable', ownerKind: entry.kind, message: `cannot test ${entry.kind} as ${entry.vocab}: ${refused.join('; ')}`, details: { vocab: entry.vocab } });
 	const unique = new Map((conditions as PortableCondition[]).map((condition) => [JSON.stringify(condition), condition]));
 	return [...unique.values()];
 }
@@ -180,7 +181,7 @@ export function portableFactOf(
 	const placed = test.filter((condition) => condition.up > 0);
 	if (placed.length === 0) return undefined;
 	const refuse = (why: string): never => {
-		throw new Error(`portable: ${entry.kind} as ${entry.vocab} is a fact its container spells, but ${why}`);
+		throw emitShapeFailure({ code: 'portable-read-untestable', ownerKind: entry.kind, message: `${entry.kind} as ${entry.vocab} is a fact its container spells, but ${why}`, details: { vocab: entry.vocab } });
 	};
 	const [container] = entry.claim.within;
 	if (container === undefined || container === WILDCARD) return refuse('its claim names no container');

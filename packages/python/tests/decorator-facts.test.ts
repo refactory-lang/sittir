@@ -1,22 +1,30 @@
 import { describe, expect, it } from 'vitest';
 import { createEngine } from '@sittir/common';
 import { portableRuntime } from '@sittir/common/engine';
+import type { NodeStorageOptions } from '@sittir/types';
 import python from '../src/index.ts';
 
 type Read = { readonly $path: string; readonly [member: string]: unknown };
 
-const runtime = await portableRuntime(await createEngine(python, { api: 'strict' }));
+const STORAGES: readonly (readonly [string, NodeStorageOptions])[] = [
+	['arena storage', {}],
+	['object storage', { nodeStorage: 'object' }]
+];
 const classOf = (...lines: readonly string[]): string => `class A:\n${lines.map((line) => `    ${line}\n`).join('')}`;
-const memberOf = (source: string): Read => {
-	const file = runtime.read(runtime.engine.parse(source)) as Read;
-	return (((file.statements as readonly Read[])[0]!.body as Read).statements as readonly Read[])[0]!;
-};
-const inClass = (member: Read): string =>
-	String(runtime.engine.render(runtime.build({ $path: 'declaration.class', name: 'A', bases: [], body: { $path: 'statement.block', statements: [member] } } as never) as never));
 const block = (statement: string): Read => ({ $path: 'statement.block', statements: [statement] });
 const cache: Read = { $path: 'attribute.decorator', content: { $path: 'expression.member', object: 'functools', property: 'cache' } };
 
-describe('a decorator that states a fact is that fact', () => {
+const runtimes = new Map(await Promise.all(STORAGES.map(async ([name, storage]) => [name, await portableRuntime(await createEngine(python, { api: 'strict', ...storage }))] as const)));
+
+describe.each(STORAGES)('a decorator that states a fact is that fact, in %s', (name) => {
+	const runtime = runtimes.get(name)!;
+	const memberOf = (source: string): Read => {
+		const file = runtime.read(runtime.engine.parse(source)) as Read;
+		return (((file.statements as readonly Read[])[0]!.body as Read).statements as readonly Read[])[0]!;
+	};
+	const inClass = (member: Read): string =>
+		String(runtime.engine.render(runtime.build({ $path: 'declaration.class', name: 'A', bases: [], body: { $path: 'statement.block', statements: [member] } } as never) as never));
+
 	it.each([
 		[classOf('@property', 'def x(self) -> int:', '    return 1'), 'declaration.property.getter', {}, { getter: { index: 0, spelling: 'property' } }],
 		[classOf('@x.setter', 'def x(self, v):', '    pass'), 'declaration.property.setter', {}, { setter: { index: 0 } }],

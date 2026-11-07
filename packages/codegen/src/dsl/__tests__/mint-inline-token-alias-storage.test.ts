@@ -60,10 +60,10 @@ describe('mintInlineLiteralAliasStorage over an inline token', () => {
 		expect(out.rules.a).toEqual(alias(body, 'content'));
 	});
 
-	it('an alias over a bare literal is not an inline token and stays inline', () => {
-		const rules = { a: alias(S('?'), 'lazy') };
-		const out = mint(rules);
-		expect(out.storageNames).toEqual([]);
-		expect(out.rules.a).toEqual(alias(S('?'), 'lazy'));
+	it('an alias over a bare literal is minted the same way as one over a token', () => {
+		const out = mint({ a: alias(S('?'), 'lazy') });
+		expect(out.storageNames).toEqual(['_lazy']);
+		expect(out.rules._lazy).toEqual(S('?'));
+		expect(out.rules.a).toEqual(alias(sym('_lazy'), 'lazy'));
 	});
 });

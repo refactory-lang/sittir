@@ -20,6 +20,7 @@ import type {
 	PortableValueBuild,
 	QueryPlan
 } from '@sittir/types';
+import { emitShapeFailure } from '../../../compiler/diagnostics/emit-diagnostics.ts';
 import { Delimiter } from '@sittir/common/delimiter';
 import type { ChildTest, GrammarRoutes, MemberRoute, ReadEntry, SlotStep } from '../../../bindings/routes.ts';
 import { concreteKinds, guaranteedBy, heldSteps, modelNode, mountHoldersOf, reachedBy, shownSlots, valueTokensOf, type Guaranteed, type MountHolder } from '../../../bindings/routes.ts';
@@ -225,7 +226,7 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 	for (const [kind, entries] of routes.readEntries) for (const { claim } of entries) if (claim.value !== undefined) declaredValues.set(kind, claim.value);
 	const register = (key: string, shape: PortableCallShape): string => {
 		const known = builders.get(key);
-		if (known !== undefined && known !== shape) throw new Error(`portable build: ${key} takes both ${known} and ${shape} input`);
+		if (known !== undefined && known !== shape) throw emitShapeFailure({ code: 'portable-vocabulary-mismatch', message: `${key} takes both ${known} and ${shape} input` });
 		builders.set(key, shape);
 		return key;
 	};
@@ -244,7 +245,7 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 	};
 	const holderOf = (kind: string): MountHolder | undefined => {
 		const at = mountHoldersOf(model, storageName(kind));
-		if (at.length > 1) throw new Error(`portable build: ${kind} is mounted at ${at.map(({ holder, slot }) => `${holder}.${slot}`).join(' and ')}, so no one mount builds it`);
+		if (at.length > 1) throw emitShapeFailure({ code: 'portable-vocabulary-mismatch', ownerKind: kind, message: `${kind} is mounted at ${at.map(({ holder, slot }) => `${holder}.${slot}`).join(' and ')}, so no one mount builds it` });
 		return at[0];
 	};
 	const builderOf = (kind: string): string | undefined => {
@@ -265,7 +266,7 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 		call === 'none' ? 'constant' : call === 'holder' ? shapeOf(holder) : call === 'child' ? seated : 'config';
 	const keyAt = (owner: string, slot: string): string => {
 		const key = slotOf(owner, slot)?.propertyName;
-		if (key === undefined) throw new Error(`portable build: ${owner} mounts a kind at ${slot}, which it has no slot for`);
+		if (key === undefined) throw emitShapeFailure({ code: 'portable-vocabulary-mismatch', message: `${owner} mounts a kind at ${slot}, which it has no slot for` });
 		return key;
 	};
 	interface MountBuilder {
@@ -283,7 +284,7 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 		const host = mountOf(up.holder, up.slot, owner);
 		const nested = name.replaceAll('.', '$');
 		const upCall = host?.nested?.[nested];
-		if (host === undefined || upCall === undefined) throw new Error(`portable build: ${up.holder} mounts ${owner} with no nested mount ${nested}`);
+		if (host === undefined || upCall === undefined) throw emitShapeFailure({ code: 'portable-vocabulary-mismatch', message: `${up.holder} mounts ${owner} with no nested mount ${nested}` });
 		const above = mountBuilderOf(up.holder, `${host.mount}$${nested}`, upCall, own);
 		if (above === undefined || (upCall !== 'keyed' && upCall !== 'keyedArgs')) return above;
 		return { ...above, outer: { call: upCall, key: keyAt(up.holder, up.slot), seats: own, ...(above.outer === undefined ? {} : { outer: above.outer }) } };
@@ -364,7 +365,7 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 						...(members.length === 0 ? {} : { members })
 					};
 					if (mount !== undefined && mounted === undefined && mount.mounted.call !== 'child')
-						throw new Error(`portable build: ${kind} in ${owner}'s ${slot.name} builds through ${mount.builder}, which takes ${mount.mounted.call} input inside another container`);
+						throw emitShapeFailure({ code: 'portable-vocabulary-mismatch', message: `${kind} in ${owner}'s ${slot.name} builds through ${mount.builder}, which takes ${mount.mounted.call} input inside another container` });
 					const next = outer === undefined ? [...within, container] : [...within.slice(0, -1), container];
 					nested.push(...seatsOf(visible ? node : holder, visible ? element.propertyName : key, kind, element, next, [...entered, kind], unwrap!.list, final));
 				} else if (node instanceof AssembledSupertype) {
@@ -719,7 +720,7 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 		const wonInputs = [...new Set(won.map(([member]) => member))];
 		const wonPreferences = [...new Set(won.map(([, preference]) => preference))];
 		if (won.length !== wonInputs.length * wonPreferences.length)
-			throw new Error(`portable build: ${entry.vocab} claims ${token.kind} by spellings that are no product of its facets' members`);
+			throw emitShapeFailure({ code: 'portable-vocabulary-mismatch', message: `${entry.vocab} claims ${token.kind} by spellings that are no product of its facets' members` });
 		const presetAt = (facet: AssembledNonterminal | undefined, members: readonly (string | null)[], satisfied: boolean): readonly Placed[] => {
 			const among = members.flatMap((member) => (member === null ? [] : [member]));
 			const [first] = among;
@@ -756,7 +757,7 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 			for (const seat of seats) {
 				const at = `${name} ${landingOf(member.steps, seat.within)}`;
 				const other = landed.get(at);
-				if (other !== undefined && other !== i) throw new Error(`portable build: ${entry.vocab}: ${kind}'s member ${name} lands on ${landingOf(member.steps, seat.within)} by two routes`);
+				if (other !== undefined && other !== i) throw emitShapeFailure({ code: 'portable-vocabulary-mismatch', message: `${entry.vocab}: ${kind}'s member ${name} lands on ${landingOf(member.steps, seat.within)} by two routes` });
 				landed.set(at, i);
 			}
 		const flagged = entry.members.flatMap((route) => {
@@ -795,8 +796,8 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 		const mounts = mountHoldersOf(model, storageName(kind)).flatMap(({ holder, slot }) => {
 			const mount = mountAt(holder, slot, kind);
 			if (mount === undefined) return [];
-			if (mount.mounted.outer !== undefined) throw new Error(`portable build: ${kind} builds through ${mount.builder}, which seats its holder in another holder's key`);
-			if (holderOf(holder) !== undefined) throw new Error(`portable build: ${kind} builds through ${mount.builder}, whose holder ${holder} is itself mounted`);
+			if (mount.mounted.outer !== undefined) throw emitShapeFailure({ code: 'portable-vocabulary-mismatch', message: `${kind} builds through ${mount.builder}, which seats its holder in another holder's key` });
+			if (holderOf(holder) !== undefined) throw emitShapeFailure({ code: 'portable-vocabulary-mismatch', message: `${kind} builds through ${mount.builder}, whose holder ${holder} is itself mounted` });
 			const holderId = typeOf(holder);
 			if (holderId === undefined) throw new Error(`portable build: ${kind} builds through ${mount.builder}, whose holder ${holder} has no kind id`);
 			return [{ builder: mount.builder, mounted: { ...mount.mounted, holder: holderId }, site: [holderId, mount.mounted.key] as const }];
@@ -931,9 +932,9 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 			const numericKeys = shape !== undefined && builder !== undefined && builders.get(builder) === 'config' ? numericSlotKeys(node) : [];
 			const memberAt = (key: string): string | undefined => completed.find(({ member }) => member.steps.length === 1 && member.steps[0]!.key === key)?.member.name;
 			const whole = numericKeys.length === 1 ? memberAt(numericKeys[0]!) : undefined;
-			if (numericKeys.length === 1 && whole === undefined) throw new Error(`portable build: ${kind} takes its number at ${numericKeys[0]}, which no member of ${entry.vocab} reaches`);
+			if (numericKeys.length === 1 && whole === undefined) throw emitShapeFailure({ code: 'portable-vocabulary-mismatch', message: `${kind} takes its number at ${numericKeys[0]}, which no member of ${entry.vocab} reaches` });
 			const partless = numericKeys.length > 1 ? numericKeys.filter((key) => !DECIMAL_PARTS.some((part) => part === key)) : [];
-			if (partless.length > 0) throw new Error(`portable build: ${kind}'s numeric slots ${partless.join(', ')} are no part of a decimal spelling`);
+			if (partless.length > 0) throw emitShapeFailure({ code: 'portable-vocabulary-mismatch', message: `${kind}'s numeric slots ${partless.join(', ')} are no part of a decimal spelling` });
 			const parts: PortableDecimalParts = Object.fromEntries(DECIMAL_PARTS.flatMap((part) => (memberAt(part) === undefined ? [] : [[part, memberAt(part)!]])));
 			const numeric: PortableBuildArm['numeric'] = numericKeys.length === 0 ? undefined : (whole ?? parts);
 			const armMembers = completed.map(({ member }) => member);
@@ -978,17 +979,17 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 			];
 		});
 		if (mounts.length < 2) return arms;
-		if (shape !== undefined) throw new Error(`portable build: ${kind} is mounted at ${mounts.length} holders, so no one mount spells its number`);
+		if (shape !== undefined) throw emitShapeFailure({ code: 'portable-vocabulary-mismatch', message: `${kind} is mounted at ${mounts.length} holders, so no one mount spells its number` });
 		return mounts.flatMap(({ builder, mounted, site }) => arms.map((arm): Arm => ({ ...arm, site, arm: { ...arm.arm, builder, mounted } })));
 	};
 
 	const refuseList = (flag: string, path: string): never => {
-		throw new Error(`portable build: ${path}'s ${flag} is the trailing separator of a list no step reaches`);
+		throw emitShapeFailure({ code: 'portable-vocabulary-mismatch', message: `${path}'s ${flag} is the trailing separator of a list no step reaches` });
 	};
 	const soleOf = (entry: ReadEntry, members: readonly PortableMemberStep[]): { readonly sole?: PortableBuildArm['sole'] } => {
 		if (entry.separated !== true) return {};
 		const listed = [...new Set(members.filter((member) => member.list === true).map((member) => member.name))];
-		if (listed.length !== 1) throw new Error(`portable build: ${entry.kind} as ${entry.vocab} is read by its own separator, so it builds one list member; it has ${listed.length}`);
+		if (listed.length !== 1) throw emitShapeFailure({ code: 'portable-vocabulary-mismatch', message: `${entry.kind} as ${entry.vocab} is read by its own separator, so it builds one list member; it has ${listed.length}` });
 		return { sole: { member: listed[0]!, delimiter: Delimiter.Trailing } };
 	};
 	const emptiedOf = (members: readonly PortableMemberStep[]): { readonly empty?: readonly string[] } => {

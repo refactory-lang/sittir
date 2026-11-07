@@ -27,25 +27,23 @@ kept: records are the wire in both directions (ruling 3).
 
 ## Packed AST is definitive
 
-The grammar-generated packed, immutable AST is Sittir's **canonical constructed-node representation** and its typed native interchange representation. Records are not the only storage. Both storage choices stay, permanently, as engine options (ruling 15): where a parsed tree's nodes live (`nodeStorage`: `'arena'`, the default, or `'object'`) and how built nodes are stored (`nodeConstruction`: `'record'`, the default under arena storage, or `'object'`). The object reader, the object codec and object construction are kept beside records, not retired, and measurements choose the defaults. Performance measurements determine layout, batching, wrapper and allocation optimizations; they do **not** reopen the record format as what arena storage and record construction hold.
+The grammar-generated packed, immutable AST is Sittir's **canonical constructed-node representation** and its typed native interchange representation. Records are not the only storage. Both node backends stay as engine options: `nodeStorage: 'arena'` (the default) reads arena views and builds records; `nodeStorage: 'object'` reads and builds objects. The storage also decides how built nodes are stored; no option chooses that apart from it. The object reader, the object codec and object construction are kept beside records, not retired, and measurements choose the defaults. Performance measurements determine layout, batching, wrapper and allocation optimizations; they do **not** reopen the record format as what arena storage and record construction hold.
 
-**The options** (ruling 15). The two keys are typed as a union, so the one invalid pair, object storage with record construction, does not compile:
+**The option.** The public choice is the node backend, one key:
 
 ```ts
 export type NodeStorage = 'arena' | 'object';
-export type NodeConstruction = 'record' | 'object';
-export type NodeStorageOptions =
-	| { readonly nodeStorage?: 'arena'; readonly nodeConstruction?: NodeConstruction }
-	| { readonly nodeStorage: 'object'; readonly nodeConstruction?: 'object' };
+export interface NodeStorageOptions {
+	readonly nodeStorage?: NodeStorage;
+}
 ```
 
-- `CreateEngineOptions` and `NativeEngineOptions` take `NodeStorageOptions`, and `NativeEngineOptions` is a type alias over the union.
-- For a caller the types do not reach, `createEngine` refuses the pair by name: `nodeConstruction 'record' needs nodeStorage 'arena', since records live in the arena`.
-- `{}` gives arena storage with record construction, `{ nodeConstruction: 'object' }` arena storage with object construction, and `{ nodeStorage: 'object' }` objects for both.
+- `CreateEngineOptions` and `NativeEngineOptions` take `NodeStorageOptions`.
+- `{}` and `{ nodeStorage: 'arena' }` give arena views and record construction; `{ nodeStorage: 'object' }` gives objects for both. A hybrid has no spelling. `createEngine` reads only the keys it knows, so a `nodeConstruction` key passed past the types is ignored like any other unknown key.
 - An engine with record construction loads its records module lazily, as the builder tables load (`hooks.records`), and makes its built arena when that module first loads. No internal switch turns record construction on.
-- Validation's construction flag takes `NodeConstruction`'s values and type.
-- The `api` table choice (`default` or `strict`) is orthogonal: both tables build through the engine's construction. Built node types are the same under every pair, so neither key is a type parameter of `Engine`.
-- `nodeConstruction`'s JSDoc: how the engine's builders store a built node. `'record'`, the default under arena storage, writes an immutable record into the engine's built arena; `'object'` keeps the node's fields on its object. `'record'` needs `nodeStorage: 'arena'`, and the engine throws when it is given with `nodeStorage: 'object'`.
+- Validation's `--node-storage` flag takes `NodeStorage`'s values; it has no construction flag.
+- The `api` table choice (`default` or `strict`) is orthogonal: both tables build through the engine's construction. Built node types are the same under both storages, so the storage is not a type parameter of `Engine`.
+- `nodeStorage`'s JSDoc: the parsed and built node backend. `'arena'`, the default, reads parsed nodes as record views and builds immutable records in the engine's built arena; `'object'` reads and builds object nodes. Asking `'arena'` of an addon built without the `arena` feature throws.
 
 **Two origins, one representation:** a generated native reader projects Tree-sitter nodes directly into typed binary records, without a JavaScript AST intermediate. This is a projection and copy of selected facts, **not** a zero-copy view of Tree-sitter's internal tree memory. Parsed source and Tree-sitter remain authoritative for untouched source-backed subtrees, with lazy record materialization and coordinate folding. Builders write immutable records directly, without first creating an object graph to serialize at render. Both feed the same native renderer. A record can be materialized later, but is published once.
 
@@ -909,12 +907,13 @@ raised (11), with four made since (12–15).
     address: its holder's cell holds its kind, its text and the edges the holder changed beside it.
     The holder keeps the leaf object, which records each site it is placed at, and the leaf's sides
     are written to the store at each of them, keyed as a unit's are (§ Leaves, § Trivia).
-15. **Both storage options stay** (the maintainer, 2026-10-27). Records measure at best flat against
-    objects, and arena storage with object construction is the fastest mix today. So `nodeStorage`
-    (`'arena'`, the default, or `'object'`) and `nodeConstruction` (`'record'`, the default under
-    arena storage, or `'object'`, and only `'object'` under object storage) are permanent options,
-    and the object reader, the object codec and object construction are kept beside records
-    (§ Packed AST is definitive).
+15. **Both node backends stay** (the maintainer, 2026-10-27; paired selection revised 2026-10-29; one option 2026-11-05).
+    The object reader, object codec and object builders stay beside the arena/record backend.
+    Earlier measurements motivated independent choices and recorded a fast arena/object hybrid;
+    they are not evidence that mixing necessarily adds runtime overhead. The accepted API
+    supports object/object and arena/record, and `nodeStorage` is its one option: how built
+    nodes are stored follows the storage, so the hybrid has no spelling. Object mode is checked against a pinned current master for behavior
+    and performance; source fidelity is assessed separately in each supported mode.
 
 ## Appendix A. Attributed declarations
 

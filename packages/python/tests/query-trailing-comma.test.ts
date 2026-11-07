@@ -16,8 +16,8 @@ const textIn = (source: string) => (node: unknown): string => {
 	return source.slice(start, end);
 };
 
-type Listed = { readonly _delimiter?: number; readonly length: number };
-const readsTrailing = (node: unknown): boolean => (((node as Listed)._delimiter ?? 0) & 2) !== 0 && (node as Listed).length >= 2;
+type Listed = { readonly delimiter?: number; readonly length: number };
+const readsTrailing = (node: unknown): boolean => (((node as Listed).delimiter ?? 0) & 2) !== 0 && (node as Listed).length >= 2;
 
 describe('c.is(\'trailingComma\') on a bare tuple in a where condition', () => {
 	const selects = (source: string, all: readonly unknown[], native: readonly unknown[], negated: readonly unknown[], trailing: readonly string[]) => {

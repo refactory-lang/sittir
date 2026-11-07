@@ -1,11 +1,5 @@
 export { run as syncBase, type SyncBaseOptions } from './sync-base.ts';
 export { run as listKinds, type ListKindsOptions } from './discover/list-kinds.ts';
-export {
-	run as nodeJsonCensus,
-	nodeJsonCensus as computeNodeJsonCensus,
-	type NodeJsonCensusOptions,
-	type NodeJsonCensus
-} from './census/node-json-census.ts';
 export { run as overrideCensus, type OverrideCensusOptions } from './discover/override-census.ts';
 export {
 	run as separatedLists,
@@ -28,7 +22,7 @@ export { run as probeValidate, type ProbeValidateOptions } from './probe/validat
 export { run as profile, type ProfileOptions } from './profile/failures.ts';
 export { run as profileFactory, type ProfileFactoryOptions } from './profile/factory.ts';
 export { run as bench, type BenchOptions } from './profile/bench.ts';
-export { run as benchCodemod, type BenchCodemodOptions } from './profile/codemod.ts';
+export { run as benchStorage, type StorageBenchOptions } from './profile/storage.ts';
 export { run as diffFailures, type DiffFailuresOptions } from './validate/diff.ts';
 export { run as defectHistogram, type DefectHistogramOptions } from './validate/defect-histogram.ts';
 export { run as dumpAstMismatches, type DumpAstMismatchesOptions } from './validate/dump-ast-mismatches.ts';
@@ -64,6 +58,7 @@ export { run as checkBaseline, type CheckBaselineOptions } from './validate/base
 export { run as propose14, type Propose14Options } from './validate/propose-14.ts';
 export { run as glossaryKeys, type GlossaryKeysOptions } from './validate/glossary-keys.ts';
 export { run as checkPerf, type CheckPerfOptions } from './validate/perf.ts';
+export { run as encodeStack, type EncodeStackOptions } from './validate/encode-stack.ts';
 export { run as classify, type ClassifyOptions } from './discover/classify.ts';
 export { run as phantomKinds, type PhantomKindsOptions } from './discover/phantom.ts';
 export { run as fieldProvenance, type FieldProvenanceOptions } from './discover/provenance.ts';
@@ -128,6 +123,7 @@ export {
 	resolveGrammars,
 	resolveBackends
 } from './commands.ts';
+export { parseNodeStorage } from './validate/common.ts';
 export { run as emitFactorySource, type EmitFactorySourceOptions } from './emit/factory-source.ts';
 export { run as hoistedCensus, type HoistedCensusOptions } from './census/hoisted.ts';
 export { run as spelledTrivia, type SpelledTriviaOptions } from './census/spelled-trivia.ts';

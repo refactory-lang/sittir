@@ -33,7 +33,7 @@ export interface HoldsTree {
 
 /** A node: an object a factory built or a parse read, stamped with which of them produced it; a copy keeps its stamp. Every `.Bound` and `.Parsed` node is one. */
 export interface HoldsSource {
-	readonly [SourceMember]: 0 | 1 | 2;
+	readonly [SourceMember]: 0 | 2;
 }
 
 export interface SlotHint<Input, Optional extends boolean = false, Rest extends boolean = false, Config = never> {
@@ -148,7 +148,9 @@ export type FormsHolding<Union, Slot extends string, Value> = [Refusals<Value, n
 		: never
 	: never;
 
-export type ListView<E, O> = ReadonlyArray<E> & Readonly<O>;
+export type ListView<E, O> = ReadonlyArray<E> & Readonly<ListOptionMembers<O>>;
+
+type ListOptionMembers<O> = Pick<O, Exclude<keyof O, 'separator'>> & { [K in Extract<keyof O, 'separator'>]: () => O[K] };
 
 type MethodKeys<N> = keyof { [P in keyof N as N[P] extends () => unknown ? P : never]: 1 };
 type Accessors<N, ByKindId> = {
@@ -157,6 +159,7 @@ type Accessors<N, ByKindId> = {
 		: never;
 };
 type Storage<N> = Remap<N, MethodKeys<N> | '__slotHints__'>;
+type PublicStorage<N> = Remap<N, MethodKeys<N> | '__slotHints__' | Extract<keyof N, `_${string}`>>;
 
 export type Admit<V> = V extends unknown
 	? V extends { readonly $type: infer Id extends number }
@@ -474,7 +477,7 @@ type ShapesOf<Surface, N, H, Of, ByChild> = [Of] extends [never]
 
 export type FlatShapesOf<Surface, N, ByChild> = ShapesOf<Surface, N, FlatOf<N>, FlatOf<N>, ByChild>;
 
-type SurfaceOf<N, ByChild> = Storage<N> &
+type SurfaceOf<N, ByChild, S = Storage<N>> = S &
 	Accessors<N, ByChild> &
 	ListPart<N, ByChild> & {
 		readonly __slotHints__?: HintsOf<N>;
@@ -482,7 +485,7 @@ type SurfaceOf<N, ByChild> = Storage<N> &
 		readonly __slotFlags__?: SlotFlagsHintOf<N>;
 	};
 export type BoundOf<N, ByBound> = SurfaceOf<N, ByBound>;
-export type ParsedOf<N, ByParsed> = SurfaceOf<N, ByParsed>;
+export type ParsedOf<N, ByParsed> = SurfaceOf<N, ByParsed, PublicStorage<N>>;
 /** `$with` for a tree-bound node: one setter per slot returning the node with that slot replaced. On a supertype union the setters intersect, so a slot whose forms disagree on its value type refuses every value; `FormsHolding` names the forms that accept one. */
 export type WithNode<Self, ByBound, Of = Self> = WithOf<Self, ByBound, Of>;
 export type BoundWithNode<Self, ByBound, Of = Self> = Setters<Self, ByBound, true, Of>;

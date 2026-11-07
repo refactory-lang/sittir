@@ -22,7 +22,6 @@ import {
 	dedupeValues,
 	extractSeparatorKindId,
 	extractSeparatorString,
-	isTerminalValue,
 	mergeDelimiterMode,
 	mergeSlotsByName,
 	mergeSourceRuleIds,
@@ -227,10 +226,7 @@ function buildSlot(
 		unnamedChoiceWarner(rule.id ?? kindForName);
 	}
 
-	const rawValues = retargetAliasedLiteral(
-		rule,
-		deriveValuesForRule(rule, { ...deriveCtx, stampArmFieldNamesAsParseName: sanctionedUnion }, mult)
-	);
+	const rawValues = deriveValuesForRule(rule, { ...deriveCtx, stampArmFieldNamesAsParseName: sanctionedUnion }, mult);
 	const dedupedValues = dedupeValues(rawValues);
 	if (dedupedValues.length === 0) return null;
 
@@ -466,20 +462,4 @@ function resolveMember(
 			return slot ? [slot] : [];
 		}
 	}
-}
-
-function retargetAliasedLiteral(rule: SimplifiedRule, values: NodeOrTerminal[]): NodeOrTerminal[] {
-	if (rule.type !== STRING || rule.nonterminal !== true || rule.aliasedTo === undefined) return values;
-	const { aliasedTo, aliasedToId } = rule;
-	return values.map((v) =>
-		isTerminalValue(v)
-			? {
-					...v,
-					resolvedKind: aliasedTo,
-					resolvedKindId: aliasedToId ?? v.resolvedKindId,
-					parseKind: { kind: 'unresolved-ref', name: aliasedTo },
-					parseKindId: aliasedToId ?? v.parseKindId
-				}
-			: v
-	);
 }

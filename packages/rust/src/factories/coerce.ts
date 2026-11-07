@@ -25,10 +25,12 @@ import {
 	coerceMixedEnumStorage,
 	configFieldOr,
 	currentHandle,
+	describeValue,
 	isNodeOfKind,
 	isNodeValue,
 	listStorage,
-	withEmptyForm
+	withEmptyForm,
+	withOptions
 } from '@sittir/common/utils';
 
 const F = RawBuilders as PlainBuilders<typeof RawBuilders>;
@@ -285,13 +287,6 @@ function _resolveBareText(v: string, kinds: readonly string[]): AnyUntypedNode |
 	return undefined;
 }
 
-const _DELIMITER_TOKENS: { readonly [kind: string]: (bag: Readonly<Record<string, unknown>>) => unknown } = {
-	raw_string_literal_start: (bag) =>
-		(F.buildRawStringLiteralStart as (...args: unknown[]) => unknown)(bag['prefix'], { hashes: bag['hashes'] }),
-	raw_string_literal_end: (bag) =>
-		(F.buildRawStringLiteralEnd as (...args: unknown[]) => unknown)({}, { hashes: bag['hashes'] })
-};
-
 function _isFromKind(k: string): k is keyof _FromMap {
 	return k in _fromMap;
 }
@@ -322,14 +317,6 @@ function _resolveByKind<K extends keyof _FromMap>(kind: K, rest: _LooseFieldInpu
 	if (_SLOTLESS_TEXT_KINDS.has(kind) || 'text' in rest)
 		throw new Error(`the ${kind} tag takes its text: { $type: <kind id>, text: "…" }`);
 	return fn(rest);
-}
-
-export function buildByKind(kind: string, ...input: unknown[]): unknown {
-	if (Object.hasOwn(_DELIMITER_TOKENS, kind))
-		return _DELIMITER_TOKENS[kind]!(Object.assign({}, ...input) as Readonly<Record<string, unknown>>);
-	if (!Object.hasOwn(_fromMap, kind)) throw new Error(`no builder for kind ${JSON.stringify(kind)}`);
-	if (input.length === 1) return _resolveByKind(kind as keyof _FromMap, input[0] as _LooseFieldInput);
-	return (_fromMap[kind as keyof _FromMap] as (...args: unknown[]) => unknown)(...input);
 }
 
 function _keywordOf(v: _LooseFieldInput, keywords: readonly (readonly [string, number])[]): number | undefined {
@@ -863,7 +850,7 @@ function _resolveOne<T>(
 	}
 	if (typeof v === 'object') {
 		throw new Error(
-			`_resolveOne: cannot resolve value to any of [${[...leafKinds, ...branchKinds].join(', ')}]: ${JSON.stringify(v)}`
+			`_resolveOne: cannot resolve value to any of [${[...leafKinds, ...branchKinds].join(', ')}]: ${describeValue(v)}`
 		);
 	}
 	if (typeof v === 'string') {
@@ -886,28 +873,19 @@ function _resolveMany<T>(
 
 function _listElements(
 	input: readonly unknown[],
-	optionKeys: readonly string[],
 	wrapperKind: string | undefined,
 	resolve: (elements: readonly unknown[]) => readonly unknown[],
 	tagKinds: readonly string[],
 	bagKinds?: readonly string[]
 ): readonly unknown[] {
-	const head = input[0];
-	const optionsFirst =
-		optionKeys.length > 0 &&
-		typeof head === 'object' &&
-		head !== null &&
-		!Array.isArray(head) &&
-		!isNodeValue(head) &&
-		Object.keys(head).every((k) => optionKeys.includes(k));
-	const elements = (optionsFirst ? input.slice(1) : input).map((e) => {
+	const elements = input.map((e) => {
 		if (typeof e !== 'object' || e === null || Array.isArray(e) || isNodeValue(e)) return e;
 		const tagged = _splitTag(e);
 		if (tagged !== undefined) return _resolveByKind(_fromOfTag(tagged.tag, tagKinds), tagged.rest);
 		if (bagKinds === undefined || bagKinds.length === 0) return e;
 		if (bagKinds.length > 1)
 			throw new Error(
-				`a bag in this list needs a $type tag naming one of [${bagKinds.join(', ')}]: ${JSON.stringify(e)}`
+				`a bag in this list needs a $type tag naming one of [${bagKinds.join(', ')}]: ${describeValue(e)}`
 			);
 		return _isFromKind(bagKinds[0]!) ? _resolveByKind(bagKinds[0]!, e) : e;
 	});
@@ -919,7 +897,7 @@ function _listElements(
 			? e
 			: resolve([e])[0]
 	);
-	return optionsFirst ? [head, ...resolved] : resolved;
+	return resolved;
 }
 
 function _resolveOneLeaf<T>(v: _LooseFieldInput, kind: string): Admit<T> {
@@ -933,7 +911,7 @@ function _resolveOneLeaf<T>(v: _LooseFieldInput, kind: string): Admit<T> {
 	const tagged = _splitTag(v);
 	if (tagged !== undefined) return _resolveByKind(_fromOfTag(tagged.tag, [kind]), tagged.rest) as Admit<T>;
 	if (typeof v === 'object') {
-		throw new Error(`_resolveOneLeaf: cannot resolve value to leaf kind '${kind}': ${JSON.stringify(v)}`);
+		throw new Error(`_resolveOneLeaf: cannot resolve value to leaf kind '${kind}': ${describeValue(v)}`);
 	}
 	return v as Admit<T>;
 }
@@ -1499,7 +1477,7 @@ function _resolveOneBranch<T>(
 		if (_isFromKind(kind)) return _resolveByKind(kind, v) as Admit<T>;
 	}
 	if (typeof v === 'object') {
-		throw new Error(`_resolveOneBranch: cannot resolve value to branch kind '${kind}': ${JSON.stringify(v)}`);
+		throw new Error(`_resolveOneBranch: cannot resolve value to branch kind '${kind}': ${describeValue(v)}`);
 	}
 	return v as Admit<T>;
 }
@@ -2468,7 +2446,7 @@ export const coerceToExpressionStatement: ConfigSeat<
 			| T.ForExpression
 			| T.ConstBlock
 		>(
-			configFieldOr(input, 'content', () => input),
+			configFieldOr(input, 'content', () => input, TSKindId.ExpressionStatement),
 			_K2,
 			_K3
 		)
@@ -2991,7 +2969,7 @@ export const coerceToNonSpecialToken: ConfigSeat<T.NonSpecialToken.Loose, Return
 		return input as unknown as ReturnType<typeof F.buildNonSpecialToken>;
 	return F.buildNonSpecialToken(
 		_keywordOr(
-			configFieldOr(input, 'content', () => input),
+			configFieldOr(input, 'content', () => input, TSKindId.NonSpecialToken),
 			[
 				['mut', TSKindId.MutableSpecifier] as const,
 				['self', TSKindId.Self] as const,
@@ -3047,7 +3025,7 @@ export const coerceToNonSpecialToken: ConfigSeat<T.NonSpecialToken.Loose, Return
 			() =>
 				coerceMixedEnumStorage(
 					_resolveKindEnum(
-						configFieldOr(input, 'content', () => input),
+						configFieldOr(input, 'content', () => input, TSKindId.NonSpecialToken),
 						[
 							TSKindId.MutableSpecifier,
 							TSKindId.Self,
@@ -3243,7 +3221,7 @@ export const coerceToNonSpecialToken: ConfigSeat<T.NonSpecialToken.Loose, Return
 								| TSKindId.WhereKeyword
 								| TSKindId.WhileKeyword
 							>(
-								configFieldOr(input, 'content', () => input),
+								configFieldOr(input, 'content', () => input, TSKindId.NonSpecialToken),
 								_K6,
 								_K7
 							)
@@ -3361,7 +3339,7 @@ export const coerceToAttributeItem: ConfigSeat<T.AttributeItem.Loose, ReturnType
 	if (isNodeOfKind(input, TSKindId.AttributeItem)) return input as unknown as ReturnType<typeof F.buildAttributeItem>;
 	return F.buildAttributeItem(
 		_resolveOneBranch<T.Attribute>(
-			configFieldOr(input, 'content', () => input),
+			configFieldOr(input, 'content', () => input, TSKindId.AttributeItem),
 			'attribute'
 		)
 	);
@@ -3381,7 +3359,7 @@ export const coerceToInnerAttributeItem: ConfigSeat<
 		return input as unknown as ReturnType<typeof F.buildInnerAttributeItem>;
 	return F.buildInnerAttributeItem(
 		_resolveOneBranch<T.Attribute>(
-			configFieldOr(input, 'content', () => input),
+			configFieldOr(input, 'content', () => input, TSKindId.InnerAttributeItem),
 			'attribute'
 		)
 	);
@@ -3423,17 +3401,8 @@ export const coerceToDeclarationList: EmptyForm<
 	Seat<T.DeclarationList.LooseArgs, ReturnType<typeof F.buildDeclarationList>>
 > = withEmptyForm((...input: T.DeclarationList.LooseArgs): ReturnType<typeof F.buildDeclarationList> => {
 	currentHandle()?.admit(TSKindId.DeclarationList, input);
-	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.DeclarationList)) {
-		const data = input[0];
-		const stored = (data as unknown as { _declarations?: unknown })._declarations;
-		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.buildDeclarationList(
-			...(listStorage(
-				_resolveKindEnumItems(children, [], (_v) => _resolveMany<T.DeclarationStatement>(_v, _K0, _K10)),
-				(item) => coerceMixedEnumStorage(item, [])
-			) as unknown as Parameters<typeof F.buildDeclarationList>)
-		);
-	}
+	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.DeclarationList))
+		return input[0] as unknown as ReturnType<typeof F.buildDeclarationList>;
 	const _elems: readonly unknown[] = (() => {
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
@@ -3550,7 +3519,7 @@ export const coerceToEnumVariantList: EmptyForm<
 		return input as unknown as ReturnType<typeof F.buildEnumVariantList>;
 	return F.buildEnumVariantList(
 		_resolveOneBranch<T.EnumVariantListElements>(
-			configFieldOr(input, 'elements', () => input),
+			configFieldOr(input, 'elements', () => input, TSKindId.EnumVariantList),
 			'enum_variant_list_elements',
 			undefined,
 			true
@@ -3618,7 +3587,7 @@ export const coerceToFieldDeclarationList: EmptyForm<
 		return input as unknown as ReturnType<typeof F.buildFieldDeclarationList>;
 	return F.buildFieldDeclarationList(
 		_resolveOneBranch<T.FieldDeclarationListElements>(
-			configFieldOr(input, 'elements', () => input),
+			configFieldOr(input, 'elements', () => input, TSKindId.FieldDeclarationList),
 			'field_declaration_list_elements',
 			undefined,
 			true
@@ -3688,7 +3657,7 @@ export const coerceToOrderedFieldDeclarationList: EmptyForm<
 		return input as unknown as ReturnType<typeof F.buildOrderedFieldDeclarationList>;
 	return F.buildOrderedFieldDeclarationList(
 		_resolveOneBranch<T.OrderedFieldDeclarationListElements>(
-			configFieldOr(input, 'elements', () => input),
+			configFieldOr(input, 'elements', () => input, TSKindId.OrderedFieldDeclarationList),
 			'ordered_field_declaration_list_elements',
 			undefined,
 			true
@@ -3997,49 +3966,8 @@ export const coerceToFunctionModifiers: Seat<
 	ReturnType<typeof F.buildFunctionModifiers>
 > = (...input: T.FunctionModifiers.LooseArgs): ReturnType<typeof F.buildFunctionModifiers> => {
 	currentHandle()?.admit(TSKindId.FunctionModifiers, input);
-	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.FunctionModifiers)) {
-		const data = input[0];
-		const stored = (data as unknown as { _modifier?: unknown })._modifier;
-		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.buildFunctionModifiers(
-			...((children == null ? [] : Array.isArray(children) ? children : [children])
-				.map(
-					(_e: _LooseFieldInput) =>
-						_keywordOf(_e, [
-							['async', TSKindId.AsyncKeyword] as const,
-							['default', TSKindId.DefaultKeyword] as const,
-							['const', TSKindId.ConstKeyword] as const,
-							['unsafe', TSKindId.UnsafeKeyword] as const
-						]) ??
-						coerceMixedEnumStorage(
-							_resolveKindEnum(
-								_e,
-								[TSKindId.AsyncKeyword, TSKindId.DefaultKeyword, TSKindId.ConstKeyword, TSKindId.UnsafeKeyword],
-								() =>
-									_resolveOneBranch<
-										| TSKindId.AsyncKeyword
-										| TSKindId.DefaultKeyword
-										| TSKindId.ConstKeyword
-										| TSKindId.UnsafeKeyword
-										| T.ExternModifier
-									>(_e, 'extern_modifier', [
-										TSKindId.AsyncKeyword,
-										TSKindId.DefaultKeyword,
-										TSKindId.ConstKeyword,
-										TSKindId.UnsafeKeyword
-									])
-							),
-							[
-								['async', TSKindId.AsyncKeyword] as const,
-								['default', TSKindId.DefaultKeyword] as const,
-								['const', TSKindId.ConstKeyword] as const,
-								['unsafe', TSKindId.UnsafeKeyword] as const
-							]
-						)
-				)
-				.filter((_e) => _e !== undefined) as unknown as Parameters<typeof F.buildFunctionModifiers>)
-		);
-	}
+	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.FunctionModifiers))
+		return input[0] as unknown as ReturnType<typeof F.buildFunctionModifiers>;
 	const _elems: readonly unknown[] = (() => {
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
@@ -4105,7 +4033,7 @@ export const coerceToWhereClause: Seat<T.WherePredicates.LooseArgs, ReturnType<t
 		return input as unknown as ReturnType<typeof F.buildWhereClause>;
 	return F.buildWhereClause(
 		_resolveOneBranch<T.WherePredicates>(
-			configFieldOr(input, 'wherePredicates', () => input),
+			configFieldOr(input, 'wherePredicates', () => input, TSKindId.WhereClause),
 			'where_predicates',
 			undefined,
 			true
@@ -4323,19 +4251,8 @@ export const coerceToTraitBounds: Seat<T.TraitBounds.LooseArgs, ReturnType<typeo
 	...input: T.TraitBounds.LooseArgs
 ): ReturnType<typeof F.buildTraitBounds> => {
 	currentHandle()?.admit(TSKindId.TraitBounds, input);
-	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.TraitBounds)) {
-		const data = input[0];
-		const stored = (data as unknown as { _bounds?: unknown })._bounds;
-		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.buildTraitBounds(
-			...(listStorage(
-				_resolveKindEnumItems(children, [], (_v) =>
-					_resolveMany<T.Type | T.Lifetime | T.HigherRankedTraitBound>(_v, _K14, _K20)
-				),
-				(item) => coerceMixedEnumStorage(item, [])
-			) as unknown as Parameters<typeof F.buildTraitBounds>)
-		);
-	}
+	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.TraitBounds))
+		return input[0] as unknown as ReturnType<typeof F.buildTraitBounds>;
 	const _elems: readonly unknown[] = (() => {
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
@@ -4398,11 +4315,11 @@ export const coerceToRemovedTraitBound: ConfigSeat<
 	return F.buildRemovedTraitBound(
 		coerceMixedEnumStorage(
 			_resolveKindEnum(
-				configFieldOr(input, 'type', () => input),
+				configFieldOr(input, 'type', () => input, TSKindId.RemovedTraitBound),
 				[],
 				() =>
 					_resolveOne<T.Type>(
-						configFieldOr(input, 'type', () => input),
+						configFieldOr(input, 'type', () => input, TSKindId.RemovedTraitBound),
 						_K14,
 						_K15
 					)
@@ -4433,7 +4350,7 @@ export const coerceToTypeParameters: Seat<
 	if (isNodeOfKind(input, TSKindId.TypeParameters)) return input as unknown as ReturnType<typeof F.buildTypeParameters>;
 	return F.buildTypeParameters(
 		_resolveOneBranch<T.TypeParametersElements>(
-			configFieldOr(input, 'elements', () => input),
+			configFieldOr(input, 'elements', () => input, TSKindId.TypeParameters),
 			'type_parameters_elements'
 		)
 	);
@@ -4684,7 +4601,7 @@ export const coerceToUseList: EmptyForm<
 	const input = args[0] as T.UseList.Loose | undefined;
 	return F.buildUseList(
 		_resolveOneBranch<T.UseClauses>(
-			configFieldOr(input, 'useClauses', () => input),
+			configFieldOr(input, 'useClauses', () => input, TSKindId.UseList),
 			'use_clauses',
 			undefined,
 			true
@@ -4737,7 +4654,7 @@ export const coerceToUseWildcard: OptionalConfigSeat<T.UseWildcard.Loose, Return
 		return input as unknown as ReturnType<typeof F.buildUseWildcard>;
 	return F.buildUseWildcard(
 		_resolveOneBranch<T.UseWildcardGroup>(
-			configFieldOr(input, 'useWildcardGroup', () => input),
+			configFieldOr(input, 'useWildcardGroup', () => input, TSKindId.UseWildcard),
 			'use_wildcard_group',
 			undefined,
 			true
@@ -4759,7 +4676,7 @@ export const coerceToParameters: EmptyForm<
 		return input as unknown as ReturnType<typeof F.buildParameters>;
 	return F.buildParameters(
 		_resolveOne<T.ParametersElements | T.ParametersElementsReceiver>(
-			configFieldOr(input, 'elements', () => input),
+			configFieldOr(input, 'elements', () => input, TSKindId.Parameters),
 			_K2,
 			_K26
 		)
@@ -4868,7 +4785,7 @@ export const coerceToExternModifier: OptionalConfigSeat<
 		return input as unknown as ReturnType<typeof F.buildExternModifier>;
 	return F.buildExternModifier(
 		_resolveOneBranch<T.StringLiteral>(
-			configFieldOr(input, 'abi', () => input),
+			configFieldOr(input, 'abi', () => input, TSKindId.ExternModifier),
 			'string_literal',
 			undefined,
 			true
@@ -4897,16 +4814,16 @@ export const coerceToVisibilityModifier: ConfigSeat<
 		return input as unknown as ReturnType<typeof F.buildVisibilityModifier>;
 	return F.buildVisibilityModifier(
 		_keywordOr(
-			configFieldOr(input, 'content', () => input),
+			configFieldOr(input, 'content', () => input, TSKindId.VisibilityModifier),
 			[['crate', TSKindId.CrateVisibilityModifier] as const],
 			() =>
 				coerceMixedEnumStorage(
 					_resolveKindEnum(
-						configFieldOr(input, 'content', () => input),
+						configFieldOr(input, 'content', () => input, TSKindId.VisibilityModifier),
 						[TSKindId.CrateVisibilityModifier],
 						() =>
 							_resolveOne<TSKindId.CrateVisibilityModifier | T.VisibilityModifierPub>(
-								configFieldOr(input, 'content', () => input),
+								configFieldOr(input, 'content', () => input, TSKindId.VisibilityModifier),
 								_K27,
 								_K28
 							)
@@ -4931,11 +4848,11 @@ export const coerceToBracketedType: ConfigSeat<T.BracketedType.Loose, ReturnType
 	return F.buildBracketedType(
 		coerceMixedEnumStorage(
 			_resolveKindEnum(
-				configFieldOr(input, 'type', () => input),
+				configFieldOr(input, 'type', () => input, TSKindId.BracketedType),
 				[],
 				() =>
 					_resolveOne<T.Type | T.QualifiedType>(
-						configFieldOr(input, 'type', () => input),
+						configFieldOr(input, 'type', () => input, TSKindId.BracketedType),
 						_K14,
 						_K29
 					)
@@ -4983,7 +4900,12 @@ export const coerceToLifetime: ConfigSeat<T.Lifetime.Loose, ReturnType<typeof F.
 	if (isNodeOfKind(input, TSKindId.Lifetime)) return input as unknown as ReturnType<typeof F.buildLifetime>;
 	return F.buildLifetime(
 		_resolveOneLeaf<T.Identifier>(
-			configFieldOr(input, 'name', () => (typeof input === 'string' ? spelledInterior(input, "'", '') : input)),
+			configFieldOr(
+				input,
+				'name',
+				() => (typeof input === 'string' ? spelledInterior(input, "'", '') : input),
+				TSKindId.Lifetime
+			),
 			'identifier'
 		)
 	);
@@ -5029,7 +4951,7 @@ export const coerceToForLifetimes: Seat<T.Lifetimes.LooseArgs, ReturnType<typeof
 	if (isNodeOfKind(input, TSKindId.ForLifetimes)) return input as unknown as ReturnType<typeof F.buildForLifetimes>;
 	return F.buildForLifetimes(
 		_resolveOneBranch<T.Lifetimes>(
-			configFieldOr(input, 'lifetimes', () => input),
+			configFieldOr(input, 'lifetimes', () => input, TSKindId.ForLifetimes),
 			'lifetimes'
 		)
 	);
@@ -5088,7 +5010,7 @@ export const coerceToTupleType: Seat<T.Types.LooseArgs, ReturnType<typeof F.buil
 	const input = args[0] as T.TupleType.Loose;
 	return F.buildTupleType(
 		_resolveOneBranch<T.Types>(
-			configFieldOr(input, 'types', () => input),
+			configFieldOr(input, 'types', () => input, TSKindId.TupleType),
 			'types'
 		)
 	);
@@ -5211,7 +5133,7 @@ export const coerceToUseBounds: EmptyForm<
 		return input as unknown as ReturnType<typeof F.buildUseBounds>;
 	return F.buildUseBounds(
 		_resolveOneBranch<T.UseBoundsElements>(
-			configFieldOr(input, 'bounds', () => input),
+			configFieldOr(input, 'bounds', () => input, TSKindId.UseBounds),
 			'use_bounds_elements',
 			undefined,
 			true
@@ -5237,7 +5159,7 @@ export const coerceToTypeArguments: Seat<T.TypeArgumentsElements.LooseArgs, Retu
 	if (isNodeOfKind(input, TSKindId.TypeArguments)) return input as unknown as ReturnType<typeof F.buildTypeArguments>;
 	return F.buildTypeArguments(
 		_resolveOneBranch<T.TypeArgumentsElements>(
-			configFieldOr(input, 'elements', () => input),
+			configFieldOr(input, 'elements', () => input, TSKindId.TypeArguments),
 			'type_arguments_elements'
 		)
 	);
@@ -5358,7 +5280,7 @@ export const coerceToDynamicType: ConfigSeat<T.DynamicType.Loose, ReturnType<typ
 			| T.FunctionType
 			| T.TupleType
 		>(
-			configFieldOr(input, 'trait', () => input),
+			configFieldOr(input, 'trait', () => input, TSKindId.DynamicType),
 			_K2,
 			_K36
 		)
@@ -5577,11 +5499,11 @@ export const coerceToTryExpression: ConfigSeat<T.TryExpression.Loose, ReturnType
 	return F.buildTryExpression(
 		coerceMixedEnumStorage(
 			_resolveKindEnum(
-				configFieldOr(input, 'argument', () => input),
+				configFieldOr(input, 'argument', () => input, TSKindId.TryExpression),
 				[],
 				() =>
 					_resolveOne<T.Expression>(
-						configFieldOr(input, 'argument', () => input),
+						configFieldOr(input, 'argument', () => input, TSKindId.TryExpression),
 						_K12,
 						_K13
 					)
@@ -5804,11 +5726,11 @@ export const coerceToReturnExpression: OptionalConfigSeat<
 	return F.buildReturnExpression(
 		coerceMixedEnumStorage(
 			_resolveKindEnum(
-				configFieldOr(input, 'expression', () => input),
+				configFieldOr(input, 'expression', () => input, TSKindId.ReturnExpression),
 				[],
 				() =>
 					_resolveOne<T.Expression>(
-						configFieldOr(input, 'expression', () => input),
+						configFieldOr(input, 'expression', () => input, TSKindId.ReturnExpression),
 						_K12,
 						_K13
 					)
@@ -5834,11 +5756,11 @@ export const coerceToYieldExpression: OptionalConfigSeat<
 	return F.buildYieldExpression(
 		coerceMixedEnumStorage(
 			_resolveKindEnum(
-				configFieldOr(input, 'expression', () => input),
+				configFieldOr(input, 'expression', () => input, TSKindId.YieldExpression),
 				[],
 				() =>
 					_resolveOne<T.Expression>(
-						configFieldOr(input, 'expression', () => input),
+						configFieldOr(input, 'expression', () => input, TSKindId.YieldExpression),
 						_K12,
 						_K13
 					)
@@ -5935,7 +5857,7 @@ export const coerceToArguments: EmptyForm<
 		return input as unknown as ReturnType<typeof F.buildArguments>;
 	return F.buildArguments(
 		_resolveOneBranch<T.ArgumentsElements>(
-			configFieldOr(input, 'elements', () => input),
+			configFieldOr(input, 'elements', () => input, TSKindId.Arguments),
 			'arguments_elements',
 			undefined,
 			true
@@ -5959,11 +5881,11 @@ export const coerceToParenthesizedExpression: ConfigSeat<
 	return F.buildParenthesizedExpression(
 		coerceMixedEnumStorage(
 			_resolveKindEnum(
-				configFieldOr(input, 'expression', () => input),
+				configFieldOr(input, 'expression', () => input, TSKindId.ParenthesizedExpression),
 				[],
 				() =>
 					_resolveOne<T.Expression>(
-						configFieldOr(input, 'expression', () => input),
+						configFieldOr(input, 'expression', () => input, TSKindId.ParenthesizedExpression),
 						_K12,
 						_K13
 					)
@@ -6050,7 +5972,7 @@ export const coerceToFieldInitializerList: EmptyForm<
 		return input as unknown as ReturnType<typeof F.buildFieldInitializerList>;
 	return F.buildFieldInitializerList(
 		_resolveOneBranch<T.FieldInitializerListElements>(
-			configFieldOr(input, 'initializers', () => input),
+			configFieldOr(input, 'initializers', () => input, TSKindId.FieldInitializerList),
 			'field_initializer_list_elements',
 			undefined,
 			true
@@ -6136,11 +6058,11 @@ export const coerceToBaseFieldInitializer: ConfigSeat<
 	return F.buildBaseFieldInitializer(
 		coerceMixedEnumStorage(
 			_resolveKindEnum(
-				configFieldOr(input, 'value', () => input),
+				configFieldOr(input, 'value', () => input, TSKindId.BaseFieldInitializer),
 				[],
 				() =>
 					_resolveOne<T.Expression>(
-						configFieldOr(input, 'value', () => input),
+						configFieldOr(input, 'value', () => input, TSKindId.BaseFieldInitializer),
 						_K12,
 						_K13
 					)
@@ -6247,7 +6169,7 @@ export const coerceToElseClause: ConfigSeat<T.ElseClause.Loose, ReturnType<typeo
 	if (isNodeOfKind(input, TSKindId.ElseClause)) return input as unknown as ReturnType<typeof F.buildElseClause>;
 	return F.buildElseClause(
 		_resolveOne<T.Block | T.IfExpression>(
-			configFieldOr(input, 'body', () => input),
+			configFieldOr(input, 'body', () => input, TSKindId.ElseClause),
 			_K2,
 			_K48
 		)
@@ -6299,7 +6221,7 @@ export const coerceToMatchBlock: EmptyForm<
 		return input as unknown as ReturnType<typeof F.buildMatchBlock>;
 	return F.buildMatchBlock(
 		_resolveOneBranch<T.MatchBlockArms>(
-			configFieldOr(input, 'matchBlockArms', () => input),
+			configFieldOr(input, 'matchBlockArms', () => input, TSKindId.MatchBlock),
 			'match_block_arms',
 			undefined,
 			true
@@ -6487,7 +6409,7 @@ export const coerceToConstBlock: OptionalConfigSeat<T.ConstBlock.Loose, ReturnTy
 		return input as unknown as ReturnType<typeof F.buildConstBlock>;
 	return F.buildConstBlock(
 		_resolveOneBranch<T.Block>(
-			configFieldOr(input, 'body', () => input),
+			configFieldOr(input, 'body', () => input, TSKindId.ConstBlock),
 			'block'
 		) ?? F.buildBlock()
 	);
@@ -6498,16 +6420,8 @@ export const coerceToClosureParameters: EmptyForm<
 	Seat<T.ClosureParameters.LooseArgs, ReturnType<typeof F.buildClosureParameters>>
 > = withEmptyForm((...input: T.ClosureParameters.LooseArgs): ReturnType<typeof F.buildClosureParameters> => {
 	currentHandle()?.admit(TSKindId.ClosureParameters, input);
-	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.ClosureParameters)) {
-		const data = input[0];
-		const stored = (data as unknown as { _parameters?: unknown })._parameters;
-		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.buildClosureParameters(
-			...(_resolveMany<T.ClosureParameter | T.Parameter>(children, _K2, _K50) as unknown as Parameters<
-				typeof F.buildClosureParameters
-			>)
-		);
-	}
+	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.ClosureParameters))
+		return input[0] as unknown as ReturnType<typeof F.buildClosureParameters>;
 	const _elems: readonly unknown[] = (() => {
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
@@ -6533,7 +6447,12 @@ export const coerceToLabel: ConfigSeat<T.Label.Loose, ReturnType<typeof F.buildL
 	if (isNodeOfKind(input, TSKindId.Label)) return input as unknown as ReturnType<typeof F.buildLabel>;
 	return F.buildLabel(
 		_resolveOneLeaf<T.Identifier>(
-			configFieldOr(input, 'name', () => (typeof input === 'string' ? spelledInterior(input, "'", '') : input)),
+			configFieldOr(
+				input,
+				'name',
+				() => (typeof input === 'string' ? spelledInterior(input, "'", '') : input),
+				TSKindId.Label
+			),
 			'identifier'
 		)
 	);
@@ -6581,7 +6500,7 @@ export const coerceToContinueExpression: OptionalConfigSeat<
 		return input as unknown as ReturnType<typeof F.buildContinueExpression>;
 	return F.buildContinueExpression(
 		_resolveOneBranch<T.Label>(
-			configFieldOr(input, 'label', () => input),
+			configFieldOr(input, 'label', () => input, TSKindId.ContinueExpression),
 			'label',
 			undefined,
 			true
@@ -6634,11 +6553,11 @@ export const coerceToAwaitExpression: ConfigSeat<T.AwaitExpression.Loose, Return
 	return F.buildAwaitExpression(
 		coerceMixedEnumStorage(
 			_resolveKindEnum(
-				configFieldOr(input, 'expression', () => input),
+				configFieldOr(input, 'expression', () => input, TSKindId.AwaitExpression),
 				[],
 				() =>
 					_resolveOne<T.Expression>(
-						configFieldOr(input, 'expression', () => input),
+						configFieldOr(input, 'expression', () => input, TSKindId.AwaitExpression),
 						_K12,
 						_K13
 					)
@@ -6688,7 +6607,7 @@ export const coerceToUnsafeBlock: OptionalConfigSeat<T.UnsafeBlock.Loose, Return
 		return input as unknown as ReturnType<typeof F.buildUnsafeBlock>;
 	return F.buildUnsafeBlock(
 		_resolveOneBranch<T.Block>(
-			configFieldOr(input, 'body', () => input),
+			configFieldOr(input, 'body', () => input, TSKindId.UnsafeBlock),
 			'block'
 		) ?? F.buildBlock()
 	);
@@ -6747,7 +6666,7 @@ export const coerceToTryBlock: OptionalConfigSeat<T.TryBlock.Loose, ReturnType<t
 		return input as unknown as ReturnType<typeof F.buildTryBlock>;
 	return F.buildTryBlock(
 		_resolveOneBranch<T.Block>(
-			configFieldOr(input, 'body', () => input),
+			configFieldOr(input, 'body', () => input, TSKindId.TryBlock),
 			'block'
 		) ?? F.buildBlock()
 	);
@@ -6829,7 +6748,7 @@ export const coerceToTuplePattern: EmptyForm<
 	const input = args[0] as T.TuplePattern.Loose | undefined;
 	return F.buildTuplePattern(
 		_resolveOneBranch<T.TuplePatternElements>(
-			configFieldOr(input, 'elements', () => input),
+			configFieldOr(input, 'elements', () => input, TSKindId.TuplePattern),
 			'tuple_pattern_elements',
 			undefined,
 			true
@@ -6852,7 +6771,7 @@ export const coerceToSlicePattern: EmptyForm<
 	const input = args[0] as T.SlicePattern.Loose | undefined;
 	return F.buildSlicePattern(
 		_resolveOneBranch<T.Patterns>(
-			configFieldOr(input, 'elements', () => input),
+			configFieldOr(input, 'elements', () => input, TSKindId.SlicePattern),
 			'patterns',
 			undefined,
 			true
@@ -6926,11 +6845,11 @@ export const coerceToMutPattern: ConfigSeat<T.MutPattern.Loose, ReturnType<typeo
 	return F.buildMutPattern(
 		coerceMixedEnumStorage(
 			_resolveKindEnum(
-				configFieldOr(input, 'pattern', () => input),
+				configFieldOr(input, 'pattern', () => input, TSKindId.MutPattern),
 				[],
 				() =>
 					_resolveOne<T.Pattern>(
-						configFieldOr(input, 'pattern', () => input),
+						configFieldOr(input, 'pattern', () => input, TSKindId.MutPattern),
 						_K23,
 						_K24
 					)
@@ -6953,11 +6872,11 @@ export const coerceToRefPattern: ConfigSeat<T.RefPattern.Loose, ReturnType<typeo
 	return F.buildRefPattern(
 		coerceMixedEnumStorage(
 			_resolveKindEnum(
-				configFieldOr(input, 'pattern', () => input),
+				configFieldOr(input, 'pattern', () => input, TSKindId.RefPattern),
 				[],
 				() =>
 					_resolveOne<T.Pattern>(
-						configFieldOr(input, 'pattern', () => input),
+						configFieldOr(input, 'pattern', () => input, TSKindId.RefPattern),
 						_K23,
 						_K24
 					)
@@ -7035,7 +6954,7 @@ export const coerceToNegativeLiteral: ConfigSeat<T.NegativeLiteral.Loose, Return
 		return input as unknown as ReturnType<typeof F.buildNegativeLiteral>;
 	return F.buildNegativeLiteral(
 		_resolveOne<T.IntegerLiteral | T.FloatLiteral>(
-			configFieldOr(input, 'value', () => input),
+			configFieldOr(input, 'value', () => input, TSKindId.NegativeLiteral),
 			_K52,
 			_super_integer_literal
 		)
@@ -7116,14 +7035,18 @@ export const coerceToLineComment: ConfigSeat<T.LineComment.Loose, ReturnType<typ
 	if (isNodeOfKind(input, TSKindId.LineComment)) return input as unknown as ReturnType<typeof F.buildLineComment>;
 	return F.buildLineComment(
 		_resolveOne<T.LineCommentExtraSlashes | T.LineCommentDocOuter | T.LineCommentDocInner | T.LineCommentRegular>(
-			configFieldOr(input, 'content', () =>
-				typeof input === 'string'
-					? refuseSiblingLead(spelledInterior(input, '//', ''), [
-							[/^(?:(?:\/\/))/u, 'ir.lineCommentExtraSlashes'],
-							[/^(?:\/)/u, 'ir.lineComment.docOuter'],
-							[/^(?:!)/u, 'ir.lineComment.docInner']
-						])
-					: input
+			configFieldOr(
+				input,
+				'content',
+				() =>
+					typeof input === 'string'
+						? refuseSiblingLead(spelledInterior(input, '//', ''), [
+								[/^(?:(?:\/\/))/u, 'ir.lineCommentExtraSlashes'],
+								[/^(?:\/)/u, 'ir.lineComment.docOuter'],
+								[/^(?:!)/u, 'ir.lineComment.docInner']
+							])
+						: input,
+				TSKindId.LineComment
 			),
 			_K54,
 			_K55,
@@ -7169,13 +7092,17 @@ export function coerceToBlockComment<const I extends T.BlockComment.Loose>(
 		return input as unknown as ReturnType<typeof F.buildBlockComment>;
 	return F.buildBlockComment(
 		_resolveOne<T.BlockCommentDocOuter | T.BlockCommentDocInner | T.BlockCommentRegular>(
-			configFieldOr(input, 'content', () =>
-				typeof input === 'string'
-					? refuseSiblingLead(spelledInterior(input, '/*', '*/'), [
-							[/^(?:\*)/u, 'ir.blockComment.docOuter'],
-							[/^(?:!)/u, 'ir.blockComment.docInner']
-						])
-					: input
+			configFieldOr(
+				input,
+				'content',
+				() =>
+					typeof input === 'string'
+						? refuseSiblingLead(spelledInterior(input, '/*', '*/'), [
+								[/^(?:\*)/u, 'ir.blockComment.docOuter'],
+								[/^(?:!)/u, 'ir.blockComment.docInner']
+							])
+						: input,
+				TSKindId.BlockComment
 			),
 			_K56,
 			_K57,
@@ -7201,8 +7128,11 @@ export const coerceToShebang: ConfigSeat<T.Shebang.Loose, ReturnType<typeof F.bu
 	if (isNodeValue(input)) return input as unknown as ReturnType<typeof F.buildShebang>;
 	return F.buildShebang(
 		_resolveOne<string>(
-			configFieldOr(input, 'content', () =>
-				typeof input === 'string' ? spelledInterior(input, '#!', '\n', F._slotRe_buildShebang_content) : input
+			configFieldOr(
+				input,
+				'content',
+				() => (typeof input === 'string' ? spelledInterior(input, '#!', '\n', F._slotRe_buildShebang_content) : input),
+				TSKindId.Shebang
 			),
 			_K2,
 			_K2
@@ -7232,8 +7162,11 @@ export const coerceToMetavariable: ConfigSeat<T.Metavariable.Loose, ReturnType<t
 	if (isNodeValue(input)) return input as unknown as ReturnType<typeof F.buildMetavariable>;
 	return F.buildMetavariable(
 		_resolveOne<string>(
-			configFieldOr(input, 'name', () =>
-				typeof input === 'string' ? spelledInterior(input, '$', '', F._slotRe_buildMetavariable_name) : input
+			configFieldOr(
+				input,
+				'name',
+				() => (typeof input === 'string' ? spelledInterior(input, '$', '', F._slotRe_buildMetavariable_name) : input),
+				TSKindId.Metavariable
 			),
 			_K2,
 			_K2
@@ -7245,22 +7178,19 @@ export const coerceToMacroRules: Seat<T.MacroRules.LooseArgs, ReturnType<typeof 
 	...input: T.MacroRules.LooseArgs
 ): ReturnType<typeof F.buildMacroRules> => {
 	currentHandle()?.admit(TSKindId.MacroRules, input);
-	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.MacroRules)) {
-		const data = input[0];
-		const stored = (data as unknown as { _item?: unknown })._item;
-		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.buildMacroRules(
-			{
-				delimiter: (() => {
-					const d = (data as unknown as { _separator?: number; _delimiter?: Delimiter })._delimiter;
-					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
-				})()
-			},
-			...(children as unknown as NonEmptyArray<Admit<T.MacroRule>>)
-		);
-	}
-	return F.buildMacroRules(
-		...(_listElements(input, ['delimiter'], undefined, (els) => _resolveManyBranch<T.MacroRule>(els, 'macro_rule'), [
+	const _optsFirst =
+		typeof input[0] === 'object' &&
+		input[0] !== null &&
+		!Array.isArray(input[0]) &&
+		!('$type' in (input[0] as object)) &&
+		Object.keys(input[0] as object).every((k) => ['delimiter'].includes(k));
+	const options = (_optsFirst ? (input[0] as unknown) : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
+	const _rest = (_optsFirst ? input.slice(1) : input) as unknown as readonly unknown[];
+	if (_rest.length === 1 && isNodeOfKind(_rest[0], TSKindId.MacroRules))
+		return withOptions(_rest[0], options) as unknown as ReturnType<typeof F.buildMacroRules>;
+	return (F.buildMacroRules as (...args: unknown[]) => ReturnType<typeof F.buildMacroRules>)(
+		options,
+		...(_listElements(_rest, undefined, (els) => _resolveManyBranch<T.MacroRule>(els, 'macro_rule'), [
 			'macro_rule'
 		]) as unknown as NonEmptyArray<Admit<T.MacroRule>>)
 	);
@@ -7271,24 +7201,20 @@ export const coerceToEnumVariantListElements: Seat<
 	ReturnType<typeof F.buildEnumVariantListElements>
 > = (...input: T.EnumVariantListElements.LooseArgs): ReturnType<typeof F.buildEnumVariantListElements> => {
 	currentHandle()?.admit(TSKindId.EnumVariantListElements, input);
-	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.EnumVariantListElements)) {
-		const data = input[0];
-		const stored = (data as unknown as { _item?: unknown })._item;
-		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.buildEnumVariantListElements(
-			{
-				delimiter: (() => {
-					const d = (data as unknown as { _separator?: number; _delimiter?: Delimiter })._delimiter;
-					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
-				})()
-			},
-			...(children as unknown as NonEmptyArray<Admit<T.AttributedEnumVariant | T.EnumVariant>>)
-		);
-	}
-	return F.buildEnumVariantListElements(
+	const _optsFirst =
+		typeof input[0] === 'object' &&
+		input[0] !== null &&
+		!Array.isArray(input[0]) &&
+		!('$type' in (input[0] as object)) &&
+		Object.keys(input[0] as object).every((k) => ['delimiter'].includes(k));
+	const options = (_optsFirst ? (input[0] as unknown) : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
+	const _rest = (_optsFirst ? input.slice(1) : input) as unknown as readonly unknown[];
+	if (_rest.length === 1 && isNodeOfKind(_rest[0], TSKindId.EnumVariantListElements))
+		return withOptions(_rest[0], options) as unknown as ReturnType<typeof F.buildEnumVariantListElements>;
+	return (F.buildEnumVariantListElements as (...args: unknown[]) => ReturnType<typeof F.buildEnumVariantListElements>)(
+		options,
 		...(_listElements(
-			input,
-			['delimiter'],
+			_rest,
 			'attributed_enum_variant',
 			(els) => _resolveManyBranch<T.AttributedEnumVariant | T.EnumVariant>(els, 'enum_variant'),
 			['attributed_enum_variant', 'enum_variant'],
@@ -7302,24 +7228,24 @@ export const coerceToFieldDeclarationListElements: Seat<
 	ReturnType<typeof F.buildFieldDeclarationListElements>
 > = (...input: T.FieldDeclarationListElements.LooseArgs): ReturnType<typeof F.buildFieldDeclarationListElements> => {
 	currentHandle()?.admit(TSKindId.FieldDeclarationListElements, input);
-	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.FieldDeclarationListElements)) {
-		const data = input[0];
-		const stored = (data as unknown as { _item?: unknown })._item;
-		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.buildFieldDeclarationListElements(
-			{
-				delimiter: (() => {
-					const d = (data as unknown as { _separator?: number; _delimiter?: Delimiter })._delimiter;
-					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
-				})()
-			},
-			...(children as unknown as NonEmptyArray<Admit<T.AttributedFieldDeclaration | T.FieldDeclaration>>)
-		);
-	}
-	return F.buildFieldDeclarationListElements(
+	const _optsFirst =
+		typeof input[0] === 'object' &&
+		input[0] !== null &&
+		!Array.isArray(input[0]) &&
+		!('$type' in (input[0] as object)) &&
+		Object.keys(input[0] as object).every((k) => ['delimiter'].includes(k));
+	const options = (_optsFirst ? (input[0] as unknown) : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
+	const _rest = (_optsFirst ? input.slice(1) : input) as unknown as readonly unknown[];
+	if (_rest.length === 1 && isNodeOfKind(_rest[0], TSKindId.FieldDeclarationListElements))
+		return withOptions(_rest[0], options) as unknown as ReturnType<typeof F.buildFieldDeclarationListElements>;
+	return (
+		F.buildFieldDeclarationListElements as (
+			...args: unknown[]
+		) => ReturnType<typeof F.buildFieldDeclarationListElements>
+	)(
+		options,
 		...(_listElements(
-			input,
-			['delimiter'],
+			_rest,
 			'attributed_field_declaration',
 			(els) => _resolveManyBranch<T.AttributedFieldDeclaration | T.FieldDeclaration>(els, 'field_declaration'),
 			['attributed_field_declaration', 'field_declaration'],
@@ -7335,24 +7261,24 @@ export const coerceToOrderedFieldDeclarationListElements: Seat<
 	...input: T.OrderedFieldDeclarationListElements.LooseArgs
 ): ReturnType<typeof F.buildOrderedFieldDeclarationListElements> => {
 	currentHandle()?.admit(TSKindId.OrderedFieldDeclarationListElements, input);
-	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.OrderedFieldDeclarationListElements)) {
-		const data = input[0];
-		const stored = (data as unknown as { _item?: unknown })._item;
-		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.buildOrderedFieldDeclarationListElements(
-			{
-				delimiter: (() => {
-					const d = (data as unknown as { _separator?: number; _delimiter?: Delimiter })._delimiter;
-					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
-				})()
-			},
-			...(children as unknown as NonEmptyArray<Admit<T.AttributedOrderedField | T.Type | T.TypeIdentifier.Types>>)
-		);
-	}
-	return F.buildOrderedFieldDeclarationListElements(
+	const _optsFirst =
+		typeof input[0] === 'object' &&
+		input[0] !== null &&
+		!Array.isArray(input[0]) &&
+		!('$type' in (input[0] as object)) &&
+		Object.keys(input[0] as object).every((k) => ['delimiter'].includes(k));
+	const options = (_optsFirst ? (input[0] as unknown) : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
+	const _rest = (_optsFirst ? input.slice(1) : input) as unknown as readonly unknown[];
+	if (_rest.length === 1 && isNodeOfKind(_rest[0], TSKindId.OrderedFieldDeclarationListElements))
+		return withOptions(_rest[0], options) as unknown as ReturnType<typeof F.buildOrderedFieldDeclarationListElements>;
+	return (
+		F.buildOrderedFieldDeclarationListElements as (
+			...args: unknown[]
+		) => ReturnType<typeof F.buildOrderedFieldDeclarationListElements>
+	)(
+		options,
 		...(_listElements(
-			input,
-			['delimiter'],
+			_rest,
 			'attributed_ordered_field',
 			(els) =>
 				listStorage(
@@ -7408,28 +7334,21 @@ export const coerceToWherePredicates: Seat<T.WherePredicates.LooseArgs, ReturnTy
 	...input: T.WherePredicates.LooseArgs
 ): ReturnType<typeof F.buildWherePredicates> => {
 	currentHandle()?.admit(TSKindId.WherePredicates, input);
-	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.WherePredicates)) {
-		const data = input[0];
-		const stored = (data as unknown as { _item?: unknown })._item;
-		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.buildWherePredicates(
-			{
-				delimiter: (() => {
-					const d = (data as unknown as { _separator?: number; _delimiter?: Delimiter })._delimiter;
-					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
-				})()
-			},
-			...(children as unknown as NonEmptyArray<Admit<T.WherePredicate>>)
-		);
-	}
-	return F.buildWherePredicates(
-		...(_listElements(
-			input,
-			['delimiter'],
-			undefined,
-			(els) => _resolveManyBranch<T.WherePredicate>(els, 'where_predicate'),
-			['where_predicate']
-		) as unknown as NonEmptyArray<Admit<T.WherePredicate>>)
+	const _optsFirst =
+		typeof input[0] === 'object' &&
+		input[0] !== null &&
+		!Array.isArray(input[0]) &&
+		!('$type' in (input[0] as object)) &&
+		Object.keys(input[0] as object).every((k) => ['delimiter'].includes(k));
+	const options = (_optsFirst ? (input[0] as unknown) : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
+	const _rest = (_optsFirst ? input.slice(1) : input) as unknown as readonly unknown[];
+	if (_rest.length === 1 && isNodeOfKind(_rest[0], TSKindId.WherePredicates))
+		return withOptions(_rest[0], options) as unknown as ReturnType<typeof F.buildWherePredicates>;
+	return (F.buildWherePredicates as (...args: unknown[]) => ReturnType<typeof F.buildWherePredicates>)(
+		options,
+		...(_listElements(_rest, undefined, (els) => _resolveManyBranch<T.WherePredicate>(els, 'where_predicate'), [
+			'where_predicate'
+		]) as unknown as NonEmptyArray<Admit<T.WherePredicate>>)
 	);
 };
 
@@ -7438,26 +7357,20 @@ export const coerceToTypeParametersElements: Seat<
 	ReturnType<typeof F.buildTypeParametersElements>
 > = (...input: T.TypeParametersElements.LooseArgs): ReturnType<typeof F.buildTypeParametersElements> => {
 	currentHandle()?.admit(TSKindId.TypeParametersElements, input);
-	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.TypeParametersElements)) {
-		const data = input[0];
-		const stored = (data as unknown as { _item?: unknown })._item;
-		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.buildTypeParametersElements(
-			{
-				delimiter: (() => {
-					const d = (data as unknown as { _separator?: number; _delimiter?: Delimiter })._delimiter;
-					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
-				})()
-			},
-			...(children as unknown as NonEmptyArray<
-				Admit<T.AttributedTypeParameter | T.Metavariable | T.TypeParameter | T.LifetimeParameter | T.ConstParameter>
-			>)
-		);
-	}
-	return F.buildTypeParametersElements(
+	const _optsFirst =
+		typeof input[0] === 'object' &&
+		input[0] !== null &&
+		!Array.isArray(input[0]) &&
+		!('$type' in (input[0] as object)) &&
+		Object.keys(input[0] as object).every((k) => ['delimiter'].includes(k));
+	const options = (_optsFirst ? (input[0] as unknown) : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
+	const _rest = (_optsFirst ? input.slice(1) : input) as unknown as readonly unknown[];
+	if (_rest.length === 1 && isNodeOfKind(_rest[0], TSKindId.TypeParametersElements))
+		return withOptions(_rest[0], options) as unknown as ReturnType<typeof F.buildTypeParametersElements>;
+	return (F.buildTypeParametersElements as (...args: unknown[]) => ReturnType<typeof F.buildTypeParametersElements>)(
+		options,
 		...(_listElements(
-			input,
-			['delimiter'],
+			_rest,
 			'attributed_type_parameter',
 			(els) =>
 				_resolveMany<
@@ -7475,37 +7388,20 @@ export const coerceToUseClauses: Seat<T.UseClauses.LooseArgs, ReturnType<typeof 
 	...input: T.UseClauses.LooseArgs
 ): ReturnType<typeof F.buildUseClauses> => {
 	currentHandle()?.admit(TSKindId.UseClauses, input);
-	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.UseClauses)) {
-		const data = input[0];
-		const stored = (data as unknown as { _item?: unknown })._item;
-		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.buildUseClauses(
-			{
-				delimiter: (() => {
-					const d = (data as unknown as { _separator?: number; _delimiter?: Delimiter })._delimiter;
-					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
-				})()
-			},
-			...(children as unknown as NonEmptyArray<
-				Admit<
-					| TSKindId.SelfModule
-					| T.Metavariable
-					| TSKindId.Super
-					| TSKindId.Crate
-					| T.Identifier
-					| T.ScopedIdentifier
-					| T.UseAsClause
-					| T.UseList
-					| T.ScopedUseList
-					| T.UseWildcard
-				>
-			>)
-		);
-	}
-	return F.buildUseClauses(
+	const _optsFirst =
+		typeof input[0] === 'object' &&
+		input[0] !== null &&
+		!Array.isArray(input[0]) &&
+		!('$type' in (input[0] as object)) &&
+		Object.keys(input[0] as object).every((k) => ['delimiter'].includes(k));
+	const options = (_optsFirst ? (input[0] as unknown) : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
+	const _rest = (_optsFirst ? input.slice(1) : input) as unknown as readonly unknown[];
+	if (_rest.length === 1 && isNodeOfKind(_rest[0], TSKindId.UseClauses))
+		return withOptions(_rest[0], options) as unknown as ReturnType<typeof F.buildUseClauses>;
+	return (F.buildUseClauses as (...args: unknown[]) => ReturnType<typeof F.buildUseClauses>)(
+		options,
 		...(_listElements(
-			input,
-			['delimiter'],
+			_rest,
 			undefined,
 			(els) =>
 				(els == null ? [] : Array.isArray(els) ? els : [els])
@@ -7573,33 +7469,20 @@ export const coerceToParametersElements: Seat<
 	ReturnType<typeof F.buildParametersElements>
 > = (...input: T.ParametersElements.LooseArgs): ReturnType<typeof F.buildParametersElements> => {
 	currentHandle()?.admit(TSKindId.ParametersElements, input);
-	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.ParametersElements)) {
-		const data = input[0];
-		const stored = (data as unknown as { _item?: unknown })._item;
-		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.buildParametersElements(
-			{
-				delimiter: (() => {
-					const d = (data as unknown as { _separator?: number; _delimiter?: Delimiter })._delimiter;
-					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
-				})()
-			},
-			...(children as unknown as NonEmptyArray<
-				Admit<
-					| T.AttributedParameter
-					| T.Parameter
-					| T.VariadicParameter
-					| TSKindId.Underscore
-					| T.Type
-					| T.TypeIdentifier.Types
-				>
-			>)
-		);
-	}
-	return F.buildParametersElements(
+	const _optsFirst =
+		typeof input[0] === 'object' &&
+		input[0] !== null &&
+		!Array.isArray(input[0]) &&
+		!('$type' in (input[0] as object)) &&
+		Object.keys(input[0] as object).every((k) => ['delimiter'].includes(k));
+	const options = (_optsFirst ? (input[0] as unknown) : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
+	const _rest = (_optsFirst ? input.slice(1) : input) as unknown as readonly unknown[];
+	if (_rest.length === 1 && isNodeOfKind(_rest[0], TSKindId.ParametersElements))
+		return withOptions(_rest[0], options) as unknown as ReturnType<typeof F.buildParametersElements>;
+	return (F.buildParametersElements as (...args: unknown[]) => ReturnType<typeof F.buildParametersElements>)(
+		options,
 		...(_listElements(
-			input,
-			['delimiter'],
+			_rest,
 			'attributed_parameter',
 			(els) => els,
 			[
@@ -7662,22 +7545,19 @@ export const coerceToLifetimes: Seat<T.Lifetimes.LooseArgs, ReturnType<typeof F.
 	...input: T.Lifetimes.LooseArgs
 ): ReturnType<typeof F.buildLifetimes> => {
 	currentHandle()?.admit(TSKindId.Lifetimes, input);
-	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.Lifetimes)) {
-		const data = input[0];
-		const stored = (data as unknown as { _item?: unknown })._item;
-		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.buildLifetimes(
-			{
-				delimiter: (() => {
-					const d = (data as unknown as { _separator?: number; _delimiter?: Delimiter })._delimiter;
-					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
-				})()
-			},
-			...(children as unknown as NonEmptyArray<Admit<T.Lifetime>>)
-		);
-	}
-	return F.buildLifetimes(
-		...(_listElements(input, ['delimiter'], undefined, (els) => _resolveManyBranch<T.Lifetime>(els, 'lifetime'), [
+	const _optsFirst =
+		typeof input[0] === 'object' &&
+		input[0] !== null &&
+		!Array.isArray(input[0]) &&
+		!('$type' in (input[0] as object)) &&
+		Object.keys(input[0] as object).every((k) => ['delimiter'].includes(k));
+	const options = (_optsFirst ? (input[0] as unknown) : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
+	const _rest = (_optsFirst ? input.slice(1) : input) as unknown as readonly unknown[];
+	if (_rest.length === 1 && isNodeOfKind(_rest[0], TSKindId.Lifetimes))
+		return withOptions(_rest[0], options) as unknown as ReturnType<typeof F.buildLifetimes>;
+	return (F.buildLifetimes as (...args: unknown[]) => ReturnType<typeof F.buildLifetimes>)(
+		options,
+		...(_listElements(_rest, undefined, (els) => _resolveManyBranch<T.Lifetime>(els, 'lifetime'), [
 			'lifetime'
 		]) as unknown as NonEmptyArray<Admit<T.Lifetime>>)
 	);
@@ -7687,24 +7567,20 @@ export const coerceToTypes: Seat<T.Types.LooseArgs, ReturnType<typeof F.buildTyp
 	...input: T.Types.LooseArgs
 ): ReturnType<typeof F.buildTypes> => {
 	currentHandle()?.admit(TSKindId.Types, input);
-	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.Types)) {
-		const data = input[0];
-		const stored = (data as unknown as { _item?: unknown })._item;
-		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.buildTypes(
-			{
-				delimiter: (() => {
-					const d = (data as unknown as { _separator?: number; _delimiter?: Delimiter })._delimiter;
-					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
-				})()
-			},
-			...(children as unknown as NonEmptyArray<Admit<T.Type | T.TypeIdentifier.Types>>)
-		);
-	}
-	return F.buildTypes(
+	const _optsFirst =
+		typeof input[0] === 'object' &&
+		input[0] !== null &&
+		!Array.isArray(input[0]) &&
+		!('$type' in (input[0] as object)) &&
+		Object.keys(input[0] as object).every((k) => ['delimiter'].includes(k));
+	const options = (_optsFirst ? (input[0] as unknown) : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
+	const _rest = (_optsFirst ? input.slice(1) : input) as unknown as readonly unknown[];
+	if (_rest.length === 1 && isNodeOfKind(_rest[0], TSKindId.Types))
+		return withOptions(_rest[0], options) as unknown as ReturnType<typeof F.buildTypes>;
+	return (F.buildTypes as (...args: unknown[]) => ReturnType<typeof F.buildTypes>)(
+		options,
 		...(_listElements(
-			input,
-			['delimiter'],
+			_rest,
 			undefined,
 			(els) =>
 				listStorage(
@@ -7740,24 +7616,20 @@ export const coerceToUseBoundsElements: Seat<
 	ReturnType<typeof F.buildUseBoundsElements>
 > = (...input: T.UseBoundsElements.LooseArgs): ReturnType<typeof F.buildUseBoundsElements> => {
 	currentHandle()?.admit(TSKindId.UseBoundsElements, input);
-	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.UseBoundsElements)) {
-		const data = input[0];
-		const stored = (data as unknown as { _item?: unknown })._item;
-		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.buildUseBoundsElements(
-			{
-				delimiter: (() => {
-					const d = (data as unknown as { _separator?: number; _delimiter?: Delimiter })._delimiter;
-					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
-				})()
-			},
-			...(children as unknown as NonEmptyArray<Admit<T.Lifetime | T.TypeIdentifier | T.TypeIdentifier.Types>>)
-		);
-	}
-	return F.buildUseBoundsElements(
+	const _optsFirst =
+		typeof input[0] === 'object' &&
+		input[0] !== null &&
+		!Array.isArray(input[0]) &&
+		!('$type' in (input[0] as object)) &&
+		Object.keys(input[0] as object).every((k) => ['delimiter'].includes(k));
+	const options = (_optsFirst ? (input[0] as unknown) : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
+	const _rest = (_optsFirst ? input.slice(1) : input) as unknown as readonly unknown[];
+	if (_rest.length === 1 && isNodeOfKind(_rest[0], TSKindId.UseBoundsElements))
+		return withOptions(_rest[0], options) as unknown as ReturnType<typeof F.buildUseBoundsElements>;
+	return (F.buildUseBoundsElements as (...args: unknown[]) => ReturnType<typeof F.buildUseBoundsElements>)(
+		options,
 		...(_listElements(
-			input,
-			['delimiter'],
+			_rest,
 			undefined,
 			(els) => _resolveMany<T.Lifetime | T.TypeIdentifier | T.TypeIdentifier.Types>(els, _K2, _K59),
 			['lifetime', 'type_identifier']
@@ -7770,26 +7642,20 @@ export const coerceToTypeArgumentsElements: Seat<
 	ReturnType<typeof F.buildTypeArgumentsElements>
 > = (...input: T.TypeArgumentsElements.LooseArgs): ReturnType<typeof F.buildTypeArgumentsElements> => {
 	currentHandle()?.admit(TSKindId.TypeArgumentsElements, input);
-	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.TypeArgumentsElements)) {
-		const data = input[0];
-		const stored = (data as unknown as { _item?: unknown })._item;
-		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.buildTypeArgumentsElements(
-			{
-				delimiter: (() => {
-					const d = (data as unknown as { _separator?: number; _delimiter?: Delimiter })._delimiter;
-					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
-				})()
-			},
-			...(children as unknown as NonEmptyArray<
-				Admit<T.TypeArgument | T.Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block | T.TypeIdentifier.Types>
-			>)
-		);
-	}
-	return F.buildTypeArgumentsElements(
+	const _optsFirst =
+		typeof input[0] === 'object' &&
+		input[0] !== null &&
+		!Array.isArray(input[0]) &&
+		!('$type' in (input[0] as object)) &&
+		Object.keys(input[0] as object).every((k) => ['delimiter'].includes(k));
+	const options = (_optsFirst ? (input[0] as unknown) : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
+	const _rest = (_optsFirst ? input.slice(1) : input) as unknown as readonly unknown[];
+	if (_rest.length === 1 && isNodeOfKind(_rest[0], TSKindId.TypeArgumentsElements))
+		return withOptions(_rest[0], options) as unknown as ReturnType<typeof F.buildTypeArgumentsElements>;
+	return (F.buildTypeArgumentsElements as (...args: unknown[]) => ReturnType<typeof F.buildTypeArgumentsElements>)(
+		options,
 		...(_listElements(
-			input,
-			['delimiter'],
+			_rest,
 			'type_argument',
 			(els) =>
 				listStorage(
@@ -7881,24 +7747,20 @@ export const coerceToArgumentsElements: Seat<
 	ReturnType<typeof F.buildArgumentsElements>
 > = (...input: T.ArgumentsElements.LooseArgs): ReturnType<typeof F.buildArgumentsElements> => {
 	currentHandle()?.admit(TSKindId.ArgumentsElements, input);
-	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.ArgumentsElements)) {
-		const data = input[0];
-		const stored = (data as unknown as { _item?: unknown })._item;
-		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.buildArgumentsElements(
-			{
-				delimiter: (() => {
-					const d = (data as unknown as { _separator?: number; _delimiter?: Delimiter })._delimiter;
-					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
-				})()
-			},
-			...(children as unknown as NonEmptyArray<Admit<T.Argument | T.Expression>>)
-		);
-	}
-	return F.buildArgumentsElements(
+	const _optsFirst =
+		typeof input[0] === 'object' &&
+		input[0] !== null &&
+		!Array.isArray(input[0]) &&
+		!('$type' in (input[0] as object)) &&
+		Object.keys(input[0] as object).every((k) => ['delimiter'].includes(k));
+	const options = (_optsFirst ? (input[0] as unknown) : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
+	const _rest = (_optsFirst ? input.slice(1) : input) as unknown as readonly unknown[];
+	if (_rest.length === 1 && isNodeOfKind(_rest[0], TSKindId.ArgumentsElements))
+		return withOptions(_rest[0], options) as unknown as ReturnType<typeof F.buildArgumentsElements>;
+	return (F.buildArgumentsElements as (...args: unknown[]) => ReturnType<typeof F.buildArgumentsElements>)(
+		options,
 		...(_listElements(
-			input,
-			['delimiter'],
+			_rest,
 			'argument',
 			(els) =>
 				listStorage(
@@ -8035,24 +7897,20 @@ export const coerceToExpressions: Seat<T.Expressions.LooseArgs, ReturnType<typeo
 	...input: T.Expressions.LooseArgs
 ): ReturnType<typeof F.buildExpressions> => {
 	currentHandle()?.admit(TSKindId.Expressions, input);
-	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.Expressions)) {
-		const data = input[0];
-		const stored = (data as unknown as { _item?: unknown })._item;
-		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.buildExpressions(
-			{
-				delimiter: (() => {
-					const d = (data as unknown as { _separator?: number; _delimiter?: Delimiter })._delimiter;
-					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
-				})()
-			},
-			...(children as unknown as NonEmptyArray<Admit<T.Expression>>)
-		);
-	}
-	return F.buildExpressions(
+	const _optsFirst =
+		typeof input[0] === 'object' &&
+		input[0] !== null &&
+		!Array.isArray(input[0]) &&
+		!('$type' in (input[0] as object)) &&
+		Object.keys(input[0] as object).every((k) => ['delimiter'].includes(k));
+	const options = (_optsFirst ? (input[0] as unknown) : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
+	const _rest = (_optsFirst ? input.slice(1) : input) as unknown as readonly unknown[];
+	if (_rest.length === 1 && isNodeOfKind(_rest[0], TSKindId.Expressions))
+		return withOptions(_rest[0], options) as unknown as ReturnType<typeof F.buildExpressions>;
+	return (F.buildExpressions as (...args: unknown[]) => ReturnType<typeof F.buildExpressions>)(
+		options,
 		...(_listElements(
-			input,
-			['delimiter'],
+			_rest,
 			undefined,
 			(els) =>
 				listStorage(
@@ -8131,26 +7989,24 @@ export const coerceToFieldInitializerListElements: Seat<
 	ReturnType<typeof F.buildFieldInitializerListElements>
 > = (...input: T.FieldInitializerListElements.LooseArgs): ReturnType<typeof F.buildFieldInitializerListElements> => {
 	currentHandle()?.admit(TSKindId.FieldInitializerListElements, input);
-	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.FieldInitializerListElements)) {
-		const data = input[0];
-		const stored = (data as unknown as { _item?: unknown })._item;
-		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.buildFieldInitializerListElements(
-			{
-				delimiter: (() => {
-					const d = (data as unknown as { _separator?: number; _delimiter?: Delimiter })._delimiter;
-					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
-				})()
-			},
-			...(children as unknown as NonEmptyArray<
-				Admit<T.ShorthandFieldInitializer | T.FieldInitializer | T.BaseFieldInitializer>
-			>)
-		);
-	}
-	return F.buildFieldInitializerListElements(
+	const _optsFirst =
+		typeof input[0] === 'object' &&
+		input[0] !== null &&
+		!Array.isArray(input[0]) &&
+		!('$type' in (input[0] as object)) &&
+		Object.keys(input[0] as object).every((k) => ['delimiter'].includes(k));
+	const options = (_optsFirst ? (input[0] as unknown) : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
+	const _rest = (_optsFirst ? input.slice(1) : input) as unknown as readonly unknown[];
+	if (_rest.length === 1 && isNodeOfKind(_rest[0], TSKindId.FieldInitializerListElements))
+		return withOptions(_rest[0], options) as unknown as ReturnType<typeof F.buildFieldInitializerListElements>;
+	return (
+		F.buildFieldInitializerListElements as (
+			...args: unknown[]
+		) => ReturnType<typeof F.buildFieldInitializerListElements>
+	)(
+		options,
 		...(_listElements(
-			input,
-			['delimiter'],
+			_rest,
 			undefined,
 			(els) => _resolveMany<T.ShorthandFieldInitializer | T.FieldInitializer | T.BaseFieldInitializer>(els, _K2, _K62),
 			['shorthand_field_initializer', 'field_initializer', 'base_field_initializer']
@@ -8163,24 +8019,20 @@ export const coerceToTuplePatternElements: Seat<
 	ReturnType<typeof F.buildTuplePatternElements>
 > = (...input: T.TuplePatternElements.LooseArgs): ReturnType<typeof F.buildTuplePatternElements> => {
 	currentHandle()?.admit(TSKindId.TuplePatternElements, input);
-	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.TuplePatternElements)) {
-		const data = input[0];
-		const stored = (data as unknown as { _item?: unknown })._item;
-		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.buildTuplePatternElements(
-			{
-				delimiter: (() => {
-					const d = (data as unknown as { _separator?: number; _delimiter?: Delimiter })._delimiter;
-					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
-				})()
-			},
-			...(children as unknown as NonEmptyArray<Admit<T.Pattern | T.ClosureExpression>>)
-		);
-	}
-	return F.buildTuplePatternElements(
+	const _optsFirst =
+		typeof input[0] === 'object' &&
+		input[0] !== null &&
+		!Array.isArray(input[0]) &&
+		!('$type' in (input[0] as object)) &&
+		Object.keys(input[0] as object).every((k) => ['delimiter'].includes(k));
+	const options = (_optsFirst ? (input[0] as unknown) : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
+	const _rest = (_optsFirst ? input.slice(1) : input) as unknown as readonly unknown[];
+	if (_rest.length === 1 && isNodeOfKind(_rest[0], TSKindId.TuplePatternElements))
+		return withOptions(_rest[0], options) as unknown as ReturnType<typeof F.buildTuplePatternElements>;
+	return (F.buildTuplePatternElements as (...args: unknown[]) => ReturnType<typeof F.buildTuplePatternElements>)(
+		options,
 		...(_listElements(
-			input,
-			['delimiter'],
+			_rest,
 			undefined,
 			(els) =>
 				listStorage(
@@ -8233,24 +8085,20 @@ export const coerceToPatterns: Seat<T.Patterns.LooseArgs, ReturnType<typeof F.bu
 	...input: T.Patterns.LooseArgs
 ): ReturnType<typeof F.buildPatterns> => {
 	currentHandle()?.admit(TSKindId.Patterns, input);
-	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.Patterns)) {
-		const data = input[0];
-		const stored = (data as unknown as { _item?: unknown })._item;
-		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.buildPatterns(
-			{
-				delimiter: (() => {
-					const d = (data as unknown as { _separator?: number; _delimiter?: Delimiter })._delimiter;
-					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
-				})()
-			},
-			...(children as unknown as NonEmptyArray<Admit<T.Pattern>>)
-		);
-	}
-	return F.buildPatterns(
+	const _optsFirst =
+		typeof input[0] === 'object' &&
+		input[0] !== null &&
+		!Array.isArray(input[0]) &&
+		!('$type' in (input[0] as object)) &&
+		Object.keys(input[0] as object).every((k) => ['delimiter'].includes(k));
+	const options = (_optsFirst ? (input[0] as unknown) : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
+	const _rest = (_optsFirst ? input.slice(1) : input) as unknown as readonly unknown[];
+	if (_rest.length === 1 && isNodeOfKind(_rest[0], TSKindId.Patterns))
+		return withOptions(_rest[0], options) as unknown as ReturnType<typeof F.buildPatterns>;
+	return (F.buildPatterns as (...args: unknown[]) => ReturnType<typeof F.buildPatterns>)(
+		options,
 		...(_listElements(
-			input,
-			['delimiter'],
+			_rest,
 			undefined,
 			(els) =>
 				listStorage(
@@ -8302,24 +8150,20 @@ export const coerceToStructPatternElements: Seat<
 	ReturnType<typeof F.buildStructPatternElements>
 > = (...input: T.StructPatternElements.LooseArgs): ReturnType<typeof F.buildStructPatternElements> => {
 	currentHandle()?.admit(TSKindId.StructPatternElements, input);
-	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.StructPatternElements)) {
-		const data = input[0];
-		const stored = (data as unknown as { _item?: unknown })._item;
-		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.buildStructPatternElements(
-			{
-				delimiter: (() => {
-					const d = (data as unknown as { _separator?: number; _delimiter?: Delimiter })._delimiter;
-					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
-				})()
-			},
-			...(children as unknown as NonEmptyArray<Admit<T.FieldPattern | TSKindId.RemainingFieldPattern>>)
-		);
-	}
-	return F.buildStructPatternElements(
+	const _optsFirst =
+		typeof input[0] === 'object' &&
+		input[0] !== null &&
+		!Array.isArray(input[0]) &&
+		!('$type' in (input[0] as object)) &&
+		Object.keys(input[0] as object).every((k) => ['delimiter'].includes(k));
+	const options = (_optsFirst ? (input[0] as unknown) : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
+	const _rest = (_optsFirst ? input.slice(1) : input) as unknown as readonly unknown[];
+	if (_rest.length === 1 && isNodeOfKind(_rest[0], TSKindId.StructPatternElements))
+		return withOptions(_rest[0], options) as unknown as ReturnType<typeof F.buildStructPatternElements>;
+	return (F.buildStructPatternElements as (...args: unknown[]) => ReturnType<typeof F.buildStructPatternElements>)(
+		options,
 		...(_listElements(
-			input,
-			['delimiter'],
+			_rest,
 			undefined,
 			(els) =>
 				listStorage(
@@ -8359,12 +8203,12 @@ export const coerceToUseWildcardGroup: OptionalConfigSeat<
 		return input as unknown as ReturnType<typeof F.buildUseWildcardGroup>;
 	return F.buildUseWildcardGroup(
 		_keywordOr(
-			configFieldOr(input, 'path', () => input),
+			configFieldOr(input, 'path', () => input, TSKindId.UseWildcardGroup),
 			[['self', TSKindId.SelfModule] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const],
 			() =>
 				coerceMixedEnumStorage(
 					_resolveKindEnum(
-						configFieldOr(input, 'path', () => input),
+						configFieldOr(input, 'path', () => input, TSKindId.UseWildcardGroup),
 						[TSKindId.SelfModule, TSKindId.Super, TSKindId.Crate],
 						() =>
 							_resolveOne<
@@ -8375,7 +8219,7 @@ export const coerceToUseWildcardGroup: OptionalConfigSeat<
 								| T.Identifier
 								| T.ScopedIdentifier
 							>(
-								configFieldOr(input, 'path', () => input),
+								configFieldOr(input, 'path', () => input, TSKindId.UseWildcardGroup),
 								_K8,
 								_K9
 							)
@@ -8694,10 +8538,14 @@ export const coerceToEscapeSequenceSimple: ConfigSeat<
 	if (isNodeValue(input)) return input as unknown as ReturnType<typeof F.buildEscapeSequenceSimple>;
 	return F.buildEscapeSequenceSimple(
 		_resolveOne<string>(
-			configFieldOr(input, 'content', () =>
-				typeof input === 'string'
-					? spelledInterior(input, '\\', '', F._slotRe_buildEscapeSequenceSimple_content)
-					: input
+			configFieldOr(
+				input,
+				'content',
+				() =>
+					typeof input === 'string'
+						? spelledInterior(input, '\\', '', F._slotRe_buildEscapeSequenceSimple_content)
+						: input,
+				TSKindId.EscapeSequenceSimple
 			),
 			_K2,
 			_K2
@@ -8718,10 +8566,14 @@ export const coerceToEscapeSequenceUnicodeFixed: ConfigSeat<
 	if (isNodeValue(input)) return input as unknown as ReturnType<typeof F.buildEscapeSequenceUnicodeFixed>;
 	return F.buildEscapeSequenceUnicodeFixed(
 		_resolveOne<string>(
-			configFieldOr(input, 'content', () =>
-				typeof input === 'string'
-					? spelledInterior(input, '\\', '', F._slotRe_buildEscapeSequenceUnicodeFixed_content)
-					: input
+			configFieldOr(
+				input,
+				'content',
+				() =>
+					typeof input === 'string'
+						? spelledInterior(input, '\\', '', F._slotRe_buildEscapeSequenceUnicodeFixed_content)
+						: input,
+				TSKindId.EscapeSequenceUnicodeFixed
 			),
 			_K2,
 			_K2
@@ -8742,10 +8594,14 @@ export const coerceToEscapeSequenceUnicodeBraced: ConfigSeat<
 	if (isNodeValue(input)) return input as unknown as ReturnType<typeof F.buildEscapeSequenceUnicodeBraced>;
 	return F.buildEscapeSequenceUnicodeBraced(
 		_resolveOne<string>(
-			configFieldOr(input, 'content', () =>
-				typeof input === 'string'
-					? spelledInterior(input, '\\', '', F._slotRe_buildEscapeSequenceUnicodeBraced_content)
-					: input
+			configFieldOr(
+				input,
+				'content',
+				() =>
+					typeof input === 'string'
+						? spelledInterior(input, '\\', '', F._slotRe_buildEscapeSequenceUnicodeBraced_content)
+						: input,
+				TSKindId.EscapeSequenceUnicodeBraced
 			),
 			_K2,
 			_K2
@@ -8766,8 +8622,14 @@ export const coerceToEscapeSequenceHex: ConfigSeat<
 	if (isNodeValue(input)) return input as unknown as ReturnType<typeof F.buildEscapeSequenceHex>;
 	return F.buildEscapeSequenceHex(
 		_resolveOne<string>(
-			configFieldOr(input, 'content', () =>
-				typeof input === 'string' ? spelledInterior(input, '\\', '', F._slotRe_buildEscapeSequenceHex_content) : input
+			configFieldOr(
+				input,
+				'content',
+				() =>
+					typeof input === 'string'
+						? spelledInterior(input, '\\', '', F._slotRe_buildEscapeSequenceHex_content)
+						: input,
+				TSKindId.EscapeSequenceHex
 			),
 			_K2,
 			_K2
@@ -8991,11 +8853,11 @@ export const coerceToReferenceExpressionRawConst: ConfigSeat<
 	return F.buildReferenceExpressionRawConst(
 		coerceMixedEnumStorage(
 			_resolveKindEnum(
-				configFieldOr(input, 'argument', () => input),
+				configFieldOr(input, 'argument', () => input, TSKindId.ReferenceExpressionRawConst),
 				[],
 				() =>
 					_resolveOne<T.Expression>(
-						configFieldOr(input, 'argument', () => input),
+						configFieldOr(input, 'argument', () => input, TSKindId.ReferenceExpressionRawConst),
 						_K12,
 						_K13
 					)
@@ -9021,11 +8883,11 @@ export const coerceToReferenceExpressionRawMut: ConfigSeat<
 	return F.buildReferenceExpressionRawMut(
 		coerceMixedEnumStorage(
 			_resolveKindEnum(
-				configFieldOr(input, 'argument', () => input),
+				configFieldOr(input, 'argument', () => input, TSKindId.ReferenceExpressionRawMut),
 				[],
 				() =>
 					_resolveOne<T.Expression>(
-						configFieldOr(input, 'argument', () => input),
+						configFieldOr(input, 'argument', () => input, TSKindId.ReferenceExpressionRawMut),
 						_K12,
 						_K13
 					)
@@ -9051,11 +8913,11 @@ export const coerceToReferenceExpressionMut: ConfigSeat<
 	return F.buildReferenceExpressionMut(
 		coerceMixedEnumStorage(
 			_resolveKindEnum(
-				configFieldOr(input, 'argument', () => input),
+				configFieldOr(input, 'argument', () => input, TSKindId.ReferenceExpressionMut),
 				[],
 				() =>
 					_resolveOne<T.Expression>(
-						configFieldOr(input, 'argument', () => input),
+						configFieldOr(input, 'argument', () => input, TSKindId.ReferenceExpressionMut),
 						_K12,
 						_K13
 					)
@@ -9081,11 +8943,11 @@ export const coerceToReferenceExpressionBare: ConfigSeat<
 	return F.buildReferenceExpressionBare(
 		coerceMixedEnumStorage(
 			_resolveKindEnum(
-				configFieldOr(input, 'argument', () => input),
+				configFieldOr(input, 'argument', () => input, TSKindId.ReferenceExpressionBare),
 				[],
 				() =>
 					_resolveOne<T.Expression>(
-						configFieldOr(input, 'argument', () => input),
+						configFieldOr(input, 'argument', () => input, TSKindId.ReferenceExpressionBare),
 						_K12,
 						_K13
 					)
@@ -9109,7 +8971,7 @@ export const coerceToImplItemPositiveClause: ConfigSeat<
 		return input as unknown as ReturnType<typeof F.buildImplItemPositiveClause>;
 	return F.buildImplItemPositiveClause(
 		_resolveOne<T.TypeIdentifier | T.ScopedTypeIdentifier | T.GenericType>(
-			configFieldOr(input, 'trait', () => input),
+			configFieldOr(input, 'trait', () => input, TSKindId.ImplItemPositiveClause),
 			_K2,
 			_K65
 		)
@@ -9130,7 +8992,7 @@ export const coerceToImplItemNegativeClause: ConfigSeat<
 		return input as unknown as ReturnType<typeof F.buildImplItemNegativeClause>;
 	return F.buildImplItemNegativeClause(
 		_resolveOne<T.TypeIdentifier | T.ScopedTypeIdentifier | T.GenericType>(
-			configFieldOr(input, 'trait', () => input),
+			configFieldOr(input, 'trait', () => input, TSKindId.ImplItemNegativeClause),
 			_K2,
 			_K65
 		)
@@ -9270,12 +9132,12 @@ export const coerceToVisibilityModifierPubScopeInPath: ConfigSeat<
 		return input as unknown as ReturnType<typeof F.buildVisibilityModifierPubScopeInPath>;
 	return F.buildVisibilityModifierPubScopeInPath(
 		_keywordOr(
-			configFieldOr(input, 'path', () => input),
+			configFieldOr(input, 'path', () => input, TSKindId.VisibilityModifierPubScopeInPath),
 			[['self', TSKindId.SelfModule] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const],
 			() =>
 				coerceMixedEnumStorage(
 					_resolveKindEnum(
-						configFieldOr(input, 'path', () => input),
+						configFieldOr(input, 'path', () => input, TSKindId.VisibilityModifierPubScopeInPath),
 						[TSKindId.SelfModule, TSKindId.Super, TSKindId.Crate],
 						() =>
 							_resolveOne<
@@ -9286,7 +9148,7 @@ export const coerceToVisibilityModifierPubScopeInPath: ConfigSeat<
 								| T.Identifier
 								| T.ScopedIdentifier
 							>(
-								configFieldOr(input, 'path', () => input),
+								configFieldOr(input, 'path', () => input, TSKindId.VisibilityModifierPubScopeInPath),
 								_K8,
 								_K9
 							)
@@ -9329,16 +9191,16 @@ export const coerceToVisibilityModifierPubScope: ConfigSeat<
 		return input as unknown as ReturnType<typeof F.buildVisibilityModifierPubScope>;
 	return F.buildVisibilityModifierPubScope(
 		_keywordOr(
-			configFieldOr(input, 'content', () => input),
+			configFieldOr(input, 'content', () => input, TSKindId.VisibilityModifierPubScope),
 			[['self', TSKindId.SelfModule] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const],
 			() =>
 				coerceMixedEnumStorage(
 					_resolveKindEnum(
-						configFieldOr(input, 'content', () => input),
+						configFieldOr(input, 'content', () => input, TSKindId.VisibilityModifierPubScope),
 						[TSKindId.SelfModule, TSKindId.Super, TSKindId.Crate],
 						() =>
 							_resolveOne<TSKindId.SelfModule | TSKindId.Super | TSKindId.Crate | T.VisibilityModifierPubScopeInPath>(
-								configFieldOr(input, 'content', () => input),
+								configFieldOr(input, 'content', () => input, TSKindId.VisibilityModifierPubScope),
 								_K67,
 								_K68
 							)
@@ -9367,7 +9229,7 @@ export const coerceToVisibilityModifierPub: OptionalConfigSeat<
 		return input as unknown as ReturnType<typeof F.buildVisibilityModifierPub>;
 	return F.buildVisibilityModifierPub(
 		_resolveOneBranch<T.VisibilityModifierPubScope>(
-			configFieldOr(input, 'visibilityModifierPubScope', () => input),
+			configFieldOr(input, 'visibilityModifierPubScope', () => input, TSKindId.VisibilityModifierPub),
 			'visibility_modifier_pub_scope',
 			undefined,
 			true
@@ -9389,7 +9251,7 @@ export const coerceToFunctionTypeTraitForm: ConfigSeat<
 		return input as unknown as ReturnType<typeof F.buildFunctionTypeTraitForm>;
 	return F.buildFunctionTypeTraitForm(
 		_resolveOne<T.TypeIdentifier | T.ScopedTypeIdentifier>(
-			configFieldOr(input, 'trait', () => input),
+			configFieldOr(input, 'trait', () => input, TSKindId.FunctionTypeTraitForm),
 			_K2,
 			_K32
 		)
@@ -9418,7 +9280,7 @@ export const coerceToFunctionTypeFnForm: Seat<
 		return input as unknown as ReturnType<typeof F.buildFunctionTypeFnForm>;
 	return F.buildFunctionTypeFnForm(
 		_resolveOneBranch<T.FunctionModifiers>(
-			configFieldOr(input, 'functionModifiers', () => input),
+			configFieldOr(input, 'functionModifiers', () => input, TSKindId.FunctionTypeFnForm),
 			'function_modifiers',
 			undefined,
 			true
@@ -9522,11 +9384,11 @@ export const coerceToOrPatternPrefix: ConfigSeat<T.OrPatternPrefix.Loose, Return
 	return F.buildOrPatternPrefix(
 		coerceMixedEnumStorage(
 			_resolveKindEnum(
-				configFieldOr(input, 'right', () => input),
+				configFieldOr(input, 'right', () => input, TSKindId.OrPatternPrefix),
 				[],
 				() =>
 					_resolveOne<T.Pattern>(
-						configFieldOr(input, 'right', () => input),
+						configFieldOr(input, 'right', () => input, TSKindId.OrPatternPrefix),
 						_K23,
 						_K24
 					)
@@ -9552,11 +9414,11 @@ export const coerceToPointerTypeConst: ConfigSeat<
 	return F.buildPointerTypeConst(
 		coerceMixedEnumStorage(
 			_resolveKindEnum(
-				configFieldOr(input, 'type', () => input),
+				configFieldOr(input, 'type', () => input, TSKindId.PointerTypeConst),
 				[],
 				() =>
 					_resolveOne<T.Type>(
-						configFieldOr(input, 'type', () => input),
+						configFieldOr(input, 'type', () => input, TSKindId.PointerTypeConst),
 						_K14,
 						_K15
 					)
@@ -9581,11 +9443,11 @@ export const coerceToPointerTypeMut: ConfigSeat<T.PointerTypeMut.Loose, ReturnTy
 	return F.buildPointerTypeMut(
 		coerceMixedEnumStorage(
 			_resolveKindEnum(
-				configFieldOr(input, 'type', () => input),
+				configFieldOr(input, 'type', () => input, TSKindId.PointerTypeMut),
 				[],
 				() =>
 					_resolveOne<T.Type>(
-						configFieldOr(input, 'type', () => input),
+						configFieldOr(input, 'type', () => input, TSKindId.PointerTypeMut),
 						_K14,
 						_K15
 					)
@@ -9652,11 +9514,11 @@ export const coerceToRangeExpressionPostfix: ConfigSeat<
 	return F.buildRangeExpressionPostfix(
 		coerceMixedEnumStorage(
 			_resolveKindEnum(
-				configFieldOr(input, 'start', () => input),
+				configFieldOr(input, 'start', () => input, TSKindId.RangeExpressionPostfix),
 				[],
 				() =>
 					_resolveOne<T.Expression>(
-						configFieldOr(input, 'start', () => input),
+						configFieldOr(input, 'start', () => input, TSKindId.RangeExpressionPostfix),
 						_K12,
 						_K13
 					)
@@ -9682,11 +9544,11 @@ export const coerceToRangeExpressionPrefix: ConfigSeat<
 	return F.buildRangeExpressionPrefix(
 		coerceMixedEnumStorage(
 			_resolveKindEnum(
-				configFieldOr(input, 'end', () => input),
+				configFieldOr(input, 'end', () => input, TSKindId.RangeExpressionPrefix),
 				[],
 				() =>
 					_resolveOne<T.Expression>(
-						configFieldOr(input, 'end', () => input),
+						configFieldOr(input, 'end', () => input, TSKindId.RangeExpressionPrefix),
 						_K12,
 						_K13
 					)
@@ -9723,11 +9585,11 @@ export const coerceToExpressionStatementWithSemi: ConfigSeat<
 	return F.buildExpressionStatementWithSemi(
 		coerceMixedEnumStorage(
 			_resolveKindEnum(
-				configFieldOr(input, 'expression', () => input),
+				configFieldOr(input, 'expression', () => input, TSKindId.ExpressionStatementWithSemi),
 				[],
 				() =>
 					_resolveOne<T.Expression>(
-						configFieldOr(input, 'expression', () => input),
+						configFieldOr(input, 'expression', () => input, TSKindId.ExpressionStatementWithSemi),
 						_K12,
 						_K13
 					)
@@ -9895,7 +9757,12 @@ export const coerceToLineCommentDocOuter: ConfigSeat<
 		return input as unknown as ReturnType<typeof F.buildLineCommentDocOuter>;
 	return F.buildLineCommentDocOuter(
 		_resolveOneLeaf<T.DocComment>(
-			configFieldOr(input, 'doc', () => (typeof input === 'string' ? spelledInterior(input, '/', '') : input)),
+			configFieldOr(
+				input,
+				'doc',
+				() => (typeof input === 'string' ? spelledInterior(input, '/', '') : input),
+				TSKindId.LineCommentDocOuter
+			),
 			'doc_comment'
 		)
 	);
@@ -9915,7 +9782,12 @@ export const coerceToLineCommentDocInner: ConfigSeat<
 		return input as unknown as ReturnType<typeof F.buildLineCommentDocInner>;
 	return F.buildLineCommentDocInner(
 		_resolveOneLeaf<T.DocComment>(
-			configFieldOr(input, 'doc', () => (typeof input === 'string' ? spelledInterior(input, '!', '') : input)),
+			configFieldOr(
+				input,
+				'doc',
+				() => (typeof input === 'string' ? spelledInterior(input, '!', '') : input),
+				TSKindId.LineCommentDocInner
+			),
 			'doc_comment'
 		)
 	);
@@ -9943,7 +9815,12 @@ export const coerceToBlockCommentDocOuter: OptionalConfigSeat<
 		return input as unknown as ReturnType<typeof F.buildBlockCommentDocOuter>;
 	return F.buildBlockCommentDocOuter(
 		_resolveOneLeaf<T.BlockCommentContent>(
-			configFieldOr(input, 'doc', () => (typeof input === 'string' ? spelledInterior(input, '*', '') : input)),
+			configFieldOr(
+				input,
+				'doc',
+				() => (typeof input === 'string' ? spelledInterior(input, '*', '') : input),
+				TSKindId.BlockCommentDocOuter
+			),
 			'_block_comment_content'
 		)
 	);
@@ -9963,7 +9840,12 @@ export const coerceToBlockCommentDocInner: OptionalConfigSeat<
 		return input as unknown as ReturnType<typeof F.buildBlockCommentDocInner>;
 	return F.buildBlockCommentDocInner(
 		_resolveOneLeaf<T.BlockCommentContent>(
-			configFieldOr(input, 'doc', () => (typeof input === 'string' ? spelledInterior(input, '!', '') : input)),
+			configFieldOr(
+				input,
+				'doc',
+				() => (typeof input === 'string' ? spelledInterior(input, '!', '') : input),
+				TSKindId.BlockCommentDocInner
+			),
 			'_block_comment_content'
 		)
 	);
@@ -10797,16 +10679,8 @@ export const coerceToMatchBlockArms: Seat<T.MatchBlockArms.LooseArgs, ReturnType
 	...input: T.MatchBlockArms.LooseArgs
 ): ReturnType<typeof F.buildMatchBlockArms> => {
 	currentHandle()?.admit(TSKindId.MatchBlockArms, input);
-	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.MatchBlockArms)) {
-		const data = input[0];
-		const stored = (data as unknown as { _arms?: unknown })._arms;
-		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.buildMatchBlockArms(
-			...(_resolveMany<T.MatchArm | T.LastMatchArm>(children, _K2, _K76) as unknown as Parameters<
-				typeof F.buildMatchBlockArms
-			>)
-		);
-	}
+	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.MatchBlockArms))
+		return input[0] as unknown as ReturnType<typeof F.buildMatchBlockArms>;
 	const _elems: readonly unknown[] = (() => {
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
@@ -10910,17 +10784,8 @@ export const coerceToTraitInterfaceDeclarationBody: EmptyForm<
 > = withEmptyForm(
 	(...input: T.TraitInterfaceDeclarationBody.LooseArgs): ReturnType<typeof F.buildTraitInterfaceDeclarationBody> => {
 		currentHandle()?.admit(TSKindId.TraitInterfaceDeclarationBody, input);
-		if (input.length === 1 && isNodeOfKind(input[0], TSKindId.TraitInterfaceDeclarationBody)) {
-			const data = input[0];
-			const stored = (data as unknown as { _declarations?: unknown })._declarations;
-			const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-			return F.buildTraitInterfaceDeclarationBody(
-				...(listStorage(
-					_resolveKindEnumItems(children, [], (_v) => _resolveMany<T.DeclarationStatementTraitItem>(_v, _K0, _K77)),
-					(item) => coerceMixedEnumStorage(item, [])
-				) as unknown as Parameters<typeof F.buildTraitInterfaceDeclarationBody>)
-			);
-		}
+		if (input.length === 1 && isNodeOfKind(input[0], TSKindId.TraitInterfaceDeclarationBody))
+			return input[0] as unknown as ReturnType<typeof F.buildTraitInterfaceDeclarationBody>;
 		const _elems: readonly unknown[] = (() => {
 			if (input.length !== 1) return input;
 			const head: unknown = input[0];
@@ -10944,17 +10809,8 @@ export const coerceToExtensionDeclarationBody: EmptyForm<
 > = withEmptyForm(
 	(...input: T.ExtensionDeclarationBody.LooseArgs): ReturnType<typeof F.buildExtensionDeclarationBody> => {
 		currentHandle()?.admit(TSKindId.ExtensionDeclarationBody, input);
-		if (input.length === 1 && isNodeOfKind(input[0], TSKindId.ExtensionDeclarationBody)) {
-			const data = input[0];
-			const stored = (data as unknown as { _declarations?: unknown })._declarations;
-			const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-			return F.buildExtensionDeclarationBody(
-				...(listStorage(
-					_resolveKindEnumItems(children, [], (_v) => _resolveMany<T.DeclarationStatementImplItemBody>(_v, _K0, _K78)),
-					(item) => coerceMixedEnumStorage(item, [])
-				) as unknown as Parameters<typeof F.buildExtensionDeclarationBody>)
-			);
-		}
+		if (input.length === 1 && isNodeOfKind(input[0], TSKindId.ExtensionDeclarationBody))
+			return input[0] as unknown as ReturnType<typeof F.buildExtensionDeclarationBody>;
 		const _elems: readonly unknown[] = (() => {
 			if (input.length !== 1) return input;
 			const head: unknown = input[0];
@@ -11003,24 +10859,22 @@ export const coerceToArrayExpressionListElements: Seat<
 	ReturnType<typeof F.buildArrayExpressionListElements>
 > = (...input: T.ArrayExpressionListElements.LooseArgs): ReturnType<typeof F.buildArrayExpressionListElements> => {
 	currentHandle()?.admit(TSKindId.ArrayExpressionListElements, input);
-	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.ArrayExpressionListElements)) {
-		const data = input[0];
-		const stored = (data as unknown as { _item?: unknown })._item;
-		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.buildArrayExpressionListElements(
-			{
-				delimiter: (() => {
-					const d = (data as unknown as { _separator?: number; _delimiter?: Delimiter })._delimiter;
-					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
-				})()
-			},
-			...(children as unknown as NonEmptyArray<Admit<T.AttributedArgument | T.Expression>>)
-		);
-	}
-	return F.buildArrayExpressionListElements(
+	const _optsFirst =
+		typeof input[0] === 'object' &&
+		input[0] !== null &&
+		!Array.isArray(input[0]) &&
+		!('$type' in (input[0] as object)) &&
+		Object.keys(input[0] as object).every((k) => ['delimiter'].includes(k));
+	const options = (_optsFirst ? (input[0] as unknown) : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
+	const _rest = (_optsFirst ? input.slice(1) : input) as unknown as readonly unknown[];
+	if (_rest.length === 1 && isNodeOfKind(_rest[0], TSKindId.ArrayExpressionListElements))
+		return withOptions(_rest[0], options) as unknown as ReturnType<typeof F.buildArrayExpressionListElements>;
+	return (
+		F.buildArrayExpressionListElements as (...args: unknown[]) => ReturnType<typeof F.buildArrayExpressionListElements>
+	)(
+		options,
 		...(_listElements(
-			input,
-			['delimiter'],
+			_rest,
 			'attributed_argument',
 			(els) =>
 				listStorage(
@@ -11261,7 +11115,7 @@ export const coerceToParametersElementsReceiverGroup: Seat<
 		return input as unknown as ReturnType<typeof F.buildParametersElementsReceiverGroup>;
 	return F.buildParametersElementsReceiverGroup(
 		_resolveOneBranch<T.ParametersElements>(
-			configFieldOr(input, 'elements', () => input),
+			configFieldOr(input, 'elements', () => input, TSKindId.ParametersElementsReceiverGroup),
 			'parameters_elements',
 			undefined,
 			true
@@ -11285,7 +11139,7 @@ export const coerceToTypeIdentifier: ConfigSeat<T.TypeIdentifier.Loose, ReturnTy
 	if (isNodeOfKind(input, TSKindId.TypeIdentifier)) return input as unknown as ReturnType<typeof F.buildTypeIdentifier>;
 	return F.buildTypeIdentifier(
 		_resolveOneLeaf<T.Identifier>(
-			configFieldOr(input, 'content', () => input),
+			configFieldOr(input, 'content', () => input, TSKindId.TypeIdentifier),
 			'identifier'
 		)
 	);
@@ -11304,7 +11158,7 @@ export const coerceToFieldIdentifier: ConfigSeat<T.FieldIdentifier.Loose, Return
 		return input as unknown as ReturnType<typeof F.buildFieldIdentifier>;
 	return F.buildFieldIdentifier(
 		_resolveOneLeaf<T.Identifier>(
-			configFieldOr(input, 'content', () => input),
+			configFieldOr(input, 'content', () => input, TSKindId.FieldIdentifier),
 			'identifier'
 		)
 	);
@@ -11334,11 +11188,11 @@ export const coerceToClosureParameter: ConfigSeat<
 	return F.buildClosureParameter(
 		coerceMixedEnumStorage(
 			_resolveKindEnum(
-				configFieldOr(input, 'content', () => input),
+				configFieldOr(input, 'content', () => input, TSKindId.ClosureParameter),
 				[],
 				() =>
 					_resolveOne<T.Pattern>(
-						configFieldOr(input, 'content', () => input),
+						configFieldOr(input, 'content', () => input, TSKindId.ClosureParameter),
 						_K23,
 						_K24
 					)
@@ -11362,7 +11216,7 @@ export const coerceToShorthandFieldIdentifier: ConfigSeat<
 		return input as unknown as ReturnType<typeof F.buildShorthandFieldIdentifier>;
 	return F.buildShorthandFieldIdentifier(
 		_resolveOneLeaf<T.Identifier>(
-			configFieldOr(input, 'content', () => input),
+			configFieldOr(input, 'content', () => input, TSKindId.ShorthandFieldIdentifier),
 			'identifier'
 		)
 	);

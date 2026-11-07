@@ -595,6 +595,7 @@ export interface DeriveCtx {
 	readonly kindName?: string;
 	readonly collision?: ParseKindCollisionContext;
 	readonly visibleAliasTargets?: ReadonlyMap<string, readonly string[]>;
+	readonly displayLexemes?: ReadonlyMap<string, readonly string[]>;
 	readonly simplifiedRules?: Record<string, SimplifiedRule>;
 	readonly nodes?: ReadonlyMap<string, AssembledNodeBase>;
 	readonly stampArmFieldNamesAsParseName?: boolean;
@@ -799,6 +800,10 @@ export function armFactsOf(
 	};
 }
 
+function literalIsLexemeOfDisplay(display: string, text: string, ctx: DeriveCtx): boolean {
+	return ctx.displayLexemes?.get(display)?.includes(text) === true;
+}
+
 function aliasEnvelopeValueOf(
 	ref: { readonly aliasedTo?: string; readonly aliasedToId?: number },
 	ctx: DeriveCtx,
@@ -829,6 +834,18 @@ export function deriveValuesForRule(
 				ctx
 			);
 			if (rule.literal !== undefined) {
+				if (rule.aliasedTo !== undefined && rule.aliasedToId !== undefined && literalIsLexemeOfDisplay(rule.aliasedTo, rule.literal, ctx)) {
+					return [
+						{
+							node: { kind: 'unresolved-ref', name: rule.aliasedTo },
+							storageKindId: rule.kindId ?? rule.aliasedToId,
+							parseKind: { kind: 'unresolved-ref', name: rule.aliasedTo },
+							parseKindId: rule.aliasedToId,
+							...armFactsOf({ annotations: rule.annotations, resolvedKind: rule.aliasedTo }, ctx),
+							multiplicity
+						}
+					];
+				}
 				if (rule.kindId !== undefined) {
 					return [
 						{
@@ -1728,6 +1745,7 @@ export interface CompoundOpts extends KindFacts {
 	parseKindCollisionContext?: ParseKindCollisionContext;
 	slots?: readonly AssembledNonterminal[];
 	visibleAliasTargets?: ReadonlyMap<string, readonly string[]>;
+	displayLexemes?: ReadonlyMap<string, readonly string[]>;
 	simplifiedRules?: Record<string, SimplifiedRule>;
 	assembleDiagnostics?: AssembleDiagnosticsCollector;
 	aliasTypeId?: number;
@@ -1847,6 +1865,7 @@ export abstract class AbstractAssembledCompound<R extends RenderRule = RenderRul
 				kindEntries: opts.kindEntries,
 				collision: opts.parseKindCollisionContext,
 				visibleAliasTargets: opts.visibleAliasTargets,
+				displayLexemes: opts.displayLexemes,
 				simplifiedRules: opts.simplifiedRules,
 				diagnostics: opts.assembleDiagnostics
 			};

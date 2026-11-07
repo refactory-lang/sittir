@@ -78,11 +78,11 @@ impl Address {
 #[derive(serde::Deserialize, Debug, Clone, Default)]
 pub struct Slots {
     #[serde(deserialize_with = "numbered_by_kind")]
-    pub slots: HashMap<crate::types::KindId, crate::types::SlotId>,
+    pub slots: HashMap<crate::types::KindId, crate::types::SlotId, crate::heap::IndexState>,
 }
 
 /// A JSON object of slot numbers by kind id: its keys are the ids as text.
-fn numbered_by_kind<'de, D: serde::Deserializer<'de>>(deserializer: D) -> Result<HashMap<crate::types::KindId, crate::types::SlotId>, D::Error> {
+fn numbered_by_kind<'de, D: serde::Deserializer<'de>>(deserializer: D) -> Result<HashMap<crate::types::KindId, crate::types::SlotId, crate::heap::IndexState>, D::Error> {
     let by_text: HashMap<String, crate::types::SlotId> = serde::Deserialize::deserialize(deserializer)?;
     by_text
         .into_iter()

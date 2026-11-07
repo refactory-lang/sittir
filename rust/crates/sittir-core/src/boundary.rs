@@ -2,6 +2,45 @@
 //! Serde `rename` / `skip_if_none` attrs live alongside the structs in
 //! `types`; reading a wire object's properties lives here.
 
+/// A choice a wire value decodes into, by the kind its `$type` names: the
+/// variants its derived codec reads.
+pub trait DecodesKind {
+    /// The choice's name, as its codec's refusals name it.
+    const OWNER: &'static str;
+    /// Whether the codec decodes a node object of kind `id` into a variant.
+    fn decodes(id: crate::types::KindId) -> bool;
+}
+
+/// The refusal of a value of kind `id` that the choice `owner` decodes into
+/// no variant.
+#[must_use]
+pub fn unknown_kind(id: crate::types::KindId, owner: &str) -> String {
+    format!("unknown kind id {id} in {owner}")
+}
+
+/// A render's text as it crosses to JavaScript: a one-byte string when every
+/// byte is ASCII, which V8 copies without decoding it, and otherwise a UTF-8
+/// string, as a `String` crosses.
+#[cfg(feature = "napi-bindings")]
+pub struct RenderedText(pub String);
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for RenderedText {
+    unsafe fn to_napi_value(env: ::napi::sys::napi_env, val: Self) -> ::napi::Result<::napi::sys::napi_value> {
+        let Self(text) = val;
+        if !text.is_ascii() {
+            // SAFETY: this fn requires `env` to be live.
+            return unsafe { String::to_napi_value(env, text) };
+        }
+        let len = isize::try_from(text.len()).map_err(|_| ::napi::Error::from_reason("a rendered text longer than a JavaScript string holds"))?;
+        let mut out = ::std::ptr::null_mut();
+        // SAFETY: this fn requires `env` to be live, and the call copies the
+        // `len` bytes of `text`, which outlives it.
+        ::napi::check_status!(unsafe { ::napi::sys::napi_create_string_latin1(env, text.as_ptr().cast(), len, &raw mut out) })?;
+        Ok(out)
+    }
+}
+
 /// Reads the property `key` of the wire object `obj`: `None` when it is
 /// undefined, otherwise its value decoded as `V`. The key is a static C
 /// string, which napi resolves to V8's interned string the way a derived
@@ -36,9 +75,46 @@ pub unsafe fn required<V: ::napi::bindgen_prelude::FromNapiValue>(
     owner: &'static str,
 ) -> ::napi::Result<V> {
     // SAFETY: this fn requires `obj` to be live in `env`.
-    let raw = unsafe { ::napi::bindgen_prelude::get_named_property_raw(env, obj, key.as_ptr())? };
+    let raw = unsafe { required_raw(env, obj, key)? };
     // SAFETY: `raw` was just read from `obj`, so it is live in `env`.
-    unsafe { ::napi::bindgen_prelude::from_raw_required_field(env, raw, owner, key_name(key)) }
+    unsafe { V::from_napi_value(env, raw) }.map_err(|err| field_refusal(err, owner, key))
+}
+
+/// A required field's value, undecoded: `undefined` is napi's missing-field
+/// error, which no owner decorates.
+///
+/// # Safety
+/// `obj` must be a live object in `env`.
+#[cfg(feature = "napi-bindings")]
+pub unsafe fn required_raw(
+    env: ::napi::sys::napi_env,
+    obj: ::napi::sys::napi_value,
+    key: &'static ::std::ffi::CStr,
+) -> ::napi::Result<::napi::sys::napi_value> {
+    // SAFETY: this fn requires `obj` to be live in `env`.
+    unsafe { optional_raw(env, obj, key)? }.ok_or_else(|| ::napi::missing_field_error(key_name(key)))
+}
+
+/// An optional field's value, undecoded: `None` when it is `undefined`.
+///
+/// # Safety
+/// `obj` must be a live object in `env`.
+#[cfg(feature = "napi-bindings")]
+pub unsafe fn optional_raw(
+    env: ::napi::sys::napi_env,
+    obj: ::napi::sys::napi_value,
+    key: &'static ::std::ffi::CStr,
+) -> ::napi::Result<Option<::napi::sys::napi_value>> {
+    // SAFETY: this fn requires `obj` to be live in `env`.
+    unsafe { ::napi::bindgen_prelude::get_named_property_raw(env, obj, key.as_ptr()) }
+}
+
+/// `err`, the refusal of the value of `owner`'s field `key`, decorated as
+/// napi's object derive decorates it: `<reason> on <owner>.<key>`.
+#[cfg(feature = "napi-bindings")]
+#[must_use]
+pub fn field_refusal(err: ::napi::Error, owner: &str, key: &'static ::std::ffi::CStr) -> ::napi::Error {
+    if owner.is_empty() { err } else { ::napi::decorate_field_error(err, owner, key_name(key)) }
 }
 
 /// A required whole-number field: read as a double, as `required` reads
@@ -99,9 +175,10 @@ pub unsafe fn optional<V: ::napi::bindgen_prelude::FromNapiValue>(
     owner: &'static str,
 ) -> ::napi::Result<Option<V>> {
     // SAFETY: this fn requires `obj` to be live in `env`.
-    let raw = unsafe { ::napi::bindgen_prelude::get_named_property_raw(env, obj, key.as_ptr())? };
-    // SAFETY: `raw` was just read from `obj`, so it is live in `env`.
-    unsafe { ::napi::bindgen_prelude::from_raw_optional_field(env, raw, owner, key_name(key)) }
+    unsafe { optional_raw(env, obj, key)? }
+        // SAFETY: `raw` was just read from `obj`, so it is live in `env`.
+        .map(|raw| unsafe { V::from_napi_value(env, raw) }.map_err(|err| field_refusal(err, owner, key)))
+        .transpose()
 }
 
 /// A presence flag: `undefined` is `false`, and every other value goes to

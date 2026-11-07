@@ -67,6 +67,7 @@ Per-grammar raw pass/total counts for all four validators
 **Options**
 
 - `--isolate` — Run each grammar in a child process; attributes SIGSEGV to the last attempted kind (default: `false`)
+- `--node-storage <storage>` — Node backend: parsed/built objects (object), or arena views with record builders (arena) (default: `object`)
 - `--_isolate-worker` — Internal: run as an isolation worker for a single grammar (default: `false`)
 
 **Example**
@@ -179,18 +180,29 @@ Native render benchmark over the corpus
 pnpm exec tsx packages/cli/src/cli.ts tool bench [options]
 ```
 
-### `tool bench-codemod`
+### `tool bench-storage`
 
-Benchmark codemod on a corpus directory
+Measure native workflows or paired backend validation buckets
 
 **Arguments**
 
-- `corpus-dir` (required) — Corpus directory to benchmark
+- `grammars…` (optional) — Defaults to all stable grammars
+
+**Options**
+
+- `--rounds <n>` — Fresh-process rounds per grammar (default: `5`)
+- `--warmup <n>` — Warmup batches per timed phase (default: `2`)
+- `--iterations <n>` — Measured corpus batches per phase and round (default: `3`)
+- `--limit <n>` — Use only the first n corpus entries (smoke runs)
+- `--native-depth <depth>` — Native hydration depth: a positive integer or all (default: `all`)
+- `--validation` — Profile deep read, factory and IR render/parse validators under both paired backends
+- `--idle-gate <path>` — Run a shell idle gate before each worker, passing the current directory
+- `--output <path>` — Write the complete JSON report to this file
 
 **Example**
 
 ```sh
-pnpm exec tsx packages/cli/src/cli.ts tool bench-codemod <corpus-dir> [options]
+pnpm exec tsx packages/cli/src/cli.ts tool bench-storage [grammars] [options]
 ```
 
 ### `tool bootstrap-grammar`
@@ -430,6 +442,27 @@ Print the strict factory source that rebuilds a source file
 pnpm exec tsx packages/cli/src/cli.ts tool emit-factory-source [options]
 ```
 
+### `tool encode-stack`
+
+Check each built release addon's whole-encode stack, RECURSION_LIMIT levels and the one-time frames, against ENCODE_STACK_BUDGET
+
+**Arguments**
+
+- `grammars…` (optional) — Grammars whose built addons to check (default: every stable grammar)
+
+**Options**
+
+- `--addon <paths...>` — Unstripped addon files to check instead of the copy each release build keeps (sittir-<grammar>.<platform>.node)
+- `--objdump <path>` — llvm-objdump to disassemble with (default: $LLVM_OBJDUMP, then the pinned Rust toolchain's llvm-tools)
+- `--paths` — Print every costliest path, not only those over budget
+- `--json` — Print the measurements as JSON
+
+**Example**
+
+```sh
+pnpm exec tsx packages/cli/src/cli.ts tool encode-stack [grammars] [options]
+```
+
 ### `tool exercise`
 
 Exercise factory round-trips with built-in or corpus cases
@@ -558,21 +591,6 @@ List groups, unaliased, and phantom kinds
 
 ```sh
 pnpm exec tsx packages/cli/src/cli.ts tool list-kinds [options]
-```
-
-### `tool node-json-census`
-
-Census what node JSON and the reviver rest on: unwrapped text leaves, kinds the coercer cannot build, slot value shapes, comment kinds
-
-**Options**
-
-- `-g, --grammar <name>` — Grammar to operate on — choices: `python` | `regex` | `rust` | `scm` | `typescript`
-- `--all-grammars` — Run every stable grammar
-
-**Example**
-
-```sh
-pnpm exec tsx packages/cli/src/cli.ts tool node-json-census [options]
 ```
 
 ### `tool output-gate`

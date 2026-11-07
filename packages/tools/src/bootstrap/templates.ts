@@ -39,9 +39,9 @@ export function grammarPackageFiles(v: GrammarTemplateVars): TemplateFile[] {
 					'./api': { types: './dist/api.d.ts', import: './dist/api.js' }
 				},
 				scripts: {
-					build: 'tsrs -p tsconfig.build.json',
+					build: 'tsrs --build tsconfig.build.json',
 					clean: 'rm -rf dist tsconfig.build.tsbuildinfo tsconfig.tsbuildinfo',
-					dev: 'tsrs -p tsconfig.build.json --watch',
+					dev: 'tsrs --build tsconfig.build.json --watch',
 					test: 'vitest run',
 					'test:coverage': 'vitest run --coverage',
 					'type-check': 'tsrs --noEmit',
@@ -113,7 +113,6 @@ import { enrich, preference, wire } from '../codegen/src/dsl/index.ts';
 
 export default grammar(enrich(base), wire({
 \tresolutions,
-\tname: '${v.name}',
 \toptions: { indent: preference('${BOOTSTRAP_INDENT_UNIT}') }
 }));
 `

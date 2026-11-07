@@ -42,7 +42,7 @@ describe('the delimited fact', () => {
 
 	it('fails generation, naming the kind, when a non-trivia delimited kind has no host', async () => {
 		const { nodeMap, generatedIdTables } = await compileGrammar({ package: grammarPackage('rust') });
-		expect(() => new FactoryEmitter({ grammar: 'rust', nodeMap, generatedIdTables, triviaKinds: [] })).toThrow(/^block_comment: its delimiters need a parse-back host/);
+		expect(() => new FactoryEmitter({ grammar: 'rust', nodeMap, generatedIdTables, triviaKinds: [] })).toThrow(/^reparse-host-missing: block_comment: its delimiters need a parse-back host/);
 	}, COMPILE_TIMEOUT);
 });
 

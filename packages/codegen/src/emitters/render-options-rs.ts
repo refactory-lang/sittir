@@ -1,4 +1,5 @@
 import type { SeamOrigin } from '../types/rule.ts';
+import { emitShapeFailure } from '../compiler/diagnostics/emit-diagnostics.ts';
 import { BLANK_KIND_ID } from '@sittir/common/blank-arm';
 import { ERROR_KIND_ID, ERROR_KIND_NAME } from '@sittir/common/error-kind';
 import type { KindEntryLike } from '../dsl/symbol-table.ts';
@@ -214,7 +215,7 @@ export function planRenderOptions(
 		}
 		if (site.source === 'separator') {
 			const defaultEntry = findEntryForKindName(kindEntries, site.defaultArm);
-			if (defaultEntry?.literalText === undefined) throw new Error(`options.rs: ${at} separator default '${site.defaultArm}' has no token text`);
+			if (defaultEntry?.literalText === undefined) throw emitShapeFailure({ code: 'separator-default-without-text', message: `options.rs: ${at} separator default '${site.defaultArm}' has no token text` });
 			pushSpacing({
 				display,
 				source,
@@ -235,7 +236,7 @@ export function planRenderOptions(
 		}
 		const allowedIds = site.arms.map((arm) => armIdOf(kindEntries, arm, at));
 		const defaultArm = site.arms.find((arm) => arm.value === site.defaultArm);
-		if (defaultArm === undefined) throw new Error(`options.rs: ${at} default '${site.defaultArm}' is not one of its arms`);
+		if (defaultArm === undefined) throw emitShapeFailure({ code: 'site-default-not-an-arm', message: `options.rs: ${at} default '${site.defaultArm}' is not one of its arms` });
 		const place = site.spacing;
 		const field =
 			place?.at === 'flank'
@@ -314,7 +315,7 @@ interface SiteLevel {
 	readonly kindId: number | undefined;
 	readonly union: readonly DisplayUnionMember[];
 }
-type IndexedSite = SitePath & { readonly admission?: string; readonly levels?: readonly [SiteLevel, SiteLevel | undefined] };
+type IndexedSite = SitePath & { readonly admission?: string; readonly arms?: string; readonly levels?: readonly [SiteLevel, SiteLevel | undefined] };
 type SiteIndex = ReadonlyMap<string, readonly IndexedSite[]>;
 
 function siteIndexOf(plan: RenderOptionsPlan): SiteIndex {
@@ -333,6 +334,7 @@ function siteIndexOf(plan: RenderOptionsPlan): SiteIndex {
 				? {
 						...p,
 						admission: JSON.stringify([p.site, spacing.slot, spacing.label, spacing.defaultId, spacing.allowedIds]),
+						arms: JSON.stringify([p.site, spacing.defaultId, spacing.allowedIds]),
 						levels: [
 							levelOf(spacing.source, spacing.display, spacing.kindId),
 							spacing.seat === undefined ? undefined : levelOf(spacing.seat.kind, spacing.seat.display, spacing.seat.kindId)
@@ -342,6 +344,7 @@ function siteIndexOf(plan: RenderOptionsPlan): SiteIndex {
 					? {
 							...p,
 							admission: JSON.stringify([p.site, delimiter.slot, delimiter.allowed, delimiter.defaultBits]),
+							arms: JSON.stringify([p.site, delimiter.allowed, delimiter.defaultBits]),
 							levels: [levelOf(delimiter.source, delimiter.display, delimiter.kindId), undefined]
 						}
 					: p;
@@ -376,17 +379,23 @@ function isAliasSiteFamily(sites: readonly IndexedSite[]): boolean {
 	);
 }
 
+function isSameLevelSiteFamily(sites: readonly IndexedSite[]): boolean {
+	const levelKey = (site: IndexedSite) => JSON.stringify(site.levels?.map((level) => level && [level.storage, level.display, level.kindId]));
+	const [head] = sites;
+	return head?.arms !== undefined && sites.every((site) => site.arms === head.arms && levelKey(site) === levelKey(head));
+}
+
 function siteRefsOf(leaf: AddressLeafEntry, siteIndex: SiteIndex): SitePath[] {
 	const refs = leaf.canonical.flatMap((segments) => {
 		const bucket = siteIndex.get(formatPreferencePath(segments)) ?? [];
-		if (bucket.length !== 1 && (bucket.length === 0 || !isAliasSiteFamily(bucket))) {
-			throw new Error(
+		if (bucket.length !== 1 && (bucket.length === 0 || !(isSameLevelSiteFamily(bucket) || isAliasSiteFamily(bucket)))) {
+			throw emitShapeFailure({ code: 'option-address-sites', message: 
 				`options.rs: address '${leaf.path}' names '${formatPreferencePath(segments)}', which is ${bucket.length === 0 ? 'no site' : `${bucket.length} sites`}: ${JSON.stringify(bucket.map(({ site, levels }) => ({ site, levels: levels?.map((level) => level && { storage: level.storage, display: level.display, kindId: level.kindId }) })))}`
-			);
+			 });
 		}
 		return bucket;
 	});
-	if (new Set(refs.map((r) => r.site)).size > 1) throw new Error(`options.rs: address '${leaf.path}' mixes spacing and delimiter sites`);
+	if (new Set(refs.map((r) => r.site)).size > 1) throw emitShapeFailure({ code: 'option-address-sites', message: `options.rs: address '${leaf.path}' mixes spacing and delimiter sites` });
 	return refs;
 }
 
@@ -554,7 +563,7 @@ export function seatTableName(kind: string, slot: string): string {
 export function seatEdgeSide(site: SpacingSite): SeparatorSide {
 	const { seat, spacing } = site;
 	if (seat === undefined || spacing?.at !== 'seam' || spacing.token !== seat.display) {
-		throw new Error(`seated site '${site.address}' writes '${site.label}', which is not the seated kind's edge`);
+		throw emitShapeFailure({ code: 'seated-site-edge-mismatch', message: `seated site '${site.address}' writes '${site.label}', which is not the seated kind's edge` });
 	}
 	return spacing.side;
 }
@@ -568,7 +577,7 @@ export function seatTablesOf(plan: RenderOptionsPlan): SeatTable[] {
 	plan.spacingSites.forEach((site, index) => {
 		if (site.seat === undefined) return;
 		if (seatEdgeSide(site) !== 'after') {
-			throw new Error(`seated site '${site.address}' fills the element's before edge; a sibling gap is the element's after edge`);
+			throw emitShapeFailure({ code: 'seated-site-edge-mismatch', message: `seated site '${site.address}' fills the element's before edge; a sibling gap is the element's after edge` });
 		}
 		const id = site.seat.kindId;
 		if (id === undefined) throw new Error(`seated site '${site.address}' seats '${site.seat.kind}', which has no kind id`);
@@ -600,7 +609,7 @@ export function carriesPerNodeValue(site: SpacingSite): boolean {
 }
 
 function seamOf(site: SpacingSite): SeamAddress {
-	if (site.spacing?.at !== 'seam') throw new Error(`options.rs: site '${site.address}' of '${site.source}' is not a seam`);
+	if (site.spacing?.at !== 'seam') throw emitShapeFailure({ code: 'site-not-a-seam', message: `options.rs: site '${site.address}' of '${site.source}' is not a seam` });
 	return site.spacing;
 }
 

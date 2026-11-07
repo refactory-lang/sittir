@@ -1,4 +1,5 @@
 import type { PortableCondition, QueryPlan, QuerySubject, SlotFlagRefusal, SlotFlagTest, SlotSubject } from '@sittir/types';
+import { emitShapeFailure } from '../../../compiler/diagnostics/emit-diagnostics.ts';
 import type { MemberRoute, SlotStep } from '../../../bindings/routes.ts';
 import type { AssembledNode, AssembledNonterminal } from '../../../compiler/model/node-map.ts';
 import { keywordTestOf, loweredPlan, type PresenceKeywordOf, type SlotSubjectOf } from './read-tests.ts';
@@ -42,7 +43,7 @@ const isNative = (plan: QueryPlan<QuerySubject>): plan is QueryPlan => {
 export function flagPlansOf(input: FlagPlansInput): Map<string, QueryPlan | null> {
 	const { kind, subjectOf, presenceOf, typesOf } = input;
 	const refuse = (flag: string, why: string): never => {
-		throw new Error(`portable: cannot test ${kind}'s flag ${flag}: ${why}`);
+		throw emitShapeFailure({ code: 'portable-flag-untestable', ownerKind: kind, message: `cannot test ${kind}'s flag ${flag}: ${why}`, details: { flag, why } });
 	};
 	const subjectAt = (flag: string, step: SlotStep): SlotSubject => subjectOf(step.owner, step.slot) ?? refuse(flag, `no number for ${step.owner}'s slot ${step.slot}`);
 	const leafOf = (route: MemberRoute, last: SlotStep): QueryPlan => {

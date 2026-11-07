@@ -2,6 +2,7 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { createEngine } from '@sittir/common';
+import { BLANK_KIND_ID, snapshotOf } from '@sittir/common/utils';
 import { PACKAGES_DIR } from '@sittir/codegen/grammars';
 import type { QuerySlots } from '@sittir/types';
 import { languageByName } from '../src/languages.ts';
@@ -45,43 +46,41 @@ const CHOSE_NONE: Readonly<Record<string, Readonly<Record<string, string>>>> = {
 	}
 };
 
-type Json = Record<string, unknown>;
-type Node = { readonly $type: number; toJSON(): Json } & Record<string, unknown>;
+type Node = { readonly $type: number; readonly $with: Record<string, (value: unknown) => Node> } & Record<string, unknown>;
 type Engine = {
 	readonly kinds: Record<string, number>;
-	readonly reviver: (key: string, value: unknown) => unknown;
 	parse(source: string): { $query(): { readonly $descendants: { ofType(kind: number): Iterable<Node> } } };
 };
 
 const read = (node: Node, accessor: string): unknown => (node[accessor] as () => unknown).call(node);
-const revive = (engine: Engine, json: Json): Node => JSON.parse(JSON.stringify(json), engine.reviver) as Node;
 
-describe('the blank arm of an optional preference reads as null on every path', () => {
+const STORAGES = ['object', 'arena'] as const;
+
+describe('the blank arm of an optional preference reads as null and is stored as the blank kind id, on both backends', () => {
 	it.each(Object.keys(CHOSE_NONE))('%s: every blank-arm slot has a source that chooses none', (grammar) => {
 		expect(Object.keys(CHOSE_NONE[grammar]!).sort()).toEqual(blankArmSlots(grammar));
 	});
 
-	const cases = Object.entries(CHOSE_NONE).flatMap(([grammar, slots]) => Object.entries(slots).map(([slot, source]) => [grammar, slot, source] as const));
+	const cases = STORAGES.flatMap((storage) =>
+		Object.entries(CHOSE_NONE).flatMap(([grammar, slots]) => Object.entries(slots).map(([slot, source]) => [storage, grammar, slot, source] as const))
+	);
 
-	it.each(cases)('%s %s', async (grammar, slot, source) => {
-		const engine = (await createEngine(await languageByName(grammar))) as unknown as Engine;
+	it.each(cases)('%s storage: %s %s', async (storage, grammar, slot, source) => {
+		const engine = (await createEngine(await languageByName(grammar), { nodeStorage: storage })) as unknown as Engine;
 		const { hooks } = (await import(`@sittir/${grammar}/api`)) as { hooks: { querySlots: QuerySlots } };
 		const [typeName, slotName] = slot.split('.') as [string, string];
 		const kindId = engine.kinds[typeName]!;
-		const accessor = hooks.querySlots[kindId]!.find((row) => row[3] === `_${slotName}`)![0];
+		const storageKey = `_${slotName}`;
+		const row = hooks.querySlots[kindId]!.find((entry) => entry[3] === storageKey)!;
+		expect(row[5], 'the slot row stamps the blank arm').toBe(true);
+		const accessor = row[0];
 
 		const parsed = [...engine.parse(source).$query().$descendants.ofType(kindId)].find((node) => read(node, accessor) === null);
 		expect(parsed, 'a parsed node that chose none').toBeDefined();
-		const json = parsed!.toJSON();
-		expect(json).toHaveProperty(accessor, null);
+		expect(snapshotOf(parsed!)).toHaveProperty(storageKey, BLANK_KIND_ID);
 
-		const builtNone = revive(engine, json);
+		const builtNone = parsed!.$with[accessor]!(null);
 		expect(read(builtNone, accessor)).toBeNull();
-		expect(builtNone.toJSON()).toEqual(json);
-
-		const { [accessor]: _, ...unset } = json;
-		const builtUnset = revive(engine, unset);
-		expect(read(builtUnset, accessor)).toBeUndefined();
-		expect(builtUnset.toJSON()).toEqual(unset);
+		expect(snapshotOf(builtNone)).toHaveProperty(storageKey, BLANK_KIND_ID);
 	});
 });

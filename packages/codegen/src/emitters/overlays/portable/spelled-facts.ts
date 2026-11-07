@@ -1,4 +1,5 @@
 import type { PortableSpelledFact, PortableSpelling } from '@sittir/types';
+import { emitShapeFailure } from '../../../compiler/diagnostics/emit-diagnostics.ts';
 import type { SlotModel } from '../../../bindings/facts.ts';
 import { camel } from '../../../bindings/names.ts';
 import { shownSlots, slotFor, type GrammarRoutes, type ReadEntry } from '../../../bindings/routes.ts';
@@ -6,7 +7,7 @@ import type { PortableFactRecord } from './read-tests.ts';
 
 export function portableSpellingOf(entry: ReadEntry, model: SlotModel, routes: GrammarRoutes): PortableSpelling {
 	const refuse = (why: string): never => {
-		throw new Error(`portable build: ${entry.kind} as ${entry.vocab} is a fact its container spells, but ${why}`);
+		throw emitShapeFailure({ code: 'portable-vocabulary-mismatch', ownerKind: entry.kind, message: `${entry.kind} as ${entry.vocab} is a fact its container spells, but ${why}`, details: { vocab: entry.vocab } });
 	};
 	const vocabOf = (kind: string): string => routes.vocabOf.get(kind) ?? refuse(`${kind}, a kind its item holds, reads as no path`);
 	const memberOf = (holder: string, slot: string): string => {

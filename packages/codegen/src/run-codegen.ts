@@ -15,6 +15,7 @@ import {
 	writeDiagnostics,
 	writeGrammarDiagnosticsJson,
 	fromDroppedTokens,
+	fromHelperSlotRead,
 	fromSlotGrouping,
 	type GrammarDiagnostic
 } from './compiler/diagnostics/grammar-diagnostics.ts';
@@ -25,7 +26,7 @@ import { generateWithDerivedConflicts } from './transpile/conflict-driver.ts';
 import { assertGrammarRuntimeFloor } from './transpile/tree-sitter-cli.ts';
 import { renderModuleSrcDir } from './emitters/render-module-paths.ts';
 import { manifestPath, recordNativeBuild, recordedGeneration, sourceFingerprint, writeManifestForGrammar, type SourceFingerprint } from './scripts/generated-manifest.ts';
-import { GRAMMAR_ENTRY, grammarPackage, isGrammar, nativeCrateDir, nativeCrateRelDir, sittirDirOf, type GrammarPackage } from './grammars.ts';
+import { GRAMMAR_ENTRY, grammarPackage, isGrammar, nativeCrateDir, nativeCrateRelDir, parserNameOf, sittirDirOf, workspaceNodeApiLevel, type GrammarPackage } from './grammars.ts';
 import { conflictResolutionsPath } from './transpile/conflict-resolutions-file.ts';
 import { nativeCrateFiles } from './emitters/native-crate.ts';
 import type { NodeMap } from './compiler/types.ts';
@@ -50,6 +51,7 @@ export interface CodegenOptions {
 	workspaceCheck?: boolean;
 	noEmitDiff?: boolean;
 	allowDiagnostics?: string[];
+	nodeApiLevel?: number;
 }
 
 export async function formatSource(path: string, content: string): Promise<string> {
@@ -235,11 +237,23 @@ async function withInternalCodegenRun<T>(fn: () => Promise<T>): Promise<T> {
 	}
 }
 
-export async function runCodegen(opts: CodegenOptions): Promise<NodeMap> {
-	return withInternalCodegenRun(() => runCodegenInternal(opts));
+function runNodeApiLevel({ all, nodeApiLevel }: CodegenOptions): number | undefined {
+	return all === true ? (nodeApiLevel ?? workspaceNodeApiLevel()) : undefined;
 }
 
-async function runCodegenInternal(opts: CodegenOptions, read: SourceFingerprint = sourceFingerprint(opts.grammar)): Promise<NodeMap> {
+export async function runCodegen(opts: CodegenOptions): Promise<NodeMap> {
+	const nodeApiLevel = runNodeApiLevel(opts);
+	return withInternalCodegenRun(() => runCodegenInternal(opts, nodeApiLevel));
+}
+
+function refuseUnlessAllowed(diagnostics: readonly GrammarDiagnostic[], allowDiagnostics: ReadonlySet<string>): void {
+	if (diagnostics.length === 0) return;
+	writeDiagnostics(diagnostics, formatGrammarDiagnostics);
+	const blocked = diagnostics.filter((d) => !allowDiagnostics.has(d.code));
+	if (blocked.length > 0) throw new GrammarDiagnosticError(blocked, diagnostics);
+}
+
+async function runCodegenInternal(opts: CodegenOptions, nodeApiLevel: number | undefined, read: SourceFingerprint = sourceFingerprint(opts.grammar)): Promise<NodeMap> {
 	const { grammar, outputDir, all, testsDir, noEmitDiff, buildNative, nativeDebug, workspaceCheck } = opts;
 
 	if (!outputDir) {
@@ -266,11 +280,14 @@ async function runCodegenInternal(opts: CodegenOptions, read: SourceFingerprint 
 		writeDiagnostics(mapped, formatGrammarDiagnostics);
 	}
 
-	if (result.droppedTokens.length > 0) {
-		const dropped = result.droppedTokens.map((d) => fromDroppedTokens(grammar, d));
-		writeDiagnostics(dropped, formatGrammarDiagnostics);
-		if (!allowDiagnostics.has('dropped-token')) throw new GrammarDiagnosticError(dropped, dropped);
-	}
+	refuseUnlessAllowed(
+		result.droppedTokens.map((d) => fromDroppedTokens(grammar, d)),
+		allowDiagnostics
+	);
+	refuseUnlessAllowed(
+		(result.renderModule?.emit.helperSlotReads ?? []).map((r) => fromHelperSlotRead(grammar, r)),
+		allowDiagnostics
+	);
 
 	if (result.emitDiagnostics.length > 0) {
 		writeDiagnostics(result.emitDiagnostics, formatGrammarDiagnostics);
@@ -292,7 +309,9 @@ async function runCodegenInternal(opts: CodegenOptions, read: SourceFingerprint 
 	rmSync(join(factoriesDir, 'overlays'), { recursive: true, force: true });
 	rmSync(join(factoriesDir, 'bundle.ts'), { force: true });
 	rmSync(join(factoriesDir, 'index.ts'), { force: true });
-	await writeFile(join(factoriesDir, 'raw.ts'), result.factories);
+	await writeFile(join(factoriesDir, 'raw.ts'), result.factoriesDispatch);
+	await writeFile(join(factoriesDir, 'objects.ts'), result.factories);
+	await writeFile(join(factoriesDir, 'records.ts'), result.factoriesRecords);
 	await writeFile(join(factoriesDir, 'coerce.ts'), result.from);
 	for (const [path, text] of Object.entries(result.tableFiles)) await writeFile(join(outDir, path), text);
 	await writeFile(join(outDir, 'wrap.ts'), result.wrap);
@@ -362,12 +381,12 @@ async function runCodegenInternal(opts: CodegenOptions, read: SourceFingerprint 
 
 	await writeFile(join(dirname(outDir), 'vitest.config.ts'), result.config);
 
-	const shouldEmitRustRender = all && isGrammar(grammar);
+	const shouldEmitRustRender = nodeApiLevel !== undefined && isGrammar(grammar);
 
 	if (shouldEmitRustRender) {
 		const crateDir = nativeCrateDir(grammar);
 		const scaffoldCrate = !existsSync(join(crateDir, 'Cargo.toml'));
-		for (const file of nativeCrateFiles(grammar)) await writeFile(join(crateDir, file.path), file.contents);
+		for (const file of nativeCrateFiles(grammar, nodeApiLevel, parserNameOf(grammarPackage(grammar)))) await writeFile(join(crateDir, file.path), file.contents);
 		if (scaffoldCrate) {
 			console.log(`  → scaffolded native crate ${nativeCrateRelDir(grammar)}`);
 			execSync('pnpm install --prefer-offline', { stdio: 'inherit', cwd: process.cwd() });
@@ -476,10 +495,11 @@ export async function runNativeOnly(opts: CodegenOptions): Promise<void> {
 }
 
 export async function runFullRegen(opts: CodegenOptions): Promise<NodeMap> {
-	return withInternalCodegenRun(() => runFullRegenInternal(opts));
+	const nodeApiLevel = runNodeApiLevel(opts);
+	return withInternalCodegenRun(() => runFullRegenInternal(opts, nodeApiLevel));
 }
 
-async function runFullRegenInternal(opts: CodegenOptions): Promise<NodeMap> {
+async function runFullRegenInternal(opts: CodegenOptions, nodeApiLevel: number | undefined): Promise<NodeMap> {
 	const { grammar, skipTsChain, transpile, tsGenerate } = opts;
 	const read = sourceFingerprint(grammar);
 
@@ -492,5 +512,5 @@ async function runFullRegenInternal(opts: CodegenOptions): Promise<NodeMap> {
 		await compileParsers(grammar, pkg);
 	}
 
-	return runCodegenInternal(opts, read);
+	return runCodegenInternal(opts, nodeApiLevel, read);
 }

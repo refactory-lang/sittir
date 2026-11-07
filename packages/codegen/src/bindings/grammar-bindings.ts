@@ -15,7 +15,7 @@ import {
 import { wordDisplaysOf } from '../dsl/rule-transforms.ts';
 import { matchesWordShape } from '../util/word-matcher.ts';
 import type { Lead } from '../dsl/verbs/effects.ts';
-import { fieldRules, fieldThrough, isEnrichedField, isRecord, OPAQUE_RULES, supertypesOf, symbolNames, type GrammarRecord } from '../dsl/rule-patterns.ts';
+import { fieldRules, fieldThrough, isEnrichedField, isRecord, OPAQUE_RULES, supertypesOf, symbolNames, unwrapPrec, type GrammarRecord } from '../dsl/rule-patterns.ts';
 import type { GrammarDiagnostic } from '../types/diagnostics.ts';
 import { isPrecWrapper } from '../types/runtime-shapes.ts';
 import type { EvaluatedGrammar, RawGrammar } from '../compiler/types.ts';
@@ -218,7 +218,7 @@ function fieldOfReference(rules: Readonly<Record<string, unknown>>, owner: strin
 	const field = fields.at(-1);
 	if (field === undefined) return undefined;
 	if (fields.some((f) => f.name !== field.name)) return 'several';
-	const content = unwrappedPrec(field.content);
+	const content = unwrapPrec(field.content);
 	return { name: field.name, whole: isRecord(content) && ((content.type === 'SYMBOL' && content.name === child) || (content.type === 'ALIAS' && content.value === child)) };
 }
 
@@ -805,7 +805,7 @@ export function grammarBindingsPatches(
 			else if (SINGLE.has(rule.type as string)) walk(rule.content, child(site.fieldPath, 0));
 		};
 		walk(rules[root], { host: root, wrappable: true, fieldPath: [], aliasPath: [], container: undefined });
-		const top = unwrappedPrec(rules[root]);
+		const top = unwrapPrec(rules[root]);
 		if (fields.length > 0) fieldPatches.set(root, pathMode(top, fields));
 		const fieldedTop = isRecord(top) && wrapAt(root, top) !== undefined ? { type: 'FIELD' } : top;
 		if (aliased.length > 0) aliasPatches.set(root, pathMode(fieldedTop, aliased));
@@ -843,12 +843,6 @@ function byHost<T>(requests: readonly T[], hosts: (request: T) => readonly strin
 }
 
 const pathText = (path: readonly number[]): string => (path.length === 0 ? '.' : path.join('/'));
-
-function unwrappedPrec(rule: unknown): unknown {
-	let node = rule;
-	while (isRecord(node) && isPrecWrapper(node as { type: string })) node = node.content;
-	return node;
-}
 
 function pathMode(top: unknown, patches: readonly GrammarBindingsPatch[]): GrammarBindingsPatch[] {
 	if (!isRecord(top) || top.type === 'SEQ' || patches.some((p) => p.path.includes('/') || p.path === '.')) return [...patches];

@@ -1,9 +1,10 @@
-//! The trivia table's assignment: each gap's entries go to a side of the
-//! owner's child beside the gap, held to tree-sitter's trees in three grammars.
+//! The trivia placement: each gap's entries go to a side of the owner's
+//! child beside the gap, held to tree-sitter's trees in three grammars.
 
-use sittir_core::trivia_table::{is_empty, Assigned, SurfaceKinds, TriviaSide, TriviaTable};
+use sittir_core::trivia_table::{is_empty, Assigned, SurfaceKinds, TriviaSide};
 use sittir_core::read::goto;
 use sittir_core::types::NodeIndex;
+use sittir_parity_tests::PlacedTrivia;
 use tree_sitter::{Language, Node, Parser, Tree};
 
 fn parse(language: &Language, source: &str) -> Tree {
@@ -35,13 +36,13 @@ fn index_of(tree: &Tree, source: &str, kind: &str, text: &str) -> NodeIndex {
 struct Case {
     tree: Tree,
     source: &'static str,
-    table: TriviaTable,
+    table: PlacedTrivia,
 }
 
 impl Case {
     fn new((language, kinds): Grammar, source: &'static str) -> Self {
         let tree = parse(&language, source);
-        let table = TriviaTable::assign(&tree, source, kinds, 4);
+        let table = PlacedTrivia::of(&tree, source, kinds, 4);
         Case { tree, source, table }
     }
 
@@ -224,7 +225,7 @@ fn every_extra_of_the_probe_inputs_lands_in_one_side() {
         let path = format!("{}/../../../docs/superpowers/probes/2026-10-01-shared-arena/transport/inputs/{name}", env!("CARGO_MANIFEST_DIR"));
         let source: &'static str = Box::leak(std::fs::read_to_string(&path).unwrap_or_else(|e| panic!("{path}: {e}")).into_boxed_str());
         let case = Case::new(rust(), source);
-        let mut placed: Vec<NodeIndex> = case.table.unowned().to_vec();
+        let mut placed: Vec<NodeIndex> = case.table.unowned();
         for index in (0..sittir_core::read::descendant_count(&case.tree.root_node())).map(NodeIndex::new) {
             for side in [Leading, Trailing, Inner] {
                 placed.extend(case.entries(index, side).into_iter().map(|entry| match entry {

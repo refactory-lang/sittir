@@ -1,0 +1,281 @@
+{
+  "runtimeCommit": "566e90fbe59722840a466d79507eacd1d57007b0",
+  "method": "median of five worker medians; ranges are worker medians, not confidence intervals",
+  "rawSha256": "8e48027674f3ee9dbe99651a4c8d746396e22722ef8b7098350d503402c9612b",
+  "phases": {
+    "object": {
+      "build": {
+        "medianMs": 9.460583000000042,
+        "minMs": 9.135958999999957,
+        "maxMs": 9.507416999999975,
+        "workerMediansMs": [
+          9.135958999999957,
+          9.507416999999975,
+          9.481874999999945,
+          9.460583000000042,
+          9.459374999999966
+        ]
+      },
+      "render": {
+        "medianMs": 25.23404199999993,
+        "minMs": 24.90979100000004,
+        "maxMs": 25.463958000000048,
+        "workerMediansMs": [
+          24.90979100000004,
+          25.23404199999993,
+          25.068583000000046,
+          25.37904100000003,
+          25.463958000000048
+        ]
+      },
+      "parse": {
+        "medianMs": 92.36029100000007,
+        "minMs": 91.73558300000002,
+        "maxMs": 93.12687499999993,
+        "workerMediansMs": [
+          93.12687499999993,
+          91.73558300000002,
+          92.36029100000007,
+          92.69683299999997,
+          92.30899999999997
+        ]
+      },
+      "pipeline": {
+        "medianMs": 127.31454200000002,
+        "minMs": 126.57449999999994,
+        "maxMs": 127.84474999999998,
+        "workerMediansMs": [
+          126.95874999999995,
+          126.57449999999994,
+          127.31454200000002,
+          127.84474999999998,
+          127.55437500000005
+        ]
+      },
+      "edit": {
+        "medianMs": 3.225167000000056,
+        "minMs": 3.174874999999929,
+        "maxMs": 3.4753749999999854,
+        "workerMediansMs": [
+          3.2455420000000004,
+          3.1865000000000236,
+          3.225167000000056,
+          3.4753749999999854,
+          3.174874999999929
+        ]
+      }
+    },
+    "arena": {
+      "build": {
+        "medianMs": 14.963666999999987,
+        "minMs": 14.731083000000012,
+        "maxMs": 22.54733299999998,
+        "workerMediansMs": [
+          21.904207999999983,
+          14.731083000000012,
+          14.874625000000037,
+          14.963666999999987,
+          22.54733299999998
+        ]
+      },
+      "render": {
+        "medianMs": 26.233584000000064,
+        "minMs": 23.706292000000076,
+        "maxMs": 27.19795799999997,
+        "workerMediansMs": [
+          24.604750000000024,
+          27.19795799999997,
+          26.233584000000064,
+          27.057915999999977,
+          23.706292000000076
+        ]
+      },
+      "parse": {
+        "medianMs": 90.23737499999993,
+        "minMs": 89.09191699999997,
+        "maxMs": 91.36120800000003,
+        "workerMediansMs": [
+          90.23737499999993,
+          91.36120800000003,
+          89.89241599999991,
+          91.342625,
+          89.09191699999997
+        ]
+      },
+      "pipeline": {
+        "medianMs": 135.08841599999994,
+        "minMs": 133.36420799999996,
+        "maxMs": 136.55941700000005,
+        "workerMediansMs": [
+          136.55941700000005,
+          135.780125,
+          133.719791,
+          133.36420799999996,
+          135.08841599999994
+        ]
+      },
+      "edit": {
+        "medianMs": 4.499416999999994,
+        "minMs": 4.3474579999999605,
+        "maxMs": 5.093999999999937,
+        "workerMediansMs": [
+          5.093999999999937,
+          4.3474579999999605,
+          4.498542000000043,
+          4.499416999999994,
+          4.707166000000029
+        ]
+      }
+    }
+  },
+  "memoryMiB": {
+    "object": {
+      "builtDelta": {
+        "heapUsed": 14.678245544433594,
+        "heapTotal": 14.75,
+        "external": 3.814697265625e-05,
+        "arrayBuffers": 0.0,
+        "rss": 0.15625,
+        "heapUsedPlusExternal": 14.67828369140625
+      },
+      "renderedDelta": {
+        "heapUsed": 14.692611694335938,
+        "heapTotal": 14.75,
+        "external": 3.814697265625e-05,
+        "arrayBuffers": 0.0,
+        "rss": 0.15625,
+        "heapUsedPlusExternal": 14.692649841308594
+      },
+      "snapshotsDelta": {
+        "heapUsed": 27.048492431640625,
+        "heapTotal": 26.0,
+        "external": 3.814697265625e-05,
+        "arrayBuffers": 0.0,
+        "rss": 2.9222412109375,
+        "heapUsedPlusExternal": 27.04853057861328
+      }
+    },
+    "arena": {
+      "builtDelta": {
+        "heapUsed": 12.526107788085938,
+        "heapTotal": 12.40625,
+        "external": 8.027381896972656,
+        "arrayBuffers": 8.02734375,
+        "rss": 10.97039794921875,
+        "heapUsedPlusExternal": 20.553489685058594
+      },
+      "renderedDelta": {
+        "heapUsed": 12.512306213378906,
+        "heapTotal": 12.40625,
+        "external": 8.027381896972656,
+        "arrayBuffers": 8.02734375,
+        "rss": 10.97039794921875,
+        "heapUsedPlusExternal": 20.539688110351562
+      },
+      "snapshotsDelta": {
+        "heapUsed": 23.736099243164062,
+        "heapTotal": 12.40625,
+        "external": 8.027381896972656,
+        "arrayBuffers": 8.02734375,
+        "rss": 11.220329284667969,
+        "heapUsedPlusExternal": 31.76348114013672
+      }
+    }
+  },
+  "nativePerRoot": {
+    "object": {
+      "bodyNs": 1897.3578,
+      "boundary": {
+        "calls": 10.0,
+        "bytes": 1781.889,
+        "frees": 10.0,
+        "freedBytes": 1781.889
+      },
+      "bodyCalls": 9.0,
+      "bodyBytes": 1717.889,
+      "renderedRustRetainedBytes": 0,
+      "snapshotsRustRetainedBytes": 0
+    },
+    "arena": {
+      "bodyNs": 1624.2363,
+      "boundary": {
+        "calls": 8.0018,
+        "bytes": 368.186,
+        "frees": 8.0014,
+        "freedBytes": 368.1644
+      },
+      "bodyCalls": 6.0007,
+      "bodyBytes": 240.0756,
+      "renderedRustRetainedBytes": 216,
+      "snapshotsRustRetainedBytes": 216
+    }
+  },
+  "arenaStorage": {
+    "builtStorage": {
+      "records": 40000,
+      "wrappers": 40000,
+      "recordBytes": 4200004,
+      "recordCapacity": 8372224,
+      "stringBytes": 48890,
+      "stringCapacity": 61440,
+      "chunks": 9,
+      "stringChunks": 4,
+      "recordSlack": 4172220,
+      "stringSlack": 12550,
+      "totalOccupied": 4248894,
+      "totalCapacity": 8433664
+    },
+    "editedStorage": {
+      "records": 50001,
+      "wrappers": 50001,
+      "recordBytes": 7280012,
+      "recordCapacity": 8372224,
+      "stringBytes": 48897,
+      "stringCapacity": 61440,
+      "chunks": 9,
+      "stringChunks": 4,
+      "recordSlack": 1092212,
+      "stringSlack": 12543,
+      "totalOccupied": 7328909,
+      "totalCapacity": 8433664
+    }
+  },
+  "ratios": {
+    "build": 1.5816855050053384,
+    "render": 1.0396108558430763,
+    "parse": 0.9770148407176398,
+    "pipeline": 1.0610603775333058,
+    "edit": 1.3950958198443417
+  },
+  "memoryRatios": {
+    "renderedDelta": 1.3979566880171566,
+    "snapshotsDelta": 1.1743144807005321
+  },
+  "legacyEncoder": {
+    "medianMs": 5.992250000000013,
+    "minMs": 5.611834000000044,
+    "maxMs": 7.384708000000046,
+    "scope": "historical encoding only, excluded from all five phases",
+    "storage": {
+      "words": 370001,
+      "bytes": 48890,
+      "capacityBytes": 2162688
+    }
+  },
+  "integrity": {
+    "freshWorkers": 10,
+    "alternatingPairs": 5,
+    "measuredBatches": 30,
+    "allFingerprintsEqual": true,
+    "count": 10000,
+    "casesSha256": "529d9f1bef79fdc56d8d9f635b8fabffee847401bae0a3146c98cc17c83cc2d9",
+    "renderSha256": "92ff4287ec4a878ed1a496df23ad903e49fa3b4291c676b1b8ba661dc4edfdbd",
+    "renderBytes": 128890,
+    "idleRange": [
+      76,
+      81
+    ],
+    "buildAndEditRustAllocations": 0,
+    "allReportedSummaryValuesRecomputed": true
+  }
+}

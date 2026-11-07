@@ -284,6 +284,7 @@ export function normalizeGrammar(linked: LinkedGrammar, ctx?: NormalizeCtx): Sim
 		terminalAliasWireIds: linked.terminalAliasWireIds,
 		parentAliasedKinds: linked.parentAliasedKinds,
 		visibleAliasTargets: linked.visibleAliasTargets,
+		displayLexemes: linked.displayLexemes,
 		variantChildren: linked.variantChildren,
 		refineForms: linked.refineForms
 	};
@@ -358,6 +359,7 @@ export function normalizeGrammar(linked: LinkedGrammar, ctx?: NormalizeCtx): Sim
 		refineForms: withAliasEnvelopeEntries(linked.refineForms, aliasStorages),
 		parentAliasedKinds: linked.parentAliasedKinds,
 		visibleAliasTargets: linked.visibleAliasTargets,
+		displayLexemes: linked.displayLexemes,
 		variantChildren: linked.variantChildren,
 		splicedNames: linked.splicedNames,
 		generatedIdTables: linked.generatedIdTables

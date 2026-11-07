@@ -65,9 +65,9 @@
 		}
 	},
 	"scripts": {
-		"build": "tsrs -p tsconfig.build.json",
+		"build": "tsrs --build tsconfig.build.json",
 		"clean": "rm -rf dist tsconfig.build.tsbuildinfo tsconfig.tsbuildinfo",
-		"dev": "tsrs -p tsconfig.build.json --watch",
+		"dev": "tsrs --build tsconfig.build.json --watch",
 		"type-check": "tsrs --noEmit",
 		"test": "vitest run"
 	},

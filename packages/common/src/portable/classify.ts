@@ -1,9 +1,8 @@
 import type { PortableCondition, PortableFact, PortablePath, PortableReadEntry, PortableRows, PortableStep, QueryPlan, QuerySubject, SlotSubject } from '@sittir/types';
 import { engineOf, isLive } from '../engine-scope.ts';
 import { anchored, holds, slotItems, type PlanSubjects } from '../query-holds.ts';
-import { spanSlicer, type ByteSpan } from '../span.ts';
 import { treeOf } from '../tree-token.ts';
-import { nodeText, spanOf } from '../node-data.ts';
+import { sourceTextOf } from '../node-data.ts';
 import { portablePathHasFacts, readableEntries, unplaced } from './facts.ts';
 
 type Node = { readonly $type: number };
@@ -152,15 +151,6 @@ function rowsReader({ table, querySlots, flags }: PortableRows): RowsReader {
 		const present = new Keyword(keyword, keywordKind);
 		return items.flatMap((item) => (item === true ? [present] : []));
 	};
-	const slicers = new WeakMap<object, (span: ByteSpan) => string>();
-	const sliceOf = (node: Node): string | undefined => {
-		const tree = treeOf(node);
-		const span = spanOf(node);
-		if (tree?.source === undefined || span === undefined) return undefined;
-		let slice = slicers.get(tree);
-		if (slice === undefined) slicers.set(tree, (slice = spanSlicer(tree.source)));
-		return slice(span);
-	};
 	const rendered = new WeakMap<object, string>();
 	const renderedText = (node: Node): string | undefined => {
 		if (treeOf(node) !== undefined) return undefined;
@@ -180,7 +170,7 @@ function rowsReader({ table, querySlots, flags }: PortableRows): RowsReader {
 	const textOf = (item: unknown): string | undefined => {
 		if (item instanceof Keyword || typeof item === 'string') return typeof item === 'string' ? item : item.text;
 		if (typeof item === 'number') return table.fixedText[item];
-		return hasKind(item) ? (nodeText(item) ?? sliceOf(item) ?? renderedText(item)) : undefined;
+		return hasKind(item) ? (sourceTextOf(item) ?? renderedText(item)) : undefined;
 	};
 	const typeOf = (item: unknown): readonly number[] =>
 		item instanceof Keyword ? (item.kind === undefined ? [] : [item.kind]) : typeof item === 'number' ? [item] : hasKind(item) ? [item.$type] : [];

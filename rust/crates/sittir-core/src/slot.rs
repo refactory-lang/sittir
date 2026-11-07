@@ -6,6 +6,7 @@
 //! not a third shape: a slot whose members render from their own text admits
 //! a `VerbatimNode`, and everywhere else a bare string is an error.
 
+use crate::heap::HeapBytes;
 use crate::engine::encode_handle;
 use crate::render::{CoordinateError, SourceTable};
 use crate::types::Span;
@@ -35,6 +36,13 @@ pub struct NodeCoordinate {
     pub writes: Option<Box<CoordinateWrites>>,
 }
 
+impl HeapBytes for NodeCoordinate {
+    fn heap_bytes(&self) -> usize {
+        let Self { tree: _, index: _, end: _, span: _, kind: _, edges, writes } = self;
+        edges.heap_bytes() + writes.heap_bytes()
+    }
+}
+
 /// What JavaScript writes on a coordinate it sends back, kept off the read's
 /// own path in one box (`NodeCoordinate::writes`): a coordinate the reader
 /// built carries neither.
@@ -45,6 +53,13 @@ pub struct CoordinateWrites {
     pub changed: ChangedEdges,
 }
 
+impl HeapBytes for CoordinateWrites {
+    fn heap_bytes(&self) -> usize {
+        let Self { changed: ChangedEdges { leading: _, trailing: _ } } = self;
+        0
+    }
+}
+
 /// The edges of a node whose neighbour is not the one its source had there.
 #[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
 pub struct ChangedEdges {
@@ -53,6 +68,12 @@ pub struct ChangedEdges {
 }
 
 impl ChangedEdges {
+    /// The edges changed on `self` or on `other`.
+    #[must_use]
+    pub fn or(self, other: Self) -> Self {
+        Self { leading: self.leading || other.leading, trailing: self.trailing || other.trailing }
+    }
+
     /// Whether the edge `side` lies on changed.
     #[must_use]
     pub fn on(self, side: crate::trivia_table::TriviaSide) -> bool {
@@ -72,11 +93,25 @@ pub struct SeamArm {
     pub strength: crate::spacing::SeamStrength,
 }
 
+impl HeapBytes for SeamArm {
+    fn heap_bytes(&self) -> usize {
+        let Self { arm: _, strength: _ } = self;
+        0
+    }
+}
+
 /// The seams a kind writes before and after itself.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct CoordinateEdges {
     pub before: Option<SeamArm>,
     pub after: Option<SeamArm>,
+}
+
+impl HeapBytes for CoordinateEdges {
+    fn heap_bytes(&self) -> usize {
+        let Self { before, after } = self;
+        before.heap_bytes() + after.heap_bytes()
+    }
 }
 
 impl NodeCoordinate {
@@ -174,6 +209,15 @@ pub enum SlotValue<T, const ADJACENT: bool = false> {
     Node(T),
 }
 
+impl<T: HeapBytes, const ADJACENT: bool> HeapBytes for SlotValue<T, ADJACENT> {
+    fn heap_bytes(&self) -> usize {
+        match self {
+            Self::Coord(coord) => coord.heap_bytes(),
+            Self::Node(node) => node.heap_bytes(),
+        }
+    }
+}
+
 impl<T, const ADJACENT: bool> SlotValue<T, ADJACENT> {
     /// The node this slot holds, or `None` when it holds a coordinate.
     pub fn node(&self) -> Option<&T> {
@@ -188,22 +232,6 @@ impl<T, const ADJACENT: bool> SlotValue<T, ADJACENT> {
         match self {
             Self::Coord(coord) => Some(coord),
             Self::Node(_) => None,
-        }
-    }
-
-    /// The node this slot holds, or `None` after slicing its coordinate
-    /// into `w`. For render paths that call a concrete `render_<kind>`
-    /// function directly instead of going through `Render`.
-    pub fn node_or_write(
-        &self,
-        w: &mut dyn crate::render::RenderSink,
-    ) -> Result<Option<&T>, crate::render::RenderError> {
-        match self {
-            Self::Coord(coord) => {
-                write_coordinate(coord, ADJACENT, w)?;
-                Ok(None)
-            }
-            Self::Node(t) => Ok(Some(t)),
         }
     }
 }
@@ -237,7 +265,7 @@ impl<T: crate::render::Render, const ADJACENT: bool> crate::render::Render
 /// the coordinate's node, unless that node's frame is already open
 /// (`RenderSink::in_frame_of`); its kind's edges are the coordinate's own
 /// (`write_between_edges`).
-fn write_coordinate(
+pub(crate) fn write_coordinate(
     coord: &NodeCoordinate,
     adjacent: bool,
     w: &mut dyn crate::render::RenderSink,
@@ -326,46 +354,25 @@ unsafe fn raw_typeof(env: ::napi::sys::napi_env, napi_val: ::napi::sys::napi_val
     Ok(value_type)
 }
 
+/// A slot's value decoded by the wire codec's loop (`codec::Codec`).
 #[cfg(feature = "napi-bindings")]
-impl<T: ::napi::bindgen_prelude::FromNapiValue + crate::trivia::HasTrivia, const ADJACENT: bool>
-    ::napi::bindgen_prelude::FromNapiValue for SlotValue<T, ADJACENT>
+impl<T: crate::codec::WireNode, const ADJACENT: bool> ::napi::bindgen_prelude::FromNapiValue
+    for SlotValue<T, ADJACENT>
 {
-    /// Dispatch on the wire shape: an object carrying `$treeHandle` is a
-    /// coordinate (its `$span` is required), anything else is the slot's own
-    /// node type, which decides for itself what it accepts. There is no
-    /// attempt-then-fallback.
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
+    unsafe fn from_napi_value(env: ::napi::sys::napi_env, napi_val: ::napi::sys::napi_value) -> ::napi::Result<Self> {
         // SAFETY: napi calls `from_napi_value` with `napi_val` live in `env`.
-        let value_type = unsafe { node_value_type(env, napi_val)? };
-        if value_type == ::napi::ValueType::Object {
-            // SAFETY: napi calls `from_napi_value` with `napi_val` live in `env`.
-            if let Some(coord) = unsafe { coordinate_from_napi(env, napi_val)? } {
-                return Ok(Self::Coord(coord));
-            }
-        }
-        // SAFETY: napi calls `from_napi_value` with `napi_val` live in `env`.
-        Ok(Self::Node(unsafe {
-            T::from_napi_value(env, napi_val)?
-        }))
+        unsafe { crate::codec::decode::<T::Trivia, Self>(env, napi_val) }
     }
 }
 
+/// A slot's value encoded by the wire codec's loop (`codec::Codec`).
 #[cfg(feature = "napi-bindings")]
-impl<T: ::napi::bindgen_prelude::ToNapiValue, const ADJACENT: bool> ::napi::bindgen_prelude::ToNapiValue
+impl<T: crate::codec::WireNode, const ADJACENT: bool> ::napi::bindgen_prelude::ToNapiValue
     for SlotValue<T, ADJACENT>
 {
-    /// A node writes itself; a coordinate writes the object the decoder
-    /// reads back as one.
     unsafe fn to_napi_value(env: ::napi::sys::napi_env, val: Self) -> ::napi::Result<::napi::sys::napi_value> {
-        match val {
-            // SAFETY: napi calls `to_napi_value` with a live `env`, and every value encoded here is created in it.
-            Self::Node(node) => unsafe { T::to_napi_value(env, node) },
-            // SAFETY: napi calls `to_napi_value` with a live `env`, and every value encoded here is created in it.
-            Self::Coord(coord) => unsafe { coordinate_to_napi(env, &coord) },
-        }
+        // SAFETY: napi calls `to_napi_value` with a live `env`.
+        unsafe { crate::codec::encode::<T::Trivia, Self>(env, val) }
     }
 }
 
@@ -543,11 +550,7 @@ mod tests {
                 crate::types::NodeIndex(0), crate::types::NodeIndex(1),
                 Span { start: 1, end: 3 },
             ));
-            slot.prepare(&RenderContext {
-                options,
-                sources: &sources,
-                recording: None,
-            })
+            slot.prepare(&RenderContext { options, sources: &sources })
             .unwrap();
             let mut out = String::new();
             let mut w = SpacingWriter::new(&mut out, WordMatcher::default_ident())
@@ -689,31 +692,5 @@ mod tests {
         let slot: SlotValue<Word> = SlotValue::Node(Word("fn"));
         assert_eq!(rendered(&slot), "fn");
         assert!(slot.node().is_some());
-    }
-
-    #[test]
-    fn node_or_write_writes_only_the_coordinate_case() {
-        let sources = Sources(HashMap::from([(crate::types::TreeId(1), Arc::from("raw"))]));
-        let mut buf = String::new();
-        let mut w = SpacingWriter::new(&mut buf, WordMatcher::default_ident())
-            .with_table(&TABLE)
-            .with_sources(&sources);
-        let node: SlotValue<Word> = SlotValue::Node(Word("fn"));
-        assert!(node.node_or_write(&mut w).unwrap().is_some());
-        w.finish().unwrap();
-        assert_eq!(buf, "");
-
-        let mut buf2 = String::new();
-        let mut w2 = SpacingWriter::new(&mut buf2, WordMatcher::default_ident())
-            .with_table(&TABLE)
-            .with_sources(&sources);
-        let coord: SlotValue<Word> = SlotValue::Coord(NodeCoordinate::new(
-            crate::types::TreeId(1),
-            crate::types::NodeIndex(0), crate::types::NodeIndex(1),
-            Span { start: 0, end: 3 },
-        ));
-        assert!(coord.node_or_write(&mut w2).unwrap().is_none());
-        w2.finish().unwrap();
-        assert_eq!(buf2, "raw");
     }
 }

@@ -4,7 +4,7 @@ import { describe, expect, it } from 'vitest';
 import typescript from '../src/index.ts';
 import { createEngine } from '@sittir/common';
 
-const ts = await createEngine(typescript);
+const ts = await createEngine(typescript, { nodeStorage: 'object' });
 
 type Stored = Record<string, unknown>;
 

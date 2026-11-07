@@ -9,7 +9,7 @@ describe('the root identity reparse wrapper', () => {
 			const { root } = await loadNodeModel(grammar);
 			await loadReparseHosts(grammar);
 			expect(root).toBeDefined();
-			expect(wrapForReparse('x y', root!, grammar, new Map(), { root })).toEqual({ text: 'x y', offset: 0 });
+			expect(wrapForReparse('x y', root!, grammar, new Map(), { root })).toMatchObject({ text: 'x y', offset: 0 });
 		});
 	}
 
@@ -25,7 +25,7 @@ describe('wrapping a rendered split kind', () => {
 
 	it('places a kind with no host of its own inside its placement owner, at the offset after the prefix', async () => {
 		await loadReparseHosts('rust');
-		expect(wrapRendered('x', 'split_kind', 'split_kind', ctx)).toEqual({ text: 'fn _f() { let _ = (x); }', offset: 19 });
+		expect(wrapRendered('x', 'split_kind', 'split_kind', ctx)).toMatchObject({ text: 'fn _f() { let _ = (x); }', offset: 19 });
 	});
 
 	it('gives a kind with neither a host nor a placement no wrapper', async () => {

@@ -34,7 +34,7 @@ Port from it, don't copy it: master has moved since (records, arena, lazy trivia
 
 ## Global Constraints
 
-- **Worktree and branch:** engine-api's existing worktree, on a new branch `feat/engine-dylib` from `origin/master` after #924's merge. No new worktrees. Pathspec commits (`git commit -- <paths>`). No force, stash, amend, rebase, revert or abort. Push by literal sha. Merge master in whenever it moves.
+- **Worktree and branch:** engine-api's one worktree, `scratchpad/wt-engine-api`, on a new branch `feat/engine-dylib` from `origin/master`. No other worktrees. Pathspec commits (`git commit -- <paths>`). No force, stash, amend, rebase, revert or abort. Push by literal sha. Merge master in whenever it moves.
 - **napi is never in the engine.** The engine holds the tree-sitter runtime and the statics a process must hold once: the tree-id counter, the build stamp and the allocator slots. Nothing else goes in it. sittir-core, napi and the generated code stay in each addon.
 - **`-C prefer-dynamic`** applies to the engine and every addon. It comes from a tracked `[target.*] rustflags` entry in `.cargo/config.toml`, never from a build script.
 - **No fat LTO.** `[profile.release]` moves from `lto = "fat"` to thin-local (`lto = false`), and `codegen-units` stays as it is.

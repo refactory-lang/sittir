@@ -6,362 +6,663 @@
 export const RECORD_HEADER_WORDS = 2;
 
 export const records = {
-	ModuleNode: { words: 4, statements: { word: 2, width: 2, run: 5 } },
-	SimpleStatementsNode: { words: 7, statements: { word: 2, width: 5 } },
-	ImportStatementNode: { words: 7, names: { word: 2, width: 5 } },
-	ImportPrefixNode: { words: 2 },
-	RelativeImportNode: { words: 12, dots: { word: 2, width: 5 }, name: { word: 7, width: 5 } },
-	FutureImportStatementNode: { words: 7, content: { word: 2, width: 5 } },
-	ImportFromStatementNode: { words: 12, module_name: { word: 2, width: 5 }, content: { word: 7, width: 5 } },
-	ImportListNode: { words: 4, name: { word: 2, width: 2, run: 5 } },
-	AliasedImportNode: { words: 12, name: { word: 2, width: 5 }, alias: { word: 7, width: 5 } },
-	PrintStatementNode: { words: 7, content: { word: 2, width: 5 } },
-	ChevronNode: { words: 7, expression: { word: 2, width: 5 } },
-	AssertStatementNode: { words: 4, expression: { word: 2, width: 2, run: 5 } },
-	ExpressionStatementNode: { words: 7, content: { word: 2, width: 5 } },
-	NamedExpressionNode: { words: 12, left: { word: 2, width: 5 }, right: { word: 7, width: 5 } },
-	NamedExpressionLhsNode: { words: 7, identifier: { word: 2, width: 5 } },
-	ReturnStatementNode: { words: 7, expressions: { word: 2, width: 5 } },
-	DeleteStatementNode: { words: 7, expressions: { word: 2, width: 5 } },
-	RaiseStatementNode: { words: 12, expressions: { word: 2, width: 5 }, cause: { word: 7, width: 5 } },
-	IfStatementNode: {
-		words: 14,
-		condition: { word: 2, width: 5 },
-		consequence: { word: 7, width: 5 },
-		alternative: { word: 12, width: 2, run: 5 }
+	ModuleNode: { words: 3, builtWords: 3, statements: { word: 2, width: 1, run: 3, forms: 1, built: 2 } },
+	SimpleStatementsNode: { words: 5, builtWords: 3, statements: { word: 2, width: 3, inline: 3, forms: 8, built: 2 } },
+	ImportStatementNode: { words: 5, builtWords: 3, names: { word: 2, width: 3, inline: 3, forms: 8, built: 2 } },
+	ImportPrefixNode: { words: 2, builtWords: 2 },
+	RelativeImportNode: {
+		words: 8,
+		builtWords: 4,
+		dots: { word: 2, width: 3, forms: 1, built: 2 },
+		name: { word: 5, width: 3, forms: 1, built: 3 }
 	},
-	ElifClauseNode: { words: 12, condition: { word: 2, width: 5 }, consequence: { word: 7, width: 5 } },
-	ElseClauseNode: { words: 7, body: { word: 2, width: 5 } },
-	MatchStatementNode: { words: 12, subject: { word: 2, width: 5 }, body: { word: 7, width: 5 } },
-	MatchBlockNode: { words: 4, alternative: { word: 2, width: 2, run: 5 } },
+	FutureImportStatementNode: { words: 7, builtWords: 3, content: { word: 2, width: 5, inline: 5, forms: 8, built: 2 } },
+	ImportFromStatementNode: {
+		words: 11,
+		builtWords: 4,
+		module_name: { word: 2, width: 3, forms: 1, built: 2 },
+		content: { word: 5, width: 6, inline: 5, forms: 10, built: 3 }
+	},
+	ImportListNode: { words: 3, builtWords: 3, name: { word: 2, width: 1, run: 3, forms: 1, built: 2 } },
+	AliasedImportNode: {
+		words: 8,
+		builtWords: 4,
+		name: { word: 2, width: 3, forms: 1, built: 2 },
+		alias: { word: 5, width: 3, forms: 1, built: 3 }
+	},
+	PrintStatementNode: { words: 13, builtWords: 3, content: { word: 2, width: 11, inline: 11, forms: 8, built: 2 } },
+	ChevronNode: { words: 6, builtWords: 3, expression: { word: 2, width: 4, forms: 3, built: 2 } },
+	AssertStatementNode: { words: 3, builtWords: 3, expression: { word: 2, width: 1, run: 4, forms: 3, built: 2 } },
+	ExpressionStatementNode: { words: 6, builtWords: 3, content: { word: 2, width: 4, forms: 3, built: 2 } },
+	NamedExpressionNode: {
+		words: 9,
+		builtWords: 4,
+		left: { word: 2, width: 3, forms: 1, built: 2 },
+		right: { word: 5, width: 4, forms: 3, built: 3 }
+	},
+	NamedExpressionLhsNode: { words: 5, builtWords: 3, identifier: { word: 2, width: 3, forms: 1, built: 2 } },
+	ReturnStatementNode: { words: 6, builtWords: 3, expressions: { word: 2, width: 4, forms: 3, built: 2 } },
+	DeleteStatementNode: { words: 6, builtWords: 3, expressions: { word: 2, width: 4, forms: 3, built: 2 } },
+	RaiseStatementNode: {
+		words: 10,
+		builtWords: 4,
+		expressions: { word: 2, width: 4, forms: 3, built: 2 },
+		cause: { word: 6, width: 4, forms: 3, built: 3 }
+	},
+	IfStatementNode: {
+		words: 12,
+		builtWords: 5,
+		condition: { word: 2, width: 4, forms: 3, built: 2 },
+		consequence: { word: 6, width: 5, inline: 5, forms: 8, built: 3 },
+		alternative: { word: 11, width: 1, run: 3, forms: 1, built: 4 }
+	},
+	ElifClauseNode: {
+		words: 11,
+		builtWords: 4,
+		condition: { word: 2, width: 4, forms: 3, built: 2 },
+		consequence: { word: 6, width: 5, inline: 5, forms: 8, built: 3 }
+	},
+	ElseClauseNode: { words: 7, builtWords: 3, body: { word: 2, width: 5, inline: 5, forms: 8, built: 2 } },
+	MatchStatementNode: {
+		words: 8,
+		builtWords: 4,
+		subject: { word: 2, width: 3, inline: 3, forms: 8, built: 2 },
+		body: { word: 5, width: 3, inline: 3, forms: 8, built: 3 }
+	},
+	MatchBlockNode: { words: 3, builtWords: 3, alternative: { word: 2, width: 1, run: 3, forms: 1, built: 2 } },
 	CaseClauseNode: {
-		words: 17,
-		pattern: { word: 2, width: 5 },
-		guard: { word: 7, width: 5 },
-		body: { word: 12, width: 5 }
+		words: 16,
+		builtWords: 5,
+		pattern: { word: 2, width: 3, forms: 1, built: 2 },
+		guard: { word: 5, width: 6, inline: 6, forms: 8, built: 3 },
+		body: { word: 11, width: 5, inline: 5, forms: 8, built: 4 }
 	},
 	ForStatementNode: {
-		words: 23,
+		words: 22,
+		builtWords: 7,
 		async_: { word: 2, bit: 0 },
-		left: { word: 3, width: 5 },
-		right: { word: 8, width: 5 },
-		body: { word: 13, width: 5 },
-		alternative: { word: 18, width: 5 }
+		left: { word: 3, width: 3, forms: 1, built: 3 },
+		right: { word: 6, width: 4, forms: 3, built: 4 },
+		body: { word: 10, width: 5, inline: 5, forms: 8, built: 5 },
+		alternative: { word: 15, width: 7, inline: 7, forms: 8, built: 6 }
 	},
 	WhileStatementNode: {
-		words: 17,
-		condition: { word: 2, width: 5 },
-		body: { word: 7, width: 5 },
-		alternative: { word: 12, width: 5 }
+		words: 18,
+		builtWords: 5,
+		condition: { word: 2, width: 4, forms: 3, built: 2 },
+		body: { word: 6, width: 5, inline: 5, forms: 8, built: 3 },
+		alternative: { word: 11, width: 7, inline: 7, forms: 8, built: 4 }
 	},
 	TryStatementNode: {
-		words: 19,
-		body: { word: 2, width: 5 },
-		handlers: { word: 7, width: 2, run: 5 },
-		alternative: { word: 9, width: 5 },
-		finalizer: { word: 14, width: 5 }
+		words: 22,
+		builtWords: 6,
+		body: { word: 2, width: 5, inline: 5, forms: 8, built: 2 },
+		handlers: { word: 7, width: 1, run: 3, forms: 1, built: 3 },
+		alternative: { word: 8, width: 7, inline: 7, forms: 8, built: 4 },
+		finalizer: { word: 15, width: 7, inline: 7, forms: 8, built: 5 }
 	},
 	ExceptClauseNode: {
-		words: 13,
+		words: 20,
+		builtWords: 5,
 		group: { word: 2, bit: 0 },
-		exception: { word: 3, width: 5 },
-		body: { word: 8, width: 5 }
+		exception: { word: 3, width: 12, inline: 12, forms: 8, built: 3 },
+		body: { word: 15, width: 5, inline: 5, forms: 8, built: 4 }
 	},
-	FinallyClauseNode: { words: 7, body: { word: 2, width: 5 } },
+	FinallyClauseNode: { words: 7, builtWords: 3, body: { word: 2, width: 5, inline: 5, forms: 8, built: 2 } },
 	WithStatementNode: {
 		words: 13,
+		builtWords: 5,
 		async_: { word: 2, bit: 0 },
-		with_clause: { word: 3, width: 5 },
-		body: { word: 8, width: 5 }
+		with_clause: { word: 3, width: 5, inline: 5, forms: 8, built: 3 },
+		body: { word: 8, width: 5, inline: 5, forms: 8, built: 4 }
 	},
-	WithItemNode: { words: 7, value: { word: 2, width: 5 } },
+	WithItemNode: { words: 6, builtWords: 3, value: { word: 2, width: 4, forms: 3, built: 2 } },
 	FunctionDefinitionNode: {
-		words: 28,
+		words: 24,
+		builtWords: 8,
 		async_: { word: 2, bit: 0 },
-		name: { word: 3, width: 5 },
-		type_parameters: { word: 8, width: 5 },
-		parameters: { word: 13, width: 5 },
-		return_type: { word: 18, width: 5 },
-		body: { word: 23, width: 5 }
+		name: { word: 3, width: 3, forms: 1, built: 3 },
+		type_parameters: { word: 6, width: 5, inline: 5, forms: 8, built: 4 },
+		parameters: { word: 11, width: 5, inline: 5, forms: 8, built: 5 },
+		return_type: { word: 16, width: 3, forms: 1, built: 6 },
+		body: { word: 19, width: 5, inline: 5, forms: 8, built: 7 }
 	},
-	ParametersNode: { words: 7, elements: { word: 2, width: 5 } },
-	LambdaParametersNode: { words: 7, parameters_elements: { word: 2, width: 5 } },
-	ListSplatNode: { words: 7, expression: { word: 2, width: 5 } },
-	DictionarySplatNode: { words: 7, expression: { word: 2, width: 5 } },
-	GlobalStatementNode: { words: 4, names: { word: 2, width: 2, run: 5 } },
-	NonlocalStatementNode: { words: 4, names: { word: 2, width: 2, run: 5 } },
-	ExecStatementNode: { words: 9, code: { word: 2, width: 5 }, in_clause: { word: 7, width: 2, run: 5 } },
+	ParametersNode: { words: 5, builtWords: 3, elements: { word: 2, width: 3, inline: 3, forms: 8, built: 2 } },
+	LambdaParametersNode: {
+		words: 5,
+		builtWords: 3,
+		parameters_elements: { word: 2, width: 3, inline: 3, forms: 8, built: 2 }
+	},
+	ListSplatNode: { words: 6, builtWords: 3, expression: { word: 2, width: 4, forms: 3, built: 2 } },
+	DictionarySplatNode: { words: 6, builtWords: 3, expression: { word: 2, width: 4, forms: 3, built: 2 } },
+	GlobalStatementNode: { words: 3, builtWords: 3, names: { word: 2, width: 1, run: 3, forms: 1, built: 2 } },
+	NonlocalStatementNode: { words: 3, builtWords: 3, names: { word: 2, width: 1, run: 3, forms: 1, built: 2 } },
+	ExecStatementNode: {
+		words: 23,
+		builtWords: 4,
+		code: { word: 2, width: 20, inline: 19, forms: 9, built: 2 },
+		in_clause: { word: 22, width: 1, run: 4, forms: 3, built: 3 }
+	},
 	TypeAliasStatementNode: {
-		words: 17,
-		name: { word: 2, width: 5 },
-		type_parameters: { word: 7, width: 5 },
-		value: { word: 12, width: 5 }
+		words: 13,
+		builtWords: 5,
+		name: { word: 2, width: 3, forms: 1, built: 2 },
+		type_parameters: { word: 5, width: 5, inline: 5, forms: 8, built: 3 },
+		value: { word: 10, width: 3, forms: 1, built: 4 }
 	},
 	ClassDefinitionNode: {
-		words: 22,
-		name: { word: 2, width: 5 },
-		type_parameters: { word: 7, width: 5 },
-		bases: { word: 12, width: 5 },
-		body: { word: 17, width: 5 }
+		words: 20,
+		builtWords: 6,
+		name: { word: 2, width: 3, forms: 1, built: 2 },
+		type_parameters: { word: 5, width: 5, inline: 5, forms: 8, built: 3 },
+		bases: { word: 10, width: 5, inline: 5, forms: 8, built: 4 },
+		body: { word: 15, width: 5, inline: 5, forms: 8, built: 5 }
 	},
-	TypeParameterNode: { words: 7, types: { word: 2, width: 5 } },
-	ParenthesizedListSplatNode: { words: 7, content: { word: 2, width: 5 } },
-	ArgumentListNode: { words: 7, arguments: { word: 2, width: 5 } },
-	DecoratedDefinitionNode: { words: 9, decorator: { word: 2, width: 2, run: 5 }, definition: { word: 4, width: 5 } },
-	DecoratorNode: { words: 7, expression: { word: 2, width: 5 } },
-	BlockNode: { words: 4, statements: { word: 2, width: 2, run: 5 } },
-	ExpressionListNode: { words: 4, elements: { word: 2, width: 2, run: 5 } },
-	DottedNameNode: { words: 12, qualifier: { word: 2, width: 5 }, name: { word: 7, width: 5 } },
-	CasePatternNode: { words: 7, content: { word: 2, width: 5 } },
-	SimplePatternNode: { words: 7, content: { word: 2, width: 5 } },
-	CaseAsPatternNode: { words: 12, case_pattern: { word: 2, width: 5 }, identifier: { word: 7, width: 5 } },
-	UnionPatternNode: { words: 12, left: { word: 2, width: 5 }, right: { word: 7, width: 5 } },
-	DictPatternNode: { words: 7, elements: { word: 2, width: 5 } },
-	KeyValuePatternNode: { words: 12, key: { word: 2, width: 5 }, value: { word: 7, width: 5 } },
-	KeywordPatternNode: { words: 12, name: { word: 2, width: 5 }, pattern: { word: 7, width: 5 } },
-	ClassPatternNode: { words: 12, type_: { word: 2, width: 5 }, fields: { word: 7, width: 5 } },
+	TypeParameterNode: { words: 5, builtWords: 3, types: { word: 2, width: 3, inline: 3, forms: 8, built: 2 } },
+	ParenthesizedListSplatNode: { words: 5, builtWords: 3, content: { word: 2, width: 3, forms: 1, built: 2 } },
+	ArgumentListNode: { words: 5, builtWords: 3, arguments: { word: 2, width: 3, inline: 3, forms: 8, built: 2 } },
+	DecoratedDefinitionNode: {
+		words: 27,
+		builtWords: 4,
+		decorator: { word: 2, width: 1, run: 3, forms: 1, built: 2 },
+		definition: { word: 3, width: 24, inline: 24, forms: 8, built: 3 }
+	},
+	DecoratorNode: { words: 6, builtWords: 3, expression: { word: 2, width: 4, forms: 3, built: 2 } },
+	BlockNode: { words: 3, builtWords: 3, statements: { word: 2, width: 1, run: 3, forms: 1, built: 2 } },
+	ExpressionListNode: { words: 3, builtWords: 3, elements: { word: 2, width: 1, run: 4, forms: 3, built: 2 } },
+	DottedNameNode: {
+		words: 8,
+		builtWords: 4,
+		qualifier: { word: 2, width: 3, forms: 1, built: 2 },
+		name: { word: 5, width: 3, forms: 1, built: 3 }
+	},
+	CasePatternNode: { words: 5, builtWords: 3, content: { word: 2, width: 3, forms: 1, built: 2 } },
+	SimplePatternNode: { words: 6, builtWords: 3, content: { word: 2, width: 4, forms: 3, built: 2 } },
+	CaseAsPatternNode: {
+		words: 8,
+		builtWords: 4,
+		case_pattern: { word: 2, width: 3, forms: 1, built: 2 },
+		identifier: { word: 5, width: 3, forms: 1, built: 3 }
+	},
+	UnionPatternNode: {
+		words: 10,
+		builtWords: 4,
+		left: { word: 2, width: 4, forms: 3, built: 2 },
+		right: { word: 6, width: 4, forms: 3, built: 3 }
+	},
+	DictPatternNode: { words: 5, builtWords: 3, elements: { word: 2, width: 3, inline: 3, forms: 8, built: 2 } },
+	KeyValuePatternNode: {
+		words: 9,
+		builtWords: 4,
+		key: { word: 2, width: 4, forms: 3, built: 2 },
+		value: { word: 6, width: 3, forms: 1, built: 3 }
+	},
+	KeywordPatternNode: {
+		words: 9,
+		builtWords: 4,
+		name: { word: 2, width: 3, forms: 1, built: 2 },
+		pattern: { word: 5, width: 4, forms: 3, built: 3 }
+	},
+	ClassPatternNode: {
+		words: 8,
+		builtWords: 4,
+		type_: { word: 2, width: 3, forms: 1, built: 2 },
+		fields: { word: 5, width: 3, inline: 3, forms: 8, built: 3 }
+	},
 	ComplexPatternNode: {
-		words: 18,
+		words: 38,
+		builtWords: 6,
 		sign: { word: 2, bit: 0 },
-		real: { word: 3, width: 5 },
-		operator: { word: 8, width: 5 },
-		imaginary: { word: 13, width: 5 }
+		real: { word: 3, width: 17, inline: 16, forms: 9, built: 3 },
+		operator: { word: 20, width: 1, forms: 2, built: 4 },
+		imaginary: { word: 21, width: 17, inline: 16, forms: 9, built: 5 }
 	},
-	ParametersElementsNode: { words: 4, item: { word: 2, width: 2, run: 5 } },
-	PatternsNode: { words: 4, item: { word: 2, width: 2, run: 5 } },
-	TuplePatternNode: { words: 7, elements: { word: 2, width: 5 } },
-	ListPatternNode: { words: 7, elements: { word: 2, width: 5 } },
-	DefaultParameterNode: { words: 12, name: { word: 2, width: 5 }, default: { word: 7, width: 5 } },
+	ParametersElementsNode: { words: 3, builtWords: 3, item: { word: 2, width: 1, run: 4, forms: 3, built: 2 } },
+	PatternsNode: { words: 3, builtWords: 3, item: { word: 2, width: 1, run: 3, forms: 1, built: 2 } },
+	TuplePatternNode: { words: 5, builtWords: 3, elements: { word: 2, width: 3, inline: 3, forms: 8, built: 2 } },
+	ListPatternNode: { words: 5, builtWords: 3, elements: { word: 2, width: 3, inline: 3, forms: 8, built: 2 } },
+	DefaultParameterNode: {
+		words: 12,
+		builtWords: 4,
+		name: { word: 2, width: 6, inline: 5, forms: 9, built: 2 },
+		default: { word: 8, width: 4, forms: 3, built: 3 }
+	},
 	TypedDefaultParameterNode: {
-		words: 17,
-		name: { word: 2, width: 5 },
-		type_: { word: 7, width: 5 },
-		default: { word: 12, width: 5 }
+		words: 12,
+		builtWords: 5,
+		name: { word: 2, width: 3, forms: 1, built: 2 },
+		type_: { word: 5, width: 3, forms: 1, built: 3 },
+		default: { word: 8, width: 4, forms: 3, built: 4 }
 	},
-	ListSplatPatternNode: { words: 7, pattern: { word: 2, width: 5 } },
-	DictionarySplatPatternNode: { words: 7, pattern: { word: 2, width: 5 } },
-	AsPatternNode: { words: 12, expression: { word: 2, width: 5 }, alias: { word: 7, width: 5 } },
-	NotOperatorNode: { words: 7, argument: { word: 2, width: 5 } },
+	ListSplatPatternNode: { words: 5, builtWords: 3, pattern: { word: 2, width: 3, forms: 1, built: 2 } },
+	DictionarySplatPatternNode: { words: 5, builtWords: 3, pattern: { word: 2, width: 3, forms: 1, built: 2 } },
+	AsPatternNode: {
+		words: 9,
+		builtWords: 4,
+		expression: { word: 2, width: 4, forms: 3, built: 2 },
+		alias: { word: 6, width: 3, forms: 1, built: 3 }
+	},
+	NotOperatorNode: { words: 6, builtWords: 3, argument: { word: 2, width: 4, forms: 3, built: 2 } },
 	BooleanOperatorNode: {
-		words: 17,
-		left: { word: 2, width: 5 },
-		operator: { word: 7, width: 5 },
-		right: { word: 12, width: 5 }
+		words: 11,
+		builtWords: 5,
+		left: { word: 2, width: 4, forms: 3, built: 2 },
+		operator: { word: 6, width: 1, forms: 2, built: 3 },
+		right: { word: 7, width: 4, forms: 3, built: 4 }
 	},
 	BinaryOperatorNode: {
-		words: 17,
-		left: { word: 2, width: 5 },
-		operator: { word: 7, width: 5 },
-		right: { word: 12, width: 5 }
+		words: 11,
+		builtWords: 5,
+		left: { word: 2, width: 4, forms: 3, built: 2 },
+		operator: { word: 6, width: 1, forms: 2, built: 3 },
+		right: { word: 7, width: 4, forms: 3, built: 4 }
 	},
-	UnaryOperatorNode: { words: 12, operator: { word: 2, width: 5 }, argument: { word: 7, width: 5 } },
-	ComparisonOperatorNode: { words: 9, left: { word: 2, width: 5 }, comparators: { word: 7, width: 2, run: 5 } },
-	LambdaNode: { words: 12, parameters: { word: 2, width: 5 }, body: { word: 7, width: 5 } },
-	LambdaWithinForInClauseNode: { words: 12, parameters: { word: 2, width: 5 }, body: { word: 7, width: 5 } },
+	UnaryOperatorNode: {
+		words: 7,
+		builtWords: 4,
+		operator: { word: 2, width: 1, forms: 2, built: 2 },
+		argument: { word: 3, width: 4, forms: 3, built: 3 }
+	},
+	ComparisonOperatorNode: {
+		words: 7,
+		builtWords: 4,
+		left: { word: 2, width: 4, forms: 3, built: 2 },
+		comparators: { word: 6, width: 1, run: 3, forms: 1, built: 3 }
+	},
+	LambdaNode: {
+		words: 11,
+		builtWords: 4,
+		parameters: { word: 2, width: 5, inline: 5, forms: 8, built: 2 },
+		body: { word: 7, width: 4, forms: 3, built: 3 }
+	},
+	LambdaWithinForInClauseNode: {
+		words: 11,
+		builtWords: 4,
+		parameters: { word: 2, width: 5, inline: 5, forms: 8, built: 2 },
+		body: { word: 7, width: 4, forms: 3, built: 3 }
+	},
 	AugmentedAssignmentNode: {
-		words: 17,
-		left: { word: 2, width: 5 },
-		operator: { word: 7, width: 5 },
-		right: { word: 12, width: 5 }
+		words: 10,
+		builtWords: 5,
+		left: { word: 2, width: 3, forms: 1, built: 2 },
+		operator: { word: 5, width: 1, forms: 2, built: 3 },
+		right: { word: 6, width: 4, forms: 3, built: 4 }
 	},
-	PatternListNode: { words: 4, elements: { word: 2, width: 2, run: 5 } },
-	YieldNode: { words: 7, content: { word: 2, width: 5 } },
-	AttributeNode: { words: 12, object: { word: 2, width: 5 }, property: { word: 7, width: 5 } },
-	SubscriptNode: { words: 12, object: { word: 2, width: 5 }, index: { word: 7, width: 5 } },
-	SliceNode: { words: 17, start: { word: 2, width: 5 }, stop: { word: 7, width: 5 }, step: { word: 12, width: 5 } },
-	CallNode: { words: 12, function: { word: 2, width: 5 }, arguments: { word: 7, width: 5 } },
-	TypedParameterNode: { words: 12, name: { word: 2, width: 5 }, type_: { word: 7, width: 5 } },
-	TypeNode: { words: 7, content: { word: 2, width: 5 } },
-	SplatTypeNode: { words: 7, type_: { word: 2, width: 5 } },
-	GenericTypeNode: { words: 12, name: { word: 2, width: 5 }, type_parameter: { word: 7, width: 5 } },
-	UnionTypeNode: { words: 12, left: { word: 2, width: 5 }, right: { word: 7, width: 5 } },
-	ConstrainedTypeNode: { words: 12, base_type: { word: 2, width: 5 }, constraint: { word: 7, width: 5 } },
-	MemberTypeNode: { words: 12, qualifier: { word: 2, width: 5 }, name: { word: 7, width: 5 } },
-	KeywordArgumentNode: { words: 12, name: { word: 2, width: 5 }, value: { word: 7, width: 5 } },
-	ListNode: { words: 7, elements: { word: 2, width: 5 } },
-	SetNode: { words: 7, elements: { word: 2, width: 5 } },
-	TupleNode: { words: 7, elements: { word: 2, width: 5 } },
-	DictionaryNode: { words: 7, elements: { word: 2, width: 5 } },
-	PairNode: { words: 12, key: { word: 2, width: 5 }, value: { word: 7, width: 5 } },
-	ListComprehensionNode: { words: 12, body: { word: 2, width: 5 }, clauses: { word: 7, width: 5 } },
-	DictionaryComprehensionNode: { words: 12, body: { word: 2, width: 5 }, clauses: { word: 7, width: 5 } },
-	SetComprehensionNode: { words: 12, body: { word: 2, width: 5 }, clauses: { word: 7, width: 5 } },
-	GeneratorExpressionNode: { words: 12, body: { word: 2, width: 5 }, clauses: { word: 7, width: 5 } },
-	ParenthesizedExpressionNode: { words: 7, expression: { word: 2, width: 5 } },
-	CollectionElementsNode: { words: 4, item: { word: 2, width: 2, run: 5 } },
+	PatternListNode: { words: 3, builtWords: 3, elements: { word: 2, width: 1, run: 3, forms: 1, built: 2 } },
+	YieldNode: { words: 6, builtWords: 3, content: { word: 2, width: 4, forms: 3, built: 2 } },
+	AttributeNode: {
+		words: 9,
+		builtWords: 4,
+		object: { word: 2, width: 4, forms: 3, built: 2 },
+		property: { word: 6, width: 3, forms: 1, built: 3 }
+	},
+	SubscriptNode: {
+		words: 9,
+		builtWords: 4,
+		object: { word: 2, width: 4, forms: 3, built: 2 },
+		index: { word: 6, width: 3, inline: 3, forms: 8, built: 3 }
+	},
+	SliceNode: {
+		words: 16,
+		builtWords: 5,
+		start: { word: 2, width: 4, forms: 3, built: 2 },
+		stop: { word: 6, width: 4, forms: 3, built: 3 },
+		step: { word: 10, width: 6, inline: 6, forms: 8, built: 4 }
+	},
+	CallNode: {
+		words: 9,
+		builtWords: 4,
+		function: { word: 2, width: 4, forms: 3, built: 2 },
+		arguments: { word: 6, width: 3, forms: 1, built: 3 }
+	},
+	TypedParameterNode: {
+		words: 8,
+		builtWords: 4,
+		name: { word: 2, width: 3, forms: 1, built: 2 },
+		type_: { word: 5, width: 3, forms: 1, built: 3 }
+	},
+	TypeNode: { words: 6, builtWords: 3, content: { word: 2, width: 4, forms: 3, built: 2 } },
+	SplatTypeNode: { words: 5, builtWords: 3, type_: { word: 2, width: 3, forms: 1, built: 2 } },
+	GenericTypeNode: {
+		words: 10,
+		builtWords: 4,
+		name: { word: 2, width: 3, forms: 1, built: 2 },
+		type_parameter: { word: 5, width: 5, inline: 5, forms: 8, built: 3 }
+	},
+	UnionTypeNode: {
+		words: 8,
+		builtWords: 4,
+		left: { word: 2, width: 3, forms: 1, built: 2 },
+		right: { word: 5, width: 3, forms: 1, built: 3 }
+	},
+	ConstrainedTypeNode: {
+		words: 8,
+		builtWords: 4,
+		base_type: { word: 2, width: 3, forms: 1, built: 2 },
+		constraint: { word: 5, width: 3, forms: 1, built: 3 }
+	},
+	MemberTypeNode: {
+		words: 8,
+		builtWords: 4,
+		qualifier: { word: 2, width: 3, forms: 1, built: 2 },
+		name: { word: 5, width: 3, forms: 1, built: 3 }
+	},
+	KeywordArgumentNode: {
+		words: 9,
+		builtWords: 4,
+		name: { word: 2, width: 3, forms: 1, built: 2 },
+		value: { word: 5, width: 4, forms: 3, built: 3 }
+	},
+	ListNode: { words: 5, builtWords: 3, elements: { word: 2, width: 3, inline: 3, forms: 8, built: 2 } },
+	SetNode: { words: 5, builtWords: 3, elements: { word: 2, width: 3, inline: 3, forms: 8, built: 2 } },
+	TupleNode: { words: 5, builtWords: 3, elements: { word: 2, width: 3, inline: 3, forms: 8, built: 2 } },
+	DictionaryNode: { words: 5, builtWords: 3, elements: { word: 2, width: 3, inline: 3, forms: 8, built: 2 } },
+	PairNode: {
+		words: 10,
+		builtWords: 4,
+		key: { word: 2, width: 4, forms: 3, built: 2 },
+		value: { word: 6, width: 4, forms: 3, built: 3 }
+	},
+	ListComprehensionNode: {
+		words: 9,
+		builtWords: 4,
+		body: { word: 2, width: 4, forms: 3, built: 2 },
+		clauses: { word: 6, width: 3, inline: 3, forms: 8, built: 3 }
+	},
+	DictionaryComprehensionNode: {
+		words: 8,
+		builtWords: 4,
+		body: { word: 2, width: 3, forms: 1, built: 2 },
+		clauses: { word: 5, width: 3, inline: 3, forms: 8, built: 3 }
+	},
+	SetComprehensionNode: {
+		words: 9,
+		builtWords: 4,
+		body: { word: 2, width: 4, forms: 3, built: 2 },
+		clauses: { word: 6, width: 3, inline: 3, forms: 8, built: 3 }
+	},
+	GeneratorExpressionNode: {
+		words: 9,
+		builtWords: 4,
+		body: { word: 2, width: 4, forms: 3, built: 2 },
+		clauses: { word: 6, width: 3, inline: 3, forms: 8, built: 3 }
+	},
+	ParenthesizedExpressionNode: { words: 6, builtWords: 3, expression: { word: 2, width: 4, forms: 3, built: 2 } },
+	CollectionElementsNode: { words: 3, builtWords: 3, item: { word: 2, width: 1, run: 4, forms: 3, built: 2 } },
 	ForInClauseNode: {
-		words: 15,
+		words: 8,
+		builtWords: 6,
 		async_: { word: 2, bit: 0 },
-		left: { word: 3, width: 5 },
-		right: { word: 8, width: 2, run: 5 },
-		trailing_comma: { word: 10, width: 5 }
+		left: { word: 3, width: 3, forms: 1, built: 3 },
+		right: { word: 6, width: 1, run: 4, forms: 3, built: 4 },
+		trailing_comma: { word: 7, width: 1, forms: 18, built: 5 }
 	},
-	IfClauseNode: { words: 7, condition: { word: 2, width: 5 } },
+	IfClauseNode: { words: 6, builtWords: 3, condition: { word: 2, width: 4, forms: 3, built: 2 } },
 	ConditionalExpressionNode: {
-		words: 17,
-		consequence: { word: 2, width: 5 },
-		condition: { word: 7, width: 5 },
-		alternative: { word: 12, width: 5 }
+		words: 14,
+		builtWords: 5,
+		consequence: { word: 2, width: 4, forms: 3, built: 2 },
+		condition: { word: 6, width: 4, forms: 3, built: 3 },
+		alternative: { word: 10, width: 4, forms: 3, built: 4 }
 	},
-	ConcatenatedStringNode: { words: 4, string: { word: 2, width: 2, run: 5 } },
+	ConcatenatedStringNode: { words: 3, builtWords: 3, string: { word: 2, width: 1, run: 3, forms: 1, built: 2 } },
 	StringNode: {
-		words: 14,
-		string_start: { word: 2, width: 5 },
-		content: { word: 7, width: 2, run: 5 },
-		string_end: { word: 9, width: 5 }
+		words: 19,
+		builtWords: 5,
+		string_start: { word: 2, width: 8, inline: 8, forms: 8, built: 2 },
+		content: { word: 10, width: 1, run: 3, forms: 1, built: 3 },
+		string_end: { word: 11, width: 8, inline: 8, forms: 8, built: 4 }
 	},
-	StringContentNode: { words: 4, elements: { word: 2, width: 2, run: 5 } },
+	StringContentNode: { words: 3, builtWords: 3, elements: { word: 2, width: 1, run: 4, forms: 3, built: 2 } },
 	InterpolationNode: {
-		words: 18,
-		expression: { word: 3, width: 5 },
+		words: 13,
+		builtWords: 6,
+		expression: { word: 3, width: 4, forms: 3, built: 3 },
 		debug: { word: 2, bit: 0 },
-		type_conversion: { word: 8, width: 5 },
-		format_specifier: { word: 13, width: 5 }
+		type_conversion: { word: 7, width: 3, forms: 1, built: 4 },
+		format_specifier: { word: 10, width: 3, inline: 3, forms: 8, built: 5 }
 	},
-	FormatSpecifierNode: { words: 4, elements: { word: 2, width: 2, run: 5 } },
-	TypeConversionNode: { words: 2 },
-	IdentifierNode: { words: 2 },
-	AwaitNode: { words: 7, expression: { word: 2, width: 5 } },
-	CommentNode: { words: 10, content: { word: 2, width: 4 }, verbatim: { word: 6, width: 4 } },
-	SimpleStatementsElementsNode: { words: 4, item: { word: 2, width: 2, run: 5 } },
-	SubjectsNode: { words: 4, elements: { word: 2, width: 2, run: 5 } },
-	WithClauseWithItemsNode: { words: 4, item: { word: 2, width: 2, run: 5 } },
-	TypesNode: { words: 4, item: { word: 2, width: 2, run: 5 } },
-	ArgumentListElementsNode: { words: 4, item: { word: 2, width: 2, run: 5 } },
-	ListPatternCasePatternsNode: { words: 4, item: { word: 2, width: 2, run: 5 } },
-	DictPatternElementsNode: { words: 4, item: { word: 2, width: 2, run: 5 } },
-	SubscriptsNode: { words: 4, elements: { word: 2, width: 2, run: 5 } },
-	DictionaryElementsNode: { words: 4, item: { word: 2, width: 2, run: 5 } },
-	SliceGroupNode: { words: 7, expression: { word: 2, width: 5 } },
-	FormatSpecifierTextNode: { words: 2 },
-	TypeParamsNode: { words: 7, items: { word: 2, width: 5 } },
-	TypeParamsItemsNode: { words: 4, item: { word: 2, width: 2, run: 5 } },
-	TuplePatternElementsNode: { words: 4, item: { word: 2, width: 2, run: 5 } },
-	CasePatternListNode: { words: 4, elements: { word: 2, width: 2, run: 5 } },
-	TupleElementsNode: { words: 4, item: { word: 2, width: 2, run: 5 } },
-	ExceptClauseExceptionAsNode: { words: 12, value: { word: 2, width: 5 }, alias: { word: 7, width: 5 } },
-	CaseTuplePatternNode: { words: 7, elements: { word: 2, width: 5 } },
-	CaseListPatternNode: { words: 7, elements: { word: 2, width: 5 } },
-	PrintArgumentsNode: { words: 4, item: { word: 2, width: 2, run: 5 } },
-	PrintChevronArgumentsNode: { words: 4, item: { word: 2, width: 2, run: 5 } },
-	PrintStatementChevronNode: { words: 12, chevron: { word: 2, width: 5 }, arguments: { word: 7, width: 5 } },
-	PrintStatementPlainNode: { words: 7, arguments: { word: 2, width: 5 } },
-	ParenthesizedImportListNode: { words: 7, import_list: { word: 2, width: 5 } },
-	ComprehensionClausesNode: { words: 4, content: { word: 2, width: 2, run: 5 } },
+	FormatSpecifierNode: { words: 3, builtWords: 3, elements: { word: 2, width: 1, run: 3, forms: 1, built: 2 } },
+	TypeConversionNode: { words: 2, builtWords: 2 },
+	IdentifierNode: { words: 2, builtWords: 2 },
+	AwaitNode: { words: 6, builtWords: 3, expression: { word: 2, width: 4, forms: 3, built: 2 } },
+	CommentNode: {
+		words: 6,
+		builtWords: 4,
+		content: { word: 2, width: 2, forms: 4, built: 2 },
+		verbatim: { word: 4, width: 2, forms: 4, built: 3 }
+	},
+	SimpleStatementsElementsNode: { words: 3, builtWords: 3, item: { word: 2, width: 1, run: 4, forms: 3, built: 2 } },
+	SubjectsNode: { words: 3, builtWords: 3, elements: { word: 2, width: 1, run: 4, forms: 3, built: 2 } },
+	WithClauseWithItemsNode: { words: 3, builtWords: 3, item: { word: 2, width: 1, run: 3, forms: 1, built: 2 } },
+	TypesNode: { words: 3, builtWords: 3, item: { word: 2, width: 1, run: 3, forms: 1, built: 2 } },
+	ArgumentListElementsNode: { words: 3, builtWords: 3, item: { word: 2, width: 1, run: 4, forms: 3, built: 2 } },
+	ListPatternCasePatternsNode: { words: 3, builtWords: 3, item: { word: 2, width: 1, run: 3, forms: 1, built: 2 } },
+	DictPatternElementsNode: { words: 3, builtWords: 3, item: { word: 2, width: 1, run: 3, forms: 1, built: 2 } },
+	SubscriptsNode: { words: 3, builtWords: 3, elements: { word: 2, width: 1, run: 4, forms: 3, built: 2 } },
+	DictionaryElementsNode: { words: 3, builtWords: 3, item: { word: 2, width: 1, run: 3, forms: 1, built: 2 } },
+	SliceGroupNode: { words: 6, builtWords: 3, expression: { word: 2, width: 4, forms: 3, built: 2 } },
+	FormatSpecifierTextNode: { words: 2, builtWords: 2 },
+	TypeParamsNode: { words: 5, builtWords: 3, items: { word: 2, width: 3, inline: 3, forms: 8, built: 2 } },
+	TypeParamsItemsNode: { words: 3, builtWords: 3, item: { word: 2, width: 1, run: 3, forms: 1, built: 2 } },
+	TuplePatternElementsNode: { words: 3, builtWords: 3, item: { word: 2, width: 1, run: 3, forms: 1, built: 2 } },
+	CasePatternListNode: { words: 3, builtWords: 3, elements: { word: 2, width: 1, run: 3, forms: 1, built: 2 } },
+	TupleElementsNode: { words: 3, builtWords: 3, item: { word: 2, width: 1, run: 4, forms: 3, built: 2 } },
+	ExceptClauseExceptionAsNode: {
+		words: 10,
+		builtWords: 4,
+		value: { word: 2, width: 4, forms: 3, built: 2 },
+		alias: { word: 6, width: 4, forms: 3, built: 3 }
+	},
+	CaseTuplePatternNode: { words: 5, builtWords: 3, elements: { word: 2, width: 3, inline: 3, forms: 8, built: 2 } },
+	CaseListPatternNode: { words: 5, builtWords: 3, elements: { word: 2, width: 3, inline: 3, forms: 8, built: 2 } },
+	PrintArgumentsNode: { words: 3, builtWords: 3, item: { word: 2, width: 1, run: 4, forms: 3, built: 2 } },
+	PrintChevronArgumentsNode: { words: 3, builtWords: 3, item: { word: 2, width: 1, run: 4, forms: 3, built: 2 } },
+	PrintStatementChevronNode: {
+		words: 11,
+		builtWords: 4,
+		chevron: { word: 2, width: 6, inline: 6, forms: 8, built: 2 },
+		arguments: { word: 8, width: 3, inline: 3, forms: 8, built: 3 }
+	},
+	PrintStatementPlainNode: { words: 5, builtWords: 3, arguments: { word: 2, width: 3, inline: 3, forms: 8, built: 2 } },
+	ParenthesizedImportListNode: {
+		words: 5,
+		builtWords: 3,
+		import_list: { word: 2, width: 3, inline: 3, forms: 8, built: 2 }
+	},
+	ComprehensionClausesNode: { words: 3, builtWords: 3, content: { word: 2, width: 1, run: 3, forms: 1, built: 2 } },
 	IntegerHexNode: {
-		words: 14,
-		radix_prefix: { word: 2, width: 4 },
-		content: { word: 6, width: 4 },
-		verbatim: { word: 10, width: 4 }
+		words: 8,
+		builtWords: 5,
+		radix_prefix: { word: 2, width: 2, forms: 4, built: 2 },
+		content: { word: 4, width: 2, forms: 4, built: 3 },
+		verbatim: { word: 6, width: 2, forms: 4, built: 4 }
 	},
 	IntegerOctalNode: {
-		words: 14,
-		radix_prefix: { word: 2, width: 4 },
-		content: { word: 6, width: 4 },
-		verbatim: { word: 10, width: 4 }
+		words: 8,
+		builtWords: 5,
+		radix_prefix: { word: 2, width: 2, forms: 4, built: 2 },
+		content: { word: 4, width: 2, forms: 4, built: 3 },
+		verbatim: { word: 6, width: 2, forms: 4, built: 4 }
 	},
 	IntegerBinaryNode: {
-		words: 14,
-		radix_prefix: { word: 2, width: 4 },
-		content: { word: 6, width: 4 },
-		verbatim: { word: 10, width: 4 }
+		words: 8,
+		builtWords: 5,
+		radix_prefix: { word: 2, width: 2, forms: 4, built: 2 },
+		content: { word: 4, width: 2, forms: 4, built: 3 },
+		verbatim: { word: 6, width: 2, forms: 4, built: 4 }
 	},
-	IntegerDecimalLongNode: { words: 2 },
-	IntegerDecimalImaginaryNode: { words: 2 },
-	IntegerDecimalPlainNode: { words: 2 },
+	IntegerDecimalLongNode: { words: 2, builtWords: 2 },
+	IntegerDecimalImaginaryNode: { words: 2, builtWords: 2 },
+	IntegerDecimalPlainNode: { words: 2, builtWords: 2 },
 	FloatPointNode: {
-		words: 30,
-		integer: { word: 2, width: 4 },
-		fraction: { word: 6, width: 4 },
-		marker: { word: 10, width: 4 },
-		exponent_sign: { word: 14, width: 4 },
-		exponent: { word: 18, width: 4 },
-		imaginary: { word: 22, width: 4 },
-		verbatim: { word: 26, width: 4 }
+		words: 16,
+		builtWords: 9,
+		integer: { word: 2, width: 2, forms: 4, built: 2 },
+		fraction: { word: 4, width: 2, forms: 4, built: 3 },
+		marker: { word: 6, width: 2, forms: 4, built: 4 },
+		exponent_sign: { word: 8, width: 2, forms: 4, built: 5 },
+		exponent: { word: 10, width: 2, forms: 4, built: 6 },
+		imaginary: { word: 12, width: 2, forms: 4, built: 7 },
+		verbatim: { word: 14, width: 2, forms: 4, built: 8 }
 	},
 	FloatLeadingPointNode: {
-		words: 30,
-		integer: { word: 2, width: 4 },
-		fraction: { word: 6, width: 4 },
-		marker: { word: 10, width: 4 },
-		exponent_sign: { word: 14, width: 4 },
-		exponent: { word: 18, width: 4 },
-		imaginary: { word: 22, width: 4 },
-		verbatim: { word: 26, width: 4 }
+		words: 16,
+		builtWords: 9,
+		integer: { word: 2, width: 2, forms: 4, built: 2 },
+		fraction: { word: 4, width: 2, forms: 4, built: 3 },
+		marker: { word: 6, width: 2, forms: 4, built: 4 },
+		exponent_sign: { word: 8, width: 2, forms: 4, built: 5 },
+		exponent: { word: 10, width: 2, forms: 4, built: 6 },
+		imaginary: { word: 12, width: 2, forms: 4, built: 7 },
+		verbatim: { word: 14, width: 2, forms: 4, built: 8 }
 	},
 	FloatScientificNode: {
-		words: 26,
-		integer: { word: 2, width: 4 },
-		marker: { word: 6, width: 4 },
-		exponent_sign: { word: 10, width: 4 },
-		exponent: { word: 14, width: 4 },
-		imaginary: { word: 18, width: 4 },
-		verbatim: { word: 22, width: 4 }
+		words: 14,
+		builtWords: 8,
+		integer: { word: 2, width: 2, forms: 4, built: 2 },
+		marker: { word: 4, width: 2, forms: 4, built: 3 },
+		exponent_sign: { word: 6, width: 2, forms: 4, built: 4 },
+		exponent: { word: 8, width: 2, forms: 4, built: 5 },
+		imaginary: { word: 10, width: 2, forms: 4, built: 6 },
+		verbatim: { word: 12, width: 2, forms: 4, built: 7 }
 	},
-	EscapeSequenceUnicodeFixedNode: { words: 10, content: { word: 2, width: 4 }, verbatim: { word: 6, width: 4 } },
-	EscapeSequenceUnicodeWideNode: { words: 10, content: { word: 2, width: 4 }, verbatim: { word: 6, width: 4 } },
-	EscapeSequenceHexNode: { words: 10, content: { word: 2, width: 4 }, verbatim: { word: 6, width: 4 } },
-	EscapeSequenceOctalNode: { words: 10, content: { word: 2, width: 4 }, verbatim: { word: 6, width: 4 } },
-	EscapeSequenceLineBreakNode: { words: 10, content: { word: 2, width: 4 }, verbatim: { word: 6, width: 4 } },
-	EscapeSequenceSimpleNode: { words: 10, content: { word: 2, width: 4 }, verbatim: { word: 6, width: 4 } },
-	EscapeSequenceNamedNode: { words: 10, content: { word: 2, width: 4 }, verbatim: { word: 6, width: 4 } },
-	LineContinuationNewlineNode: { words: 2 },
-	SimplePatternNegativeNode: { words: 7, value: { word: 2, width: 5 } },
-	ExceptClauseExceptionListNode: { words: 4, value: { word: 2, width: 2, run: 5 } },
-	ExceptClauseExceptionNode: { words: 7, content: { word: 2, width: 5 } },
-	SplatPatternListNode: { words: 7, pattern: { word: 2, width: 5 } },
-	SplatPatternDictionaryNode: { words: 7, pattern: { word: 2, width: 5 } },
-	AssignmentEqNode: { words: 12, name: { word: 2, width: 5 }, value: { word: 7, width: 5 } },
-	AssignmentTypeNode: { words: 12, name: { word: 2, width: 5 }, type_: { word: 7, width: 5 } },
-	AssignmentTypedNode: {
-		words: 17,
-		name: { word: 2, width: 5 },
-		type_: { word: 7, width: 5 },
-		value: { word: 12, width: 5 }
+	EscapeSequenceUnicodeFixedNode: {
+		words: 6,
+		builtWords: 4,
+		content: { word: 2, width: 2, forms: 4, built: 2 },
+		verbatim: { word: 4, width: 2, forms: 4, built: 3 }
 	},
-	ExpressionStatementTupleNode: { words: 4, elements: { word: 2, width: 2, run: 5 } },
-	WithClauseBareNode: { words: 4, items: { word: 2, width: 2, run: 5 } },
-	WithClauseParenNode: { words: 7, items: { word: 2, width: 5 } },
-	SuiteInlineNode: { words: 7, statements: { word: 2, width: 5 } },
-	SuiteBlockNode: { words: 7, block: { word: 2, width: 5 } },
-	SuiteEmptyNode: { words: 7, newline: { word: 2, width: 5 } },
-	ComparisonOperatorComparatorNode: {
+	EscapeSequenceUnicodeWideNode: {
+		words: 6,
+		builtWords: 4,
+		content: { word: 2, width: 2, forms: 4, built: 2 },
+		verbatim: { word: 4, width: 2, forms: 4, built: 3 }
+	},
+	EscapeSequenceHexNode: {
+		words: 6,
+		builtWords: 4,
+		content: { word: 2, width: 2, forms: 4, built: 2 },
+		verbatim: { word: 4, width: 2, forms: 4, built: 3 }
+	},
+	EscapeSequenceOctalNode: {
+		words: 6,
+		builtWords: 4,
+		content: { word: 2, width: 2, forms: 4, built: 2 },
+		verbatim: { word: 4, width: 2, forms: 4, built: 3 }
+	},
+	EscapeSequenceLineBreakNode: {
+		words: 6,
+		builtWords: 4,
+		content: { word: 2, width: 2, forms: 4, built: 2 },
+		verbatim: { word: 4, width: 2, forms: 4, built: 3 }
+	},
+	EscapeSequenceSimpleNode: {
+		words: 6,
+		builtWords: 4,
+		content: { word: 2, width: 2, forms: 4, built: 2 },
+		verbatim: { word: 4, width: 2, forms: 4, built: 3 }
+	},
+	EscapeSequenceNamedNode: {
+		words: 6,
+		builtWords: 4,
+		content: { word: 2, width: 2, forms: 4, built: 2 },
+		verbatim: { word: 4, width: 2, forms: 4, built: 3 }
+	},
+	LineContinuationNewlineNode: { words: 2, builtWords: 2 },
+	SimplePatternNegativeNode: {
+		words: 19,
+		builtWords: 3,
+		value: { word: 2, width: 17, inline: 16, forms: 9, built: 2 }
+	},
+	ExceptClauseExceptionListNode: { words: 3, builtWords: 3, value: { word: 2, width: 1, run: 4, forms: 3, built: 2 } },
+	ExceptClauseExceptionNode: {
 		words: 12,
-		operators: { word: 2, width: 5 },
-		primary_expression: { word: 7, width: 5 }
+		builtWords: 3,
+		content: { word: 2, width: 10, inline: 10, forms: 8, built: 2 }
 	},
-	YieldFromClauseNode: { words: 7, expression: { word: 2, width: 5 } },
-	TypeParamTypeVarNode: { words: 12, name: { word: 2, width: 5 }, bounds: { word: 7, width: 5 } },
-	TypeParamTypeVarTupleNode: { words: 7, name: { word: 2, width: 5 } },
-	TypeParamParamSpecNode: { words: 7, name: { word: 2, width: 5 } },
+	SplatPatternListNode: { words: 6, builtWords: 3, pattern: { word: 2, width: 4, forms: 3, built: 2 } },
+	SplatPatternDictionaryNode: { words: 6, builtWords: 3, pattern: { word: 2, width: 4, forms: 3, built: 2 } },
+	AssignmentEqNode: {
+		words: 9,
+		builtWords: 4,
+		name: { word: 2, width: 3, forms: 1, built: 2 },
+		value: { word: 5, width: 4, forms: 3, built: 3 }
+	},
+	AssignmentTypeNode: {
+		words: 8,
+		builtWords: 4,
+		name: { word: 2, width: 3, forms: 1, built: 2 },
+		type_: { word: 5, width: 3, forms: 1, built: 3 }
+	},
+	AssignmentTypedNode: {
+		words: 12,
+		builtWords: 5,
+		name: { word: 2, width: 3, forms: 1, built: 2 },
+		type_: { word: 5, width: 3, forms: 1, built: 3 },
+		value: { word: 8, width: 4, forms: 3, built: 4 }
+	},
+	ExpressionStatementTupleNode: {
+		words: 3,
+		builtWords: 3,
+		elements: { word: 2, width: 1, run: 4, forms: 3, built: 2 }
+	},
+	WithClauseBareNode: { words: 3, builtWords: 3, items: { word: 2, width: 1, run: 3, forms: 1, built: 2 } },
+	WithClauseParenNode: { words: 5, builtWords: 3, items: { word: 2, width: 3, inline: 3, forms: 8, built: 2 } },
+	SuiteInlineNode: { words: 5, builtWords: 3, statements: { word: 2, width: 3, inline: 3, forms: 8, built: 2 } },
+	SuiteBlockNode: { words: 5, builtWords: 3, block: { word: 2, width: 3, inline: 3, forms: 8, built: 2 } },
+	SuiteEmptyNode: { words: 3, builtWords: 3, newline: { word: 2, width: 1, forms: 2, built: 2 } },
+	ComparisonOperatorComparatorNode: {
+		words: 7,
+		builtWords: 4,
+		operators: { word: 2, width: 1, forms: 2, built: 2 },
+		primary_expression: { word: 3, width: 4, forms: 3, built: 3 }
+	},
+	YieldFromClauseNode: { words: 6, builtWords: 3, expression: { word: 2, width: 4, forms: 3, built: 2 } },
+	TypeParamTypeVarNode: {
+		words: 8,
+		builtWords: 4,
+		name: { word: 2, width: 3, forms: 1, built: 2 },
+		bounds: { word: 5, width: 3, forms: 1, built: 3 }
+	},
+	TypeParamTypeVarTupleNode: { words: 5, builtWords: 3, name: { word: 2, width: 3, forms: 1, built: 2 } },
+	TypeParamParamSpecNode: { words: 5, builtWords: 3, name: { word: 2, width: 3, forms: 1, built: 2 } },
 	StringStartNode: {
-		words: 14,
-		prefix: { word: 2, width: 4 },
-		quote: { word: 6, width: 4 },
-		verbatim: { word: 10, width: 4 }
+		words: 8,
+		builtWords: 5,
+		prefix: { word: 2, width: 2, forms: 4, built: 2 },
+		quote: { word: 4, width: 2, forms: 4, built: 3 },
+		verbatim: { word: 6, width: 2, forms: 4, built: 4 }
 	},
-	StringFragmentNode: { words: 2 },
-	EscapeInterpolationNode: { words: 2 },
+	StringFragmentNode: { words: 2, builtWords: 2 },
+	EscapeInterpolationNode: { words: 2, builtWords: 2 },
 	StringEndNode: {
-		words: 14,
-		content: { word: 2, width: 4 },
-		quote: { word: 6, width: 4 },
-		verbatim: { word: 10, width: 4 }
+		words: 8,
+		builtWords: 5,
+		content: { word: 2, width: 2, forms: 4, built: 2 },
+		quote: { word: 4, width: 2, forms: 4, built: 3 },
+		verbatim: { word: 6, width: 2, forms: 4, built: 4 }
 	},
 	ConstructorDeclarationNode: {
-		words: 23,
+		words: 21,
+		builtWords: 7,
 		async_: { word: 2, bit: 0 },
-		type_parameters: { word: 3, width: 5 },
-		parameters: { word: 8, width: 5 },
-		return_type: { word: 13, width: 5 },
-		body: { word: 18, width: 5 }
+		type_parameters: { word: 3, width: 5, inline: 5, forms: 8, built: 3 },
+		parameters: { word: 8, width: 5, inline: 5, forms: 8, built: 4 },
+		return_type: { word: 13, width: 3, forms: 1, built: 5 },
+		body: { word: 16, width: 5, inline: 5, forms: 8, built: 6 }
 	},
-	BlockClassDeclarationNode: { words: 4, statements: { word: 2, width: 2, run: 5 } },
-	SuiteBlockClassDeclarationNode: { words: 7, block_class_declaration: { word: 2, width: 5 } },
+	BlockClassDeclarationNode: { words: 3, builtWords: 3, statements: { word: 2, width: 1, run: 3, forms: 1, built: 2 } },
+	SuiteBlockClassDeclarationNode: {
+		words: 5,
+		builtWords: 3,
+		block_class_declaration: { word: 2, width: 3, inline: 3, forms: 8, built: 2 }
+	},
 	DecoratedDefinitionClassDeclarationNode: {
-		words: 9,
-		decorator: { word: 2, width: 2, run: 5 },
-		definition: { word: 4, width: 5 }
+		words: 27,
+		builtWords: 4,
+		decorator: { word: 2, width: 1, run: 3, forms: 1, built: 2 },
+		definition: { word: 3, width: 24, inline: 24, forms: 8, built: 3 }
 	},
-	AsPatternTargetNode: { words: 7, content: { word: 2, width: 5 } }
+	AsPatternTargetNode: { words: 6, builtWords: 3, content: { word: 2, width: 4, forms: 3, built: 2 } }
 } as const;

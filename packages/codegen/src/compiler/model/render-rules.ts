@@ -1,4 +1,5 @@
 import { ruleListParts } from '../../dsl/rule-patterns.ts';
+import { emitShapeFailure } from '../diagnostics/emit-diagnostics.ts';
 import type { NodeMap } from '../types.ts';
 import { findAnonEntryForLiteralText, findEntryForKindName, findEntryForLiteralText, modelKindOfEntry, type KindEntryLike } from '../../dsl/symbol-table.ts';
 import { aliasTargetOf, type RenderRule, type Rule, type RuleAnnotations, type RuleId, type SeamOrigin } from '../../types/rule.ts';
@@ -267,7 +268,7 @@ class DefaultResolver {
 		const declared = this.#resolve(kind, label);
 		const resolved = declared.origin === 'fallback' && seams.defaultArm !== undefined ? { ...declared, arm: seams.defaultArm } : declared;
 		const { arm, origin } = wordShaped && resolved.origin === 'fallback' ? { arm: resolved.arm, origin: 'word-default' as const } : resolved;
-		if (!arms.includes(arm)) throw new Error(`options: '${label}' on ${displayNameOf(kind, this.#nodeMap)} is '${arm}', not one of ${arms.join(', ')}`);
+		if (!arms.includes(arm)) throw emitShapeFailure({ code: 'option-arm-invalid', message: `options: '${label}' on ${displayNameOf(kind, this.#nodeMap)} is '${arm}', not one of ${arms.join(', ')}` });
 		return { arm, origin };
 	}
 
@@ -433,12 +434,12 @@ export function validateIndentDepth(sites: readonly RuleSpacingSite[], nodeMap: 
 		const current = depth.get(kind) ?? 0;
 		if (site.defaultArm === 'indent') depth.set(kind, current + 1);
 		if (site.defaultArm === 'dedent') {
-			if (current === 0) throw new Error(`defaults: ${siteAt(site, nodeMap)} dedents an indent it never opened; indent and dedent are a pair on one kind`);
+			if (current === 0) throw emitShapeFailure({ code: 'indent-dedent-unpaired', message: `defaults: ${siteAt(site, nodeMap)} dedents an indent it never opened; indent and dedent are a pair on one kind` });
 			depth.set(kind, current - 1);
 		}
 	}
 	for (const [kind, open] of depth) {
-		if (open > 0) throw new Error(`defaults: ${kind} opens an indent it never dedents; indent and dedent are a pair on one kind`);
+		if (open > 0) throw emitShapeFailure({ code: 'indent-dedent-unpaired', message: `defaults: ${kind} opens an indent it never dedents; indent and dedent are a pair on one kind` });
 	}
 }
 
@@ -959,7 +960,7 @@ export function spacingSitesOf(renderRules: RenderRules, nodeMap: NodeMap): Rule
 		const prior = out.get(key);
 		const label = spacingLabelOf(part.spacing);
 		if (prior !== undefined && prior.defaultArm !== part.defaultArm) {
-			throw new Error(`render rules: ${displayNameOf(kind, nodeMap)}.${slot} resolves '${label}' to both ${prior.defaultArm} and ${part.defaultArm}`);
+			throw emitShapeFailure({ code: 'option-label-arm-conflict', message: `render rules: ${displayNameOf(kind, nodeMap)}.${slot} resolves '${label}' to both ${prior.defaultArm} and ${part.defaultArm}` });
 		}
 		if (prior === undefined) {
 			out.set(key, {
@@ -1115,7 +1116,7 @@ function seatedSites(
 			const address = siteKey(seat.slot, edge.spacing);
 			const arm = declared?.get(declaredKey(seat.kind, address))?.arm;
 			if (arm !== undefined && !edge.arms.includes(arm)) {
-				throw new Error(`options: ${displayNameOf(seat.kind, nodeMap)}.${address} is '${arm}', not one of ${edge.arms.join(', ')}`);
+				throw emitShapeFailure({ code: 'option-arm-invalid', message: `options: ${displayNameOf(seat.kind, nodeMap)}.${address} is '${arm}', not one of ${edge.arms.join(', ')}` });
 			}
 			out.push({
 				kind: seat.kind,

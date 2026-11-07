@@ -10,6 +10,7 @@ import {
 	type GrammarRecord
 } from './rule-patterns.ts';
 import type { BindingEffect, Lead, LeadMatch } from './verbs/effects.ts';
+import { isPrecWrapperType } from '../types/runtime-shapes.ts';
 
 export interface SplitStep {
 	readonly field: string | null;
@@ -168,7 +169,7 @@ export function fieldHoldsOnly(grammar: GrammarRecord, owner: string, field: str
 			return only(rules[rule.name]);
 		}
 		if (rule.type === 'CHOICE' || rule.type === 'SEQ') return Array.isArray(rule.members) && rule.members.every(only);
-		if (rule.type === 'FIELD' || rule.type === 'PREC' || rule.type === 'PREC_LEFT' || rule.type === 'PREC_RIGHT' || rule.type === 'PREC_DYNAMIC') return only(rule.content);
+		if (rule.type === 'FIELD' || (typeof rule.type === 'string' && isPrecWrapperType(rule.type))) return only(rule.content);
 		return false;
 	};
 	const sites: unknown[] = [];

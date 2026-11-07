@@ -2,6 +2,7 @@ import type {
 	AnyUntypedNode,
 	BuildSurface,
 	BuilderMode,
+	CommitScope,
 	Engine,
 	EngineIdentity,
 	EngineOptions,
@@ -12,6 +13,7 @@ import type {
 	LanguageIdentity,
 	LanguageHooks,
 	NativeEngineOptions,
+	NodeStorage,
 	ParseOptions,
 	PortableEngine,
 	PortableEngineOptions,
@@ -23,16 +25,19 @@ import type {
 	KindMembership,
 	StructureTable
 } from '@sittir/types';
-import { bindTree, engineOf, inEngine, sameLanguage, type EngineHandle, type TreeEngineHandle } from './engine-scope.ts';
+import { bindTree, foreignEngine, inEngine, nodeStorageOf, stampEngineStorage, type EngineHandle, type TreeEngineHandle } from './engine-scope.ts';
+import { keepLayout } from './exemplars.ts';
 import { guardsOf, inLanguage as inLanguageOf, kindTestOf } from './language.ts';
-import { metricsEnabled, recordFfi } from './metrics.ts';
-import { checkInput, verifyStructure } from './verify-structure.ts';
+import { dataBytes, metricsEnabled, recordFfi } from './metrics.ts';
+import { checkInput, checkRow, verifyStructure } from './verify-structure.ts';
+import { BuiltArena, type BuiltViews } from './built-arena.ts';
+import type { TreeHandle } from './read.ts';
 import { ParseErrors } from './parse-errors.ts';
 import { queryFacet, type QueryHooks } from './query.ts';
-import { reviveNode } from './node-json.ts';
-import { createRenderHandle } from './engine.ts';
+import { refuseReviver } from './json-refusal.ts';
+import { ARENA_FEATURE_REFUSED, createRenderHandle, nativeBuiltRecords } from './engine.ts';
 import { portable, portableGuardsOf, registerPortableRows } from './portable/index.ts';
-import { isEmptyNode as isEmptyUntypedNode, isErrorNode, isFactoryNode, isNode, isParsedNode, wrapRegistered } from './utils.ts';
+import { isEmptyNode as isEmptyUntypedNode, isErrorNode, isFactoryNode, isNode, isParsedNode, wrapRegistered, writeLeafSites } from './utils.ts';
 
 type Middleware<Call, Result> = (call: Call, next: () => Result) => Result;
 
@@ -81,10 +86,19 @@ async function loadTable<API extends LanguageAPI, M extends BuilderMode>(
 	}
 }
 
+async function loadRecords<API extends LanguageAPI>(language: LanguageIdentity<API>, hooks: LanguageHooks<API>): Promise<object> {
+	try {
+		return await hooks.records();
+	} catch (cause) {
+		throw new Error(`failed to load the record builders of language "${language.name}"`, { cause });
+	}
+}
+
 function nativeEngineOptions<API extends LanguageAPI>(
-	options: EngineOptions<API, BuilderMode> | undefined
+	options: EngineOptions<API, BuilderMode> | undefined,
+	nodeStorage: NodeStorage
 ): NativeEngineOptions<API['options']> {
-	return options?.render === undefined ? {} : { options: options.render };
+	return { ...(options?.render === undefined ? {} : { options: options.render }), nodeStorage };
 }
 
 function unimplementedVerb(verb: 'read' | 'create' | 'write'): Error {
@@ -129,7 +143,8 @@ function scopedBuild<B, Node>(
 				inEngine(handle, () => {
 					if (typeof value !== 'function') throw new TypeError('builder is not callable');
 					const run = (): Node => Reflect.apply(value, self, args);
-					return handle.settle(intercept === undefined ? run() : intercept({ path, args }, run));
+					const built = (): Node => handle.settle(intercept === undefined ? run() : intercept({ path, args }, run));
+					return handle.builtArena === undefined ? built() : handle.builtArena.scope(built);
 				}),
 			set: refuseWrite,
 			defineProperty: refuseWrite,
@@ -168,6 +183,14 @@ export function scopeBuilders<T extends object>(engine: object, table: T): T {
 	return scope(table);
 }
 
+function storedVerifierOf(mode: EngineOptions<LanguageAPI>['verifyStructure'], table: StructureTable, membership: KindMembership): EngineHandle['verifyStored'] {
+	if (mode !== 'runtime') return undefined;
+	return (kind, stored) => {
+		const row = table[kind];
+		if (row !== undefined) checkRow(stored, row, membership);
+	};
+}
+
 function settlerOf(
 	mode: EngineOptions<LanguageAPI>['verifyStructure'],
 	table: StructureTable,
@@ -181,6 +204,12 @@ function settlerOf(
 	};
 }
 
+function keepingBuilt(settle: EngineHandle['settle'], keeps: boolean): EngineHandle['settle'] {
+	if (!keeps) return settle;
+	const layouts: object[] = [];
+	return (node) => settle(typeof node === 'object' && node !== null ? keepLayout(layouts, node) : node);
+}
+
 function admitterOf(mode: EngineOptions<LanguageAPI>['verifyStructure'], table: StructureTable): EngineHandle['admit'] {
 	if (mode !== 'runtime') return () => undefined;
 	return (kindId, args, declared) => {
@@ -189,13 +218,20 @@ function admitterOf(mode: EngineOptions<LanguageAPI>['verifyStructure'], table: 
 	};
 }
 
+const OBJECT_SCOPE: CommitScope = Object.freeze({
+	keep: <N extends object>(node: N): N => node,
+	[Symbol.dispose]: () => undefined
+});
+
 function assembleEngine<API extends LanguageAPI, M extends BuilderMode>(
 	language: Language<API>,
 	hooks: LanguageHooks<API>,
 	table: API['build'][M],
-	options: EngineOptions<API, M> | undefined
+	options: EngineOptions<API, M> | undefined,
+	storage: NodeStorage,
+	records: object | undefined
 ): Engine<API, M> {
-	const native = hooks.createNative(nativeEngineOptions(options));
+	const native = hooks.createNative(nativeEngineOptions(options, storage));
 	const identity: EngineIdentity<API> = Object.freeze({
 		language,
 		renderModuleHash: hooks.renderModuleHash,
@@ -203,10 +239,14 @@ function assembleEngine<API extends LanguageAPI, M extends BuilderMode>(
 		trivia: hooks.trivia,
 		portable: hooks.portable
 	});
+	stampEngineStorage(identity, storage);
 	const handle: TreeEngineHandle = {
 		current: identity,
 		hydrate: hooks.hydrate,
-		settle: settlerOf(options?.verifyStructure, hooks.structure, hooks.membership),
+		querySlots: hooks.querySlots,
+		structure: hooks.structure,
+		settle: keepingBuilt(settlerOf(options?.verifyStructure, hooks.structure, hooks.membership), records === undefined),
+		verifyStored: storedVerifierOf(options?.verifyStructure, hooks.structure, hooks.membership),
 		admit: admitterOf(options?.verifyStructure, hooks.structure)
 	};
 	const interceptors = options?.intercept ?? [];
@@ -220,8 +260,13 @@ function assembleEngine<API extends LanguageAPI, M extends BuilderMode>(
 			typeof target === 'number' ? String(target) : (hooks.trivia.kindName(target.$type) ?? String(target.$type));
 		const before = performance.now();
 		const text = rendered.toString();
-		recordFfi(language.name, kind, JSON.stringify(target).length, performance.now() - before, text.length);
+		recordFfi(language.name, kind, dataBytes(target), performance.now() - before, text.length);
 		return text;
+	};
+	const parseAndBind = (source: string) => {
+		const tree = native.parseTree(source);
+		bindTree(tree, handle);
+		return tree;
 	};
 	const readAndBind = (source: string, parseOptions?: ParseOptions) => {
 		const read = native.parseAndRead(source, parseOptions);
@@ -247,16 +292,15 @@ function assembleEngine<API extends LanguageAPI, M extends BuilderMode>(
 		types: undefined as unknown as API['types'],
 		diagnostics: {
 			buildProfile: native.buildProfile,
+			builtMemory: native.builtMemory,
+			parseTree: parseAndBind,
 			parseAndRead: readAndBind
 		},
 		isNode: (value): value is API['node'] => isNode(value) && inLanguage(value),
 		isParsedNode: (value): value is API['node'] => isParsedNode(value) && inLanguage(value),
 		isFactoryNode: (value): value is API['node'] => isFactoryNode(value) && inLanguage(value),
 		isErrorNode: (value): value is ErrorNode => isErrorNode(value) && inLanguage(value),
-		reviver: (key, value) =>
-			key !== ''
-				? value
-				: inEngine(handle, () => reviveNode(value, { facts: hooks.json, build: hooks.buildByKind, settle: handle.settle })),
+		reviver: refuseReviver,
 		isEmptyNode: ((node: AnyUntypedNode): boolean => {
 			const kind = hooks.trivia.kindName(node.$type);
 			return (
@@ -277,9 +321,9 @@ function assembleEngine<API extends LanguageAPI, M extends BuilderMode>(
 		query: ((node: object) => {
 			if (handle.current !== engine)
 				throw new Error('query: engine disposed; parse the source again with a live engine');
-			const stamp = engineOf(node);
-			if (stamp !== undefined && !sameLanguage(stamp, identity)) {
-				throw new Error(`cannot query a ${stamp.language.name} node through a ${language.name} engine`);
+			const foreign = foreignEngine(node, identity);
+			if (foreign !== undefined) {
+				throw new Error(`cannot query a ${foreign.language.name} node through a ${language.name} engine`);
 			}
 			return queryFacet(node, queryHooks);
 		}) as Engine<API, M>['query'],
@@ -288,9 +332,9 @@ function assembleEngine<API extends LanguageAPI, M extends BuilderMode>(
 		},
 		render(node: RenderArgument<API, M>, renderOptions?: API['options']) {
 			const target = typeof node === 'function' ? node(build) : node;
-			const stamp = engineOf(target);
-			if (stamp !== undefined && !sameLanguage(stamp, identity)) {
-				throw new Error(`cannot render a ${stamp.language.name} node through a ${language.name} engine`);
+			const foreign = foreignEngine(target, identity);
+			if (foreign !== undefined) {
+				throw new Error(`cannot render a ${foreign.language.name} node through a ${language.name} engine`);
 			}
 			const rendered = native.render(target, renderOptions);
 			if (renderChain === undefined) {
@@ -309,6 +353,13 @@ function assembleEngine<API extends LanguageAPI, M extends BuilderMode>(
 		write(): Pending {
 			throw unimplementedVerb('write');
 		},
+		release(node) {
+			native.release(node);
+		},
+		scope() {
+			if (handle.current !== engine) throw new Error('scope: engine disposed; open a scope on a live engine');
+			return handle.builtArena?.commit() ?? OBJECT_SCOPE;
+		},
 		dispose() {
 			handle.current = identity;
 			native.dispose();
@@ -319,7 +370,16 @@ function assembleEngine<API extends LanguageAPI, M extends BuilderMode>(
 	};
 	handle.current = engine;
 	const frozen = Object.freeze(engine);
+	stampEngineStorage(frozen, storage);
 	builderScopes.set(frozen, (table) => scopedBuild(table, handle, buildChain));
+	if (records !== undefined) {
+		const built = nativeBuiltRecords(native);
+		if (built === undefined) throw new Error(ARENA_FEATURE_REFUSED);
+		const views = (records as { readonly builtViews?: BuiltViews }).builtViews;
+		if (views === undefined) throw new Error(`the record builders of language "${language.name}" export no builtViews`);
+		handle.builtArena = new BuiltArena(built, hooks.wrap as (data: object, tree: TreeHandle) => unknown, handle, views, writeLeafSites);
+		handle.records = records;
+	}
 	return frozen;
 }
 
@@ -372,5 +432,10 @@ export async function createEngine<API extends LanguageAPI>(
 	}
 	const hooks = await loadLanguage(language);
 	const mode = options?.api ?? 'default';
-	return assembleEngine(language, hooks, await loadTable(language, hooks, mode), options);
+	const storage = nodeStorageOf(options);
+	const [table, records] = await Promise.all([
+		loadTable(language, hooks, mode),
+		storage === 'arena' ? loadRecords(language, hooks) : undefined
+	]);
+	return assembleEngine(language, hooks, table, options, storage, records);
 }
