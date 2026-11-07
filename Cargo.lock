@@ -482,9 +482,9 @@ dependencies = [
  "serde",
  "serde_json",
  "sha2",
+ "sittir-engine",
  "sittir-node-macros",
  "stacker",
- "tree-sitter",
  "tree-sitter-python",
  "tree-sitter-rust",
 ]
@@ -518,7 +518,6 @@ dependencies = [
  "sittir-rust",
  "sittir-scm",
  "sittir-typescript",
- "tree-sitter",
 ]
 
 [[package]]
@@ -532,7 +531,7 @@ dependencies = [
  "serde",
  "serde_json",
  "sittir-core",
- "tree-sitter",
+ "sittir-engine",
  "tree-sitter-language",
 ]
 
@@ -547,7 +546,7 @@ dependencies = [
  "serde",
  "serde_json",
  "sittir-core",
- "tree-sitter",
+ "sittir-engine",
  "tree-sitter-language",
 ]
 
@@ -562,7 +561,7 @@ dependencies = [
  "serde",
  "serde_json",
  "sittir-core",
- "tree-sitter",
+ "sittir-engine",
  "tree-sitter-language",
 ]
 
@@ -577,7 +576,7 @@ dependencies = [
  "serde",
  "serde_json",
  "sittir-core",
- "tree-sitter",
+ "sittir-engine",
  "tree-sitter-language",
 ]
 
@@ -592,7 +591,7 @@ dependencies = [
  "serde",
  "serde_json",
  "sittir-core",
- "tree-sitter",
+ "sittir-engine",
  "tree-sitter-language",
 ]
 

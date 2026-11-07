@@ -20,6 +20,9 @@
 //!   undefined symbol, so each listed name is also marked undefined: every
 //!   image this crate links, its test executables included, holds the
 //!   runtime. Apple's ld and link.exe fetch what their export lists name.
+//! - Slot names: every crate that depends on the engine directly reads them
+//!   from `DEP_SITTIR_ENGINE_ALLOCATOR_SLOTS`, so a grammar's build defines
+//!   each slot's import without a list of its own.
 //! - Stamp: the commit comes from `SITTIR_ENGINE_COMMIT`, `local` when unset.
 use std::path::{Path, PathBuf};
 
@@ -63,6 +66,7 @@ fn main() {
         }
         (os, env) => panic!("no engine link settings for {os}-{env}"),
     }
+    println!("cargo:allocator_slots={}", ALLOCATOR_SLOTS.join(","));
     println!("cargo:rerun-if-env-changed=SITTIR_ENGINE_COMMIT");
     let commit = std::env::var("SITTIR_ENGINE_COMMIT").ok().filter(|commit| !commit.is_empty());
     println!("cargo:rustc-env=SITTIR_ENGINE_COMMIT={}", commit.as_deref().unwrap_or("local"));

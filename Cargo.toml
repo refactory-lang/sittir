@@ -52,18 +52,19 @@ repository = "https://github.com/refactory-lang/sittir"
 # the pinned toolchain's `llvm-strip`. The unstripped build is kept beside the
 # binding's build stamp, for tools that read the shipped code by name.
 #
-# Fat LTO over a single codegen unit is for size: the bindings ship inside the
-# grammar packages, and whole-program optimization drops what the per-crate
-# units keep. It costs build time, not render speed.
+# Thin-local LTO over a single codegen unit: every binding links the shared
+# engine library with `-C prefer-dynamic` (NATIVE_RUSTFLAGS), and rustc refuses
+# fat LTO across a dynamic Rust dependency. A single unit keeps each crate
+# optimized whole.
 [profile.release]
 strip = "none"
-lto = "fat"
+lto = false
 codegen-units = 1
 
 # What local generation and validation build (the crates' `build:gate`):
 # optimized like release, so validation's deep reads keep optimized stack
-# frames (`typed_read_nesting`'s ceilings hold on it), without fat LTO's
-# single-threaded link. CI and published bindings build `release`.
+# frames (`typed_read_nesting`'s ceilings hold on it), with parallel codegen
+# units for a faster build. CI and published bindings build `release`.
 [profile.gate]
 inherits = "release"
 lto = "off"

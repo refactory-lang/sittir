@@ -1,6 +1,16 @@
 fn main() {
     napi_build::setup();
 
+    // The addon finds the engine and std libraries shipped in its own folder.
+    match std::env::var("CARGO_CFG_TARGET_OS").as_deref() {
+        Ok("macos") => println!("cargo:rustc-cdylib-link-arg=-Wl,-rpath,@loader_path"),
+        Ok("linux") => {
+            println!("cargo:rustc-cdylib-link-arg=-Wl,-rpath,$ORIGIN");
+            println!("cargo:rustc-cdylib-link-arg=-Wl,--enable-new-dtags");
+        }
+        _ => {}
+    }
+
     let crate_dir = std::path::PathBuf::from(
         std::env::var_os("CARGO_MANIFEST_DIR").expect("CARGO_MANIFEST_DIR"),
     );
@@ -16,6 +26,7 @@ fn main() {
     if std::env::var("CARGO_CFG_TARGET_ENV").as_deref() == Ok("msvc") {
         build.flag("-utf-8");
     }
+    allocate_through_runtime(&mut build);
 
     let parser_path = grammar_src.join("parser.c");
     build.file(&parser_path);
@@ -30,15 +41,27 @@ fn main() {
 
     let cpp_scanner_path = grammar_src.join("scanner.cc");
     if cpp_scanner_path.exists() {
-        cc::Build::new()
-            .cpp(true)
-            .include(&grammar_src)
-            .file(&cpp_scanner_path)
-            .compile("sittir-tree-sitter-regex-scanner");
+        let mut cpp = cc::Build::new();
+        cpp.cpp(true).include(&grammar_src).file(&cpp_scanner_path);
+        allocate_through_runtime(&mut cpp);
+        cpp.compile("sittir-tree-sitter-regex-scanner");
         rerun_if_changed_with_includes(&cpp_scanner_path, &mut watched);
     }
 
     build.compile("sittir-tree-sitter-regex");
+}
+
+/// A scanner allocates through the tree-sitter runtime's allocator slots,
+/// which the engine library exports and names to this build. MSVC reaches
+/// data in another DLL only through its import slot.
+fn allocate_through_runtime(build: &mut cc::Build) {
+    build.define("TREE_SITTER_REUSE_ALLOCATOR", None);
+    if std::env::var("CARGO_CFG_TARGET_ENV").as_deref() == Ok("msvc") {
+        let slots = std::env::var("DEP_SITTIR_ENGINE_ALLOCATOR_SLOTS").expect("the engine names its allocator slots");
+        for slot in slots.split(',') {
+            build.define(slot, format!("(*__imp_{slot})").as_str());
+        }
+    }
 }
 
 /// Rebuild when a scanner source, or any file it quotes in an `#include`,

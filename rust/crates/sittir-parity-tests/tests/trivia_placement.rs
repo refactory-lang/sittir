@@ -4,6 +4,7 @@
 //! bytes and sides rather than by id, over each grammar's fixtures. The
 //! depth changes where layout owners meet are pinned.
 
+use sittir_core::tree_sitter;
 use sittir_core::engine::EngineGrammar;
 use sittir_core::points::LineTable;
 use sittir_core::trivia_table::{Adjacency, Assigned, Placement, Source, Table, TriviaSide};

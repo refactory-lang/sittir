@@ -10,7 +10,7 @@ use super::{Address, ArenaError, ArenaRead, Cell, CellShape, CellWord, HydrateEr
 use crate::read::{Depth, ReadCtx};
 use crate::record::HEADER_WORDS;
 use crate::types::{KindId, NodeIndex};
-use tree_sitter::TreeCursor;
+use crate::tree_sitter::TreeCursor;
 
 fn malformed(what: &'static str, word: u32) -> ArenaError {
     ArenaError::Malformed { what, word }

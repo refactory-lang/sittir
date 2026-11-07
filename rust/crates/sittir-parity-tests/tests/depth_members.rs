@@ -2,6 +2,7 @@
 //! levels any subtree opens net of those it closes as a walk of that
 //! subtree counts them, the interiors of `ERROR`s and extras included.
 
+use sittir_core::tree_sitter;
 use sittir_core::trivia_table::{DepthMembers, SurfaceKinds};
 use sittir_core::types::NodeIndex;
 

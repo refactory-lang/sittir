@@ -32,6 +32,7 @@
 //! taking no lock. What the placement keeps to place further layout owners
 //! stays under the lock.
 
+use crate::tree_sitter;
 use super::{holds_sides, is_entry, Adjacency, Assigned, DepthAnchor, LayoutRun, Place, SurfaceKinds, TriviaSide};
 use crate::heap::{btree_allocation, CountedMap, HeapBytes, IndexState, ARC_COUNTS};
 use crate::points::LineTable;

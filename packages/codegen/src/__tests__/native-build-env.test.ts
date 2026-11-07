@@ -3,22 +3,25 @@ import { NATIVE_RUSTFLAGS, NATIVE_TARGETS, nativeBuildEnv } from '../grammars.ts
 
 describe('nativeBuildEnv', () => {
 	it('passes the target row of the rustflags table through RUSTFLAGS', () => {
-		expect(nativeBuildEnv('x86_64-unknown-linux-musl', {}).RUSTFLAGS).toBe('-C target-feature=-crt-static');
+		expect(nativeBuildEnv('x86_64-unknown-linux-musl', {}).RUSTFLAGS).toBe('-C prefer-dynamic -C target-feature=-crt-static');
 	});
 
 	it('appends the RUSTFLAGS already in the environment after the table row', () => {
-		expect(nativeBuildEnv('aarch64-unknown-linux-musl', { RUSTFLAGS: '-C link-arg=-fuse-ld=lld' }).RUSTFLAGS).toBe(
-			'-C target-feature=-crt-static -C link-arg=-fuse-ld=lld'
-		);
+		expect(nativeBuildEnv('aarch64-apple-darwin', { RUSTFLAGS: '-C link-arg=-fuse-ld=lld' }).RUSTFLAGS).toBe('-C prefer-dynamic -C link-arg=-fuse-ld=lld');
 	});
 
 	it('puts the build driver flags last', () => {
-		expect(nativeBuildEnv('x86_64-pc-windows-msvc', { RUSTFLAGS: '-C debuginfo=1' }, ['-C link-arg=/MAP']).RUSTFLAGS).toBe('-C debuginfo=1 -C link-arg=/MAP');
+		expect(nativeBuildEnv('x86_64-pc-windows-msvc', { RUSTFLAGS: '-C debuginfo=1' }, ['-C link-arg=/MAP']).RUSTFLAGS).toBe(
+			'-C prefer-dynamic -C debuginfo=1 -C link-arg=/MAP'
+		);
 	});
 
-	it('leaves the environment as it is when there is nothing to pass, so cargo still reads its config', () => {
-		const env = { PATH: '/bin' };
-		expect(nativeBuildEnv('aarch64-apple-darwin', env)).toBe(env);
+	it('keeps the rest of the environment', () => {
+		expect(nativeBuildEnv('aarch64-apple-darwin', { PATH: '/bin' })).toEqual({ PATH: '/bin', RUSTFLAGS: '-C prefer-dynamic' });
+	});
+
+	it('links every release target against the engine library', () => {
+		for (const target of NATIVE_TARGETS) expect(NATIVE_RUSTFLAGS[target]).toContain('-C prefer-dynamic');
 	});
 
 	it('refuses a target with no row, by name', () => {

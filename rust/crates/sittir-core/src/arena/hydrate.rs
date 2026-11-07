@@ -26,7 +26,7 @@ use crate::record::{stored, Stored, HEADER_WORDS};
 use crate::slot::SlotValue;
 use crate::types::{KindId, NodeIndex, Span};
 use crate::NonEmptyVec;
-use tree_sitter::TreeCursor;
+use crate::tree_sitter::TreeCursor;
 
 /// What a refused hydration names: the read's refusal, or the arena's.
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -492,6 +492,7 @@ mod tests {
     use super::*;
     use crate::read::{grammar_id, index_of};
     use crate::record::{form, PARSED_KIND_BITS};
+    use crate::tree_sitter;
     use crate::types::TreeId;
 
     const fn shape(word: u32, width: u32, run: Option<u32>, inline: u32, forms: u8) -> CellShape {

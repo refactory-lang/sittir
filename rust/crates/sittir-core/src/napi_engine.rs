@@ -1945,7 +1945,7 @@ where
         self.trees.seat_through(coord, wrappers, seat)
     }
 
-    fn read_ctx(&self, tree: crate::types::TreeId) -> Option<(&tree_sitter::Tree, crate::read::ReadCtx<'_>)> {
+    fn read_ctx(&self, tree: crate::types::TreeId) -> Option<(&crate::tree_sitter::Tree, crate::read::ReadCtx<'_>)> {
         crate::render::SourceTable::read_ctx(self.trees, tree)
     }
 

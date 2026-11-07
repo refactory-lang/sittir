@@ -111,22 +111,25 @@ Port from it, don't copy it: master has moved since (records, arena, lazy trivia
 ### Task 2: Grammar addons on the engine
 
 **Files:**
-- Modify: `rust/crates/sittir-core/Cargo.toml`. It depends on `sittir-engine` and reaches tree-sitter through it.
-- Modify: `packages/codegen/src/emitters/native-crate.ts` (each grammar's `build.rs` and `Cargo.toml`).
+- Modify: `rust/crates/sittir-core`. It depends on `sittir-engine` in place of `tree-sitter` and re-exports the engine's copy as `sittir_core::tree_sitter`, which its own modules name. The engine is the one crate that declares tree-sitter. Rust links an extern crate only when code names it, so a dependency on the engine that nothing names leaves tree-sitter static in the `.node`.
+- Modify: `rust/crates/sittir-parity-tests` and `rust/crates/sittir-node-macros`. They drop `tree-sitter` and name `sittir_core::tree_sitter`.
+- Modify: `packages/codegen/src/emitters/native-crate.ts` (each grammar's `build.rs`, `Cargo.toml` and `src/lib.rs`) and `packages/codegen/src/emitters/render-module.ts` (the read coordinate's tree type). A grammar crate depends on `sittir-engine`, declares no `tree-sitter`, and names `sittir_core::tree_sitter`.
 - Modify: `packages/codegen/src/grammars.ts`. Every row of `NATIVE_RUSTFLAGS` gains `-C prefer-dynamic`.
 - Modify: `Cargo.toml`. `[profile.release]` moves from `lto = "fat"` to thin-local (`lto = false`), and `codegen-units` stays: rustc refuses fat LTO with `-C prefer-dynamic`.
 - Modify: `scripts/build-native.mts`. After the build, it copies the engine (`libsittir_engine.dylib`, `.so` or `sittir_engine.dll`) and std (`libstd-<hash>`, or `std-<hash>.dll` on Windows) beside the `.node` in `packages/<lang>/native/`:
   - on macOS it rewrites every std reference, and the std copy's own id, to `@rpath/libstd-<hash>.dylib`, then re-signs the images ad hoc;
   - it keeps unstripped copies beside the build stamp, as it does for the `.node`;
-  - on Linux, the engine copy keeps `RUNPATH $ORIGIN`.
+  - on Linux, the engine copy keeps `RUNPATH $ORIGIN`;
+  - each copy is made writable, since a toolchain (Homebrew's, for one) may install std read-only, and the build rewrites and later replaces its copies;
+  - its `cargo metadata` resolves fully, which settles `Cargo.lock` after a manifest change before the build's fingerprint reads it.
 
   These copies land here, not with the packaging, because a `.node` built with `-C prefer-dynamic` loads only with them beside it.
 - Test: `packages/codegen/src/emitters/__tests__/native-crate.test.ts`, and `packages/tools/tests/native-layout.test.ts` for the copies.
-- Regenerated: `rust/crates/sittir-{python,regex,rust,scm,typescript}/{build.rs,Cargo.toml}` and the generation manifests.
+- Regenerated: `rust/crates/sittir-{python,regex,rust,scm,typescript}/{build.rs,Cargo.toml,src/lib.rs,src/render/node.rs}` and the generation manifests.
 
 **Interfaces:**
 - Consumes: Task 1's crate and table.
-- Produces: each addon links the engine dynamically and defines no `ts_*` symbol. A platform layout of `<binary>.<platform>.node`, the engine and `libstd-<hash>`, in one folder.
+- Produces: each addon links the engine dynamically, imports the runtime functions it calls from the engine, and defines none of the symbols the engine exports. The generated parser's own tables (`ts_parse_table`, `ts_lex_modes`, …) stay in the addon. A platform layout of `<binary>.<platform>.node`, the engine and `libstd-<hash>`, in one folder.
 
 - [ ] **Step 1: Failing emitter tests.** The emitted `build.rs` has:
   - on macOS, `cargo:rustc-link-arg=-Wl,-rpath,@loader_path`;
@@ -136,13 +139,13 @@ Port from it, don't copy it: master has moved since (records, arena, lazy trivia
 
   The emitted `Cargo.toml` depends on `sittir-engine`. Use the probe's `spikes/build-scripts/addon.rs` as the reference text.
 
-  The copies: after `build-native.mts python`, `packages/python/native/` holds the `.node`, the engine and the std copy. On macOS, `otool -L` names `@rpath/` for both libraries, and `codesign -v` passes.
+  The copies: after `build-native.mts python`, `packages/python/native/` holds the `.node`, the engine and the std copy. The `.node` links both from its own folder, imports runtime symbols the engine exports, and defines none of them, locals included (`nm -U`; an exported-only listing can't see a static runtime, since a cdylib hides it). On macOS, `otool -L` names `@rpath/` for both libraries, and `codesign -v` passes.
 - [ ] **Step 2:** Run `pnpm vitest run packages/codegen/src/emitters/__tests__/native-crate.test.ts packages/tools/tests/native-layout.test.ts`. They fail.
 - [ ] **Step 3: Implement the emitter, the flag, the LTO change and the copies,** then regenerate every grammar.
 - [ ] **Step 4: Prove it on the host:**
-  - `sittir tool native-images <each addon> --defined ts_` is empty;
-  - `--imported ts_current_` lists only the slots that grammar's scanner reads;
-  - `cargo test --workspace --no-default-features` passes;
+  - `native-layout.test.ts` passes on every grammar's `.node`;
+  - `sittir tool native-images <each addon> --imported ts_current_` lists only the slots that grammar's scanner reads;
+  - `cargo test --workspace --no-default-features` passes, and so do CI's clippy variants and the stack-ceiling tests, which the release profile's LTO change can move;
   - `validate:history` shows the same rows on every grammar;
   - the full suite passes;
   - the paired-refs benchmark, against the last commit before this task, run before the PR. Any cell over ×1.10 is reported with its cause, not deferred to Task 6. Leaving fat LTO can cost speed.

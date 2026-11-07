@@ -23,11 +23,15 @@ arena = []
 
 [dependencies]
 regex = "1"
+# The tree-sitter runtime and the process statics, one per process. The engine
+# is the only crate that declares tree-sitter: this crate reaches it through
+# the engine's re-export, so naming it loads the engine, and every addon built
+# with `-C prefer-dynamic` links the engine library rather than its own copy.
+sittir-engine = { workspace = true }
 stacker = { workspace = true }
 sittir-node-macros = { path = "../sittir-node-macros" }
 serde = { workspace = true }
 serde_json = { workspace = true }
-tree-sitter = { workspace = true }
 # napi + napi-derive: `#[napi(object)]` on boundary types expands to
 # references against the napi runtime crate. Both are pure Rust — no
 # Node.js is required at compile time, so sittir-core builds without

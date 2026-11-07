@@ -12,6 +12,7 @@
 //! node by its tree's id and its descendant index, re-resolved through a
 //! cursor on each access — no lifetime-erasure needed.
 
+use crate::tree_sitter;
 use crate::heap::HeapBytes;
 use crate::options::ResolvedOptions;
 use crate::query::{Address, DescendantBatch, Plan, QueryCoordinate, QueryItem};

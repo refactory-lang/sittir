@@ -31,6 +31,7 @@
 //! in a gap of a list slot, from the class the slot stores
 //! (`ParsedTree::deviation`, `list_slots`).
 
+use crate::tree_sitter;
 use crate::heap::HeapBytes;
 use crate::types::{KindId, NodeIndex, RunId, Span};
 

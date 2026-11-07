@@ -6,6 +6,9 @@ rust-version.workspace = true
 license.workspace = true
 repository.workspace = true
 description = "The library every sittir grammar addon shares at run time: the one tree-sitter runtime and the statics a process holds once."
+# The build script names the runtime's allocator slots to every crate that
+# depends on the engine directly (`DEP_SITTIR_ENGINE_ALLOCATOR_SLOTS`).
+links = "sittir_engine"
 
 # A grammar addon built with `-C prefer-dynamic` links the `dylib`; without the
 # flag it takes the `rlib` and links everything statically.

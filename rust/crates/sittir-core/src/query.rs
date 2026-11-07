@@ -3,7 +3,7 @@
 
 use std::collections::HashMap;
 
-use tree_sitter::{Node, TreeCursor};
+use crate::tree_sitter::{Node, TreeCursor};
 
 use crate::read::{index_of, Child, Route, Router};
 use crate::slot::NodeCoordinate;
@@ -346,6 +346,7 @@ fn slot_hits<'s>(cursor: &mut TreeCursor<'_>, ctx: &QueryCtx<'s>, slots: &Slots,
 mod tests {
     use super::*;
     use crate::read::{Interior, ReadError};
+    use crate::tree_sitter;
     use crate::types::KindId;
     use std::sync::OnceLock;
 
