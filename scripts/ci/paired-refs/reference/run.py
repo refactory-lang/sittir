@@ -1,8 +1,9 @@
 # Usage: python3 run.py <out-dir> <tree> <corpora-dir> [<batches>] [<rounds>]
 # Rounds of the speed reference over every corpus admit.mjs admitted in
-# <corpora-dir>. Each round runs, for each corpus, four fresh processes: sittir
-# (built at <tree>) in object and in arena storage, and oxfmt's format(), each
-# timing <batches> batches (reference-worker.mjs), and oxlint. The order
+# <corpora-dir>. Each round runs, for each corpus, five fresh processes: sittir
+# (built at <tree>) in object and in arena storage, the arena whole read's
+# native calls alone (deep-read) and oxfmt's format(), each timing <batches>
+# batches (reference-worker.mjs), and oxlint. The order
 # rotates by round and reverses on odd rounds. oxlint runs as its command from
 # <tree>'s node_modules, single-threaded, from the corpus directory over the
 # admitted files' paths, <batches> times; each run is paired with a run of the
@@ -10,7 +11,7 @@
 # oxlint run records its wall time, peak RSS (wait4) and the time oxlint
 # reports for itself. When TS_WALK names a built ts-walk binary, each round
 # also runs its timing mode (tree-sitter's parse, a TreeCursor walk into flat
-# rows and the tree's drop, <batches> passes) as a fifth process, and after
+# rows and the tree's drop, <batches> passes) as a sixth process, and after
 # the rounds its memory mode once per corpus (<corpus>-ts-memory.json). Each
 # receipt records the one-minute load beside the process. Defaults: 10
 # batches, 5 rounds.
@@ -25,7 +26,7 @@ BATCHES = int(sys.argv[4]) if len(sys.argv) > 4 else 10
 ROUNDS = int(sys.argv[5]) if len(sys.argv) > 5 else 5
 TS_WALK = os.environ.get('TS_WALK')
 TREE_SITTER = re.search(r'^tree-sitter = "=([^"]+)"', (here / 'ts-walk' / 'Cargo.toml').read_text(), re.M).group(1)
-TOOLS = ['object', 'arena', 'oxfmt', 'oxlint'] + (['ts-walk'] if TS_WALK else [])
+TOOLS = ['object', 'arena', 'deep-read', 'oxfmt', 'oxlint'] + (['ts-walk'] if TS_WALK else [])
 OXLINT_FLAGS = ['--threads=1', '--silent', '--disable-nested-config', '--no-ignore']
 out.mkdir(parents=True, exist_ok=True)
 empty = out / 'oxlint-empty'

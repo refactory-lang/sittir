@@ -9,11 +9,16 @@
 # - sittir's time over each tool's on the same bytes (xN: sittir takes N
 #   times as long), the median of the per-round ratios of process medians,
 #   each round within one copy, with a seeded bootstrap 95% range;
-# - oxlint's startup and its own reported time, and each tool's peak RSS.
+# - oxlint's startup and its own reported time, and each tool's peak RSS;
+# - the arena whole read's native calls alone (deep-read): the parse, the
+#   deep read and the release per visible node, the native bytes the read
+#   adds per node, and the read over tree-sitter's parse and over the arena
+#   whole read, paired by round.
 # Writes <out.md> and summary.json beside it, appends the Markdown to
 # $GITHUB_STEP_SUMMARY when it is set, and exits 1 when a corpus renders or
-# edits differently in object and arena storage or between copies, or a
-# tool's output changes between processes.
+# edits differently in object and arena storage or between copies, a tool's
+# output changes between processes, or deep-read and ts-walk count different
+# visible nodes.
 import json, os, random, statistics, sys
 from pathlib import Path
 
@@ -110,6 +115,19 @@ for (cpu, corpus), row in sorted(rows.items()):
         for storage in STORAGES:
             entry['treeSitter'][f'walk / {storage} whole read'] = pairedRatio(row, 'ts-walk', 'walkMs', storage, 'wholeReadMs')
             entry['treeSitter'][f'parse / {storage} parse'] = pairedRatio(row, 'ts-walk', 'parseMs', storage, 'parseMs')
+    if 'deep-read' in row['processes']:
+        reads = list(row['processes']['deep-read'].values())
+        sig = reads[0]['signature']
+        nodes = sig['visibleNodes']
+        entry['deepRead'] = {'visibleNodes': nodes, 'readBytesPerNode': sig['readBytes'] / nodes,
+                             'nsPerNode': {ph: column(row, 'deep-read', ph) * 1e6 / nodes for ph in ('parseMs', 'deepReadMs', 'treeReleaseMs')},
+                             'read / arena whole read': pairedRatio(row, 'deep-read', 'deepReadMs', 'arena', 'wholeReadMs'),
+                             'native parse + read / arena whole read': pairedRatio(row, 'deep-read', 'wholeReadMs', 'arena', 'wholeReadMs'),
+                             'peakRssMB': median(x['peakRssMB'] for x in reads)}
+        if 'treeSitter' in entry:
+            entry['deepRead']['read / ts parse'] = pairedRatio(row, 'deep-read', 'deepReadMs', 'ts-walk', 'parseMs')
+            if entry['treeSitter']['visibleNodes'] != nodes:
+                mismatches.append(f"{corpus}: deep-read counts {nodes} visible nodes, ts-walk {entry['treeSitter']['visibleNodes']}")
     summary.append(entry)
 treeMemory = {}
 for d in dirs:
@@ -149,6 +167,15 @@ for cpu in sorted({e['cpu'] for e in summary}):
             ts = e['treeSitter']
             lines.append(f"| {e['corpus']} | {ts['visibleNodes']} | " + ' | '.join(f"{ts['nsPerNode'][ph]:.1f}" for ph in ('parseMs', 'walkMs', 'dropMs')) + ' | '
                          + ' | '.join(cell(ts[k]) for k in ['walk / parse', 'walk / object whole read', 'walk / arena whole read', 'parse / object parse', 'parse / arena parse']) + ' |')
+    read = [e for e in entries if 'deepRead' in e]
+    if read:
+        lines += ['', 'The arena whole read\'s native calls alone (deep-read): per file the addon\'s parse, then readRecordStub(0, Infinity), timed apart, and the tree\'s release; read bytes are the native bytes the read adds (treeMemory). Ratios paired by round on this runner.', '',
+                  '| corpus | visible nodes | parse ns/node | deep read ns/node | release ns/node | read bytes / node | read ÷ ts parse | read ÷ arena whole read | parse + read ÷ arena whole read | peak RSS MB |',
+                  '|---|---|---|---|---|---|---|---|---|---|']
+        for e in read:
+            dr = e['deepRead']
+            lines.append(f"| {e['corpus']} | {dr['visibleNodes']} | " + ' | '.join(f"{dr['nsPerNode'][ph]:.1f}" for ph in ('parseMs', 'deepReadMs', 'treeReleaseMs')) + f" | {dr['readBytesPerNode']:.1f} | "
+                         + ' | '.join(cell(dr[k]) if k in dr else '–' for k in ['read / ts parse', 'read / arena whole read', 'native parse + read / arena whole read']) + f" | {dr['peakRssMB']:.0f} |")
     lines.append('')
 if treeMemory:
     lines += ['### tree-sitter tree memory (any CPU)', '', 'Bytes tree-sitter asked for that a parsed tree holds until its drop (a counting allocator through set_allocator; the parser\'s own buffers and the allocator\'s overhead excluded), against one flat row per visible node.', '',

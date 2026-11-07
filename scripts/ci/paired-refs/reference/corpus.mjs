@@ -24,6 +24,8 @@ export async function loadSittir(tree, nodeStorage) {
   return language.createEngine({ nodeStorage });
 }
 
+export const loadNative = (tree) => createRequire(path.join(tree, 'packages/typescript/package.json'))('./native/index.cjs');
+
 const packageOf = (tree, name) => {
   const require = createRequire(path.join(tree, 'package.json'));
   const manifest = require.resolve(`${name}/package.json`);
