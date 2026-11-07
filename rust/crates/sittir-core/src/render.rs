@@ -173,7 +173,8 @@ pub trait SourceTable {
     /// The levels the node a coordinate names opens net of those it closes:
     /// its tree's depth members (`SurfaceKinds::indent`, `dedent`) counted
     /// over its subtree. A slice moves the writer's depth by it, as the
-    /// node's template would. A coordinate whose handle names a node other
+    /// node's template would; a tree root's slice once something after it
+    /// reads the depth, so a render that reads none never asks. A coordinate whose handle names a node other
     /// than its own span, and a table of bare sources, answer none.
     fn depth_move(&self, coord: &crate::slot::NodeCoordinate) -> i32 {
         let _ = coord;
@@ -520,7 +521,7 @@ pub trait RenderSink {
     }
     /// Whether the output stands right after an indent that nothing has been
     /// written under yet: the start of a block body.
-    fn at_body_start(&self) -> bool {
+    fn at_body_start(&mut self) -> bool {
         false
     }
     /// The node just written ends its line, so a line break follows it: at

@@ -22,6 +22,8 @@
 //! infinitely growing wrapper type (E0275) — don't.
 use crate::layout_kinds::LayoutKinds;
 
+mod depth;
+
 
 /// Per-grammar word-character class. An ASCII table plus a fallback for
 /// `char >= 0x80` (Unicode identifiers). A full regex engine is not needed
@@ -184,16 +186,11 @@ pub struct SpacingWriter<'a, W: std::fmt::Write + ?Sized> {
     word: &'a WordMatcher,
     table: Option<&'a crate::render::WhitespaceTable>,
     indent: &'a str,
-    depth: usize,
+    depth: depth::Depth,
     /// The levels the current output line's indentation was paid at: what a
     /// re-indented slice's continuation lines take.
     line_depth: usize,
-    /// For each open depth level, how many further opens asked for it at the
-    /// position it opened (`indent` while armed): depth is one fact per
-    /// position, so those merge into it, and their dedents unwind first.
-    merged: Vec<usize>,
     indent_pending: bool,
-    indent_armed: bool,
     seam: Option<SeamRank>,
     seam_strength: SeamStrength,
     seam_set: LayoutKinds,
@@ -389,11 +386,9 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
             word,
             table: None,
             indent: "",
-            depth: 0,
+            depth: depth::Depth::default(),
             line_depth: 0,
-            merged: Vec::new(),
             indent_pending: false,
-            indent_armed: false,
             seam: None,
             seam_strength: SeamStrength::Fallback,
             seam_set: LayoutKinds::NONE,
@@ -592,8 +587,8 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
 
     /// The levels the next line indents: the template's depth and the
     /// trivia's excess, never below none.
-    fn levels(&self) -> usize {
-        self.depth.saturating_add_signed(isize::try_from(self.excess).unwrap_or(0))
+    fn levels(&mut self) -> usize {
+        self.depth.levels(self.sources).depth().saturating_add_signed(isize::try_from(self.excess).unwrap_or(0))
     }
 
     /// A slice's text moved to the column the writer puts it at: each
@@ -604,7 +599,7 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
     /// layout, not content; a line that starts inside a token
     /// (`SourceTable::line_starts_inside_tokens`) keeps its bytes, as does a
     /// blank line.
-    fn reindented<'t>(&self, coord: &crate::slot::NodeCoordinate, text: &'t str, sources: &dyn crate::render::SourceTable) -> std::borrow::Cow<'t, str> {
+    fn reindented<'t>(&mut self, coord: &crate::slot::NodeCoordinate, text: &'t str, sources: &dyn crate::render::SourceTable) -> std::borrow::Cow<'t, str> {
         if !text.contains('\n') {
             return std::borrow::Cow::Borrowed(text);
         }
@@ -667,7 +662,7 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
         HeldContext {
             last: self.last.take(),
             indent_pending: std::mem::replace(&mut self.indent_pending, false),
-            indent_armed: std::mem::replace(&mut self.indent_armed, false),
+            indent_armed: self.depth.levels(self.sources).arm(false),
             seam: self.seam.take(),
             seam_strength: std::mem::replace(&mut self.seam_strength, SeamStrength::Fallback),
             seam_set: std::mem::take(&mut self.seam_set),
@@ -686,7 +681,7 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
     fn restore_context(&mut self, held: HeldContext) {
         self.last = held.last;
         self.indent_pending = held.indent_pending;
-        self.indent_armed = held.indent_armed;
+        self.depth.levels(self.sources).arm(held.indent_armed);
         self.seam = held.seam;
         self.seam_strength = held.seam_strength;
         self.seam_set = held.seam_set;
@@ -772,7 +767,7 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
             self.last = tail.chars().next_back();
         }
         let adjacent = std::mem::take(&mut self.tight) || !self.word_space_allowed();
-        self.indent_armed = false;
+        self.depth.disarm();
         self.pay_indent(first)?;
         if let Some(last) = self.last {
             if !adjacent && !last.is_whitespace() && !first.is_whitespace() {
@@ -1144,7 +1139,7 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
         }
         self.clear_payload();
         self.tail = None;
-        debug_assert_eq!(self.depth, 0, "a render must dedent every indent it opens");
+        debug_assert_eq!(self.depth.at_end().depth(), 0, "a render must dedent every indent it opens");
         Ok(())
     }
 }
@@ -1431,6 +1426,10 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
         }
         self.probe_kind = None;
         self.end_leaf();
+        if !text.is_empty() && coord.index == crate::types::NodeIndex::ROOT {
+            self.depth.hold(coord, self.sources);
+            return Ok(());
+        }
         let moved = sources.depth_move(coord);
         for _ in 0..moved.unsigned_abs() {
             if moved > 0 {
@@ -1467,30 +1466,18 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
     }
 
     fn indent(&mut self) {
-        if self.indent_armed {
-            if let Some(merged) = self.merged.last_mut() {
-                *merged += 1;
-                return;
-            }
-        }
-        self.depth += 1;
-        self.merged.push(0);
-        self.indent_armed = true;
+        self.depth.levels(self.sources).open();
     }
 
     fn dedent(&mut self, seam: LayoutKinds) {
-        if let Some(merged) = self.merged.last_mut().filter(|merged| **merged > 0) {
-            *merged -= 1;
-            if !self.indent_armed && !seam.is_empty() {
-                self.merge_seam(seam);
+        let levels = self.depth.levels(self.sources);
+        if let depth::Closed::Level { armed } = levels.close() {
+            let holds_trivia = self.seam.is_some() && self.seam_strength == SeamStrength::Trivia;
+            if armed && !holds_trivia {
+                self.clear_payload();
+                return;
             }
-            return;
-        }
-        self.merged.pop();
-        self.depth = self.depth.saturating_sub(1);
-        let holds_trivia = self.seam.is_some() && self.seam_strength == SeamStrength::Trivia;
-        if std::mem::replace(&mut self.indent_armed, false) && !holds_trivia {
-            self.clear_payload();
+        } else if levels.armed() {
             return;
         }
         if !seam.is_empty() {
@@ -1506,8 +1493,8 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
         self.held_breaks()
     }
 
-    fn at_body_start(&self) -> bool {
-        self.indent_armed
+    fn at_body_start(&mut self) -> bool {
+        self.depth.levels(self.sources).armed()
     }
 
     fn kind_has(&self, kind: crate::types::KindId, flag: crate::options::KindFlags) -> bool {
@@ -2229,6 +2216,97 @@ mod sink_tests {
         w.seam(crate::layout_kinds::LayoutKinds::NEWLINE);
         w.text("y").unwrap();
         assert_eq!(s, "x\n  y");
+    }
+
+    struct Moves {
+        source: std::sync::Arc<str>,
+        moved: i32,
+        asked: std::cell::Cell<u32>,
+    }
+
+    impl crate::render::SourceTable for Moves {
+        fn source_of(&self, tree_id: crate::types::TreeId) -> Option<&std::sync::Arc<str>> {
+            let _ = tree_id;
+            Some(&self.source)
+        }
+
+        fn depth_move(&self, coord: &crate::slot::NodeCoordinate) -> i32 {
+            let _ = coord;
+            self.asked.set(self.asked.get() + 1);
+            self.moved
+        }
+    }
+
+    const HEAD: crate::types::Span = crate::types::Span { start: 0, end: 3 };
+    const EMPTY: crate::types::Span = crate::types::Span { start: 3, end: 3 };
+
+    const ROOT: crate::types::NodeIndex = crate::types::NodeIndex::ROOT;
+    const CHILD: crate::types::NodeIndex = crate::types::NodeIndex(1);
+
+    /// What `f` writes, with slices of `a {\nb` whose nodes move the depth
+    /// by `moved`, and how many moves the render found.
+    fn moving(moved: i32, f: impl FnOnce(&mut SpacingWriter<'_, String>, &dyn Fn(crate::types::NodeIndex, crate::types::Span) -> crate::slot::NodeCoordinate)) -> (String, u32) {
+        let sources = Moves { source: std::sync::Arc::from("a {\nb"), moved, asked: std::cell::Cell::new(0) };
+        let mut s = String::new();
+        let mut w = SpacingWriter::new(&mut s, WordMatcher::default_ident()).with_table(&TABLE).with_indent("  ").with_sources(&sources);
+        f(&mut w, &|index, span| crate::slot::NodeCoordinate::new(crate::types::TreeId(1), index, index + 1, span));
+        w.finish().unwrap();
+        (s, sources.asked.get())
+    }
+
+    #[test]
+    fn a_root_slice_s_depth_move_is_found_only_when_something_reads_the_depth() {
+        assert_eq!(moving(1, |w, at| w.slice(&at(ROOT, HEAD)).unwrap()), ("a {".to_owned(), 0));
+        let followed = moving(1, |w, at| {
+            w.slice(&at(ROOT, HEAD)).unwrap();
+            w.text("\n").unwrap();
+            w.text("b").unwrap();
+            w.dedent(crate::layout_kinds::LayoutKinds::NONE);
+        });
+        assert_eq!(followed, ("a {\n  b".to_owned(), 1));
+    }
+
+    #[test]
+    fn any_other_slice_moves_the_depth_at_once_since_it_may_close_what_a_template_opened() {
+        let closed = moving(-1, |w, at| {
+            w.indent();
+            w.slice(&at(CHILD, HEAD)).unwrap();
+        });
+        assert_eq!(closed, ("a {".to_owned(), 1));
+    }
+
+    #[test]
+    fn a_held_move_is_made_before_a_later_indent_after_the_text_between_disarms_it() {
+        let merged = moving(1, |w, at| {
+            w.slice(&at(ROOT, HEAD)).unwrap();
+            w.indent();
+            w.text("\n").unwrap();
+            w.text("b").unwrap();
+            w.dedent(crate::layout_kinds::LayoutKinds::NONE);
+            w.dedent(crate::layout_kinds::LayoutKinds::NONE);
+        });
+        assert_eq!(merged, ("a {\n  b".to_owned(), 1), "an indent right after the move merges into the level it opened");
+        let stacked = moving(1, |w, at| {
+            w.slice(&at(ROOT, HEAD)).unwrap();
+            w.text("\n").unwrap();
+            w.indent();
+            w.text("b").unwrap();
+            w.dedent(crate::layout_kinds::LayoutKinds::NONE);
+            w.dedent(crate::layout_kinds::LayoutKinds::NONE);
+        });
+        assert_eq!(stacked, ("a {\n    b".to_owned(), 1), "text after the move disarms its level, so the indent opens another");
+    }
+
+    #[test]
+    fn an_empty_slice_moves_at_once_so_its_dedent_clears_the_payload_its_armed_level_holds() {
+        let out = moving(-1, |w, at| {
+            w.text("x").unwrap();
+            w.indent();
+            w.seam(crate::layout_kinds::LayoutKinds::NEWLINE);
+            w.slice(&at(ROOT, EMPTY)).unwrap();
+            w.text("y").unwrap();
+        });
+        assert_eq!(out, ("x y".to_owned(), 1));
     }
 }
 
