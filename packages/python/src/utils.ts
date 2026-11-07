@@ -107,7 +107,7 @@ export const querySlots: QuerySlots = Object.freeze({
 		['quote', 1, undefined, '_quote']
 	],
 	128: [['statements', 0, undefined, '_statements']],
-	130: [['elements', 0, undefined, '_elements']],
+	130: [['statements', 0, undefined, '_statements']],
 	131: [['names', 0, undefined, '_names']],
 	133: [
 		['dots', 0, undefined, '_dots'],
@@ -460,7 +460,7 @@ export const querySlots: QuerySlots = Object.freeze({
 	296: [['elements', 0, undefined, '_elements']],
 	297: [['items', 0, undefined, '_items']],
 	298: [['items', 0, undefined, '_items']],
-	299: [['elements', 0, undefined, '_elements']],
+	299: [['statements', 0, undefined, '_statements']],
 	300: [['block', 0, undefined, '_block']],
 	301: [['newline', 0, undefined, '_newline']],
 	302: [
@@ -699,9 +699,9 @@ export const structure: StructureTable = Object.freeze({
 	},
 	130: {
 		kind: '_simple_statements',
-		required: [['_elements', 'elements']],
-		single: [['_elements', 'SimpleStatements.elements']],
-		nodeOnly: [['_elements', 'SimpleStatements.elements', 'a built SimpleStatementsElements', [260]]]
+		required: [['_statements', 'statements']],
+		single: [['_statements', 'SimpleStatements.statements']],
+		nodeOnly: [['_statements', 'SimpleStatements.statements', 'a built SimpleStatementsElements', [260]]]
 	},
 	131: {
 		kind: 'import_statement',
@@ -2225,9 +2225,9 @@ export const structure: StructureTable = Object.freeze({
 	},
 	299: {
 		kind: 'suite_inline',
-		required: [['_elements', 'elements']],
-		single: [['_elements', 'SuiteInline.elements']],
-		nodeOnly: [['_elements', 'SuiteInline.elements', 'a built SimpleStatementsElements', [260]]]
+		required: [['_statements', 'statements']],
+		single: [['_statements', 'SuiteInline.statements']],
+		nodeOnly: [['_statements', 'SuiteInline.statements', 'a built SimpleStatementsElements', [260]]]
 	},
 	300: {
 		kind: 'suite_block',

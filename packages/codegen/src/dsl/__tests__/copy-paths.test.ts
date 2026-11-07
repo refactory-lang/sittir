@@ -488,15 +488,15 @@ describe('a copy path names its copies by the spelling of the path', () => {
 		expect(raw.layerDiagnostics ?? []).toContainEqual(expect.objectContaining({ code: 'rule-name-taken', ownerKind: 'outer' }));
 	}, 60_000);
 
-	it('C3b: a segment followed by more segments enters an alias that shows its kind, copying the aliased rule under the segment\'s name', async () => {
+	it('C3b: a segment followed by more segments enters an alias that shows its kind, copying the aliased rule under the segment\'s name, and a second path through it reaches that copy', async () => {
 		const raw = await evaluateClean({ extras: '', rules: S3_RULES.replace("field('body', $.list)", "field('body', alias($.list, $.block_list))") }, '', {
-			bindings: "edits: { outer: { 'body:/(block_list as outer_list)/(fn)': ($) => alias(copy('fn'), $.method) } }"
+			bindings: "edits: { outer: { 'body:/(block_list as outer_list)/(fn)': ($) => alias(copy('fn'), $.method), 'body:/(block_list as outer_list)/(konst)': ($) => alias(copy('konst'), $.assoc) } }"
 		});
 		expect(raw.rules.outer).toMatchObject({
 			type: 'SEQ',
 			members: [{ type: 'STRING', value: 'impl' }, { type: 'FIELD', name: 'body', content: { type: 'ALIAS', named: true, value: 'outer_list', content: { type: 'SYMBOL', name: '_list_outer' } } }]
 		});
-		expect(raw.rules._stmt_outer).toMatchObject({ type: 'CHOICE', members: [{ type: 'ALIAS', named: true, value: 'method' }, { type: 'SYMBOL', name: 'konst' }] });
+		expect(raw.rules._stmt_outer).toMatchObject({ type: 'CHOICE', members: [{ type: 'ALIAS', named: true, value: 'method' }, { type: 'ALIAS', named: true, value: 'assoc' }] });
 	}, 60_000);
 
 	it('C4: an alias on a symbol inside a copied context relabels the reference and mints no copy of the symbol', async () => {

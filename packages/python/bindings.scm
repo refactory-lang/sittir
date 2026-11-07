@@ -37,6 +37,8 @@
 
 ; ── statement ──────────────────────────────────────────────────────────────────
 (block) @statement.block
+(suite_inline) @statement.block
+(suite_inline elements: (_) @statements)
 (if_statement) @statement.if
 (for_statement) @statement.loop.for_each
 (while_statement) @statement.loop.while

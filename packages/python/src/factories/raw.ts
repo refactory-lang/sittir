@@ -198,16 +198,16 @@ export function buildSimpleStatements(...args: unknown[]) {
 			);
 }
 function _buildSimpleStatements(value: Admit<T.SimpleStatementsElements>): T.SimpleStatements.Bound {
-	const _elements = hydrateStored(value);
-	const listView = ownerView(_elements, '_item');
-	if (listView.stored === undefined) refuseReadStub('_elements');
+	const _statements = hydrateStored(value);
+	const listView = ownerView(_statements, '_item');
+	if (listView.stored === undefined) refuseReadStub('_statements');
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.SimpleStatements as const,
 		$named: true as const,
-		_elements,
+		_statements,
 		$with: {
-			elements: (...args: unknown[]) =>
+			statements: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
 						args,
@@ -216,10 +216,10 @@ function _buildSimpleStatements(value: Admit<T.SimpleStatementsElements>): T.Sim
 					)
 				)
 		},
-		elements: () => hydrateStoredSlot(node, '_elements'),
+		statements: () => hydrateStoredSlot(node, '_statements'),
 		length: listView.stored?.length,
 		[LIST_ITEMS]: undefined,
-		[LIST_READ]: () => listItems(ownerElements(node.elements(), 'items'), undefined),
+		[LIST_READ]: () => listItems(ownerElements(node.statements(), 'items'), undefined),
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -7560,18 +7560,22 @@ export function buildSuiteInline(...args: unknown[]) {
 			);
 }
 function _buildSuiteInline(value: Admit<T.SimpleStatementsElements | Admit<T.SimpleStatements>>): T.SuiteInline.Bound {
-	const _elements = hydrateStored(
-		admitSplicedEnvelope(value, [TSKindId.SimpleStatements, 'elements', 'simple_statements'], 'SuiteInline.elements')
+	const _statements = hydrateStored(
+		admitSplicedEnvelope(
+			value,
+			[TSKindId.SimpleStatements, 'statements', 'simple_statements'],
+			'SuiteInline.statements'
+		)
 	);
-	const listView = ownerView(_elements, '_item');
-	if (listView.stored === undefined) refuseReadStub('_elements');
+	const listView = ownerView(_statements, '_item');
+	if (listView.stored === undefined) refuseReadStub('_statements');
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.SuiteInline as const,
 		$named: true as const,
-		_elements,
+		_statements,
 		$with: {
-			elements: (...args: unknown[]) =>
+			statements: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
 						args,
@@ -7580,10 +7584,10 @@ function _buildSuiteInline(value: Admit<T.SimpleStatementsElements | Admit<T.Sim
 					)
 				)
 		},
-		elements: () => hydrateStoredSlot(node, '_elements'),
+		statements: () => hydrateStoredSlot(node, '_statements'),
 		length: listView.stored?.length,
 		[LIST_ITEMS]: undefined,
-		[LIST_READ]: () => listItems(ownerElements(node.elements(), 'items'), undefined),
+		[LIST_READ]: () => listItems(ownerElements(node.statements(), 'items'), undefined),
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,

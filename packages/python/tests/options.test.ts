@@ -16,7 +16,7 @@ it('types every site by kind id at its address and rejects a wrong member at com
 		argumentListElements: {
 			item: { separator: { comma: { after: py.kinds.Space } }, delimiter: Delimiter.Trailing }
 		},
-		block: { statements: { separator: py.kinds.Newline } },
+		blockStatement: { statements: { separator: py.kinds.Newline } },
 		module: { statements: { separator: py.kinds.Newline } },
 		decoratedDefinition: { decorator: { separator: py.kinds.Newline, decorator: { after: py.kinds.Newline } } },
 		layout: { indent: '    ' }

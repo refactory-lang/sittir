@@ -404,11 +404,12 @@ export interface PortableIds {
 		| TSKindId.RaiseStatement
 		| TSKindId.ReturnStatement
 		| TSKindId.SuiteEmpty
+		| TSKindId.SuiteInline
 		| TSKindId.TryStatement
 		| TSKindId.WhileStatement
 		| TSKindId.WithStatement;
 	'statement.assert': TSKindId.AssertStatement;
-	'statement.block': TSKindId.Block | TSKindId.BlockClassDeclaration | TSKindId.SuiteEmpty;
+	'statement.block': TSKindId.Block | TSKindId.BlockClassDeclaration | TSKindId.SuiteEmpty | TSKindId.SuiteInline;
 	'statement.break': TSKindId.BreakStatement;
 	'statement.continue': TSKindId.ContinueStatement;
 	'statement.delete': TSKindId.DeleteStatement;
@@ -3168,6 +3169,7 @@ const table: PortableTable = {
 				TSKindId.RaiseStatement,
 				TSKindId.ReturnStatement,
 				TSKindId.SuiteEmpty,
+				TSKindId.SuiteInline,
 				TSKindId.TryStatement,
 				TSKindId.WhileStatement,
 				TSKindId.WithStatement
@@ -3175,7 +3177,10 @@ const table: PortableTable = {
 			exact: true
 		},
 		'statement.assert': { ids: [TSKindId.AssertStatement], exact: true },
-		'statement.block': { ids: [TSKindId.Block, TSKindId.BlockClassDeclaration, TSKindId.SuiteEmpty], exact: true },
+		'statement.block': {
+			ids: [TSKindId.Block, TSKindId.BlockClassDeclaration, TSKindId.SuiteEmpty, TSKindId.SuiteInline],
+			exact: true
+		},
 		'statement.break': { ids: [TSKindId.BreakStatement], exact: true },
 		'statement.continue': { ids: [TSKindId.ContinueStatement], exact: true },
 		'statement.delete': { ids: [TSKindId.DeleteStatement], exact: true },
@@ -3892,6 +3897,7 @@ const table: PortableTable = {
 			}
 		],
 		[TSKindId.SuiteEmpty]: [{ path: 'statement.block', within: [], test: [] }],
+		[TSKindId.SuiteInline]: [{ path: 'statement.block', within: [], test: [] }],
 		[TSKindId.True]: [{ path: 'literal.boolean.true', within: [], test: [] }],
 		[TSKindId.TryStatement]: [{ path: 'statement.try', within: [], test: [] }],
 		[TSKindId.Tuple]: [{ path: 'expression.collection.tuple', within: [], test: [] }],

@@ -39,7 +39,7 @@
     },
     "_simple_statements": {
       "container": {
-        "slot": "elements",
+        "slot": "statements",
         "kinds": [
           "simple_statements_elements"
         ],
@@ -1191,6 +1191,13 @@
           "within": [],
           "pins": [],
           "test": []
+        },
+        {
+          "vocab": "statement.block",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
         }
       ],
       "members": [
@@ -1764,7 +1771,7 @@
             },
             {
               "owner": "_simple_statements",
-              "slot": "elements"
+              "slot": "statements"
             },
             {
               "owner": "simple_statements_elements",
@@ -4516,7 +4523,7 @@
             },
             {
               "owner": "_simple_statements",
-              "slot": "elements"
+              "slot": "statements"
             },
             {
               "owner": "simple_statements_elements",
@@ -5829,7 +5836,7 @@
             },
             {
               "owner": "_simple_statements",
-              "slot": "elements"
+              "slot": "statements"
             },
             {
               "owner": "simple_statements_elements",
@@ -5896,7 +5903,7 @@
             },
             {
               "owner": "_simple_statements",
-              "slot": "elements"
+              "slot": "statements"
             },
             {
               "owner": "simple_statements_elements",
@@ -7448,13 +7455,43 @@
           "within": [],
           "pins": [],
           "test": []
+        },
+        {
+          "vocab": "statement.block",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
         }
       ],
       "members": []
     },
     "suite_inline": {
+      "vocab": "statement.block",
+      "read": [
+        {
+          "vocab": "statement.block",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": [
+        {
+          "name": "statements",
+          "route": "slot",
+          "slot": "statements",
+          "path": [
+            {
+              "owner": "suite_inline",
+              "slot": "statements"
+            }
+          ]
+        }
+      ],
       "container": {
-        "slot": "elements",
+        "slot": "statements",
         "kinds": [
           "simple_statements_elements"
         ],
@@ -8518,7 +8555,7 @@
       {
         "depth": 2,
         "paths": 77,
-        "kinds": 81,
+        "kinds": 82,
         "refinements": 6
       },
       {

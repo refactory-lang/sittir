@@ -13,17 +13,17 @@ describe('the portable build through the strict table', () => {
 	});
 
 	it("builds an except clause's exception through the mount that seats it at the clause's key, and a list of exceptions through the nested mount", () => {
-		const body = [{ $path: 'statement.empty' }];
-		expect(render(runtime.build({ $path: 'clause.catch', type: 'E', body }))).toBe('except E: pass\n');
-		expect(render(runtime.build({ $path: 'clause.catch', type: 'E', name: 'e', body }))).toBe('except E as e: pass\n');
-		expect(render(runtime.build({ $path: 'clause.catch', type: ['E', 'F'], body }))).toBe('except E, F: pass\n');
+		const body = { $path: 'statement.block', statements: [{ $path: 'statement.empty' }] };
+		expect(render(runtime.build({ $path: 'clause.catch', type: 'E', body }))).toBe('except E:\n    pass\n');
+		expect(render(runtime.build({ $path: 'clause.catch', type: 'E', name: 'e', body }))).toBe('except E as e:\n    pass\n');
+		expect(render(runtime.build({ $path: 'clause.catch', type: ['E', 'F'], body }))).toBe('except E, F:\n    pass\n');
 	});
 
 	it('builds an except clause with and without a name through the form that takes its members, in any order, and refuses a name beside a list of exceptions', () => {
-		const body = [{ $path: 'statement.empty' }];
-		expect(render(runtime.build({ $path: 'clause.catch', body, type: 'E' }))).toBe('except E: pass\n');
+		const body = { $path: 'statement.block', statements: [{ $path: 'statement.empty' }] };
+		expect(render(runtime.build({ $path: 'clause.catch', body, type: 'E' }))).toBe('except E:\n    pass\n');
 		for (const structure of [{ type: 'E', body, name: 'e' }, { name: 'e', body, type: 'E' }, { body, name: 'e', type: 'E' }])
-			expect(render(runtime.build({ $path: 'clause.catch', ...structure }))).toBe('except E as e: pass\n');
+			expect(render(runtime.build({ $path: 'clause.catch', ...structure }))).toBe('except E as e:\n    pass\n');
 		expect(() => runtime.build({ $path: 'clause.catch', type: ['E', 'F'], name: 'e', body })).toThrow(/no python form of except_clause takes .* together/);
 	});
 
@@ -57,8 +57,10 @@ describe('the portable build through the strict table', () => {
 		expect(() => runtime.build({ $path: 'clause.resource.item', name: 'b' })).toThrow(/clause\.resource\.item builds this structure \(members name\); it needs value/);
 	});
 
-	it('builds a list given for a slot that holds one value through the container that holds the list', () => {
-		expect(render(runtime.build({ $path: 'declaration.function', name: 'f', parameters: [], body: [{ $path: 'statement.empty' }] }))).toBe('def f(): pass\n');
+	it('builds a body from its block of statements, indented by the default form, and refuses a bare statement or a list for it', () => {
+		expect(render(runtime.build({ $path: 'declaration.function', name: 'f', parameters: [], body: { $path: 'statement.block', statements: [{ $path: 'statement.empty' }] } }))).toBe('def f():\n    pass\n');
+		expect(() => runtime.build({ $path: 'declaration.function', name: 'f', parameters: [], body: [{ $path: 'statement.empty' }] })).toThrow(/declaration\.function's body holds one value, not a list/);
+		expect(() => runtime.build({ $path: 'declaration.function', name: 'f', parameters: [], body: 'pass' })).toThrow(/declaration\.function's body has no route that seats the text "pass"/);
 	});
 
 	it("builds one comparison operand through the comparator list its route walks, and a float through the exponent spelling its form takes", () => {

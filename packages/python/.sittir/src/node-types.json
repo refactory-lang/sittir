@@ -1001,32 +1001,6 @@
     }
   },
   {
-    "type": "block",
-    "named": true,
-    "fields": {
-      "statements": {
-        "multiple": true,
-        "required": false,
-        "types": [
-          {
-            "type": "_statement",
-            "named": true
-          }
-        ]
-      }
-    },
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "dedent",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
     "type": "block_class_declaration",
     "named": true,
     "fields": {
@@ -1047,6 +1021,40 @@
       "types": [
         {
           "type": "dedent",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "block_statement",
+    "named": true,
+    "fields": {
+      "statements": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "_statement",
+            "named": true
+          },
+          {
+            "type": "simple_statements_elements",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "dedent",
+          "named": true
+        },
+        {
+          "type": "newline",
           "named": true
         }
       ]
@@ -1155,15 +1163,15 @@
         "required": true,
         "types": [
           {
+            "type": "block_statement",
+            "named": true
+          },
+          {
             "type": "suite_block",
             "named": true
           },
           {
             "type": "suite_empty",
-            "named": true
-          },
-          {
-            "type": "suite_inline",
             "named": true
           }
         ]
@@ -1284,15 +1292,15 @@
         "required": true,
         "types": [
           {
+            "type": "block_statement",
+            "named": true
+          },
+          {
             "type": "suite_block_class_declaration",
             "named": true
           },
           {
             "type": "suite_empty",
-            "named": true
-          },
-          {
-            "type": "suite_inline",
             "named": true
           }
         ]
@@ -1639,15 +1647,15 @@
         "required": true,
         "types": [
           {
+            "type": "block_statement",
+            "named": true
+          },
+          {
             "type": "suite_block",
             "named": true
           },
           {
             "type": "suite_empty",
-            "named": true
-          },
-          {
-            "type": "suite_inline",
             "named": true
           }
         ]
@@ -1971,15 +1979,15 @@
         "required": true,
         "types": [
           {
+            "type": "block_statement",
+            "named": true
+          },
+          {
             "type": "suite_block",
             "named": true
           },
           {
             "type": "suite_empty",
-            "named": true
-          },
-          {
-            "type": "suite_inline",
             "named": true
           }
         ]
@@ -1995,15 +2003,15 @@
         "required": true,
         "types": [
           {
+            "type": "block_statement",
+            "named": true
+          },
+          {
             "type": "suite_block",
             "named": true
           },
           {
             "type": "suite_empty",
-            "named": true
-          },
-          {
-            "type": "suite_inline",
             "named": true
           }
         ]
@@ -2019,15 +2027,15 @@
         "required": true,
         "types": [
           {
+            "type": "block_statement",
+            "named": true
+          },
+          {
             "type": "suite_block",
             "named": true
           },
           {
             "type": "suite_empty",
-            "named": true
-          },
-          {
-            "type": "suite_inline",
             "named": true
           }
         ]
@@ -2217,15 +2225,15 @@
         "required": true,
         "types": [
           {
+            "type": "block_statement",
+            "named": true
+          },
+          {
             "type": "suite_block",
             "named": true
           },
           {
             "type": "suite_empty",
-            "named": true
-          },
-          {
-            "type": "suite_inline",
             "named": true
           }
         ]
@@ -2315,15 +2323,15 @@
         "required": true,
         "types": [
           {
+            "type": "block_statement",
+            "named": true
+          },
+          {
             "type": "suite_block",
             "named": true
           },
           {
             "type": "suite_empty",
-            "named": true
-          },
-          {
-            "type": "suite_inline",
             "named": true
           }
         ]
@@ -2455,15 +2463,15 @@
         "required": true,
         "types": [
           {
+            "type": "block_statement",
+            "named": true
+          },
+          {
             "type": "suite_block",
             "named": true
           },
           {
             "type": "suite_empty",
-            "named": true
-          },
-          {
-            "type": "suite_inline",
             "named": true
           }
         ]
@@ -2646,15 +2654,15 @@
         "required": true,
         "types": [
           {
+            "type": "block_statement",
+            "named": true
+          },
+          {
             "type": "suite_block",
             "named": true
           },
           {
             "type": "suite_empty",
-            "named": true
-          },
-          {
-            "type": "suite_inline",
             "named": true
           }
         ]
@@ -3247,15 +3255,15 @@
         "required": true,
         "types": [
           {
+            "type": "block_statement",
+            "named": true
+          },
+          {
             "type": "suite_block",
             "named": true
           },
           {
             "type": "suite_empty",
-            "named": true
-          },
-          {
-            "type": "suite_inline",
             "named": true
           }
         ]
@@ -3921,7 +3929,7 @@
     "type": "simple_statements",
     "named": true,
     "fields": {
-      "elements": {
+      "statements": {
         "multiple": false,
         "required": true,
         "types": [
@@ -4225,7 +4233,7 @@
       "required": true,
       "types": [
         {
-          "type": "block",
+          "type": "block_statement",
           "named": true
         },
         {
@@ -4270,32 +4278,6 @@
     }
   },
   {
-    "type": "suite_inline",
-    "named": true,
-    "fields": {
-      "elements": {
-        "multiple": false,
-        "required": true,
-        "types": [
-          {
-            "type": "simple_statements_elements",
-            "named": true
-          }
-        ]
-      }
-    },
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "newline",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
     "type": "try_statement",
     "named": true,
     "fields": {
@@ -4314,15 +4296,15 @@
         "required": true,
         "types": [
           {
+            "type": "block_statement",
+            "named": true
+          },
+          {
             "type": "suite_block",
             "named": true
           },
           {
             "type": "suite_empty",
-            "named": true
-          },
-          {
-            "type": "suite_inline",
             "named": true
           }
         ]
@@ -4920,15 +4902,15 @@
         "required": true,
         "types": [
           {
+            "type": "block_statement",
+            "named": true
+          },
+          {
             "type": "suite_block",
             "named": true
           },
           {
             "type": "suite_empty",
-            "named": true
-          },
-          {
-            "type": "suite_inline",
             "named": true
           }
         ]
@@ -5038,15 +5020,15 @@
         "required": true,
         "types": [
           {
+            "type": "block_statement",
+            "named": true
+          },
+          {
             "type": "suite_block",
             "named": true
           },
           {
             "type": "suite_empty",
-            "named": true
-          },
-          {
-            "type": "suite_inline",
             "named": true
           }
         ]

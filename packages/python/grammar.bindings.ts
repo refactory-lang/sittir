@@ -3,7 +3,7 @@
 import sittir from './grammar.sittir.ts';
 import { alias, copy, edit, enrich, field, wire } from '../codegen/src/dsl/dsl-authoring.ts';
 
-export const hash = "0ce4bd9bfac86aff875234a4a9591fccaafad19c9aa0a66d25c4103eb1f529b1";
+export const hash = "b56f1bf7abcf02497d2e06cafefbbdee55358102eaa87e5e3ebfa5c4534af84a";
 
 export const renames = {
 	module: "file",
@@ -17,7 +17,6 @@ export const renames = {
 	type_param_param_spec: "parameters_type_parameter_declaration",
 	assignment_eq: "variable_declaration",
 	type_alias_statement: "type_alias_declaration",
-	block: "block_statement",
 	for_statement: "for_each_loop_statement",
 	while_statement: "while_loop_statement",
 	raise_statement: "throw_statement",
@@ -101,6 +100,8 @@ export default grammar(
 			_left_hand_side: { "-1": alias("bare_tuple_pattern") },
 			_right_hand_side: { "-2": alias("bare_tuple_pattern") },
 			_simple_pattern: { "-2": alias("qualified_identifier") },
+			_simple_statements: { "0": field("statements") },
+			_suite: { "-3": alias("block_statement") },
 			_type_param_optional1: { "1": field("bounds") },
 			aliased_import: { "0/0": alias("qualified_identifier") },
 			assignment_eq: { "0": field("name"), "1/1": field("value") },
@@ -109,7 +110,7 @@ export default grammar(
 			attribute: { "2": field("property") },
 			case_clause: [{ "4": field("body") }, { "1/0/1": alias("bare_tuple_pattern") }],
 			case_pattern_list: { "0/0": field("elements"), "1/0/0": field("elements"), "2/0": field("elements") },
-			class_definition: [{ "3": field("bases") }, { "body:/(suite_block as suite_block_class_declaration)/(block as block_class_declaration)/(function_definition)": ($, member) => choice(alias(member, $.method_declaration), alias(edit(copy("function_definition"), { "name:": alias("__init__", $.identifier) }), $.constructor_declaration)), "body:/(suite_block as suite_block_class_declaration)/(block as block_class_declaration)/(decorated_definition as decorated_definition_class_declaration)/definition:/(function_definition)": ($, member) => choice(alias(member, $.method_declaration), alias(edit(copy("function_definition"), { "name:": alias("__init__", $.identifier) }), $.constructor_declaration)) }],
+			class_definition: [{ "3": field("bases") }, { "body:/(suite_block as suite_block_class_declaration)/(block_statement as block_class_declaration)/(function_definition)": ($, member) => choice(alias(member, $.method_declaration), alias(edit(copy("function_definition"), { "name:": alias("__init__", $.identifier) }), $.constructor_declaration)), "body:/(suite_block as suite_block_class_declaration)/(block_statement as block_class_declaration)/(decorated_definition as decorated_definition_class_declaration)/definition:/(function_definition)": ($, member) => choice(alias(member, $.method_declaration), alias(edit(copy("function_definition"), { "name:": alias("__init__", $.identifier) }), $.constructor_declaration)) }],
 			class_pattern: [{ "0": field("type"), "2": field("fields") }, { "0/0": alias("qualified_identifier") }],
 			conditional_expression: { "0": field("consequence") },
 			default_parameter: { "2": field("default") },
@@ -140,6 +141,7 @@ export default grammar(
 			splat_pattern_list: { "1": field("pattern") },
 			splat_type: { "1": field("type") },
 			subscript: { "0": field("object"), "2": field("index"), "2/0": field("elements"), "2/1/0/1": field("elements") },
+			suite_block: { "1": alias("block_statement") },
 			try_statement: { "3": field("handlers"), "4/0": field("alternative"), "5/0": field("finalizer") },
 			type: { "-1": alias("qualified_identifier") },
 			typed_default_parameter: { "4": field("default") },

@@ -1958,9 +1958,9 @@ export const coerceToModule: EmptyForm<
 	return F.buildModule(...(_resolveMany<T.Statement>(_elems, _K0, _K1) as unknown as Parameters<typeof F.buildModule>));
 });
 
-export function resolveSimpleStatements_elements(
-	value: T.SimpleStatements.LooseConfig['elements']
-): Admit<T.SimpleStatements['_elements']> {
+export function resolveSimpleStatements_statements(
+	value: T.SimpleStatements.LooseConfig['statements']
+): Admit<T.SimpleStatements['_statements']> {
 	return _resolveOneBranch<T.SimpleStatementsElements>(value, 'simple_statements_elements');
 }
 
@@ -1980,7 +1980,7 @@ export const coerceToSimpleStatements: Seat<
 		return input as unknown as ReturnType<typeof F.buildSimpleStatements>;
 	return F.buildSimpleStatements(
 		_resolveOneBranch<T.SimpleStatementsElements>(
-			configFieldOr(input, 'elements', () => input),
+			configFieldOr(input, 'statements', () => input),
 			'simple_statements_elements'
 		)
 	);
@@ -7229,9 +7229,9 @@ export const coerceToWithClauseParen: Seat<T.WithClauseWithItems.LooseArgs, Retu
 	);
 };
 
-export function resolveSuiteInline_elements(
-	value: T.SuiteInline.LooseConfig['elements']
-): Admit<T.SuiteInline['_elements']> {
+export function resolveSuiteInline_statements(
+	value: T.SuiteInline.LooseConfig['statements']
+): Admit<T.SuiteInline['_statements']> {
 	return _resolveOneBranch<T.SimpleStatementsElements>(value, 'simple_statements_elements', [
 		TSKindId.SimpleStatements
 	]);
@@ -7249,7 +7249,7 @@ export const coerceToSuiteInline: Seat<T.SimpleStatementsElements.LooseArgs, Ret
 	if (isNodeOfKind(input, TSKindId.SuiteInline)) return input as unknown as ReturnType<typeof F.buildSuiteInline>;
 	return F.buildSuiteInline(
 		_resolveOneBranch<T.SimpleStatementsElements>(
-			configFieldOr(input, 'elements', () => input),
+			configFieldOr(input, 'statements', () => input),
 			'simple_statements_elements',
 			[TSKindId.SimpleStatements]
 		)

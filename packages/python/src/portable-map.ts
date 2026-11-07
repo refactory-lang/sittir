@@ -237,27 +237,7 @@ export interface PythonMap extends V.GrammarMap {
 			readonly $forms: V.Form<'content'>;
 		};
 		readonly 'clause.case.match': {
-			readonly body:
-				| V.Read<PythonMap, 'declaration.type_alias'>
-				| V.Read<PythonMap, 'statement.assert'>
-				| V.Read<PythonMap, 'statement.block'>
-				| V.Text<PythonMap, 'statement.break'>
-				| V.Text<PythonMap, 'statement.continue'>
-				| V.Read<PythonMap, 'statement.delete'>
-				| V.Text<PythonMap, 'statement.empty'>
-				| V.Read<PythonMap, 'statement.exec'>
-				| V.Read<PythonMap, 'statement.expression'>
-				| V.Read<PythonMap, 'statement.global'>
-				| V.Read<PythonMap, 'statement.import'>
-				| V.Read<PythonMap, 'statement.import.from'>
-				| V.Read<PythonMap, 'statement.import.future'>
-				| V.Read<PythonMap, 'statement.nonlocal'>
-				| V.Read<PythonMap, 'statement.print'>
-				| V.Read<PythonMap, 'statement.return'>
-				| V.Read<PythonMap, 'statement.throw'>
-				| 'break'
-				| 'continue'
-				| 'pass';
+			readonly body: V.Read<PythonMap, 'statement.block'>;
 			readonly guard:
 				| V.Read<PythonMap, 'expression.assignment'>
 				| V.Read<PythonMap, 'expression.await'>
@@ -420,27 +400,7 @@ export interface PythonMap extends V.GrammarMap {
 			readonly $forms: V.Form<'body' | 'pattern'>;
 		};
 		readonly 'clause.catch': {
-			readonly body:
-				| V.Read<PythonMap, 'declaration.type_alias'>
-				| V.Read<PythonMap, 'statement.assert'>
-				| V.Read<PythonMap, 'statement.block'>
-				| V.Text<PythonMap, 'statement.break'>
-				| V.Text<PythonMap, 'statement.continue'>
-				| V.Read<PythonMap, 'statement.delete'>
-				| V.Text<PythonMap, 'statement.empty'>
-				| V.Read<PythonMap, 'statement.exec'>
-				| V.Read<PythonMap, 'statement.expression'>
-				| V.Read<PythonMap, 'statement.global'>
-				| V.Read<PythonMap, 'statement.import'>
-				| V.Read<PythonMap, 'statement.import.from'>
-				| V.Read<PythonMap, 'statement.import.future'>
-				| V.Read<PythonMap, 'statement.nonlocal'>
-				| V.Read<PythonMap, 'statement.print'>
-				| V.Read<PythonMap, 'statement.return'>
-				| V.Read<PythonMap, 'statement.throw'>
-				| 'break'
-				| 'continue'
-				| 'pass';
+			readonly body: V.Read<PythonMap, 'statement.block'>;
 			readonly name:
 				| V.Read<PythonMap, 'expression.assignment'>
 				| V.Read<PythonMap, 'expression.await'>
@@ -916,27 +876,7 @@ export interface PythonMap extends V.GrammarMap {
 			readonly $forms: V.Form<'condition'>;
 		};
 		readonly 'clause.else': {
-			readonly body:
-				| V.Read<PythonMap, 'declaration.type_alias'>
-				| V.Read<PythonMap, 'statement.assert'>
-				| V.Read<PythonMap, 'statement.block'>
-				| V.Text<PythonMap, 'statement.break'>
-				| V.Text<PythonMap, 'statement.continue'>
-				| V.Read<PythonMap, 'statement.delete'>
-				| V.Text<PythonMap, 'statement.empty'>
-				| V.Read<PythonMap, 'statement.exec'>
-				| V.Read<PythonMap, 'statement.expression'>
-				| V.Read<PythonMap, 'statement.global'>
-				| V.Read<PythonMap, 'statement.import'>
-				| V.Read<PythonMap, 'statement.import.from'>
-				| V.Read<PythonMap, 'statement.import.future'>
-				| V.Read<PythonMap, 'statement.nonlocal'>
-				| V.Read<PythonMap, 'statement.print'>
-				| V.Read<PythonMap, 'statement.return'>
-				| V.Read<PythonMap, 'statement.throw'>
-				| 'break'
-				| 'continue'
-				| 'pass';
+			readonly body: V.Read<PythonMap, 'statement.block'>;
 			readonly $forms: V.Form<'body'>;
 		};
 		readonly 'clause.else_if': {
@@ -1051,51 +991,11 @@ export interface PythonMap extends V.GrammarMap {
 				| T.String.Parsed
 				| T.Subscript.Parsed
 				| T.UnaryOperator.Parsed;
-			readonly consequence:
-				| V.Read<PythonMap, 'declaration.type_alias'>
-				| V.Read<PythonMap, 'statement.assert'>
-				| V.Read<PythonMap, 'statement.block'>
-				| V.Text<PythonMap, 'statement.break'>
-				| V.Text<PythonMap, 'statement.continue'>
-				| V.Read<PythonMap, 'statement.delete'>
-				| V.Text<PythonMap, 'statement.empty'>
-				| V.Read<PythonMap, 'statement.exec'>
-				| V.Read<PythonMap, 'statement.expression'>
-				| V.Read<PythonMap, 'statement.global'>
-				| V.Read<PythonMap, 'statement.import'>
-				| V.Read<PythonMap, 'statement.import.from'>
-				| V.Read<PythonMap, 'statement.import.future'>
-				| V.Read<PythonMap, 'statement.nonlocal'>
-				| V.Read<PythonMap, 'statement.print'>
-				| V.Read<PythonMap, 'statement.return'>
-				| V.Read<PythonMap, 'statement.throw'>
-				| 'break'
-				| 'continue'
-				| 'pass';
+			readonly consequence: V.Read<PythonMap, 'statement.block'>;
 			readonly $forms: V.Form<'condition' | 'consequence'>;
 		};
 		readonly 'clause.finally': {
-			readonly body:
-				| V.Read<PythonMap, 'declaration.type_alias'>
-				| V.Read<PythonMap, 'statement.assert'>
-				| V.Read<PythonMap, 'statement.block'>
-				| V.Text<PythonMap, 'statement.break'>
-				| V.Text<PythonMap, 'statement.continue'>
-				| V.Read<PythonMap, 'statement.delete'>
-				| V.Text<PythonMap, 'statement.empty'>
-				| V.Read<PythonMap, 'statement.exec'>
-				| V.Read<PythonMap, 'statement.expression'>
-				| V.Read<PythonMap, 'statement.global'>
-				| V.Read<PythonMap, 'statement.import'>
-				| V.Read<PythonMap, 'statement.import.from'>
-				| V.Read<PythonMap, 'statement.import.future'>
-				| V.Read<PythonMap, 'statement.nonlocal'>
-				| V.Read<PythonMap, 'statement.print'>
-				| V.Read<PythonMap, 'statement.return'>
-				| V.Read<PythonMap, 'statement.throw'>
-				| 'break'
-				| 'continue'
-				| 'pass';
+			readonly body: V.Read<PythonMap, 'statement.block'>;
 			readonly $forms: V.Form<'body'>;
 		};
 		readonly 'clause.import.alias': {
@@ -1417,27 +1317,7 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.string.unicode'>
 				| V.Read<PythonMap, 'pattern.rest'>
 				| V.Unmapped<'python:as_pattern'>;
-			readonly body:
-				| V.Read<PythonMap, 'declaration.type_alias'>
-				| V.Read<PythonMap, 'statement.assert'>
-				| V.Read<PythonMap, 'statement.block'>
-				| V.Text<PythonMap, 'statement.break'>
-				| V.Text<PythonMap, 'statement.continue'>
-				| V.Read<PythonMap, 'statement.delete'>
-				| V.Text<PythonMap, 'statement.empty'>
-				| V.Read<PythonMap, 'statement.exec'>
-				| V.Read<PythonMap, 'statement.expression'>
-				| V.Read<PythonMap, 'statement.global'>
-				| V.Read<PythonMap, 'statement.import'>
-				| V.Read<PythonMap, 'statement.import.from'>
-				| V.Read<PythonMap, 'statement.import.future'>
-				| V.Read<PythonMap, 'statement.nonlocal'>
-				| V.Read<PythonMap, 'statement.print'>
-				| V.Read<PythonMap, 'statement.return'>
-				| V.Read<PythonMap, 'statement.throw'>
-				| 'break'
-				| 'continue'
-				| 'pass';
+			readonly body: V.Read<PythonMap, 'statement.block'>;
 			readonly decorators: V.Read<PythonMap, 'attribute.decorator'>;
 			readonly doc:
 				| V.Read<PythonMap, 'literal.string'>
@@ -1472,27 +1352,7 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Form<'name' | 'type' | 'value'>;
 		};
 		readonly 'declaration.constructor': {
-			readonly body:
-				| V.Read<PythonMap, 'declaration.type_alias'>
-				| V.Read<PythonMap, 'statement.assert'>
-				| V.Read<PythonMap, 'statement.block'>
-				| V.Text<PythonMap, 'statement.break'>
-				| V.Text<PythonMap, 'statement.continue'>
-				| V.Read<PythonMap, 'statement.delete'>
-				| V.Text<PythonMap, 'statement.empty'>
-				| V.Read<PythonMap, 'statement.exec'>
-				| V.Read<PythonMap, 'statement.expression'>
-				| V.Read<PythonMap, 'statement.global'>
-				| V.Read<PythonMap, 'statement.import'>
-				| V.Read<PythonMap, 'statement.import.from'>
-				| V.Read<PythonMap, 'statement.import.future'>
-				| V.Read<PythonMap, 'statement.nonlocal'>
-				| V.Read<PythonMap, 'statement.print'>
-				| V.Read<PythonMap, 'statement.return'>
-				| V.Read<PythonMap, 'statement.throw'>
-				| 'break'
-				| 'continue'
-				| 'pass';
+			readonly body: V.Read<PythonMap, 'statement.block'>;
 			readonly decorators: V.Read<PythonMap, 'attribute.decorator'>;
 			readonly parameters:
 				| V.Read<PythonMap, 'declaration.parameter.default'>
@@ -1520,27 +1380,7 @@ export interface PythonMap extends V.GrammarMap {
 			readonly $forms: V.Form<'body' | 'parameters', 'doc' | 'name'> | V.Form<'name' | 'parameters'>;
 		};
 		readonly 'declaration.function': {
-			readonly body:
-				| V.Read<PythonMap, 'declaration.type_alias'>
-				| V.Read<PythonMap, 'statement.assert'>
-				| V.Read<PythonMap, 'statement.block'>
-				| V.Text<PythonMap, 'statement.break'>
-				| V.Text<PythonMap, 'statement.continue'>
-				| V.Read<PythonMap, 'statement.delete'>
-				| V.Text<PythonMap, 'statement.empty'>
-				| V.Read<PythonMap, 'statement.exec'>
-				| V.Read<PythonMap, 'statement.expression'>
-				| V.Read<PythonMap, 'statement.global'>
-				| V.Read<PythonMap, 'statement.import'>
-				| V.Read<PythonMap, 'statement.import.from'>
-				| V.Read<PythonMap, 'statement.import.future'>
-				| V.Read<PythonMap, 'statement.nonlocal'>
-				| V.Read<PythonMap, 'statement.print'>
-				| V.Read<PythonMap, 'statement.return'>
-				| V.Read<PythonMap, 'statement.throw'>
-				| 'break'
-				| 'continue'
-				| 'pass';
+			readonly body: V.Read<PythonMap, 'statement.block'>;
 			readonly decorators: V.Read<PythonMap, 'attribute.decorator'>;
 			readonly doc:
 				| V.Read<PythonMap, 'literal.string'>
@@ -1588,27 +1428,7 @@ export interface PythonMap extends V.GrammarMap {
 			readonly $forms: V.Form<'name' | 'parameters'>;
 		};
 		readonly 'declaration.method': {
-			readonly body:
-				| V.Read<PythonMap, 'declaration.type_alias'>
-				| V.Read<PythonMap, 'statement.assert'>
-				| V.Read<PythonMap, 'statement.block'>
-				| V.Text<PythonMap, 'statement.break'>
-				| V.Text<PythonMap, 'statement.continue'>
-				| V.Read<PythonMap, 'statement.delete'>
-				| V.Text<PythonMap, 'statement.empty'>
-				| V.Read<PythonMap, 'statement.exec'>
-				| V.Read<PythonMap, 'statement.expression'>
-				| V.Read<PythonMap, 'statement.global'>
-				| V.Read<PythonMap, 'statement.import'>
-				| V.Read<PythonMap, 'statement.import.from'>
-				| V.Read<PythonMap, 'statement.import.future'>
-				| V.Read<PythonMap, 'statement.nonlocal'>
-				| V.Read<PythonMap, 'statement.print'>
-				| V.Read<PythonMap, 'statement.return'>
-				| V.Read<PythonMap, 'statement.throw'>
-				| 'break'
-				| 'continue'
-				| 'pass';
+			readonly body: V.Read<PythonMap, 'statement.block'>;
 			readonly decorators: V.Read<PythonMap, 'attribute.decorator'>;
 			readonly doc:
 				| V.Read<PythonMap, 'literal.string'>
@@ -1656,27 +1476,7 @@ export interface PythonMap extends V.GrammarMap {
 			readonly $forms: V.Form<'name' | 'parameters'>;
 		};
 		readonly 'declaration.method.special': {
-			readonly body:
-				| V.Read<PythonMap, 'declaration.type_alias'>
-				| V.Read<PythonMap, 'statement.assert'>
-				| V.Read<PythonMap, 'statement.block'>
-				| V.Text<PythonMap, 'statement.break'>
-				| V.Text<PythonMap, 'statement.continue'>
-				| V.Read<PythonMap, 'statement.delete'>
-				| V.Text<PythonMap, 'statement.empty'>
-				| V.Read<PythonMap, 'statement.exec'>
-				| V.Read<PythonMap, 'statement.expression'>
-				| V.Read<PythonMap, 'statement.global'>
-				| V.Read<PythonMap, 'statement.import'>
-				| V.Read<PythonMap, 'statement.import.from'>
-				| V.Read<PythonMap, 'statement.import.future'>
-				| V.Read<PythonMap, 'statement.nonlocal'>
-				| V.Read<PythonMap, 'statement.print'>
-				| V.Read<PythonMap, 'statement.return'>
-				| V.Read<PythonMap, 'statement.throw'>
-				| 'break'
-				| 'continue'
-				| 'pass';
+			readonly body: V.Read<PythonMap, 'statement.block'>;
 			readonly decorators: V.Read<PythonMap, 'attribute.decorator'>;
 			readonly doc:
 				| V.Read<PythonMap, 'literal.string'>
@@ -17561,27 +17361,7 @@ export interface PythonMap extends V.GrammarMap {
 				| T.String.Parsed
 				| T.Subscript.Parsed
 				| T.UnaryOperator.Parsed;
-			readonly consequence:
-				| V.Read<PythonMap, 'declaration.type_alias'>
-				| V.Read<PythonMap, 'statement.assert'>
-				| V.Read<PythonMap, 'statement.block'>
-				| V.Text<PythonMap, 'statement.break'>
-				| V.Text<PythonMap, 'statement.continue'>
-				| V.Read<PythonMap, 'statement.delete'>
-				| V.Text<PythonMap, 'statement.empty'>
-				| V.Read<PythonMap, 'statement.exec'>
-				| V.Read<PythonMap, 'statement.expression'>
-				| V.Read<PythonMap, 'statement.global'>
-				| V.Read<PythonMap, 'statement.import'>
-				| V.Read<PythonMap, 'statement.import.from'>
-				| V.Read<PythonMap, 'statement.import.future'>
-				| V.Read<PythonMap, 'statement.nonlocal'>
-				| V.Read<PythonMap, 'statement.print'>
-				| V.Read<PythonMap, 'statement.return'>
-				| V.Read<PythonMap, 'statement.throw'>
-				| 'break'
-				| 'continue'
-				| 'pass';
+			readonly consequence: V.Read<PythonMap, 'statement.block'>;
 			readonly $forms: V.Form<'condition' | 'consequence'>;
 		};
 		readonly 'statement.import': {
@@ -17605,27 +17385,7 @@ export interface PythonMap extends V.GrammarMap {
 		};
 		readonly 'statement.loop.for_each': {
 			readonly alternative: V.Read<PythonMap, 'clause.else'>;
-			readonly body:
-				| V.Read<PythonMap, 'declaration.type_alias'>
-				| V.Read<PythonMap, 'statement.assert'>
-				| V.Read<PythonMap, 'statement.block'>
-				| V.Text<PythonMap, 'statement.break'>
-				| V.Text<PythonMap, 'statement.continue'>
-				| V.Read<PythonMap, 'statement.delete'>
-				| V.Text<PythonMap, 'statement.empty'>
-				| V.Read<PythonMap, 'statement.exec'>
-				| V.Read<PythonMap, 'statement.expression'>
-				| V.Read<PythonMap, 'statement.global'>
-				| V.Read<PythonMap, 'statement.import'>
-				| V.Read<PythonMap, 'statement.import.from'>
-				| V.Read<PythonMap, 'statement.import.future'>
-				| V.Read<PythonMap, 'statement.nonlocal'>
-				| V.Read<PythonMap, 'statement.print'>
-				| V.Read<PythonMap, 'statement.return'>
-				| V.Read<PythonMap, 'statement.throw'>
-				| 'break'
-				| 'continue'
-				| 'pass';
+			readonly body: V.Read<PythonMap, 'statement.block'>;
 			readonly left:
 				| V.Read<PythonMap, 'expression.member'>
 				| V.Read<PythonMap, 'expression.subscript'>
@@ -17754,27 +17514,7 @@ export interface PythonMap extends V.GrammarMap {
 		};
 		readonly 'statement.loop.while': {
 			readonly alternative: V.Read<PythonMap, 'clause.else'>;
-			readonly body:
-				| V.Read<PythonMap, 'declaration.type_alias'>
-				| V.Read<PythonMap, 'statement.assert'>
-				| V.Read<PythonMap, 'statement.block'>
-				| V.Text<PythonMap, 'statement.break'>
-				| V.Text<PythonMap, 'statement.continue'>
-				| V.Read<PythonMap, 'statement.delete'>
-				| V.Text<PythonMap, 'statement.empty'>
-				| V.Read<PythonMap, 'statement.exec'>
-				| V.Read<PythonMap, 'statement.expression'>
-				| V.Read<PythonMap, 'statement.global'>
-				| V.Read<PythonMap, 'statement.import'>
-				| V.Read<PythonMap, 'statement.import.from'>
-				| V.Read<PythonMap, 'statement.import.future'>
-				| V.Read<PythonMap, 'statement.nonlocal'>
-				| V.Read<PythonMap, 'statement.print'>
-				| V.Read<PythonMap, 'statement.return'>
-				| V.Read<PythonMap, 'statement.throw'>
-				| 'break'
-				| 'continue'
-				| 'pass';
+			readonly body: V.Read<PythonMap, 'statement.block'>;
 			readonly condition:
 				| V.Read<PythonMap, 'expression.assignment'>
 				| V.Read<PythonMap, 'expression.await'>
@@ -18187,27 +17927,7 @@ export interface PythonMap extends V.GrammarMap {
 			readonly $forms: V.Form<'arguments', 'destination'> | V.Form<'destination'>;
 		};
 		readonly 'statement.resource': {
-			readonly body:
-				| V.Read<PythonMap, 'declaration.type_alias'>
-				| V.Read<PythonMap, 'statement.assert'>
-				| V.Read<PythonMap, 'statement.block'>
-				| V.Text<PythonMap, 'statement.break'>
-				| V.Text<PythonMap, 'statement.continue'>
-				| V.Read<PythonMap, 'statement.delete'>
-				| V.Text<PythonMap, 'statement.empty'>
-				| V.Read<PythonMap, 'statement.exec'>
-				| V.Read<PythonMap, 'statement.expression'>
-				| V.Read<PythonMap, 'statement.global'>
-				| V.Read<PythonMap, 'statement.import'>
-				| V.Read<PythonMap, 'statement.import.from'>
-				| V.Read<PythonMap, 'statement.import.future'>
-				| V.Read<PythonMap, 'statement.nonlocal'>
-				| V.Read<PythonMap, 'statement.print'>
-				| V.Read<PythonMap, 'statement.return'>
-				| V.Read<PythonMap, 'statement.throw'>
-				| 'break'
-				| 'continue'
-				| 'pass';
+			readonly body: V.Read<PythonMap, 'statement.block'>;
 			readonly withClause: V.Read<PythonMap, 'clause.resource'>;
 			readonly $forms: V.Form<'body' | 'withClause'>;
 		};
@@ -18554,27 +18274,7 @@ export interface PythonMap extends V.GrammarMap {
 		};
 		readonly 'statement.try': {
 			readonly alternative: V.Read<PythonMap, 'clause.else'>;
-			readonly body:
-				| V.Read<PythonMap, 'declaration.type_alias'>
-				| V.Read<PythonMap, 'statement.assert'>
-				| V.Read<PythonMap, 'statement.block'>
-				| V.Text<PythonMap, 'statement.break'>
-				| V.Text<PythonMap, 'statement.continue'>
-				| V.Read<PythonMap, 'statement.delete'>
-				| V.Text<PythonMap, 'statement.empty'>
-				| V.Read<PythonMap, 'statement.exec'>
-				| V.Read<PythonMap, 'statement.expression'>
-				| V.Read<PythonMap, 'statement.global'>
-				| V.Read<PythonMap, 'statement.import'>
-				| V.Read<PythonMap, 'statement.import.from'>
-				| V.Read<PythonMap, 'statement.import.future'>
-				| V.Read<PythonMap, 'statement.nonlocal'>
-				| V.Read<PythonMap, 'statement.print'>
-				| V.Read<PythonMap, 'statement.return'>
-				| V.Read<PythonMap, 'statement.throw'>
-				| 'break'
-				| 'continue'
-				| 'pass';
+			readonly body: V.Read<PythonMap, 'statement.block'>;
 			readonly finalizer: V.Read<PythonMap, 'clause.finally'>;
 			readonly handlers: V.Read<PythonMap, 'clause.catch'>;
 			readonly $forms: V.Form<'body'>;

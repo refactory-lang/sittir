@@ -39,3 +39,12 @@ declare const body: At<'clause.case.match'>['body'];
 export const wildcard: In<'clause.case.match'> = { $path: 'clause.case.match', pattern: '_', body };
 // @ts-expect-error a token member takes its text, never a kind id
 export const wildcardId: In<'clause.case.match'> = { $path: 'clause.case.match', pattern: 1, body };
+
+declare const functionName: At<'declaration.function'>['name'];
+declare const block: At<'declaration.function'>['body'];
+declare const statement: At<'statement.empty'>;
+export const blockBody: In<'declaration.function'> = { $path: 'declaration.function', name: functionName, parameters: [], body: block };
+// @ts-expect-error a body is the block of its statements, never a bare statement
+export const bareBody: In<'declaration.function'> = { $path: 'declaration.function', name: functionName, parameters: [], body: statement };
+// @ts-expect-error a body is one block, never a list of statements
+export const listBody: In<'declaration.function'> = { $path: 'declaration.function', name: functionName, parameters: [], body: [statement] };

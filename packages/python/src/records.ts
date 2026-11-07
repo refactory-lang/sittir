@@ -7,7 +7,7 @@ export const RECORD_HEADER_WORDS = 2;
 
 export const records = {
 	ModuleNode: { words: 4, statements: { word: 2, width: 2, run: 5 } },
-	SimpleStatementsNode: { words: 7, elements: { word: 2, width: 5 } },
+	SimpleStatementsNode: { words: 7, statements: { word: 2, width: 5 } },
 	ImportStatementNode: { words: 7, names: { word: 2, width: 5 } },
 	ImportPrefixNode: { words: 2 },
 	RelativeImportNode: { words: 12, dots: { word: 2, width: 5 }, name: { word: 7, width: 5 } },
@@ -322,7 +322,7 @@ export const records = {
 	ExpressionStatementTupleNode: { words: 4, elements: { word: 2, width: 2, run: 5 } },
 	WithClauseBareNode: { words: 4, items: { word: 2, width: 2, run: 5 } },
 	WithClauseParenNode: { words: 7, items: { word: 2, width: 5 } },
-	SuiteInlineNode: { words: 7, elements: { word: 2, width: 5 } },
+	SuiteInlineNode: { words: 7, statements: { word: 2, width: 5 } },
 	SuiteBlockNode: { words: 7, block: { word: 2, width: 5 } },
 	SuiteEmptyNode: { words: 7, newline: { word: 2, width: 5 } },
 	ComparisonOperatorComparatorNode: {

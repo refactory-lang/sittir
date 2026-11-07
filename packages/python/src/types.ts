@@ -712,7 +712,7 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[177, 'argument_list'],
 	[178, 'decorated_definition'],
 	[179, 'decorator'],
-	[180, 'block'],
+	[180, 'block_statement'],
 	[181, 'expression_list'],
 	[182, 'qualified_identifier'],
 	[183, 'case_pattern'],
@@ -832,7 +832,7 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[296, 'expression_statement_tuple'],
 	[297, 'with_clause_bare'],
 	[298, 'with_clause_paren'],
-	[299, 'suite_inline'],
+	[299, 'block_statement'],
 	[300, 'suite_block'],
 	[301, 'suite_empty'],
 	[302, 'comparison_operator_comparator'],
@@ -1777,6 +1777,8 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.Dedent;
 		case 'simple_statements':
 			return TSKindId.SimpleStatements;
+		case 'block_statement':
+			return TSKindId.Block;
 		case 'qualified_identifier':
 			return TSKindId.DottedName;
 		case 'simple_pattern':
@@ -2058,21 +2060,21 @@ export interface Module {
 
 export interface SimpleStatements {
 	readonly $type: TSKindId.SimpleStatements;
-	readonly _elements: SimpleStatementsElements;
+	readonly _statements: SimpleStatementsElements;
 	readonly __slotNames__?: {
-		readonly _elements: 'elements';
+		readonly _statements: 'statements';
 	};
 	readonly __looseHints__?: {
-		readonly elements: readonly SimpleStatement[];
+		readonly statements: readonly SimpleStatement[];
 	};
 	readonly __slotHints__?: {
-		readonly elements: SlotHint<T.SimpleStatementsElements>;
+		readonly statements: SlotHint<T.SimpleStatementsElements>;
 		readonly $listView: ListViewHint<T.SimpleStatement, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 		readonly $listSlots: {
-			readonly elements: ListSlotHint<T.SimpleStatement, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
+			readonly statements: ListSlotHint<T.SimpleStatement, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 		};
 	};
-	readonly elements: () => SimpleStatementsElements;
+	readonly statements: () => SimpleStatementsElements;
 }
 
 export interface ImportStatement {
@@ -5487,21 +5489,21 @@ export interface WithClauseParen {
 
 export interface SuiteInline {
 	readonly $type: TSKindId.SuiteInline;
-	readonly _elements: SimpleStatementsElements;
+	readonly _statements: SimpleStatementsElements;
 	readonly __slotNames__?: {
-		readonly _elements: 'elements';
+		readonly _statements: 'statements';
 	};
 	readonly __looseHints__?: {
-		readonly elements: readonly SimpleStatement[];
+		readonly statements: readonly SimpleStatement[];
 	};
 	readonly __slotHints__?: {
-		readonly elements: SlotHint<T.SimpleStatementsElements | Admit<T.SimpleStatements>>;
+		readonly statements: SlotHint<T.SimpleStatementsElements | Admit<T.SimpleStatements>>;
 		readonly $listView: ListViewHint<T.SimpleStatement, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 		readonly $listSlots: {
-			readonly elements: ListSlotHint<T.SimpleStatement, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
+			readonly statements: ListSlotHint<T.SimpleStatement, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 		};
 	};
-	readonly elements: () => SimpleStatementsElements;
+	readonly statements: () => SimpleStatementsElements;
 }
 
 export interface SuiteBlock {
@@ -6273,7 +6275,7 @@ export interface OptionsHintMap {
 	argumentList: ArgumentList.Hints;
 	decoratedDefinition: DecoratedDefinition.Hints;
 	decorator: Decorator.Hints;
-	block: Block.Hints;
+	blockStatement: Block.Hints | SuiteInline.Hints;
 	expressionList: ExpressionList.Hints;
 	qualifiedIdentifier: DottedName.Hints | MemberType.Hints;
 	caseAsPattern: CaseAsPattern.Hints;
@@ -6361,7 +6363,6 @@ export interface OptionsHintMap {
 	expressionStatementTuple: ExpressionStatementTuple.Hints;
 	withClauseBare: WithClauseBare.Hints;
 	withClauseParen: WithClauseParen.Hints;
-	suiteInline: SuiteInline.Hints;
 	suiteBlock: SuiteBlock.Hints;
 	comparisonOperatorComparator: ComparisonOperatorComparator.Hints;
 	yieldFromClause: YieldFromClause.Hints;
@@ -6907,6 +6908,28 @@ export namespace Decorator {
 }
 
 export namespace Block {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceKindId;
+			readonly before?: WhitespaceKindId;
+			readonly statements?: {
+				readonly classDefinition?: { readonly after?: WhitespaceKindId };
+				readonly decoratedDefinition?: { readonly after?: WhitespaceKindId };
+				readonly forStatement?: { readonly after?: WhitespaceKindId };
+				readonly functionDefinition?: { readonly after?: WhitespaceKindId };
+				readonly ifStatement?: { readonly after?: WhitespaceKindId };
+				readonly matchStatement?: { readonly after?: WhitespaceKindId };
+				readonly separator?: WhitespaceKindId;
+				readonly simpleStatements?: { readonly after?: WhitespaceKindId };
+				readonly tryStatement?: { readonly after?: WhitespaceKindId };
+				readonly whileStatement?: { readonly after?: WhitespaceKindId };
+				readonly withStatement?: { readonly after?: WhitespaceKindId };
+			};
+		};
+	}
+}
+
+export namespace SuiteInline {
 	export interface Hints {
 		readonly __optionsHint__?: {
 			readonly after?: WhitespaceKindId;
@@ -8411,12 +8434,6 @@ export namespace WithClauseParen {
 	}
 }
 
-export namespace SuiteInline {
-	export interface Hints {
-		readonly __optionsHint__?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
-	}
-}
-
 export namespace SuiteBlock {
 	export interface Hints {
 		readonly __optionsHint__?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
@@ -8559,7 +8576,7 @@ export interface SimpleStatementsNs extends NodeNs<
 	LeafStringMap,
 	NamespaceMap,
 	SimpleStatements.Bound,
-	'elements',
+	'statements',
 	TSKindId.SimpleStatements,
 	SimpleStatements.Parsed,
 	never
@@ -10743,7 +10760,7 @@ export interface SuiteInlineNs extends NodeNs<
 	LeafStringMap,
 	NamespaceMap,
 	SuiteInline.Bound,
-	'elements',
+	'statements',
 	TSKindId.SuiteInline,
 	SuiteInline.Parsed,
 	never
@@ -16893,7 +16910,7 @@ export namespace WithClauseParen {
 	export type Kind = TSKindId.WithClauseParen;
 }
 export namespace SuiteInline {
-	export type Config = WidenSlots<ConfigFor<TSKindId.SuiteInline>, { elements: Admit<T.SimpleStatements> }>;
+	export type Config = WidenSlots<ConfigFor<TSKindId.SuiteInline>, { statements: Admit<T.SimpleStatements> }>;
 	export interface Bound extends BoundOf<T.SuiteInline, BoundByKindId>, NodeMethodsOf, HoldsSource {
 		readonly $type: T.SuiteInline['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
@@ -16912,9 +16929,9 @@ export namespace SuiteInline {
 	}
 	export type Loose =
 		| LooseFor<TSKindId.SuiteInline>
-		| WidenSlots<LooseConfigFor<TSKindId.SuiteInline>, { elements: Admit<T.SimpleStatements> }>
+		| WidenSlots<LooseConfigFor<TSKindId.SuiteInline>, { statements: Admit<T.SimpleStatements> }>
 		| Admit<T.SimpleStatements>;
-	export type LooseConfig = WidenSlots<LooseConfigFor<TSKindId.SuiteInline>, { elements: Admit<T.SimpleStatements> }>;
+	export type LooseConfig = WidenSlots<LooseConfigFor<TSKindId.SuiteInline>, { statements: Admit<T.SimpleStatements> }>;
 	export type BuildArgs =
 		| [value: Admit<T.SimpleStatementsElements | Admit<T.SimpleStatements>>]
 		| T.SimpleStatementsElements.BuildArgs;

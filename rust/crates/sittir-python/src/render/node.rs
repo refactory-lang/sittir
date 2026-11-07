@@ -2822,7 +2822,7 @@ impl ::sittir_core::render::Render for WithClauseNode {
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
 #[node(choice, stamp = stamp)]
 pub enum SuiteNode {
-    #[kind(kind::SUITE_INLINE)]
+    #[kind(kind::SUITE_INLINE, kind::BLOCK)]
     SuiteInline(SuiteInlineNode),
     #[kind(kind::SUITE_BLOCK)]
     SuiteBlock(SuiteBlockNode),
@@ -4111,7 +4111,7 @@ impl ::sittir_core::render::Render for StatementClassDefinitionNode {
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
 #[node(choice, stamp = stamp)]
 pub enum SuiteClassDefinitionNode {
-    #[kind(kind::SUITE_INLINE)]
+    #[kind(kind::SUITE_INLINE, kind::BLOCK)]
     SuiteInline(SuiteInlineNode),
     #[kind(kind::_SUITE_BLOCK_CLASS_DECLARATION)]
     SuiteBlockClassDeclaration(SuiteBlockClassDeclarationNode),
@@ -11872,9 +11872,9 @@ impl ::sittir_core::prepare::Prepare for ModuleNode {
 pub struct SimpleStatementsNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
-    #[wire(key = "_elements")]
-    #[slot(field = field::ELEMENTS, word = 2, width = 5)]
-    pub elements: ::sittir_core::SlotValue<SimpleStatementsElementsNode>,
+    #[wire(key = "_statements")]
+    #[slot(field = field::STATEMENTS, word = 2, width = 5)]
+    pub statements: ::sittir_core::SlotValue<SimpleStatementsElementsNode>,
 }
 
 impl ::sittir_core::view::KindOf for SimpleStatementsNode {
@@ -11899,7 +11899,7 @@ impl ::sittir_core::prepare::Prepare for SimpleStatementsNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         self.layout.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.elements.prepare(ctx)?;
+        self.statements.prepare(ctx)?;
         Ok(())
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -21765,9 +21765,9 @@ impl ::sittir_core::prepare::Prepare for WithClauseParenNode {
 pub struct SuiteInlineNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
-    #[wire(key = "_elements")]
-    #[slot(field = field::ELEMENTS, word = 2, width = 5)]
-    pub elements: ::sittir_core::SlotValue<SimpleStatementsElementsNode>,
+    #[wire(key = "_statements")]
+    #[slot(field = field::STATEMENTS, word = 2, width = 5)]
+    pub statements: ::sittir_core::SlotValue<SimpleStatementsElementsNode>,
 }
 
 impl ::sittir_core::view::KindOf for SuiteInlineNode {
@@ -21792,7 +21792,7 @@ impl ::sittir_core::prepare::Prepare for SuiteInlineNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         self.layout.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.elements.prepare(ctx)?;
+        self.statements.prepare(ctx)?;
         Ok(())
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -27331,9 +27331,9 @@ fn render_module(node: &ModuleNode, w: &mut dyn ::sittir_core::render::RenderSin
 }
 
 fn render_simple_statements(node: &SimpleStatementsNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let elements = &node.elements;
+    let statements = &node.statements;
     w.edge(::sittir_core::types::KindId(130), ::sittir_core::options::Side::Before, node.layout.edges().before);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_elements", ::sittir_core::types::ItemIndex(0), w, |w| elements.render(w))?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_statements", ::sittir_core::types::ItemIndex(0), w, |w| statements.render(w))?;
     w.seam(::sittir_core::layout_kinds::LayoutKinds::NEWLINE);
     w.edge(::sittir_core::types::KindId(130), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
@@ -29683,9 +29683,9 @@ fn render_with_clause_paren(node: &WithClauseParenNode, w: &mut dyn ::sittir_cor
 }
 
 fn render_suite_inline(node: &SuiteInlineNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let elements = &node.elements;
+    let statements = &node.statements;
     w.edge(::sittir_core::types::KindId(299), ::sittir_core::options::Side::Before, node.layout.edges().before);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_elements", ::sittir_core::types::ItemIndex(0), w, |w| elements.render(w))?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_statements", ::sittir_core::types::ItemIndex(0), w, |w| statements.render(w))?;
     w.seam(::sittir_core::layout_kinds::LayoutKinds::NEWLINE);
     w.edge(::sittir_core::types::KindId(299), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())

@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { runPortableRoundTrip } from '../portable-round-trip.ts';
 
 const CARRIED_CEILING = {
-	python: 8,
+	python: 7,
 	rust: 11,
 	typescript: 8
 };
@@ -11,7 +11,6 @@ const CARRIED_PAIRS: Record<keyof typeof CARRIED_CEILING, readonly string[]> = {
 	python: [
 		'float_point scalar',
 		'float_scientific scalar',
-		'if_statement unread',
 		'key_value_pattern unclaimed',
 		'string readOnly'
 	],

@@ -558,7 +558,7 @@ static const char * const ts_symbol_names[] = {
   [sym_argument_list] = "argument_list",
   [sym_decorated_definition] = "decorated_definition",
   [sym_decorator] = "decorator",
-  [sym_block] = "block",
+  [sym_block] = "block_statement",
   [sym_expression_list] = "expression_list",
   [sym_dotted_name] = "qualified_identifier",
   [sym_case_pattern] = "case_pattern",
@@ -677,7 +677,7 @@ static const char * const ts_symbol_names[] = {
   [sym_expression_statement_tuple] = "expression_statement_tuple",
   [sym_with_clause_bare] = "with_clause_bare",
   [sym_with_clause_paren] = "with_clause_paren",
-  [sym_suite_inline] = "suite_inline",
+  [sym_suite_inline] = "block_statement",
   [sym_suite_block] = "suite_block",
   [sym_suite_empty] = "suite_empty",
   [sym__comparison_operator_comparator] = "comparison_operator_comparator",
@@ -1036,7 +1036,7 @@ static const TSSymbol ts_symbol_map[] = {
   [sym_expression_statement_tuple] = sym_expression_statement_tuple,
   [sym_with_clause_bare] = sym_with_clause_bare,
   [sym_with_clause_paren] = sym_with_clause_paren,
-  [sym_suite_inline] = sym_suite_inline,
+  [sym_suite_inline] = sym_block,
   [sym_suite_block] = sym_suite_block,
   [sym_suite_empty] = sym_suite_empty,
   [sym__comparison_operator_comparator] = sym__comparison_operator_comparator,
@@ -2859,7 +2859,7 @@ static const TSMapSlice ts_field_map_slices[PRODUCTION_ID_COUNT] = {
 
 static const TSFieldMapEntry ts_field_map_entries[] = {
   [0] =
-    {field_elements, 0, .inherited = true},
+    {field_statements, 0, .inherited = true},
   [1] =
     {field_item, 0},
   [2] =
@@ -113212,8 +113212,8 @@ static const TSParseActionEntry ts_parse_actions[] = {
   [1455] = {.entry = {.count = 1, .reusable = true}}, REDUCE(aux_sym_if_statement_repeat1, 2, 0, 127),
   [1457] = {.entry = {.count = 2, .reusable = false}}, REDUCE(aux_sym_if_statement_repeat1, 2, 0, 127), SHIFT_REPEAT(458),
   [1460] = {.entry = {.count = 2, .reusable = false}}, REDUCE(aux_sym_if_statement_repeat1, 2, 0, 127), SHIFT_REPEAT(362),
-  [1463] = {.entry = {.count = 1, .reusable = true}}, REDUCE(sym__simple_statements, 2, 0, 4),
-  [1465] = {.entry = {.count = 1, .reusable = false}}, REDUCE(sym__simple_statements, 2, 0, 4),
+  [1463] = {.entry = {.count = 1, .reusable = true}}, REDUCE(sym__simple_statements, 2, 0, 5),
+  [1465] = {.entry = {.count = 1, .reusable = false}}, REDUCE(sym__simple_statements, 2, 0, 5),
   [1467] = {.entry = {.count = 1, .reusable = false}}, SHIFT(1331),
   [1469] = {.entry = {.count = 1, .reusable = false}}, SHIFT(1350),
   [1471] = {.entry = {.count = 1, .reusable = true}}, SHIFT(131),

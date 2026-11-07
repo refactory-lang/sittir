@@ -1168,7 +1168,7 @@ describe('if_statement', () => {
 				$type: TSKindId.SuiteInline,
 				$text: 'test',
 				$named: true,
-				_elements: stampBuilt({
+				_statements: stampBuilt({
 					$type: TSKindId.SimpleStatementsElements,
 					$text: 'test',
 					$named: true,
@@ -1186,7 +1186,7 @@ describe('if_statement', () => {
 				$type: TSKindId.SuiteInline,
 				$text: 'test',
 				$named: true,
-				_elements: stampBuilt({
+				_statements: stampBuilt({
 					$type: TSKindId.SimpleStatementsElements,
 					$text: 'test',
 					$named: true,
@@ -1207,7 +1207,7 @@ describe('elif_clause', () => {
 				$type: TSKindId.SuiteInline,
 				$text: 'test',
 				$named: true,
-				_elements: stampBuilt({
+				_statements: stampBuilt({
 					$type: TSKindId.SimpleStatementsElements,
 					$text: 'test',
 					$named: true,
@@ -1225,7 +1225,7 @@ describe('elif_clause', () => {
 				$type: TSKindId.SuiteInline,
 				$text: 'test',
 				$named: true,
-				_elements: stampBuilt({
+				_statements: stampBuilt({
 					$type: TSKindId.SimpleStatementsElements,
 					$text: 'test',
 					$named: true,
@@ -1245,7 +1245,7 @@ describe('else_clause', () => {
 				$type: TSKindId.SuiteInline,
 				$text: 'test',
 				$named: true,
-				_elements: stampBuilt({
+				_statements: stampBuilt({
 					$type: TSKindId.SimpleStatementsElements,
 					$text: 'test',
 					$named: true,
@@ -1262,7 +1262,7 @@ describe('else_clause', () => {
 				$type: TSKindId.SuiteInline,
 				$text: 'test',
 				$named: true,
-				_elements: stampBuilt({
+				_statements: stampBuilt({
 					$type: TSKindId.SimpleStatementsElements,
 					$text: 'test',
 					$named: true,
@@ -1336,7 +1336,7 @@ describe('case_clause', () => {
 				$type: TSKindId.SuiteInline,
 				$text: 'test',
 				$named: true,
-				_elements: stampBuilt({
+				_statements: stampBuilt({
 					$type: TSKindId.SimpleStatementsElements,
 					$text: 'test',
 					$named: true,
@@ -1365,7 +1365,7 @@ describe('case_clause', () => {
 				$type: TSKindId.SuiteInline,
 				$text: 'test',
 				$named: true,
-				_elements: stampBuilt({
+				_statements: stampBuilt({
 					$type: TSKindId.SimpleStatementsElements,
 					$text: 'test',
 					$named: true,
@@ -1387,7 +1387,7 @@ describe('for_statement', () => {
 				$type: TSKindId.SuiteInline,
 				$text: 'test',
 				$named: true,
-				_elements: stampBuilt({
+				_statements: stampBuilt({
 					$type: TSKindId.SimpleStatementsElements,
 					$text: 'test',
 					$named: true,
@@ -1406,7 +1406,7 @@ describe('for_statement', () => {
 				$type: TSKindId.SuiteInline,
 				$text: 'test',
 				$named: true,
-				_elements: stampBuilt({
+				_statements: stampBuilt({
 					$type: TSKindId.SimpleStatementsElements,
 					$text: 'test',
 					$named: true,
@@ -1427,7 +1427,7 @@ describe('while_statement', () => {
 				$type: TSKindId.SuiteInline,
 				$text: 'test',
 				$named: true,
-				_elements: stampBuilt({
+				_statements: stampBuilt({
 					$type: TSKindId.SimpleStatementsElements,
 					$text: 'test',
 					$named: true,
@@ -1445,7 +1445,7 @@ describe('while_statement', () => {
 				$type: TSKindId.SuiteInline,
 				$text: 'test',
 				$named: true,
-				_elements: stampBuilt({
+				_statements: stampBuilt({
 					$type: TSKindId.SimpleStatementsElements,
 					$text: 'test',
 					$named: true,
@@ -1465,7 +1465,7 @@ describe('try_statement', () => {
 				$type: TSKindId.SuiteInline,
 				$text: 'test',
 				$named: true,
-				_elements: stampBuilt({
+				_statements: stampBuilt({
 					$type: TSKindId.SimpleStatementsElements,
 					$text: 'test',
 					$named: true,
@@ -1482,7 +1482,7 @@ describe('try_statement', () => {
 				$type: TSKindId.SuiteInline,
 				$text: 'test',
 				$named: true,
-				_elements: stampBuilt({
+				_statements: stampBuilt({
 					$type: TSKindId.SimpleStatementsElements,
 					$text: 'test',
 					$named: true,
@@ -1502,7 +1502,7 @@ describe('except_clause', () => {
 				$type: TSKindId.SuiteInline,
 				$text: 'test',
 				$named: true,
-				_elements: stampBuilt({
+				_statements: stampBuilt({
 					$type: TSKindId.SimpleStatementsElements,
 					$text: 'test',
 					$named: true,
@@ -1519,7 +1519,7 @@ describe('except_clause', () => {
 				$type: TSKindId.SuiteInline,
 				$text: 'test',
 				$named: true,
-				_elements: stampBuilt({
+				_statements: stampBuilt({
 					$type: TSKindId.SimpleStatementsElements,
 					$text: 'test',
 					$named: true,
@@ -1539,7 +1539,7 @@ describe('except_clause sub-factories', () => {
 				$type: TSKindId.SuiteInline,
 				$text: 'test',
 				$named: true,
-				_elements: stampBuilt({
+				_statements: stampBuilt({
 					$type: TSKindId.SimpleStatementsElements,
 					$text: 'test',
 					$named: true,
@@ -1563,7 +1563,7 @@ describe('except_clause sub-factories', () => {
 				$type: TSKindId.SuiteInline,
 				$text: 'test',
 				$named: true,
-				_elements: stampBuilt({
+				_statements: stampBuilt({
 					$type: TSKindId.SimpleStatementsElements,
 					$text: 'test',
 					$named: true,
@@ -1582,7 +1582,7 @@ describe('except_clause sub-factories', () => {
 				$type: TSKindId.SuiteInline,
 				$text: 'test',
 				$named: true,
-				_elements: stampBuilt({
+				_statements: stampBuilt({
 					$type: TSKindId.SimpleStatementsElements,
 					$text: 'test',
 					$named: true,
@@ -1604,7 +1604,7 @@ describe('finally_clause', () => {
 				$type: TSKindId.SuiteInline,
 				$text: 'test',
 				$named: true,
-				_elements: stampBuilt({
+				_statements: stampBuilt({
 					$type: TSKindId.SimpleStatementsElements,
 					$text: 'test',
 					$named: true,
@@ -1621,7 +1621,7 @@ describe('finally_clause', () => {
 				$type: TSKindId.SuiteInline,
 				$text: 'test',
 				$named: true,
-				_elements: stampBuilt({
+				_statements: stampBuilt({
 					$type: TSKindId.SimpleStatementsElements,
 					$text: 'test',
 					$named: true,
@@ -1655,7 +1655,7 @@ describe('with_statement', () => {
 				$type: TSKindId.SuiteInline,
 				$text: 'test',
 				$named: true,
-				_elements: stampBuilt({
+				_statements: stampBuilt({
 					$type: TSKindId.SimpleStatementsElements,
 					$text: 'test',
 					$named: true,
@@ -1685,7 +1685,7 @@ describe('with_statement', () => {
 				$type: TSKindId.SuiteInline,
 				$text: 'test',
 				$named: true,
-				_elements: stampBuilt({
+				_statements: stampBuilt({
 					$type: TSKindId.SimpleStatementsElements,
 					$text: 'test',
 					$named: true,
@@ -1721,7 +1721,7 @@ describe('function_definition', () => {
 				$type: TSKindId.SuiteInline,
 				$text: 'test',
 				$named: true,
-				_elements: stampBuilt({
+				_statements: stampBuilt({
 					$type: TSKindId.SimpleStatementsElements,
 					$text: 'test',
 					$named: true,
@@ -1740,7 +1740,7 @@ describe('function_definition', () => {
 				$type: TSKindId.SuiteInline,
 				$text: 'test',
 				$named: true,
-				_elements: stampBuilt({
+				_statements: stampBuilt({
 					$type: TSKindId.SimpleStatementsElements,
 					$text: 'test',
 					$named: true,
@@ -1903,7 +1903,7 @@ describe('class_definition', () => {
 				$type: TSKindId.SuiteInline,
 				$text: 'test',
 				$named: true,
-				_elements: stampBuilt({
+				_statements: stampBuilt({
 					$type: TSKindId.SimpleStatementsElements,
 					$text: 'test',
 					$named: true,
@@ -1921,7 +1921,7 @@ describe('class_definition', () => {
 				$type: TSKindId.SuiteInline,
 				$text: 'test',
 				$named: true,
-				_elements: stampBuilt({
+				_statements: stampBuilt({
 					$type: TSKindId.SimpleStatementsElements,
 					$text: 'test',
 					$named: true,
@@ -2036,7 +2036,7 @@ describe('decorated_definition', () => {
 					$type: TSKindId.SuiteInline,
 					$text: 'test',
 					$named: true,
-					_elements: stampBuilt({
+					_statements: stampBuilt({
 						$type: TSKindId.SimpleStatementsElements,
 						$text: 'test',
 						$named: true,
@@ -2067,7 +2067,7 @@ describe('decorated_definition', () => {
 					$type: TSKindId.SuiteInline,
 					$text: 'test',
 					$named: true,
-					_elements: stampBuilt({
+					_statements: stampBuilt({
 						$type: TSKindId.SimpleStatementsElements,
 						$text: 'test',
 						$named: true,
@@ -6379,7 +6379,7 @@ describe('constructor_declaration', () => {
 				$type: TSKindId.SuiteInline,
 				$text: 'test',
 				$named: true,
-				_elements: stampBuilt({
+				_statements: stampBuilt({
 					$type: TSKindId.SimpleStatementsElements,
 					$text: 'test',
 					$named: true,
@@ -6397,7 +6397,7 @@ describe('constructor_declaration', () => {
 				$type: TSKindId.SuiteInline,
 				$text: 'test',
 				$named: true,
-				_elements: stampBuilt({
+				_statements: stampBuilt({
 					$type: TSKindId.SimpleStatementsElements,
 					$text: 'test',
 					$named: true,
@@ -6458,7 +6458,7 @@ describe('decorated_definition_class_declaration', () => {
 					$type: TSKindId.SuiteInline,
 					$text: 'test',
 					$named: true,
-					_elements: stampBuilt({
+					_statements: stampBuilt({
 						$type: TSKindId.SimpleStatementsElements,
 						$text: 'test',
 						$named: true,
@@ -6489,7 +6489,7 @@ describe('decorated_definition_class_declaration', () => {
 					$type: TSKindId.SuiteInline,
 					$text: 'test',
 					$named: true,
-					_elements: stampBuilt({
+					_statements: stampBuilt({
 						$type: TSKindId.SimpleStatementsElements,
 						$text: 'test',
 						$named: true,
@@ -6559,7 +6559,7 @@ describe('method_declaration', () => {
 				$type: TSKindId.SuiteInline,
 				$text: 'test',
 				$named: true,
-				_elements: stampBuilt({
+				_statements: stampBuilt({
 					$type: TSKindId.SimpleStatementsElements,
 					$text: 'test',
 					$named: true,
@@ -6578,7 +6578,7 @@ describe('method_declaration', () => {
 				$type: TSKindId.SuiteInline,
 				$text: 'test',
 				$named: true,
-				_elements: stampBuilt({
+				_statements: stampBuilt({
 					$type: TSKindId.SimpleStatementsElements,
 					$text: 'test',
 					$named: true,

@@ -917,7 +917,7 @@ export interface IsGuards {
 	readonly suite: {
 		<T extends { readonly $type: number } | number>(
 			v: T
-		): v is NarrowTo<T, TSKindId.SuiteInline | TSKindId.SuiteBlock | TSKindId.SuiteEmpty>;
+		): v is NarrowTo<T, TSKindId.Block | TSKindId.SuiteInline | TSKindId.SuiteBlock | TSKindId.SuiteEmpty>;
 		inline<T extends { readonly $type: number } | number>(
 			v: T
 		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.SuiteInline };
@@ -1220,7 +1220,7 @@ const _supertype_simpleStatement_ids = new Set<number>([
 ]);
 const _supertype_compoundStatement_ids = new Set<number>([151, 157, 158, 159, 162, 165, 174, 178, 154]);
 const _supertype_withClause_ids = new Set<number>([297, 298]);
-const _supertype_suite_ids = new Set<number>([299, 300, 301]);
+const _supertype_suite_ids = new Set<number>([180, 299, 300, 301]);
 const _supertype_splatPattern_ids = new Set<number>([201, 202, 291, 292]);
 const _supertype_parameter_ids = new Set<number>([201, 202, 1, 225, 199, 200, 197, 259, 258]);
 const _supertype_pattern_ids = new Set<number>([201, 1, 222, 221, 197, 198]);
@@ -1246,7 +1246,7 @@ const _supertype_compoundStatementClassDefinition_ids = new Set<number>([
 const _supertype_statementClassDefinition_ids = new Set<number>([
 	130, 352, 151, 157, 158, 159, 162, 307, 174, 311, 154
 ]);
-const _supertype_suiteClassDefinition_ids = new Set<number>([299, 310, 301]);
+const _supertype_suiteClassDefinition_ids = new Set<number>([180, 299, 310, 301]);
 
 const _members = new Map<number, ReadonlySet<number>>([
 	[TSKindId.Statement, _supertype_statement_ids],
