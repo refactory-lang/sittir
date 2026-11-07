@@ -21,7 +21,6 @@ sittir-regex = { path = "../sittir-regex", default-features = false }
 sittir-scm = { path = "../sittir-scm", default-features = false }
 serde = { workspace = true }
 serde_json = { workspace = true }
-tree-sitter = { workspace = true }
 
 [features]
 # The record writer's corpus tests (`tests/record_write.rs`).

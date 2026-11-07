@@ -2,6 +2,7 @@
 //! kind name, the regions of a source that did not parse, and a list's last
 //! child.
 
+use sittir_core::tree_sitter;
 use sittir_core::read::{display_id, grammar_id};
 use sittir_core::KindId;
 use sittir_core::types::Span;

@@ -186,6 +186,29 @@ export const NATIVE_TARGETS = [
 	'x86_64-pc-windows-msvc'
 ] as const;
 
+export type NativeTarget = (typeof NATIVE_TARGETS)[number];
+
+const SHARED_ENGINE = '-C prefer-dynamic';
+const STATIC_MUSL_OFF = '-C target-feature=-crt-static';
+
+export const NATIVE_RUSTFLAGS: Readonly<Record<NativeTarget, readonly string[]>> = {
+	'aarch64-apple-darwin': [SHARED_ENGINE],
+	'x86_64-unknown-linux-gnu': [SHARED_ENGINE],
+	'x86_64-unknown-linux-musl': [SHARED_ENGINE, STATIC_MUSL_OFF],
+	'aarch64-unknown-linux-gnu': [SHARED_ENGINE],
+	'aarch64-unknown-linux-musl': [SHARED_ENGINE, STATIC_MUSL_OFF],
+	'x86_64-pc-windows-msvc': [SHARED_ENGINE]
+};
+
+const isNativeTarget = (target: string): target is NativeTarget => Object.hasOwn(NATIVE_RUSTFLAGS, target);
+
+export function nativeBuildEnv(target: string, env: NodeJS.ProcessEnv, driverFlags: readonly string[] = []): NodeJS.ProcessEnv {
+	if (!isNativeTarget(target)) throw new Error(`${target} has no row in NATIVE_RUSTFLAGS`);
+	if (env.CARGO_ENCODED_RUSTFLAGS) throw new Error('CARGO_ENCODED_RUSTFLAGS overrides the native rustflags table; set RUSTFLAGS instead');
+	const inherited = env.RUSTFLAGS?.trim();
+	return { ...env, RUSTFLAGS: [...NATIVE_RUSTFLAGS[target], ...(inherited ? [inherited] : []), ...driverFlags].join(' ') };
+}
+
 export const NODE_API_NODE_RANGES: Readonly<Partial<Record<number, string>>> = {
 	9: '^18.17.0 || ^20.3.0 || >=21.1.0',
 	10: '^22.14.0 || >=23.6.0'

@@ -4,6 +4,7 @@
 //! have a method, and the writer behind the sink decides what reaches the
 //! output.
 
+use crate::tree_sitter;
 use std::fmt;
 use std::sync::Arc;
 

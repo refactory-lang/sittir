@@ -1,5 +1,5 @@
 // Every grammar's addon is its own linked image, so tree ids must come from
-// the one owner every addon shares — the JavaScript process — or a rust
+// the one owner every addon shares — the engine library's counter — or a rust
 // engine and a typescript engine would both mint tree 0 and a coordinate
 // read by one could slice the other's unrelated tree. A node read by one
 // grammar's engine is refused by another grammar's, naming both languages,
@@ -58,13 +58,18 @@ describe('a coordinate names its tree across grammars', () => {
 		expect(() => parsed.$trivia.trailing(comment)).toThrow(refusal);
 	});
 
-	it('mints distinct ids for trees parsed by engines of different grammars', async () => {
-		const treeIdOf = async (grammar: string, source: string): Promise<number> => {
-			const native = (await (await languageByName(grammar)).load()).createNative();
-			return Math.floor(native.parseAndRead(source).root.$_layout!.at!.$treeHandle / 2 ** 32);
-		};
-		const a = await treeIdOf('rust', 'fn a() {}\n');
-		const b = await treeIdOf('typescript', 'let b = 1;\n');
-		expect(a).not.toBe(b);
+	it('mints every tree id from one counter, whichever grammar parses, and keeps none on globalThis', async () => {
+		const parsers = await Promise.all(
+			[
+				['python', 'x = 1\n'],
+				['rust', 'fn a() {}\n']
+			].map(async ([grammar, source]) => {
+				const native = (await (await languageByName(grammar!)).load()).createNative();
+				return () => Math.floor(native.parseAndRead(source!).root.$_layout!.at!.$treeHandle / 2 ** 32);
+			})
+		);
+		const ids = Array.from({ length: 50 }, (_, parse) => parsers[parse % parsers.length]!());
+		expect(ids.filter((id, parse) => parse > 0 && id <= ids[parse - 1]!)).toEqual([]);
+		expect((globalThis as { __sittirNextTreeId?: unknown }).__sittirNextTreeId).toBeUndefined();
 	});
 });

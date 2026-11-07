@@ -61,6 +61,8 @@ Under shape A, anything in sittir-core is one per addon, so a fact the process m
   - `feat/records` adds `NEXT_TREE_ID` and `claim_tree_id` to sittir-core's `engine.rs`, beside `TreeClaim`. The migration moves the counter into the engine.
   - The `globalThis` claim in `napi_engine.rs` and `claim_tree_id_from` are deleted.
   - `TreeClaim`, from `feat/records`, stays as it is: ids are minted only natively, and `Engine::parse` consumes the claim.
+  - A handle packs its tree id in 21 bits beside a 32-bit node index, so it stays an exact double, and `MAX_TREE_ID` is 2^21 − 1. With one counter, that is a budget for the whole process, shared by every thread, and ids are never reused. Once it is spent, `parse` refuses with "this process exhausted its 2097151 tree ids".
+  - Every thread claims from the one counter, so an id names one tree in the whole process. Each thread still holds its own table of live trees.
 - **The allocator slots** are the runtime's own, defined once in the engine.
 
 ## Tree holders

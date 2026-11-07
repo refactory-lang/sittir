@@ -59,16 +59,21 @@ function rustToolchain(repoRoot: string): string {
 	return toolchain;
 }
 
-export type LlvmTool = 'llvm-strip' | 'llvm-objdump';
+export type LlvmTool = 'llvm-strip' | 'llvm-objdump' | 'llvm-nm' | 'llvm-readobj';
+
+export function rustHost(repoRoot: string = REPO_ROOT): string {
+	const host = /^host: (.+)$/m.exec(rustToolchain(repoRoot))?.[1];
+	if (host === undefined) throw new Error('rustc -vV names no host');
+	return host;
+}
 
 export function llvmTool(name: LlvmTool, repoRoot: string = REPO_ROOT): string {
 	const variable = name.toUpperCase().replace('-', '_');
 	const named = process.env[variable];
 	if (named) return named;
-	const host = /^host: (.+)$/m.exec(rustToolchain(repoRoot))?.[1];
 	const sysroot = execFileSync('rustc', ['--print', 'sysroot'], { cwd: repoRoot, encoding: 'utf8' }).trim();
-	const tool = join(sysroot, 'lib', 'rustlib', host ?? '', 'bin', process.platform === 'win32' ? `${name}.exe` : name);
-	if (host !== undefined && existsSync(tool)) return tool;
+	const tool = join(sysroot, 'lib', 'rustlib', rustHost(repoRoot), 'bin', process.platform === 'win32' ? `${name}.exe` : name);
+	if (existsSync(tool)) return tool;
 	throw new Error(`${name} is not in the Rust toolchain: add its llvm-tools component (rustup component add llvm-tools), or name one in ${variable}`);
 }
 

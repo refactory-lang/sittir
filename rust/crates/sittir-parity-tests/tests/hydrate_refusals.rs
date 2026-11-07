@@ -5,6 +5,7 @@
 //! a second one after the first's whole walk.
 #![cfg(feature = "arena")]
 
+use sittir_core::tree_sitter;
 use sittir_core::arena::{hydrate_at, HydrateError, Hydration, TreeArena};
 use sittir_core::read::{descendant_count, index_of, Depth, ReadCtx, ReadError};
 use sittir_core::record::PARSED_KIND_BITS;

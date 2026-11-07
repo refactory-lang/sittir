@@ -12,6 +12,7 @@
 //! node by its tree's id and its descendant index, re-resolved through a
 //! cursor on each access — no lifetime-erasure needed.
 
+use crate::tree_sitter;
 use crate::heap::HeapBytes;
 use crate::options::ResolvedOptions;
 use crate::query::{Address, DescendantBatch, Plan, QueryCoordinate, QueryItem};
@@ -546,27 +547,27 @@ const HANDLE_INDEX_MASK: u64 = (1u64 << HANDLE_INDEX_BITS) - 1;
 /// Largest tree id that still fits beside an index in an exact double.
 pub const MAX_TREE_ID: u32 = (1u32 << (53 - HANDLE_INDEX_BITS)) - 1;
 
-static NEXT_TREE_ID: std::sync::atomic::AtomicU32 = std::sync::atomic::AtomicU32::new(0);
-
-/// Mint the next tree id from this linked image's counter. One counter
-/// serves every engine the image holds, so no two of them ever hold a tree
-/// under the same id: a coordinate names its tree unambiguously, and an
-/// engine handed another engine's coordinate finds no such tree and refuses
-/// it rather than slicing whatever tree sits at that index in its own table.
-/// Ids are never reused — a stale handle must not come back to life under a
-/// later tree — so once `MAX_TREE_ID` is claimed every later claim gets
-/// `None` and the counter stays put. Each grammar's addon is its own image
-/// with its own copy of this counter; the napi engine therefore claims from
-/// the JavaScript process instead (`claim_tree_id_from`), and this counter
-/// serves engines built in Rust alone.
+/// Mint the next tree id from the process's one counter, which the engine
+/// library holds (`sittir_engine::claim_tree_id`). Every engine of every
+/// grammar claims from it, so no two of them ever hold a tree under the same
+/// id: a coordinate names its tree unambiguously, and an engine handed
+/// another engine's coordinate finds no such tree and refuses it rather than
+/// slicing whatever tree sits at that index in its own table. Ids are never
+/// reused — a stale handle must not come back to life under a later tree —
+/// and a handle carries only ids up to `MAX_TREE_ID`, so every claim past it
+/// gets `None`.
 #[must_use]
 pub fn claim_tree_id() -> Option<TreeClaim> {
-    claim_tree_id_from_counter(&NEXT_TREE_ID).map(|id| TreeClaim(TreeId(id)))
+    claim_on(sittir_engine::claim_tree_id())
+}
+
+fn claim_on(id: Option<u32>) -> Option<TreeClaim> {
+    id.filter(|&id| id <= MAX_TREE_ID).map(|id| TreeClaim(TreeId(id)))
 }
 
 /// The one claim on a tree id a parse consumes (`Engine::parse`): minted only
-/// by `claim_tree_id` and `claim_tree_id_from`, and neither copied nor
-/// cloned, so each tree a counter serves holds an id its own claim minted.
+/// by `claim_tree_id`, and neither copied nor cloned, so each tree holds an
+/// id its own claim minted.
 #[derive(Debug, PartialEq, Eq)]
 pub struct TreeClaim(TreeId);
 
@@ -581,31 +582,6 @@ impl TreeClaim {
     fn into_id(self) -> TreeId {
         self.0
     }
-}
-
-fn claim_tree_id_from_counter(counter: &std::sync::atomic::AtomicU32) -> Option<u32> {
-    use std::sync::atomic::Ordering::Relaxed;
-
-    // try_update requires Rust 1.95; this bounded CAS preserves the 1.88 minimum.
-    let mut next = counter.load(Relaxed);
-    while next <= MAX_TREE_ID {
-        match counter.compare_exchange_weak(next, next + 1, Relaxed, Relaxed) {
-            Ok(id) => return Some(id),
-            Err(observed) => next = observed,
-        }
-    }
-    None
-}
-
-/// Mint the next tree id from a counter shared by every image in the
-/// process. `next` is the last value the owner recorded (none on the first
-/// claim); the claim and the value to record come back together, or nothing
-/// once `MAX_TREE_ID` has been claimed — the owner then records nothing, so
-/// the counter stays put and no id is ever reused.
-#[must_use]
-pub fn claim_tree_id_from(next: Option<f64>) -> Option<(TreeClaim, f64)> {
-    let id = crate::types::exact_whole(next.unwrap_or(0.0)).ok().and_then(|whole| u32::try_from(whole).ok()).filter(|&id| id <= MAX_TREE_ID)?;
-    Some((TreeClaim(TreeId(id)), f64::from(id) + 1.0))
 }
 
 /// Pack a tree id and a node index into one self-identifying handle.
@@ -2134,7 +2110,7 @@ impl<G: EngineGrammar> Engine<G> {
     }
 
     /// Parse source and return an owned `ParsedTree` under the id `claim` is
-    /// on (`claim_tree_id`, `claim_tree_id_from`).
+    /// on (`claim_tree_id`).
     ///
     /// # Errors
     ///
@@ -2629,41 +2605,10 @@ mod tests {
     use super::*;
 
     #[test]
-    fn counter_exhaustion_does_not_wrap_or_reuse_an_id() {
-        use std::sync::atomic::{AtomicU32, Ordering::Relaxed};
-
-        let counter = AtomicU32::new(MAX_TREE_ID - 1);
-        assert_eq!(claim_tree_id_from_counter(&counter), Some(MAX_TREE_ID - 1));
-        assert_eq!(claim_tree_id_from_counter(&counter), Some(MAX_TREE_ID));
-        assert_eq!(claim_tree_id_from_counter(&counter), None);
-        assert_eq!(claim_tree_id_from_counter(&counter), None);
-        assert_eq!(counter.load(Relaxed), MAX_TREE_ID + 1);
-    }
-
-    #[test]
-    fn concurrent_counter_claims_are_unique() {
-        use std::sync::{atomic::AtomicU32, Arc, Barrier};
-
-        let counter = Arc::new(AtomicU32::new(0));
-        let barrier = Arc::new(Barrier::new(8));
-        let threads: Vec<_> = (0..8)
-            .map(|_| {
-                let counter = Arc::clone(&counter);
-                let barrier = Arc::clone(&barrier);
-                std::thread::spawn(move || {
-                    barrier.wait();
-                    (0..256)
-                        .map(|_| claim_tree_id_from_counter(&counter).unwrap())
-                        .collect::<Vec<_>>()
-                })
-            })
-            .collect();
-        let mut ids: Vec<_> = threads
-            .into_iter()
-            .flat_map(|thread| thread.join().unwrap())
-            .collect();
-        ids.sort_unstable();
-        assert_eq!(ids, (0..2048).collect::<Vec<_>>());
+    fn an_id_past_the_handle_range_is_refused() {
+        assert_eq!(claim_on(Some(MAX_TREE_ID)), Some(TreeClaim(TreeId(MAX_TREE_ID))));
+        assert_eq!(claim_on(Some(MAX_TREE_ID + 1)), None);
+        assert_eq!(claim_on(None), None);
     }
 
     /// A test `function_item`'s slots: `name` 0, `return_type` 1.
@@ -2855,7 +2800,7 @@ mod tests {
         crate::read::kind_named(&language, name, true)
     }
 
-    /// A claim on the next id of the image's counter.
+    /// A claim on the next id of the process's counter.
     fn claim() -> TreeClaim {
         claim_tree_id().expect("a claim")
     }
