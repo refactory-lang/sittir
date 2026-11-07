@@ -4,7 +4,7 @@ import { continuationTriviaKinds, emptyForms, layoutTriviaKinds } from '../compi
 import type { AuthoredCompound } from '../compiler/model/node-map.ts';
 import type { NodeMap } from '../compiler/types.ts';
 import { AbstractAssembledCompound, AssembledAlias, AssembledList, AssembledNonterminal, storesNodes } from '../compiler/model/node-map.ts';
-import { envelopesOverList, listContentsOf } from './node-projection.ts';
+import { envelopeListOf, envelopesOverList } from './node-projection.ts';
 import type { AssembledNode } from '../compiler/model/node-map.ts';
 import { storedTextKinds } from './built-from-text.ts';
 import type { GeneratedIdTables } from '../dsl/symbol-table.ts';
@@ -157,7 +157,7 @@ export namespace wrap {
 	): boolean {
 		if (!node.rawFactoryName) return false;
 		if (node instanceof AssembledAlias) {
-			const [list] = listContentsOf(node, nodeMap);
+			const list = envelopeListOf(node, nodeMap);
 			if (list === undefined) return viewPlaces(output, node, kindEntries, nodeMap, shared);
 			output.push(emitEnvelopeOverListHandle(node, list, kindEntries));
 			return true;

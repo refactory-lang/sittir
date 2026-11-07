@@ -613,8 +613,10 @@ fn structure(ident: &Ident, attrs: &KindAttrs, data: &DataStruct) -> syn::Result
         None => TokenStream::new(),
     };
     let kind_field = fields.iter().find(|field| matches!(field.role, Role::Kind));
-    if let (Some(field), true) = (kind_field, attrs.displays.is_empty()) {
-        return Err(syn::Error::new_spanned(field.ident, "a `$type` field holds a display id: declare them with `#[node(displays = […])]`"));
+    match (kind_field, attrs.displays.is_empty()) {
+        (Some(field), true) => return Err(syn::Error::new_spanned(field.ident, "a `$type` field holds a display id: declare them with `#[node(displays = […])]`")),
+        (None, false) => return Err(syn::Error::new_spanned(ident, "a struct with `displays` holds the id it shows in a `#[wire(key = \"$type\")]` field")),
+        _ => {}
     }
     let displays = attrs.displays.iter().chain(&attrs.shown_as);
     let folded = &attrs.folded;

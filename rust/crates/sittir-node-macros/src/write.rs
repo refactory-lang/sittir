@@ -76,6 +76,23 @@ pub fn structure(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn:
         let name = field.ident;
         quote!(self.#name)
     });
+    if attrs.content_list {
+        let name = attrs.content.as_ref().ok_or_else(|| syn::Error::new_spanned(ident, format!("`{ident}` is an envelope over a list, so it names its content: `#[node(content = …)]`")))?;
+        let content = fields.iter().find(|field| field.ident == name).ok_or_else(|| syn::Error::new_spanned(ident, format!("`{ident}` names no content field `{name}`")))?;
+        let list = inner_of(content.ty, "SlotValue").ok_or_else(|| syn::Error::new_spanned(content.ty, "an envelope's content is a `SlotValue<…>`"))?;
+        let refused = format!("{ident}: an envelope over a list is written from the list it holds, not from a coordinate");
+        return Ok(gated(&quote! {
+            const _: () = assert!(<#list>::shown_as(#kind), "an envelope over a list is one of the kinds the list is shown as");
+            impl ::sittir_core::arena::WriteCell<#trivia> for #ident {
+                fn write_cell(&self, __sink: &mut ::sittir_core::arena::RecordSink<'_, #trivia>) -> ::core::result::Result<::sittir_core::arena::CellWord, ::sittir_core::arena::ArenaError> {
+                    match &self.#name {
+                        ::sittir_core::SlotValue::Node(list) => list.write_cell_shown(__sink, #kind, #layout_of),
+                        ::sittir_core::SlotValue::Coord(_) => ::core::result::Result::Err(::sittir_core::arena::ArenaError::Unwritable(#refused)),
+                    }
+                }
+            }
+        }));
+    }
     if attrs.text.is_some() {
         let text = fields
             .iter()
@@ -123,18 +140,29 @@ pub fn structure(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn:
         TokenStream::new()
     } else {
         quote! {
-            /// Writes this record under the envelope kind `shown`, with `layout`
-            /// in place of its own when given: the record an envelope over this
-            /// list is, since the envelope has none of its own.
+            /// Whether `kind` is an envelope kind this list is shown as.
+            pub const fn shown_as(kind: ::sittir_core::types::KindId) -> bool {
+                let shown = [#(#shown),*];
+                let mut at = 0;
+                while at < shown.len() {
+                    if shown[at].0 == kind.0 {
+                        return true;
+                    }
+                    at += 1;
+                }
+                false
+            }
+
+            /// Writes this record under the envelope kind `shown`, one of those
+            /// `shown_as` answers for, with `layout` in place of its own when
+            /// given: the record an envelope over this list is, since the
+            /// envelope has none of its own.
             pub fn write_cell_shown(
                 &self,
                 __sink: &mut ::sittir_core::arena::RecordSink<'_, #trivia>,
                 shown: ::sittir_core::types::KindId,
                 layout: ::core::option::Option<&::sittir_core::layout::NodeLayout<#trivia>>,
             ) -> ::core::result::Result<::sittir_core::arena::CellWord, ::sittir_core::arena::ArenaError> {
-                if ![#(#shown),*].contains(&shown) {
-                    return ::core::result::Result::Err(::sittir_core::arena::ArenaError::Unwritable("a list written under a kind it is not shown as"));
-                }
                 self.__write_as(__sink, shown, layout.or(#layout_of))
             }
         }
@@ -280,6 +308,27 @@ mod tests {
         assert!(has(&out, "::sittir_core::arena::write_record(__sink, __kind, 5u32, __layout,"));
         assert!(has(&out, "self.__write_as(__sink, __KIND,"));
         assert!(!has(&out, "write_cell_shown"));
+    }
+
+    #[test]
+    fn an_envelope_over_a_list_writes_the_list_under_its_own_kind_and_layout() {
+        let out = expand(&parse_quote! {
+            #[node(kind = kind::ELEMENT_BINDING, display, content = content, content_list, words = 5, built_words = 3, fields = BindingFields)]
+            pub struct BindingNode {
+                #[wire(key = "$_layout")]
+                #[layout]
+                pub layout: Option<Box<NodeLayout>>,
+                #[height]
+                height: u16,
+                #[wire(key = "_content")]
+                #[slot(word = 2, width = 3, forms = 1, built = 2)]
+                pub content: SlotValue<ArgumentsNode>,
+            }
+        })
+        .expect("expands");
+        assert!(has(&out, "::sittir_core::SlotValue::Node(list) => list.write_cell_shown(__sink, __KIND, ::sittir_core::arena::LayoutField::layout(&self.layout)),"));
+        assert!(has(&out, "const _: () = assert!(<ArgumentsNode>::shown_as(__KIND),"));
+        assert!(!has(&out, "write_record("));
     }
 
     #[test]

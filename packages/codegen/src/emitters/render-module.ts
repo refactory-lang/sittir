@@ -52,8 +52,8 @@ import {
 	captureArgs,
 	displayClaimedIds,
 	enumKindArgs,
+	envelopeListOf,
 	flankArgs,
-	listContentsOf,
 	presenceKeyword,
 	readNames,
 	separatorKindArgs,
@@ -3658,8 +3658,9 @@ const recordLayouts = new WeakMap<
 export function nodeRecordLayout(node: AssembledNode, nodeMap: NodeMap): RecordLayout | undefined {
 	if (node instanceof AssembledEnum || !isCompoundOf(node)) return undefined;
 	if (node instanceof AssembledAlias) {
-		const lists = listContentsOf(node, nodeMap).flatMap((list) => nodeRecordLayout(list, nodeMap) ?? []);
-		if (lists.length > 0) return lists.reduce((widest, layout) => (layout.words > widest.words ? layout : widest));
+		const list = envelopeListOf(node, nodeMap);
+		const layout = list === undefined ? undefined : nodeRecordLayout(list, nodeMap);
+		if (layout !== undefined) return layout;
 	}
 	let state = recordLayouts.get(nodeMap);
 	if (state === undefined) {

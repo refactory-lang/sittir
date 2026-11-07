@@ -660,7 +660,8 @@ mod tests {
         assert!(has(&out, "fn claims(kind: ::sittir_core::types::KindId) -> bool { (kind == kind::ARGUMENTS) }"));
         assert!(has(&out, "::sittir_core::arena::Cell::Child { kind, at, link, changed } if (kind == kind::ARGUMENTS || kind == kind::ELEMENT_BINDING_EXPRESSION) =>"));
         assert!(has(&out, "pub fn write_cell_shown("));
-        assert!(has(&out, "if ![kind::ELEMENT_BINDING_EXPRESSION].contains(&shown)"));
+        assert!(has(&out, "pub const fn shown_as(kind: ::sittir_core::types::KindId) -> bool { let shown = [kind::ELEMENT_BINDING_EXPRESSION];"));
+        assert!(!has(&out, "a list written under a kind it is not shown as"));
     }
 
     #[test]

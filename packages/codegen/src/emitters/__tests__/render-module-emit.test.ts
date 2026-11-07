@@ -36,6 +36,7 @@ import {
 	assertOneUntaggedSlot,
 	displayClaimedIds,
 	enumKindArgs,
+	envelopeListOf,
 	flankArgs,
 	layoutTokenIds,
 	listItemSlot,
@@ -726,6 +727,8 @@ describe('node read facts', () => {
 		expect(() => nodeArgs(list, ownId(list), over, list.slots)).not.toThrow();
 		expect(nodeArgs(list, ownId(list), over, list.slots)).toMatch(/, shown_as = \[kind::_TYPE_IDENTIFIER, kind::_FIELD_IDENTIFIER, kind::_SHORTHAND_FIELD_IDENTIFIER\]/);
 		expect(nodeArgs(list, ownId(list), ctx, list.slots)).not.toMatch(/shown_as/);
+		expect(envelopeListOf(envelope, over.nodeMap)).toBe(list);
+		expect(envelopeListOf(envelope, ctx.nodeMap)).toBeUndefined();
 	});
 
 	it('refuses an envelope that holds more than one list, since its record is one list\'s', () => {
