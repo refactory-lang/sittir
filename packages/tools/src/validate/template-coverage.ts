@@ -34,6 +34,7 @@ import { sharedDisplayEntries, type DisplayFamilies } from './display-families.t
 import type { RawNodeEntry, PolymorphVariantMap } from '../codegen-surface.ts';
 
 const { loadRawEntries } = await load('nodeTypesLoader');
+const { isPrecWrapperType } = await load('runtimeShapes');
 import { bodyToLegacyRule, loadRenderBodies, renderBodiesPath } from './render-bodies.ts';
 import { isLeafKind, parseNodeModel, type ValidatorSkip } from './common.ts';
 import { KindCases, type CasesByKind } from './kind-cases.ts';
@@ -793,10 +794,7 @@ function isNamedReferenceGrammar(node: unknown): boolean {
 		n.type === 'REPEAT1' ||
 		n.type === 'TOKEN' ||
 		n.type === 'IMMEDIATE_TOKEN' ||
-		n.type === 'PREC' ||
-		n.type === 'PREC_LEFT' ||
-		n.type === 'PREC_RIGHT' ||
-		n.type === 'PREC_DYNAMIC'
+		(n.type !== undefined && isPrecWrapperType(n.type))
 	) {
 		return n.content !== undefined && isNamedReferenceGrammar(n.content);
 	}

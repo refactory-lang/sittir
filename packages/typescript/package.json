@@ -50,6 +50,9 @@
 		"@types/node": "^25.6.0",
 		"tree-sitter-typescript": "^0.23.2"
 	},
+	"engines": {
+		"node": "^22.14.0 || >=23.6.0"
+	},
 	"//native": "Native artifacts are grammar-local implementation details for @sittir/typescript, shipped in native/ and built from rust/crates/sittir-typescript.",
 	"sittir": {
 		"stable": true,

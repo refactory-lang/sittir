@@ -1,3 +1,4 @@
+import { execFileSync } from 'node:child_process';
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { dirname, join } from 'node:path';
@@ -184,6 +185,33 @@ export const NATIVE_TARGETS = [
 	'aarch64-unknown-linux-musl',
 	'x86_64-pc-windows-msvc'
 ] as const;
+
+export const NODE_API_NODE_RANGES: Readonly<Partial<Record<number, string>>> = {
+	9: '^18.17.0 || ^20.3.0 || >=21.1.0',
+	10: '^22.14.0 || >=23.6.0'
+};
+
+export function nodeRangeOfNodeApi(level: number): string {
+	const range = NODE_API_NODE_RANGES[level];
+	if (range === undefined) throw new Error(`Node-API ${level} has no Node range in NODE_API_NODE_RANGES`);
+	return range;
+}
+
+interface CargoMetadata {
+	readonly packages: readonly { readonly dependencies: readonly { readonly name: string; readonly features: readonly string[] }[] }[];
+}
+
+export function workspaceNodeApiLevel(): number {
+	const metadata = JSON.parse(execFileSync('cargo', ['metadata', '--no-deps', '--format-version', '1'], { cwd: REPO_ROOT, encoding: 'utf8' })) as CargoMetadata;
+	const levels = metadata.packages
+		.flatMap((pkg) => pkg.dependencies)
+		.filter((dependency) => dependency.name === 'napi')
+		.flatMap((dependency) => dependency.features)
+		.flatMap((feature) => /^napi(\d+)$/.exec(feature)?.slice(1) ?? [])
+		.map(Number);
+	if (levels.length === 0) throw new Error('no workspace crate enables a napiN feature on napi');
+	return Math.max(...levels);
+}
 
 export function nativeBinaryName(name: GrammarName): string {
 	return `sittir-${name}`;

@@ -425,6 +425,9 @@ pub struct ParsedTree<G: EngineGrammar> {
     /// What the parse read off the source's layout: the tree's layer of the
     /// render options (`InferredOptions`).
     inferred: crate::options::InferredOptions,
+    /// Whether the source spells every line break `\n`, holding no `\r`
+    /// (`SourceTable::breaks_spelled_lf`).
+    breaks_lf: bool,
     /// Identity this tree stamps into every handle it mints. Distinct per
     /// parse, so a handle names the tree it belongs to and cannot be spent
     /// against another one.
@@ -669,6 +672,7 @@ impl<G: EngineGrammar> ParsedTree<G> {
             tree: _,
             source,
             inferred,
+            breaks_lf: _,
             tree_id: _,
             lines,
             trivia,
@@ -2017,6 +2021,10 @@ impl<G: EngineGrammar> SourceTable for WithoutLayout<'_, G> {
         self.tree.source_of(tree_id)
     }
 
+    fn breaks_spelled_lf(&self, tree_id: crate::types::TreeId) -> bool {
+        self.tree.breaks_spelled_lf(tree_id)
+    }
+
     fn kind_of(&self, coord: &NodeCoordinate) -> Option<KindId> {
         self.tree.own(coord.tree)?;
         kind_from(&mut &self.region, coord)
@@ -2149,6 +2157,7 @@ impl<G: EngineGrammar> Engine<G> {
             tree,
             source: Arc::from(source),
             inferred,
+            breaks_lf: !source.contains('\r'),
             tree_id,
             lines: std::sync::OnceLock::new(),
             trivia: Placement::new(self.grammar.surface_kinds(), level_width),
@@ -2307,6 +2316,10 @@ fn align(items: &[SourceItem], written: &[crate::baseline::Item], steps: &mut u6
 impl<G: EngineGrammar> SourceTable for ParsedTree<G> {
     fn source_of(&self, tree_id: crate::types::TreeId) -> Option<&Arc<str>> {
         (tree_id == self.tree_id).then_some(&self.source)
+    }
+
+    fn breaks_spelled_lf(&self, tree_id: crate::types::TreeId) -> bool {
+        tree_id == self.tree_id && self.breaks_lf
     }
 
     fn kind_of(&self, coord: &NodeCoordinate) -> Option<KindId> {
@@ -2540,6 +2553,10 @@ impl<'t, G: EngineGrammar, H: std::hash::BuildHasher> ReadTrees<'t, G, H> {
 impl<G: EngineGrammar, H: std::hash::BuildHasher> SourceTable for ReadTrees<'_, G, H> {
     fn source_of(&self, tree_id: crate::types::TreeId) -> Option<&Arc<str>> {
         self.get(tree_id)?.source_of(tree_id)
+    }
+
+    fn breaks_spelled_lf(&self, tree_id: crate::types::TreeId) -> bool {
+        self.get(tree_id).is_some_and(|tree| tree.breaks_spelled_lf(tree_id))
     }
 
     fn kind_of(&self, coord: &NodeCoordinate) -> Option<KindId> {
@@ -3311,6 +3328,33 @@ mod tests {
     fn coordinate(tree: &ParsedTree<TestGrammar>, index: crate::types::NodeIndex) -> NodeCoordinate {
         let node = node_at_index(tree.tree(), index).expect("a node");
         NodeCoordinate::new(tree.tree_id(), index, index + crate::read::descendant_count(&node), Span::of(&node))
+    }
+
+    /// The parsed root of `source` rendered through the live trees, and the
+    /// texts `to_internal` scanned meanwhile.
+    fn root_rendered(source: &str) -> (String, usize) {
+        let (tree, _) = parsed(source);
+        let root = coordinate(&tree, NodeIndex::ROOT);
+        let trees = table(tree);
+        let sources = ReadTrees::new(&trees);
+        let scans = || crate::line_endings::SCANS.with(std::cell::Cell::get);
+        let before = scans();
+        let mut out = String::new();
+        let mut w = crate::spacing::SpacingWriter::new(&mut out, crate::spacing::WordMatcher::default_ident()).with_sources(&sources);
+        crate::render::Render::render(&SlotValue::<TestTrivia>::Coord(root), &mut w).expect("a render");
+        w.finish().expect("a finished render");
+        drop(w);
+        (out, scans() - before)
+    }
+
+    #[test]
+    fn a_source_with_no_carriage_return_enters_the_writer_unscanned_and_one_with_a_crlf_is_respelled() {
+        let (lf, unscanned) = root_rendered("fn f() {}\nfn g() {}\nfn h() {}\n");
+        assert_eq!(lf, "fn f() {}\nfn g() {}\nfn h() {}\n");
+        assert_eq!(unscanned, 0, "a slice of a source its parse found holds no `\\r` is not scanned");
+        let (mixed, scanned) = root_rendered("fn f() {}\nfn g() {}\r\nfn h() {}\n");
+        assert!(scanned > 0, "a source holding a `\\r` is respelled");
+        assert_eq!(mixed, lf, "its `\\r\\n` is written `\\n`");
     }
 
     #[test]

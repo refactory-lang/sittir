@@ -77,6 +77,7 @@ In flight as its own PR (prototype). Goldens from master, then the pass, with re
 
 **Files:**
 - Modify: `engine.rs`. The `SourceTable` implementations for `ParsedTree`, `ReadTrees` and `WithoutLayout`, plus `cursor_at`, `row_coordinate`, `line_starts_inside_tokens`, `last_list_child`, `edge_child`, `frame_levels` and `Lookups::baseline_gap`. Each reads through a `TreeNodes`.
+- Modify: `trivia_table.rs`. `DepthMembers::of` reads through the interface. In object storage it's still one walk per tree, on first use.
 - Modify: `napi_engine.rs`, the engine's tree functions (`descendants`, `siblings`, `planHolds`, `snapshot`, `text`, `coordinate`, the layout baseline, stored layout, `slotLayouts`, `separatorBefore` and `framedSpan`), plus `ArenaSources`.
 - Modify: `prepare.rs` (`ListTrees`) where it reads a tree.
 - Test: `rust/crates/sittir-core/tests/nodes.rs`.
@@ -97,7 +98,7 @@ In flight as its own PR (prototype). Goldens from master, then the pass, with re
 
 **Files:**
 - Modify: the hydrate derive (`sittir-node-macros/src/hydrate.rs`) and `arena/hydrate.rs`. Every child the records don't otherwise name gets a token span (index, start, end). These are anonymous tokens, extras, named units and flags, and named children a template writes.
-- Modify: `arena/rows.rs`. A `TreeArena` keeps each node's row: index, span, subtree end and kind.
+- Modify: `arena/rows.rs`. A `TreeArena` keeps each node's row (index, span, subtree end and kind) and the tree's depth members (`SurfaceKinds::indent` and `dedent` with their running net), recorded as the hydrate pass meets them. The record backer answers `depth_move` from these, so arena storage never walks the tree for them. A first render spent 71% of its time in that walk.
 - Modify: `nodes.rs`, adding the record backer.
 - Create: `packages/tools/src/validate/backer-parity.ts`, registered as `sittir tool backer-parity`. It's driven by prototype's corpus harness and reads `.ts` files only, never building or running anything from a corpus.
 - Test: `rust/crates/sittir-core/tests/nodes.rs` and `packages/tools/tests/backer-parity.test.ts`.
@@ -112,7 +113,8 @@ In flight as its own PR (prototype). Goldens from master, then the pass, with re
     - (Review Focus 2) python nested blocks, which have indent and dedent, and typescript statements ending by automatic semicolon;
     - (Review Focus 3) non-ASCII identifiers and strings;
   - `records_and_spans_cover_every_byte`: the spike's coverage check as a test. No uncovered byte, no overlap, no token-text mismatch;
-  - `record_words_are_unchanged`: Task 1's goldens still pass, because spans and rows sit beside the records.
+  - `record_words_are_unchanged`: Task 1's goldens still pass, because spans and rows sit beside the records;
+  - `depth_members_match_the_walk`: for every subtree of the fixtures, the recorded members give the same `between` as `DepthMembers::of`.
 - [ ] **Step 2:** Run them. They fail.
 - [ ] **Step 3: Implement.** Spans and rows are written during the hydrate pass. The tree is still kept.
 - [ ] **Step 4: Run `sittir tool backer-parity`** on matter.js 2078d664893d and next.js 4e5335a00314. 0 differing nodes. Then run the three-way verification in both storages.

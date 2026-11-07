@@ -1,6 +1,7 @@
 import {
 	isChoiceType,
 	isFieldType,
+	isPrecLike,
 	isPrecWrapper,
 	patternAcceptsEmpty,
 	realizesEmpty,
@@ -11,6 +12,9 @@ import {
 	isTokenWrapperType,
 	typeEq,
 	type EmptinessCtx,
+	type Peeled,
+	type PrecWrapperLike,
+	type PrecWrappersOf,
 	type RuntimeRule
 } from '../types/runtime-shapes.ts';
 import { escapeRegexLiteral, matchesWordShape, ruleToRegexSource, wordCharClass } from '../util/word-matcher.ts';
@@ -303,17 +307,29 @@ export function isMultiSlotRepeatElement(content: unknown, symbols: SymbolSource
 	return collectSlots(core.members, symbols.rules).length >= 2;
 }
 
-export function unwrapPrec(rule: unknown): unknown {
-	let cur = rule;
-	while (cur && typeof cur === 'object') {
-		const r = cur as Record<string, unknown>;
-		if (isPrecWrapper(r as { type: string })) {
-			cur = r.content;
-		} else {
-			break;
-		}
+export function peelPrecs<R>(rule: R): { precs: PrecWrappersOf<R>; core: Peeled<R> };
+export function peelPrecs(rule: unknown): { precs: PrecWrapperLike[]; core: unknown } {
+	const precs: PrecWrapperLike[] = [];
+	let core = rule;
+	while (isPrecLike(core)) {
+		precs.push(core);
+		core = core.content;
 	}
-	return cur;
+	return { precs, core };
+}
+
+export function unwrapPrec<R>(rule: R): Peeled<R>;
+export function unwrapPrec(rule: unknown): unknown {
+	return peelPrecs(rule).core;
+}
+
+export function unwrapPrecAndOptional(rule: AnyRule): AnyRule {
+	let node = unwrapPrec(rule);
+	for (;;) {
+		const optional = optionalContentOf(node);
+		if (optional === undefined) return node;
+		node = unwrapPrec(optional);
+	}
 }
 
 function isRepeatLike(t: string): boolean {
@@ -1476,15 +1492,9 @@ export function deriveComplexAliasTargetHidden(rules: Record<string, AnyRule>): 
 
 export function armsDifferOnlyByLiteralChoice<P extends PhaseName>(a: Rule<P>, b: Rule<P>): boolean {
 	let literalDeltas = 0;
-	const peel = (r: Rule<P>): Rule<P> => {
-		while (isPrecWrapper(r as { type: string }) && (r as { content?: Rule<P> }).content) {
-			r = (r as { content: Rule<P> }).content;
-		}
-		return r;
-	};
-	const same = (x: Rule<P>, y: Rule<P>): boolean => {
-		x = peel(x);
-		y = peel(y);
+	const same = (left: Rule<P>, right: Rule<P>): boolean => {
+		const x = unwrapPrec(left);
+		const y = unwrapPrec(right);
 		if (isLiteralChoiceContent(x) && isLiteralChoiceContent(y)) {
 			if (JSON.stringify(x) !== JSON.stringify(y)) literalDeltas++;
 			return true;

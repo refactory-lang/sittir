@@ -74,11 +74,19 @@ impl Tally {
     /// its line breaks alone when it breaks the line, its spaces and tabs
     /// otherwise.
     #[must_use]
-    pub fn spelling(self) -> String {
-        if self.breaks > 0 {
-            "\n".repeat(self.breaks as usize)
-        } else {
-            format!("{}{}", " ".repeat(self.spaces as usize), "\t".repeat(self.tabs as usize))
+    pub fn spelling(self) -> std::borrow::Cow<'static, str> {
+        const BREAKS: &str = "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n";
+        const SPACES: &str = "                                                                ";
+        const TABS: &str = "\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t";
+        let run = |run: &'static str, n: u32| match run.get(..n as usize) {
+            Some(spelled) => std::borrow::Cow::Borrowed(spelled),
+            None => std::borrow::Cow::Owned(run[..1].repeat(n as usize)),
+        };
+        match (self.breaks, self.spaces, self.tabs) {
+            (0, spaces, 0) => run(SPACES, spaces),
+            (0, 0, tabs) => run(TABS, tabs),
+            (0, spaces, tabs) => std::borrow::Cow::Owned(run(SPACES, spaces).into_owned() + &run(TABS, tabs)),
+            (breaks, ..) => run(BREAKS, breaks),
         }
     }
 }
@@ -494,6 +502,25 @@ mod tests {
         recorder.before_text(s);
         recorder.emitted(s);
         recorder.after_text(s);
+    }
+
+    #[test]
+    fn a_gap_is_spelled_by_its_breaks_or_else_its_spaces_then_tabs() {
+        let tally = |breaks, spaces, tabs| Tally { breaks, spaces, tabs };
+        for (gap, spelled) in [
+            (tally(0, 0, 0), String::new()),
+            (tally(2, 3, 1), "\n\n".to_owned()),
+            (tally(0, 4, 0), " ".repeat(4)),
+            (tally(0, 0, 2), "\t\t".to_owned()),
+            (tally(0, 2, 1), "  \t".to_owned()),
+            (tally(17, 0, 0), "\n".repeat(17)),
+            (tally(0, 65, 0), " ".repeat(65)),
+            (tally(0, 0, 17), "\t".repeat(17)),
+        ] {
+            assert_eq!(gap.spelling(), spelled, "{gap:?}");
+            assert_eq!(Tally::of(&gap.spelling()), if gap.breaks > 0 { tally(gap.breaks, 0, 0) } else { gap }, "{gap:?}");
+        }
+        assert!(matches!(tally(0, 8, 0).spelling(), std::borrow::Cow::Borrowed(_)), "a common gap borrows its spelling");
     }
 
     #[test]
