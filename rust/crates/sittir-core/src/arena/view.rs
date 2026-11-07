@@ -613,6 +613,13 @@ impl<'a, T, V: RecordView<'a, T>, const ADJACENT: bool> RecordSlot<'a, T, V, ADJ
         Self::of_cell(ctx, site, shape.key, ctx.slot_cell(words, at, shape))
     }
 
+    /// The slot at `site` that holds `cell`, a record the holder's own cell
+    /// names: an envelope over a list has no cell of its own for its content.
+    #[must_use]
+    pub fn of_record_cell(ctx: RecordCtx<'a, T>, site: Site<PrepPlace>, key: &'static str, cell: Cell) -> Self {
+        Self::of_cell(ctx, site, key, Ok(cell))
+    }
+
     /// The slot at `site` whose cell decoded as `decoded`. An unset single
     /// slot holds the unit its prepare defaulted it to, when it took one.
     fn of_cell(ctx: RecordCtx<'a, T>, site: Site<PrepPlace>, key: &'static str, decoded: Result<Cell, ArenaError>) -> Self {
