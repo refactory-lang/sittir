@@ -92,7 +92,7 @@ In flight as its own PR (prototype). Goldens from master, then the pass, with re
   - After this task, no function outside `nodes.rs` moves a tree-sitter cursor except the reader, on a cursor `TreeNodes` lends (`over`). The reader is the hydrate pass, the generated reads, `survey` and `read_units`.
 
 - [ ] **Step 1: Failing tests:**
-  - `no_tree_query_descends_from_the_root_per_call`: rendering the codemod case (one rename, one argument set, one statement inserted, as prototype's render profile) makes at most one root-down move per render call, through the Task 2 counter;
+  - `a_codemod_render_descends_from_the_root_as_often_over_80_functions_as_over_20`: rendering the codemod case (one rename, one argument set, one statement inserted, as prototype's render profile) makes the same number of root-down moves at either size, through the Task 2 counter, and no more than the count this task lands at. That count is a ceiling that only goes down. On master it grows with the root's width (29 at 20 functions, 89 at 80). The moves left are one per engine call JavaScript makes during `$render()`, plus one per native render pass that restarts at the file's start;
   - `line_starts_inside_a_multiline_token_hold`: a typescript template string and a python triple-quoted string spanning lines, with a multi-byte character before each, give the same line starts as today (Review Focus 3).
 - [ ] **Step 2:** Run them. They fail.
 - [ ] **Step 3: Implement.** Logic is unchanged. Only the way each function reaches a node changes.
