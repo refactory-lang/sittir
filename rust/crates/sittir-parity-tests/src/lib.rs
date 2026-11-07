@@ -276,6 +276,14 @@ pub fn wide_unit_blocks(levels: usize) -> String {
     format!("fn f(){{\n{}{}\nx\n{}\n}}\n", " ".repeat(levels), "{".repeat(levels), "}".repeat(levels))
 }
 
+/// `levels` rust `!` operators, each applied to the one after it:
+/// `!!true`. Every level is a layout owner of its own, so a snapshot places
+/// each on its own read.
+#[must_use]
+pub fn unary_chain(levels: usize) -> String {
+    format!("const X: bool = {}true;\n", "!".repeat(levels))
+}
+
 /// A rust tuple type of `members` `u8`s on one line: a flat list of unit
 /// kinds, which a record writes with no anchor of its own.
 #[must_use]

@@ -4,6 +4,7 @@
 //! serves every backer.
 
 use crate::types::{KindId, NodeIndex, Span};
+use std::ops::Range;
 use std::sync::Arc;
 
 /// What navigation reads of a node: its descendant index, its bytes, the
@@ -62,61 +63,97 @@ pub trait Nodes<'t> {
     fn parent(&mut self, index: NodeIndex) -> Option<NodeIndex>;
 }
 
-/// Navigation over a tree-sitter tree: one cursor, made on the first move,
-/// that moves from where it last stood, up to the lowest node that holds the
-/// next one and down from there (`read::goto_from`).
-pub struct TreeNodes<'t> {
+/// Navigation over a tree-sitter tree: a cursor moved from where it last
+/// stood, up to the lowest node that holds the next one and down from there
+/// (`read::goto_from`). A reader lends the cursor it reads with, so
+/// navigation starts where the reader stands; a node the lent cursor cannot
+/// reach, or any node when none is lent, is found with a cursor of the
+/// whole tree, made on the first such move.
+pub struct TreeNodes<'t, 'c> {
     tree: &'t tree_sitter::Tree,
     text: &'t str,
-    cursor: Option<tree_sitter::TreeCursor<'t>>,
+    lent: Option<Lent<'t, 'c>>,
+    own: Option<tree_sitter::TreeCursor<'t>>,
+    climbs: u32,
     root_descents: u32,
 }
 
-impl<'t> TreeNodes<'t> {
-    /// Navigation over `tree`, parsed from `text`.
+/// A reader's cursor, created at the node at `nodes.start`, whose subtree
+/// is `nodes`.
+struct Lent<'t, 'c> {
+    cursor: &'c mut tree_sitter::TreeCursor<'t>,
+    nodes: Range<NodeIndex>,
+}
+
+impl<'t, 'c> TreeNodes<'t, 'c> {
+    /// Navigation over `tree`, parsed from `text`, with no cursor lent.
     #[must_use]
     pub fn new(tree: &'t tree_sitter::Tree, text: &'t str) -> Self {
-        Self { tree, text, cursor: None, root_descents: 0 }
+        Self { tree, text, lent: None, own: None, climbs: 0, root_descents: 0 }
     }
 
-    /// The moves that started down from the root to a node below the
-    /// root's children: those whose target no node below the root on the
-    /// cursor's path holds.
+    /// Navigation over `tree`, parsed from `text`, that moves `cursor`,
+    /// created at the node at `nodes.start` and standing anywhere in that
+    /// node's subtree `nodes`, for every node of `nodes` but its first's
+    /// parent.
+    #[must_use]
+    pub fn over(tree: &'t tree_sitter::Tree, text: &'t str, cursor: &'c mut tree_sitter::TreeCursor<'t>, nodes: Range<NodeIndex>) -> Self {
+        Self { tree, text, lent: Some(Lent { cursor, nodes }), own: None, climbs: 0, root_descents: 0 }
+    }
+
+    /// The levels the cursors climbed to reach the nodes they moved to
+    /// (`read::goto_from`), which bound the levels they descended but for
+    /// the moves counted in `root_descents`.
+    #[must_use]
+    pub fn climbs(&self) -> u32 {
+        self.climbs
+    }
+
+    /// The moves that started down from the node their cursor was created
+    /// at to a node below its children: those whose target no node below
+    /// that one on the cursor's path holds.
     #[must_use]
     pub fn root_descents(&self) -> u32 {
         self.root_descents
     }
 
-    fn goto(&mut self, index: NodeIndex) -> &mut tree_sitter::TreeCursor<'t> {
+    /// The cursor standing on the node at `index`, the lent one when it
+    /// reaches the node and `lend` allows it, and the index of the node it
+    /// was created at.
+    fn goto(&mut self, index: NodeIndex, lend: bool) -> (&mut tree_sitter::TreeCursor<'t>, NodeIndex) {
         let tree = self.tree;
-        let cursor = self.cursor.get_or_insert_with(|| tree.walk());
-        let (_, from_root) = crate::read::goto_from_noting_top(cursor, NodeIndex::ROOT, index);
-        if from_root && index != NodeIndex::ROOT {
+        let (cursor, top) = match &mut self.lent {
+            Some(lent) if lend && lent.nodes.contains(&index) => (&mut *lent.cursor, lent.nodes.start),
+            _ => (self.own.get_or_insert_with(|| tree.walk()), NodeIndex::ROOT),
+        };
+        let (climbed, from_top) = crate::read::goto_from_noting_top(cursor, top, index);
+        self.climbs += climbed;
+        if from_top && index != top {
             cursor.goto_parent();
-            if crate::read::index_of(cursor) != NodeIndex::ROOT {
+            if crate::read::offset_of(cursor) != 0 {
                 self.root_descents += 1;
             }
-            crate::read::goto_from(cursor, NodeIndex::ROOT, index);
+            crate::read::goto_from(cursor, top, index);
         }
-        cursor
+        (cursor, top)
     }
 }
 
-impl<'t> Nodes<'t> for TreeNodes<'t> {
+impl<'t> Nodes<'t> for TreeNodes<'t, '_> {
     fn text(&self) -> &'t str {
         self.text
     }
 
     fn kid(&mut self, index: NodeIndex) -> Kid {
-        Kid::of(&self.goto(index).node(), index)
+        Kid::of(&self.goto(index, true).0.node(), index)
     }
 
     fn kids(&mut self, index: NodeIndex) -> Arc<[Kid]> {
-        let cursor = self.goto(index);
+        let (cursor, top) = self.goto(index, true);
         let mut kids = Vec::new();
         if cursor.goto_first_child() {
             loop {
-                kids.push(Kid::of(&cursor.node(), crate::read::index_of(cursor)));
+                kids.push(Kid::of(&cursor.node(), top + crate::read::offset_of(cursor)));
                 if !cursor.goto_next_sibling() {
                     break;
                 }
@@ -127,7 +164,11 @@ impl<'t> Nodes<'t> for TreeNodes<'t> {
     }
 
     fn parent(&mut self, index: NodeIndex) -> Option<NodeIndex> {
-        let cursor = self.goto(index);
-        cursor.goto_parent().then(|| crate::read::index_of(cursor))
+        if index == NodeIndex::ROOT {
+            return None;
+        }
+        let lend = self.lent.as_ref().is_none_or(|lent| lent.nodes.start != index);
+        let (cursor, top) = self.goto(index, lend);
+        cursor.goto_parent().then(|| top + crate::read::offset_of(cursor))
     }
 }

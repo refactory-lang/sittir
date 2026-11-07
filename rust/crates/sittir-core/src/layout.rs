@@ -173,6 +173,11 @@ pub struct LayoutWork {
     /// the nodes they looked up (`read::goto_from`), which bound the levels
     /// they descended.
     pub cursor_climbs: u32,
+    /// The moves trivia placement made down from the node its cursor was
+    /// created at, the tree's root or the node of a reader's cursor it moves,
+    /// to a node below that node's children (`nodes::TreeNodes::root_descents`):
+    /// the lookups whose descent `cursor_climbs` does not bound.
+    pub root_descents: u32,
     /// The nodes the depth moves of the tree's slices walked, its depth
     /// members found once for every move (`DepthMembers::of`).
     pub depth_nodes: u32,
@@ -196,6 +201,7 @@ pub struct LayoutWorkCounter {
     sibling_items: std::sync::atomic::AtomicU64,
     region_fallbacks: std::sync::atomic::AtomicU64,
     cursor_climbs: std::sync::atomic::AtomicU64,
+    root_descents: std::sync::atomic::AtomicU64,
     depth_nodes: std::sync::atomic::AtomicU64,
     record_nodes: std::sync::atomic::AtomicU64,
     gap_items: std::sync::atomic::AtomicU64,
@@ -218,6 +224,10 @@ impl LayoutWorkCounter {
         self.cursor_climbs.fetch_add(u64::from(n), std::sync::atomic::Ordering::Relaxed);
     }
 
+    pub fn root_descents(&self, n: u32) {
+        self.root_descents.fetch_add(u64::from(n), std::sync::atomic::Ordering::Relaxed);
+    }
+
     pub fn depth_nodes(&self, n: u32) {
         self.depth_nodes.fetch_add(u64::from(n), std::sync::atomic::Ordering::Relaxed);
     }
@@ -233,7 +243,7 @@ impl LayoutWorkCounter {
     /// The counts so far, with the tree's `records_rendered`.
     pub fn counts(&self, records_rendered: u32) -> LayoutWork {
         let read = |count: &std::sync::atomic::AtomicU64| u32::try_from(count.load(std::sync::atomic::Ordering::Relaxed)).unwrap_or(u32::MAX);
-        LayoutWork { region_nodes: read(&self.region_nodes), sibling_items: read(&self.sibling_items), region_fallbacks: read(&self.region_fallbacks), cursor_climbs: read(&self.cursor_climbs), depth_nodes: read(&self.depth_nodes), record_nodes: read(&self.record_nodes), records_rendered, gap_items: read(&self.gap_items) }
+        LayoutWork { region_nodes: read(&self.region_nodes), sibling_items: read(&self.sibling_items), region_fallbacks: read(&self.region_fallbacks), cursor_climbs: read(&self.cursor_climbs), root_descents: read(&self.root_descents), depth_nodes: read(&self.depth_nodes), record_nodes: read(&self.record_nodes), records_rendered, gap_items: read(&self.gap_items) }
     }
 }
 

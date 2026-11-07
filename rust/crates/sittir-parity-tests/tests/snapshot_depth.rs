@@ -1,7 +1,8 @@
 //! A snapshot's time grows linearly with its tree's depth: doubling a chain's
 //! depth doubles it, where a cost quadratic in the depth would quadruple it.
 //! The chain is timed on one line and with a line for each token, since the
-//! lines a run breaks to cost work of their own, and as nested blocks: a
+//! lines a run breaks to cost work of their own, as `!` operators, each a
+//! layout owner a snapshot places on a read of its own, and as nested blocks: a
 //! brace a line, each line indented a level deeper than the one before; all
 //! opened on one deeply indented line; and under an indentation unit as wide
 //! as the chain is deep. A flat tuple of `u8`s grows in width instead, its
@@ -12,7 +13,7 @@
 //! The test binary holds this one test, so no other test shares its process.
 
 use sittir_core::types::NodeIndex;
-use sittir_parity_tests::{block_chain, flat_tuple, indented_block_line, multiline_tuple_chain, on_deep_stack, parsed_rust, tuple_chain, wide_unit_blocks};
+use sittir_parity_tests::{block_chain, flat_tuple, indented_block_line, multiline_tuple_chain, on_deep_stack, parsed_rust, tuple_chain, unary_chain, wide_unit_blocks};
 use sittir_rust::render::AnyNode;
 use std::time::{Duration, Instant};
 
@@ -25,8 +26,9 @@ const LEVELS: [usize; 2] = if cfg!(debug_assertions) { [4_000, 8_000] } else { [
 type Chain = (&'static str, fn(usize) -> String);
 
 /// The chains timed in every build: tuple types nested on one line and
-/// with a line for each token, and a flat tuple as many `u8`s wide.
-const CHAINS: [Chain; 3] = [("on one line", tuple_chain), ("a line for each token", multiline_tuple_chain), ("a flat tuple of u8s", flat_tuple)];
+/// with a line for each token, `!` operators, and a flat tuple as many
+/// `u8`s wide.
+const CHAINS: [Chain; 4] = [("on one line", tuple_chain), ("a line for each token", multiline_tuple_chain), ("`!` operators", unary_chain), ("a flat tuple of u8s", flat_tuple)];
 
 /// The chains of nested blocks, timed in an optimized build alone.
 const BLOCKS: [Chain; 3] = [("nested blocks", block_chain), ("blocks opened on one indented line", indented_block_line), ("blocks under a wide indentation unit", wide_unit_blocks)];
