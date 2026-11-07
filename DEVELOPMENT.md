@@ -7,7 +7,10 @@ source for dev commands; other docs link here instead of restating them.
 
 Prerequisites: a Node release inside the root `package.json`'s
 `engines.node` range, [pnpm](https://pnpm.io), and a Rust toolchain
-(the native render engines are N-API crates built with `napi`).
+(the native render engines are N-API crates built with `napi`). On Linux,
+also [lld](https://lld.llvm.org) with `ld.lld` on `PATH`: the shared engine
+library links with it, because GNU ld refuses the second version script its
+exports need. On x86_64 glibc the Rust toolchain's own rust-lld serves.
 
 ```bash
 pnpm run setup
