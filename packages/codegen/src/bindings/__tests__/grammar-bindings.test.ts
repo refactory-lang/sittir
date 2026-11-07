@@ -74,6 +74,7 @@ const node = (kind: string, extra: Partial<ModelNode> = {}): ModelNode => ({
 	splitFrom: null,
 	aliasStorage: null,
 	interiorPart: null,
+	textLeavesThrough: [],
 	shownAs: [],
 	...extra
 });
@@ -231,6 +232,7 @@ describe('deriveGrammarBindings', () => {
 			splitFrom: null,
 			aliasStorage: null,
 			interiorPart: null,
+			textLeavesThrough: [],
 			shownAs: [],
 			...extra
 		});
@@ -269,6 +271,7 @@ describe('deriveGrammarBindings', () => {
 			splitFrom: null,
 			aliasStorage: null,
 			interiorPart: null,
+			textLeavesThrough: [],
 			shownAs: [],
 			...extra
 		});
@@ -880,6 +883,7 @@ describe('a child that shares a union slot', () => {
 					splitFrom: null,
 					aliasStorage: null,
 					interiorPart: null,
+					textLeavesThrough: [],
 					shownAs: []
 				} as ModelNode
 			]
@@ -959,6 +963,7 @@ describe('a claim on a supertype owner', () => {
 		splitFrom: null,
 		aliasStorage: null,
 		interiorPart: null,
+		textLeavesThrough: [],
 		shownAs: [],
 		...extra
 	});

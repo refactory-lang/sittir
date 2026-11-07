@@ -114,8 +114,8 @@ export function slotModelOf(record: NodeModelRecord): SlotModel {
 			variantOf: n.variantOf ?? null,
 			splitFrom: n.splitFrom ?? null,
 			aliasStorage: n.aliasStorage ?? null,
-			...(n.textLeavesThrough === undefined ? {} : { textLeavesThrough: n.textLeavesThrough }),
 			interiorPart: n.interiorPart ?? null,
+			textLeavesThrough: n.textLeavesThrough ?? [],
 			shownAs: n.shownAs ?? [],
 			...(n.modelType === 'list' && n.trailingDelimiter !== undefined
 				? { list: { trailing: n.trailingDelimiter, ...(n.separator === undefined ? {} : { separator: n.separator }), ...(n.singleElementNeedsTrailing === true ? { singleElementNeedsTrailing: true as const } : {}) } }

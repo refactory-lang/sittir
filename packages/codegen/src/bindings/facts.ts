@@ -201,8 +201,8 @@ export interface ModelNode {
 	readonly variantOf: string | null;
 	readonly splitFrom: string | null;
 	readonly aliasStorage: string | null;
-	readonly textLeavesThrough?: readonly string[];
 	readonly interiorPart: string | null;
+	readonly textLeavesThrough: readonly string[];
 	readonly shownAs: readonly string[];
 	readonly list?: ModelList;
 }
