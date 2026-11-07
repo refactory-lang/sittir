@@ -24,6 +24,7 @@ import type { ChildTest, GrammarRoutes, MemberRoute, ReadEntry, SlotStep } from 
 import { concreteKinds, guaranteedBy, heldSteps, modelNode, mountHoldersOf, reachedBy, shownSlots, valueTokensOf, type Guaranteed, type MountHolder } from '../../../bindings/routes.ts';
 import type { ModelMount, ModelSlot, SlotModel, TemplateFact } from '../../../bindings/facts.ts';
 import type { NodeMap } from '../../../compiler/types.ts';
+import { forwardedTargetKind } from '../../shared.ts';
 import { SEQ, STRING } from '../../../types/rule-types.ts'; // @rule-type-consts
 import type { RenderRule } from '../../../types/rule.ts';
 import {
@@ -1030,6 +1031,11 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 				})
 	);
 	const storageOf = (arm: Arm): string => storageName(arm.kind);
+	const variantOf = (arm: Arm): string => {
+		const envelopes = arm.site !== undefined ? [] : [...new Set(holderSlots.filter(({ kinds }) => kinds.has(arm.builds)).map(({ holder }) => holder))];
+		const [envelope] = envelopes;
+		return envelopes.length === 1 && variantChain(envelope!.kind).length > 0 && forwardedTargetKind(envelope!, nodeMap) === arm.builds ? envelope!.kind : storageOf(arm);
+	};
 	const isLeaf = (arm: Arm): boolean => textLeaf(arm.kind);
 	type Part = readonly [test: PortablePickTest | undefined, arms: readonly Arm[]];
 	let holders = new Map<Arm, (readonly [number, string])[]>();
@@ -1081,10 +1087,10 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 			return [true, false].map((set): Part => [{ flag, set }, group.filter((arm) => implied(arm, flag) === set)]);
 		},
 		(group) => {
-			const found = grammarDefault(group.map(storageOf));
+			const found = grammarDefault(group.map(variantOf));
 			if (found === undefined) return undefined;
-			const ordered = [...group].sort((a, b) => Number(storageOf(b) === found.kind) - Number(storageOf(a) === found.kind));
-			return ordered.map((arm): Part => [{ variant: found.supertype.kind, value: arm.arm.kind, ...(storageOf(arm) === found.kind ? { default: true as const } : {}) }, [arm]]);
+			const ordered = [...group].sort((a, b) => Number(variantOf(b) === found.kind) - Number(variantOf(a) === found.kind));
+			return ordered.map((arm): Part => [{ variant: found.supertype.kind, value: arm.arm.kind, ...(variantOf(arm) === found.kind ? { default: true as const } : {}) }, [arm]]);
 		},
 		(group) => {
 			const names = (arm: Arm): string[] => arm.arm.members.map((m) => m.name).sort();
@@ -1176,7 +1182,13 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 			if (!leaves && group.every((arm) => admittedAt(arm).length === 0)) diagnostics.push({ code: 'portable-pick-undecided', path, kinds: group.map((arm) => arm.kind) });
 			return group;
 		};
-		const ordered = decide(arms);
+		const memberNames = (arm: Arm): readonly string[] => arm.arm.members.map((member) => member.name);
+		const stated = new Set(arms.flatMap(memberNames));
+		const listed = new Set(arms.flatMap((arm) => arm.arm.members.filter((member) => member.list ?? member.multiple).map((member) => member.name)));
+		const missingOf = (arm: Arm): string[] => [...stated].filter((name) => !memberNames(arm).includes(name)).sort();
+		const emptyOf = (arm: Arm): string[] => (arm.text === undefined && arm.entry.empty === true ? missingOf(arm).filter((name) => listed.has(name)) : []);
+		const decidedOrder = decide(arms);
+		const ordered = [...decidedOrder.filter((arm) => emptyOf(arm).length > 0), ...decidedOrder.filter((arm) => emptyOf(arm).length === 0)];
 		const scalarArms = new Map<Arm, 'integer' | 'float'>();
 		for (const scalar of ['integer', 'float'] as const) {
 			const pool = ordered.filter((arm) => arm.scalar === scalar);
@@ -1196,14 +1208,10 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 			true: kindOf(arms.find((arm) => arm.value === true)),
 			false: kindOf(arms.find((arm) => arm.value === false))
 		});
-		const memberNames = (arm: Arm): readonly string[] => arm.arm.members.map((member) => member.name);
-		const stated = new Set(arms.flatMap(memberNames));
-		const listed = new Set(arms.flatMap((arm) => arm.arm.members.filter((member) => member.list ?? member.multiple).map((member) => member.name)));
 		for (const arm of arms) {
 			if (arm.text !== undefined) continue;
-			const missing = [...stated].filter((name) => !memberNames(arm).includes(name)).sort();
-			const empty = arm.entry.empty === true ? missing.filter((name) => listed.has(name)) : [];
-			const lacking = missing.filter((name) => !empty.includes(name));
+			const empty = emptyOf(arm);
+			const lacking = missingOf(arm).filter((name) => !empty.includes(name));
 			const own = tests.get(arm)!;
 			const presence = own.find((test): test is Extract<PortablePickTest, { readonly absent: readonly string[] }> => 'absent' in test);
 			const required = [...new Set([...(presence === undefined ? [] : presence.required), ...arm.required])].sort();

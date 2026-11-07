@@ -13362,6 +13362,10 @@ export const build: PortableBuildTable = {
 					flags: {},
 					when: [
 						{
+							variant: '_suite',
+							value: 301
+						},
+						{
 							empty: ['statements']
 						}
 					],
@@ -13474,7 +13478,13 @@ export const build: PortableBuildTable = {
 					],
 					presets: [],
 					flags: {},
-					when: [],
+					when: [
+						{
+							variant: '_suite',
+							value: 180,
+							default: true
+						}
+					],
 					holders: [[300, 'block']]
 				},
 				{
@@ -13569,7 +13579,12 @@ export const build: PortableBuildTable = {
 					],
 					presets: [],
 					flags: {},
-					when: [],
+					when: [
+						{
+							variant: '_suite',
+							value: 309
+						}
+					],
 					holders: [[310, 'blockClassDeclaration']]
 				},
 				{
@@ -13627,6 +13642,10 @@ export const build: PortableBuildTable = {
 					presets: [],
 					flags: {},
 					when: [
+						{
+							variant: '_suite',
+							value: 299
+						},
 						{
 							absent: [],
 							required: ['statements']

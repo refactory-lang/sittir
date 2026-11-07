@@ -145,6 +145,13 @@ describe('the portable build table', () => {
 		expect(armOf('rust', 'declaration.macro', rust.kinds.MacroDefinitionParen).when).toContainEqual({ variant: 'macro_definition', value: rust.kinds.MacroDefinitionParen, default: true });
 	});
 
+	it('counts an arm that is the whole content of a forwarding variant envelope as that variant, so the declared default leads after the empty-list pick', () => {
+		const block = armsOf('python', 'statement.block');
+		expect(block.slice(0, 2).map((arm) => arm.kind)).toEqual([python.kinds.SuiteEmpty, python.kinds.Block]);
+		expect(block[1]!.when).toContainEqual({ variant: '_suite', value: python.kinds.Block, default: true });
+		expect(armOf('python', 'statement.block', python.kinds.SuiteInline).when).toContainEqual({ variant: '_suite', value: python.kinds.SuiteInline });
+	});
+
 	it('tells forms apart by the kinds a member holds, where the member reaches them through the containers its slot holds', () => {
 		expect(armOf('rust', 'pattern.struct', rust.kinds.StructPattern).when).toEqual([
 			{ member: 'type', kinds: [rust.kinds.ScopedTypeIdentifier, rust.kinds.TypeIdentifier] },
