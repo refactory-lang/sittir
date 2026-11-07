@@ -268,7 +268,7 @@ export function listItemSlot(node: AssembledNode): AssembledNonterminal | undefi
 }
 
 function refuseSharedRowContent(envelope: string, name: string, content: AssembledNode | undefined): void {
-	if (content instanceof AssembledSupertype) return;
+	if (content instanceof AssembledSupertype || content instanceof AssembledList) return;
 	if (content?.unit === true)
 		throw emitShapeFailure({
 			code: 'envelope-holds-unit',
@@ -294,8 +294,10 @@ export function nodeArgs(
 	if (node instanceof AssembledAlias) {
 		const contents = envelopeContentKinds(node).map((name) => [name, ctx.nodeMap.nodes.get(name)] as const);
 		for (const [name, content] of contents) refuseSharedRowContent(node.kind, name, content);
+		refuseMixedListContent(node, ctx.nodeMap);
 		const wraps = contents.some(([, content]) => content instanceof AssembledSupertype);
-		return `kind = ${ctx.names.kind(node.aliasTypeId)}, display, content = content${wraps ? ', wraps_hidden' : ''}`;
+		const listed = envelopeContentIsList(node, ctx.nodeMap);
+		return `kind = ${ctx.names.kind(node.aliasTypeId)}, display, content = content${wraps ? ', wraps_hidden' : ''}${listed ? ', content_list' : ''}`;
 	}
 	if (ownId === undefined)
 		throw emitShapeFailure({
@@ -333,6 +335,27 @@ function envelopeContentKinds(envelope: AssembledAlias): string[] {
 	return envelope.slots.flatMap((slot) => slotKindNames(slot));
 }
 
+function envelopeConcreteContents(envelope: AssembledAlias, nodeMap: NodeMap): AssembledNode[] {
+	return envelopeContentKinds(envelope).flatMap((name) => concreteKindsOf(name, nodeMap)).flatMap((kind) => nodeMap.nodes.get(kind) ?? []);
+}
+
+export function envelopeContentIsList(envelope: AssembledAlias, nodeMap: NodeMap): boolean {
+	const contents = envelopeConcreteContents(envelope, nodeMap);
+	return contents.length > 0 && contents.every((content) => content instanceof AssembledList);
+}
+
+function refuseMixedListContent(envelope: AssembledAlias, nodeMap: NodeMap): void {
+	const contents = envelopeConcreteContents(envelope, nodeMap);
+	const lists = contents.filter((content) => content instanceof AssembledList);
+	if (lists.length === 0 || lists.length === contents.length) return;
+	throw emitShapeFailure({
+		code: 'envelope-mixes-list-content',
+		ownerKind: envelope.kind,
+		message: `the envelope ${envelope.kind} holds the list ${lists[0]!.kind} beside ${contents.find((content) => !(content instanceof AssembledList))!.kind}, so a list's charge would apply to one content and not the other`,
+		details: { envelope: envelope.kind, lists: lists.map((list) => list.kind) }
+	});
+}
+
 function flatEntriesOf(list: AssembledNode, ctx: ReadFactsCtx): readonly (readonly [AssembledNode, AssembledNonterminal])[] {
 	const item = listItemSlot(list);
 	const wrapper = ctx.wrappedLists.get(list.kind);
@@ -349,6 +372,7 @@ function refuseFlatListCycle(list: AssembledNode, ctx: ReadFactsCtx): void {
 				seen.add(kind);
 				const held = ctx.nodeMap.nodes.get(kind);
 				if (held instanceof AssembledAlias) {
+					if (envelopeContentIsList(held, ctx.nodeMap)) continue;
 					for (const content of envelopeContentKinds(held)) reach(content, from, [...envelopes, kind]);
 				} else if (held !== undefined && listItemSlot(held) !== undefined) {
 					const path = [...trail, from, ...envelopes, kind];
