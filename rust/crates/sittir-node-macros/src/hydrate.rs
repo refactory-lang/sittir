@@ -6,8 +6,10 @@
 //! value, an enum kind's member a unit. A struct's walk meets each child once:
 //! it reads the child (`Child::at`), routes it, and walks into it there and
 //! then, handing it over in `ReadCtx::at`, so the child's own walk asks the
-//! tree for none of its ids, row or span again. Every `HydrateNode` sits
-//! inside `::sittir_core::records_codec!`, beside the read it mirrors.
+//! tree for none of its ids, row or span again. A refusal anywhere below
+//! breaks the walk out of its children's loop, and the walk steps back to its
+//! own node before passing the refusal up. Every `HydrateNode` sits inside
+//! `::sittir_core::records_codec!`, beside the read it mirrors.
 
 use crate::attrs::{KindAttrs, SlotAttrs};
 use crate::codec::WireVariant;
@@ -121,7 +123,11 @@ fn routed(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn::Result
         let word = slot.cell.word.ok_or_else(|| syn::Error::new_spanned(field.ident, format!("`{}` is a record slot without its record cell (`word = …`)", field.ident)))?;
         if let Some(bit) = slot.cell.bit {
             starts.push(quote!(let mut #acc = false;));
-            takes.push(quote!(__rt::Route::Slot { slot: #id, .. } => <bool as __rt::ReadSlot>::take(&mut #acc, cursor, ctx, __rt::Depth::ONE, #site)?,));
+            takes.push(quote! {
+                __rt::Route::Slot { slot: #id, .. } => if let ::core::result::Result::Err(refusal) = <bool as __rt::ReadSlot>::take(&mut #acc, cursor, ctx, __rt::Depth::ONE, #site) {
+                    break 'walk ::core::result::Result::Err(::sittir_core::arena::HydrateError::from(refusal));
+                },
+            });
             finishes.push(quote!(records.flag(__draft, #word, #bit, #acc)?;));
             continue;
         }
@@ -131,7 +137,11 @@ fn routed(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn::Result
             starts.push(quote!(const _: () = assert!(#shape.forms & ::sittir_core::record::form::INLINE == 0, #message);));
         }
         starts.push(quote!(let mut #acc = <#ty as ::sittir_core::arena::HydrateSlot>::held();));
-        takes.push(quote!(__rt::Route::Slot { slot: #id, .. } => <#ty as ::sittir_core::arena::HydrateSlot>::take_held(&mut #acc, cursor, ctx, depth, #site, records, #shape, __draft)?,));
+        takes.push(quote! {
+            __rt::Route::Slot { slot: #id, .. } => if let ::core::result::Result::Err(refusal) = <#ty as ::sittir_core::arena::HydrateSlot>::take_held(&mut #acc, cursor, ctx, depth, #site, records, #shape, __draft) {
+                break 'walk ::core::result::Result::Err(refusal);
+            },
+        });
         separators.push(quote!(__rt::Route::Separator { slot: #id, tagged } => <#ty as ::sittir_core::arena::HydrateSlot>::separator_held(&mut #acc, tagged),));
         finishes.push(quote!(<#ty as ::sittir_core::arena::HydrateSlot>::finish_held(#acc, #site, #shape, __draft, records)?;));
     }
@@ -168,9 +178,12 @@ fn routed(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn::Result
         #(#starts)*
         #collect
         if cursor.goto_first_child() {
-            loop {
+            let __walked: ::core::result::Result<(), ::sittir_core::arena::HydrateError> = 'walk: loop {
                 let __child = __rt::Child::at(cursor);
-                let __route = __route(&__child)?;
+                let __route = match __route(&__child) {
+                    ::core::result::Result::Ok(route) => route,
+                    ::core::result::Result::Err(refusal) => break 'walk ::core::result::Result::Err(::sittir_core::arena::HydrateError::from(refusal)),
+                };
                 ctx.at = ::core::option::Option::Some(__child);
                 match __route {
                     #(#takes)*
@@ -179,10 +192,11 @@ fn routed(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn::Result
                 }
                 #keep
                 if !cursor.goto_next_sibling() {
-                    break;
+                    break 'walk ::core::result::Result::Ok(());
                 }
-            }
+            };
             cursor.goto_parent();
+            __walked?;
         }
         #(#finishes)*
         #end

@@ -282,7 +282,8 @@ pub fn row_of(at: &crate::read::Child, ctx: &ReadCtx<'_>) -> Row {
 /// in its holder's record, its own record written as its walk goes when it
 /// has one. `depth` is the levels the read reaches from the node, `None` past
 /// them; `inline` is where in its holder's cell its record is written. The
-/// derive writes every impl. The cursor ends where it started.
+/// derive writes every impl. The cursor ends where it started, whether the
+/// walk stands or is refused.
 pub trait HydrateNode: ReadNode + Stored {
     /// # Errors
     ///
