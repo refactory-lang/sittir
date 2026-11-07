@@ -113,6 +113,22 @@ fn root_descents<G: EngineGrammar + Copy>(name: &str, grammar: G, options: fn() 
     (nodes.root_descents(), lent.root_descents(), if grandchildren.len() > 1 { apart.root_descents() } else { 2 })
 }
 
+/// The lines under the root of `source` that begin inside a token, as its
+/// tree's source table gives them.
+fn line_starts<G: EngineGrammar>(grammar: G, options: ResolvedOptions, source: &str) -> Vec<u32> {
+    let parsed = parsed(grammar, options, source);
+    let root = parsed.row_coordinate(NodeIndex::ROOT).expect("the root's coordinate");
+    let starts = sittir_core::render::SourceTable::line_starts_inside_tokens(&parsed, &root);
+    assert!(starts.iter().all(|&at| source.is_char_boundary(at as usize) && source.as_bytes()[at as usize - 1] == b'\n'), "{source:?}: {starts:?}");
+    starts
+}
+
+#[test]
+fn line_starts_inside_a_multiline_token_hold() {
+    assert_eq!(line_starts(sittir_typescript::TypeScriptGrammar, sittir_typescript::render::options::defaults(), "const é = 1;\nconst t = `x\n  y\nz`;\n"), [27, 31]);
+    assert_eq!(line_starts(sittir_python::PythonGrammar, sittir_python::render::options::defaults(), "é = 1\ns = '''a\nb\n'''\n"), [16, 18]);
+}
+
 #[test]
 fn tree_nodes_never_descend_from_the_root_in_a_sweep() {
     let descents = each_grammar!(root_descents);
