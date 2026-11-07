@@ -26,7 +26,7 @@
 
 ## Global Constraints
 
-- **Worktree and branch:** engine-api's existing worktree, on a new branch `feat/trees-as-objects` from `origin/master`. No new worktrees. Pathspec commits. No force, stash, amend, rebase, revert or abort. Push by literal sha. Merge master in whenever it moves.
+- **Worktree and branch:** engine-api's one worktree, `scratchpad/wt-engine-api`, on a new branch `feat/trees-as-objects` from `origin/master`. No other worktrees. Pathspec commits. No force, stash, amend, rebase, revert or abort. Push by literal sha. Merge master in whenever it moves.
 - **No napi or V8 call runs off the JavaScript thread.** Parallel output stays byte-identical, and render stays a recursive descent.
 - **A borrow never blocks.** A borrow that's already held is refused, by a message naming the tree and the operation.
 - **No tree dispose API is added.** A tree is freed only when its last holder goes. In object storage a node's `[Symbol.dispose]` stays a no-op. In arena storage the parse root's existing `[Symbol.dispose]` and `engine.release(node)` drop its count, and releasing any other read handle still does nothing.
