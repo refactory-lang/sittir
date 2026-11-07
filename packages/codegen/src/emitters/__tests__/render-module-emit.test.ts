@@ -19,8 +19,7 @@ import { ENVELOPE_PINS } from '../envelope-claims.ts';
 import { collectKindEntries, findKindEntry } from '../kind-discriminant.ts';
 import { emitReadyModel } from '../../__tests__/helpers/emit-ready-model.ts';
 import { makeNodeMapWith, withGeneratedIdTables } from '../../__tests__/helpers/node-map-fixtures.ts';
-import { CHOICE, PATTERN, SUPERTYPE, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
-import type { SupertypeRule } from '../../types/rule.ts';
+import { PATTERN, SUPERTYPE, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
 import { runTemplateEmitter } from '../templates.ts';
 import type { NodeMap } from '../../compiler/types.ts';
 import { generatedFieldIds, type GeneratedKindEntry } from '../../dsl/symbol-table.ts';
@@ -995,7 +994,7 @@ describe('closeUsedSupertypes', () => {
 	const supertypeOf = (kind: string, members: readonly string[], kindEntries: readonly GeneratedKindEntry[]) =>
 		new AssembledSupertype(
 			kind,
-			{ type: SUPERTYPE, name: kind, subtypes: members.map((name) => ({ type: SYMBOL, name })) } as unknown as SupertypeRule,
+			{ type: SUPERTYPE, name: kind, subtypes: members.map((name) => ({ type: SYMBOL, name })) },
 			members.map((name) => ({ name })),
 			{ kindEntries }
 		);
