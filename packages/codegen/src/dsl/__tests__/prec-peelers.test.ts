@@ -1,5 +1,6 @@
 import { describe, expect, expectTypeOf, it } from 'vitest';
 import { peelPrecs, unwrapPrec, unwrapPrecAndOptional } from '../rule-patterns.ts';
+import { isPrecWrapper, isPrecWrapperType } from '../../types/runtime-shapes.ts';
 import type { AnyRule, PrecRule } from '../../types/rule.ts';
 
 const leaf = { type: 'PATTERN', value: 'x' } as unknown as AnyRule;
@@ -36,5 +37,10 @@ describe('the one precedence peeler', () => {
 		expectTypeOf(peelPrecs(prec).core).not.toEqualTypeOf<PrecRule<'evaluate'>>();
 		expectTypeOf(peelPrecs(prec).precs).toEqualTypeOf<PrecRule<'evaluate'>[]>();
 		expect(unwrapPrec(prec)).toBe(leaf);
+	});
+
+	it.each(['PREC', 'PREC_LEFT', 'PREC_RIGHT', 'PREC_DYNAMIC', 'RESERVED', 'TOKEN', 'FIELD', 'SEQ'])('names %s as a wrapper type exactly when the rule predicate does', (type) => {
+		expect(isPrecWrapperType(type)).toBe(isPrecWrapper({ type }));
+		expect(isPrecWrapperType(type)).toBe(['PREC', 'PREC_LEFT', 'PREC_RIGHT', 'PREC_DYNAMIC', 'RESERVED'].includes(type));
 	});
 });

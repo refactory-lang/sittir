@@ -65,9 +65,12 @@ export function isWrapperType(t: string): boolean {
 	);
 }
 
-export function isPrecWrapper(rule: { type: string }): boolean {
-	const t = rule.type;
+export function isPrecWrapperType(t: string): boolean {
 	return t === 'PREC' || t === 'PREC_LEFT' || t === 'PREC_RIGHT' || t === 'PREC_DYNAMIC' || t === 'RESERVED';
+}
+
+export function isPrecWrapper(rule: { type: string }): boolean {
+	return isPrecWrapperType(rule.type);
 }
 
 export interface PrecWrapperLike {
@@ -80,7 +83,7 @@ export type PrecWrappersOf<R> = [Extract<R, PrecWrapperLike>] extends [never] ? 
 export type Peeled<R> = Exclude<R, PrecWrapperLike> | (R extends PrecWrapperLike ? R['content'] : never);
 
 export function isPrecLike(rule: unknown): rule is PrecWrapperLike {
-	return typeof rule === 'object' && rule !== null && 'type' in rule && typeof rule.type === 'string' && 'content' in rule && isPrecWrapper({ type: rule.type });
+	return typeof rule === 'object' && rule !== null && 'type' in rule && typeof rule.type === 'string' && 'content' in rule && isPrecWrapperType(rule.type);
 }
 
 export function typeEq(t: unknown, upper: string): boolean {

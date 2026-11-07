@@ -81,7 +81,8 @@ const MODULES = {
 	wrap: '../../codegen/src/emitters/wrap.ts',
 	contentHash: '../../codegen/src/util/content-hash.ts',
 	writeFileAtomic: '../../codegen/src/util/write-file-atomic.ts',
-	vocabularyPaths: '../../codegen/src/bindings/vocabulary-paths.ts'
+	vocabularyPaths: '../../codegen/src/bindings/vocabulary-paths.ts',
+	runtimeShapes: '../../codegen/src/types/runtime-shapes.ts'
 } as const;
 
 // ---------------------------------------------------------------------------
@@ -128,6 +129,7 @@ export interface CodegenSurface {
 	from: typeof import('../../codegen/src/emitters/from.ts');
 	sitePreferences: typeof import('../../codegen/src/compiler/model/site-preferences.ts');
 	bind: typeof import('../../codegen/src/dsl/bind.ts');
+	runtimeShapes: typeof import('../../codegen/src/types/runtime-shapes.ts');
 	nodeModel: typeof import('../../codegen/src/emitters/node-model.ts');
 	sourceParser: typeof import('../../codegen/src/transpile/source-parser.ts');
 	evaluateForDerivation: typeof import('../../codegen/src/transpile/evaluate-for-derivation.ts');
