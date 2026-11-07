@@ -3,7 +3,6 @@ import type { NodeMapWithIdTables } from '../../../__tests__/helpers/node-map-fi
 import { CHOICE, FIELD, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, STRING, SYMBOL } from '../../../types/rule-types.ts'; // @rule-type-consts
 import { describe, it, expect } from 'vitest';
 import type { Rule } from '../../../types/rule.ts';
-import type { RawGrammar } from '../../types.ts';
 import { EmitHaltedError } from '../../../types/diagnostics.ts';
 import {
 	armConfigKeys,
