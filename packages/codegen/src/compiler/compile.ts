@@ -135,7 +135,7 @@ export function diagnoseGrammar(cfg: DiagnoseGrammarConfig): GrammarDiagnosis {
 		});
 	} catch (error) {
 		if (!(error instanceof CompilePhaseFailed)) throw error;
-		return { passed: false, stages, grammarDiagnostics: [...evaluateDiagnostics, ...error.records], blocked: error.records };
+		return { passed: false, stages, grammarDiagnostics: [...evaluateDiagnostics, ...error.carried, ...error.records], blocked: error.records };
 	}
 	const diagnosticRecords =
 		stages === undefined
