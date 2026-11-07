@@ -240,7 +240,8 @@ pub struct SpacingWriter<'a, W: std::fmt::Write + ?Sized> {
     /// verbatim; the next non-empty `write_text` takes it.
     tight: bool,
     /// The in-line run after the last verbatim text, written ahead of the
-    /// next text unless that text breaks the line.
+    /// next text unless that text breaks the line. Its breaks are spelled
+    /// `\n` as it enters, as every text the writer writes is.
     tail: Option<String>,
     /// While a trailing run defers, the length of the in-line run its
     /// opening verbatim text carries before it.
@@ -1195,7 +1196,7 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
             }
         }
         self.glued = (!s.is_empty()).then_some(Glued::of(after));
-        self.tail = after.filter(|run| !run.is_empty()).map(str::to_owned);
+        self.tail = after.filter(|run| !run.is_empty()).map(|run| crate::line_endings::to_internal(run).into_owned());
         Ok(())
     }
 
@@ -1408,8 +1409,13 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
             .is_some_and(|source| source.as_bytes().get(coord.span.end as usize) == Some(&b'\n'));
         let raw = if swallowed { crate::line_endings::without_swallowed_cr(raw) } else { raw };
         let reindented = self.reindented(coord, raw, sources);
-        let text = crate::line_endings::to_internal(&reindented);
-        let text = text.as_ref();
+        let respelled;
+        let text: &str = if sources.breaks_spelled_lf(coord.tree) {
+            &reindented
+        } else {
+            respelled = crate::line_endings::to_internal(&reindented);
+            &respelled
+        };
         let token = crate::render::RenderSink::kind_of(self, coord)
             .is_some_and(|kind| crate::render::RenderSink::kind_has(self, kind, crate::options::KindFlags::ANON));
         if !token {
@@ -2229,6 +2235,15 @@ mod sink_tests {
         w.seam(crate::layout_kinds::LayoutKinds::NEWLINE);
         w.text("y").unwrap();
         assert_eq!(s, "x\n  y");
+    }
+
+    #[test]
+    fn the_run_after_a_verbatim_text_enters_with_its_breaks_spelled_lf() {
+        let out = run(|w| {
+            w.verbatim(None, "// c", Some("\r\n  "), None).unwrap();
+            w.text("x").unwrap();
+        });
+        assert_eq!(out, "// c\n  x");
     }
 }
 
