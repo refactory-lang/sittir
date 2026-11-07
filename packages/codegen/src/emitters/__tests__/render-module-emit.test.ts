@@ -724,6 +724,20 @@ describe('node read facts', () => {
 		expect(nodeArgs(envelope, ownId(envelope), over, envelope.slots)).toMatch(/, display, content = content, content_list$/);
 		expect(nodeArgs(envelope, ownId(envelope), ctx, envelope.slots)).not.toMatch(/content_list/);
 		expect(() => nodeArgs(list, ownId(list), over, list.slots)).not.toThrow();
+		expect(nodeArgs(list, ownId(list), over, list.slots)).toMatch(/, shown_as = \[kind::_TYPE_IDENTIFIER, kind::_FIELD_IDENTIFIER, kind::_SHORTHAND_FIELD_IDENTIFIER\]/);
+		expect(nodeArgs(list, ownId(list), ctx, list.slots)).not.toMatch(/shown_as/);
+	});
+
+	it('refuses an envelope that holds more than one list, since its record is one list\'s', () => {
+		const first = node('FieldInitializerListElementsNode');
+		const second = node('ArgumentsElementsNode');
+		const envelope = node('TypeIdentifierNode');
+		const [content] = envelope.slots.flatMap((s) => slotKindNames(s));
+		const supertype = [...model.nodeMap.nodes.values()].find((n): n is AssembledSupertype => n instanceof AssembledSupertype && n.subtypeNames.length > 1)!;
+		const [firstMember, secondMember] = supertype.subtypeNames;
+		const nodes = new Map([...model.nodeMap.nodes, [content!, supertype], [firstMember!, first], [secondMember!, second]]);
+		const several = { ...ctx, nodeMap: { ...ctx.nodeMap, nodes } };
+		expect(() => nodeArgs(envelope, ownId(envelope), several, envelope.slots)).toThrow(`envelope-holds-several-lists: the envelope ${envelope.kind} holds the lists`);
 	});
 
 	it('refuses an envelope whose contents are a list and a kind that is not one', () => {

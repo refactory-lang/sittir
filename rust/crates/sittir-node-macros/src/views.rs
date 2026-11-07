@@ -357,6 +357,15 @@ pub fn structure(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn:
     } else {
         quote!(#accepts.then_some(::sittir_core::arena::RecordShape { words: #words, built_words: #built_words, cells: &[#(#cells),*] }))
     };
+    let accepts_method = if shown_as.is_empty() {
+        TokenStream::new()
+    } else {
+        quote! {
+            fn accepts(kind: ::sittir_core::types::KindId) -> bool {
+                #accepts
+            }
+        }
+    };
     Ok(gated(&quote! {
         #[doc = #doc]
         #[derive(Clone, Copy)]
@@ -375,6 +384,7 @@ pub fn structure(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn:
             fn claims(kind: ::sittir_core::types::KindId) -> bool {
                 #claims
             }
+            #accepts_method
             #[allow(unused_variables, reason = "a record with no settings reads no side record past its header")]
             fn from_cell(
                 ctx: ::sittir_core::arena::RecordCtx<'a, #trivia>,

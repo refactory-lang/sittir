@@ -14,7 +14,7 @@ use crate::attrs::KindAttrs;
 use crate::codec::WireVariant;
 use crate::expand::{Field, Role};
 use proc_macro2::TokenStream;
-use quote::quote;
+use quote::{quote, ToTokens};
 use syn::{Ident, Type};
 
 fn gated(items: &TokenStream) -> TokenStream {
@@ -98,6 +98,7 @@ pub fn structure(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>], trivia:
         return Err(syn::Error::new_spanned(view, format!("`{ident}` has a record view, so it names its kind and its prepare body (`prepare_fn = …`)")));
     };
     let claims = quote!(<#view<'_> as ::sittir_core::arena::RecordView<'_, #trivia>>::claims);
+    let accepts = quote!(<#view<'_> as ::sittir_core::arena::RecordView<'_, #trivia>>::accepts);
     let slots: Vec<(u32, &syn::LitStr)> = fields
         .iter()
         .filter_map(|field| match (&field.role, &field.key) {
@@ -116,41 +117,67 @@ pub fn structure(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>], trivia:
             };
             let node = crate::views::held(field.ty).map(|(node, _)| node).ok_or_else(|| syn::Error::new_spanned(field.ty, "a wrapper's content holds a `SlotValue<…>`"))?;
             let shape = crate::views::cell_shape(field, &slot.cell)?;
-            quote!(.or_else(|| ::sittir_core::arena::seat_through::<#trivia, #node>(prep, at, #claims, #shape, table, ctx)))
+            quote!(.or_else(|| ::sittir_core::arena::seat_through::<#trivia, #node>(prep, at, #accepts, #shape, table, ctx)))
         }
         None => TokenStream::new(),
     };
-    let methods = Methods {
-        claims: quote!(#claims(kind)),
-        prepare: quote! {
-            let mut record = ::sittir_core::arena::RecordAt::of(prep, at, #claims, |word| <Self as ::sittir_core::arena::PrepareRecord<#trivia>>::slot_key(#kind, word))?;
-            #prepare_fn(&mut record, prep, ctx)
-        },
-        takes_gaps: quote!(true),
-        seat: quote!(::sittir_core::arena::own_seat(prep, at, #kind, table) #through),
-        separator: quote!(::sittir_core::arena::record_source_separator(prep, at, #claims, ctx)),
-        snapshot: quote!(::sittir_core::arena::record_snapshot_edge(prep, at, #claims)),
-        kind_in: quote!(::sittir_core::arena::view_kind_in::<#trivia, #view<'_>>(prep, at, kinds)),
-        slot_key: quote! {
-            if !#claims(kind) {
-                return ::core::option::Option::None;
-            }
-            match word {
-                #(#keys)*
-                _ => ::core::option::Option::None,
-            }
-        },
-        slot_word: quote! {
-            if !#claims(kind) {
-                return ::core::option::Option::None;
-            }
-            match key {
-                #(#words)*
-                _ => ::core::option::Option::None,
-            }
-        },
+    let methods = if attrs.content_list {
+        shared_record_methods(ident, attrs, fields, trivia, &claims, &kind.to_token_stream())?
+    } else {
+        Methods {
+            claims: quote!(#claims(kind)),
+            prepare: quote! {
+                let mut record = ::sittir_core::arena::RecordAt::of(prep, at, #accepts, |word| <Self as ::sittir_core::arena::PrepareRecord<#trivia>>::slot_key(#kind, word))?;
+                #prepare_fn(&mut record, prep, ctx)
+            },
+            takes_gaps: quote!(true),
+            seat: quote!(::sittir_core::arena::own_seat(prep, at, #kind, table) #through),
+            separator: quote!(::sittir_core::arena::record_source_separator(prep, at, #accepts, ctx)),
+            snapshot: quote!(::sittir_core::arena::record_snapshot_edge(prep, at, #accepts)),
+            kind_in: quote!(::sittir_core::arena::view_kind_in::<#trivia, #view<'_>>(prep, at, kinds)),
+            slot_key: quote! {
+                if !#accepts(kind) {
+                    return ::core::option::Option::None;
+                }
+                match word {
+                    #(#keys)*
+                    _ => ::core::option::Option::None,
+                }
+            },
+            slot_word: quote! {
+                if !#accepts(kind) {
+                    return ::core::option::Option::None;
+                }
+                match key {
+                    #(#words)*
+                    _ => ::core::option::Option::None,
+                }
+            },
+        }
     };
     Ok(implementation(ident, trivia, &TokenStream::new(), &TokenStream::new(), &methods))
+}
+
+/// An envelope over a list prepares as the list does, since the two share one
+/// record and one side record: every method but the seat and the kind test is
+/// the list's, asked of the same cell.
+fn shared_record_methods(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>], trivia: &TokenStream, claims: &TokenStream, kind: &TokenStream) -> syn::Result<Methods> {
+    let content = attrs.content.as_ref().ok_or_else(|| syn::Error::new_spanned(ident, "an envelope names its content field: `content = …`"))?;
+    let field = fields.iter().find(|field| field.ident == content).ok_or_else(|| syn::Error::new_spanned(content, "`content` names one of the envelope's fields"))?;
+    let (inner, _) = crate::views::held(field.ty).ok_or_else(|| syn::Error::new_spanned(field.ty, "an envelope's content holds a `SlotValue<…>`"))?;
+    let view = attrs.view.as_ref().ok_or_else(|| syn::Error::new_spanned(ident, "an envelope over a list has a record view"))?;
+    let list = quote!(<#inner as ::sittir_core::arena::PrepareRecord<#trivia>>);
+    Ok(Methods {
+        claims: quote!(#claims(kind)),
+        prepare: quote!(#list::prepare_record(prep, at, ctx)),
+        takes_gaps: quote!(#list::takes_gaps(cell)),
+        seat: quote!(::sittir_core::arena::own_seat(prep, at, #kind, table)),
+        separator: quote!(#list::source_separator(prep, at, ctx)),
+        snapshot: quote!(#list::snapshot_edge(prep, at)),
+        kind_in: quote!(::sittir_core::arena::view_kind_in::<#trivia, #view<'_>>(prep, at, kinds)),
+        slot_key: quote!(#list::slot_key(kind, word)),
+        slot_word: quote!(#list::slot_word(kind, key)),
+    })
 }
 
 /// A choice's, beside its view: none where it has no view.
@@ -302,15 +329,42 @@ mod tests {
         .expect("expands");
         assert!(has(&out, "::sittir_core::arena::PrepareRecord<<Option<Box<NodeLayout>> as ::sittir_core::arena::LayoutField>::Trivia> for StatementNode"));
         let trivia = "<Option<Box<NodeLayout>> as ::sittir_core::arena::LayoutField>::Trivia";
-        let claims = format!("<StatementNodeRecord<'_> as ::sittir_core::arena::RecordView<'_, {trivia}>>::claims");
-        assert!(has(&out, &format!("::sittir_core::arena::RecordAt::of(prep, at, {claims}, |word| <Self as ::sittir_core::arena::PrepareRecord<{trivia}>>::slot_key(kind::EXPRESSION_STATEMENT, word))?; prepare_statement(&mut record, prep, ctx)")));
-        assert!(has(&out, &format!("if !{claims}(kind) {{ return ::core::option::Option::None; }} match word {{ 2u32 => ::core::option::Option::Some(\"_content\"), _ => ::core::option::Option::None, }}")));
-        assert!(has(&out, &format!("if !{claims}(kind) {{ return ::core::option::Option::None; }} match key {{ \"_content\" => ::core::option::Option::Some(2u32), _ => ::core::option::Option::None, }}")));
-        assert!(has(&out, &format!("::sittir_core::arena::own_seat(prep, at, kind::EXPRESSION_STATEMENT, table).or_else(|| ::sittir_core::arena::seat_through::<{trivia}, ExpressionNode>(prep, at, {claims}, ::sittir_core::arena::CellShape {{ word: 2u32, width: 3u32, run: ::core::option::Option::None, inline: 0u32, forms: 1u8, built: 2u32, key: \"_content\" }}, table, ctx))")));
+        let accepts = format!("<StatementNodeRecord<'_> as ::sittir_core::arena::RecordView<'_, {trivia}>>::accepts");
+        assert!(has(&out, &format!("::sittir_core::arena::RecordAt::of(prep, at, {accepts}, |word| <Self as ::sittir_core::arena::PrepareRecord<{trivia}>>::slot_key(kind::EXPRESSION_STATEMENT, word))?; prepare_statement(&mut record, prep, ctx)")));
+        assert!(has(&out, &format!("if !{accepts}(kind) {{ return ::core::option::Option::None; }} match word {{ 2u32 => ::core::option::Option::Some(\"_content\"), _ => ::core::option::Option::None, }}")));
+        assert!(has(&out, &format!("if !{accepts}(kind) {{ return ::core::option::Option::None; }} match key {{ \"_content\" => ::core::option::Option::Some(2u32), _ => ::core::option::Option::None, }}")));
+        assert!(has(&out, &format!("::sittir_core::arena::own_seat(prep, at, kind::EXPRESSION_STATEMENT, table).or_else(|| ::sittir_core::arena::seat_through::<{trivia}, ExpressionNode>(prep, at, {accepts}, ::sittir_core::arena::CellShape {{ word: 2u32, width: 3u32, run: ::core::option::Option::None, inline: 0u32, forms: 1u8, built: 2u32, key: \"_content\" }}, table, ctx))")));
         assert!(has(&out, "::sittir_core::arena::view_kind_in::<<Option<Box<NodeLayout>> as ::sittir_core::arena::LayoutField>::Trivia, StatementNodeRecord<'_>>(prep, at, kinds)"));
         assert!(has(&out, "impl<'r> StatementPrepare for ::sittir_core::arena::RecordAt<'r, <Option<Box<NodeLayout>> as ::sittir_core::arena::LayoutField>::Trivia>"));
         assert!(has(&out, "type Content<'a> = ::sittir_core::arena::SlotAt<'r, <Option<Box<NodeLayout>> as ::sittir_core::arena::LayoutField>::Trivia, ExpressionNode, false> where Self: 'a;"));
         assert!(has(&out, "StatementPrepareParts { layout: self.layout(), content: self.slot::<ExpressionNode, false>(::sittir_core::arena::CellShape { word: 2u32, width: 3u32, run: ::core::option::Option::None, inline: 0u32, forms: 1u8, built: 2u32, key: \"_content\" }), }"));
+    }
+
+    #[test]
+    fn an_envelope_over_a_list_prepares_as_the_list_over_the_same_cell() {
+        let out = expand(&parse_quote! {
+            #[node(kind = kind::ELEMENT_BINDING, display, content = content, content_list, words = 5, built_words = 3, fields = BindingFields, prepare = BindingPrepare, view = BindingNodeRecord, prepare_fn = prepare_binding)]
+            pub struct BindingNode {
+                #[wire(key = "$_layout")]
+                #[layout]
+                pub layout: Option<Box<NodeLayout>>,
+                #[height]
+                height: u16,
+                #[wire(key = "_content")]
+                #[slot(field = field::CONTENT, word = 2, width = 3, forms = 1, built = 2)]
+                pub content: SlotValue<ArgumentsNode>,
+            }
+        })
+        .expect("expands");
+        let list = "<ArgumentsNode as ::sittir_core::arena::PrepareRecord<<Option<Box<NodeLayout>> as ::sittir_core::arena::LayoutField>::Trivia>>";
+        assert!(has(&out, &format!("{list}::prepare_record(prep, at, ctx)")));
+        assert!(has(&out, &format!("{list}::takes_gaps(cell)")));
+        assert!(has(&out, &format!("{list}::source_separator(prep, at, ctx)")));
+        assert!(has(&out, &format!("{list}::snapshot_edge(prep, at)")));
+        assert!(has(&out, &format!("{list}::slot_key(kind, word)")));
+        assert!(has(&out, &format!("{list}::slot_word(kind, key)")));
+        assert!(has(&out, "::sittir_core::arena::own_seat(prep, at, kind::ELEMENT_BINDING, table)"));
+        assert!(!has(&out, "prepare_binding(&mut record"));
     }
 
     #[test]

@@ -308,10 +308,12 @@ export function nodeArgs(
 		});
 	const folded = foldedTokens(ownId, ctx);
 	const displays = layoutDisplaysOf(node).flatMap((display) => findKindEntry(ctx.kindEntries, display.kind)?.id ?? []);
+	const shown = envelopesOverList(node, ctx.nodeMap);
 	const kind = [
 		`kind = ${ctx.names.kind(ownId)}`,
 		...(folded.length === 0 ? [] : [`folded = [${folded.map((id) => ctx.names.kind(id)).join(', ')}]`]),
-		...(displays.length === 0 ? [] : [`displays = [${displays.map((id) => ctx.names.kind(id)).join(', ')}]`])
+		...(displays.length === 0 ? [] : [`displays = [${displays.map((id) => ctx.names.kind(id)).join(', ')}]`]),
+		...(shown.length === 0 ? [] : [`shown_as = [${shown.map((envelope) => ctx.names.kind(envelope.aliasTypeId)).join(', ')}]`])
 	].join(', ');
 	if (isTextLeaf(node)) {
 		const fixed = kindIdText(node);
@@ -344,9 +346,40 @@ export function envelopeContentIsList(envelope: AssembledAlias, nodeMap: NodeMap
 	return contents.length > 0 && contents.every((content) => content instanceof AssembledList);
 }
 
+const envelopesOverLists = new WeakMap<NodeMap, ReadonlyMap<string, readonly AssembledAlias[]>>();
+
+export function listContentsOf(envelope: AssembledAlias, nodeMap: NodeMap): readonly AssembledNode[] {
+	return envelopeContentIsList(envelope, nodeMap) ? envelopeConcreteContents(envelope, nodeMap) : [];
+}
+
+export function envelopesOverList(list: AssembledNode, nodeMap: NodeMap): readonly AssembledAlias[] {
+	let byList = envelopesOverLists.get(nodeMap);
+	if (byList === undefined) {
+		const built = new Map<string, AssembledAlias[]>();
+		for (const node of nodeMap.nodes.values()) {
+			if (!(node instanceof AssembledAlias)) continue;
+			for (const content of listContentsOf(node, nodeMap)) {
+				const held = built.get(content.kind) ?? [];
+				if (!held.includes(node)) built.set(content.kind, [...held, node]);
+			}
+		}
+		byList = built;
+		envelopesOverLists.set(nodeMap, byList);
+	}
+	return byList.get(list.kind) ?? [];
+}
+
 function refuseMixedListContent(envelope: AssembledAlias, nodeMap: NodeMap): void {
 	const contents = envelopeConcreteContents(envelope, nodeMap);
 	const lists = contents.filter((content) => content instanceof AssembledList);
+	if (new Set(lists.map((list) => list.kind)).size > 1) {
+		throw emitShapeFailure({
+			code: 'envelope-holds-several-lists',
+			ownerKind: envelope.kind,
+			message: `the envelope ${envelope.kind} holds the lists ${[...new Set(lists.map((list) => list.kind))].join(', ')}, and its record is one list's under the envelope kind, so nothing in it says which`,
+			details: { envelope: envelope.kind, lists: lists.map((list) => list.kind) }
+		});
+	}
 	if (lists.length === 0 || lists.length === contents.length) return;
 	throw emitShapeFailure({
 		code: 'envelope-mixes-list-content',

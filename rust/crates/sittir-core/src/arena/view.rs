@@ -434,6 +434,14 @@ pub trait RecordView<'a, T>: Sized {
     /// own kind, a variant's, a member's, or blank text for verbatim text.
     fn claims(kind: KindId) -> bool;
 
+    /// Whether a cell of `kind` is a record this view reads: `claims`, and
+    /// the envelope kinds the record is written under where a list is shown
+    /// as them. A choice dispatches by `claims`, never by this.
+    #[must_use]
+    fn accepts(kind: KindId) -> bool {
+        Self::claims(kind)
+    }
+
     /// The view of the value `cell` names, at `site` in its holder; a root
     /// has none.
     ///
