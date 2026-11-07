@@ -471,10 +471,12 @@ function applyKindMatchToShownAlias(
 	enclosing: readonly RuntimeRule[] | undefined,
 	insideNamedField: boolean
 ): WalkResult | undefined {
-	const shown = rule as unknown as { named?: boolean; value?: string };
-	if (shown.named !== true || shown.value !== segment.name || rest.length > 0 || segment.as !== undefined) return undefined;
+	const shown = rule as unknown as { named?: boolean; value?: string; content: { name: string } };
+	if (shown.named !== true || shown.value !== segment.name) return undefined;
 	if (insideNamedField) return { rule, matched: false };
-	return { rule: typeof patch === 'function' ? patch(rule, enclosing) : patch, matched: true };
+	if (rest.length === 0 && segment.as === undefined) return { rule: typeof patch === 'function' ? patch(rule, enclosing) : patch, matched: true };
+	const reached = reachedRule(shown.content.name);
+	return { rule: enteredCopy(shown.content as unknown as RuntimeRule, reached.request, (body) => applyPath(body, rest, patch), segment.as ?? shown.value), matched: true };
 }
 
 function walkMatches(

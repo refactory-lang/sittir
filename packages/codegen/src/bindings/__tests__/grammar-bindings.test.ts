@@ -410,6 +410,27 @@ describe('deriveGrammarBindings', () => {
 		]);
 	});
 
+	it('names a step through a kind a merge shows under its path by the name the merge shows it as, keeping the clone named by the kind', () => {
+		const symbol = (name: string) => ({ type: 'SYMBOL', name });
+		const rules = {
+			...base.rules,
+			trait_x: { type: 'SEQ', members: [{ type: 'STRING', value: 'trait' }, { type: 'FIELD', name: 'body', content: symbol('list_x') }] },
+			list_x: { type: 'REPEAT', content: symbol('fn_x') },
+			inline_x: { type: 'SEQ', members: [{ type: 'STRING', value: ':' }, symbol('fn_x')] },
+			fn_x: { type: 'SEQ', members: [{ type: 'STRING', value: 'fn' }, symbol('identifier')] }
+		};
+		const facts: BindingFacts = {
+			...FACTS,
+			claims: [claim('statement.block', 'list_x'), claim('statement.block', 'inline_x'), claim('declaration.method', 'fn_x', { toplevel: false, within: ['list_x', 'trait_x'] })],
+			members: []
+		};
+		const { bindings, report } = bind({ file: FILE, facts, base: { ...base, rules }, vocabMembers: VOCABULARY, routes: ROUTES, model: NO_MODEL } as never);
+		expect(report.aliases).toEqual({ list_x: 'block_statement', inline_x: 'block_statement' });
+		expect(bindings.splits).toEqual([
+			{ owner: 'trait_x', path: [{ field: 'body', kind: 'block_statement', as: 'trait_x_body' }, { field: null, kind: 'fn_x', as: null }], as: 'method_declaration' }
+		]);
+	});
+
 	it('places a split at a site that shows a hidden rule as a copy of that rule, stepping over the group lift that holds the site', () => {
 		const symbol = (name: string) => ({ type: 'SYMBOL', name });
 		const shown = { type: 'ALIAS', named: true, value: 'arg_z', content: symbol('_arg_z') };

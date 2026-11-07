@@ -534,7 +534,7 @@ export function deriveGrammarBindings(input: GrammarBindingsInput): {
 		const copies = ruleNames.has(split.kind) ? undefined : aliasSourceOf(rules, split.kind);
 		return {
 			owner,
-			path: split.steps.map(({ kind, field }, i) => ({ field: field?.name ?? null, kind, as: cloneName(kind, i) })),
+			path: split.steps.map(({ kind, field }, i) => ({ field: field?.name ?? null, kind: Object.hasOwn(aliases, kind) ? aliases[kind]! : kind, as: cloneName(kind, i) })),
 			as: split.as,
 			...(copies === undefined ? {} : { copies }),
 			...(split.literal === undefined ? {} : { literal: split.literal })
