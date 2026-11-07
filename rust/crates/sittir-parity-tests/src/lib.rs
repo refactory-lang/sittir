@@ -203,7 +203,7 @@ impl PlacedTrivia {
     pub fn of(tree: &tree_sitter::Tree, source: &str, kinds: sittir_core::trivia_table::SurfaceKinds, unit: u32) -> Self {
         let lines = sittir_core::points::LineTable::new(source);
         let placement = sittir_core::trivia_table::Placement::new(kinds, unit);
-        placement.place_all(sittir_core::trivia_table::Source { tree, source, lines: &lines });
+        placement.place_all(sittir_core::trivia_table::Source { nodes: &mut sittir_core::nodes::TreeNodes::new(tree, source), lines: &lines });
         let sides = placement.tables().flat_map(|table| table.sides().map(|(key, entries)| (key, entries.to_vec())).collect::<Vec<_>>()).collect();
         Self { placement, sides }
     }
@@ -274,6 +274,14 @@ pub fn indented_block_line(levels: usize) -> String {
 #[must_use]
 pub fn wide_unit_blocks(levels: usize) -> String {
     format!("fn f(){{\n{}{}\nx\n{}\n}}\n", " ".repeat(levels), "{".repeat(levels), "}".repeat(levels))
+}
+
+/// `levels` rust `!` operators, each applied to the one after it:
+/// `!!true`. Every level is a layout owner of its own, so a snapshot places
+/// each on its own read.
+#[must_use]
+pub fn unary_chain(levels: usize) -> String {
+    format!("const X: bool = {}true;\n", "!".repeat(levels))
 }
 
 /// A rust tuple type of `members` `u8`s on one line: a flat list of unit

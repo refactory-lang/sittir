@@ -1316,23 +1316,30 @@ impl<G: EngineGrammar> ParsedTree<G> {
         })
     }
 
-    /// What the tree's trivia placement reads: its tree, source and row
-    /// starts.
-    fn trivia_source(&self) -> crate::trivia_table::Source<'_> {
-        crate::trivia_table::Source { tree: &self.tree, source: &self.source, lines: self.lines() }
+    /// The tree's nodes as trivia placement reads them, through the
+    /// navigation interface that moves the cursor `nodes` looks nodes up
+    /// with (`Nodes::navigate`), with their text's row starts. Its moves
+    /// count in `LayoutWork::cursor_climbs` and `LayoutWork::root_descents`.
+    fn with_trivia_source<'t, N: Nodes<'t>, R>(&'t self, nodes: &mut N, f: impl FnOnce(crate::trivia_table::Source<'t, '_>) -> R) -> R {
+        nodes.navigate(&self.tree, &self.source, |navigation| {
+            let answer = f(crate::trivia_table::Source { nodes: &mut *navigation, lines: self.lines() });
+            self.work.cursor_climbs(navigation.climbs());
+            self.work.root_descents(navigation.root_descents());
+            answer
+        })
     }
 
     /// The tree's trivia with every layout owner placed.
     pub fn placed_trivia(&self) -> &Placement {
-        self.trivia.place_all(self.trivia_source());
+        self.with_trivia_source(&mut &self.tree, |source| self.trivia.place_all(source));
         &self.trivia
     }
 
     /// The table of the layout owner that holds `side` of the node at
-    /// `index`, placed on its first read, each node it reads found through `nodes`
+    /// `index`, placed on its first read with `nodes`'s cursor
     /// (`Placement::cover`).
-    fn cover_side<'t>(&'t self, nodes: crate::trivia_table::Lookup<'_, 't>, index: crate::types::NodeIndex, side: TriviaSide) -> Option<&'t crate::trivia_table::Table> {
-        self.trivia.cover(self.trivia_source(), nodes, index, side)
+    fn cover_side<'t, N: Nodes<'t>>(&'t self, nodes: &mut N, index: crate::types::NodeIndex, side: TriviaSide) -> Option<&'t crate::trivia_table::Table> {
+        self.with_trivia_source(nodes, |source| self.trivia.cover(source, index, side))
     }
 
     /// The entries of `side` of the node at `index`: the ones a write gave it,
@@ -1362,7 +1369,7 @@ impl<G: EngineGrammar> ParsedTree<G> {
     /// `Table::adjacency`) is no layout: it is an entry of the source, as an
     /// `ERROR` is.
     fn assigned_side<'t, N: Nodes<'t>>(&'t self, nodes: &mut N, index: crate::types::NodeIndex, side: TriviaSide, deviation: Option<Deviation<N, G::Trivia>>) -> Vec<SideEntry<G::Trivia>> {
-        let Some(table) = self.cover_side(&mut |at| nodes.node(at), index, side) else { return Vec::new() };
+        let Some(table) = self.cover_side(nodes, index, side) else { return Vec::new() };
         let assigned = table.side(index, side);
         if assigned.is_empty() {
             return Vec::new();
@@ -1484,6 +1491,14 @@ type Deviation<N, T> = fn(&mut N, RunId) -> Option<T>;
 trait Nodes<'t> {
     /// The node at descendant `index`, or `None` past the tree's last node.
     fn node(&mut self, index: NodeIndex) -> Option<tree_sitter::Node<'t>>;
+
+    /// What `f` answers given navigation over `tree`, parsed from `text`,
+    /// that moves the cursor this lookup finds nodes with from where it
+    /// stands, for every node that cursor reaches (`TreeNodes::over`);
+    /// with no cursor, navigation of its own (`TreeNodes::new`).
+    fn navigate<R>(&mut self, tree: &'t tree_sitter::Tree, text: &'t str, f: impl FnOnce(&mut crate::nodes::TreeNodes<'t, '_>) -> R) -> R {
+        f(&mut crate::nodes::TreeNodes::new(tree, text))
+    }
 }
 
 /// A tree finds each node from its root (`node_at_index`).
@@ -1517,6 +1532,11 @@ struct Lookups<'t, G: EngineGrammar> {
 impl<'t, G: EngineGrammar> Nodes<'t> for Lookups<'t, G> {
     fn node(&mut self, index: NodeIndex) -> Option<tree_sitter::Node<'t>> {
         self.goto(index).then(|| self.cursor.node())
+    }
+
+    fn navigate<R>(&mut self, tree: &'t tree_sitter::Tree, text: &'t str, f: impl FnOnce(&mut crate::nodes::TreeNodes<'t, '_>) -> R) -> R {
+        let nodes = NodeIndex::ROOT..NodeIndex::ROOT + crate::read::descendant_count(&tree.root_node());
+        f(&mut crate::nodes::TreeNodes::over(tree, text, &mut self.cursor, nodes))
     }
 }
 
@@ -1621,7 +1641,7 @@ impl<'t, G: EngineGrammar> Lookups<'t, G> {
         if let Some(slots) = tree.slots.lock().unwrap_or_else(std::sync::PoisonError::into_inner).get(&index) {
             return Arc::clone(slots);
         }
-        tree.cover_side(&mut |at| self.node(at), index, TriviaSide::Inner);
+        tree.cover_side(self, index, TriviaSide::Inner);
         let table = &tree.trivia;
         let run_at = |start: u32, end: u32| table.run_at(start, end);
         self.goto(index);
@@ -1930,6 +1950,10 @@ impl<'t> Nodes<'t> for &Region<'t> {
         self.work.region_fallbacks(1);
         node_at_index(self.tree, index)
     }
+
+    fn navigate<R>(&mut self, tree: &'t tree_sitter::Tree, text: &'t str, f: impl FnOnce(&mut crate::nodes::TreeNodes<'t, '_>) -> R) -> R {
+        f(&mut crate::nodes::TreeNodes::over(tree, text, &mut self.cursor.borrow_mut(), self.at..self.end))
+    }
 }
 
 impl<G: EngineGrammar> crate::read::SideLookup for ParsedTree<G> {
@@ -1965,11 +1989,11 @@ impl<G: EngineGrammar> ParsedTree<G> {
     fn frame_levels<E>(&self, index: crate::types::NodeIndex, mut entries: impl FnMut(crate::types::NodeIndex, TriviaSide) -> Vec<E>) -> Vec<[Vec<E>; 3]> {
         let mut levels = vec![[entries(index, TriviaSide::Leading), entries(index, TriviaSide::Trailing), entries(index, TriviaSide::Inner)]];
         for side in [TriviaSide::Leading, TriviaSide::Trailing] {
-            let mut item = self.trivia.edge_item(self.trivia_source(), &mut |at| node_at_index(&self.tree, at), index, side);
+            let mut item = self.with_trivia_source(&mut &self.tree, |source| self.trivia.edge_item(source, index, side));
             while let Some(at) = item {
                 let held = entries(at, side);
                 levels.push(if side == TriviaSide::Leading { [held, Vec::new(), Vec::new()] } else { [Vec::new(), held, Vec::new()] });
-                item = self.trivia.edge_item(self.trivia_source(), &mut |index| node_at_index(&self.tree, index), at, side);
+                item = self.with_trivia_source(&mut &self.tree, |source| self.trivia.edge_item(source, at, side));
             }
         }
         levels
