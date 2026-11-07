@@ -377,10 +377,16 @@ function isAliasSiteFamily(sites: readonly IndexedSite[]): boolean {
 	);
 }
 
+function isSameLevelSiteFamily(sites: readonly IndexedSite[]): boolean {
+	const levelKey = (site: IndexedSite) => JSON.stringify(site.levels?.map((level) => level && [level.storage, level.display, level.kindId]));
+	const [head] = sites;
+	return head?.admission !== undefined && sites.every((site) => site.admission === head.admission && levelKey(site) === levelKey(head));
+}
+
 function siteRefsOf(leaf: AddressLeafEntry, siteIndex: SiteIndex): SitePath[] {
 	const refs = leaf.canonical.flatMap((segments) => {
 		const bucket = siteIndex.get(formatPreferencePath(segments)) ?? [];
-		if (bucket.length !== 1 && (bucket.length === 0 || !isAliasSiteFamily(bucket))) {
+		if (bucket.length !== 1 && (bucket.length === 0 || !(isSameLevelSiteFamily(bucket) || isAliasSiteFamily(bucket)))) {
 			throw emitShapeFailure({ code: 'option-address-sites', message: 
 				`options.rs: address '${leaf.path}' names '${formatPreferencePath(segments)}', which is ${bucket.length === 0 ? 'no site' : `${bucket.length} sites`}: ${JSON.stringify(bucket.map(({ site, levels }) => ({ site, levels: levels?.map((level) => level && { storage: level.storage, display: level.display, kindId: level.kindId }) })))}`
 			 });

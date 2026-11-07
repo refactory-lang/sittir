@@ -277,6 +277,35 @@ describe('an address that names one canonical path', () => {
 	});
 });
 
+describe('an address two positions of one kind share', () => {
+	const twin = (extra: Partial<SitePreference> = {}): SitePreference => ({
+		kind: 'block',
+		slot: 'statements',
+		address: 'statements_separator_space',
+		label: 'empty_separator_space',
+		arms: SPACING,
+		defaultArm: 'newline',
+		source: 'spacing',
+		...extra
+	});
+	const printed = (sites: SitePreference[]) => {
+		const nodeMap = makeSiteKindsNodeMap(sites, kindEntries as never);
+		const plan = planRenderOptions(sites, kindEntries, nodeMap, whitespaceText, undefined, 'rust');
+		const addresses = deriveAddressTables(sites, kindEntries, nodeMap, kindIdArmType(kindEntries as never), (() => []) as never);
+		return () => renderOptionsRs(plan, addresses, kindEntries);
+	};
+
+	it('is one option when the levels are identical', () => {
+		const render = printed([twin(), twin()]);
+		expect(render).not.toThrow();
+	});
+
+	it('is refused when the levels differ', () => {
+		const render = printed([twin(), twin({ kind: '_block' })]);
+		expect(render).toThrow(/option-address-sites|which is 2 sites/);
+	});
+});
+
 describe('a kind edge over a choice of tokens', () => {
 	const entries = [...kindEntries, { kind: 'bracket', member: 'Bracket', id: 40 }];
 	const seam = (address: string, extra: Partial<SitePreference> = {}): SitePreference => ({
