@@ -26,7 +26,7 @@ import { generateWithDerivedConflicts } from './transpile/conflict-driver.ts';
 import { assertGrammarRuntimeFloor } from './transpile/tree-sitter-cli.ts';
 import { renderModuleSrcDir } from './emitters/render-module-paths.ts';
 import { manifestPath, recordNativeBuild, recordedGeneration, sourceFingerprint, writeManifestForGrammar, type SourceFingerprint } from './scripts/generated-manifest.ts';
-import { GRAMMAR_ENTRY, grammarPackage, isGrammar, nativeCrateDir, nativeCrateRelDir, parserNameOf, sittirDirOf, type GrammarPackage } from './grammars.ts';
+import { GRAMMAR_ENTRY, grammarPackage, isGrammar, nativeCrateDir, nativeCrateRelDir, parserNameOf, sittirDirOf, workspaceNodeApiLevel, type GrammarPackage } from './grammars.ts';
 import { conflictResolutionsPath } from './transpile/conflict-resolutions-file.ts';
 import { nativeCrateFiles } from './emitters/native-crate.ts';
 import type { NodeMap } from './compiler/types.ts';
@@ -377,7 +377,7 @@ async function runCodegenInternal(opts: CodegenOptions, read: SourceFingerprint 
 	if (shouldEmitRustRender) {
 		const crateDir = nativeCrateDir(grammar);
 		const scaffoldCrate = !existsSync(join(crateDir, 'Cargo.toml'));
-		for (const file of nativeCrateFiles(grammar, parserNameOf(grammarPackage(grammar)))) await writeFile(join(crateDir, file.path), file.contents);
+		for (const file of nativeCrateFiles(grammar, workspaceNodeApiLevel(), parserNameOf(grammarPackage(grammar)))) await writeFile(join(crateDir, file.path), file.contents);
 		if (scaffoldCrate) {
 			console.log(`  → scaffolded native crate ${nativeCrateRelDir(grammar)}`);
 			execSync('pnpm install --prefer-offline', { stdio: 'inherit', cwd: process.cwd() });

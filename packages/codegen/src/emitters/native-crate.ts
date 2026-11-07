@@ -1,4 +1,4 @@
-import { NATIVE_TARGETS, grammarDisplayName, nativeBinaryName, type GrammarName } from '../grammars.ts';
+import { NATIVE_TARGETS, grammarDisplayName, nativeBinaryName, nodeRangeOfNodeApi, type GrammarName } from '../grammars.ts';
 import { TRIVIA_NODE } from './render-module.ts';
 
 export const NATIVE_RENDER_NODE_ABI = 26;
@@ -10,7 +10,7 @@ export interface NativeCrateFile {
 
 const json = (value: unknown): string => `${JSON.stringify(value, null, '\t')}\n`;
 
-export function nativeCrateFiles(name: GrammarName, parserName: string = name): NativeCrateFile[] {
+export function nativeCrateFiles(name: GrammarName, nodeApiLevel: number, parserName: string = name): NativeCrateFile[] {
 	const v = { name, parserName, Name: grammarDisplayName(name) };
 	return [
 		{
@@ -148,7 +148,7 @@ fn rerun_if_changed_with_includes(
 					packageName: `sittir-${v.name}`,
 					targets: [...NATIVE_TARGETS]
 				},
-				engines: { node: '>=20.0.0' }
+				engines: { node: nodeRangeOfNodeApi(nodeApiLevel) }
 			})
 		},
 		{
