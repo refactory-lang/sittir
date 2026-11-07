@@ -5,6 +5,7 @@
 - lazy trivia's tree-owned sides took their writes through the live-tree table;
 - an arena link record carries its tree in one word, so the maintainer chose an arena-held slot over a pointer per link;
 - the maintainer then ruled that each storage holds its trees the way it holds its nodes. Object storage uses a `Tree` object the garbage collector tracks. Arena storage uses counted native slots, released with the parse root, and makes no `Tree` object.
+- the arena half is held (the maintainer, 2026-11-06). Arena storage is moving to hydrate a tree whole at parse and drop tree-sitter's tree, so what an arena parse keeps is its source buffer, not a tree. Arena counted slots get redesigned from the tree-memory measurements, likely to hold that buffer. Until then, arena storage keeps the interim `Tree` object. The object-storage half and the render that takes no tree go ahead.
 **Scope**: the native crates (`sittir-engine`, `sittir-core`, the grammar crates), the native crate emitter, the grammar packages' build and packaging, and the JavaScript loader.
 **Evidence**: the probe report on `probe/engine-dylib` at 3923f9de6, `docs/superpowers/probes/2026-10-23-engine-dylib/README.md`. That branch does not merge; it is the record.
 
@@ -73,7 +74,7 @@ A parsed tree is freed when its last holder drops it. Each storage holds its tre
   - Object nodes are plain values that can be spread, copied and shared without any code running. So only the garbage collector sees every holder, and native code learns that the last one is gone only through the object's finalizer. One `Tree` object per tree means one finalizer per tree instead of one per node.
   - **The `Tree` object is internal.** It's reached only through a node's `[TREE]` property, and it isn't part of the public API.
   - There's no tree dispose. A node's `[Symbol.dispose]` stays a no-op, as it is for every object node.
-- **Arena storage: counted slots.**
+- **Arena storage: counted slots.** Held; see the status above.
   - No `Tree` object is made. The engine's arena holds each of its trees in a slot of its held-tree table, and the slot's entry holds the tree's handle.
   - An entry is counted once by the parse root and once by each link record that names it (below). The entry is dropped when its count reaches 0, and the engine's dispose drops every entry.
   - Releasing the parse root drops the root's count. The release is the `[Symbol.dispose]` and `engine.release(node)` that every node already has, the same release that frees a built root today. Releasing any other read handle still does nothing.

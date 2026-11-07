@@ -43,7 +43,7 @@
 1. **A node held alone, object storage.** A node read from a tree is stored in a long-lived structure, and every other reference to that tree is dropped. Expected: the tree stays alive, and the node renders and reads. Once the node is dropped and collected, the tree is freed. Owned by Task 3.
 2. **A write during a render of the same tree,** for example from a callback the render reaches. Expected: refused by name, with no deadlock. A write to another tree in the same call succeeds. Owned by Tasks 1 and 5.
 3. **A parsed node from another grammar's tree placed in a built node.** Expected: refused by name, as the interim admission rule does today. Never a cast across type tags. Owned by Task 3.
-4. **Arena slots: reuse and stale read handles.** Expected: a slot is reused only after its count reaches 0, meaning its root is released and its last link is gone. A read handle kept past that point is refused by name through the slot's tree-id check. It never reads the tree that a reused slot now holds. Owned by Task 4.
+4. **Arena slots: reuse and stale read handles.** Expected: a slot is reused only after its count reaches 0, meaning its root is released and its last link is gone. A read handle kept past that point is refused by name through the slot's tree-id check. It never reads the tree that a reused slot now holds. Owned by Task 4, which is held.
 5. **A `Tree` object or a node posted to another worker.** Expected: refused by name, never a crash. Owned by Task 3.
 
 ---
@@ -83,7 +83,7 @@
 
 **Interfaces:**
 - Consumes: Task 1's `TreeRef`.
-- Produces: the JavaScript engine gets a `Tree` object from every parse, and the existing token helpers carry it unchanged. In arena storage this is interim: Task 4 replaces the `Tree` object with a counted slot, so each task stays green on its own.
+- Produces: the JavaScript engine gets a `Tree` object from every parse, and the existing token helpers carry it unchanged. In arena storage this is interim until Task 4, which is held, replaces it. Each task stays green on its own.
 
 - [ ] **Step 1: Failing tests, run under `--expose-gc`:**
   - 100 parses whose results are all dropped, then `gc()`, leave the native live count at 0, read through a test-only `liveTreeCount()`;
@@ -122,6 +122,8 @@
 
 ### Task 4: Arena storage holds its trees in counted slots
 
+**Held (the user, 2026-11-06).** Arena storage is moving to hydrate a tree whole at parse and drop tree-sitter's tree, so what an arena parse keeps is its source buffer. This task is rewritten from the tree-memory design once prototype's spike reports, likely as counted slots that hold the buffer. Tasks 1–3, 5 and 6 go ahead without it, and arena storage keeps Task 2's interim `Tree` object. Don't start this task as written.
+
 **Files:**
 - Modify: core `arena/built_image.rs` (the LINK record's tree word becomes a slot) and the arena's store (a new held-tree table).
 - Modify: `napi_engine.rs`. In arena storage, `parse` holds its tree in the engine arena's table and returns the slot and tree id, not a `Tree` object. Every call from a read handle passes both.
@@ -156,12 +158,12 @@
 ### Task 5: The native render takes no tree, and the live-tree table goes
 
 **Files:**
-- Modify: `napi_engine.rs`. `render`, `render_to_file`, `render_record` and `render_built` lose their tree id. Their sources come from the node's coordinates (object: `$tree`; arena: held slots), and their options layer from those coordinates: one tree gives its layer, several or none give no tree layer. The `Weak` index and `ReadTrees` over every live tree go.
+- Modify: `napi_engine.rs`. `render`, `render_to_file`, `render_record` and `render_built` lose their tree id. Their sources come from the node's coordinates (object: `$tree`; arena: Task 2's interim `Tree` object while Task 4 is held), and their options layer from those coordinates: one tree gives its layer, several or none give no tree layer. The `Weak` index and `ReadTrees` over every live tree go, except that an arena link record still names its tree by id while Task 4 is held, so the index stays for those lookups alone.
 - Modify: `packages/common/src/engine.ts`. `renderTreeOf` and its argument go.
 - Test: `packages/common/tests/render-from-node.test.ts`.
 
 **Interfaces:**
-- Consumes: Tasks 3 and 4.
+- Consumes: Tasks 2 and 3, and Task 4 once it's rewritten.
 - Produces: `render(engine, node, options)` natively, with nothing that looks a tree up by id.
 
 - [ ] **Step 1: Failing tests:**
