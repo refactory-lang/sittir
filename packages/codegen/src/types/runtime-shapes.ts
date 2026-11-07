@@ -75,6 +75,8 @@ export interface PrecWrapperLike {
 	readonly content: unknown;
 }
 
+export type PrecWrappersOf<R> = [Extract<R, PrecWrapperLike>] extends [never] ? PrecWrapperLike[] : Extract<R, PrecWrapperLike>[];
+
 export type Peeled<R> = Exclude<R, PrecWrapperLike> | (R extends PrecWrapperLike ? R['content'] : never);
 
 export function isPrecLike(rule: unknown): rule is PrecWrapperLike {

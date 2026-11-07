@@ -1,4 +1,4 @@
-import { isChoiceType, isPrecWrapper, isSeqType, isTokenWrapperType, type RuntimeRule } from '../../types/runtime-shapes.ts';
+import { isChoiceType, isSeqType, isTokenWrapperType, type RuntimeRule } from '../../types/runtime-shapes.ts';
 import { isBlank, matchesEmpty, optionalContentOf, peelPrecs } from '../rule-patterns.ts';
 
 export type TokenChoiceClass = 'presence' | 'spelling' | 'forms';
@@ -119,14 +119,8 @@ export const canonicalRuleText = (rule: RuntimeRule): string =>
 const underWrapper = (fielded: Fielded): Fielded => fielded.flatMap((site) => (site[0] === 0 ? [site.slice(1)] : []));
 
 export function distributeTokenForms(rule: RuntimeRule, kind: string, fielded: Fielded = []): RuntimeRule {
-	const precStack: RuntimeRule[] = [];
-	let core = rule;
-	let sites = fielded;
-	while (isPrecWrapper(core)) {
-		precStack.push(core);
-		core = contentOf(core);
-		sites = underWrapper(sites);
-	}
+	const { precs: precStack, core } = peelPrecs(rule);
+	const sites = precStack.reduce(underWrapper, fielded);
 	if (!isTokenWrapper(core)) return rule;
 	const body = contentOf(core);
 	const site = findOutermostForms(body, [], underWrapper(sites));
