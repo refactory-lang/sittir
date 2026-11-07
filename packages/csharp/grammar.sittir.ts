@@ -6,6 +6,7 @@ import { enrich, field, preference, variant, wire } from '../codegen/src/dsl/ind
 export default grammar(enrich(base), wire({
 	resolutions,
 	name: 'csharp',
+	expectDiagnostics: { 'token-interior-unstructurable': ['_identifier_token'] },
 	options: { indent: preference('    ') },
 	renderAs: (_$) => ({
 		_optional_semi: string(';'),
