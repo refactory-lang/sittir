@@ -238,6 +238,7 @@
 (type) @type
 (generic_type) @type.generic
 (generic_type (type_parameter (_) @typeArguments))
+((generic_type (identifier) @_n (type_parameter (types . (type) @type .))) @type.nullable (#eq? @_n "Optional"))
 (union_type) @type.union
 (constrained_type) @type.constrained
 (member_type) @identifier.qualified

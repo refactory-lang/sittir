@@ -1509,6 +1509,7 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'type'>
 				| V.Read<PythonMap, 'type.constrained'>
 				| V.Read<PythonMap, 'type.generic'>
+				| V.Read<PythonMap, 'type.nullable'>
 				| V.Read<PythonMap, 'type.rest'>
 				| V.Read<PythonMap, 'type.union'>
 				| T.Type.Parsed;
@@ -1576,6 +1577,7 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'type'>
 				| V.Read<PythonMap, 'type.constrained'>
 				| V.Read<PythonMap, 'type.generic'>
+				| V.Read<PythonMap, 'type.nullable'>
 				| V.Read<PythonMap, 'type.rest'>
 				| V.Read<PythonMap, 'type.union'>
 				| T.Type.Parsed;
@@ -1643,6 +1645,7 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'type'>
 				| V.Read<PythonMap, 'type.constrained'>
 				| V.Read<PythonMap, 'type.generic'>
+				| V.Read<PythonMap, 'type.nullable'>
 				| V.Read<PythonMap, 'type.rest'>
 				| V.Read<PythonMap, 'type.union'>
 				| T.Type.Parsed;
@@ -1709,6 +1712,7 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'type'>
 				| V.Read<PythonMap, 'type.constrained'>
 				| V.Read<PythonMap, 'type.generic'>
+				| V.Read<PythonMap, 'type.nullable'>
 				| V.Read<PythonMap, 'type.rest'>
 				| V.Read<PythonMap, 'type.union'>
 				| T.Type.Parsed;
@@ -1846,6 +1850,7 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'type'>
 				| V.Read<PythonMap, 'type.constrained'>
 				| V.Read<PythonMap, 'type.generic'>
+				| V.Read<PythonMap, 'type.nullable'>
 				| V.Read<PythonMap, 'type.rest'>
 				| V.Read<PythonMap, 'type.union'>
 				| T.Type.Parsed;
@@ -1968,6 +1973,7 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'type'>
 				| V.Read<PythonMap, 'type.constrained'>
 				| V.Read<PythonMap, 'type.generic'>
+				| V.Read<PythonMap, 'type.nullable'>
 				| V.Read<PythonMap, 'type.rest'>
 				| V.Read<PythonMap, 'type.union'>
 				| T.Type.Parsed;
@@ -1983,6 +1989,7 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'type'>
 				| V.Read<PythonMap, 'type.constrained'>
 				| V.Read<PythonMap, 'type.generic'>
+				| V.Read<PythonMap, 'type.nullable'>
 				| V.Read<PythonMap, 'type.rest'>
 				| V.Read<PythonMap, 'type.union'>
 				| T.Type.Parsed;
@@ -1993,6 +2000,7 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'type'>
 				| V.Read<PythonMap, 'type.constrained'>
 				| V.Read<PythonMap, 'type.generic'>
+				| V.Read<PythonMap, 'type.nullable'>
 				| V.Read<PythonMap, 'type.rest'>
 				| V.Read<PythonMap, 'type.union'>
 				| T.Type.Parsed;
@@ -2023,6 +2031,7 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'type'>
 				| V.Read<PythonMap, 'type.constrained'>
 				| V.Read<PythonMap, 'type.generic'>
+				| V.Read<PythonMap, 'type.nullable'>
 				| V.Read<PythonMap, 'type.rest'>
 				| V.Read<PythonMap, 'type.union'>
 				| T.Type.Parsed;
@@ -15809,6 +15818,7 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'type'>
 				| V.Read<PythonMap, 'type.constrained'>
 				| V.Read<PythonMap, 'type.generic'>
+				| V.Read<PythonMap, 'type.nullable'>
 				| V.Read<PythonMap, 'type.rest'>
 				| V.Read<PythonMap, 'type.union'>
 				| T.Type.Parsed;
@@ -18658,6 +18668,7 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'pattern.rest'>
 				| V.Read<PythonMap, 'type.constrained'>
 				| V.Read<PythonMap, 'type.generic'>
+				| V.Read<PythonMap, 'type.nullable'>
 				| V.Read<PythonMap, 'type.rest'>
 				| V.Read<PythonMap, 'type.union'>
 				| V.Unmapped<'python:as_pattern'>
@@ -18692,6 +18703,7 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'type'>
 				| V.Read<PythonMap, 'type.constrained'>
 				| V.Read<PythonMap, 'type.generic'>
+				| V.Read<PythonMap, 'type.nullable'>
 				| V.Read<PythonMap, 'type.rest'>
 				| V.Read<PythonMap, 'type.union'>
 				| T.Type.Parsed;
@@ -18699,6 +18711,7 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'type'>
 				| V.Read<PythonMap, 'type.constrained'>
 				| V.Read<PythonMap, 'type.generic'>
+				| V.Read<PythonMap, 'type.nullable'>
 				| V.Read<PythonMap, 'type.rest'>
 				| V.Read<PythonMap, 'type.union'>
 				| T.Type.Parsed;
@@ -18890,9 +18903,103 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'type'>
 				| V.Read<PythonMap, 'type.constrained'>
 				| V.Read<PythonMap, 'type.generic'>
+				| V.Read<PythonMap, 'type.nullable'>
 				| V.Read<PythonMap, 'type.rest'>
 				| V.Read<PythonMap, 'type.union'>;
 			readonly $forms: V.Form<'name' | 'typeArguments'>;
+		};
+		readonly 'type.nullable': {
+			readonly content:
+				| V.Read<PythonMap, 'expression.assignment'>
+				| V.Read<PythonMap, 'expression.await'>
+				| V.Read<PythonMap, 'expression.binary'>
+				| V.Read<PythonMap, 'expression.binary.arithmetic.add'>
+				| V.Read<PythonMap, 'expression.binary.arithmetic.divide'>
+				| V.Read<PythonMap, 'expression.binary.arithmetic.exponent'>
+				| V.Read<PythonMap, 'expression.binary.arithmetic.floor_divide'>
+				| V.Read<PythonMap, 'expression.binary.arithmetic.modulo'>
+				| V.Read<PythonMap, 'expression.binary.arithmetic.multiply'>
+				| V.Read<PythonMap, 'expression.binary.arithmetic.subtract'>
+				| V.Read<PythonMap, 'expression.binary.bitwise.and'>
+				| V.Read<PythonMap, 'expression.binary.bitwise.or'>
+				| V.Read<PythonMap, 'expression.binary.bitwise.xor'>
+				| V.Read<PythonMap, 'expression.binary.comparison.chain'>
+				| V.Read<PythonMap, 'expression.binary.comparison.equal'>
+				| V.Read<PythonMap, 'expression.binary.comparison.greater'>
+				| V.Read<PythonMap, 'expression.binary.comparison.greater_equal'>
+				| V.Read<PythonMap, 'expression.binary.comparison.less'>
+				| V.Read<PythonMap, 'expression.binary.comparison.less_equal'>
+				| V.Read<PythonMap, 'expression.binary.comparison.not_equal'>
+				| V.Read<PythonMap, 'expression.binary.comparison.not_equal.legacy'>
+				| V.Read<PythonMap, 'expression.binary.identity.is'>
+				| V.Read<PythonMap, 'expression.binary.identity.is_not'>
+				| V.Read<PythonMap, 'expression.binary.logical'>
+				| V.Read<PythonMap, 'expression.binary.logical.and'>
+				| V.Read<PythonMap, 'expression.binary.logical.or'>
+				| V.Read<PythonMap, 'expression.binary.matrix_multiply'>
+				| V.Read<PythonMap, 'expression.binary.membership.in'>
+				| V.Read<PythonMap, 'expression.binary.membership.not_in'>
+				| V.Read<PythonMap, 'expression.binary.shift.left'>
+				| V.Read<PythonMap, 'expression.binary.shift.right'>
+				| V.Read<PythonMap, 'expression.call'>
+				| V.Read<PythonMap, 'expression.call.member'>
+				| V.Read<PythonMap, 'expression.collection.list'>
+				| V.Read<PythonMap, 'expression.collection.map'>
+				| V.Read<PythonMap, 'expression.collection.set'>
+				| V.Read<PythonMap, 'expression.collection.tuple'>
+				| V.Read<PythonMap, 'expression.comprehension.generator'>
+				| V.Read<PythonMap, 'expression.comprehension.list'>
+				| V.Read<PythonMap, 'expression.comprehension.map'>
+				| V.Read<PythonMap, 'expression.comprehension.set'>
+				| V.Read<PythonMap, 'expression.conditional'>
+				| V.Read<PythonMap, 'expression.lambda'>
+				| V.Read<PythonMap, 'expression.member'>
+				| V.Read<PythonMap, 'expression.parenthesized'>
+				| V.Read<PythonMap, 'expression.subscript'>
+				| V.Read<PythonMap, 'expression.unary'>
+				| V.Read<PythonMap, 'expression.unary.bitwise_not'>
+				| V.Read<PythonMap, 'expression.unary.negation'>
+				| V.Read<PythonMap, 'expression.unary.not'>
+				| V.Read<PythonMap, 'expression.unary.plus'>
+				| V.Read<PythonMap, 'identifier'>
+				| V.Read<PythonMap, 'identifier.qualified'>
+				| V.Read<PythonMap, 'literal.boolean.false'>
+				| V.Read<PythonMap, 'literal.boolean.true'>
+				| V.Read<PythonMap, 'literal.ellipsis'>
+				| V.Read<PythonMap, 'literal.null'>
+				| V.Read<PythonMap, 'literal.number.float'>
+				| V.Read<PythonMap, 'literal.number.float.leading_point'>
+				| V.Read<PythonMap, 'literal.number.float.scientific'>
+				| V.Read<PythonMap, 'literal.number.integer'>
+				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
+				| V.Read<PythonMap, 'literal.number.integer.octal'>
+				| V.Read<PythonMap, 'literal.string'>
+				| V.Read<PythonMap, 'literal.string.bytes'>
+				| V.Read<PythonMap, 'literal.string.bytes.multiline'>
+				| V.Read<PythonMap, 'literal.string.bytes.raw'>
+				| V.Read<PythonMap, 'literal.string.bytes.raw.multiline'>
+				| V.Read<PythonMap, 'literal.string.concatenated'>
+				| V.Read<PythonMap, 'literal.string.interpolated'>
+				| V.Read<PythonMap, 'literal.string.interpolated.deferred'>
+				| V.Read<PythonMap, 'literal.string.interpolated.deferred.multiline'>
+				| V.Read<PythonMap, 'literal.string.interpolated.deferred.raw'>
+				| V.Read<PythonMap, 'literal.string.interpolated.deferred.raw.multiline'>
+				| V.Read<PythonMap, 'literal.string.interpolated.multiline'>
+				| V.Read<PythonMap, 'literal.string.interpolated.raw'>
+				| V.Read<PythonMap, 'literal.string.interpolated.raw.multiline'>
+				| V.Read<PythonMap, 'literal.string.multiline'>
+				| V.Read<PythonMap, 'literal.string.raw'>
+				| V.Read<PythonMap, 'literal.string.raw.multiline'>
+				| V.Read<PythonMap, 'literal.string.unicode'>
+				| V.Read<PythonMap, 'pattern.rest'>
+				| V.Read<PythonMap, 'type.constrained'>
+				| V.Read<PythonMap, 'type.generic'>
+				| V.Read<PythonMap, 'type.rest'>
+				| V.Read<PythonMap, 'type.union'>;
+			readonly $forms: V.Form<'type'>;
 		};
 		readonly 'type.rest': {
 			readonly content:
@@ -19083,6 +19190,7 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'type'>
 				| V.Read<PythonMap, 'type.constrained'>
 				| V.Read<PythonMap, 'type.generic'>
+				| V.Read<PythonMap, 'type.nullable'>
 				| V.Read<PythonMap, 'type.rest'>
 				| V.Read<PythonMap, 'type.union'>
 				| T.Type.Parsed;
@@ -19090,6 +19198,7 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'type'>
 				| V.Read<PythonMap, 'type.constrained'>
 				| V.Read<PythonMap, 'type.generic'>
+				| V.Read<PythonMap, 'type.nullable'>
 				| V.Read<PythonMap, 'type.rest'>
 				| V.Read<PythonMap, 'type.union'>
 				| T.Type.Parsed;

@@ -187,6 +187,14 @@ describe('the portable read', () => {
 		expect(read(`${source}\n`).statements).toEqual([statement]);
 	});
 
+	it('reads Optional[X] as a nullable type of X, spells Optional back, and keeps another generic a generic', () => {
+		const typeOf = (source: string) => ((firstOf(source) as Read).content as Read).type;
+		expect(typeOf('x: Optional[int] = 1')).toEqual({ $path: 'type', content: { $path: 'type.nullable', type: { $path: 'type', content: 'int' } } });
+		expect(roundTrip('x: Optional[int] = 1')).toBe('x: Optional[int] = 1\n');
+		expect(String(runtime.engine.render(runtime.build({ $path: 'type.nullable', type: { $path: 'type', content: 'int' } }) as never))).toBe('Optional[int]');
+		expect(typeOf('x: List[int] = 1')).toEqual({ $path: 'type', content: { $path: 'type.generic', name: 'List', typeArguments: [{ $path: 'type', content: 'int' }] } });
+	});
+
 	it('reads a print statement\'s destination and arguments, and its trailing comma as a flag', () => {
 		expect(firstOf('print a, b,')).toEqual({ $path: 'statement.print', arguments: ['a', 'b'], $flags: ['trailingComma'] });
 		expect(firstOf('print >> f')).toEqual({ $path: 'statement.print', destination: 'f', arguments: [] });

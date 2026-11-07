@@ -717,6 +717,7 @@ export function guaranteedBy(
 		readonly pins?: readonly Pin[];
 		readonly absent?: readonly string[];
 		readonly present?: readonly string[];
+		readonly claim?: { readonly predicates: readonly PredicateFact[] };
 	}
 ): Guaranteed {
 	const one = new Map<string, Set<string>>();
@@ -740,7 +741,14 @@ export function guaranteedBy(
 		const held = heldSteps(model, entry.kind, { field: slot, kind: null, after: null, anchor: null });
 		return held === undefined ? [] : [[pathKey(heldPath(held, null)), held.at(-1)!.slot]];
 	};
-	const pinned = new Map((entry.pins ?? []).flatMap((pin) => heldSlot(pin.slot).map(([key]) => [key, pin.text] as const)));
+	const spelled = (entry.claim?.predicates ?? []).flatMap((predicate) => {
+		const [step, ...deeper] = predicate.subject?.down ?? [];
+		const [argument, ...more] = predicate.arguments;
+		if (predicate.operator !== 'eq' || predicate.capture?.startsWith('_') !== true || predicate.subject?.up !== 0 || step === undefined || deeper.length > 0 || argument === undefined || more.length > 0 || !('text' in argument)) return [];
+		const held = heldSteps(model, entry.kind, step);
+		return held === undefined ? [] : [[pathKey(heldPath(held, null)), argument.text] as const];
+	});
+	const pinned = new Map([...(entry.pins ?? []).flatMap((pin) => heldSlot(pin.slot).map(([key]) => [key, pin.text] as const)), ...spelled]);
 	const absent = new Set((entry.absent ?? []).flatMap((slot) => heldSlot(slot).map(([key]) => key)));
 	for (const [key, slot] of (entry.present ?? []).flatMap(heldSlot)) if (!one.has(key)) one.set(key, new Set(slot.kinds));
 	return {
@@ -933,6 +941,7 @@ function membersOf(
 			unrouted(slot, 'is pinned to one fixed text by the same claim', capturesOf(slot).filter((m) => m.claims?.includes(entry.index) === true));
 			continue;
 		}
+		if (!captured && pin !== undefined && !slot.multiple && narrowed !== undefined && narrowed.kinds.length === 0 && narrowed.terminals.length === 0) continue;
 		const tested = captured ? rest : (narrowed ?? rest);
 		if (toldByRead(input.model, tested, told.get(slot.name) ?? new Set<string>())) {
 			unrouted(slot, 'is told by the read');
@@ -953,6 +962,9 @@ function membersOf(
 	}
 	for (const [member, slot] of flagSlots) routes.push(flagRouteOf(kind, member, slot, pathTo(slot)));
 	routes.push(...spelledFlags);
+	const ownPaths = [...reached].flatMap(([m, held]) => (m.claims?.includes(entry.index) === true ? held.flatMap((route) => (route.path === undefined ? [] : [route.path])) : []));
+	const beneathOwn = (route: MemberRoute): boolean =>
+		route.path !== undefined && ownPaths.some((path) => path.length > route.path!.length && stepPast(route.path, path) !== undefined);
 	for (const member of deep) {
 		if (member.route === 'kind') {
 			const named = routes.find((r) => r.route === 'slot' && r.name === camel(member.member));
@@ -960,7 +972,8 @@ function membersOf(
 			continue;
 		}
 		const known = new Set(routes.map((route) => JSON.stringify(route)));
-		routes.push(...((isDeep(member) ? reached.get(member) : undefined) ?? []).filter((route) => !known.has(JSON.stringify(route))));
+		const own = member.claims?.includes(entry.index) === true;
+		routes.push(...((isDeep(member) ? reached.get(member) : undefined) ?? []).filter((route) => !known.has(JSON.stringify(route)) && (own || !beneathOwn(route))));
 	}
 	for (const route of routes) {
 		const landed = landedKinds(input.model, route);

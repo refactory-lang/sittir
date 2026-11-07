@@ -15635,6 +15635,75 @@ export const build: PortableBuildTable = {
 				}
 			]
 		},
+		'type.nullable': {
+			root: true,
+			arms: [
+				{
+					kind: 228,
+					builder: 'genericType',
+					members: [
+						{
+							name: 'type',
+							steps: [
+								{
+									key: 'typeParameter',
+									builder: 'typeParameter'
+								},
+								{
+									key: 'types',
+									builder: 'types'
+								},
+								{
+									key: 'items'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [263, 'items'],
+									kinds: [226]
+								}
+							]
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'typeParameter',
+									builder: 'typeParameter'
+								},
+								{
+									key: 'types',
+									builder: 'types'
+								},
+								{
+									key: 'items'
+								}
+							],
+							builder: 'type'
+						},
+						{
+							steps: [
+								{
+									key: 'name'
+								}
+							],
+							text: 'Optional',
+							builder: 'identifier'
+						}
+					],
+					flags: {},
+					when: [
+						{
+							absent: [],
+							required: ['type']
+						}
+					]
+				}
+			]
+		},
 		'type.rest': {
 			root: true,
 			arms: [

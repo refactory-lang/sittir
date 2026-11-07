@@ -433,6 +433,7 @@ export interface PortableIds {
 	type: TSKindId.ConstrainedType | TSKindId.GenericType | TSKindId.SplatType | TSKindId.Type | TSKindId.UnionType;
 	'type.constrained': TSKindId.ConstrainedType;
 	'type.generic': TSKindId.GenericType;
+	'type.nullable': TSKindId.GenericType;
 	'type.rest': TSKindId.SplatType;
 	'type.union': TSKindId.UnionType;
 }
@@ -660,6 +661,7 @@ export interface PortableTexts {
 	type: never;
 	'type.constrained': never;
 	'type.generic': never;
+	'type.nullable': never;
 	'type.rest': never;
 	'type.union': never;
 }
@@ -1195,11 +1197,13 @@ export interface PortableKindsAt {
 		readonly $path: 'type';
 		readonly constrained: PortableKindsAt['type.constrained'];
 		readonly generic: PortableKindsAt['type.generic'];
+		readonly nullable: PortableKindsAt['type.nullable'];
 		readonly rest: PortableKindsAt['type.rest'];
 		readonly union: PortableKindsAt['type.union'];
 	};
 	'type.constrained': { readonly $path: 'type.constrained' };
 	'type.generic': { readonly $path: 'type.generic' };
+	'type.nullable': { readonly $path: 'type.nullable' };
 	'type.rest': { readonly $path: 'type.rest' };
 	'type.union': { readonly $path: 'type.union' };
 }
@@ -2626,6 +2630,7 @@ export interface PortableIsAt {
 	type: PortableGuard<PortableIds['type'], PythonNode, TSKindId, PortableTexts['type']> & {
 		readonly constrained: PortableIsAt['type.constrained'];
 		readonly generic: PortableIsAt['type.generic'];
+		readonly nullable: PortableIsAt['type.nullable'];
 		readonly rest: PortableIsAt['type.rest'];
 		readonly union: PortableIsAt['type.union'];
 	};
@@ -2636,6 +2641,12 @@ export interface PortableIsAt {
 		PortableTexts['type.constrained']
 	> & {};
 	'type.generic': PortableGuard<PortableIds['type.generic'], PythonNode, TSKindId, PortableTexts['type.generic']> & {};
+	'type.nullable': PortableGuard<
+		PortableIds['type.nullable'],
+		PythonNode,
+		TSKindId,
+		PortableTexts['type.nullable']
+	> & {};
 	'type.rest': PortableGuard<PortableIds['type.rest'], PythonNode, TSKindId, PortableTexts['type.rest']> & {};
 	'type.union': PortableGuard<PortableIds['type.union'], PythonNode, TSKindId, PortableTexts['type.union']> & {};
 }
@@ -3194,7 +3205,8 @@ const table: PortableTable = {
 			exact: true
 		},
 		'type.constrained': { ids: [TSKindId.ConstrainedType], exact: true },
-		'type.generic': { ids: [TSKindId.GenericType], exact: true },
+		'type.generic': { ids: [TSKindId.GenericType], exact: false },
+		'type.nullable': { ids: [TSKindId.GenericType], exact: false },
 		'type.rest': { ids: [TSKindId.SplatType], exact: true },
 		'type.union': { ids: [TSKindId.UnionType], exact: true }
 	},
@@ -3636,7 +3648,21 @@ const table: PortableTable = {
 		[TSKindId.FunctionDefinition]: [{ path: 'declaration.function', within: [], test: [] }],
 		[TSKindId.FutureImportStatement]: [{ path: 'statement.import.future', within: [], test: [] }],
 		[TSKindId.GeneratorExpression]: [{ path: 'expression.comprehension.generator', within: [], test: [] }],
-		[TSKindId.GenericType]: [{ path: 'type.generic', within: [], test: [] }],
+		[TSKindId.GenericType]: [
+			{
+				path: 'type.nullable',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'eq', text: 'Optional', slots: { '228': 0 } } },
+					{
+						up: 0,
+						via: [{ slots: { '228': 1 } }, { slots: { '175': 0 } }, { slots: { '263': 0 }, anchor: 'only' }],
+						plan: { op: 'is', types: [226], self: true }
+					}
+				]
+			},
+			{ path: 'type.generic', within: [], test: [] }
+		],
 		[TSKindId.GlobalStatement]: [{ path: 'statement.global', within: [], test: [] }],
 		[TSKindId.Identifier]: [{ path: 'identifier', within: [], test: [] }],
 		[TSKindId.IfClause]: [{ path: 'clause.comprehension.if', within: [], test: [] }],

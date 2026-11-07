@@ -4579,6 +4579,53 @@
       "vocab": "type.generic",
       "read": [
         {
+          "vocab": "type.nullable",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "Optional",
+                "slots": {
+                  "228": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "slots": {
+                    "228": 1
+                  }
+                },
+                {
+                  "slots": {
+                    "175": 0
+                  }
+                },
+                {
+                  "slots": {
+                    "263": 0
+                  },
+                  "anchor": "only"
+                }
+              ],
+              "plan": {
+                "op": "is",
+                "types": [
+                  226
+                ],
+                "self": true
+              }
+            }
+          ]
+        },
+        {
           "vocab": "type.generic",
           "toplevel": true,
           "within": [],
@@ -4620,6 +4667,42 @@
             {
               "owner": "type_parameter",
               "slot": "types"
+            }
+          ]
+        },
+        {
+          "name": "type",
+          "route": "nested",
+          "via": [
+            {
+              "field": null,
+              "kind": "types",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "type_parameter",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "types",
+          "slot": "item",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "generic_type",
+              "slot": "type_parameter"
+            },
+            {
+              "owner": "type_parameter",
+              "slot": "types"
+            },
+            {
+              "owner": "types",
+              "slot": "item",
+              "anchor": "only"
             }
           ]
         }
@@ -8382,9 +8465,9 @@
       },
       {
         "depth": 2,
-        "paths": 76,
+        "paths": 77,
         "kinds": 81,
-        "refinements": 5
+        "refinements": 6
       },
       {
         "depth": 3,

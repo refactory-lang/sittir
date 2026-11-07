@@ -324,6 +324,24 @@ describe('resolveRoutes', () => {
 		expect(routes.readEntries.get('binary')?.map((e) => e.vocab)).toEqual(['expression.sum', 'binary', 'expression.add']);
 	});
 
+	it("routes no member through a slot the entry's own test capture spells, and keeps a member capture the predicate tests", async () => {
+		const routes = resolveRoutes(
+			await grammar(['(function_definition) @declaration.function', '((function_definition name: (identifier) @_n) @declaration.main (#eq? @_n "main"))'].join('\n'))
+		);
+		const membersAt = (vocab: string) => routes.readEntries.get('function_definition')?.find((e) => e.vocab === vocab)?.members.map((m) => m.name);
+		expect(membersAt('declaration.main')).not.toContain('name');
+		expect(membersAt('declaration.function')).toContain('name');
+	});
+
+	it('routes no inherited capture whose path the entry\'s own capture reaches beneath', async () => {
+		const routes = resolveRoutes(
+			await grammar(['(outer) @statement.outer', '(outer mid: (middle inner: (_) @inner))', '(outer mid: (middle inner: (binary left: (expr) @left))) @statement.left'].join('\n'))
+		);
+		const membersAt = (vocab: string) => routes.readEntries.get('outer')?.find((e) => e.vocab === vocab)?.members.map((m) => m.name);
+		expect(membersAt('statement.left')).toEqual(['left']);
+		expect(membersAt('statement.outer')).toEqual(['inner']);
+	});
+
 	it('enters a placed wildcard claim on every concrete kind its holder admits there, in the ruled order', async () => {
 		const routes = resolveRoutes(await grammar(['(identifier) @expression.identifier', '(params (_) @declaration.parameter)'].join('\n')));
 		expect(routes.readEntries.has('_')).toBe(false);
