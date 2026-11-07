@@ -88,6 +88,7 @@ import {
 	type InlineAtReferenceCtx,
 	type SymbolSource,
 	ruleListParts,
+	unwrapPrec,
 	type RuleListEntry,
 } from '../dsl/rule-patterns.ts';
 import { assertPredictedKindEntries, catalogRenames, catalogSymbolSource, collectGeneratedKindEntries, predictedEntriesOf, stampVisibleExternals } from '../dsl/symbol-table.ts';
@@ -1408,8 +1409,7 @@ function fixedNamesOf<R extends AnyRule>(rules: Readonly<Record<string, R>>): Re
 	for (const rule of Object.values(rules)) {
 		fixedNameWalker.find(rule, (node) => {
 			if (node.type !== FIELD) return false;
-			let content = node.content;
-			while (isPrecWrapper(content) && 'content' in content) content = content.content;
+			const content = unwrapPrec(node.content);
 			if (isLiteralAlias(content)) out.add(content as R);
 			return false;
 		});
