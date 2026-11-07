@@ -194,6 +194,12 @@ export function exactSlotsOf(input: PortableTypedInput, reads: ExactReads = exac
 			reasonsCache.set(kind, out);
 			return out;
 		}
+		const through = node.textLeavesThrough ?? [];
+		if (through.length > 0 && node.slots.every((slot) => concreteKinds(model, slot.kinds).every((k) => through.includes(k)))) {
+			const leaves = [...new Set(through.flatMap(reasonsOf))];
+			reasonsCache.set(kind, leaves);
+			return leaves;
+		}
 		const held = node.slots.flatMap((slot) => concreteKinds(model, slot.kinds));
 		if ((table.tokens?.[id]?.length ?? 0) > 0) out.push('opaque');
 		if (held.some((k) => { const held = idOf(k); return held !== undefined && table.delimiters?.[held]?.readOnly !== undefined; })) out.push('readOnly');

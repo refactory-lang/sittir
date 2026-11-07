@@ -377,8 +377,7 @@ export interface RustMap extends V.GrammarMap {
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
 				| T.RemovedTraitBound.Parsed
-				| T.ScopedTypeIdentifier.Parsed
-				| T.TypeIdentifier.Parsed;
+				| T.ScopedTypeIdentifier.Parsed;
 			readonly $forms: V.Form<'bounds'>;
 		};
 		readonly 'clause.bounds.higher_ranked': {
@@ -452,8 +451,7 @@ export interface RustMap extends V.GrammarMap {
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
 				| T.RemovedTraitBound.Parsed
-				| T.ScopedTypeIdentifier.Parsed
-				| T.TypeIdentifier.Parsed;
+				| T.ScopedTypeIdentifier.Parsed;
 			readonly typeParameters:
 				| V.Read<RustMap, 'declaration.type_parameter'>
 				| V.Read<RustMap, 'declaration.type_parameter.lifetime'>
@@ -532,8 +530,7 @@ export interface RustMap extends V.GrammarMap {
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
 				| T.RemovedTraitBound.Parsed
-				| T.ScopedTypeIdentifier.Parsed
-				| T.TypeIdentifier.Parsed;
+				| T.ScopedTypeIdentifier.Parsed;
 			readonly $forms: V.Form<'type'>;
 		};
 		readonly 'clause.bounds.use': {
@@ -1859,8 +1856,7 @@ export interface RustMap extends V.GrammarMap {
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
 				| T.RemovedTraitBound.Parsed
-				| T.ScopedTypeIdentifier.Parsed
-				| T.TypeIdentifier.Parsed;
+				| T.ScopedTypeIdentifier.Parsed;
 			readonly left:
 				| V.Read<RustMap, 'clause.bounds.higher_ranked'>
 				| V.Read<RustMap, 'identifier'>
@@ -1897,8 +1893,7 @@ export interface RustMap extends V.GrammarMap {
 				| T.PointerTypeConst.Parsed
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
-				| T.ScopedTypeIdentifier.Parsed
-				| T.TypeIdentifier.Parsed;
+				| T.ScopedTypeIdentifier.Parsed;
 			readonly wherePredicates: V.Read<RustMap, 'clause.where.predicate'>;
 			readonly $forms: V.Form<'bounds' | 'left'>;
 		};
@@ -1982,8 +1977,7 @@ export interface RustMap extends V.GrammarMap {
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
 				| T.RemovedTraitBound.Parsed
-				| T.ScopedTypeIdentifier.Parsed
-				| T.TypeIdentifier.Parsed;
+				| T.ScopedTypeIdentifier.Parsed;
 			readonly value:
 				| V.Read<RustMap, 'expression.assignment'>
 				| V.Read<RustMap, 'expression.assignment.compound'>
@@ -2185,8 +2179,7 @@ export interface RustMap extends V.GrammarMap {
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
 				| T.RemovedTraitBound.Parsed
-				| T.ScopedTypeIdentifier.Parsed
-				| T.TypeIdentifier.Parsed;
+				| T.ScopedTypeIdentifier.Parsed;
 			readonly value:
 				| V.Read<RustMap, 'expression.assignment'>
 				| V.Read<RustMap, 'expression.assignment.compound'>
@@ -2388,8 +2381,7 @@ export interface RustMap extends V.GrammarMap {
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
 				| T.RemovedTraitBound.Parsed
-				| T.ScopedTypeIdentifier.Parsed
-				| T.TypeIdentifier.Parsed;
+				| T.ScopedTypeIdentifier.Parsed;
 			readonly value:
 				| V.Read<RustMap, 'expression.assignment'>
 				| V.Read<RustMap, 'expression.assignment.compound'>
@@ -2591,8 +2583,7 @@ export interface RustMap extends V.GrammarMap {
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
 				| T.RemovedTraitBound.Parsed
-				| T.ScopedTypeIdentifier.Parsed
-				| T.TypeIdentifier.Parsed;
+				| T.ScopedTypeIdentifier.Parsed;
 			readonly value:
 				| V.Read<RustMap, 'expression.assignment'>
 				| V.Read<RustMap, 'expression.assignment.compound'>
@@ -2794,8 +2785,7 @@ export interface RustMap extends V.GrammarMap {
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
 				| T.RemovedTraitBound.Parsed
-				| T.ScopedTypeIdentifier.Parsed
-				| T.TypeIdentifier.Parsed;
+				| T.ScopedTypeIdentifier.Parsed;
 			readonly value:
 				| V.Read<RustMap, 'expression.assignment'>
 				| V.Read<RustMap, 'expression.assignment.compound'>
@@ -3010,8 +3000,7 @@ export interface RustMap extends V.GrammarMap {
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
 				| T.RemovedTraitBound.Parsed
-				| T.ScopedTypeIdentifier.Parsed
-				| T.TypeIdentifier.Parsed;
+				| T.ScopedTypeIdentifier.Parsed;
 			readonly value:
 				| V.Read<RustMap, 'expression.assignment'>
 				| V.Read<RustMap, 'expression.assignment.compound'>
@@ -3183,8 +3172,7 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
-				| T.TypeIdentifier.Parsed;
+				| V.Text<RustMap, 'identifier.receiver'>;
 			readonly typeParameters:
 				| V.Read<RustMap, 'declaration.type_parameter'>
 				| V.Read<RustMap, 'declaration.type_parameter.lifetime'>
@@ -3220,8 +3208,7 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
-				| T.TypeIdentifier.Parsed;
+				| V.Text<RustMap, 'identifier.receiver'>;
 			readonly typeParameters:
 				| V.Read<RustMap, 'declaration.type_parameter'>
 				| V.Read<RustMap, 'declaration.type_parameter.lifetime'>
@@ -3257,8 +3244,7 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
-				| T.TypeIdentifier.Parsed;
+				| V.Text<RustMap, 'identifier.receiver'>;
 			readonly typeParameters:
 				| V.Read<RustMap, 'declaration.type_parameter'>
 				| V.Read<RustMap, 'declaration.type_parameter.lifetime'>
@@ -3294,8 +3280,7 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
-				| T.TypeIdentifier.Parsed;
+				| V.Text<RustMap, 'identifier.receiver'>;
 			readonly typeParameters:
 				| V.Read<RustMap, 'declaration.type_parameter'>
 				| V.Read<RustMap, 'declaration.type_parameter.lifetime'>
@@ -3331,8 +3316,7 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
-				| T.TypeIdentifier.Parsed;
+				| V.Text<RustMap, 'identifier.receiver'>;
 			readonly typeParameters:
 				| V.Read<RustMap, 'declaration.type_parameter'>
 				| V.Read<RustMap, 'declaration.type_parameter.lifetime'>
@@ -3368,8 +3352,7 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
-				| T.TypeIdentifier.Parsed;
+				| V.Text<RustMap, 'identifier.receiver'>;
 			readonly scope:
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
@@ -6530,8 +6513,7 @@ export interface RustMap extends V.GrammarMap {
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
 				| T.RemovedTraitBound.Parsed
-				| T.ScopedTypeIdentifier.Parsed
-				| T.TypeIdentifier.Parsed;
+				| T.ScopedTypeIdentifier.Parsed;
 			readonly typeParameters:
 				| V.Read<RustMap, 'declaration.type_parameter'>
 				| V.Read<RustMap, 'declaration.type_parameter.lifetime'>
@@ -6648,8 +6630,7 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'type.generic'>
-				| T.ScopedTypeIdentifier.Parsed
-				| T.TypeIdentifier.Parsed;
+				| T.ScopedTypeIdentifier.Parsed;
 			readonly traitClause: V.Unmapped<'rust:impl_item_negative_clause'>;
 			readonly type:
 				| V.Read<RustMap, 'clause.bounds.removed'>
@@ -6699,8 +6680,7 @@ export interface RustMap extends V.GrammarMap {
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
 				| T.RemovedTraitBound.Parsed
-				| T.ScopedTypeIdentifier.Parsed
-				| T.TypeIdentifier.Parsed;
+				| T.ScopedTypeIdentifier.Parsed;
 			readonly typeParameters:
 				| V.Read<RustMap, 'declaration.type_parameter'>
 				| V.Read<RustMap, 'declaration.type_parameter.lifetime'>
@@ -6721,8 +6701,7 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
-				| T.FieldIdentifier.Parsed;
+				| V.Text<RustMap, 'identifier.receiver'>;
 			readonly type:
 				| V.Read<RustMap, 'clause.bounds.removed'>
 				| V.Read<RustMap, 'expression.call.macro'>
@@ -6771,8 +6750,7 @@ export interface RustMap extends V.GrammarMap {
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
 				| T.RemovedTraitBound.Parsed
-				| T.ScopedTypeIdentifier.Parsed
-				| T.TypeIdentifier.Parsed;
+				| T.ScopedTypeIdentifier.Parsed;
 			readonly $forms: V.Form<'name' | 'type', 'attributes'> | V.Form<'type', 'name'>;
 		};
 		readonly 'declaration.field.private': {
@@ -6787,8 +6765,7 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
-				| T.FieldIdentifier.Parsed;
+				| V.Text<RustMap, 'identifier.receiver'>;
 			readonly type:
 				| V.Read<RustMap, 'clause.bounds.removed'>
 				| V.Read<RustMap, 'expression.call.macro'>
@@ -6837,8 +6814,7 @@ export interface RustMap extends V.GrammarMap {
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
 				| T.RemovedTraitBound.Parsed
-				| T.ScopedTypeIdentifier.Parsed
-				| T.TypeIdentifier.Parsed;
+				| T.ScopedTypeIdentifier.Parsed;
 			readonly $forms: V.Form<'name' | 'type', 'attributes'> | V.Form<'type', 'name'>;
 		};
 		readonly 'declaration.field.public': {
@@ -6853,8 +6829,7 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
-				| T.FieldIdentifier.Parsed;
+				| V.Text<RustMap, 'identifier.receiver'>;
 			readonly type:
 				| V.Read<RustMap, 'clause.bounds.removed'>
 				| V.Read<RustMap, 'expression.call.macro'>
@@ -6903,8 +6878,7 @@ export interface RustMap extends V.GrammarMap {
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
 				| T.RemovedTraitBound.Parsed
-				| T.ScopedTypeIdentifier.Parsed
-				| T.TypeIdentifier.Parsed;
+				| T.ScopedTypeIdentifier.Parsed;
 			readonly $forms: V.Form<'name' | 'type', 'attributes'> | V.Form<'type', 'name'>;
 		};
 		readonly 'declaration.field.public.internal': {
@@ -6919,8 +6893,7 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
-				| T.FieldIdentifier.Parsed;
+				| V.Text<RustMap, 'identifier.receiver'>;
 			readonly type:
 				| V.Read<RustMap, 'clause.bounds.removed'>
 				| V.Read<RustMap, 'expression.call.macro'>
@@ -6969,8 +6942,7 @@ export interface RustMap extends V.GrammarMap {
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
 				| T.RemovedTraitBound.Parsed
-				| T.ScopedTypeIdentifier.Parsed
-				| T.TypeIdentifier.Parsed;
+				| T.ScopedTypeIdentifier.Parsed;
 			readonly $forms: V.Form<'name' | 'type', 'attributes'> | V.Form<'type', 'name'>;
 		};
 		readonly 'declaration.field.public.parent': {
@@ -6985,8 +6957,7 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
-				| T.FieldIdentifier.Parsed;
+				| V.Text<RustMap, 'identifier.receiver'>;
 			readonly type:
 				| V.Read<RustMap, 'clause.bounds.removed'>
 				| V.Read<RustMap, 'expression.call.macro'>
@@ -7035,8 +7006,7 @@ export interface RustMap extends V.GrammarMap {
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
 				| T.RemovedTraitBound.Parsed
-				| T.ScopedTypeIdentifier.Parsed
-				| T.TypeIdentifier.Parsed;
+				| T.ScopedTypeIdentifier.Parsed;
 			readonly $forms: V.Form<'name' | 'type', 'attributes'> | V.Form<'type', 'name'>;
 		};
 		readonly 'declaration.field.public.restricted': {
@@ -7051,8 +7021,7 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
-				| T.FieldIdentifier.Parsed;
+				| V.Text<RustMap, 'identifier.receiver'>;
 			readonly scope:
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
@@ -7114,8 +7083,7 @@ export interface RustMap extends V.GrammarMap {
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
 				| T.RemovedTraitBound.Parsed
-				| T.ScopedTypeIdentifier.Parsed
-				| T.TypeIdentifier.Parsed;
+				| T.ScopedTypeIdentifier.Parsed;
 			readonly $forms: V.Form<'name' | 'scope' | 'type', 'attributes'> | V.Form<'scope' | 'type', 'name'>;
 		};
 		readonly 'declaration.function': {
@@ -7223,8 +7191,7 @@ export interface RustMap extends V.GrammarMap {
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
 				| T.RemovedTraitBound.Parsed
-				| T.ScopedTypeIdentifier.Parsed
-				| T.TypeIdentifier.Parsed;
+				| T.ScopedTypeIdentifier.Parsed;
 			readonly typeParameters:
 				| V.Read<RustMap, 'declaration.type_parameter'>
 				| V.Read<RustMap, 'declaration.type_parameter.lifetime'>
@@ -7338,8 +7305,7 @@ export interface RustMap extends V.GrammarMap {
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
 				| T.RemovedTraitBound.Parsed
-				| T.ScopedTypeIdentifier.Parsed
-				| T.TypeIdentifier.Parsed;
+				| T.ScopedTypeIdentifier.Parsed;
 			readonly typeParameters:
 				| V.Read<RustMap, 'declaration.type_parameter'>
 				| V.Read<RustMap, 'declaration.type_parameter.lifetime'>
@@ -7453,8 +7419,7 @@ export interface RustMap extends V.GrammarMap {
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
 				| T.RemovedTraitBound.Parsed
-				| T.ScopedTypeIdentifier.Parsed
-				| T.TypeIdentifier.Parsed;
+				| T.ScopedTypeIdentifier.Parsed;
 			readonly typeParameters:
 				| V.Read<RustMap, 'declaration.type_parameter'>
 				| V.Read<RustMap, 'declaration.type_parameter.lifetime'>
@@ -7568,8 +7533,7 @@ export interface RustMap extends V.GrammarMap {
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
 				| T.RemovedTraitBound.Parsed
-				| T.ScopedTypeIdentifier.Parsed
-				| T.TypeIdentifier.Parsed;
+				| T.ScopedTypeIdentifier.Parsed;
 			readonly typeParameters:
 				| V.Read<RustMap, 'declaration.type_parameter'>
 				| V.Read<RustMap, 'declaration.type_parameter.lifetime'>
@@ -7683,8 +7647,7 @@ export interface RustMap extends V.GrammarMap {
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
 				| T.RemovedTraitBound.Parsed
-				| T.ScopedTypeIdentifier.Parsed
-				| T.TypeIdentifier.Parsed;
+				| T.ScopedTypeIdentifier.Parsed;
 			readonly typeParameters:
 				| V.Read<RustMap, 'declaration.type_parameter'>
 				| V.Read<RustMap, 'declaration.type_parameter.lifetime'>
@@ -7798,8 +7761,7 @@ export interface RustMap extends V.GrammarMap {
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
 				| T.RemovedTraitBound.Parsed
-				| T.ScopedTypeIdentifier.Parsed
-				| T.TypeIdentifier.Parsed;
+				| T.ScopedTypeIdentifier.Parsed;
 			readonly scope:
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
@@ -7926,8 +7888,7 @@ export interface RustMap extends V.GrammarMap {
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
 				| T.RemovedTraitBound.Parsed
-				| T.ScopedTypeIdentifier.Parsed
-				| T.TypeIdentifier.Parsed;
+				| T.ScopedTypeIdentifier.Parsed;
 			readonly typeParameters:
 				| V.Read<RustMap, 'declaration.type_parameter'>
 				| V.Read<RustMap, 'declaration.type_parameter.lifetime'>
@@ -8041,8 +8002,7 @@ export interface RustMap extends V.GrammarMap {
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
 				| T.RemovedTraitBound.Parsed
-				| T.ScopedTypeIdentifier.Parsed
-				| T.TypeIdentifier.Parsed;
+				| T.ScopedTypeIdentifier.Parsed;
 			readonly typeParameters:
 				| V.Read<RustMap, 'declaration.type_parameter'>
 				| V.Read<RustMap, 'declaration.type_parameter.lifetime'>
@@ -8156,8 +8116,7 @@ export interface RustMap extends V.GrammarMap {
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
 				| T.RemovedTraitBound.Parsed
-				| T.ScopedTypeIdentifier.Parsed
-				| T.TypeIdentifier.Parsed;
+				| T.ScopedTypeIdentifier.Parsed;
 			readonly typeParameters:
 				| V.Read<RustMap, 'declaration.type_parameter'>
 				| V.Read<RustMap, 'declaration.type_parameter.lifetime'>
@@ -8271,8 +8230,7 @@ export interface RustMap extends V.GrammarMap {
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
 				| T.RemovedTraitBound.Parsed
-				| T.ScopedTypeIdentifier.Parsed
-				| T.TypeIdentifier.Parsed;
+				| T.ScopedTypeIdentifier.Parsed;
 			readonly typeParameters:
 				| V.Read<RustMap, 'declaration.type_parameter'>
 				| V.Read<RustMap, 'declaration.type_parameter.lifetime'>
@@ -8386,8 +8344,7 @@ export interface RustMap extends V.GrammarMap {
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
 				| T.RemovedTraitBound.Parsed
-				| T.ScopedTypeIdentifier.Parsed
-				| T.TypeIdentifier.Parsed;
+				| T.ScopedTypeIdentifier.Parsed;
 			readonly typeParameters:
 				| V.Read<RustMap, 'declaration.type_parameter'>
 				| V.Read<RustMap, 'declaration.type_parameter.lifetime'>
@@ -8501,8 +8458,7 @@ export interface RustMap extends V.GrammarMap {
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
 				| T.RemovedTraitBound.Parsed
-				| T.ScopedTypeIdentifier.Parsed
-				| T.TypeIdentifier.Parsed;
+				| T.ScopedTypeIdentifier.Parsed;
 			readonly scope:
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
@@ -8673,8 +8629,7 @@ export interface RustMap extends V.GrammarMap {
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
 				| T.RemovedTraitBound.Parsed
-				| T.ScopedTypeIdentifier.Parsed
-				| T.TypeIdentifier.Parsed;
+				| T.ScopedTypeIdentifier.Parsed;
 			readonly name:
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
@@ -8682,8 +8637,7 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
-				| T.TypeIdentifier.Parsed;
+				| V.Text<RustMap, 'identifier.receiver'>;
 			readonly typeParameters:
 				| V.Read<RustMap, 'declaration.type_parameter'>
 				| V.Read<RustMap, 'declaration.type_parameter.lifetime'>
@@ -8841,8 +8795,7 @@ export interface RustMap extends V.GrammarMap {
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
 				| T.RemovedTraitBound.Parsed
-				| T.ScopedTypeIdentifier.Parsed
-				| T.TypeIdentifier.Parsed;
+				| T.ScopedTypeIdentifier.Parsed;
 			readonly name:
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
@@ -8850,8 +8803,7 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
-				| T.TypeIdentifier.Parsed;
+				| V.Text<RustMap, 'identifier.receiver'>;
 			readonly typeParameters:
 				| V.Read<RustMap, 'declaration.type_parameter'>
 				| V.Read<RustMap, 'declaration.type_parameter.lifetime'>
@@ -9009,8 +8961,7 @@ export interface RustMap extends V.GrammarMap {
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
 				| T.RemovedTraitBound.Parsed
-				| T.ScopedTypeIdentifier.Parsed
-				| T.TypeIdentifier.Parsed;
+				| T.ScopedTypeIdentifier.Parsed;
 			readonly name:
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
@@ -9018,8 +8969,7 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
-				| T.TypeIdentifier.Parsed;
+				| V.Text<RustMap, 'identifier.receiver'>;
 			readonly typeParameters:
 				| V.Read<RustMap, 'declaration.type_parameter'>
 				| V.Read<RustMap, 'declaration.type_parameter.lifetime'>
@@ -9177,8 +9127,7 @@ export interface RustMap extends V.GrammarMap {
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
 				| T.RemovedTraitBound.Parsed
-				| T.ScopedTypeIdentifier.Parsed
-				| T.TypeIdentifier.Parsed;
+				| T.ScopedTypeIdentifier.Parsed;
 			readonly name:
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
@@ -9186,8 +9135,7 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
-				| T.TypeIdentifier.Parsed;
+				| V.Text<RustMap, 'identifier.receiver'>;
 			readonly typeParameters:
 				| V.Read<RustMap, 'declaration.type_parameter'>
 				| V.Read<RustMap, 'declaration.type_parameter.lifetime'>
@@ -9345,8 +9293,7 @@ export interface RustMap extends V.GrammarMap {
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
 				| T.RemovedTraitBound.Parsed
-				| T.ScopedTypeIdentifier.Parsed
-				| T.TypeIdentifier.Parsed;
+				| T.ScopedTypeIdentifier.Parsed;
 			readonly name:
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
@@ -9354,8 +9301,7 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
-				| T.TypeIdentifier.Parsed;
+				| V.Text<RustMap, 'identifier.receiver'>;
 			readonly typeParameters:
 				| V.Read<RustMap, 'declaration.type_parameter'>
 				| V.Read<RustMap, 'declaration.type_parameter.lifetime'>
@@ -9513,8 +9459,7 @@ export interface RustMap extends V.GrammarMap {
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
 				| T.RemovedTraitBound.Parsed
-				| T.ScopedTypeIdentifier.Parsed
-				| T.TypeIdentifier.Parsed;
+				| T.ScopedTypeIdentifier.Parsed;
 			readonly name:
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
@@ -9522,8 +9467,7 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
-				| T.TypeIdentifier.Parsed;
+				| V.Text<RustMap, 'identifier.receiver'>;
 			readonly scope:
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
@@ -9689,8 +9633,7 @@ export interface RustMap extends V.GrammarMap {
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
 				| T.RemovedTraitBound.Parsed
-				| T.ScopedTypeIdentifier.Parsed
-				| T.TypeIdentifier.Parsed;
+				| T.ScopedTypeIdentifier.Parsed;
 			readonly typeParameters:
 				| V.Read<RustMap, 'declaration.type_parameter'>
 				| V.Read<RustMap, 'declaration.type_parameter.lifetime'>
@@ -9804,8 +9747,7 @@ export interface RustMap extends V.GrammarMap {
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
 				| T.RemovedTraitBound.Parsed
-				| T.ScopedTypeIdentifier.Parsed
-				| T.TypeIdentifier.Parsed;
+				| T.ScopedTypeIdentifier.Parsed;
 			readonly typeParameters:
 				| V.Read<RustMap, 'declaration.type_parameter'>
 				| V.Read<RustMap, 'declaration.type_parameter.lifetime'>
@@ -9919,8 +9861,7 @@ export interface RustMap extends V.GrammarMap {
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
 				| T.RemovedTraitBound.Parsed
-				| T.ScopedTypeIdentifier.Parsed
-				| T.TypeIdentifier.Parsed;
+				| T.ScopedTypeIdentifier.Parsed;
 			readonly typeParameters:
 				| V.Read<RustMap, 'declaration.type_parameter'>
 				| V.Read<RustMap, 'declaration.type_parameter.lifetime'>
@@ -10034,8 +9975,7 @@ export interface RustMap extends V.GrammarMap {
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
 				| T.RemovedTraitBound.Parsed
-				| T.ScopedTypeIdentifier.Parsed
-				| T.TypeIdentifier.Parsed;
+				| T.ScopedTypeIdentifier.Parsed;
 			readonly typeParameters:
 				| V.Read<RustMap, 'declaration.type_parameter'>
 				| V.Read<RustMap, 'declaration.type_parameter.lifetime'>
@@ -10149,8 +10089,7 @@ export interface RustMap extends V.GrammarMap {
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
 				| T.RemovedTraitBound.Parsed
-				| T.ScopedTypeIdentifier.Parsed
-				| T.TypeIdentifier.Parsed;
+				| T.ScopedTypeIdentifier.Parsed;
 			readonly typeParameters:
 				| V.Read<RustMap, 'declaration.type_parameter'>
 				| V.Read<RustMap, 'declaration.type_parameter.lifetime'>
@@ -10264,8 +10203,7 @@ export interface RustMap extends V.GrammarMap {
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
 				| T.RemovedTraitBound.Parsed
-				| T.ScopedTypeIdentifier.Parsed
-				| T.TypeIdentifier.Parsed;
+				| T.ScopedTypeIdentifier.Parsed;
 			readonly scope:
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
@@ -10392,8 +10330,7 @@ export interface RustMap extends V.GrammarMap {
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
 				| T.RemovedTraitBound.Parsed
-				| T.ScopedTypeIdentifier.Parsed
-				| T.TypeIdentifier.Parsed;
+				| T.ScopedTypeIdentifier.Parsed;
 			readonly typeParameters:
 				| V.Read<RustMap, 'declaration.type_parameter'>
 				| V.Read<RustMap, 'declaration.type_parameter.lifetime'>
@@ -10507,8 +10444,7 @@ export interface RustMap extends V.GrammarMap {
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
 				| T.RemovedTraitBound.Parsed
-				| T.ScopedTypeIdentifier.Parsed
-				| T.TypeIdentifier.Parsed;
+				| T.ScopedTypeIdentifier.Parsed;
 			readonly typeParameters:
 				| V.Read<RustMap, 'declaration.type_parameter'>
 				| V.Read<RustMap, 'declaration.type_parameter.lifetime'>
@@ -10622,8 +10558,7 @@ export interface RustMap extends V.GrammarMap {
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
 				| T.RemovedTraitBound.Parsed
-				| T.ScopedTypeIdentifier.Parsed
-				| T.TypeIdentifier.Parsed;
+				| T.ScopedTypeIdentifier.Parsed;
 			readonly typeParameters:
 				| V.Read<RustMap, 'declaration.type_parameter'>
 				| V.Read<RustMap, 'declaration.type_parameter.lifetime'>
@@ -10737,8 +10672,7 @@ export interface RustMap extends V.GrammarMap {
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
 				| T.RemovedTraitBound.Parsed
-				| T.ScopedTypeIdentifier.Parsed
-				| T.TypeIdentifier.Parsed;
+				| T.ScopedTypeIdentifier.Parsed;
 			readonly typeParameters:
 				| V.Read<RustMap, 'declaration.type_parameter'>
 				| V.Read<RustMap, 'declaration.type_parameter.lifetime'>
@@ -10852,8 +10786,7 @@ export interface RustMap extends V.GrammarMap {
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
 				| T.RemovedTraitBound.Parsed
-				| T.ScopedTypeIdentifier.Parsed
-				| T.TypeIdentifier.Parsed;
+				| T.ScopedTypeIdentifier.Parsed;
 			readonly typeParameters:
 				| V.Read<RustMap, 'declaration.type_parameter'>
 				| V.Read<RustMap, 'declaration.type_parameter.lifetime'>
@@ -10967,8 +10900,7 @@ export interface RustMap extends V.GrammarMap {
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
 				| T.RemovedTraitBound.Parsed
-				| T.ScopedTypeIdentifier.Parsed
-				| T.TypeIdentifier.Parsed;
+				| T.ScopedTypeIdentifier.Parsed;
 			readonly scope:
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
@@ -11886,8 +11818,7 @@ export interface RustMap extends V.GrammarMap {
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
 				| T.RemovedTraitBound.Parsed
-				| T.ScopedTypeIdentifier.Parsed
-				| T.TypeIdentifier.Parsed;
+				| T.ScopedTypeIdentifier.Parsed;
 			readonly $forms: V.Form<'type', 'name'> | V.Form<'name', 'type'> | V.Form<'name' | 'type'>;
 		};
 		readonly 'declaration.parameter.receiver': {
@@ -11944,8 +11875,7 @@ export interface RustMap extends V.GrammarMap {
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
 				| T.RemovedTraitBound.Parsed
-				| T.ScopedTypeIdentifier.Parsed
-				| T.TypeIdentifier.Parsed;
+				| T.ScopedTypeIdentifier.Parsed;
 			readonly $forms: V.Form<'type', 'lifetime' | 'reference'> | V.Form<never, 'type'>;
 		};
 		readonly 'declaration.parameter.variadic': {
@@ -12092,8 +12022,7 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
-				| T.TypeIdentifier.Parsed;
+				| V.Text<RustMap, 'identifier.receiver'>;
 			readonly typeParameters:
 				| V.Read<RustMap, 'declaration.type_parameter'>
 				| V.Read<RustMap, 'declaration.type_parameter.lifetime'>
@@ -12132,8 +12061,7 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
-				| T.TypeIdentifier.Parsed;
+				| V.Text<RustMap, 'identifier.receiver'>;
 			readonly typeParameters:
 				| V.Read<RustMap, 'declaration.type_parameter'>
 				| V.Read<RustMap, 'declaration.type_parameter.lifetime'>
@@ -12157,8 +12085,7 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
-				| T.TypeIdentifier.Parsed;
+				| V.Text<RustMap, 'identifier.receiver'>;
 			readonly typeParameters:
 				| V.Read<RustMap, 'declaration.type_parameter'>
 				| V.Read<RustMap, 'declaration.type_parameter.lifetime'>
@@ -12182,8 +12109,7 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
-				| T.TypeIdentifier.Parsed;
+				| V.Text<RustMap, 'identifier.receiver'>;
 			readonly typeParameters:
 				| V.Read<RustMap, 'declaration.type_parameter'>
 				| V.Read<RustMap, 'declaration.type_parameter.lifetime'>
@@ -12207,8 +12133,7 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
-				| T.TypeIdentifier.Parsed;
+				| V.Text<RustMap, 'identifier.receiver'>;
 			readonly typeParameters:
 				| V.Read<RustMap, 'declaration.type_parameter'>
 				| V.Read<RustMap, 'declaration.type_parameter.lifetime'>
@@ -12232,8 +12157,7 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
-				| T.TypeIdentifier.Parsed;
+				| V.Text<RustMap, 'identifier.receiver'>;
 			readonly scope:
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
@@ -12270,8 +12194,7 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
-				| T.TypeIdentifier.Parsed;
+				| V.Text<RustMap, 'identifier.receiver'>;
 			readonly typeParameters:
 				| V.Read<RustMap, 'declaration.type_parameter'>
 				| V.Read<RustMap, 'declaration.type_parameter.lifetime'>
@@ -12295,8 +12218,7 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
-				| T.TypeIdentifier.Parsed;
+				| V.Text<RustMap, 'identifier.receiver'>;
 			readonly typeParameters:
 				| V.Read<RustMap, 'declaration.type_parameter'>
 				| V.Read<RustMap, 'declaration.type_parameter.lifetime'>
@@ -12320,8 +12242,7 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
-				| T.TypeIdentifier.Parsed;
+				| V.Text<RustMap, 'identifier.receiver'>;
 			readonly typeParameters:
 				| V.Read<RustMap, 'declaration.type_parameter'>
 				| V.Read<RustMap, 'declaration.type_parameter.lifetime'>
@@ -12345,8 +12266,7 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
-				| T.TypeIdentifier.Parsed;
+				| V.Text<RustMap, 'identifier.receiver'>;
 			readonly typeParameters:
 				| V.Read<RustMap, 'declaration.type_parameter'>
 				| V.Read<RustMap, 'declaration.type_parameter.lifetime'>
@@ -12370,8 +12290,7 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
-				| T.TypeIdentifier.Parsed;
+				| V.Text<RustMap, 'identifier.receiver'>;
 			readonly typeParameters:
 				| V.Read<RustMap, 'declaration.type_parameter'>
 				| V.Read<RustMap, 'declaration.type_parameter.lifetime'>
@@ -12395,8 +12314,7 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
-				| T.TypeIdentifier.Parsed;
+				| V.Text<RustMap, 'identifier.receiver'>;
 			readonly scope:
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
@@ -12433,8 +12351,7 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
-				| T.TypeIdentifier.Parsed;
+				| V.Text<RustMap, 'identifier.receiver'>;
 			readonly typeParameters:
 				| V.Read<RustMap, 'declaration.type_parameter'>
 				| V.Read<RustMap, 'declaration.type_parameter.lifetime'>
@@ -12458,8 +12375,7 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
-				| T.TypeIdentifier.Parsed;
+				| V.Text<RustMap, 'identifier.receiver'>;
 			readonly typeParameters:
 				| V.Read<RustMap, 'declaration.type_parameter'>
 				| V.Read<RustMap, 'declaration.type_parameter.lifetime'>
@@ -12483,8 +12399,7 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
-				| T.TypeIdentifier.Parsed;
+				| V.Text<RustMap, 'identifier.receiver'>;
 			readonly typeParameters:
 				| V.Read<RustMap, 'declaration.type_parameter'>
 				| V.Read<RustMap, 'declaration.type_parameter.lifetime'>
@@ -12508,8 +12423,7 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
-				| T.TypeIdentifier.Parsed;
+				| V.Text<RustMap, 'identifier.receiver'>;
 			readonly typeParameters:
 				| V.Read<RustMap, 'declaration.type_parameter'>
 				| V.Read<RustMap, 'declaration.type_parameter.lifetime'>
@@ -12533,8 +12447,7 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
-				| T.TypeIdentifier.Parsed;
+				| V.Text<RustMap, 'identifier.receiver'>;
 			readonly typeParameters:
 				| V.Read<RustMap, 'declaration.type_parameter'>
 				| V.Read<RustMap, 'declaration.type_parameter.lifetime'>
@@ -12558,8 +12471,7 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
-				| T.TypeIdentifier.Parsed;
+				| V.Text<RustMap, 'identifier.receiver'>;
 			readonly scope:
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
@@ -12589,8 +12501,7 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
-				| T.TypeIdentifier.Parsed;
+				| V.Text<RustMap, 'identifier.receiver'>;
 			readonly trailingWhereClause: V.Read<RustMap, 'clause.where'>;
 			readonly typeParameters:
 				| V.Read<RustMap, 'declaration.type_parameter'>
@@ -12645,8 +12556,7 @@ export interface RustMap extends V.GrammarMap {
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
 				| T.RemovedTraitBound.Parsed
-				| T.ScopedTypeIdentifier.Parsed
-				| T.TypeIdentifier.Parsed;
+				| T.ScopedTypeIdentifier.Parsed;
 			readonly whereClause: V.Read<RustMap, 'clause.where'>;
 			readonly $forms: V.Form<'name' | 'value'>;
 		};
@@ -12701,8 +12611,7 @@ export interface RustMap extends V.GrammarMap {
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
 				| T.RemovedTraitBound.Parsed
-				| T.ScopedTypeIdentifier.Parsed
-				| T.TypeIdentifier.Parsed;
+				| T.ScopedTypeIdentifier.Parsed;
 			readonly name:
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
@@ -12710,8 +12619,7 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
-				| T.TypeIdentifier.Parsed;
+				| V.Text<RustMap, 'identifier.receiver'>;
 			readonly trailingWhereClause: V.Read<RustMap, 'clause.where'>;
 			readonly typeParameters:
 				| V.Read<RustMap, 'declaration.type_parameter'>
@@ -12750,8 +12658,7 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
-				| T.TypeIdentifier.Parsed;
+				| V.Text<RustMap, 'identifier.receiver'>;
 			readonly trailingWhereClause: V.Read<RustMap, 'clause.where'>;
 			readonly typeParameters:
 				| V.Read<RustMap, 'declaration.type_parameter'>
@@ -12806,8 +12713,7 @@ export interface RustMap extends V.GrammarMap {
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
 				| T.RemovedTraitBound.Parsed
-				| T.ScopedTypeIdentifier.Parsed
-				| T.TypeIdentifier.Parsed;
+				| T.ScopedTypeIdentifier.Parsed;
 			readonly whereClause: V.Read<RustMap, 'clause.where'>;
 			readonly $forms: V.Form<'name' | 'value'>;
 		};
@@ -12819,8 +12725,7 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
-				| T.TypeIdentifier.Parsed;
+				| V.Text<RustMap, 'identifier.receiver'>;
 			readonly trailingWhereClause: V.Read<RustMap, 'clause.where'>;
 			readonly typeParameters:
 				| V.Read<RustMap, 'declaration.type_parameter'>
@@ -12875,8 +12780,7 @@ export interface RustMap extends V.GrammarMap {
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
 				| T.RemovedTraitBound.Parsed
-				| T.ScopedTypeIdentifier.Parsed
-				| T.TypeIdentifier.Parsed;
+				| T.ScopedTypeIdentifier.Parsed;
 			readonly whereClause: V.Read<RustMap, 'clause.where'>;
 			readonly $forms: V.Form<'name' | 'value'>;
 		};
@@ -12888,8 +12792,7 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
-				| T.TypeIdentifier.Parsed;
+				| V.Text<RustMap, 'identifier.receiver'>;
 			readonly trailingWhereClause: V.Read<RustMap, 'clause.where'>;
 			readonly typeParameters:
 				| V.Read<RustMap, 'declaration.type_parameter'>
@@ -12944,8 +12847,7 @@ export interface RustMap extends V.GrammarMap {
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
 				| T.RemovedTraitBound.Parsed
-				| T.ScopedTypeIdentifier.Parsed
-				| T.TypeIdentifier.Parsed;
+				| T.ScopedTypeIdentifier.Parsed;
 			readonly whereClause: V.Read<RustMap, 'clause.where'>;
 			readonly $forms: V.Form<'name' | 'value'>;
 		};
@@ -12957,8 +12859,7 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
-				| T.TypeIdentifier.Parsed;
+				| V.Text<RustMap, 'identifier.receiver'>;
 			readonly trailingWhereClause: V.Read<RustMap, 'clause.where'>;
 			readonly typeParameters:
 				| V.Read<RustMap, 'declaration.type_parameter'>
@@ -13013,8 +12914,7 @@ export interface RustMap extends V.GrammarMap {
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
 				| T.RemovedTraitBound.Parsed
-				| T.ScopedTypeIdentifier.Parsed
-				| T.TypeIdentifier.Parsed;
+				| T.ScopedTypeIdentifier.Parsed;
 			readonly whereClause: V.Read<RustMap, 'clause.where'>;
 			readonly $forms: V.Form<'name' | 'value'>;
 		};
@@ -13026,8 +12926,7 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
-				| T.TypeIdentifier.Parsed;
+				| V.Text<RustMap, 'identifier.receiver'>;
 			readonly scope:
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
@@ -13095,8 +12994,7 @@ export interface RustMap extends V.GrammarMap {
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
 				| T.RemovedTraitBound.Parsed
-				| T.ScopedTypeIdentifier.Parsed
-				| T.TypeIdentifier.Parsed;
+				| T.ScopedTypeIdentifier.Parsed;
 			readonly whereClause: V.Read<RustMap, 'clause.where'>;
 			readonly $forms: V.Form<'name' | 'scope' | 'value'>;
 		};
@@ -13155,8 +13053,7 @@ export interface RustMap extends V.GrammarMap {
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
 				| T.RemovedTraitBound.Parsed
-				| T.ScopedTypeIdentifier.Parsed
-				| T.TypeIdentifier.Parsed;
+				| T.ScopedTypeIdentifier.Parsed;
 			readonly default:
 				| V.Read<RustMap, 'clause.bounds.removed'>
 				| V.Read<RustMap, 'expression.call.macro'>
@@ -13217,8 +13114,7 @@ export interface RustMap extends V.GrammarMap {
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
 				| T.RemovedTraitBound.Parsed
-				| T.ScopedTypeIdentifier.Parsed
-				| T.TypeIdentifier.Parsed;
+				| T.ScopedTypeIdentifier.Parsed;
 			readonly name:
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
@@ -13226,8 +13122,7 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
-				| T.TypeIdentifier.Parsed;
+				| V.Text<RustMap, 'identifier.receiver'>;
 			readonly $forms: V.Form<'name'>;
 		};
 		readonly 'declaration.type_parameter.lifetime': {
@@ -13285,8 +13180,7 @@ export interface RustMap extends V.GrammarMap {
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
 				| T.RemovedTraitBound.Parsed
-				| T.ScopedTypeIdentifier.Parsed
-				| T.TypeIdentifier.Parsed;
+				| T.ScopedTypeIdentifier.Parsed;
 			readonly name: V.Read<RustMap, 'identifier.lifetime'>;
 			readonly $forms: V.Form<'name'>;
 		};
@@ -13391,8 +13285,7 @@ export interface RustMap extends V.GrammarMap {
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
 				| T.RemovedTraitBound.Parsed
-				| T.ScopedTypeIdentifier.Parsed
-				| T.TypeIdentifier.Parsed;
+				| T.ScopedTypeIdentifier.Parsed;
 			readonly $forms: V.Form<'name' | 'type'>;
 		};
 		readonly 'declaration.union': {
@@ -13410,8 +13303,7 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
-				| T.TypeIdentifier.Parsed;
+				| V.Text<RustMap, 'identifier.receiver'>;
 			readonly typeParameters:
 				| V.Read<RustMap, 'declaration.type_parameter'>
 				| V.Read<RustMap, 'declaration.type_parameter.lifetime'>
@@ -13435,8 +13327,7 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
-				| T.TypeIdentifier.Parsed;
+				| V.Text<RustMap, 'identifier.receiver'>;
 			readonly typeParameters:
 				| V.Read<RustMap, 'declaration.type_parameter'>
 				| V.Read<RustMap, 'declaration.type_parameter.lifetime'>
@@ -13460,8 +13351,7 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
-				| T.TypeIdentifier.Parsed;
+				| V.Text<RustMap, 'identifier.receiver'>;
 			readonly typeParameters:
 				| V.Read<RustMap, 'declaration.type_parameter'>
 				| V.Read<RustMap, 'declaration.type_parameter.lifetime'>
@@ -13485,8 +13375,7 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
-				| T.TypeIdentifier.Parsed;
+				| V.Text<RustMap, 'identifier.receiver'>;
 			readonly typeParameters:
 				| V.Read<RustMap, 'declaration.type_parameter'>
 				| V.Read<RustMap, 'declaration.type_parameter.lifetime'>
@@ -13510,8 +13399,7 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
-				| T.TypeIdentifier.Parsed;
+				| V.Text<RustMap, 'identifier.receiver'>;
 			readonly typeParameters:
 				| V.Read<RustMap, 'declaration.type_parameter'>
 				| V.Read<RustMap, 'declaration.type_parameter.lifetime'>
@@ -13535,8 +13423,7 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
-				| T.TypeIdentifier.Parsed;
+				| V.Text<RustMap, 'identifier.receiver'>;
 			readonly scope:
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
@@ -13674,8 +13561,7 @@ export interface RustMap extends V.GrammarMap {
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
 				| T.RemovedTraitBound.Parsed
-				| T.ScopedTypeIdentifier.Parsed
-				| T.TypeIdentifier.Parsed;
+				| T.ScopedTypeIdentifier.Parsed;
 			readonly value:
 				| V.Read<RustMap, 'expression.assignment'>
 				| V.Read<RustMap, 'expression.assignment.compound'>
@@ -13878,8 +13764,7 @@ export interface RustMap extends V.GrammarMap {
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
 				| T.RemovedTraitBound.Parsed
-				| T.ScopedTypeIdentifier.Parsed
-				| T.TypeIdentifier.Parsed;
+				| T.ScopedTypeIdentifier.Parsed;
 			readonly value:
 				| V.Read<RustMap, 'expression.assignment'>
 				| V.Read<RustMap, 'expression.assignment.compound'>
@@ -14082,8 +13967,7 @@ export interface RustMap extends V.GrammarMap {
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
 				| T.RemovedTraitBound.Parsed
-				| T.ScopedTypeIdentifier.Parsed
-				| T.TypeIdentifier.Parsed;
+				| T.ScopedTypeIdentifier.Parsed;
 			readonly value:
 				| V.Read<RustMap, 'expression.assignment'>
 				| V.Read<RustMap, 'expression.assignment.compound'>
@@ -14286,8 +14170,7 @@ export interface RustMap extends V.GrammarMap {
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
 				| T.RemovedTraitBound.Parsed
-				| T.ScopedTypeIdentifier.Parsed
-				| T.TypeIdentifier.Parsed;
+				| T.ScopedTypeIdentifier.Parsed;
 			readonly value:
 				| V.Read<RustMap, 'expression.assignment'>
 				| V.Read<RustMap, 'expression.assignment.compound'>
@@ -14490,8 +14373,7 @@ export interface RustMap extends V.GrammarMap {
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
 				| T.RemovedTraitBound.Parsed
-				| T.ScopedTypeIdentifier.Parsed
-				| T.TypeIdentifier.Parsed;
+				| T.ScopedTypeIdentifier.Parsed;
 			readonly value:
 				| V.Read<RustMap, 'expression.assignment'>
 				| V.Read<RustMap, 'expression.assignment.compound'>
@@ -14707,8 +14589,7 @@ export interface RustMap extends V.GrammarMap {
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
 				| T.RemovedTraitBound.Parsed
-				| T.ScopedTypeIdentifier.Parsed
-				| T.TypeIdentifier.Parsed;
+				| T.ScopedTypeIdentifier.Parsed;
 			readonly value:
 				| V.Read<RustMap, 'expression.assignment'>
 				| V.Read<RustMap, 'expression.assignment.compound'>
@@ -16569,7 +16450,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'literal.number.integer.binary'>
 				| V.Read<RustMap, 'literal.number.integer.hex'>
 				| V.Read<RustMap, 'literal.number.integer.octal'>
-				| T.FieldIdentifier.Parsed
 				| T.IntegerLiteralBinary.Parsed
 				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
@@ -16769,8 +16649,7 @@ export interface RustMap extends V.GrammarMap {
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
 				| T.RemovedTraitBound.Parsed
-				| T.ScopedTypeIdentifier.Parsed
-				| T.TypeIdentifier.Parsed;
+				| T.ScopedTypeIdentifier.Parsed;
 			readonly content:
 				| V.Read<RustMap, 'clause.bounds.removed'>
 				| V.Read<RustMap, 'element.type_binding'>
@@ -16851,8 +16730,7 @@ export interface RustMap extends V.GrammarMap {
 				| T.RemovedTraitBound.Parsed
 				| T.ScopedTypeIdentifier.Parsed
 				| T.StringLiteral.Parsed
-				| T.TypeBinding.Parsed
-				| T.TypeIdentifier.Parsed;
+				| T.TypeBinding.Parsed;
 			readonly $forms: V.Form<'content'>;
 		};
 		readonly 'element.type_binding': {
@@ -16863,8 +16741,7 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
-				| T.TypeIdentifier.Parsed;
+				| V.Text<RustMap, 'identifier.receiver'>;
 			readonly type:
 				| V.Read<RustMap, 'clause.bounds.removed'>
 				| V.Read<RustMap, 'expression.call.macro'>
@@ -16913,8 +16790,7 @@ export interface RustMap extends V.GrammarMap {
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
 				| T.RemovedTraitBound.Parsed
-				| T.ScopedTypeIdentifier.Parsed
-				| T.TypeIdentifier.Parsed;
+				| T.ScopedTypeIdentifier.Parsed;
 			readonly typeArguments: V.Read<RustMap, 'element.type_argument'>;
 			readonly $forms: V.Form<'name' | 'type'>;
 		};
@@ -26892,8 +26768,7 @@ export interface RustMap extends V.GrammarMap {
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
 				| T.RemovedTraitBound.Parsed
-				| T.ScopedTypeIdentifier.Parsed
-				| T.TypeIdentifier.Parsed;
+				| T.ScopedTypeIdentifier.Parsed;
 			readonly $forms: V.Form<'expression' | 'type'>;
 		};
 		readonly 'expression.collection.list': {
@@ -27393,8 +27268,7 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'type.generic.turbofish'>
-				| T.ScopedTypeIdentifierInExpressionPosition.Parsed
-				| T.TypeIdentifier.Parsed;
+				| T.ScopedTypeIdentifierInExpressionPosition.Parsed;
 			readonly $forms: V.Form<'body' | 'name'>;
 		};
 		readonly 'expression.collection.tuple': {
@@ -27710,8 +27584,7 @@ export interface RustMap extends V.GrammarMap {
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
 				| T.RemovedTraitBound.Parsed
-				| T.ScopedTypeIdentifier.Parsed
-				| T.TypeIdentifier.Parsed;
+				| T.ScopedTypeIdentifier.Parsed;
 			readonly $forms:
 				| V.Form<'parameters', never, { readonly body: V.Read<RustMap, 'statement.block'> | T.Block.Parsed }>
 				| V.Form<
@@ -28014,7 +27887,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'literal.number.integer.binary'>
 				| V.Read<RustMap, 'literal.number.integer.hex'>
 				| V.Read<RustMap, 'literal.number.integer.octal'>
-				| T.FieldIdentifier.Parsed
 				| T.IntegerLiteralBinary.Parsed
 				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
@@ -30771,8 +30643,7 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
-				| 'super'
-				| T.TypeIdentifier.Parsed;
+				| 'super';
 			readonly qualifier:
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
@@ -31896,8 +31767,7 @@ export interface RustMap extends V.GrammarMap {
 				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'type.generic.turbofish'>
 				| T.ScopedIdentifier.Parsed
-				| T.ScopedTypeIdentifier.Parsed
-				| T.TypeIdentifier.Parsed;
+				| T.ScopedTypeIdentifier.Parsed;
 			readonly $forms:
 				| V.Form<
 						never,
@@ -31968,9 +31838,7 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
-				| T.FieldIdentifier.Parsed
-				| T.ShorthandFieldIdentifier.Parsed;
+				| V.Text<RustMap, 'identifier.receiver'>;
 			readonly pattern:
 				| V.Read<RustMap, 'expression.block.const'>
 				| V.Read<RustMap, 'expression.call.macro'>
@@ -33782,8 +33650,7 @@ export interface RustMap extends V.GrammarMap {
 				| T.BoundedType.Parsed
 				| T.FunctionType.Parsed
 				| T.RemovedTraitBound.Parsed
-				| T.ScopedTypeIdentifier.Parsed
-				| T.TypeIdentifier.Parsed;
+				| T.ScopedTypeIdentifier.Parsed;
 			readonly typeParameters:
 				| V.Read<RustMap, 'declaration.type_parameter'>
 				| V.Read<RustMap, 'declaration.type_parameter.lifetime'>
@@ -33840,8 +33707,7 @@ export interface RustMap extends V.GrammarMap {
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
 				| T.RemovedTraitBound.Parsed
-				| T.ScopedTypeIdentifier.Parsed
-				| T.TypeIdentifier.Parsed;
+				| T.ScopedTypeIdentifier.Parsed;
 			readonly length:
 				| V.Read<RustMap, 'expression.assignment'>
 				| V.Read<RustMap, 'expression.assignment.compound'>
@@ -34036,8 +33902,7 @@ export interface RustMap extends V.GrammarMap {
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
 				| T.RemovedTraitBound.Parsed
-				| T.ScopedTypeIdentifier.Parsed
-				| T.TypeIdentifier.Parsed;
+				| T.ScopedTypeIdentifier.Parsed;
 			readonly right:
 				| V.Read<RustMap, 'clause.bounds.removed'>
 				| V.Read<RustMap, 'clause.bounds.use'>
@@ -34087,8 +33952,7 @@ export interface RustMap extends V.GrammarMap {
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
 				| T.RemovedTraitBound.Parsed
-				| T.ScopedTypeIdentifier.Parsed
-				| T.TypeIdentifier.Parsed;
+				| T.ScopedTypeIdentifier.Parsed;
 			readonly $forms: V.Form<'left' | 'right'>;
 		};
 		readonly 'type.bracketed': {
@@ -34142,8 +34006,7 @@ export interface RustMap extends V.GrammarMap {
 				| T.QualifiedType.Parsed
 				| T.ReferenceType.Parsed
 				| T.RemovedTraitBound.Parsed
-				| T.ScopedTypeIdentifier.Parsed
-				| T.TypeIdentifier.Parsed;
+				| T.ScopedTypeIdentifier.Parsed;
 			readonly $forms: V.Form<'type'>;
 		};
 		readonly 'type.dynamic': {
@@ -34161,8 +34024,7 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'type.tuple'>
 				| T.FunctionType.Parsed
 				| T.HigherRankedTraitBound.Parsed
-				| T.ScopedTypeIdentifier.Parsed
-				| T.TypeIdentifier.Parsed;
+				| T.ScopedTypeIdentifier.Parsed;
 			readonly $forms: V.Form<'trait'>;
 		};
 		readonly 'type.function': {
@@ -34260,8 +34122,7 @@ export interface RustMap extends V.GrammarMap {
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
 				| T.RemovedTraitBound.Parsed
-				| T.ScopedTypeIdentifier.Parsed
-				| T.TypeIdentifier.Parsed;
+				| T.ScopedTypeIdentifier.Parsed;
 			readonly trait:
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
@@ -34270,8 +34131,7 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
-				| T.ScopedTypeIdentifier.Parsed
-				| T.TypeIdentifier.Parsed;
+				| T.ScopedTypeIdentifier.Parsed;
 			readonly $forms: V.Form<never, 'trait'> | V.Form<'trait', 'extern'>;
 		};
 		readonly 'type.generic': {
@@ -34283,8 +34143,7 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
-				| T.ScopedTypeIdentifier.Parsed
-				| T.TypeIdentifier.Parsed;
+				| T.ScopedTypeIdentifier.Parsed;
 			readonly typeArguments: V.Read<RustMap, 'element.type_argument'>;
 			readonly $forms: V.Form<'type' | 'typeArguments'>;
 		};
@@ -34297,8 +34156,7 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
-				| T.ScopedIdentifier.Parsed
-				| T.TypeIdentifier.Parsed;
+				| T.ScopedIdentifier.Parsed;
 			readonly typeArguments: V.Read<RustMap, 'element.type_argument'>;
 			readonly $forms: V.Form<'type' | 'typeArguments'>;
 		};
@@ -34351,8 +34209,7 @@ export interface RustMap extends V.GrammarMap {
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
 				| T.RemovedTraitBound.Parsed
-				| T.ScopedTypeIdentifier.Parsed
-				| T.TypeIdentifier.Parsed;
+				| T.ScopedTypeIdentifier.Parsed;
 			readonly $forms: V.Form<'type'>;
 		};
 		readonly 'type.primitive': {
@@ -34443,8 +34300,7 @@ export interface RustMap extends V.GrammarMap {
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
 				| T.RemovedTraitBound.Parsed
-				| T.ScopedTypeIdentifier.Parsed
-				| T.TypeIdentifier.Parsed;
+				| T.ScopedTypeIdentifier.Parsed;
 			readonly type:
 				| V.Read<RustMap, 'clause.bounds.removed'>
 				| V.Read<RustMap, 'expression.call.macro'>
@@ -34493,8 +34349,7 @@ export interface RustMap extends V.GrammarMap {
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
 				| T.RemovedTraitBound.Parsed
-				| T.ScopedTypeIdentifier.Parsed
-				| T.TypeIdentifier.Parsed;
+				| T.ScopedTypeIdentifier.Parsed;
 			readonly $forms: V.Form<'alias' | 'type'>;
 		};
 		readonly 'type.reference': {
@@ -34547,8 +34402,7 @@ export interface RustMap extends V.GrammarMap {
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
 				| T.RemovedTraitBound.Parsed
-				| T.ScopedTypeIdentifier.Parsed
-				| T.TypeIdentifier.Parsed;
+				| T.ScopedTypeIdentifier.Parsed;
 			readonly $forms: V.Form<'type'>;
 		};
 		readonly 'type.tuple': {

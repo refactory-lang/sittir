@@ -196,8 +196,7 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'identifier.label'>
 				| V.Read<TypeScriptMap, 'identifier.qualified'>
 				| V.Text<TypeScriptMap, 'identifier.receiver'>
-				| V.Text<TypeScriptMap, 'identifier.super'>
-				| T.PropertyIdentifier.Parsed;
+				| V.Text<TypeScriptMap, 'identifier.super'>;
 			readonly $forms: V.Form<'object' | 'property'>;
 		};
 		readonly 'attribute.content.parenthesized': {
@@ -280,7 +279,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'unknown'
 				| 'void'
 				| T.LiteralType.Parsed
-				| T.TypeIdentifier.Parsed
 				| T.TypeQueryCallExpressionInTypeAnnotation.Parsed
 				| T.TypeQueryMemberExpressionInTypeAnnotation.Parsed;
 			readonly $forms: V.Form<'bounds'>;
@@ -774,7 +772,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'unknown'
 				| 'void'
 				| T.LiteralType.Parsed
-				| T.TypeIdentifier.Parsed
 				| T.TypeQueryCallExpressionInTypeAnnotation.Parsed
 				| T.TypeQueryMemberExpressionInTypeAnnotation.Parsed;
 			readonly $forms: V.Form<'type'>;
@@ -990,8 +987,7 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'identifier.qualified'>
 				| V.Text<TypeScriptMap, 'identifier.receiver'>
 				| V.Text<TypeScriptMap, 'identifier.super'>
-				| V.Read<TypeScriptMap, 'type.generic'>
-				| T.TypeIdentifier.Parsed;
+				| V.Read<TypeScriptMap, 'type.generic'>;
 			readonly $forms: V.Form<'types'>;
 		};
 		readonly 'clause.finally': {
@@ -1053,7 +1049,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'unknown'
 				| 'void'
 				| T.LiteralType.Parsed
-				| T.TypeIdentifier.Parsed
 				| T.TypeQueryCallExpressionInTypeAnnotation.Parsed
 				| T.TypeQueryMemberExpressionInTypeAnnotation.Parsed;
 			readonly $forms: V.Form<'types'>;
@@ -1194,7 +1189,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'unknown'
 				| 'void'
 				| T.LiteralType.Parsed
-				| T.TypeIdentifier.Parsed
 				| T.TypeQueryCallExpressionInTypeAnnotation.Parsed
 				| T.TypeQueryMemberExpressionInTypeAnnotation.Parsed;
 			readonly name:
@@ -1203,8 +1197,7 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'identifier.label'>
 				| V.Read<TypeScriptMap, 'identifier.qualified'>
 				| V.Text<TypeScriptMap, 'identifier.receiver'>
-				| V.Text<TypeScriptMap, 'identifier.super'>
-				| T.TypeIdentifier.Parsed;
+				| V.Text<TypeScriptMap, 'identifier.super'>;
 			readonly type:
 				| V.Read<TypeScriptMap, 'identifier'>
 				| V.Text<TypeScriptMap, 'identifier'>
@@ -1259,7 +1252,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'unknown'
 				| 'void'
 				| T.LiteralType.Parsed
-				| T.TypeIdentifier.Parsed
 				| T.TypeQueryCallExpressionInTypeAnnotation.Parsed
 				| T.TypeQueryMemberExpressionInTypeAnnotation.Parsed;
 			readonly $forms: V.Form<'name' | 'type'>;
@@ -1473,7 +1465,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'unknown'
 				| 'void'
 				| T.LiteralType.Parsed
-				| T.TypeIdentifier.Parsed
 				| T.TypeQueryCallExpressionInTypeAnnotation.Parsed
 				| T.TypeQueryMemberExpressionInTypeAnnotation.Parsed;
 			readonly name:
@@ -1482,8 +1473,7 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'identifier.label'>
 				| V.Read<TypeScriptMap, 'identifier.qualified'>
 				| V.Text<TypeScriptMap, 'identifier.receiver'>
-				| V.Text<TypeScriptMap, 'identifier.super'>
-				| T.TypeIdentifier.Parsed;
+				| V.Text<TypeScriptMap, 'identifier.super'>;
 			readonly typeParameters: V.Read<TypeScriptMap, 'declaration.type_parameter'>;
 			readonly $forms: V.Form<'body' | 'name'>;
 		};
@@ -1666,7 +1656,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.NumberFloatScientific.Parsed
 				| T.NumberHex.Parsed
 				| T.NumberOctal.Parsed
-				| T.PropertyIdentifier.Parsed
 				| T.StringDouble.Parsed
 				| T.StringSingle.Parsed;
 			readonly value:
@@ -1929,7 +1918,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.NumberFloatScientific.Parsed
 				| T.NumberHex.Parsed
 				| T.NumberOctal.Parsed
-				| T.PropertyIdentifier.Parsed
 				| T.StringDouble.Parsed
 				| T.StringSingle.Parsed;
 			readonly optionality: '!' | '?';
@@ -2246,7 +2234,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.NumberFloatScientific.Parsed
 				| T.NumberHex.Parsed
 				| T.NumberOctal.Parsed
-				| T.PropertyIdentifier.Parsed
 				| T.StringDouble.Parsed
 				| T.StringSingle.Parsed;
 			readonly optionality: '!' | '?';
@@ -2563,7 +2550,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.NumberFloatScientific.Parsed
 				| T.NumberHex.Parsed
 				| T.NumberOctal.Parsed
-				| T.PropertyIdentifier.Parsed
 				| T.StringDouble.Parsed
 				| T.StringSingle.Parsed;
 			readonly optionality: '!' | '?';
@@ -2880,7 +2866,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.NumberFloatScientific.Parsed
 				| T.NumberHex.Parsed
 				| T.NumberOctal.Parsed
-				| T.PropertyIdentifier.Parsed
 				| T.StringDouble.Parsed
 				| T.StringSingle.Parsed;
 			readonly optionality: '!' | '?';
@@ -3197,7 +3182,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.NumberFloatScientific.Parsed
 				| T.NumberHex.Parsed
 				| T.NumberOctal.Parsed
-				| T.PropertyIdentifier.Parsed
 				| T.StringDouble.Parsed
 				| T.StringSingle.Parsed;
 			readonly optionality: '!' | '?';
@@ -3477,7 +3461,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.NumberFloatScientific.Parsed
 				| T.NumberHex.Parsed
 				| T.NumberOctal.Parsed
-				| T.PropertyIdentifier.Parsed
 				| T.StringDouble.Parsed
 				| T.StringSingle.Parsed;
 			readonly optionality: '!' | '?';
@@ -3757,7 +3740,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.NumberFloatScientific.Parsed
 				| T.NumberHex.Parsed
 				| T.NumberOctal.Parsed
-				| T.PropertyIdentifier.Parsed
 				| T.StringDouble.Parsed
 				| T.StringSingle.Parsed;
 			readonly optionality: '!' | '?';
@@ -4037,7 +4019,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.NumberFloatScientific.Parsed
 				| T.NumberHex.Parsed
 				| T.NumberOctal.Parsed
-				| T.PropertyIdentifier.Parsed
 				| T.StringDouble.Parsed
 				| T.StringSingle.Parsed;
 			readonly optionality: '!' | '?';
@@ -4397,16 +4378,14 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'identifier.qualified'>
 				| V.Text<TypeScriptMap, 'identifier.receiver'>
 				| V.Text<TypeScriptMap, 'identifier.super'>
-				| V.Read<TypeScriptMap, 'type.generic'>
-				| T.TypeIdentifier.Parsed;
+				| V.Read<TypeScriptMap, 'type.generic'>;
 			readonly name:
 				| V.Read<TypeScriptMap, 'identifier'>
 				| V.Text<TypeScriptMap, 'identifier'>
 				| V.Read<TypeScriptMap, 'identifier.label'>
 				| V.Read<TypeScriptMap, 'identifier.qualified'>
 				| V.Text<TypeScriptMap, 'identifier.receiver'>
-				| V.Text<TypeScriptMap, 'identifier.super'>
-				| T.TypeIdentifier.Parsed;
+				| V.Text<TypeScriptMap, 'identifier.super'>;
 			readonly typeParameters: V.Read<TypeScriptMap, 'declaration.type_parameter'>;
 			readonly $forms: V.Form<'name'>;
 		};
@@ -4528,7 +4507,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.NumberFloatScientific.Parsed
 				| T.NumberHex.Parsed
 				| T.NumberOctal.Parsed
-				| T.PropertyIdentifier.Parsed
 				| T.StringDouble.Parsed
 				| T.StringSingle.Parsed;
 			readonly parameters:
@@ -4720,7 +4698,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.NumberFloatScientific.Parsed
 				| T.NumberHex.Parsed
 				| T.NumberOctal.Parsed
-				| T.PropertyIdentifier.Parsed
 				| T.StringDouble.Parsed
 				| T.StringSingle.Parsed;
 			readonly parameters:
@@ -4912,7 +4889,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.NumberFloatScientific.Parsed
 				| T.NumberHex.Parsed
 				| T.NumberOctal.Parsed
-				| T.PropertyIdentifier.Parsed
 				| T.StringDouble.Parsed
 				| T.StringSingle.Parsed;
 			readonly parameters:
@@ -5104,7 +5080,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.NumberFloatScientific.Parsed
 				| T.NumberHex.Parsed
 				| T.NumberOctal.Parsed
-				| T.PropertyIdentifier.Parsed
 				| T.StringDouble.Parsed
 				| T.StringSingle.Parsed;
 			readonly parameters:
@@ -5296,7 +5271,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.NumberFloatScientific.Parsed
 				| T.NumberHex.Parsed
 				| T.NumberOctal.Parsed
-				| T.PropertyIdentifier.Parsed
 				| T.StringDouble.Parsed
 				| T.StringSingle.Parsed;
 			readonly parameters:
@@ -5488,7 +5462,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.NumberFloatScientific.Parsed
 				| T.NumberHex.Parsed
 				| T.NumberOctal.Parsed
-				| T.PropertyIdentifier.Parsed
 				| T.StringDouble.Parsed
 				| T.StringSingle.Parsed;
 			readonly parameters:
@@ -5680,7 +5653,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.NumberFloatScientific.Parsed
 				| T.NumberHex.Parsed
 				| T.NumberOctal.Parsed
-				| T.PropertyIdentifier.Parsed
 				| T.StringDouble.Parsed
 				| T.StringSingle.Parsed;
 			readonly parameters:
@@ -5872,7 +5844,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.NumberFloatScientific.Parsed
 				| T.NumberHex.Parsed
 				| T.NumberOctal.Parsed
-				| T.PropertyIdentifier.Parsed
 				| T.StringDouble.Parsed
 				| T.StringSingle.Parsed;
 			readonly parameters:
@@ -6064,7 +6035,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.NumberFloatScientific.Parsed
 				| T.NumberHex.Parsed
 				| T.NumberOctal.Parsed
-				| T.PropertyIdentifier.Parsed
 				| T.StringDouble.Parsed
 				| T.StringSingle.Parsed;
 			readonly parameters:
@@ -6256,7 +6226,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.NumberFloatScientific.Parsed
 				| T.NumberHex.Parsed
 				| T.NumberOctal.Parsed
-				| T.PropertyIdentifier.Parsed
 				| T.StringDouble.Parsed
 				| T.StringSingle.Parsed;
 			readonly parameters:
@@ -6448,7 +6417,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.NumberFloatScientific.Parsed
 				| T.NumberHex.Parsed
 				| T.NumberOctal.Parsed
-				| T.PropertyIdentifier.Parsed
 				| T.StringDouble.Parsed
 				| T.StringSingle.Parsed;
 			readonly parameters:
@@ -6640,7 +6608,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.NumberFloatScientific.Parsed
 				| T.NumberHex.Parsed
 				| T.NumberOctal.Parsed
-				| T.PropertyIdentifier.Parsed
 				| T.StringDouble.Parsed
 				| T.StringSingle.Parsed;
 			readonly parameters:
@@ -6749,8 +6716,7 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'identifier.label'>
 				| V.Read<TypeScriptMap, 'identifier.qualified'>
 				| V.Text<TypeScriptMap, 'identifier.receiver'>
-				| V.Text<TypeScriptMap, 'identifier.super'>
-				| T.PropertyIdentifier.Parsed;
+				| V.Text<TypeScriptMap, 'identifier.super'>;
 			readonly type:
 				| V.Read<TypeScriptMap, 'identifier'>
 				| V.Text<TypeScriptMap, 'identifier'>
@@ -6805,7 +6771,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'unknown'
 				| 'void'
 				| T.LiteralType.Parsed
-				| T.TypeIdentifier.Parsed
 				| T.TypeQueryCallExpressionInTypeAnnotation.Parsed
 				| T.TypeQueryMemberExpressionInTypeAnnotation.Parsed;
 			readonly $forms: V.Form<'name' | 'type'>;
@@ -7976,7 +7941,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.NumberFloatScientific.Parsed
 				| T.NumberHex.Parsed
 				| T.NumberOctal.Parsed
-				| T.PropertyIdentifier.Parsed
 				| T.StringDouble.Parsed
 				| T.StringSingle.Parsed;
 			readonly type:
@@ -8293,7 +8257,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.NumberFloatScientific.Parsed
 				| T.NumberHex.Parsed
 				| T.NumberOctal.Parsed
-				| T.PropertyIdentifier.Parsed
 				| T.StringDouble.Parsed
 				| T.StringSingle.Parsed;
 			readonly type:
@@ -8573,7 +8536,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.NumberFloatScientific.Parsed
 				| T.NumberHex.Parsed
 				| T.NumberOctal.Parsed
-				| T.PropertyIdentifier.Parsed
 				| T.StringDouble.Parsed
 				| T.StringSingle.Parsed;
 			readonly type:
@@ -8853,7 +8815,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.NumberFloatScientific.Parsed
 				| T.NumberHex.Parsed
 				| T.NumberOctal.Parsed
-				| T.PropertyIdentifier.Parsed
 				| T.StringDouble.Parsed
 				| T.StringSingle.Parsed;
 			readonly type:
@@ -9133,7 +9094,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.NumberFloatScientific.Parsed
 				| T.NumberHex.Parsed
 				| T.NumberOctal.Parsed
-				| T.PropertyIdentifier.Parsed
 				| T.StringDouble.Parsed
 				| T.StringSingle.Parsed;
 			readonly type:
@@ -9412,7 +9372,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.NumberFloatScientific.Parsed
 				| T.NumberHex.Parsed
 				| T.NumberOctal.Parsed
-				| T.PropertyIdentifier.Parsed
 				| T.StringDouble.Parsed
 				| T.StringSingle.Parsed;
 			readonly type:
@@ -9728,7 +9687,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.NumberFloatScientific.Parsed
 				| T.NumberHex.Parsed
 				| T.NumberOctal.Parsed
-				| T.PropertyIdentifier.Parsed
 				| T.StringDouble.Parsed
 				| T.StringSingle.Parsed;
 			readonly type:
@@ -10044,7 +10002,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.NumberFloatScientific.Parsed
 				| T.NumberHex.Parsed
 				| T.NumberOctal.Parsed
-				| T.PropertyIdentifier.Parsed
 				| T.StringDouble.Parsed
 				| T.StringSingle.Parsed;
 			readonly type:
@@ -10361,7 +10318,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.NumberFloatScientific.Parsed
 				| T.NumberHex.Parsed
 				| T.NumberOctal.Parsed
-				| T.PropertyIdentifier.Parsed
 				| T.StringDouble.Parsed
 				| T.StringSingle.Parsed;
 			readonly parameters:
@@ -10635,7 +10591,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.NumberFloatScientific.Parsed
 				| T.NumberHex.Parsed
 				| T.NumberOctal.Parsed
-				| T.PropertyIdentifier.Parsed
 				| T.StringDouble.Parsed
 				| T.StringSingle.Parsed;
 			readonly parameters:
@@ -10909,7 +10864,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.NumberFloatScientific.Parsed
 				| T.NumberHex.Parsed
 				| T.NumberOctal.Parsed
-				| T.PropertyIdentifier.Parsed
 				| T.StringDouble.Parsed
 				| T.StringSingle.Parsed;
 			readonly parameters:
@@ -11183,7 +11137,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.NumberFloatScientific.Parsed
 				| T.NumberHex.Parsed
 				| T.NumberOctal.Parsed
-				| T.PropertyIdentifier.Parsed
 				| T.StringDouble.Parsed
 				| T.StringSingle.Parsed;
 			readonly parameters:
@@ -11456,7 +11409,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.NumberFloatScientific.Parsed
 				| T.NumberHex.Parsed
 				| T.NumberOctal.Parsed
-				| T.PropertyIdentifier.Parsed
 				| T.StringDouble.Parsed
 				| T.StringSingle.Parsed;
 			readonly type:
@@ -11772,7 +11724,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.NumberFloatScientific.Parsed
 				| T.NumberHex.Parsed
 				| T.NumberOctal.Parsed
-				| T.PropertyIdentifier.Parsed
 				| T.StringDouble.Parsed
 				| T.StringSingle.Parsed;
 			readonly type:
@@ -12051,7 +12002,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.NumberFloatScientific.Parsed
 				| T.NumberHex.Parsed
 				| T.NumberOctal.Parsed
-				| T.PropertyIdentifier.Parsed
 				| T.StringDouble.Parsed
 				| T.StringSingle.Parsed;
 			readonly type:
@@ -12330,7 +12280,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.NumberFloatScientific.Parsed
 				| T.NumberHex.Parsed
 				| T.NumberOctal.Parsed
-				| T.PropertyIdentifier.Parsed
 				| T.StringDouble.Parsed
 				| T.StringSingle.Parsed;
 			readonly type:
@@ -12609,7 +12558,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.NumberFloatScientific.Parsed
 				| T.NumberHex.Parsed
 				| T.NumberOctal.Parsed
-				| T.PropertyIdentifier.Parsed
 				| T.StringDouble.Parsed
 				| T.StringSingle.Parsed;
 			readonly type:
@@ -12888,7 +12836,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.NumberFloatScientific.Parsed
 				| T.NumberHex.Parsed
 				| T.NumberOctal.Parsed
-				| T.PropertyIdentifier.Parsed
 				| T.StringDouble.Parsed
 				| T.StringSingle.Parsed;
 			readonly parameters:
@@ -13161,7 +13108,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.NumberFloatScientific.Parsed
 				| T.NumberHex.Parsed
 				| T.NumberOctal.Parsed
-				| T.PropertyIdentifier.Parsed
 				| T.StringDouble.Parsed
 				| T.StringSingle.Parsed;
 			readonly parameters:
@@ -13434,7 +13380,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.NumberFloatScientific.Parsed
 				| T.NumberHex.Parsed
 				| T.NumberOctal.Parsed
-				| T.PropertyIdentifier.Parsed
 				| T.StringDouble.Parsed
 				| T.StringSingle.Parsed;
 			readonly parameters:
@@ -13707,7 +13652,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.NumberFloatScientific.Parsed
 				| T.NumberHex.Parsed
 				| T.NumberOctal.Parsed
-				| T.PropertyIdentifier.Parsed
 				| T.StringDouble.Parsed
 				| T.StringSingle.Parsed;
 			readonly parameters:
@@ -13980,7 +13924,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.NumberFloatScientific.Parsed
 				| T.NumberHex.Parsed
 				| T.NumberOctal.Parsed
-				| T.PropertyIdentifier.Parsed
 				| T.StringDouble.Parsed
 				| T.StringSingle.Parsed;
 			readonly type:
@@ -14259,7 +14202,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.NumberFloatScientific.Parsed
 				| T.NumberHex.Parsed
 				| T.NumberOctal.Parsed
-				| T.PropertyIdentifier.Parsed
 				| T.StringDouble.Parsed
 				| T.StringSingle.Parsed;
 			readonly type:
@@ -14538,7 +14480,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.NumberFloatScientific.Parsed
 				| T.NumberHex.Parsed
 				| T.NumberOctal.Parsed
-				| T.PropertyIdentifier.Parsed
 				| T.StringDouble.Parsed
 				| T.StringSingle.Parsed;
 			readonly type:
@@ -14817,7 +14758,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.NumberFloatScientific.Parsed
 				| T.NumberHex.Parsed
 				| T.NumberOctal.Parsed
-				| T.PropertyIdentifier.Parsed
 				| T.StringDouble.Parsed
 				| T.StringSingle.Parsed;
 			readonly type:
@@ -15096,7 +15036,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.NumberFloatScientific.Parsed
 				| T.NumberHex.Parsed
 				| T.NumberOctal.Parsed
-				| T.PropertyIdentifier.Parsed
 				| T.StringDouble.Parsed
 				| T.StringSingle.Parsed;
 			readonly parameters:
@@ -15369,7 +15308,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.NumberFloatScientific.Parsed
 				| T.NumberHex.Parsed
 				| T.NumberOctal.Parsed
-				| T.PropertyIdentifier.Parsed
 				| T.StringDouble.Parsed
 				| T.StringSingle.Parsed;
 			readonly parameters:
@@ -15642,7 +15580,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.NumberFloatScientific.Parsed
 				| T.NumberHex.Parsed
 				| T.NumberOctal.Parsed
-				| T.PropertyIdentifier.Parsed
 				| T.StringDouble.Parsed
 				| T.StringSingle.Parsed;
 			readonly parameters:
@@ -15915,7 +15852,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.NumberFloatScientific.Parsed
 				| T.NumberHex.Parsed
 				| T.NumberOctal.Parsed
-				| T.PropertyIdentifier.Parsed
 				| T.StringDouble.Parsed
 				| T.StringSingle.Parsed;
 			readonly parameters:
@@ -16261,7 +16197,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'unknown'
 				| 'void'
 				| T.LiteralType.Parsed
-				| T.TypeIdentifier.Parsed
 				| T.TypeQueryCallExpressionInTypeAnnotation.Parsed
 				| T.TypeQueryMemberExpressionInTypeAnnotation.Parsed;
 			readonly name:
@@ -16442,8 +16377,7 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'identifier.label'>
 				| V.Read<TypeScriptMap, 'identifier.qualified'>
 				| V.Text<TypeScriptMap, 'identifier.receiver'>
-				| V.Text<TypeScriptMap, 'identifier.super'>
-				| T.TypeIdentifier.Parsed;
+				| V.Text<TypeScriptMap, 'identifier.super'>;
 			readonly typeParameters: V.Read<TypeScriptMap, 'declaration.type_parameter'>;
 			readonly value:
 				| V.Read<TypeScriptMap, 'identifier'>
@@ -16499,7 +16433,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'unknown'
 				| 'void'
 				| T.LiteralType.Parsed
-				| T.TypeIdentifier.Parsed
 				| T.TypeQueryCallExpressionInTypeAnnotation.Parsed
 				| T.TypeQueryMemberExpressionInTypeAnnotation.Parsed;
 			readonly $forms: V.Form<'name' | 'value'>;
@@ -16559,7 +16492,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'unknown'
 				| 'void'
 				| T.LiteralType.Parsed
-				| T.TypeIdentifier.Parsed
 				| T.TypeQueryCallExpressionInTypeAnnotation.Parsed
 				| T.TypeQueryMemberExpressionInTypeAnnotation.Parsed;
 			readonly default: V.Read<TypeScriptMap, 'clause.default'>;
@@ -16569,8 +16501,7 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'identifier.label'>
 				| V.Read<TypeScriptMap, 'identifier.qualified'>
 				| V.Text<TypeScriptMap, 'identifier.receiver'>
-				| V.Text<TypeScriptMap, 'identifier.super'>
-				| T.TypeIdentifier.Parsed;
+				| V.Text<TypeScriptMap, 'identifier.super'>;
 			readonly $forms: V.Form<'name'>;
 		};
 		readonly 'declaration.variable': {
@@ -17597,7 +17528,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.NumberFloatScientific.Parsed
 				| T.NumberHex.Parsed
 				| T.NumberOctal.Parsed
-				| T.PropertyIdentifier.Parsed
 				| T.StringDouble.Parsed
 				| T.StringSingle.Parsed;
 			readonly value:
@@ -17924,8 +17854,7 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'unique symbol'
 				| 'unknown'
 				| 'void'
-				| T.LiteralType.Parsed
-				| T.TypeIdentifier.Parsed;
+				| T.LiteralType.Parsed;
 			readonly $forms: V.Form<'type'>;
 		};
 		readonly 'element.tuple.member': {
@@ -29550,7 +29479,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'unknown'
 				| 'void'
 				| T.LiteralType.Parsed
-				| T.TypeIdentifier.Parsed
 				| T.TypeQueryCallExpressionInTypeAnnotation.Parsed
 				| T.TypeQueryMemberExpressionInTypeAnnotation.Parsed;
 			readonly $forms: V.Form<'expression' | 'type'>;
@@ -30092,7 +30020,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'unknown'
 				| 'void'
 				| T.LiteralType.Parsed
-				| T.TypeIdentifier.Parsed
 				| T.TypeQueryCallExpressionInTypeAnnotation.Parsed
 				| T.TypeQueryMemberExpressionInTypeAnnotation.Parsed;
 			readonly $forms: V.Form<'expression' | 'type'>;
@@ -30208,7 +30135,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'unknown'
 				| 'void'
 				| T.LiteralType.Parsed
-				| T.TypeIdentifier.Parsed
 				| T.TypeQueryCallExpressionInTypeAnnotation.Parsed
 				| T.TypeQueryMemberExpressionInTypeAnnotation.Parsed;
 			readonly name:
@@ -30217,8 +30143,7 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'identifier.label'>
 				| V.Read<TypeScriptMap, 'identifier.qualified'>
 				| V.Text<TypeScriptMap, 'identifier.receiver'>
-				| V.Text<TypeScriptMap, 'identifier.super'>
-				| T.TypeIdentifier.Parsed;
+				| V.Text<TypeScriptMap, 'identifier.super'>;
 			readonly typeParameters: V.Read<TypeScriptMap, 'declaration.type_parameter'>;
 			readonly $forms: V.Form<'body'>;
 		};
@@ -30393,7 +30318,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.MethodDefinitionPlain.Parsed
 				| T.MethodDefinitionSetter.Parsed
 				| T.Pair.Parsed
-				| T.ShorthandPropertyIdentifier.Parsed
 				| T.SpreadElement.Parsed;
 		};
 		readonly 'expression.conditional': {
@@ -31611,8 +31535,7 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'identifier.label'>
 				| V.Read<TypeScriptMap, 'identifier.qualified'>
 				| V.Text<TypeScriptMap, 'identifier.receiver'>
-				| V.Text<TypeScriptMap, 'identifier.super'>
-				| T.PropertyIdentifier.Parsed;
+				| V.Text<TypeScriptMap, 'identifier.super'>;
 			readonly $forms: V.Form<'object' | 'property'>;
 		};
 		readonly 'expression.meta': {
@@ -34386,9 +34309,7 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'identifier.label'>
 				| V.Read<TypeScriptMap, 'identifier.qualified'>
 				| V.Text<TypeScriptMap, 'identifier.receiver'>
-				| V.Text<TypeScriptMap, 'identifier.super'>
-				| T.PropertyIdentifier.Parsed
-				| T.TypeIdentifier.Parsed;
+				| V.Text<TypeScriptMap, 'identifier.super'>;
 			readonly qualifier:
 				| V.Text<TypeScriptMap, 'expression.call.import'>
 				| V.Read<TypeScriptMap, 'identifier'>
@@ -34794,8 +34715,7 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'pattern.object.pair'>
 				| V.Read<TypeScriptMap, 'pattern.rest'>
 				| T.ObjectAssignmentPattern.Parsed
-				| T.PairPattern.Parsed
-				| T.ShorthandPropertyIdentifierPattern.Parsed;
+				| T.PairPattern.Parsed;
 		};
 		readonly 'pattern.object.assignment': {
 			readonly left:
@@ -34806,8 +34726,7 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'identifier.receiver'>
 				| V.Text<TypeScriptMap, 'identifier.super'>
 				| V.Read<TypeScriptMap, 'pattern.list'>
-				| V.Read<TypeScriptMap, 'pattern.object'>
-				| T.ShorthandPropertyIdentifierPattern.Parsed;
+				| V.Read<TypeScriptMap, 'pattern.object'>;
 			readonly properties:
 				| V.Read<TypeScriptMap, 'identifier'>
 				| V.Text<TypeScriptMap, 'identifier'>
@@ -35077,7 +34996,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.NumberFloatScientific.Parsed
 				| T.NumberHex.Parsed
 				| T.NumberOctal.Parsed
-				| T.PropertyIdentifier.Parsed
 				| T.StringDouble.Parsed
 				| T.StringSingle.Parsed;
 			readonly properties:
@@ -35347,10 +35265,10 @@ export interface TypeScriptMap extends V.GrammarMap {
 			readonly $forms: V.Form<'body'>;
 		};
 		readonly 'statement.break': {
-			readonly label: V.Read<TypeScriptMap, 'identifier.label'> | T.StatementIdentifier.Parsed;
+			readonly label: V.Read<TypeScriptMap, 'identifier.label'>;
 		};
 		readonly 'statement.continue': {
-			readonly label: V.Read<TypeScriptMap, 'identifier.label'> | T.StatementIdentifier.Parsed;
+			readonly label: V.Read<TypeScriptMap, 'identifier.label'>;
 		};
 		readonly 'statement.empty': {
 			readonly $text: PortableTexts['statement.empty'];
@@ -36441,7 +36359,7 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.ForStatement.Parsed
 				| T.ReturnStatement.Parsed
 				| T.ThrowStatement.Parsed;
-			readonly label: V.Read<TypeScriptMap, 'identifier.label'> | T.StatementIdentifier.Parsed;
+			readonly label: V.Read<TypeScriptMap, 'identifier.label'>;
 			readonly $forms: V.Form<'body' | 'label'>;
 		};
 		readonly 'statement.loop.counted': {
@@ -37793,8 +37711,7 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'unique symbol'
 				| 'unknown'
 				| 'void'
-				| T.LiteralType.Parsed
-				| T.TypeIdentifier.Parsed;
+				| T.LiteralType.Parsed;
 			readonly $forms: V.Form<'type'>;
 		};
 		readonly 'type.conditional': {
@@ -37852,7 +37769,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'unknown'
 				| 'void'
 				| T.LiteralType.Parsed
-				| T.TypeIdentifier.Parsed
 				| T.TypeQueryCallExpressionInTypeAnnotation.Parsed
 				| T.TypeQueryMemberExpressionInTypeAnnotation.Parsed;
 			readonly consequence:
@@ -37909,7 +37825,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'unknown'
 				| 'void'
 				| T.LiteralType.Parsed
-				| T.TypeIdentifier.Parsed
 				| T.TypeQueryCallExpressionInTypeAnnotation.Parsed
 				| T.TypeQueryMemberExpressionInTypeAnnotation.Parsed;
 			readonly left:
@@ -37966,7 +37881,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'unknown'
 				| 'void'
 				| T.LiteralType.Parsed
-				| T.TypeIdentifier.Parsed
 				| T.TypeQueryCallExpressionInTypeAnnotation.Parsed
 				| T.TypeQueryMemberExpressionInTypeAnnotation.Parsed;
 			readonly right:
@@ -38023,7 +37937,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'unknown'
 				| 'void'
 				| T.LiteralType.Parsed
-				| T.TypeIdentifier.Parsed
 				| T.TypeQueryCallExpressionInTypeAnnotation.Parsed
 				| T.TypeQueryMemberExpressionInTypeAnnotation.Parsed;
 			readonly $forms: V.Form<'alternative' | 'consequence' | 'left' | 'right'>;
@@ -38101,7 +38014,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'unknown'
 				| 'void'
 				| T.LiteralType.Parsed
-				| T.TypeIdentifier.Parsed
 				| T.TypeQueryCallExpressionInTypeAnnotation.Parsed
 				| T.TypeQueryMemberExpressionInTypeAnnotation.Parsed;
 			readonly typeParameters: V.Read<TypeScriptMap, 'declaration.type_parameter'>;
@@ -38218,7 +38130,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'unknown'
 				| 'void'
 				| T.LiteralType.Parsed
-				| T.TypeIdentifier.Parsed
 				| T.TypeQueryCallExpressionInTypeAnnotation.Parsed
 				| T.TypeQueryMemberExpressionInTypeAnnotation.Parsed;
 			readonly typeParameters: V.Read<TypeScriptMap, 'declaration.type_parameter'>;
@@ -38231,8 +38142,7 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'identifier.label'>
 				| V.Read<TypeScriptMap, 'identifier.qualified'>
 				| V.Text<TypeScriptMap, 'identifier.receiver'>
-				| V.Text<TypeScriptMap, 'identifier.super'>
-				| T.TypeIdentifier.Parsed;
+				| V.Text<TypeScriptMap, 'identifier.super'>;
 			readonly typeArguments:
 				| V.Read<TypeScriptMap, 'identifier'>
 				| V.Text<TypeScriptMap, 'identifier'>
@@ -38470,8 +38380,7 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'unique symbol'
 				| 'unknown'
 				| 'void'
-				| T.LiteralType.Parsed
-				| T.TypeIdentifier.Parsed;
+				| T.LiteralType.Parsed;
 			readonly $forms: V.Form<'type'>;
 		};
 		readonly 'type.infer': {
@@ -38481,8 +38390,7 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'identifier.label'>
 				| V.Read<TypeScriptMap, 'identifier.qualified'>
 				| V.Text<TypeScriptMap, 'identifier.receiver'>
-				| V.Text<TypeScriptMap, 'identifier.super'>
-				| T.TypeIdentifier.Parsed;
+				| V.Text<TypeScriptMap, 'identifier.super'>;
 			readonly type:
 				| V.Read<TypeScriptMap, 'identifier'>
 				| V.Text<TypeScriptMap, 'identifier'>
@@ -38537,7 +38445,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'unknown'
 				| 'void'
 				| T.LiteralType.Parsed
-				| T.TypeIdentifier.Parsed
 				| T.TypeQueryCallExpressionInTypeAnnotation.Parsed
 				| T.TypeQueryMemberExpressionInTypeAnnotation.Parsed;
 			readonly $forms: V.Form<'name'>;
@@ -38597,7 +38504,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'unknown'
 				| 'void'
 				| T.LiteralType.Parsed
-				| T.TypeIdentifier.Parsed
 				| T.TypeQueryCallExpressionInTypeAnnotation.Parsed
 				| T.TypeQueryMemberExpressionInTypeAnnotation.Parsed;
 			readonly right:
@@ -38654,7 +38560,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'unknown'
 				| 'void'
 				| T.LiteralType.Parsed
-				| T.TypeIdentifier.Parsed
 				| T.TypeQueryCallExpressionInTypeAnnotation.Parsed
 				| T.TypeQueryMemberExpressionInTypeAnnotation.Parsed;
 			readonly $forms: V.Form<'right'>;
@@ -38745,7 +38650,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'unknown'
 				| 'void'
 				| T.LiteralType.Parsed
-				| T.TypeIdentifier.Parsed
 				| T.TypeQueryCallExpressionInTypeAnnotation.Parsed
 				| T.TypeQueryMemberExpressionInTypeAnnotation.Parsed;
 			readonly type:
@@ -38783,8 +38687,7 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'unique symbol'
 				| 'unknown'
 				| 'void'
-				| T.LiteralType.Parsed
-				| T.TypeIdentifier.Parsed;
+				| T.LiteralType.Parsed;
 			readonly $forms: V.Form<'indexType' | 'type'>;
 		};
 		readonly 'type.nullable': {
@@ -38823,8 +38726,7 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'unique symbol'
 				| 'unknown'
 				| 'void'
-				| T.LiteralType.Parsed
-				| T.TypeIdentifier.Parsed;
+				| T.LiteralType.Parsed;
 			readonly $forms: V.Form<'type'>;
 		};
 		readonly 'type.object': {
@@ -38911,7 +38813,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'unknown'
 				| 'void'
 				| T.LiteralType.Parsed
-				| T.TypeIdentifier.Parsed
 				| T.TypeQueryCallExpressionInTypeAnnotation.Parsed
 				| T.TypeQueryMemberExpressionInTypeAnnotation.Parsed;
 			readonly $forms: V.Form<'type'>;
@@ -38971,7 +38872,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'unknown'
 				| 'void'
 				| T.LiteralType.Parsed
-				| T.TypeIdentifier.Parsed
 				| T.TypeQueryCallExpressionInTypeAnnotation.Parsed
 				| T.TypeQueryMemberExpressionInTypeAnnotation.Parsed;
 			readonly $forms: V.Form<'type'>;
@@ -39049,7 +38949,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'unknown'
 				| 'void'
 				| T.LiteralType.Parsed
-				| T.TypeIdentifier.Parsed
 				| T.TypeQueryCallExpressionInTypeAnnotation.Parsed
 				| T.TypeQueryMemberExpressionInTypeAnnotation.Parsed;
 			readonly $forms: V.Form<'name' | 'type'>;
@@ -39338,7 +39237,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'unknown'
 				| 'void'
 				| T.LiteralType.Parsed
-				| T.TypeIdentifier.Parsed
 				| T.TypeQueryCallExpressionInTypeAnnotation.Parsed
 				| T.TypeQueryMemberExpressionInTypeAnnotation.Parsed;
 			readonly $forms: V.Form<'type'>;
@@ -39401,7 +39299,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'unknown'
 				| 'void'
 				| T.LiteralType.Parsed
-				| T.TypeIdentifier.Parsed
 				| T.TypeQueryCallExpressionInTypeAnnotation.Parsed
 				| T.TypeQueryMemberExpressionInTypeAnnotation.Parsed;
 			readonly $forms: V.Form<'type'>;
@@ -39523,7 +39420,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'unknown'
 				| 'void'
 				| T.LiteralType.Parsed
-				| T.TypeIdentifier.Parsed
 				| T.TypeQueryCallExpressionInTypeAnnotation.Parsed
 				| T.TypeQueryMemberExpressionInTypeAnnotation.Parsed;
 			readonly right:
@@ -39580,7 +39476,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'unknown'
 				| 'void'
 				| T.LiteralType.Parsed
-				| T.TypeIdentifier.Parsed
 				| T.TypeQueryCallExpressionInTypeAnnotation.Parsed
 				| T.TypeQueryMemberExpressionInTypeAnnotation.Parsed;
 			readonly $forms: V.Form<'right'>;
