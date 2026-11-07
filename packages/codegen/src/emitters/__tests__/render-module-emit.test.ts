@@ -13,20 +13,23 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 import { DEDENT_TEXT, INDENT_TEXT } from '../../dsl/primitives/spacing.ts';
 import { classifySlot, buildSupertypeNodeSet, type SlotClass } from '../node-common.ts';
-import { emitRenderModule, grammarRenderInputs, payloadCeilingAssertions, rustNodeStructName, nodeSlotShapeOf } from '../render-module.ts';
+import { closeUsedSupertypes, emitRenderModule, grammarRenderInputs, payloadCeilingAssertions, rustNodeStructName, nodeSlotShapeOf } from '../render-module.ts';
 import { PAYLOAD_CEILING_BYTES } from '../boxed-payloads.ts';
 import { ENVELOPE_PINS } from '../envelope-claims.ts';
 import { collectKindEntries, findKindEntry } from '../kind-discriminant.ts';
 import { emitReadyModel } from '../../__tests__/helpers/emit-ready-model.ts';
+import { makeNodeMapWith, withGeneratedIdTables } from '../../__tests__/helpers/node-map-fixtures.ts';
+import { PATTERN, SUPERTYPE, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
 import { runTemplateEmitter } from '../templates.ts';
 import type { NodeMap } from '../../compiler/types.ts';
-import { generatedFieldIds } from '../../dsl/symbol-table.ts';
+import { generatedFieldIds, type GeneratedKindEntry } from '../../dsl/symbol-table.ts';
 import { listViewOwners, wrappedItemLists } from '../factories.ts';
 import { isTextLeaf, slotKindNames } from '../shared.ts';
 import {
 	AbstractAssembledCompound,
 	AssembledLexedPattern,
 	AssembledList,
+	AssembledPattern,
 	AssembledSupertype,
 	type AssembledNode,
 	type AssembledNonterminal
@@ -985,4 +988,36 @@ describe('list storage', () => {
 		expect(rust).not.toMatch(/Option<Vec</);
 		expect(rust).toContain('pub decorator: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<DecoratorNode>>');
 	}, 120_000);
+});
+
+describe('closeUsedSupertypes', () => {
+	const supertypeOf = (kind: string, members: readonly string[], kindEntries: readonly GeneratedKindEntry[]) =>
+		new AssembledSupertype(
+			kind,
+			{ type: SUPERTYPE, name: kind, subtypes: members.map((name) => ({ type: SYMBOL, name })) },
+			members.map((name) => ({ name })),
+			{ kindEntries }
+		);
+
+	it('reaches a supertype nested only inside a reserved supertype, the same members the printer emits', () => {
+		const { nodeMap } = withGeneratedIdTables((kindEntries) =>
+			makeNodeMapWith(
+				new Map<string, AssembledNode>([
+					['_expression', supertypeOf('_expression', ['_literal', 'identifier'], kindEntries)],
+					['_literal', supertypeOf('_literal', ['_number', 'string'], kindEntries)],
+					['_number', supertypeOf('_number', ['integer', 'float'], kindEntries)],
+					['identifier', new AssembledPattern('identifier', { type: PATTERN, value: 'a' }, { kindEntries })],
+					['string', new AssembledPattern('string', { type: PATTERN, value: 's' }, { kindEntries })],
+					['integer', new AssembledPattern('integer', { type: PATTERN, value: '1' }, { kindEntries })],
+					['float', new AssembledPattern('float', { type: PATTERN, value: '2' }, { kindEntries })]
+				])
+			)
+		);
+		const expression = nodeMap.nodes.get('_expression') as AssembledSupertype;
+		const number = nodeMap.nodes.get('_number') as AssembledSupertype;
+		const literal = nodeMap.nodes.get('_literal') as AssembledSupertype;
+		const used = closeUsedSupertypes(new Set([expression.typeName]), nodeMap);
+		expect(used.has(number.typeName)).toBe(true);
+		expect(used.has(literal.typeName)).toBe(false);
+	});
 });

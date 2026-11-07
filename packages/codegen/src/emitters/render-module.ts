@@ -1658,17 +1658,19 @@ function collectUsedSupertypeNames(nodes: readonly AssembledNode[], nodeMap: Nod
 		const slotModel = renderSlotModelOf(node);
 		collectFromSlots([...slotModel.named, ...slotModel.unnamed]);
 	}
+	return closeUsedSupertypes(used, nodeMap);
+}
+
+export function closeUsedSupertypes(seeds: ReadonlySet<string>, nodeMap: NodeMap): Set<string> {
+	const used = new Set(seeds);
 	let changed = true;
 	while (changed) {
 		changed = false;
 		for (const [, node] of nodeMap.nodes) {
 			if (!(node instanceof AssembledSupertype)) continue;
 			if (!used.has(node.typeName)) continue;
-			for (const subKind of node.subtypeNames) {
-				const subNode = nodeMap.nodes.get(subKind);
-				if (subNode === undefined || !(subNode instanceof AssembledSupertype)) continue;
-				const enumName = `${rustTypeIdent(subNode.typeName)}Node`;
-				if (RESERVED_SUPERTYPE_ENUM_NAMES.has(enumName)) continue;
+			for (const { subNode } of collectEffectiveSupertypeNodeShape(node, nodeMap).subtypes) {
+				if (!(subNode instanceof AssembledSupertype)) continue;
 				if (!used.has(subNode.typeName)) {
 					used.add(subNode.typeName);
 					changed = true;
