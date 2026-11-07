@@ -682,6 +682,26 @@ describe("keptKinds over a supertype the slot holds", () => {
 		);
 	});
 
+	it("names a slot by a claim's capture only for the paths that inherit the claim or declare the member", async () => {
+		const declaring: Vocabulary = {
+			...EMPTY_VOCABULARY,
+			kinds: new Map([['declaration.constant', {} as never]]),
+			members: (path) => new Map(path === 'declaration.constant' ? [['value', { optional: false, flag: false }]] : [])
+		};
+		const bindings = [
+			'(binary right: (_) @value) @declaration.variable',
+			'((binary left: (_) @_left) @declaration.method (#eq? @_left "m"))',
+			'((binary left: (_) @_left) @declaration.constant (#eq? @_left "K"))'
+		];
+		const routes = resolveRoutes({ ...(await grammar(bindings.join('\n'))), vocabulary: declaring });
+		const named = (vocab: string): string | undefined =>
+			routes.readEntries
+				.get('binary')
+				?.find((entry) => entry.vocab === vocab)
+				?.members.find((member) => member.route === 'slot' && member.slot.name === 'right')?.name;
+		expect(['declaration.variable', 'declaration.method', 'declaration.constant'].map(named)).toEqual(['value', 'right', 'value']);
+	});
+
 	it("gives an alias envelope of a structured kind the stored kind's members, each routed through its content", async () => {
 		const model = new Map(MODEL.map((n) => [n.kind, n]));
 		model.set('wrapped', node('wrapped', [slot('content', ['binary'])], { modelType: 'alias' }));

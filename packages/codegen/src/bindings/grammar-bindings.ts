@@ -22,7 +22,7 @@ import type { EvaluatedGrammar, RawGrammar } from '../compiler/types.ts';
 import { isEnrichGroupLiftSymbol } from '../dsl/transform/transform-path.ts';
 import { groupLiftNames, isGroupLiftReference, isVisibleGroupAlias } from '../dsl/rule-metadata.ts';
 import { type BindingFacts, type LiteralText, type MemberFact, type ModelSlot, type RefinedClaim, type SlotModel, WILDCARD, isNamedMember, literalClaimOf } from './facts.ts';
-import { type GrammarRoutes, type MemberRoute, formsOf, memberTargets, readsByKind } from './routes.ts';
+import { type GrammarRoutes, type MemberRoute, formsOf, namesEvery, memberTargets, readsByKind } from './routes.ts';
 import { boundKindName } from './names.ts';
 import { deriveLeads } from './leads.ts';
 import { isParserHiddenName, symbolFactsOf, type SymbolSource } from '../dsl/rule-patterns.ts';
@@ -584,7 +584,7 @@ export function deriveGrammarBindings(input: GrammarBindingsInput): {
 				else for (const request of renames) candidates.push({ row, request, group: row });
 				continue;
 			}
-			if (to === m.field || (m.flag === true && m.token !== undefined && !fieldHoldsOnly(checks, m.owner, m.field, { token: m.token }))) {
+			if (to === m.field || (m.flag === true && m.token !== undefined && !fieldHoldsOnly(checks, m.owner, m.field, { token: m.token })) || !namesEvery(m, facts.claims.flatMap((claim, index) => (claim.kind === m.owner ? [{ vocab: claim.vocab, index }] : [])), (path, name) => vocabMembers.get(path)?.has(name) === true)) {
 				realizedMembers.push(row);
 				continue;
 			}

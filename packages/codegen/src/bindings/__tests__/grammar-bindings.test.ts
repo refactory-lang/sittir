@@ -164,6 +164,18 @@ describe('deriveGrammarBindings', () => {
 		expect(bindings.patches).toEqual(new Map([['let_item', [[{ path: '1', edit: { field: 'name' } }]]]]));
 	});
 
+	it("patches no field for a claim's capture that another claim on its kind neither inherits nor declares, and patches it once that claim declares the member", () => {
+		const facts: BindingFacts = {
+			...FACTS,
+			claims: [...FACTS.claims, claim('declaration.constant', 'let_item')],
+			members: [{ route: 'rename', owner: 'let_item', name: 'name', field: 'left', kind: null, after: null, anchor: null, claims: [0] }]
+		};
+		const patches = (constant: ReadonlySet<string>) =>
+			bind({ file: FILE, facts, base, vocabMembers: new Map([...VOCABULARY, ['declaration.constant', constant]]), routes: ROUTES, model: NO_MODEL }).bindings.patches;
+		expect(patches(new Set())).toEqual(new Map());
+		expect(patches(new Set(['name']))).toEqual(new Map([['let_item', [[{ path: '1', edit: { field: 'name' } }]]]]));
+	});
+
 	it('patches no field for a member an anchor ties to its neighbour: its slot is a position, not a field', () => {
 		const left = { route: 'rename', owner: 'let_item', name: 'name', field: 'left', kind: null, after: null, anchor: null } as const;
 		const facts = { ...FACTS, members: [{ ...left, adjacent: { previous: { field: null, kind: 'identifier', after: null, anchor: null } } }] };

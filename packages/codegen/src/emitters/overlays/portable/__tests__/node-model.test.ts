@@ -43,7 +43,10 @@ describe('emitPortableNodeModel', () => {
 				},
 				{ vocab: 'expression.binary', toplevel: true, within: [], pins: [], test: [] }
 			],
-			members: [{ name: 'lhs', route: 'slot', slot: 'left', path: [{ owner: 'alpha', slot: 'left' }] }]
+			members: [
+				{ name: 'lhs', route: 'slot', slot: 'left', path: [{ owner: 'alpha', slot: 'left' }] },
+				{ name: 'left', route: 'slot', slot: 'left', path: [{ owner: 'alpha', slot: 'left' }] }
+			]
 		});
 		expect(model.kinds.wrapper).toEqual({ container: { slot: 'inner', kinds: ['alpha'], terminals: [], list: false } });
 		expect(model.namespaces).toEqual({
