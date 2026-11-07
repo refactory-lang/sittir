@@ -19,7 +19,11 @@ on:
       - packages/codegen/src/emitters/native-crate.ts
       - packages/tools/src/native-images.ts
       - packages/tools/src/scripts/native-rustflags.ts
+      - packages/common/src/native-binding.ts
+      - packages/codegen/src/emitters/grammar-runtime.ts
+      - rust/crates/sittir-core/src/napi_engine.rs
       - scripts/build-native.mts
+      - scripts/ci/native-skew.mts
       - Cargo.toml
       - Cargo.lock
       - rust-toolchain.toml
@@ -118,3 +122,10 @@ jobs:
           RUSTFLAGS="$(npx tsx packages/tools/src/scripts/native-rustflags.ts '${{ matrix.target }}')"
           export RUSTFLAGS
           cargo test -p sittir-engine --target '${{ matrix.target }}'
+      # Two grammar packages built against different engine releases, in one
+      # process: the second is refused by name, whether the engine's load hook
+      # or the OS loader refuses it. Only legs that can run what they build.
+      - name: Engine skew is refused both ways
+        if: matrix.cross == false
+        shell: bash
+        run: npx tsx scripts/ci/native-skew.mts

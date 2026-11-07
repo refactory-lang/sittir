@@ -176,23 +176,29 @@ Port from it, don't copy it: master has moved since (records, arena, lazy trivia
 ### Task 4: The build stamp, checked at load
 
 **Files:**
-- Modify: `napi_engine.rs`. The `napi_engine!` macro's `#[napi(module_exports)]` hook calls `sittir_engine::stamp_mismatch(&sittir_engine::BUILT)` and throws its message.
-- Modify: the native loader emitter (`native/index.cjs`). It maps a loader symbol failure that names the engine to the same mismatch message:
-  - macOS `Symbol not found`;
-  - Linux `undefined symbol`;
-  - Windows `ERROR_PROC_NOT_FOUND`, "The specified procedure could not be found".
-- Modify: `scripts/build-native.mts`. It sets `SITTIR_ENGINE_COMMIT` from `git rev-parse HEAD`.
-- Modify: `release.yml`. It checks that every release build set the commit.
-- Test: the loader emitter's tests, and `packages/tools/tests/native-skew.test.ts`. The skew test ports 8ee579994's method.
+- Modify: `rust/crates/sittir-engine/src/stamp.rs`. `stamp_mismatch(addon, built)` names the addon, and `loaded()` gives the mapped engine's stamp and path.
+- Modify: `napi_engine.rs`. The `napi_engine!` macro's `#[napi(module_exports)]` hook calls `sittir_engine::stamp_mismatch(env!("CARGO_PKG_NAME"), &sittir_engine::BUILT)` and throws its message. Each addon also exports `engineStamp()`, the mapped engine's stamp and path as text.
+- Modify: `packages/common/src/native-binding.ts`.
+  - `nativeLoadFailure` reports an error in the cause chain that begins `sittir: ` (the engine's refusal) as the reason, ahead of the error that names the file. napi's loader wraps every candidate's error, so the refusal sits deep in its chain.
+  - When the OS loader refuses the addon over a missing symbol, `nativeLoadFailure` builds the same message from the stamp file beside the `.node` and the engine the process mapped, when the two differ. It matches four loader strings:
+    - macOS `Symbol not found`;
+    - glibc `undefined symbol`;
+    - musl `Error relocating …: symbol not found`;
+    - Windows "The specified procedure could not be found".
+  - `recordLoadedEngine` keeps the first mapped engine's `engineStamp()` under `Symbol.for('sittir.engine')` on `globalThis`. The entry is diagnostic text only, never read for identity or behavior, and an empty or garbage entry changes only the message.
+- Modify: the backend emitter (`grammar-runtime.ts`). A backend that loads its binding records the engine.
+- Modify: `scripts/build-native.mts`. A `--release` build sets `SITTIR_ENGINE_COMMIT` from `git rev-parse HEAD`. Dev and gate builds leave it as the environment has it, so the engine reads `local`, and a commit doesn't rebuild every crate above the engine. Every build writes the addon's stamp beside the `.node` (`<binary>.engine-stamp`).
+- Modify: `release.yml`. It checks that every addon of a release build is stamped with the commit.
+- Test: the engine's stamp tests, `packages/common/tests/native-binding.test.ts` (built with napi's real chaining), `packages/tools/tests/native-layout.test.ts` (the stamp file against the loaded engine, and the backend's record), and `scripts/ci/native-skew.mts`. The script runs both skew cases end to end, as a `native-layout.yml` step on every leg that can run what it builds. It ports 8ee579994's method with regex and scm.
 
 **Interfaces:**
 - Consumes: Task 1's `BUILT` and `stamp_mismatch`.
-- Produces: one mismatch message, `sittir: <addon> was built against engine <version>@<commit> but loaded engine <version>@<commit> from <path>`.
+- Produces: one mismatch message, `sittir: <addon> was built against engine <version>@<commit> but loaded engine <version>@<commit> from <path>`. `<addon>` is the crate name (`sittir-python`), which names the `.node` file.
 
 - [ ] **Step 1: Failing tests.**
-  - The same version with another commit: an addon built with one `SITTIR_ENGINE_COMMIT`, loaded after an engine built with another, throws the message with both commits and the path.
-  - A newer version: the version is bumped in a scratch build, and the loader's symbol error is mapped to the same message.
-  - The emitter test pins the three platform strings.
+  - The same version with another commit: an addon built with one `SITTIR_ENGINE_COMMIT`, loaded after an engine built with another, is refused with the message, both commits and the path.
+  - A newer version: the engine's version is bumped in a scratch build, and the loader's symbol error is mapped to the same message.
+  - The common tests pin the four platform strings, the refusal's depth in napi's chain, and the registry's diagnostics-only role.
 - [ ] **Step 2:** Run them. They fail.
 - [ ] **Step 3: Implement.**
 - [ ] **Step 4:** Run them, then the full suite. Both pass.

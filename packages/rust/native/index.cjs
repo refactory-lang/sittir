@@ -864,6 +864,7 @@ module.exports.COUNT_SATURATED = nativeBinding.COUNT_SATURATED
 module.exports.descendants = nativeBinding.descendants
 module.exports.disposeTree = nativeBinding.disposeTree
 module.exports.editedWithin = nativeBinding.editedWithin
+module.exports.engineStamp = nativeBinding.engineStamp
 module.exports.externalBuffers = nativeBinding.externalBuffers
 module.exports.framedSpan = nativeBinding.framedSpan
 module.exports.HELD_RECORD = nativeBinding.HELD_RECORD

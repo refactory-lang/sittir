@@ -1,8 +1,11 @@
 import { execFileSync } from 'node:child_process';
-import { readdirSync } from 'node:fs';
+import { readdirSync, readFileSync } from 'node:fs';
+import { createRequire } from 'node:module';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
-import { allGrammars, nativeBindingDir } from '@sittir/codegen/grammars';
+import { NATIVE_LOADER, allGrammars, nativeBindingDir } from '@sittir/codegen/grammars';
+import { LOADED_ENGINE, engineStampFileOf } from '@sittir/common/engine';
+import { languageByName } from '../src/languages.ts';
 
 const ENGINE: Partial<Record<NodeJS.Platform, string>> = {
 	darwin: 'libsittir_engine.dylib',
@@ -67,6 +70,11 @@ describe('a grammar binding ships the engine and std copies its .node loads', ()
 				expect(std).toHaveLength(1);
 			});
 
+			it('holds the stamp its addon was built against, as the loaded engine reports it', () => {
+				const native = createRequire(import.meta.url)(join(dir, NATIVE_LOADER)) as { engineStamp(): { stamp: string } };
+				expect(readFileSync(join(dir, engineStampFileOf(node!)), 'utf8')).toBe(native.engineStamp().stamp);
+			});
+
 			it.runIf(process.platform === 'darwin' || process.platform === 'linux')(
 				'links the engine and std from its own folder',
 				() => {
@@ -102,4 +110,15 @@ describe('a grammar binding ships the engine and std copies its .node loads', ()
 			);
 		});
 	}
+});
+
+describe('a grammar backend that loads its binding', () => {
+	it('records the engine image the process mapped, as text', async () => {
+		const grammar = allGrammars()[0]!;
+		(await (await languageByName(grammar)).load()).createNative();
+		const native = createRequire(import.meta.url)(join(nativeBindingDir(grammar), NATIVE_LOADER)) as {
+			engineStamp(): { stamp: string; path?: string };
+		};
+		expect((globalThis as Record<symbol, unknown>)[LOADED_ENGINE]).toEqual(native.engineStamp());
+	});
 });

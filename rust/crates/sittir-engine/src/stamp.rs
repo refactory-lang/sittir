@@ -23,20 +23,27 @@ pub const BUILT: Stamp = Stamp { version: env!("CARGO_PKG_VERSION"), commit: env
 static LOADED: Stamp = BUILT;
 
 /// `None` when the mapped engine is the one `built` names. Otherwise the
-/// refusal, naming both stamps and the file the mapped engine came from.
-/// Never inlined, so the comparison runs in the mapped engine's image.
+/// refusal, naming `addon`, both stamps and the file the mapped engine came
+/// from. Never inlined, so the comparison runs in the mapped engine's image.
 #[must_use]
 #[inline(never)]
-pub fn stamp_mismatch(built: &Stamp) -> Option<String> {
+pub fn stamp_mismatch(addon: &str, built: &Stamp) -> Option<String> {
     (*built != LOADED).then(|| {
         format!(
-            "sittir: an addon was built against engine {built} but loaded engine {LOADED} from {}",
+            "sittir: {addon} was built against engine {built} but loaded engine {LOADED} from {}",
             loaded_from().as_deref().unwrap_or("an unknown path")
         )
     })
 }
 
-/// The file the mapped engine image was loaded from.
+/// The mapped engine's stamp and the file it was loaded from. Never inlined,
+/// so the read goes to the mapped engine's image.
+#[must_use]
+#[inline(never)]
+pub fn loaded() -> (Stamp, Option<String>) {
+    (LOADED, loaded_from())
+}
+
 fn loaded_from() -> Option<String> {
     image_path(std::ptr::addr_of!(LOADED).cast())
 }
@@ -94,23 +101,25 @@ mod tests {
 
     #[test]
     fn the_stamp_an_image_was_built_with_matches_itself() {
-        assert_eq!(stamp_mismatch(&BUILT), None);
+        assert_eq!(stamp_mismatch("sittir-test", &BUILT), None);
     }
 
     #[test]
-    fn another_commit_is_refused_naming_both_stamps_and_the_loaded_engine() {
+    fn another_commit_is_refused_naming_the_addon_both_stamps_and_the_loaded_engine() {
         let other = Stamp { version: BUILT.version, commit: "another-commit" };
-        let message = stamp_mismatch(&other).expect("another commit mismatches");
+        let message = stamp_mismatch("sittir-test", &other).expect("another commit mismatches");
         let path = loaded_from().expect("the loaded engine has a path");
-        assert!(message.contains(&format!("{}@another-commit", BUILT.version)), "{message}");
-        assert!(message.contains(&format!("{}@{}", BUILT.version, BUILT.commit)), "{message}");
-        assert!(message.ends_with(&format!("from {path}")), "{message}");
+        assert_eq!(
+            message,
+            format!("sittir: sittir-test was built against engine {}@another-commit but loaded engine {BUILT} from {path}", BUILT.version)
+        );
     }
 
     #[test]
     fn the_loaded_engine_is_the_image_its_stamp_was_mapped_from() {
-        let path = loaded_from().expect("the loaded engine has a path");
+        let (stamp, path) = loaded();
         let exe = std::env::current_exe().unwrap();
-        assert_eq!(Path::new(&path).canonicalize().unwrap(), exe.canonicalize().unwrap());
+        assert_eq!(stamp, BUILT);
+        assert_eq!(Path::new(&path.expect("the loaded engine has a path")).canonicalize().unwrap(), exe.canonicalize().unwrap());
     }
 }

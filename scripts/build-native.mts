@@ -24,6 +24,14 @@
 // release strips the copies like the `.node` and keeps unstripped ones beside
 // the build's stamp.
 //
+// A release stamps the engine with the commit it is built from
+// (`SITTIR_ENGINE_COMMIT`, from `git rev-parse HEAD`). Every other build
+// leaves the variable as the environment has it, so the engine reads `local`
+// and a new commit doesn't rebuild every crate above the engine. Beside the
+// `.node` the build writes the stamp its addon was built against
+// (`<binary>.engine-stamp`): the loader names it when the OS refuses the addon
+// beside an engine of another release.
+//
 // A release binding links with its symbols and is stripped after the build,
 // on every target. Its unstripped copy is kept beside the build's stamp,
 // which records where, so a tool can read the shipped code by name (the
@@ -40,11 +48,11 @@
 // dependencies; the linker writes the map beside the image in cargo's
 // `deps` directory, where the image's own link last left it.
 import { spawnSync } from 'node:child_process';
-import { chmodSync, copyFileSync, existsSync, mkdirSync, readdirSync, rmSync } from 'node:fs';
+import { chmodSync, copyFileSync, existsSync, mkdirSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
 import { basename, dirname, join, resolve } from 'node:path';
 import { NATIVE_LOADER, NATIVE_TYPINGS, REPO_ROOT, assertGrammar, nativeBinaryName, nativeBindingDir, nativeBuildEnv, nativeCrateDir } from '../packages/codegen/src/grammars.ts';
 import { type NativeProfile, linkerMapOf, llvmTool, nativeBuildFingerprint, rustHost, unstrippedBinaryPath, writeNativeBuildStamp } from '../packages/codegen/src/scripts/native-binary-freshness.ts';
-import { hostPlatform, platformSuffix, targetSuffix } from '../packages/common/src/native-binding.ts';
+import { engineStampFileOf, hostPlatform, platformSuffix, targetSuffix } from '../packages/common/src/native-binding.ts';
 
 const [name, ...flags] = process.argv.slice(2);
 if (name === undefined) throw new Error('usage: build-native.mts <grammar> [napi build flags…]');
@@ -63,7 +71,24 @@ function run(command: string, args: readonly string[], cwd: string, shell = fals
 
 interface CargoMetadata {
 	readonly target_directory: string;
-	readonly packages: readonly { readonly manifest_path: string; readonly targets: readonly { readonly name: string; readonly kind: readonly string[] }[] }[];
+	readonly packages: readonly {
+		readonly name: string;
+		readonly version: string;
+		readonly manifest_path: string;
+		readonly targets: readonly { readonly name: string; readonly kind: readonly string[] }[];
+	}[];
+}
+
+function gitHead(): string {
+	const result = spawnSync('git', ['rev-parse', 'HEAD'], { cwd: REPO_ROOT, encoding: 'utf8' });
+	if (result.status !== 0) throw new Error('a release build stamps its engine with its commit, and `git rev-parse HEAD` failed');
+	return result.stdout.trim();
+}
+
+function engineStamp(metadata: CargoMetadata, commit: string | undefined): string {
+	const version = metadata.packages.find((pkg) => pkg.name === 'sittir-engine')?.version;
+	if (version === undefined) throw new Error('cargo metadata names no sittir-engine package');
+	return `${version}@${commit ?? 'local'}`;
 }
 
 const PROFILE_DIR: Readonly<Record<NativeProfile, string>> = { release: 'release', gate: 'gate', dev: 'debug' };
@@ -130,6 +155,7 @@ const crateDir = nativeCrateDir(grammar);
 const metadata = cargoMetadata(crateDir);
 const cargoOut = join(metadata.target_directory, triple, PROFILE_DIR[profile]);
 const engineLibrary = apple ? 'libsittir_engine.dylib' : suffix.startsWith('win32-') ? 'sittir_engine.dll' : 'libsittir_engine.so';
+const engineCommit = release ? gitHead() : process.env.SITTIR_ENGINE_COMMIT || undefined;
 mkdirSync(dirname(copy), { recursive: true });
 const built = nativeBuildFingerprint(REPO_ROOT, grammar);
 run(
@@ -137,8 +163,13 @@ run(
 	['exec', 'napi', 'build', '--platform', '--features', 'arena', ...flags, '--output-dir', outDir, '--js', NATIVE_LOADER, '--dts', NATIVE_TYPINGS],
 	crateDir,
 	process.platform === 'win32',
-	nativeBuildEnv(triple, process.env, linkerMap === undefined ? [] : ['-C link-arg=/MAP'])
+	nativeBuildEnv(
+		triple,
+		engineCommit === undefined ? process.env : { ...process.env, SITTIR_ENGINE_COMMIT: engineCommit },
+		linkerMap === undefined ? [] : ['-C link-arg=/MAP']
+	)
 );
+writeFileSync(join(outDir, engineStampFileOf(binary)), engineStamp(metadata, engineCommit));
 if (linkerMap !== undefined) {
 	const written = writtenLinkerMap(metadata, crateDir, cargoOut);
 	if (!existsSync(written)) throw new Error(`the release link wrote no linker map at ${written}`);

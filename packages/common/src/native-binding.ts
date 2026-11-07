@@ -1,4 +1,5 @@
-import { existsSync, readdirSync } from 'node:fs';
+import { existsSync, readdirSync, readFileSync } from 'node:fs';
+import { join } from 'node:path';
 
 /** Where a grammar package keeps its native binaries, and how they are named. */
 export interface NativeBindingSpec {
@@ -60,6 +61,56 @@ function shippedSuffixes(spec: NativeBindingSpec): string[] {
 
 const LOADER_OVERRIDES = ['NAPI_RS_NATIVE_LIBRARY_PATH', 'NAPI_RS_FORCE_WASI'] as const;
 
+export const LOADED_ENGINE = Symbol.for('sittir.engine');
+
+const ENGINE_REFUSAL = 'sittir: ';
+const LOADER_SYMBOL_FAILURE =
+	/Symbol not found|undefined symbol|Error relocating .*: symbol not found|The specified procedure could not be found/;
+
+interface LoadedEngine {
+	readonly stamp: string;
+	readonly path?: string;
+}
+
+export function engineStampFileOf(binaryFile: string): string {
+	return binaryFile.replace(/\.node$/, '.engine-stamp');
+}
+
+export function recordLoadedEngine(native: { engineStamp?(): { stamp: string; path?: string | null } }): void {
+	const registry = globalThis as Record<symbol, unknown>;
+	if (registry[LOADED_ENGINE] !== undefined || typeof native.engineStamp !== 'function') return;
+	try {
+		const { stamp, path } = native.engineStamp();
+		registry[LOADED_ENGINE] = Object.freeze(path === undefined || path === null ? { stamp } : { stamp, path });
+	} catch {
+		return;
+	}
+}
+
+function loadedEngine(): LoadedEngine | undefined {
+	const entry = (globalThis as Record<symbol, unknown>)[LOADED_ENGINE];
+	if (typeof entry !== 'object' || entry === null) return undefined;
+	const { stamp, path } = entry as Record<string, unknown>;
+	if (typeof stamp !== 'string' || (path !== undefined && typeof path !== 'string')) return undefined;
+	return path === undefined ? { stamp } : { stamp, path };
+}
+
+function builtStamp(dir: string, file: string): string | undefined {
+	try {
+		return readFileSync(join(dir, engineStampFileOf(file)), 'utf8').trim();
+	} catch {
+		return undefined;
+	}
+}
+
+function engineSkew(spec: NativeBindingSpec, file: string, messages: readonly string[]): string | undefined {
+	if (!messages.some((message) => LOADER_SYMBOL_FAILURE.test(message))) return undefined;
+	const loaded = loadedEngine();
+	const built = builtStamp(spec.dir, file);
+	if (loaded === undefined || built === undefined || built === loaded.stamp) return undefined;
+	return `${ENGINE_REFUSAL}${spec.binaryName} was built against engine ${built} but loaded engine ${loaded.stamp} from ${loaded.path ?? 'an unknown path'}`;
+}
+
 function messagesOf(error: unknown): string[] {
 	const messages: string[] = [];
 	const seen = new Set<unknown>();
@@ -83,7 +134,10 @@ function messagesOf(error: unknown): string[] {
  * (`NAPI_RS_NATIVE_LIBRARY_PATH`, `NAPI_RS_FORCE_WASI`), the packaged binary
  * was never tried: the override and the loader's own error. Otherwise, when
  * the package holds no binary for the host: the file it looked for and the
- * platforms it does ship. When the binary is there: the reason it would not load.
+ * platforms it does ship. When the binary is there: the reason it would not load —
+ * the engine's refusal when the binary was built against another engine release than
+ * the one the process mapped, whether the engine refused it or the loader found a
+ * symbol missing.
  */
 export function nativeLoadFailure(
 	spec: NativeBindingSpec,
@@ -109,6 +163,9 @@ export function nativeLoadFailure(
 		);
 	}
 	const reason =
-		messages.find((message) => message.includes(file) && !message.startsWith('Cannot find module')) ?? messages[0]!;
+		messages.find((message) => message.startsWith(ENGINE_REFUSAL)) ??
+		engineSkew(spec, file, messages) ??
+		messages.find((message) => message.includes(file) && !message.startsWith('Cannot find module')) ??
+		messages[0]!;
 	return `${spec.packageName}: native/${file} is present and failed to load: ${reason}`;
 }

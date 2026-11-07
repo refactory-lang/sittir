@@ -197,6 +197,17 @@ jobs:
           for crate in $grammars; do
             npx tsx scripts/build-native.mts "${crate}" --release --target "${{ matrix.target }}" ${{ matrix.buildFlag }}
           done
+      # Every addon names the engine release it was built against, so a
+      # release build that missed the commit would ship a `local` stamp.
+      - name: Every addon is stamped with this commit
+        shell: bash
+        run: |
+          for stamp in packages/*/native/*.engine-stamp; do
+            case "$(cat "$stamp")" in
+              *"@${GITHUB_SHA}") echo "$stamp: $(cat "$stamp")" ;;
+              *) echo "::error::$stamp holds '$(cat "$stamp")', not a stamp of ${GITHUB_SHA}"; exit 1 ;;
+            esac
+          done
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:

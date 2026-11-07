@@ -52,6 +52,32 @@
 #[macro_export]
 macro_rules! napi_engine {
     ($grammar:ty, $render_root:ty, $any:ty, $options:ty, $render_parts:path, $abi:expr, $defaults:path) => {
+        /// Refuse to load beside an engine image of another release: the
+        /// addon carries the stamp it was built against, and the process
+        /// holds one engine, mapped by whichever addon loaded first.
+        #[::napi_derive::napi(module_exports)]
+        pub fn refuse_engine_skew() -> ::napi::Result<()> {
+            match ::sittir_engine::stamp_mismatch(env!("CARGO_PKG_NAME"), &::sittir_engine::BUILT) {
+                Some(message) => Err(::napi::Error::from_reason(message)),
+                None => Ok(()),
+            }
+        }
+
+        /// The engine image this process mapped: its stamp and the file it
+        /// was loaded from.
+        #[::napi_derive::napi(object)]
+        pub struct EngineStamp {
+            pub stamp: String,
+            pub path: Option<String>,
+        }
+
+        /// The engine image this process mapped (`sittir_engine::loaded`).
+        #[::napi_derive::napi]
+        pub fn engine_stamp() -> EngineStamp {
+            let (stamp, path) = ::sittir_engine::loaded();
+            EngineStamp { stamp: stamp.to_string(), path }
+        }
+
         #[::napi_derive::napi(object, object_to_js = false)]
         pub struct EngineOptions {
             /// Resolved once here against the grammar's site table at

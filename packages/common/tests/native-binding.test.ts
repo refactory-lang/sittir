@@ -1,8 +1,15 @@
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it } from 'vitest';
 import { mkdtempSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { nativeLoadFailure, platformSuffix, targetSuffix } from '../src/native-binding.ts';
+import {
+	LOADED_ENGINE,
+	type HostPlatform,
+	nativeLoadFailure,
+	platformSuffix,
+	recordLoadedEngine,
+	targetSuffix
+} from '../src/native-binding.ts';
 
 function nativeDir(...files: string[]): string {
 	const dir = mkdtempSync(join(tmpdir(), 'sittir-native-'));
@@ -99,3 +106,117 @@ describe('nativeLoadFailure', () => {
 	});
 });
 
+
+function napiLoadError(failure: string): Error {
+	const candidates = [
+		"Cannot find module './sittir-rust.universal.node'",
+		"Cannot find module 'sittir-rust-universal'",
+		failure,
+		"Cannot find module 'sittir-rust-host'",
+		"Cannot find module './sittir-rust.wasi.cjs'",
+		"Cannot find module 'sittir-rust-wasm32-wasi'"
+	];
+	const top = new Error('Cannot find native binding. npm has a bug related to optional dependencies');
+	top.cause = candidates.reduce<Error | null>((previous, message) => {
+		const error = new Error(message);
+		error.cause = previous;
+		return error;
+	}, null);
+	return top;
+}
+
+const registry = globalThis as Record<symbol, unknown>;
+
+describe('nativeLoadFailure across engine releases', () => {
+	afterEach(() => {
+		delete registry[LOADED_ENGINE];
+	});
+
+	const darwin: HostPlatform = { platform: 'darwin', arch: 'arm64' };
+	const refusal = (built: string) =>
+		`sittir: sittir-rust was built against engine ${built} but loaded engine 0.1.0@a from /engines/libsittir_engine.dylib`;
+	const presentFile = (host: HostPlatform) => `sittir-rust.${platformSuffix(host)}.node`;
+	const stamped = (host: HostPlatform, built: string): string => {
+		const dir = nativeDir(presentFile(host));
+		writeFileSync(join(dir, `sittir-rust.${platformSuffix(host)}.engine-stamp`), built);
+		return dir;
+	};
+
+	it("gives the engine's refusal from wherever napi's loader chain holds it", () => {
+		const dir = nativeDir(presentFile(darwin));
+		const message = nativeLoadFailure(spec(dir), napiLoadError(refusal('0.1.0@b')), darwin);
+		expect(message).toBe(`@sittir/rust: native/${presentFile(darwin)} is present and failed to load: ${refusal('0.1.0@b')}`);
+	});
+
+	const symbolFailures: readonly [string, HostPlatform, (path: string) => string][] = [
+		['macOS', darwin, (path) => `dlopen(${path}, 0x0001): Symbol not found: __RNvNtCs1_13sittir_engine5stamp6LOADED`],
+		['glibc', { platform: 'linux', arch: 'x64', libc: 'gnu' }, (path) => `${path}: undefined symbol: _RNvNtCs1_13sittir_engine5stamp6LOADED`],
+		['musl', { platform: 'linux', arch: 'x64', libc: 'musl' }, (path) => `Error relocating ${path}: _RNvNtCs1_13sittir_engine5stamp6LOADED: symbol not found`],
+		['Windows', { platform: 'win32', arch: 'x64' }, (path) => `The specified procedure could not be found.\r\n\\\\?\\${path}`]
+	];
+
+	it.each(symbolFailures)(
+		'maps a %s symbol failure to the same refusal, from the stamp beside the binary and the engine the process mapped',
+		(_, host, failure) => {
+			registry[LOADED_ENGINE] = { stamp: '0.1.0@a', path: '/engines/libsittir_engine.dylib' };
+			const dir = stamped(host, '0.2.0@b');
+			const message = nativeLoadFailure(spec(dir), napiLoadError(failure(join(dir, presentFile(host)))), host);
+			expect(message).toBe(`@sittir/rust: native/${presentFile(host)} is present and failed to load: ${refusal('0.2.0@b')}`);
+		}
+	);
+
+	it("keeps the loader's reason when the binary was built against the engine the process mapped", () => {
+		registry[LOADED_ENGINE] = { stamp: '0.1.0@a', path: '/engines/libsittir_engine.dylib' };
+		const dir = stamped(darwin, '0.1.0@a');
+		const failure = symbolFailures[0]![2](join(dir, presentFile(darwin)));
+		expect(nativeLoadFailure(spec(dir), napiLoadError(failure), darwin)).toBe(
+			`@sittir/rust: native/${presentFile(darwin)} is present and failed to load: ${failure}`
+		);
+	});
+
+	it("keeps the loader's reason when no stamp sits beside the binary", () => {
+		registry[LOADED_ENGINE] = { stamp: '0.1.0@a', path: '/engines/libsittir_engine.dylib' };
+		const dir = nativeDir(presentFile(darwin));
+		const failure = symbolFailures[0]![2](join(dir, presentFile(darwin)));
+		expect(nativeLoadFailure(spec(dir), napiLoadError(failure), darwin)).toBe(
+			`@sittir/rust: native/${presentFile(darwin)} is present and failed to load: ${failure}`
+		);
+	});
+
+	it.each([undefined, 42, 'text', {}, { stamp: 7 }, { stamp: '0.1.0@a', path: 7 }])(
+		"keeps the loader's reason when the registry holds %o, changing nothing but the message",
+		(entry) => {
+			if (entry !== undefined) registry[LOADED_ENGINE] = entry;
+			const dir = stamped(darwin, '0.2.0@b');
+			const failure = symbolFailures[0]![2](join(dir, presentFile(darwin)));
+			expect(nativeLoadFailure(spec(dir), napiLoadError(failure), darwin)).toBe(
+				`@sittir/rust: native/${presentFile(darwin)} is present and failed to load: ${failure}`
+			);
+			expect(registry[LOADED_ENGINE]).toBe(entry);
+		}
+	);
+});
+
+describe('recordLoadedEngine', () => {
+	afterEach(() => {
+		delete registry[LOADED_ENGINE];
+	});
+
+	it('records nothing and throws nothing when the binding cannot name its engine, so the load goes on', () => {
+		expect(() => recordLoadedEngine({})).not.toThrow();
+		expect(() =>
+			recordLoadedEngine({
+				engineStamp: () => {
+					throw new Error('no stamp');
+				}
+			})
+		).not.toThrow();
+		expect(registry[LOADED_ENGINE]).toBeUndefined();
+	});
+
+	it('keeps the first engine the process mapped, as text', () => {
+		recordLoadedEngine({ engineStamp: () => ({ stamp: '0.1.0@a', path: '/a/libsittir_engine.dylib' }) });
+		recordLoadedEngine({ engineStamp: () => ({ stamp: '0.1.0@b', path: '/b/libsittir_engine.dylib' }) });
+		expect(registry[LOADED_ENGINE]).toEqual({ stamp: '0.1.0@a', path: '/a/libsittir_engine.dylib' });
+	});
+});

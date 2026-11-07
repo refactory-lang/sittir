@@ -297,6 +297,18 @@ export interface EngineOptions {
   options?: object
 }
 
+/** The engine image this process mapped (`sittir_engine::loaded`). */
+export declare function engineStamp(): EngineStamp
+
+/**
+ * The engine image this process mapped: its stamp and the file it
+ * was loaded from.
+ */
+export interface EngineStamp {
+  stamp: string
+  path?: string
+}
+
 /**
  * r" Refuses, by name, a runtime that does not allow external
  * r" array buffers, which arena node storage reads every chunk
