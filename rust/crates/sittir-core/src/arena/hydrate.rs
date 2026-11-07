@@ -273,9 +273,9 @@ pub fn parsed_side(row: Row, delimiter: Option<crate::types::Delimiter>) -> Side
 /// The row the child `at` was read at, with its subtree's end and its span:
 /// the whole source for the root, as a read's coordinate names it.
 #[must_use]
-pub fn row_of(at: &crate::read::Child, ctx: &ReadCtx<'_>) -> Row {
+pub fn row_of(at: &crate::read::Kid, ctx: &ReadCtx<'_>) -> Row {
     let span = if at.index == NodeIndex::ROOT { Span::whole(ctx.source) } else { Span { start: at.start, end: at.end } };
-    Row { index: at.index, end: at.index + at.descendants, span }
+    Row { index: at.index, end: at.index + at.count, span }
 }
 
 /// A node type's direct hydration: what the node the cursor is on is held as

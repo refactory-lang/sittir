@@ -753,8 +753,8 @@ fn pass(min_depth: u32) -> TokenStream {
 /// whose children are its spelling.
 fn spelling_router() -> TokenStream {
     quote! {
-        fn __route(child: &__rt::Child) -> ::core::result::Result<__rt::Route, __rt::ReadError> {
-            ::core::result::Result::Ok(if child.trivia { __rt::Route::Trivia } else { __rt::Route::Layout })
+        fn __route(child: &__rt::Kid) -> ::core::result::Result<__rt::Route, __rt::ReadError> {
+            ::core::result::Result::Ok(if child.entry() { __rt::Route::Trivia } else { __rt::Route::Layout })
         }
     }
 }
@@ -911,7 +911,7 @@ fn envelope_body(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>], height:
         (
             quote! {
                 let own = __rt::index_of(cursor);
-                let wrapped = __rt::survey(cursor).into_iter().find(|child| !child.trivia).ok_or(
+                let wrapped = __rt::survey(cursor).into_iter().find(|child| !child.entry()).ok_or(
                     __rt::ReadError::Unadmitted { kind: ::sittir_core::read::grammar_id(&cursor.node()), index: own },
                 )?;
                 __rt::goto(cursor, wrapped.index);
@@ -1096,8 +1096,8 @@ fn routed_body(attrs: &KindAttrs, fields: &[Field<'_>], height: Option<&Ident>) 
                     _ => ::core::option::Option::None,
                 }
             }
-            fn __route(child: &__rt::Child) -> ::core::result::Result<__rt::Route, __rt::ReadError> {
-                if child.trivia {
+            fn __route(child: &__rt::Kid) -> ::core::result::Result<__rt::Route, __rt::ReadError> {
+                if child.entry() {
                     return ::core::result::Result::Ok(__rt::Route::Trivia);
                 }
                 match child.field {

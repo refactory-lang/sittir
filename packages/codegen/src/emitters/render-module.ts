@@ -2851,8 +2851,8 @@ const TRIVIA_TEXT = '::sittir_core::trivia::TriviaText';
 const BLANK_VARIANT = 'Blank';
 const PREPARE_SIG = `fn prepare(&mut self, ctx: &${PREPARE_MOD}::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {`;
 const READ_COORDINATE = [
-	`    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &mut ::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {`,
-	`        Some(::sittir_core::read::read_coordinate(tree, ctx, index))`,
+	`    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {`,
+	`        Some(::sittir_core::read::read_coordinate(cursor, ctx))`,
 	`    }`
 ];
 

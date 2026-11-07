@@ -2,6 +2,9 @@
 //! kind name, the regions of a source that did not parse, and a list's last
 //! child.
 
+use sittir_core::engine::node_at_index;
+use sittir_core::layout::LayoutWorkCounter;
+use sittir_core::nodes::TreeNodes;
 use sittir_core::read::{display_id, grammar_id};
 use sittir_core::KindId;
 use sittir_core::types::Span;
@@ -48,6 +51,8 @@ fn node_at_span_finds_the_first_node_a_pre_order_walk_meets_with_that_span_and_k
                 }
             }
         }
+        let work = LayoutWorkCounter::default();
+        let mut navigation = TreeNodes::new(&tree, source, &work);
         for node in &nodes {
             let span = Span::of(node);
             for kind in [grammar_id(node), display_id(node)] {
@@ -55,7 +60,7 @@ fn node_at_span_finds_the_first_node_a_pre_order_walk_meets_with_that_span_and_k
                     .iter()
                     .find(|candidate| grammar_id(candidate) == kind || display_id(candidate) == kind)
                     .map(tree_sitter::Node::id);
-                let found = node_at_span(&tree, span, kind).map(|found| found.id());
+                let found = node_at_span(&mut navigation, span, kind).and_then(|found| node_at_index(&tree, found.index)).map(|found| found.id());
                 assert_eq!(found, expected, "{} at {}..{}", node.kind(), span.start, span.end);
             }
         }
@@ -64,12 +69,11 @@ fn node_at_span_finds_the_first_node_a_pre_order_walk_meets_with_that_span_and_k
 
 #[test]
 fn a_clean_parse_has_no_error_regions() {
-    let tree = parse_tree(&tree_sitter_python::LANGUAGE.into(), "def f():\n    pass\nx = 1\n");
-    assert_eq!(sittir_core::error_regions(&tree), [] as [sittir_core::ErrorRegion; 0]);
+    assert_eq!(regions_of(&tree_sitter_python::LANGUAGE.into(), "def f():\n    pass\nx = 1\n"), [] as [sittir_core::ErrorRegion; 0]);
 }
 
 fn regions_of(language: &tree_sitter::Language, source: &str) -> Vec<ErrorRegion> {
-    sittir_core::error_regions(&parse_tree(language, source))
+    sittir_core::error_regions(&mut TreeNodes::new(&parse_tree(language, source), source, &LayoutWorkCounter::default()))
 }
 
 fn region(kind: ErrorRegionKind, start: u32, end: u32) -> ErrorRegion {
@@ -104,7 +108,9 @@ fn an_error_inside_an_error_is_part_of_the_outer_region() {
 fn last_list_child_of(source: &str, list: &str, kind: u16) -> Option<String> {
     let tree = parse_tree(&tree_sitter_rust::LANGUAGE.into(), source);
     let start = sittir_core::types::narrow(source.find(list).unwrap());
-    sittir_core::engine::last_list_child(&tree, Span { start, end: start + sittir_core::types::narrow(list.len()) }, KindId(kind)).map(|child| child.kind().to_string())
+    let work = LayoutWorkCounter::default();
+    let child = sittir_core::engine::last_list_child(&mut TreeNodes::new(&tree, source, &work), Span { start, end: start + sittir_core::types::narrow(list.len()) }, KindId(kind))?;
+    node_at_index(&tree, child.index).map(|child| child.kind().to_string())
 }
 
 #[test]
@@ -130,6 +136,7 @@ fn a_list_the_tree_holds_a_node_for_ends_in_that_node_child() {
     let tree = parse_tree(&tree_sitter_rust::LANGUAGE.into(), source);
     let arguments = tree.root_node().descendant_for_byte_range(10, 17).unwrap();
     assert_eq!(arguments.kind(), "arguments");
-    let last = sittir_core::engine::last_list_child(&tree, Span { start: 10, end: 17 }, sittir_core::read::grammar_id(&arguments)).unwrap();
-    assert_eq!(last.kind(), ")");
+    let work = LayoutWorkCounter::default();
+    let last = sittir_core::engine::last_list_child(&mut TreeNodes::new(&tree, source, &work), Span { start: 10, end: 17 }, sittir_core::read::grammar_id(&arguments)).unwrap();
+    assert_eq!(node_at_index(&tree, last.index).unwrap().kind(), ")");
 }

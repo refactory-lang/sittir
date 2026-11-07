@@ -459,15 +459,15 @@ macro_rules! napi_engine {
         #[::napi_derive::napi]
         pub fn siblings(env: ::napi::Env, tree_id: $crate::types::TreeId, indexes: Vec<$crate::types::NodeIndex>) -> ::napi::Result<Vec<u32>> {
             with_live_tree(&env, tree_id, |parsed| {
-                let mut words = Vec::with_capacity(indexes.len() * 8);
-                for index in indexes {
+                for &index in &indexes {
                     $crate::napi_engine::check_node(parsed, index)?;
-                    let siblings = parsed.siblings(index);
-                    for sibling in [siblings.previous, siblings.next] {
-                        words.extend(sibling.map_or([0; 4], |sibling| [1, u32::from(sibling.kind.0), sibling.start, sibling.end]));
-                    }
                 }
-                Ok(words)
+                Ok(parsed
+                    .siblings(&indexes)
+                    .into_iter()
+                    .flat_map(|siblings| [siblings.previous, siblings.next])
+                    .flat_map(|sibling| sibling.map_or([0; 4], |sibling| [1, u32::from(sibling.kind.0), sibling.start, sibling.end]))
+                    .collect())
             })
         }
 
@@ -581,9 +581,7 @@ macro_rules! napi_engine {
             LIVE_TREES.with(|trees| {
                 let trees = trees.borrow();
                 let parsed = trees.get(&tree_id).ok_or_else(|| $crate::napi_engine::tree_not_live(tree_id))?;
-                let node = $crate::engine::node_at_index(parsed.tree(), index)
-                    .ok_or_else(|| ::napi::Error::from_reason(format!("index {index} names no node of tree {tree_id}")))?;
-                Ok($crate::engine::line_starts_inside_tokens(node, index, parsed.source()))
+                parsed.line_starts_inside_tokens(index).ok_or_else(|| ::napi::Error::from_reason(format!("index {index} names no node of tree {tree_id}")))
             })
         }
 
@@ -1871,13 +1869,13 @@ pub fn release_built<T>(_env: &napi::Env, _store: &crate::trivia_store::TriviaSt
 /// (`BuiltChunks`), with this table as its context's, so the entries inside
 /// it render here too.
 #[cfg(feature = "arena")]
-struct ArenaSources<'a, G: crate::engine::EngineGrammar, H> {
+struct ArenaSources<'a, 't, G: crate::engine::EngineGrammar, H> {
     grammar: G,
-    trees: &'a crate::engine::ReadTrees<'a, G, H>,
+    trees: &'a crate::engine::ReadTrees<'t, G, H>,
 }
 
 #[cfg(feature = "arena")]
-impl<G: crate::arena::RecordGrammar, H: std::hash::BuildHasher> crate::render::SourceTable for ArenaSources<'_, G, H>
+impl<G: crate::arena::RecordGrammar, H: std::hash::BuildHasher> crate::render::SourceTable for ArenaSources<'_, '_, G, H>
 where
     G::Trivia: crate::boundary::DecodesKind,
 {
@@ -1945,8 +1943,8 @@ where
         self.trees.seat_through(coord, wrappers, seat)
     }
 
-    fn read_ctx(&self, tree: crate::types::TreeId) -> Option<(&tree_sitter::Tree, crate::read::ReadCtx<'_>)> {
-        crate::render::SourceTable::read_ctx(self.trees, tree)
+    fn read_node(&self, tree: crate::types::TreeId, index: crate::types::NodeIndex, read: &mut dyn FnMut(&mut tree_sitter::TreeCursor<'_>, &mut crate::read::ReadCtx<'_>)) -> bool {
+        crate::render::SourceTable::read_node(self.trees, tree, index, read)
     }
 
     fn render_record_entry(&self, record: crate::trivia::BuiltEntry, held: &dyn std::any::Any, options: &crate::options::ResolvedOptions, w: &mut dyn crate::render::RenderSink) -> crate::render::RenderResult {

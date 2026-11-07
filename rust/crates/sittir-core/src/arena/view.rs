@@ -279,15 +279,17 @@ impl<'a, T> RecordCtx<'a, T> {
     }
 
     /// The coordinate of the node at `row` of `tree` a read of it names
-    /// (`engine::row_coordinate`): a read node's own `at`.
+    /// (`ReadCtx::coordinate_of`): a read node's own `at`.
     ///
     /// # Errors
     ///
     /// `ArenaError::Malformed` when the render holds no tree `tree`, or the
     /// tree has no node at `row`.
     pub fn row_node(self, tree: TreeId, row: NodeIndex) -> Result<NodeCoordinate, ArenaError> {
-        let (live, read) = self.sources.read_ctx(tree).ok_or(malformed("record tree", tree.0))?;
-        crate::engine::row_coordinate(live, &read, row).ok_or(malformed("record row", row.0))
+        self.sources.source_of(tree).ok_or(malformed("record tree", tree.0))?;
+        let mut at = None;
+        self.sources.read_node(tree, row, &mut |cursor, read| at = Some(read.coordinate_of(&crate::nodes::Kid::at(cursor))));
+        at.ok_or(malformed("record row", row.0))
     }
 }
 

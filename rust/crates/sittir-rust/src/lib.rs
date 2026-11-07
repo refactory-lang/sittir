@@ -78,8 +78,8 @@ impl EngineGrammar for RustGrammar {
         &<render::options::Sites as sittir_core::options::OptionSites>::TABLES
     }
 
-    fn read_units(self, tree: &tree_sitter::Tree, ctx: &mut sittir_core::read::ReadCtx<'_>, index: sittir_core::types::NodeIndex) -> Vec<sittir_core::layout::UnitSides<Self::Trivia>> {
-        sittir_core::read::read_at::<AnyNode>(&mut tree.walk(), ctx, index, sittir_core::read::Depth::ONE)
+    fn read_units(self, cursor: &mut tree_sitter::TreeCursor<'_>, ctx: &mut sittir_core::read::ReadCtx<'_>) -> Vec<sittir_core::layout::UnitSides<Self::Trivia>> {
+        sittir_core::read::read_from::<AnyNode>(cursor, ctx, sittir_core::read::Depth::ONE)
             .ok()
             .and_then(|mut any| sittir_core::read::HasLayout::<Option<Box<sittir_core::layout::NodeLayout<Self::Trivia>>>>::take_layout(&mut any))
             .map_or_else(Vec::new, |layout| layout.units)

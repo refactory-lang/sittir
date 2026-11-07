@@ -5,7 +5,7 @@ use std::collections::HashMap;
 
 use tree_sitter::{Node, TreeCursor};
 
-use crate::read::{index_of, Child, Route, Router};
+use crate::read::{index_of, Kid, Route, Router};
 use crate::slot::NodeCoordinate;
 use crate::types::Span;
 
@@ -285,7 +285,7 @@ fn slot_hits<'s>(cursor: &mut TreeCursor<'_>, ctx: &QueryCtx<'s>, slots: &Slots,
             let mut routed = true;
             if cursor.goto_first_child() {
                 loop {
-                    let child = Child::at(cursor);
+                    let child = Kid::at(cursor);
                     match route(&child) {
                         Ok(Route::Slot { slot: at, .. }) if at == slot => {
                             let node = cursor.node();
@@ -322,8 +322,8 @@ fn slot_hits<'s>(cursor: &mut TreeCursor<'_>, ctx: &QueryCtx<'s>, slots: &Slots,
             let mut wrapped = None;
             if cursor.goto_first_child() {
                 loop {
-                    let child = Child::at(cursor);
-                    if !child.trivia {
+                    let child = Kid::at(cursor);
+                    if !child.entry() {
                         let node = cursor.node();
                         let kind = unit(cursor).unwrap_or_else(|| (ctx.stamp)(&node));
                         wrapped = Some(Hit { node: Some((child.index, kind)), text: text(&node) });
@@ -369,8 +369,8 @@ mod tests {
         ("source_file", &[Sel::Kind("function_item")], true),
     ];
 
-    fn route<const T: usize>(child: &Child) -> Result<Route, ReadError> {
-        if child.trivia {
+    fn route<const T: usize>(child: &Kid) -> Result<Route, ReadError> {
+        if child.entry() {
             return Ok(Route::Trivia);
         }
         let (_, slots, strict) = TABLES[T];

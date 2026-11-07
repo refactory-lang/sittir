@@ -642,14 +642,19 @@ fn edited_record<T: Clone + 'static, N: HydrateNode>(prep: &mut RecordPrep<'_, T
     let Cell::Coordinate { kind, .. } = item.at.cell else { return Ok(Some(item.at)) };
     let tree = coord.tree;
     let place = item.cell.ok_or(malformed("coordinate cell place", coord.index.0))?;
-    let Some((live, read)) = ctx.sources.read_ctx(tree) else { return Ok(None) };
-    let mut read = crate::read::ReadCtx { sides: None, changed: None, ..read };
+    let mut hydrated = None;
+    ctx.sources.read_node(tree, coord.index, &mut |cursor, read| {
+        read.sides = None;
+        read.changed = None;
+        hydrated = Some(prep.trees.tree_mut(tree).ok_or_else(|| malformed("record tree", tree.0).into()).and_then(|arena| {
+            super::hydrate_at::<N>(cursor, read, coord.index, Some(kind), crate::read::Depth::ONE, &mut super::Hydration::new(arena)).map_err(|error| match error {
+                super::HydrateError::Read(error) => unread(coord, &error),
+                super::HydrateError::Arena(error) => error.into(),
+            })
+        }));
+    });
+    let Some(record) = hydrated.transpose()?.flatten() else { return Ok(None) };
     let arena = prep.trees.tree_mut(tree).ok_or(malformed("record tree", tree.0))?;
-    let record = super::hydrate_at::<N>(&mut live.walk(), &mut read, coord.index, Some(kind), crate::read::Depth::ONE, &mut super::Hydration::new(arena)).map_err(|error| match error {
-        super::HydrateError::Read(error) => unread(coord, &error),
-        super::HydrateError::Arena(error) => error.into(),
-    })?;
-    let Some(record) = record else { return Ok(None) };
     super::reach::patch(arena, place, record)?;
     Ok(Some(CellAt { cell: Cell::Child { kind, at: record, link: None, changed: ChangedEdges::default() }, tree: Some(tree), site: item.at.site }))
 }
@@ -754,8 +759,9 @@ impl<T, N, const ADJACENT: bool> SlotAt<'_, T, N, ADJACENT> {
 /// A token read from the source its parsed coordinate names, as a native
 /// slot reads one (`delimiters`).
 fn read_token<N: Prepare>(coord: &NodeCoordinate, ctx: &RenderContext<'_>) -> Option<N> {
-    let (tree, mut read) = ctx.sources.read_ctx(coord.tree)?;
-    N::read_coordinate(tree, &mut read, coord.index)?.ok()
+    let mut node = None;
+    ctx.sources.read_node(coord.tree, coord.index, &mut |cursor, read| node = N::read_coordinate(cursor, read));
+    node?.ok()
 }
 
 impl<'r, T: Clone + 'static, N, const ADJACENT: bool> DelimiterSlot<RecordPrep<'r, T>> for SlotAt<'r, T, N, ADJACENT>
