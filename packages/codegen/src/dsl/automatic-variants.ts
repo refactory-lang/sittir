@@ -1,6 +1,8 @@
 import { withAnnotations } from './annotations.ts';
 import type { Rule, RuleAnnotations } from '../types/rule.ts';
 import { armNameOf, undisplayedKindAddress } from './arm-names.ts';
+import { collectSymbolRefs } from '../util/reachable-rules.ts';
+import { isChoiceType } from '../types/runtime-shapes.ts';
 import {
 	hiddenChoiceClass,
 	isBlank,
@@ -113,6 +115,23 @@ export function isSupertypeOwner(
 	return hiddenChoiceClass(rule, (name) => rules[name], isNamedArmChoice(rule)) === 'supertype';
 }
 
+function splicedHostOf(
+	owner: string,
+	rules: Readonly<Record<string, unknown>>,
+	supertypeOwners: ReadonlySet<string>,
+	seen: ReadonlySet<string> = new Set()
+): string {
+	if (!isParserHiddenName(owner) || supertypeOwners.has(owner) || seen.has(owner)) return owner;
+	if (isChoiceType((unwrapPrec(rules[owner]) as ArmShape | undefined)?.type ?? '')) return owner;
+	const hosts = Object.keys(rules).filter((name) => {
+		if (name === owner) return false;
+		const refs = new Set<string>();
+		collectSymbolRefs(rules[name], refs);
+		return refs.has(owner);
+	});
+	return hosts.length === 1 ? splicedHostOf(hosts[0]!, rules, supertypeOwners, new Set([...seen, owner])) : owner;
+}
+
 function stampRuleVariants(
 	owner: string,
 	rule: unknown,
@@ -175,7 +194,7 @@ export function stampAutomaticVariants(
 		const rule = rules[owner];
 		if (rule === undefined || (owners !== undefined && !owners.has(owner))) continue;
 		const stamped = automatic.keys.size;
-		const labelOwner = baseOf(owner);
+		const labelOwner = splicedHostOf(baseOf(owner), rules, automatic.supertypeOwners);
 		rules[owner] = stampRuleVariants(labelOwner, rule, (name) => rules[name], automatic, elementChoices, symbols) as Rule;
 		if (into !== undefined && automatic.keys.size > stamped && supertypeOwners.has(labelOwner)) (into.supertypeOwners as Set<string>).add(labelOwner);
 	}

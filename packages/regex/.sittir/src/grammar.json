@@ -157,14 +157,14 @@
               "type": "STRING",
               "value": "=",
               "annotations": {
-                "variantOf": "_lookahead_assertion"
+                "variantOf": "lookaround_assertion"
               }
             },
             {
               "type": "STRING",
               "value": "!",
               "annotations": {
-                "variantOf": "_lookahead_assertion"
+                "variantOf": "lookaround_assertion"
               }
             }
           ]
@@ -193,14 +193,14 @@
               "type": "STRING",
               "value": "=",
               "annotations": {
-                "variantOf": "_lookbehind_assertion"
+                "variantOf": "lookaround_assertion"
               }
             },
             {
               "type": "STRING",
               "value": "!",
               "annotations": {
-                "variantOf": "_lookbehind_assertion"
+                "variantOf": "lookaround_assertion"
               }
             }
           ]
