@@ -26,6 +26,8 @@ function diagnose(input: {
 	renderAs?: readonly string[];
 	enriched: StageDiagnosis;
 	upstreamRules?: Record<string, unknown>;
+	supertypes?: readonly string[];
+	inline?: readonly string[];
 	authoredRules?: Record<string, unknown>;
 }): GrammarDiagnostic[] {
 	return diagnoseRuleCauses({
@@ -39,7 +41,10 @@ function diagnose(input: {
 					: Object.fromEntries(input.renderAs.map((n) => [n, { type: 'BLANK' } as never]))
 		},
 		enriched: input.enriched,
-		upstreamRules: input.upstreamRules as never,
+		upstream:
+			input.upstreamRules === undefined
+				? undefined
+				: { rules: input.upstreamRules as never, supertypes: input.supertypes, inline: input.inline },
 		authoredRules: input.authoredRules as never
 	});
 }
@@ -374,6 +379,50 @@ describe('a rule reauthored because upstream accepts a form the language exclude
 
 	it('is a witness-verified cause', () => {
 		expect(isWitnessVerified({ kind: 'reauthored', causes: [{ cause: 'accepts-invalid-syntax' }] })).toBe(true);
+	});
+});
+
+describe('a witness form derived through a rule that shows as no node', () => {
+	const str = (value: string) => ({ type: 'STRING', value });
+	const sym = (name: string) => ({ type: 'SYMBOL', name });
+	const seq = (...members: unknown[]) => ({ type: 'SEQ', members });
+	const choice = (...members: unknown[]) => ({ type: 'CHOICE', members });
+	const upstreamRules = {
+		call: seq(sym('callee'), str('('), str(')')),
+		callee: choice(sym('identifier'), sym('cast')),
+		identifier: { type: 'PATTERN', value: '[a-z]+' },
+		cast: seq(sym('identifier'), str('as'), sym('identifier'))
+	};
+	const authoredRules = { ...upstreamRules, call: seq(sym('identifier'), str('('), str(')')) };
+	const witness = {
+		text: 'x as F()',
+		form: [{ symbol: 'cast' }, '(', ')'],
+		kind: 'call',
+		production: 'a callee is a left-hand-side expression'
+	};
+	const check = (lists: { supertypes?: readonly string[]; inline?: readonly string[] }, authored: Record<string, unknown> = authoredRules) =>
+		diagnose({
+			ruleCauses: { call: { kind: 'reauthored', causes: [{ cause: 'accepts-invalid-syntax', witnesses: [witness] }] } },
+			enriched: enriched({ ruleNames: new Set(Object.keys(upstreamRules)) }),
+			upstreamRules,
+			...lists,
+			authoredRules: authored
+		});
+
+	it.each([{ supertypes: ['callee'] }, { inline: ['callee'] }])('derives upstream through a visible rule the grammar lists in %o', (lists) => {
+		expect(check(lists)).toEqual([]);
+	});
+
+	it('does not derive upstream through a visible rule that is neither a supertype nor inline', () => {
+		const ds = check({});
+		expect(codesOf(ds)).toEqual(['rule-cause-mismatch:call']);
+		expect(ds[0]!.message).toContain("upstream 'call' does not derive the witness form");
+	});
+
+	it('derives the authored rule through an upstream supertype it still references', () => {
+		const ds = check({ supertypes: ['callee'] }, upstreamRules);
+		expect(codesOf(ds)).toEqual(['rule-cause-mismatch:call']);
+		expect(ds[0]!.message).toContain('the authored rule still derives');
 	});
 });
 
