@@ -21,6 +21,8 @@ on:
       - packages/codegen/src/emitters/native-crate.ts
       - packages/tools/src/native-images.ts
       - packages/tools/src/scripts/native-rustflags.ts
+      - packages/tools/src/native-targets.ts
+      - packages/tools/src/scripts/native-targets.ts
       - packages/common/src/native-binding.ts
       - packages/codegen/src/emitters/grammar-runtime.ts
       - rust/crates/sittir-core/src/napi_engine.rs
@@ -42,19 +44,39 @@ env:
   CARGO_HTTP_MULTIPLEXING: "false"
 
 jobs:
+  # The legs, one per row of the release target table
+  # (packages/tools/src/native-targets.ts).
+  plan:
+    name: native targets
+    runs-on: ubuntu-22.04
+    outputs:
+      matrix: ${{ steps.plan.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@v6
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+      - name: Install Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22.x
+          cache: pnpm
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Plan the legs
+        id: plan
+        run: |
+          matrix=$(npx tsx packages/tools/src/scripts/native-targets.ts)
+          echo "$matrix"
+          echo "matrix=$matrix" >> "$GITHUB_OUTPUT"
+
   engine:
     name: engine (${{ matrix.target }})
+    needs: plan
     runs-on: ${{ matrix.host }}
     strategy:
       fail-fast: false
       matrix:
-        include:
-          - { target: aarch64-apple-darwin, host: macos-15, cross: false }
-          - { target: x86_64-unknown-linux-gnu, host: ubuntu-22.04, cross: false }
-          - { target: x86_64-unknown-linux-musl, host: ubuntu-22.04, cross: true }
-          - { target: aarch64-unknown-linux-gnu, host: ubuntu-22.04, cross: true }
-          - { target: aarch64-unknown-linux-musl, host: ubuntu-22.04, cross: true }
-          - { target: x86_64-pc-windows-msvc, host: windows-2022, cross: false }
+        include: ${{ fromJSON(needs.plan.outputs.matrix) }}
     steps:
       - uses: actions/checkout@v6
       - name: Install pnpm

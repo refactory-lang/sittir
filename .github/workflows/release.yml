@@ -4,7 +4,8 @@
 # 1. `version`: Changesets opens or updates the "Version Packages" PR while
 #    changesets are pending. Otherwise, when a public package's version is
 #    not on npm yet, the run goes on to publish.
-# 2. `native`: each target in NATIVE_TARGETS builds its release binaries,
+# 2. `native`: each target in NATIVE_TARGETS builds its release binaries on
+#    its row of the target table (packages/tools/src/native-targets.ts),
 #    with the engine and std copies they link.
 # 3. `publish`: napi makes each grammar's platform packages
 #    (`sittir-<grammar>-<platform>`) and declares them as optional
@@ -55,6 +56,7 @@ jobs:
       pull-requests: write
     outputs:
       publish: ${{ steps.plan.outputs.publish }}
+      targets: ${{ steps.targets.outputs.matrix }}
     steps:
       - uses: actions/checkout@v6
         with:
@@ -110,6 +112,12 @@ jobs:
           else
             echo "publish=false" >> "$GITHUB_OUTPUT"
           fi
+      - name: Plan the native legs
+        id: targets
+        run: |
+          matrix=$(npx tsx packages/tools/src/scripts/native-targets.ts)
+          echo "$matrix"
+          echo "matrix=$matrix" >> "$GITHUB_OUTPUT"
 
   native:
     name: native (${{ matrix.target }})
@@ -121,13 +129,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        include:
-          - { target: aarch64-apple-darwin, host: macos-15 }
-          - { target: x86_64-unknown-linux-gnu, host: ubuntu-22.04 }
-          - { target: x86_64-unknown-linux-musl, host: ubuntu-22.04 }
-          - { target: aarch64-unknown-linux-gnu, host: ubuntu-22.04 }
-          - { target: aarch64-unknown-linux-musl, host: ubuntu-22.04 }
-          - { target: x86_64-pc-windows-msvc, host: windows-2022 }
+        include: ${{ fromJSON(needs.version.outputs.targets) }}
     steps:
       - uses: actions/checkout@v6
       - uses: pnpm/action-setup@v4
