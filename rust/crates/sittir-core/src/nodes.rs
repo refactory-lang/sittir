@@ -6,6 +6,7 @@
 //! lends it (`TreeNodes::reader`).
 
 use crate::layout::LayoutWorkCounter;
+use crate::tree_sitter;
 use crate::types::{FieldId, KindId, NodeIndex, Span};
 use std::ops::Range;
 use std::sync::Arc;

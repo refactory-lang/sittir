@@ -4,20 +4,31 @@ inputs:
   prefix:
     description: Runtime artifact prefix from the build workflow
     required: true
+  tree:
+    description: The checkout to restore into; its commit must be the one the runtime was built from
+    default: .
+  receipts:
+    description: Folder under the benchmark output that keeps the runtime manifests
+    default: ''
 runs:
   using: composite
   steps:
     - uses: actions/download-artifact@v4
       with:
         pattern: ${{ inputs.prefix }}-*
-        path: ${{ runner.temp }}/arena-runtime
+        path: ${{ runner.temp }}/${{ inputs.prefix }}
         merge-multiple: true
     - name: Verify and restore compiled outputs
       shell: bash
+      working-directory: ${{ inputs.tree }}
+      env:
+        RUNTIME: ${{ runner.temp }}/${{ inputs.prefix }}
+        RECEIPTS: ${{ runner.temp }}/arena-benchmarks/${{ inputs.receipts }}
       run: |
         labels=(typescript)
         for grammar in $(pnpm exec tsx packages/tools/src/scripts/list-grammars.ts stable); do
           labels+=("native-$grammar")
         done
-        node scripts/ci/arena-benchmark-runtime.mjs restore "$RUNNER_TEMP/arena-runtime" "${labels[@]}"
-        cp "$RUNNER_TEMP/arena-runtime/"*.manifest.json "$RUNNER_TEMP/arena-benchmarks/"
+        node scripts/ci/arena-benchmark-runtime.mjs restore "$RUNTIME" "${labels[@]}"
+        mkdir -p "$RECEIPTS"
+        cp "$RUNTIME/"*.manifest.json "$RECEIPTS/"

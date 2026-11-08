@@ -1,5 +1,5 @@
 // Every grammar's addon is its own linked image, so tree ids must come from
-// the one owner every addon shares — the JavaScript process — or a rust
+// the one owner every addon shares — the engine library's counter — or a rust
 // engine and a typescript engine would both mint tree 0 and a coordinate
 // read by one could slice the other's unrelated tree. A node read by one
 // grammar's engine is refused by another grammar's, naming both languages,
@@ -9,6 +9,7 @@ import type { AnyUntypedNode, TriviaEntry } from '@sittir/types';
 import { createEngine } from '@sittir/common';
 import { writeTrivia } from '@sittir/common/utils';
 import { languageByName } from '../src/languages.ts';
+import { treeIdCounter } from '../src/tree-id-counter.ts';
 
 describe('a coordinate names its tree across grammars', () => {
 	it('is refused by an engine of another grammar, naming both, instead of resolved against its own tree', async () => {
@@ -58,13 +59,9 @@ describe('a coordinate names its tree across grammars', () => {
 		expect(() => parsed.$trivia.trailing(comment)).toThrow(refusal);
 	});
 
-	it('mints distinct ids for trees parsed by engines of different grammars', async () => {
-		const treeIdOf = async (grammar: string, source: string): Promise<number> => {
-			const native = (await (await languageByName(grammar)).load()).createNative();
-			return Math.floor(native.parseAndRead(source).root.$_layout!.at!.$treeHandle / 2 ** 32);
-		};
-		const a = await treeIdOf('rust', 'fn a() {}\n');
-		const b = await treeIdOf('typescript', 'let b = 1;\n');
-		expect(a).not.toBe(b);
+	it('mints every tree id from one counter, whichever grammar parses, and keeps none on globalThis', async () => {
+		const sources: Readonly<Record<string, string>> = { python: 'x = 1\n', rust: 'fn a() {}\n' };
+		const samples = await Promise.all(Object.entries(sources).map(async ([grammar, source]) => ({ language: await languageByName(grammar), source })));
+		expect(await treeIdCounter(samples)).toEqual({ outOfOrder: [] });
 	});
 });

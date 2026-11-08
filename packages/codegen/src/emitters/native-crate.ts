@@ -1,4 +1,5 @@
-import { NATIVE_TARGETS, grammarDisplayName, nativeBinaryName, nodeRangeOfNodeApi, type GrammarName } from '../grammars.ts';
+import { NATIVE_NAPI_CONFIG, NATIVE_TARGETS, grammarDisplayName, nativeBinaryName, nativePlatformPackage, nodeRangeOfNodeApi, type GrammarName } from '../grammars.ts';
+import { NATIVE_PROFILE_FLAGS, type NativeProfile } from '../scripts/native-binary-freshness.ts';
 import { TRIVIA_NODE } from './render-module.ts';
 
 export const NATIVE_RENDER_NODE_ABI = 26;
@@ -9,6 +10,9 @@ export interface NativeCrateFile {
 }
 
 const json = (value: unknown): string => `${JSON.stringify(value, null, '\t')}\n`;
+
+const buildNative = (grammar: GrammarName, profile: NativeProfile): string =>
+	['tsx ../../../scripts/build-native.mts', grammar, ...NATIVE_PROFILE_FLAGS[profile]].join(' ');
 
 export function nativeCrateFiles(name: GrammarName, nodeApiLevel: number, parserName: string = name): NativeCrateFile[] {
 	const v = { name, parserName, Name: grammarDisplayName(name) };
@@ -34,11 +38,11 @@ arena = ["sittir-core/arena"]
 
 [dependencies]
 sittir-core = { path = "../sittir-core" }
+sittir-engine = { workspace = true }
 napi = { workspace = true, features = ["serde-json"], optional = true }
 napi-derive = { workspace = true, optional = true }
 serde = { workspace = true }
 serde_json = { workspace = true }
-tree-sitter = { workspace = true }
 tree-sitter-language = { workspace = true }
 
 [build-dependencies]
@@ -53,6 +57,16 @@ workspace = true
 			path: 'build.rs',
 			contents: `fn main() {
     napi_build::setup();
+
+    // The addon finds the engine and std libraries shipped in its own folder.
+    match std::env::var("CARGO_CFG_TARGET_OS").as_deref() {
+        Ok("macos") => println!("cargo:rustc-cdylib-link-arg=-Wl,-rpath,@loader_path"),
+        Ok("linux") => {
+            println!("cargo:rustc-cdylib-link-arg=-Wl,-rpath,$ORIGIN");
+            println!("cargo:rustc-cdylib-link-arg=-Wl,--enable-new-dtags");
+        }
+        _ => {}
+    }
 
     let crate_dir = std::path::PathBuf::from(
         std::env::var_os("CARGO_MANIFEST_DIR").expect("CARGO_MANIFEST_DIR"),
@@ -69,6 +83,7 @@ workspace = true
     if std::env::var("CARGO_CFG_TARGET_ENV").as_deref() == Ok("msvc") {
         build.flag("-utf-8");
     }
+    allocate_through_runtime(&mut build);
 
     let parser_path = grammar_src.join("parser.c");
     build.file(&parser_path);
@@ -83,15 +98,27 @@ workspace = true
 
     let cpp_scanner_path = grammar_src.join("scanner.cc");
     if cpp_scanner_path.exists() {
-        cc::Build::new()
-            .cpp(true)
-            .include(&grammar_src)
-            .file(&cpp_scanner_path)
-            .compile("sittir-tree-sitter-${v.name}-scanner");
+        let mut cpp = cc::Build::new();
+        cpp.cpp(true).include(&grammar_src).file(&cpp_scanner_path);
+        allocate_through_runtime(&mut cpp);
+        cpp.compile("sittir-tree-sitter-${v.name}-scanner");
         rerun_if_changed_with_includes(&cpp_scanner_path, &mut watched);
     }
 
     build.compile("sittir-tree-sitter-${v.name}");
+}
+
+/// A scanner allocates through the tree-sitter runtime's allocator slots,
+/// which the engine library exports and names to this build. MSVC reaches
+/// data in another DLL only through its import slot.
+fn allocate_through_runtime(build: &mut cc::Build) {
+    build.define("TREE_SITTER_REUSE_ALLOCATOR", None);
+    if std::env::var("CARGO_CFG_TARGET_ENV").as_deref() == Ok("msvc") {
+        let slots = std::env::var("DEP_SITTIR_ENGINE_ALLOCATOR_SLOTS").expect("the engine names its allocator slots");
+        for slot in slots.split(',') {
+            build.define(slot, format!("(*__imp_{slot})").as_str());
+        }
+    }
 }
 
 /// Rebuild when a scanner source, or any file it quotes in an \`#include\`,
@@ -126,7 +153,6 @@ fn rerun_if_changed_with_includes(
 			contents: json({
 				name: `sittir-${v.name}`,
 				private: true,
-				version: '0.1.0',
 				description: `Grammar-local Rust / napi-rs engine for @sittir/${v.name}.`,
 				keywords: ['n-api', 'napi', 'native', v.name, 'sittir', 'tree-sitter'].sort(),
 				homepage: 'https://github.com/refactory-lang/sittir#readme',
@@ -138,17 +164,20 @@ fn rerun_if_changed_with_includes(
 					directory: `rust/crates/sittir-${v.name}`
 				},
 				scripts: {
-					build: `tsx ../../../scripts/build-native.mts ${v.name} --release`,
-					'build:debug': `tsx ../../../scripts/build-native.mts ${v.name}`,
-					'build:gate': `tsx ../../../scripts/build-native.mts ${v.name} --profile gate`
+					build: buildNative(v.name, 'release'),
+					'build:debug': buildNative(v.name, 'dev'),
+					'build:gate': buildNative(v.name, 'gate')
 				},
 				devDependencies: { '@napi-rs/cli': 'catalog:' },
-				napi: {
-					binaryName: nativeBinaryName(v.name),
-					packageName: `sittir-${v.name}`,
-					targets: [...NATIVE_TARGETS]
-				},
 				engines: { node: nodeRangeOfNodeApi(nodeApiLevel) }
+			})
+		},
+		{
+			path: NATIVE_NAPI_CONFIG,
+			contents: json({
+				binaryName: nativeBinaryName(v.name),
+				packageName: nativePlatformPackage(v.name),
+				targets: [...NATIVE_TARGETS]
 			})
 		},
 		{
@@ -163,6 +192,7 @@ fn rerun_if_changed_with_includes(
 
 pub mod render;
 
+use sittir_core::tree_sitter;
 use tree_sitter_language::LanguageFn;
 
 unsafe extern "C" {

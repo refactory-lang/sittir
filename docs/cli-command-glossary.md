@@ -197,7 +197,8 @@ Measure native workflows or paired backend validation buckets
 - `--limit <n>` — Use only the first n corpus entries (smoke runs)
 - `--native-depth <depth>` — Native hydration depth: a positive integer or all (default: `all`)
 - `--validation` — Profile deep read, factory and IR render/parse validators under both paired backends
-- `--idle-gate <path>` — Run a shell idle gate before each worker, passing the current directory
+- `--baseline <tree>` — With --validation, also measure another built checkout's own validation workers in the same rounds, the order turning each round, with the memory of loading one grammar and every grammar, and the bytes a host install of each grammar costs, for both
+- `--idle-gate <path>` — Run a shell idle gate before each worker, passing the worker's checkout
 - `--output <path>` — Write the complete JSON report to this file
 
 **Example**
@@ -593,6 +594,28 @@ List groups, unaliased, and phantom kinds
 
 ```sh
 pnpm exec tsx packages/cli/src/cli.ts tool list-kinds [options]
+```
+
+### `tool native-images`
+
+List the symbols each built native image (ELF, Mach-O or PE) defines, imports and binds at load, the engine stamp it holds, or the native images a process mapped, as JSON
+
+**Arguments**
+
+- `images…` (optional) — Image files to read: an addon, the engine library or any shared library
+
+**Options**
+
+- `--mapped <script>` — Run <script> in a fresh Node process, then list the addon, engine and std images the process mapped, in the order it mapped them, with the engine stamp each engine holds. Takes no images
+- `--defined <prefix>` — List the defined (exported) symbols that start with <prefix>
+- `--imported <prefix>` — List the imported symbols that start with <prefix>
+- `--bound-at-load <prefix>` — List the imported symbols that start with <prefix> and that the loader binds when it maps the image, whatever its binding mode: a Mach-O non-lazy bind, an ELF relocation other than a PLT slot, a PE import that is not delay-loaded
+- `--stamp` — Report the engine stamp the image holds; fails, naming the image, unless it holds exactly one
+
+**Example**
+
+```sh
+pnpm exec tsx packages/cli/src/cli.ts tool native-images [images] [options]
 ```
 
 ### `tool output-gate`

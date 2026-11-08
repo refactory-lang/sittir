@@ -1,0 +1,271 @@
+# The shared engine library on every release target.
+#
+# `engine`: each leg builds sittir-engine in release on its row of the target
+# table (packages/tools/src/native-targets.ts), with the rustflags
+# `build-native` passes for that target, and holds the image to the build's
+# own export list: the engine defines exactly the runtime functions and the
+# four allocator slots it lists, and no other ts_ symbol. Legs that run on
+# their own host also run the engine's tests, build one grammar's binding in
+# release and hold it to the layout test, and load two grammars built against
+# different engine releases into one process. Every leg then builds python
+# and rust in release as they ship, and rust again from another commit: the
+# same version, another stamp.
+#
+# `packs`: napi makes each grammar's platform packages from those builds and
+# declares them as optional dependencies of `@sittir/<grammar>`, as a release
+# does; the grammar, common and types packages and every platform package are
+# packed.
+#
+# `layouts`: on each target's own architecture (inside an Alpine container for
+# musl), the packs are installed three ways: pnpm's store, npm hoisted and npm
+# nested. In each, loading python then rust maps one engine and one std image,
+# both from python's platform package; no addon defines a ts_ symbol; tree ids
+# come from one counter and none is kept on globalThis; and a rust package
+# from another commit is refused beside python's engine, naming both stamps.
+#
+# It runs when a pull request touches the engine, what builds or packs a
+# grammar's native binding, or this workflow, and on master after such a merge.
+name: Native layout
+
+on:
+  pull_request:
+    paths: &native-paths
+      - rust/crates/sittir-engine/**
+      - packages/codegen/src/grammars.ts
+      - packages/codegen/src/emitters/native-crate.ts
+      - packages/tools/src/native-images.ts
+      - packages/tools/src/scripts/native-rustflags.ts
+      - packages/tools/src/native-targets.ts
+      - packages/tools/src/scripts/native-targets.ts
+      - packages/tools/src/native-layouts.ts
+      - packages/tools/src/scripts/native-layouts.ts
+      - packages/tools/src/native-pack.ts
+      - packages/tools/src/tree-id-counter.ts
+      - packages/tools/src/sample-source.ts
+      - packages/common/src/native-binding.ts
+      - packages/codegen/src/emitters/grammar-runtime.ts
+      - rust/crates/sittir-core/src/napi_engine.rs
+      - scripts/build-native.mts
+      - scripts/ci/native-skew.mts
+      - packages/tools/tests/native-layout.test.ts
+      - Cargo.toml
+      - Cargo.lock
+      - rust-toolchain.toml
+      - .github/workflows/native-layout.yml
+      - .github/actions/native-cross/**
+  push:
+    branches: [master]
+    paths: *native-paths
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  CARGO_NET_RETRY: "10"
+  CARGO_HTTP_MULTIPLEXING: "false"
+
+jobs:
+  # The legs, one per row of the release target table
+  # (packages/tools/src/native-targets.ts).
+  plan:
+    name: native targets
+    runs-on: ubuntu-22.04
+    outputs:
+      matrix: ${{ steps.plan.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@v6
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+      - name: Install Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22.x
+          cache: pnpm
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Plan the legs
+        id: plan
+        run: |
+          matrix=$(npx tsx packages/tools/src/scripts/native-targets.ts)
+          echo "$matrix"
+          echo "matrix=$matrix" >> "$GITHUB_OUTPUT"
+
+  engine:
+    name: engine (${{ matrix.target }})
+    needs: plan
+    runs-on: ${{ matrix.host }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include: ${{ fromJSON(needs.plan.outputs.matrix) }}
+    steps:
+      - uses: actions/checkout@v6
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+      - name: Install Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22.x
+          cache: pnpm
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Install Rust toolchain (pinned, ${{ matrix.target }})
+        uses: ./.github/actions/rust-toolchain
+        with:
+          targets: ${{ matrix.target }}
+      - name: Cross toolchain (${{ matrix.target }})
+        uses: ./.github/actions/native-cross
+        with:
+          target: ${{ matrix.target }}
+      - name: Cache cargo registry + target
+        uses: Swatinem/rust-cache@v2
+        with:
+          key: engine-${{ matrix.target }}
+      - name: Build the engine (release)
+        shell: bash
+        run: |
+          RUSTFLAGS="$(npx tsx packages/tools/src/scripts/native-rustflags.ts '${{ matrix.target }}')"
+          export RUSTFLAGS
+          echo "RUSTFLAGS=${RUSTFLAGS}"
+          cargo "$NATIVE_CARGO" -p sittir-engine --release --target '${{ matrix.target }}'
+      - name: The image exports exactly the runtime list
+        shell: bash
+        run: |
+          case '${{ matrix.target }}' in
+            *-apple-darwin) image=libsittir_engine.dylib ;;
+            *-windows-msvc) image=sittir_engine.dll ;;
+            *) image=libsittir_engine.so ;;
+          esac
+          dir='target/${{ matrix.target }}/release'
+          list=$(ls -t "$dir"/build/sittir-engine-*/out/runtime-exports.txt | head -1)
+          tr -d '\r' < "$list" | LC_ALL=C sort > listed.txt
+          npx tsx packages/cli/src/cli.ts tool native-images "$dir/$image" --defined ts_ \
+            | node -e 'let s = ""; process.stdin.on("data", (d) => (s += d)).on("end", () => { for (const name of JSON.parse(s)[0].defined) console.log(name); });' \
+            | tr -d '\r' | LC_ALL=C sort > defined.txt
+          diff listed.txt defined.txt
+          echo "$image defines the $(wc -l < defined.txt | tr -d ' ') listed runtime symbols and no other ts_ symbol"
+      - name: Engine tests
+        if: matrix.cross == false
+        shell: bash
+        run: |
+          RUSTFLAGS="$(npx tsx packages/tools/src/scripts/native-rustflags.ts '${{ matrix.target }}')"
+          export RUSTFLAGS
+          cargo test -p sittir-engine --target '${{ matrix.target }}'
+      # A release strips the addon and its engine copy. The layout test, run
+      # on the release build, holds each stripped image to its stamp and the
+      # addon to reading the mapped engine's stamp as data, which the loader
+      # binds when it maps the addon: an engine of another version then fails
+      # the load instead of a lazily bound call crashing the process.
+      - name: A release binding keeps its stamp and reads the engine's at load
+        if: matrix.cross == false
+        shell: bash
+        run: |
+          npx tsx scripts/build-native.mts regex --release
+          pnpm exec vitest run packages/tools/tests/native-layout.test.ts -t regex
+      # Two grammar packages built against different engine releases, in one
+      # process: the second is refused by name, whether the engine's load hook
+      # or the OS loader refuses it. Only legs that can run what they build.
+      - name: Engine skew is refused both ways
+        if: matrix.cross == false
+        shell: bash
+        run: npx tsx scripts/ci/native-skew.mts
+      - name: Build python and rust as they ship
+        shell: bash
+        run: |
+          mkdir -p "$RUNNER_TEMP/layout-ship"
+          for grammar in python rust; do
+            npx tsx scripts/build-native.mts "$grammar" --release --target '${{ matrix.target }}' $NATIVE_BUILD_FLAGS
+            cp -R "packages/$grammar/native" "$RUNNER_TEMP/layout-ship/$grammar"
+          done
+      # A release stamps its engine with the commit it builds, so an empty
+      # commit gives rust the same version and another stamp.
+      - name: Build rust from another commit
+        shell: bash
+        run: |
+          git -c user.name=native-layout -c user.email=native-layout@users.noreply.github.com commit --allow-empty --quiet -m 'another commit'
+          npx tsx scripts/build-native.mts rust --release --target '${{ matrix.target }}' $NATIVE_BUILD_FLAGS
+          mkdir -p "$RUNNER_TEMP/layout-skew"
+          cp -R packages/rust/native "$RUNNER_TEMP/layout-skew/rust"
+      - name: Upload python and rust as they ship
+        uses: actions/upload-artifact@v4
+        with:
+          name: layout-ship-${{ matrix.target }}
+          path: ${{ runner.temp }}/layout-ship/
+          if-no-files-found: error
+      - name: Upload rust from another commit
+        uses: actions/upload-artifact@v4
+        with:
+          name: layout-skew-${{ matrix.target }}
+          path: ${{ runner.temp }}/layout-skew/
+          if-no-files-found: error
+
+  packs:
+    name: python and rust packs
+    needs: engine
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v6
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+      - name: Install Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22.x
+          cache: pnpm
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Build the packages
+        run: pnpm run build:packages
+      - name: Download python and rust as they ship
+        uses: actions/download-artifact@v4
+        with:
+          pattern: layout-ship-*
+          path: layout-bindings/ship
+      - name: Download rust from another commit
+        uses: actions/download-artifact@v4
+        with:
+          pattern: layout-skew-*
+          path: layout-bindings/skew
+      - name: Pack them as a release does
+        run: npx tsx packages/tools/src/scripts/native-layouts.ts pack layout-bindings "$RUNNER_TEMP/layout-packs"
+      - name: Upload the packs
+        uses: actions/upload-artifact@v4
+        with:
+          name: layout-packs
+          path: ${{ runner.temp }}/layout-packs/
+          if-no-files-found: error
+
+  layouts:
+    name: layouts (${{ matrix.target }})
+    needs: [plan, packs]
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include: ${{ fromJSON(needs.plan.outputs.matrix) }}
+    steps:
+      - uses: actions/checkout@v6
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+      - name: Install Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22.x
+          cache: pnpm
+      # The tools only: nothing here builds.
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile --ignore-scripts
+      # llvm-nm and llvm-readobj, which list each installed addon's symbols.
+      - name: Install Rust toolchain (pinned)
+        uses: ./.github/actions/rust-toolchain
+      - name: Download the packs
+        uses: actions/download-artifact@v4
+        with:
+          name: layout-packs
+          path: ${{ runner.temp }}/layout-packs
+      - name: Install python and rust three ways and check each
+        shell: bash
+        env:
+          CONTAINER: ${{ matrix.container }}
+        run: npx tsx packages/tools/src/scripts/native-layouts.ts check "$RUNNER_TEMP/layout-packs" '${{ matrix.target }}' ${CONTAINER:+--container "$CONTAINER"} | tee -a "$GITHUB_STEP_SUMMARY"

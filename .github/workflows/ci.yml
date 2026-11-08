@@ -418,43 +418,52 @@ jobs:
             exit 1
           fi
 
-  # Spec 012 Phase 4 — platform matrix for napi `.node` artifact builds
-  # (T053 macOS arm64, T054 Linux x64 glibc/musl, T055 Linux arm64
-  # glibc/musl, T056 Windows x64). Each matrix job runs the parity
-  # suite as well (T061 — SC-006 requires platform coverage be parity-
-  # gated, not just compile-gated).
-  #
-  # Cross-compile setup uses `napi-rs/setup-node-and-napi@v3` for the
-  # musl + arm64 targets that need a sysroot; native targets use the
-  # repo's `.github/actions/rust-toolchain`, which installs the pinned version.
+  # The napi-build legs, as rows of the release target table
+  # (packages/tools/src/native-targets.ts). A tag run builds every target.
+  # Every other run builds x86_64-unknown-linux-gnu alone: its binaries are
+  # what regression-checker-native and perf-regression-checker download, and
+  # nothing in this workflow reads another leg's. release.yml's native job
+  # builds all six, and its publish job checks them, before anything
+  # publishes, so the other five legs would only repeat that on every pull
+  # request.
+  native-targets:
+    name: native targets
+    runs-on: ubuntu-22.04
+    outputs:
+      matrix: ${{ steps.plan.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@v6
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+      - name: Install Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22.x
+          cache: pnpm
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Plan the legs
+        id: plan
+        run: |
+          if [[ "$GITHUB_REF" == refs/tags/v* ]]; then targets=(); else targets=(x86_64-unknown-linux-gnu); fi
+          matrix=$(npx tsx packages/tools/src/scripts/native-targets.ts "${targets[@]}")
+          echo "$matrix"
+          echo "matrix=$matrix" >> "$GITHUB_OUTPUT"
+
+  # Each leg builds every grammar's release addon for its target and, on a
+  # runner that can run what it builds, the workspace tests, the stack
+  # ceilings and the parity suite.
   napi-build:
     name: napi build (${{ matrix.target }})
-    needs: rust
+    needs: [rust, native-targets]
     runs-on: ${{ matrix.host }}
     # A tag run's platform legs report without failing the run; on every
-    # other run the single linux leg gates: its build, the workspace
-    # tests, the stack ceilings and the parity suite.
+    # other run the single linux leg gates.
     continue-on-error: ${{ startsWith(github.ref, 'refs/tags/v') }}
     strategy:
       fail-fast: false
-      # Only x86_64-unknown-linux-gnu builds on every push/PR — it's the
-      # sole artifact regression-checker-native + perf-regression-checker
-      # (below) actually consume; nothing else in ci.yml touches the
-      # other 5 legs' output. Those 5 are pure "does it compile on
-      # platform X" checks with no per-PR consumer: release.yml's
-      # napi-publish job already builds (and verifies) all 6 targets
-      # independently on tag push before publishing, so building them
-      # again here on every PR was pure duplicated CI time, and a tag
-      # run's legs do not gate (continue-on-error above). Gated to tag
-      # pushes so a platform-specific break
-      # still surfaces (at release time) without paying the cost per PR.
-      #
-      # `matrix.*` isn't available in job-level `if:` (GitHub Actions
-      # evaluates job `if:` before matrix expansion), so the matrix
-      # itself has to be conditional — computed via fromJSON rather than
-      # a plain `include:` list.
       matrix:
-        include: ${{ startsWith(github.ref, 'refs/tags/v') && fromJSON('[{"target":"aarch64-apple-darwin","host":"macos-15","cross":false,"buildFlag":""},{"target":"x86_64-unknown-linux-gnu","host":"ubuntu-22.04","cross":false,"buildFlag":""},{"target":"x86_64-unknown-linux-musl","host":"ubuntu-22.04","cross":true,"buildFlag":"--cross-compile"},{"target":"aarch64-unknown-linux-gnu","host":"ubuntu-22.04","cross":true,"buildFlag":"--use-napi-cross"},{"target":"aarch64-unknown-linux-musl","host":"ubuntu-22.04","cross":true,"buildFlag":"--cross-compile"},{"target":"x86_64-pc-windows-msvc","host":"windows-2022","cross":false,"buildFlag":""}]') || fromJSON('[{"target":"x86_64-unknown-linux-gnu","host":"ubuntu-22.04","cross":false,"buildFlag":""}]') }}
+        include: ${{ fromJSON(needs.native-targets.outputs.matrix) }}
     steps:
       - uses: actions/checkout@v6
       - name: Install pnpm
@@ -470,24 +479,10 @@ jobs:
         uses: ./.github/actions/rust-toolchain
         with:
           targets: ${{ matrix.target }}
-      # `napi-rs/setup-node-and-napi@v3` was removed upstream (repo no
-      # longer resolves), which failed EVERY matrix leg — GitHub Actions
-      # fails job setup if any referenced action can't be resolved, even
-      # one gated behind `if:`. Replaced with the current napi-rs CLI's
-      # own cross-compile flags (see `buildFlag` above): musl targets
-      # cross-compile via cargo-zigbuild (needs zig + cargo-zigbuild on
-      # PATH), the gnu arm64 target uses napi's bundled cross-toolchain
-      # (`--use-napi-cross`, no extra setup needed).
-      - name: Setup zig (musl cross-compile)
-        if: contains(matrix.target, 'musl')
-        uses: mlugg/setup-zig@v2
+      - name: Cross toolchain (${{ matrix.target }})
+        uses: ./.github/actions/native-cross
         with:
-          version: 0.14.1
-      - name: Install cargo-zigbuild (musl cross-compile)
-        if: contains(matrix.target, 'musl')
-        uses: taiki-e/install-action@v2
-        with:
-          tool: cargo-zigbuild
+          target: ${{ matrix.target }}
       - name: Cache cargo registry + target
         uses: Swatinem/rust-cache@v2
         with:
@@ -500,7 +495,7 @@ jobs:
         run: |
           grammars=$(npx tsx packages/tools/src/scripts/list-grammars.ts stable)
           for crate in $grammars; do
-            npx tsx scripts/build-native.mts "${crate}" --release --target "${{ matrix.target }}" ${{ matrix.buildFlag }}
+            npx tsx scripts/build-native.mts "${crate}" --release --target "${{ matrix.target }}" $NATIVE_BUILD_FLAGS
           done
       # Each release addon just built, read from the unstripped copy its
       # build keeps: the limit's count of its grammar's costliest whole-encode
@@ -547,7 +542,9 @@ jobs:
       # specifically — without the artifact, they fail outright (or, when
       # blocked on the full 7-target matrix pre-#167, could never even
       # start). Upload regardless of test outcome; the binary itself is
-      # still a valid build artifact independent of test pass/fail.
+      # still a valid build artifact independent of test pass/fail. Each
+      # `.node` loads the engine and std libraries shipped beside it, so
+      # they travel with it.
       - name: Upload `.node` artifact
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v4
@@ -555,6 +552,9 @@ jobs:
           name: bindings-${{ matrix.target }}
           path: |
             packages/*/native/*.node
+            packages/*/native/*.dylib
+            packages/*/native/*.so
+            packages/*/native/*.dll
             node_modules/.cache/sittir/native-build/
           include-hidden-files: true
           if-no-files-found: ignore

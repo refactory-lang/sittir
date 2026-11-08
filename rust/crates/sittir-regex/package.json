@@ -1,7 +1,6 @@
 {
 	"name": "sittir-regex",
 	"private": true,
-	"version": "0.1.0",
 	"description": "Grammar-local Rust / napi-rs engine for @sittir/regex.",
 	"keywords": [
 		"n-api",
@@ -26,18 +25,6 @@
 	},
 	"devDependencies": {
 		"@napi-rs/cli": "catalog:"
-	},
-	"napi": {
-		"binaryName": "sittir-regex",
-		"packageName": "sittir-regex",
-		"targets": [
-			"aarch64-apple-darwin",
-			"x86_64-unknown-linux-gnu",
-			"x86_64-unknown-linux-musl",
-			"aarch64-unknown-linux-gnu",
-			"aarch64-unknown-linux-musl",
-			"x86_64-pc-windows-msvc"
-		]
 	},
 	"engines": {
 		"node": "^22.14.0 || >=23.6.0"

@@ -134,7 +134,7 @@ fn choice(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Toke
                 variant_fns.push(quote! {
                     #[inline(never)]
                     fn #read_fn(
-                        _cursor: &mut ::tree_sitter::TreeCursor<'_>,
+                        _cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>,
                         _ctx: &mut __rt::ReadCtx<'_>,
                         _depth: __rt::Depth,
                     ) -> ::core::result::Result<#ident, __rt::ReadError> {
@@ -142,7 +142,7 @@ fn choice(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Toke
                     }
                     #[inline(never)]
                     fn #boxed_fn(
-                        _cursor: &mut ::tree_sitter::TreeCursor<'_>,
+                        _cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>,
                         _ctx: &mut __rt::ReadCtx<'_>,
                         _depth: __rt::Depth,
                     ) -> ::core::result::Result<::std::boxed::Box<#ident>, __rt::ReadError> {
@@ -154,7 +154,7 @@ fn choice(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Toke
                 if let Some(first) = &first {
                     let unit_fn = format_ident!("__unit_{}", i);
                     variant_fns.push(quote! {
-                        fn #unit_fn(_cursor: &mut ::tree_sitter::TreeCursor<'_>) -> ::core::option::Option<__Kind> {
+                        fn #unit_fn(_cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>) -> ::core::option::Option<__Kind> {
                             ::core::option::Option::Some(#first)
                         }
                     });
@@ -169,7 +169,7 @@ fn choice(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Toke
                 variant_fns.push(quote! {
                     #[inline(never)]
                     fn #read_fn(
-                        cursor: &mut ::tree_sitter::TreeCursor<'_>,
+                        cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>,
                         ctx: &mut __rt::ReadCtx<'_>,
                         depth: __rt::Depth,
                     ) -> ::core::result::Result<#ident, __rt::ReadError> {
@@ -177,7 +177,7 @@ fn choice(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Toke
                     }
                     #[inline(never)]
                     fn #boxed_fn(
-                        cursor: &mut ::tree_sitter::TreeCursor<'_>,
+                        cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>,
                         ctx: &mut __rt::ReadCtx<'_>,
                         depth: __rt::Depth,
                     ) -> ::core::result::Result<::std::boxed::Box<#ident>, __rt::ReadError> {
@@ -280,32 +280,32 @@ fn choice(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Toke
         const _: () = {
             use ::sittir_core::read as __rt;
             use ::sittir_core::types::KindId as __Kind;
-            type __Read<T> = fn(&mut ::tree_sitter::TreeCursor<'_>, &mut __rt::ReadCtx<'_>, __rt::Depth) -> ::core::result::Result<T, __rt::ReadError>;
+            type __Read<T> = fn(&mut ::sittir_core::tree_sitter::TreeCursor<'_>, &mut __rt::ReadCtx<'_>, __rt::Depth) -> ::core::result::Result<T, __rt::ReadError>;
             fn __unadmitted<T>(
-                cursor: &mut ::tree_sitter::TreeCursor<'_>,
+                cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>,
                 _ctx: &mut __rt::ReadCtx<'_>,
                 _depth: __rt::Depth,
             ) -> ::core::result::Result<T, __rt::ReadError> {
                 ::core::result::Result::Err(__rt::ReadError::Unadmitted { kind: ::sittir_core::read::grammar_id(&cursor.node()), index: __rt::index_of(cursor) })
             }
-            fn __no_routes(_cursor: &mut ::tree_sitter::TreeCursor<'_>) -> ::core::option::Option<__rt::Routed> {
+            fn __no_routes(_cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>) -> ::core::option::Option<__rt::Routed> {
                 ::core::option::Option::None
             }
             fn __no_router(_grammar: __Kind, _display: __Kind) -> ::core::option::Option<__rt::Router> {
                 ::core::option::Option::None
             }
-            fn __no_unit(_cursor: &mut ::tree_sitter::TreeCursor<'_>) -> ::core::option::Option<__Kind> {
+            fn __no_unit(_cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>) -> ::core::option::Option<__Kind> {
                 ::core::option::Option::None
             }
-            fn __no_delimiter(_cursor: &mut ::tree_sitter::TreeCursor<'_>) -> ::core::option::Option<::sittir_core::types::Delimiter> {
+            fn __no_delimiter(_cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>) -> ::core::option::Option<::sittir_core::types::Delimiter> {
                 ::core::option::Option::None
             }
             #(#variant_fns)*
             const __READS: &[__Read<#ident>] = &[#(#read_table),*];
-            const __ROUTES: &[fn(&mut ::tree_sitter::TreeCursor<'_>) -> ::core::option::Option<__rt::Routed>] = &[#(#routes_table),*];
+            const __ROUTES: &[fn(&mut ::sittir_core::tree_sitter::TreeCursor<'_>) -> ::core::option::Option<__rt::Routed>] = &[#(#routes_table),*];
             const __ROUTERS: &[fn(__Kind, __Kind) -> ::core::option::Option<__rt::Router>] = &[#(#routers_table),*];
             const __UNITS: &[__rt::UnitId] = &[#(#units_table),*];
-            const __DELIMITERS: &[fn(&mut ::tree_sitter::TreeCursor<'_>) -> ::core::option::Option<::sittir_core::types::Delimiter>] = &[#(#delimiters_table),*];
+            const __DELIMITERS: &[fn(&mut ::sittir_core::tree_sitter::TreeCursor<'_>) -> ::core::option::Option<::sittir_core::types::Delimiter>] = &[#(#delimiters_table),*];
             const __READS_BOXED: &[__Read<::std::boxed::Box<#ident>>] = &[#(#boxed_table),*];
             #own_stamp
             #[allow(dead_code)]
@@ -337,7 +337,7 @@ fn choice(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Toke
                 #blank
                 #[allow(unused_variables)]
                 fn read(
-                    cursor: &mut ::tree_sitter::TreeCursor<'_>,
+                    cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>,
                     ctx: &mut __rt::ReadCtx<'_>,
                     depth: __rt::Depth,
                 ) -> ::core::result::Result<Self, __rt::ReadError> {
@@ -350,7 +350,7 @@ fn choice(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Toke
                 }
                 #[allow(unused_variables)]
                 fn read_boxed(
-                    cursor: &mut ::tree_sitter::TreeCursor<'_>,
+                    cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>,
                     ctx: &mut __rt::ReadCtx<'_>,
                     depth: __rt::Depth,
                 ) -> ::core::result::Result<::std::boxed::Box<Self>, __rt::ReadError> {
@@ -361,18 +361,18 @@ fn choice(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Toke
                         ::core::option::Option::None => ::core::result::Result::Err(__rt::ReadError::Unadmitted { kind: grammar, index: __rt::index_of(cursor) }),
                     }
                 }
-                fn routes(cursor: &mut ::tree_sitter::TreeCursor<'_>) -> ::core::option::Option<__rt::Routed> {
+                fn routes(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>) -> ::core::option::Option<__rt::Routed> {
                     let node = cursor.node();
                     __variant(::sittir_core::read::grammar_id(&node), __rt::display_id(&node)).and_then(|i| __ROUTES[i as usize](cursor))
                 }
                 fn router(grammar: __Kind, display: __Kind) -> ::core::option::Option<__rt::Router> {
                     __variant(grammar, display).and_then(|i| __ROUTERS[i as usize](grammar, display))
                 }
-                fn unit_id(cursor: &mut ::tree_sitter::TreeCursor<'_>) -> ::core::option::Option<__Kind> {
+                fn unit_id(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>) -> ::core::option::Option<__Kind> {
                     let node = cursor.node();
                     __variant(::sittir_core::read::grammar_id(&node), __rt::display_id(&node)).and_then(|i| __UNITS[i as usize](cursor))
                 }
-                fn delimiter(cursor: &mut ::tree_sitter::TreeCursor<'_>) -> ::core::option::Option<::sittir_core::types::Delimiter> {
+                fn delimiter(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>) -> ::core::option::Option<::sittir_core::types::Delimiter> {
                     let node = cursor.node();
                     __variant(::sittir_core::read::grammar_id(&node), __rt::display_id(&node)).and_then(|i| __DELIMITERS[i as usize](cursor))
                 }
@@ -421,7 +421,7 @@ fn members(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Tok
                 #(#by_kind)*
                 ::core::option::Option::None
             }
-            fn __resolve(cursor: &mut ::tree_sitter::TreeCursor<'_>) -> ::core::option::Option<#ident> {
+            fn __resolve(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>) -> ::core::option::Option<#ident> {
                 let node = cursor.node();
                 __member(::sittir_core::read::grammar_id(&node), __rt::display_id(&node))#spelled
             }
@@ -441,13 +441,13 @@ fn members(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Tok
                     <Self as __rt::ReadNode>::admits(grammar, display)
                 }
                 fn read(
-                    cursor: &mut ::tree_sitter::TreeCursor<'_>,
+                    cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>,
                     _ctx: &mut __rt::ReadCtx<'_>,
                     _depth: __rt::Depth,
                 ) -> ::core::result::Result<Self, __rt::ReadError> {
                     __resolve(cursor).ok_or_else(|| __rt::ReadError::Unspelled { kind: ::sittir_core::read::grammar_id(&cursor.node()), index: __rt::index_of(cursor) })
                 }
-                fn unit_id(cursor: &mut ::tree_sitter::TreeCursor<'_>) -> ::core::option::Option<__Kind> {
+                fn unit_id(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>) -> ::core::option::Option<__Kind> {
                     __resolve(cursor).map(|member| __id(&member))
                 }
             }
@@ -695,7 +695,7 @@ fn structure(ident: &Ident, attrs: &KindAttrs, data: &DataStruct) -> syn::Result
             #[allow(dead_code)]
             const __LAYOUT: &[__Kind] = &[#(#layout),*];
             #[allow(dead_code, unused_variables)]
-            fn __stored_kind(node: &::tree_sitter::Node<'_>) -> __Kind {
+            fn __stored_kind(node: &::sittir_core::tree_sitter::Node<'_>) -> __Kind {
                 #stored_kind
             }
             #items
@@ -708,7 +708,7 @@ fn structure(ident: &Ident, attrs: &KindAttrs, data: &DataStruct) -> syn::Result
                 }
                 #[allow(unused_mut, unused_variables)]
                 fn read(
-                    cursor: &mut ::tree_sitter::TreeCursor<'_>,
+                    cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>,
                     ctx: &mut __rt::ReadCtx<'_>,
                     depth: __rt::Depth,
                 ) -> ::core::result::Result<Self, __rt::ReadError> {
@@ -1084,7 +1084,7 @@ fn routed_body(attrs: &KindAttrs, fields: &[Field<'_>], height: Option<&Ident>) 
     inits.extend(list_inits(attrs, fields, &slots)?);
     let delimiter = flank_delimiter(attrs, fields, &slots)?.map(|call| {
         quote! {
-            fn delimiter(cursor: &mut ::tree_sitter::TreeCursor<'_>) -> ::core::option::Option<::sittir_core::types::Delimiter> {
+            fn delimiter(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>) -> ::core::option::Option<::sittir_core::types::Delimiter> {
                 let __rt::Routed { children, routes, .. } = <Self as __rt::ReadNode>::routes(cursor)?;
                 ::core::option::Option::Some(#call)
             }
@@ -1095,7 +1095,7 @@ fn routed_body(attrs: &KindAttrs, fields: &[Field<'_>], height: Option<&Ident>) 
 
     Ok(Body {
         routes: quote! {
-            fn routes(cursor: &mut ::tree_sitter::TreeCursor<'_>) -> ::core::option::Option<__rt::Routed> {
+            fn routes(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>) -> ::core::option::Option<__rt::Routed> {
                 let __node = cursor.node();
                 if !<Self as __rt::ReadNode>::admits(::sittir_core::read::grammar_id(&__node), __rt::display_id(&__node)) {
                     return ::core::option::Option::None;
@@ -1111,7 +1111,7 @@ fn routed_body(attrs: &KindAttrs, fields: &[Field<'_>], height: Option<&Ident>) 
         },
         items: quote! {
             #[allow(unused_variables)]
-            fn __unit(slot: ::sittir_core::types::SlotId, cursor: &mut ::tree_sitter::TreeCursor<'_>) -> ::core::option::Option<__Kind> {
+            fn __unit(slot: ::sittir_core::types::SlotId, cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>) -> ::core::option::Option<__Kind> {
                 match slot {
                     #(#idxs => <#tys as __rt::ReadSlot>::unit_id(cursor),)*
                     _ => ::core::option::Option::None,

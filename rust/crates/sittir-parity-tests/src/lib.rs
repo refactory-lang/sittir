@@ -8,6 +8,7 @@
 //! dependencies (`sittir-{lang}`, `tree-sitter-{lang}`) only
 //! when the integration-test binary builds.
 
+use sittir_core::tree_sitter;
 use serde::Deserialize;
 
 /// One entry in a grammar's `test-fixtures.json`. Discriminated by the

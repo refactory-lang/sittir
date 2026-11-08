@@ -1,3 +1,4 @@
+use sittir_core::tree_sitter;
 use sittir_core::read::{read_at, Depth, ReadCtx, ReadError, ReadRoot};
 use sittir_core::SlotValue;
 use sittir_rust::render::kind_ids;

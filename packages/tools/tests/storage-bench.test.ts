@@ -1,4 +1,7 @@
+import { execFileSync } from 'node:child_process';
 import { expect, it } from 'vitest';
+import { REPO_ROOT } from '@sittir/codegen/grammars';
+import { roundWorkers } from '../src/profile/storage.ts';
 import { reportFor, storageBenchTestTimeout } from './storage-bench.helpers.ts';
 
 const allGrammars = ['python', 'regex', 'rust', 'scm', 'typescript'];
@@ -87,6 +90,65 @@ it.each([
 				row.timings.parse[0] + row.timings.hydrate[0] + row.timings.render[0],
 				6
 			);
+		}
+	},
+	storageBenchTestTimeout
+);
+
+it('runs the branch and a baseline tree in the same rounds, turning the order each round', () => {
+	const evenRound = [
+		{ revision: 'branch', storage: 'object' },
+		{ revision: 'branch', storage: 'arena' },
+		{ revision: 'baseline', storage: 'object' },
+		{ revision: 'baseline', storage: 'arena' },
+		{ revision: 'branch', grammars: 'one' },
+		{ revision: 'branch', grammars: 'all' },
+		{ revision: 'baseline', grammars: 'one' },
+		{ revision: 'baseline', grammars: 'all' }
+	];
+	expect(roundWorkers(0, ['branch', 'baseline'], true)).toEqual(evenRound);
+	expect(roundWorkers(1, ['branch', 'baseline'], true)).toEqual([
+		{ revision: 'baseline', storage: 'arena' },
+		{ revision: 'baseline', storage: 'object' },
+		{ revision: 'branch', storage: 'arena' },
+		{ revision: 'branch', storage: 'object' },
+		{ revision: 'baseline', grammars: 'all' },
+		{ revision: 'baseline', grammars: 'one' },
+		{ revision: 'branch', grammars: 'all' },
+		{ revision: 'branch', grammars: 'one' }
+	]);
+	expect(roundWorkers(1, ['branch'], false)).toEqual([
+		{ revision: 'branch', storage: 'arena' },
+		{ revision: 'branch', storage: 'object' }
+	]);
+});
+
+it(
+	'measures a baseline tree beside the branch: its own validation workers, the memory of one and of every grammar, and what a host install costs',
+	async () => {
+		const report = await reportFor(['regex', '--validation', '--rounds', '2', '--warmup', '0', '--iterations', '1', '--baseline', REPO_ROOT]);
+		expect(report.validationSamples.map((row: { storage: string }) => row.storage)).toEqual(['object', 'arena', 'arena', 'object']);
+		expect(report.baseline.validationSamples.map((row: { storage: string }) => row.storage)).toEqual(['object', 'arena', 'arena', 'object']);
+		expect(report.baseline.commit).toBe(execFileSync('git', ['rev-parse', 'HEAD'], { cwd: REPO_ROOT, encoding: 'utf8' }).trim());
+		expect(report.baseline.harnessSha256).toBe(report.environment.harnessSha256);
+		expect(report.library.memory.map((row: { revision: string; grammars: string[] }) => [row.revision, row.grammars.length])).toEqual([
+			['branch', 1],
+			['branch', 5],
+			['baseline', 1],
+			['baseline', 5],
+			['baseline', 5],
+			['baseline', 1],
+			['branch', 5],
+			['branch', 1]
+		]);
+		for (const row of report.library.memory) expect(row.rssBytes).toBeGreaterThan(0);
+		const pids = [...report.validationSamples, ...report.baseline.validationSamples, ...report.library.memory].map((row: { pid: number }) => row.pid);
+		expect(new Set(pids).size).toBe(16);
+		for (const revision of ['branch', 'baseline']) {
+			const install = report.library.install[revision].regex;
+			expect(Object.keys(install.packages)[0]).toBe('@sittir/regex');
+			expect(Object.keys(install.packages)).toHaveLength(2);
+			expect(install.bytes).toBeGreaterThan(install.packages['@sittir/regex']);
 		}
 	},
 	storageBenchTestTimeout

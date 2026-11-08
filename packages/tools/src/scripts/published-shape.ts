@@ -1,28 +1,38 @@
-import { spawnSync } from 'node:child_process';
-import { existsSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
-import { createRequire } from 'node:module';
+import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
-import { dirname, join } from 'node:path';
+import { basename, join } from 'node:path';
 import {
 	NATIVE_LOADER,
-	NATIVE_TARGETS,
 	NATIVE_TYPINGS,
 	PACKAGES_DIR,
 	assertGrammar,
 	grammarPackageDir,
 	nativeBinaryName,
+	nativeBindingDir,
+	nativePlatformPackage,
 	stableGrammars
 } from '@sittir/codegen/grammars';
-import { hostPlatform, platformSuffix, targetSuffix } from '@sittir/common/engine';
-import { nativePackGaps, unexpectedNativeBinaries } from '../native-pack.ts';
-
-const SAMPLE_SOURCE: Readonly<Record<string, string>> = {
-	python: 'def  f( x ):\n    return x\n',
-	regex: 'a+(b|c)*',
-	rust: 'fn  main( ) { let x = 1; }\n',
-	scm: '(identifier) @name\n',
-	typescript: 'const  x = [1, 2];\n'
-};
+import { hostPlatform, platformPackageName, platformSuffix } from '@sittir/common/engine';
+import {
+	NATIVE_PACKAGES_DIR,
+	assembleNativePackages,
+	changesetFixedGroups,
+	grammarNapiPackage,
+	grammarPackageName,
+	nativePackGaps,
+	nativePackageDirs,
+	optionalDependencyGaps,
+	pack,
+	packWorkspacePackage,
+	platformPackGaps,
+	readManifest,
+	releaseGroupGaps,
+	unexpectedNativeFiles,
+	type GrammarManifest,
+	type PlatformPackageManifest
+} from '../native-pack.ts';
+import { packageBin, run } from '../spawn.ts';
+import { SAMPLE_SOURCE } from '../sample-source.ts';
 
 const SMOKE = `import { createEngine } from '@sittir/common';
 const [name, source] = process.argv.slice(2);
@@ -45,36 +55,20 @@ const TYPES_CHECK_CONFIG = {
 	files: ['types.ts']
 };
 
-function tscBin(): string {
-	const manifest = createRequire(import.meta.url).resolve('typescript/package.json');
-	const { bin } = JSON.parse(readFileSync(manifest, 'utf-8')) as { bin: { tsc: string } };
-	return join(dirname(manifest), bin.tsc);
-}
-
-function run(command: string, args: readonly string[], cwd: string): string {
-	const child = spawnSync(command, args, { cwd, encoding: 'utf-8', shell: process.platform === 'win32' });
-	if (child.status !== 0) {
-		throw new Error(`${command} ${args.join(' ')} failed in ${cwd}:\n${child.stdout}${child.stderr}`);
-	}
-	return child.stdout;
-}
-
-function pack(dir: string, into: string): string {
-	if (!existsSync(join(dir, 'dist'))) throw new Error(`${dir} has no dist; run \`pnpm run build\` first`);
-	const before = new Set(readdirSync(into));
-	run('pnpm', ['pack', '--pack-destination', into], dir);
-	const tarball = readdirSync(into).find((file) => !before.has(file));
-	if (tarball === undefined) throw new Error(`pnpm pack wrote no tarball for ${dir}`);
-	return join(into, tarball);
+function unpack(tarball: string, into: string): string {
+	const dir = mkdtempSync(join(into, 'unpacked-'));
+	run('tar', ['-xzf', tarball, '-C', dir], into);
+	return join(dir, 'package');
 }
 
 const args = process.argv.slice(2);
 const release = args.includes('--release');
 const named = args.filter((arg) => arg !== '--release');
 const grammars = named.length === 0 ? stableGrammars() : named.map(assertGrammar);
-const suffixes = release ? NATIVE_TARGETS.map(targetSuffix) : [platformSuffix(hostPlatform())];
+const host = platformSuffix(hostPlatform());
 
 const root = mkdtempSync(join(tmpdir(), 'sittir-published-'));
+const assembled: string[] = [];
 try {
 	const tarballs = join(root, 'tarballs');
 	const consumer = join(root, 'consumer');
@@ -82,18 +76,35 @@ try {
 	mkdirSync(consumer);
 
 	const dependencies: Record<string, string> = {};
-	for (const name of ['types', 'common']) dependencies[`@sittir/${name}`] = `file:${pack(join(PACKAGES_DIR, name), tarballs)}`;
+	for (const name of ['types', 'common']) dependencies[`@sittir/${name}`] = `file:${packWorkspacePackage(join(PACKAGES_DIR, name), tarballs)}`;
 
-	const gaps: string[] = [];
+	const gaps: string[] = releaseGroupGaps(changesetFixedGroups(), stableGrammars().map(grammarPackageName));
 	for (const grammar of grammars) {
-		const tarball = pack(grammarPackageDir(grammar), tarballs);
+		const label = `@sittir/${grammar}`;
+		const tarball = packWorkspacePackage(grammarPackageDir(grammar), tarballs);
 		const entries = run('tar', ['-tzf', tarball], root).split('\n');
 		const binding = { binaryName: nativeBinaryName(grammar), loader: NATIVE_LOADER, typings: NATIVE_TYPINGS };
-		gaps.push(...nativePackGaps(entries, binding, suffixes).map((file) => `@sittir/${grammar}: lacks ${file}`));
+		gaps.push(...nativePackGaps(entries, binding).map((file) => `${label}: lacks ${file}`));
+		gaps.push(...unexpectedNativeFiles(entries, binding).map((file) => `${label}: holds ${file}, which ships in a platform package`));
+		dependencies[label] = `file:${tarball}`;
+
+		const pkg = grammarNapiPackage(grammar);
+		if (!release) assembled.push(join(pkg.dir, NATIVE_PACKAGES_DIR));
+		const platformDirs = release ? nativePackageDirs(pkg) : assembleNativePackages(pkg, nativeBindingDir(grammar), [host]);
+		const platformPackages = platformDirs.map((dir) => readManifest<PlatformPackageManifest>(dir).name);
 		if (release) {
-			gaps.push(...unexpectedNativeBinaries(entries, binding, suffixes).map((file) => `@sittir/${grammar}: holds ${file}, which is not a declared target`));
+			const manifest = readManifest<GrammarManifest>(unpack(tarball, root));
+			gaps.push(...optionalDependencyGaps(manifest, platformPackages).map((gap) => `${label}: ${gap}`));
 		}
-		dependencies[`@sittir/${grammar}`] = `file:${tarball}`;
+		for (const [index, dir] of platformDirs.entries()) {
+			const name = platformPackages[index]!;
+			const suffix = basename(dir);
+			const looked = platformPackageName(nativePlatformPackage(grammar), suffix);
+			if (name !== looked) gaps.push(`${name}: napi names the ${suffix} package ${name}, but a failed load looks for ${looked}`);
+			const platformTarball = pack('npm', dir, tarballs);
+			gaps.push(...platformPackGaps(unpack(platformTarball, root), binding.binaryName, suffix).map((gap) => `${name}: ${gap}`));
+			if (suffix === host) dependencies[name] = `file:${platformTarball}`;
+		}
 	}
 	if (gaps.length > 0) {
 		throw new Error(`${release ? 'release' : 'host'} pack check failed:\n  ${gaps.join('\n  ')}`);
@@ -104,7 +115,7 @@ try {
 	run('npm', ['install', '--no-audit', '--no-fund'], consumer);
 	writeFileSync(join(consumer, 'types.ts'), TYPES_CHECK);
 	writeFileSync(join(consumer, 'tsconfig.json'), JSON.stringify(TYPES_CHECK_CONFIG));
-	run(process.execPath, [tscBin(), '-p', consumer], consumer);
+	run(process.execPath, [packageBin('typescript', 'tsc'), '-p', consumer], consumer);
 	console.log('@sittir/types: type-checks from the installed package, without its devDependencies');
 	for (const grammar of grammars) {
 		const source = SAMPLE_SOURCE[grammar];
@@ -113,4 +124,5 @@ try {
 	}
 } finally {
 	rmSync(root, { recursive: true, force: true });
+	for (const dir of assembled) rmSync(dir, { recursive: true, force: true });
 }

@@ -11,6 +11,7 @@ use sittir_core::layout::LayoutWorkCounter;
 use sittir_core::nodes::{Kid, Nodes, Step, TreeNodes, Visit};
 use sittir_core::options::ResolvedOptions;
 use sittir_core::read::{descendant_count, goto, index_of};
+use sittir_core::tree_sitter;
 use sittir_core::types::NodeIndex;
 use sittir_parity_tests::{each_grammar, fixture_sources, parsed};
 use std::sync::Arc;

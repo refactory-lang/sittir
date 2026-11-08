@@ -5,7 +5,7 @@ use sittir_core::trivia_table::{is_empty, Assigned, SurfaceKinds, TriviaSide};
 use sittir_core::read::goto;
 use sittir_core::types::NodeIndex;
 use sittir_parity_tests::PlacedTrivia;
-use tree_sitter::{Language, Node, Parser, Tree};
+use sittir_core::tree_sitter::{Language, Node, Parser, Tree};
 
 fn parse(language: &Language, source: &str) -> Tree {
     let mut parser = Parser::new();

@@ -9,6 +9,14 @@ on:
       grammars:
         type: string
         required: true
+      baseline:
+        description: A commit measured beside this one in the same rounds; empty measures this one alone
+        type: string
+        default: ''
+      baseline-prefix:
+        description: Runtime artifact prefix of the baseline's build
+        type: string
+        default: ''
 
 permissions:
   contents: read
@@ -32,16 +40,42 @@ jobs:
       - uses: ./.github/actions/arena-benchmark-runtime
         with:
           prefix: ${{ inputs.runtime-prefix }}
+      # The baseline is a second checkout on the same runner, with its own
+      # dependencies and its own compiled runtime, so each round can run
+      # both trees' workers back to back.
+      - name: Check out the baseline
+        if: inputs.baseline != ''
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ inputs.baseline }}
+          path: baseline-tree
+      - name: Install the baseline's dependencies
+        if: inputs.baseline != ''
+        working-directory: baseline-tree
+        run: pnpm install --frozen-lockfile
+      - uses: ./.github/actions/arena-benchmark-runtime
+        if: inputs.baseline != ''
+        with:
+          prefix: ${{ inputs.baseline-prefix }}
+          tree: baseline-tree
+          receipts: baseline
       - name: Fingerprint the measured runtime
-        run: node scripts/ci/arena-benchmark-report.mjs capture "$RUNNER_TEMP/arena-benchmarks/before.json"
+        shell: bash
+        run: |
+          node scripts/ci/arena-benchmark-report.mjs capture "$RUNNER_TEMP/arena-benchmarks/before.json"
+          if [[ -d baseline-tree ]]; then
+            (cd baseline-tree && node "$GITHUB_WORKSPACE/scripts/ci/arena-benchmark-report.mjs" capture "$RUNNER_TEMP/arena-benchmarks/baseline-before.json")
+          fi
       - name: Measure complete validation buckets
         env:
           NODE_ENV: production
           GRAMMAR: ${{ matrix.grammar }}
+          BASELINE: ${{ inputs.baseline != '' && format('{0}/baseline-tree', github.workspace) || '' }}
         shell: bash
         run: |
           node packages/cli/dist/cli.js tool bench-storage "$GRAMMAR" --validation \
             --idle-gate scripts/ci/arena-benchmark-idle.sh \
+            ${BASELINE:+--baseline "$BASELINE"} \
             --output "$RUNNER_TEMP/arena-benchmarks/corpus.json" \
             2>&1 | tee "$RUNNER_TEMP/arena-benchmarks/corpus.log"
       - name: Check runtime stability
@@ -51,6 +85,10 @@ jobs:
           if [[ -f "$RUNNER_TEMP/arena-benchmarks/before.json" ]]; then
             node scripts/ci/arena-benchmark-report.mjs capture "$RUNNER_TEMP/arena-benchmarks/after.json"
             node scripts/ci/arena-benchmark-report.mjs verify "$RUNNER_TEMP/arena-benchmarks/before.json" "$RUNNER_TEMP/arena-benchmarks/after.json"
+          fi
+          if [[ -f "$RUNNER_TEMP/arena-benchmarks/baseline-before.json" ]]; then
+            (cd baseline-tree && node "$GITHUB_WORKSPACE/scripts/ci/arena-benchmark-report.mjs" capture "$RUNNER_TEMP/arena-benchmarks/baseline-after.json")
+            node scripts/ci/arena-benchmark-report.mjs verify "$RUNNER_TEMP/arena-benchmarks/baseline-before.json" "$RUNNER_TEMP/arena-benchmarks/baseline-after.json"
           fi
       - name: Summarize paired measurements
         shell: bash
