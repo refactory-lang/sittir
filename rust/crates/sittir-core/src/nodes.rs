@@ -13,8 +13,10 @@ use std::sync::Arc;
 /// What navigation reads of a node: its descendant index, numbered from the
 /// tree's root; its bytes; the nodes under it, counting itself; the kind it
 /// has in the grammar and the kind the parser shows it as; the field it
-/// fills in its parent; and whether it is named, an extra, an `ERROR`,
-/// `MISSING`, or holds an error in its subtree, itself included.
+/// fills in its parent; and whether it is named, an extra or an `ERROR`.
+/// A read takes these of every node it visits; whether a node is `MISSING`
+/// or holds an error only an error search asks (`Nodes::missing`,
+/// `Nodes::holds_error`).
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct Kid {
     pub index: NodeIndex,
@@ -27,8 +29,6 @@ pub struct Kid {
     pub named: bool,
     pub extra: bool,
     pub error: bool,
-    pub missing: bool,
-    pub has_error: bool,
 }
 
 impl Kid {
@@ -39,7 +39,7 @@ impl Kid {
     }
 
     /// `node`, at `index` and filling `field` in its parent.
-    fn of(node: &tree_sitter::Node<'_>, index: NodeIndex, field: Option<FieldId>) -> Self {
+    pub(crate) fn of(node: &tree_sitter::Node<'_>, index: NodeIndex, field: Option<FieldId>) -> Self {
         let Span { start, end } = Span::of(node);
         Self {
             index,
@@ -52,8 +52,6 @@ impl Kid {
             named: node.is_named(),
             extra: node.is_extra(),
             error: node.is_error(),
-            missing: node.is_missing(),
-            has_error: node.has_error(),
         }
     }
 
@@ -120,9 +118,10 @@ pub enum Visit {
 
 /// How navigation finds the nodes of one parse: each node by its descendant
 /// index, the root's being `NodeIndex::ROOT`, and the text their bytes index.
-/// `kid`, `kids` and `parent` answer every question; the others answer what
-/// those would, and a backer gives them only to answer without reading every
-/// child.
+/// `kid`, `kids` and `parent` answer every question of the tree's shape, and
+/// `missing` and `holds_error` those of its errors; the others answer what
+/// the first three would, and a backer gives them only to answer without
+/// reading every child.
 pub trait Nodes<'t> {
     /// The source text the nodes' bytes index.
     fn text(&self) -> &'t str;
@@ -132,6 +131,12 @@ pub trait Nodes<'t> {
     fn kids(&mut self, index: NodeIndex) -> Arc<[Kid]>;
     /// The parent of the node at `index`, `None` for the root.
     fn parent(&mut self, index: NodeIndex) -> Option<NodeIndex>;
+    /// Whether the node at `index` is `MISSING`: a token the parser
+    /// inserted, with no bytes.
+    fn missing(&mut self, index: NodeIndex) -> bool;
+    /// Whether the node at `index` holds an error in its subtree, itself
+    /// included: an `ERROR` or a `MISSING` node holds one.
+    fn holds_error(&mut self, index: NodeIndex) -> bool;
 
     /// Walks the subtree of the node at `from` in preorder, telling `visit`
     /// each node it meets and each node it leaves.
@@ -242,6 +247,14 @@ impl<'t> TreeNodes<'t> {
         }
         cursor
     }
+
+    /// The tree's node at `index`, the root's read without a move.
+    fn node(&mut self, index: NodeIndex) -> tree_sitter::Node<'t> {
+        if index == NodeIndex::ROOT {
+            return self.tree.root_node();
+        }
+        self.reader(index).node()
+    }
 }
 
 impl<'t> Nodes<'t> for TreeNodes<'t> {
@@ -254,6 +267,14 @@ impl<'t> Nodes<'t> for TreeNodes<'t> {
             return Kid::of(&self.tree.root_node(), index, None);
         }
         Kid::at(self.reader(index))
+    }
+
+    fn missing(&mut self, index: NodeIndex) -> bool {
+        self.node(index).is_missing()
+    }
+
+    fn holds_error(&mut self, index: NodeIndex) -> bool {
+        self.node(index).has_error()
     }
 
     fn kids(&mut self, index: NodeIndex) -> Arc<[Kid]> {

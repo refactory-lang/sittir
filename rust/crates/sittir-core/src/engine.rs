@@ -143,7 +143,7 @@ fn node(nodes: &mut dyn Nodes<'_>, index: NodeIndex) -> Option<Kid> {
 /// otherwise the node's ancestors are climbed, so the cost follows the
 /// node's depth, not how many siblings precede it.
 fn error_holding(nodes: &mut dyn Nodes<'_>, index: NodeIndex) -> Option<Kid> {
-    if !nodes.kid(NodeIndex::ROOT).has_error {
+    if !nodes.holds_error(NodeIndex::ROOT) {
         return None;
     }
     let mut outermost = None;
@@ -201,8 +201,8 @@ pub fn line_starts_inside_tokens(nodes: &mut dyn Nodes<'_>, index: NodeIndex, so
 /// is the first, and the one after it, or none when it is the last. Where the
 /// parent's read routes its children (`ParsedTree::siblings`), the items are
 /// the children routed to the node's slot, a bare token among them;
-/// elsewhere they are the children that hold sides
-/// (`trivia_table::holds_sides`) in the same field, or both in none. A child
+/// elsewhere they are the children that hold sides (`Kid::holder`) in the
+/// same field, or both in none. A child
 /// of another slot past the list's closer is not its neighbour.
 #[derive(Debug, Clone, Copy, Default, PartialEq, Eq, serde::Serialize)]
 pub struct Siblings {
@@ -237,27 +237,22 @@ pub struct ErrorRegion {
 }
 
 /// Every ERROR and MISSING region of the tree `nodes` navigates, in source
-/// order. The walk enters only nodes that hold an error, and never an ERROR
-/// node: a region nested in another is part of it.
+/// order. The search goes into the children only of nodes that hold an
+/// error, and never of an ERROR node: a region nested in another is part of
+/// it.
 #[must_use]
 pub fn error_regions(nodes: &mut dyn Nodes<'_>) -> Vec<ErrorRegion> {
     let mut regions = Vec::new();
-    nodes.walk(NodeIndex::ROOT, &mut |step, kid| {
-        if step == Step::Leave {
-            return Visit::Pass;
+    let mut pending = vec![nodes.kid(NodeIndex::ROOT)];
+    while let Some(kid) = pending.pop() {
+        if kid.error {
+            regions.push(ErrorRegion { kind: ErrorRegionKind::Error, span: kid.span() });
+        } else if nodes.missing(kid.index) {
+            regions.push(ErrorRegion { kind: ErrorRegionKind::Missing, span: kid.span() });
+        } else if nodes.holds_error(kid.index) {
+            pending.extend(nodes.kids(kid.index).iter().rev().copied());
         }
-        let kind = if kid.error {
-            Some(ErrorRegionKind::Error)
-        } else if kid.missing {
-            Some(ErrorRegionKind::Missing)
-        } else {
-            None
-        };
-        if let Some(kind) = kind {
-            regions.push(ErrorRegion { kind, span: kid.span() });
-        }
-        if kind.is_none() && kid.has_error { Visit::Enter } else { Visit::Pass }
-    });
+    }
     regions
 }
 

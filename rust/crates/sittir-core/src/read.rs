@@ -579,16 +579,20 @@ impl<'s> ReadCtx<'s> {
     /// over: no other child's leading side can begin before its holder.
     fn first_child_leading(&self, cursor: &TreeCursor<'_>) -> Option<u32> {
         let lookup = self.sides?;
+        let holder = index_of(cursor);
         let mut child = cursor.node().walk();
         if !child.goto_first_child() {
             return None;
         }
-        while child.node().is_extra() || child.node().is_error() {
+        loop {
+            let kid = Kid::of(&child.node(), holder + offset_of(&child), field_id(&child));
+            if !kid.entry() {
+                return lookup.leading_start(kid.index);
+            }
             if !child.goto_next_sibling() {
                 return None;
             }
         }
-        lookup.leading_start(index_of(cursor) + offset_of(&child))
     }
 
     /// The first byte a snapshot read measured before the holder it was
@@ -1787,7 +1791,7 @@ mod tests {
     type Plain = Probe<false>;
 
     fn token(start: u32, end: u32, extra: bool) -> Kid {
-        Kid { index: NodeIndex::ROOT, start, end, count: 1, grammar: KindId(9), display: KindId(9), field: None, named: false, extra, error: false, missing: false, has_error: false }
+        Kid { index: NodeIndex::ROOT, start, end, count: 1, grammar: KindId(9), display: KindId(9), field: None, named: false, extra, error: false }
     }
 
     #[test]

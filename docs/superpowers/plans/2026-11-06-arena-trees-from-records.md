@@ -79,14 +79,15 @@ In flight as its own PR (prototype). Goldens from master, then the pass, with re
 - Modify: `engine.rs`. The `SourceTable` implementations for `ParsedTree`, `ReadTrees` and `WithoutLayout`, plus `cursor_at`, `row_coordinate`, `line_starts_inside_tokens`, `last_list_child`, `edge_child`, `frame_levels` and `Lookups::baseline_gap`. Each reads through a `TreeNodes`.
 - Modify: `trivia_table.rs`. `DepthMembers::of` reads through the interface. In object storage it's still one walk per tree, on first use.
 - Modify: `napi_engine.rs`, the engine's tree functions (`descendants`, `siblings`, `planHolds`, `snapshot`, `text`, `coordinate`, the layout baseline, stored layout, `slotLayouts`, `separatorBefore` and `framedSpan`), plus `ArenaSources`.
-- Modify: `engine.rs` (`error_regions`), which walks through the interface and still enters only nodes that hold an error.
+- Modify: `engine.rs` (`error_regions`), which searches through the interface and still goes into only nodes that hold an error.
 - Modify: `nodes.rs`, `read.rs` (`Child`, `survey`) and the node macros (`sittir-node-macros/src/hydrate.rs`, `expand.rs`). `read::Child` folds into `Kid`, so one struct holds a node's facts and one constructor reads them from tree-sitter.
 - Test: `rust/crates/sittir-core/tests/nodes.rs`.
 
 **Interfaces:**
 - Consumes: Task 2's `Nodes` and `TreeNodes`.
 - Produces:
-  - `Kid` carries every fact a consumer reads: index, span, descendant count, grammar kind, display kind, field, and whether it is named, an extra, an `ERROR`, `MISSING`, or holds an error. Its `index` has one meaning, numbered from the tree's root.
+  - `Kid` carries the facts a read takes of every node it visits: index, span, descendant count, grammar kind, display kind, field, and whether it is named, an extra or an `ERROR`. Its `index` has one meaning, numbered from the tree's root. So the hydrate pass reads exactly what `read::Child` read.
+  - Whether a node is `MISSING` and whether it holds an error are `Nodes` queries, `missing(index)` and `holds_error(index)`, asked only by `error_regions` and `error_holding`. The tree backer reads them from the node.
   - Facts that follow from others are methods, not stored: an entry (an extra or an `ERROR`), a leaf (no entry, descendant count 1) and a holder of sides (named, no entry, nonzero width). `trivia_table::holds_sides` is that method.
   - One `TreeNodes` per tree per render call lives in `ReadTrees`, and `Lookups` moves its cursor. Each engine tree function makes one per call.
   - After this task, no function outside `nodes.rs` moves a tree-sitter cursor except the reader, on a cursor `TreeNodes` lends (`over`). The reader is the hydrate pass, the generated reads, `survey` and `read_units`.
@@ -110,7 +111,7 @@ In flight as its own PR (prototype). Goldens from master, then the pass, with re
 
 **Interfaces:**
 - Consumes: Task 2's `Nodes` and `Kid`.
-- Produces: `pub(crate) struct RecordNodes<'t>`, built from a `TreeArena`, its token spans and the source. Its `parent` is found from the rows' subtree ends, never with a cursor. It answers every fact of Task 3's `Kid`. A fact the records already hold (a record's display kind, a slot's field) is read from them. Rows add bytes only for facts the records don't hold.
+- Produces: `pub(crate) struct RecordNodes<'t>`, built from a `TreeArena`, its token spans and the source. Its `parent` is found from the rows' subtree ends, never with a cursor. It answers every fact of Task 3's `Kid`, and its `missing` and `holds_error` queries from rows. A fact the records already hold (a record's display kind, a slot's field) is read from them. Rows add bytes only for facts the records don't hold.
 
 - [ ] **Step 1: Failing tests:**
   - `record_nodes_match_tree_nodes`: for every node of each fixture tree in all five grammars, the two backers give equal `kid`, `kids` and `parent`. The fixtures include:

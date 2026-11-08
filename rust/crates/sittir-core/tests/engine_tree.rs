@@ -4,10 +4,10 @@
 
 use sittir_core::engine::node_at_index;
 use sittir_core::layout::LayoutWorkCounter;
-use sittir_core::nodes::TreeNodes;
-use sittir_core::read::{display_id, grammar_id};
+use sittir_core::nodes::{Nodes, TreeNodes};
+use sittir_core::read::{descendant_count, display_id, grammar_id};
 use sittir_core::KindId;
-use sittir_core::types::Span;
+use sittir_core::types::{NodeIndex, Span};
 use sittir_core::{ErrorRegion, ErrorRegionKind};
 
 fn parse_tree(language: &tree_sitter::Language, source: &str) -> tree_sitter::Tree {
@@ -102,6 +102,28 @@ fn an_error_inside_an_error_is_part_of_the_outer_region() {
         regions_of(&tree_sitter_python::LANGUAGE.into(), "x = )\ny = (\n"),
         vec![region(ErrorRegionKind::Error, 0, 11)]
     );
+}
+
+/// Every node of a parse with a `MISSING` token and an `ERROR`, read back to
+/// front and then front to back, answers whether it is `MISSING` and whether
+/// it holds an error through the tree backer as the tree does.
+#[test]
+fn tree_nodes_answer_missing_and_error_holding_as_the_tree_does() {
+    let source = "def f(:\n    pass\nx = )\n";
+    let tree = parse_tree(&tree_sitter_python::LANGUAGE.into(), source);
+    let work = LayoutWorkCounter::default();
+    let mut nodes = TreeNodes::new(&tree, source, &work);
+    let count = descendant_count(&tree.root_node());
+    let (mut missing, mut holding) = (0, 0);
+    for index in (0..count).rev().chain(0..count) {
+        let at = NodeIndex::new(index);
+        let node = node_at_index(&tree, at).expect("a node at every index");
+        assert_eq!(nodes.missing(at), node.is_missing(), "whether {index} is MISSING");
+        assert_eq!(nodes.holds_error(at), node.has_error(), "whether {index} holds an error");
+        missing += u32::from(node.is_missing());
+        holding += u32::from(node.has_error() && !node.is_error() && !node.is_missing());
+    }
+    assert!(missing > 0 && holding > 0, "a MISSING token ({missing}) and nodes holding an error below them ({holding})");
 }
 
 /// The kind name of the last child, extras aside, of the list spelled `list` in `source`, its own kind `kind`.

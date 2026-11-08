@@ -74,6 +74,14 @@ impl<'t> Nodes<'t> for Plain<'_, 't> {
     fn parent(&mut self, index: NodeIndex) -> Option<NodeIndex> {
         self.0.parent(index)
     }
+
+    fn missing(&mut self, index: NodeIndex) -> bool {
+        self.0.missing(index)
+    }
+
+    fn holds_error(&mut self, index: NodeIndex) -> bool {
+        self.0.holds_error(index)
+    }
 }
 
 /// The steps a walk of `nodes` from the root takes, entering the nodes
