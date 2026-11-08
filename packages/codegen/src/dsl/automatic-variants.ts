@@ -115,21 +115,27 @@ export function isSupertypeOwner(
 	return hiddenChoiceClass(rule, (name) => rules[name], isNamedArmChoice(rule)) === 'supertype';
 }
 
+function referencingRules(rules: Readonly<Record<string, unknown>>): ReadonlyMap<string, readonly string[]> {
+	const hosts = new Map<string, string[]>();
+	for (const name of Object.keys(rules)) {
+		const refs = new Set<string>();
+		collectSymbolRefs(rules[name], refs);
+		for (const ref of refs) if (ref !== name) hosts.set(ref, [...(hosts.get(ref) ?? []), name]);
+	}
+	return hosts;
+}
+
 function splicedHostOf(
 	owner: string,
 	rules: Readonly<Record<string, unknown>>,
+	hostsOf: ReadonlyMap<string, readonly string[]>,
 	supertypeOwners: ReadonlySet<string>,
 	seen: ReadonlySet<string> = new Set()
 ): string {
 	if (!isParserHiddenName(owner) || supertypeOwners.has(owner) || seen.has(owner)) return owner;
 	if (isChoiceType((unwrapPrec(rules[owner]) as ArmShape | undefined)?.type ?? '')) return owner;
-	const hosts = Object.keys(rules).filter((name) => {
-		if (name === owner) return false;
-		const refs = new Set<string>();
-		collectSymbolRefs(rules[name], refs);
-		return refs.has(owner);
-	});
-	return hosts.length === 1 ? splicedHostOf(hosts[0]!, rules, supertypeOwners, new Set([...seen, owner])) : owner;
+	const hosts = hostsOf.get(owner) ?? [];
+	return hosts.length === 1 ? splicedHostOf(hosts[0]!, rules, hostsOf, supertypeOwners, new Set([...seen, owner])) : owner;
 }
 
 function stampRuleVariants(
@@ -190,11 +196,12 @@ export function stampAutomaticVariants(
 		into === undefined
 			? { keys: new Set(), supertypeOwners }
 			: { keys: into.keys, supertypeOwners: new Set([...into.supertypeOwners, ...supertypeOwners]) };
+	const hostsOf = referencingRules(rules);
 	for (const owner of Object.keys(rules)) {
 		const rule = rules[owner];
 		if (rule === undefined || (owners !== undefined && !owners.has(owner))) continue;
 		const stamped = automatic.keys.size;
-		const labelOwner = splicedHostOf(baseOf(owner), rules, automatic.supertypeOwners);
+		const labelOwner = splicedHostOf(baseOf(owner), rules, hostsOf, automatic.supertypeOwners);
 		rules[owner] = stampRuleVariants(labelOwner, rule, (name) => rules[name], automatic, elementChoices, symbols) as Rule;
 		if (into !== undefined && automatic.keys.size > stamped && supertypeOwners.has(labelOwner)) (into.supertypeOwners as Set<string>).add(labelOwner);
 	}
