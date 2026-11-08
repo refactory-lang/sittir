@@ -18,7 +18,8 @@
 	},
 	"files": [
 		"dist",
-		"native"
+		"native/index.cjs",
+		"native/index.d.ts"
 	],
 	"type": "module",
 	"main": "./dist/index.js",
@@ -53,7 +54,7 @@
 	"engines": {
 		"node": "^22.14.0 || >=23.6.0"
 	},
-	"//native": "Native artifacts are grammar-local implementation details for @sittir/typescript, shipped in native/ and built from rust/crates/sittir-typescript.",
+	"//native": "Native artifacts are grammar-local implementation details for @sittir/typescript, built from rust/crates/sittir-typescript: native/ holds the loader and its typings, and each platform's binary ships in its own sittir-typescript-<platform> package with the engine and std it links.",
 	"sittir": {
 		"stable": true,
 		"displayName": "TypeScript"

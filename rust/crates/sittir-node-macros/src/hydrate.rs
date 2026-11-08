@@ -4,12 +4,13 @@
 //! read routes by, and writes each slot's cell from its stamps: a struct's
 //! record its slots fill, a text leaf held whole, a choice its variant's
 //! value, an enum kind's member a unit. A struct's walk meets each child once:
-//! it reads the child (`Kid::at`), routes it, and walks into it there and
-//! then, handing it over in `ReadCtx::at`, so the child's own walk asks the
-//! tree for none of its ids, row or span again. A refusal anywhere below
-//! breaks the walk out of its children's loop, and the walk steps back to its
-//! own node before passing the refusal up. Every `HydrateNode` sits inside
-//! `::sittir_core::records_codec!`, beside the read it mirrors.
+//! it reads the child and writes its row (`Hydration::meet`), routes it, and
+//! walks into it there and then, handing it over in `ReadCtx::at`, so the
+//! child's own walk asks the tree for none of its ids, row or span again. A
+//! refusal anywhere below breaks the walk out of its children's loop, and
+//! the walk steps back to its own node before passing the refusal up. Every
+//! `HydrateNode` sits inside `::sittir_core::records_codec!`, beside the read
+//! it mirrors.
 
 use crate::attrs::{KindAttrs, SlotAttrs};
 use crate::codec::WireVariant;
@@ -38,7 +39,7 @@ fn struct_impl(ident: &Ident, leaf: bool, body: &TokenStream) -> TokenStream {
         impl ::sittir_core::arena::HydrateNode for #ident {
             #[allow(unused_mut, unused_variables)]
             fn hydrate(
-                cursor: &mut ::tree_sitter::TreeCursor<'_>,
+                cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>,
                 ctx: &mut __rt::ReadCtx<'_>,
                 depth: ::core::option::Option<__rt::Depth>,
                 records: &mut ::sittir_core::arena::Hydration<'_>,
@@ -85,7 +86,10 @@ pub fn structure(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn:
         return Ok(stored);
     }
     let hydrate = if leaf {
-        struct_impl(ident, true, &quote!(::core::result::Result::Ok(__held)))
+        struct_impl(ident, true, &quote! {
+            records.meet_under(cursor, __at.count)?;
+            ::core::result::Result::Ok(__held)
+        })
     } else if let Some(pattern) = &attrs.interior {
         struct_impl(ident, false, &interior(ident, attrs, fields, pattern)?)
     } else if attrs.content.is_some() {
@@ -124,9 +128,12 @@ fn routed(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn::Result
         if let Some(bit) = slot.cell.bit {
             starts.push(quote!(let mut #acc = false;));
             takes.push(quote! {
-                __rt::Route::Slot { slot: #id, .. } => if let ::core::result::Result::Err(refusal) = <bool as __rt::ReadSlot>::take(&mut #acc, cursor, ctx, __rt::Depth::ONE, #site) {
-                    break 'walk ::core::result::Result::Err(::sittir_core::arena::HydrateError::from(refusal));
-                },
+                __rt::Route::Slot { slot: #id, .. } => {
+                    if let ::core::result::Result::Err(refusal) = <bool as __rt::ReadSlot>::take(&mut #acc, cursor, ctx, __rt::Depth::ONE, #site) {
+                        break 'walk ::core::result::Result::Err(::sittir_core::arena::HydrateError::from(refusal));
+                    }
+                    false
+                }
             });
             finishes.push(quote!(records.flag(__draft, #word, #bit, #acc)?;));
             continue;
@@ -138,11 +145,19 @@ fn routed(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn::Result
         }
         starts.push(quote!(let mut #acc = <#ty as ::sittir_core::arena::HydrateSlot>::held();));
         takes.push(quote! {
-            __rt::Route::Slot { slot: #id, .. } => if let ::core::result::Result::Err(refusal) = <#ty as ::sittir_core::arena::HydrateSlot>::take_held(&mut #acc, cursor, ctx, depth, #site, records, #shape, __draft) {
-                break 'walk ::core::result::Result::Err(refusal);
-            },
+            __rt::Route::Slot { slot: #id, .. } => {
+                if let ::core::result::Result::Err(refusal) = <#ty as ::sittir_core::arena::HydrateSlot>::take_held(&mut #acc, cursor, ctx, depth, #site, records, #shape, __draft) {
+                    break 'walk ::core::result::Result::Err(refusal);
+                }
+                true
+            }
         });
-        separators.push(quote!(__rt::Route::Separator { slot: #id, tagged } => <#ty as ::sittir_core::arena::HydrateSlot>::separator_held(&mut #acc, tagged),));
+        separators.push(quote! {
+            __rt::Route::Separator { slot: #id, tagged } => {
+                <#ty as ::sittir_core::arena::HydrateSlot>::separator_held(&mut #acc, tagged);
+                false
+            }
+        });
         finishes.push(quote!(<#ty as ::sittir_core::arena::HydrateSlot>::finish_held(#acc, #site, #shape, __draft, records)?;));
     }
     let flank = fields.iter().find_map(|field| match &field.role {
@@ -179,16 +194,24 @@ fn routed(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn::Result
         #collect
         if cursor.goto_first_child() {
             let __walked: ::core::result::Result<(), ::sittir_core::arena::HydrateError> = 'walk: loop {
-                let __child = __rt::Kid::at(cursor);
+                let __child = match records.meet(cursor) {
+                    ::core::result::Result::Ok(child) => child,
+                    ::core::result::Result::Err(refusal) => break 'walk ::core::result::Result::Err(refusal),
+                };
                 let __route = match __route(&__child) {
                     ::core::result::Result::Ok(route) => route,
                     ::core::result::Result::Err(refusal) => break 'walk ::core::result::Result::Err(::sittir_core::arena::HydrateError::from(refusal)),
                 };
                 ctx.at = ::core::option::Option::Some(__child);
-                match __route {
+                let __entered = match __route {
                     #(#takes)*
                     #(#separators)*
-                    _ => {}
+                    _ => false,
+                };
+                if !__entered {
+                    if let ::core::result::Result::Err(refusal) = records.meet_under(cursor, __child.count) {
+                        break 'walk ::core::result::Result::Err(refusal);
+                    }
                 }
                 #keep
                 if !cursor.goto_next_sibling() {
@@ -241,6 +264,7 @@ fn interior(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>], _pattern: &L
     let end = record_end(&quote!(::core::option::Option::None));
     Ok(quote! {
         #start
+        records.meet_under(cursor, __at.count)?;
         let base = ::sittir_core::types::Span::of(&__node).start;
         match __INTERIOR.captures(ctx.text(&__node)) {
             ::core::option::Option::Some(captures) => {
@@ -285,19 +309,22 @@ fn envelope(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn::Resu
                 if !cursor.goto_first_child() {
                     return ::core::result::Result::Err(__unwrapped.into());
                 }
-                loop {
+                let __wrapped = loop {
                     let __child = __rt::Kid::at(cursor);
                     if !__child.entry() {
                         ctx.at = ::core::option::Option::Some(__child);
-                        break;
+                        break __child.index;
                     }
                     if !cursor.goto_next_sibling() {
                         cursor.goto_parent();
                         return ::core::result::Result::Err(__unwrapped.into());
                     }
-                }
+                };
             },
-            quote!(cursor.goto_parent();),
+            quote! {
+                cursor.goto_parent();
+                records.meet_children_but(cursor, __wrapped)?;
+            },
         )
     } else {
         (quote!(), quote!())
@@ -344,14 +371,17 @@ pub fn choice(ident: &Ident, variants: &[WireVariant<'_>], codec_only: bool) -> 
         let name = format_ident!("__hydrate_{}", at);
         let value = match (variant.payload, &variant.first) {
             (Some(payload), _) => quote!(<#payload as ::sittir_core::arena::HydrateNode>::hydrate(cursor, ctx, depth, records, inline)),
-            (None, Some(first)) => quote!(::core::result::Result::Ok(::sittir_core::arena::Hydrated::Unit { kind: #first, row: ::core::option::Option::Some(__rt::index_of(cursor)) })),
+            (None, Some(first)) => quote! {
+                records.meet_under(cursor, ctx.current(cursor).count)?;
+                ::core::result::Result::Ok(::sittir_core::arena::Hydrated::Unit { kind: #first, row: ::core::option::Option::Some(__rt::index_of(cursor)) })
+            },
             (None, None) => continue,
         };
         fns.push(quote! {
             #[inline(never)]
             #[allow(unused_variables)]
             fn #name(
-                cursor: &mut ::tree_sitter::TreeCursor<'_>,
+                cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>,
                 ctx: &mut __rt::ReadCtx<'_>,
                 depth: ::core::option::Option<__rt::Depth>,
                 records: &mut ::sittir_core::arena::Hydration<'_>,
@@ -364,9 +394,9 @@ pub fn choice(ident: &Ident, variants: &[WireVariant<'_>], codec_only: bool) -> 
     }
     let hydrate = gated(&quote! {
         const _: () = {
-            type __Hydrate = fn(&mut ::tree_sitter::TreeCursor<'_>, &mut __rt::ReadCtx<'_>, ::core::option::Option<__rt::Depth>, &mut ::sittir_core::arena::Hydration<'_>, ::core::option::Option<::sittir_core::arena::Embed>) -> ::core::result::Result<::sittir_core::arena::Hydrated, ::sittir_core::arena::HydrateError>;
+            type __Hydrate = fn(&mut ::sittir_core::tree_sitter::TreeCursor<'_>, &mut __rt::ReadCtx<'_>, ::core::option::Option<__rt::Depth>, &mut ::sittir_core::arena::Hydration<'_>, ::core::option::Option<::sittir_core::arena::Embed>) -> ::core::result::Result<::sittir_core::arena::Hydrated, ::sittir_core::arena::HydrateError>;
             fn __unhydrated(
-                cursor: &mut ::tree_sitter::TreeCursor<'_>,
+                cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>,
                 _ctx: &mut __rt::ReadCtx<'_>,
                 _depth: ::core::option::Option<__rt::Depth>,
                 _records: &mut ::sittir_core::arena::Hydration<'_>,
@@ -378,7 +408,7 @@ pub fn choice(ident: &Ident, variants: &[WireVariant<'_>], codec_only: bool) -> 
             const __HYDRATES: &[__Hydrate] = &[#(#table),*];
             impl ::sittir_core::arena::HydrateNode for #ident {
                 fn hydrate(
-                    cursor: &mut ::tree_sitter::TreeCursor<'_>,
+                    cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>,
                     ctx: &mut __rt::ReadCtx<'_>,
                     depth: ::core::option::Option<__rt::Depth>,
                     records: &mut ::sittir_core::arena::Hydration<'_>,
@@ -393,7 +423,7 @@ pub fn choice(ident: &Ident, variants: &[WireVariant<'_>], codec_only: bool) -> 
                 }
                 fn hydrate_stamped(
                     stamped: ::sittir_core::types::KindId,
-                    cursor: &mut ::tree_sitter::TreeCursor<'_>,
+                    cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>,
                     ctx: &mut __rt::ReadCtx<'_>,
                     depth: ::core::option::Option<__rt::Depth>,
                     records: &mut ::sittir_core::arena::Hydration<'_>,
@@ -417,13 +447,14 @@ pub fn members(ident: &Ident) -> TokenStream {
     let hydrate = gated(&quote! {
         impl ::sittir_core::arena::HydrateNode for #ident {
             fn hydrate(
-                cursor: &mut ::tree_sitter::TreeCursor<'_>,
-                _ctx: &mut __rt::ReadCtx<'_>,
+                cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>,
+                ctx: &mut __rt::ReadCtx<'_>,
                 _depth: ::core::option::Option<__rt::Depth>,
-                _records: &mut ::sittir_core::arena::Hydration<'_>,
+                records: &mut ::sittir_core::arena::Hydration<'_>,
                 _inline: ::core::option::Option<::sittir_core::arena::Embed>,
             ) -> ::core::result::Result<::sittir_core::arena::Hydrated, ::sittir_core::arena::HydrateError> {
                 let member = __resolve(cursor).ok_or_else(|| __rt::ReadError::Unspelled { kind: ::sittir_core::read::grammar_id(&cursor.node()), index: __rt::index_of(cursor) })?;
+                records.meet_under(cursor, ctx.current(cursor).count)?;
                 ::core::result::Result::Ok(::sittir_core::arena::Hydrated::Unit { kind: __id(&member), row: ::core::option::Option::Some(__rt::index_of(cursor)) })
             }
         }

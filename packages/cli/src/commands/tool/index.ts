@@ -29,6 +29,7 @@ import { hoistedCensus } from './hoisted-census.ts';
 import { inspectRefs } from './inspect-refs.ts';
 import { inspectType } from './inspect-type.ts';
 import { listKinds } from './list-kinds.ts';
+import { nativeImages } from './native-images.ts';
 import { outputGate } from './output-gate.ts';
 import { overrideCensus } from './override-census.ts';
 import { phantomKinds } from './phantom-kinds.ts';
@@ -47,6 +48,7 @@ import { textKindOverlap } from './text-kind-overlap.ts';
 import { spelledTrivia } from './spelled-trivia.ts';
 import { triviaPlacement } from './trivia-placement.ts';
 import { gapCensus } from './gap-census.ts';
+import { backerParity } from './backer-parity.ts';
 import { triviaTiming } from './trivia-timing.ts';
 import { uncoveredContent } from './uncovered-content.ts';
 import { variantDerivationProbe } from './variant-derivation-probe.ts';
@@ -82,6 +84,7 @@ export const toolModules: readonly CommandModule[] = [
 	inspectRefs,
 	inspectType,
 	listKinds,
+	nativeImages,
 	outputGate,
 	overrideCensus,
 	phantomKinds,
@@ -100,6 +103,7 @@ export const toolModules: readonly CommandModule[] = [
 	spelledTrivia,
 	triviaPlacement,
 	gapCensus,
+	backerParity,
 	triviaTiming,
 	uncoveredContent,
 	variantDerivationProbe,

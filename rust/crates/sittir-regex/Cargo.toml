@@ -17,11 +17,11 @@ arena = ["sittir-core/arena"]
 
 [dependencies]
 sittir-core = { path = "../sittir-core" }
+sittir-engine = { workspace = true }
 napi = { workspace = true, features = ["serde-json"], optional = true }
 napi-derive = { workspace = true, optional = true }
 serde = { workspace = true }
 serde_json = { workspace = true }
-tree-sitter = { workspace = true }
 tree-sitter-language = { workspace = true }
 
 [build-dependencies]

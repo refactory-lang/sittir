@@ -14,7 +14,7 @@
 import { createRequire } from 'node:module';
 import { dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { nativeLoadFailure } from '@sittir/common/engine';
+import { nativeLoadFailure, recordLoadedEngine } from '@sittir/common/engine';
 import type {
 	JsBackendStatusLike,
 	NativeBackendStatusLike,
@@ -112,11 +112,17 @@ function tryLoadNative(): NativeModule | { reason: string } {
 	try {
 		const req = createRequire(import.meta.url);
 		const mod = req(NATIVE_MODULE_PATH) as NativeModule;
+		recordLoadedEngine(mod);
 		return mod;
 	} catch (err) {
 		return {
 			reason: nativeLoadFailure(
-				{ packageName: '@sittir/regex', binaryName: 'sittir-regex', dir: dirname(NATIVE_MODULE_PATH) },
+				{
+					packageName: '@sittir/regex',
+					binaryName: 'sittir-regex',
+					platformPackage: 'sittir-regex',
+					dir: dirname(NATIVE_MODULE_PATH)
+				},
 				err
 			)
 		};

@@ -4,7 +4,7 @@
 //! directly rather than through `sittir_core::read`.
 #![allow(clippy::disallowed_methods, reason = "these tests hold sittir_core::read to the cursor numbering tree-sitter gives directly")]
 
-use tree_sitter::{Language, Node, Parser, Tree};
+use sittir_core::tree_sitter::{Language, Node, Parser, Tree};
 
 fn parse(language: &Language, source: &str) -> Tree {
     let mut parser = Parser::new();

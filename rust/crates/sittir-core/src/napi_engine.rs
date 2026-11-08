@@ -30,9 +30,9 @@
 //! A coordinate names a tree, not the engine that parsed it, so the table is
 //! one per grammar addon: every engine of a language resolves every tree of
 //! that language, and a tree outlives the engine that parsed it. It is a
-//! `thread_local!`, because tree ids are minted from `globalThis` and each
-//! JavaScript thread has its own — a table shared across threads would meet
-//! the same id twice.
+//! `thread_local!`: a tree resolves only on the JavaScript thread that parsed
+//! it, whose heap holds its nodes and the finalizer that disposes it. Tree ids
+//! come from the engine's one counter, so no two threads' tables share an id.
 //!
 //! Trees are dropped when JavaScript drops its side: the boundary registers
 //! each tree with a `FinalizationRegistry` and calls the addon's `disposeTree`
@@ -52,6 +52,41 @@
 #[macro_export]
 macro_rules! napi_engine {
     ($grammar:ty, $render_root:ty, $any:ty, $options:ty, $render_parts:path, $abi:expr, $defaults:path) => {
+        /// Refuse to load beside an engine image of another release: the
+        /// addon carries the stamp it was built against, and the process
+        /// holds one engine, mapped by whichever addon loaded first.
+        ///
+        /// The hook reads the mapped engine's stamp as data and compares it
+        /// here, before any call into the engine. The loader binds that read
+        /// when it maps the addon, so an engine of another version fails the
+        /// load, and one of this version and another commit reaches the
+        /// comparison. Only once the stamps differ does the hook call the
+        /// engine, for the refusal. No other call into the engine runs before
+        /// the comparison: a call may be bound lazily, and an engine of
+        /// another release may not define it.
+        #[::napi_derive::napi(module_exports)]
+        pub fn refuse_engine_skew() -> ::napi::Result<()> {
+            if ::sittir_engine::LOADED == ::sittir_engine::BUILT {
+                return Ok(());
+            }
+            Err(::napi::Error::from_reason(::sittir_engine::refusal(env!("CARGO_PKG_NAME"), &::sittir_engine::BUILT)))
+        }
+
+        /// The engine image this process mapped: its stamp and the file it
+        /// was loaded from.
+        #[::napi_derive::napi(object)]
+        pub struct EngineStamp {
+            pub stamp: String,
+            pub path: Option<String>,
+        }
+
+        /// The engine image this process mapped (`sittir_engine::loaded`).
+        #[::napi_derive::napi]
+        pub fn engine_stamp() -> EngineStamp {
+            let (stamp, path) = ::sittir_engine::loaded();
+            EngineStamp { stamp: stamp.to_string(), path }
+        }
+
         #[::napi_derive::napi(object, object_to_js = false)]
         pub struct EngineOptions {
             /// Resolved once here against the grammar's site table at
@@ -307,7 +342,9 @@ macro_rules! napi_engine {
             /// and its error regions.
             #[::napi_derive::napi]
             pub fn parse(&mut self, env: ::napi::Env, source: String) -> ::napi::Result<String> {
-                let claim = self.claim_tree_id(&env)?;
+                let claim = $crate::engine::claim_tree_id().ok_or_else(|| {
+                    ::napi::Error::from_reason(format!("this process exhausted its {} tree ids", $crate::engine::MAX_TREE_ID))
+                })?;
                 let tree_id = claim.id();
                 let parsed = self
                     .engine
@@ -669,32 +706,6 @@ macro_rules! napi_engine {
             }
         }
 
-        impl SittirEngine {
-
-            /// Take the next tree id from the JavaScript process, refusing to wrap.
-            ///
-            /// Every grammar's addon is its own linked image, so a counter in
-            /// Rust static memory would be one counter per addon and a rust
-            /// engine and a typescript engine could both mint tree 0. The
-            /// process's one `globalThis` is the owner every addon shares: the
-            /// next id lives there, so a coordinate minted by any engine names
-            /// no tree in any other, whatever grammar it speaks. Ids are never
-            /// reused, so exhausting them is the honest end state.
-            fn claim_tree_id(&mut self, env: &::napi::Env) -> ::napi::Result<$crate::engine::TreeClaim> {
-                const KEY: &str = "__sittirNextTreeId";
-                let mut global = env.get_global()?;
-                let next: Option<f64> = ::napi::bindgen_prelude::JsObjectValue::get_named_property(&global, KEY)?;
-                let (id, record) = $crate::engine::claim_tree_id_from(next).ok_or_else(|| {
-                    ::napi::Error::from_reason(format!(
-                        "this process exhausted its {} tree ids",
-                        $crate::engine::MAX_TREE_ID
-                    ))
-                })?;
-                ::napi::bindgen_prelude::JsObjectValue::set_named_property(&mut global, KEY, record)?;
-                Ok(id)
-            }
-        }
-
         $crate::records_codec! {
             /// The tag words of a parsed cell whose slot holds more than one
             /// form (`arena::cell::parsed_tag`).
@@ -883,6 +894,20 @@ macro_rules! napi_engine {
                 with_live_tree(&env, tree_id, |parsed| {
                     let at = record_of(parsed, index, depth, true)?;
                     Ok(at)
+                })
+            }
+
+            /// Whether the record backer answers every node of the live tree
+            /// `treeId`, read whole, as the tree backer does
+            /// (`ParsedTree::backer_parity`): `{ nodes, differing, first? }`.
+            /// A diagnostic. Refuses a tree that is not live and a read the
+            /// model refuses.
+            #[::napi_derive::napi(ts_return_type = "{ nodes: number; differing: number; first?: number }")]
+            pub fn backer_parity(env: ::napi::Env, tree_id: $crate::types::TreeId) -> ::napi::Result<$crate::arena::BackerParity> {
+                with_live_tree(&env, tree_id, |parsed| {
+                    ::std::panic::catch_unwind(::std::panic::AssertUnwindSafe(|| parsed.backer_parity::<$any>()))
+                        .map_err(|payload| ::napi::Error::from_reason($crate::panic_msg(&*payload, "backer parity panicked")))?
+                        .map_err(::napi::Error::from_reason)
                 })
             }
 
@@ -1943,7 +1968,7 @@ where
         self.trees.seat_through(coord, wrappers, seat)
     }
 
-    fn read_node(&self, tree: crate::types::TreeId, index: crate::types::NodeIndex, read: &mut dyn FnMut(&mut tree_sitter::TreeCursor<'_>, &mut crate::read::ReadCtx<'_>)) -> bool {
+    fn read_node(&self, tree: crate::types::TreeId, index: crate::types::NodeIndex, read: &mut dyn FnMut(&mut crate::tree_sitter::TreeCursor<'_>, &mut crate::read::ReadCtx<'_>)) -> bool {
         crate::render::SourceTable::read_node(self.trees, tree, index, read)
     }
 

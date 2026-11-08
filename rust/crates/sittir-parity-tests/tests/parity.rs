@@ -17,8 +17,9 @@
 //! covered by per-crate tests. This harness isolates
 //! grammar crate render module + sittir-core engine parity.
 
+use sittir_core::tree_sitter;
 use sittir_parity_tests::{load_fixtures, ParityFixture, RoundTripFixture};
-use tree_sitter::Parser;
+use sittir_core::tree_sitter::Parser;
 
 /// One grammar's engine binding — everything the harness needs to
 /// drive the reparse pipeline end-to-end.

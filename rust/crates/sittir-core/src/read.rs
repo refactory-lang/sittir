@@ -9,6 +9,7 @@
 //! fact lives here: each one reaches the reader through a generated
 //! attribute.
 
+use crate::tree_sitter;
 use crate::heap::HeapBytes;
 use crate::layout::NodeLayout;
 use crate::slot::{ChangedEdges, NodeCoordinate, SlotValue};
@@ -17,7 +18,7 @@ use crate::trivia_table::TriviaSide;
 use crate::types::{FieldId, ItemIndex, KindId, NodeIndex, Span};
 use std::num::NonZeroU32;
 use std::sync::OnceLock;
-use tree_sitter::{Language, Node, TreeCursor};
+use crate::tree_sitter::{Language, Node, TreeCursor};
 
 pub use crate::nodes::Kid;
 pub use regex::Captures;
@@ -1791,7 +1792,7 @@ mod tests {
     type Plain = Probe<false>;
 
     fn token(start: u32, end: u32, extra: bool) -> Kid {
-        Kid { index: NodeIndex::ROOT, start, end, count: 1, grammar: KindId(9), display: KindId(9), field: None, named: false, extra, error: false }
+        Kid { index: NodeIndex::ROOT, start, end, count: 1, grammar: KindId(9), display: KindId(9), field: None, named: false, extra }
     }
 
     #[test]

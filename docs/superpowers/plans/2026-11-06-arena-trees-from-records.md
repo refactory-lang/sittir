@@ -140,20 +140,22 @@ In flight as its own PR (prototype). Goldens from master, then the pass, with re
 **Files:**
 - Modify: `napi_engine.rs` (`ArenaSources`), `arena/view.rs` (`source_root`, `RecordCtx::row_coordinate`) and `arena/prep.rs` (`edited_record`, `RecordPrep::row_coordinate`). In arena storage these read `RecordNodes`. `edited_record` takes the node's existing record and stops re-hydrating.
 - Modify: `trivia_table/place.rs` and `engine.rs` (`Lookups::baseline_gap`). A layout run's baseline gap is measured once, when the run is first placed, and kept with it.
+- Modify: the `SourceTable` methods that measure (`slot_layouts`, `separator_before`, `sides`, `frames`) take the arenas their caller holds. A render lends the arenas it holds. A napi call made outside a render (`slotLayouts`, `layoutBaseline`) locks its tree's arena and lends it to the same method. In a tree read whole (its rows published), a baseline renders the region's record from its templates over the lent arenas, read-only, with the same Baseline recorder and seating as the reader render. A tree read part-way measures through the tree as before.
 - Modify: the consumers Task 3 left on a lent cursor. In arena storage they read `RecordNodes`:
   - `render_read` (baselines);
   - `slot_routes` (slot layouts, separators, siblings);
   - `unit_id`, `delimiter` and `Plan::holds` (descendants, `planHolds`);
   - `read_units`.
   The generated routers take `RecordNodes::kids` as they take `survey`'s children. Snapshot and `readNode` read the node's existing record.
-- Test: `rust/crates/sittir-core/tests/arena_from_records.rs`.
+- Test: `rust/crates/sittir-parity-tests/tests/arena_from_records.rs`, since `sittir-core` can't render a grammar's records.
 
 **Interfaces:**
 - Consumes: Task 4's `RecordNodes`.
 - Produces: in arena storage, `SourceTable::read_ctx` answers `None` after a full hydration, and nothing on the render, query or edit paths asks for the tree.
 
 - [ ] **Step 1: Failing tests:**
-  - `arena_render_reads_no_tree`: after a full hydration, rendering the untouched, rebuilt and codemod cases in arena storage makes 0 tree accesses, through a test-only counter on `TreeNodes`;
+  - `arena_render_reads_no_tree`: after a full hydration, rendering the untouched, rebuilt and codemod cases in arena storage makes 0 tree accesses, counted by `LayoutWork::tree_reads` in the one function that hands out a `ParsedTree`'s tree;
+  - baseline parity: for every layout run of the fixtures and both corpora, the gap measured from the record equals the gap measured through the tree;
   - `a_baseline_gap_is_measured_once`: rendering one tree twice measures each layout run's baseline once;
   - `an_edit_does_not_rehydrate`: an edited render in arena storage writes no record into the `TreeArena`.
 - [ ] **Step 2:** Run them. They fail.
@@ -166,6 +168,7 @@ In flight as its own PR (prototype). Goldens from master, then the pass, with re
 **Files:**
 - Modify: `napi_engine.rs` and `engine.rs`. In arena storage, `parse` hydrates the whole tree in the same call, then drops the `tree_sitter::Tree`. The parse's `TreeArena`, token spans, rows, source buffer and placed sides go into the engine arena's held-parse table. Root release drops the root's count.
 - Modify: `arena/built_image.rs`. The LINK record's tree word names a held-parse slot.
+- Remove the branches Task 5 keeps for trees read part-way: `edited_record`'s coordinate branch and the baseline measured through the tree. Every arena tree is now read whole at parse.
 - Modify: `packages/common/src/{read,record-view,handle,engine,create-engine,built-arena}.ts`. An arena `TreeHandle` carries the slot and the parse id, and holds no `Tree` object. `handleDispose` on a parse root releases the root's count. The arena's `#trees` and its `holdTree` calls go.
 - Modify: `packages/tools/src/validate/layout-runs.ts` and `packages/tools/src/profile/native-hydration.ts`, which release their roots.
 - Test: `rust/crates/sittir-core/tests/arena_held_parses.rs` and `packages/common/tests/arena-held-parses.test.ts`.

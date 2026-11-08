@@ -10,7 +10,7 @@ use super::{Address, ArenaError, ArenaRead, Cell, CellShape, CellWord, HydrateEr
 use crate::read::{Depth, ReadCtx};
 use crate::record::HEADER_WORDS;
 use crate::types::{KindId, NodeIndex};
-use tree_sitter::TreeCursor;
+use crate::tree_sitter::TreeCursor;
 
 fn malformed(what: &'static str, word: u32) -> ArenaError {
     ArenaError::Malformed { what, word }
@@ -201,7 +201,7 @@ fn held<N: HydrateNode>(tree: &mut TreeArena, cursor: &mut TreeCursor<'_>, ctx: 
         return Ok(Some(at));
     }
     crate::read::goto(cursor, row);
-    if !writes || cursor.node().is_error() {
+    if !writes || crate::nodes::shown_as_error(crate::read::display_id(&cursor.node())) {
         return Ok(None);
     }
     let at = write::<N>(tree, cursor, ctx, row, None, depth)?;

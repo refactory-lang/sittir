@@ -133,6 +133,15 @@ export declare class SittirEngine {
 export declare const ARENA_CHUNK_SHIFT: number
 
 /**
+ * r" Whether the record backer answers every node of the live tree
+ * r" `treeId`, read whole, as the tree backer does
+ * r" (`ParsedTree::backer_parity`): `{ nodes, differing, first? }`.
+ * r" A diagnostic. Refuses a tree that is not live and a read the
+ * r" model refuses.
+ */
+export declare function backerParity(treeId: TreeId): { nodes: number; differing: number; first?: number }
+
+/**
  * r" Takes one more count of the built entry at `address`, whose
  * r" count saturated. Refuses an address no entry starts at and
  * r" a count that has not saturated.
@@ -308,6 +317,18 @@ export interface EngineOptions {
    * engine's table — the engine's own table never changes.
    */
   options?: object
+}
+
+/** The engine image this process mapped (`sittir_engine::loaded`). */
+export declare function engineStamp(): EngineStamp
+
+/**
+ * The engine image this process mapped: its stamp and the file it
+ * was loaded from.
+ */
+export interface EngineStamp {
+  stamp: string
+  path?: string
 }
 
 /**

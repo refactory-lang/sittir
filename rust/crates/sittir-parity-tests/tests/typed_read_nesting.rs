@@ -1,3 +1,4 @@
+use sittir_core::tree_sitter;
 use sittir_core::codec::{Height, RECURSION_LIMIT};
 use sittir_core::read::{Depth, ReadCtx, ReadRoot};
 use sittir_rust::render::RenderRoot;

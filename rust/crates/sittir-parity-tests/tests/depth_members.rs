@@ -3,6 +3,7 @@
 //! subtree counts them, the interiors of `ERROR`s and extras included. A
 //! render finds them only when something after a slice reads its depth.
 
+use sittir_core::tree_sitter;
 use sittir_core::trivia_table::{DepthMembers, SurfaceKinds};
 use sittir_core::types::NodeIndex;
 

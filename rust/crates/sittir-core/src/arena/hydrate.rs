@@ -26,7 +26,7 @@ use crate::record::{stored, Stored, HEADER_WORDS};
 use crate::slot::SlotValue;
 use crate::types::{KindId, NodeIndex, Span};
 use crate::NonEmptyVec;
-use tree_sitter::TreeCursor;
+use crate::tree_sitter::TreeCursor;
 
 /// What a refused hydration names: the read's refusal, or the arena's.
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -232,6 +232,87 @@ impl<'a> Hydration<'a> {
         }
         arena.words_mut(cell, 1)?[0] = ListCell::word(run)?.0;
         Ok(())
+    }
+
+    /// The facts of the node `cursor` stands on (`Kid::at`), its row
+    /// written unless the tree has one for it.
+    ///
+    /// # Errors
+    ///
+    /// What writing the row refuses.
+    pub fn meet(&mut self, cursor: &TreeCursor<'_>) -> Result<crate::nodes::Kid, HydrateError> {
+        let node = cursor.node();
+        let kid = crate::nodes::Kid::of(&node, crate::read::index_of(cursor), crate::read::field_id(cursor));
+        self.tree.write_row(&kid, node.is_missing())?;
+        Ok(kid)
+    }
+
+    /// Writes the row of every node under the one `cursor` stands on, which
+    /// holds `count` nodes counting itself: a subtree the walk does not
+    /// enter. The cursor ends where it started.
+    ///
+    /// # Errors
+    ///
+    /// What writing a row refuses.
+    pub fn meet_under(&mut self, cursor: &mut TreeCursor<'_>, count: u32) -> Result<(), HydrateError> {
+        if count <= 1 || !cursor.goto_first_child() {
+            return Ok(());
+        }
+        let mut levels = 1;
+        let met = loop {
+            if let Err(refusal) = self.meet(cursor) {
+                break Err(refusal);
+            }
+            if cursor.goto_first_child() {
+                levels += 1;
+                continue;
+            }
+            while !cursor.goto_next_sibling() {
+                cursor.goto_parent();
+                levels -= 1;
+                if levels == 0 {
+                    return Ok(());
+                }
+            }
+        };
+        for _ in 0..levels {
+            cursor.goto_parent();
+        }
+        met
+    }
+
+    /// Writes the row of the node `cursor` stands on and of every node
+    /// under it: a subtree no walk enters. The cursor ends where it started.
+    ///
+    /// # Errors
+    ///
+    /// What writing a row refuses.
+    pub fn meet_whole(&mut self, cursor: &mut TreeCursor<'_>) -> Result<(), HydrateError> {
+        let kid = self.meet(cursor)?;
+        self.meet_under(cursor, kid.count)
+    }
+
+    /// Writes the row of every child of the node `cursor` stands on, and of
+    /// every node under each child but `entered`, whose walk wrote its own.
+    /// The cursor ends where it started.
+    ///
+    /// # Errors
+    ///
+    /// What writing a row refuses.
+    pub fn meet_children_but(&mut self, cursor: &mut TreeCursor<'_>, entered: NodeIndex) -> Result<(), HydrateError> {
+        if !cursor.goto_first_child() {
+            return Ok(());
+        }
+        let met = loop {
+            if let Err(refusal) = self.meet(cursor).and_then(|kid| if kid.index == entered { Ok(()) } else { self.meet_under(cursor, kid.count) }) {
+                break Err(refusal);
+            }
+            if !cursor.goto_next_sibling() {
+                break Ok(());
+            }
+        };
+        cursor.goto_parent();
+        met
     }
 
     /// Sets the presence bit `bit` of word `word` of `draft` when `present`.
@@ -462,14 +543,16 @@ impl<T: HydrateNode, const A: bool> HydrateSlot for NonEmptyVec<Option<SlotValue
 /// read `depth` levels down into `N` as its walk writes it: `None` for a node
 /// with no record, a leaf or a unit. A refused walk leaves the tree's arena
 /// as it found it: the words, chunks and record starts it and its children's
-/// walks wrote are dropped. The walk is a read of its own: the node at
-/// `index` is where it starts (`ReadCtx::begin_read`).
+/// walks wrote are dropped. The rows of the nodes it met stay, since a row
+/// is a fact of the tree (`TreeArena::write_row`). The walk is a read of its
+/// own: the node at `index` is where it starts (`ReadCtx::begin_read`).
 ///
 /// # Errors
 ///
 /// What the hydration refuses.
 pub fn hydrate_at<N: HydrateNode>(cursor: &mut TreeCursor<'_>, ctx: &mut ReadCtx<'_>, index: NodeIndex, stamped: Option<KindId>, depth: Depth, records: &mut Hydration<'_>) -> Result<Option<Address>, HydrateError> {
     crate::read::goto(cursor, index);
+    records.meet(cursor)?;
     ctx.begin_read();
     ctx.at = None;
     let mark = records.tree.mark();
@@ -492,6 +575,7 @@ mod tests {
     use super::*;
     use crate::read::{grammar_id, index_of};
     use crate::record::{form, PARSED_KIND_BITS};
+    use crate::tree_sitter;
     use crate::types::TreeId;
 
     const fn shape(word: u32, width: u32, run: Option<u32>, inline: u32, forms: u8) -> CellShape {

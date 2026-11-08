@@ -1,10 +1,15 @@
 import { execFile } from 'node:child_process';
 import { createHash } from 'node:crypto';
+import { realpathSync } from 'node:fs';
 import { readFile, writeFile } from 'node:fs/promises';
 import { cpus, release } from 'node:os';
+import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { promisify } from 'node:util';
-import { stableGrammars, type GrammarName } from '@sittir/codegen/grammars';
+import { REPO_ROOT, stableGrammars, type GrammarName } from '@sittir/codegen/grammars';
+import type { NodeStorage } from '@sittir/types';
+import { hostInstallSize, inTree } from '../native-pack.ts';
+import type { LibraryMemoryOptions, LibraryMemoryRun } from './library-memory-worker.ts';
 import { nativePhases, type HydrationDepth } from './native-hydration.ts';
 import type { NativeHydrationOptions, NativeHydrationRun } from './native-hydration-worker.ts';
 import { measureBuilt } from '../built.ts';
@@ -24,6 +29,24 @@ export interface StorageBenchOptions {
 	idleGate?: string;
 	output?: string;
 	validation?: boolean;
+	baseline?: string;
+}
+
+export type Revision = 'branch' | 'baseline';
+
+export type RoundWorker =
+	| { readonly revision: Revision; readonly storage: NodeStorage }
+	| { readonly revision: Revision; readonly grammars: 'one' | 'all' };
+
+export function roundWorkers(round: number, revisions: readonly Revision[], memory: boolean): RoundWorker[] {
+	const odd = round % 2 === 1;
+	const ordered = odd ? [...revisions].reverse() : revisions;
+	const storages: readonly NodeStorage[] = odd ? ['arena', 'object'] : ['object', 'arena'];
+	const loads = odd ? (['all', 'one'] as const) : (['one', 'all'] as const);
+	return [
+		...ordered.flatMap((revision) => storages.map((storage) => ({ revision, storage }))),
+		...(memory ? ordered.flatMap((revision) => loads.map((grammars) => ({ revision, grammars }))) : [])
+	];
 }
 
 function retainedMemory(rows: readonly { baseline: NodeJS.MemoryUsage; current: NodeJS.MemoryUsage }[]) {
@@ -74,23 +97,35 @@ export function summarizeNativeHydration(samples: readonly NativeHydrationRun[])
 	});
 }
 
+type WorkerName = 'native-hydration' | 'validation-storage' | 'library-memory';
+
+const ownWorker = (name: WorkerName): string => fileURLToPath(new URL(`./${name}-worker.js`, import.meta.url));
+
 async function runWorker<T>(
-	workerName: 'native-hydration' | 'validation-storage',
-	args: NativeHydrationOptions | ValidationStorageOptions,
+	worker: string,
+	args: NativeHydrationOptions | ValidationStorageOptions | LibraryMemoryOptions,
+	label: string,
 	round: number,
-	idleGate?: string
+	idleGate?: string,
+	cwd = process.cwd()
 ): Promise<T & { round: number; idle: string | null }> {
-	const idle = idleGate ? (await execute('bash', [idleGate, process.cwd()], { timeout: 120_000 })).stdout.trim() : null;
-	process.stderr.write(
-		`bench-storage: ${args.grammar} round ${round + 1} ${'storage' in args ? args.storage : 'native'}\n`
-	);
-	const worker = new URL(`./${workerName}-worker.js`, import.meta.url);
-	const { stdout } = await execute(process.execPath, ['--expose-gc', fileURLToPath(worker), JSON.stringify(args)], {
+	const idle = idleGate ? (await execute('bash', [idleGate, cwd], { timeout: 120_000 })).stdout.trim() : null;
+	process.stderr.write(`bench-storage: ${label} round ${round + 1}\n`);
+	const { stdout } = await execute(process.execPath, ['--expose-gc', worker, JSON.stringify(args)], {
+		cwd,
 		maxBuffer: 8 * 1024 * 1024,
 		timeout: 300_000,
 		env: { ...process.env, NODE_ENV: 'production' }
 	});
 	return { ...JSON.parse(stdout), round, idle };
+}
+
+const PROFILE_DIR = dirname(fileURLToPath(import.meta.url));
+
+async function harnessDigest(profileDir: string, files: readonly string[]): Promise<string> {
+	const harness = createHash('sha256');
+	for (const file of ['storage', ...files]) harness.update(await readFile(join(profileDir, `${file}.js`)));
+	return harness.digest('hex');
 }
 
 function integer(name: string, value: number, minimum: number): number {
@@ -109,6 +144,7 @@ export async function run(options: StorageBenchOptions): Promise<number> {
 		throw new Error(
 			'validation profiles use the complete deep corpus; --limit and finite --native-depth apply only to native hydration'
 		);
+	if (options.baseline !== undefined && !options.validation) throw new Error('--baseline compares the validation profiles; add --validation');
 	if (nativeDepth !== 'all') {
 		integer('native-depth', nativeDepth, 1);
 		if (nativeDepth > 0xffffffff) throw new Error('native-depth exceeds the native depth range');
@@ -119,38 +155,57 @@ export async function run(options: StorageBenchOptions): Promise<number> {
 		if (!grammar) throw new Error(`unknown grammar: ${name}`);
 		if (!grammars.includes(grammar)) grammars.push(grammar);
 	}
+	const trees: Readonly<Record<Revision, string>> = { branch: REPO_ROOT, baseline: options.baseline === undefined ? REPO_ROOT : realpathSync.native(options.baseline) };
+	const revisions: readonly Revision[] = options.baseline === undefined ? ['branch'] : ['branch', 'baseline'];
 	const nativeSamples: (NativeHydrationRun & { round: number; idle: string | null })[] = [];
-	const validationSamples: (ValidationStorageRun & { round: number; idle: string | null })[] = [];
+	const validationSamples: Record<Revision, (ValidationStorageRun & { round: number; idle: string | null })[]> = { branch: [], baseline: [] };
+	const memorySamples: (LibraryMemoryRun & { grammar: GrammarName; revision: Revision; round: number; idle: string | null })[] = [];
 	const startedAt = new Date().toISOString();
 	for (const grammar of grammars) {
 		for (let round = 0; round < rounds; round++) {
-			if (options.validation) {
-				const order = round % 2 === 0 ? (['object', 'arena'] as const) : (['arena', 'object'] as const);
-				for (const storage of order)
-					validationSamples.push(
-						await runWorker<ValidationStorageRun>(
-							'validation-storage',
-							{ grammar, storage, warmup, iterations },
-							round,
-							options.idleGate
-						)
-					);
-				summarizeValidationStorage(validationSamples);
+			if (!options.validation) {
+				nativeSamples.push(
+					await runWorker<NativeHydrationRun>(
+						ownWorker('native-hydration'),
+						{ grammar, depth: nativeDepth, warmup, iterations, limit: options.limit },
+						`${grammar} native`,
+						round,
+						options.idleGate
+					)
+				);
 				continue;
 			}
-			nativeSamples.push(
-				await runWorker<NativeHydrationRun>(
-					'native-hydration',
-					{ grammar, depth: nativeDepth, warmup, iterations, limit: options.limit },
-					round,
-					options.idleGate
-				)
-			);
+			for (const slot of roundWorkers(round, revisions, options.baseline !== undefined)) {
+				const tree = trees[slot.revision];
+				if ('storage' in slot) {
+					validationSamples[slot.revision].push(
+						await runWorker<ValidationStorageRun>(
+							inTree(tree, ownWorker('validation-storage')),
+							{ grammar, storage: slot.storage, warmup, iterations },
+							`${grammar} ${slot.storage} ${slot.revision}`,
+							round,
+							options.idleGate,
+							tree
+						)
+					);
+				} else {
+					const loaded = slot.grammars === 'one' ? [grammar] : stableGrammars();
+					const sample = await runWorker<LibraryMemoryRun>(
+						ownWorker('library-memory'),
+						{ tree, grammars: loaded },
+						`${slot.grammars === 'one' ? grammar : 'all grammars'} memory ${slot.revision}`,
+						round,
+						options.idleGate,
+						tree
+					);
+					memorySamples.push({ ...sample, grammar, revision: slot.revision });
+				}
+			}
+			for (const revision of revisions) summarizeValidationStorage(validationSamples[revision]);
 		}
 	}
 	const nativeSummary = summarizeNativeHydration(nativeSamples);
-	const validationSummary = summarizeValidationStorage(validationSamples);
-	const harness = createHash('sha256').update(await readFile(fileURLToPath(import.meta.url)));
+	const validationSummary = summarizeValidationStorage(validationSamples.branch);
 	const harnessFiles = options.validation
 		? [
 				'storage-common',
@@ -162,7 +217,25 @@ export async function run(options: StorageBenchOptions): Promise<number> {
 				'../validate/common'
 			]
 		: ['storage-common', 'native-hydration-worker', 'native-hydration'];
-	for (const file of harnessFiles) harness.update(await readFile(new URL(`./${file}.js`, import.meta.url)));
+	const baseline =
+		options.baseline === undefined
+			? undefined
+			: {
+					tree: trees.baseline,
+					commit: (await execute('git', ['rev-parse', 'HEAD'], { cwd: trees.baseline })).stdout.trim(),
+					harnessSha256: await harnessDigest(inTree(trees.baseline, PROFILE_DIR), harnessFiles),
+					validationSummary: summarizeValidationStorage(validationSamples.baseline),
+					validationSamples: validationSamples.baseline
+				};
+	const library =
+		baseline === undefined
+			? undefined
+			: {
+					memory: memorySamples,
+					install: Object.fromEntries(
+						revisions.map((revision) => [revision, Object.fromEntries(grammars.map((grammar) => [grammar, hostInstallSize(trees[revision], grammar)]))])
+					)
+				};
 	const report = {
 		schemaVersion: options.validation ? 4 : 3,
 		mode: options.validation ? 'validation-storage' : 'native-hydration',
@@ -178,7 +251,7 @@ export async function run(options: StorageBenchOptions): Promise<number> {
 			cwd: process.cwd(),
 			nodeEnv: 'production',
 			idleGated: Boolean(options.idleGate),
-			harnessSha256: harness.digest('hex')
+			harnessSha256: await harnessDigest(PROFILE_DIR, harnessFiles)
 		},
 		options: {
 			grammars,
@@ -188,7 +261,8 @@ export async function run(options: StorageBenchOptions): Promise<number> {
 			limit: options.limit ?? null,
 			nativeDepth
 		},
-		...(options.validation ? { validationSummary, validationSamples } : { nativeSummary, nativeSamples })
+		...(options.validation ? { validationSummary, validationSamples: validationSamples.branch } : { nativeSummary, nativeSamples }),
+		...(baseline === undefined ? {} : { baseline, library })
 	};
 	const json = `${JSON.stringify(report, null, 2)}\n`;
 	if (options.output) await writeFile(options.output, json);

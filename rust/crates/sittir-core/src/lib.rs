@@ -51,6 +51,10 @@ pub mod view;
 pub use types::KindId;
 // The derive that expands a node declaration into its typed reader.
 pub use sittir_node_macros::Node;
+// The one tree-sitter crate, held by the shared engine library. Every crate
+// above the engine, and the code the derive and the generators write, reaches
+// tree-sitter here, so no addon links a second copy of the runtime.
+pub use sittir_engine::tree_sitter;
 
 #[cfg(feature = "napi-bindings")]
 #[doc(hidden)]
