@@ -103,15 +103,24 @@ In flight as its own PR (prototype). Goldens from master, then the pass, with re
 ### Task 4: Token spans and node rows in arena records, and the record backer
 
 **Files:**
-- Modify: the hydrate derive (`sittir-node-macros/src/hydrate.rs`) and `arena/hydrate.rs`. Every child the records don't otherwise name gets a token span (index, start, end). These are anonymous tokens, extras, named units and flags, and named children a template writes.
-- Modify: `arena/rows.rs`. A `TreeArena` keeps each node's row (index, span, subtree end and kind) and the tree's depth members (`SurfaceKinds::indent` and `dedent` with their running net), recorded as the hydrate pass meets them. The record backer answers `depth_move` from these, so arena storage never walks the tree for them. A first render spent 71% of its time in that walk.
+- Modify: the hydrate derive (`sittir-node-macros/src/hydrate.rs`) and `arena/hydrate.rs`. Every node of the tree gets a row, records included. That covers anonymous tokens, extras, named units and flags, named children a template writes, and the nodes inside a subtree the hydrate pass doesn't enter: a leaf's interior, an `ERROR`'s children, an extra's children. Such a subtree is walked once for its rows while the tree is still held.
+- Modify: `arena/rows.rs`. A `TreeArena` keeps one dense row per node, 4 words:
+  - start;
+  - end;
+  - subtree end;
+  - a packed word: grammar kind (16 bits), field (10 bits), and named, extra, `ERROR`, `MISSING`, holds-an-error and aliased flags.
+  
+  A sparse map holds the display kind of each aliased node. A field id that doesn't fit in 10 bits is refused by name when the arena is built. The arena also keeps the tree's depth members (`SurfaceKinds::indent` and `dedent` with their running net), recorded as the hydrate pass meets them. The record backer answers `depth_move` from these, so arena storage never walks the tree for them. A first render spent 71% of its time in that walk.
 - Modify: `nodes.rs`, adding the record backer.
 - Create: `packages/tools/src/validate/backer-parity.ts`, registered as `sittir tool backer-parity`. It's driven by prototype's corpus harness and reads `.ts` files only, never building or running anything from a corpus.
 - Test: `rust/crates/sittir-core/tests/nodes.rs` and `packages/tools/tests/backer-parity.test.ts`.
 
 **Interfaces:**
 - Consumes: Task 2's `Nodes` and `Kid`.
-- Produces: `pub(crate) struct RecordNodes<'t>`, built from a `TreeArena`, its token spans and the source. Its `parent` is found from the rows' subtree ends, never with a cursor. It answers every fact of Task 3's `Kid`, and its `missing` and `holds_error` queries from rows. A fact the records already hold (a record's display kind, a slot's field) is read from them. Rows add bytes only for facts the records don't hold.
+- Produces: `pub struct RecordNodes<'t>`, built from a `TreeArena`'s rows and the source. It's public because the five-grammar parity test lives in `sittir-parity-tests`. Its `parent` is found from the rows' subtree ends, never with a cursor. It answers every fact of Task 3's `Kid`, and its `missing` and `holds_error` queries, from rows alone.
+  - The rows are navigation's one source of node facts.
+  - A record node's row repeats the bytes its side record also holds. Both are written once, by the hydrate pass, and never change.
+  - Records stay word-identical.
 
 - [ ] **Step 1: Failing tests:**
   - `record_nodes_match_tree_nodes`: for every node of each fixture tree in all five grammars, the two backers give equal `kid`, `kids` and `parent`. The fixtures include:
