@@ -31,6 +31,7 @@ on:
       - Cargo.lock
       - rust-toolchain.toml
       - .github/workflows/native-layout.yml
+      - .github/actions/native-cross/**
   push:
     branches: [master]
     paths: *native-paths
@@ -48,12 +49,12 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - { target: aarch64-apple-darwin, host: macos-15, cross: false, cargo: build }
-          - { target: x86_64-unknown-linux-gnu, host: ubuntu-22.04, cross: false, cargo: build }
-          - { target: x86_64-unknown-linux-musl, host: ubuntu-22.04, cross: true, cargo: zigbuild }
-          - { target: aarch64-unknown-linux-gnu, host: ubuntu-22.04, cross: true, cargo: build }
-          - { target: aarch64-unknown-linux-musl, host: ubuntu-22.04, cross: true, cargo: zigbuild }
-          - { target: x86_64-pc-windows-msvc, host: windows-2022, cross: false, cargo: build }
+          - { target: aarch64-apple-darwin, host: macos-15, cross: false }
+          - { target: x86_64-unknown-linux-gnu, host: ubuntu-22.04, cross: false }
+          - { target: x86_64-unknown-linux-musl, host: ubuntu-22.04, cross: true }
+          - { target: aarch64-unknown-linux-gnu, host: ubuntu-22.04, cross: true }
+          - { target: aarch64-unknown-linux-musl, host: ubuntu-22.04, cross: true }
+          - { target: x86_64-pc-windows-msvc, host: windows-2022, cross: false }
     steps:
       - uses: actions/checkout@v6
       - name: Install pnpm
@@ -69,28 +70,10 @@ jobs:
         uses: ./.github/actions/rust-toolchain
         with:
           targets: ${{ matrix.target }}
-      - name: Setup zig (musl cross-compile)
-        if: contains(matrix.target, 'musl')
-        uses: mlugg/setup-zig@v2
+      - name: Cross toolchain (${{ matrix.target }})
+        uses: ./.github/actions/native-cross
         with:
-          version: 0.14.1
-      - name: Install cargo-zigbuild (musl cross-compile)
-        if: contains(matrix.target, 'musl')
-        uses: taiki-e/install-action@v2
-        with:
-          tool: cargo-zigbuild
-      # The engine is not a napi package, so napi's cross toolchain does not
-      # build it: the glibc arm64 leg links with the distribution's cross gcc,
-      # and lld, which the engine's Linux link uses. A cross gcc looks for
-      # lld under its target prefix (`-fuse-ld=lld` finds
-      # aarch64-linux-gnu-ld.lld), and the package installs only ld.lld.
-      - name: Cross linker (aarch64 glibc)
-        if: matrix.target == 'aarch64-unknown-linux-gnu'
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y gcc-aarch64-linux-gnu lld
-          sudo ln -sf "$(command -v ld.lld)" /usr/local/bin/aarch64-linux-gnu-ld.lld
-          echo "CARGO_TARGET_AARCH64_UNKNOWN_LINUX_GNU_LINKER=aarch64-linux-gnu-gcc" >> "$GITHUB_ENV"
+          target: ${{ matrix.target }}
       - name: Cache cargo registry + target
         uses: Swatinem/rust-cache@v2
         with:
@@ -101,7 +84,7 @@ jobs:
           RUSTFLAGS="$(npx tsx packages/tools/src/scripts/native-rustflags.ts '${{ matrix.target }}')"
           export RUSTFLAGS
           echo "RUSTFLAGS=${RUSTFLAGS}"
-          cargo ${{ matrix.cargo }} -p sittir-engine --release --target '${{ matrix.target }}'
+          cargo "$NATIVE_CARGO" -p sittir-engine --release --target '${{ matrix.target }}'
       - name: The image exports exactly the runtime list
         shell: bash
         run: |

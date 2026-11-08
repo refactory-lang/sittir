@@ -116,28 +116,18 @@ jobs:
     needs: version
     if: needs.version.outputs.publish == 'true'
     runs-on: ${{ matrix.host }}
+    # Every leg runs to the end, so one run shows every target's failure;
+    # the publish job needs them all.
     strategy:
-      fail-fast: true
+      fail-fast: false
       matrix:
         include:
-          - target: aarch64-apple-darwin
-            host: macos-15
-            buildFlag: ""
-          - target: x86_64-unknown-linux-gnu
-            host: ubuntu-22.04
-            buildFlag: ""
-          - target: x86_64-unknown-linux-musl
-            host: ubuntu-22.04
-            buildFlag: "--cross-compile"
-          - target: aarch64-unknown-linux-gnu
-            host: ubuntu-22.04
-            buildFlag: "--use-napi-cross"
-          - target: aarch64-unknown-linux-musl
-            host: ubuntu-22.04
-            buildFlag: "--cross-compile"
-          - target: x86_64-pc-windows-msvc
-            host: windows-2022
-            buildFlag: ""
+          - { target: aarch64-apple-darwin, host: macos-15 }
+          - { target: x86_64-unknown-linux-gnu, host: ubuntu-22.04 }
+          - { target: x86_64-unknown-linux-musl, host: ubuntu-22.04 }
+          - { target: aarch64-unknown-linux-gnu, host: ubuntu-22.04 }
+          - { target: aarch64-unknown-linux-musl, host: ubuntu-22.04 }
+          - { target: x86_64-pc-windows-msvc, host: windows-2022 }
     steps:
       - uses: actions/checkout@v6
       - uses: pnpm/action-setup@v4
@@ -150,17 +140,10 @@ jobs:
         uses: ./.github/actions/rust-toolchain
         with:
           targets: ${{ matrix.target }}
-      # See ci.yml's `napi-build` job for the cross-compile setup.
-      - name: Setup zig (musl cross-compile)
-        if: contains(matrix.target, 'musl')
-        uses: mlugg/setup-zig@v2
+      - name: Cross toolchain (${{ matrix.target }})
+        uses: ./.github/actions/native-cross
         with:
-          version: 0.14.1
-      - name: Install cargo-zigbuild (musl cross-compile)
-        if: contains(matrix.target, 'musl')
-        uses: taiki-e/install-action@v2
-        with:
-          tool: cargo-zigbuild
+          target: ${{ matrix.target }}
       - name: Cache cargo registry + target
         uses: Swatinem/rust-cache@v2
         with:
@@ -172,7 +155,7 @@ jobs:
         run: |
           grammars=$(npx tsx packages/tools/src/scripts/list-grammars.ts stable)
           for crate in $grammars; do
-            npx tsx scripts/build-native.mts "${crate}" --release --target "${{ matrix.target }}" ${{ matrix.buildFlag }}
+            npx tsx scripts/build-native.mts "${crate}" --release --target "${{ matrix.target }}" $NATIVE_BUILD_FLAGS
           done
       # Every addon holds the stamp of the engine it was built against, and
       # build-native refused an engine copy that holds another, so a release

@@ -1,0 +1,49 @@
+name: Native cross toolchain
+description: >-
+  Set up what a native build for one release target needs on its CI host, and
+  export how to build for it: NATIVE_BUILD_FLAGS (for build-native, passed to
+  napi build) and NATIVE_CARGO (the cargo subcommand that builds the engine alone).
+inputs:
+  target:
+    description: The Rust target triple, one of NATIVE_TARGETS.
+    required: true
+runs:
+  using: composite
+  steps:
+    # The musl targets cross-compile through cargo-zigbuild: zig as the C
+    # compiler and linker.
+    - name: Setup zig (musl cross-compile)
+      if: contains(inputs.target, 'musl')
+      uses: mlugg/setup-zig@v2
+      with:
+        version: 0.14.1
+    - name: Install cargo-zigbuild (musl cross-compile)
+      if: contains(inputs.target, 'musl')
+      uses: taiki-e/install-action@v2
+      with:
+        tool: cargo-zigbuild
+    # The engine's Linux link passes `-fuse-ld=lld`: rustc gives a dylib one
+    # version script and GNU ld refuses a second. napi's bundled glibc cross
+    # toolchain predates that flag, so the glibc arm64 build links with the
+    # distribution's cross gcc and lld. A cross gcc looks for lld under its
+    # target prefix (`-fuse-ld=lld` finds aarch64-linux-gnu-ld.lld), and the
+    # package installs only ld.lld.
+    - name: Cross linker (aarch64 glibc)
+      if: inputs.target == 'aarch64-unknown-linux-gnu'
+      shell: bash
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y gcc-aarch64-linux-gnu lld
+        sudo ln -sf "$(command -v ld.lld)" /usr/local/bin/aarch64-linux-gnu-ld.lld
+        echo "CARGO_TARGET_AARCH64_UNKNOWN_LINUX_GNU_LINKER=aarch64-linux-gnu-gcc" >> "$GITHUB_ENV"
+    - name: How to build for ${{ inputs.target }}
+      shell: bash
+      env:
+        TARGET: ${{ inputs.target }}
+      run: |
+        case "$TARGET" in
+          *-musl) flags=--cross-compile cargo=zigbuild ;;
+          *) flags= cargo=build ;;
+        esac
+        echo "NATIVE_BUILD_FLAGS=$flags" >> "$GITHUB_ENV"
+        echo "NATIVE_CARGO=$cargo" >> "$GITHUB_ENV"

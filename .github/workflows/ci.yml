@@ -454,7 +454,7 @@ jobs:
       # itself has to be conditional — computed via fromJSON rather than
       # a plain `include:` list.
       matrix:
-        include: ${{ startsWith(github.ref, 'refs/tags/v') && fromJSON('[{"target":"aarch64-apple-darwin","host":"macos-15","cross":false,"buildFlag":""},{"target":"x86_64-unknown-linux-gnu","host":"ubuntu-22.04","cross":false,"buildFlag":""},{"target":"x86_64-unknown-linux-musl","host":"ubuntu-22.04","cross":true,"buildFlag":"--cross-compile"},{"target":"aarch64-unknown-linux-gnu","host":"ubuntu-22.04","cross":true,"buildFlag":"--use-napi-cross"},{"target":"aarch64-unknown-linux-musl","host":"ubuntu-22.04","cross":true,"buildFlag":"--cross-compile"},{"target":"x86_64-pc-windows-msvc","host":"windows-2022","cross":false,"buildFlag":""}]') || fromJSON('[{"target":"x86_64-unknown-linux-gnu","host":"ubuntu-22.04","cross":false,"buildFlag":""}]') }}
+        include: ${{ startsWith(github.ref, 'refs/tags/v') && fromJSON('[{"target":"aarch64-apple-darwin","host":"macos-15","cross":false},{"target":"x86_64-unknown-linux-gnu","host":"ubuntu-22.04","cross":false},{"target":"x86_64-unknown-linux-musl","host":"ubuntu-22.04","cross":true},{"target":"aarch64-unknown-linux-gnu","host":"ubuntu-22.04","cross":true},{"target":"aarch64-unknown-linux-musl","host":"ubuntu-22.04","cross":true},{"target":"x86_64-pc-windows-msvc","host":"windows-2022","cross":false}]') || fromJSON('[{"target":"x86_64-unknown-linux-gnu","host":"ubuntu-22.04","cross":false}]') }}
     steps:
       - uses: actions/checkout@v6
       - name: Install pnpm
@@ -470,24 +470,10 @@ jobs:
         uses: ./.github/actions/rust-toolchain
         with:
           targets: ${{ matrix.target }}
-      # `napi-rs/setup-node-and-napi@v3` was removed upstream (repo no
-      # longer resolves), which failed EVERY matrix leg — GitHub Actions
-      # fails job setup if any referenced action can't be resolved, even
-      # one gated behind `if:`. Replaced with the current napi-rs CLI's
-      # own cross-compile flags (see `buildFlag` above): musl targets
-      # cross-compile via cargo-zigbuild (needs zig + cargo-zigbuild on
-      # PATH), the gnu arm64 target uses napi's bundled cross-toolchain
-      # (`--use-napi-cross`, no extra setup needed).
-      - name: Setup zig (musl cross-compile)
-        if: contains(matrix.target, 'musl')
-        uses: mlugg/setup-zig@v2
+      - name: Cross toolchain (${{ matrix.target }})
+        uses: ./.github/actions/native-cross
         with:
-          version: 0.14.1
-      - name: Install cargo-zigbuild (musl cross-compile)
-        if: contains(matrix.target, 'musl')
-        uses: taiki-e/install-action@v2
-        with:
-          tool: cargo-zigbuild
+          target: ${{ matrix.target }}
       - name: Cache cargo registry + target
         uses: Swatinem/rust-cache@v2
         with:
@@ -500,7 +486,7 @@ jobs:
         run: |
           grammars=$(npx tsx packages/tools/src/scripts/list-grammars.ts stable)
           for crate in $grammars; do
-            npx tsx scripts/build-native.mts "${crate}" --release --target "${{ matrix.target }}" ${{ matrix.buildFlag }}
+            npx tsx scripts/build-native.mts "${crate}" --release --target "${{ matrix.target }}" $NATIVE_BUILD_FLAGS
           done
       # Each release addon just built, read from the unstripped copy its
       # build keeps: the limit's count of its grammar's costliest whole-encode
