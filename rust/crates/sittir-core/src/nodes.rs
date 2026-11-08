@@ -54,11 +54,10 @@ impl Kid {
         }
     }
 
-    /// Whether the node is an `ERROR`: shown as one, as `Node::is_error`
-    /// answers.
+    /// Whether the node is an `ERROR` (`shown_as_error`).
     #[must_use]
     pub fn error(&self) -> bool {
-        self.display == KindId::ERROR
+        shown_as_error(self.display)
     }
 
     /// Whether the node is an entry of a side: an extra, or an `ERROR`
@@ -120,6 +119,14 @@ pub enum Visit {
     Pass,
     /// Ends the walk.
     Stop,
+}
+
+/// Whether a node the parser shows as `display` is an `ERROR`, as
+/// `Node::is_error` compares: the one test of it, on the kind the node is
+/// shown as.
+#[must_use]
+pub fn shown_as_error(display: KindId) -> bool {
+    display == KindId::ERROR
 }
 
 /// How navigation finds the nodes of one parse: each node by its descendant
@@ -282,7 +289,7 @@ impl<'t> Nodes<'t> for TreeNodes<'t> {
 
     fn holds_error(&mut self, index: NodeIndex) -> bool {
         let node = self.node(index);
-        node.has_error() || crate::read::grammar_id(&node) == KindId::ERROR
+        node.has_error() || shown_as_error(crate::read::display_id(&node))
     }
 
     fn kids(&mut self, index: NodeIndex) -> Arc<[Kid]> {

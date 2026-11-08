@@ -14,7 +14,7 @@
 
 use crate::heap::{CountedMap, HeapBytes};
 use super::{Address, Arena, ArenaError, ArenaMark};
-use crate::nodes::Kid;
+use crate::nodes::{shown_as_error, Kid};
 use crate::types::{FieldId, KindId, NodeIndex};
 
 /// The bits of a node row's packed word that hold the node's field id.
@@ -82,7 +82,7 @@ impl NodeRows {
             end,
             count: subtree_end - index.0,
             grammar,
-            display: if word & packed::ALIASED == 0 { grammar } else { self.alias(index).unwrap_or(grammar) },
+            display: display_of(&self.aliases, index, word),
             field: (field != 0).then(|| FieldId(u16::try_from(field).unwrap_or(u16::MAX))),
             named: word & packed::NAMED != 0,
             extra: word & packed::EXTRA != 0,
@@ -107,10 +107,6 @@ impl NodeRows {
     #[must_use]
     pub fn holds_error(&self, index: NodeIndex) -> bool {
         self.row(index)[3] & packed::HOLDS_ERROR != 0
-    }
-
-    fn alias(&self, index: NodeIndex) -> Option<KindId> {
-        self.aliases.binary_search_by_key(&index.0, |&(at, _)| at.0).ok().map(|at| self.aliases[at].1)
     }
 
     /// Writes the row of `kid` once, with whether it is `MISSING`, the rows
@@ -150,15 +146,16 @@ impl NodeRows {
 
     /// Sorts the aliases by index and fits them to their count, and marks
     /// every node that holds an error, in one sweep from the last row to the
-    /// first: a node holds one when the nearest `ERROR` or `MISSING` token
-    /// at or after it lies before its subtree's end.
+    /// first: a node holds one when the nearest `ERROR` (`shown_as_error`)
+    /// or `MISSING` token at or after it lies before its subtree's end.
     fn finish(&mut self) {
         self.aliases.sort_unstable_by_key(|&(index, _)| index.0);
         self.aliases.shrink_to_fit();
         let mut nearest = u32::MAX;
         let len = self.len();
-        for (index, row) in (0..len).zip(self.rows.iter_mut()).rev() {
-            if row[3] & packed::MISSING != 0 || grammar_of(row[3]) == KindId::ERROR {
+        let Self { rows, aliases, written: _ } = self;
+        for (index, row) in (0..len).zip(rows.iter_mut()).rev() {
+            if row[3] & packed::MISSING != 0 || shown_as_error(display_of(aliases, NodeIndex(index), row[3])) {
                 nearest = index;
             }
             if nearest < row[2] {
@@ -170,6 +167,16 @@ impl NodeRows {
 
 fn grammar_of(word: u32) -> KindId {
     KindId(u16::try_from(word & packed::KIND_MASK).unwrap_or(u16::MAX))
+}
+
+/// The kind the node at `index`, its row's packed word `word`, is shown as:
+/// its alias's, from `aliases` sorted by index, or its grammar kind.
+fn display_of(aliases: &[(NodeIndex, KindId)], index: NodeIndex, word: u32) -> KindId {
+    let grammar = grammar_of(word);
+    if word & packed::ALIASED == 0 {
+        return grammar;
+    }
+    aliases.binary_search_by_key(&index.0, |&(at, _)| at.0).map_or(grammar, |at| aliases[at].1)
 }
 
 /// What a tree's arena holds: its chunks' written words, its record starts
@@ -431,6 +438,20 @@ mod tests {
             assert_eq!(rows.kid(kid.index), kid, "node {} as written", kid.index.0);
         }
         assert!(rows.kid(NodeIndex(5)).error());
+    }
+
+    #[test]
+    fn an_error_is_the_kind_a_node_is_shown_as() {
+        let unshown = Kid { grammar: KindId::ERROR, display: KindId(6), ..kid(2, 1, None) };
+        let shown = Kid { display: KindId::ERROR, ..kid(4, 1, None) };
+        let mut tree = TreeArena::new(crate::record::PARSED_KIND_BITS, 5);
+        for kid in [kid(0, 5, None), kid(1, 2, None), unshown, kid(3, 2, None), shown] {
+            tree.write_row(&kid, false).expect("a row");
+        }
+        let rows = tree.node_rows().expect("a row for every node");
+        let holding: Vec<u32> = (0..5).filter(|&index| rows.holds_error(NodeIndex(index))).collect();
+        assert_eq!(holding, [0, 3, 4], "the node shown as an ERROR and those over it, not the ERROR shown as another kind");
+        assert_eq!((rows.kid(NodeIndex(2)).error(), rows.kid(NodeIndex(4)).error()), (false, true));
     }
 
     #[test]

@@ -36,7 +36,7 @@ use super::{Adjacency, Assigned, DepthAnchor, LayoutRun, Place, SurfaceKinds, Tr
 use crate::nodes::{Kid, Nodes};
 use crate::heap::{btree_allocation, CountedMap, HeapBytes, IndexState, ARC_COUNTS};
 use crate::points::LineTable;
-use crate::types::{narrow, KindId, NodeIndex, RunId, Span};
+use crate::types::{narrow, NodeIndex, RunId, Span};
 use std::collections::{BTreeMap, HashMap};
 use std::sync::atomic::{AtomicBool, AtomicU32, Ordering};
 use std::sync::{Arc, Mutex, OnceLock, PoisonError};
@@ -1317,7 +1317,7 @@ impl<'t> Placer<'t, '_, '_> {
                 None => steps.push(Step::Entry { place: beside.unwrap_or(default), entry: Assigned::Member(entry.index) }),
                 Some(place) => {
                     led = matches!(place, Place::Side(_, TriviaSide::Leading)).then_some(place);
-                    let assigned = if entry.grammar == KindId::ERROR { Assigned::Error(entry.index) } else { Assigned::Extra(entry.index) };
+                    let assigned = if entry.error() { Assigned::Error(entry.index) } else { Assigned::Extra(entry.index) };
                     steps.push(Step::Entry { place, entry: assigned });
                 }
             }
@@ -1604,7 +1604,7 @@ impl<'t> Placer<'t, '_, '_> {
     /// (`Table::adjacency`): an entry carries the in-line run after the
     /// entry before it when that one is fixed too.
     fn adjacency(&mut self, entry: &Kid) -> Option<Adjacency> {
-        let fixes = |kinds: &SurfaceKinds, kid: &Kid| kid.grammar == KindId::ERROR || kinds.layout.contains(&kid.grammar);
+        let fixes = |kinds: &SurfaceKinds, kid: &Kid| kid.error() || kinds.layout.contains(&kid.grammar);
         if !fixes(&self.kinds, entry) {
             return None;
         }
@@ -1636,7 +1636,7 @@ impl<'t> Placer<'t, '_, '_> {
             let carried = taken.take().filter(|run| run.end == span.start);
             let spelled = Adjacency::of(self.text(), span);
             let adjacency = Adjacency { before: carried.or(spelled.before), ..spelled };
-            let stored = (kid.grammar == KindId::ERROR || adjacency.holds_whitespace()).then(|| if carried.is_some() { Adjacency { before: None, ..adjacency } } else { adjacency });
+            let stored = (kid.error() || adjacency.holds_whitespace()).then(|| if carried.is_some() { Adjacency { before: None, ..adjacency } } else { adjacency });
             taken = stored.and_then(|adjacency| adjacency.after);
             self.state.adjacency.insert(kid.index, stored);
         }

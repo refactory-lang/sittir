@@ -9,7 +9,7 @@
 #![cfg(feature = "arena")]
 
 use sittir_core::arena::{HydrateNode, RecordCells, ROW_FIELD_BITS};
-use sittir_core::engine::EngineGrammar;
+use sittir_core::engine::{node_at_index, EngineGrammar};
 use sittir_core::layout::LayoutWorkCounter;
 use sittir_core::nodes::{Kid, Nodes, RecordNodes, Step, TreeNodes, Visit};
 use sittir_core::options::ResolvedOptions;
@@ -73,8 +73,11 @@ struct Held {
 }
 
 /// Every node of `source`, read whole as `N`, answered by its record backer
-/// as its tree backer answers it (`ParsedTree::backer_parity`), and what its
-/// nodes held, counted into `held`.
+/// as its tree backer answers it (`ParsedTree::backer_parity`), whether it
+/// holds an error among the facts compared; its tree backer's `ERROR` and
+/// holds-an-error as the tree's own `is_error` and `has_error` give them,
+/// an `ERROR` itself included; and what its nodes held, counted into
+/// `held`.
 fn backers_agree<G: EngineGrammar, N: HydrateNode + RecordCells>(name: &str, grammar: G, options: ResolvedOptions, source: &str, held: &mut Held) {
     let tree = parsed(grammar, options, source);
     let parity = tree.backer_parity::<N>().unwrap_or_else(|refusal| panic!("{name} {source:?}: a whole read: {refusal}"));
@@ -85,6 +88,9 @@ fn backers_agree<G: EngineGrammar, N: HydrateNode + RecordCells>(name: &str, gra
     for index in 0..parity.nodes {
         let at = NodeIndex::new(index);
         let kid = nodes.kid(at);
+        let node = node_at_index(tree.tree(), at).expect("a node at every index");
+        assert_eq!(kid.error(), node.is_error(), "{name} {source:?}: whether {index} is an ERROR");
+        assert_eq!(nodes.holds_error(at), node.has_error() || node.is_error(), "{name} {source:?}: whether {index} holds an error");
         held.nodes += 1;
         held.errors += u32::from(kid.error());
         held.lone_errors += u32::from(kid.error() && kid.count == 1);
