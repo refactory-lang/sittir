@@ -1791,7 +1791,7 @@ mod tests {
     type Plain = Probe<false>;
 
     fn token(start: u32, end: u32, extra: bool) -> Kid {
-        Kid { index: NodeIndex::ROOT, start, end, count: 1, grammar: KindId(9), display: KindId(9), field: None, named: false, extra, error: false }
+        Kid { index: NodeIndex::ROOT, start, end, count: 1, grammar: KindId(9), display: KindId(9), field: None, named: false, extra }
     }
 
     #[test]

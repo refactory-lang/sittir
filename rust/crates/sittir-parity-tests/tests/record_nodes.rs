@@ -61,12 +61,13 @@ fn fixtures(name: &str) -> Vec<String> {
     sources
 }
 
-/// What the fixtures of a grammar held: nodes, `ERROR`s, `MISSING` tokens
-/// and nodes shown as an alias.
+/// What the fixtures of a grammar held: nodes, `ERROR`s, `ERROR`s with no
+/// node under them, `MISSING` tokens and nodes shown as an alias.
 #[derive(Debug, Default, Clone, Copy)]
 struct Held {
     nodes: u32,
     errors: u32,
+    lone_errors: u32,
     missing: u32,
     aliased: u32,
 }
@@ -85,7 +86,8 @@ fn backers_agree<G: EngineGrammar, N: HydrateNode + RecordCells>(name: &str, gra
         let at = NodeIndex::new(index);
         let kid = nodes.kid(at);
         held.nodes += 1;
-        held.errors += u32::from(kid.error);
+        held.errors += u32::from(kid.error());
+        held.lone_errors += u32::from(kid.error() && kid.count == 1);
         held.missing += u32::from(nodes.missing(at));
         held.aliased += u32::from(kid.display != kid.grammar);
     }
@@ -122,6 +124,7 @@ fn record_nodes_match_tree_nodes() {
         assert!(held.nodes > 0, "{name}: some node was read");
     }
     assert!(held.iter().any(|(_, held)| held.aliased > 0), "some node is shown as an alias: {held:?}");
+    assert!(held.iter().any(|(_, held)| held.lone_errors > 0), "some ERROR has no node under it: {held:?}");
 }
 
 /// The leaves `nodes` reaches from the root, in order, read through its

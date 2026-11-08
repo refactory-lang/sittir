@@ -234,15 +234,17 @@ impl<'a> Hydration<'a> {
         Ok(())
     }
 
-    /// Writes the row of `kid`, the node `cursor` stands on, unless the
-    /// tree has one for it.
+    /// The facts of the node `cursor` stands on (`Kid::at`), its row
+    /// written unless the tree has one for it.
     ///
     /// # Errors
     ///
     /// What writing the row refuses.
-    pub fn meet(&mut self, cursor: &TreeCursor<'_>, kid: &crate::nodes::Kid) -> Result<(), HydrateError> {
+    pub fn meet(&mut self, cursor: &TreeCursor<'_>) -> Result<crate::nodes::Kid, HydrateError> {
         let node = cursor.node();
-        Ok(self.tree.write_row(kid, node.is_missing(), node.has_error())?)
+        let kid = crate::nodes::Kid::of(&node, crate::read::index_of(cursor), crate::read::field_id(cursor));
+        self.tree.write_row(&kid, node.is_missing())?;
+        Ok(kid)
     }
 
     /// Writes the row of every node under the one `cursor` stands on, which
@@ -258,7 +260,7 @@ impl<'a> Hydration<'a> {
         }
         let mut levels = 1;
         let met = loop {
-            if let Err(refusal) = self.meet(cursor, &crate::nodes::Kid::at(cursor)) {
+            if let Err(refusal) = self.meet(cursor) {
                 break Err(refusal);
             }
             if cursor.goto_first_child() {
@@ -286,8 +288,7 @@ impl<'a> Hydration<'a> {
     ///
     /// What writing a row refuses.
     pub fn meet_whole(&mut self, cursor: &mut TreeCursor<'_>) -> Result<(), HydrateError> {
-        let kid = crate::nodes::Kid::at(cursor);
-        self.meet(cursor, &kid)?;
+        let kid = self.meet(cursor)?;
         self.meet_under(cursor, kid.count)
     }
 
@@ -303,8 +304,7 @@ impl<'a> Hydration<'a> {
             return Ok(());
         }
         let met = loop {
-            let kid = crate::nodes::Kid::at(cursor);
-            if let Err(refusal) = self.meet(cursor, &kid).and_then(|()| if kid.index == entered { Ok(()) } else { self.meet_under(cursor, kid.count) }) {
+            if let Err(refusal) = self.meet(cursor).and_then(|kid| if kid.index == entered { Ok(()) } else { self.meet_under(cursor, kid.count) }) {
                 break Err(refusal);
             }
             if !cursor.goto_next_sibling() {
@@ -552,7 +552,7 @@ impl<T: HydrateNode, const A: bool> HydrateSlot for NonEmptyVec<Option<SlotValue
 /// What the hydration refuses.
 pub fn hydrate_at<N: HydrateNode>(cursor: &mut TreeCursor<'_>, ctx: &mut ReadCtx<'_>, index: NodeIndex, stamped: Option<KindId>, depth: Depth, records: &mut Hydration<'_>) -> Result<Option<Address>, HydrateError> {
     crate::read::goto(cursor, index);
-    records.meet(cursor, &crate::nodes::Kid::at(cursor))?;
+    records.meet(cursor)?;
     ctx.begin_read();
     ctx.at = None;
     let mark = records.tree.mark();

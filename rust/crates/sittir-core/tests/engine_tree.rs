@@ -119,11 +119,29 @@ fn tree_nodes_answer_missing_and_error_holding_as_the_tree_does() {
         let at = NodeIndex::new(index);
         let node = node_at_index(&tree, at).expect("a node at every index");
         assert_eq!(nodes.missing(at), node.is_missing(), "whether {index} is MISSING");
-        assert_eq!(nodes.holds_error(at), node.has_error(), "whether {index} holds an error");
+        assert_eq!(nodes.holds_error(at), node.has_error() || node.is_error(), "whether {index} holds an error");
         missing += u32::from(node.is_missing());
         holding += u32::from(node.has_error() && !node.is_error() && !node.is_missing());
     }
     assert!(missing > 0 && holding > 0, "a MISSING token ({missing}) and nodes holding an error below them ({holding})");
+}
+
+/// A lone `ERROR` token, the bytes the lexer could not read, holds an error
+/// through the tree backer, itself included, as every `ERROR` does, though
+/// the tree charges its error to the `ERROR` around it (`Node::has_error`).
+#[test]
+fn a_lone_error_token_holds_an_error() {
+    let source = "x = 1 $ 2\n";
+    let tree = parse_tree(&tree_sitter_python::LANGUAGE.into(), source);
+    let work = LayoutWorkCounter::default();
+    let mut nodes = TreeNodes::new(&tree, source, &work);
+    let lone: Vec<u32> = (0..descendant_count(&tree.root_node()))
+        .filter(|&index| node_at_index(&tree, NodeIndex::new(index)).is_some_and(|node| node.is_error() && !node.has_error()))
+        .collect();
+    assert!(!lone.is_empty(), "a lone ERROR token");
+    for index in lone {
+        assert!(nodes.holds_error(NodeIndex::new(index)), "the lone ERROR token at {index} holds an error");
+    }
 }
 
 /// The kind name of the last child, extras aside, of the list spelled `list` in `source`, its own kind `kind`.

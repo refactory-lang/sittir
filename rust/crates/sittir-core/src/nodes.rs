@@ -13,9 +13,10 @@ use std::sync::Arc;
 /// What navigation reads of a node: its descendant index, numbered from the
 /// tree's root; its bytes; the nodes under it, counting itself; the kind it
 /// has in the grammar and the kind the parser shows it as; the field it
-/// fills in its parent; and whether it is named, an extra or an `ERROR`.
-/// A read takes these of every node it visits; whether a node is `MISSING`
-/// or holds an error only an error search asks (`Nodes::missing`,
+/// fills in its parent; and whether it is named or an extra. Whether it is
+/// an `ERROR` follows from the kind it is shown as (`Kid::error`). A read
+/// takes these of every node it visits; whether a node is `MISSING` or
+/// holds an error only an error search asks (`Nodes::missing`,
 /// `Nodes::holds_error`).
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct Kid {
@@ -28,7 +29,6 @@ pub struct Kid {
     pub field: Option<FieldId>,
     pub named: bool,
     pub extra: bool,
-    pub error: bool,
 }
 
 impl Kid {
@@ -51,15 +51,21 @@ impl Kid {
             field,
             named: node.is_named(),
             extra: node.is_extra(),
-            error: node.is_error(),
         }
+    }
+
+    /// Whether the node is an `ERROR`: shown as one, as `Node::is_error`
+    /// answers.
+    #[must_use]
+    pub fn error(&self) -> bool {
+        self.display == KindId::ERROR
     }
 
     /// Whether the node is an entry of a side: an extra, or an `ERROR`
     /// wherever the parser left it. Trivia, which no slot reads.
     #[must_use]
     pub fn entry(&self) -> bool {
-        self.extra || self.error
+        self.extra || self.error()
     }
 
     /// Whether the node is a leaf: no entry, and no node under it.
@@ -135,7 +141,8 @@ pub trait Nodes<'t> {
     /// inserted, with no bytes.
     fn missing(&mut self, index: NodeIndex) -> bool;
     /// Whether the node at `index` holds an error in its subtree, itself
-    /// included: an `ERROR` or a `MISSING` node holds one.
+    /// included: an `ERROR` or a `MISSING` node holds one, a lone `ERROR`
+    /// token too.
     fn holds_error(&mut self, index: NodeIndex) -> bool;
 
     /// Walks the subtree of the node at `from` in preorder, telling `visit`
@@ -274,7 +281,8 @@ impl<'t> Nodes<'t> for TreeNodes<'t> {
     }
 
     fn holds_error(&mut self, index: NodeIndex) -> bool {
-        self.node(index).has_error()
+        let node = self.node(index);
+        node.has_error() || crate::read::grammar_id(&node) == KindId::ERROR
     }
 
     fn kids(&mut self, index: NodeIndex) -> Arc<[Kid]> {

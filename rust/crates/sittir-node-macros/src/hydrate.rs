@@ -4,12 +4,13 @@
 //! read routes by, and writes each slot's cell from its stamps: a struct's
 //! record its slots fill, a text leaf held whole, a choice its variant's
 //! value, an enum kind's member a unit. A struct's walk meets each child once:
-//! it reads the child (`Kid::at`), routes it, and walks into it there and
-//! then, handing it over in `ReadCtx::at`, so the child's own walk asks the
-//! tree for none of its ids, row or span again. A refusal anywhere below
-//! breaks the walk out of its children's loop, and the walk steps back to its
-//! own node before passing the refusal up. Every `HydrateNode` sits inside
-//! `::sittir_core::records_codec!`, beside the read it mirrors.
+//! it reads the child and writes its row (`Hydration::meet`), routes it, and
+//! walks into it there and then, handing it over in `ReadCtx::at`, so the
+//! child's own walk asks the tree for none of its ids, row or span again. A
+//! refusal anywhere below breaks the walk out of its children's loop, and
+//! the walk steps back to its own node before passing the refusal up. Every
+//! `HydrateNode` sits inside `::sittir_core::records_codec!`, beside the read
+//! it mirrors.
 
 use crate::attrs::{KindAttrs, SlotAttrs};
 use crate::codec::WireVariant;
@@ -193,10 +194,10 @@ fn routed(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn::Result
         #collect
         if cursor.goto_first_child() {
             let __walked: ::core::result::Result<(), ::sittir_core::arena::HydrateError> = 'walk: loop {
-                let __child = __rt::Kid::at(cursor);
-                if let ::core::result::Result::Err(refusal) = records.meet(cursor, &__child) {
-                    break 'walk ::core::result::Result::Err(refusal);
-                }
+                let __child = match records.meet(cursor) {
+                    ::core::result::Result::Ok(child) => child,
+                    ::core::result::Result::Err(refusal) => break 'walk ::core::result::Result::Err(refusal),
+                };
                 let __route = match __route(&__child) {
                     ::core::result::Result::Ok(route) => route,
                     ::core::result::Result::Err(refusal) => break 'walk ::core::result::Result::Err(::sittir_core::arena::HydrateError::from(refusal)),

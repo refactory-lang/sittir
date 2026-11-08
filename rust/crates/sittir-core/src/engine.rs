@@ -150,7 +150,7 @@ fn error_holding(nodes: &mut dyn Nodes<'_>, index: NodeIndex) -> Option<Kid> {
     let mut at = Some(index);
     while let Some(here) = at {
         let kid = nodes.kid(here);
-        if kid.error {
+        if kid.error() {
             outermost = Some(kid);
         }
         at = nodes.parent(here);
@@ -245,7 +245,7 @@ pub fn error_regions(nodes: &mut dyn Nodes<'_>) -> Vec<ErrorRegion> {
     let mut regions = Vec::new();
     let mut pending = vec![nodes.kid(NodeIndex::ROOT)];
     while let Some(kid) = pending.pop() {
-        if kid.error {
+        if kid.error() {
             regions.push(ErrorRegion { kind: ErrorRegionKind::Error, span: kid.span() });
         } else if nodes.missing(kid.index) {
             regions.push(ErrorRegion { kind: ErrorRegionKind::Missing, span: kid.span() });
@@ -2779,7 +2779,7 @@ mod tests {
                     at = node.parent();
                 }
                 let found = error_holding(&mut tree.nodes(), index);
-                assert!(found.is_none_or(|error| error.error), "{source:?} at {index:?}: an ERROR");
+                assert!(found.is_none_or(|error| error.error()), "{source:?} at {index:?}: an ERROR");
                 assert_eq!(found.and_then(|error| node_at_index(tree.tree(), error.index)).map(|node| node.id()), outermost, "{source:?} at {index:?}");
             }
         }
