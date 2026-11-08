@@ -15,7 +15,7 @@ import {
 	SYMBOL,
 	TOKEN,
 } from '../types/rule-types.ts'; // @rule-type-consts
-import type { ChoiceRule, RenderRule, Rule, RuleSeparator, SeqRule } from '../types/rule.ts';
+import type { ChoiceRule, RenderRule, Rule, RuleSeparator, SeqRule, SymbolRule } from '../types/rule.ts';
 import { fuseHeadRepeatLists } from '../dsl/rule-transforms.ts';
 import { selfReferentialFoldOf, collectFixedLiteral } from '../dsl/rule-patterns.ts';
 import { runToFixpoint } from './fixpoint.ts';
@@ -23,8 +23,9 @@ import { attributeBuilder, buildOptional, carryNodeFacts } from '../dsl/builders
 import { withId, withKindFacts, withAttrsFrom, sharedArmAttrs, absorbIds, structuralKey } from '../dsl/rule-attrs.ts';
 import { RuleWalker } from '../dsl/rule-walker.ts';
 import { reservedWordsetsOf, withReservedWordsets } from '../dsl/rule-metadata.ts';
-import { supertypeArmsOf } from '../dsl/symbol-table.ts';
 import { LAYOUT_SUPERTYPE } from '../dsl/primitives/spacing.ts';
+import { collectGeneratedKindEntries, isNamedKindEntry, parseKindIdOf, supertypeArmsOf, type GeneratedIdTables } from '../dsl/symbol-table.ts';
+import type { DiagnosticSink } from '../types/diagnostics.ts';
 
 function applySelfReferentialFold(ownName: string, rule: Rule<'link'>): Rule<'link'> {
 	if (rule.type !== CHOICE) return rule;
@@ -113,16 +114,35 @@ export function flatten(rule: Input): Output {
 	return rebuild(rule);
 }
 
-export function flattenRules(rules: Record<string, Rule<'link'>>, wordMatcher?: RegExp): Record<string, RenderRule> {
+export type StoredNamed = (ref: SymbolRule<'normalize'>, owner: string) => boolean;
+
+export function storedNamedOf(tables: GeneratedIdTables, diagnostics: DiagnosticSink): StoredNamed {
+	const named = new Map(collectGeneratedKindEntries(tables).map((entry) => [entry.id, isNamedKindEntry(entry)]));
+	return (ref, owner) => {
+		const id = parseKindIdOf(ref);
+		const stored = id === undefined ? undefined : named.get(id);
+		if (stored !== undefined) return stored;
+		diagnostics.fail({
+			scope: 'compiler',
+			phase: 'normalize',
+			code: 'field-kind-unstamped',
+			message: `${owner}.${ref.fieldName}: '${ref.name}' has no parser kind id, so whether the parser names its stored kind is unknown`,
+			details: { owner, field: ref.fieldName, symbol: ref.name, kindId: ref.kindId, aliasedToId: ref.aliasedToId }
+		});
+		return false;
+	};
+}
+
+export function flattenRules(rules: Record<string, Rule<'link'>>, storedNamed: StoredNamed, wordMatcher?: RegExp): Record<string, RenderRule> {
 	const result: Record<string, RenderRule> = {};
 	for (const [name, rule] of Object.entries(rules)) {
 		const flat = fuseHeadRepeatLists(flatten(applySelfReferentialFold(name, rule)));
 		result[name] = withKindFacts(flat, rule);
 	}
-	return stampTerminality(factorChoiceArmsToFixpoint(result), wordMatcher);
+	return stampTerminality(factorChoiceArmsToFixpoint(result), storedNamed, wordMatcher);
 }
 
-function stampTerminality(rules: Record<string, RenderRule>, wordMatcher: RegExp | undefined): Record<string, RenderRule> {
+function stampTerminality(rules: Record<string, RenderRule>, storedNamed: StoredNamed, wordMatcher: RegExp | undefined): Record<string, RenderRule> {
 	const isLiteralRule = (name: string): boolean => {
 		const target = rules[name];
 		return (
@@ -130,7 +150,9 @@ function stampTerminality(rules: Record<string, RenderRule>, wordMatcher: RegExp
 			collectFixedLiteral(target, { tokenized: false, deterministic: false, wordMatcher }) !== undefined
 		);
 	};
-	const stamp = (rule: RenderRule): RenderRule => {
+	const isSingle = (rule: RenderRule): boolean => rule.multiplicity === undefined || rule.multiplicity === 'single';
+	const layoutMembers = supertypeArmsOf([LAYOUT_SUPERTYPE], rules);
+	const stamp = (owner: string) => (rule: RenderRule): RenderRule => {
 		if (
 			rule.type === SYMBOL &&
 			rule.nonterminal === true &&
@@ -139,8 +161,10 @@ function stampTerminality(rules: Record<string, RenderRule>, wordMatcher: RegExp
 		)
 			return { ...rule, nonterminal: false };
 		if (rule.type === SEQ) {
-			const nonterminal = rule.members.some((m) => m.nonterminal === true);
-			return rule.nonterminal === nonterminal ? rule : { ...rule, nonterminal };
+			const kept = rule.members.map((m) => m.type === SYMBOL && m.nonterminal === false && m.fieldName !== undefined && isSingle(m) && !layoutMembers.has(m.name) && storedNamed(m, owner));
+			const members = kept.includes(true) ? rule.members.map((m, i) => (kept[i] ? { ...m, nonterminal: true } : m)) : rule.members;
+			const nonterminal = members.some((m) => m.nonterminal === true);
+			return rule.nonterminal === nonterminal && members === rule.members ? rule : { ...rule, members, nonterminal };
 		}
 		if (rule.type === CHOICE) {
 			const labels = (field: string): number => rule.members.filter((m) => m.fieldName === field).length;
@@ -150,11 +174,9 @@ function stampTerminality(rules: Record<string, RenderRule>, wordMatcher: RegExp
 		}
 		return rule;
 	};
-	const isSingle = (rule: RenderRule): boolean => rule.multiplicity === undefined || rule.multiplicity === 'single';
-	const layoutMembers = supertypeArmsOf([LAYOUT_SUPERTYPE], rules);
 	const isLayoutBody = (rule: RenderRule): boolean => rule.type === SYMBOL && layoutMembers.has(rule.name);
 	const out: Record<string, RenderRule> = {};
-	for (const [name, rule] of Object.entries(rules)) out[name] = isLayoutBody(rule) ? rule : stamp(ruleWalker.map(rule, stamp));
+	for (const [name, rule] of Object.entries(rules)) out[name] = isLayoutBody(rule) ? rule : stamp(name)(ruleWalker.map(rule, stamp(name)));
 	return out;
 }
 

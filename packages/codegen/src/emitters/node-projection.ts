@@ -20,7 +20,7 @@ import { DEDENT_TEXT, INDENT_TEXT } from '../dsl/primitives/spacing.ts';
 import { kindConstants } from './kind-id-rust.ts';
 import { fieldConstName } from './field-id-rust.ts';
 import { queryRoutesOf } from './client-utils.ts';
-import { canonicalSeparatedListField, fieldTypeComponents, isTextLeaf, slotDropKindIds, slotKindNames } from './shared.ts';
+import { canonicalSeparatedListField, fieldTypeComponents, isTextLeaf, resolveFieldStorageInfo, slotDropKindIds, slotKindNames } from './shared.ts';
 import { interiorOf } from './interior.ts';
 import { rustStringLiteral } from './render-body.ts';
 import { STRING, SYMBOL } from '../types/rule-types.ts'; // @rule-type-consts
@@ -433,7 +433,20 @@ export function slotArgs(slot: AssembledNonterminal, owner: AssembledNode, shape
 	}
 	if (separators.length > 0) args.push(`separator = ${oneOrList(separators.map((id) => tokenGroup(id, ctx)))}`);
 	if (shape.tag === 'text' && isScalarStorage(slot)) args.push('scalar');
+	if (slot.pinned !== undefined) args.push(`pinned = ${ctx.names.kind(pinnedKindIdOf(slot, owner, ctx))}`);
 	return args.join(', ');
+}
+
+function pinnedKindIdOf(slot: AssembledNonterminal, owner: AssembledNode, ctx: ReadFactsCtx): number {
+	const [id, ...more] = new Set(resolveFieldStorageInfo(slot, ctx.nodeMap).enumKindsById.values());
+	if (id === undefined || more.length > 0)
+		throw emitShapeFailure({
+			code: 'pinned-slot-without-one-kind',
+			ownerKind: owner.kind,
+			slotName: slot.name,
+			message: `${owner.kind}.${slot.name} is pinned to '${slot.pinned}', which names ${more.length + (id === undefined ? 0 : 1)} stored kinds, not one`
+		});
+	return id;
 }
 
 export function captureArgs(slot: AssembledNonterminal): string {

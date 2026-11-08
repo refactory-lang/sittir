@@ -60,6 +60,7 @@ interface SerializedSlot {
 	multiple: boolean;
 	nonEmpty: boolean;
 	storage: string;
+	pinned?: string;
 	registered?: true;
 	blank?: true;
 	optionDefault?: number | string;
@@ -364,6 +365,7 @@ function serializeSlot(
 		multiple: isMultiple(slot),
 		nonEmpty: isNonEmpty(slot),
 		storage: resolveFieldStorageInfo(slot, nodeMap).kind,
+		...(slot.pinned === undefined ? {} : { pinned: slot.pinned }),
 		...(meta?.registered === true ? { registered: true } : {}),
 		...(meta?.blank === true ? { blank: true } : {}),
 		...(meta?.optionDefault === undefined ? {} : { optionDefault: meta.optionDefault }),

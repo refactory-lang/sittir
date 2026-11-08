@@ -23,7 +23,7 @@ describe('attributeBuilder.alias of a literal', () => {
 });
 
 describe('flattenRules — literals shared by every arm of a distributed choice', () => {
-	const flattened = (rule: Rule) => flattenRules({ owner: rule } as never).owner as unknown as { type: string; members: { type: string; value?: string; members?: unknown[] }[] };
+	const flattened = (rule: Rule) => flattenRules({ owner: rule } as never, () => false).owner as unknown as { type: string; members: { type: string; value?: string; members?: unknown[] }[] };
 
 	it('factors the shared prefix and suffix around a choice of the differing middles', () => {
 		const out = flattened(choice(seq(str('{'), sym('arm'), str('}')), seq(str('{'), str(','), sym('digits'), str('}'))));

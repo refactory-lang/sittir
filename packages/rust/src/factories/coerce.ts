@@ -397,8 +397,6 @@ const _STRING_CAPABLE_BRANCHES: ReadonlySet<string> = new Set([
 	'label',
 	'continue_expression',
 	'lifetimes',
-	'line_comment_doc_outer',
-	'line_comment_doc_inner',
 	'block_comment_doc_outer',
 	'block_comment_doc_inner',
 	'type_identifier',
@@ -523,16 +521,12 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 		1, 116, 117, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 259, 263, 300, 313, 315, 316, 317, 318, 319,
 		321, 322, 324, 325, 326, 330, 332, 333, 336, 357, 358, 369, 370, 386, 387, 419, 422, 426
 	]),
-	mut_pattern: new Set([
-		1, 116, 117, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 259, 263, 300, 313, 315, 316, 317, 318, 319,
-		321, 322, 324, 325, 326, 330, 332, 333, 336, 357, 358, 369, 370, 386, 387, 419, 422, 426
-	]),
 	ref_pattern: new Set([
 		1, 116, 117, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 259, 263, 300, 313, 315, 316, 317, 318, 319,
 		321, 322, 324, 325, 326, 330, 332, 333, 336, 357, 358, 369, 370, 386, 387, 419, 422, 426
 	]),
 	negative_literal: new Set([141, 142, 143, 144, 162]),
-	line_comment: new Set([155, 166, 399, 400, 401]),
+	line_comment: new Set([155, 399, 400, 401]),
 	block_comment: new Set([165, 402, 403, 404]),
 	macro_rules: new Set([181]),
 	enum_variant_list_elements: new Set([200, 428]),
@@ -589,16 +583,6 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 		272, 273, 274, 275, 276, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 303, 304, 305, 306, 307, 308, 309, 310,
 		311, 312, 313, 332, 333, 336, 366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 	]),
-	reference_expression_raw_mut: new Set([
-		1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 259, 263, 267, 268, 270, 271,
-		272, 273, 274, 275, 276, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 303, 304, 305, 306, 307, 308, 309, 310,
-		311, 312, 313, 332, 333, 336, 366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
-	]),
-	reference_expression_mut: new Set([
-		1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 259, 263, 267, 268, 270, 271,
-		272, 273, 274, 275, 276, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 303, 304, 305, 306, 307, 308, 309, 310,
-		311, 312, 313, 332, 333, 336, 366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
-	]),
 	reference_expression_bare: new Set([
 		1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 259, 263, 267, 268, 270, 271,
 		272, 273, 274, 275, 276, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 303, 304, 305, 306, 307, 308, 309, 310,
@@ -619,10 +603,6 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 		1, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 127, 217, 218, 240, 242, 243, 244, 246, 248,
 		252, 254, 255, 256, 259, 265, 341, 351, 388, 389, 484
 	]),
-	pointer_type_mut: new Set([
-		1, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 127, 217, 218, 240, 242, 243, 244, 246, 248,
-		252, 254, 255, 256, 259, 265, 341, 351, 388, 389, 484
-	]),
 	range_expression_postfix: new Set([
 		1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 259, 263, 267, 268, 270, 271,
 		272, 273, 274, 275, 276, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 303, 304, 305, 306, 307, 308, 309, 310,
@@ -638,8 +618,6 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 		272, 273, 274, 275, 276, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 303, 304, 305, 306, 307, 308, 309, 310,
 		311, 312, 313, 332, 333, 336, 366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 	]),
-	line_comment_doc_outer: new Set([166]),
-	line_comment_doc_inner: new Set([166]),
 	block_comment_doc_outer: new Set([165]),
 	block_comment_doc_inner: new Set([165]),
 	array_expression_list_elements: new Set([
@@ -960,7 +938,6 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
 	try_block: TSKindId.TryBlock,
 	tuple_pattern: TSKindId.TuplePattern,
 	slice_pattern: TSKindId.SlicePattern,
-	mut_pattern: TSKindId.MutPattern,
 	ref_pattern: TSKindId.RefPattern,
 	negative_literal: TSKindId.NegativeLiteral,
 	line_comment: TSKindId.LineComment,
@@ -985,8 +962,6 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
 	struct_pattern_elements: TSKindId.StructPatternElements,
 	use_wildcard_group: TSKindId.UseWildcardGroup,
 	reference_expression_raw_const: TSKindId.ReferenceExpressionRawConst,
-	reference_expression_raw_mut: TSKindId.ReferenceExpressionRawMut,
-	reference_expression_mut: TSKindId.ReferenceExpressionMut,
 	reference_expression_bare: TSKindId.ReferenceExpressionBare,
 	impl_item_positive_clause: TSKindId.ImplItemPositiveClause,
 	impl_item_negative_clause: TSKindId.ImplItemNegativeClause,
@@ -997,12 +972,9 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
 	function_type_fn_form: TSKindId.FunctionTypeFnForm,
 	or_pattern_prefix: TSKindId.OrPatternPrefix,
 	pointer_type_const: TSKindId.PointerTypeConst,
-	pointer_type_mut: TSKindId.PointerTypeMut,
 	range_expression_postfix: TSKindId.RangeExpressionPostfix,
 	range_expression_prefix: TSKindId.RangeExpressionPrefix,
 	expression_statement_with_semi: TSKindId.ExpressionStatementWithSemi,
-	line_comment_doc_outer: TSKindId.LineCommentDocOuter,
-	line_comment_doc_inner: TSKindId.LineCommentDocInner,
 	block_comment_doc_outer: TSKindId.BlockCommentDocOuter,
 	block_comment_doc_inner: TSKindId.BlockCommentDocInner,
 	token_tree_pattern_paren: TSKindId.TokenTreePatternParen,
@@ -1061,7 +1033,6 @@ const _wrapElementKinds: { readonly [kind: string]: string } = {
 	try_block: 'block',
 	tuple_pattern: 'tuple_pattern_elements',
 	slice_pattern: 'patterns',
-	mut_pattern: '_pattern',
 	ref_pattern: '_pattern',
 	macro_rules: 'macro_rule',
 	enum_variant_list_elements: 'attributed_enum_variant',
@@ -1078,20 +1049,15 @@ const _wrapElementKinds: { readonly [kind: string]: string } = {
 	patterns: '_pattern',
 	struct_pattern_elements: 'field_pattern',
 	reference_expression_raw_const: '_expression',
-	reference_expression_raw_mut: '_expression',
-	reference_expression_mut: '_expression',
 	reference_expression_bare: '_expression',
 	visibility_modifier_pub_scope: 'visibility_modifier_pub_scope_in_path',
 	visibility_modifier_pub: 'visibility_modifier_pub_scope',
 	function_type_fn_form: 'function_modifiers',
 	or_pattern_prefix: '_pattern',
 	pointer_type_const: '_type',
-	pointer_type_mut: '_type',
 	range_expression_postfix: '_expression',
 	range_expression_prefix: '_expression',
 	expression_statement_with_semi: '_expression',
-	line_comment_doc_outer: 'doc_comment',
-	line_comment_doc_inner: 'doc_comment',
 	block_comment_doc_outer: '_block_comment_content',
 	block_comment_doc_inner: '_block_comment_content',
 	trait_interface_declaration_body: '_declaration_statement_trait_item',
@@ -1144,15 +1110,12 @@ const _wrapDirectKinds: ReadonlySet<string> = new Set([
 	'try_block',
 	'tuple_pattern',
 	'slice_pattern',
-	'mut_pattern',
 	'ref_pattern',
 	'negative_literal',
 	'line_comment',
 	'block_comment',
 	'use_wildcard_group',
 	'reference_expression_raw_const',
-	'reference_expression_raw_mut',
-	'reference_expression_mut',
 	'reference_expression_bare',
 	'impl_item_positive_clause',
 	'impl_item_negative_clause',
@@ -1163,12 +1126,9 @@ const _wrapDirectKinds: ReadonlySet<string> = new Set([
 	'function_type_fn_form',
 	'or_pattern_prefix',
 	'pointer_type_const',
-	'pointer_type_mut',
 	'range_expression_postfix',
 	'range_expression_prefix',
 	'expression_statement_with_semi',
-	'line_comment_doc_outer',
-	'line_comment_doc_inner',
 	'block_comment_doc_outer',
 	'block_comment_doc_inner',
 	'parameters_elements_receiver_group',
@@ -1295,8 +1255,6 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			return F.buildTuplePattern(children[0] as Parameters<typeof F.buildTuplePattern>[0]);
 		case 'slice_pattern':
 			return F.buildSlicePattern(children[0] as Parameters<typeof F.buildSlicePattern>[0]);
-		case 'mut_pattern':
-			return F.buildMutPattern(children[0] as Parameters<typeof F.buildMutPattern>[0]);
 		case 'ref_pattern':
 			return F.buildRefPattern(children[0] as Parameters<typeof F.buildRefPattern>[0]);
 		case 'negative_literal':
@@ -1347,10 +1305,6 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			return F.buildReferenceExpressionRawConst(
 				children[0] as Parameters<typeof F.buildReferenceExpressionRawConst>[0]
 			);
-		case 'reference_expression_raw_mut':
-			return F.buildReferenceExpressionRawMut(children[0] as Parameters<typeof F.buildReferenceExpressionRawMut>[0]);
-		case 'reference_expression_mut':
-			return F.buildReferenceExpressionMut(children[0] as Parameters<typeof F.buildReferenceExpressionMut>[0]);
 		case 'reference_expression_bare':
 			return F.buildReferenceExpressionBare(children[0] as Parameters<typeof F.buildReferenceExpressionBare>[0]);
 		case 'impl_item_positive_clause':
@@ -1373,8 +1327,6 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			return F.buildOrPatternPrefix(children[0] as Parameters<typeof F.buildOrPatternPrefix>[0]);
 		case 'pointer_type_const':
 			return F.buildPointerTypeConst(children[0] as Parameters<typeof F.buildPointerTypeConst>[0]);
-		case 'pointer_type_mut':
-			return F.buildPointerTypeMut(children[0] as Parameters<typeof F.buildPointerTypeMut>[0]);
 		case 'range_expression_postfix':
 			return F.buildRangeExpressionPostfix(children[0] as Parameters<typeof F.buildRangeExpressionPostfix>[0]);
 		case 'range_expression_prefix':
@@ -1383,10 +1335,6 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			return F.buildExpressionStatementWithSemi(
 				children[0] as Parameters<typeof F.buildExpressionStatementWithSemi>[0]
 			);
-		case 'line_comment_doc_outer':
-			return F.buildLineCommentDocOuter(children[0] as Parameters<typeof F.buildLineCommentDocOuter>[0]);
-		case 'line_comment_doc_inner':
-			return F.buildLineCommentDocInner(children[0] as Parameters<typeof F.buildLineCommentDocInner>[0]);
 		case 'block_comment_doc_outer':
 			return F.buildBlockCommentDocOuter(children[0] as Parameters<typeof F.buildBlockCommentDocOuter>[0]);
 		case 'block_comment_doc_inner':
@@ -6842,21 +6790,11 @@ export function resolveMutPattern_pattern(value: T.MutPattern.LooseConfig['patte
 export const coerceToMutPattern: ConfigSeat<T.MutPattern.Loose, ReturnType<typeof F.buildMutPattern>> = (
 	input: T.MutPattern.Loose
 ): ReturnType<typeof F.buildMutPattern> => {
-	return F.buildMutPattern(
-		coerceMixedEnumStorage(
-			_resolveKindEnum(
-				configFieldOr(input, 'pattern', () => input, TSKindId.MutPattern),
-				[],
-				() =>
-					_resolveOne<T.Pattern>(
-						configFieldOr(input, 'pattern', () => input, TSKindId.MutPattern),
-						_K23,
-						_K24
-					)
-			),
-			[]
-		)
-	);
+	if (!_isLooseConfig<T.MutPattern.LooseConfig>(input)) return input as unknown as ReturnType<typeof F.buildMutPattern>;
+	currentHandle()?.admit(TSKindId.MutPattern, [input]);
+	return F.buildMutPattern({
+		pattern: resolveMutPattern_pattern(input.pattern)
+	});
 };
 
 export function resolveRefPattern_pattern(value: T.RefPattern.LooseConfig['pattern']): Admit<T.RefPattern['_pattern']> {
@@ -8880,21 +8818,12 @@ export const coerceToReferenceExpressionRawMut: ConfigSeat<
 	T.ReferenceExpressionRawMut.Loose,
 	ReturnType<typeof F.buildReferenceExpressionRawMut>
 > = (input: T.ReferenceExpressionRawMut.Loose): ReturnType<typeof F.buildReferenceExpressionRawMut> => {
-	return F.buildReferenceExpressionRawMut(
-		coerceMixedEnumStorage(
-			_resolveKindEnum(
-				configFieldOr(input, 'argument', () => input, TSKindId.ReferenceExpressionRawMut),
-				[],
-				() =>
-					_resolveOne<T.Expression>(
-						configFieldOr(input, 'argument', () => input, TSKindId.ReferenceExpressionRawMut),
-						_K12,
-						_K13
-					)
-			),
-			[]
-		)
-	);
+	if (!_isLooseConfig<T.ReferenceExpressionRawMut.LooseConfig>(input))
+		return input as unknown as ReturnType<typeof F.buildReferenceExpressionRawMut>;
+	currentHandle()?.admit(TSKindId.ReferenceExpressionRawMut, [input]);
+	return F.buildReferenceExpressionRawMut({
+		argument: resolveReferenceExpressionRawMut_argument(input.argument)
+	});
 };
 
 export function resolveReferenceExpressionMut_argument(
@@ -8910,21 +8839,12 @@ export const coerceToReferenceExpressionMut: ConfigSeat<
 	T.ReferenceExpressionMut.Loose,
 	ReturnType<typeof F.buildReferenceExpressionMut>
 > = (input: T.ReferenceExpressionMut.Loose): ReturnType<typeof F.buildReferenceExpressionMut> => {
-	return F.buildReferenceExpressionMut(
-		coerceMixedEnumStorage(
-			_resolveKindEnum(
-				configFieldOr(input, 'argument', () => input, TSKindId.ReferenceExpressionMut),
-				[],
-				() =>
-					_resolveOne<T.Expression>(
-						configFieldOr(input, 'argument', () => input, TSKindId.ReferenceExpressionMut),
-						_K12,
-						_K13
-					)
-			),
-			[]
-		)
-	);
+	if (!_isLooseConfig<T.ReferenceExpressionMut.LooseConfig>(input))
+		return input as unknown as ReturnType<typeof F.buildReferenceExpressionMut>;
+	currentHandle()?.admit(TSKindId.ReferenceExpressionMut, [input]);
+	return F.buildReferenceExpressionMut({
+		argument: resolveReferenceExpressionMut_argument(input.argument)
+	});
 };
 
 export function resolveReferenceExpressionBare_argument(
@@ -9440,21 +9360,12 @@ export function resolvePointerTypeMut_type(
 export const coerceToPointerTypeMut: ConfigSeat<T.PointerTypeMut.Loose, ReturnType<typeof F.buildPointerTypeMut>> = (
 	input: T.PointerTypeMut.Loose
 ): ReturnType<typeof F.buildPointerTypeMut> => {
-	return F.buildPointerTypeMut(
-		coerceMixedEnumStorage(
-			_resolveKindEnum(
-				configFieldOr(input, 'type', () => input, TSKindId.PointerTypeMut),
-				[],
-				() =>
-					_resolveOne<T.Type>(
-						configFieldOr(input, 'type', () => input, TSKindId.PointerTypeMut),
-						_K14,
-						_K15
-					)
-			),
-			[]
-		)
-	);
+	if (!_isLooseConfig<T.PointerTypeMut.LooseConfig>(input))
+		return input as unknown as ReturnType<typeof F.buildPointerTypeMut>;
+	currentHandle()?.admit(TSKindId.PointerTypeMut, [input]);
+	return F.buildPointerTypeMut({
+		type: resolvePointerTypeMut_type(input.type)
+	});
 };
 
 export function resolveRangeExpressionBinary_start(
@@ -9753,19 +9664,12 @@ export const coerceToLineCommentDocOuter: ConfigSeat<
 	T.LineCommentDocOuter.Loose,
 	ReturnType<typeof F.buildLineCommentDocOuter>
 > = (input: T.LineCommentDocOuter.Loose): ReturnType<typeof F.buildLineCommentDocOuter> => {
-	if (isNodeOfKind(input, TSKindId.LineCommentDocOuter))
+	if (!_isLooseConfig<T.LineCommentDocOuter.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildLineCommentDocOuter>;
-	return F.buildLineCommentDocOuter(
-		_resolveOneLeaf<T.DocComment>(
-			configFieldOr(
-				input,
-				'doc',
-				() => (typeof input === 'string' ? spelledInterior(input, '/', '') : input),
-				TSKindId.LineCommentDocOuter
-			),
-			'doc_comment'
-		)
-	);
+	currentHandle()?.admit(TSKindId.LineCommentDocOuter, [input]);
+	return F.buildLineCommentDocOuter({
+		doc: resolveLineCommentDocOuter_doc(input.doc)
+	});
 };
 
 export function resolveLineCommentDocInner_doc(
@@ -9778,19 +9682,12 @@ export const coerceToLineCommentDocInner: ConfigSeat<
 	T.LineCommentDocInner.Loose,
 	ReturnType<typeof F.buildLineCommentDocInner>
 > = (input: T.LineCommentDocInner.Loose): ReturnType<typeof F.buildLineCommentDocInner> => {
-	if (isNodeOfKind(input, TSKindId.LineCommentDocInner))
+	if (!_isLooseConfig<T.LineCommentDocInner.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildLineCommentDocInner>;
-	return F.buildLineCommentDocInner(
-		_resolveOneLeaf<T.DocComment>(
-			configFieldOr(
-				input,
-				'doc',
-				() => (typeof input === 'string' ? spelledInterior(input, '!', '') : input),
-				TSKindId.LineCommentDocInner
-			),
-			'doc_comment'
-		)
-	);
+	currentHandle()?.admit(TSKindId.LineCommentDocInner, [input]);
+	return F.buildLineCommentDocInner({
+		doc: resolveLineCommentDocInner_doc(input.doc)
+	});
 };
 
 export const coerceToLineCommentRegular: ConfigSeat<

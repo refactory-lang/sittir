@@ -603,11 +603,11 @@ export namespace factory {
 		views: BuiltViewTable | undefined
 	): void {
 		if (!(node instanceof AssembledAlias) || !placedAlias(node, nodeMap)) {
-			output.push(emitFieldCarryingFactory(backend, node, node.slots, nodeMap, kindEntries, leafReConsts, views));
+			output.push(emitFieldCarryingFactory(backend, node, node.valueSlots, nodeMap, kindEntries, leafReConsts, views));
 			return;
 		}
 		const core = Object.create(node, { rawFactoryName: { value: `${node.rawFactoryName}Content` } }) as FieldCarryingNode;
-		output.push(emitFieldCarryingFactory(backend, core, node.slots, nodeMap, kindEntries, leafReConsts, views));
+		output.push(emitFieldCarryingFactory(backend, core, node.valueSlots, nodeMap, kindEntries, leafReConsts, views));
 		output.push(emitPlacedAliasFactory(node, core.rawFactoryName!, nodeMap, kindEntries));
 	}
 
@@ -1217,7 +1217,7 @@ export function builtTypeSurfaceOf(
 	kindEntries: readonly KindEnumEntry[]
 ): BuiltTypeSurface | undefined {
 	if (node instanceof AssembledList) return listBuiltTypeSurface(node, nodeMap, kindEntries);
-	if (isSlotBearingCompound(node)) return fieldCarryingBuiltTypeSurface(node, node.slots, nodeMap, kindEntries);
+	if (isSlotBearingCompound(node)) return fieldCarryingBuiltTypeSurface(node, node.valueSlots, nodeMap, kindEntries);
 	switch (node.modelType) {
 		case 'pattern':
 			return leafBuiltTypeSurface(node, leafTextParams(node), 'string', nodeMap, kindEntries);
@@ -1450,7 +1450,8 @@ function registeredSlotSource(
 }
 
 export function omitRegistered(type: string, node: { readonly slots: readonly AssembledNonterminal[] }, omitter: 'OmitEach' | 'OmitRegistered' = 'OmitEach'): string {
-	const keys = registeredSlots(node).map((slot) => JSON.stringify(slot.propertyName));
+	const registered = new Set(registeredSlots(node));
+	const keys = node.slots.filter((slot) => slot.pinned !== undefined || registered.has(slot)).map((slot) => JSON.stringify(slot.propertyName));
 	return keys.length === 0 ? type : `${omitter}<${type}, ${keys.join(' | ')}>`;
 }
 

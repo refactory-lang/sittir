@@ -2084,8 +2084,8 @@ export function buildExternCrateDeclaration(config: T.ExternCrateDeclaration.Con
 	return arena.scope(() => {
 		const record = arena.record(TSKindId.ExternCrateDeclaration as const);
 		storeCell(arena, record, 2, 2, _visibility_modifier);
-		storeCell(arena, record, 3, 16, _name);
-		storeCell(arena, record, 4, 19, _alias);
+		storeCell(arena, record, 4, 17, _name);
+		storeCell(arena, record, 5, 20, _alias);
 		const node = arena.view(record);
 		return node as unknown as T.ExternCrateDeclaration.Bound;
 	});
@@ -2111,8 +2111,8 @@ function buildExternCrateDeclaration$patch(
 	return arena.scope(() => {
 		const record = arena.copy(source, TSKindId.ExternCrateDeclaration as const);
 		patchCell(arena, record, 2, 2, carriedSlot(source, 'visibilityModifier', _visibility_modifier));
-		patchCell(arena, record, 3, 16, carriedSlot(source, 'name', _name));
-		patchCell(arena, record, 4, 19, carriedSlot(source, 'alias', _alias));
+		patchCell(arena, record, 4, 17, carriedSlot(source, 'name', _name));
+		patchCell(arena, record, 5, 20, carriedSlot(source, 'alias', _alias));
 		const node = arena.view(record);
 		return node as unknown as T.ExternCrateDeclaration.Bound;
 	});
@@ -9087,40 +9087,46 @@ function withStructPattern(node: object, setter: string, args: readonly unknown[
 
 export const buildRemainingFieldPattern: TSKindId.RemainingFieldPattern = TSKindId.RemainingFieldPattern;
 
-export function buildMutPattern<V extends Admit<T.Pattern>>(value: V & RefuseUndeclared<V>): T.MutPattern.Bound;
-export function buildMutPattern(value: Admit<T.Pattern>): T.MutPattern.Bound {
-	const _pattern = kindIdStorage<NonNullable<T.MutPattern['_pattern']>>(value);
+export function buildMutPattern<PatternSlot extends T.MutPattern.Config['pattern']>(
+	config: RefusingConfig<T.MutPattern.Config, { pattern: PatternSlot }>
+): T.MutPattern.Bound;
+export function buildMutPattern(config: T.MutPattern.Config): T.MutPattern.Bound {
+	currentHandle()?.admit(TSKindId.MutPattern, [config]);
+	const _pattern = kindIdStorage<NonNullable<T.MutPattern['_pattern']>>(config.pattern);
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'mut_pattern', { pattern: _pattern });
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.MutPattern as const, { _pattern });
 	return arena.scope(() => {
 		const record = arena.record(TSKindId.MutPattern as const);
-		storeCell(arena, record, 2, 2, _pattern);
+		storeCell(arena, record, 3, 3, _pattern);
 		const node = arena.view(record);
 		return node as unknown as T.MutPattern.Bound;
 	});
 }
 
-function buildMutPattern$patch(source: object, value: Admit<T.Pattern>): T.MutPattern.Bound {
-	const _pattern = kindIdStorage<NonNullable<T.MutPattern['_pattern']>>(value);
+function buildMutPattern$patch(source: object, config: T.MutPattern.Config): T.MutPattern.Bound {
+	currentHandle()?.admit(TSKindId.MutPattern, [config]);
+	const _pattern = kindIdStorage<NonNullable<T.MutPattern['_pattern']>>(config.pattern);
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'mut_pattern', { pattern: _pattern });
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.MutPattern as const, { _pattern });
 	return arena.scope(() => {
 		const record = arena.copy(source, TSKindId.MutPattern as const);
-		patchCell(arena, record, 2, 2, carriedSlot(source, 'pattern', _pattern));
+		patchCell(arena, record, 3, 3, carriedSlot(source, 'pattern', _pattern));
 		const node = arena.view(record);
 		return node as unknown as T.MutPattern.Bound;
 	});
 }
 function withMutPattern(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
+	const inputs = builtInputs(node);
+	const config = inputs.config as T.MutPattern.Config;
 	switch (setter) {
 		case 'pattern':
-			return applySetter(args, (value: Admit<NonNullable<T.Pattern>>) =>
-				rebuilt(node, handle, () => buildMutPattern$patch(node, value))
+			return applySetter(args, (value: Admit<NonNullable<T.MutPattern.Config>['pattern']>) =>
+				rebuilt(node, handle, () => buildMutPattern$patch(node, { ...config, pattern: value }))
 			);
 	}
 	throw new Error(`mut_pattern has no $with.${setter}`);
@@ -13210,18 +13216,21 @@ function withReferenceExpressionRawConst(node: object, setter: string, args: rea
 	throw new Error(`reference_expression_raw_const has no $with.${setter}`);
 }
 
-export function buildReferenceExpressionRawMut<V extends Admit<T.Expression>>(
-	value: V & RefuseUndeclared<V>
+export function buildReferenceExpressionRawMut<ArgumentSlot extends T.ReferenceExpressionRawMut.Config['argument']>(
+	config: RefusingConfig<T.ReferenceExpressionRawMut.Config, { argument: ArgumentSlot }>
 ): T.ReferenceExpressionRawMut.Bound;
-export function buildReferenceExpressionRawMut(value: Admit<T.Expression>): T.ReferenceExpressionRawMut.Bound {
-	const _argument = kindIdStorage<NonNullable<T.ReferenceExpressionRawMut['_argument']>>(value);
+export function buildReferenceExpressionRawMut(
+	config: T.ReferenceExpressionRawMut.Config
+): T.ReferenceExpressionRawMut.Bound {
+	currentHandle()?.admit(TSKindId.ReferenceExpressionRawMut, [config]);
+	const _argument = kindIdStorage<NonNullable<T.ReferenceExpressionRawMut['_argument']>>(config.argument);
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'reference_expression_raw_mut', { argument: _argument });
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.ReferenceExpressionRawMut as const, { _argument });
 	return arena.scope(() => {
 		const record = arena.record(TSKindId.ReferenceExpressionRawMut as const);
-		storeCell(arena, record, 2, 2, _argument);
+		storeCell(arena, record, 3, 3, _argument);
 		const node = arena.view(record);
 		return node as unknown as T.ReferenceExpressionRawMut.Bound;
 	});
@@ -13229,67 +13238,77 @@ export function buildReferenceExpressionRawMut(value: Admit<T.Expression>): T.Re
 
 function buildReferenceExpressionRawMut$patch(
 	source: object,
-	value: Admit<T.Expression>
+	config: T.ReferenceExpressionRawMut.Config
 ): T.ReferenceExpressionRawMut.Bound {
-	const _argument = kindIdStorage<NonNullable<T.ReferenceExpressionRawMut['_argument']>>(value);
+	currentHandle()?.admit(TSKindId.ReferenceExpressionRawMut, [config]);
+	const _argument = kindIdStorage<NonNullable<T.ReferenceExpressionRawMut['_argument']>>(config.argument);
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'reference_expression_raw_mut', { argument: _argument });
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.ReferenceExpressionRawMut as const, { _argument });
 	return arena.scope(() => {
 		const record = arena.copy(source, TSKindId.ReferenceExpressionRawMut as const);
-		patchCell(arena, record, 2, 2, carriedSlot(source, 'argument', _argument));
+		patchCell(arena, record, 3, 3, carriedSlot(source, 'argument', _argument));
 		const node = arena.view(record);
 		return node as unknown as T.ReferenceExpressionRawMut.Bound;
 	});
 }
 function withReferenceExpressionRawMut(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
+	const inputs = builtInputs(node);
+	const config = inputs.config as T.ReferenceExpressionRawMut.Config;
 	switch (setter) {
 		case 'argument':
-			return applySetter(args, (value: Admit<NonNullable<T.Expression>>) =>
-				rebuilt(node, handle, () => buildReferenceExpressionRawMut$patch(node, value))
+			return applySetter(args, (value: Admit<NonNullable<T.ReferenceExpressionRawMut.Config>['argument']>) =>
+				rebuilt(node, handle, () => buildReferenceExpressionRawMut$patch(node, { ...config, argument: value }))
 			);
 	}
 	throw new Error(`reference_expression_raw_mut has no $with.${setter}`);
 }
 
-export function buildReferenceExpressionMut<V extends Admit<T.Expression>>(
-	value: V & RefuseUndeclared<V>
+export function buildReferenceExpressionMut<ArgumentSlot extends T.ReferenceExpressionMut.Config['argument']>(
+	config: RefusingConfig<T.ReferenceExpressionMut.Config, { argument: ArgumentSlot }>
 ): T.ReferenceExpressionMut.Bound;
-export function buildReferenceExpressionMut(value: Admit<T.Expression>): T.ReferenceExpressionMut.Bound {
-	const _argument = kindIdStorage<NonNullable<T.ReferenceExpressionMut['_argument']>>(value);
+export function buildReferenceExpressionMut(config: T.ReferenceExpressionMut.Config): T.ReferenceExpressionMut.Bound {
+	currentHandle()?.admit(TSKindId.ReferenceExpressionMut, [config]);
+	const _argument = kindIdStorage<NonNullable<T.ReferenceExpressionMut['_argument']>>(config.argument);
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'reference_expression_mut', { argument: _argument });
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.ReferenceExpressionMut as const, { _argument });
 	return arena.scope(() => {
 		const record = arena.record(TSKindId.ReferenceExpressionMut as const);
-		storeCell(arena, record, 2, 2, _argument);
+		storeCell(arena, record, 3, 3, _argument);
 		const node = arena.view(record);
 		return node as unknown as T.ReferenceExpressionMut.Bound;
 	});
 }
 
-function buildReferenceExpressionMut$patch(source: object, value: Admit<T.Expression>): T.ReferenceExpressionMut.Bound {
-	const _argument = kindIdStorage<NonNullable<T.ReferenceExpressionMut['_argument']>>(value);
+function buildReferenceExpressionMut$patch(
+	source: object,
+	config: T.ReferenceExpressionMut.Config
+): T.ReferenceExpressionMut.Bound {
+	currentHandle()?.admit(TSKindId.ReferenceExpressionMut, [config]);
+	const _argument = kindIdStorage<NonNullable<T.ReferenceExpressionMut['_argument']>>(config.argument);
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'reference_expression_mut', { argument: _argument });
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.ReferenceExpressionMut as const, { _argument });
 	return arena.scope(() => {
 		const record = arena.copy(source, TSKindId.ReferenceExpressionMut as const);
-		patchCell(arena, record, 2, 2, carriedSlot(source, 'argument', _argument));
+		patchCell(arena, record, 3, 3, carriedSlot(source, 'argument', _argument));
 		const node = arena.view(record);
 		return node as unknown as T.ReferenceExpressionMut.Bound;
 	});
 }
 function withReferenceExpressionMut(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
+	const inputs = builtInputs(node);
+	const config = inputs.config as T.ReferenceExpressionMut.Config;
 	switch (setter) {
 		case 'argument':
-			return applySetter(args, (value: Admit<NonNullable<T.Expression>>) =>
-				rebuilt(node, handle, () => buildReferenceExpressionMut$patch(node, value))
+			return applySetter(args, (value: Admit<NonNullable<T.ReferenceExpressionMut.Config>['argument']>) =>
+				rebuilt(node, handle, () => buildReferenceExpressionMut$patch(node, { ...config, argument: value }))
 			);
 	}
 	throw new Error(`reference_expression_mut has no $with.${setter}`);
@@ -14311,12 +14330,13 @@ function withPointerTypeConst(node: object, setter: string, args: readonly unkno
 	throw new Error(`pointer_type_const has no $with.${setter}`);
 }
 
-export function buildPointerTypeMut<V extends Admit<T.Type | T.TypeIdentifier.Types>>(
-	value: V & RefuseUndeclared<V>
+export function buildPointerTypeMut<TypeSlot extends T.PointerTypeMut.Config['type']>(
+	config: RefusingConfig<T.PointerTypeMut.Config, { type: TypeSlot }>
 ): T.PointerTypeMut.Bound;
-export function buildPointerTypeMut(value: Admit<T.Type | T.TypeIdentifier.Types>): T.PointerTypeMut.Bound {
+export function buildPointerTypeMut(config: T.PointerTypeMut.Config): T.PointerTypeMut.Bound {
+	currentHandle()?.admit(TSKindId.PointerTypeMut, [config]);
 	const _type = admitAliasContent<NonNullable<T.PointerTypeMut['_type']>>(
-		kindIdStorage<NonNullable<T.PointerTypeMut['_type']>>(value),
+		kindIdStorage<NonNullable<T.PointerTypeMut['_type']>>(config.type),
 		[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
 	);
 	const handle = currentHandle();
@@ -14325,18 +14345,16 @@ export function buildPointerTypeMut(value: Admit<T.Type | T.TypeIdentifier.Types
 	handle?.verifyStored?.(TSKindId.PointerTypeMut as const, { _type });
 	return arena.scope(() => {
 		const record = arena.record(TSKindId.PointerTypeMut as const);
-		storeCell(arena, record, 2, 2, _type);
+		storeCell(arena, record, 3, 3, _type);
 		const node = arena.view(record);
 		return node as unknown as T.PointerTypeMut.Bound;
 	});
 }
 
-function buildPointerTypeMut$patch(
-	source: object,
-	value: Admit<T.Type | T.TypeIdentifier.Types>
-): T.PointerTypeMut.Bound {
+function buildPointerTypeMut$patch(source: object, config: T.PointerTypeMut.Config): T.PointerTypeMut.Bound {
+	currentHandle()?.admit(TSKindId.PointerTypeMut, [config]);
 	const _type = admitAliasContent<NonNullable<T.PointerTypeMut['_type']>>(
-		kindIdStorage<NonNullable<T.PointerTypeMut['_type']>>(value),
+		kindIdStorage<NonNullable<T.PointerTypeMut['_type']>>(config.type),
 		[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
 	);
 	const handle = currentHandle();
@@ -14345,17 +14363,19 @@ function buildPointerTypeMut$patch(
 	handle?.verifyStored?.(TSKindId.PointerTypeMut as const, { _type });
 	return arena.scope(() => {
 		const record = arena.copy(source, TSKindId.PointerTypeMut as const);
-		patchCell(arena, record, 2, 2, carriedSlot(source, 'type', _type));
+		patchCell(arena, record, 3, 3, carriedSlot(source, 'type', _type));
 		const node = arena.view(record);
 		return node as unknown as T.PointerTypeMut.Bound;
 	});
 }
 function withPointerTypeMut(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
+	const inputs = builtInputs(node);
+	const config = inputs.config as T.PointerTypeMut.Config;
 	switch (setter) {
 		case 'type':
-			return applySetter(args, (value: Admit<NonNullable<T.Type | T.TypeIdentifier.Types>>) =>
-				rebuilt(node, handle, () => buildPointerTypeMut$patch(node, value))
+			return applySetter(args, (value: Admit<NonNullable<T.PointerTypeMut.Config>['type']>) =>
+				rebuilt(node, handle, () => buildPointerTypeMut$patch(node, { ...config, type: value }))
 			);
 	}
 	throw new Error(`pointer_type_mut has no $with.${setter}`);
@@ -14964,83 +14984,97 @@ function leafLineCommentExtraSlashes(tree: TreeHandle, entry: BuiltText, site: L
 	return node;
 }
 
-export function buildLineCommentDocOuter<V extends Admit<T.DocComment>>(
-	value: V & RefuseUndeclared<V>
+export function buildLineCommentDocOuter<DocSlot extends T.LineCommentDocOuter.Config['doc']>(
+	config: RefusingConfig<T.LineCommentDocOuter.Config, { doc: DocSlot }>
 ): T.LineCommentDocOuter.Bound;
-export function buildLineCommentDocOuter(value: Admit<T.DocComment>): T.LineCommentDocOuter.Bound {
-	const _doc = value;
+export function buildLineCommentDocOuter(config: T.LineCommentDocOuter.Config): T.LineCommentDocOuter.Bound {
+	currentHandle()?.admit(TSKindId.LineCommentDocOuter, [config]);
+	const _doc = config.doc;
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'line_comment_doc_outer', { doc: _doc });
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.LineCommentDocOuter as const, { _doc });
 	return arena.scope(() => {
 		const record = arena.record(TSKindId.LineCommentDocOuter as const);
-		storeCell(arena, record, 2, 2, _doc);
+		storeCell(arena, record, 3, 3, _doc);
 		const node = arena.view(record);
 		return node as unknown as T.LineCommentDocOuter.Bound;
 	});
 }
 
-function buildLineCommentDocOuter$patch(source: object, value: Admit<T.DocComment>): T.LineCommentDocOuter.Bound {
-	const _doc = value;
+function buildLineCommentDocOuter$patch(
+	source: object,
+	config: T.LineCommentDocOuter.Config
+): T.LineCommentDocOuter.Bound {
+	currentHandle()?.admit(TSKindId.LineCommentDocOuter, [config]);
+	const _doc = config.doc;
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'line_comment_doc_outer', { doc: _doc });
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.LineCommentDocOuter as const, { _doc });
 	return arena.scope(() => {
 		const record = arena.copy(source, TSKindId.LineCommentDocOuter as const);
-		patchCell(arena, record, 2, 2, carriedSlot(source, 'doc', _doc));
+		patchCell(arena, record, 3, 3, carriedSlot(source, 'doc', _doc));
 		const node = arena.view(record);
 		return node as unknown as T.LineCommentDocOuter.Bound;
 	});
 }
 function withLineCommentDocOuter(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
+	const inputs = builtInputs(node);
+	const config = inputs.config as T.LineCommentDocOuter.Config;
 	switch (setter) {
 		case 'doc':
 			return applySetter(args, (value: Admit<T.DocComment>) =>
-				rebuilt(node, handle, () => buildLineCommentDocOuter$patch(node, value))
+				rebuilt(node, handle, () => buildLineCommentDocOuter$patch(node, { ...config, doc: value }))
 			);
 	}
 	throw new Error(`line_comment_doc_outer has no $with.${setter}`);
 }
 
-export function buildLineCommentDocInner<V extends Admit<T.DocComment>>(
-	value: V & RefuseUndeclared<V>
+export function buildLineCommentDocInner<DocSlot extends T.LineCommentDocInner.Config['doc']>(
+	config: RefusingConfig<T.LineCommentDocInner.Config, { doc: DocSlot }>
 ): T.LineCommentDocInner.Bound;
-export function buildLineCommentDocInner(value: Admit<T.DocComment>): T.LineCommentDocInner.Bound {
-	const _doc = value;
+export function buildLineCommentDocInner(config: T.LineCommentDocInner.Config): T.LineCommentDocInner.Bound {
+	currentHandle()?.admit(TSKindId.LineCommentDocInner, [config]);
+	const _doc = config.doc;
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'line_comment_doc_inner', { doc: _doc });
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.LineCommentDocInner as const, { _doc });
 	return arena.scope(() => {
 		const record = arena.record(TSKindId.LineCommentDocInner as const);
-		storeCell(arena, record, 2, 2, _doc);
+		storeCell(arena, record, 3, 3, _doc);
 		const node = arena.view(record);
 		return node as unknown as T.LineCommentDocInner.Bound;
 	});
 }
 
-function buildLineCommentDocInner$patch(source: object, value: Admit<T.DocComment>): T.LineCommentDocInner.Bound {
-	const _doc = value;
+function buildLineCommentDocInner$patch(
+	source: object,
+	config: T.LineCommentDocInner.Config
+): T.LineCommentDocInner.Bound {
+	currentHandle()?.admit(TSKindId.LineCommentDocInner, [config]);
+	const _doc = config.doc;
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'line_comment_doc_inner', { doc: _doc });
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.LineCommentDocInner as const, { _doc });
 	return arena.scope(() => {
 		const record = arena.copy(source, TSKindId.LineCommentDocInner as const);
-		patchCell(arena, record, 2, 2, carriedSlot(source, 'doc', _doc));
+		patchCell(arena, record, 3, 3, carriedSlot(source, 'doc', _doc));
 		const node = arena.view(record);
 		return node as unknown as T.LineCommentDocInner.Bound;
 	});
 }
 function withLineCommentDocInner(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
+	const inputs = builtInputs(node);
+	const config = inputs.config as T.LineCommentDocInner.Config;
 	switch (setter) {
 		case 'doc':
 			return applySetter(args, (value: Admit<T.DocComment>) =>
-				rebuilt(node, handle, () => buildLineCommentDocInner$patch(node, value))
+				rebuilt(node, handle, () => buildLineCommentDocInner$patch(node, { ...config, doc: value }))
 			);
 	}
 	throw new Error(`line_comment_doc_inner has no $with.${setter}`);
@@ -17758,7 +17792,7 @@ export function buildReceiverParameterDeclaration(
 	return arena.scope(() => {
 		const record = arena.record(TSKindId.ReceiverParameterDeclaration as const);
 		if (_mutable) storeFlag(record.data, record.base + 2, 1);
-		storeCell(arena, record, 3, 3, _type);
+		storeCell(arena, record, 4, 4, _type);
 		const node = arena.view(record);
 		return node as unknown as T.ReceiverParameterDeclaration.Bound;
 	});
@@ -17781,7 +17815,7 @@ function buildReceiverParameterDeclaration$patch(
 	return arena.scope(() => {
 		const record = arena.copy(source, TSKindId.ReceiverParameterDeclaration as const);
 		patchFlag(record, 2, 1, _mutable);
-		patchCell(arena, record, 3, 3, carriedSlot(source, 'type', _type));
+		patchCell(arena, record, 4, 4, carriedSlot(source, 'type', _type));
 		const node = arena.view(record);
 		return node as unknown as T.ReceiverParameterDeclaration.Bound;
 	});
@@ -19506,7 +19540,7 @@ export const builtViews: BuiltViews = Object.freeze({
 		201: 3,
 		202: 5,
 		203: 3,
-		204: 5,
+		204: 6,
 		205: 6,
 		206: 7,
 		207: 8,
@@ -19531,7 +19565,7 @@ export const builtViews: BuiltViews = Object.freeze({
 		228: 4,
 		229: 3,
 		230: 3,
-		231: 4,
+		231: 5,
 		232: 4,
 		233: 5,
 		234: 3,
@@ -19603,7 +19637,7 @@ export const builtViews: BuiltViews = Object.freeze({
 		317: 3,
 		318: 4,
 		319: 4,
-		322: 3,
+		322: 4,
 		324: 3,
 		325: 4,
 		326: 4,
@@ -19637,8 +19671,8 @@ export const builtViews: BuiltViews = Object.freeze({
 		369: 6,
 		370: 5,
 		371: 3,
-		372: 3,
-		373: 3,
+		372: 4,
+		373: 4,
 		374: 3,
 		375: 3,
 		376: 3,
@@ -19654,7 +19688,7 @@ export const builtViews: BuiltViews = Object.freeze({
 		386: 4,
 		387: 3,
 		388: 3,
-		389: 3,
+		389: 4,
 		390: 5,
 		391: 3,
 		392: 3,
@@ -19664,8 +19698,8 @@ export const builtViews: BuiltViews = Object.freeze({
 		396: 5,
 		397: 5,
 		398: 5,
-		400: 3,
-		401: 3,
+		400: 4,
+		401: 4,
 		402: 3,
 		403: 3,
 		405: 3,
@@ -19700,7 +19734,7 @@ export const builtViews: BuiltViews = Object.freeze({
 		436: 3,
 		437: 4,
 		438: 3,
-		439: 4,
+		439: 5,
 		440: 4,
 		441: 4,
 		442: 3,

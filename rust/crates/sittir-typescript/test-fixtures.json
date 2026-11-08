@@ -38706,299 +38706,6 @@
     "wrappedText": "{\n}\n"
   },
   {
-    "expectedOutput": "\nabstract class Foo {\n}\n\nabstract class Animal {\n    readonly abstract prop: string;\n    requiredProp!: string;\n    abstract makeSound(): void;\n    abstract get readonlyProp(): string;\n    protected abstract readonlyProp?(): string;\n    move(): void {\n        console.log(\"roaming the earth...\");\n    }\n}\n\n@bar\nabstract class Foo {\n}\n",
-    "grammar": "typescript",
-    "input": {
-      "$errors": [],
-      "$type": 189,
-      "_statements": [
-        {
-          "$type": 313,
-          "_body": {
-            "$_layout": {
-              "trivia": {
-                "inner": [
-                  184
-                ]
-              }
-            },
-            "$type": 287,
-            "_members": []
-          },
-          "_decorator": [],
-          "_name": {
-            "$type": 504,
-            "_content": {
-              "$text": "Foo",
-              "$type": 1
-            }
-          }
-        },
-        {
-          "$type": 313,
-          "_body": {
-            "$type": 287,
-            "_members": [
-              {
-                "$type": 410,
-                "_member": {
-                  "$type": 461,
-                  "_abstract": true,
-                  "_declare": false,
-                  "_decorator": [],
-                  "_name": {
-                    "$_layout": {
-                      "trivia": {
-                        "leading": [
-                          182
-                        ]
-                      }
-                    },
-                    "$type": 499,
-                    "_content": {
-                      "$text": "prop",
-                      "$type": 1
-                    }
-                  },
-                  "_override": false,
-                  "_readonly": true,
-                  "_static": false,
-                  "_type": {
-                    "$type": 333,
-                    "_type": 43
-                  }
-                },
-                "_terminator": 22
-              },
-              {
-                "$type": 410,
-                "_member": {
-                  "$type": 461,
-                  "_abstract": false,
-                  "_declare": false,
-                  "_decorator": [],
-                  "_name": {
-                    "$type": 499,
-                    "_content": {
-                      "$text": "requiredProp",
-                      "$type": 1
-                    }
-                  },
-                  "_optionality": 117,
-                  "_override": false,
-                  "_readonly": false,
-                  "_static": false,
-                  "_type": {
-                    "$type": 333,
-                    "_type": 43
-                  }
-                },
-                "_terminator": 22
-              },
-              {
-                "$type": 410,
-                "_member": {
-                  "$type": 458,
-                  "_generator": false,
-                  "_name": {
-                    "$type": 499,
-                    "_content": {
-                      "$text": "makeSound",
-                      "$type": 1
-                    }
-                  },
-                  "_optional": false,
-                  "_override": false,
-                  "_parameters": {
-                    "$type": 288
-                  },
-                  "_return_type": {
-                    "$type": 333,
-                    "_type": 78
-                  }
-                },
-                "_terminator": 22
-              },
-              {
-                "$type": 410,
-                "_member": {
-                  "$type": 459,
-                  "_name": {
-                    "$type": 499,
-                    "_content": {
-                      "$text": "readonlyProp",
-                      "$type": 1
-                    }
-                  },
-                  "_override": false,
-                  "_type": {
-                    "$type": 333,
-                    "_type": 43
-                  }
-                },
-                "_terminator": 22
-              },
-              {
-                "$type": 410,
-                "_member": {
-                  "$type": 458,
-                  "_accessibility_modifier": 36,
-                  "_generator": false,
-                  "_name": {
-                    "$type": 499,
-                    "_content": {
-                      "$text": "readonlyProp",
-                      "$type": 1
-                    }
-                  },
-                  "_optional": true,
-                  "_override": false,
-                  "_parameters": {
-                    "$type": 288
-                  },
-                  "_return_type": {
-                    "$type": 333,
-                    "_type": 43
-                  }
-                },
-                "_terminator": 22
-              },
-              {
-                "$type": 408,
-                "_decorator": [],
-                "_method_definition": {
-                  "$type": 452,
-                  "_async": false,
-                  "_body": {
-                    "$type": 210,
-                    "_statements": [
-                      {
-                        "$type": 205,
-                        "_expression": {
-                          "$type": 420,
-                          "_arguments": {
-                            "$type": 283,
-                            "_elements": [
-                              {
-                                "$type": 423,
-                                "_elements": [
-                                  {
-                                    "$text": "roaming the earth...",
-                                    "$type": 119
-                                  }
-                                ]
-                              }
-                            ]
-                          },
-                          "_function": {
-                            "$type": 258,
-                            "_object": {
-                              "$text": "console",
-                              "$type": 1
-                            },
-                            "_operator": 63,
-                            "_property": {
-                              "$type": 499,
-                              "_content": {
-                                "$text": "log",
-                                "$type": 1
-                              }
-                            }
-                          }
-                        },
-                        "_terminator": 22
-                      }
-                    ],
-                    "_terminator": 174
-                  },
-                  "_generator": false,
-                  "_name": {
-                    "$type": 499,
-                    "_content": {
-                      "$text": "move",
-                      "$type": 1
-                    }
-                  },
-                  "_optional": false,
-                  "_override": false,
-                  "_parameters": {
-                    "$type": 288
-                  },
-                  "_readonly": false,
-                  "_return_type": {
-                    "$type": 333,
-                    "_type": 78
-                  },
-                  "_static": false
-                },
-                "_terminator": 174
-              }
-            ]
-          },
-          "_decorator": [],
-          "_name": {
-            "$type": 504,
-            "_content": {
-              "$text": "Animal",
-              "$type": 1
-            }
-          }
-        },
-        {
-          "$type": 313,
-          "_body": {
-            "$_layout": {
-              "trivia": {
-                "inner": [
-                  184
-                ]
-              }
-            },
-            "$type": 287,
-            "_members": []
-          },
-          "_decorator": [
-            {
-              "$type": 284,
-              "_content": {
-                "$text": "bar",
-                "$type": 1
-              }
-            }
-          ],
-          "_name": {
-            "$type": 504,
-            "_content": {
-              "$text": "Foo",
-              "$type": 1
-            }
-          }
-        }
-      ]
-    },
-    "kind": "render",
-    "options": {
-      "layout": {
-        "indent": "    "
-      },
-      "program": {
-        "before": 184
-      }
-    },
-    "pattern": "program"
-  },
-  {
-    "edits": [],
-    "expectedReparseTree": "(program statements: (abstract_class_declaration name: (type_identifier) body: (class_body)) statements: (abstract_class_declaration name: (type_identifier) body: (class_body members: (class_body_member_declaration member: (public_field_definition_plain name: (property_identifier) type: (type_annotation type: (predefined_type)))) members: (class_body_member_declaration member: (public_field_definition_plain name: (property_identifier) type: (type_annotation type: (predefined_type)))) members: (class_body_member_declaration member: (abstract_method_signature_plain name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type)))) members: (class_body_member_declaration member: (abstract_method_signature_getter name: (property_identifier) parameters: (formal_parameters) type: (type_annotation type: (predefined_type)))) members: (class_body_member_declaration member: (abstract_method_signature_plain accessibility_modifier: (accessibility_modifier) name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type)))) members: (class_body_member_method (method_definition_plain name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type)) body: (statement_block statements: (expression_statement expression: (call_expression_call function: (member_expression object: (identifier) property: (property_identifier)) arguments: (arguments elements: (string_double elements: (string_fragment))))) terminator: (automatic_semicolon))) terminator: (automatic_semicolon)))) statements: (abstract_class_declaration decorator: (decorator content: (identifier)) name: (type_identifier) body: (class_body)))",
-    "expectedSourceOut": "\nabstract class Foo {\n}\n\nabstract class Animal {\n    readonly abstract prop: string;\n    requiredProp!: string;\n    abstract makeSound(): void;\n    abstract get readonlyProp(): string;\n    protected abstract readonlyProp?(): string;\n    move(): void {\n        console.log(\"roaming the earth...\");\n    }\n}\n\n@bar\nabstract class Foo {\n}\n",
-    "grammar": "typescript",
-    "kind": "roundtrip",
-    "pattern": "program",
-    "sourceIn": "\nabstract class Foo {\n}\n\nabstract class Animal {\n    readonly abstract prop: string;\n    requiredProp!: string;\n    abstract makeSound(): void;\n    abstract get readonlyProp(): string;\n    protected abstract readonlyProp?(): string;\n    move(): void {\n        console.log(\"roaming the earth...\");\n    }\n}\n\n@bar\nabstract class Foo {\n}\n",
-    "wrappedOffset": 0,
-    "wrappedText": "\nabstract class Foo {\n}\n\nabstract class Animal {\n    readonly abstract prop: string;\n    requiredProp!: string;\n    abstract makeSound(): void;\n    abstract get readonlyProp(): string;\n    protected abstract readonlyProp?(): string;\n    move(): void {\n        console.log(\"roaming the earth...\");\n    }\n}\n\n@bar\nabstract class Foo {\n}\n"
-  },
-  {
     "expectedOutput": "abstract class Foo {\n}",
     "grammar": "typescript",
     "input": {
@@ -39044,241 +38751,6 @@
     "sourceIn": "abstract class Foo {\n}",
     "wrappedOffset": 0,
     "wrappedText": "abstract class Foo {\n}"
-  },
-  {
-    "expectedOutput": "abstract class Animal {\n    readonly abstract prop: string;\n    requiredProp!: string;\n    abstract makeSound(): void;\n    abstract get readonlyProp(): string;\n    protected abstract readonlyProp?(): string;\n    move(): void {\n        console.log(\"roaming the earth...\");\n    }\n}",
-    "grammar": "typescript",
-    "input": {
-      "$type": 313,
-      "_body": {
-        "$type": 287,
-        "_members": [
-          {
-            "$type": 410,
-            "_member": {
-              "$type": 461,
-              "_abstract": true,
-              "_declare": false,
-              "_decorator": [],
-              "_name": {
-                "$_layout": {
-                  "trivia": {
-                    "leading": [
-                      182
-                    ]
-                  }
-                },
-                "$type": 499,
-                "_content": {
-                  "$text": "prop",
-                  "$type": 1
-                }
-              },
-              "_override": false,
-              "_readonly": true,
-              "_static": false,
-              "_type": {
-                "$type": 333,
-                "_type": 43
-              }
-            },
-            "_terminator": 22
-          },
-          {
-            "$type": 410,
-            "_member": {
-              "$type": 461,
-              "_abstract": false,
-              "_declare": false,
-              "_decorator": [],
-              "_name": {
-                "$type": 499,
-                "_content": {
-                  "$text": "requiredProp",
-                  "$type": 1
-                }
-              },
-              "_optionality": 117,
-              "_override": false,
-              "_readonly": false,
-              "_static": false,
-              "_type": {
-                "$type": 333,
-                "_type": 43
-              }
-            },
-            "_terminator": 22
-          },
-          {
-            "$type": 410,
-            "_member": {
-              "$type": 458,
-              "_generator": false,
-              "_name": {
-                "$type": 499,
-                "_content": {
-                  "$text": "makeSound",
-                  "$type": 1
-                }
-              },
-              "_optional": false,
-              "_override": false,
-              "_parameters": {
-                "$type": 288
-              },
-              "_return_type": {
-                "$type": 333,
-                "_type": 78
-              }
-            },
-            "_terminator": 22
-          },
-          {
-            "$type": 410,
-            "_member": {
-              "$type": 459,
-              "_name": {
-                "$type": 499,
-                "_content": {
-                  "$text": "readonlyProp",
-                  "$type": 1
-                }
-              },
-              "_override": false,
-              "_type": {
-                "$type": 333,
-                "_type": 43
-              }
-            },
-            "_terminator": 22
-          },
-          {
-            "$type": 410,
-            "_member": {
-              "$type": 458,
-              "_accessibility_modifier": 36,
-              "_generator": false,
-              "_name": {
-                "$type": 499,
-                "_content": {
-                  "$text": "readonlyProp",
-                  "$type": 1
-                }
-              },
-              "_optional": true,
-              "_override": false,
-              "_parameters": {
-                "$type": 288
-              },
-              "_return_type": {
-                "$type": 333,
-                "_type": 43
-              }
-            },
-            "_terminator": 22
-          },
-          {
-            "$type": 408,
-            "_decorator": [],
-            "_method_definition": {
-              "$type": 452,
-              "_async": false,
-              "_body": {
-                "$type": 210,
-                "_statements": [
-                  {
-                    "$type": 205,
-                    "_expression": {
-                      "$type": 420,
-                      "_arguments": {
-                        "$type": 283,
-                        "_elements": [
-                          {
-                            "$type": 423,
-                            "_elements": [
-                              {
-                                "$text": "roaming the earth...",
-                                "$type": 119
-                              }
-                            ]
-                          }
-                        ]
-                      },
-                      "_function": {
-                        "$type": 258,
-                        "_object": {
-                          "$text": "console",
-                          "$type": 1
-                        },
-                        "_operator": 63,
-                        "_property": {
-                          "$type": 499,
-                          "_content": {
-                            "$text": "log",
-                            "$type": 1
-                          }
-                        }
-                      }
-                    },
-                    "_terminator": 22
-                  }
-                ],
-                "_terminator": 174
-              },
-              "_generator": false,
-              "_name": {
-                "$type": 499,
-                "_content": {
-                  "$text": "move",
-                  "$type": 1
-                }
-              },
-              "_optional": false,
-              "_override": false,
-              "_parameters": {
-                "$type": 288
-              },
-              "_readonly": false,
-              "_return_type": {
-                "$type": 333,
-                "_type": 78
-              },
-              "_static": false
-            },
-            "_terminator": 174
-          }
-        ]
-      },
-      "_decorator": [],
-      "_name": {
-        "$type": 504,
-        "_content": {
-          "$text": "Animal",
-          "$type": 1
-        }
-      }
-    },
-    "kind": "render",
-    "options": {
-      "layout": {
-        "indent": "    "
-      },
-      "program": {
-        "before": 184
-      }
-    },
-    "pattern": "abstract_class_declaration"
-  },
-  {
-    "edits": [],
-    "expectedReparseTree": "(abstract_class_declaration name: (type_identifier) body: (class_body members: (class_body_member_declaration member: (public_field_definition_plain name: (property_identifier) type: (type_annotation type: (predefined_type)))) members: (class_body_member_declaration member: (public_field_definition_plain name: (property_identifier) type: (type_annotation type: (predefined_type)))) members: (class_body_member_declaration member: (abstract_method_signature_plain name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type)))) members: (class_body_member_declaration member: (abstract_method_signature_getter name: (property_identifier) parameters: (formal_parameters) type: (type_annotation type: (predefined_type)))) members: (class_body_member_declaration member: (abstract_method_signature_plain accessibility_modifier: (accessibility_modifier) name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type)))) members: (class_body_member_method (method_definition_plain name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type)) body: (statement_block statements: (expression_statement expression: (call_expression_call function: (member_expression object: (identifier) property: (property_identifier)) arguments: (arguments elements: (string_double elements: (string_fragment))))) terminator: (automatic_semicolon))) terminator: (automatic_semicolon))))",
-    "expectedSourceOut": "abstract class Animal {\n    readonly abstract prop: string;\n    requiredProp!: string;\n    abstract makeSound(): void;\n    abstract get readonlyProp(): string;\n    protected abstract readonlyProp?(): string;\n    move(): void {\n        console.log(\"roaming the earth...\");\n    }\n}",
-    "grammar": "typescript",
-    "kind": "roundtrip",
-    "pattern": "abstract_class_declaration",
-    "sourceIn": "abstract class Animal {\n    readonly abstract prop: string;\n    requiredProp!: string;\n    abstract makeSound(): void;\n    abstract get readonlyProp(): string;\n    protected abstract readonlyProp?(): string;\n    move(): void {\n        console.log(\"roaming the earth...\");\n    }\n}",
-    "wrappedOffset": 0,
-    "wrappedText": "abstract class Animal {\n    readonly abstract prop: string;\n    requiredProp!: string;\n    abstract makeSound(): void;\n    abstract get readonlyProp(): string;\n    protected abstract readonlyProp?(): string;\n    move(): void {\n        console.log(\"roaming the earth...\");\n    }\n}"
   },
   {
     "expectedOutput": "@bar\nabstract class Foo {\n}",
@@ -39470,230 +38942,6 @@
     "sourceIn": "{\n}",
     "wrappedOffset": 9,
     "wrappedText": "class _C {\n}"
-  },
-  {
-    "expectedOutput": "{\n    readonly abstract prop: string;\n    requiredProp!: string;\n    abstract makeSound(): void;\n    abstract get readonlyProp(): string;\n    protected abstract readonlyProp?(): string;\n    move(): void {\n        console.log(\"roaming the earth...\");\n    }\n}",
-    "grammar": "typescript",
-    "input": {
-      "$type": 287,
-      "_members": [
-        {
-          "$type": 410,
-          "_member": {
-            "$type": 461,
-            "_abstract": true,
-            "_declare": false,
-            "_decorator": [],
-            "_name": {
-              "$_layout": {
-                "trivia": {
-                  "leading": [
-                    182
-                  ]
-                }
-              },
-              "$type": 499,
-              "_content": {
-                "$text": "prop",
-                "$type": 1
-              }
-            },
-            "_override": false,
-            "_readonly": true,
-            "_static": false,
-            "_type": {
-              "$type": 333,
-              "_type": 43
-            }
-          },
-          "_terminator": 22
-        },
-        {
-          "$type": 410,
-          "_member": {
-            "$type": 461,
-            "_abstract": false,
-            "_declare": false,
-            "_decorator": [],
-            "_name": {
-              "$type": 499,
-              "_content": {
-                "$text": "requiredProp",
-                "$type": 1
-              }
-            },
-            "_optionality": 117,
-            "_override": false,
-            "_readonly": false,
-            "_static": false,
-            "_type": {
-              "$type": 333,
-              "_type": 43
-            }
-          },
-          "_terminator": 22
-        },
-        {
-          "$type": 410,
-          "_member": {
-            "$type": 458,
-            "_generator": false,
-            "_name": {
-              "$type": 499,
-              "_content": {
-                "$text": "makeSound",
-                "$type": 1
-              }
-            },
-            "_optional": false,
-            "_override": false,
-            "_parameters": {
-              "$type": 288
-            },
-            "_return_type": {
-              "$type": 333,
-              "_type": 78
-            }
-          },
-          "_terminator": 22
-        },
-        {
-          "$type": 410,
-          "_member": {
-            "$type": 459,
-            "_name": {
-              "$type": 499,
-              "_content": {
-                "$text": "readonlyProp",
-                "$type": 1
-              }
-            },
-            "_override": false,
-            "_type": {
-              "$type": 333,
-              "_type": 43
-            }
-          },
-          "_terminator": 22
-        },
-        {
-          "$type": 410,
-          "_member": {
-            "$type": 458,
-            "_accessibility_modifier": 36,
-            "_generator": false,
-            "_name": {
-              "$type": 499,
-              "_content": {
-                "$text": "readonlyProp",
-                "$type": 1
-              }
-            },
-            "_optional": true,
-            "_override": false,
-            "_parameters": {
-              "$type": 288
-            },
-            "_return_type": {
-              "$type": 333,
-              "_type": 43
-            }
-          },
-          "_terminator": 22
-        },
-        {
-          "$type": 408,
-          "_decorator": [],
-          "_method_definition": {
-            "$type": 452,
-            "_async": false,
-            "_body": {
-              "$type": 210,
-              "_statements": [
-                {
-                  "$type": 205,
-                  "_expression": {
-                    "$type": 420,
-                    "_arguments": {
-                      "$type": 283,
-                      "_elements": [
-                        {
-                          "$type": 423,
-                          "_elements": [
-                            {
-                              "$text": "roaming the earth...",
-                              "$type": 119
-                            }
-                          ]
-                        }
-                      ]
-                    },
-                    "_function": {
-                      "$type": 258,
-                      "_object": {
-                        "$text": "console",
-                        "$type": 1
-                      },
-                      "_operator": 63,
-                      "_property": {
-                        "$type": 499,
-                        "_content": {
-                          "$text": "log",
-                          "$type": 1
-                        }
-                      }
-                    }
-                  },
-                  "_terminator": 22
-                }
-              ],
-              "_terminator": 174
-            },
-            "_generator": false,
-            "_name": {
-              "$type": 499,
-              "_content": {
-                "$text": "move",
-                "$type": 1
-              }
-            },
-            "_optional": false,
-            "_override": false,
-            "_parameters": {
-              "$type": 288
-            },
-            "_readonly": false,
-            "_return_type": {
-              "$type": 333,
-              "_type": 78
-            },
-            "_static": false
-          },
-          "_terminator": 174
-        }
-      ]
-    },
-    "kind": "render",
-    "options": {
-      "layout": {
-        "indent": "    "
-      },
-      "program": {
-        "before": 184
-      }
-    },
-    "pattern": "class_body"
-  },
-  {
-    "edits": [],
-    "expectedReparseTree": "(class_body members: (class_body_member_declaration member: (public_field_definition_plain name: (property_identifier) type: (type_annotation type: (predefined_type)))) members: (class_body_member_declaration member: (public_field_definition_plain name: (property_identifier) type: (type_annotation type: (predefined_type)))) members: (class_body_member_declaration member: (abstract_method_signature_plain name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type)))) members: (class_body_member_declaration member: (abstract_method_signature_getter name: (property_identifier) parameters: (formal_parameters) type: (type_annotation type: (predefined_type)))) members: (class_body_member_declaration member: (abstract_method_signature_plain accessibility_modifier: (accessibility_modifier) name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type)))) members: (class_body_member_method (method_definition_plain name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type)) body: (statement_block statements: (expression_statement expression: (call_expression_call function: (member_expression object: (identifier) property: (property_identifier)) arguments: (arguments elements: (string_double elements: (string_fragment))))) terminator: (automatic_semicolon))) terminator: (automatic_semicolon)))",
-    "expectedSourceOut": "{\n    readonly abstract prop: string;\n    requiredProp!: string;\n    abstract makeSound(): void;\n    abstract get readonlyProp(): string;\n    protected abstract readonlyProp?(): string;\n    move(): void {\n        console.log(\"roaming the earth...\");\n    }\n}",
-    "grammar": "typescript",
-    "kind": "roundtrip",
-    "pattern": "class_body",
-    "sourceIn": "{\n    readonly abstract prop: string;\n    requiredProp!: string;\n    abstract makeSound(): void;\n    abstract get readonlyProp(): string;\n    protected abstract readonlyProp?(): string;\n    move(): void {\n        console.log(\"roaming the earth...\");\n    }\n}",
-    "wrappedOffset": 9,
-    "wrappedText": "class _C {\n    readonly abstract prop: string;\n    requiredProp!: string;\n    abstract makeSound(): void;\n    abstract get readonlyProp(): string;\n    protected abstract readonlyProp?(): string;\n    move(): void {\n        console.log(\"roaming the earth...\");\n    }\n}"
   },
   {
     "expectedOutput": "{\n}",
@@ -39889,50 +39137,6 @@
     "sourceIn": "abstract makeSound(): void;",
     "wrappedOffset": 13,
     "wrappedText": "class _C {\n  abstract makeSound(): void;\n}"
-  },
-  {
-    "expectedOutput": "abstract get readonlyProp(): string;",
-    "grammar": "typescript",
-    "input": {
-      "$type": 410,
-      "_member": {
-        "$type": 459,
-        "_name": {
-          "$type": 499,
-          "_content": {
-            "$text": "readonlyProp",
-            "$type": 1
-          }
-        },
-        "_override": false,
-        "_type": {
-          "$type": 333,
-          "_type": 43
-        }
-      },
-      "_terminator": 22
-    },
-    "kind": "render",
-    "options": {
-      "layout": {
-        "indent": "    "
-      },
-      "program": {
-        "before": 184
-      }
-    },
-    "pattern": "class_body_member_declaration"
-  },
-  {
-    "edits": [],
-    "expectedReparseTree": "(class_body_member_declaration member: (abstract_method_signature_getter name: (property_identifier) parameters: (formal_parameters) type: (type_annotation type: (predefined_type))))",
-    "expectedSourceOut": "abstract get readonlyProp(): string;",
-    "grammar": "typescript",
-    "kind": "roundtrip",
-    "pattern": "class_body_member_declaration",
-    "sourceIn": "abstract get readonlyProp(): string;",
-    "wrappedOffset": 13,
-    "wrappedText": "class _C {\n  abstract get readonlyProp(): string;\n}"
   },
   {
     "expectedOutput": "protected abstract readonlyProp?(): string;",
@@ -40654,46 +39858,6 @@
     "sourceIn": "()",
     "wrappedOffset": 11,
     "wrappedText": "function _f() {}"
-  },
-  {
-    "expectedOutput": "abstract get readonlyProp(): string",
-    "grammar": "typescript",
-    "input": {
-      "$type": 459,
-      "_name": {
-        "$type": 499,
-        "_content": {
-          "$text": "readonlyProp",
-          "$type": 1
-        }
-      },
-      "_override": false,
-      "_type": {
-        "$type": 333,
-        "_type": 43
-      }
-    },
-    "kind": "render",
-    "options": {
-      "layout": {
-        "indent": "    "
-      },
-      "program": {
-        "before": 184
-      }
-    },
-    "pattern": "abstract_method_signature_getter"
-  },
-  {
-    "edits": [],
-    "expectedReparseTree": "(abstract_method_signature_getter name: (property_identifier) parameters: (formal_parameters) type: (type_annotation type: (predefined_type)))",
-    "expectedSourceOut": "abstract get readonlyProp(): string",
-    "grammar": "typescript",
-    "kind": "roundtrip",
-    "pattern": "abstract_method_signature_getter",
-    "sourceIn": "abstract get readonlyProp(): string",
-    "wrappedOffset": 13,
-    "wrappedText": "class _C {\n  abstract get readonlyProp(): string;\n}"
   },
   {
     "expectedOutput": "move(): void {\n    console.log(\"roaming the earth...\");\n}\n",
@@ -61949,6 +61113,7 @@
               "_receiver": {
                 "$type": 467,
                 "_decorator": [],
+                "_name": 278,
                 "_override": false,
                 "_readonly": false,
                 "_type": {
@@ -62546,6 +61711,7 @@
           "_receiver": {
             "$type": 467,
             "_decorator": [],
+            "_name": 278,
             "_override": false,
             "_readonly": false,
             "_type": {
@@ -63044,6 +62210,7 @@
         "_receiver": {
           "$type": 467,
           "_decorator": [],
+          "_name": 278,
           "_override": false,
           "_readonly": false,
           "_type": {
@@ -66105,6 +65272,7 @@
       "_receiver": {
         "$type": 467,
         "_decorator": [],
+        "_name": 278,
         "_override": false,
         "_readonly": false,
         "_type": {
@@ -66147,6 +65315,7 @@
     "input": {
       "$type": 467,
       "_decorator": [],
+      "_name": 278,
       "_override": false,
       "_readonly": false,
       "_type": {
@@ -70642,6 +69811,7 @@
                     ],
                     "_terminator": 174
                   },
+                  "_name": 54,
                   "_parameters": {
                     "$type": 288,
                     "_elements": {
@@ -70861,6 +70031,7 @@
                 ],
                 "_terminator": 174
               },
+              "_name": 54,
               "_parameters": {
                 "$type": 288,
                 "_elements": {
@@ -71260,6 +70431,7 @@
               ],
               "_terminator": 174
             },
+            "_name": 54,
             "_parameters": {
               "$type": 288,
               "_elements": {
@@ -71444,6 +70616,7 @@
           ],
           "_terminator": 174
         },
+        "_name": 54,
         "_parameters": {
           "$type": 288,
           "_elements": {
@@ -71648,6 +70821,7 @@
         ],
         "_terminator": 174
       },
+      "_name": 54,
       "_parameters": {
         "$type": 288,
         "_elements": {
@@ -83105,6 +82279,7 @@
                       "_receiver": {
                         "$type": 467,
                         "_decorator": [],
+                        "_name": 278,
                         "_override": false,
                         "_readonly": false,
                         "_type": {
@@ -83269,6 +82444,7 @@
                   "_receiver": {
                     "$type": 467,
                     "_decorator": [],
+                    "_name": 278,
                     "_override": false,
                     "_readonly": false,
                     "_type": {
@@ -83421,6 +82597,7 @@
               "_receiver": {
                 "$type": 467,
                 "_decorator": [],
+                "_name": 278,
                 "_override": false,
                 "_readonly": false,
                 "_type": {
@@ -83583,6 +82760,7 @@
             "_receiver": {
               "$type": 467,
               "_decorator": [],
+              "_name": 278,
               "_override": false,
               "_readonly": false,
               "_type": {
@@ -83772,6 +82950,7 @@
           "_receiver": {
             "$type": 467,
             "_decorator": [],
+            "_name": 278,
             "_override": false,
             "_readonly": false,
             "_type": {
@@ -83894,6 +83073,7 @@
         "_receiver": {
           "$type": 467,
           "_decorator": [],
+          "_name": 278,
           "_override": false,
           "_readonly": false,
           "_type": {
@@ -84155,6 +83335,7 @@
       "_receiver": {
         "$type": 467,
         "_decorator": [],
+        "_name": 278,
         "_override": false,
         "_readonly": false,
         "_type": {
@@ -84195,6 +83376,7 @@
     "input": {
       "$type": 467,
       "_decorator": [],
+      "_name": 278,
       "_override": false,
       "_readonly": false,
       "_type": {

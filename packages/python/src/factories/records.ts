@@ -11699,10 +11699,10 @@ export function buildConstructorDeclaration(config: T.ConstructorDeclaration.Con
 	return arena.scope(() => {
 		const record = arena.record(TSKindId.ConstructorDeclaration as const);
 		if (_async) storeFlag(record.data, record.base + 2, 1);
-		storeCell(arena, record, 3, 3, _type_parameters);
-		storeCell(arena, record, 4, 8, _parameters);
-		storeCell(arena, record, 5, 13, _return_type);
-		storeCell(arena, record, 6, 16, _body);
+		storeCell(arena, record, 4, 4, _type_parameters);
+		storeCell(arena, record, 5, 9, _parameters);
+		storeCell(arena, record, 6, 14, _return_type);
+		storeCell(arena, record, 7, 17, _body);
 		const node = arena.view(record);
 		return node as unknown as T.ConstructorDeclaration.Bound;
 	});
@@ -11738,10 +11738,10 @@ function buildConstructorDeclaration$patch(
 	return arena.scope(() => {
 		const record = arena.copy(source, TSKindId.ConstructorDeclaration as const);
 		patchFlag(record, 2, 1, _async);
-		patchCell(arena, record, 3, 3, carriedSlot(source, 'typeParameters', _type_parameters));
-		patchCell(arena, record, 4, 8, carriedSlot(source, 'parameters', _parameters));
-		patchCell(arena, record, 5, 13, carriedSlot(source, 'returnType', _return_type));
-		patchCell(arena, record, 6, 16, carriedSlot(source, 'body', _body));
+		patchCell(arena, record, 4, 4, carriedSlot(source, 'typeParameters', _type_parameters));
+		patchCell(arena, record, 5, 9, carriedSlot(source, 'parameters', _parameters));
+		patchCell(arena, record, 6, 14, carriedSlot(source, 'returnType', _return_type));
+		patchCell(arena, record, 7, 17, carriedSlot(source, 'body', _body));
 		const node = arena.view(record);
 		return node as unknown as T.ConstructorDeclaration.Bound;
 	});
@@ -13112,7 +13112,7 @@ export const builtViews: BuiltViews = Object.freeze({
 		304: 4,
 		305: 3,
 		306: 3,
-		307: 7,
+		307: 8,
 		309: 3,
 		310: 3,
 		311: 4,

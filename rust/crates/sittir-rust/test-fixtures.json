@@ -3689,6 +3689,7 @@
       "_statements": [
         {
           "$type": 204,
+          "_crate": 126,
           "_name": {
             "$text": "std",
             "$type": 1
@@ -3700,6 +3701,7 @@
             "$text": "ruststd",
             "$type": 1
           },
+          "_crate": 126,
           "_name": {
             "$text": "std",
             "$type": 1
@@ -3707,6 +3709,7 @@
         },
         {
           "$type": 204,
+          "_crate": 126,
           "_name": {
             "$text": "futures",
             "$type": 1
@@ -3744,6 +3747,7 @@
     "grammar": "rust",
     "input": {
       "$type": 204,
+      "_crate": 126,
       "_name": {
         "$text": "std",
         "$type": 1
@@ -3777,6 +3781,7 @@
         "$text": "ruststd",
         "$type": 1
       },
+      "_crate": 126,
       "_name": {
         "$text": "std",
         "$type": 1
@@ -3806,6 +3811,7 @@
     "grammar": "rust",
     "input": {
       "$type": 204,
+      "_crate": 126,
       "_name": {
         "$text": "futures",
         "$type": 1
@@ -4374,7 +4380,8 @@
                 "_content": {
                   "$type": 231,
                   "_mutable": false,
-                  "_reference": false
+                  "_reference": false,
+                  "_self": 124
                 }
               }
             }
@@ -5213,7 +5220,8 @@
             "_content": {
               "$type": 231,
               "_mutable": false,
-              "_reference": false
+              "_reference": false,
+              "_self": 124
             }
           }
         }
@@ -5836,7 +5844,8 @@
           "_content": {
             "$type": 231,
             "_mutable": false,
-            "_reference": false
+            "_reference": false,
+            "_self": 124
           }
         }
       }
@@ -10469,7 +10478,8 @@
         "_content": {
           "$type": 231,
           "_mutable": false,
-          "_reference": false
+          "_reference": false,
+          "_self": 124
         }
       }
     },
@@ -10500,7 +10510,8 @@
       "_content": {
         "$type": 231,
         "_mutable": false,
-        "_reference": false
+        "_reference": false,
+        "_self": 124
       }
     },
     "kind": "render",
@@ -10528,7 +10539,8 @@
     "input": {
       "$type": 231,
       "_mutable": false,
-      "_reference": false
+      "_reference": false,
+      "_self": 124
     },
     "kind": "render",
     "options": {
@@ -12840,7 +12852,8 @@
                 "_content": {
                   "$type": 231,
                   "_mutable": false,
-                  "_reference": true
+                  "_reference": true,
+                  "_self": 124
                 }
               }
             }
@@ -12981,7 +12994,8 @@
             "_content": {
               "$type": 231,
               "_mutable": false,
-              "_reference": true
+              "_reference": true,
+              "_self": 124
             }
           }
         }
@@ -13374,7 +13388,8 @@
           "_content": {
             "$type": 231,
             "_mutable": false,
-            "_reference": true
+            "_reference": true,
+            "_self": 124
           }
         }
       }
@@ -13408,7 +13423,8 @@
         "_content": {
           "$type": 231,
           "_mutable": false,
-          "_reference": true
+          "_reference": true,
+          "_self": 124
         }
       }
     },
@@ -13439,7 +13455,8 @@
       "_content": {
         "$type": 231,
         "_mutable": false,
-        "_reference": true
+        "_reference": true,
+        "_self": 124
       }
     },
     "kind": "render",
@@ -13467,7 +13484,8 @@
     "input": {
       "$type": 231,
       "_mutable": false,
-      "_reference": true
+      "_reference": true,
+      "_self": 124
     },
     "kind": "render",
     "options": {
@@ -14027,7 +14045,8 @@
                 "_content": {
                   "$type": 231,
                   "_mutable": false,
-                  "_reference": true
+                  "_reference": true,
+                  "_self": 124
                 }
               }
             }
@@ -14125,7 +14144,8 @@
             "_content": {
               "$type": 231,
               "_mutable": false,
-              "_reference": true
+              "_reference": true,
+              "_self": 124
             }
           }
         }
@@ -14204,7 +14224,8 @@
           "_content": {
             "$type": 231,
             "_mutable": false,
-            "_reference": true
+            "_reference": true,
+            "_self": 124
           }
         }
       }
@@ -14238,7 +14259,8 @@
         "_content": {
           "$type": 231,
           "_mutable": false,
-          "_reference": true
+          "_reference": true,
+          "_self": 124
         }
       }
     },
@@ -14269,7 +14291,8 @@
       "_content": {
         "$type": 231,
         "_mutable": false,
-        "_reference": true
+        "_reference": true,
+        "_self": 124
       }
     },
     "kind": "render",
@@ -14297,7 +14320,8 @@
     "input": {
       "$type": 231,
       "_mutable": false,
-      "_reference": true
+      "_reference": true,
+      "_self": 124
     },
     "kind": "render",
     "options": {
@@ -33530,7 +33554,8 @@
                 "_content": {
                   "$type": 231,
                   "_mutable": true,
-                  "_reference": true
+                  "_reference": true,
+                  "_self": 124
                 }
               }
             }
@@ -33772,7 +33797,8 @@
             "_content": {
               "$type": 231,
               "_mutable": true,
-              "_reference": true
+              "_reference": true,
+              "_self": 124
             }
           }
         }
@@ -35054,7 +35080,8 @@
           "_content": {
             "$type": 231,
             "_mutable": true,
-            "_reference": true
+            "_reference": true,
+            "_self": 124
           }
         }
       }
@@ -35174,7 +35201,8 @@
         "_content": {
           "$type": 231,
           "_mutable": true,
-          "_reference": true
+          "_reference": true,
+          "_self": 124
         }
       }
     },
@@ -35205,7 +35233,8 @@
       "_content": {
         "$type": 231,
         "_mutable": true,
-        "_reference": true
+        "_reference": true,
+        "_self": 124
       }
     },
     "kind": "render",
@@ -35233,7 +35262,8 @@
     "input": {
       "$type": 231,
       "_mutable": true,
-      "_reference": true
+      "_reference": true,
+      "_self": 124
     },
     "kind": "render",
     "options": {
@@ -37793,6 +37823,7 @@
                       "_content": {
                         "$type": 439,
                         "_mutable": false,
+                        "_name": 124,
                         "_type": {
                           "$type": 246,
                           "_type": {
@@ -37882,6 +37913,7 @@
                   "_content": {
                     "$type": 439,
                     "_mutable": false,
+                    "_name": 124,
                     "_type": {
                       "$type": 246,
                       "_type": {
@@ -38054,6 +38086,7 @@
                 "_content": {
                   "$type": 439,
                   "_mutable": false,
+                  "_name": 124,
                   "_type": {
                     "$type": 246,
                     "_type": {
@@ -38127,6 +38160,7 @@
             "_content": {
               "$type": 439,
               "_mutable": false,
+              "_name": 124,
               "_type": {
                 "$type": 246,
                 "_type": {
@@ -38192,6 +38226,7 @@
           "_content": {
             "$type": 439,
             "_mutable": false,
+            "_name": 124,
             "_type": {
               "$type": 246,
               "_type": {
@@ -38254,6 +38289,7 @@
         "_content": {
           "$type": 439,
           "_mutable": false,
+          "_name": 124,
           "_type": {
             "$type": 246,
             "_type": {
@@ -38313,6 +38349,7 @@
       "_content": {
         "$type": 439,
         "_mutable": false,
+        "_name": 124,
         "_type": {
           "$type": 246,
           "_type": {
@@ -38369,6 +38406,7 @@
     "input": {
       "$type": 439,
       "_mutable": false,
+      "_name": 124,
       "_type": {
         "$type": 246,
         "_type": {
@@ -38898,7 +38936,8 @@
                   "$type": 1
                 }
               }
-            }
+            },
+            "_writable": 57
           }
         }
       ]
@@ -38987,7 +39026,8 @@
               "$type": 1
             }
           }
-        }
+        },
+        "_writable": 57
       }
     },
     "kind": "render",
@@ -39056,7 +39096,8 @@
             "$type": 1
           }
         }
-      }
+      },
+      "_writable": 57
     },
     "kind": "render",
     "options": {
@@ -57567,7 +57608,7 @@
     "wrappedText": "fn _f() { let _ = (2, 7, 8); }"
   },
   {
-    "expectedOutput": "\nimpl Person {\n  const leg_count : u32 = 2;\n\n  fn walk(self) {}\n  fn walk_mut(mut self) {}\n  fn talk(&self) {}\n  fn talk_mut(&'a mut self) {}\n}\n\nimpl Machine<{State::Init}> {}\n",
+    "expectedOutput": "\nimpl Person {\n  const leg_count : u32 = 2;\n\n  fn walk(self) {}\n  fn walk_mut(mut self) {}\n  fn talk(& self) {}\n  fn talk_mut(&'a mut self) {}\n}\n\nimpl Machine<{State::Init}> {}\n",
     "grammar": "rust",
     "input": {
       "$errors": [],
@@ -57623,7 +57664,8 @@
                       "_content": {
                         "$type": 231,
                         "_mutable": false,
-                        "_reference": false
+                        "_reference": false,
+                        "_self": 124
                       }
                     }
                   }
@@ -57648,7 +57690,8 @@
                       "_content": {
                         "$type": 231,
                         "_mutable": true,
-                        "_reference": false
+                        "_reference": false,
+                        "_self": 124
                       }
                     }
                   }
@@ -57671,9 +57714,21 @@
                     "_receiver": {
                       "$type": 440,
                       "_content": {
+                        "$_layout": {
+                          "units": [
+                            {
+                              "item": 0,
+                              "leading": [
+                                169
+                              ],
+                              "slot": "_self"
+                            }
+                          ]
+                        },
                         "$type": 231,
                         "_mutable": false,
-                        "_reference": true
+                        "_reference": true,
+                        "_self": 124
                       }
                     }
                   }
@@ -57705,7 +57760,8 @@
                           }
                         },
                         "_mutable": true,
-                        "_reference": true
+                        "_reference": true,
+                        "_self": 124
                       }
                     }
                   }
@@ -57793,16 +57849,16 @@
   {
     "edits": [],
     "expectedReparseTree": "(source_file statements: (impl_item_body type: (type_identifier) body: (extension_declaration_body declarations: (const_item name: (identifier) type: (primitive_type) value: (integer_literal_decimal)) declarations: (method_declaration name: (identifier) parameters: (parameters elements: (parameters_elements_receiver receiver: (attributed_parameter_receiver (self_parameter self: (self))))) body: (block)) declarations: (method_declaration name: (identifier) parameters: (parameters elements: (parameters_elements_receiver receiver: (attributed_parameter_receiver (self_parameter mutable: (mutable_specifier) self: (self))))) body: (block)) declarations: (method_declaration name: (identifier) parameters: (parameters elements: (parameters_elements_receiver receiver: (attributed_parameter_receiver (self_parameter self: (self))))) body: (block)) declarations: (method_declaration name: (identifier) parameters: (parameters elements: (parameters_elements_receiver receiver: (attributed_parameter_receiver (self_parameter lifetime: (lifetime name: (identifier)) mutable: (mutable_specifier) self: (self))))) body: (block)))) statements: (impl_item_body type: (generic_type type: (type_identifier) type_arguments: (type_arguments elements: (type_arguments_elements item: (type_argument (block trailing_expression: (qualified_identifier qualifier: (identifier) name: (identifier))))))) body: (extension_declaration_body)))",
-    "expectedSourceOut": "\nimpl Person {\n  const leg_count : u32 = 2;\n\n  fn walk(self) {}\n  fn walk_mut(mut self) {}\n  fn talk(&self) {}\n  fn talk_mut(&'a mut self) {}\n}\n\nimpl Machine<{State::Init}> {}\n",
+    "expectedSourceOut": "\nimpl Person {\n  const leg_count : u32 = 2;\n\n  fn walk(self) {}\n  fn walk_mut(mut self) {}\n  fn talk(& self) {}\n  fn talk_mut(&'a mut self) {}\n}\n\nimpl Machine<{State::Init}> {}\n",
     "grammar": "rust",
     "kind": "roundtrip",
     "pattern": "source_file",
     "sourceIn": "\nimpl Person {\n  const leg_count : u32 = 2;\n\n  fn walk(self) {}\n  fn walk_mut(mut self) {}\n  fn talk(& self) {}\n  fn talk_mut(&'a mut self) {}\n}\n\nimpl Machine<{State::Init}> {}\n",
     "wrappedOffset": 0,
-    "wrappedText": "\nimpl Person {\n  const leg_count : u32 = 2;\n\n  fn walk(self) {}\n  fn walk_mut(mut self) {}\n  fn talk(&self) {}\n  fn talk_mut(&'a mut self) {}\n}\n\nimpl Machine<{State::Init}> {}\n"
+    "wrappedText": "\nimpl Person {\n  const leg_count : u32 = 2;\n\n  fn walk(self) {}\n  fn walk_mut(mut self) {}\n  fn talk(& self) {}\n  fn talk_mut(&'a mut self) {}\n}\n\nimpl Machine<{State::Init}> {}\n"
   },
   {
-    "expectedOutput": "impl Person {\n  const leg_count : u32 = 2;\n\n  fn walk(self) {}\n  fn walk_mut(mut self) {}\n  fn talk(&self) {}\n  fn talk_mut(&'a mut self) {}\n}",
+    "expectedOutput": "impl Person {\n  const leg_count : u32 = 2;\n\n  fn walk(self) {}\n  fn walk_mut(mut self) {}\n  fn talk(& self) {}\n  fn talk_mut(&'a mut self) {}\n}",
     "grammar": "rust",
     "input": {
       "$type": 377,
@@ -57854,7 +57910,8 @@
                   "_content": {
                     "$type": 231,
                     "_mutable": false,
-                    "_reference": false
+                    "_reference": false,
+                    "_self": 124
                   }
                 }
               }
@@ -57879,7 +57936,8 @@
                   "_content": {
                     "$type": 231,
                     "_mutable": true,
-                    "_reference": false
+                    "_reference": false,
+                    "_self": 124
                   }
                 }
               }
@@ -57902,9 +57960,21 @@
                 "_receiver": {
                   "$type": 440,
                   "_content": {
+                    "$_layout": {
+                      "units": [
+                        {
+                          "item": 0,
+                          "leading": [
+                            169
+                          ],
+                          "slot": "_self"
+                        }
+                      ]
+                    },
                     "$type": 231,
                     "_mutable": false,
-                    "_reference": true
+                    "_reference": true,
+                    "_self": 124
                   }
                 }
               }
@@ -57936,7 +58006,8 @@
                       }
                     },
                     "_mutable": true,
-                    "_reference": true
+                    "_reference": true,
+                    "_self": 124
                   }
                 }
               }
@@ -57967,13 +58038,13 @@
   {
     "edits": [],
     "expectedReparseTree": "(impl_item_body type: (type_identifier) body: (extension_declaration_body declarations: (const_item name: (identifier) type: (primitive_type) value: (integer_literal_decimal)) declarations: (method_declaration name: (identifier) parameters: (parameters elements: (parameters_elements_receiver receiver: (attributed_parameter_receiver (self_parameter self: (self))))) body: (block)) declarations: (method_declaration name: (identifier) parameters: (parameters elements: (parameters_elements_receiver receiver: (attributed_parameter_receiver (self_parameter mutable: (mutable_specifier) self: (self))))) body: (block)) declarations: (method_declaration name: (identifier) parameters: (parameters elements: (parameters_elements_receiver receiver: (attributed_parameter_receiver (self_parameter self: (self))))) body: (block)) declarations: (method_declaration name: (identifier) parameters: (parameters elements: (parameters_elements_receiver receiver: (attributed_parameter_receiver (self_parameter lifetime: (lifetime name: (identifier)) mutable: (mutable_specifier) self: (self))))) body: (block))))",
-    "expectedSourceOut": "impl Person {\n  const leg_count : u32 = 2;\n\n  fn walk(self) {}\n  fn walk_mut(mut self) {}\n  fn talk(&self) {}\n  fn talk_mut(&'a mut self) {}\n}",
+    "expectedSourceOut": "impl Person {\n  const leg_count : u32 = 2;\n\n  fn walk(self) {}\n  fn walk_mut(mut self) {}\n  fn talk(& self) {}\n  fn talk_mut(&'a mut self) {}\n}",
     "grammar": "rust",
     "kind": "roundtrip",
     "pattern": "impl_item_body",
     "sourceIn": "impl Person {\n  const leg_count : u32 = 2;\n\n  fn walk(self) {}\n  fn walk_mut(mut self) {}\n  fn talk(& self) {}\n  fn talk_mut(&'a mut self) {}\n}",
     "wrappedOffset": 0,
-    "wrappedText": "impl Person {\n  const leg_count : u32 = 2;\n\n  fn walk(self) {}\n  fn walk_mut(mut self) {}\n  fn talk(&self) {}\n  fn talk_mut(&'a mut self) {}\n}"
+    "wrappedText": "impl Person {\n  const leg_count : u32 = 2;\n\n  fn walk(self) {}\n  fn walk_mut(mut self) {}\n  fn talk(& self) {}\n  fn talk_mut(&'a mut self) {}\n}"
   },
   {
     "expectedOutput": "impl Machine<{State::Init}> {}",
@@ -58120,7 +58191,7 @@
     "wrappedText": "type _X = Machine;"
   },
   {
-    "expectedOutput": "{\n  const leg_count : u32 = 2;\n\n  fn walk(self) {}\n  fn walk_mut(mut self) {}\n  fn talk(&self) {}\n  fn talk_mut(&'a mut self) {}\n}",
+    "expectedOutput": "{\n  const leg_count : u32 = 2;\n\n  fn walk(self) {}\n  fn walk_mut(mut self) {}\n  fn talk(& self) {}\n  fn talk_mut(&'a mut self) {}\n}",
     "grammar": "rust",
     "input": {
       "$type": 436,
@@ -58170,7 +58241,8 @@
                 "_content": {
                   "$type": 231,
                   "_mutable": false,
-                  "_reference": false
+                  "_reference": false,
+                  "_self": 124
                 }
               }
             }
@@ -58195,7 +58267,8 @@
                 "_content": {
                   "$type": 231,
                   "_mutable": true,
-                  "_reference": false
+                  "_reference": false,
+                  "_self": 124
                 }
               }
             }
@@ -58218,9 +58291,21 @@
               "_receiver": {
                 "$type": 440,
                 "_content": {
+                  "$_layout": {
+                    "units": [
+                      {
+                        "item": 0,
+                        "leading": [
+                          169
+                        ],
+                        "slot": "_self"
+                      }
+                    ]
+                  },
                   "$type": 231,
                   "_mutable": false,
-                  "_reference": true
+                  "_reference": true,
+                  "_self": 124
                 }
               }
             }
@@ -58252,7 +58337,8 @@
                     }
                   },
                   "_mutable": true,
-                  "_reference": true
+                  "_reference": true,
+                  "_self": 124
                 }
               }
             }
@@ -58274,13 +58360,13 @@
   {
     "edits": [],
     "expectedReparseTree": "(extension_declaration_body declarations: (const_item name: (identifier) type: (primitive_type) value: (integer_literal_decimal)) declarations: (method_declaration name: (identifier) parameters: (parameters elements: (parameters_elements_receiver receiver: (attributed_parameter_receiver (self_parameter self: (self))))) body: (block)) declarations: (method_declaration name: (identifier) parameters: (parameters elements: (parameters_elements_receiver receiver: (attributed_parameter_receiver (self_parameter mutable: (mutable_specifier) self: (self))))) body: (block)) declarations: (method_declaration name: (identifier) parameters: (parameters elements: (parameters_elements_receiver receiver: (attributed_parameter_receiver (self_parameter self: (self))))) body: (block)) declarations: (method_declaration name: (identifier) parameters: (parameters elements: (parameters_elements_receiver receiver: (attributed_parameter_receiver (self_parameter lifetime: (lifetime name: (identifier)) mutable: (mutable_specifier) self: (self))))) body: (block)))",
-    "expectedSourceOut": "{\n  const leg_count : u32 = 2;\n\n  fn walk(self) {}\n  fn walk_mut(mut self) {}\n  fn talk(&self) {}\n  fn talk_mut(&'a mut self) {}\n}",
+    "expectedSourceOut": "{\n  const leg_count : u32 = 2;\n\n  fn walk(self) {}\n  fn walk_mut(mut self) {}\n  fn talk(& self) {}\n  fn talk_mut(&'a mut self) {}\n}",
     "grammar": "rust",
     "kind": "roundtrip",
     "pattern": "extension_declaration_body",
     "sourceIn": "{\n  const leg_count : u32 = 2;\n\n  fn walk(self) {}\n  fn walk_mut(mut self) {}\n  fn talk(& self) {}\n  fn talk_mut(&'a mut self) {}\n}",
     "wrappedOffset": 9,
-    "wrappedText": "impl Foo {\n  const leg_count : u32 = 2;\n\n  fn walk(self) {}\n  fn walk_mut(mut self) {}\n  fn talk(&self) {}\n  fn talk_mut(&'a mut self) {}\n}"
+    "wrappedText": "impl Foo {\n  const leg_count : u32 = 2;\n\n  fn walk(self) {}\n  fn walk_mut(mut self) {}\n  fn talk(& self) {}\n  fn talk_mut(&'a mut self) {}\n}"
   },
   {
     "expectedOutput": "{}",
@@ -58406,7 +58492,8 @@
             "_content": {
               "$type": 231,
               "_mutable": false,
-              "_reference": false
+              "_reference": false,
+              "_self": 124
             }
           }
         }
@@ -58456,7 +58543,8 @@
             "_content": {
               "$type": 231,
               "_mutable": true,
-              "_reference": false
+              "_reference": false,
+              "_self": 124
             }
           }
         }
@@ -58485,7 +58573,7 @@
     "wrappedText": "impl Foo {\n  fn walk_mut(mut self) {}\n}"
   },
   {
-    "expectedOutput": "fn talk(&self) {}",
+    "expectedOutput": "fn talk(& self) {}",
     "grammar": "rust",
     "input": {
       "$type": 480,
@@ -58504,9 +58592,21 @@
           "_receiver": {
             "$type": 440,
             "_content": {
+              "$_layout": {
+                "units": [
+                  {
+                    "item": 0,
+                    "leading": [
+                      169
+                    ],
+                    "slot": "_self"
+                  }
+                ]
+              },
               "$type": 231,
               "_mutable": false,
-              "_reference": true
+              "_reference": true,
+              "_self": 124
             }
           }
         }
@@ -58526,13 +58626,13 @@
   {
     "edits": [],
     "expectedReparseTree": "(method_declaration name: (identifier) parameters: (parameters elements: (parameters_elements_receiver receiver: (attributed_parameter_receiver (self_parameter self: (self))))) body: (block))",
-    "expectedSourceOut": "fn talk(&self) {}",
+    "expectedSourceOut": "fn talk(& self) {}",
     "grammar": "rust",
     "kind": "roundtrip",
     "pattern": "method_declaration",
     "sourceIn": "fn talk(& self) {}",
     "wrappedOffset": 13,
-    "wrappedText": "impl Foo {\n  fn talk(&self) {}\n}"
+    "wrappedText": "impl Foo {\n  fn talk(& self) {}\n}"
   },
   {
     "expectedOutput": "fn talk_mut(&'a mut self) {}",
@@ -58563,7 +58663,8 @@
                 }
               },
               "_mutable": true,
-              "_reference": true
+              "_reference": true,
+              "_self": 124
             }
           }
         }
@@ -58603,7 +58704,8 @@
           "_content": {
             "$type": 231,
             "_mutable": false,
-            "_reference": false
+            "_reference": false,
+            "_self": 124
           }
         }
       }
@@ -58642,7 +58744,8 @@
           "_content": {
             "$type": 231,
             "_mutable": true,
-            "_reference": false
+            "_reference": false,
+            "_self": 124
           }
         }
       }
@@ -58670,7 +58773,7 @@
     "wrappedText": "fn _f(mut self) {}"
   },
   {
-    "expectedOutput": "(&self)",
+    "expectedOutput": "(& self)",
     "grammar": "rust",
     "input": {
       "$type": 230,
@@ -58679,9 +58782,21 @@
         "_receiver": {
           "$type": 440,
           "_content": {
+            "$_layout": {
+              "units": [
+                {
+                  "item": 0,
+                  "leading": [
+                    169
+                  ],
+                  "slot": "_self"
+                }
+              ]
+            },
             "$type": 231,
             "_mutable": false,
-            "_reference": true
+            "_reference": true,
+            "_self": 124
           }
         }
       }
@@ -58700,13 +58815,13 @@
   {
     "edits": [],
     "expectedReparseTree": "(parameters elements: (parameters_elements_receiver receiver: (attributed_parameter_receiver (self_parameter self: (self)))))",
-    "expectedSourceOut": "(&self)",
+    "expectedSourceOut": "(& self)",
     "grammar": "rust",
     "kind": "roundtrip",
     "pattern": "parameters",
     "sourceIn": "(& self)",
     "wrappedOffset": 5,
-    "wrappedText": "fn _f(&self) {}"
+    "wrappedText": "fn _f(& self) {}"
   },
   {
     "expectedOutput": "(&'a mut self)",
@@ -58727,7 +58842,8 @@
               }
             },
             "_mutable": true,
-            "_reference": true
+            "_reference": true,
+            "_self": 124
           }
         }
       }
@@ -58764,7 +58880,8 @@
         "_content": {
           "$type": 231,
           "_mutable": false,
-          "_reference": false
+          "_reference": false,
+          "_self": 124
         }
       }
     },
@@ -58800,7 +58917,8 @@
         "_content": {
           "$type": 231,
           "_mutable": true,
-          "_reference": false
+          "_reference": false,
+          "_self": 124
         }
       }
     },
@@ -58827,16 +58945,28 @@
     "wrappedText": "fn _f(mut self) {}"
   },
   {
-    "expectedOutput": "&self",
+    "expectedOutput": "& self",
     "grammar": "rust",
     "input": {
       "$type": 441,
       "_receiver": {
         "$type": 440,
         "_content": {
+          "$_layout": {
+            "units": [
+              {
+                "item": 0,
+                "leading": [
+                  169
+                ],
+                "slot": "_self"
+              }
+            ]
+          },
           "$type": 231,
           "_mutable": false,
-          "_reference": true
+          "_reference": true,
+          "_self": 124
         }
       }
     },
@@ -58854,13 +58984,13 @@
   {
     "edits": [],
     "expectedReparseTree": "(parameters_elements_receiver receiver: (attributed_parameter_receiver (self_parameter self: (self))))",
-    "expectedSourceOut": "&self",
+    "expectedSourceOut": "& self",
     "grammar": "rust",
     "kind": "roundtrip",
     "pattern": "parameters_elements_receiver",
     "sourceIn": "& self",
     "wrappedOffset": 6,
-    "wrappedText": "fn _f(&self) {}"
+    "wrappedText": "fn _f(& self) {}"
   },
   {
     "expectedOutput": "&'a mut self",
@@ -58879,7 +59009,8 @@
             }
           },
           "_mutable": true,
-          "_reference": true
+          "_reference": true,
+          "_self": 124
         }
       }
     },
@@ -58913,7 +59044,8 @@
       "_content": {
         "$type": 231,
         "_mutable": false,
-        "_reference": false
+        "_reference": false,
+        "_self": 124
       }
     },
     "kind": "render",
@@ -58946,7 +59078,8 @@
       "_content": {
         "$type": 231,
         "_mutable": true,
-        "_reference": false
+        "_reference": false,
+        "_self": 124
       }
     },
     "kind": "render",
@@ -58972,14 +59105,26 @@
     "wrappedText": "fn _f(mut self) {}"
   },
   {
-    "expectedOutput": "&self",
+    "expectedOutput": "& self",
     "grammar": "rust",
     "input": {
       "$type": 440,
       "_content": {
+        "$_layout": {
+          "units": [
+            {
+              "item": 0,
+              "leading": [
+                169
+              ],
+              "slot": "_self"
+            }
+          ]
+        },
         "$type": 231,
         "_mutable": false,
-        "_reference": true
+        "_reference": true,
+        "_self": 124
       }
     },
     "kind": "render",
@@ -58996,13 +59141,13 @@
   {
     "edits": [],
     "expectedReparseTree": "(attributed_parameter_receiver (self_parameter self: (self)))",
-    "expectedSourceOut": "&self",
+    "expectedSourceOut": "& self",
     "grammar": "rust",
     "kind": "roundtrip",
     "pattern": "attributed_parameter_receiver",
     "sourceIn": "& self",
     "wrappedOffset": 6,
-    "wrappedText": "fn _f(&self) {}"
+    "wrappedText": "fn _f(& self) {}"
   },
   {
     "expectedOutput": "&'a mut self",
@@ -59019,7 +59164,8 @@
           }
         },
         "_mutable": true,
-        "_reference": true
+        "_reference": true,
+        "_self": 124
       }
     },
     "kind": "render",
@@ -59050,7 +59196,8 @@
     "input": {
       "$type": 231,
       "_mutable": false,
-      "_reference": false
+      "_reference": false,
+      "_self": 124
     },
     "kind": "render",
     "options": {
@@ -59080,7 +59227,8 @@
     "input": {
       "$type": 231,
       "_mutable": true,
-      "_reference": false
+      "_reference": false,
+      "_self": 124
     },
     "kind": "render",
     "options": {
@@ -59105,12 +59253,24 @@
     "wrappedText": "fn _f(mut self) {}"
   },
   {
-    "expectedOutput": "&self",
+    "expectedOutput": "& self",
     "grammar": "rust",
     "input": {
+      "$_layout": {
+        "units": [
+          {
+            "item": 0,
+            "leading": [
+              169
+            ],
+            "slot": "_self"
+          }
+        ]
+      },
       "$type": 231,
       "_mutable": false,
-      "_reference": true
+      "_reference": true,
+      "_self": 124
     },
     "kind": "render",
     "options": {
@@ -59126,13 +59286,13 @@
   {
     "edits": [],
     "expectedReparseTree": "(self_parameter self: (self))",
-    "expectedSourceOut": "&self",
+    "expectedSourceOut": "& self",
     "grammar": "rust",
     "kind": "roundtrip",
     "pattern": "self_parameter",
     "sourceIn": "& self",
     "wrappedOffset": 6,
-    "wrappedText": "fn _f(&self) {}"
+    "wrappedText": "fn _f(& self) {}"
   },
   {
     "expectedOutput": "&'a mut self",
@@ -59147,7 +59307,8 @@
         }
       },
       "_mutable": true,
-      "_reference": true
+      "_reference": true,
+      "_self": 124
     },
     "kind": "render",
     "options": {
@@ -59792,7 +59953,8 @@
                       "_content": {
                         "$type": 231,
                         "_mutable": false,
-                        "_reference": true
+                        "_reference": true,
+                        "_self": 124
                       }
                     }
                   }
@@ -60010,7 +60172,8 @@
                   "_content": {
                     "$type": 231,
                     "_mutable": false,
-                    "_reference": true
+                    "_reference": true,
+                    "_self": 124
                   }
                 }
               }
@@ -60914,7 +61077,8 @@
                 "_content": {
                   "$type": 231,
                   "_mutable": false,
-                  "_reference": true
+                  "_reference": true,
+                  "_self": 124
                 }
               }
             }
@@ -60983,7 +61147,8 @@
             "_content": {
               "$type": 231,
               "_mutable": false,
-              "_reference": true
+              "_reference": true,
+              "_self": 124
             }
           }
         }
@@ -61021,7 +61186,8 @@
           "_content": {
             "$type": 231,
             "_mutable": false,
-            "_reference": true
+            "_reference": true,
+            "_self": 124
           }
         }
       }
@@ -61055,7 +61221,8 @@
         "_content": {
           "$type": 231,
           "_mutable": false,
-          "_reference": true
+          "_reference": true,
+          "_self": 124
         }
       }
     },
@@ -61086,7 +61253,8 @@
       "_content": {
         "$type": 231,
         "_mutable": false,
-        "_reference": true
+        "_reference": true,
+        "_self": 124
       }
     },
     "kind": "render",
@@ -61114,7 +61282,8 @@
     "input": {
       "$type": 231,
       "_mutable": false,
-      "_reference": true
+      "_reference": true,
+      "_self": 124
     },
     "kind": "render",
     "options": {
@@ -64977,7 +65146,8 @@
                       "_content": {
                         "$type": 231,
                         "_mutable": false,
-                        "_reference": true
+                        "_reference": true,
+                        "_self": 124
                       }
                     }
                   }
@@ -65113,7 +65283,8 @@
                   "_content": {
                     "$type": 231,
                     "_mutable": false,
-                    "_reference": true
+                    "_reference": true,
+                    "_self": 124
                   }
                 }
               }
@@ -65621,7 +65792,8 @@
                 "_content": {
                   "$type": 231,
                   "_mutable": false,
-                  "_reference": true
+                  "_reference": true,
+                  "_self": 124
                 }
               }
             }
@@ -65717,7 +65889,8 @@
             "_content": {
               "$type": 231,
               "_mutable": false,
-              "_reference": true
+              "_reference": true,
+              "_self": 124
             }
           }
         }
@@ -65768,7 +65941,8 @@
           "_content": {
             "$type": 231,
             "_mutable": false,
-            "_reference": true
+            "_reference": true,
+            "_self": 124
           }
         }
       }
@@ -65802,7 +65976,8 @@
         "_content": {
           "$type": 231,
           "_mutable": false,
-          "_reference": true
+          "_reference": true,
+          "_self": 124
         }
       }
     },
@@ -65833,7 +66008,8 @@
       "_content": {
         "$type": 231,
         "_mutable": false,
-        "_reference": true
+        "_reference": true,
+        "_self": 124
       }
     },
     "kind": "render",
@@ -65861,7 +66037,8 @@
     "input": {
       "$type": 231,
       "_mutable": false,
-      "_reference": true
+      "_reference": true,
+      "_self": 124
     },
     "kind": "render",
     "options": {
@@ -65946,7 +66123,8 @@
                       "_content": {
                         "$type": 231,
                         "_mutable": false,
-                        "_reference": false
+                        "_reference": false,
+                        "_self": 124
                       }
                     }
                   }
@@ -66102,7 +66280,8 @@
                   "_content": {
                     "$type": 231,
                     "_mutable": false,
-                    "_reference": false
+                    "_reference": false,
+                    "_self": 124
                   }
                 }
               }
@@ -66667,7 +66846,8 @@
                 "_content": {
                   "$type": 231,
                   "_mutable": false,
-                  "_reference": false
+                  "_reference": false,
+                  "_self": 124
                 }
               }
             }
@@ -66785,7 +66965,8 @@
             "_content": {
               "$type": 231,
               "_mutable": false,
-              "_reference": false
+              "_reference": false,
+              "_self": 124
             }
           }
         }
@@ -66863,7 +67044,8 @@
           "_content": {
             "$type": 231,
             "_mutable": false,
-            "_reference": false
+            "_reference": false,
+            "_self": 124
           }
         }
       }
@@ -66924,7 +67106,8 @@
         "_content": {
           "$type": 231,
           "_mutable": false,
-          "_reference": false
+          "_reference": false,
+          "_self": 124
         }
       }
     },
@@ -66955,7 +67138,8 @@
       "_content": {
         "$type": 231,
         "_mutable": false,
-        "_reference": false
+        "_reference": false,
+        "_self": 124
       }
     },
     "kind": "render",
@@ -66983,7 +67167,8 @@
     "input": {
       "$type": 231,
       "_mutable": false,
-      "_reference": false
+      "_reference": false,
+      "_self": 124
     },
     "kind": "render",
     "options": {
@@ -70093,7 +70278,8 @@
                       "_content": {
                         "$type": 231,
                         "_mutable": false,
-                        "_reference": true
+                        "_reference": true,
+                        "_self": 124
                       }
                     }
                   }
@@ -70197,7 +70383,8 @@
                   "_content": {
                     "$type": 231,
                     "_mutable": false,
-                    "_reference": true
+                    "_reference": true,
+                    "_self": 124
                   }
                 }
               }
@@ -70514,7 +70701,8 @@
                 "_content": {
                   "$type": 231,
                   "_mutable": false,
-                  "_reference": true
+                  "_reference": true,
+                  "_self": 124
                 }
               }
             }
@@ -70618,7 +70806,8 @@
             "_content": {
               "$type": 231,
               "_mutable": false,
-              "_reference": true
+              "_reference": true,
+              "_self": 124
             }
           }
         }
@@ -70655,7 +70844,8 @@
           "_content": {
             "$type": 231,
             "_mutable": false,
-            "_reference": true
+            "_reference": true,
+            "_self": 124
           }
         }
       }
@@ -70689,7 +70879,8 @@
         "_content": {
           "$type": 231,
           "_mutable": false,
-          "_reference": true
+          "_reference": true,
+          "_self": 124
         }
       }
     },
@@ -70720,7 +70911,8 @@
       "_content": {
         "$type": 231,
         "_mutable": false,
-        "_reference": true
+        "_reference": true,
+        "_self": 124
       }
     },
     "kind": "render",
@@ -70748,7 +70940,8 @@
     "input": {
       "$type": 231,
       "_mutable": false,
-      "_reference": true
+      "_reference": true,
+      "_self": 124
     },
     "kind": "render",
     "options": {
@@ -82197,7 +82390,8 @@
                 "_content": {
                   "$type": 231,
                   "_mutable": false,
-                  "_reference": true
+                  "_reference": true,
+                  "_self": 124
                 }
               }
             }
@@ -83398,7 +83592,8 @@
                         "$text": "A",
                         "$type": 1
                       }
-                    }
+                    },
+                    "_writable": 57
                   }
                 }
               ]
@@ -83491,7 +83686,8 @@
             "_content": {
               "$type": 231,
               "_mutable": false,
-              "_reference": true
+              "_reference": true,
+              "_self": 124
             }
           }
         }
@@ -87120,7 +87316,8 @@
           "_content": {
             "$type": 231,
             "_mutable": false,
-            "_reference": true
+            "_reference": true,
+            "_self": 124
           }
         }
       }
@@ -87255,7 +87452,8 @@
         "_content": {
           "$type": 231,
           "_mutable": false,
-          "_reference": true
+          "_reference": true,
+          "_self": 124
         }
       }
     },
@@ -87286,7 +87484,8 @@
       "_content": {
         "$type": 231,
         "_mutable": false,
-        "_reference": true
+        "_reference": true,
+        "_self": 124
       }
     },
     "kind": "render",
@@ -87314,7 +87513,8 @@
     "input": {
       "$type": 231,
       "_mutable": false,
-      "_reference": true
+      "_reference": true,
+      "_self": 124
     },
     "kind": "render",
     "options": {
@@ -88452,7 +88652,8 @@
                   "$text": "A",
                   "$type": 1
                 }
-              }
+              },
+              "_writable": 57
             }
           }
         ]
@@ -89196,7 +89397,8 @@
                 "$text": "A",
                 "$type": 1
               }
-            }
+            },
+            "_writable": 57
           }
         }
       ]
@@ -89931,7 +90133,8 @@
             "$text": "A",
             "$type": 1
           }
-        }
+        },
+        "_writable": 57
       }
     },
     "kind": "render",
@@ -91680,7 +91883,8 @@
                     "$text": "A",
                     "$type": 1
                   }
-                }
+                },
+                "_writable": 57
               }
             }
           ]
@@ -94525,7 +94729,8 @@
           "$text": "A",
           "$type": 1
         }
-      }
+      },
+      "_writable": 57
     },
     "kind": "render",
     "options": {
@@ -94587,7 +94792,8 @@
                                 "$text": "napi_module",
                                 "$type": 1
                               }
-                            }
+                            },
+                            "_writable": 57
                           }
                         }
                       }
@@ -94731,7 +94937,8 @@
                             "$text": "napi_module",
                             "$type": 1
                           }
-                        }
+                        },
+                        "_writable": 57
                       }
                     }
                   }
@@ -95017,7 +95224,8 @@
                           "$text": "napi_module",
                           "$type": 1
                         }
-                      }
+                      },
+                      "_writable": 57
                     }
                   }
                 }
@@ -95145,7 +95353,8 @@
                       "$text": "napi_module",
                       "$type": 1
                     }
-                  }
+                  },
+                  "_writable": 57
                 }
               }
             }
@@ -95266,7 +95475,8 @@
                     "$text": "napi_module",
                     "$type": 1
                   }
-                }
+                },
+                "_writable": 57
               }
             }
           }
@@ -95319,7 +95529,8 @@
                   "$text": "napi_module",
                   "$type": 1
                 }
-              }
+              },
+              "_writable": 57
             }
           }
         }
@@ -95367,7 +95578,8 @@
               "$text": "napi_module",
               "$type": 1
             }
-          }
+          },
+          "_writable": 57
         }
       }
     },
@@ -95411,7 +95623,8 @@
             "$text": "napi_module",
             "$type": 1
           }
-        }
+        },
+        "_writable": 57
       }
     },
     "kind": "render",
@@ -95447,7 +95660,8 @@
           "$text": "napi_module",
           "$type": 1
         }
-      }
+      },
+      "_writable": 57
     },
     "kind": "render",
     "options": {
@@ -100623,7 +100837,8 @@
                     "$type": 1
                   }
                 }
-              }
+              },
+              "_exclusive": 57
             }
           }
         },
@@ -100656,7 +100871,8 @@
                     "$type": 1
                   }
                 }
-              }
+              },
+              "_writable": 57
             }
           }
         }
@@ -100735,7 +100951,8 @@
                 "$type": 1
               }
             }
-          }
+          },
+          "_exclusive": 57
         }
       }
     },
@@ -100812,7 +101029,8 @@
                 "$type": 1
               }
             }
-          }
+          },
+          "_writable": 57
         }
       }
     },
@@ -100884,7 +101102,8 @@
               "$type": 1
             }
           }
-        }
+        },
+        "_exclusive": 57
       }
     },
     "kind": "render",
@@ -100955,7 +101174,8 @@
               "$type": 1
             }
           }
-        }
+        },
+        "_writable": 57
       }
     },
     "kind": "render",
@@ -101021,7 +101241,8 @@
             "$type": 1
           }
         }
-      }
+      },
+      "_exclusive": 57
     },
     "kind": "render",
     "options": {
@@ -101210,7 +101431,8 @@
             "$type": 1
           }
         }
-      }
+      },
+      "_writable": 57
     },
     "kind": "render",
     "options": {
@@ -135939,6 +136161,7 @@
                               "$type": 476,
                               "_content": {
                                 "$type": 322,
+                                "_mutable_specifier": 57,
                                 "_pattern": {
                                   "$text": "e",
                                   "$type": 1
@@ -136263,6 +136486,7 @@
                           "$type": 476,
                           "_content": {
                             "$type": 322,
+                            "_mutable_specifier": 57,
                             "_pattern": {
                               "$text": "e",
                               "$type": 1
@@ -136654,6 +136878,7 @@
                         "$type": 476,
                         "_content": {
                           "$type": 322,
+                          "_mutable_specifier": 57,
                           "_pattern": {
                             "$text": "e",
                             "$type": 1
@@ -137089,6 +137314,7 @@
                       "$type": 476,
                       "_content": {
                         "$type": 322,
+                        "_mutable_specifier": 57,
                         "_pattern": {
                           "$text": "e",
                           "$type": 1
@@ -137722,6 +137948,7 @@
                     "$type": 476,
                     "_content": {
                       "$type": 322,
+                      "_mutable_specifier": 57,
                       "_pattern": {
                         "$text": "e",
                         "$type": 1
@@ -138116,6 +138343,7 @@
                   "$type": 476,
                   "_content": {
                     "$type": 322,
+                    "_mutable_specifier": 57,
                     "_pattern": {
                       "$text": "e",
                       "$type": 1
@@ -138484,6 +138712,7 @@
               "$type": 476,
               "_content": {
                 "$type": 322,
+                "_mutable_specifier": 57,
                 "_pattern": {
                   "$text": "e",
                   "$type": 1
@@ -138795,6 +139024,7 @@
             "$type": 476,
             "_content": {
               "$type": 322,
+              "_mutable_specifier": 57,
               "_pattern": {
                 "$text": "e",
                 "$type": 1
@@ -138881,6 +139111,7 @@
           "$type": 476,
           "_content": {
             "$type": 322,
+            "_mutable_specifier": 57,
             "_pattern": {
               "$text": "e",
               "$type": 1
@@ -138983,6 +139214,7 @@
       "$type": 476,
       "_content": {
         "$type": 322,
+        "_mutable_specifier": 57,
         "_pattern": {
           "$text": "e",
           "$type": 1
@@ -139088,6 +139320,7 @@
     "grammar": "rust",
     "input": {
       "$type": 322,
+      "_mutable_specifier": 57,
       "_pattern": {
         "$text": "e",
         "$type": 1
@@ -162281,6 +162514,7 @@
                         "$type": 324,
                         "_pattern": {
                           "$type": 322,
+                          "_mutable_specifier": 57,
                           "_pattern": {
                             "$text": "y",
                             "$type": 1
@@ -162405,6 +162639,7 @@
                     "$type": 324,
                     "_pattern": {
                       "$type": 322,
+                      "_mutable_specifier": 57,
                       "_pattern": {
                         "$text": "y",
                         "$type": 1
@@ -162525,6 +162760,7 @@
                   "$type": 324,
                   "_pattern": {
                     "$type": 322,
+                    "_mutable_specifier": 57,
                     "_pattern": {
                       "$text": "y",
                       "$type": 1
@@ -162642,6 +162878,7 @@
                 "$type": 324,
                 "_pattern": {
                   "$type": 322,
+                  "_mutable_specifier": 57,
                   "_pattern": {
                     "$text": "y",
                     "$type": 1
@@ -162752,6 +162989,7 @@
               "$type": 324,
               "_pattern": {
                 "$type": 322,
+                "_mutable_specifier": 57,
                 "_pattern": {
                   "$text": "y",
                   "$type": 1
@@ -162883,6 +163121,7 @@
           "$type": 324,
           "_pattern": {
             "$type": 322,
+            "_mutable_specifier": 57,
             "_pattern": {
               "$text": "y",
               "$type": 1
@@ -162970,6 +163209,7 @@
         "$type": 324,
         "_pattern": {
           "$type": 322,
+          "_mutable_specifier": 57,
           "_pattern": {
             "$text": "y",
             "$type": 1
@@ -163157,6 +163397,7 @@
       "$type": 324,
       "_pattern": {
         "$type": 322,
+        "_mutable_specifier": 57,
         "_pattern": {
           "$text": "y",
           "$type": 1
@@ -163255,6 +163496,7 @@
     "grammar": "rust",
     "input": {
       "$type": 322,
+      "_mutable_specifier": 57,
       "_pattern": {
         "$text": "y",
         "$type": 1
@@ -174654,6 +174896,7 @@
             "$type": 324,
             "_pattern": {
               "$type": 322,
+              "_mutable_specifier": 57,
               "_pattern": {
                 "$type": 325,
                 "_name": {
@@ -178441,6 +178684,7 @@
         "$type": 324,
         "_pattern": {
           "$type": 322,
+          "_mutable_specifier": 57,
           "_pattern": {
             "$type": 325,
             "_name": {
@@ -178725,6 +178969,7 @@
       "$type": 324,
       "_pattern": {
         "$type": 322,
+        "_mutable_specifier": 57,
         "_pattern": {
           "$type": 325,
           "_name": {
@@ -179347,6 +179592,7 @@
     "grammar": "rust",
     "input": {
       "$type": 322,
+      "_mutable_specifier": 57,
       "_pattern": {
         "$type": 325,
         "_name": {
@@ -186671,7 +186917,8 @@
                 "$text": "B",
                 "$type": 1
               }
-            }
+            },
+            "_writable": 57
           }
         },
         {
@@ -186729,7 +186976,8 @@
             "$text": "B",
             "$type": 1
           }
-        }
+        },
+        "_writable": 57
       }
     },
     "kind": "render",
@@ -186885,7 +187133,8 @@
           "$text": "B",
           "$type": 1
         }
-      }
+      },
+      "_writable": 57
     },
     "kind": "render",
     "options": {
@@ -194770,7 +195019,8 @@
                           "$text": "c_void",
                           "$type": 1
                         }
-                      }
+                      },
+                      "_writable": 57
                     }
                   }
                 ]
@@ -194825,7 +195075,8 @@
                   "$text": "c_void",
                   "$type": 1
                 }
-              }
+              },
+              "_writable": 57
             }
           }
         }
@@ -194904,7 +195155,8 @@
                       "$text": "c_void",
                       "$type": 1
                     }
-                  }
+                  },
+                  "_writable": 57
                 }
               }
             ]
@@ -194981,7 +195233,8 @@
               "$text": "c_void",
               "$type": 1
             }
-          }
+          },
+          "_writable": 57
         }
       }
     },
@@ -195165,7 +195418,8 @@
                     "$text": "c_void",
                     "$type": 1
                   }
-                }
+                },
+                "_writable": 57
               }
             }
           ]
@@ -195232,7 +195486,8 @@
             "$text": "c_void",
             "$type": 1
           }
-        }
+        },
+        "_writable": 57
       }
     },
     "kind": "render",
@@ -195599,7 +195854,8 @@
                   "$text": "c_void",
                   "$type": 1
                 }
-              }
+              },
+              "_writable": 57
             }
           }
         ]
@@ -195666,7 +195922,8 @@
                 "$text": "c_void",
                 "$type": 1
               }
-            }
+            },
+            "_writable": 57
           }
         }
       ]
@@ -195703,7 +195960,8 @@
             "$text": "c_void",
             "$type": 1
           }
-        }
+        },
+        "_writable": 57
       }
     },
     "kind": "render",
@@ -195736,7 +195994,8 @@
           "$text": "c_void",
           "$type": 1
         }
-      }
+      },
+      "_writable": 57
     },
     "kind": "render",
     "options": {
@@ -195768,7 +196027,8 @@
           "$text": "c_void",
           "$type": 1
         }
-      }
+      },
+      "_writable": 57
     },
     "kind": "render",
     "options": {
@@ -197863,7 +198123,8 @@
                       ]
                     }
                   }
-                }
+                },
+                "_writable": 57
               }
             }
           }
@@ -198019,7 +198280,8 @@
                   ]
                 }
               }
-            }
+            },
+            "_writable": 57
           }
         }
       }
@@ -198168,7 +198430,8 @@
                 ]
               }
             }
-          }
+          },
+          "_writable": 57
         }
       }
     },
@@ -198311,7 +198574,8 @@
               ]
             }
           }
-        }
+        },
+        "_writable": 57
       }
     },
     "kind": "render",
@@ -198979,7 +199243,8 @@
             ]
           }
         }
-      }
+      },
+      "_writable": 57
     },
     "kind": "render",
     "options": {

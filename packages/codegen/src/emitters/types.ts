@@ -1029,12 +1029,12 @@ function emitInterface(
 		lines.push('  readonly __slotNames__?: {');
 		for (const f of slots) lines.push(`    readonly ${f.storageKey}: ${JSON.stringify(f.propertyName)};`);
 		lines.push('  };');
-		emitFieldInputHints(lines, slots, node.kind, nodeMap, kindEntries, lookupUnion);
+		emitFieldInputHints(lines, node.valueSlots, node.kind, nodeMap, kindEntries, lookupUnion);
 		emitSlotHints(lines, node, nodeMap, kindEntries);
 		if (aliasContentTypeExpr(node, nodeMap, kindEntries) !== undefined) {
 			lines.push(`  readonly __aliasContent__?: ${node.typeName}.Types;`);
 		}
-		for (const f of slots) {
+		for (const f of node.valueSlots) {
 			const typeExpr = fieldTypeExpr(f, nodeMap, lookupUnion);
 			const storageInfo = resolveFieldStorageInfo(f, nodeMap);
 			const propName = f.propertyName;

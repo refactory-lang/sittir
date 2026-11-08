@@ -5749,12 +5749,14 @@ export interface StringEnd {
 export interface ConstructorDeclaration {
 	readonly $type: TSKindId.ConstructorDeclaration;
 	readonly _async: boolean;
+	readonly _name: TSKindId.InitUKeyword;
 	readonly _type_parameters?: TypeParams;
 	readonly _parameters: Parameters;
 	readonly _return_type?: Type;
 	readonly _body: Suite;
 	readonly __slotNames__?: {
 		readonly _async: 'async';
+		readonly _name: 'name';
 		readonly _type_parameters: 'typeParameters';
 		readonly _parameters: 'parameters';
 		readonly _return_type: 'returnType';
@@ -17144,7 +17146,7 @@ export namespace StringEnd {
 	export type Kind = TSKindId.StringEnd;
 }
 export namespace ConstructorDeclaration {
-	export type Config = ConfigFor<TSKindId.ConstructorDeclaration>;
+	export type Config = OmitEach<ConfigFor<TSKindId.ConstructorDeclaration>, 'name'>;
 	export interface Bound extends BoundOf<T.ConstructorDeclaration, BoundByKindId>, NodeMethodsOf, HoldsSource {
 		readonly $type: T.ConstructorDeclaration['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
@@ -17162,9 +17164,9 @@ export namespace ConstructorDeclaration {
 		>;
 		readonly $snapshot: () => Snapshot<T.ConstructorDeclaration['$type']>;
 	}
-	export type Loose = LooseFor<TSKindId.ConstructorDeclaration>;
-	export type LooseConfig = LooseConfigFor<TSKindId.ConstructorDeclaration>;
-	export type BuildArgs = [config: ConfigOf<T.ConstructorDeclaration>];
+	export type Loose = OmitEach<LooseFor<TSKindId.ConstructorDeclaration>, 'name'>;
+	export type LooseConfig = OmitEach<LooseConfigFor<TSKindId.ConstructorDeclaration>, 'name'>;
+	export type BuildArgs = [config: OmitRegistered<ConfigOf<T.ConstructorDeclaration>, 'name'>];
 	export type LooseArgs = [config: T.ConstructorDeclaration.Loose];
 	export type Kind = TSKindId.ConstructorDeclaration;
 }

@@ -117,7 +117,7 @@ describe('simplifyRule — field-free input (wrapper-deleted)', () => {
 			seq(field('op', str('+')), field('r', sym('expr'))),
 			seq(field('op', str('-')), field('r', sym('expr')))
 		);
-		const fieldFree = flattenRules({ x: raw }).x!;
+		const fieldFree = flattenRules({ x: raw }, () => false).x!;
 		const once = simplifyRule(fieldFree as Rule);
 		const twice = simplifyRule(once);
 		expect(twice).toEqual(once);
@@ -125,7 +125,7 @@ describe('simplifyRule — field-free input (wrapper-deleted)', () => {
 
 	it('collapses a single-member choice to its member', () => {
 		const raw = choice(sym('a'));
-		const fieldFree = flattenRules({ x: raw }).x!;
+		const fieldFree = flattenRules({ x: raw }, () => false).x!;
 		const result = simplifyRule(fieldFree as Rule);
 		expect(result.type).toBe('SYMBOL');
 	});
@@ -158,7 +158,7 @@ describe('simplifyRule — field-free input (wrapper-deleted)', () => {
 		// a field wrapper: field('kw', str('static')) → wrapper-deleted →
 		// str('static', {fieldName:'kw', nonterminal:true}).
 		const wrapped = { x: optional(field('kw', str('static'))) };
-		const fieldFree = flattenRules(wrapped).x!;
+		const fieldFree = flattenRules(wrapped, () => false).x!;
 		const result = simplifyRule(fieldFree as Rule);
 		// The optional wraps a nonterminal string → stays as optional (not stripped)
 		expect(result.type).not.toBe('SEQ');

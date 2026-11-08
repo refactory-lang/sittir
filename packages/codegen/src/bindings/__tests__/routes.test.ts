@@ -131,7 +131,7 @@ const MODEL = [
 	node('clause_bare', [slot('item', ['identifier'], { propertyName: 'items', multiple: true })], { modelType: 'list', elementKinds: ['identifier'], variantOf: '_clause' }),
 	node('clause_paren', [slot('wrapped', ['clause_items'])], { modelType: 'envelope', variantOf: '_clause' }),
 	node('clause_items', [slot('item', ['identifier'], { propertyName: 'items', multiple: true })], { modelType: 'list', elementKinds: ['identifier'] }),
-	node('range', [slot('start', ['expr']), slot('dots', ['_dots'])]),
+	node('range', [slot('start', ['expr']), slot('dots', ['_dots'], { pinned: '..' })]),
 	node('_dots', [], { modelType: 'punctuation', unit: true, text: '..' }),
 	node('span', [slot('lo', ['expr']), slot('op', ['_dotdot', '_dotdoteq'])]),
 	node('_dotdot', [], { modelType: 'punctuation', unit: true, text: '..' }),
@@ -1087,6 +1087,11 @@ describe("keptKinds over a supertype the slot holds", () => {
 		expect(routes.members.get('range')?.map((r) => r.name)).toEqual(['start']);
 	});
 
+	it("drops a claim's capture of a slot the model pins to one fixed text when the claim itself tests nothing there", async () => {
+		const routes = resolveRoutes(await grammar('(range dots: _ @dots) @expression.range'));
+		expect(routes.members.get('range')?.map((r) => r.name)).toEqual(['start']);
+	});
+
 	it('routes no member through a slot whose every value a refinement pins, and keeps one a refinement leaves open', async () => {
 		const told = resolveRoutes(
 			await grammar(['(binary) @expression.binary', '(binary operator: "+") @expression.binary.add', '(binary operator: "-") @expression.binary.subtract'].join('\n'))
@@ -1425,6 +1430,7 @@ describe('flag captures', () => {
 		node('ref_expr', [], { modelType: 'supertype' }),
 		node('ref_expr_raw', [slot('value', ['identifier'])], { variantOf: 'ref_expr' }),
 		node('ref_expr_mut', [slot('value', ['identifier'])], { variantOf: 'ref_expr' }),
+		node('ref_expr_pinned', [slot('exclusive', ['mutable_specifier'], { pinned: 'mut' }), slot('value', ['identifier'])], { variantOf: 'ref_expr' }),
 		node('def', [slot('async', [], { required: false, storage: 'boolean', terminals: ['async'] }), slot('name', ['identifier'])])
 	];
 	const member = (flag: boolean): VocabularyMember => ({ optional: true, flag });
@@ -1751,6 +1757,12 @@ describe('flag captures', () => {
 
 	it('marks a flag a variant form spells, captured as a node no slot of the form holds', async () => {
 		const members = await membersOf(['(ref_expr) @expression.reference', '(ref_expr_mut (mutable_specifier) @exclusive)'].join('\n'), 'ref_expr_mut');
+		expect(members?.find((r) => r.name === 'exclusive')).toEqual({ route: 'kind', name: 'exclusive', kind: 'mutable_specifier', path: undefined, flag: true, spelled: true });
+	});
+
+	it('marks a flag a variant form spells through a required slot that holds only its one fixed text', async () => {
+		const members = await membersOf(['(ref_expr) @expression.reference', '(ref_expr_pinned (mutable_specifier) @exclusive)'].join('\n'), 'ref_expr_pinned');
+		expect(members?.map((r) => r.name)).toEqual(['value', 'exclusive']);
 		expect(members?.find((r) => r.name === 'exclusive')).toEqual({ route: 'kind', name: 'exclusive', kind: 'mutable_specifier', path: undefined, flag: true, spelled: true });
 	});
 

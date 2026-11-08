@@ -179,8 +179,8 @@ export const querySlots: QuerySlots = Object.freeze({
 	203: [['elements', 0, undefined, '_elements']],
 	204: [
 		['visibilityModifier', 0, undefined, '_visibility_modifier'],
-		['name', 1, undefined, '_name'],
-		['alias', 2, undefined, '_alias']
+		['name', 2, undefined, '_name'],
+		['alias', 3, undefined, '_alias']
 	],
 	205: [
 		['visibilityModifier', 0, undefined, '_visibility_modifier'],
@@ -510,7 +510,7 @@ export const querySlots: QuerySlots = Object.freeze({
 		['type', 0, undefined, '_type'],
 		['fields', 1, undefined, '_fields']
 	],
-	322: [['pattern', 0, undefined, '_pattern']],
+	322: [['pattern', 1, undefined, '_pattern']],
 	324: [['pattern', 0, undefined, '_pattern']],
 	325: [
 		['name', 0, undefined, '_name'],
@@ -580,8 +580,8 @@ export const querySlots: QuerySlots = Object.freeze({
 		['body', 4, undefined, '_body']
 	],
 	371: [['argument', 0, undefined, '_argument']],
-	372: [['argument', 0, undefined, '_argument']],
-	373: [['argument', 0, undefined, '_argument']],
+	372: [['argument', 1, undefined, '_argument']],
+	373: [['argument', 1, undefined, '_argument']],
 	374: [['argument', 0, undefined, '_argument']],
 	375: [['trait', 0, undefined, '_trait']],
 	376: [['trait', 0, undefined, '_trait']],
@@ -620,7 +620,7 @@ export const querySlots: QuerySlots = Object.freeze({
 	],
 	387: [['right', 0, undefined, '_right']],
 	388: [['type', 0, undefined, '_type']],
-	389: [['type', 0, undefined, '_type']],
+	389: [['type', 1, undefined, '_type']],
 	390: [
 		['start', 0, undefined, '_start'],
 		['operator', 1, undefined, '_operator'],
@@ -648,8 +648,8 @@ export const querySlots: QuerySlots = Object.freeze({
 		['match', 1, undefined, '_match'],
 		['body', 2, undefined, '_body']
 	],
-	400: [['doc', 0, undefined, '_doc']],
-	401: [['doc', 0, undefined, '_doc']],
+	400: [['doc', 1, undefined, '_doc']],
+	401: [['doc', 1, undefined, '_doc']],
 	402: [['doc', 0, undefined, '_doc']],
 	403: [['doc', 0, undefined, '_doc']],
 	405: [['tokenPatterns', 0, undefined, '_token_patterns']],
@@ -754,7 +754,7 @@ export const querySlots: QuerySlots = Object.freeze({
 	438: [['items', 0, undefined, '_item']],
 	439: [
 		['mutable', 0, 'mut', '_mutable', 57],
-		['type', 1, undefined, '_type']
+		['type', 2, undefined, '_type']
 	],
 	440: [
 		['attributeItem', 0, undefined, '_attribute_item'],
@@ -1127,7 +1127,10 @@ export const structure: StructureTable = Object.freeze({
 	},
 	204: {
 		kind: 'extern_crate_declaration',
-		required: [['_name', 'name']],
+		required: [
+			['_crate', 'crate'],
+			['_name', 'name']
+		],
 		single: [
 			['_visibility_modifier', 'ExternCrateDeclaration.visibilityModifier'],
 			['_name', 'ExternCrateDeclaration.name'],
@@ -1138,6 +1141,7 @@ export const structure: StructureTable = Object.freeze({
 			['_name', 'ExternCrateDeclaration.name', 'buildIdentifier(…)', [1]],
 			['_alias', 'ExternCrateDeclaration.alias', 'buildIdentifier(…)', [1]]
 		],
+		kindIds: [['_crate', 'ExternCrateDeclaration.crate', [126]]],
 		config: ['visibilityModifier', 'name', 'alias']
 	},
 	205: {
@@ -1512,12 +1516,14 @@ export const structure: StructureTable = Object.freeze({
 	},
 	231: {
 		kind: 'self_parameter',
+		required: [['_self', 'self']],
 		single: [['_lifetime', 'SelfParameter.lifetime']],
 		nodeOnly: [['_lifetime', 'SelfParameter.lifetime', 'a built Lifetime', [239]]],
 		booleans: [
 			['_reference', 'SelfParameter.reference'],
 			['_mutable', 'SelfParameter.mutable']
 		],
+		kindIds: [['_self', 'SelfParameter.self', [124]]],
 		config: ['reference', 'lifetime', 'mutable']
 	},
 	232: {
@@ -2342,9 +2348,14 @@ export const structure: StructureTable = Object.freeze({
 	},
 	322: {
 		kind: 'mut_pattern',
-		required: [['_pattern', 'pattern']],
+		required: [
+			['_mutable_specifier', 'mutableSpecifier'],
+			['_pattern', 'pattern']
+		],
 		single: [['_pattern', 'MutPattern.pattern']],
-		nodeOnly: [['_pattern', 'MutPattern.pattern', 'a built Pattern', [314]]]
+		nodeOnly: [['_pattern', 'MutPattern.pattern', 'a built Pattern', [314]]],
+		kindIds: [['_mutable_specifier', 'MutPattern.mutableSpecifier', [57]]],
+		config: ['pattern']
 	},
 	324: {
 		kind: 'ref_pattern',
@@ -2642,15 +2653,25 @@ export const structure: StructureTable = Object.freeze({
 	},
 	372: {
 		kind: 'reference_expression_raw_mut',
-		required: [['_argument', 'argument']],
+		required: [
+			['_writable', 'writable'],
+			['_argument', 'argument']
+		],
 		single: [['_argument', 'ReferenceExpressionRawMut.argument']],
-		nodeOnly: [['_argument', 'ReferenceExpressionRawMut.argument', 'a built Expression', [258]]]
+		nodeOnly: [['_argument', 'ReferenceExpressionRawMut.argument', 'a built Expression', [258]]],
+		kindIds: [['_writable', 'ReferenceExpressionRawMut.writable', [57]]],
+		config: ['argument']
 	},
 	373: {
 		kind: 'reference_expression_mut',
-		required: [['_argument', 'argument']],
+		required: [
+			['_exclusive', 'exclusive'],
+			['_argument', 'argument']
+		],
 		single: [['_argument', 'ReferenceExpressionMut.argument']],
-		nodeOnly: [['_argument', 'ReferenceExpressionMut.argument', 'a built Expression', [258]]]
+		nodeOnly: [['_argument', 'ReferenceExpressionMut.argument', 'a built Expression', [258]]],
+		kindIds: [['_exclusive', 'ReferenceExpressionMut.exclusive', [57]]],
+		config: ['argument']
 	},
 	374: {
 		kind: 'reference_expression_bare',
@@ -2831,9 +2852,14 @@ export const structure: StructureTable = Object.freeze({
 	},
 	389: {
 		kind: 'pointer_type_mut',
-		required: [['_type', 'type']],
+		required: [
+			['_writable', 'writable'],
+			['_type', 'type']
+		],
 		single: [['_type', 'PointerTypeMut.type']],
-		nodeOnly: [['_type', 'PointerTypeMut.type', 'a built Type', [236]]]
+		nodeOnly: [['_type', 'PointerTypeMut.type', 'a built Type', [236]]],
+		kindIds: [['_writable', 'PointerTypeMut.writable', [57]]],
+		config: ['type']
 	},
 	390: {
 		kind: 'range_expression_binary',
@@ -2939,15 +2965,25 @@ export const structure: StructureTable = Object.freeze({
 	},
 	400: {
 		kind: 'line_comment_doc_outer',
-		required: [['_doc', 'doc']],
+		required: [
+			['_outer', 'outer'],
+			['_doc', 'doc']
+		],
 		single: [['_doc', 'LineCommentDocOuter.doc']],
-		nodeOnly: [['_doc', 'LineCommentDocOuter.doc', 'buildDocComment(…)', [166]]]
+		nodeOnly: [['_doc', 'LineCommentDocOuter.doc', 'buildDocComment(…)', [166]]],
+		kindIds: [['_outer', 'LineCommentDocOuter.outer', [339]]],
+		config: ['doc']
 	},
 	401: {
 		kind: 'line_comment_doc_inner',
-		required: [['_doc', 'doc']],
+		required: [
+			['_inner', 'inner'],
+			['_doc', 'doc']
+		],
 		single: [['_doc', 'LineCommentDocInner.doc']],
-		nodeOnly: [['_doc', 'LineCommentDocInner.doc', 'buildDocComment(…)', [166]]]
+		nodeOnly: [['_doc', 'LineCommentDocInner.doc', 'buildDocComment(…)', [166]]],
+		kindIds: [['_inner', 'LineCommentDocInner.inner', [338]]],
+		config: ['doc']
 	},
 	402: {
 		kind: 'block_comment_doc_outer',
@@ -3345,10 +3381,14 @@ export const structure: StructureTable = Object.freeze({
 	},
 	439: {
 		kind: 'receiver_parameter_declaration',
-		required: [['_type', 'type']],
+		required: [
+			['_name', 'name'],
+			['_type', 'type']
+		],
 		single: [['_type', 'ReceiverParameterDeclaration.type']],
 		nodeOnly: [['_type', 'ReceiverParameterDeclaration.type', 'a built Type', [236]]],
 		booleans: [['_mutable', 'ReceiverParameterDeclaration.mutable']],
+		kindIds: [['_name', 'ReceiverParameterDeclaration.name', [124]]],
 		config: ['mutable', 'type']
 	},
 	440: {

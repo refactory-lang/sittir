@@ -24413,7 +24413,7 @@ function viewCatchClauseGroup(data: RecordPosition, tree: TreeHandle): T.CatchCl
 }
 
 function viewGetAccessorSignature$type(this: RecordHandle) {
-	return viewSlot<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation | undefined>(this, 2, 3, 1, 0, 2);
+	return viewSlot<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation | undefined>(this, 3, 3, 1, 0, 3);
 }
 function viewGetAccessorSignature(data: RecordPosition, tree: TreeHandle): T.GetAccessorSignature.Parsed {
 	const node = {
@@ -26537,10 +26537,10 @@ function viewMethodDefinitionGetter$name(this: RecordHandle) {
 	);
 }
 function viewMethodDefinitionGetter$type(this: RecordHandle) {
-	return viewSlot<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation | undefined>(this, 19, 3, 1, 0, 5);
+	return viewSlot<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation | undefined>(this, 20, 3, 1, 0, 6);
 }
 function viewMethodDefinitionGetter$body(this: RecordHandle) {
-	return viewSlot<T.StatementBlock>(this, 22, 4, 8, 4, 6);
+	return viewSlot<T.StatementBlock>(this, 23, 4, 8, 4, 7);
 }
 function viewMethodDefinitionGetter(data: RecordPosition, tree: TreeHandle): T.MethodDefinitionGetter.Parsed {
 	const node = {
@@ -26748,7 +26748,7 @@ function viewMethodSignatureGetter$name(this: RecordHandle) {
 	);
 }
 function viewMethodSignatureGetter$type(this: RecordHandle) {
-	return viewSlot<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation | undefined>(this, 19, 3, 1, 0, 5);
+	return viewSlot<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation | undefined>(this, 20, 3, 1, 0, 6);
 }
 function viewMethodSignatureGetter(data: RecordPosition, tree: TreeHandle): T.MethodSignatureGetter.Parsed {
 	const node = {
@@ -26934,7 +26934,7 @@ function viewAbstractMethodSignatureGetter$name(this: RecordHandle) {
 	);
 }
 function viewAbstractMethodSignatureGetter$type(this: RecordHandle) {
-	return viewSlot<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation | undefined>(this, 19, 3, 1, 0, 5);
+	return viewSlot<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation | undefined>(this, 20, 3, 1, 0, 6);
 }
 function viewAbstractMethodSignatureGetter(
 	data: RecordPosition,
@@ -27193,10 +27193,10 @@ function viewConstructorDeclaration$accessibilityModifier(this: RecordHandle) {
 	return childSlot(this, 2, 1, 2, 0, 2);
 }
 function viewConstructorDeclaration$parameters(this: RecordHandle) {
-	return viewSlot<T.FormalParameters>(this, 3, 3, 1, 0, 3);
+	return viewSlot<T.FormalParameters>(this, 4, 3, 1, 0, 4);
 }
 function viewConstructorDeclaration$body(this: RecordHandle) {
-	return viewSlot<T.StatementBlock>(this, 6, 4, 8, 4, 4);
+	return viewSlot<T.StatementBlock>(this, 7, 4, 8, 4, 5);
 }
 function viewConstructorDeclaration(data: RecordPosition, tree: TreeHandle): T.ConstructorDeclaration.Parsed {
 	const node = {
@@ -27242,10 +27242,10 @@ function viewReceiverParameterDeclaration$readonly(this: RecordHandle) {
 	return recordFlag(this, 2, 1);
 }
 function viewReceiverParameterDeclaration$type(this: RecordHandle) {
-	return viewSlot<T.TypeAnnotation | undefined>(this, 5, 3, 1, 0, 5);
+	return viewSlot<T.TypeAnnotation | undefined>(this, 6, 3, 1, 0, 6);
 }
 function viewReceiverParameterDeclaration$value(this: RecordHandle) {
-	return viewSlot<T.Expression | undefined>(this, 8, 4, 3, 0, 6);
+	return viewSlot<T.Expression | undefined>(this, 9, 4, 3, 0, 7);
 }
 function viewReceiverParameterDeclaration(
 	data: RecordPosition,

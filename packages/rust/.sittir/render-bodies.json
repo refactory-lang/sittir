@@ -2298,8 +2298,8 @@
 			"field": "crate_before"
 		},
 		{
-			"kind": "text",
-			"text": "crate"
+			"kind": "slot",
+			"name": "crate"
 		},
 		{
 			"kind": "seam",
@@ -4313,8 +4313,8 @@
 	],
 	"line_comment_doc_inner": [
 		{
-			"kind": "text",
-			"text": "!"
+			"kind": "slot",
+			"name": "inner"
 		},
 		{
 			"kind": "slot",
@@ -4323,8 +4323,8 @@
 	],
 	"line_comment_doc_outer": [
 		{
-			"kind": "text",
-			"text": "/"
+			"kind": "slot",
+			"name": "outer"
 		},
 		{
 			"kind": "slot",
@@ -5094,8 +5094,8 @@
 			"field": "mut_pattern_before"
 		},
 		{
-			"kind": "text",
-			"text": "mut"
+			"kind": "slot",
+			"name": "mutable_specifier"
 		},
 		{
 			"kind": "seam",
@@ -5503,8 +5503,8 @@
 			"field": "writable_before"
 		},
 		{
-			"kind": "text",
-			"text": "mut"
+			"kind": "slot",
+			"name": "writable"
 		},
 		{
 			"kind": "seam",
@@ -5766,8 +5766,8 @@
 			"field": "name_before"
 		},
 		{
-			"kind": "text",
-			"text": "self"
+			"kind": "slot",
+			"name": "name"
 		},
 		{
 			"kind": "seam",
@@ -5856,8 +5856,8 @@
 			"field": "exclusive_before"
 		},
 		{
-			"kind": "text",
-			"text": "mut"
+			"kind": "slot",
+			"name": "exclusive"
 		},
 		{
 			"kind": "seam",
@@ -5948,8 +5948,8 @@
 			"field": "writable_before"
 		},
 		{
-			"kind": "text",
-			"text": "mut"
+			"kind": "slot",
+			"name": "writable"
 		},
 		{
 			"kind": "seam",
@@ -6344,8 +6344,8 @@
 			"field": "self_before"
 		},
 		{
-			"kind": "text",
-			"text": "self"
+			"kind": "slot",
+			"name": "self"
 		},
 		{
 			"kind": "seam",

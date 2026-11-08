@@ -83,11 +83,11 @@ export function querySlotRows(nodeMap: NodeMap): ReadonlyMap<number, readonly Qu
 	const rows = new Map<number, readonly QuerySlotEntry[]>();
 	const collector = new EmitCollector('');
 	for (const node of nodeMap.nodes.values()) {
-		if (node.kindId === undefined || node.slots.length === 0) continue;
+		if (node.kindId === undefined || node.valueSlots.length === 0) continue;
 		const kindId = node.kindId;
 		collector.guard(() => {
 			const numbers = nodeSlotNumbers(node, nodeMap);
-			const row = node.slots.map((slot): QuerySlotEntry => {
+			const row = node.valueSlots.map((slot): QuerySlotEntry => {
 				if (slot.propertyName === RECORDER_FLAG_KEY)
 					throw emitShapeFailure({
 						code: 'reserved-slot-name',

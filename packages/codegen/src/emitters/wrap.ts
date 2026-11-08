@@ -6,7 +6,7 @@ import type { NodeMap } from '../compiler/types.ts';
 import { AbstractAssembledCompound, AssembledAlias, AssembledList, AssembledNonterminal, storesNodes } from '../compiler/model/node-map.ts';
 import type { AssembledNode } from '../compiler/model/node-map.ts';
 import { storedTextKinds } from './built-from-text.ts';
-import type { GeneratedIdTables } from '../dsl/symbol-table.ts';
+import { isNamedKindEntry, type GeneratedIdTables } from '../dsl/symbol-table.ts';
 import { groupSeatMembers, groupSeatReaders, LIST_SURFACE_LINES, LIST_SYMBOL_LINES, ROOT_ERRORS_LINE, triviaPositionsOf, listReadLines, listReadPostlude, listSelfViewParts, nodeMemberParts, ownerViewParts, receivedMembers, seatedSetters, triviaSides, type HeldLocal, type SetterEntry, type TriviaPositions } from './node-members.ts';
 import {
 	DELIMITER_IMPORT,
@@ -50,7 +50,7 @@ export function unitKindIds(nodeMap: NodeMap): number[] {
 }
 
 export function namedUnitKindIds(nodeMap: NodeMap): number[] {
-	return unitKindIdsWhere(nodeMap, (node) => node.kindEntry?.anon !== true && node.kindEntry?.hidden !== true);
+	return unitKindIdsWhere(nodeMap, (node) => node.kindEntry === undefined || isNamedKindEntry(node.kindEntry));
 }
 
 export function layoutMemberKindIds(nodeMap: NodeMap): number[] {
@@ -240,7 +240,7 @@ function listAccessorSlots(node: AssembledList, kindEntries: readonly KindEnumEn
 }
 
 function accessorSlotsOf(node: AuthoredCompound | AssembledList, kindEntries: readonly KindEnumEntry[], nodeMap: NodeMap): AccessorSlot[] {
-	return node instanceof AssembledList ? listAccessorSlots(node, kindEntries, nodeMap) : fieldAccessorSlots(node.slots, kindEntries, nodeMap, node instanceof AssembledAlias);
+	return node instanceof AssembledList ? listAccessorSlots(node, kindEntries, nodeMap) : fieldAccessorSlots(node.valueSlots, kindEntries, nodeMap, node instanceof AssembledAlias);
 }
 
 function settersOf(node: AuthoredCompound | AssembledList, nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[], plan: SeatPlan): SetterEntry[] {
@@ -529,7 +529,7 @@ function inlineSetters(node: AuthoredCompound | AssembledList, nodeMap: NodeMap,
 			.filter((setter) => setter.rest)
 			.map((setter) => setter.name)
 	);
-	return node.slots.map((f) => {
+	return node.valueSlots.map((f) => {
 		const method = f.propertyName;
 		const envelopeType = splicedEnvelopeType(f, nodeMap);
 		const admitted = envelopeType === undefined ? '' : ` | ${envelopeType}`;

@@ -59,7 +59,7 @@ describe('Assemble — simplifyRule', () => {
 				{ type: STRING, value: '}' }
 			]
 		};
-		const rule = flattenRules({ x: rawRule }).x!;
+		const rule = flattenRules({ x: rawRule }, () => false).x!;
 		const simplified = simplifyRule(rule as Rule);
 		// After stripping { and }, only the symbol (with fieldName attr) remains
 		expect(simplified.type).toBe('SYMBOL');
@@ -73,7 +73,7 @@ describe('Assemble — simplifyRule', () => {
 			members: [{ type: FIELD, name: 'x', content: { type: SYMBOL, name: 'y' } }]
 		};
 		// wrapper-deletion: field('x', sym('y')) → sym('y', {fieldName:'x', nonterminal:true})
-		const rule = flattenRules({ x: rawRule }).x!;
+		const rule = flattenRules({ x: rawRule }, () => false).x!;
 		const simplified = simplifyRule(rule as Rule);
 		// seq of one symbol (with attr) collapses to that symbol
 		expect(simplified.type).toBe('SYMBOL');

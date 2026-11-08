@@ -168,6 +168,7 @@ export interface ModelSlot {
 	readonly required: boolean;
 	readonly multiple: boolean;
 	readonly storage: string;
+	readonly pinned?: string;
 	readonly kinds: readonly string[];
 	readonly terminals: readonly string[];
 	readonly mounts?: Readonly<Record<string, ModelMount>>;

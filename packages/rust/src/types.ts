@@ -4042,10 +4042,12 @@ export interface OrderedFieldDeclarationList {
 export interface ExternCrateDeclaration {
 	readonly $type: TSKindId.ExternCrateDeclaration;
 	readonly _visibility_modifier?: VisibilityModifier;
+	readonly _crate: TSKindId.Crate;
 	readonly _name: Identifier;
 	readonly _alias?: Identifier;
 	readonly __slotNames__?: {
 		readonly _visibility_modifier: 'visibilityModifier';
+		readonly _crate: 'crate';
 		readonly _name: 'name';
 		readonly _alias: 'alias';
 	};
@@ -5444,10 +5446,12 @@ export interface SelfParameter {
 	readonly _reference: boolean;
 	readonly _lifetime?: Lifetime;
 	readonly _mutable: boolean;
+	readonly _self: TSKindId.Self;
 	readonly __slotNames__?: {
 		readonly _reference: 'reference';
 		readonly _lifetime: 'lifetime';
 		readonly _mutable: 'mutable';
+		readonly _self: 'self';
 	};
 	readonly __inputHints__?: {
 		readonly reference?: BaseBooleanKeyword<'&'>;
@@ -7783,8 +7787,10 @@ export interface StructPattern {
 
 export interface MutPattern {
 	readonly $type: TSKindId.MutPattern;
+	readonly _mutable_specifier: TSKindId.MutableSpecifier;
 	readonly _pattern: Pattern;
 	readonly __slotNames__?: {
+		readonly _mutable_specifier: 'mutableSpecifier';
 		readonly _pattern: 'pattern';
 	};
 	readonly __inputHints__?: {
@@ -7796,7 +7802,7 @@ export interface MutPattern {
 			| Pattern;
 	};
 	readonly __slotHints__?: {
-		readonly pattern: SlotHint<NonNullable<T.Pattern>>;
+		readonly pattern: SlotHint<NonNullable<T.MutPattern.Config>['pattern']>;
 	};
 	readonly pattern: () => Pattern;
 }
@@ -8986,8 +8992,10 @@ export interface ReferenceExpressionRawConst {
 
 export interface ReferenceExpressionRawMut {
 	readonly $type: TSKindId.ReferenceExpressionRawMut;
+	readonly _writable: TSKindId.MutableSpecifier;
 	readonly _argument: Expression;
 	readonly __slotNames__?: {
+		readonly _writable: 'writable';
 		readonly _argument: 'argument';
 	};
 	readonly __inputHints__?: {
@@ -8996,15 +9004,17 @@ export interface ReferenceExpressionRawMut {
 			| Expression;
 	};
 	readonly __slotHints__?: {
-		readonly argument: SlotHint<NonNullable<T.Expression>>;
+		readonly argument: SlotHint<NonNullable<T.ReferenceExpressionRawMut.Config>['argument']>;
 	};
 	readonly argument: () => Expression;
 }
 
 export interface ReferenceExpressionMut {
 	readonly $type: TSKindId.ReferenceExpressionMut;
+	readonly _exclusive: TSKindId.MutableSpecifier;
 	readonly _argument: Expression;
 	readonly __slotNames__?: {
+		readonly _exclusive: 'exclusive';
 		readonly _argument: 'argument';
 	};
 	readonly __inputHints__?: {
@@ -9013,7 +9023,7 @@ export interface ReferenceExpressionMut {
 			| Expression;
 	};
 	readonly __slotHints__?: {
-		readonly argument: SlotHint<NonNullable<T.Expression>>;
+		readonly argument: SlotHint<NonNullable<T.ReferenceExpressionMut.Config>['argument']>;
 	};
 	readonly argument: () => Expression;
 }
@@ -9476,8 +9486,10 @@ export interface PointerTypeConst {
 
 export interface PointerTypeMut {
 	readonly $type: TSKindId.PointerTypeMut;
+	readonly _writable: TSKindId.MutableSpecifier;
 	readonly _type: Type;
 	readonly __slotNames__?: {
+		readonly _writable: 'writable';
 		readonly _type: 'type';
 	};
 	readonly __inputHints__?: {
@@ -9523,7 +9535,7 @@ export interface PointerTypeMut {
 			| Type;
 	};
 	readonly __slotHints__?: {
-		readonly type: SlotHint<NonNullable<T.Type | T.TypeIdentifier.Types>>;
+		readonly type: SlotHint<NonNullable<T.PointerTypeMut.Config>['type']>;
 	};
 	readonly type: () => Type;
 }
@@ -9756,8 +9768,10 @@ export interface MatchArmBlockEnding {
 
 export interface LineCommentDocOuter {
 	readonly $type: TSKindId.LineCommentDocOuter;
+	readonly _outer: TSKindId.OuterLineDocCommentMarker | TSKindId.Slash;
 	readonly _doc: DocComment;
 	readonly __slotNames__?: {
+		readonly _outer: 'outer';
 		readonly _doc: 'doc';
 	};
 	readonly __slotHints__?: {
@@ -9768,8 +9782,10 @@ export interface LineCommentDocOuter {
 
 export interface LineCommentDocInner {
 	readonly $type: TSKindId.LineCommentDocInner;
+	readonly _inner: TSKindId.InnerLineDocCommentMarker | TSKindId.Bang;
 	readonly _doc: DocComment;
 	readonly __slotNames__?: {
+		readonly _inner: 'inner';
 		readonly _doc: 'doc';
 	};
 	readonly __slotHints__?: {
@@ -10758,9 +10774,11 @@ export interface ArrayExpressionListElements {
 export interface ReceiverParameterDeclaration {
 	readonly $type: TSKindId.ReceiverParameterDeclaration;
 	readonly _mutable: boolean;
+	readonly _name: TSKindId.Self;
 	readonly _type: Type;
 	readonly __slotNames__?: {
 		readonly _mutable: 'mutable';
+		readonly _name: 'name';
 		readonly _type: 'type';
 	};
 	readonly __inputHints__?: {
@@ -16636,7 +16654,7 @@ export interface MutPatternNs extends NodeNs<
 	LeafStringMap,
 	NamespaceMap,
 	MutPattern.Bound,
-	'pattern',
+	never,
 	TSKindId.MutPattern,
 	MutPattern.Parsed,
 	never
@@ -17322,7 +17340,7 @@ export interface ReferenceExpressionRawMutNs extends NodeNs<
 	LeafStringMap,
 	NamespaceMap,
 	ReferenceExpressionRawMut.Bound,
-	'argument',
+	never,
 	TSKindId.ReferenceExpressionRawMut,
 	ReferenceExpressionRawMut.Parsed,
 	never
@@ -17336,7 +17354,7 @@ export interface ReferenceExpressionMutNs extends NodeNs<
 	LeafStringMap,
 	NamespaceMap,
 	ReferenceExpressionMut.Bound,
-	'argument',
+	never,
 	TSKindId.ReferenceExpressionMut,
 	ReferenceExpressionMut.Parsed,
 	never
@@ -17560,7 +17578,7 @@ export interface PointerTypeMutNs extends NodeNs<
 	LeafStringMap,
 	NamespaceMap,
 	PointerTypeMut.Bound,
-	'type',
+	never,
 	TSKindId.PointerTypeMut,
 	PointerTypeMut.Parsed,
 	never
@@ -17700,7 +17718,7 @@ export interface LineCommentDocOuterNs extends NodeNs<
 	LeafStringMap,
 	NamespaceMap,
 	LineCommentDocOuter.Bound,
-	'doc',
+	never,
 	TSKindId.LineCommentDocOuter,
 	LineCommentDocOuter.Parsed,
 	never
@@ -17714,7 +17732,7 @@ export interface LineCommentDocInnerNs extends NodeNs<
 	LeafStringMap,
 	NamespaceMap,
 	LineCommentDocInner.Bound,
-	'doc',
+	never,
 	TSKindId.LineCommentDocInner,
 	LineCommentDocInner.Parsed,
 	never
@@ -20279,7 +20297,7 @@ export namespace OrderedFieldDeclarationList {
 	export type Kind = TSKindId.OrderedFieldDeclarationList;
 }
 export namespace ExternCrateDeclaration {
-	export type Config = ConfigFor<TSKindId.ExternCrateDeclaration>;
+	export type Config = OmitEach<ConfigFor<TSKindId.ExternCrateDeclaration>, 'crate'>;
 	export interface Bound extends BoundOf<T.ExternCrateDeclaration, BoundByKindId>, NodeMethodsOf, HoldsSource {
 		readonly $type: T.ExternCrateDeclaration['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
@@ -20297,9 +20315,9 @@ export namespace ExternCrateDeclaration {
 		>;
 		readonly $snapshot: () => Snapshot<T.ExternCrateDeclaration['$type']>;
 	}
-	export type Loose = LooseFor<TSKindId.ExternCrateDeclaration>;
-	export type LooseConfig = LooseConfigFor<TSKindId.ExternCrateDeclaration>;
-	export type BuildArgs = [config: ConfigOf<T.ExternCrateDeclaration>];
+	export type Loose = OmitEach<LooseFor<TSKindId.ExternCrateDeclaration>, 'crate'>;
+	export type LooseConfig = OmitEach<LooseConfigFor<TSKindId.ExternCrateDeclaration>, 'crate'>;
+	export type BuildArgs = [config: OmitRegistered<ConfigOf<T.ExternCrateDeclaration>, 'crate'>];
 	export type LooseArgs = [config: T.ExternCrateDeclaration.Loose];
 	export type Kind = TSKindId.ExternCrateDeclaration;
 }
@@ -20950,7 +20968,7 @@ export namespace Parameters {
 	export type Kind = TSKindId.Parameters;
 }
 export namespace SelfParameter {
-	export type Config = ConfigFor<TSKindId.SelfParameter>;
+	export type Config = OmitEach<ConfigFor<TSKindId.SelfParameter>, 'self'>;
 	export interface Bound extends BoundOf<T.SelfParameter, BoundByKindId>, NodeMethodsOf, HoldsSource {
 		readonly $type: T.SelfParameter['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
@@ -20967,9 +20985,9 @@ export namespace SelfParameter {
 		>;
 		readonly $snapshot: () => Snapshot<T.SelfParameter['$type']>;
 	}
-	export type Loose = LooseFor<TSKindId.SelfParameter>;
-	export type LooseConfig = LooseConfigFor<TSKindId.SelfParameter>;
-	export type BuildArgs = [config?: Partial<ConfigOf<T.SelfParameter>>];
+	export type Loose = OmitEach<LooseFor<TSKindId.SelfParameter>, 'self'>;
+	export type LooseConfig = OmitEach<LooseConfigFor<TSKindId.SelfParameter>, 'self'>;
+	export type BuildArgs = [config?: Partial<OmitRegistered<ConfigOf<T.SelfParameter>, 'self'>>];
 	export type LooseArgs = [config?: T.SelfParameter.Loose];
 	export type Kind = TSKindId.SelfParameter;
 }
@@ -22761,7 +22779,7 @@ export namespace StructPattern {
 	export type Kind = TSKindId.StructPattern;
 }
 export namespace MutPattern {
-	export type Config = ConfigFor<TSKindId.MutPattern>;
+	export type Config = OmitEach<ConfigFor<TSKindId.MutPattern>, 'mutableSpecifier'>;
 	export interface Bound extends BoundOf<T.MutPattern, BoundByKindId>, NodeMethodsOf, HoldsSource {
 		readonly $type: T.MutPattern['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
@@ -22778,10 +22796,10 @@ export namespace MutPattern {
 		>;
 		readonly $snapshot: () => Snapshot<T.MutPattern['$type']>;
 	}
-	export type Loose = LooseFor<TSKindId.MutPattern>;
-	export type LooseConfig = LooseConfigFor<TSKindId.MutPattern>;
-	export type BuildArgs = [value: Admit<T.Pattern>];
-	export type LooseArgs = [value: T.MutPattern.Loose];
+	export type Loose = OmitEach<LooseFor<TSKindId.MutPattern>, 'mutableSpecifier'>;
+	export type LooseConfig = OmitEach<LooseConfigFor<TSKindId.MutPattern>, 'mutableSpecifier'>;
+	export type BuildArgs = [config: OmitRegistered<ConfigOf<T.MutPattern>, 'mutableSpecifier'>];
+	export type LooseArgs = [config: T.MutPattern.Loose];
 	export type Kind = TSKindId.MutPattern;
 }
 export namespace RefPattern {
@@ -24831,7 +24849,7 @@ export namespace ReferenceExpressionRawConst {
 	export type Kind = TSKindId.ReferenceExpressionRawConst;
 }
 export namespace ReferenceExpressionRawMut {
-	export type Config = ConfigFor<TSKindId.ReferenceExpressionRawMut>;
+	export type Config = OmitEach<ConfigFor<TSKindId.ReferenceExpressionRawMut>, 'writable'>;
 	export interface Bound extends BoundOf<T.ReferenceExpressionRawMut, BoundByKindId>, NodeMethodsOf, HoldsSource {
 		readonly $type: T.ReferenceExpressionRawMut['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
@@ -24849,14 +24867,14 @@ export namespace ReferenceExpressionRawMut {
 		>;
 		readonly $snapshot: () => Snapshot<T.ReferenceExpressionRawMut['$type']>;
 	}
-	export type Loose = LooseFor<TSKindId.ReferenceExpressionRawMut>;
-	export type LooseConfig = LooseConfigFor<TSKindId.ReferenceExpressionRawMut>;
-	export type BuildArgs = [value: Admit<T.Expression>];
-	export type LooseArgs = [value: T.ReferenceExpressionRawMut.Loose];
+	export type Loose = OmitEach<LooseFor<TSKindId.ReferenceExpressionRawMut>, 'writable'>;
+	export type LooseConfig = OmitEach<LooseConfigFor<TSKindId.ReferenceExpressionRawMut>, 'writable'>;
+	export type BuildArgs = [config: OmitRegistered<ConfigOf<T.ReferenceExpressionRawMut>, 'writable'>];
+	export type LooseArgs = [config: T.ReferenceExpressionRawMut.Loose];
 	export type Kind = TSKindId.ReferenceExpressionRawMut;
 }
 export namespace ReferenceExpressionMut {
-	export type Config = ConfigFor<TSKindId.ReferenceExpressionMut>;
+	export type Config = OmitEach<ConfigFor<TSKindId.ReferenceExpressionMut>, 'exclusive'>;
 	export interface Bound extends BoundOf<T.ReferenceExpressionMut, BoundByKindId>, NodeMethodsOf, HoldsSource {
 		readonly $type: T.ReferenceExpressionMut['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
@@ -24874,10 +24892,10 @@ export namespace ReferenceExpressionMut {
 		>;
 		readonly $snapshot: () => Snapshot<T.ReferenceExpressionMut['$type']>;
 	}
-	export type Loose = LooseFor<TSKindId.ReferenceExpressionMut>;
-	export type LooseConfig = LooseConfigFor<TSKindId.ReferenceExpressionMut>;
-	export type BuildArgs = [value: Admit<T.Expression>];
-	export type LooseArgs = [value: T.ReferenceExpressionMut.Loose];
+	export type Loose = OmitEach<LooseFor<TSKindId.ReferenceExpressionMut>, 'exclusive'>;
+	export type LooseConfig = OmitEach<LooseConfigFor<TSKindId.ReferenceExpressionMut>, 'exclusive'>;
+	export type BuildArgs = [config: OmitRegistered<ConfigOf<T.ReferenceExpressionMut>, 'exclusive'>];
+	export type LooseArgs = [config: T.ReferenceExpressionMut.Loose];
 	export type Kind = TSKindId.ReferenceExpressionMut;
 }
 export namespace ReferenceExpressionBare {
@@ -25262,7 +25280,7 @@ export namespace PointerTypeConst {
 	export type Kind = TSKindId.PointerTypeConst;
 }
 export namespace PointerTypeMut {
-	export type Config = ConfigFor<TSKindId.PointerTypeMut>;
+	export type Config = OmitEach<ConfigFor<TSKindId.PointerTypeMut>, 'writable'>;
 	export interface Bound extends BoundOf<T.PointerTypeMut, BoundByKindId>, NodeMethodsOf, HoldsSource {
 		readonly $type: T.PointerTypeMut['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
@@ -25279,10 +25297,10 @@ export namespace PointerTypeMut {
 		>;
 		readonly $snapshot: () => Snapshot<T.PointerTypeMut['$type']>;
 	}
-	export type Loose = LooseFor<TSKindId.PointerTypeMut>;
-	export type LooseConfig = LooseConfigFor<TSKindId.PointerTypeMut>;
-	export type BuildArgs = [value: Admit<T.Type | T.TypeIdentifier.Types>];
-	export type LooseArgs = [value: T.PointerTypeMut.Loose];
+	export type Loose = OmitEach<LooseFor<TSKindId.PointerTypeMut>, 'writable'>;
+	export type LooseConfig = OmitEach<LooseConfigFor<TSKindId.PointerTypeMut>, 'writable'>;
+	export type BuildArgs = [config: OmitRegistered<ConfigOf<T.PointerTypeMut>, 'writable'>];
+	export type LooseArgs = [config: T.PointerTypeMut.Loose];
 	export type Kind = TSKindId.PointerTypeMut;
 }
 export namespace RangeExpressionBinary {
@@ -25534,7 +25552,7 @@ export namespace MatchArmBlockEnding {
 	export type Kind = TSKindId.MatchArmBlockEnding;
 }
 export namespace LineCommentDocOuter {
-	export type Config = ConfigFor<TSKindId.LineCommentDocOuter>;
+	export type Config = OmitEach<ConfigFor<TSKindId.LineCommentDocOuter>, 'outer'>;
 	export interface Bound extends BoundOf<T.LineCommentDocOuter, BoundByKindId>, NodeMethods, HoldsSource {
 		readonly $type: T.LineCommentDocOuter['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
@@ -25551,14 +25569,14 @@ export namespace LineCommentDocOuter {
 		>;
 		readonly $snapshot: () => Snapshot<T.LineCommentDocOuter['$type']>;
 	}
-	export type Loose = LooseFor<TSKindId.LineCommentDocOuter>;
-	export type LooseConfig = LooseConfigFor<TSKindId.LineCommentDocOuter>;
-	export type BuildArgs = [value: Admit<T.DocComment>];
-	export type LooseArgs = [value: T.LineCommentDocOuter.Loose];
+	export type Loose = OmitEach<LooseFor<TSKindId.LineCommentDocOuter>, 'outer'>;
+	export type LooseConfig = OmitEach<LooseConfigFor<TSKindId.LineCommentDocOuter>, 'outer'>;
+	export type BuildArgs = [config: OmitRegistered<ConfigOf<T.LineCommentDocOuter>, 'outer'>];
+	export type LooseArgs = [config: T.LineCommentDocOuter.Loose];
 	export type Kind = TSKindId.LineCommentDocOuter;
 }
 export namespace LineCommentDocInner {
-	export type Config = ConfigFor<TSKindId.LineCommentDocInner>;
+	export type Config = OmitEach<ConfigFor<TSKindId.LineCommentDocInner>, 'inner'>;
 	export interface Bound extends BoundOf<T.LineCommentDocInner, BoundByKindId>, NodeMethods, HoldsSource {
 		readonly $type: T.LineCommentDocInner['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
@@ -25575,10 +25593,10 @@ export namespace LineCommentDocInner {
 		>;
 		readonly $snapshot: () => Snapshot<T.LineCommentDocInner['$type']>;
 	}
-	export type Loose = LooseFor<TSKindId.LineCommentDocInner>;
-	export type LooseConfig = LooseConfigFor<TSKindId.LineCommentDocInner>;
-	export type BuildArgs = [value: Admit<T.DocComment>];
-	export type LooseArgs = [value: T.LineCommentDocInner.Loose];
+	export type Loose = OmitEach<LooseFor<TSKindId.LineCommentDocInner>, 'inner'>;
+	export type LooseConfig = OmitEach<LooseConfigFor<TSKindId.LineCommentDocInner>, 'inner'>;
+	export type BuildArgs = [config: OmitRegistered<ConfigOf<T.LineCommentDocInner>, 'inner'>];
+	export type LooseArgs = [config: T.LineCommentDocInner.Loose];
 	export type Kind = TSKindId.LineCommentDocInner;
 }
 export namespace BlockCommentDocOuter {
@@ -26793,7 +26811,7 @@ export namespace ArrayExpressionListElements {
 	>;
 }
 export namespace ReceiverParameterDeclaration {
-	export type Config = ConfigFor<TSKindId.ReceiverParameterDeclaration>;
+	export type Config = OmitEach<ConfigFor<TSKindId.ReceiverParameterDeclaration>, 'name'>;
 	export interface Bound extends BoundOf<T.ReceiverParameterDeclaration, BoundByKindId>, NodeMethodsOf, HoldsSource {
 		readonly $type: T.ReceiverParameterDeclaration['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
@@ -26811,9 +26829,9 @@ export namespace ReceiverParameterDeclaration {
 		>;
 		readonly $snapshot: () => Snapshot<T.ReceiverParameterDeclaration['$type']>;
 	}
-	export type Loose = LooseFor<TSKindId.ReceiverParameterDeclaration>;
-	export type LooseConfig = LooseConfigFor<TSKindId.ReceiverParameterDeclaration>;
-	export type BuildArgs = [config: ConfigOf<T.ReceiverParameterDeclaration>];
+	export type Loose = OmitEach<LooseFor<TSKindId.ReceiverParameterDeclaration>, 'name'>;
+	export type LooseConfig = OmitEach<LooseConfigFor<TSKindId.ReceiverParameterDeclaration>, 'name'>;
+	export type BuildArgs = [config: OmitRegistered<ConfigOf<T.ReceiverParameterDeclaration>, 'name'>];
 	export type LooseArgs = [config: T.ReceiverParameterDeclaration.Loose];
 	export type Kind = TSKindId.ReceiverParameterDeclaration;
 }

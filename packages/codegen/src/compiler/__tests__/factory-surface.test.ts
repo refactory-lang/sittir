@@ -85,10 +85,11 @@ describe('child factory surface classification', () => {
 		expect(classifyFactoryShape(nodeMap.nodes.get('async_block')!, nodeMap)).toBe('config');
 		expect(classifyFactoryShape(nodeMap.nodes.get('gen_block')!, nodeMap)).toBe('config');
 		expect(classifyFactoryShape(nodeMap.nodes.get('reference_pattern')!, nodeMap)).toBe('config');
-		// Marker-free single-field kinds keep the ergonomic direct shape
-		// (mut_pattern's `mut` is determined — grammar-fixed template text).
+		// A stored slot the parser names counts toward the shape even when it
+		// takes no input: mut_pattern stores its `mut`, so it is config-shaped.
+		expect(classifyFactoryShape(nodeMap.nodes.get('mut_pattern')!, nodeMap)).toBe('config');
+		// Marker-free single-field kinds keep the ergonomic direct shape.
 		expect(classifyFactoryShape(nodeMap.nodes.get('await_expression')!, nodeMap)).toBe('direct');
-		expect(classifyFactoryShape(nodeMap.nodes.get('mut_pattern')!, nodeMap)).toBe('direct');
 	});
 
 	it('has no sole slot when markers sit beside the payload', () => {

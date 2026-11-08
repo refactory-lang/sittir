@@ -75,7 +75,7 @@ describe('computeSimplifiedRules wrapper-free output — unit shapes', () => {
 				]
 			}
 		};
-		const normalizedRules = flattenRules(input);
+		const normalizedRules = flattenRules(input, () => false);
 		const simplified = computeSimplifiedRules(
 			new SimplifyCtx({ grammar: makeNormalizedGrammar(normalizedRules), diagnostics: new DiagnosticSink() })
 		);
@@ -104,7 +104,7 @@ describe('computeSimplifiedRules wrapper-free output — unit shapes', () => {
 				]
 			}
 		};
-		const normalizedRules = flattenRules(input);
+		const normalizedRules = flattenRules(input, () => false);
 		const simplified = computeSimplifiedRules(
 			new SimplifyCtx({ grammar: makeNormalizedGrammar(normalizedRules), diagnostics: new DiagnosticSink() })
 		);
@@ -131,7 +131,7 @@ describe('computeSimplifiedRules wrapper-free output — unit shapes', () => {
 				]
 			}
 		};
-		const normalizedRules = flattenRules(input);
+		const normalizedRules = flattenRules(input, () => false);
 		const simplified = computeSimplifiedRules(
 			new SimplifyCtx({ grammar: makeNormalizedGrammar(normalizedRules), diagnostics: new DiagnosticSink() })
 		);
@@ -221,7 +221,7 @@ describe('computeSimplifiedRules — wrapper-free invariant', () => {
 			expr: { type: SYMBOL, name: 'identifier' }
 		};
 
-		const normalizedRules = flattenRules(inputRules);
+		const normalizedRules = flattenRules(inputRules, () => false);
 		const simplified = computeSimplifiedRules(
 			new SimplifyCtx({ grammar: makeNormalizedGrammar(normalizedRules), diagnostics: new DiagnosticSink() })
 		);

@@ -90,6 +90,7 @@ import {
 	kindDiscriminantExprForLiteral
 } from './kind-discriminant.ts';
 import { emptyForms } from '../compiler/model/trivia.ts';
+import { layoutTokenKindsOf } from '../compiler/model/layout-kinds.ts';
 
 export { isRequired, isMultiple, isNonEmpty, hasOptionalElements, deriveSlotCardinality, deriveChildrenCardinality };
 
@@ -658,20 +659,26 @@ export function kindEnumAltIdPairs(
 	nodeMap: NodeMap
 ): readonly (readonly [number, number])[] {
 	const out: (readonly [number, number])[] = [];
-	const seen = new Set<number>();
+	const seen = new Set<string>();
+	const pair = (stored: number | undefined, alts: readonly (number | undefined)[]): void => {
+		if (stored === undefined) return;
+		for (const alt of alts) {
+			if (alt === undefined || alt === stored || seen.has(`${alt}:${stored}`)) continue;
+			seen.add(`${alt}:${stored}`);
+			out.push([alt, stored]);
+		}
+	};
 	for (const value of field.values) {
+		if (isTerminalValue(value)) {
+			pair(value.resolvedKindId, [value.parseKindId]);
+			continue;
+		}
 		if (!isNodeRef(value)) continue;
 		const node = nodeMap.nodes.get(storageKindOfRef(value.node));
 		if (node === undefined) continue;
 		const target = storageTargetOf(node, nodeMap);
 		if (!isFixedTextLeaf(target)) continue;
-		const stored = keywordRefWireIdentity(value, target).kindId;
-		if (stored === undefined) continue;
-		for (const alt of [value.storageKindId, value.parseKindId, target.aliasStorageNode === undefined ? target.resolvedKindId : undefined]) {
-			if (alt === undefined || alt === stored || seen.has(alt)) continue;
-			seen.add(alt);
-			out.push([alt, stored]);
-		}
+		pair(keywordRefWireIdentity(value, target).kindId, [value.storageKindId, value.parseKindId, target.aliasStorageNode === undefined ? target.resolvedKindId : undefined]);
 	}
 	return out;
 }
@@ -679,6 +686,19 @@ export function kindEnumAltIdPairs(
 export function resolveFieldStorageInfo(field: AssembledNonterminal, nodeMap: NodeMap): FieldStorageInfo {
 	field.storageInfo ??= classifyFieldStorageInfo(field, nodeMap);
 	return field.storageInfo;
+}
+
+export function stampPinnedSlots(nodeMap: NodeMap): void {
+	const layout = layoutTokenKindsOf(nodeMap);
+	for (const node of nodeMap.nodes.values()) {
+		for (const slot of node.slots) {
+			if (!isRequired(slot) || isMultiple(slot)) continue;
+			const info = resolveFieldStorageInfo(slot, nodeMap);
+			const [text, ...more] = new Set(info.texts);
+			if (info.kind !== 'kindEnum' || text === undefined || more.length > 0) continue;
+			if (!slot.values.some((value) => isNodeRef(value) && layout.has(storageKindOfRef(value.node)))) slot.pinned = text;
+		}
+	}
 }
 
 export type ClassifiedFactoryShape = 'config' | 'spread' | 'text' | 'constant' | 'nullary' | 'direct' | 'elements' | 'forwarded';
@@ -1067,11 +1087,12 @@ export function assertOmittedSlotsFilled(
 
 export function registeredSlots(node: {
 	readonly slots: readonly AssembledNonterminal[];
+	readonly valueSlots?: readonly AssembledNonterminal[];
 	readonly configSlots?: readonly AssembledNonterminal[];
 }): readonly AssembledNonterminal[] {
 	if (node.configSlots === undefined) return node.slots.filter((slot) => slot.registeredOption !== undefined);
 	const config = new Set(node.configSlots);
-	return node.slots.filter((slot) => !config.has(slot));
+	return (node.valueSlots ?? node.slots).filter((slot) => !config.has(slot));
 }
 
 export function blankArmImports(nodeMap: NodeMap): readonly string[] {

@@ -15,7 +15,7 @@ export function makeNormalized(
 			rule.hidden === undefined ? { ...rule, hidden: name.startsWith('_') } : rule
 		])
 	);
-	const normalizedRules = flattenRules(stamped);
+	const normalizedRules = flattenRules(stamped, () => false);
 	const simplifiedRules = computeSimplifiedRules(
 		new SimplifyCtx({
 			grammar: makeNormalizedGrammar(normalizedRules),
@@ -26,7 +26,7 @@ export function makeNormalized(
 	// so their canonical snapshots are available under the alias kind name.
 	if (overrides?.topLevelAliasBodies) {
 		const aliasBodiesRaw: Record<string, Rule<'link'>> = Object.fromEntries(overrides.topLevelAliasBodies);
-		const aliasBodiesRender = flattenRules(aliasBodiesRaw);
+		const aliasBodiesRender = flattenRules(aliasBodiesRaw, () => false);
 		const aliasBodiesSimplified = computeSimplifiedRules(
 			new SimplifyCtx({ grammar: makeNormalizedGrammar(aliasBodiesRender), diagnostics: new DiagnosticSink() })
 		);

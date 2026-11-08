@@ -20962,7 +20962,7 @@ fn prepare_ordered_field_declaration_list<N: OrderedFieldDeclarationListPrepare 
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::EXTERN_CRATE_DECLARATION, layout = [kind::EXTERN_KEYWORD, kind::CRATE, kind::AS_KEYWORD, kind::SEMI], words = 22, built_words = 5, fields = ExternCrateDeclarationFields, prepare = ExternCrateDeclarationPrepare, view = ExternCrateDeclarationNodeRecord, prepare_fn = prepare_extern_crate_declaration)]
+#[node(kind = kind::EXTERN_CRATE_DECLARATION, layout = [kind::EXTERN_KEYWORD, kind::AS_KEYWORD, kind::SEMI], words = 23, built_words = 6, fields = ExternCrateDeclarationFields, prepare = ExternCrateDeclarationPrepare, view = ExternCrateDeclarationNodeRecord, prepare_fn = prepare_extern_crate_declaration)]
 pub struct ExternCrateDeclarationNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -20972,11 +20972,14 @@ pub struct ExternCrateDeclarationNode {
     #[wire(key = "_visibility_modifier")]
     #[slot(field = field::VISIBILITY_MODIFIER, word = 2, width = 14, inline = 14, forms = 8, built = 2)]
     pub visibility_modifier: Option<::sittir_core::SlotValue<VisibilityModifierNode>>,
+    #[wire(key = "_crate")]
+    #[slot(field = field::CRATE, pinned = kind::CRATE, word = 16, width = 1, forms = 2, built = 3)]
+    pub crate_: ::sittir_core::SlotValue<CrateNode>,
     #[wire(key = "_name")]
-    #[slot(field = field::NAME, word = 16, width = 3, forms = 1, built = 3)]
+    #[slot(field = field::NAME, word = 17, width = 3, forms = 1, built = 4)]
     pub name: ::sittir_core::SlotValue<IdentifierNode>,
     #[wire(key = "_alias")]
-    #[slot(field = field::ALIAS, word = 19, width = 3, forms = 1, built = 4)]
+    #[slot(field = field::ALIAS, word = 20, width = 3, forms = 1, built = 5)]
     pub alias: Option<::sittir_core::SlotValue<IdentifierNode>>,
 }
 
@@ -21039,6 +21042,7 @@ fn prepare_extern_crate_declaration<N: ExternCrateDeclarationPrepare + ?Sized>(n
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(204), (None, None), ctx);
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.visibility_modifier, overlay, ctx)?;
+    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.crate_, overlay, ctx)?;
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.name, overlay, ctx)?;
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.alias, overlay, ctx)?;
     Ok(())
@@ -23057,7 +23061,7 @@ fn prepare_parameters<N: ParametersPrepare + ?Sized>(node: &mut N, overlay: &mut
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::SELF_PARAMETER, layout = [kind::SELF], words = 8, built_words = 4, fields = SelfParameterFields, prepare = SelfParameterPrepare, view = SelfParameterNodeRecord, prepare_fn = prepare_self_parameter)]
+#[node(kind = kind::SELF_PARAMETER, words = 9, built_words = 5, fields = SelfParameterFields, prepare = SelfParameterPrepare, view = SelfParameterNodeRecord, prepare_fn = prepare_self_parameter)]
 pub struct SelfParameterNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -23073,6 +23077,9 @@ pub struct SelfParameterNode {
     #[wire(key = "_mutable")]
     #[slot(field = field::MUTABLE, presence = kind::MUTABLE_SPECIFIER, word = 2, bit = 1)]
     pub mutable: bool,
+    #[wire(key = "_self")]
+    #[slot(field = field::SELF, pinned = kind::SELF, word = 8, width = 1, forms = 2, built = 4)]
+    pub self_: ::sittir_core::SlotValue<Self_Node>,
 }
 
 impl ::sittir_core::view::KindOf for SelfParameterNode {
@@ -23134,6 +23141,7 @@ fn prepare_self_parameter<N: SelfParameterPrepare + ?Sized>(node: &mut N, overla
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(231), (None, None), ctx);
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.lifetime, overlay, ctx)?;
+    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.self_, overlay, ctx)?;
     Ok(())
 }
 
@@ -28983,15 +28991,18 @@ impl ::sittir_core::render::Render for RemainingFieldPatternNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::MUT_PATTERN, layout = [kind::MUTABLE_SPECIFIER], words = 6, built_words = 3, fields = MutPatternFields, prepare = MutPatternPrepare, view = MutPatternNodeRecord, prepare_fn = prepare_mut_pattern)]
+#[node(kind = kind::MUT_PATTERN, words = 7, built_words = 4, fields = MutPatternFields, prepare = MutPatternPrepare, view = MutPatternNodeRecord, prepare_fn = prepare_mut_pattern)]
 pub struct MutPatternNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
     #[height]
     height: u16,
+    #[wire(key = "_mutable_specifier")]
+    #[slot(field = field::MUTABLE_SPECIFIER, pinned = kind::MUTABLE_SPECIFIER, word = 2, width = 1, forms = 2, built = 2)]
+    pub mutable_specifier: ::sittir_core::SlotValue<MutableSpecifierNode>,
     #[wire(key = "_pattern")]
-    #[slot(field = field::PATTERN, word = 2, width = 4, forms = 3, built = 2)]
+    #[slot(field = field::PATTERN, word = 3, width = 4, forms = 3, built = 3)]
     pub pattern: ::sittir_core::SlotValue<Box<PatternNode>>,
 }
 
@@ -29053,6 +29064,7 @@ fn prepare_mut_pattern<N: MutPatternPrepare + ?Sized>(node: &mut N, overlay: &mu
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(322), (None, None), ctx);
+    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.mutable_specifier, overlay, ctx)?;
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.pattern, overlay, ctx)?;
     Ok(())
 }
@@ -29565,7 +29577,7 @@ impl ::sittir_core::render::Render for BooleanLiteralEnum {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::LINE_COMMENT, layout = [kind::SLASH_SLASH], words = 8, built_words = 3, fields = LineCommentFields, prepare = LineCommentPrepare, view = LineCommentNodeRecord, prepare_fn = prepare_line_comment)]
+#[node(kind = kind::LINE_COMMENT, layout = [kind::SLASH_SLASH], words = 9, built_words = 3, fields = LineCommentFields, prepare = LineCommentPrepare, view = LineCommentNodeRecord, prepare_fn = prepare_line_comment)]
 pub struct LineCommentNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -29573,7 +29585,7 @@ pub struct LineCommentNode {
     #[height]
     height: u16,
     #[wire(key = "_content")]
-    #[slot(word = 2, width = 6, inline = 5, forms = 9, built = 2)]
+    #[slot(word = 2, width = 7, inline = 6, forms = 9, built = 2)]
     pub content: ::sittir_core::SlotValue<LineCommentContentNodeSlot>,
 }
 
@@ -34053,15 +34065,18 @@ fn prepare_reference_expression_raw_const<N: ReferenceExpressionRawConstPrepare 
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::REFERENCE_EXPRESSION_RAW_MUT, layout = [kind::AMP, kind::RAW_KEYWORD, kind::MUTABLE_SPECIFIER], words = 6, built_words = 3, fields = ReferenceExpressionRawMutFields, prepare = ReferenceExpressionRawMutPrepare, view = ReferenceExpressionRawMutNodeRecord, prepare_fn = prepare_reference_expression_raw_mut)]
+#[node(kind = kind::REFERENCE_EXPRESSION_RAW_MUT, layout = [kind::AMP, kind::RAW_KEYWORD], words = 7, built_words = 4, fields = ReferenceExpressionRawMutFields, prepare = ReferenceExpressionRawMutPrepare, view = ReferenceExpressionRawMutNodeRecord, prepare_fn = prepare_reference_expression_raw_mut)]
 pub struct ReferenceExpressionRawMutNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
     #[height]
     height: u16,
+    #[wire(key = "_writable")]
+    #[slot(field = field::WRITABLE, pinned = kind::MUTABLE_SPECIFIER, word = 2, width = 1, forms = 2, built = 2)]
+    pub writable: ::sittir_core::SlotValue<MutableSpecifierNode>,
     #[wire(key = "_argument")]
-    #[slot(field = field::ARGUMENT, word = 2, width = 4, forms = 3, built = 2)]
+    #[slot(field = field::ARGUMENT, word = 3, width = 4, forms = 3, built = 3)]
     pub argument: ::sittir_core::SlotValue<Box<ExpressionNode>>,
 }
 
@@ -34123,20 +34138,24 @@ fn prepare_reference_expression_raw_mut<N: ReferenceExpressionRawMutPrepare + ?S
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(372), (None, None), ctx);
+    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.writable, overlay, ctx)?;
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.argument, overlay, ctx)?;
     Ok(())
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::REFERENCE_EXPRESSION_MUT, layout = [kind::AMP, kind::MUTABLE_SPECIFIER], words = 6, built_words = 3, fields = ReferenceExpressionMutFields, prepare = ReferenceExpressionMutPrepare, view = ReferenceExpressionMutNodeRecord, prepare_fn = prepare_reference_expression_mut)]
+#[node(kind = kind::REFERENCE_EXPRESSION_MUT, layout = [kind::AMP], words = 7, built_words = 4, fields = ReferenceExpressionMutFields, prepare = ReferenceExpressionMutPrepare, view = ReferenceExpressionMutNodeRecord, prepare_fn = prepare_reference_expression_mut)]
 pub struct ReferenceExpressionMutNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
     #[height]
     height: u16,
+    #[wire(key = "_exclusive")]
+    #[slot(field = field::EXCLUSIVE, pinned = kind::MUTABLE_SPECIFIER, word = 2, width = 1, forms = 2, built = 2)]
+    pub exclusive: ::sittir_core::SlotValue<MutableSpecifierNode>,
     #[wire(key = "_argument")]
-    #[slot(field = field::ARGUMENT, word = 2, width = 4, forms = 3, built = 2)]
+    #[slot(field = field::ARGUMENT, word = 3, width = 4, forms = 3, built = 3)]
     pub argument: ::sittir_core::SlotValue<Box<ExpressionNode>>,
 }
 
@@ -34198,6 +34217,7 @@ fn prepare_reference_expression_mut<N: ReferenceExpressionMutPrepare + ?Sized>(n
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(373), (None, None), ctx);
+    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.exclusive, overlay, ctx)?;
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.argument, overlay, ctx)?;
     Ok(())
 }
@@ -35377,15 +35397,18 @@ fn prepare_pointer_type_const<N: PointerTypeConstPrepare + ?Sized>(node: &mut N,
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::POINTER_TYPE_MUT, layout = [kind::STAR, kind::MUTABLE_SPECIFIER], words = 6, built_words = 3, fields = PointerTypeMutFields, prepare = PointerTypeMutPrepare, view = PointerTypeMutNodeRecord, prepare_fn = prepare_pointer_type_mut)]
+#[node(kind = kind::POINTER_TYPE_MUT, layout = [kind::STAR], words = 7, built_words = 4, fields = PointerTypeMutFields, prepare = PointerTypeMutPrepare, view = PointerTypeMutNodeRecord, prepare_fn = prepare_pointer_type_mut)]
 pub struct PointerTypeMutNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
     #[height]
     height: u16,
+    #[wire(key = "_writable")]
+    #[slot(field = field::WRITABLE, pinned = kind::MUTABLE_SPECIFIER, word = 2, width = 1, forms = 2, built = 2)]
+    pub writable: ::sittir_core::SlotValue<MutableSpecifierNode>,
     #[wire(key = "_type")]
-    #[slot(field = field::TYPE, word = 2, width = 4, forms = 3, built = 2)]
+    #[slot(field = field::TYPE, word = 3, width = 4, forms = 3, built = 3)]
     pub type_: ::sittir_core::SlotValue<Box<TypeNode>>,
 }
 
@@ -35447,6 +35470,7 @@ fn prepare_pointer_type_mut<N: PointerTypeMutPrepare + ?Sized>(node: &mut N, ove
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(389), (None, None), ctx);
+    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.writable, overlay, ctx)?;
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.type_, overlay, ctx)?;
     Ok(())
 }
@@ -36237,15 +36261,18 @@ fn prepare_line_comment_extra_slashes<N: LineCommentExtraSlashesPrepare + ?Sized
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::LINE_COMMENT_DOC_OUTER, layout = [kind::_OUTER_LINE_DOC_COMMENT_MARKER], words = 5, built_words = 3, fields = LineCommentDocOuterFields, prepare = LineCommentDocOuterPrepare, view = LineCommentDocOuterNodeRecord, prepare_fn = prepare_line_comment_doc_outer)]
+#[node(kind = kind::LINE_COMMENT_DOC_OUTER, words = 6, built_words = 4, fields = LineCommentDocOuterFields, prepare = LineCommentDocOuterPrepare, view = LineCommentDocOuterNodeRecord, prepare_fn = prepare_line_comment_doc_outer)]
 pub struct LineCommentDocOuterNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
     #[height]
     height: u16,
+    #[wire(key = "_outer")]
+    #[slot(field = field::OUTER, pinned = kind::_OUTER_LINE_DOC_COMMENT_MARKER, word = 2, width = 1, forms = 2, built = 2)]
+    pub outer: ::sittir_core::SlotValue<OuterLineDocCommentMarkerNode, true>,
     #[wire(key = "_doc")]
-    #[slot(field = field::DOC, word = 2, width = 3, forms = 1, built = 2)]
+    #[slot(field = field::DOC, word = 3, width = 3, forms = 1, built = 3)]
     pub doc: ::sittir_core::SlotValue<DocCommentNode, true>,
 }
 
@@ -36306,20 +36333,24 @@ impl ::sittir_core::prepare::Prepare for LineCommentDocOuterNode {
 fn prepare_line_comment_doc_outer<N: LineCommentDocOuterPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
+    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.outer, overlay, ctx)?;
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.doc, overlay, ctx)?;
     Ok(())
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::LINE_COMMENT_DOC_INNER, layout = [kind::_INNER_LINE_DOC_COMMENT_MARKER], words = 5, built_words = 3, fields = LineCommentDocInnerFields, prepare = LineCommentDocInnerPrepare, view = LineCommentDocInnerNodeRecord, prepare_fn = prepare_line_comment_doc_inner)]
+#[node(kind = kind::LINE_COMMENT_DOC_INNER, words = 6, built_words = 4, fields = LineCommentDocInnerFields, prepare = LineCommentDocInnerPrepare, view = LineCommentDocInnerNodeRecord, prepare_fn = prepare_line_comment_doc_inner)]
 pub struct LineCommentDocInnerNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
     #[height]
     height: u16,
+    #[wire(key = "_inner")]
+    #[slot(field = field::INNER, pinned = kind::_INNER_LINE_DOC_COMMENT_MARKER, word = 2, width = 1, forms = 2, built = 2)]
+    pub inner: ::sittir_core::SlotValue<InnerLineDocCommentMarkerNode, true>,
     #[wire(key = "_doc")]
-    #[slot(field = field::DOC, word = 2, width = 3, forms = 1, built = 2)]
+    #[slot(field = field::DOC, word = 3, width = 3, forms = 1, built = 3)]
     pub doc: ::sittir_core::SlotValue<DocCommentNode, true>,
 }
 
@@ -36380,6 +36411,7 @@ impl ::sittir_core::prepare::Prepare for LineCommentDocInnerNode {
 fn prepare_line_comment_doc_inner<N: LineCommentDocInnerPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
+    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.inner, overlay, ctx)?;
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.doc, overlay, ctx)?;
     Ok(())
 }
@@ -40215,7 +40247,7 @@ fn prepare_array_expression_list_elements<N: ArrayExpressionListElementsPrepare 
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::_RECEIVER_PARAMETER_DECLARATION, layout = [kind::SELF, kind::COLON], words = 7, built_words = 4, fields = ReceiverParameterDeclarationFields, prepare = ReceiverParameterDeclarationPrepare, view = ReceiverParameterDeclarationNodeRecord, prepare_fn = prepare_receiver_parameter_declaration)]
+#[node(kind = kind::_RECEIVER_PARAMETER_DECLARATION, layout = [kind::COLON], words = 8, built_words = 5, fields = ReceiverParameterDeclarationFields, prepare = ReceiverParameterDeclarationPrepare, view = ReceiverParameterDeclarationNodeRecord, prepare_fn = prepare_receiver_parameter_declaration)]
 pub struct ReceiverParameterDeclarationNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -40225,8 +40257,11 @@ pub struct ReceiverParameterDeclarationNode {
     #[wire(key = "_mutable")]
     #[slot(field = field::MUTABLE, presence = kind::MUTABLE_SPECIFIER, word = 2, bit = 0)]
     pub mutable: bool,
+    #[wire(key = "_name")]
+    #[slot(field = field::NAME, pinned = kind::SELF, word = 3, width = 1, forms = 2, built = 3)]
+    pub name: ::sittir_core::SlotValue<Self_Node>,
     #[wire(key = "_type")]
-    #[slot(field = field::TYPE, word = 3, width = 4, forms = 3, built = 3)]
+    #[slot(field = field::TYPE, word = 4, width = 4, forms = 3, built = 4)]
     pub type_: ::sittir_core::SlotValue<Box<TypeNode>>,
 }
 
@@ -40288,6 +40323,7 @@ fn prepare_receiver_parameter_declaration<N: ReceiverParameterDeclarationPrepare
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(439), (None, None), ctx);
+    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.name, overlay, ctx)?;
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.type_, overlay, ctx)?;
     Ok(())
 }
@@ -47550,6 +47586,7 @@ fn render_ordered_field_declaration_list<N: OrderedFieldDeclarationListFields + 
 
 fn render_extern_crate_declaration<N: ExternCrateDeclarationFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let alias = View::new(node.alias(), "{}");
+    let crate_ = node.crate_();
     let name = node.name();
     let visibility_modifier = View::new(node.visibility_modifier(), "{}");
     w.edge(::sittir_core::types::KindId(204), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
@@ -47558,7 +47595,7 @@ fn render_extern_crate_declaration<N: ExternCrateDeclarationFields + ?Sized>(nod
     w.text("extern")?;
     w.site_at(options::SITE_EXTERN_CRATE_DECLARATION_EXTERN_KEYWORD_AFTER);
     w.site_at(options::SITE_EXTERN_CRATE_DECLARATION_CRATE_BEFORE);
-    w.text("crate")?;
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_crate", ::sittir_core::types::ItemIndex(0), w, |w| crate_.render(w))?;
     w.site_at(options::SITE_EXTERN_CRATE_DECLARATION_CRATE_AFTER);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_name", ::sittir_core::types::ItemIndex(0), w, |w| name.render(w))?;
     if alias.is_present() {
@@ -48035,6 +48072,7 @@ fn render_self_parameter<N: SelfParameterFields + ?Sized>(node: &N, w: &mut dyn 
     let lifetime = View::new(node.lifetime(), "{}");
     let mutable = View::new(::sittir_core::view::Presence::new(node.mutable(), MutableSpecifierNode::MutableSpecifier), "{}");
     let reference = View::new(node.reference(), "&");
+    let self_ = node.self_();
     w.edge(::sittir_core::types::KindId(231), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     if reference.is_present() {
         reference.render(w)?;
@@ -48047,7 +48085,7 @@ fn render_self_parameter<N: SelfParameterFields + ?Sized>(node: &N, w: &mut dyn 
         w.site_at(options::SITE_SELF_PARAMETER_MUTABLE_AFTER);
     }
     w.site_at(options::SITE_SELF_PARAMETER_SELF_BEFORE);
-    w.text("self")?;
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_self", ::sittir_core::types::ItemIndex(0), w, |w| self_.render(w))?;
     w.edge(::sittir_core::types::KindId(231), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
@@ -49094,9 +49132,10 @@ fn render_struct_pattern<N: StructPatternFields + ?Sized>(node: &N, w: &mut dyn 
 }
 
 fn render_mut_pattern<N: MutPatternFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let mutable_specifier = node.mutable_specifier();
     let pattern = node.pattern();
     w.edge(::sittir_core::types::KindId(322), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
-    w.text("mut")?;
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_mutable_specifier", ::sittir_core::types::ItemIndex(0), w, |w| mutable_specifier.render(w))?;
     w.site_at(options::SITE_MUT_PATTERN_MUTABLE_SPECIFIER_AFTER);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_pattern", ::sittir_core::types::ItemIndex(0), w, |w| pattern.render(w))?;
     w.edge(::sittir_core::types::KindId(322), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
@@ -49926,6 +49965,7 @@ fn render_reference_expression_raw_const<N: ReferenceExpressionRawConstFields + 
 
 fn render_reference_expression_raw_mut<N: ReferenceExpressionRawMutFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let argument = node.argument();
+    let writable = node.writable();
     w.edge(::sittir_core::types::KindId(372), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text("&")?;
     w.site_at(options::SITE_REFERENCE_EXPRESSION_RAW_MUT_AMP_AFTER);
@@ -49933,7 +49973,7 @@ fn render_reference_expression_raw_mut<N: ReferenceExpressionRawMutFields + ?Siz
     w.text("raw")?;
     w.site_at(options::SITE_REFERENCE_EXPRESSION_RAW_MUT_RAW_AFTER);
     w.site_at(options::SITE_REFERENCE_EXPRESSION_RAW_MUT_WRITABLE_BEFORE);
-    w.text("mut")?;
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_writable", ::sittir_core::types::ItemIndex(0), w, |w| writable.render(w))?;
     w.site_at(options::SITE_REFERENCE_EXPRESSION_RAW_MUT_WRITABLE_AFTER);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_argument", ::sittir_core::types::ItemIndex(0), w, |w| argument.render(w))?;
     w.edge(::sittir_core::types::KindId(372), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
@@ -49942,11 +49982,12 @@ fn render_reference_expression_raw_mut<N: ReferenceExpressionRawMutFields + ?Siz
 
 fn render_reference_expression_mut<N: ReferenceExpressionMutFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let argument = node.argument();
+    let exclusive = node.exclusive();
     w.edge(::sittir_core::types::KindId(373), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text("&")?;
     w.site_at(options::SITE_REFERENCE_EXPRESSION_MUT_AMP_AFTER);
     w.site_at(options::SITE_REFERENCE_EXPRESSION_MUT_EXCLUSIVE_BEFORE);
-    w.text("mut")?;
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_exclusive", ::sittir_core::types::ItemIndex(0), w, |w| exclusive.render(w))?;
     w.site_at(options::SITE_REFERENCE_EXPRESSION_MUT_EXCLUSIVE_AFTER);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_argument", ::sittir_core::types::ItemIndex(0), w, |w| argument.render(w))?;
     w.edge(::sittir_core::types::KindId(373), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
@@ -50149,11 +50190,12 @@ fn render_pointer_type_const<N: PointerTypeConstFields + ?Sized>(node: &N, w: &m
 
 fn render_pointer_type_mut<N: PointerTypeMutFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let type_ = node.type_();
+    let writable = node.writable();
     w.edge(::sittir_core::types::KindId(389), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text("*")?;
     w.site_at(options::SITE_POINTER_TYPE_MUT_STAR_AFTER);
     w.site_at(options::SITE_POINTER_TYPE_MUT_WRITABLE_BEFORE);
-    w.text("mut")?;
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_writable", ::sittir_core::types::ItemIndex(0), w, |w| writable.render(w))?;
     w.site_at(options::SITE_POINTER_TYPE_MUT_WRITABLE_AFTER);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_type", ::sittir_core::types::ItemIndex(0), w, |w| type_.render(w))?;
     w.edge(::sittir_core::types::KindId(389), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
@@ -50302,14 +50344,16 @@ fn render_line_comment_extra_slashes<N: LineCommentExtraSlashesFields + ?Sized>(
 
 fn render_line_comment_doc_outer<N: LineCommentDocOuterFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let doc = node.doc();
-    w.text("/")?;
+    let outer = node.outer();
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_outer", ::sittir_core::types::ItemIndex(0), w, |w| outer.render(w))?;
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_doc", ::sittir_core::types::ItemIndex(0), w, |w| doc.render(w))?;
     Ok(())
 }
 
 fn render_line_comment_doc_inner<N: LineCommentDocInnerFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let doc = node.doc();
-    w.text("!")?;
+    let inner = node.inner();
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_inner", ::sittir_core::types::ItemIndex(0), w, |w| inner.render(w))?;
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_doc", ::sittir_core::types::ItemIndex(0), w, |w| doc.render(w))?;
     Ok(())
 }
@@ -51041,6 +51085,7 @@ fn render_array_expression_list_elements<N: ArrayExpressionListElementsFields + 
 
 fn render_receiver_parameter_declaration<N: ReceiverParameterDeclarationFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let mutable = View::new(::sittir_core::view::Presence::new(node.mutable(), MutableSpecifierNode::MutableSpecifier), "{}");
+    let name = node.name();
     let type_ = node.type_();
     w.edge(::sittir_core::types::KindId(439), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     if mutable.is_present() {
@@ -51048,7 +51093,7 @@ fn render_receiver_parameter_declaration<N: ReceiverParameterDeclarationFields +
         w.site_at(options::SITE_RECEIVER_PARAMETER_DECLARATION_MUTABLE_AFTER);
     }
     w.site_at(options::SITE_RECEIVER_PARAMETER_DECLARATION_NAME_BEFORE);
-    w.text("self")?;
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_name", ::sittir_core::types::ItemIndex(0), w, |w| name.render(w))?;
     w.site_at(options::SITE_RECEIVER_PARAMETER_DECLARATION_NAME_AFTER);
     w.site_at(options::SITE_RECEIVER_PARAMETER_DECLARATION_COLON_BEFORE);
     w.text(":")?;
@@ -54654,7 +54699,7 @@ const _: () = assert!(::core::mem::size_of::<AttributedParameterContentNodeSlot>
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<AttributedParameterNode>() == 280, "AttributedParameterNode is not the 280 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<AttributedParameterReceiverContentNodeSlot>() == 80, "AttributedParameterReceiverContentNodeSlot is not the 80 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<AttributedParameterReceiverContentNodeSlot>() == 112, "AttributedParameterReceiverContentNodeSlot is not the 112 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<AttributedParameterReceiverNode>() == 96, "AttributedParameterReceiverNode is not the 96 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
@@ -54880,7 +54925,7 @@ const _: () = assert!(::core::mem::size_of::<ExpressionsNode>() == 48, "Expressi
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<ExtensionDeclarationBodyNode>() == 40, "ExtensionDeclarationBodyNode is not the 40 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<ExternCrateDeclarationNode>() == 264, "ExternCrateDeclarationNode is not the 264 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<ExternCrateDeclarationNode>() == 304, "ExternCrateDeclarationNode is not the 304 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<ExternKeywordNode>() == 0, "ExternKeywordNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
@@ -55078,15 +55123,15 @@ const _: () = assert!(::core::mem::size_of::<LifetimeParameterNode>() == 120, "L
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<LifetimesNode>() == 48, "LifetimesNode is not the 48 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<LineCommentContentNodeSlot>() == 64, "LineCommentContentNodeSlot is not the 64 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<LineCommentContentNodeSlot>() == 104, "LineCommentContentNodeSlot is not the 104 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<LineCommentDocInnerNode>() == 56, "LineCommentDocInnerNode is not the 56 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<LineCommentDocInnerNode>() == 96, "LineCommentDocInnerNode is not the 96 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<LineCommentDocOuterNode>() == 56, "LineCommentDocOuterNode is not the 56 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<LineCommentDocOuterNode>() == 96, "LineCommentDocOuterNode is not the 96 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<LineCommentExtraSlashesNode>() == 32, "LineCommentExtraSlashesNode is not the 32 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<LineCommentNode>() == 80, "LineCommentNode is not the 80 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<LineCommentNode>() == 120, "LineCommentNode is not the 120 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<LineCommentRegularNode>() == 32, "LineCommentRegularNode is not the 32 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
@@ -55158,7 +55203,7 @@ const _: () = assert!(::core::mem::size_of::<ModKeywordNode>() == 0, "ModKeyword
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<MoveKeywordNode>() == 0, "MoveKeywordNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<MutPatternNode>() == 56, "MutPatternNode is not the 56 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<MutPatternNode>() == 96, "MutPatternNode is not the 96 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<MutableSpecifierNode>() == 0, "MutableSpecifierNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
@@ -55228,9 +55273,9 @@ const _: () = assert!(::core::mem::size_of::<PlusNode>() == 0, "PlusNode is not 
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<PointerTypeConstNode>() == 56, "PointerTypeConstNode is not the 56 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<PointerTypeMutNode>() == 56, "PointerTypeMutNode is not the 56 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<PointerTypeMutNode>() == 96, "PointerTypeMutNode is not the 96 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<PointerTypeNode>() == 64, "PointerTypeNode is not the 64 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<PointerTypeNode>() == 96, "PointerTypeNode is not the 96 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<PoundNode>() == 0, "PoundNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
@@ -55286,7 +55331,7 @@ const _: () = assert!(::core::mem::size_of::<RbraceNode>() == 0, "RbraceNode is 
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<RbrackNode>() == 0, "RbrackNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<ReceiverParameterDeclarationNode>() == 56, "ReceiverParameterDeclarationNode is not the 56 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<ReceiverParameterDeclarationNode>() == 96, "ReceiverParameterDeclarationNode is not the 96 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<RefKeywordNode>() == 0, "RefKeywordNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
@@ -55294,13 +55339,13 @@ const _: () = assert!(::core::mem::size_of::<RefPatternNode>() == 56, "RefPatter
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<ReferenceExpressionBareNode>() == 56, "ReferenceExpressionBareNode is not the 56 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<ReferenceExpressionMutNode>() == 56, "ReferenceExpressionMutNode is not the 56 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<ReferenceExpressionMutNode>() == 96, "ReferenceExpressionMutNode is not the 96 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<ReferenceExpressionNode>() == 64, "ReferenceExpressionNode is not the 64 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<ReferenceExpressionNode>() == 104, "ReferenceExpressionNode is not the 104 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<ReferenceExpressionRawConstNode>() == 56, "ReferenceExpressionRawConstNode is not the 56 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<ReferenceExpressionRawMutNode>() == 56, "ReferenceExpressionRawMutNode is not the 56 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<ReferenceExpressionRawMutNode>() == 96, "ReferenceExpressionRawMutNode is not the 96 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<ReferencePatternNode>() == 56, "ReferencePatternNode is not the 56 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
@@ -55334,7 +55379,7 @@ const _: () = assert!(::core::mem::size_of::<ScopedUseListNode>() == 184, "Scope
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<SelfModuleNode>() == 0, "SelfModuleNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<SelfParameterNode>() == 72, "SelfParameterNode is not the 72 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<SelfParameterNode>() == 112, "SelfParameterNode is not the 112 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<Self_Node>() == 8, "Self_Node is not the 8 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
@@ -55462,7 +55507,7 @@ const _: () = assert!(::core::mem::size_of::<TraitItemNode>() == 464, "TraitItem
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<TraitKeywordNode>() == 0, "TraitKeywordNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<TriviaNode>() == 112, "TriviaNode is not the 112 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<TriviaNode>() == 120, "TriviaNode is not the 120 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<TrueKeywordNode>() == 0, "TrueKeywordNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]

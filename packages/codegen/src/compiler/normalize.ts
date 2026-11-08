@@ -37,7 +37,7 @@ import {
 	combineMultiplicity,
 	type LeafMultiplicity
 } from '../dsl/rule-transforms.ts';
-import { flattenRules } from './flatten.ts';
+import { flattenRules, storedNamedOf } from './flatten.ts';
 import { runToFixpoint } from './fixpoint.ts';
 import { withAttrsFrom, withKindFacts, rebaseRuleIds } from '../dsl/rule-attrs.ts';
 import { BaseCtx, type BaseCtxInit } from './ctx.ts';
@@ -249,10 +249,12 @@ export function supertypeKindsOf(grammar: Pick<SimplifiedGrammar, 'rules'>): Rea
 
 export function normalizeGrammar(linked: LinkedGrammar, ctx?: NormalizeCtx): SimplifiedGrammar {
 	const inlineKinds: ReadonlySet<string> = ctx?.inlineKinds ?? new Set();
+	const diagnostics = ctx?.diagnostics ?? new DiagnosticSink();
+	const storedNamed = storedNamedOf(linked.generatedIdTables, diagnostics);
 
 	const preserveKinds = deriveComplexAliasTargetHidden(linked.rules);
 	const rules = applyNormalizationPasses(linked.rules, ctx, preserveKinds.size > 0 ? preserveKinds : undefined);
-	const normalizedRules = flattenRules(rules, linked.wordMatcher);
+	const normalizedRules = flattenRules(rules, storedNamed, linked.wordMatcher);
 	runToFixpoint({
 		name: 'normalize.inlineHiddenSeqRefs',
 		cap: 8,
@@ -291,7 +293,7 @@ export function normalizeGrammar(linked: LinkedGrammar, ctx?: NormalizeCtx): Sim
 	const simplifiedRules = computeSimplifiedRules(
 		new SimplifyCtx({
 			grammar: normalizedGrammarView,
-			diagnostics: ctx?.diagnostics ?? new DiagnosticSink(),
+			diagnostics,
 			wordMatcher: linked.wordMatcher,
 			inlineKinds,
 			builder: attributeBuilder,
@@ -306,7 +308,7 @@ export function normalizeGrammar(linked: LinkedGrammar, ctx?: NormalizeCtx): Sim
 			ctx,
 			preserveKinds.size > 0 ? preserveKinds : undefined
 		);
-		const aliasBodiesRender = flattenRules(aliasBodiesNormalized, linked.wordMatcher);
+		const aliasBodiesRender = flattenRules(aliasBodiesNormalized, storedNamed, linked.wordMatcher);
 		const aliasBodiesGrammarView: NormalizedGrammar = {
 			...normalizedGrammarView,
 			rules: aliasBodiesRender
@@ -314,7 +316,7 @@ export function normalizeGrammar(linked: LinkedGrammar, ctx?: NormalizeCtx): Sim
 		const aliasBodiesSimplified = computeSimplifiedRules(
 			new SimplifyCtx({
 				grammar: aliasBodiesGrammarView,
-				diagnostics: ctx?.diagnostics ?? new DiagnosticSink(),
+				diagnostics,
 				wordMatcher: linked.wordMatcher,
 				inlineKinds,
 				builder: attributeBuilder,

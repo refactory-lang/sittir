@@ -8264,8 +8264,10 @@ export interface CatchClauseGroup {
 
 export interface GetAccessorSignature {
 	readonly $type: TSKindId.GetAccessorSignature;
+	readonly _parameters: TSKindId.FormalParameters;
 	readonly _type?: TypeAnnotation | AssertsAnnotation | TypePredicateAnnotation;
 	readonly __slotNames__?: {
+		readonly _parameters: 'parameters';
 		readonly _type: 'type';
 	};
 	readonly __slotHints__?: {
@@ -9783,6 +9785,7 @@ export interface MethodDefinitionGetter {
 	readonly _static: boolean;
 	readonly _override: boolean;
 	readonly _name: PropertyIdentifier | PrivatePropertyIdentifier | String | Number | ComputedPropertyName;
+	readonly _parameters: TSKindId.FormalParameters;
 	readonly _type?: TypeAnnotation | AssertsAnnotation | TypePredicateAnnotation;
 	readonly _body: StatementBlock;
 	readonly __slotNames__?: {
@@ -9790,6 +9793,7 @@ export interface MethodDefinitionGetter {
 		readonly _static: 'static';
 		readonly _override: 'override';
 		readonly _name: 'name';
+		readonly _parameters: 'parameters';
 		readonly _type: 'type';
 		readonly _body: 'body';
 	};
@@ -9986,12 +9990,14 @@ export interface MethodSignatureGetter {
 	readonly _static: boolean;
 	readonly _override: boolean;
 	readonly _name: PropertyIdentifier | PrivatePropertyIdentifier | String | Number | ComputedPropertyName;
+	readonly _parameters: TSKindId.FormalParameters;
 	readonly _type?: TypeAnnotation | AssertsAnnotation | TypePredicateAnnotation;
 	readonly __slotNames__?: {
 		readonly _accessibility_modifier: 'accessibilityModifier';
 		readonly _static: 'static';
 		readonly _override: 'override';
 		readonly _name: 'name';
+		readonly _parameters: 'parameters';
 		readonly _type: 'type';
 	};
 	readonly __inputHints__?: {
@@ -10166,11 +10172,13 @@ export interface AbstractMethodSignatureGetter {
 	readonly _accessibility_modifier?: TSKindId.PublicKeyword | TSKindId.PrivateKeyword | TSKindId.ProtectedKeyword;
 	readonly _override: boolean;
 	readonly _name: PropertyIdentifier | PrivatePropertyIdentifier | String | Number | ComputedPropertyName;
+	readonly _parameters: TSKindId.FormalParameters;
 	readonly _type?: TypeAnnotation | AssertsAnnotation | TypePredicateAnnotation;
 	readonly __slotNames__?: {
 		readonly _accessibility_modifier: 'accessibilityModifier';
 		readonly _override: 'override';
 		readonly _name: 'name';
+		readonly _parameters: 'parameters';
 		readonly _type: 'type';
 	};
 	readonly __inputHints__?: {
@@ -10432,10 +10440,12 @@ export interface PublicFieldDefinitionAccessor {
 export interface ConstructorDeclaration {
 	readonly $type: TSKindId.ConstructorDeclaration;
 	readonly _accessibility_modifier?: TSKindId.PublicKeyword | TSKindId.PrivateKeyword | TSKindId.ProtectedKeyword;
+	readonly _name: TSKindId.ConstructorKeyword;
 	readonly _parameters: FormalParameters;
 	readonly _body: StatementBlock;
 	readonly __slotNames__?: {
 		readonly _accessibility_modifier: 'accessibilityModifier';
+		readonly _name: 'name';
 		readonly _parameters: 'parameters';
 		readonly _body: 'body';
 	};
@@ -10472,6 +10482,7 @@ export interface ReceiverParameterDeclaration {
 	readonly _accessibility_modifier?: TSKindId.PublicKeyword | TSKindId.PrivateKeyword | TSKindId.ProtectedKeyword;
 	readonly _override: boolean;
 	readonly _readonly: boolean;
+	readonly _name: TSKindId.This | TSKindId.ThisKeyword;
 	readonly _type?: TypeAnnotation;
 	readonly _value?: Expression;
 	readonly __slotNames__?: {
@@ -10479,6 +10490,7 @@ export interface ReceiverParameterDeclaration {
 		readonly _accessibility_modifier: 'accessibilityModifier';
 		readonly _override: 'override';
 		readonly _readonly: 'readonly';
+		readonly _name: 'name';
 		readonly _type: 'type';
 		readonly _value: 'value';
 	};
@@ -23499,7 +23511,7 @@ export namespace CatchClauseGroup {
 	export type Kind = TSKindId.CatchClauseGroup;
 }
 export namespace GetAccessorSignature {
-	export type Config = ConfigFor<TSKindId.GetAccessorSignature>;
+	export type Config = OmitEach<ConfigFor<TSKindId.GetAccessorSignature>, 'parameters'>;
 	export interface Bound extends BoundOf<T.GetAccessorSignature, BoundByKindId>, NodeMethodsOf, HoldsSource {
 		readonly $type: T.GetAccessorSignature['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
@@ -23517,9 +23529,9 @@ export namespace GetAccessorSignature {
 		>;
 		readonly $snapshot: () => Snapshot<T.GetAccessorSignature['$type']>;
 	}
-	export type Loose = LooseFor<TSKindId.GetAccessorSignature>;
-	export type LooseConfig = LooseConfigFor<TSKindId.GetAccessorSignature>;
-	export type BuildArgs = [config?: Partial<ConfigOf<T.GetAccessorSignature>>];
+	export type Loose = OmitEach<LooseFor<TSKindId.GetAccessorSignature>, 'parameters'>;
+	export type LooseConfig = OmitEach<LooseConfigFor<TSKindId.GetAccessorSignature>, 'parameters'>;
+	export type BuildArgs = [config?: Partial<OmitRegistered<ConfigOf<T.GetAccessorSignature>, 'parameters'>>];
 	export type LooseArgs = [config?: T.GetAccessorSignature.Loose];
 	export type Kind = TSKindId.GetAccessorSignature;
 }
@@ -25255,7 +25267,7 @@ export namespace MethodDefinitionPlain {
 	export type Kind = TSKindId.MethodDefinitionPlain;
 }
 export namespace MethodDefinitionGetter {
-	export type Config = ConfigFor<TSKindId.MethodDefinitionGetter>;
+	export type Config = OmitEach<ConfigFor<TSKindId.MethodDefinitionGetter>, 'parameters'>;
 	export interface Bound extends BoundOf<T.MethodDefinitionGetter, BoundByKindId>, NodeMethodsOf, HoldsSource {
 		readonly $type: T.MethodDefinitionGetter['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
@@ -25273,9 +25285,9 @@ export namespace MethodDefinitionGetter {
 		>;
 		readonly $snapshot: () => Snapshot<T.MethodDefinitionGetter['$type']>;
 	}
-	export type Loose = LooseFor<TSKindId.MethodDefinitionGetter>;
-	export type LooseConfig = LooseConfigFor<TSKindId.MethodDefinitionGetter>;
-	export type BuildArgs = [config: ConfigOf<T.MethodDefinitionGetter>];
+	export type Loose = OmitEach<LooseFor<TSKindId.MethodDefinitionGetter>, 'parameters'>;
+	export type LooseConfig = OmitEach<LooseConfigFor<TSKindId.MethodDefinitionGetter>, 'parameters'>;
+	export type BuildArgs = [config: OmitRegistered<ConfigOf<T.MethodDefinitionGetter>, 'parameters'>];
 	export type LooseArgs = [config: T.MethodDefinitionGetter.Loose];
 	export type Kind = TSKindId.MethodDefinitionGetter;
 }
@@ -25330,7 +25342,7 @@ export namespace MethodSignaturePlain {
 	export type Kind = TSKindId.MethodSignaturePlain;
 }
 export namespace MethodSignatureGetter {
-	export type Config = ConfigFor<TSKindId.MethodSignatureGetter>;
+	export type Config = OmitEach<ConfigFor<TSKindId.MethodSignatureGetter>, 'parameters'>;
 	export interface Bound extends BoundOf<T.MethodSignatureGetter, BoundByKindId>, NodeMethodsOf, HoldsSource {
 		readonly $type: T.MethodSignatureGetter['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
@@ -25348,9 +25360,9 @@ export namespace MethodSignatureGetter {
 		>;
 		readonly $snapshot: () => Snapshot<T.MethodSignatureGetter['$type']>;
 	}
-	export type Loose = LooseFor<TSKindId.MethodSignatureGetter>;
-	export type LooseConfig = LooseConfigFor<TSKindId.MethodSignatureGetter>;
-	export type BuildArgs = [config: ConfigOf<T.MethodSignatureGetter>];
+	export type Loose = OmitEach<LooseFor<TSKindId.MethodSignatureGetter>, 'parameters'>;
+	export type LooseConfig = OmitEach<LooseConfigFor<TSKindId.MethodSignatureGetter>, 'parameters'>;
+	export type BuildArgs = [config: OmitRegistered<ConfigOf<T.MethodSignatureGetter>, 'parameters'>];
 	export type LooseArgs = [config: T.MethodSignatureGetter.Loose];
 	export type Kind = TSKindId.MethodSignatureGetter;
 }
@@ -25405,7 +25417,7 @@ export namespace AbstractMethodSignaturePlain {
 	export type Kind = TSKindId.AbstractMethodSignaturePlain;
 }
 export namespace AbstractMethodSignatureGetter {
-	export type Config = ConfigFor<TSKindId.AbstractMethodSignatureGetter>;
+	export type Config = OmitEach<ConfigFor<TSKindId.AbstractMethodSignatureGetter>, 'parameters'>;
 	export interface Bound extends BoundOf<T.AbstractMethodSignatureGetter, BoundByKindId>, NodeMethodsOf, HoldsSource {
 		readonly $type: T.AbstractMethodSignatureGetter['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
@@ -25423,9 +25435,9 @@ export namespace AbstractMethodSignatureGetter {
 		>;
 		readonly $snapshot: () => Snapshot<T.AbstractMethodSignatureGetter['$type']>;
 	}
-	export type Loose = LooseFor<TSKindId.AbstractMethodSignatureGetter>;
-	export type LooseConfig = LooseConfigFor<TSKindId.AbstractMethodSignatureGetter>;
-	export type BuildArgs = [config: ConfigOf<T.AbstractMethodSignatureGetter>];
+	export type Loose = OmitEach<LooseFor<TSKindId.AbstractMethodSignatureGetter>, 'parameters'>;
+	export type LooseConfig = OmitEach<LooseConfigFor<TSKindId.AbstractMethodSignatureGetter>, 'parameters'>;
+	export type BuildArgs = [config: OmitRegistered<ConfigOf<T.AbstractMethodSignatureGetter>, 'parameters'>];
 	export type LooseArgs = [config: T.AbstractMethodSignatureGetter.Loose];
 	export type Kind = TSKindId.AbstractMethodSignatureGetter;
 }
@@ -25505,7 +25517,7 @@ export namespace PublicFieldDefinitionAccessor {
 	export type Kind = TSKindId.PublicFieldDefinitionAccessor;
 }
 export namespace ConstructorDeclaration {
-	export type Config = ConfigFor<TSKindId.ConstructorDeclaration>;
+	export type Config = OmitEach<ConfigFor<TSKindId.ConstructorDeclaration>, 'name'>;
 	export interface Bound extends BoundOf<T.ConstructorDeclaration, BoundByKindId>, NodeMethodsOf, HoldsSource {
 		readonly $type: T.ConstructorDeclaration['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
@@ -25523,14 +25535,14 @@ export namespace ConstructorDeclaration {
 		>;
 		readonly $snapshot: () => Snapshot<T.ConstructorDeclaration['$type']>;
 	}
-	export type Loose = LooseFor<TSKindId.ConstructorDeclaration>;
-	export type LooseConfig = LooseConfigFor<TSKindId.ConstructorDeclaration>;
-	export type BuildArgs = [config?: Partial<ConfigOf<T.ConstructorDeclaration>>];
+	export type Loose = OmitEach<LooseFor<TSKindId.ConstructorDeclaration>, 'name'>;
+	export type LooseConfig = OmitEach<LooseConfigFor<TSKindId.ConstructorDeclaration>, 'name'>;
+	export type BuildArgs = [config?: Partial<OmitRegistered<ConfigOf<T.ConstructorDeclaration>, 'name'>>];
 	export type LooseArgs = [config?: T.ConstructorDeclaration.Loose];
 	export type Kind = TSKindId.ConstructorDeclaration;
 }
 export namespace ReceiverParameterDeclaration {
-	export type Config = ConfigFor<TSKindId.ReceiverParameterDeclaration>;
+	export type Config = OmitEach<ConfigFor<TSKindId.ReceiverParameterDeclaration>, 'name'>;
 	export interface Bound extends BoundOf<T.ReceiverParameterDeclaration, BoundByKindId>, NodeMethodsOf, HoldsSource {
 		readonly $type: T.ReceiverParameterDeclaration['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
@@ -25548,9 +25560,9 @@ export namespace ReceiverParameterDeclaration {
 		>;
 		readonly $snapshot: () => Snapshot<T.ReceiverParameterDeclaration['$type']>;
 	}
-	export type Loose = LooseFor<TSKindId.ReceiverParameterDeclaration>;
-	export type LooseConfig = LooseConfigFor<TSKindId.ReceiverParameterDeclaration>;
-	export type BuildArgs = [config?: Partial<ConfigOf<T.ReceiverParameterDeclaration>>];
+	export type Loose = OmitEach<LooseFor<TSKindId.ReceiverParameterDeclaration>, 'name'>;
+	export type LooseConfig = OmitEach<LooseConfigFor<TSKindId.ReceiverParameterDeclaration>, 'name'>;
+	export type BuildArgs = [config?: Partial<OmitRegistered<ConfigOf<T.ReceiverParameterDeclaration>, 'name'>>];
 	export type LooseArgs = [config?: T.ReceiverParameterDeclaration.Loose];
 	export type Kind = TSKindId.ReceiverParameterDeclaration;
 }

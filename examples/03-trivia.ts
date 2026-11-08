@@ -10,7 +10,7 @@ export function attachDocComment() {
 			parameters: rs.build.parameters(),
 			body: rs.build.block(),
 		})
-		.$trivia.leading(rs.build.lineComment.docOuter('Entry point.'));
+		.$trivia.leading(rs.build.lineComment.docOuter({ doc: 'Entry point.' }));
 
 	return fn.$render();
 }

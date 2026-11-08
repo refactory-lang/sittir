@@ -181,8 +181,8 @@
 			"name": "name"
 		},
 		{
-			"kind": "text",
-			"text": "()"
+			"kind": "slot",
+			"name": "parameters"
 		},
 		{
 			"kind": "if",
@@ -1878,8 +1878,8 @@
 			]
 		},
 		{
-			"kind": "text",
-			"text": "constructor"
+			"kind": "slot",
+			"name": "name"
 		},
 		{
 			"kind": "adjacent"
@@ -5216,8 +5216,8 @@
 			"name": "name"
 		},
 		{
-			"kind": "text",
-			"text": "()"
+			"kind": "slot",
+			"name": "parameters"
 		},
 		{
 			"kind": "if",
@@ -5622,8 +5622,8 @@
 			"name": "name"
 		},
 		{
-			"kind": "text",
-			"text": "()"
+			"kind": "slot",
+			"name": "parameters"
 		},
 		{
 			"kind": "if",
@@ -7676,8 +7676,8 @@
 			"field": "name_before"
 		},
 		{
-			"kind": "text",
-			"text": "this"
+			"kind": "slot",
+			"name": "name"
 		},
 		{
 			"kind": "seam",

@@ -118,7 +118,7 @@ describe('inlineRefs — optional(seq) group-lift inline (PR-D2 fix)', () => {
 			_expression: { type: 'SYMBOL', name: '_expression' } as Rule
 		};
 
-		const normalizedRules = flattenRules(inputRules);
+		const normalizedRules = flattenRules(inputRules, () => false);
 		const simplified = computeSimplifiedRules(
 			new SimplifyCtx({
 				grammar: makeNormalizedGrammar(withHoisted(normalizedRules, '_const_item_optional1')),
@@ -167,7 +167,7 @@ describe('inlineRefs — optional(seq) group-lift inline (PR-D2 fix)', () => {
 			_type: { type: 'SYMBOL', name: '_type' } as Rule
 		};
 
-		const normalizedRules = flattenRules(inputRules);
+		const normalizedRules = flattenRules(inputRules, () => false);
 		const simplified = computeSimplifiedRules(
 			new SimplifyCtx({
 				grammar: makeNormalizedGrammar(withHoisted(normalizedRules, '_type_arguments_repeat1')),
@@ -210,7 +210,7 @@ describe('inlineRefs — optional(seq) group-lift inline (PR-D2 fix)', () => {
 			some_kind: { type: 'SYMBOL', name: 'some_kind' } as Rule
 		};
 
-		const normalizedRules = flattenRules(inputRules);
+		const normalizedRules = flattenRules(inputRules, () => false);
 		const simplified = computeSimplifiedRules(
 			new SimplifyCtx({
 				grammar: makeNormalizedGrammar(withHoisted(normalizedRules, '_parent_group1')),
@@ -263,7 +263,7 @@ describe('inlineRefs — optional(seq) group-lift inline (PR-D2 fix)', () => {
 			_type: { type: 'SYMBOL', name: '_type' } as Rule
 		};
 
-		const normalizedRules = flattenRules(inputRules);
+		const normalizedRules = flattenRules(inputRules, () => false);
 		// Pass _let_declaration_optional1 in inlineKinds (as in the real pipeline).
 		const inlineKinds = new Set(['_let_declaration_optional1']);
 		const simplified = computeSimplifiedRules(

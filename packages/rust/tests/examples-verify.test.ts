@@ -158,16 +158,16 @@ describe('dogfoodContract helper', () => {
 // parent names the form, the arm keeps no top-level builder of its own.
 describe('namespaced constructors reach the arm kinds', () => {
 	it('builds both doc-comment forms through line_comment', () => {
-		expect(rs.build.lineComment.docOuter(' hi').$render()).toBe('/// hi\n');
-		expect(rs.build.lineComment.docInner(' hi').$render()).toBe('//! hi\n');
+		expect(rs.build.lineComment.docOuter({ doc: ' hi' }).$render()).toBe('/// hi\n');
+		expect(rs.build.lineComment.docInner({ doc: ' hi' }).$render()).toBe('//! hi\n');
 	});
 	// `///` and `//!` are alternatives, so each is its own arm kind carrying
 	// only the doc text. Were they one kind with the markers as two optional
 	// fields, a caller could set both — `///!` — or neither, which renders a
 	// doc-comment kind as a plain `//` comment.
 	it('carries the marker as the arm identity, not as a settable field', () => {
-		const outer = rs.build.lineComment.docOuter(' hi').content();
-		const inner = rs.build.lineComment.docInner(' hi').content();
+		const outer = rs.build.lineComment.docOuter({ doc: ' hi' }).content();
+		const inner = rs.build.lineComment.docInner({ doc: ' hi' }).content();
 
 		expect(outer.$type).not.toBe(inner.$type);
 		for (const arm of [outer, inner]) {

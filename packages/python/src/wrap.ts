@@ -19748,16 +19748,16 @@ function viewConstructorDeclaration$async(this: RecordHandle) {
 	return recordFlag(this, 2, 0);
 }
 function viewConstructorDeclaration$typeParameters(this: RecordHandle) {
-	return viewSlot<T.TypeParams | undefined>(this, 3, 5, 8, 5, 3);
+	return viewSlot<T.TypeParams | undefined>(this, 4, 5, 8, 5, 4);
 }
 function viewConstructorDeclaration$parameters(this: RecordHandle) {
-	return viewSlot<T.Parameters>(this, 8, 5, 8, 5, 4);
+	return viewSlot<T.Parameters>(this, 9, 5, 8, 5, 5);
 }
 function viewConstructorDeclaration$returnType(this: RecordHandle) {
-	return viewSlot<T.Type | undefined>(this, 13, 3, 1, 0, 5);
+	return viewSlot<T.Type | undefined>(this, 14, 3, 1, 0, 6);
 }
 function viewConstructorDeclaration$body(this: RecordHandle) {
-	return viewSlot<T.Suite>(this, 16, 5, 8, 5, 6);
+	return viewSlot<T.Suite>(this, 17, 5, 8, 5, 7);
 }
 function viewConstructorDeclaration(data: RecordPosition, tree: TreeHandle): T.ConstructorDeclaration.Parsed {
 	const node = {

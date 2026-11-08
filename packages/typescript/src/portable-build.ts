@@ -2994,7 +2994,16 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
-					presets: [],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'name'
+								}
+							],
+							text: 'constructor'
+						}
+					],
 					flags: {},
 					when: [
 						{
@@ -30383,7 +30392,8 @@ export const build: PortableBuildTable = {
 						[459, 'name'],
 						[460, 'name'],
 						[461, 'name'],
-						[462, 'name']
+						[462, 'name'],
+						[463, 'name']
 					]
 				},
 				{

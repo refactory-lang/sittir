@@ -21,6 +21,7 @@ export interface WrittenSlot {
 	readonly optionDefault?: number | string;
 	readonly separator?: { readonly default?: number };
 	readonly delimiterRole?: DelimiterFacetRole;
+	readonly pinned?: string;
 	readonly values?: readonly WrittenValue[];
 }
 

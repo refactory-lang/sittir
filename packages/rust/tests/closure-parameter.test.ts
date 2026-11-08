@@ -17,7 +17,7 @@ describe("a closure's untyped parameter is the closure_parameter envelope", () =
 
 	it('lifts a bare string and a pattern node into the envelope on the loose surface', () => {
 		const closure = rs.build.closureExpressionExpr({
-			parameters: ['a', rs.build.mutPattern('b'), '_'],
+			parameters: ['a', rs.build.mutPattern({ pattern: 'b' }), '_'],
 			body: 'a'
 		});
 		expect(closure.$render()).toBe('|a, mut b, _| a');

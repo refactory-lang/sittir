@@ -745,7 +745,12 @@ export const records = {
 		parameter: { word: 2, width: 4, inline: 3, forms: 9, built: 2 },
 		type_: { word: 6, width: 3, forms: 1, built: 3 }
 	},
-	GetAccessorSignatureNode: { words: 5, builtWords: 3, type_: { word: 2, width: 3, forms: 1, built: 2 } },
+	GetAccessorSignatureNode: {
+		words: 6,
+		builtWords: 4,
+		parameters: { word: 2, width: 1, forms: 2, built: 2 },
+		type_: { word: 3, width: 3, forms: 1, built: 3 }
+	},
 	AmbientDeclarationGlobalNode: { words: 6, builtWords: 3, body: { word: 2, width: 4, inline: 4, forms: 8, built: 2 } },
 	AmbientDeclarationModuleNode: {
 		words: 12,
@@ -1102,14 +1107,15 @@ export const records = {
 		body: { word: 30, width: 4, inline: 4, forms: 8, built: 8 }
 	},
 	MethodDefinitionGetterNode: {
-		words: 26,
-		builtWords: 7,
+		words: 27,
+		builtWords: 8,
 		accessibility_modifier: { word: 3, width: 1, forms: 2, built: 3 },
 		static_: { word: 2, bit: 0 },
 		override_: { word: 2, bit: 1 },
 		name: { word: 4, width: 15, inline: 14, forms: 9, built: 4 },
-		type_: { word: 19, width: 3, forms: 1, built: 5 },
-		body: { word: 22, width: 4, inline: 4, forms: 8, built: 6 }
+		parameters: { word: 19, width: 1, forms: 2, built: 5 },
+		type_: { word: 20, width: 3, forms: 1, built: 6 },
+		body: { word: 23, width: 4, inline: 4, forms: 8, built: 7 }
 	},
 	MethodDefinitionSetterNode: {
 		words: 39,
@@ -1137,13 +1143,14 @@ export const records = {
 		return_type: { word: 27, width: 3, forms: 1, built: 7 }
 	},
 	MethodSignatureGetterNode: {
-		words: 22,
-		builtWords: 6,
+		words: 23,
+		builtWords: 7,
 		accessibility_modifier: { word: 3, width: 1, forms: 2, built: 3 },
 		static_: { word: 2, bit: 0 },
 		override_: { word: 2, bit: 1 },
 		name: { word: 4, width: 15, inline: 14, forms: 9, built: 4 },
-		type_: { word: 19, width: 3, forms: 1, built: 5 }
+		parameters: { word: 19, width: 1, forms: 2, built: 5 },
+		type_: { word: 20, width: 3, forms: 1, built: 6 }
 	},
 	MethodSignatureSetterNode: {
 		words: 35,
@@ -1167,12 +1174,13 @@ export const records = {
 		return_type: { word: 27, width: 3, forms: 1, built: 7 }
 	},
 	AbstractMethodSignatureGetterNode: {
-		words: 22,
-		builtWords: 6,
+		words: 23,
+		builtWords: 7,
 		accessibility_modifier: { word: 3, width: 1, forms: 2, built: 3 },
 		override_: { word: 2, bit: 0 },
 		name: { word: 4, width: 15, inline: 14, forms: 9, built: 4 },
-		type_: { word: 19, width: 3, forms: 1, built: 5 }
+		parameters: { word: 19, width: 1, forms: 2, built: 5 },
+		type_: { word: 20, width: 3, forms: 1, built: 6 }
 	},
 	AbstractMethodSignatureSetterNode: {
 		words: 35,
@@ -1213,21 +1221,23 @@ export const records = {
 	JsxTextNode: { words: 2, builtWords: 2 },
 	TemplateCharsNode: { words: 2, builtWords: 2 },
 	ConstructorDeclarationNode: {
-		words: 10,
-		builtWords: 5,
+		words: 11,
+		builtWords: 6,
 		accessibility_modifier: { word: 2, width: 1, forms: 2, built: 2 },
-		parameters: { word: 3, width: 3, forms: 1, built: 3 },
-		body: { word: 6, width: 4, inline: 4, forms: 8, built: 4 }
+		name: { word: 3, width: 1, forms: 2, built: 3 },
+		parameters: { word: 4, width: 3, forms: 1, built: 4 },
+		body: { word: 7, width: 4, inline: 4, forms: 8, built: 5 }
 	},
 	ReceiverParameterDeclarationNode: {
-		words: 12,
-		builtWords: 7,
+		words: 13,
+		builtWords: 8,
 		decorator: { word: 3, width: 1, run: 3, forms: 1, built: 3 },
 		accessibility_modifier: { word: 4, width: 1, forms: 2, built: 4 },
 		override_: { word: 2, bit: 0 },
 		readonly: { word: 2, bit: 1 },
-		type_: { word: 5, width: 3, forms: 1, built: 5 },
-		value: { word: 8, width: 4, forms: 3, built: 6 }
+		name: { word: 5, width: 1, forms: 2, built: 5 },
+		type_: { word: 6, width: 3, forms: 1, built: 6 },
+		value: { word: 9, width: 4, forms: 3, built: 7 }
 	},
 	FormalParametersElementsReceiverNode: {
 		words: 10,

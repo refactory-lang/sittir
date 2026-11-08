@@ -1,7 +1,7 @@
 import type { VariantChild } from './variant-structural.ts';
 import { isHiddenPunctuationLeaf } from './model/node-map.ts';
 import { irKeyOfTypeName, lowerCamelCase } from './model/casing.ts';
-import { computeFieldStorageInfo, compareOrdinal } from '../emitters/shared.ts';
+import { computeFieldStorageInfo, compareOrdinal, stampPinnedSlots } from '../emitters/shared.ts';
 import {
 	CHOICE,
 	FIELD,
@@ -377,6 +377,7 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 	stampExternalRoles(assembled, ctx);
 	stampTriviaInterior(assembled);
 	stampGrammarRoot(assembled);
+	stampPinnedSlots(assembled);
 	return assembled;
 }
 

@@ -487,8 +487,8 @@
 ; ── comment ────────────────────────────────────────────────────────────────────
 (line_comment) @comment.line
 (block_comment) @comment.block
-(line_comment (line_comment_doc_outer)) @comment.line.doc
-(line_comment (line_comment_doc_inner)) @comment.line.doc.inner
+(line_comment (line_comment_doc_outer doc: (_) @content)) @comment.line.doc
+(line_comment (line_comment_doc_inner doc: (_) @content)) @comment.line.doc.inner
 (block_comment (block_comment_doc_outer)) @comment.block.doc
 (block_comment (block_comment_doc_inner)) @comment.block.doc.inner
 (doc_comment) @comment.text

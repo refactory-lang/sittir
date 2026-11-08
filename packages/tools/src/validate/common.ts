@@ -563,6 +563,7 @@ interface ParsedNodeModel {
 			optionDefault?: number | string;
 			separator?: { readonly default?: number };
 			delimiterRole?: DelimiterFacetRole;
+			pinned?: string;
 			values?: ReadonlyArray<ParsedSlotValue>;
 		}>;
 		elementSeats?: readonly Seat[];
@@ -767,7 +768,7 @@ export function parseNodeModel(text: string): LoadedNodeModel {
 			slotKinds[node.kind] = Object.fromEntries(node.slots.map((slot) => [slot.accessor, slotKindsOf(slot)]));
 			slotNames[node.kind] = node.slots.map((slot) => slot.name);
 			if (node.factoryShape !== undefined) {
-				factorySlots[node.kind] = Object.fromEntries(node.slots.map((slot) => [slot.name, factorySlotMetaOf(slot)]));
+				factorySlots[node.kind] = Object.fromEntries(node.slots.filter((slot) => slot.pinned === undefined).map((slot) => [slot.name, factorySlotMetaOf(slot)]));
 				if (node.preference !== undefined) {
 					const { name, slot, open } = node.preference;
 					factorySlots[node.kind]![name] = { propertyName: name, required: false, multiple: false, nonEmpty: false, registered: true, optionDefault: node.preference.default, preferenceOf: { open, facet: slot } };

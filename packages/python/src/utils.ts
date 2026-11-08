@@ -476,10 +476,10 @@ export const querySlots: QuerySlots = Object.freeze({
 	306: [['name', 0, undefined, '_name']],
 	307: [
 		['async', 0, 'async', '_async', 67],
-		['typeParameters', 1, undefined, '_type_parameters'],
-		['parameters', 2, undefined, '_parameters'],
-		['returnType', 3, undefined, '_return_type'],
-		['body', 4, undefined, '_body']
+		['typeParameters', 2, undefined, '_type_parameters'],
+		['parameters', 3, undefined, '_parameters'],
+		['returnType', 4, undefined, '_return_type'],
+		['body', 5, undefined, '_body']
 	],
 	309: [['statements', 0, undefined, '_statements']],
 	310: [['blockClassDeclaration', 0, undefined, '_block_class_declaration']],
@@ -2268,6 +2268,7 @@ export const structure: StructureTable = Object.freeze({
 	307: {
 		kind: 'constructor_declaration',
 		required: [
+			['_name', 'name'],
 			['_parameters', 'parameters'],
 			['_body', 'body']
 		],
@@ -2284,6 +2285,7 @@ export const structure: StructureTable = Object.freeze({
 			['_body', 'ConstructorDeclaration.body', 'a built Suite']
 		],
 		booleans: [['_async', 'ConstructorDeclaration.async']],
+		kindIds: [['_name', 'ConstructorDeclaration.name', [115]]],
 		config: ['async', 'typeParameters', 'parameters', 'returnType', 'body']
 	},
 	309: {

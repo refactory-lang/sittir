@@ -19224,10 +19224,10 @@ function viewExternCrateDeclaration$visibilityModifier(this: RecordHandle) {
 	return viewSlot<T.VisibilityModifier | undefined>(this, 2, 14, 8, 14, 2);
 }
 function viewExternCrateDeclaration$name(this: RecordHandle) {
-	return viewSlot<T.Identifier>(this, 16, 3, 1, 0, 3);
+	return viewSlot<T.Identifier>(this, 17, 3, 1, 0, 4);
 }
 function viewExternCrateDeclaration$alias(this: RecordHandle) {
-	return viewSlot<T.Identifier | undefined>(this, 19, 3, 1, 0, 4);
+	return viewSlot<T.Identifier | undefined>(this, 20, 3, 1, 0, 5);
 }
 function viewExternCrateDeclaration(data: RecordPosition, tree: TreeHandle): T.ExternCrateDeclaration.Parsed {
 	const node = {
@@ -22966,7 +22966,7 @@ function viewStructPattern(data: RecordPosition, tree: TreeHandle): T.StructPatt
 }
 
 function viewMutPattern$pattern(this: RecordHandle) {
-	return viewSlot<T.Pattern>(this, 2, 4, 3, 0, 2);
+	return viewSlot<T.Pattern>(this, 3, 4, 3, 0, 3);
 }
 function viewMutPattern(data: RecordPosition, tree: TreeHandle): T.MutPattern.Parsed {
 	const node = {
@@ -23189,9 +23189,9 @@ function viewLineComment$content(this: RecordHandle) {
 	return viewSlot<T.LineCommentExtraSlashes | T.LineCommentDocOuter | T.LineCommentDocInner | T.LineCommentRegular>(
 		this,
 		2,
-		6,
+		7,
 		9,
-		5,
+		6,
 		2
 	);
 }
@@ -25280,7 +25280,7 @@ function viewReferenceExpressionRawConst(data: RecordPosition, tree: TreeHandle)
 }
 
 function viewReferenceExpressionRawMut$argument(this: RecordHandle) {
-	return viewSlot<T.Expression>(this, 2, 4, 3, 0, 2);
+	return viewSlot<T.Expression>(this, 3, 4, 3, 0, 3);
 }
 function viewReferenceExpressionRawMut(data: RecordPosition, tree: TreeHandle): T.ReferenceExpressionRawMut.Parsed {
 	const node = {
@@ -25307,7 +25307,7 @@ function viewReferenceExpressionRawMut(data: RecordPosition, tree: TreeHandle): 
 }
 
 function viewReferenceExpressionMut$argument(this: RecordHandle) {
-	return viewSlot<T.Expression>(this, 2, 4, 3, 0, 2);
+	return viewSlot<T.Expression>(this, 3, 4, 3, 0, 3);
 }
 function viewReferenceExpressionMut(data: RecordPosition, tree: TreeHandle): T.ReferenceExpressionMut.Parsed {
 	const node = {
@@ -25818,7 +25818,7 @@ function viewPointerTypeConst(data: RecordPosition, tree: TreeHandle): T.Pointer
 }
 
 function viewPointerTypeMut$type(this: RecordHandle) {
-	return viewSlot<T.Type>(this, 2, 4, 3, 0, 2);
+	return viewSlot<T.Type>(this, 3, 4, 3, 0, 3);
 }
 function viewPointerTypeMut(data: RecordPosition, tree: TreeHandle): T.PointerTypeMut.Parsed {
 	const node = {
@@ -26166,7 +26166,7 @@ function viewMatchArmBlockEnding(data: RecordPosition, tree: TreeHandle): T.Matc
 }
 
 function viewLineCommentDocOuter$doc(this: RecordHandle) {
-	return viewSlot<T.DocComment>(this, 2, 3, 1, 0, 2);
+	return viewSlot<T.DocComment>(this, 3, 3, 1, 0, 3);
 }
 function viewLineCommentDocOuter(data: RecordPosition, tree: TreeHandle): T.LineCommentDocOuter.Parsed {
 	const node = {
@@ -26191,7 +26191,7 @@ function viewLineCommentDocOuter(data: RecordPosition, tree: TreeHandle): T.Line
 }
 
 function viewLineCommentDocInner$doc(this: RecordHandle) {
-	return viewSlot<T.DocComment>(this, 2, 3, 1, 0, 2);
+	return viewSlot<T.DocComment>(this, 3, 3, 1, 0, 3);
 }
 function viewLineCommentDocInner(data: RecordPosition, tree: TreeHandle): T.LineCommentDocInner.Parsed {
 	const node = {
@@ -27424,7 +27424,7 @@ function viewReceiverParameterDeclaration$mutable(this: RecordHandle) {
 	return recordFlag(this, 2, 0);
 }
 function viewReceiverParameterDeclaration$type(this: RecordHandle) {
-	return viewSlot<T.Type>(this, 3, 4, 3, 0, 3);
+	return viewSlot<T.Type>(this, 4, 4, 3, 0, 4);
 }
 function viewReceiverParameterDeclaration(
 	data: RecordPosition,

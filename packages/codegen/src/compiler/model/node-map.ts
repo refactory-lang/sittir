@@ -32,7 +32,7 @@ import type { RuleMetadata } from '../../types/rule-metadata-brand.ts';
 import { aliasStorageOf, GLOBAL_WORDSET, reservedWordsetsOf } from '../../dsl/rule-metadata.ts';
 import type { GeneratedKindEntry } from '../../dsl/symbol-table.ts';
 import type { KindProvenance } from '../types.ts';
-import { findEntryForKindName, findEntryForLiteralText, findOwnKindEntry, isAliasedHiddenStorage, seatedOf, surfaceHiddenOf } from '../../dsl/symbol-table.ts';
+import { findEntryForKindName, findEntryForLiteralText, findOwnKindEntry, isAliasedHiddenStorage, parseKindIdOf, seatedOf, surfaceHiddenOf } from '../../dsl/symbol-table.ts';
 import { stampDisplay, type DisplayStamp, type RowlessDisplaySource } from './display-name.ts';
 import { armNameOf, undisplayedKindAddress } from '../../dsl/arm-names.ts';
 import { tokenToName } from '../normalize.ts';
@@ -853,7 +853,7 @@ export function deriveValuesForRule(
 							resolvedKind: rule.name,
 							resolvedKindId: rule.kindId,
 							parseKind: { kind: 'unresolved-ref', name: rule.aliasedTo ?? rule.name },
-							parseKindId: rule.aliasedToId ?? rule.kindId,
+							parseKindId: parseKindIdOf(rule),
 							...armFacts,
 							multiplicity
 						}
@@ -880,7 +880,7 @@ export function deriveValuesForRule(
 						node: { kind: 'unresolved-ref', name: rule.name },
 						storageKindId: rule.kindId,
 						parseKind: { kind: 'unresolved-ref', name: rule.aliasedTo ?? rule.name },
-						parseKindId: rule.aliasedToId ?? rule.kindId,
+						parseKindId: parseKindIdOf(rule),
 						...armFacts,
 						...(rule.copyOf === undefined ? {} : { copyOf: rule.copyOf }),
 						multiplicity
@@ -913,7 +913,7 @@ export function deriveValuesForRule(
 						node: { kind: 'unresolved-ref' as const, name },
 						storageKindId: subRef.kindId,
 						parseKind: { kind: 'unresolved-ref' as const, name: subRef.aliasedTo ?? name },
-						parseKindId: subRef.aliasedToId ?? subRef.kindId,
+						parseKindId: parseKindIdOf(subRef),
 						...armFacts,
 						multiplicity
 					};
@@ -1161,6 +1161,10 @@ export abstract class AssembledNodeBase<R extends AnyRule = RenderRule> {
 		return [];
 	}
 
+	get valueSlots(): readonly AssembledNonterminal[] {
+		return this.slots.filter((slot) => slot.pinned === undefined);
+	}
+
 	get stampExpression(): string | undefined {
 		return undefined;
 	}
@@ -1292,6 +1296,7 @@ export class AssembledNonterminal {
 	optionDefaultArm?: string;
 	optionDefaultKind?: string;
 	registeredOption?: 'spelling' | 'choice';
+	pinned?: string;
 	delimiterRole?: DelimiterFacetRole;
 	contentLeaf?: string;
 	effectiveWordsets?: readonly string[];
@@ -1925,14 +1930,18 @@ export abstract class AbstractAssembledCompound<R extends RenderRule = RenderRul
 	}
 
 	get configSlots(): readonly AssembledNonterminal[] {
-		if (this.delimiterOf !== undefined) return this._slots.filter((slot) => slot.delimiterRole === 'input');
-		const real = this._slots.filter((slot) => slot.registeredOption === undefined);
-		return real.length > 0 || this._slots.every((slot) => slot.values.every(isFixedTextValue)) ? real : this._slots;
+		return this.inputSlotsOf(this.valueSlots);
 	}
 
 	get soleSlot(): AssembledNonterminal | undefined {
-		const slots = this.configSlots;
+		const slots = this.inputSlotsOf(this._slots);
 		return slots.length === 1 ? slots[0] : undefined;
+	}
+
+	private inputSlotsOf(slots: readonly AssembledNonterminal[]): readonly AssembledNonterminal[] {
+		if (this.delimiterOf !== undefined) return slots.filter((slot) => slot.delimiterRole === 'input');
+		const real = slots.filter((slot) => slot.registeredOption === undefined);
+		return real.length > 0 || slots.every((slot) => slot.values.every(isFixedTextValue)) ? real : slots;
 	}
 
 	get keywordConstructibleText(): string | undefined {

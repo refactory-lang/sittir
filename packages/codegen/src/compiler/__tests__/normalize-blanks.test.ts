@@ -57,7 +57,7 @@ describe('a blank member of a production is dropped before the model reads it (i
 	it('all-blank: seq(\'(\', optional(seq(blank(), blank())), $.x) normalizes as seq(\'(\', $.x)', async () => {
 		const withBlank = await normalized("source: ($) => optional($.r), r: ($) => seq('(', optional(seq(blank(), blank())), $.x), x: () => 'a'");
 		const without = await normalized("source: ($) => optional($.r), r: ($) => seq('(', $.x), x: () => 'a'");
-		expect(withBlank.rules.r).toEqual(without.rules.r);
+		expect(shape(withBlank.rules.r)).toEqual(shape(without.rules.r));
 	}, 60_000);
 
 	it.each([

@@ -11145,10 +11145,64 @@
           "name": "content",
           "route": "slot",
           "slot": "content",
+          "except": [
+            "line_comment_doc_outer",
+            "line_comment_doc_inner"
+          ],
           "path": [
             {
               "owner": "line_comment",
               "slot": "content"
+            }
+          ]
+        },
+        {
+          "name": "content",
+          "route": "nested",
+          "via": [
+            {
+              "field": null,
+              "kind": "line_comment_doc_outer",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "line_comment_doc_outer",
+          "slot": "doc",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "line_comment",
+              "slot": "content"
+            },
+            {
+              "owner": "line_comment_doc_outer",
+              "slot": "doc"
+            }
+          ]
+        },
+        {
+          "name": "content",
+          "route": "nested",
+          "via": [
+            {
+              "field": null,
+              "kind": "line_comment_doc_inner",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "line_comment_doc_inner",
+          "slot": "doc",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "line_comment",
+              "slot": "content"
+            },
+            {
+              "owner": "line_comment_doc_inner",
+              "slot": "doc"
             }
           ]
         }
@@ -11160,26 +11214,6 @@
           "line_comment_doc_outer",
           "line_comment_doc_inner",
           "line_comment_regular"
-        ],
-        "terminals": [],
-        "list": false
-      }
-    },
-    "line_comment_doc_inner": {
-      "container": {
-        "slot": "doc",
-        "kinds": [
-          "doc_comment"
-        ],
-        "terminals": [],
-        "list": false
-      }
-    },
-    "line_comment_doc_outer": {
-      "container": {
-        "slot": "doc",
-        "kinds": [
-          "doc_comment"
         ],
         "terminals": [],
         "list": false
@@ -13784,15 +13818,7 @@
             }
           ]
         }
-      ],
-      "container": {
-        "slot": "pattern",
-        "kinds": [
-          "_pattern"
-        ],
-        "terminals": [],
-        "list": false
-      }
+      ]
     },
     "negative_literal": {
       "vocab": "literal.number.negative",
@@ -14200,15 +14226,7 @@
           "flag": true,
           "spelled": true
         }
-      ],
-      "container": {
-        "slot": "type",
-        "kinds": [
-          "_type"
-        ],
-        "terminals": [],
-        "list": false
-      }
+      ]
     },
     "qualified_type": {
       "vocab": "type.qualified",
@@ -14973,15 +14991,7 @@
           "flag": true,
           "spelled": true
         }
-      ],
-      "container": {
-        "slot": "argument",
-        "kinds": [
-          "_expression"
-        ],
-        "terminals": [],
-        "list": false
-      }
+      ]
     },
     "reference_expression_raw_const": {
       "vocab": "expression.reference",
@@ -15065,15 +15075,7 @@
           "flag": true,
           "spelled": true
         }
-      ],
-      "container": {
-        "slot": "argument",
-        "kinds": [
-          "_expression"
-        ],
-        "terminals": [],
-        "list": false
-      }
+      ]
     },
     "reference_pattern": {
       "vocab": "pattern.reference.value",

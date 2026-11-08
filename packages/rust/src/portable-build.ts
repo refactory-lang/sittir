@@ -112,8 +112,8 @@ export const build: PortableBuildTable = {
 		lifetimeParameter: 'config',
 		lifetimes: 'elements',
 		lineComment: 'direct',
-		'lineComment.docInner': 'forwarded',
-		'lineComment.docOuter': 'forwarded',
+		'lineComment.docInner': 'config',
+		'lineComment.docOuter': 'config',
 		'lineComment.extraSlashes': 'text',
 		lineCommentRegular: 'text',
 		loopExpression: 'config',
@@ -132,7 +132,7 @@ export const build: PortableBuildTable = {
 		methodDeclaration: 'config',
 		modItemExternal: 'config',
 		modItemInline: 'config',
-		mutPattern: 'direct',
+		mutPattern: 'config',
 		negativeLiteral: 'direct',
 		nonSpecialToken: 'direct',
 		orPatternBinary: 'config',
@@ -146,7 +146,7 @@ export const build: PortableBuildTable = {
 		parenthesizedExpression: 'direct',
 		patterns: 'elements',
 		pointerTypeConst: 'direct',
-		pointerTypeMut: 'direct',
+		pointerTypeMut: 'config',
 		qualifiedType: 'config',
 		rangeExpressionBare: 'nullary',
 		rangeExpressionBinary: 'config',
@@ -160,9 +160,9 @@ export const build: PortableBuildTable = {
 		receiverParameterDeclaration: 'config',
 		refPattern: 'direct',
 		referenceExpressionBare: 'direct',
-		referenceExpressionMut: 'direct',
+		referenceExpressionMut: 'config',
 		referenceExpressionRawConst: 'direct',
-		referenceExpressionRawMut: 'direct',
+		referenceExpressionRawMut: 'config',
 		referencePattern: 'config',
 		referenceType: 'config',
 		removedTraitBound: 'direct',
@@ -2111,7 +2111,8 @@ export const build: PortableBuildTable = {
 									at: [337, 'content'],
 									kinds: [155, 399]
 								}
-							]
+							],
+							reads: [155, 399]
 						}
 					],
 					presets: [],
@@ -2148,26 +2149,11 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [400, 'doc'],
-									kinds: [166],
-									leaf: 'docComment',
-									texts: [166],
-									pattern: {
-										source: '^(?:(?:.*\\n?))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'lineComment.docOuter',
-											key: 'doc',
-											mounted: {
-												call: 'child',
-												key: 'content'
-											}
-										}
-									]
+									at: [337, 'content'],
+									kinds: [400]
 								}
-							]
+							],
+							reads: [155, 399]
 						}
 					],
 					presets: [
@@ -2212,26 +2198,11 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [401, 'doc'],
-									kinds: [166],
-									leaf: 'docComment',
-									texts: [166],
-									pattern: {
-										source: '^(?:(?:.*\\n?))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'lineComment.docInner',
-											key: 'doc',
-											mounted: {
-												call: 'child',
-												key: 'content'
-											}
-										}
-									]
+									at: [337, 'content'],
+									kinds: [401]
 								}
-							]
+							],
+							reads: [155, 399]
 						}
 					],
 					presets: [
@@ -44539,6 +44510,7 @@ export const build: PortableBuildTable = {
 					holders: [
 						[189, 'content'],
 						[192, 'path'],
+						[204, 'crate'],
 						[224, 'argument'],
 						[226, 'path'],
 						[228, 'name'],

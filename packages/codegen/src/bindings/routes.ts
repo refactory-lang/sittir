@@ -911,6 +911,11 @@ function membersOf(
 	const spelledFlags: MemberRoute[] = [];
 	const flagSlots = new Map(flags.flatMap((m) => {
 		const slot = slotFor(input.model, slots, m);
+		const pinned = slot?.pinned !== undefined ? spelledFlagRouteOf(m) : undefined;
+		if (pinned !== undefined) {
+			spelledFlags.push(pinned);
+			return [];
+		}
 		if (slot === undefined && formsOf(input.model, m.owner).every((form) => slotFor(input.model, modelNode(input.model, form)?.slots ?? [], m) === undefined)) {
 			const spelled = m.field === null && modelNode(input.model, m.owner)?.variantOf != null ? spelledFlagRouteOf(m) : undefined;
 			if (spelled !== undefined) {
@@ -963,6 +968,7 @@ function membersOf(
 			unrouted(slot, 'is pinned to one fixed text by the same claim', capturesOf(slot).filter((m) => m.claims?.includes(entry.index) === true));
 			continue;
 		}
+		if (captured && slot.pinned !== undefined) continue;
 		if (!captured && pin !== undefined && !slot.multiple && narrowed !== undefined && narrowed.kinds.length === 0 && narrowed.terminals.length === 0) continue;
 		const tested = captured ? rest : (narrowed ?? rest);
 		if (toldByRead(input.model, tested, told.get(slot.name) ?? new Set<string>())) {

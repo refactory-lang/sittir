@@ -2406,6 +2406,15 @@ function alternatesOf(ids: readonly number[], alternates: ReadonlyMap<number, nu
 	return [...alternates].filter(([, stored]) => ids.includes(stored)).map(([alt]) => alt);
 }
 
+function unownedAlternates(pairs: readonly (readonly [number, number])[], owned: ReadonlySet<number>, at: string): ReadonlyMap<number, number> {
+	const stored = new Map<number, Set<number>>();
+	for (const [alt, id] of pairs) if (!owned.has(alt)) (stored.get(alt) ?? stored.set(alt, new Set()).get(alt)!).add(id);
+	for (const [alt, ids] of stored) {
+		if (ids.size > 1) throw emitShapeFailure({ code: 'read-id-alternates-collide', message: `${at}: the read kind id ${alt} is an alternate of stored ids ${[...ids].join(', ')}, and no variant owns it` });
+	}
+	return new Map([...stored].map(([alt, ids]) => [alt, [...ids][0]!]));
+}
+
 function emitPerSlotChildEnum(
 	entry: PerSlotChildEnum,
 	kindIdByKind: ReadonlyMap<string, number>,
@@ -2468,7 +2477,7 @@ function emitPerSlotChildEnum(
 		}
 	}
 
-	const altIds = new Map(modelSlot === undefined ? [] : kindEnumAltIdPairs(modelSlot, nodeMap));
+	const altIds = unownedAlternates(modelSlot === undefined ? [] : kindEnumAltIdPairs(modelSlot, nodeMap), emittedIds, `${ownerKind}.${entry.fieldName}`);
 	const viewed = nodeKinds.length > 0 || admitsVerbatim;
 	lines.push(...nodeDeclaration(read, NODE_DERIVE, viewed ? `${CHOICE_ARGS}, ${viewArg(enumName)}` : CHOICE_ARGS, 'enum', enumName));
 	for (const { node } of nodeKinds) {

@@ -62,6 +62,7 @@ export function accessorClassClashes(nodeMap: NodeMap, leads: readonly LeadEffec
 	for (const node of nodeMap.nodes.values()) {
 		if (!(node instanceof AbstractAssembledCompound) || !node.userFacing) continue;
 		for (const slot of node.slots) {
+			if (slot.pinned !== undefined) continue;
 			const classes = byName.get(slot.propertyName) ?? byName.set(slot.propertyName, new Map()).get(slot.propertyName)!;
 			const valueClass = accessorValueClassOf(slot, nodeMap);
 			(classes.get(valueClass) ?? classes.set(valueClass, []).get(valueClass)!).push(node.kind);

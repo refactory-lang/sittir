@@ -79,7 +79,7 @@ export function buildFactoryMap(nodeMap: NodeMap, kindEntries: readonly KindEnum
 		if (node.surfaceHidden && !aliasSet.has(kind)) continue;
 		const slots: Record<string, FactorySlotMeta> = {};
 		const registered = new Set(registeredSlots(node));
-		for (const field of node.slots) {
+		for (const field of node.valueSlots) {
 			slots[field.name] = createFactorySlotMeta(
 				field.propertyName,
 				deriveSlotCardinality(field),

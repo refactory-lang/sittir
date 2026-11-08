@@ -9310,9 +9310,12 @@ function buildStructPattern$with$fields(this: Received<Held>, ...args: unknown[]
 
 export const buildRemainingFieldPattern: TSKindId.RemainingFieldPattern = TSKindId.RemainingFieldPattern;
 
-export function buildMutPattern<V extends Admit<T.Pattern>>(value: V & RefuseUndeclared<V>): T.MutPattern.Bound;
-export function buildMutPattern(value: Admit<T.Pattern>): T.MutPattern.Bound {
-	const _pattern = kindIdStorage<NonNullable<T.MutPattern['_pattern']>>(value);
+export function buildMutPattern<PatternSlot extends T.MutPattern.Config['pattern']>(
+	config: RefusingConfig<T.MutPattern.Config, { pattern: PatternSlot }>
+): T.MutPattern.Bound;
+export function buildMutPattern(config: T.MutPattern.Config): T.MutPattern.Bound {
+	currentHandle()?.admit(TSKindId.MutPattern, [config]);
+	const _pattern = kindIdStorage<NonNullable<T.MutPattern['_pattern']>>(config.pattern);
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'mut_pattern', { pattern: _pattern });
 	const node = {
@@ -9328,6 +9331,7 @@ export function buildMutPattern(value: Admit<T.Pattern>): T.MutPattern.Bound {
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = { pattern: buildMutPattern$with$pattern, [RECEIVER]: node };
@@ -9337,10 +9341,11 @@ export function buildMutPattern(value: Admit<T.Pattern>): T.MutPattern.Bound {
 
 function buildMutPattern$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
+	const config = node[INPUT] as T.MutPattern.Config;
 	switch (setter) {
 		case 'pattern':
-			return applySetter(args, (value: Admit<NonNullable<T.Pattern>>) =>
-				rebuilt(node, handle, () => buildMutPattern(value))
+			return applySetter(args, (value: Admit<NonNullable<T.MutPattern.Config>['pattern']>) =>
+				rebuilt(node, handle, () => buildMutPattern({ ...config, pattern: value }))
 			);
 	}
 	throw new Error(`mut_pattern has no $with.${setter}`);
@@ -13845,11 +13850,14 @@ function buildReferenceExpressionRawConst$with$argument(this: Received<Held>, ..
 	return buildReferenceExpressionRawConst$with(receiverOf(this, '$with.argument'), 'argument', args);
 }
 
-export function buildReferenceExpressionRawMut<V extends Admit<T.Expression>>(
-	value: V & RefuseUndeclared<V>
+export function buildReferenceExpressionRawMut<ArgumentSlot extends T.ReferenceExpressionRawMut.Config['argument']>(
+	config: RefusingConfig<T.ReferenceExpressionRawMut.Config, { argument: ArgumentSlot }>
 ): T.ReferenceExpressionRawMut.Bound;
-export function buildReferenceExpressionRawMut(value: Admit<T.Expression>): T.ReferenceExpressionRawMut.Bound {
-	const _argument = kindIdStorage<NonNullable<T.ReferenceExpressionRawMut['_argument']>>(value);
+export function buildReferenceExpressionRawMut(
+	config: T.ReferenceExpressionRawMut.Config
+): T.ReferenceExpressionRawMut.Bound {
+	currentHandle()?.admit(TSKindId.ReferenceExpressionRawMut, [config]);
+	const _argument = kindIdStorage<NonNullable<T.ReferenceExpressionRawMut['_argument']>>(config.argument);
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'reference_expression_raw_mut', { argument: _argument });
 	const node = {
@@ -13865,6 +13873,7 @@ export function buildReferenceExpressionRawMut(value: Admit<T.Expression>): T.Re
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = { argument: buildReferenceExpressionRawMut$with$argument, [RECEIVER]: node };
@@ -13874,10 +13883,11 @@ export function buildReferenceExpressionRawMut(value: Admit<T.Expression>): T.Re
 
 function buildReferenceExpressionRawMut$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
+	const config = node[INPUT] as T.ReferenceExpressionRawMut.Config;
 	switch (setter) {
 		case 'argument':
-			return applySetter(args, (value: Admit<NonNullable<T.Expression>>) =>
-				rebuilt(node, handle, () => buildReferenceExpressionRawMut(value))
+			return applySetter(args, (value: Admit<NonNullable<T.ReferenceExpressionRawMut.Config>['argument']>) =>
+				rebuilt(node, handle, () => buildReferenceExpressionRawMut({ ...config, argument: value }))
 			);
 	}
 	throw new Error(`reference_expression_raw_mut has no $with.${setter}`);
@@ -13886,11 +13896,12 @@ function buildReferenceExpressionRawMut$with$argument(this: Received<Held>, ...a
 	return buildReferenceExpressionRawMut$with(receiverOf(this, '$with.argument'), 'argument', args);
 }
 
-export function buildReferenceExpressionMut<V extends Admit<T.Expression>>(
-	value: V & RefuseUndeclared<V>
+export function buildReferenceExpressionMut<ArgumentSlot extends T.ReferenceExpressionMut.Config['argument']>(
+	config: RefusingConfig<T.ReferenceExpressionMut.Config, { argument: ArgumentSlot }>
 ): T.ReferenceExpressionMut.Bound;
-export function buildReferenceExpressionMut(value: Admit<T.Expression>): T.ReferenceExpressionMut.Bound {
-	const _argument = kindIdStorage<NonNullable<T.ReferenceExpressionMut['_argument']>>(value);
+export function buildReferenceExpressionMut(config: T.ReferenceExpressionMut.Config): T.ReferenceExpressionMut.Bound {
+	currentHandle()?.admit(TSKindId.ReferenceExpressionMut, [config]);
+	const _argument = kindIdStorage<NonNullable<T.ReferenceExpressionMut['_argument']>>(config.argument);
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'reference_expression_mut', { argument: _argument });
 	const node = {
@@ -13906,6 +13917,7 @@ export function buildReferenceExpressionMut(value: Admit<T.Expression>): T.Refer
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = { argument: buildReferenceExpressionMut$with$argument, [RECEIVER]: node };
@@ -13915,10 +13927,11 @@ export function buildReferenceExpressionMut(value: Admit<T.Expression>): T.Refer
 
 function buildReferenceExpressionMut$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
+	const config = node[INPUT] as T.ReferenceExpressionMut.Config;
 	switch (setter) {
 		case 'argument':
-			return applySetter(args, (value: Admit<NonNullable<T.Expression>>) =>
-				rebuilt(node, handle, () => buildReferenceExpressionMut(value))
+			return applySetter(args, (value: Admit<NonNullable<T.ReferenceExpressionMut.Config>['argument']>) =>
+				rebuilt(node, handle, () => buildReferenceExpressionMut({ ...config, argument: value }))
 			);
 	}
 	throw new Error(`reference_expression_mut has no $with.${setter}`);
@@ -14902,12 +14915,13 @@ function buildPointerTypeConst$with$type(this: Received<Held>, ...args: unknown[
 	return buildPointerTypeConst$with(receiverOf(this, '$with.type'), 'type', args);
 }
 
-export function buildPointerTypeMut<V extends Admit<T.Type | T.TypeIdentifier.Types>>(
-	value: V & RefuseUndeclared<V>
+export function buildPointerTypeMut<TypeSlot extends T.PointerTypeMut.Config['type']>(
+	config: RefusingConfig<T.PointerTypeMut.Config, { type: TypeSlot }>
 ): T.PointerTypeMut.Bound;
-export function buildPointerTypeMut(value: Admit<T.Type | T.TypeIdentifier.Types>): T.PointerTypeMut.Bound {
+export function buildPointerTypeMut(config: T.PointerTypeMut.Config): T.PointerTypeMut.Bound {
+	currentHandle()?.admit(TSKindId.PointerTypeMut, [config]);
 	const _type = admitAliasContent<NonNullable<T.PointerTypeMut['_type']>>(
-		kindIdStorage<NonNullable<T.PointerTypeMut['_type']>>(value),
+		kindIdStorage<NonNullable<T.PointerTypeMut['_type']>>(config.type),
 		[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
 	);
 	const handle = currentHandle();
@@ -14925,6 +14939,7 @@ export function buildPointerTypeMut(value: Admit<T.Type | T.TypeIdentifier.Types
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = { type: buildPointerTypeMut$with$type, [RECEIVER]: node };
@@ -14934,10 +14949,11 @@ export function buildPointerTypeMut(value: Admit<T.Type | T.TypeIdentifier.Types
 
 function buildPointerTypeMut$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
+	const config = node[INPUT] as T.PointerTypeMut.Config;
 	switch (setter) {
 		case 'type':
-			return applySetter(args, (value: Admit<NonNullable<T.Type | T.TypeIdentifier.Types>>) =>
-				rebuilt(node, handle, () => buildPointerTypeMut(value))
+			return applySetter(args, (value: Admit<NonNullable<T.PointerTypeMut.Config>['type']>) =>
+				rebuilt(node, handle, () => buildPointerTypeMut({ ...config, type: value }))
 			);
 	}
 	throw new Error(`pointer_type_mut has no $with.${setter}`);
@@ -15582,11 +15598,12 @@ export function buildLineCommentExtraSlashes(text: string): T.LineCommentExtraSl
 	return node as unknown as T.LineCommentExtraSlashes.Bound;
 }
 
-export function buildLineCommentDocOuter<V extends Admit<T.DocComment>>(
-	value: V & RefuseUndeclared<V>
+export function buildLineCommentDocOuter<DocSlot extends T.LineCommentDocOuter.Config['doc']>(
+	config: RefusingConfig<T.LineCommentDocOuter.Config, { doc: DocSlot }>
 ): T.LineCommentDocOuter.Bound;
-export function buildLineCommentDocOuter(value: Admit<T.DocComment>): T.LineCommentDocOuter.Bound {
-	const _doc = value;
+export function buildLineCommentDocOuter(config: T.LineCommentDocOuter.Config): T.LineCommentDocOuter.Bound {
+	currentHandle()?.admit(TSKindId.LineCommentDocOuter, [config]);
+	const _doc = config.doc;
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'line_comment_doc_outer', { doc: _doc });
 	const node = {
@@ -15601,6 +15618,7 @@ export function buildLineCommentDocOuter(value: Admit<T.DocComment>): T.LineComm
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = { doc: buildLineCommentDocOuter$with$doc, [RECEIVER]: node };
@@ -15609,10 +15627,11 @@ export function buildLineCommentDocOuter(value: Admit<T.DocComment>): T.LineComm
 
 function buildLineCommentDocOuter$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
+	const config = node[INPUT] as T.LineCommentDocOuter.Config;
 	switch (setter) {
 		case 'doc':
 			return applySetter(args, (value: Admit<T.DocComment>) =>
-				rebuilt(node, handle, () => buildLineCommentDocOuter(value))
+				rebuilt(node, handle, () => buildLineCommentDocOuter({ ...config, doc: value }))
 			);
 	}
 	throw new Error(`line_comment_doc_outer has no $with.${setter}`);
@@ -15621,11 +15640,12 @@ function buildLineCommentDocOuter$with$doc(this: Received<Held>, ...args: unknow
 	return buildLineCommentDocOuter$with(receiverOf(this, '$with.doc'), 'doc', args);
 }
 
-export function buildLineCommentDocInner<V extends Admit<T.DocComment>>(
-	value: V & RefuseUndeclared<V>
+export function buildLineCommentDocInner<DocSlot extends T.LineCommentDocInner.Config['doc']>(
+	config: RefusingConfig<T.LineCommentDocInner.Config, { doc: DocSlot }>
 ): T.LineCommentDocInner.Bound;
-export function buildLineCommentDocInner(value: Admit<T.DocComment>): T.LineCommentDocInner.Bound {
-	const _doc = value;
+export function buildLineCommentDocInner(config: T.LineCommentDocInner.Config): T.LineCommentDocInner.Bound {
+	currentHandle()?.admit(TSKindId.LineCommentDocInner, [config]);
+	const _doc = config.doc;
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'line_comment_doc_inner', { doc: _doc });
 	const node = {
@@ -15640,6 +15660,7 @@ export function buildLineCommentDocInner(value: Admit<T.DocComment>): T.LineComm
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = { doc: buildLineCommentDocInner$with$doc, [RECEIVER]: node };
@@ -15648,10 +15669,11 @@ export function buildLineCommentDocInner(value: Admit<T.DocComment>): T.LineComm
 
 function buildLineCommentDocInner$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
+	const config = node[INPUT] as T.LineCommentDocInner.Config;
 	switch (setter) {
 		case 'doc':
 			return applySetter(args, (value: Admit<T.DocComment>) =>
-				rebuilt(node, handle, () => buildLineCommentDocInner(value))
+				rebuilt(node, handle, () => buildLineCommentDocInner({ ...config, doc: value }))
 			);
 	}
 	throw new Error(`line_comment_doc_inner has no $with.${setter}`);

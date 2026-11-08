@@ -266,7 +266,7 @@ function factoryCallArgs(
 	const seated = (f: AssembledNonterminal): boolean => isRequired(f) || (options?.populateOptional === true && !isMultiple(f));
 	const inner: DummyOptions | undefined = options?.texts === undefined ? undefined : { texts: options.texts };
 	const typeConfigParts: string[] = [];
-	for (const f of node.slots) {
+	for (const f of node.valueSlots) {
 		if (registeredSet.has(f)) continue;
 		if (seated(f)) typeConfigParts.push(...fieldDummyParts(f, nodeMap, kindEntries, strict, at, inner));
 	}
@@ -881,7 +881,7 @@ function childInput(
 		return path?.length === 1 ? `ir.${path[0]}(${item})` : `[${item}]`;
 	}
 	const populateOptional = depth === 0 && options?.populateOptional === true;
-	const parts = node.slots.flatMap((f) => {
+	const parts = node.valueSlots.flatMap((f) => {
 		if (isRequired(f) || (populateOptional && !isMultiple(f))) return fieldDummyParts(f, nodeMap, kindEntries, false, at, inner);
 		return isMultiple(f) ? [`${f.propertyName}: []`] : [];
 	});

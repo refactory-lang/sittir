@@ -13155,7 +13155,7 @@ export function buildGetAccessorSignature(
 	handle?.verifyStored?.(TSKindId.GetAccessorSignature as const, { _type });
 	return arena.scope(() => {
 		const record = arena.record(TSKindId.GetAccessorSignature as const);
-		storeCell(arena, record, 2, 2, _type);
+		storeCell(arena, record, 3, 3, _type);
 		const node = arena.view(record);
 		return node as unknown as T.GetAccessorSignature.Bound;
 	});
@@ -13173,7 +13173,7 @@ function buildGetAccessorSignature$patch(
 	handle?.verifyStored?.(TSKindId.GetAccessorSignature as const, { _type });
 	return arena.scope(() => {
 		const record = arena.copy(source, TSKindId.GetAccessorSignature as const);
-		patchCell(arena, record, 2, 2, carriedSlot(source, 'type', _type));
+		patchCell(arena, record, 3, 3, carriedSlot(source, 'type', _type));
 		const node = arena.view(record);
 		return node as unknown as T.GetAccessorSignature.Bound;
 	});
@@ -18272,8 +18272,8 @@ export function buildMethodDefinitionGetter(config: T.MethodDefinitionGetter.Con
 		if (_static) storeFlag(record.data, record.base + 2, 1);
 		if (_override) storeFlag(record.data, record.base + 2, 2);
 		storeCell(arena, record, 4, 4, _name);
-		storeCell(arena, record, 5, 19, _type);
-		storeCell(arena, record, 6, 22, _body);
+		storeCell(arena, record, 6, 20, _type);
+		storeCell(arena, record, 7, 23, _body);
 		const node = arena.view(record);
 		return node as unknown as T.MethodDefinitionGetter.Bound;
 	});
@@ -18320,8 +18320,8 @@ function buildMethodDefinitionGetter$patch(
 		patchFlag(record, 2, 1, _static);
 		patchFlag(record, 2, 2, _override);
 		patchCell(arena, record, 4, 4, carriedSlot(source, 'name', _name));
-		patchCell(arena, record, 5, 19, carriedSlot(source, 'type', _type));
-		patchCell(arena, record, 6, 22, carriedSlot(source, 'body', _body));
+		patchCell(arena, record, 6, 20, carriedSlot(source, 'type', _type));
+		patchCell(arena, record, 7, 23, carriedSlot(source, 'body', _body));
 		const node = arena.view(record);
 		return node as unknown as T.MethodDefinitionGetter.Bound;
 	});
@@ -18772,7 +18772,7 @@ export function buildMethodSignatureGetter(config: T.MethodSignatureGetter.Confi
 		if (_static) storeFlag(record.data, record.base + 2, 1);
 		if (_override) storeFlag(record.data, record.base + 2, 2);
 		storeCell(arena, record, 4, 4, _name);
-		storeCell(arena, record, 5, 19, _type);
+		storeCell(arena, record, 6, 20, _type);
 		const node = arena.view(record);
 		return node as unknown as T.MethodSignatureGetter.Bound;
 	});
@@ -18816,7 +18816,7 @@ function buildMethodSignatureGetter$patch(
 		patchFlag(record, 2, 1, _static);
 		patchFlag(record, 2, 2, _override);
 		patchCell(arena, record, 4, 4, carriedSlot(source, 'name', _name));
-		patchCell(arena, record, 5, 19, carriedSlot(source, 'type', _type));
+		patchCell(arena, record, 6, 20, carriedSlot(source, 'type', _type));
 		const node = arena.view(record);
 		return node as unknown as T.MethodSignatureGetter.Bound;
 	});
@@ -19226,7 +19226,7 @@ export function buildAbstractMethodSignatureGetter(
 		storeCell(arena, record, 3, 3, _accessibility_modifier);
 		if (_override) storeFlag(record.data, record.base + 2, 1);
 		storeCell(arena, record, 4, 4, _name);
-		storeCell(arena, record, 5, 19, _type);
+		storeCell(arena, record, 6, 20, _type);
 		const node = arena.view(record);
 		return node as unknown as T.AbstractMethodSignatureGetter.Bound;
 	});
@@ -19271,7 +19271,7 @@ function buildAbstractMethodSignatureGetter$patch(
 		patchCell(arena, record, 3, 3, carriedSlot(source, 'accessibilityModifier', _accessibility_modifier));
 		patchFlag(record, 2, 1, _override);
 		patchCell(arena, record, 4, 4, carriedSlot(source, 'name', _name));
-		patchCell(arena, record, 5, 19, carriedSlot(source, 'type', _type));
+		patchCell(arena, record, 6, 20, carriedSlot(source, 'type', _type));
 		const node = arena.view(record);
 		return node as unknown as T.AbstractMethodSignatureGetter.Bound;
 	});
@@ -20013,8 +20013,8 @@ export function buildConstructorDeclaration(
 	return arena.scope(() => {
 		const record = arena.record(TSKindId.ConstructorDeclaration as const);
 		storeCell(arena, record, 2, 2, _accessibility_modifier);
-		storeCell(arena, record, 3, 3, _parameters);
-		storeCell(arena, record, 4, 6, _body);
+		storeCell(arena, record, 4, 4, _parameters);
+		storeCell(arena, record, 5, 7, _body);
 		const node = arena.view(record);
 		return node as unknown as T.ConstructorDeclaration.Bound;
 	});
@@ -20042,8 +20042,8 @@ function buildConstructorDeclaration$patch(
 	return arena.scope(() => {
 		const record = arena.copy(source, TSKindId.ConstructorDeclaration as const);
 		patchCell(arena, record, 2, 2, carriedSlot(source, 'accessibilityModifier', _accessibility_modifier));
-		patchCell(arena, record, 3, 3, carriedSlot(source, 'parameters', _parameters));
-		patchCell(arena, record, 4, 6, carriedSlot(source, 'body', _body));
+		patchCell(arena, record, 4, 4, carriedSlot(source, 'parameters', _parameters));
+		patchCell(arena, record, 5, 7, carriedSlot(source, 'body', _body));
 		const node = arena.view(record);
 		return node as unknown as T.ConstructorDeclaration.Bound;
 	});
@@ -20123,8 +20123,8 @@ export function buildReceiverParameterDeclaration(
 		storeCell(arena, record, 4, 4, _accessibility_modifier);
 		if (_override) storeFlag(record.data, record.base + 2, 1);
 		if (_readonly) storeFlag(record.data, record.base + 2, 2);
-		storeCell(arena, record, 5, 5, _type);
-		storeCell(arena, record, 6, 8, _value);
+		storeCell(arena, record, 6, 6, _type);
+		storeCell(arena, record, 7, 9, _value);
 		const node = arena.view(record);
 		return node as unknown as T.ReceiverParameterDeclaration.Bound;
 	});
@@ -20173,8 +20173,8 @@ function buildReceiverParameterDeclaration$patch(
 		patchCell(arena, record, 4, 4, carriedSlot(source, 'accessibilityModifier', _accessibility_modifier));
 		patchFlag(record, 2, 1, _override);
 		patchFlag(record, 2, 2, _readonly);
-		patchCell(arena, record, 5, 5, carriedSlot(source, 'type', _type));
-		patchCell(arena, record, 6, 8, carriedSlot(source, 'value', _value));
+		patchCell(arena, record, 6, 6, carriedSlot(source, 'type', _type));
+		patchCell(arena, record, 7, 9, carriedSlot(source, 'value', _value));
 		const node = arena.view(record);
 		return node as unknown as T.ReceiverParameterDeclaration.Bound;
 	});
@@ -21814,7 +21814,7 @@ export const builtViews: BuiltViews = Object.freeze({
 		392: 3,
 		393: 3,
 		395: 4,
-		396: 3,
+		396: 4,
 		398: 3,
 		399: 5,
 		400: 3,
@@ -21860,18 +21860,18 @@ export const builtViews: BuiltViews = Object.freeze({
 		448: 3,
 		449: 7,
 		452: 9,
-		453: 7,
+		453: 8,
 		454: 7,
 		455: 8,
-		456: 6,
+		456: 7,
 		457: 6,
 		458: 8,
-		459: 6,
+		459: 7,
 		460: 6,
 		461: 9,
 		462: 8,
-		463: 5,
-		467: 7,
+		463: 6,
+		467: 8,
 		469: 4,
 		470: 3,
 		497: 5,

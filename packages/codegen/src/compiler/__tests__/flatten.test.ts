@@ -195,7 +195,7 @@ describe('flattenRules — map form', () => {
 			foo: { type: OPTIONAL, content: sym('bar') } as OptionalRule,
 			baz: sym('qux')
 		};
-		const result = flattenRules(rules);
+		const result = flattenRules(rules, () => false);
 		expect(result['foo']!.type).toBe('SYMBOL');
 		expect(result['foo']!.multiplicity).toBe('optional');
 		expect(result['baz']!.type).toBe('SYMBOL');

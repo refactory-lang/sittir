@@ -90,11 +90,12 @@ export const records = {
 		elements: { word: 2, width: 3, inline: 3, forms: 8, built: 2 }
 	},
 	ExternCrateDeclarationNode: {
-		words: 22,
-		builtWords: 5,
+		words: 23,
+		builtWords: 6,
 		visibility_modifier: { word: 2, width: 14, inline: 14, forms: 8, built: 2 },
-		name: { word: 16, width: 3, forms: 1, built: 3 },
-		alias: { word: 19, width: 3, forms: 1, built: 4 }
+		crate_: { word: 16, width: 1, forms: 2, built: 3 },
+		name: { word: 17, width: 3, forms: 1, built: 4 },
+		alias: { word: 20, width: 3, forms: 1, built: 5 }
 	},
 	ConstItemNode: {
 		words: 27,
@@ -238,11 +239,12 @@ export const records = {
 	},
 	ParametersNode: { words: 5, builtWords: 3, elements: { word: 2, width: 3, forms: 1, built: 2 } },
 	SelfParameterNode: {
-		words: 8,
-		builtWords: 4,
+		words: 9,
+		builtWords: 5,
 		reference: { word: 2, bit: 0 },
 		lifetime: { word: 3, width: 5, inline: 5, forms: 8, built: 3 },
-		mutable: { word: 2, bit: 1 }
+		mutable: { word: 2, bit: 1 },
+		self_: { word: 8, width: 1, forms: 2, built: 4 }
 	},
 	VariadicParameterNode: {
 		words: 7,
@@ -558,7 +560,12 @@ export const records = {
 		type_: { word: 2, width: 3, forms: 1, built: 2 },
 		fields: { word: 5, width: 3, inline: 3, forms: 8, built: 3 }
 	},
-	MutPatternNode: { words: 6, builtWords: 3, pattern: { word: 2, width: 4, forms: 3, built: 2 } },
+	MutPatternNode: {
+		words: 7,
+		builtWords: 4,
+		mutable_specifier: { word: 2, width: 1, forms: 2, built: 2 },
+		pattern: { word: 3, width: 4, forms: 3, built: 3 }
+	},
 	RefPatternNode: { words: 6, builtWords: 3, pattern: { word: 2, width: 4, forms: 3, built: 2 } },
 	CapturedPatternNode: {
 		words: 9,
@@ -586,7 +593,7 @@ export const records = {
 		string_content: { word: 10, width: 3, forms: 1, built: 3 },
 		raw_string_literal_end: { word: 13, width: 6, inline: 6, forms: 8, built: 4 }
 	},
-	LineCommentNode: { words: 8, builtWords: 3, content: { word: 2, width: 6, inline: 5, forms: 9, built: 2 } },
+	LineCommentNode: { words: 9, builtWords: 3, content: { word: 2, width: 7, inline: 6, forms: 9, built: 2 } },
 	BlockCommentNode: { words: 8, builtWords: 3, content: { word: 2, width: 6, inline: 5, forms: 9, built: 2 } },
 	IdentifierNode: { words: 2, builtWords: 2 },
 	ShebangNode: {
@@ -761,8 +768,18 @@ export const records = {
 		body: { word: 6, width: 4, forms: 3, built: 4 }
 	},
 	ReferenceExpressionRawConstNode: { words: 6, builtWords: 3, argument: { word: 2, width: 4, forms: 3, built: 2 } },
-	ReferenceExpressionRawMutNode: { words: 6, builtWords: 3, argument: { word: 2, width: 4, forms: 3, built: 2 } },
-	ReferenceExpressionMutNode: { words: 6, builtWords: 3, argument: { word: 2, width: 4, forms: 3, built: 2 } },
+	ReferenceExpressionRawMutNode: {
+		words: 7,
+		builtWords: 4,
+		writable: { word: 2, width: 1, forms: 2, built: 2 },
+		argument: { word: 3, width: 4, forms: 3, built: 3 }
+	},
+	ReferenceExpressionMutNode: {
+		words: 7,
+		builtWords: 4,
+		exclusive: { word: 2, width: 1, forms: 2, built: 2 },
+		argument: { word: 3, width: 4, forms: 3, built: 3 }
+	},
 	ReferenceExpressionBareNode: { words: 6, builtWords: 3, argument: { word: 2, width: 4, forms: 3, built: 2 } },
 	ImplItemPositiveClauseNode: { words: 5, builtWords: 3, trait_: { word: 2, width: 3, forms: 1, built: 2 } },
 	ImplItemNegativeClauseNode: { words: 5, builtWords: 3, trait_: { word: 2, width: 3, forms: 1, built: 2 } },
@@ -823,7 +840,12 @@ export const records = {
 	},
 	OrPatternPrefixNode: { words: 6, builtWords: 3, right: { word: 2, width: 4, forms: 3, built: 2 } },
 	PointerTypeConstNode: { words: 6, builtWords: 3, type_: { word: 2, width: 4, forms: 3, built: 2 } },
-	PointerTypeMutNode: { words: 6, builtWords: 3, type_: { word: 2, width: 4, forms: 3, built: 2 } },
+	PointerTypeMutNode: {
+		words: 7,
+		builtWords: 4,
+		writable: { word: 2, width: 1, forms: 2, built: 2 },
+		type_: { word: 3, width: 4, forms: 3, built: 3 }
+	},
 	RangeExpressionBinaryNode: {
 		words: 11,
 		builtWords: 5,
@@ -863,8 +885,18 @@ export const records = {
 		body: { word: 13, width: 3, forms: 1, built: 4 }
 	},
 	LineCommentExtraSlashesNode: { words: 2, builtWords: 2 },
-	LineCommentDocOuterNode: { words: 5, builtWords: 3, doc: { word: 2, width: 3, forms: 1, built: 2 } },
-	LineCommentDocInnerNode: { words: 5, builtWords: 3, doc: { word: 2, width: 3, forms: 1, built: 2 } },
+	LineCommentDocOuterNode: {
+		words: 6,
+		builtWords: 4,
+		outer: { word: 2, width: 1, forms: 2, built: 2 },
+		doc: { word: 3, width: 3, forms: 1, built: 3 }
+	},
+	LineCommentDocInnerNode: {
+		words: 6,
+		builtWords: 4,
+		inner: { word: 2, width: 1, forms: 2, built: 2 },
+		doc: { word: 3, width: 3, forms: 1, built: 3 }
+	},
 	LineCommentRegularNode: { words: 2, builtWords: 2 },
 	BlockCommentDocOuterNode: { words: 5, builtWords: 3, doc: { word: 2, width: 3, forms: 1, built: 2 } },
 	BlockCommentDocInnerNode: { words: 5, builtWords: 3, doc: { word: 2, width: 3, forms: 1, built: 2 } },
@@ -1050,10 +1082,11 @@ export const records = {
 	},
 	ArrayExpressionListElementsNode: { words: 3, builtWords: 3, item: { word: 2, width: 1, run: 3, forms: 1, built: 2 } },
 	ReceiverParameterDeclarationNode: {
-		words: 7,
-		builtWords: 4,
+		words: 8,
+		builtWords: 5,
 		mutable: { word: 2, bit: 0 },
-		type_: { word: 3, width: 4, forms: 3, built: 3 }
+		name: { word: 3, width: 1, forms: 2, built: 3 },
+		type_: { word: 4, width: 4, forms: 3, built: 4 }
 	},
 	AttributedParameterReceiverNode: {
 		words: 8,

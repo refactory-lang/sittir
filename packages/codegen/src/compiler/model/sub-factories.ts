@@ -535,7 +535,7 @@ export function seatsConfigChild(sub: SubFactory, nodeMap: NodeMap): boolean {
 }
 
 export function configKeysOf(node: AssembledNode): readonly string[] {
-	return isSlotBearingCompound(node) ? node.slots.map((f) => f.propertyName) : [];
+	return isSlotBearingCompound(node) ? node.valueSlots.map((f) => f.propertyName) : [];
 }
 
 export function subFactoriesOf(node: AssembledNode, nodeMap: NodeMap, opts: SubFactoryOptions = {}): SubFactorySet {

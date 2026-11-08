@@ -644,13 +644,14 @@ export const records = {
 		verbatim: { word: 6, width: 2, forms: 4, built: 4 }
 	},
 	ConstructorDeclarationNode: {
-		words: 21,
-		builtWords: 7,
+		words: 22,
+		builtWords: 8,
 		async_: { word: 2, bit: 0 },
-		type_parameters: { word: 3, width: 5, inline: 5, forms: 8, built: 3 },
-		parameters: { word: 8, width: 5, inline: 5, forms: 8, built: 4 },
-		return_type: { word: 13, width: 3, forms: 1, built: 5 },
-		body: { word: 16, width: 5, inline: 5, forms: 8, built: 6 }
+		name: { word: 3, width: 1, forms: 2, built: 3 },
+		type_parameters: { word: 4, width: 5, inline: 5, forms: 8, built: 4 },
+		parameters: { word: 9, width: 5, inline: 5, forms: 8, built: 5 },
+		return_type: { word: 14, width: 3, forms: 1, built: 6 },
+		body: { word: 17, width: 5, inline: 5, forms: 8, built: 7 }
 	},
 	BlockClassDeclarationNode: { words: 3, builtWords: 3, statements: { word: 2, width: 1, run: 3, forms: 1, built: 2 } },
 	SuiteBlockClassDeclarationNode: {

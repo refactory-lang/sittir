@@ -616,7 +616,7 @@ export const querySlots: QuerySlots = Object.freeze({
 		['parameter', 0, undefined, '_parameter'],
 		['type', 1, undefined, '_type']
 	],
-	396: [['type', 0, undefined, '_type']],
+	396: [['type', 1, undefined, '_type']],
 	398: [['body', 0, undefined, '_body']],
 	399: [
 		['name', 0, undefined, '_name'],
@@ -801,8 +801,8 @@ export const querySlots: QuerySlots = Object.freeze({
 		['static', 1, 'static', '_static', 52],
 		['override', 2, 'override', '_override', 326],
 		['name', 3, undefined, '_name'],
-		['type', 4, undefined, '_type'],
-		['body', 5, undefined, '_body']
+		['type', 5, undefined, '_type'],
+		['body', 6, undefined, '_body']
 	],
 	454: [
 		['accessibilityModifier', 0, undefined, '_accessibility_modifier'],
@@ -830,7 +830,7 @@ export const querySlots: QuerySlots = Object.freeze({
 		['static', 1, 'static', '_static', 52],
 		['override', 2, 'override', '_override', 326],
 		['name', 3, undefined, '_name'],
-		['type', 4, undefined, '_type']
+		['type', 5, undefined, '_type']
 	],
 	457: [
 		['accessibilityModifier', 0, undefined, '_accessibility_modifier'],
@@ -853,7 +853,7 @@ export const querySlots: QuerySlots = Object.freeze({
 		['accessibilityModifier', 0, undefined, '_accessibility_modifier'],
 		['override', 1, 'override', '_override', 326],
 		['name', 2, undefined, '_name'],
-		['type', 3, undefined, '_type']
+		['type', 4, undefined, '_type']
 	],
 	460: [
 		['accessibilityModifier', 0, undefined, '_accessibility_modifier'],
@@ -886,16 +886,16 @@ export const querySlots: QuerySlots = Object.freeze({
 	],
 	463: [
 		['accessibilityModifier', 0, undefined, '_accessibility_modifier'],
-		['parameters', 1, undefined, '_parameters'],
-		['body', 2, undefined, '_body']
+		['parameters', 2, undefined, '_parameters'],
+		['body', 3, undefined, '_body']
 	],
 	467: [
 		['decorators', 0, undefined, '_decorator'],
 		['accessibilityModifier', 1, undefined, '_accessibility_modifier'],
 		['override', 2, 'override', '_override', 326],
 		['readonly', 3, 'readonly', '_readonly', 38],
-		['type', 4, undefined, '_type'],
-		['value', 5, undefined, '_value']
+		['type', 5, undefined, '_type'],
+		['value', 6, undefined, '_value']
 	],
 	469: [
 		['receiver', 0, undefined, '_receiver'],
@@ -3000,6 +3000,7 @@ export const structure: StructureTable = Object.freeze({
 	},
 	396: {
 		kind: '_get_accessor_signature',
+		required: [['_parameters', 'parameters']],
 		single: [['_type', 'GetAccessorSignature.type']],
 		nodeOnly: [
 			[
@@ -3009,6 +3010,7 @@ export const structure: StructureTable = Object.freeze({
 				[333, 337, 352]
 			]
 		],
+		kindIds: [['_parameters', 'GetAccessorSignature.parameters', [288]]],
 		config: ['type']
 	},
 	398: {
@@ -3671,6 +3673,7 @@ export const structure: StructureTable = Object.freeze({
 		kind: 'method_definition_getter',
 		required: [
 			['_name', 'name'],
+			['_parameters', 'parameters'],
 			['_body', 'body']
 		],
 		single: [
@@ -3697,7 +3700,10 @@ export const structure: StructureTable = Object.freeze({
 			['_static', 'MethodDefinitionGetter.static'],
 			['_override', 'MethodDefinitionGetter.override']
 		],
-		kindIds: [['_accessibility_modifier', 'MethodDefinitionGetter.accessibilityModifier', [34, 35, 36]]],
+		kindIds: [
+			['_accessibility_modifier', 'MethodDefinitionGetter.accessibilityModifier', [34, 35, 36]],
+			['_parameters', 'MethodDefinitionGetter.parameters', [288]]
+		],
 		config: ['accessibilityModifier', 'static', 'override', 'name', 'type', 'body']
 	},
 	454: {
@@ -3782,7 +3788,10 @@ export const structure: StructureTable = Object.freeze({
 	},
 	456: {
 		kind: 'method_signature_getter',
-		required: [['_name', 'name']],
+		required: [
+			['_name', 'name'],
+			['_parameters', 'parameters']
+		],
 		single: [
 			['_name', 'MethodSignatureGetter.name'],
 			['_type', 'MethodSignatureGetter.type']
@@ -3805,7 +3814,10 @@ export const structure: StructureTable = Object.freeze({
 			['_static', 'MethodSignatureGetter.static'],
 			['_override', 'MethodSignatureGetter.override']
 		],
-		kindIds: [['_accessibility_modifier', 'MethodSignatureGetter.accessibilityModifier', [34, 35, 36]]],
+		kindIds: [
+			['_accessibility_modifier', 'MethodSignatureGetter.accessibilityModifier', [34, 35, 36]],
+			['_parameters', 'MethodSignatureGetter.parameters', [288]]
+		],
 		config: ['accessibilityModifier', 'static', 'override', 'name', 'type']
 	},
 	457: {
@@ -3881,7 +3893,10 @@ export const structure: StructureTable = Object.freeze({
 	},
 	459: {
 		kind: 'abstract_method_signature_getter',
-		required: [['_name', 'name']],
+		required: [
+			['_name', 'name'],
+			['_parameters', 'parameters']
+		],
 		single: [
 			['_name', 'AbstractMethodSignatureGetter.name'],
 			['_type', 'AbstractMethodSignatureGetter.type']
@@ -3901,7 +3916,10 @@ export const structure: StructureTable = Object.freeze({
 			]
 		],
 		booleans: [['_override', 'AbstractMethodSignatureGetter.override']],
-		kindIds: [['_accessibility_modifier', 'AbstractMethodSignatureGetter.accessibilityModifier', [34, 35, 36]]],
+		kindIds: [
+			['_accessibility_modifier', 'AbstractMethodSignatureGetter.accessibilityModifier', [34, 35, 36]],
+			['_parameters', 'AbstractMethodSignatureGetter.parameters', [288]]
+		],
 		config: ['accessibilityModifier', 'override', 'name', 'type']
 	},
 	460: {
@@ -4003,6 +4021,7 @@ export const structure: StructureTable = Object.freeze({
 	463: {
 		kind: 'constructor_declaration',
 		required: [
+			['_name', 'name'],
 			['_parameters', 'parameters'],
 			['_body', 'body']
 		],
@@ -4014,11 +4033,15 @@ export const structure: StructureTable = Object.freeze({
 			['_parameters', 'ConstructorDeclaration.parameters', 'a built FormalParameters', [288]],
 			['_body', 'ConstructorDeclaration.body', 'a built StatementBlock', [210]]
 		],
-		kindIds: [['_accessibility_modifier', 'ConstructorDeclaration.accessibilityModifier', [34, 35, 36]]],
+		kindIds: [
+			['_accessibility_modifier', 'ConstructorDeclaration.accessibilityModifier', [34, 35, 36]],
+			['_name', 'ConstructorDeclaration.name', [54]]
+		],
 		config: ['accessibilityModifier', 'parameters', 'body']
 	},
 	467: {
 		kind: 'receiver_parameter_declaration',
+		required: [['_name', 'name']],
 		single: [
 			['_type', 'ReceiverParameterDeclaration.type'],
 			['_value', 'ReceiverParameterDeclaration.value']
@@ -4032,7 +4055,10 @@ export const structure: StructureTable = Object.freeze({
 			['_override', 'ReceiverParameterDeclaration.override'],
 			['_readonly', 'ReceiverParameterDeclaration.readonly']
 		],
-		kindIds: [['_accessibility_modifier', 'ReceiverParameterDeclaration.accessibilityModifier', [34, 35, 36]]],
+		kindIds: [
+			['_accessibility_modifier', 'ReceiverParameterDeclaration.accessibilityModifier', [34, 35, 36]],
+			['_name', 'ReceiverParameterDeclaration.name', [278]]
+		],
 		config: ['decorators', 'accessibilityModifier', 'override', 'readonly', 'type', 'value'],
 		lists: [['decorators', false, 'key']]
 	},

@@ -33,6 +33,7 @@ export interface NodeModelSlot {
 	readonly required?: boolean;
 	readonly multiple?: boolean;
 	readonly storage?: string;
+	readonly pinned?: string;
 	readonly values?: readonly NodeModelValue[];
 }
 
@@ -101,6 +102,7 @@ export function slotModelOf(record: NodeModelRecord): SlotModel {
 				required: s.required ?? false,
 				multiple: s.multiple ?? false,
 				storage: s.storage ?? 'verbatim',
+				...(s.pinned === undefined ? {} : { pinned: s.pinned }),
 				kinds: slotKindsOf(s),
 				terminals: (s.values ?? []).flatMap((v) => (v.kind === 'terminal' && v.value !== undefined ? [v.value] : [])),
 				...mountsOf(s),
