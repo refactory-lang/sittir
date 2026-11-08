@@ -1,5 +1,6 @@
-// Object render per file: node --expose-gc object-render.mjs <tree> <corpus-root> <admitted.json> <passes> <out.json> [path-filter]
-// Each pass parses every admitted file in object storage (untimed), renders
+// Render per file, in the node storage STORAGE names (object when unset):
+// node --expose-gc object-render.mjs <tree> <corpus-root> <admitted.json> <passes> <out.json> [path-filter]
+// Each pass parses every admitted file (untimed), renders
 // each parsed root once, timing that render alone (each render is its tree's
 // first, as the paired-refs corpus batch renders), and releases the roots.
 // Writes each file's median render ms over the passes, the total, and a hash
@@ -12,7 +13,7 @@ import { pathToFileURL } from 'node:url';
 
 const [tree, root, admitted, passesArg, out, filter] = process.argv.slice(2);
 const language = (await import(pathToFileURL(path.join(tree, 'packages/typescript/dist/index.js')).href)).default;
-const engine = await language.createEngine({ nodeStorage: 'object' });
+const engine = await language.createEngine({ nodeStorage: process.env.STORAGE ?? 'object' });
 const files = JSON.parse(fs.readFileSync(admitted, 'utf8')).files.filter((file) => filter === undefined || file.path.includes(filter));
 const sources = files.map((file) => fs.readFileSync(path.join(root, file.path), 'utf8'));
 const pass = (timed) => {

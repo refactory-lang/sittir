@@ -1,5 +1,5 @@
 name: Probe object render (Linux)
-run-name: Probe matter.js object render, b140d66e2 against d2733088b
+run-name: Probe matter.js render (object and arena), b140d66e2 against d2733088b
 
 on:
   push:
@@ -36,11 +36,11 @@ jobs:
         shell: bash
         env:
           NODE_ENV: production
-        run: NAPI_RS_NATIVE_LIBRARY_PATH="$RUNNER_TEMP/trees/lib-head.node" node scripts/ci/paired-refs/reference/admit.mjs "$RUNNER_TEMP/trees/head" "$RUNNER_TEMP/probe/corpora"
-      - name: Time each file's object render, alternating
+        run: node scripts/ci/paired-refs/reference/admit.mjs "$RUNNER_TEMP/trees/head" "$RUNNER_TEMP/probe/corpora"
+      - name: Time each file's render in each storage, alternating
         shell: bash
         run: bash scripts/ci/paired-refs/probes/object-render.sh time
-      - name: The corpus worker in object storage, GC by phase
+      - name: The corpus worker in each storage, GC by phase
         shell: bash
         run: bash scripts/ci/paired-refs/probes/object-render.sh worker
       - name: Profile each tree under perf
