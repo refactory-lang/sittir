@@ -17,6 +17,8 @@
  * run rather than filtering it, so CI passes it here (`pnpm run test --
  * --coverage`) to get coverage AND a recorded history entry from a single
  * vitest invocation instead of running the full suite twice.
+ * `--merge-reports` is the other: it assembles the whole suite from the
+ * shards' blob reports, so CI's sharded run records one entry for all of them.
  *
  * Exits with vitest's own exit code, not a code derived from the recording
  * step — `pnpm test`'s pass/fail signal (CI, a human running it locally)
@@ -46,7 +48,8 @@ const result = spawnSync('pnpm', ['exec', 'vitest', 'run', ...extraArgs], {
 	stdio: 'inherit'
 });
 
-const isFilteredRun = extraArgs.some((arg) => arg !== '--coverage');
+const WHOLE_SUITE_FLAGS = new Set(['--coverage', '--merge-reports']);
+const isFilteredRun = extraArgs.some((arg) => !WHOLE_SUITE_FLAGS.has(arg));
 if (isFilteredRun) {
 	process.exit(result.status ?? 1);
 }

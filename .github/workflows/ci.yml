@@ -19,13 +19,11 @@ env:
   CARGO_HTTP_MULTIPLEXING: "false"
 
 jobs:
-  CI:
-    name: CI
+  # Builds the packages and native addons once, hands the build to the test
+  # shards, then runs the checks that need only the build while the shards run.
+  build:
+    name: build (24.x)
     runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        node-version: [24.x]
 
     steps:
       - uses: actions/checkout@v6
@@ -33,10 +31,10 @@ jobs:
       - name: Install pnpm
         uses: pnpm/action-setup@v4
 
-      - name: Use Node.js ${{ matrix.node-version }}
+      - name: Use Node.js 24.x
         uses: actions/setup-node@v6
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: 24.x
           cache: "pnpm"
 
       - name: Install dependencies
@@ -56,6 +54,17 @@ jobs:
 
       - name: Build
         run: pnpm run build
+
+      - name: Upload the build for the test shards
+        uses: actions/upload-artifact@v4
+        with:
+          name: workspace-build
+          path: |
+            packages/*/dist
+            packages/*/native/*.node
+            node_modules/.cache/sittir/native-build/
+          include-hidden-files: true
+          if-no-files-found: error
 
       # Compiling a grammar reads its generated layer's hash through the
       # pinned build, and the required-slot census compiles every grammar.
@@ -83,14 +92,6 @@ jobs:
         run: pnpm run format:check
         continue-on-error: true
 
-      - name: Test
-        # `-- --coverage` instruments this same whole-suite run instead of
-        # running it a second time — test-and-record.ts treats --coverage
-        # as compatible with recording (see its own doc comment). This used
-        # to be two separate steps (`pnpm run test` then `pnpm run
-        # test:coverage`), each running all ~208 test files.
-        run: pnpm run test -- --coverage
-
       - name: Benchmark reporting tests
         # The benchmark workflows run these with `node --test` before any
         # build, so they stay outside vitest.
@@ -99,6 +100,98 @@ jobs:
       - name: Security Audit
         run: pnpm audit --audit-level moderate
         continue-on-error: true
+
+  # The whole suite split across parallel runners. Each shard writes a blob
+  # report with its coverage; `CI (24.x)` merges them into the one run that
+  # is recorded.
+  test:
+    name: test (shard ${{ matrix.shard }}/${{ strategy.job-total }})
+    needs: build
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3, 4]
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Use Node.js 24.x
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24.x
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Download the build
+        uses: actions/download-artifact@v4
+        with:
+          name: workspace-build
+          path: .
+
+      - name: Install the pinned Rust toolchain
+        uses: ./.github/actions/rust-toolchain
+
+      - name: Bootstrap the pinned build
+        uses: ./.github/actions/bootstrap
+
+      - name: Test
+        run: pnpm exec vitest run --coverage --shard=${{ matrix.shard }}/${{ strategy.job-total }} --reporter=default --reporter=blob
+
+      - name: Upload the blob report
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: vitest-blob-${{ matrix.shard }}
+          path: .vitest-reports/
+          include-hidden-files: true
+          if-no-files-found: error
+
+  # The required check. It passes only when the build job and every shard
+  # passed, then merges the shards' reports into the one whole-suite run that
+  # `test-and-record` records and covers.
+  CI:
+    name: CI (24.x)
+    needs: [build, test]
+    if: ${{ !cancelled() }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Every upstream job passed
+        if: ${{ needs.build.result != 'success' || needs.test.result != 'success' }}
+        run: |
+          echo "build: ${{ needs.build.result }}, test shards: ${{ needs.test.result }}"
+          exit 1
+
+      - uses: actions/checkout@v6
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Use Node.js 24.x
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24.x
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Download the blob reports
+        uses: actions/download-artifact@v4
+        with:
+          pattern: vitest-blob-*
+          merge-multiple: true
+          path: .vitest-reports
+
+      - name: Merge the shards' reports, record and cover
+        run: pnpm run test -- --merge-reports --coverage
 
   # Spec 016 T009 (follow-up) — regression-checker (native mode).
   #
@@ -278,8 +371,8 @@ jobs:
           find packages -path "*/native/*.node" -print
       - name: Install the pinned Rust toolchain
         uses: ./.github/actions/rust-toolchain
-      - name: Build the packages
-        run: pnpm run build
+      - name: Build the packages (the addons are the napi build's)
+        run: pnpm -r --filter './packages/*' --workspace-concurrency=4 run build
       - name: Pack, install outside the workspace, type-check @sittir/types, createEngine + parse + render
         run: pnpm run check:published
 
@@ -333,7 +426,7 @@ jobs:
           if-no-files-found: warn
 
   # Rust workspace compile and lint checks. They need no other job's output, so the job
-  # starts immediately; `napi-build` and `scope-boundaries` wait on it.
+  # starts immediately; `scope-boundaries` waits on it.
   rust:
     name: cargo check --workspace
     runs-on: ubuntu-22.04
@@ -429,7 +522,6 @@ jobs:
   # repo's `.github/actions/rust-toolchain`, which installs the pinned version.
   napi-build:
     name: napi build (${{ matrix.target }})
-    needs: rust
     runs-on: ${{ matrix.host }}
     # A tag run's platform legs report without failing the run; on every
     # other run the single linux leg gates: its build, the workspace
