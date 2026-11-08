@@ -52,13 +52,13 @@ pub use built_write::BuiltWriter;
 pub use cell::{flag, header_of, kind_field, parsed_tag, with_kind, Cell, CellWord, ListCell, LINK_WORDS};
 pub use hydrate::{hydrate_at, parsed_side, row_of as hydrated_row, Draft, Embed, HydrateError, HydrateNode, HydrateSlot, Hydrated, Hydration, Walk};
 pub use memory::{ChunkMem, ChunkUnit};
-pub use parsed::RecordGrammar;
+pub use parsed::{BackerParity, RecordGrammar};
 pub use reach::{deepen, reach, read_cell};
 pub use prep::{own_seat, prepare_root, record_snapshot_edge, record_source_separator, seat_through, view_kind_in, CellAt, HeldArenas, LayoutAt, PrepareRecord, RecordAt, RecordPrep, RecordTrees, SettingAt, SettingOf, SlotAt};
 pub use prepared::{PrepPlace, Prepared, PreparedNode, PreparedSlot, SlotTokens};
 pub use view::{built_leaf_place, linked_leaf_place, held_changed, leaf_place, place_of, record_of, row_of, source_root, ParsedRow, RecordArenas, RecordCtx, RecordItems, RecordLayout, RecordSlot, RecordView, VerbatimRecord};
 pub use write::{LayoutField, Link, Linked, RecordSink, WriteCell, captured_cell, coordinate_cell, leaf_cell, write_list, write_record, write_slot};
-pub use rows::TreeArena;
+pub use rows::{NodeRows, TreeArena, ROW_FIELD_BITS};
 pub use side::{Row, SideRecord, SideSlot, Sides};
 
 /// A native node type's view over its records: a struct's is its

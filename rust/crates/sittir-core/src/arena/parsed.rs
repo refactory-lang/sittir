@@ -6,6 +6,7 @@
 use crate::tree_sitter;
 use super::{Address, Arena, ArenaRead, Cell, CellAt, HeldArenas, HydrateError, HydrateNode, RecordCells, RecordTrees, SideRecord, TreeArena};
 use crate::engine::{EngineGrammar, ParsedTree};
+use crate::nodes::{Nodes, RecordNodes, TreeNodes};
 use crate::options::ResolvedOptions;
 use crate::prepare::RenderContext;
 use crate::read::Depth;
@@ -14,6 +15,43 @@ use crate::render::{RenderError, SourceTable};
 use crate::slot::ChangedEdges;
 use crate::trivia_store::TriviaStore;
 use crate::types::{KindId, NodeIndex};
+
+/// Whether a tree's record backer answers its nodes as its tree backer does
+/// (`ParsedTree::backer_parity`): the nodes compared, how many differ, and
+/// the first that does.
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
+pub struct BackerParity {
+    pub nodes: u32,
+    pub differing: u32,
+    pub first: Option<u32>,
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for BackerParity {
+    /// `{ nodes, differing, first? }`, `first` only when a node differs.
+    unsafe fn to_napi_value(env: ::napi::sys::napi_env, val: Self) -> ::napi::Result<::napi::sys::napi_value> {
+        use crate::boundary::{object_with_present, present};
+        // SAFETY: napi calls `to_napi_value` with a live `env`, and every value encoded here is created in it.
+        unsafe {
+            object_with_present(env, &[
+                present(env, c"nodes", Some(val.nodes))?,
+                present(env, c"differing", Some(val.differing))?,
+                present(env, c"first", val.first)?,
+            ])
+        }
+    }
+}
+
+/// Whether `records` and `nodes` answer the node at `index` alike: its
+/// facts, children and parent, whether it is `MISSING` and whether it holds
+/// an error.
+fn agree(records: &mut dyn Nodes<'_>, nodes: &mut dyn Nodes<'_>, index: NodeIndex) -> bool {
+    records.kid(index) == nodes.kid(index)
+        && *records.kids(index) == *nodes.kids(index)
+        && records.parent(index) == nodes.parent(index)
+        && records.missing(index) == nodes.missing(index)
+        && records.holds_error(index) == nodes.holds_error(index)
+}
 
 /// A grammar's render of a record: its generated `render_record`.
 pub trait RecordGrammar: EngineGrammar {
@@ -57,13 +95,14 @@ impl<G: EngineGrammar> ParsedTree<G> {
     /// records of its ancestors no read wrote, each one level down (`reach`).
     /// `None` for a node that has no record: a parsed leaf or a unit, which
     /// its holder's cell holds whole, and an `ERROR` node, which is trivia of
-    /// its tree.
+    /// its tree; the first read in a tree whose root is an `ERROR` writes
+    /// its rows (`meet_error`).
     ///
     /// # Errors
     ///
     /// The read's refusal, naming the kind, and what the arena refuses.
     pub fn read_record<N: HydrateNode + RecordCells>(&self, index: NodeIndex, depth: Depth) -> Result<Option<Address>, String> {
-        if self.read_error(index).is_some() {
+        if self.meet_error(index)? {
             return Ok(None);
         }
         self.with_reads(|tree, cursor, ctx| super::reach::<N>(tree, cursor, ctx, index, depth, true))
@@ -77,7 +116,7 @@ impl<G: EngineGrammar> ParsedTree<G> {
     ///
     /// What the hydration refuses.
     pub fn hydrate_record<N: HydrateNode + RecordCells>(&self, index: NodeIndex, depth: Depth) -> Result<Option<Address>, String> {
-        if self.read_error(index).is_some() {
+        if self.meet_error(index)? {
             return Ok(None);
         }
         self.with_reads(|tree, cursor, ctx| {
@@ -127,6 +166,31 @@ impl<G: EngineGrammar> ParsedTree<G> {
         let coordinate = self.row_coordinate(row.index).ok_or_else(|| format!("the tree has no node {}", row.index.0))?;
         let kind = coordinate.kind.ok_or_else(|| format!("node {} has no stamped kind", row.index.0))?;
         Ok([header, row.index.0, coordinate.end.0, row.span.start, row.span.end, u32::from(kind.0)])
+    }
+
+    /// The tree hydrated whole as `N` (`hydrate_record`), past any record a
+    /// shallower read wrote, then each node compared as its record backer
+    /// (`RecordNodes`) and its tree backer (`TreeNodes`) answer it. A
+    /// diagnostic.
+    ///
+    /// # Errors
+    ///
+    /// The hydration's refusal, and one that leaves some node with no row.
+    pub fn backer_parity<N: HydrateNode + RecordCells>(&self) -> Result<BackerParity, String> {
+        self.hydrate_record::<N>(NodeIndex::ROOT, Depth::All)?;
+        let arena = self.tree_arena();
+        let mut records = RecordNodes::new(&arena, self.source()).ok_or("the whole read left a node with no row")?;
+        let work = crate::layout::LayoutWorkCounter::default();
+        let mut nodes = TreeNodes::new(self.tree(), self.source(), &work);
+        let mut parity = BackerParity::default();
+        for index in (0..nodes.kid(NodeIndex::ROOT).count).map(NodeIndex) {
+            parity.nodes += 1;
+            if !agree(&mut records, &mut nodes, index) {
+                parity.differing += 1;
+                parity.first.get_or_insert(index.0);
+            }
+        }
+        Ok(parity)
     }
 
     fn with_reads<R>(&self, f: impl FnOnce(&mut TreeArena, &mut tree_sitter::TreeCursor<'_>, &mut crate::read::ReadCtx<'_>) -> Result<R, HydrateError>) -> Result<R, String> {

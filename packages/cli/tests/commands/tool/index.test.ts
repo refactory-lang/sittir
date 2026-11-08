@@ -5,6 +5,7 @@ import { toolModules, registerTools } from '../../../src/commands/tool/index.ts'
 const EXPECTED = [
 	'assemble-shape-census',
 	'ast-diff',
+	'backer-parity',
 	'bench',
 	'bench-storage',
 	'bindings-inventory',

@@ -20,6 +20,7 @@ export type { CellFormat, CellForms, RecordCell, RecordCodecConstants, RecordLis
 export { BuiltArena, builtCell, decodeBuiltCell, unitCell } from './built-arena.ts';
 export type { HostPlatform, NativeBindingSpec } from './native-binding.ts';
 export type {
+	BackerParity,
 	BaselineRun,
 	LayoutWork,
 	StoredLayout,

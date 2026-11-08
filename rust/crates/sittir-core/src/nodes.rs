@@ -14,9 +14,10 @@ use std::sync::Arc;
 /// What navigation reads of a node: its descendant index, numbered from the
 /// tree's root; its bytes; the nodes under it, counting itself; the kind it
 /// has in the grammar and the kind the parser shows it as; the field it
-/// fills in its parent; and whether it is named, an extra or an `ERROR`.
-/// A read takes these of every node it visits; whether a node is `MISSING`
-/// or holds an error only an error search asks (`Nodes::missing`,
+/// fills in its parent; and whether it is named or an extra. Whether it is
+/// an `ERROR` follows from the kind it is shown as (`Kid::error`). A read
+/// takes these of every node it visits; whether a node is `MISSING` or
+/// holds an error only an error search asks (`Nodes::missing`,
 /// `Nodes::holds_error`).
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct Kid {
@@ -29,7 +30,6 @@ pub struct Kid {
     pub field: Option<FieldId>,
     pub named: bool,
     pub extra: bool,
-    pub error: bool,
 }
 
 impl Kid {
@@ -52,15 +52,20 @@ impl Kid {
             field,
             named: node.is_named(),
             extra: node.is_extra(),
-            error: node.is_error(),
         }
+    }
+
+    /// Whether the node is an `ERROR` (`shown_as_error`).
+    #[must_use]
+    pub fn error(&self) -> bool {
+        shown_as_error(self.display)
     }
 
     /// Whether the node is an entry of a side: an extra, or an `ERROR`
     /// wherever the parser left it. Trivia, which no slot reads.
     #[must_use]
     pub fn entry(&self) -> bool {
-        self.extra || self.error
+        self.extra || self.error()
     }
 
     /// Whether the node is a leaf: no entry, and no node under it.
@@ -117,6 +122,14 @@ pub enum Visit {
     Stop,
 }
 
+/// Whether a node the parser shows as `display` is an `ERROR`, as
+/// `Node::is_error` compares: the one test of it, on the kind the node is
+/// shown as.
+#[must_use]
+pub fn shown_as_error(display: KindId) -> bool {
+    display == KindId::ERROR
+}
+
 /// How navigation finds the nodes of one parse: each node by its descendant
 /// index, the root's being `NodeIndex::ROOT`, and the text their bytes index.
 /// `kid`, `kids` and `parent` answer every question of the tree's shape, and
@@ -136,7 +149,8 @@ pub trait Nodes<'t> {
     /// inserted, with no bytes.
     fn missing(&mut self, index: NodeIndex) -> bool;
     /// Whether the node at `index` holds an error in its subtree, itself
-    /// included: an `ERROR` or a `MISSING` node holds one.
+    /// included: an `ERROR` or a `MISSING` node holds one, a lone `ERROR`
+    /// token too.
     fn holds_error(&mut self, index: NodeIndex) -> bool;
 
     /// Walks the subtree of the node at `from` in preorder, telling `visit`
@@ -275,7 +289,8 @@ impl<'t> Nodes<'t> for TreeNodes<'t> {
     }
 
     fn holds_error(&mut self, index: NodeIndex) -> bool {
-        self.node(index).has_error()
+        let node = self.node(index);
+        node.has_error() || shown_as_error(crate::read::display_id(&node))
     }
 
     fn kids(&mut self, index: NodeIndex) -> Arc<[Kid]> {
@@ -346,5 +361,87 @@ impl<'t> Nodes<'t> for TreeNodes<'t> {
     fn next(&mut self, index: NodeIndex) -> Option<Kid> {
         let cursor = self.reader(index);
         cursor.goto_next_sibling().then(|| Kid::at(cursor))
+    }
+}
+
+/// Navigation over the rows a parsed tree's arena keeps for its nodes
+/// (`TreeArena::node_rows`), with no tree: each node's facts read from its
+/// row, its children by stepping from one subtree end to the next, and its
+/// parent from an index of every node's parent, made from the subtree ends
+/// on the first `parent`.
+#[cfg(feature = "arena")]
+pub struct RecordNodes<'t> {
+    rows: &'t crate::arena::NodeRows,
+    text: &'t str,
+    parents: Option<Vec<u32>>,
+}
+
+#[cfg(feature = "arena")]
+impl<'t> RecordNodes<'t> {
+    /// Navigation over the rows of `tree`'s nodes, whose bytes index `text`;
+    /// `None` while some node of the tree has no row.
+    #[must_use]
+    pub fn new(tree: &'t crate::arena::TreeArena, text: &'t str) -> Option<Self> {
+        tree.node_rows().map(|rows| Self { rows, text, parents: None })
+    }
+
+    /// Every node of the tree, in preorder: the rows in index order.
+    pub fn preorder(&self) -> impl Iterator<Item = Kid> + '_ {
+        (0..self.rows.len()).map(|index| self.rows.kid(NodeIndex(index)))
+    }
+}
+
+/// Each node's parent by its index, the root's 0: one pass in index order,
+/// holding the nodes whose subtrees are still open.
+#[cfg(feature = "arena")]
+fn parents_of(rows: &crate::arena::NodeRows) -> Vec<u32> {
+    let mut parents = vec![0; rows.len() as usize];
+    let mut open: Vec<(u32, NodeIndex)> = Vec::new();
+    for index in 0..rows.len() {
+        while open.last().is_some_and(|&(_, end)| end.0 <= index) {
+            open.pop();
+        }
+        if let Some(&(parent, _)) = open.last() {
+            parents[index as usize] = parent;
+        }
+        open.push((index, rows.subtree_end(NodeIndex(index))));
+    }
+    parents
+}
+
+#[cfg(feature = "arena")]
+impl<'t> Nodes<'t> for RecordNodes<'t> {
+    fn text(&self) -> &'t str {
+        self.text
+    }
+
+    fn kid(&mut self, index: NodeIndex) -> Kid {
+        self.rows.kid(index)
+    }
+
+    fn kids(&mut self, index: NodeIndex) -> Arc<[Kid]> {
+        let end = self.rows.subtree_end(index);
+        let mut kids = Vec::new();
+        let mut at = index + 1;
+        while at < end {
+            let kid = self.rows.kid(at);
+            at = at + kid.count;
+            kids.push(kid);
+        }
+        kids.into()
+    }
+
+    fn parent(&mut self, index: NodeIndex) -> Option<NodeIndex> {
+        let rows = self.rows;
+        let parents = self.parents.get_or_insert_with(|| parents_of(rows));
+        (index != NodeIndex::ROOT).then(|| NodeIndex(parents[index.0 as usize]))
+    }
+
+    fn missing(&mut self, index: NodeIndex) -> bool {
+        self.rows.missing(index)
+    }
+
+    fn holds_error(&mut self, index: NodeIndex) -> bool {
+        self.rows.holds_error(index)
     }
 }

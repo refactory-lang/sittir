@@ -201,7 +201,7 @@ fn held<N: HydrateNode>(tree: &mut TreeArena, cursor: &mut TreeCursor<'_>, ctx: 
         return Ok(Some(at));
     }
     crate::read::goto(cursor, row);
-    if !writes || cursor.node().is_error() {
+    if !writes || crate::nodes::shown_as_error(crate::read::display_id(&cursor.node())) {
         return Ok(None);
     }
     let at = write::<N>(tree, cursor, ctx, row, None, depth)?;

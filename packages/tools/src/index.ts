@@ -42,6 +42,13 @@ export {
 	type TriviaPlacementCensus
 } from './validate/trivia-placement.ts';
 export {
+	run as backerParity,
+	computeBackerParity,
+	type BackerParityOptions,
+	type BackerParityFile,
+	type BackerParityCensus
+} from './validate/backer-parity.ts';
+export {
 	run as gapCensus,
 	computeGapCensus,
 	type GapCensusOptions,

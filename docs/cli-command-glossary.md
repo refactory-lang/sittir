@@ -929,6 +929,23 @@ Census the source gaps between adjacent list items: exact versus the nearest mem
 pnpm exec tsx packages/cli/src/cli.ts tool gap-census [options]
 ```
 
+### `tool backer-parity`
+
+Compare arena storage's record backer with the tree backer on every node of each TypeScript source of a corpus, read whole
+
+**Options**
+
+- `--corpus <dir>` — The corpus root every path is read under
+- `--admitted <json>` — The corpus harness's admitted list, whose files' paths are read
+- `--files <paths...>` — These paths under the corpus root, without an admitted list
+- `--json` — Print the census as JSON
+
+**Example**
+
+```sh
+pnpm exec tsx packages/cli/src/cli.ts tool backer-parity [options]
+```
+
 ### `tool trivia-timing`
 
 Time reading every node's leading trivia after a deep parse of a file (one line-gap query per node)
