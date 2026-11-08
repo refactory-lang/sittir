@@ -12,7 +12,7 @@
 
 **Tech stack:** Rust (`sittir-core`, `sittir-node-macros`), the TypeScript engine in `packages/common`, and the tools' validators and benchmarks.
 
-**Spec:** `docs/superpowers/specs/2026-11-06-arena-trees-from-records-design.md`. Read it first. It replaces Task 4 of `docs/superpowers/plans/2026-11-06-trees-as-objects.md`.
+**Spec:** `docs/superpowers/specs/2026-11-06-arena-trees-from-records-design.md`. Read it first. It replaces Task 4 of `docs/superpowers/plans/2026-11-06-trees-as-objects.md`. Tasks 8–13 implement `docs/superpowers/specs/2026-11-08-lock-free-tree-state-design.md`, the lock-free arena state with no `Rc` or `Arc`; read that spec before Task 6.
 
 **Facts this plan starts from:**
 - Trivia placement (`trivia_table/place.rs`) reaches the tree only through `Placer::node`, `kid`, `kids`, `path` and `parent`. A `Kid` carries index, start, end, descendant count, kind, named, entry, leaf and holder.
@@ -27,7 +27,9 @@
 ## Global Constraints
 
 - **Worktree and branches:** prototype's one worktree, `scratchpad/wt-2c-census`, with a new branch per task from `origin/master`. No other worktrees. Pathspec commits (`git commit -- <paths>`). No force, stash, amend, rebase, revert or abort. Push by literal sha.
-- **File overlap with engine-api's plans:** before starting a task, compare its files with engine-api's open branch. A task that overlaps waits until that branch merges. Task 6 starts only after the tree-holders plan's Tasks 1–3 and 5 have merged.
+- **The tree-holders plan's object half is deferred** (the maintainer, 2026-11-08). Arena parses move from the live-tree table straight into the engine's held-parse table. No `TreeCell` or interim `Tree` object comes first.
+- **Native threads, when added,** are scoped threads that borrow immutable published data: rows, the source and written records. Each returns its scratch to the borrow's owner. Nothing is reference-counted to cross a thread.
+- **Object storage's speed is not a gate** (the maintainer: "as long as it doesn't affect arenas and the public api"). Its correctness is a gate: rows, renders and records. So is the public API.
 - **No napi or V8 call runs off the JavaScript thread, or on a grown stack segment.** Render stays a recursive descent.
 - **A tree's bytes and strings stay native.** No source copy on the JavaScript heap, and no bulk source crossing.
 - **Object storage keeps its representation.** Only its tree backer's cursor movement changes.
@@ -44,6 +46,8 @@
 3. **Multi-byte UTF-8 sources and multi-line tokens.** Spans stay byte offsets, `line_starts_inside_tokens` gives the same lines, and columns come from the line table, not from byte counts. Owned by Tasks 3 and 4.
 4. **A deeply nested source hydrated at parse.** 10,000 levels hydrate without overflow, with no napi call on a grown segment. Owned by Task 6.
 5. **A built node that links parsed nodes from a released parse root.** The parse stays held until the link goes, and a stale read handle is refused by name, never reading a reused slot. Owned by Task 6.
+6. **A second call into the same engine while one is running,** for example from a finalizer or a callback that reaches the engine. Expected: refused by name, with no deadlock and no aliasing `&mut`. Owned by Task 9.
+7. **A JavaScript view of a built chunk kept past the chunk's free.** Expected: the view is detached (`byteLength` 0) before the memory goes, never a read of freed memory. Owned by Task 12.
 
 ---
 
@@ -174,12 +178,14 @@ In flight as its own PR (prototype). Goldens from master, then the pass, with re
 - Test: `rust/crates/sittir-core/tests/arena_held_parses.rs` and `packages/common/tests/arena-held-parses.test.ts`.
 
 **Interfaces:**
-- Consumes: Task 5. The tree-holders plan's `TreeCell` and the interim `Tree` object, which this task removes from arena storage.
+- Consumes: Task 5. Arena parses leave the live-tree table here.
 - Produces:
-  - `HeldParses::hold(&mut self, parse: ParseRef) -> u32`;
+  - `pub struct HeldParse`, owning its `TreeArena`, token spans, rows, source (`Box<str>`) and placed sides as direct fields, none wrapped in `Arc`, `Rc`, `Mutex`, `RwLock` or an atomic. What those values hold inside becomes plain in Tasks 11 and 12.
+  - `HeldParses`, a field of the engine, reached only through the engine's borrow. Counts are plain `u32`s.
+  - `HeldParses::hold(&mut self, parse: HeldParse) -> u32`;
   - `HeldParses::release(&mut self, slot: u32)`;
-  - `HeldParses::get(&self, slot: u32) -> &ParseRef`, for a counted holder;
-  - `HeldParses::borrowed(&self, slot: u32, parse: TreeId) -> Result<&ParseRef, ParseReleased>`, for every read-handle call. `ParseReleased` names the parse's id;
+  - `HeldParses::get(&self, slot: u32) -> &HeldParse`, for a counted holder;
+  - `HeldParses::borrowed(&self, slot: u32, parse: TreeId) -> Result<&HeldParse, ParseReleased>`, for every read-handle call. `ParseReleased` names the parse's id;
   - a slot is reused only when its count is 0.
 
 - [ ] **Step 1: Failing tests:**
@@ -205,3 +211,118 @@ Run on Task 6's branch before its PR is opened. Tasks 2–5 carry the standard C
   - each against the ×1.10 bar.
   Anything over the bar is reported before the PR, with its cause.
 - [ ] **Step 2: Open Task 6's PR to master.** The body carries the table and checks the spec's memory claim against it. Merge waits for the user's word.
+
+### Task 8: The lock-free census
+
+A ratchet that every later task lowers. Each of Tasks 9–12 starts by lowering its files' ceilings, so its first test fails.
+
+**Files:**
+- Create: `rust/crates/sittir-core/tests/lock_free_census.rs`.
+
+**Interfaces:**
+- Produces: `const CEILINGS: &[(&str, u32)]`. This holds each `src/` file's count of uses of `Mutex`, `RwLock`, `OnceLock`, `LazyLock`, `Arc`, `Weak`, `Rc`, `RefCell` and `std::sync::atomic`, keyed by its path under `rust/crates/sittir-core/src/`. It lists every file whose count isn't 0.
+
+- [ ] **Step 1: Write `lock_free_census_matches_its_ceilings`.** It scans `src/**/*.rs`, skipping comments, `#[cfg(test)]` modules and string literals, and compares each file's count with its ceiling.
+  - A file over its ceiling fails, naming the file, its count and the uses found.
+  - A file under its ceiling also fails, asking for the ceiling to be lowered. The ceiling equals the count; it never exceeds it.
+  - A file missing from `CEILINGS` has a ceiling of 0.
+- [ ] **Step 2:** Fill in `CEILINGS` from the run at the task's base. Run `cargo test -p sittir-core --test lock_free_census`. It passes.
+- [ ] **Step 3: Commit:** `test(core): a census of locks, atomics and shared owners, ratcheted per file`.
+
+### Task 9: The engine owns its state; one borrow per call
+
+**Files:**
+- Modify: `napi_engine.rs`. `napi_engine!`'s `EngineCell` goes from `Rc<RefCell<Engine<G>>>` to a `RefCell<Engine<G>>` the napi class owns. Every holder of an `Rc` clone today takes the engine per call instead. Any holder that can't is listed in the PR for the maintainer.
+- Modify: `engine.rs` (`Engine`).
+- Test: `rust/crates/sittir-core/tests/engine_borrow.rs`.
+
+**Interfaces:**
+- Produces:
+  - `pub fn engine_mut<'a, G: EngineGrammar>(cell: &'a std::cell::RefCell<Engine<G>>, operation: &'static str) -> napi::Result<std::cell::RefMut<'a, Engine<G>>>`, which every `#[napi]` method calls once;
+  - the refusal message: `sittir: {operation} was called while this engine is already in a call`.
+
+- [ ] **Step 1: Lower `napi_engine.rs`'s ceiling by the `Rc` uses it removes.** Write `a_second_borrow_of_an_engine_in_one_call_is_refused_by_name`: it holds `engine_mut(&cell, "render")` and asserts `engine_mut(&cell, "parse")` errs with `sittir: parse was called while this engine is already in a call`.
+- [ ] **Step 2:** Run `cargo test -p sittir-core --test engine_borrow --test lock_free_census`. Both fail.
+- [ ] **Step 3: Implement.**
+- [ ] **Step 4: Run the three-way verification** in both storages, then the census. Both pass.
+- [ ] **Step 5: Commit:** `refactor(core): the engine is owned by its object and borrowed once per call`.
+
+### Task 10: Work counters belong to the call, and `kids` fills the caller's buffer
+
+**Files:**
+- Modify: `layout.rs`. `LayoutWorkCounter` and its nine atomics, plus Task 5's `tree_reads`, become `LayoutWork`, a plain record.
+- Modify: `nodes.rs`. `Nodes::kids` stops returning `Arc<[Kid]>`. `TreeNodes`, `RecordNodes`, `nodes::walk`, `engine.rs`'s `descendants`/`advance`, and `Placer::kids` in `trivia_table/place.rs` follow.
+- Test: `rust/crates/sittir-parity-tests/tests/arena_from_records.rs`.
+
+**Interfaces:**
+- Produces:
+  - `#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)] pub struct LayoutWork { pub region_nodes: u64, pub sibling_items: u64, pub region_fallbacks: u64, pub cursor_climbs: u64, pub sibling_steps: u64, pub root_descents: u64, pub depth_nodes: u64, pub record_nodes: u64, pub gap_items: u64, pub tree_reads: u64 }`. It's owned by the call and incremented through `&mut`. The napi `layoutWork` result reports the last call's record.
+  - `fn kids(&mut self, index: NodeIndex, out: &mut Vec<Kid>)` on `Nodes`. It clears `out`, then fills it in child order. A walk keeps one reusable `Vec<Kid>` per depth.
+
+- [ ] **Step 1: Lower the ceilings of `layout.rs`, `nodes.rs` and `engine.rs`.** Write `each_call_reports_only_its_own_layout_work`: it renders one arena tree twice, and the second call's `LayoutWork` equals the first's rather than their sum.
+- [ ] **Step 2:** Run it and the census. Both fail.
+- [ ] **Step 3: Implement.**
+- [ ] **Step 4: Run the three-way verification,** backer parity on both corpora, the descent-ceiling tests (unchanged) and the census.
+- [ ] **Step 5: Commit:** `refactor(core): layout work is the call's record, and kids fill the caller's buffer`.
+
+### Task 11: The placement and the trivia store are plain data
+
+**Files:**
+- Modify: `trivia_table/place.rs`.
+  - `Placement` loses `Mutex<State>`, `OnceLock<Published>`, `AtomicBool` and the `AtomicU32` published slots.
+  - `Chunks` loses its `OnceLock`s.
+  - `Arc<Shape>`, `Arc<Sim>`, `Arc<Plan>` and `Arc<[Kid]>` become values the placement owns, named by index.
+- Modify: `trivia_store.rs`.
+  - The per-tree parts follow the same rule: sides and edit walks.
+  - For each per-engine part (built chunks, buffers), the PR lists whether it is confined to one JavaScript thread. A confined part becomes plain. One shared across threads stays as it is and is named for the maintainer.
+- Modify: `engine.rs` and `napi_engine.rs`. Object storage's live-tree table is its one coarse holder.
+  - A render borrows the live trees mutably for the call. That's engine-api's note: `ReadTrees` holds each tree's borrow for the call, with references bound to it.
+  - Object storage's locks stay outside the shared types.
+- Test: `rust/crates/sittir-core/tests/placement_plain.rs`.
+
+**Interfaces:**
+- Produces:
+  - `Placement::place(&mut self, …)` places sides, and `Placement::side(&self, …)` reads published sides. Neither takes a lock.
+  - `struct ShapeId(u32)` and `struct PlanId(u32)` name owned shapes and plans.
+
+- [ ] **Step 1: Lower the ceilings of `trivia_table/place.rs` and `trivia_store.rs`.** Write `a_tree_places_its_sides_through_one_mutable_borrow`. It places every side of a matter.js file through `&mut Placement` and asserts the published sides equal `master`'s, read from the corpus golden.
+- [ ] **Step 2:** Run it and the census. Both fail.
+- [ ] **Step 3: Implement.** `a_change_to_the_live_trees_while_a_read_holds_them_is_refused_as_an_error` (`engine.rs`) stays green.
+- [ ] **Step 4: Run the three-way verification** in both storages, the byte-identical corpus render in arena storage, and the census.
+- [ ] **Step 5: Commit:** `refactor(core): placement and the trivia store hold plain data under one borrow`.
+
+### Task 12: Arena state is plain, and chunk memory has one owner
+
+**Files:**
+- Modify: `engine.rs`, `arena.rs`, `arena/*.rs` and `napi_engine.rs`.
+  - Arena storage's records, slots, items and gaps, its arena, lines and depth members: no `Mutex`, `OnceLock` or atomic. Lazily built values are `Option` fields.
+  - Task 5's rows `Arc`: the held parse owns the rows, and `RecordNodes` borrows them.
+  - The source: owned as `Box<str>`, read as `&str`. `SourceTable::source_of` returns `Option<&str>`.
+  - Cached `Arc` values (`Record`, `NodeSlots`, `SlotItems`) become owned values that lookups borrow.
+- Modify: `arena.rs`, `arena/memory.rs`, `arena/count.rs` and `napi_engine.rs` (`external_view`, `release_share`, `Buffers`).
+  - Chunk memory becomes the engine's alone if every path that frees a chunk detaches its views in the same call first. The external buffer's finalizer then frees nothing.
+  - A path that can't is listed for the maintainer, and that structure stays as it is.
+- Test: `rust/crates/sittir-parity-tests/tests/arena_from_records.rs` and `packages/common/tests/built-chunk-views.test.ts`.
+
+- [ ] **Step 1: Lower the arena files' ceilings.** Write `freeing_a_chunk_detaches_every_view_first`: it keeps a JavaScript view of a built chunk, releases the node that frees it, and asserts the view's `byteLength` is 0 and that the engine reports the chunk's bytes as freed.
+- [ ] **Step 2:** Run it and the census. The census fails, and the view test passes or fails as the code stands. Record which.
+- [ ] **Step 3: Implement.**
+- [ ] **Step 4: Run the three-way verification,** the arena corpus render and parity, and the census.
+- [ ] **Step 5: Commit:** `refactor(arena): arena state has one owner and no lock`.
+
+### Task 13: The type guard and the measurements
+
+**Files:**
+- Create: `rust/crates/sittir-core/clippy.toml`, with `disallowed-types` listing `std::sync::{Mutex, RwLock, OnceLock, LazyLock, Arc, Weak}`, `std::rc::{Rc, Weak}`, `std::cell::RefCell` and the `std::sync::atomic` types.
+- Modify: each remaining site gets `#[allow(clippy::disallowed_types)]`:
+  - the process-wide init-once statics;
+  - the engine cell;
+  - object storage's live-tree table;
+  - every structure Tasks 11 and 12 listed.
+  `CEILINGS` then equals that allowlist.
+
+- [ ] **Step 1:** Run clippy in the four CI configurations. Every remaining use outside the allowlist fails it. Fix or list each one.
+- [ ] **Step 2: CI.** The paired-refs benchmark and `oxc-reference`, against the base this task's branch starts from, in both storages:
+  - arena storage: parse, deep read, the three render cases and peak RSS, held to "no regression past noise, except planned trade-offs stated with numbers";
+  - object storage: correctness gates only.
+- [ ] **Step 3: Commit and open the PR:** `chore(core): sittir-core denies locks, atomics and shared owners outside its allowlist`. The body carries the measurements and the list of structures left for the maintainer. Merge waits for the user's word.
