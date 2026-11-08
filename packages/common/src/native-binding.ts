@@ -72,8 +72,22 @@ interface LoadedEngine {
 	readonly path?: string;
 }
 
-export function engineStampFileOf(binaryFile: string): string {
-	return binaryFile.replace(/\.node$/, '.engine-stamp');
+const STAMP_MARKER = Buffer.from('sittir-engine-stamp:');
+const STAMP_SHAPE = /^[0-9A-Za-z.+-]+@[0-9A-Za-z._-]+$/;
+const STAMP_MAX_LENGTH = 256;
+
+export function engineStampOf(image: string): string {
+	const bytes = readFileSync(image);
+	const stamps = new Set<string>();
+	for (let at = bytes.indexOf(STAMP_MARKER); at >= 0; at = bytes.indexOf(STAMP_MARKER, at + 1)) {
+		const start = at + STAMP_MARKER.length;
+		const length = bytes.subarray(start, start + STAMP_MAX_LENGTH).indexOf(0);
+		const text = length < 0 ? '' : bytes.toString('latin1', start, start + length);
+		if (STAMP_SHAPE.test(text)) stamps.add(text);
+	}
+	if (stamps.size === 0) throw new Error(`${image} holds no engine stamp`);
+	if (stamps.size > 1) throw new Error(`${image} holds ${stamps.size} differing engine stamps: ${[...stamps].join(', ')}`);
+	return [...stamps][0]!;
 }
 
 export function recordLoadedEngine(native: { engineStamp?(): { stamp: string; path?: string | null } }): void {
@@ -95,9 +109,9 @@ function loadedEngine(): LoadedEngine | undefined {
 	return path === undefined ? { stamp } : { stamp, path };
 }
 
-function builtStamp(dir: string, file: string): string | undefined {
+function builtStamp(image: string): string | undefined {
 	try {
-		return readFileSync(join(dir, engineStampFileOf(file)), 'utf8').trim();
+		return engineStampOf(image);
 	} catch {
 		return undefined;
 	}
@@ -106,7 +120,7 @@ function builtStamp(dir: string, file: string): string | undefined {
 function engineSkew(spec: NativeBindingSpec, file: string, messages: readonly string[]): string | undefined {
 	if (!messages.some((message) => LOADER_SYMBOL_FAILURE.test(message))) return undefined;
 	const loaded = loadedEngine();
-	const built = builtStamp(spec.dir, file);
+	const built = builtStamp(join(spec.dir, file));
 	if (loaded === undefined || built === undefined || built === loaded.stamp) return undefined;
 	return `${ENGINE_REFUSAL}${spec.binaryName} was built against engine ${built} but loaded engine ${loaded.stamp} from ${loaded.path ?? 'an unknown path'}`;
 }

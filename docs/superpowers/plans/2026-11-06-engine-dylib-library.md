@@ -84,15 +84,16 @@ Port from it, don't copy it: master has moved since (records, arena, lazy trivia
 - Produces, in crate `sittir_engine`:
   - `pub use tree_sitter;`
   - `pub fn claim_tree_id() -> Option<u32>`: one atomic counter per process, `None` once it's exhausted.
-  - `pub struct Stamp { pub version: &'static str, pub commit: &'static str }`
+  - `pub struct Stamp(&'static str)`: the stamp's marked text in the image, displayed as `<version>@<commit>`.
   - `pub const BUILT: Stamp`, inlined into each caller at its compile time.
-  - `pub fn stamp_mismatch(built: &Stamp) -> Option<String>`: compares `built` with the mapped image's `LOADED` static. The message names both stamps and the engine's path.
+  - `pub static LOADED: Stamp`: the mapped engine's stamp, which an addon reads as data.
+  - `pub fn refusal(addon: &str, built: &Stamp) -> String`: the message naming the addon, both stamps and the engine's path.
   - The version comes from `CARGO_PKG_VERSION`, and the commit from `SITTIR_ENGINE_COMMIT`. The build script declares `rerun-if-env-changed` for it, and an unset value reads `local`.
 - Produces: `sittir tool native-images <image…> [--defined <prefix>] [--imported <prefix>]`, which lists the symbols an image defines or imports, as JSON.
 
 - [ ] **Step 1: Failing tests.**
   - `tree_ids`: 8 threads × 256 claims are unique and increasing within each thread, and a counter at `u32::MAX` gives `None`. Move the concurrent test from sittir-core's `engine.rs` here.
-  - `stamp`: `stamp_mismatch(&BUILT)` is `None`. A `Stamp` with another commit gives a message holding both commits and the image path.
+  - `stamp`: the refusal for a `Stamp` with another commit holds both commits and the image path.
 - [ ] **Step 2:** Run `cargo test -p sittir-engine`. It fails: there's no crate yet.
 - [ ] **Step 3: Implement the crate.**
   - The build script's export list is every function tree-sitter's `api.h` declares, less the ones only its wasm module calls, plus the four `ts_current_*` slots.
@@ -176,23 +177,27 @@ Port from it, don't copy it: master has moved since (records, arena, lazy trivia
 ### Task 4: The build stamp, checked at load
 
 **Files:**
-- Modify: `rust/crates/sittir-engine/src/stamp.rs`. `stamp_mismatch(addon, built)` names the addon, and `loaded()` gives the mapped engine's stamp and path.
-- Modify: `napi_engine.rs`. The `napi_engine!` macro's `#[napi(module_exports)]` hook calls `sittir_engine::stamp_mismatch(env!("CARGO_PKG_NAME"), &sittir_engine::BUILT)` and throws its message. Each addon also exports `engineStamp()`, the mapped engine's stamp and path as text.
+- Modify: `rust/crates/sittir-engine/src/stamp.rs`.
+  - A stamp is marked text in the image's read-only data, `sittir-engine-stamp:<version>@<commit>\0`, so a reader finds it in the bytes. The build script refuses a commit outside letters, digits, `.`, `_` and `-`.
+  - `LOADED` is a `pub static` an addon reads as data. `refusal(addon, built)` names the addon, both stamps and the engine's path, and `loaded()` gives the mapped engine's stamp and path.
+- Modify: `napi_engine.rs`. The `napi_engine!` macro's `#[napi(module_exports)]` hook compares `sittir_engine::LOADED` with `sittir_engine::BUILT` before any call into the engine. Only on a mismatch does it call `refusal(env!("CARGO_PKG_NAME"), &BUILT)`, and it throws that message. Each addon also exports `engineStamp()`, the mapped engine's stamp and path as text.
 - Modify: `packages/common/src/native-binding.ts`.
   - `nativeLoadFailure` reports an error in the cause chain that begins `sittir: ` (the engine's refusal) as the reason, ahead of the error that names the file. napi's loader wraps every candidate's error, so the refusal sits deep in its chain.
-  - When the OS loader refuses the addon over a missing symbol, `nativeLoadFailure` builds the same message from the stamp file beside the `.node` and the engine the process mapped, when the two differ. It matches four loader strings:
+  - When the OS loader refuses the addon over a missing symbol, `nativeLoadFailure` builds the same message from the stamp in the `.node`'s bytes (`engineStampOf`) and the engine the process mapped, when the two differ. It matches four loader strings:
     - macOS `Symbol not found`;
     - glibc `undefined symbol`;
     - musl `Error relocating …: symbol not found`;
     - Windows "The specified procedure could not be found".
   - `recordLoadedEngine` keeps the first mapped engine's `engineStamp()` under `Symbol.for('sittir.engine')` on `globalThis`. The entry is diagnostic text only, never read for identity or behavior, and an empty or garbage entry changes only the message.
 - Modify: the backend emitter (`grammar-runtime.ts`). A backend that loads its binding records the engine.
-- Modify: `scripts/build-native.mts`. A `--release` build sets `SITTIR_ENGINE_COMMIT` from `git rev-parse HEAD`. Dev and gate builds leave it as the environment has it, so the engine reads `local`, and a commit doesn't rebuild every crate above the engine. Every build writes the addon's stamp beside the `.node` (`<binary>.engine-stamp`).
-- Modify: `release.yml`. It checks that every addon of a release build is stamped with the commit.
-- Test: the engine's stamp tests, `packages/common/tests/native-binding.test.ts` (built with napi's real chaining), `packages/tools/tests/native-layout.test.ts` (the stamp file against the loaded engine, and the backend's record), and `scripts/ci/native-skew.mts`. The script runs both skew cases end to end, as a `native-layout.yml` step on every leg that can run what it builds. It ports 8ee579994's method with regex and scm.
+- Modify: `scripts/build-native.mts`. A `--release` build sets `SITTIR_ENGINE_COMMIT` from `git rev-parse HEAD`. Dev and gate builds leave it as the environment has it, so the engine reads `local`, and a commit doesn't rebuild every crate above the engine. After stripping and signing, every build reads the stamps of the `.node` and the engine copy it ships and refuses by name unless they match each other and the workspace's engine version, naming the remedy: touch the engine's source and build again.
+- Modify: `sittir tool native-images`. `--stamp` reports the stamp each image holds, and `--bound-at-load <prefix>` lists the imports the loader binds when it maps the image, whatever its binding mode.
+- Modify: `release.yml`. It checks, with `native-images --stamp`, that every addon of a release build is stamped with the commit.
+- Modify: `native-layout.yml`. Each leg that runs what it builds builds regex in release and runs the layout test on it, then runs the skew script.
+- Test: the engine's stamp tests, `packages/common/tests/native-binding.test.ts` (built with napi's real chaining), `packages/tools/tests/native-layout.test.ts` (each `.node` and engine copy hold the stamp the loaded engine reports, each `.node` binds `LOADED` at load, and the backend's record), and `scripts/ci/native-skew.mts`. The script runs both skew cases end to end, as a `native-layout.yml` step on every leg that can run what it builds. It ports 8ee579994's method with regex and scm. Afterwards, whether the cases pass or fail, it touches the engine's source and rebuilds both grammars with the caller's environment.
 
 **Interfaces:**
-- Consumes: Task 1's `BUILT` and `stamp_mismatch`.
+- Consumes: Task 1's `BUILT`, `LOADED` and `refusal`.
 - Produces: one mismatch message, `sittir: <addon> was built against engine <version>@<commit> but loaded engine <version>@<commit> from <path>`. `<addon>` is the crate name (`sittir-python`), which names the `.node` file.
 
 - [ ] **Step 1: Failing tests.**
@@ -209,7 +214,7 @@ Port from it, don't copy it: master has moved since (records, arena, lazy trivia
 **Files:**
 - The copies beside each dev build's `.node` land in Task 2. This task makes a missing copy fail by name and ships the copies in every platform package.
 - Modify: the native loader emitter. A missing engine or std file raises an error naming that file before any WASI fallback is tried.
-- Modify: `release.yml` (`napi-artifacts-publish`). Each per-target subpackage receives its engine and std copies, and its `files` lists them.
+- Modify: `release.yml` (`napi-artifacts-publish`). Each per-target subpackage receives its engine and std copies, and its `files` lists them. No stamp file is packaged: each image holds its stamp in its bytes.
 - Test: `packages/tools/tests/native-layout.test.ts`.
 
 **Interfaces:**

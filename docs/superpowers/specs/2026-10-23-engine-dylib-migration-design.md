@@ -47,11 +47,13 @@ The std library ships as `libstd-<hash>`, and the hash changes with the rustc bu
 ## The build stamp
 
 - The engine stamps itself with the release's identity: its version and commit.
-  - `BUILT` is a `const` compiled into each addon.
-  - `LOADED` is a `static` read from whichever engine image was mapped.
-  - Each addon compares them in its `#[napi(module_exports)]` hook, so `require` fails with one message naming both and the path the loaded engine came from.
+  - A stamp is text in an image's read-only data: `sittir-engine-stamp:<version>@<commit>`, ending in a NUL. A reader finds it in the image's bytes without loading the image, so the build, the release check and the JavaScript loader all read it there, and no stamp file ships. The commit takes letters, digits, `.`, `_` and `-` only.
+  - `BUILT` is a `const` compiled into each addon, so each addon's image holds the stamp it was built against.
+  - `LOADED` is a `static` in the engine. An addon reads it as data, never through a call: the loader binds a data reference when it maps the addon, to the engine image the process mapped first.
+- Each addon compares `BUILT` with `LOADED` in its `#[napi(module_exports)]` hook, before any call into the engine, so `require` fails with one message naming both stamps and the path the loaded engine came from. Only once they differ does the hook call the engine, for that message. A call may be bound lazily, and a lazily bound call into an engine that lacks it crashes the process instead of failing the load.
 - The stamp is not a hash of source bytes. That hash differed between a Unix checkout and a Windows one with CRLF line endings.
-- A newer engine version changes every mangled symbol, so the OS loader fails first, with "symbol not found" or its platform's equivalent. The JavaScript loader maps that failure to the same mismatch message.
+- A newer engine version changes every mangled symbol, `LOADED` among them, so the OS loader fails the addon at load, with "symbol not found" or its platform's equivalent. The JavaScript loader maps that failure to the same mismatch message, reading the addon's stamp from its bytes.
+- A build reads the stamps of the `.node` and the engine copy it ships, stripped and signed, and fails by name unless they match each other and the workspace's engine version. Cargo gives every build of the engine one file name, so after a version change it can keep a build of the other version that it judges fresh.
 
 ## Process statics
 

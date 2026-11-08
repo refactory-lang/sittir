@@ -560,7 +560,6 @@ jobs:
             packages/*/native/*.dylib
             packages/*/native/*.so
             packages/*/native/*.dll
-            packages/*/native/*.engine-stamp
             node_modules/.cache/sittir/native-build/
           include-hidden-files: true
           if-no-files-found: ignore

@@ -1,11 +1,12 @@
 import { execFileSync } from 'node:child_process';
-import { readdirSync, readFileSync } from 'node:fs';
+import { readdirSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { NATIVE_LOADER, allGrammars, nativeBindingDir } from '@sittir/codegen/grammars';
-import { LOADED_ENGINE, engineStampFileOf } from '@sittir/common/engine';
+import { LOADED_ENGINE, engineStampOf } from '@sittir/common/engine';
 import { languageByName } from '../src/languages.ts';
+import { imageSymbols } from '../src/native-images.ts';
 
 const ENGINE: Partial<Record<NodeJS.Platform, string>> = {
 	darwin: 'libsittir_engine.dylib',
@@ -13,6 +14,7 @@ const ENGINE: Partial<Record<NodeJS.Platform, string>> = {
 	win32: 'sittir_engine.dll'
 };
 const STD = /^(?:lib)?std-[0-9a-f]+\.(?:dylib|so|dll)$/;
+const ENGINE_LOADED_STATIC = /13sittir_engine5stamp6LOADED/;
 
 const run = (command: string, args: readonly string[]): string =>
 	execFileSync(command, args, { encoding: 'utf8', maxBuffer: 1 << 28 });
@@ -70,9 +72,15 @@ describe('a grammar binding ships the engine and std copies its .node loads', ()
 				expect(std).toHaveLength(1);
 			});
 
-			it('holds the stamp its addon was built against, as the loaded engine reports it', () => {
+			it('holds one stamp in the .node and the engine copy, the one the loaded engine reports', () => {
 				const native = createRequire(import.meta.url)(join(dir, NATIVE_LOADER)) as { engineStamp(): { stamp: string } };
-				expect(readFileSync(join(dir, engineStampFileOf(node!)), 'utf8')).toBe(native.engineStamp().stamp);
+				expect(engineStampOf(join(dir, node!))).toBe(native.engineStamp().stamp);
+				expect(engineStampOf(join(dir, ENGINE[process.platform]!))).toBe(native.engineStamp().stamp);
+			});
+
+			it("reads the mapped engine's stamp as data, which the loader binds when it maps the .node", async () => {
+				const { boundAtLoad = [] } = await imageSymbols(join(dir, node!), { boundAtLoad: '' });
+				expect(boundAtLoad.filter((name) => ENGINE_LOADED_STATIC.test(name))).toHaveLength(1);
 			});
 
 			it.runIf(process.platform === 'darwin' || process.platform === 'linux')(

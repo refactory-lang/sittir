@@ -30,9 +30,9 @@
 //! A coordinate names a tree, not the engine that parsed it, so the table is
 //! one per grammar addon: every engine of a language resolves every tree of
 //! that language, and a tree outlives the engine that parsed it. It is a
-//! `thread_local!`, because tree ids are minted from `globalThis` and each
-//! JavaScript thread has its own — a table shared across threads would meet
-//! the same id twice.
+//! `thread_local!`: a tree resolves only on the JavaScript thread that parsed
+//! it, whose heap holds its nodes and the finalizer that disposes it. Tree ids
+//! come from the engine's one counter, so no two threads' tables share an id.
 //!
 //! Trees are dropped when JavaScript drops its side: the boundary registers
 //! each tree with a `FinalizationRegistry` and calls the addon's `disposeTree`
@@ -55,12 +55,21 @@ macro_rules! napi_engine {
         /// Refuse to load beside an engine image of another release: the
         /// addon carries the stamp it was built against, and the process
         /// holds one engine, mapped by whichever addon loaded first.
+        ///
+        /// The hook reads the mapped engine's stamp as data and compares it
+        /// here, before any call into the engine. The loader binds that read
+        /// when it maps the addon, so an engine of another version fails the
+        /// load, and one of this version and another commit reaches the
+        /// comparison. Only once the stamps differ does the hook call the
+        /// engine, for the refusal. No other call into the engine runs before
+        /// the comparison: a call may be bound lazily, and an engine of
+        /// another release may not define it.
         #[::napi_derive::napi(module_exports)]
         pub fn refuse_engine_skew() -> ::napi::Result<()> {
-            match ::sittir_engine::stamp_mismatch(env!("CARGO_PKG_NAME"), &::sittir_engine::BUILT) {
-                Some(message) => Err(::napi::Error::from_reason(message)),
-                None => Ok(()),
+            if ::sittir_engine::LOADED == ::sittir_engine::BUILT {
+                return Ok(());
             }
+            Err(::napi::Error::from_reason(::sittir_engine::refusal(env!("CARGO_PKG_NAME"), &::sittir_engine::BUILT)))
         }
 
         /// The engine image this process mapped: its stamp and the file it

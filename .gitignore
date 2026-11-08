@@ -73,7 +73,6 @@ packages/*/native/*.node
 packages/*/native/*.dylib
 packages/*/native/*.so
 packages/*/native/*.dll
-packages/*/native/*.engine-stamp
 .claude/worktrees/
 tmp-scripts/
 graphify-out/cache/**

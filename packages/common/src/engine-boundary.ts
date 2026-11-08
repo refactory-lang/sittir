@@ -3,7 +3,7 @@ export { scopeBuilders } from './create-engine.ts';
 export { nodeStorageOf } from './engine-scope.ts';
 export {
 	LOADED_ENGINE,
-	engineStampFileOf,
+	engineStampOf,
 	hostPlatform,
 	nativeLoadFailure,
 	platformSuffix,

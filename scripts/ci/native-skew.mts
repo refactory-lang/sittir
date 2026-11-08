@@ -6,20 +6,24 @@
 // - same version, another commit: every engine symbol still resolves, so the
 //   addon's load hook compares the stamps and refuses;
 // - a newer version: every mangled engine symbol changes, so the OS loader
-//   refuses the addon first, and the grammar's backend names the same stamps
-//   from the stamp file beside the `.node` and the engine the process mapped.
+//   refuses the addon first, and the grammar's backend names the same stamps,
+//   read from the `.node`'s bytes and the engine the process mapped.
 //
 // Each case builds regex (whose engine the process maps first) and then scm,
 // and loads both through their backends in a fresh process. The version case
 // gives the engine its own version in its manifest for the length of one
-// build and restores the manifest and the lockfile after. Both grammars are
-// left built from the cases: rebuild them after a local run.
+// build and restores the manifest and the lockfile after. Whether the cases
+// pass or fail, the script then touches the engine's source and rebuilds both
+// grammars with the caller's environment: cargo gives every build of the
+// engine one file name, so the other version's build would otherwise stay in
+// its output, judged fresh.
 import { spawnSync } from 'node:child_process';
-import { readFileSync, realpathSync, writeFileSync } from 'node:fs';
+import { readFileSync, realpathSync, utimesSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
-import { REPO_ROOT, nativeBindingDir } from '../../packages/codegen/src/grammars.ts';
-import { engineStampFileOf, hostPlatform, platformSuffix } from '../../packages/common/src/native-binding.ts';
+import { REPO_ROOT, nativeBinaryName, nativeBindingDir } from '../../packages/codegen/src/grammars.ts';
+import { hostBinaryName } from '../../packages/codegen/src/scripts/native-binary-freshness.ts';
+import { engineStampOf } from '../../packages/common/src/native-binding.ts';
 
 const FIRST = 'regex';
 const SECOND = 'scm';
@@ -51,14 +55,13 @@ function run(command: string, args: readonly string[], env: NodeJS.ProcessEnv = 
 	return result.stdout;
 }
 
-const build = (grammar: string, commit: string): void => {
-	run('pnpm', ['exec', 'tsx', 'scripts/build-native.mts', grammar], { ...process.env, SITTIR_ENGINE_COMMIT: commit });
+const build = (grammar: string, env: NodeJS.ProcessEnv = process.env): void => {
+	run('pnpm', ['exec', 'tsx', 'scripts/build-native.mts', grammar], env);
 };
 
-const stampOf = (grammar: string): string => {
-	const binary = `sittir-${grammar}.${platformSuffix(hostPlatform())}.node`;
-	return readFileSync(join(nativeBindingDir(grammar), engineStampFileOf(binary)), 'utf8');
-};
+const buildAt = (grammar: string, commit: string): void => build(grammar, { ...process.env, SITTIR_ENGINE_COMMIT: commit });
+
+const stampOf = (grammar: string): string => engineStampOf(join(nativeBindingDir(grammar), hostBinaryName(grammar)));
 
 function loadBoth(): [string, string] {
 	const out = run('pnpm', ['exec', 'tsx', fileURLToPath(import.meta.url), 'load']);
@@ -68,13 +71,12 @@ function loadBoth(): [string, string] {
 function expectRefused(name: string, built: string, loaded: string): void {
 	const [first, second] = loadBoth();
 	if (first !== 'native') throw new Error(`${name}: ${FIRST} did not load: ${first}`);
-	const binary = `sittir-${SECOND}.${platformSuffix(hostPlatform())}.node`;
 	const prefix =
-		`@sittir/${SECOND}: native/${binary} is present and failed to load: ` +
-		`sittir: sittir-${SECOND} was built against engine ${built} but loaded engine ${loaded} from `;
+		`@sittir/${SECOND}: native/${hostBinaryName(SECOND)} is present and failed to load: ` +
+		`sittir: ${nativeBinaryName(SECOND)} was built against engine ${built} but loaded engine ${loaded} from `;
 	if (!second.startsWith(prefix)) throw new Error(`${name}: expected a refusal starting\n  ${prefix}\ngot\n  ${second}`);
-	const mapped = realpathSync(second.slice(prefix.length));
-	const expected = realpathSync(join(nativeBindingDir(FIRST), ENGINE_FILE[process.platform]!));
+	const mapped = realpathSync.native(second.slice(prefix.length));
+	const expected = realpathSync.native(join(nativeBindingDir(FIRST), ENGINE_FILE[process.platform]!));
 	if (mapped !== expected) throw new Error(`${name}: the refusal names ${mapped}, not ${expected}`);
 	console.log(`${name}: refused — ${second}`);
 }
@@ -93,13 +95,23 @@ function withEngineVersion<T>(version: string, body: () => T): T {
 	}
 }
 
-build(FIRST, 'skew-first');
-const loaded = stampOf(FIRST);
-const version = loaded.slice(0, loaded.indexOf('@'));
+function rebuildAsTheCallerBuilds(): void {
+	const now = new Date();
+	utimesSync(join(REPO_ROOT, 'rust', 'crates', 'sittir-engine', 'src', 'lib.rs'), now, now);
+	for (const grammar of [FIRST, SECOND]) build(grammar);
+}
 
-build(SECOND, 'skew-second');
-expectRefused('same version, another commit', `${version}@skew-second`, loaded);
+try {
+	buildAt(FIRST, 'skew-first');
+	const loaded = stampOf(FIRST);
+	const version = loaded.slice(0, loaded.indexOf('@'));
 
-const newer = `${version}-skew`;
-withEngineVersion(newer, () => build(SECOND, 'skew-second'));
-expectRefused('a newer version', `${newer}@skew-second`, loaded);
+	buildAt(SECOND, 'skew-second');
+	expectRefused('same version, another commit', `${version}@skew-second`, loaded);
+
+	const newer = `${version}-skew`;
+	withEngineVersion(newer, () => buildAt(SECOND, 'skew-second'));
+	expectRefused('a newer version', `${newer}@skew-second`, loaded);
+} finally {
+	rebuildAsTheCallerBuilds();
+}

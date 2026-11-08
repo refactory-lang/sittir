@@ -197,17 +197,14 @@ jobs:
           for crate in $grammars; do
             npx tsx scripts/build-native.mts "${crate}" --release --target "${{ matrix.target }}" ${{ matrix.buildFlag }}
           done
-      # Every addon names the engine release it was built against, so a
-      # release build that missed the commit would ship a `local` stamp.
+      # Every addon holds the stamp of the engine it was built against, and
+      # build-native refused an engine copy that holds another, so a release
+      # build that missed the commit would ship a `local` stamp.
       - name: Every addon is stamped with this commit
         shell: bash
         run: |
-          for stamp in packages/*/native/*.engine-stamp; do
-            case "$(cat "$stamp")" in
-              *"@${GITHUB_SHA}") echo "$stamp: $(cat "$stamp")" ;;
-              *) echo "::error::$stamp holds '$(cat "$stamp")', not a stamp of ${GITHUB_SHA}"; exit 1 ;;
-            esac
-          done
+          npx tsx packages/cli/src/cli.ts tool native-images --stamp packages/*/native/*.node \
+            | node -e 'let s = ""; process.stdin.on("data", (d) => (s += d)).on("end", () => { const want = `@${process.env.GITHUB_SHA}`; let ok = true; for (const { image, stamp } of JSON.parse(s)) { if (stamp.endsWith(want)) console.log(`${image}: ${stamp}`); else { console.log(`::error::${image} holds ${stamp}, not a stamp of ${process.env.GITHUB_SHA}`); ok = false; } } process.exitCode = ok ? 0 : 1; });'
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:

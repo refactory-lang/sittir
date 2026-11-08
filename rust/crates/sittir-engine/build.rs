@@ -23,7 +23,9 @@
 //! - Slot names: every crate that depends on the engine directly reads them
 //!   from `DEP_SITTIR_ENGINE_ALLOCATOR_SLOTS`, so a grammar's build defines
 //!   each slot's import without a list of its own.
-//! - Stamp: the commit comes from `SITTIR_ENGINE_COMMIT`, `local` when unset.
+//! - Stamp: the commit comes from `SITTIR_ENGINE_COMMIT`, `local` when unset
+//!   or empty. It takes letters, digits, `.`, `_` and `-` only: the shape a
+//!   reader of an image's bytes accepts as a stamp.
 use std::path::{Path, PathBuf};
 
 /// The runtime's allocator, as a scanner built with
@@ -69,7 +71,12 @@ fn main() {
     println!("cargo:allocator_slots={}", ALLOCATOR_SLOTS.join(","));
     println!("cargo:rerun-if-env-changed=SITTIR_ENGINE_COMMIT");
     let commit = std::env::var("SITTIR_ENGINE_COMMIT").ok().filter(|commit| !commit.is_empty());
-    println!("cargo:rustc-env=SITTIR_ENGINE_COMMIT={}", commit.as_deref().unwrap_or("local"));
+    let commit = commit.as_deref().unwrap_or("local");
+    assert!(
+        commit.bytes().all(|byte| byte.is_ascii_alphanumeric() || b"._-".contains(&byte)),
+        "SITTIR_ENGINE_COMMIT holds {commit:?}: the engine stamp takes letters, digits, '.', '_' and '-' only"
+    );
+    println!("cargo:rustc-env=SITTIR_ENGINE_COMMIT={commit}");
 }
 
 fn var(key: &str) -> String {

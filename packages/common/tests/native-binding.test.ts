@@ -5,6 +5,7 @@ import { join } from 'node:path';
 import {
 	LOADED_ENGINE,
 	type HostPlatform,
+	engineStampOf,
 	nativeLoadFailure,
 	platformSuffix,
 	recordLoadedEngine,
@@ -127,6 +128,38 @@ function napiLoadError(failure: string): Error {
 
 const registry = globalThis as Record<symbol, unknown>;
 
+const NOT_A_STAMP = Buffer.concat([Buffer.from('sittir-engine-stamp:'), Buffer.from([0xff, 0x02, 0x00])]);
+
+function imageHolding(...stamps: string[]): Buffer {
+	return Buffer.concat([
+		Buffer.from([0x7f, 0x45, 0x4c, 0x46]),
+		NOT_A_STAMP,
+		...stamps.flatMap((stamp) => [Buffer.from(`sittir-engine-stamp:${stamp}\0`), Buffer.from([1, 2, 3, 0])])
+	]);
+}
+
+describe('engineStampOf', () => {
+	const image = (...stamps: string[]): string => {
+		const path = join(nativeDir(), 'image.node');
+		writeFileSync(path, imageHolding(...stamps));
+		return path;
+	};
+
+	it('reads the one stamp an image holds, however often it repeats, past bytes that only open like one', () => {
+		expect(engineStampOf(image('0.1.0@a', '0.1.0@a'))).toBe('0.1.0@a');
+	});
+
+	it('refuses an image that holds no stamp, naming it', () => {
+		const path = image();
+		expect(() => engineStampOf(path)).toThrow(`${path} holds no engine stamp`);
+	});
+
+	it('refuses an image that holds two differing stamps, naming both, and never takes the first', () => {
+		const path = image('0.1.0@a', '0.2.0@b');
+		expect(() => engineStampOf(path)).toThrow(`${path} holds 2 differing engine stamps: 0.1.0@a, 0.2.0@b`);
+	});
+});
+
 describe('nativeLoadFailure across engine releases', () => {
 	afterEach(() => {
 		delete registry[LOADED_ENGINE];
@@ -136,9 +169,9 @@ describe('nativeLoadFailure across engine releases', () => {
 	const refusal = (built: string) =>
 		`sittir: sittir-rust was built against engine ${built} but loaded engine 0.1.0@a from /engines/libsittir_engine.dylib`;
 	const presentFile = (host: HostPlatform) => `sittir-rust.${platformSuffix(host)}.node`;
-	const stamped = (host: HostPlatform, built: string): string => {
-		const dir = nativeDir(presentFile(host));
-		writeFileSync(join(dir, `sittir-rust.${platformSuffix(host)}.engine-stamp`), built);
+	const stamped = (host: HostPlatform, ...built: string[]): string => {
+		const dir = nativeDir();
+		writeFileSync(join(dir, presentFile(host)), imageHolding(...built));
 		return dir;
 	};
 
@@ -156,7 +189,7 @@ describe('nativeLoadFailure across engine releases', () => {
 	];
 
 	it.each(symbolFailures)(
-		'maps a %s symbol failure to the same refusal, from the stamp beside the binary and the engine the process mapped',
+		'maps a %s symbol failure to the same refusal, from the stamp the binary holds and the engine the process mapped',
 		(_, host, failure) => {
 			registry[LOADED_ENGINE] = { stamp: '0.1.0@a', path: '/engines/libsittir_engine.dylib' };
 			const dir = stamped(host, '0.2.0@b');
@@ -174,9 +207,9 @@ describe('nativeLoadFailure across engine releases', () => {
 		);
 	});
 
-	it("keeps the loader's reason when no stamp sits beside the binary", () => {
+	it.each([[], ['0.2.0@b', '0.3.0@c']])("keeps the loader's reason when the binary holds stamps %j, not exactly one", (...built) => {
 		registry[LOADED_ENGINE] = { stamp: '0.1.0@a', path: '/engines/libsittir_engine.dylib' };
-		const dir = nativeDir(presentFile(darwin));
+		const dir = stamped(darwin, ...built);
 		const failure = symbolFailures[0]![2](join(dir, presentFile(darwin)));
 		expect(nativeLoadFailure(spec(dir), napiLoadError(failure), darwin)).toBe(
 			`@sittir/rust: native/${presentFile(darwin)} is present and failed to load: ${failure}`

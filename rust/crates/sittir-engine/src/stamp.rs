@@ -1,39 +1,53 @@
 use core::fmt;
 
-/// The release an engine image belongs to: its crate version and the commit
-/// it was built from. Every package of a release carries the same stamp.
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub struct Stamp {
-    pub version: &'static str,
-    pub commit: &'static str,
+macro_rules! marker {
+    () => {
+        "sittir-engine-stamp:"
+    };
 }
+
+/// The length of the bytes that open a stamp's text in an image. Only the
+/// length: the marker's own text must appear in an image only where a stamp
+/// begins.
+const MARKER_LEN: usize = marker!().len();
+
+/// The release an engine image belongs to: its crate version and the commit
+/// it was built from, held as the text `<marker><version>@<commit>\0`. An
+/// image that holds a stamp carries that text in its read-only data, so a
+/// reader finds it in the image's bytes without loading the image. Every
+/// package of a release carries the same stamp.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct Stamp(&'static str);
 
 impl fmt::Display for Stamp {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "{}@{}", self.version, self.commit)
+        f.write_str(&self.0[MARKER_LEN..self.0.len() - 1])
     }
 }
 
 /// The engine a caller was built against. A `const`, so each addon compiled
 /// against the engine carries this value in its own image.
-pub const BUILT: Stamp = Stamp { version: env!("CARGO_PKG_VERSION"), commit: env!("SITTIR_ENGINE_COMMIT") };
+pub const BUILT: Stamp = Stamp(concat!(marker!(), env!("CARGO_PKG_VERSION"), "@", env!("SITTIR_ENGINE_COMMIT"), "\0"));
 
-/// The engine the process mapped. A `static`, so a read goes to whichever
-/// engine image the loader mapped first.
-static LOADED: Stamp = BUILT;
+/// The engine the process mapped. An addon reads it as data, never through a
+/// call: the loader binds a data reference when it maps the addon, to the
+/// first engine image the process mapped, and an engine of another version
+/// names this static differently, so the addon fails to load. A call may be
+/// bound lazily, on first use, and a lazily bound call into an engine of
+/// another version crashes the process instead of failing the load.
+pub static LOADED: Stamp = BUILT;
 
-/// `None` when the mapped engine is the one `built` names. Otherwise the
-/// refusal, naming `addon`, both stamps and the file the mapped engine came
-/// from. Never inlined, so the comparison runs in the mapped engine's image.
+/// The refusal for `addon`, built against `built`, beside the mapped engine:
+/// it names both stamps and the file the mapped engine came from. An addon
+/// calls it once its stamp differs from [`LOADED`], when the mapped engine has
+/// this version and another commit, so its name and signature hold across
+/// every commit of a version.
 #[must_use]
-#[inline(never)]
-pub fn stamp_mismatch(addon: &str, built: &Stamp) -> Option<String> {
-    (*built != LOADED).then(|| {
-        format!(
-            "sittir: {addon} was built against engine {built} but loaded engine {LOADED} from {}",
-            loaded_from().as_deref().unwrap_or("an unknown path")
-        )
-    })
+pub fn refusal(addon: &str, built: &Stamp) -> String {
+    format!(
+        "sittir: {addon} was built against engine {built} but loaded engine {LOADED} from {}",
+        loaded_from().as_deref().unwrap_or("an unknown path")
+    )
 }
 
 /// The mapped engine's stamp and the file it was loaded from. Never inlined,
@@ -99,19 +113,24 @@ mod tests {
     use super::*;
     use std::path::Path;
 
-    #[test]
-    fn the_stamp_an_image_was_built_with_matches_itself() {
-        assert_eq!(stamp_mismatch("sittir-test", &BUILT), None);
+    fn version() -> String {
+        BUILT.to_string().split('@').next().expect("a version").to_owned()
     }
 
     #[test]
-    fn another_commit_is_refused_naming_the_addon_both_stamps_and_the_loaded_engine() {
-        let other = Stamp { version: BUILT.version, commit: "another-commit" };
-        let message = stamp_mismatch("sittir-test", &other).expect("another commit mismatches");
+    fn the_stamp_is_its_marked_text_so_a_reader_finds_it_in_the_image_bytes() {
+        assert_eq!(BUILT.0, format!("{}{}@{}\0", marker!(), env!("CARGO_PKG_VERSION"), env!("SITTIR_ENGINE_COMMIT")));
+        assert_eq!(BUILT.to_string(), format!("{}@{}", env!("CARGO_PKG_VERSION"), env!("SITTIR_ENGINE_COMMIT")));
+    }
+
+    #[test]
+    fn the_refusal_names_the_addon_both_stamps_and_the_loaded_engine() {
+        let other = Stamp(Box::leak(format!("{}{}@another-commit\0", marker!(), version()).into_boxed_str()));
+        let message = refusal("sittir-test", &other);
         let path = loaded_from().expect("the loaded engine has a path");
         assert_eq!(
             message,
-            format!("sittir: sittir-test was built against engine {}@another-commit but loaded engine {BUILT} from {path}", BUILT.version)
+            format!("sittir: sittir-test was built against engine {}@another-commit but loaded engine {BUILT} from {path}", version())
         );
     }
 

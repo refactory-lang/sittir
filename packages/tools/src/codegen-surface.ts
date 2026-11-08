@@ -219,6 +219,7 @@ export type RawNodeEntry = import('../../codegen/src/validate/node-types-loader.
 export type OpaqueFacts = import('../../codegen/src/compiler/opaque-facts.ts').OpaqueFacts;
 export type SpelledTriviaForm = import('../../codegen/src/compiler/model/trivia.ts').SpelledTriviaForm;
 export type SpelledTriviaTable = import('../../codegen/src/compiler/model/trivia.ts').SpelledTriviaTable;
+export type LlvmTool = import('../../codegen/src/scripts/native-binary-freshness.ts').LlvmTool;
 
 // ---------------------------------------------------------------------------
 // Convenience: the canonical evaluate → link → normalize → assemble walk.

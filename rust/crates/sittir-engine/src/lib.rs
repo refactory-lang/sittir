@@ -12,5 +12,5 @@ pub use tree_sitter;
 mod stamp;
 mod tree_ids;
 
-pub use stamp::{loaded, stamp_mismatch, Stamp, BUILT};
+pub use stamp::{loaded, refusal, Stamp, BUILT, LOADED};
 pub use tree_ids::claim_tree_id;

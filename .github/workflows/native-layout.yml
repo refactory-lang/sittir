@@ -5,7 +5,9 @@
 # row of NATIVE_RUSTFLAGS, printed by native-rustflags.ts). It then holds the
 # image to the build's own export list: the engine defines exactly the
 # runtime functions and the four allocator slots it lists, and no other ts_
-# symbol. Legs that run on their own host also run the engine's tests.
+# symbol. Legs that run on their own host also run the engine's tests, build
+# one grammar's binding in release and hold it to the layout test, and load
+# two grammars built against different engine releases into one process.
 #
 # It runs when a pull request touches the engine, what builds a grammar's
 # native binding, or this workflow, and on master after such a merge.
@@ -24,6 +26,7 @@ on:
       - rust/crates/sittir-core/src/napi_engine.rs
       - scripts/build-native.mts
       - scripts/ci/native-skew.mts
+      - packages/tools/tests/native-layout.test.ts
       - Cargo.toml
       - Cargo.lock
       - rust-toolchain.toml
@@ -122,6 +125,17 @@ jobs:
           RUSTFLAGS="$(npx tsx packages/tools/src/scripts/native-rustflags.ts '${{ matrix.target }}')"
           export RUSTFLAGS
           cargo test -p sittir-engine --target '${{ matrix.target }}'
+      # A release strips the addon and its engine copy. The layout test, run
+      # on the release build, holds each stripped image to its stamp and the
+      # addon to reading the mapped engine's stamp as data, which the loader
+      # binds when it maps the addon: an engine of another version then fails
+      # the load instead of a lazily bound call crashing the process.
+      - name: A release binding keeps its stamp and reads the engine's at load
+        if: matrix.cross == false
+        shell: bash
+        run: |
+          npx tsx scripts/build-native.mts regex --release
+          pnpm exec vitest run packages/tools/tests/native-layout.test.ts -t regex
       # Two grammar packages built against different engine releases, in one
       # process: the second is refused by name, whether the engine's load hook
       # or the OS loader refuses it. Only legs that can run what they build.

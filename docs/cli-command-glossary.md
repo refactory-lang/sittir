@@ -401,6 +401,7 @@ Compile the bindings, derive the vocabulary they imply, and check it against the
 **Options**
 
 - `--check` — Compile every bindings.scm against its parser, report totality diagnostics, report where the bindings and the vocabulary disagree, check the vocabulary flags module against its Flag declarations, and check that each grammar.bindings.ts is enrich's fixpoint over grammar.sittir.ts
+- `--grammar <grammar...>` — The grammars to compile (default: every stable grammar with bindings)
 - `--members` — Print member names and kinds per shared kind
 - `--write` — Write the vocabulary flags module from its Flag declarations, then each grammar.bindings.ts: the generated layer above grammar.sittir.ts, with the hash of the sources it was derived from, failing when the written layer is not enrich's fixpoint
 
@@ -596,7 +597,7 @@ pnpm exec tsx packages/cli/src/cli.ts tool list-kinds [options]
 
 ### `tool native-images`
 
-List the symbols each built native image (ELF, Mach-O or PE) defines and imports, as JSON
+List the symbols each built native image (ELF, Mach-O or PE) defines, imports and binds at load, or the engine stamp it holds, as JSON
 
 **Arguments**
 
@@ -606,6 +607,8 @@ List the symbols each built native image (ELF, Mach-O or PE) defines and imports
 
 - `--defined <prefix>` — List the defined (exported) symbols that start with <prefix>
 - `--imported <prefix>` — List the imported symbols that start with <prefix>
+- `--bound-at-load <prefix>` — List the imported symbols that start with <prefix> and that the loader binds when it maps the image, whatever its binding mode: a Mach-O non-lazy bind, an ELF relocation other than a PLT slot, a PE import that is not delay-loaded
+- `--stamp` — Report the engine stamp the image holds; fails, naming the image, unless it holds exactly one
 
 **Example**
 
@@ -667,7 +670,7 @@ List the vocabulary members and own slots whose type admits a kind no read in th
 
 **Options**
 
-- `--grammar <grammar...>` — The grammars to read (default: every grammar with bindings)
+- `--grammar <grammar...>` — The grammars to read (default: every stable grammar with bindings)
 
 **Example**
 
@@ -681,7 +684,7 @@ Write each grammar's vocabulary-typed portable module, type-check it and count i
 
 **Options**
 
-- `--grammar <grammar...>` — The grammars to check (default: every grammar with bindings)
+- `--grammar <grammar...>` — The grammars to check (default: every stable grammar with bindings)
 
 **Example**
 
