@@ -434,6 +434,14 @@ pub trait RecordView<'a, T>: Sized {
     /// own kind, a variant's, a member's, or blank text for verbatim text.
     fn claims(kind: KindId) -> bool;
 
+    /// Whether a cell of `kind` is a record this view reads: `claims`, and
+    /// the envelope kinds the record is written under where a list is shown
+    /// as them. A choice dispatches by `claims`, never by this.
+    #[must_use]
+    fn accepts(kind: KindId) -> bool {
+        Self::claims(kind)
+    }
+
     /// The view of the value `cell` names, at `site` in its holder; a root
     /// has none.
     ///
@@ -611,6 +619,13 @@ impl<'a, T, V: RecordView<'a, T>, const ADJACENT: bool> RecordSlot<'a, T, V, ADJ
     #[must_use]
     pub fn of_shape(ctx: RecordCtx<'a, T>, site: Site<PrepPlace>, words: &[u32], at: Address, shape: CellShape) -> Self {
         Self::of_cell(ctx, site, shape.key, ctx.slot_cell(words, at, shape))
+    }
+
+    /// The slot at `site` that holds `cell`, a record the holder's own cell
+    /// names: an envelope over a list has no cell of its own for its content.
+    #[must_use]
+    pub fn of_record_cell(ctx: RecordCtx<'a, T>, site: Site<PrepPlace>, key: &'static str, cell: Cell) -> Self {
+        Self::of_cell(ctx, site, key, Ok(cell))
     }
 
     /// The slot at `site` whose cell decoded as `decoded`. An unset single
@@ -850,6 +865,33 @@ mod tests {
     }
 
     type WordSlot<'a> = RecordSlot<'a, TriviaText, Word<'a>>;
+
+    const SHOWN: KindId = KindId(8);
+
+    struct Shown;
+
+    impl<'a, T> RecordView<'a, T> for Shown {
+        fn claims(kind: KindId) -> bool {
+            kind == WORD
+        }
+
+        fn accepts(kind: KindId) -> bool {
+            kind == WORD || kind == SHOWN
+        }
+
+        fn from_cell(_: RecordCtx<'a, T>, _: Cell, _: Option<Site<PrepPlace>>) -> Result<Self, ArenaError> {
+            Ok(Self)
+        }
+    }
+
+    #[test]
+    fn a_view_accepts_what_it_claims_unless_it_widens_the_envelopes_it_is_shown_as() {
+        assert!(<Word<'_> as RecordView<'_, TriviaText>>::accepts(WORD));
+        assert!(!<Word<'_> as RecordView<'_, TriviaText>>::accepts(SHOWN));
+        assert!(<Shown as RecordView<'_, TriviaText>>::accepts(SHOWN));
+        assert!(!<Shown as RecordView<'_, TriviaText>>::claims(SHOWN));
+        assert!(<Shown as RecordView<'_, TriviaText>>::claims(WORD));
+    }
 
     #[test]
     fn a_layout_keeps_prepared_defaults_below_stored_settings() {

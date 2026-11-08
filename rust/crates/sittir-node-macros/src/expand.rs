@@ -618,7 +618,7 @@ fn structure(ident: &Ident, attrs: &KindAttrs, data: &DataStruct) -> syn::Result
         (None, false) => return Err(syn::Error::new_spanned(ident, "a struct with `displays` holds the id it shows in a `#[wire(key = \"$type\")]` field")),
         _ => {}
     }
-    let displays = &attrs.displays;
+    let displays = attrs.displays.iter().chain(&attrs.shown_as);
     let folded = &attrs.folded;
     let admits = if attrs.display { quote!(display == #kind) } else { quote!(grammar == #kind #(|| grammar == #folded)*) };
     let layout: Vec<&Path> = attrs.layout.iter().flatten().collect();
@@ -672,7 +672,7 @@ fn structure(ident: &Ident, attrs: &KindAttrs, data: &DataStruct) -> syn::Result
     let writer = crate::write::structure(ident, attrs, &fields)?;
     let hydrate = crate::hydrate::structure(ident, attrs, &fields)?;
     let view = crate::views::structure(ident, attrs, &fields)?;
-    let stored_kind = if kind_field.is_some() {
+    let stored_kind = if !attrs.displays.is_empty() || !attrs.shown_as.is_empty() {
         quote! {
             let __shown = __rt::display_id(node);
             if __DISPLAYS.contains(&__shown) { __shown } else { __KIND }
@@ -902,7 +902,7 @@ fn envelope_body(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>], height:
         let name = other.ident;
         match other.role {
             Role::Layout => quote!(#name: layout,),
-            _ if other.ident == content => quote!(#name: ::sittir_core::SlotValue::Node(content),),
+            _ if other.ident == content => if attrs.content_list { quote!(#name: content,) } else { quote!(#name: ::sittir_core::SlotValue::Node(content),) },
             _ => quote!(#name: ::core::default::Default::default(),),
         }
     });
@@ -921,6 +921,27 @@ fn envelope_body(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>], height:
     } else {
         (quote!(), quote!())
     };
+    let field_ty = field.ty;
+    let (read_content, take_layout) = if attrs.content_list {
+        (
+            quote!(let content: ::core::result::Result<#field_ty, __rt::ReadError> = __rt::read_value(cursor, ctx, depth);),
+            quote! {
+                let mut content = content?;
+                let __taken = match &mut content {
+                    ::sittir_core::SlotValue::Node(node) => <#inner as __rt::HasLayout<#layout_ty>>::take_layout(node),
+                    ::sittir_core::SlotValue::Coord(_) => ::core::option::Option::None,
+                };
+            },
+        )
+    } else {
+        (
+            quote!(let content = <#inner as __rt::ReadNode>::read(cursor, ctx, depth);),
+            quote! {
+                let mut content = content?;
+                let __taken = <#inner as __rt::HasLayout<#layout_ty>>::take_layout(&mut content);
+            },
+        )
+    };
     let wraps_hidden = attrs.wraps_hidden;
     Ok(Body {
         routes: quote! {
@@ -934,10 +955,10 @@ fn envelope_body(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>], height:
             let __index = __rt::index_of(cursor);
             #hidden
             let __unit = <#inner as __rt::ReadNode>::unit_id(cursor).map(|_| ::sittir_core::layout::UnitRow { slot: #key, item: ::sittir_core::types::ItemIndex(0), row: __rt::index_of(cursor) });
-            let mut content = <#inner as __rt::ReadNode>::read(cursor, ctx, depth);
+            #read_content
             #restore
-            let mut content = content?;
-            let layout: #layout_ty = Some(__rt::envelope_layout(<#inner as __rt::HasLayout<#layout_ty>>::take_layout(&mut content), __index, __at, __unit, ctx));
+            #take_layout
+            let layout: #layout_ty = Some(__rt::envelope_layout(__taken, __index, __at, __unit, ctx));
             ::core::result::Result::Ok(#built)
         },
     })
@@ -1267,6 +1288,60 @@ mod tests {
             &out,
             "::core::option::Option::Some(__field) if (__field == field::KEY) && <SlotValue<ValueNode> as __rt::ReadSlot>::takes_tagged(child.grammar, child.display, child.named) => {"
         ));
+    }
+
+    fn envelope(list: bool) -> syn::DeriveInput {
+        let extra = if list { ", content_list" } else { "" };
+        syn::parse_str(&format!(
+            "#[node(kind = kind::ELEMENT_BINDING_EXPRESSION, display, content = content, words = 5, built_words = 3{extra})]
+            pub struct ElementBindingExpressionNode {{
+                #[wire(key = \"$_layout\")]
+                #[layout]
+                pub layout: Option<Box<NodeLayout>>,
+                #[height]
+                height: u16,
+                #[wire(key = \"_content\")]
+                #[slot(word = 2, width = 3, forms = 1, built = 2)]
+                pub content: SlotValue<ArgumentsNode>,
+            }}"
+        ))
+        .expect("an envelope")
+    }
+
+    #[test]
+    fn an_envelope_over_a_list_reads_its_content_through_a_slot_hop() {
+        let charged = expand(&envelope(true));
+        assert!(has(&charged, "let content: ::core::result::Result<SlotValue<ArgumentsNode>, __rt::ReadError> = __rt::read_value(cursor, ctx, depth);"));
+        assert!(has(&charged, "::sittir_core::SlotValue::Coord(_) => ::core::option::Option::None,"));
+        assert!(has(&charged, "content: content,"));
+        let plain = expand(&envelope(false));
+        assert!(has(&plain, "let content = <ArgumentsNode as __rt::ReadNode>::read(cursor, ctx, depth);"));
+        assert!(has(&plain, "content: ::sittir_core::SlotValue::Node(content),"));
+    }
+
+    #[test]
+    fn an_envelope_over_a_list_hydrates_as_the_lists_record_under_its_own_kind() {
+        let charged = expand(&envelope(true));
+        assert!(has(&charged, "<ArgumentsNode as ::sittir_core::arena::HydrateNode>::hydrate(cursor, ctx, depth.and_then(__rt::Depth::below), records, inline)?"));
+        assert!(has(&charged, "::sittir_core::arena::Hydrated::Record { kind: __stored_kind(&__node), at }"));
+        assert!(has(&charged, "embedded @ ::sittir_core::arena::Hydrated::Embedded => ::core::result::Result::Ok(embedded),"));
+        assert!(has(&charged, "::sittir_core::arena::Hydrated::Unit { .. } | ::sittir_core::arena::Hydrated::Text { .. } => ::core::result::Result::Err(::sittir_core::arena::ArenaError::Unwritable("));
+        assert!(!has(&charged, "other => "));
+        assert!(!has(&charged, "an envelope's content read from its own row is no node with a record"));
+        let plain = expand(&envelope(false));
+        assert!(!has(&plain, "compile_error!"));
+        assert!(has(&plain, "an envelope's content read from its own row is no node with a record"));
+    }
+
+    #[test]
+    fn an_envelope_over_a_list_still_needs_its_content_to_be_a_slot() {
+        let mut input = envelope(true);
+        let syn::Data::Struct(data) = &mut input.data else { panic!("a struct") };
+        let syn::Fields::Named(fields) = &mut data.fields else { panic!("named fields") };
+        let content = fields.named.iter_mut().find(|field| field.ident.as_ref().is_some_and(|name| name == "content")).expect("content");
+        content.attrs.retain(|attr| !attr.path().is_ident("slot"));
+        let error = super::derive(&input).expect_err("a content that is no slot");
+        assert!(error.to_string().contains("content"), "{error}");
     }
 
     #[test]

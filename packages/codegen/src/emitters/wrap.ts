@@ -4,6 +4,7 @@ import { continuationTriviaKinds, emptyForms, layoutTriviaKinds } from '../compi
 import type { AuthoredCompound } from '../compiler/model/node-map.ts';
 import type { NodeMap } from '../compiler/types.ts';
 import { AbstractAssembledCompound, AssembledAlias, AssembledList, AssembledNonterminal, storesNodes } from '../compiler/model/node-map.ts';
+import { envelopeListOf, envelopesOverList } from './node-projection.ts';
 import type { AssembledNode } from '../compiler/model/node-map.ts';
 import { storedTextKinds } from './built-from-text.ts';
 import type { GeneratedIdTables } from '../dsl/symbol-table.ts';
@@ -155,11 +156,39 @@ export namespace wrap {
 		shared: HandleShared
 	): boolean {
 		if (!node.rawFactoryName) return false;
-		const places = recordPlacesOf(node, nodeMap);
-		if (places === undefined) return false;
-		output.push(emitRecordHandle(node, kindEntries, nodeMap, places, shared));
-		return true;
+		if (node instanceof AssembledAlias) {
+			const list = envelopeListOf(node, nodeMap);
+			if (list === undefined) return viewPlaces(output, node, kindEntries, nodeMap, shared);
+			output.push(emitEnvelopeOverListHandle(node, list, kindEntries));
+			return true;
+		}
+		return viewPlaces(output, node, kindEntries, nodeMap, shared);
 	}
+}
+
+function viewPlaces(
+	output: string[],
+	node: AuthoredCompound | AssembledList,
+	kindEntries: readonly KindEnumEntry[],
+	nodeMap: NodeMap,
+	shared: HandleShared
+): boolean {
+	const places = recordPlacesOf(node, nodeMap);
+	if (places === undefined) return false;
+	output.push(emitRecordHandle(node, kindEntries, nodeMap, places, shared));
+	return true;
+}
+
+function emitEnvelopeOverListHandle(envelope: AuthoredCompound, list: AssembledNode, kindEntries: readonly KindEnumEntry[]): string {
+	const entry = findKindEntry(kindEntries, list.kind);
+	if (entry === undefined) throw new Error(`emitWrap: the list '${list.kind}' under the envelope '${envelope.kind}' has no catalog entry`);
+	const parsed = declaredParsedType(envelope, kindEntries);
+	return [
+		`function view${envelope.typeName}(data: RecordPosition, tree: TreeHandle)${returnAnnotation(parsed)} {`,
+		`  const list = view${list.typeName}({ ...data, $type: TSKindId.${entry.member} }, tree);`,
+		`  return ${castToParsed('{ ...list, $type: data.$type, content: list }', parsed)};`,
+		'}'
+	].join('\n');
 }
 
 type RecordPlaces = ReadonlyMap<string, RecordPlace>;
@@ -456,7 +485,7 @@ function emitRecordHandle(node: AuthoredCompound | AssembledList, kindEntries: r
 	for (const name of setters) shared.setters.add(name);
 	const trivia = triviaPositionsOf(node.kind, nodeMap);
 	if (trivia?.inner === true) shared.inner = true;
-	const stamp = typeStampLines(node, kindEntries);
+	const stamp = envelopesOverList(node, nodeMap).length > 0 ? [] : typeStampLines(node, kindEntries);
 	const verbatim = recordVerbatimPlaceOf(node, nodeMap);
 	return [
 		...functions,

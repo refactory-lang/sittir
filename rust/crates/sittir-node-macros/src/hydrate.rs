@@ -257,11 +257,24 @@ fn interior(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>], _pattern: &L
 }
 
 fn envelope(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn::Result<TokenStream> {
-    let words = words_of(ident, attrs)?;
     let content = attrs.content.as_ref().ok_or_else(|| syn::Error::new_spanned(ident, "an envelope names its content field: `content = …`"))?;
     let field = fields.iter().find(|f| f.ident == content).ok_or_else(|| syn::Error::new_spanned(content, "`content` names one of the envelope's fields"))?;
-    let Role::Slot(slot) = &field.role else { return Err(syn::Error::new_spanned(content, "an envelope's content is a slot")) };
     let inner: &Type = inner_of(field.ty, "SlotValue").ok_or_else(|| syn::Error::new_spanned(field.ty, "an envelope's content is a `SlotValue<…>`"))?;
+    let Role::Slot(slot) = &field.role else { return Err(syn::Error::new_spanned(content, "an envelope's content is a slot")) };
+    if attrs.content_list {
+        let refused = format!("{ident}: an envelope over a list holds the list's record, its coordinate or its embedded record, and the list hydrated to none of them");
+        return Ok(quote! {
+            match <#inner as ::sittir_core::arena::HydrateNode>::hydrate(cursor, ctx, depth.and_then(__rt::Depth::below), records, inline)? {
+                ::sittir_core::arena::Hydrated::Record { at, .. } => ::core::result::Result::Ok(::sittir_core::arena::Hydrated::Record { kind: __stored_kind(&__node), at }),
+                ::sittir_core::arena::Hydrated::Node { row, span, leaf, .. } => {
+                    ::core::result::Result::Ok(::sittir_core::arena::Hydrated::Node { kind: __stored_kind(&__node), row, span, leaf })
+                }
+                embedded @ ::sittir_core::arena::Hydrated::Embedded => ::core::result::Result::Ok(embedded),
+                ::sittir_core::arena::Hydrated::Unit { .. } | ::sittir_core::arena::Hydrated::Text { .. } => ::core::result::Result::Err(::sittir_core::arena::ArenaError::Unwritable(#refused).into()),
+            }
+        });
+    }
+    let words = words_of(ident, attrs)?;
     let shape = crate::views::cell_shape(field, &slot.cell)?;
     let wraps_hidden = attrs.wraps_hidden;
     let message = format!("{ident}: an envelope's content read from its own row is no node with a record, since a tree holds one record per row");
