@@ -15,6 +15,7 @@
 	"type": "module",
 	"scripts": {
 		"build": "pnpm -r run build",
+		"build:packages": "pnpm --filter \"./packages/*\" run build",
 		"clean": "pnpm -r run clean && rm -rf node_modules/.cache",
 		"clean:all": "pnpm -r exec rm -rf dist node_modules && rm -rf node_modules",
 		"dev": "tsrs --build tsconfig.json --watch",
@@ -48,7 +49,7 @@
 		"gen:examples": "tsx packages/tools/src/scripts/gen-examples.ts",
 		"changeset": "changeset",
 		"changeset:version": "changeset version",
-		"changeset:publish": "pnpm run build && changeset publish",
+		"changeset:publish": "pnpm run build:packages && changeset publish",
 		"docs": "typedoc",
 		"docs:md": "typedoc --plugin typedoc-plugin-markdown"
 	},

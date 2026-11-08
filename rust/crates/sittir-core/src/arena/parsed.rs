@@ -3,6 +3,7 @@
 //! A record is named by its tree and its address together: the address
 //! reads nothing once its tree is gone.
 
+use crate::tree_sitter;
 use super::{Address, Arena, ArenaRead, Cell, CellAt, HeldArenas, HydrateError, HydrateNode, RecordCells, RecordTrees, SideRecord, TreeArena};
 use crate::engine::{EngineGrammar, ParsedTree};
 use crate::nodes::{Nodes, RecordNodes, TreeNodes};

@@ -14,6 +14,7 @@ use sittir_core::layout::LayoutWorkCounter;
 use sittir_core::nodes::{Kid, Nodes, RecordNodes, Step, TreeNodes, Visit};
 use sittir_core::options::ResolvedOptions;
 use sittir_core::read::{descendant_count, Depth};
+use sittir_core::tree_sitter;
 use sittir_core::trivia_table::DepthMembers;
 use sittir_core::types::NodeIndex;
 use sittir_parity_tests::{each_grammar, fixture_sources, parsed};

@@ -14920,7 +14920,7 @@
               "name": "parameter",
               "annotations": {
                 "variant": "parameter",
-                "variantOf": "_attributed_parameter"
+                "variantOf": "parameters_elements"
               }
             },
             {
@@ -14928,14 +14928,14 @@
               "name": "variadic_parameter",
               "annotations": {
                 "variant": "variadic_parameter",
-                "variantOf": "_attributed_parameter"
+                "variantOf": "parameters_elements"
               }
             },
             {
               "type": "STRING",
               "value": "_",
               "annotations": {
-                "variantOf": "_attributed_parameter"
+                "variantOf": "parameters_elements"
               }
             },
             {
@@ -14943,7 +14943,7 @@
               "name": "_type",
               "annotations": {
                 "variant": "type",
-                "variantOf": "_attributed_parameter"
+                "variantOf": "parameters_elements"
               }
             }
           ]
@@ -14971,7 +14971,7 @@
               "name": "metavariable",
               "annotations": {
                 "variant": "metavariable",
-                "variantOf": "_attributed_type_parameter"
+                "variantOf": "type_parameters_elements"
               }
             },
             {
@@ -14979,7 +14979,7 @@
               "name": "type_parameter",
               "annotations": {
                 "variant": "type_parameter",
-                "variantOf": "_attributed_type_parameter"
+                "variantOf": "type_parameters_elements"
               }
             },
             {
@@ -14987,7 +14987,7 @@
               "name": "lifetime_parameter",
               "annotations": {
                 "variant": "lifetime_parameter",
-                "variantOf": "_attributed_type_parameter"
+                "variantOf": "type_parameters_elements"
               }
             },
             {
@@ -14995,7 +14995,7 @@
               "name": "const_parameter",
               "annotations": {
                 "variant": "const_parameter",
-                "variantOf": "_attributed_type_parameter"
+                "variantOf": "type_parameters_elements"
               }
             }
           ]
@@ -15073,7 +15073,7 @@
               "name": "_type",
               "annotations": {
                 "variant": "type",
-                "variantOf": "_type_argument"
+                "variantOf": "type_arguments_elements"
               }
             },
             {
@@ -15081,7 +15081,7 @@
               "name": "type_binding",
               "annotations": {
                 "variant": "type_binding",
-                "variantOf": "_type_argument"
+                "variantOf": "type_arguments_elements"
               }
             },
             {
@@ -15089,7 +15089,7 @@
               "name": "lifetime",
               "annotations": {
                 "variant": "lifetime",
-                "variantOf": "_type_argument"
+                "variantOf": "type_arguments_elements"
               }
             },
             {
@@ -15097,7 +15097,7 @@
               "name": "_literal",
               "annotations": {
                 "variant": "literal",
-                "variantOf": "_type_argument"
+                "variantOf": "type_arguments_elements"
               }
             },
             {
@@ -15105,7 +15105,7 @@
               "name": "block",
               "annotations": {
                 "variant": "block",
-                "variantOf": "_type_argument"
+                "variantOf": "type_arguments_elements"
               }
             }
           ]
@@ -15811,7 +15811,7 @@
                 "name": "_parameter_receiver",
                 "annotations": {
                   "variant": "receiver_parameter_declaration",
-                  "variantOf": "_attributed_parameter_receiver"
+                  "variantOf": "parameters"
                 }
               },
               "named": true,
@@ -15822,7 +15822,7 @@
               "name": "self_parameter",
               "annotations": {
                 "variant": "self_parameter",
-                "variantOf": "_attributed_parameter"
+                "variantOf": "parameters_elements"
               }
             }
           ]

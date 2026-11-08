@@ -2130,7 +2130,7 @@ impl ::sittir_core::prepare::Prepare for AnyNode {
             AnyNode::Verbatim(t) => t.source_separator(ctx),
         }
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -2425,7 +2425,7 @@ impl ::sittir_core::prepare::Prepare for StatementNode {
             StatementNode::MatchStatement(t) => t.source_separator(ctx),
         }
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -2622,7 +2622,7 @@ impl ::sittir_core::prepare::Prepare for SimpleStatementNode {
             SimpleStatementNode::TypeAliasStatement(t) => t.source_separator(ctx),
         }
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -2777,7 +2777,7 @@ impl ::sittir_core::prepare::Prepare for CompoundStatementNode {
             CompoundStatementNode::MatchStatement(t) => t.source_separator(ctx),
         }
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -2883,7 +2883,7 @@ impl ::sittir_core::prepare::Prepare for WithClauseNode {
             WithClauseNode::WithClauseParen(t) => t.source_separator(ctx),
         }
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -2968,7 +2968,7 @@ impl ::sittir_core::prepare::Prepare for SuiteNode {
             SuiteNode::SuiteEmpty(t) => t.source_separator(ctx),
         }
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -3106,7 +3106,7 @@ impl ::sittir_core::prepare::Prepare for ParameterNode {
             ParameterNode::Verbatim(t) => t.source_separator(ctx),
         }
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -3235,7 +3235,7 @@ impl ::sittir_core::prepare::Prepare for PatternNode {
             PatternNode::Verbatim(t) => t.source_separator(ctx),
         }
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -3372,7 +3372,7 @@ impl ::sittir_core::prepare::Prepare for ExpressionNode {
             ExpressionNode::Verbatim(t) => t.source_separator(ctx),
         }
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -3636,7 +3636,7 @@ impl ::sittir_core::prepare::Prepare for PrimaryExpressionNode {
             PrimaryExpressionNode::Verbatim(t) => t.source_separator(ctx),
         }
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -3814,7 +3814,7 @@ impl ::sittir_core::prepare::Prepare for IntegerNode {
             IntegerNode::Verbatim(t) => t.source_separator(ctx),
         }
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -3915,7 +3915,7 @@ impl ::sittir_core::prepare::Prepare for FloatNode {
             FloatNode::FloatScientific(t) => t.source_separator(ctx),
         }
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -4010,7 +4010,7 @@ impl ::sittir_core::prepare::Prepare for TypeParamNode {
             TypeParamNode::TypeParamParamSpec(t) => t.source_separator(ctx),
         }
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -4104,7 +4104,7 @@ impl ::sittir_core::prepare::Prepare for IntegerDecimalNode {
             IntegerDecimalNode::Verbatim(t) => t.source_separator(ctx),
         }
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -4251,7 +4251,7 @@ impl ::sittir_core::prepare::Prepare for CompoundStatementClassDefinitionNode {
             CompoundStatementClassDefinitionNode::MatchStatement(t) => t.source_separator(ctx),
         }
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -4420,7 +4420,7 @@ impl ::sittir_core::prepare::Prepare for StatementClassDefinitionNode {
             StatementClassDefinitionNode::MatchStatement(t) => t.source_separator(ctx),
         }
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -4525,7 +4525,7 @@ impl ::sittir_core::prepare::Prepare for SuiteClassDefinitionNode {
             SuiteClassDefinitionNode::SuiteEmpty(t) => t.source_separator(ctx),
         }
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -4606,7 +4606,7 @@ impl ::sittir_core::prepare::Prepare for FutureImportStatementContentNodeSlot {
             FutureImportStatementContentNodeSlot::ParenthesizedImportList(t) => t.source_separator(ctx),
         }
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -4689,7 +4689,7 @@ impl ::sittir_core::prepare::Prepare for ImportFromStatementModuleNameNodeSlot {
             ImportFromStatementModuleNameNodeSlot::DottedName(t) => t.source_separator(ctx),
         }
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -4779,7 +4779,7 @@ impl ::sittir_core::prepare::Prepare for ImportFromStatementContentNodeSlot {
             ImportFromStatementContentNodeSlot::WildcardImport => None,
         }
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -4876,7 +4876,7 @@ impl ::sittir_core::prepare::Prepare for ImportListNameNodeSlot {
             ImportListNameNodeSlot::AliasedImport(t) => t.source_separator(ctx),
         }
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -4959,7 +4959,7 @@ impl ::sittir_core::prepare::Prepare for PrintStatementContentNodeSlot {
             PrintStatementContentNodeSlot::PrintStatementPlain(t) => t.source_separator(ctx),
         }
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -5354,7 +5354,7 @@ impl ::sittir_core::prepare::Prepare for ExpressionStatementContentNodeSlot {
             ExpressionStatementContentNodeSlot::Verbatim(t) => t.source_separator(ctx),
         }
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -5890,7 +5890,7 @@ impl ::sittir_core::prepare::Prepare for ReturnStatementExpressionsNodeSlot {
             ReturnStatementExpressionsNodeSlot::Verbatim(t) => t.source_separator(ctx),
         }
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -6129,7 +6129,7 @@ impl ::sittir_core::prepare::Prepare for IfStatementAlternativeNodeSlot {
             IfStatementAlternativeNodeSlot::ElseClause(t) => t.source_separator(ctx),
         }
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -6212,7 +6212,7 @@ impl ::sittir_core::prepare::Prepare for CaseClausePatternNodeSlot {
             CaseClausePatternNodeSlot::CasePatternList(t) => t.source_separator(ctx),
         }
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -6337,7 +6337,7 @@ impl ::sittir_core::prepare::Prepare for ForStatementLeftNodeSlot {
             ForStatementLeftNodeSlot::Verbatim(t) => t.source_separator(ctx),
         }
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -6451,7 +6451,7 @@ impl ::sittir_core::prepare::Prepare for ExecStatementCodeNodeSlot {
             ExecStatementCodeNodeSlot::Verbatim(t) => t.source_separator(ctx),
         }
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -6538,7 +6538,7 @@ impl ::sittir_core::prepare::Prepare for ParenthesizedListSplatContentNodeSlot {
             ParenthesizedListSplatContentNodeSlot::ListSplat(t) => t.source_separator(ctx),
         }
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -6621,7 +6621,7 @@ impl ::sittir_core::prepare::Prepare for DecoratedDefinitionDefinitionNodeSlot {
             DecoratedDefinitionDefinitionNodeSlot::FunctionDefinition(t) => t.source_separator(ctx),
         }
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -6711,7 +6711,7 @@ impl ::sittir_core::prepare::Prepare for CasePatternContentNodeSlot {
             CasePatternContentNodeSlot::SimplePattern(t) => t.source_separator(ctx),
         }
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -6969,7 +6969,7 @@ impl ::sittir_core::prepare::Prepare for SimplePatternContentNodeSlot {
             SimplePatternContentNodeSlot::Verbatim(t) => t.source_separator(ctx),
         }
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -7204,7 +7204,7 @@ impl ::sittir_core::prepare::Prepare for ComplexPatternRealNodeSlot {
             ComplexPatternRealNodeSlot::Verbatim(t) => t.source_separator(ctx),
         }
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -7295,7 +7295,7 @@ impl ::sittir_core::prepare::Prepare for ComplexPatternOperatorNodeSlot {
             ComplexPatternOperatorNodeSlot::Dash => Ok(()),
         }
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -7365,7 +7365,7 @@ impl ::sittir_core::prepare::Prepare for DefaultParameterNameNodeSlot {
             DefaultParameterNameNodeSlot::Verbatim(t) => t.source_separator(ctx),
         }
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -7466,7 +7466,7 @@ impl ::sittir_core::prepare::Prepare for ListSplatPatternPatternNodeSlot {
             ListSplatPatternPatternNodeSlot::Verbatim(t) => t.source_separator(ctx),
         }
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -7533,7 +7533,7 @@ impl ::sittir_core::prepare::Prepare for BooleanOperatorOperatorNodeSlot {
             BooleanOperatorOperatorNodeSlot::OrKeyword => Ok(()),
         }
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -7605,7 +7605,7 @@ impl ::sittir_core::prepare::Prepare for BinaryOperatorOperatorNodeSlot {
             BinaryOperatorOperatorNodeSlot::GtGt => Ok(()),
         }
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -7669,7 +7669,7 @@ impl ::sittir_core::prepare::Prepare for UnaryOperatorOperatorNodeSlot {
             UnaryOperatorOperatorNodeSlot::Tilde => Ok(()),
         }
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -8026,7 +8026,7 @@ impl ::sittir_core::prepare::Prepare for LambdaWithinForInClauseBodyNodeSlot {
             LambdaWithinForInClauseBodyNodeSlot::Verbatim(t) => t.source_separator(ctx),
         }
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -8274,7 +8274,7 @@ impl ::sittir_core::prepare::Prepare for AugmentedAssignmentOperatorNodeSlot {
             AugmentedAssignmentOperatorNodeSlot::PipeEq => Ok(()),
         }
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -8650,7 +8650,7 @@ impl ::sittir_core::prepare::Prepare for AugmentedAssignmentRightNodeSlot {
             AugmentedAssignmentRightNodeSlot::Verbatim(t) => t.source_separator(ctx),
         }
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -9181,7 +9181,7 @@ impl ::sittir_core::prepare::Prepare for YieldContentNodeSlot {
             YieldContentNodeSlot::Verbatim(t) => t.source_separator(ctx),
         }
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -9424,7 +9424,7 @@ impl ::sittir_core::prepare::Prepare for CallArgumentsNodeSlot {
             CallArgumentsNodeSlot::ArgumentList(t) => t.source_separator(ctx),
         }
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -9521,7 +9521,7 @@ impl ::sittir_core::prepare::Prepare for TypedParameterNameNodeSlot {
             TypedParameterNameNodeSlot::Verbatim(t) => t.source_separator(ctx),
         }
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -9917,7 +9917,7 @@ impl ::sittir_core::prepare::Prepare for TypeContentNodeSlot {
             TypeContentNodeSlot::Verbatim(t) => t.source_separator(ctx),
         }
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -10449,7 +10449,7 @@ impl ::sittir_core::prepare::Prepare for ParenthesizedExpressionExpressionNodeSl
             ParenthesizedExpressionExpressionNodeSlot::Verbatim(t) => t.source_separator(ctx),
         }
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -10979,7 +10979,7 @@ impl ::sittir_core::prepare::Prepare for CollectionElementsItemNodeSlot {
             CollectionElementsItemNodeSlot::Verbatim(t) => t.source_separator(ctx),
         }
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -11202,7 +11202,7 @@ impl ::sittir_core::prepare::Prepare for ForInClauseTrailingCommaNodeSlot {
             ForInClauseTrailingCommaNodeSlot::Blank => Ok(()),
         }
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -11270,7 +11270,7 @@ impl ::sittir_core::prepare::Prepare for StringContentNodeSlot {
             StringContentNodeSlot::StringContent(t) => t.source_separator(ctx),
         }
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -11416,7 +11416,7 @@ impl ::sittir_core::prepare::Prepare for StringContentElementsNodeSlot {
             StringContentElementsNodeSlot::Verbatim(t) => t.source_separator(ctx),
         }
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -11542,7 +11542,7 @@ impl ::sittir_core::prepare::Prepare for FormatSpecifierElementsNodeSlot {
             FormatSpecifierElementsNodeSlot::Verbatim(t) => t.source_separator(ctx),
         }
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -11927,7 +11927,7 @@ impl ::sittir_core::prepare::Prepare for ArgumentListElementsItemNodeSlot {
             ArgumentListElementsItemNodeSlot::Verbatim(t) => t.source_separator(ctx),
         }
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -12185,7 +12185,7 @@ impl ::sittir_core::prepare::Prepare for DictPatternElementsItemNodeSlot {
             DictPatternElementsItemNodeSlot::SplatPatternDictionary(t) => t.source_separator(ctx),
         }
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -12549,7 +12549,7 @@ impl ::sittir_core::prepare::Prepare for SubscriptsElementsNodeSlot {
             SubscriptsElementsNodeSlot::Verbatim(t) => t.source_separator(ctx),
         }
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -12788,7 +12788,7 @@ impl ::sittir_core::prepare::Prepare for DictionaryElementsItemNodeSlot {
             DictionaryElementsItemNodeSlot::DictionarySplat(t) => t.source_separator(ctx),
         }
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -12871,7 +12871,7 @@ impl ::sittir_core::prepare::Prepare for ComprehensionClausesContentNodeSlot {
             ComprehensionClausesContentNodeSlot::IfClause(t) => t.source_separator(ctx),
         }
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -12954,7 +12954,7 @@ impl ::sittir_core::prepare::Prepare for ExceptClauseExceptionContentNodeSlot {
             ExceptClauseExceptionContentNodeSlot::ExceptClauseExceptionList(t) => t.source_separator(ctx),
         }
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -13044,7 +13044,7 @@ impl ::sittir_core::prepare::Prepare for SplatPatternListPatternNodeSlot {
             SplatPatternListPatternNodeSlot::Verbatim(t) => t.source_separator(ctx),
         }
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -13148,7 +13148,7 @@ impl ::sittir_core::prepare::Prepare for SplatPatternDictionaryPatternNodeSlot {
             SplatPatternDictionaryPatternNodeSlot::Verbatim(t) => t.source_separator(ctx),
         }
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -13557,7 +13557,7 @@ impl ::sittir_core::prepare::Prepare for AssignmentEqValueNodeSlot {
             AssignmentEqValueNodeSlot::Verbatim(t) => t.source_separator(ctx),
         }
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -13819,7 +13819,7 @@ impl ::sittir_core::prepare::Prepare for ComparisonOperatorComparatorOperatorsNo
             ComparisonOperatorComparatorOperatorsNodeSlot::IsNot => Ok(()),
         }
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -13962,7 +13962,7 @@ impl ::sittir_core::prepare::Prepare for DecoratedDefinitionClassDeclarationDefi
             DecoratedDefinitionClassDeclarationDefinitionNodeSlot::ConstructorDeclaration(t) => t.source_separator(ctx),
         }
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -14075,7 +14075,7 @@ impl ::sittir_core::prepare::Prepare for ModuleNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -14159,7 +14159,7 @@ impl ::sittir_core::prepare::Prepare for SimpleStatementsNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -14234,7 +14234,7 @@ impl ::sittir_core::prepare::Prepare for ImportStatementNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -14307,7 +14307,7 @@ impl ::sittir_core::prepare::Prepare for ImportPrefixNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -14383,7 +14383,7 @@ impl ::sittir_core::prepare::Prepare for RelativeImportNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -14459,7 +14459,7 @@ impl ::sittir_core::prepare::Prepare for FutureImportStatementNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -14537,7 +14537,7 @@ impl ::sittir_core::prepare::Prepare for ImportFromStatementNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -14624,7 +14624,7 @@ impl ::sittir_core::prepare::Prepare for ImportListNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -14707,7 +14707,7 @@ impl ::sittir_core::prepare::Prepare for AliasedImportNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -14738,7 +14738,7 @@ impl ::sittir_core::prepare::Prepare for WildcardImportNode {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -14811,7 +14811,7 @@ impl ::sittir_core::prepare::Prepare for PrintStatementNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -14885,7 +14885,7 @@ impl ::sittir_core::prepare::Prepare for ChevronNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -14966,7 +14966,7 @@ impl ::sittir_core::prepare::Prepare for AssertStatementNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -15045,7 +15045,7 @@ impl ::sittir_core::prepare::Prepare for ExpressionStatementNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -15122,7 +15122,7 @@ impl ::sittir_core::prepare::Prepare for NamedExpressionNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -15198,7 +15198,7 @@ impl ::sittir_core::prepare::Prepare for NamedExpressionLhsNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -15272,7 +15272,7 @@ impl ::sittir_core::prepare::Prepare for ReturnStatementNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -15347,7 +15347,7 @@ impl ::sittir_core::prepare::Prepare for DeleteStatementNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -15425,7 +15425,7 @@ impl ::sittir_core::prepare::Prepare for RaiseStatementNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -15479,7 +15479,7 @@ impl ::sittir_core::prepare::Prepare for PassStatementNode {
             PassStatementNode::PassStatement(_) => None,
         }
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -15532,7 +15532,7 @@ impl ::sittir_core::prepare::Prepare for BreakStatementNode {
             BreakStatementNode::BreakStatement(_) => None,
         }
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -15585,7 +15585,7 @@ impl ::sittir_core::prepare::Prepare for ContinueStatementNode {
             ContinueStatementNode::ContinueStatement(_) => None,
         }
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -15669,7 +15669,7 @@ impl ::sittir_core::prepare::Prepare for IfStatementNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -15752,7 +15752,7 @@ impl ::sittir_core::prepare::Prepare for ElifClauseNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -15828,7 +15828,7 @@ impl ::sittir_core::prepare::Prepare for ElseClauseNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -15906,7 +15906,7 @@ impl ::sittir_core::prepare::Prepare for MatchStatementNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -15985,7 +15985,7 @@ impl ::sittir_core::prepare::Prepare for MatchBlockNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -16069,7 +16069,7 @@ impl ::sittir_core::prepare::Prepare for CaseClauseNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -16158,7 +16158,7 @@ impl ::sittir_core::prepare::Prepare for ForStatementNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -16242,7 +16242,7 @@ impl ::sittir_core::prepare::Prepare for WhileStatementNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -16331,7 +16331,7 @@ impl ::sittir_core::prepare::Prepare for TryStatementNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -16418,7 +16418,7 @@ impl ::sittir_core::prepare::Prepare for ExceptClauseNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -16494,7 +16494,7 @@ impl ::sittir_core::prepare::Prepare for FinallyClauseNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -16575,7 +16575,7 @@ impl ::sittir_core::prepare::Prepare for WithStatementNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -16651,7 +16651,7 @@ impl ::sittir_core::prepare::Prepare for WithItemNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -16742,7 +16742,7 @@ impl ::sittir_core::prepare::Prepare for FunctionDefinitionNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -16821,7 +16821,7 @@ impl ::sittir_core::prepare::Prepare for ParametersNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -16896,7 +16896,7 @@ impl ::sittir_core::prepare::Prepare for LambdaParametersNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -16970,7 +16970,7 @@ impl ::sittir_core::prepare::Prepare for ListSplatNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -17045,7 +17045,7 @@ impl ::sittir_core::prepare::Prepare for DictionarySplatNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -17126,7 +17126,7 @@ impl ::sittir_core::prepare::Prepare for GlobalStatementNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -17210,7 +17210,7 @@ impl ::sittir_core::prepare::Prepare for NonlocalStatementNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -17297,7 +17297,7 @@ impl ::sittir_core::prepare::Prepare for ExecStatementNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -17383,7 +17383,7 @@ impl ::sittir_core::prepare::Prepare for TypeAliasStatementNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -17469,7 +17469,7 @@ impl ::sittir_core::prepare::Prepare for ClassDefinitionNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -17547,7 +17547,7 @@ impl ::sittir_core::prepare::Prepare for TypeParameterNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -17622,7 +17622,7 @@ impl ::sittir_core::prepare::Prepare for ParenthesizedListSplatNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -17697,7 +17697,7 @@ impl ::sittir_core::prepare::Prepare for ArgumentListNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -17778,7 +17778,7 @@ impl ::sittir_core::prepare::Prepare for DecoratedDefinitionNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -17857,7 +17857,7 @@ impl ::sittir_core::prepare::Prepare for DecoratorNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -17935,7 +17935,7 @@ impl ::sittir_core::prepare::Prepare for BlockNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -18022,7 +18022,7 @@ impl ::sittir_core::prepare::Prepare for ExpressionListNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -18105,7 +18105,7 @@ impl ::sittir_core::prepare::Prepare for DottedNameNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -18181,7 +18181,7 @@ impl ::sittir_core::prepare::Prepare for CasePatternNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -18255,7 +18255,7 @@ impl ::sittir_core::prepare::Prepare for SimplePatternNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -18332,7 +18332,7 @@ impl ::sittir_core::prepare::Prepare for CaseAsPatternNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -18411,7 +18411,7 @@ impl ::sittir_core::prepare::Prepare for UnionPatternNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -18487,7 +18487,7 @@ impl ::sittir_core::prepare::Prepare for DictPatternNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -18565,7 +18565,7 @@ impl ::sittir_core::prepare::Prepare for KeyValuePatternNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -18644,7 +18644,7 @@ impl ::sittir_core::prepare::Prepare for KeywordPatternNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -18723,7 +18723,7 @@ impl ::sittir_core::prepare::Prepare for ClassPatternNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -18808,7 +18808,7 @@ impl ::sittir_core::prepare::Prepare for ComplexPatternNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -18894,7 +18894,7 @@ impl ::sittir_core::prepare::Prepare for ParametersElementsNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -18983,7 +18983,7 @@ impl ::sittir_core::prepare::Prepare for PatternsNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -19063,7 +19063,7 @@ impl ::sittir_core::prepare::Prepare for TuplePatternNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -19138,7 +19138,7 @@ impl ::sittir_core::prepare::Prepare for ListPatternNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -19216,7 +19216,7 @@ impl ::sittir_core::prepare::Prepare for DefaultParameterNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -19298,7 +19298,7 @@ impl ::sittir_core::prepare::Prepare for TypedDefaultParameterNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -19375,7 +19375,7 @@ impl ::sittir_core::prepare::Prepare for ListSplatPatternNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -19450,7 +19450,7 @@ impl ::sittir_core::prepare::Prepare for DictionarySplatPatternNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -19528,7 +19528,7 @@ impl ::sittir_core::prepare::Prepare for AsPatternNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -19604,7 +19604,7 @@ impl ::sittir_core::prepare::Prepare for NotOperatorNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -19685,7 +19685,7 @@ impl ::sittir_core::prepare::Prepare for BooleanOperatorNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -19768,7 +19768,7 @@ impl ::sittir_core::prepare::Prepare for BinaryOperatorNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -19848,7 +19848,7 @@ impl ::sittir_core::prepare::Prepare for UnaryOperatorNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -19930,7 +19930,7 @@ impl ::sittir_core::prepare::Prepare for ComparisonOperatorNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -20012,7 +20012,7 @@ impl ::sittir_core::prepare::Prepare for LambdaNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -20091,7 +20091,7 @@ impl ::sittir_core::prepare::Prepare for LambdaWithinForInClauseNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -20173,7 +20173,7 @@ impl ::sittir_core::prepare::Prepare for AugmentedAssignmentNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -20259,7 +20259,7 @@ impl ::sittir_core::prepare::Prepare for PatternListNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -20339,7 +20339,7 @@ impl ::sittir_core::prepare::Prepare for YieldNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -20417,7 +20417,7 @@ impl ::sittir_core::prepare::Prepare for AttributeNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -20496,7 +20496,7 @@ impl ::sittir_core::prepare::Prepare for SubscriptNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -20578,7 +20578,7 @@ impl ::sittir_core::prepare::Prepare for SliceNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -20633,7 +20633,7 @@ impl ::sittir_core::prepare::Prepare for EllipsisNode {
             EllipsisNode::Ellipsis(_) => None,
         }
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -20711,7 +20711,7 @@ impl ::sittir_core::prepare::Prepare for CallNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -20790,7 +20790,7 @@ impl ::sittir_core::prepare::Prepare for TypedParameterNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -20866,7 +20866,7 @@ impl ::sittir_core::prepare::Prepare for TypeNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -20940,7 +20940,7 @@ impl ::sittir_core::prepare::Prepare for SplatTypeNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -21018,7 +21018,7 @@ impl ::sittir_core::prepare::Prepare for GenericTypeNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -21097,7 +21097,7 @@ impl ::sittir_core::prepare::Prepare for UnionTypeNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -21176,7 +21176,7 @@ impl ::sittir_core::prepare::Prepare for ConstrainedTypeNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -21255,7 +21255,7 @@ impl ::sittir_core::prepare::Prepare for MemberTypeNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -21334,7 +21334,7 @@ impl ::sittir_core::prepare::Prepare for KeywordArgumentNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -21410,7 +21410,7 @@ impl ::sittir_core::prepare::Prepare for ListNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -21485,7 +21485,7 @@ impl ::sittir_core::prepare::Prepare for SetNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -21560,7 +21560,7 @@ impl ::sittir_core::prepare::Prepare for TupleNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -21635,7 +21635,7 @@ impl ::sittir_core::prepare::Prepare for DictionaryNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -21713,7 +21713,7 @@ impl ::sittir_core::prepare::Prepare for PairNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -21792,7 +21792,7 @@ impl ::sittir_core::prepare::Prepare for ListComprehensionNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -21871,7 +21871,7 @@ impl ::sittir_core::prepare::Prepare for DictionaryComprehensionNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -21950,7 +21950,7 @@ impl ::sittir_core::prepare::Prepare for SetComprehensionNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -22029,7 +22029,7 @@ impl ::sittir_core::prepare::Prepare for GeneratorExpressionNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -22105,7 +22105,7 @@ impl ::sittir_core::prepare::Prepare for ParenthesizedExpressionNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -22189,7 +22189,7 @@ impl ::sittir_core::prepare::Prepare for CollectionElementsNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -22284,7 +22284,7 @@ impl ::sittir_core::prepare::Prepare for ForInClauseNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -22366,7 +22366,7 @@ impl ::sittir_core::prepare::Prepare for IfClauseNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -22447,7 +22447,7 @@ impl ::sittir_core::prepare::Prepare for ConditionalExpressionNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -22527,7 +22527,7 @@ impl ::sittir_core::prepare::Prepare for ConcatenatedStringNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -22611,7 +22611,7 @@ impl ::sittir_core::prepare::Prepare for StringNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -22690,7 +22690,7 @@ impl ::sittir_core::prepare::Prepare for StringContentNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -22776,7 +22776,7 @@ impl ::sittir_core::prepare::Prepare for InterpolationNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -22808,7 +22808,7 @@ impl ::sittir_core::prepare::Prepare for NotEscapeSequenceNode {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -22881,7 +22881,7 @@ impl ::sittir_core::prepare::Prepare for FormatSpecifierNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -22955,7 +22955,7 @@ impl ::sittir_core::prepare::Prepare for TypeConversionNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -23026,7 +23026,7 @@ impl ::sittir_core::prepare::Prepare for IdentifierNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -23077,7 +23077,7 @@ impl ::sittir_core::prepare::Prepare for TrueNode {
             TrueNode::True(_) => None,
         }
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -23130,7 +23130,7 @@ impl ::sittir_core::prepare::Prepare for FalseNode {
             FalseNode::False(_) => None,
         }
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -23183,7 +23183,7 @@ impl ::sittir_core::prepare::Prepare for NoneNode {
             NoneNode::None(_) => None,
         }
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -23258,7 +23258,7 @@ impl ::sittir_core::prepare::Prepare for AwaitNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -23334,7 +23334,7 @@ impl ::sittir_core::prepare::Prepare for CommentNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -23385,7 +23385,7 @@ impl ::sittir_core::prepare::Prepare for PositionalSeparatorNode {
             PositionalSeparatorNode::PositionalSeparator(_) => None,
         }
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -23438,7 +23438,7 @@ impl ::sittir_core::prepare::Prepare for KeywordSeparatorNode {
             KeywordSeparatorNode::KeywordSeparator(_) => None,
         }
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -23522,7 +23522,7 @@ impl ::sittir_core::prepare::Prepare for SimpleStatementsElementsNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -23611,7 +23611,7 @@ impl ::sittir_core::prepare::Prepare for SubjectsNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -23700,7 +23700,7 @@ impl ::sittir_core::prepare::Prepare for WithClauseWithItemsNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -23788,7 +23788,7 @@ impl ::sittir_core::prepare::Prepare for TypesNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -23877,7 +23877,7 @@ impl ::sittir_core::prepare::Prepare for ArgumentListElementsNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -23966,7 +23966,7 @@ impl ::sittir_core::prepare::Prepare for ListPatternCasePatternsNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -24055,7 +24055,7 @@ impl ::sittir_core::prepare::Prepare for DictPatternElementsNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -24144,7 +24144,7 @@ impl ::sittir_core::prepare::Prepare for SubscriptsNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -24233,7 +24233,7 @@ impl ::sittir_core::prepare::Prepare for DictionaryElementsNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -24313,7 +24313,7 @@ impl ::sittir_core::prepare::Prepare for SliceGroupNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -24386,7 +24386,7 @@ impl ::sittir_core::prepare::Prepare for FormatSpecifierTextNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -24459,7 +24459,7 @@ impl ::sittir_core::prepare::Prepare for TypeParamsNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -24543,7 +24543,7 @@ impl ::sittir_core::prepare::Prepare for TypeParamsItemsNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -24632,7 +24632,7 @@ impl ::sittir_core::prepare::Prepare for TuplePatternElementsNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -24721,7 +24721,7 @@ impl ::sittir_core::prepare::Prepare for CasePatternListNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -24810,7 +24810,7 @@ impl ::sittir_core::prepare::Prepare for TupleElementsNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -24893,7 +24893,7 @@ impl ::sittir_core::prepare::Prepare for ExceptClauseExceptionAsNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -24969,7 +24969,7 @@ impl ::sittir_core::prepare::Prepare for CaseTuplePatternNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -25044,7 +25044,7 @@ impl ::sittir_core::prepare::Prepare for CaseListPatternNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -25128,7 +25128,7 @@ impl ::sittir_core::prepare::Prepare for PrintArgumentsNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -25217,7 +25217,7 @@ impl ::sittir_core::prepare::Prepare for PrintChevronArgumentsNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -25300,7 +25300,7 @@ impl ::sittir_core::prepare::Prepare for PrintStatementChevronNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -25376,7 +25376,7 @@ impl ::sittir_core::prepare::Prepare for PrintStatementPlainNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -25406,7 +25406,7 @@ impl ::sittir_core::prepare::Prepare for WildcardPatternNode {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -25479,7 +25479,7 @@ impl ::sittir_core::prepare::Prepare for ParenthesizedImportListNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -25557,7 +25557,7 @@ impl ::sittir_core::prepare::Prepare for ComprehensionClausesNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -25638,7 +25638,7 @@ impl ::sittir_core::prepare::Prepare for IntegerHexNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -25715,7 +25715,7 @@ impl ::sittir_core::prepare::Prepare for IntegerOctalNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -25792,7 +25792,7 @@ impl ::sittir_core::prepare::Prepare for IntegerBinaryNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -25863,7 +25863,7 @@ impl ::sittir_core::prepare::Prepare for IntegerDecimalLongNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -25934,7 +25934,7 @@ impl ::sittir_core::prepare::Prepare for IntegerDecimalImaginaryNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -26005,7 +26005,7 @@ impl ::sittir_core::prepare::Prepare for IntegerDecimalPlainNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -26094,7 +26094,7 @@ impl ::sittir_core::prepare::Prepare for FloatPointNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -26183,7 +26183,7 @@ impl ::sittir_core::prepare::Prepare for FloatLeadingPointNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -26269,7 +26269,7 @@ impl ::sittir_core::prepare::Prepare for FloatScientificNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -26343,7 +26343,7 @@ impl ::sittir_core::prepare::Prepare for EscapeSequenceUnicodeFixedNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -26417,7 +26417,7 @@ impl ::sittir_core::prepare::Prepare for EscapeSequenceUnicodeWideNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -26491,7 +26491,7 @@ impl ::sittir_core::prepare::Prepare for EscapeSequenceHexNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -26565,7 +26565,7 @@ impl ::sittir_core::prepare::Prepare for EscapeSequenceOctalNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -26639,7 +26639,7 @@ impl ::sittir_core::prepare::Prepare for EscapeSequenceLineBreakNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -26713,7 +26713,7 @@ impl ::sittir_core::prepare::Prepare for EscapeSequenceSimpleNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -26787,7 +26787,7 @@ impl ::sittir_core::prepare::Prepare for EscapeSequenceNamedNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -26858,7 +26858,7 @@ impl ::sittir_core::prepare::Prepare for LineContinuationNewlineNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -26886,7 +26886,7 @@ impl ::sittir_core::prepare::Prepare for LineContinuationNulNode {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -26959,7 +26959,7 @@ impl ::sittir_core::prepare::Prepare for SimplePatternNegativeNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -27040,7 +27040,7 @@ impl ::sittir_core::prepare::Prepare for ExceptClauseExceptionListNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -27118,7 +27118,7 @@ impl ::sittir_core::prepare::Prepare for ExceptClauseExceptionNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -27192,7 +27192,7 @@ impl ::sittir_core::prepare::Prepare for SplatPatternListNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -27267,7 +27267,7 @@ impl ::sittir_core::prepare::Prepare for SplatPatternDictionaryNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -27345,7 +27345,7 @@ impl ::sittir_core::prepare::Prepare for AssignmentEqNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -27424,7 +27424,7 @@ impl ::sittir_core::prepare::Prepare for AssignmentTypeNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -27506,7 +27506,7 @@ impl ::sittir_core::prepare::Prepare for AssignmentTypedNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -27592,7 +27592,7 @@ impl ::sittir_core::prepare::Prepare for ExpressionStatementTupleNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -27681,7 +27681,7 @@ impl ::sittir_core::prepare::Prepare for WithClauseBareNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -27760,7 +27760,7 @@ impl ::sittir_core::prepare::Prepare for WithClauseParenNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -27835,7 +27835,7 @@ impl ::sittir_core::prepare::Prepare for SuiteInlineNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -27910,7 +27910,7 @@ impl ::sittir_core::prepare::Prepare for SuiteBlockNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -27985,7 +27985,7 @@ impl ::sittir_core::prepare::Prepare for SuiteEmptyNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -28062,7 +28062,7 @@ impl ::sittir_core::prepare::Prepare for ComparisonOperatorComparatorNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -28138,7 +28138,7 @@ impl ::sittir_core::prepare::Prepare for YieldFromClauseNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -28216,7 +28216,7 @@ impl ::sittir_core::prepare::Prepare for TypeParamTypeVarNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -28292,7 +28292,7 @@ impl ::sittir_core::prepare::Prepare for TypeParamTypeVarTupleNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -28367,7 +28367,7 @@ impl ::sittir_core::prepare::Prepare for TypeParamParamSpecNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -28446,7 +28446,7 @@ impl ::sittir_core::prepare::Prepare for StringStartNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -28536,7 +28536,7 @@ impl ::sittir_core::prepare::Prepare for StringFragmentNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -28607,7 +28607,7 @@ impl ::sittir_core::prepare::Prepare for EscapeInterpolationNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -28684,7 +28684,7 @@ impl ::sittir_core::prepare::Prepare for StringEndNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -28731,7 +28731,7 @@ impl ::sittir_core::prepare::Prepare for IndentNode {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -28759,7 +28759,7 @@ impl ::sittir_core::prepare::Prepare for DedentNode {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -28787,7 +28787,7 @@ impl ::sittir_core::prepare::Prepare for TightNode {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -28815,7 +28815,7 @@ impl ::sittir_core::prepare::Prepare for SpaceNode {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -28843,7 +28843,7 @@ impl ::sittir_core::prepare::Prepare for TabNode {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -28871,7 +28871,7 @@ impl ::sittir_core::prepare::Prepare for NewlineNode {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -28899,7 +28899,7 @@ impl ::sittir_core::prepare::Prepare for BlanklineNode {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -28927,7 +28927,7 @@ impl ::sittir_core::prepare::Prepare for DoubleBlanklineNode {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -29012,7 +29012,7 @@ impl ::sittir_core::prepare::Prepare for ConstructorDeclarationNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -29093,7 +29093,7 @@ impl ::sittir_core::prepare::Prepare for BlockClassDeclarationNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -29171,7 +29171,7 @@ impl ::sittir_core::prepare::Prepare for SuiteBlockClassDeclarationNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -29252,7 +29252,7 @@ impl ::sittir_core::prepare::Prepare for DecoratedDefinitionClassDeclarationNode
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -29331,7 +29331,7 @@ impl ::sittir_core::prepare::Prepare for AsPatternTargetNode {
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -29360,7 +29360,7 @@ impl ::sittir_core::prepare::Prepare for ImportKeywordNode {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -29388,7 +29388,7 @@ impl ::sittir_core::prepare::Prepare for DotNode {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -29416,7 +29416,7 @@ impl ::sittir_core::prepare::Prepare for FromKeywordNode {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -29444,7 +29444,7 @@ impl ::sittir_core::prepare::Prepare for FutureUKeywordNode {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -29472,7 +29472,7 @@ impl ::sittir_core::prepare::Prepare for AsKeywordNode {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -29500,7 +29500,7 @@ impl ::sittir_core::prepare::Prepare for StarNode {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -29528,7 +29528,7 @@ impl ::sittir_core::prepare::Prepare for GtGtNode {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -29556,7 +29556,7 @@ impl ::sittir_core::prepare::Prepare for AssertKeywordNode {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -29584,7 +29584,7 @@ impl ::sittir_core::prepare::Prepare for ColonEqNode {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -29612,7 +29612,7 @@ impl ::sittir_core::prepare::Prepare for ReturnKeywordNode {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -29640,7 +29640,7 @@ impl ::sittir_core::prepare::Prepare for DelKeywordNode {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -29668,7 +29668,7 @@ impl ::sittir_core::prepare::Prepare for RaiseKeywordNode {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -29696,7 +29696,7 @@ impl ::sittir_core::prepare::Prepare for PassKeywordNode {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -29724,7 +29724,7 @@ impl ::sittir_core::prepare::Prepare for BreakKeywordNode {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -29752,7 +29752,7 @@ impl ::sittir_core::prepare::Prepare for ContinueKeywordNode {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -29780,7 +29780,7 @@ impl ::sittir_core::prepare::Prepare for IfKeywordNode {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -29808,7 +29808,7 @@ impl ::sittir_core::prepare::Prepare for ColonNode {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -29836,7 +29836,7 @@ impl ::sittir_core::prepare::Prepare for ElifKeywordNode {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -29864,7 +29864,7 @@ impl ::sittir_core::prepare::Prepare for ElseKeywordNode {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -29892,7 +29892,7 @@ impl ::sittir_core::prepare::Prepare for MatchKeywordNode {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -29920,7 +29920,7 @@ impl ::sittir_core::prepare::Prepare for CaseKeywordNode {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -29948,7 +29948,7 @@ impl ::sittir_core::prepare::Prepare for AsyncKeywordNode {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -29976,7 +29976,7 @@ impl ::sittir_core::prepare::Prepare for ForKeywordNode {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -30004,7 +30004,7 @@ impl ::sittir_core::prepare::Prepare for InKeywordNode {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -30032,7 +30032,7 @@ impl ::sittir_core::prepare::Prepare for WhileKeywordNode {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -30060,7 +30060,7 @@ impl ::sittir_core::prepare::Prepare for TryKeywordNode {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -30088,7 +30088,7 @@ impl ::sittir_core::prepare::Prepare for ExceptKeywordNode {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -30116,7 +30116,7 @@ impl ::sittir_core::prepare::Prepare for FinallyKeywordNode {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -30144,7 +30144,7 @@ impl ::sittir_core::prepare::Prepare for WithKeywordNode {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -30172,7 +30172,7 @@ impl ::sittir_core::prepare::Prepare for DefKeywordNode {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -30200,7 +30200,7 @@ impl ::sittir_core::prepare::Prepare for DashGtNode {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -30228,7 +30228,7 @@ impl ::sittir_core::prepare::Prepare for LparenNode {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -30256,7 +30256,7 @@ impl ::sittir_core::prepare::Prepare for RparenNode {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -30284,7 +30284,7 @@ impl ::sittir_core::prepare::Prepare for StarStarNode {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -30312,7 +30312,7 @@ impl ::sittir_core::prepare::Prepare for GlobalKeywordNode {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -30340,7 +30340,7 @@ impl ::sittir_core::prepare::Prepare for NonlocalKeywordNode {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -30368,7 +30368,7 @@ impl ::sittir_core::prepare::Prepare for ExecKeywordNode {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -30396,7 +30396,7 @@ impl ::sittir_core::prepare::Prepare for TypeKeywordNode {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -30424,7 +30424,7 @@ impl ::sittir_core::prepare::Prepare for EqNode {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -30452,7 +30452,7 @@ impl ::sittir_core::prepare::Prepare for ClassKeywordNode {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -30480,7 +30480,7 @@ impl ::sittir_core::prepare::Prepare for LbrackNode {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -30508,7 +30508,7 @@ impl ::sittir_core::prepare::Prepare for RbrackNode {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -30536,7 +30536,7 @@ impl ::sittir_core::prepare::Prepare for AtNode {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -30564,7 +30564,7 @@ impl ::sittir_core::prepare::Prepare for PipeNode {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -30592,7 +30592,7 @@ impl ::sittir_core::prepare::Prepare for LbraceNode {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -30620,7 +30620,7 @@ impl ::sittir_core::prepare::Prepare for RbraceNode {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -30648,7 +30648,7 @@ impl ::sittir_core::prepare::Prepare for DashNode {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -30676,7 +30676,7 @@ impl ::sittir_core::prepare::Prepare for PlusNode {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -30704,7 +30704,7 @@ impl ::sittir_core::prepare::Prepare for NotKeywordNode {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -30732,7 +30732,7 @@ impl ::sittir_core::prepare::Prepare for AndKeywordNode {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -30760,7 +30760,7 @@ impl ::sittir_core::prepare::Prepare for OrKeywordNode {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -30788,7 +30788,7 @@ impl ::sittir_core::prepare::Prepare for SlashNode {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -30816,7 +30816,7 @@ impl ::sittir_core::prepare::Prepare for PercentNode {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -30844,7 +30844,7 @@ impl ::sittir_core::prepare::Prepare for SlashSlashNode {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -30872,7 +30872,7 @@ impl ::sittir_core::prepare::Prepare for AmpNode {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -30900,7 +30900,7 @@ impl ::sittir_core::prepare::Prepare for CaretNode {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -30928,7 +30928,7 @@ impl ::sittir_core::prepare::Prepare for LtLtNode {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -30956,7 +30956,7 @@ impl ::sittir_core::prepare::Prepare for TildeNode {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -30984,7 +30984,7 @@ impl ::sittir_core::prepare::Prepare for LambdaKeywordNode {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -31012,7 +31012,7 @@ impl ::sittir_core::prepare::Prepare for PlusEqNode {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -31040,7 +31040,7 @@ impl ::sittir_core::prepare::Prepare for DashEqNode {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -31068,7 +31068,7 @@ impl ::sittir_core::prepare::Prepare for StarEqNode {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -31096,7 +31096,7 @@ impl ::sittir_core::prepare::Prepare for SlashEqNode {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -31124,7 +31124,7 @@ impl ::sittir_core::prepare::Prepare for AtEqNode {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -31152,7 +31152,7 @@ impl ::sittir_core::prepare::Prepare for SlashSlashEqNode {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -31180,7 +31180,7 @@ impl ::sittir_core::prepare::Prepare for PercentEqNode {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -31208,7 +31208,7 @@ impl ::sittir_core::prepare::Prepare for StarStarEqNode {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -31236,7 +31236,7 @@ impl ::sittir_core::prepare::Prepare for GtGtEqNode {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -31264,7 +31264,7 @@ impl ::sittir_core::prepare::Prepare for LtLtEqNode {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -31292,7 +31292,7 @@ impl ::sittir_core::prepare::Prepare for AmpEqNode {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -31320,7 +31320,7 @@ impl ::sittir_core::prepare::Prepare for CaretEqNode {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -31348,7 +31348,7 @@ impl ::sittir_core::prepare::Prepare for PipeEqNode {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -31376,7 +31376,7 @@ impl ::sittir_core::prepare::Prepare for YieldKeywordNode {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -31404,7 +31404,7 @@ impl ::sittir_core::prepare::Prepare for CommaNode {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -31432,7 +31432,7 @@ impl ::sittir_core::prepare::Prepare for BslashNode {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -31460,7 +31460,7 @@ impl ::sittir_core::prepare::Prepare for AwaitKeywordNode {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -31488,7 +31488,7 @@ impl ::sittir_core::prepare::Prepare for PrintKeywordNode {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -31516,7 +31516,7 @@ impl ::sittir_core::prepare::Prepare for UnderscoreNode {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -31544,7 +31544,7 @@ impl ::sittir_core::prepare::Prepare for LtNode {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -31572,7 +31572,7 @@ impl ::sittir_core::prepare::Prepare for LtEqNode {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -31600,7 +31600,7 @@ impl ::sittir_core::prepare::Prepare for EqEqNode {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -31628,7 +31628,7 @@ impl ::sittir_core::prepare::Prepare for BangEqNode {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -31656,7 +31656,7 @@ impl ::sittir_core::prepare::Prepare for GtEqNode {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -31684,7 +31684,7 @@ impl ::sittir_core::prepare::Prepare for GtNode {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -31712,7 +31712,7 @@ impl ::sittir_core::prepare::Prepare for LtGtNode {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -31740,7 +31740,7 @@ impl ::sittir_core::prepare::Prepare for NotInNode {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -31768,7 +31768,7 @@ impl ::sittir_core::prepare::Prepare for IsKeywordNode {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -31796,7 +31796,7 @@ impl ::sittir_core::prepare::Prepare for IsNotNode {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }
@@ -31824,7 +31824,7 @@ impl ::sittir_core::prepare::Prepare for InitUKeywordNode {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         Ok(())
     }
-    fn read_coordinate(cursor: &mut ::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
 }

@@ -9,6 +9,7 @@
 //! fact lives here: each one reaches the reader through a generated
 //! attribute.
 
+use crate::tree_sitter;
 use crate::heap::HeapBytes;
 use crate::layout::NodeLayout;
 use crate::slot::{ChangedEdges, NodeCoordinate, SlotValue};
@@ -17,7 +18,7 @@ use crate::trivia_table::TriviaSide;
 use crate::types::{FieldId, ItemIndex, KindId, NodeIndex, Span};
 use std::num::NonZeroU32;
 use std::sync::OnceLock;
-use tree_sitter::{Language, Node, TreeCursor};
+use crate::tree_sitter::{Language, Node, TreeCursor};
 
 pub use crate::nodes::Kid;
 pub use crate::nodes::Nodes;

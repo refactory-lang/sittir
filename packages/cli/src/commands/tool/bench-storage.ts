@@ -12,7 +12,11 @@ export const benchStorage: CommandModule = {
 			.option('--limit <n>', 'Use only the first n corpus entries (smoke runs)')
 			.option('--native-depth <depth>', 'Native hydration depth: a positive integer or all', 'all')
 			.option('--validation', 'Profile deep read, factory and IR render/parse validators under both paired backends')
-			.option('--idle-gate <path>', 'Run a shell idle gate before each worker, passing the current directory')
+			.option(
+				'--baseline <tree>',
+				"With --validation, also measure another built checkout's own validation workers in the same rounds, the order turning each round, with the memory of loading one grammar and every grammar, and the bytes a host install of each grammar costs, for both"
+			)
+			.option('--idle-gate <path>', "Run a shell idle gate before each worker, passing the worker's checkout")
 			.option('--output <path>', 'Write the complete JSON report to this file')
 			.action(
 				async (
@@ -26,6 +30,7 @@ export const benchStorage: CommandModule = {
 						validation?: boolean;
 						idleGate?: string;
 						output?: string;
+						baseline?: string;
 					}
 				) => {
 					const { benchStorage: run } = await import('@sittir/tools');
@@ -38,7 +43,8 @@ export const benchStorage: CommandModule = {
 						nativeDepth: opts.nativeDepth === 'all' ? 'all' : Number(opts.nativeDepth),
 						validation: opts.validation,
 						idleGate: opts.idleGate,
-						output: opts.output
+						output: opts.output,
+						baseline: opts.baseline
 					});
 				}
 			);

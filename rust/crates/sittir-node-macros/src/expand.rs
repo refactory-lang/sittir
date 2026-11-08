@@ -134,7 +134,7 @@ fn choice(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Toke
                 variant_fns.push(quote! {
                     #[inline(never)]
                     fn #read_fn(
-                        _cursor: &mut ::tree_sitter::TreeCursor<'_>,
+                        _cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>,
                         _ctx: &mut __rt::ReadCtx<'_>,
                         _depth: __rt::Depth,
                     ) -> ::core::result::Result<#ident, __rt::ReadError> {
@@ -142,7 +142,7 @@ fn choice(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Toke
                     }
                     #[inline(never)]
                     fn #boxed_fn(
-                        _cursor: &mut ::tree_sitter::TreeCursor<'_>,
+                        _cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>,
                         _ctx: &mut __rt::ReadCtx<'_>,
                         _depth: __rt::Depth,
                     ) -> ::core::result::Result<::std::boxed::Box<#ident>, __rt::ReadError> {
@@ -169,7 +169,7 @@ fn choice(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Toke
                 variant_fns.push(quote! {
                     #[inline(never)]
                     fn #read_fn(
-                        cursor: &mut ::tree_sitter::TreeCursor<'_>,
+                        cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>,
                         ctx: &mut __rt::ReadCtx<'_>,
                         depth: __rt::Depth,
                     ) -> ::core::result::Result<#ident, __rt::ReadError> {
@@ -177,7 +177,7 @@ fn choice(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Toke
                     }
                     #[inline(never)]
                     fn #boxed_fn(
-                        cursor: &mut ::tree_sitter::TreeCursor<'_>,
+                        cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>,
                         ctx: &mut __rt::ReadCtx<'_>,
                         depth: __rt::Depth,
                     ) -> ::core::result::Result<::std::boxed::Box<#ident>, __rt::ReadError> {
@@ -280,9 +280,9 @@ fn choice(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Toke
         const _: () = {
             use ::sittir_core::read as __rt;
             use ::sittir_core::types::KindId as __Kind;
-            type __Read<T> = fn(&mut ::tree_sitter::TreeCursor<'_>, &mut __rt::ReadCtx<'_>, __rt::Depth) -> ::core::result::Result<T, __rt::ReadError>;
+            type __Read<T> = fn(&mut ::sittir_core::tree_sitter::TreeCursor<'_>, &mut __rt::ReadCtx<'_>, __rt::Depth) -> ::core::result::Result<T, __rt::ReadError>;
             fn __unadmitted<T>(
-                cursor: &mut ::tree_sitter::TreeCursor<'_>,
+                cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>,
                 _ctx: &mut __rt::ReadCtx<'_>,
                 _depth: __rt::Depth,
             ) -> ::core::result::Result<T, __rt::ReadError> {
@@ -337,7 +337,7 @@ fn choice(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Toke
                 #blank
                 #[allow(unused_variables)]
                 fn read(
-                    cursor: &mut ::tree_sitter::TreeCursor<'_>,
+                    cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>,
                     ctx: &mut __rt::ReadCtx<'_>,
                     depth: __rt::Depth,
                 ) -> ::core::result::Result<Self, __rt::ReadError> {
@@ -350,7 +350,7 @@ fn choice(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Toke
                 }
                 #[allow(unused_variables)]
                 fn read_boxed(
-                    cursor: &mut ::tree_sitter::TreeCursor<'_>,
+                    cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>,
                     ctx: &mut __rt::ReadCtx<'_>,
                     depth: __rt::Depth,
                 ) -> ::core::result::Result<::std::boxed::Box<Self>, __rt::ReadError> {
@@ -438,7 +438,7 @@ fn members(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Tok
                     <Self as __rt::ReadNode>::admits(grammar, display)
                 }
                 fn read(
-                    cursor: &mut ::tree_sitter::TreeCursor<'_>,
+                    cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>,
                     ctx: &mut __rt::ReadCtx<'_>,
                     _depth: __rt::Depth,
                 ) -> ::core::result::Result<Self, __rt::ReadError> {
@@ -694,7 +694,7 @@ fn structure(ident: &Ident, attrs: &KindAttrs, data: &DataStruct) -> syn::Result
             #[allow(dead_code)]
             const __LAYOUT: &[__Kind] = &[#(#layout),*];
             #[allow(dead_code, unused_variables)]
-            fn __stored_kind(node: &::tree_sitter::Node<'_>) -> __Kind {
+            fn __stored_kind(node: &::sittir_core::tree_sitter::Node<'_>) -> __Kind {
                 #stored_kind
             }
             #items
@@ -707,7 +707,7 @@ fn structure(ident: &Ident, attrs: &KindAttrs, data: &DataStruct) -> syn::Result
                 }
                 #[allow(unused_mut, unused_variables)]
                 fn read(
-                    cursor: &mut ::tree_sitter::TreeCursor<'_>,
+                    cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>,
                     ctx: &mut __rt::ReadCtx<'_>,
                     depth: __rt::Depth,
                 ) -> ::core::result::Result<Self, __rt::ReadError> {

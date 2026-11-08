@@ -316,6 +316,7 @@ fn slot_hits<'s>(nodes: &mut dyn Nodes<'_>, at: &Kid, ctx: &QueryCtx<'s>, slots:
 mod tests {
     use super::*;
     use crate::read::{Interior, ReadError};
+    use crate::tree_sitter;
     use crate::types::KindId;
     use std::sync::OnceLock;
 

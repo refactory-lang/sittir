@@ -31,6 +31,7 @@ const EXPECTED = [
 	'inspect-refs',
 	'inspect-type',
 	'list-kinds',
+	'native-images',
 	'output-gate',
 	'override-census',
 	'phantom-kinds',

@@ -9,6 +9,10 @@ on:
       prefix:
         type: string
         required: true
+      ref:
+        description: The commit to build; empty builds the commit the run is for
+        type: string
+        default: ''
 
 permissions:
   contents: read
@@ -25,12 +29,17 @@ jobs:
     timeout-minutes: 60
     steps:
       - uses: actions/checkout@v6
+        with:
+          ref: ${{ inputs.ref }}
       - uses: ./.github/actions/arena-benchmark-setup
+      - name: The commit being built
+        id: commit
+        run: echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
       - uses: actions/cache@v4
         id: binary
         with:
           path: ${{ runner.temp }}/arena-runtime-native-${{ inputs.grammar }}
-          key: arena-runtime-v1-${{ runner.os }}-${{ runner.arch }}-node26.12.0-${{ github.sha }}-native-${{ inputs.grammar }}
+          key: arena-runtime-v1-${{ runner.os }}-${{ runner.arch }}-node26.12.0-${{ steps.commit.outputs.sha }}-native-${{ inputs.grammar }}
       - uses: Swatinem/rust-cache@v2
         if: steps.binary.outputs.cache-hit != 'true'
         with:

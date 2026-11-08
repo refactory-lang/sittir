@@ -6,6 +6,7 @@ use sittir_core::engine::node_at_index;
 use sittir_core::layout::LayoutWorkCounter;
 use sittir_core::nodes::{Nodes, TreeNodes};
 use sittir_core::read::{descendant_count, display_id, grammar_id};
+use sittir_core::tree_sitter;
 use sittir_core::KindId;
 use sittir_core::types::{NodeIndex, Span};
 use sittir_core::{ErrorRegion, ErrorRegionKind};

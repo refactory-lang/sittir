@@ -3,6 +3,7 @@
 //! answers, and brings a wrapper item with its own slots read too. The plain
 //! read leaves them coordinates past its depth.
 
+use sittir_core::tree_sitter;
 use sittir_core::engine::{NodeRead, ParsedTree};
 use sittir_core::read::Depth;
 use sittir_core::types::NodeIndex;

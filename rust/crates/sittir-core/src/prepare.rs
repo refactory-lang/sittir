@@ -4,6 +4,7 @@
 //! field from the resolved options. The context is an argument at every level;
 //! nothing ambient carries the trees or the table.
 
+use crate::tree_sitter;
 use crate::options::{EdgeArm, Edges, ResolvedOptions, Side};
 use crate::types::{KindId, SiteId};
 use crate::render::{CoordinateError, Lent, RenderError, SourceTable};

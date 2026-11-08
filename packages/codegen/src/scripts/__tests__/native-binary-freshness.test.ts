@@ -51,6 +51,7 @@ beforeEach(() => {
 	write('rust/crates/sittir-node-macros/src/lib.rs', 'pub fn macros() {}\n');
 	write('rust/crates/sittir-unused/src/lib.rs', 'pub fn unused() {}\n');
 	write('rust/crates/sittir-rust/Cargo.toml', '[package]\n[dependencies]\nsittir-core = { path = "../sittir-core" }\n');
+	write('rust/crates/sittir-rust/napi.json', '{"binaryName":"sittir-rust"}\n');
 	write('rust/crates/sittir-rust/build.rs', 'fn main() {}\n');
 	write('rust/crates/sittir-rust/src/lib.rs', 'pub fn grammar() {}\n');
 	write('packages/rust/.sittir/src/parser.c', 'int parser;\n');
@@ -85,6 +86,7 @@ describe('native build freshness', () => {
 		'pnpm-lock.yaml',
 		'rust/crates/sittir-core/package.json',
 		'rust/crates/sittir-rust/package.json',
+		'rust/crates/sittir-rust/napi.json',
 		'scripts/build-native.mts',
 		'scripts/native-args.mts'
 	]) {

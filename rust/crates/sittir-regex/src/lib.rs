@@ -8,6 +8,7 @@
 
 pub mod render;
 
+use sittir_core::tree_sitter;
 use tree_sitter_language::LanguageFn;
 
 unsafe extern "C" {

@@ -1,4 +1,15 @@
-import { BASE_ENTRY, BOOTSTRAP_INDENT_UNIT, GRAMMAR_ENTRY, GRAMMAR_TSCONFIG, GRAMMAR_TYPECHECK_CEILING, GRAMMAR_TYPECHECK_SCRIPT, PORTABLE_TYPE_TESTS } from '@sittir/codegen/grammars';
+import {
+	BASE_ENTRY,
+	BOOTSTRAP_INDENT_UNIT,
+	GRAMMAR_ENTRY,
+	GRAMMAR_TSCONFIG,
+	GRAMMAR_TYPECHECK_CEILING,
+	GRAMMAR_TYPECHECK_SCRIPT,
+	NATIVE_LOADER,
+	NATIVE_TYPINGS,
+	PORTABLE_TYPE_TESTS,
+	nativePlatformPackage
+} from '@sittir/codegen/grammars';
 
 export interface GrammarTemplateVars {
 	readonly name: string;
@@ -30,7 +41,7 @@ export function grammarPackageFiles(v: GrammarTemplateVars): TemplateFile[] {
 					url: 'https://github.com/refactory-lang/sittir.git',
 					directory: `packages/${v.name}`
 				},
-				files: ['dist', 'native'],
+				files: ['dist', `native/${NATIVE_LOADER}`, `native/${NATIVE_TYPINGS}`],
 				type: 'module',
 				main: './dist/index.js',
 				types: './dist/index.d.ts',
@@ -55,7 +66,7 @@ export function grammarPackageFiles(v: GrammarTemplateVars): TemplateFile[] {
 					'@types/node': '^25.6.0',
 					[v.upstreamDependency]: v.upstreamRange
 				},
-				'//native': `Native artifacts are grammar-local implementation details for @sittir/${v.name}, shipped in native/ and built from rust/crates/sittir-${v.name}.`
+				'//native': `Native artifacts are grammar-local implementation details for @sittir/${v.name}, built from rust/crates/sittir-${v.name}: native/ holds the loader and its typings, and each platform's binary ships in its own ${nativePlatformPackage(v.name)}-<platform> package with the engine and std it links.`
 			})
 		},
 		{

@@ -1,3 +1,4 @@
+use sittir_core::tree_sitter;
 use sittir_core::read::{Depth, ReadCtx, ReadError, ReadNode, SideEntry, SideLookup, DEBUG_READ_CHECKS};
 use sittir_core::types::KindId;
 

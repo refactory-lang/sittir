@@ -39,7 +39,7 @@ fn struct_impl(ident: &Ident, leaf: bool, body: &TokenStream) -> TokenStream {
         impl ::sittir_core::arena::HydrateNode for #ident {
             #[allow(unused_mut, unused_variables)]
             fn hydrate(
-                cursor: &mut ::tree_sitter::TreeCursor<'_>,
+                cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>,
                 ctx: &mut __rt::ReadCtx<'_>,
                 depth: ::core::option::Option<__rt::Depth>,
                 records: &mut ::sittir_core::arena::Hydration<'_>,
@@ -381,7 +381,7 @@ pub fn choice(ident: &Ident, variants: &[WireVariant<'_>], codec_only: bool) -> 
             #[inline(never)]
             #[allow(unused_variables)]
             fn #name(
-                cursor: &mut ::tree_sitter::TreeCursor<'_>,
+                cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>,
                 ctx: &mut __rt::ReadCtx<'_>,
                 depth: ::core::option::Option<__rt::Depth>,
                 records: &mut ::sittir_core::arena::Hydration<'_>,
@@ -394,9 +394,9 @@ pub fn choice(ident: &Ident, variants: &[WireVariant<'_>], codec_only: bool) -> 
     }
     let hydrate = gated(&quote! {
         const _: () = {
-            type __Hydrate = fn(&mut ::tree_sitter::TreeCursor<'_>, &mut __rt::ReadCtx<'_>, ::core::option::Option<__rt::Depth>, &mut ::sittir_core::arena::Hydration<'_>, ::core::option::Option<::sittir_core::arena::Embed>) -> ::core::result::Result<::sittir_core::arena::Hydrated, ::sittir_core::arena::HydrateError>;
+            type __Hydrate = fn(&mut ::sittir_core::tree_sitter::TreeCursor<'_>, &mut __rt::ReadCtx<'_>, ::core::option::Option<__rt::Depth>, &mut ::sittir_core::arena::Hydration<'_>, ::core::option::Option<::sittir_core::arena::Embed>) -> ::core::result::Result<::sittir_core::arena::Hydrated, ::sittir_core::arena::HydrateError>;
             fn __unhydrated(
-                cursor: &mut ::tree_sitter::TreeCursor<'_>,
+                cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>,
                 _ctx: &mut __rt::ReadCtx<'_>,
                 _depth: ::core::option::Option<__rt::Depth>,
                 _records: &mut ::sittir_core::arena::Hydration<'_>,
@@ -408,7 +408,7 @@ pub fn choice(ident: &Ident, variants: &[WireVariant<'_>], codec_only: bool) -> 
             const __HYDRATES: &[__Hydrate] = &[#(#table),*];
             impl ::sittir_core::arena::HydrateNode for #ident {
                 fn hydrate(
-                    cursor: &mut ::tree_sitter::TreeCursor<'_>,
+                    cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>,
                     ctx: &mut __rt::ReadCtx<'_>,
                     depth: ::core::option::Option<__rt::Depth>,
                     records: &mut ::sittir_core::arena::Hydration<'_>,
@@ -423,7 +423,7 @@ pub fn choice(ident: &Ident, variants: &[WireVariant<'_>], codec_only: bool) -> 
                 }
                 fn hydrate_stamped(
                     stamped: ::sittir_core::types::KindId,
-                    cursor: &mut ::tree_sitter::TreeCursor<'_>,
+                    cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>,
                     ctx: &mut __rt::ReadCtx<'_>,
                     depth: ::core::option::Option<__rt::Depth>,
                     records: &mut ::sittir_core::arena::Hydration<'_>,
@@ -447,7 +447,7 @@ pub fn members(ident: &Ident) -> TokenStream {
     let hydrate = gated(&quote! {
         impl ::sittir_core::arena::HydrateNode for #ident {
             fn hydrate(
-                cursor: &mut ::tree_sitter::TreeCursor<'_>,
+                cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>,
                 ctx: &mut __rt::ReadCtx<'_>,
                 _depth: ::core::option::Option<__rt::Depth>,
                 records: &mut ::sittir_core::arena::Hydration<'_>,

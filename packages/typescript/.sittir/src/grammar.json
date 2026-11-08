@@ -16879,7 +16879,7 @@
             ]
           },
           "annotations": {
-            "variantOf": "_for_header"
+            "variantOf": "for_in_statement"
           }
         },
         {

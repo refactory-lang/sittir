@@ -5,6 +5,7 @@
 //! re-using `tree_sitter::Range` — row/column info never crosses the
 //! boundary and would be serialized dead weight on every hop.
 
+use crate::tree_sitter;
 use crate::heap::HeapBytes;
 use serde::{Deserialize, Serialize};
 
