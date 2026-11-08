@@ -21,6 +21,7 @@ use std::sync::OnceLock;
 use crate::tree_sitter::{Language, Node, TreeCursor};
 
 pub use crate::nodes::Kid;
+pub use crate::nodes::Nodes;
 pub use regex::Captures;
 
 /// Opt-in parser/model drift diagnostics after typed slot routing.
@@ -827,6 +828,65 @@ pub fn survey(cursor: &mut TreeCursor<'_>) -> Vec<Kid> {
     children
 }
 
+/// Navigation over the tree a reader's cursor walks, the cursor, created at
+/// the tree's root, lent for one question: each answer moves it from where
+/// it stands to the node asked about and back (`goto_from`), so it ends
+/// where it started. The nodes' text is the reader's source.
+pub struct LentCursor<'c, 'n, 's> {
+    cursor: &'c mut TreeCursor<'n>,
+    text: &'s str,
+}
+
+impl<'c, 'n, 's> LentCursor<'c, 'n, 's> {
+    /// Navigation over `cursor`'s tree, parsed from `text`.
+    pub fn new(cursor: &'c mut TreeCursor<'n>, text: &'s str) -> Self {
+        Self { cursor, text }
+    }
+
+    /// The node the cursor stands on.
+    #[must_use]
+    pub fn here(&self) -> Kid {
+        Kid::at(self.cursor)
+    }
+
+    fn at<R>(&mut self, index: NodeIndex, answer: impl FnOnce(&mut TreeCursor<'n>) -> R) -> R {
+        let here = index_of(self.cursor);
+        goto_from(self.cursor, NodeIndex::ROOT, index);
+        let answered = answer(self.cursor);
+        goto_from(self.cursor, NodeIndex::ROOT, here);
+        answered
+    }
+}
+
+impl<'s> Nodes<'s> for LentCursor<'_, '_, 's> {
+    fn text(&self) -> &'s str {
+        self.text
+    }
+
+    fn kid(&mut self, index: NodeIndex) -> Kid {
+        self.at(index, |cursor| Kid::at(cursor))
+    }
+
+    fn kids(&mut self, index: NodeIndex) -> std::sync::Arc<[Kid]> {
+        self.at(index, |cursor| survey(cursor).into())
+    }
+
+    fn parent(&mut self, index: NodeIndex) -> Option<NodeIndex> {
+        self.at(index, |cursor| cursor.goto_parent().then(|| index_of(cursor)))
+    }
+
+    fn missing(&mut self, index: NodeIndex) -> bool {
+        self.at(index, |cursor| cursor.node().is_missing())
+    }
+
+    fn holds_error(&mut self, index: NodeIndex) -> bool {
+        self.at(index, |cursor| {
+            let node = cursor.node();
+            node.has_error() || crate::nodes::shown_as_error(display_id(&node))
+        })
+    }
+}
+
 /// Where an expansion sends a child.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Route {
@@ -951,12 +1011,11 @@ pub trait ReadNode: Sized {
     fn read_boxed(cursor: &mut TreeCursor<'_>, ctx: &mut ReadCtx<'_>, depth: Depth) -> Result<Box<Self>, ReadError> {
         Self::read(cursor, ctx, depth).map(Box::new)
     }
-    /// The children of the node the cursor is on as its read routes them
-    /// (`Routed`); `None` for a node this native node reads without routing
-    /// its children, or one it does not admit. The cursor ends where it
-    /// started.
-    fn routes(cursor: &mut TreeCursor<'_>) -> Option<Routed> {
-        let _ = cursor;
+    /// The children of the node `at`, found through `nodes`, as its read
+    /// routes them (`Routed`); `None` for a node this native node reads
+    /// without routing its children, or one it does not admit.
+    fn routes(nodes: &mut dyn Nodes<'_>, at: &Kid) -> Option<Routed> {
+        let _ = (nodes, at);
         None
     }
     /// How a node with these ids finds its slots (`Router`); `None` for a
@@ -966,21 +1025,19 @@ pub trait ReadNode: Sized {
         let _ = (grammar, display);
         None
     }
-    /// The delimiter flags the read stamps on the list the cursor is on
-    /// (`delimiter`); `None` for a node that is no list with an optional
-    /// flank, or one this native node does not admit. The cursor ends where
-    /// it started.
-    fn delimiter(cursor: &mut TreeCursor<'_>) -> Option<crate::types::Delimiter> {
-        let _ = cursor;
+    /// The delimiter flags the read stamps on the list `at`, found through
+    /// `nodes` (`delimiter`); `None` for a node that is no list with an
+    /// optional flank, or one this native node does not admit.
+    fn delimiter(nodes: &mut dyn Nodes<'_>, at: &Kid) -> Option<crate::types::Delimiter> {
+        let _ = (nodes, at);
         None
     }
-    /// The id the read stores for the node the cursor is on when it stores
-    /// the node as a unit (an enum kind's member, a choice's unit variant),
-    /// resolved as the read resolves it; `None` for a node it stores as a
-    /// node, or one it does not admit. The cursor ends where it
-    /// started.
-    fn unit_id(cursor: &mut TreeCursor<'_>) -> Option<KindId> {
-        let _ = cursor;
+    /// The id the read stores for the node `at`, found through `nodes`, when
+    /// it stores the node as a unit (an enum kind's member, a choice's unit
+    /// variant), resolved as the read resolves it; `None` for a node it
+    /// stores as a node, or one it does not admit.
+    fn unit_id(nodes: &mut dyn Nodes<'_>, at: &Kid) -> Option<KindId> {
+        let _ = (nodes, at);
         None
     }
 }
@@ -989,12 +1046,13 @@ pub trait ReadNode: Sized {
 /// child it has no route for.
 pub type ChildRoute = fn(&Kid) -> Result<Route, ReadError>;
 
-/// The id a slot's read stores for the child the cursor is on, when it
-/// stores the child as a unit (`ReadSlot::unit_id`), by the slot's number.
-pub type SlotUnit = fn(crate::types::SlotId, &mut TreeCursor<'_>) -> Option<KindId>;
+/// The id a slot's read stores for a child, found through a navigation,
+/// when it stores the child as a unit (`ReadSlot::unit_id`), by the slot's
+/// number.
+pub type SlotUnit = fn(crate::types::SlotId, &mut dyn Nodes<'_>, &Kid) -> Option<KindId>;
 
 /// [`ReadNode::unit_id`] of one node.
-pub type UnitId = fn(&mut TreeCursor<'_>) -> Option<KindId>;
+pub type UnitId = fn(&mut dyn Nodes<'_>, &Kid) -> Option<KindId>;
 
 /// How a kind finds its slots on a node, each slot by its number: the
 /// position of its field among the node's slot fields.
@@ -1045,14 +1103,14 @@ impl<T: ReadNode> ReadNode for Box<T> {
     fn read(cursor: &mut TreeCursor<'_>, ctx: &mut ReadCtx<'_>, depth: Depth) -> Result<Self, ReadError> {
         T::read_boxed(cursor, ctx, depth)
     }
-    fn routes(cursor: &mut TreeCursor<'_>) -> Option<Routed> {
-        T::routes(cursor)
+    fn routes(nodes: &mut dyn Nodes<'_>, at: &Kid) -> Option<Routed> {
+        T::routes(nodes, at)
     }
     fn router(grammar: KindId, display: KindId) -> Option<Router> {
         T::router(grammar, display)
     }
-    fn unit_id(cursor: &mut TreeCursor<'_>) -> Option<KindId> {
-        T::unit_id(cursor)
+    fn unit_id(nodes: &mut dyn Nodes<'_>, at: &Kid) -> Option<KindId> {
+        T::unit_id(nodes, at)
     }
 }
 
@@ -1156,11 +1214,10 @@ pub trait ReadSlot: Sized {
     fn admits(grammar: KindId, display: KindId) -> bool;
     fn takes_tagged(grammar: KindId, display: KindId, named: bool) -> bool;
     fn scalar(grammar: KindId, display: KindId) -> bool;
-    /// The id the slot stores for the child the cursor is on when it stores
-    /// the child as a unit (`ReadNode::unit_id`). The cursor ends where
-    /// it started.
-    fn unit_id(cursor: &mut TreeCursor<'_>) -> Option<KindId> {
-        let _ = cursor;
+    /// The id the slot stores for the child `at`, found through `nodes`,
+    /// when it stores the child as a unit (`ReadNode::unit_id`).
+    fn unit_id(nodes: &mut dyn Nodes<'_>, at: &Kid) -> Option<KindId> {
+        let _ = (nodes, at);
         None
     }
     fn take(
@@ -1212,8 +1269,8 @@ macro_rules! slot_value_kinds {
         fn scalar(grammar: KindId, display: KindId) -> bool {
             T::scalar(grammar, display)
         }
-        fn unit_id(cursor: &mut TreeCursor<'_>) -> Option<KindId> {
-            T::unit_id(cursor)
+        fn unit_id(nodes: &mut dyn Nodes<'_>, at: &Kid) -> Option<KindId> {
+            T::unit_id(nodes, at)
         }
     };
 }
@@ -1529,7 +1586,7 @@ pub fn capture_span(captures: &Captures<'_>, name: &str, base: u32) -> Option<Sp
 /// more anonymous unfielded tokens than the separators between its items and
 /// the mandatory flank tokens account for.
 #[must_use]
-pub fn delimiter(list: &Node<'_>, children: &[Kid], routes: &[Route], items: crate::types::SlotId, leading: Option<u16>, trailing: Option<u16>) -> crate::types::Delimiter {
+pub fn delimiter(list: Span, children: &[Kid], routes: &[Route], items: crate::types::SlotId, leading: Option<u16>, trailing: Option<u16>) -> crate::types::Delimiter {
     use crate::types::Delimiter;
     let item_children: Vec<(&Kid, bool)> = children
         .iter()
@@ -1548,7 +1605,7 @@ pub fn delimiter(list: &Node<'_>, children: &[Kid], routes: &[Route], items: cra
         Some((child, false)) => past(child),
         _ => others > item_children.len().saturating_sub(1) + mandatory as usize,
     };
-    let Span { start, end } = Span::of(list);
+    let Span { start, end } = list;
     let mut flags = Delimiter::NONE;
     if leading.is_some_and(|mandatory| flank(item_children.first(), mandatory, &|child| start < child.start)) {
         flags = flags.with(Delimiter::LEADING);

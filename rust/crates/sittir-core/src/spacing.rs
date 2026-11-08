@@ -208,6 +208,9 @@ pub struct SpacingWriter<'a, W: std::fmt::Write + ?Sized> {
     leaf_leading: Option<LayoutKinds>,
     flushed_template: Option<LayoutKinds>,
     sources: Option<&'a dyn crate::render::SourceTable>,
+    /// The arenas the render holds, lent to each lookup through `sources`
+    /// that measures (`render::Lent`).
+    lent: crate::render::Lent<'a>,
     options: Option<&'a crate::options::ResolvedOptions>,
     deferring: Option<String>,
     swallow_cr: bool,
@@ -403,6 +406,7 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
             leaf_leading: None,
             flushed_template: None,
             sources: None,
+            lent: crate::render::Lent::NONE,
             options: None,
             deferring: None,
             swallow_cr: false,
@@ -527,6 +531,14 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
     #[must_use]
     pub fn with_sources(mut self, sources: &'a dyn crate::render::SourceTable) -> Self {
         self.sources = Some(sources);
+        self
+    }
+
+    /// The arenas the render holds, lent to each lookup it makes through its
+    /// sources that measures.
+    #[must_use]
+    pub fn with_lent(mut self, lent: crate::render::Lent<'a>) -> Self {
+        self.lent = lent;
         self
     }
 
@@ -1333,10 +1345,11 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
 
     fn frames(&self, coord: &crate::slot::NodeCoordinate) -> Result<crate::trivia::Frames, crate::render::RenderError> {
         let Some(sources) = self.sources else { return Ok(crate::trivia::Frames::default()) };
-        let mut frames = sources.frames(coord);
+        let mut frames = sources.frames(coord, self.lent);
         if let Some(options) = self.options {
+            let ctx = crate::prepare::RenderContext { options, sources, lent: self.lent };
             for frame in frames.iter_mut() {
-                frame.prepare(&crate::prepare::RenderContext { options, sources })?;
+                frame.prepare(&ctx)?;
             }
         }
         Ok(frames)

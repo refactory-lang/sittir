@@ -50,7 +50,7 @@ fn rendered(source: &str, depth: Depth, write: Write) -> String {
     let seating = tree.seating();
     let root: AnyNode = read_at(&mut seating.cursor(NodeIndex::ROOT), &mut seating.ctx(), NodeIndex::ROOT, depth).expect("a root");
     let options = engine.options().clone();
-    let ctx = RenderContext { options: &options, sources: &seating };
+    let ctx = RenderContext::new(&options, &seating);
     render_node_parts(sittir_core::SlotValue::Node(root), &ctx, None).expect("a render").1
 }
 

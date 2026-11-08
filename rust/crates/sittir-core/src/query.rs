@@ -3,9 +3,8 @@
 
 use std::collections::HashMap;
 
-use crate::tree_sitter::{Node, TreeCursor};
-
-use crate::read::{index_of, Kid, Route, Router};
+use crate::nodes::Nodes;
+use crate::read::{Kid, Route, Router};
 use crate::slot::NodeCoordinate;
 use crate::types::Span;
 
@@ -166,14 +165,14 @@ pub enum Subject {
 }
 
 /// What a plan reads a node with: the source, the kind a coordinate of a
-/// node carries (`ReadCtx::node_kind`), how a node's kind finds its
+/// node carries (`ReadCtx::stamped_kind`), how a node's kind finds its
 /// slots (`ReadNode::router`), and the delimiter flags the read stamps on
-/// the list the cursor is on (`ReadNode::delimiter`).
+/// a list (`ReadNode::delimiter`).
 pub struct QueryCtx<'a> {
     pub source: &'a str,
-    pub stamp: &'a dyn Fn(&Node<'_>) -> crate::types::KindId,
-    pub router: &'a dyn Fn(&Node<'_>) -> Option<Router>,
-    pub delimiter: &'a dyn Fn(&mut TreeCursor<'_>) -> Option<crate::types::Delimiter>,
+    pub stamp: &'a dyn Fn(&Kid) -> crate::types::KindId,
+    pub router: &'a dyn Fn(&Kid) -> Option<Router>,
+    pub delimiter: &'a dyn Fn(&mut dyn Nodes<'_>, &Kid) -> Option<crate::types::Delimiter>,
 }
 
 /// One value a slot holds: its text, and the node that spells it, by its
@@ -213,30 +212,29 @@ impl Plan {
         })
     }
 
-    /// Whether the node the cursor is on satisfies the condition: a
-    /// comparison holds when some value its slot holds has the text or
-    /// matches, a presence leaf when the slot holds a value, a count leaf
-    /// when it holds at least `min` values, a delimiter leaf when the read
-    /// stamps one of its delimiters on the node, an `is` leaf
-    /// when a node the slot holds (or the node itself) has one of the
-    /// types, and a child step
-    /// when its condition holds on one of the slot's nodes its anchor keeps.
-    /// The cursor was created at the tree's root and ends where it started.
-    pub fn holds(&self, cursor: &mut TreeCursor<'_>, ctx: &QueryCtx<'_>) -> bool {
+    /// Whether the node `at`, found through `nodes`, satisfies the
+    /// condition: a comparison holds when some value its slot holds has the
+    /// text or matches, a presence leaf when the slot holds a value, a count
+    /// leaf when it holds at least `min` values, a delimiter leaf when the
+    /// read stamps one of its delimiters on the node, an `is` leaf when a
+    /// node the slot holds (or the node itself) has one of the types, and a
+    /// child step when its condition holds on one of the slot's nodes its
+    /// anchor keeps.
+    pub fn holds(&self, nodes: &mut dyn Nodes<'_>, at: &Kid, ctx: &QueryCtx<'_>) -> bool {
         match self {
-            Plan::Eq { slots, text } => any_hit(cursor, ctx, slots, |hit| hit.text == text),
-            Plan::Match { slots, pattern } => any_hit(cursor, ctx, slots, |hit| pattern.is_match(hit.text)),
-            Plan::Present { slots } => any_hit(cursor, ctx, slots, |_| true),
+            Plan::Eq { slots, text } => any_hit(nodes, at, ctx, slots, |hit| hit.text == text),
+            Plan::Match { slots, pattern } => any_hit(nodes, at, ctx, slots, |hit| pattern.is_match(hit.text)),
+            Plan::Present { slots } => any_hit(nodes, at, ctx, slots, |_| true),
             Plan::Count { slots, min } => {
                 let mut held = 0u32;
-                slot_hits(cursor, ctx, slots, &mut |_| held += 1) && held >= *min
+                slot_hits(nodes, at, ctx, slots, &mut |_| held += 1) && held >= *min
             }
-            Plan::Delimiter(delimiter) => (ctx.delimiter)(cursor).is_some_and(|stamped| stamped.has(*delimiter)),
-            Plan::Is { subject: Subject::Slots(slots), types } => any_hit(cursor, ctx, slots, |hit| hit.node.is_some_and(|(_, kind)| types.contains(&kind))),
-            Plan::Is { subject: Subject::Own, types } => types.contains(&(ctx.stamp)(&cursor.node())),
+            Plan::Delimiter(delimiter) => (ctx.delimiter)(nodes, at).is_some_and(|stamped| stamped.has(*delimiter)),
+            Plan::Is { subject: Subject::Slots(slots), types } => any_hit(nodes, at, ctx, slots, |hit| hit.node.is_some_and(|(_, kind)| types.contains(&kind))),
+            Plan::Is { subject: Subject::Own, types } => types.contains(&(ctx.stamp)(at)),
             Plan::Child { slots, anchor, of } => {
                 let mut held = Vec::new();
-                if !slot_hits(cursor, ctx, slots, &mut |hit| held.extend(hit.node.map(|(index, _)| index))) {
+                if !slot_hits(nodes, at, ctx, slots, &mut |hit| held.extend(hit.node.map(|(index, _)| index))) {
                     return false;
                 }
                 let tested = match anchor {
@@ -246,65 +244,52 @@ impl Plan {
                     Some(Anchor::Only) if held.len() == 1 => &held[..],
                     Some(Anchor::Only) => &[],
                 };
-                let own = index_of(cursor);
                 let found = tested.iter().any(|&index| {
-                    crate::read::goto(cursor, index);
-                    of.holds(cursor, ctx)
+                    let held = nodes.kid(index);
+                    of.holds(nodes, &held, ctx)
                 });
-                crate::read::goto(cursor, own);
                 found
             }
-            Plan::Not(of) => !of.holds(cursor, ctx),
-            Plan::And(of) => of.iter().all(|p| p.holds(cursor, ctx)),
-            Plan::Or(of) => of.iter().any(|p| p.holds(cursor, ctx)),
+            Plan::Not(of) => !of.holds(nodes, at, ctx),
+            Plan::And(of) => of.iter().all(|p| p.holds(nodes, at, ctx)),
+            Plan::Or(of) => of.iter().any(|p| p.holds(nodes, at, ctx)),
         }
     }
 }
 
-/// Whether some value the slot holds on the node the cursor is on passes
-/// `test`, and the node's slot was read at all (`slot_hits`).
-fn any_hit(cursor: &mut TreeCursor<'_>, ctx: &QueryCtx<'_>, slots: &Slots, mut test: impl FnMut(&Hit<'_>) -> bool) -> bool {
+/// Whether some value the slot holds on the node `at` passes `test`, and the
+/// node's slot was read at all (`slot_hits`).
+fn any_hit(nodes: &mut dyn Nodes<'_>, at: &Kid, ctx: &QueryCtx<'_>, slots: &Slots, mut test: impl FnMut(&Hit<'_>) -> bool) -> bool {
     let mut found = false;
-    slot_hits(cursor, ctx, slots, &mut |hit| found |= test(&hit)) && found
+    slot_hits(nodes, at, ctx, slots, &mut |hit| found |= test(&hit)) && found
 }
 
-/// Visit each value the slot holds on the node the cursor is on, as the
-/// node's read finds it (`Router`), allocating only to survey the tokens of
-/// a spelled enum member. `false` when the node
-/// holds nothing there: its kind has no number for the slot, no router, or
-/// a child the read cannot route, so the query and the read agree. The
-/// cursor was created at the tree's root and ends where it started.
-fn slot_hits<'s>(cursor: &mut TreeCursor<'_>, ctx: &QueryCtx<'s>, slots: &Slots, visit: &mut dyn FnMut(Hit<'s>)) -> bool {
-    let node = cursor.node();
-    let (Some(&slot), Some(router)) = (slots.slots.get(&(ctx.stamp)(&node)), (ctx.router)(&node)) else {
+/// Visit each value the slot holds on the node `at`, found through `nodes`,
+/// as the node's read finds it (`Router`). `false` when the node holds
+/// nothing there: its kind has no number for the slot, no router, or a child
+/// the read cannot route, so the query and the read agree.
+fn slot_hits<'s>(nodes: &mut dyn Nodes<'_>, at: &Kid, ctx: &QueryCtx<'s>, slots: &Slots, visit: &mut dyn FnMut(Hit<'s>)) -> bool {
+    let (Some(&slot), Some(router)) = (slots.slots.get(&(ctx.stamp)(at)), (ctx.router)(at)) else {
         return false;
     };
-    let text = |node: &Node<'_>| ctx.source.get(crate::types::Span::of(node).range()).unwrap_or("");
+    let text = |kid: &Kid| ctx.source.get(kid.span().range()).unwrap_or("");
     match router {
         Router::Children(route, unit) => {
             let mut routed = true;
-            if cursor.goto_first_child() {
-                loop {
-                    let child = Kid::at(cursor);
-                    match route(&child) {
-                        Ok(Route::Slot { slot: at, .. }) if at == slot => {
-                            let node = cursor.node();
-                            let kind = unit(slot, cursor).unwrap_or_else(|| (ctx.stamp)(&node));
-                            visit(Hit { node: Some((child.index, kind)), text: text(&node) });
-                        }
-                        Ok(_) => {}
-                        Err(_) => routed = false,
+            for child in nodes.kids(at.index).iter() {
+                match route(child) {
+                    Ok(Route::Slot { slot: taken, .. }) if taken == slot => {
+                        let kind = unit(slot, nodes, child).unwrap_or_else(|| (ctx.stamp)(child));
+                        visit(Hit { node: Some((child.index, kind)), text: text(child) });
                     }
-                    if !cursor.goto_next_sibling() {
-                        break;
-                    }
+                    Ok(_) => {}
+                    Err(_) => routed = false,
                 }
-                cursor.goto_parent();
             }
             routed
         }
         Router::Interior(interior, captures) => {
-            let Some(groups) = interior.captures(text(&node)) else { return false };
+            let Some(groups) = interior.captures(text(at)) else { return false };
             if let Some(group) = captures.get(slot.index()).and_then(|name| groups.name(name)) {
                 visit(Hit { node: None, text: group.as_str() });
             }
@@ -315,28 +300,13 @@ fn slot_hits<'s>(cursor: &mut TreeCursor<'_>, ctx: &QueryCtx<'s>, slots: &Slots,
                 return false;
             }
             if !wraps_hidden {
-                let kind = unit(cursor).unwrap_or_else(|| crate::read::grammar_id(&node));
-                visit(Hit { node: Some((index_of(cursor), kind)), text: text(&node) });
+                let kind = unit(nodes, at).unwrap_or(at.grammar);
+                visit(Hit { node: Some((at.index, kind)), text: text(at) });
                 return true;
             }
-            let mut wrapped = None;
-            if cursor.goto_first_child() {
-                loop {
-                    let child = Kid::at(cursor);
-                    if !child.entry() {
-                        let node = cursor.node();
-                        let kind = unit(cursor).unwrap_or_else(|| (ctx.stamp)(&node));
-                        wrapped = Some(Hit { node: Some((child.index, kind)), text: text(&node) });
-                        break;
-                    }
-                    if !cursor.goto_next_sibling() {
-                        break;
-                    }
-                }
-                cursor.goto_parent();
-            }
-            let Some(hit) = wrapped else { return false };
-            visit(hit);
+            let Some(child) = nodes.kids(at.index).iter().find(|child| !child.entry()).copied() else { return false };
+            let kind = unit(nodes, &child).unwrap_or_else(|| (ctx.stamp)(&child));
+            visit(Hit { node: Some((child.index, kind)), text: text(&child) });
             true
         }
     }
@@ -392,8 +362,8 @@ mod tests {
 
     /// A parameter's type slot stores a primitive type as a unit, the `u8`
     /// token's id, as an enum kind's read stores its member.
-    fn unit<const T: usize>(slot: crate::types::SlotId, cursor: &mut TreeCursor<'_>) -> Option<KindId> {
-        (TABLES[T].0 == "parameter" && slot == crate::types::SlotId(1) && cursor.node().kind() == "primitive_type").then(member)
+    fn unit<const T: usize>(slot: crate::types::SlotId, _nodes: &mut dyn Nodes<'_>, at: &Kid) -> Option<KindId> {
+        (TABLES[T].0 == "parameter" && slot == crate::types::SlotId(1) && crate::read::kind_name(language(), at.display) == Some("primitive_type")).then(member)
     }
 
     fn member() -> KindId {
@@ -404,10 +374,10 @@ mod tests {
 
     static INTEGER: Interior = Interior::new("^(?<digits>[0-9]+)(?<suffix>u8|i32)?$");
 
-    fn router(node: &Node<'_>) -> Option<Router> {
-        match node.kind() {
+    fn router(at: &Kid) -> Option<Router> {
+        match crate::read::kind_name(language(), at.display).unwrap_or("") {
             "integer_literal" => Some(Router::Interior(&INTEGER, &["digits", "suffix"])),
-            "type_identifier" => Some(Router::Envelope { wraps_hidden: false, unit: |_| None }),
+            "type_identifier" => Some(Router::Envelope { wraps_hidden: false, unit: |_, _| None }),
             kind => TABLES.iter().position(|(name, ..)| *name == kind).map(|t| Router::Children(ROUTES[t], UNITS[t])),
         }
     }
@@ -426,21 +396,20 @@ mod tests {
         Plan::compile(serde_json::from_str(json).unwrap()).unwrap()
     }
 
-    /// Whether `plan` holds on each node of `kind`, in pre-order, checking
-    /// the cursor ends where it started.
+    /// Whether `plan` holds on each node of `kind`, in pre-order.
     fn eval(plan: &Plan, source: &str, kind: &str) -> Vec<bool> {
         let mut parser = tree_sitter::Parser::new();
         parser.set_language(language()).unwrap();
         let tree = parser.parse(source, None).unwrap();
-        let stamp = |node: &Node<'_>| crate::read::display_id(node);
-        let ctx = QueryCtx { source, stamp: &stamp, router: &router, delimiter: &|_| None };
-        let mut cursor = tree.walk();
+        let stamp = |at: &Kid| at.display;
+        let ctx = QueryCtx { source, stamp: &stamp, router: &router, delimiter: &|_, _| None };
+        let work = crate::layout::LayoutWorkCounter::default();
+        let mut nodes = crate::nodes::TreeNodes::new(&tree, source, &work);
         let mut out = Vec::new();
         for index in (0..crate::read::descendant_count(&tree.root_node())).map(crate::types::NodeIndex::new) {
-            crate::read::goto(&mut cursor, index);
-            if cursor.node().kind() == kind {
-                out.push(plan.holds(&mut cursor, &ctx));
-                assert_eq!(crate::read::index_of(&cursor), index, "the cursor ends where it started");
+            let at = nodes.kid(index);
+            if crate::read::kind_name(language(), at.display) == Some(kind) {
+                out.push(plan.holds(&mut nodes, &at, &ctx));
             }
         }
         out

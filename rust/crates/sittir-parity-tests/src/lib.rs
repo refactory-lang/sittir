@@ -145,7 +145,7 @@ macro_rules! snapshot_rendered {
         let tree = engine.parse($source, ::sittir_core::engine::claim_tree_id().expect("a tree id")).expect("a parse");
         let options = engine.options().clone();
         let root: $krate::render::AnyNode = tree.snapshot(::sittir_core::types::NodeIndex::ROOT, None).expect("a snapshot");
-        let ctx = ::sittir_core::prepare::RenderContext { options: &options, sources: &$crate::NoSources };
+        let ctx = ::sittir_core::prepare::RenderContext::new(&options, &$crate::NoSources);
         $krate::render::render_node_parts(::sittir_core::SlotValue::Node(root), &ctx, None).expect("a render").1
     }};
 }
@@ -162,7 +162,7 @@ macro_rules! edited_rendered {
         let seating = tree.seating();
         let root: $krate::render::AnyNode = ::sittir_core::read::read_at(&mut seating.cursor(::sittir_core::types::NodeIndex::ROOT), &mut seating.ctx(), ::sittir_core::types::NodeIndex::ROOT, ::sittir_core::read::Depth::All).expect("a root");
         let options = engine.options().clone();
-        let ctx = ::sittir_core::prepare::RenderContext { options: &options, sources: &seating };
+        let ctx = ::sittir_core::prepare::RenderContext::new(&options, &seating);
         $krate::render::render_node_parts(::sittir_core::SlotValue::Node(root), &ctx, None).expect("a render").1
     }};
 }

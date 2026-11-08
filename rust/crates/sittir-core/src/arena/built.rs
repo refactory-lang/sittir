@@ -138,7 +138,7 @@ impl<G: RecordGrammar> Engine<G> {
         ctx: &RenderContext<'_>,
     ) -> Result<String, RenderError> {
         let (root, mut held) = admitted_root::<G, H>(arena, at, changed, trees)?;
-        G::render_record(self.grammar(), root, &mut held, arena, self.written(), ctx)
+        G::render_record(self.grammar(), root, &mut held, arena, self.written(), ctx, None)
     }
 
     /// The lone built leaf of `kind` whose leaf entry is at `entry` in
@@ -163,7 +163,7 @@ impl<G: RecordGrammar> Engine<G> {
         let cell = admitted_leaf::<G>(arena, kind, entry, changed).map_err(RenderError::Record)?;
         let store = self.written().root_leaf(sides);
         let mut held = HeldArenas::of([]);
-        G::render_record(self.grammar(), CellAt { cell, tree: None, site: None }, &mut held, arena, &store, ctx)
+        G::render_record(self.grammar(), CellAt { cell, tree: None, site: None }, &mut held, arena, &store, ctx, None)
     }
 }
 

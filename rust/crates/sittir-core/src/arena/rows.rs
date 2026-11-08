@@ -38,18 +38,20 @@ mod packed {
 /// (`packed`), and the display kind of each node shown as an alias, by
 /// index. A row whose subtree end is 0 is unwritten, since every node's
 /// subtree ends past it. Whether a node holds an error is set on every row
-/// once the last is written, as are the aliases' order and capacity.
+/// once the last is written, as are the aliases' order and capacity and
+/// each node's parent.
 #[derive(Debug, Default)]
 pub struct NodeRows {
     rows: Vec<[u32; 4]>,
     aliases: Vec<(NodeIndex, KindId)>,
+    parents: Vec<u32>,
     written: u32,
 }
 
 impl HeapBytes for NodeRows {
     fn heap_bytes(&self) -> usize {
-        let Self { rows, aliases, written: _ } = self;
-        rows.capacity() * std::mem::size_of::<[u32; 4]>() + aliases.capacity() * std::mem::size_of::<(NodeIndex, KindId)>()
+        let Self { rows, aliases, parents, written: _ } = self;
+        rows.capacity() * std::mem::size_of::<[u32; 4]>() + aliases.capacity() * std::mem::size_of::<(NodeIndex, KindId)>() + parents.capacity() * std::mem::size_of::<u32>()
     }
 }
 
@@ -109,10 +111,33 @@ impl NodeRows {
         self.row(index)[3] & packed::HOLDS_ERROR != 0
     }
 
+    /// The parent of the node at `index`, `None` for the root.
+    #[must_use]
+    pub fn parent(&self, index: NodeIndex) -> Option<NodeIndex> {
+        (index != NodeIndex::ROOT).then(|| NodeIndex(self.parents[index.0 as usize]))
+    }
+
+    /// The rows from the root to the node at `index`, ascending: its
+    /// ancestors and itself.
+    #[must_use]
+    pub fn spine(&self, index: NodeIndex) -> Vec<NodeIndex> {
+        let mut rows: Vec<NodeIndex> = std::iter::successors(Some(index), |&at| self.parent(at)).collect();
+        rows.reverse();
+        rows
+    }
+
+    /// How many levels the node at `index` lies below the node at `above`,
+    /// counted up to `most`: `None` when it lies `most` levels or more below
+    /// it, or not under it.
+    #[must_use]
+    pub fn levels_below(&self, above: NodeIndex, index: NodeIndex, most: u32) -> Option<u32> {
+        std::iter::successors(Some(index), |&at| self.parent(at)).take(most as usize).position(|at| at == above).and_then(|levels| u32::try_from(levels).ok())
+    }
+
     /// Writes the row of `kid` once, with whether it is `MISSING`, the rows
     /// made for `nodes` nodes on the first write; the last row written
     /// finishes them (`finish`). Answers whether the write changed the
-    /// rows' heap.
+    /// rows' heap, which making them and finishing them do.
     fn write(&mut self, nodes: u32, kid: &Kid, missing: bool) -> Result<bool, ArenaError> {
         let field = kid.field.map_or(0, |field| u32::from(field.0));
         if field > packed::FIELD_MASK {
@@ -140,20 +165,23 @@ impl NodeRows {
         }
         if self.written == nodes {
             self.finish();
+            return Ok(true);
         }
         Ok(made || self.aliases.capacity() != capacity)
     }
 
-    /// Sorts the aliases by index and fits them to their count, and marks
-    /// every node that holds an error, in one sweep from the last row to the
+    /// Sorts the aliases by index and fits them to their count, marks every
+    /// node that holds an error, in one sweep from the last row to the
     /// first: a node holds one when the nearest `ERROR` (`shown_as_error`)
-    /// or `MISSING` token at or after it lies before its subtree's end.
+    /// or `MISSING` token at or after it lies before its subtree's end; and
+    /// finds each node's parent, in one pass from the first, holding the
+    /// nodes whose subtrees are still open.
     fn finish(&mut self) {
         self.aliases.sort_unstable_by_key(|&(index, _)| index.0);
         self.aliases.shrink_to_fit();
         let mut nearest = u32::MAX;
         let len = self.len();
-        let Self { rows, aliases, written: _ } = self;
+        let Self { rows, aliases, parents, written: _ } = self;
         for (index, row) in (0..len).zip(rows.iter_mut()).rev() {
             if row[3] & packed::MISSING != 0 || shown_as_error(display_of(aliases, NodeIndex(index), row[3])) {
                 nearest = index;
@@ -161,6 +189,17 @@ impl NodeRows {
             if nearest < row[2] {
                 row[3] |= packed::HOLDS_ERROR;
             }
+        }
+        *parents = vec![0; rows.len()];
+        let mut open: Vec<(u32, u32)> = Vec::new();
+        for (index, row) in (0..len).zip(rows.iter()) {
+            while open.last().is_some_and(|&(_, end)| end <= index) {
+                open.pop();
+            }
+            if let Some(&(parent, _)) = open.last() {
+                parents[index as usize] = parent;
+            }
+            open.push((index, row[2]));
         }
     }
 }
@@ -200,7 +239,7 @@ pub struct TreeArena {
     /// Native record starts, including an embedded record, which starts
     /// inside its holder's.
     records: CountedMap<Address>,
-    rows: NodeRows,
+    rows: std::sync::Arc<NodeRows>,
 }
 
 impl HeapBytes for TreeArena {
@@ -215,7 +254,7 @@ impl TreeArena {
     /// `kind_bits` bits: grown, since nothing has taken its growth yet.
     #[must_use]
     pub fn new(kind_bits: u32, rows: u32) -> Self {
-        Self { grown: true, arena: Arena::with_kind_bits(kind_bits), held: CountedMap::default(), nodes: rows, records: CountedMap::default(), rows: NodeRows::default() }
+        Self { grown: true, arena: Arena::with_kind_bits(kind_bits), held: CountedMap::default(), nodes: rows, records: CountedMap::default(), rows: std::sync::Arc::default() }
     }
 
     /// Whether the tree has a row for the node at `index`.
@@ -228,7 +267,14 @@ impl TreeArena {
     /// tree; `None` while some node has none.
     #[must_use]
     pub fn node_rows(&self) -> Option<&NodeRows> {
-        (self.rows.written == self.nodes).then_some(&self.rows)
+        (self.rows.written == self.nodes).then_some(&*self.rows)
+    }
+
+    /// Every node's row, shared, once the hydrate pass has met every node of
+    /// the tree: no row is written after that (`write_row`).
+    #[must_use]
+    pub fn shared_rows(&self) -> Option<std::sync::Arc<NodeRows>> {
+        (self.rows.written == self.nodes).then(|| std::sync::Arc::clone(&self.rows))
     }
 
     /// Writes the row of `kid`, with whether it is `MISSING`, unless the
@@ -240,7 +286,11 @@ impl TreeArena {
     /// `ArenaError::Malformed` for a field id wider than `ROW_FIELD_BITS`
     /// or a node past the tree's.
     pub(super) fn write_row(&mut self, kid: &Kid, missing: bool) -> Result<(), ArenaError> {
-        if self.rows.write(self.nodes, kid, missing)? {
+        if self.has_row(kid.index) {
+            return Ok(());
+        }
+        let rows = std::sync::Arc::get_mut(&mut self.rows).ok_or(ArenaError::Unwritable("a node row once every row is shared"))?;
+        if rows.write(self.nodes, kid, missing)? {
             self.grown = true;
         }
         Ok(())

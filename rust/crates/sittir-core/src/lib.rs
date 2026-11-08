@@ -79,23 +79,24 @@ macro_rules! napi_codec {
     ($($item:item)*) => {};
 }
 
-/// The items of a derived node's record writer (`arena::WriteCell`), kept
-/// only when this crate is built with the arena, so a crate that derives
-/// `Node` needs no feature of its own.
+/// The items of a derived node's record writer (`arena::WriteCell`), and
+/// the associated items of a grammar's impls that read records, kept only
+/// when this crate is built with the arena, so a crate that derives `Node`
+/// needs no feature of its own.
 #[cfg(feature = "arena")]
 #[doc(hidden)]
 #[macro_export]
 macro_rules! records_codec {
-    ($($item:item)*) => { $($item)* };
+    ($($items:tt)*) => { $($items)* };
 }
 
-/// The items of a derived node's record writer, dropped: this crate is
-/// built without the arena.
+/// The items of a derived node's record writer, and a grammar's associated
+/// items that read records, dropped: this crate is built without the arena.
 #[cfg(not(feature = "arena"))]
 #[doc(hidden)]
 #[macro_export]
 macro_rules! records_codec {
-    ($($item:item)*) => {};
+    ($($items:tt)*) => {};
 }
 
 pub use verbatim::VerbatimNode;

@@ -37,7 +37,7 @@ enum Alike {
 type NativeRender<N> = fn(SlotValue<N>, &RenderContext<'_>, Option<&mut sittir_core::baseline::Baseline>) -> Result<(sittir_core::types::Source, String), RenderError>;
 
 /// A grammar's render of a record (`render_record`).
-type RecordRender<T> = fn(CellAt, &mut dyn RecordTrees, &dyn ArenaRead, &TriviaStore<T>, &RenderContext<'_>) -> Result<String, RenderError>;
+type RecordRender<T> = fn(CellAt, &mut dyn RecordTrees, &dyn ArenaRead, &TriviaStore<T>, &RenderContext<'_>, Option<sittir_core::arena::Recording<'_>>) -> Result<String, RenderError>;
 
 /// One grammar's two renders: a native root's, and a record's.
 struct Renders<G: EngineGrammar, N> {
@@ -61,7 +61,7 @@ impl<G: RecordGrammar, N: ReadNode + WriteCell<G::Trivia> + HydrateNode + Record
     fn native(&self, tree: &ParsedTree<G>, index: NodeIndex, options: &ResolvedOptions) -> Option<Result<String, String>> {
         let seating = tree.seating();
         let node: N = read_at(&mut seating.cursor(index), &mut seating.ctx(), index, Depth::ONE).ok()?;
-        let ctx = RenderContext { options, sources: &seating };
+        let ctx = RenderContext::new(options, &seating);
         Some((self.native)(SlotValue::Node(node), &ctx, None).map(|(_, text)| text).map_err(|e| format!("native: {e}")))
     }
 
@@ -69,10 +69,10 @@ impl<G: RecordGrammar, N: ReadNode + WriteCell<G::Trivia> + HydrateNode + Record
     /// `tree`'s, rendered twice: both renders, which must agree.
     fn record(&self, tree: &ParsedTree<G>, built: &BuiltChunks, root: CellAt, options: &ResolvedOptions) -> Result<String, String> {
         let seating = tree.seating();
-        let ctx = RenderContext { options, sources: &seating };
+        let ctx = RenderContext::new(options, &seating);
         twice(|| {
             let mut arenas = HeldArenas::of([(tree.tree_id(), tree.tree_arena())]);
-            (self.record)(root, &mut arenas, built, tree.store(), &ctx).map_err(|e| format!("record: {e}"))
+            (self.record)(root, &mut arenas, built, tree.store(), &ctx, None).map_err(|e| format!("record: {e}"))
         })
     }
 
@@ -373,7 +373,7 @@ fn an_untouched_parsed_record_a_built_record_links_renders_as_its_source() {
     let sittir_rust::render::AnyNode::SourceFile(file) = &mut root else { panic!("the root is a file") };
     let layout = file.layout.as_mut().expect("a read node names itself");
     layout.sides = layout.at.take();
-    let native = (renders.native)(SlotValue::Node(root.clone()), &RenderContext { options: &options, sources: &seating }, None).expect("a native render").1;
+    let native = (renders.native)(SlotValue::Node(root.clone()), &RenderContext::new(&options, &seating), None).expect("a native render").1;
     let (built, root, linked) = built_record(&tree, &root);
     assert!(linked > 0, "the built root links its parsed children");
     let record = renders.record(&tree, &built, root, &options).expect("a record render");
@@ -419,7 +419,7 @@ fn a_built_node_s_written_sides_units_and_slots_render_from_its_record_as_native
         (
             rust_kinds::CLOSURE_PARAMETERS,
             |layout, tree| {
-                let source = sittir_core::render::SourceTable::slot_layouts(&tree.seating(), layout.sides.as_ref().expect("rebuilt from its read"));
+                let source = sittir_core::render::SourceTable::slot_layouts(&tree.seating(), layout.sides.as_ref().expect("rebuilt from its read"), sittir_core::render::Lent::NONE);
                 assert!(!source.is_empty(), "the source spaces the list apart from the options");
                 layout.slots = source.into_iter().map(|slot| sittir_core::layout::SlotLayout { before: slot.after, after: slot.before, ..slot }).collect();
             },
@@ -437,7 +437,7 @@ fn a_built_node_s_written_sides_units_and_slots_render_from_its_record_as_native
         layout.sides = layout.at.take();
         written(layout);
         edit(layout, &tree);
-        let native = (renders.native)(SlotValue::Node(node.clone()), &RenderContext { options: &options, sources: &tree.seating() }, None).expect("a native render").1;
+        let native = (renders.native)(SlotValue::Node(node.clone()), &RenderContext::new(&options, &tree.seating()), None).expect("a native render").1;
         let (built, root, _) = built_record(&tree, &node);
         let record = renders.record(&tree, &built, root, &options).expect("a record render");
         assert_eq!(record, native, "{kind:?}");

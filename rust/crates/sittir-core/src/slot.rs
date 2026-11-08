@@ -550,7 +550,7 @@ mod tests {
                 crate::types::NodeIndex(0), crate::types::NodeIndex(1),
                 Span { start: 1, end: 3 },
             ));
-            slot.prepare(&RenderContext { options, sources: &sources })
+            slot.prepare(&RenderContext::new(options, &sources))
             .unwrap();
             let mut out = String::new();
             let mut w = SpacingWriter::new(&mut out, WordMatcher::default_ident())

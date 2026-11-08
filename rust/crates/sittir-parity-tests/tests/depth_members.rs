@@ -89,7 +89,7 @@ fn rendered_root(tree: &sittir_core::engine::ParsedTree<sittir_python::PythonGra
     let coord = sittir_core::slot::NodeCoordinate::new(tree.tree_id(), NodeIndex::ROOT, NodeIndex::new(sittir_core::read::descendant_count(&root)), sittir_core::types::Span::of(&root));
     let options = sittir_python::render::options::defaults();
     let seating = tree.seating();
-    let ctx = sittir_core::prepare::RenderContext { options: &options, sources: &seating };
+    let ctx = sittir_core::prepare::RenderContext::new(&options, &seating);
     sittir_python::render::render_node_parts(sittir_core::SlotValue::Coord(coord), &ctx, None).expect("a render").1
 }
 

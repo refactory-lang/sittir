@@ -21,7 +21,7 @@ impl SourceTable for NoSources {
 #[test]
 fn an_empty_suite_block_closes_the_indent_it_opened() {
     let options = options::defaults();
-    let ctx = RenderContext { options: &options, sources: &NoSources };
+    let ctx = RenderContext::new(&options, &NoSources);
     let block = BlockNode::new(None, Vec::new(), None);
     let suite = SuiteBlockNode::new(None, ::sittir_core::SlotValue::Node(block));
     let root: RenderRoot = ::sittir_core::SlotValue::Node(AnyNode::SuiteBlock(suite));

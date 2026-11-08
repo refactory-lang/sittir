@@ -79,6 +79,11 @@ export interface LayoutWork {
    * (`Lookups::aligned`), and one for each gap measured from them.
    */
   gapItems: number
+  /**
+   * The times a call was handed the tree's tree-sitter tree
+   * (`ParsedTree::tree`): to navigate it, read it or hydrate from it.
+   */
+  treeReads: number
 }
 
 /**

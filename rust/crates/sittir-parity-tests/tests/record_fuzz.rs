@@ -115,7 +115,7 @@ impl<T: Clone + sittir_core::heap::HeapBytes> Built<T> {
     /// `G`'s render of the root, its panic caught.
     fn render<G: RecordGrammar<Trivia = T>>(&self, tree: &ParsedTree<G>, ctx: &RenderContext<'_>) -> std::thread::Result<Result<String, RenderError>> {
         let mut arenas = HeldArenas::of([(tree.tree_id(), tree.tree_arena())]);
-        std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| tree.grammar().render_record(self.root, &mut arenas, &self.image, &self.store, ctx)))
+        std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| tree.grammar().render_record(self.root, &mut arenas, &self.image, &self.store, ctx, None)))
     }
 }
 
@@ -146,7 +146,7 @@ fn fuzz<G: RecordGrammar + Default, N: ReadNode + WriteCell<G::Trivia> + RecordC
     for (i, source) in sources(grammar).take(SOURCES).enumerate() {
         let tree = engine.parse(&source, claim_tree_id().expect("a tree id")).expect("a parse");
         let seating = tree.seating();
-        let ctx = RenderContext { options: &options, sources: &seating };
+        let ctx = RenderContext::new(&options, &seating);
         let Some(mut built) = Built::<G::Trivia>::of::<G, N>(&tree) else { continue };
         if built.admit::<N>().is_err() || !matches!(built.render(&tree, &ctx), Ok(Ok(_))) {
             continue;
@@ -208,7 +208,7 @@ fn a_child_cell_naming_a_record_that_holds_it_is_refused() {
     let options = engine.options().clone();
     let tree = engine.parse("fn f() {\n    a(b(c(d())));\n}\n", claim_tree_id().expect("a tree id")).expect("a parse");
     let seating = tree.seating();
-    let ctx = RenderContext { options: &options, sources: &seating };
+    let ctx = RenderContext::new(&options, &seating);
     let mut built = Built::of::<_, sittir_rust::render::AnyNode>(&tree).expect("a built tree");
     assert_eq!(built.admit::<sittir_rust::render::AnyNode>(), Ok(()), "the tree is admitted before the cycle");
     assert!(matches!(built.render(&tree, &ctx), Ok(Ok(_))), "and renders");

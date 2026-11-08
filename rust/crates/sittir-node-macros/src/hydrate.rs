@@ -169,7 +169,7 @@ fn routed(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn::Result
         let position = slots.iter().find(|(_, field, _)| field.ident == item).map(|&(i, ..)| i).ok_or_else(|| syn::Error::new_spanned(item, "`item` names one of the list's slots"))?;
         let option = |value: Option<u16>| value.map_or_else(|| quote!(::core::option::Option::None), |value| quote!(::core::option::Option::Some(#value)));
         let (leading, trailing) = (option(flank.leading), option(flank.trailing));
-        quote!(::core::option::Option::Some(__rt::delimiter(&__node, &children, &routes, ::sittir_core::types::SlotId(#position), #leading, #trailing)))
+        quote!(::core::option::Option::Some(__rt::delimiter(::sittir_core::types::Span::of(&__node), &children, &routes, ::sittir_core::types::SlotId(#position), #leading, #trailing)))
     } else {
         quote!(::core::option::Option::None)
     };
@@ -453,9 +453,10 @@ pub fn members(ident: &Ident) -> TokenStream {
                 records: &mut ::sittir_core::arena::Hydration<'_>,
                 _inline: ::core::option::Option<::sittir_core::arena::Embed>,
             ) -> ::core::result::Result<::sittir_core::arena::Hydrated, ::sittir_core::arena::HydrateError> {
-                let member = __resolve(cursor).ok_or_else(|| __rt::ReadError::Unspelled { kind: ::sittir_core::read::grammar_id(&cursor.node()), index: __rt::index_of(cursor) })?;
-                records.meet_under(cursor, ctx.current(cursor).count)?;
-                ::core::result::Result::Ok(::sittir_core::arena::Hydrated::Unit { kind: __id(&member), row: ::core::option::Option::Some(__rt::index_of(cursor)) })
+                let at = ctx.current(cursor);
+                let member = __resolve(&mut __rt::LentCursor::new(cursor, ctx.source), &at).ok_or(__rt::ReadError::Unspelled { kind: at.grammar, index: at.index })?;
+                records.meet_under(cursor, at.count)?;
+                ::core::result::Result::Ok(::sittir_core::arena::Hydrated::Unit { kind: __id(&member), row: ::core::option::Option::Some(at.index) })
             }
         }
     });

@@ -214,12 +214,27 @@ impl<'a, T> RecordCtx<'a, T> {
     /// The parsed node `cell` names, whatever cell names it: the row of a
     /// coordinate, a parsed leaf or a parsed unit of this arena's tree, or
     /// the row of a parsed record, in this arena or in the tree a link names,
-    /// with the edges a child cell marks changed; `None` for a built value.
+    /// with the edges a child cell marks changed; `None` for a built value,
+    /// and for a parsed record, leaf or unit a recording render renders from
+    /// its template (`Templates`), which it takes as a value, as a read takes
+    /// a node within its depth: a record or a leaf with its own sides seated
+    /// from its row, a unit with the sides its holder seats for it. A
+    /// coordinate names no record.
     ///
     /// # Errors
     ///
     /// What reading a child's record or reaching a linked arena refuses.
     pub fn parsed_row(self, cell: Cell) -> Result<Option<ParsedRow>, ArenaError> {
+        let row = self.cell_row(cell)?;
+        let templated = |row: &ParsedRow| {
+            matches!(cell, Cell::Child { .. } | Cell::ParsedLeaf { .. } | Cell::Unit { .. })
+                && self.prepared.templates().is_some_and(|templates| self.arenas.tree(row.tree).and_then(TreeArena::node_rows).is_some_and(|rows| templates.reach(row.tree, rows, row.row)))
+        };
+        Ok(row.filter(|row| !templated(row)))
+    }
+
+    /// The parsed node `cell` names (`parsed_row`), whatever renders it.
+    fn cell_row(self, cell: Cell) -> Result<Option<ParsedRow>, ArenaError> {
         let here = |row, kind| self.tree.map(|tree| ParsedRow { tree, row, kind, changed: ChangedEdges::default() });
         Ok(match cell {
             Cell::Coordinate { kind, index, .. } => here(index, kind),
@@ -246,7 +261,7 @@ impl<'a, T> RecordCtx<'a, T> {
     /// `ArenaError::Malformed` for a parsed record whose side record names no
     /// row.
     pub fn stamped_row(self, cell: Cell) -> Result<Option<ParsedRow>, ArenaError> {
-        let Cell::Child { kind, at, link, changed } = cell else { return self.parsed_row(cell) };
+        let Cell::Child { kind, at, link, changed } = cell else { return self.cell_row(cell) };
         let Some((ctx, side)) = self.child_side(at, kind, link)? else { return Ok(None) };
         let row = side.at.ok_or(malformed("parsed record row", at.0))?.index;
         Ok(ctx.tree.map(|tree| ParsedRow { tree, row, kind, changed }))
@@ -287,9 +302,7 @@ impl<'a, T> RecordCtx<'a, T> {
     /// tree has no node at `row`.
     pub fn row_node(self, tree: TreeId, row: NodeIndex) -> Result<NodeCoordinate, ArenaError> {
         self.sources.source_of(tree).ok_or(malformed("record tree", tree.0))?;
-        let mut at = None;
-        self.sources.read_node(tree, row, &mut |cursor, read| at = Some(read.coordinate_of(&crate::nodes::Kid::at(cursor))));
-        at.ok_or(malformed("record row", row.0))
+        self.sources.row_coordinate(tree, row).ok_or(malformed("record row", row.0))
     }
 }
 

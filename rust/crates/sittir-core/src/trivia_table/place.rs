@@ -37,6 +37,7 @@ use crate::nodes::{Kid, Nodes};
 use crate::heap::{btree_allocation, CountedMap, HeapBytes, IndexState, ARC_COUNTS};
 use crate::points::LineTable;
 use crate::types::{narrow, NodeIndex, RunId, Span};
+use crate::baseline::Tally;
 use std::collections::{BTreeMap, HashMap};
 use std::sync::atomic::{AtomicBool, AtomicU32, Ordering};
 use std::sync::{Arc, Mutex, OnceLock, PoisonError};
@@ -404,6 +405,9 @@ struct State {
     wide: CountedMap<u32, Option<Kid>>,
     ending: CountedMap<u32, Option<Kid>>,
     adjacency: CountedMap<NodeIndex, Option<Adjacency>>,
+    /// Each run's baseline gap, by its id, kept on its first measure
+    /// (`Placement::keep_gap`).
+    gaps: CountedMap<RunId, Option<Tally>>,
     unowned: BTreeMap<Order, NodeIndex>,
     order: BTreeMap<(u32, u32, Order), RunId>,
     runs: u32,
@@ -501,6 +505,21 @@ impl Placement {
     /// `None` for a node that is no list or passes none.
     pub fn edge_item(&self, source: Source<'_, '_>, index: NodeIndex, side: TriviaSide) -> Option<NodeIndex> {
         self.cover(source, index, TriviaSide::Inner)?.edge_item(index, side)
+    }
+
+    /// The baseline gap kept for the run `id` (`keep_gap`): `None` before one
+    /// is kept, `Some(None)` where no baseline reaches the run.
+    #[must_use]
+    #[allow(clippy::option_option, reason = "`None` before a gap is kept; `Some(None)` for a run no baseline reaches")]
+    pub fn gap(&self, id: RunId) -> Option<Option<Tally>> {
+        self.state.lock().unwrap_or_else(PoisonError::into_inner).gaps.get(&id).copied()
+    }
+
+    /// Keeps `gap` as the baseline gap of the run `id`, which a placed side
+    /// holds, so it is measured once.
+    pub fn keep_gap(&self, id: RunId, gap: Option<Tally>) {
+        self.state.lock().unwrap_or_else(PoisonError::into_inner).gaps.insert(id, gap);
+        self.grown.store(true, Ordering::Relaxed);
     }
 
     /// The run `id` names, which a placed side holds, read without a lock.
@@ -1906,6 +1925,7 @@ impl HeapBytes for State {
             wide,
             ending,
             adjacency,
+            gaps,
             unowned,
             order,
             runs: _,
@@ -1931,6 +1951,7 @@ impl HeapBytes for State {
             + wide.allocation()
             + ending.allocation()
             + adjacency.allocation()
+            + gaps.allocation()
             + btree_allocation(unowned)
             + btree_allocation(order)
             + held
@@ -1959,6 +1980,7 @@ impl State {
             wide,
             ending,
             adjacency,
+            gaps,
             unowned,
             order,
             runs: _,
@@ -1984,6 +2006,7 @@ impl State {
             + wide.heap_bytes()
             + ending.heap_bytes()
             + adjacency.heap_bytes()
+            + gaps.heap_bytes()
             + unowned.heap_bytes()
             + order.heap_bytes()
     }
