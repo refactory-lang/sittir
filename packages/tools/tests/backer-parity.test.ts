@@ -30,6 +30,13 @@ describe('backer parity', () => {
 		expect({ differing: census.differing, failing: census.failing }).toEqual({ differing: 0, failing: [] });
 	}, 120_000);
 
+	it('refuses a census of no file, so an empty or missing list cannot pass', async () => {
+		writeFileSync(join(root, 'none.json'), JSON.stringify({ files: [] }));
+		for (const paths of [[], admittedPaths(join(root, 'none.json'))]) {
+			await expect(computeBackerParity(root, paths)).rejects.toThrow(/backer-parity has no corpus file to read/);
+		}
+	});
+
 	it('reads TypeScript sources inside the corpus only', () => {
 		expect(corpusFile(root, 'src/a.ts')).toMatch(/src\/a\.ts$/);
 		for (const path of ['src/c.d.ts', 'src/d.js', '../a.ts', join(root, 'src/a.ts'), 'out/x.ts']) {

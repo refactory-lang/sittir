@@ -44,6 +44,9 @@ export function admittedPaths(list: string): string[] {
 }
 
 export async function computeBackerParity(root: string, paths: readonly string[]): Promise<BackerParityCensus> {
+	if (paths.length === 0) {
+		throw new Error('backer-parity has no corpus file to read; name them with --admitted or --files');
+	}
 	const withTree = await withTreeOf('typescript');
 	const failing: BackerParityFile[] = [];
 	let nodes = 0;
