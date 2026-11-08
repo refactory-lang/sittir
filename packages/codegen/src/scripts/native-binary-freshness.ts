@@ -2,7 +2,7 @@ import { execFileSync } from 'node:child_process';
 import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
 import { homedir } from 'node:os';
 import { basename, dirname, join, normalize, posix, relative, sep } from 'node:path';
-import { hostPlatform, platformSuffix } from '@sittir/common/engine';
+import { addonFileName, hostPlatform, platformSuffix } from '@sittir/common/engine';
 import { moduleClosure } from './module-closure.ts';
 import { sha256File } from '../util/content-hash.ts';
 import { writeFileAtomic } from '../util/write-file-atomic.ts';
@@ -112,7 +112,7 @@ function crateInputs(crateRel: string): string[] {
 }
 
 export function hostBinaryName(grammar: string): string {
-	return `${nativeBinaryName(grammar as GrammarName)}.${platformSuffix(hostPlatform())}.node`;
+	return addonFileName(nativeBinaryName(grammar as GrammarName), platformSuffix(hostPlatform()));
 }
 
 function quotedIncludeClosure(file: string, seen: Set<string>): void {

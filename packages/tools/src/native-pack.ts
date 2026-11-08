@@ -1,7 +1,7 @@
 import { copyFileSync, existsSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
 import { basename, dirname, join } from 'node:path';
 import { NATIVE_NAPI_CONFIG, grammarPackageDir, nativeCrateDir, type GrammarName } from '@sittir/codegen/grammars';
-import { engineLibraryName, engineStampOf, stdLibrariesLinkedBy } from '@sittir/common/engine';
+import { addonFileName, engineLibraryName, engineStampOf, stdLibrariesLinkedBy } from '@sittir/common/engine';
 import { packageBin, run } from './spawn.ts';
 
 export interface PlatformPackageManifest {
@@ -114,7 +114,7 @@ export function optionalDependencyGaps(manifest: GrammarManifest, platformPackag
 }
 
 export function platformPackGaps(dir: string, binaryName: string, suffix: string): string[] {
-	const node = `${binaryName}.${suffix}.node`;
+	const node = addonFileName(binaryName, suffix);
 	if (!existsSync(join(dir, node))) return [`lacks ${node}`];
 	const engine = engineLibraryName(suffix);
 	const lacking = [engine, ...stdLibrariesLinkedBy(join(dir, node))].filter((copy) => !existsSync(join(dir, copy)));

@@ -3,6 +3,7 @@ export { scopeBuilders } from './create-engine.ts';
 export { nodeStorageOf } from './engine-scope.ts';
 export {
 	LOADED_ENGINE,
+	addonFileName,
 	engineLibraryName,
 	engineStampOf,
 	hostPlatform,

@@ -5,6 +5,7 @@ import { basename, join } from 'node:path';
 import {
 	LOADED_ENGINE,
 	type HostPlatform,
+	addonFileName,
 	engineLibraryName,
 	engineStampOf,
 	isStdLibrary,
@@ -54,6 +55,12 @@ describe('engineLibraryName', () => {
 		expect(engineLibraryName('linux-x64-gnu')).toBe('libsittir_engine.so');
 		expect(engineLibraryName('linux-arm64-musl')).toBe('libsittir_engine.so');
 		expect(engineLibraryName('win32-x64-msvc')).toBe('sittir_engine.dll');
+	});
+});
+
+describe('addonFileName', () => {
+	it("names a grammar's addon the way napi builds it for a platform", () => {
+		expect(addonFileName('sittir-rust', 'linux-arm64-musl')).toBe('sittir-rust.linux-arm64-musl.node');
 	});
 });
 

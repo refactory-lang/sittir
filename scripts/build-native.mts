@@ -54,7 +54,7 @@ import { chmodSync, copyFileSync, existsSync, mkdirSync, readdirSync, rmSync } f
 import { basename, dirname, join, resolve } from 'node:path';
 import { NATIVE_LOADER, NATIVE_NAPI_CONFIG, NATIVE_TYPINGS, REPO_ROOT, assertGrammar, nativeBinaryName, nativeBindingDir, nativeBuildEnv, nativeCrateDir } from '../packages/codegen/src/grammars.ts';
 import { type NativeProfile, linkerMapOf, llvmTool, nativeBuildFingerprint, rustHost, unstrippedBinaryPath, writeNativeBuildStamp } from '../packages/codegen/src/scripts/native-binary-freshness.ts';
-import { engineLibraryName, engineStampOf, hostPlatform, isStdLibrary, platformSuffix, targetSuffix } from '../packages/common/src/native-binding.ts';
+import { addonFileName, engineLibraryName, engineStampOf, hostPlatform, isStdLibrary, platformSuffix, targetSuffix } from '../packages/common/src/native-binding.ts';
 
 const [name, ...flags] = process.argv.slice(2);
 if (name === undefined) throw new Error('usage: build-native.mts <grammar> [napi build flags…]');
@@ -163,7 +163,7 @@ function nameStdByRpath(images: readonly string[], std: string): void {
 }
 
 const outDir = nativeBindingDir(grammar);
-const binary = `${nativeBinaryName(grammar)}.${suffix}.node`;
+const binary = addonFileName(nativeBinaryName(grammar), suffix);
 const copy = unstrippedBinaryPath(REPO_ROOT, grammar, binary);
 const linkerMap = release && suffix.endsWith('-msvc') ? linkerMapOf(copy) : undefined;
 const triple = flags.includes('--target') && target !== undefined ? target : rustHost();

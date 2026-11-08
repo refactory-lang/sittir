@@ -57,6 +57,10 @@ export function platformPackageName(stem: string, suffix: string): string {
 	return `${stem}-${suffix}`;
 }
 
+export function addonFileName(binaryName: string, suffix: string): string {
+	return `${binaryName}.${suffix}.node`;
+}
+
 export function engineLibraryName(suffix: string): string {
 	if (suffix.startsWith('darwin-')) return 'libsittir_engine.dylib';
 	if (suffix.startsWith('win32-')) return 'sittir_engine.dll';
@@ -223,7 +227,7 @@ export function nativeLoadFailure(
 		);
 	}
 	const suffix = platformSuffix(host);
-	const file = `${spec.binaryName}.${suffix}.node`;
+	const file = addonFileName(spec.binaryName, suffix);
 	const home = binaryHomes(spec, suffix).find(({ dir }) => existsSync(join(dir, file)));
 	if (home === undefined) {
 		const shipped = shippedSuffixes(spec);
