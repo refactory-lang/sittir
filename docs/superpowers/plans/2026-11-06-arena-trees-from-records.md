@@ -256,10 +256,13 @@ A ratchet that every later task lowers. Each of Tasks 9–12 starts by lowering 
 
 **Interfaces:**
 - Produces:
-  - `#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)] pub struct LayoutWork { pub region_nodes: u64, pub sibling_items: u64, pub region_fallbacks: u64, pub cursor_climbs: u64, pub sibling_steps: u64, pub root_descents: u64, pub depth_nodes: u64, pub record_nodes: u64, pub gap_items: u64, pub tree_reads: u64 }`. It's owned by the call and incremented through `&mut`. The napi `layoutWork` result reports the last call's record.
+  - `#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)] pub struct LayoutWork { pub region_nodes: u64, pub sibling_items: u64, pub region_fallbacks: u64, pub cursor_climbs: u64, pub sibling_steps: u64, pub root_descents: u64, pub depth_nodes: u64, pub record_nodes: u64, pub gap_items: u64, pub tree_reads: u64, pub kids_listed: u64 }`. It's owned by the call and incremented through `&mut`. The napi `layoutWork` result reports the last call's record.
   - `fn kids(&mut self, index: NodeIndex, out: &mut Vec<Kid>)` on `Nodes`. It clears `out`, then fills it in child order. A walk keeps one reusable `Vec<Kid>` per depth.
 
-- [ ] **Step 1: Lower the ceilings of `layout.rs`, `nodes.rs` and `engine.rs`.** Write `each_call_reports_only_its_own_layout_work`: it renders one arena tree twice, and the second call's `LayoutWork` equals the first's rather than their sum.
+- [ ] **Step 1: Lower the ceilings of `layout.rs`, `nodes.rs` and `engine.rs`.** Write two tests:
+  - `each_call_reports_only_its_own_layout_work`: it renders one arena tree twice, and the second call's `LayoutWork` equals the first's rather than their sum.
+  - `a_first_render_lists_kids_within_its_ceiling`: `LayoutWork` gains `kids_listed`, and on a first arena render of a statement list it stays within a pinned ceiling per visible node, in the descent-ceiling style.
+  - A child list that carries a field id nobody reads drops it here, the field-id cost #1137's diagnosis measured.
 - [ ] **Step 2:** Run it and the census. Both fail.
 - [ ] **Step 3: Implement.**
 - [ ] **Step 4: Run the three-way verification,** backer parity on both corpora, the descent-ceiling tests (unchanged) and the census.
