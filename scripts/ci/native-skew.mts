@@ -14,15 +14,16 @@
 // gives the engine its own version in its manifest for the length of one
 // build and restores the manifest and the lockfile after. Whether the cases
 // pass or fail, the script then touches the engine's source and rebuilds both
-// grammars with the caller's environment: cargo gives every build of the
-// engine one file name, so the other version's build would otherwise stay in
-// its output, judged fresh.
+// grammars under the profile each was built with before the run, in the
+// caller's environment: cargo gives every build of the engine one file name,
+// so the other version's build would otherwise stay in its output, judged
+// fresh, and every grammar a process loads must carry the same engine build.
 import { spawnSync } from 'node:child_process';
 import { readFileSync, realpathSync, utimesSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { REPO_ROOT, nativeBinaryName, nativeBindingDir } from '../../packages/codegen/src/grammars.ts';
-import { hostBinaryName } from '../../packages/codegen/src/scripts/native-binary-freshness.ts';
+import { NATIVE_PROFILE_FLAGS, hostBinaryName, nativeBuildStamp } from '../../packages/codegen/src/scripts/native-binary-freshness.ts';
 import { engineStampOf } from '../../packages/common/src/native-binding.ts';
 
 const FIRST = 'regex';
@@ -55,8 +56,8 @@ function run(command: string, args: readonly string[], env: NodeJS.ProcessEnv = 
 	return result.stdout;
 }
 
-const build = (grammar: string, env: NodeJS.ProcessEnv = process.env): void => {
-	run('pnpm', ['exec', 'tsx', 'scripts/build-native.mts', grammar], env);
+const build = (grammar: string, env: NodeJS.ProcessEnv = process.env, flags: readonly string[] = []): void => {
+	run('pnpm', ['exec', 'tsx', 'scripts/build-native.mts', grammar, ...flags], env);
 };
 
 const buildAt = (grammar: string, commit: string): void => build(grammar, { ...process.env, SITTIR_ENGINE_COMMIT: commit });
@@ -95,10 +96,12 @@ function withEngineVersion<T>(version: string, body: () => T): T {
 	}
 }
 
-function rebuildAsTheCallerBuilds(): void {
+const profileBefore = new Map([FIRST, SECOND].map((grammar) => [grammar, nativeBuildStamp(REPO_ROOT, grammar)?.profile ?? 'dev'] as const));
+
+function rebuildAsTheCallerBuilt(): void {
 	const now = new Date();
 	utimesSync(join(REPO_ROOT, 'rust', 'crates', 'sittir-engine', 'src', 'lib.rs'), now, now);
-	for (const grammar of [FIRST, SECOND]) build(grammar);
+	for (const [grammar, profile] of profileBefore) build(grammar, process.env, NATIVE_PROFILE_FLAGS[profile]);
 }
 
 try {
@@ -113,5 +116,5 @@ try {
 	withEngineVersion(newer, () => buildAt(SECOND, 'skew-second'));
 	expectRefused('a newer version', `${newer}@skew-second`, loaded);
 } finally {
-	rebuildAsTheCallerBuilds();
+	rebuildAsTheCallerBuilt();
 }

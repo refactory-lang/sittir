@@ -1,4 +1,5 @@
 import { NATIVE_TARGETS, grammarDisplayName, nativeBinaryName, nodeRangeOfNodeApi, type GrammarName } from '../grammars.ts';
+import { NATIVE_PROFILE_FLAGS, type NativeProfile } from '../scripts/native-binary-freshness.ts';
 import { TRIVIA_NODE } from './render-module.ts';
 
 export const NATIVE_RENDER_NODE_ABI = 26;
@@ -9,6 +10,9 @@ export interface NativeCrateFile {
 }
 
 const json = (value: unknown): string => `${JSON.stringify(value, null, '\t')}\n`;
+
+const buildNative = (grammar: GrammarName, profile: NativeProfile): string =>
+	['tsx ../../../scripts/build-native.mts', grammar, ...NATIVE_PROFILE_FLAGS[profile]].join(' ');
 
 export function nativeCrateFiles(name: GrammarName, nodeApiLevel: number, parserName: string = name): NativeCrateFile[] {
 	const v = { name, parserName, Name: grammarDisplayName(name) };
@@ -161,9 +165,9 @@ fn rerun_if_changed_with_includes(
 					directory: `rust/crates/sittir-${v.name}`
 				},
 				scripts: {
-					build: `tsx ../../../scripts/build-native.mts ${v.name} --release`,
-					'build:debug': `tsx ../../../scripts/build-native.mts ${v.name}`,
-					'build:gate': `tsx ../../../scripts/build-native.mts ${v.name} --profile gate`
+					build: buildNative(v.name, 'release'),
+					'build:debug': buildNative(v.name, 'dev'),
+					'build:gate': buildNative(v.name, 'gate')
 				},
 				devDependencies: { '@napi-rs/cli': 'catalog:' },
 				napi: {

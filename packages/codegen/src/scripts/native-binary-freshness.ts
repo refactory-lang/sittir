@@ -10,6 +10,12 @@ import { REPO_ROOT, grammarPackageDir, nativeBinaryName, nativeBindingRelDir, na
 
 export type NativeProfile = 'release' | 'gate' | 'dev';
 
+export const NATIVE_PROFILE_FLAGS: Readonly<Record<NativeProfile, readonly string[]>> = {
+	release: ['--release'],
+	gate: ['--profile', 'gate'],
+	dev: []
+};
+
 export interface NativeBuildStamp {
 	readonly profile: NativeProfile;
 	readonly binarySha256: string;
