@@ -1,5 +1,5 @@
 name: Probe object render (Linux)
-run-name: Probe matter.js arena render by commit, 5e97dcd9f through ffb839786
+run-name: Probe matter.js arena render, master f44d193b2 against the edge fix and the edge fix with one entry predicate
 
 on:
   push:
