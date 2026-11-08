@@ -174,7 +174,7 @@ jobs:
   CI:
     name: CI (24.x)
     needs: [build, test]
-    if: ${{ !cancelled() }}
+    if: ${{ always() }}
     runs-on: ubuntu-latest
 
     steps:
