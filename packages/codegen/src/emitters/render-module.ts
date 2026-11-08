@@ -52,6 +52,7 @@ import {
 	captureArgs,
 	displayClaimedIds,
 	enumKindArgs,
+	envelopeListOf,
 	flankArgs,
 	presenceKeyword,
 	readNames,
@@ -3656,6 +3657,11 @@ const recordLayouts = new WeakMap<
 
 export function nodeRecordLayout(node: AssembledNode, nodeMap: NodeMap): RecordLayout | undefined {
 	if (node instanceof AssembledEnum || !isCompoundOf(node)) return undefined;
+	if (node instanceof AssembledAlias) {
+		const list = envelopeListOf(node, nodeMap);
+		const layout = list === undefined ? undefined : nodeRecordLayout(list, nodeMap);
+		if (layout !== undefined) return layout;
+	}
 	let state = recordLayouts.get(nodeMap);
 	if (state === undefined) {
 		state = { layouts: new Map(), recursive: (nodeMap.scc ?? computeNodeSCC(nodeMap)).recursive, active: new Set() };

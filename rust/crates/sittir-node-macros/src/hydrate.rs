@@ -235,8 +235,17 @@ fn envelope(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn::Resu
     let inner: &Type = inner_of(field.ty, "SlotValue").ok_or_else(|| syn::Error::new_spanned(field.ty, "an envelope's content is a `SlotValue<…>`"))?;
     let Role::Slot(slot) = &field.role else { return Err(syn::Error::new_spanned(content, "an envelope's content is a slot")) };
     if attrs.content_list {
-        let refused = format!("{ident}: an envelope over a list has no arena record view: its record would be the list's under another kind, which arena storage does not write or read; build with object storage");
-        return Ok(quote!(::core::compile_error!(#refused);));
+        let refused = format!("{ident}: an envelope over a list holds the list's record, its coordinate or its embedded record, and the list hydrated to none of them");
+        return Ok(quote! {
+            match <#inner as ::sittir_core::arena::HydrateNode>::hydrate(cursor, ctx, depth.and_then(__rt::Depth::below), records, inline)? {
+                ::sittir_core::arena::Hydrated::Record { at, .. } => ::core::result::Result::Ok(::sittir_core::arena::Hydrated::Record { kind: __stored_kind(&__node), at }),
+                ::sittir_core::arena::Hydrated::Node { row, span, leaf, .. } => {
+                    ::core::result::Result::Ok(::sittir_core::arena::Hydrated::Node { kind: __stored_kind(&__node), row, span, leaf })
+                }
+                embedded @ ::sittir_core::arena::Hydrated::Embedded => ::core::result::Result::Ok(embedded),
+                ::sittir_core::arena::Hydrated::Unit { .. } | ::sittir_core::arena::Hydrated::Text { .. } => ::core::result::Result::Err(::sittir_core::arena::ArenaError::Unwritable(#refused).into()),
+            }
+        });
     }
     let words = words_of(ident, attrs)?;
     let shape = crate::views::cell_shape(field, &slot.cell)?;

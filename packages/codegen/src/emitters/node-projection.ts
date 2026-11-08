@@ -294,9 +294,9 @@ export function nodeArgs(
 	if (node instanceof AssembledAlias) {
 		const contents = envelopeContentKinds(node).map((name) => [name, ctx.nodeMap.nodes.get(name)] as const);
 		for (const [name, content] of contents) refuseSharedRowContent(node.kind, name, content);
+		const listed = envelopeContentIsList(node, ctx.nodeMap);
 		refuseMixedListContent(node, ctx.nodeMap);
 		const wraps = contents.some(([, content]) => content instanceof AssembledSupertype);
-		const listed = envelopeContentIsList(node, ctx.nodeMap);
 		return `kind = ${ctx.names.kind(node.aliasTypeId)}, display, content = content${wraps ? ', wraps_hidden' : ''}${listed ? ', content_list' : ''}`;
 	}
 	if (ownId === undefined)
@@ -308,10 +308,12 @@ export function nodeArgs(
 		});
 	const folded = foldedTokens(ownId, ctx);
 	const displays = layoutDisplaysOf(node).flatMap((display) => findKindEntry(ctx.kindEntries, display.kind)?.id ?? []);
+	const shown = envelopesOverList(node, ctx.nodeMap);
 	const kind = [
 		`kind = ${ctx.names.kind(ownId)}`,
 		...(folded.length === 0 ? [] : [`folded = [${folded.map((id) => ctx.names.kind(id)).join(', ')}]`]),
-		...(displays.length === 0 ? [] : [`displays = [${displays.map((id) => ctx.names.kind(id)).join(', ')}]`])
+		...(displays.length === 0 ? [] : [`displays = [${displays.map((id) => ctx.names.kind(id)).join(', ')}]`]),
+		...(shown.length === 0 ? [] : [`shown_as = [${shown.map((envelope) => ctx.names.kind(envelope.aliasTypeId)).join(', ')}]`])
 	].join(', ');
 	if (isTextLeaf(node)) {
 		const fixed = kindIdText(node);
@@ -339,9 +341,18 @@ function envelopeConcreteContents(envelope: AssembledAlias, nodeMap: NodeMap): A
 	return envelopeContentKinds(envelope).flatMap((name) => concreteKindsOf(name, nodeMap)).flatMap((kind) => nodeMap.nodes.get(kind) ?? []);
 }
 
-export function envelopeContentIsList(envelope: AssembledAlias, nodeMap: NodeMap): boolean {
+export function envelopeListOf(envelope: AssembledAlias, nodeMap: NodeMap): AssembledNode | undefined {
 	const contents = envelopeConcreteContents(envelope, nodeMap);
-	return contents.length > 0 && contents.every((content) => content instanceof AssembledList);
+	const lists = contents.filter((content) => content instanceof AssembledList);
+	if (new Set(lists.map((list) => list.kind)).size > 1) {
+		throw emitShapeFailure({
+			code: 'envelope-holds-several-lists',
+			ownerKind: envelope.kind,
+			message: `the envelope ${envelope.kind} holds the lists ${[...new Set(lists.map((list) => list.kind))].join(', ')}, and its record is one list's under the envelope kind, so nothing in it says which`,
+			details: { envelope: envelope.kind, lists: lists.map((list) => list.kind) }
+		});
+	}
+	return lists.length > 0 && lists.length === contents.length ? lists[0] : undefined;
 }
 
 function refuseMixedListContent(envelope: AssembledAlias, nodeMap: NodeMap): void {
@@ -354,6 +365,29 @@ function refuseMixedListContent(envelope: AssembledAlias, nodeMap: NodeMap): voi
 		message: `the envelope ${envelope.kind} holds the list ${lists[0]!.kind} beside ${contents.find((content) => !(content instanceof AssembledList))!.kind}, so a list's charge would apply to one content and not the other`,
 		details: { envelope: envelope.kind, lists: lists.map((list) => list.kind) }
 	});
+}
+
+export function envelopeContentIsList(envelope: AssembledAlias, nodeMap: NodeMap): boolean {
+	return envelopeListOf(envelope, nodeMap) !== undefined;
+}
+
+const envelopesOverLists = new WeakMap<NodeMap, ReadonlyMap<string, readonly AssembledAlias[]>>();
+
+export function envelopesOverList(list: AssembledNode, nodeMap: NodeMap): readonly AssembledAlias[] {
+	let byList = envelopesOverLists.get(nodeMap);
+	if (byList === undefined) {
+		const built = new Map<string, AssembledAlias[]>();
+		for (const node of nodeMap.nodes.values()) {
+			if (!(node instanceof AssembledAlias)) continue;
+			const content = envelopeListOf(node, nodeMap);
+			if (content === undefined) continue;
+			const held = built.get(content.kind) ?? [];
+			if (!held.includes(node)) built.set(content.kind, [...held, node]);
+		}
+		byList = built;
+		envelopesOverLists.set(nodeMap, byList);
+	}
+	return byList.get(list.kind) ?? [];
 }
 
 function flatEntriesOf(list: AssembledNode, ctx: ReadFactsCtx): readonly (readonly [AssembledNode, AssembledNonterminal])[] {

@@ -618,7 +618,7 @@ fn structure(ident: &Ident, attrs: &KindAttrs, data: &DataStruct) -> syn::Result
         (None, false) => return Err(syn::Error::new_spanned(ident, "a struct with `displays` holds the id it shows in a `#[wire(key = \"$type\")]` field")),
         _ => {}
     }
-    let displays = &attrs.displays;
+    let displays = attrs.displays.iter().chain(&attrs.shown_as);
     let folded = &attrs.folded;
     let admits = if attrs.display { quote!(display == #kind) } else { quote!(grammar == #kind #(|| grammar == #folded)*) };
     let layout: Vec<&Path> = attrs.layout.iter().flatten().collect();
@@ -672,7 +672,7 @@ fn structure(ident: &Ident, attrs: &KindAttrs, data: &DataStruct) -> syn::Result
     let writer = crate::write::structure(ident, attrs, &fields)?;
     let hydrate = crate::hydrate::structure(ident, attrs, &fields)?;
     let view = crate::views::structure(ident, attrs, &fields)?;
-    let stored_kind = if kind_field.is_some() {
+    let stored_kind = if !attrs.displays.is_empty() || !attrs.shown_as.is_empty() {
         quote! {
             let __shown = __rt::display_id(node);
             if __DISPLAYS.contains(&__shown) { __shown } else { __KIND }
@@ -1320,9 +1320,13 @@ mod tests {
     }
 
     #[test]
-    fn an_envelope_over_a_list_refuses_arena_storage_by_name() {
+    fn an_envelope_over_a_list_hydrates_as_the_lists_record_under_its_own_kind() {
         let charged = expand(&envelope(true));
-        assert!(has(&charged, "compile_error!(\"ElementBindingExpressionNode: an envelope over a list has no arena record view"));
+        assert!(has(&charged, "<ArgumentsNode as ::sittir_core::arena::HydrateNode>::hydrate(cursor, ctx, depth.and_then(__rt::Depth::below), records, inline)?"));
+        assert!(has(&charged, "::sittir_core::arena::Hydrated::Record { kind: __stored_kind(&__node), at }"));
+        assert!(has(&charged, "embedded @ ::sittir_core::arena::Hydrated::Embedded => ::core::result::Result::Ok(embedded),"));
+        assert!(has(&charged, "::sittir_core::arena::Hydrated::Unit { .. } | ::sittir_core::arena::Hydrated::Text { .. } => ::core::result::Result::Err(::sittir_core::arena::ArenaError::Unwritable("));
+        assert!(!has(&charged, "other => "));
         assert!(!has(&charged, "an envelope's content read from its own row is no node with a record"));
         let plain = expand(&envelope(false));
         assert!(!has(&plain, "compile_error!"));
