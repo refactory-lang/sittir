@@ -64,6 +64,7 @@ jobs:
             packages/types/build
             packages/*/tsconfig.build.tsbuildinfo
             packages/*/native/*.node
+            packages/*/native/*.so
             node_modules/.cache/sittir/native-build/
           include-hidden-files: true
           if-no-files-found: error
@@ -142,7 +143,7 @@ jobs:
       - name: Date the downloaded build after the checkout
         run: |
           now=$(date +%s)
-          find packages node_modules/.cache/sittir \( -path '*/dist/*' -o -path 'packages/types/build/*' -o -name '*.tsbuildinfo' -o -name '*.node' -o -path '*/native-build/*' \) -type f -exec touch -d "@$now" {} +
+          find packages node_modules/.cache/sittir \( -path '*/dist/*' -o -path 'packages/types/build/*' -o -name '*.tsbuildinfo' -o -name '*.node' -o -name '*.so' -o -path '*/native-build/*' \) -type f -exec touch -d "@$now" {} +
 
       - name: Install the pinned Rust toolchain
         uses: ./.github/actions/rust-toolchain
