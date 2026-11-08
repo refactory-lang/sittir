@@ -59,15 +59,17 @@ impl<G: RecordGrammar, N: ReadNode + WriteCell<G::Trivia> + HydrateNode + Record
     /// The node at `index` of `tree`, read one level down seating its sides,
     /// rendered natively; `None` when the model reads no node there.
     fn native(&self, tree: &ParsedTree<G>, index: NodeIndex, options: &ResolvedOptions) -> Option<Result<String, String>> {
-        let node: N = read_at(&mut tree.tree().walk(), &mut tree.seating_ctx(), index, Depth::ONE).ok()?;
-        let ctx = RenderContext { options, sources: tree };
+        let seating = tree.seating();
+        let node: N = read_at(&mut seating.cursor(index), &mut seating.ctx(), index, Depth::ONE).ok()?;
+        let ctx = RenderContext { options, sources: &seating };
         Some((self.native)(SlotValue::Node(node), &ctx, None).map(|(_, text)| text).map_err(|e| format!("native: {e}")))
     }
 
     /// The built record `root` of the arena `built`, its parsed children in
     /// `tree`'s, rendered twice: both renders, which must agree.
     fn record(&self, tree: &ParsedTree<G>, built: &BuiltChunks, root: CellAt, options: &ResolvedOptions) -> Result<String, String> {
-        let ctx = RenderContext { options, sources: tree };
+        let seating = tree.seating();
+        let ctx = RenderContext { options, sources: &seating };
         twice(|| {
             let mut arenas = HeldArenas::of([(tree.tree_id(), tree.tree_arena())]);
             (self.record)(root, &mut arenas, built, tree.store(), &ctx).map_err(|e| format!("record: {e}"))
@@ -77,7 +79,7 @@ impl<G: RecordGrammar, N: ReadNode + WriteCell<G::Trivia> + HydrateNode + Record
     /// The record at `at` of `tree`'s arena rendered twice by its entry point
     /// (`ParsedTree::render_record`): both renders, which must agree.
     fn parsed(tree: &ParsedTree<G>, at: Address, options: &ResolvedOptions) -> Result<String, String> {
-        twice(|| tree.render_record(at, ChangedEdges::default(), options, tree).map_err(|e| format!("record: {e}")))
+        twice(|| tree.render_record(at, ChangedEdges::default(), options, &tree.seating()).map_err(|e| format!("record: {e}")))
     }
 
     /// The record of `tree`'s root, its first read `depth` levels down
@@ -366,11 +368,12 @@ fn an_untouched_parsed_record_a_built_record_links_renders_as_its_source() {
     let mut engine = renders.engine();
     let options = engine.options().clone();
     let tree = RustRenders::parse(&mut engine, EDITED);
-    let mut root: sittir_rust::render::AnyNode = read_at(&mut tree.tree().walk(), &mut tree.seating_ctx(), NodeIndex::ROOT, Depth::ONE).expect("a root");
+    let seating = tree.seating();
+    let mut root: sittir_rust::render::AnyNode = read_at(&mut seating.cursor(NodeIndex::ROOT), &mut seating.ctx(), NodeIndex::ROOT, Depth::ONE).expect("a root");
     let sittir_rust::render::AnyNode::SourceFile(file) = &mut root else { panic!("the root is a file") };
     let layout = file.layout.as_mut().expect("a read node names itself");
     layout.sides = layout.at.take();
-    let native = (renders.native)(SlotValue::Node(root.clone()), &RenderContext { options: &options, sources: &tree }, None).expect("a native render").1;
+    let native = (renders.native)(SlotValue::Node(root.clone()), &RenderContext { options: &options, sources: &seating }, None).expect("a native render").1;
     let (built, root, linked) = built_record(&tree, &root);
     assert!(linked > 0, "the built root links its parsed children");
     let record = renders.record(&tree, &built, root, &options).expect("a record render");
@@ -416,7 +419,7 @@ fn a_built_node_s_written_sides_units_and_slots_render_from_its_record_as_native
         (
             rust_kinds::CLOSURE_PARAMETERS,
             |layout, tree| {
-                let source = sittir_core::render::SourceTable::slot_layouts(tree, layout.sides.as_ref().expect("rebuilt from its read"));
+                let source = sittir_core::render::SourceTable::slot_layouts(&tree.seating(), layout.sides.as_ref().expect("rebuilt from its read"));
                 assert!(!source.is_empty(), "the source spaces the list apart from the options");
                 layout.slots = source.into_iter().map(|slot| sittir_core::layout::SlotLayout { before: slot.after, after: slot.before, ..slot }).collect();
             },
@@ -434,7 +437,7 @@ fn a_built_node_s_written_sides_units_and_slots_render_from_its_record_as_native
         layout.sides = layout.at.take();
         written(layout);
         edit(layout, &tree);
-        let native = (renders.native)(SlotValue::Node(node.clone()), &RenderContext { options: &options, sources: &tree }, None).expect("a native render").1;
+        let native = (renders.native)(SlotValue::Node(node.clone()), &RenderContext { options: &options, sources: &tree.seating() }, None).expect("a native render").1;
         let (built, root, _) = built_record(&tree, &node);
         let record = renders.record(&tree, &built, root, &options).expect("a record render");
         assert_eq!(record, native, "{kind:?}");
@@ -583,7 +586,7 @@ fn native_hydration_keeps_envelope_content_unindexed_and_writes_it_once() {
             root.expect("a record"),
             ChangedEdges::default(),
             engine.options(),
-            &tree
+            &tree.seating()
         )
         .expect("render"),
         source
@@ -609,15 +612,15 @@ fn an_address_that_names_no_record_of_the_arena_is_refused() {
     let options = engine.options().clone();
     let tree = RustRenders::parse(&mut engine, &EDITED.repeat(400));
     RustRenders::first_read(&tree, Depth::All).expect("every record written");
-    assert!(matches!(tree.render_record(Address::NONE, ChangedEdges::default(), &options, &tree), Err(RenderError::Record(ArenaError::Malformed { what: "record address", .. }))));
+    assert!(matches!(tree.render_record(Address::NONE, ChangedEdges::default(), &options, &tree.seating()), Err(RenderError::Record(ArenaError::Malformed { what: "record address", .. }))));
     let past = Address::new(sittir_core::arena::MAX_CHUNKS - 1, 0).expect("an address");
-    assert!(matches!(tree.render_record(past, ChangedEdges::default(), &options, &tree), Err(RenderError::Record(ArenaError::OutOfBounds { .. }))));
+    assert!(matches!(tree.render_record(past, ChangedEdges::default(), &options, &tree.seating()), Err(RenderError::Record(ArenaError::OutOfBounds { .. }))));
     let (n, word) = (1..)
         .map_while(|n| tree.record_chunk(n).map(|chunk| (n, chunk)))
         .find_map(|(n, chunk)| chunk.iter().take(chunk.len() - 1).position(|&word| word > u32::from(u16::MAX)).map(|word| (n, word)))
         .expect("a source this long fills chunks whose cells name addresses past every kind id");
     let at = Address::new(n, u32::try_from(word).expect("a chunk's word")).expect("an address");
-    assert!(matches!(tree.render_record(at, ChangedEdges::default(), &options, &tree), Err(RenderError::Record(ArenaError::Malformed { what: "record kind", .. }))), "a header naming no kind is never read as a record");
+    assert!(matches!(tree.render_record(at, ChangedEdges::default(), &options, &tree.seating()), Err(RenderError::Record(ArenaError::Malformed { what: "record kind", .. }))), "a header naming no kind is never read as a record");
 }
 
 #[test]
@@ -637,7 +640,7 @@ fn an_address_inside_a_side_record_is_refused_before_source_folding() {
     };
     assert!(
         matches!(
-            tree.render_record(at, ChangedEdges::default(), &options, &tree),
+            tree.render_record(at, ChangedEdges::default(), &options, &tree.seating()),
             Err(RenderError::Record(_))
         ),
         "a side record's row is never a node record header"
@@ -665,7 +668,7 @@ fn payload_words_never_render_as_node_records() {
                     continue;
                 }
                 assert!(
-                    tree.render_record(at, ChangedEdges::default(), &options, &tree)
+                    tree.render_record(at, ChangedEdges::default(), &options, &tree.seating())
                         .is_err(),
                     "word {at:?} is not a node record"
                 );
@@ -697,9 +700,9 @@ fn a_record_rendered_as_a_render_root_drops_the_seams_its_holder_gave_it() {
     let both = ChangedEdges { leading: true, trailing: true };
     let record = |kind, nth| tree.written_record::<sittir_rust::render::AnyNode>(index_of(&tree, kind, nth)).expect("its record");
     let call = record(rust_kinds::CALL_EXPRESSION, 0);
-    assert_eq!(tree.render_record(call, both, &options, &tree).expect("a render"), "Ok(None)", "a node crossing as its coordinate renders so");
-    assert_eq!(tree.render_record(call, ChangedEdges::default(), &options, &tree).expect("a render"), " Ok(None) ", "in its holder, it keeps the block's padding");
-    assert_eq!(tree.render_record(record(rust_kinds::FUNCTION_ITEM, 1), both, &options, &tree).expect("a render"), "fn b() { Ok(None) }");
+    assert_eq!(tree.render_record(call, both, &options, &tree.seating()).expect("a render"), "Ok(None)", "a node crossing as its coordinate renders so");
+    assert_eq!(tree.render_record(call, ChangedEdges::default(), &options, &tree.seating()).expect("a render"), " Ok(None) ", "in its holder, it keeps the block's padding");
+    assert_eq!(tree.render_record(record(rust_kinds::FUNCTION_ITEM, 1), both, &options, &tree.seating()).expect("a render"), "fn b() { Ok(None) }");
 }
 
 #[test]
@@ -713,10 +716,10 @@ fn a_record_rendered_as_a_render_root_keeps_its_inner_trivia_and_leaves_the_tree
         .hydrate_record::<sittir_rust::render::AnyNode>(statement, Depth::All)
         .expect("a deep read")
         .expect("a statement record");
-    let ordinary = tree.render_record(record, ChangedEdges::default(), &options, &tree).expect("the ordinary render");
+    let ordinary = tree.render_record(record, ChangedEdges::default(), &options, &tree.seating()).expect("the ordinary render");
     let both = ChangedEdges { leading: true, trailing: true };
-    assert_eq!(tree.render_record(record, both, &options, &tree).expect("the root render"), "// outside\ncall(/* inside */ arg); // tail\n");
-    assert_eq!(tree.render_record(record, ChangedEdges::default(), &options, &tree).expect("the ordinary render after the root render"), ordinary);
+    assert_eq!(tree.render_record(record, both, &options, &tree.seating()).expect("the root render"), "// outside\ncall(/* inside */ arg); // tail\n");
+    assert_eq!(tree.render_record(record, ChangedEdges::default(), &options, &tree.seating()).expect("the ordinary render after the root render"), ordinary);
 }
 
 #[test]
@@ -741,7 +744,7 @@ fn a_list_record_rendered_as_a_render_root_keeps_the_trailing_comment_of_its_chi
                 .expect("the list read")
                 .expect("a list record");
             for _ in 0..2 {
-                assert_eq!(tree.render_record(record, both, &options, &tree).expect("the list render"), expected, "{source:?}, depth: {depth:?}");
+                assert_eq!(tree.render_record(record, both, &options, &tree.seating()).expect("the list render"), expected, "{source:?}, depth: {depth:?}");
             }
         }
     }
@@ -758,7 +761,7 @@ fn a_record_rendered_as_a_render_root_keeps_line_breaks_between_unmodified_contr
     let statement = node_spanning(&tree, source, "try_statement", source);
     let record = tree.written_record::<sittir_typescript::render::AnyNode>(statement).expect("a statement record");
     assert_eq!(
-        tree.render_record(record, ChangedEdges { leading: true, trailing: true }, &options, &tree).expect("the root render"),
+        tree.render_record(record, ChangedEdges { leading: true, trailing: true }, &options, &tree.seating()).expect("the root render"),
         source
     );
 }

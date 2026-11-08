@@ -9,7 +9,8 @@
 
 use sittir_core::engine::ParsedTree;
 use sittir_core::layout::LayoutWork;
-use sittir_core::read::{Depth, ReadNode, SnapshotCtx};
+use sittir_core::read::{Depth, ReadNode, SideLookup, SnapshotCtx};
+use sittir_core::trivia_table::TriviaSide;
 use sittir_core::types::NodeIndex;
 use sittir_rust::render::AnyNode;
 use sittir_parity_tests::{block_chain, indented_block_line, on_deep_stack, parsed_rust, probe_input, tuple_chain, unary_chain, wide_unit_blocks};
@@ -18,10 +19,37 @@ use sittir_rust::RustGrammar;
 /// Lists inside lists, each with runs and comments beside its items.
 const NESTED: &str = "fn f() {\n    let x = (\n        1, // one\n        (\n            2, /* two */\n            3,\n        ),\n    );\n}\n";
 
-/// The snapshot of `tree`'s root, each side seated by a lookup of its own
-/// (`ParsedTree::seating_ctx`).
+/// Each side of a tree seated by lookups of its own (`ParsedTree::seating`).
+struct Alone<'t>(&'t ParsedTree<RustGrammar>);
+
+impl SideLookup for Alone<'_> {
+    fn side(&self, index: NodeIndex, side: TriviaSide, edge_changed: bool) -> Box<dyn std::any::Any> {
+        self.0.seating().side(index, side, edge_changed)
+    }
+
+    fn slots(&self, index: NodeIndex) -> Vec<sittir_core::layout::SlotLayout> {
+        self.0.seating().slots(index)
+    }
+
+    fn end_children(&self, index: NodeIndex) -> Option<[sittir_core::nodes::Kid; 2]> {
+        self.0.seating().end_children(index)
+    }
+
+    fn separator(&self, index: NodeIndex) -> Option<sittir_core::KindId> {
+        self.0.seating().separator(index)
+    }
+
+    fn leading_start(&self, index: NodeIndex) -> Option<u32> {
+        self.0.seating().leading_start(index)
+    }
+}
+
+/// The snapshot of `tree`'s root, each side seated by lookups of its own
+/// (`Alone`).
 fn seated_alone(tree: &ParsedTree<RustGrammar>) -> AnyNode {
-    let mut ctx = tree.seating_ctx().snapshot(SnapshotCtx::new(tree.lines(), None, NodeIndex::ROOT));
+    let alone = Alone(tree);
+    let seating = tree.seating();
+    let mut ctx = seating.ctx().with_sides(&alone).snapshot(SnapshotCtx::new(tree.lines(), None, NodeIndex::ROOT));
     AnyNode::read(&mut tree.tree().walk(), &mut ctx, Depth::All).expect("a read")
 }
 
@@ -71,7 +99,8 @@ fn a_snapshot_s_trivia_placement_descends_from_the_root_as_often_at_any_depth() 
 fn the_trivia_walk_of_a_chain_folds_the_same_bounds_at_each_level() {
     let folds = [100, 200, 400].map(|levels| {
         let tree = parsed_rust(&tuple_chain(levels));
-        sittir_core::trivia_table::walk(tree.tree().root_node(), NodeIndex::ROOT, &tuple_chain(levels)).folds
+        let folds = sittir_core::trivia_table::walk(&mut tree.nodes(), NodeIndex::ROOT, &tuple_chain(levels)).folds;
+        folds
     });
     let [one, two, four] = folds;
     assert_eq!(four - two, 2 * (two - one), "folds at 100, 200 and 400 levels: {one}, {two}, {four}");
@@ -139,7 +168,7 @@ fn the_depth_moves_of_every_node_of_a_chain_walk_its_nodes_once() {
                 edges: None,
                 writes: None,
             };
-            assert_eq!(tree.depth_move(&coord), 0, "{levels} levels: a chain of tuples opens no level");
+            assert_eq!(tree.seating().depth_move(&coord), 0, "{levels} levels: a chain of tuples opens no level");
         }
         assert_eq!(tree.layout_work().depth_nodes, nodes, "{levels} levels");
     }

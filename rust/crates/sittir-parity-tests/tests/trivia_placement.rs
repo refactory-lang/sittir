@@ -5,7 +5,6 @@
 //! depth changes where layout owners meet are pinned.
 
 use sittir_core::engine::EngineGrammar;
-use sittir_core::nodes::TreeNodes;
 use sittir_core::points::LineTable;
 use sittir_core::trivia_table::{Adjacency, Assigned, Placement, Source, Table, TriviaSide};
 use sittir_core::types::NodeIndex;
@@ -56,7 +55,7 @@ fn differences<G: EngineGrammar>(grammar: G, options: sittir_core::options::Reso
     let tree = parsed.tree();
     let kinds = grammar.surface_kinds();
     let lines = LineTable::new(source);
-    let mut nodes = TreeNodes::new(tree, source);
+    let mut nodes = parsed.nodes();
     let count = sittir_core::read::descendant_count(&tree.root_node());
     let whole = Placement::new(kinds, unit);
     whole.place_all(Source { nodes: &mut nodes, lines: &lines });
@@ -166,7 +165,7 @@ fn pinned<G: EngineGrammar>(grammar: G, options: sittir_core::options::ResolvedO
     let tree = parsed.tree();
     let kinds = grammar.surface_kinds();
     let lines = LineTable::new(source);
-    let mut nodes = TreeNodes::new(tree, source);
+    let mut nodes = parsed.nodes();
     let want: Depths = want.iter().map(|&(kind, nth, side, changes)| (kind.to_owned(), nth, side, changes.to_vec())).collect();
     let mut found = Vec::new();
     let whole = Placement::new(kinds, unit);

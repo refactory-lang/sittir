@@ -496,15 +496,15 @@ pub trait Prepare {
         None
     }
 
-    /// The node at descendant `index` of `tree` read one level into this
-    /// type (`read::read_coordinate`), when the type reads; `None` for a
-    /// value no read produces.
+    /// The node the cursor is on read one level into this type
+    /// (`read::read_coordinate`), when the type reads; `None` for a value no
+    /// read produces.
     #[must_use]
-    fn read_coordinate(tree: &tree_sitter::Tree, ctx: &mut crate::read::ReadCtx<'_>, index: crate::types::NodeIndex) -> Option<Result<Self, crate::read::ReadError>>
+    fn read_coordinate(cursor: &mut tree_sitter::TreeCursor<'_>, ctx: &mut crate::read::ReadCtx<'_>) -> Option<Result<Self, crate::read::ReadError>>
     where
         Self: Sized,
     {
-        let _ = (tree, ctx, index);
+        let _ = (cursor, ctx);
         None
     }
 }
@@ -613,13 +613,12 @@ pub(crate) fn read_edited<T: Prepare>(coord: &NodeCoordinate, ctx: &RenderContex
     if !ctx.sources.edited_within(coord) {
         return Ok(None);
     }
-    let Some((tree, read)) = ctx.sources.read_ctx(coord.tree) else { return Ok(None) };
-    let mut read = read.with_changed(coord.index, coord.changed());
-    match T::read_coordinate(tree, &mut read, coord.index) {
-        None => Ok(None),
-        Some(Ok(node)) => Ok(Some(node)),
-        Some(Err(error)) => Err(unread(coord, &error)),
-    }
+    let mut node = None;
+    ctx.sources.read_node(coord.tree, coord.index, &mut |cursor, read| {
+        read.changed = Some((coord.index, coord.changed()));
+        node = T::read_coordinate(cursor, read);
+    });
+    node.transpose().map_err(|error| unread(coord, &error))
 }
 
 /// The refusal of a render whose edited coordinate `coord` its read refused.
@@ -675,8 +674,8 @@ impl<T: Prepare> Prepare for Box<T> {
         (**self).prepare(ctx)
     }
 
-    fn read_coordinate(tree: &tree_sitter::Tree, ctx: &mut crate::read::ReadCtx<'_>, index: crate::types::NodeIndex) -> Option<Result<Self, crate::read::ReadError>> {
-        T::read_coordinate(tree, ctx, index).map(|read| read.map(Box::new))
+    fn read_coordinate(cursor: &mut tree_sitter::TreeCursor<'_>, ctx: &mut crate::read::ReadCtx<'_>) -> Option<Result<Self, crate::read::ReadError>> {
+        T::read_coordinate(cursor, ctx).map(|read| read.map(Box::new))
     }
 
     fn snapshot_edge(&self) -> Option<SnapshotEdge> {

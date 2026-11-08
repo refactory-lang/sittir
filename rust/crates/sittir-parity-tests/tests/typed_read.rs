@@ -902,9 +902,9 @@ fn a_coordinate_reads_one_level_into_its_generated_node() {
     use sittir_rust::render::node::FunctionItemNode;
     let source = "fn f() { g(); }\n";
     let tree = parse_rust(source);
-    let index = sittir_core::read::index_of(&find(&tree, kind::FUNCTION_ITEM, 0));
+    let mut cursor = find(&tree, kind::FUNCTION_ITEM, 0);
     let mut ctx = ReadCtx::new(source, sittir_core::types::TreeId(7), <FunctionItemNode as ReadNode>::shows);
-    let read = FunctionItemNode::read_coordinate(&tree, &mut ctx, index).expect("a generated node reads a coordinate").unwrap();
+    let read = FunctionItemNode::read_coordinate(&mut cursor, &mut ctx).expect("a generated node reads a coordinate").unwrap();
     let direct = read_nth::<FunctionItemNode>(&tree, source, kind::FUNCTION_ITEM, 0, Depth::ONE).unwrap();
     assert_eq!(read, direct);
 }
