@@ -1040,12 +1040,11 @@ type BareLoose<
 
 /**
  * BareArm<T, …> — the {@link BareLoose} arm for a SINGLE kind reached through
- * a slot: reads the kind's bare slot key off its `NamespaceMap` row
- * (`NsMap[K]['Bare']`) and widens that slot. Only a single-kind slot gets it:
+ * a slot: reads the slot a holder reaches bare off the kind's `NamespaceMap`
+ * row (`NsMap[K]['HeldBare']`) and widens that slot. Only a single-kind slot gets it:
  * the resolver hands a single-kind slot's value to that kind's coercer, which
  * takes the bare form, while a multi-kind slot cannot tell which arm a bare
- * value belongs to. Rows without a bare slot (`Bare` is `never`) contribute
- * nothing.
+ * value belongs to. Rows whose `HeldBare` is `never` contribute nothing.
  */
 type BareArm<T, Scalars, Strings, Depth extends number[], NsMap, Visited extends number[] = []> = T extends {
 	readonly $type: infer K extends keyof NsMap & number;
@@ -1054,7 +1053,7 @@ type BareArm<T, Scalars, Strings, Depth extends number[], NsMap, Visited extends
 		? never
 		: Contains<Visited, K> extends true
 			? never
-			: NsMap[K] extends { readonly Bare: infer Key }
+			: NsMap[K] extends { readonly HeldBare: infer Key }
 				? BareLoose<T, Key, Scalars, Strings, Depth, NsMap, [...Visited, K]>
 				: never
 	: never;
@@ -1097,7 +1096,9 @@ type BareArm<T, Scalars, Strings, Depth extends number[], NsMap, Visited extends
  *   coercer; `never` otherwise. It is the `$type` tag a multi-kind slot's
  *   config bag carries (`TagEachArm`), because the runtime dispatches such a
  *   bag through the from map by kind id — a kind with no coercer cannot be
- *   built from a bag, so its row carries no id and its arm offers no bag.
+ *   built from a bag, so its row carries no id and its arm offers no bag. * @param HeldBare - The slot a HOLDER of the kind reaches bare through it
+ *   ({@link BareArm}): `Bare`, or `never` when the kind's fold carries a
+ *   fixed word, which a holder takes only as itself.
  */
 export interface NodeNs<
 	T extends { readonly $type: number },
@@ -1108,7 +1109,8 @@ export interface NodeNs<
 	Bare extends string = never,
 	Kind extends number = never,
 	Parsed = Bound,
-	Empty = never
+	Empty = never,
+	HeldBare extends string = Bare
 > {
 	readonly Node: T;
 	readonly Config: ConfigOf<T>;
@@ -1168,6 +1170,9 @@ export interface NodeNs<
 	/** The `FieldsOf<T>` key of the slot the coercer accepts bare, or
 	 *  `never` — see the `Bare` type parameter. */
 	readonly Bare: Bare;
+	/** The slot a holder reaches bare through the kind — see the `HeldBare`
+	 *  type parameter. */
+	readonly HeldBare: HeldBare;
 	/** `Loose` minus the UntypedNode passthrough arm — the config bag alone.
 	 *
 	 *  Reading a caller-supplied field by name off `Loose` picks up the

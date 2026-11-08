@@ -16639,6 +16639,7 @@ export interface MutPatternNs extends NodeNs<
 	'pattern',
 	TSKindId.MutPattern,
 	MutPattern.Parsed,
+	never,
 	never
 > {
 	readonly BuildArgs: MutPattern.BuildArgs;
@@ -17311,6 +17312,7 @@ export interface ReferenceExpressionRawConstNs extends NodeNs<
 	'argument',
 	TSKindId.ReferenceExpressionRawConst,
 	ReferenceExpressionRawConst.Parsed,
+	never,
 	never
 > {
 	readonly BuildArgs: ReferenceExpressionRawConst.BuildArgs;
@@ -17325,6 +17327,7 @@ export interface ReferenceExpressionRawMutNs extends NodeNs<
 	'argument',
 	TSKindId.ReferenceExpressionRawMut,
 	ReferenceExpressionRawMut.Parsed,
+	never,
 	never
 > {
 	readonly BuildArgs: ReferenceExpressionRawMut.BuildArgs;
@@ -17339,6 +17342,7 @@ export interface ReferenceExpressionMutNs extends NodeNs<
 	'argument',
 	TSKindId.ReferenceExpressionMut,
 	ReferenceExpressionMut.Parsed,
+	never,
 	never
 > {
 	readonly BuildArgs: ReferenceExpressionMut.BuildArgs;
@@ -17423,6 +17427,7 @@ export interface VisibilityModifierPubScopeInPathNs extends NodeNs<
 	'path',
 	TSKindId.VisibilityModifierPubScopeInPath,
 	VisibilityModifierPubScopeInPath.Parsed,
+	never,
 	never
 > {
 	readonly BuildArgs: VisibilityModifierPubScopeInPath.BuildArgs;
@@ -17563,6 +17568,7 @@ export interface PointerTypeMutNs extends NodeNs<
 	'type',
 	TSKindId.PointerTypeMut,
 	PointerTypeMut.Parsed,
+	never,
 	never
 > {
 	readonly BuildArgs: PointerTypeMut.BuildArgs;
@@ -17591,6 +17597,7 @@ export interface RangeExpressionPostfixNs extends NodeNs<
 	'start',
 	TSKindId.RangeExpressionPostfix,
 	RangeExpressionPostfix.Parsed,
+	never,
 	never
 > {
 	readonly BuildArgs: RangeExpressionPostfix.BuildArgs;
@@ -17605,6 +17612,7 @@ export interface RangeExpressionPrefixNs extends NodeNs<
 	'end',
 	TSKindId.RangeExpressionPrefix,
 	RangeExpressionPrefix.Parsed,
+	never,
 	never
 > {
 	readonly BuildArgs: RangeExpressionPrefix.BuildArgs;
@@ -17703,6 +17711,7 @@ export interface LineCommentDocOuterNs extends NodeNs<
 	'doc',
 	TSKindId.LineCommentDocOuter,
 	LineCommentDocOuter.Parsed,
+	never,
 	never
 > {
 	readonly BuildArgs: LineCommentDocOuter.BuildArgs;
@@ -17717,6 +17726,7 @@ export interface LineCommentDocInnerNs extends NodeNs<
 	'doc',
 	TSKindId.LineCommentDocInner,
 	LineCommentDocInner.Parsed,
+	never,
 	never
 > {
 	readonly BuildArgs: LineCommentDocInner.BuildArgs;

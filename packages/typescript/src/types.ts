@@ -16606,6 +16606,7 @@ export interface LiteralTypeNegativeNumberNs extends NodeNs<
 	'value',
 	TSKindId.LiteralTypeNegativeNumber,
 	LiteralTypeNegativeNumber.Parsed,
+	never,
 	never
 > {
 	readonly BuildArgs: LiteralTypeNegativeNumber.BuildArgs;
