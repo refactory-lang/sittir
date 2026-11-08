@@ -41,6 +41,7 @@ on:
       - packages/tools/src/scripts/native-layouts.ts
       - packages/tools/src/native-pack.ts
       - packages/tools/src/tree-id-counter.ts
+      - packages/tools/src/sample-source.ts
       - packages/common/src/native-binding.ts
       - packages/codegen/src/emitters/grammar-runtime.ts
       - rust/crates/sittir-core/src/napi_engine.rs

@@ -5,8 +5,11 @@ import { appendFileSync, existsSync, mkdirSync, readFileSync, readdirSync, write
 import os from 'node:os';
 import { dirname, join, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
+import { isDeepStrictEqual } from 'node:util';
 
 const MEMORY_FIELDS = ['heapUsed', 'heapTotal', 'external', 'arrayBuffers', 'rss'];
+const REVISIONS = ['branch', 'baseline'];
+const MiB = 1048576;
 const IDLE = 'docs/superpowers/probes/2026-10-01-shared-arena/timing/idle.sh';
 const sha = (value) => createHash('sha256').update(value).digest('hex');
 const command = (name, args) => execFileSync(name, args, { encoding: 'utf8' }).trim();
@@ -168,6 +171,13 @@ export function mergeCorpusShards(shards, grammars) {
 				shards[0].report.environment[field],
 				'shard environment differs'
 			);
+		if (shard.report.baseline) {
+			assert(shard.baselineBefore && shard.baselineAfter, 'baseline identity missing');
+			verify(shard.baselineBefore, shard.baselineAfter);
+			assert.equal(shard.baselineBefore.commit, shard.report.baseline.commit, 'baseline report and identity name other commits');
+			for (const field of ['commit', 'sections', 'releaseProfile', 'workingTreeDiffSha256'])
+				assert.deepEqual(shard.baselineBefore[field], shards[0].baselineBefore?.[field], 'shards must measure the same baseline');
+		}
 		analyzeCorpus(shard.report);
 	}
 	return { mode: 'validation-storage-shards', options: { grammars }, shards };
@@ -177,8 +187,10 @@ export function analyzeCorpus(data) {
 	if (data.shards) {
 		mergeCorpusShards(data.shards, data.options.grammars);
 		const result = { workers: 0, aggregates: {}, phases: [], memoryMiB: {} };
+		const revisions = [];
 		for (const { report } of data.shards) {
 			const part = analyzeCorpus(report);
+			if (part.revision) revisions.push(part.revision);
 			result.workers += part.workers;
 			result.phases.push(...part.phases);
 			Object.assign(result.memoryMiB, part.memoryMiB);
@@ -190,6 +202,10 @@ export function analyzeCorpus(data) {
 			}
 		}
 		for (const value of Object.values(result.aggregates)) value.ratio = value.arenaMs / value.objectMs;
+		if (revisions.length) {
+			assert.equal(revisions.length, data.shards.length, 'every shard or none measures a baseline');
+			result.revision = combineRevisions(revisions);
+		}
 		return result;
 	}
 	assert.equal(data.options.rounds, 5);
@@ -290,7 +306,138 @@ export function analyzeCorpus(data) {
 	}
 	assert.equal(result.phases.length, grammars.length * 3 * 5);
 	for (const value of Object.values(result.aggregates)) value.ratio = value.arenaMs / value.objectMs;
+	if (data.baseline) result.revision = compareRevisions(data, result);
 	return result;
+}
+
+const ratio = (value, base) => (base === 0 ? null : value / base);
+const sides = (branch, baseline) => ({ branch, baseline, ratio: ratio(branch, baseline) });
+
+function compareRevisions(data, branch) {
+	const baseline = analyzeCorpus({
+		...data,
+		validationSummary: data.baseline.validationSummary,
+		validationSamples: data.baseline.validationSamples,
+		baseline: undefined,
+		library: undefined
+	});
+	const pids = [...data.validationSamples, ...data.baseline.validationSamples, ...data.library.memory].map((worker) => worker.pid);
+	assert.equal(new Set(pids).size, pids.length, 'workers must be fresh');
+	for (const summary of data.validationSummary) {
+		const other = data.baseline.validationSummary.find((row) => row.grammar === summary.grammar && row.bucket === summary.bucket);
+		assert(
+			other && isDeepStrictEqual(other.corpus, summary.corpus) && isDeepStrictEqual(other.counts, summary.counts),
+			'baseline measured another workload'
+		);
+	}
+	const phases = branch.phases.map((row) => {
+		const base = baseline.phases.find((other) => other.grammar === row.grammar && other.bucket === row.bucket && other.phase === row.phase);
+		assert(base, 'baseline lacks a phase row');
+		return {
+			grammar: row.grammar,
+			bucket: row.bucket,
+			phase: row.phase,
+			object: sides(row.object.median, base.object.median),
+			arena: sides(row.arena.median, base.arena.median)
+		};
+	});
+	const aggregates = Object.fromEntries(
+		Object.entries(branch.aggregates).map(([bucket, value]) => [
+			bucket,
+			{ object: sides(value.objectMs, baseline.aggregates[bucket].objectMs), arena: sides(value.arenaMs, baseline.aggregates[bucket].arenaMs) }
+		])
+	);
+	return { commit: data.baseline.commit, phases, aggregates, ...analyzeLibrary(data) };
+}
+
+function analyzeLibrary(data) {
+	const { memory, install } = data.library;
+	const { grammars, rounds } = data.options;
+	const alone = (worker) => isDeepStrictEqual(worker.grammars, [worker.grammar]);
+	for (const grammar of grammars)
+		for (let round = 0; round < rounds; round++)
+			for (const revision of REVISIONS)
+				for (const one of [true, false])
+					assert.equal(
+						memory.filter((worker) => worker.grammar === grammar && worker.round === round && worker.revision === revision && alone(worker) === one).length,
+						1,
+						'incomplete memory worker population'
+					);
+	assert.equal(memory.length, grammars.length * rounds * REVISIONS.length * 2, 'incomplete memory worker population');
+	for (const worker of memory) {
+		assert(Number.isFinite(worker.rssBytes) && worker.rssBytes > 0, 'invalid memory sample');
+		assert(Number(worker.idle?.match(/(\d+)%/)?.[1]) >= 75, 'worker did not pass the idle gate');
+	}
+	const rssMiB = (rows) => median(rows.map((worker) => worker.rssBytes / MiB));
+	const byRevision = (pick) => Object.fromEntries(REVISIONS.map((revision) => [revision, pick(revision)]));
+	return {
+		memoryMiB: {
+			one: Object.fromEntries(
+				grammars.map((grammar) => [grammar, byRevision((revision) => rssMiB(memory.filter((worker) => worker.grammar === grammar && worker.revision === revision && alone(worker))))])
+			),
+			all: byRevision((revision) => rssMiB(memory.filter((worker) => worker.revision === revision && !alone(worker))))
+		},
+		installMiB: Object.fromEntries(grammars.map((grammar) => [grammar, byRevision((revision) => install[revision][grammar].bytes / MiB)]))
+	};
+}
+
+function combineRevisions(parts) {
+	assert(parts.every((part) => part.commit === parts[0].commit), 'shards must measure the same baseline');
+	const aggregates = {};
+	for (const part of parts)
+		for (const [bucket, value] of Object.entries(part.aggregates)) {
+			const total = (aggregates[bucket] ??= { object: { branch: 0, baseline: 0 }, arena: { branch: 0, baseline: 0 } });
+			for (const mode of ['object', 'arena']) for (const revision of REVISIONS) total[mode][revision] += value[mode][revision];
+		}
+	for (const value of Object.values(aggregates)) for (const mode of ['object', 'arena']) value[mode].ratio = ratio(value[mode].branch, value[mode].baseline);
+	return {
+		commit: parts[0].commit,
+		phases: parts.flatMap((part) => part.phases),
+		aggregates,
+		memoryMiB: {
+			one: Object.assign({}, ...parts.map((part) => part.memoryMiB.one)),
+			all: Object.fromEntries(REVISIONS.map((revision) => [revision, median(parts.map((part) => part.memoryMiB.all[revision]))]))
+		},
+		installMiB: Object.assign({}, ...parts.map((part) => part.installMiB))
+	};
+}
+
+const signed = (value) => `${value >= 0 ? '+' : ''}${value.toFixed(3)}`;
+const fixed = (value) => (value === null ? 'n/a' : value.toFixed(3));
+
+function revisionLines(revision) {
+	const total = (revisionName) => Object.values(revision.installMiB).reduce((sum, value) => sum + value[revisionName], 0);
+	const row = (label, value) => `| ${label} | ${value.branch.toFixed(3)} | ${value.baseline.toFixed(3)} | ${signed(value.branch - value.baseline)} |`;
+	return [
+		`## Branch against baseline ${revision.commit}`,
+		'',
+		'Ratios are branch/baseline; above one the branch is slower. Both trees ran in the same rounds on each runner, every worker a fresh process, the order turning each round.',
+		'',
+		'| Whole validator round trip | Object branch/baseline | Arena branch/baseline |',
+		'| --- | ---: | ---: |',
+		...Object.entries(revision.aggregates).map(([bucket, value]) => `| ${bucket} | ${fixed(value.object.ratio)} | ${fixed(value.arena.ratio)} |`),
+		'',
+		'| Grammar | Read-render-parse phase | Object branch/baseline | Arena branch/baseline |',
+		'| --- | --- | ---: | ---: |',
+		...revision.phases
+			.filter((value) => value.bucket === 'read-render-parse' && ['parse', 'read', 'render'].includes(value.phase))
+			.map((value) => `| ${value.grammar} | ${value.phase} | ${fixed(value.object.ratio)} | ${fixed(value.arena.ratio)} |`),
+		'',
+		'| RSS after loading | Branch MiB | Baseline MiB | Branch - baseline |',
+		'| --- | ---: | ---: | ---: |',
+		...Object.entries(revision.memoryMiB.one).map(([grammar, value]) => row(`${grammar} alone`, value)),
+		row('every grammar', revision.memoryMiB.all),
+		'',
+		'RSS is read in a fresh process after it creates each engine, parses and renders a sample, and collects garbage; medians over five rounds.',
+		'',
+		'| Host install | Branch MiB | Baseline MiB | Branch - baseline |',
+		'| --- | ---: | ---: | ---: |',
+		...Object.entries(revision.installMiB).map(([grammar, value]) => row(grammar, value)),
+		row('all grammars', { branch: total('branch'), baseline: total('baseline') }),
+		'',
+		'Install sizes are the unpacked bytes npm reports for what a consumer on this runner installs: the grammar package, and its platform package where the tree ships one.',
+		''
+	];
 }
 
 export function summarize(data) {
@@ -357,6 +504,7 @@ export function summarize(data) {
 		'External memory includes array buffers; do not add them again. RSS overlaps heap and external memory, so do not sum these columns. These fields do not provide complete native retained-memory attribution.',
 		''
 	);
+	if (analysis.revision) lines.push(...revisionLines(analysis.revision));
 	return { analysis, markdown: lines.join('\n') };
 }
 
@@ -366,10 +514,13 @@ function main() {
 	if (action === 'capture') writeJson(first, capture());
 	else if (action === 'verify') verify(readJson(first), readJson(second));
 	else if (action === 'merge') {
+		const optional = (path) => (existsSync(path) ? readJson(path) : undefined);
 		const shards = rest.map((path) => ({
 			report: readJson(path),
 			before: readJson(join(dirname(path), 'before.json')),
-			after: readJson(join(dirname(path), 'after.json'))
+			after: readJson(join(dirname(path), 'after.json')),
+			baselineBefore: optional(join(dirname(path), 'baseline-before.json')),
+			baselineAfter: optional(join(dirname(path), 'baseline-after.json'))
 		}));
 		writeJson(first, mergeCorpusShards(shards, JSON.parse(process.env.EXPECTED_GRAMMARS ?? 'null')));
 	} else if (action === 'summarize') {

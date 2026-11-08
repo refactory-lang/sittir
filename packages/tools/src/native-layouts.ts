@@ -6,7 +6,6 @@ import { addonFileName, engineStampOf, platformPackageName, targetSuffix } from 
 import { imageSymbols, mappedImages, type MappedImage, type NodeRunner } from './native-images.ts';
 import {
 	NATIVE_PACKAGES_DIR,
-	SAMPLE_SOURCE,
 	assembleNativePackages,
 	declareNativePackages,
 	grammarNapiPackage,
@@ -16,6 +15,7 @@ import {
 	type PlatformPackageManifest
 } from './native-pack.ts';
 import { run } from './spawn.ts';
+import { SAMPLE_SOURCE } from './sample-source.ts';
 import type { TreeIdCounterReport } from './tree-id-counter.ts';
 
 export const LAYOUT_GRAMMARS: readonly GrammarName[] = ['python', 'rust'];

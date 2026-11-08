@@ -17,7 +17,6 @@ import {
 	NATIVE_PACKAGES_DIR,
 	assembleNativePackages,
 	grammarNapiPackage,
-	SAMPLE_SOURCE,
 	nativePackGaps,
 	nativePackageDirs,
 	optionalDependencyGaps,
@@ -30,6 +29,7 @@ import {
 	type PlatformPackageManifest
 } from '../native-pack.ts';
 import { packageBin, run } from '../spawn.ts';
+import { SAMPLE_SOURCE } from '../sample-source.ts';
 
 const SMOKE = `import { createEngine } from '@sittir/common';
 const [name, source] = process.argv.slice(2);

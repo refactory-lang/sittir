@@ -2,6 +2,15 @@ name: Build benchmark runtime
 
 on:
   workflow_call:
+    inputs:
+      ref:
+        description: The commit to build; empty builds the commit the run is for
+        type: string
+        default: ''
+      label:
+        description: Appended to the artifact prefix, so two builds in one run do not collide
+        type: string
+        default: ''
     outputs:
       prefix:
         value: ${{ jobs.prepare.outputs.prefix }}
@@ -26,22 +35,29 @@ jobs:
       grammars: ${{ steps.plan.outputs.grammars }}
     steps:
       - uses: actions/checkout@v6
+        with:
+          ref: ${{ inputs.ref }}
       - uses: ./.github/actions/arena-benchmark-setup
       - name: Plan canonical grammar builds
         id: plan
+        env:
+          LABEL: ${{ inputs.label }}
         run: |
+          export COMMIT=$(git rev-parse HEAD)
           pnpm exec tsx packages/tools/src/scripts/list-grammars.ts stable > "$RUNNER_TEMP/grammars.txt"
           node --input-type=module <<'NODE' >> "$GITHUB_OUTPUT"
           import { readFileSync } from 'node:fs';
           const grammars = readFileSync(`${process.env.RUNNER_TEMP}/grammars.txt`, 'utf8').trim().split(/\s+/);
           console.log(`grammars=${JSON.stringify(grammars)}`);
-          console.log(`prefix=arena-runtime-${process.env.GITHUB_RUN_ID}-${process.env.GITHUB_RUN_ATTEMPT}`);
+          const label = process.env.LABEL ? `-${process.env.LABEL}` : '';
+          console.log(`prefix=arena-runtime-${process.env.GITHUB_RUN_ID}-${process.env.GITHUB_RUN_ATTEMPT}${label}`);
+          console.log(`commit=${process.env.COMMIT}`);
           NODE
       - uses: actions/cache@v4
         id: compiled
         with:
           path: ${{ runner.temp }}/arena-runtime-typescript
-          key: arena-runtime-v2-${{ runner.os }}-${{ runner.arch }}-node26.12.0-${{ github.sha }}-typescript
+          key: arena-runtime-v2-${{ runner.os }}-${{ runner.arch }}-node26.12.0-${{ steps.plan.outputs.commit }}-typescript
       - name: Compile committed TypeScript packages
         if: steps.compiled.outputs.cache-hit != 'true'
         run: |

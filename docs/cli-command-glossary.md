@@ -197,7 +197,8 @@ Measure native workflows or paired backend validation buckets
 - `--limit <n>` — Use only the first n corpus entries (smoke runs)
 - `--native-depth <depth>` — Native hydration depth: a positive integer or all (default: `all`)
 - `--validation` — Profile deep read, factory and IR render/parse validators under both paired backends
-- `--idle-gate <path>` — Run a shell idle gate before each worker, passing the current directory
+- `--baseline <tree>` — With --validation, also measure another built checkout's own validation workers in the same rounds, the order turning each round, with the memory of loading one grammar and every grammar, and the bytes a host install of each grammar costs, for both
+- `--idle-gate <path>` — Run a shell idle gate before each worker, passing the worker's checkout
 - `--output <path>` — Write the complete JSON report to this file
 
 **Example**

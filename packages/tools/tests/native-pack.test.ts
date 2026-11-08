@@ -1,10 +1,11 @@
-import { mkdirSync, mkdtempSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, statSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import {
 	assembleNativePackages,
 	declareNativePackages,
+	hostInstallSize,
 	nativePackGaps,
 	optionalDependencyGaps,
 	platformPackGaps,
@@ -199,5 +200,40 @@ describe('the platform packages napi makes, filled from a release build tree', (
 			'sittir-probe-darwin-arm64': '0.2.0',
 			'sittir-probe-linux-x64-gnu': '0.2.0'
 		});
+	}, 60_000);
+});
+
+const linkingEngineAndStd = Buffer.concat([ELF, Buffer.from(`libsittir_engine.so\0${STD}\0`)]);
+
+describe('hostInstallSize', () => {
+	const grammarPackage = {
+		'packages/regex/package.json': JSON.stringify({ name: '@sittir/regex', version: '0.2.0', files: ['dist', 'native'] }),
+		'packages/regex/dist/index.js': 'export {};\n'.repeat(100)
+	};
+
+	it('counts the grammar package alone for a tree that ships no platform package', () => {
+		const root = tree(scratch('install-size'), { ...grammarPackage, 'packages/regex/native/sittir-regex.linux-x64-gnu.node': 'x'.repeat(4096) });
+		const size = hostInstallSize(root, 'regex', 'linux-x64-gnu');
+		expect(Object.keys(size.packages)).toEqual(['@sittir/regex']);
+		const files = ['package.json', 'dist/index.js', 'native/sittir-regex.linux-x64-gnu.node'];
+		expect(size.packages['@sittir/regex']).toBe(files.reduce((sum, file) => sum + statSync(join(root, 'packages', 'regex', file)).size, 0));
+		expect(size.bytes).toBe(size.packages['@sittir/regex']);
+	}, 60_000);
+
+	it("adds the host platform package napi makes from the tree's own build, and leaves no npm folder behind", () => {
+		const native = 'packages/regex/native';
+		const root = tree(scratch('install-size'), {
+			...grammarPackage,
+			'rust/crates/sittir-regex/napi.json': JSON.stringify({ binaryName: 'sittir-regex', packageName: 'sittir-regex', targets: ['x86_64-unknown-linux-gnu'] }),
+			[`${native}/sittir-regex.linux-x64-gnu.node`]: linkingEngineAndStd,
+			[`${native}/libsittir_engine.so`]: 'e'.repeat(2048),
+			[`${native}/${STD}`]: 's'.repeat(1024)
+		});
+		const size = hostInstallSize(root, 'regex', 'linux-x64-gnu');
+		expect(Object.keys(size.packages)).toEqual(['@sittir/regex', 'sittir-regex-linux-x64-gnu']);
+		const binaries = ['sittir-regex.linux-x64-gnu.node', 'libsittir_engine.so', STD].reduce((sum, file) => sum + statSync(join(root, native, file)).size, 0);
+		expect(size.packages['sittir-regex-linux-x64-gnu']).toBeGreaterThan(binaries);
+		expect(size.bytes).toBe(size.packages['@sittir/regex']! + size.packages['sittir-regex-linux-x64-gnu']!);
+		expect(existsSync(join(root, 'packages', 'regex', 'npm'))).toBe(false);
 	}, 60_000);
 });

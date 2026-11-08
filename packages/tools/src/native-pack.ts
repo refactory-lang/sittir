@@ -1,7 +1,7 @@
 import { copyFileSync, existsSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
-import { basename, dirname, join } from 'node:path';
-import { NATIVE_NAPI_CONFIG, grammarPackageDir, nativeCrateDir, type GrammarName } from '@sittir/codegen/grammars';
-import { addonFileName, engineLibraryName, engineStampOf, stdLibrariesLinkedBy } from '@sittir/common/engine';
+import { basename, dirname, join, relative } from 'node:path';
+import { NATIVE_NAPI_CONFIG, REPO_ROOT, grammarPackageDir, nativeBindingDir, nativeCrateDir, type GrammarName } from '@sittir/codegen/grammars';
+import { addonFileName, engineLibraryName, engineStampOf, hostPlatform, platformSuffix, stdLibrariesLinkedBy } from '@sittir/common/engine';
 import { packageBin, run } from './spawn.ts';
 
 export interface PlatformPackageManifest {
@@ -25,14 +25,6 @@ export function shipLinkedCopies(packageDir: string, source: string): string[] {
 	return copies;
 }
 
-export const SAMPLE_SOURCE: Readonly<Record<string, string>> = {
-	python: 'def  f( x ):\n    return x\n',
-	regex: 'a+(b|c)*',
-	rust: 'fn  main( ) { let x = 1; }\n',
-	scm: '(identifier) @name\n',
-	typescript: 'const  x = [1, 2];\n'
-};
-
 export function pack(client: 'npm' | 'pnpm', dir: string, into: string): string {
 	const before = new Set(readdirSync(into));
 	run(client, ['pack', '--pack-destination', into], dir);
@@ -53,9 +45,13 @@ export interface NapiPackage {
 	readonly config: string;
 }
 
-export function grammarNapiPackage(grammar: GrammarName): NapiPackage {
-	return { dir: grammarPackageDir(grammar), config: join(nativeCrateDir(grammar), NATIVE_NAPI_CONFIG) };
+export const inTree = (tree: string, path: string): string => join(tree, relative(REPO_ROOT, path));
+
+export function napiPackageIn(tree: string, grammar: GrammarName): NapiPackage {
+	return { dir: inTree(tree, grammarPackageDir(grammar)), config: inTree(tree, join(nativeCrateDir(grammar), NATIVE_NAPI_CONFIG)) };
 }
+
+export const grammarNapiPackage = (grammar: GrammarName): NapiPackage => napiPackageIn(REPO_ROOT, grammar);
 
 function napi(pkg: NapiPackage, command: string, ...flags: string[]): void {
 	run(
@@ -142,4 +138,30 @@ export function platformPackGaps(dir: string, binaryName: string, suffix: string
 	if (lacking.length > 0) return lacking.map((copy) => `lacks ${copy}`);
 	const [built, copied] = [engineStampOf(join(dir, node)), engineStampOf(join(dir, engine))];
 	return built === copied ? [] : [`${node} was built against engine ${built}, but ${engine} is ${copied}`];
+}
+
+export function packedBytes(dir: string): number {
+	const [report] = JSON.parse(run('npm', ['pack', '--dry-run', '--json', '--ignore-scripts'], dir)) as { readonly unpackedSize: number }[];
+	if (report === undefined) throw new Error(`npm pack reported nothing for ${dir}`);
+	return report.unpackedSize;
+}
+
+export interface InstallSize {
+	readonly packages: Readonly<Record<string, number>>;
+	readonly bytes: number;
+}
+
+export function hostInstallSize(tree: string, grammar: GrammarName, suffix = platformSuffix(hostPlatform())): InstallSize {
+	const pkg = napiPackageIn(tree, grammar);
+	const packages: Record<string, number> = { [readManifest<{ name: string }>(pkg.dir).name]: packedBytes(pkg.dir) };
+	if (existsSync(pkg.config)) {
+		try {
+			for (const dir of assembleNativePackages(pkg, inTree(tree, nativeBindingDir(grammar)), [suffix])) {
+				packages[readManifest<PlatformPackageManifest>(dir).name] = packedBytes(dir);
+			}
+		} finally {
+			rmSync(join(pkg.dir, NATIVE_PACKAGES_DIR), { recursive: true, force: true });
+		}
+	}
+	return { packages, bytes: Object.values(packages).reduce((sum, bytes) => sum + bytes, 0) };
 }
