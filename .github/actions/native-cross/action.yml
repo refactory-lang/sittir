@@ -11,12 +11,15 @@ runs:
   using: composite
   steps:
     # The musl targets cross-compile through cargo-zigbuild: zig as the C
-    # compiler and linker.
+    # compiler and linker. Each build starts with an empty zig cache: a job
+    # cancelled mid-compile still saves its cache, holding a manifest entry
+    # for an object it never wrote, and zig then fails to open that object.
     - name: Setup zig (musl cross-compile)
       if: contains(inputs.target, 'musl')
       uses: mlugg/setup-zig@v2
       with:
         version: 0.14.1
+        use-cache: false
     - name: Install cargo-zigbuild (musl cross-compile)
       if: contains(inputs.target, 'musl')
       uses: taiki-e/install-action@v2
