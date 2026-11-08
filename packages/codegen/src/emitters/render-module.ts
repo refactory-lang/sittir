@@ -2643,7 +2643,7 @@ function renderRecordFn(): string[] {
 		') -> Result<String, ::sittir_core::render::RenderError> {',
 		'    let (templates, baseline) = ::sittir_core::arena::Recording::parts(recording);',
 		`    ${sourceRoot}`,
-		'        return render_node_parts(::sittir_core::SlotValue::Coord(coord), ctx, baseline).map(|(_, text)| text);',
+		'        return render_node_parts(::sittir_core::SlotValue::Coord(coord), &ctx.lending(&*trees), baseline).map(|(_, text)| text);',
 		'    }',
 		'    with_record_node(root, templates, trees, built, store, ctx, |node, ctx| render_root(ctx, baseline, |_| ::sittir_core::view::KindOf::kind_in(node, kind::ROOT_KINDS), |w| node.render(w)))',
 		'}',

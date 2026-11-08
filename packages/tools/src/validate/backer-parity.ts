@@ -12,6 +12,7 @@ export interface BackerParityOptions {
 
 export interface RunParity {
 	readonly runs: number;
+	readonly measuredRuns: number;
 	readonly differingRuns: number;
 	readonly firstRun?: number;
 }
@@ -25,6 +26,7 @@ export interface BackerParityCensus {
 	readonly nodes: number;
 	readonly differing: number;
 	readonly runs: number;
+	readonly measuredRuns: number;
 	readonly differingRuns: number;
 	readonly failing: readonly BackerParityFile[];
 }
@@ -55,18 +57,30 @@ function runKey({ start, end, index, side, breaks, spaces, tabs }: BaselineRun):
 	return JSON.stringify([start, end, index, side, breaks, spaces, tabs]);
 }
 
+function measured({ breaks, spaces, tabs }: BaselineRun): boolean {
+	return breaks !== undefined && spaces !== undefined && tabs !== undefined;
+}
+
 export function runParity(throughTree: readonly BaselineRun[], fromRecords: readonly BaselineRun[]): RunParity {
 	const runs = Math.max(throughTree.length, fromRecords.length);
+	let measuredRuns = 0;
 	let differingRuns = 0;
 	let firstRun: number | undefined;
 	for (let at = 0; at < runs; at++) {
 		const tree = throughTree[at];
 		const records = fromRecords[at];
-		if (tree !== undefined && records !== undefined && runKey(tree) === runKey(records)) continue;
+		if (tree !== undefined && records !== undefined && runKey(tree) === runKey(records)) {
+			if (measured(tree)) measuredRuns++;
+			continue;
+		}
 		differingRuns++;
 		firstRun ??= (tree ?? records)?.start;
 	}
-	return firstRun === undefined ? { runs, differingRuns } : { runs, differingRuns, firstRun };
+	return firstRun === undefined ? { runs, measuredRuns, differingRuns } : { runs, measuredRuns, differingRuns, firstRun };
+}
+
+export function censusPasses({ differing, measuredRuns, differingRuns }: BackerParityCensus): boolean {
+	return differing === 0 && differingRuns === 0 && measuredRuns > 0;
 }
 
 export async function computeBackerParity(root: string, paths: readonly string[]): Promise<BackerParityCensus> {
@@ -78,6 +92,7 @@ export async function computeBackerParity(root: string, paths: readonly string[]
 	let nodes = 0;
 	let differing = 0;
 	let runs = 0;
+	let measuredRuns = 0;
 	let differingRuns = 0;
 	for (const path of paths) {
 		const source = readFileSync(corpusFile(root, path), 'utf8');
@@ -86,10 +101,11 @@ export async function computeBackerParity(root: string, paths: readonly string[]
 		nodes += parity.nodes;
 		differing += parity.differing;
 		runs += run.runs;
+		measuredRuns += run.measuredRuns;
 		differingRuns += run.differingRuns;
 		if (parity.differing > 0 || run.differingRuns > 0) failing.push({ file: path, ...parity, ...run });
 	}
-	return { files: paths.length, nodes, differing, runs, differingRuns, failing };
+	return { files: paths.length, nodes, differing, runs, measuredRuns, differingRuns, failing };
 }
 
 export async function run(opts: BackerParityOptions): Promise<number> {
@@ -98,9 +114,11 @@ export async function run(opts: BackerParityOptions): Promise<number> {
 	if (opts.json) {
 		console.log(JSON.stringify(census, null, 2));
 	} else {
-		console.log(`backer-parity: ${census.files} files, ${census.nodes} nodes, ${census.differing} differing; ${census.runs} layout runs, ${census.differingRuns} measured apart`);
+		console.log(
+			`backer-parity: ${census.files} files, ${census.nodes} nodes, ${census.differing} differing; ${census.runs} layout runs, ${census.measuredRuns} measured alike, ${census.differingRuns} measured apart`
+		);
 		for (const { file, differing, first, differingRuns, firstRun } of census.failing)
 			console.log(`  ${file}: ${differing} differing, first at node ${first}; ${differingRuns} runs apart, first at byte ${firstRun}`);
 	}
-	return census.differing === 0 && census.differingRuns === 0 ? 0 : 1;
+	return censusPasses(census) ? 0 : 1;
 }

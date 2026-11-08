@@ -228,6 +228,36 @@ fn arena_render_reads_no_tree() {
     assert_eq!(reads, [("rust", [0; 3]), ("python", [0; 3]), ("typescript", [0; 3])], "tree reads of the untouched, rebuilt and codemod renders");
 }
 
+/// The record of `case`'s `nested` node (`kind:n`) rendered from a tree read
+/// whole, with its tree reads meanwhile, and the same node's record rendered
+/// from a tree read only from that node down, which measures through the
+/// tree.
+fn nested_render<G: RecordGrammar, N: ReadNode + Clone + WriteCell<G::Trivia> + HydrateNode + RecordCells>(case: &Case<G, N>, nested: &str) -> (String, u32, String) {
+    let options = (case.options)();
+    let (whole, _) = case.hydrated();
+    let index = nth_of_kind(&whole, nested);
+    let address = whole.hydrate_record::<N>(index, Depth::All).expect("a read").expect("the node's record");
+    let before = whole.layout_work();
+    let text = whole.render_record(address, ChangedEdges::default(), &options, &whole.seating()).expect("a record render");
+    let reads = since(whole.layout_work(), before).tree_reads;
+    let part = parsed(case.grammar, (case.options)(), case.source);
+    let address = part.hydrate_record::<N>(index, Depth::All).expect("a read").expect("the node's record");
+    let through_tree = part.render_record(address, ChangedEdges::default(), &options, &part.seating()).expect("a record render");
+    (text, reads, through_tree)
+}
+
+#[test]
+fn a_nested_record_renders_from_records() {
+    for (name, (text, reads, through_tree)) in [
+        ("rust", nested_render(&rust(), "block:0")),
+        ("python", nested_render(&python(), "block:0")),
+        ("typescript", nested_render(&typescript(), "statement_block:0")),
+    ] {
+        assert_eq!(reads, 0, "{name}: tree reads of a nested record's render");
+        assert_eq!(text, through_tree, "{name}: a nested record renders from records as through the tree");
+    }
+}
+
 fn measured_twice<G: RecordGrammar, N: ReadNode + Clone + WriteCell<G::Trivia> + HydrateNode + RecordCells>(case: &Case<G, N>) -> ([u32; 4], [u32; 4]) {
     let (tree, _) = case.hydrated();
     let (_, built, root) = case.rebuilt_root(&tree);
