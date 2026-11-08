@@ -137,6 +137,13 @@ jobs:
           name: workspace-build
           path: .
 
+      # The artifact keeps the build job's file times, which predate this
+      # checkout, so every project reads as older than its sources.
+      - name: Date the downloaded build after the checkout
+        run: |
+          now=$(date +%s)
+          find packages node_modules/.cache/sittir \( -path '*/dist/*' -o -path 'packages/types/build/*' -o -name '*.tsbuildinfo' -o -name '*.node' -o -path '*/native-build/*' \) -type f -exec touch -d "@$now" {} +
+
       - name: Install the pinned Rust toolchain
         uses: ./.github/actions/rust-toolchain
 
