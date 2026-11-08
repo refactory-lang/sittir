@@ -61,6 +61,7 @@ jobs:
           name: workspace-build
           path: |
             packages/*/dist
+            packages/*/tsconfig.build.tsbuildinfo
             packages/*/native/*.node
             node_modules/.cache/sittir/native-build/
           include-hidden-files: true
@@ -135,11 +136,21 @@ jobs:
           name: workspace-build
           path: .
 
+      # The artifact keeps the build job's file times, which predate this
+      # checkout; a build older than its sources reads as stale.
+      - name: Date the downloaded build after the checkout
+        run: find packages node_modules/.cache/sittir \( -path '*/dist/*' -o -name '*.tsbuildinfo' -o -name '*.node' -o -path '*/native-build/*' \) -type f -exec touch {} +
+
       - name: Install the pinned Rust toolchain
         uses: ./.github/actions/rust-toolchain
 
       - name: Bootstrap the pinned build
         uses: ./.github/actions/bootstrap
+
+      # Tests that build a parser each install the wasm toolchain when it is
+      # missing, and concurrent installs corrupt one another.
+      - name: Install the wasm toolchain once
+        run: npx tsx -e "import { ensureWasmToolchain } from './packages/codegen/src/transpile/tree-sitter-cli.ts'; ensureWasmToolchain();"
 
       - name: Test
         run: pnpm exec vitest run --coverage --shard=${{ matrix.shard }}/${{ strategy.job-total }} --reporter=default --reporter=blob
