@@ -84,11 +84,14 @@ impl SlotPlaces {
     }
 }
 
-/// The slots of the parsed record at `at`, its kind's shape read from `N`.
-fn slots<N: RecordCells>(tree: &TreeArena, at: Address) -> Result<Vec<SlotPlaces>, ArenaError> {
+/// The record a node of a kind is written as (`RecordCells::shape`).
+pub type Shape = fn(KindId) -> Option<super::RecordShape>;
+
+/// The slots of the parsed record at `at`, its kind's shape read from `shape`.
+fn slots(tree: &TreeArena, at: Address, shape: Shape) -> Result<Vec<SlotPlaces>, ArenaError> {
     let arena = tree.arena();
     let kind = arena.header_kind(at, arena.kind_bits())?;
-    let record = N::shape(kind).ok_or(malformed("record shape", u32::from(kind.0)))?;
+    let record = shape(kind).ok_or(malformed("record shape", u32::from(kind.0)))?;
     let words = arena.words(at, record.words.max(HEADER_WORDS))?;
     record
         .cells
@@ -101,6 +104,26 @@ fn slots<N: RecordCells>(tree: &TreeArena, at: Address) -> Result<Vec<SlotPlaces
             Ok(SlotPlaces::Run { run: list.run, len: list.len, shape })
         })
         .collect()
+}
+
+/// The parsed units the record at `at` holds, each by its slot's key and
+/// its item there, with its kind and its row, its kind's shape read from
+/// `shape`.
+///
+/// # Errors
+///
+/// What reading the record refuses.
+pub(super) fn units(tree: &TreeArena, at: Address, shape: Shape) -> Result<Vec<(&'static str, u32, KindId, NodeIndex)>, ArenaError> {
+    let mut units = Vec::new();
+    for slot in slots(tree, at, shape)? {
+        for n in 0..slot.len() {
+            let place = slot.item(n)?;
+            if let Cell::Unit { kind, row: Some(row) } = cell_at(tree, place)? {
+                units.push((place.shape.key, n, kind, row));
+            }
+        }
+    }
+    Ok(units)
 }
 
 fn cell_at(tree: &TreeArena, place: CellPlace) -> Result<Cell, ArenaError> {
@@ -138,7 +161,7 @@ pub(super) fn patch(tree: &mut TreeArena, place: CellPlace, at: Address) -> Resu
 fn spine_cell<N: RecordCells>(tree: &TreeArena, at: Address, spine: &[NodeIndex]) -> Result<Option<(usize, CellPlace, Cell)>, ArenaError> {
     let Some(&target) = spine.last() else { return Ok(None) };
     let on_spine = |row: Option<NodeIndex>| row.and_then(|row| spine.binary_search(&row).ok());
-    for slot in slots::<N>(tree, at)? {
+    for slot in slots(tree, at, N::shape)? {
         let found = match slot {
             SlotPlaces::One(place) => {
                 let cell = cell_at(tree, place)?;
@@ -194,53 +217,118 @@ fn write<N: HydrateNode>(tree: &mut TreeArena, cursor: &mut TreeCursor<'_>, ctx:
     super::hydrate_at::<N>(cursor, ctx, row, stamped, depth, &mut Hydration::new(tree))
 }
 
-/// The record of the node at `row`, which no cell names, held by its tree:
-/// written `depth` levels down and held when `writes` and no read has.
-fn held<N: HydrateNode>(tree: &mut TreeArena, cursor: &mut TreeCursor<'_>, ctx: &mut ReadCtx<'_>, row: NodeIndex, depth: Depth, writes: bool) -> Result<Option<Address>, HydrateError> {
-    if let Some(at) = tree.held(row) {
-        return Ok(Some(at));
-    }
-    crate::read::goto(cursor, row);
-    if !writes || crate::nodes::shown_as_error(crate::read::display_id(&cursor.node())) {
-        return Ok(None);
-    }
-    let at = write::<N>(tree, cursor, ctx, row, None, depth)?;
-    if let Some(at) = at {
-        tree.hold(row, at)?;
-    }
-    Ok(at)
+/// What a walk down a spine meets where no read has written the record it
+/// needs next: a writing read writes it there and goes on, a read-only one
+/// stops.
+trait Reader {
+    type Error: From<ArenaError>;
+    fn tree(&self) -> &TreeArena;
+    /// The record of `spine[j]`, the node at `row`, which no cell names:
+    /// the one its tree holds.
+    fn held(&mut self, j: usize, row: NodeIndex) -> Result<Option<Address>, Self::Error>;
+    /// The record of `spine[j]`, which the coordinate cell at `place` names
+    /// as a node of kind `kind` at `index`.
+    fn coordinate(&mut self, j: usize, place: CellPlace, kind: KindId, index: NodeIndex) -> Result<Option<Address>, Self::Error>;
 }
 
-/// The record of the node at `row`: reached from the root through the cells
-/// that name its ancestors, or held by its tree where no cell names it. When
-/// `writes`, a record no read has written yet is written on the way, the
-/// node's own `depth` levels down and each ancestor's one, and the cell that
-/// names it rewritten to; else such a node answers `None`. `None` too for a
-/// node with no record: a leaf, a unit or an `ERROR` node.
-///
-/// # Errors
-///
-/// What a hydration or the arena refuses.
-pub fn reach<N: HydrateNode + RecordCells>(tree: &mut TreeArena, cursor: &mut TreeCursor<'_>, ctx: &mut ReadCtx<'_>, row: NodeIndex, depth: Depth, writes: bool) -> Result<Option<Address>, HydrateError> {
-    let spine = spine(cursor, row);
+/// A walk that writes nothing: it reads the records written so far.
+struct Written<'a>(&'a TreeArena);
+
+impl Reader for Written<'_> {
+    type Error = ArenaError;
+
+    fn tree(&self) -> &TreeArena {
+        self.0
+    }
+
+    fn held(&mut self, _: usize, row: NodeIndex) -> Result<Option<Address>, ArenaError> {
+        Ok(self.0.held(row))
+    }
+
+    fn coordinate(&mut self, _: usize, _: CellPlace, _: KindId, _: NodeIndex) -> Result<Option<Address>, ArenaError> {
+        Ok(None)
+    }
+}
+
+/// A walk that, when `writes`, writes each record it needs and no read has:
+/// the spine's last node's `depth` levels down, each ancestor's one, from a
+/// cursor on the tree created at its root.
+struct Writing<'a, 'c, 's, N> {
+    tree: &'a mut TreeArena,
+    cursor: &'a mut TreeCursor<'c>,
+    ctx: &'a mut ReadCtx<'s>,
+    last: usize,
+    depth: Depth,
+    writes: bool,
+    node: std::marker::PhantomData<fn() -> N>,
+}
+
+impl<N: HydrateNode> Writing<'_, '_, '_, N> {
+    fn depth_at(&self, j: usize) -> Depth {
+        if j == self.last { self.depth } else { Depth::ONE }
+    }
+}
+
+impl<N: HydrateNode> Reader for Writing<'_, '_, '_, N> {
+    type Error = HydrateError;
+
+    fn tree(&self) -> &TreeArena {
+        self.tree
+    }
+
+    /// Written and held when `writes` and no read has, unless the node is an
+    /// `ERROR`, which has no record.
+    fn held(&mut self, j: usize, row: NodeIndex) -> Result<Option<Address>, HydrateError> {
+        if let Some(at) = self.tree.held(row) {
+            return Ok(Some(at));
+        }
+        if !self.writes {
+            return Ok(None);
+        }
+        crate::read::goto(self.cursor, row);
+        if crate::nodes::shown_as_error(crate::read::display_id(&self.cursor.node())) {
+            return Ok(None);
+        }
+        let at = write::<N>(self.tree, self.cursor, self.ctx, row, None, self.depth_at(j))?;
+        if let Some(at) = at {
+            self.tree.hold(row, at)?;
+        }
+        Ok(at)
+    }
+
+    /// Written when `writes`, and the cell rewritten to name it.
+    fn coordinate(&mut self, j: usize, place: CellPlace, kind: KindId, index: NodeIndex) -> Result<Option<Address>, HydrateError> {
+        if !self.writes {
+            return Ok(None);
+        }
+        let child = write::<N>(self.tree, self.cursor, self.ctx, index, Some(kind), self.depth_at(j))?.ok_or(malformed("record of a coordinate", index.0))?;
+        patch(self.tree, place, child)?;
+        Ok(Some(child))
+    }
+}
+
+/// The cell that names the last node of `spine`, a root-to-node row path:
+/// reached from the root through the cells that name its ancestors, or held
+/// by its tree where no cell names it, `reader` met where no read has
+/// written a record. A record's cell names its record; a leaf's or a unit's
+/// is its holder's, which holds it whole. `None` for an `ERROR` node, and
+/// where `reader` gives none.
+fn walk<N: RecordCells, R: Reader>(reader: &mut R, spine: &[NodeIndex]) -> Result<Option<Cell>, R::Error> {
     let last = spine.len() - 1;
-    let depth_at = |j: usize| if j == last { depth } else { Depth::ONE };
-    let Some(mut at) = held::<N>(tree, cursor, ctx, spine[0], depth_at(0), writes)? else { return Ok(None) };
+    let Some(mut at) = reader.held(0, spine[0])? else { return Ok(None) };
     let mut i = 0;
     while i < last {
-        let named = spine_cell::<N>(tree, at, &spine[i + 1..])?;
+        let named = spine_cell::<N>(reader.tree(), at, &spine[i + 1..])?;
         let next = match named {
             Some((j, place, cell)) => {
                 let j = i + 1 + j;
                 match cell {
                     Cell::Child { at: child, .. } => Some((j, child)),
-                    Cell::Coordinate { kind, index, .. } if writes => {
-                        let child = write::<N>(tree, cursor, ctx, index, Some(kind), depth_at(j))?.ok_or(malformed("record of a coordinate", index.0))?;
-                        patch(tree, place, child)?;
-                        Some((j, child))
-                    }
-                    Cell::Coordinate { .. } => return Ok(None),
-                    _ if j == last => return Ok(None),
+                    Cell::Coordinate { kind, index, .. } => match reader.coordinate(j, place, kind, index)? {
+                        Some(child) => Some((j, child)),
+                        None => return Ok(None),
+                    },
+                    cell if j == last => return Ok(Some(cell)),
                     _ => {
                         i = j;
                         None
@@ -255,7 +343,7 @@ pub fn reach<N: HydrateNode + RecordCells>(tree: &mut TreeArena, cursor: &mut Tr
         }
         let mut found = None;
         for (j, &row) in spine.iter().enumerate().skip(i + 1) {
-            if let Some(child) = held::<N>(tree, cursor, ctx, row, depth_at(j), writes)? {
+            if let Some(child) = reader.held(j, row)? {
                 found = Some((j, child));
                 break;
             }
@@ -263,7 +351,62 @@ pub fn reach<N: HydrateNode + RecordCells>(tree: &mut TreeArena, cursor: &mut Tr
         let Some((j, child)) = found else { return Ok(None) };
         (i, at) = (j, child);
     }
-    Ok(Some(at))
+    let arena = reader.tree().arena();
+    Ok(Some(Cell::Child { kind: arena.header_kind(at, arena.kind_bits())?, at, link: None, changed: crate::slot::ChangedEdges::default() }))
+}
+
+/// The record of the node at `row`: reached from the root through the cells
+/// that name its ancestors, or held by its tree where no cell names it. When
+/// `writes`, a record no read has written yet is written on the way, the
+/// node's own `depth` levels down and each ancestor's one, and the cell that
+/// names it rewritten to; else such a node answers `None`. `None` too for a
+/// node with no record: a leaf, a unit or an `ERROR` node. A tree whose rows
+/// are all written finds the path by its rows, and moves the cursor only to
+/// write.
+///
+/// # Errors
+///
+/// What a hydration or the arena refuses.
+pub fn reach<N: HydrateNode + RecordCells>(tree: &mut TreeArena, cursor: &mut TreeCursor<'_>, ctx: &mut ReadCtx<'_>, row: NodeIndex, depth: Depth, writes: bool) -> Result<Option<Address>, HydrateError> {
+    let spine = match tree.node_rows() {
+        Some(rows) => rows.spine(row),
+        None => spine(cursor, row),
+    };
+    let cell = walk::<N, _>(&mut Writing::<N> { tree, cursor, ctx, last: spine.len() - 1, depth, writes, node: std::marker::PhantomData }, &spine)?;
+    Ok(cell.and_then(record_of_cell))
+}
+
+/// The record a cell names: none for a leaf or a unit, which its holder's
+/// cell holds whole.
+fn record_of_cell(cell: Cell) -> Option<Address> {
+    match cell {
+        Cell::Child { at, .. } => Some(at),
+        _ => None,
+    }
+}
+
+/// The cell that names the node at `row` as the reads so far wrote it (a
+/// record's names its record; a leaf's or a unit's, its holder's, holds it
+/// whole), found by the tree's rows with no cursor and nothing written:
+/// `None` while no read has written a record on its path, for an `ERROR`
+/// node, and while some node of the tree has no row.
+///
+/// # Errors
+///
+/// What the arena refuses.
+pub fn written<N: RecordCells>(tree: &TreeArena, row: NodeIndex) -> Result<Option<Cell>, ArenaError> {
+    let Some(rows) = tree.node_rows() else { return Ok(None) };
+    walk::<N, _>(&mut Written(tree), &rows.spine(row))
+}
+
+/// The record of the node at `row` a read wrote (`written`): none for a
+/// leaf or a unit.
+///
+/// # Errors
+///
+/// What the arena refuses.
+pub fn written_record<N: RecordCells>(tree: &TreeArena, row: NodeIndex) -> Result<Option<Address>, ArenaError> {
+    Ok(written::<N>(tree, row)?.and_then(record_of_cell))
 }
 
 /// The record a parsed cell names, the item `item` of the slot at `word` of
@@ -279,7 +422,7 @@ pub fn read_cell<N: HydrateNode + RecordCells>(tree: &mut TreeArena, cursor: &mu
     if !tree.contains_record(holder) {
         return Err(malformed("record address", holder.0).into());
     }
-    let slot = slots::<N>(tree, holder)?
+    let slot = slots(tree, holder, N::shape)?
         .into_iter()
         .find(|slot| match slot {
             SlotPlaces::One(place) => place.shape.word == word,
@@ -310,7 +453,7 @@ pub fn read_cell<N: HydrateNode + RecordCells>(tree: &mut TreeArena, cursor: &mu
 pub fn deepen<N: HydrateNode + RecordCells>(tree: &mut TreeArena, cursor: &mut TreeCursor<'_>, ctx: &mut ReadCtx<'_>, at: Address, depth: Depth) -> Result<(), HydrateError> {
     let Some(below) = depth.below() else { return Ok(()) };
     let mut places = Vec::new();
-    for slot in slots::<N>(tree, at)? {
+    for slot in slots(tree, at, N::shape)? {
         for n in 0..slot.len() {
             places.push(slot.item(n)?);
         }

@@ -626,7 +626,7 @@ macro_rules! napi_engine {
                 let resolved = render_options(&engine, tree_id.and_then(|id| trees.get(id)), options)?;
                 let table = &resolved;
                 let canonical = $crate::napi_engine::entry_sources(engine.grammar(), trees, |sources| {
-                    let ctx = $crate::prepare::RenderContext { options: table, sources };
+                    let ctx = $crate::prepare::RenderContext::new(table, sources);
                     $render_parts(node, &ctx, None).map(|(_, canonical)| canonical)
                 })
                 .map_err(|e| ::napi::Error::from_reason(format!("render_node failed: {e}")))?;
@@ -831,7 +831,7 @@ macro_rules! napi_engine {
                 with_live_trees(env, |trees| {
                     let table = render_options(engine, tree_id.and_then(|id| trees.get(id)), options)?;
                     let canonical = $crate::napi_engine::entry_sources(engine.grammar(), trees, |sources| {
-                        let ctx = $crate::prepare::RenderContext { options: &table, sources };
+                        let ctx = $crate::prepare::RenderContext::new(&table, sources);
                         ::std::panic::catch_unwind(::std::panic::AssertUnwindSafe(|| render(arena, trees, &ctx)))
                     })
                         .map_err(|payload| ::napi::Error::from_reason($crate::panic_msg(&*payload, "render_built panicked")))?
@@ -1925,20 +1925,20 @@ where
         self.trees.depth_move(coord)
     }
 
-    fn sides(&self, coord: &crate::slot::NodeCoordinate) -> Option<Box<dyn crate::trivia::FramedTrivia>> {
-        self.trees.sides(coord)
+    fn sides(&self, coord: &crate::slot::NodeCoordinate, lent: crate::render::Lent<'_>) -> Option<Box<dyn crate::trivia::FramedTrivia>> {
+        self.trees.sides(coord, lent)
     }
 
-    fn frames(&self, coord: &crate::slot::NodeCoordinate) -> crate::trivia::Frames {
-        self.trees.frames(coord)
+    fn frames(&self, coord: &crate::slot::NodeCoordinate, lent: crate::render::Lent<'_>) -> crate::trivia::Frames {
+        self.trees.frames(coord, lent)
     }
 
-    fn slot_layouts(&self, coord: &crate::slot::NodeCoordinate) -> Vec<crate::layout::SlotLayout> {
-        crate::render::SourceTable::slot_layouts(self.trees, coord)
+    fn slot_layouts(&self, coord: &crate::slot::NodeCoordinate, lent: crate::render::Lent<'_>) -> Vec<crate::layout::SlotLayout> {
+        crate::render::SourceTable::slot_layouts(self.trees, coord, lent)
     }
 
-    fn separator_before(&self, coord: &crate::slot::NodeCoordinate) -> Option<crate::types::KindId> {
-        crate::render::SourceTable::separator_before(self.trees, coord)
+    fn separator_before(&self, coord: &crate::slot::NodeCoordinate, lent: crate::render::Lent<'_>) -> Option<crate::types::KindId> {
+        crate::render::SourceTable::separator_before(self.trees, coord, lent)
     }
 
     fn framed_span(&self, coord: &crate::slot::NodeCoordinate) -> crate::types::Span {
@@ -1957,6 +1957,10 @@ where
         self.trees.seat_through(coord, wrappers, seat)
     }
 
+    fn row_coordinate(&self, tree: crate::types::TreeId, index: crate::types::NodeIndex) -> Option<crate::slot::NodeCoordinate> {
+        crate::render::SourceTable::row_coordinate(self.trees, tree, index)
+    }
+
     fn read_node(&self, tree: crate::types::TreeId, index: crate::types::NodeIndex, read: &mut dyn FnMut(&mut tree_sitter::TreeCursor<'_>, &mut crate::read::ReadCtx<'_>)) -> bool {
         crate::render::SourceTable::read_node(self.trees, tree, index, read)
     }
@@ -1972,7 +1976,7 @@ where
             .ok_or(RenderError::Record(crate::arena::ArenaError::Unwritable("a trivia entry's store is another grammar's")))?;
         let built = store.built();
         let arena = built.readable().map_err(RenderError::Record)?;
-        crate::arena::render_record_entry(self.grammar, arena, record, store, self.trees, &crate::prepare::RenderContext { options, sources: self }, w)
+        crate::arena::render_record_entry(self.grammar, arena, record, store, self.trees, &crate::prepare::RenderContext::new(options, self), w)
     }
 }
 

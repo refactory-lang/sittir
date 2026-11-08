@@ -107,6 +107,7 @@ export interface LayoutWork {
 	readonly recordNodes: number;
 	readonly recordsRendered: number;
 	readonly gapItems: number;
+	readonly treeReads: number;
 }
 
 export interface BaselineRun {

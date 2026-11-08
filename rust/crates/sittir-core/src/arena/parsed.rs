@@ -62,7 +62,7 @@ pub trait RecordGrammar: EngineGrammar {
     /// # Errors
     ///
     /// What the record's prepare or render refuses.
-    fn render_record(self, root: CellAt, trees: &mut dyn RecordTrees, built: &dyn ArenaRead, store: &TriviaStore<Self::Trivia>, ctx: &RenderContext<'_>) -> Result<String, RenderError>;
+    fn render_record(self, root: CellAt, trees: &mut dyn RecordTrees, built: &dyn ArenaRead, store: &TriviaStore<Self::Trivia>, ctx: &RenderContext<'_>, recording: Option<Recording<'_>>) -> Result<String, RenderError>;
 
     /// Writes the built record `root` names into `w` as a trivia entry in
     /// the side that holds it: prepared into a fresh overlay of its own over
@@ -88,6 +88,66 @@ pub trait RecordGrammar: EngineGrammar {
     fn slot_word(kind: KindId, key: &str) -> Option<u32>;
 }
 
+/// A recording render of a parsed record (`RecordGrammar::render_record`),
+/// as the reader's render records the node a read gives it
+/// (`EngineGrammar::render_read`): the nodes it renders from their
+/// templates, and what it records what it writes into. It writes no text.
+pub struct Recording<'b> {
+    pub templates: super::Templates,
+    pub baseline: &'b mut crate::baseline::Baseline,
+}
+
+impl<'b> Recording<'b> {
+    /// What a render renders from its templates and records into: none of
+    /// either for a render that records nothing.
+    #[must_use]
+    pub fn parts(recording: Option<Self>) -> (Option<super::Templates>, Option<&'b mut crate::baseline::Baseline>) {
+        recording.map_or((None, None), |Self { templates, baseline }| (Some(templates), Some(baseline)))
+    }
+}
+
+/// The record a recording render renders (`render_record_read`): the node at
+/// `index` of tree `tree`, from its templates `depth` levels down, over the
+/// parsed trees' arenas `arenas`, which another render lent and which hold
+/// every row and record of the tree.
+#[derive(Clone, Copy)]
+pub struct RecordRead<'a> {
+    pub tree: crate::types::TreeId,
+    pub index: NodeIndex,
+    pub depth: Depth,
+    pub arenas: &'a dyn super::RecordArenas,
+}
+
+/// Renders the node `read` names from its templates, read only, as the
+/// reader's render renders the node a read `depth` levels down gives it,
+/// under `render`, recording into `baseline` (`Lookups::recorded`): from the
+/// cell the tree's rows reach for it (`written`), its record or, for a leaf
+/// or a unit, its holder's cell, its sides from the store `store`. A node no
+/// cell names in a tree read whole is one the records keep no value of (a
+/// token, a pinned slot's value): its holder's template writes it, so it
+/// records nothing of its own, and its runs are measured in its holder's
+/// region (`Lookups::baseline_gap`).
+///
+/// # Errors
+///
+/// What the render refuses, naming the kinds it names.
+pub fn render_record_read<G: RecordGrammar, N: RecordCells>(grammar: G, read: RecordRead<'_>, store: &TriviaStore<G::Trivia>, render: &RenderContext<'_>, baseline: &mut crate::baseline::Baseline) -> Result<(), String> {
+    let RecordRead { tree, index, depth, arenas } = read;
+    let describe = |error: super::ArenaError| match error {
+        super::ArenaError::ReadOnly { index, kind } => format!("a render over arenas lent read-only met node {} ({}), which has no record to read", index.0, grammar.kind_name(kind)),
+        error => error.to_string(),
+    };
+    let arena = arenas.tree(tree).ok_or_else(|| format!("no arena of tree {} was lent", tree.0))?;
+    let Some(cell) = super::written::<N>(arena, index).map_err(describe)? else { return Ok(()) };
+    let root = CellAt { cell, tree: Some(tree), site: None };
+    let recording = Recording { templates: super::Templates { tree, root: index, depth }, baseline };
+    match grammar.render_record(root, &mut super::ReadArenas(arenas), &Arena::new(), store, render, Some(recording)) {
+        Ok(_) => Ok(()),
+        Err(RenderError::Record(error)) => Err(describe(error)),
+        Err(error) => Err(error.to_string()),
+    }
+}
+
 impl<G: EngineGrammar> ParsedTree<G> {
     /// The record of the node at `index`: the one a read wrote, else the
     /// one its direct hydration `depth` levels down writes now, with the
@@ -103,6 +163,9 @@ impl<G: EngineGrammar> ParsedTree<G> {
     pub fn read_record<N: HydrateNode + RecordCells>(&self, index: NodeIndex, depth: Depth) -> Result<Option<Address>, String> {
         if self.meet_error(index)? {
             return Ok(None);
+        }
+        if let Some(at) = self.written::<N>(index)? {
+            return Ok(Some(at));
         }
         self.with_reads(|tree, cursor, ctx| super::reach::<N>(tree, cursor, ctx, index, depth, true))
     }
@@ -141,7 +204,16 @@ impl<G: EngineGrammar> ParsedTree<G> {
     /// The record of the node at `index` a read wrote, or `None` while none has.
     #[must_use]
     pub fn written_record<N: HydrateNode + RecordCells>(&self, index: NodeIndex) -> Option<Address> {
+        if self.tree_arena().node_rows().is_some() {
+            return self.written::<N>(index).ok().flatten();
+        }
         self.with_reads(|tree, cursor, ctx| super::reach::<N>(tree, cursor, ctx, index, Depth::ONE, false)).ok().flatten()
+    }
+
+    /// The record of the node at `index` a read wrote, found by the tree's
+    /// rows once it holds every one (`written`).
+    fn written<N: RecordCells>(&self, index: NodeIndex) -> Result<Option<Address>, String> {
+        super::reach::written_record::<N>(&self.tree_arena(), index).map_err(|error| error.to_string())
     }
 
     /// What a view of the parsed record at `at` names it by, read without
@@ -266,8 +338,8 @@ impl<G: RecordGrammar> ParsedTree<G> {
         options: &ResolvedOptions,
         sources: &dyn SourceTable,
     ) -> Result<String, RenderError> {
-        let ctx = RenderContext { options, sources };
+        let ctx = RenderContext::new(options, sources);
         let mut arenas = HeldArenas::of([(self.tree_id(), self.tree_arena())]);
-        self.grammar().render_record(root, &mut arenas, &Arena::new(), self.store(), &ctx)
+        self.grammar().render_record(root, &mut arenas, &Arena::new(), self.store(), &ctx, None)
     }
 }

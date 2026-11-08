@@ -6,13 +6,35 @@
 
 use crate::options::{EdgeArm, Edges, ResolvedOptions, Side};
 use crate::types::{KindId, SiteId};
-use crate::render::{CoordinateError, RenderError, SourceTable};
+use crate::render::{CoordinateError, Lent, RenderError, SourceTable};
 use crate::slot::{CoordinateEdges, NodeCoordinate, SeamArm, SlotValue};
 
 /// Everything a render reads that is not the node itself.
 pub struct RenderContext<'a> {
     pub options: &'a ResolvedOptions,
     pub sources: &'a dyn SourceTable,
+    /// The arenas the render holds, lent to each lookup it makes through
+    /// `sources` that measures (`Lent`).
+    pub lent: Lent<'a>,
+}
+
+impl<'a> RenderContext<'a> {
+    /// The context of a render under `options` through `sources` that holds
+    /// no arena.
+    #[must_use]
+    pub fn new(options: &'a ResolvedOptions, sources: &'a dyn SourceTable) -> Self {
+        Self { options, sources, lent: Lent::NONE }
+    }
+
+    /// This context, lending `arenas`, which the render holds.
+    #[cfg(feature = "arena")]
+    #[must_use]
+    pub fn lending<'b>(&self, arenas: &'b dyn crate::arena::RecordArenas) -> RenderContext<'b>
+    where
+        'a: 'b,
+    {
+        RenderContext { options: self.options, sources: self.sources, lent: Lent::of(arenas) }
+    }
 }
 
 mod target;
@@ -560,7 +582,7 @@ impl<T: Prepare, const ADJACENT: bool> Prepare for SlotValue<T, ADJACENT> {
         match self {
             SlotValue::Node(t) => t.source_separator(ctx),
             SlotValue::Coord(coord) if coord.writes.as_ref().is_some_and(|writes| writes.changed.leading) => None,
-            SlotValue::Coord(coord) => ctx.sources.separator_before(coord),
+            SlotValue::Coord(coord) => ctx.sources.separator_before(coord, ctx.lent),
         }
     }
 }
@@ -747,7 +769,7 @@ mod tests {
     fn before_flank(first: &NodeCoordinate, source: &str) -> Option<KindId> {
         let sources = Sources(HashMap::from([(crate::types::TreeId(3), Arc::from(source))]));
         let options = ResolvedOptions::default();
-        let ctx = RenderContext { options: &options, sources: &sources };
+        let ctx = RenderContext::new(&options, &sources);
         root_flanks(Some(super::EdgeItem::Coord(std::borrow::Cow::Borrowed(first))), None, crate::layout_kinds::Flanks::default(), &[TIGHT, NEWLINE], &[TIGHT, NEWLINE], &TABLE, &ctx)
             .before
             .map(|edge| edge.arm)
@@ -776,7 +798,7 @@ mod tests {
     fn trailing(last: Option<KindId>, rebuilt: bool, default: u8) -> u8 {
         let sources = ListTrees(last);
         let options = ResolvedOptions::default();
-        let ctx = RenderContext { options: &options, sources: &sources };
+        let ctx = RenderContext::new(&options, &sources);
         let source = rebuilt.then(|| coordinate(2, 7));
         super::source_trailing_delimiter(source.as_ref(), crate::types::KindId(1), &[COMMA], crate::types::Delimiter(default), &ctx).get()
     }

@@ -366,13 +366,12 @@ impl<'t> Nodes<'t> for TreeNodes<'t> {
 /// Navigation over the rows a parsed tree's arena keeps for its nodes
 /// (`TreeArena::node_rows`), with no tree: each node's facts read from its
 /// row, its children by stepping from one subtree end to the next, and its
-/// parent from an index of every node's parent, made from the subtree ends
-/// on the first `parent`.
+/// parent from the rows' index of every node's parent.
 #[cfg(feature = "arena")]
+#[derive(Clone, Copy)]
 pub struct RecordNodes<'t> {
     rows: &'t crate::arena::NodeRows,
     text: &'t str,
-    parents: Option<Vec<u32>>,
 }
 
 #[cfg(feature = "arena")]
@@ -381,31 +380,19 @@ impl<'t> RecordNodes<'t> {
     /// `None` while some node of the tree has no row.
     #[must_use]
     pub fn new(tree: &'t crate::arena::TreeArena, text: &'t str) -> Option<Self> {
-        tree.node_rows().map(|rows| Self { rows, text, parents: None })
+        tree.node_rows().map(|rows| Self::over(rows, text))
+    }
+
+    /// Navigation over `rows`, every node's, whose bytes index `text`.
+    #[must_use]
+    pub fn over(rows: &'t crate::arena::NodeRows, text: &'t str) -> Self {
+        Self { rows, text }
     }
 
     /// Every node of the tree, in preorder: the rows in index order.
     pub fn preorder(&self) -> impl Iterator<Item = Kid> + '_ {
         (0..self.rows.len()).map(|index| self.rows.kid(NodeIndex(index)))
     }
-}
-
-/// Each node's parent by its index, the root's 0: one pass in index order,
-/// holding the nodes whose subtrees are still open.
-#[cfg(feature = "arena")]
-fn parents_of(rows: &crate::arena::NodeRows) -> Vec<u32> {
-    let mut parents = vec![0; rows.len() as usize];
-    let mut open: Vec<(u32, NodeIndex)> = Vec::new();
-    for index in 0..rows.len() {
-        while open.last().is_some_and(|&(_, end)| end.0 <= index) {
-            open.pop();
-        }
-        if let Some(&(parent, _)) = open.last() {
-            parents[index as usize] = parent;
-        }
-        open.push((index, rows.subtree_end(NodeIndex(index))));
-    }
-    parents
 }
 
 #[cfg(feature = "arena")]
@@ -431,9 +418,7 @@ impl<'t> Nodes<'t> for RecordNodes<'t> {
     }
 
     fn parent(&mut self, index: NodeIndex) -> Option<NodeIndex> {
-        let rows = self.rows;
-        let parents = self.parents.get_or_insert_with(|| parents_of(rows));
-        (index != NodeIndex::ROOT).then(|| NodeIndex(parents[index.0 as usize]))
+        self.rows.parent(index)
     }
 
     fn missing(&mut self, index: NodeIndex) -> bool {
@@ -442,5 +427,108 @@ impl<'t> Nodes<'t> for RecordNodes<'t> {
 
     fn holds_error(&mut self, index: NodeIndex) -> bool {
         self.rows.holds_error(index)
+    }
+
+    fn next(&mut self, index: NodeIndex) -> Option<Kid> {
+        let parent = self.rows.parent(index)?;
+        let at = index + self.rows.kid(index).count;
+        (at < self.rows.subtree_end(parent)).then(|| self.rows.kid(at))
+    }
+}
+
+/// Navigation of one parse for one call: over its rows once every node has
+/// one (`RecordNodes`), else over tree-sitter's tree (`TreeNodes`).
+pub enum Navigation<'t> {
+    Tree(TreeNodes<'t>),
+    #[cfg(feature = "arena")]
+    Records(RecordNodes<'t>),
+}
+
+impl<'t> Navigation<'t> {
+    /// Navigation of the region `nodes`, a node's subtree
+    /// (`TreeNodes::region`); rows navigate any region alike.
+    #[must_use]
+    pub fn region(&mut self, nodes: Range<NodeIndex>) -> Self {
+        match self {
+            Self::Tree(tree) => Self::Tree(tree.region(nodes)),
+            #[cfg(feature = "arena")]
+            Self::Records(records) => Self::Records(*records),
+        }
+    }
+
+    /// Navigation of what this one navigates, leaving this one where it is
+    /// (`TreeNodes::copy`).
+    #[must_use]
+    pub fn copy(&mut self) -> Self {
+        match self {
+            Self::Tree(tree) => Self::Tree(tree.copy()),
+            #[cfg(feature = "arena")]
+            Self::Records(records) => Self::Records(*records),
+        }
+    }
+
+    /// The tree's cursor, standing on the node at `index`, for a reader
+    /// (`TreeNodes::reader`); `None` for navigation over rows, which holds
+    /// no tree.
+    pub fn reader(&mut self, index: NodeIndex) -> Option<&mut tree_sitter::TreeCursor<'t>> {
+        match self {
+            Self::Tree(tree) => Some(tree.reader(index)),
+            #[cfg(feature = "arena")]
+            Self::Records(_) => None,
+        }
+    }
+
+    fn nodes(&mut self) -> &mut dyn Nodes<'t> {
+        match self {
+            Self::Tree(tree) => tree,
+            #[cfg(feature = "arena")]
+            Self::Records(records) => records,
+        }
+    }
+}
+
+impl<'t> Nodes<'t> for Navigation<'t> {
+    fn text(&self) -> &'t str {
+        match self {
+            Self::Tree(tree) => tree.text(),
+            #[cfg(feature = "arena")]
+            Self::Records(records) => records.text(),
+        }
+    }
+
+    fn kid(&mut self, index: NodeIndex) -> Kid {
+        self.nodes().kid(index)
+    }
+
+    fn kids(&mut self, index: NodeIndex) -> Arc<[Kid]> {
+        self.nodes().kids(index)
+    }
+
+    fn parent(&mut self, index: NodeIndex) -> Option<NodeIndex> {
+        self.nodes().parent(index)
+    }
+
+    fn missing(&mut self, index: NodeIndex) -> bool {
+        self.nodes().missing(index)
+    }
+
+    fn holds_error(&mut self, index: NodeIndex) -> bool {
+        self.nodes().holds_error(index)
+    }
+
+    fn walk(&mut self, from: NodeIndex, visit: &mut dyn FnMut(Step, &Kid) -> Visit) {
+        self.nodes().walk(from, visit);
+    }
+
+    fn child_past(&mut self, index: NodeIndex, byte: u32) -> Option<Kid> {
+        self.nodes().child_past(index, byte)
+    }
+
+    fn next(&mut self, index: NodeIndex) -> Option<Kid> {
+        self.nodes().next(index)
+    }
+
+    fn previous(&mut self, index: NodeIndex) -> Option<Kid> {
+        self.nodes().previous(index)
     }
 }

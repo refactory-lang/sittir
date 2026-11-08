@@ -246,20 +246,32 @@ impl EngineGrammar for ${v.Name}Grammar {
         render_node_parts(sittir_core::SlotValue::Node(node), render, Some(baseline)).map(|_| ()).map_err(|error| error.to_string())
     }
 
-    fn slot_routes(self, cursor: &mut tree_sitter::TreeCursor<'_>) -> Option<sittir_core::read::Routed> {
-        <AnyNode as sittir_core::read::ReadNode>::routes(cursor)
+    fn slot_routes(self, nodes: &mut dyn sittir_core::nodes::Nodes<'_>, at: &sittir_core::nodes::Kid) -> Option<sittir_core::read::Routed> {
+        <AnyNode as sittir_core::read::ReadNode>::routes(nodes, at)
     }
 
     fn router(self, grammar: sittir_core::types::KindId, display: sittir_core::types::KindId) -> Option<sittir_core::read::Router> {
         <AnyNode as sittir_core::read::ReadNode>::router(grammar, display)
     }
 
-    fn unit_id(self, cursor: &mut tree_sitter::TreeCursor<'_>) -> Option<sittir_core::types::KindId> {
-        <AnyNode as sittir_core::read::ReadNode>::unit_id(cursor)
+    fn unit_id(self, nodes: &mut dyn sittir_core::nodes::Nodes<'_>, at: &sittir_core::nodes::Kid) -> Option<sittir_core::types::KindId> {
+        <AnyNode as sittir_core::read::ReadNode>::unit_id(nodes, at)
     }
 
-    fn delimiter(self, cursor: &mut tree_sitter::TreeCursor<'_>) -> Option<sittir_core::types::Delimiter> {
-        <AnyNode as sittir_core::read::ReadNode>::delimiter(cursor)
+    fn delimiter(self, nodes: &mut dyn sittir_core::nodes::Nodes<'_>, at: &sittir_core::nodes::Kid) -> Option<sittir_core::types::Delimiter> {
+        <AnyNode as sittir_core::read::ReadNode>::delimiter(nodes, at)
+    }
+
+    sittir_core::records_codec! {
+        fn render_record_read(
+            self,
+            read: sittir_core::arena::RecordRead<'_>,
+            store: &sittir_core::trivia_store::TriviaStore<Self::Trivia>,
+            render: &sittir_core::prepare::RenderContext<'_>,
+            baseline: &mut sittir_core::baseline::Baseline,
+        ) -> Option<std::result::Result<(), String>> {
+            Some(sittir_core::arena::render_record_read::<Self, AnyNode>(self, read, store, render, baseline))
+        }
     }
 }
 
@@ -272,8 +284,9 @@ sittir_core::records_codec! {
             built: &dyn sittir_core::arena::ArenaRead,
             store: &sittir_core::trivia_store::TriviaStore<Self::Trivia>,
             ctx: &sittir_core::prepare::RenderContext<'_>,
+            recording: Option<sittir_core::arena::Recording<'_>>,
         ) -> std::result::Result<String, sittir_core::render::RenderError> {
-            render::node::render_record(root, trees, built, store, ctx)
+            render::node::render_record(root, trees, built, store, ctx, recording)
         }
 
         fn render_entry(
