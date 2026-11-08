@@ -290,6 +290,30 @@ pnpm run changeset:publish               # then the @sittir packages
 A release run dispatched with `dry-run` runs every step with a dry-run publish
 in place of each publish.
 
+Every workflow that builds the native targets (CI's `napi-build`, the release
+and the native layout workflow) reads its legs from one table,
+`packages/tools/src/native-targets.ts`: the runner each target builds on, the
+runner that can run what it builds and, for musl, the Alpine image its
+binaries run in. `native-targets.ts [target...]` prints the rows as a job
+matrix.
+
+The native layout workflow (`.github/workflows/native-layout.yml`) installs
+python and rust the way a release ships them, on each target, three ways:
+pnpm's store, npm hoisted and npm nested.
+
+```bash
+pnpm exec tsx packages/tools/src/scripts/native-layouts.ts pack <binaries> <packs>                 # <binaries>/ship: python and rust; <binaries>/skew: rust from another commit
+pnpm exec tsx packages/tools/src/scripts/native-layouts.ts check <packs> <target> [--container <image>]
+```
+
+`pack` needs a binary for every target in `NATIVE_TARGETS`, as napi does.
+`check` fails unless, in each layout, loading python then rust maps one engine
+and one std image, both from python's platform package (`sittir tool
+native-images --mapped <script>` lists what a process mapped); no addon defines
+a `ts_` symbol; tree ids come from one counter, with none kept on `globalThis`;
+and rust built from another commit is refused beside python's engine, naming
+both stamps.
+
 `@sittir/types` publishes one declaration file, bundled by tsdown
 (`packages/types/tsdown.config.ts`), with the `type-fest` types it uses
 inlined, so `type-fest` stays a devDependency. The bundle may take nothing

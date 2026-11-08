@@ -9,6 +9,7 @@ import type { AnyUntypedNode, TriviaEntry } from '@sittir/types';
 import { createEngine } from '@sittir/common';
 import { writeTrivia } from '@sittir/common/utils';
 import { languageByName } from '../src/languages.ts';
+import { treeIdCounter } from '../src/tree-id-counter.ts';
 
 describe('a coordinate names its tree across grammars', () => {
 	it('is refused by an engine of another grammar, naming both, instead of resolved against its own tree', async () => {
@@ -59,17 +60,8 @@ describe('a coordinate names its tree across grammars', () => {
 	});
 
 	it('mints every tree id from one counter, whichever grammar parses, and keeps none on globalThis', async () => {
-		const parsers = await Promise.all(
-			[
-				['python', 'x = 1\n'],
-				['rust', 'fn a() {}\n']
-			].map(async ([grammar, source]) => {
-				const native = (await (await languageByName(grammar!)).load()).createNative();
-				return () => Math.floor(native.parseAndRead(source!).root.$_layout!.at!.$treeHandle / 2 ** 32);
-			})
-		);
-		const ids = Array.from({ length: 50 }, (_, parse) => parsers[parse % parsers.length]!());
-		expect(ids.filter((id, parse) => parse > 0 && id <= ids[parse - 1]!)).toEqual([]);
-		expect((globalThis as { __sittirNextTreeId?: unknown }).__sittirNextTreeId).toBeUndefined();
+		const sources: Readonly<Record<string, string>> = { python: 'x = 1\n', rust: 'fn a() {}\n' };
+		const samples = await Promise.all(Object.entries(sources).map(async ([grammar, source]) => ({ language: await languageByName(grammar), source })));
+		expect(await treeIdCounter(samples)).toEqual({ outOfOrder: [] });
 	});
 });

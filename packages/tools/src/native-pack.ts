@@ -25,6 +25,27 @@ export function shipLinkedCopies(packageDir: string, source: string): string[] {
 	return copies;
 }
 
+export const SAMPLE_SOURCE: Readonly<Record<string, string>> = {
+	python: 'def  f( x ):\n    return x\n',
+	regex: 'a+(b|c)*',
+	rust: 'fn  main( ) { let x = 1; }\n',
+	scm: '(identifier) @name\n',
+	typescript: 'const  x = [1, 2];\n'
+};
+
+export function pack(client: 'npm' | 'pnpm', dir: string, into: string): string {
+	const before = new Set(readdirSync(into));
+	run(client, ['pack', '--pack-destination', into], dir);
+	const tarball = readdirSync(into).find((file) => !before.has(file));
+	if (tarball === undefined) throw new Error(`${client} pack wrote no tarball for ${dir}`);
+	return join(into, tarball);
+}
+
+export function packWorkspacePackage(dir: string, into: string): string {
+	if (!existsSync(join(dir, 'dist'))) throw new Error(`${dir} has no dist; run \`pnpm run build\` first`);
+	return pack('pnpm', dir, into);
+}
+
 export const NATIVE_PACKAGES_DIR = 'npm';
 
 export interface NapiPackage {

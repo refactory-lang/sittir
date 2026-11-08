@@ -1,4 +1,4 @@
-import { existsSync, mkdirSync, mkdtempSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
+import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { basename, join } from 'node:path';
 import {
@@ -17,9 +17,12 @@ import {
 	NATIVE_PACKAGES_DIR,
 	assembleNativePackages,
 	grammarNapiPackage,
+	SAMPLE_SOURCE,
 	nativePackGaps,
 	nativePackageDirs,
 	optionalDependencyGaps,
+	pack,
+	packWorkspacePackage,
 	platformPackGaps,
 	readManifest,
 	unexpectedNativeFiles,
@@ -27,14 +30,6 @@ import {
 	type PlatformPackageManifest
 } from '../native-pack.ts';
 import { packageBin, run } from '../spawn.ts';
-
-const SAMPLE_SOURCE: Readonly<Record<string, string>> = {
-	python: 'def  f( x ):\n    return x\n',
-	regex: 'a+(b|c)*',
-	rust: 'fn  main( ) { let x = 1; }\n',
-	scm: '(identifier) @name\n',
-	typescript: 'const  x = [1, 2];\n'
-};
 
 const SMOKE = `import { createEngine } from '@sittir/common';
 const [name, source] = process.argv.slice(2);
@@ -56,19 +51,6 @@ const TYPES_CHECK_CONFIG = {
 	compilerOptions: { target: 'esnext', module: 'nodenext', strict: true, noEmit: true, skipLibCheck: false, types: [] },
 	files: ['types.ts']
 };
-
-function pack(client: 'npm' | 'pnpm', dir: string, into: string): string {
-	const before = new Set(readdirSync(into));
-	run(client, ['pack', '--pack-destination', into], dir);
-	const tarball = readdirSync(into).find((file) => !before.has(file));
-	if (tarball === undefined) throw new Error(`${client} pack wrote no tarball for ${dir}`);
-	return join(into, tarball);
-}
-
-function packWorkspacePackage(dir: string, into: string): string {
-	if (!existsSync(join(dir, 'dist'))) throw new Error(`${dir} has no dist; run \`pnpm run build\` first`);
-	return pack('pnpm', dir, into);
-}
 
 function unpack(tarball: string, into: string): string {
 	const dir = mkdtempSync(join(into, 'unpacked-'));

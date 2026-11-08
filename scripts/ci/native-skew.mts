@@ -19,12 +19,13 @@
 // so the other version's build would otherwise stay in its output, judged
 // fresh, and every grammar a process loads must carry the same engine build.
 import { spawnSync } from 'node:child_process';
-import { readFileSync, realpathSync, utimesSync, writeFileSync } from 'node:fs';
+import { readFileSync, utimesSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { REPO_ROOT, nativeBinaryName, nativeBindingDir } from '../../packages/codegen/src/grammars.ts';
 import { NATIVE_PROFILE_FLAGS, hostBinaryName, nativeBuildStamp } from '../../packages/codegen/src/scripts/native-binary-freshness.ts';
 import { engineLibraryName, engineStampOf, hostPlatform, platformSuffix } from '../../packages/common/src/native-binding.ts';
+import { engineRefusalGap } from '../../packages/tools/src/native-layouts.ts';
 
 const FIRST = 'regex';
 const SECOND = 'scm';
@@ -67,13 +68,16 @@ function loadBoth(): [string, string] {
 function expectRefused(name: string, built: string, loaded: string): void {
 	const [first, second] = loadBoth();
 	if (first !== 'native') throw new Error(`${name}: ${FIRST} did not load: ${first}`);
-	const prefix =
-		`@sittir/${SECOND}: native/${hostBinaryName(SECOND)} is present and failed to load: ` +
-		`sittir: ${nativeBinaryName(SECOND)} was built against engine ${built} but loaded engine ${loaded} from `;
-	if (!second.startsWith(prefix)) throw new Error(`${name}: expected a refusal starting\n  ${prefix}\ngot\n  ${second}`);
-	const mapped = realpathSync.native(second.slice(prefix.length));
-	const expected = realpathSync.native(join(nativeBindingDir(FIRST), engineLibraryName(platformSuffix(hostPlatform()))));
-	if (mapped !== expected) throw new Error(`${name}: the refusal names ${mapped}, not ${expected}`);
+	const gap = engineRefusalGap(second === 'native' ? undefined : second, {
+		packageName: `@sittir/${SECOND}`,
+		home: 'native/',
+		file: hostBinaryName(SECOND),
+		binaryName: nativeBinaryName(SECOND),
+		built,
+		loaded,
+		engine: join(nativeBindingDir(FIRST), engineLibraryName(platformSuffix(hostPlatform())))
+	});
+	if (gap !== undefined) throw new Error(`${name}: ${gap}`);
 	console.log(`${name}: refused — ${second}`);
 }
 
