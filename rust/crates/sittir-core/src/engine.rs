@@ -451,9 +451,6 @@ pub struct ParsedTree<G: EngineGrammar> {
     /// Each node's routed children, by its index, measured on first use
     /// (`slot_items`).
     items: std::sync::Mutex<crate::heap::CountedMap<NodeIndex, Arc<Option<SlotItems>>>>,
-    /// Each layout run's baseline gap, by its id, measured on its first ask
-    /// (`Lookups::measured_gap`).
-    gaps: std::sync::Mutex<crate::heap::CountedMap<RunId, Option<crate::baseline::Tally>>>,
     /// The heap the values of `records`, `slots` and `items` hold, added as
     /// each is inserted (`count_cached`).
     cached: std::sync::atomic::AtomicUsize,
@@ -685,7 +682,6 @@ impl<G: EngineGrammar> ParsedTree<G> {
             records,
             slots,
             items,
-            gaps,
             cached,
             grown: _,
             work: _,
@@ -696,7 +692,7 @@ impl<G: EngineGrammar> ParsedTree<G> {
             #[cfg(feature = "arena")]
             rows: _,
         } = self;
-        let tables = owned(records).allocation() + owned(slots).allocation() + owned(items).allocation() + owned(gaps).allocation();
+        let tables = owned(records).allocation() + owned(slots).allocation() + owned(items).allocation();
         #[cfg(feature = "arena")]
         let arena = arena.get_mut().map_or(0, |arena| owned(arena).heap_bytes());
         #[cfg(not(feature = "arena"))]
@@ -1525,16 +1521,16 @@ impl<G: EngineGrammar> Lookups<'_, G> {
     }
 
     /// The baseline gap of the run at `at` (`baseline_gap`), measured on its
-    /// first ask and kept by the run's id: `None` where no baseline reaches
-    /// the run or its measure refused.
+    /// first ask and kept with the run in the tree's placement
+    /// (`Placement::keep_gap`): `None` where no baseline reaches the run or
+    /// its measure refused.
     fn measured_gap(&mut self, at: RunId, lent: Lent<'_>) -> Option<crate::baseline::Tally> {
         let tree = self.tree;
-        if let Some(&gap) = tree.gaps.lock().unwrap_or_else(std::sync::PoisonError::into_inner).get(&at) {
+        if let Some(gap) = tree.trivia.gap(at) {
             return gap;
         }
         let gap = self.baseline_gap(tree.trivia.run(at), false, lent).ok().flatten();
-        tree.gaps.lock().unwrap_or_else(std::sync::PoisonError::into_inner).insert(at, gap);
-        tree.grew();
+        tree.trivia.keep_gap(at, gap);
         gap
     }
 
@@ -2348,7 +2344,6 @@ impl<G: EngineGrammar> Engine<G> {
             records: std::sync::Mutex::default(),
             slots: std::sync::Mutex::default(),
             items: std::sync::Mutex::default(),
-            gaps: std::sync::Mutex::default(),
             cached: std::sync::atomic::AtomicUsize::new(0),
             grown: std::sync::atomic::AtomicBool::new(true),
             work: crate::layout::LayoutWorkCounter::default(),
@@ -3235,6 +3230,22 @@ mod tests {
         assert_eq!(tree.trivia.heap_bytes(), tree.trivia.walked_bytes(), "some layout owners placed");
         tree.placed_trivia();
         assert_eq!(tree.trivia.heap_bytes(), tree.trivia.walked_bytes(), "every layout owner placed");
+    }
+
+    #[test]
+    fn a_run_s_baseline_gap_is_kept_with_the_run_in_its_placement() {
+        let (tree, _) = parsed("fn f(a: i32,  b: i32,\n    c: u8) {\n    g(a,  b);\n}\n");
+        tree.placed_trivia();
+        let runs = tree.trivia.runs();
+        assert!(!runs.is_empty(), "the source holds layout runs");
+        assert!(runs.iter().all(|&(id, _)| tree.trivia.gap(id).is_none()), "no gap is kept before it is measured");
+        let gaps: Vec<_> = runs.iter().map(|&(id, _)| tree.lookups().measured_gap(id, crate::render::Lent::NONE)).collect();
+        assert_eq!(runs.iter().map(|&(id, _)| tree.trivia.gap(id)).collect::<Vec<_>>(), gaps.iter().copied().map(Some).collect::<Vec<_>>(), "each measure is kept with its run");
+        assert_eq!(tree.trivia.heap_bytes(), tree.trivia.walked_bytes(), "the kept gaps count in the placement's heap");
+        let before = tree.layout_work();
+        assert_eq!(runs.iter().map(|&(id, _)| tree.lookups().measured_gap(id, crate::render::Lent::NONE)).collect::<Vec<_>>(), gaps, "a kept gap answers again");
+        let after = tree.layout_work();
+        assert_eq!((after.region_nodes, after.records_rendered), (before.region_nodes, before.records_rendered), "a kept gap is not measured again");
     }
 
     #[test]
