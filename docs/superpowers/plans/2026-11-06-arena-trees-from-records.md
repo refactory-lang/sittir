@@ -79,19 +79,24 @@ In flight as its own PR (prototype). Goldens from master, then the pass, with re
 - Modify: `engine.rs`. The `SourceTable` implementations for `ParsedTree`, `ReadTrees` and `WithoutLayout`, plus `cursor_at`, `row_coordinate`, `line_starts_inside_tokens`, `last_list_child`, `edge_child`, `frame_levels` and `Lookups::baseline_gap`. Each reads through a `TreeNodes`.
 - Modify: `trivia_table.rs`. `DepthMembers::of` reads through the interface. In object storage it's still one walk per tree, on first use.
 - Modify: `napi_engine.rs`, the engine's tree functions (`descendants`, `siblings`, `planHolds`, `snapshot`, `text`, `coordinate`, the layout baseline, stored layout, `slotLayouts`, `separatorBefore` and `framedSpan`), plus `ArenaSources`.
-- Modify: `prepare.rs` (`ListTrees`) where it reads a tree.
+- Modify: `engine.rs` (`error_regions`), which walks through the interface and still enters only nodes that hold an error.
+- Modify: `nodes.rs`, `read.rs` (`Child`, `survey`) and the node macros (`sittir-node-macros/src/hydrate.rs`, `expand.rs`). `read::Child` folds into `Kid`, so one struct holds a node's facts and one constructor reads them from tree-sitter.
 - Test: `rust/crates/sittir-core/tests/nodes.rs`.
 
 **Interfaces:**
 - Consumes: Task 2's `Nodes` and `TreeNodes`.
-- Produces: nothing new. After this task, no function outside `nodes.rs` moves a tree-sitter cursor except the reader's hydrate pass.
+- Produces:
+  - `Kid` carries every fact a consumer reads: index, span, descendant count, grammar kind, display kind, field, and whether it is named, an extra, an `ERROR`, `MISSING`, or holds an error. Its `index` has one meaning, numbered from the tree's root.
+  - Facts that follow from others are methods, not stored: an entry (an extra or an `ERROR`), a leaf (no entry, descendant count 1) and a holder of sides (named, no entry, nonzero width). `trivia_table::holds_sides` is that method.
+  - One `TreeNodes` per tree per render call lives in `ReadTrees`, and `Lookups` moves its cursor. Each engine tree function makes one per call.
+  - After this task, no function outside `nodes.rs` moves a tree-sitter cursor except the reader, on a cursor `TreeNodes` lends (`over`). The reader is the hydrate pass, the generated reads, `survey` and `read_units`.
 
 - [ ] **Step 1: Failing tests:**
-  - `no_tree_query_descends_from_the_root_per_call`: rendering the codemod case (one rename, one argument set, one statement inserted, as prototype's render profile) makes at most one root-down move per render call, through the Task 2 counter;
+  - `a_codemod_render_descends_from_the_root_as_often_over_80_functions_as_over_20`: rendering the codemod case (one rename, one argument set, one statement inserted, as prototype's render profile) makes the same number of root-down moves at either size, through the Task 2 counter, and no more than the count this task lands at. That count is a ceiling that only goes down. On master it grows with the root's width (29 at 20 functions, 89 at 80). The moves left are one per engine call JavaScript makes during `$render()`, plus one per native render pass that restarts at the file's start;
   - `line_starts_inside_a_multiline_token_hold`: a typescript template string and a python triple-quoted string spanning lines, with a multi-byte character before each, give the same line starts as today (Review Focus 3).
 - [ ] **Step 2:** Run them. They fail.
 - [ ] **Step 3: Implement.** Logic is unchanged. Only the way each function reaches a node changes.
-- [ ] **Step 4: Run the three-way verification** in both storages, and rerun prototype's render profile cases 2 and 3 locally to confirm the cursor share drops. CI numbers come in Task 7.
+- [ ] **Step 4: Run the three-way verification** in both storages, and rerun prototype's render profile cases 2 and 3 locally to confirm the cursor share drops. Run Task 1's deep-read bench before and after: the fold must not slow the hydrate pass beyond noise. CI numbers come in Task 7.
 - [ ] **Step 5: Commit:** `refactor(core): the source table and tree functions read through the navigation interface`.
 
 ### Task 4: Token spans and node rows in arena records, and the record backer
@@ -105,7 +110,7 @@ In flight as its own PR (prototype). Goldens from master, then the pass, with re
 
 **Interfaces:**
 - Consumes: Task 2's `Nodes` and `Kid`.
-- Produces: `pub(crate) struct RecordNodes<'t>`, built from a `TreeArena`, its token spans and the source. Its `parent` is found from the rows' subtree ends, never with a cursor.
+- Produces: `pub(crate) struct RecordNodes<'t>`, built from a `TreeArena`, its token spans and the source. Its `parent` is found from the rows' subtree ends, never with a cursor. It answers every fact of Task 3's `Kid`. A fact the records already hold (a record's display kind, a slot's field) is read from them. Rows add bytes only for facts the records don't hold.
 
 - [ ] **Step 1: Failing tests:**
   - `record_nodes_match_tree_nodes`: for every node of each fixture tree in all five grammars, the two backers give equal `kid`, `kids` and `parent`. The fixtures include:
@@ -125,6 +130,12 @@ In flight as its own PR (prototype). Goldens from master, then the pass, with re
 **Files:**
 - Modify: `napi_engine.rs` (`ArenaSources`), `arena/view.rs` (`source_root`, `RecordCtx::row_coordinate`) and `arena/prep.rs` (`edited_record`, `RecordPrep::row_coordinate`). In arena storage these read `RecordNodes`. `edited_record` takes the node's existing record and stops re-hydrating.
 - Modify: `trivia_table/place.rs` and `engine.rs` (`Lookups::baseline_gap`). A layout run's baseline gap is measured once, when the run is first placed, and kept with it.
+- Modify: the consumers Task 3 left on a lent cursor. In arena storage they read `RecordNodes`:
+  - `render_read` (baselines);
+  - `slot_routes` (slot layouts, separators, siblings);
+  - `unit_id`, `delimiter` and `Plan::holds` (descendants, `planHolds`);
+  - `read_units`.
+  The generated routers take `RecordNodes::kids` as they take `survey`'s children. Snapshot and `readNode` read the node's existing record.
 - Test: `rust/crates/sittir-core/tests/arena_from_records.rs`.
 
 **Interfaces:**
