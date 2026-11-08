@@ -1,8 +1,8 @@
 import { execFileSync } from 'node:child_process';
-import { copyFileSync, mkdtempSync, readdirSync } from 'node:fs';
+import { copyFileSync, mkdtempSync, readdirSync, realpathSync, writeFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { tmpdir } from 'node:os';
-import { join } from 'node:path';
+import { dirname, join } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { describe, expect, it } from 'vitest';
 import {
@@ -16,7 +16,7 @@ import {
 } from '@sittir/codegen/grammars';
 import { LOADED_ENGINE, engineLibraryName, engineStampOf, hostPlatform, isStdLibrary, platformSuffix } from '@sittir/common/engine';
 import { languageByName } from '../src/languages.ts';
-import { imageSymbols } from '../src/native-images.ts';
+import { imageSymbols, mappedImages } from '../src/native-images.ts';
 
 const ENGINE = engineLibraryName(platformSuffix(hostPlatform()));
 const ENGINE_LOADED_STATIC = /13sittir_engine5stamp6LOADED/;
@@ -166,5 +166,21 @@ describe('a grammar backend that loads its binding', () => {
 			engineStamp(): { stamp: string; path?: string };
 		};
 		expect((globalThis as Record<symbol, unknown>)[LOADED_ENGINE]).toEqual(native.engineStamp());
+	});
+});
+
+describe('a process that loads two grammar bindings', () => {
+	it("maps one engine and one std image, from the first binding's folder", () => {
+		const [first, second] = ['python', 'rust'] as const;
+		const loaders = [first, second].map((grammar) => join(nativeBindingDir(grammar), NATIVE_LOADER));
+		const script = join(mkdtempSync(join(tmpdir(), 'sittir-mapped-')), 'load.mjs');
+		writeFileSync(script, `import { createRequire } from 'node:module';\nconst require = createRequire(import.meta.url);\nfor (const loader of ${JSON.stringify(loaders)}) require(loader);\n`);
+		const mapped = mappedImages(script);
+		const folders = (kind: string) => mapped.filter((entry) => entry.kind === kind).map((entry) => dirname(realpathSync.native(entry.image)));
+		const folder = (grammar: GrammarName) => realpathSync.native(nativeBindingDir(grammar));
+		expect(folders('engine')).toEqual([folder(first)]);
+		expect(folders('std')).toEqual([folder(first)]);
+		expect(folders('addon')).toEqual([folder(first), folder(second)]);
+		expect(mapped.find((entry) => entry.kind === 'engine')?.stamp).toBe(engineStampOf(join(nativeBindingDir(first), ENGINE)));
 	});
 });

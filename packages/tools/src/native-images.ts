@@ -1,7 +1,10 @@
 import { execFileSync } from 'node:child_process';
 import { closeSync, openSync, readSync } from 'node:fs';
-import { engineStampOf } from '@sittir/common/engine';
+import { win32 } from 'node:path';
+import { pathToFileURL } from 'node:url';
+import { engineLibraryName, engineStampOf, hostPlatform, isStdLibrary, platformSuffix } from '@sittir/common/engine';
 import { type LlvmTool, load } from './codegen-surface.ts';
+import { run as runCommand } from './spawn.ts';
 
 export type ImageFormat = 'elf' | 'mach-o' | 'pe';
 
@@ -18,7 +21,18 @@ export interface ImageQuery {
 
 export interface NativeImagesOptions extends ImageQuery {
 	readonly images: readonly string[];
+	readonly mapped?: string;
 }
+
+export type MappedKind = 'addon' | 'engine' | 'std';
+
+export interface MappedImage {
+	readonly image: string;
+	readonly kind: MappedKind;
+	readonly stamp?: string;
+}
+
+export type NodeRunner = (args: readonly string[]) => string;
 
 export interface ImageSymbols {
 	readonly image: string;
@@ -141,7 +155,30 @@ export async function imageSymbols(image: string, query: ImageQuery): Promise<Im
 	return { image, format, ...(query.stamp === true ? { stamp: engineStampOf(image) } : {}), ...lists };
 }
 
+export function nativeImagesMapped(sharedObjects: readonly string[], suffix: string): MappedImage[] {
+	const engine = engineLibraryName(suffix);
+	return sharedObjects.flatMap((image): MappedImage[] => {
+		const file = win32.basename(image);
+		if (file === engine) return [{ image, kind: 'engine' }];
+		if (isStdLibrary(file)) return [{ image, kind: 'std' }];
+		return file.endsWith('.node') ? [{ image, kind: 'addon' }] : [];
+	});
+}
+
+const SHARED_OBJECTS = 'console.log(JSON.stringify(process.report.getReport().sharedObjects))';
+
+const hostNode: NodeRunner = (args) => runCommand(process.execPath, args, process.cwd(), false);
+
+export function mappedImages(script: string, node: NodeRunner = hostNode, suffix = platformSuffix(hostPlatform())): MappedImage[] {
+	const printed = node(['--import', pathToFileURL(script).href, '--eval', SHARED_OBJECTS]).trim().split('\n').at(-1)!;
+	return nativeImagesMapped(JSON.parse(printed) as string[], suffix).map((entry) => (entry.kind === 'engine' ? { ...entry, stamp: engineStampOf(entry.image) } : entry));
+}
+
 export async function run(opts: NativeImagesOptions): Promise<number> {
+	if (opts.mapped !== undefined) {
+		console.log(JSON.stringify(mappedImages(opts.mapped), null, 2));
+		return 0;
+	}
 	const reports: ImageSymbols[] = [];
 	for (const image of opts.images) reports.push(await imageSymbols(image, opts));
 	console.log(JSON.stringify(reports, null, 2));

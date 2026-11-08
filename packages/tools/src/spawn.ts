@@ -3,8 +3,8 @@ import { readFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { dirname, join } from 'node:path';
 
-export function run(command: string, args: readonly string[], cwd: string): string {
-	const child = spawnSync(command, args, { cwd, encoding: 'utf-8', shell: process.platform === 'win32' });
+export function run(command: string, args: readonly string[], cwd: string, shell = process.platform === 'win32'): string {
+	const child = spawnSync(command, args, { cwd, encoding: 'utf-8', shell, maxBuffer: 1 << 28 });
 	if (child.status !== 0) {
 		throw new Error(`${command} ${args.join(' ')} failed in ${cwd}:\n${child.stdout}${child.stderr}`);
 	}

@@ -2,7 +2,7 @@ import { mkdtempSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { describe, expect, it, vi } from 'vitest';
-import { coffBoundAtLoad, coffExports, coffImports, elfDataRelocations, imageFormat, machoBinds, nmSymbols, run, withPrefix } from '../native-images.ts';
+import { coffBoundAtLoad, coffExports, coffImports, elfDataRelocations, imageFormat, machoBinds, nativeImagesMapped, nmSymbols, run, withPrefix } from '../native-images.ts';
 
 const bytes = (...values: number[]): Uint8Array => Uint8Array.from([...values, 0, 0, 0, 0]);
 
@@ -122,5 +122,32 @@ describe('--stamp', () => {
 		} finally {
 			log.mockRestore();
 		}
+	});
+});
+
+describe('nativeImagesMapped', () => {
+	it('keeps the engine, std and addon images a process mapped, in the order it mapped them', () => {
+		const mapped = [
+			'/usr/lib/libc.so.6',
+			'/w/node_modules/sittir-python-linux-x64-gnu/sittir-python.linux-x64-gnu.node',
+			'/w/node_modules/sittir-python-linux-x64-gnu/libsittir_engine.so',
+			'/w/node_modules/sittir-python-linux-x64-gnu/libstd-0a1b2c3d4e5f6789.so',
+			'/usr/lib/libstdc++.so.6',
+			'/w/node_modules/sittir-rust-linux-x64-gnu/sittir-rust.linux-x64-gnu.node'
+		];
+		expect(nativeImagesMapped(mapped, 'linux-x64-gnu')).toEqual([
+			{ image: mapped[1], kind: 'addon' },
+			{ image: mapped[2], kind: 'engine' },
+			{ image: mapped[3], kind: 'std' },
+			{ image: mapped[5], kind: 'addon' }
+		]);
+	});
+
+	it("names the engine by the platform's library name", () => {
+		const mapped = ['C:\\w\\sittir_engine.dll', 'C:\\w\\libsittir_engine.so', 'C:\\w\\std-0a1b2c3d4e5f6789.dll'];
+		expect(nativeImagesMapped(mapped, 'win32-x64-msvc')).toEqual([
+			{ image: mapped[0], kind: 'engine' },
+			{ image: mapped[2], kind: 'std' }
+		]);
 	});
 });

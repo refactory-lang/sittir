@@ -597,14 +597,15 @@ pnpm exec tsx packages/cli/src/cli.ts tool list-kinds [options]
 
 ### `tool native-images`
 
-List the symbols each built native image (ELF, Mach-O or PE) defines, imports and binds at load, or the engine stamp it holds, as JSON
+List the symbols each built native image (ELF, Mach-O or PE) defines, imports and binds at load, the engine stamp it holds, or the native images a process mapped, as JSON
 
 **Arguments**
 
-- `images…` (required) — Image files to read: an addon, the engine library or any shared library
+- `images…` (optional) — Image files to read: an addon, the engine library or any shared library
 
 **Options**
 
+- `--mapped <script>` — Run <script> in a fresh Node process, then list the addon, engine and std images the process mapped, in the order it mapped them, with the engine stamp each engine holds. Takes no images
 - `--defined <prefix>` — List the defined (exported) symbols that start with <prefix>
 - `--imported <prefix>` — List the imported symbols that start with <prefix>
 - `--bound-at-load <prefix>` — List the imported symbols that start with <prefix> and that the loader binds when it maps the image, whatever its binding mode: a Mach-O non-lazy bind, an ELF relocation other than a PLT slot, a PE import that is not delay-loaded
@@ -613,7 +614,7 @@ List the symbols each built native image (ELF, Mach-O or PE) defines, imports an
 **Example**
 
 ```sh
-pnpm exec tsx packages/cli/src/cli.ts tool native-images <images> [options]
+pnpm exec tsx packages/cli/src/cli.ts tool native-images [images] [options]
 ```
 
 ### `tool output-gate`
