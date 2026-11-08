@@ -6,6 +6,7 @@
 //! lends it (`TreeNodes::reader`).
 
 use crate::layout::LayoutWorkCounter;
+use crate::options::Side;
 use crate::tree_sitter;
 use crate::types::{FieldId, KindId, NodeIndex, Span};
 use std::ops::Range;
@@ -143,6 +144,10 @@ pub trait Nodes<'t> {
     fn kid(&mut self, index: NodeIndex) -> Kid;
     /// The children of the node at `index`, in order.
     fn kids(&mut self, index: NodeIndex) -> Arc<[Kid]>;
+    /// The first child of the node at `index` (`Side::Before`) or its last
+    /// (`Side::After`), `None` for a node with no children, found without
+    /// listing them.
+    fn edge(&mut self, index: NodeIndex, side: Side) -> Option<Kid>;
     /// The parent of the node at `index`, `None` for the root.
     fn parent(&mut self, index: NodeIndex) -> Option<NodeIndex>;
     /// Whether the node at `index` is `MISSING`: a token the parser
@@ -200,6 +205,21 @@ pub trait Nodes<'t> {
         let kids = self.kids(parent);
         let at = kids.iter().position(|kid| kid.index == index)?;
         at.checked_sub(1).map(|before| kids[before])
+    }
+}
+
+/// Visits the child at the edge on `side` of `holder`, then the child at
+/// the same edge of that one, level by level down, while each starts
+/// (`Side::Before`) or ends (`Side::After`) where its holder does: one
+/// `Nodes::edge` a level, and no node's children listed.
+pub fn for_each_edge_child(nodes: &mut dyn Nodes<'_>, holder: &Kid, side: Side, visit: &mut dyn FnMut(&Kid)) {
+    let mut holder = *holder;
+    while let Some(child) = nodes.edge(holder.index, side).filter(|child| match side {
+        Side::Before => child.start == holder.start,
+        Side::After => child.end == holder.end,
+    }) {
+        visit(&child);
+        holder = child;
     }
 }
 
@@ -306,6 +326,20 @@ impl<'t> Nodes<'t> for TreeNodes<'t> {
             cursor.goto_parent();
         }
         kids.into()
+    }
+
+    fn edge(&mut self, index: NodeIndex, side: Side) -> Option<Kid> {
+        let cursor = self.reader(index);
+        let moved = match side {
+            Side::Before => cursor.goto_first_child(),
+            Side::After => cursor.goto_last_child(),
+        };
+        if !moved {
+            return None;
+        }
+        let kid = Kid::at(cursor);
+        cursor.goto_parent();
+        Some(kid)
     }
 
     fn parent(&mut self, index: NodeIndex) -> Option<NodeIndex> {
@@ -418,6 +452,24 @@ impl<'t> Nodes<'t> for RecordNodes<'t> {
         kids.into()
     }
 
+    fn edge(&mut self, index: NodeIndex, side: Side) -> Option<Kid> {
+        let end = self.rows.subtree_end(index);
+        let mut at = index + 1;
+        if at >= end {
+            return None;
+        }
+        if side == Side::After {
+            loop {
+                let next = self.rows.subtree_end(at);
+                if next >= end {
+                    break;
+                }
+                at = next;
+            }
+        }
+        Some(self.rows.kid(at))
+    }
+
     fn parent(&mut self, index: NodeIndex) -> Option<NodeIndex> {
         self.rows.parent(index)
     }
@@ -503,6 +555,10 @@ impl<'t> Nodes<'t> for Navigation<'t> {
 
     fn kids(&mut self, index: NodeIndex) -> Arc<[Kid]> {
         self.nodes().kids(index)
+    }
+
+    fn edge(&mut self, index: NodeIndex, side: Side) -> Option<Kid> {
+        self.nodes().edge(index, side)
     }
 
     fn parent(&mut self, index: NodeIndex) -> Option<NodeIndex> {

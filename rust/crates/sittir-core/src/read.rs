@@ -871,6 +871,20 @@ impl<'s> Nodes<'s> for LentCursor<'_, '_, 's> {
         self.at(index, |cursor| survey(cursor).into())
     }
 
+    fn edge(&mut self, index: NodeIndex, side: crate::options::Side) -> Option<Kid> {
+        self.at(index, |cursor| {
+            let moved = match side {
+                crate::options::Side::Before => cursor.goto_first_child(),
+                crate::options::Side::After => cursor.goto_last_child(),
+            };
+            moved.then(|| {
+                let kid = Kid::at(cursor);
+                cursor.goto_parent();
+                kid
+            })
+        })
+    }
+
     fn parent(&mut self, index: NodeIndex) -> Option<NodeIndex> {
         self.at(index, |cursor| cursor.goto_parent().then(|| index_of(cursor)))
     }

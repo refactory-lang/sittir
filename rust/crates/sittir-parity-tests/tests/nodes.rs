@@ -9,7 +9,7 @@
 use sittir_core::engine::EngineGrammar;
 use sittir_core::layout::LayoutWorkCounter;
 use sittir_core::nodes::{Kid, Nodes, Step, TreeNodes, Visit};
-use sittir_core::options::ResolvedOptions;
+use sittir_core::options::{ResolvedOptions, Side};
 use sittir_core::read::{descendant_count, goto, index_of};
 use sittir_core::tree_sitter;
 use sittir_core::types::NodeIndex;
@@ -48,6 +48,8 @@ fn assert_reads_as_the_tree(name: &str, tree: &tree_sitter::Tree, nodes: &mut dy
         let (node, kids) = walked(tree, at);
         assert_eq!(nodes.kid(at), node, "{name}: the node at {index}");
         assert_eq!(&*nodes.kids(at), kids.as_slice(), "{name}: the children of {index}");
+        assert_eq!(nodes.edge(at, Side::Before), kids.first().copied(), "{name}: the first child of {index}");
+        assert_eq!(nodes.edge(at, Side::After), kids.last().copied(), "{name}: the last child of {index}");
         let mut cursor = tree.walk();
         goto(&mut cursor, at);
         let parent = cursor.goto_parent().then(|| index_of(&cursor));
@@ -55,7 +57,7 @@ fn assert_reads_as_the_tree(name: &str, tree: &tree_sitter::Tree, nodes: &mut dy
     }
 }
 
-/// Navigation that answers `kid`, `kids` and `parent` through a
+/// Navigation that answers `kid`, `kids`, `edge` and `parent` through a
 /// `TreeNodes` and takes the interface's defaults for the rest.
 struct Plain<'n, 't>(&'n mut TreeNodes<'t>);
 
@@ -70,6 +72,10 @@ impl<'t> Nodes<'t> for Plain<'_, 't> {
 
     fn kids(&mut self, index: NodeIndex) -> Arc<[Kid]> {
         self.0.kids(index)
+    }
+
+    fn edge(&mut self, index: NodeIndex, side: Side) -> Option<Kid> {
+        self.0.edge(index, side)
     }
 
     fn parent(&mut self, index: NodeIndex) -> Option<NodeIndex> {
