@@ -40,7 +40,7 @@ fn the_members_of_every_subtree_count_as_a_walk_of_it() {
         let mut parser = tree_sitter::Parser::new();
         parser.set_language(&sittir_python::language()).expect("the language");
         let tree = parser.parse(source, None).expect("a parse");
-        let members = DepthMembers::of(&tree, kinds);
+        let members = DepthMembers::of(&mut sittir_core::nodes::TreeNodes::new(&tree, source, &sittir_core::layout::LayoutWorkCounter::default()), kinds);
         let count = sittir_core::read::descendant_count(&tree.root_node());
         assert_eq!(members.walked(), count, "{source:?}: the walk visits every node once");
         for index in 0..count {
@@ -71,13 +71,13 @@ fn a_tree_counts_its_depth_members_from_its_first_depth_move() {
         edges: None,
         writes: None,
     };
-    let table = DepthMembers::of(tree.tree(), sittir_python::render::kind_ids::SURFACE_KINDS).heap_bytes();
+    let table = DepthMembers::of(&mut tree.nodes(), sittir_python::render::kind_ids::SURFACE_KINDS).heap_bytes();
     assert_ne!(table, 0, "the source has depth members");
     assert!(!tree.take_grown(), "nothing grew before a depth move");
-    assert_eq!(tree.depth_move(&coord), 0, "the whole tree opens as many levels as it closes");
+    assert_eq!(tree.seating().depth_move(&coord), 0, "the whole tree opens as many levels as it closes");
     assert!(tree.take_grown(), "the first depth move grows the tree");
     assert_eq!(tree.native_bytes(), parsed + table, "by its depth members");
-    assert_eq!(tree.depth_move(&coord), 0);
+    assert_eq!(tree.seating().depth_move(&coord), 0);
     assert!(!tree.take_grown(), "a later move finds them made");
     assert_eq!(tree.native_bytes(), parsed + table);
 }
@@ -88,7 +88,8 @@ fn rendered_root(tree: &sittir_core::engine::ParsedTree<sittir_python::PythonGra
     let root = tree.tree().root_node();
     let coord = sittir_core::slot::NodeCoordinate::new(tree.tree_id(), NodeIndex::ROOT, NodeIndex::new(sittir_core::read::descendant_count(&root)), sittir_core::types::Span::of(&root));
     let options = sittir_python::render::options::defaults();
-    let ctx = sittir_core::prepare::RenderContext { options: &options, sources: tree };
+    let seating = tree.seating();
+    let ctx = sittir_core::prepare::RenderContext { options: &options, sources: &seating };
     sittir_python::render::render_node_parts(sittir_core::SlotValue::Coord(coord), &ctx, None).expect("a render").1
 }
 

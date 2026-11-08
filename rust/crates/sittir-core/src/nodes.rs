@@ -1,47 +1,93 @@
 //! The navigation interface: a node's facts by its descendant index
 //! (`Kid`), its children in order and its parent, over a tree's source
-//! text. Trivia placement reads a tree through it alone, so one placement
-//! serves every backer.
+//! text. Trivia placement, the source table and the engine's tree functions
+//! read a tree through it, so each of their rules serves every backer. The
+//! reader alone reads tree-sitter's tree itself, on a cursor the tree backer
+//! lends it (`TreeNodes::reader`).
 
+use crate::layout::LayoutWorkCounter;
 use crate::tree_sitter;
-use crate::types::{KindId, NodeIndex, Span};
+use crate::types::{FieldId, KindId, NodeIndex, Span};
 use std::ops::Range;
 use std::sync::Arc;
 
-/// What navigation reads of a node: its descendant index, its bytes, the
-/// nodes under it counting itself, its grammar kind, whether it is named,
-/// whether it is an entry (an extra or an `ERROR`), a leaf (no entry, no
-/// children) or a holder of sides (`trivia_table::holds_sides`).
+/// What navigation reads of a node: its descendant index, numbered from the
+/// tree's root; its bytes; the nodes under it, counting itself; the kind it
+/// has in the grammar and the kind the parser shows it as; the field it
+/// fills in its parent; and whether it is named, an extra or an `ERROR`.
+/// A read takes these of every node it visits; whether a node is `MISSING`
+/// or holds an error only an error search asks (`Nodes::missing`,
+/// `Nodes::holds_error`).
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct Kid {
     pub index: NodeIndex,
     pub start: u32,
     pub end: u32,
     pub count: u32,
-    pub kind: KindId,
+    pub grammar: KindId,
+    pub display: KindId,
+    pub field: Option<FieldId>,
     pub named: bool,
-    pub entry: bool,
-    pub leaf: bool,
-    pub holder: bool,
+    pub extra: bool,
+    pub error: bool,
 }
 
 impl Kid {
-    /// What navigation reads of the tree-sitter node `node` at `index`.
+    /// The node `cursor`, created at the tree's root, stands on.
     #[must_use]
-    pub fn of(node: &tree_sitter::Node<'_>, index: NodeIndex) -> Self {
+    pub fn at(cursor: &tree_sitter::TreeCursor<'_>) -> Self {
+        Self::of(&cursor.node(), crate::read::index_of(cursor), crate::read::field_id(cursor))
+    }
+
+    /// `node`, at `index` and filling `field` in its parent.
+    pub(crate) fn of(node: &tree_sitter::Node<'_>, index: NodeIndex, field: Option<FieldId>) -> Self {
         let Span { start, end } = Span::of(node);
-        let entry = crate::trivia_table::is_entry(node);
         Self {
             index,
             start,
             end,
             count: crate::read::descendant_count(node),
-            kind: crate::read::grammar_id(node),
+            grammar: crate::read::grammar_id(node),
+            display: crate::read::display_id(node),
+            field,
             named: node.is_named(),
-            entry,
-            leaf: !entry && node.child_count() == 0,
-            holder: crate::trivia_table::holds_sides(node),
+            extra: node.is_extra(),
+            error: node.is_error(),
         }
+    }
+
+    /// Whether the node is an entry of a side: an extra, or an `ERROR`
+    /// wherever the parser left it. Trivia, which no slot reads.
+    #[must_use]
+    pub fn entry(&self) -> bool {
+        self.extra || self.error
+    }
+
+    /// Whether the node is a leaf: no entry, and no node under it.
+    #[must_use]
+    pub fn leaf(&self) -> bool {
+        !self.entry() && self.count == 1
+    }
+
+    /// Whether the node holds trivia sides: named, no entry, and with width.
+    /// Width is read from the tree here; a built node's child has the width
+    /// of its rendered text, so a stored automatic semicolon, which renders
+    /// `"\n"`, has width there.
+    #[must_use]
+    pub fn holder(&self) -> bool {
+        self.named && !self.entry() && self.end > self.start
+    }
+
+    /// The node's bytes.
+    #[must_use]
+    pub fn span(&self) -> Span {
+        Span { start: self.start, end: self.end }
+    }
+
+    /// How many bytes the node spans.
+    #[must_use]
+    pub fn width(&self) -> u32 {
+        self.end - self.start
     }
 
     /// Whether the node's bytes hold the byte at `byte`.
@@ -51,8 +97,32 @@ impl Kid {
     }
 }
 
+/// Where a walk is (`Nodes::walk`): at a node it meets, or leaving a node
+/// it entered, once that node's children are walked.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum Step {
+    Meet,
+    Leave,
+}
+
+/// What a walk does next (`Nodes::walk`).
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum Visit {
+    /// At a node it meets: walks the node's children, then leaves it.
+    Enter,
+    /// At a node it meets: passes over the node's children. Leaving a node:
+    /// goes on.
+    Pass,
+    /// Ends the walk.
+    Stop,
+}
+
 /// How navigation finds the nodes of one parse: each node by its descendant
 /// index, the root's being `NodeIndex::ROOT`, and the text their bytes index.
+/// `kid`, `kids` and `parent` answer every question of the tree's shape, and
+/// `missing` and `holds_error` those of its errors; the others answer what
+/// the first three would, and a backer gives them only to answer without
+/// reading every child.
 pub trait Nodes<'t> {
     /// The source text the nodes' bytes index.
     fn text(&self) -> &'t str;
@@ -62,99 +132,158 @@ pub trait Nodes<'t> {
     fn kids(&mut self, index: NodeIndex) -> Arc<[Kid]>;
     /// The parent of the node at `index`, `None` for the root.
     fn parent(&mut self, index: NodeIndex) -> Option<NodeIndex>;
+    /// Whether the node at `index` is `MISSING`: a token the parser
+    /// inserted, with no bytes.
+    fn missing(&mut self, index: NodeIndex) -> bool;
+    /// Whether the node at `index` holds an error in its subtree, itself
+    /// included: an `ERROR` or a `MISSING` node holds one.
+    fn holds_error(&mut self, index: NodeIndex) -> bool;
+
+    /// Walks the subtree of the node at `from` in preorder, telling `visit`
+    /// each node it meets and each node it leaves.
+    fn walk(&mut self, from: NodeIndex, visit: &mut dyn FnMut(Step, &Kid) -> Visit) {
+        let mut entered: Vec<(Kid, Arc<[Kid]>, usize)> = Vec::new();
+        let mut next = Some(self.kid(from));
+        loop {
+            if let Some(kid) = next.take() {
+                match visit(Step::Meet, &kid) {
+                    Visit::Stop => return,
+                    Visit::Enter => {
+                        let kids = self.kids(kid.index);
+                        entered.push((kid, kids, 0));
+                    }
+                    Visit::Pass => {}
+                }
+            }
+            let Some((_, kids, at)) = entered.last_mut() else { return };
+            if let Some(&kid) = kids.get(*at) {
+                *at += 1;
+                next = Some(kid);
+            } else if let Some((kid, ..)) = entered.pop() {
+                if visit(Step::Leave, &kid) == Visit::Stop {
+                    return;
+                }
+            }
+        }
+    }
+
+    /// The first child of the node at `index` that ends past `byte`.
+    fn child_past(&mut self, index: NodeIndex, byte: u32) -> Option<Kid> {
+        self.kids(index).iter().find(|kid| kid.end > byte).copied()
+    }
+
+    /// The node after the node at `index` among its parent's children.
+    fn next(&mut self, index: NodeIndex) -> Option<Kid> {
+        let parent = self.parent(index)?;
+        let kids = self.kids(parent);
+        let at = kids.iter().position(|kid| kid.index == index)?;
+        kids.get(at + 1).copied()
+    }
+
+    /// The node before the node at `index` among its parent's children.
+    fn previous(&mut self, index: NodeIndex) -> Option<Kid> {
+        let parent = self.parent(index)?;
+        let kids = self.kids(parent);
+        let at = kids.iter().position(|kid| kid.index == index)?;
+        at.checked_sub(1).map(|before| kids[before])
+    }
 }
 
-/// Navigation over a tree-sitter tree: a cursor moved from where it last
-/// stood, up to the lowest node that holds the next one and down from there
-/// (`read::goto_from`). A reader lends the cursor it reads with, so
-/// navigation starts where the reader stands; a node the lent cursor cannot
-/// reach, or any node when none is lent, is found with a cursor of the
-/// whole tree, made on the first such move.
-pub struct TreeNodes<'t, 'c> {
+/// Navigation over a tree-sitter tree: one cursor, created at the tree's
+/// root, moved from where it last stood (`read::goto_from`). The root's
+/// facts are read without a move. Its moves count in the
+/// tree's layout work: the levels climbed (`LayoutWork::cursor_climbs`), the
+/// moves down from the root to below its children
+/// (`LayoutWork::root_descents`), and, for navigation of a region, the moves
+/// to a node outside it (`LayoutWork::region_fallbacks`).
+pub struct TreeNodes<'t> {
     tree: &'t tree_sitter::Tree,
     text: &'t str,
-    lent: Option<Lent<'t, 'c>>,
-    own: Option<tree_sitter::TreeCursor<'t>>,
-    climbs: u32,
-    root_descents: u32,
+    work: &'t LayoutWorkCounter,
+    cursor: Option<tree_sitter::TreeCursor<'t>>,
+    region: Option<Range<NodeIndex>>,
 }
 
-/// A reader's cursor, created at the node at `nodes.start`, whose subtree
-/// is `nodes`.
-struct Lent<'t, 'c> {
-    cursor: &'c mut tree_sitter::TreeCursor<'t>,
-    nodes: Range<NodeIndex>,
-}
-
-impl<'t, 'c> TreeNodes<'t, 'c> {
-    /// Navigation over `tree`, parsed from `text`, with no cursor lent.
+impl<'t> TreeNodes<'t> {
+    /// Navigation over `tree`, parsed from `text`, its cursor made on its
+    /// first move, its moves counted in `work`.
     #[must_use]
-    pub fn new(tree: &'t tree_sitter::Tree, text: &'t str) -> Self {
-        Self { tree, text, lent: None, own: None, climbs: 0, root_descents: 0 }
+    pub fn new(tree: &'t tree_sitter::Tree, text: &'t str, work: &'t LayoutWorkCounter) -> Self {
+        Self { tree, text, work, cursor: None, region: None }
     }
 
-    /// Navigation over `tree`, parsed from `text`, that moves `cursor`,
-    /// created at the node at `nodes.start` and standing anywhere in that
-    /// node's subtree `nodes`, for every node of `nodes` but its first's
-    /// parent.
+    /// Navigation of the region `nodes`, a node's subtree, that moves a copy
+    /// of this navigation's cursor from where it stands.
     #[must_use]
-    pub fn over(tree: &'t tree_sitter::Tree, text: &'t str, cursor: &'c mut tree_sitter::TreeCursor<'t>, nodes: Range<NodeIndex>) -> Self {
-        Self { tree, text, lent: Some(Lent { cursor, nodes }), own: None, climbs: 0, root_descents: 0 }
+    pub fn region(&mut self, nodes: Range<NodeIndex>) -> Self {
+        Self { region: Some(nodes), ..self.copy() }
     }
 
-    /// The levels the cursors climbed to reach the nodes they moved to
-    /// (`read::goto_from`), which bound the levels they descended but for
-    /// the moves counted in `root_descents`.
+    /// Navigation of what this one navigates that moves a copy of its
+    /// cursor from where it stands, leaving its own where it is.
     #[must_use]
-    pub fn climbs(&self) -> u32 {
-        self.climbs
-    }
-
-    /// The moves that started down from the node their cursor was created
-    /// at to a node below its children: those whose target no node below
-    /// that one on the cursor's path holds.
-    #[must_use]
-    pub fn root_descents(&self) -> u32 {
-        self.root_descents
-    }
-
-    /// The cursor standing on the node at `index`, the lent one when it
-    /// reaches the node and `lend` allows it, and the index of the node it
-    /// was created at.
-    fn goto(&mut self, index: NodeIndex, lend: bool) -> (&mut tree_sitter::TreeCursor<'t>, NodeIndex) {
+    pub fn copy(&mut self) -> Self {
         let tree = self.tree;
-        let (cursor, top) = match &mut self.lent {
-            Some(lent) if lend && lent.nodes.contains(&index) => (&mut *lent.cursor, lent.nodes.start),
-            _ => (self.own.get_or_insert_with(|| tree.walk()), NodeIndex::ROOT),
-        };
-        let (climbed, from_top) = crate::read::goto_from_noting_top(cursor, top, index);
-        self.climbs += climbed;
-        if from_top && index != top {
+        let cursor = self.cursor.get_or_insert_with(|| tree.walk()).clone();
+        Self { tree, text: self.text, work: self.work, cursor: Some(cursor), region: self.region.clone() }
+    }
+
+    /// The cursor, standing on the node at `index`, for a reader, which
+    /// reads tree-sitter's tree itself and numbers nodes from the root.
+    pub fn reader(&mut self, index: NodeIndex) -> &mut tree_sitter::TreeCursor<'t> {
+        if self.region.as_ref().is_some_and(|region| !region.contains(&index)) {
+            self.work.region_fallbacks(1);
+        }
+        let tree = self.tree;
+        let cursor = self.cursor.get_or_insert_with(|| tree.walk());
+        let moved = crate::read::goto_from_noting_top(cursor, NodeIndex::ROOT, index);
+        self.work.cursor_climbs(moved.climbed);
+        self.work.sibling_steps(moved.stepped);
+        if moved.top && index != NodeIndex::ROOT {
             cursor.goto_parent();
             if crate::read::offset_of(cursor) != 0 {
-                self.root_descents += 1;
+                self.work.root_descents(1);
             }
-            crate::read::goto_from(cursor, top, index);
+            crate::read::goto_from(cursor, NodeIndex::ROOT, index);
         }
-        (cursor, top)
+        cursor
+    }
+
+    /// The tree's node at `index`, the root's read without a move.
+    fn node(&mut self, index: NodeIndex) -> tree_sitter::Node<'t> {
+        if index == NodeIndex::ROOT {
+            return self.tree.root_node();
+        }
+        self.reader(index).node()
     }
 }
 
-impl<'t> Nodes<'t> for TreeNodes<'t, '_> {
+impl<'t> Nodes<'t> for TreeNodes<'t> {
     fn text(&self) -> &'t str {
         self.text
     }
 
     fn kid(&mut self, index: NodeIndex) -> Kid {
-        Kid::of(&self.goto(index, true).0.node(), index)
+        if index == NodeIndex::ROOT {
+            return Kid::of(&self.tree.root_node(), index, None);
+        }
+        Kid::at(self.reader(index))
+    }
+
+    fn missing(&mut self, index: NodeIndex) -> bool {
+        self.node(index).is_missing()
+    }
+
+    fn holds_error(&mut self, index: NodeIndex) -> bool {
+        self.node(index).has_error()
     }
 
     fn kids(&mut self, index: NodeIndex) -> Arc<[Kid]> {
-        let (cursor, top) = self.goto(index, true);
+        let cursor = self.reader(index);
         let mut kids = Vec::new();
         if cursor.goto_first_child() {
             loop {
-                kids.push(Kid::of(&cursor.node(), top + crate::read::offset_of(cursor)));
+                kids.push(Kid::at(cursor));
                 if !cursor.goto_next_sibling() {
                     break;
                 }
@@ -168,8 +297,54 @@ impl<'t> Nodes<'t> for TreeNodes<'t, '_> {
         if index == NodeIndex::ROOT {
             return None;
         }
-        let lend = self.lent.as_ref().is_none_or(|lent| lent.nodes.start != index);
-        let (cursor, top) = self.goto(index, lend);
-        cursor.goto_parent().then(|| top + crate::read::offset_of(cursor))
+        let cursor = self.reader(index);
+        cursor.goto_parent().then(|| crate::read::index_of(cursor))
+    }
+
+    fn walk(&mut self, from: NodeIndex, visit: &mut dyn FnMut(Step, &Kid) -> Visit) {
+        let cursor = self.reader(from);
+        let mut entered: Vec<Kid> = Vec::new();
+        let mut kid = Kid::at(cursor);
+        loop {
+            match visit(Step::Meet, &kid) {
+                Visit::Stop => return,
+                Visit::Enter if cursor.goto_first_child() => {
+                    entered.push(kid);
+                    kid = Kid::at(cursor);
+                    continue;
+                }
+                Visit::Enter => {
+                    if visit(Step::Leave, &kid) == Visit::Stop {
+                        return;
+                    }
+                }
+                Visit::Pass => {}
+            }
+            loop {
+                if entered.is_empty() {
+                    return;
+                }
+                if cursor.goto_next_sibling() {
+                    kid = Kid::at(cursor);
+                    break;
+                }
+                cursor.goto_parent();
+                if let Some(left) = entered.pop() {
+                    if visit(Step::Leave, &left) == Visit::Stop {
+                        return;
+                    }
+                }
+            }
+        }
+    }
+
+    fn child_past(&mut self, index: NodeIndex, byte: u32) -> Option<Kid> {
+        let cursor = self.reader(index);
+        cursor.goto_first_child_for_byte(byte as usize).map(|_| Kid::at(cursor))
+    }
+
+    fn next(&mut self, index: NodeIndex) -> Option<Kid> {
+        let cursor = self.reader(index);
+        cursor.goto_next_sibling().then(|| Kid::at(cursor))
     }
 }

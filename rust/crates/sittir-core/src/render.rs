@@ -256,11 +256,13 @@ pub trait SourceTable {
         None
     }
 
-    /// The live tree `tree` and the context its reads share. A table of bare
-    /// sources holds no trees.
-    fn read_ctx(&self, tree: crate::types::TreeId) -> Option<(&tree_sitter::Tree, crate::read::ReadCtx<'_>)> {
-        let _ = tree;
-        None
+    /// Hands `read` a cursor on the node at `index` of the live tree `tree`,
+    /// created at the tree's root, and the context the tree's reads share;
+    /// false, `read` not called, where the table holds no such node. A table
+    /// of bare sources holds no trees.
+    fn read_node(&self, tree: crate::types::TreeId, index: crate::types::NodeIndex, read: &mut dyn FnMut(&mut tree_sitter::TreeCursor<'_>, &mut crate::read::ReadCtx<'_>)) -> bool {
+        let _ = (tree, index, read);
+        false
     }
 
     /// Renders the built record `record`, which the store `held` answered,

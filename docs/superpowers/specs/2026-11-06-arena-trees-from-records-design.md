@@ -43,12 +43,14 @@ The maintainer decided these on 2026-11-06:
 ## What an arena parse keeps
 
 - **Records** for every node, from the single cursor pass. Leaves stay coordinates inside their holder's record.
-- **Token spans**, beside the arena chunks and keyed by record. Each child the records don't otherwise name gets one entry of 3 words: its index, start and end. These children are anonymous tokens, extras, named units and flags, and named children a template writes (such as `constructor`, or an empty `()`). The spike's check found that records plus these spans locate every byte trivia placement needs: 0 uncovered bytes and 0 overlaps over all of matter.js and next.js.
-- **Node rows:** each node's descendant index, span, subtree end and kind, as the side records hold them today. `NodeIndex` stays tree-sitter's descendant index, so indexes, written sides and coordinates mean the same thing in both storages.
+- **Node rows:** one dense row per node, records included, of 4 words: start, end, subtree end, and a packed word (grammar kind, field, and named, extra, `ERROR`, `MISSING`, holds-an-error and aliased flags). A sparse map holds each aliased node's display kind.
+  - The row at a node's descendant index is its row. `NodeIndex` stays tree-sitter's descendant index, so indexes, written sides and coordinates mean the same thing in both storages.
+  - Rows give every node a token span. That covers anonymous tokens, extras, named units and flags, named children a template writes (such as `constructor` or an empty `()`), and nodes inside subtrees the hydrate pass doesn't enter. The spike's check found that records plus spans locate every byte trivia placement needs: 0 uncovered bytes and 0 overlaps over all of matter.js and next.js.
+  - A 3-word span per child the records don't name can't answer backer parity. A token, extra, unit or flag has no record holding its kind, field or flags, and a kind isn't read from text. So rows are dense.
 - **Baseline gaps**, each measured once when its layout run is first placed, and kept with the run.
 - **The source buffer** and **placed sides**, as today.
 
-The spike's cost: records take about 33.8 bytes per node, and spans add 7.8 bytes per node in words (11.2 counting vector capacity).
+The spike's cost: records take about 33.8 bytes per node, and spans added 7.8 bytes per node in words (11.2 counting vector capacity). Dense rows cost 16 bytes per node instead. That puts matter.js at an estimated 190 MB, not the spike's 166 MB, still about 55% under today's 424 MB. Task 7 measures it.
 
 ## One navigation interface, two backers
 

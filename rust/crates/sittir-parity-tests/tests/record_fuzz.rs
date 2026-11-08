@@ -145,7 +145,8 @@ fn fuzz<G: RecordGrammar + Default, N: ReadNode + WriteCell<G::Trivia> + RecordC
     let (mut fuzzed, mut admitted, mut rendered, mut panicked) = (0, 0, 0, Vec::new());
     for (i, source) in sources(grammar).take(SOURCES).enumerate() {
         let tree = engine.parse(&source, claim_tree_id().expect("a tree id")).expect("a parse");
-        let ctx = RenderContext { options: &options, sources: &tree };
+        let seating = tree.seating();
+        let ctx = RenderContext { options: &options, sources: &seating };
         let Some(mut built) = Built::<G::Trivia>::of::<G, N>(&tree) else { continue };
         if built.admit::<N>().is_err() || !matches!(built.render(&tree, &ctx), Ok(Ok(_))) {
             continue;
@@ -206,7 +207,8 @@ fn a_child_cell_naming_a_record_that_holds_it_is_refused() {
     let mut engine = Engine::new(sittir_rust::RustGrammar, sittir_rust::render::options::defaults()).expect("an engine");
     let options = engine.options().clone();
     let tree = engine.parse("fn f() {\n    a(b(c(d())));\n}\n", claim_tree_id().expect("a tree id")).expect("a parse");
-    let ctx = RenderContext { options: &options, sources: &tree };
+    let seating = tree.seating();
+    let ctx = RenderContext { options: &options, sources: &seating };
     let mut built = Built::of::<_, sittir_rust::render::AnyNode>(&tree).expect("a built tree");
     assert_eq!(built.admit::<sittir_rust::render::AnyNode>(), Ok(()), "the tree is admitted before the cycle");
     assert!(matches!(built.render(&tree, &ctx), Ok(Ok(_))), "and renders");

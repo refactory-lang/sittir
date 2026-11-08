@@ -159,9 +159,10 @@ macro_rules! edited_rendered {
         let mut engine = ::sittir_core::engine::Engine::new($grammar, $krate::render::options::defaults()).expect("an engine");
         let mut tree = engine.parse($source, ::sittir_core::engine::claim_tree_id().expect("a tree id")).expect("a parse");
         (0..::sittir_core::read::descendant_count(&tree.tree().root_node())).map(::sittir_core::types::NodeIndex::new).for_each(|index| $crate::edit_in_place(&mut tree, index));
-        let root: $krate::render::AnyNode = ::sittir_core::read::read_at(&mut tree.tree().walk(), &mut tree.seating_ctx(), ::sittir_core::types::NodeIndex::ROOT, ::sittir_core::read::Depth::All).expect("a root");
+        let seating = tree.seating();
+        let root: $krate::render::AnyNode = ::sittir_core::read::read_at(&mut seating.cursor(::sittir_core::types::NodeIndex::ROOT), &mut seating.ctx(), ::sittir_core::types::NodeIndex::ROOT, ::sittir_core::read::Depth::All).expect("a root");
         let options = engine.options().clone();
-        let ctx = ::sittir_core::prepare::RenderContext { options: &options, sources: &tree };
+        let ctx = ::sittir_core::prepare::RenderContext { options: &options, sources: &seating };
         $krate::render::render_node_parts(::sittir_core::SlotValue::Node(root), &ctx, None).expect("a render").1
     }};
 }
@@ -204,7 +205,7 @@ impl PlacedTrivia {
     pub fn of(tree: &tree_sitter::Tree, source: &str, kinds: sittir_core::trivia_table::SurfaceKinds, unit: u32) -> Self {
         let lines = sittir_core::points::LineTable::new(source);
         let placement = sittir_core::trivia_table::Placement::new(kinds, unit);
-        placement.place_all(sittir_core::trivia_table::Source { nodes: &mut sittir_core::nodes::TreeNodes::new(tree, source), lines: &lines });
+        placement.place_all(sittir_core::trivia_table::Source { nodes: &mut sittir_core::nodes::TreeNodes::new(tree, source, &sittir_core::layout::LayoutWorkCounter::default()), lines: &lines });
         let sides = placement.tables().flat_map(|table| table.sides().map(|(key, entries)| (key, entries.to_vec())).collect::<Vec<_>>()).collect();
         Self { placement, sides }
     }

@@ -198,8 +198,9 @@ fn refusal_reason(spec: &DelimiterSpec, content: &str) -> String {
 
 fn read_token<T: Prepare, const ADJACENT: bool>(slot: &SlotValue<T, ADJACENT>, ctx: &RenderContext<'_>) -> Option<T> {
     let coord = slot.coord()?;
-    let (tree, mut read) = ctx.sources.read_ctx(coord.tree)?;
-    T::read_coordinate(tree, &mut read, coord.index)?.ok()
+    let mut node = None;
+    ctx.sources.read_node(coord.tree, coord.index, &mut |cursor, read| node = T::read_coordinate(cursor, read));
+    node?.ok()
 }
 
 impl<T: SetFacet, const ADJACENT: bool> DelimiterSlot<()> for SlotValue<T, ADJACENT> {

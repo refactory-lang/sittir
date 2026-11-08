@@ -4,7 +4,7 @@
 //! read routes by, and writes each slot's cell from its stamps: a struct's
 //! record its slots fill, a text leaf held whole, a choice its variant's
 //! value, an enum kind's member a unit. A struct's walk meets each child once:
-//! it reads the child (`Child::at`), routes it, and walks into it there and
+//! it reads the child (`Kid::at`), routes it, and walks into it there and
 //! then, handing it over in `ReadCtx::at`, so the child's own walk asks the
 //! tree for none of its ids, row or span again. A refusal anywhere below
 //! breaks the walk out of its children's loop, and the walk steps back to its
@@ -179,7 +179,7 @@ fn routed(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn::Result
         #collect
         if cursor.goto_first_child() {
             let __walked: ::core::result::Result<(), ::sittir_core::arena::HydrateError> = 'walk: loop {
-                let __child = __rt::Child::at(cursor);
+                let __child = __rt::Kid::at(cursor);
                 let __route = match __route(&__child) {
                     ::core::result::Result::Ok(route) => route,
                     ::core::result::Result::Err(refusal) => break 'walk ::core::result::Result::Err(::sittir_core::arena::HydrateError::from(refusal)),
@@ -257,11 +257,24 @@ fn interior(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>], _pattern: &L
 }
 
 fn envelope(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn::Result<TokenStream> {
-    let words = words_of(ident, attrs)?;
     let content = attrs.content.as_ref().ok_or_else(|| syn::Error::new_spanned(ident, "an envelope names its content field: `content = …`"))?;
     let field = fields.iter().find(|f| f.ident == content).ok_or_else(|| syn::Error::new_spanned(content, "`content` names one of the envelope's fields"))?;
-    let Role::Slot(slot) = &field.role else { return Err(syn::Error::new_spanned(content, "an envelope's content is a slot")) };
     let inner: &Type = inner_of(field.ty, "SlotValue").ok_or_else(|| syn::Error::new_spanned(field.ty, "an envelope's content is a `SlotValue<…>`"))?;
+    let Role::Slot(slot) = &field.role else { return Err(syn::Error::new_spanned(content, "an envelope's content is a slot")) };
+    if attrs.content_list {
+        let refused = format!("{ident}: an envelope over a list holds the list's record, its coordinate or its embedded record, and the list hydrated to none of them");
+        return Ok(quote! {
+            match <#inner as ::sittir_core::arena::HydrateNode>::hydrate(cursor, ctx, depth.and_then(__rt::Depth::below), records, inline)? {
+                ::sittir_core::arena::Hydrated::Record { at, .. } => ::core::result::Result::Ok(::sittir_core::arena::Hydrated::Record { kind: __stored_kind(&__node), at }),
+                ::sittir_core::arena::Hydrated::Node { row, span, leaf, .. } => {
+                    ::core::result::Result::Ok(::sittir_core::arena::Hydrated::Node { kind: __stored_kind(&__node), row, span, leaf })
+                }
+                embedded @ ::sittir_core::arena::Hydrated::Embedded => ::core::result::Result::Ok(embedded),
+                ::sittir_core::arena::Hydrated::Unit { .. } | ::sittir_core::arena::Hydrated::Text { .. } => ::core::result::Result::Err(::sittir_core::arena::ArenaError::Unwritable(#refused).into()),
+            }
+        });
+    }
+    let words = words_of(ident, attrs)?;
     let shape = crate::views::cell_shape(field, &slot.cell)?;
     let wraps_hidden = attrs.wraps_hidden;
     let message = format!("{ident}: an envelope's content read from its own row is no node with a record, since a tree holds one record per row");
@@ -273,8 +286,8 @@ fn envelope(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn::Resu
                     return ::core::result::Result::Err(__unwrapped.into());
                 }
                 loop {
-                    let __child = __rt::Child::at(cursor);
-                    if !__child.trivia {
+                    let __child = __rt::Kid::at(cursor);
+                    if !__child.entry() {
                         ctx.at = ::core::option::Option::Some(__child);
                         break;
                     }

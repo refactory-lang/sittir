@@ -52,6 +52,7 @@ import {
 	captureArgs,
 	displayClaimedIds,
 	enumKindArgs,
+	envelopeListOf,
 	flankArgs,
 	presenceKeyword,
 	readNames,
@@ -2851,8 +2852,8 @@ const TRIVIA_TEXT = '::sittir_core::trivia::TriviaText';
 const BLANK_VARIANT = 'Blank';
 const PREPARE_SIG = `fn prepare(&mut self, ctx: &${PREPARE_MOD}::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {`;
 const READ_COORDINATE = [
-	`    fn read_coordinate(tree: &::sittir_core::tree_sitter::Tree, ctx: &mut ::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {`,
-	`        Some(::sittir_core::read::read_coordinate(tree, ctx, index))`,
+	`    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {`,
+	`        Some(::sittir_core::read::read_coordinate(cursor, ctx))`,
 	`    }`
 ];
 
@@ -3658,6 +3659,11 @@ const recordLayouts = new WeakMap<
 
 export function nodeRecordLayout(node: AssembledNode, nodeMap: NodeMap): RecordLayout | undefined {
 	if (node instanceof AssembledEnum || !isCompoundOf(node)) return undefined;
+	if (node instanceof AssembledAlias) {
+		const list = envelopeListOf(node, nodeMap);
+		const layout = list === undefined ? undefined : nodeRecordLayout(list, nodeMap);
+		if (layout !== undefined) return layout;
+	}
 	let state = recordLayouts.get(nodeMap);
 	if (state === undefined) {
 		state = { layouts: new Map(), recursive: (nodeMap.scc ?? computeNodeSCC(nodeMap)).recursive, active: new Set() };

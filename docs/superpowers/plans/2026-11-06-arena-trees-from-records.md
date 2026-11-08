@@ -79,20 +79,21 @@ In flight as its own PR (prototype). Goldens from master, then the pass, with re
 - Modify: `engine.rs`. The `SourceTable` implementations for `ParsedTree`, `ReadTrees` and `WithoutLayout`, plus `cursor_at`, `row_coordinate`, `line_starts_inside_tokens`, `last_list_child`, `edge_child`, `frame_levels` and `Lookups::baseline_gap`. Each reads through a `TreeNodes`.
 - Modify: `trivia_table.rs`. `DepthMembers::of` reads through the interface. In object storage it's still one walk per tree, on first use.
 - Modify: `napi_engine.rs`, the engine's tree functions (`descendants`, `siblings`, `planHolds`, `snapshot`, `text`, `coordinate`, the layout baseline, stored layout, `slotLayouts`, `separatorBefore` and `framedSpan`), plus `ArenaSources`.
-- Modify: `engine.rs` (`error_regions`), which walks through the interface and still enters only nodes that hold an error.
+- Modify: `engine.rs` (`error_regions`), which searches through the interface and still goes into only nodes that hold an error.
 - Modify: `nodes.rs`, `read.rs` (`Child`, `survey`) and the node macros (`sittir-node-macros/src/hydrate.rs`, `expand.rs`). `read::Child` folds into `Kid`, so one struct holds a node's facts and one constructor reads them from tree-sitter.
 - Test: `rust/crates/sittir-core/tests/nodes.rs`.
 
 **Interfaces:**
 - Consumes: Task 2's `Nodes` and `TreeNodes`.
 - Produces:
-  - `Kid` carries every fact a consumer reads: index, span, descendant count, grammar kind, display kind, field, and whether it is named, an extra, an `ERROR`, `MISSING`, or holds an error. Its `index` has one meaning, numbered from the tree's root.
+  - `Kid` carries the facts a read takes of every node it visits: index, span, descendant count, grammar kind, display kind, field, and whether it is named, an extra or an `ERROR`. Its `index` has one meaning, numbered from the tree's root. So the hydrate pass reads exactly what `read::Child` read.
+  - Whether a node is `MISSING` and whether it holds an error are `Nodes` queries, `missing(index)` and `holds_error(index)`, asked only by `error_regions` and `error_holding`. The tree backer reads them from the node.
   - Facts that follow from others are methods, not stored: an entry (an extra or an `ERROR`), a leaf (no entry, descendant count 1) and a holder of sides (named, no entry, nonzero width). `trivia_table::holds_sides` is that method.
   - One `TreeNodes` per tree per render call lives in `ReadTrees`, and `Lookups` moves its cursor. Each engine tree function makes one per call.
   - After this task, no function outside `nodes.rs` moves a tree-sitter cursor except the reader, on a cursor `TreeNodes` lends (`over`). The reader is the hydrate pass, the generated reads, `survey` and `read_units`.
 
 - [ ] **Step 1: Failing tests:**
-  - `no_tree_query_descends_from_the_root_per_call`: rendering the codemod case (one rename, one argument set, one statement inserted, as prototype's render profile) makes at most one root-down move per render call, through the Task 2 counter;
+  - `a_codemod_render_descends_from_the_root_as_often_over_80_functions_as_over_20`: rendering the codemod case (one rename, one argument set, one statement inserted, as prototype's render profile) makes the same number of root-down moves at either size, through the Task 2 counter, and no more than the count this task lands at. That count is a ceiling that only goes down. On master it grows with the root's width (29 at 20 functions, 89 at 80). The moves left are one per engine call JavaScript makes during `$render()`, plus one per native render pass that restarts at the file's start;
   - `line_starts_inside_a_multiline_token_hold`: a typescript template string and a python triple-quoted string spanning lines, with a multi-byte character before each, give the same line starts as today (Review Focus 3).
 - [ ] **Step 2:** Run them. They fail.
 - [ ] **Step 3: Implement.** Logic is unchanged. Only the way each function reaches a node changes.
@@ -102,15 +103,24 @@ In flight as its own PR (prototype). Goldens from master, then the pass, with re
 ### Task 4: Token spans and node rows in arena records, and the record backer
 
 **Files:**
-- Modify: the hydrate derive (`sittir-node-macros/src/hydrate.rs`) and `arena/hydrate.rs`. Every child the records don't otherwise name gets a token span (index, start, end). These are anonymous tokens, extras, named units and flags, and named children a template writes.
-- Modify: `arena/rows.rs`. A `TreeArena` keeps each node's row (index, span, subtree end and kind) and the tree's depth members (`SurfaceKinds::indent` and `dedent` with their running net), recorded as the hydrate pass meets them. The record backer answers `depth_move` from these, so arena storage never walks the tree for them. A first render spent 71% of its time in that walk.
+- Modify: the hydrate derive (`sittir-node-macros/src/hydrate.rs`) and `arena/hydrate.rs`. Every node of the tree gets a row, records included. That covers anonymous tokens, extras, named units and flags, named children a template writes, and the nodes inside a subtree the hydrate pass doesn't enter: a leaf's interior, an `ERROR`'s children, an extra's children. Such a subtree is walked once for its rows while the tree is still held.
+- Modify: `arena/rows.rs`. A `TreeArena` keeps one dense row per node, 4 words:
+  - start;
+  - end;
+  - subtree end;
+  - a packed word: grammar kind (16 bits), field (10 bits), and named, extra, `ERROR`, `MISSING`, holds-an-error and aliased flags.
+  
+  A sparse map holds the display kind of each aliased node. A field id that doesn't fit in 10 bits is refused by name when the arena is built. The arena also keeps the tree's depth members (`SurfaceKinds::indent` and `dedent` with their running net), recorded as the hydrate pass meets them. The record backer answers `depth_move` from these, so arena storage never walks the tree for them. A first render spent 71% of its time in that walk.
 - Modify: `nodes.rs`, adding the record backer.
 - Create: `packages/tools/src/validate/backer-parity.ts`, registered as `sittir tool backer-parity`. It's driven by prototype's corpus harness and reads `.ts` files only, never building or running anything from a corpus.
 - Test: `rust/crates/sittir-core/tests/nodes.rs` and `packages/tools/tests/backer-parity.test.ts`.
 
 **Interfaces:**
 - Consumes: Task 2's `Nodes` and `Kid`.
-- Produces: `pub(crate) struct RecordNodes<'t>`, built from a `TreeArena`, its token spans and the source. Its `parent` is found from the rows' subtree ends, never with a cursor. It answers every fact of Task 3's `Kid`. A fact the records already hold (a record's display kind, a slot's field) is read from them. Rows add bytes only for facts the records don't hold.
+- Produces: `pub struct RecordNodes<'t>`, built from a `TreeArena`'s rows and the source. It's public because the five-grammar parity test lives in `sittir-parity-tests`. Its `parent` is found from the rows' subtree ends, never with a cursor. It answers every fact of Task 3's `Kid`, and its `missing` and `holds_error` queries, from rows alone.
+  - The rows are navigation's one source of node facts.
+  - A record node's row repeats the bytes its side record also holds. Both are written once, by the hydrate pass, and never change.
+  - Records stay word-identical.
 
 - [ ] **Step 1: Failing tests:**
   - `record_nodes_match_tree_nodes`: for every node of each fixture tree in all five grammars, the two backers give equal `kid`, `kids` and `parent`. The fixtures include:

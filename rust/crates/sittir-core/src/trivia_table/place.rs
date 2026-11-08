@@ -153,11 +153,11 @@ impl Shape {
     /// The child the segment at `at` is when that child holds tokens of its
     /// own below it.
     fn block(&self, at: usize) -> Option<Kid> {
-        self.segments.get(at)?.kid.map(|kid| self.kids[kid]).filter(|kid| !kid.leaf)
+        self.segments.get(at)?.kid.map(|kid| self.kids[kid]).filter(|kid| !kid.leaf())
     }
 
     fn holders(&self) -> impl DoubleEndedIterator<Item = &Kid> + '_ {
-        self.kids.iter().filter(|kid| kid.holder)
+        self.kids.iter().filter(|kid| kid.holder())
     }
 }
 
@@ -659,10 +659,10 @@ impl<'t> Placer<'t, '_, '_> {
             next: usize,
             at: u32,
         }
-        if kid.entry {
+        if kid.entry() {
             return None;
         }
-        if kid.leaf {
+        if kid.leaf() {
             return Some(Tok::leaf(kid));
         }
         if let Some(&known) = self.state.firsts.get(&kid.index) {
@@ -689,10 +689,10 @@ impl<'t> Placer<'t, '_, '_> {
             if before.is_some() {
                 break before;
             }
-            if child.entry {
+            if child.entry() {
                 continue;
             }
-            if child.leaf {
+            if child.leaf() {
                 break Some(Tok::leaf(&child));
             }
             if let Some(&known) = self.state.firsts.get(&child.index) {
@@ -722,10 +722,10 @@ impl<'t> Placer<'t, '_, '_> {
             left: usize,
             at: u32,
         }
-        if kid.entry {
+        if kid.entry() {
             return None;
         }
-        if kid.leaf {
+        if kid.leaf() {
             return Some(Tok::leaf(kid));
         }
         if let Some(&known) = self.state.lasts.get(&kid.index) {
@@ -756,10 +756,10 @@ impl<'t> Placer<'t, '_, '_> {
             if after.is_some() {
                 break after;
             }
-            if child.entry {
+            if child.entry() {
                 continue;
             }
-            if child.leaf {
+            if child.leaf() {
                 break Some(Tok::leaf(&child));
             }
             if let Some(&known) = self.state.lasts.get(&child.index) {
@@ -794,9 +794,9 @@ impl<'t> Placer<'t, '_, '_> {
             };
             *next += 1;
             self.state.parent.insert(child.index, parent);
-            if child.entry {
+            if child.entry() {
                 entries.push(child);
-            } else if !child.leaf {
+            } else if !child.leaf() {
                 let kids = self.kids(child.index);
                 stack.push((child.index, kids, 0));
             }
@@ -809,10 +809,10 @@ impl<'t> Placer<'t, '_, '_> {
         }
         let node = self.kid(index);
         let root = index == NodeIndex::ROOT;
-        let kids = if node.entry { Arc::from([]) } else { self.kids(index) };
+        let kids = if node.entry() { Arc::from([]) } else { self.kids(index) };
         let source = self.text();
         let (mut segments, mut entries, mut at) = (Vec::new(), Vec::new(), node.start);
-        if node.entry {
+        if node.entry() {
             entries.push(node);
         }
         for (position, kid) in kids.iter().enumerate() {
@@ -821,9 +821,9 @@ impl<'t> Placer<'t, '_, '_> {
                 segments.push(Segment { first: token, last: token, kid: None });
             }
             at = kid.end;
-            if kid.entry {
+            if kid.entry() {
                 entries.push(*kid);
-            } else if kid.leaf {
+            } else if kid.leaf() {
                 let token = Tok::leaf(kid);
                 segments.push(Segment { first: token, last: token, kid: Some(position) });
             } else if let (Some(first), Some(last)) = (self.first(kid), self.last(kid)) {
@@ -832,7 +832,7 @@ impl<'t> Placer<'t, '_, '_> {
                 self.entries_under(kid, &mut entries);
             }
         }
-        if let Some(token) = hidden(source, at, node.end, |start, end| Key::leave(start, end, &node, 0)).filter(|_| !node.leaf && !node.entry) {
+        if let Some(token) = hidden(source, at, node.end, |start, end| Key::leave(start, end, &node, 0)).filter(|_| !node.leaf() && !node.entry()) {
             segments.push(Segment { first: token, last: token, kid: None });
         }
         if !root {
@@ -848,11 +848,11 @@ impl<'t> Placer<'t, '_, '_> {
             }
         }
         for (position, segment) in segments.iter().enumerate() {
-            if let Some(kid) = segment.kid.map(|kid| kids[kid]).filter(|kid| !kid.leaf) {
+            if let Some(kid) = segment.kid.map(|kid| kids[kid]).filter(|kid| !kid.leaf()) {
                 self.state.positions.insert(kid.index, position);
             }
         }
-        let holds = kids.iter().any(|kid| kid.holder);
+        let holds = kids.iter().any(Kid::holder);
         self.kids.remove(&index);
         let shape = Arc::new(Shape { node, root, kids, holds, segments, entries });
         hold(&mut self.state.held, &mut self.state.shapes, index, Arc::clone(&shape));
@@ -865,7 +865,7 @@ impl<'t> Placer<'t, '_, '_> {
             return true;
         }
         let path = self.path(index);
-        !path[..path.len() - 1].iter().any(|&at| self.kid(at).entry)
+        !path[..path.len() - 1].iter().any(|&at| self.kid(at).entry())
     }
 
     /// The nodes from the root down to the node at `index`, each one's shape
@@ -877,7 +877,7 @@ impl<'t> Placer<'t, '_, '_> {
         }
         path.reverse();
         for &at in &path[..path.len() - 1] {
-            if self.kid(at).entry {
+            if self.kid(at).entry() {
                 break;
             }
             self.shape(at);
@@ -909,7 +909,7 @@ impl<'t> Placer<'t, '_, '_> {
     /// it that is no list, or the root.
     fn layout_owner_of(&mut self, index: NodeIndex) -> NodeIndex {
         let mut at = index;
-        while at != NodeIndex::ROOT && self.kinds.lists.contains(&self.kid(at).kind) {
+        while at != NodeIndex::ROOT && self.kinds.lists.contains(&self.kid(at).grammar) {
             match self.parent(at) {
                 Some(parent) => at = parent,
                 None => break,
@@ -954,10 +954,10 @@ impl<'t> Placer<'t, '_, '_> {
         let mut owners = Vec::new();
         let mut pending = vec![self.kid(NodeIndex::ROOT)];
         while let Some(kid) = pending.pop() {
-            if kid.index == NodeIndex::ROOT || (!kid.entry && !kid.leaf && !self.kinds.lists.contains(&kid.kind)) {
+            if kid.index == NodeIndex::ROOT || (!kid.entry() && !kid.leaf() && !self.kinds.lists.contains(&kid.grammar)) {
                 owners.push(kid.index);
             }
-            if !kid.entry && !kid.leaf {
+            if !kid.entry() && !kid.leaf() {
                 pending.extend(self.kids(kid.index).iter().rev());
             }
         }
@@ -971,7 +971,7 @@ impl<'t> Placer<'t, '_, '_> {
     fn measure_stretches(&mut self) {
         let mut pending = vec![self.kid(NodeIndex::ROOT)];
         while let Some(kid) = pending.pop() {
-            let shape = (!kid.entry && !kid.leaf).then(|| self.shape(kid.index));
+            let shape = (!kid.entry() && !kid.leaf()).then(|| self.shape(kid.index));
             self.level(kid.index);
             if let Some(shape) = shape {
                 pending.extend(shape.kids.iter().rev());
@@ -997,7 +997,7 @@ impl<'t> Placer<'t, '_, '_> {
         while let Some(at) = stack.pop() {
             members.push(at);
             let kids = Arc::clone(&self.shape(at).kids);
-            stack.extend(kids.iter().rev().filter(|kid| !kid.entry && !kid.leaf && self.kinds.lists.contains(&kid.kind)).map(|kid| kid.index));
+            stack.extend(kids.iter().rev().filter(|kid| !kid.entry() && !kid.leaf() && self.kinds.lists.contains(&kid.grammar)).map(|kid| kid.index));
         }
         let mut events: Vec<(Order, Event)> = Vec::new();
         for &member in &members {
@@ -1052,7 +1052,7 @@ impl<'t> Placer<'t, '_, '_> {
         let mut edges = Vec::new();
         for &member in members {
             let kid = self.kid(member);
-            if kid.holder && self.kinds.lists.contains(&kid.kind) {
+            if kid.holder() && self.kinds.lists.contains(&kid.grammar) {
                 for side in [TriviaSide::Leading, TriviaSide::Trailing] {
                     if let Some(item) = self.edge_item(&kid, side) {
                         edges.push((member, side, item.index));
@@ -1289,7 +1289,7 @@ impl<'t> Placer<'t, '_, '_> {
         let default = self.place(shape, gap, (from, to), false, false);
         let mut placed = Vec::with_capacity(entries.len());
         for entry in &entries {
-            placed.push(if self.kinds.layout.contains(&entry.kind) {
+            placed.push(if self.kinds.layout.contains(&entry.grammar) {
                 None
             } else {
                 let on_left_row = left.is_some_and(|left| self.same_row(left.end, entry.start));
@@ -1317,7 +1317,7 @@ impl<'t> Placer<'t, '_, '_> {
                 None => steps.push(Step::Entry { place: beside.unwrap_or(default), entry: Assigned::Member(entry.index) }),
                 Some(place) => {
                     led = matches!(place, Place::Side(_, TriviaSide::Leading)).then_some(place);
-                    let assigned = if entry.kind == KindId::ERROR { Assigned::Error(entry.index) } else { Assigned::Extra(entry.index) };
+                    let assigned = if entry.grammar == KindId::ERROR { Assigned::Error(entry.index) } else { Assigned::Extra(entry.index) };
                     steps.push(Step::Entry { place, entry: assigned });
                 }
             }
@@ -1389,10 +1389,10 @@ impl<'t> Placer<'t, '_, '_> {
             let kids = self.kids(at);
             let kid = kids.get(kids.partition_point(|kid| kid.end <= byte)).copied().filter(|kid| kid.start <= byte)?;
             self.state.parent.insert(kid.index, at);
-            if kid.entry {
+            if kid.entry() {
                 return Some(kid);
             }
-            if kid.leaf {
+            if kid.leaf() {
                 return None;
             }
             at = kid.index;
@@ -1430,7 +1430,7 @@ impl<'t> Placer<'t, '_, '_> {
     fn side_holder(&mut self, shape: &Shape, kid: Option<usize>, through: bool, side: TriviaSide, edge: u32) -> Option<NodeIndex> {
         let kid = shape.kids[kid?];
         let at_edge = if side == TriviaSide::Trailing { kid.end == edge } else { kid.start == edge };
-        if !kid.holder || !at_edge {
+        if !kid.holder() || !at_edge {
             return None;
         }
         let mut child = kid;
@@ -1446,23 +1446,23 @@ impl<'t> Placer<'t, '_, '_> {
     /// to: its first (leading) or last (trailing) holder child, when that
     /// child lies at the list's edge and is not a unit kind.
     fn edge_item(&mut self, list: &Kid, side: TriviaSide) -> Option<Kid> {
-        if list.leaf || list.entry || !self.kinds.lists.contains(&list.kind) {
+        if list.leaf() || list.entry() || !self.kinds.lists.contains(&list.grammar) {
             return None;
         }
         let kids = self.kids(list.index);
-        let mut holders = kids.iter().filter(|kid| kid.holder);
+        let mut holders = kids.iter().filter(|kid| kid.holder());
         let item = if side == TriviaSide::Leading { holders.next() } else { holders.next_back() }?;
         let at_edge = if side == TriviaSide::Leading { item.start == list.start } else { item.end == list.end };
-        (at_edge && !self.kinds.units.contains(&item.kind)).then_some(*item)
+        (at_edge && !self.kinds.units.contains(&item.grammar)).then_some(*item)
     }
 
     /// `kid`, or, while it is a list node, its first (for a `Leading` side)
     /// or last item that holds trivia and is not a unit kind.
     fn through_lists(&mut self, kid: &Kid, side: TriviaSide) -> NodeIndex {
         let mut child = *kid;
-        while !child.leaf && self.kinds.lists.contains(&child.kind) {
+        while !child.leaf() && self.kinds.lists.contains(&child.grammar) {
             let kids = self.kids(child.index);
-            let mut items = kids.iter().filter(|kid| kid.holder && !self.kinds.units.contains(&kid.kind));
+            let mut items = kids.iter().filter(|kid| kid.holder() && !self.kinds.units.contains(&kid.grammar));
             match if side == TriviaSide::Leading { items.next() } else { items.next_back() } {
                 Some(&inner) => child = inner,
                 None => break,
@@ -1516,13 +1516,13 @@ impl<'t> Placer<'t, '_, '_> {
     /// The stretches the template of the node at `index` opens, each with
     /// its width, inside those from `up` up.
     fn stretched(&mut self, index: NodeIndex, up: Option<NodeIndex>) -> Vec<Stretch> {
-        let kind = self.kid(index).kind;
+        let kind = self.kid(index).grammar;
         if !self.kinds.depth.iter().any(|region| region.kind == kind) {
             return Vec::new();
         }
         let shape = self.shape(index);
         let source = self.text();
-        let literals: Vec<(u32, u32, &str)> = shape.kids.iter().filter(|kid| kid.leaf && !kid.named).filter_map(|kid| Some((kid.start, kid.end, source.get(kid.start as usize..kid.end as usize)?))).collect();
+        let literals: Vec<(u32, u32, &str)> = shape.kids.iter().filter(|kid| kid.leaf() && !kid.named).filter_map(|kid| Some((kid.start, kid.end, source.get(kid.start as usize..kid.end as usize)?))).collect();
         let (start, end) = (shape.node.start, shape.node.end);
         let mut spans: Vec<(u32, u32)> = self
             .kinds
@@ -1604,7 +1604,7 @@ impl<'t> Placer<'t, '_, '_> {
     /// (`Table::adjacency`): an entry carries the in-line run after the
     /// entry before it when that one is fixed too.
     fn adjacency(&mut self, entry: &Kid) -> Option<Adjacency> {
-        let fixes = |kinds: &SurfaceKinds, kid: &Kid| kid.kind == KindId::ERROR || kinds.layout.contains(&kid.kind);
+        let fixes = |kinds: &SurfaceKinds, kid: &Kid| kid.grammar == KindId::ERROR || kinds.layout.contains(&kid.grammar);
         if !fixes(&self.kinds, entry) {
             return None;
         }
@@ -1636,7 +1636,7 @@ impl<'t> Placer<'t, '_, '_> {
             let carried = taken.take().filter(|run| run.end == span.start);
             let spelled = Adjacency::of(self.text(), span);
             let adjacency = Adjacency { before: carried.or(spelled.before), ..spelled };
-            let stored = (kid.kind == KindId::ERROR || adjacency.holds_whitespace()).then(|| if carried.is_some() { Adjacency { before: None, ..adjacency } } else { adjacency });
+            let stored = (kid.grammar == KindId::ERROR || adjacency.holds_whitespace()).then(|| if carried.is_some() { Adjacency { before: None, ..adjacency } } else { adjacency });
             taken = stored.and_then(|adjacency| adjacency.after);
             self.state.adjacency.insert(kid.index, stored);
         }
