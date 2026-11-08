@@ -7,10 +7,139 @@
 //! (the root, an extra a side holds, a node inside an `ERROR` or inside a
 //! leaf's captured text) is held by its tree, by its row, here: the one place
 //! a row names a record. The map never leaves native code.
+//!
+//! The tree also keeps a row of facts for every node, record or not, written
+//! as the hydrate pass meets the node (`NodeRows`): navigation's one source
+//! of a node's facts once the tree is read whole.
 
 use crate::heap::{CountedMap, HeapBytes};
 use super::{Address, Arena, ArenaError, ArenaMark};
-use crate::types::NodeIndex;
+use crate::nodes::Kid;
+use crate::types::{FieldId, KindId, NodeIndex};
+
+/// The bits of a node row's packed word that hold the node's field id.
+pub const ROW_FIELD_BITS: u32 = 10;
+
+/// What a node row's packed word holds above its grammar kind (16 bits):
+/// its field id (`ROW_FIELD_BITS`), then its flags.
+mod packed {
+    pub const FIELD_SHIFT: u32 = 16;
+    pub const FIELD_MASK: u32 = (1 << super::ROW_FIELD_BITS) - 1;
+    pub const NAMED: u32 = 1 << 26;
+    pub const EXTRA: u32 = 1 << 27;
+    pub const ERROR: u32 = 1 << 28;
+    pub const MISSING: u32 = 1 << 29;
+    pub const HOLDS_ERROR: u32 = 1 << 30;
+    pub const ALIASED: u32 = 1 << 31;
+}
+
+/// Every node's row by its descendant index: `[start, end, subtree end,
+/// packed]`, the packed word its grammar kind, field id and flags
+/// (`packed`), and the display kind of each node shown as an alias. A row
+/// whose subtree end is 0 is unwritten, since every node's subtree ends
+/// past it.
+#[derive(Debug, Default)]
+pub struct NodeRows {
+    rows: Vec<[u32; 4]>,
+    aliases: CountedMap<NodeIndex, KindId>,
+    written: u32,
+}
+
+impl HeapBytes for NodeRows {
+    fn heap_bytes(&self) -> usize {
+        let Self { rows, aliases, written: _ } = self;
+        rows.capacity() * std::mem::size_of::<[u32; 4]>() + aliases.heap_bytes()
+    }
+}
+
+impl NodeRows {
+    /// How many nodes the rows hold, written or not.
+    #[must_use]
+    pub fn len(&self) -> u32 {
+        u32::try_from(self.rows.len()).unwrap_or(u32::MAX)
+    }
+
+    /// Whether the rows hold no node.
+    #[must_use]
+    pub fn is_empty(&self) -> bool {
+        self.rows.is_empty()
+    }
+
+    fn row(&self, index: NodeIndex) -> [u32; 4] {
+        self.rows[index.0 as usize]
+    }
+
+    /// The facts of the node at `index`.
+    #[must_use]
+    pub fn kid(&self, index: NodeIndex) -> Kid {
+        let [start, end, subtree_end, word] = self.row(index);
+        let grammar = KindId(u16::try_from(word & 0xffff).unwrap_or(u16::MAX));
+        let field = (word >> packed::FIELD_SHIFT) & packed::FIELD_MASK;
+        Kid {
+            index,
+            start,
+            end,
+            count: subtree_end - index.0,
+            grammar,
+            display: if word & packed::ALIASED == 0 { grammar } else { self.aliases.get(&index).copied().unwrap_or(grammar) },
+            field: (field != 0).then(|| FieldId(u16::try_from(field).unwrap_or(u16::MAX))),
+            named: word & packed::NAMED != 0,
+            extra: word & packed::EXTRA != 0,
+            error: word & packed::ERROR != 0,
+        }
+    }
+
+    /// Where the subtree of the node at `index` ends: the index past its
+    /// last descendant.
+    #[must_use]
+    pub fn subtree_end(&self, index: NodeIndex) -> NodeIndex {
+        NodeIndex(self.row(index)[2])
+    }
+
+    /// Whether the node at `index` is `MISSING`.
+    #[must_use]
+    pub fn missing(&self, index: NodeIndex) -> bool {
+        self.row(index)[3] & packed::MISSING != 0
+    }
+
+    /// Whether the node at `index` holds an error in its subtree, itself
+    /// included.
+    #[must_use]
+    pub fn holds_error(&self, index: NodeIndex) -> bool {
+        self.row(index)[3] & packed::HOLDS_ERROR != 0
+    }
+
+    /// Writes the row of `kid` once, with whether it is `MISSING` and holds
+    /// an error, the rows made for `nodes` nodes on the first write.
+    /// Answers whether the write grew the rows' heap.
+    fn write(&mut self, nodes: u32, kid: &Kid, missing: bool, holds_error: bool) -> Result<bool, ArenaError> {
+        let field = kid.field.map_or(0, |field| u32::from(field.0));
+        if field > packed::FIELD_MASK {
+            return Err(ArenaError::Malformed { what: "row field id", word: field });
+        }
+        if kid.index.0 >= nodes {
+            return Err(ArenaError::Malformed { what: "node row", word: kid.index.0 });
+        }
+        let made = self.rows.is_empty();
+        if made {
+            self.rows = vec![[0; 4]; nodes as usize];
+        }
+        let row = &mut self.rows[kid.index.0 as usize];
+        if row[2] != 0 {
+            return Ok(made);
+        }
+        let aliased = kid.display != kid.grammar;
+        let flags = [(kid.named, packed::NAMED), (kid.extra, packed::EXTRA), (kid.error, packed::ERROR), (missing, packed::MISSING), (holds_error, packed::HOLDS_ERROR), (aliased, packed::ALIASED)];
+        let word = flags.into_iter().filter(|&(set, _)| set).fold(u32::from(kid.grammar.0) | field << packed::FIELD_SHIFT, |word, (_, bit)| word | bit);
+        *row = [kid.start, kid.end, kid.index.0 + kid.count, word];
+        self.written += 1;
+        if aliased {
+            self.aliases.insert(kid.index, kid.display);
+            return Ok(true);
+        }
+        Ok(made)
+    }
+}
 
 /// What a tree's arena holds: its chunks' written words, its record starts
 /// and its held rows, each in order.
@@ -33,12 +162,13 @@ pub struct TreeArena {
     /// Native record starts, including an embedded record, which starts
     /// inside its holder's.
     records: CountedMap<Address>,
+    rows: NodeRows,
 }
 
 impl HeapBytes for TreeArena {
     fn heap_bytes(&self) -> usize {
-        let Self { grown: _, arena, held, nodes: _, records } = self;
-        arena.heap_bytes() + held.heap_bytes() + records.heap_bytes()
+        let Self { grown: _, arena, held, nodes: _, records, rows } = self;
+        arena.heap_bytes() + held.heap_bytes() + records.heap_bytes() + rows.heap_bytes()
     }
 }
 
@@ -47,7 +177,29 @@ impl TreeArena {
     /// `kind_bits` bits: grown, since nothing has taken its growth yet.
     #[must_use]
     pub fn new(kind_bits: u32, rows: u32) -> Self {
-        Self { grown: true, arena: Arena::with_kind_bits(kind_bits), held: CountedMap::default(), nodes: rows, records: CountedMap::default() }
+        Self { grown: true, arena: Arena::with_kind_bits(kind_bits), held: CountedMap::default(), nodes: rows, records: CountedMap::default(), rows: NodeRows::default() }
+    }
+
+    /// Every node's row, once the hydrate pass has met every node of the
+    /// tree; `None` while some node has none.
+    #[must_use]
+    pub fn node_rows(&self) -> Option<&NodeRows> {
+        (self.rows.written == self.nodes).then_some(&self.rows)
+    }
+
+    /// Writes the row of `kid`, with whether it is `MISSING` and holds an
+    /// error, unless the tree has one for it. A row is a fact of the tree,
+    /// so a rewind keeps it.
+    ///
+    /// # Errors
+    ///
+    /// `ArenaError::Malformed` for a field id wider than `ROW_FIELD_BITS`
+    /// or a node past the tree's.
+    pub(super) fn write_row(&mut self, kid: &Kid, missing: bool, holds_error: bool) -> Result<(), ArenaError> {
+        if self.rows.write(self.nodes, kid, missing, holds_error)? {
+            self.grown = true;
+        }
+        Ok(())
     }
 
     /// Whether a write grew the arena since the last call.
@@ -198,6 +350,38 @@ mod tests {
         let at = record(&mut tree, &[7, 0]);
         assert_eq!(tree.hold(NodeIndex(4), at), Err(ArenaError::Malformed { what: "record row", word: 4 }));
         assert_eq!(tree.held(NodeIndex(4)), None);
+    }
+
+    fn kid(index: u32, count: u32, field: Option<u16>) -> Kid {
+        Kid { index: NodeIndex(index), start: index, end: index + 1, count, grammar: KindId(5), display: KindId(5), field: field.map(FieldId), named: true, extra: false, error: false }
+    }
+
+    #[test]
+    fn a_node_row_reads_back_as_written_and_is_written_once() {
+        let mut tree = TreeArena::new(crate::record::PARSED_KIND_BITS, 3);
+        let root = Kid { display: KindId(9), extra: true, error: true, named: false, ..kid(0, 3, None) };
+        tree.write_row(&root, false, true).expect("a row");
+        tree.write_row(&kid(1, 1, Some(1023)), true, true).expect("a row");
+        assert!(tree.node_rows().is_none(), "node 2 has no row");
+        assert!(tree.take_grown(), "the rows were made");
+        tree.write_row(&kid(2, 1, None), false, false).expect("a row");
+        assert!(!tree.take_grown(), "a row written into made rows grows nothing");
+        tree.write_row(&kid(2, 1, Some(4)), true, true).expect("a second write of a row");
+        let rows = tree.node_rows().expect("a row for every node");
+        assert_eq!(rows.kid(NodeIndex(0)), root);
+        assert_eq!(rows.kid(NodeIndex(1)), kid(1, 1, Some(1023)));
+        assert_eq!(rows.kid(NodeIndex(2)), kid(2, 1, None), "the first write stands");
+        assert_eq!((rows.missing(NodeIndex(1)), rows.holds_error(NodeIndex(1))), (true, true));
+        assert_eq!((rows.missing(NodeIndex(2)), rows.holds_error(NodeIndex(2))), (false, false));
+        assert_eq!((rows.missing(NodeIndex(0)), rows.holds_error(NodeIndex(0))), (false, true));
+        assert_eq!(rows.subtree_end(NodeIndex(0)), NodeIndex(3));
+    }
+
+    #[test]
+    fn a_field_id_past_a_row_s_bits_is_refused_by_name() {
+        let mut tree = TreeArena::new(crate::record::PARSED_KIND_BITS, 2);
+        assert_eq!(tree.write_row(&kid(1, 1, Some(1024)), false, false), Err(ArenaError::Malformed { what: "row field id", word: 1024 }));
+        assert_eq!(tree.write_row(&kid(2, 1, None), false, false), Err(ArenaError::Malformed { what: "node row", word: 2 }));
     }
 
     #[test]

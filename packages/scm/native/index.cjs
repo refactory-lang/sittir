@@ -837,6 +837,7 @@ module.exports.__napiBindingTarget = __napiStampBindingTarget(nativeBinding, __n
 module.exports = nativeBinding
 module.exports.SittirEngine = nativeBinding.SittirEngine
 module.exports.ARENA_CHUNK_SHIFT = nativeBinding.ARENA_CHUNK_SHIFT
+module.exports.backerParity = nativeBinding.backerParity
 module.exports.builtBump = nativeBinding.builtBump
 module.exports.builtBytes = nativeBinding.builtBytes
 module.exports.builtLeafSide = nativeBinding.builtLeafSide

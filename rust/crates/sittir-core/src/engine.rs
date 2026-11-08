@@ -781,6 +781,24 @@ impl<G: EngineGrammar> ParsedTree<G> {
         Some(self.error_at(&error, &self.read_ctx()))
     }
 
+    /// Writes the rows of the subtree of the `ERROR` holding the node at
+    /// `index`, which no record holds and no walk enters, and answers
+    /// whether one holds it (`read_error`).
+    ///
+    /// # Errors
+    ///
+    /// What writing a row refuses, naming it.
+    #[cfg(feature = "arena")]
+    pub(crate) fn meet_error(&self, index: crate::types::NodeIndex) -> Result<bool, String> {
+        let mut nodes = self.nodes();
+        let Some(error) = node(&mut nodes, index).and_then(|_| error_holding(&mut nodes, index)) else { return Ok(false) };
+        let mut cursor = self.tree.walk();
+        crate::read::goto(&mut cursor, error.index);
+        let grammar = self.grammar;
+        crate::arena::Hydration::new(&mut self.tree_arena()).meet_whole(&mut cursor).map_err(|refusal| refusal.describe(&|kind| grammar.kind_name(kind)))?;
+        Ok(true)
+    }
+
     /// The `ERROR` holding the node at `index` (`read_error`) as `snapshot`
     /// reads one: its bytes and its span from the byte `holder`, or `None`
     /// when no `ERROR` holds it. Refuses a holder after the `ERROR`'s start
@@ -2142,10 +2160,16 @@ impl<G: EngineGrammar> Engine<G> {
     ///
     /// # Errors
     ///
-    /// What the grammar's parser configuration refuses.
+    /// What the grammar's parser configuration refuses, and, with arena
+    /// storage, a grammar with more field ids than a node row's field bits
+    /// hold (`arena::ROW_FIELD_BITS`).
     pub fn with_store(grammar: G, options: ResolvedOptions, written: TriviaStore<G::Trivia>) -> Result<Self, String> {
         let mut parser = tree_sitter::Parser::new();
         grammar.configure_parser(&mut parser)?;
+        #[cfg(feature = "arena")]
+        if let Some(fields) = parser.language().map(|language| language.field_count()).filter(|&fields| fields >> crate::arena::ROW_FIELD_BITS != 0) {
+            return Err(format!("the grammar has {fields} field ids, more than a node row's {} bits hold", crate::arena::ROW_FIELD_BITS));
+        }
         Ok(Self { grammar, parser, options, written })
     }
 

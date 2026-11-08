@@ -347,3 +347,63 @@ impl<'t> Nodes<'t> for TreeNodes<'t> {
         cursor.goto_next_sibling().then(|| Kid::at(cursor))
     }
 }
+
+/// Navigation over the rows a parsed tree's arena keeps for its nodes
+/// (`TreeArena::node_rows`), with no tree: each node's facts read from its
+/// row, its children by stepping from one subtree end to the next, and its
+/// parent found from the subtree ends of the rows before it.
+#[cfg(feature = "arena")]
+pub struct RecordNodes<'t> {
+    rows: &'t crate::arena::NodeRows,
+    text: &'t str,
+}
+
+#[cfg(feature = "arena")]
+impl<'t> RecordNodes<'t> {
+    /// Navigation over the rows of `tree`'s nodes, whose bytes index `text`;
+    /// `None` while some node of the tree has no row.
+    #[must_use]
+    pub fn new(tree: &'t crate::arena::TreeArena, text: &'t str) -> Option<Self> {
+        tree.node_rows().map(|rows| Self { rows, text })
+    }
+
+    /// Every node of the tree, in preorder: the rows in index order.
+    pub fn preorder(&self) -> impl Iterator<Item = Kid> + '_ {
+        (0..self.rows.len()).map(|index| self.rows.kid(NodeIndex(index)))
+    }
+}
+
+#[cfg(feature = "arena")]
+impl<'t> Nodes<'t> for RecordNodes<'t> {
+    fn text(&self) -> &'t str {
+        self.text
+    }
+
+    fn kid(&mut self, index: NodeIndex) -> Kid {
+        self.rows.kid(index)
+    }
+
+    fn kids(&mut self, index: NodeIndex) -> Arc<[Kid]> {
+        let end = self.rows.subtree_end(index);
+        let mut kids = Vec::new();
+        let mut at = index + 1;
+        while at < end {
+            let kid = self.rows.kid(at);
+            at = at + kid.count;
+            kids.push(kid);
+        }
+        kids.into()
+    }
+
+    fn parent(&mut self, index: NodeIndex) -> Option<NodeIndex> {
+        (0..index.0).rev().map(NodeIndex).find(|&at| self.rows.subtree_end(at) > index)
+    }
+
+    fn missing(&mut self, index: NodeIndex) -> bool {
+        self.rows.missing(index)
+    }
+
+    fn holds_error(&mut self, index: NodeIndex) -> bool {
+        self.rows.holds_error(index)
+    }
+}

@@ -26,6 +26,7 @@ Generate typed factories, templates, and native bindings from a grammar
 - `--roundtrip` — Run validator probes after generation
 - `--post-generate-only` — Run only the post-generate fixtures and probes
 - `--native-only` — Rebuild only the N-API binding from the generated sources, then run post-generate
+- `--node-api-level <level>` — The Node-API level the workspace builds with, read once by a multi-grammar driver
 - `--no-build-native` — Skip the post-regen N-API rebuild
 - `--native-debug` — Build the post-regen N-API binding in debug (incremental, unoptimized — dev iteration only, never for CI/validation)
 - `--no-workspace-check` — Skip the post-build cargo check --workspace (multi-grammar drivers run it once, on the last grammar)
@@ -400,6 +401,7 @@ Compile the bindings, derive the vocabulary they imply, and check it against the
 **Options**
 
 - `--check` — Compile every bindings.scm against its parser, report totality diagnostics, report where the bindings and the vocabulary disagree, check the vocabulary flags module against its Flag declarations, and check that each grammar.bindings.ts is enrich's fixpoint over grammar.sittir.ts
+- `--grammar <grammar...>` — The grammars to compile (default: every stable grammar with bindings)
 - `--members` — Print member names and kinds per shared kind
 - `--write` — Write the vocabulary flags module from its Flag declarations, then each grammar.bindings.ts: the generated layer above grammar.sittir.ts, with the hash of the sources it was derived from, failing when the written layer is not enrich's fixpoint
 
@@ -647,7 +649,7 @@ List the vocabulary members and own slots whose type admits a kind no read in th
 
 **Options**
 
-- `--grammar <grammar...>` — The grammars to read (default: every grammar with bindings)
+- `--grammar <grammar...>` — The grammars to read (default: every stable grammar with bindings)
 
 **Example**
 
@@ -661,7 +663,7 @@ Write each grammar's vocabulary-typed portable module, type-check it and count i
 
 **Options**
 
-- `--grammar <grammar...>` — The grammars to check (default: every grammar with bindings)
+- `--grammar <grammar...>` — The grammars to check (default: every stable grammar with bindings)
 
 **Example**
 
@@ -902,6 +904,23 @@ Census the source gaps between adjacent list items: exact versus the nearest mem
 
 ```sh
 pnpm exec tsx packages/cli/src/cli.ts tool gap-census [options]
+```
+
+### `tool backer-parity`
+
+Compare arena storage's record backer with the tree backer on every node of each TypeScript source of a corpus, read whole
+
+**Options**
+
+- `--corpus <dir>` — The corpus root every path is read under
+- `--admitted <json>` — The corpus harness's admitted list, whose files' paths are read
+- `--files <paths...>` — These paths under the corpus root, without an admitted list
+- `--json` — Print the census as JSON
+
+**Example**
+
+```sh
+pnpm exec tsx packages/cli/src/cli.ts tool backer-parity [options]
 ```
 
 ### `tool trivia-timing`
