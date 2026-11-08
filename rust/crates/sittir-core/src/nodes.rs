@@ -351,11 +351,13 @@ impl<'t> Nodes<'t> for TreeNodes<'t> {
 /// Navigation over the rows a parsed tree's arena keeps for its nodes
 /// (`TreeArena::node_rows`), with no tree: each node's facts read from its
 /// row, its children by stepping from one subtree end to the next, and its
-/// parent found from the subtree ends of the rows before it.
+/// parent from an index of every node's parent, made from the subtree ends
+/// on the first `parent`.
 #[cfg(feature = "arena")]
 pub struct RecordNodes<'t> {
     rows: &'t crate::arena::NodeRows,
     text: &'t str,
+    parents: Option<Vec<u32>>,
 }
 
 #[cfg(feature = "arena")]
@@ -364,13 +366,31 @@ impl<'t> RecordNodes<'t> {
     /// `None` while some node of the tree has no row.
     #[must_use]
     pub fn new(tree: &'t crate::arena::TreeArena, text: &'t str) -> Option<Self> {
-        tree.node_rows().map(|rows| Self { rows, text })
+        tree.node_rows().map(|rows| Self { rows, text, parents: None })
     }
 
     /// Every node of the tree, in preorder: the rows in index order.
     pub fn preorder(&self) -> impl Iterator<Item = Kid> + '_ {
         (0..self.rows.len()).map(|index| self.rows.kid(NodeIndex(index)))
     }
+}
+
+/// Each node's parent by its index, the root's 0: one pass in index order,
+/// holding the nodes whose subtrees are still open.
+#[cfg(feature = "arena")]
+fn parents_of(rows: &crate::arena::NodeRows) -> Vec<u32> {
+    let mut parents = vec![0; rows.len() as usize];
+    let mut open: Vec<(u32, NodeIndex)> = Vec::new();
+    for index in 0..rows.len() {
+        while open.last().is_some_and(|&(_, end)| end.0 <= index) {
+            open.pop();
+        }
+        if let Some(&(parent, _)) = open.last() {
+            parents[index as usize] = parent;
+        }
+        open.push((index, rows.subtree_end(NodeIndex(index))));
+    }
+    parents
 }
 
 #[cfg(feature = "arena")]
@@ -396,7 +416,9 @@ impl<'t> Nodes<'t> for RecordNodes<'t> {
     }
 
     fn parent(&mut self, index: NodeIndex) -> Option<NodeIndex> {
-        (0..index.0).rev().map(NodeIndex).find(|&at| self.rows.subtree_end(at) > index)
+        let rows = self.rows;
+        let parents = self.parents.get_or_insert_with(|| parents_of(rows));
+        (index != NodeIndex::ROOT).then(|| NodeIndex(parents[index.0 as usize]))
     }
 
     fn missing(&mut self, index: NodeIndex) -> bool {

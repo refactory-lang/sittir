@@ -94,7 +94,8 @@ impl<G: EngineGrammar> ParsedTree<G> {
     /// records of its ancestors no read wrote, each one level down (`reach`).
     /// `None` for a node that has no record: a parsed leaf or a unit, which
     /// its holder's cell holds whole, and an `ERROR` node, which is trivia of
-    /// its tree, whose subtree's rows the read writes (`meet_error`).
+    /// its tree; the first read in a tree whose root is an `ERROR` writes
+    /// its rows (`meet_error`).
     ///
     /// # Errors
     ///
@@ -166,15 +167,16 @@ impl<G: EngineGrammar> ParsedTree<G> {
         Ok([header, row.index.0, coordinate.end.0, row.span.start, row.span.end, u32::from(kind.0)])
     }
 
-    /// The tree read whole as `N`, then each node compared as its record
-    /// backer (`RecordNodes`) and its tree backer (`TreeNodes`) answer it. A
+    /// The tree hydrated whole as `N` (`hydrate_record`), past any record a
+    /// shallower read wrote, then each node compared as its record backer
+    /// (`RecordNodes`) and its tree backer (`TreeNodes`) answer it. A
     /// diagnostic.
     ///
     /// # Errors
     ///
-    /// The read's refusal, and a read that leaves some node with no row.
+    /// The hydration's refusal, and one that leaves some node with no row.
     pub fn backer_parity<N: HydrateNode + RecordCells>(&self) -> Result<BackerParity, String> {
-        self.read_record::<N>(NodeIndex::ROOT, Depth::All)?;
+        self.hydrate_record::<N>(NodeIndex::ROOT, Depth::All)?;
         let arena = self.tree_arena();
         let mut records = RecordNodes::new(&arena, self.source()).ok_or("the whole read left a node with no row")?;
         let work = crate::layout::LayoutWorkCounter::default();

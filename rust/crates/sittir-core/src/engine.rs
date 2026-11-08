@@ -781,9 +781,10 @@ impl<G: EngineGrammar> ParsedTree<G> {
         Some(self.error_at(&error, &self.read_ctx()))
     }
 
-    /// Writes the rows of the subtree of the `ERROR` holding the node at
-    /// `index`, which no record holds and no walk enters, and answers
-    /// whether one holds it (`read_error`).
+    /// Whether an `ERROR` holds the node at `index` (`read_error`). When the
+    /// `ERROR` is the tree's root, which no record holds and no walk meets,
+    /// writes the rows of every node of the tree once; an `ERROR` below the
+    /// root is met by its holder's walk.
     ///
     /// # Errors
     ///
@@ -792,10 +793,11 @@ impl<G: EngineGrammar> ParsedTree<G> {
     pub(crate) fn meet_error(&self, index: crate::types::NodeIndex) -> Result<bool, String> {
         let mut nodes = self.nodes();
         let Some(error) = node(&mut nodes, index).and_then(|_| error_holding(&mut nodes, index)) else { return Ok(false) };
-        let mut cursor = self.tree.walk();
-        crate::read::goto(&mut cursor, error.index);
-        let grammar = self.grammar;
-        crate::arena::Hydration::new(&mut self.tree_arena()).meet_whole(&mut cursor).map_err(|refusal| refusal.describe(&|kind| grammar.kind_name(kind)))?;
+        let mut arena = self.tree_arena();
+        if error.index == crate::types::NodeIndex::ROOT && !arena.has_row(error.index) {
+            let grammar = self.grammar;
+            crate::arena::Hydration::new(&mut arena).meet_whole(&mut self.tree.walk()).map_err(|refusal| refusal.describe(&|kind| grammar.kind_name(kind)))?;
+        }
         Ok(true)
     }
 

@@ -17,6 +17,7 @@ use sittir_core::read::{descendant_count, Depth};
 use sittir_core::trivia_table::DepthMembers;
 use sittir_core::types::NodeIndex;
 use sittir_parity_tests::{each_grammar, fixture_sources, parsed};
+use std::fmt::Write as _;
 
 /// A file with an `ERROR` node and a `MISSING` token, by grammar.
 fn with_errors(name: &str) -> &'static str {
@@ -204,4 +205,60 @@ fn every_grammar_s_field_ids_fit_a_row() {
     for (name, fields) in each_grammar!(field_fits) {
         assert_ne!(fields, 0, "{name} has fields");
     }
+}
+
+#[test]
+fn backer_parity_reads_the_tree_whole_after_a_shallow_read() {
+    use sittir_typescript::render::AnyNode;
+    let source = "function f() {\n  function g() {\n    return [1, \"two\"];\n  }\n}\n";
+    let tree = parsed(sittir_typescript::TypeScriptGrammar, sittir_typescript::render::options::defaults(), source);
+    tree.read_record::<AnyNode>(NodeIndex::ROOT, Depth::ONE).expect("a shallow read").expect("a root record");
+    let parity = tree.backer_parity::<AnyNode>().expect("a whole read after a shallow one");
+    assert_eq!((parity.differing, parity.nodes), (0, descendant_count(&tree.tree().root_node())));
+}
+
+/// The milliseconds the record backer of a flat file of `statements`
+/// calls takes to answer every node's parent; `pass` makes each source
+/// distinct.
+fn parents_ms(statements: usize, pass: usize) -> f64 {
+    let mut source = String::new();
+    for i in 0..statements {
+        writeln!(source, "a{}();", i + pass).expect("a string takes the text");
+    }
+    let tree = parsed(sittir_typescript::TypeScriptGrammar, sittir_typescript::render::options::defaults(), &source);
+    tree.read_record::<sittir_typescript::render::AnyNode>(NodeIndex::ROOT, Depth::All).expect("a whole read");
+    let arena = tree.tree_arena();
+    let mut records = RecordNodes::new(&arena, tree.source()).expect("a row for every node");
+    let count = descendant_count(&tree.tree().root_node());
+    let start = std::time::Instant::now();
+    for index in 0..count {
+        std::hint::black_box(records.parent(NodeIndex::new(index)));
+    }
+    start.elapsed().as_secs_f64() * 1e3
+}
+
+#[test]
+fn parent_lookups_grow_with_the_tree() {
+    let _ = parents_ms(100, 0);
+    let (mut small, mut large) = (f64::INFINITY, f64::INFINITY);
+    for pass in 1..=5 {
+        small = small.min(parents_ms(1000, pass));
+        large = large.min(parents_ms(8000, pass));
+    }
+    assert!(large < small * 24.0, "eight times the statements take {:.1} times as long ({small:.2} ms, {large:.2} ms)", large / small);
+}
+
+#[test]
+fn a_read_inside_an_error_its_holder_meets_writes_no_rows() {
+    use sittir_core::heap::HeapBytes;
+    let source = "if (a { b(); }\nlet x = ;\n";
+    let tree = parsed(sittir_typescript::TypeScriptGrammar, sittir_typescript::render::options::defaults(), source);
+    let at = |index: u32| sittir_core::engine::node_at_index(tree.tree(), NodeIndex::new(index)).expect("a node");
+    let error = (0..descendant_count(&tree.tree().root_node())).find(|&index| at(index).is_error()).expect("the source holds an ERROR");
+    assert_ne!(error, 0, "the ERROR has a holder");
+    let made = tree.tree_arena().heap_bytes();
+    for index in error..error + descendant_count(&at(error)) {
+        assert_eq!(tree.read_record::<sittir_typescript::render::AnyNode>(NodeIndex::new(index), Depth::ONE), Ok(None), "the node at {index} has no record");
+    }
+    assert_eq!(tree.tree_arena().heap_bytes(), made, "no read inside the ERROR walked it for rows");
 }

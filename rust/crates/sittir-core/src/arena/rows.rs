@@ -180,6 +180,12 @@ impl TreeArena {
         Self { grown: true, arena: Arena::with_kind_bits(kind_bits), held: CountedMap::default(), nodes: rows, records: CountedMap::default(), rows: NodeRows::default() }
     }
 
+    /// Whether the tree has a row for the node at `index`.
+    #[must_use]
+    pub fn has_row(&self, index: NodeIndex) -> bool {
+        self.rows.rows.get(index.0 as usize).is_some_and(|row| row[2] != 0)
+    }
+
     /// Every node's row, once the hydrate pass has met every node of the
     /// tree; `None` while some node has none.
     #[must_use]
