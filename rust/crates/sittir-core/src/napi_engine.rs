@@ -886,6 +886,20 @@ macro_rules! napi_engine {
                 })
             }
 
+            /// Whether the record backer answers every node of the live tree
+            /// `treeId`, read whole, as the tree backer does
+            /// (`ParsedTree::backer_parity`): `{ nodes, differing, first? }`.
+            /// A diagnostic. Refuses a tree that is not live and a read the
+            /// model refuses.
+            #[::napi_derive::napi(ts_return_type = "{ nodes: number; differing: number; first?: number }")]
+            pub fn backer_parity(env: ::napi::Env, tree_id: $crate::types::TreeId) -> ::napi::Result<$crate::arena::BackerParity> {
+                with_live_tree(&env, tree_id, |parsed| {
+                    ::std::panic::catch_unwind(::std::panic::AssertUnwindSafe(|| parsed.backer_parity::<$any>()))
+                        .map_err(|payload| ::napi::Error::from_reason($crate::panic_msg(&*payload, "backer parity panicked")))?
+                        .map_err(::napi::Error::from_reason)
+                })
+            }
+
             /// The address of the record the parsed cell at `word`, item
             /// `item` (0 for a slot of one value), of the record at
             /// `holder` names, in the live tree `treeId`: on the first read

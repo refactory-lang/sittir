@@ -166,19 +166,37 @@ impl DepthMembers {
         if !kinds.has_depth_members() {
             return members;
         }
-        let mut net = 0;
         nodes.walk(NodeIndex::ROOT, &mut |step, kid| {
             if step == Step::Meet {
                 members.walked += 1;
-                if kinds.is_depth_member(kid.grammar) {
-                    net += i32::from(kid.grammar == kinds.indent) - i32::from(kid.grammar == kinds.dedent);
-                    members.at.push(kid.index);
-                    members.net.push(net);
-                }
+                members.meet(kid, kinds);
             }
             Visit::Enter
         });
         members
+    }
+
+    /// The depth members among `kids`, every node of a tree in preorder,
+    /// found by a scan of them with no walk; none where `kinds` has no
+    /// depth member.
+    #[must_use]
+    pub fn scanned(kids: impl IntoIterator<Item = Kid>, kinds: SurfaceKinds) -> Self {
+        let mut members = Self::default();
+        if kinds.has_depth_members() {
+            for kid in kids {
+                members.meet(&kid, kinds);
+            }
+        }
+        members
+    }
+
+    /// Counts `kid`, the next node in preorder, when it is a depth member.
+    fn meet(&mut self, kid: &Kid, kinds: SurfaceKinds) {
+        if kinds.is_depth_member(kid.grammar) {
+            let net = self.net.last().copied().unwrap_or(0) + i32::from(kid.grammar == kinds.indent) - i32::from(kid.grammar == kinds.dedent);
+            self.at.push(kid.index);
+            self.net.push(net);
+        }
     }
 
     /// The levels the members at the descendant indexes `from..to` open net

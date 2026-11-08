@@ -150,7 +150,7 @@ fn error_holding(nodes: &mut dyn Nodes<'_>, index: NodeIndex) -> Option<Kid> {
     let mut at = Some(index);
     while let Some(here) = at {
         let kid = nodes.kid(here);
-        if kid.error {
+        if kid.error() {
             outermost = Some(kid);
         }
         at = nodes.parent(here);
@@ -245,7 +245,7 @@ pub fn error_regions(nodes: &mut dyn Nodes<'_>) -> Vec<ErrorRegion> {
     let mut regions = Vec::new();
     let mut pending = vec![nodes.kid(NodeIndex::ROOT)];
     while let Some(kid) = pending.pop() {
-        if kid.error {
+        if kid.error() {
             regions.push(ErrorRegion { kind: ErrorRegionKind::Error, span: kid.span() });
         } else if nodes.missing(kid.index) {
             regions.push(ErrorRegion { kind: ErrorRegionKind::Missing, span: kid.span() });
@@ -779,6 +779,26 @@ impl<G: EngineGrammar> ParsedTree<G> {
         node(&mut nodes, index)?;
         let error = error_holding(&mut nodes, index)?;
         Some(self.error_at(&error, &self.read_ctx()))
+    }
+
+    /// Whether an `ERROR` holds the node at `index` (`read_error`). When the
+    /// `ERROR` is the tree's root, which no record holds and no walk meets,
+    /// writes the rows of every node of the tree once; an `ERROR` below the
+    /// root is met by its holder's walk.
+    ///
+    /// # Errors
+    ///
+    /// What writing a row refuses, naming it.
+    #[cfg(feature = "arena")]
+    pub(crate) fn meet_error(&self, index: crate::types::NodeIndex) -> Result<bool, String> {
+        let mut nodes = self.nodes();
+        let Some(error) = node(&mut nodes, index).and_then(|_| error_holding(&mut nodes, index)) else { return Ok(false) };
+        let mut arena = self.tree_arena();
+        if error.index == crate::types::NodeIndex::ROOT && !arena.has_row(error.index) {
+            let grammar = self.grammar;
+            crate::arena::Hydration::new(&mut arena).meet_whole(&mut self.tree.walk()).map_err(|refusal| refusal.describe(&|kind| grammar.kind_name(kind)))?;
+        }
+        Ok(true)
     }
 
     /// The `ERROR` holding the node at `index` (`read_error`) as `snapshot`
@@ -2142,10 +2162,16 @@ impl<G: EngineGrammar> Engine<G> {
     ///
     /// # Errors
     ///
-    /// What the grammar's parser configuration refuses.
+    /// What the grammar's parser configuration refuses, and, with arena
+    /// storage, a grammar with more field ids than a node row's field bits
+    /// hold (`arena::ROW_FIELD_BITS`).
     pub fn with_store(grammar: G, options: ResolvedOptions, written: TriviaStore<G::Trivia>) -> Result<Self, String> {
         let mut parser = tree_sitter::Parser::new();
         grammar.configure_parser(&mut parser)?;
+        #[cfg(feature = "arena")]
+        if let Some(fields) = parser.language().map(|language| language.field_count()).filter(|&fields| fields >> crate::arena::ROW_FIELD_BITS != 0) {
+            return Err(format!("the grammar has {fields} field ids, more than a node row's {} bits hold", crate::arena::ROW_FIELD_BITS));
+        }
         Ok(Self { grammar, parser, options, written })
     }
 
@@ -2753,7 +2779,7 @@ mod tests {
                     at = node.parent();
                 }
                 let found = error_holding(&mut tree.nodes(), index);
-                assert!(found.is_none_or(|error| error.error), "{source:?} at {index:?}: an ERROR");
+                assert!(found.is_none_or(|error| error.error()), "{source:?} at {index:?}: an ERROR");
                 assert_eq!(found.and_then(|error| node_at_index(tree.tree(), error.index)).map(|node| node.id()), outermost, "{source:?} at {index:?}");
             }
         }

@@ -117,7 +117,7 @@ mod tests {
 
     fn child(index: u32, start: u32, end: u32) -> Kid {
         let kind = KindId(u16::try_from(index).unwrap());
-        Kid { index: crate::types::NodeIndex(index), start, end, count: 1, grammar: kind, display: kind, field: None, named: true, extra: false, error: false }
+        Kid { index: crate::types::NodeIndex(index), start, end, count: 1, grammar: kind, display: kind, field: None, named: true, extra: false }
     }
 
     #[test]
