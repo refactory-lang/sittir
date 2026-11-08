@@ -442,8 +442,8 @@ jobs:
       # (below) actually consume; nothing else in ci.yml touches the
       # other 5 legs' output. Those 5 are pure "does it compile on
       # platform X" checks with no per-PR consumer: release.yml's
-      # napi-publish job already builds (and verifies) all 6 targets
-      # independently on tag push before publishing, so building them
+      # native job builds all 6 targets, and its publish job checks them,
+      # before anything publishes, so building them
       # again here on every PR was pure duplicated CI time, and a tag
       # run's legs do not gate (continue-on-error above). Gated to tag
       # pushes so a platform-specific break

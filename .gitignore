@@ -66,13 +66,15 @@ scratch/
 /target/
 
 # napi-rs build outputs: platform-specific .node binaries, written into the
-# grammar package that ships them, with the engine and Rust std libraries each
+# grammar package's native/ folder with the engine and Rust std libraries each
 # one loads beside it. Each developer rebuilds locally via
 # `pnpm -C rust/crates/sittir-{lang} run build`.
 packages/*/native/*.node
 packages/*/native/*.dylib
 packages/*/native/*.so
 packages/*/native/*.dll
+# The per-platform packages napi makes for a release (`sittir-<lang>-<platform>`).
+packages/*/npm/
 .claude/worktrees/
 tmp-scripts/
 graphify-out/cache/**

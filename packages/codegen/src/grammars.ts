@@ -176,6 +176,7 @@ export function nativeCrateDir(name: GrammarName): string {
 
 export const NATIVE_LOADER = 'index.cjs';
 export const NATIVE_TYPINGS = 'index.d.ts';
+export const NATIVE_NAPI_CONFIG = 'napi.json';
 
 export const NATIVE_TARGETS = [
 	'aarch64-apple-darwin',
@@ -237,6 +238,10 @@ export function workspaceNodeApiLevel(): number {
 }
 
 export function nativeBinaryName(name: GrammarName): string {
+	return `sittir-${name}`;
+}
+
+export function nativePlatformPackage(name: GrammarName): string {
 	return `sittir-${name}`;
 }
 

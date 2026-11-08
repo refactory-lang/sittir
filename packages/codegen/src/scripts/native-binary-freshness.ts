@@ -6,7 +6,7 @@ import { hostPlatform, platformSuffix } from '@sittir/common/engine';
 import { moduleClosure } from './module-closure.ts';
 import { sha256File } from '../util/content-hash.ts';
 import { writeFileAtomic } from '../util/write-file-atomic.ts';
-import { REPO_ROOT, grammarPackageDir, nativeBinaryName, nativeBindingRelDir, nativeCrateRelDir, type GrammarName } from '../grammars.ts';
+import { NATIVE_NAPI_CONFIG, REPO_ROOT, grammarPackageDir, nativeBinaryName, nativeBindingRelDir, nativeCrateRelDir, type GrammarName } from '../grammars.ts';
 
 export type NativeProfile = 'release' | 'gate' | 'dev';
 
@@ -108,7 +108,7 @@ function crateClosure(repoRoot: string, crateRel: string): string[] {
 }
 
 function crateInputs(crateRel: string): string[] {
-	return [`${crateRel}/Cargo.toml`, `${crateRel}/package.json`, `${crateRel}/build.rs`, `${crateRel}/src`, `${crateRel}/templates`];
+	return [`${crateRel}/Cargo.toml`, `${crateRel}/package.json`, `${crateRel}/${NATIVE_NAPI_CONFIG}`, `${crateRel}/build.rs`, `${crateRel}/src`, `${crateRel}/templates`];
 }
 
 export function hostBinaryName(grammar: string): string {

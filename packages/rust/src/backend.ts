@@ -117,7 +117,12 @@ function tryLoadNative(): NativeModule | { reason: string } {
 	} catch (err) {
 		return {
 			reason: nativeLoadFailure(
-				{ packageName: '@sittir/rust', binaryName: 'sittir-rust', dir: dirname(NATIVE_MODULE_PATH) },
+				{
+					packageName: '@sittir/rust',
+					binaryName: 'sittir-rust',
+					platformPackage: 'sittir-rust',
+					dir: dirname(NATIVE_MODULE_PATH)
+				},
 				err
 			)
 		};

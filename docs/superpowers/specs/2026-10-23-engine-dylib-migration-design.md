@@ -52,6 +52,7 @@ The std library ships as `libstd-<hash>`, and the hash changes with the rustc bu
   - `LOADED` is a `static` in the engine. An addon reads it as data, never through a call: the loader binds a data reference when it maps the addon, to the engine image the process mapped first.
 - Each addon compares `BUILT` with `LOADED` in its `#[napi(module_exports)]` hook, before any call into the engine, so `require` fails with one message naming both stamps and the path the loaded engine came from. Only once they differ does the hook call the engine, for that message. A call may be bound lazily, and a lazily bound call into an engine that lacks it crashes the process instead of failing the load.
 - The stamp is not a hash of source bytes. That hash differed between a Unix checkout and a Windows one with CRLF line endings.
+- A release stamp carries the commit. A dev build stamps `<version>@local`, so two dev builds under different profiles carry the same stamp and the check cannot tell them apart. A dev workspace relies on regen's freshness check of each binary's profile and inputs instead.
 - A newer engine version changes every mangled symbol, `LOADED` among them, so the OS loader fails the addon at load, with "symbol not found" or its platform's equivalent. The JavaScript loader maps that failure to the same mismatch message, reading the addon's stamp from its bytes.
 - A build reads the stamps of the `.node` and the engine copy it ships, stripped and signed, and fails by name unless they match each other and the workspace's engine version. Cargo gives every build of the engine one file name, so after a version change it can keep a build of the other version that it judges fresh.
 
@@ -118,7 +119,8 @@ A parsed node's coordinate reaches its tree through the tree's holder, never by 
 
 ## Packaging
 
-- **Files.** Each platform package ships the engine and std copies beside its `.node`. The npm `files` and the napi-rs loader carry the two extra files.
+- **Packages.** `@sittir/<g>` ships its JavaScript, the loader and its typings. Each platform's binaries ship in napi-rs's per-platform package, `sittir-<g>-<platform>`, which `@sittir/<g>` lists as an optional dependency at its own version; npm installs the one that matches the platform. napi reads the crate's `napi.json` and `@sittir/<g>`'s manifest, so a platform package takes the grammar package's version, and the release writes the optional dependencies. The platform packages publish before the grammar package.
+- **Files.** Each platform package ships the engine and std copies beside its `.node`, and its npm `files` lists them.
 - **Load paths.** The loader reuses an image by the name each addon records:
   - macOS: the engine's install name is `@rpath/libsittir_engine.dylib`, set by its build script (rustc's default is the bare file name). Each addon carries `LC_RPATH @loader_path`. Packaging rewrites every std reference, and the std copy's own id, to `@rpath/libstd-<hash>.dylib`, then re-signs the images.
   - Linux: `DT_NEEDED libsittir_engine.so` (the engine's soname) and `libstd-<hash>.so`, found through `RUNPATH $ORIGIN` on the addon and on the engine. The engine needs its own, since `RUNPATH` is not inherited.

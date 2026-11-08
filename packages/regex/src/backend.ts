@@ -117,7 +117,12 @@ function tryLoadNative(): NativeModule | { reason: string } {
 	} catch (err) {
 		return {
 			reason: nativeLoadFailure(
-				{ packageName: '@sittir/regex', binaryName: 'sittir-regex', dir: dirname(NATIVE_MODULE_PATH) },
+				{
+					packageName: '@sittir/regex',
+					binaryName: 'sittir-regex',
+					platformPackage: 'sittir-regex',
+					dir: dirname(NATIVE_MODULE_PATH)
+				},
 				err
 			)
 		};

@@ -24,15 +24,10 @@ import { join } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { REPO_ROOT, nativeBinaryName, nativeBindingDir } from '../../packages/codegen/src/grammars.ts';
 import { NATIVE_PROFILE_FLAGS, hostBinaryName, nativeBuildStamp } from '../../packages/codegen/src/scripts/native-binary-freshness.ts';
-import { engineStampOf } from '../../packages/common/src/native-binding.ts';
+import { engineLibraryName, engineStampOf, hostPlatform, platformSuffix } from '../../packages/common/src/native-binding.ts';
 
 const FIRST = 'regex';
 const SECOND = 'scm';
-const ENGINE_FILE: Partial<Record<NodeJS.Platform, string>> = {
-	darwin: 'libsittir_engine.dylib',
-	linux: 'libsittir_engine.so',
-	win32: 'sittir_engine.dll'
-};
 const shell = process.platform === 'win32';
 
 if (process.argv[2] === 'load') {
@@ -77,7 +72,7 @@ function expectRefused(name: string, built: string, loaded: string): void {
 		`sittir: ${nativeBinaryName(SECOND)} was built against engine ${built} but loaded engine ${loaded} from `;
 	if (!second.startsWith(prefix)) throw new Error(`${name}: expected a refusal starting\n  ${prefix}\ngot\n  ${second}`);
 	const mapped = realpathSync.native(second.slice(prefix.length));
-	const expected = realpathSync.native(join(nativeBindingDir(FIRST), ENGINE_FILE[process.platform]!));
+	const expected = realpathSync.native(join(nativeBindingDir(FIRST), engineLibraryName(platformSuffix(hostPlatform()))));
 	if (mapped !== expected) throw new Error(`${name}: the refusal names ${mapped}, not ${expected}`);
 	console.log(`${name}: refused — ${second}`);
 }

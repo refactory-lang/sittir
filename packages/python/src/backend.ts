@@ -117,7 +117,12 @@ function tryLoadNative(): NativeModule | { reason: string } {
 	} catch (err) {
 		return {
 			reason: nativeLoadFailure(
-				{ packageName: '@sittir/python', binaryName: 'sittir-python', dir: dirname(NATIVE_MODULE_PATH) },
+				{
+					packageName: '@sittir/python',
+					binaryName: 'sittir-python',
+					platformPackage: 'sittir-python',
+					dir: dirname(NATIVE_MODULE_PATH)
+				},
 				err
 			)
 		};

@@ -216,9 +216,12 @@ pnpm run build:debug          # debug binding (dev only)
 ```
 
 Both go through `scripts/build-native.mts <lang>`, which writes the loader
-(`index.cjs`), its typings (`index.d.ts`) and the host's `.node` into
-`packages/<lang>/native/` — the directory the grammar package ships. The loader
-and typings are committed; the binaries are git-ignored.
+(`index.cjs`), its typings (`index.d.ts`) and the host's `.node`, with the
+engine and std copies it loads, into `packages/<lang>/native/`. napi reads the
+crate's settings from `rust/crates/sittir-<lang>/napi.json`, which codegen
+writes. The grammar package ships the loader and typings; the binaries ship in
+the platform packages (see [Published shape](#published-shape)). The loader and
+typings are committed; the binaries are git-ignored.
 
 Run the validators on an optimized binding (`gate` or `release`); the
 validation load is sized for it. Each build records its profile, its native
@@ -251,19 +254,41 @@ language crates share the core switch; they need no matching feature flag.
 
 ### Published shape
 
-A grammar package ships its native binaries inside itself (`files` lists
-`native`), so a consumer installs one package per grammar. Check what would be
-published with:
+`@sittir/<lang>` ships its JavaScript, the native loader and its typings. Each
+platform's binary ships in its own package, `sittir-<lang>-<platform>`
+(napi-rs's per-platform packages), with the engine and std copies it loads.
+`@sittir/<lang>` lists every platform package as an optional dependency at its
+own version, and npm installs only the one that matches the consumer's
+platform. The grammar package's version is the one version: napi reads
+`@sittir/<lang>`'s `package.json` for it when it makes the platform packages,
+and writes the optional dependencies into it at release time. Neither is
+committed.
+
+Check what would be published with:
 
 ```bash
 pnpm run build
 pnpm run check:published                 # pack, install outside the workspace, type-check @sittir/types, createEngine + parse + render
-pnpm run check:published --release       # also require a binary for every declared target
 ```
 
-The default run accepts a pack holding only the host's binary; `--release`
-fails unless every target in `NATIVE_TARGETS`
-(`packages/codegen/src/grammars.ts`) has one.
+It packs each grammar package and the host's platform package, which it makes
+from `packages/<lang>/native/`. It fails when a grammar pack lacks the loader or
+its typings or holds anything else under `native/`, and when a platform pack
+lacks its `.node` or a copy the `.node` links, or holds an engine built from
+another stamp.
+
+The release (`.github/workflows/release.yml`) builds every target in
+`NATIVE_TARGETS` (`packages/codegen/src/grammars.ts`), then runs:
+
+```bash
+pnpm exec tsx packages/tools/src/scripts/native-packages.ts assemble <binaries>  # napi makes packages/<lang>/npm/<platform>; fill each; declare them on @sittir/<lang>
+pnpm run check:published --release       # every platform pack, and one optional dependency per platform at the grammar's version
+pnpm exec tsx packages/tools/src/scripts/native-packages.ts publish             # the platform packages first
+pnpm run changeset:publish               # then the @sittir packages
+```
+
+A release run dispatched with `dry-run` runs every step with a dry-run publish
+in place of each publish.
 
 `@sittir/types` publishes one declaration file, bundled by tsdown
 (`packages/types/tsdown.config.ts`), with the `type-fest` types it uses

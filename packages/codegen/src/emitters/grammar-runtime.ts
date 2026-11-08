@@ -1,4 +1,4 @@
-import { NATIVE_LOADER, nativeBinaryName } from '../grammars.ts';
+import { NATIVE_LOADER, nativeBinaryName, nativePlatformPackage } from '../grammars.ts';
 import { NATIVE_RENDER_NODE_ABI } from './native-crate.ts';
 
 export interface EmitGrammarRuntimeConfig {
@@ -125,7 +125,12 @@ function tryLoadNative(): NativeModule | { reason: string } {
 	} catch (err) {
 		return {
 			reason: nativeLoadFailure(
-				{ packageName: '@sittir/${grammar}', binaryName: '${nativeBinaryName(grammar)}', dir: dirname(NATIVE_MODULE_PATH) },
+				{
+					packageName: '@sittir/${grammar}',
+					binaryName: '${nativeBinaryName(grammar)}',
+					platformPackage: '${nativePlatformPackage(grammar)}',
+					dir: dirname(NATIVE_MODULE_PATH)
+				},
 				err
 			)
 		};

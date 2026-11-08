@@ -3,11 +3,15 @@ export { scopeBuilders } from './create-engine.ts';
 export { nodeStorageOf } from './engine-scope.ts';
 export {
 	LOADED_ENGINE,
+	engineLibraryName,
 	engineStampOf,
 	hostPlatform,
+	isStdLibrary,
 	nativeLoadFailure,
+	platformPackageName,
 	platformSuffix,
 	recordLoadedEngine,
+	stdLibrariesLinkedBy,
 	targetSuffix
 } from './native-binding.ts';
 export { addressOf, cellFormatOf, chunkOf, decodeListCell, decodeParsedCell, decodeSideDelimiter, decodeSideRow, isTagged, wordOf } from './record-cell.ts';

@@ -52,9 +52,9 @@
 import { spawnSync } from 'node:child_process';
 import { chmodSync, copyFileSync, existsSync, mkdirSync, readdirSync, rmSync } from 'node:fs';
 import { basename, dirname, join, resolve } from 'node:path';
-import { NATIVE_LOADER, NATIVE_TYPINGS, REPO_ROOT, assertGrammar, nativeBinaryName, nativeBindingDir, nativeBuildEnv, nativeCrateDir } from '../packages/codegen/src/grammars.ts';
+import { NATIVE_LOADER, NATIVE_NAPI_CONFIG, NATIVE_TYPINGS, REPO_ROOT, assertGrammar, nativeBinaryName, nativeBindingDir, nativeBuildEnv, nativeCrateDir } from '../packages/codegen/src/grammars.ts';
 import { type NativeProfile, linkerMapOf, llvmTool, nativeBuildFingerprint, rustHost, unstrippedBinaryPath, writeNativeBuildStamp } from '../packages/codegen/src/scripts/native-binary-freshness.ts';
-import { engineStampOf, hostPlatform, platformSuffix, targetSuffix } from '../packages/common/src/native-binding.ts';
+import { engineLibraryName, engineStampOf, hostPlatform, isStdLibrary, platformSuffix, targetSuffix } from '../packages/common/src/native-binding.ts';
 
 const [name, ...flags] = process.argv.slice(2);
 if (name === undefined) throw new Error('usage: build-native.mts <grammar> [napi build flags…]');
@@ -109,7 +109,6 @@ function assertOneEngine(addon: string, engine: string, source: string, version:
 }
 
 const PROFILE_DIR: Readonly<Record<NativeProfile, string>> = { release: 'release', gate: 'gate', dev: 'debug' };
-const STD_LIBRARY = /^(?:lib)?std-[0-9a-f]+\.(?:dylib|so|dll)$/;
 
 // A full resolve, not `--no-deps`: it settles Cargo.lock after a manifest
 // change before the build's fingerprint reads it, so the build doesn't
@@ -131,7 +130,7 @@ function writtenLinkerMap(metadata: CargoMetadata, crateDir: string, cargoOut: s
 function stdLibrary(triple: string): string {
 	const sysroot = spawnSync('rustc', ['--print', 'sysroot'], { encoding: 'utf8' }).stdout.trim();
 	const dir = join(sysroot, 'lib', 'rustlib', triple, 'lib');
-	const found = readdirSync(dir).filter((file) => STD_LIBRARY.test(file));
+	const found = readdirSync(dir).filter(isStdLibrary);
 	if (found.length !== 1) throw new Error(`expected one std library in ${dir}, found ${found.length}`);
 	return join(dir, found[0]!);
 }
@@ -149,7 +148,7 @@ function linkedStd(image: string): string {
 		.stdout.split('\n')
 		.slice(1)
 		.map((line) => line.trim().split(' ')[0]!)
-		.find((library) => STD_LIBRARY.test(basename(library)));
+		.find((library) => isStdLibrary(basename(library)));
 	if (linked === undefined) throw new Error(`${image} links no std library`);
 	return linked;
 }
@@ -171,12 +170,12 @@ const triple = flags.includes('--target') && target !== undefined ? target : rus
 const crateDir = nativeCrateDir(grammar);
 const metadata = cargoMetadata(crateDir);
 const cargoOut = join(metadata.target_directory, triple, PROFILE_DIR[profile]);
-const engineLibrary = apple ? 'libsittir_engine.dylib' : suffix.startsWith('win32-') ? 'sittir_engine.dll' : 'libsittir_engine.so';
+const engineLibrary = engineLibraryName(suffix);
 mkdirSync(dirname(copy), { recursive: true });
 const built = nativeBuildFingerprint(REPO_ROOT, grammar);
 run(
 	'pnpm',
-	['exec', 'napi', 'build', '--platform', '--features', 'arena', ...flags, '--output-dir', outDir, '--js', NATIVE_LOADER, '--dts', NATIVE_TYPINGS],
+	['exec', 'napi', 'build', '--config-path', NATIVE_NAPI_CONFIG, '--platform', '--features', 'arena', ...flags, '--output-dir', outDir, '--js', NATIVE_LOADER, '--dts', NATIVE_TYPINGS],
 	crateDir,
 	process.platform === 'win32',
 	nativeBuildEnv(triple, release ? { ...process.env, SITTIR_ENGINE_COMMIT: gitHead() } : process.env, linkerMap === undefined ? [] : ['-C link-arg=/MAP'])
@@ -189,7 +188,7 @@ if (linkerMap !== undefined) {
 
 const shipped = join(outDir, binary);
 const std = stdLibrary(triple);
-for (const stale of readdirSync(outDir).filter((file) => STD_LIBRARY.test(file) && file !== basename(std))) rmSync(join(outDir, stale));
+for (const stale of readdirSync(outDir).filter((file) => isStdLibrary(file) && file !== basename(std))) rmSync(join(outDir, stale));
 const libraries = [shipLibrary(join(cargoOut, 'deps', engineLibrary)), shipLibrary(std)];
 const images = [shipped, ...libraries];
 const signs = apple && process.platform === 'darwin';

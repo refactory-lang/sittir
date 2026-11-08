@@ -1,4 +1,4 @@
-import { NATIVE_TARGETS, grammarDisplayName, nativeBinaryName, nodeRangeOfNodeApi, type GrammarName } from '../grammars.ts';
+import { NATIVE_NAPI_CONFIG, NATIVE_TARGETS, grammarDisplayName, nativeBinaryName, nativePlatformPackage, nodeRangeOfNodeApi, type GrammarName } from '../grammars.ts';
 import { NATIVE_PROFILE_FLAGS, type NativeProfile } from '../scripts/native-binary-freshness.ts';
 import { TRIVIA_NODE } from './render-module.ts';
 
@@ -153,7 +153,6 @@ fn rerun_if_changed_with_includes(
 			contents: json({
 				name: `sittir-${v.name}`,
 				private: true,
-				version: '0.1.0',
 				description: `Grammar-local Rust / napi-rs engine for @sittir/${v.name}.`,
 				keywords: ['n-api', 'napi', 'native', v.name, 'sittir', 'tree-sitter'].sort(),
 				homepage: 'https://github.com/refactory-lang/sittir#readme',
@@ -170,12 +169,15 @@ fn rerun_if_changed_with_includes(
 					'build:gate': buildNative(v.name, 'gate')
 				},
 				devDependencies: { '@napi-rs/cli': 'catalog:' },
-				napi: {
-					binaryName: nativeBinaryName(v.name),
-					packageName: `sittir-${v.name}`,
-					targets: [...NATIVE_TARGETS]
-				},
 				engines: { node: nodeRangeOfNodeApi(nodeApiLevel) }
+			})
+		},
+		{
+			path: NATIVE_NAPI_CONFIG,
+			contents: json({
+				binaryName: nativeBinaryName(v.name),
+				packageName: nativePlatformPackage(v.name),
+				targets: [...NATIVE_TARGETS]
 			})
 		},
 		{

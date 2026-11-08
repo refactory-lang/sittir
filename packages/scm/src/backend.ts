@@ -117,7 +117,12 @@ function tryLoadNative(): NativeModule | { reason: string } {
 	} catch (err) {
 		return {
 			reason: nativeLoadFailure(
-				{ packageName: '@sittir/scm', binaryName: 'sittir-scm', dir: dirname(NATIVE_MODULE_PATH) },
+				{
+					packageName: '@sittir/scm',
+					binaryName: 'sittir-scm',
+					platformPackage: 'sittir-scm',
+					dir: dirname(NATIVE_MODULE_PATH)
+				},
 				err
 			)
 		};

@@ -2,7 +2,16 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { subset } from 'semver';
 import { describe, expect, it } from 'vitest';
-import { NODE_API_NODE_RANGES, allGrammars, grammarPackageDir, nativeCrateDir, nodeRangeOfNodeApi, workspaceNodeApiLevel } from '../../grammars.ts';
+import {
+	NATIVE_NAPI_CONFIG,
+	NATIVE_TARGETS,
+	NODE_API_NODE_RANGES,
+	allGrammars,
+	grammarPackageDir,
+	nativeCrateDir,
+	nodeRangeOfNodeApi,
+	workspaceNodeApiLevel
+} from '../../grammars.ts';
 import { nativeCrateFiles } from '../native-crate.ts';
 
 const nodeApiLevel = workspaceNodeApiLevel();
@@ -19,6 +28,19 @@ describe('a grammar crate builds its binding', () => {
 			'build:debug': 'tsx ../../../scripts/build-native.mts rust',
 			'build:gate': 'tsx ../../../scripts/build-native.mts rust --profile gate'
 		});
+	});
+});
+
+describe("napi reads a grammar crate's config from its own file", () => {
+	it('names the binary, the stem of the platform packages and the targets', () => {
+		const config = nativeCrateFiles('rust', nodeApiLevel).find((file) => file.path === NATIVE_NAPI_CONFIG);
+		expect(JSON.parse(config?.contents ?? '{}')).toEqual({ binaryName: 'sittir-rust', packageName: 'sittir-rust', targets: [...NATIVE_TARGETS] });
+	});
+
+	it('keeps the version and the napi config out of the crate manifest: the grammar package holds the one version', () => {
+		const pkg = JSON.parse(crateManifest('rust', nodeApiLevel)) as Record<string, unknown>;
+		expect(pkg).not.toHaveProperty('version');
+		expect(pkg).not.toHaveProperty('napi');
 	});
 });
 

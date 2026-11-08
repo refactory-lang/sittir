@@ -117,7 +117,12 @@ function tryLoadNative(): NativeModule | { reason: string } {
 	} catch (err) {
 		return {
 			reason: nativeLoadFailure(
-				{ packageName: '@sittir/typescript', binaryName: 'sittir-typescript', dir: dirname(NATIVE_MODULE_PATH) },
+				{
+					packageName: '@sittir/typescript',
+					binaryName: 'sittir-typescript',
+					platformPackage: 'sittir-typescript',
+					dir: dirname(NATIVE_MODULE_PATH)
+				},
 				err
 			)
 		};
