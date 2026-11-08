@@ -447,7 +447,7 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 		246, 248, 252, 254, 255, 256, 259, 265, 341, 349, 351, 388, 389, 429, 441, 484
 	]),
 	extern_modifier: new Set([332]),
-	visibility_modifier: new Set([1, 125, 126, 127, 263, 379, 380, 381, 477, 481]),
+	visibility_modifier: new Set([125, 126, 379, 380, 381, 477, 481]),
 	bracketed_type: new Set([
 		1, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 127, 217, 218, 238, 240, 242, 243, 244, 246,
 		248, 252, 254, 255, 256, 259, 265, 341, 351, 388, 389, 484
@@ -532,7 +532,7 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 		321, 322, 324, 325, 326, 330, 332, 333, 336, 357, 358, 369, 370, 386, 387, 419, 422, 426
 	]),
 	negative_literal: new Set([141, 142, 143, 144, 162]),
-	line_comment: new Set([155, 166, 399, 400, 401]),
+	line_comment: new Set([155, 399, 400, 401]),
 	block_comment: new Set([165, 402, 403, 404]),
 	macro_rules: new Set([181]),
 	enum_variant_list_elements: new Set([200, 428]),
@@ -607,8 +607,8 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 	impl_item_positive_clause: new Set([1, 246, 265, 484]),
 	impl_item_negative_clause: new Set([1, 246, 265, 484]),
 	visibility_modifier_pub_scope_in_path: new Set([1, 125, 126, 127, 263, 481]),
-	visibility_modifier_pub_scope: new Set([1, 125, 126, 127, 263, 379, 481]),
-	visibility_modifier_pub: new Set([1, 125, 126, 127, 263, 379, 380, 481]),
+	visibility_modifier_pub_scope: new Set([125, 126, 379, 481]),
+	visibility_modifier_pub: new Set([125, 126, 379, 380, 481]),
 	function_type_trait_form: new Set([1, 265, 484]),
 	function_type_fn_form: new Set([210]),
 	or_pattern_prefix: new Set([

@@ -1228,6 +1228,7 @@ export function bareAcceptClosure(
 			names.add(admitted);
 			const admittedNode = nodeMap.nodes.get(admitted);
 			if (admittedNode instanceof AssembledEnum) for (const member of admittedNode.resolvedKinds) names.add(member);
+			if (admittedNode?.foldsFixedWord === true) continue;
 			for (const inner of acceptedBy(admitted, seen)) names.add(inner);
 		}
 		return names;

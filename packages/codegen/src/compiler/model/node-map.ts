@@ -32,7 +32,7 @@ import type { RuleMetadata } from '../../types/rule-metadata-brand.ts';
 import { aliasStorageOf, GLOBAL_WORDSET, reservedWordsetsOf } from '../../dsl/rule-metadata.ts';
 import type { GeneratedKindEntry } from '../../dsl/symbol-table.ts';
 import type { KindProvenance } from '../types.ts';
-import { findEntryForKindName, findEntryForLiteralText, findOwnKindEntry, isAliasedHiddenStorage, seatedOf, surfaceHiddenOf } from '../../dsl/symbol-table.ts';
+import { findEntryForKindName, findEntryForLiteralText, findOwnKindEntry, isAliasedHiddenStorage, parseKindIdOf, seatedOf, surfaceHiddenOf } from '../../dsl/symbol-table.ts';
 import { stampDisplay, type DisplayStamp, type RowlessDisplaySource } from './display-name.ts';
 import { armNameOf, undisplayedKindAddress } from '../../dsl/arm-names.ts';
 import { tokenToName } from '../normalize.ts';
@@ -853,7 +853,7 @@ export function deriveValuesForRule(
 							resolvedKind: rule.name,
 							resolvedKindId: rule.kindId,
 							parseKind: { kind: 'unresolved-ref', name: rule.aliasedTo ?? rule.name },
-							parseKindId: rule.aliasedToId ?? rule.kindId,
+							parseKindId: parseKindIdOf(rule),
 							...armFacts,
 							multiplicity
 						}
@@ -880,7 +880,7 @@ export function deriveValuesForRule(
 						node: { kind: 'unresolved-ref', name: rule.name },
 						storageKindId: rule.kindId,
 						parseKind: { kind: 'unresolved-ref', name: rule.aliasedTo ?? rule.name },
-						parseKindId: rule.aliasedToId ?? rule.kindId,
+						parseKindId: parseKindIdOf(rule),
 						...armFacts,
 						...(rule.copyOf === undefined ? {} : { copyOf: rule.copyOf }),
 						multiplicity
@@ -913,7 +913,7 @@ export function deriveValuesForRule(
 						node: { kind: 'unresolved-ref' as const, name },
 						storageKindId: subRef.kindId,
 						parseKind: { kind: 'unresolved-ref' as const, name: subRef.aliasedTo ?? name },
-						parseKindId: subRef.aliasedToId ?? subRef.kindId,
+						parseKindId: parseKindIdOf(subRef),
 						...armFacts,
 						multiplicity
 					};
@@ -1184,6 +1184,8 @@ export abstract class AssembledNodeBase<R extends AnyRule = RenderRule> {
 	factoryInline: boolean = false;
 
 	triviaInterior: boolean = false;
+
+	foldsFixedWord: boolean = false;
 
 	externalRole?: ExternalRole['role'];
 
