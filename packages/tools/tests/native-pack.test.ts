@@ -2,13 +2,17 @@ import { existsSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, statSync
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
+import { stableGrammars } from '@sittir/codegen/grammars';
 import {
 	assembleNativePackages,
+	changesetFixedGroups,
 	declareNativePackages,
+	grammarPackageName,
 	hostInstallSize,
 	nativePackGaps,
 	optionalDependencyGaps,
 	platformPackGaps,
+	releaseGroupGaps,
 	shipLinkedCopies,
 	unexpectedNativeFiles,
 	type NapiPackage
@@ -77,6 +81,31 @@ function tree(root: string, files: Readonly<Record<string, Buffer | string>>): s
 }
 
 const scratch = (name: string): string => mkdtempSync(join(tmpdir(), `sittir-${name}-`));
+
+describe('releaseGroupGaps', () => {
+	const grammars = ['@sittir/python', '@sittir/regex', '@sittir/rust'];
+	const gap = (name: string) => `${name} is not in the fixed changeset group that releases the grammar packages together`;
+
+	it('accepts one fixed group holding every grammar package', () => {
+		expect(releaseGroupGaps([['@sittir/common'], ['@sittir/python', '@sittir/regex', '@sittir/rust']], grammars)).toEqual([]);
+	});
+
+	it('names a grammar package the group leaves out', () => {
+		expect(releaseGroupGaps([['@sittir/python', '@sittir/rust']], grammars)).toEqual([gap('@sittir/regex')]);
+	});
+
+	it('names every grammar package when no group is fixed', () => {
+		expect(releaseGroupGaps([], grammars)).toEqual(grammars.map(gap));
+	});
+
+	it('names the grammar packages fixed apart from the larger group', () => {
+		expect(releaseGroupGaps([['@sittir/rust'], ['@sittir/python', '@sittir/regex']], grammars)).toEqual([gap('@sittir/rust')]);
+	});
+
+	it("holds for this repository's changeset config", () => {
+		expect(releaseGroupGaps(changesetFixedGroups(), stableGrammars().map(grammarPackageName))).toEqual([]);
+	});
+});
 
 describe('platformPackGaps', () => {
 	it('accepts a platform pack holding the .node, the engine and the std it links, under one stamp', () => {

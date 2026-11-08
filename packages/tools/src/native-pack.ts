@@ -130,6 +130,20 @@ export function optionalDependencyGaps(manifest: GrammarManifest, platformPackag
 	];
 }
 
+export const grammarPackageName = (grammar: GrammarName): string => readManifest<{ readonly name: string }>(grammarPackageDir(grammar)).name;
+
+export function changesetFixedGroups(root: string = REPO_ROOT): string[][] {
+	return (JSON.parse(readFileSync(join(root, '.changeset', 'config.json'), 'utf8')) as { readonly fixed?: string[][] }).fixed ?? [];
+}
+
+export function releaseGroupGaps(fixed: readonly (readonly string[])[], packages: readonly string[]): string[] {
+	const held = (group: readonly string[]) => packages.filter((name) => group.includes(name)).length;
+	const group = fixed.reduce<readonly string[]>((best, candidate) => (held(candidate) > held(best) ? candidate : best), []);
+	return packages
+		.filter((name) => !group.includes(name))
+		.map((name) => `${name} is not in the fixed changeset group that releases the grammar packages together`);
+}
+
 export function platformPackGaps(dir: string, binaryName: string, suffix: string): string[] {
 	const node = addonFileName(binaryName, suffix);
 	if (!existsSync(join(dir, node))) return [`lacks ${node}`];

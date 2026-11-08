@@ -16,7 +16,9 @@ import { hostPlatform, platformPackageName, platformSuffix } from '@sittir/commo
 import {
 	NATIVE_PACKAGES_DIR,
 	assembleNativePackages,
+	changesetFixedGroups,
 	grammarNapiPackage,
+	grammarPackageName,
 	nativePackGaps,
 	nativePackageDirs,
 	optionalDependencyGaps,
@@ -24,6 +26,7 @@ import {
 	packWorkspacePackage,
 	platformPackGaps,
 	readManifest,
+	releaseGroupGaps,
 	unexpectedNativeFiles,
 	type GrammarManifest,
 	type PlatformPackageManifest
@@ -75,7 +78,7 @@ try {
 	const dependencies: Record<string, string> = {};
 	for (const name of ['types', 'common']) dependencies[`@sittir/${name}`] = `file:${packWorkspacePackage(join(PACKAGES_DIR, name), tarballs)}`;
 
-	const gaps: string[] = [];
+	const gaps: string[] = releaseGroupGaps(changesetFixedGroups(), stableGrammars().map(grammarPackageName));
 	for (const grammar of grammars) {
 		const label = `@sittir/${grammar}`;
 		const tarball = packWorkspacePackage(grammarPackageDir(grammar), tarballs);

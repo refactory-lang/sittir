@@ -44,6 +44,8 @@ The list reaches each linker in its own form: an `exported_symbols_list` (macOS)
 
 The std library ships as `libstd-<hash>`, and the hash changes with the rustc build. The engine's mangled symbols change with its version. So every package of a release comes from one toolchain and one engine version, and packages of different releases do not load into one process.
 
+The grammar packages are one `fixed` Changesets group, so a release that bumps one grammar bumps them all, and the latest version of each grammar comes from the same release. `check:published` fails when the group leaves a grammar package out.
+
 ## The build stamp
 
 - The engine stamps itself with the release's identity: its version and commit.

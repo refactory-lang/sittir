@@ -275,7 +275,9 @@ It packs each grammar package and the host's platform package, which it makes
 from `packages/<lang>/native/`. It fails when a grammar pack lacks the loader or
 its typings or holds anything else under `native/`, and when a platform pack
 lacks its `.node` or a copy the `.node` links, or holds an engine built from
-another stamp.
+another stamp. It also fails when `.changeset/config.json` leaves a grammar
+package out of the one `fixed` group: grammars of different releases refuse each
+other's engine at load, so a release that bumps one grammar bumps them all.
 
 The release (`.github/workflows/release.yml`) builds every target in
 `NATIVE_TARGETS` (`packages/codegen/src/grammars.ts`), then runs:
