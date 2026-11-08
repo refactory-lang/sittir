@@ -145,6 +145,9 @@ jobs:
           find packages node_modules/.cache/sittir \( -path '*/dist/*' -o -name '*.node' -o -path '*/native-build/*' \) -type f -exec touch -d "@$now" {} +
           find packages -name '*.tsbuildinfo' -type f -exec touch -d "@$((now + 1))" {} +
 
+      - name: Diagnose staleness
+        run: node_modules/.bin/tsrs --build --dry --verbose $(ls packages/*/tsconfig.build.json) | awk '/out of date/'
+
       - name: Install the pinned Rust toolchain
         uses: ./.github/actions/rust-toolchain
 
