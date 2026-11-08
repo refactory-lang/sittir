@@ -62,7 +62,7 @@ jobs:
         if: steps.compiled.outputs.cache-hit != 'true'
         run: |
           pnpm -r --filter './packages/*' --workspace-concurrency=4 run build
-          node scripts/ci/arena-benchmark-runtime.mjs pack "$RUNNER_TEMP/arena-runtime-typescript" typescript packages/*/dist packages/*/tsconfig.build.tsbuildinfo
+          node scripts/ci/arena-benchmark-runtime.mjs pack "$RUNNER_TEMP/arena-runtime-typescript" typescript packages/*/dist packages/*/build packages/*/tsconfig.build.tsbuildinfo
       - uses: actions/upload-artifact@v4
         with:
           name: ${{ steps.plan.outputs.prefix }}-typescript

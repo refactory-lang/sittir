@@ -70,7 +70,7 @@ export function restore({ directory, required = [], root = process.cwd(), stamp 
 	mkdirSync(root, { recursive: true });
 	for (const manifest of manifests)
 		execFileSync('tar', [
-			'-xzf',
+			'-xzmf',
 			join(directory, manifest.archive),
 			'-C',
 			root,

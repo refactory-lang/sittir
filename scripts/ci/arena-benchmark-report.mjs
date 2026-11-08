@@ -71,7 +71,7 @@ export function capture() {
 			path === 'Cargo.lock' ||
 			(!path.includes('/') && /\.(json|ya?ml|toml|[cm]?ts|[cm]?js)$/.test(path))
 	);
-	const compiled = readdirSync('packages').flatMap((name) => filesUnder(`packages/${name}/dist`));
+	const compiled = readdirSync('packages').flatMap((name) => ['dist', 'build'].flatMap((output) => filesUnder(`packages/${name}/${output}`)));
 	const native = grammars.flatMap((name) => {
 		const binaries = filesUnder(`packages/${name}/native`).filter((path) => path.endsWith('.node'));
 		assert.equal(binaries.length, 1, `one host addon required for ${name}`);
