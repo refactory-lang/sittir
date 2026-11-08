@@ -1,0 +1,58 @@
+name: Probe object render (Linux)
+run-name: Probe matter.js object render, b140d66e2 against d2733088b
+
+on:
+  push:
+    branches: [probe/object-render-linux]
+
+permissions:
+  contents: read
+
+env:
+  CARGO_NET_RETRY: '10'
+  CARGO_HTTP_MULTIPLEXING: 'false'
+
+jobs:
+  probe:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '26.12.0'
+          cache: pnpm
+      - uses: ./.github/actions/rust-toolchain
+      - name: Build both trees (dist, and the TypeScript addon unstripped)
+        shell: bash
+        run: bash scripts/ci/paired-refs/probes/object-render.sh build
+      - name: Fetch the pinned corpora (read only, nothing run from them)
+        shell: bash
+        run: python3 -I scripts/ci/paired-refs/reference/fetch-corpora.py "$RUNNER_TEMP/probe/corpora"
+      - name: Admit the files both parsers accept
+        shell: bash
+        env:
+          NODE_ENV: production
+        run: NAPI_RS_NATIVE_LIBRARY_PATH="$RUNNER_TEMP/trees/lib-head.node" node scripts/ci/paired-refs/reference/admit.mjs "$RUNNER_TEMP/trees/head" "$RUNNER_TEMP/probe/corpora"
+      - name: Time each file's object render, alternating
+        shell: bash
+        run: bash scripts/ci/paired-refs/probes/object-render.sh time
+      - name: The corpus worker in object storage, GC by phase
+        shell: bash
+        run: bash scripts/ci/paired-refs/probes/object-render.sh worker
+      - name: Profile each tree under perf
+        shell: bash
+        run: bash scripts/ci/paired-refs/probes/object-render.sh perf
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: probe-object-render-${{ github.run_id }}
+          path: |
+            ${{ runner.temp }}/probe/
+            !${{ runner.temp }}/probe/corpora/*/**
+            !${{ runner.temp }}/probe/*.perf.data
+          retention-days: 14
+          if-no-files-found: warn
