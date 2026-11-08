@@ -11629,7 +11629,7 @@ export namespace ForInStatement {
 	export interface Hints {
 		readonly __optionsHint__?: {
 			readonly after?: LayoutKindId;
-			readonly asyncKeyword?: { readonly after?: LayoutKindId; readonly before?: LayoutKindId };
+			readonly async?: { readonly after?: LayoutKindId; readonly before?: LayoutKindId };
 			readonly before?: LayoutKindId;
 			readonly forKeyword?: { readonly after?: LayoutKindId };
 		};

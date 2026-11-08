@@ -382,11 +382,11 @@ pub const SITE_EXPORT_CLAUSE_LBRACE_AFTER: SiteId = SiteId(372);
 pub const SITE_EXPORT_CLAUSE_RBRACE_BEFORE: SiteId = SiteId(373);
 pub const SITE_EXPORT_CLAUSE_EXPORT_CLAUSE_BEFORE: SiteId = SiteId(374);
 pub const SITE_EXPORT_CLAUSE_EXPORT_CLAUSE_AFTER: SiteId = SiteId(375);
-pub const SITE_EXPORT_SPECIFIER_AS_KEYWORD_BEFORE: SiteId = SiteId(376);
-pub const SITE_EXPORT_SPECIFIER_AS_KEYWORD_AFTER: SiteId = SiteId(377);
-pub const SITE_EXPORT_SPECIFIER_DEFAULT_KEYWORD_BEFORE: SiteId = SiteId(378);
-pub const SITE_EXPORT_SPECIFIER_DEFAULT_KEYWORD_AFTER: SiteId = SiteId(379);
-pub const SITE_EXPORT_SPECIFIER_TYPE_KEYWORD_AFTER: SiteId = SiteId(380);
+pub const SITE_EXPORT_SPECIFIER_TYPE_KEYWORD_AFTER: SiteId = SiteId(376);
+pub const SITE_EXPORT_SPECIFIER_AS_KEYWORD_BEFORE: SiteId = SiteId(377);
+pub const SITE_EXPORT_SPECIFIER_AS_KEYWORD_AFTER: SiteId = SiteId(378);
+pub const SITE_EXPORT_SPECIFIER_DEFAULT_KEYWORD_BEFORE: SiteId = SiteId(379);
+pub const SITE_EXPORT_SPECIFIER_DEFAULT_KEYWORD_AFTER: SiteId = SiteId(380);
 pub const SITE_EXPORT_SPECIFIER_TYPEOF_KEYWORD_AFTER: SiteId = SiteId(381);
 pub const SITE_EXPORT_SPECIFIER_EXPORT_SPECIFIER_BEFORE: SiteId = SiteId(382);
 pub const SITE_EXPORT_SPECIFIER_EXPORT_SPECIFIER_AFTER: SiteId = SiteId(383);
@@ -651,11 +651,11 @@ pub const SITE_IMPORT_REQUIRE_CLAUSE_REQUIRE_KEYWORD_BEFORE: SiteId = SiteId(641
 pub const SITE_IMPORT_REQUIRE_CLAUSE_REQUIRE_KEYWORD_AFTER: SiteId = SiteId(642);
 pub const SITE_IMPORT_REQUIRE_CLAUSE_IMPORT_REQUIRE_CLAUSE_BEFORE: SiteId = SiteId(643);
 pub const SITE_IMPORT_REQUIRE_CLAUSE_IMPORT_REQUIRE_CLAUSE_AFTER: SiteId = SiteId(644);
-pub const SITE_IMPORT_SPECIFIER_AS_AS_KEYWORD_BEFORE: SiteId = SiteId(645);
-pub const SITE_IMPORT_SPECIFIER_AS_AS_KEYWORD_AFTER: SiteId = SiteId(646);
-pub const SITE_IMPORT_SPECIFIER_AS_DEFAULT_KEYWORD_BEFORE: SiteId = SiteId(647);
-pub const SITE_IMPORT_SPECIFIER_AS_DEFAULT_KEYWORD_AFTER: SiteId = SiteId(648);
-pub const SITE_IMPORT_SPECIFIER_AS_TYPE_KEYWORD_AFTER: SiteId = SiteId(649);
+pub const SITE_IMPORT_SPECIFIER_AS_TYPE_KEYWORD_AFTER: SiteId = SiteId(645);
+pub const SITE_IMPORT_SPECIFIER_AS_AS_KEYWORD_BEFORE: SiteId = SiteId(646);
+pub const SITE_IMPORT_SPECIFIER_AS_AS_KEYWORD_AFTER: SiteId = SiteId(647);
+pub const SITE_IMPORT_SPECIFIER_AS_DEFAULT_KEYWORD_BEFORE: SiteId = SiteId(648);
+pub const SITE_IMPORT_SPECIFIER_AS_DEFAULT_KEYWORD_AFTER: SiteId = SiteId(649);
 pub const SITE_IMPORT_SPECIFIER_AS_TYPEOF_KEYWORD_AFTER: SiteId = SiteId(650);
 pub const SITE_IMPORT_SPECIFIER_AS_IMPORT_SPECIFIER_AS_BEFORE: SiteId = SiteId(651);
 pub const SITE_IMPORT_SPECIFIER_AS_IMPORT_SPECIFIER_AS_AFTER: SiteId = SiteId(652);
@@ -672,10 +672,10 @@ pub const SITE_IMPORT_SPECIFIERS_ITEM_SEPARATOR_SPACE_AFTER: SiteId = SiteId(662
 pub const SITE_IMPORT_SPECIFIERS_IMPORT_SPECIFIERS_BEFORE: SiteId = SiteId(663);
 pub const SITE_IMPORT_SPECIFIERS_IMPORT_SPECIFIERS_AFTER: SiteId = SiteId(664);
 pub const SITE_IMPORT_STATEMENT_TERMINATOR: SiteId = SiteId(665);
-pub const SITE_IMPORT_STATEMENT_SEMI_BEFORE: SiteId = SiteId(666);
-pub const SITE_IMPORT_STATEMENT_IMPORT_KEYWORD_AFTER: SiteId = SiteId(667);
-pub const SITE_IMPORT_STATEMENT_TYPE_KEYWORD_BEFORE: SiteId = SiteId(668);
-pub const SITE_IMPORT_STATEMENT_TYPE_KEYWORD_AFTER: SiteId = SiteId(669);
+pub const SITE_IMPORT_STATEMENT_TYPE_KEYWORD_BEFORE: SiteId = SiteId(666);
+pub const SITE_IMPORT_STATEMENT_TYPE_KEYWORD_AFTER: SiteId = SiteId(667);
+pub const SITE_IMPORT_STATEMENT_SEMI_BEFORE: SiteId = SiteId(668);
+pub const SITE_IMPORT_STATEMENT_IMPORT_KEYWORD_AFTER: SiteId = SiteId(669);
 pub const SITE_IMPORT_STATEMENT_TYPEOF_KEYWORD_BEFORE: SiteId = SiteId(670);
 pub const SITE_IMPORT_STATEMENT_TYPEOF_KEYWORD_AFTER: SiteId = SiteId(671);
 pub const SITE_IMPORT_STATEMENT_IMPORT_STATEMENT_BEFORE: SiteId = SiteId(672);
@@ -1961,11 +1961,11 @@ pub static SPACING_SITES: &[(&str, &str, &str, &[KindId])] = &[
     ("export_clause", "rbrace_before", "rbrace_before", &[KindId(181), KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188)]),
     ("export_clause", "export_clause_before", "export_clause_before", &[KindId(181), KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188)]),
     ("export_clause", "export_clause_after", "export_clause_after", &[KindId(181), KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188)]),
+    ("export_specifier", "type_keyword_after", "type_keyword_after", &[KindId(181), KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188)]),
     ("export_specifier", "as_keyword_before", "as_keyword_before", &[KindId(181), KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188)]),
     ("export_specifier", "as_keyword_after", "as_keyword_after", &[KindId(181), KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188)]),
     ("export_specifier", "default_keyword_before", "default_keyword_before", &[KindId(181), KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188)]),
     ("export_specifier", "default_keyword_after", "default_keyword_after", &[KindId(181), KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188)]),
-    ("export_specifier", "type_keyword_after", "type_keyword_after", &[KindId(181), KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188)]),
     ("export_specifier", "typeof_keyword_after", "typeof_keyword_after", &[KindId(181), KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188)]),
     ("export_specifier", "export_specifier_before", "export_specifier_before", &[KindId(181), KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188)]),
     ("export_specifier", "export_specifier_after", "export_specifier_after", &[KindId(181), KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188)]),
@@ -2230,11 +2230,11 @@ pub static SPACING_SITES: &[(&str, &str, &str, &[KindId])] = &[
     ("import_require_clause", "require_keyword_after", "require_keyword_after", &[KindId(181), KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188)]),
     ("import_require_clause", "import_require_clause_before", "import_require_clause_before", &[KindId(181), KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188)]),
     ("import_require_clause", "import_require_clause_after", "import_require_clause_after", &[KindId(181), KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188)]),
+    ("import_specifier_as", "type_keyword_after", "type_keyword_after", &[KindId(181), KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188)]),
     ("import_specifier_as", "as_keyword_before", "as_keyword_before", &[KindId(181), KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188)]),
     ("import_specifier_as", "as_keyword_after", "as_keyword_after", &[KindId(181), KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188)]),
     ("import_specifier_as", "default_keyword_before", "default_keyword_before", &[KindId(181), KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188)]),
     ("import_specifier_as", "default_keyword_after", "default_keyword_after", &[KindId(181), KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188)]),
-    ("import_specifier_as", "type_keyword_after", "type_keyword_after", &[KindId(181), KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188)]),
     ("import_specifier_as", "typeof_keyword_after", "typeof_keyword_after", &[KindId(181), KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188)]),
     ("import_specifier_as", "import_specifier_as_before", "import_specifier_as_before", &[KindId(181), KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188)]),
     ("import_specifier_as", "import_specifier_as_after", "import_specifier_as_after", &[KindId(181), KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188)]),
@@ -2251,10 +2251,10 @@ pub static SPACING_SITES: &[(&str, &str, &str, &[KindId])] = &[
     ("import_specifiers", "import_specifiers_before", "import_specifiers_before", &[KindId(181), KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188)]),
     ("import_specifiers", "import_specifiers_after", "import_specifiers_after", &[KindId(181), KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188)]),
     ("import_statement", "terminator", "terminator", &[KindId(174), KindId(22)]),
-    ("import_statement", "semi_before", "semi_before", &[KindId(181), KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188)]),
-    ("import_statement", "import_keyword_after", "import_keyword_after", &[KindId(181), KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188)]),
     ("import_statement", "type_keyword_before", "type_keyword_before", &[KindId(181), KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188)]),
     ("import_statement", "type_keyword_after", "type_keyword_after", &[KindId(181), KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188)]),
+    ("import_statement", "semi_before", "semi_before", &[KindId(181), KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188)]),
+    ("import_statement", "import_keyword_after", "import_keyword_after", &[KindId(181), KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188)]),
     ("import_statement", "typeof_keyword_before", "typeof_keyword_before", &[KindId(181), KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188)]),
     ("import_statement", "typeof_keyword_after", "typeof_keyword_after", &[KindId(181), KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188)]),
     ("import_statement", "import_statement_before", "import_statement_before", &[KindId(181), KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188)]),
@@ -3507,7 +3507,7 @@ pub static DEPTH_SITES: &[(&str, &[SiteId])] = &[
     ("enum_body_elements", &[SiteId(365), SiteId(362), SiteId(361), SiteId(366), SiteId(360)]),
     ("enum_declaration", &[SiteId(370), SiteId(367), SiteId(368), SiteId(369), SiteId(371)]),
     ("export_clause", &[SiteId(374), SiteId(372), SiteId(373), SiteId(375)]),
-    ("export_specifier", &[SiteId(382), SiteId(380), SiteId(381), SiteId(378), SiteId(379), SiteId(376), SiteId(377), SiteId(383)]),
+    ("export_specifier", &[SiteId(382), SiteId(376), SiteId(381), SiteId(379), SiteId(380), SiteId(377), SiteId(378), SiteId(383)]),
     ("export_specifiers", &[SiteId(389), SiteId(386), SiteId(385), SiteId(390), SiteId(384)]),
     ("export_statement_default_declaration", &[SiteId(397), SiteId(393), SiteId(392), SiteId(395), SiteId(396), SiteId(398), SiteId(391)]),
     ("export_statement_default_declaration_default_kw", &[SiteId(400), SiteId(399), SiteId(401)]),
@@ -3549,10 +3549,10 @@ pub static DEPTH_SITES: &[(&str, &[SiteId])] = &[
     ("import_clause_default_import", &[SiteId(631), SiteId(632)]),
     ("import_clause_group", &[SiteId(634), SiteId(633), SiteId(635)]),
     ("import_require_clause", &[SiteId(643), SiteId(639), SiteId(640), SiteId(641), SiteId(642), SiteId(636), SiteId(637), SiteId(638), SiteId(644)]),
-    ("import_specifier_as", &[SiteId(651), SiteId(649), SiteId(650), SiteId(647), SiteId(648), SiteId(645), SiteId(646), SiteId(652)]),
+    ("import_specifier_as", &[SiteId(651), SiteId(645), SiteId(650), SiteId(648), SiteId(649), SiteId(646), SiteId(647), SiteId(652)]),
     ("import_specifier_name", &[SiteId(655), SiteId(653), SiteId(654), SiteId(656)]),
     ("import_specifiers", &[SiteId(663), SiteId(660), SiteId(659), SiteId(664), SiteId(657), SiteId(658)]),
-    ("import_statement", &[SiteId(672), SiteId(667), SiteId(668), SiteId(669), SiteId(670), SiteId(671), SiteId(666), SiteId(673)]),
+    ("import_statement", &[SiteId(672), SiteId(669), SiteId(666), SiteId(667), SiteId(670), SiteId(671), SiteId(668), SiteId(673)]),
     ("import_statement_clause_from", &[SiteId(676), SiteId(674), SiteId(675), SiteId(677)]),
     ("index_signature_colon", &[SiteId(687), SiteId(678), SiteId(685), SiteId(686), SiteId(681), SiteId(682), SiteId(679), SiteId(680), SiteId(683), SiteId(684), SiteId(688)]),
     ("index_signature_mapped_type_clause", &[SiteId(696), SiteId(689), SiteId(694), SiteId(695), SiteId(690), SiteId(691), SiteId(692), SiteId(693), SiteId(697)]),
@@ -4372,9 +4372,9 @@ pub static SITE_SPECS: &[::sittir_core::options::SiteSpec] = &[
     ::sittir_core::options::SiteSpec { default_arm: KindId(182), strength: ::sittir_core::spacing::SeamStrength::Fallback },
     ::sittir_core::options::SiteSpec { default_arm: KindId(182), strength: ::sittir_core::spacing::SeamStrength::Fallback },
     ::sittir_core::options::SiteSpec { default_arm: KindId(22), strength: ::sittir_core::spacing::SeamStrength::Declared },
+    ::sittir_core::options::SiteSpec { default_arm: KindId(182), strength: ::sittir_core::spacing::SeamStrength::Declared },
+    ::sittir_core::options::SiteSpec { default_arm: KindId(182), strength: ::sittir_core::spacing::SeamStrength::Declared },
     ::sittir_core::options::SiteSpec { default_arm: KindId(181), strength: ::sittir_core::spacing::SeamStrength::Declared },
-    ::sittir_core::options::SiteSpec { default_arm: KindId(182), strength: ::sittir_core::spacing::SeamStrength::Declared },
-    ::sittir_core::options::SiteSpec { default_arm: KindId(182), strength: ::sittir_core::spacing::SeamStrength::Declared },
     ::sittir_core::options::SiteSpec { default_arm: KindId(182), strength: ::sittir_core::spacing::SeamStrength::Declared },
     ::sittir_core::options::SiteSpec { default_arm: KindId(182), strength: ::sittir_core::spacing::SeamStrength::Declared },
     ::sittir_core::options::SiteSpec { default_arm: KindId(182), strength: ::sittir_core::spacing::SeamStrength::Declared },
@@ -7262,8 +7262,8 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_EXPORT_SPECIFIER_DEFAULT_KEYWORD_AFTER, path: "(export_specifier)/\"default\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_EXPORT_SPECIFIER_DEFAULT_KEYWORD_BEFORE, path: "(export_specifier)/\"default\"/before" }] },
         ] },
-        ::sittir_core::options::AddressNode::Branch { key: "typeKeyword", path: "(export_specifier)/\"type\"", children: &[
-            ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_EXPORT_SPECIFIER_TYPE_KEYWORD_AFTER, path: "(export_specifier)/\"type\"/after" }] },
+        ::sittir_core::options::AddressNode::Branch { key: "typeKeyword", path: "(export_specifier)/type_keyword:", children: &[
+            ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_EXPORT_SPECIFIER_TYPE_KEYWORD_AFTER, path: "(export_specifier)/type_keyword:/after" }] },
         ] },
         ::sittir_core::options::AddressNode::Branch { key: "typeofKeyword", path: "(export_specifier)/\"typeof\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_EXPORT_SPECIFIER_TYPEOF_KEYWORD_AFTER, path: "(export_specifier)/\"typeof\"/after" }] },
@@ -7539,9 +7539,9 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
     ] },
     ::sittir_core::options::AddressNode::Branch { key: "forInStatement", path: "(for_in_statement)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_FOR_IN_STATEMENT_FOR_IN_STATEMENT_AFTER, path: "(for_in_statement)/after" }] },
-        ::sittir_core::options::AddressNode::Branch { key: "asyncKeyword", path: "(for_in_statement)/\"async\"", children: &[
-            ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_FOR_IN_STATEMENT_ASYNC_AFTER, path: "(for_in_statement)/\"async\"/after" }] },
-            ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_FOR_IN_STATEMENT_ASYNC_BEFORE, path: "(for_in_statement)/\"async\"/before" }] },
+        ::sittir_core::options::AddressNode::Branch { key: "async", path: "(for_in_statement)/async:", children: &[
+            ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_FOR_IN_STATEMENT_ASYNC_AFTER, path: "(for_in_statement)/async:/after" }] },
+            ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_FOR_IN_STATEMENT_ASYNC_BEFORE, path: "(for_in_statement)/async:/before" }] },
         ] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_FOR_IN_STATEMENT_FOR_IN_STATEMENT_BEFORE, path: "(for_in_statement)/before" }] },
         ::sittir_core::options::AddressNode::Branch { key: "forKeyword", path: "(for_in_statement)/\"for\"", children: &[
@@ -7874,8 +7874,8 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_IMPORT_SPECIFIER_AS_DEFAULT_KEYWORD_AFTER, path: "(import_specifier_as)/\"default\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_IMPORT_SPECIFIER_AS_DEFAULT_KEYWORD_BEFORE, path: "(import_specifier_as)/\"default\"/before" }] },
         ] },
-        ::sittir_core::options::AddressNode::Branch { key: "typeKeyword", path: "(import_specifier_as)/\"type\"", children: &[
-            ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_IMPORT_SPECIFIER_AS_TYPE_KEYWORD_AFTER, path: "(import_specifier_as)/\"type\"/after" }] },
+        ::sittir_core::options::AddressNode::Branch { key: "typeKeyword", path: "(import_specifier_as)/type_keyword:", children: &[
+            ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_IMPORT_SPECIFIER_AS_TYPE_KEYWORD_AFTER, path: "(import_specifier_as)/type_keyword:/after" }] },
         ] },
         ::sittir_core::options::AddressNode::Branch { key: "typeofKeyword", path: "(import_specifier_as)/\"typeof\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_IMPORT_SPECIFIER_AS_TYPEOF_KEYWORD_AFTER, path: "(import_specifier_as)/\"typeof\"/after" }] },
@@ -7884,8 +7884,8 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
     ::sittir_core::options::AddressNode::Branch { key: "importSpecifierName", path: "(import_specifier_name)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_IMPORT_SPECIFIER_NAME_IMPORT_SPECIFIER_NAME_AFTER, path: "(import_specifier_name)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_IMPORT_SPECIFIER_NAME_IMPORT_SPECIFIER_NAME_BEFORE, path: "(import_specifier_name)/before" }] },
-        ::sittir_core::options::AddressNode::Branch { key: "typeKeyword", path: "(import_specifier_name)/\"type\"", children: &[
-            ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_IMPORT_SPECIFIER_NAME_TYPE_KEYWORD_AFTER, path: "(import_specifier_name)/\"type\"/after" }] },
+        ::sittir_core::options::AddressNode::Branch { key: "typeKeyword", path: "(import_specifier_name)/type_keyword:", children: &[
+            ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_IMPORT_SPECIFIER_NAME_TYPE_KEYWORD_AFTER, path: "(import_specifier_name)/type_keyword:/after" }] },
         ] },
         ::sittir_core::options::AddressNode::Branch { key: "typeofKeyword", path: "(import_specifier_name)/\"typeof\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_IMPORT_SPECIFIER_NAME_TYPEOF_KEYWORD_AFTER, path: "(import_specifier_name)/\"typeof\"/after" }] },
@@ -7922,9 +7922,9 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_IMPORT_STATEMENT_SEMI_BEFORE, path: "(import_statement)/\";\"/before" }] },
         ] },
         ::sittir_core::options::AddressNode::Spacing { key: "terminator", sites: &[::sittir_core::options::SiteRef { site: SITE_IMPORT_STATEMENT_TERMINATOR, path: "(import_statement)/terminator:" }] },
-        ::sittir_core::options::AddressNode::Branch { key: "typeKeyword", path: "(import_statement)/\"type\"", children: &[
-            ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_IMPORT_STATEMENT_TYPE_KEYWORD_AFTER, path: "(import_statement)/\"type\"/after" }] },
-            ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_IMPORT_STATEMENT_TYPE_KEYWORD_BEFORE, path: "(import_statement)/\"type\"/before" }] },
+        ::sittir_core::options::AddressNode::Branch { key: "typeKeyword", path: "(import_statement)/type_keyword:", children: &[
+            ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_IMPORT_STATEMENT_TYPE_KEYWORD_AFTER, path: "(import_statement)/type_keyword:/after" }] },
+            ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_IMPORT_STATEMENT_TYPE_KEYWORD_BEFORE, path: "(import_statement)/type_keyword:/before" }] },
         ] },
         ::sittir_core::options::AddressNode::Branch { key: "typeofKeyword", path: "(import_statement)/\"typeof\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_IMPORT_STATEMENT_TYPEOF_KEYWORD_AFTER, path: "(import_statement)/\"typeof\"/after" }] },

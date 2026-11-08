@@ -1,12 +1,13 @@
 import { describe, it, expect } from 'vitest';
 import { addressSites, matchAddress, matchAddressWith, resolveLabels } from '../site-addresses.ts';
 import { parseSpacingAddress } from '../../../dsl/primitives/spacing.ts';
-import { CHOICE, PATTERN, STRING, SYMBOL } from '../../../types/rule-types.ts'; // @rule-type-consts
+import { CHOICE, FIELD, PATTERN, SEQ, STRING, SYMBOL } from '../../../types/rule-types.ts'; // @rule-type-consts
 import { assemble, AssembleCtx } from '../../assemble.ts';
 import { makeNormalized } from '../../__tests__/make-normalized.ts';
 import { supertypeMembersByDisplayName } from '../supertype-members.ts';
 import { parsePreferencePath } from '../../../dsl/primitives/preference-path.ts';
 import type { KindEntryLike } from '../../../dsl/symbol-table.ts';
+import type { Rule } from '../../../types/rule.ts';
 import type { RuleSpacingSite } from '../render-rules.ts';
 import { makeSiteKindsNodeMap } from '../../../__tests__/helpers/node-map-fixtures.ts';
 
@@ -122,6 +123,38 @@ describe('addressSites', () => {
 			{ kind: 'fieldName', name: 'type' },
 			{ kind: 'name', name: 'before' }
 		]);
+	});
+});
+
+describe('a field seam is addressed by its field, unless the field is named for the word it writes', () => {
+	const field = (name: string, content: Rule<'link'>) => ({ type: FIELD, name, content }) as const;
+	const nodeMap = assemble(
+		AssembleCtx.from(
+			makeNormalized({
+				for_in: { type: SEQ, members: [{ type: STRING, value: 'for' }, field('async', { type: STRING, value: 'await' }), { type: SYMBOL, name: 'block' }] },
+				import_clause: { type: SEQ, members: [field('type_keyword', { type: CHOICE, members: [{ type: STRING, value: 'type' }, { type: STRING, value: 'typeof' }] }), { type: SYMBOL, name: 'block' }] },
+				static_item: { type: SEQ, members: [field('static', { type: STRING, value: 'static' }), { type: SYMBOL, name: 'block' }] },
+				block: { type: PATTERN, value: '[a-z]+' }
+			})
+		)
+	);
+	const entries: readonly KindEntryLike[] = [
+		{ kind: 'async', symbolName: 'async', literalText: 'async', anon: true },
+		{ kind: 'type_keyword', symbolName: 'type', literalText: 'type', anon: true },
+		{ kind: 'static', symbolName: 'static', literalText: 'static', anon: true }
+	];
+	const middle = (kind: string, address: string, slot: string) => addressSites([site(kind, address, slot)], entries, nodeMap)[0]!.path[1];
+
+	it('takes the field segment when the field writes another word than its name', () => {
+		expect(middle('for_in', 'async_after', 'async')).toEqual({ kind: 'fieldName', name: 'async' });
+	});
+
+	it('takes the field segment when the field writes no single word', () => {
+		expect(middle('import_clause', 'type_keyword_after', 'type_keyword')).toEqual({ kind: 'fieldName', name: 'type_keyword' });
+	});
+
+	it('takes the literal when the field is named for the word it writes', () => {
+		expect(middle('static_item', 'static_after', 'static')).toEqual({ kind: 'literal', text: 'static' });
 	});
 });
 
