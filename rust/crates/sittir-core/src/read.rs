@@ -587,9 +587,9 @@ impl<'s> ReadCtx<'s> {
             return None;
         }
         loop {
-            let kid = Kid::of(&child.node(), holder + offset_of(&child), field_id(&child));
-            if !kid.entry() {
-                return lookup.leading_start(kid.index);
+            let node = child.node();
+            if !crate::nodes::is_entry(node.is_extra(), display_id(&node)) {
+                return lookup.leading_start(holder + offset_of(&child));
             }
             if !child.goto_next_sibling() {
                 return None;

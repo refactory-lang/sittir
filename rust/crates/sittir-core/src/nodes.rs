@@ -62,11 +62,10 @@ impl Kid {
         shown_as_error(self.display)
     }
 
-    /// Whether the node is an entry of a side: an extra, or an `ERROR`
-    /// wherever the parser left it. Trivia, which no slot reads.
+    /// Whether the node is an entry of a side (`is_entry`).
     #[must_use]
     pub fn entry(&self) -> bool {
-        self.extra || self.error()
+        is_entry(self.extra, self.display)
     }
 
     /// Whether the node is a leaf: no entry, and no node under it.
@@ -121,6 +120,14 @@ pub enum Visit {
     Pass,
     /// Ends the walk.
     Stop,
+}
+
+/// Whether a node, an extra or not (`extra`) and shown as `display`, is an
+/// entry of a side: an extra, or an `ERROR` wherever the parser left it.
+/// Trivia, which no slot reads.
+#[must_use]
+pub fn is_entry(extra: bool, display: KindId) -> bool {
+    extra || shown_as_error(display)
 }
 
 /// Whether a node the parser shows as `display` is an `ERROR`, as
