@@ -1098,6 +1098,14 @@ function admittedKinds(model: SlotModel, claim: ClaimFact): string[] {
 	return concreteKinds(model, admitted);
 }
 
+function claimFormsOf(model: SlotModel, owner: string, claim: ClaimFact): readonly string[] {
+	const forms = formsOf(model, owner);
+	const [holder] = claim.within;
+	if (holder === undefined || holder === WILDCARD) return forms;
+	const admitted = new Set(admittedKinds(model, claim));
+	return forms.filter((form) => form === owner || shownKinds(model, form).some((kind) => admitted.has(kind)));
+}
+
 export function comparesOwnText(predicate: PredicateFact): boolean {
 	const [argument, ...rest] = predicate.arguments;
 	const own = predicate.subject !== null && predicate.subject.up === 0 && predicate.subject.down.length === 0;
@@ -1179,7 +1187,7 @@ export function readsByKind(model: SlotModel, claims: readonly ClaimFact[]): Cla
 	claims.forEach((claim, index) => {
 		const owner = claim.kind ?? (claim.token === undefined ? null : tokenKindOf(model, claim.token));
 		if (owner === null) return;
-		const forms = owner === WILDCARD ? admittedKinds(model, claim).filter((kind) => !claimsOwn.has(`${kind} ${claim.vocab}`)) : formsOf(model, owner);
+		const forms = owner === WILDCARD ? admittedKinds(model, claim).filter((kind) => !claimsOwn.has(`${kind} ${claim.vocab}`)) : claimFormsOf(model, owner, claim);
 		const literal = owner !== WILDCARD && literalClaimOf(claim) !== undefined;
 		for (const form of forms.filter((form) => shownKinds(model, form).some((kind) => modelNode(model, kind) !== undefined)))
 			for (const { kind, spelled } of readKinds(model, form, claim)) {
@@ -1464,7 +1472,7 @@ export function unenteredForms(input: GrammarInput, routes: GrammarRoutes): stri
 	return input.bindings.claims.flatMap((claim, index) => {
 		const owner = claim.kind;
 		if (owner === null || owner === WILDCARD) return [];
-		return formsOf(input.model, owner)
+		return claimFormsOf(input.model, owner, claim)
 			.filter((form) => form !== owner)
 			.flatMap((form) =>
 				readKinds(input.model, form, claim).flatMap(({ kind }) =>

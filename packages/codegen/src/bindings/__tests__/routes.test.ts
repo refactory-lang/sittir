@@ -907,6 +907,19 @@ describe("keptKinds over a supertype the slot holds", () => {
 		await expect(grammar('((outer (middle (binary) @argument)) (#set! claim other))')).rejects.toThrow(/#set! claim names @other, which the pattern does not capture/);
 	});
 
+	it('enters a placed claim on the forms of its kind that its holder admits, and on no split copy another kind holds', async () => {
+		const input = await grammar('((outer (middle (binary) @argument)) (#set! claim argument))');
+		const held = node('binary_held', MODEL.find((n) => n.kind === 'binary')!.slots, { splitFrom: 'binary' });
+		const elsewhere = node('binary_elsewhere', MODEL.find((n) => n.kind === 'binary')!.slots, { splitFrom: 'binary' });
+		const middle = node('middle', [slot('inner', ['binary', 'binary_held'])]);
+		const other = node('other_holder', [slot('inner', ['binary_elsewhere'])]);
+		const model = new Map([...input.model, ...[held, elsewhere, middle, other].map((n) => [n.kind, n] as const)]);
+		const placed = { ...input, model };
+		const routes = resolveRoutes(placed);
+		expect(['binary', 'binary_held', 'binary_elsewhere'].map((kind) => routes.readEntries.get(kind)?.map((e) => e.vocab))).toEqual([['argument'], ['argument'], undefined]);
+		expect(unenteredForms(placed, routes)).toEqual([]);
+	});
+
 	it('stamps a declared container whose only claims are refinements as refined: it names no path of its own, and reads through its element where no claim holds', async () => {
 		const container = '((attr_arg (attr)* @dropped (_) @element) (#set! reason "read as its element unless it has an attribute"))';
 		const refined = resolveRoutes(await grammar(['(attr_arg (attr) (_) @value) @argument', '(attr_arg (attr)* @attributes)', container].join('\n')));
