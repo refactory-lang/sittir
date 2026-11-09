@@ -358,17 +358,17 @@ function _resolveScalar(v: boolean | number | bigint): AnyUntypedNode | number |
 	if (typeof v === 'boolean') return v ? TSKindId.TrueKeyword : TSKindId.FalseKeyword;
 	if (typeof v === 'number' || typeof v === 'bigint') {
 		const text = String(v);
-		for (const [kind, integer] of [
-			['integer_literal_decimal', true],
-			['float_literal', false]
+		for (const [kind, integer, signed] of [
+			['integer_literal_decimal', true, false],
+			['float_literal', false, false]
 		] as const) {
 			const e = _leafRegistry[kind];
 			if (!e?.pattern?.test(text)) continue;
-			const refused = numberRefusal(v, integer);
+			const refused = numberRefusal(v, integer, signed);
 			if (refused !== undefined) throw new RangeError(refused);
 			return e.factory(text);
 		}
-		const refused = numberRefusal(v, false);
+		const refused = numberRefusal(v, false, false);
 		if (refused !== undefined) throw new RangeError(refused);
 	}
 	return undefined;

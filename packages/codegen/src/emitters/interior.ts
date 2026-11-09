@@ -364,8 +364,8 @@ function numericLeafShapes(nodeMap: NodeMap): ReadonlyMap<string, NumberShape> {
 	return shapes;
 }
 
-export function numericLeafIntegers(nodeMap: NodeMap): readonly (readonly [kind: string, integer: boolean])[] {
-	return [...numericLeafShapes(nodeMap)].map(([kind, shape]) => [kind, shape.base !== 'float'] as const);
+export function numericLeafFacts(nodeMap: NodeMap): readonly (readonly [kind: string, integer: boolean, signed: boolean])[] {
+	return [...numericLeafShapes(nodeMap)].map(([kind, shape]) => [kind, shape.base !== 'float', shape.signed] as const);
 }
 
 export function numericLeafInputTypes(nodeMap: NodeMap): ReadonlyMap<string, string> {

@@ -4,7 +4,7 @@ import type { AuthoredCompound, FullForm } from '../compiler/model/node-map.ts';
 import type { NodeMap } from '../compiler/types.ts';
 import { builtFromText } from './built-from-text.ts';
 import { hasOptionalElements, isBuilderTextLeaf } from '../compiler/model/node-map.ts';
-import { bareInteriorText, interiorSlotGuards, numberInputTest, numberInputType, numberTextArgs, numericInputRefusal, numericLeafIntegers, numericLeafShape, numericSlotShape, type NumberShape } from './interior.ts';
+import { bareInteriorText, interiorSlotGuards, numberInputTest, numberInputType, numberTextArgs, numericInputRefusal, numericLeafFacts, numericLeafShape, numericSlotShape, type NumberShape } from './interior.ts';
 import type { GeneratedIdTables } from '../dsl/symbol-table.ts';
 import {
 	collectKindEntries,
@@ -1172,13 +1172,13 @@ function emitResolveByKindHelper(lines: string[]): void {
 interface ScalarResolution {
 	readonly trueMember: string | undefined;
 	readonly falseMember: string | undefined;
-	readonly numeric: readonly (readonly [kind: string, integer: boolean])[];
+	readonly numeric: readonly (readonly [kind: string, integer: boolean, signed: boolean])[];
 	readonly resolves: boolean;
 }
 
 function scalarResolutionOf(nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[]): ScalarResolution {
 	const scalars = scalarLeafKinds(nodeMap);
-	const numeric = numericLeafIntegers(nodeMap);
+	const numeric = numericLeafFacts(nodeMap);
 	const booleanMember = (kind: string): string | undefined =>
 		findKindEntry(kindEntries, kind)?.member;
 	const trueMember = scalars.boolean === undefined ? undefined : booleanMember(scalars.boolean.trueKind);
@@ -1642,14 +1642,14 @@ function emitResolverHelpers(
 		if (scalar.numeric.length > 0) {
 			lines.push('  if (typeof v === "number" || typeof v === "bigint") {');
 			lines.push('    const text = String(v);');
-			lines.push(`    for (const [kind, integer] of ${JSON.stringify(scalar.numeric)} as const) {`);
+			lines.push(`    for (const [kind, integer, signed] of ${JSON.stringify(scalar.numeric)} as const) {`);
 			lines.push('      const e = _leafRegistry[kind];');
 			lines.push('      if (!e?.pattern?.test(text)) continue;');
-			lines.push('      const refused = numberRefusal(v, integer);');
+			lines.push('      const refused = numberRefusal(v, integer, signed);');
 			lines.push('      if (refused !== undefined) throw new RangeError(refused);');
 			lines.push('      return e.factory(text);');
 			lines.push('    }');
-			lines.push('    const refused = numberRefusal(v, false);');
+			lines.push('    const refused = numberRefusal(v, false, false);');
 			lines.push('    if (refused !== undefined) throw new RangeError(refused);');
 			lines.push('  }');
 		}
