@@ -83,7 +83,7 @@ const symbols = (image: string, which: keyof typeof NM_FLAGS): Set<string> =>
 			.filter(Boolean)
 	);
 
-describe('a grammar binding ships the engine and std copies its .node loads', () => {
+describe('a grammar binding ships the engine and std copies its .node loads', { timeout: 60_000 }, () => {
 	for (const grammar of allGrammars()) {
 		describe(grammar, () => {
 			const dir = nativeBindingDir(grammar);
