@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { evaluateGrammar, invoke } from '../codegen-surface.ts';
 import { loadLanguageForGrammar, loadWebTreeSitter, upstreamWasmPath } from '../validate/common.ts';
-import type { RuleCause } from '../../../codegen/src/dsl/primitives/rule-cause.ts';
+import type { MisreadWitness, RuleCause } from '../../../codegen/src/dsl/primitives/rule-cause.ts';
 
 interface WitnessCase {
 	readonly grammar: string;
@@ -9,6 +9,7 @@ interface WitnessCase {
 	readonly text: string;
 	readonly kind: string;
 	readonly cause: RuleCause;
+	readonly read?: string;
 }
 
 const cases: WitnessCase[] = [];
@@ -17,7 +18,11 @@ for (const grammar of await invoke('grammars', 'allGrammars')) {
 	for (const [rule, declaration] of Object.entries(ruleCauses)) {
 		if (declaration.kind !== 'reauthored') continue;
 		for (const { cause, witnesses = [] } of declaration.causes)
-			for (const { text, kind } of witnesses) cases.push({ grammar, rule, text, kind, cause });
+			for (const witness of witnesses) {
+				const { text, kind } = witness;
+				const { read } = witness as Partial<MisreadWitness>;
+				cases.push({ grammar, rule, text, kind, cause, ...(read === undefined ? {} : { read }) });
+			}
 	}
 }
 
@@ -88,10 +93,14 @@ describe('reauthoring grammar witnesses', () => {
 		expect(cases.map(({ grammar, rule }) => `${grammar}:${rule}`)).toContain('python:tuple');
 	});
 
-	it.each(cases)('$grammar $rule: upstream accepts or rejects $text as its cause says ($kind)', async ({ grammar, rule, text, kind, cause }) => {
+	it.each(cases)('$grammar $rule: upstream accepts or rejects $text as its cause says ($kind)', async ({ grammar, rule, text, kind, cause, read }) => {
 		const { kinds, hasError } = await upstreamParse(grammar, text);
 		if (cause === 'rejects-valid-syntax') {
 			expect(hasError).toBe(true);
+			return;
+		}
+		if (cause === 'misreads-valid-syntax') {
+			expect({ hasError, read: kinds.has(read!), kind: kinds.has(kind) }).toEqual({ hasError: false, read: true, kind: false });
 			return;
 		}
 		expect(hasError).toBe(false);

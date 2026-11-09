@@ -1613,7 +1613,7 @@ export const structure: StructureTable = Object.freeze({
 		kind: 'splat_type',
 		required: [['_type', 'type']],
 		single: [['_type', 'SplatType.type']],
-		nodeOnly: [['_type', 'SplatType.type', 'buildIdentifier(…)', [1]]]
+		nodeOnly: [['_type', 'SplatType.type', 'buildIdentifier(…)', [1, 228]]]
 	},
 	228: {
 		kind: 'generic_type',

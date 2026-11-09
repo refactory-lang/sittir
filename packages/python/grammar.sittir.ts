@@ -112,6 +112,11 @@ const SPLAT_TYPE_WITNESSES = [
 	{ text: 'x: Callable[**P, int]\n', form: ['**', { symbol: 'identifier' }], kind: 'splat_type', production: SPLAT_TYPE_PRODUCTION }
 ] as const;
 
+const SPLAT_TYPE_MISREAD = [
+	{ text: 'x: tuple[int, *tuple[str, ...]]\n', form: ['*', { symbol: 'generic_type' }], kind: 'splat_type', read: 'subscript' },
+	{ text: 'def f(*args: *tuple[int, ...]): pass\n', form: ['*', { symbol: 'generic_type' }], kind: 'splat_type', read: 'subscript' }
+] as const;
+
 const TYPE_ALIAS_WITNESSES = [
 	{
 		text: 'type a.b = int\n',
@@ -516,7 +521,12 @@ export default grammar(enrich(base), wire({
 		type_params_items: vocabulary(($) =>
 			seq(field('item', $.type_param), repeat(seq(',', field('item', $.type_param))), optional(','))
 		),
-		splat_type: reauthored('accepts-invalid-syntax', SPLAT_TYPE_WITNESSES, ($) => prec(1, seq('*', field('name', $.identifier)))),
+		splat_type: reauthored(
+			[
+				['accepts-invalid-syntax', SPLAT_TYPE_WITNESSES],
+				['misreads-valid-syntax', SPLAT_TYPE_MISREAD]
+			],
+			($) => prec(1, seq('*', field('type', choice($.identifier, $.generic_type))))),
 		type_alias_statement: reauthored('accepts-invalid-syntax', TYPE_ALIAS_WITNESSES, ($) =>
 			prec.dynamic(1, seq('type', field('name', $.identifier), optional(field('type_parameters', $.type_params)), '=', field('value', $.type)))
 		),

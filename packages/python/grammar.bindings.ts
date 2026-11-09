@@ -3,7 +3,7 @@
 import sittir from './grammar.sittir.ts';
 import { alias, copy, edit, enrich, field, wire } from '../codegen/src/dsl/dsl-authoring.ts';
 
-export const hash = "948f8a77bd3955feb5257bafe3b4502f3ffbdfd95efa5794d5057ed0965c633c";
+export const hash = "c57fddaefd7f81bbef267652c7d22bc0ceb59023ae63c390e9552be942cccd15";
 
 export const renames = {
 	module: "file",
@@ -139,7 +139,6 @@ export default grammar(
 			splat_pattern: { "-2": alias("rest_pattern"), "-1": alias("map_rest_pattern") },
 			splat_pattern_dictionary: { "1": field("pattern") },
 			splat_pattern_list: { "1": field("pattern") },
-			splat_type: { "1": field("type") },
 			subscript: { "0": field("object"), "2": field("index"), "2/0": field("elements"), "2/1/0/1": field("elements") },
 			suite_block: { "1": alias("block_statement") },
 			try_statement: { "3": field("handlers"), "4/0": field("alternative"), "5/0": field("finalizer") },

@@ -203,6 +203,27 @@ describe('the portable read', () => {
 		expect(typeOf('x: List[int] = 1')).toEqual({ $path: 'type', content: { $path: 'type.generic', name: 'List', typeArguments: [{ $path: 'type', content: 'int' }] } });
 	});
 
+	it('reads an unpacked generic type argument as the rest type of the generic, and an unpacked name as the rest type of the name', () => {
+		const typeOf = (source: string) => ((firstOf(source) as Read).content as Read).type;
+		const unpacked = (type: unknown) => ({ $path: 'type', content: { $path: 'type.rest', type } });
+		expect(typeOf('x: tuple[int, *tuple[str, ...]]')).toEqual({
+			$path: 'type',
+			content: {
+				$path: 'type.generic',
+				name: 'tuple',
+				typeArguments: [
+					{ $path: 'type', content: 'int' },
+					unpacked({ $path: 'type.generic', name: 'tuple', typeArguments: [{ $path: 'type', content: 'str' }, { $path: 'type', content: { $path: 'literal.ellipsis' } }] })
+				]
+			}
+		});
+		expect(typeOf('x: tuple[str, *Ts]')).toEqual({ $path: 'type', content: { $path: 'type.generic', name: 'tuple', typeArguments: [{ $path: 'type', content: 'str' }, unpacked('Ts')] } });
+		const parameter = (((firstOf('def f(*args: *tuple[int, ...]):\n    pass\n') as Read).parameters as readonly Read[])[0] as Read).type;
+		expect(parameter).toEqual(unpacked({ $path: 'type.generic', name: 'tuple', typeArguments: [{ $path: 'type', content: 'int' }, { $path: 'type', content: { $path: 'literal.ellipsis' } }] }));
+		for (const source of ['x: tuple[int, *tuple[str, ...]]\n', 'x: tuple[str, *Ts]\n', 'def f(*args: *tuple[int, ...]):\n    pass\n', 'def f(*args: *Ts):\n    pass\n'])
+			expect(roundTrip(source)).toBe(source);
+	});
+
 	it.each([
 		['__x', 'x'],
 		['__x_', 'x_'],

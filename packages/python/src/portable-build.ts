@@ -146,7 +146,7 @@ export const build: PortableBuildTable = {
 		slice: 'config',
 		splatPatternDictionary: 'direct',
 		splatPatternList: 'direct',
-		splatType: 'forwarded',
+		splatType: 'direct',
 		string: 'config',
 		stringContent: 'spread',
 		stringFragment: 'text',
@@ -15841,7 +15841,7 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [227, 'type'],
-									kinds: [1],
+									kinds: [1, 228],
 									leaf: 'identifier',
 									texts: [1],
 									pattern: {

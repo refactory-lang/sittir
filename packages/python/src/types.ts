@@ -4085,14 +4085,14 @@ export interface Type {
 
 export interface SplatType {
 	readonly $type: TSKindId.SplatType;
-	readonly _type: Identifier;
+	readonly _type: Identifier | GenericType;
 	readonly __slotNames__?: {
 		readonly _type: 'type';
 	};
 	readonly __slotHints__?: {
-		readonly type: SlotHint<T.Identifier>;
+		readonly type: SlotHint<T.Identifier | T.GenericType>;
 	};
-	readonly type: () => Identifier;
+	readonly type: () => Identifier | GenericType;
 }
 
 export interface GenericType {
@@ -14326,7 +14326,7 @@ export namespace SplatType {
 	}
 	export type Loose = LooseFor<TSKindId.SplatType>;
 	export type LooseConfig = LooseConfigFor<TSKindId.SplatType>;
-	export type BuildArgs = [value: Admit<T.Identifier>];
+	export type BuildArgs = [value: Admit<T.Identifier | T.GenericType>];
 	export type LooseArgs = [value: T.SplatType.Loose];
 	export type Kind = TSKindId.SplatType;
 }

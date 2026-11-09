@@ -5291,8 +5291,10 @@ function withType(node: object, setter: string, args: readonly unknown[]): unkno
 	throw new Error(`type has no $with.${setter}`);
 }
 
-export function buildSplatType<V extends Admit<T.Identifier>>(value: V & RefuseUndeclared<V>): T.SplatType.Bound;
-export function buildSplatType(value: Admit<T.Identifier>): T.SplatType.Bound {
+export function buildSplatType<V extends Admit<T.Identifier | T.GenericType>>(
+	value: V & RefuseUndeclared<V>
+): T.SplatType.Bound;
+export function buildSplatType(value: Admit<T.Identifier | T.GenericType>): T.SplatType.Bound {
 	const _type = value;
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'splat_type', { type: _type });
@@ -5306,7 +5308,7 @@ export function buildSplatType(value: Admit<T.Identifier>): T.SplatType.Bound {
 	});
 }
 
-function buildSplatType$patch(source: object, value: Admit<T.Identifier>): T.SplatType.Bound {
+function buildSplatType$patch(source: object, value: Admit<T.Identifier | T.GenericType>): T.SplatType.Bound {
 	const _type = value;
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'splat_type', { type: _type });
@@ -5323,7 +5325,7 @@ function withSplatType(node: object, setter: string, args: readonly unknown[]): 
 	const handle = handleOf(node as RecordHandle);
 	switch (setter) {
 		case 'type':
-			return applySetter(args, (value: Admit<T.Identifier>) =>
+			return applySetter(args, (value: Admit<T.Identifier | T.GenericType>) =>
 				rebuilt(node, handle, () => buildSplatType$patch(node, value))
 			);
 	}

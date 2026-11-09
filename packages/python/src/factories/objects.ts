@@ -5772,8 +5772,10 @@ function buildType$with$content(this: Received<Held>, ...args: unknown[]): unkno
 	return buildType$with(receiverOf(this, '$with.content'), 'content', args);
 }
 
-export function buildSplatType<V extends Admit<T.Identifier>>(value: V & RefuseUndeclared<V>): T.SplatType.Bound;
-export function buildSplatType(value: Admit<T.Identifier>): T.SplatType.Bound {
+export function buildSplatType<V extends Admit<T.Identifier | T.GenericType>>(
+	value: V & RefuseUndeclared<V>
+): T.SplatType.Bound;
+export function buildSplatType(value: Admit<T.Identifier | T.GenericType>): T.SplatType.Bound {
 	const _type = value;
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'splat_type', { type: _type });
@@ -5801,7 +5803,9 @@ function buildSplatType$with(node: Held, setter: string, args: readonly unknown[
 	const handle = node[HANDLE];
 	switch (setter) {
 		case 'type':
-			return applySetter(args, (value: Admit<T.Identifier>) => rebuilt(node, handle, () => buildSplatType(value)));
+			return applySetter(args, (value: Admit<T.Identifier | T.GenericType>) =>
+				rebuilt(node, handle, () => buildSplatType(value))
+			);
 	}
 	throw new Error(`splat_type has no $with.${setter}`);
 }

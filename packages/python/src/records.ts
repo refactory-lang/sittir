@@ -322,7 +322,7 @@ export const records = {
 		type_: { word: 5, width: 3, forms: 1, built: 3 }
 	},
 	TypeNode: { words: 6, builtWords: 3, content: { word: 2, width: 4, forms: 3, built: 2 } },
-	SplatTypeNode: { words: 5, builtWords: 3, type_: { word: 2, width: 3, forms: 1, built: 2 } },
+	SplatTypeNode: { words: 13, builtWords: 3, type_: { word: 2, width: 11, inline: 10, forms: 9, built: 2 } },
 	GenericTypeNode: {
 		words: 10,
 		builtWords: 4,

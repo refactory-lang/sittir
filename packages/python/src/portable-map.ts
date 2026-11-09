@@ -18798,7 +18798,11 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'type.generic'>
 				| V.Read<PythonMap, 'type.rest'>
 				| V.Read<PythonMap, 'type.union'>;
-			readonly type: V.Read<PythonMap, 'identifier'> | V.Read<PythonMap, 'identifier.qualified'>;
+			readonly type:
+				| V.Read<PythonMap, 'identifier'>
+				| V.Read<PythonMap, 'identifier.qualified'>
+				| V.Read<PythonMap, 'type.generic'>
+				| V.Read<PythonMap, 'type.nullable'>;
 			readonly $forms: V.Form<'type'>;
 		};
 		readonly 'type.union': {

@@ -5803,7 +5803,7 @@ export function wrapSplatType(data: T.SplatType, tree: TreeHandle): T.SplatType.
 		...data,
 		$type: TSKindId.SplatType as const,
 		type() {
-			return hydrateSlot<T.Identifier>(this, '_type', tree);
+			return hydrateSlot<T.Identifier | T.GenericType>(this, '_type', tree);
 		},
 		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
@@ -15976,7 +15976,7 @@ function viewType(data: RecordPosition, tree: TreeHandle): T.Type.Parsed {
 }
 
 function viewSplatType$type(this: RecordHandle) {
-	return viewSlot<T.Identifier>(this, 2, 3, 1, 0, 2);
+	return viewSlot<T.Identifier | T.GenericType>(this, 2, 11, 9, 10, 2);
 }
 function viewSplatType(data: RecordPosition, tree: TreeHandle): T.SplatType.Parsed {
 	const node = {

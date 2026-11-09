@@ -253,7 +253,7 @@
 (member_type) @identifier.qualified
 (member_type base_type: (_) @qualifier)
 (splat_type) @type.splat
-(splat_type name: (_) @type)
+(splat_type type: (_) @type)
 
 ; ── literal ────────────────────────────────────────────────────────────────────
 (string [(interpolation) (string_content)]* @elements) @literal.string

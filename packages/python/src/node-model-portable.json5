@@ -6967,15 +6967,7 @@
             }
           ]
         }
-      ],
-      "container": {
-        "slot": "type",
-        "kinds": [
-          "identifier"
-        ],
-        "terminals": [],
-        "list": false
-      }
+      ]
     },
     "string": {
       "vocab": "literal.string",

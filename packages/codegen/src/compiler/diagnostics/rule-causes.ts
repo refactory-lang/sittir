@@ -3,6 +3,7 @@ import type { GrammarDiagnostic } from '../../types/diagnostics.ts';
 import {
 	WITNESSED_CAUSES,
 	type DeclaredCause,
+	type MisreadWitness,
 	type OtherKindWitness,
 	type RuleCause,
 	type RuleCauseDeclaration,
@@ -52,6 +53,7 @@ export const PROVOKING_CODES: Readonly<Record<RuleCause, readonly string[]>> = {
 	'accepts-other-kind': [],
 	'semantic-gap': [],
 	'rejects-valid-syntax': [],
+	'misreads-valid-syntax': [],
 	'accepts-invalid-syntax': [],
 	'ruled-narrowing': []
 };
@@ -364,22 +366,30 @@ function judgeOtherKindWitnesses(
 	);
 }
 
-function judgeRejectedWitnesses(
+function judgeUnderivedWitnesses(
 	grammar: string,
 	name: string,
+	cause: 'rejects-valid-syntax' | 'misreads-valid-syntax',
 	witnesses: Witnesses<OtherKindWitness> | undefined,
 	upstream: Derivation
 ): GrammarDiagnostic | undefined {
 	return judgeWitnesses(
 		grammar,
 		name,
-		'rejects-valid-syntax',
+		cause,
 		witnesses,
-		'The witness must be a form the upstream rule does not derive',
+		cause === 'rejects-valid-syntax'
+			? 'The witness must be a form the upstream rule does not derive'
+			: 'The witness must be a form the upstream rule does not derive, read by upstream as another rule it names',
 		(witness) => {
 			const body = upstream.rules[witness.kind];
 			if (body === undefined) return `upstream declares no rule '${witness.kind}'`;
 			if (derivesForm(upstream, body, witness.form)) return `upstream '${witness.kind}' already derives the witness form`;
+			if (cause === 'rejects-valid-syntax') return undefined;
+			const { read } = witness as Partial<MisreadWitness>;
+			if (typeof read !== 'string' || read.length === 0) return 'it names no kind upstream reads it as';
+			if (read === witness.kind) return `it names '${read}', the witness kind, as what upstream reads it as`;
+			if (upstream.rules[read] === undefined) return `upstream declares no rule '${read}'`;
 			return undefined;
 		}
 	);
@@ -468,7 +478,8 @@ function judgeReauthored(
 			{ cause }
 		);
 	}
-	if (cause === 'rejects-valid-syntax') return judgeRejectedWitnesses(grammar, name, witnesses, upstream);
+	if (cause === 'rejects-valid-syntax' || cause === 'misreads-valid-syntax')
+		return judgeUnderivedWitnesses(grammar, name, cause, witnesses, upstream);
 	if (cause === 'accepts-invalid-syntax' || cause === 'ruled-narrowing')
 		return judgeNarrowingWitnesses(grammar, name, cause, witnesses, upstream, authored);
 	if (cause === 'accepts-other-kind' || cause === 'semantic-gap')

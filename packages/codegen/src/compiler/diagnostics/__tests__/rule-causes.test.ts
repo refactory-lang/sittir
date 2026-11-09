@@ -95,7 +95,7 @@ describe('semantic-gap reauthoring witnesses', () => {
 
 describe('a witnessed cause given an empty witness array', () => {
 	const upstreamRules = { tuple: { type: 'SEQ', members: [{ type: 'STRING', value: '(' }, { type: 'STRING', value: ')' }] } };
-	it.each(['accepts-other-kind', 'semantic-gap', 'rejects-valid-syntax', 'accepts-invalid-syntax'] as const)(
+	it.each(['accepts-other-kind', 'semantic-gap', 'rejects-valid-syntax', 'misreads-valid-syntax', 'accepts-invalid-syntax'] as const)(
 		'%s is a mismatch',
 		(cause) => {
 			const ds = diagnose({
@@ -282,6 +282,48 @@ describe('a rule reauthored because upstream accepts a form that is always anoth
 			upstreamRules
 		});
 		expect(codesOf(doubled)).toEqual(['rule-cause-mismatch:tuple']);
+	});
+});
+
+describe('a rule reauthored because upstream reads valid syntax as another rule', () => {
+	const str = (value: string) => ({ type: 'STRING', value });
+	const sym = (name: string) => ({ type: 'SYMBOL', name });
+	const seq = (...members: unknown[]) => ({ type: 'SEQ', members });
+	const upstreamRules = {
+		splat_type: seq(str('*'), sym('identifier')),
+		subscript: seq(sym('expression'), str('['), sym('expression'), str(']')),
+		generic_type: seq(sym('identifier'), str('['), sym('expression'), str(']'))
+	};
+	const ruleNames = new Set(Object.keys(upstreamRules));
+	const form = ['*', { symbol: 'generic_type' }];
+	const declared = (witness: { form: readonly (string | { symbol: string })[]; read?: string }): Record<string, RuleCauseDeclaration> => ({
+		splat_type: {
+			kind: 'reauthored',
+			causes: [{ cause: 'misreads-valid-syntax', witnesses: [{ text: 'x: tuple[*tuple[int]]', kind: 'splat_type', ...witness } as never] }]
+		}
+	});
+	const check = (witness: Parameters<typeof declared>[0]) => diagnose({ ruleCauses: declared(witness), enriched: enriched({ ruleNames }), upstreamRules });
+
+	it('is silent when the upstream rule does not derive the form and the witness names the upstream rule it is read as', () => {
+		expect(check({ form, read: 'subscript' })).toEqual([]);
+	});
+
+	it('is a mismatch when the upstream rule already derives the form', () => {
+		const ds = check({ form: ['*', { symbol: 'identifier' }], read: 'subscript' });
+		expect(codesOf(ds)).toEqual(['rule-cause-mismatch:splat_type']);
+		expect(ds[0]!.message).toContain("upstream 'splat_type' already derives the witness form");
+	});
+
+	it('is a mismatch when the witness names no read, its own kind, or a rule upstream does not declare', () => {
+		for (const [read, message] of [
+			[undefined, 'names no kind upstream reads it as'],
+			['splat_type', "names 'splat_type', the witness kind"],
+			['absent', "upstream declares no rule 'absent'"]
+		] as const) {
+			const ds = check(read === undefined ? { form } : { form, read });
+			expect(codesOf(ds)).toEqual(['rule-cause-mismatch:splat_type']);
+			expect(ds[0]!.message).toContain(message);
+		}
 	});
 });
 
