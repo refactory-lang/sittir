@@ -220,11 +220,14 @@ describe('the portable read', () => {
 		}
 	});
 
-	it('carries a typeof operand typescript does not accept: a call, an optional chain', () => {
-		for (const source of ['let g: typeof a.b();', 'let h: typeof a?.b;']) {
+	it('carries a typeof operand typescript does not accept: an optional chain no claim reads, a call the grammar rejects', () => {
+		for (const [source, carry] of [
+			['let h: typeof a?.b;', 'unclaimed'],
+			['let g: typeof a.b();', 'error']
+		] as const) {
 			const carried: unknown[] = [];
-			runtime.read(runtime.engine.parse(source), (_, carry) => carried.push(carry));
-			expect(carried, source).toEqual([{ reason: 'unclaimed' }]);
+			runtime.read(runtime.engine.parse(source), (_, held) => carried.push(held));
+			expect(carried, source).toEqual([{ reason: carry }]);
 			expect(roundTrip(source)).toBe(`${source}\n`);
 		}
 	});

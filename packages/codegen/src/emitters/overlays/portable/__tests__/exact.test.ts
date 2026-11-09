@@ -96,6 +96,6 @@ describe('exactSlotsOf, typescript', () => {
 	it('reads an alias that only relaxes the identifier it holds as that identifier, while a kind with a slot no claim reads stays raw', () => {
 		expect(setIn(typescript, 'identifier.qualified', 'name').raw).toEqual([]);
 		expect(setIn(typescript, 'statement.labeled', 'label').raw).toEqual([]);
-		expect(reasonsAt(typescript, 'identifier.qualified', 'qualifier', 'type_query_call_expression')).toEqual(['unread']);
+		expect(reasonsAt(typescript, 'identifier.qualified', 'qualifier', 'type_query_call_expression_in_type_annotation')).toEqual(['unread']);
 	});
 });

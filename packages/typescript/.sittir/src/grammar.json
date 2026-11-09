@@ -11920,35 +11920,11 @@
           "type": "FIELD",
           "name": "function",
           "content": {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "SYMBOL",
-                "name": "import"
-              },
-              {
-                "type": "SYMBOL",
-                "name": "identifier"
-              },
-              {
-                "type": "ALIAS",
-                "content": {
-                  "type": "SYMBOL",
-                  "name": "_type_query_member_expression"
-                },
-                "named": true,
-                "value": "type_query_member_expression"
-              },
-              {
-                "type": "ALIAS",
-                "content": {
-                  "type": "SYMBOL",
-                  "name": "_type_query_subscript_expression"
-                },
-                "named": true,
-                "value": "type_query_subscript_expression"
-              }
-            ]
+            "type": "SYMBOL",
+            "name": "import"
+          },
+          "metadata": {
+            "fieldSource": "override"
           }
         },
         {
@@ -11957,6 +11933,9 @@
           "content": {
             "type": "SYMBOL",
             "name": "arguments"
+          },
+          "metadata": {
+            "fieldSource": "override"
           }
         }
       ]

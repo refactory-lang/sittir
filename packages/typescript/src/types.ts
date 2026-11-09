@@ -6982,27 +6982,16 @@ export interface TypeQuerySubscriptExpression {
 
 export interface TypeQueryCallExpression {
 	readonly $type: TSKindId.TypeQueryCallExpression;
-	readonly _function: TSKindId.Import | Identifier | TypeQueryMemberExpression | TypeQuerySubscriptExpression;
 	readonly _arguments: Arguments;
 	readonly __slotNames__?: {
-		readonly _function: 'function';
 		readonly _arguments: 'arguments';
-	};
-	readonly __inputHints__?: {
-		readonly function:
-			| KindEnum<'import', TSKindId.Import | TSKindId.ImportKeyword>
-			| Identifier
-			| TypeQueryMemberExpression
-			| TypeQuerySubscriptExpression;
 	};
 	readonly __looseHints__?: {
 		readonly arguments: readonly (Expression | SpreadElement)[];
 	};
 	readonly __slotHints__?: {
-		readonly function: SlotHint<NonNullable<T.TypeQueryCallExpression.Config>['function']>;
 		readonly arguments: SlotHint<T.Arguments>;
 	};
-	readonly function: () => TSKindId.Import | Identifier | TypeQueryMemberExpression | TypeQuerySubscriptExpression;
 	readonly arguments: () => Arguments;
 }
 
@@ -13049,7 +13038,11 @@ export namespace TypeQuerySubscriptExpression {
 
 export namespace TypeQueryCallExpression {
 	export interface Hints {
-		readonly __optionsHint__?: { readonly after?: LayoutKindId; readonly before?: LayoutKindId };
+		readonly __optionsHint__?: {
+			readonly after?: LayoutKindId;
+			readonly before?: LayoutKindId;
+			readonly function?: { readonly after?: LayoutKindId };
+		};
 	}
 }
 
@@ -16015,9 +16008,10 @@ export interface TypeQueryCallExpressionNs extends NodeNs<
 	LeafStringMap,
 	NamespaceMap,
 	TypeQueryCallExpression.Bound,
-	never,
+	'arguments',
 	TSKindId.TypeQueryCallExpression,
 	TypeQueryCallExpression.Parsed,
+	never,
 	never
 > {
 	readonly BuildArgs: TypeQueryCallExpression.BuildArgs;
@@ -22383,8 +22377,8 @@ export namespace TypeQueryCallExpression {
 	}
 	export type Loose = LooseFor<TSKindId.TypeQueryCallExpression>;
 	export type LooseConfig = LooseConfigFor<TSKindId.TypeQueryCallExpression>;
-	export type BuildArgs = [config: ConfigOf<T.TypeQueryCallExpression>];
-	export type LooseArgs = [config: T.TypeQueryCallExpression.Loose];
+	export type BuildArgs = [value: Admit<T.Arguments>] | T.Arguments.BuildArgs;
+	export type LooseArgs = [value?: T.TypeQueryCallExpression.Loose] | T.Arguments.LooseArgs;
 	export type Kind = TSKindId.TypeQueryCallExpression;
 }
 export namespace TypeQueryInstantiationExpression {

@@ -216,7 +216,7 @@ export const build: PortableBuildTable = {
 		typePredicate: 'config',
 		typePredicateAnnotation: 'forwarded',
 		typeQuery: 'direct',
-		typeQueryCallExpression: 'config',
+		typeQueryCallExpression: 'forwarded',
 		typeQueryCallExpressionInTypeAnnotation: 'config',
 		typeQueryInstantiationExpression: 'config',
 		typeQueryMemberExpression: 'config',
@@ -30252,7 +30252,6 @@ export const build: PortableBuildTable = {
 						[351, 'name'],
 						[353, 'object'],
 						[354, 'object'],
-						[355, 'function'],
 						[356, 'function'],
 						[357, 'expression'],
 						[395, 'parameter'],
@@ -30502,7 +30501,6 @@ export const build: PortableBuildTable = {
 					holders: [
 						[353, 'object'],
 						[354, 'object'],
-						[355, 'function'],
 						[356, 'function'],
 						[357, 'expression']
 					]
@@ -35849,6 +35847,49 @@ export const build: PortableBuildTable = {
 			root: false,
 			arms: [
 				{
+					kind: 355,
+					builder: 'typeQueryCallExpression',
+					members: [
+						{
+							name: 'source',
+							steps: [
+								{
+									key: 'arguments',
+									builder: 'arguments'
+								},
+								{
+									key: 'elements'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [283, 'elements'],
+									kinds: [234, 235, 272, 423, 424]
+								}
+							]
+						}
+					],
+					presets: [],
+					flags: {},
+					when: [
+						{
+							member: 'source',
+							kinds: [234, 235, 272, 423, 424]
+						},
+						{
+							absent: [],
+							required: ['source']
+						}
+					],
+					holders: [
+						[353, 'object'],
+						[354, 'object'],
+						[357, 'expression']
+					]
+				},
+				{
 					kind: 335,
 					builder: 'typeQueryCallExpressionInTypeAnnotation',
 					members: [
@@ -35904,6 +35945,14 @@ export const build: PortableBuildTable = {
 					flags: {},
 					when: [
 						{
+							member: 'source',
+							kinds: [
+								1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 233, 234, 235, 236, 237, 241, 244, 247,
+								249, 251, 255, 256, 257, 258, 259, 261, 263, 266, 267, 268, 269, 270, 272, 273, 275, 276, 277, 278, 279,
+								280, 281, 282, 299, 304, 305, 306, 307, 315, 405, 418, 419, 420, 421, 422, 423, 424, 425, 426, 439, 440
+							]
+						},
+						{
 							absent: [],
 							required: ['source']
 						}
@@ -35943,72 +35992,6 @@ export const build: PortableBuildTable = {
 						[392, 'items'],
 						[399, 'type'],
 						[411, 'indexType']
-					]
-				},
-				{
-					kind: 355,
-					builder: 'typeQueryCallExpression',
-					members: [
-						{
-							name: 'source',
-							steps: [
-								{
-									key: 'arguments',
-									builder: 'arguments'
-								},
-								{
-									key: 'elements'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [283, 'elements'],
-									kinds: [
-										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 233, 234, 235, 236, 237, 241, 244,
-										247, 249, 251, 255, 256, 257, 258, 259, 261, 263, 266, 267, 268, 269, 270, 272, 273, 275, 276, 277,
-										278, 279, 280, 281, 282, 299, 304, 305, 306, 307, 315, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 439, 440
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										'import.meta': 440,
-										'new.target': 439,
-										super: 279,
-										this: 278
-									},
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\s\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\s\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									}
-								}
-							]
-						}
-					],
-					presets: [
-						{
-							steps: [
-								{
-									key: 'function'
-								}
-							],
-							kind: 196
-						}
-					],
-					flags: {},
-					when: [
-						{
-							absent: [],
-							required: ['source']
-						}
-					],
-					holders: [
-						[353, 'object'],
-						[354, 'object'],
-						[357, 'expression']
 					]
 				}
 			]
