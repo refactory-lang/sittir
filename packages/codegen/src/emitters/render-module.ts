@@ -832,8 +832,8 @@ function buildTypedTemplateBody(
 	struct: EmittedStruct,
 	separator: string,
 	nodeMap: NodeMap,
-	slotModel: RenderSlotModel | undefined = undefined,
-	node: AssembledNode | undefined,
+	slotModel: RenderSlotModel,
+	node: AssembledNode,
 	kindIdByKind: ReadonlyMap<string, number>,
 	plan: RenderPlan,
 	armSeams: ReadonlyMap<string, readonly ArmSeams[]>
@@ -842,9 +842,7 @@ function buildTypedTemplateBody(
 	const sepLiteral = JSON.stringify(separator);
 
 	const shapeByName = new Map<string, NodeSlotShape>();
-	if (nodeMap !== undefined && slotModel !== undefined) {
-		for (const f of [...slotModel.named, ...slotModel.unnamed]) shapeByName.set(f.name, nodeSlotShapeOf(f, nodeMap));
-	}
+	for (const f of [...slotModel.named, ...slotModel.unnamed]) shapeByName.set(f.name, nodeSlotShapeOf(f, nodeMap));
 
 	const bound = new Set<string>();
 	const bind = (ident: string, expr: string): void => {
@@ -942,7 +940,7 @@ function buildTypedTemplateBody(
 	}
 
 	const seamFieldNames = new Set(
-		(node === undefined ? [] : synthesizedSpacingSites(plan, node).filter((s) => s.spacing.at === 'seam')).map((site) =>
+		synthesizedSpacingSites(plan, node).filter((s) => s.spacing.at === 'seam').map((site) =>
 			rustFieldIdent(site.fieldIdent)
 		)
 	);
@@ -978,7 +976,7 @@ function buildTypedTemplateBody(
 			},
 			armSeams: (name) => {
 				const f = struct.fields.find((field) => rustFieldIdent(field.name) === rustFieldIdent(name));
-				return f === undefined || node === undefined ? undefined : armSeams.get(choiceKey(node.typeName, f.name));
+				return f === undefined ? undefined : holderArmSeams(armSeams, node, f.name, shapeByName.get(f.name));
 			},
 			innerGap: (name) => node instanceof AbstractAssembledCompound && node.innerSite?.key === name
 		})
@@ -2274,6 +2272,20 @@ function shareIdenticalChoices(
 	return { emitted, names, folded };
 }
 
+export function holderArmSeams(
+	recorded: ReadonlyMap<string, readonly ArmSeams[]>,
+	holder: AssembledNode,
+	fieldName: string,
+	shape: NodeSlotShape | undefined
+): readonly ArmSeams[] | undefined {
+	if (shape?.tag !== 'union') return undefined;
+	const arms = recorded.get(choiceKey(holder.typeName, fieldName));
+	if (arms === undefined) {
+		throw new Error(`render body for '${holder.kind}' renders choice slot '${fieldName}', but its choice recorded no arm seams`);
+	}
+	return arms;
+}
+
 function choiceNameOf(choices: ChoiceNames, typeName: string, fieldName: string): string {
 	const name = choices.get(choiceKey(typeName, fieldName));
 	if (name === undefined) {
@@ -2504,7 +2516,7 @@ function emitPerSlotChildEnum(
 			: [{ kinds: rustKindIds([...(claimedBy.get(rustTypeIdent(node.typeName)) ?? []), ...acceptedIdsOf(kind, node)]), immediate: true }]
 	);
 	const holderSeams = modelSlot !== undefined && !isMultiple(modelSlot);
-	if (holderSeams) read.armSeams.set(choiceKey(entry.typeName, entry.fieldName), [...nodeArmSeams, ...unitArmSeams]);
+	read.armSeams.set(choiceKey(entry.typeName, entry.fieldName), holderSeams ? [...nodeArmSeams, ...unitArmSeams] : []);
 	const viewed = nodeKinds.length > 0 || admitsVerbatim;
 	lines.push(...nodeDeclaration(read, NODE_DERIVE, viewed ? `${CHOICE_ARGS}, ${viewArg(enumName)}` : CHOICE_ARGS, 'enum', enumName));
 	for (const { node } of nodeKinds) {

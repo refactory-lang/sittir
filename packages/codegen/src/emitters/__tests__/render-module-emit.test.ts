@@ -13,7 +13,7 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 import { DEDENT_TEXT, INDENT_TEXT } from '../../dsl/primitives/spacing.ts';
 import { classifySlot, buildSupertypeNodeSet, type SlotClass } from '../node-common.ts';
-import { closeUsedSupertypes, emitRenderModule, grammarRenderInputs, payloadCeilingAssertions, rustNodeStructName, nodeSlotShapeOf } from '../render-module.ts';
+import { closeUsedSupertypes, emitRenderModule, grammarRenderInputs, holderArmSeams, payloadCeilingAssertions, rustNodeStructName, nodeSlotShapeOf } from '../render-module.ts';
 import { PAYLOAD_CEILING_BYTES } from '../boxed-payloads.ts';
 import { ENVELOPE_PINS } from '../envelope-claims.ts';
 import { collectKindEntries, findKindEntry } from '../kind-discriminant.ts';
@@ -388,6 +388,13 @@ describe('render options on nodes', () => {
 		const arms = render.slice(0, render.indexOf('\n}\n'));
 		expect(arms).toMatch(/::Semi => render_semi\(w\),/);
 		expect(arms).not.toContain('w.site_at(');
+	});
+
+	it("a holder's choice slot whose enum recorded no arm seams fails at codegen instead of rendering without them", async () => {
+		const { nodeMap } = await modelFor('typescript');
+		const holder = nodeMap.nodes.get('lexical_declaration')!;
+		expect(() => holderArmSeams(new Map(), holder, 'terminator', { tag: 'union' })).toThrow(/lexical_declaration.*terminator/);
+		expect(holderArmSeams(new Map(), holder, 'kind', { tag: 'text' })).toBeUndefined();
 	});
 
 	it('the render entry prepares the tree through the context before dispatch, then releases it a level at a time', async () => {
