@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { numberText } from '../src/number.ts';
+import { numberRefusal, numberText } from '../src/number.ts';
 
 describe('numberText', () => {
 	it('writes an integer in the base of the slot with its prefix', () => {
@@ -42,5 +42,22 @@ describe('numberText', () => {
 	});
 	it('refuses a bigint for a float literal', () => {
 		expect(() => numberText('float', '.0', 1n)).toThrow(/cannot spell a float literal/);
+	});
+});
+
+describe('numberRefusal', () => {
+	it('refuses a negative value for a leaf whose guard rejects a sign', () => {
+		expect(numberRefusal(-1, true, false)).toMatch(/unary minus/);
+		expect(numberRefusal(-1n, true, false)).toMatch(/unary minus/);
+		expect(numberRefusal(-0, false, false)).toMatch(/^-0: /);
+	});
+	it('admits a negative value for a leaf whose guard spells a sign', () => {
+		expect(numberRefusal(-1, true, true)).toBeUndefined();
+		expect(numberRefusal(-1n, true, true)).toBeUndefined();
+		expect(numberRefusal(-1.5, false, true)).toBeUndefined();
+	});
+	it('still refuses what no signed literal spells', () => {
+		expect(numberRefusal(Number.NEGATIVE_INFINITY, false, true)).toMatch(/no literal spelling/);
+		expect(numberRefusal(-(2 ** 53), true, true)).toMatch(/pass it as a bigint/);
 	});
 });

@@ -17,7 +17,7 @@ describe('rust number input', () => {
 		expect(rs.build.integerLiteral.hex(255).$render()).toBe('0xff');
 	});
 	it('refuses a negative value and an integer past the safe range', () => {
-		expect(() => rs.build.integerLiteral(-1)).toThrow(/a negative number is a unary minus applied to a positive literal/);
+		expect(() => rs.build.integerLiteral(-1 as number)).toThrow(/a negative number is a unary minus applied to a positive literal/);
 		expect(() => rs.build.integerLiteral(2 ** 53)).toThrow(/pass it as a bigint/);
 	});
 	it('refuses a bigint for a float literal', () => {

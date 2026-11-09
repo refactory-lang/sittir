@@ -158,6 +158,18 @@ describe('kindIdStorage', () => {
 		expect(listStorage([1, null, 2], kindIdStorage)).toEqual([1, 2]);
 		expect(kindIdStorage('+')).toBe('+');
 	});
+
+	it('refuses a number that is no kind id, by the name the arena writer refuses it with', async () => {
+		const { kindIdStorage, listStorage } = await import('../src/utils.ts');
+		const { unitCell } = await import('../src/built-arena.ts');
+		for (const value of [-1, 1.5, Number.NaN, Number.POSITIVE_INFINITY, 2 ** 53 + 2]) {
+			const refusal = `a kind id is a non-negative safe integer, not ${value}`;
+			expect(() => kindIdStorage(value)).toThrow(refusal);
+			expect(() => unitCell(value, { blankUnit: 16383 } as never)).toThrow(refusal);
+		}
+		expect(() => kindIdStorage(7n)).toThrow('a kind id is a non-negative safe integer, not 7n');
+		expect(() => listStorage([1, -1], kindIdStorage)).toThrow('a kind id is a non-negative safe integer, not -1');
+	});
 });
 
 describe('listStorage', () => {
