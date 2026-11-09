@@ -7,6 +7,7 @@ import { createRuleId } from './rule-catalog.ts';
 import type { RulePathSegment } from './types.ts';
 import type { SpellingFields, SpellingGroup } from '../dsl/primitives/spellings.ts';
 import { matchesWordShape } from '../util/word-matcher.ts';
+import { pieceAt, pieces } from '../util/pattern-pieces.ts';
 import { isValidIdent } from '../emitters/shared.ts';
 
 type LinkRule = Rule<'link'>;
@@ -261,14 +262,9 @@ const REGEX_SPECIALS = '[]()|*+?{}.^$';
 
 function closingParen(source: string, from: number): number {
 	let depth = 1;
-	let inClass = false;
-	for (let i = from; i < source.length; i++) {
-		const c = source[i]!;
-		if (c === '\\') i += 1;
-		else if (inClass) inClass = c !== ']';
-		else if (c === '[') inClass = true;
-		else if (c === '(') depth += 1;
-		else if (c === ')' && --depth === 0) return i;
+	for (const piece of pieces(source, from)) {
+		if (piece.kind === 'open') depth += 1;
+		else if (piece.kind === 'char' && piece.text === ')' && --depth === 0) return piece.at;
 	}
 	return -1;
 }
@@ -292,26 +288,23 @@ function namedGroupParts(kind: string, source: string, diagnostics: DiagnosticSi
 		if (last !== undefined && 'lit' in last) parts[parts.length - 1] = { lit: last.lit + text };
 		else parts.push({ lit: text });
 	};
-	for (let i = 0; i < source.length; i++) {
-		const c = source[i]!;
-		if (c === '\\') {
-			const next = source[i + 1];
+	for (let at = 0; at < source.length; ) {
+		const piece = pieceAt(source, at);
+		if (piece.kind === 'open' && piece.group === 'named') {
+			const end = closingParen(source, at + piece.text.length);
+			if (end < 0) return notPure();
+			parts.push({ group: piece.name, pattern: source.slice(at + piece.text.length, end) });
+			at = end + 1;
+			continue;
+		}
+		if (piece.kind === 'escape') {
+			const next = piece.text[1];
 			if (next === undefined) return notPure();
 			if (/[A-Za-z0-9]/.test(next) && CONTROL_ESCAPES[next] === undefined) return notPure();
 			pushLit(CONTROL_ESCAPES[next] ?? next);
-			i += 1;
-			continue;
-		}
-		const named = c === '(' ? /^\(\?<([A-Za-z_]\w*)>/.exec(source.slice(i)) : null;
-		if (named !== null) {
-			const end = closingParen(source, i + named[0].length);
-			if (end < 0) return notPure();
-			parts.push({ group: named[1]!, pattern: source.slice(i + named[0].length, end) });
-			i = end;
-			continue;
-		}
-		if (REGEX_SPECIALS.includes(c)) return notPure();
-		pushLit(c);
+		} else if (piece.kind !== 'char' || REGEX_SPECIALS.includes(piece.text)) return notPure();
+		else pushLit(piece.text);
+		at += piece.text.length;
 	}
 	return parts;
 }
