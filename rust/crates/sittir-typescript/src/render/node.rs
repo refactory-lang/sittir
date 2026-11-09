@@ -37552,7 +37552,7 @@ fn prepare_comment_line<N: CommentLinePrepare + ?Sized>(node: &mut N, overlay: &
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::COMMENT_BLOCK, interior = "^/\\*(?<content>(?:([^*]|\\*+[^*\\/])*\\**))\\*/$", affixes = ("/*", "*/"), words = 6, built_words = 4, fields = CommentBlockFields, prepare = CommentBlockPrepare, view = CommentBlockNodeRecord, prepare_fn = prepare_comment_block)]
+#[node(kind = kind::COMMENT_BLOCK, interior = "^/\\*(?<content>(?:(?:[^*]|\\*+[^*\\/])*\\**))\\*/$", affixes = ("/*", "*/"), words = 6, built_words = 4, fields = CommentBlockFields, prepare = CommentBlockPrepare, view = CommentBlockNodeRecord, prepare_fn = prepare_comment_block)]
 pub struct CommentBlockNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -37701,7 +37701,7 @@ fn prepare_literal_type_negative_number<N: LiteralTypeNegativeNumberPrepare + ?S
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::NUMBER_HEX, interior = "^(?<radix_prefix>0x|0X)(?<content>(?:[\\da-fA-F](_?[\\da-fA-F])*))$", words = 8, built_words = 5, fields = NumberHexFields, prepare = NumberHexPrepare, view = NumberHexNodeRecord, prepare_fn = prepare_number_hex)]
+#[node(kind = kind::NUMBER_HEX, interior = "^(?<radix_prefix>0x|0X)(?<content>(?:[\\da-fA-F](?:_?[\\da-fA-F])*))$", words = 8, built_words = 5, fields = NumberHexFields, prepare = NumberHexPrepare, view = NumberHexNodeRecord, prepare_fn = prepare_number_hex)]
 pub struct NumberHexNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -37778,7 +37778,7 @@ fn prepare_number_hex<N: NumberHexPrepare + ?Sized>(node: &mut N, overlay: &mut 
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::NUMBER_FLOAT_POINT, interior = "^(?<integer>(?:0|(?:0)?(?:[1-9])(?:(?:_)?(?:\\d(_?\\d)*))?))\\.(?<fraction>(?:\\d(_?\\d)*))?(?:(?<marker>e|E)?(?<exponent_sign>-|\\+)?(?<exponent>(?:\\d(_?\\d)*))?)?$", words = 14, built_words = 8, fields = NumberFloatPointFields, prepare = NumberFloatPointPrepare, view = NumberFloatPointNodeRecord, prepare_fn = prepare_number_float_point)]
+#[node(kind = kind::NUMBER_FLOAT_POINT, interior = "^(?<integer>(?:0|(?:0)?(?:[1-9])(?:(?:_)?(?:\\d(?:_?\\d)*))?))\\.(?<fraction>(?:\\d(?:_?\\d)*))?(?:(?<marker>e|E)?(?<exponent_sign>-|\\+)?(?<exponent>(?:\\d(?:_?\\d)*))?)?$", words = 14, built_words = 8, fields = NumberFloatPointFields, prepare = NumberFloatPointPrepare, view = NumberFloatPointNodeRecord, prepare_fn = prepare_number_float_point)]
 pub struct NumberFloatPointNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -37864,7 +37864,7 @@ fn prepare_number_float_point<N: NumberFloatPointPrepare + ?Sized>(node: &mut N,
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::NUMBER_FLOAT_LEADING_POINT, interior = "^\\.(?<fraction>(?:\\d(_?\\d)*))(?:(?<marker>e|E)?(?<exponent_sign>-|\\+)?(?<exponent>(?:\\d(_?\\d)*))?)?$", words = 12, built_words = 7, fields = NumberFloatLeadingPointFields, prepare = NumberFloatLeadingPointPrepare, view = NumberFloatLeadingPointNodeRecord, prepare_fn = prepare_number_float_leading_point)]
+#[node(kind = kind::NUMBER_FLOAT_LEADING_POINT, interior = "^\\.(?<fraction>(?:\\d(?:_?\\d)*))(?:(?<marker>e|E)?(?<exponent_sign>-|\\+)?(?<exponent>(?:\\d(?:_?\\d)*))?)?$", words = 12, built_words = 7, fields = NumberFloatLeadingPointFields, prepare = NumberFloatLeadingPointPrepare, view = NumberFloatLeadingPointNodeRecord, prepare_fn = prepare_number_float_leading_point)]
 pub struct NumberFloatLeadingPointNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -37947,7 +37947,7 @@ fn prepare_number_float_leading_point<N: NumberFloatLeadingPointPrepare + ?Sized
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::NUMBER_FLOAT_SCIENTIFIC, interior = "^(?<integer>(?:0|(?:0)?(?:[1-9])(?:(?:_)?(?:\\d(_?\\d)*))?))(?<marker>e|E)(?<exponent_sign>-|\\+)?(?<exponent>(?:\\d(_?\\d)*))$", words = 12, built_words = 7, fields = NumberFloatScientificFields, prepare = NumberFloatScientificPrepare, view = NumberFloatScientificNodeRecord, prepare_fn = prepare_number_float_scientific)]
+#[node(kind = kind::NUMBER_FLOAT_SCIENTIFIC, interior = "^(?<integer>(?:0|(?:0)?(?:[1-9])(?:(?:_)?(?:\\d(?:_?\\d)*))?))(?<marker>e|E)(?<exponent_sign>-|\\+)?(?<exponent>(?:\\d(?:_?\\d)*))$", words = 12, built_words = 7, fields = NumberFloatScientificFields, prepare = NumberFloatScientificPrepare, view = NumberFloatScientificNodeRecord, prepare_fn = prepare_number_float_scientific)]
 pub struct NumberFloatScientificNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -38101,7 +38101,7 @@ fn prepare_number_decimal<N: NumberDecimalPrepare + ?Sized>(node: &mut N, overla
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::NUMBER_BINARY, interior = "^(?<radix_prefix>0b|0B)(?<content>(?:[0-1](_?[0-1])*))$", words = 8, built_words = 5, fields = NumberBinaryFields, prepare = NumberBinaryPrepare, view = NumberBinaryNodeRecord, prepare_fn = prepare_number_binary)]
+#[node(kind = kind::NUMBER_BINARY, interior = "^(?<radix_prefix>0b|0B)(?<content>(?:[0-1](?:_?[0-1])*))$", words = 8, built_words = 5, fields = NumberBinaryFields, prepare = NumberBinaryPrepare, view = NumberBinaryNodeRecord, prepare_fn = prepare_number_binary)]
 pub struct NumberBinaryNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -38178,7 +38178,7 @@ fn prepare_number_binary<N: NumberBinaryPrepare + ?Sized>(node: &mut N, overlay:
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::NUMBER_OCTAL, interior = "^(?<radix_prefix>0o|0O)(?<content>(?:[0-7](_?[0-7])*))$", words = 8, built_words = 5, fields = NumberOctalFields, prepare = NumberOctalPrepare, view = NumberOctalNodeRecord, prepare_fn = prepare_number_octal)]
+#[node(kind = kind::NUMBER_OCTAL, interior = "^(?<radix_prefix>0o|0O)(?<content>(?:[0-7](?:_?[0-7])*))$", words = 8, built_words = 5, fields = NumberOctalFields, prepare = NumberOctalPrepare, view = NumberOctalNodeRecord, prepare_fn = prepare_number_octal)]
 pub struct NumberOctalNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -38255,7 +38255,7 @@ fn prepare_number_octal<N: NumberOctalPrepare + ?Sized>(node: &mut N, overlay: &
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::NUMBER_BIGINT_HEX, interior = "^(?<content>(?:0x|0X)(?:[\\da-fA-F](_?[\\da-fA-F])*))n$", affixes = ("", "n"), words = 6, built_words = 4, fields = NumberBigintHexFields, prepare = NumberBigintHexPrepare, view = NumberBigintHexNodeRecord, prepare_fn = prepare_number_bigint_hex)]
+#[node(kind = kind::NUMBER_BIGINT_HEX, interior = "^(?<content>(?:0x|0X)(?:[\\da-fA-F](?:_?[\\da-fA-F])*))n$", affixes = ("", "n"), words = 6, built_words = 4, fields = NumberBigintHexFields, prepare = NumberBigintHexPrepare, view = NumberBigintHexNodeRecord, prepare_fn = prepare_number_bigint_hex)]
 pub struct NumberBigintHexNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -38329,7 +38329,7 @@ fn prepare_number_bigint_hex<N: NumberBigintHexPrepare + ?Sized>(node: &mut N, o
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::NUMBER_BIGINT_BINARY, interior = "^(?<content>(?:0b|0B)(?:[0-1](_?[0-1])*))n$", affixes = ("", "n"), words = 6, built_words = 4, fields = NumberBigintBinaryFields, prepare = NumberBigintBinaryPrepare, view = NumberBigintBinaryNodeRecord, prepare_fn = prepare_number_bigint_binary)]
+#[node(kind = kind::NUMBER_BIGINT_BINARY, interior = "^(?<content>(?:0b|0B)(?:[0-1](?:_?[0-1])*))n$", affixes = ("", "n"), words = 6, built_words = 4, fields = NumberBigintBinaryFields, prepare = NumberBigintBinaryPrepare, view = NumberBigintBinaryNodeRecord, prepare_fn = prepare_number_bigint_binary)]
 pub struct NumberBigintBinaryNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -38403,7 +38403,7 @@ fn prepare_number_bigint_binary<N: NumberBigintBinaryPrepare + ?Sized>(node: &mu
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::NUMBER_BIGINT_OCTAL, interior = "^(?<content>(?:0o|0O)(?:[0-7](_?[0-7])*))n$", affixes = ("", "n"), words = 6, built_words = 4, fields = NumberBigintOctalFields, prepare = NumberBigintOctalPrepare, view = NumberBigintOctalNodeRecord, prepare_fn = prepare_number_bigint_octal)]
+#[node(kind = kind::NUMBER_BIGINT_OCTAL, interior = "^(?<content>(?:0o|0O)(?:[0-7](?:_?[0-7])*))n$", affixes = ("", "n"), words = 6, built_words = 4, fields = NumberBigintOctalFields, prepare = NumberBigintOctalPrepare, view = NumberBigintOctalNodeRecord, prepare_fn = prepare_number_bigint_octal)]
 pub struct NumberBigintOctalNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -38477,7 +38477,7 @@ fn prepare_number_bigint_octal<N: NumberBigintOctalPrepare + ?Sized>(node: &mut 
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::NUMBER_BIGINT_DECIMAL, interior = "^(?<content>(?:\\d(_?\\d)*))n$", affixes = ("", "n"), words = 6, built_words = 4, fields = NumberBigintDecimalFields, prepare = NumberBigintDecimalPrepare, view = NumberBigintDecimalNodeRecord, prepare_fn = prepare_number_bigint_decimal)]
+#[node(kind = kind::NUMBER_BIGINT_DECIMAL, interior = "^(?<content>(?:\\d(?:_?\\d)*))n$", affixes = ("", "n"), words = 6, built_words = 4, fields = NumberBigintDecimalFields, prepare = NumberBigintDecimalPrepare, view = NumberBigintDecimalNodeRecord, prepare_fn = prepare_number_bigint_decimal)]
 pub struct NumberBigintDecimalNode {
     #[wire(key = "$_layout")]
     #[layout]

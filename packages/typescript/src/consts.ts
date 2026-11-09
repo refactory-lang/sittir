@@ -5,7 +5,7 @@ import type { TokenInterior } from '@sittir/common/utils';
 /** Slot structure of every token whose lexed text carries literal affixes, flags or enums around its content. */
 export const TOKEN_INTERIORS = {
 	comment_block: {
-		regex: '^/\\*(?<content>(?:([^*]|\\*+[^*\\/])*\\**))\\*/$',
+		regex: '^/\\*(?<content>(?:(?:[^*]|\\*+[^*\\/])*\\**))\\*/$',
 		slots: [{ name: 'content', propertyName: 'content' }]
 	},
 	comment_line: {
@@ -19,30 +19,31 @@ export const TOKEN_INTERIORS = {
 	},
 	hash_bang_line: { regex: '^#!(?<content>.*)$', slots: [{ name: 'content', propertyName: 'content' }] },
 	number_bigint_binary: {
-		regex: '^(?<content>(?:0b|0B)(?:[0-1](_?[0-1])*))n$',
+		regex: '^(?<content>(?:0b|0B)(?:[0-1](?:_?[0-1])*))n$',
 		slots: [{ name: 'content', propertyName: 'content' }]
 	},
 	number_bigint_decimal: {
-		regex: '^(?<content>(?:\\d(_?\\d)*))n$',
+		regex: '^(?<content>(?:\\d(?:_?\\d)*))n$',
 		slots: [{ name: 'content', propertyName: 'content' }]
 	},
 	number_bigint_hex: {
-		regex: '^(?<content>(?:0x|0X)(?:[\\da-fA-F](_?[\\da-fA-F])*))n$',
+		regex: '^(?<content>(?:0x|0X)(?:[\\da-fA-F](?:_?[\\da-fA-F])*))n$',
 		slots: [{ name: 'content', propertyName: 'content' }]
 	},
 	number_bigint_octal: {
-		regex: '^(?<content>(?:0o|0O)(?:[0-7](_?[0-7])*))n$',
+		regex: '^(?<content>(?:0o|0O)(?:[0-7](?:_?[0-7])*))n$',
 		slots: [{ name: 'content', propertyName: 'content' }]
 	},
 	number_binary: {
-		regex: '^(?<radix_prefix>0b|0B)(?<content>(?:[0-1](_?[0-1])*))$',
+		regex: '^(?<radix_prefix>0b|0B)(?<content>(?:[0-1](?:_?[0-1])*))$',
 		slots: [
 			{ name: 'radix_prefix', propertyName: 'radixPrefix' },
 			{ name: 'content', propertyName: 'content' }
 		]
 	},
 	number_float_leading_point: {
-		regex: '^\\.(?<fraction>(?:\\d(_?\\d)*))(?:(?<marker>e|E)?(?<exponent_sign>-|\\+)?(?<exponent>(?:\\d(_?\\d)*))?)?$',
+		regex:
+			'^\\.(?<fraction>(?:\\d(?:_?\\d)*))(?:(?<marker>e|E)?(?<exponent_sign>-|\\+)?(?<exponent>(?:\\d(?:_?\\d)*))?)?$',
 		slots: [
 			{ name: 'fraction', propertyName: 'fraction' },
 			{ name: 'marker', propertyName: 'marker' },
@@ -52,7 +53,7 @@ export const TOKEN_INTERIORS = {
 	},
 	number_float_point: {
 		regex:
-			'^(?<integer>(?:0|(?:0)?(?:[1-9])(?:(?:_)?(?:\\d(_?\\d)*))?))\\.(?<fraction>(?:\\d(_?\\d)*))?(?:(?<marker>e|E)?(?<exponent_sign>-|\\+)?(?<exponent>(?:\\d(_?\\d)*))?)?$',
+			'^(?<integer>(?:0|(?:0)?(?:[1-9])(?:(?:_)?(?:\\d(?:_?\\d)*))?))\\.(?<fraction>(?:\\d(?:_?\\d)*))?(?:(?<marker>e|E)?(?<exponent_sign>-|\\+)?(?<exponent>(?:\\d(?:_?\\d)*))?)?$',
 		slots: [
 			{ name: 'integer', propertyName: 'integer' },
 			{ name: 'fraction', propertyName: 'fraction' },
@@ -63,7 +64,7 @@ export const TOKEN_INTERIORS = {
 	},
 	number_float_scientific: {
 		regex:
-			'^(?<integer>(?:0|(?:0)?(?:[1-9])(?:(?:_)?(?:\\d(_?\\d)*))?))(?<marker>e|E)(?<exponent_sign>-|\\+)?(?<exponent>(?:\\d(_?\\d)*))$',
+			'^(?<integer>(?:0|(?:0)?(?:[1-9])(?:(?:_)?(?:\\d(?:_?\\d)*))?))(?<marker>e|E)(?<exponent_sign>-|\\+)?(?<exponent>(?:\\d(?:_?\\d)*))$',
 		slots: [
 			{ name: 'integer', propertyName: 'integer' },
 			{ name: 'marker', propertyName: 'marker' },
@@ -72,14 +73,14 @@ export const TOKEN_INTERIORS = {
 		]
 	},
 	number_hex: {
-		regex: '^(?<radix_prefix>0x|0X)(?<content>(?:[\\da-fA-F](_?[\\da-fA-F])*))$',
+		regex: '^(?<radix_prefix>0x|0X)(?<content>(?:[\\da-fA-F](?:_?[\\da-fA-F])*))$',
 		slots: [
 			{ name: 'radix_prefix', propertyName: 'radixPrefix' },
 			{ name: 'content', propertyName: 'content' }
 		]
 	},
 	number_octal: {
-		regex: '^(?<radix_prefix>0o|0O)(?<content>(?:[0-7](_?[0-7])*))$',
+		regex: '^(?<radix_prefix>0o|0O)(?<content>(?:[0-7](?:_?[0-7])*))$',
 		slots: [
 			{ name: 'radix_prefix', propertyName: 'radixPrefix' },
 			{ name: 'content', propertyName: 'content' }
