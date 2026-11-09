@@ -850,20 +850,24 @@ interface TriviaTextContext {
 	readonly slotNameOf: (kind: string, slot: string) => string;
 }
 
-function seatTableSides(node: unknown, layoutKinds: ReadonlySet<number>, depth = 0): void {
+function blankRunKinds(kindIdByText: Readonly<Record<string, number>> | undefined): ReadonlySet<number> {
+	return new Set(Object.entries(kindIdByText ?? {}).filter(([text]) => text.split('\n').length > 2).map(([, id]) => id));
+}
+
+function seatTableSides(node: unknown, layoutKinds: ReadonlySet<number>, blankRuns: ReadonlySet<number>, depth = 0): void {
 	if (depth > 256) return;
 	if (Array.isArray(node)) {
-		for (const entry of node) seatTableSides(entry, layoutKinds, depth + 1);
+		for (const entry of node) seatTableSides(entry, layoutKinds, blankRuns, depth + 1);
 		return;
 	}
 	if (!isPlainObject(node)) return;
 	for (const [key, value] of Object.entries(node)) {
-		if (isStorageKey(key)) seatTableSides(value, layoutKinds, depth + 1);
+		if (isStorageKey(key)) seatTableSides(value, layoutKinds, blankRuns, depth + 1);
 	}
-	const isLayout = (entry: TriviaEntry): boolean =>
-		layoutKinds.has(typeof entry === 'number' ? entry : isPlainObject(entry) && typeof entry.$type === 'number' ? entry.$type : -1);
+	const kindOf = (entry: TriviaEntry): number => (typeof entry === 'number' ? entry : isPlainObject(entry) && typeof entry.$type === 'number' ? entry.$type : -1);
+	const isLayout = (entry: TriviaEntry): boolean => layoutKinds.has(kindOf(entry));
 	const kept = (entries: readonly TriviaEntry[] | undefined): readonly TriviaEntry[] | undefined => {
-		const content = entries?.filter((entry) => !isLayout(entry));
+		const content = entries?.filter((entry, at) => !isLayout(entry) || (blankRuns.has(kindOf(entry)) && at > 0 && !isLayout(entries[at - 1]!)));
 		return content === undefined || content.length === 0 ? undefined : content;
 	};
 	const sides = sidesOf(node);
@@ -1036,7 +1040,7 @@ export async function emitFactorySourceText(
 	const { triviaFacts, querySlots } = await requireGrammarModule(grammar, 'utils.ts');
 	const accessorOf = slotAccessorOf(querySlots, model, (id) => types.KIND_NAMES.get(id));
 	const root = materialize(readNode(handle), accessorOf) as ReadNodeLike;
-	seatTableSides(root, triviaFacts?.layout ?? new Set());
+	seatTableSides(root, triviaFacts?.layout ?? new Set(), blankRunKinds(triviaFacts?.whitespace?.kindIdByText));
 	seatFormTree(root, { kindNameFromId, seats: model.seats });
 	const textLeafKinds = new Set(Object.keys(model.modelTypes).filter((k) => model.modelTypes[k] === 'pattern'));
 	spellTriviaTree(root, {
