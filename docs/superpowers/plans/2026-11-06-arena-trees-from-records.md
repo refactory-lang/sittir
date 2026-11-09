@@ -215,7 +215,8 @@ Task 5 planned these reads on records, but its no-tree test covered render, quer
 - [ ] **Step 1: Failing tests:**
   - `a_parsed_snapshot_takes_no_tree`: an arena snapshot makes 0 tree reads;
   - snapshots equal master's, for every node of the fixtures and both corpora, in both storages and all three grammars;
-  - a snapshot of a node holding an ERROR side or a MISSING token equals master's, and an unmeasurable holder is still refused as `unmeasured`.
+  - a snapshot of a node holding an ERROR side or a MISSING token equals master's, and an unmeasurable holder is still refused as `unmeasured`;
+  - `an_alias_content_snapshots_as_itself`: a parsed alias content's snapshot carries the content's own `$type` and text, not its envelope's, though the two share a row. A snapshot is the node as read, detached. This is the one place output differs from master's, and the PR lists it.
 - [ ] **Step 2:** Run them. They fail.
 - [ ] **Step 3: Implement.**
 - [ ] **Step 4: Run the three-way verification** in both storages. Object storage's snapshot speed is not a gate. Its output is.
