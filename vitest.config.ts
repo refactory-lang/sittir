@@ -1,5 +1,6 @@
 import { defineConfig } from 'vitest/config';
 import { sourceAliases } from './packages/codegen/src/grammars.ts';
+import { engineGuard } from './vitest.engine-guard.config.ts';
 
 /**
  * Root vitest config. The workspace is still defined in
@@ -29,8 +30,7 @@ export default defineConfig({
 		// Build any grammar's missing `.sittir/parser.wasm` before tests run;
 		// a present (committed) wasm is left as is.
 		globalSetup: ['./vitest.setup.ts'],
-		setupFiles: ['./vitest.engine-guard.ts'],
-		sequence: { hooks: 'stack' },
+		...engineGuard,
 		// JSON report as a side artifact of the SAME run (gitignored scratch
 		// path) — `scripts/test-and-record.ts` reads it to append a
 		// test-history.jsonl entry without spawning a second, separate

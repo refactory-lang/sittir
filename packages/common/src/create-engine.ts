@@ -233,7 +233,6 @@ function assembleEngine<API extends LanguageAPI, M extends BuilderMode>(
 	records: object | undefined
 ): Engine<API, M> {
 	const native = hooks.createNative(nativeEngineOptions(options, storage));
-	engineOpened();
 	let open = true;
 	const identity: EngineIdentity<API> = Object.freeze({
 		language,
@@ -387,6 +386,7 @@ function assembleEngine<API extends LanguageAPI, M extends BuilderMode>(
 		handle.builtArena = new BuiltArena(built, hooks.wrap as (data: object, tree: TreeHandle) => unknown, handle, views, writeLeafSites);
 		handle.records = records;
 	}
+	engineOpened();
 	return frozen;
 }
 
