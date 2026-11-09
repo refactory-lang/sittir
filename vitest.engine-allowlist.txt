@@ -274,6 +274,7 @@ packages/tools/tests/derived-delimiters-storage.test.ts
 packages/tools/tests/derived-reparse-hosts.test.ts
 packages/tools/tests/descriptor-create-engine.test.ts
 packages/tools/tests/emit/dogfood-render-bytes.test.ts
+packages/tools/tests/emit/factory-source-blank-after-comment.test.ts
 packages/tools/tests/emit/factory-source-corpus-builds.test.ts
 packages/tools/tests/emit/factory-source-emit.test.ts
 packages/tools/tests/emit/factory-source-separators.test.ts
