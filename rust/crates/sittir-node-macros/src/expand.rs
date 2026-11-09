@@ -624,7 +624,7 @@ fn structure(ident: &Ident, attrs: &KindAttrs, data: &DataStruct) -> syn::Result
     let Body { items, read, routes } = if let Some(fixed) = &attrs.text {
         text_body(ident, &fields, fixed.as_ref())?
     } else if let Some(pattern) = &attrs.interior {
-        interior_body(ident, &fields, pattern, height)?
+        interior_body(ident, &fields, pattern, attrs.affixes.as_ref().map(|affixes| (affixes, attrs.scanned)), height)?
     } else if attrs.content.is_some() {
         envelope_body(ident, attrs, &fields, height)?
     } else {
@@ -804,7 +804,7 @@ fn text_body(ident: &Ident, fields: &[Field<'_>], fixed: Option<&LitStr>) -> syn
     })
 }
 
-fn interior_body(ident: &Ident, fields: &[Field<'_>], pattern: &LitStr, height: Option<&Ident>) -> syn::Result<Body> {
+fn interior_body(ident: &Ident, fields: &[Field<'_>], pattern: &LitStr, affixes: Option<(&(LitStr, LitStr), bool)>, height: Option<&Ident>) -> syn::Result<Body> {
     let flagged = format!("(?s){}", pattern.value());
     regex::Regex::new(&flagged)
         .map_err(|e| syn::Error::new_spanned(pattern, format!("`{ident}`'s token interior does not compile as a Rust regex: {e}")))?;
@@ -824,6 +824,13 @@ fn interior_body(ident: &Ident, fields: &[Field<'_>], pattern: &LitStr, height: 
         opaque.push(quote!(#name: ::core::default::Default::default(),));
     }
     let captures: Vec<&LitStr> = captured.iter().map(|&(_, capture)| capture).collect();
+    let interior = match (affixes, captures.as_slice()) {
+        (None, _) => quote!(__rt::Interior::new(#flagged)),
+        (Some(((open, close), scanned)), [group]) => quote!(__rt::Interior::affixed(#flagged, #group, #open, #close, #scanned)),
+        (Some(((open, _), _)), _) => {
+            return Err(syn::Error::new_spanned(open, format!("`{ident}`'s interior is read by its affixes, so it has one capture, the text between them")));
+        }
+    };
     let spans = match layout {
         Some(layout) => {
             inits.push(quote!(#layout: Some(__layout),));
@@ -847,7 +854,7 @@ fn interior_body(ident: &Ident, fields: &[Field<'_>], pattern: &LitStr, height: 
             }
         },
         items: quote! {
-            static __INTERIOR: __rt::Interior = __rt::Interior::new(#flagged);
+            static __INTERIOR: __rt::Interior = #interior;
             #router
         },
         read: quote! {
@@ -1320,6 +1327,52 @@ mod tests {
         content.attrs.retain(|attr| !attr.path().is_ident("slot"));
         let error = super::derive(&input).expect_err("a content that is no slot");
         assert!(error.to_string().contains("content"), "{error}");
+    }
+
+    fn affixed_comment(scanned: bool) -> syn::DeriveInput {
+        let scanned = scanned.then(|| quote::quote!(, scanned));
+        parse_quote! {
+            #[node(kind = kind::COMMENT, interior = "^#(?<content>(?:.*))$", affixes = ("#", "") #scanned)]
+            pub struct CommentNode {
+                #[wire(key = "$_layout")]
+                #[layout]
+                pub layout: Option<Box<NodeLayout>>,
+                #[wire(key = "_content")]
+                #[slot(capture = "content")]
+                pub content: String,
+                #[wire(key = "$verbatim")]
+                #[slot]
+                pub verbatim: Option<String>,
+            }
+        }
+    }
+
+    #[test]
+    fn an_interior_between_fixed_affixes_reads_its_capture_by_them() {
+        let lexed = expand(&affixed_comment(false));
+        assert!(has(&lexed, r##"static __INTERIOR: __rt::Interior = __rt::Interior::affixed("(?s)^#(?<content>(?:.*))$", "content", "#", "", false);"##), "{lexed}");
+        let scanned = expand(&affixed_comment(true));
+        assert!(has(&scanned, r##"static __INTERIOR: __rt::Interior = __rt::Interior::affixed("(?s)^#(?<content>(?:.*))$", "content", "#", "", true);"##), "{scanned}");
+    }
+
+    #[test]
+    fn an_interior_between_affixes_has_one_capture() {
+        let input: syn::DeriveInput = parse_quote! {
+            #[node(kind = kind::DECIMAL, interior = "^(?<whole>[0-9]+)(?<suffix>[a-z]+)?$", affixes = ("", ""))]
+            pub struct DecimalNode {
+                #[wire(key = "_whole")]
+                #[slot(capture = "whole")]
+                pub whole: String,
+                #[wire(key = "_suffix")]
+                #[slot(capture = "suffix")]
+                pub suffix: Option<String>,
+                #[wire(key = "$verbatim")]
+                #[slot]
+                pub verbatim: Option<String>,
+            }
+        };
+        let error = super::derive(&input).expect_err("two captures between affixes");
+        assert!(error.to_string().contains("one capture"), "{error}");
     }
 
     #[test]

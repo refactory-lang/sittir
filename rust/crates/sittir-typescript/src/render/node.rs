@@ -23069,7 +23069,7 @@ fn prepare_program<N: ProgramPrepare + ?Sized>(node: &mut N, overlay: &mut N::Ov
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::HASH_BANG_LINE, interior = "^#!(?<content>.*)$", words = 6, built_words = 4, fields = HashBangLineFields, prepare = HashBangLinePrepare, view = HashBangLineNodeRecord, prepare_fn = prepare_hash_bang_line)]
+#[node(kind = kind::HASH_BANG_LINE, interior = "^#!(?<content>.*)$", affixes = ("#!", ""), words = 6, built_words = 4, fields = HashBangLineFields, prepare = HashBangLinePrepare, view = HashBangLineNodeRecord, prepare_fn = prepare_hash_bang_line)]
 pub struct HashBangLineNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -28432,7 +28432,7 @@ fn prepare_unescaped_single_string_fragment<N: UnescapedSingleStringFragmentPrep
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::ESCAPE_SEQUENCE, interior = "^\\\\(?<content>(?:(?:[^xu0-7])|(?:[0-7]{1,3})|(?:x[0-9a-fA-F]{2})|(?:u[0-9a-fA-F]{4})|(?:u\\{[0-9a-fA-F]+\\})|(?:[\\r?][\\n\\u2028\\u2029])))$", words = 6, built_words = 4, fields = EscapeSequenceFields, prepare = EscapeSequencePrepare, view = EscapeSequenceNodeRecord, prepare_fn = prepare_escape_sequence)]
+#[node(kind = kind::ESCAPE_SEQUENCE, interior = "^\\\\(?<content>(?:(?:[^xu0-7])|(?:[0-7]{1,3})|(?:x[0-9a-fA-F]{2})|(?:u[0-9a-fA-F]{4})|(?:u\\{[0-9a-fA-F]+\\})|(?:[\\r?][\\n\\u2028\\u2029])))$", affixes = ("\\", ""), scanned, words = 6, built_words = 4, fields = EscapeSequenceFields, prepare = EscapeSequencePrepare, view = EscapeSequenceNodeRecord, prepare_fn = prepare_escape_sequence)]
 pub struct EscapeSequenceNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -28949,7 +28949,7 @@ fn prepare_identifier<N: IdentifierPrepare + ?Sized>(node: &mut N, overlay: &mut
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::PRIVATE_PROPERTY_IDENTIFIER, interior = "^#(?<content>(?:[^\\x00-\\x1F\\s\\p{Zs}0-9:;`\"'@#.,|^&<=>+\\-*/\\\\%?!~()\\[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\s\\p{Zs}:;`\"'@#.,|^&<=>+\\-*/\\\\%?!~()\\[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$", words = 6, built_words = 4, fields = PrivatePropertyIdentifierFields, prepare = PrivatePropertyIdentifierPrepare, view = PrivatePropertyIdentifierNodeRecord, prepare_fn = prepare_private_property_identifier)]
+#[node(kind = kind::PRIVATE_PROPERTY_IDENTIFIER, interior = "^#(?<content>(?:[^\\x00-\\x1F\\s\\p{Zs}0-9:;`\"'@#.,|^&<=>+\\-*/\\\\%?!~()\\[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\s\\p{Zs}:;`\"'@#.,|^&<=>+\\-*/\\\\%?!~()\\[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$", affixes = ("#", ""), words = 6, built_words = 4, fields = PrivatePropertyIdentifierFields, prepare = PrivatePropertyIdentifierPrepare, view = PrivatePropertyIdentifierNodeRecord, prepare_fn = prepare_private_property_identifier)]
 pub struct PrivatePropertyIdentifierNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -37478,7 +37478,7 @@ fn prepare_export_statement_equals_export<N: ExportStatementEqualsExportPrepare 
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::COMMENT_LINE, interior = "^//(?<content>(?:[^\\r\\n\\u2028\\u2029]*))$", words = 6, built_words = 4, fields = CommentLineFields, prepare = CommentLinePrepare, view = CommentLineNodeRecord, prepare_fn = prepare_comment_line)]
+#[node(kind = kind::COMMENT_LINE, interior = "^//(?<content>(?:[^\\r\\n\\u2028\\u2029]*))$", affixes = ("//", ""), words = 6, built_words = 4, fields = CommentLineFields, prepare = CommentLinePrepare, view = CommentLineNodeRecord, prepare_fn = prepare_comment_line)]
 pub struct CommentLineNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -37552,7 +37552,7 @@ fn prepare_comment_line<N: CommentLinePrepare + ?Sized>(node: &mut N, overlay: &
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::COMMENT_BLOCK, interior = "^/\\*(?<content>(?:([^*]|\\*+[^*\\/])*\\**))\\*/$", words = 6, built_words = 4, fields = CommentBlockFields, prepare = CommentBlockPrepare, view = CommentBlockNodeRecord, prepare_fn = prepare_comment_block)]
+#[node(kind = kind::COMMENT_BLOCK, interior = "^/\\*(?<content>(?:([^*]|\\*+[^*\\/])*\\**))\\*/$", affixes = ("/*", "*/"), words = 6, built_words = 4, fields = CommentBlockFields, prepare = CommentBlockPrepare, view = CommentBlockNodeRecord, prepare_fn = prepare_comment_block)]
 pub struct CommentBlockNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -38255,7 +38255,7 @@ fn prepare_number_octal<N: NumberOctalPrepare + ?Sized>(node: &mut N, overlay: &
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::NUMBER_BIGINT_HEX, interior = "^(?<content>(?:0x|0X)(?:[\\da-fA-F](_?[\\da-fA-F])*))n$", words = 6, built_words = 4, fields = NumberBigintHexFields, prepare = NumberBigintHexPrepare, view = NumberBigintHexNodeRecord, prepare_fn = prepare_number_bigint_hex)]
+#[node(kind = kind::NUMBER_BIGINT_HEX, interior = "^(?<content>(?:0x|0X)(?:[\\da-fA-F](_?[\\da-fA-F])*))n$", affixes = ("", "n"), words = 6, built_words = 4, fields = NumberBigintHexFields, prepare = NumberBigintHexPrepare, view = NumberBigintHexNodeRecord, prepare_fn = prepare_number_bigint_hex)]
 pub struct NumberBigintHexNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -38329,7 +38329,7 @@ fn prepare_number_bigint_hex<N: NumberBigintHexPrepare + ?Sized>(node: &mut N, o
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::NUMBER_BIGINT_BINARY, interior = "^(?<content>(?:0b|0B)(?:[0-1](_?[0-1])*))n$", words = 6, built_words = 4, fields = NumberBigintBinaryFields, prepare = NumberBigintBinaryPrepare, view = NumberBigintBinaryNodeRecord, prepare_fn = prepare_number_bigint_binary)]
+#[node(kind = kind::NUMBER_BIGINT_BINARY, interior = "^(?<content>(?:0b|0B)(?:[0-1](_?[0-1])*))n$", affixes = ("", "n"), words = 6, built_words = 4, fields = NumberBigintBinaryFields, prepare = NumberBigintBinaryPrepare, view = NumberBigintBinaryNodeRecord, prepare_fn = prepare_number_bigint_binary)]
 pub struct NumberBigintBinaryNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -38403,7 +38403,7 @@ fn prepare_number_bigint_binary<N: NumberBigintBinaryPrepare + ?Sized>(node: &mu
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::NUMBER_BIGINT_OCTAL, interior = "^(?<content>(?:0o|0O)(?:[0-7](_?[0-7])*))n$", words = 6, built_words = 4, fields = NumberBigintOctalFields, prepare = NumberBigintOctalPrepare, view = NumberBigintOctalNodeRecord, prepare_fn = prepare_number_bigint_octal)]
+#[node(kind = kind::NUMBER_BIGINT_OCTAL, interior = "^(?<content>(?:0o|0O)(?:[0-7](_?[0-7])*))n$", affixes = ("", "n"), words = 6, built_words = 4, fields = NumberBigintOctalFields, prepare = NumberBigintOctalPrepare, view = NumberBigintOctalNodeRecord, prepare_fn = prepare_number_bigint_octal)]
 pub struct NumberBigintOctalNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -38477,7 +38477,7 @@ fn prepare_number_bigint_octal<N: NumberBigintOctalPrepare + ?Sized>(node: &mut 
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::NUMBER_BIGINT_DECIMAL, interior = "^(?<content>(?:\\d(_?\\d)*))n$", words = 6, built_words = 4, fields = NumberBigintDecimalFields, prepare = NumberBigintDecimalPrepare, view = NumberBigintDecimalNodeRecord, prepare_fn = prepare_number_bigint_decimal)]
+#[node(kind = kind::NUMBER_BIGINT_DECIMAL, interior = "^(?<content>(?:\\d(_?\\d)*))n$", affixes = ("", "n"), words = 6, built_words = 4, fields = NumberBigintDecimalFields, prepare = NumberBigintDecimalPrepare, view = NumberBigintDecimalNodeRecord, prepare_fn = prepare_number_bigint_decimal)]
 pub struct NumberBigintDecimalNode {
     #[wire(key = "$_layout")]
     #[layout]

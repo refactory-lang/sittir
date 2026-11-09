@@ -1584,24 +1584,110 @@ impl<T: ReadNode, const A: bool> ReadRoot for SlotValue<T, A> {
 /// already compiled it, so a pattern that does not compile never reaches here.
 pub struct Interior {
     pattern: &'static str,
+    affixed: Option<Affixed>,
     compiled: OnceLock<regex::Regex>,
+}
+
+/// An interior that is its one group between fixed affixes.
+#[derive(Clone, Copy)]
+struct Affixed {
+    group: &'static str,
+    open: &'static str,
+    close: &'static str,
+    checked: bool,
 }
 
 impl Interior {
     #[must_use]
     pub const fn new(pattern: &'static str) -> Self {
-        Self { pattern, compiled: OnceLock::new() }
+        Self { pattern, affixed: None, compiled: OnceLock::new() }
     }
-    /// The captures of the pattern in `text`, compiling it on first use.
+    /// An interior that is its one group, `group`, between the fixed texts
+    /// `open` and `close`: a text has that group where the affixes leave it,
+    /// found with no capture search. A token the grammar's own rule lexes
+    /// matches the pattern that rule was compiled from, so only a `checked`
+    /// interior, one an external scanner lexes, tests its pattern first.
+    #[must_use]
+    pub const fn affixed(pattern: &'static str, group: &'static str, open: &'static str, close: &'static str, checked: bool) -> Self {
+        Self { pattern, affixed: Some(Affixed { group, open, close, checked }), compiled: OnceLock::new() }
+    }
+    /// The interior's pattern.
+    #[must_use]
+    pub const fn pattern(&self) -> &'static str {
+        self.pattern
+    }
+    /// The fixed texts an affixed interior's group lies between, and whether
+    /// a text is checked against the pattern before them.
+    #[must_use]
+    pub const fn affixes(&self) -> Option<(&'static str, &'static str, bool)> {
+        match self.affixed {
+            Some(Affixed { open, close, checked, .. }) => Some((open, close, checked)),
+            None => None,
+        }
+    }
+    fn compiled(&self) -> &regex::Regex {
+        self.compiled.get_or_init(|| regex::Regex::new(self.pattern).expect("the expansion compiled this pattern"))
+    }
+    /// The groups of the pattern in `text`, compiling it on first use: none
+    /// when the pattern does not match. An affixed interior also has none for
+    /// an empty text (a missing token) or one that does not open and close
+    /// with its affixes.
     ///
     /// # Panics
     ///
     /// If the pattern does not compile; the derive expansion compiled it
     /// already, so it does.
-    pub fn captures<'t>(&self, text: &'t str) -> Option<Captures<'t>> {
-        self.compiled
-            .get_or_init(|| regex::Regex::new(self.pattern).expect("the expansion compiled this pattern"))
-            .captures(text)
+    pub fn captures<'t>(&self, text: &'t str) -> Option<InteriorCaptures<'t>> {
+        let Some(Affixed { group, open, close, checked }) = self.affixed else {
+            return self.compiled().captures(text).map(|captures| InteriorCaptures(Groups::Pattern(captures)));
+        };
+        let content = text.strip_prefix(open)?.strip_suffix(close)?;
+        if text.is_empty() || (checked && !self.compiled().is_match(text)) {
+            return None;
+        }
+        Some(InteriorCaptures(Groups::Affixed { text: content, group, start: open.len(), end: open.len() + content.len() }))
+    }
+}
+
+/// The groups an interior captured in a token's text.
+pub struct InteriorCaptures<'t>(Groups<'t>);
+
+enum Groups<'t> {
+    Pattern(Captures<'t>),
+    Affixed { text: &'t str, group: &'static str, start: usize, end: usize },
+}
+
+/// One captured group: where it lies in the token's text, and its text.
+#[derive(Clone, Copy, Debug)]
+pub struct Group<'t> {
+    text: &'t str,
+    start: usize,
+    end: usize,
+}
+
+impl<'t> Group<'t> {
+    #[must_use]
+    pub const fn start(&self) -> usize {
+        self.start
+    }
+    #[must_use]
+    pub const fn end(&self) -> usize {
+        self.end
+    }
+    #[must_use]
+    pub const fn as_str(&self) -> &'t str {
+        self.text
+    }
+}
+
+impl<'t> InteriorCaptures<'t> {
+    /// The group named `name`, when it matched.
+    #[must_use]
+    pub fn name(&self, name: &str) -> Option<Group<'t>> {
+        match &self.0 {
+            Groups::Pattern(captures) => captures.name(name).map(|m| Group { text: m.as_str(), start: m.start(), end: m.end() }),
+            &Groups::Affixed { text, group, start, end } => (group == name).then_some(Group { text, start, end }),
+        }
     }
 }
 
@@ -1630,14 +1716,14 @@ impl FromCapture for bool {
 }
 
 /// A capture slot's value.
-pub fn capture<F: FromCapture>(captures: &Captures<'_>, name: &str, at: SlotSite) -> Result<F, ReadError> {
+pub fn capture<F: FromCapture>(captures: &InteriorCaptures<'_>, name: &str, at: SlotSite) -> Result<F, ReadError> {
     F::from_capture(captures.name(name).map(|m| m.as_str()), at)
 }
 
 /// Where a capture lies in its tree's source, for the captures of the text
 /// of a node that starts at byte `base`: `None` when its group did not match.
 #[must_use]
-pub fn capture_span(captures: &Captures<'_>, name: &str, base: u32) -> Option<Span> {
+pub fn capture_span(captures: &InteriorCaptures<'_>, name: &str, base: u32) -> Option<Span> {
     captures.name(name).map(|m| Span { start: base + crate::types::narrow(m.start()), end: base + crate::types::narrow(m.end()) })
 }
 
@@ -1697,6 +1783,57 @@ pub fn read_from<T: ReadNode>(cursor: &mut TreeCursor<'_>, ctx: &mut ReadCtx<'_>
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    const BLOCK: &str = r"(?s)^/\*(?<content>(?:([^*]|\*+[^*\/])*\**))\*/$";
+    const LINE: &str = r"(?s)^//(?<content>(?:[^\r\n  ]*))$";
+
+    fn by_regex(pattern: &str, text: &str) -> Option<Vec<Option<(usize, usize, String)>>> {
+        regex::Regex::new(pattern).unwrap().captures(text).map(|groups| vec![groups.name("content").map(|m| (m.start(), m.end(), m.as_str().to_owned()))])
+    }
+
+    fn by_interior(interior: &Interior, text: &str) -> Option<Vec<Option<(usize, usize, String)>>> {
+        interior.captures(text).map(|groups| vec![groups.name("content").map(|m| (m.start(), m.end(), m.as_str().to_owned()))])
+    }
+
+    const LEXED_BLOCKS: [&str; 7] = ["/**/", "/***/", "/****/", "/* a */", "/** doc\n * more\n */", "/*a*b*/", "/* \u{e9} */"];
+    const LEXED_LINES: [&str; 4] = ["//", "// a", "//\u{e9}", "//a/*b*/"];
+
+    #[test]
+    fn a_checked_affixed_interior_reads_its_group_by_its_affixes_as_its_pattern_does() {
+        let block = Interior::affixed(BLOCK, "content", "/*", "*/", true);
+        let line = Interior::affixed(LINE, "content", "//", "", true);
+        for text in LEXED_BLOCKS.into_iter().chain(["/*/", "/* a */ b", "/* a */ */", "/* *", ""]) {
+            assert_eq!(by_interior(&block, text), by_regex(BLOCK, text), "{text:?}");
+        }
+        for text in LEXED_LINES.into_iter().chain(["// a\r", "// a\n", "//a\u{2028}", "/", ""]) {
+            assert_eq!(by_interior(&line, text), by_regex(LINE, text), "{text:?}");
+        }
+        assert!(block.captures("/* a */").is_some_and(|groups| groups.name("other").is_none()), "a name the pattern lacks captures nothing");
+    }
+
+    #[test]
+    fn an_affixed_interior_its_own_rule_lexes_reads_a_lexed_token_as_its_pattern_does() {
+        let block = Interior::affixed(BLOCK, "content", "/*", "*/", false);
+        let line = Interior::affixed(LINE, "content", "//", "", false);
+        for text in LEXED_BLOCKS {
+            assert_eq!(by_interior(&block, text), by_regex(BLOCK, text), "{text:?}");
+        }
+        for text in LEXED_LINES {
+            assert_eq!(by_interior(&line, text), by_regex(LINE, text), "{text:?}");
+        }
+    }
+
+    #[test]
+    fn an_affixed_interior_reads_nothing_from_an_empty_text_or_one_its_affixes_do_not_bound() {
+        let permissive = Interior::affixed(r"(?s)^(?<content>.*)$", "content", "<<", ">>", false);
+        for text in ["", "<", "<<", "<<>", "<>>", "a<<>>", "<<>>a"] {
+            assert!(permissive.captures(text).is_none(), "{text:?} does not open and close with its affixes");
+        }
+        assert_eq!(by_interior(&permissive, "<<>>"), Some(vec![Some((2, 2, String::new()))]));
+        assert_eq!(by_interior(&permissive, "<<\u{e9}>>"), Some(vec![Some((2, 4, "\u{e9}".to_owned()))]));
+        let bare = Interior::affixed(r"(?s)^(?<content>.*)$", "content", "", "", false);
+        assert!(bare.captures("").is_none(), "a missing token is read verbatim");
+    }
 
     #[test]
     fn a_list_s_items_are_numbered_in_one_pass_over_its_children() {

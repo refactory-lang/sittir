@@ -13,7 +13,7 @@ import {
 	type AssembledNode
 } from '../compiler/model/node-map.ts';
 import type { NodeMap } from '../compiler/types.ts';
-import { lexedContentSlot, slotLiteralValues } from './shared.ts';
+import { lexedContentSlot, ownTextLeaf, slotLiteralValues } from './shared.ts';
 import { anchoredLeafRegex, regexLiteral } from '../compiler/model/leaf-pattern.ts';
 
 export type InteriorEntry =
@@ -181,6 +181,38 @@ export function interiorOf(node: AssembledNode): NodeInterior | undefined {
 					: [{ name: entry.slot, propertyName: propertyNameOf(entry.slot) }]
 	);
 	return { entries, regex: `^${tree.map(interiorNodePattern).join('')}$`, slots };
+}
+
+export interface AffixedInterior {
+	readonly open: string;
+	readonly close: string;
+}
+
+export function affixedInterior(node: AssembledNode): AffixedInterior | undefined {
+	const own = ownTextLeaf(node);
+	const tree = own === undefined ? undefined : interiorTreeOf(node);
+	if (own === undefined || tree === undefined) return undefined;
+	const expected: readonly InteriorNode[] = [
+		...(own.open === '' ? [] : [{ lit: own.open }]),
+		{ slot: own.slot.name, pattern: '' },
+		...(own.close === '' ? [] : [{ lit: own.close }])
+	];
+	const fits =
+		tree.length === expected.length &&
+		tree.every((entry, i) => {
+			const want = expected[i]!;
+			if ('lit' in want) return 'lit' in entry && entry.lit === want.lit;
+			return 'slot' in want && 'slot' in entry && entry.slot === want.slot && entry.optional !== true;
+		});
+	if (!fits) {
+		throw emitShapeFailure({
+			code: 'own-text-interior-not-affixed',
+			ownerKind: node.kind,
+			message: `token interior: '${node.kind}' is an own-text leaf spelled ${JSON.stringify(own.open)}…${JSON.stringify(own.close)}, but its interior is not those affixes around its one required slot, so the slot cannot be read by them`,
+			details: { open: own.open, close: own.close }
+		});
+	}
+	return { open: own.open, close: own.close };
 }
 
 export function optionalGroupPeers(node: AssembledNode, slotName: string): readonly string[] | undefined {

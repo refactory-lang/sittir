@@ -23272,7 +23272,7 @@ fn prepare_await<N: AwaitPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overla
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::COMMENT, interior = "^#(?<content>(?:.*))$", words = 6, built_words = 4, fields = CommentFields, prepare = CommentPrepare, view = CommentNodeRecord, prepare_fn = prepare_comment)]
+#[node(kind = kind::COMMENT, interior = "^#(?<content>(?:.*))$", affixes = ("#", ""), scanned, words = 6, built_words = 4, fields = CommentFields, prepare = CommentPrepare, view = CommentNodeRecord, prepare_fn = prepare_comment)]
 pub struct CommentNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -26281,7 +26281,7 @@ fn prepare_float_scientific<N: FloatScientificPrepare + ?Sized>(node: &mut N, ov
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::ESCAPE_SEQUENCE_UNICODE_FIXED, interior = "^\\\\(?<content>(?:u[a-fA-F\\d]{4}))$", words = 6, built_words = 4, fields = EscapeSequenceUnicodeFixedFields, prepare = EscapeSequenceUnicodeFixedPrepare, view = EscapeSequenceUnicodeFixedNodeRecord, prepare_fn = prepare_escape_sequence_unicode_fixed)]
+#[node(kind = kind::ESCAPE_SEQUENCE_UNICODE_FIXED, interior = "^\\\\(?<content>(?:u[a-fA-F\\d]{4}))$", affixes = ("\\", ""), words = 6, built_words = 4, fields = EscapeSequenceUnicodeFixedFields, prepare = EscapeSequenceUnicodeFixedPrepare, view = EscapeSequenceUnicodeFixedNodeRecord, prepare_fn = prepare_escape_sequence_unicode_fixed)]
 pub struct EscapeSequenceUnicodeFixedNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -26355,7 +26355,7 @@ fn prepare_escape_sequence_unicode_fixed<N: EscapeSequenceUnicodeFixedPrepare + 
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::ESCAPE_SEQUENCE_UNICODE_WIDE, interior = "^\\\\(?<content>(?:U[a-fA-F\\d]{8}))$", words = 6, built_words = 4, fields = EscapeSequenceUnicodeWideFields, prepare = EscapeSequenceUnicodeWidePrepare, view = EscapeSequenceUnicodeWideNodeRecord, prepare_fn = prepare_escape_sequence_unicode_wide)]
+#[node(kind = kind::ESCAPE_SEQUENCE_UNICODE_WIDE, interior = "^\\\\(?<content>(?:U[a-fA-F\\d]{8}))$", affixes = ("\\", ""), words = 6, built_words = 4, fields = EscapeSequenceUnicodeWideFields, prepare = EscapeSequenceUnicodeWidePrepare, view = EscapeSequenceUnicodeWideNodeRecord, prepare_fn = prepare_escape_sequence_unicode_wide)]
 pub struct EscapeSequenceUnicodeWideNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -26429,7 +26429,7 @@ fn prepare_escape_sequence_unicode_wide<N: EscapeSequenceUnicodeWidePrepare + ?S
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::ESCAPE_SEQUENCE_HEX, interior = "^\\\\(?<content>(?:x[a-fA-F\\d]{2}))$", words = 6, built_words = 4, fields = EscapeSequenceHexFields, prepare = EscapeSequenceHexPrepare, view = EscapeSequenceHexNodeRecord, prepare_fn = prepare_escape_sequence_hex)]
+#[node(kind = kind::ESCAPE_SEQUENCE_HEX, interior = "^\\\\(?<content>(?:x[a-fA-F\\d]{2}))$", affixes = ("\\", ""), words = 6, built_words = 4, fields = EscapeSequenceHexFields, prepare = EscapeSequenceHexPrepare, view = EscapeSequenceHexNodeRecord, prepare_fn = prepare_escape_sequence_hex)]
 pub struct EscapeSequenceHexNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -26503,7 +26503,7 @@ fn prepare_escape_sequence_hex<N: EscapeSequenceHexPrepare + ?Sized>(node: &mut 
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::ESCAPE_SEQUENCE_OCTAL, interior = "^\\\\(?<content>(?:\\d{1,3}))$", words = 6, built_words = 4, fields = EscapeSequenceOctalFields, prepare = EscapeSequenceOctalPrepare, view = EscapeSequenceOctalNodeRecord, prepare_fn = prepare_escape_sequence_octal)]
+#[node(kind = kind::ESCAPE_SEQUENCE_OCTAL, interior = "^\\\\(?<content>(?:\\d{1,3}))$", affixes = ("\\", ""), words = 6, built_words = 4, fields = EscapeSequenceOctalFields, prepare = EscapeSequenceOctalPrepare, view = EscapeSequenceOctalNodeRecord, prepare_fn = prepare_escape_sequence_octal)]
 pub struct EscapeSequenceOctalNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -26577,7 +26577,7 @@ fn prepare_escape_sequence_octal<N: EscapeSequenceOctalPrepare + ?Sized>(node: &
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::ESCAPE_SEQUENCE_LINE_BREAK, interior = "^\\\\(?<content>(?:\\r?\\n))$", words = 6, built_words = 4, fields = EscapeSequenceLineBreakFields, prepare = EscapeSequenceLineBreakPrepare, view = EscapeSequenceLineBreakNodeRecord, prepare_fn = prepare_escape_sequence_line_break)]
+#[node(kind = kind::ESCAPE_SEQUENCE_LINE_BREAK, interior = "^\\\\(?<content>(?:\\r?\\n))$", affixes = ("\\", ""), words = 6, built_words = 4, fields = EscapeSequenceLineBreakFields, prepare = EscapeSequenceLineBreakPrepare, view = EscapeSequenceLineBreakNodeRecord, prepare_fn = prepare_escape_sequence_line_break)]
 pub struct EscapeSequenceLineBreakNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -26651,7 +26651,7 @@ fn prepare_escape_sequence_line_break<N: EscapeSequenceLineBreakPrepare + ?Sized
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::ESCAPE_SEQUENCE_SIMPLE, interior = "^\\\\(?<content>(?:['\"abfrntv\\\\]))$", words = 6, built_words = 4, fields = EscapeSequenceSimpleFields, prepare = EscapeSequenceSimplePrepare, view = EscapeSequenceSimpleNodeRecord, prepare_fn = prepare_escape_sequence_simple)]
+#[node(kind = kind::ESCAPE_SEQUENCE_SIMPLE, interior = "^\\\\(?<content>(?:['\"abfrntv\\\\]))$", affixes = ("\\", ""), words = 6, built_words = 4, fields = EscapeSequenceSimpleFields, prepare = EscapeSequenceSimplePrepare, view = EscapeSequenceSimpleNodeRecord, prepare_fn = prepare_escape_sequence_simple)]
 pub struct EscapeSequenceSimpleNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -26725,7 +26725,7 @@ fn prepare_escape_sequence_simple<N: EscapeSequenceSimplePrepare + ?Sized>(node:
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::ESCAPE_SEQUENCE_NAMED, interior = "^\\\\(?<content>(?:N\\{[^}]+\\}))$", words = 6, built_words = 4, fields = EscapeSequenceNamedFields, prepare = EscapeSequenceNamedPrepare, view = EscapeSequenceNamedNodeRecord, prepare_fn = prepare_escape_sequence_named)]
+#[node(kind = kind::ESCAPE_SEQUENCE_NAMED, interior = "^\\\\(?<content>(?:N\\{[^}]+\\}))$", affixes = ("\\", ""), words = 6, built_words = 4, fields = EscapeSequenceNamedFields, prepare = EscapeSequenceNamedPrepare, view = EscapeSequenceNamedNodeRecord, prepare_fn = prepare_escape_sequence_named)]
 pub struct EscapeSequenceNamedNode {
     #[wire(key = "$_layout")]
     #[layout]
