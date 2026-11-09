@@ -182,9 +182,10 @@ Task 5 planned these reads on records, but its no-tree test covered render, quer
 **Interfaces:**
 - Consumes: Task 4's `RecordNodes`; Task 5's `LayoutWork::tree_reads`.
 - Produces:
-  - `ParsedTree::holder_cell(&self, index: NodeIndex) -> Option<(Address, u32, u32)>`, which gives the holder, word and item for a parsed leaf or a unit, since both cells name their row. Over napi it's `holderCell(treeId, index)`, returning `[holder, word, item]` or `null`;
-  - `Routed::slot_items()`, yielding `(child, slot, item)`. It's the reader's list accumulators (arrival and position per list kind, with segments and holes) exposed once. The list read and the units walk both go through it;
-  - `read::units_of(nodes, at, routed, sides) -> Vec<UnitSides<T>>`, over `Nodes` for both storages. It replaces `EngineGrammar::read_units` and its generated bodies;
+  - `ParsedTree::read_leaf::<N>(&self, index: NodeIndex)`, returning the leaf's stamped kind and span, or `None`. The native walk decodes the holder's cell through `written::<N>`. A unit's span is its row's, because a unit cell holds no span. Over napi it's `readLeaf(treeId, index)`, returning `[kind, start, end]` or `null`. JS `RecordReader.leaf(index)` builds the leaf with record-view's `leafData`, and `readAt` tries the stub, then the leaf, then the native read;
+  - `read::slot_items(routes, elided)` and `Routed::slot_items()`, yielding `(child, slot, item)`. They expose the list-item numbering once. `Routed` carries `elided`, from a `ReadSlot::ELIDED` const that replaces the per-type arrival and position overrides;
+  - `read::units_of(routed, ctx)`, over `Nodes` for both storages, with sides taken from the seating's `unit_sides`. It replaces `EngineGrammar::read_units` and its generated bodies;
+  - `backer_parity` also checks each node's unit sides and leaf read against the stamped coordinate, so `sittir tool backer-parity` covers the corpora;
   - the no-tree count is the existing `LayoutWork::tree_reads`, because every path to the tree passes `ParsedTree::tree()`.
 
 - [ ] **Step 1: Failing tests:**
