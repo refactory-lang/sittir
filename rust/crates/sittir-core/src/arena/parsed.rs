@@ -180,7 +180,7 @@ impl<G: EngineGrammar> ParsedTree<G> {
         if let Some(cell) = self.written::<N>(index)? {
             return Ok(super::reach::record_of_cell(cell));
         }
-        self.with_reads::<N, _>(|tree, cursor, ctx| super::reach::<N>(tree, cursor, ctx, index, depth, true))
+        self.with_reads(|tree, cursor, ctx| super::reach::<N>(tree, cursor, ctx, index, depth, true))
     }
 
     /// Writes the records `depth` levels down from the node at `index` that
@@ -194,7 +194,7 @@ impl<G: EngineGrammar> ParsedTree<G> {
         if self.meet_error(index)? {
             return Ok(None);
         }
-        self.with_reads::<N, _>(|tree, cursor, ctx| {
+        self.with_reads(|tree, cursor, ctx| {
             let at = super::reach::<N>(tree, cursor, ctx, index, Depth::ONE, true)?;
             if let Some(at) = at {
                 super::deepen::<N>(tree, cursor, ctx, at, depth)?;
@@ -211,7 +211,7 @@ impl<G: EngineGrammar> ParsedTree<G> {
     ///
     /// What `read_cell` refuses.
     pub fn read_cell<N: HydrateNode + RecordCells>(&self, holder: Address, word: u32, item: u32, depth: Depth) -> Result<Address, String> {
-        self.with_reads::<N, _>(|tree, cursor, ctx| super::read_cell::<N>(tree, cursor, ctx, holder, word, item, depth))
+        self.with_reads(|tree, cursor, ctx| super::read_cell::<N>(tree, cursor, ctx, holder, word, item, depth))
     }
 
     /// The record of the node at `index` a read wrote, or `None` while none has.
@@ -220,7 +220,7 @@ impl<G: EngineGrammar> ParsedTree<G> {
         if self.tree_arena().node_rows().is_some() {
             return self.written::<N>(index).ok().flatten().and_then(super::reach::record_of_cell);
         }
-        self.with_reads::<N, _>(|tree, cursor, ctx| super::reach::<N>(tree, cursor, ctx, index, Depth::ONE, false)).ok().flatten()
+        self.with_reads(|tree, cursor, ctx| super::reach::<N>(tree, cursor, ctx, index, Depth::ONE, false)).ok().flatten()
     }
 
     /// The cell that names the node at `index` as the reads so far wrote it,
@@ -297,12 +297,14 @@ impl<G: EngineGrammar> ParsedTree<G> {
     /// shallower read wrote, then each node compared as its record backer
     /// (`RecordNodes`) and its tree backer (`TreeNodes`) answer it, and as
     /// the records and a typed read of the tree answer its unit sides and
-    /// its leaf read (`reads_agree`). A diagnostic.
+    /// its leaf read (`reads_agree`), and, for an extra, whether its tree
+    /// holds its record (`extra_agrees`). A diagnostic.
     ///
     /// # Errors
     ///
     /// The hydration's refusal, one that leaves some node with no row, and
-    /// what reading a leaf from the records refuses.
+    /// what reading a leaf from the records or walking an extra alone
+    /// refuses.
     pub fn backer_parity<N>(&self) -> Result<BackerParity, String>
     where
         N: HydrateNode + RecordCells + crate::prepare::Prepare + crate::read::HasLayout<Option<Box<crate::layout::NodeLayout<G::Trivia>>>>,
@@ -322,12 +324,26 @@ impl<G: EngineGrammar> ParsedTree<G> {
         let mut parity = BackerParity::default();
         for (index, (backers_agree, kid)) in (0..).map(NodeIndex).zip(facts) {
             parity.nodes += 1;
-            if !backers_agree || !self.reads_agree::<N>(index, &kid)? {
+            if !backers_agree || !self.reads_agree::<N>(index, &kid)? || !self.extra_agrees::<N>(index, &kid)? {
                 parity.differing += 1;
                 parity.first.get_or_insert(index.0);
             }
         }
         Ok(parity)
+    }
+
+    /// Whether the tree, read whole, holds the record of the node at `index`
+    /// (`kid`) as `N` reads it: an extra no `ERROR` is or holds has its
+    /// record held exactly when a walk of it alone, into an arena of its
+    /// own, writes one. Any other node agrees.
+    fn extra_agrees<N: HydrateNode>(&self, index: NodeIndex, kid: &crate::nodes::Kid) -> Result<bool, String> {
+        if !kid.extra || self.read_error(index).is_some() {
+            return Ok(true);
+        }
+        let mut alone = TreeArena::new(G::KIND_BITS, crate::read::descendant_count(&self.tree().root_node()));
+        let grammar = self.grammar();
+        let written = super::hydrate_at::<N>(&mut self.tree().walk(), &mut self.read_ctx(), index, None, Depth::All, &mut alone).map_err(|refusal| refusal.describe(&|kind| grammar.kind_name(kind)))?;
+        Ok(self.tree_arena().held(index).is_some() == written.is_some())
     }
 
     /// The sides of the unit children of the node at `index` as a typed read
@@ -368,23 +384,14 @@ impl<G: EngineGrammar> ParsedTree<G> {
         })
     }
 
-    /// `f` of the tree's arena, a cursor on its tree and a read of it; the
-    /// call that publishes the tree's rows then holds the record of every
-    /// extra `N` reads as one (`hold_extras`).
-    fn with_reads<N: HydrateNode + RecordCells, R>(&self, f: impl FnOnce(&mut TreeArena, &mut tree_sitter::TreeCursor<'_>, &mut crate::read::ReadCtx<'_>) -> Result<R, HydrateError>) -> Result<R, String> {
+    /// `f` of the tree's arena, a cursor on its tree and a read of it, its
+    /// refusal in words.
+    fn with_reads<R>(&self, f: impl FnOnce(&mut TreeArena, &mut tree_sitter::TreeCursor<'_>, &mut crate::read::ReadCtx<'_>) -> Result<R, HydrateError>) -> Result<R, String> {
         let grammar = self.grammar();
         let mut arena = self.tree_arena();
         let mut ctx = self.read_ctx();
         let mut cursor = self.tree().walk();
-        let published = arena.node_rows().is_some();
-        f(&mut arena, &mut cursor, &mut ctx)
-            .and_then(|read| {
-                if !published {
-                    super::hold_extras::<N>(&mut arena, &mut cursor, &mut ctx, self.source())?;
-                }
-                Ok(read)
-            })
-            .map_err(|refusal| refusal.describe(&|kind| grammar.kind_name(kind)))
+        f(&mut arena, &mut cursor, &mut ctx).map_err(|refusal| refusal.describe(&|kind| grammar.kind_name(kind)))
     }
 
     /// `f` of the words records fill in chunk `n` of the tree's arena,

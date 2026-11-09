@@ -6,7 +6,7 @@
 //! no read has written it yet; a node no cell names is held by its tree. So a
 //! tree holds one record per row, however the row is reached.
 
-use super::{Address, ArenaError, ArenaRead, Cell, CellShape, CellWord, HydrateError, HydrateNode, Hydration, ListCell, RecordCells, SideRecord, TreeArena};
+use super::{Address, ArenaError, ArenaRead, Cell, CellShape, CellWord, HydrateError, HydrateNode, ListCell, RecordCells, SideRecord, TreeArena};
 use crate::read::{Depth, ReadCtx};
 use crate::record::HEADER_WORDS;
 use crate::types::{KindId, NodeIndex};
@@ -214,7 +214,7 @@ fn spine(cursor: &mut TreeCursor<'_>, row: NodeIndex) -> Vec<NodeIndex> {
 
 /// Writes the record of the node at `row`, which has none, `depth` levels down.
 fn write<N: HydrateNode>(tree: &mut TreeArena, cursor: &mut TreeCursor<'_>, ctx: &mut ReadCtx<'_>, row: NodeIndex, stamped: Option<KindId>, depth: Depth) -> Result<Option<Address>, HydrateError> {
-    super::hydrate_at::<N>(cursor, ctx, row, stamped, depth, &mut Hydration::new(tree))
+    super::hydrate_at::<N>(cursor, ctx, row, stamped, depth, tree)
 }
 
 /// What a walk down a spine meets where no read has written the record it
@@ -432,25 +432,6 @@ pub fn read_cell<N: HydrateNode + RecordCells>(tree: &mut TreeArena, cursor: &mu
         }
         _ => Err(ArenaError::Unwritable("a record for a cell that names none").into()),
     }
-}
-
-/// Writes and holds the record of every extra of `tree` that `N` reads as
-/// one, read whole, once the tree's rows are published: each a node no cell
-/// names, reached as `reach` reaches one. An extra `N` reads as a leaf keeps
-/// no record, and none is written for one an `ERROR` is or holds
-/// (`error_holding` over the rows, `source` the tree's).
-///
-/// # Errors
-///
-/// What a hydration or the arena refuses.
-pub fn hold_extras<N: HydrateNode + RecordCells>(tree: &mut TreeArena, cursor: &mut TreeCursor<'_>, ctx: &mut ReadCtx<'_>, source: &str) -> Result<(), HydrateError> {
-    let Some(rows) = tree.shared_rows() else { return Ok(()) };
-    let mut nodes = crate::nodes::RecordNodes::over(&rows, source);
-    let extras: Vec<NodeIndex> = (0..rows.len()).map(NodeIndex).filter(|&row| rows.kid(row).extra && crate::engine::error_holding(&mut nodes, row).is_none()).collect();
-    for row in extras {
-        reach::<N>(tree, cursor, ctx, row, Depth::All, true)?;
-    }
-    Ok(())
 }
 
 /// Writes the records `depth` levels down from the record at `at` that no read

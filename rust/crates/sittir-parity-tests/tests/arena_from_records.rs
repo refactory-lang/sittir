@@ -534,6 +534,21 @@ fn an_extra_with_structure_is_held_and_a_node_no_cell_names_reads_from_its_row()
     assert_eq!(continued.read_leaf::<Python>(continuation), Ok(Some(LeafRead::Leaf { kind: at.kind.expect("a stamped kind"), span: at.span })));
 }
 
+/// A walk writes and holds the record of each extra its reader reads as one
+/// as it meets the extra among its node's children, with no pass over the
+/// tree after it: a root read one level down, which leaves rows under its
+/// children unwritten, holds the doc comment among them.
+#[test]
+fn a_walk_holds_each_structural_extra_it_meets() {
+    type Rust = sittir_rust::render::AnyNode;
+    let tree = parsed(sittir_rust::RustGrammar, sittir_rust::render::options::defaults(), "/// doc\nfn f() {}\n");
+    let doc = nth_of_kind(&tree, "line_comment:0");
+    tree.read_record::<Rust>(NodeIndex::ROOT, Depth::ONE).expect("a read");
+    let arena = tree.tree_arena();
+    assert!(arena.node_rows().is_none(), "a read one level down leaves rows under its children unwritten");
+    assert!(arena.held(doc).is_some(), "the doc comment's record is held");
+}
+
 #[test]
 fn a_node_of_a_record_kind_no_written_record_names_is_no_leaf() {
     type Ts = sittir_typescript::render::AnyNode;

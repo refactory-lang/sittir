@@ -9,8 +9,11 @@
 //! record and rewrites the cell to name it. A bounded child, whose slot
 //! stamps an embedded capacity, is written into its holder's record at any
 //! depth. A leaf, a unit and a captured string have no record and are held
-//! whole. A walk writes only nodes its holder's cell names, and a holder's
-//! walk is the one walk that does, so a tree holds one record per row.
+//! whole. An extra no cell names: the walk that meets it among its node's
+//! children writes it whole when the walk's reader reads it as a record, and
+//! its tree holds the record. A walk writes only the nodes its holder's cell
+//! names and those extras, and a holder's walk is the one walk that does, so
+//! a tree holds one record per row.
 //!
 //! A record is written in place: its walk reserves its words in one chunk
 //! when it starts, and writes each cell there as its slot closes. A list's
@@ -122,9 +125,28 @@ pub struct Embed {
     words: u32,
 }
 
-/// Where a hydration writes: the tree's arena.
+/// The walk of the extra a walk meets with the cursor on it (`kid`), as the
+/// walk's reader reads it: whether it entered the extra, writing every row
+/// under it.
+type ExtraWalk = fn(&mut TreeCursor<'_>, &mut ReadCtx<'_>, &mut Hydration<'_>, &crate::nodes::Kid) -> Result<bool, HydrateError>;
+
+/// Where a hydration writes: the tree's arena, and how its walks read the
+/// extras they meet (`Hydration::extra`).
 pub struct Hydration<'a> {
     tree: &'a mut TreeArena,
+    extras: Option<ExtraWalk>,
+}
+
+/// The extra the cursor stands on (`kid`) walked whole into `N` when `N`
+/// reads it as a record (`ReadNode::router`), its record held by its tree.
+fn extra_walk<N: HydrateNode>(cursor: &mut TreeCursor<'_>, ctx: &mut ReadCtx<'_>, records: &mut Hydration<'_>, kid: &crate::nodes::Kid) -> Result<bool, HydrateError> {
+    if N::router(kid.grammar, kid.display).is_none() {
+        return Ok(false);
+    }
+    if let Hydrated::Record { at, .. } = crate::stack::grown(|| N::hydrate(cursor, ctx, Some(Depth::All), records, None))? {
+        records.tree.hold(kid.index, at)?;
+    }
+    Ok(true)
 }
 
 /// What a walk does for a node with a record of its own.
@@ -137,9 +159,28 @@ pub enum Walk {
 }
 
 impl<'a> Hydration<'a> {
-    /// A hydration of `tree`'s records.
-    pub fn new(tree: &'a mut TreeArena) -> Self {
-        Self { tree }
+    /// A hydration of `tree`'s rows whose walks hold no extra: `hydrate_at`
+    /// makes the one a walk writes records through.
+    pub(crate) fn new(tree: &'a mut TreeArena) -> Self {
+        Self { tree, extras: None }
+    }
+
+    /// Writes the record of the extra `kid` the cursor stands on, read whole
+    /// as the walk's reader reads it, when the reader reads it as a record:
+    /// no cell names an extra, so its tree holds the record. Whether the walk
+    /// entered the extra, writing every row under it; not for a leaf extra,
+    /// an `ERROR`, an extra its tree already holds, or a hydration whose
+    /// walks hold none, whose rows the walk writes itself.
+    ///
+    /// # Errors
+    ///
+    /// What the extra's hydration and the arena refuse.
+    pub fn extra(&mut self, cursor: &mut TreeCursor<'_>, ctx: &mut ReadCtx<'_>, kid: &crate::nodes::Kid) -> Result<bool, HydrateError> {
+        let Some(walk) = self.extras else { return Ok(false) };
+        if !kid.extra || kid.error() || self.tree.held(kid.index).is_some() {
+            return Ok(false);
+        }
+        walk(cursor, ctx, self, kid)
     }
 
     /// Whether the walk of a node with a record, read at `depth` (`None` past
@@ -539,18 +580,22 @@ impl<T: HydrateNode, const A: bool> HydrateSlot for NonEmptyVec<Option<SlotValue
     }
 }
 
-/// The record of the node at `index` of `tree`'s cursor, which has none yet,
-/// read `depth` levels down into `N` as its walk writes it: `None` for a node
-/// with no record, a leaf or a unit. A refused walk leaves the tree's arena
-/// as it found it: the words, chunks and record starts it and its children's
-/// walks wrote are dropped. The rows of the nodes it met stay, since a row
-/// is a fact of the tree (`TreeArena::write_row`). The walk is a read of its
-/// own: the node at `index` is where it starts (`ReadCtx::begin_read`).
+/// The record of the node at `index` of `cursor`'s tree, which has none yet,
+/// read `depth` levels down into `N` as its walk writes it into `tree`:
+/// `None` for a node with no record, a leaf or a unit. Each extra the walk
+/// meets among a node's children that `N` reads as a record is written whole
+/// and held there (`Hydration::extra`). A refused walk leaves the tree's
+/// arena as it found it: the words, chunks, record starts and held rows it
+/// and its children's walks wrote are dropped. The rows of the nodes it met
+/// stay, since a row is a fact of the tree (`TreeArena::write_row`). The
+/// walk is a read of its own: the node at `index` is where it starts
+/// (`ReadCtx::begin_read`).
 ///
 /// # Errors
 ///
 /// What the hydration refuses.
-pub fn hydrate_at<N: HydrateNode>(cursor: &mut TreeCursor<'_>, ctx: &mut ReadCtx<'_>, index: NodeIndex, stamped: Option<KindId>, depth: Depth, records: &mut Hydration<'_>) -> Result<Option<Address>, HydrateError> {
+pub fn hydrate_at<N: HydrateNode>(cursor: &mut TreeCursor<'_>, ctx: &mut ReadCtx<'_>, index: NodeIndex, stamped: Option<KindId>, depth: Depth, tree: &mut TreeArena) -> Result<Option<Address>, HydrateError> {
+    let records = &mut Hydration { tree, extras: Some(extra_walk::<N>) };
     crate::read::goto(cursor, index);
     records.meet(cursor)?;
     ctx.begin_read();
@@ -685,19 +730,19 @@ mod tests {
         let item = index_of(&cursor);
 
         let mut whole = TreeArena::new(PARSED_KIND_BITS, rows);
-        let file = hydrate_at::<File<false>>(&mut tree.walk(), &mut ctx, NodeIndex::ROOT, None, Depth::All, &mut Hydration::new(&mut whole)).expect("a walk").expect("a record");
+        let file = hydrate_at::<File<false>>(&mut tree.walk(), &mut ctx, NodeIndex::ROOT, None, Depth::All, &mut whole).expect("a walk").expect("a record");
         let starts = whole.snapshot().records;
         assert_eq!(starts.len(), 5, "the file's record, each item's, and each name's in its item's cell");
         assert!(starts.contains(&file));
 
         let mut arena = TreeArena::new(PARSED_KIND_BITS, rows);
-        let kept = hydrate_at::<Item>(&mut tree.walk(), &mut ctx, item, None, Depth::ONE, &mut Hydration::new(&mut arena)).expect("a walk").expect("a record");
+        let kept = hydrate_at::<Item>(&mut tree.walk(), &mut ctx, item, None, Depth::ONE, &mut arena).expect("a walk").expect("a record");
         arena.hold(item, kept).expect("the row had none");
         let before = arena.snapshot();
-        let refused = hydrate_at::<File<true>>(&mut tree.walk(), &mut ctx, NodeIndex::ROOT, None, Depth::All, &mut Hydration::new(&mut arena));
+        let refused = hydrate_at::<File<true>>(&mut tree.walk(), &mut ctx, NodeIndex::ROOT, None, Depth::All, &mut arena);
         assert!(matches!(refused, Err(HydrateError::Read(ReadError::Overfull { .. }))), "{refused:?}");
         assert_eq!(arena.snapshot(), before, "no word, chunk, record start or held row past where the walk started");
         assert_eq!(arena.held(item), Some(kept), "the walk that stood keeps its record");
-        assert!(hydrate_at::<File<false>>(&mut tree.walk(), &mut ctx, NodeIndex::ROOT, None, Depth::All, &mut Hydration::new(&mut arena)).expect("a walk").is_some());
+        assert!(hydrate_at::<File<false>>(&mut tree.walk(), &mut ctx, NodeIndex::ROOT, None, Depth::All, &mut arena).expect("a walk").is_some());
     }
 }
