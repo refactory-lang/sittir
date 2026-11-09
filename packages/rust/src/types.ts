@@ -679,19 +679,19 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[352, 'use_bounds_elements'],
 	[353, 'type_arguments_elements'],
 	[354, 'arguments_elements'],
-	[355, 'expressions'],
-	[356, 'field_initializer_list_elements'],
-	[357, 'tuple_pattern_elements'],
-	[358, 'patterns'],
-	[359, 'struct_pattern_elements'],
-	[360, 'use_wildcard_group'],
-	[361, 'token_tree_punctuation'],
-	[362, '_token_keywords'],
-	[363, '_range_expression_bare'],
-	[364, '_impl_item_unsafe_marker'],
-	[365, 'char_literal_escaped'],
-	[366, 'array_expression_semi'],
-	[367, 'array_expression_list'],
+	[355, 'field_initializer_list_elements'],
+	[356, 'tuple_pattern_elements'],
+	[357, 'patterns'],
+	[358, 'struct_pattern_elements'],
+	[359, 'use_wildcard_group'],
+	[360, 'token_tree_punctuation'],
+	[361, '_token_keywords'],
+	[362, '_range_expression_bare'],
+	[363, 'attributed_element'],
+	[364, 'array_expression_list_elements'],
+	[365, 'tuple_expression_elements'],
+	[366, '_impl_item_unsafe_marker'],
+	[367, 'char_literal_escaped'],
 	[368, 'attribute_input'],
 	[369, 'closure_expression_block'],
 	[370, 'closure_expression_expr'],
@@ -755,14 +755,14 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[428, 'attributed_enum_variant'],
 	[429, 'attributed_parameter'],
 	[430, 'attributed_type_parameter'],
-	[431, 'attributed_argument'],
+	[431, 'argument'],
 	[432, 'attributed_ordered_field'],
 	[433, 'type_argument'],
 	[434, 'match_block_arms'],
-	[435, 'trait_interface_declaration_body'],
-	[436, 'extension_declaration_body'],
-	[437, 'argument'],
-	[438, 'array_expression_list_elements'],
+	[435, 'array_expression_semi'],
+	[436, 'array_expression_list'],
+	[437, 'trait_interface_declaration_body'],
+	[438, 'extension_declaration_body'],
 	[439, 'receiver_parameter_declaration'],
 	[440, 'attributed_parameter_receiver'],
 	[441, 'parameters_elements_receiver'],
@@ -773,7 +773,7 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[446, 'declaration_list_repeat1'],
 	[447, 'function_modifiers_repeat1'],
 	[448, 'trait_bounds_repeat1'],
-	[449, 'tuple_expression_repeat1'],
+	[449, 'shorthand_field_initializer_repeat1'],
 	[450, 'last_match_arm_repeat1'],
 	[451, 'string_literal_repeat1'],
 	[452, 'macro_rules_repeat1'],
@@ -789,17 +789,17 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[462, 'use_bounds_elements_repeat1'],
 	[463, 'type_arguments_elements_repeat1'],
 	[464, 'arguments_elements_repeat1'],
-	[465, 'expressions_repeat1'],
-	[466, 'field_initializer_list_elements_repeat1'],
-	[467, '_closure_parameters_optional1_repeat1'],
-	[468, 'tuple_pattern_elements_repeat1'],
-	[469, 'patterns_repeat1'],
-	[470, 'struct_pattern_elements_repeat1'],
-	[471, 'delim_token_tree_paren_repeat1'],
-	[472, '_match_block_arms_repeat1'],
-	[473, '_declaration_list_trait_item_repeat1'],
-	[474, '_declaration_list_impl_item_body_repeat1'],
-	[475, 'array_expression_list_elements_repeat1'],
+	[465, 'field_initializer_list_elements_repeat1'],
+	[466, '_closure_parameters_optional1_repeat1'],
+	[467, 'tuple_pattern_elements_repeat1'],
+	[468, 'patterns_repeat1'],
+	[469, 'struct_pattern_elements_repeat1'],
+	[470, '_array_expression_list_elements_repeat1'],
+	[471, '_tuple_expression_elements_repeat1'],
+	[472, 'delim_token_tree_paren_repeat1'],
+	[473, '_match_block_arms_repeat1'],
+	[474, '_declaration_list_trait_item_repeat1'],
+	[475, '_declaration_list_impl_item_body_repeat1'],
 	[476, 'closure_parameter'],
 	[477, 'crate_visibility_modifier'],
 	[478, 'field_identifier'],
@@ -1168,19 +1168,19 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[352, 'use_bounds_elements'],
 	[353, 'type_arguments_elements'],
 	[354, 'arguments_elements'],
-	[355, 'expressions'],
-	[356, 'field_initializer_list_elements'],
-	[357, 'tuple_pattern_elements'],
-	[358, 'patterns'],
-	[359, 'struct_pattern_elements'],
-	[360, 'use_wildcard_group'],
-	[361, 'token_tree_punctuation'],
-	[362, '_token_keywords'],
-	[363, '_range_expression_bare'],
-	[364, '_impl_item_unsafe_marker'],
-	[365, 'char_literal_escaped'],
-	[366, 'array_expression_semi'],
-	[367, 'array_expression_list'],
+	[355, 'field_initializer_list_elements'],
+	[356, 'tuple_pattern_elements'],
+	[357, 'patterns'],
+	[358, 'struct_pattern_elements'],
+	[359, 'use_wildcard_group'],
+	[360, 'token_tree_punctuation'],
+	[361, '_token_keywords'],
+	[362, '_range_expression_bare'],
+	[363, 'attributed_element'],
+	[364, 'array_expression_list_elements'],
+	[365, 'tuple_expression_elements'],
+	[366, '_impl_item_unsafe_marker'],
+	[367, 'char_literal_escaped'],
 	[368, 'attribute_input'],
 	[369, 'closure_expression_block'],
 	[370, 'closure_expression_expr'],
@@ -1244,14 +1244,14 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[428, 'attributed_enum_variant'],
 	[429, 'attributed_parameter'],
 	[430, 'attributed_type_parameter'],
-	[431, 'attributed_argument'],
+	[431, 'argument'],
 	[432, 'attributed_ordered_field'],
 	[433, 'type_argument'],
 	[434, 'match_block_arms'],
-	[435, 'trait_interface_declaration_body'],
-	[436, 'extension_declaration_body'],
-	[437, 'argument'],
-	[438, 'array_expression_list_elements'],
+	[435, 'array_expression_semi'],
+	[436, 'array_expression_list'],
+	[437, 'trait_interface_declaration_body'],
+	[438, 'extension_declaration_body'],
 	[439, 'receiver_parameter_declaration'],
 	[440, 'attributed_parameter_receiver'],
 	[441, 'parameters_elements_receiver'],
@@ -1262,7 +1262,7 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[446, 'declaration_list_repeat1'],
 	[447, 'function_modifiers_repeat1'],
 	[448, 'trait_bounds_repeat1'],
-	[449, 'tuple_expression_repeat1'],
+	[449, 'shorthand_field_initializer_repeat1'],
 	[450, 'last_match_arm_repeat1'],
 	[451, 'string_literal_repeat1'],
 	[452, 'macro_rules_repeat1'],
@@ -1278,17 +1278,17 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[462, 'use_bounds_elements_repeat1'],
 	[463, 'type_arguments_elements_repeat1'],
 	[464, 'arguments_elements_repeat1'],
-	[465, 'expressions_repeat1'],
-	[466, 'field_initializer_list_elements_repeat1'],
-	[467, '_closure_parameters_optional1_repeat1'],
-	[468, 'tuple_pattern_elements_repeat1'],
-	[469, 'patterns_repeat1'],
-	[470, 'struct_pattern_elements_repeat1'],
-	[471, 'delim_token_tree_paren_repeat1'],
-	[472, '_match_block_arms_repeat1'],
-	[473, '_declaration_list_trait_item_repeat1'],
-	[474, '_declaration_list_impl_item_body_repeat1'],
-	[475, 'array_expression_list_elements_repeat1'],
+	[465, 'field_initializer_list_elements_repeat1'],
+	[466, '_closure_parameters_optional1_repeat1'],
+	[467, 'tuple_pattern_elements_repeat1'],
+	[468, 'patterns_repeat1'],
+	[469, 'struct_pattern_elements_repeat1'],
+	[470, '_array_expression_list_elements_repeat1'],
+	[471, '_tuple_expression_elements_repeat1'],
+	[472, 'delim_token_tree_paren_repeat1'],
+	[473, '_match_block_arms_repeat1'],
+	[474, '_declaration_list_trait_item_repeat1'],
+	[475, '_declaration_list_impl_item_body_repeat1'],
 	[476, 'closure_parameter'],
 	[477, 'crate_visibility_modifier'],
 	[478, 'field_identifier'],
@@ -2013,8 +2013,6 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.TypeArgumentsElements;
 		case 'arguments_elements':
 			return TSKindId.ArgumentsElements;
-		case 'expressions':
-			return TSKindId.Expressions;
 		case 'field_initializer_list_elements':
 			return TSKindId.FieldInitializerListElements;
 		case 'tuple_pattern_elements':
@@ -2031,14 +2029,16 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.TokenKeywords;
 		case '_range_expression_bare':
 			return TSKindId._RangeExpressionBare;
+		case 'attributed_element':
+			return TSKindId.AttributedElement;
+		case 'array_expression_list_elements':
+			return TSKindId.ArrayExpressionListElements;
+		case 'tuple_expression_elements':
+			return TSKindId.TupleExpressionElements;
 		case '_impl_item_unsafe_marker':
 			return TSKindId.ImplItemUnsafeMarker;
 		case 'char_literal_escaped':
 			return TSKindId.CharLiteralEscaped;
-		case 'array_expression_semi':
-			return TSKindId.ArrayExpressionSemi;
-		case 'array_expression_list':
-			return TSKindId.ArrayExpressionList;
 		case 'attribute_input':
 			return TSKindId.AttributeInput;
 		case 'closure_expression_block':
@@ -2165,22 +2165,22 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.AttributedParameter;
 		case 'attributed_type_parameter':
 			return TSKindId.AttributedTypeParameter;
-		case 'attributed_argument':
-			return TSKindId.AttributedArgument;
+		case 'argument':
+			return TSKindId.Argument;
 		case 'attributed_ordered_field':
 			return TSKindId.AttributedOrderedField;
 		case 'type_argument':
 			return TSKindId.TypeArgument;
 		case 'match_block_arms':
 			return TSKindId.MatchBlockArms;
+		case 'array_expression_semi':
+			return TSKindId.ArrayExpressionSemi;
+		case 'array_expression_list':
+			return TSKindId.ArrayExpressionList;
 		case 'trait_interface_declaration_body':
 			return TSKindId.TraitInterfaceDeclarationBody;
 		case 'extension_declaration_body':
 			return TSKindId.ExtensionDeclarationBody;
-		case 'argument':
-			return TSKindId.Argument;
-		case 'array_expression_list_elements':
-			return TSKindId.ArrayExpressionListElements;
 		case 'receiver_parameter_declaration':
 			return TSKindId.ReceiverParameterDeclaration;
 		case 'attributed_parameter_receiver':
@@ -2201,8 +2201,8 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.FunctionModifiersRepeat1;
 		case 'trait_bounds_repeat1':
 			return TSKindId.TraitBoundsRepeat1;
-		case 'tuple_expression_repeat1':
-			return TSKindId.TupleExpressionRepeat1;
+		case 'shorthand_field_initializer_repeat1':
+			return TSKindId.ShorthandFieldInitializerRepeat1;
 		case 'last_match_arm_repeat1':
 			return TSKindId.LastMatchArmRepeat1;
 		case 'string_literal_repeat1':
@@ -2233,8 +2233,6 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.TypeArgumentsElementsRepeat1;
 		case 'arguments_elements_repeat1':
 			return TSKindId.ArgumentsElementsRepeat1;
-		case 'expressions_repeat1':
-			return TSKindId.ExpressionsRepeat1;
 		case 'field_initializer_list_elements_repeat1':
 			return TSKindId.FieldInitializerListElementsRepeat1;
 		case '_closure_parameters_optional1_repeat1':
@@ -2245,6 +2243,10 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.PatternsRepeat1;
 		case 'struct_pattern_elements_repeat1':
 			return TSKindId.StructPatternElementsRepeat1;
+		case '_array_expression_list_elements_repeat1':
+			return TSKindId._ArrayExpressionListElementsRepeat1;
+		case '_tuple_expression_elements_repeat1':
+			return TSKindId._TupleExpressionElementsRepeat1;
 		case 'delim_token_tree_paren_repeat1':
 			return TSKindId.DelimTokenTreeParenRepeat1;
 		case '_match_block_arms_repeat1':
@@ -2253,8 +2255,6 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId._DeclarationListTraitItemRepeat1;
 		case '_declaration_list_impl_item_body_repeat1':
 			return TSKindId._DeclarationListImplItemBodyRepeat1;
-		case 'array_expression_list_elements_repeat1':
-			return TSKindId.ArrayExpressionListElementsRepeat1;
 		case 'closure_parameter':
 			return TSKindId.ClosureParameter;
 		case 'crate_visibility_modifier':
@@ -7032,24 +7032,27 @@ export interface ParenthesizedExpression {
 
 export interface TupleExpression {
 	readonly $type: TSKindId.TupleExpression;
-	readonly _attributes: readonly AttributeItem[];
-	readonly _elements: Expressions;
+	readonly _elements: TupleExpressionElements;
 	readonly __slotNames__?: {
-		readonly _attributes: 'attributes';
 		readonly _elements: 'elements';
 	};
 	readonly __looseHints__?: {
-		readonly elements: readonly Expression[];
+		readonly elements: readonly (AttributedElement | Expression)[];
 	};
 	readonly __slotHints__?: {
-		readonly attributes: SlotHint<T.AttributeItem[], true, true>;
-		readonly elements: SlotHint<T.Expressions>;
+		readonly elements: SlotHint<T.TupleExpressionElements>;
+		readonly $listView: ListViewHint<
+			T.AttributedElement | T.Expression,
+			{ delimiter?: Delimiter.None | Delimiter.Trailing }
+		>;
 		readonly $listSlots: {
-			readonly elements: ListSlotHint<T.Expression, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
+			readonly elements: ListSlotHint<
+				T.AttributedElement | T.Expression,
+				{ delimiter?: Delimiter.None | Delimiter.Trailing }
+			>;
 		};
 	};
-	readonly attributes: () => readonly AttributeItem[];
-	readonly elements: () => Expressions;
+	readonly elements: () => TupleExpressionElements;
 }
 
 export interface StructExpression {
@@ -8316,21 +8319,6 @@ export interface ArgumentsElements {
 	readonly items: () => NonEmptyArray<Argument>;
 }
 
-export interface Expressions {
-	readonly $type: TSKindId.Expressions;
-	readonly _item: NonEmptyArray<Expression>;
-	readonly _delimiter?: Delimiter;
-	readonly __slotNames__?: {
-		readonly _item: 'items';
-	};
-	readonly __slotHints__?: {
-		readonly items: SlotHint<NonEmptyArray<T.Expression>, false, true>;
-		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
-		readonly $listView: ListViewHint<T.Expression, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
-	};
-	readonly items: () => NonEmptyArray<Expression>;
-}
-
 export interface FieldInitializerListElements {
 	readonly $type: TSKindId.FieldInitializerListElements;
 	readonly _item: NonEmptyArray<ShorthandFieldInitializer | FieldInitializer | BaseFieldInitializer>;
@@ -8433,6 +8421,63 @@ export interface UseWildcardGroup {
 		| Identifier
 		| ScopedIdentifier
 		| undefined;
+}
+
+export interface AttributedElement {
+	readonly $type: TSKindId.AttributedElement;
+	readonly _attributes: NonEmptyArray<AttributeItem>;
+	readonly _expression: Expression;
+	readonly __slotNames__?: {
+		readonly _attributes: 'attributes';
+		readonly _expression: 'expression';
+	};
+	readonly __inputHints__?: {
+		readonly expression:
+			| KindEnum<'true' | 'false' | 'self', TSKindId.TrueKeyword | TSKindId.FalseKeyword | TSKindId.Self>
+			| Expression;
+	};
+	readonly __slotHints__?: {
+		readonly attributes: SlotHint<NonEmptyArray<T.AttributeItem>, false, true>;
+		readonly expression: SlotHint<NonNullable<T.AttributedElement.Config>['expression']>;
+	};
+	readonly attributes: () => NonEmptyArray<AttributeItem>;
+	readonly expression: () => Expression;
+}
+
+export interface ArrayExpressionListElements {
+	readonly $type: TSKindId.ArrayExpressionListElements;
+	readonly _item: NonEmptyArray<AttributedElement | Expression>;
+	readonly _delimiter?: Delimiter;
+	readonly __slotNames__?: {
+		readonly _item: 'items';
+	};
+	readonly __slotHints__?: {
+		readonly items: SlotHint<NonEmptyArray<T.AttributedElement | T.Expression>, false, true>;
+		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
+		readonly $listView: ListViewHint<
+			T.AttributedElement | T.Expression,
+			{ delimiter?: Delimiter.None | Delimiter.Trailing }
+		>;
+	};
+	readonly items: () => NonEmptyArray<AttributedElement | Expression>;
+}
+
+export interface TupleExpressionElements {
+	readonly $type: TSKindId.TupleExpressionElements;
+	readonly _item: NonEmptyArray<AttributedElement | Expression>;
+	readonly _delimiter?: Delimiter;
+	readonly __slotNames__?: {
+		readonly _item: 'items';
+	};
+	readonly __slotHints__?: {
+		readonly items: SlotHint<NonEmptyArray<T.AttributedElement | T.Expression>, false, true>;
+		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
+		readonly $listView: ListViewHint<
+			T.AttributedElement | T.Expression,
+			{ delimiter?: Delimiter.None | Delimiter.Trailing }
+		>;
+	};
+	readonly items: () => NonEmptyArray<AttributedElement | Expression>;
 }
 
 export interface IntegerLiteralDecimal {
@@ -8768,60 +8813,6 @@ export interface EscapeSequenceHex {
 		readonly content: SlotHint<string>;
 	};
 	readonly content: () => string;
-}
-
-export interface ArrayExpressionSemi {
-	readonly $type: TSKindId.ArrayExpressionSemi;
-	readonly _attributes: readonly AttributeItem[];
-	readonly _element: Expression;
-	readonly _length: Expression;
-	readonly __slotNames__?: {
-		readonly _attributes: 'attributes';
-		readonly _element: 'element';
-		readonly _length: 'length';
-	};
-	readonly __inputHints__?: {
-		readonly element:
-			| KindEnum<'true' | 'false' | 'self', TSKindId.TrueKeyword | TSKindId.FalseKeyword | TSKindId.Self>
-			| Expression;
-		readonly length:
-			| KindEnum<'true' | 'false' | 'self', TSKindId.TrueKeyword | TSKindId.FalseKeyword | TSKindId.Self>
-			| Expression;
-	};
-	readonly __slotHints__?: {
-		readonly attributes: SlotHint<T.AttributeItem[], true, true>;
-		readonly element: SlotHint<NonNullable<T.ArrayExpressionSemi.Config>['element']>;
-		readonly length: SlotHint<NonNullable<T.ArrayExpressionSemi.Config>['length']>;
-	};
-	readonly attributes: () => readonly AttributeItem[];
-	readonly element: () => Expression;
-	readonly length: () => Expression;
-}
-
-export interface ArrayExpressionList {
-	readonly $type: TSKindId.ArrayExpressionList;
-	readonly _attributes: readonly AttributeItem[];
-	readonly _elements?: ArrayExpressionListElements;
-	readonly __slotNames__?: {
-		readonly _attributes: 'attributes';
-		readonly _elements: 'elements';
-	};
-	readonly __looseHints__?: {
-		readonly elements?: readonly AttributedArgument[];
-	};
-	readonly __slotHints__?: {
-		readonly attributes: SlotHint<T.AttributeItem[], true, true>;
-		readonly elements: SlotHint<T.ArrayExpressionListElements, true>;
-		readonly $listSlots: {
-			readonly elements: ListSlotHint<
-				T.AttributedArgument | T.Expression,
-				{ delimiter?: Delimiter.None | Delimiter.Trailing },
-				T.AttributedArgument.Config
-			>;
-		};
-	};
-	readonly attributes: () => readonly AttributeItem[];
-	readonly elements: () => ArrayExpressionListElements | undefined;
 }
 
 export interface AttributeInput {
@@ -10483,8 +10474,8 @@ export interface AttributedTypeParameter {
 	readonly content: () => Metavariable | TypeParameter | LifetimeParameter | ConstParameter;
 }
 
-export interface AttributedArgument {
-	readonly $type: TSKindId.AttributedArgument;
+export interface Argument {
+	readonly $type: TSKindId.Argument;
 	readonly _attribute_item: readonly AttributeItem[];
 	readonly _expression: Expression;
 	readonly __slotNames__?: {
@@ -10498,7 +10489,7 @@ export interface AttributedArgument {
 	};
 	readonly __slotHints__?: {
 		readonly attributeItems: SlotHint<T.AttributeItem[], true, true>;
-		readonly expression: SlotHint<NonNullable<T.AttributedArgument.Config>['expression']>;
+		readonly expression: SlotHint<NonNullable<T.Argument.Config>['expression']>;
 	};
 	readonly attributeItems: () => readonly AttributeItem[];
 	readonly expression: () => Expression;
@@ -10650,6 +10641,55 @@ export interface MatchBlockArms {
 	readonly arms: () => readonly [...MatchArm[], LastMatchArm];
 }
 
+export interface ArrayExpressionSemi {
+	readonly $type: TSKindId.ArrayExpressionSemi;
+	readonly _element: Expression;
+	readonly _length: Expression;
+	readonly __slotNames__?: {
+		readonly _element: 'element';
+		readonly _length: 'length';
+	};
+	readonly __inputHints__?: {
+		readonly element:
+			| KindEnum<'true' | 'false' | 'self', TSKindId.TrueKeyword | TSKindId.FalseKeyword | TSKindId.Self>
+			| Expression;
+		readonly length:
+			| KindEnum<'true' | 'false' | 'self', TSKindId.TrueKeyword | TSKindId.FalseKeyword | TSKindId.Self>
+			| Expression;
+	};
+	readonly __slotHints__?: {
+		readonly element: SlotHint<NonNullable<T.ArrayExpressionSemi.Config>['element']>;
+		readonly length: SlotHint<NonNullable<T.ArrayExpressionSemi.Config>['length']>;
+	};
+	readonly element: () => Expression;
+	readonly length: () => Expression;
+}
+
+export interface ArrayExpressionList {
+	readonly $type: TSKindId.ArrayExpressionList;
+	readonly _elements?: ArrayExpressionListElements;
+	readonly __slotNames__?: {
+		readonly _elements: 'elements';
+	};
+	readonly __looseHints__?: {
+		readonly elements?: readonly (AttributedElement | Expression)[];
+	};
+	readonly __slotHints__?: {
+		readonly elements: SlotHint<T.ArrayExpressionListElements, true>;
+		readonly $listView: ListViewHint<
+			T.AttributedElement | T.Expression,
+			{ delimiter?: Delimiter.None | Delimiter.Trailing }
+		>;
+		readonly $listSlots: {
+			readonly elements: ListSlotHint<
+				T.AttributedElement | T.Expression,
+				{ delimiter?: Delimiter.None | Delimiter.Trailing }
+			>;
+		};
+	};
+	readonly elements: () => ArrayExpressionListElements | undefined;
+}
+
 export interface RawStringLiteralStart {
 	readonly $type: TSKindId.RawStringLiteralStart;
 	readonly _prefix: 'r' | 'br' | 'cr';
@@ -10706,53 +10746,6 @@ export interface ExtensionDeclarationBody {
 		readonly declarations: SlotHint<T.DeclarationStatementImplItemBody[], false, true>;
 	};
 	readonly declarations: () => readonly DeclarationStatementImplItemBody[];
-}
-
-export interface Argument {
-	readonly $type: TSKindId.Argument;
-	readonly _attribute_item: readonly AttributeItem[];
-	readonly _expression: Expression;
-	readonly __slotNames__?: {
-		readonly _attribute_item: 'attributeItems';
-		readonly _expression: 'expression';
-	};
-	readonly __inputHints__?: {
-		readonly expression:
-			| KindEnum<'true' | 'false' | 'self', TSKindId.TrueKeyword | TSKindId.FalseKeyword | TSKindId.Self>
-			| Expression;
-	};
-	readonly __slotHints__?: {
-		readonly attributeItems: SlotHint<T.AttributeItem[], true, true>;
-		readonly expression: SlotHint<NonNullable<T.Argument.Config>['expression']>;
-	};
-	readonly attributeItems: () => readonly AttributeItem[];
-	readonly expression: () => Expression;
-}
-
-export interface ArrayExpressionListElements {
-	readonly $type: TSKindId.ArrayExpressionListElements;
-	readonly _item: NonEmptyArray<AttributedArgument>;
-	readonly _delimiter?: Delimiter;
-	readonly __slotNames__?: {
-		readonly _item: 'items';
-	};
-	readonly __inputHints__?: {
-		readonly item: NonEmptyArray<T.AttributedArgument | T.Expression>;
-	};
-	readonly __slotHints__?: {
-		readonly items: SlotHint<
-			NonEmptyArray<T.AttributedArgument | T.Expression>,
-			false,
-			true,
-			T.AttributedArgument.Config
-		>;
-		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
-		readonly $listView: ListViewHint<
-			T.AttributedArgument | T.Expression,
-			{ delimiter?: Delimiter.None | Delimiter.Trailing }
-		>;
-	};
-	readonly items: () => NonEmptyArray<AttributedArgument>;
 }
 
 export interface ReceiverParameterDeclaration {
@@ -11888,14 +11881,14 @@ export interface OptionsHintMap {
 	useBoundsElements: UseBoundsElements.Hints;
 	typeArgumentsElements: TypeArgumentsElements.Hints;
 	argumentsElements: ArgumentsElements.Hints;
-	expressions: Expressions.Hints;
 	fieldInitializerListElements: FieldInitializerListElements.Hints;
 	tuplePatternElements: TuplePatternElements.Hints;
 	patterns: Patterns.Hints;
 	structPatternElements: StructPatternElements.Hints;
 	useWildcardGroup: UseWildcardGroup.Hints;
-	arrayExpressionSemi: ArrayExpressionSemi.Hints;
-	arrayExpressionList: ArrayExpressionList.Hints;
+	attributedElement: AttributedElement.Hints;
+	arrayExpressionListElements: ArrayExpressionListElements.Hints;
+	tupleExpressionElements: TupleExpressionElements.Hints;
 	attributeInput: AttributeInput.Hints;
 	closureExpressionBlock: ClosureExpressionBlock.Hints;
 	closureExpressionExpr: ClosureExpressionExpr.Hints;
@@ -11949,14 +11942,14 @@ export interface OptionsHintMap {
 	attributedEnumVariant: AttributedEnumVariant.Hints;
 	attributedParameter: AttributedParameter.Hints;
 	attributedTypeParameter: AttributedTypeParameter.Hints;
-	attributedArgument: AttributedArgument.Hints;
+	argument: Argument.Hints;
 	attributedOrderedField: AttributedOrderedField.Hints;
 	typeArgument: TypeArgument.Hints;
 	matchBlockArms: MatchBlockArms.Hints;
+	arrayExpressionSemi: ArrayExpressionSemi.Hints;
+	arrayExpressionList: ArrayExpressionList.Hints;
 	traitInterfaceDeclarationBody: TraitInterfaceDeclarationBody.Hints;
 	extensionDeclarationBody: ExtensionDeclarationBody.Hints;
-	argument: Argument.Hints;
-	arrayExpressionListElements: ArrayExpressionListElements.Hints;
 	receiverParameterDeclaration: ReceiverParameterDeclaration.Hints;
 	attributedParameterReceiver: AttributedParameterReceiver.Hints;
 	parametersElementsReceiver: ParametersElementsReceiver.Hints;
@@ -12929,12 +12922,6 @@ export namespace TupleExpression {
 	export interface Hints {
 		readonly __optionsHint__?: {
 			readonly after?: LayoutKindId;
-			readonly attributes?: {
-				readonly attributeItem?: { readonly after?: LayoutKindId };
-				readonly end?: LayoutKindId;
-				readonly separator?: WhitespaceKindId;
-				readonly start?: LayoutKindId;
-			};
 			readonly before?: LayoutKindId;
 			readonly lparen?: { readonly after?: LayoutKindId };
 			readonly rparen?: { readonly before?: LayoutKindId };
@@ -13750,69 +13737,6 @@ export namespace ArgumentsElements {
 	}
 }
 
-export namespace Expressions {
-	export interface Hints {
-		readonly __optionsHint__?: {
-			readonly after?: LayoutKindId;
-			readonly before?: LayoutKindId;
-			readonly item?: {
-				readonly arrayExpressionList?: { readonly after?: LayoutKindId };
-				readonly arrayExpressionSemi?: { readonly after?: LayoutKindId };
-				readonly assignmentExpression?: { readonly after?: LayoutKindId };
-				readonly asyncBlock?: { readonly after?: LayoutKindId };
-				readonly awaitExpression?: { readonly after?: LayoutKindId };
-				readonly binaryExpression?: { readonly after?: LayoutKindId };
-				readonly block?: { readonly after?: LayoutKindId };
-				readonly breakExpression?: { readonly after?: LayoutKindId };
-				readonly callExpression?: { readonly after?: LayoutKindId };
-				readonly closureExpressionBlock?: { readonly after?: LayoutKindId };
-				readonly closureExpressionExpr?: { readonly after?: LayoutKindId };
-				readonly compoundAssignmentExpr?: { readonly after?: LayoutKindId };
-				readonly constBlock?: { readonly after?: LayoutKindId };
-				readonly continueExpression?: { readonly after?: LayoutKindId };
-				readonly delimiter?: Delimiter.None | Delimiter.Trailing;
-				readonly end?: LayoutKindId;
-				readonly fieldExpression?: { readonly after?: LayoutKindId };
-				readonly forExpression?: { readonly after?: LayoutKindId };
-				readonly genBlock?: { readonly after?: LayoutKindId };
-				readonly genericFunction?: { readonly after?: LayoutKindId };
-				readonly ifExpression?: { readonly after?: LayoutKindId };
-				readonly indexExpression?: { readonly after?: LayoutKindId };
-				readonly loopExpression?: { readonly after?: LayoutKindId };
-				readonly macroInvocation?: { readonly after?: LayoutKindId };
-				readonly matchExpression?: { readonly after?: LayoutKindId };
-				readonly parenthesizedExpression?: { readonly after?: LayoutKindId };
-				readonly qualifiedIdentifier?: { readonly after?: LayoutKindId };
-				readonly rangeExpressionBinary?: { readonly after?: LayoutKindId };
-				readonly rangeExpressionPostfix?: { readonly after?: LayoutKindId };
-				readonly rangeExpressionPrefix?: { readonly after?: LayoutKindId };
-				readonly rawStringLiteral?: { readonly after?: LayoutKindId };
-				readonly referenceExpressionBare?: { readonly after?: LayoutKindId };
-				readonly referenceExpressionMut?: { readonly after?: LayoutKindId };
-				readonly referenceExpressionRawConst?: { readonly after?: LayoutKindId };
-				readonly referenceExpressionRawMut?: { readonly after?: LayoutKindId };
-				readonly returnExpression?: { readonly after?: LayoutKindId };
-				readonly self?: { readonly after?: LayoutKindId };
-				readonly separator?: {
-					readonly comma?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
-				};
-				readonly start?: LayoutKindId;
-				readonly stringLiteral?: { readonly after?: LayoutKindId };
-				readonly structExpression?: { readonly after?: LayoutKindId };
-				readonly tryBlock?: { readonly after?: LayoutKindId };
-				readonly tryExpression?: { readonly after?: LayoutKindId };
-				readonly tupleExpression?: { readonly after?: LayoutKindId };
-				readonly typeCastExpression?: { readonly after?: LayoutKindId };
-				readonly unaryExpression?: { readonly after?: LayoutKindId };
-				readonly unitExpression?: { readonly after?: LayoutKindId };
-				readonly unsafeBlock?: { readonly after?: LayoutKindId };
-				readonly whileExpression?: { readonly after?: LayoutKindId };
-				readonly yieldExpression?: { readonly after?: LayoutKindId };
-			};
-		};
-	}
-}
-
 export namespace FieldInitializerListElements {
 	export interface Hints {
 		readonly __optionsHint__?: {
@@ -13941,7 +13865,7 @@ export namespace UseWildcardGroup {
 	}
 }
 
-export namespace ArrayExpressionSemi {
+export namespace AttributedElement {
 	export interface Hints {
 		readonly __optionsHint__?: {
 			readonly after?: LayoutKindId;
@@ -13952,26 +13876,134 @@ export namespace ArrayExpressionSemi {
 				readonly start?: LayoutKindId;
 			};
 			readonly before?: LayoutKindId;
-			readonly lbrack?: { readonly after?: LayoutKindId };
-			readonly rbrack?: { readonly before?: LayoutKindId };
-			readonly semi?: { readonly after?: LayoutKindId; readonly before?: LayoutKindId };
 		};
 	}
 }
 
-export namespace ArrayExpressionList {
+export namespace ArrayExpressionListElements {
 	export interface Hints {
 		readonly __optionsHint__?: {
 			readonly after?: LayoutKindId;
-			readonly attributes?: {
-				readonly attributeItem?: { readonly after?: LayoutKindId };
-				readonly end?: LayoutKindId;
-				readonly separator?: WhitespaceKindId;
-				readonly start?: LayoutKindId;
-			};
 			readonly before?: LayoutKindId;
-			readonly lbrack?: { readonly after?: LayoutKindId };
-			readonly rbrack?: { readonly before?: LayoutKindId };
+			readonly item?: {
+				readonly arrayExpressionList?: { readonly after?: LayoutKindId };
+				readonly arrayExpressionSemi?: { readonly after?: LayoutKindId };
+				readonly assignmentExpression?: { readonly after?: LayoutKindId };
+				readonly asyncBlock?: { readonly after?: LayoutKindId };
+				readonly attributedElement?: { readonly after?: LayoutKindId };
+				readonly awaitExpression?: { readonly after?: LayoutKindId };
+				readonly binaryExpression?: { readonly after?: LayoutKindId };
+				readonly block?: { readonly after?: LayoutKindId };
+				readonly breakExpression?: { readonly after?: LayoutKindId };
+				readonly callExpression?: { readonly after?: LayoutKindId };
+				readonly closureExpressionBlock?: { readonly after?: LayoutKindId };
+				readonly closureExpressionExpr?: { readonly after?: LayoutKindId };
+				readonly compoundAssignmentExpr?: { readonly after?: LayoutKindId };
+				readonly constBlock?: { readonly after?: LayoutKindId };
+				readonly continueExpression?: { readonly after?: LayoutKindId };
+				readonly delimiter?: Delimiter.None | Delimiter.Trailing;
+				readonly end?: LayoutKindId;
+				readonly fieldExpression?: { readonly after?: LayoutKindId };
+				readonly forExpression?: { readonly after?: LayoutKindId };
+				readonly genBlock?: { readonly after?: LayoutKindId };
+				readonly genericFunction?: { readonly after?: LayoutKindId };
+				readonly ifExpression?: { readonly after?: LayoutKindId };
+				readonly indexExpression?: { readonly after?: LayoutKindId };
+				readonly loopExpression?: { readonly after?: LayoutKindId };
+				readonly macroInvocation?: { readonly after?: LayoutKindId };
+				readonly matchExpression?: { readonly after?: LayoutKindId };
+				readonly parenthesizedExpression?: { readonly after?: LayoutKindId };
+				readonly qualifiedIdentifier?: { readonly after?: LayoutKindId };
+				readonly rangeExpressionBinary?: { readonly after?: LayoutKindId };
+				readonly rangeExpressionPostfix?: { readonly after?: LayoutKindId };
+				readonly rangeExpressionPrefix?: { readonly after?: LayoutKindId };
+				readonly rawStringLiteral?: { readonly after?: LayoutKindId };
+				readonly referenceExpressionBare?: { readonly after?: LayoutKindId };
+				readonly referenceExpressionMut?: { readonly after?: LayoutKindId };
+				readonly referenceExpressionRawConst?: { readonly after?: LayoutKindId };
+				readonly referenceExpressionRawMut?: { readonly after?: LayoutKindId };
+				readonly returnExpression?: { readonly after?: LayoutKindId };
+				readonly self?: { readonly after?: LayoutKindId };
+				readonly separator?: {
+					readonly comma?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
+				};
+				readonly start?: LayoutKindId;
+				readonly stringLiteral?: { readonly after?: LayoutKindId };
+				readonly structExpression?: { readonly after?: LayoutKindId };
+				readonly tryBlock?: { readonly after?: LayoutKindId };
+				readonly tryExpression?: { readonly after?: LayoutKindId };
+				readonly tupleExpression?: { readonly after?: LayoutKindId };
+				readonly typeCastExpression?: { readonly after?: LayoutKindId };
+				readonly unaryExpression?: { readonly after?: LayoutKindId };
+				readonly unitExpression?: { readonly after?: LayoutKindId };
+				readonly unsafeBlock?: { readonly after?: LayoutKindId };
+				readonly whileExpression?: { readonly after?: LayoutKindId };
+				readonly yieldExpression?: { readonly after?: LayoutKindId };
+			};
+		};
+	}
+}
+
+export namespace TupleExpressionElements {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: LayoutKindId;
+			readonly before?: LayoutKindId;
+			readonly item?: {
+				readonly arrayExpressionList?: { readonly after?: LayoutKindId };
+				readonly arrayExpressionSemi?: { readonly after?: LayoutKindId };
+				readonly assignmentExpression?: { readonly after?: LayoutKindId };
+				readonly asyncBlock?: { readonly after?: LayoutKindId };
+				readonly attributedElement?: { readonly after?: LayoutKindId };
+				readonly awaitExpression?: { readonly after?: LayoutKindId };
+				readonly binaryExpression?: { readonly after?: LayoutKindId };
+				readonly block?: { readonly after?: LayoutKindId };
+				readonly breakExpression?: { readonly after?: LayoutKindId };
+				readonly callExpression?: { readonly after?: LayoutKindId };
+				readonly closureExpressionBlock?: { readonly after?: LayoutKindId };
+				readonly closureExpressionExpr?: { readonly after?: LayoutKindId };
+				readonly compoundAssignmentExpr?: { readonly after?: LayoutKindId };
+				readonly constBlock?: { readonly after?: LayoutKindId };
+				readonly continueExpression?: { readonly after?: LayoutKindId };
+				readonly delimiter?: Delimiter.None | Delimiter.Trailing;
+				readonly end?: LayoutKindId;
+				readonly fieldExpression?: { readonly after?: LayoutKindId };
+				readonly forExpression?: { readonly after?: LayoutKindId };
+				readonly genBlock?: { readonly after?: LayoutKindId };
+				readonly genericFunction?: { readonly after?: LayoutKindId };
+				readonly ifExpression?: { readonly after?: LayoutKindId };
+				readonly indexExpression?: { readonly after?: LayoutKindId };
+				readonly loopExpression?: { readonly after?: LayoutKindId };
+				readonly macroInvocation?: { readonly after?: LayoutKindId };
+				readonly matchExpression?: { readonly after?: LayoutKindId };
+				readonly parenthesizedExpression?: { readonly after?: LayoutKindId };
+				readonly qualifiedIdentifier?: { readonly after?: LayoutKindId };
+				readonly rangeExpressionBinary?: { readonly after?: LayoutKindId };
+				readonly rangeExpressionPostfix?: { readonly after?: LayoutKindId };
+				readonly rangeExpressionPrefix?: { readonly after?: LayoutKindId };
+				readonly rawStringLiteral?: { readonly after?: LayoutKindId };
+				readonly referenceExpressionBare?: { readonly after?: LayoutKindId };
+				readonly referenceExpressionMut?: { readonly after?: LayoutKindId };
+				readonly referenceExpressionRawConst?: { readonly after?: LayoutKindId };
+				readonly referenceExpressionRawMut?: { readonly after?: LayoutKindId };
+				readonly returnExpression?: { readonly after?: LayoutKindId };
+				readonly self?: { readonly after?: LayoutKindId };
+				readonly separator?: {
+					readonly comma?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
+				};
+				readonly start?: LayoutKindId;
+				readonly stringLiteral?: { readonly after?: LayoutKindId };
+				readonly structExpression?: { readonly after?: LayoutKindId };
+				readonly tryBlock?: { readonly after?: LayoutKindId };
+				readonly tryExpression?: { readonly after?: LayoutKindId };
+				readonly tupleExpression?: { readonly after?: LayoutKindId };
+				readonly typeCastExpression?: { readonly after?: LayoutKindId };
+				readonly unaryExpression?: { readonly after?: LayoutKindId };
+				readonly unitExpression?: { readonly after?: LayoutKindId };
+				readonly unsafeBlock?: { readonly after?: LayoutKindId };
+				readonly whileExpression?: { readonly after?: LayoutKindId };
+				readonly yieldExpression?: { readonly after?: LayoutKindId };
+			};
 		};
 	}
 }
@@ -14703,7 +14735,7 @@ export namespace AttributedTypeParameter {
 	}
 }
 
-export namespace AttributedArgument {
+export namespace Argument {
 	export interface Hints {
 		readonly __optionsHint__?: {
 			readonly after?: LayoutKindId;
@@ -14752,6 +14784,29 @@ export namespace MatchBlockArms {
 				readonly start?: LayoutKindId;
 			};
 			readonly before?: LayoutKindId;
+		};
+	}
+}
+
+export namespace ArrayExpressionSemi {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: LayoutKindId;
+			readonly before?: LayoutKindId;
+			readonly lbrack?: { readonly after?: LayoutKindId };
+			readonly rbrack?: { readonly before?: LayoutKindId };
+			readonly semi?: { readonly after?: LayoutKindId; readonly before?: LayoutKindId };
+		};
+	}
+}
+
+export namespace ArrayExpressionList {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: LayoutKindId;
+			readonly before?: LayoutKindId;
+			readonly lbrack?: { readonly after?: LayoutKindId };
+			readonly rbrack?: { readonly before?: LayoutKindId };
 		};
 	}
 }
@@ -14837,39 +14892,6 @@ export namespace ExtensionDeclarationBody {
 			};
 			readonly lbrace?: { readonly after?: LayoutKindId };
 			readonly rbrace?: { readonly before?: LayoutKindId };
-		};
-	}
-}
-
-export namespace Argument {
-	export interface Hints {
-		readonly __optionsHint__?: {
-			readonly after?: LayoutKindId;
-			readonly attributeItem?: {
-				readonly attributeItem?: { readonly after?: LayoutKindId };
-				readonly end?: LayoutKindId;
-				readonly separator?: WhitespaceKindId;
-				readonly start?: LayoutKindId;
-			};
-			readonly before?: LayoutKindId;
-		};
-	}
-}
-
-export namespace ArrayExpressionListElements {
-	export interface Hints {
-		readonly __optionsHint__?: {
-			readonly after?: LayoutKindId;
-			readonly before?: LayoutKindId;
-			readonly item?: {
-				readonly attributedArgument?: { readonly after?: LayoutKindId };
-				readonly delimiter?: Delimiter.None | Delimiter.Trailing;
-				readonly end?: LayoutKindId;
-				readonly separator?: {
-					readonly comma?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
-				};
-				readonly start?: LayoutKindId;
-			};
 		};
 	}
 }
@@ -16146,7 +16168,7 @@ export interface TupleExpressionNs extends NodeNs<
 	LeafStringMap,
 	NamespaceMap,
 	TupleExpression.Bound,
-	never,
+	'elements',
 	TSKindId.TupleExpression,
 	TupleExpression.Parsed,
 	never
@@ -16967,20 +16989,6 @@ export interface ArgumentsElementsNs extends NodeNs<
 	readonly BuildArgs: ArgumentsElements.BuildArgs;
 	readonly LooseArgs: ArgumentsElements.LooseArgs;
 }
-export interface ExpressionsNs extends NodeNs<
-	Expressions,
-	LeafScalarMap,
-	LeafStringMap,
-	NamespaceMap,
-	Expressions.Bound,
-	'item',
-	TSKindId.Expressions,
-	Expressions.Parsed,
-	never
-> {
-	readonly BuildArgs: Expressions.BuildArgs;
-	readonly LooseArgs: Expressions.LooseArgs;
-}
 export interface FieldInitializerListElementsNs extends NodeNs<
 	FieldInitializerListElements,
 	LeafScalarMap,
@@ -17050,6 +17058,48 @@ export interface UseWildcardGroupNs extends NodeNs<
 > {
 	readonly BuildArgs: UseWildcardGroup.BuildArgs;
 	readonly LooseArgs: UseWildcardGroup.LooseArgs;
+}
+export interface AttributedElementNs extends NodeNs<
+	AttributedElement,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	AttributedElement.Bound,
+	never,
+	TSKindId.AttributedElement,
+	AttributedElement.Parsed,
+	never
+> {
+	readonly BuildArgs: AttributedElement.BuildArgs;
+	readonly LooseArgs: AttributedElement.LooseArgs;
+}
+export interface ArrayExpressionListElementsNs extends NodeNs<
+	ArrayExpressionListElements,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	ArrayExpressionListElements.Bound,
+	'item',
+	TSKindId.ArrayExpressionListElements,
+	ArrayExpressionListElements.Parsed,
+	never
+> {
+	readonly BuildArgs: ArrayExpressionListElements.BuildArgs;
+	readonly LooseArgs: ArrayExpressionListElements.LooseArgs;
+}
+export interface TupleExpressionElementsNs extends NodeNs<
+	TupleExpressionElements,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	TupleExpressionElements.Bound,
+	'item',
+	TSKindId.TupleExpressionElements,
+	TupleExpressionElements.Parsed,
+	never
+> {
+	readonly BuildArgs: TupleExpressionElements.BuildArgs;
+	readonly LooseArgs: TupleExpressionElements.LooseArgs;
 }
 export interface IntegerLiteralDecimalNs extends NodeNs<
 	IntegerLiteralDecimal,
@@ -17232,34 +17282,6 @@ export interface EscapeSequenceHexNs extends NodeNs<
 > {
 	readonly BuildArgs: EscapeSequenceHex.BuildArgs;
 	readonly LooseArgs: EscapeSequenceHex.LooseArgs;
-}
-export interface ArrayExpressionSemiNs extends NodeNs<
-	ArrayExpressionSemi,
-	LeafScalarMap,
-	LeafStringMap,
-	NamespaceMap,
-	ArrayExpressionSemi.Bound,
-	never,
-	TSKindId.ArrayExpressionSemi,
-	ArrayExpressionSemi.Parsed,
-	never
-> {
-	readonly BuildArgs: ArrayExpressionSemi.BuildArgs;
-	readonly LooseArgs: ArrayExpressionSemi.LooseArgs;
-}
-export interface ArrayExpressionListNs extends NodeNs<
-	ArrayExpressionList,
-	LeafScalarMap,
-	LeafStringMap,
-	NamespaceMap,
-	ArrayExpressionList.Bound,
-	never,
-	TSKindId.ArrayExpressionList,
-	ArrayExpressionList.Parsed,
-	EmptyArrayExpressionList
-> {
-	readonly BuildArgs: ArrayExpressionList.BuildArgs;
-	readonly LooseArgs: ArrayExpressionList.LooseArgs;
 }
 export interface AttributeInputNs extends NodeNs<
 	AttributeInput,
@@ -18096,19 +18118,19 @@ export interface AttributedTypeParameterNs extends NodeNs<
 	readonly BuildArgs: AttributedTypeParameter.BuildArgs;
 	readonly LooseArgs: AttributedTypeParameter.LooseArgs;
 }
-export interface AttributedArgumentNs extends NodeNs<
-	AttributedArgument,
+export interface ArgumentNs extends NodeNs<
+	Argument,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	AttributedArgument.Bound,
+	Argument.Bound,
 	never,
-	TSKindId.AttributedArgument,
-	AttributedArgument.Parsed,
+	TSKindId.Argument,
+	Argument.Parsed,
 	never
 > {
-	readonly BuildArgs: AttributedArgument.BuildArgs;
-	readonly LooseArgs: AttributedArgument.LooseArgs;
+	readonly BuildArgs: Argument.BuildArgs;
+	readonly LooseArgs: Argument.LooseArgs;
 }
 export interface AttributedOrderedFieldNs extends NodeNs<
 	AttributedOrderedField,
@@ -18151,6 +18173,34 @@ export interface MatchBlockArmsNs extends NodeNs<
 > {
 	readonly BuildArgs: MatchBlockArms.BuildArgs;
 	readonly LooseArgs: MatchBlockArms.LooseArgs;
+}
+export interface ArrayExpressionSemiNs extends NodeNs<
+	ArrayExpressionSemi,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	ArrayExpressionSemi.Bound,
+	never,
+	TSKindId.ArrayExpressionSemi,
+	ArrayExpressionSemi.Parsed,
+	never
+> {
+	readonly BuildArgs: ArrayExpressionSemi.BuildArgs;
+	readonly LooseArgs: ArrayExpressionSemi.LooseArgs;
+}
+export interface ArrayExpressionListNs extends NodeNs<
+	ArrayExpressionList,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	ArrayExpressionList.Bound,
+	'elements',
+	TSKindId.ArrayExpressionList,
+	ArrayExpressionList.Parsed,
+	EmptyArrayExpressionList
+> {
+	readonly BuildArgs: ArrayExpressionList.BuildArgs;
+	readonly LooseArgs: ArrayExpressionList.LooseArgs;
 }
 export interface RawStringLiteralStartNs extends NodeNs<
 	RawStringLiteralStart,
@@ -18207,34 +18257,6 @@ export interface ExtensionDeclarationBodyNs extends NodeNs<
 > {
 	readonly BuildArgs: ExtensionDeclarationBody.BuildArgs;
 	readonly LooseArgs: ExtensionDeclarationBody.LooseArgs;
-}
-export interface ArgumentNs extends NodeNs<
-	Argument,
-	LeafScalarMap,
-	LeafStringMap,
-	NamespaceMap,
-	Argument.Bound,
-	never,
-	TSKindId.Argument,
-	Argument.Parsed,
-	never
-> {
-	readonly BuildArgs: Argument.BuildArgs;
-	readonly LooseArgs: Argument.LooseArgs;
-}
-export interface ArrayExpressionListElementsNs extends NodeNs<
-	ArrayExpressionListElements,
-	LeafScalarMap,
-	LeafStringMap,
-	NamespaceMap,
-	ArrayExpressionListElements.Bound,
-	'item',
-	TSKindId.ArrayExpressionListElements,
-	ArrayExpressionListElements.Parsed,
-	never
-> {
-	readonly BuildArgs: ArrayExpressionListElements.BuildArgs;
-	readonly LooseArgs: ArrayExpressionListElements.LooseArgs;
 }
 export interface ReceiverParameterDeclarationNs extends NodeNs<
 	ReceiverParameterDeclaration,
@@ -18628,12 +18650,14 @@ export interface NamespaceMap {
 	[TSKindId.UseBoundsElements]: UseBoundsElementsNs;
 	[TSKindId.TypeArgumentsElements]: TypeArgumentsElementsNs;
 	[TSKindId.ArgumentsElements]: ArgumentsElementsNs;
-	[TSKindId.Expressions]: ExpressionsNs;
 	[TSKindId.FieldInitializerListElements]: FieldInitializerListElementsNs;
 	[TSKindId.TuplePatternElements]: TuplePatternElementsNs;
 	[TSKindId.Patterns]: PatternsNs;
 	[TSKindId.StructPatternElements]: StructPatternElementsNs;
 	[TSKindId.UseWildcardGroup]: UseWildcardGroupNs;
+	[TSKindId.AttributedElement]: AttributedElementNs;
+	[TSKindId.ArrayExpressionListElements]: ArrayExpressionListElementsNs;
+	[TSKindId.TupleExpressionElements]: TupleExpressionElementsNs;
 	[TSKindId.IntegerLiteralDecimal]: IntegerLiteralDecimalNs;
 	[TSKindId.IntegerLiteralHex]: IntegerLiteralHexNs;
 	[TSKindId.IntegerLiteralBinary]: IntegerLiteralBinaryNs;
@@ -18647,8 +18671,6 @@ export interface NamespaceMap {
 	[TSKindId.EscapeSequenceUnicodeFixed]: EscapeSequenceUnicodeFixedNs;
 	[TSKindId.EscapeSequenceUnicodeBraced]: EscapeSequenceUnicodeBracedNs;
 	[TSKindId.EscapeSequenceHex]: EscapeSequenceHexNs;
-	[TSKindId.ArrayExpressionSemi]: ArrayExpressionSemiNs;
-	[TSKindId.ArrayExpressionList]: ArrayExpressionListNs;
 	[TSKindId.AttributeInput]: AttributeInputNs;
 	[TSKindId.ClosureExpressionBlock]: ClosureExpressionBlockNs;
 	[TSKindId.ClosureExpressionExpr]: ClosureExpressionExprNs;
@@ -18708,16 +18730,16 @@ export interface NamespaceMap {
 	[TSKindId.AttributedEnumVariant]: AttributedEnumVariantNs;
 	[TSKindId.AttributedParameter]: AttributedParameterNs;
 	[TSKindId.AttributedTypeParameter]: AttributedTypeParameterNs;
-	[TSKindId.AttributedArgument]: AttributedArgumentNs;
+	[TSKindId.Argument]: ArgumentNs;
 	[TSKindId.AttributedOrderedField]: AttributedOrderedFieldNs;
 	[TSKindId.TypeArgument]: TypeArgumentNs;
 	[TSKindId.MatchBlockArms]: MatchBlockArmsNs;
+	[TSKindId.ArrayExpressionSemi]: ArrayExpressionSemiNs;
+	[TSKindId.ArrayExpressionList]: ArrayExpressionListNs;
 	[TSKindId.RawStringLiteralStart]: RawStringLiteralStartNs;
 	[TSKindId.RawStringLiteralEnd]: RawStringLiteralEndNs;
 	[TSKindId.TraitInterfaceDeclarationBody]: TraitInterfaceDeclarationBodyNs;
 	[TSKindId.ExtensionDeclarationBody]: ExtensionDeclarationBodyNs;
-	[TSKindId.Argument]: ArgumentNs;
-	[TSKindId.ArrayExpressionListElements]: ArrayExpressionListElementsNs;
 	[TSKindId.ReceiverParameterDeclaration]: ReceiverParameterDeclarationNs;
 	[TSKindId.AttributedParameterReceiver]: AttributedParameterReceiverNs;
 	[TSKindId.ParametersElementsReceiver]: ParametersElementsReceiverNs;
@@ -18909,12 +18931,14 @@ export interface BoundByKindId {
 	[TSKindId.UseBoundsElements]: UseBoundsElements.Bound;
 	[TSKindId.TypeArgumentsElements]: TypeArgumentsElements.Bound;
 	[TSKindId.ArgumentsElements]: ArgumentsElements.Bound;
-	[TSKindId.Expressions]: Expressions.Bound;
 	[TSKindId.FieldInitializerListElements]: FieldInitializerListElements.Bound;
 	[TSKindId.TuplePatternElements]: TuplePatternElements.Bound;
 	[TSKindId.Patterns]: Patterns.Bound;
 	[TSKindId.StructPatternElements]: StructPatternElements.Bound;
 	[TSKindId.UseWildcardGroup]: UseWildcardGroup.Bound;
+	[TSKindId.AttributedElement]: AttributedElement.Bound;
+	[TSKindId.ArrayExpressionListElements]: ArrayExpressionListElements.Bound;
+	[TSKindId.TupleExpressionElements]: TupleExpressionElements.Bound;
 	[TSKindId.IntegerLiteralDecimal]: IntegerLiteralDecimal.Bound;
 	[TSKindId.IntegerLiteralHex]: IntegerLiteralHex.Bound;
 	[TSKindId.IntegerLiteralBinary]: IntegerLiteralBinary.Bound;
@@ -18928,8 +18952,6 @@ export interface BoundByKindId {
 	[TSKindId.EscapeSequenceUnicodeFixed]: EscapeSequenceUnicodeFixed.Bound;
 	[TSKindId.EscapeSequenceUnicodeBraced]: EscapeSequenceUnicodeBraced.Bound;
 	[TSKindId.EscapeSequenceHex]: EscapeSequenceHex.Bound;
-	[TSKindId.ArrayExpressionSemi]: ArrayExpressionSemi.Bound;
-	[TSKindId.ArrayExpressionList]: ArrayExpressionList.Bound;
 	[TSKindId.AttributeInput]: AttributeInput.Bound;
 	[TSKindId.ClosureExpressionBlock]: ClosureExpressionBlock.Bound;
 	[TSKindId.ClosureExpressionExpr]: ClosureExpressionExpr.Bound;
@@ -18989,16 +19011,16 @@ export interface BoundByKindId {
 	[TSKindId.AttributedEnumVariant]: AttributedEnumVariant.Bound;
 	[TSKindId.AttributedParameter]: AttributedParameter.Bound;
 	[TSKindId.AttributedTypeParameter]: AttributedTypeParameter.Bound;
-	[TSKindId.AttributedArgument]: AttributedArgument.Bound;
+	[TSKindId.Argument]: Argument.Bound;
 	[TSKindId.AttributedOrderedField]: AttributedOrderedField.Bound;
 	[TSKindId.TypeArgument]: TypeArgument.Bound;
 	[TSKindId.MatchBlockArms]: MatchBlockArms.Bound;
+	[TSKindId.ArrayExpressionSemi]: ArrayExpressionSemi.Bound;
+	[TSKindId.ArrayExpressionList]: ArrayExpressionList.Bound;
 	[TSKindId.RawStringLiteralStart]: RawStringLiteralStart.Bound;
 	[TSKindId.RawStringLiteralEnd]: RawStringLiteralEnd.Bound;
 	[TSKindId.TraitInterfaceDeclarationBody]: TraitInterfaceDeclarationBody.Bound;
 	[TSKindId.ExtensionDeclarationBody]: ExtensionDeclarationBody.Bound;
-	[TSKindId.Argument]: Argument.Bound;
-	[TSKindId.ArrayExpressionListElements]: ArrayExpressionListElements.Bound;
 	[TSKindId.ReceiverParameterDeclaration]: ReceiverParameterDeclaration.Bound;
 	[TSKindId.AttributedParameterReceiver]: AttributedParameterReceiver.Bound;
 	[TSKindId.ParametersElementsReceiver]: ParametersElementsReceiver.Bound;
@@ -19164,12 +19186,14 @@ export interface ParsedByKindId {
 	[TSKindId.UseBoundsElements]: UseBoundsElements.Parsed;
 	[TSKindId.TypeArgumentsElements]: TypeArgumentsElements.Parsed;
 	[TSKindId.ArgumentsElements]: ArgumentsElements.Parsed;
-	[TSKindId.Expressions]: Expressions.Parsed;
 	[TSKindId.FieldInitializerListElements]: FieldInitializerListElements.Parsed;
 	[TSKindId.TuplePatternElements]: TuplePatternElements.Parsed;
 	[TSKindId.Patterns]: Patterns.Parsed;
 	[TSKindId.StructPatternElements]: StructPatternElements.Parsed;
 	[TSKindId.UseWildcardGroup]: UseWildcardGroup.Parsed;
+	[TSKindId.AttributedElement]: AttributedElement.Parsed;
+	[TSKindId.ArrayExpressionListElements]: ArrayExpressionListElements.Parsed;
+	[TSKindId.TupleExpressionElements]: TupleExpressionElements.Parsed;
 	[TSKindId.IntegerLiteralDecimal]: IntegerLiteralDecimal.Parsed;
 	[TSKindId.IntegerLiteralHex]: IntegerLiteralHex.Parsed;
 	[TSKindId.IntegerLiteralBinary]: IntegerLiteralBinary.Parsed;
@@ -19183,8 +19207,6 @@ export interface ParsedByKindId {
 	[TSKindId.EscapeSequenceUnicodeFixed]: EscapeSequenceUnicodeFixed.Parsed;
 	[TSKindId.EscapeSequenceUnicodeBraced]: EscapeSequenceUnicodeBraced.Parsed;
 	[TSKindId.EscapeSequenceHex]: EscapeSequenceHex.Parsed;
-	[TSKindId.ArrayExpressionSemi]: ArrayExpressionSemi.Parsed;
-	[TSKindId.ArrayExpressionList]: ArrayExpressionList.Parsed;
 	[TSKindId.AttributeInput]: AttributeInput.Parsed;
 	[TSKindId.ClosureExpressionBlock]: ClosureExpressionBlock.Parsed;
 	[TSKindId.ClosureExpressionExpr]: ClosureExpressionExpr.Parsed;
@@ -19244,16 +19266,16 @@ export interface ParsedByKindId {
 	[TSKindId.AttributedEnumVariant]: AttributedEnumVariant.Parsed;
 	[TSKindId.AttributedParameter]: AttributedParameter.Parsed;
 	[TSKindId.AttributedTypeParameter]: AttributedTypeParameter.Parsed;
-	[TSKindId.AttributedArgument]: AttributedArgument.Parsed;
+	[TSKindId.Argument]: Argument.Parsed;
 	[TSKindId.AttributedOrderedField]: AttributedOrderedField.Parsed;
 	[TSKindId.TypeArgument]: TypeArgument.Parsed;
 	[TSKindId.MatchBlockArms]: MatchBlockArms.Parsed;
+	[TSKindId.ArrayExpressionSemi]: ArrayExpressionSemi.Parsed;
+	[TSKindId.ArrayExpressionList]: ArrayExpressionList.Parsed;
 	[TSKindId.RawStringLiteralStart]: RawStringLiteralStart.Parsed;
 	[TSKindId.RawStringLiteralEnd]: RawStringLiteralEnd.Parsed;
 	[TSKindId.TraitInterfaceDeclarationBody]: TraitInterfaceDeclarationBody.Parsed;
 	[TSKindId.ExtensionDeclarationBody]: ExtensionDeclarationBody.Parsed;
-	[TSKindId.Argument]: Argument.Parsed;
-	[TSKindId.ArrayExpressionListElements]: ArrayExpressionListElements.Parsed;
 	[TSKindId.ReceiverParameterDeclaration]: ReceiverParameterDeclaration.Parsed;
 	[TSKindId.AttributedParameterReceiver]: AttributedParameterReceiver.Parsed;
 	[TSKindId.ParametersElementsReceiver]: ParametersElementsReceiver.Parsed;
@@ -19575,12 +19597,14 @@ export interface TypeKeyOf {
 	[TSKindId.UseBoundsElements]: 'useBoundsElements';
 	[TSKindId.TypeArgumentsElements]: 'typeArgumentsElements';
 	[TSKindId.ArgumentsElements]: 'argumentsElements';
-	[TSKindId.Expressions]: 'expressions';
 	[TSKindId.FieldInitializerListElements]: 'fieldInitializerListElements';
 	[TSKindId.TuplePatternElements]: 'tuplePatternElements';
 	[TSKindId.Patterns]: 'patterns';
 	[TSKindId.StructPatternElements]: 'structPatternElements';
 	[TSKindId.UseWildcardGroup]: 'useWildcardGroup';
+	[TSKindId.AttributedElement]: 'attributedElement';
+	[TSKindId.ArrayExpressionListElements]: 'arrayExpressionListElements';
+	[TSKindId.TupleExpressionElements]: 'tupleExpressionElements';
 	[TSKindId.IntegerLiteralDecimal]: 'integerLiteralDecimal';
 	[TSKindId.IntegerLiteralHex]: 'integerLiteralHex';
 	[TSKindId.IntegerLiteralBinary]: 'integerLiteralBinary';
@@ -19594,8 +19618,6 @@ export interface TypeKeyOf {
 	[TSKindId.EscapeSequenceUnicodeFixed]: 'escapeSequenceUnicodeFixed';
 	[TSKindId.EscapeSequenceUnicodeBraced]: 'escapeSequenceUnicodeBraced';
 	[TSKindId.EscapeSequenceHex]: 'escapeSequenceHex';
-	[TSKindId.ArrayExpressionSemi]: 'arrayExpressionSemi';
-	[TSKindId.ArrayExpressionList]: 'arrayExpressionList';
 	[TSKindId.AttributeInput]: 'attributeInput';
 	[TSKindId.ClosureExpressionBlock]: 'closureExpressionBlock';
 	[TSKindId.ClosureExpressionExpr]: 'closureExpressionExpr';
@@ -19655,16 +19677,16 @@ export interface TypeKeyOf {
 	[TSKindId.AttributedEnumVariant]: 'attributedEnumVariant';
 	[TSKindId.AttributedParameter]: 'attributedParameter';
 	[TSKindId.AttributedTypeParameter]: 'attributedTypeParameter';
-	[TSKindId.AttributedArgument]: 'attributedArgument';
+	[TSKindId.Argument]: 'argument';
 	[TSKindId.AttributedOrderedField]: 'attributedOrderedField';
 	[TSKindId.TypeArgument]: 'typeArgument';
 	[TSKindId.MatchBlockArms]: 'matchBlockArms';
+	[TSKindId.ArrayExpressionSemi]: 'arrayExpressionSemi';
+	[TSKindId.ArrayExpressionList]: 'arrayExpressionList';
 	[TSKindId.RawStringLiteralStart]: 'rawStringLiteralStart';
 	[TSKindId.RawStringLiteralEnd]: 'rawStringLiteralEnd';
 	[TSKindId.TraitInterfaceDeclarationBody]: 'traitInterfaceDeclarationBody';
 	[TSKindId.ExtensionDeclarationBody]: 'extensionDeclarationBody';
-	[TSKindId.Argument]: 'argument';
-	[TSKindId.ArrayExpressionListElements]: 'arrayExpressionListElements';
 	[TSKindId.ReceiverParameterDeclaration]: 'receiverParameterDeclaration';
 	[TSKindId.AttributedParameterReceiver]: 'attributedParameterReceiver';
 	[TSKindId.ParametersElementsReceiver]: 'parametersElementsReceiver';
@@ -21892,16 +21914,8 @@ export namespace TupleExpression {
 	}
 	export type Loose = LooseFor<TSKindId.TupleExpression>;
 	export type LooseConfig = LooseConfigFor<TSKindId.TupleExpression>;
-	export type BuildArgs = [
-		config:
-			| ConfigOf<T.TupleExpression>
-			| (OmitEach<NonNullable<ConfigOf<T.TupleExpression>>, 'elements'> & { elements: T.Expressions.BuildArgs })
-	];
-	export type LooseArgs = [
-		config:
-			| T.TupleExpression.Loose
-			| (OmitEach<NonNullable<T.TupleExpression.Loose>, 'elements'> & { elements: T.Expressions.LooseArgs })
-	];
+	export type BuildArgs = [value: Admit<T.TupleExpressionElements>] | T.TupleExpressionElements.BuildArgs;
+	export type LooseArgs = [value: T.TupleExpression.Loose] | T.TupleExpressionElements.LooseArgs;
 	export type Kind = TSKindId.TupleExpression;
 }
 export namespace StructExpression {
@@ -24018,54 +24032,6 @@ export namespace ArgumentsElements {
 		[KeyRefusesEmpty<Config, 'items'>, KeyRefusesEmpty<LooseConfig, 'items'>, SetterRefusesEmpty<Bound, 'items'>]
 	>;
 }
-export namespace Expressions {
-	export type Config = ConfigFor<TSKindId.Expressions>;
-	export interface Bound extends BoundOf<T.Expressions, BoundByKindId>, NodeMethodsOf, HoldsSource {
-		readonly $type: T.Expressions['$type'];
-		readonly $with: BoundWithNode<this, BoundByKindId>;
-	}
-	export interface Parsed extends ParsedOf<T.Expressions, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
-		readonly $type: T.Expressions['$type'];
-		readonly $with: WithNode<this, BoundByKindId>;
-		readonly $query: () => QueryFacet<
-			this,
-			ParsedByKindId,
-			PortableQueryIds<PortableReads>,
-			KindMembers,
-			FixedTextKindId
-		>;
-		readonly $snapshot: () => Snapshot<T.Expressions['$type']>;
-	}
-	export type Loose = LooseFor<TSKindId.Expressions>;
-	export type LooseConfig = LooseConfigFor<TSKindId.Expressions>;
-	export type BuildArgs =
-		| [element: Admit<T.Expression>, ...elements: Admit<T.Expression>[]]
-		| [
-				options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
-				element: Admit<T.Expression>,
-				...elements: Admit<T.Expression>[]
-		  ];
-	export type LooseArgs =
-		| [
-				element: T.Expressions.Loose | LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
-				...elements: (
-					| T.Expressions.Loose
-					| LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-				)[]
-		  ]
-		| [
-				options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
-				element: T.Expressions.Loose | LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
-				...elements: (
-					| T.Expressions.Loose
-					| LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-				)[]
-		  ];
-	export type Kind = TSKindId.Expressions;
-	type NonEmptySlots = Proven<
-		[KeyRefusesEmpty<Config, 'items'>, KeyRefusesEmpty<LooseConfig, 'items'>, SetterRefusesEmpty<Bound, 'items'>]
-	>;
-}
 export namespace FieldInitializerListElements {
 	export type Config = ConfigFor<TSKindId.FieldInitializerListElements>;
 	export interface Bound extends BoundOf<T.FieldInitializerListElements, BoundByKindId>, NodeMethodsOf, HoldsSource {
@@ -24340,6 +24306,143 @@ export namespace UseWildcardGroup {
 	];
 	export type LooseArgs = [value?: T.UseWildcardGroup.Loose];
 	export type Kind = TSKindId.UseWildcardGroup;
+}
+export namespace AttributedElement {
+	export type Config = ConfigFor<TSKindId.AttributedElement>;
+	export interface Bound extends BoundOf<T.AttributedElement, BoundByKindId>, NodeMethodsOf, HoldsSource {
+		readonly $type: T.AttributedElement['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.AttributedElement, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
+		readonly $type: T.AttributedElement['$type'];
+		readonly $with: WithNode<this, BoundByKindId>;
+		readonly $query: () => QueryFacet<
+			this,
+			ParsedByKindId,
+			PortableQueryIds<PortableReads>,
+			KindMembers,
+			FixedTextKindId
+		>;
+		readonly $snapshot: () => Snapshot<T.AttributedElement['$type']>;
+	}
+	export type Loose = LooseFor<TSKindId.AttributedElement>;
+	export type LooseConfig = LooseConfigFor<TSKindId.AttributedElement>;
+	export type BuildArgs = [config: ConfigOf<T.AttributedElement>];
+	export type LooseArgs = [config: T.AttributedElement.Loose];
+	export type Kind = TSKindId.AttributedElement;
+	type NonEmptySlots = Proven<
+		[
+			KeyRefusesEmpty<Config, 'attributes'>,
+			KeyRefusesEmpty<LooseConfig, 'attributes'>,
+			SetterRefusesEmpty<Bound, 'attributes'>
+		]
+	>;
+}
+export namespace ArrayExpressionListElements {
+	export type Config = ConfigFor<TSKindId.ArrayExpressionListElements>;
+	export interface Bound extends BoundOf<T.ArrayExpressionListElements, BoundByKindId>, NodeMethodsOf, HoldsSource {
+		readonly $type: T.ArrayExpressionListElements['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId>;
+	}
+	export interface Parsed
+		extends ParsedOf<T.ArrayExpressionListElements, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
+		readonly $type: T.ArrayExpressionListElements['$type'];
+		readonly $with: WithNode<this, BoundByKindId>;
+		readonly $query: () => QueryFacet<
+			this,
+			ParsedByKindId,
+			PortableQueryIds<PortableReads>,
+			KindMembers,
+			FixedTextKindId
+		>;
+		readonly $snapshot: () => Snapshot<T.ArrayExpressionListElements['$type']>;
+	}
+	export type Loose = LooseFor<TSKindId.ArrayExpressionListElements>;
+	export type LooseConfig = LooseConfigFor<TSKindId.ArrayExpressionListElements>;
+	export type BuildArgs =
+		| [element: Admit<T.AttributedElement | T.Expression>, ...elements: Admit<T.AttributedElement | T.Expression>[]]
+		| [
+				options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
+				element: Admit<T.AttributedElement | T.Expression>,
+				...elements: Admit<T.AttributedElement | T.Expression>[]
+		  ];
+	export type LooseArgs =
+		| [
+				element:
+					| T.ArrayExpressionListElements.Loose
+					| LooseValue<T.AttributedElement | T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
+				...elements: (
+					| T.ArrayExpressionListElements.Loose
+					| LooseValue<T.AttributedElement | T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+				)[]
+		  ]
+		| [
+				options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
+				element:
+					| T.ArrayExpressionListElements.Loose
+					| LooseValue<T.AttributedElement | T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
+				...elements: (
+					| T.ArrayExpressionListElements.Loose
+					| LooseValue<T.AttributedElement | T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+				)[]
+		  ];
+	export type Kind = TSKindId.ArrayExpressionListElements;
+	type NonEmptySlots = Proven<
+		[KeyRefusesEmpty<Config, 'items'>, KeyRefusesEmpty<LooseConfig, 'items'>, SetterRefusesEmpty<Bound, 'items'>]
+	>;
+}
+export namespace TupleExpressionElements {
+	export type Config = ConfigFor<TSKindId.TupleExpressionElements>;
+	export interface Bound extends BoundOf<T.TupleExpressionElements, BoundByKindId>, NodeMethodsOf, HoldsSource {
+		readonly $type: T.TupleExpressionElements['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId>;
+	}
+	export interface Parsed
+		extends ParsedOf<T.TupleExpressionElements, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
+		readonly $type: T.TupleExpressionElements['$type'];
+		readonly $with: WithNode<this, BoundByKindId>;
+		readonly $query: () => QueryFacet<
+			this,
+			ParsedByKindId,
+			PortableQueryIds<PortableReads>,
+			KindMembers,
+			FixedTextKindId
+		>;
+		readonly $snapshot: () => Snapshot<T.TupleExpressionElements['$type']>;
+	}
+	export type Loose = LooseFor<TSKindId.TupleExpressionElements>;
+	export type LooseConfig = LooseConfigFor<TSKindId.TupleExpressionElements>;
+	export type BuildArgs =
+		| [element: Admit<T.AttributedElement | T.Expression>, ...elements: Admit<T.AttributedElement | T.Expression>[]]
+		| [
+				options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
+				element: Admit<T.AttributedElement | T.Expression>,
+				...elements: Admit<T.AttributedElement | T.Expression>[]
+		  ];
+	export type LooseArgs =
+		| [
+				element:
+					| T.TupleExpressionElements.Loose
+					| LooseValue<T.AttributedElement | T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
+				...elements: (
+					| T.TupleExpressionElements.Loose
+					| LooseValue<T.AttributedElement | T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+				)[]
+		  ]
+		| [
+				options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
+				element:
+					| T.TupleExpressionElements.Loose
+					| LooseValue<T.AttributedElement | T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
+				...elements: (
+					| T.TupleExpressionElements.Loose
+					| LooseValue<T.AttributedElement | T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+				)[]
+		  ];
+	export type Kind = TSKindId.TupleExpressionElements;
+	type NonEmptySlots = Proven<
+		[KeyRefusesEmpty<Config, 'items'>, KeyRefusesEmpty<LooseConfig, 'items'>, SetterRefusesEmpty<Bound, 'items'>]
+	>;
 }
 export namespace IntegerLiteralDecimal {
 	export type Config = WidenSlots<ConfigFor<TSKindId.IntegerLiteralDecimal>, { content: number | bigint }>;
@@ -24678,68 +24781,6 @@ export namespace EscapeSequenceHex {
 	export type BuildArgs = [content: string, affix?: true] | [text: `\\${string}`, affix: false];
 	export type LooseArgs = [content: string, affix?: true] | [text: `\\${string}`, affix: false];
 	export type Kind = TSKindId.EscapeSequenceHex;
-}
-export namespace ArrayExpressionSemi {
-	export type Config = ConfigFor<TSKindId.ArrayExpressionSemi>;
-	export interface Bound extends BoundOf<T.ArrayExpressionSemi, BoundByKindId>, NodeMethodsOf, HoldsSource {
-		readonly $type: T.ArrayExpressionSemi['$type'];
-		readonly $with: BoundWithNode<this, BoundByKindId>;
-	}
-	export interface Parsed
-		extends ParsedOf<T.ArrayExpressionSemi, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
-		readonly $type: T.ArrayExpressionSemi['$type'];
-		readonly $with: WithNode<this, BoundByKindId>;
-		readonly $query: () => QueryFacet<
-			this,
-			ParsedByKindId,
-			PortableQueryIds<PortableReads>,
-			KindMembers,
-			FixedTextKindId
-		>;
-		readonly $snapshot: () => Snapshot<T.ArrayExpressionSemi['$type']>;
-	}
-	export type Loose = LooseFor<TSKindId.ArrayExpressionSemi>;
-	export type LooseConfig = LooseConfigFor<TSKindId.ArrayExpressionSemi>;
-	export type BuildArgs = [config: ConfigOf<T.ArrayExpressionSemi>];
-	export type LooseArgs = [config: T.ArrayExpressionSemi.Loose];
-	export type Kind = TSKindId.ArrayExpressionSemi;
-}
-export namespace ArrayExpressionList {
-	export type Config = ConfigFor<TSKindId.ArrayExpressionList>;
-	export interface Bound extends BoundOf<T.ArrayExpressionList, BoundByKindId>, NodeMethodsOf, HoldsSource {
-		readonly $type: T.ArrayExpressionList['$type'];
-		readonly $with: BoundWithNode<this, BoundByKindId>;
-	}
-	export interface Parsed
-		extends ParsedOf<T.ArrayExpressionList, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
-		readonly $type: T.ArrayExpressionList['$type'];
-		readonly $with: WithNode<this, BoundByKindId>;
-		readonly $query: () => QueryFacet<
-			this,
-			ParsedByKindId,
-			PortableQueryIds<PortableReads>,
-			KindMembers,
-			FixedTextKindId
-		>;
-		readonly $snapshot: () => Snapshot<T.ArrayExpressionList['$type']>;
-	}
-	export type Loose = LooseFor<TSKindId.ArrayExpressionList>;
-	export type LooseConfig = LooseConfigFor<TSKindId.ArrayExpressionList>;
-	export type BuildArgs = [
-		config?:
-			| Partial<ConfigOf<T.ArrayExpressionList>>
-			| (OmitEach<NonNullable<Partial<ConfigOf<T.ArrayExpressionList>>>, 'elements'> & {
-					elements: T.ArrayExpressionListElements.BuildArgs;
-			  })
-	];
-	export type LooseArgs = [
-		config?:
-			| T.ArrayExpressionList.Loose
-			| (OmitEach<NonNullable<T.ArrayExpressionList.Loose>, 'elements'> & {
-					elements: T.ArrayExpressionListElements.LooseArgs;
-			  })
-	];
-	export type Kind = TSKindId.ArrayExpressionList;
 }
 export namespace AttributeInput {
 	export type Config = ConfigFor<TSKindId.AttributeInput>;
@@ -26479,15 +26520,14 @@ export namespace AttributedTypeParameter {
 	export type LooseArgs = [config: T.AttributedTypeParameter.Loose];
 	export type Kind = TSKindId.AttributedTypeParameter;
 }
-export namespace AttributedArgument {
-	export type Config = ConfigFor<TSKindId.AttributedArgument>;
-	export interface Bound extends BoundOf<T.AttributedArgument, BoundByKindId>, NodeMethodsOf, HoldsSource {
-		readonly $type: T.AttributedArgument['$type'];
+export namespace Argument {
+	export type Config = ConfigFor<TSKindId.Argument>;
+	export interface Bound extends BoundOf<T.Argument, BoundByKindId>, NodeMethodsOf, HoldsSource {
+		readonly $type: T.Argument['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed
-		extends ParsedOf<T.AttributedArgument, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
-		readonly $type: T.AttributedArgument['$type'];
+	export interface Parsed extends ParsedOf<T.Argument, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
+		readonly $type: T.Argument['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<
 			this,
@@ -26496,13 +26536,13 @@ export namespace AttributedArgument {
 			KindMembers,
 			FixedTextKindId
 		>;
-		readonly $snapshot: () => Snapshot<T.AttributedArgument['$type']>;
+		readonly $snapshot: () => Snapshot<T.Argument['$type']>;
 	}
-	export type Loose = LooseFor<TSKindId.AttributedArgument>;
-	export type LooseConfig = LooseConfigFor<TSKindId.AttributedArgument>;
-	export type BuildArgs = [config: ConfigOf<T.AttributedArgument>];
-	export type LooseArgs = [config: T.AttributedArgument.Loose];
-	export type Kind = TSKindId.AttributedArgument;
+	export type Loose = LooseFor<TSKindId.Argument>;
+	export type LooseConfig = LooseConfigFor<TSKindId.Argument>;
+	export type BuildArgs = [config: ConfigOf<T.Argument>];
+	export type LooseArgs = [config: T.Argument.Loose];
+	export type Kind = TSKindId.Argument;
 }
 export namespace AttributedOrderedField {
 	export type Config = ConfigFor<TSKindId.AttributedOrderedField>;
@@ -26590,6 +26630,56 @@ export namespace MatchBlockArms {
 				>
 		  ];
 	export type Kind = TSKindId.MatchBlockArms;
+}
+export namespace ArrayExpressionSemi {
+	export type Config = ConfigFor<TSKindId.ArrayExpressionSemi>;
+	export interface Bound extends BoundOf<T.ArrayExpressionSemi, BoundByKindId>, NodeMethodsOf, HoldsSource {
+		readonly $type: T.ArrayExpressionSemi['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId>;
+	}
+	export interface Parsed
+		extends ParsedOf<T.ArrayExpressionSemi, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
+		readonly $type: T.ArrayExpressionSemi['$type'];
+		readonly $with: WithNode<this, BoundByKindId>;
+		readonly $query: () => QueryFacet<
+			this,
+			ParsedByKindId,
+			PortableQueryIds<PortableReads>,
+			KindMembers,
+			FixedTextKindId
+		>;
+		readonly $snapshot: () => Snapshot<T.ArrayExpressionSemi['$type']>;
+	}
+	export type Loose = LooseFor<TSKindId.ArrayExpressionSemi>;
+	export type LooseConfig = LooseConfigFor<TSKindId.ArrayExpressionSemi>;
+	export type BuildArgs = [config: ConfigOf<T.ArrayExpressionSemi>];
+	export type LooseArgs = [config: T.ArrayExpressionSemi.Loose];
+	export type Kind = TSKindId.ArrayExpressionSemi;
+}
+export namespace ArrayExpressionList {
+	export type Config = ConfigFor<TSKindId.ArrayExpressionList>;
+	export interface Bound extends BoundOf<T.ArrayExpressionList, BoundByKindId>, NodeMethodsOf, HoldsSource {
+		readonly $type: T.ArrayExpressionList['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId>;
+	}
+	export interface Parsed
+		extends ParsedOf<T.ArrayExpressionList, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
+		readonly $type: T.ArrayExpressionList['$type'];
+		readonly $with: WithNode<this, BoundByKindId>;
+		readonly $query: () => QueryFacet<
+			this,
+			ParsedByKindId,
+			PortableQueryIds<PortableReads>,
+			KindMembers,
+			FixedTextKindId
+		>;
+		readonly $snapshot: () => Snapshot<T.ArrayExpressionList['$type']>;
+	}
+	export type Loose = LooseFor<TSKindId.ArrayExpressionList>;
+	export type LooseConfig = LooseConfigFor<TSKindId.ArrayExpressionList>;
+	export type BuildArgs = [value?: Admit<T.ArrayExpressionListElements>] | T.ArrayExpressionListElements.BuildArgs;
+	export type LooseArgs = [value?: T.ArrayExpressionList.Loose] | T.ArrayExpressionListElements.LooseArgs;
+	export type Kind = TSKindId.ArrayExpressionList;
 }
 export namespace RawStringLiteralStart {
 	export type Config = OmitEach<ConfigFor<TSKindId.RawStringLiteralStart>, 'hashes'>;
@@ -26717,90 +26807,6 @@ export namespace ExtensionDeclarationBody {
 				>
 		  ];
 	export type Kind = TSKindId.ExtensionDeclarationBody;
-}
-export namespace Argument {
-	export type Config = ConfigFor<TSKindId.Argument>;
-	export interface Bound extends BoundOf<T.Argument, BoundByKindId>, NodeMethodsOf, HoldsSource {
-		readonly $type: T.Argument['$type'];
-		readonly $with: BoundWithNode<this, BoundByKindId>;
-	}
-	export interface Parsed extends ParsedOf<T.Argument, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
-		readonly $type: T.Argument['$type'];
-		readonly $with: WithNode<this, BoundByKindId>;
-		readonly $query: () => QueryFacet<
-			this,
-			ParsedByKindId,
-			PortableQueryIds<PortableReads>,
-			KindMembers,
-			FixedTextKindId
-		>;
-		readonly $snapshot: () => Snapshot<T.Argument['$type']>;
-	}
-	export type Loose = LooseFor<TSKindId.Argument>;
-	export type LooseConfig = LooseConfigFor<TSKindId.Argument>;
-	export type BuildArgs = [config: ConfigOf<T.Argument>];
-	export type LooseArgs = [config: T.Argument.Loose];
-	export type Kind = TSKindId.Argument;
-}
-export namespace ArrayExpressionListElements {
-	export type Config = ConfigFor<TSKindId.ArrayExpressionListElements>;
-	export interface Bound extends BoundOf<T.ArrayExpressionListElements, BoundByKindId>, NodeMethodsOf, HoldsSource {
-		readonly $type: T.ArrayExpressionListElements['$type'];
-		readonly $with: BoundWithNode<this, BoundByKindId>;
-	}
-	export interface Parsed
-		extends ParsedOf<T.ArrayExpressionListElements, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
-		readonly $type: T.ArrayExpressionListElements['$type'];
-		readonly $with: WithNode<this, BoundByKindId>;
-		readonly $query: () => QueryFacet<
-			this,
-			ParsedByKindId,
-			PortableQueryIds<PortableReads>,
-			KindMembers,
-			FixedTextKindId
-		>;
-		readonly $snapshot: () => Snapshot<T.ArrayExpressionListElements['$type']>;
-	}
-	export type Loose = LooseFor<TSKindId.ArrayExpressionListElements>;
-	export type LooseConfig = LooseConfigFor<TSKindId.ArrayExpressionListElements>;
-	export type BuildArgs =
-		| [
-				element: Admit<T.AttributedArgument | T.Expression> | T.AttributedArgument.BuildArgs[0],
-				...elements: (Admit<T.AttributedArgument | T.Expression> | T.AttributedArgument.BuildArgs[0])[]
-		  ]
-		| [
-				options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
-				element: Admit<T.AttributedArgument | T.Expression> | T.AttributedArgument.BuildArgs[0],
-				...elements: (Admit<T.AttributedArgument | T.Expression> | T.AttributedArgument.BuildArgs[0])[]
-		  ];
-	export type LooseArgs =
-		| [
-				element:
-					| T.ArrayExpressionListElements.Loose
-					| LooseValue<T.AttributedArgument | T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-					| T.AttributedArgument.LooseArgs[0],
-				...elements: (
-					| T.ArrayExpressionListElements.Loose
-					| LooseValue<T.AttributedArgument | T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-					| T.AttributedArgument.LooseArgs[0]
-				)[]
-		  ]
-		| [
-				options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
-				element:
-					| T.ArrayExpressionListElements.Loose
-					| LooseValue<T.AttributedArgument | T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-					| T.AttributedArgument.LooseArgs[0],
-				...elements: (
-					| T.ArrayExpressionListElements.Loose
-					| LooseValue<T.AttributedArgument | T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-					| T.AttributedArgument.LooseArgs[0]
-				)[]
-		  ];
-	export type Kind = TSKindId.ArrayExpressionListElements;
-	type NonEmptySlots = Proven<
-		[KeyRefusesEmpty<Config, 'items'>, KeyRefusesEmpty<LooseConfig, 'items'>, SetterRefusesEmpty<Bound, 'items'>]
-	>;
 }
 export namespace ReceiverParameterDeclaration {
 	export type Config = ConfigFor<TSKindId.ReceiverParameterDeclaration>;
@@ -27621,9 +27627,6 @@ export interface RustTypeMap extends GrammarTypeMap {
 		| { readonly node: SlicePattern; readonly empty: EmptySlicePattern }
 		| { readonly node: SlicePattern.Bound; readonly empty: EmptySlicePattern }
 		| { readonly node: SlicePattern.Parsed; readonly empty: EmptySlicePattern.Parsed }
-		| { readonly node: ArrayExpressionList; readonly empty: EmptyArrayExpressionList }
-		| { readonly node: ArrayExpressionList.Bound; readonly empty: EmptyArrayExpressionList }
-		| { readonly node: ArrayExpressionList.Parsed; readonly empty: EmptyArrayExpressionList.Parsed }
 		| { readonly node: TokenTreePatternParen; readonly empty: EmptyTokenTreePatternParen }
 		| { readonly node: TokenTreePatternParen.Bound; readonly empty: EmptyTokenTreePatternParen }
 		| { readonly node: TokenTreePatternParen.Parsed; readonly empty: EmptyTokenTreePatternParen.Parsed }
@@ -27651,6 +27654,9 @@ export interface RustTypeMap extends GrammarTypeMap {
 		| { readonly node: DelimTokenTreeBrace; readonly empty: EmptyDelimTokenTreeBrace }
 		| { readonly node: DelimTokenTreeBrace.Bound; readonly empty: EmptyDelimTokenTreeBrace }
 		| { readonly node: DelimTokenTreeBrace.Parsed; readonly empty: EmptyDelimTokenTreeBrace.Parsed }
+		| { readonly node: ArrayExpressionList; readonly empty: EmptyArrayExpressionList }
+		| { readonly node: ArrayExpressionList.Bound; readonly empty: EmptyArrayExpressionList }
+		| { readonly node: ArrayExpressionList.Parsed; readonly empty: EmptyArrayExpressionList.Parsed }
 		| { readonly node: TraitInterfaceDeclarationBody; readonly empty: EmptyTraitInterfaceDeclarationBody }
 		| { readonly node: TraitInterfaceDeclarationBody.Bound; readonly empty: EmptyTraitInterfaceDeclarationBody }
 		| { readonly node: TraitInterfaceDeclarationBody.Parsed; readonly empty: EmptyTraitInterfaceDeclarationBody.Parsed }
@@ -27785,14 +27791,6 @@ export namespace EmptySlicePattern {
 		readonly $trivia: TriviaSetterOf<EmptySlicePattern.Parsed> & InnerTrivia<EmptySlicePattern.Parsed>;
 	};
 }
-export interface EmptyArrayExpressionList extends ArrayExpressionList.Bound {
-	readonly $trivia: TriviaSetterOf<this> & InnerTrivia<this>;
-}
-export namespace EmptyArrayExpressionList {
-	export type Parsed = ArrayExpressionList.Parsed & {
-		readonly $trivia: TriviaSetterOf<EmptyArrayExpressionList.Parsed> & InnerTrivia<EmptyArrayExpressionList.Parsed>;
-	};
-}
 export interface EmptyTokenTreePatternParen extends TokenTreePatternParen.Bound {
 	readonly $trivia: TriviaSetterOf<this> & InnerTrivia<this>;
 }
@@ -27867,6 +27865,14 @@ export interface EmptyDelimTokenTreeBrace extends DelimTokenTreeBrace.Bound {
 export namespace EmptyDelimTokenTreeBrace {
 	export type Parsed = DelimTokenTreeBrace.Parsed & {
 		readonly $trivia: TriviaSetterOf<EmptyDelimTokenTreeBrace.Parsed> & InnerTrivia<EmptyDelimTokenTreeBrace.Parsed>;
+	};
+}
+export interface EmptyArrayExpressionList extends ArrayExpressionList.Bound {
+	readonly $trivia: TriviaSetterOf<this> & InnerTrivia<this>;
+}
+export namespace EmptyArrayExpressionList {
+	export type Parsed = ArrayExpressionList.Parsed & {
+		readonly $trivia: TriviaSetterOf<EmptyArrayExpressionList.Parsed> & InnerTrivia<EmptyArrayExpressionList.Parsed>;
 	};
 }
 export interface EmptyTraitInterfaceDeclarationBody extends TraitInterfaceDeclarationBody.Bound {

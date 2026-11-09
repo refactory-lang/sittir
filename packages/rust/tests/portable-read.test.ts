@@ -159,6 +159,30 @@ describe('the portable read', () => {
 		expect(roundTrip('f(a, b);')).toBe('f(a, b);\n');
 	});
 
+	it('reads an array or tuple element with attributes as an attributed element, one without as its expression, and builds both back', () => {
+		const attributed = { $path: 'element.attributed', attributes: [expect.objectContaining({ $path: 'attribute' })], value: expect.anything() };
+		const cases = [
+			['fn f() {\n    let a = [#[cfg(x)] 1, 2];\n}\n', 'expression.collection.list', [attributed, expect.anything()]],
+			['fn f() {\n    let a = [1, #[cfg(x)] 2];\n}\n', 'expression.collection.list', [expect.anything(), attributed]],
+			['fn f() {\n    let a = (#[cfg(x)] 1, 2);\n}\n', 'expression.collection.tuple', [attributed, expect.anything()]],
+			['fn f() {\n    let a = (1, #[cfg(x)] 2);\n}\n', 'expression.collection.tuple', [expect.anything(), attributed]]
+		] as const;
+		for (const [source, path, elements] of cases) {
+			const carries: unknown[] = [];
+			const read = runtime.read(runtime.engine.parse(source), (_, carry) => carries.push(carry)) as Read;
+			const body = (read.statements as readonly Read[])[0]!.body as Read;
+			const value = (body.statements as readonly Read[])[0]!.value as Read;
+			expect(value).toEqual({ $path: path, elements });
+			expect((value.elements as readonly unknown[]).filter((element) => (element as Read | undefined)?.$path === 'element.attributed')).toHaveLength(1);
+			expect(carries).toEqual([]);
+			expect(roundTrip(source)).toBe(source);
+		}
+		for (const source of ['fn f() {\n    let a = [1, 2];\n}\n', 'fn f() {\n    let a = (1, 2);\n}\n', 'fn f() {\n    let a = [1; 3];\n}\n'])
+			expect(roundTrip(source)).toBe(source);
+		for (const source of ['fn f() { let a = [#[a]]; }\n', 'fn f() { let a = [#[a] 1; 3]; }\n'])
+			expect([...runtime.engine.parse(source).$errors].length).toBeGreaterThan(0);
+	});
+
 	it('reads one extern as one value and builds it back, refuses to build a list of them, and keeps a function stating two whole', () => {
 		const fn = readFirst('extern "C" fn f() {}');
 		expect(fn.extern).toEqual({ $path: 'modifier.extern', abi: { $path: 'literal.string', elements: ['C'] } });

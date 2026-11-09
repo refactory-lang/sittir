@@ -103,7 +103,7 @@
                   190
                 ],
                 "slots": {
-                  "437": 0
+                  "431": 0
                 }
               }
             }
@@ -190,17 +190,6 @@
       ],
       "members": [
         {
-          "name": "attributes",
-          "route": "slot",
-          "slot": "attributes",
-          "path": [
-            {
-              "owner": "array_expression_list",
-              "slot": "attributes"
-            }
-          ]
-        },
-        {
           "name": "elements",
           "route": "slot",
           "slot": "elements",
@@ -211,13 +200,22 @@
             }
           ]
         }
-      ]
+      ],
+      "container": {
+        "slot": "elements",
+        "kinds": [
+          "array_expression_list_elements"
+        ],
+        "terminals": [],
+        "list": false
+      }
     },
     "array_expression_list_elements": {
       "container": {
         "slot": "item",
         "kinds": [
-          "attributed_argument"
+          "attributed_element",
+          "_expression"
         ],
         "terminals": [],
         "list": true
@@ -242,17 +240,6 @@
         }
       ],
       "members": [
-        {
-          "name": "attributes",
-          "route": "slot",
-          "slot": "attributes",
-          "path": [
-            {
-              "owner": "array_expression_semi",
-              "slot": "attributes"
-            }
-          ]
-        },
         {
           "name": "element",
           "route": "slot",
@@ -588,15 +575,41 @@
         "list": false
       }
     },
-    "attributed_argument": {
-      "container": {
-        "slot": "expression",
-        "kinds": [
-          "_expression"
-        ],
-        "terminals": [],
-        "list": false
-      }
+    "attributed_element": {
+      "vocab": "element.attributed",
+      "read": [
+        {
+          "vocab": "element.attributed",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": [
+        {
+          "name": "attributes",
+          "route": "slot",
+          "slot": "attributes",
+          "path": [
+            {
+              "owner": "attributed_element",
+              "slot": "attributes"
+            }
+          ]
+        },
+        {
+          "name": "value",
+          "route": "slot",
+          "slot": "expression",
+          "path": [
+            {
+              "owner": "attributed_element",
+              "slot": "expression"
+            }
+          ]
+        }
+      ]
     },
     "attributed_enum_variant": {
       "container": {
@@ -6343,16 +6356,6 @@
         ],
         "terminals": [],
         "list": false
-      }
-    },
-    "expressions": {
-      "container": {
-        "slot": "item",
-        "kinds": [
-          "_expression"
-        ],
-        "terminals": [],
-        "list": true
       }
     },
     "extension_declaration_body": {
@@ -20144,17 +20147,6 @@
       ],
       "members": [
         {
-          "name": "attributes",
-          "route": "slot",
-          "slot": "attributes",
-          "path": [
-            {
-              "owner": "tuple_expression",
-              "slot": "attributes"
-            }
-          ]
-        },
-        {
           "name": "elements",
           "route": "slot",
           "slot": "elements",
@@ -20165,7 +20157,26 @@
             }
           ]
         }
-      ]
+      ],
+      "container": {
+        "slot": "elements",
+        "kinds": [
+          "tuple_expression_elements"
+        ],
+        "terminals": [],
+        "list": false
+      }
+    },
+    "tuple_expression_elements": {
+      "container": {
+        "slot": "item",
+        "kinds": [
+          "attributed_element",
+          "_expression"
+        ],
+        "terminals": [],
+        "list": true
+      }
     },
     "tuple_pattern": {
       "vocab": "pattern.tuple",
@@ -23178,8 +23189,8 @@
       },
       {
         "depth": 2,
-        "paths": 95,
-        "kinds": 144,
+        "paths": 96,
+        "kinds": 145,
         "refinements": 7
       },
       {

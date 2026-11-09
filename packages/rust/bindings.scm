@@ -259,11 +259,13 @@
 (for_lifetimes) @clause.lifetimes
 
 ; ── argument (pieces of a call that are not expressions) ───────────────────────
-((arguments (arguments_elements (attributed_argument (attribute_item) (_) @value) @argument)) (#set! claim argument))
-(attributed_argument (attribute_item)* @attributes)
-((attributed_argument (attribute_item)* @dropped (_) @element) (#set! reason "a call argument with attributes reads as argument; one without, or an array element, reads as its expression"))
+((argument (attribute_item) (_) @value) @argument (#set! claim argument))
+(argument (attribute_item)* @attributes)
+((argument (attribute_item)* @dropped (_) @element) (#set! reason "a call argument with attributes reads as argument; one without reads as its expression"))
 
 ; ── element (pieces of a composite expression that are not expressions) ────────
+((attributed_element (attribute_item) (_) @value) @element.attributed)
+(attributed_element (attribute_item)* @attributes)
 (field_initializer) @element.struct.field
 (field_initializer (attribute_item)* @attributes)
 (shorthand_field_initializer) @element.struct.field
@@ -348,7 +350,7 @@
 (type_cast_expression) @expression.cast.conversion
 (type_cast_expression value: (_) @expression)
 (parenthesized_expression) @expression.parenthesized
-(tuple_expression (expressions) @elements) @expression.collection.tuple
+(tuple_expression) @expression.collection.tuple
 (array_expression) @expression.collection.array
 (array_expression_semi) @expression.collection.array.repeat
 (struct_expression) @expression.collection.struct

@@ -2612,6 +2612,10 @@ declare module './declaration.ts' {
 
 declare module './element.ts' {
 	namespace Element {
+		interface Attributed<
+			G extends GrammarMap,
+			K extends gate.Under<'element.attributed'> = 'element.attributed'
+		> extends attributes.Element.Attributed<G, K> {}
 		interface Comparator<
 			G extends GrammarMap,
 			K extends gate.Under<'element.comparator'> = 'element.comparator'
@@ -2922,6 +2926,7 @@ declare module './element.ts' {
 		> extends associatedTypes.Element.TypeBinding<G, K> {}
 		type Any<G extends GrammarMap> =
 			| V.Element<G>
+			| V.Element.Attributed<G>
 			| V.Element.Comparator<G>
 			| V.Element.Comparator.Comparison<G>
 			| V.Element.Comparator.Comparison.Equal<G>
@@ -3388,16 +3393,6 @@ declare module './expression.ts' {
 			>;
 		}
 		namespace Collection {
-			interface List<
-				G extends GrammarMap,
-				K extends gate.Under<'expression.collection.list'> = 'expression.collection.list'
-			> {
-				readonly attributes?: gate.In<
-					G,
-					features.Attributes,
-					attributes.Expression.Collection.List<G, K>['attributes']
-				>;
-			}
 			namespace List {
 				interface Repeat<
 					G extends GrammarMap,
@@ -3424,13 +3419,7 @@ declare module './expression.ts' {
 			interface Tuple<
 				G extends GrammarMap,
 				K extends gate.Under<'expression.collection.tuple'> = 'expression.collection.tuple'
-			> extends tuples.Expression.Collection.Tuple<G, K> {
-				readonly attributes?: gate.In<
-					G,
-					features.Attributes,
-					attributes.Expression.Collection.Tuple<G, K>['attributes']
-				>;
-			}
+			> extends tuples.Expression.Collection.Tuple<G, K> {}
 			namespace Tuple {
 				interface Bare<
 					G extends GrammarMap,
@@ -5856,6 +5845,7 @@ declare module './map.ts' {
 			V.Declaration.Variable.Reassignable.FunctionScoped<G>
 		>;
 		readonly element: V.Element<G>;
+		readonly 'element.attributed': gate.In<G, features.Attributes, V.Element.Attributed<G>>;
 		readonly 'element.comparator': gate.In<G, features.PythonOperators, V.Element.Comparator<G>>;
 		readonly 'element.comparator.comparison': gate.In<G, features.PythonOperators, V.Element.Comparator.Comparison<G>>;
 		readonly 'element.comparator.comparison.equal': gate.In<

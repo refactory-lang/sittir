@@ -10,6 +10,7 @@ export namespace Expression {
 				G,
 				K,
 				'elements',
+				| V.Element.Attributed<G>
 				| V.Element.Spread<G>
 				| V.Element.Spread.Parenthesized<G>
 				| V.Expression.Any<G>

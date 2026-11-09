@@ -14734,6 +14734,155 @@ export interface RustMap extends V.GrammarMap {
 				| T.YieldExpression.Parsed;
 			readonly $forms: V.Form<'name' | 'scope' | 'type'>;
 		};
+		readonly 'element.attributed': {
+			readonly attributes:
+				| V.Read<RustMap, 'attribute'>
+				| V.Read<RustMap, 'attribute.content'>
+				| V.Read<RustMap, 'attribute.inner'>;
+			readonly value:
+				| V.Read<RustMap, 'expression.assignment'>
+				| V.Read<RustMap, 'expression.assignment.compound'>
+				| V.Read<RustMap, 'expression.assignment.compound.add'>
+				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
+				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
+				| V.Read<RustMap, 'expression.assignment.compound.bitwise_xor'>
+				| V.Read<RustMap, 'expression.assignment.compound.divide'>
+				| V.Read<RustMap, 'expression.assignment.compound.modulo'>
+				| V.Read<RustMap, 'expression.assignment.compound.multiply'>
+				| V.Read<RustMap, 'expression.assignment.compound.shift_left'>
+				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
+				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
+				| V.Read<RustMap, 'expression.await'>
+				| V.Read<RustMap, 'expression.binary'>
+				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
+				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
+				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
+				| V.Read<RustMap, 'expression.binary.arithmetic.multiply'>
+				| V.Read<RustMap, 'expression.binary.arithmetic.subtract'>
+				| V.Read<RustMap, 'expression.binary.bitwise.and'>
+				| V.Read<RustMap, 'expression.binary.bitwise.or'>
+				| V.Read<RustMap, 'expression.binary.bitwise.xor'>
+				| V.Read<RustMap, 'expression.binary.comparison.equal'>
+				| V.Read<RustMap, 'expression.binary.comparison.greater'>
+				| V.Read<RustMap, 'expression.binary.comparison.greater_equal'>
+				| V.Read<RustMap, 'expression.binary.comparison.less'>
+				| V.Read<RustMap, 'expression.binary.comparison.less_equal'>
+				| V.Read<RustMap, 'expression.binary.comparison.not_equal'>
+				| V.Read<RustMap, 'expression.binary.logical.and'>
+				| V.Read<RustMap, 'expression.binary.logical.or'>
+				| V.Read<RustMap, 'expression.binary.shift.left'>
+				| V.Read<RustMap, 'expression.binary.shift.right'>
+				| V.Read<RustMap, 'expression.block.async'>
+				| V.Read<RustMap, 'expression.block.const'>
+				| V.Read<RustMap, 'expression.block.generator'>
+				| V.Read<RustMap, 'expression.block.try'>
+				| V.Read<RustMap, 'expression.block.unsafe'>
+				| V.Read<RustMap, 'expression.call'>
+				| V.Read<RustMap, 'expression.call.macro'>
+				| V.Read<RustMap, 'expression.call.member'>
+				| V.Read<RustMap, 'expression.call.qualified'>
+				| V.Read<RustMap, 'expression.cast.conversion'>
+				| V.Read<RustMap, 'expression.collection.list'>
+				| V.Read<RustMap, 'expression.collection.list.repeat'>
+				| V.Read<RustMap, 'expression.collection.struct'>
+				| V.Read<RustMap, 'expression.collection.tuple'>
+				| V.Read<RustMap, 'expression.instantiation'>
+				| V.Read<RustMap, 'expression.lambda'>
+				| V.Read<RustMap, 'expression.member'>
+				| V.Read<RustMap, 'expression.parenthesized'>
+				| V.Read<RustMap, 'expression.propagate'>
+				| V.Read<RustMap, 'expression.range'>
+				| V.Read<RustMap, 'expression.range.exclusive'>
+				| V.Read<RustMap, 'expression.range.inclusive'>
+				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
+				| V.Read<RustMap, 'expression.reference'>
+				| V.Read<RustMap, 'expression.subscript'>
+				| V.Read<RustMap, 'expression.unary'>
+				| V.Read<RustMap, 'expression.unary.deref'>
+				| V.Read<RustMap, 'expression.unary.negation'>
+				| V.Read<RustMap, 'expression.unary.not'>
+				| V.Text<RustMap, 'expression.unit'>
+				| V.Read<RustMap, 'expression.yield'>
+				| V.Read<RustMap, 'identifier'>
+				| V.Text<RustMap, 'identifier'>
+				| V.Read<RustMap, 'identifier.label'>
+				| V.Read<RustMap, 'identifier.lifetime'>
+				| V.Read<RustMap, 'identifier.metavariable'>
+				| V.Read<RustMap, 'identifier.qualified'>
+				| V.Text<RustMap, 'identifier.receiver'>
+				| V.Read<RustMap, 'literal.boolean.false'>
+				| V.Read<RustMap, 'literal.boolean.true'>
+				| V.Read<RustMap, 'literal.character'>
+				| V.Read<RustMap, 'literal.number.float'>
+				| V.Read<RustMap, 'literal.number.integer'>
+				| V.Read<RustMap, 'literal.number.integer.binary'>
+				| V.Read<RustMap, 'literal.number.integer.hex'>
+				| V.Read<RustMap, 'literal.number.integer.octal'>
+				| V.Read<RustMap, 'literal.string'>
+				| V.Read<RustMap, 'literal.string.bytes'>
+				| V.Read<RustMap, 'literal.string.bytes.raw'>
+				| V.Read<RustMap, 'literal.string.c'>
+				| V.Read<RustMap, 'literal.string.c.raw'>
+				| V.Read<RustMap, 'literal.string.raw'>
+				| V.Read<RustMap, 'statement.block'>
+				| V.Read<RustMap, 'statement.break'>
+				| V.Read<RustMap, 'statement.continue'>
+				| V.Read<RustMap, 'statement.if'>
+				| V.Read<RustMap, 'statement.loop'>
+				| V.Read<RustMap, 'statement.loop.for_each'>
+				| V.Read<RustMap, 'statement.loop.while'>
+				| V.Read<RustMap, 'statement.match'>
+				| V.Read<RustMap, 'statement.return'>
+				| '()'
+				| 'false'
+				| 'self'
+				| 'true'
+				| T.ArrayExpressionSemi.Parsed
+				| T.AssignmentExpression.Parsed
+				| T.AwaitExpression.Parsed
+				| T.BinaryExpression.Parsed
+				| T.Block.Parsed
+				| T.BreakExpression.Parsed
+				| T.CallExpression.Parsed
+				| T.CharLiteralEscapedHex.Parsed
+				| T.CharLiteralEscapedSimple.Parsed
+				| T.CharLiteralEscapedUnicodeBraced.Parsed
+				| T.CharLiteralEscapedUnicodeFixed.Parsed
+				| T.CharLiteralPlain.Parsed
+				| T.ClosureExpressionBlock.Parsed
+				| T.ClosureExpressionExpr.Parsed
+				| T.CompoundAssignmentExpr.Parsed
+				| T.FieldExpression.Parsed
+				| T.FloatLiteral.Parsed
+				| T.ForExpression.Parsed
+				| T.IfExpression.Parsed
+				| T.IndexExpression.Parsed
+				| T.IntegerLiteralBinary.Parsed
+				| T.IntegerLiteralDecimal.Parsed
+				| T.IntegerLiteralHex.Parsed
+				| T.IntegerLiteralOctal.Parsed
+				| T.MatchExpression.Parsed
+				| T.Metavariable.Parsed
+				| T.ParenthesizedExpression.Parsed
+				| T.RangeExpressionBare.Parsed
+				| T.RangeExpressionBinary.Parsed
+				| T.RangeExpressionPostfix.Parsed
+				| T.RangeExpressionPrefix.Parsed
+				| T.RawStringLiteral.Parsed
+				| T.ReferenceExpressionBare.Parsed
+				| T.ReferenceExpressionMut.Parsed
+				| T.ReferenceExpressionRawConst.Parsed
+				| T.ReferenceExpressionRawMut.Parsed
+				| T.ReturnExpression.Parsed
+				| T.ScopedIdentifier.Parsed
+				| T.StringLiteral.Parsed
+				| T.TryExpression.Parsed
+				| T.TypeCastExpression.Parsed
+				| T.UnaryExpression.Parsed
+				| T.WhileExpression.Parsed
+				| T.YieldExpression.Parsed;
+			readonly $forms: V.Form<'attributes' | 'value'>;
+		};
 		readonly 'element.macro.fragment': {
 			readonly $text: PortableTexts['element.macro.fragment'];
 		};
@@ -26772,11 +26921,8 @@ export interface RustMap extends V.GrammarMap {
 			readonly $forms: V.Form<'expression' | 'type'>;
 		};
 		readonly 'expression.collection.list': {
-			readonly attributes:
-				| V.Read<RustMap, 'attribute'>
-				| V.Read<RustMap, 'attribute.content'>
-				| V.Read<RustMap, 'attribute.inner'>;
 			readonly elements:
+				| V.Read<RustMap, 'element.attributed'>
 				| V.Read<RustMap, 'expression.assignment'>
 				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
@@ -26877,10 +27023,6 @@ export interface RustMap extends V.GrammarMap {
 			readonly $forms: V.Form<never, 'element' | 'length'> | V.Form<'element' | 'length', 'elements'>;
 		};
 		readonly 'expression.collection.list.repeat': {
-			readonly attributes:
-				| V.Read<RustMap, 'attribute'>
-				| V.Read<RustMap, 'attribute.content'>
-				| V.Read<RustMap, 'attribute.inner'>;
 			readonly element:
 				| V.Read<RustMap, 'expression.assignment'>
 				| V.Read<RustMap, 'expression.assignment.compound'>
@@ -27024,6 +27166,7 @@ export interface RustMap extends V.GrammarMap {
 				| T.WhileExpression.Parsed
 				| T.YieldExpression.Parsed;
 			readonly elements:
+				| V.Read<RustMap, 'element.attributed'>
 				| V.Read<RustMap, 'expression.assignment'>
 				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
@@ -27272,11 +27415,8 @@ export interface RustMap extends V.GrammarMap {
 			readonly $forms: V.Form<'body' | 'name'>;
 		};
 		readonly 'expression.collection.tuple': {
-			readonly attributes:
-				| V.Read<RustMap, 'attribute'>
-				| V.Read<RustMap, 'attribute.content'>
-				| V.Read<RustMap, 'attribute.inner'>;
 			readonly elements:
+				| V.Read<RustMap, 'element.attributed'>
 				| V.Read<RustMap, 'expression.assignment'>
 				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>

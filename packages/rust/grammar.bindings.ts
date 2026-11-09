@@ -1,9 +1,9 @@
 // Generated from bindings.scm and the vocabulary by `pnpm exec tsx packages/cli/src/cli.ts tool bindings-inventory --write`. Do not edit.
 /// <reference path="../codegen/src/dsl/authoring-globals.d.ts" />
 import sittir from './grammar.sittir.ts';
-import { alias, copy, enrich, field, lead, match, wire } from '../codegen/src/dsl/dsl-authoring.ts';
+import { alias, enrich, field, lead, match, wire } from '../codegen/src/dsl/dsl-authoring.ts';
 
-export const hash = "376e3aeb8242a0f60209a1ad3b58c951866d890719af0a5e43c096e4f5cc6f60";
+export const hash = "a2809c499d4a965affd2e0f7c044ef23a2ceb47d5ee80de4d79174d130a68fab";
 
 export const renames = {
 	source_file: "file",
@@ -134,6 +134,7 @@ export default grammar(
 			_type: { "-12": alias("qualified_identifier") },
 			abstract_type: { "2/0/1": alias("qualified_identifier") },
 			attribute_item: { "2": field("content") },
+			attributed_element: { "0": field("attributes") },
 			const_parameter: { "4/0/1": field("default") },
 			dynamic_type: { "1/0/2": alias("qualified_identifier") },
 			field_expression: { "0": field("object"), "2": field("property") },
@@ -174,7 +175,6 @@ export default grammar(
 			struct_item_tuple: { "4/1/0": field("where_clause") },
 			struct_pattern: { "0/0/1": alias("qualified_identifier") },
 			try_expression: { "0": field("argument") },
-			tuple_expression: { "2": field("elements") },
 			tuple_struct_pattern: [{ "2/0": field("fields") }, { "0/0/1": alias("qualified_identifier") }],
 			tuple_type: { "1": field("types") },
 			type_cast_expression: { "0": field("expression") },
@@ -188,8 +188,7 @@ export default grammar(
 			where_predicate: { "0/0/2": alias("qualified_identifier") },
 			parameters_elements: { ".": lead("attributed_parameter", "receiver", match("attributed_parameter", [match("self_parameter"), match("parameter", { "name": [match("self")] }, "receiver_parameter_declaration")])) },
 			trait_item: { "body:/(declaration_list as trait_interface_declaration_body)/declarations:/(function_signature_item)": alias("signature_method_declaration"), "body:/(declaration_list as trait_interface_declaration_body)/declarations:/(function_item)": alias("method_declaration") },
-			impl_item_body: { "body:/(declaration_list as extension_declaration_body)/declarations:/(function_item)": alias("method_declaration") },
-			arguments: { "(attributed_argument)": ($) => alias(copy("_attributed_argument"), $.argument) }
+			impl_item_body: { "body:/(declaration_list as extension_declaration_body)/declarations:/(function_item)": alias("method_declaration") }
 		}
 	})
 );

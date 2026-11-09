@@ -361,6 +361,7 @@ export namespace Expression {
 				K,
 				'elements',
 				| V.Declaration.Module<G>
+				| V.Element.Attributed<G>
 				| V.Element.Spread<G>
 				| V.Element.Spread.Parenthesized<G>
 				| V.Expression.Any<G>

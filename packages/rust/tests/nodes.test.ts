@@ -1663,18 +1663,19 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 
 	describe('tuple_expression', () => {
 		it('factory produces correct type', () => {
-			const node = ir.tupleExpression({
-				elements: ir.expressions({ $type: TSKindId.Identifier, text: 'test' } as never) as never
-			});
+			const node = ir.tupleExpression(
+				ir.tupleExpressionElements({ $type: TSKindId.Identifier, text: 'test' } as never) as never
+			);
 			expect(node.$type).toBe(TSKindId.TupleExpression);
 			expectBuiltNode(node);
 		});
 		it('render produces non-empty string', () => {
-			const node = ir.tupleExpression({
-				elements: ir.expressions({ $type: TSKindId.Identifier, text: 'test' } as never) as never
-			});
+			const node = ir.tupleExpression(
+				ir.tupleExpressionElements({ $type: TSKindId.Identifier, text: 'test' } as never) as never
+			);
 			const rendered = node.$render!();
 			expect(rendered.length).toBeGreaterThan(0);
+			expect(rendered).toContain('test');
 		});
 	});
 
@@ -2775,18 +2776,6 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 		});
 	});
 
-	describe('expressions', () => {
-		it('factory produces correct type', () => {
-			const node = ir.expressions(...[{ $type: TSKindId.Identifier, text: 'test' } as never]);
-			expect(node.$type).toBe(TSKindId.Expressions);
-			expectBuiltNode(node);
-		});
-		it('render produces non-empty string', () => {
-			const node = ir.expressions(...[{ $type: TSKindId.Identifier, text: 'test' } as never]);
-			expect(node.$render!().length).toBeGreaterThan(0);
-		});
-	});
-
 	describe('field_initializer_list_elements', () => {
 		it('factory produces correct type', () => {
 			const node = ir.fieldInitializerListElements(
@@ -2866,6 +2855,59 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 			expect(node.$type).toBe(TSKindId.StringOpen);
 			expectBuiltNode(node);
 			expect(node.$text()).toBe('"');
+		});
+	});
+
+	describe('attributed_element', () => {
+		it('factory produces correct type', () => {
+			const node = ir.attributedElement({
+				attributes: [
+					{
+						$type: TSKindId.AttributeItem,
+						content: { $type: TSKindId.Attribute, path: TSKindId.SelfModule as never } as never
+					} as never
+				],
+				expression: { $type: TSKindId.Identifier, text: 'test' } as never
+			});
+			expect(node.$type).toBe(TSKindId.AttributedElement);
+			expectBuiltNode(node);
+		});
+		it('render produces non-empty string', () => {
+			const node = ir.attributedElement({
+				attributes: [
+					{
+						$type: TSKindId.AttributeItem,
+						content: { $type: TSKindId.Attribute, path: TSKindId.SelfModule as never } as never
+					} as never
+				],
+				expression: { $type: TSKindId.Identifier, text: 'test' } as never
+			});
+			const rendered = node.$render!();
+			expect(rendered.length).toBeGreaterThan(0);
+		});
+	});
+
+	describe('array_expression_list_elements', () => {
+		it('factory produces correct type', () => {
+			const node = ir.arrayExpressionListElements(...[{ $type: TSKindId.Identifier, text: 'test' } as never]);
+			expect(node.$type).toBe(TSKindId.ArrayExpressionListElements);
+			expectBuiltNode(node);
+		});
+		it('render produces non-empty string', () => {
+			const node = ir.arrayExpressionListElements(...[{ $type: TSKindId.Identifier, text: 'test' } as never]);
+			expect(node.$render!().length).toBeGreaterThan(0);
+		});
+	});
+
+	describe('tuple_expression_elements', () => {
+		it('factory produces correct type', () => {
+			const node = ir.tupleExpressionElements(...[{ $type: TSKindId.Identifier, text: 'test' } as never]);
+			expect(node.$type).toBe(TSKindId.TupleExpressionElements);
+			expectBuiltNode(node);
+		});
+		it('render produces non-empty string', () => {
+			const node = ir.tupleExpressionElements(...[{ $type: TSKindId.Identifier, text: 'test' } as never]);
+			expect(node.$render!().length).toBeGreaterThan(0);
 		});
 	});
 
@@ -3035,37 +3077,6 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 			const node = ir.escapeSequenceHex('x00');
 			const rendered = node.$render!();
 			expect(rendered.length).toBeGreaterThan(0);
-		});
-	});
-
-	describe('array_expression_semi', () => {
-		it('factory produces correct type', () => {
-			const node = ir.arrayExpressionSemi({
-				element: { $type: TSKindId.Identifier, text: 'test' } as never,
-				length: { $type: TSKindId.Identifier, text: 'test' } as never
-			});
-			expect(node.$type).toBe(TSKindId.ArrayExpressionSemi);
-			expectBuiltNode(node);
-		});
-		it('render produces non-empty string', () => {
-			const node = ir.arrayExpressionSemi({
-				element: { $type: TSKindId.Identifier, text: 'test' } as never,
-				length: { $type: TSKindId.Identifier, text: 'test' } as never
-			});
-			const rendered = node.$render!();
-			expect(rendered.length).toBeGreaterThan(0);
-		});
-	});
-
-	describe('array_expression_list', () => {
-		it('factory produces correct type', () => {
-			const node = ir.arrayExpressionList({});
-			expect(node.$type).toBe(TSKindId.ArrayExpressionList);
-			expectBuiltNode(node);
-		});
-		it('render does not throw on minimal config', () => {
-			const node = ir.arrayExpressionList({});
-			expect(() => node.$render!()).not.toThrow();
 		});
 	});
 
@@ -3844,6 +3855,37 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 		});
 	});
 
+	describe('array_expression_semi', () => {
+		it('factory produces correct type', () => {
+			const node = ir.arrayExpressionSemi({
+				element: { $type: TSKindId.Identifier, text: 'test' } as never,
+				length: { $type: TSKindId.Identifier, text: 'test' } as never
+			});
+			expect(node.$type).toBe(TSKindId.ArrayExpressionSemi);
+			expectBuiltNode(node);
+		});
+		it('render produces non-empty string', () => {
+			const node = ir.arrayExpressionSemi({
+				element: { $type: TSKindId.Identifier, text: 'test' } as never,
+				length: { $type: TSKindId.Identifier, text: 'test' } as never
+			});
+			const rendered = node.$render!();
+			expect(rendered.length).toBeGreaterThan(0);
+		});
+	});
+
+	describe('array_expression_list', () => {
+		it('factory produces correct type', () => {
+			const node = ir.arrayExpressionList();
+			expect(node.$type).toBe(TSKindId.ArrayExpressionList);
+			expectBuiltNode(node);
+		});
+		it('render does not throw on minimal config', () => {
+			const node = ir.arrayExpressionList();
+			expect(() => node.$render!()).not.toThrow();
+		});
+	});
+
 	describe('float_literal', () => {
 		it('factory produces correct type', () => {
 			const node = ir.floatLiteral('1.0');
@@ -3913,34 +3955,6 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 		it('render does not throw on minimal config', () => {
 			const node = ir.extensionDeclarationBody();
 			expect(() => node.$render!()).not.toThrow();
-		});
-	});
-
-	describe('array_expression_list_elements', () => {
-		it('factory produces correct type', () => {
-			const node = ir.arrayExpressionListElements(
-				...[
-					{
-						$type: TSKindId.AttributedArgument,
-						attributeItems: [],
-						expression: { $type: TSKindId.Identifier, text: 'test' } as never
-					} as never
-				]
-			);
-			expect(node.$type).toBe(TSKindId.ArrayExpressionListElements);
-			expectBuiltNode(node);
-		});
-		it('render produces non-empty string', () => {
-			const node = ir.arrayExpressionListElements(
-				...[
-					{
-						$type: TSKindId.AttributedArgument,
-						attributeItems: [],
-						expression: { $type: TSKindId.Identifier, text: 'test' } as never
-					} as never
-				]
-			);
-			expect(node.$render!().length).toBeGreaterThan(0);
 		});
 	});
 

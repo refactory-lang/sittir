@@ -411,20 +411,20 @@ const _KIND_ID_STORED: ReadonlySet<number> = new Set([
 	63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91,
 	92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116,
 	117, 118, 121, 122, 124, 125, 126, 128, 129, 130, 131, 136, 137, 138, 139, 140, 156, 158, 163, 164, 168, 169, 170,
-	171, 172, 173, 174, 175, 178, 186, 244, 254, 281, 321, 336, 338, 339, 341, 361, 362, 363, 364, 421, 426, 477, 481
+	171, 172, 173, 174, 175, 178, 186, 244, 254, 281, 321, 336, 338, 339, 341, 360, 361, 362, 366, 421, 426, 477, 481
 ]);
 const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 	expression_statement: new Set([
 		1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 259, 263, 267, 268, 270, 271,
 		272, 273, 274, 275, 276, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 303, 304, 305, 306, 307, 308, 309, 310,
-		311, 312, 313, 332, 333, 336, 366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 394
+		311, 312, 313, 332, 333, 336, 363, 364, 365, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 394, 435, 436
 	]),
 	non_special_token: new Set([
 		1, 2, 3, 4, 8, 9, 10, 26, 29, 32, 33, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 54, 55,
 		57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85,
 		86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 100, 101, 103, 104, 105, 107, 108, 109, 110, 111, 112, 115, 116,
 		117, 124, 125, 126, 128, 130, 131, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162,
-		332, 333, 336, 341, 361, 362
+		332, 333, 336, 341, 360, 361
 	]),
 	attribute_item: new Set([192]),
 	inner_attribute_item: new Set([192]),
@@ -440,8 +440,8 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 		252, 254, 255, 256, 259, 265, 341, 351, 388, 389, 484
 	]),
 	type_parameters: new Set([127, 220, 221, 222, 347, 430]),
-	use_list: new Set([1, 125, 126, 127, 226, 227, 228, 229, 263, 348, 360, 481]),
-	use_wildcard: new Set([1, 125, 126, 127, 263, 360, 481]),
+	use_list: new Set([1, 125, 126, 127, 226, 227, 228, 229, 263, 348, 359, 481]),
+	use_wildcard: new Set([1, 125, 126, 127, 263, 359, 481]),
 	parameters: new Set([
 		1, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 127, 217, 218, 232, 233, 240, 242, 243, 244,
 		246, 248, 252, 254, 255, 256, 259, 265, 341, 349, 351, 388, 389, 429, 441, 484
@@ -471,37 +471,43 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 	try_expression: new Set([
 		1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 259, 263, 267, 268, 270, 271,
 		272, 273, 274, 275, 276, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 303, 304, 305, 306, 307, 308, 309, 310,
-		311, 312, 313, 332, 333, 336, 366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
+		311, 312, 313, 332, 333, 336, 363, 364, 365, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 435, 436
 	]),
 	return_expression: new Set([
 		1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 259, 263, 267, 268, 270, 271,
 		272, 273, 274, 275, 276, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 303, 304, 305, 306, 307, 308, 309, 310,
-		311, 312, 313, 332, 333, 336, 366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
+		311, 312, 313, 332, 333, 336, 363, 364, 365, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 435, 436
 	]),
 	yield_expression: new Set([
 		1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 259, 263, 267, 268, 270, 271,
 		272, 273, 274, 275, 276, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 303, 304, 305, 306, 307, 308, 309, 310,
-		311, 312, 313, 332, 333, 336, 366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
+		311, 312, 313, 332, 333, 336, 363, 364, 365, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 435, 436
 	]),
 	arguments: new Set([
 		1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 259, 263, 267, 268, 270, 271,
 		272, 273, 274, 275, 276, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 303, 304, 305, 306, 307, 308, 309, 310,
-		311, 312, 313, 332, 333, 336, 354, 366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 437
+		311, 312, 313, 332, 333, 336, 354, 363, 364, 365, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 431, 435, 436
 	]),
 	parenthesized_expression: new Set([
 		1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 259, 263, 267, 268, 270, 271,
 		272, 273, 274, 275, 276, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 303, 304, 305, 306, 307, 308, 309, 310,
-		311, 312, 313, 332, 333, 336, 366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
+		311, 312, 313, 332, 333, 336, 363, 364, 365, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 435, 436
+	]),
+	tuple_expression: new Set([
+		1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 259, 263, 267, 268, 270, 271,
+		272, 273, 274, 275, 276, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 303, 304, 305, 306, 307, 308, 309, 310,
+		311, 312, 313, 332, 333, 336, 363, 364, 365, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 435, 436
 	]),
 	field_initializer_list: new Set([
 		1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 259, 263, 267, 268, 270, 271,
 		272, 273, 274, 275, 276, 279, 280, 281, 282, 284, 285, 286, 287, 292, 297, 298, 299, 300, 303, 304, 305, 306, 307,
-		308, 309, 310, 311, 312, 313, 332, 333, 336, 356, 366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
+		308, 309, 310, 311, 312, 313, 332, 333, 336, 355, 363, 364, 365, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393,
+		435, 436
 	]),
 	base_field_initializer: new Set([
 		1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 259, 263, 267, 268, 270, 271,
 		272, 273, 274, 275, 276, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 303, 304, 305, 306, 307, 308, 309, 310,
-		311, 312, 313, 332, 333, 336, 366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
+		311, 312, 313, 332, 333, 336, 363, 364, 365, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 435, 436
 	]),
 	else_clause: new Set([287, 313]),
 	match_block: new Set([434]),
@@ -511,25 +517,25 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 	await_expression: new Set([
 		1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 259, 263, 267, 268, 270, 271,
 		272, 273, 274, 275, 276, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 303, 304, 305, 306, 307, 308, 309, 310,
-		311, 312, 313, 332, 333, 336, 366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
+		311, 312, 313, 332, 333, 336, 363, 364, 365, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 435, 436
 	]),
 	unsafe_block: new Set([313]),
 	try_block: new Set([313]),
 	tuple_pattern: new Set([
 		1, 116, 117, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 259, 263, 300, 313, 315, 316, 317, 318, 319,
-		321, 322, 324, 325, 326, 330, 332, 333, 336, 357, 358, 369, 370, 386, 387, 419, 422, 426
+		321, 322, 324, 325, 326, 330, 332, 333, 336, 356, 357, 369, 370, 386, 387, 419, 422, 426
 	]),
 	slice_pattern: new Set([
 		1, 116, 117, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 259, 263, 300, 313, 315, 316, 317, 318, 319,
-		321, 322, 324, 325, 326, 330, 332, 333, 336, 357, 358, 369, 370, 386, 387, 419, 422, 426
+		321, 322, 324, 325, 326, 330, 332, 333, 336, 356, 357, 369, 370, 386, 387, 419, 422, 426
 	]),
 	mut_pattern: new Set([
 		1, 116, 117, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 259, 263, 300, 313, 315, 316, 317, 318, 319,
-		321, 322, 324, 325, 326, 330, 332, 333, 336, 357, 358, 369, 370, 386, 387, 419, 422, 426
+		321, 322, 324, 325, 326, 330, 332, 333, 336, 356, 357, 369, 370, 386, 387, 419, 422, 426
 	]),
 	ref_pattern: new Set([
 		1, 116, 117, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 259, 263, 300, 313, 315, 316, 317, 318, 319,
-		321, 322, 324, 325, 326, 330, 332, 333, 336, 357, 358, 369, 370, 386, 387, 419, 422, 426
+		321, 322, 324, 325, 326, 330, 332, 333, 336, 356, 357, 369, 370, 386, 387, 419, 422, 426
 	]),
 	negative_literal: new Set([141, 142, 143, 144, 162]),
 	line_comment: new Set([155, 399, 400, 401]),
@@ -543,7 +549,7 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 	]),
 	where_predicates: new Set([212]),
 	type_parameters_elements: new Set([127, 220, 221, 222, 430]),
-	use_clauses: new Set([1, 125, 126, 127, 226, 227, 228, 229, 263, 348, 360, 481]),
+	use_clauses: new Set([1, 125, 126, 127, 226, 227, 228, 229, 263, 348, 359, 481]),
 	parameters_elements: new Set([
 		1, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 127, 217, 218, 232, 233, 240, 242, 243, 244,
 		246, 248, 252, 254, 255, 256, 259, 265, 341, 351, 388, 389, 429, 484
@@ -562,47 +568,53 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 	arguments_elements: new Set([
 		1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 259, 263, 267, 268, 270, 271,
 		272, 273, 274, 275, 276, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 303, 304, 305, 306, 307, 308, 309, 310,
-		311, 312, 313, 332, 333, 336, 366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 437
-	]),
-	expressions: new Set([
-		1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 259, 263, 267, 268, 270, 271,
-		272, 273, 274, 275, 276, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 303, 304, 305, 306, 307, 308, 309, 310,
-		311, 312, 313, 332, 333, 336, 366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
+		311, 312, 313, 332, 333, 336, 363, 364, 365, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 431, 435, 436
 	]),
 	field_initializer_list_elements: new Set([
 		1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 259, 263, 267, 268, 270, 271,
 		272, 273, 274, 275, 276, 279, 280, 281, 282, 284, 285, 286, 287, 292, 297, 298, 299, 300, 303, 304, 305, 306, 307,
-		308, 309, 310, 311, 312, 313, 332, 333, 336, 366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
+		308, 309, 310, 311, 312, 313, 332, 333, 336, 363, 364, 365, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 435,
+		436
 	]),
 	tuple_pattern_elements: new Set([
 		1, 116, 117, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 259, 263, 300, 313, 315, 316, 317, 318, 319,
-		321, 322, 324, 325, 326, 330, 332, 333, 336, 357, 358, 369, 370, 386, 387, 419, 422, 426
+		321, 322, 324, 325, 326, 330, 332, 333, 336, 356, 357, 369, 370, 386, 387, 419, 422, 426
 	]),
 	patterns: new Set([
 		1, 116, 117, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 259, 263, 300, 313, 315, 316, 317, 318, 319,
-		321, 322, 324, 325, 326, 330, 332, 333, 336, 357, 358, 369, 370, 386, 387, 419, 422, 426
+		321, 322, 324, 325, 326, 330, 332, 333, 336, 356, 357, 369, 370, 386, 387, 419, 422, 426
 	]),
 	struct_pattern_elements: new Set([321, 414, 415]),
 	use_wildcard_group: new Set([1, 125, 126, 127, 263, 481]),
+	array_expression_list_elements: new Set([
+		1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 259, 263, 267, 268, 270, 271,
+		272, 273, 274, 275, 276, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 303, 304, 305, 306, 307, 308, 309, 310,
+		311, 312, 313, 332, 333, 336, 363, 364, 365, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 435, 436
+	]),
+	tuple_expression_elements: new Set([
+		1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 259, 263, 267, 268, 270, 271,
+		272, 273, 274, 275, 276, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 303, 304, 305, 306, 307, 308, 309, 310,
+		311, 312, 313, 332, 333, 336, 363, 364, 365, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 435, 436
+	]),
 	reference_expression_raw_const: new Set([
 		1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 259, 263, 267, 268, 270, 271,
 		272, 273, 274, 275, 276, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 303, 304, 305, 306, 307, 308, 309, 310,
-		311, 312, 313, 332, 333, 336, 366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
+		311, 312, 313, 332, 333, 336, 363, 364, 365, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 435, 436
 	]),
 	reference_expression_raw_mut: new Set([
 		1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 259, 263, 267, 268, 270, 271,
 		272, 273, 274, 275, 276, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 303, 304, 305, 306, 307, 308, 309, 310,
-		311, 312, 313, 332, 333, 336, 366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
+		311, 312, 313, 332, 333, 336, 363, 364, 365, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 435, 436
 	]),
 	reference_expression_mut: new Set([
 		1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 259, 263, 267, 268, 270, 271,
 		272, 273, 274, 275, 276, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 303, 304, 305, 306, 307, 308, 309, 310,
-		311, 312, 313, 332, 333, 336, 366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
+		311, 312, 313, 332, 333, 336, 363, 364, 365, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 435, 436
 	]),
 	reference_expression_bare: new Set([
 		1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 259, 263, 267, 268, 270, 271,
 		272, 273, 274, 275, 276, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 303, 304, 305, 306, 307, 308, 309, 310,
-		311, 312, 313, 332, 333, 336, 366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
+		311, 312, 313, 332, 333, 336, 363, 364, 365, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 435, 436
 	]),
 	impl_item_positive_clause: new Set([1, 246, 265, 484]),
 	impl_item_negative_clause: new Set([1, 246, 265, 484]),
@@ -613,7 +625,7 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 	function_type_fn_form: new Set([210]),
 	or_pattern_prefix: new Set([
 		1, 116, 117, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 259, 263, 300, 313, 315, 316, 317, 318, 319,
-		321, 322, 324, 325, 326, 330, 332, 333, 336, 357, 358, 369, 370, 386, 387, 419, 422, 426
+		321, 322, 324, 325, 326, 330, 332, 333, 336, 356, 357, 369, 370, 386, 387, 419, 422, 426
 	]),
 	pointer_type_const: new Set([
 		1, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 127, 217, 218, 240, 242, 243, 244, 246, 248,
@@ -626,26 +638,26 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 	range_expression_postfix: new Set([
 		1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 259, 263, 267, 268, 270, 271,
 		272, 273, 274, 275, 276, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 303, 304, 305, 306, 307, 308, 309, 310,
-		311, 312, 313, 332, 333, 336, 366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
+		311, 312, 313, 332, 333, 336, 363, 364, 365, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 435, 436
 	]),
 	range_expression_prefix: new Set([
 		1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 259, 263, 267, 268, 270, 271,
 		272, 273, 274, 275, 276, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 303, 304, 305, 306, 307, 308, 309, 310,
-		311, 312, 313, 332, 333, 336, 366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
+		311, 312, 313, 332, 333, 336, 363, 364, 365, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 435, 436
 	]),
 	expression_statement_with_semi: new Set([
 		1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 259, 263, 267, 268, 270, 271,
 		272, 273, 274, 275, 276, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 303, 304, 305, 306, 307, 308, 309, 310,
-		311, 312, 313, 332, 333, 336, 366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
+		311, 312, 313, 332, 333, 336, 363, 364, 365, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 435, 436
 	]),
 	line_comment_doc_outer: new Set([166]),
 	line_comment_doc_inner: new Set([166]),
 	block_comment_doc_outer: new Set([165]),
 	block_comment_doc_inner: new Set([165]),
-	array_expression_list_elements: new Set([
+	array_expression_list: new Set([
 		1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 259, 263, 267, 268, 270, 271,
 		272, 273, 274, 275, 276, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 303, 304, 305, 306, 307, 308, 309, 310,
-		311, 312, 313, 332, 333, 336, 366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 431
+		311, 312, 313, 332, 333, 336, 363, 364, 365, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 435, 436
 	]),
 	parameters_elements_receiver_group: new Set([
 		1, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 127, 217, 218, 232, 233, 240, 242, 243, 244,
@@ -655,7 +667,7 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 	field_identifier: new Set([1]),
 	closure_parameter: new Set([
 		1, 116, 117, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 259, 263, 300, 313, 315, 316, 317, 318, 319,
-		321, 322, 324, 325, 326, 330, 332, 333, 336, 357, 358, 369, 370, 386, 387, 419, 422, 426
+		321, 322, 324, 325, 326, 330, 332, 333, 336, 356, 357, 369, 370, 386, 387, 419, 422, 426
 	]),
 	shorthand_field_identifier: new Set([1])
 };
@@ -947,6 +959,7 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
 	yield_expression: TSKindId.YieldExpression,
 	arguments: TSKindId.Arguments,
 	parenthesized_expression: TSKindId.ParenthesizedExpression,
+	tuple_expression: TSKindId.TupleExpression,
 	field_initializer_list: TSKindId.FieldInitializerList,
 	base_field_initializer: TSKindId.BaseFieldInitializer,
 	else_clause: TSKindId.ElseClause,
@@ -978,12 +991,13 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
 	use_bounds_elements: TSKindId.UseBoundsElements,
 	type_arguments_elements: TSKindId.TypeArgumentsElements,
 	arguments_elements: TSKindId.ArgumentsElements,
-	expressions: TSKindId.Expressions,
 	field_initializer_list_elements: TSKindId.FieldInitializerListElements,
 	tuple_pattern_elements: TSKindId.TuplePatternElements,
 	patterns: TSKindId.Patterns,
 	struct_pattern_elements: TSKindId.StructPatternElements,
 	use_wildcard_group: TSKindId.UseWildcardGroup,
+	array_expression_list_elements: TSKindId.ArrayExpressionListElements,
+	tuple_expression_elements: TSKindId.TupleExpressionElements,
 	reference_expression_raw_const: TSKindId.ReferenceExpressionRawConst,
 	reference_expression_raw_mut: TSKindId.ReferenceExpressionRawMut,
 	reference_expression_mut: TSKindId.ReferenceExpressionMut,
@@ -1015,9 +1029,9 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
 	delim_token_tree_bracket: TSKindId.DelimTokenTreeBracket,
 	delim_token_tree_brace: TSKindId.DelimTokenTreeBrace,
 	match_block_arms: TSKindId.MatchBlockArms,
+	array_expression_list: TSKindId.ArrayExpressionList,
 	trait_interface_declaration_body: TSKindId.TraitInterfaceDeclarationBody,
 	extension_declaration_body: TSKindId.ExtensionDeclarationBody,
-	array_expression_list_elements: TSKindId.ArrayExpressionListElements,
 	parameters_elements_receiver_group: TSKindId.ParametersElementsReceiverGroup,
 	type_identifier: TSKindId.TypeIdentifier,
 	field_identifier: TSKindId.FieldIdentifier,
@@ -1050,6 +1064,7 @@ const _wrapElementKinds: { readonly [kind: string]: string } = {
 	yield_expression: '_expression',
 	arguments: 'arguments_elements',
 	parenthesized_expression: '_expression',
+	tuple_expression: 'tuple_expression_elements',
 	field_initializer_list: 'field_initializer_list_elements',
 	base_field_initializer: '_expression',
 	match_block: 'match_block_arms',
@@ -1074,7 +1089,6 @@ const _wrapElementKinds: { readonly [kind: string]: string } = {
 	types: '_type',
 	type_arguments_elements: 'type_argument',
 	arguments_elements: 'argument',
-	expressions: '_expression',
 	patterns: '_pattern',
 	struct_pattern_elements: 'field_pattern',
 	reference_expression_raw_const: '_expression',
@@ -1094,9 +1108,9 @@ const _wrapElementKinds: { readonly [kind: string]: string } = {
 	line_comment_doc_inner: 'doc_comment',
 	block_comment_doc_outer: '_block_comment_content',
 	block_comment_doc_inner: '_block_comment_content',
+	array_expression_list: 'array_expression_list_elements',
 	trait_interface_declaration_body: '_declaration_statement_trait_item',
 	extension_declaration_body: '_declaration_statement_impl_item_body',
-	array_expression_list_elements: 'attributed_argument',
 	parameters_elements_receiver_group: 'parameters_elements',
 	type_identifier: 'identifier',
 	field_identifier: 'identifier',
@@ -1132,6 +1146,7 @@ const _wrapDirectKinds: ReadonlySet<string> = new Set([
 	'yield_expression',
 	'arguments',
 	'parenthesized_expression',
+	'tuple_expression',
 	'field_initializer_list',
 	'base_field_initializer',
 	'else_clause',
@@ -1171,6 +1186,7 @@ const _wrapDirectKinds: ReadonlySet<string> = new Set([
 	'line_comment_doc_inner',
 	'block_comment_doc_outer',
 	'block_comment_doc_inner',
+	'array_expression_list',
 	'parameters_elements_receiver_group',
 	'type_identifier',
 	'field_identifier',
@@ -1202,6 +1218,7 @@ const _wrapOptionalSoleKinds: ReadonlySet<string> = new Set([
 	'function_type_fn_form',
 	'block_comment_doc_outer',
 	'block_comment_doc_inner',
+	'array_expression_list',
 	'parameters_elements_receiver_group'
 ]);
 
@@ -1269,6 +1286,8 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			return F.buildArguments(children[0] as Parameters<typeof F.buildArguments>[0]);
 		case 'parenthesized_expression':
 			return F.buildParenthesizedExpression(children[0] as Parameters<typeof F.buildParenthesizedExpression>[0]);
+		case 'tuple_expression':
+			return F.buildTupleExpression(children[0] as Parameters<typeof F.buildTupleExpression>[0]);
 		case 'field_initializer_list':
 			return F.buildFieldInitializerList(children[0] as Parameters<typeof F.buildFieldInitializerList>[0]);
 		case 'base_field_initializer':
@@ -1331,8 +1350,6 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			return (coerceToTypeArgumentsElements as (...args: unknown[]) => unknown)(...children);
 		case 'arguments_elements':
 			return (coerceToArgumentsElements as (...args: unknown[]) => unknown)(...children);
-		case 'expressions':
-			return (coerceToExpressions as (...args: unknown[]) => unknown)(...children);
 		case 'field_initializer_list_elements':
 			return (coerceToFieldInitializerListElements as (...args: unknown[]) => unknown)(...children);
 		case 'tuple_pattern_elements':
@@ -1343,6 +1360,10 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			return (coerceToStructPatternElements as (...args: unknown[]) => unknown)(...children);
 		case 'use_wildcard_group':
 			return F.buildUseWildcardGroup(children[0] as Parameters<typeof F.buildUseWildcardGroup>[0]);
+		case 'array_expression_list_elements':
+			return (coerceToArrayExpressionListElements as (...args: unknown[]) => unknown)(...children);
+		case 'tuple_expression_elements':
+			return (coerceToTupleExpressionElements as (...args: unknown[]) => unknown)(...children);
 		case 'reference_expression_raw_const':
 			return F.buildReferenceExpressionRawConst(
 				children[0] as Parameters<typeof F.buildReferenceExpressionRawConst>[0]
@@ -1411,12 +1432,12 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			return (coerceToDelimTokenTreeBrace as (...args: unknown[]) => unknown)(...children);
 		case 'match_block_arms':
 			return (coerceToMatchBlockArms as (...args: unknown[]) => unknown)(...children);
+		case 'array_expression_list':
+			return F.buildArrayExpressionList(children[0] as Parameters<typeof F.buildArrayExpressionList>[0]);
 		case 'trait_interface_declaration_body':
 			return (coerceToTraitInterfaceDeclarationBody as (...args: unknown[]) => unknown)(...children);
 		case 'extension_declaration_body':
 			return (coerceToExtensionDeclarationBody as (...args: unknown[]) => unknown)(...children);
-		case 'array_expression_list_elements':
-			return (coerceToArrayExpressionListElements as (...args: unknown[]) => unknown)(...children);
 		case 'parameters_elements_receiver_group':
 			return F.buildParametersElementsReceiverGroup(
 				children[0] as Parameters<typeof F.buildParametersElementsReceiverGroup>[0]
@@ -2246,11 +2267,69 @@ const _K63: readonly string[] = [
 	'closure_expression_expr'
 ];
 const _K64: readonly string[] = ['remaining_field_pattern'];
-const _K65: readonly string[] = ['type_identifier', 'scoped_type_identifier', 'generic_type'];
-const _K66: readonly string[] = ['impl_item_positive_clause', 'impl_item_negative_clause'];
-const _K67: readonly string[] = ['self_module', 'super', 'crate'];
-const _K68: readonly string[] = ['visibility_modifier_pub_scope_in_path'];
-const _K69: readonly string[] = [
+const _K65: readonly string[] = [
+	'attributed_element',
+	'unary_expression',
+	'reference_expression_raw_const',
+	'reference_expression_raw_mut',
+	'reference_expression_mut',
+	'reference_expression_bare',
+	'try_expression',
+	'binary_expression',
+	'assignment_expression',
+	'compound_assignment_expr',
+	'type_cast_expression',
+	'call_expression',
+	'return_expression',
+	'yield_expression',
+	'string_literal',
+	'raw_string_literal',
+	'char_literal_escaped_simple',
+	'char_literal_escaped_unicode_fixed',
+	'char_literal_escaped_unicode_braced',
+	'char_literal_escaped_hex',
+	'char_literal_plain',
+	'integer_literal_decimal',
+	'integer_literal_hex',
+	'integer_literal_binary',
+	'integer_literal_octal',
+	'scoped_identifier',
+	'generic_function',
+	'await_expression',
+	'field_expression',
+	'array_expression_semi',
+	'array_expression_list',
+	'tuple_expression',
+	'macro_invocation',
+	'break_expression',
+	'continue_expression',
+	'index_expression',
+	'metavariable',
+	'closure_expression_block',
+	'closure_expression_expr',
+	'parenthesized_expression',
+	'struct_expression',
+	'unsafe_block',
+	'async_block',
+	'gen_block',
+	'try_block',
+	'block',
+	'if_expression',
+	'match_expression',
+	'while_expression',
+	'loop_expression',
+	'for_expression',
+	'const_block',
+	'range_expression_binary',
+	'range_expression_postfix',
+	'range_expression_prefix',
+	'range_expression_bare'
+];
+const _K66: readonly string[] = ['type_identifier', 'scoped_type_identifier', 'generic_type'];
+const _K67: readonly string[] = ['impl_item_positive_clause', 'impl_item_negative_clause'];
+const _K68: readonly string[] = ['self_module', 'super', 'crate'];
+const _K69: readonly string[] = ['visibility_modifier_pub_scope_in_path'];
+const _K70: readonly string[] = [
 	'unsafe_block',
 	'async_block',
 	'gen_block',
@@ -2263,13 +2342,13 @@ const _K69: readonly string[] = [
 	'for_expression',
 	'const_block'
 ];
-const _K70: readonly string[] = [
+const _K71: readonly string[] = [
 	'non_special_token',
 	'delim_token_tree_paren',
 	'delim_token_tree_bracket',
 	'delim_token_tree_brace'
 ];
-const _K71: readonly string[] = [
+const _K72: readonly string[] = [
 	'char_literal_empty',
 	'boolean_literal',
 	'float_literal',
@@ -2278,7 +2357,7 @@ const _K71: readonly string[] = [
 	'crate',
 	'identifier'
 ];
-const _K72: readonly string[] = [
+const _K73: readonly string[] = [
 	'string_literal',
 	'raw_string_literal',
 	'char_literal_escaped_simple',
@@ -2294,9 +2373,9 @@ const _K72: readonly string[] = [
 	'metavariable',
 	'scoped_identifier'
 ];
-const _K73: readonly string[] = ['range_pattern_with_left_bare'];
-const _K74: readonly string[] = ['range_pattern_with_left_with_right'];
-const _K75: readonly string[] = [
+const _K74: readonly string[] = ['range_pattern_with_left_bare'];
+const _K75: readonly string[] = ['range_pattern_with_left_with_right'];
+const _K76: readonly string[] = [
 	'parameter',
 	'variadic_parameter',
 	'abstract_type',
@@ -2315,8 +2394,8 @@ const _K75: readonly string[] = [
 	'bounded_type',
 	'removed_trait_bound'
 ];
-const _K76: readonly string[] = ['match_arm_with_comma', 'match_arm_block_ending', 'last_match_arm'];
-const _K77: readonly string[] = [
+const _K77: readonly string[] = ['match_arm_with_comma', 'match_arm_block_ending', 'last_match_arm'];
+const _K78: readonly string[] = [
 	'const_item',
 	'macro_invocation',
 	'macro_definition_paren',
@@ -2345,7 +2424,7 @@ const _K77: readonly string[] = [
 	'extern_crate_declaration',
 	'static_item'
 ];
-const _K78: readonly string[] = [
+const _K79: readonly string[] = [
 	'const_item',
 	'macro_invocation',
 	'macro_definition_paren',
@@ -2374,7 +2453,7 @@ const _K78: readonly string[] = [
 	'extern_crate_declaration',
 	'static_item'
 ];
-const _K79: readonly string[] = ['receiver_parameter_declaration', 'self_parameter'];
+const _K80: readonly string[] = ['receiver_parameter_declaration', 'self_parameter'];
 
 export function resolveSourceFile_shebang(value: T.SourceFile.LooseConfig['shebang']): Admit<T.SourceFile['_shebang']> {
 	return _resolveOneBranch<T.Shebang>(value, 'shebang', undefined, true);
@@ -5895,28 +5974,30 @@ export const coerceToParenthesizedExpression: ConfigSeat<
 	);
 };
 
-export function resolveTupleExpression_attributes(
-	value: T.TupleExpression.LooseConfig['attributes']
-): Admit<T.TupleExpression['_attributes']> {
-	return _resolveManyBranch<T.AttributeItem>(value, 'attribute_item');
-}
-
 export function resolveTupleExpression_elements(
 	value: T.TupleExpression.LooseConfig['elements']
 ): Admit<T.TupleExpression['_elements']> {
-	return _resolveOneBranch<T.Expressions>(value, 'expressions');
+	return _resolveOneBranch<T.TupleExpressionElements>(value, 'tuple_expression_elements');
 }
 
-export const coerceToTupleExpression: ConfigSeat<T.TupleExpression.Loose, ReturnType<typeof F.buildTupleExpression>> = (
-	input: T.TupleExpression.Loose
+export const coerceToTupleExpression: Seat<
+	T.TupleExpressionElements.LooseArgs,
+	ReturnType<typeof F.buildTupleExpression>
+> &
+	ConfigSeat<T.TupleExpression.Loose, ReturnType<typeof F.buildTupleExpression>> = (
+	...args: unknown[]
 ): ReturnType<typeof F.buildTupleExpression> => {
-	if (!_isLooseConfig<T.TupleExpression.LooseConfig>(input))
-		return input as unknown as ReturnType<typeof F.buildTupleExpression>;
-	currentHandle()?.admit(TSKindId.TupleExpression, [input]);
-	return F.buildTupleExpression({
-		attributes: resolveTupleExpression_attributes(input.attributes),
-		elements: resolveTupleExpression_elements(input.elements)
-	});
+	if (args.length > 1)
+		return F.buildTupleExpression(
+			coerceToTupleExpressionElements(...(args as Parameters<typeof coerceToTupleExpressionElements>))
+		);
+	const input = args[0] as T.TupleExpression.Loose;
+	return F.buildTupleExpression(
+		_resolveOneBranch<T.TupleExpressionElements>(
+			configFieldOr(input, 'elements', () => input, TSKindId.TupleExpression),
+			'tuple_expression_elements'
+		)
+	);
 };
 
 export function coerceToUnitExpression(_input?: T.UnitExpression.Loose): typeof F.buildUnitExpression {
@@ -7893,97 +7974,6 @@ export const coerceToArgumentsElements: Seat<
 	);
 };
 
-export const coerceToExpressions: Seat<T.Expressions.LooseArgs, ReturnType<typeof F.buildExpressions>> = (
-	...input: T.Expressions.LooseArgs
-): ReturnType<typeof F.buildExpressions> => {
-	currentHandle()?.admit(TSKindId.Expressions, input);
-	const _optsFirst =
-		typeof input[0] === 'object' &&
-		input[0] !== null &&
-		!Array.isArray(input[0]) &&
-		!('$type' in (input[0] as object)) &&
-		Object.keys(input[0] as object).every((k) => ['delimiter'].includes(k));
-	const options = (_optsFirst ? (input[0] as unknown) : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
-	const _rest = (_optsFirst ? input.slice(1) : input) as unknown as readonly unknown[];
-	if (_rest.length === 1 && isNodeOfKind(_rest[0], TSKindId.Expressions))
-		return withOptions(_rest[0], options) as unknown as ReturnType<typeof F.buildExpressions>;
-	return (F.buildExpressions as (...args: unknown[]) => ReturnType<typeof F.buildExpressions>)(
-		options,
-		...(_listElements(
-			_rest,
-			undefined,
-			(els) =>
-				listStorage(
-					_resolveKindEnumItems(els, [], (_v) => _resolveMany<T.Expression>(_v, _K12, _K13)),
-					(item) => coerceMixedEnumStorage(item, [])
-				),
-			[
-				'char_literal_empty',
-				'boolean_literal',
-				'float_literal',
-				'identifier',
-				'self',
-				'unit_expression',
-				'unary_expression',
-				'reference_expression_raw_const',
-				'reference_expression_raw_mut',
-				'reference_expression_mut',
-				'reference_expression_bare',
-				'try_expression',
-				'binary_expression',
-				'assignment_expression',
-				'compound_assignment_expr',
-				'type_cast_expression',
-				'call_expression',
-				'return_expression',
-				'yield_expression',
-				'string_literal',
-				'raw_string_literal',
-				'char_literal_escaped_simple',
-				'char_literal_escaped_unicode_fixed',
-				'char_literal_escaped_unicode_braced',
-				'char_literal_escaped_hex',
-				'char_literal_plain',
-				'integer_literal_decimal',
-				'integer_literal_hex',
-				'integer_literal_binary',
-				'integer_literal_octal',
-				'scoped_identifier',
-				'generic_function',
-				'await_expression',
-				'field_expression',
-				'array_expression_semi',
-				'array_expression_list',
-				'tuple_expression',
-				'macro_invocation',
-				'break_expression',
-				'continue_expression',
-				'index_expression',
-				'metavariable',
-				'closure_expression_block',
-				'closure_expression_expr',
-				'parenthesized_expression',
-				'struct_expression',
-				'unsafe_block',
-				'async_block',
-				'gen_block',
-				'try_block',
-				'block',
-				'if_expression',
-				'match_expression',
-				'while_expression',
-				'loop_expression',
-				'for_expression',
-				'const_block',
-				'range_expression_binary',
-				'range_expression_postfix',
-				'range_expression_prefix',
-				'range_expression_bare'
-			]
-		) as unknown as NonEmptyArray<Admit<T.Expression>>)
-	);
-};
-
 export const coerceToFieldInitializerListElements: Seat<
 	T.FieldInitializerListElements.LooseArgs,
 	ReturnType<typeof F.buildFieldInitializerListElements>
@@ -8247,6 +8237,222 @@ export const coerceToStringOpen: ConfigSeat<T.StringOpen.Loose, ReturnType<typeo
 ): ReturnType<typeof F.buildStringOpen> => {
 	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildStringOpen>;
 	return F.buildStringOpen(input as Parameters<typeof F.buildStringOpen>[0]);
+};
+
+export function resolveAttributedElement_attributes(
+	value: T.AttributedElement.LooseConfig['attributes']
+): Admit<T.AttributedElement['_attributes']> {
+	return _resolveManyBranch<T.AttributeItem>(value, 'attribute_item') as Admit<T.AttributedElement['_attributes']>;
+}
+
+export function resolveAttributedElement_expression(
+	value: T.AttributedElement.LooseConfig['expression']
+): Admit<T.AttributedElement['_expression']> {
+	return coerceMixedEnumStorage(
+		_resolveKindEnum(value, [], () => _resolveOne<T.Expression>(value, _K12, _K13)),
+		[]
+	);
+}
+
+export const coerceToAttributedElement: ConfigSeat<
+	T.AttributedElement.Loose,
+	ReturnType<typeof F.buildAttributedElement>
+> = (input: T.AttributedElement.Loose): ReturnType<typeof F.buildAttributedElement> => {
+	if (!_isLooseConfig<T.AttributedElement.LooseConfig>(input))
+		return input as unknown as ReturnType<typeof F.buildAttributedElement>;
+	currentHandle()?.admit(TSKindId.AttributedElement, [input]);
+	return F.buildAttributedElement({
+		attributes: resolveAttributedElement_attributes(input.attributes),
+		expression: resolveAttributedElement_expression(input.expression)
+	});
+};
+
+export const coerceToArrayExpressionListElements: Seat<
+	T.ArrayExpressionListElements.LooseArgs,
+	ReturnType<typeof F.buildArrayExpressionListElements>
+> = (...input: T.ArrayExpressionListElements.LooseArgs): ReturnType<typeof F.buildArrayExpressionListElements> => {
+	currentHandle()?.admit(TSKindId.ArrayExpressionListElements, input);
+	const _optsFirst =
+		typeof input[0] === 'object' &&
+		input[0] !== null &&
+		!Array.isArray(input[0]) &&
+		!('$type' in (input[0] as object)) &&
+		Object.keys(input[0] as object).every((k) => ['delimiter'].includes(k));
+	const options = (_optsFirst ? (input[0] as unknown) : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
+	const _rest = (_optsFirst ? input.slice(1) : input) as unknown as readonly unknown[];
+	if (_rest.length === 1 && isNodeOfKind(_rest[0], TSKindId.ArrayExpressionListElements))
+		return withOptions(_rest[0], options) as unknown as ReturnType<typeof F.buildArrayExpressionListElements>;
+	return (
+		F.buildArrayExpressionListElements as (...args: unknown[]) => ReturnType<typeof F.buildArrayExpressionListElements>
+	)(
+		options,
+		...(_listElements(
+			_rest,
+			undefined,
+			(els) =>
+				listStorage(
+					_resolveKindEnumItems(els, [], (_v) => _resolveMany<T.AttributedElement | T.Expression>(_v, _K12, _K65)),
+					(item) => coerceMixedEnumStorage(item, [])
+				),
+			[
+				'char_literal_empty',
+				'boolean_literal',
+				'float_literal',
+				'identifier',
+				'self',
+				'unit_expression',
+				'attributed_element',
+				'unary_expression',
+				'reference_expression_raw_const',
+				'reference_expression_raw_mut',
+				'reference_expression_mut',
+				'reference_expression_bare',
+				'try_expression',
+				'binary_expression',
+				'assignment_expression',
+				'compound_assignment_expr',
+				'type_cast_expression',
+				'call_expression',
+				'return_expression',
+				'yield_expression',
+				'string_literal',
+				'raw_string_literal',
+				'char_literal_escaped_simple',
+				'char_literal_escaped_unicode_fixed',
+				'char_literal_escaped_unicode_braced',
+				'char_literal_escaped_hex',
+				'char_literal_plain',
+				'integer_literal_decimal',
+				'integer_literal_hex',
+				'integer_literal_binary',
+				'integer_literal_octal',
+				'scoped_identifier',
+				'generic_function',
+				'await_expression',
+				'field_expression',
+				'array_expression_semi',
+				'array_expression_list',
+				'tuple_expression',
+				'macro_invocation',
+				'break_expression',
+				'continue_expression',
+				'index_expression',
+				'metavariable',
+				'closure_expression_block',
+				'closure_expression_expr',
+				'parenthesized_expression',
+				'struct_expression',
+				'unsafe_block',
+				'async_block',
+				'gen_block',
+				'try_block',
+				'block',
+				'if_expression',
+				'match_expression',
+				'while_expression',
+				'loop_expression',
+				'for_expression',
+				'const_block',
+				'range_expression_binary',
+				'range_expression_postfix',
+				'range_expression_prefix',
+				'range_expression_bare'
+			]
+		) as unknown as NonEmptyArray<Admit<T.AttributedElement | T.Expression>>)
+	);
+};
+
+export const coerceToTupleExpressionElements: Seat<
+	T.TupleExpressionElements.LooseArgs,
+	ReturnType<typeof F.buildTupleExpressionElements>
+> = (...input: T.TupleExpressionElements.LooseArgs): ReturnType<typeof F.buildTupleExpressionElements> => {
+	currentHandle()?.admit(TSKindId.TupleExpressionElements, input);
+	const _optsFirst =
+		typeof input[0] === 'object' &&
+		input[0] !== null &&
+		!Array.isArray(input[0]) &&
+		!('$type' in (input[0] as object)) &&
+		Object.keys(input[0] as object).every((k) => ['delimiter'].includes(k));
+	const options = (_optsFirst ? (input[0] as unknown) : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
+	const _rest = (_optsFirst ? input.slice(1) : input) as unknown as readonly unknown[];
+	if (_rest.length === 1 && isNodeOfKind(_rest[0], TSKindId.TupleExpressionElements))
+		return withOptions(_rest[0], options) as unknown as ReturnType<typeof F.buildTupleExpressionElements>;
+	return (F.buildTupleExpressionElements as (...args: unknown[]) => ReturnType<typeof F.buildTupleExpressionElements>)(
+		options,
+		...(_listElements(
+			_rest,
+			undefined,
+			(els) =>
+				listStorage(
+					_resolveKindEnumItems(els, [], (_v) => _resolveMany<T.AttributedElement | T.Expression>(_v, _K12, _K65)),
+					(item) => coerceMixedEnumStorage(item, [])
+				),
+			[
+				'char_literal_empty',
+				'boolean_literal',
+				'float_literal',
+				'identifier',
+				'self',
+				'unit_expression',
+				'attributed_element',
+				'unary_expression',
+				'reference_expression_raw_const',
+				'reference_expression_raw_mut',
+				'reference_expression_mut',
+				'reference_expression_bare',
+				'try_expression',
+				'binary_expression',
+				'assignment_expression',
+				'compound_assignment_expr',
+				'type_cast_expression',
+				'call_expression',
+				'return_expression',
+				'yield_expression',
+				'string_literal',
+				'raw_string_literal',
+				'char_literal_escaped_simple',
+				'char_literal_escaped_unicode_fixed',
+				'char_literal_escaped_unicode_braced',
+				'char_literal_escaped_hex',
+				'char_literal_plain',
+				'integer_literal_decimal',
+				'integer_literal_hex',
+				'integer_literal_binary',
+				'integer_literal_octal',
+				'scoped_identifier',
+				'generic_function',
+				'await_expression',
+				'field_expression',
+				'array_expression_semi',
+				'array_expression_list',
+				'tuple_expression',
+				'macro_invocation',
+				'break_expression',
+				'continue_expression',
+				'index_expression',
+				'metavariable',
+				'closure_expression_block',
+				'closure_expression_expr',
+				'parenthesized_expression',
+				'struct_expression',
+				'unsafe_block',
+				'async_block',
+				'gen_block',
+				'try_block',
+				'block',
+				'if_expression',
+				'match_expression',
+				'while_expression',
+				'loop_expression',
+				'for_expression',
+				'const_block',
+				'range_expression_binary',
+				'range_expression_postfix',
+				'range_expression_prefix',
+				'range_expression_bare'
+			]
+		) as unknown as NonEmptyArray<Admit<T.AttributedElement | T.Expression>>)
+	);
 };
 
 export function resolveIntegerLiteralDecimal_content(
@@ -8637,69 +8843,6 @@ export const coerceToEscapeSequenceHex: ConfigSeat<
 	);
 };
 
-export function resolveArrayExpressionSemi_attributes(
-	value: T.ArrayExpressionSemi.LooseConfig['attributes']
-): Admit<T.ArrayExpressionSemi['_attributes']> {
-	return _resolveManyBranch<T.AttributeItem>(value, 'attribute_item');
-}
-
-export function resolveArrayExpressionSemi_element(
-	value: T.ArrayExpressionSemi.LooseConfig['element']
-): Admit<T.ArrayExpressionSemi['_element']> {
-	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, [], () => _resolveOne<T.Expression>(value, _K12, _K13)),
-		[]
-	);
-}
-
-export function resolveArrayExpressionSemi_length(
-	value: T.ArrayExpressionSemi.LooseConfig['length']
-): Admit<T.ArrayExpressionSemi['_length']> {
-	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, [], () => _resolveOne<T.Expression>(value, _K12, _K13)),
-		[]
-	);
-}
-
-export const coerceToArrayExpressionSemi: ConfigSeat<
-	T.ArrayExpressionSemi.Loose,
-	ReturnType<typeof F.buildArrayExpressionSemi>
-> = (input: T.ArrayExpressionSemi.Loose): ReturnType<typeof F.buildArrayExpressionSemi> => {
-	if (!_isLooseConfig<T.ArrayExpressionSemi.LooseConfig>(input))
-		return input as unknown as ReturnType<typeof F.buildArrayExpressionSemi>;
-	currentHandle()?.admit(TSKindId.ArrayExpressionSemi, [input]);
-	return F.buildArrayExpressionSemi({
-		attributes: resolveArrayExpressionSemi_attributes(input.attributes),
-		element: resolveArrayExpressionSemi_element(input.element),
-		length: resolveArrayExpressionSemi_length(input.length)
-	});
-};
-
-export function resolveArrayExpressionList_attributes(
-	value: T.ArrayExpressionList.LooseConfig['attributes']
-): Admit<T.ArrayExpressionList['_attributes']> {
-	return _resolveManyBranch<T.AttributeItem>(value, 'attribute_item');
-}
-
-export function resolveArrayExpressionList_elements(
-	value: T.ArrayExpressionList.LooseConfig['elements']
-): Admit<T.ArrayExpressionList['_elements']> {
-	return _resolveOneBranch<T.ArrayExpressionListElements>(value, 'array_expression_list_elements', undefined, true);
-}
-
-export const coerceToArrayExpressionList: EmptyForm<
-	T.EmptyArrayExpressionList,
-	OptionalConfigSeat<T.ArrayExpressionList.Loose, ReturnType<typeof F.buildArrayExpressionList>>
-> = withEmptyForm((input?: T.ArrayExpressionList.Loose): ReturnType<typeof F.buildArrayExpressionList> => {
-	if (!_isLooseConfig<T.ArrayExpressionList.LooseConfig | undefined>(input))
-		return input as unknown as ReturnType<typeof F.buildArrayExpressionList>;
-	currentHandle()?.admit(TSKindId.ArrayExpressionList, [input]);
-	return F.buildArrayExpressionList({
-		attributes: resolveArrayExpressionList_attributes(input?.attributes),
-		elements: resolveArrayExpressionList_elements(input?.elements)
-	});
-});
-
 export function resolveAttributeInput_value(
 	value: T.AttributeInput.LooseConfig['value']
 ): Admit<T.AttributeInput['_value']> {
@@ -8960,7 +9103,7 @@ export const coerceToReferenceExpressionBare: ConfigSeat<
 export function resolveImplItemPositiveClause_trait(
 	value: T.ImplItemPositiveClause.LooseConfig['trait']
 ): Admit<T.ImplItemPositiveClause['_trait']> {
-	return _resolveOne<T.TypeIdentifier | T.ScopedTypeIdentifier | T.GenericType>(value, _K2, _K65);
+	return _resolveOne<T.TypeIdentifier | T.ScopedTypeIdentifier | T.GenericType>(value, _K2, _K66);
 }
 
 export const coerceToImplItemPositiveClause: ConfigSeat<
@@ -8973,7 +9116,7 @@ export const coerceToImplItemPositiveClause: ConfigSeat<
 		_resolveOne<T.TypeIdentifier | T.ScopedTypeIdentifier | T.GenericType>(
 			configFieldOr(input, 'trait', () => input, TSKindId.ImplItemPositiveClause),
 			_K2,
-			_K65
+			_K66
 		)
 	);
 };
@@ -8981,7 +9124,7 @@ export const coerceToImplItemPositiveClause: ConfigSeat<
 export function resolveImplItemNegativeClause_trait(
 	value: T.ImplItemNegativeClause.LooseConfig['trait']
 ): Admit<T.ImplItemNegativeClause['_trait']> {
-	return _resolveOne<T.TypeIdentifier | T.ScopedTypeIdentifier | T.GenericType>(value, _K2, _K65);
+	return _resolveOne<T.TypeIdentifier | T.ScopedTypeIdentifier | T.GenericType>(value, _K2, _K66);
 }
 
 export const coerceToImplItemNegativeClause: ConfigSeat<
@@ -8994,7 +9137,7 @@ export const coerceToImplItemNegativeClause: ConfigSeat<
 		_resolveOne<T.TypeIdentifier | T.ScopedTypeIdentifier | T.GenericType>(
 			configFieldOr(input, 'trait', () => input, TSKindId.ImplItemNegativeClause),
 			_K2,
-			_K65
+			_K66
 		)
 	);
 };
@@ -9017,7 +9160,7 @@ export function resolveImplItemBody_traitClause(
 	return _resolveOne<T.ImplItemPositiveClause | T.ImplItemNegativeClause>(
 		value,
 		_K2,
-		_K66,
+		_K67,
 		'impl_item_positive_clause'
 	);
 }
@@ -9073,7 +9216,7 @@ export function resolveImplItemSemi_traitClause(
 	return _resolveOne<T.ImplItemPositiveClause | T.ImplItemNegativeClause>(
 		value,
 		_K2,
-		_K66,
+		_K67,
 		'impl_item_positive_clause'
 	);
 }
@@ -9174,8 +9317,8 @@ export function resolveVisibilityModifierPubScope_content(
 				_resolveKindEnum(value, [TSKindId.SelfModule, TSKindId.Super, TSKindId.Crate], () =>
 					_resolveOne<TSKindId.SelfModule | TSKindId.Super | TSKindId.Crate | T.VisibilityModifierPubScopeInPath>(
 						value,
-						_K67,
-						_K68
+						_K68,
+						_K69
 					)
 				),
 				[['self', TSKindId.SelfModule] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const]
@@ -9201,8 +9344,8 @@ export const coerceToVisibilityModifierPubScope: ConfigSeat<
 						() =>
 							_resolveOne<TSKindId.SelfModule | TSKindId.Super | TSKindId.Crate | T.VisibilityModifierPubScopeInPath>(
 								configFieldOr(input, 'content', () => input, TSKindId.VisibilityModifierPubScope),
-								_K67,
-								_K68
+								_K68,
+								_K69
 							)
 					),
 					[
@@ -9718,7 +9861,7 @@ export function resolveMatchArmBlockEnding_body(
 		| T.LoopExpression
 		| T.ForExpression
 		| T.ConstBlock
-	>(value, _K2, _K69);
+	>(value, _K2, _K70);
 }
 
 export const coerceToMatchArmBlockEnding: ConfigSeat<
@@ -10003,7 +10146,7 @@ export const coerceToDelimTokenTreeParen: EmptyForm<
 	return F.buildDelimTokenTreeParen(
 		...(listStorage(
 			_resolveKindEnumItems(_elems, [TSKindId.Dollar], (_v) =>
-				_resolveMany<T.NonSpecialToken | TSKindId.Dollar | T.DelimTokenTree>(_v, _K2, _K70)
+				_resolveMany<T.NonSpecialToken | TSKindId.Dollar | T.DelimTokenTree>(_v, _K2, _K71)
 			),
 			(item) => coerceMixedEnumStorage(item, [['$', TSKindId.Dollar] as const])
 		) as unknown as Parameters<typeof F.buildDelimTokenTreeParen>)
@@ -10026,7 +10169,7 @@ export const coerceToDelimTokenTreeBracket: EmptyForm<
 	return F.buildDelimTokenTreeBracket(
 		...(listStorage(
 			_resolveKindEnumItems(_elems, [TSKindId.Dollar], (_v) =>
-				_resolveMany<T.NonSpecialToken | TSKindId.Dollar | T.DelimTokenTree>(_v, _K2, _K70)
+				_resolveMany<T.NonSpecialToken | TSKindId.Dollar | T.DelimTokenTree>(_v, _K2, _K71)
 			),
 			(item) => coerceMixedEnumStorage(item, [['$', TSKindId.Dollar] as const])
 		) as unknown as Parameters<typeof F.buildDelimTokenTreeBracket>)
@@ -10049,7 +10192,7 @@ export const coerceToDelimTokenTreeBrace: EmptyForm<
 	return F.buildDelimTokenTreeBrace(
 		...(listStorage(
 			_resolveKindEnumItems(_elems, [TSKindId.Dollar], (_v) =>
-				_resolveMany<T.NonSpecialToken | TSKindId.Dollar | T.DelimTokenTree>(_v, _K2, _K70)
+				_resolveMany<T.NonSpecialToken | TSKindId.Dollar | T.DelimTokenTree>(_v, _K2, _K71)
 			),
 			(item) => coerceMixedEnumStorage(item, [['$', TSKindId.Dollar] as const])
 		) as unknown as Parameters<typeof F.buildDelimTokenTreeBrace>)
@@ -10231,7 +10374,7 @@ export function resolveRangePatternPrefix_right(
 						| TSKindId.Crate
 						| T.Identifier
 						| T.ScopedIdentifier
-					>(value, _K71, _K72)
+					>(value, _K72, _K73)
 				),
 				[['self', TSKindId.SelfModule] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const]
 			)
@@ -10277,7 +10420,7 @@ export function resolveRangePatternWithLeftWithRight_right(
 						| TSKindId.Crate
 						| T.Identifier
 						| T.ScopedIdentifier
-					>(value, _K71, _K72)
+					>(value, _K72, _K73)
 				),
 				[['self', TSKindId.SelfModule] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const]
 			)
@@ -10320,7 +10463,7 @@ export function resolveRangePatternWithLeft_left(
 						| TSKindId.Crate
 						| T.Identifier
 						| T.ScopedIdentifier
-					>(value, _K71, _K72)
+					>(value, _K72, _K73)
 				),
 				[['self', TSKindId.SelfModule] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const]
 			)
@@ -10332,7 +10475,7 @@ export function resolveRangePatternWithLeft_content(
 ): Admit<T.RangePatternWithLeft['_content']> {
 	return coerceMixedEnumStorage(
 		_resolveKindEnum(value, [TSKindId.RangePatternWithLeftBare], () =>
-			_resolveOne<T.RangePatternWithLeftWithRight | TSKindId.RangePatternWithLeftBare>(value, _K73, _K74)
+			_resolveOne<T.RangePatternWithLeftWithRight | TSKindId.RangePatternWithLeftBare>(value, _K74, _K75)
 		),
 		[['..', TSKindId.RangePatternWithLeftBare] as const]
 	);
@@ -10538,7 +10681,7 @@ export function resolveAttributedParameter_content(
 	return _keywordOr(value, [['_', TSKindId.Underscore] as const], () =>
 		coerceMixedEnumStorage(
 			_resolveKindEnum(value, [TSKindId.Underscore], () =>
-				_resolveOne<T.Parameter | T.VariadicParameter | TSKindId.Underscore | T.Type>(value, _K14, _K75)
+				_resolveOne<T.Parameter | T.VariadicParameter | TSKindId.Underscore | T.Type>(value, _K14, _K76)
 			),
 			[['_', TSKindId.Underscore] as const]
 		)
@@ -10583,31 +10726,29 @@ export const coerceToAttributedTypeParameter: ConfigSeat<
 	});
 };
 
-export function resolveAttributedArgument_attributeItems(
-	value: T.AttributedArgument.LooseConfig['attributeItems']
-): Admit<T.AttributedArgument['_attribute_item']> {
+export function resolveArgument_attributeItems(
+	value: T.Argument.LooseConfig['attributeItems']
+): Admit<T.Argument['_attribute_item']> {
 	return _resolveManyBranch<T.AttributeItem>(value, 'attribute_item');
 }
 
-export function resolveAttributedArgument_expression(
-	value: T.AttributedArgument.LooseConfig['expression']
-): Admit<T.AttributedArgument['_expression']> {
+export function resolveArgument_expression(
+	value: T.Argument.LooseConfig['expression']
+): Admit<T.Argument['_expression']> {
 	return coerceMixedEnumStorage(
 		_resolveKindEnum(value, [], () => _resolveOne<T.Expression>(value, _K12, _K13)),
 		[]
 	);
 }
 
-export const coerceToAttributedArgument: ConfigSeat<
-	T.AttributedArgument.Loose,
-	ReturnType<typeof F.buildAttributedArgument>
-> = (input: T.AttributedArgument.Loose): ReturnType<typeof F.buildAttributedArgument> => {
-	if (!_isLooseConfig<T.AttributedArgument.LooseConfig>(input))
-		return input as unknown as ReturnType<typeof F.buildAttributedArgument>;
-	currentHandle()?.admit(TSKindId.AttributedArgument, [input]);
-	return F.buildAttributedArgument({
-		attributeItems: resolveAttributedArgument_attributeItems(input.attributeItems),
-		expression: resolveAttributedArgument_expression(input.expression)
+export const coerceToArgument: ConfigSeat<T.Argument.Loose, ReturnType<typeof F.buildArgument>> = (
+	input: T.Argument.Loose
+): ReturnType<typeof F.buildArgument> => {
+	if (!_isLooseConfig<T.Argument.LooseConfig>(input)) return input as unknown as ReturnType<typeof F.buildArgument>;
+	currentHandle()?.admit(TSKindId.Argument, [input]);
+	return F.buildArgument({
+		attributeItems: resolveArgument_attributeItems(input.attributeItems),
+		expression: resolveArgument_expression(input.expression)
 	});
 };
 
@@ -10690,11 +10831,68 @@ export const coerceToMatchBlockArms: Seat<T.MatchBlockArms.LooseArgs, ReturnType
 		return Array.isArray(v) ? v : [v];
 	})();
 	return F.buildMatchBlockArms(
-		...(_resolveMany<T.MatchArm | T.LastMatchArm>(_elems, _K2, _K76) as unknown as Parameters<
+		...(_resolveMany<T.MatchArm | T.LastMatchArm>(_elems, _K2, _K77) as unknown as Parameters<
 			typeof F.buildMatchBlockArms
 		>)
 	);
 };
+
+export function resolveArrayExpressionSemi_element(
+	value: T.ArrayExpressionSemi.LooseConfig['element']
+): Admit<T.ArrayExpressionSemi['_element']> {
+	return coerceMixedEnumStorage(
+		_resolveKindEnum(value, [], () => _resolveOne<T.Expression>(value, _K12, _K13)),
+		[]
+	);
+}
+
+export function resolveArrayExpressionSemi_length(
+	value: T.ArrayExpressionSemi.LooseConfig['length']
+): Admit<T.ArrayExpressionSemi['_length']> {
+	return coerceMixedEnumStorage(
+		_resolveKindEnum(value, [], () => _resolveOne<T.Expression>(value, _K12, _K13)),
+		[]
+	);
+}
+
+export const coerceToArrayExpressionSemi: ConfigSeat<
+	T.ArrayExpressionSemi.Loose,
+	ReturnType<typeof F.buildArrayExpressionSemi>
+> = (input: T.ArrayExpressionSemi.Loose): ReturnType<typeof F.buildArrayExpressionSemi> => {
+	if (!_isLooseConfig<T.ArrayExpressionSemi.LooseConfig>(input))
+		return input as unknown as ReturnType<typeof F.buildArrayExpressionSemi>;
+	currentHandle()?.admit(TSKindId.ArrayExpressionSemi, [input]);
+	return F.buildArrayExpressionSemi({
+		element: resolveArrayExpressionSemi_element(input.element),
+		length: resolveArrayExpressionSemi_length(input.length)
+	});
+};
+
+export function resolveArrayExpressionList_elements(
+	value: T.ArrayExpressionList.LooseConfig['elements']
+): Admit<T.ArrayExpressionList['_elements']> {
+	return _resolveOneBranch<T.ArrayExpressionListElements>(value, 'array_expression_list_elements', undefined, true);
+}
+
+export const coerceToArrayExpressionList: EmptyForm<
+	T.EmptyArrayExpressionList,
+	Seat<T.ArrayExpressionListElements.LooseArgs, ReturnType<typeof F.buildArrayExpressionList>> &
+		OptionalConfigSeat<T.ArrayExpressionList.Loose, ReturnType<typeof F.buildArrayExpressionList>>
+> = withEmptyForm((...args: unknown[]): ReturnType<typeof F.buildArrayExpressionList> => {
+	if (args.length > 1)
+		return F.buildArrayExpressionList(
+			coerceToArrayExpressionListElements(...(args as Parameters<typeof coerceToArrayExpressionListElements>))
+		);
+	const input = args[0] as T.ArrayExpressionList.Loose | undefined;
+	return F.buildArrayExpressionList(
+		_resolveOneBranch<T.ArrayExpressionListElements>(
+			configFieldOr(input, 'elements', () => input, TSKindId.ArrayExpressionList),
+			'array_expression_list_elements',
+			undefined,
+			true
+		)
+	);
+});
 
 export const coerceToFloatLiteral: ConfigSeat<T.FloatLiteral.Loose, ReturnType<typeof F.buildFloatLiteral>> = (
 	input: T.FloatLiteral.Loose
@@ -10796,7 +10994,7 @@ export const coerceToTraitInterfaceDeclarationBody: EmptyForm<
 		})();
 		return F.buildTraitInterfaceDeclarationBody(
 			...(listStorage(
-				_resolveKindEnumItems(_elems, [], (_v) => _resolveMany<T.DeclarationStatementTraitItem>(_v, _K0, _K77)),
+				_resolveKindEnumItems(_elems, [], (_v) => _resolveMany<T.DeclarationStatementTraitItem>(_v, _K0, _K78)),
 				(item) => coerceMixedEnumStorage(item, [])
 			) as unknown as Parameters<typeof F.buildTraitInterfaceDeclarationBody>)
 		);
@@ -10821,191 +11019,12 @@ export const coerceToExtensionDeclarationBody: EmptyForm<
 		})();
 		return F.buildExtensionDeclarationBody(
 			...(listStorage(
-				_resolveKindEnumItems(_elems, [], (_v) => _resolveMany<T.DeclarationStatementImplItemBody>(_v, _K0, _K78)),
+				_resolveKindEnumItems(_elems, [], (_v) => _resolveMany<T.DeclarationStatementImplItemBody>(_v, _K0, _K79)),
 				(item) => coerceMixedEnumStorage(item, [])
 			) as unknown as Parameters<typeof F.buildExtensionDeclarationBody>)
 		);
 	}
 );
-
-export function resolveArgument_attributeItems(
-	value: T.Argument.LooseConfig['attributeItems']
-): Admit<T.Argument['_attribute_item']> {
-	return _resolveManyBranch<T.AttributeItem>(value, 'attribute_item');
-}
-
-export function resolveArgument_expression(
-	value: T.Argument.LooseConfig['expression']
-): Admit<T.Argument['_expression']> {
-	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, [], () => _resolveOne<T.Expression>(value, _K12, _K13)),
-		[]
-	);
-}
-
-export const coerceToArgument: ConfigSeat<T.Argument.Loose, ReturnType<typeof F.buildArgument>> = (
-	input: T.Argument.Loose
-): ReturnType<typeof F.buildArgument> => {
-	if (!_isLooseConfig<T.Argument.LooseConfig>(input)) return input as unknown as ReturnType<typeof F.buildArgument>;
-	currentHandle()?.admit(TSKindId.Argument, [input]);
-	return F.buildArgument({
-		attributeItems: resolveArgument_attributeItems(input.attributeItems),
-		expression: resolveArgument_expression(input.expression)
-	});
-};
-
-export const coerceToArrayExpressionListElements: Seat<
-	T.ArrayExpressionListElements.LooseArgs,
-	ReturnType<typeof F.buildArrayExpressionListElements>
-> = (...input: T.ArrayExpressionListElements.LooseArgs): ReturnType<typeof F.buildArrayExpressionListElements> => {
-	currentHandle()?.admit(TSKindId.ArrayExpressionListElements, input);
-	const _optsFirst =
-		typeof input[0] === 'object' &&
-		input[0] !== null &&
-		!Array.isArray(input[0]) &&
-		!('$type' in (input[0] as object)) &&
-		Object.keys(input[0] as object).every((k) => ['delimiter'].includes(k));
-	const options = (_optsFirst ? (input[0] as unknown) : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
-	const _rest = (_optsFirst ? input.slice(1) : input) as unknown as readonly unknown[];
-	if (_rest.length === 1 && isNodeOfKind(_rest[0], TSKindId.ArrayExpressionListElements))
-		return withOptions(_rest[0], options) as unknown as ReturnType<typeof F.buildArrayExpressionListElements>;
-	return (
-		F.buildArrayExpressionListElements as (...args: unknown[]) => ReturnType<typeof F.buildArrayExpressionListElements>
-	)(
-		options,
-		...(_listElements(
-			_rest,
-			'attributed_argument',
-			(els) =>
-				listStorage(
-					_resolveKindEnumItems(els, [], (_v) => _resolveMany<T.AttributedArgument | T.Expression>(_v, _K12, _K13)),
-					(item) => coerceMixedEnumStorage(item, [])
-				),
-			[
-				'attributed_argument',
-				'char_literal_empty',
-				'boolean_literal',
-				'float_literal',
-				'identifier',
-				'self',
-				'unit_expression',
-				'unary_expression',
-				'reference_expression_raw_const',
-				'reference_expression_raw_mut',
-				'reference_expression_mut',
-				'reference_expression_bare',
-				'try_expression',
-				'binary_expression',
-				'assignment_expression',
-				'compound_assignment_expr',
-				'type_cast_expression',
-				'call_expression',
-				'return_expression',
-				'yield_expression',
-				'string_literal',
-				'raw_string_literal',
-				'char_literal_escaped_simple',
-				'char_literal_escaped_unicode_fixed',
-				'char_literal_escaped_unicode_braced',
-				'char_literal_escaped_hex',
-				'char_literal_plain',
-				'integer_literal_decimal',
-				'integer_literal_hex',
-				'integer_literal_binary',
-				'integer_literal_octal',
-				'scoped_identifier',
-				'generic_function',
-				'await_expression',
-				'field_expression',
-				'array_expression_semi',
-				'array_expression_list',
-				'tuple_expression',
-				'macro_invocation',
-				'break_expression',
-				'continue_expression',
-				'index_expression',
-				'metavariable',
-				'closure_expression_block',
-				'closure_expression_expr',
-				'parenthesized_expression',
-				'struct_expression',
-				'unsafe_block',
-				'async_block',
-				'gen_block',
-				'try_block',
-				'block',
-				'if_expression',
-				'match_expression',
-				'while_expression',
-				'loop_expression',
-				'for_expression',
-				'const_block',
-				'range_expression_binary',
-				'range_expression_postfix',
-				'range_expression_prefix',
-				'range_expression_bare'
-			],
-			[
-				'attributed_argument',
-				'unary_expression',
-				'reference_expression_raw_const',
-				'reference_expression_raw_mut',
-				'reference_expression_mut',
-				'reference_expression_bare',
-				'try_expression',
-				'binary_expression',
-				'assignment_expression',
-				'compound_assignment_expr',
-				'type_cast_expression',
-				'call_expression',
-				'return_expression',
-				'yield_expression',
-				'string_literal',
-				'raw_string_literal',
-				'char_literal_escaped_simple',
-				'char_literal_escaped_unicode_fixed',
-				'char_literal_escaped_unicode_braced',
-				'char_literal_escaped_hex',
-				'char_literal_plain',
-				'integer_literal_decimal',
-				'integer_literal_hex',
-				'integer_literal_binary',
-				'integer_literal_octal',
-				'scoped_identifier',
-				'generic_function',
-				'await_expression',
-				'field_expression',
-				'array_expression_semi',
-				'array_expression_list',
-				'tuple_expression',
-				'macro_invocation',
-				'break_expression',
-				'continue_expression',
-				'index_expression',
-				'metavariable',
-				'closure_expression_block',
-				'closure_expression_expr',
-				'parenthesized_expression',
-				'struct_expression',
-				'unsafe_block',
-				'async_block',
-				'gen_block',
-				'try_block',
-				'block',
-				'if_expression',
-				'match_expression',
-				'while_expression',
-				'loop_expression',
-				'for_expression',
-				'const_block',
-				'range_expression_binary',
-				'range_expression_postfix',
-				'range_expression_prefix',
-				'range_expression_bare'
-			]
-		) as unknown as NonEmptyArray<Admit<T.AttributedArgument | T.Expression>>)
-	);
-};
 
 export function resolveReceiverParameterDeclaration_mutable(
 	value: T.ReceiverParameterDeclaration.LooseConfig['mutable']
@@ -11044,7 +11063,7 @@ export function resolveAttributedParameterReceiver_attributeItem(
 export function resolveAttributedParameterReceiver_content(
 	value: T.AttributedParameterReceiver.LooseConfig['content']
 ): Admit<T.AttributedParameterReceiver['_content']> {
-	return _resolveOne<T.ReceiverParameterDeclaration | T.SelfParameter>(value, _K2, _K79);
+	return _resolveOne<T.ReceiverParameterDeclaration | T.SelfParameter>(value, _K2, _K80);
 }
 
 export const coerceToAttributedParameterReceiver: ConfigSeat<
@@ -11507,7 +11526,6 @@ export interface _FromMap {
 	readonly use_bounds_elements: typeof coerceToUseBoundsElements;
 	readonly type_arguments_elements: typeof coerceToTypeArgumentsElements;
 	readonly arguments_elements: typeof coerceToArgumentsElements;
-	readonly expressions: typeof coerceToExpressions;
 	readonly field_initializer_list_elements: typeof coerceToFieldInitializerListElements;
 	readonly tuple_pattern_elements: typeof coerceToTuplePatternElements;
 	readonly patterns: typeof coerceToPatterns;
@@ -11515,6 +11533,9 @@ export interface _FromMap {
 	readonly use_wildcard_group: typeof coerceToUseWildcardGroup;
 	readonly token_repetition_pattern_text: typeof coerceToTokenRepetitionPatternText;
 	readonly string_open: typeof coerceToStringOpen;
+	readonly attributed_element: typeof coerceToAttributedElement;
+	readonly array_expression_list_elements: typeof coerceToArrayExpressionListElements;
+	readonly tuple_expression_elements: typeof coerceToTupleExpressionElements;
 	readonly integer_literal_decimal: typeof coerceToIntegerLiteralDecimal;
 	readonly integer_literal_hex: typeof coerceToIntegerLiteralHex;
 	readonly integer_literal_binary: typeof coerceToIntegerLiteralBinary;
@@ -11529,8 +11550,6 @@ export interface _FromMap {
 	readonly escape_sequence_unicode_fixed: typeof coerceToEscapeSequenceUnicodeFixed;
 	readonly escape_sequence_unicode_braced: typeof coerceToEscapeSequenceUnicodeBraced;
 	readonly escape_sequence_hex: typeof coerceToEscapeSequenceHex;
-	readonly array_expression_semi: typeof coerceToArrayExpressionSemi;
-	readonly array_expression_list: typeof coerceToArrayExpressionList;
 	readonly attribute_input: typeof coerceToAttributeInput;
 	readonly closure_expression_block: typeof coerceToClosureExpressionBlock;
 	readonly closure_expression_expr: typeof coerceToClosureExpressionExpr;
@@ -11595,10 +11614,12 @@ export interface _FromMap {
 	readonly attributed_enum_variant: typeof coerceToAttributedEnumVariant;
 	readonly attributed_parameter: typeof coerceToAttributedParameter;
 	readonly attributed_type_parameter: typeof coerceToAttributedTypeParameter;
-	readonly attributed_argument: typeof coerceToAttributedArgument;
+	readonly argument: typeof coerceToArgument;
 	readonly attributed_ordered_field: typeof coerceToAttributedOrderedField;
 	readonly type_argument: typeof coerceToTypeArgument;
 	readonly match_block_arms: typeof coerceToMatchBlockArms;
+	readonly array_expression_semi: typeof coerceToArrayExpressionSemi;
+	readonly array_expression_list: typeof coerceToArrayExpressionList;
 	readonly float_literal: typeof coerceToFloatLiteral;
 	readonly string_content: typeof coerceToStringContent;
 	readonly raw_string_literal_content: typeof coerceToRawStringLiteralContent;
@@ -11616,8 +11637,6 @@ export interface _FromMap {
 	readonly _dedent: typeof coerceToDedent;
 	readonly trait_interface_declaration_body: typeof coerceToTraitInterfaceDeclarationBody;
 	readonly extension_declaration_body: typeof coerceToExtensionDeclarationBody;
-	readonly argument: typeof coerceToArgument;
-	readonly array_expression_list_elements: typeof coerceToArrayExpressionListElements;
 	readonly receiver_parameter_declaration: typeof coerceToReceiverParameterDeclaration;
 	readonly attributed_parameter_receiver: typeof coerceToAttributedParameterReceiver;
 	readonly parameters_elements_receiver: typeof coerceToParametersElementsReceiver;
@@ -11783,7 +11802,6 @@ export const _fromMap: _FromMap = {
 	use_bounds_elements: coerceToUseBoundsElements,
 	type_arguments_elements: coerceToTypeArgumentsElements,
 	arguments_elements: coerceToArgumentsElements,
-	expressions: coerceToExpressions,
 	field_initializer_list_elements: coerceToFieldInitializerListElements,
 	tuple_pattern_elements: coerceToTuplePatternElements,
 	patterns: coerceToPatterns,
@@ -11791,6 +11809,9 @@ export const _fromMap: _FromMap = {
 	use_wildcard_group: coerceToUseWildcardGroup,
 	token_repetition_pattern_text: coerceToTokenRepetitionPatternText,
 	string_open: coerceToStringOpen,
+	attributed_element: coerceToAttributedElement,
+	array_expression_list_elements: coerceToArrayExpressionListElements,
+	tuple_expression_elements: coerceToTupleExpressionElements,
 	integer_literal_decimal: coerceToIntegerLiteralDecimal,
 	integer_literal_hex: coerceToIntegerLiteralHex,
 	integer_literal_binary: coerceToIntegerLiteralBinary,
@@ -11805,8 +11826,6 @@ export const _fromMap: _FromMap = {
 	escape_sequence_unicode_fixed: coerceToEscapeSequenceUnicodeFixed,
 	escape_sequence_unicode_braced: coerceToEscapeSequenceUnicodeBraced,
 	escape_sequence_hex: coerceToEscapeSequenceHex,
-	array_expression_semi: coerceToArrayExpressionSemi,
-	array_expression_list: coerceToArrayExpressionList,
 	attribute_input: coerceToAttributeInput,
 	closure_expression_block: coerceToClosureExpressionBlock,
 	closure_expression_expr: coerceToClosureExpressionExpr,
@@ -11871,10 +11890,12 @@ export const _fromMap: _FromMap = {
 	attributed_enum_variant: coerceToAttributedEnumVariant,
 	attributed_parameter: coerceToAttributedParameter,
 	attributed_type_parameter: coerceToAttributedTypeParameter,
-	attributed_argument: coerceToAttributedArgument,
+	argument: coerceToArgument,
 	attributed_ordered_field: coerceToAttributedOrderedField,
 	type_argument: coerceToTypeArgument,
 	match_block_arms: coerceToMatchBlockArms,
+	array_expression_semi: coerceToArrayExpressionSemi,
+	array_expression_list: coerceToArrayExpressionList,
 	float_literal: coerceToFloatLiteral,
 	string_content: coerceToStringContent,
 	raw_string_literal_content: coerceToRawStringLiteralContent,
@@ -11892,8 +11913,6 @@ export const _fromMap: _FromMap = {
 	_dedent: coerceToDedent,
 	trait_interface_declaration_body: coerceToTraitInterfaceDeclarationBody,
 	extension_declaration_body: coerceToExtensionDeclarationBody,
-	argument: coerceToArgument,
-	array_expression_list_elements: coerceToArrayExpressionListElements,
 	receiver_parameter_declaration: coerceToReceiverParameterDeclaration,
 	attributed_parameter_receiver: coerceToAttributedParameterReceiver,
 	parameters_elements_receiver: coerceToParametersElementsReceiver,
