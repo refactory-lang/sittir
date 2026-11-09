@@ -19073,42 +19073,6 @@ function buildNumberFloatPoint$set(
 				return node as unknown as T.NumberFloatPoint.Bound;
 			});
 		}
-		case 'exponentSign': {
-			const _exponent_sign = config.exponentSign;
-			if (_exponent_sign !== undefined && typeof _exponent_sign !== 'string')
-				throw new Error(`number_float_point.exponent_sign: text must be a string: ${describeValue(_exponent_sign)}`);
-			if (_exponent_sign !== undefined && !_slotRe_buildNumberFloatPoint_exponent_sign.test(_exponent_sign))
-				throw new Error(
-					`number_float_point.exponent_sign: text does not match pattern: ${describeValue(_exponent_sign)}`
-				);
-			const handle = currentHandle();
-			if (handle !== undefined) admitChildren(handle, 'number_float_point', { exponentSign: _exponent_sign });
-			const arena = builtArenaOf(handle);
-			return arena.scope(() => {
-				const record = arena.copy(source, TSKindId.NumberFloatPoint as const, 3);
-				patchCell(arena, record, 5, 8, carriedSlot(source, 'exponentSign', _exponent_sign));
-				arena.carry(source, record, 3);
-				const node = arena.view(record);
-				return node as unknown as T.NumberFloatPoint.Bound;
-			});
-		}
-		case 'exponent': {
-			const _exponent = numberText(10, '', config.exponent);
-			if (_exponent !== undefined && typeof _exponent !== 'string')
-				throw new Error(`number_float_point.exponent: text must be a string: ${describeValue(_exponent)}`);
-			if (_exponent !== undefined && !_slotRe_buildNumberFloatPoint_exponent.test(_exponent))
-				throw new Error(`number_float_point.exponent: text does not match pattern: ${describeValue(_exponent)}`);
-			const handle = currentHandle();
-			if (handle !== undefined) admitChildren(handle, 'number_float_point', { exponent: _exponent });
-			const arena = builtArenaOf(handle);
-			return arena.scope(() => {
-				const record = arena.copy(source, TSKindId.NumberFloatPoint as const, 4);
-				patchCell(arena, record, 6, 10, carriedSlot(source, 'exponent', _exponent));
-				arena.carry(source, record, 4);
-				const node = arena.view(record);
-				return node as unknown as T.NumberFloatPoint.Bound;
-			});
-		}
 	}
 	throw new Error(`number_float_point writes no slot ${slot} alone`);
 }
@@ -19131,14 +19095,22 @@ function withNumberFloatPoint(node: object, setter: string, args: readonly unkno
 				rebuilt(node, handle, () => buildNumberFloatPoint$patch(node, config, { ...options, marker: spelling }))
 			);
 		}
-		case 'exponentSign':
+		case 'exponentSign': {
+			const inputs = builtInputs(node);
+			const config = inputs.config as T.NumberFloatPoint.Config;
+			const options = inputs.options as T.NumberFloatPoint.Options;
 			return applySetter(args, (value?: Admit<'-' | '+'>) =>
-				rebuilt(node, handle, () => buildNumberFloatPoint$set(node, 'exponentSign', { exponentSign: value }))
+				rebuilt(node, handle, () => buildNumberFloatPoint$patch(node, { ...config, exponentSign: value }, options))
 			);
-		case 'exponent':
+		}
+		case 'exponent': {
+			const inputs = builtInputs(node);
+			const config = inputs.config as T.NumberFloatPoint.Config;
+			const options = inputs.options as T.NumberFloatPoint.Options;
 			return applySetter(args, (value?: Admit<string | number | bigint>) =>
-				rebuilt(node, handle, () => buildNumberFloatPoint$set(node, 'exponent', { exponent: value }))
+				rebuilt(node, handle, () => buildNumberFloatPoint$patch(node, { ...config, exponent: value }, options))
 			);
+		}
 	}
 	throw new Error(`number_float_point has no $with.${setter}`);
 }
@@ -19299,46 +19271,6 @@ function buildNumberFloatLeadingPoint$set(
 				return node as unknown as T.NumberFloatLeadingPoint.Bound;
 			});
 		}
-		case 'exponentSign': {
-			const _exponent_sign = config.exponentSign;
-			if (_exponent_sign !== undefined && typeof _exponent_sign !== 'string')
-				throw new Error(
-					`number_float_leading_point.exponent_sign: text must be a string: ${describeValue(_exponent_sign)}`
-				);
-			if (_exponent_sign !== undefined && !_slotRe_buildNumberFloatLeadingPoint_exponent_sign.test(_exponent_sign))
-				throw new Error(
-					`number_float_leading_point.exponent_sign: text does not match pattern: ${describeValue(_exponent_sign)}`
-				);
-			const handle = currentHandle();
-			if (handle !== undefined) admitChildren(handle, 'number_float_leading_point', { exponentSign: _exponent_sign });
-			const arena = builtArenaOf(handle);
-			return arena.scope(() => {
-				const record = arena.copy(source, TSKindId.NumberFloatLeadingPoint as const, 2);
-				patchCell(arena, record, 4, 6, carriedSlot(source, 'exponentSign', _exponent_sign));
-				arena.carry(source, record, 2);
-				const node = arena.view(record);
-				return node as unknown as T.NumberFloatLeadingPoint.Bound;
-			});
-		}
-		case 'exponent': {
-			const _exponent = numberText(10, '', config.exponent);
-			if (_exponent !== undefined && typeof _exponent !== 'string')
-				throw new Error(`number_float_leading_point.exponent: text must be a string: ${describeValue(_exponent)}`);
-			if (_exponent !== undefined && !_slotRe_buildNumberFloatLeadingPoint_exponent.test(_exponent))
-				throw new Error(
-					`number_float_leading_point.exponent: text does not match pattern: ${describeValue(_exponent)}`
-				);
-			const handle = currentHandle();
-			if (handle !== undefined) admitChildren(handle, 'number_float_leading_point', { exponent: _exponent });
-			const arena = builtArenaOf(handle);
-			return arena.scope(() => {
-				const record = arena.copy(source, TSKindId.NumberFloatLeadingPoint as const, 3);
-				patchCell(arena, record, 5, 8, carriedSlot(source, 'exponent', _exponent));
-				arena.carry(source, record, 3);
-				const node = arena.view(record);
-				return node as unknown as T.NumberFloatLeadingPoint.Bound;
-			});
-		}
 	}
 	throw new Error(`number_float_leading_point writes no slot ${slot} alone`);
 }
@@ -19357,14 +19289,24 @@ function withNumberFloatLeadingPoint(node: object, setter: string, args: readonl
 				rebuilt(node, handle, () => buildNumberFloatLeadingPoint$patch(node, config, { ...options, marker: spelling }))
 			);
 		}
-		case 'exponentSign':
+		case 'exponentSign': {
+			const inputs = builtInputs(node);
+			const config = inputs.config as T.NumberFloatLeadingPoint.Config;
+			const options = inputs.options as T.NumberFloatLeadingPoint.Options;
 			return applySetter(args, (value?: Admit<'-' | '+'>) =>
-				rebuilt(node, handle, () => buildNumberFloatLeadingPoint$set(node, 'exponentSign', { exponentSign: value }))
+				rebuilt(node, handle, () =>
+					buildNumberFloatLeadingPoint$patch(node, { ...config, exponentSign: value }, options)
+				)
 			);
-		case 'exponent':
+		}
+		case 'exponent': {
+			const inputs = builtInputs(node);
+			const config = inputs.config as T.NumberFloatLeadingPoint.Config;
+			const options = inputs.options as T.NumberFloatLeadingPoint.Options;
 			return applySetter(args, (value?: Admit<string | number | bigint>) =>
-				rebuilt(node, handle, () => buildNumberFloatLeadingPoint$set(node, 'exponent', { exponent: value }))
+				rebuilt(node, handle, () => buildNumberFloatLeadingPoint$patch(node, { ...config, exponent: value }, options))
 			);
+		}
 	}
 	throw new Error(`number_float_leading_point has no $with.${setter}`);
 }

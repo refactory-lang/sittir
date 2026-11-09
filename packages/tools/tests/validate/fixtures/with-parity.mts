@@ -3,7 +3,11 @@
 // engine of the given structure checking, and prints one JSON line per step
 // with a digest of the built arena after it (the words and bytes of every
 // live chunk, each chunk's counts, and the chunks freed so far, in order)
-// and of the render, then one line once every handle is released. Two runs
+// and of the render, then one line once every handle is released. A slot
+// some occurrence of its kind leaves empty is also emptied and then filled
+// again, since a slot's presence can decide another slot's; past the first
+// occurrences of a kind, one that fills a slot none of them fills is taken
+// too. Two runs
 // of the same sequence print the same lines when both modes write the same
 // arena. A child process per mode, because tree ids come from one counter
 // per process, and link records name them.
@@ -89,6 +93,8 @@ function set(node: Node, key: string, value: unknown): unknown {
 }
 
 const byKind = new Map<number, Node[]>();
+const emptied = new Map<number, Map<string, unknown>>();
+const filledBy = new Map<number, Set<string>>();
 const roots: Node[] = [];
 function collect(value: unknown, depth: number): void {
 	if (Array.isArray(value)) {
@@ -97,9 +103,23 @@ function collect(value: unknown, depth: number): void {
 	}
 	if (!isNode(value) || depth > 64) return;
 	const seen = byKind.get(value.$type) ?? [];
-	if (seen.length < Number(occurrences)) seen.push(value);
+	const filled = filledBy.get(value.$type) ?? new Set<string>();
+	const slots = settersOf(value).map((key) => [key, read(value, key)] as const);
+	const isEmpty = (slot: unknown): boolean => slot === undefined || (Array.isArray(slot) && slot.length === 0);
+	if (seen.length < Number(occurrences) || slots.some(([key, slot]) => !isEmpty(slot) && !filled.has(key))) {
+		seen.push(value);
+		for (const [key, slot] of slots) if (!isEmpty(slot)) filled.add(key);
+	}
 	byKind.set(value.$type, seen);
-	for (const key of settersOf(value)) collect(read(value, key), depth + 1);
+	filledBy.set(value.$type, filled);
+	for (const [key, slot] of slots) {
+		if (isEmpty(slot)) {
+			const empty = emptied.get(value.$type) ?? new Map<string, unknown>();
+			if (!empty.has(key)) empty.set(key, slot);
+			emptied.set(value.$type, empty);
+		}
+		collect(slot, depth + 1);
+	}
 }
 for (const entry of loadCorpusEntries(grammar)) {
 	const root = engine.parse(entry.source) as unknown as Node;
@@ -110,6 +130,7 @@ for (const entry of loadCorpusEntries(grammar)) {
 let setters = 0;
 for (const kind of [...byKind.keys()].sort((a, b) => a - b)) {
 	const nodes = byKind.get(kind)!;
+	const empty = emptied.get(kind) ?? new Map<string, unknown>();
 	for (let n = 0; n < nodes.length; n++) {
 		const node = nodes[n]!;
 		const other = nodes[(n + 1) % nodes.length]!;
@@ -118,9 +139,12 @@ for (const kind of [...byKind.keys()].sort((a, b) => a - b)) {
 			const at = `${kind}.${key}#${n}`;
 			const parsed = step(`${at} parsed same`, () => set(node, key, read(node, key)));
 			if (other !== node) step(`${at} parsed changed`, () => set(node, key, read(other, key)));
+			const cleared = empty.has(key) ? step(`${at} parsed emptied`, () => set(node, key, empty.get(key))) : undefined;
+			if (cleared !== undefined) step(`${at} built filled`, () => set(cleared, key, read(node, key)));
 			if (parsed === undefined) continue;
 			step(`${at} built same`, () => set(parsed, key, read(parsed, key)));
 			if (other !== node) step(`${at} built changed`, () => set(parsed, key, read(other, key)));
+			if (empty.has(key)) step(`${at} built emptied`, () => set(parsed, key, empty.get(key)));
 		}
 	}
 	for (const node of held.splice(0)) engine.release(node as never);

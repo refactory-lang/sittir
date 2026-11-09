@@ -1441,12 +1441,15 @@ function registeredSlotSource(
 		slot.delimiterRole !== undefined || slot.optionDefaultArm === undefined
 			? `options?.${slot.propertyName}`
 			: `options?.${slot.propertyName} ?? ${JSON.stringify(slot.optionDefaultArm)}`;
-	const peers = hasConfig ? optionalGroupPeers(node, slot.name) : undefined;
-	const present = (peers ?? [])
-		.map((name) => node.slots.find((candidate) => candidate.name === name))
-		.filter((peer): peer is AssembledNonterminal => peer !== undefined && peer.registeredOption === undefined)
-		.map((peer) => `config.${peer.propertyName} !== undefined`);
+	const present = (hasConfig ? presencePeersOf(node, slot) : []).map((peer) => `config.${peer.propertyName} !== undefined`);
 	return present.length === 0 ? value : `(${present.join(' || ')}) ? (${value}) : undefined`;
+}
+
+function presencePeersOf(node: FieldCarryingNode, slot: AssembledNonterminal): AssembledNonterminal[] {
+	if (slot.registeredOption === 'choice') return [];
+	return (optionalGroupPeers(node, slot.name) ?? [])
+		.map((name) => node.slots.find((candidate) => candidate.name === name))
+		.filter((peer): peer is AssembledNonterminal => peer !== undefined && peer.registeredOption === undefined);
 }
 
 export function omitRegistered(type: string, node: { readonly slots: readonly AssembledNonterminal[] }, omitter: 'OmitEach' | 'OmitRegistered' = 'OmitEach'): string {
@@ -2010,8 +2013,9 @@ function fieldCarryingFactoryText(
 		setters = [];
 		const optionsArg = registered.length === 0 && preference === undefined ? '' : ', options';
 		const inPlace = backend === 'records' && leadingOptions === undefined && ownText === undefined && plan.viewPlan === undefined && check === undefined;
+		const presenceRead = new Set(registered.flatMap((r) => presencePeersOf(node, r)));
 		const slotSet = (f: AssembledNonterminal, value: string): Pick<SetterEntry, 'body' | 'reads'> => {
-			if (inPlace && f !== preference?.open) {
+			if (inPlace && f !== preference?.open && !presenceRead.has(f)) {
 				inPlaceSlots.push(f);
 				return { body: `${fn}$set(node, ${JSON.stringify(f.propertyName)}, { ${f.propertyName}: ${value} })`, reads: [] };
 			}
