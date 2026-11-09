@@ -4,7 +4,7 @@ import { LIST_VIEW_MEMBERS } from '@sittir/common/utils';
 import { hostTemplateFor } from '@sittir/common';
 import type { ReparseHostsConfig } from '../dsl/wire/reparse-hosts.ts';
 import { REPARSE_HOST_PRIORITY } from '../dsl/wire/reparse-hosts.ts';
-import { groupSeatMembers, groupSeatReaders, triviaPositionsOf, listSelfViewParts, nodeMemberParts, ownerViewParts, seatedSetters, triviaInnerImports, type HeldLocal, type SetterEntry, type StoredAccessor } from './node-members.ts';
+import { groupSeatMembers, groupSeatReaders, triviaPositionsOf, listSelfViewParts, nodeMemberParts, ownerViewParts, seatedSetters, triviaInnerImports, type HeldLocal, type HeldRead, type SetterEntry, type StoredAccessor } from './node-members.ts';
 import { findOwnKindEntry, reservedWordset, reservedWordsAdmittedIn } from '../dsl/symbol-table.ts';
 import { GLOBAL_WORDSET } from '../dsl/rule-metadata.ts';
 import type { AuthoredCompound } from '../compiler/model/node-map.ts';
@@ -1893,8 +1893,8 @@ interface FactoryHeld extends HeldLocal {
 	readonly recorded: string;
 }
 
-function recordInputLines(held: readonly FactoryHeld[]): string[] {
-	return held.map((field) => `  const ${field.local} = ${field.recorded} as ${field.type};`);
+function recordInputLines(held: readonly FactoryHeld[]): HeldRead[] {
+	return held.map((field) => ({ local: field.local, line: `  const ${field.local} = ${field.recorded} as ${field.type};` }));
 }
 
 function storedRead(hint: GroupSeatHint): string {
@@ -1949,30 +1949,40 @@ function fieldCarryingFactoryText(
 			? `${exportKw}function ${fn}(${surface.params}): ${builtName} {`
 			: `${exportKw}function ${fn}(...args: unknown[]): ${builtName} {`;
 	let valueSourceFor: (f: AssembledNonterminal) => string;
-	let slotsToEmit: readonly AssembledNonterminal[] = slots;
 	const registered = registeredSlots(node);
 	const registeredSet = new Set(registered);
+	const slotsToEmit = spreadFacts ? emittedSlots(slots, spreadFacts, registeredSet) : slots;
 	const preference = delimiterPreferenceOf(node);
 	const forwarded = forwardedConstruction(node, surface, nodeMap, kindEntries);
 	const forwardTarget = forwarded?.target ?? null;
+	const ownText = ownTextLeaf(node);
+	const plan = seatPlanOf(node, nodeMap, kindEntries);
+	const owner = plan.viewPlan?.owner;
+	const check = delimitedCheckCall(node, slotsToEmit, leafReConsts);
+	const inPlaceSlots: AssembledNonterminal[] = [];
 	const call = (callee: string, args: string): string => (backend === 'records' ? `${callee}$patch(node, ${args})` : `${callee}(${args})`);
-	const spellingWith = (rebuild: (patch: string) => string): SetterEntry[] =>
+	const spellingWith = (rebuild: (patch: string) => string, reads: readonly string[]): SetterEntry[] =>
 		registered.map((f) => ({
 			name: f.propertyName,
 			params: `spelling: ${constructionFieldElementType(f, nodeMap, kindEntries)}${hasBlankArm(f) ? ' | null' : ''}`,
-			body: rebuild(`{ ...options, ${f.propertyName}: spelling }`)
+			body: rebuild(`{ ...options, ${f.propertyName}: spelling }`),
+			reads
 		}));
 	let setters: SetterEntry[];
 	let valueType = 'never';
 
 	if (spreadFacts) {
-		slotsToEmit = emittedSlots(slots, spreadFacts, registeredSet);
 		const setter = spreadFacts.slot.propertyName;
 		const optionsFirst = leadingOptions === undefined ? '' : 'options, ';
 		valueSourceFor = (f) => (f === spreadFacts.slot ? admittedSlotInput(f, 'children', nodeMap, kindEntries, node.typeName) : '');
 		setters = [
-			{ name: setter, params: `...vs: ${slotListTypeOf(spreadFacts.slot, (s) => admitNodes(spreadElementType(s, nodeMap, kindEntries)), 'mutable')}`, body: call(fn, `${optionsFirst}...restItems(${JSON.stringify(setter)}, vs)`) },
-			...spellingWith((patch) => call(fn, `${patch}, ...children`))
+			{
+				name: setter,
+				params: `...vs: ${slotListTypeOf(spreadFacts.slot, (s) => admitNodes(spreadElementType(s, nodeMap, kindEntries)), 'mutable')}`,
+				body: call(fn, `${optionsFirst}...restItems(${JSON.stringify(setter)}, vs)`),
+				reads: optionsFirst === '' ? [] : ['options']
+			},
+			...spellingWith((patch) => call(fn, `${patch}, ...children`), ['options', 'children'])
 		];
 	} else if (singleField) {
 		const elemType = surface.directParamType!;
@@ -1984,8 +1994,8 @@ function fieldCarryingFactoryText(
 		const direct = forwardTarget === null ? fn : `_${fn}`;
 		const rebuildDirect = (options: string): string => call(direct, `value, ${options}`);
 		setters = [
-			{ name: singleField.propertyName, params: setterSig, body: registered.length === 0 ? call(direct, 'value') : call(direct, 'value, options') },
-			...spellingWith(rebuildDirect)
+			{ name: singleField.propertyName, params: setterSig, body: registered.length === 0 ? call(direct, 'value') : call(direct, 'value, options'), reads: registered.length === 0 ? [] : ['options'] },
+			...spellingWith(rebuildDirect, ['value', 'options'])
 		];
 	} else {
 		const configAccess = 'config';
@@ -1999,26 +2009,29 @@ function fieldCarryingFactoryText(
 		};
 		setters = [];
 		const optionsArg = registered.length === 0 && preference === undefined ? '' : ', options';
+		const inPlace = backend === 'records' && leadingOptions === undefined && ownText === undefined && plan.viewPlan === undefined && check === undefined;
+		const slotSet = (f: AssembledNonterminal, value: string): Pick<SetterEntry, 'body' | 'reads'> => {
+			if (inPlace && f !== preference?.open) {
+				inPlaceSlots.push(f);
+				return { body: `${fn}$set(node, ${JSON.stringify(f.propertyName)}, { ${f.propertyName}: ${value} })`, reads: [] };
+			}
+			return { body: call(fn, `{ ...${configAccess}, ${f.propertyName}: ${value} }${optionsArg}`), reads: optionsArg === '' ? [configAccess] : [configAccess, 'options'] };
+		};
 		for (const f of slots) {
 			if (registeredSet.has(f)) continue;
 			const method = f.propertyName;
 			const restType = restSetterType(f, configType, nodeMap, kindEntries);
 			if (restType !== undefined) {
-				setters.push({
-					name: method,
-					params: `...values: ${admitNodes(restType)}`,
-					body: call(fn, `{ ...${configAccess}, ${f.propertyName}: restItems(${JSON.stringify(method)}, values) }${optionsArg}`)
-				});
+				setters.push({ name: method, params: `...values: ${admitNodes(restType)}`, ...slotSet(f, `restItems(${JSON.stringify(method)}, values)`) });
 			} else {
 				const elemType = setterElemType(f, constructionFieldElementType(f, nodeMap, kindEntries), configType, nodeMap);
 				const setterSig = setterValueSignature(f, elemType);
-				setters.push({ name: method, params: setterSig, body: call(fn, `{ ...${configAccess}, ${f.propertyName}: value }${optionsArg}`) });
+				setters.push({ name: method, params: setterSig, ...slotSet(f, 'value') });
 			}
 		}
-		setters.push(...spellingWith((patch) => call(fn, `${configAccess}, ${patch}`)));
+		setters.push(...spellingWith((patch) => call(fn, `${configAccess}, ${patch}`), [configAccess, 'options']));
 	}
 
-	const ownText = ownTextLeaf(node);
 	const lines: string[] =
 		ownText === undefined
 			? [signature]
@@ -2037,9 +2050,8 @@ function fieldCarryingFactoryText(
 	if (surface.leadingOptions !== undefined) {
 		lines.push(...leadingOptionsSplit(surface.leadingOptions, 'children', strictParamType(surface.param)));
 	}
-	const plan = seatPlanOf(node, nodeMap, kindEntries);
-	const owner = plan.viewPlan?.owner;
 	lines.push(...admitStatement(node.kind, nodeMap, kindEntries, surface.spreadFacts === null ? '[config]' : surface.leadingOptions === undefined ? 'children' : 'args'));
+	const slotHeads = new Map<string, readonly string[]>();
 	for (const f of slotsToEmit) {
 		const shape = numericSlotShape(f);
 		const source =
@@ -2049,24 +2061,25 @@ function fieldCarryingFactoryText(
 					? valueSourceFor(f)
 					: `numberText(${numberTextArgs(shape)}, ${valueSourceFor(f)})`;
 		const stored = owner?.storage === f.storageKey ? `hydrateStored(${source})` : source;
-		lines.push(`  const ${f.storageKey} = ${stored};`);
+		const head = [`  const ${f.storageKey} = ${stored};`];
 		const guard = leafReConsts.get(slotGuardKey(node.kind, f.name));
 		const requiredUnfilled = isRequired(f) && !registeredSet.has(f) && !slotFilledWhenOmitted(f, nodeMap);
 		if (guard !== undefined) {
 			const present = requiredUnfilled ? '' : `${f.storageKey} !== undefined && `;
 			const label = `${node.kind}.${f.name}`;
-			lines.push(
+			head.push(
 				`  if (${present}typeof ${f.storageKey} !== 'string') ${textTypeMismatchThrow(label, f.storageKey)}`,
 				`  if (${present}!${guard}.test(${f.storageKey})) ${patternMismatchThrow(label, f.storageKey)}`
 			);
 		}
+		lines.push(...head);
+		slotHeads.set(f.storageKey, head);
 	}
 	const view = plan.viewPlan === undefined || owner === undefined ? undefined : ownerViewParts(plan.viewPlan, owner.storage, owner.accessor, 'factory', fn);
 	lines.push(...(view?.prelude ?? []));
 	lines.push(...builderHandleLines(node.kind, slotsToEmit.map((f) => [f.propertyName, f.storageKey] as const)));
 	const seated = seatedSetters(inSlotOrder(setters, node.slots), plan);
 	const trivia = triviaPositionsOf(typeKind, nodeMap);
-	const check = delimitedCheckCall(node, slotsToEmit, leafReConsts);
 	const typeExpr = factoryTypeDiscriminant(typeKind, nodeMap, kindEntries);
 	const optionsType = leadingOptions?.type ?? `T.${node.typeName}.Options`;
 	const held: FactoryHeld[] = [
@@ -2078,9 +2091,13 @@ function fieldCarryingFactoryText(
 		...(leadingOptions !== undefined || registered.length > 0 || preference !== undefined ? [{ local: 'options', type: optionsType, key: 'OPTIONS' as const, recorded: 'inputs.options' }] : [])
 	];
 	if (backend === 'records') {
-		const inputs = [...recordInputLines(held), ...groupSeatReaders(plan, (hint) => `inputs.config[${JSON.stringify(hint.slot)}] as object | undefined`)];
-		const parts = recordParts({ node, kind: typeExpr, slots: slotsToEmit, setters: seated, inputs, check, result: builtName }, nodeMap, viewTable(views));
+		const readers = groupSeatReaders(plan, (hint) => `builtInputs(node).config[${JSON.stringify(hint.slot)}] as object | undefined`);
+		const parts = recordParts({ node, kind: typeExpr, slots: slotsToEmit, setters: seated, inputs: recordInputLines(held), readers, check, result: builtName }, nodeMap, viewTable(views));
 		if (parts.patchTail !== undefined) after.push(renameUnusedConfigParam(patchTwinLines(lines, fn, forwardTarget === null ? fn : `_${fn}`, parts.patchTail)));
+		if (inPlaceSlots.length > 0) {
+			const options = registered.length === 0 && preference === undefined ? undefined : optionsType;
+			after.push(...setTwinLines({ fn, kind: node.kind, configType, builtName, optionsType: options, slots: inPlaceSlots, heads: slotHeads, tail: parts.slotTail }));
+		}
 		lines.push(...parts.tail);
 		after.push(...parts.after);
 	} else {
@@ -2220,6 +2237,37 @@ export function kindEnumTextExpr(text: string, kindEntries: readonly KindEnumEnt
 function inSlotOrder(setters: readonly SetterEntry[], slots: readonly AssembledNonterminal[]): SetterEntry[] {
 	const at = new Map(slots.map((slot, index) => [slot.propertyName, index]));
 	return [...setters].sort((a, b) => (at.get(a.name) ?? slots.length) - (at.get(b.name) ?? slots.length));
+}
+
+interface SetTwin {
+	readonly fn: string;
+	readonly kind: string;
+	readonly configType: string;
+	readonly builtName: string;
+	readonly optionsType: string | undefined;
+	readonly slots: readonly AssembledNonterminal[];
+	readonly heads: ReadonlyMap<string, readonly string[]>;
+	readonly tail: (storageKey: string) => readonly string[];
+}
+
+function setTwinLines({ fn, kind, configType, builtName, optionsType, slots, heads, tail }: SetTwin): string[] {
+	const options = optionsType === undefined ? '' : `, inputs.options as ${optionsType}`;
+	return [
+		`function ${fn}$set(source: object, slot: string, config: Partial<${configType}>): ${builtName} {`,
+		'  if (!editsInPlace(source)) {',
+		'    const inputs = builtInputs(source);',
+		`    return ${fn}$patch(source, { ...(inputs.config as ${configType}), ...config }${options});`,
+		'  }',
+		'  switch (slot) {',
+		...slots.flatMap((f) => {
+			const head = heads.get(f.storageKey);
+			if (head === undefined) throw new Error(`setTwinLines: ${kind}.${f.name} has no builder lines`);
+			return [`    case ${JSON.stringify(f.propertyName)}: {`, ...[...head, ...builderHandleLines(kind, [[f.propertyName, f.storageKey]]), ...tail(f.storageKey)].map((line) => `    ${line}`), '    }'];
+		}),
+		'  }',
+		`  throw new Error(\`${kind} writes no slot \${slot} alone\`);`,
+		'}'
+	];
 }
 
 function renameUnusedConfigParam(lines: string[]): string {
@@ -2944,12 +2992,12 @@ function emitSeparatedListFactory(
 			backend === 'records' ? `${impl}$patch(node, elements, { ...options, ${option}: v })` : `${fn}({ ...options, ${option}: v }, ...elements)`;
 		const carried = soleTrailing ? '(vs.length === 1 && options.delimiter === Delimiter.None ? { ...options, delimiter: undefined } : options)' : 'options';
 		const contentSet = backend !== 'records' ? `${fn}(${hasOptions ? `${carried}, ` : ''}...vs)` : hasOptions ? `${impl}$patch(node, vs, ${carried})` : `${impl}$patch(node, ...vs)`;
-		const setters: SetterEntry[] = [{ name: contentAccessorName, params: `...vs: ${elementsType}`, body: contentSet }];
+		const setters: SetterEntry[] = [{ name: contentAccessorName, params: `...vs: ${elementsType}`, body: contentSet, reads: hasOptions ? ['options'] : [] }];
 		if (hasSeparatorKindOption) {
-			setters.push({ name: 'separator', params: `v: ${separatorKindUnion}`, body: optionsSet('separator') });
+			setters.push({ name: 'separator', params: `v: ${separatorKindUnion}`, body: optionsSet('separator'), reads: ['elements', 'options'] });
 		}
 		if (hasDelimiterOption) {
-			setters.push({ name: 'delimiter', params: `v?: ${delimiterUnion}`, body: optionsSet('delimiter') });
+			setters.push({ name: 'delimiter', params: `v?: ${delimiterUnion}`, body: optionsSet('delimiter'), reads: ['elements', 'options'] });
 		}
 		if (backend === 'objects') {
 			lines.unshift(...view.hoisted);

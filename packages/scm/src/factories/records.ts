@@ -19,6 +19,7 @@ import {
 	unaffixed,
 	builtArenaOf,
 	builtInputs,
+	editsInPlace,
 	storeCell,
 	storeFlag,
 	storeList,
@@ -550,18 +551,51 @@ function buildList$patch(source: object, config: T.List.Config): T.List.Bound {
 		return node as unknown as T.List.Bound;
 	});
 }
+function buildList$set(source: object, slot: string, config: Partial<T.List.Config>): T.List.Bound {
+	if (!editsInPlace(source)) {
+		const inputs = builtInputs(source);
+		return buildList$patch(source, { ...(inputs.config as T.List.Config), ...config });
+	}
+	switch (slot) {
+		case 'definitions': {
+			const _definitions = listStorage<NonNullable<T.List['_definitions']>>(config.definitions);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'list', { definitions: _definitions });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.List as const);
+				patchList(arena, record, 2, 2, _definitions);
+				const node = arena.view(record);
+				return node as unknown as T.List.Bound;
+			});
+		}
+		case 'elements': {
+			const _elements = listStorage<NonNullable<T.List['_elements']>>(config.elements ?? []);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'list', { elements: _elements });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.List as const);
+				patchList(arena, record, 3, 3, _elements);
+				const node = arena.view(record);
+				return node as unknown as T.List.Bound;
+			});
+		}
+	}
+	throw new Error(`list writes no slot ${slot} alone`);
+}
 function withList(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.List.Config;
 	switch (setter) {
 		case 'definitions':
 			return applySetter(args, (...values: Admit<NonEmptyArray<T.Definition>>) =>
-				rebuilt(node, handle, () => buildList$patch(node, { ...config, definitions: restItems('definitions', values) }))
+				rebuilt(node, handle, () =>
+					buildList$set(node, 'definitions', { definitions: restItems('definitions', values) })
+				)
 			);
 		case 'elements':
 			return applySetter(args, (...values: Admit<T.ListElement[]>) =>
-				rebuilt(node, handle, () => buildList$patch(node, { ...config, elements: restItems('elements', values) }))
+				rebuilt(node, handle, () => buildList$set(node, 'elements', { elements: restItems('elements', values) }))
 			);
 	}
 	throw new Error(`list has no $with.${setter}`);
@@ -606,10 +640,41 @@ function buildGrouping$patch(source: object, config: T.Grouping.Config): T.Group
 		return node as unknown as T.Grouping.Bound;
 	});
 }
+function buildGrouping$set(source: object, slot: string, config: Partial<T.Grouping.Config>): T.Grouping.Bound {
+	if (!editsInPlace(source)) {
+		const inputs = builtInputs(source);
+		return buildGrouping$patch(source, { ...(inputs.config as T.Grouping.Config), ...config });
+	}
+	switch (slot) {
+		case 'groupingGroups': {
+			const _grouping_group = listStorage<NonNullable<T.Grouping['_grouping_group']>>(config.groupingGroups);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'grouping', { groupingGroups: _grouping_group });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.Grouping as const);
+				patchList(arena, record, 2, 2, _grouping_group);
+				const node = arena.view(record);
+				return node as unknown as T.Grouping.Bound;
+			});
+		}
+		case 'elements': {
+			const _elements = listStorage<NonNullable<T.Grouping['_elements']>>(config.elements ?? []);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'grouping', { elements: _elements });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.Grouping as const);
+				patchList(arena, record, 3, 3, _elements);
+				const node = arena.view(record);
+				return node as unknown as T.Grouping.Bound;
+			});
+		}
+	}
+	throw new Error(`grouping writes no slot ${slot} alone`);
+}
 function withGrouping(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.Grouping.Config;
 	switch (setter) {
 		case 'groupingGroups':
 			return applySetter(args, (...args: unknown[]) =>
@@ -618,13 +683,13 @@ function withGrouping(node: object, setter: string, args: readonly unknown[]): u
 						args,
 						{ slot: 'groupingGroups', keys: ['groupExpression', 'anchor'], make: buildGroupingGroup },
 						(...values: Admit<NonEmptyArray<T.GroupingGroup>>) =>
-							buildGrouping$patch(node, { ...config, groupingGroups: restItems('groupingGroups', values) })
+							buildGrouping$set(node, 'groupingGroups', { groupingGroups: restItems('groupingGroups', values) })
 					)
 				)
 			);
 		case 'elements':
 			return applySetter(args, (...values: Admit<T.ListElement[]>) =>
-				rebuilt(node, handle, () => buildGrouping$patch(node, { ...config, elements: restItems('elements', values) }))
+				rebuilt(node, handle, () => buildGrouping$set(node, 'elements', { elements: restItems('elements', values) }))
 			);
 	}
 	throw new Error(`grouping has no $with.${setter}`);
@@ -670,20 +735,53 @@ function buildMissingNode$patch(source: object, config: Partial<T.MissingNode.Co
 		return node as unknown as T.MissingNode.Bound;
 	});
 }
+function buildMissingNode$set(
+	source: object,
+	slot: string,
+	config: Partial<T.MissingNode.Config>
+): T.MissingNode.Bound {
+	if (!editsInPlace(source)) {
+		const inputs = builtInputs(source);
+		return buildMissingNode$patch(source, { ...(inputs.config as T.MissingNode.Config), ...config });
+	}
+	switch (slot) {
+		case 'name': {
+			const _name = config.name;
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'missing_node', { name: _name });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.MissingNode as const);
+				patchCell(arena, record, 2, 2, carriedSlot(source, 'name', _name));
+				const node = arena.view(record);
+				return node as unknown as T.MissingNode.Bound;
+			});
+		}
+		case 'elements': {
+			const _elements = listStorage<NonNullable<T.MissingNode['_elements']>>(config.elements ?? []);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'missing_node', { elements: _elements });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.MissingNode as const);
+				patchList(arena, record, 3, 8, _elements);
+				const node = arena.view(record);
+				return node as unknown as T.MissingNode.Bound;
+			});
+		}
+	}
+	throw new Error(`missing_node writes no slot ${slot} alone`);
+}
 function withMissingNode(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.MissingNode.Config;
 	switch (setter) {
 		case 'name':
 			return applySetter(args, (value?: Admit<T.Identifier | T.String>) =>
-				rebuilt(node, handle, () => buildMissingNode$patch(node, { ...config, name: value }))
+				rebuilt(node, handle, () => buildMissingNode$set(node, 'name', { name: value }))
 			);
 		case 'elements':
 			return applySetter(args, (...values: Admit<T.ListElement[]>) =>
-				rebuilt(node, handle, () =>
-					buildMissingNode$patch(node, { ...config, elements: restItems('elements', values) })
-				)
+				rebuilt(node, handle, () => buildMissingNode$set(node, 'elements', { elements: restItems('elements', values) }))
 			);
 	}
 	throw new Error(`missing_node has no $with.${setter}`);
@@ -726,19 +824,54 @@ function buildAnonymousNode$patch(source: object, config: T.AnonymousNode.Config
 		return node as unknown as T.AnonymousNode.Bound;
 	});
 }
+function buildAnonymousNode$set(
+	source: object,
+	slot: string,
+	config: Partial<T.AnonymousNode.Config>
+): T.AnonymousNode.Bound {
+	if (!editsInPlace(source)) {
+		const inputs = builtInputs(source);
+		return buildAnonymousNode$patch(source, { ...(inputs.config as T.AnonymousNode.Config), ...config });
+	}
+	switch (slot) {
+		case 'name': {
+			const _name = kindIdStorage<NonNullable<T.AnonymousNode['_name']>>(config.name);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'anonymous_node', { name: _name });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.AnonymousNode as const);
+				patchCell(arena, record, 2, 2, carriedSlot(source, 'name', _name));
+				const node = arena.view(record);
+				return node as unknown as T.AnonymousNode.Bound;
+			});
+		}
+		case 'elements': {
+			const _elements = listStorage<NonNullable<T.AnonymousNode['_elements']>>(config.elements ?? []);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'anonymous_node', { elements: _elements });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.AnonymousNode as const);
+				patchList(arena, record, 3, 8, _elements);
+				const node = arena.view(record);
+				return node as unknown as T.AnonymousNode.Bound;
+			});
+		}
+	}
+	throw new Error(`anonymous_node writes no slot ${slot} alone`);
+}
 function withAnonymousNode(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.AnonymousNode.Config;
 	switch (setter) {
 		case 'name':
 			return applySetter(args, (value: Admit<NonNullable<T.AnonymousNode.Config>['name']>) =>
-				rebuilt(node, handle, () => buildAnonymousNode$patch(node, { ...config, name: value }))
+				rebuilt(node, handle, () => buildAnonymousNode$set(node, 'name', { name: value }))
 			);
 		case 'elements':
 			return applySetter(args, (...values: Admit<T.ListElement[]>) =>
 				rebuilt(node, handle, () =>
-					buildAnonymousNode$patch(node, { ...config, elements: restItems('elements', values) })
+					buildAnonymousNode$set(node, 'elements', { elements: restItems('elements', values) })
 				)
 			);
 	}
@@ -784,18 +917,53 @@ function buildFieldDefinition$patch(source: object, config: T.FieldDefinition.Co
 		return node as unknown as T.FieldDefinition.Bound;
 	});
 }
+function buildFieldDefinition$set(
+	source: object,
+	slot: string,
+	config: Partial<T.FieldDefinition.Config>
+): T.FieldDefinition.Bound {
+	if (!editsInPlace(source)) {
+		const inputs = builtInputs(source);
+		return buildFieldDefinition$patch(source, { ...(inputs.config as T.FieldDefinition.Config), ...config });
+	}
+	switch (slot) {
+		case 'name': {
+			const _name = config.name;
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'field_definition', { name: _name });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.FieldDefinition as const);
+				patchCell(arena, record, 2, 2, carriedSlot(source, 'name', _name));
+				const node = arena.view(record);
+				return node as unknown as T.FieldDefinition.Bound;
+			});
+		}
+		case 'definition': {
+			const _definition = config.definition;
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'field_definition', { definition: _definition });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.FieldDefinition as const);
+				patchCell(arena, record, 3, 5, carriedSlot(source, 'definition', _definition));
+				const node = arena.view(record);
+				return node as unknown as T.FieldDefinition.Bound;
+			});
+		}
+	}
+	throw new Error(`field_definition writes no slot ${slot} alone`);
+}
 function withFieldDefinition(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.FieldDefinition.Config;
 	switch (setter) {
 		case 'name':
 			return applySetter(args, (value: Admit<T.Identifier>) =>
-				rebuilt(node, handle, () => buildFieldDefinition$patch(node, { ...config, name: value }))
+				rebuilt(node, handle, () => buildFieldDefinition$set(node, 'name', { name: value }))
 			);
 		case 'definition':
 			return applySetter(args, (value: Admit<T.Definition>) =>
-				rebuilt(node, handle, () => buildFieldDefinition$patch(node, { ...config, definition: value }))
+				rebuilt(node, handle, () => buildFieldDefinition$set(node, 'definition', { definition: value }))
 			);
 	}
 	throw new Error(`field_definition has no $with.${setter}`);
@@ -887,26 +1055,81 @@ function buildPredicate$patch(source: object, config: T.Predicate.Config): T.Pre
 		return node as unknown as T.Predicate.Bound;
 	});
 }
+function buildPredicate$set(source: object, slot: string, config: Partial<T.Predicate.Config>): T.Predicate.Bound {
+	if (!editsInPlace(source)) {
+		const inputs = builtInputs(source);
+		return buildPredicate$patch(source, { ...(inputs.config as T.Predicate.Config), ...config });
+	}
+	switch (slot) {
+		case 'prefix': {
+			const _prefix = kindIdStorage<NonNullable<T.Predicate['_prefix']>>(config.prefix);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'predicate', { prefix: _prefix });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.Predicate as const);
+				patchCell(arena, record, 2, 2, carriedSlot(source, 'prefix', _prefix));
+				const node = arena.view(record);
+				return node as unknown as T.Predicate.Bound;
+			});
+		}
+		case 'name': {
+			const _name = config.name;
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'predicate', { name: _name });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.Predicate as const);
+				patchCell(arena, record, 3, 3, carriedSlot(source, 'name', _name));
+				const node = arena.view(record);
+				return node as unknown as T.Predicate.Bound;
+			});
+		}
+		case 'type': {
+			const _type = kindIdStorage<NonNullable<T.Predicate['_type']>>(config.type);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'predicate', { type: _type });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.Predicate as const);
+				patchCell(arena, record, 4, 6, carriedSlot(source, 'type', _type));
+				const node = arena.view(record);
+				return node as unknown as T.Predicate.Bound;
+			});
+		}
+		case 'parameters': {
+			const _parameters = config.parameters;
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'predicate', { parameters: _parameters });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.Predicate as const);
+				patchCell(arena, record, 5, 7, carriedSlot(source, 'parameters', _parameters));
+				const node = arena.view(record);
+				return node as unknown as T.Predicate.Bound;
+			});
+		}
+	}
+	throw new Error(`predicate writes no slot ${slot} alone`);
+}
 function withPredicate(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.Predicate.Config;
 	switch (setter) {
 		case 'prefix':
 			return applySetter(args, (value: Admit<NonNullable<T.Predicate.Config>['prefix']>) =>
-				rebuilt(node, handle, () => buildPredicate$patch(node, { ...config, prefix: value }))
+				rebuilt(node, handle, () => buildPredicate$set(node, 'prefix', { prefix: value }))
 			);
 		case 'name':
 			return applySetter(args, (value: Admit<T.ImmediateIdentifier>) =>
-				rebuilt(node, handle, () => buildPredicate$patch(node, { ...config, name: value }))
+				rebuilt(node, handle, () => buildPredicate$set(node, 'name', { name: value }))
 			);
 		case 'type':
 			return applySetter(args, (value: Admit<NonNullable<T.Predicate.Config>['type']>) =>
-				rebuilt(node, handle, () => buildPredicate$patch(node, { ...config, type: value }))
+				rebuilt(node, handle, () => buildPredicate$set(node, 'type', { type: value }))
 			);
 		case 'parameters':
 			return applySetter(args, (value?: Admit<T.Parameters>) =>
-				rebuilt(node, handle, () => buildPredicate$patch(node, { ...config, parameters: value }))
+				rebuilt(node, handle, () => buildPredicate$set(node, 'parameters', { parameters: value }))
 			);
 	}
 	throw new Error(`predicate has no $with.${setter}`);
@@ -1000,18 +1223,53 @@ function buildGroupExpressionArm$patch(
 		return node as unknown as T.GroupExpressionArm.Bound;
 	});
 }
+function buildGroupExpressionArm$set(
+	source: object,
+	slot: string,
+	config: Partial<T.GroupExpressionArm.Config>
+): T.GroupExpressionArm.Bound {
+	if (!editsInPlace(source)) {
+		const inputs = builtInputs(source);
+		return buildGroupExpressionArm$patch(source, { ...(inputs.config as T.GroupExpressionArm.Config), ...config });
+	}
+	switch (slot) {
+		case 'left': {
+			const _left = config.left;
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'group_expression_arm', { left: _left });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.GroupExpressionArm as const);
+				patchCell(arena, record, 2, 2, carriedSlot(source, 'left', _left));
+				const node = arena.view(record);
+				return node as unknown as T.GroupExpressionArm.Bound;
+			});
+		}
+		case 'right': {
+			const _right = config.right;
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'group_expression_arm', { right: _right });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.GroupExpressionArm as const);
+				patchCell(arena, record, 3, 5, carriedSlot(source, 'right', _right));
+				const node = arena.view(record);
+				return node as unknown as T.GroupExpressionArm.Bound;
+			});
+		}
+	}
+	throw new Error(`group_expression_arm writes no slot ${slot} alone`);
+}
 function withGroupExpressionArm(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.GroupExpressionArm.Config;
 	switch (setter) {
 		case 'left':
 			return applySetter(args, (value: Admit<T.Definition | T.GroupExpressionArm>) =>
-				rebuilt(node, handle, () => buildGroupExpressionArm$patch(node, { ...config, left: value }))
+				rebuilt(node, handle, () => buildGroupExpressionArm$set(node, 'left', { left: value }))
 			);
 		case 'right':
 			return applySetter(args, (value: Admit<T.Definition | T.GroupExpressionArm>) =>
-				rebuilt(node, handle, () => buildGroupExpressionArm$patch(node, { ...config, right: value }))
+				rebuilt(node, handle, () => buildGroupExpressionArm$set(node, 'right', { right: value }))
 			);
 	}
 	throw new Error(`group_expression_arm has no $with.${setter}`);
@@ -1059,18 +1317,56 @@ function buildNamedNodeExpressionArm$patch(
 		return node as unknown as T.NamedNodeExpressionArm.Bound;
 	});
 }
+function buildNamedNodeExpressionArm$set(
+	source: object,
+	slot: string,
+	config: Partial<T.NamedNodeExpressionArm.Config>
+): T.NamedNodeExpressionArm.Bound {
+	if (!editsInPlace(source)) {
+		const inputs = builtInputs(source);
+		return buildNamedNodeExpressionArm$patch(source, {
+			...(inputs.config as T.NamedNodeExpressionArm.Config),
+			...config
+		});
+	}
+	switch (slot) {
+		case 'left': {
+			const _left = config.left;
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'named_node_expression_arm', { left: _left });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.NamedNodeExpressionArm as const);
+				patchCell(arena, record, 2, 2, carriedSlot(source, 'left', _left));
+				const node = arena.view(record);
+				return node as unknown as T.NamedNodeExpressionArm.Bound;
+			});
+		}
+		case 'right': {
+			const _right = config.right;
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'named_node_expression_arm', { right: _right });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.NamedNodeExpressionArm as const);
+				patchCell(arena, record, 3, 5, carriedSlot(source, 'right', _right));
+				const node = arena.view(record);
+				return node as unknown as T.NamedNodeExpressionArm.Bound;
+			});
+		}
+	}
+	throw new Error(`named_node_expression_arm writes no slot ${slot} alone`);
+}
 function withNamedNodeExpressionArm(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.NamedNodeExpressionArm.Config;
 	switch (setter) {
 		case 'left':
 			return applySetter(args, (value: Admit<T.Definition | T.NegatedField | T.NamedNodeExpressionArm>) =>
-				rebuilt(node, handle, () => buildNamedNodeExpressionArm$patch(node, { ...config, left: value }))
+				rebuilt(node, handle, () => buildNamedNodeExpressionArm$set(node, 'left', { left: value }))
 			);
 		case 'right':
 			return applySetter(args, (value: Admit<T.Definition | T.NegatedField | T.NamedNodeExpressionArm>) =>
-				rebuilt(node, handle, () => buildNamedNodeExpressionArm$patch(node, { ...config, right: value }))
+				rebuilt(node, handle, () => buildNamedNodeExpressionArm$set(node, 'right', { right: value }))
 			);
 	}
 	throw new Error(`named_node_expression_arm has no $with.${setter}`);
@@ -1114,18 +1410,53 @@ function buildGroupingGroup$patch(source: object, config: T.GroupingGroup.Config
 		return node as unknown as T.GroupingGroup.Bound;
 	});
 }
+function buildGroupingGroup$set(
+	source: object,
+	slot: string,
+	config: Partial<T.GroupingGroup.Config>
+): T.GroupingGroup.Bound {
+	if (!editsInPlace(source)) {
+		const inputs = builtInputs(source);
+		return buildGroupingGroup$patch(source, { ...(inputs.config as T.GroupingGroup.Config), ...config });
+	}
+	switch (slot) {
+		case 'groupExpression': {
+			const _group_expression = config.groupExpression;
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'grouping_group', { groupExpression: _group_expression });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.GroupingGroup as const);
+				patchCell(arena, record, 3, 3, carriedSlot(source, 'groupExpression', _group_expression));
+				const node = arena.view(record);
+				return node as unknown as T.GroupingGroup.Bound;
+			});
+		}
+		case 'anchor': {
+			const _anchor = strictBooleanStorage(config.anchor);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'grouping_group', { anchor: _anchor });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.GroupingGroup as const);
+				patchFlag(record, 2, 1, _anchor);
+				const node = arena.view(record);
+				return node as unknown as T.GroupingGroup.Bound;
+			});
+		}
+	}
+	throw new Error(`grouping_group writes no slot ${slot} alone`);
+}
 function withGroupingGroup(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.GroupingGroup.Config;
 	switch (setter) {
 		case 'groupExpression':
 			return applySetter(args, (value: Admit<T.Definition | T.GroupExpressionArm>) =>
-				rebuilt(node, handle, () => buildGroupingGroup$patch(node, { ...config, groupExpression: value }))
+				rebuilt(node, handle, () => buildGroupingGroup$set(node, 'groupExpression', { groupExpression: value }))
 			);
 		case 'anchor':
 			return applySetter(args, (value?: Admit<NonNullable<T.GroupingGroup.Config>['anchor']>) =>
-				rebuilt(node, handle, () => buildGroupingGroup$patch(node, { ...config, anchor: value }))
+				rebuilt(node, handle, () => buildGroupingGroup$set(node, 'anchor', { anchor: value }))
 			);
 	}
 	throw new Error(`grouping_group has no $with.${setter}`);
@@ -1211,23 +1542,70 @@ function buildNamedNodePlain$patch(source: object, config: T.NamedNodePlain.Conf
 		return node as unknown as T.NamedNodePlain.Bound;
 	});
 }
+function buildNamedNodePlain$set(
+	source: object,
+	slot: string,
+	config: Partial<T.NamedNodePlain.Config>
+): T.NamedNodePlain.Bound {
+	if (!editsInPlace(source)) {
+		const inputs = builtInputs(source);
+		return buildNamedNodePlain$patch(source, { ...(inputs.config as T.NamedNodePlain.Config), ...config });
+	}
+	switch (slot) {
+		case 'name': {
+			const _name = kindIdStorage<NonNullable<T.NamedNodePlain['_name']>>(config.name);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'named_node_plain', { name: _name });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.NamedNodePlain as const);
+				patchCell(arena, record, 2, 2, carriedSlot(source, 'name', _name));
+				const node = arena.view(record);
+				return node as unknown as T.NamedNodePlain.Bound;
+			});
+		}
+		case 'namedNodeGroup': {
+			const _named_node_group = config.namedNodeGroup;
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'named_node_plain', { namedNodeGroup: _named_node_group });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.NamedNodePlain as const);
+				patchCell(arena, record, 3, 6, carriedSlot(source, 'namedNodeGroup', _named_node_group));
+				const node = arena.view(record);
+				return node as unknown as T.NamedNodePlain.Bound;
+			});
+		}
+		case 'elements': {
+			const _elements = listStorage<NonNullable<T.NamedNodePlain['_elements']>>(config.elements ?? []);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'named_node_plain', { elements: _elements });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.NamedNodePlain as const);
+				patchList(arena, record, 4, 9, _elements);
+				const node = arena.view(record);
+				return node as unknown as T.NamedNodePlain.Bound;
+			});
+		}
+	}
+	throw new Error(`named_node_plain writes no slot ${slot} alone`);
+}
 function withNamedNodePlain(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.NamedNodePlain.Config;
 	switch (setter) {
 		case 'name':
 			return applySetter(args, (value: Admit<NonNullable<T.NamedNodePlain.Config>['name']>) =>
-				rebuilt(node, handle, () => buildNamedNodePlain$patch(node, { ...config, name: value }))
+				rebuilt(node, handle, () => buildNamedNodePlain$set(node, 'name', { name: value }))
 			);
 		case 'namedNodeGroup':
 			return applySetter(args, (value?: Admit<T.NamedNodeGroup>) =>
-				rebuilt(node, handle, () => buildNamedNodePlain$patch(node, { ...config, namedNodeGroup: value }))
+				rebuilt(node, handle, () => buildNamedNodePlain$set(node, 'namedNodeGroup', { namedNodeGroup: value }))
 			);
 		case 'elements':
 			return applySetter(args, (...values: Admit<T.ListElement[]>) =>
 				rebuilt(node, handle, () =>
-					buildNamedNodePlain$patch(node, { ...config, elements: restItems('elements', values) })
+					buildNamedNodePlain$set(node, 'elements', { elements: restItems('elements', values) })
 				)
 			);
 	}
@@ -1301,27 +1679,86 @@ function buildNamedNodeSupertyped$patch(
 		return node as unknown as T.NamedNodeSupertyped.Bound;
 	});
 }
+function buildNamedNodeSupertyped$set(
+	source: object,
+	slot: string,
+	config: Partial<T.NamedNodeSupertyped.Config>
+): T.NamedNodeSupertyped.Bound {
+	if (!editsInPlace(source)) {
+		const inputs = builtInputs(source);
+		return buildNamedNodeSupertyped$patch(source, { ...(inputs.config as T.NamedNodeSupertyped.Config), ...config });
+	}
+	switch (slot) {
+		case 'supertype': {
+			const _supertype = config.supertype;
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'named_node_supertyped', { supertype: _supertype });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.NamedNodeSupertyped as const);
+				patchCell(arena, record, 2, 2, carriedSlot(source, 'supertype', _supertype));
+				const node = arena.view(record);
+				return node as unknown as T.NamedNodeSupertyped.Bound;
+			});
+		}
+		case 'name': {
+			const _name = config.name;
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'named_node_supertyped', { name: _name });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.NamedNodeSupertyped as const);
+				patchCell(arena, record, 3, 5, carriedSlot(source, 'name', _name));
+				const node = arena.view(record);
+				return node as unknown as T.NamedNodeSupertyped.Bound;
+			});
+		}
+		case 'namedNodeGroup': {
+			const _named_node_group = config.namedNodeGroup;
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'named_node_supertyped', { namedNodeGroup: _named_node_group });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.NamedNodeSupertyped as const);
+				patchCell(arena, record, 4, 11, carriedSlot(source, 'namedNodeGroup', _named_node_group));
+				const node = arena.view(record);
+				return node as unknown as T.NamedNodeSupertyped.Bound;
+			});
+		}
+		case 'elements': {
+			const _elements = listStorage<NonNullable<T.NamedNodeSupertyped['_elements']>>(config.elements ?? []);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'named_node_supertyped', { elements: _elements });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.NamedNodeSupertyped as const);
+				patchList(arena, record, 5, 14, _elements);
+				const node = arena.view(record);
+				return node as unknown as T.NamedNodeSupertyped.Bound;
+			});
+		}
+	}
+	throw new Error(`named_node_supertyped writes no slot ${slot} alone`);
+}
 function withNamedNodeSupertyped(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.NamedNodeSupertyped.Config;
 	switch (setter) {
 		case 'supertype':
 			return applySetter(args, (value: Admit<T.Identifier>) =>
-				rebuilt(node, handle, () => buildNamedNodeSupertyped$patch(node, { ...config, supertype: value }))
+				rebuilt(node, handle, () => buildNamedNodeSupertyped$set(node, 'supertype', { supertype: value }))
 			);
 		case 'name':
 			return applySetter(args, (value: Admit<T.ImmediateIdentifier | T.ImmediateString>) =>
-				rebuilt(node, handle, () => buildNamedNodeSupertyped$patch(node, { ...config, name: value }))
+				rebuilt(node, handle, () => buildNamedNodeSupertyped$set(node, 'name', { name: value }))
 			);
 		case 'namedNodeGroup':
 			return applySetter(args, (value?: Admit<T.NamedNodeGroup>) =>
-				rebuilt(node, handle, () => buildNamedNodeSupertyped$patch(node, { ...config, namedNodeGroup: value }))
+				rebuilt(node, handle, () => buildNamedNodeSupertyped$set(node, 'namedNodeGroup', { namedNodeGroup: value }))
 			);
 		case 'elements':
 			return applySetter(args, (...values: Admit<T.ListElement[]>) =>
 				rebuilt(node, handle, () =>
-					buildNamedNodeSupertyped$patch(node, { ...config, elements: restItems('elements', values) })
+					buildNamedNodeSupertyped$set(node, 'elements', { elements: restItems('elements', values) })
 				)
 			);
 	}
@@ -1381,14 +1818,55 @@ function buildNamedNodeGroupChildren$patch(
 		return node as unknown as T.NamedNodeGroupChildren.Bound;
 	});
 }
+function buildNamedNodeGroupChildren$set(
+	source: object,
+	slot: string,
+	config: Partial<T.NamedNodeGroupChildren.Config>
+): T.NamedNodeGroupChildren.Bound {
+	if (!editsInPlace(source)) {
+		const inputs = builtInputs(source);
+		return buildNamedNodeGroupChildren$patch(source, {
+			...(inputs.config as T.NamedNodeGroupChildren.Config),
+			...config
+		});
+	}
+	switch (slot) {
+		case 'anchor': {
+			const _anchor = strictBooleanStorage(config.anchor);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'named_node_group_children', { anchor: _anchor });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.NamedNodeGroupChildren as const);
+				patchFlag(record, 2, 1, _anchor);
+				const node = arena.view(record);
+				return node as unknown as T.NamedNodeGroupChildren.Bound;
+			});
+		}
+		case 'namedNodeExpressions': {
+			const _named_node_expressions = listStorage<NonNullable<T.NamedNodeGroupChildren['_named_node_expressions']>>(
+				config.namedNodeExpressions
+			);
+			const handle = currentHandle();
+			if (handle !== undefined)
+				admitChildren(handle, 'named_node_group_children', { namedNodeExpressions: _named_node_expressions });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.NamedNodeGroupChildren as const);
+				patchList(arena, record, 3, 3, _named_node_expressions);
+				const node = arena.view(record);
+				return node as unknown as T.NamedNodeGroupChildren.Bound;
+			});
+		}
+	}
+	throw new Error(`named_node_group_children writes no slot ${slot} alone`);
+}
 function withNamedNodeGroupChildren(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.NamedNodeGroupChildren.Config;
 	switch (setter) {
 		case 'anchor':
 			return applySetter(args, (value?: Admit<NonNullable<T.NamedNodeGroupChildren.Config>['anchor']>) =>
-				rebuilt(node, handle, () => buildNamedNodeGroupChildren$patch(node, { ...config, anchor: value }))
+				rebuilt(node, handle, () => buildNamedNodeGroupChildren$set(node, 'anchor', { anchor: value }))
 			);
 		case 'namedNodeExpressions':
 			return applySetter(args, (...args: unknown[]) =>
@@ -1397,8 +1875,7 @@ function withNamedNodeGroupChildren(node: object, setter: string, args: readonly
 						args,
 						{ slot: 'namedNodeExpressions', keys: ['left', 'right'], make: buildNamedNodeExpressionArm },
 						(...values: Admit<NonEmptyArray<T.Definition | T.NegatedField | T.NamedNodeExpressionArm>>) =>
-							buildNamedNodeGroupChildren$patch(node, {
-								...config,
+							buildNamedNodeGroupChildren$set(node, 'namedNodeExpressions', {
 								namedNodeExpressions: restItems('namedNodeExpressions', values)
 							})
 					)
@@ -1473,14 +1950,67 @@ function buildNamedNodeGroupAnchoredLast$patch(
 		return node as unknown as T.NamedNodeGroupAnchoredLast.Bound;
 	});
 }
+function buildNamedNodeGroupAnchoredLast$set(
+	source: object,
+	slot: string,
+	config: Partial<T.NamedNodeGroupAnchoredLast.Config>
+): T.NamedNodeGroupAnchoredLast.Bound {
+	if (!editsInPlace(source)) {
+		const inputs = builtInputs(source);
+		return buildNamedNodeGroupAnchoredLast$patch(source, {
+			...(inputs.config as T.NamedNodeGroupAnchoredLast.Config),
+			...config
+		});
+	}
+	switch (slot) {
+		case 'anchor': {
+			const _anchor = strictBooleanStorage(config.anchor);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'named_node_group_anchored_last', { anchor: _anchor });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.NamedNodeGroupAnchoredLast as const);
+				patchFlag(record, 2, 1, _anchor);
+				const node = arena.view(record);
+				return node as unknown as T.NamedNodeGroupAnchoredLast.Bound;
+			});
+		}
+		case 'namedNodeExpressions': {
+			const _named_node_expressions = listStorage<NonNullable<T.NamedNodeGroupAnchoredLast['_named_node_expressions']>>(
+				config.namedNodeExpressions ?? []
+			);
+			const handle = currentHandle();
+			if (handle !== undefined)
+				admitChildren(handle, 'named_node_group_anchored_last', { namedNodeExpressions: _named_node_expressions });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.NamedNodeGroupAnchoredLast as const);
+				patchList(arena, record, 3, 3, _named_node_expressions);
+				const node = arena.view(record);
+				return node as unknown as T.NamedNodeGroupAnchoredLast.Bound;
+			});
+		}
+		case 'last': {
+			const _last = config.last;
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'named_node_group_anchored_last', { last: _last });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.NamedNodeGroupAnchoredLast as const);
+				patchCell(arena, record, 4, 4, carriedSlot(source, 'last', _last));
+				const node = arena.view(record);
+				return node as unknown as T.NamedNodeGroupAnchoredLast.Bound;
+			});
+		}
+	}
+	throw new Error(`named_node_group_anchored_last writes no slot ${slot} alone`);
+}
 function withNamedNodeGroupAnchoredLast(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.NamedNodeGroupAnchoredLast.Config;
 	switch (setter) {
 		case 'anchor':
 			return applySetter(args, (value?: Admit<NonNullable<T.NamedNodeGroupAnchoredLast.Config>['anchor']>) =>
-				rebuilt(node, handle, () => buildNamedNodeGroupAnchoredLast$patch(node, { ...config, anchor: value }))
+				rebuilt(node, handle, () => buildNamedNodeGroupAnchoredLast$set(node, 'anchor', { anchor: value }))
 			);
 		case 'namedNodeExpressions':
 			return applySetter(args, (...args: unknown[]) =>
@@ -1489,8 +2019,7 @@ function withNamedNodeGroupAnchoredLast(node: object, setter: string, args: read
 						args,
 						{ slot: 'namedNodeExpressions', keys: ['left', 'right'], make: buildNamedNodeExpressionArm },
 						(...values: Admit<(T.Definition | T.NegatedField | T.NamedNodeExpressionArm)[]>) =>
-							buildNamedNodeGroupAnchoredLast$patch(node, {
-								...config,
+							buildNamedNodeGroupAnchoredLast$set(node, 'namedNodeExpressions', {
 								namedNodeExpressions: restItems('namedNodeExpressions', values)
 							})
 					)
@@ -1498,7 +2027,7 @@ function withNamedNodeGroupAnchoredLast(node: object, setter: string, args: read
 			);
 		case 'last':
 			return applySetter(args, (value: Admit<T.Definition | T.NegatedField | T.NamedNodeExpressionArm>) =>
-				rebuilt(node, handle, () => buildNamedNodeGroupAnchoredLast$patch(node, { ...config, last: value }))
+				rebuilt(node, handle, () => buildNamedNodeGroupAnchoredLast$set(node, 'last', { last: value }))
 			);
 	}
 	throw new Error(`named_node_group_anchored_last has no $with.${setter}`);

@@ -15,7 +15,7 @@ import { snapshotOf } from './snapshot.ts';
 import { chosenSeparatorOf, liveWords, recordOf, recordSlot, recordSlots, rowTrivia, storedSlotValues } from './record-view.ts';
 import { HANDLE, receiverOf, type Held, type LeafHandle, type Received, type RecordHandle, type RecordPosition } from './handle.ts';
 import { builtLeafOf, builtRefOf, handleArenaOf, siteOf } from './built-ref.ts';
-import { holdSideEntries, isBuiltNode, refuseBuiltEntries, refuseForeignEntry, sideEntryOf, type BuiltArena } from './built-arena.ts';
+import { builtRecordOf, holdSideEntries, isBuiltNode, refuseBuiltEntries, refuseForeignEntry, sideEntryOf, type BuiltArena } from './built-arena.ts';
 
 export { Delimiter } from './delimiter.ts';
 export { BLANK_KIND_ID, blankArmRead, blankArmStored } from './blank-arm.ts';
@@ -329,6 +329,12 @@ function carryRebuiltSlots(read: Record<string, unknown>, result: Record<string,
 		carryRead(held as object, fresh);
 		carryPlace(held as object, fresh);
 	}
+}
+
+export function editsInPlace(source: object): boolean {
+	const handle = currentHandle();
+	if (handle === undefined || handle.verifyStored !== undefined || handle.builtArena === undefined) return false;
+	return builtRecordOf(source, handle.builtArena) !== undefined;
 }
 
 export function carriedSlot(source: object, accessor: string, value: unknown): unknown {

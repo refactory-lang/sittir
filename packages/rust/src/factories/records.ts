@@ -42,6 +42,7 @@ import {
 	unaffixed,
 	builtArenaOf,
 	builtInputs,
+	editsInPlace,
 	storeCell,
 	storeFlag,
 	storeList,
@@ -141,21 +142,52 @@ function buildSourceFile$patch(source: object, config: Partial<T.SourceFile.Conf
 		return node as unknown as T.SourceFile.Bound;
 	});
 }
+function buildSourceFile$set(source: object, slot: string, config: Partial<T.SourceFile.Config>): T.SourceFile.Bound {
+	if (!editsInPlace(source)) {
+		const inputs = builtInputs(source);
+		return buildSourceFile$patch(source, { ...(inputs.config as T.SourceFile.Config), ...config });
+	}
+	switch (slot) {
+		case 'shebang': {
+			const _shebang = config.shebang;
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'source_file', { shebang: _shebang });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.SourceFile as const);
+				patchCell(arena, record, 2, 2, carriedSlot(source, 'shebang', _shebang));
+				const node = arena.view(record);
+				return node as unknown as T.SourceFile.Bound;
+			});
+		}
+		case 'statements': {
+			const _statements = listStorage<NonNullable<T.SourceFile['_statements']>>(config.statements ?? [], kindIdStorage);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'source_file', { statements: _statements });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.SourceFile as const);
+				patchList(arena, record, 3, 8, _statements);
+				const node = arena.view(record);
+				return node as unknown as T.SourceFile.Bound;
+			});
+		}
+	}
+	throw new Error(`source_file writes no slot ${slot} alone`);
+}
 function withSourceFile(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.SourceFile.Config;
 	switch (setter) {
 		case 'shebang':
 			return applySetter(args, (value?: Admit<T.Shebang>) =>
-				rebuilt(node, handle, () => buildSourceFile$patch(node, { ...config, shebang: value }))
+				rebuilt(node, handle, () => buildSourceFile$set(node, 'shebang', { shebang: value }))
 			);
 		case 'statements':
 			return applySetter(
 				args,
 				(...values: Admit<NonNullable<NonNullable<T.SourceFile.Config>['statements']>[number][]>) =>
 					rebuilt(node, handle, () =>
-						buildSourceFile$patch(node, { ...config, statements: restItems('statements', values) })
+						buildSourceFile$set(node, 'statements', { statements: restItems('statements', values) })
 					)
 			);
 	}
@@ -302,18 +334,49 @@ function buildMacroRule$patch(source: object, config: T.MacroRule.Config): T.Mac
 		return node as unknown as T.MacroRule.Bound;
 	});
 }
+function buildMacroRule$set(source: object, slot: string, config: Partial<T.MacroRule.Config>): T.MacroRule.Bound {
+	if (!editsInPlace(source)) {
+		const inputs = builtInputs(source);
+		return buildMacroRule$patch(source, { ...(inputs.config as T.MacroRule.Config), ...config });
+	}
+	switch (slot) {
+		case 'left': {
+			const _left = config.left;
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'macro_rule', { left: _left });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.MacroRule as const);
+				patchCell(arena, record, 2, 2, carriedSlot(source, 'left', _left));
+				const node = arena.view(record);
+				return node as unknown as T.MacroRule.Bound;
+			});
+		}
+		case 'right': {
+			const _right = config.right;
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'macro_rule', { right: _right });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.MacroRule as const);
+				patchCell(arena, record, 3, 5, carriedSlot(source, 'right', _right));
+				const node = arena.view(record);
+				return node as unknown as T.MacroRule.Bound;
+			});
+		}
+	}
+	throw new Error(`macro_rule writes no slot ${slot} alone`);
+}
 function withMacroRule(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.MacroRule.Config;
 	switch (setter) {
 		case 'left':
 			return applySetter(args, (value: Admit<T.TokenTreePattern>) =>
-				rebuilt(node, handle, () => buildMacroRule$patch(node, { ...config, left: value }))
+				rebuilt(node, handle, () => buildMacroRule$set(node, 'left', { left: value }))
 			);
 		case 'right':
 			return applySetter(args, (value: Admit<T.TokenTree>) =>
-				rebuilt(node, handle, () => buildMacroRule$patch(node, { ...config, right: value }))
+				rebuilt(node, handle, () => buildMacroRule$set(node, 'right', { right: value }))
 			);
 	}
 	throw new Error(`macro_rule has no $with.${setter}`);
@@ -358,18 +421,53 @@ function buildTokenBindingPattern$patch(
 		return node as unknown as T.TokenBindingPattern.Bound;
 	});
 }
+function buildTokenBindingPattern$set(
+	source: object,
+	slot: string,
+	config: Partial<T.TokenBindingPattern.Config>
+): T.TokenBindingPattern.Bound {
+	if (!editsInPlace(source)) {
+		const inputs = builtInputs(source);
+		return buildTokenBindingPattern$patch(source, { ...(inputs.config as T.TokenBindingPattern.Config), ...config });
+	}
+	switch (slot) {
+		case 'name': {
+			const _name = config.name;
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'token_binding_pattern', { name: _name });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.TokenBindingPattern as const);
+				patchCell(arena, record, 2, 2, carriedSlot(source, 'name', _name));
+				const node = arena.view(record);
+				return node as unknown as T.TokenBindingPattern.Bound;
+			});
+		}
+		case 'fragment': {
+			const _fragment = kindIdStorage<NonNullable<T.TokenBindingPattern['_fragment']>>(config.fragment);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'token_binding_pattern', { fragment: _fragment });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.TokenBindingPattern as const);
+				patchCell(arena, record, 3, 8, carriedSlot(source, 'fragment', _fragment));
+				const node = arena.view(record);
+				return node as unknown as T.TokenBindingPattern.Bound;
+			});
+		}
+	}
+	throw new Error(`token_binding_pattern writes no slot ${slot} alone`);
+}
 function withTokenBindingPattern(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.TokenBindingPattern.Config;
 	switch (setter) {
 		case 'name':
 			return applySetter(args, (value: Admit<T.Metavariable>) =>
-				rebuilt(node, handle, () => buildTokenBindingPattern$patch(node, { ...config, name: value }))
+				rebuilt(node, handle, () => buildTokenBindingPattern$set(node, 'name', { name: value }))
 			);
 		case 'fragment':
 			return applySetter(args, (value: Admit<NonNullable<T.TokenBindingPattern.Config>['fragment']>) =>
-				rebuilt(node, handle, () => buildTokenBindingPattern$patch(node, { ...config, fragment: value }))
+				rebuilt(node, handle, () => buildTokenBindingPattern$set(node, 'fragment', { fragment: value }))
 			);
 	}
 	throw new Error(`token_binding_pattern has no $with.${setter}`);
@@ -438,10 +536,62 @@ function buildTokenRepetitionPattern$patch(
 		return node as unknown as T.TokenRepetitionPattern.Bound;
 	});
 }
+function buildTokenRepetitionPattern$set(
+	source: object,
+	slot: string,
+	config: Partial<T.TokenRepetitionPattern.Config>
+): T.TokenRepetitionPattern.Bound {
+	if (!editsInPlace(source)) {
+		const inputs = builtInputs(source);
+		return buildTokenRepetitionPattern$patch(source, {
+			...(inputs.config as T.TokenRepetitionPattern.Config),
+			...config
+		});
+	}
+	switch (slot) {
+		case 'tokenPatterns': {
+			const _token_patterns = listStorage<NonNullable<T.TokenRepetitionPattern['_token_patterns']>>(
+				config.tokenPatterns ?? []
+			);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'token_repetition_pattern', { tokenPatterns: _token_patterns });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.TokenRepetitionPattern as const);
+				patchList(arena, record, 2, 2, _token_patterns);
+				const node = arena.view(record);
+				return node as unknown as T.TokenRepetitionPattern.Bound;
+			});
+		}
+		case 'separator': {
+			const _separator = config.separator;
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'token_repetition_pattern', { separator: _separator });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.TokenRepetitionPattern as const);
+				patchCell(arena, record, 3, 3, carriedSlot(source, 'separator', _separator));
+				const node = arena.view(record);
+				return node as unknown as T.TokenRepetitionPattern.Bound;
+			});
+		}
+		case 'operator': {
+			const _operator = kindIdStorage<NonNullable<T.TokenRepetitionPattern['_operator']>>(config.operator);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'token_repetition_pattern', { operator: _operator });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.TokenRepetitionPattern as const);
+				patchCell(arena, record, 4, 6, carriedSlot(source, 'operator', _operator));
+				const node = arena.view(record);
+				return node as unknown as T.TokenRepetitionPattern.Bound;
+			});
+		}
+	}
+	throw new Error(`token_repetition_pattern writes no slot ${slot} alone`);
+}
 function withTokenRepetitionPattern(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.TokenRepetitionPattern.Config;
 	switch (setter) {
 		case 'tokenPatterns':
 			return applySetter(
@@ -458,16 +608,18 @@ function withTokenRepetitionPattern(node: object, setter: string, args: readonly
 					>
 				) =>
 					rebuilt(node, handle, () =>
-						buildTokenRepetitionPattern$patch(node, { ...config, tokenPatterns: restItems('tokenPatterns', values) })
+						buildTokenRepetitionPattern$set(node, 'tokenPatterns', {
+							tokenPatterns: restItems('tokenPatterns', values)
+						})
 					)
 			);
 		case 'separator':
 			return applySetter(args, (value?: Admit<T.TokenRepetitionPatternText>) =>
-				rebuilt(node, handle, () => buildTokenRepetitionPattern$patch(node, { ...config, separator: value }))
+				rebuilt(node, handle, () => buildTokenRepetitionPattern$set(node, 'separator', { separator: value }))
 			);
 		case 'operator':
 			return applySetter(args, (value: Admit<NonNullable<T.TokenRepetitionPattern.Config>['operator']>) =>
-				rebuilt(node, handle, () => buildTokenRepetitionPattern$patch(node, { ...config, operator: value }))
+				rebuilt(node, handle, () => buildTokenRepetitionPattern$set(node, 'operator', { operator: value }))
 			);
 	}
 	throw new Error(`token_repetition_pattern has no $with.${setter}`);
@@ -518,26 +670,71 @@ function buildTokenRepetition$patch(source: object, config: T.TokenRepetition.Co
 		return node as unknown as T.TokenRepetition.Bound;
 	});
 }
+function buildTokenRepetition$set(
+	source: object,
+	slot: string,
+	config: Partial<T.TokenRepetition.Config>
+): T.TokenRepetition.Bound {
+	if (!editsInPlace(source)) {
+		const inputs = builtInputs(source);
+		return buildTokenRepetition$patch(source, { ...(inputs.config as T.TokenRepetition.Config), ...config });
+	}
+	switch (slot) {
+		case 'tokens': {
+			const _tokens = listStorage<NonNullable<T.TokenRepetition['_tokens']>>(config.tokens ?? []);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'token_repetition', { tokens: _tokens });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.TokenRepetition as const);
+				patchList(arena, record, 2, 2, _tokens);
+				const node = arena.view(record);
+				return node as unknown as T.TokenRepetition.Bound;
+			});
+		}
+		case 'separator': {
+			const _separator = config.separator;
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'token_repetition', { separator: _separator });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.TokenRepetition as const);
+				patchCell(arena, record, 3, 3, carriedSlot(source, 'separator', _separator));
+				const node = arena.view(record);
+				return node as unknown as T.TokenRepetition.Bound;
+			});
+		}
+		case 'operator': {
+			const _operator = kindIdStorage<NonNullable<T.TokenRepetition['_operator']>>(config.operator);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'token_repetition', { operator: _operator });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.TokenRepetition as const);
+				patchCell(arena, record, 4, 6, carriedSlot(source, 'operator', _operator));
+				const node = arena.view(record);
+				return node as unknown as T.TokenRepetition.Bound;
+			});
+		}
+	}
+	throw new Error(`token_repetition writes no slot ${slot} alone`);
+}
 function withTokenRepetition(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.TokenRepetition.Config;
 	switch (setter) {
 		case 'tokens':
 			return applySetter(
 				args,
 				(...values: Admit<(T.TokenTree | T.TokenRepetition | T.Metavariable | T.NonSpecialToken)[]>) =>
-					rebuilt(node, handle, () =>
-						buildTokenRepetition$patch(node, { ...config, tokens: restItems('tokens', values) })
-					)
+					rebuilt(node, handle, () => buildTokenRepetition$set(node, 'tokens', { tokens: restItems('tokens', values) }))
 			);
 		case 'separator':
 			return applySetter(args, (value?: Admit<T.TokenRepetitionPatternText>) =>
-				rebuilt(node, handle, () => buildTokenRepetition$patch(node, { ...config, separator: value }))
+				rebuilt(node, handle, () => buildTokenRepetition$set(node, 'separator', { separator: value }))
 			);
 		case 'operator':
 			return applySetter(args, (value: Admit<NonNullable<T.TokenRepetition.Config>['operator']>) =>
-				rebuilt(node, handle, () => buildTokenRepetition$patch(node, { ...config, operator: value }))
+				rebuilt(node, handle, () => buildTokenRepetition$set(node, 'operator', { operator: value }))
 			);
 	}
 	throw new Error(`token_repetition has no $with.${setter}`);
@@ -1265,18 +1462,54 @@ function buildAttribute$patch(source: object, config: T.Attribute.Config): T.Att
 		return node as unknown as T.Attribute.Bound;
 	});
 }
+function buildAttribute$set(source: object, slot: string, config: Partial<T.Attribute.Config>): T.Attribute.Bound {
+	if (!editsInPlace(source)) {
+		const inputs = builtInputs(source);
+		return buildAttribute$patch(source, { ...(inputs.config as T.Attribute.Config), ...config });
+	}
+	switch (slot) {
+		case 'path': {
+			const _path = rejectKeywordText(
+				kindIdStorage<NonNullable<T.Attribute['_path']>>(config.path),
+				'Attribute.path',
+				TSKindId.Identifier,
+				['self', 'super', 'crate']
+			);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'attribute', { path: _path });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.Attribute as const);
+				patchCell(arena, record, 2, 2, carriedSlot(source, 'path', _path));
+				const node = arena.view(record);
+				return node as unknown as T.Attribute.Bound;
+			});
+		}
+		case 'input': {
+			const _input = config.input;
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'attribute', { input: _input });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.Attribute as const);
+				patchCell(arena, record, 3, 6, carriedSlot(source, 'input', _input));
+				const node = arena.view(record);
+				return node as unknown as T.Attribute.Bound;
+			});
+		}
+	}
+	throw new Error(`attribute writes no slot ${slot} alone`);
+}
 function withAttribute(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.Attribute.Config;
 	switch (setter) {
 		case 'path':
 			return applySetter(args, (value: Admit<NonNullable<T.Attribute.Config>['path']>) =>
-				rebuilt(node, handle, () => buildAttribute$patch(node, { ...config, path: value }))
+				rebuilt(node, handle, () => buildAttribute$set(node, 'path', { path: value }))
 			);
 		case 'input':
 			return applySetter(args, (value?: Admit<T.AttributeInput>) =>
-				rebuilt(node, handle, () => buildAttribute$patch(node, { ...config, input: value }))
+				rebuilt(node, handle, () => buildAttribute$set(node, 'input', { input: value }))
 			);
 	}
 	throw new Error(`attribute has no $with.${setter}`);
@@ -1422,18 +1655,87 @@ function buildUnionItem$patch(source: object, config: T.UnionItem.Config): T.Uni
 		return node as unknown as T.UnionItem.Bound;
 	});
 }
+function buildUnionItem$set(source: object, slot: string, config: Partial<T.UnionItem.Config>): T.UnionItem.Bound {
+	if (!editsInPlace(source)) {
+		const inputs = builtInputs(source);
+		return buildUnionItem$patch(source, { ...(inputs.config as T.UnionItem.Config), ...config });
+	}
+	switch (slot) {
+		case 'visibilityModifier': {
+			const _visibility_modifier = config.visibilityModifier;
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'union_item', { visibilityModifier: _visibility_modifier });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.UnionItem as const);
+				patchCell(arena, record, 2, 2, carriedSlot(source, 'visibilityModifier', _visibility_modifier));
+				const node = arena.view(record);
+				return node as unknown as T.UnionItem.Bound;
+			});
+		}
+		case 'name': {
+			const _name = admitAliasContent<NonNullable<T.UnionItem['_name']>>(config.name, [
+				[[1], (v: unknown) => buildTypeIdentifier(v as never)]
+			]);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'union_item', { name: _name });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.UnionItem as const);
+				patchCell(arena, record, 3, 16, carriedSlot(source, 'name', _name));
+				const node = arena.view(record);
+				return node as unknown as T.UnionItem.Bound;
+			});
+		}
+		case 'typeParameters': {
+			const _type_parameters = config.typeParameters;
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'union_item', { typeParameters: _type_parameters });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.UnionItem as const);
+				patchCell(arena, record, 4, 21, carriedSlot(source, 'typeParameters', _type_parameters));
+				const node = arena.view(record);
+				return node as unknown as T.UnionItem.Bound;
+			});
+		}
+		case 'whereClause': {
+			const _where_clause = config.whereClause;
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'union_item', { whereClause: _where_clause });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.UnionItem as const);
+				patchCell(arena, record, 5, 26, carriedSlot(source, 'whereClause', _where_clause));
+				const node = arena.view(record);
+				return node as unknown as T.UnionItem.Bound;
+			});
+		}
+		case 'body': {
+			const _body = orDefault(config.body, () => buildFieldDeclarationList());
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'union_item', { body: _body });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.UnionItem as const);
+				patchCell(arena, record, 6, 31, carriedSlot(source, 'body', _body));
+				const node = arena.view(record);
+				return node as unknown as T.UnionItem.Bound;
+			});
+		}
+	}
+	throw new Error(`union_item writes no slot ${slot} alone`);
+}
 function withUnionItem(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.UnionItem.Config;
 	switch (setter) {
 		case 'visibilityModifier':
 			return applySetter(args, (value?: Admit<T.VisibilityModifier>) =>
-				rebuilt(node, handle, () => buildUnionItem$patch(node, { ...config, visibilityModifier: value }))
+				rebuilt(node, handle, () => buildUnionItem$set(node, 'visibilityModifier', { visibilityModifier: value }))
 			);
 		case 'name':
 			return applySetter(args, (value: Admit<T.TypeIdentifier | T.TypeIdentifier.Types>) =>
-				rebuilt(node, handle, () => buildUnionItem$patch(node, { ...config, name: value }))
+				rebuilt(node, handle, () => buildUnionItem$set(node, 'name', { name: value }))
 			);
 		case 'typeParameters':
 			return applySetter(args, (...args: unknown[]) =>
@@ -1446,7 +1748,7 @@ function withUnionItem(node: object, setter: string, args: readonly unknown[]): 
 							make: buildTypeParameters,
 							element: { keys: ['attributeItems', 'content'], make: buildAttributedTypeParameter }
 						},
-						(value?: Admit<T.TypeParameters>) => buildUnionItem$patch(node, { ...config, typeParameters: value })
+						(value?: Admit<T.TypeParameters>) => buildUnionItem$set(node, 'typeParameters', { typeParameters: value })
 					)
 				)
 			);
@@ -1456,7 +1758,7 @@ function withUnionItem(node: object, setter: string, args: readonly unknown[]): 
 					listSlotWith(
 						args,
 						{ kind: TSKindId.WhereClause as const, optional: true, make: buildWhereClause },
-						(value?: Admit<T.WhereClause>) => buildUnionItem$patch(node, { ...config, whereClause: value })
+						(value?: Admit<T.WhereClause>) => buildUnionItem$set(node, 'whereClause', { whereClause: value })
 					)
 				)
 			);
@@ -1471,7 +1773,7 @@ function withUnionItem(node: object, setter: string, args: readonly unknown[]): 
 							make: buildFieldDeclarationList,
 							element: { keys: ['attributeItems', 'fieldDeclaration'], make: buildAttributedFieldDeclaration }
 						},
-						(value: Admit<T.FieldDeclarationList>) => buildUnionItem$patch(node, { ...config, body: value })
+						(value: Admit<T.FieldDeclarationList>) => buildUnionItem$set(node, 'body', { body: value })
 					)
 				)
 			);
@@ -1572,18 +1874,87 @@ function buildEnumItem$patch(source: object, config: T.EnumItem.Config): T.EnumI
 		return node as unknown as T.EnumItem.Bound;
 	});
 }
+function buildEnumItem$set(source: object, slot: string, config: Partial<T.EnumItem.Config>): T.EnumItem.Bound {
+	if (!editsInPlace(source)) {
+		const inputs = builtInputs(source);
+		return buildEnumItem$patch(source, { ...(inputs.config as T.EnumItem.Config), ...config });
+	}
+	switch (slot) {
+		case 'visibilityModifier': {
+			const _visibility_modifier = config.visibilityModifier;
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'enum_item', { visibilityModifier: _visibility_modifier });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.EnumItem as const);
+				patchCell(arena, record, 2, 2, carriedSlot(source, 'visibilityModifier', _visibility_modifier));
+				const node = arena.view(record);
+				return node as unknown as T.EnumItem.Bound;
+			});
+		}
+		case 'name': {
+			const _name = admitAliasContent<NonNullable<T.EnumItem['_name']>>(config.name, [
+				[[1], (v: unknown) => buildTypeIdentifier(v as never)]
+			]);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'enum_item', { name: _name });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.EnumItem as const);
+				patchCell(arena, record, 3, 16, carriedSlot(source, 'name', _name));
+				const node = arena.view(record);
+				return node as unknown as T.EnumItem.Bound;
+			});
+		}
+		case 'typeParameters': {
+			const _type_parameters = config.typeParameters;
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'enum_item', { typeParameters: _type_parameters });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.EnumItem as const);
+				patchCell(arena, record, 4, 21, carriedSlot(source, 'typeParameters', _type_parameters));
+				const node = arena.view(record);
+				return node as unknown as T.EnumItem.Bound;
+			});
+		}
+		case 'whereClause': {
+			const _where_clause = config.whereClause;
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'enum_item', { whereClause: _where_clause });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.EnumItem as const);
+				patchCell(arena, record, 5, 26, carriedSlot(source, 'whereClause', _where_clause));
+				const node = arena.view(record);
+				return node as unknown as T.EnumItem.Bound;
+			});
+		}
+		case 'body': {
+			const _body = orDefault(config.body, () => buildEnumVariantList());
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'enum_item', { body: _body });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.EnumItem as const);
+				patchCell(arena, record, 6, 31, carriedSlot(source, 'body', _body));
+				const node = arena.view(record);
+				return node as unknown as T.EnumItem.Bound;
+			});
+		}
+	}
+	throw new Error(`enum_item writes no slot ${slot} alone`);
+}
 function withEnumItem(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.EnumItem.Config;
 	switch (setter) {
 		case 'visibilityModifier':
 			return applySetter(args, (value?: Admit<T.VisibilityModifier>) =>
-				rebuilt(node, handle, () => buildEnumItem$patch(node, { ...config, visibilityModifier: value }))
+				rebuilt(node, handle, () => buildEnumItem$set(node, 'visibilityModifier', { visibilityModifier: value }))
 			);
 		case 'name':
 			return applySetter(args, (value: Admit<T.TypeIdentifier | T.TypeIdentifier.Types>) =>
-				rebuilt(node, handle, () => buildEnumItem$patch(node, { ...config, name: value }))
+				rebuilt(node, handle, () => buildEnumItem$set(node, 'name', { name: value }))
 			);
 		case 'typeParameters':
 			return applySetter(args, (...args: unknown[]) =>
@@ -1596,7 +1967,7 @@ function withEnumItem(node: object, setter: string, args: readonly unknown[]): u
 							make: buildTypeParameters,
 							element: { keys: ['attributeItems', 'content'], make: buildAttributedTypeParameter }
 						},
-						(value?: Admit<T.TypeParameters>) => buildEnumItem$patch(node, { ...config, typeParameters: value })
+						(value?: Admit<T.TypeParameters>) => buildEnumItem$set(node, 'typeParameters', { typeParameters: value })
 					)
 				)
 			);
@@ -1606,7 +1977,7 @@ function withEnumItem(node: object, setter: string, args: readonly unknown[]): u
 					listSlotWith(
 						args,
 						{ kind: TSKindId.WhereClause as const, optional: true, make: buildWhereClause },
-						(value?: Admit<T.WhereClause>) => buildEnumItem$patch(node, { ...config, whereClause: value })
+						(value?: Admit<T.WhereClause>) => buildEnumItem$set(node, 'whereClause', { whereClause: value })
 					)
 				)
 			);
@@ -1621,7 +1992,7 @@ function withEnumItem(node: object, setter: string, args: readonly unknown[]): u
 							make: buildEnumVariantList,
 							element: { keys: ['attributeItems', 'enumVariant'], make: buildAttributedEnumVariant }
 						},
-						(value: Admit<T.EnumVariantList>) => buildEnumItem$patch(node, { ...config, body: value })
+						(value: Admit<T.EnumVariantList>) => buildEnumItem$set(node, 'body', { body: value })
 					)
 				)
 			);
@@ -1777,26 +2148,85 @@ function buildEnumVariant$patch(source: object, config: T.EnumVariant.Config): T
 		return node as unknown as T.EnumVariant.Bound;
 	});
 }
+function buildEnumVariant$set(
+	source: object,
+	slot: string,
+	config: Partial<T.EnumVariant.Config>
+): T.EnumVariant.Bound {
+	if (!editsInPlace(source)) {
+		const inputs = builtInputs(source);
+		return buildEnumVariant$patch(source, { ...(inputs.config as T.EnumVariant.Config), ...config });
+	}
+	switch (slot) {
+		case 'visibilityModifier': {
+			const _visibility_modifier = config.visibilityModifier;
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'enum_variant', { visibilityModifier: _visibility_modifier });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.EnumVariant as const);
+				patchCell(arena, record, 2, 2, carriedSlot(source, 'visibilityModifier', _visibility_modifier));
+				const node = arena.view(record);
+				return node as unknown as T.EnumVariant.Bound;
+			});
+		}
+		case 'name': {
+			const _name = config.name;
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'enum_variant', { name: _name });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.EnumVariant as const);
+				patchCell(arena, record, 3, 16, carriedSlot(source, 'name', _name));
+				const node = arena.view(record);
+				return node as unknown as T.EnumVariant.Bound;
+			});
+		}
+		case 'body': {
+			const _body = config.body;
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'enum_variant', { body: _body });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.EnumVariant as const);
+				patchCell(arena, record, 4, 19, carriedSlot(source, 'body', _body));
+				const node = arena.view(record);
+				return node as unknown as T.EnumVariant.Bound;
+			});
+		}
+		case 'value': {
+			const _value = kindIdStorage<NonNullable<T.EnumVariant['_value']>>(config.value);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'enum_variant', { value: _value });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.EnumVariant as const);
+				patchCell(arena, record, 5, 24, carriedSlot(source, 'value', _value));
+				const node = arena.view(record);
+				return node as unknown as T.EnumVariant.Bound;
+			});
+		}
+	}
+	throw new Error(`enum_variant writes no slot ${slot} alone`);
+}
 function withEnumVariant(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.EnumVariant.Config;
 	switch (setter) {
 		case 'visibilityModifier':
 			return applySetter(args, (value?: Admit<T.VisibilityModifier>) =>
-				rebuilt(node, handle, () => buildEnumVariant$patch(node, { ...config, visibilityModifier: value }))
+				rebuilt(node, handle, () => buildEnumVariant$set(node, 'visibilityModifier', { visibilityModifier: value }))
 			);
 		case 'name':
 			return applySetter(args, (value: Admit<T.Identifier>) =>
-				rebuilt(node, handle, () => buildEnumVariant$patch(node, { ...config, name: value }))
+				rebuilt(node, handle, () => buildEnumVariant$set(node, 'name', { name: value }))
 			);
 		case 'body':
 			return applySetter(args, (value?: Admit<T.FieldDeclarationList | T.OrderedFieldDeclarationList>) =>
-				rebuilt(node, handle, () => buildEnumVariant$patch(node, { ...config, body: value }))
+				rebuilt(node, handle, () => buildEnumVariant$set(node, 'body', { body: value }))
 			);
 		case 'value':
 			return applySetter(args, (value?: Admit<NonNullable<T.EnumVariant.Config>['value']>) =>
-				rebuilt(node, handle, () => buildEnumVariant$patch(node, { ...config, value: value }))
+				rebuilt(node, handle, () => buildEnumVariant$set(node, 'value', { value: value }))
 			);
 	}
 	throw new Error(`enum_variant has no $with.${setter}`);
@@ -1947,22 +2377,77 @@ function buildFieldDeclaration$patch(source: object, config: T.FieldDeclaration.
 		return node as unknown as T.FieldDeclaration.Bound;
 	});
 }
+function buildFieldDeclaration$set(
+	source: object,
+	slot: string,
+	config: Partial<T.FieldDeclaration.Config>
+): T.FieldDeclaration.Bound {
+	if (!editsInPlace(source)) {
+		const inputs = builtInputs(source);
+		return buildFieldDeclaration$patch(source, { ...(inputs.config as T.FieldDeclaration.Config), ...config });
+	}
+	switch (slot) {
+		case 'visibilityModifier': {
+			const _visibility_modifier = config.visibilityModifier;
+			const handle = currentHandle();
+			if (handle !== undefined)
+				admitChildren(handle, 'field_declaration', { visibilityModifier: _visibility_modifier });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.FieldDeclaration as const);
+				patchCell(arena, record, 2, 2, carriedSlot(source, 'visibilityModifier', _visibility_modifier));
+				const node = arena.view(record);
+				return node as unknown as T.FieldDeclaration.Bound;
+			});
+		}
+		case 'name': {
+			const _name = admitAliasContent<NonNullable<T.FieldDeclaration['_name']>>(config.name, [
+				[[1], (v: unknown) => buildFieldIdentifier(v as never)]
+			]);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'field_declaration', { name: _name });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.FieldDeclaration as const);
+				patchCell(arena, record, 3, 16, carriedSlot(source, 'name', _name));
+				const node = arena.view(record);
+				return node as unknown as T.FieldDeclaration.Bound;
+			});
+		}
+		case 'type': {
+			const _type = admitAliasContent<NonNullable<T.FieldDeclaration['_type']>>(
+				kindIdStorage<NonNullable<T.FieldDeclaration['_type']>>(config.type),
+				[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
+			);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'field_declaration', { type: _type });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.FieldDeclaration as const);
+				patchCell(arena, record, 4, 21, carriedSlot(source, 'type', _type));
+				const node = arena.view(record);
+				return node as unknown as T.FieldDeclaration.Bound;
+			});
+		}
+	}
+	throw new Error(`field_declaration writes no slot ${slot} alone`);
+}
 function withFieldDeclaration(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.FieldDeclaration.Config;
 	switch (setter) {
 		case 'visibilityModifier':
 			return applySetter(args, (value?: Admit<T.VisibilityModifier>) =>
-				rebuilt(node, handle, () => buildFieldDeclaration$patch(node, { ...config, visibilityModifier: value }))
+				rebuilt(node, handle, () =>
+					buildFieldDeclaration$set(node, 'visibilityModifier', { visibilityModifier: value })
+				)
 			);
 		case 'name':
 			return applySetter(args, (value: Admit<T.FieldIdentifier | T.FieldIdentifier.Types>) =>
-				rebuilt(node, handle, () => buildFieldDeclaration$patch(node, { ...config, name: value }))
+				rebuilt(node, handle, () => buildFieldDeclaration$set(node, 'name', { name: value }))
 			);
 		case 'type':
 			return applySetter(args, (value: Admit<NonNullable<T.FieldDeclaration.Config>['type']>) =>
-				rebuilt(node, handle, () => buildFieldDeclaration$patch(node, { ...config, type: value }))
+				rebuilt(node, handle, () => buildFieldDeclaration$set(node, 'type', { type: value }))
 			);
 	}
 	throw new Error(`field_declaration has no $with.${setter}`);
@@ -2117,22 +2602,75 @@ function buildExternCrateDeclaration$patch(
 		return node as unknown as T.ExternCrateDeclaration.Bound;
 	});
 }
+function buildExternCrateDeclaration$set(
+	source: object,
+	slot: string,
+	config: Partial<T.ExternCrateDeclaration.Config>
+): T.ExternCrateDeclaration.Bound {
+	if (!editsInPlace(source)) {
+		const inputs = builtInputs(source);
+		return buildExternCrateDeclaration$patch(source, {
+			...(inputs.config as T.ExternCrateDeclaration.Config),
+			...config
+		});
+	}
+	switch (slot) {
+		case 'visibilityModifier': {
+			const _visibility_modifier = config.visibilityModifier;
+			const handle = currentHandle();
+			if (handle !== undefined)
+				admitChildren(handle, 'extern_crate_declaration', { visibilityModifier: _visibility_modifier });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.ExternCrateDeclaration as const);
+				patchCell(arena, record, 2, 2, carriedSlot(source, 'visibilityModifier', _visibility_modifier));
+				const node = arena.view(record);
+				return node as unknown as T.ExternCrateDeclaration.Bound;
+			});
+		}
+		case 'name': {
+			const _name = config.name;
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'extern_crate_declaration', { name: _name });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.ExternCrateDeclaration as const);
+				patchCell(arena, record, 3, 16, carriedSlot(source, 'name', _name));
+				const node = arena.view(record);
+				return node as unknown as T.ExternCrateDeclaration.Bound;
+			});
+		}
+		case 'alias': {
+			const _alias = config.alias;
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'extern_crate_declaration', { alias: _alias });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.ExternCrateDeclaration as const);
+				patchCell(arena, record, 4, 19, carriedSlot(source, 'alias', _alias));
+				const node = arena.view(record);
+				return node as unknown as T.ExternCrateDeclaration.Bound;
+			});
+		}
+	}
+	throw new Error(`extern_crate_declaration writes no slot ${slot} alone`);
+}
 function withExternCrateDeclaration(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.ExternCrateDeclaration.Config;
 	switch (setter) {
 		case 'visibilityModifier':
 			return applySetter(args, (value?: Admit<T.VisibilityModifier>) =>
-				rebuilt(node, handle, () => buildExternCrateDeclaration$patch(node, { ...config, visibilityModifier: value }))
+				rebuilt(node, handle, () =>
+					buildExternCrateDeclaration$set(node, 'visibilityModifier', { visibilityModifier: value })
+				)
 			);
 		case 'name':
 			return applySetter(args, (value: Admit<T.Identifier>) =>
-				rebuilt(node, handle, () => buildExternCrateDeclaration$patch(node, { ...config, name: value }))
+				rebuilt(node, handle, () => buildExternCrateDeclaration$set(node, 'name', { name: value }))
 			);
 		case 'alias':
 			return applySetter(args, (value?: Admit<T.Identifier>) =>
-				rebuilt(node, handle, () => buildExternCrateDeclaration$patch(node, { ...config, alias: value }))
+				rebuilt(node, handle, () => buildExternCrateDeclaration$set(node, 'alias', { alias: value }))
 			);
 	}
 	throw new Error(`extern_crate_declaration has no $with.${setter}`);
@@ -2208,26 +2746,84 @@ function buildConstItem$patch(source: object, config: T.ConstItem.Config): T.Con
 		return node as unknown as T.ConstItem.Bound;
 	});
 }
+function buildConstItem$set(source: object, slot: string, config: Partial<T.ConstItem.Config>): T.ConstItem.Bound {
+	if (!editsInPlace(source)) {
+		const inputs = builtInputs(source);
+		return buildConstItem$patch(source, { ...(inputs.config as T.ConstItem.Config), ...config });
+	}
+	switch (slot) {
+		case 'visibilityModifier': {
+			const _visibility_modifier = config.visibilityModifier;
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'const_item', { visibilityModifier: _visibility_modifier });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.ConstItem as const);
+				patchCell(arena, record, 2, 2, carriedSlot(source, 'visibilityModifier', _visibility_modifier));
+				const node = arena.view(record);
+				return node as unknown as T.ConstItem.Bound;
+			});
+		}
+		case 'name': {
+			const _name = config.name;
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'const_item', { name: _name });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.ConstItem as const);
+				patchCell(arena, record, 3, 16, carriedSlot(source, 'name', _name));
+				const node = arena.view(record);
+				return node as unknown as T.ConstItem.Bound;
+			});
+		}
+		case 'type': {
+			const _type = admitAliasContent<NonNullable<T.ConstItem['_type']>>(
+				kindIdStorage<NonNullable<T.ConstItem['_type']>>(config.type),
+				[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
+			);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'const_item', { type: _type });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.ConstItem as const);
+				patchCell(arena, record, 4, 19, carriedSlot(source, 'type', _type));
+				const node = arena.view(record);
+				return node as unknown as T.ConstItem.Bound;
+			});
+		}
+		case 'value': {
+			const _value = kindIdStorage<NonNullable<T.ConstItem['_value']>>(config.value);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'const_item', { value: _value });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.ConstItem as const);
+				patchCell(arena, record, 5, 23, carriedSlot(source, 'value', _value));
+				const node = arena.view(record);
+				return node as unknown as T.ConstItem.Bound;
+			});
+		}
+	}
+	throw new Error(`const_item writes no slot ${slot} alone`);
+}
 function withConstItem(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.ConstItem.Config;
 	switch (setter) {
 		case 'visibilityModifier':
 			return applySetter(args, (value?: Admit<T.VisibilityModifier>) =>
-				rebuilt(node, handle, () => buildConstItem$patch(node, { ...config, visibilityModifier: value }))
+				rebuilt(node, handle, () => buildConstItem$set(node, 'visibilityModifier', { visibilityModifier: value }))
 			);
 		case 'name':
 			return applySetter(args, (value: Admit<T.Identifier>) =>
-				rebuilt(node, handle, () => buildConstItem$patch(node, { ...config, name: value }))
+				rebuilt(node, handle, () => buildConstItem$set(node, 'name', { name: value }))
 			);
 		case 'type':
 			return applySetter(args, (value: Admit<NonNullable<T.ConstItem.Config>['type']>) =>
-				rebuilt(node, handle, () => buildConstItem$patch(node, { ...config, type: value }))
+				rebuilt(node, handle, () => buildConstItem$set(node, 'type', { type: value }))
 			);
 		case 'value':
 			return applySetter(args, (value?: Admit<NonNullable<T.ConstItem.Config>['value']>) =>
-				rebuilt(node, handle, () => buildConstItem$patch(node, { ...config, value: value }))
+				rebuilt(node, handle, () => buildConstItem$set(node, 'value', { value: value }))
 			);
 	}
 	throw new Error(`const_item has no $with.${setter}`);
@@ -2329,34 +2925,116 @@ function buildStaticItem$patch(source: object, config: T.StaticItem.Config): T.S
 		return node as unknown as T.StaticItem.Bound;
 	});
 }
+function buildStaticItem$set(source: object, slot: string, config: Partial<T.StaticItem.Config>): T.StaticItem.Bound {
+	if (!editsInPlace(source)) {
+		const inputs = builtInputs(source);
+		return buildStaticItem$patch(source, { ...(inputs.config as T.StaticItem.Config), ...config });
+	}
+	switch (slot) {
+		case 'visibilityModifier': {
+			const _visibility_modifier = config.visibilityModifier;
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'static_item', { visibilityModifier: _visibility_modifier });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.StaticItem as const);
+				patchCell(arena, record, 3, 3, carriedSlot(source, 'visibilityModifier', _visibility_modifier));
+				const node = arena.view(record);
+				return node as unknown as T.StaticItem.Bound;
+			});
+		}
+		case 'byReference': {
+			const _by_reference = strictBooleanStorage(config.byReference);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'static_item', { byReference: _by_reference });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.StaticItem as const);
+				patchFlag(record, 2, 1, _by_reference);
+				const node = arena.view(record);
+				return node as unknown as T.StaticItem.Bound;
+			});
+		}
+		case 'mutable': {
+			const _mutable = strictBooleanStorage(config.mutable);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'static_item', { mutable: _mutable });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.StaticItem as const);
+				patchFlag(record, 2, 2, _mutable);
+				const node = arena.view(record);
+				return node as unknown as T.StaticItem.Bound;
+			});
+		}
+		case 'name': {
+			const _name = config.name;
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'static_item', { name: _name });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.StaticItem as const);
+				patchCell(arena, record, 4, 17, carriedSlot(source, 'name', _name));
+				const node = arena.view(record);
+				return node as unknown as T.StaticItem.Bound;
+			});
+		}
+		case 'type': {
+			const _type = admitAliasContent<NonNullable<T.StaticItem['_type']>>(
+				kindIdStorage<NonNullable<T.StaticItem['_type']>>(config.type),
+				[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
+			);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'static_item', { type: _type });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.StaticItem as const);
+				patchCell(arena, record, 5, 20, carriedSlot(source, 'type', _type));
+				const node = arena.view(record);
+				return node as unknown as T.StaticItem.Bound;
+			});
+		}
+		case 'value': {
+			const _value = kindIdStorage<NonNullable<T.StaticItem['_value']>>(config.value);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'static_item', { value: _value });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.StaticItem as const);
+				patchCell(arena, record, 6, 24, carriedSlot(source, 'value', _value));
+				const node = arena.view(record);
+				return node as unknown as T.StaticItem.Bound;
+			});
+		}
+	}
+	throw new Error(`static_item writes no slot ${slot} alone`);
+}
 function withStaticItem(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.StaticItem.Config;
 	switch (setter) {
 		case 'visibilityModifier':
 			return applySetter(args, (value?: Admit<T.VisibilityModifier>) =>
-				rebuilt(node, handle, () => buildStaticItem$patch(node, { ...config, visibilityModifier: value }))
+				rebuilt(node, handle, () => buildStaticItem$set(node, 'visibilityModifier', { visibilityModifier: value }))
 			);
 		case 'byReference':
 			return applySetter(args, (value?: Admit<NonNullable<T.StaticItem.Config>['byReference']>) =>
-				rebuilt(node, handle, () => buildStaticItem$patch(node, { ...config, byReference: value }))
+				rebuilt(node, handle, () => buildStaticItem$set(node, 'byReference', { byReference: value }))
 			);
 		case 'mutable':
 			return applySetter(args, (value?: Admit<NonNullable<T.StaticItem.Config>['mutable']>) =>
-				rebuilt(node, handle, () => buildStaticItem$patch(node, { ...config, mutable: value }))
+				rebuilt(node, handle, () => buildStaticItem$set(node, 'mutable', { mutable: value }))
 			);
 		case 'name':
 			return applySetter(args, (value: Admit<T.Identifier>) =>
-				rebuilt(node, handle, () => buildStaticItem$patch(node, { ...config, name: value }))
+				rebuilt(node, handle, () => buildStaticItem$set(node, 'name', { name: value }))
 			);
 		case 'type':
 			return applySetter(args, (value: Admit<NonNullable<T.StaticItem.Config>['type']>) =>
-				rebuilt(node, handle, () => buildStaticItem$patch(node, { ...config, type: value }))
+				rebuilt(node, handle, () => buildStaticItem$set(node, 'type', { type: value }))
 			);
 		case 'value':
 			return applySetter(args, (value?: Admit<NonNullable<T.StaticItem.Config>['value']>) =>
-				rebuilt(node, handle, () => buildStaticItem$patch(node, { ...config, value: value }))
+				rebuilt(node, handle, () => buildStaticItem$set(node, 'value', { value: value }))
 			);
 	}
 	throw new Error(`static_item has no $with.${setter}`);
@@ -2471,18 +3149,102 @@ function buildTypeItem$patch(source: object, config: T.TypeItem.Config): T.TypeI
 		return node as unknown as T.TypeItem.Bound;
 	});
 }
+function buildTypeItem$set(source: object, slot: string, config: Partial<T.TypeItem.Config>): T.TypeItem.Bound {
+	if (!editsInPlace(source)) {
+		const inputs = builtInputs(source);
+		return buildTypeItem$patch(source, { ...(inputs.config as T.TypeItem.Config), ...config });
+	}
+	switch (slot) {
+		case 'visibilityModifier': {
+			const _visibility_modifier = config.visibilityModifier;
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'type_item', { visibilityModifier: _visibility_modifier });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.TypeItem as const);
+				patchCell(arena, record, 2, 2, carriedSlot(source, 'visibilityModifier', _visibility_modifier));
+				const node = arena.view(record);
+				return node as unknown as T.TypeItem.Bound;
+			});
+		}
+		case 'name': {
+			const _name = admitAliasContent<NonNullable<T.TypeItem['_name']>>(config.name, [
+				[[1], (v: unknown) => buildTypeIdentifier(v as never)]
+			]);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'type_item', { name: _name });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.TypeItem as const);
+				patchCell(arena, record, 3, 16, carriedSlot(source, 'name', _name));
+				const node = arena.view(record);
+				return node as unknown as T.TypeItem.Bound;
+			});
+		}
+		case 'typeParameters': {
+			const _type_parameters = config.typeParameters;
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'type_item', { typeParameters: _type_parameters });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.TypeItem as const);
+				patchCell(arena, record, 4, 21, carriedSlot(source, 'typeParameters', _type_parameters));
+				const node = arena.view(record);
+				return node as unknown as T.TypeItem.Bound;
+			});
+		}
+		case 'whereClause': {
+			const _where_clause = config.whereClause;
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'type_item', { whereClause: _where_clause });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.TypeItem as const);
+				patchCell(arena, record, 5, 26, carriedSlot(source, 'whereClause', _where_clause));
+				const node = arena.view(record);
+				return node as unknown as T.TypeItem.Bound;
+			});
+		}
+		case 'value': {
+			const _value = admitAliasContent<NonNullable<T.TypeItem['_value']>>(
+				kindIdStorage<NonNullable<T.TypeItem['_value']>>(config.value),
+				[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
+			);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'type_item', { value: _value });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.TypeItem as const);
+				patchCell(arena, record, 6, 31, carriedSlot(source, 'value', _value));
+				const node = arena.view(record);
+				return node as unknown as T.TypeItem.Bound;
+			});
+		}
+		case 'trailingWhereClause': {
+			const _trailing_where_clause = config.trailingWhereClause;
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'type_item', { trailingWhereClause: _trailing_where_clause });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.TypeItem as const);
+				patchCell(arena, record, 7, 35, carriedSlot(source, 'trailingWhereClause', _trailing_where_clause));
+				const node = arena.view(record);
+				return node as unknown as T.TypeItem.Bound;
+			});
+		}
+	}
+	throw new Error(`type_item writes no slot ${slot} alone`);
+}
 function withTypeItem(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.TypeItem.Config;
 	switch (setter) {
 		case 'visibilityModifier':
 			return applySetter(args, (value?: Admit<T.VisibilityModifier>) =>
-				rebuilt(node, handle, () => buildTypeItem$patch(node, { ...config, visibilityModifier: value }))
+				rebuilt(node, handle, () => buildTypeItem$set(node, 'visibilityModifier', { visibilityModifier: value }))
 			);
 		case 'name':
 			return applySetter(args, (value: Admit<T.TypeIdentifier | T.TypeIdentifier.Types>) =>
-				rebuilt(node, handle, () => buildTypeItem$patch(node, { ...config, name: value }))
+				rebuilt(node, handle, () => buildTypeItem$set(node, 'name', { name: value }))
 			);
 		case 'typeParameters':
 			return applySetter(args, (...args: unknown[]) =>
@@ -2495,7 +3257,7 @@ function withTypeItem(node: object, setter: string, args: readonly unknown[]): u
 							make: buildTypeParameters,
 							element: { keys: ['attributeItems', 'content'], make: buildAttributedTypeParameter }
 						},
-						(value?: Admit<T.TypeParameters>) => buildTypeItem$patch(node, { ...config, typeParameters: value })
+						(value?: Admit<T.TypeParameters>) => buildTypeItem$set(node, 'typeParameters', { typeParameters: value })
 					)
 				)
 			);
@@ -2505,13 +3267,13 @@ function withTypeItem(node: object, setter: string, args: readonly unknown[]): u
 					listSlotWith(
 						args,
 						{ kind: TSKindId.WhereClause as const, optional: true, make: buildWhereClause },
-						(value?: Admit<T.WhereClause>) => buildTypeItem$patch(node, { ...config, whereClause: value })
+						(value?: Admit<T.WhereClause>) => buildTypeItem$set(node, 'whereClause', { whereClause: value })
 					)
 				)
 			);
 		case 'value':
 			return applySetter(args, (value: Admit<NonNullable<T.TypeItem.Config>['value']>) =>
-				rebuilt(node, handle, () => buildTypeItem$patch(node, { ...config, value: value }))
+				rebuilt(node, handle, () => buildTypeItem$set(node, 'value', { value: value }))
 			);
 		case 'trailingWhereClause':
 			return applySetter(args, (...args: unknown[]) =>
@@ -2519,7 +3281,8 @@ function withTypeItem(node: object, setter: string, args: readonly unknown[]): u
 					listSlotWith(
 						args,
 						{ kind: TSKindId.WhereClause as const, optional: true, make: buildWhereClause },
-						(value?: Admit<T.WhereClause>) => buildTypeItem$patch(node, { ...config, trailingWhereClause: value })
+						(value?: Admit<T.WhereClause>) =>
+							buildTypeItem$set(node, 'trailingWhereClause', { trailingWhereClause: value })
 					)
 				)
 			);
@@ -2652,22 +3415,132 @@ function buildFunctionItem$patch(source: object, config: T.FunctionItem.Config):
 		return node as unknown as T.FunctionItem.Bound;
 	});
 }
+function buildFunctionItem$set(
+	source: object,
+	slot: string,
+	config: Partial<T.FunctionItem.Config>
+): T.FunctionItem.Bound {
+	if (!editsInPlace(source)) {
+		const inputs = builtInputs(source);
+		return buildFunctionItem$patch(source, { ...(inputs.config as T.FunctionItem.Config), ...config });
+	}
+	switch (slot) {
+		case 'visibilityModifier': {
+			const _visibility_modifier = config.visibilityModifier;
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'function_item', { visibilityModifier: _visibility_modifier });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.FunctionItem as const);
+				patchCell(arena, record, 2, 2, carriedSlot(source, 'visibilityModifier', _visibility_modifier));
+				const node = arena.view(record);
+				return node as unknown as T.FunctionItem.Bound;
+			});
+		}
+		case 'functionModifiers': {
+			const _function_modifiers = config.functionModifiers;
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'function_item', { functionModifiers: _function_modifiers });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.FunctionItem as const);
+				patchCell(arena, record, 3, 16, carriedSlot(source, 'functionModifiers', _function_modifiers));
+				const node = arena.view(record);
+				return node as unknown as T.FunctionItem.Bound;
+			});
+		}
+		case 'name': {
+			const _name = config.name;
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'function_item', { name: _name });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.FunctionItem as const);
+				patchCell(arena, record, 4, 19, carriedSlot(source, 'name', _name));
+				const node = arena.view(record);
+				return node as unknown as T.FunctionItem.Bound;
+			});
+		}
+		case 'typeParameters': {
+			const _type_parameters = config.typeParameters;
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'function_item', { typeParameters: _type_parameters });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.FunctionItem as const);
+				patchCell(arena, record, 5, 26, carriedSlot(source, 'typeParameters', _type_parameters));
+				const node = arena.view(record);
+				return node as unknown as T.FunctionItem.Bound;
+			});
+		}
+		case 'parameters': {
+			const _parameters = orDefault(config.parameters, () => buildParameters());
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'function_item', { parameters: _parameters });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.FunctionItem as const);
+				patchCell(arena, record, 6, 31, carriedSlot(source, 'parameters', _parameters));
+				const node = arena.view(record);
+				return node as unknown as T.FunctionItem.Bound;
+			});
+		}
+		case 'returnType': {
+			const _return_type = admitAliasContent<NonNullable<T.FunctionItem['_return_type']>>(
+				kindIdStorage<NonNullable<T.FunctionItem['_return_type']>>(config.returnType),
+				[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
+			);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'function_item', { returnType: _return_type });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.FunctionItem as const);
+				patchCell(arena, record, 7, 34, carriedSlot(source, 'returnType', _return_type));
+				const node = arena.view(record);
+				return node as unknown as T.FunctionItem.Bound;
+			});
+		}
+		case 'whereClause': {
+			const _where_clause = config.whereClause;
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'function_item', { whereClause: _where_clause });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.FunctionItem as const);
+				patchCell(arena, record, 8, 38, carriedSlot(source, 'whereClause', _where_clause));
+				const node = arena.view(record);
+				return node as unknown as T.FunctionItem.Bound;
+			});
+		}
+		case 'body': {
+			const _body = orDefault(config.body, () => buildBlock());
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'function_item', { body: _body });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.FunctionItem as const);
+				patchCell(arena, record, 9, 43, carriedSlot(source, 'body', _body));
+				const node = arena.view(record);
+				return node as unknown as T.FunctionItem.Bound;
+			});
+		}
+	}
+	throw new Error(`function_item writes no slot ${slot} alone`);
+}
 function withFunctionItem(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.FunctionItem.Config;
 	switch (setter) {
 		case 'visibilityModifier':
 			return applySetter(args, (value?: Admit<T.VisibilityModifier>) =>
-				rebuilt(node, handle, () => buildFunctionItem$patch(node, { ...config, visibilityModifier: value }))
+				rebuilt(node, handle, () => buildFunctionItem$set(node, 'visibilityModifier', { visibilityModifier: value }))
 			);
 		case 'functionModifiers':
 			return applySetter(args, (value?: Admit<T.FunctionModifiers>) =>
-				rebuilt(node, handle, () => buildFunctionItem$patch(node, { ...config, functionModifiers: value }))
+				rebuilt(node, handle, () => buildFunctionItem$set(node, 'functionModifiers', { functionModifiers: value }))
 			);
 		case 'name':
 			return applySetter(args, (value: Admit<T.Identifier | T.Metavariable>) =>
-				rebuilt(node, handle, () => buildFunctionItem$patch(node, { ...config, name: value }))
+				rebuilt(node, handle, () => buildFunctionItem$set(node, 'name', { name: value }))
 			);
 		case 'typeParameters':
 			return applySetter(args, (...args: unknown[]) =>
@@ -2680,17 +3553,18 @@ function withFunctionItem(node: object, setter: string, args: readonly unknown[]
 							make: buildTypeParameters,
 							element: { keys: ['attributeItems', 'content'], make: buildAttributedTypeParameter }
 						},
-						(value?: Admit<T.TypeParameters>) => buildFunctionItem$patch(node, { ...config, typeParameters: value })
+						(value?: Admit<T.TypeParameters>) =>
+							buildFunctionItem$set(node, 'typeParameters', { typeParameters: value })
 					)
 				)
 			);
 		case 'parameters':
 			return applySetter(args, (value: Admit<T.Parameters>) =>
-				rebuilt(node, handle, () => buildFunctionItem$patch(node, { ...config, parameters: value }))
+				rebuilt(node, handle, () => buildFunctionItem$set(node, 'parameters', { parameters: value }))
 			);
 		case 'returnType':
 			return applySetter(args, (value?: Admit<NonNullable<T.FunctionItem.Config>['returnType']>) =>
-				rebuilt(node, handle, () => buildFunctionItem$patch(node, { ...config, returnType: value }))
+				rebuilt(node, handle, () => buildFunctionItem$set(node, 'returnType', { returnType: value }))
 			);
 		case 'whereClause':
 			return applySetter(args, (...args: unknown[]) =>
@@ -2698,13 +3572,13 @@ function withFunctionItem(node: object, setter: string, args: readonly unknown[]
 					listSlotWith(
 						args,
 						{ kind: TSKindId.WhereClause as const, optional: true, make: buildWhereClause },
-						(value?: Admit<T.WhereClause>) => buildFunctionItem$patch(node, { ...config, whereClause: value })
+						(value?: Admit<T.WhereClause>) => buildFunctionItem$set(node, 'whereClause', { whereClause: value })
 					)
 				)
 			);
 		case 'body':
 			return applySetter(args, (value: Admit<T.Block>) =>
-				rebuilt(node, handle, () => buildFunctionItem$patch(node, { ...config, body: value }))
+				rebuilt(node, handle, () => buildFunctionItem$set(node, 'body', { body: value }))
 			);
 	}
 	throw new Error(`function_item has no $with.${setter}`);
@@ -2828,22 +3702,129 @@ function buildFunctionSignatureItem$patch(
 		return node as unknown as T.FunctionSignatureItem.Bound;
 	});
 }
+function buildFunctionSignatureItem$set(
+	source: object,
+	slot: string,
+	config: Partial<T.FunctionSignatureItem.Config>
+): T.FunctionSignatureItem.Bound {
+	if (!editsInPlace(source)) {
+		const inputs = builtInputs(source);
+		return buildFunctionSignatureItem$patch(source, {
+			...(inputs.config as T.FunctionSignatureItem.Config),
+			...config
+		});
+	}
+	switch (slot) {
+		case 'visibilityModifier': {
+			const _visibility_modifier = config.visibilityModifier;
+			const handle = currentHandle();
+			if (handle !== undefined)
+				admitChildren(handle, 'function_signature_item', { visibilityModifier: _visibility_modifier });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.FunctionSignatureItem as const);
+				patchCell(arena, record, 2, 2, carriedSlot(source, 'visibilityModifier', _visibility_modifier));
+				const node = arena.view(record);
+				return node as unknown as T.FunctionSignatureItem.Bound;
+			});
+		}
+		case 'functionModifiers': {
+			const _function_modifiers = config.functionModifiers;
+			const handle = currentHandle();
+			if (handle !== undefined)
+				admitChildren(handle, 'function_signature_item', { functionModifiers: _function_modifiers });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.FunctionSignatureItem as const);
+				patchCell(arena, record, 3, 16, carriedSlot(source, 'functionModifiers', _function_modifiers));
+				const node = arena.view(record);
+				return node as unknown as T.FunctionSignatureItem.Bound;
+			});
+		}
+		case 'name': {
+			const _name = config.name;
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'function_signature_item', { name: _name });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.FunctionSignatureItem as const);
+				patchCell(arena, record, 4, 19, carriedSlot(source, 'name', _name));
+				const node = arena.view(record);
+				return node as unknown as T.FunctionSignatureItem.Bound;
+			});
+		}
+		case 'typeParameters': {
+			const _type_parameters = config.typeParameters;
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'function_signature_item', { typeParameters: _type_parameters });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.FunctionSignatureItem as const);
+				patchCell(arena, record, 5, 26, carriedSlot(source, 'typeParameters', _type_parameters));
+				const node = arena.view(record);
+				return node as unknown as T.FunctionSignatureItem.Bound;
+			});
+		}
+		case 'parameters': {
+			const _parameters = orDefault(config.parameters, () => buildParameters());
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'function_signature_item', { parameters: _parameters });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.FunctionSignatureItem as const);
+				patchCell(arena, record, 6, 31, carriedSlot(source, 'parameters', _parameters));
+				const node = arena.view(record);
+				return node as unknown as T.FunctionSignatureItem.Bound;
+			});
+		}
+		case 'returnType': {
+			const _return_type = admitAliasContent<NonNullable<T.FunctionSignatureItem['_return_type']>>(
+				kindIdStorage<NonNullable<T.FunctionSignatureItem['_return_type']>>(config.returnType),
+				[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
+			);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'function_signature_item', { returnType: _return_type });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.FunctionSignatureItem as const);
+				patchCell(arena, record, 7, 34, carriedSlot(source, 'returnType', _return_type));
+				const node = arena.view(record);
+				return node as unknown as T.FunctionSignatureItem.Bound;
+			});
+		}
+		case 'whereClause': {
+			const _where_clause = config.whereClause;
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'function_signature_item', { whereClause: _where_clause });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.FunctionSignatureItem as const);
+				patchCell(arena, record, 8, 38, carriedSlot(source, 'whereClause', _where_clause));
+				const node = arena.view(record);
+				return node as unknown as T.FunctionSignatureItem.Bound;
+			});
+		}
+	}
+	throw new Error(`function_signature_item writes no slot ${slot} alone`);
+}
 function withFunctionSignatureItem(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.FunctionSignatureItem.Config;
 	switch (setter) {
 		case 'visibilityModifier':
 			return applySetter(args, (value?: Admit<T.VisibilityModifier>) =>
-				rebuilt(node, handle, () => buildFunctionSignatureItem$patch(node, { ...config, visibilityModifier: value }))
+				rebuilt(node, handle, () =>
+					buildFunctionSignatureItem$set(node, 'visibilityModifier', { visibilityModifier: value })
+				)
 			);
 		case 'functionModifiers':
 			return applySetter(args, (value?: Admit<T.FunctionModifiers>) =>
-				rebuilt(node, handle, () => buildFunctionSignatureItem$patch(node, { ...config, functionModifiers: value }))
+				rebuilt(node, handle, () =>
+					buildFunctionSignatureItem$set(node, 'functionModifiers', { functionModifiers: value })
+				)
 			);
 		case 'name':
 			return applySetter(args, (value: Admit<T.Identifier | T.Metavariable>) =>
-				rebuilt(node, handle, () => buildFunctionSignatureItem$patch(node, { ...config, name: value }))
+				rebuilt(node, handle, () => buildFunctionSignatureItem$set(node, 'name', { name: value }))
 			);
 		case 'typeParameters':
 			return applySetter(args, (...args: unknown[]) =>
@@ -2857,17 +3838,17 @@ function withFunctionSignatureItem(node: object, setter: string, args: readonly 
 							element: { keys: ['attributeItems', 'content'], make: buildAttributedTypeParameter }
 						},
 						(value?: Admit<T.TypeParameters>) =>
-							buildFunctionSignatureItem$patch(node, { ...config, typeParameters: value })
+							buildFunctionSignatureItem$set(node, 'typeParameters', { typeParameters: value })
 					)
 				)
 			);
 		case 'parameters':
 			return applySetter(args, (value: Admit<T.Parameters>) =>
-				rebuilt(node, handle, () => buildFunctionSignatureItem$patch(node, { ...config, parameters: value }))
+				rebuilt(node, handle, () => buildFunctionSignatureItem$set(node, 'parameters', { parameters: value }))
 			);
 		case 'returnType':
 			return applySetter(args, (value?: Admit<NonNullable<T.FunctionSignatureItem.Config>['returnType']>) =>
-				rebuilt(node, handle, () => buildFunctionSignatureItem$patch(node, { ...config, returnType: value }))
+				rebuilt(node, handle, () => buildFunctionSignatureItem$set(node, 'returnType', { returnType: value }))
 			);
 		case 'whereClause':
 			return applySetter(args, (...args: unknown[]) =>
@@ -2875,7 +3856,8 @@ function withFunctionSignatureItem(node: object, setter: string, args: readonly 
 					listSlotWith(
 						args,
 						{ kind: TSKindId.WhereClause as const, optional: true, make: buildWhereClause },
-						(value?: Admit<T.WhereClause>) => buildFunctionSignatureItem$patch(node, { ...config, whereClause: value })
+						(value?: Admit<T.WhereClause>) =>
+							buildFunctionSignatureItem$set(node, 'whereClause', { whereClause: value })
 					)
 				)
 			);
@@ -3082,18 +4064,56 @@ function buildWherePredicate$patch(source: object, config: T.WherePredicate.Conf
 		return node as unknown as T.WherePredicate.Bound;
 	});
 }
+function buildWherePredicate$set(
+	source: object,
+	slot: string,
+	config: Partial<T.WherePredicate.Config>
+): T.WherePredicate.Bound {
+	if (!editsInPlace(source)) {
+		const inputs = builtInputs(source);
+		return buildWherePredicate$patch(source, { ...(inputs.config as T.WherePredicate.Config), ...config });
+	}
+	switch (slot) {
+		case 'left': {
+			const _left = admitAliasContent<NonNullable<T.WherePredicate['_left']>>(
+				kindIdStorage<NonNullable<T.WherePredicate['_left']>>(config.left),
+				[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
+			);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'where_predicate', { left: _left });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.WherePredicate as const);
+				patchCell(arena, record, 2, 2, carriedSlot(source, 'left', _left));
+				const node = arena.view(record);
+				return node as unknown as T.WherePredicate.Bound;
+			});
+		}
+		case 'bounds': {
+			const _bounds = config.bounds;
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'where_predicate', { bounds: _bounds });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.WherePredicate as const);
+				patchCell(arena, record, 3, 6, carriedSlot(source, 'bounds', _bounds));
+				const node = arena.view(record);
+				return node as unknown as T.WherePredicate.Bound;
+			});
+		}
+	}
+	throw new Error(`where_predicate writes no slot ${slot} alone`);
+}
 function withWherePredicate(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.WherePredicate.Config;
 	switch (setter) {
 		case 'left':
 			return applySetter(args, (value: Admit<NonNullable<T.WherePredicate.Config>['left']>) =>
-				rebuilt(node, handle, () => buildWherePredicate$patch(node, { ...config, left: value }))
+				rebuilt(node, handle, () => buildWherePredicate$set(node, 'left', { left: value }))
 			);
 		case 'bounds':
 			return applySetter(args, (value: Admit<T.TraitBounds>) =>
-				rebuilt(node, handle, () => buildWherePredicate$patch(node, { ...config, bounds: value }))
+				rebuilt(node, handle, () => buildWherePredicate$set(node, 'bounds', { bounds: value }))
 			);
 	}
 	throw new Error(`where_predicate has no $with.${setter}`);
@@ -3210,22 +4230,115 @@ function buildTraitItem$patch(source: object, config: T.TraitItem.Config): T.Tra
 		return node as unknown as T.TraitItem.Bound;
 	});
 }
+function buildTraitItem$set(source: object, slot: string, config: Partial<T.TraitItem.Config>): T.TraitItem.Bound {
+	if (!editsInPlace(source)) {
+		const inputs = builtInputs(source);
+		return buildTraitItem$patch(source, { ...(inputs.config as T.TraitItem.Config), ...config });
+	}
+	switch (slot) {
+		case 'visibilityModifier': {
+			const _visibility_modifier = config.visibilityModifier;
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'trait_item', { visibilityModifier: _visibility_modifier });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.TraitItem as const);
+				patchCell(arena, record, 3, 3, carriedSlot(source, 'visibilityModifier', _visibility_modifier));
+				const node = arena.view(record);
+				return node as unknown as T.TraitItem.Bound;
+			});
+		}
+		case 'unsafe': {
+			const _unsafe = strictBooleanStorage(config.unsafe);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'trait_item', { unsafe: _unsafe });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.TraitItem as const);
+				patchFlag(record, 2, 1, _unsafe);
+				const node = arena.view(record);
+				return node as unknown as T.TraitItem.Bound;
+			});
+		}
+		case 'name': {
+			const _name = admitAliasContent<NonNullable<T.TraitItem['_name']>>(config.name, [
+				[[1], (v: unknown) => buildTypeIdentifier(v as never)]
+			]);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'trait_item', { name: _name });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.TraitItem as const);
+				patchCell(arena, record, 4, 17, carriedSlot(source, 'name', _name));
+				const node = arena.view(record);
+				return node as unknown as T.TraitItem.Bound;
+			});
+		}
+		case 'typeParameters': {
+			const _type_parameters = config.typeParameters;
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'trait_item', { typeParameters: _type_parameters });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.TraitItem as const);
+				patchCell(arena, record, 5, 22, carriedSlot(source, 'typeParameters', _type_parameters));
+				const node = arena.view(record);
+				return node as unknown as T.TraitItem.Bound;
+			});
+		}
+		case 'bounds': {
+			const _bounds = config.bounds;
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'trait_item', { bounds: _bounds });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.TraitItem as const);
+				patchCell(arena, record, 6, 27, carriedSlot(source, 'bounds', _bounds));
+				const node = arena.view(record);
+				return node as unknown as T.TraitItem.Bound;
+			});
+		}
+		case 'whereClause': {
+			const _where_clause = config.whereClause;
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'trait_item', { whereClause: _where_clause });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.TraitItem as const);
+				patchCell(arena, record, 7, 30, carriedSlot(source, 'whereClause', _where_clause));
+				const node = arena.view(record);
+				return node as unknown as T.TraitItem.Bound;
+			});
+		}
+		case 'body': {
+			const _body = orDefault(config.body, () => buildTraitInterfaceDeclarationBody());
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'trait_item', { body: _body });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.TraitItem as const);
+				patchCell(arena, record, 8, 35, carriedSlot(source, 'body', _body));
+				const node = arena.view(record);
+				return node as unknown as T.TraitItem.Bound;
+			});
+		}
+	}
+	throw new Error(`trait_item writes no slot ${slot} alone`);
+}
 function withTraitItem(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.TraitItem.Config;
 	switch (setter) {
 		case 'visibilityModifier':
 			return applySetter(args, (value?: Admit<T.VisibilityModifier>) =>
-				rebuilt(node, handle, () => buildTraitItem$patch(node, { ...config, visibilityModifier: value }))
+				rebuilt(node, handle, () => buildTraitItem$set(node, 'visibilityModifier', { visibilityModifier: value }))
 			);
 		case 'unsafe':
 			return applySetter(args, (value?: Admit<NonNullable<T.TraitItem.Config>['unsafe']>) =>
-				rebuilt(node, handle, () => buildTraitItem$patch(node, { ...config, unsafe: value }))
+				rebuilt(node, handle, () => buildTraitItem$set(node, 'unsafe', { unsafe: value }))
 			);
 		case 'name':
 			return applySetter(args, (value: Admit<T.TypeIdentifier | T.TypeIdentifier.Types>) =>
-				rebuilt(node, handle, () => buildTraitItem$patch(node, { ...config, name: value }))
+				rebuilt(node, handle, () => buildTraitItem$set(node, 'name', { name: value }))
 			);
 		case 'typeParameters':
 			return applySetter(args, (...args: unknown[]) =>
@@ -3238,13 +4351,13 @@ function withTraitItem(node: object, setter: string, args: readonly unknown[]): 
 							make: buildTypeParameters,
 							element: { keys: ['attributeItems', 'content'], make: buildAttributedTypeParameter }
 						},
-						(value?: Admit<T.TypeParameters>) => buildTraitItem$patch(node, { ...config, typeParameters: value })
+						(value?: Admit<T.TypeParameters>) => buildTraitItem$set(node, 'typeParameters', { typeParameters: value })
 					)
 				)
 			);
 		case 'bounds':
 			return applySetter(args, (value?: Admit<T.TraitBounds>) =>
-				rebuilt(node, handle, () => buildTraitItem$patch(node, { ...config, bounds: value }))
+				rebuilt(node, handle, () => buildTraitItem$set(node, 'bounds', { bounds: value }))
 			);
 		case 'whereClause':
 			return applySetter(args, (...args: unknown[]) =>
@@ -3252,13 +4365,13 @@ function withTraitItem(node: object, setter: string, args: readonly unknown[]): 
 					listSlotWith(
 						args,
 						{ kind: TSKindId.WhereClause as const, optional: true, make: buildWhereClause },
-						(value?: Admit<T.WhereClause>) => buildTraitItem$patch(node, { ...config, whereClause: value })
+						(value?: Admit<T.WhereClause>) => buildTraitItem$set(node, 'whereClause', { whereClause: value })
 					)
 				)
 			);
 		case 'body':
 			return applySetter(args, (value: Admit<T.TraitInterfaceDeclarationBody>) =>
-				rebuilt(node, handle, () => buildTraitItem$patch(node, { ...config, body: value }))
+				rebuilt(node, handle, () => buildTraitItem$set(node, 'body', { body: value }))
 			);
 	}
 	throw new Error(`trait_item has no $with.${setter}`);
@@ -3332,14 +4445,75 @@ function buildAssociatedType$patch(source: object, config: T.AssociatedType.Conf
 		return node as unknown as T.AssociatedType.Bound;
 	});
 }
+function buildAssociatedType$set(
+	source: object,
+	slot: string,
+	config: Partial<T.AssociatedType.Config>
+): T.AssociatedType.Bound {
+	if (!editsInPlace(source)) {
+		const inputs = builtInputs(source);
+		return buildAssociatedType$patch(source, { ...(inputs.config as T.AssociatedType.Config), ...config });
+	}
+	switch (slot) {
+		case 'name': {
+			const _name = admitAliasContent<NonNullable<T.AssociatedType['_name']>>(config.name, [
+				[[1], (v: unknown) => buildTypeIdentifier(v as never)]
+			]);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'associated_type', { name: _name });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.AssociatedType as const);
+				patchCell(arena, record, 2, 2, carriedSlot(source, 'name', _name));
+				const node = arena.view(record);
+				return node as unknown as T.AssociatedType.Bound;
+			});
+		}
+		case 'typeParameters': {
+			const _type_parameters = config.typeParameters;
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'associated_type', { typeParameters: _type_parameters });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.AssociatedType as const);
+				patchCell(arena, record, 3, 7, carriedSlot(source, 'typeParameters', _type_parameters));
+				const node = arena.view(record);
+				return node as unknown as T.AssociatedType.Bound;
+			});
+		}
+		case 'bounds': {
+			const _bounds = config.bounds;
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'associated_type', { bounds: _bounds });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.AssociatedType as const);
+				patchCell(arena, record, 4, 12, carriedSlot(source, 'bounds', _bounds));
+				const node = arena.view(record);
+				return node as unknown as T.AssociatedType.Bound;
+			});
+		}
+		case 'whereClause': {
+			const _where_clause = config.whereClause;
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'associated_type', { whereClause: _where_clause });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.AssociatedType as const);
+				patchCell(arena, record, 5, 15, carriedSlot(source, 'whereClause', _where_clause));
+				const node = arena.view(record);
+				return node as unknown as T.AssociatedType.Bound;
+			});
+		}
+	}
+	throw new Error(`associated_type writes no slot ${slot} alone`);
+}
 function withAssociatedType(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.AssociatedType.Config;
 	switch (setter) {
 		case 'name':
 			return applySetter(args, (value: Admit<T.TypeIdentifier | T.TypeIdentifier.Types>) =>
-				rebuilt(node, handle, () => buildAssociatedType$patch(node, { ...config, name: value }))
+				rebuilt(node, handle, () => buildAssociatedType$set(node, 'name', { name: value }))
 			);
 		case 'typeParameters':
 			return applySetter(args, (...args: unknown[]) =>
@@ -3352,13 +4526,14 @@ function withAssociatedType(node: object, setter: string, args: readonly unknown
 							make: buildTypeParameters,
 							element: { keys: ['attributeItems', 'content'], make: buildAttributedTypeParameter }
 						},
-						(value?: Admit<T.TypeParameters>) => buildAssociatedType$patch(node, { ...config, typeParameters: value })
+						(value?: Admit<T.TypeParameters>) =>
+							buildAssociatedType$set(node, 'typeParameters', { typeParameters: value })
 					)
 				)
 			);
 		case 'bounds':
 			return applySetter(args, (value?: Admit<T.TraitBounds>) =>
-				rebuilt(node, handle, () => buildAssociatedType$patch(node, { ...config, bounds: value }))
+				rebuilt(node, handle, () => buildAssociatedType$set(node, 'bounds', { bounds: value }))
 			);
 		case 'whereClause':
 			return applySetter(args, (...args: unknown[]) =>
@@ -3366,7 +4541,7 @@ function withAssociatedType(node: object, setter: string, args: readonly unknown
 					listSlotWith(
 						args,
 						{ kind: TSKindId.WhereClause as const, optional: true, make: buildWhereClause },
-						(value?: Admit<T.WhereClause>) => buildAssociatedType$patch(node, { ...config, whereClause: value })
+						(value?: Admit<T.WhereClause>) => buildAssociatedType$set(node, 'whereClause', { whereClause: value })
 					)
 				)
 			);
@@ -3478,10 +4653,52 @@ function buildHigherRankedTraitBound$patch(
 		return node as unknown as T.HigherRankedTraitBound.Bound;
 	});
 }
+function buildHigherRankedTraitBound$set(
+	source: object,
+	slot: string,
+	config: Partial<T.HigherRankedTraitBound.Config>
+): T.HigherRankedTraitBound.Bound {
+	if (!editsInPlace(source)) {
+		const inputs = builtInputs(source);
+		return buildHigherRankedTraitBound$patch(source, {
+			...(inputs.config as T.HigherRankedTraitBound.Config),
+			...config
+		});
+	}
+	switch (slot) {
+		case 'typeParameters': {
+			const _type_parameters = config.typeParameters;
+			const handle = currentHandle();
+			if (handle !== undefined)
+				admitChildren(handle, 'higher_ranked_trait_bound', { typeParameters: _type_parameters });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.HigherRankedTraitBound as const);
+				patchCell(arena, record, 2, 2, carriedSlot(source, 'typeParameters', _type_parameters));
+				const node = arena.view(record);
+				return node as unknown as T.HigherRankedTraitBound.Bound;
+			});
+		}
+		case 'type': {
+			const _type = admitAliasContent<NonNullable<T.HigherRankedTraitBound['_type']>>(
+				kindIdStorage<NonNullable<T.HigherRankedTraitBound['_type']>>(config.type),
+				[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
+			);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'higher_ranked_trait_bound', { type: _type });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.HigherRankedTraitBound as const);
+				patchCell(arena, record, 3, 7, carriedSlot(source, 'type', _type));
+				const node = arena.view(record);
+				return node as unknown as T.HigherRankedTraitBound.Bound;
+			});
+		}
+	}
+	throw new Error(`higher_ranked_trait_bound writes no slot ${slot} alone`);
+}
 function withHigherRankedTraitBound(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.HigherRankedTraitBound.Config;
 	switch (setter) {
 		case 'typeParameters':
 			return applySetter(args, (...args: unknown[]) =>
@@ -3495,13 +4712,13 @@ function withHigherRankedTraitBound(node: object, setter: string, args: readonly
 							element: { keys: ['attributeItems', 'content'], make: buildAttributedTypeParameter }
 						},
 						(value: Admit<T.TypeParameters>) =>
-							buildHigherRankedTraitBound$patch(node, { ...config, typeParameters: value })
+							buildHigherRankedTraitBound$set(node, 'typeParameters', { typeParameters: value })
 					)
 				)
 			);
 		case 'type':
 			return applySetter(args, (value: Admit<NonNullable<T.HigherRankedTraitBound.Config>['type']>) =>
-				rebuilt(node, handle, () => buildHigherRankedTraitBound$patch(node, { ...config, type: value }))
+				rebuilt(node, handle, () => buildHigherRankedTraitBound$set(node, 'type', { type: value }))
 			);
 	}
 	throw new Error(`higher_ranked_trait_bound has no $with.${setter}`);
@@ -3693,22 +4910,72 @@ function buildConstParameter$patch(source: object, config: T.ConstParameter.Conf
 		return node as unknown as T.ConstParameter.Bound;
 	});
 }
+function buildConstParameter$set(
+	source: object,
+	slot: string,
+	config: Partial<T.ConstParameter.Config>
+): T.ConstParameter.Bound {
+	if (!editsInPlace(source)) {
+		const inputs = builtInputs(source);
+		return buildConstParameter$patch(source, { ...(inputs.config as T.ConstParameter.Config), ...config });
+	}
+	switch (slot) {
+		case 'name': {
+			const _name = config.name;
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'const_parameter', { name: _name });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.ConstParameter as const);
+				patchCell(arena, record, 2, 2, carriedSlot(source, 'name', _name));
+				const node = arena.view(record);
+				return node as unknown as T.ConstParameter.Bound;
+			});
+		}
+		case 'type': {
+			const _type = admitAliasContent<NonNullable<T.ConstParameter['_type']>>(
+				kindIdStorage<NonNullable<T.ConstParameter['_type']>>(config.type),
+				[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
+			);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'const_parameter', { type: _type });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.ConstParameter as const);
+				patchCell(arena, record, 3, 5, carriedSlot(source, 'type', _type));
+				const node = arena.view(record);
+				return node as unknown as T.ConstParameter.Bound;
+			});
+		}
+		case 'default': {
+			const _default = kindIdStorage<NonNullable<T.ConstParameter['_default']>>(config.default);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'const_parameter', { default: _default });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.ConstParameter as const);
+				patchCell(arena, record, 4, 9, carriedSlot(source, 'default', _default));
+				const node = arena.view(record);
+				return node as unknown as T.ConstParameter.Bound;
+			});
+		}
+	}
+	throw new Error(`const_parameter writes no slot ${slot} alone`);
+}
 function withConstParameter(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.ConstParameter.Config;
 	switch (setter) {
 		case 'name':
 			return applySetter(args, (value: Admit<T.Identifier>) =>
-				rebuilt(node, handle, () => buildConstParameter$patch(node, { ...config, name: value }))
+				rebuilt(node, handle, () => buildConstParameter$set(node, 'name', { name: value }))
 			);
 		case 'type':
 			return applySetter(args, (value: Admit<NonNullable<T.ConstParameter.Config>['type']>) =>
-				rebuilt(node, handle, () => buildConstParameter$patch(node, { ...config, type: value }))
+				rebuilt(node, handle, () => buildConstParameter$set(node, 'type', { type: value }))
 			);
 		case 'default':
 			return applySetter(args, (value?: Admit<NonNullable<T.ConstParameter.Config>['default']>) =>
-				rebuilt(node, handle, () => buildConstParameter$patch(node, { ...config, default: value }))
+				rebuilt(node, handle, () => buildConstParameter$set(node, 'default', { default: value }))
 			);
 	}
 	throw new Error(`const_parameter has no $with.${setter}`);
@@ -3770,22 +5037,74 @@ function buildTypeParameter$patch(source: object, config: T.TypeParameter.Config
 		return node as unknown as T.TypeParameter.Bound;
 	});
 }
+function buildTypeParameter$set(
+	source: object,
+	slot: string,
+	config: Partial<T.TypeParameter.Config>
+): T.TypeParameter.Bound {
+	if (!editsInPlace(source)) {
+		const inputs = builtInputs(source);
+		return buildTypeParameter$patch(source, { ...(inputs.config as T.TypeParameter.Config), ...config });
+	}
+	switch (slot) {
+		case 'name': {
+			const _name = admitAliasContent<NonNullable<T.TypeParameter['_name']>>(config.name, [
+				[[1], (v: unknown) => buildTypeIdentifier(v as never)]
+			]);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'type_parameter', { name: _name });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.TypeParameter as const);
+				patchCell(arena, record, 2, 2, carriedSlot(source, 'name', _name));
+				const node = arena.view(record);
+				return node as unknown as T.TypeParameter.Bound;
+			});
+		}
+		case 'bounds': {
+			const _bounds = config.bounds;
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'type_parameter', { bounds: _bounds });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.TypeParameter as const);
+				patchCell(arena, record, 3, 7, carriedSlot(source, 'bounds', _bounds));
+				const node = arena.view(record);
+				return node as unknown as T.TypeParameter.Bound;
+			});
+		}
+		case 'default': {
+			const _default = admitAliasContent<NonNullable<T.TypeParameter['_default']>>(
+				kindIdStorage<NonNullable<T.TypeParameter['_default']>>(config.default),
+				[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
+			);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'type_parameter', { default: _default });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.TypeParameter as const);
+				patchCell(arena, record, 4, 10, carriedSlot(source, 'default', _default));
+				const node = arena.view(record);
+				return node as unknown as T.TypeParameter.Bound;
+			});
+		}
+	}
+	throw new Error(`type_parameter writes no slot ${slot} alone`);
+}
 function withTypeParameter(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.TypeParameter.Config;
 	switch (setter) {
 		case 'name':
 			return applySetter(args, (value: Admit<T.TypeIdentifier | T.TypeIdentifier.Types>) =>
-				rebuilt(node, handle, () => buildTypeParameter$patch(node, { ...config, name: value }))
+				rebuilt(node, handle, () => buildTypeParameter$set(node, 'name', { name: value }))
 			);
 		case 'bounds':
 			return applySetter(args, (value?: Admit<T.TraitBounds>) =>
-				rebuilt(node, handle, () => buildTypeParameter$patch(node, { ...config, bounds: value }))
+				rebuilt(node, handle, () => buildTypeParameter$set(node, 'bounds', { bounds: value }))
 			);
 		case 'default':
 			return applySetter(args, (value?: Admit<NonNullable<T.TypeParameter.Config>['default']>) =>
-				rebuilt(node, handle, () => buildTypeParameter$patch(node, { ...config, default: value }))
+				rebuilt(node, handle, () => buildTypeParameter$set(node, 'default', { default: value }))
 			);
 	}
 	throw new Error(`type_parameter has no $with.${setter}`);
@@ -3830,18 +5149,53 @@ function buildLifetimeParameter$patch(source: object, config: T.LifetimeParamete
 		return node as unknown as T.LifetimeParameter.Bound;
 	});
 }
+function buildLifetimeParameter$set(
+	source: object,
+	slot: string,
+	config: Partial<T.LifetimeParameter.Config>
+): T.LifetimeParameter.Bound {
+	if (!editsInPlace(source)) {
+		const inputs = builtInputs(source);
+		return buildLifetimeParameter$patch(source, { ...(inputs.config as T.LifetimeParameter.Config), ...config });
+	}
+	switch (slot) {
+		case 'name': {
+			const _name = config.name;
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'lifetime_parameter', { name: _name });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.LifetimeParameter as const);
+				patchCell(arena, record, 2, 2, carriedSlot(source, 'name', _name));
+				const node = arena.view(record);
+				return node as unknown as T.LifetimeParameter.Bound;
+			});
+		}
+		case 'bounds': {
+			const _bounds = config.bounds;
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'lifetime_parameter', { bounds: _bounds });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.LifetimeParameter as const);
+				patchCell(arena, record, 3, 7, carriedSlot(source, 'bounds', _bounds));
+				const node = arena.view(record);
+				return node as unknown as T.LifetimeParameter.Bound;
+			});
+		}
+	}
+	throw new Error(`lifetime_parameter writes no slot ${slot} alone`);
+}
 function withLifetimeParameter(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.LifetimeParameter.Config;
 	switch (setter) {
 		case 'name':
 			return applySetter(args, (value: Admit<T.Lifetime>) =>
-				rebuilt(node, handle, () => buildLifetimeParameter$patch(node, { ...config, name: value }))
+				rebuilt(node, handle, () => buildLifetimeParameter$set(node, 'name', { name: value }))
 			);
 		case 'bounds':
 			return applySetter(args, (value?: Admit<T.TraitBounds>) =>
-				rebuilt(node, handle, () => buildLifetimeParameter$patch(node, { ...config, bounds: value }))
+				rebuilt(node, handle, () => buildLifetimeParameter$set(node, 'bounds', { bounds: value }))
 			);
 	}
 	throw new Error(`lifetime_parameter has no $with.${setter}`);
@@ -3923,30 +5277,104 @@ function buildLetDeclaration$patch(source: object, config: T.LetDeclaration.Conf
 		return node as unknown as T.LetDeclaration.Bound;
 	});
 }
+function buildLetDeclaration$set(
+	source: object,
+	slot: string,
+	config: Partial<T.LetDeclaration.Config>
+): T.LetDeclaration.Bound {
+	if (!editsInPlace(source)) {
+		const inputs = builtInputs(source);
+		return buildLetDeclaration$patch(source, { ...(inputs.config as T.LetDeclaration.Config), ...config });
+	}
+	switch (slot) {
+		case 'mutable': {
+			const _mutable = strictBooleanStorage(config.mutable);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'let_declaration', { mutable: _mutable });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.LetDeclaration as const);
+				patchFlag(record, 2, 1, _mutable);
+				const node = arena.view(record);
+				return node as unknown as T.LetDeclaration.Bound;
+			});
+		}
+		case 'name': {
+			const _name = kindIdStorage<NonNullable<T.LetDeclaration['_name']>>(config.name);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'let_declaration', { name: _name });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.LetDeclaration as const);
+				patchCell(arena, record, 3, 3, carriedSlot(source, 'name', _name));
+				const node = arena.view(record);
+				return node as unknown as T.LetDeclaration.Bound;
+			});
+		}
+		case 'type': {
+			const _type = admitAliasContent<NonNullable<T.LetDeclaration['_type']>>(
+				kindIdStorage<NonNullable<T.LetDeclaration['_type']>>(config.type),
+				[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
+			);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'let_declaration', { type: _type });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.LetDeclaration as const);
+				patchCell(arena, record, 4, 7, carriedSlot(source, 'type', _type));
+				const node = arena.view(record);
+				return node as unknown as T.LetDeclaration.Bound;
+			});
+		}
+		case 'value': {
+			const _value = kindIdStorage<NonNullable<T.LetDeclaration['_value']>>(config.value);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'let_declaration', { value: _value });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.LetDeclaration as const);
+				patchCell(arena, record, 5, 11, carriedSlot(source, 'value', _value));
+				const node = arena.view(record);
+				return node as unknown as T.LetDeclaration.Bound;
+			});
+		}
+		case 'alternative': {
+			const _alternative = config.alternative;
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'let_declaration', { alternative: _alternative });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.LetDeclaration as const);
+				patchCell(arena, record, 6, 15, carriedSlot(source, 'alternative', _alternative));
+				const node = arena.view(record);
+				return node as unknown as T.LetDeclaration.Bound;
+			});
+		}
+	}
+	throw new Error(`let_declaration writes no slot ${slot} alone`);
+}
 function withLetDeclaration(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.LetDeclaration.Config;
 	switch (setter) {
 		case 'mutable':
 			return applySetter(args, (value?: Admit<NonNullable<T.LetDeclaration.Config>['mutable']>) =>
-				rebuilt(node, handle, () => buildLetDeclaration$patch(node, { ...config, mutable: value }))
+				rebuilt(node, handle, () => buildLetDeclaration$set(node, 'mutable', { mutable: value }))
 			);
 		case 'name':
 			return applySetter(args, (value: Admit<NonNullable<T.LetDeclaration.Config>['name']>) =>
-				rebuilt(node, handle, () => buildLetDeclaration$patch(node, { ...config, name: value }))
+				rebuilt(node, handle, () => buildLetDeclaration$set(node, 'name', { name: value }))
 			);
 		case 'type':
 			return applySetter(args, (value?: Admit<NonNullable<T.LetDeclaration.Config>['type']>) =>
-				rebuilt(node, handle, () => buildLetDeclaration$patch(node, { ...config, type: value }))
+				rebuilt(node, handle, () => buildLetDeclaration$set(node, 'type', { type: value }))
 			);
 		case 'value':
 			return applySetter(args, (value?: Admit<NonNullable<T.LetDeclaration.Config>['value']>) =>
-				rebuilt(node, handle, () => buildLetDeclaration$patch(node, { ...config, value: value }))
+				rebuilt(node, handle, () => buildLetDeclaration$set(node, 'value', { value: value }))
 			);
 		case 'alternative':
 			return applySetter(args, (value?: Admit<T.Block>) =>
-				rebuilt(node, handle, () => buildLetDeclaration$patch(node, { ...config, alternative: value }))
+				rebuilt(node, handle, () => buildLetDeclaration$set(node, 'alternative', { alternative: value }))
 			);
 	}
 	throw new Error(`let_declaration has no $with.${setter}`);
@@ -4006,18 +5434,58 @@ function buildUseDeclaration$patch(source: object, config: T.UseDeclaration.Conf
 		return node as unknown as T.UseDeclaration.Bound;
 	});
 }
+function buildUseDeclaration$set(
+	source: object,
+	slot: string,
+	config: Partial<T.UseDeclaration.Config>
+): T.UseDeclaration.Bound {
+	if (!editsInPlace(source)) {
+		const inputs = builtInputs(source);
+		return buildUseDeclaration$patch(source, { ...(inputs.config as T.UseDeclaration.Config), ...config });
+	}
+	switch (slot) {
+		case 'visibilityModifier': {
+			const _visibility_modifier = config.visibilityModifier;
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'use_declaration', { visibilityModifier: _visibility_modifier });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.UseDeclaration as const);
+				patchCell(arena, record, 2, 2, carriedSlot(source, 'visibilityModifier', _visibility_modifier));
+				const node = arena.view(record);
+				return node as unknown as T.UseDeclaration.Bound;
+			});
+		}
+		case 'argument': {
+			const _argument = rejectKeywordText(
+				kindIdStorage<NonNullable<T.UseDeclaration['_argument']>>(config.argument),
+				'UseDeclaration.argument',
+				TSKindId.Identifier,
+				['self', 'super', 'crate']
+			);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'use_declaration', { argument: _argument });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.UseDeclaration as const);
+				patchCell(arena, record, 3, 16, carriedSlot(source, 'argument', _argument));
+				const node = arena.view(record);
+				return node as unknown as T.UseDeclaration.Bound;
+			});
+		}
+	}
+	throw new Error(`use_declaration writes no slot ${slot} alone`);
+}
 function withUseDeclaration(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.UseDeclaration.Config;
 	switch (setter) {
 		case 'visibilityModifier':
 			return applySetter(args, (value?: Admit<T.VisibilityModifier>) =>
-				rebuilt(node, handle, () => buildUseDeclaration$patch(node, { ...config, visibilityModifier: value }))
+				rebuilt(node, handle, () => buildUseDeclaration$set(node, 'visibilityModifier', { visibilityModifier: value }))
 			);
 		case 'argument':
 			return applySetter(args, (value: Admit<NonNullable<T.UseDeclaration.Config>['argument']>) =>
-				rebuilt(node, handle, () => buildUseDeclaration$patch(node, { ...config, argument: value }))
+				rebuilt(node, handle, () => buildUseDeclaration$set(node, 'argument', { argument: value }))
 			);
 	}
 	throw new Error(`use_declaration has no $with.${setter}`);
@@ -4070,14 +5538,54 @@ function buildScopedUseList$patch(source: object, config: Partial<T.ScopedUseLis
 		return node as unknown as T.ScopedUseList.Bound;
 	});
 }
+function buildScopedUseList$set(
+	source: object,
+	slot: string,
+	config: Partial<T.ScopedUseList.Config>
+): T.ScopedUseList.Bound {
+	if (!editsInPlace(source)) {
+		const inputs = builtInputs(source);
+		return buildScopedUseList$patch(source, { ...(inputs.config as T.ScopedUseList.Config), ...config });
+	}
+	switch (slot) {
+		case 'path': {
+			const _path = rejectKeywordText(
+				kindIdStorage<NonNullable<T.ScopedUseList['_path']>>(config.path),
+				'ScopedUseList.path',
+				TSKindId.Identifier,
+				['self', 'super', 'crate']
+			);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'scoped_use_list', { path: _path });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.ScopedUseList as const);
+				patchCell(arena, record, 2, 2, carriedSlot(source, 'path', _path));
+				const node = arena.view(record);
+				return node as unknown as T.ScopedUseList.Bound;
+			});
+		}
+		case 'list': {
+			const _list = orDefault(config.list, () => buildUseList());
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'scoped_use_list', { list: _list });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.ScopedUseList as const);
+				patchCell(arena, record, 3, 6, carriedSlot(source, 'list', _list));
+				const node = arena.view(record);
+				return node as unknown as T.ScopedUseList.Bound;
+			});
+		}
+	}
+	throw new Error(`scoped_use_list writes no slot ${slot} alone`);
+}
 function withScopedUseList(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.ScopedUseList.Config;
 	switch (setter) {
 		case 'path':
 			return applySetter(args, (value?: Admit<NonNullable<T.ScopedUseList.Config>['path']>) =>
-				rebuilt(node, handle, () => buildScopedUseList$patch(node, { ...config, path: value }))
+				rebuilt(node, handle, () => buildScopedUseList$set(node, 'path', { path: value }))
 			);
 		case 'list':
 			return applySetter(args, (...args: unknown[]) =>
@@ -4085,7 +5593,7 @@ function withScopedUseList(node: object, setter: string, args: readonly unknown[
 					listSlotWith(
 						args,
 						{ kind: TSKindId.UseList as const, optional: false, make: buildUseList },
-						(value: Admit<T.UseList>) => buildScopedUseList$patch(node, { ...config, list: value })
+						(value: Admit<T.UseList>) => buildScopedUseList$set(node, 'list', { list: value })
 					)
 				)
 			);
@@ -4240,18 +5748,58 @@ function buildUseAsClause$patch(source: object, config: T.UseAsClause.Config): T
 		return node as unknown as T.UseAsClause.Bound;
 	});
 }
+function buildUseAsClause$set(
+	source: object,
+	slot: string,
+	config: Partial<T.UseAsClause.Config>
+): T.UseAsClause.Bound {
+	if (!editsInPlace(source)) {
+		const inputs = builtInputs(source);
+		return buildUseAsClause$patch(source, { ...(inputs.config as T.UseAsClause.Config), ...config });
+	}
+	switch (slot) {
+		case 'name': {
+			const _name = rejectKeywordText(
+				kindIdStorage<NonNullable<T.UseAsClause['_name']>>(config.name),
+				'UseAsClause.name',
+				TSKindId.Identifier,
+				['self', 'super', 'crate']
+			);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'use_as_clause', { name: _name });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.UseAsClause as const);
+				patchCell(arena, record, 2, 2, carriedSlot(source, 'name', _name));
+				const node = arena.view(record);
+				return node as unknown as T.UseAsClause.Bound;
+			});
+		}
+		case 'alias': {
+			const _alias = config.alias;
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'use_as_clause', { alias: _alias });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.UseAsClause as const);
+				patchCell(arena, record, 3, 6, carriedSlot(source, 'alias', _alias));
+				const node = arena.view(record);
+				return node as unknown as T.UseAsClause.Bound;
+			});
+		}
+	}
+	throw new Error(`use_as_clause writes no slot ${slot} alone`);
+}
 function withUseAsClause(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.UseAsClause.Config;
 	switch (setter) {
 		case 'name':
 			return applySetter(args, (value: Admit<NonNullable<T.UseAsClause.Config>['name']>) =>
-				rebuilt(node, handle, () => buildUseAsClause$patch(node, { ...config, name: value }))
+				rebuilt(node, handle, () => buildUseAsClause$set(node, 'name', { name: value }))
 			);
 		case 'alias':
 			return applySetter(args, (value: Admit<T.Identifier>) =>
-				rebuilt(node, handle, () => buildUseAsClause$patch(node, { ...config, alias: value }))
+				rebuilt(node, handle, () => buildUseAsClause$set(node, 'alias', { alias: value }))
 			);
 	}
 	throw new Error(`use_as_clause has no $with.${setter}`);
@@ -4309,8 +5857,7 @@ function _buildUseWildcard$patch(source: object, value?: Admit<T.UseWildcardGrou
 }
 function withUseWildcard(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const readGroup_useWildcardGroup = () => inputs.config['useWildcardGroup'] as object | undefined;
+	const readGroup_useWildcardGroup = () => builtInputs(node).config['useWildcardGroup'] as object | undefined;
 	switch (setter) {
 		case 'useWildcardGroup':
 			return applySetter(args, (value?: Admit<T.UseWildcardGroup>) =>
@@ -4426,22 +5973,69 @@ function buildSelfParameter$patch(source: object, config: Partial<T.SelfParamete
 		return node as unknown as T.SelfParameter.Bound;
 	});
 }
+function buildSelfParameter$set(
+	source: object,
+	slot: string,
+	config: Partial<T.SelfParameter.Config>
+): T.SelfParameter.Bound {
+	if (!editsInPlace(source)) {
+		const inputs = builtInputs(source);
+		return buildSelfParameter$patch(source, { ...(inputs.config as T.SelfParameter.Config), ...config });
+	}
+	switch (slot) {
+		case 'reference': {
+			const _reference = strictBooleanStorage(config.reference);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'self_parameter', { reference: _reference });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.SelfParameter as const);
+				patchFlag(record, 2, 1, _reference);
+				const node = arena.view(record);
+				return node as unknown as T.SelfParameter.Bound;
+			});
+		}
+		case 'lifetime': {
+			const _lifetime = config.lifetime;
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'self_parameter', { lifetime: _lifetime });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.SelfParameter as const);
+				patchCell(arena, record, 3, 3, carriedSlot(source, 'lifetime', _lifetime));
+				const node = arena.view(record);
+				return node as unknown as T.SelfParameter.Bound;
+			});
+		}
+		case 'mutable': {
+			const _mutable = strictBooleanStorage(config.mutable);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'self_parameter', { mutable: _mutable });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.SelfParameter as const);
+				patchFlag(record, 2, 2, _mutable);
+				const node = arena.view(record);
+				return node as unknown as T.SelfParameter.Bound;
+			});
+		}
+	}
+	throw new Error(`self_parameter writes no slot ${slot} alone`);
+}
 function withSelfParameter(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.SelfParameter.Config;
 	switch (setter) {
 		case 'reference':
 			return applySetter(args, (value?: Admit<NonNullable<T.SelfParameter.Config>['reference']>) =>
-				rebuilt(node, handle, () => buildSelfParameter$patch(node, { ...config, reference: value }))
+				rebuilt(node, handle, () => buildSelfParameter$set(node, 'reference', { reference: value }))
 			);
 		case 'lifetime':
 			return applySetter(args, (value?: Admit<T.Lifetime>) =>
-				rebuilt(node, handle, () => buildSelfParameter$patch(node, { ...config, lifetime: value }))
+				rebuilt(node, handle, () => buildSelfParameter$set(node, 'lifetime', { lifetime: value }))
 			);
 		case 'mutable':
 			return applySetter(args, (value?: Admit<NonNullable<T.SelfParameter.Config>['mutable']>) =>
-				rebuilt(node, handle, () => buildSelfParameter$patch(node, { ...config, mutable: value }))
+				rebuilt(node, handle, () => buildSelfParameter$set(node, 'mutable', { mutable: value }))
 			);
 	}
 	throw new Error(`self_parameter has no $with.${setter}`);
@@ -4486,18 +6080,53 @@ function buildVariadicParameter$patch(
 		return node as unknown as T.VariadicParameter.Bound;
 	});
 }
+function buildVariadicParameter$set(
+	source: object,
+	slot: string,
+	config: Partial<T.VariadicParameter.Config>
+): T.VariadicParameter.Bound {
+	if (!editsInPlace(source)) {
+		const inputs = builtInputs(source);
+		return buildVariadicParameter$patch(source, { ...(inputs.config as T.VariadicParameter.Config), ...config });
+	}
+	switch (slot) {
+		case 'mutable': {
+			const _mutable = strictBooleanStorage(config.mutable);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'variadic_parameter', { mutable: _mutable });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.VariadicParameter as const);
+				patchFlag(record, 2, 1, _mutable);
+				const node = arena.view(record);
+				return node as unknown as T.VariadicParameter.Bound;
+			});
+		}
+		case 'pattern': {
+			const _pattern = kindIdStorage<NonNullable<T.VariadicParameter['_pattern']>>(config.pattern);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'variadic_parameter', { pattern: _pattern });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.VariadicParameter as const);
+				patchCell(arena, record, 3, 3, carriedSlot(source, 'pattern', _pattern));
+				const node = arena.view(record);
+				return node as unknown as T.VariadicParameter.Bound;
+			});
+		}
+	}
+	throw new Error(`variadic_parameter writes no slot ${slot} alone`);
+}
 function withVariadicParameter(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.VariadicParameter.Config;
 	switch (setter) {
 		case 'mutable':
 			return applySetter(args, (value?: Admit<NonNullable<T.VariadicParameter.Config>['mutable']>) =>
-				rebuilt(node, handle, () => buildVariadicParameter$patch(node, { ...config, mutable: value }))
+				rebuilt(node, handle, () => buildVariadicParameter$set(node, 'mutable', { mutable: value }))
 			);
 		case 'pattern':
 			return applySetter(args, (value?: Admit<NonNullable<T.VariadicParameter.Config>['pattern']>) =>
-				rebuilt(node, handle, () => buildVariadicParameter$patch(node, { ...config, pattern: value }))
+				rebuilt(node, handle, () => buildVariadicParameter$set(node, 'pattern', { pattern: value }))
 			);
 	}
 	throw new Error(`variadic_parameter has no $with.${setter}`);
@@ -4550,22 +6179,68 @@ function buildParameter$patch(source: object, config: T.Parameter.Config): T.Par
 		return node as unknown as T.Parameter.Bound;
 	});
 }
+function buildParameter$set(source: object, slot: string, config: Partial<T.Parameter.Config>): T.Parameter.Bound {
+	if (!editsInPlace(source)) {
+		const inputs = builtInputs(source);
+		return buildParameter$patch(source, { ...(inputs.config as T.Parameter.Config), ...config });
+	}
+	switch (slot) {
+		case 'mutable': {
+			const _mutable = strictBooleanStorage(config.mutable);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'parameter', { mutable: _mutable });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.Parameter as const);
+				patchFlag(record, 2, 1, _mutable);
+				const node = arena.view(record);
+				return node as unknown as T.Parameter.Bound;
+			});
+		}
+		case 'name': {
+			const _name = kindIdStorage<NonNullable<T.Parameter['_name']>>(config.name);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'parameter', { name: _name });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.Parameter as const);
+				patchCell(arena, record, 3, 3, carriedSlot(source, 'name', _name));
+				const node = arena.view(record);
+				return node as unknown as T.Parameter.Bound;
+			});
+		}
+		case 'type': {
+			const _type = admitAliasContent<NonNullable<T.Parameter['_type']>>(
+				kindIdStorage<NonNullable<T.Parameter['_type']>>(config.type),
+				[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
+			);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'parameter', { type: _type });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.Parameter as const);
+				patchCell(arena, record, 4, 7, carriedSlot(source, 'type', _type));
+				const node = arena.view(record);
+				return node as unknown as T.Parameter.Bound;
+			});
+		}
+	}
+	throw new Error(`parameter writes no slot ${slot} alone`);
+}
 function withParameter(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.Parameter.Config;
 	switch (setter) {
 		case 'mutable':
 			return applySetter(args, (value?: Admit<NonNullable<T.Parameter.Config>['mutable']>) =>
-				rebuilt(node, handle, () => buildParameter$patch(node, { ...config, mutable: value }))
+				rebuilt(node, handle, () => buildParameter$set(node, 'mutable', { mutable: value }))
 			);
 		case 'name':
 			return applySetter(args, (value: Admit<NonNullable<T.Parameter.Config>['name']>) =>
-				rebuilt(node, handle, () => buildParameter$patch(node, { ...config, name: value }))
+				rebuilt(node, handle, () => buildParameter$set(node, 'name', { name: value }))
 			);
 		case 'type':
 			return applySetter(args, (value: Admit<NonNullable<T.Parameter.Config>['type']>) =>
-				rebuilt(node, handle, () => buildParameter$patch(node, { ...config, type: value }))
+				rebuilt(node, handle, () => buildParameter$set(node, 'type', { type: value }))
 			);
 	}
 	throw new Error(`parameter has no $with.${setter}`);
@@ -4782,18 +6457,59 @@ function buildQualifiedType$patch(source: object, config: T.QualifiedType.Config
 		return node as unknown as T.QualifiedType.Bound;
 	});
 }
+function buildQualifiedType$set(
+	source: object,
+	slot: string,
+	config: Partial<T.QualifiedType.Config>
+): T.QualifiedType.Bound {
+	if (!editsInPlace(source)) {
+		const inputs = builtInputs(source);
+		return buildQualifiedType$patch(source, { ...(inputs.config as T.QualifiedType.Config), ...config });
+	}
+	switch (slot) {
+		case 'type': {
+			const _type = admitAliasContent<NonNullable<T.QualifiedType['_type']>>(
+				kindIdStorage<NonNullable<T.QualifiedType['_type']>>(config.type),
+				[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
+			);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'qualified_type', { type: _type });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.QualifiedType as const);
+				patchCell(arena, record, 2, 2, carriedSlot(source, 'type', _type));
+				const node = arena.view(record);
+				return node as unknown as T.QualifiedType.Bound;
+			});
+		}
+		case 'alias': {
+			const _alias = admitAliasContent<NonNullable<T.QualifiedType['_alias']>>(
+				kindIdStorage<NonNullable<T.QualifiedType['_alias']>>(config.alias),
+				[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
+			);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'qualified_type', { alias: _alias });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.QualifiedType as const);
+				patchCell(arena, record, 3, 6, carriedSlot(source, 'alias', _alias));
+				const node = arena.view(record);
+				return node as unknown as T.QualifiedType.Bound;
+			});
+		}
+	}
+	throw new Error(`qualified_type writes no slot ${slot} alone`);
+}
 function withQualifiedType(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.QualifiedType.Config;
 	switch (setter) {
 		case 'type':
 			return applySetter(args, (value: Admit<NonNullable<T.QualifiedType.Config>['type']>) =>
-				rebuilt(node, handle, () => buildQualifiedType$patch(node, { ...config, type: value }))
+				rebuilt(node, handle, () => buildQualifiedType$set(node, 'type', { type: value }))
 			);
 		case 'alias':
 			return applySetter(args, (value: Admit<NonNullable<T.QualifiedType.Config>['alias']>) =>
-				rebuilt(node, handle, () => buildQualifiedType$patch(node, { ...config, alias: value }))
+				rebuilt(node, handle, () => buildQualifiedType$set(node, 'alias', { alias: value }))
 			);
 	}
 	throw new Error(`qualified_type has no $with.${setter}`);
@@ -4881,18 +6597,52 @@ function buildArrayType$patch(source: object, config: T.ArrayType.Config): T.Arr
 		return node as unknown as T.ArrayType.Bound;
 	});
 }
+function buildArrayType$set(source: object, slot: string, config: Partial<T.ArrayType.Config>): T.ArrayType.Bound {
+	if (!editsInPlace(source)) {
+		const inputs = builtInputs(source);
+		return buildArrayType$patch(source, { ...(inputs.config as T.ArrayType.Config), ...config });
+	}
+	switch (slot) {
+		case 'element': {
+			const _element = admitAliasContent<NonNullable<T.ArrayType['_element']>>(
+				kindIdStorage<NonNullable<T.ArrayType['_element']>>(config.element),
+				[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
+			);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'array_type', { element: _element });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.ArrayType as const);
+				patchCell(arena, record, 2, 2, carriedSlot(source, 'element', _element));
+				const node = arena.view(record);
+				return node as unknown as T.ArrayType.Bound;
+			});
+		}
+		case 'length': {
+			const _length = kindIdStorage<NonNullable<T.ArrayType['_length']>>(config.length);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'array_type', { length: _length });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.ArrayType as const);
+				patchCell(arena, record, 3, 6, carriedSlot(source, 'length', _length));
+				const node = arena.view(record);
+				return node as unknown as T.ArrayType.Bound;
+			});
+		}
+	}
+	throw new Error(`array_type writes no slot ${slot} alone`);
+}
 function withArrayType(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.ArrayType.Config;
 	switch (setter) {
 		case 'element':
 			return applySetter(args, (value: Admit<NonNullable<T.ArrayType.Config>['element']>) =>
-				rebuilt(node, handle, () => buildArrayType$patch(node, { ...config, element: value }))
+				rebuilt(node, handle, () => buildArrayType$set(node, 'element', { element: value }))
 			);
 		case 'length':
 			return applySetter(args, (value?: Admit<NonNullable<T.ArrayType.Config>['length']>) =>
-				rebuilt(node, handle, () => buildArrayType$patch(node, { ...config, length: value }))
+				rebuilt(node, handle, () => buildArrayType$set(node, 'length', { length: value }))
 			);
 	}
 	throw new Error(`array_type has no $with.${setter}`);
@@ -5041,10 +6791,72 @@ function buildFunctionType$patch(source: object, config: T.FunctionType.Config):
 		return node as unknown as T.FunctionType.Bound;
 	});
 }
+function buildFunctionType$set(
+	source: object,
+	slot: string,
+	config: Partial<T.FunctionType.Config>
+): T.FunctionType.Bound {
+	if (!editsInPlace(source)) {
+		const inputs = builtInputs(source);
+		return buildFunctionType$patch(source, { ...(inputs.config as T.FunctionType.Config), ...config });
+	}
+	switch (slot) {
+		case 'forLifetimes': {
+			const _for_lifetimes = config.forLifetimes;
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'function_type', { forLifetimes: _for_lifetimes });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.FunctionType as const);
+				patchCell(arena, record, 2, 2, carriedSlot(source, 'forLifetimes', _for_lifetimes));
+				const node = arena.view(record);
+				return node as unknown as T.FunctionType.Bound;
+			});
+		}
+		case 'content': {
+			const _content = config.content;
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'function_type', { content: _content });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.FunctionType as const);
+				patchCell(arena, record, 3, 7, carriedSlot(source, 'content', _content));
+				const node = arena.view(record);
+				return node as unknown as T.FunctionType.Bound;
+			});
+		}
+		case 'parameters': {
+			const _parameters = orDefault(config.parameters, () => buildParameters());
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'function_type', { parameters: _parameters });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.FunctionType as const);
+				patchCell(arena, record, 4, 10, carriedSlot(source, 'parameters', _parameters));
+				const node = arena.view(record);
+				return node as unknown as T.FunctionType.Bound;
+			});
+		}
+		case 'returnType': {
+			const _return_type = admitAliasContent<NonNullable<T.FunctionType['_return_type']>>(
+				kindIdStorage<NonNullable<T.FunctionType['_return_type']>>(config.returnType),
+				[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
+			);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'function_type', { returnType: _return_type });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.FunctionType as const);
+				patchCell(arena, record, 5, 13, carriedSlot(source, 'returnType', _return_type));
+				const node = arena.view(record);
+				return node as unknown as T.FunctionType.Bound;
+			});
+		}
+	}
+	throw new Error(`function_type writes no slot ${slot} alone`);
+}
 function withFunctionType(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.FunctionType.Config;
 	switch (setter) {
 		case 'forLifetimes':
 			return applySetter(args, (...args: unknown[]) =>
@@ -5052,21 +6864,21 @@ function withFunctionType(node: object, setter: string, args: readonly unknown[]
 					listSlotWith(
 						args,
 						{ kind: TSKindId.ForLifetimes as const, optional: true, make: buildForLifetimes },
-						(value?: Admit<T.ForLifetimes>) => buildFunctionType$patch(node, { ...config, forLifetimes: value })
+						(value?: Admit<T.ForLifetimes>) => buildFunctionType$set(node, 'forLifetimes', { forLifetimes: value })
 					)
 				)
 			);
 		case 'content':
 			return applySetter(args, (value: Admit<T.FunctionTypeTraitForm | T.FunctionTypeFnForm>) =>
-				rebuilt(node, handle, () => buildFunctionType$patch(node, { ...config, content: value }))
+				rebuilt(node, handle, () => buildFunctionType$set(node, 'content', { content: value }))
 			);
 		case 'parameters':
 			return applySetter(args, (value: Admit<T.Parameters>) =>
-				rebuilt(node, handle, () => buildFunctionType$patch(node, { ...config, parameters: value }))
+				rebuilt(node, handle, () => buildFunctionType$set(node, 'parameters', { parameters: value }))
 			);
 		case 'returnType':
 			return applySetter(args, (value?: Admit<NonNullable<T.FunctionType.Config>['returnType']>) =>
-				rebuilt(node, handle, () => buildFunctionType$patch(node, { ...config, returnType: value }))
+				rebuilt(node, handle, () => buildFunctionType$set(node, 'returnType', { returnType: value }))
 			);
 	}
 	throw new Error(`function_type has no $with.${setter}`);
@@ -5186,14 +6998,49 @@ function buildGenericFunction$patch(source: object, config: T.GenericFunction.Co
 		return node as unknown as T.GenericFunction.Bound;
 	});
 }
+function buildGenericFunction$set(
+	source: object,
+	slot: string,
+	config: Partial<T.GenericFunction.Config>
+): T.GenericFunction.Bound {
+	if (!editsInPlace(source)) {
+		const inputs = builtInputs(source);
+		return buildGenericFunction$patch(source, { ...(inputs.config as T.GenericFunction.Config), ...config });
+	}
+	switch (slot) {
+		case 'function': {
+			const _function = config.function;
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'generic_function', { function: _function });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.GenericFunction as const);
+				patchCell(arena, record, 2, 2, carriedSlot(source, 'function', _function));
+				const node = arena.view(record);
+				return node as unknown as T.GenericFunction.Bound;
+			});
+		}
+		case 'typeArguments': {
+			const _type_arguments = config.typeArguments;
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'generic_function', { typeArguments: _type_arguments });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.GenericFunction as const);
+				patchCell(arena, record, 3, 5, carriedSlot(source, 'typeArguments', _type_arguments));
+				const node = arena.view(record);
+				return node as unknown as T.GenericFunction.Bound;
+			});
+		}
+	}
+	throw new Error(`generic_function writes no slot ${slot} alone`);
+}
 function withGenericFunction(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.GenericFunction.Config;
 	switch (setter) {
 		case 'function':
 			return applySetter(args, (value: Admit<T.Identifier | T.ScopedIdentifier | T.FieldExpression>) =>
-				rebuilt(node, handle, () => buildGenericFunction$patch(node, { ...config, function: value }))
+				rebuilt(node, handle, () => buildGenericFunction$set(node, 'function', { function: value }))
 			);
 		case 'typeArguments':
 			return applySetter(args, (...args: unknown[]) =>
@@ -5206,7 +7053,7 @@ function withGenericFunction(node: object, setter: string, args: readonly unknow
 							make: buildTypeArguments,
 							element: { keys: ['content', 'traitBounds'], make: buildTypeArgument }
 						},
-						(value: Admit<T.TypeArguments>) => buildGenericFunction$patch(node, { ...config, typeArguments: value })
+						(value: Admit<T.TypeArguments>) => buildGenericFunction$set(node, 'typeArguments', { typeArguments: value })
 					)
 				)
 			);
@@ -5253,16 +7100,51 @@ function buildGenericType$patch(source: object, config: T.GenericType.Config): T
 		return node as unknown as T.GenericType.Bound;
 	});
 }
+function buildGenericType$set(
+	source: object,
+	slot: string,
+	config: Partial<T.GenericType.Config>
+): T.GenericType.Bound {
+	if (!editsInPlace(source)) {
+		const inputs = builtInputs(source);
+		return buildGenericType$patch(source, { ...(inputs.config as T.GenericType.Config), ...config });
+	}
+	switch (slot) {
+		case 'type': {
+			const _type = config.type;
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'generic_type', { type: _type });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.GenericType as const);
+				patchCell(arena, record, 2, 2, carriedSlot(source, 'type', _type));
+				const node = arena.view(record);
+				return node as unknown as T.GenericType.Bound;
+			});
+		}
+		case 'typeArguments': {
+			const _type_arguments = config.typeArguments;
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'generic_type', { typeArguments: _type_arguments });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.GenericType as const);
+				patchCell(arena, record, 3, 5, carriedSlot(source, 'typeArguments', _type_arguments));
+				const node = arena.view(record);
+				return node as unknown as T.GenericType.Bound;
+			});
+		}
+	}
+	throw new Error(`generic_type writes no slot ${slot} alone`);
+}
 function withGenericType(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.GenericType.Config;
 	switch (setter) {
 		case 'type':
 			return applySetter(
 				args,
 				(value: Admit<T.TypeIdentifier | T.Identifier | T.ScopedTypeIdentifier | T.TypeIdentifier.Types>) =>
-					rebuilt(node, handle, () => buildGenericType$patch(node, { ...config, type: value }))
+					rebuilt(node, handle, () => buildGenericType$set(node, 'type', { type: value }))
 			);
 		case 'typeArguments':
 			return applySetter(args, (...args: unknown[]) =>
@@ -5275,7 +7157,7 @@ function withGenericType(node: object, setter: string, args: readonly unknown[])
 							make: buildTypeArguments,
 							element: { keys: ['content', 'traitBounds'], make: buildTypeArgument }
 						},
-						(value: Admit<T.TypeArguments>) => buildGenericType$patch(node, { ...config, typeArguments: value })
+						(value: Admit<T.TypeArguments>) => buildGenericType$set(node, 'typeArguments', { typeArguments: value })
 					)
 				)
 			);
@@ -5333,14 +7215,55 @@ function buildGenericTypeWithTurbofish$patch(
 		return node as unknown as T.GenericTypeWithTurbofish.Bound;
 	});
 }
+function buildGenericTypeWithTurbofish$set(
+	source: object,
+	slot: string,
+	config: Partial<T.GenericTypeWithTurbofish.Config>
+): T.GenericTypeWithTurbofish.Bound {
+	if (!editsInPlace(source)) {
+		const inputs = builtInputs(source);
+		return buildGenericTypeWithTurbofish$patch(source, {
+			...(inputs.config as T.GenericTypeWithTurbofish.Config),
+			...config
+		});
+	}
+	switch (slot) {
+		case 'type': {
+			const _type = admitAliasContent<NonNullable<T.GenericTypeWithTurbofish['_type']>>(config.type, [
+				[[1], (v: unknown) => buildTypeIdentifier(v as never)]
+			]);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'generic_type_with_turbofish', { type: _type });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.GenericTypeWithTurbofish as const);
+				patchCell(arena, record, 2, 2, carriedSlot(source, 'type', _type));
+				const node = arena.view(record);
+				return node as unknown as T.GenericTypeWithTurbofish.Bound;
+			});
+		}
+		case 'typeArguments': {
+			const _type_arguments = config.typeArguments;
+			const handle = currentHandle();
+			if (handle !== undefined)
+				admitChildren(handle, 'generic_type_with_turbofish', { typeArguments: _type_arguments });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.GenericTypeWithTurbofish as const);
+				patchCell(arena, record, 3, 5, carriedSlot(source, 'typeArguments', _type_arguments));
+				const node = arena.view(record);
+				return node as unknown as T.GenericTypeWithTurbofish.Bound;
+			});
+		}
+	}
+	throw new Error(`generic_type_with_turbofish writes no slot ${slot} alone`);
+}
 function withGenericTypeWithTurbofish(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.GenericTypeWithTurbofish.Config;
 	switch (setter) {
 		case 'type':
 			return applySetter(args, (value: Admit<T.TypeIdentifier | T.ScopedIdentifier | T.TypeIdentifier.Types>) =>
-				rebuilt(node, handle, () => buildGenericTypeWithTurbofish$patch(node, { ...config, type: value }))
+				rebuilt(node, handle, () => buildGenericTypeWithTurbofish$set(node, 'type', { type: value }))
 			);
 		case 'typeArguments':
 			return applySetter(args, (...args: unknown[]) =>
@@ -5354,7 +7277,7 @@ function withGenericTypeWithTurbofish(node: object, setter: string, args: readon
 							element: { keys: ['content', 'traitBounds'], make: buildTypeArgument }
 						},
 						(value: Admit<T.TypeArguments>) =>
-							buildGenericTypeWithTurbofish$patch(node, { ...config, typeArguments: value })
+							buildGenericTypeWithTurbofish$set(node, 'typeArguments', { typeArguments: value })
 					)
 				)
 			);
@@ -5411,18 +7334,59 @@ function buildBoundedType$patch(source: object, config: T.BoundedType.Config): T
 		return node as unknown as T.BoundedType.Bound;
 	});
 }
+function buildBoundedType$set(
+	source: object,
+	slot: string,
+	config: Partial<T.BoundedType.Config>
+): T.BoundedType.Bound {
+	if (!editsInPlace(source)) {
+		const inputs = builtInputs(source);
+		return buildBoundedType$patch(source, { ...(inputs.config as T.BoundedType.Config), ...config });
+	}
+	switch (slot) {
+		case 'left': {
+			const _left = admitAliasContent<NonNullable<T.BoundedType['_left']>>(
+				kindIdStorage<NonNullable<T.BoundedType['_left']>>(config.left),
+				[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
+			);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'bounded_type', { left: _left });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.BoundedType as const);
+				patchCell(arena, record, 2, 2, carriedSlot(source, 'left', _left));
+				const node = arena.view(record);
+				return node as unknown as T.BoundedType.Bound;
+			});
+		}
+		case 'right': {
+			const _right = admitAliasContent<NonNullable<T.BoundedType['_right']>>(
+				kindIdStorage<NonNullable<T.BoundedType['_right']>>(config.right),
+				[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
+			);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'bounded_type', { right: _right });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.BoundedType as const);
+				patchCell(arena, record, 3, 6, carriedSlot(source, 'right', _right));
+				const node = arena.view(record);
+				return node as unknown as T.BoundedType.Bound;
+			});
+		}
+	}
+	throw new Error(`bounded_type writes no slot ${slot} alone`);
+}
 function withBoundedType(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.BoundedType.Config;
 	switch (setter) {
 		case 'left':
 			return applySetter(args, (value: Admit<NonNullable<T.BoundedType.Config>['left']>) =>
-				rebuilt(node, handle, () => buildBoundedType$patch(node, { ...config, left: value }))
+				rebuilt(node, handle, () => buildBoundedType$set(node, 'left', { left: value }))
 			);
 		case 'right':
 			return applySetter(args, (value: Admit<NonNullable<T.BoundedType.Config>['right']>) =>
-				rebuilt(node, handle, () => buildBoundedType$patch(node, { ...config, right: value }))
+				rebuilt(node, handle, () => buildBoundedType$set(node, 'right', { right: value }))
 			);
 	}
 	throw new Error(`bounded_type has no $with.${setter}`);
@@ -5644,14 +7608,66 @@ function buildTypeBinding$patch(source: object, config: T.TypeBinding.Config): T
 		return node as unknown as T.TypeBinding.Bound;
 	});
 }
+function buildTypeBinding$set(
+	source: object,
+	slot: string,
+	config: Partial<T.TypeBinding.Config>
+): T.TypeBinding.Bound {
+	if (!editsInPlace(source)) {
+		const inputs = builtInputs(source);
+		return buildTypeBinding$patch(source, { ...(inputs.config as T.TypeBinding.Config), ...config });
+	}
+	switch (slot) {
+		case 'name': {
+			const _name = admitAliasContent<NonNullable<T.TypeBinding['_name']>>(config.name, [
+				[[1], (v: unknown) => buildTypeIdentifier(v as never)]
+			]);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'type_binding', { name: _name });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.TypeBinding as const);
+				patchCell(arena, record, 2, 2, carriedSlot(source, 'name', _name));
+				const node = arena.view(record);
+				return node as unknown as T.TypeBinding.Bound;
+			});
+		}
+		case 'typeArguments': {
+			const _type_arguments = config.typeArguments;
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'type_binding', { typeArguments: _type_arguments });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.TypeBinding as const);
+				patchCell(arena, record, 3, 7, carriedSlot(source, 'typeArguments', _type_arguments));
+				const node = arena.view(record);
+				return node as unknown as T.TypeBinding.Bound;
+			});
+		}
+		case 'type': {
+			const _type = admitAliasContent<NonNullable<T.TypeBinding['_type']>>(
+				kindIdStorage<NonNullable<T.TypeBinding['_type']>>(config.type),
+				[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
+			);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'type_binding', { type: _type });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.TypeBinding as const);
+				patchCell(arena, record, 4, 12, carriedSlot(source, 'type', _type));
+				const node = arena.view(record);
+				return node as unknown as T.TypeBinding.Bound;
+			});
+		}
+	}
+	throw new Error(`type_binding writes no slot ${slot} alone`);
+}
 function withTypeBinding(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.TypeBinding.Config;
 	switch (setter) {
 		case 'name':
 			return applySetter(args, (value: Admit<T.TypeIdentifier | T.TypeIdentifier.Types>) =>
-				rebuilt(node, handle, () => buildTypeBinding$patch(node, { ...config, name: value }))
+				rebuilt(node, handle, () => buildTypeBinding$set(node, 'name', { name: value }))
 			);
 		case 'typeArguments':
 			return applySetter(args, (...args: unknown[]) =>
@@ -5664,13 +7680,13 @@ function withTypeBinding(node: object, setter: string, args: readonly unknown[])
 							make: buildTypeArguments,
 							element: { keys: ['content', 'traitBounds'], make: buildTypeArgument }
 						},
-						(value?: Admit<T.TypeArguments>) => buildTypeBinding$patch(node, { ...config, typeArguments: value })
+						(value?: Admit<T.TypeArguments>) => buildTypeBinding$set(node, 'typeArguments', { typeArguments: value })
 					)
 				)
 			);
 		case 'type':
 			return applySetter(args, (value: Admit<NonNullable<T.TypeBinding.Config>['type']>) =>
-				rebuilt(node, handle, () => buildTypeBinding$patch(node, { ...config, type: value }))
+				rebuilt(node, handle, () => buildTypeBinding$set(node, 'type', { type: value }))
 			);
 	}
 	throw new Error(`type_binding has no $with.${setter}`);
@@ -5725,22 +7741,72 @@ function buildReferenceType$patch(source: object, config: T.ReferenceType.Config
 		return node as unknown as T.ReferenceType.Bound;
 	});
 }
+function buildReferenceType$set(
+	source: object,
+	slot: string,
+	config: Partial<T.ReferenceType.Config>
+): T.ReferenceType.Bound {
+	if (!editsInPlace(source)) {
+		const inputs = builtInputs(source);
+		return buildReferenceType$patch(source, { ...(inputs.config as T.ReferenceType.Config), ...config });
+	}
+	switch (slot) {
+		case 'lifetime': {
+			const _lifetime = config.lifetime;
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'reference_type', { lifetime: _lifetime });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.ReferenceType as const);
+				patchCell(arena, record, 3, 3, carriedSlot(source, 'lifetime', _lifetime));
+				const node = arena.view(record);
+				return node as unknown as T.ReferenceType.Bound;
+			});
+		}
+		case 'exclusive': {
+			const _exclusive = strictBooleanStorage(config.exclusive);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'reference_type', { exclusive: _exclusive });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.ReferenceType as const);
+				patchFlag(record, 2, 1, _exclusive);
+				const node = arena.view(record);
+				return node as unknown as T.ReferenceType.Bound;
+			});
+		}
+		case 'type': {
+			const _type = admitAliasContent<NonNullable<T.ReferenceType['_type']>>(
+				kindIdStorage<NonNullable<T.ReferenceType['_type']>>(config.type),
+				[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
+			);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'reference_type', { type: _type });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.ReferenceType as const);
+				patchCell(arena, record, 4, 8, carriedSlot(source, 'type', _type));
+				const node = arena.view(record);
+				return node as unknown as T.ReferenceType.Bound;
+			});
+		}
+	}
+	throw new Error(`reference_type writes no slot ${slot} alone`);
+}
 function withReferenceType(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.ReferenceType.Config;
 	switch (setter) {
 		case 'lifetime':
 			return applySetter(args, (value?: Admit<T.Lifetime>) =>
-				rebuilt(node, handle, () => buildReferenceType$patch(node, { ...config, lifetime: value }))
+				rebuilt(node, handle, () => buildReferenceType$set(node, 'lifetime', { lifetime: value }))
 			);
 		case 'exclusive':
 			return applySetter(args, (value?: Admit<NonNullable<T.ReferenceType.Config>['exclusive']>) =>
-				rebuilt(node, handle, () => buildReferenceType$patch(node, { ...config, exclusive: value }))
+				rebuilt(node, handle, () => buildReferenceType$set(node, 'exclusive', { exclusive: value }))
 			);
 		case 'type':
 			return applySetter(args, (value: Admit<NonNullable<T.ReferenceType.Config>['type']>) =>
-				rebuilt(node, handle, () => buildReferenceType$patch(node, { ...config, type: value }))
+				rebuilt(node, handle, () => buildReferenceType$set(node, 'type', { type: value }))
 			);
 	}
 	throw new Error(`reference_type has no $with.${setter}`);
@@ -5791,10 +7857,47 @@ function buildAbstractType$patch(source: object, config: T.AbstractType.Config):
 		return node as unknown as T.AbstractType.Bound;
 	});
 }
+function buildAbstractType$set(
+	source: object,
+	slot: string,
+	config: Partial<T.AbstractType.Config>
+): T.AbstractType.Bound {
+	if (!editsInPlace(source)) {
+		const inputs = builtInputs(source);
+		return buildAbstractType$patch(source, { ...(inputs.config as T.AbstractType.Config), ...config });
+	}
+	switch (slot) {
+		case 'typeParameters': {
+			const _type_parameters = config.typeParameters;
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'abstract_type', { typeParameters: _type_parameters });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.AbstractType as const);
+				patchCell(arena, record, 2, 2, carriedSlot(source, 'typeParameters', _type_parameters));
+				const node = arena.view(record);
+				return node as unknown as T.AbstractType.Bound;
+			});
+		}
+		case 'trait': {
+			const _trait = admitAliasContent<NonNullable<T.AbstractType['_trait']>>(config.trait, [
+				[[1], (v: unknown) => buildTypeIdentifier(v as never)]
+			]);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'abstract_type', { trait: _trait });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.AbstractType as const);
+				patchCell(arena, record, 3, 7, carriedSlot(source, 'trait', _trait));
+				const node = arena.view(record);
+				return node as unknown as T.AbstractType.Bound;
+			});
+		}
+	}
+	throw new Error(`abstract_type writes no slot ${slot} alone`);
+}
 function withAbstractType(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.AbstractType.Config;
 	switch (setter) {
 		case 'typeParameters':
 			return applySetter(args, (...args: unknown[]) =>
@@ -5807,7 +7910,8 @@ function withAbstractType(node: object, setter: string, args: readonly unknown[]
 							make: buildTypeParameters,
 							element: { keys: ['attributeItems', 'content'], make: buildAttributedTypeParameter }
 						},
-						(value?: Admit<T.TypeParameters>) => buildAbstractType$patch(node, { ...config, typeParameters: value })
+						(value?: Admit<T.TypeParameters>) =>
+							buildAbstractType$set(node, 'typeParameters', { typeParameters: value })
 					)
 				)
 			);
@@ -5825,7 +7929,7 @@ function withAbstractType(node: object, setter: string, args: readonly unknown[]
 						| T.BoundedType
 						| T.TypeIdentifier.Types
 					>
-				) => rebuilt(node, handle, () => buildAbstractType$patch(node, { ...config, trait: value }))
+				) => rebuilt(node, handle, () => buildAbstractType$set(node, 'trait', { trait: value }))
 			);
 	}
 	throw new Error(`abstract_type has no $with.${setter}`);
@@ -5965,18 +8069,53 @@ function buildMacroInvocation$patch(source: object, config: T.MacroInvocation.Co
 		return node as unknown as T.MacroInvocation.Bound;
 	});
 }
+function buildMacroInvocation$set(
+	source: object,
+	slot: string,
+	config: Partial<T.MacroInvocation.Config>
+): T.MacroInvocation.Bound {
+	if (!editsInPlace(source)) {
+		const inputs = builtInputs(source);
+		return buildMacroInvocation$patch(source, { ...(inputs.config as T.MacroInvocation.Config), ...config });
+	}
+	switch (slot) {
+		case 'function': {
+			const _function = config.function;
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'macro_invocation', { function: _function });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.MacroInvocation as const);
+				patchCell(arena, record, 2, 2, carriedSlot(source, 'function', _function));
+				const node = arena.view(record);
+				return node as unknown as T.MacroInvocation.Bound;
+			});
+		}
+		case 'arguments': {
+			const _arguments = config.arguments;
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'macro_invocation', { arguments: _arguments });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.MacroInvocation as const);
+				patchCell(arena, record, 3, 5, carriedSlot(source, 'arguments', _arguments));
+				const node = arena.view(record);
+				return node as unknown as T.MacroInvocation.Bound;
+			});
+		}
+	}
+	throw new Error(`macro_invocation writes no slot ${slot} alone`);
+}
 function withMacroInvocation(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.MacroInvocation.Config;
 	switch (setter) {
 		case 'function':
 			return applySetter(args, (value: Admit<T.ScopedIdentifier | T.Identifier>) =>
-				rebuilt(node, handle, () => buildMacroInvocation$patch(node, { ...config, function: value }))
+				rebuilt(node, handle, () => buildMacroInvocation$set(node, 'function', { function: value }))
 			);
 		case 'arguments':
 			return applySetter(args, (value: Admit<T.DelimTokenTree>) =>
-				rebuilt(node, handle, () => buildMacroInvocation$patch(node, { ...config, arguments: value }))
+				rebuilt(node, handle, () => buildMacroInvocation$set(node, 'arguments', { arguments: value }))
 			);
 	}
 	throw new Error(`macro_invocation has no $with.${setter}`);
@@ -6041,18 +8180,63 @@ function buildScopedIdentifier$patch(source: object, config: T.ScopedIdentifier.
 		return node as unknown as T.ScopedIdentifier.Bound;
 	});
 }
+function buildScopedIdentifier$set(
+	source: object,
+	slot: string,
+	config: Partial<T.ScopedIdentifier.Config>
+): T.ScopedIdentifier.Bound {
+	if (!editsInPlace(source)) {
+		const inputs = builtInputs(source);
+		return buildScopedIdentifier$patch(source, { ...(inputs.config as T.ScopedIdentifier.Config), ...config });
+	}
+	switch (slot) {
+		case 'qualifier': {
+			const _qualifier = rejectKeywordText(
+				kindIdStorage<NonNullable<T.ScopedIdentifier['_qualifier']>>(config.qualifier),
+				'ScopedIdentifier.qualifier',
+				TSKindId.Identifier,
+				['self', 'super', 'crate']
+			);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'scoped_identifier', { qualifier: _qualifier });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.ScopedIdentifier as const);
+				patchCell(arena, record, 2, 2, carriedSlot(source, 'qualifier', _qualifier));
+				const node = arena.view(record);
+				return node as unknown as T.ScopedIdentifier.Bound;
+			});
+		}
+		case 'name': {
+			const _name = rejectKeywordText(
+				kindIdStorage<NonNullable<T.ScopedIdentifier['_name']>>(config.name),
+				'ScopedIdentifier.name',
+				TSKindId.Identifier,
+				['super']
+			);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'scoped_identifier', { name: _name });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.ScopedIdentifier as const);
+				patchCell(arena, record, 3, 6, carriedSlot(source, 'name', _name));
+				const node = arena.view(record);
+				return node as unknown as T.ScopedIdentifier.Bound;
+			});
+		}
+	}
+	throw new Error(`scoped_identifier writes no slot ${slot} alone`);
+}
 function withScopedIdentifier(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.ScopedIdentifier.Config;
 	switch (setter) {
 		case 'qualifier':
 			return applySetter(args, (value?: Admit<NonNullable<T.ScopedIdentifier.Config>['qualifier']>) =>
-				rebuilt(node, handle, () => buildScopedIdentifier$patch(node, { ...config, qualifier: value }))
+				rebuilt(node, handle, () => buildScopedIdentifier$set(node, 'qualifier', { qualifier: value }))
 			);
 		case 'name':
 			return applySetter(args, (value: Admit<NonNullable<T.ScopedIdentifier.Config>['name']>) =>
-				rebuilt(node, handle, () => buildScopedIdentifier$patch(node, { ...config, name: value }))
+				rebuilt(node, handle, () => buildScopedIdentifier$set(node, 'name', { name: value }))
 			);
 	}
 	throw new Error(`scoped_identifier has no $with.${setter}`);
@@ -6121,24 +8305,68 @@ function buildScopedTypeIdentifierInExpressionPosition$patch(
 		return node as unknown as T.ScopedTypeIdentifierInExpressionPosition.Bound;
 	});
 }
+function buildScopedTypeIdentifierInExpressionPosition$set(
+	source: object,
+	slot: string,
+	config: Partial<T.ScopedTypeIdentifierInExpressionPosition.Config>
+): T.ScopedTypeIdentifierInExpressionPosition.Bound {
+	if (!editsInPlace(source)) {
+		const inputs = builtInputs(source);
+		return buildScopedTypeIdentifierInExpressionPosition$patch(source, {
+			...(inputs.config as T.ScopedTypeIdentifierInExpressionPosition.Config),
+			...config
+		});
+	}
+	switch (slot) {
+		case 'qualifier': {
+			const _qualifier = rejectKeywordText(
+				kindIdStorage<NonNullable<T.ScopedTypeIdentifierInExpressionPosition['_qualifier']>>(config.qualifier),
+				'ScopedTypeIdentifierInExpressionPosition.qualifier',
+				TSKindId.Identifier,
+				['self', 'super', 'crate']
+			);
+			const handle = currentHandle();
+			if (handle !== undefined)
+				admitChildren(handle, 'scoped_type_identifier_in_expression_position', { qualifier: _qualifier });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.ScopedTypeIdentifierInExpressionPosition as const);
+				patchCell(arena, record, 2, 2, carriedSlot(source, 'qualifier', _qualifier));
+				const node = arena.view(record);
+				return node as unknown as T.ScopedTypeIdentifierInExpressionPosition.Bound;
+			});
+		}
+		case 'name': {
+			const _name = admitAliasContent<NonNullable<T.ScopedTypeIdentifierInExpressionPosition['_name']>>(config.name, [
+				[[1], (v: unknown) => buildTypeIdentifier(v as never)]
+			]);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'scoped_type_identifier_in_expression_position', { name: _name });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.ScopedTypeIdentifierInExpressionPosition as const);
+				patchCell(arena, record, 3, 6, carriedSlot(source, 'name', _name));
+				const node = arena.view(record);
+				return node as unknown as T.ScopedTypeIdentifierInExpressionPosition.Bound;
+			});
+		}
+	}
+	throw new Error(`scoped_type_identifier_in_expression_position writes no slot ${slot} alone`);
+}
 function withScopedTypeIdentifierInExpressionPosition(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.ScopedTypeIdentifierInExpressionPosition.Config;
 	switch (setter) {
 		case 'qualifier':
 			return applySetter(
 				args,
 				(value?: Admit<NonNullable<T.ScopedTypeIdentifierInExpressionPosition.Config>['qualifier']>) =>
 					rebuilt(node, handle, () =>
-						buildScopedTypeIdentifierInExpressionPosition$patch(node, { ...config, qualifier: value })
+						buildScopedTypeIdentifierInExpressionPosition$set(node, 'qualifier', { qualifier: value })
 					)
 			);
 		case 'name':
 			return applySetter(args, (value: Admit<T.TypeIdentifier | T.TypeIdentifier.Types>) =>
-				rebuilt(node, handle, () =>
-					buildScopedTypeIdentifierInExpressionPosition$patch(node, { ...config, name: value })
-				)
+				rebuilt(node, handle, () => buildScopedTypeIdentifierInExpressionPosition$set(node, 'name', { name: value }))
 			);
 	}
 	throw new Error(`scoped_type_identifier_in_expression_position has no $with.${setter}`);
@@ -6200,18 +8428,60 @@ function buildScopedTypeIdentifier$patch(
 		return node as unknown as T.ScopedTypeIdentifier.Bound;
 	});
 }
+function buildScopedTypeIdentifier$set(
+	source: object,
+	slot: string,
+	config: Partial<T.ScopedTypeIdentifier.Config>
+): T.ScopedTypeIdentifier.Bound {
+	if (!editsInPlace(source)) {
+		const inputs = builtInputs(source);
+		return buildScopedTypeIdentifier$patch(source, { ...(inputs.config as T.ScopedTypeIdentifier.Config), ...config });
+	}
+	switch (slot) {
+		case 'qualifier': {
+			const _qualifier = rejectKeywordText(
+				kindIdStorage<NonNullable<T.ScopedTypeIdentifier['_qualifier']>>(config.qualifier),
+				'ScopedTypeIdentifier.qualifier',
+				TSKindId.Identifier,
+				['self', 'super', 'crate']
+			);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'scoped_type_identifier', { qualifier: _qualifier });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.ScopedTypeIdentifier as const);
+				patchCell(arena, record, 2, 2, carriedSlot(source, 'qualifier', _qualifier));
+				const node = arena.view(record);
+				return node as unknown as T.ScopedTypeIdentifier.Bound;
+			});
+		}
+		case 'name': {
+			const _name = admitAliasContent<NonNullable<T.ScopedTypeIdentifier['_name']>>(config.name, [
+				[[1], (v: unknown) => buildTypeIdentifier(v as never)]
+			]);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'scoped_type_identifier', { name: _name });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.ScopedTypeIdentifier as const);
+				patchCell(arena, record, 3, 6, carriedSlot(source, 'name', _name));
+				const node = arena.view(record);
+				return node as unknown as T.ScopedTypeIdentifier.Bound;
+			});
+		}
+	}
+	throw new Error(`scoped_type_identifier writes no slot ${slot} alone`);
+}
 function withScopedTypeIdentifier(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.ScopedTypeIdentifier.Config;
 	switch (setter) {
 		case 'qualifier':
 			return applySetter(args, (value?: Admit<NonNullable<T.ScopedTypeIdentifier.Config>['qualifier']>) =>
-				rebuilt(node, handle, () => buildScopedTypeIdentifier$patch(node, { ...config, qualifier: value }))
+				rebuilt(node, handle, () => buildScopedTypeIdentifier$set(node, 'qualifier', { qualifier: value }))
 			);
 		case 'name':
 			return applySetter(args, (value: Admit<T.TypeIdentifier | T.TypeIdentifier.Types>) =>
-				rebuilt(node, handle, () => buildScopedTypeIdentifier$patch(node, { ...config, name: value }))
+				rebuilt(node, handle, () => buildScopedTypeIdentifier$set(node, 'name', { name: value }))
 			);
 	}
 	throw new Error(`scoped_type_identifier has no $with.${setter}`);
@@ -6253,18 +8523,53 @@ function buildUnaryExpression$patch(source: object, config: T.UnaryExpression.Co
 		return node as unknown as T.UnaryExpression.Bound;
 	});
 }
+function buildUnaryExpression$set(
+	source: object,
+	slot: string,
+	config: Partial<T.UnaryExpression.Config>
+): T.UnaryExpression.Bound {
+	if (!editsInPlace(source)) {
+		const inputs = builtInputs(source);
+		return buildUnaryExpression$patch(source, { ...(inputs.config as T.UnaryExpression.Config), ...config });
+	}
+	switch (slot) {
+		case 'operator': {
+			const _operator = kindIdStorage<NonNullable<T.UnaryExpression['_operator']>>(config.operator);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'unary_expression', { operator: _operator });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.UnaryExpression as const);
+				patchCell(arena, record, 2, 2, carriedSlot(source, 'operator', _operator));
+				const node = arena.view(record);
+				return node as unknown as T.UnaryExpression.Bound;
+			});
+		}
+		case 'argument': {
+			const _argument = kindIdStorage<NonNullable<T.UnaryExpression['_argument']>>(config.argument);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'unary_expression', { argument: _argument });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.UnaryExpression as const);
+				patchCell(arena, record, 3, 3, carriedSlot(source, 'argument', _argument));
+				const node = arena.view(record);
+				return node as unknown as T.UnaryExpression.Bound;
+			});
+		}
+	}
+	throw new Error(`unary_expression writes no slot ${slot} alone`);
+}
 function withUnaryExpression(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.UnaryExpression.Config;
 	switch (setter) {
 		case 'operator':
 			return applySetter(args, (value: Admit<NonNullable<T.UnaryExpression.Config>['operator']>) =>
-				rebuilt(node, handle, () => buildUnaryExpression$patch(node, { ...config, operator: value }))
+				rebuilt(node, handle, () => buildUnaryExpression$set(node, 'operator', { operator: value }))
 			);
 		case 'argument':
 			return applySetter(args, (value: Admit<NonNullable<T.UnaryExpression.Config>['argument']>) =>
-				rebuilt(node, handle, () => buildUnaryExpression$patch(node, { ...config, argument: value }))
+				rebuilt(node, handle, () => buildUnaryExpression$set(node, 'argument', { argument: value }))
 			);
 	}
 	throw new Error(`unary_expression has no $with.${setter}`);
@@ -6354,22 +8659,69 @@ function buildBinaryExpression$patch(source: object, config: T.BinaryExpression.
 		return node as unknown as T.BinaryExpression.Bound;
 	});
 }
+function buildBinaryExpression$set(
+	source: object,
+	slot: string,
+	config: Partial<T.BinaryExpression.Config>
+): T.BinaryExpression.Bound {
+	if (!editsInPlace(source)) {
+		const inputs = builtInputs(source);
+		return buildBinaryExpression$patch(source, { ...(inputs.config as T.BinaryExpression.Config), ...config });
+	}
+	switch (slot) {
+		case 'left': {
+			const _left = kindIdStorage<NonNullable<T.BinaryExpression['_left']>>(config.left);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'binary_expression', { left: _left });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.BinaryExpression as const);
+				patchCell(arena, record, 2, 2, carriedSlot(source, 'left', _left));
+				const node = arena.view(record);
+				return node as unknown as T.BinaryExpression.Bound;
+			});
+		}
+		case 'operator': {
+			const _operator = kindIdStorage<NonNullable<T.BinaryExpression['_operator']>>(config.operator);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'binary_expression', { operator: _operator });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.BinaryExpression as const);
+				patchCell(arena, record, 3, 6, carriedSlot(source, 'operator', _operator));
+				const node = arena.view(record);
+				return node as unknown as T.BinaryExpression.Bound;
+			});
+		}
+		case 'right': {
+			const _right = kindIdStorage<NonNullable<T.BinaryExpression['_right']>>(config.right);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'binary_expression', { right: _right });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.BinaryExpression as const);
+				patchCell(arena, record, 4, 7, carriedSlot(source, 'right', _right));
+				const node = arena.view(record);
+				return node as unknown as T.BinaryExpression.Bound;
+			});
+		}
+	}
+	throw new Error(`binary_expression writes no slot ${slot} alone`);
+}
 function withBinaryExpression(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.BinaryExpression.Config;
 	switch (setter) {
 		case 'left':
 			return applySetter(args, (value: Admit<NonNullable<T.BinaryExpression.Config>['left']>) =>
-				rebuilt(node, handle, () => buildBinaryExpression$patch(node, { ...config, left: value }))
+				rebuilt(node, handle, () => buildBinaryExpression$set(node, 'left', { left: value }))
 			);
 		case 'operator':
 			return applySetter(args, (value: Admit<NonNullable<T.BinaryExpression.Config>['operator']>) =>
-				rebuilt(node, handle, () => buildBinaryExpression$patch(node, { ...config, operator: value }))
+				rebuilt(node, handle, () => buildBinaryExpression$set(node, 'operator', { operator: value }))
 			);
 		case 'right':
 			return applySetter(args, (value: Admit<NonNullable<T.BinaryExpression.Config>['right']>) =>
-				rebuilt(node, handle, () => buildBinaryExpression$patch(node, { ...config, right: value }))
+				rebuilt(node, handle, () => buildBinaryExpression$set(node, 'right', { right: value }))
 			);
 	}
 	throw new Error(`binary_expression has no $with.${setter}`);
@@ -6417,18 +8769,53 @@ function buildAssignmentExpression$patch(
 		return node as unknown as T.AssignmentExpression.Bound;
 	});
 }
+function buildAssignmentExpression$set(
+	source: object,
+	slot: string,
+	config: Partial<T.AssignmentExpression.Config>
+): T.AssignmentExpression.Bound {
+	if (!editsInPlace(source)) {
+		const inputs = builtInputs(source);
+		return buildAssignmentExpression$patch(source, { ...(inputs.config as T.AssignmentExpression.Config), ...config });
+	}
+	switch (slot) {
+		case 'left': {
+			const _left = kindIdStorage<NonNullable<T.AssignmentExpression['_left']>>(config.left);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'assignment_expression', { left: _left });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.AssignmentExpression as const);
+				patchCell(arena, record, 2, 2, carriedSlot(source, 'left', _left));
+				const node = arena.view(record);
+				return node as unknown as T.AssignmentExpression.Bound;
+			});
+		}
+		case 'right': {
+			const _right = kindIdStorage<NonNullable<T.AssignmentExpression['_right']>>(config.right);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'assignment_expression', { right: _right });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.AssignmentExpression as const);
+				patchCell(arena, record, 3, 6, carriedSlot(source, 'right', _right));
+				const node = arena.view(record);
+				return node as unknown as T.AssignmentExpression.Bound;
+			});
+		}
+	}
+	throw new Error(`assignment_expression writes no slot ${slot} alone`);
+}
 function withAssignmentExpression(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.AssignmentExpression.Config;
 	switch (setter) {
 		case 'left':
 			return applySetter(args, (value: Admit<NonNullable<T.AssignmentExpression.Config>['left']>) =>
-				rebuilt(node, handle, () => buildAssignmentExpression$patch(node, { ...config, left: value }))
+				rebuilt(node, handle, () => buildAssignmentExpression$set(node, 'left', { left: value }))
 			);
 		case 'right':
 			return applySetter(args, (value: Admit<NonNullable<T.AssignmentExpression.Config>['right']>) =>
-				rebuilt(node, handle, () => buildAssignmentExpression$patch(node, { ...config, right: value }))
+				rebuilt(node, handle, () => buildAssignmentExpression$set(node, 'right', { right: value }))
 			);
 	}
 	throw new Error(`assignment_expression has no $with.${setter}`);
@@ -6482,22 +8869,72 @@ function buildCompoundAssignmentExpr$patch(
 		return node as unknown as T.CompoundAssignmentExpr.Bound;
 	});
 }
+function buildCompoundAssignmentExpr$set(
+	source: object,
+	slot: string,
+	config: Partial<T.CompoundAssignmentExpr.Config>
+): T.CompoundAssignmentExpr.Bound {
+	if (!editsInPlace(source)) {
+		const inputs = builtInputs(source);
+		return buildCompoundAssignmentExpr$patch(source, {
+			...(inputs.config as T.CompoundAssignmentExpr.Config),
+			...config
+		});
+	}
+	switch (slot) {
+		case 'left': {
+			const _left = kindIdStorage<NonNullable<T.CompoundAssignmentExpr['_left']>>(config.left);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'compound_assignment_expr', { left: _left });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.CompoundAssignmentExpr as const);
+				patchCell(arena, record, 2, 2, carriedSlot(source, 'left', _left));
+				const node = arena.view(record);
+				return node as unknown as T.CompoundAssignmentExpr.Bound;
+			});
+		}
+		case 'operator': {
+			const _operator = kindIdStorage<NonNullable<T.CompoundAssignmentExpr['_operator']>>(config.operator);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'compound_assignment_expr', { operator: _operator });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.CompoundAssignmentExpr as const);
+				patchCell(arena, record, 3, 6, carriedSlot(source, 'operator', _operator));
+				const node = arena.view(record);
+				return node as unknown as T.CompoundAssignmentExpr.Bound;
+			});
+		}
+		case 'right': {
+			const _right = kindIdStorage<NonNullable<T.CompoundAssignmentExpr['_right']>>(config.right);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'compound_assignment_expr', { right: _right });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.CompoundAssignmentExpr as const);
+				patchCell(arena, record, 4, 7, carriedSlot(source, 'right', _right));
+				const node = arena.view(record);
+				return node as unknown as T.CompoundAssignmentExpr.Bound;
+			});
+		}
+	}
+	throw new Error(`compound_assignment_expr writes no slot ${slot} alone`);
+}
 function withCompoundAssignmentExpr(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.CompoundAssignmentExpr.Config;
 	switch (setter) {
 		case 'left':
 			return applySetter(args, (value: Admit<NonNullable<T.CompoundAssignmentExpr.Config>['left']>) =>
-				rebuilt(node, handle, () => buildCompoundAssignmentExpr$patch(node, { ...config, left: value }))
+				rebuilt(node, handle, () => buildCompoundAssignmentExpr$set(node, 'left', { left: value }))
 			);
 		case 'operator':
 			return applySetter(args, (value: Admit<NonNullable<T.CompoundAssignmentExpr.Config>['operator']>) =>
-				rebuilt(node, handle, () => buildCompoundAssignmentExpr$patch(node, { ...config, operator: value }))
+				rebuilt(node, handle, () => buildCompoundAssignmentExpr$set(node, 'operator', { operator: value }))
 			);
 		case 'right':
 			return applySetter(args, (value: Admit<NonNullable<T.CompoundAssignmentExpr.Config>['right']>) =>
-				rebuilt(node, handle, () => buildCompoundAssignmentExpr$patch(node, { ...config, right: value }))
+				rebuilt(node, handle, () => buildCompoundAssignmentExpr$set(node, 'right', { right: value }))
 			);
 	}
 	throw new Error(`compound_assignment_expr has no $with.${setter}`);
@@ -6551,18 +8988,56 @@ function buildTypeCastExpression$patch(
 		return node as unknown as T.TypeCastExpression.Bound;
 	});
 }
+function buildTypeCastExpression$set(
+	source: object,
+	slot: string,
+	config: Partial<T.TypeCastExpression.Config>
+): T.TypeCastExpression.Bound {
+	if (!editsInPlace(source)) {
+		const inputs = builtInputs(source);
+		return buildTypeCastExpression$patch(source, { ...(inputs.config as T.TypeCastExpression.Config), ...config });
+	}
+	switch (slot) {
+		case 'expression': {
+			const _expression = kindIdStorage<NonNullable<T.TypeCastExpression['_expression']>>(config.expression);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'type_cast_expression', { expression: _expression });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.TypeCastExpression as const);
+				patchCell(arena, record, 2, 2, carriedSlot(source, 'expression', _expression));
+				const node = arena.view(record);
+				return node as unknown as T.TypeCastExpression.Bound;
+			});
+		}
+		case 'type': {
+			const _type = admitAliasContent<NonNullable<T.TypeCastExpression['_type']>>(
+				kindIdStorage<NonNullable<T.TypeCastExpression['_type']>>(config.type),
+				[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
+			);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'type_cast_expression', { type: _type });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.TypeCastExpression as const);
+				patchCell(arena, record, 3, 6, carriedSlot(source, 'type', _type));
+				const node = arena.view(record);
+				return node as unknown as T.TypeCastExpression.Bound;
+			});
+		}
+	}
+	throw new Error(`type_cast_expression writes no slot ${slot} alone`);
+}
 function withTypeCastExpression(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.TypeCastExpression.Config;
 	switch (setter) {
 		case 'expression':
 			return applySetter(args, (value: Admit<NonNullable<T.TypeCastExpression.Config>['expression']>) =>
-				rebuilt(node, handle, () => buildTypeCastExpression$patch(node, { ...config, expression: value }))
+				rebuilt(node, handle, () => buildTypeCastExpression$set(node, 'expression', { expression: value }))
 			);
 		case 'type':
 			return applySetter(args, (value: Admit<NonNullable<T.TypeCastExpression.Config>['type']>) =>
-				rebuilt(node, handle, () => buildTypeCastExpression$patch(node, { ...config, type: value }))
+				rebuilt(node, handle, () => buildTypeCastExpression$set(node, 'type', { type: value }))
 			);
 	}
 	throw new Error(`type_cast_expression has no $with.${setter}`);
@@ -6699,14 +9174,54 @@ function buildCallExpression$patch(source: object, config: T.CallExpression.Conf
 		return node as unknown as T.CallExpression.Bound;
 	});
 }
+function buildCallExpression$set(
+	source: object,
+	slot: string,
+	config: Partial<T.CallExpression.Config>
+): T.CallExpression.Bound {
+	if (!editsInPlace(source)) {
+		const inputs = builtInputs(source);
+		return buildCallExpression$patch(source, { ...(inputs.config as T.CallExpression.Config), ...config });
+	}
+	switch (slot) {
+		case 'function': {
+			const _function = rejectKeywordText(
+				kindIdStorage<NonNullable<T.CallExpression['_function']>>(config.function),
+				'CallExpression.function',
+				TSKindId.Identifier,
+				['self']
+			);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'call_expression', { function: _function });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.CallExpression as const);
+				patchCell(arena, record, 2, 2, carriedSlot(source, 'function', _function));
+				const node = arena.view(record);
+				return node as unknown as T.CallExpression.Bound;
+			});
+		}
+		case 'arguments': {
+			const _arguments = orDefault(config.arguments, () => buildArguments());
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'call_expression', { arguments: _arguments });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.CallExpression as const);
+				patchCell(arena, record, 3, 6, carriedSlot(source, 'arguments', _arguments));
+				const node = arena.view(record);
+				return node as unknown as T.CallExpression.Bound;
+			});
+		}
+	}
+	throw new Error(`call_expression writes no slot ${slot} alone`);
+}
 function withCallExpression(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.CallExpression.Config;
 	switch (setter) {
 		case 'function':
 			return applySetter(args, (value: Admit<NonNullable<T.CallExpression.Config>['function']>) =>
-				rebuilt(node, handle, () => buildCallExpression$patch(node, { ...config, function: value }))
+				rebuilt(node, handle, () => buildCallExpression$set(node, 'function', { function: value }))
 			);
 		case 'arguments':
 			return applySetter(args, (...args: unknown[]) =>
@@ -6719,7 +9234,7 @@ function withCallExpression(node: object, setter: string, args: readonly unknown
 							make: buildArguments,
 							element: { keys: ['attributeItems', 'expression'], make: buildArgument }
 						},
-						(value: Admit<T.Arguments>) => buildCallExpression$patch(node, { ...config, arguments: value })
+						(value: Admit<T.Arguments>) => buildCallExpression$set(node, 'arguments', { arguments: value })
 					)
 				)
 			);
@@ -6889,15 +9404,50 @@ function buildTupleExpression$patch(source: object, config: T.TupleExpression.Co
 		return node as unknown as T.TupleExpression.Bound;
 	});
 }
+function buildTupleExpression$set(
+	source: object,
+	slot: string,
+	config: Partial<T.TupleExpression.Config>
+): T.TupleExpression.Bound {
+	if (!editsInPlace(source)) {
+		const inputs = builtInputs(source);
+		return buildTupleExpression$patch(source, { ...(inputs.config as T.TupleExpression.Config), ...config });
+	}
+	switch (slot) {
+		case 'attributes': {
+			const _attributes = listStorage<NonNullable<T.TupleExpression['_attributes']>>(config.attributes ?? []);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'tuple_expression', { attributes: _attributes });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.TupleExpression as const);
+				patchList(arena, record, 2, 2, _attributes);
+				const node = arena.view(record);
+				return node as unknown as T.TupleExpression.Bound;
+			});
+		}
+		case 'elements': {
+			const _elements = config.elements;
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'tuple_expression', { elements: _elements });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.TupleExpression as const);
+				patchCell(arena, record, 3, 3, carriedSlot(source, 'elements', _elements));
+				const node = arena.view(record);
+				return node as unknown as T.TupleExpression.Bound;
+			});
+		}
+	}
+	throw new Error(`tuple_expression writes no slot ${slot} alone`);
+}
 function withTupleExpression(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.TupleExpression.Config;
 	switch (setter) {
 		case 'attributes':
 			return applySetter(args, (...values: Admit<T.AttributeItem[]>) =>
 				rebuilt(node, handle, () =>
-					buildTupleExpression$patch(node, { ...config, attributes: restItems('attributes', values) })
+					buildTupleExpression$set(node, 'attributes', { attributes: restItems('attributes', values) })
 				)
 			);
 		case 'elements':
@@ -6906,7 +9456,7 @@ function withTupleExpression(node: object, setter: string, args: readonly unknow
 					listSlotWith(
 						args,
 						{ kind: TSKindId.Expressions as const, optional: false, make: buildExpressions },
-						(value: Admit<T.Expressions>) => buildTupleExpression$patch(node, { ...config, elements: value })
+						(value: Admit<T.Expressions>) => buildTupleExpression$set(node, 'elements', { elements: value })
 					)
 				)
 			);
@@ -6957,10 +9507,47 @@ function buildStructExpression$patch(source: object, config: T.StructExpression.
 		return node as unknown as T.StructExpression.Bound;
 	});
 }
+function buildStructExpression$set(
+	source: object,
+	slot: string,
+	config: Partial<T.StructExpression.Config>
+): T.StructExpression.Bound {
+	if (!editsInPlace(source)) {
+		const inputs = builtInputs(source);
+		return buildStructExpression$patch(source, { ...(inputs.config as T.StructExpression.Config), ...config });
+	}
+	switch (slot) {
+		case 'name': {
+			const _name = admitAliasContent<NonNullable<T.StructExpression['_name']>>(config.name, [
+				[[1], (v: unknown) => buildTypeIdentifier(v as never)]
+			]);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'struct_expression', { name: _name });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.StructExpression as const);
+				patchCell(arena, record, 2, 2, carriedSlot(source, 'name', _name));
+				const node = arena.view(record);
+				return node as unknown as T.StructExpression.Bound;
+			});
+		}
+		case 'body': {
+			const _body = orDefault(config.body, () => buildFieldInitializerList());
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'struct_expression', { body: _body });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.StructExpression as const);
+				patchCell(arena, record, 3, 5, carriedSlot(source, 'body', _body));
+				const node = arena.view(record);
+				return node as unknown as T.StructExpression.Bound;
+			});
+		}
+	}
+	throw new Error(`struct_expression writes no slot ${slot} alone`);
+}
 function withStructExpression(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.StructExpression.Config;
 	switch (setter) {
 		case 'name':
 			return applySetter(
@@ -6972,7 +9559,7 @@ function withStructExpression(node: object, setter: string, args: readonly unkno
 						| T.GenericTypeWithTurbofish
 						| T.TypeIdentifier.Types
 					>
-				) => rebuilt(node, handle, () => buildStructExpression$patch(node, { ...config, name: value }))
+				) => rebuilt(node, handle, () => buildStructExpression$set(node, 'name', { name: value }))
 			);
 		case 'body':
 			return applySetter(args, (...args: unknown[]) =>
@@ -6980,7 +9567,7 @@ function withStructExpression(node: object, setter: string, args: readonly unkno
 					listSlotWith(
 						args,
 						{ kind: TSKindId.FieldInitializerList as const, optional: false, make: buildFieldInitializerList },
-						(value: Admit<T.FieldInitializerList>) => buildStructExpression$patch(node, { ...config, body: value })
+						(value: Admit<T.FieldInitializerList>) => buildStructExpression$set(node, 'body', { body: value })
 					)
 				)
 			);
@@ -7119,20 +9706,58 @@ function buildShorthandFieldInitializer$patch(
 		return node as unknown as T.ShorthandFieldInitializer.Bound;
 	});
 }
+function buildShorthandFieldInitializer$set(
+	source: object,
+	slot: string,
+	config: Partial<T.ShorthandFieldInitializer.Config>
+): T.ShorthandFieldInitializer.Bound {
+	if (!editsInPlace(source)) {
+		const inputs = builtInputs(source);
+		return buildShorthandFieldInitializer$patch(source, {
+			...(inputs.config as T.ShorthandFieldInitializer.Config),
+			...config
+		});
+	}
+	switch (slot) {
+		case 'attributes': {
+			const _attributes = listStorage<NonNullable<T.ShorthandFieldInitializer['_attributes']>>(config.attributes ?? []);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'shorthand_field_initializer', { attributes: _attributes });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.ShorthandFieldInitializer as const);
+				patchList(arena, record, 2, 2, _attributes);
+				const node = arena.view(record);
+				return node as unknown as T.ShorthandFieldInitializer.Bound;
+			});
+		}
+		case 'field': {
+			const _field = config.field;
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'shorthand_field_initializer', { field: _field });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.ShorthandFieldInitializer as const);
+				patchCell(arena, record, 3, 3, carriedSlot(source, 'field', _field));
+				const node = arena.view(record);
+				return node as unknown as T.ShorthandFieldInitializer.Bound;
+			});
+		}
+	}
+	throw new Error(`shorthand_field_initializer writes no slot ${slot} alone`);
+}
 function withShorthandFieldInitializer(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.ShorthandFieldInitializer.Config;
 	switch (setter) {
 		case 'attributes':
 			return applySetter(args, (...values: Admit<T.AttributeItem[]>) =>
 				rebuilt(node, handle, () =>
-					buildShorthandFieldInitializer$patch(node, { ...config, attributes: restItems('attributes', values) })
+					buildShorthandFieldInitializer$set(node, 'attributes', { attributes: restItems('attributes', values) })
 				)
 			);
 		case 'field':
 			return applySetter(args, (value: Admit<T.Identifier>) =>
-				rebuilt(node, handle, () => buildShorthandFieldInitializer$patch(node, { ...config, field: value }))
+				rebuilt(node, handle, () => buildShorthandFieldInitializer$set(node, 'field', { field: value }))
 			);
 	}
 	throw new Error(`shorthand_field_initializer has no $with.${setter}`);
@@ -7188,24 +9813,73 @@ function buildFieldInitializer$patch(source: object, config: T.FieldInitializer.
 		return node as unknown as T.FieldInitializer.Bound;
 	});
 }
+function buildFieldInitializer$set(
+	source: object,
+	slot: string,
+	config: Partial<T.FieldInitializer.Config>
+): T.FieldInitializer.Bound {
+	if (!editsInPlace(source)) {
+		const inputs = builtInputs(source);
+		return buildFieldInitializer$patch(source, { ...(inputs.config as T.FieldInitializer.Config), ...config });
+	}
+	switch (slot) {
+		case 'attributes': {
+			const _attributes = listStorage<NonNullable<T.FieldInitializer['_attributes']>>(config.attributes ?? []);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'field_initializer', { attributes: _attributes });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.FieldInitializer as const);
+				patchList(arena, record, 2, 2, _attributes);
+				const node = arena.view(record);
+				return node as unknown as T.FieldInitializer.Bound;
+			});
+		}
+		case 'field': {
+			const _field = admitAliasContent<NonNullable<T.FieldInitializer['_field']>>(config.field, [
+				[[1], (v: unknown) => buildFieldIdentifier(v as never)]
+			]);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'field_initializer', { field: _field });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.FieldInitializer as const);
+				patchCell(arena, record, 3, 3, carriedSlot(source, 'field', _field));
+				const node = arena.view(record);
+				return node as unknown as T.FieldInitializer.Bound;
+			});
+		}
+		case 'value': {
+			const _value = kindIdStorage<NonNullable<T.FieldInitializer['_value']>>(config.value);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'field_initializer', { value: _value });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.FieldInitializer as const);
+				patchCell(arena, record, 4, 11, carriedSlot(source, 'value', _value));
+				const node = arena.view(record);
+				return node as unknown as T.FieldInitializer.Bound;
+			});
+		}
+	}
+	throw new Error(`field_initializer writes no slot ${slot} alone`);
+}
 function withFieldInitializer(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.FieldInitializer.Config;
 	switch (setter) {
 		case 'attributes':
 			return applySetter(args, (...values: Admit<T.AttributeItem[]>) =>
 				rebuilt(node, handle, () =>
-					buildFieldInitializer$patch(node, { ...config, attributes: restItems('attributes', values) })
+					buildFieldInitializer$set(node, 'attributes', { attributes: restItems('attributes', values) })
 				)
 			);
 		case 'field':
 			return applySetter(args, (value: Admit<T.FieldIdentifier | T.IntegerLiteral | T.FieldIdentifier.Types>) =>
-				rebuilt(node, handle, () => buildFieldInitializer$patch(node, { ...config, field: value }))
+				rebuilt(node, handle, () => buildFieldInitializer$set(node, 'field', { field: value }))
 			);
 		case 'value':
 			return applySetter(args, (value: Admit<NonNullable<T.FieldInitializer.Config>['value']>) =>
-				rebuilt(node, handle, () => buildFieldInitializer$patch(node, { ...config, value: value }))
+				rebuilt(node, handle, () => buildFieldInitializer$set(node, 'value', { value: value }))
 			);
 	}
 	throw new Error(`field_initializer has no $with.${setter}`);
@@ -7309,22 +9983,69 @@ function buildIfExpression$patch(source: object, config: T.IfExpression.Config):
 		return node as unknown as T.IfExpression.Bound;
 	});
 }
+function buildIfExpression$set(
+	source: object,
+	slot: string,
+	config: Partial<T.IfExpression.Config>
+): T.IfExpression.Bound {
+	if (!editsInPlace(source)) {
+		const inputs = builtInputs(source);
+		return buildIfExpression$patch(source, { ...(inputs.config as T.IfExpression.Config), ...config });
+	}
+	switch (slot) {
+		case 'condition': {
+			const _condition = kindIdStorage<NonNullable<T.IfExpression['_condition']>>(config.condition);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'if_expression', { condition: _condition });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.IfExpression as const);
+				patchCell(arena, record, 2, 2, carriedSlot(source, 'condition', _condition));
+				const node = arena.view(record);
+				return node as unknown as T.IfExpression.Bound;
+			});
+		}
+		case 'consequence': {
+			const _consequence = orDefault(config.consequence, () => buildBlock());
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'if_expression', { consequence: _consequence });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.IfExpression as const);
+				patchCell(arena, record, 3, 6, carriedSlot(source, 'consequence', _consequence));
+				const node = arena.view(record);
+				return node as unknown as T.IfExpression.Bound;
+			});
+		}
+		case 'alternative': {
+			const _alternative = config.alternative;
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'if_expression', { alternative: _alternative });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.IfExpression as const);
+				patchCell(arena, record, 4, 9, carriedSlot(source, 'alternative', _alternative));
+				const node = arena.view(record);
+				return node as unknown as T.IfExpression.Bound;
+			});
+		}
+	}
+	throw new Error(`if_expression writes no slot ${slot} alone`);
+}
 function withIfExpression(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.IfExpression.Config;
 	switch (setter) {
 		case 'condition':
 			return applySetter(args, (value: Admit<NonNullable<T.IfExpression.Config>['condition']>) =>
-				rebuilt(node, handle, () => buildIfExpression$patch(node, { ...config, condition: value }))
+				rebuilt(node, handle, () => buildIfExpression$set(node, 'condition', { condition: value }))
 			);
 		case 'consequence':
 			return applySetter(args, (value: Admit<T.Block>) =>
-				rebuilt(node, handle, () => buildIfExpression$patch(node, { ...config, consequence: value }))
+				rebuilt(node, handle, () => buildIfExpression$set(node, 'consequence', { consequence: value }))
 			);
 		case 'alternative':
 			return applySetter(args, (value?: Admit<T.ElseClause>) =>
-				rebuilt(node, handle, () => buildIfExpression$patch(node, { ...config, alternative: value }))
+				rebuilt(node, handle, () => buildIfExpression$set(node, 'alternative', { alternative: value }))
 			);
 	}
 	throw new Error(`if_expression has no $with.${setter}`);
@@ -7367,18 +10088,53 @@ function buildLetCondition$patch(source: object, config: T.LetCondition.Config):
 		return node as unknown as T.LetCondition.Bound;
 	});
 }
+function buildLetCondition$set(
+	source: object,
+	slot: string,
+	config: Partial<T.LetCondition.Config>
+): T.LetCondition.Bound {
+	if (!editsInPlace(source)) {
+		const inputs = builtInputs(source);
+		return buildLetCondition$patch(source, { ...(inputs.config as T.LetCondition.Config), ...config });
+	}
+	switch (slot) {
+		case 'pattern': {
+			const _pattern = kindIdStorage<NonNullable<T.LetCondition['_pattern']>>(config.pattern);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'let_condition', { pattern: _pattern });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.LetCondition as const);
+				patchCell(arena, record, 2, 2, carriedSlot(source, 'pattern', _pattern));
+				const node = arena.view(record);
+				return node as unknown as T.LetCondition.Bound;
+			});
+		}
+		case 'value': {
+			const _value = kindIdStorage<NonNullable<T.LetCondition['_value']>>(config.value);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'let_condition', { value: _value });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.LetCondition as const);
+				patchCell(arena, record, 3, 6, carriedSlot(source, 'value', _value));
+				const node = arena.view(record);
+				return node as unknown as T.LetCondition.Bound;
+			});
+		}
+	}
+	throw new Error(`let_condition writes no slot ${slot} alone`);
+}
 function withLetCondition(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.LetCondition.Config;
 	switch (setter) {
 		case 'pattern':
 			return applySetter(args, (value: Admit<NonNullable<T.LetCondition.Config>['pattern']>) =>
-				rebuilt(node, handle, () => buildLetCondition$patch(node, { ...config, pattern: value }))
+				rebuilt(node, handle, () => buildLetCondition$set(node, 'pattern', { pattern: value }))
 			);
 		case 'value':
 			return applySetter(args, (value: Admit<NonNullable<T.LetCondition.Config>['value']>) =>
-				rebuilt(node, handle, () => buildLetCondition$patch(node, { ...config, value: value }))
+				rebuilt(node, handle, () => buildLetCondition$set(node, 'value', { value: value }))
 			);
 	}
 	throw new Error(`let_condition has no $with.${setter}`);
@@ -7421,18 +10177,49 @@ function buildLetChain$patch(source: object, config: T.LetChain.Config): T.LetCh
 		return node as unknown as T.LetChain.Bound;
 	});
 }
+function buildLetChain$set(source: object, slot: string, config: Partial<T.LetChain.Config>): T.LetChain.Bound {
+	if (!editsInPlace(source)) {
+		const inputs = builtInputs(source);
+		return buildLetChain$patch(source, { ...(inputs.config as T.LetChain.Config), ...config });
+	}
+	switch (slot) {
+		case 'left': {
+			const _left = kindIdStorage<NonNullable<T.LetChain['_left']>>(config.left);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, '_let_chain', { left: _left });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.LetChain as const);
+				patchCell(arena, record, 2, 2, carriedSlot(source, 'left', _left));
+				const node = arena.view(record);
+				return node as unknown as T.LetChain.Bound;
+			});
+		}
+		case 'rights': {
+			const _right = listStorage<NonNullable<T.LetChain['_right']>>(config.rights ?? [], kindIdStorage);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, '_let_chain', { rights: _right });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.LetChain as const);
+				patchList(arena, record, 3, 6, _right);
+				const node = arena.view(record);
+				return node as unknown as T.LetChain.Bound;
+			});
+		}
+	}
+	throw new Error(`_let_chain writes no slot ${slot} alone`);
+}
 function withLetChain(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.LetChain.Config;
 	switch (setter) {
 		case 'left':
 			return applySetter(args, (value: Admit<NonNullable<T.LetChain.Config>['left']>) =>
-				rebuilt(node, handle, () => buildLetChain$patch(node, { ...config, left: value }))
+				rebuilt(node, handle, () => buildLetChain$set(node, 'left', { left: value }))
 			);
 		case 'rights':
 			return applySetter(args, (...values: Admit<NonNullable<NonNullable<T.LetChain.Config>['rights']>[number][]>) =>
-				rebuilt(node, handle, () => buildLetChain$patch(node, { ...config, rights: restItems('rights', values) }))
+				rebuilt(node, handle, () => buildLetChain$set(node, 'rights', { rights: restItems('rights', values) }))
 			);
 	}
 	throw new Error(`_let_chain has no $with.${setter}`);
@@ -7516,18 +10303,53 @@ function buildMatchExpression$patch(source: object, config: T.MatchExpression.Co
 		return node as unknown as T.MatchExpression.Bound;
 	});
 }
+function buildMatchExpression$set(
+	source: object,
+	slot: string,
+	config: Partial<T.MatchExpression.Config>
+): T.MatchExpression.Bound {
+	if (!editsInPlace(source)) {
+		const inputs = builtInputs(source);
+		return buildMatchExpression$patch(source, { ...(inputs.config as T.MatchExpression.Config), ...config });
+	}
+	switch (slot) {
+		case 'subject': {
+			const _subject = kindIdStorage<NonNullable<T.MatchExpression['_subject']>>(config.subject);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'match_expression', { subject: _subject });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.MatchExpression as const);
+				patchCell(arena, record, 2, 2, carriedSlot(source, 'subject', _subject));
+				const node = arena.view(record);
+				return node as unknown as T.MatchExpression.Bound;
+			});
+		}
+		case 'body': {
+			const _body = orDefault(config.body, () => buildMatchBlock());
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'match_expression', { body: _body });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.MatchExpression as const);
+				patchCell(arena, record, 3, 6, carriedSlot(source, 'body', _body));
+				const node = arena.view(record);
+				return node as unknown as T.MatchExpression.Bound;
+			});
+		}
+	}
+	throw new Error(`match_expression writes no slot ${slot} alone`);
+}
 function withMatchExpression(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.MatchExpression.Config;
 	switch (setter) {
 		case 'subject':
 			return applySetter(args, (value: Admit<NonNullable<T.MatchExpression.Config>['subject']>) =>
-				rebuilt(node, handle, () => buildMatchExpression$patch(node, { ...config, subject: value }))
+				rebuilt(node, handle, () => buildMatchExpression$set(node, 'subject', { subject: value }))
 			);
 		case 'body':
 			return applySetter(args, (value: Admit<T.MatchBlock>) =>
-				rebuilt(node, handle, () => buildMatchExpression$patch(node, { ...config, body: value }))
+				rebuilt(node, handle, () => buildMatchExpression$set(node, 'body', { body: value }))
 			);
 	}
 	throw new Error(`match_expression has no $with.${setter}`);
@@ -7667,31 +10489,85 @@ function buildLastMatchArm$patch(
 		return node as unknown as T.LastMatchArm.Bound;
 	});
 }
+function buildLastMatchArm$set(
+	source: object,
+	slot: string,
+	config: Partial<T.LastMatchArm.Config>
+): T.LastMatchArm.Bound {
+	if (!editsInPlace(source)) {
+		const inputs = builtInputs(source);
+		return buildLastMatchArm$patch(
+			source,
+			{ ...(inputs.config as T.LastMatchArm.Config), ...config },
+			inputs.options as T.LastMatchArm.Options
+		);
+	}
+	switch (slot) {
+		case 'attributes': {
+			const _attributes = listStorage<NonNullable<T.LastMatchArm['_attributes']>>(config.attributes ?? []);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'last_match_arm', { attributes: _attributes });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.LastMatchArm as const);
+				patchList(arena, record, 2, 2, _attributes);
+				const node = arena.view(record);
+				return node as unknown as T.LastMatchArm.Bound;
+			});
+		}
+		case 'match': {
+			const _match = config.match;
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'last_match_arm', { match: _match });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.LastMatchArm as const);
+				patchCell(arena, record, 3, 3, carriedSlot(source, 'match', _match));
+				const node = arena.view(record);
+				return node as unknown as T.LastMatchArm.Bound;
+			});
+		}
+		case 'body': {
+			const _body = kindIdStorage<NonNullable<T.LastMatchArm['_body']>>(config.body);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'last_match_arm', { body: _body });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.LastMatchArm as const);
+				patchCell(arena, record, 4, 13, carriedSlot(source, 'body', _body));
+				const node = arena.view(record);
+				return node as unknown as T.LastMatchArm.Bound;
+			});
+		}
+	}
+	throw new Error(`last_match_arm writes no slot ${slot} alone`);
+}
 function withLastMatchArm(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.LastMatchArm.Config;
-	const options = inputs.options as T.LastMatchArm.Options;
-	const readGroup_match = () => inputs.config['match'] as object | undefined;
+	const readGroup_match = () => builtInputs(node).config['match'] as object | undefined;
 	switch (setter) {
 		case 'attributes':
 			return applySetter(args, (...values: Admit<(T.AttributeItem | T.InnerAttributeItem)[]>) =>
 				rebuilt(node, handle, () =>
-					buildLastMatchArm$patch(node, { ...config, attributes: restItems('attributes', values) }, options)
+					buildLastMatchArm$set(node, 'attributes', { attributes: restItems('attributes', values) })
 				)
 			);
 		case 'match':
 			return applySetter(args, (value: Admit<T.MatchPattern>) =>
-				rebuilt(node, handle, () => buildLastMatchArm$patch(node, { ...config, match: value }, options))
+				rebuilt(node, handle, () => buildLastMatchArm$set(node, 'match', { match: value }))
 			);
 		case 'body':
 			return applySetter(args, (value: Admit<NonNullable<T.LastMatchArm.Config>['body']>) =>
-				rebuilt(node, handle, () => buildLastMatchArm$patch(node, { ...config, body: value }, options))
+				rebuilt(node, handle, () => buildLastMatchArm$set(node, 'body', { body: value }))
 			);
-		case 'trailingComma':
+		case 'trailingComma': {
+			const inputs = builtInputs(node);
+			const config = inputs.config as T.LastMatchArm.Config;
+			const options = inputs.options as T.LastMatchArm.Options;
 			return applySetter(args, (spelling: TSKindId.Comma | null) =>
 				rebuilt(node, handle, () => buildLastMatchArm$patch(node, config, { ...options, trailingComma: spelling }))
 			);
+		}
 		case 'pattern':
 			return applySetter(args, (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
@@ -7707,7 +10583,7 @@ function withLastMatchArm(node: object, setter: string, args: readonly unknown[]
 						},
 						'pattern',
 						args,
-						(value: Admit<T.MatchPattern>) => buildLastMatchArm$patch(node, { ...config, match: value }, options),
+						(value: Admit<T.MatchPattern>) => buildLastMatchArm$set(node, 'match', { match: value }),
 						() => readGroup_match.call(node)
 					)
 				)
@@ -7727,7 +10603,7 @@ function withLastMatchArm(node: object, setter: string, args: readonly unknown[]
 						},
 						'condition',
 						args,
-						(value: Admit<T.MatchPattern>) => buildLastMatchArm$patch(node, { ...config, match: value }, options),
+						(value: Admit<T.MatchPattern>) => buildLastMatchArm$set(node, 'match', { match: value }),
 						() => readGroup_match.call(node)
 					)
 				)
@@ -7775,18 +10651,53 @@ function buildMatchPattern$patch(source: object, config: T.MatchPattern.Config):
 		return node as unknown as T.MatchPattern.Bound;
 	});
 }
+function buildMatchPattern$set(
+	source: object,
+	slot: string,
+	config: Partial<T.MatchPattern.Config>
+): T.MatchPattern.Bound {
+	if (!editsInPlace(source)) {
+		const inputs = builtInputs(source);
+		return buildMatchPattern$patch(source, { ...(inputs.config as T.MatchPattern.Config), ...config });
+	}
+	switch (slot) {
+		case 'pattern': {
+			const _pattern = kindIdStorage<NonNullable<T.MatchPattern['_pattern']>>(config.pattern);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'match_pattern', { pattern: _pattern });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.MatchPattern as const);
+				patchCell(arena, record, 2, 2, carriedSlot(source, 'pattern', _pattern));
+				const node = arena.view(record);
+				return node as unknown as T.MatchPattern.Bound;
+			});
+		}
+		case 'condition': {
+			const _condition = kindIdStorage<NonNullable<T.MatchPattern['_condition']>>(config.condition);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'match_pattern', { condition: _condition });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.MatchPattern as const);
+				patchCell(arena, record, 3, 6, carriedSlot(source, 'condition', _condition));
+				const node = arena.view(record);
+				return node as unknown as T.MatchPattern.Bound;
+			});
+		}
+	}
+	throw new Error(`match_pattern writes no slot ${slot} alone`);
+}
 function withMatchPattern(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.MatchPattern.Config;
 	switch (setter) {
 		case 'pattern':
 			return applySetter(args, (value: Admit<NonNullable<T.MatchPattern.Config>['pattern']>) =>
-				rebuilt(node, handle, () => buildMatchPattern$patch(node, { ...config, pattern: value }))
+				rebuilt(node, handle, () => buildMatchPattern$set(node, 'pattern', { pattern: value }))
 			);
 		case 'condition':
 			return applySetter(args, (value?: Admit<NonNullable<T.MatchPattern.Config>['condition']>) =>
-				rebuilt(node, handle, () => buildMatchPattern$patch(node, { ...config, condition: value }))
+				rebuilt(node, handle, () => buildMatchPattern$set(node, 'condition', { condition: value }))
 			);
 	}
 	throw new Error(`match_pattern has no $with.${setter}`);
@@ -7838,22 +10749,69 @@ function buildWhileExpression$patch(source: object, config: T.WhileExpression.Co
 		return node as unknown as T.WhileExpression.Bound;
 	});
 }
+function buildWhileExpression$set(
+	source: object,
+	slot: string,
+	config: Partial<T.WhileExpression.Config>
+): T.WhileExpression.Bound {
+	if (!editsInPlace(source)) {
+		const inputs = builtInputs(source);
+		return buildWhileExpression$patch(source, { ...(inputs.config as T.WhileExpression.Config), ...config });
+	}
+	switch (slot) {
+		case 'label': {
+			const _label = config.label;
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'while_expression', { label: _label });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.WhileExpression as const);
+				patchCell(arena, record, 2, 2, carriedSlot(source, 'label', _label));
+				const node = arena.view(record);
+				return node as unknown as T.WhileExpression.Bound;
+			});
+		}
+		case 'condition': {
+			const _condition = kindIdStorage<NonNullable<T.WhileExpression['_condition']>>(config.condition);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'while_expression', { condition: _condition });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.WhileExpression as const);
+				patchCell(arena, record, 3, 7, carriedSlot(source, 'condition', _condition));
+				const node = arena.view(record);
+				return node as unknown as T.WhileExpression.Bound;
+			});
+		}
+		case 'body': {
+			const _body = orDefault(config.body, () => buildBlock());
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'while_expression', { body: _body });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.WhileExpression as const);
+				patchCell(arena, record, 4, 11, carriedSlot(source, 'body', _body));
+				const node = arena.view(record);
+				return node as unknown as T.WhileExpression.Bound;
+			});
+		}
+	}
+	throw new Error(`while_expression writes no slot ${slot} alone`);
+}
 function withWhileExpression(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.WhileExpression.Config;
 	switch (setter) {
 		case 'label':
 			return applySetter(args, (value?: Admit<T.Label>) =>
-				rebuilt(node, handle, () => buildWhileExpression$patch(node, { ...config, label: value }))
+				rebuilt(node, handle, () => buildWhileExpression$set(node, 'label', { label: value }))
 			);
 		case 'condition':
 			return applySetter(args, (value: Admit<NonNullable<T.WhileExpression.Config>['condition']>) =>
-				rebuilt(node, handle, () => buildWhileExpression$patch(node, { ...config, condition: value }))
+				rebuilt(node, handle, () => buildWhileExpression$set(node, 'condition', { condition: value }))
 			);
 		case 'body':
 			return applySetter(args, (value: Admit<T.Block>) =>
-				rebuilt(node, handle, () => buildWhileExpression$patch(node, { ...config, body: value }))
+				rebuilt(node, handle, () => buildWhileExpression$set(node, 'body', { body: value }))
 			);
 	}
 	throw new Error(`while_expression has no $with.${setter}`);
@@ -7901,18 +10859,53 @@ function buildLoopExpression$patch(
 		return node as unknown as T.LoopExpression.Bound;
 	});
 }
+function buildLoopExpression$set(
+	source: object,
+	slot: string,
+	config: Partial<T.LoopExpression.Config>
+): T.LoopExpression.Bound {
+	if (!editsInPlace(source)) {
+		const inputs = builtInputs(source);
+		return buildLoopExpression$patch(source, { ...(inputs.config as T.LoopExpression.Config), ...config });
+	}
+	switch (slot) {
+		case 'label': {
+			const _label = config.label;
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'loop_expression', { label: _label });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.LoopExpression as const);
+				patchCell(arena, record, 2, 2, carriedSlot(source, 'label', _label));
+				const node = arena.view(record);
+				return node as unknown as T.LoopExpression.Bound;
+			});
+		}
+		case 'body': {
+			const _body = orDefault(config.body, () => buildBlock());
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'loop_expression', { body: _body });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.LoopExpression as const);
+				patchCell(arena, record, 3, 7, carriedSlot(source, 'body', _body));
+				const node = arena.view(record);
+				return node as unknown as T.LoopExpression.Bound;
+			});
+		}
+	}
+	throw new Error(`loop_expression writes no slot ${slot} alone`);
+}
 function withLoopExpression(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.LoopExpression.Config;
 	switch (setter) {
 		case 'label':
 			return applySetter(args, (value?: Admit<T.Label>) =>
-				rebuilt(node, handle, () => buildLoopExpression$patch(node, { ...config, label: value }))
+				rebuilt(node, handle, () => buildLoopExpression$set(node, 'label', { label: value }))
 			);
 		case 'body':
 			return applySetter(args, (value: Admit<T.Block>) =>
-				rebuilt(node, handle, () => buildLoopExpression$patch(node, { ...config, body: value }))
+				rebuilt(node, handle, () => buildLoopExpression$set(node, 'body', { body: value }))
 			);
 	}
 	throw new Error(`loop_expression has no $with.${setter}`);
@@ -7969,26 +10962,85 @@ function buildForExpression$patch(source: object, config: T.ForExpression.Config
 		return node as unknown as T.ForExpression.Bound;
 	});
 }
+function buildForExpression$set(
+	source: object,
+	slot: string,
+	config: Partial<T.ForExpression.Config>
+): T.ForExpression.Bound {
+	if (!editsInPlace(source)) {
+		const inputs = builtInputs(source);
+		return buildForExpression$patch(source, { ...(inputs.config as T.ForExpression.Config), ...config });
+	}
+	switch (slot) {
+		case 'label': {
+			const _label = config.label;
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'for_expression', { label: _label });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.ForExpression as const);
+				patchCell(arena, record, 2, 2, carriedSlot(source, 'label', _label));
+				const node = arena.view(record);
+				return node as unknown as T.ForExpression.Bound;
+			});
+		}
+		case 'left': {
+			const _left = kindIdStorage<NonNullable<T.ForExpression['_left']>>(config.left);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'for_expression', { left: _left });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.ForExpression as const);
+				patchCell(arena, record, 3, 7, carriedSlot(source, 'left', _left));
+				const node = arena.view(record);
+				return node as unknown as T.ForExpression.Bound;
+			});
+		}
+		case 'right': {
+			const _right = kindIdStorage<NonNullable<T.ForExpression['_right']>>(config.right);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'for_expression', { right: _right });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.ForExpression as const);
+				patchCell(arena, record, 4, 11, carriedSlot(source, 'right', _right));
+				const node = arena.view(record);
+				return node as unknown as T.ForExpression.Bound;
+			});
+		}
+		case 'body': {
+			const _body = orDefault(config.body, () => buildBlock());
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'for_expression', { body: _body });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.ForExpression as const);
+				patchCell(arena, record, 5, 15, carriedSlot(source, 'body', _body));
+				const node = arena.view(record);
+				return node as unknown as T.ForExpression.Bound;
+			});
+		}
+	}
+	throw new Error(`for_expression writes no slot ${slot} alone`);
+}
 function withForExpression(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.ForExpression.Config;
 	switch (setter) {
 		case 'label':
 			return applySetter(args, (value?: Admit<T.Label>) =>
-				rebuilt(node, handle, () => buildForExpression$patch(node, { ...config, label: value }))
+				rebuilt(node, handle, () => buildForExpression$set(node, 'label', { label: value }))
 			);
 		case 'left':
 			return applySetter(args, (value: Admit<NonNullable<T.ForExpression.Config>['left']>) =>
-				rebuilt(node, handle, () => buildForExpression$patch(node, { ...config, left: value }))
+				rebuilt(node, handle, () => buildForExpression$set(node, 'left', { left: value }))
 			);
 		case 'right':
 			return applySetter(args, (value: Admit<NonNullable<T.ForExpression.Config>['right']>) =>
-				rebuilt(node, handle, () => buildForExpression$patch(node, { ...config, right: value }))
+				rebuilt(node, handle, () => buildForExpression$set(node, 'right', { right: value }))
 			);
 		case 'body':
 			return applySetter(args, (value: Admit<T.Block>) =>
-				rebuilt(node, handle, () => buildForExpression$patch(node, { ...config, body: value }))
+				rebuilt(node, handle, () => buildForExpression$set(node, 'body', { body: value }))
 			);
 	}
 	throw new Error(`for_expression has no $with.${setter}`);
@@ -8207,18 +11259,53 @@ function buildBreakExpression$patch(
 		return node as unknown as T.BreakExpression.Bound;
 	});
 }
+function buildBreakExpression$set(
+	source: object,
+	slot: string,
+	config: Partial<T.BreakExpression.Config>
+): T.BreakExpression.Bound {
+	if (!editsInPlace(source)) {
+		const inputs = builtInputs(source);
+		return buildBreakExpression$patch(source, { ...(inputs.config as T.BreakExpression.Config), ...config });
+	}
+	switch (slot) {
+		case 'label': {
+			const _label = config.label;
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'break_expression', { label: _label });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.BreakExpression as const);
+				patchCell(arena, record, 2, 2, carriedSlot(source, 'label', _label));
+				const node = arena.view(record);
+				return node as unknown as T.BreakExpression.Bound;
+			});
+		}
+		case 'expression': {
+			const _expression = kindIdStorage<NonNullable<T.BreakExpression['_expression']>>(config.expression);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'break_expression', { expression: _expression });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.BreakExpression as const);
+				patchCell(arena, record, 3, 7, carriedSlot(source, 'expression', _expression));
+				const node = arena.view(record);
+				return node as unknown as T.BreakExpression.Bound;
+			});
+		}
+	}
+	throw new Error(`break_expression writes no slot ${slot} alone`);
+}
 function withBreakExpression(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.BreakExpression.Config;
 	switch (setter) {
 		case 'label':
 			return applySetter(args, (value?: Admit<T.Label>) =>
-				rebuilt(node, handle, () => buildBreakExpression$patch(node, { ...config, label: value }))
+				rebuilt(node, handle, () => buildBreakExpression$set(node, 'label', { label: value }))
 			);
 		case 'expression':
 			return applySetter(args, (value?: Admit<NonNullable<T.BreakExpression.Config>['expression']>) =>
-				rebuilt(node, handle, () => buildBreakExpression$patch(node, { ...config, expression: value }))
+				rebuilt(node, handle, () => buildBreakExpression$set(node, 'expression', { expression: value }))
 			);
 	}
 	throw new Error(`break_expression has no $with.${setter}`);
@@ -8302,18 +11389,53 @@ function buildIndexExpression$patch(source: object, config: T.IndexExpression.Co
 		return node as unknown as T.IndexExpression.Bound;
 	});
 }
+function buildIndexExpression$set(
+	source: object,
+	slot: string,
+	config: Partial<T.IndexExpression.Config>
+): T.IndexExpression.Bound {
+	if (!editsInPlace(source)) {
+		const inputs = builtInputs(source);
+		return buildIndexExpression$patch(source, { ...(inputs.config as T.IndexExpression.Config), ...config });
+	}
+	switch (slot) {
+		case 'object': {
+			const _object = kindIdStorage<NonNullable<T.IndexExpression['_object']>>(config.object);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'index_expression', { object: _object });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.IndexExpression as const);
+				patchCell(arena, record, 2, 2, carriedSlot(source, 'object', _object));
+				const node = arena.view(record);
+				return node as unknown as T.IndexExpression.Bound;
+			});
+		}
+		case 'index': {
+			const _index = kindIdStorage<NonNullable<T.IndexExpression['_index']>>(config.index);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'index_expression', { index: _index });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.IndexExpression as const);
+				patchCell(arena, record, 3, 6, carriedSlot(source, 'index', _index));
+				const node = arena.view(record);
+				return node as unknown as T.IndexExpression.Bound;
+			});
+		}
+	}
+	throw new Error(`index_expression writes no slot ${slot} alone`);
+}
 function withIndexExpression(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.IndexExpression.Config;
 	switch (setter) {
 		case 'object':
 			return applySetter(args, (value: Admit<NonNullable<T.IndexExpression.Config>['object']>) =>
-				rebuilt(node, handle, () => buildIndexExpression$patch(node, { ...config, object: value }))
+				rebuilt(node, handle, () => buildIndexExpression$set(node, 'object', { object: value }))
 			);
 		case 'index':
 			return applySetter(args, (value: Admit<NonNullable<T.IndexExpression.Config>['index']>) =>
-				rebuilt(node, handle, () => buildIndexExpression$patch(node, { ...config, index: value }))
+				rebuilt(node, handle, () => buildIndexExpression$set(node, 'index', { index: value }))
 			);
 	}
 	throw new Error(`index_expression has no $with.${setter}`);
@@ -8403,18 +11525,55 @@ function buildFieldExpression$patch(source: object, config: T.FieldExpression.Co
 		return node as unknown as T.FieldExpression.Bound;
 	});
 }
+function buildFieldExpression$set(
+	source: object,
+	slot: string,
+	config: Partial<T.FieldExpression.Config>
+): T.FieldExpression.Bound {
+	if (!editsInPlace(source)) {
+		const inputs = builtInputs(source);
+		return buildFieldExpression$patch(source, { ...(inputs.config as T.FieldExpression.Config), ...config });
+	}
+	switch (slot) {
+		case 'object': {
+			const _object = kindIdStorage<NonNullable<T.FieldExpression['_object']>>(config.object);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'field_expression', { object: _object });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.FieldExpression as const);
+				patchCell(arena, record, 2, 2, carriedSlot(source, 'object', _object));
+				const node = arena.view(record);
+				return node as unknown as T.FieldExpression.Bound;
+			});
+		}
+		case 'property': {
+			const _property = admitAliasContent<NonNullable<T.FieldExpression['_property']>>(config.property, [
+				[[1], (v: unknown) => buildFieldIdentifier(v as never)]
+			]);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'field_expression', { property: _property });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.FieldExpression as const);
+				patchCell(arena, record, 3, 6, carriedSlot(source, 'property', _property));
+				const node = arena.view(record);
+				return node as unknown as T.FieldExpression.Bound;
+			});
+		}
+	}
+	throw new Error(`field_expression writes no slot ${slot} alone`);
+}
 function withFieldExpression(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.FieldExpression.Config;
 	switch (setter) {
 		case 'object':
 			return applySetter(args, (value: Admit<NonNullable<T.FieldExpression.Config>['object']>) =>
-				rebuilt(node, handle, () => buildFieldExpression$patch(node, { ...config, object: value }))
+				rebuilt(node, handle, () => buildFieldExpression$set(node, 'object', { object: value }))
 			);
 		case 'property':
 			return applySetter(args, (value: Admit<T.FieldIdentifier | T.IntegerLiteral | T.FieldIdentifier.Types>) =>
-				rebuilt(node, handle, () => buildFieldExpression$patch(node, { ...config, property: value }))
+				rebuilt(node, handle, () => buildFieldExpression$set(node, 'property', { property: value }))
 			);
 	}
 	throw new Error(`field_expression has no $with.${setter}`);
@@ -8525,18 +11684,49 @@ function buildAsyncBlock$patch(source: object, config: Partial<T.AsyncBlock.Conf
 		return node as unknown as T.AsyncBlock.Bound;
 	});
 }
+function buildAsyncBlock$set(source: object, slot: string, config: Partial<T.AsyncBlock.Config>): T.AsyncBlock.Bound {
+	if (!editsInPlace(source)) {
+		const inputs = builtInputs(source);
+		return buildAsyncBlock$patch(source, { ...(inputs.config as T.AsyncBlock.Config), ...config });
+	}
+	switch (slot) {
+		case 'move': {
+			const _move = strictBooleanStorage(config.move);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'async_block', { move: _move });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.AsyncBlock as const);
+				patchFlag(record, 2, 1, _move);
+				const node = arena.view(record);
+				return node as unknown as T.AsyncBlock.Bound;
+			});
+		}
+		case 'body': {
+			const _body = orDefault(config.body, () => buildBlock());
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'async_block', { body: _body });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.AsyncBlock as const);
+				patchCell(arena, record, 3, 3, carriedSlot(source, 'body', _body));
+				const node = arena.view(record);
+				return node as unknown as T.AsyncBlock.Bound;
+			});
+		}
+	}
+	throw new Error(`async_block writes no slot ${slot} alone`);
+}
 function withAsyncBlock(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.AsyncBlock.Config;
 	switch (setter) {
 		case 'move':
 			return applySetter(args, (value?: Admit<NonNullable<T.AsyncBlock.Config>['move']>) =>
-				rebuilt(node, handle, () => buildAsyncBlock$patch(node, { ...config, move: value }))
+				rebuilt(node, handle, () => buildAsyncBlock$set(node, 'move', { move: value }))
 			);
 		case 'body':
 			return applySetter(args, (value: Admit<T.Block>) =>
-				rebuilt(node, handle, () => buildAsyncBlock$patch(node, { ...config, body: value }))
+				rebuilt(node, handle, () => buildAsyncBlock$set(node, 'body', { body: value }))
 			);
 	}
 	throw new Error(`async_block has no $with.${setter}`);
@@ -8578,18 +11768,49 @@ function buildGenBlock$patch(source: object, config: Partial<T.GenBlock.Config> 
 		return node as unknown as T.GenBlock.Bound;
 	});
 }
+function buildGenBlock$set(source: object, slot: string, config: Partial<T.GenBlock.Config>): T.GenBlock.Bound {
+	if (!editsInPlace(source)) {
+		const inputs = builtInputs(source);
+		return buildGenBlock$patch(source, { ...(inputs.config as T.GenBlock.Config), ...config });
+	}
+	switch (slot) {
+		case 'move': {
+			const _move = strictBooleanStorage(config.move);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'gen_block', { move: _move });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.GenBlock as const);
+				patchFlag(record, 2, 1, _move);
+				const node = arena.view(record);
+				return node as unknown as T.GenBlock.Bound;
+			});
+		}
+		case 'body': {
+			const _body = orDefault(config.body, () => buildBlock());
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'gen_block', { body: _body });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.GenBlock as const);
+				patchCell(arena, record, 3, 3, carriedSlot(source, 'body', _body));
+				const node = arena.view(record);
+				return node as unknown as T.GenBlock.Bound;
+			});
+		}
+	}
+	throw new Error(`gen_block writes no slot ${slot} alone`);
+}
 function withGenBlock(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.GenBlock.Config;
 	switch (setter) {
 		case 'move':
 			return applySetter(args, (value?: Admit<NonNullable<T.GenBlock.Config>['move']>) =>
-				rebuilt(node, handle, () => buildGenBlock$patch(node, { ...config, move: value }))
+				rebuilt(node, handle, () => buildGenBlock$set(node, 'move', { move: value }))
 			);
 		case 'body':
 			return applySetter(args, (value: Admit<T.Block>) =>
-				rebuilt(node, handle, () => buildGenBlock$patch(node, { ...config, body: value }))
+				rebuilt(node, handle, () => buildGenBlock$set(node, 'body', { body: value }))
 			);
 	}
 	throw new Error(`gen_block has no $with.${setter}`);
@@ -8720,22 +11941,67 @@ function buildBlock$patch(source: object, config: Partial<T.Block.Config> = {}):
 		return node as unknown as T.Block.Bound;
 	});
 }
+function buildBlock$set(source: object, slot: string, config: Partial<T.Block.Config>): T.Block.Bound {
+	if (!editsInPlace(source)) {
+		const inputs = builtInputs(source);
+		return buildBlock$patch(source, { ...(inputs.config as T.Block.Config), ...config });
+	}
+	switch (slot) {
+		case 'label': {
+			const _label = config.label;
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'block', { label: _label });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.Block as const);
+				patchCell(arena, record, 2, 2, carriedSlot(source, 'label', _label));
+				const node = arena.view(record);
+				return node as unknown as T.Block.Bound;
+			});
+		}
+		case 'statements': {
+			const _statements = listStorage<NonNullable<T.Block['_statements']>>(config.statements ?? [], kindIdStorage);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'block', { statements: _statements });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.Block as const);
+				patchList(arena, record, 3, 7, _statements);
+				const node = arena.view(record);
+				return node as unknown as T.Block.Bound;
+			});
+		}
+		case 'trailingExpression': {
+			const _trailing_expression = kindIdStorage<NonNullable<T.Block['_trailing_expression']>>(
+				config.trailingExpression
+			);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'block', { trailingExpression: _trailing_expression });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.Block as const);
+				patchCell(arena, record, 4, 8, carriedSlot(source, 'trailingExpression', _trailing_expression));
+				const node = arena.view(record);
+				return node as unknown as T.Block.Bound;
+			});
+		}
+	}
+	throw new Error(`block writes no slot ${slot} alone`);
+}
 function withBlock(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.Block.Config;
 	switch (setter) {
 		case 'label':
 			return applySetter(args, (value?: Admit<T.Label>) =>
-				rebuilt(node, handle, () => buildBlock$patch(node, { ...config, label: value }))
+				rebuilt(node, handle, () => buildBlock$set(node, 'label', { label: value }))
 			);
 		case 'statements':
 			return applySetter(args, (...values: Admit<NonNullable<NonNullable<T.Block.Config>['statements']>[number][]>) =>
-				rebuilt(node, handle, () => buildBlock$patch(node, { ...config, statements: restItems('statements', values) }))
+				rebuilt(node, handle, () => buildBlock$set(node, 'statements', { statements: restItems('statements', values) }))
 			);
 		case 'trailingExpression':
 			return applySetter(args, (value?: Admit<NonNullable<T.Block.Config>['trailingExpression']>) =>
-				rebuilt(node, handle, () => buildBlock$patch(node, { ...config, trailingExpression: value }))
+				rebuilt(node, handle, () => buildBlock$set(node, 'trailingExpression', { trailingExpression: value }))
 			);
 	}
 	throw new Error(`block has no $with.${setter}`);
@@ -8780,14 +12046,49 @@ function buildGenericPattern$patch(source: object, config: T.GenericPattern.Conf
 		return node as unknown as T.GenericPattern.Bound;
 	});
 }
+function buildGenericPattern$set(
+	source: object,
+	slot: string,
+	config: Partial<T.GenericPattern.Config>
+): T.GenericPattern.Bound {
+	if (!editsInPlace(source)) {
+		const inputs = builtInputs(source);
+		return buildGenericPattern$patch(source, { ...(inputs.config as T.GenericPattern.Config), ...config });
+	}
+	switch (slot) {
+		case 'name': {
+			const _name = config.name;
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'generic_pattern', { name: _name });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.GenericPattern as const);
+				patchCell(arena, record, 2, 2, carriedSlot(source, 'name', _name));
+				const node = arena.view(record);
+				return node as unknown as T.GenericPattern.Bound;
+			});
+		}
+		case 'typeArguments': {
+			const _type_arguments = config.typeArguments;
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'generic_pattern', { typeArguments: _type_arguments });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.GenericPattern as const);
+				patchCell(arena, record, 3, 5, carriedSlot(source, 'typeArguments', _type_arguments));
+				const node = arena.view(record);
+				return node as unknown as T.GenericPattern.Bound;
+			});
+		}
+	}
+	throw new Error(`generic_pattern writes no slot ${slot} alone`);
+}
 function withGenericPattern(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.GenericPattern.Config;
 	switch (setter) {
 		case 'name':
 			return applySetter(args, (value: Admit<T.Identifier | T.ScopedIdentifier>) =>
-				rebuilt(node, handle, () => buildGenericPattern$patch(node, { ...config, name: value }))
+				rebuilt(node, handle, () => buildGenericPattern$set(node, 'name', { name: value }))
 			);
 		case 'typeArguments':
 			return applySetter(args, (...args: unknown[]) =>
@@ -8800,7 +12101,7 @@ function withGenericPattern(node: object, setter: string, args: readonly unknown
 							make: buildTypeArguments,
 							element: { keys: ['content', 'traitBounds'], make: buildTypeArgument }
 						},
-						(value: Admit<T.TypeArguments>) => buildGenericPattern$patch(node, { ...config, typeArguments: value })
+						(value: Admit<T.TypeArguments>) => buildGenericPattern$set(node, 'typeArguments', { typeArguments: value })
 					)
 				)
 			);
@@ -8998,14 +12299,49 @@ function buildTupleStructPattern$patch(
 		return node as unknown as T.TupleStructPattern.Bound;
 	});
 }
+function buildTupleStructPattern$set(
+	source: object,
+	slot: string,
+	config: Partial<T.TupleStructPattern.Config>
+): T.TupleStructPattern.Bound {
+	if (!editsInPlace(source)) {
+		const inputs = builtInputs(source);
+		return buildTupleStructPattern$patch(source, { ...(inputs.config as T.TupleStructPattern.Config), ...config });
+	}
+	switch (slot) {
+		case 'type': {
+			const _type = config.type;
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'tuple_struct_pattern', { type: _type });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.TupleStructPattern as const);
+				patchCell(arena, record, 2, 2, carriedSlot(source, 'type', _type));
+				const node = arena.view(record);
+				return node as unknown as T.TupleStructPattern.Bound;
+			});
+		}
+		case 'fields': {
+			const _fields = config.fields;
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'tuple_struct_pattern', { fields: _fields });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.TupleStructPattern as const);
+				patchCell(arena, record, 3, 5, carriedSlot(source, 'fields', _fields));
+				const node = arena.view(record);
+				return node as unknown as T.TupleStructPattern.Bound;
+			});
+		}
+	}
+	throw new Error(`tuple_struct_pattern writes no slot ${slot} alone`);
+}
 function withTupleStructPattern(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.TupleStructPattern.Config;
 	switch (setter) {
 		case 'type':
 			return applySetter(args, (value: Admit<T.Identifier | T.ScopedIdentifier | T.GenericTypeWithTurbofish>) =>
-				rebuilt(node, handle, () => buildTupleStructPattern$patch(node, { ...config, type: value }))
+				rebuilt(node, handle, () => buildTupleStructPattern$set(node, 'type', { type: value }))
 			);
 		case 'fields':
 			return applySetter(args, (...args: unknown[]) =>
@@ -9013,7 +12349,7 @@ function withTupleStructPattern(node: object, setter: string, args: readonly unk
 					listSlotWith(
 						args,
 						{ kind: TSKindId.Patterns as const, optional: true, make: buildPatterns },
-						(value?: Admit<T.Patterns>) => buildTupleStructPattern$patch(node, { ...config, fields: value })
+						(value?: Admit<T.Patterns>) => buildTupleStructPattern$set(node, 'fields', { fields: value })
 					)
 				)
 			);
@@ -9062,14 +12398,51 @@ function buildStructPattern$patch(source: object, config: T.StructPattern.Config
 		return node as unknown as T.StructPattern.Bound;
 	});
 }
+function buildStructPattern$set(
+	source: object,
+	slot: string,
+	config: Partial<T.StructPattern.Config>
+): T.StructPattern.Bound {
+	if (!editsInPlace(source)) {
+		const inputs = builtInputs(source);
+		return buildStructPattern$patch(source, { ...(inputs.config as T.StructPattern.Config), ...config });
+	}
+	switch (slot) {
+		case 'type': {
+			const _type = admitAliasContent<NonNullable<T.StructPattern['_type']>>(config.type, [
+				[[1], (v: unknown) => buildTypeIdentifier(v as never)]
+			]);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'struct_pattern', { type: _type });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.StructPattern as const);
+				patchCell(arena, record, 2, 2, carriedSlot(source, 'type', _type));
+				const node = arena.view(record);
+				return node as unknown as T.StructPattern.Bound;
+			});
+		}
+		case 'fields': {
+			const _fields = config.fields;
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'struct_pattern', { fields: _fields });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.StructPattern as const);
+				patchCell(arena, record, 3, 5, carriedSlot(source, 'fields', _fields));
+				const node = arena.view(record);
+				return node as unknown as T.StructPattern.Bound;
+			});
+		}
+	}
+	throw new Error(`struct_pattern writes no slot ${slot} alone`);
+}
 function withStructPattern(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.StructPattern.Config;
 	switch (setter) {
 		case 'type':
 			return applySetter(args, (value: Admit<T.TypeIdentifier | T.ScopedTypeIdentifier | T.TypeIdentifier.Types>) =>
-				rebuilt(node, handle, () => buildStructPattern$patch(node, { ...config, type: value }))
+				rebuilt(node, handle, () => buildStructPattern$set(node, 'type', { type: value }))
 			);
 		case 'fields':
 			return applySetter(args, (...args: unknown[]) =>
@@ -9077,7 +12450,7 @@ function withStructPattern(node: object, setter: string, args: readonly unknown[
 					listSlotWith(
 						args,
 						{ kind: TSKindId.StructPatternElements as const, optional: true, make: buildStructPatternElements },
-						(value?: Admit<T.StructPatternElements>) => buildStructPattern$patch(node, { ...config, fields: value })
+						(value?: Admit<T.StructPatternElements>) => buildStructPattern$set(node, 'fields', { fields: value })
 					)
 				)
 			);
@@ -9202,18 +12575,53 @@ function buildCapturedPattern$patch(source: object, config: T.CapturedPattern.Co
 		return node as unknown as T.CapturedPattern.Bound;
 	});
 }
+function buildCapturedPattern$set(
+	source: object,
+	slot: string,
+	config: Partial<T.CapturedPattern.Config>
+): T.CapturedPattern.Bound {
+	if (!editsInPlace(source)) {
+		const inputs = builtInputs(source);
+		return buildCapturedPattern$patch(source, { ...(inputs.config as T.CapturedPattern.Config), ...config });
+	}
+	switch (slot) {
+		case 'name': {
+			const _name = config.name;
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'captured_pattern', { name: _name });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.CapturedPattern as const);
+				patchCell(arena, record, 2, 2, carriedSlot(source, 'name', _name));
+				const node = arena.view(record);
+				return node as unknown as T.CapturedPattern.Bound;
+			});
+		}
+		case 'pattern': {
+			const _pattern = kindIdStorage<NonNullable<T.CapturedPattern['_pattern']>>(config.pattern);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'captured_pattern', { pattern: _pattern });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.CapturedPattern as const);
+				patchCell(arena, record, 3, 5, carriedSlot(source, 'pattern', _pattern));
+				const node = arena.view(record);
+				return node as unknown as T.CapturedPattern.Bound;
+			});
+		}
+	}
+	throw new Error(`captured_pattern writes no slot ${slot} alone`);
+}
 function withCapturedPattern(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.CapturedPattern.Config;
 	switch (setter) {
 		case 'name':
 			return applySetter(args, (value: Admit<T.Identifier>) =>
-				rebuilt(node, handle, () => buildCapturedPattern$patch(node, { ...config, name: value }))
+				rebuilt(node, handle, () => buildCapturedPattern$set(node, 'name', { name: value }))
 			);
 		case 'pattern':
 			return applySetter(args, (value: Admit<NonNullable<T.CapturedPattern.Config>['pattern']>) =>
-				rebuilt(node, handle, () => buildCapturedPattern$patch(node, { ...config, pattern: value }))
+				rebuilt(node, handle, () => buildCapturedPattern$set(node, 'pattern', { pattern: value }))
 			);
 	}
 	throw new Error(`captured_pattern has no $with.${setter}`);
@@ -9255,18 +12663,53 @@ function buildReferencePattern$patch(source: object, config: T.ReferencePattern.
 		return node as unknown as T.ReferencePattern.Bound;
 	});
 }
+function buildReferencePattern$set(
+	source: object,
+	slot: string,
+	config: Partial<T.ReferencePattern.Config>
+): T.ReferencePattern.Bound {
+	if (!editsInPlace(source)) {
+		const inputs = builtInputs(source);
+		return buildReferencePattern$patch(source, { ...(inputs.config as T.ReferencePattern.Config), ...config });
+	}
+	switch (slot) {
+		case 'exclusive': {
+			const _exclusive = strictBooleanStorage(config.exclusive);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'reference_pattern', { exclusive: _exclusive });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.ReferencePattern as const);
+				patchFlag(record, 2, 1, _exclusive);
+				const node = arena.view(record);
+				return node as unknown as T.ReferencePattern.Bound;
+			});
+		}
+		case 'pattern': {
+			const _pattern = kindIdStorage<NonNullable<T.ReferencePattern['_pattern']>>(config.pattern);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'reference_pattern', { pattern: _pattern });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.ReferencePattern as const);
+				patchCell(arena, record, 3, 3, carriedSlot(source, 'pattern', _pattern));
+				const node = arena.view(record);
+				return node as unknown as T.ReferencePattern.Bound;
+			});
+		}
+	}
+	throw new Error(`reference_pattern writes no slot ${slot} alone`);
+}
 function withReferencePattern(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.ReferencePattern.Config;
 	switch (setter) {
 		case 'exclusive':
 			return applySetter(args, (value?: Admit<NonNullable<T.ReferencePattern.Config>['exclusive']>) =>
-				rebuilt(node, handle, () => buildReferencePattern$patch(node, { ...config, exclusive: value }))
+				rebuilt(node, handle, () => buildReferencePattern$set(node, 'exclusive', { exclusive: value }))
 			);
 		case 'pattern':
 			return applySetter(args, (value: Admit<NonNullable<T.ReferencePattern.Config>['pattern']>) =>
-				rebuilt(node, handle, () => buildReferencePattern$patch(node, { ...config, pattern: value }))
+				rebuilt(node, handle, () => buildReferencePattern$set(node, 'pattern', { pattern: value }))
 			);
 	}
 	throw new Error(`reference_pattern has no $with.${setter}`);
@@ -9355,19 +12798,54 @@ function buildStringLiteral$patch(source: object, config: T.StringLiteral.Config
 		return node as unknown as T.StringLiteral.Bound;
 	});
 }
+function buildStringLiteral$set(
+	source: object,
+	slot: string,
+	config: Partial<T.StringLiteral.Config>
+): T.StringLiteral.Bound {
+	if (!editsInPlace(source)) {
+		const inputs = builtInputs(source);
+		return buildStringLiteral$patch(source, { ...(inputs.config as T.StringLiteral.Config), ...config });
+	}
+	switch (slot) {
+		case 'stringOpen': {
+			const _string_open = config.stringOpen;
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'string_literal', { stringOpen: _string_open });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.StringLiteral as const);
+				patchCell(arena, record, 2, 2, carriedSlot(source, 'stringOpen', _string_open));
+				const node = arena.view(record);
+				return node as unknown as T.StringLiteral.Bound;
+			});
+		}
+		case 'elements': {
+			const _elements = listStorage<NonNullable<T.StringLiteral['_elements']>>(config.elements ?? []);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'string_literal', { elements: _elements });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.StringLiteral as const);
+				patchList(arena, record, 3, 5, _elements);
+				const node = arena.view(record);
+				return node as unknown as T.StringLiteral.Bound;
+			});
+		}
+	}
+	throw new Error(`string_literal writes no slot ${slot} alone`);
+}
 function withStringLiteral(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.StringLiteral.Config;
 	switch (setter) {
 		case 'stringOpen':
 			return applySetter(args, (value: Admit<T.StringOpen>) =>
-				rebuilt(node, handle, () => buildStringLiteral$patch(node, { ...config, stringOpen: value }))
+				rebuilt(node, handle, () => buildStringLiteral$set(node, 'stringOpen', { stringOpen: value }))
 			);
 		case 'elements':
 			return applySetter(args, (...values: Admit<(T.EscapeSequence | T.StringContent)[]>) =>
 				rebuilt(node, handle, () =>
-					buildStringLiteral$patch(node, { ...config, elements: restItems('elements', values) })
+					buildStringLiteral$set(node, 'elements', { elements: restItems('elements', values) })
 				)
 			);
 	}
@@ -9443,23 +12921,76 @@ function buildRawStringLiteral$patch(source: object, config: T.RawStringLiteral.
 		return node as unknown as T.RawStringLiteral.Bound;
 	});
 }
+function buildRawStringLiteral$set(
+	source: object,
+	slot: string,
+	config: Partial<T.RawStringLiteral.Config>
+): T.RawStringLiteral.Bound {
+	if (!editsInPlace(source)) {
+		const inputs = builtInputs(source);
+		return buildRawStringLiteral$patch(source, { ...(inputs.config as T.RawStringLiteral.Config), ...config });
+	}
+	switch (slot) {
+		case 'rawStringLiteralStart': {
+			const _raw_string_literal_start = config.rawStringLiteralStart;
+			const handle = currentHandle();
+			if (handle !== undefined)
+				admitChildren(handle, 'raw_string_literal', { rawStringLiteralStart: _raw_string_literal_start });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.RawStringLiteral as const);
+				patchCell(arena, record, 2, 2, carriedSlot(source, 'rawStringLiteralStart', _raw_string_literal_start));
+				const node = arena.view(record);
+				return node as unknown as T.RawStringLiteral.Bound;
+			});
+		}
+		case 'stringContent': {
+			const _string_content = config.stringContent;
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'raw_string_literal', { stringContent: _string_content });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.RawStringLiteral as const);
+				patchCell(arena, record, 3, 10, carriedSlot(source, 'stringContent', _string_content));
+				const node = arena.view(record);
+				return node as unknown as T.RawStringLiteral.Bound;
+			});
+		}
+		case 'rawStringLiteralEnd': {
+			const _raw_string_literal_end = orDefault(config.rawStringLiteralEnd, () => buildRawStringLiteralEnd());
+			const handle = currentHandle();
+			if (handle !== undefined)
+				admitChildren(handle, 'raw_string_literal', { rawStringLiteralEnd: _raw_string_literal_end });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.RawStringLiteral as const);
+				patchCell(arena, record, 4, 13, carriedSlot(source, 'rawStringLiteralEnd', _raw_string_literal_end));
+				const node = arena.view(record);
+				return node as unknown as T.RawStringLiteral.Bound;
+			});
+		}
+	}
+	throw new Error(`raw_string_literal writes no slot ${slot} alone`);
+}
 function withRawStringLiteral(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.RawStringLiteral.Config;
-	const readGroup_rawStringLiteralStart = () => inputs.config['rawStringLiteralStart'] as object | undefined;
+	const readGroup_rawStringLiteralStart = () => builtInputs(node).config['rawStringLiteralStart'] as object | undefined;
 	switch (setter) {
 		case 'rawStringLiteralStart':
 			return applySetter(args, (value: Admit<T.RawStringLiteralStart>) =>
-				rebuilt(node, handle, () => buildRawStringLiteral$patch(node, { ...config, rawStringLiteralStart: value }))
+				rebuilt(node, handle, () =>
+					buildRawStringLiteral$set(node, 'rawStringLiteralStart', { rawStringLiteralStart: value })
+				)
 			);
 		case 'stringContent':
 			return applySetter(args, (value: Admit<T.RawStringLiteralContent>) =>
-				rebuilt(node, handle, () => buildRawStringLiteral$patch(node, { ...config, stringContent: value }))
+				rebuilt(node, handle, () => buildRawStringLiteral$set(node, 'stringContent', { stringContent: value }))
 			);
 		case 'rawStringLiteralEnd':
 			return applySetter(args, (value: Admit<T.RawStringLiteralEnd>) =>
-				rebuilt(node, handle, () => buildRawStringLiteral$patch(node, { ...config, rawStringLiteralEnd: value }))
+				rebuilt(node, handle, () =>
+					buildRawStringLiteral$set(node, 'rawStringLiteralEnd', { rawStringLiteralEnd: value })
+				)
 			);
 		case 'prefix':
 			return applySetter(args, (...args: unknown[]) =>
@@ -9474,7 +13005,7 @@ function withRawStringLiteral(node: object, setter: string, args: readonly unkno
 						'prefix',
 						args,
 						(value: Admit<T.RawStringLiteralStart>) =>
-							buildRawStringLiteral$patch(node, { ...config, rawStringLiteralStart: value }),
+							buildRawStringLiteral$set(node, 'rawStringLiteralStart', { rawStringLiteralStart: value }),
 						() => readGroup_rawStringLiteralStart.call(node)
 					)
 				)
@@ -9793,18 +13324,22 @@ function _buildMacroRules$patch(
 }
 function withMacroRules(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const elements = inputs.elements as NonEmptyArray<Admit<T.MacroRule>>;
-	const options = inputs.options as { delimiter?: Delimiter.None | Delimiter.Trailing };
 	switch (setter) {
-		case 'items':
+		case 'items': {
+			const inputs = builtInputs(node);
+			const options = inputs.options as { delimiter?: Delimiter.None | Delimiter.Trailing };
 			return applySetter(args, (...vs: NonEmptyArray<Admit<T.MacroRule>>) =>
 				rebuilt(node, handle, () => _buildMacroRules$patch(node, vs, options))
 			);
-		case 'delimiter':
+		}
+		case 'delimiter': {
+			const inputs = builtInputs(node);
+			const elements = inputs.elements as NonEmptyArray<Admit<T.MacroRule>>;
+			const options = inputs.options as { delimiter?: Delimiter.None | Delimiter.Trailing };
 			return applySetter(args, (v?: Delimiter.None | Delimiter.Trailing) =>
 				rebuilt(node, handle, () => _buildMacroRules$patch(node, elements, { ...options, delimiter: v }))
 			);
+		}
 	}
 	throw new Error(`macro_rules has no $with.${setter}`);
 }
@@ -9889,11 +13424,10 @@ function _buildEnumVariantListElements$patch(
 }
 function withEnumVariantListElements(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const elements = inputs.elements as NonEmptyArray<Admit<T.AttributedEnumVariant | T.EnumVariant>>;
-	const options = inputs.options as { delimiter?: Delimiter.None | Delimiter.Trailing };
 	switch (setter) {
-		case 'items':
+		case 'items': {
+			const inputs = builtInputs(node);
+			const options = inputs.options as { delimiter?: Delimiter.None | Delimiter.Trailing };
 			return applySetter(args, (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					elementsWith(
@@ -9904,10 +13438,15 @@ function withEnumVariantListElements(node: object, setter: string, args: readonl
 					)
 				)
 			);
-		case 'delimiter':
+		}
+		case 'delimiter': {
+			const inputs = builtInputs(node);
+			const elements = inputs.elements as NonEmptyArray<Admit<T.AttributedEnumVariant | T.EnumVariant>>;
+			const options = inputs.options as { delimiter?: Delimiter.None | Delimiter.Trailing };
 			return applySetter(args, (v?: Delimiter.None | Delimiter.Trailing) =>
 				rebuilt(node, handle, () => _buildEnumVariantListElements$patch(node, elements, { ...options, delimiter: v }))
 			);
+		}
 	}
 	throw new Error(`enum_variant_list_elements has no $with.${setter}`);
 }
@@ -9997,11 +13536,10 @@ function _buildFieldDeclarationListElements$patch(
 }
 function withFieldDeclarationListElements(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const elements = inputs.elements as NonEmptyArray<Admit<T.AttributedFieldDeclaration | T.FieldDeclaration>>;
-	const options = inputs.options as { delimiter?: Delimiter.None | Delimiter.Trailing };
 	switch (setter) {
-		case 'items':
+		case 'items': {
+			const inputs = builtInputs(node);
+			const options = inputs.options as { delimiter?: Delimiter.None | Delimiter.Trailing };
 			return applySetter(args, (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					elementsWith(
@@ -10012,12 +13550,17 @@ function withFieldDeclarationListElements(node: object, setter: string, args: re
 					)
 				)
 			);
-		case 'delimiter':
+		}
+		case 'delimiter': {
+			const inputs = builtInputs(node);
+			const elements = inputs.elements as NonEmptyArray<Admit<T.AttributedFieldDeclaration | T.FieldDeclaration>>;
+			const options = inputs.options as { delimiter?: Delimiter.None | Delimiter.Trailing };
 			return applySetter(args, (v?: Delimiter.None | Delimiter.Trailing) =>
 				rebuilt(node, handle, () =>
 					_buildFieldDeclarationListElements$patch(node, elements, { ...options, delimiter: v })
 				)
 			);
+		}
 	}
 	throw new Error(`field_declaration_list_elements has no $with.${setter}`);
 }
@@ -10107,11 +13650,10 @@ function _buildOrderedFieldDeclarationListElements$patch(
 }
 function withOrderedFieldDeclarationListElements(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const elements = inputs.elements as NonEmptyArray<Admit<T.AttributedOrderedField | T.Type | T.TypeIdentifier.Types>>;
-	const options = inputs.options as { delimiter?: Delimiter.None | Delimiter.Trailing };
 	switch (setter) {
-		case 'items':
+		case 'items': {
+			const inputs = builtInputs(node);
+			const options = inputs.options as { delimiter?: Delimiter.None | Delimiter.Trailing };
 			return applySetter(args, (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					elementsWith(
@@ -10126,12 +13668,19 @@ function withOrderedFieldDeclarationListElements(node: object, setter: string, a
 					)
 				)
 			);
-		case 'delimiter':
+		}
+		case 'delimiter': {
+			const inputs = builtInputs(node);
+			const elements = inputs.elements as NonEmptyArray<
+				Admit<T.AttributedOrderedField | T.Type | T.TypeIdentifier.Types>
+			>;
+			const options = inputs.options as { delimiter?: Delimiter.None | Delimiter.Trailing };
 			return applySetter(args, (v?: Delimiter.None | Delimiter.Trailing) =>
 				rebuilt(node, handle, () =>
 					_buildOrderedFieldDeclarationListElements$patch(node, elements, { ...options, delimiter: v })
 				)
 			);
+		}
 	}
 	throw new Error(`ordered_field_declaration_list_elements has no $with.${setter}`);
 }
@@ -10198,18 +13747,22 @@ function _buildWherePredicates$patch(
 }
 function withWherePredicates(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const elements = inputs.elements as NonEmptyArray<Admit<T.WherePredicate>>;
-	const options = inputs.options as { delimiter?: Delimiter.None | Delimiter.Trailing };
 	switch (setter) {
-		case 'items':
+		case 'items': {
+			const inputs = builtInputs(node);
+			const options = inputs.options as { delimiter?: Delimiter.None | Delimiter.Trailing };
 			return applySetter(args, (...vs: NonEmptyArray<Admit<T.WherePredicate>>) =>
 				rebuilt(node, handle, () => _buildWherePredicates$patch(node, vs, options))
 			);
-		case 'delimiter':
+		}
+		case 'delimiter': {
+			const inputs = builtInputs(node);
+			const elements = inputs.elements as NonEmptyArray<Admit<T.WherePredicate>>;
+			const options = inputs.options as { delimiter?: Delimiter.None | Delimiter.Trailing };
 			return applySetter(args, (v?: Delimiter.None | Delimiter.Trailing) =>
 				rebuilt(node, handle, () => _buildWherePredicates$patch(node, elements, { ...options, delimiter: v }))
 			);
+		}
 	}
 	throw new Error(`where_predicates has no $with.${setter}`);
 }
@@ -10307,13 +13860,10 @@ function _buildTypeParametersElements$patch(
 }
 function withTypeParametersElements(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const elements = inputs.elements as NonEmptyArray<
-		Admit<T.AttributedTypeParameter | T.Metavariable | T.TypeParameter | T.LifetimeParameter | T.ConstParameter>
-	>;
-	const options = inputs.options as { delimiter?: Delimiter.None | Delimiter.Trailing };
 	switch (setter) {
-		case 'items':
+		case 'items': {
+			const inputs = builtInputs(node);
+			const options = inputs.options as { delimiter?: Delimiter.None | Delimiter.Trailing };
 			return applySetter(args, (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					elementsWith(
@@ -10329,10 +13879,17 @@ function withTypeParametersElements(node: object, setter: string, args: readonly
 					)
 				)
 			);
-		case 'delimiter':
+		}
+		case 'delimiter': {
+			const inputs = builtInputs(node);
+			const elements = inputs.elements as NonEmptyArray<
+				Admit<T.AttributedTypeParameter | T.Metavariable | T.TypeParameter | T.LifetimeParameter | T.ConstParameter>
+			>;
+			const options = inputs.options as { delimiter?: Delimiter.None | Delimiter.Trailing };
 			return applySetter(args, (v?: Delimiter.None | Delimiter.Trailing) =>
 				rebuilt(node, handle, () => _buildTypeParametersElements$patch(node, elements, { ...options, delimiter: v }))
 			);
+		}
 	}
 	throw new Error(`type_parameters_elements has no $with.${setter}`);
 }
@@ -10480,24 +14037,10 @@ function _buildUseClauses$patch(
 }
 function withUseClauses(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const elements = inputs.elements as NonEmptyArray<
-		Admit<
-			| TSKindId.SelfModule
-			| T.Metavariable
-			| TSKindId.Super
-			| TSKindId.Crate
-			| T.Identifier
-			| T.ScopedIdentifier
-			| T.UseAsClause
-			| T.UseList
-			| T.ScopedUseList
-			| T.UseWildcard
-		>
-	>;
-	const options = inputs.options as { delimiter?: Delimiter.None | Delimiter.Trailing };
 	switch (setter) {
-		case 'items':
+		case 'items': {
+			const inputs = builtInputs(node);
+			const options = inputs.options as { delimiter?: Delimiter.None | Delimiter.Trailing };
 			return applySetter(
 				args,
 				(
@@ -10517,10 +14060,28 @@ function withUseClauses(node: object, setter: string, args: readonly unknown[]):
 					>
 				) => rebuilt(node, handle, () => _buildUseClauses$patch(node, vs, options))
 			);
-		case 'delimiter':
+		}
+		case 'delimiter': {
+			const inputs = builtInputs(node);
+			const elements = inputs.elements as NonEmptyArray<
+				Admit<
+					| TSKindId.SelfModule
+					| T.Metavariable
+					| TSKindId.Super
+					| TSKindId.Crate
+					| T.Identifier
+					| T.ScopedIdentifier
+					| T.UseAsClause
+					| T.UseList
+					| T.ScopedUseList
+					| T.UseWildcard
+				>
+			>;
+			const options = inputs.options as { delimiter?: Delimiter.None | Delimiter.Trailing };
 			return applySetter(args, (v?: Delimiter.None | Delimiter.Trailing) =>
 				rebuilt(node, handle, () => _buildUseClauses$patch(node, elements, { ...options, delimiter: v }))
 			);
+		}
 	}
 	throw new Error(`use_clauses has no $with.${setter}`);
 }
@@ -10635,15 +14196,10 @@ function _buildParametersElements$patch(
 }
 function withParametersElements(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const elements = inputs.elements as NonEmptyArray<
-		Admit<
-			T.AttributedParameter | T.Parameter | T.VariadicParameter | TSKindId.Underscore | T.Type | T.TypeIdentifier.Types
-		>
-	>;
-	const options = inputs.options as { delimiter?: Delimiter.None | Delimiter.Trailing };
 	switch (setter) {
-		case 'items':
+		case 'items': {
+			const inputs = builtInputs(node);
+			const options = inputs.options as { delimiter?: Delimiter.None | Delimiter.Trailing };
 			return applySetter(args, (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					elementsWith(
@@ -10664,10 +14220,24 @@ function withParametersElements(node: object, setter: string, args: readonly unk
 					)
 				)
 			);
-		case 'delimiter':
+		}
+		case 'delimiter': {
+			const inputs = builtInputs(node);
+			const elements = inputs.elements as NonEmptyArray<
+				Admit<
+					| T.AttributedParameter
+					| T.Parameter
+					| T.VariadicParameter
+					| TSKindId.Underscore
+					| T.Type
+					| T.TypeIdentifier.Types
+				>
+			>;
+			const options = inputs.options as { delimiter?: Delimiter.None | Delimiter.Trailing };
 			return applySetter(args, (v?: Delimiter.None | Delimiter.Trailing) =>
 				rebuilt(node, handle, () => _buildParametersElements$patch(node, elements, { ...options, delimiter: v }))
 			);
+		}
 	}
 	throw new Error(`parameters_elements has no $with.${setter}`);
 }
@@ -10732,18 +14302,22 @@ function _buildLifetimes$patch(
 }
 function withLifetimes(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const elements = inputs.elements as NonEmptyArray<Admit<T.Lifetime>>;
-	const options = inputs.options as { delimiter?: Delimiter.None | Delimiter.Trailing };
 	switch (setter) {
-		case 'items':
+		case 'items': {
+			const inputs = builtInputs(node);
+			const options = inputs.options as { delimiter?: Delimiter.None | Delimiter.Trailing };
 			return applySetter(args, (...vs: NonEmptyArray<Admit<T.Lifetime>>) =>
 				rebuilt(node, handle, () => _buildLifetimes$patch(node, vs, options))
 			);
-		case 'delimiter':
+		}
+		case 'delimiter': {
+			const inputs = builtInputs(node);
+			const elements = inputs.elements as NonEmptyArray<Admit<T.Lifetime>>;
+			const options = inputs.options as { delimiter?: Delimiter.None | Delimiter.Trailing };
 			return applySetter(args, (v?: Delimiter.None | Delimiter.Trailing) =>
 				rebuilt(node, handle, () => _buildLifetimes$patch(node, elements, { ...options, delimiter: v }))
 			);
+		}
 	}
 	throw new Error(`lifetimes has no $with.${setter}`);
 }
@@ -10816,18 +14390,22 @@ function _buildTypes$patch(
 }
 function withTypes(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const elements = inputs.elements as NonEmptyArray<Admit<T.Type | T.TypeIdentifier.Types>>;
-	const options = inputs.options as { delimiter?: Delimiter.None | Delimiter.Trailing };
 	switch (setter) {
-		case 'items':
+		case 'items': {
+			const inputs = builtInputs(node);
+			const options = inputs.options as { delimiter?: Delimiter.None | Delimiter.Trailing };
 			return applySetter(args, (...vs: NonEmptyArray<Admit<T.Type | T.TypeIdentifier.Types>>) =>
 				rebuilt(node, handle, () => _buildTypes$patch(node, vs, options))
 			);
-		case 'delimiter':
+		}
+		case 'delimiter': {
+			const inputs = builtInputs(node);
+			const elements = inputs.elements as NonEmptyArray<Admit<T.Type | T.TypeIdentifier.Types>>;
+			const options = inputs.options as { delimiter?: Delimiter.None | Delimiter.Trailing };
 			return applySetter(args, (v?: Delimiter.None | Delimiter.Trailing) =>
 				rebuilt(node, handle, () => _buildTypes$patch(node, elements, { ...options, delimiter: v }))
 			);
+		}
 	}
 	throw new Error(`types has no $with.${setter}`);
 }
@@ -10905,18 +14483,22 @@ function _buildUseBoundsElements$patch(
 }
 function withUseBoundsElements(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const elements = inputs.elements as NonEmptyArray<Admit<T.Lifetime | T.TypeIdentifier | T.TypeIdentifier.Types>>;
-	const options = inputs.options as { delimiter?: Delimiter.None | Delimiter.Trailing };
 	switch (setter) {
-		case 'items':
+		case 'items': {
+			const inputs = builtInputs(node);
+			const options = inputs.options as { delimiter?: Delimiter.None | Delimiter.Trailing };
 			return applySetter(args, (...vs: NonEmptyArray<Admit<T.Lifetime | T.TypeIdentifier | T.TypeIdentifier.Types>>) =>
 				rebuilt(node, handle, () => _buildUseBoundsElements$patch(node, vs, options))
 			);
-		case 'delimiter':
+		}
+		case 'delimiter': {
+			const inputs = builtInputs(node);
+			const elements = inputs.elements as NonEmptyArray<Admit<T.Lifetime | T.TypeIdentifier | T.TypeIdentifier.Types>>;
+			const options = inputs.options as { delimiter?: Delimiter.None | Delimiter.Trailing };
 			return applySetter(args, (v?: Delimiter.None | Delimiter.Trailing) =>
 				rebuilt(node, handle, () => _buildUseBoundsElements$patch(node, elements, { ...options, delimiter: v }))
 			);
+		}
 	}
 	throw new Error(`use_bounds_elements has no $with.${setter}`);
 }
@@ -11010,13 +14592,10 @@ function _buildTypeArgumentsElements$patch(
 }
 function withTypeArgumentsElements(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const elements = inputs.elements as NonEmptyArray<
-		Admit<T.TypeArgument | T.Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block | T.TypeIdentifier.Types>
-	>;
-	const options = inputs.options as { delimiter?: Delimiter.None | Delimiter.Trailing };
 	switch (setter) {
-		case 'items':
+		case 'items': {
+			const inputs = builtInputs(node);
+			const options = inputs.options as { delimiter?: Delimiter.None | Delimiter.Trailing };
 			return applySetter(args, (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					elementsWith(
@@ -11032,10 +14611,17 @@ function withTypeArgumentsElements(node: object, setter: string, args: readonly 
 					)
 				)
 			);
-		case 'delimiter':
+		}
+		case 'delimiter': {
+			const inputs = builtInputs(node);
+			const elements = inputs.elements as NonEmptyArray<
+				Admit<T.TypeArgument | T.Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block | T.TypeIdentifier.Types>
+			>;
+			const options = inputs.options as { delimiter?: Delimiter.None | Delimiter.Trailing };
 			return applySetter(args, (v?: Delimiter.None | Delimiter.Trailing) =>
 				rebuilt(node, handle, () => _buildTypeArgumentsElements$patch(node, elements, { ...options, delimiter: v }))
 			);
+		}
 	}
 	throw new Error(`type_arguments_elements has no $with.${setter}`);
 }
@@ -11114,11 +14700,10 @@ function _buildArgumentsElements$patch(
 }
 function withArgumentsElements(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const elements = inputs.elements as NonEmptyArray<Admit<T.Argument | T.Expression>>;
-	const options = inputs.options as { delimiter?: Delimiter.None | Delimiter.Trailing };
 	switch (setter) {
-		case 'items':
+		case 'items': {
+			const inputs = builtInputs(node);
+			const options = inputs.options as { delimiter?: Delimiter.None | Delimiter.Trailing };
 			return applySetter(args, (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					elementsWith(
@@ -11128,10 +14713,15 @@ function withArgumentsElements(node: object, setter: string, args: readonly unkn
 					)
 				)
 			);
-		case 'delimiter':
+		}
+		case 'delimiter': {
+			const inputs = builtInputs(node);
+			const elements = inputs.elements as NonEmptyArray<Admit<T.Argument | T.Expression>>;
+			const options = inputs.options as { delimiter?: Delimiter.None | Delimiter.Trailing };
 			return applySetter(args, (v?: Delimiter.None | Delimiter.Trailing) =>
 				rebuilt(node, handle, () => _buildArgumentsElements$patch(node, elements, { ...options, delimiter: v }))
 			);
+		}
 	}
 	throw new Error(`arguments_elements has no $with.${setter}`);
 }
@@ -11202,11 +14792,10 @@ function _buildExpressions$patch(
 }
 function withExpressions(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const elements = inputs.elements as NonEmptyArray<Admit<T.Expression>>;
-	const options = inputs.options as { delimiter?: Delimiter.None | Delimiter.Trailing };
 	switch (setter) {
-		case 'items':
+		case 'items': {
+			const inputs = builtInputs(node);
+			const options = inputs.options as { delimiter?: Delimiter.None | Delimiter.Trailing };
 			return applySetter(args, (...vs: NonEmptyArray<Admit<T.Expression>>) =>
 				rebuilt(node, handle, () =>
 					_buildExpressions$patch(
@@ -11216,10 +14805,15 @@ function withExpressions(node: object, setter: string, args: readonly unknown[])
 					)
 				)
 			);
-		case 'delimiter':
+		}
+		case 'delimiter': {
+			const inputs = builtInputs(node);
+			const elements = inputs.elements as NonEmptyArray<Admit<T.Expression>>;
+			const options = inputs.options as { delimiter?: Delimiter.None | Delimiter.Trailing };
 			return applySetter(args, (v?: Delimiter.None | Delimiter.Trailing) =>
 				rebuilt(node, handle, () => _buildExpressions$patch(node, elements, { ...options, delimiter: v }))
 			);
+		}
 	}
 	throw new Error(`expressions has no $with.${setter}`);
 }
@@ -11293,24 +14887,28 @@ function _buildFieldInitializerListElements$patch(
 }
 function withFieldInitializerListElements(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const elements = inputs.elements as NonEmptyArray<
-		Admit<T.ShorthandFieldInitializer | T.FieldInitializer | T.BaseFieldInitializer>
-	>;
-	const options = inputs.options as { delimiter?: Delimiter.None | Delimiter.Trailing };
 	switch (setter) {
-		case 'items':
+		case 'items': {
+			const inputs = builtInputs(node);
+			const options = inputs.options as { delimiter?: Delimiter.None | Delimiter.Trailing };
 			return applySetter(
 				args,
 				(...vs: NonEmptyArray<Admit<T.ShorthandFieldInitializer | T.FieldInitializer | T.BaseFieldInitializer>>) =>
 					rebuilt(node, handle, () => _buildFieldInitializerListElements$patch(node, vs, options))
 			);
-		case 'delimiter':
+		}
+		case 'delimiter': {
+			const inputs = builtInputs(node);
+			const elements = inputs.elements as NonEmptyArray<
+				Admit<T.ShorthandFieldInitializer | T.FieldInitializer | T.BaseFieldInitializer>
+			>;
+			const options = inputs.options as { delimiter?: Delimiter.None | Delimiter.Trailing };
 			return applySetter(args, (v?: Delimiter.None | Delimiter.Trailing) =>
 				rebuilt(node, handle, () =>
 					_buildFieldInitializerListElements$patch(node, elements, { ...options, delimiter: v })
 				)
 			);
+		}
 	}
 	throw new Error(`field_initializer_list_elements has no $with.${setter}`);
 }
@@ -11379,18 +14977,22 @@ function _buildTuplePatternElements$patch(
 }
 function withTuplePatternElements(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const elements = inputs.elements as NonEmptyArray<Admit<T.Pattern | T.ClosureExpression>>;
-	const options = inputs.options as { delimiter?: Delimiter.None | Delimiter.Trailing };
 	switch (setter) {
-		case 'items':
+		case 'items': {
+			const inputs = builtInputs(node);
+			const options = inputs.options as { delimiter?: Delimiter.None | Delimiter.Trailing };
 			return applySetter(args, (...vs: NonEmptyArray<Admit<T.Pattern | T.ClosureExpression>>) =>
 				rebuilt(node, handle, () => _buildTuplePatternElements$patch(node, vs, options))
 			);
-		case 'delimiter':
+		}
+		case 'delimiter': {
+			const inputs = builtInputs(node);
+			const elements = inputs.elements as NonEmptyArray<Admit<T.Pattern | T.ClosureExpression>>;
+			const options = inputs.options as { delimiter?: Delimiter.None | Delimiter.Trailing };
 			return applySetter(args, (v?: Delimiter.None | Delimiter.Trailing) =>
 				rebuilt(node, handle, () => _buildTuplePatternElements$patch(node, elements, { ...options, delimiter: v }))
 			);
+		}
 	}
 	throw new Error(`tuple_pattern_elements has no $with.${setter}`);
 }
@@ -11455,18 +15057,22 @@ function _buildPatterns$patch(
 }
 function withPatterns(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const elements = inputs.elements as NonEmptyArray<Admit<T.Pattern>>;
-	const options = inputs.options as { delimiter?: Delimiter.None | Delimiter.Trailing };
 	switch (setter) {
-		case 'items':
+		case 'items': {
+			const inputs = builtInputs(node);
+			const options = inputs.options as { delimiter?: Delimiter.None | Delimiter.Trailing };
 			return applySetter(args, (...vs: NonEmptyArray<Admit<T.Pattern>>) =>
 				rebuilt(node, handle, () => _buildPatterns$patch(node, vs, options))
 			);
-		case 'delimiter':
+		}
+		case 'delimiter': {
+			const inputs = builtInputs(node);
+			const elements = inputs.elements as NonEmptyArray<Admit<T.Pattern>>;
+			const options = inputs.options as { delimiter?: Delimiter.None | Delimiter.Trailing };
 			return applySetter(args, (v?: Delimiter.None | Delimiter.Trailing) =>
 				rebuilt(node, handle, () => _buildPatterns$patch(node, elements, { ...options, delimiter: v }))
 			);
+		}
 	}
 	throw new Error(`patterns has no $with.${setter}`);
 }
@@ -11540,18 +15146,22 @@ function _buildStructPatternElements$patch(
 }
 function withStructPatternElements(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const elements = inputs.elements as NonEmptyArray<Admit<T.FieldPattern | TSKindId.RemainingFieldPattern>>;
-	const options = inputs.options as { delimiter?: Delimiter.None | Delimiter.Trailing };
 	switch (setter) {
-		case 'items':
+		case 'items': {
+			const inputs = builtInputs(node);
+			const options = inputs.options as { delimiter?: Delimiter.None | Delimiter.Trailing };
 			return applySetter(args, (...vs: NonEmptyArray<Admit<T.FieldPattern | TSKindId.RemainingFieldPattern>>) =>
 				rebuilt(node, handle, () => _buildStructPatternElements$patch(node, vs, options))
 			);
-		case 'delimiter':
+		}
+		case 'delimiter': {
+			const inputs = builtInputs(node);
+			const elements = inputs.elements as NonEmptyArray<Admit<T.FieldPattern | TSKindId.RemainingFieldPattern>>;
+			const options = inputs.options as { delimiter?: Delimiter.None | Delimiter.Trailing };
 			return applySetter(args, (v?: Delimiter.None | Delimiter.Trailing) =>
 				rebuilt(node, handle, () => _buildStructPatternElements$patch(node, elements, { ...options, delimiter: v }))
 			);
+		}
 	}
 	throw new Error(`struct_pattern_elements has no $with.${setter}`);
 }
@@ -11754,14 +15364,60 @@ function buildIntegerLiteralDecimal$patch(
 		return node as unknown as T.IntegerLiteralDecimal.Bound;
 	});
 }
+function buildIntegerLiteralDecimal$set(
+	source: object,
+	slot: string,
+	config: Partial<T.IntegerLiteralDecimal.Config>
+): T.IntegerLiteralDecimal.Bound {
+	if (!editsInPlace(source)) {
+		const inputs = builtInputs(source);
+		return buildIntegerLiteralDecimal$patch(source, {
+			...(inputs.config as T.IntegerLiteralDecimal.Config),
+			...config
+		});
+	}
+	switch (slot) {
+		case 'content': {
+			const _content = numberText(10, '', config.content);
+			if (typeof _content !== 'string')
+				throw new Error(`integer_literal_decimal.content: text must be a string: ${describeValue(_content)}`);
+			if (!_slotRe_buildIntegerLiteralDecimal_content.test(_content))
+				throw new Error(`integer_literal_decimal.content: text does not match pattern: ${describeValue(_content)}`);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'integer_literal_decimal', { content: _content });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.IntegerLiteralDecimal as const);
+				patchCell(arena, record, 2, 2, carriedSlot(source, 'content', _content));
+				const node = arena.view(record);
+				return node as unknown as T.IntegerLiteralDecimal.Bound;
+			});
+		}
+		case 'suffix': {
+			const _suffix = config.suffix;
+			if (_suffix !== undefined && typeof _suffix !== 'string')
+				throw new Error(`integer_literal_decimal.suffix: text must be a string: ${describeValue(_suffix)}`);
+			if (_suffix !== undefined && !_slotRe_buildIntegerLiteralDecimal_suffix.test(_suffix))
+				throw new Error(`integer_literal_decimal.suffix: text does not match pattern: ${describeValue(_suffix)}`);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'integer_literal_decimal', { suffix: _suffix });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.IntegerLiteralDecimal as const);
+				patchCell(arena, record, 3, 4, carriedSlot(source, 'suffix', _suffix));
+				const node = arena.view(record);
+				return node as unknown as T.IntegerLiteralDecimal.Bound;
+			});
+		}
+	}
+	throw new Error(`integer_literal_decimal writes no slot ${slot} alone`);
+}
 function withIntegerLiteralDecimal(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.IntegerLiteralDecimal.Config;
 	switch (setter) {
 		case 'content':
 			return applySetter(args, (value: Admit<string | number | bigint>) =>
-				rebuilt(node, handle, () => buildIntegerLiteralDecimal$patch(node, { ...config, content: value }))
+				rebuilt(node, handle, () => buildIntegerLiteralDecimal$set(node, 'content', { content: value }))
 			);
 		case 'suffix':
 			return applySetter(
@@ -11783,7 +15439,7 @@ function withIntegerLiteralDecimal(node: object, setter: string, args: readonly 
 						| 'f32'
 						| 'f64'
 					>
-				) => rebuilt(node, handle, () => buildIntegerLiteralDecimal$patch(node, { ...config, suffix: value }))
+				) => rebuilt(node, handle, () => buildIntegerLiteralDecimal$set(node, 'suffix', { suffix: value }))
 			);
 	}
 	throw new Error(`integer_literal_decimal has no $with.${setter}`);
@@ -11856,14 +15512,57 @@ function buildIntegerLiteralHex$patch(
 		return node as unknown as T.IntegerLiteralHex.Bound;
 	});
 }
+function buildIntegerLiteralHex$set(
+	source: object,
+	slot: string,
+	config: Partial<T.IntegerLiteralHex.Config>
+): T.IntegerLiteralHex.Bound {
+	if (!editsInPlace(source)) {
+		const inputs = builtInputs(source);
+		return buildIntegerLiteralHex$patch(source, { ...(inputs.config as T.IntegerLiteralHex.Config), ...config });
+	}
+	switch (slot) {
+		case 'content': {
+			const _content = numberText(16, '0x', config.content);
+			if (typeof _content !== 'string')
+				throw new Error(`integer_literal_hex.content: text must be a string: ${describeValue(_content)}`);
+			if (!_slotRe_buildIntegerLiteralHex_content.test(_content))
+				throw new Error(`integer_literal_hex.content: text does not match pattern: ${describeValue(_content)}`);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'integer_literal_hex', { content: _content });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.IntegerLiteralHex as const);
+				patchCell(arena, record, 2, 2, carriedSlot(source, 'content', _content));
+				const node = arena.view(record);
+				return node as unknown as T.IntegerLiteralHex.Bound;
+			});
+		}
+		case 'suffix': {
+			const _suffix = config.suffix;
+			if (_suffix !== undefined && typeof _suffix !== 'string')
+				throw new Error(`integer_literal_hex.suffix: text must be a string: ${describeValue(_suffix)}`);
+			if (_suffix !== undefined && !_slotRe_buildIntegerLiteralHex_suffix.test(_suffix))
+				throw new Error(`integer_literal_hex.suffix: text does not match pattern: ${describeValue(_suffix)}`);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'integer_literal_hex', { suffix: _suffix });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.IntegerLiteralHex as const);
+				patchCell(arena, record, 3, 4, carriedSlot(source, 'suffix', _suffix));
+				const node = arena.view(record);
+				return node as unknown as T.IntegerLiteralHex.Bound;
+			});
+		}
+	}
+	throw new Error(`integer_literal_hex writes no slot ${slot} alone`);
+}
 function withIntegerLiteralHex(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.IntegerLiteralHex.Config;
 	switch (setter) {
 		case 'content':
 			return applySetter(args, (value: Admit<string | number | bigint>) =>
-				rebuilt(node, handle, () => buildIntegerLiteralHex$patch(node, { ...config, content: value }))
+				rebuilt(node, handle, () => buildIntegerLiteralHex$set(node, 'content', { content: value }))
 			);
 		case 'suffix':
 			return applySetter(
@@ -11885,7 +15584,7 @@ function withIntegerLiteralHex(node: object, setter: string, args: readonly unkn
 						| 'f32'
 						| 'f64'
 					>
-				) => rebuilt(node, handle, () => buildIntegerLiteralHex$patch(node, { ...config, suffix: value }))
+				) => rebuilt(node, handle, () => buildIntegerLiteralHex$set(node, 'suffix', { suffix: value }))
 			);
 	}
 	throw new Error(`integer_literal_hex has no $with.${setter}`);
@@ -11958,14 +15657,57 @@ function buildIntegerLiteralBinary$patch(
 		return node as unknown as T.IntegerLiteralBinary.Bound;
 	});
 }
+function buildIntegerLiteralBinary$set(
+	source: object,
+	slot: string,
+	config: Partial<T.IntegerLiteralBinary.Config>
+): T.IntegerLiteralBinary.Bound {
+	if (!editsInPlace(source)) {
+		const inputs = builtInputs(source);
+		return buildIntegerLiteralBinary$patch(source, { ...(inputs.config as T.IntegerLiteralBinary.Config), ...config });
+	}
+	switch (slot) {
+		case 'content': {
+			const _content = numberText(2, '0b', config.content);
+			if (typeof _content !== 'string')
+				throw new Error(`integer_literal_binary.content: text must be a string: ${describeValue(_content)}`);
+			if (!_slotRe_buildIntegerLiteralBinary_content.test(_content))
+				throw new Error(`integer_literal_binary.content: text does not match pattern: ${describeValue(_content)}`);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'integer_literal_binary', { content: _content });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.IntegerLiteralBinary as const);
+				patchCell(arena, record, 2, 2, carriedSlot(source, 'content', _content));
+				const node = arena.view(record);
+				return node as unknown as T.IntegerLiteralBinary.Bound;
+			});
+		}
+		case 'suffix': {
+			const _suffix = config.suffix;
+			if (_suffix !== undefined && typeof _suffix !== 'string')
+				throw new Error(`integer_literal_binary.suffix: text must be a string: ${describeValue(_suffix)}`);
+			if (_suffix !== undefined && !_slotRe_buildIntegerLiteralBinary_suffix.test(_suffix))
+				throw new Error(`integer_literal_binary.suffix: text does not match pattern: ${describeValue(_suffix)}`);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'integer_literal_binary', { suffix: _suffix });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.IntegerLiteralBinary as const);
+				patchCell(arena, record, 3, 4, carriedSlot(source, 'suffix', _suffix));
+				const node = arena.view(record);
+				return node as unknown as T.IntegerLiteralBinary.Bound;
+			});
+		}
+	}
+	throw new Error(`integer_literal_binary writes no slot ${slot} alone`);
+}
 function withIntegerLiteralBinary(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.IntegerLiteralBinary.Config;
 	switch (setter) {
 		case 'content':
 			return applySetter(args, (value: Admit<string | number | bigint>) =>
-				rebuilt(node, handle, () => buildIntegerLiteralBinary$patch(node, { ...config, content: value }))
+				rebuilt(node, handle, () => buildIntegerLiteralBinary$set(node, 'content', { content: value }))
 			);
 		case 'suffix':
 			return applySetter(
@@ -11987,7 +15729,7 @@ function withIntegerLiteralBinary(node: object, setter: string, args: readonly u
 						| 'f32'
 						| 'f64'
 					>
-				) => rebuilt(node, handle, () => buildIntegerLiteralBinary$patch(node, { ...config, suffix: value }))
+				) => rebuilt(node, handle, () => buildIntegerLiteralBinary$set(node, 'suffix', { suffix: value }))
 			);
 	}
 	throw new Error(`integer_literal_binary has no $with.${setter}`);
@@ -12060,14 +15802,57 @@ function buildIntegerLiteralOctal$patch(
 		return node as unknown as T.IntegerLiteralOctal.Bound;
 	});
 }
+function buildIntegerLiteralOctal$set(
+	source: object,
+	slot: string,
+	config: Partial<T.IntegerLiteralOctal.Config>
+): T.IntegerLiteralOctal.Bound {
+	if (!editsInPlace(source)) {
+		const inputs = builtInputs(source);
+		return buildIntegerLiteralOctal$patch(source, { ...(inputs.config as T.IntegerLiteralOctal.Config), ...config });
+	}
+	switch (slot) {
+		case 'content': {
+			const _content = numberText(8, '0o', config.content);
+			if (typeof _content !== 'string')
+				throw new Error(`integer_literal_octal.content: text must be a string: ${describeValue(_content)}`);
+			if (!_slotRe_buildIntegerLiteralOctal_content.test(_content))
+				throw new Error(`integer_literal_octal.content: text does not match pattern: ${describeValue(_content)}`);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'integer_literal_octal', { content: _content });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.IntegerLiteralOctal as const);
+				patchCell(arena, record, 2, 2, carriedSlot(source, 'content', _content));
+				const node = arena.view(record);
+				return node as unknown as T.IntegerLiteralOctal.Bound;
+			});
+		}
+		case 'suffix': {
+			const _suffix = config.suffix;
+			if (_suffix !== undefined && typeof _suffix !== 'string')
+				throw new Error(`integer_literal_octal.suffix: text must be a string: ${describeValue(_suffix)}`);
+			if (_suffix !== undefined && !_slotRe_buildIntegerLiteralOctal_suffix.test(_suffix))
+				throw new Error(`integer_literal_octal.suffix: text does not match pattern: ${describeValue(_suffix)}`);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'integer_literal_octal', { suffix: _suffix });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.IntegerLiteralOctal as const);
+				patchCell(arena, record, 3, 4, carriedSlot(source, 'suffix', _suffix));
+				const node = arena.view(record);
+				return node as unknown as T.IntegerLiteralOctal.Bound;
+			});
+		}
+	}
+	throw new Error(`integer_literal_octal writes no slot ${slot} alone`);
+}
 function withIntegerLiteralOctal(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.IntegerLiteralOctal.Config;
 	switch (setter) {
 		case 'content':
 			return applySetter(args, (value: Admit<string | number | bigint>) =>
-				rebuilt(node, handle, () => buildIntegerLiteralOctal$patch(node, { ...config, content: value }))
+				rebuilt(node, handle, () => buildIntegerLiteralOctal$set(node, 'content', { content: value }))
 			);
 		case 'suffix':
 			return applySetter(
@@ -12089,7 +15874,7 @@ function withIntegerLiteralOctal(node: object, setter: string, args: readonly un
 						| 'f32'
 						| 'f64'
 					>
-				) => rebuilt(node, handle, () => buildIntegerLiteralOctal$patch(node, { ...config, suffix: value }))
+				) => rebuilt(node, handle, () => buildIntegerLiteralOctal$set(node, 'suffix', { suffix: value }))
 			);
 	}
 	throw new Error(`integer_literal_octal has no $with.${setter}`);
@@ -12139,18 +15924,57 @@ function buildCharLiteralPlain$patch(source: object, config: T.CharLiteralPlain.
 		return node as unknown as T.CharLiteralPlain.Bound;
 	});
 }
+function buildCharLiteralPlain$set(
+	source: object,
+	slot: string,
+	config: Partial<T.CharLiteralPlain.Config>
+): T.CharLiteralPlain.Bound {
+	if (!editsInPlace(source)) {
+		const inputs = builtInputs(source);
+		return buildCharLiteralPlain$patch(source, { ...(inputs.config as T.CharLiteralPlain.Config), ...config });
+	}
+	switch (slot) {
+		case 'byte': {
+			const _byte = strictBooleanStorage(config.byte);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'char_literal_plain', { byte: _byte });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.CharLiteralPlain as const);
+				patchFlag(record, 2, 1, _byte);
+				const node = arena.view(record);
+				return node as unknown as T.CharLiteralPlain.Bound;
+			});
+		}
+		case 'content': {
+			const _content = config.content;
+			if (typeof _content !== 'string')
+				throw new Error(`char_literal_plain.content: text must be a string: ${describeValue(_content)}`);
+			if (!_slotRe_buildCharLiteralPlain_content.test(_content))
+				throw new Error(`char_literal_plain.content: text does not match pattern: ${describeValue(_content)}`);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'char_literal_plain', { content: _content });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.CharLiteralPlain as const);
+				patchCell(arena, record, 3, 3, carriedSlot(source, 'content', _content));
+				const node = arena.view(record);
+				return node as unknown as T.CharLiteralPlain.Bound;
+			});
+		}
+	}
+	throw new Error(`char_literal_plain writes no slot ${slot} alone`);
+}
 function withCharLiteralPlain(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.CharLiteralPlain.Config;
 	switch (setter) {
 		case 'byte':
 			return applySetter(args, (value?: Admit<NonNullable<T.CharLiteralPlain.Config>['byte']>) =>
-				rebuilt(node, handle, () => buildCharLiteralPlain$patch(node, { ...config, byte: value }))
+				rebuilt(node, handle, () => buildCharLiteralPlain$set(node, 'byte', { byte: value }))
 			);
 		case 'content':
 			return applySetter(args, (value: Admit<string>) =>
-				rebuilt(node, handle, () => buildCharLiteralPlain$patch(node, { ...config, content: value }))
+				rebuilt(node, handle, () => buildCharLiteralPlain$set(node, 'content', { content: value }))
 			);
 	}
 	throw new Error(`char_literal_plain has no $with.${setter}`);
@@ -12234,18 +16058,60 @@ function buildCharLiteralEscapedSimple$patch(
 		return node as unknown as T.CharLiteralEscapedSimple.Bound;
 	});
 }
+function buildCharLiteralEscapedSimple$set(
+	source: object,
+	slot: string,
+	config: Partial<T.CharLiteralEscapedSimple.Config>
+): T.CharLiteralEscapedSimple.Bound {
+	if (!editsInPlace(source)) {
+		const inputs = builtInputs(source);
+		return buildCharLiteralEscapedSimple$patch(source, {
+			...(inputs.config as T.CharLiteralEscapedSimple.Config),
+			...config
+		});
+	}
+	switch (slot) {
+		case 'byte': {
+			const _byte = strictBooleanStorage(config.byte);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'char_literal_escaped_simple', { byte: _byte });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.CharLiteralEscapedSimple as const);
+				patchFlag(record, 2, 1, _byte);
+				const node = arena.view(record);
+				return node as unknown as T.CharLiteralEscapedSimple.Bound;
+			});
+		}
+		case 'content': {
+			const _content = config.content;
+			if (typeof _content !== 'string')
+				throw new Error(`char_literal_escaped_simple.content: text must be a string: ${describeValue(_content)}`);
+			if (!_slotRe_buildCharLiteralEscapedSimple_content.test(_content))
+				throw new Error(`char_literal_escaped_simple.content: text does not match pattern: ${describeValue(_content)}`);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'char_literal_escaped_simple', { content: _content });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.CharLiteralEscapedSimple as const);
+				patchCell(arena, record, 3, 3, carriedSlot(source, 'content', _content));
+				const node = arena.view(record);
+				return node as unknown as T.CharLiteralEscapedSimple.Bound;
+			});
+		}
+	}
+	throw new Error(`char_literal_escaped_simple writes no slot ${slot} alone`);
+}
 function withCharLiteralEscapedSimple(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.CharLiteralEscapedSimple.Config;
 	switch (setter) {
 		case 'byte':
 			return applySetter(args, (value?: Admit<NonNullable<T.CharLiteralEscapedSimple.Config>['byte']>) =>
-				rebuilt(node, handle, () => buildCharLiteralEscapedSimple$patch(node, { ...config, byte: value }))
+				rebuilt(node, handle, () => buildCharLiteralEscapedSimple$set(node, 'byte', { byte: value }))
 			);
 		case 'content':
 			return applySetter(args, (value: Admit<string>) =>
-				rebuilt(node, handle, () => buildCharLiteralEscapedSimple$patch(node, { ...config, content: value }))
+				rebuilt(node, handle, () => buildCharLiteralEscapedSimple$set(node, 'content', { content: value }))
 			);
 	}
 	throw new Error(`char_literal_escaped_simple has no $with.${setter}`);
@@ -12308,18 +16174,64 @@ function buildCharLiteralEscapedUnicodeFixed$patch(
 		return node as unknown as T.CharLiteralEscapedUnicodeFixed.Bound;
 	});
 }
+function buildCharLiteralEscapedUnicodeFixed$set(
+	source: object,
+	slot: string,
+	config: Partial<T.CharLiteralEscapedUnicodeFixed.Config>
+): T.CharLiteralEscapedUnicodeFixed.Bound {
+	if (!editsInPlace(source)) {
+		const inputs = builtInputs(source);
+		return buildCharLiteralEscapedUnicodeFixed$patch(source, {
+			...(inputs.config as T.CharLiteralEscapedUnicodeFixed.Config),
+			...config
+		});
+	}
+	switch (slot) {
+		case 'byte': {
+			const _byte = strictBooleanStorage(config.byte);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'char_literal_escaped_unicode_fixed', { byte: _byte });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.CharLiteralEscapedUnicodeFixed as const);
+				patchFlag(record, 2, 1, _byte);
+				const node = arena.view(record);
+				return node as unknown as T.CharLiteralEscapedUnicodeFixed.Bound;
+			});
+		}
+		case 'content': {
+			const _content = config.content;
+			if (typeof _content !== 'string')
+				throw new Error(
+					`char_literal_escaped_unicode_fixed.content: text must be a string: ${describeValue(_content)}`
+				);
+			if (!_slotRe_buildCharLiteralEscapedUnicodeFixed_content.test(_content))
+				throw new Error(
+					`char_literal_escaped_unicode_fixed.content: text does not match pattern: ${describeValue(_content)}`
+				);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'char_literal_escaped_unicode_fixed', { content: _content });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.CharLiteralEscapedUnicodeFixed as const);
+				patchCell(arena, record, 3, 3, carriedSlot(source, 'content', _content));
+				const node = arena.view(record);
+				return node as unknown as T.CharLiteralEscapedUnicodeFixed.Bound;
+			});
+		}
+	}
+	throw new Error(`char_literal_escaped_unicode_fixed writes no slot ${slot} alone`);
+}
 function withCharLiteralEscapedUnicodeFixed(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.CharLiteralEscapedUnicodeFixed.Config;
 	switch (setter) {
 		case 'byte':
 			return applySetter(args, (value?: Admit<NonNullable<T.CharLiteralEscapedUnicodeFixed.Config>['byte']>) =>
-				rebuilt(node, handle, () => buildCharLiteralEscapedUnicodeFixed$patch(node, { ...config, byte: value }))
+				rebuilt(node, handle, () => buildCharLiteralEscapedUnicodeFixed$set(node, 'byte', { byte: value }))
 			);
 		case 'content':
 			return applySetter(args, (value: Admit<string>) =>
-				rebuilt(node, handle, () => buildCharLiteralEscapedUnicodeFixed$patch(node, { ...config, content: value }))
+				rebuilt(node, handle, () => buildCharLiteralEscapedUnicodeFixed$set(node, 'content', { content: value }))
 			);
 	}
 	throw new Error(`char_literal_escaped_unicode_fixed has no $with.${setter}`);
@@ -12382,18 +16294,64 @@ function buildCharLiteralEscapedUnicodeBraced$patch(
 		return node as unknown as T.CharLiteralEscapedUnicodeBraced.Bound;
 	});
 }
+function buildCharLiteralEscapedUnicodeBraced$set(
+	source: object,
+	slot: string,
+	config: Partial<T.CharLiteralEscapedUnicodeBraced.Config>
+): T.CharLiteralEscapedUnicodeBraced.Bound {
+	if (!editsInPlace(source)) {
+		const inputs = builtInputs(source);
+		return buildCharLiteralEscapedUnicodeBraced$patch(source, {
+			...(inputs.config as T.CharLiteralEscapedUnicodeBraced.Config),
+			...config
+		});
+	}
+	switch (slot) {
+		case 'byte': {
+			const _byte = strictBooleanStorage(config.byte);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'char_literal_escaped_unicode_braced', { byte: _byte });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.CharLiteralEscapedUnicodeBraced as const);
+				patchFlag(record, 2, 1, _byte);
+				const node = arena.view(record);
+				return node as unknown as T.CharLiteralEscapedUnicodeBraced.Bound;
+			});
+		}
+		case 'content': {
+			const _content = config.content;
+			if (typeof _content !== 'string')
+				throw new Error(
+					`char_literal_escaped_unicode_braced.content: text must be a string: ${describeValue(_content)}`
+				);
+			if (!_slotRe_buildCharLiteralEscapedUnicodeBraced_content.test(_content))
+				throw new Error(
+					`char_literal_escaped_unicode_braced.content: text does not match pattern: ${describeValue(_content)}`
+				);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'char_literal_escaped_unicode_braced', { content: _content });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.CharLiteralEscapedUnicodeBraced as const);
+				patchCell(arena, record, 3, 3, carriedSlot(source, 'content', _content));
+				const node = arena.view(record);
+				return node as unknown as T.CharLiteralEscapedUnicodeBraced.Bound;
+			});
+		}
+	}
+	throw new Error(`char_literal_escaped_unicode_braced writes no slot ${slot} alone`);
+}
 function withCharLiteralEscapedUnicodeBraced(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.CharLiteralEscapedUnicodeBraced.Config;
 	switch (setter) {
 		case 'byte':
 			return applySetter(args, (value?: Admit<NonNullable<T.CharLiteralEscapedUnicodeBraced.Config>['byte']>) =>
-				rebuilt(node, handle, () => buildCharLiteralEscapedUnicodeBraced$patch(node, { ...config, byte: value }))
+				rebuilt(node, handle, () => buildCharLiteralEscapedUnicodeBraced$set(node, 'byte', { byte: value }))
 			);
 		case 'content':
 			return applySetter(args, (value: Admit<string>) =>
-				rebuilt(node, handle, () => buildCharLiteralEscapedUnicodeBraced$patch(node, { ...config, content: value }))
+				rebuilt(node, handle, () => buildCharLiteralEscapedUnicodeBraced$set(node, 'content', { content: value }))
 			);
 	}
 	throw new Error(`char_literal_escaped_unicode_braced has no $with.${setter}`);
@@ -12446,18 +16404,60 @@ function buildCharLiteralEscapedHex$patch(
 		return node as unknown as T.CharLiteralEscapedHex.Bound;
 	});
 }
+function buildCharLiteralEscapedHex$set(
+	source: object,
+	slot: string,
+	config: Partial<T.CharLiteralEscapedHex.Config>
+): T.CharLiteralEscapedHex.Bound {
+	if (!editsInPlace(source)) {
+		const inputs = builtInputs(source);
+		return buildCharLiteralEscapedHex$patch(source, {
+			...(inputs.config as T.CharLiteralEscapedHex.Config),
+			...config
+		});
+	}
+	switch (slot) {
+		case 'byte': {
+			const _byte = strictBooleanStorage(config.byte);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'char_literal_escaped_hex', { byte: _byte });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.CharLiteralEscapedHex as const);
+				patchFlag(record, 2, 1, _byte);
+				const node = arena.view(record);
+				return node as unknown as T.CharLiteralEscapedHex.Bound;
+			});
+		}
+		case 'content': {
+			const _content = config.content;
+			if (typeof _content !== 'string')
+				throw new Error(`char_literal_escaped_hex.content: text must be a string: ${describeValue(_content)}`);
+			if (!_slotRe_buildCharLiteralEscapedHex_content.test(_content))
+				throw new Error(`char_literal_escaped_hex.content: text does not match pattern: ${describeValue(_content)}`);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'char_literal_escaped_hex', { content: _content });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.CharLiteralEscapedHex as const);
+				patchCell(arena, record, 3, 3, carriedSlot(source, 'content', _content));
+				const node = arena.view(record);
+				return node as unknown as T.CharLiteralEscapedHex.Bound;
+			});
+		}
+	}
+	throw new Error(`char_literal_escaped_hex writes no slot ${slot} alone`);
+}
 function withCharLiteralEscapedHex(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.CharLiteralEscapedHex.Config;
 	switch (setter) {
 		case 'byte':
 			return applySetter(args, (value?: Admit<NonNullable<T.CharLiteralEscapedHex.Config>['byte']>) =>
-				rebuilt(node, handle, () => buildCharLiteralEscapedHex$patch(node, { ...config, byte: value }))
+				rebuilt(node, handle, () => buildCharLiteralEscapedHex$set(node, 'byte', { byte: value }))
 			);
 		case 'content':
 			return applySetter(args, (value: Admit<string>) =>
-				rebuilt(node, handle, () => buildCharLiteralEscapedHex$patch(node, { ...config, content: value }))
+				rebuilt(node, handle, () => buildCharLiteralEscapedHex$set(node, 'content', { content: value }))
 			);
 	}
 	throw new Error(`char_literal_escaped_hex has no $with.${setter}`);
@@ -12776,24 +16776,71 @@ function buildArrayExpressionSemi$patch(
 		return node as unknown as T.ArrayExpressionSemi.Bound;
 	});
 }
+function buildArrayExpressionSemi$set(
+	source: object,
+	slot: string,
+	config: Partial<T.ArrayExpressionSemi.Config>
+): T.ArrayExpressionSemi.Bound {
+	if (!editsInPlace(source)) {
+		const inputs = builtInputs(source);
+		return buildArrayExpressionSemi$patch(source, { ...(inputs.config as T.ArrayExpressionSemi.Config), ...config });
+	}
+	switch (slot) {
+		case 'attributes': {
+			const _attributes = listStorage<NonNullable<T.ArrayExpressionSemi['_attributes']>>(config.attributes ?? []);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'array_expression_semi', { attributes: _attributes });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.ArrayExpressionSemi as const);
+				patchList(arena, record, 2, 2, _attributes);
+				const node = arena.view(record);
+				return node as unknown as T.ArrayExpressionSemi.Bound;
+			});
+		}
+		case 'element': {
+			const _element = kindIdStorage<NonNullable<T.ArrayExpressionSemi['_element']>>(config.element);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'array_expression_semi', { element: _element });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.ArrayExpressionSemi as const);
+				patchCell(arena, record, 3, 3, carriedSlot(source, 'element', _element));
+				const node = arena.view(record);
+				return node as unknown as T.ArrayExpressionSemi.Bound;
+			});
+		}
+		case 'length': {
+			const _length = kindIdStorage<NonNullable<T.ArrayExpressionSemi['_length']>>(config.length);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'array_expression_semi', { length: _length });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.ArrayExpressionSemi as const);
+				patchCell(arena, record, 4, 7, carriedSlot(source, 'length', _length));
+				const node = arena.view(record);
+				return node as unknown as T.ArrayExpressionSemi.Bound;
+			});
+		}
+	}
+	throw new Error(`array_expression_semi writes no slot ${slot} alone`);
+}
 function withArrayExpressionSemi(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.ArrayExpressionSemi.Config;
 	switch (setter) {
 		case 'attributes':
 			return applySetter(args, (...values: Admit<T.AttributeItem[]>) =>
 				rebuilt(node, handle, () =>
-					buildArrayExpressionSemi$patch(node, { ...config, attributes: restItems('attributes', values) })
+					buildArrayExpressionSemi$set(node, 'attributes', { attributes: restItems('attributes', values) })
 				)
 			);
 		case 'element':
 			return applySetter(args, (value: Admit<NonNullable<T.ArrayExpressionSemi.Config>['element']>) =>
-				rebuilt(node, handle, () => buildArrayExpressionSemi$patch(node, { ...config, element: value }))
+				rebuilt(node, handle, () => buildArrayExpressionSemi$set(node, 'element', { element: value }))
 			);
 		case 'length':
 			return applySetter(args, (value: Admit<NonNullable<T.ArrayExpressionSemi.Config>['length']>) =>
-				rebuilt(node, handle, () => buildArrayExpressionSemi$patch(node, { ...config, length: value }))
+				rebuilt(node, handle, () => buildArrayExpressionSemi$set(node, 'length', { length: value }))
 			);
 	}
 	throw new Error(`array_expression_semi has no $with.${setter}`);
@@ -12846,15 +16893,50 @@ function buildArrayExpressionList$patch(
 		return node as unknown as T.ArrayExpressionList.Bound;
 	});
 }
+function buildArrayExpressionList$set(
+	source: object,
+	slot: string,
+	config: Partial<T.ArrayExpressionList.Config>
+): T.ArrayExpressionList.Bound {
+	if (!editsInPlace(source)) {
+		const inputs = builtInputs(source);
+		return buildArrayExpressionList$patch(source, { ...(inputs.config as T.ArrayExpressionList.Config), ...config });
+	}
+	switch (slot) {
+		case 'attributes': {
+			const _attributes = listStorage<NonNullable<T.ArrayExpressionList['_attributes']>>(config.attributes ?? []);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'array_expression_list', { attributes: _attributes });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.ArrayExpressionList as const);
+				patchList(arena, record, 2, 2, _attributes);
+				const node = arena.view(record);
+				return node as unknown as T.ArrayExpressionList.Bound;
+			});
+		}
+		case 'elements': {
+			const _elements = config.elements;
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'array_expression_list', { elements: _elements });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.ArrayExpressionList as const);
+				patchCell(arena, record, 3, 3, carriedSlot(source, 'elements', _elements));
+				const node = arena.view(record);
+				return node as unknown as T.ArrayExpressionList.Bound;
+			});
+		}
+	}
+	throw new Error(`array_expression_list writes no slot ${slot} alone`);
+}
 function withArrayExpressionList(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.ArrayExpressionList.Config;
 	switch (setter) {
 		case 'attributes':
 			return applySetter(args, (...values: Admit<T.AttributeItem[]>) =>
 				rebuilt(node, handle, () =>
-					buildArrayExpressionList$patch(node, { ...config, attributes: restItems('attributes', values) })
+					buildArrayExpressionList$set(node, 'attributes', { attributes: restItems('attributes', values) })
 				)
 			);
 		case 'elements':
@@ -12869,7 +16951,7 @@ function withArrayExpressionList(node: object, setter: string, args: readonly un
 							element: { keys: ['attributeItems', 'expression'], make: buildAttributedArgument }
 						},
 						(value?: Admit<T.ArrayExpressionListElements>) =>
-							buildArrayExpressionList$patch(node, { ...config, elements: value })
+							buildArrayExpressionList$set(node, 'elements', { elements: value })
 					)
 				)
 			);
@@ -12919,18 +17001,53 @@ function buildAttributeInput$patch(
 		return node as unknown as T.AttributeInput.Bound;
 	});
 }
+function buildAttributeInput$set(
+	source: object,
+	slot: string,
+	config: Partial<T.AttributeInput.Config>
+): T.AttributeInput.Bound {
+	if (!editsInPlace(source)) {
+		const inputs = builtInputs(source);
+		return buildAttributeInput$patch(source, { ...(inputs.config as T.AttributeInput.Config), ...config });
+	}
+	switch (slot) {
+		case 'value': {
+			const _value = kindIdStorage<NonNullable<T.AttributeInput['_value']>>(config.value);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'attribute_input', { value: _value });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.AttributeInput as const);
+				patchCell(arena, record, 2, 2, carriedSlot(source, 'value', _value));
+				const node = arena.view(record);
+				return node as unknown as T.AttributeInput.Bound;
+			});
+		}
+		case 'arguments': {
+			const _arguments = config.arguments;
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'attribute_input', { arguments: _arguments });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.AttributeInput as const);
+				patchCell(arena, record, 3, 6, carriedSlot(source, 'arguments', _arguments));
+				const node = arena.view(record);
+				return node as unknown as T.AttributeInput.Bound;
+			});
+		}
+	}
+	throw new Error(`attribute_input writes no slot ${slot} alone`);
+}
 function withAttributeInput(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.AttributeInput.Config;
 	switch (setter) {
 		case 'value':
 			return applySetter(args, (value?: Admit<NonNullable<T.AttributeInput.Config>['value']>) =>
-				rebuilt(node, handle, () => buildAttributeInput$patch(node, { ...config, value: value }))
+				rebuilt(node, handle, () => buildAttributeInput$set(node, 'value', { value: value }))
 			);
 		case 'arguments':
 			return applySetter(args, (value?: Admit<T.DelimTokenTree>) =>
-				rebuilt(node, handle, () => buildAttributeInput$patch(node, { ...config, arguments: value }))
+				rebuilt(node, handle, () => buildAttributeInput$set(node, 'arguments', { arguments: value }))
 			);
 	}
 	throw new Error(`attribute_input has no $with.${setter}`);
@@ -13036,34 +17153,123 @@ function buildClosureExpressionBlock$patch(
 		return node as unknown as T.ClosureExpressionBlock.Bound;
 	});
 }
+function buildClosureExpressionBlock$set(
+	source: object,
+	slot: string,
+	config: Partial<T.ClosureExpressionBlock.Config>
+): T.ClosureExpressionBlock.Bound {
+	if (!editsInPlace(source)) {
+		const inputs = builtInputs(source);
+		return buildClosureExpressionBlock$patch(source, {
+			...(inputs.config as T.ClosureExpressionBlock.Config),
+			...config
+		});
+	}
+	switch (slot) {
+		case 'static': {
+			const _static = strictBooleanStorage(config.static);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'closure_expression_block', { static: _static });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.ClosureExpressionBlock as const);
+				patchFlag(record, 2, 1, _static);
+				const node = arena.view(record);
+				return node as unknown as T.ClosureExpressionBlock.Bound;
+			});
+		}
+		case 'async': {
+			const _async = strictBooleanStorage(config.async);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'closure_expression_block', { async: _async });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.ClosureExpressionBlock as const);
+				patchFlag(record, 2, 2, _async);
+				const node = arena.view(record);
+				return node as unknown as T.ClosureExpressionBlock.Bound;
+			});
+		}
+		case 'move': {
+			const _move = strictBooleanStorage(config.move);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'closure_expression_block', { move: _move });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.ClosureExpressionBlock as const);
+				patchFlag(record, 2, 4, _move);
+				const node = arena.view(record);
+				return node as unknown as T.ClosureExpressionBlock.Bound;
+			});
+		}
+		case 'parameters': {
+			const _parameters = orDefault(config.parameters, () => buildClosureParameters());
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'closure_expression_block', { parameters: _parameters });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.ClosureExpressionBlock as const);
+				patchCell(arena, record, 3, 3, carriedSlot(source, 'parameters', _parameters));
+				const node = arena.view(record);
+				return node as unknown as T.ClosureExpressionBlock.Bound;
+			});
+		}
+		case 'returnType': {
+			const _return_type = admitAliasContent<NonNullable<T.ClosureExpressionBlock['_return_type']>>(
+				kindIdStorage<NonNullable<T.ClosureExpressionBlock['_return_type']>>(config.returnType),
+				[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
+			);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'closure_expression_block', { returnType: _return_type });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.ClosureExpressionBlock as const);
+				patchCell(arena, record, 4, 6, carriedSlot(source, 'returnType', _return_type));
+				const node = arena.view(record);
+				return node as unknown as T.ClosureExpressionBlock.Bound;
+			});
+		}
+		case 'body': {
+			const _body = orDefault(config.body, () => buildBlock());
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'closure_expression_block', { body: _body });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.ClosureExpressionBlock as const);
+				patchCell(arena, record, 5, 10, carriedSlot(source, 'body', _body));
+				const node = arena.view(record);
+				return node as unknown as T.ClosureExpressionBlock.Bound;
+			});
+		}
+	}
+	throw new Error(`closure_expression_block writes no slot ${slot} alone`);
+}
 function withClosureExpressionBlock(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.ClosureExpressionBlock.Config;
 	switch (setter) {
 		case 'static':
 			return applySetter(args, (value?: Admit<NonNullable<T.ClosureExpressionBlock.Config>['static']>) =>
-				rebuilt(node, handle, () => buildClosureExpressionBlock$patch(node, { ...config, static: value }))
+				rebuilt(node, handle, () => buildClosureExpressionBlock$set(node, 'static', { static: value }))
 			);
 		case 'async':
 			return applySetter(args, (value?: Admit<NonNullable<T.ClosureExpressionBlock.Config>['async']>) =>
-				rebuilt(node, handle, () => buildClosureExpressionBlock$patch(node, { ...config, async: value }))
+				rebuilt(node, handle, () => buildClosureExpressionBlock$set(node, 'async', { async: value }))
 			);
 		case 'move':
 			return applySetter(args, (value?: Admit<NonNullable<T.ClosureExpressionBlock.Config>['move']>) =>
-				rebuilt(node, handle, () => buildClosureExpressionBlock$patch(node, { ...config, move: value }))
+				rebuilt(node, handle, () => buildClosureExpressionBlock$set(node, 'move', { move: value }))
 			);
 		case 'parameters':
 			return applySetter(args, (value: Admit<T.ClosureParameters>) =>
-				rebuilt(node, handle, () => buildClosureExpressionBlock$patch(node, { ...config, parameters: value }))
+				rebuilt(node, handle, () => buildClosureExpressionBlock$set(node, 'parameters', { parameters: value }))
 			);
 		case 'returnType':
 			return applySetter(args, (value?: Admit<NonNullable<T.ClosureExpressionBlock.Config>['returnType']>) =>
-				rebuilt(node, handle, () => buildClosureExpressionBlock$patch(node, { ...config, returnType: value }))
+				rebuilt(node, handle, () => buildClosureExpressionBlock$set(node, 'returnType', { returnType: value }))
 			);
 		case 'body':
 			return applySetter(args, (value: Admit<T.Block>) =>
-				rebuilt(node, handle, () => buildClosureExpressionBlock$patch(node, { ...config, body: value }))
+				rebuilt(node, handle, () => buildClosureExpressionBlock$set(node, 'body', { body: value }))
 			);
 	}
 	throw new Error(`closure_expression_block has no $with.${setter}`);
@@ -13137,30 +17343,104 @@ function buildClosureExpressionExpr$patch(
 		return node as unknown as T.ClosureExpressionExpr.Bound;
 	});
 }
+function buildClosureExpressionExpr$set(
+	source: object,
+	slot: string,
+	config: Partial<T.ClosureExpressionExpr.Config>
+): T.ClosureExpressionExpr.Bound {
+	if (!editsInPlace(source)) {
+		const inputs = builtInputs(source);
+		return buildClosureExpressionExpr$patch(source, {
+			...(inputs.config as T.ClosureExpressionExpr.Config),
+			...config
+		});
+	}
+	switch (slot) {
+		case 'static': {
+			const _static = strictBooleanStorage(config.static);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'closure_expression_expr', { static: _static });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.ClosureExpressionExpr as const);
+				patchFlag(record, 2, 1, _static);
+				const node = arena.view(record);
+				return node as unknown as T.ClosureExpressionExpr.Bound;
+			});
+		}
+		case 'async': {
+			const _async = strictBooleanStorage(config.async);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'closure_expression_expr', { async: _async });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.ClosureExpressionExpr as const);
+				patchFlag(record, 2, 2, _async);
+				const node = arena.view(record);
+				return node as unknown as T.ClosureExpressionExpr.Bound;
+			});
+		}
+		case 'move': {
+			const _move = strictBooleanStorage(config.move);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'closure_expression_expr', { move: _move });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.ClosureExpressionExpr as const);
+				patchFlag(record, 2, 4, _move);
+				const node = arena.view(record);
+				return node as unknown as T.ClosureExpressionExpr.Bound;
+			});
+		}
+		case 'parameters': {
+			const _parameters = orDefault(config.parameters, () => buildClosureParameters());
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'closure_expression_expr', { parameters: _parameters });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.ClosureExpressionExpr as const);
+				patchCell(arena, record, 3, 3, carriedSlot(source, 'parameters', _parameters));
+				const node = arena.view(record);
+				return node as unknown as T.ClosureExpressionExpr.Bound;
+			});
+		}
+		case 'body': {
+			const _body = kindIdStorage<NonNullable<T.ClosureExpressionExpr['_body']>>(config.body);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'closure_expression_expr', { body: _body });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.ClosureExpressionExpr as const);
+				patchCell(arena, record, 4, 6, carriedSlot(source, 'body', _body));
+				const node = arena.view(record);
+				return node as unknown as T.ClosureExpressionExpr.Bound;
+			});
+		}
+	}
+	throw new Error(`closure_expression_expr writes no slot ${slot} alone`);
+}
 function withClosureExpressionExpr(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.ClosureExpressionExpr.Config;
 	switch (setter) {
 		case 'static':
 			return applySetter(args, (value?: Admit<NonNullable<T.ClosureExpressionExpr.Config>['static']>) =>
-				rebuilt(node, handle, () => buildClosureExpressionExpr$patch(node, { ...config, static: value }))
+				rebuilt(node, handle, () => buildClosureExpressionExpr$set(node, 'static', { static: value }))
 			);
 		case 'async':
 			return applySetter(args, (value?: Admit<NonNullable<T.ClosureExpressionExpr.Config>['async']>) =>
-				rebuilt(node, handle, () => buildClosureExpressionExpr$patch(node, { ...config, async: value }))
+				rebuilt(node, handle, () => buildClosureExpressionExpr$set(node, 'async', { async: value }))
 			);
 		case 'move':
 			return applySetter(args, (value?: Admit<NonNullable<T.ClosureExpressionExpr.Config>['move']>) =>
-				rebuilt(node, handle, () => buildClosureExpressionExpr$patch(node, { ...config, move: value }))
+				rebuilt(node, handle, () => buildClosureExpressionExpr$set(node, 'move', { move: value }))
 			);
 		case 'parameters':
 			return applySetter(args, (value: Admit<T.ClosureParameters>) =>
-				rebuilt(node, handle, () => buildClosureExpressionExpr$patch(node, { ...config, parameters: value }))
+				rebuilt(node, handle, () => buildClosureExpressionExpr$set(node, 'parameters', { parameters: value }))
 			);
 		case 'body':
 			return applySetter(args, (value: Admit<NonNullable<T.ClosureExpressionExpr.Config>['body']>) =>
-				rebuilt(node, handle, () => buildClosureExpressionExpr$patch(node, { ...config, body: value }))
+				rebuilt(node, handle, () => buildClosureExpressionExpr$set(node, 'body', { body: value }))
 			);
 	}
 	throw new Error(`closure_expression_expr has no $with.${setter}`);
@@ -13546,14 +17826,100 @@ function buildImplItemBody$patch(source: object, config: T.ImplItemBody.Config):
 		return node as unknown as T.ImplItemBody.Bound;
 	});
 }
+function buildImplItemBody$set(
+	source: object,
+	slot: string,
+	config: Partial<T.ImplItemBody.Config>
+): T.ImplItemBody.Bound {
+	if (!editsInPlace(source)) {
+		const inputs = builtInputs(source);
+		return buildImplItemBody$patch(source, { ...(inputs.config as T.ImplItemBody.Config), ...config });
+	}
+	switch (slot) {
+		case 'unsafe': {
+			const _unsafe = strictBooleanStorage(config.unsafe);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'impl_item_body', { unsafe: _unsafe });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.ImplItemBody as const);
+				patchFlag(record, 2, 1, _unsafe);
+				const node = arena.view(record);
+				return node as unknown as T.ImplItemBody.Bound;
+			});
+		}
+		case 'typeParameters': {
+			const _type_parameters = config.typeParameters;
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'impl_item_body', { typeParameters: _type_parameters });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.ImplItemBody as const);
+				patchCell(arena, record, 3, 3, carriedSlot(source, 'typeParameters', _type_parameters));
+				const node = arena.view(record);
+				return node as unknown as T.ImplItemBody.Bound;
+			});
+		}
+		case 'traitClause': {
+			const _trait_clause = config.traitClause;
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'impl_item_body', { traitClause: _trait_clause });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.ImplItemBody as const);
+				patchCell(arena, record, 4, 8, carriedSlot(source, 'traitClause', _trait_clause));
+				const node = arena.view(record);
+				return node as unknown as T.ImplItemBody.Bound;
+			});
+		}
+		case 'type': {
+			const _type = admitAliasContent<NonNullable<T.ImplItemBody['_type']>>(
+				kindIdStorage<NonNullable<T.ImplItemBody['_type']>>(config.type),
+				[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
+			);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'impl_item_body', { type: _type });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.ImplItemBody as const);
+				patchCell(arena, record, 5, 13, carriedSlot(source, 'type', _type));
+				const node = arena.view(record);
+				return node as unknown as T.ImplItemBody.Bound;
+			});
+		}
+		case 'whereClause': {
+			const _where_clause = config.whereClause;
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'impl_item_body', { whereClause: _where_clause });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.ImplItemBody as const);
+				patchCell(arena, record, 6, 17, carriedSlot(source, 'whereClause', _where_clause));
+				const node = arena.view(record);
+				return node as unknown as T.ImplItemBody.Bound;
+			});
+		}
+		case 'body': {
+			const _body = orDefault(config.body, () => buildExtensionDeclarationBody());
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'impl_item_body', { body: _body });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.ImplItemBody as const);
+				patchCell(arena, record, 7, 22, carriedSlot(source, 'body', _body));
+				const node = arena.view(record);
+				return node as unknown as T.ImplItemBody.Bound;
+			});
+		}
+	}
+	throw new Error(`impl_item_body writes no slot ${slot} alone`);
+}
 function withImplItemBody(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.ImplItemBody.Config;
 	switch (setter) {
 		case 'unsafe':
 			return applySetter(args, (value?: Admit<NonNullable<T.ImplItemBody.Config>['unsafe']>) =>
-				rebuilt(node, handle, () => buildImplItemBody$patch(node, { ...config, unsafe: value }))
+				rebuilt(node, handle, () => buildImplItemBody$set(node, 'unsafe', { unsafe: value }))
 			);
 		case 'typeParameters':
 			return applySetter(args, (...args: unknown[]) =>
@@ -13566,17 +17932,18 @@ function withImplItemBody(node: object, setter: string, args: readonly unknown[]
 							make: buildTypeParameters,
 							element: { keys: ['attributeItems', 'content'], make: buildAttributedTypeParameter }
 						},
-						(value?: Admit<T.TypeParameters>) => buildImplItemBody$patch(node, { ...config, typeParameters: value })
+						(value?: Admit<T.TypeParameters>) =>
+							buildImplItemBody$set(node, 'typeParameters', { typeParameters: value })
 					)
 				)
 			);
 		case 'traitClause':
 			return applySetter(args, (value?: Admit<T.ImplItemPositiveClause | T.ImplItemNegativeClause>) =>
-				rebuilt(node, handle, () => buildImplItemBody$patch(node, { ...config, traitClause: value }))
+				rebuilt(node, handle, () => buildImplItemBody$set(node, 'traitClause', { traitClause: value }))
 			);
 		case 'type':
 			return applySetter(args, (value: Admit<NonNullable<T.ImplItemBody.Config>['type']>) =>
-				rebuilt(node, handle, () => buildImplItemBody$patch(node, { ...config, type: value }))
+				rebuilt(node, handle, () => buildImplItemBody$set(node, 'type', { type: value }))
 			);
 		case 'whereClause':
 			return applySetter(args, (...args: unknown[]) =>
@@ -13584,13 +17951,13 @@ function withImplItemBody(node: object, setter: string, args: readonly unknown[]
 					listSlotWith(
 						args,
 						{ kind: TSKindId.WhereClause as const, optional: true, make: buildWhereClause },
-						(value?: Admit<T.WhereClause>) => buildImplItemBody$patch(node, { ...config, whereClause: value })
+						(value?: Admit<T.WhereClause>) => buildImplItemBody$set(node, 'whereClause', { whereClause: value })
 					)
 				)
 			);
 		case 'body':
 			return applySetter(args, (value: Admit<T.ExtensionDeclarationBody>) =>
-				rebuilt(node, handle, () => buildImplItemBody$patch(node, { ...config, body: value }))
+				rebuilt(node, handle, () => buildImplItemBody$set(node, 'body', { body: value }))
 			);
 	}
 	throw new Error(`impl_item_body has no $with.${setter}`);
@@ -13684,14 +18051,88 @@ function buildImplItemSemi$patch(source: object, config: T.ImplItemSemi.Config):
 		return node as unknown as T.ImplItemSemi.Bound;
 	});
 }
+function buildImplItemSemi$set(
+	source: object,
+	slot: string,
+	config: Partial<T.ImplItemSemi.Config>
+): T.ImplItemSemi.Bound {
+	if (!editsInPlace(source)) {
+		const inputs = builtInputs(source);
+		return buildImplItemSemi$patch(source, { ...(inputs.config as T.ImplItemSemi.Config), ...config });
+	}
+	switch (slot) {
+		case 'unsafe': {
+			const _unsafe = strictBooleanStorage(config.unsafe);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'impl_item_semi', { unsafe: _unsafe });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.ImplItemSemi as const);
+				patchFlag(record, 2, 1, _unsafe);
+				const node = arena.view(record);
+				return node as unknown as T.ImplItemSemi.Bound;
+			});
+		}
+		case 'typeParameters': {
+			const _type_parameters = config.typeParameters;
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'impl_item_semi', { typeParameters: _type_parameters });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.ImplItemSemi as const);
+				patchCell(arena, record, 3, 3, carriedSlot(source, 'typeParameters', _type_parameters));
+				const node = arena.view(record);
+				return node as unknown as T.ImplItemSemi.Bound;
+			});
+		}
+		case 'traitClause': {
+			const _trait_clause = config.traitClause;
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'impl_item_semi', { traitClause: _trait_clause });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.ImplItemSemi as const);
+				patchCell(arena, record, 4, 8, carriedSlot(source, 'traitClause', _trait_clause));
+				const node = arena.view(record);
+				return node as unknown as T.ImplItemSemi.Bound;
+			});
+		}
+		case 'type': {
+			const _type = admitAliasContent<NonNullable<T.ImplItemSemi['_type']>>(
+				kindIdStorage<NonNullable<T.ImplItemSemi['_type']>>(config.type),
+				[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
+			);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'impl_item_semi', { type: _type });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.ImplItemSemi as const);
+				patchCell(arena, record, 5, 13, carriedSlot(source, 'type', _type));
+				const node = arena.view(record);
+				return node as unknown as T.ImplItemSemi.Bound;
+			});
+		}
+		case 'whereClause': {
+			const _where_clause = config.whereClause;
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'impl_item_semi', { whereClause: _where_clause });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.ImplItemSemi as const);
+				patchCell(arena, record, 6, 17, carriedSlot(source, 'whereClause', _where_clause));
+				const node = arena.view(record);
+				return node as unknown as T.ImplItemSemi.Bound;
+			});
+		}
+	}
+	throw new Error(`impl_item_semi writes no slot ${slot} alone`);
+}
 function withImplItemSemi(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.ImplItemSemi.Config;
 	switch (setter) {
 		case 'unsafe':
 			return applySetter(args, (value?: Admit<NonNullable<T.ImplItemSemi.Config>['unsafe']>) =>
-				rebuilt(node, handle, () => buildImplItemSemi$patch(node, { ...config, unsafe: value }))
+				rebuilt(node, handle, () => buildImplItemSemi$set(node, 'unsafe', { unsafe: value }))
 			);
 		case 'typeParameters':
 			return applySetter(args, (...args: unknown[]) =>
@@ -13704,17 +18145,18 @@ function withImplItemSemi(node: object, setter: string, args: readonly unknown[]
 							make: buildTypeParameters,
 							element: { keys: ['attributeItems', 'content'], make: buildAttributedTypeParameter }
 						},
-						(value?: Admit<T.TypeParameters>) => buildImplItemSemi$patch(node, { ...config, typeParameters: value })
+						(value?: Admit<T.TypeParameters>) =>
+							buildImplItemSemi$set(node, 'typeParameters', { typeParameters: value })
 					)
 				)
 			);
 		case 'traitClause':
 			return applySetter(args, (value?: Admit<T.ImplItemPositiveClause | T.ImplItemNegativeClause>) =>
-				rebuilt(node, handle, () => buildImplItemSemi$patch(node, { ...config, traitClause: value }))
+				rebuilt(node, handle, () => buildImplItemSemi$set(node, 'traitClause', { traitClause: value }))
 			);
 		case 'type':
 			return applySetter(args, (value: Admit<NonNullable<T.ImplItemSemi.Config>['type']>) =>
-				rebuilt(node, handle, () => buildImplItemSemi$patch(node, { ...config, type: value }))
+				rebuilt(node, handle, () => buildImplItemSemi$set(node, 'type', { type: value }))
 			);
 		case 'whereClause':
 			return applySetter(args, (...args: unknown[]) =>
@@ -13722,7 +18164,7 @@ function withImplItemSemi(node: object, setter: string, args: readonly unknown[]
 					listSlotWith(
 						args,
 						{ kind: TSKindId.WhereClause as const, optional: true, make: buildWhereClause },
-						(value?: Admit<T.WhereClause>) => buildImplItemSemi$patch(node, { ...config, whereClause: value })
+						(value?: Admit<T.WhereClause>) => buildImplItemSemi$set(node, 'whereClause', { whereClause: value })
 					)
 				)
 			);
@@ -14079,18 +18521,54 @@ function buildModItemExternal$patch(source: object, config: T.ModItemExternal.Co
 		return node as unknown as T.ModItemExternal.Bound;
 	});
 }
+function buildModItemExternal$set(
+	source: object,
+	slot: string,
+	config: Partial<T.ModItemExternal.Config>
+): T.ModItemExternal.Bound {
+	if (!editsInPlace(source)) {
+		const inputs = builtInputs(source);
+		return buildModItemExternal$patch(source, { ...(inputs.config as T.ModItemExternal.Config), ...config });
+	}
+	switch (slot) {
+		case 'visibilityModifier': {
+			const _visibility_modifier = config.visibilityModifier;
+			const handle = currentHandle();
+			if (handle !== undefined)
+				admitChildren(handle, 'mod_item_external', { visibilityModifier: _visibility_modifier });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.ModItemExternal as const);
+				patchCell(arena, record, 2, 2, carriedSlot(source, 'visibilityModifier', _visibility_modifier));
+				const node = arena.view(record);
+				return node as unknown as T.ModItemExternal.Bound;
+			});
+		}
+		case 'name': {
+			const _name = config.name;
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'mod_item_external', { name: _name });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.ModItemExternal as const);
+				patchCell(arena, record, 3, 16, carriedSlot(source, 'name', _name));
+				const node = arena.view(record);
+				return node as unknown as T.ModItemExternal.Bound;
+			});
+		}
+	}
+	throw new Error(`mod_item_external writes no slot ${slot} alone`);
+}
 function withModItemExternal(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.ModItemExternal.Config;
 	switch (setter) {
 		case 'visibilityModifier':
 			return applySetter(args, (value?: Admit<T.VisibilityModifier>) =>
-				rebuilt(node, handle, () => buildModItemExternal$patch(node, { ...config, visibilityModifier: value }))
+				rebuilt(node, handle, () => buildModItemExternal$set(node, 'visibilityModifier', { visibilityModifier: value }))
 			);
 		case 'name':
 			return applySetter(args, (value: Admit<T.Identifier>) =>
-				rebuilt(node, handle, () => buildModItemExternal$patch(node, { ...config, name: value }))
+				rebuilt(node, handle, () => buildModItemExternal$set(node, 'name', { name: value }))
 			);
 	}
 	throw new Error(`mod_item_external has no $with.${setter}`);
@@ -14145,22 +18623,69 @@ function buildModItemInline$patch(source: object, config: T.ModItemInline.Config
 		return node as unknown as T.ModItemInline.Bound;
 	});
 }
+function buildModItemInline$set(
+	source: object,
+	slot: string,
+	config: Partial<T.ModItemInline.Config>
+): T.ModItemInline.Bound {
+	if (!editsInPlace(source)) {
+		const inputs = builtInputs(source);
+		return buildModItemInline$patch(source, { ...(inputs.config as T.ModItemInline.Config), ...config });
+	}
+	switch (slot) {
+		case 'visibilityModifier': {
+			const _visibility_modifier = config.visibilityModifier;
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'mod_item_inline', { visibilityModifier: _visibility_modifier });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.ModItemInline as const);
+				patchCell(arena, record, 2, 2, carriedSlot(source, 'visibilityModifier', _visibility_modifier));
+				const node = arena.view(record);
+				return node as unknown as T.ModItemInline.Bound;
+			});
+		}
+		case 'name': {
+			const _name = config.name;
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'mod_item_inline', { name: _name });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.ModItemInline as const);
+				patchCell(arena, record, 3, 16, carriedSlot(source, 'name', _name));
+				const node = arena.view(record);
+				return node as unknown as T.ModItemInline.Bound;
+			});
+		}
+		case 'body': {
+			const _body = orDefault(config.body, () => buildDeclarationList());
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'mod_item_inline', { body: _body });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.ModItemInline as const);
+				patchCell(arena, record, 4, 19, carriedSlot(source, 'body', _body));
+				const node = arena.view(record);
+				return node as unknown as T.ModItemInline.Bound;
+			});
+		}
+	}
+	throw new Error(`mod_item_inline writes no slot ${slot} alone`);
+}
 function withModItemInline(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.ModItemInline.Config;
 	switch (setter) {
 		case 'visibilityModifier':
 			return applySetter(args, (value?: Admit<T.VisibilityModifier>) =>
-				rebuilt(node, handle, () => buildModItemInline$patch(node, { ...config, visibilityModifier: value }))
+				rebuilt(node, handle, () => buildModItemInline$set(node, 'visibilityModifier', { visibilityModifier: value }))
 			);
 		case 'name':
 			return applySetter(args, (value: Admit<T.Identifier>) =>
-				rebuilt(node, handle, () => buildModItemInline$patch(node, { ...config, name: value }))
+				rebuilt(node, handle, () => buildModItemInline$set(node, 'name', { name: value }))
 			);
 		case 'body':
 			return applySetter(args, (value: Admit<T.DeclarationList>) =>
-				rebuilt(node, handle, () => buildModItemInline$patch(node, { ...config, body: value }))
+				rebuilt(node, handle, () => buildModItemInline$set(node, 'body', { body: value }))
 			);
 	}
 	throw new Error(`mod_item_inline has no $with.${setter}`);
@@ -14203,18 +18728,53 @@ function buildOrPatternBinary$patch(source: object, config: T.OrPatternBinary.Co
 		return node as unknown as T.OrPatternBinary.Bound;
 	});
 }
+function buildOrPatternBinary$set(
+	source: object,
+	slot: string,
+	config: Partial<T.OrPatternBinary.Config>
+): T.OrPatternBinary.Bound {
+	if (!editsInPlace(source)) {
+		const inputs = builtInputs(source);
+		return buildOrPatternBinary$patch(source, { ...(inputs.config as T.OrPatternBinary.Config), ...config });
+	}
+	switch (slot) {
+		case 'left': {
+			const _left = kindIdStorage<NonNullable<T.OrPatternBinary['_left']>>(config.left);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'or_pattern_binary', { left: _left });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.OrPatternBinary as const);
+				patchCell(arena, record, 2, 2, carriedSlot(source, 'left', _left));
+				const node = arena.view(record);
+				return node as unknown as T.OrPatternBinary.Bound;
+			});
+		}
+		case 'right': {
+			const _right = kindIdStorage<NonNullable<T.OrPatternBinary['_right']>>(config.right);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'or_pattern_binary', { right: _right });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.OrPatternBinary as const);
+				patchCell(arena, record, 3, 6, carriedSlot(source, 'right', _right));
+				const node = arena.view(record);
+				return node as unknown as T.OrPatternBinary.Bound;
+			});
+		}
+	}
+	throw new Error(`or_pattern_binary writes no slot ${slot} alone`);
+}
 function withOrPatternBinary(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.OrPatternBinary.Config;
 	switch (setter) {
 		case 'left':
 			return applySetter(args, (value: Admit<NonNullable<T.OrPatternBinary.Config>['left']>) =>
-				rebuilt(node, handle, () => buildOrPatternBinary$patch(node, { ...config, left: value }))
+				rebuilt(node, handle, () => buildOrPatternBinary$set(node, 'left', { left: value }))
 			);
 		case 'right':
 			return applySetter(args, (value: Admit<NonNullable<T.OrPatternBinary.Config>['right']>) =>
-				rebuilt(node, handle, () => buildOrPatternBinary$patch(node, { ...config, right: value }))
+				rebuilt(node, handle, () => buildOrPatternBinary$set(node, 'right', { right: value }))
 			);
 	}
 	throw new Error(`or_pattern_binary has no $with.${setter}`);
@@ -14409,22 +18969,72 @@ function buildRangeExpressionBinary$patch(
 		return node as unknown as T.RangeExpressionBinary.Bound;
 	});
 }
+function buildRangeExpressionBinary$set(
+	source: object,
+	slot: string,
+	config: Partial<T.RangeExpressionBinary.Config>
+): T.RangeExpressionBinary.Bound {
+	if (!editsInPlace(source)) {
+		const inputs = builtInputs(source);
+		return buildRangeExpressionBinary$patch(source, {
+			...(inputs.config as T.RangeExpressionBinary.Config),
+			...config
+		});
+	}
+	switch (slot) {
+		case 'start': {
+			const _start = kindIdStorage<NonNullable<T.RangeExpressionBinary['_start']>>(config.start);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'range_expression_binary', { start: _start });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.RangeExpressionBinary as const);
+				patchCell(arena, record, 2, 2, carriedSlot(source, 'start', _start));
+				const node = arena.view(record);
+				return node as unknown as T.RangeExpressionBinary.Bound;
+			});
+		}
+		case 'operator': {
+			const _operator = kindIdStorage<NonNullable<T.RangeExpressionBinary['_operator']>>(config.operator);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'range_expression_binary', { operator: _operator });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.RangeExpressionBinary as const);
+				patchCell(arena, record, 3, 6, carriedSlot(source, 'operator', _operator));
+				const node = arena.view(record);
+				return node as unknown as T.RangeExpressionBinary.Bound;
+			});
+		}
+		case 'end': {
+			const _end = kindIdStorage<NonNullable<T.RangeExpressionBinary['_end']>>(config.end);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'range_expression_binary', { end: _end });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.RangeExpressionBinary as const);
+				patchCell(arena, record, 4, 7, carriedSlot(source, 'end', _end));
+				const node = arena.view(record);
+				return node as unknown as T.RangeExpressionBinary.Bound;
+			});
+		}
+	}
+	throw new Error(`range_expression_binary writes no slot ${slot} alone`);
+}
 function withRangeExpressionBinary(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.RangeExpressionBinary.Config;
 	switch (setter) {
 		case 'start':
 			return applySetter(args, (value: Admit<NonNullable<T.RangeExpressionBinary.Config>['start']>) =>
-				rebuilt(node, handle, () => buildRangeExpressionBinary$patch(node, { ...config, start: value }))
+				rebuilt(node, handle, () => buildRangeExpressionBinary$set(node, 'start', { start: value }))
 			);
 		case 'operator':
 			return applySetter(args, (value: Admit<NonNullable<T.RangeExpressionBinary.Config>['operator']>) =>
-				rebuilt(node, handle, () => buildRangeExpressionBinary$patch(node, { ...config, operator: value }))
+				rebuilt(node, handle, () => buildRangeExpressionBinary$set(node, 'operator', { operator: value }))
 			);
 		case 'end':
 			return applySetter(args, (value: Admit<NonNullable<T.RangeExpressionBinary.Config>['end']>) =>
-				rebuilt(node, handle, () => buildRangeExpressionBinary$patch(node, { ...config, end: value }))
+				rebuilt(node, handle, () => buildRangeExpressionBinary$set(node, 'end', { end: value }))
 			);
 	}
 	throw new Error(`range_expression_binary has no $with.${setter}`);
@@ -14612,18 +19222,53 @@ function buildForeignModItemSemi$patch(
 		return node as unknown as T.ForeignModItemSemi.Bound;
 	});
 }
+function buildForeignModItemSemi$set(
+	source: object,
+	slot: string,
+	config: Partial<T.ForeignModItemSemi.Config>
+): T.ForeignModItemSemi.Bound {
+	if (!editsInPlace(source)) {
+		const inputs = builtInputs(source);
+		return buildForeignModItemSemi$patch(source, { ...(inputs.config as T.ForeignModItemSemi.Config), ...config });
+	}
+	switch (slot) {
+		case 'unsafe': {
+			const _unsafe = strictBooleanStorage(config.unsafe);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'foreign_mod_item_semi', { unsafe: _unsafe });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.ForeignModItemSemi as const);
+				patchFlag(record, 2, 1, _unsafe);
+				const node = arena.view(record);
+				return node as unknown as T.ForeignModItemSemi.Bound;
+			});
+		}
+		case 'externModifier': {
+			const _extern_modifier = orDefault(config.externModifier, () => buildExternModifier());
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'foreign_mod_item_semi', { externModifier: _extern_modifier });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.ForeignModItemSemi as const);
+				patchCell(arena, record, 3, 3, carriedSlot(source, 'externModifier', _extern_modifier));
+				const node = arena.view(record);
+				return node as unknown as T.ForeignModItemSemi.Bound;
+			});
+		}
+	}
+	throw new Error(`foreign_mod_item_semi writes no slot ${slot} alone`);
+}
 function withForeignModItemSemi(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.ForeignModItemSemi.Config;
 	switch (setter) {
 		case 'unsafe':
 			return applySetter(args, (value?: Admit<NonNullable<T.ForeignModItemSemi.Config>['unsafe']>) =>
-				rebuilt(node, handle, () => buildForeignModItemSemi$patch(node, { ...config, unsafe: value }))
+				rebuilt(node, handle, () => buildForeignModItemSemi$set(node, 'unsafe', { unsafe: value }))
 			);
 		case 'externModifier':
 			return applySetter(args, (value: Admit<T.ExternModifier>) =>
-				rebuilt(node, handle, () => buildForeignModItemSemi$patch(node, { ...config, externModifier: value }))
+				rebuilt(node, handle, () => buildForeignModItemSemi$set(node, 'externModifier', { externModifier: value }))
 			);
 	}
 	throw new Error(`foreign_mod_item_semi has no $with.${setter}`);
@@ -14677,22 +19322,69 @@ function buildForeignModItemBody$patch(
 		return node as unknown as T.ForeignModItemBody.Bound;
 	});
 }
+function buildForeignModItemBody$set(
+	source: object,
+	slot: string,
+	config: Partial<T.ForeignModItemBody.Config>
+): T.ForeignModItemBody.Bound {
+	if (!editsInPlace(source)) {
+		const inputs = builtInputs(source);
+		return buildForeignModItemBody$patch(source, { ...(inputs.config as T.ForeignModItemBody.Config), ...config });
+	}
+	switch (slot) {
+		case 'unsafe': {
+			const _unsafe = strictBooleanStorage(config.unsafe);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'foreign_mod_item_body', { unsafe: _unsafe });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.ForeignModItemBody as const);
+				patchFlag(record, 2, 1, _unsafe);
+				const node = arena.view(record);
+				return node as unknown as T.ForeignModItemBody.Bound;
+			});
+		}
+		case 'externModifier': {
+			const _extern_modifier = orDefault(config.externModifier, () => buildExternModifier());
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'foreign_mod_item_body', { externModifier: _extern_modifier });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.ForeignModItemBody as const);
+				patchCell(arena, record, 3, 3, carriedSlot(source, 'externModifier', _extern_modifier));
+				const node = arena.view(record);
+				return node as unknown as T.ForeignModItemBody.Bound;
+			});
+		}
+		case 'body': {
+			const _body = orDefault(config.body, () => buildDeclarationList());
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'foreign_mod_item_body', { body: _body });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.ForeignModItemBody as const);
+				patchCell(arena, record, 4, 11, carriedSlot(source, 'body', _body));
+				const node = arena.view(record);
+				return node as unknown as T.ForeignModItemBody.Bound;
+			});
+		}
+	}
+	throw new Error(`foreign_mod_item_body writes no slot ${slot} alone`);
+}
 function withForeignModItemBody(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.ForeignModItemBody.Config;
 	switch (setter) {
 		case 'unsafe':
 			return applySetter(args, (value?: Admit<NonNullable<T.ForeignModItemBody.Config>['unsafe']>) =>
-				rebuilt(node, handle, () => buildForeignModItemBody$patch(node, { ...config, unsafe: value }))
+				rebuilt(node, handle, () => buildForeignModItemBody$set(node, 'unsafe', { unsafe: value }))
 			);
 		case 'externModifier':
 			return applySetter(args, (value: Admit<T.ExternModifier>) =>
-				rebuilt(node, handle, () => buildForeignModItemBody$patch(node, { ...config, externModifier: value }))
+				rebuilt(node, handle, () => buildForeignModItemBody$set(node, 'externModifier', { externModifier: value }))
 			);
 		case 'body':
 			return applySetter(args, (value: Admit<T.DeclarationList>) =>
-				rebuilt(node, handle, () => buildForeignModItemBody$patch(node, { ...config, body: value }))
+				rebuilt(node, handle, () => buildForeignModItemBody$set(node, 'body', { body: value }))
 			);
 	}
 	throw new Error(`foreign_mod_item_body has no $with.${setter}`);
@@ -14744,25 +19436,72 @@ function buildMatchArmWithComma$patch(source: object, config: T.MatchArmWithComm
 		return node as unknown as T.MatchArmWithComma.Bound;
 	});
 }
+function buildMatchArmWithComma$set(
+	source: object,
+	slot: string,
+	config: Partial<T.MatchArmWithComma.Config>
+): T.MatchArmWithComma.Bound {
+	if (!editsInPlace(source)) {
+		const inputs = builtInputs(source);
+		return buildMatchArmWithComma$patch(source, { ...(inputs.config as T.MatchArmWithComma.Config), ...config });
+	}
+	switch (slot) {
+		case 'attributes': {
+			const _attributes = listStorage<NonNullable<T.MatchArmWithComma['_attributes']>>(config.attributes ?? []);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'match_arm_with_comma', { attributes: _attributes });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.MatchArmWithComma as const);
+				patchList(arena, record, 2, 2, _attributes);
+				const node = arena.view(record);
+				return node as unknown as T.MatchArmWithComma.Bound;
+			});
+		}
+		case 'match': {
+			const _match = config.match;
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'match_arm_with_comma', { match: _match });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.MatchArmWithComma as const);
+				patchCell(arena, record, 3, 3, carriedSlot(source, 'match', _match));
+				const node = arena.view(record);
+				return node as unknown as T.MatchArmWithComma.Bound;
+			});
+		}
+		case 'body': {
+			const _body = kindIdStorage<NonNullable<T.MatchArmWithComma['_body']>>(config.body);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'match_arm_with_comma', { body: _body });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.MatchArmWithComma as const);
+				patchCell(arena, record, 4, 13, carriedSlot(source, 'body', _body));
+				const node = arena.view(record);
+				return node as unknown as T.MatchArmWithComma.Bound;
+			});
+		}
+	}
+	throw new Error(`match_arm_with_comma writes no slot ${slot} alone`);
+}
 function withMatchArmWithComma(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.MatchArmWithComma.Config;
-	const readGroup_match = () => inputs.config['match'] as object | undefined;
+	const readGroup_match = () => builtInputs(node).config['match'] as object | undefined;
 	switch (setter) {
 		case 'attributes':
 			return applySetter(args, (...values: Admit<(T.AttributeItem | T.InnerAttributeItem)[]>) =>
 				rebuilt(node, handle, () =>
-					buildMatchArmWithComma$patch(node, { ...config, attributes: restItems('attributes', values) })
+					buildMatchArmWithComma$set(node, 'attributes', { attributes: restItems('attributes', values) })
 				)
 			);
 		case 'match':
 			return applySetter(args, (value: Admit<T.MatchPattern>) =>
-				rebuilt(node, handle, () => buildMatchArmWithComma$patch(node, { ...config, match: value }))
+				rebuilt(node, handle, () => buildMatchArmWithComma$set(node, 'match', { match: value }))
 			);
 		case 'body':
 			return applySetter(args, (value: Admit<NonNullable<T.MatchArmWithComma.Config>['body']>) =>
-				rebuilt(node, handle, () => buildMatchArmWithComma$patch(node, { ...config, body: value }))
+				rebuilt(node, handle, () => buildMatchArmWithComma$set(node, 'body', { body: value }))
 			);
 		case 'pattern':
 			return applySetter(args, (...args: unknown[]) =>
@@ -14779,7 +19518,7 @@ function withMatchArmWithComma(node: object, setter: string, args: readonly unkn
 						},
 						'pattern',
 						args,
-						(value: Admit<T.MatchPattern>) => buildMatchArmWithComma$patch(node, { ...config, match: value }),
+						(value: Admit<T.MatchPattern>) => buildMatchArmWithComma$set(node, 'match', { match: value }),
 						() => readGroup_match.call(node)
 					)
 				)
@@ -14799,7 +19538,7 @@ function withMatchArmWithComma(node: object, setter: string, args: readonly unkn
 						},
 						'condition',
 						args,
-						(value: Admit<T.MatchPattern>) => buildMatchArmWithComma$patch(node, { ...config, match: value }),
+						(value: Admit<T.MatchPattern>) => buildMatchArmWithComma$set(node, 'match', { match: value }),
 						() => readGroup_match.call(node)
 					)
 				)
@@ -14857,21 +19596,68 @@ function buildMatchArmBlockEnding$patch(
 		return node as unknown as T.MatchArmBlockEnding.Bound;
 	});
 }
+function buildMatchArmBlockEnding$set(
+	source: object,
+	slot: string,
+	config: Partial<T.MatchArmBlockEnding.Config>
+): T.MatchArmBlockEnding.Bound {
+	if (!editsInPlace(source)) {
+		const inputs = builtInputs(source);
+		return buildMatchArmBlockEnding$patch(source, { ...(inputs.config as T.MatchArmBlockEnding.Config), ...config });
+	}
+	switch (slot) {
+		case 'attributes': {
+			const _attributes = listStorage<NonNullable<T.MatchArmBlockEnding['_attributes']>>(config.attributes ?? []);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'match_arm_block_ending', { attributes: _attributes });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.MatchArmBlockEnding as const);
+				patchList(arena, record, 2, 2, _attributes);
+				const node = arena.view(record);
+				return node as unknown as T.MatchArmBlockEnding.Bound;
+			});
+		}
+		case 'match': {
+			const _match = config.match;
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'match_arm_block_ending', { match: _match });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.MatchArmBlockEnding as const);
+				patchCell(arena, record, 3, 3, carriedSlot(source, 'match', _match));
+				const node = arena.view(record);
+				return node as unknown as T.MatchArmBlockEnding.Bound;
+			});
+		}
+		case 'body': {
+			const _body = config.body;
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'match_arm_block_ending', { body: _body });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.MatchArmBlockEnding as const);
+				patchCell(arena, record, 4, 13, carriedSlot(source, 'body', _body));
+				const node = arena.view(record);
+				return node as unknown as T.MatchArmBlockEnding.Bound;
+			});
+		}
+	}
+	throw new Error(`match_arm_block_ending writes no slot ${slot} alone`);
+}
 function withMatchArmBlockEnding(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.MatchArmBlockEnding.Config;
-	const readGroup_match = () => inputs.config['match'] as object | undefined;
+	const readGroup_match = () => builtInputs(node).config['match'] as object | undefined;
 	switch (setter) {
 		case 'attributes':
 			return applySetter(args, (...values: Admit<(T.AttributeItem | T.InnerAttributeItem)[]>) =>
 				rebuilt(node, handle, () =>
-					buildMatchArmBlockEnding$patch(node, { ...config, attributes: restItems('attributes', values) })
+					buildMatchArmBlockEnding$set(node, 'attributes', { attributes: restItems('attributes', values) })
 				)
 			);
 		case 'match':
 			return applySetter(args, (value: Admit<T.MatchPattern>) =>
-				rebuilt(node, handle, () => buildMatchArmBlockEnding$patch(node, { ...config, match: value }))
+				rebuilt(node, handle, () => buildMatchArmBlockEnding$set(node, 'match', { match: value }))
 			);
 		case 'body':
 			return applySetter(
@@ -14890,7 +19676,7 @@ function withMatchArmBlockEnding(node: object, setter: string, args: readonly un
 						| T.ForExpression
 						| T.ConstBlock
 					>
-				) => rebuilt(node, handle, () => buildMatchArmBlockEnding$patch(node, { ...config, body: value }))
+				) => rebuilt(node, handle, () => buildMatchArmBlockEnding$set(node, 'body', { body: value }))
 			);
 		case 'pattern':
 			return applySetter(args, (...args: unknown[]) =>
@@ -14907,7 +19693,7 @@ function withMatchArmBlockEnding(node: object, setter: string, args: readonly un
 						},
 						'pattern',
 						args,
-						(value: Admit<T.MatchPattern>) => buildMatchArmBlockEnding$patch(node, { ...config, match: value }),
+						(value: Admit<T.MatchPattern>) => buildMatchArmBlockEnding$set(node, 'match', { match: value }),
 						() => readGroup_match.call(node)
 					)
 				)
@@ -14927,7 +19713,7 @@ function withMatchArmBlockEnding(node: object, setter: string, args: readonly un
 						},
 						'condition',
 						args,
-						(value: Admit<T.MatchPattern>) => buildMatchArmBlockEnding$patch(node, { ...config, match: value }),
+						(value: Admit<T.MatchPattern>) => buildMatchArmBlockEnding$set(node, 'match', { match: value }),
 						() => readGroup_match.call(node)
 					)
 				)
@@ -15709,22 +20495,74 @@ function buildFieldPatternShorthand$patch(
 		return node as unknown as T.FieldPatternShorthand.Bound;
 	});
 }
+function buildFieldPatternShorthand$set(
+	source: object,
+	slot: string,
+	config: Partial<T.FieldPatternShorthand.Config>
+): T.FieldPatternShorthand.Bound {
+	if (!editsInPlace(source)) {
+		const inputs = builtInputs(source);
+		return buildFieldPatternShorthand$patch(source, {
+			...(inputs.config as T.FieldPatternShorthand.Config),
+			...config
+		});
+	}
+	switch (slot) {
+		case 'byReference': {
+			const _by_reference = strictBooleanStorage(config.byReference);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'field_pattern_shorthand', { byReference: _by_reference });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.FieldPatternShorthand as const);
+				patchFlag(record, 2, 1, _by_reference);
+				const node = arena.view(record);
+				return node as unknown as T.FieldPatternShorthand.Bound;
+			});
+		}
+		case 'mutable': {
+			const _mutable = strictBooleanStorage(config.mutable);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'field_pattern_shorthand', { mutable: _mutable });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.FieldPatternShorthand as const);
+				patchFlag(record, 2, 2, _mutable);
+				const node = arena.view(record);
+				return node as unknown as T.FieldPatternShorthand.Bound;
+			});
+		}
+		case 'name': {
+			const _name = admitAliasContent<NonNullable<T.FieldPatternShorthand['_name']>>(config.name, [
+				[[1], (v: unknown) => buildShorthandFieldIdentifier(v as never)]
+			]);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'field_pattern_shorthand', { name: _name });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.FieldPatternShorthand as const);
+				patchCell(arena, record, 3, 3, carriedSlot(source, 'name', _name));
+				const node = arena.view(record);
+				return node as unknown as T.FieldPatternShorthand.Bound;
+			});
+		}
+	}
+	throw new Error(`field_pattern_shorthand writes no slot ${slot} alone`);
+}
 function withFieldPatternShorthand(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.FieldPatternShorthand.Config;
 	switch (setter) {
 		case 'byReference':
 			return applySetter(args, (value?: Admit<NonNullable<T.FieldPatternShorthand.Config>['byReference']>) =>
-				rebuilt(node, handle, () => buildFieldPatternShorthand$patch(node, { ...config, byReference: value }))
+				rebuilt(node, handle, () => buildFieldPatternShorthand$set(node, 'byReference', { byReference: value }))
 			);
 		case 'mutable':
 			return applySetter(args, (value?: Admit<NonNullable<T.FieldPatternShorthand.Config>['mutable']>) =>
-				rebuilt(node, handle, () => buildFieldPatternShorthand$patch(node, { ...config, mutable: value }))
+				rebuilt(node, handle, () => buildFieldPatternShorthand$set(node, 'mutable', { mutable: value }))
 			);
 		case 'name':
 			return applySetter(args, (value: Admit<T.ShorthandFieldIdentifier | T.ShorthandFieldIdentifier.Types>) =>
-				rebuilt(node, handle, () => buildFieldPatternShorthand$patch(node, { ...config, name: value }))
+				rebuilt(node, handle, () => buildFieldPatternShorthand$set(node, 'name', { name: value }))
 			);
 	}
 	throw new Error(`field_pattern_shorthand has no $with.${setter}`);
@@ -15793,26 +20631,87 @@ function buildFieldPatternNamed$patch(source: object, config: T.FieldPatternName
 		return node as unknown as T.FieldPatternNamed.Bound;
 	});
 }
+function buildFieldPatternNamed$set(
+	source: object,
+	slot: string,
+	config: Partial<T.FieldPatternNamed.Config>
+): T.FieldPatternNamed.Bound {
+	if (!editsInPlace(source)) {
+		const inputs = builtInputs(source);
+		return buildFieldPatternNamed$patch(source, { ...(inputs.config as T.FieldPatternNamed.Config), ...config });
+	}
+	switch (slot) {
+		case 'byReference': {
+			const _by_reference = strictBooleanStorage(config.byReference);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'field_pattern_named', { byReference: _by_reference });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.FieldPatternNamed as const);
+				patchFlag(record, 2, 1, _by_reference);
+				const node = arena.view(record);
+				return node as unknown as T.FieldPatternNamed.Bound;
+			});
+		}
+		case 'mutable': {
+			const _mutable = strictBooleanStorage(config.mutable);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'field_pattern_named', { mutable: _mutable });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.FieldPatternNamed as const);
+				patchFlag(record, 2, 2, _mutable);
+				const node = arena.view(record);
+				return node as unknown as T.FieldPatternNamed.Bound;
+			});
+		}
+		case 'name': {
+			const _name = admitAliasContent<NonNullable<T.FieldPatternNamed['_name']>>(config.name, [
+				[[1], (v: unknown) => buildFieldIdentifier(v as never)]
+			]);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'field_pattern_named', { name: _name });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.FieldPatternNamed as const);
+				patchCell(arena, record, 3, 3, carriedSlot(source, 'name', _name));
+				const node = arena.view(record);
+				return node as unknown as T.FieldPatternNamed.Bound;
+			});
+		}
+		case 'pattern': {
+			const _pattern = kindIdStorage<NonNullable<T.FieldPatternNamed['_pattern']>>(config.pattern);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'field_pattern_named', { pattern: _pattern });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.FieldPatternNamed as const);
+				patchCell(arena, record, 4, 8, carriedSlot(source, 'pattern', _pattern));
+				const node = arena.view(record);
+				return node as unknown as T.FieldPatternNamed.Bound;
+			});
+		}
+	}
+	throw new Error(`field_pattern_named writes no slot ${slot} alone`);
+}
 function withFieldPatternNamed(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.FieldPatternNamed.Config;
 	switch (setter) {
 		case 'byReference':
 			return applySetter(args, (value?: Admit<NonNullable<T.FieldPatternNamed.Config>['byReference']>) =>
-				rebuilt(node, handle, () => buildFieldPatternNamed$patch(node, { ...config, byReference: value }))
+				rebuilt(node, handle, () => buildFieldPatternNamed$set(node, 'byReference', { byReference: value }))
 			);
 		case 'mutable':
 			return applySetter(args, (value?: Admit<NonNullable<T.FieldPatternNamed.Config>['mutable']>) =>
-				rebuilt(node, handle, () => buildFieldPatternNamed$patch(node, { ...config, mutable: value }))
+				rebuilt(node, handle, () => buildFieldPatternNamed$set(node, 'mutable', { mutable: value }))
 			);
 		case 'name':
 			return applySetter(args, (value: Admit<T.FieldIdentifier | T.FieldIdentifier.Types>) =>
-				rebuilt(node, handle, () => buildFieldPatternNamed$patch(node, { ...config, name: value }))
+				rebuilt(node, handle, () => buildFieldPatternNamed$set(node, 'name', { name: value }))
 			);
 		case 'pattern':
 			return applySetter(args, (value: Admit<NonNullable<T.FieldPatternNamed.Config>['pattern']>) =>
-				rebuilt(node, handle, () => buildFieldPatternNamed$patch(node, { ...config, pattern: value }))
+				rebuilt(node, handle, () => buildFieldPatternNamed$set(node, 'pattern', { pattern: value }))
 			);
 	}
 	throw new Error(`field_pattern_named has no $with.${setter}`);
@@ -15860,14 +20759,49 @@ function buildMacroDefinitionParen$patch(
 		return node as unknown as T.MacroDefinitionParen.Bound;
 	});
 }
+function buildMacroDefinitionParen$set(
+	source: object,
+	slot: string,
+	config: Partial<T.MacroDefinitionParen.Config>
+): T.MacroDefinitionParen.Bound {
+	if (!editsInPlace(source)) {
+		const inputs = builtInputs(source);
+		return buildMacroDefinitionParen$patch(source, { ...(inputs.config as T.MacroDefinitionParen.Config), ...config });
+	}
+	switch (slot) {
+		case 'name': {
+			const _name = config.name;
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'macro_definition_paren', { name: _name });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.MacroDefinitionParen as const);
+				patchCell(arena, record, 2, 2, carriedSlot(source, 'name', _name));
+				const node = arena.view(record);
+				return node as unknown as T.MacroDefinitionParen.Bound;
+			});
+		}
+		case 'macroRules': {
+			const _macro_rules = config.macroRules;
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'macro_definition_paren', { macroRules: _macro_rules });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.MacroDefinitionParen as const);
+				patchCell(arena, record, 3, 5, carriedSlot(source, 'macroRules', _macro_rules));
+				const node = arena.view(record);
+				return node as unknown as T.MacroDefinitionParen.Bound;
+			});
+		}
+	}
+	throw new Error(`macro_definition_paren writes no slot ${slot} alone`);
+}
 function withMacroDefinitionParen(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.MacroDefinitionParen.Config;
 	switch (setter) {
 		case 'name':
 			return applySetter(args, (value: Admit<T.Identifier>) =>
-				rebuilt(node, handle, () => buildMacroDefinitionParen$patch(node, { ...config, name: value }))
+				rebuilt(node, handle, () => buildMacroDefinitionParen$set(node, 'name', { name: value }))
 			);
 		case 'macroRules':
 			return applySetter(args, (...args: unknown[]) =>
@@ -15875,7 +20809,7 @@ function withMacroDefinitionParen(node: object, setter: string, args: readonly u
 					listSlotWith(
 						args,
 						{ kind: TSKindId.MacroRules as const, optional: true, make: buildMacroRules },
-						(value?: Admit<T.MacroRules>) => buildMacroDefinitionParen$patch(node, { ...config, macroRules: value })
+						(value?: Admit<T.MacroRules>) => buildMacroDefinitionParen$set(node, 'macroRules', { macroRules: value })
 					)
 				)
 			);
@@ -15927,14 +20861,52 @@ function buildMacroDefinitionBracket$patch(
 		return node as unknown as T.MacroDefinitionBracket.Bound;
 	});
 }
+function buildMacroDefinitionBracket$set(
+	source: object,
+	slot: string,
+	config: Partial<T.MacroDefinitionBracket.Config>
+): T.MacroDefinitionBracket.Bound {
+	if (!editsInPlace(source)) {
+		const inputs = builtInputs(source);
+		return buildMacroDefinitionBracket$patch(source, {
+			...(inputs.config as T.MacroDefinitionBracket.Config),
+			...config
+		});
+	}
+	switch (slot) {
+		case 'name': {
+			const _name = config.name;
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'macro_definition_bracket', { name: _name });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.MacroDefinitionBracket as const);
+				patchCell(arena, record, 2, 2, carriedSlot(source, 'name', _name));
+				const node = arena.view(record);
+				return node as unknown as T.MacroDefinitionBracket.Bound;
+			});
+		}
+		case 'macroRules': {
+			const _macro_rules = config.macroRules;
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'macro_definition_bracket', { macroRules: _macro_rules });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.MacroDefinitionBracket as const);
+				patchCell(arena, record, 3, 5, carriedSlot(source, 'macroRules', _macro_rules));
+				const node = arena.view(record);
+				return node as unknown as T.MacroDefinitionBracket.Bound;
+			});
+		}
+	}
+	throw new Error(`macro_definition_bracket writes no slot ${slot} alone`);
+}
 function withMacroDefinitionBracket(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.MacroDefinitionBracket.Config;
 	switch (setter) {
 		case 'name':
 			return applySetter(args, (value: Admit<T.Identifier>) =>
-				rebuilt(node, handle, () => buildMacroDefinitionBracket$patch(node, { ...config, name: value }))
+				rebuilt(node, handle, () => buildMacroDefinitionBracket$set(node, 'name', { name: value }))
 			);
 		case 'macroRules':
 			return applySetter(args, (...args: unknown[]) =>
@@ -15942,7 +20914,7 @@ function withMacroDefinitionBracket(node: object, setter: string, args: readonly
 					listSlotWith(
 						args,
 						{ kind: TSKindId.MacroRules as const, optional: true, make: buildMacroRules },
-						(value?: Admit<T.MacroRules>) => buildMacroDefinitionBracket$patch(node, { ...config, macroRules: value })
+						(value?: Admit<T.MacroRules>) => buildMacroDefinitionBracket$set(node, 'macroRules', { macroRules: value })
 					)
 				)
 			);
@@ -15992,14 +20964,49 @@ function buildMacroDefinitionBrace$patch(
 		return node as unknown as T.MacroDefinitionBrace.Bound;
 	});
 }
+function buildMacroDefinitionBrace$set(
+	source: object,
+	slot: string,
+	config: Partial<T.MacroDefinitionBrace.Config>
+): T.MacroDefinitionBrace.Bound {
+	if (!editsInPlace(source)) {
+		const inputs = builtInputs(source);
+		return buildMacroDefinitionBrace$patch(source, { ...(inputs.config as T.MacroDefinitionBrace.Config), ...config });
+	}
+	switch (slot) {
+		case 'name': {
+			const _name = config.name;
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'macro_definition_brace', { name: _name });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.MacroDefinitionBrace as const);
+				patchCell(arena, record, 2, 2, carriedSlot(source, 'name', _name));
+				const node = arena.view(record);
+				return node as unknown as T.MacroDefinitionBrace.Bound;
+			});
+		}
+		case 'macroRules': {
+			const _macro_rules = config.macroRules;
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'macro_definition_brace', { macroRules: _macro_rules });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.MacroDefinitionBrace as const);
+				patchCell(arena, record, 3, 5, carriedSlot(source, 'macroRules', _macro_rules));
+				const node = arena.view(record);
+				return node as unknown as T.MacroDefinitionBrace.Bound;
+			});
+		}
+	}
+	throw new Error(`macro_definition_brace writes no slot ${slot} alone`);
+}
 function withMacroDefinitionBrace(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.MacroDefinitionBrace.Config;
 	switch (setter) {
 		case 'name':
 			return applySetter(args, (value: Admit<T.Identifier>) =>
-				rebuilt(node, handle, () => buildMacroDefinitionBrace$patch(node, { ...config, name: value }))
+				rebuilt(node, handle, () => buildMacroDefinitionBrace$set(node, 'name', { name: value }))
 			);
 		case 'macroRules':
 			return applySetter(args, (...args: unknown[]) =>
@@ -16007,7 +21014,7 @@ function withMacroDefinitionBrace(node: object, setter: string, args: readonly u
 					listSlotWith(
 						args,
 						{ kind: TSKindId.MacroRules as const, optional: true, make: buildMacroRules },
-						(value?: Admit<T.MacroRules>) => buildMacroDefinitionBrace$patch(node, { ...config, macroRules: value })
+						(value?: Admit<T.MacroRules>) => buildMacroDefinitionBrace$set(node, 'macroRules', { macroRules: value })
 					)
 				)
 			);
@@ -16064,18 +21071,58 @@ function buildRangePatternPrefix$patch(
 		return node as unknown as T.RangePatternPrefix.Bound;
 	});
 }
+function buildRangePatternPrefix$set(
+	source: object,
+	slot: string,
+	config: Partial<T.RangePatternPrefix.Config>
+): T.RangePatternPrefix.Bound {
+	if (!editsInPlace(source)) {
+		const inputs = builtInputs(source);
+		return buildRangePatternPrefix$patch(source, { ...(inputs.config as T.RangePatternPrefix.Config), ...config });
+	}
+	switch (slot) {
+		case 'operator': {
+			const _operator = kindIdStorage<NonNullable<T.RangePatternPrefix['_operator']>>(config.operator);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'range_pattern_prefix', { operator: _operator });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.RangePatternPrefix as const);
+				patchCell(arena, record, 2, 2, carriedSlot(source, 'operator', _operator));
+				const node = arena.view(record);
+				return node as unknown as T.RangePatternPrefix.Bound;
+			});
+		}
+		case 'right': {
+			const _right = rejectKeywordText(
+				kindIdStorage<NonNullable<T.RangePatternPrefix['_right']>>(config.right),
+				'RangePatternPrefix.right',
+				TSKindId.Identifier,
+				['self', 'super', 'crate']
+			);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'range_pattern_prefix', { right: _right });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.RangePatternPrefix as const);
+				patchCell(arena, record, 3, 3, carriedSlot(source, 'right', _right));
+				const node = arena.view(record);
+				return node as unknown as T.RangePatternPrefix.Bound;
+			});
+		}
+	}
+	throw new Error(`range_pattern_prefix writes no slot ${slot} alone`);
+}
 function withRangePatternPrefix(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.RangePatternPrefix.Config;
 	switch (setter) {
 		case 'operator':
 			return applySetter(args, (value: Admit<NonNullable<T.RangePatternPrefix.Config>['operator']>) =>
-				rebuilt(node, handle, () => buildRangePatternPrefix$patch(node, { ...config, operator: value }))
+				rebuilt(node, handle, () => buildRangePatternPrefix$set(node, 'operator', { operator: value }))
 			);
 		case 'right':
 			return applySetter(args, (value: Admit<NonNullable<T.RangePatternPrefix.Config>['right']>) =>
-				rebuilt(node, handle, () => buildRangePatternPrefix$patch(node, { ...config, right: value }))
+				rebuilt(node, handle, () => buildRangePatternPrefix$set(node, 'right', { right: value }))
 			);
 	}
 	throw new Error(`range_pattern_prefix has no $with.${setter}`);
@@ -16134,18 +21181,61 @@ function buildRangePatternWithLeftWithRight$patch(
 		return node as unknown as T.RangePatternWithLeftWithRight.Bound;
 	});
 }
+function buildRangePatternWithLeftWithRight$set(
+	source: object,
+	slot: string,
+	config: Partial<T.RangePatternWithLeftWithRight.Config>
+): T.RangePatternWithLeftWithRight.Bound {
+	if (!editsInPlace(source)) {
+		const inputs = builtInputs(source);
+		return buildRangePatternWithLeftWithRight$patch(source, {
+			...(inputs.config as T.RangePatternWithLeftWithRight.Config),
+			...config
+		});
+	}
+	switch (slot) {
+		case 'operator': {
+			const _operator = kindIdStorage<NonNullable<T.RangePatternWithLeftWithRight['_operator']>>(config.operator);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'range_pattern_with_left_with_right', { operator: _operator });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.RangePatternWithLeftWithRight as const);
+				patchCell(arena, record, 2, 2, carriedSlot(source, 'operator', _operator));
+				const node = arena.view(record);
+				return node as unknown as T.RangePatternWithLeftWithRight.Bound;
+			});
+		}
+		case 'right': {
+			const _right = rejectKeywordText(
+				kindIdStorage<NonNullable<T.RangePatternWithLeftWithRight['_right']>>(config.right),
+				'RangePatternWithLeftWithRight.right',
+				TSKindId.Identifier,
+				['self', 'super', 'crate']
+			);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'range_pattern_with_left_with_right', { right: _right });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.RangePatternWithLeftWithRight as const);
+				patchCell(arena, record, 3, 3, carriedSlot(source, 'right', _right));
+				const node = arena.view(record);
+				return node as unknown as T.RangePatternWithLeftWithRight.Bound;
+			});
+		}
+	}
+	throw new Error(`range_pattern_with_left_with_right writes no slot ${slot} alone`);
+}
 function withRangePatternWithLeftWithRight(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.RangePatternWithLeftWithRight.Config;
 	switch (setter) {
 		case 'operator':
 			return applySetter(args, (value: Admit<NonNullable<T.RangePatternWithLeftWithRight.Config>['operator']>) =>
-				rebuilt(node, handle, () => buildRangePatternWithLeftWithRight$patch(node, { ...config, operator: value }))
+				rebuilt(node, handle, () => buildRangePatternWithLeftWithRight$set(node, 'operator', { operator: value }))
 			);
 		case 'right':
 			return applySetter(args, (value: Admit<NonNullable<T.RangePatternWithLeftWithRight.Config>['right']>) =>
-				rebuilt(node, handle, () => buildRangePatternWithLeftWithRight$patch(node, { ...config, right: value }))
+				rebuilt(node, handle, () => buildRangePatternWithLeftWithRight$set(node, 'right', { right: value }))
 			);
 	}
 	throw new Error(`range_pattern_with_left_with_right has no $with.${setter}`);
@@ -16205,18 +21295,58 @@ function buildRangePatternWithLeft$patch(
 		return node as unknown as T.RangePatternWithLeft.Bound;
 	});
 }
+function buildRangePatternWithLeft$set(
+	source: object,
+	slot: string,
+	config: Partial<T.RangePatternWithLeft.Config>
+): T.RangePatternWithLeft.Bound {
+	if (!editsInPlace(source)) {
+		const inputs = builtInputs(source);
+		return buildRangePatternWithLeft$patch(source, { ...(inputs.config as T.RangePatternWithLeft.Config), ...config });
+	}
+	switch (slot) {
+		case 'left': {
+			const _left = rejectKeywordText(
+				kindIdStorage<NonNullable<T.RangePatternWithLeft['_left']>>(config.left),
+				'RangePatternWithLeft.left',
+				TSKindId.Identifier,
+				['self', 'super', 'crate']
+			);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'range_pattern_with_left', { left: _left });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.RangePatternWithLeft as const);
+				patchCell(arena, record, 2, 2, carriedSlot(source, 'left', _left));
+				const node = arena.view(record);
+				return node as unknown as T.RangePatternWithLeft.Bound;
+			});
+		}
+		case 'content': {
+			const _content = kindIdStorage<NonNullable<T.RangePatternWithLeft['_content']>>(config.content);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'range_pattern_with_left', { content: _content });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.RangePatternWithLeft as const);
+				patchCell(arena, record, 3, 6, carriedSlot(source, 'content', _content));
+				const node = arena.view(record);
+				return node as unknown as T.RangePatternWithLeft.Bound;
+			});
+		}
+	}
+	throw new Error(`range_pattern_with_left writes no slot ${slot} alone`);
+}
 function withRangePatternWithLeft(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.RangePatternWithLeft.Config;
 	switch (setter) {
 		case 'left':
 			return applySetter(args, (value: Admit<NonNullable<T.RangePatternWithLeft.Config>['left']>) =>
-				rebuilt(node, handle, () => buildRangePatternWithLeft$patch(node, { ...config, left: value }))
+				rebuilt(node, handle, () => buildRangePatternWithLeft$set(node, 'left', { left: value }))
 			);
 		case 'content':
 			return applySetter(args, (value: Admit<NonNullable<T.RangePatternWithLeft.Config>['content']>) =>
-				rebuilt(node, handle, () => buildRangePatternWithLeft$patch(node, { ...config, content: value }))
+				rebuilt(node, handle, () => buildRangePatternWithLeft$set(node, 'content', { content: value }))
 			);
 	}
 	throw new Error(`range_pattern_with_left has no $with.${setter}`);
@@ -16315,18 +21445,92 @@ function buildStructItemBrace$patch(source: object, config: T.StructItemBrace.Co
 		return node as unknown as T.StructItemBrace.Bound;
 	});
 }
+function buildStructItemBrace$set(
+	source: object,
+	slot: string,
+	config: Partial<T.StructItemBrace.Config>
+): T.StructItemBrace.Bound {
+	if (!editsInPlace(source)) {
+		const inputs = builtInputs(source);
+		return buildStructItemBrace$patch(source, { ...(inputs.config as T.StructItemBrace.Config), ...config });
+	}
+	switch (slot) {
+		case 'visibilityModifier': {
+			const _visibility_modifier = config.visibilityModifier;
+			const handle = currentHandle();
+			if (handle !== undefined)
+				admitChildren(handle, 'struct_item_brace', { visibilityModifier: _visibility_modifier });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.StructItemBrace as const);
+				patchCell(arena, record, 2, 2, carriedSlot(source, 'visibilityModifier', _visibility_modifier));
+				const node = arena.view(record);
+				return node as unknown as T.StructItemBrace.Bound;
+			});
+		}
+		case 'name': {
+			const _name = admitAliasContent<NonNullable<T.StructItemBrace['_name']>>(config.name, [
+				[[1], (v: unknown) => buildTypeIdentifier(v as never)]
+			]);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'struct_item_brace', { name: _name });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.StructItemBrace as const);
+				patchCell(arena, record, 3, 16, carriedSlot(source, 'name', _name));
+				const node = arena.view(record);
+				return node as unknown as T.StructItemBrace.Bound;
+			});
+		}
+		case 'typeParameters': {
+			const _type_parameters = config.typeParameters;
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'struct_item_brace', { typeParameters: _type_parameters });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.StructItemBrace as const);
+				patchCell(arena, record, 4, 21, carriedSlot(source, 'typeParameters', _type_parameters));
+				const node = arena.view(record);
+				return node as unknown as T.StructItemBrace.Bound;
+			});
+		}
+		case 'whereClause': {
+			const _where_clause = config.whereClause;
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'struct_item_brace', { whereClause: _where_clause });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.StructItemBrace as const);
+				patchCell(arena, record, 5, 26, carriedSlot(source, 'whereClause', _where_clause));
+				const node = arena.view(record);
+				return node as unknown as T.StructItemBrace.Bound;
+			});
+		}
+		case 'body': {
+			const _body = orDefault(config.body, () => buildFieldDeclarationList());
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'struct_item_brace', { body: _body });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.StructItemBrace as const);
+				patchCell(arena, record, 6, 31, carriedSlot(source, 'body', _body));
+				const node = arena.view(record);
+				return node as unknown as T.StructItemBrace.Bound;
+			});
+		}
+	}
+	throw new Error(`struct_item_brace writes no slot ${slot} alone`);
+}
 function withStructItemBrace(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.StructItemBrace.Config;
 	switch (setter) {
 		case 'visibilityModifier':
 			return applySetter(args, (value?: Admit<T.VisibilityModifier>) =>
-				rebuilt(node, handle, () => buildStructItemBrace$patch(node, { ...config, visibilityModifier: value }))
+				rebuilt(node, handle, () => buildStructItemBrace$set(node, 'visibilityModifier', { visibilityModifier: value }))
 			);
 		case 'name':
 			return applySetter(args, (value: Admit<T.TypeIdentifier | T.TypeIdentifier.Types>) =>
-				rebuilt(node, handle, () => buildStructItemBrace$patch(node, { ...config, name: value }))
+				rebuilt(node, handle, () => buildStructItemBrace$set(node, 'name', { name: value }))
 			);
 		case 'typeParameters':
 			return applySetter(args, (...args: unknown[]) =>
@@ -16339,7 +21543,8 @@ function withStructItemBrace(node: object, setter: string, args: readonly unknow
 							make: buildTypeParameters,
 							element: { keys: ['attributeItems', 'content'], make: buildAttributedTypeParameter }
 						},
-						(value?: Admit<T.TypeParameters>) => buildStructItemBrace$patch(node, { ...config, typeParameters: value })
+						(value?: Admit<T.TypeParameters>) =>
+							buildStructItemBrace$set(node, 'typeParameters', { typeParameters: value })
 					)
 				)
 			);
@@ -16349,7 +21554,7 @@ function withStructItemBrace(node: object, setter: string, args: readonly unknow
 					listSlotWith(
 						args,
 						{ kind: TSKindId.WhereClause as const, optional: true, make: buildWhereClause },
-						(value?: Admit<T.WhereClause>) => buildStructItemBrace$patch(node, { ...config, whereClause: value })
+						(value?: Admit<T.WhereClause>) => buildStructItemBrace$set(node, 'whereClause', { whereClause: value })
 					)
 				)
 			);
@@ -16364,7 +21569,7 @@ function withStructItemBrace(node: object, setter: string, args: readonly unknow
 							make: buildFieldDeclarationList,
 							element: { keys: ['attributeItems', 'fieldDeclaration'], make: buildAttributedFieldDeclaration }
 						},
-						(value: Admit<T.FieldDeclarationList>) => buildStructItemBrace$patch(node, { ...config, body: value })
+						(value: Admit<T.FieldDeclarationList>) => buildStructItemBrace$set(node, 'body', { body: value })
 					)
 				)
 			);
@@ -16465,18 +21670,92 @@ function buildStructItemTuple$patch(source: object, config: T.StructItemTuple.Co
 		return node as unknown as T.StructItemTuple.Bound;
 	});
 }
+function buildStructItemTuple$set(
+	source: object,
+	slot: string,
+	config: Partial<T.StructItemTuple.Config>
+): T.StructItemTuple.Bound {
+	if (!editsInPlace(source)) {
+		const inputs = builtInputs(source);
+		return buildStructItemTuple$patch(source, { ...(inputs.config as T.StructItemTuple.Config), ...config });
+	}
+	switch (slot) {
+		case 'visibilityModifier': {
+			const _visibility_modifier = config.visibilityModifier;
+			const handle = currentHandle();
+			if (handle !== undefined)
+				admitChildren(handle, 'struct_item_tuple', { visibilityModifier: _visibility_modifier });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.StructItemTuple as const);
+				patchCell(arena, record, 2, 2, carriedSlot(source, 'visibilityModifier', _visibility_modifier));
+				const node = arena.view(record);
+				return node as unknown as T.StructItemTuple.Bound;
+			});
+		}
+		case 'name': {
+			const _name = admitAliasContent<NonNullable<T.StructItemTuple['_name']>>(config.name, [
+				[[1], (v: unknown) => buildTypeIdentifier(v as never)]
+			]);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'struct_item_tuple', { name: _name });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.StructItemTuple as const);
+				patchCell(arena, record, 3, 16, carriedSlot(source, 'name', _name));
+				const node = arena.view(record);
+				return node as unknown as T.StructItemTuple.Bound;
+			});
+		}
+		case 'typeParameters': {
+			const _type_parameters = config.typeParameters;
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'struct_item_tuple', { typeParameters: _type_parameters });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.StructItemTuple as const);
+				patchCell(arena, record, 4, 21, carriedSlot(source, 'typeParameters', _type_parameters));
+				const node = arena.view(record);
+				return node as unknown as T.StructItemTuple.Bound;
+			});
+		}
+		case 'body': {
+			const _body = orDefault(config.body, () => buildOrderedFieldDeclarationList());
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'struct_item_tuple', { body: _body });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.StructItemTuple as const);
+				patchCell(arena, record, 5, 26, carriedSlot(source, 'body', _body));
+				const node = arena.view(record);
+				return node as unknown as T.StructItemTuple.Bound;
+			});
+		}
+		case 'whereClause': {
+			const _where_clause = config.whereClause;
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'struct_item_tuple', { whereClause: _where_clause });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.StructItemTuple as const);
+				patchCell(arena, record, 6, 31, carriedSlot(source, 'whereClause', _where_clause));
+				const node = arena.view(record);
+				return node as unknown as T.StructItemTuple.Bound;
+			});
+		}
+	}
+	throw new Error(`struct_item_tuple writes no slot ${slot} alone`);
+}
 function withStructItemTuple(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.StructItemTuple.Config;
 	switch (setter) {
 		case 'visibilityModifier':
 			return applySetter(args, (value?: Admit<T.VisibilityModifier>) =>
-				rebuilt(node, handle, () => buildStructItemTuple$patch(node, { ...config, visibilityModifier: value }))
+				rebuilt(node, handle, () => buildStructItemTuple$set(node, 'visibilityModifier', { visibilityModifier: value }))
 			);
 		case 'name':
 			return applySetter(args, (value: Admit<T.TypeIdentifier | T.TypeIdentifier.Types>) =>
-				rebuilt(node, handle, () => buildStructItemTuple$patch(node, { ...config, name: value }))
+				rebuilt(node, handle, () => buildStructItemTuple$set(node, 'name', { name: value }))
 			);
 		case 'typeParameters':
 			return applySetter(args, (...args: unknown[]) =>
@@ -16489,7 +21768,8 @@ function withStructItemTuple(node: object, setter: string, args: readonly unknow
 							make: buildTypeParameters,
 							element: { keys: ['attributeItems', 'content'], make: buildAttributedTypeParameter }
 						},
-						(value?: Admit<T.TypeParameters>) => buildStructItemTuple$patch(node, { ...config, typeParameters: value })
+						(value?: Admit<T.TypeParameters>) =>
+							buildStructItemTuple$set(node, 'typeParameters', { typeParameters: value })
 					)
 				)
 			);
@@ -16504,8 +21784,7 @@ function withStructItemTuple(node: object, setter: string, args: readonly unknow
 							make: buildOrderedFieldDeclarationList,
 							element: { keys: ['attributeItems', 'visibilityModifier', 'type'], make: buildAttributedOrderedField }
 						},
-						(value: Admit<T.OrderedFieldDeclarationList>) =>
-							buildStructItemTuple$patch(node, { ...config, body: value })
+						(value: Admit<T.OrderedFieldDeclarationList>) => buildStructItemTuple$set(node, 'body', { body: value })
 					)
 				)
 			);
@@ -16515,7 +21794,7 @@ function withStructItemTuple(node: object, setter: string, args: readonly unknow
 					listSlotWith(
 						args,
 						{ kind: TSKindId.WhereClause as const, optional: true, make: buildWhereClause },
-						(value?: Admit<T.WhereClause>) => buildStructItemTuple$patch(node, { ...config, whereClause: value })
+						(value?: Admit<T.WhereClause>) => buildStructItemTuple$set(node, 'whereClause', { whereClause: value })
 					)
 				)
 			);
@@ -16584,18 +21863,67 @@ function buildStructItemUnit$patch(source: object, config: T.StructItemUnit.Conf
 		return node as unknown as T.StructItemUnit.Bound;
 	});
 }
+function buildStructItemUnit$set(
+	source: object,
+	slot: string,
+	config: Partial<T.StructItemUnit.Config>
+): T.StructItemUnit.Bound {
+	if (!editsInPlace(source)) {
+		const inputs = builtInputs(source);
+		return buildStructItemUnit$patch(source, { ...(inputs.config as T.StructItemUnit.Config), ...config });
+	}
+	switch (slot) {
+		case 'visibilityModifier': {
+			const _visibility_modifier = config.visibilityModifier;
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'struct_item_unit', { visibilityModifier: _visibility_modifier });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.StructItemUnit as const);
+				patchCell(arena, record, 2, 2, carriedSlot(source, 'visibilityModifier', _visibility_modifier));
+				const node = arena.view(record);
+				return node as unknown as T.StructItemUnit.Bound;
+			});
+		}
+		case 'name': {
+			const _name = admitAliasContent<NonNullable<T.StructItemUnit['_name']>>(config.name, [
+				[[1], (v: unknown) => buildTypeIdentifier(v as never)]
+			]);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'struct_item_unit', { name: _name });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.StructItemUnit as const);
+				patchCell(arena, record, 3, 16, carriedSlot(source, 'name', _name));
+				const node = arena.view(record);
+				return node as unknown as T.StructItemUnit.Bound;
+			});
+		}
+		case 'typeParameters': {
+			const _type_parameters = config.typeParameters;
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'struct_item_unit', { typeParameters: _type_parameters });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.StructItemUnit as const);
+				patchCell(arena, record, 4, 21, carriedSlot(source, 'typeParameters', _type_parameters));
+				const node = arena.view(record);
+				return node as unknown as T.StructItemUnit.Bound;
+			});
+		}
+	}
+	throw new Error(`struct_item_unit writes no slot ${slot} alone`);
+}
 function withStructItemUnit(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.StructItemUnit.Config;
 	switch (setter) {
 		case 'visibilityModifier':
 			return applySetter(args, (value?: Admit<T.VisibilityModifier>) =>
-				rebuilt(node, handle, () => buildStructItemUnit$patch(node, { ...config, visibilityModifier: value }))
+				rebuilt(node, handle, () => buildStructItemUnit$set(node, 'visibilityModifier', { visibilityModifier: value }))
 			);
 		case 'name':
 			return applySetter(args, (value: Admit<T.TypeIdentifier | T.TypeIdentifier.Types>) =>
-				rebuilt(node, handle, () => buildStructItemUnit$patch(node, { ...config, name: value }))
+				rebuilt(node, handle, () => buildStructItemUnit$set(node, 'name', { name: value }))
 			);
 		case 'typeParameters':
 			return applySetter(args, (...args: unknown[]) =>
@@ -16608,7 +21936,8 @@ function withStructItemUnit(node: object, setter: string, args: readonly unknown
 							make: buildTypeParameters,
 							element: { keys: ['attributeItems', 'content'], make: buildAttributedTypeParameter }
 						},
-						(value?: Admit<T.TypeParameters>) => buildStructItemUnit$patch(node, { ...config, typeParameters: value })
+						(value?: Admit<T.TypeParameters>) =>
+							buildStructItemUnit$set(node, 'typeParameters', { typeParameters: value })
 					)
 				)
 			);
@@ -16677,23 +22006,66 @@ function buildAttributedFieldDeclaration$patch(
 		return node as unknown as T.AttributedFieldDeclaration.Bound;
 	});
 }
+function buildAttributedFieldDeclaration$set(
+	source: object,
+	slot: string,
+	config: Partial<T.AttributedFieldDeclaration.Config>
+): T.AttributedFieldDeclaration.Bound {
+	if (!editsInPlace(source)) {
+		const inputs = builtInputs(source);
+		return buildAttributedFieldDeclaration$patch(source, {
+			...(inputs.config as T.AttributedFieldDeclaration.Config),
+			...config
+		});
+	}
+	switch (slot) {
+		case 'attributeItems': {
+			const _attribute_item = listStorage<NonNullable<T.AttributedFieldDeclaration['_attribute_item']>>(
+				config.attributeItems ?? []
+			);
+			const handle = currentHandle();
+			if (handle !== undefined)
+				admitChildren(handle, 'attributed_field_declaration', { attributeItems: _attribute_item });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.AttributedFieldDeclaration as const);
+				patchList(arena, record, 2, 2, _attribute_item);
+				const node = arena.view(record);
+				return node as unknown as T.AttributedFieldDeclaration.Bound;
+			});
+		}
+		case 'fieldDeclaration': {
+			const _field_declaration = config.fieldDeclaration;
+			const handle = currentHandle();
+			if (handle !== undefined)
+				admitChildren(handle, 'attributed_field_declaration', { fieldDeclaration: _field_declaration });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.AttributedFieldDeclaration as const);
+				patchCell(arena, record, 3, 3, carriedSlot(source, 'fieldDeclaration', _field_declaration));
+				const node = arena.view(record);
+				return node as unknown as T.AttributedFieldDeclaration.Bound;
+			});
+		}
+	}
+	throw new Error(`attributed_field_declaration writes no slot ${slot} alone`);
+}
 function withAttributedFieldDeclaration(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.AttributedFieldDeclaration.Config;
 	switch (setter) {
 		case 'attributeItems':
 			return applySetter(args, (...values: Admit<T.AttributeItem[]>) =>
 				rebuilt(node, handle, () =>
-					buildAttributedFieldDeclaration$patch(node, {
-						...config,
+					buildAttributedFieldDeclaration$set(node, 'attributeItems', {
 						attributeItems: restItems('attributeItems', values)
 					})
 				)
 			);
 		case 'fieldDeclaration':
 			return applySetter(args, (value: Admit<T.FieldDeclaration>) =>
-				rebuilt(node, handle, () => buildAttributedFieldDeclaration$patch(node, { ...config, fieldDeclaration: value }))
+				rebuilt(node, handle, () =>
+					buildAttributedFieldDeclaration$set(node, 'fieldDeclaration', { fieldDeclaration: value })
+				)
 			);
 	}
 	throw new Error(`attributed_field_declaration has no $with.${setter}`);
@@ -16750,20 +22122,62 @@ function buildAttributedEnumVariant$patch(
 		return node as unknown as T.AttributedEnumVariant.Bound;
 	});
 }
+function buildAttributedEnumVariant$set(
+	source: object,
+	slot: string,
+	config: Partial<T.AttributedEnumVariant.Config>
+): T.AttributedEnumVariant.Bound {
+	if (!editsInPlace(source)) {
+		const inputs = builtInputs(source);
+		return buildAttributedEnumVariant$patch(source, {
+			...(inputs.config as T.AttributedEnumVariant.Config),
+			...config
+		});
+	}
+	switch (slot) {
+		case 'attributeItems': {
+			const _attribute_item = listStorage<NonNullable<T.AttributedEnumVariant['_attribute_item']>>(
+				config.attributeItems ?? []
+			);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'attributed_enum_variant', { attributeItems: _attribute_item });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.AttributedEnumVariant as const);
+				patchList(arena, record, 2, 2, _attribute_item);
+				const node = arena.view(record);
+				return node as unknown as T.AttributedEnumVariant.Bound;
+			});
+		}
+		case 'enumVariant': {
+			const _enum_variant = config.enumVariant;
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'attributed_enum_variant', { enumVariant: _enum_variant });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.AttributedEnumVariant as const);
+				patchCell(arena, record, 3, 3, carriedSlot(source, 'enumVariant', _enum_variant));
+				const node = arena.view(record);
+				return node as unknown as T.AttributedEnumVariant.Bound;
+			});
+		}
+	}
+	throw new Error(`attributed_enum_variant writes no slot ${slot} alone`);
+}
 function withAttributedEnumVariant(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.AttributedEnumVariant.Config;
 	switch (setter) {
 		case 'attributeItems':
 			return applySetter(args, (...values: Admit<T.AttributeItem[]>) =>
 				rebuilt(node, handle, () =>
-					buildAttributedEnumVariant$patch(node, { ...config, attributeItems: restItems('attributeItems', values) })
+					buildAttributedEnumVariant$set(node, 'attributeItems', {
+						attributeItems: restItems('attributeItems', values)
+					})
 				)
 			);
 		case 'enumVariant':
 			return applySetter(args, (value: Admit<T.EnumVariant>) =>
-				rebuilt(node, handle, () => buildAttributedEnumVariant$patch(node, { ...config, enumVariant: value }))
+				rebuilt(node, handle, () => buildAttributedEnumVariant$set(node, 'enumVariant', { enumVariant: value }))
 			);
 	}
 	throw new Error(`attributed_enum_variant has no $with.${setter}`);
@@ -16819,18 +22233,56 @@ function buildAttributedParameter$patch(
 		return node as unknown as T.AttributedParameter.Bound;
 	});
 }
+function buildAttributedParameter$set(
+	source: object,
+	slot: string,
+	config: Partial<T.AttributedParameter.Config>
+): T.AttributedParameter.Bound {
+	if (!editsInPlace(source)) {
+		const inputs = builtInputs(source);
+		return buildAttributedParameter$patch(source, { ...(inputs.config as T.AttributedParameter.Config), ...config });
+	}
+	switch (slot) {
+		case 'attributeItem': {
+			const _attribute_item = config.attributeItem;
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'attributed_parameter', { attributeItem: _attribute_item });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.AttributedParameter as const);
+				patchCell(arena, record, 2, 2, carriedSlot(source, 'attributeItem', _attribute_item));
+				const node = arena.view(record);
+				return node as unknown as T.AttributedParameter.Bound;
+			});
+		}
+		case 'content': {
+			const _content = admitAliasContent<NonNullable<T.AttributedParameter['_content']>>(
+				kindIdStorage<NonNullable<T.AttributedParameter['_content']>>(config.content),
+				[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
+			);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'attributed_parameter', { content: _content });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.AttributedParameter as const);
+				patchCell(arena, record, 3, 5, carriedSlot(source, 'content', _content));
+				const node = arena.view(record);
+				return node as unknown as T.AttributedParameter.Bound;
+			});
+		}
+	}
+	throw new Error(`attributed_parameter writes no slot ${slot} alone`);
+}
 function withAttributedParameter(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.AttributedParameter.Config;
 	switch (setter) {
 		case 'attributeItem':
 			return applySetter(args, (value?: Admit<T.AttributeItem>) =>
-				rebuilt(node, handle, () => buildAttributedParameter$patch(node, { ...config, attributeItem: value }))
+				rebuilt(node, handle, () => buildAttributedParameter$set(node, 'attributeItem', { attributeItem: value }))
 			);
 		case 'content':
 			return applySetter(args, (value: Admit<NonNullable<T.AttributedParameter.Config>['content']>) =>
-				rebuilt(node, handle, () => buildAttributedParameter$patch(node, { ...config, content: value }))
+				rebuilt(node, handle, () => buildAttributedParameter$set(node, 'content', { content: value }))
 			);
 	}
 	throw new Error(`attributed_parameter has no $with.${setter}`);
@@ -16886,22 +22338,64 @@ function buildAttributedTypeParameter$patch(
 		return node as unknown as T.AttributedTypeParameter.Bound;
 	});
 }
+function buildAttributedTypeParameter$set(
+	source: object,
+	slot: string,
+	config: Partial<T.AttributedTypeParameter.Config>
+): T.AttributedTypeParameter.Bound {
+	if (!editsInPlace(source)) {
+		const inputs = builtInputs(source);
+		return buildAttributedTypeParameter$patch(source, {
+			...(inputs.config as T.AttributedTypeParameter.Config),
+			...config
+		});
+	}
+	switch (slot) {
+		case 'attributeItems': {
+			const _attribute_item = listStorage<NonNullable<T.AttributedTypeParameter['_attribute_item']>>(
+				config.attributeItems ?? []
+			);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'attributed_type_parameter', { attributeItems: _attribute_item });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.AttributedTypeParameter as const);
+				patchList(arena, record, 2, 2, _attribute_item);
+				const node = arena.view(record);
+				return node as unknown as T.AttributedTypeParameter.Bound;
+			});
+		}
+		case 'content': {
+			const _content = config.content;
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'attributed_type_parameter', { content: _content });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.AttributedTypeParameter as const);
+				patchCell(arena, record, 3, 3, carriedSlot(source, 'content', _content));
+				const node = arena.view(record);
+				return node as unknown as T.AttributedTypeParameter.Bound;
+			});
+		}
+	}
+	throw new Error(`attributed_type_parameter writes no slot ${slot} alone`);
+}
 function withAttributedTypeParameter(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.AttributedTypeParameter.Config;
 	switch (setter) {
 		case 'attributeItems':
 			return applySetter(args, (...values: Admit<T.AttributeItem[]>) =>
 				rebuilt(node, handle, () =>
-					buildAttributedTypeParameter$patch(node, { ...config, attributeItems: restItems('attributeItems', values) })
+					buildAttributedTypeParameter$set(node, 'attributeItems', {
+						attributeItems: restItems('attributeItems', values)
+					})
 				)
 			);
 		case 'content':
 			return applySetter(
 				args,
 				(value: Admit<T.Metavariable | T.TypeParameter | T.LifetimeParameter | T.ConstParameter>) =>
-					rebuilt(node, handle, () => buildAttributedTypeParameter$patch(node, { ...config, content: value }))
+					rebuilt(node, handle, () => buildAttributedTypeParameter$set(node, 'content', { content: value }))
 			);
 	}
 	throw new Error(`attributed_type_parameter has no $with.${setter}`);
@@ -16958,20 +22452,57 @@ function buildAttributedArgument$patch(
 		return node as unknown as T.AttributedArgument.Bound;
 	});
 }
+function buildAttributedArgument$set(
+	source: object,
+	slot: string,
+	config: Partial<T.AttributedArgument.Config>
+): T.AttributedArgument.Bound {
+	if (!editsInPlace(source)) {
+		const inputs = builtInputs(source);
+		return buildAttributedArgument$patch(source, { ...(inputs.config as T.AttributedArgument.Config), ...config });
+	}
+	switch (slot) {
+		case 'attributeItems': {
+			const _attribute_item = listStorage<NonNullable<T.AttributedArgument['_attribute_item']>>(
+				config.attributeItems ?? []
+			);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'attributed_argument', { attributeItems: _attribute_item });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.AttributedArgument as const);
+				patchList(arena, record, 2, 2, _attribute_item);
+				const node = arena.view(record);
+				return node as unknown as T.AttributedArgument.Bound;
+			});
+		}
+		case 'expression': {
+			const _expression = kindIdStorage<NonNullable<T.AttributedArgument['_expression']>>(config.expression);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'attributed_argument', { expression: _expression });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.AttributedArgument as const);
+				patchCell(arena, record, 3, 3, carriedSlot(source, 'expression', _expression));
+				const node = arena.view(record);
+				return node as unknown as T.AttributedArgument.Bound;
+			});
+		}
+	}
+	throw new Error(`attributed_argument writes no slot ${slot} alone`);
+}
 function withAttributedArgument(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.AttributedArgument.Config;
 	switch (setter) {
 		case 'attributeItems':
 			return applySetter(args, (...values: Admit<T.AttributeItem[]>) =>
 				rebuilt(node, handle, () =>
-					buildAttributedArgument$patch(node, { ...config, attributeItems: restItems('attributeItems', values) })
+					buildAttributedArgument$set(node, 'attributeItems', { attributeItems: restItems('attributeItems', values) })
 				)
 			);
 		case 'expression':
 			return applySetter(args, (value: Admit<NonNullable<T.AttributedArgument.Config>['expression']>) =>
-				rebuilt(node, handle, () => buildAttributedArgument$patch(node, { ...config, expression: value }))
+				rebuilt(node, handle, () => buildAttributedArgument$set(node, 'expression', { expression: value }))
 			);
 	}
 	throw new Error(`attributed_argument has no $with.${setter}`);
@@ -17047,24 +22578,84 @@ function buildAttributedOrderedField$patch(
 		return node as unknown as T.AttributedOrderedField.Bound;
 	});
 }
+function buildAttributedOrderedField$set(
+	source: object,
+	slot: string,
+	config: Partial<T.AttributedOrderedField.Config>
+): T.AttributedOrderedField.Bound {
+	if (!editsInPlace(source)) {
+		const inputs = builtInputs(source);
+		return buildAttributedOrderedField$patch(source, {
+			...(inputs.config as T.AttributedOrderedField.Config),
+			...config
+		});
+	}
+	switch (slot) {
+		case 'attributeItems': {
+			const _attribute_item = listStorage<NonNullable<T.AttributedOrderedField['_attribute_item']>>(
+				config.attributeItems ?? []
+			);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'attributed_ordered_field', { attributeItems: _attribute_item });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.AttributedOrderedField as const);
+				patchList(arena, record, 2, 2, _attribute_item);
+				const node = arena.view(record);
+				return node as unknown as T.AttributedOrderedField.Bound;
+			});
+		}
+		case 'visibilityModifier': {
+			const _visibility_modifier = config.visibilityModifier;
+			const handle = currentHandle();
+			if (handle !== undefined)
+				admitChildren(handle, 'attributed_ordered_field', { visibilityModifier: _visibility_modifier });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.AttributedOrderedField as const);
+				patchCell(arena, record, 3, 3, carriedSlot(source, 'visibilityModifier', _visibility_modifier));
+				const node = arena.view(record);
+				return node as unknown as T.AttributedOrderedField.Bound;
+			});
+		}
+		case 'type': {
+			const _type = admitAliasContent<NonNullable<T.AttributedOrderedField['_type']>>(
+				kindIdStorage<NonNullable<T.AttributedOrderedField['_type']>>(config.type),
+				[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
+			);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'attributed_ordered_field', { type: _type });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.AttributedOrderedField as const);
+				patchCell(arena, record, 4, 17, carriedSlot(source, 'type', _type));
+				const node = arena.view(record);
+				return node as unknown as T.AttributedOrderedField.Bound;
+			});
+		}
+	}
+	throw new Error(`attributed_ordered_field writes no slot ${slot} alone`);
+}
 function withAttributedOrderedField(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.AttributedOrderedField.Config;
 	switch (setter) {
 		case 'attributeItems':
 			return applySetter(args, (...values: Admit<T.AttributeItem[]>) =>
 				rebuilt(node, handle, () =>
-					buildAttributedOrderedField$patch(node, { ...config, attributeItems: restItems('attributeItems', values) })
+					buildAttributedOrderedField$set(node, 'attributeItems', {
+						attributeItems: restItems('attributeItems', values)
+					})
 				)
 			);
 		case 'visibilityModifier':
 			return applySetter(args, (value?: Admit<T.VisibilityModifier>) =>
-				rebuilt(node, handle, () => buildAttributedOrderedField$patch(node, { ...config, visibilityModifier: value }))
+				rebuilt(node, handle, () =>
+					buildAttributedOrderedField$set(node, 'visibilityModifier', { visibilityModifier: value })
+				)
 			);
 		case 'type':
 			return applySetter(args, (value: Admit<NonNullable<T.AttributedOrderedField.Config>['type']>) =>
-				rebuilt(node, handle, () => buildAttributedOrderedField$patch(node, { ...config, type: value }))
+				rebuilt(node, handle, () => buildAttributedOrderedField$set(node, 'type', { type: value }))
 			);
 	}
 	throw new Error(`attributed_ordered_field has no $with.${setter}`);
@@ -17115,18 +22706,56 @@ function buildTypeArgument$patch(source: object, config: T.TypeArgument.Config):
 		return node as unknown as T.TypeArgument.Bound;
 	});
 }
+function buildTypeArgument$set(
+	source: object,
+	slot: string,
+	config: Partial<T.TypeArgument.Config>
+): T.TypeArgument.Bound {
+	if (!editsInPlace(source)) {
+		const inputs = builtInputs(source);
+		return buildTypeArgument$patch(source, { ...(inputs.config as T.TypeArgument.Config), ...config });
+	}
+	switch (slot) {
+		case 'content': {
+			const _content = admitAliasContent<NonNullable<T.TypeArgument['_content']>>(
+				kindIdStorage<NonNullable<T.TypeArgument['_content']>>(config.content),
+				[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
+			);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'type_argument', { content: _content });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.TypeArgument as const);
+				patchCell(arena, record, 2, 2, carriedSlot(source, 'content', _content));
+				const node = arena.view(record);
+				return node as unknown as T.TypeArgument.Bound;
+			});
+		}
+		case 'traitBounds': {
+			const _trait_bounds = config.traitBounds;
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'type_argument', { traitBounds: _trait_bounds });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.TypeArgument as const);
+				patchCell(arena, record, 3, 6, carriedSlot(source, 'traitBounds', _trait_bounds));
+				const node = arena.view(record);
+				return node as unknown as T.TypeArgument.Bound;
+			});
+		}
+	}
+	throw new Error(`type_argument writes no slot ${slot} alone`);
+}
 function withTypeArgument(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.TypeArgument.Config;
 	switch (setter) {
 		case 'content':
 			return applySetter(args, (value: Admit<NonNullable<T.TypeArgument.Config>['content']>) =>
-				rebuilt(node, handle, () => buildTypeArgument$patch(node, { ...config, content: value }))
+				rebuilt(node, handle, () => buildTypeArgument$set(node, 'content', { content: value }))
 			);
 		case 'traitBounds':
 			return applySetter(args, (value?: Admit<T.TraitBounds>) =>
-				rebuilt(node, handle, () => buildTypeArgument$patch(node, { ...config, traitBounds: value }))
+				rebuilt(node, handle, () => buildTypeArgument$set(node, 'traitBounds', { traitBounds: value }))
 			);
 	}
 	throw new Error(`type_argument has no $with.${setter}`);
@@ -17333,18 +22962,22 @@ function buildRawStringLiteralStart$patch(
 }
 function withRawStringLiteralStart(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const value = inputs.config['prefix'] as Admit<'r' | 'br' | 'cr'>;
-	const options = inputs.options as T.RawStringLiteralStart.Options;
 	switch (setter) {
-		case 'prefix':
+		case 'prefix': {
+			const inputs = builtInputs(node);
+			const options = inputs.options as T.RawStringLiteralStart.Options;
 			return applySetter(args, (value: Admit<'r' | 'br' | 'cr'>) =>
 				rebuilt(node, handle, () => buildRawStringLiteralStart$patch(node, value, options))
 			);
-		case 'hashes':
+		}
+		case 'hashes': {
+			const inputs = builtInputs(node);
+			const value = inputs.config['prefix'] as Admit<'r' | 'br' | 'cr'>;
+			const options = inputs.options as T.RawStringLiteralStart.Options;
 			return applySetter(args, (spelling: string) =>
 				rebuilt(node, handle, () => buildRawStringLiteralStart$patch(node, value, { ...options, hashes: spelling }))
 			);
+		}
 	}
 	throw new Error(`raw_string_literal_start has no $with.${setter}`);
 }
@@ -17395,14 +23028,15 @@ function buildRawStringLiteralEnd$patch(
 }
 function withRawStringLiteralEnd(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.RawStringLiteralEnd.Config;
-	const options = inputs.options as T.RawStringLiteralEnd.Options;
 	switch (setter) {
-		case 'hashes':
+		case 'hashes': {
+			const inputs = builtInputs(node);
+			const config = inputs.config as T.RawStringLiteralEnd.Config;
+			const options = inputs.options as T.RawStringLiteralEnd.Options;
 			return applySetter(args, (spelling: string) =>
 				rebuilt(node, handle, () => buildRawStringLiteralEnd$patch(node, config, { ...options, hashes: spelling }))
 			);
+		}
 	}
 	throw new Error(`raw_string_literal_end has no $with.${setter}`);
 }
@@ -17615,20 +23249,51 @@ function buildArgument$patch(source: object, config: T.Argument.Config): T.Argum
 		return node as unknown as T.Argument.Bound;
 	});
 }
+function buildArgument$set(source: object, slot: string, config: Partial<T.Argument.Config>): T.Argument.Bound {
+	if (!editsInPlace(source)) {
+		const inputs = builtInputs(source);
+		return buildArgument$patch(source, { ...(inputs.config as T.Argument.Config), ...config });
+	}
+	switch (slot) {
+		case 'attributeItems': {
+			const _attribute_item = listStorage<NonNullable<T.Argument['_attribute_item']>>(config.attributeItems ?? []);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'argument', { attributeItems: _attribute_item });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.Argument as const);
+				patchList(arena, record, 2, 2, _attribute_item);
+				const node = arena.view(record);
+				return node as unknown as T.Argument.Bound;
+			});
+		}
+		case 'expression': {
+			const _expression = kindIdStorage<NonNullable<T.Argument['_expression']>>(config.expression);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'argument', { expression: _expression });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.Argument as const);
+				patchCell(arena, record, 3, 3, carriedSlot(source, 'expression', _expression));
+				const node = arena.view(record);
+				return node as unknown as T.Argument.Bound;
+			});
+		}
+	}
+	throw new Error(`argument writes no slot ${slot} alone`);
+}
 function withArgument(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.Argument.Config;
 	switch (setter) {
 		case 'attributeItems':
 			return applySetter(args, (...values: Admit<T.AttributeItem[]>) =>
 				rebuilt(node, handle, () =>
-					buildArgument$patch(node, { ...config, attributeItems: restItems('attributeItems', values) })
+					buildArgument$set(node, 'attributeItems', { attributeItems: restItems('attributeItems', values) })
 				)
 			);
 		case 'expression':
 			return applySetter(args, (value: Admit<NonNullable<T.Argument.Config>['expression']>) =>
-				rebuilt(node, handle, () => buildArgument$patch(node, { ...config, expression: value }))
+				rebuilt(node, handle, () => buildArgument$set(node, 'expression', { expression: value }))
 			);
 	}
 	throw new Error(`argument has no $with.${setter}`);
@@ -17714,11 +23379,10 @@ function _buildArrayExpressionListElements$patch(
 }
 function withArrayExpressionListElements(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const elements = inputs.elements as NonEmptyArray<Admit<T.AttributedArgument | T.Expression>>;
-	const options = inputs.options as { delimiter?: Delimiter.None | Delimiter.Trailing };
 	switch (setter) {
-		case 'items':
+		case 'items': {
+			const inputs = builtInputs(node);
+			const options = inputs.options as { delimiter?: Delimiter.None | Delimiter.Trailing };
 			return applySetter(args, (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					elementsWith(
@@ -17729,12 +23393,17 @@ function withArrayExpressionListElements(node: object, setter: string, args: rea
 					)
 				)
 			);
-		case 'delimiter':
+		}
+		case 'delimiter': {
+			const inputs = builtInputs(node);
+			const elements = inputs.elements as NonEmptyArray<Admit<T.AttributedArgument | T.Expression>>;
+			const options = inputs.options as { delimiter?: Delimiter.None | Delimiter.Trailing };
 			return applySetter(args, (v?: Delimiter.None | Delimiter.Trailing) =>
 				rebuilt(node, handle, () =>
 					_buildArrayExpressionListElements$patch(node, elements, { ...options, delimiter: v })
 				)
 			);
+		}
 	}
 	throw new Error(`array_expression_list_elements has no $with.${setter}`);
 }
@@ -17786,18 +23455,59 @@ function buildReceiverParameterDeclaration$patch(
 		return node as unknown as T.ReceiverParameterDeclaration.Bound;
 	});
 }
+function buildReceiverParameterDeclaration$set(
+	source: object,
+	slot: string,
+	config: Partial<T.ReceiverParameterDeclaration.Config>
+): T.ReceiverParameterDeclaration.Bound {
+	if (!editsInPlace(source)) {
+		const inputs = builtInputs(source);
+		return buildReceiverParameterDeclaration$patch(source, {
+			...(inputs.config as T.ReceiverParameterDeclaration.Config),
+			...config
+		});
+	}
+	switch (slot) {
+		case 'mutable': {
+			const _mutable = strictBooleanStorage(config.mutable);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'receiver_parameter_declaration', { mutable: _mutable });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.ReceiverParameterDeclaration as const);
+				patchFlag(record, 2, 1, _mutable);
+				const node = arena.view(record);
+				return node as unknown as T.ReceiverParameterDeclaration.Bound;
+			});
+		}
+		case 'type': {
+			const _type = admitAliasContent<NonNullable<T.ReceiverParameterDeclaration['_type']>>(
+				kindIdStorage<NonNullable<T.ReceiverParameterDeclaration['_type']>>(config.type),
+				[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
+			);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'receiver_parameter_declaration', { type: _type });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.ReceiverParameterDeclaration as const);
+				patchCell(arena, record, 3, 3, carriedSlot(source, 'type', _type));
+				const node = arena.view(record);
+				return node as unknown as T.ReceiverParameterDeclaration.Bound;
+			});
+		}
+	}
+	throw new Error(`receiver_parameter_declaration writes no slot ${slot} alone`);
+}
 function withReceiverParameterDeclaration(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.ReceiverParameterDeclaration.Config;
 	switch (setter) {
 		case 'mutable':
 			return applySetter(args, (value?: Admit<NonNullable<T.ReceiverParameterDeclaration.Config>['mutable']>) =>
-				rebuilt(node, handle, () => buildReceiverParameterDeclaration$patch(node, { ...config, mutable: value }))
+				rebuilt(node, handle, () => buildReceiverParameterDeclaration$set(node, 'mutable', { mutable: value }))
 			);
 		case 'type':
 			return applySetter(args, (value: Admit<NonNullable<T.ReceiverParameterDeclaration.Config>['type']>) =>
-				rebuilt(node, handle, () => buildReceiverParameterDeclaration$patch(node, { ...config, type: value }))
+				rebuilt(node, handle, () => buildReceiverParameterDeclaration$set(node, 'type', { type: value }))
 			);
 	}
 	throw new Error(`receiver_parameter_declaration has no $with.${setter}`);
@@ -17852,18 +23562,59 @@ function buildAttributedParameterReceiver$patch(
 		return node as unknown as T.AttributedParameterReceiver.Bound;
 	});
 }
+function buildAttributedParameterReceiver$set(
+	source: object,
+	slot: string,
+	config: Partial<T.AttributedParameterReceiver.Config>
+): T.AttributedParameterReceiver.Bound {
+	if (!editsInPlace(source)) {
+		const inputs = builtInputs(source);
+		return buildAttributedParameterReceiver$patch(source, {
+			...(inputs.config as T.AttributedParameterReceiver.Config),
+			...config
+		});
+	}
+	switch (slot) {
+		case 'attributeItem': {
+			const _attribute_item = config.attributeItem;
+			const handle = currentHandle();
+			if (handle !== undefined)
+				admitChildren(handle, 'attributed_parameter_receiver', { attributeItem: _attribute_item });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.AttributedParameterReceiver as const);
+				patchCell(arena, record, 2, 2, carriedSlot(source, 'attributeItem', _attribute_item));
+				const node = arena.view(record);
+				return node as unknown as T.AttributedParameterReceiver.Bound;
+			});
+		}
+		case 'content': {
+			const _content = config.content;
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'attributed_parameter_receiver', { content: _content });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.AttributedParameterReceiver as const);
+				patchCell(arena, record, 3, 5, carriedSlot(source, 'content', _content));
+				const node = arena.view(record);
+				return node as unknown as T.AttributedParameterReceiver.Bound;
+			});
+		}
+	}
+	throw new Error(`attributed_parameter_receiver writes no slot ${slot} alone`);
+}
 function withAttributedParameterReceiver(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.AttributedParameterReceiver.Config;
 	switch (setter) {
 		case 'attributeItem':
 			return applySetter(args, (value?: Admit<T.AttributeItem>) =>
-				rebuilt(node, handle, () => buildAttributedParameterReceiver$patch(node, { ...config, attributeItem: value }))
+				rebuilt(node, handle, () =>
+					buildAttributedParameterReceiver$set(node, 'attributeItem', { attributeItem: value })
+				)
 			);
 		case 'content':
 			return applySetter(args, (value: Admit<T.ReceiverParameterDeclaration | T.SelfParameter>) =>
-				rebuilt(node, handle, () => buildAttributedParameterReceiver$patch(node, { ...config, content: value }))
+				rebuilt(node, handle, () => buildAttributedParameterReceiver$set(node, 'content', { content: value }))
 			);
 	}
 	throw new Error(`attributed_parameter_receiver has no $with.${setter}`);
@@ -17936,15 +23687,62 @@ function buildParametersElementsReceiver$patch(
 		return node as unknown as T.ParametersElementsReceiver.Bound;
 	});
 }
+function buildParametersElementsReceiver$set(
+	source: object,
+	slot: string,
+	config: Partial<T.ParametersElementsReceiver.Config>
+): T.ParametersElementsReceiver.Bound {
+	if (!editsInPlace(source)) {
+		const inputs = builtInputs(source);
+		return buildParametersElementsReceiver$patch(source, {
+			...(inputs.config as T.ParametersElementsReceiver.Config),
+			...config
+		});
+	}
+	switch (slot) {
+		case 'receiver': {
+			const _receiver = config.receiver;
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'parameters_elements_receiver', { receiver: _receiver });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.ParametersElementsReceiver as const);
+				patchCell(arena, record, 2, 2, carriedSlot(source, 'receiver', _receiver));
+				const node = arena.view(record);
+				return node as unknown as T.ParametersElementsReceiver.Bound;
+			});
+		}
+		case 'parametersElementsReceiverGroup': {
+			const _parameters_elements_receiver_group = config.parametersElementsReceiverGroup;
+			const handle = currentHandle();
+			if (handle !== undefined)
+				admitChildren(handle, 'parameters_elements_receiver', {
+					parametersElementsReceiverGroup: _parameters_elements_receiver_group
+				});
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.ParametersElementsReceiver as const);
+				patchCell(
+					arena,
+					record,
+					3,
+					5,
+					carriedSlot(source, 'parametersElementsReceiverGroup', _parameters_elements_receiver_group)
+				);
+				const node = arena.view(record);
+				return node as unknown as T.ParametersElementsReceiver.Bound;
+			});
+		}
+	}
+	throw new Error(`parameters_elements_receiver writes no slot ${slot} alone`);
+}
 function withParametersElementsReceiver(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.ParametersElementsReceiver.Config;
-	const readGroup_receiver = () => inputs.config['receiver'] as object | undefined;
+	const readGroup_receiver = () => builtInputs(node).config['receiver'] as object | undefined;
 	switch (setter) {
 		case 'receiver':
 			return applySetter(args, (value: Admit<T.AttributedParameterReceiver>) =>
-				rebuilt(node, handle, () => buildParametersElementsReceiver$patch(node, { ...config, receiver: value }))
+				rebuilt(node, handle, () => buildParametersElementsReceiver$set(node, 'receiver', { receiver: value }))
 			);
 		case 'parametersElementsReceiverGroup':
 			return applySetter(args, (...args: unknown[]) =>
@@ -17958,7 +23756,9 @@ function withParametersElementsReceiver(node: object, setter: string, args: read
 							element: { keys: ['attributeItem', 'content'], make: buildAttributedParameter }
 						},
 						(value?: Admit<T.ParametersElementsReceiverGroup>) =>
-							buildParametersElementsReceiver$patch(node, { ...config, parametersElementsReceiverGroup: value })
+							buildParametersElementsReceiver$set(node, 'parametersElementsReceiverGroup', {
+								parametersElementsReceiverGroup: value
+							})
 					)
 				)
 			);
@@ -17978,7 +23778,7 @@ function withParametersElementsReceiver(node: object, setter: string, args: read
 						'attributeItem',
 						args,
 						(value: Admit<T.AttributedParameterReceiver>) =>
-							buildParametersElementsReceiver$patch(node, { ...config, receiver: value }),
+							buildParametersElementsReceiver$set(node, 'receiver', { receiver: value }),
 						() => readGroup_receiver.call(node)
 					)
 				)
@@ -17999,7 +23799,7 @@ function withParametersElementsReceiver(node: object, setter: string, args: read
 						'content',
 						args,
 						(value: Admit<T.AttributedParameterReceiver>) =>
-							buildParametersElementsReceiver$patch(node, { ...config, receiver: value }),
+							buildParametersElementsReceiver$set(node, 'receiver', { receiver: value }),
 						() => readGroup_receiver.call(node)
 					)
 				)
@@ -18428,22 +24228,135 @@ function buildMethodDeclaration$patch(source: object, config: T.MethodDeclaratio
 		return node as unknown as T.MethodDeclaration.Bound;
 	});
 }
+function buildMethodDeclaration$set(
+	source: object,
+	slot: string,
+	config: Partial<T.MethodDeclaration.Config>
+): T.MethodDeclaration.Bound {
+	if (!editsInPlace(source)) {
+		const inputs = builtInputs(source);
+		return buildMethodDeclaration$patch(source, { ...(inputs.config as T.MethodDeclaration.Config), ...config });
+	}
+	switch (slot) {
+		case 'visibilityModifier': {
+			const _visibility_modifier = config.visibilityModifier;
+			const handle = currentHandle();
+			if (handle !== undefined)
+				admitChildren(handle, 'method_declaration', { visibilityModifier: _visibility_modifier });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.MethodDeclaration as const);
+				patchCell(arena, record, 2, 2, carriedSlot(source, 'visibilityModifier', _visibility_modifier));
+				const node = arena.view(record);
+				return node as unknown as T.MethodDeclaration.Bound;
+			});
+		}
+		case 'functionModifiers': {
+			const _function_modifiers = config.functionModifiers;
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'method_declaration', { functionModifiers: _function_modifiers });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.MethodDeclaration as const);
+				patchCell(arena, record, 3, 16, carriedSlot(source, 'functionModifiers', _function_modifiers));
+				const node = arena.view(record);
+				return node as unknown as T.MethodDeclaration.Bound;
+			});
+		}
+		case 'name': {
+			const _name = config.name;
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'method_declaration', { name: _name });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.MethodDeclaration as const);
+				patchCell(arena, record, 4, 19, carriedSlot(source, 'name', _name));
+				const node = arena.view(record);
+				return node as unknown as T.MethodDeclaration.Bound;
+			});
+		}
+		case 'typeParameters': {
+			const _type_parameters = config.typeParameters;
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'method_declaration', { typeParameters: _type_parameters });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.MethodDeclaration as const);
+				patchCell(arena, record, 5, 26, carriedSlot(source, 'typeParameters', _type_parameters));
+				const node = arena.view(record);
+				return node as unknown as T.MethodDeclaration.Bound;
+			});
+		}
+		case 'parameters': {
+			const _parameters = orDefault(config.parameters, () => buildParameters());
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'method_declaration', { parameters: _parameters });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.MethodDeclaration as const);
+				patchCell(arena, record, 6, 31, carriedSlot(source, 'parameters', _parameters));
+				const node = arena.view(record);
+				return node as unknown as T.MethodDeclaration.Bound;
+			});
+		}
+		case 'returnType': {
+			const _return_type = admitAliasContent<NonNullable<T.MethodDeclaration['_return_type']>>(
+				kindIdStorage<NonNullable<T.MethodDeclaration['_return_type']>>(config.returnType),
+				[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
+			);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'method_declaration', { returnType: _return_type });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.MethodDeclaration as const);
+				patchCell(arena, record, 7, 34, carriedSlot(source, 'returnType', _return_type));
+				const node = arena.view(record);
+				return node as unknown as T.MethodDeclaration.Bound;
+			});
+		}
+		case 'whereClause': {
+			const _where_clause = config.whereClause;
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'method_declaration', { whereClause: _where_clause });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.MethodDeclaration as const);
+				patchCell(arena, record, 8, 38, carriedSlot(source, 'whereClause', _where_clause));
+				const node = arena.view(record);
+				return node as unknown as T.MethodDeclaration.Bound;
+			});
+		}
+		case 'body': {
+			const _body = orDefault(config.body, () => buildBlock());
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'method_declaration', { body: _body });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.MethodDeclaration as const);
+				patchCell(arena, record, 9, 43, carriedSlot(source, 'body', _body));
+				const node = arena.view(record);
+				return node as unknown as T.MethodDeclaration.Bound;
+			});
+		}
+	}
+	throw new Error(`method_declaration writes no slot ${slot} alone`);
+}
 function withMethodDeclaration(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.MethodDeclaration.Config;
 	switch (setter) {
 		case 'visibilityModifier':
 			return applySetter(args, (value?: Admit<T.VisibilityModifier>) =>
-				rebuilt(node, handle, () => buildMethodDeclaration$patch(node, { ...config, visibilityModifier: value }))
+				rebuilt(node, handle, () =>
+					buildMethodDeclaration$set(node, 'visibilityModifier', { visibilityModifier: value })
+				)
 			);
 		case 'functionModifiers':
 			return applySetter(args, (value?: Admit<T.FunctionModifiers>) =>
-				rebuilt(node, handle, () => buildMethodDeclaration$patch(node, { ...config, functionModifiers: value }))
+				rebuilt(node, handle, () => buildMethodDeclaration$set(node, 'functionModifiers', { functionModifiers: value }))
 			);
 		case 'name':
 			return applySetter(args, (value: Admit<T.Identifier | T.Metavariable>) =>
-				rebuilt(node, handle, () => buildMethodDeclaration$patch(node, { ...config, name: value }))
+				rebuilt(node, handle, () => buildMethodDeclaration$set(node, 'name', { name: value }))
 			);
 		case 'typeParameters':
 			return applySetter(args, (...args: unknown[]) =>
@@ -18457,17 +24370,17 @@ function withMethodDeclaration(node: object, setter: string, args: readonly unkn
 							element: { keys: ['attributeItems', 'content'], make: buildAttributedTypeParameter }
 						},
 						(value?: Admit<T.TypeParameters>) =>
-							buildMethodDeclaration$patch(node, { ...config, typeParameters: value })
+							buildMethodDeclaration$set(node, 'typeParameters', { typeParameters: value })
 					)
 				)
 			);
 		case 'parameters':
 			return applySetter(args, (value: Admit<T.Parameters>) =>
-				rebuilt(node, handle, () => buildMethodDeclaration$patch(node, { ...config, parameters: value }))
+				rebuilt(node, handle, () => buildMethodDeclaration$set(node, 'parameters', { parameters: value }))
 			);
 		case 'returnType':
 			return applySetter(args, (value?: Admit<NonNullable<T.MethodDeclaration.Config>['returnType']>) =>
-				rebuilt(node, handle, () => buildMethodDeclaration$patch(node, { ...config, returnType: value }))
+				rebuilt(node, handle, () => buildMethodDeclaration$set(node, 'returnType', { returnType: value }))
 			);
 		case 'whereClause':
 			return applySetter(args, (...args: unknown[]) =>
@@ -18475,13 +24388,13 @@ function withMethodDeclaration(node: object, setter: string, args: readonly unkn
 					listSlotWith(
 						args,
 						{ kind: TSKindId.WhereClause as const, optional: true, make: buildWhereClause },
-						(value?: Admit<T.WhereClause>) => buildMethodDeclaration$patch(node, { ...config, whereClause: value })
+						(value?: Admit<T.WhereClause>) => buildMethodDeclaration$set(node, 'whereClause', { whereClause: value })
 					)
 				)
 			);
 		case 'body':
 			return applySetter(args, (value: Admit<T.Block>) =>
-				rebuilt(node, handle, () => buildMethodDeclaration$patch(node, { ...config, body: value }))
+				rebuilt(node, handle, () => buildMethodDeclaration$set(node, 'body', { body: value }))
 			);
 	}
 	throw new Error(`method_declaration has no $with.${setter}`);
@@ -18607,26 +24520,130 @@ function buildSignatureMethodDeclaration$patch(
 		return node as unknown as T.SignatureMethodDeclaration.Bound;
 	});
 }
+function buildSignatureMethodDeclaration$set(
+	source: object,
+	slot: string,
+	config: Partial<T.SignatureMethodDeclaration.Config>
+): T.SignatureMethodDeclaration.Bound {
+	if (!editsInPlace(source)) {
+		const inputs = builtInputs(source);
+		return buildSignatureMethodDeclaration$patch(source, {
+			...(inputs.config as T.SignatureMethodDeclaration.Config),
+			...config
+		});
+	}
+	switch (slot) {
+		case 'visibilityModifier': {
+			const _visibility_modifier = config.visibilityModifier;
+			const handle = currentHandle();
+			if (handle !== undefined)
+				admitChildren(handle, 'signature_method_declaration', { visibilityModifier: _visibility_modifier });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.SignatureMethodDeclaration as const);
+				patchCell(arena, record, 2, 2, carriedSlot(source, 'visibilityModifier', _visibility_modifier));
+				const node = arena.view(record);
+				return node as unknown as T.SignatureMethodDeclaration.Bound;
+			});
+		}
+		case 'functionModifiers': {
+			const _function_modifiers = config.functionModifiers;
+			const handle = currentHandle();
+			if (handle !== undefined)
+				admitChildren(handle, 'signature_method_declaration', { functionModifiers: _function_modifiers });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.SignatureMethodDeclaration as const);
+				patchCell(arena, record, 3, 16, carriedSlot(source, 'functionModifiers', _function_modifiers));
+				const node = arena.view(record);
+				return node as unknown as T.SignatureMethodDeclaration.Bound;
+			});
+		}
+		case 'name': {
+			const _name = config.name;
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'signature_method_declaration', { name: _name });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.SignatureMethodDeclaration as const);
+				patchCell(arena, record, 4, 19, carriedSlot(source, 'name', _name));
+				const node = arena.view(record);
+				return node as unknown as T.SignatureMethodDeclaration.Bound;
+			});
+		}
+		case 'typeParameters': {
+			const _type_parameters = config.typeParameters;
+			const handle = currentHandle();
+			if (handle !== undefined)
+				admitChildren(handle, 'signature_method_declaration', { typeParameters: _type_parameters });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.SignatureMethodDeclaration as const);
+				patchCell(arena, record, 5, 26, carriedSlot(source, 'typeParameters', _type_parameters));
+				const node = arena.view(record);
+				return node as unknown as T.SignatureMethodDeclaration.Bound;
+			});
+		}
+		case 'parameters': {
+			const _parameters = orDefault(config.parameters, () => buildParameters());
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'signature_method_declaration', { parameters: _parameters });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.SignatureMethodDeclaration as const);
+				patchCell(arena, record, 6, 31, carriedSlot(source, 'parameters', _parameters));
+				const node = arena.view(record);
+				return node as unknown as T.SignatureMethodDeclaration.Bound;
+			});
+		}
+		case 'returnType': {
+			const _return_type = admitAliasContent<NonNullable<T.SignatureMethodDeclaration['_return_type']>>(
+				kindIdStorage<NonNullable<T.SignatureMethodDeclaration['_return_type']>>(config.returnType),
+				[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
+			);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'signature_method_declaration', { returnType: _return_type });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.SignatureMethodDeclaration as const);
+				patchCell(arena, record, 7, 34, carriedSlot(source, 'returnType', _return_type));
+				const node = arena.view(record);
+				return node as unknown as T.SignatureMethodDeclaration.Bound;
+			});
+		}
+		case 'whereClause': {
+			const _where_clause = config.whereClause;
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'signature_method_declaration', { whereClause: _where_clause });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.SignatureMethodDeclaration as const);
+				patchCell(arena, record, 8, 38, carriedSlot(source, 'whereClause', _where_clause));
+				const node = arena.view(record);
+				return node as unknown as T.SignatureMethodDeclaration.Bound;
+			});
+		}
+	}
+	throw new Error(`signature_method_declaration writes no slot ${slot} alone`);
+}
 function withSignatureMethodDeclaration(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.SignatureMethodDeclaration.Config;
 	switch (setter) {
 		case 'visibilityModifier':
 			return applySetter(args, (value?: Admit<T.VisibilityModifier>) =>
 				rebuilt(node, handle, () =>
-					buildSignatureMethodDeclaration$patch(node, { ...config, visibilityModifier: value })
+					buildSignatureMethodDeclaration$set(node, 'visibilityModifier', { visibilityModifier: value })
 				)
 			);
 		case 'functionModifiers':
 			return applySetter(args, (value?: Admit<T.FunctionModifiers>) =>
 				rebuilt(node, handle, () =>
-					buildSignatureMethodDeclaration$patch(node, { ...config, functionModifiers: value })
+					buildSignatureMethodDeclaration$set(node, 'functionModifiers', { functionModifiers: value })
 				)
 			);
 		case 'name':
 			return applySetter(args, (value: Admit<T.Identifier | T.Metavariable>) =>
-				rebuilt(node, handle, () => buildSignatureMethodDeclaration$patch(node, { ...config, name: value }))
+				rebuilt(node, handle, () => buildSignatureMethodDeclaration$set(node, 'name', { name: value }))
 			);
 		case 'typeParameters':
 			return applySetter(args, (...args: unknown[]) =>
@@ -18640,17 +24657,17 @@ function withSignatureMethodDeclaration(node: object, setter: string, args: read
 							element: { keys: ['attributeItems', 'content'], make: buildAttributedTypeParameter }
 						},
 						(value?: Admit<T.TypeParameters>) =>
-							buildSignatureMethodDeclaration$patch(node, { ...config, typeParameters: value })
+							buildSignatureMethodDeclaration$set(node, 'typeParameters', { typeParameters: value })
 					)
 				)
 			);
 		case 'parameters':
 			return applySetter(args, (value: Admit<T.Parameters>) =>
-				rebuilt(node, handle, () => buildSignatureMethodDeclaration$patch(node, { ...config, parameters: value }))
+				rebuilt(node, handle, () => buildSignatureMethodDeclaration$set(node, 'parameters', { parameters: value }))
 			);
 		case 'returnType':
 			return applySetter(args, (value?: Admit<NonNullable<T.SignatureMethodDeclaration.Config>['returnType']>) =>
-				rebuilt(node, handle, () => buildSignatureMethodDeclaration$patch(node, { ...config, returnType: value }))
+				rebuilt(node, handle, () => buildSignatureMethodDeclaration$set(node, 'returnType', { returnType: value }))
 			);
 		case 'whereClause':
 			return applySetter(args, (...args: unknown[]) =>
@@ -18659,7 +24676,7 @@ function withSignatureMethodDeclaration(node: object, setter: string, args: read
 						args,
 						{ kind: TSKindId.WhereClause as const, optional: true, make: buildWhereClause },
 						(value?: Admit<T.WhereClause>) =>
-							buildSignatureMethodDeclaration$patch(node, { ...config, whereClause: value })
+							buildSignatureMethodDeclaration$set(node, 'whereClause', { whereClause: value })
 					)
 				)
 			);

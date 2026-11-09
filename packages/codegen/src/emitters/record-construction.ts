@@ -1,6 +1,6 @@
 import type { AssembledList, AssembledNonterminal, AuthoredCompound } from '../compiler/model/node-map.ts';
 import type { NodeMap } from '../compiler/types.ts';
-import { builtWithLines, receivedMembers, triviaSides, type SetterEntry, type TriviaPositions, type TriviaSide } from './node-members.ts';
+import { builtWithLines, receivedMembers, triviaSides, type HeldRead, type SetterEntry, type TriviaPositions, type TriviaSide } from './node-members.ts';
 import { rustFieldIdent } from './node-common.ts';
 import { firstBuiltCell, type RecordLayout, type RecordPlace } from './record-layout.ts';
 import { VERBATIM_FIELD, nodeRecordLayout } from './render-module.ts';
@@ -8,6 +8,7 @@ import { VERBATIM_FIELD, nodeRecordLayout } from './render-module.ts';
 export const RECORD_CONSTRUCTION_IMPORTS = [
 	'builtArenaOf',
 	'builtInputs',
+	'editsInPlace',
 	'storeCell',
 	'storeFlag',
 	'storeList',
@@ -57,7 +58,8 @@ export interface RecordConstruction {
 	readonly slots: readonly AssembledNonterminal[];
 	readonly listOptions?: { readonly delimiter: boolean; readonly separator: boolean };
 	readonly setters: readonly SetterEntry[] | undefined;
-	readonly inputs: readonly string[] | 'kind';
+	readonly inputs: readonly HeldRead[] | 'kind';
+	readonly readers?: readonly string[];
 	readonly check?: string;
 	readonly result: string;
 }
@@ -65,6 +67,7 @@ export interface RecordConstruction {
 export interface RecordParts {
 	readonly tail: readonly string[];
 	readonly patchTail: readonly string[] | undefined;
+	readonly slotTail: (storageKey: string) => readonly string[];
 	readonly after: readonly string[];
 }
 
@@ -89,7 +92,9 @@ function slotPatch({ place, local, accessor }: PlacedSlot): string {
 export function recordParts(spec: RecordConstruction, nodeMap: NodeMap, views: BuiltViewTable): RecordParts {
 	const places = recordPlacesOf(spec.node, nodeMap);
 	const layout = nodeRecordLayout(spec.node, nodeMap);
-	if (places === undefined || layout === undefined) return { tail: recordRefusalLines(spec.node), patchTail: recordRefusalLines(spec.node), after: [] };
+	if (places === undefined || layout === undefined) {
+		return { tail: recordRefusalLines(spec.node), patchTail: recordRefusalLines(spec.node), slotTail: () => recordRefusalLines(spec.node), after: [] };
+	}
 	views.width(spec.node, layout);
 	const placed = spec.slots.map((slot): PlacedSlot => {
 		const place = places.get(slot.storageKey);
@@ -98,26 +103,32 @@ export function recordParts(spec: RecordConstruction, nodeMap: NodeMap, views: B
 	});
 	const options = spec.listOptions;
 	const listOptions = options === undefined ? undefined : `arena, record, ${options.delimiter ? '_delimiter' : 'undefined'}, ${options.separator ? '_separator' : 'undefined'}`;
-	const tailOf = (record: string, store: (slot: PlacedSlot) => string, storeOptions: string): string[] => [
+	const tailOf = (record: string, slots: readonly PlacedSlot[], store: (slot: PlacedSlot) => string, storeOptions: string | undefined): string[] => [
 		'  const arena = builtArenaOf(handle);',
-		`  handle?.verifyStored?.(${spec.kind}, { ${spec.slots.map((slot) => slot.storageKey).join(', ')} });`,
+		...(storeOptions === undefined ? [] : [`  handle?.verifyStored?.(${spec.kind}, { ${spec.slots.map((slot) => slot.storageKey).join(', ')} });`]),
 		'  return arena.scope(() => {',
 		`    const record = ${record};`,
-		...placed.map((slot) => `  ${store(slot)}`),
-		...(listOptions === undefined ? [] : [`    ${storeOptions}(${listOptions});`]),
+		...slots.map((slot) => `  ${store(slot)}`),
+		...(listOptions === undefined || storeOptions === undefined ? [] : [`    ${storeOptions}(${listOptions});`]),
 		'    const node = arena.view(record);',
-		...(spec.check === undefined ? [] : [`    ${spec.check};`]),
+		...(spec.check === undefined || storeOptions === undefined ? [] : [`    ${spec.check};`]),
 		`    return node as unknown as ${spec.result};`,
 		'  });'
 	];
-	const tail = tailOf(`arena.record(${spec.kind})`, slotStore, 'storeListOptions');
-	const patchTail = tailOf(`arena.copy(source, ${spec.kind})`, slotPatch, 'patchListOptions');
+	const tail = tailOf(`arena.record(${spec.kind})`, placed, slotStore, 'storeListOptions');
+	const patchTail = tailOf(`arena.copy(source, ${spec.kind})`, placed, slotPatch, 'patchListOptions');
+	const slotTail = (storageKey: string): string[] => {
+		if (spec.check !== undefined) throw new Error(`recordParts: ${spec.node.kind} checks its slots together, so no one slot is written alone`);
+		const slot = placed.find((candidate) => candidate.local === storageKey);
+		if (slot === undefined) throw new Error(`recordParts: ${spec.node.kind} stores no slot ${storageKey}`);
+		return tailOf(`arena.copy(source, ${spec.kind})`, [slot], slotPatch, undefined);
+	};
 	if (spec.inputs === 'kind') {
 		views.requireWith(spec.node);
-		return { tail, patchTail, after: [] };
+		return { tail, patchTail, slotTail, after: [] };
 	}
 	const setters = spec.setters ?? [];
-	return { tail, patchTail: setters.length === 0 ? undefined : patchTail, after: views.with(spec.node, spec.inputs, setters) };
+	return { tail, patchTail: setters.length === 0 ? undefined : patchTail, slotTail, after: views.with(spec.node, spec.inputs, spec.readers ?? [], setters) };
 }
 
 export function patchTwinLines(head: readonly string[], impl: string, twin: string, patchTail: readonly string[]): string[] {
@@ -175,12 +186,12 @@ export class BuiltViewTable {
 	readonly #widths = new Map<number, number>();
 	readonly #cells = new Map<number, number>();
 
-	with(node: ViewKind, inputs: readonly string[], setters: readonly SetterEntry[]): string[] {
+	with(node: ViewKind, inputs: readonly HeldRead[], readers: readonly string[], setters: readonly SetterEntry[]): string[] {
 		const kindId = viewKindId(node);
 		if (this.#withs.has(kindId)) throw new Error(`record views: ${node.kind} has two record builders that each write its setters`);
 		const name = `with${node.typeName}`;
 		this.#withs.set(kindId, name);
-		return builtWithLines(name, node.kind, inputs, setters);
+		return builtWithLines(name, node.kind, inputs, readers, setters);
 	}
 
 	width(node: ViewKind, layout: RecordLayout): void {
