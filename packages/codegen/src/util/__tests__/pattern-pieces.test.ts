@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { pieceAt, pieces, withoutCaptures } from '../pattern-pieces.ts';
+import { closingParen, pieceAt, pieces, sameUpToGroups, withoutCaptures } from '../pattern-pieces.ts';
 
 const shape = (source: string) => [...pieces(source)].map((piece) => [piece.kind, piece.at, piece.text, 'group' in piece ? piece.group : undefined]);
 
@@ -61,5 +61,32 @@ describe('withoutCaptures', () => {
 		const forms = ['(?<content>a|b)*', '(a|b)*', '(?:a|b)*'].map(withoutCaptures);
 		expect(new Set(forms).size).toBe(1);
 		expect(withoutCaptures('(a|b)+')).not.toBe(forms[0]);
+	});
+});
+
+describe('closingParen', () => {
+	it('finds the parenthesis that closes a group, past escaped ones, ones in a class and nested groups', () => {
+		const source = '(a\\)[)](b(c))d)e';
+		expect(closingParen(source, 1)).toBe(source.length - 2);
+		expect(closingParen('(a', 1)).toBe(-1);
+	});
+});
+
+describe('sameUpToGroups', () => {
+	it('takes a pattern and the same pattern with a named group around part of it as the same', () => {
+		expect(sameUpToGroups('#!.*', '#!(?<content>.*)')).toBe(true);
+		expect(sameUpToGroups('\\$[a-zA-Z_]\\w*', '\\$(?<name>[a-zA-Z_]\\w*)')).toBe(true);
+		expect(sameUpToGroups('#![\\r\\f\\t\\v ]*([^\\[\\n].*)?\\n', '#!(?<content>[\\r\\f\\t\\v ]*(?:[^\\[\\n].*)?)\\n')).toBe(true);
+		expect(sameUpToGroups('a(b|c)', 'a(?<x>b|c)')).toBe(true);
+	});
+
+	it('keeps a group that holds an alternation or takes a quantifier', () => {
+		expect(sameUpToGroups('a(b|c)', 'ab|c')).toBe(false);
+		expect(sameUpToGroups('(ab)*', 'ab*')).toBe(false);
+		expect(sameUpToGroups('(ab)?', '(?<x>ab)?')).toBe(true);
+	});
+
+	it('tells a rewritten pattern from the one it replaces', () => {
+		expect(sameUpToGroups('[^*]*\\*+([^/*][^*]*\\*+)*', '([^*]|\\*+[^*\\/])*\\**')).toBe(false);
 	});
 });

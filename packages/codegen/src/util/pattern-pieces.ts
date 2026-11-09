@@ -43,3 +43,47 @@ export function withoutCaptures(source: string): string {
 	for (const piece of pieces(source)) out += piece.kind === 'open' && (piece.group === 'capture' || piece.group === 'named') ? '(?:' : piece.text;
 	return out;
 }
+
+export function closingParen(source: string, from: number): number {
+	let depth = 1;
+	for (const piece of pieces(source, from)) {
+		if (piece.kind === 'open') depth += 1;
+		else if (piece.kind === 'char' && piece.text === ')' && --depth === 0) return piece.at;
+	}
+	return -1;
+}
+
+const QUANTIFIERS = '*+?{';
+
+function topLevelAlternation(source: string): boolean {
+	let depth = 0;
+	for (const piece of pieces(source)) {
+		if (piece.kind === 'open') depth += 1;
+		else if (piece.kind === 'char' && piece.text === ')') depth -= 1;
+		else if (piece.kind === 'char' && piece.text === '|' && depth === 0) return true;
+	}
+	return false;
+}
+
+function groupForm(source: string): string {
+	let out = '';
+	for (let at = 0; at < source.length; ) {
+		const piece = pieceAt(source, at);
+		const end = piece.kind === 'open' && piece.group !== 'other' ? closingParen(source, at + piece.text.length) : -1;
+		if (end < 0) {
+			out += piece.text;
+			at += piece.text.length;
+			continue;
+		}
+		const inner = source.slice(at + piece.text.length, end);
+		const after = source[end + 1];
+		const kept = topLevelAlternation(inner) || (after !== undefined && QUANTIFIERS.includes(after));
+		out += kept ? `(?:${groupForm(inner)})` : groupForm(inner);
+		at = end + 1;
+	}
+	return out;
+}
+
+export function sameUpToGroups(a: string, b: string): boolean {
+	return groupForm(a) === groupForm(b);
+}

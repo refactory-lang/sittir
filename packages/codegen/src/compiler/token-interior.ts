@@ -7,7 +7,7 @@ import { createRuleId } from './rule-catalog.ts';
 import type { RulePathSegment } from './types.ts';
 import type { SpellingFields, SpellingGroup } from '../dsl/primitives/spellings.ts';
 import { matchesWordShape } from '../util/word-matcher.ts';
-import { pieceAt, pieces } from '../util/pattern-pieces.ts';
+import { closingParen, pieceAt } from '../util/pattern-pieces.ts';
 import { isValidIdent } from '../emitters/shared.ts';
 
 type LinkRule = Rule<'link'>;
@@ -259,15 +259,6 @@ type PatternPart = { readonly lit: string } | { readonly group: string; readonly
 
 const CONTROL_ESCAPES: Readonly<Record<string, string>> = { n: '\n', r: '\r', t: '\t', f: '\f', v: '\v', 0: '\0' };
 const REGEX_SPECIALS = '[]()|*+?{}.^$';
-
-function closingParen(source: string, from: number): number {
-	let depth = 1;
-	for (const piece of pieces(source, from)) {
-		if (piece.kind === 'open') depth += 1;
-		else if (piece.kind === 'char' && piece.text === ')' && --depth === 0) return piece.at;
-	}
-	return -1;
-}
 
 function recordNotPure(kind: string, source: string, diagnostics: DiagnosticSink): undefined {
 	diagnostics.fail({
