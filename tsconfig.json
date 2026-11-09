@@ -11,6 +11,7 @@
 			"@sittir/common/delimiter": ["./packages/common/src/delimiter.ts"],
 			"@sittir/common/error-kind": ["./packages/common/src/error-kind.ts"],
 			"@sittir/common/language": ["./packages/common/src/language.ts"],
+			"@sittir/common/native-binding": ["./packages/common/src/native-binding.ts"],
 			"@sittir/common/portable": ["./packages/common/src/portable/index.ts"],
 			"@sittir/common/utils": ["./packages/common/src/utils.ts"],
 			"@sittir/codegen": ["./packages/codegen/src/index.ts"],
