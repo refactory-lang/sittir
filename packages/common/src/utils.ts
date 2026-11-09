@@ -340,11 +340,13 @@ export function patchesByCopy(source: object): boolean {
 }
 
 export function carriedSlot(source: object, accessor: string, value: unknown): unknown {
+	if (value === null || typeof value !== 'object') {
+		slotRead(source, accessor);
+		return value;
+	}
 	const facts = currentHandle()?.current.trivia;
 	if (facts === undefined || builtRefOf(value)?.at === undefined) return value;
-	const read = (source as Record<string, unknown>)[accessor];
-	if (typeof read !== 'function') throw new Error(`a $with of kind ${(source as AnyUntypedNode).$type} reads no slot ${accessor}`);
-	const held = (read as () => unknown).call(source);
+	const held = slotRead(source, accessor);
 	if (!carriesFrom(held, value, standsIn(facts))) return value;
 	if (placeOf(held as object) !== undefined) return sourcedRecord(held as object, value, false);
 	carrySides(held as object, value);
@@ -353,6 +355,12 @@ export function carriedSlot(source: object, accessor: string, value: unknown): u
 
 function standsIn(facts: TriviaFacts): (kindId: number) => boolean {
 	return (kindId) => facts.rebuildWrappers.has(kindId) || facts.listKinds.has(kindId);
+}
+
+function slotRead(source: object, accessor: string): unknown {
+	const read = (source as Record<string, unknown>)[accessor];
+	if (typeof read !== 'function') throw new Error(`a $with of kind ${(source as AnyUntypedNode).$type} reads no slot ${accessor}`);
+	return (read as () => unknown).call(source);
 }
 
 function carriesFrom(held: unknown, fresh: unknown, stands: (kindId: number) => boolean): fresh is AnyUntypedNode {

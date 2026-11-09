@@ -47,6 +47,13 @@ describe.each(Object.entries(arenas))('a $with of a string start prefix (%s)', (
 	});
 
 	it.each([
+		['parsed', 'B"a"', 'b', 'B"', parsed],
+		['built', 'fr"a"', 'rf', "fr'", built]
+	] as const)('the member it reads, set on a %s start of %s whose prefix was never read, keeps its spelling', (_, source, member, rendered, start) => {
+		expect(String(py.render(start(source).$with.prefix(member) as never))).toBe(rendered);
+	});
+
+	it.each([
 		['parsed', parsed, "'"],
 		['built', built, '"']
 	])('the spelling setter on a %s start respells what it sets and keeps the prefix', (_, start, quote) => {
