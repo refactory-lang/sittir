@@ -1086,19 +1086,86 @@ pub enum Router {
 }
 
 /// A node's children as its read routes them: each child (`survey`), the
-/// route it takes (`Route`), and the wire key of each slot by its number.
+/// route it takes (`Route`), and, by each slot's number, its wire key and
+/// whether it is an elided list (`ReadSlot::ELIDED`).
 #[derive(Debug, Clone)]
 pub struct Routed {
     pub children: Vec<Kid>,
     pub routes: Vec<Route>,
     pub keys: &'static [&'static str],
+    pub elided: &'static [bool],
 }
 
 impl HeapBytes for Routed {
     fn heap_bytes(&self) -> usize {
-        let Self { children, routes, keys } = self;
+        let Self { children, routes, keys, elided: _ } = self;
         children.heap_bytes() + routes.heap_bytes() + keys.heap_bytes()
     }
+}
+
+impl Routed {
+    /// Each child a slot stores, by its place among `children`, with its slot
+    /// and its item there (`slot_items`).
+    #[must_use]
+    pub fn slot_items(&self) -> Vec<(usize, crate::types::SlotId, ItemIndex)> {
+        slot_items(&self.routes, self.elided)
+    }
+}
+
+/// Each child `routes` sends to a slot, by its place among them, with its
+/// slot and its item there, `elided` saying by each slot's number whether
+/// it is an elided list. A slot numbers its children in the order they
+/// arrive. An elided list's tagged separators make holes that take items of
+/// their own, and only a segment's first child takes one (`Elided`).
+#[must_use]
+pub fn slot_items(routes: &[Route], elided: &[bool]) -> Vec<(usize, crate::types::SlotId, ItemIndex)> {
+    let mut lists: Vec<Elided<()>> = elided.iter().map(|_| Elided::default()).collect();
+    let mut arrived = Vec::new();
+    for (child, route) in routes.iter().enumerate() {
+        match *route {
+            Route::Slot { slot, .. } => {
+                let list = &mut lists[slot.index()];
+                arrived.push((child, slot, list.arrival()));
+                list.push(());
+            }
+            Route::Separator { slot, tagged } if elided[slot.index()] => lists[slot.index()].separator(tagged),
+            _ => {}
+        }
+    }
+    arrived.into_iter().filter_map(|(child, slot, arrival)| lists[slot.index()].position(arrival).map(|item| (child, slot, item))).collect()
+}
+
+/// Each child's item in its slot (`slot_items`), by its place among
+/// `routes`: `None` for a child no slot takes, and none at all where no
+/// route takes a unit. Kept out of line, so a read's frame, which every
+/// nested read stacks, holds only the list.
+#[must_use]
+#[inline(never)]
+pub fn unit_items(routes: &[Route], elided: &[bool]) -> Vec<Option<ItemIndex>> {
+    if !routes.iter().any(|route| matches!(route, Route::Slot { scalar: true, .. })) {
+        return Vec::new();
+    }
+    let mut items = vec![None; routes.len()];
+    for (at, _, item) in slot_items(routes, elided) {
+        items[at] = Some(item);
+    }
+    items
+}
+
+/// The sides of each unit child `routed` names, a child its slot stores as a
+/// bare kind, by its slot's key and its item there (`slot_items`), as `ctx`
+/// seats them (`ReadCtx::unit_sides`): only those that have any.
+#[must_use]
+pub fn units_of<T: crate::trivia::FromTriviaText + 'static>(routed: &Routed, ctx: &ReadCtx<'_>) -> Vec<crate::layout::UnitSides<T>> {
+    routed
+        .slot_items()
+        .into_iter()
+        .filter(|&(at, _, _)| matches!(routed.routes[at], Route::Slot { scalar: true, .. }))
+        .filter_map(|(at, slot, item)| {
+            let trivia = ctx.unit_sides(routed.children[at].index, Depth::ONE)?;
+            Some(crate::layout::UnitSides { slot: routed.keys[slot.index()].to_owned(), item, trivia })
+        })
+        .collect()
 }
 
 impl<T: ReadNode> ReadNode for Box<T> {
@@ -1224,6 +1291,9 @@ pub fn read_value<T: ReadNode, const A: bool>(
 /// are never asked.
 pub trait ReadSlot: Sized {
     type Acc;
+    /// Whether the slot is an elided list, whose tagged separators make
+    /// holes (`Routed::slot_items`).
+    const ELIDED: bool = false;
     fn start() -> Self::Acc;
     fn admits(grammar: KindId, display: KindId) -> bool;
     fn takes_tagged(grammar: KindId, display: KindId, named: bool) -> bool;
@@ -1244,18 +1314,6 @@ pub trait ReadSlot: Sized {
     /// A separator between the slot's children.
     fn separator(acc: &mut Self::Acc, tagged: bool) {
         let _ = (acc, tagged);
-    }
-    /// Where the next child taken arrives, `taken` children having been
-    /// taken: its item in the finished slot unless `position` moves it.
-    fn arrival(acc: &Self::Acc, taken: u32) -> ItemIndex {
-        let _ = acc;
-        ItemIndex(taken)
-    }
-    /// The item in the finished slot of the child that arrived at
-    /// `arrival`; `None` when finishing drops it.
-    fn position(acc: &Self::Acc, arrival: ItemIndex) -> Option<ItemIndex> {
-        let _ = acc;
-        Some(arrival)
     }
     fn finish(acc: Self::Acc, at: SlotSite) -> Result<Self, ReadError>;
 }
@@ -1414,6 +1472,7 @@ impl<V> Elided<V> {
 
 impl<T: ReadNode, const A: bool> ReadSlot for Vec<Option<SlotValue<T, A>>> {
     type Acc = Elided<SlotValue<T, A>>;
+    const ELIDED: bool = true;
     fn start() -> Self::Acc {
         Elided::default()
     }
@@ -1425,12 +1484,6 @@ impl<T: ReadNode, const A: bool> ReadSlot for Vec<Option<SlotValue<T, A>>> {
     fn separator(acc: &mut Self::Acc, tagged: bool) {
         acc.separator(tagged);
     }
-    fn arrival(acc: &Self::Acc, _: u32) -> ItemIndex {
-        acc.arrival()
-    }
-    fn position(acc: &Self::Acc, arrival: ItemIndex) -> Option<ItemIndex> {
-        acc.position(arrival)
-    }
     /// An empty list is `[]`.
     fn finish(acc: Self::Acc, _at: SlotSite) -> Result<Self, ReadError> {
         Ok(acc.positions())
@@ -1440,6 +1493,7 @@ impl<T: ReadNode, const A: bool> ReadSlot for Vec<Option<SlotValue<T, A>>> {
 /// A `repeat1` elided list: the elided read, with an empty one refused as missing.
 impl<T: ReadNode, const A: bool> ReadSlot for crate::NonEmptyVec<Option<SlotValue<T, A>>> {
     type Acc = Elided<SlotValue<T, A>>;
+    const ELIDED: bool = true;
     fn start() -> Self::Acc {
         Elided::default()
     }
@@ -1449,12 +1503,6 @@ impl<T: ReadNode, const A: bool> ReadSlot for crate::NonEmptyVec<Option<SlotValu
     }
     fn separator(acc: &mut Self::Acc, tagged: bool) {
         acc.separator(tagged);
-    }
-    fn arrival(acc: &Self::Acc, _: u32) -> ItemIndex {
-        acc.arrival()
-    }
-    fn position(acc: &Self::Acc, arrival: ItemIndex) -> Option<ItemIndex> {
-        acc.position(arrival)
     }
     fn finish(acc: Self::Acc, at: SlotSite) -> Result<Self, ReadError> {
         Self::try_from(acc.positions()).map_err(|crate::non_empty::EmptyList| missing(at))

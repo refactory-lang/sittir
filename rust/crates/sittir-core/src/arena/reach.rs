@@ -378,7 +378,7 @@ pub fn reach<N: HydrateNode + RecordCells>(tree: &mut TreeArena, cursor: &mut Tr
 
 /// The record a cell names: none for a leaf or a unit, which its holder's
 /// cell holds whole.
-fn record_of_cell(cell: Cell) -> Option<Address> {
+pub(crate) fn record_of_cell(cell: Cell) -> Option<Address> {
     match cell {
         Cell::Child { at, .. } => Some(at),
         _ => None,
@@ -397,16 +397,6 @@ fn record_of_cell(cell: Cell) -> Option<Address> {
 pub fn written<N: RecordCells>(tree: &TreeArena, row: NodeIndex) -> Result<Option<Cell>, ArenaError> {
     let Some(rows) = tree.node_rows() else { return Ok(None) };
     walk::<N, _>(&mut Written(tree), &rows.spine(row))
-}
-
-/// The record of the node at `row` a read wrote (`written`): none for a
-/// leaf or a unit.
-///
-/// # Errors
-///
-/// What the arena refuses.
-pub fn written_record<N: RecordCells>(tree: &TreeArena, row: NodeIndex) -> Result<Option<Address>, ArenaError> {
-    Ok(written::<N>(tree, row)?.and_then(record_of_cell))
 }
 
 /// The record a parsed cell names, the item `item` of the slot at `word` of
@@ -442,6 +432,25 @@ pub fn read_cell<N: HydrateNode + RecordCells>(tree: &mut TreeArena, cursor: &mu
         }
         _ => Err(ArenaError::Unwritable("a record for a cell that names none").into()),
     }
+}
+
+/// Writes and holds the record of every extra of `tree` that `N` reads as
+/// one, read whole, once the tree's rows are published: each a node no cell
+/// names, reached as `reach` reaches one. An extra `N` reads as a leaf keeps
+/// no record, and none is written for one an `ERROR` is or holds
+/// (`error_holding` over the rows, `source` the tree's).
+///
+/// # Errors
+///
+/// What a hydration or the arena refuses.
+pub fn hold_extras<N: HydrateNode + RecordCells>(tree: &mut TreeArena, cursor: &mut TreeCursor<'_>, ctx: &mut ReadCtx<'_>, source: &str) -> Result<(), HydrateError> {
+    let Some(rows) = tree.shared_rows() else { return Ok(()) };
+    let mut nodes = crate::nodes::RecordNodes::over(&rows, source);
+    let extras: Vec<NodeIndex> = (0..rows.len()).map(NodeIndex).filter(|&row| rows.kid(row).extra && crate::engine::error_holding(&mut nodes, row).is_none()).collect();
+    for row in extras {
+        reach::<N>(tree, cursor, ctx, row, Depth::All, true)?;
+    }
+    Ok(())
 }
 
 /// Writes the records `depth` levels down from the record at `at` that no read
