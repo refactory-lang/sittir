@@ -12,6 +12,7 @@ export interface ProcessRow {
 	readonly ppid: number;
 	readonly started: string;
 	readonly command: string;
+	readonly background: boolean;
 }
 
 export interface PeerHold {
@@ -29,13 +30,20 @@ interface Owner {
 	readonly started: string;
 }
 
-interface HoldState {
-	readonly owner: Owner;
-	readonly held: readonly (readonly [number, string])[];
+type Marks = readonly (readonly [number, string])[];
+
+export interface Holding {
+	readonly held: Marks;
+	readonly kept: Marks;
 }
 
-const TABLE = ['-axo', 'pid=,ppid=,lstart=,comm='];
-const ROW = /^\s*(\d+)\s+(\d+)\s+(\S+\s+\S+\s+\d+\s+[\d:]+\s+\d+)\s+(.+?)\s*$/;
+interface HoldState extends Holding {
+	readonly owner: Owner;
+}
+
+const TABLE = ['-axo', 'pid=,ppid=,pri=,lstart=,comm='];
+const ROW = /^\s*(\d+)\s+(\d+)\s+(\d+)\s+(\S+\s+\S+\s+\d+\s+[\d:]+\s+\d+)\s+(.+?)\s*$/;
+const THROTTLED_PRIORITY = 4;
 const SIGNALS = ['SIGINT', 'SIGTERM', 'SIGHUP'] as const;
 const MAX_DEPTH = 64;
 const GIVE_BACK_PASSES = 5;
@@ -49,7 +57,14 @@ export function parseProcessTable(text: string): ProcessRow[] {
 	const rows: ProcessRow[] = [];
 	for (const line of text.split('\n')) {
 		const match = ROW.exec(line);
-		if (match) rows.push({ pid: Number(match[1]), ppid: Number(match[2]), started: match[3]!.replace(/\s+/g, ' '), command: match[4]! });
+		if (match)
+			rows.push({
+				pid: Number(match[1]),
+				ppid: Number(match[2]),
+				started: match[4]!.replace(/\s+/g, ' '),
+				command: match[5]!,
+				background: Number(match[3]) === THROTTLED_PRIORITY
+			});
 	}
 	return rows;
 }
@@ -85,11 +100,14 @@ export function peerWork(rows: readonly ProcessRow[], self: number | undefined):
 	});
 }
 
-export function stillHeld(rows: readonly ProcessRow[], held: ReadonlyMap<number, string>): number[] {
+export function stillHeld(rows: readonly ProcessRow[], held: ReadonlyMap<number, string>, kept: ReadonlyMap<number, string>): number[] {
 	const byPid = index(rows);
-	const alive = new Set(rows.filter((row) => held.get(row.pid) === row.started).map((row) => row.pid));
+	const live = (marks: ReadonlyMap<number, string>) => new Set(rows.filter((row) => marks.get(row.pid) === row.started).map((row) => row.pid));
+	const taken = live(held);
+	const left = live(kept);
+	const nearest = (row: ProcessRow) => [row, ...ancestors(byPid, row)].find((up) => taken.has(up.pid) || left.has(up.pid));
 	return rows
-		.filter((row) => alive.has(row.pid) || [...ancestors(byPid, row)].some((up) => alive.has(up.pid)))
+		.filter((row) => taken.has(nearest(row)?.pid ?? Number.NaN))
 		.map((row) => row.pid)
 		.sort((a, b) => a - b);
 }
@@ -100,7 +118,7 @@ export function within(rows: readonly ProcessRow[], root: number | undefined): P
 	return rows.filter((row) => row.pid === root || [...ancestors(byPid, row)].some((up) => up.pid === root));
 }
 
-const table = () => parseProcessTable(execFileSync('ps', TABLE, { encoding: 'utf8', maxBuffer: 16 << 20 }));
+export const processTable = () => parseProcessTable(execFileSync('ps', TABLE, { encoding: 'utf8', maxBuffer: 16 << 20 }));
 
 function setClass(pid: number, background: boolean): boolean {
 	try {
@@ -127,14 +145,15 @@ export interface ProcessControl {
 	setClass(pid: number, background: boolean): boolean;
 }
 
-const system: ProcessControl = { table, setClass };
+const system: ProcessControl = { table: processTable, setClass };
 
-export function giveBack(held: readonly (readonly [number, string])[], control: ProcessControl = system): number {
-	const recorded = new Map(held);
+export function giveBack(holding: Holding, control: ProcessControl = system): number {
+	const recorded = new Map(holding.held);
+	const kept = new Map(holding.kept);
 	const restored = new Set<number>();
 	for (const row of control.table()) if (recorded.get(row.pid) === row.started && control.setClass(row.pid, false)) restored.add(row.pid);
 	for (let pass = 0; pass < GIVE_BACK_PASSES; pass++) {
-		const fresh = stillHeld(control.table(), recorded).filter((pid) => !restored.has(pid));
+		const fresh = stillHeld(control.table(), recorded, kept).filter((pid) => !restored.has(pid));
 		if (fresh.length === 0) break;
 		for (const pid of fresh) if (control.setClass(pid, false)) restored.add(pid);
 	}
@@ -154,7 +173,7 @@ function takeOverStale(path: string, owner: Owner): boolean {
 		renameSync(claimed, path);
 		return false;
 	}
-	if (state !== undefined) giveBack(state.held);
+	if (state !== undefined) giveBack(state);
 	unlinkSync(claimed);
 	return true;
 }
@@ -166,7 +185,7 @@ function watch(path: string, owner: Owner, intervalMs: number): void {
 			clearInterval(timer);
 			return;
 		}
-		if (isRunning(table(), owner)) return;
+		if (isRunning(processTable(), owner)) return;
 		takeOverStale(path, owner);
 		clearInterval(timer);
 	}, intervalMs);
@@ -177,13 +196,13 @@ async function acquire(path: string, owner: Owner, intervalMs: number): Promise<
 	let waitingOn: number | undefined;
 	for (;;) {
 		try {
-			writeFileSync(path, JSON.stringify({ owner, held: [] } satisfies HoldState), { flag: 'wx' });
+			writeFileSync(path, JSON.stringify({ owner, held: [], kept: [] } satisfies HoldState), { flag: 'wx' });
 			return;
 		} catch (error) {
 			if ((error as NodeJS.ErrnoException).code !== 'EEXIST') throw error;
 		}
 		const state = readState(path);
-		if (state !== undefined && !isRunning(table(), state.owner)) {
+		if (state !== undefined && !isRunning(processTable(), state.owner)) {
 			takeOverStale(path, state.owner);
 			continue;
 		}
@@ -200,7 +219,7 @@ export async function holdPeers(options: HoldOptions = {}): Promise<PeerHold> {
 		throw new Error('--hold-peers moves other sessions to the efficiency cores with macOS taskpolicy, which this platform does not have');
 	const intervalMs = options.intervalMs ?? 2000;
 	const path = options.state ?? DEFAULT_STATE;
-	const rows = table();
+	const rows = processTable();
 	const owner: Owner = { pid: process.pid, started: rows.find((row) => row.pid === process.pid)!.started };
 	const self = sessionOf(rows, process.pid);
 	await acquire(path, owner, intervalMs);
@@ -209,9 +228,10 @@ export async function holdPeers(options: HoldOptions = {}): Promise<PeerHold> {
 		stdio: 'ignore'
 	}).unref();
 	const held = new Map<number, string>();
+	const kept = new Map<number, string>();
 	const record = () => {
 		const temporary = `${path}.${process.pid}.tmp`;
-		writeFileSync(temporary, JSON.stringify({ owner, held: [...held] } satisfies HoldState));
+		writeFileSync(temporary, JSON.stringify({ owner, held: [...held], kept: [...kept] } satisfies HoldState));
 		renameSync(temporary, path);
 	};
 	let total = 0;
@@ -221,14 +241,16 @@ export async function holdPeers(options: HoldOptions = {}): Promise<PeerHold> {
 	const sweep = async () => {
 		const current = within(parseProcessTable((await execute('ps', TABLE, { maxBuffer: 16 << 20 })).stdout), options.within);
 		if (released) return;
-		const fresh = peerWork(current, self).filter((row) => held.get(row.pid) !== row.started);
+		const inherited = new Set(stillHeld(current, held, kept));
+		const fresh = peerWork(current, self).filter((row) => held.get(row.pid) !== row.started && kept.get(row.pid) !== row.started);
 		if (fresh.length === 0) return;
-		for (const row of fresh) held.set(row.pid, row.started);
+		const taken = fresh.filter((row) => !row.background || inherited.has(row.pid));
+		for (const row of fresh) (taken.includes(row) ? held : kept).set(row.pid, row.started);
 		record();
-		const refused = fresh.filter((row) => !setClass(row.pid, true));
+		const refused = taken.filter((row) => !setClass(row.pid, true));
 		for (const row of refused) held.delete(row.pid);
 		if (refused.length > 0) record();
-		total += fresh.length - refused.length;
+		total += taken.length - refused.length;
 	};
 	const release = () => {
 		if (released) return { held: total, restored: 0 };
@@ -236,7 +258,7 @@ export async function holdPeers(options: HoldOptions = {}): Promise<PeerHold> {
 		clearInterval(timer);
 		for (const signal of SIGNALS) process.off(signal, onSignal);
 		process.off('exit', release);
-		const restored = giveBack([...held]);
+		const restored = giveBack({ held: [...held], kept: [...kept] });
 		const state = readState(path);
 		if (state?.owner.pid === owner.pid && state.owner.started === owner.started) unlinkSync(path);
 		return { held: total, restored };

@@ -4,7 +4,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { afterEach, expect, it } from 'vitest';
-import { giveBack, holdPeers, parseProcessTable, peerWork, sessionOf, stillHeld } from '../src/profile/hold-peers.ts';
+import { giveBack, holdPeers, parseProcessTable, peerWork, processTable, sessionOf, stillHeld } from '../src/profile/hold-peers.ts';
 
 const darwin = process.platform === 'darwin';
 const cleanups: (() => void)[] = [];
@@ -37,7 +37,7 @@ async function fakeSession(dir: string, work = ['sleep 60', 'sleep 60']): Promis
 		session.kill('SIGKILL');
 	});
 	const children = () =>
-		parseProcessTable(execFileSync('ps', ['-axo', 'pid=,ppid=,lstart=,comm='], { encoding: 'utf8' }))
+		processTable()
 			.filter((row) => row.ppid === session.pid)
 			.map((row) => row.pid);
 	expect(await until(() => children().length === work.length, 5000)).toBe(true);
@@ -60,18 +60,18 @@ setInterval(() => {}, 1000);`;
 
 const table = parseProcessTable(
 	[
-		'    1     0 Mon Nov  9 08:00:00 2026 /sbin/launchd',
-		'   10     1 Mon Nov  9 09:00:00 2026 claude',
-		'   11    10 Mon Nov  9 09:00:01 2026 /bin/zsh',
-		'   12    11 Mon Nov  9 09:00:02 2026 node',
-		'   20     1 Mon Nov  9 09:10:00 2026 /Users/me/.local/bin/claude',
-		'   21    20 Mon Nov  9 09:10:01 2026 /bin/zsh',
-		'   22    21 Mon Nov  9 09:10:02 2026 node',
-		'   23    22 Mon Nov  9 09:10:03 2026 /opt/homebrew/bin/rustc',
-		'   30     1 Mon Nov  9 08:30:00 2026 /opt/homebrew/bin/sccache',
-		'   31    30 Mon Nov  9 09:20:00 2026 /opt/homebrew/bin/rustc',
-		'   40     1 Mon Nov  9 08:05:00 2026 /System/Library/CoreServices/Finder.app/Contents/MacOS/Finder',
-		'   41     1 Mon Nov  9 08:06:00 2026 /Applications/Claude Helper (Renderer).app/Contents/MacOS/Claude Helper (Renderer)'
+		'    1     0   31 Mon Nov  9 08:00:00 2026 /sbin/launchd',
+		'   10     1   31 Mon Nov  9 09:00:00 2026 claude',
+		'   11    10   31 Mon Nov  9 09:00:01 2026 /bin/zsh',
+		'   12    11   31 Mon Nov  9 09:00:02 2026 node',
+		'   20     1   31 Mon Nov  9 09:10:00 2026 /Users/me/.local/bin/claude',
+		'   21    20   31 Mon Nov  9 09:10:01 2026 /bin/zsh',
+		'   22    21   31 Mon Nov  9 09:10:02 2026 node',
+		'   23    22   31 Mon Nov  9 09:10:03 2026 /opt/homebrew/bin/rustc',
+		'   30     1   31 Mon Nov  9 08:30:00 2026 /opt/homebrew/bin/sccache',
+		'   31    30   31 Mon Nov  9 09:20:00 2026 /opt/homebrew/bin/rustc',
+		'   40     1   31 Mon Nov  9 08:05:00 2026 /System/Library/CoreServices/Finder.app/Contents/MacOS/Finder',
+		'   41     1   31 Mon Nov  9 08:06:00 2026 /Applications/Claude Helper (Renderer).app/Contents/MacOS/Claude Helper (Renderer)'
 	].join('\n')
 );
 
@@ -79,7 +79,7 @@ const pids = (rows: readonly { pid: number }[]) => rows.map(({ pid }) => pid).so
 
 it('reads a process table with its start times and commands', () => {
 	expect(table).toHaveLength(12);
-	expect(table[4]).toEqual({ pid: 20, ppid: 1, started: 'Mon Nov 9 09:10:00 2026', command: '/Users/me/.local/bin/claude' });
+	expect(table[4]).toEqual({ pid: 20, ppid: 1, started: 'Mon Nov 9 09:10:00 2026', command: '/Users/me/.local/bin/claude', background: false });
 	expect(table[11]!.command).toBe('/Applications/Claude Helper (Renderer).app/Contents/MacOS/Claude Helper (Renderer)');
 });
 
@@ -101,12 +101,12 @@ it('holds every session’s work when no session runs the caller', () => {
 it('gives back what it held that still runs under the same start, and what started under it since', () => {
 	const later = parseProcessTable(
 		[
-			'   20     1 Mon Nov  9 09:10:00 2026 claude',
-			'   22    20 Mon Nov  9 09:10:02 2026 node',
-			'   24    22 Mon Nov  9 09:30:00 2026 node',
-			'   25    24 Mon Nov  9 09:30:01 2026 /opt/homebrew/bin/rustc',
-			'   30     1 Mon Nov  9 09:40:00 2026 /opt/homebrew/bin/sccache',
-			'   50     1 Mon Nov  9 09:41:00 2026 node'
+			'   20     1   31 Mon Nov  9 09:10:00 2026 claude',
+			'   22    20   31 Mon Nov  9 09:10:02 2026 node',
+			'   24    22   31 Mon Nov  9 09:30:00 2026 node',
+			'   25    24   31 Mon Nov  9 09:30:01 2026 /opt/homebrew/bin/rustc',
+			'   30     1   31 Mon Nov  9 09:40:00 2026 /opt/homebrew/bin/sccache',
+			'   50     1   31 Mon Nov  9 09:41:00 2026 node'
 		].join('\n')
 	);
 	const held = new Map([
@@ -114,7 +114,26 @@ it('gives back what it held that still runs under the same start, and what start
 		[23, 'Mon Nov 9 09:10:03 2026'],
 		[30, 'Mon Nov 9 08:30:00 2026']
 	]);
-	expect(stillHeld(later, held)).toEqual([22, 24, 25]);
+	expect(stillHeld(later, held, new Map())).toEqual([22, 24, 25]);
+});
+
+it('gives back nothing under a process kept in the background class unless a held process is nearer', () => {
+	const rows = parseProcessTable(
+		[
+			'   20     1   31 Mon Nov  9 09:10:00 2026 node',
+			'   21    20    4 Mon Nov  9 09:10:01 2026 node',
+			'   22    21    4 Mon Nov  9 09:10:02 2026 node',
+			'   23    22   31 Mon Nov  9 09:10:03 2026 node',
+			'   24    20    4 Mon Nov  9 09:20:00 2026 node'
+		].join('\n')
+	);
+	expect(rows.map(({ background }) => background)).toEqual([false, true, true, false, true]);
+	const held = new Map([
+		[20, 'Mon Nov 9 09:10:00 2026'],
+		[23, 'Mon Nov 9 09:10:03 2026']
+	]);
+	const kept = new Map([[21, 'Mon Nov 9 09:10:01 2026']]);
+	expect(stillHeld(rows, held, kept)).toEqual([20, 23, 24]);
 });
 
 it.runIf(darwin)('gives back what it held when its process is killed outright', async () => {
@@ -149,12 +168,12 @@ it.runIf(darwin)('gives back what a hold whose owner died left held before it ho
 	const dir = scratch();
 	const state = join(dir, 'hold.json');
 	const { work } = await fakeSession(dir);
-	const rows = parseProcessTable(execFileSync('ps', ['-axo', 'pid=,ppid=,lstart=,comm='], { encoding: 'utf8' }));
+	const rows = processTable();
 	const started = (pid: number) => rows.find((row) => row.pid === pid)!.started;
 	for (const pid of work) execFileSync('taskpolicy', ['-b', '-p', String(pid)]);
 	const gone = spawn('true');
 	await new Promise((resolve) => gone.on('exit', resolve));
-	writeFileSync(state, JSON.stringify({ owner: { pid: gone.pid, started: 'Thu Jan 1 00:00:00 1970' }, held: work.map((pid) => [pid, started(pid)]) }));
+	writeFileSync(state, JSON.stringify({ owner: { pid: gone.pid, started: 'Thu Jan 1 00:00:00 1970' }, held: work.map((pid) => [pid, started(pid)]), kept: [] }));
 	expect(work.map(priority)).toEqual([4, 4]);
 	const { root: elsewhere } = await fakeSession(scratch());
 	const hold = await holdPeers({ within: elsewhere, state, intervalMs: 200 });
@@ -169,7 +188,7 @@ it('leaves nothing held that a held process starts while it is being given back'
 		[21, { ppid: 20, started: 'Mon Nov 9 09:00:01 2026', background: true }]
 	]);
 	const control = {
-		table: () => [...processes].map(([pid, { ppid, started }]) => ({ pid, ppid, started, command: 'node' })),
+		table: () => [...processes].map(([pid, { ppid, started, background }]) => ({ pid, ppid, started, command: 'node', background })),
 		setClass: (pid: number, background: boolean) => {
 			if (!processes.has(30) && processes.get(20)!.background) processes.set(30, { ppid: 20, started: 'Mon Nov 9 09:05:00 2026', background: true });
 			processes.get(pid)!.background = background;
@@ -177,11 +196,45 @@ it('leaves nothing held that a held process starts while it is being given back'
 		}
 	};
 	giveBack(
-		[
-			[20, 'Mon Nov 9 09:00:00 2026'],
-			[21, 'Mon Nov 9 09:00:01 2026']
-		],
+		{
+			held: [
+				[20, 'Mon Nov 9 09:00:00 2026'],
+				[21, 'Mon Nov 9 09:00:01 2026']
+			],
+			kept: []
+		},
 		control
 	);
 	expect([...processes].filter(([, { background }]) => background).map(([pid]) => pid)).toEqual([]);
 });
+
+const demote = (pid: number) => execFileSync('taskpolicy', ['-b', '-p', String(pid)]);
+
+it.runIf(darwin)('neither holds nor gives back a process already in the background class when the hold starts', async () => {
+	const dir = scratch();
+	const { root, work } = await fakeSession(dir);
+	const [plain, deliberate] = work;
+	demote(deliberate!);
+	expect([priority(plain!), priority(deliberate!)]).toEqual([31, 4]);
+	const hold = await holdPeers({ within: root, state: join(dir, 'hold.json'), intervalMs: 200 });
+	expect([priority(plain!), priority(deliberate!)]).toEqual([4, 4]);
+	expect(hold.release().held).toBe(1);
+	expect([priority(plain!), priority(deliberate!)]).toEqual([31, 4]);
+}, 20_000);
+
+it.runIf(darwin)('leaves a process already in the background class there when a held process runs it and the holder is killed outright', async () => {
+	const dir = scratch();
+	const { root, work } = await fakeSession(dir, ["bash -c 'sleep 60 & wait'"]);
+	const [shell] = work;
+	const under = () => processTable().filter((row) => row.ppid === shell);
+	expect(await until(() => under().length === 1, 5000)).toBe(true);
+	const [deliberate] = under().map((row) => row.pid);
+	demote(deliberate!);
+	expect([priority(shell!), priority(deliberate!)]).toEqual([31, 4]);
+	const holder = await holderProcess(root, join(dir, 'hold.json'));
+	expect(priority(shell!)).toBe(4);
+	holder.kill('SIGKILL');
+	expect(await until(() => priority(shell!) === 31, 5000)).toBe(true);
+	await pause(1000);
+	expect(priority(deliberate!)).toBe(4);
+}, 20_000);
