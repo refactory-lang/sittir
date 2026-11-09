@@ -9,7 +9,7 @@ const UNFORMED: Readonly<Record<string, number>> = { python: 0, rust: 0, typescr
 
 const RAW: Readonly<Record<string, { readonly kind: number; readonly value: number }>> = {
 	python: { kind: 144, value: 2889 },
-	rust: { kind: 1545, value: 5895 },
+	rust: { kind: 1411, value: 5895 },
 	typescript: { kind: 31, value: 5231 }
 };
 

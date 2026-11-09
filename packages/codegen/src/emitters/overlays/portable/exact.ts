@@ -1,4 +1,4 @@
-import { builtFlags, readableEntries, textBuilt, type PortableCarry } from '@sittir/common/engine';
+import { builtFlags, nullaryBuilt, readableEntries, textBuilt, type PortableCarry } from '@sittir/common/engine';
 import type { PortableBuildArm } from '@sittir/types';
 import { type ModelNode } from '../../../bindings/facts.ts';
 import { armClass, derive, isScalar, levelMembers, type Derivation, type MemberFacts, type Scalar } from '../../../bindings/derive.ts';
@@ -206,7 +206,8 @@ export function exactSlotsOf(input: PortableTypedInput, reads: ExactReads = exac
 		const structural = arms.filter((arm) => arm.literal === undefined);
 		if ((entriesFor(kind) ?? []).some((entry) => presetCarried.has(entry.index))) out.push('preset');
 		if (structural.some((arm) => arm.scalar !== undefined)) out.push('scalar');
-		const readsText = node.slots.length === 0 || (structural.length > 0 && structural.every((arm) => (arm.members.length === 0 && arm.seated !== undefined) || textBuilt(table, arm)));
+		const builtWhole = structural.length > 0 && structural.every((arm) => nullaryBuilt(table, arm));
+		const readsText = !builtWhole && (node.slots.length === 0 || (structural.length > 0 && structural.every((arm) => (arm.members.length === 0 && arm.seated !== undefined) || textBuilt(table, arm))));
 		if (structural.some((arm) => arm.content !== undefined) || (readsText && !structural.every((arm) => textBuilt(table, arm)))) out.push('text');
 		const buildable = new Set(structural.flatMap(builtFlags));
 		if ((flags.get(kind) ?? []).some((flag) => !buildable.has(flag))) out.push('flags');

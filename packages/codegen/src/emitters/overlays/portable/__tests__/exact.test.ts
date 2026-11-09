@@ -54,6 +54,12 @@ describe('exactSlotsOf', () => {
 		expect(reasonsAt(exact, 'argument', 'value', 'string_literal')).not.toContain('preset');
 	});
 
+	it('keeps a kind its nullary builder builds whole out of raw: the bare range reads as its path and builds back', () => {
+		const raw = setAt('argument', 'value').raw.map((arm) => arm.kind);
+		expect(raw).not.toContain('range_expression_bare');
+		expect(raw).toContain('metavariable');
+	});
+
 	it("keeps the preset reason where the build picks a form the read doesn't record", () => {
 		expect(reasonsAt(exact, 'clause.bounds', 'bounds', 'function_type')).toContain('preset');
 	});

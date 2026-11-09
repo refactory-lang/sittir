@@ -31,6 +31,9 @@ export function readableEntries<E extends Placement>(entries: readonly E[]): rea
 export const textBuilt = (table: PortableBuildTable, arm: PortableBuildArm): boolean =>
 	arm.members.length === 0 && arm.builder !== undefined && table.builders[arm.builder] === 'text';
 
+export const nullaryBuilt = (table: PortableBuildTable, arm: PortableBuildArm): boolean =>
+	arm.members.length === 0 && arm.builder !== undefined && table.builders[arm.builder] === 'nullary';
+
 export const builtFlags = (arm: PortableBuildArm): readonly string[] => [
 	...Object.keys(arm.flags),
 	...arm.when.flatMap((test) => ('flag' in test ? [test.flag] : [])),

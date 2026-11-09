@@ -137,7 +137,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.MatchExpression.Parsed
 				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBare.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
 				| T.RangeExpressionPrefix.Parsed
@@ -290,7 +289,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.MatchExpression.Parsed
 				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBare.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
 				| T.RangeExpressionPrefix.Parsed
@@ -673,7 +671,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.MatchExpression.Parsed
 				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBare.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
 				| T.RangeExpressionPrefix.Parsed
@@ -819,7 +816,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.MatchExpression.Parsed
 				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBare.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
 				| T.RangeExpressionPrefix.Parsed
@@ -1050,7 +1046,6 @@ export interface RustMap extends V.GrammarMap {
 								| T.MatchExpression.Parsed
 								| T.Metavariable.Parsed
 								| T.ParenthesizedExpression.Parsed
-								| T.RangeExpressionBare.Parsed
 								| T.RangeExpressionBinary.Parsed
 								| T.RangeExpressionPostfix.Parsed
 								| T.RangeExpressionPrefix.Parsed
@@ -1343,7 +1338,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.MatchExpression.Parsed
 				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBare.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
 				| T.RangeExpressionPrefix.Parsed
@@ -1492,7 +1486,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.MatchExpression.Parsed
 				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBare.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
 				| T.RangeExpressionPrefix.Parsed
@@ -1672,7 +1665,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.MatchExpression.Parsed
 				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBare.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
 				| T.RangeExpressionPrefix.Parsed
@@ -2103,7 +2095,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.MatchExpression.Parsed
 				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBare.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
 				| T.RangeExpressionPrefix.Parsed
@@ -2305,7 +2296,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.MatchExpression.Parsed
 				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBare.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
 				| T.RangeExpressionPrefix.Parsed
@@ -2507,7 +2497,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.MatchExpression.Parsed
 				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBare.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
 				| T.RangeExpressionPrefix.Parsed
@@ -2709,7 +2698,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.MatchExpression.Parsed
 				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBare.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
 				| T.RangeExpressionPrefix.Parsed
@@ -2911,7 +2899,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.MatchExpression.Parsed
 				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBare.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
 				| T.RangeExpressionPrefix.Parsed
@@ -3126,7 +3113,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.MatchExpression.Parsed
 				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBare.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
 				| T.RangeExpressionPrefix.Parsed
@@ -3519,7 +3505,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.MatchExpression.Parsed
 				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBare.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
 				| T.RangeExpressionPrefix.Parsed
@@ -3683,7 +3668,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.MatchExpression.Parsed
 				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBare.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
 				| T.RangeExpressionPrefix.Parsed
@@ -3847,7 +3831,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.MatchExpression.Parsed
 				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBare.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
 				| T.RangeExpressionPrefix.Parsed
@@ -4011,7 +3994,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.MatchExpression.Parsed
 				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBare.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
 				| T.RangeExpressionPrefix.Parsed
@@ -4175,7 +4157,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.MatchExpression.Parsed
 				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBare.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
 				| T.RangeExpressionPrefix.Parsed
@@ -4352,7 +4333,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.MatchExpression.Parsed
 				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBare.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
 				| T.RangeExpressionPrefix.Parsed
@@ -4516,7 +4496,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.MatchExpression.Parsed
 				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBare.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
 				| T.RangeExpressionPrefix.Parsed
@@ -4680,7 +4659,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.MatchExpression.Parsed
 				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBare.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
 				| T.RangeExpressionPrefix.Parsed
@@ -4844,7 +4822,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.MatchExpression.Parsed
 				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBare.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
 				| T.RangeExpressionPrefix.Parsed
@@ -5008,7 +4985,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.MatchExpression.Parsed
 				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBare.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
 				| T.RangeExpressionPrefix.Parsed
@@ -5172,7 +5148,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.MatchExpression.Parsed
 				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBare.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
 				| T.RangeExpressionPrefix.Parsed
@@ -5349,7 +5324,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.MatchExpression.Parsed
 				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBare.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
 				| T.RangeExpressionPrefix.Parsed
@@ -5513,7 +5487,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.MatchExpression.Parsed
 				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBare.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
 				| T.RangeExpressionPrefix.Parsed
@@ -5677,7 +5650,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.MatchExpression.Parsed
 				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBare.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
 				| T.RangeExpressionPrefix.Parsed
@@ -5841,7 +5813,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.MatchExpression.Parsed
 				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBare.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
 				| T.RangeExpressionPrefix.Parsed
@@ -6005,7 +5976,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.MatchExpression.Parsed
 				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBare.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
 				| T.RangeExpressionPrefix.Parsed
@@ -6169,7 +6139,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.MatchExpression.Parsed
 				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBare.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
 				| T.RangeExpressionPrefix.Parsed
@@ -6346,7 +6315,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.MatchExpression.Parsed
 				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBare.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
 				| T.RangeExpressionPrefix.Parsed
@@ -13687,7 +13655,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.MatchExpression.Parsed
 				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBare.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
 				| T.RangeExpressionPrefix.Parsed
@@ -13890,7 +13857,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.MatchExpression.Parsed
 				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBare.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
 				| T.RangeExpressionPrefix.Parsed
@@ -14093,7 +14059,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.MatchExpression.Parsed
 				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBare.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
 				| T.RangeExpressionPrefix.Parsed
@@ -14296,7 +14261,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.MatchExpression.Parsed
 				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBare.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
 				| T.RangeExpressionPrefix.Parsed
@@ -14499,7 +14463,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.MatchExpression.Parsed
 				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBare.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
 				| T.RangeExpressionPrefix.Parsed
@@ -14715,7 +14678,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.MatchExpression.Parsed
 				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBare.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
 				| T.RangeExpressionPrefix.Parsed
@@ -14864,7 +14826,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.MatchExpression.Parsed
 				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBare.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
 				| T.RangeExpressionPrefix.Parsed
@@ -16563,7 +16524,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.MatchExpression.Parsed
 				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBare.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
 				| T.RangeExpressionPrefix.Parsed
@@ -16728,7 +16688,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.MatchExpression.Parsed
 				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBare.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
 				| T.RangeExpressionPrefix.Parsed
@@ -17069,7 +17028,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.MatchExpression.Parsed
 				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBare.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
 				| T.RangeExpressionPrefix.Parsed
@@ -17211,7 +17169,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.MatchExpression.Parsed
 				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBare.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
 				| T.RangeExpressionPrefix.Parsed
@@ -17356,7 +17313,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.MatchExpression.Parsed
 				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBare.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
 				| T.RangeExpressionPrefix.Parsed
@@ -17498,7 +17454,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.MatchExpression.Parsed
 				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBare.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
 				| T.RangeExpressionPrefix.Parsed
@@ -17642,7 +17597,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.MatchExpression.Parsed
 				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBare.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
 				| T.RangeExpressionPrefix.Parsed
@@ -17784,7 +17738,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.MatchExpression.Parsed
 				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBare.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
 				| T.RangeExpressionPrefix.Parsed
@@ -17929,7 +17882,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.MatchExpression.Parsed
 				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBare.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
 				| T.RangeExpressionPrefix.Parsed
@@ -18071,7 +18023,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.MatchExpression.Parsed
 				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBare.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
 				| T.RangeExpressionPrefix.Parsed
@@ -18216,7 +18167,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.MatchExpression.Parsed
 				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBare.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
 				| T.RangeExpressionPrefix.Parsed
@@ -18358,7 +18308,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.MatchExpression.Parsed
 				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBare.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
 				| T.RangeExpressionPrefix.Parsed
@@ -18503,7 +18452,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.MatchExpression.Parsed
 				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBare.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
 				| T.RangeExpressionPrefix.Parsed
@@ -18645,7 +18593,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.MatchExpression.Parsed
 				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBare.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
 				| T.RangeExpressionPrefix.Parsed
@@ -18790,7 +18737,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.MatchExpression.Parsed
 				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBare.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
 				| T.RangeExpressionPrefix.Parsed
@@ -18932,7 +18878,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.MatchExpression.Parsed
 				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBare.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
 				| T.RangeExpressionPrefix.Parsed
@@ -19077,7 +19022,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.MatchExpression.Parsed
 				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBare.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
 				| T.RangeExpressionPrefix.Parsed
@@ -19219,7 +19163,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.MatchExpression.Parsed
 				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBare.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
 				| T.RangeExpressionPrefix.Parsed
@@ -19364,7 +19307,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.MatchExpression.Parsed
 				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBare.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
 				| T.RangeExpressionPrefix.Parsed
@@ -19506,7 +19448,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.MatchExpression.Parsed
 				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBare.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
 				| T.RangeExpressionPrefix.Parsed
@@ -19651,7 +19592,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.MatchExpression.Parsed
 				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBare.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
 				| T.RangeExpressionPrefix.Parsed
@@ -19793,7 +19733,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.MatchExpression.Parsed
 				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBare.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
 				| T.RangeExpressionPrefix.Parsed
@@ -19938,7 +19877,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.MatchExpression.Parsed
 				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBare.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
 				| T.RangeExpressionPrefix.Parsed
@@ -20080,7 +20018,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.MatchExpression.Parsed
 				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBare.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
 				| T.RangeExpressionPrefix.Parsed
@@ -20225,7 +20162,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.MatchExpression.Parsed
 				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBare.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
 				| T.RangeExpressionPrefix.Parsed
@@ -20367,7 +20303,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.MatchExpression.Parsed
 				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBare.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
 				| T.RangeExpressionPrefix.Parsed
@@ -20512,7 +20447,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.MatchExpression.Parsed
 				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBare.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
 				| T.RangeExpressionPrefix.Parsed
@@ -20657,7 +20591,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.MatchExpression.Parsed
 				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBare.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
 				| T.RangeExpressionPrefix.Parsed
@@ -20799,7 +20732,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.MatchExpression.Parsed
 				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBare.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
 				| T.RangeExpressionPrefix.Parsed
@@ -20943,7 +20875,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.MatchExpression.Parsed
 				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBare.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
 				| T.RangeExpressionPrefix.Parsed
@@ -21085,7 +21016,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.MatchExpression.Parsed
 				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBare.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
 				| T.RangeExpressionPrefix.Parsed
@@ -21230,7 +21160,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.MatchExpression.Parsed
 				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBare.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
 				| T.RangeExpressionPrefix.Parsed
@@ -21372,7 +21301,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.MatchExpression.Parsed
 				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBare.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
 				| T.RangeExpressionPrefix.Parsed
@@ -21517,7 +21445,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.MatchExpression.Parsed
 				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBare.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
 				| T.RangeExpressionPrefix.Parsed
@@ -21659,7 +21586,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.MatchExpression.Parsed
 				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBare.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
 				| T.RangeExpressionPrefix.Parsed
@@ -21804,7 +21730,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.MatchExpression.Parsed
 				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBare.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
 				| T.RangeExpressionPrefix.Parsed
@@ -21946,7 +21871,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.MatchExpression.Parsed
 				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBare.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
 				| T.RangeExpressionPrefix.Parsed
@@ -22091,7 +22015,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.MatchExpression.Parsed
 				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBare.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
 				| T.RangeExpressionPrefix.Parsed
@@ -22233,7 +22156,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.MatchExpression.Parsed
 				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBare.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
 				| T.RangeExpressionPrefix.Parsed
@@ -22378,7 +22300,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.MatchExpression.Parsed
 				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBare.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
 				| T.RangeExpressionPrefix.Parsed
@@ -22520,7 +22441,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.MatchExpression.Parsed
 				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBare.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
 				| T.RangeExpressionPrefix.Parsed
@@ -22665,7 +22585,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.MatchExpression.Parsed
 				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBare.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
 				| T.RangeExpressionPrefix.Parsed
@@ -22807,7 +22726,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.MatchExpression.Parsed
 				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBare.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
 				| T.RangeExpressionPrefix.Parsed
@@ -22952,7 +22870,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.MatchExpression.Parsed
 				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBare.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
 				| T.RangeExpressionPrefix.Parsed
@@ -23094,7 +23011,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.MatchExpression.Parsed
 				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBare.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
 				| T.RangeExpressionPrefix.Parsed
@@ -23239,7 +23155,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.MatchExpression.Parsed
 				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBare.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
 				| T.RangeExpressionPrefix.Parsed
@@ -23381,7 +23296,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.MatchExpression.Parsed
 				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBare.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
 				| T.RangeExpressionPrefix.Parsed
@@ -23526,7 +23440,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.MatchExpression.Parsed
 				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBare.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
 				| T.RangeExpressionPrefix.Parsed
@@ -23668,7 +23581,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.MatchExpression.Parsed
 				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBare.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
 				| T.RangeExpressionPrefix.Parsed
@@ -23813,7 +23725,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.MatchExpression.Parsed
 				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBare.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
 				| T.RangeExpressionPrefix.Parsed
@@ -23955,7 +23866,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.MatchExpression.Parsed
 				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBare.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
 				| T.RangeExpressionPrefix.Parsed
@@ -24100,7 +24010,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.MatchExpression.Parsed
 				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBare.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
 				| T.RangeExpressionPrefix.Parsed
@@ -24242,7 +24151,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.MatchExpression.Parsed
 				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBare.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
 				| T.RangeExpressionPrefix.Parsed
@@ -24387,7 +24295,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.MatchExpression.Parsed
 				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBare.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
 				| T.RangeExpressionPrefix.Parsed
@@ -24529,7 +24436,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.MatchExpression.Parsed
 				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBare.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
 				| T.RangeExpressionPrefix.Parsed
@@ -24674,7 +24580,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.MatchExpression.Parsed
 				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBare.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
 				| T.RangeExpressionPrefix.Parsed
@@ -24816,7 +24721,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.MatchExpression.Parsed
 				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBare.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
 				| T.RangeExpressionPrefix.Parsed
@@ -24961,7 +24865,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.MatchExpression.Parsed
 				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBare.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
 				| T.RangeExpressionPrefix.Parsed
@@ -25103,7 +25006,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.MatchExpression.Parsed
 				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBare.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
 				| T.RangeExpressionPrefix.Parsed
@@ -25248,7 +25150,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.MatchExpression.Parsed
 				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBare.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
 				| T.RangeExpressionPrefix.Parsed
@@ -25390,7 +25291,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.MatchExpression.Parsed
 				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBare.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
 				| T.RangeExpressionPrefix.Parsed
@@ -25535,7 +25435,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.MatchExpression.Parsed
 				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBare.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
 				| T.RangeExpressionPrefix.Parsed
@@ -25677,7 +25576,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.MatchExpression.Parsed
 				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBare.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
 				| T.RangeExpressionPrefix.Parsed
@@ -25822,7 +25720,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.MatchExpression.Parsed
 				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBare.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
 				| T.RangeExpressionPrefix.Parsed
@@ -25964,7 +25861,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.MatchExpression.Parsed
 				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBare.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
 				| T.RangeExpressionPrefix.Parsed
@@ -26852,7 +26748,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.MatchExpression.Parsed
 				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBare.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
 				| T.RangeExpressionPrefix.Parsed
@@ -27148,7 +27043,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.MatchExpression.Parsed
 				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBare.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
 				| T.RangeExpressionPrefix.Parsed
@@ -27381,7 +27275,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.MatchExpression.Parsed
 				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBare.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
 				| T.RangeExpressionPrefix.Parsed
@@ -27658,7 +27551,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.MatchExpression.Parsed
 				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBare.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
 				| T.RangeExpressionPrefix.Parsed
@@ -27852,7 +27744,6 @@ export interface RustMap extends V.GrammarMap {
 								| T.MatchExpression.Parsed
 								| T.Metavariable.Parsed
 								| T.ParenthesizedExpression.Parsed
-								| T.RangeExpressionBare.Parsed
 								| T.RangeExpressionBinary.Parsed
 								| T.RangeExpressionPostfix.Parsed
 								| T.RangeExpressionPrefix.Parsed
@@ -27998,7 +27889,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.MatchExpression.Parsed
 				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBare.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
 				| T.RangeExpressionPrefix.Parsed
@@ -28159,7 +28049,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.MatchExpression.Parsed
 				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBare.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
 				| T.RangeExpressionPrefix.Parsed
@@ -28304,7 +28193,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.MatchExpression.Parsed
 				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBare.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
 				| T.RangeExpressionPrefix.Parsed
@@ -28449,7 +28337,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.MatchExpression.Parsed
 				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBare.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
 				| T.RangeExpressionPrefix.Parsed
@@ -28591,7 +28478,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.MatchExpression.Parsed
 				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBare.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
 				| T.RangeExpressionPrefix.Parsed
@@ -28736,7 +28622,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.MatchExpression.Parsed
 				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBare.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
 				| T.RangeExpressionPrefix.Parsed
@@ -28878,7 +28763,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.MatchExpression.Parsed
 				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBare.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
 				| T.RangeExpressionPrefix.Parsed
@@ -29027,7 +28911,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.MatchExpression.Parsed
 				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBare.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
 				| T.RangeExpressionPrefix.Parsed
@@ -29169,7 +29052,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.MatchExpression.Parsed
 				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBare.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
 				| T.RangeExpressionPrefix.Parsed
@@ -29314,7 +29196,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.MatchExpression.Parsed
 				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBare.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
 				| T.RangeExpressionPrefix.Parsed
@@ -29456,7 +29337,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.MatchExpression.Parsed
 				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBare.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
 				| T.RangeExpressionPrefix.Parsed
@@ -29601,7 +29481,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.MatchExpression.Parsed
 				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBare.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
 				| T.RangeExpressionPrefix.Parsed
@@ -29746,7 +29625,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.MatchExpression.Parsed
 				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBare.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
 				| T.RangeExpressionPrefix.Parsed
@@ -29888,7 +29766,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.MatchExpression.Parsed
 				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBare.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
 				| T.RangeExpressionPrefix.Parsed
@@ -30033,7 +29910,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.MatchExpression.Parsed
 				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBare.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
 				| T.RangeExpressionPrefix.Parsed
@@ -30177,7 +30053,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.MatchExpression.Parsed
 				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBare.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
 				| T.RangeExpressionPrefix.Parsed
@@ -30322,7 +30197,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.MatchExpression.Parsed
 				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBare.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
 				| T.RangeExpressionPrefix.Parsed
@@ -30467,7 +30341,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.MatchExpression.Parsed
 				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBare.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
 				| T.RangeExpressionPrefix.Parsed
@@ -30615,7 +30488,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.MatchExpression.Parsed
 				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBare.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
 				| T.RangeExpressionPrefix.Parsed
@@ -32344,7 +32216,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.MatchExpression.Parsed
 				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBare.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
 				| T.RangeExpressionPrefix.Parsed
@@ -32488,7 +32359,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.MatchExpression.Parsed
 				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBare.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
 				| T.RangeExpressionPrefix.Parsed
@@ -32750,7 +32620,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.MatchExpression.Parsed
 				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBare.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
 				| T.RangeExpressionPrefix.Parsed
@@ -33313,7 +33182,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.MatchExpression.Parsed
 				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBare.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
 				| T.RangeExpressionPrefix.Parsed
@@ -33463,7 +33331,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.MatchExpression.Parsed
 				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBare.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
 				| T.RangeExpressionPrefix.Parsed
@@ -33610,7 +33477,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.MatchExpression.Parsed
 				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBare.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
 				| T.RangeExpressionPrefix.Parsed
@@ -33755,7 +33621,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.MatchExpression.Parsed
 				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBare.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
 				| T.RangeExpressionPrefix.Parsed
@@ -33973,7 +33838,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.MatchExpression.Parsed
 				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBare.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
 				| T.RangeExpressionPrefix.Parsed
