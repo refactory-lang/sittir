@@ -2,19 +2,20 @@ import { describe, expect, it } from 'vitest';
 import { ParseErrors } from '@sittir/common';
 import { ERROR_KIND_ID } from '@sittir/common/utils';
 import scm from '../src/index.ts';
+import { TSKindId } from '../src/kinds.ts';
 
 const engine = await scm.createEngine();
 
 const error = (start: number, end: number) => ({ kind: 'error', span: { start, end } });
-const missing = (at: number) => ({ kind: 'missing', span: { start: at, end: at } });
+const missing = (at: number, kind: TSKindId, start: number, end: number) => ({ kind: 'missing', span: { start: at, end: at }, holder: { kind, span: { start, end } } });
 
 describe('a parsed root reports the regions of its source that did not parse', () => {
 	it.each([
 		['(a) @b\n(c @d\n(e) @f\n', [error(7, 19)]],
 		['(a [ (b)\n', [error(0, 8)]],
 		['((a) (#eq? @x)\n', [error(0, 14)]],
-		['(a b: )', [missing(5)]],
-		['(identifier) @identifier (call #eq? @x "a"', [error(26, 30), missing(42)]]
+		['(a b: )', [missing(5, TSKindId.AnonymousNode, 5, 5)]],
+		['(identifier) @identifier (call #eq? @x "a"', [error(26, 30), missing(42, TSKindId.Predicate, 25, 42)]]
 	])('%j', (source, regions) => {
 		expect(engine.parse(source).$errors).toEqual(regions);
 	});

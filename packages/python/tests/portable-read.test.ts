@@ -234,6 +234,14 @@ describe('the portable read', () => {
 		expect(roundTrip(source)).toBe(source);
 	});
 
+	it('carries the node a parser-inserted token sits in, so its rebuild writes no token the source lacks', () => {
+		const source = 'def f(:\n    pass\n';
+		const carried: unknown[] = [];
+		runtime.read(runtime.engine.parse(source), (_, carry) => carried.push(carry));
+		expect(carried).toEqual([{ reason: 'error' }]);
+		expect(roundTrip(source)).toBe(source);
+	});
+
 	it('reads a print statement\'s destination and arguments, and its trailing comma as a flag', () => {
 		expect(firstOf('print a, b,')).toEqual({ $path: 'statement.print', arguments: ['a', 'b'], $flags: ['trailingComma'] });
 		expect(firstOf('print >> f')).toEqual({ $path: 'statement.print', destination: 'f', arguments: [] });

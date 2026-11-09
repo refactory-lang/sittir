@@ -91,7 +91,8 @@ export type {
 	ErrorKindId,
 	ErrorNode,
 	TriviaFlanks,
-	ErrorRegion
+	ErrorRegion,
+	ErrorHolder
 } from './core-types.ts';
 
 // ---------------------------------------------------------------------------

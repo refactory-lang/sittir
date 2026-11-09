@@ -234,18 +234,28 @@ pub struct Sibling {
 }
 
 /// What kind of region of a source did not parse: an ERROR node error
-/// recovery wrapped source in, or a MISSING node it inserted.
+/// recovery wrapped source in, or a MISSING node it inserted, with the node it
+/// was inserted into.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, serde::Serialize)]
-#[serde(rename_all = "lowercase")]
+#[serde(tag = "kind", rename_all = "lowercase")]
 pub enum ErrorRegionKind {
     Error,
-    Missing,
+    Missing { holder: ErrorHolder },
+}
+
+/// The node a MISSING token was inserted into: its span and the kind the
+/// grammar parsed it as (`read::grammar_id`).
+#[derive(Debug, Clone, Copy, PartialEq, Eq, serde::Serialize)]
+pub struct ErrorHolder {
+    pub span: Span,
+    pub kind: KindId,
 }
 
 /// One region of a source that did not parse, with its byte span. A MISSING
 /// region is empty: it marks where the parser inserted a token.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, serde::Serialize)]
 pub struct ErrorRegion {
+    #[serde(flatten)]
     pub kind: ErrorRegionKind,
     pub span: Span,
 }
@@ -265,7 +275,7 @@ pub fn error_regions(tree: &tree_sitter::Tree) -> Vec<ErrorRegion> {
         let kind = if node.is_error() {
             Some(ErrorRegionKind::Error)
         } else if node.is_missing() {
-            Some(ErrorRegionKind::Missing)
+            node.parent().map(|parent| ErrorRegionKind::Missing { holder: ErrorHolder { span: Span::of(&parent), kind: crate::read::grammar_id(&parent) } })
         } else {
             None
         };

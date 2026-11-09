@@ -207,6 +207,19 @@ describe('the portable read', () => {
 		}
 	});
 
+	it('carries the node a parser-inserted token sits in, so its rebuild writes no token the source lacks', () => {
+		for (const [source, rendered] of [
+			["let x: import('a')();", "let x: import('a')();\n"],
+			['export class A { set y() {} }\n', 'export class A {\n  set y() {}\n}\n'],
+			['export class A { set y(a = 1) {} }\n', 'export class A {\n  set y(a = 1) {}\n}\n']
+		] as const) {
+			const carried: unknown[] = [];
+			runtime.read(runtime.engine.parse(source), (_, carry) => carried.push(carry));
+			expect(carried, source).toEqual([{ reason: 'error' }]);
+			expect(roundTrip(source)).toBe(rendered);
+		}
+	});
+
 	it('carries a typeof operand typescript does not accept: a call, an optional chain', () => {
 		for (const source of ['let g: typeof a.b();', 'let h: typeof a?.b;']) {
 			const carried: unknown[] = [];

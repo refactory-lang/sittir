@@ -1,5 +1,5 @@
-import type { PortableBuildArm, PortableBuildTable, PortableContainer, PortableDecimalParts, PortableMemberStep, PortablePreset, PortableSeat, PortableSlotStep } from '@sittir/types';
-import { nodeText, sidesOf } from '../node-data.ts';
+import type { ErrorRegion, PortableBuildArm, PortableBuildTable, PortableContainer, PortableDecimalParts, PortableMemberStep, PortablePreset, PortableSeat, PortableSlotStep } from '@sittir/types';
+import { nodeText, sidesOf, spanOf } from '../node-data.ts';
 import { isErrorNode } from '../utils.ts';
 import { treeOf } from '../tree-token.ts';
 import { spelledMember } from '../spelled.ts';
@@ -35,8 +35,29 @@ export interface PortableReadContext {
 	readonly otherTested: (node: Node, path: string) => ReadonlySet<string>;
 }
 
-const erred = (node: Node): boolean =>
-	isErrorNode(node) || (treeOf(node)?.errors?.length !== 0 && Object.values(sidesOf(node) ?? {}).some((entries) => entries.some(isErrorNode)));
+const holders = new WeakMap<readonly ErrorRegion[], ReadonlySet<string>>();
+
+const holderKey = (kind: number, span: { readonly start: number; readonly end: number }): string => `${kind}:${span.start}:${span.end}`;
+
+const holdersOf = (errors: readonly ErrorRegion[]): ReadonlySet<string> => {
+	const known = holders.get(errors);
+	if (known !== undefined) return known;
+	const found = new Set(errors.flatMap((region) => (region.kind === 'missing' ? [holderKey(region.holder.kind, region.holder.span)] : [])));
+	holders.set(errors, found);
+	return found;
+};
+
+const holdsMissing = (node: Node, errors: readonly ErrorRegion[]): boolean => {
+	const span = spanOf(node);
+	return span !== undefined && holdersOf(errors).has(holderKey(node.$type, span));
+};
+
+const erred = (node: Node): boolean => {
+	if (isErrorNode(node)) return true;
+	const errors = treeOf(node)?.errors;
+	if (errors?.length === 0) return false;
+	return Object.values(sidesOf(node) ?? {}).some((entries) => entries.some(isErrorNode)) || (errors !== undefined && holdsMissing(node, errors));
+};
 
 const opaque = (item: unknown): boolean => hasKind(item) && typeof (item as { readonly $verbatim?: unknown }).$verbatim === 'string';
 
